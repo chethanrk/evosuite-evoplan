@@ -1,0 +1,11 @@
+<mvc:View controllerName="com.evorait.evoplan.controller.EmptyPage"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+	<MessagePage id="messagePage"
+		title="{globalProperties>/emptyPage/title}"
+		text="{globalProperties>/emptyPage/text}"
+		icon="{globalProperties>/emptyPage/icon}"
+		description="{globalProperties>/emptyPage/description}"
+		showNavButton="{device>/system/phone}"
+		navButtonPress="onNavButtonPressed">
+	</MessagePage>
+</mvc:View>

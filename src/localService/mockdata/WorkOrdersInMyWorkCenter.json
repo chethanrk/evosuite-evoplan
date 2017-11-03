@@ -1,0 +1,134 @@
+[
+  {
+	"WorkOrder": "613584",
+	"WorkOrderDescription": "Conveyer belt malfunctioned",
+	"OrderType": "MaintOrderType3",
+	"MaintWorkOrderLongText": "",
+	"Customer": "SAP",
+	"Customername": "SAP SE",
+	"Street": "Dietmar-Hopp-Allee 1",
+	"Location": "69190 Walldorf",
+	"PlannerGroup": "PlannerGroup",
+	"WorkCenter": "WorkCenter",
+	"PersonResponsible": "Stefan Lech",
+	"StartDate": "\/Date(1354665600000)\/",
+	"StartTime": "PT11H47M11S",
+	"EndDate": "\/Date(1354665600000)\/",
+	"EndTime": "PT11H47M11S",
+	"Priority": "P2",
+	"Proritytxt": "Medium",
+	"FunctionalLocation": "FunctionalLocation",
+	"FunctionalLocationDescription": "FunctionalLocationDescription",
+	"Equipment": "Equipment",
+	"EquipmentDescription": "EquipmentDescription",
+	"Assembly": "Assembly",
+	"AssemblyDesc": "AssemblyDesc",
+	"SystemStatus": "SystemStatus",
+	"SystemStatusText": "SystemStatusText",
+	"UserStatus": "INPR",
+	"UserStatusText": "UserStatusText",
+	"CreatedOn": "\/Date(1354665600000)\/",
+	"Createdby": "User1",
+	"CreatedByUserDescription": "UserDescription 3",
+	"ReportedByUser": "User1",
+	"ReportedByUserDescription": "UserDescription 3",
+	"WorkOrdheadtoOpr": {
+	  "__deferred": {
+		"uri": "WorkOrderHeaderSet('613584')/WorkOrdheadtoOpr"
+	  }
+	},
+	"WorkOrderheadtoComp": {
+	  "__deferred": {
+		"uri": "WorkOrderHeaderSet('613584')/WorkOrderheadtoComp"
+	  }
+	}
+  },
+  {
+	"WorkOrder": "613583",
+	"WorkOrderDescription": "Service MRT (regular)",
+	"OrderType": "MaintOrderType4",
+	"MaintWorkOrderLongText": "",
+	"Customer": "HOSP-ERL",
+	"Customername": "Uniklinik Erlangen",
+	"Street": "Nürnberger Str. 34-48",
+	"Location": "91054 Erlangen",
+	"PlannerGroup": "PlannerGroup",
+	"WorkCenter": "WorkCenter",
+	"PersonResponsible": "---",
+	"StartDate": "\/Date(820800000000)\/",
+	"StartTime": "PT11H47M11S",
+	"EndDate": "\/Date(820800000000)\/",
+	"EndTime": "PT11H47M11S",
+	"Priority": "P3",
+	"Proritytxt": "Low",
+	"FunctionalLocation": "FunctionalLocation",
+	"FunctionalLocationDescription": "FunctionalLocationDescription",
+	"Equipment": "Equipment",
+	"EquipmentDescription": "EquipmentDescription",
+	"Assembly": "Assembly",
+	"AssemblyDesc": "AssemblyDesc",
+	"SystemStatus": "SystemStatus",
+	"SystemStatusText": "SystemStatusText",
+	"UserStatus": "INTM",
+	"UserStatusText": "UserStatusText",
+	"CreatedOn": "\/Date(820800000000)\/",
+	"Createdby": "User1",
+	"CreatedByUserDescription": "UserDescription 4",
+	"ReportedByUser": "User1",
+	"ReportedByUserDescription": "UserDescription 4",
+	"WorkOrdheadtoOpr": {
+	  "__deferred": {
+		"uri": "WorkOrderHeaderSet('613583')/WorkOrdheadtoOpr"
+	  }
+	},
+	"WorkOrderheadtoComp": {
+	  "__deferred": {
+		"uri": "WorkOrderHeaderSet('613583')/WorkOrderheadtoComp"
+	  }
+	}
+  },
+  {
+	"WorkOrder": "613582",
+	"WorkOrderDescription": "Inspect Gas Pipe Leakage",
+	"OrderType": "MaintOrderType5",
+	"MaintWorkOrderLongText": "",
+	"Customer": "UTIL-NBG",
+	"Customername": "Nürnberger Versorgungsbetriebe AG",
+	"Street": "Frankenschnellweg 381",
+	"Location": "90403 Nuremberg",
+	"PlannerGroup": "PlannerGroup",
+	"WorkCenter": "WorkCenter",
+	"PersonResponsible": "Tim Kretschmann",
+	"StartDate": "\/Date(820800000000)\/",
+	"StartTime": "PT11H47M11S",
+	"EndDate": "\/Date(820800000000)\/",
+	"EndTime": "PT11H47M11S",
+	"Priority": "P2",
+	"Proritytxt": "Medium",
+	"FunctionalLocation": "FunctionalLocation",
+	"FunctionalLocationDescription": "FunctionalLocationDescription",
+	"Equipment": "Equipment",
+	"EquipmentDescription": "EquipmentDescription",
+	"Assembly": "Assembly",
+	"AssemblyDesc": "AssemblyDesc",
+	"SystemStatus": "SystemStatus",
+	"SystemStatusText": "SystemStatusText",
+	"UserStatus": "CMPL",
+	"UserStatusText": "UserStatusText",
+	"CreatedOn": "\/Date(820800000000)\/",
+	"Createdby": "User1",
+	"CreatedByUserDescription": "UserDescription 5",
+	"ReportedByUser": "User1",
+	"ReportedByUserDescription": "UserDescription 5",
+	"WorkOrdheadtoOpr": {
+	  "__deferred": {
+		"uri": "WorkOrderHeaderSet('613582')/WorkOrdheadtoOpr"
+	  }
+	},
+	"WorkOrderheadtoComp": {
+	  "__deferred": {
+		"uri": "WorkOrderHeaderSet('613582')/WorkOrderheadtoComp"
+	  }
+	}
+  }
+]

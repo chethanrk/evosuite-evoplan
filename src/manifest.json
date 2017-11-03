@@ -1,0 +1,147 @@
+{
+	"_version": "1.4.0",
+	"sap.app": {
+		"id": "com.evorait.evoplan",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {
+			"mainService": {
+				"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EVOSUPRVISR_DASHBOARD_SRV/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/metadata.xml",
+					"annotations": [
+						"annotations"
+					]
+				}
+			},
+			"annotations": {
+				"uri": "annotations/annotations.xml",
+				"type": "ODataAnnotation",
+				"settings": {
+					"localUri": "annotations/annotations.xml"
+				}
+			}
+		},
+		"sourceTemplate": {
+			"id": "sap.ui.ui5-template-plugin.1worklist",
+			"version": "1.38.3"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://task",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": ["sap_hcb", "sap_bluecrystal", "sap_belize"]
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "com.evorait.evoplan.view.App",
+			"type": "XML",
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.40.0",
+			"libs": {
+				"sap.ui.core": {
+					"minVersion": "1.40.0"
+				},
+				"sap.m": {
+					"minVersion": "1.40.0"
+				},
+				"sap.uxap": {
+					"minVersion": ""
+				},
+				"sap.ui.comp": {
+					"minVersion": ""
+				}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "com.evorait.evoplan.i18n.i18n"
+				}
+			},
+			"": {
+				"dataSource": "mainService",
+				"preload": true
+			}
+		},
+		"resources": {
+			"css": [{
+				"uri": "assets/css/style.css"
+			}]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "com.evorait.evoplan.view",
+				"controlId": "app",
+				"bypassed": {
+					"target": ["master", "empty"]
+				},
+				"async": true
+			},
+			"routes": [{
+				"pattern": "",
+				"name": "main",
+				"target": ["list", "master"]
+			}, {
+				"pattern": "WorkOrder/{objectId}",
+				"name": "detail",
+				"target": ["master", "detail"]
+			}],
+			"targets": {
+				"master": {
+					"viewName": "MasterPage",
+					"viewLevel": 1,
+					"controlAggregation": "masterPages"
+				},
+				"list": {
+					"viewName": "List",
+					"viewLevel": 2,
+					"controlAggregation": "detailPages"
+				},
+				"detail": {
+					"viewName": "Detail",
+					"viewLevel": 3,
+					"controlAggregation": "detailPages"
+				},
+				"empty": {
+					"viewName": "EmptyPage",
+					"viewLevel": 3,
+					"controlAggregation": "detailPages"
+				},
+				"notFound": {
+					"viewName": "NotFound",
+					"viewLevel": 3,
+					"controlAggregation": "detailPages"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,71 @@
+<mvc:View controllerName="com.evorait.evoplan.controller.MasterPage"
+          xmlns="sap.m"
+          xmlns:mvc="sap.ui.core.mvc"
+          xmlns:semantic="sap.m.semantic"
+          xmlns:smartTable="sap.ui.comp.smarttable"
+          xmlns:table="sap.ui.table">
+
+    <semantic:MasterPage id="masterPage"
+                         navButtonPress="onNavButtonPressed"
+                         showNavButton="false"
+                         title="Technicians"
+                         showFooter="true"
+                         icon="sap-icon://action"
+                         class="sapUiStdPage">
+
+        <semantic:subHeader>
+            <Bar id="subHeaderBar">
+                <contentMiddle>
+                    <SearchField id="searchField"
+                                 search="onSearch"
+                                 showRefreshButton="{= !${device>/support/touch} }"
+                                 width="100%">
+                    </SearchField>
+                </contentMiddle>
+            </Bar>
+        </semantic:subHeader>
+
+        <semantic:content>
+            <!--<PullToRefresh id="pullToRefresh" refresh="onRefresh" visible="{device>/support/touch}"/>-->
+
+            <smartTable:SmartTable
+                    id="droppableTable"
+                    entitySet="TechnicianSet"
+                    tableType="TreeTable"
+                    useExportToExcel="false"
+                    useVariantManagement="false"
+                    useTablePersonalisation="false"
+                    header="Technician"
+                    showRowCount="false"
+                    enableAutoBinding="true"
+                    beforeRebindTable="onBeforeRebindTable"
+                    updateFinished="onUpdateFinished"
+                    initiallyVisibleFields="DESCRIPTION"
+                    toolbarStyleClass="treeTableHeader">
+                <!-- layout data used to make the table growing but the filter bar fixed -->
+                <smartTable:layoutData>
+                    <FlexItemData growFactor="1" />
+                </smartTable:layoutData>
+
+                <table:TreeTable
+                        width="100%"
+                        selectionMode="None"
+                        enableColumnReordering="false"
+                        columnHeaderVisible="false"
+                        editable="false"
+                        enableBusyIndicator="true"
+                        busyStateChanged="onBusyStateChanged">
+                </table:TreeTable>
+            </smartTable:SmartTable>
+
+        </semantic:content>
+
+        <semantic:filter>
+            <semantic:FilterAction press="onFilterButtonPress"/>
+        </semantic:filter>
+        <semantic:addAction>
+            <semantic:AddAction press="onSemanticButtonPress"/>
+        </semantic:addAction>
+
+    </semantic:MasterPage>
+</mvc:View>

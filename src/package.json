@@ -1,0 +1,31 @@
+{
+  "name": "evoplan-ui5",
+  "version": "1.0.0",
+  "description": "Dispatch Work Orders and manage your service engineers' capacities.",
+  "main": "Component.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "grunt": "^1.0.1"
+  },
+  "devDependencies": {
+    "grunt-openui5": "^0.12.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://marklanger@bitbucket.org/evorait/evoplan-ui5.git"
+  },
+  "keywords": [
+    "Planning",
+    "Dispatch",
+    "Orders",
+    "Work",
+  ],
+  "author": "Evora IT Solutions",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/evorait/evoplan-ui5#readme"
+}

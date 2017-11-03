@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Testing Overview</title>
+			<!--  load the unit tests part if the file exists -->
+			<script type="text/javascript">
+				var request = new XMLHttpRequest();
+				request.open('GET', 'test/testLinks.fragment.html', true);
+				
+				request.onload =  function() {
+					if (request.status >= 200 && request.status < 400) {
+						// Success!
+						var resp = request.responseText;
+						document.getElementById('integrationTests').innerHTML=resp
+					} else {
+						//failed
+						console.log("No unit test/opa tests maintained")
+						}};
+				
+				request.onerror = function() {
+					console.log("Request error: No unit test/opa tests available")};
+					
+				request.send();
+			</script>
+		<!--  try to load the basic UI5 styles -->
+		<link rel="stylesheet" type="text/css" href="resources/sap/ui/core/themes/sap_bluecrystal/library.css">
+	<script src="https://trackerexta90daed17.hana.ondemand.com/tracker/js/privacy.js" type="text/javascript"></script>
+<style>.facadebtn{display:inline-block;width:60px;height:60px;background-color:#009de0;border-radius:50px;text-align:center;box-shadow: 2px 2px 3px #999;opacity:.3;}
+.facadebtn .sapUiIcon{color:#FFF;font-size:1.5rem;cursor:pointer;line-height:60px;width:60px;}
+.facadebtn:hover{opacity:1;}
+#interactive.viewport video{width:320px;height:240px;}
+.facade .sapMSLITitleOnly, .facade .sapMILILabel {font-size: 1rem;}
+#interactive.viewport .drawingBuffer{width:320px;height:240px;position:absolute;}
+</style>
+<script type="text/javascript">
+window.swa = {
+	"baseUrl": "https://trackerexta90daed17.hana.ondemand.com/tracker/",
+	"clicksEnabled": false,
+	"custom10": {
+		"ref": "ad74c0790"
+	},
+	"custom3": {
+		"ref": "NONE_SAP"
+	},
+	"custom6": {
+		"ref": "170330"
+	},
+	"custom7": {},
+	"custom8": {
+		"ref": null
+	},
+	"pubToken": "9cd40036-9be2-a644-a76b-4b955748f028",
+	"optOutCookieTimeout": 63113852,
+	"visitorCookieTimeout": 63113852,
+	"custom1": {
+		"ref": "HAT_PreviewOn"
+	},
+	"custom2": {
+		"ref": "USAGE"
+	},
+	"custom4": {
+		"ref": null
+	},
+	"custom5": {
+		"ref": null
+	},
+	"custom9": {
+		"ref": null
+	},
+	"logger": false,
+	"loggingUrl": "https://trackerexta90daed17.hana.ondemand.com/tracker/",
+	"pageLoadEnabled": false,
+	"customEventsEnabled": true,
+	"hotkeysEnabled": false,
+	"loggingEnabled": true,
+	"dntLevel": 1,
+	"bannerEnabled": false,
+	"licenseUrl": "about:blank",
+	"bannerText": "<strong>This site uses <a href=\"about:blank\" target=\"_blank\">SAP Web Analytics</a>.</strong>",
+	"cookiesEnabled": true,
+	"optOutGroup": "9cd40036-9be2-a644-a76b-4b955748f028",
+	"sessionCookieTimeout": 1800,
+	"referralCookieTimeout": 15778463,
+	"frameExclusionSelector": ".swa_ignore",
+	"textExclusionSelector": "",
+	"referrerOfTop": false,
+	"test": false,
+	"currentEvent": "custom",
+	"_respectDNT": true,
+	"loggerLoaded": true,
+	"plugin": {
+		"clickedElements": [],
+		"customEventAddValues": []
+	}
+};
+window._facadeSettings = {"cordova-plugin-device-orientation":false,"accelerometer":{},"compass":{}};
+	window.sIdeOrigin = "https://webide-ad74c0790.dispatcher.hana.ondemand.com";
+	window.sap_webide_FacadePreview = true;
+	window.sFacadePath = "https://webide-ad74c0790.dispatcher.hana.ondemand.com/plugins/pluginrepository/hybrid/cordovafacade/cordova.js";
+	window.sFacadeCfgViewPath = "https://webide-ad74c0790.dispatcher.hana.ondemand.com/plugins/pluginrepository/hybrid/view/";
+	window.bridgeHtml = "https://webide-ad74c0790.dispatcher.hana.ondemand.com/plugins/pluginrepository/hybrid/cordovafacade/MessageBridge.html";
+	window.msgDefPath = "https://webide-ad74c0790.dispatcher.hana.ondemand.com/plugins/pluginrepository/hybrid/mobileextend/MessageDef.js";
+	window.msgBridgePath = "https://webide-ad74c0790.dispatcher.hana.ondemand.com/plugins/pluginrepository/hybrid/mobileextend/MessageBridge.js";
+	window.meCssPath = "https://webide-ad74c0790.dispatcher.hana.ondemand.com/plugins/pluginrepository/hybrid/css/mobileExtend.css";
+</script>
+<script src="https://webide-ad74c0790.dispatcher.hana.ondemand.com/plugins/pluginrepository/hybrid/cordovafacade/floatingButton.js" type="text/javascript"></script>
+</head>
+	<body class="sapUiBody sapUiMediumMargin sapUiForceWidthAuto">
+		<h1>Testing Overview</h1>
+		<p>This is an overview page of various ways to test the <b>Purchase Orders Approval</b> app during development.<br>Choose one of the options below to launch the app in the WebIDE preview.</p>
+
+		<ul>
+			<li><a href="test/flpSandbox.html#evoplan-dispatch">test/flpSandbox.html</a> - start the app in the SAP Fiori launchpad sandbox (with the real backend server). Note: you'll need a properly configured <i>RefAppsBackend</i> destination in this cloud account.</li>
+			<li><a href="test/flpSandboxMockServer.html#evoplan-dispatch">test/flpSandboxMockServer.html</a> - start the app in the SAP Fiori launchpad sandbox (with local mock data)</li>
+			<div id="integrationTests"></div>
+		</ul>
+	</body>
+</html>

@@ -1,0 +1,56 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:microchart="sap.suite.ui.microchart">
+
+    <HBox class="sapUiSmallMargin" alignItems="End" justifyContent="End">
+        <HBox class="sapUiTinyMarginBeginEnd">
+            <Title level="H3" class="fontsize-biggest" text="{chartModel>/UnassignedByPriority/count}"/>
+        </HBox>
+        <HBox class="sapUiTinyMarginEnd">
+            <Title level="H3" titleStyle="H6" text="{i18n>labelNewOperations}" />
+        </HBox>
+    </HBox>
+
+    <FlexBox width="90%" height="3rem" alignItems="Center" justifyContent="SpaceBetween">
+        <items>
+            <microchart:StackedBarMicroChart size="Responsive" class="sapUiSmallMargin">
+                <microchart:bars>
+                    <microchart:StackedBarMicroChartBar
+                            value="{chartModel>/UnassignedByPriority/data/P3/Count}"
+                            displayValue="{chartModel>/UnassignedByPriority/data/P3/Count}"
+                            valueColor="Good"/>
+                    <microchart:StackedBarMicroChartBar
+                            value="{chartModel>/UnassignedByPriority/data/P2/Count}"
+                            displayValue="{chartModel>/UnassignedByPriority/data/P2/Count}"
+                            valueColor="Critical"/>
+                    <microchart:StackedBarMicroChartBar
+                            value="{chartModel>/UnassignedByPriority/data/P1/Count}"
+                            displayValue="{chartModel>/UnassignedByPriority/data/P1/Count}"
+                            valueColor="Error"/>
+                </microchart:bars>
+            </microchart:StackedBarMicroChart>
+        </items>
+    </FlexBox>
+    <HBox class="sapUiSmallMarginBeginEnd sapUiMediumMarginBottom">
+        <HBox class="sapUiTinyMarginEnd">
+            <core:Icon src="sap-icon://circle-task-2" color="green"/>
+        </HBox>
+        <HBox class="sapUiSmallMarginEnd">
+            <Text text="{chartModel>/UnassignedByPriority/data/P3/Text}: {chartModel>/UnassignedByPriority/data/P3/Count}" />
+        </HBox>
+        <HBox class="sapUiTinyMarginEnd">
+            <core:Icon src="sap-icon://circle-task-2" color="orange"/>
+        </HBox>
+        <HBox class="sapUiSmallMarginEnd">
+            <Text text="{chartModel>/UnassignedByPriority/data/P2/Text}: {chartModel>/UnassignedByPriority/data/P2/Count}" />
+        </HBox>
+        <HBox class="sapUiTinyMarginEnd">
+            <core:Icon src="sap-icon://circle-task-2" color="red"/>
+        </HBox>
+        <HBox class="sapUiSmallMarginEnd">
+            <Text text="{chartModel>/UnassignedByPriority/data/P1/Text}: {chartModel>/UnassignedByPriority/data/P1/Count}" />
+        </HBox>
+    </HBox>
+
+</core:FragmentDefinition>

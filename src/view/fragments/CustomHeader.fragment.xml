@@ -1,0 +1,48 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core" >
+
+    <Bar design="Header" class="customHeader">
+        <contentLeft>
+            <Button id="navBackBtn" icon="sap-icon://nav-back" type="Transparent" press="onNavBack"/>
+            <Button id="navHomeBtn" icon="sap-icon://home" type="Transparent" press="onPressHome"/>
+        </contentLeft>
+
+        <contentMiddle VAlign="Middle">
+            <VBox>
+                <MenuButton id="headerMenuBtn" text="{viewModel>/viewTitle}">
+                    <menu>
+                        <Menu itemSelected="onSelectedMenu">
+                            <items>
+                                <MenuItem id="menuItemHome" text="{i18n>overviewViewTitle}" icon="sap-icon://home"/>
+                                <MenuItem id="menuItemSearch" text="{i18n>menuSearch}" icon="{i18n>menuSearchIcon}"/>
+                                <MenuItem id="menuItemDispatch" text="{i18n>menuDispatch}" icon="{i18n>menuDispatchIcon}"/>
+                                <MenuItem id="menuItemTimesheet" text="{i18n>menuTimesheet}" icon="{i18n>menuTimesheetIcon}"/>
+                                <MenuItem id="menuItemCapacity" text="{i18n>menuCapacity}" icon="{i18n>menuCapacityIcon}"/>
+                            </items>
+                        </Menu>
+                    </menu>
+                </MenuButton>
+            </VBox>
+        </contentMiddle>
+
+        <contentRight>
+            <MenuButton class="sapUiVisibleOnlyOnPhone" icon="sap-icon://person-placeholder">
+                <menu>
+                    <Menu itemSelected="onSelectedMenu">
+                        <items>
+                            <MenuItem text="{user>/username}" icon="sap-icon://person-placeholder"/>
+                            <MenuItem text="{i18n>logout}" icon="sap-icon://log"/>
+                        </items>
+                    </Menu>
+                </menu>
+            </MenuButton>
+
+            <HBox class="sapUiHideOnPhone">
+                <Button text="{user>/username}" type="Transparent" icon="sap-icon://person-placeholder" class="sapUiSmallMarginBeginEnd"/>
+                <Button press="onLogout" type="Transparent" icon="sap-icon://log"/>
+            </HBox>
+
+        </contentRight>
+    </Bar>
+</core:FragmentDefinition>

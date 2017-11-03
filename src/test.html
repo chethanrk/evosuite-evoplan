@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Testing Overview</title>
+			<!--  load the unit tests part if the file exists -->
+			<script type="text/javascript">
+				var request = new XMLHttpRequest();
+				request.open('GET', 'test/testLinks.fragment.html', true);
+				
+				request.onload =  function() {
+					if (request.status >= 200 && request.status < 400) {
+						// Success!
+						var resp = request.responseText;
+						document.getElementById('integrationTests').innerHTML=resp
+					} else {
+						//failed
+						console.log("No unit test/opa tests maintained")
+						}};
+				
+				request.onerror = function() {
+					console.log("Request error: No unit test/opa tests available")};
+					
+				request.send();
+			</script>
+		<!--  try to load the basic UI5 styles -->
+		<link rel="stylesheet" type="text/css" href="resources/sap/ui/core/themes/sap_bluecrystal/library.css">
+	</head>
+	<body class="sapUiBody sapUiMediumMargin sapUiForceWidthAuto">
+		<h1>Testing Overview</h1>
+		<p>This is an overview page of various ways to test the <b>Purchase Orders Approval</b> app during development.<br/>Choose one of the options below to launch the app in the WebIDE preview.</p>
+
+		<ul>
+			<li><a href="test/flpSandbox.html#evoplan-dispatch">test/flpSandbox.html</a> - start the app in the SAP Fiori launchpad sandbox (with the real backend server). Note: you'll need a properly configured <i>RefAppsBackend</i> destination in this cloud account.</li>
+			<li><a href="test/flpSandboxMockServer.html#evoplan-dispatch">test/flpSandboxMockServer.html</a> - start the app in the SAP Fiori launchpad sandbox (with local mock data)</li>
+			<div id="integrationTests"></div>
+			<li><a href="test/mockServer.html">test/mockServer.html</a> - start the app without Fiori lauchpad (with local mock data)</li>
+			<div id="integrationTests"></div>
+		</ul>
+	</body>
+</html>

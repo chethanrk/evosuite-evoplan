@@ -1,0 +1,20 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core">
+    <SelectDialog
+            id="selectUserDialog"
+            noDataText="{noTechniciansFound}"
+            title="{selectUserDialogTitle}"
+            liveChange="onDialogSearch"
+            confirm="onDialogClose"
+            close="onDialogClose"
+            items="{path: '/UsersVHSet'}">
+
+        <StandardListItem
+                id="selectUserDialogList"
+                title="{Fullname}"
+                description="{WorkCenterFunction}"
+                type="Active"/>
+
+    </SelectDialog>
+</core:FragmentDefinition>

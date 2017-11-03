@@ -1,0 +1,56 @@
+<mvc:View
+        xmlns="sap.m"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns:core="sap.ui.core"
+        xmlns:f="sap.f"
+        xmlns:smartTable="sap.ui.comp.smarttable"
+        xmlns:semantic="sap.m.semantic"
+        xmlns:table="sap.ui.table"
+        controllerName="com.evorait.evoplan.controller.List">
+
+    <semantic:DetailPage
+            id="listPage"
+            class=""
+            title="Work Orders"
+            showFooter="true"
+            showHeader="true">
+
+        <semantic:content>
+            <core:Fragment fragmentName="com.evorait.evoplan.view.fragments.SmartFilter" type="XML"/>
+
+            <smartTable:SmartTable
+                    id="draggableList"
+                    height="100%"
+                    width="100%"
+                    direction="Column"
+                    fitContainer="true"
+                    enableAutoBinding="true"
+                    entitySet="{viewModel>/tableEntity}"
+                    smartFilterId="listReportFilter"
+                    showRowCount="true"
+                    header="{viewModel>/tableTitle}"
+                    useExportToExcel="true"
+                    useVariantManagement="true"
+                    useTablePersonalisation="true">
+                <!-- layout data used to make the table growing but the filter bar fixed -->
+                <smartTable:layoutData>
+                    <FlexItemData growFactor="1" />
+                </smartTable:layoutData>
+                <table:Table
+                        id="dataTable"
+                        enableBusyIndicator="true"
+                        busyStateChanged="onBusyStateChanged"
+                        selectionMode="MultiToggle"
+                        enableCellFilter="false"
+                        enableColumnReordering="false">
+                </table:Table>
+            </smartTable:SmartTable>
+
+        </semantic:content>
+
+        <semantic:customFooterContent>
+            <OverflowToolbarButton text="Assign" press="onPressAssign"/>
+        </semantic:customFooterContent>
+
+    </semantic:DetailPage>
+</mvc:View>

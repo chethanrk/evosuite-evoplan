@@ -1,0 +1,85 @@
+[{
+	"DESCRIPTION": "REFD",
+	"DRILLDOWN_STATE": "collapsed",
+	"HIERARCHY_NODE": "1000",
+	"LEVEL": 0,
+	"MAGNITUDE": 27,
+	"PARENT_NODE": "1000",
+	"SERVER_INDEX": 0,
+	"ISCONTAINER": 0,
+	"toChildren": {
+		"__deferred": {
+			"uri": "TechnicianSet('1000')/toChildren"
+		}
+	}
+},{
+	"DESCRIPTION": "Assigned",
+	"DRILLDOWN_STATE": "collapsed",
+	"HIERARCHY_NODE": "1100",
+	"LEVEL": 1,
+	"MAGNITUDE": 6,
+	"PARENT_NODE": "1000",
+	"SERVER_INDEX": 1,
+	"ISCONTAINER": 1,
+	"toChildren": {
+		"__deferred": {
+			"uri": "TechnicianSet('1100')/toChildren"
+		}
+	}
+},{
+	"DESCRIPTION": "Helmut Krause",
+	"DRILLDOWN_STATE": "collapsed",
+	"HIERARCHY_NODE": "1200",
+	"LEVEL": 1,
+	"MAGNITUDE": 6,
+	"PARENT_NODE": "1000",
+	"SERVER_INDEX": 1,
+	"ISCONTAINER": 0,
+	"toChildren": {
+		"__deferred": {
+			"uri": "TechnicianSet('1200')/toChildren"
+		}
+	}
+},{
+	"DESCRIPTION": "Assigned",
+	"DRILLDOWN_STATE": "collapsed",
+	"HIERARCHY_NODE": "1220",
+	"LEVEL": 2,
+	"MAGNITUDE": 6,
+	"PARENT_NODE": "1200",
+	"SERVER_INDEX": 1,
+	"ISCONTAINER": 1,
+	"toChildren": {
+		"__deferred": {
+			"uri": "TechnicianSet('1220')/toChildren"
+		}
+	}
+},{
+	"DESCRIPTION": "RESG",
+	"DRILLDOWN_STATE": "collapsed",
+	"HIERARCHY_NODE": "2000",
+	"LEVEL": 0,
+	"MAGNITUDE": 27,
+	"PARENT_NODE": "2000",
+	"SERVER_INDEX": 0,
+	"ISCONTAINER": 0,
+	"toChildren": {
+		"__deferred": {
+			"uri": "TechnicianSet('2000')/toChildren"
+		}
+	}
+},{
+	"DESCRIPTION": "Assigned",
+	"DRILLDOWN_STATE": "collapsed",
+	"HIERARCHY_NODE": "2100",
+	"LEVEL": 1,
+	"MAGNITUDE": 6,
+	"PARENT_NODE": "2000",
+	"SERVER_INDEX": 1,
+	"ISCONTAINER": 1,
+	"toChildren": {
+		"__deferred": {
+			"uri": "TechnicianSet('2100')/toChildren"
+		}
+	}
+}]

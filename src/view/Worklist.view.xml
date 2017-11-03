@@ -1,0 +1,73 @@
+<mvc:View
+        xmlns="sap.m"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns:core="sap.ui.core"
+        xmlns:f="sap.f"
+        xmlns:smartTable="sap.ui.comp.smarttable"
+        xmlns:semantic="sap.m.semantic"
+        controllerName="com.evorait.evoplan.controller.Worklist">
+
+    <Page id="listPage" class="sapUiNoContentPadding" title="Work Orders">
+
+        <f:DynamicPage headerExpanded="true"
+                       preserveHeaderStateOnScroll="true"
+                       showFooter="false"
+                       class="sapUiNoContentPadding">
+            <f:header>
+                <f:DynamicPageHeader pinnable="">
+                    <f:content>
+                        <core:Fragment fragmentName="com.evorait.evoplan.view.fragments.SmartFilter" type="XML"/>
+                    </f:content>
+                </f:DynamicPageHeader>
+            </f:header>
+
+            <f:content>
+
+                <smartTable:SmartTable
+                        height="100%"
+                        width="100%"
+                        direction="Column"
+                        fitContainer="true"
+                        tableType="ResponsiveTable"
+                        enableAutoBinding="true"
+                        id="listReportTable"
+                        entitySet="{viewModel>/tableEntity}"
+                        smartFilterId="listReportFilter"
+                        showRowCount="true"
+                        header="{viewModel>/tableTitle}"
+                        demandPopin="true">
+                    <Table id="responsiveWorkOrderTable"
+                           growing="true"
+                           fixedLayout="false">
+                        <columns>
+                            <Column hAlign="Center">
+                                <customData>
+                                    <core:CustomData key="p13nData" value='\{"columnKey": "SystemStatus", "leadingProperty": "SystemStatus"}' />
+                                </customData>
+                                <Text text="{i18n>Status}" />
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem type="Navigation" press="onPress">
+                                <cells>
+                                    <ObjectStatus text="" tooltip="{path: 'SystemStatus', formatter: '.formatter.getStatusText'}"
+                                    icon="{path: 'SystemStatus', formatter: '.formatter.getStatusIcon'}" />
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </smartTable:SmartTable>
+
+            </f:content>
+
+            <f:footer>
+                <OverflowToolbar>
+                    <ToolbarSpacer/>
+                    <Button icon="sap-icon://add" text="{i18n>objectAddButton}" press="onAddPress"/>
+                </OverflowToolbar>
+            </f:footer>
+
+        </f:DynamicPage>
+
+    </Page>
+</mvc:View>
