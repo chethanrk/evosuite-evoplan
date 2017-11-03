@@ -84,18 +84,23 @@ sap.ui.define([
                         "ui-droppable-active": "ui-droppable-active"
                     },
                     drop: function( event, ui ) {
-                        var dropTargetId = event.target.id;
-                        var targetElement = sap.ui.getCore().byId(dropTargetId),
+                        var dropTargetId = event.target.id,
+                            targetElement = sap.ui.getCore().byId(dropTargetId),
                             oContext = targetElement.getBindingContext(),
-                            targetPath = oContext.getPath(),
-                            sourcePath = ui.helper[0].id;
-                        _this._addEntry(sourcePath, targetPath);
+                            draggedElements = ui.helper[0];
+
+                        if(oContext){
+                            var targetPath = oContext.getPath();
+                            $(draggedElements).find('li').each(function (idx, obj) {
+                                _this._addEntries($(this).attr('id'), targetPath);
+                            });
+                        }
                     }
                 });
             }
         },
 
-        _addEntry: function (sourcePath, targetPath) {
+        _addEntries: function (sourcePath, targetPath) {
             var sourceData = this.getModel().getProperty(sourcePath),
                 targetData = this.getModel().getProperty(targetPath);
 
@@ -106,12 +111,11 @@ sap.ui.define([
                 LEVEL: targetData.LEVEL+1,
                 MAGNITUDE: 0,
                 SERVER_INDEX: 0,
-                ISCONTAINER: 0,
+                ISCONTAINER: 0
             };
 
             var newEntry = this.getModel().createEntry('/TechnicianSet', {properties: newRowObj});
             this._oDroppableTable.getModel().refresh();
-            console.log(this.getModel());
         },
 
         /**

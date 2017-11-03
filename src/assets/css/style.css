@@ -1,9 +1,14 @@
 .ui-draggable-dragging{
     //width: 320px;
-    border-color: transparent !important;
     background-color: white !important;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ui-draggable-dragging-item{
     padding: 10px;
-    border: 2px solid #427cac !important;
+    border: 2px solid #427cac;
 }
 
 .treeTableHeader{

@@ -25,6 +25,12 @@ sap.ui.define([
 			onInit : function () {
 				var oViewModel;
                 this._oDraggableTable = this.byId("draggableList");
+                this._oDataTable = this.byId("dataTable");
+
+                //this highlight is only to show that rows can be dragged - nice to see
+                this._oDataTable.setRowSettingsTemplate(new RowSettings({
+                    highlight: "Information"
+                }));
 
 				// Model used to manipulate control states
 				var tableTitle = this.getResourceBundle().getText("worklistTableTitle");
@@ -53,9 +59,13 @@ sap.ui.define([
 			 * @public
 			 */
 
+            /**
+			 * after rendering of view
+             * @param oEvent
+             */
             onAfterRendering: function (oEvent) {
                 if(this._oDraggableTable){
-                    this._jDraggable(this);
+                    //this._jDraggable(this);
                 }
             },
 
@@ -81,6 +91,15 @@ sap.ui.define([
 				this._showObject(oEvent.getSource());
 			},
 
+            /**
+			 * Event handler to set multiple selection for drag or assignment
+             * @param oEvent
+             */
+            onRowSelectionChange: function (oEvent) {
+                console.log(oEvent.getParameters());
+                //this.multiSelect = true;
+            },
+
 			/* =========================================================== */
 			/* internal methods                                            */
 			/* =========================================================== */
@@ -98,19 +117,49 @@ sap.ui.define([
 			},
 
             /**
+			 * get all selected rows from table and return to draggable helper function
+             * @param aSelectedRowsIdx
+             * @private
+             */
+            _getSelectedRowPaths : function (aSelectedRowsIdx) {
+            	var aPathsData = [];
+                this.multiSelect = false;
+
+                for (var i=0; i<aSelectedRowsIdx.length; i++) {
+					var oContext = this._oDataTable.getContextByIndex(aSelectedRowsIdx[i]);
+					var sPath = oContext.getPath();
+                    aPathsData.push({
+						sPath: sPath,
+						oData: this.getModel().getProperty(sPath)
+					});
+                }
+                if(aPathsData.length > 0){
+                    this.multiSelect = true;
+				}
+				return aPathsData;
+            },
+
+            /**
+			 * deselect all checkboxes in table
+             * @private
+             */
+            _deselectAll : function () {
+                this._oDataTable.clearSelection();
+            },
+
+            /**
 			 * destroy already initial draggable and build again
+			 * timeout to make sure draggable is really after loading finish added
              * @param elem
              * @private
              */
 			_jDraggable : function (_this) {
-                var oTable = _this.getView().byId("dataTable");
-                oTable.setRowSettingsTemplate(new RowSettings({
-                    highlight: "Information"
-                }));
-
 				setTimeout(function() {
-                    var draggableTableId = _this._oDraggableTable.getId();
-                    var jDragElement = $("#"+draggableTableId+" tbody tr").not(".sapUiTableColHdrTr");
+                    var draggableTableId = _this._oDraggableTable.getId(); // sapUiTableRowHdr
+                    var aPathsData = [];
+                    //checkbox is not inside tr so needs to select by class .sapUiTableRowHdr
+                    var jDragElement = $("#"+draggableTableId+" tbody tr, #"+draggableTableId+" .sapUiTableRowHdr")
+                        .not(".sapUiTableColHdrTr, .sapUiTableRowHidden");
 
                     try{
                         if(jDragElement.hasClass("ui-draggable")){
@@ -121,23 +170,84 @@ sap.ui.define([
                     }
 
                     jDragElement.draggable({
-						helper: function (event) {
-							var col = event.currentTarget.id;
-							var draggedElement = sap.ui.getCore().byId(col),
-								oContext = draggedElement.getBindingContext(),
-								sPath = oContext.getPath();
-							var data = _this.getModel().getProperty(sPath);
-							return $('<div id="'+sPath+'" class="ui-draggable-dragging">'+data.WorkOrder+' '+data.WorkOrderDescription+'</div>');
+						revertDuration: 10,
+						stop: function (event, ui) {
+                            aPathsData = [];
+                            _this._deselectAll();
+                        },
+						helper: function (event, ui) {
+                            var target = $(event.currentTarget);
+                            //single drag by checkbox, checkbox is not inside tr so have to find out row index
+                            var targetDataCheckbox = target.data("sapUiRowindex");
+                            var selectedIdx = _this._oDataTable.getSelectedIndices();
+
+                            //get all selected rows
+                            if(selectedIdx.length > 0){
+                                aPathsData = _this._getSelectedRowPaths(selectedIdx);
+                            }
+                            if(!_this.multiSelect){
+                                //single drag by checkbox row index
+                            	if(targetDataCheckbox >= 0){
+                                    selectedIdx = [targetDataCheckbox];
+                                    aPathsData = _this._getSelectedRowPaths(selectedIdx);
+								}else{
+                                    //table tr single dragged element
+                                    aPathsData = _this._getSingleDraggedElement(target.attr('id'));
+								}
+                            }
+                            if(!aPathsData){
+                            	
+							}
+                            //get helper html list
+							var oHtml = _this._generateDragHelperHTML(aPathsData);
+                            _this.multiSelect = false;
+                            return oHtml;
 						},
-                        cursor: "move",
+						cursor: "move",
 						cursorAt: { top: -3, left: -3 },
 						zIndex: 10000,
 						containment: "document",
 						appendTo: "body"
 					});
 				}, 1000);
-            }
+            },
 
+            /**
+			 * single dragged element when no checkboxes was selected
+             * @param targetId
+             * @returns {*}
+             * @private
+             */
+            _getSingleDraggedElement : function (targetId) {
+                var draggedElement = sap.ui.getCore().byId(targetId),
+                    oContext = draggedElement.getBindingContext();
+                if(oContext){
+                    var sPath = oContext.getPath();
+                    return [{
+                        oData: this.getModel().getProperty(sPath),
+                        sPath: sPath
+                    }];
+				}
+				return false;
+            },
+
+            /**
+			 * generates html list for dragged paths and gives back to helper function
+             * @param aPathsData
+             * @returns {jQuery|HTMLElement}
+             * @private
+             */
+            _generateDragHelperHTML : function (aPathsData) {
+                var helperTemplate = $('<ul id="dragHelper"></ul>');
+                for (var i=0; i<aPathsData.length; i++) {
+					var item = $('<li id="'+aPathsData[i].sPath+'" class="ui-draggable-dragging-item">'+
+                        +aPathsData[i].oData.WorkOrder+' - '
+						+aPathsData[i].oData.WorkOrderDescription
+						+'</li>');
+					helperTemplate.append(item);
+                }
+                return helperTemplate;
+            }
 		});
 	}
 );

@@ -42,7 +42,8 @@
                         busyStateChanged="onBusyStateChanged"
                         selectionMode="MultiToggle"
                         enableCellFilter="false"
-                        enableColumnReordering="false">
+                        enableColumnReordering="false"
+                        rowSelectionChange="onRowSelectionChange">
                 </table:Table>
             </smartTable:SmartTable>
 
