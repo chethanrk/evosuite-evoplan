@@ -14,3 +14,9 @@
 .treeTableHeader{
     display: none;
 }
+
+.tableContentPage .sapFDynamicPageContent,
+.tableContentPage .sapFDynamicPageContentFitContainer{
+    padding-left: 0;
+    padding-right: 0;
+}

@@ -11,7 +11,7 @@
 		},
 		"dataSources": {
 			"mainService": {
-				"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EVOSUPRVISR_DASHBOARD_SRV/",
+				"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/ZEVORA_MAIN_SRV/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",

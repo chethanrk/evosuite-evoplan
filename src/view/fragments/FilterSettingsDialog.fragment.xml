@@ -1,0 +1,45 @@
+<core:FragmentDefinition
+        controllerName="com.evorait.evoplan.controller.FilterSettingsDialog"
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:l="sap.ui.layout"
+        xmlns:vm="sap.ui.comp.variants">
+
+    <ViewSettingsDialog title="Filter and Variants" confirm="onFilterSettingsConfirm">
+        <filterItems>
+            <ViewSettingsFilterItem
+                    text="View"
+                    key="View"
+                    multiSelect="false">
+                <items>
+                    <ViewSettingsItem text="Daily" key="Daily" />
+                    <ViewSettingsItem text="Weekly" key="Weekly" />
+                    <ViewSettingsItem text="Monthly" key="Monthly" />
+                    <ViewSettingsItem text="Simple" key="Simple" />
+                </items>
+            </ViewSettingsFilterItem>
+            <ViewSettingsFilterItem
+                    text="Group"
+                    key="Group"
+                    multiSelect="false">
+                <items>
+                    <ViewSettingsItem text="Less Than 100" key="Price___LE___100___X" />
+                    <ViewSettingsItem text="Between 100 and 1000" key="Price___BT___100___1000" />
+                    <ViewSettingsItem text="More Than 1000" key="Price___GT___1000___X" />
+                </items>
+            </ViewSettingsFilterItem>
+        </filterItems>
+        <customTabs>
+            <ViewSettingsCustomTab id="tree-variant" icon="sap-icon://arrow-down" title="Variants" tooltip="Technician Variants">
+                <content>
+                    <Panel>
+                        <content>
+                            <vm:VariantManagement standardItemText="Standard"></vm:VariantManagement>
+                        </content>
+                    </Panel>
+                </content>
+            </ViewSettingsCustomTab>
+        </customTabs>
+    </ViewSettingsDialog>
+
+</core:FragmentDefinition>

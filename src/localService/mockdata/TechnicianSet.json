@@ -13,20 +13,6 @@
 		}
 	}
 },{
-	"DESCRIPTION": "Assigned",
-	"DRILLDOWN_STATE": "collapsed",
-	"HIERARCHY_NODE": "1100",
-	"LEVEL": 1,
-	"MAGNITUDE": 6,
-	"PARENT_NODE": "1000",
-	"SERVER_INDEX": 1,
-	"ISCONTAINER": 1,
-	"toChildren": {
-		"__deferred": {
-			"uri": "TechnicianSet('1100')/toChildren"
-		}
-	}
-},{
 	"DESCRIPTION": "Helmut Krause",
 	"DRILLDOWN_STATE": "collapsed",
 	"HIERARCHY_NODE": "1200",
@@ -41,9 +27,9 @@
 		}
 	}
 },{
-	"DESCRIPTION": "Assigned",
+	"DESCRIPTION": "01.11.2017",
 	"DRILLDOWN_STATE": "collapsed",
-	"HIERARCHY_NODE": "1220",
+	"HIERARCHY_NODE": "1201",
 	"LEVEL": 2,
 	"MAGNITUDE": 6,
 	"PARENT_NODE": "1200",
@@ -51,7 +37,91 @@
 	"ISCONTAINER": 1,
 	"toChildren": {
 		"__deferred": {
-			"uri": "TechnicianSet('1220')/toChildren"
+			"uri": "TechnicianSet('1201')/toChildren"
+		}
+	}
+},{
+	"DESCRIPTION": "02.11.2017",
+	"DRILLDOWN_STATE": "collapsed",
+	"HIERARCHY_NODE": "1202",
+	"LEVEL": 2,
+	"MAGNITUDE": 6,
+	"PARENT_NODE": "1200",
+	"SERVER_INDEX": 1,
+	"ISCONTAINER": 1,
+	"toChildren": {
+		"__deferred": {
+			"uri": "TechnicianSet('1202')/toChildren"
+		}
+	}
+},{
+	"DESCRIPTION": "03.11.2017",
+	"DRILLDOWN_STATE": "collapsed",
+	"HIERARCHY_NODE": "1203",
+	"LEVEL": 2,
+	"MAGNITUDE": 6,
+	"PARENT_NODE": "1200",
+	"SERVER_INDEX": 1,
+	"ISCONTAINER": 1,
+	"toChildren": {
+		"__deferred": {
+			"uri": "TechnicianSet('1203')/toChildren"
+		}
+	}
+},{
+	"DESCRIPTION": "04.11.2017",
+	"DRILLDOWN_STATE": "collapsed",
+	"HIERARCHY_NODE": "1204",
+	"LEVEL": 2,
+	"MAGNITUDE": 6,
+	"PARENT_NODE": "1200",
+	"SERVER_INDEX": 1,
+	"ISCONTAINER": 1,
+	"toChildren": {
+		"__deferred": {
+			"uri": "TechnicianSet('1204')/toChildren"
+		}
+	}
+},{
+	"DESCRIPTION": "05.11.2017",
+	"DRILLDOWN_STATE": "collapsed",
+	"HIERARCHY_NODE": "1205",
+	"LEVEL": 2,
+	"MAGNITUDE": 6,
+	"PARENT_NODE": "1200",
+	"SERVER_INDEX": 1,
+	"ISCONTAINER": 1,
+	"toChildren": {
+		"__deferred": {
+			"uri": "TechnicianSet('1205')/toChildren"
+		}
+	}
+},{
+	"DESCRIPTION": "Assigned",
+	"DRILLDOWN_STATE": "collapsed",
+	"HIERARCHY_NODE": "1206",
+	"LEVEL": 2,
+	"MAGNITUDE": 6,
+	"PARENT_NODE": "1200",
+	"SERVER_INDEX": 1,
+	"ISCONTAINER": 1,
+	"toChildren": {
+		"__deferred": {
+			"uri": "TechnicianSet('1206')/toChildren"
+		}
+	}
+},{
+	"DESCRIPTION": "Assigned Group",
+	"DRILLDOWN_STATE": "collapsed",
+	"HIERARCHY_NODE": "1100",
+	"LEVEL": 1,
+	"MAGNITUDE": 6,
+	"PARENT_NODE": "1000",
+	"SERVER_INDEX": 1,
+	"ISCONTAINER": 1,
+	"toChildren": {
+		"__deferred": {
+			"uri": "TechnicianSet('1100')/toChildren"
 		}
 	}
 },{
@@ -69,7 +139,7 @@
 		}
 	}
 },{
-	"DESCRIPTION": "Assigned",
+	"DESCRIPTION": "Assigned Group",
 	"DRILLDOWN_STATE": "collapsed",
 	"HIERARCHY_NODE": "2100",
 	"LEVEL": 1,

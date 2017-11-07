@@ -6,9 +6,34 @@ sap.ui.define([
 		"sap/ui/model/FilterOperator",
     	"sap/ui/table/Table",
     	"sap/ui/table/Row",
-    	"sap/ui/table/RowSettings"
-	], function (BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, RowSettings) {
+    	"sap/ui/table/RowSettings",
+    	"sap/m/MessageToast",
+        'sap/m/MessagePopover',
+        'sap/m/MessagePopoverItem'
+	], function (BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, RowSettings, MessageToast, MessagePopover, MessagePopoverItem) {
 		"use strict";
+
+        var oLink = new sap.m.Link({
+            text: "Show more information",
+            href: "http://sap.com",
+            target: "_blank"
+        });
+
+        var oMessageTemplate = new MessagePopoverItem({
+            type: '{type}',
+            title: '{title}',
+            description: '{description}',
+            subtitle: '{subtitle}',
+            counter: '{counter}',
+            link: oLink
+        });
+
+        var oMessagePopover = new MessagePopover({
+            items: {
+                path: '/',
+                template: oMessageTemplate
+            }
+        });
 
 		return BaseController.extend("com.evorait.evoplan.controller.List", {
 
@@ -19,26 +44,24 @@ sap.ui.define([
 			/* =========================================================== */
 
 			/**
-			 * Called when the worklist controller is instantiated.
+			 * Called when the demand controller is instantiated.
 			 * @public
 			 */
 			onInit : function () {
 				var oViewModel;
-                this._oDraggableTable = this.byId("draggableList");
-                this._oDataTable = this.byId("dataTable");
 
-                //this highlight is only to show that rows can be dragged - nice to see
-                this._oDataTable.setRowSettingsTemplate(new RowSettings({
-                    highlight: "Information"
-                }));
+                this._oDraggableTable = this.byId("draggableList");
+                this._oDataTable = this._oDraggableTable.getTable();
+                this._configureDataTable(this._oDataTable);
+                this._aSelectedRowsIdx = [];
 
 				// Model used to manipulate control states
-				var tableTitle = this.getResourceBundle().getText("worklistTableTitle");
+				var tableTitle = this.getResourceBundle().getText("demandTableTitle");
 				oViewModel = new JSONModel({
-					viewTitle : this.getResourceBundle().getText("worklistViewTitle"),
-					filterEntity: "WorkOrderHeader",
-					tableEntity : "WorkOrderHeaderSet",
-					tableTitle : this.getResourceBundle().getText("worklistTableTitle"),
+					viewTitle : this.getResourceBundle().getText("demandViewTitle"),
+					filterEntity: "Demand",
+					tableEntity : "DemandSet",
+					tableTitle : this.getResourceBundle().getText("demandTableTitle"),
 					tableNoDataText : this.getResourceBundle().getText("tableNoDataText", [tableTitle]),
 					tableBusyDelay : 0
 				});
@@ -63,11 +86,7 @@ sap.ui.define([
 			 * after rendering of view
              * @param oEvent
              */
-            onAfterRendering: function (oEvent) {
-                if(this._oDraggableTable){
-                    //this._jDraggable(this);
-                }
-            },
+            onAfterRendering: function (oEvent) {},
 
             /**
 			 * initial draggable after every refresh of table
@@ -75,46 +94,54 @@ sap.ui.define([
              * @param oEvent
              */
             onBusyStateChanged : function (oEvent) {
-				var parameters = oEvent.getParameters();
+                var parameters = oEvent.getParameters();
 				if(parameters.busy === false){
                     this._jDraggable(this);
 				}
 			},
 
-			/**
-			 * Event handler when a table item gets pressed
-			 * @param {sap.ui.base.Event} oEvent the table selectionChange event
-			 * @public
-			 */
-			onPress : function (oEvent) {
-				// The source is the list item that got pressed
-				this._showObject(oEvent.getSource());
-			},
-
             /**
-			 * Event handler to set multiple selection for drag or assignment
+			 * on press assign button in footer
+			 * show modal with user for selcet
              * @param oEvent
              */
-            onRowSelectionChange: function (oEvent) {
-                console.log(oEvent.getParameters());
-                //this.multiSelect = true;
+            onAssignButtonPress : function (oEvent) {
+                this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+                if(this._aSelectedRowsIdx.length > 0){
+                    if (!this._oAssignDialog) {
+                        this._oAssignDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.SelectDialog", this);
+                        this._oAssignDialog.setModel(this.getView().getModel());
+                    }
+                    this._oAssignDialog.getBinding("items").filter([]);
+                    this._oAssignDialog.open();
+				}else{
+                    var msg = this.getResourceBundle().getText('ymsg.selectOrderForAssign');
+                    MessageToast.show(msg);
+				}
+            },
+
+            onExit: function() {
+                if(this._oAssignDialog){
+                    this._oAssignDialog.destroy();
+                }
             },
 
 			/* =========================================================== */
 			/* internal methods                                            */
 			/* =========================================================== */
 
-			/**
-			 * Shows the selected item on the object page
-			 * On phones a additional history entry is created
-			 * @param {sap.m.ObjectListItem} oItem selected Item
-			 * @private
-			 */
-			_showObject : function (oItem) {
-				this.getRouter().navTo("detail", {
-					objectId: oItem.getBindingContext().getProperty("WorkOrder")
-				});
-			},
+            _configureDataTable : function (oDataTable) {
+                oDataTable.setEnableBusyIndicator(true);
+                oDataTable.setSelectionMode('MultiToggle');
+                oDataTable.setEnableColumnReordering(false);
+                oDataTable.setEnableCellFilter(false);
+                oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
+
+                //this highlight is only to show that rows can be dragged - nice to see
+                oDataTable.setRowSettingsTemplate(new RowSettings({
+                    highlight: "Information"
+                }));
+            },
 
             /**
 			 * get all selected rows from table and return to draggable helper function
@@ -196,7 +223,7 @@ sap.ui.define([
 								}
                             }
                             if(!aPathsData){
-                            	
+
 							}
                             //get helper html list
 							var oHtml = _this._generateDragHelperHTML(aPathsData);
@@ -240,11 +267,10 @@ sap.ui.define([
             _generateDragHelperHTML : function (aPathsData) {
                 var helperTemplate = $('<ul id="dragHelper"></ul>');
                 for (var i=0; i<aPathsData.length; i++) {
-					var item = $('<li id="'+aPathsData[i].sPath+'" class="ui-draggable-dragging-item">'+
-                        +aPathsData[i].oData.WorkOrder+' - '
-						+aPathsData[i].oData.WorkOrderDescription
-						+'</li>');
-					helperTemplate.append(item);
+                    var item = $('<li id="'+aPathsData[i].sPath+'" class="ui-draggable-dragging-item"></li>');
+                    var text = '<span class="demandId">'+aPathsData[i].oData.Guid+'</span> - '+aPathsData[i].oData.DemandDesc;
+                    item.html(text);
+                    helperTemplate.append(item);
                 }
                 return helperTemplate;
             }

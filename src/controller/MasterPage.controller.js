@@ -18,12 +18,16 @@ sap.ui.define([
         onInit: function() {
             //this._oApplication = this.getApplication();
             this._oDroppableTable = this.byId("droppableTable");
+            this._oDataTable = this._oDroppableTable.getTable();
+            this._configureDataTable(this._oDataTable);
+
             this._oPullToRefresh = this.byId("pullToRefresh");
             this._oListFilterState = {
                 aSearch: []
             };
             this._iRunningListUpdates = 0;
             //this._initializeViewModel();
+
         },
 
         /**
@@ -47,9 +51,12 @@ sap.ui.define([
 
         onBeforeRebindTable: function(oEvent) {
             var oBindingParams = oEvent.getParameter('bindingParams');
-            // Note: This example is based on mock data, so defining the number of expended levels in the beforeRebindTable event should be avoided for
-            // performance reasons.
+
             oBindingParams.parameters.numberOfExpandedLevels = 2;
+
+            /*var aFilters = oEvent.mParameters.bindingParams.filters,
+                aSorters = oEvent.mParameters.bindingParams.sorter;*/
+
         },
 
         /**
@@ -64,8 +71,67 @@ sap.ui.define([
             }
         },
 
+        onSearch : function (oEvent) {
+            var sQuery = oEvent.getSource().getValue(),
+                aFilters = [];
+            var tableBindingPath = this._oDroppableTable.getTableBindingPath();
+            //this._oDroppableTable.fireBeforeRebindTable();
+        },
+
+        /**
+         *
+         * @param oEvent
+         */
+        onFilterButtonPress : function (oEvent) {
+            if (!this._oFilterSettingsDialog) {
+                this._oFilterSettingsDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.FilterSettingsDialog", this);
+            }
+            // toggle compact style
+            jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oFilterSettingsDialog);
+            this._oFilterSettingsDialog.open();
+        },
+
+        /**
+         *
+         * @param oEvent
+         */
+        onSwitchViewButtonPress : function (oEvent) {
+            if (!this._oViewSettingsPopover) {
+                this._oViewSettingsPopover = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ViewSettingsPopover", this);
+                this.getView().addDependent(this._oViewSettingsPopover);
+            }
+            this._oViewSettingsPopover.openBy(oEvent.getSource());
+        },
+
+        /**
+         * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
+         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage
+         **/
+        onExit: function() {
+            if(this._oFilterSettingsDialog){
+                this._oFilterSettingsDialog.destroy();
+            }
+            if(this._oViewSettingsPopover){
+                this._oViewSettingsPopover.destroy();
+            }
+        },
+
+        /* =========================================================== */
+        /* internal methods                                            */
+        /* =========================================================== */
+
+        _configureDataTable : function (oDataTable) {
+            oDataTable.setEnableBusyIndicator(true);
+            oDataTable.setSelectionMode('None');
+            oDataTable.setColumnHeaderVisible(false);
+            oDataTable.setEnableColumnReordering(false);
+            oDataTable.setEditable(false);
+            oDataTable.setWidth("100%");
+            oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
+        },
+
         _jDroppable: function (_this) {
-            if(_this._oDroppableTable){
+            setTimeout(function() {
                 var droppableTableId = _this._oDroppableTable.getId();
                 var droppedElement = $("#"+droppableTableId+" tbody tr");
 
@@ -97,7 +163,7 @@ sap.ui.define([
                         }
                     }
                 });
-            }
+            }, 1000);
         },
 
         _addEntries: function (sourcePath, targetPath) {
@@ -106,7 +172,7 @@ sap.ui.define([
 
             var newRowObj = {
                 PARENT_NODE: targetData.HIERARCHY_NODE,
-                DESCRIPTION: sourceData.WorkOrder +" "+sourceData.WorkOrderDescription,
+                DESCRIPTION: sourceData.Guid +" "+sourceData.DemandDesc,
                 DRILLDOWN_STATE: "collapsed",
                 LEVEL: targetData.LEVEL+1,
                 MAGNITUDE: 0,
@@ -116,15 +182,8 @@ sap.ui.define([
 
             var newEntry = this.getModel().createEntry('/TechnicianSet', {properties: newRowObj});
             this._oDroppableTable.getModel().refresh();
-        },
-
-        /**
-        * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
-        * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage
-        **/
-        onExit: function() {
-
         }
+
 
     });
 });

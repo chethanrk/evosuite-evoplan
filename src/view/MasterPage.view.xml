@@ -3,69 +3,68 @@
           xmlns:mvc="sap.ui.core.mvc"
           xmlns:semantic="sap.m.semantic"
           xmlns:smartTable="sap.ui.comp.smarttable"
-          xmlns:table="sap.ui.table">
+          xmlns:table="sap.ui.table"
+          xmlns:l="sap.ui.layout"
+          xmlns:vm="sap.ui.comp.variants"
+          xmlns:f="sap.f">
 
-    <semantic:MasterPage id="masterPage"
-                         navButtonPress="onNavButtonPressed"
-                         showNavButton="false"
-                         title="Technicians"
-                         showFooter="true"
-                         icon="sap-icon://action"
-                         class="sapUiStdPage">
+    <Page id="masterPage"
+          title="Technicians"
+          showFooter="true"
+          showHeader="true"
+          icon="sap-icon://action">
 
-        <semantic:subHeader>
-            <Bar id="subHeaderBar">
-                <contentMiddle>
-                    <SearchField id="searchField"
-                                 search="onSearch"
-                                 showRefreshButton="{= !${device>/support/touch} }"
-                                 width="100%">
-                    </SearchField>
-                </contentMiddle>
-            </Bar>
-        </semantic:subHeader>
+        <f:DynamicPage headerExpanded="true"
+                       preserveHeaderStateOnScroll="true"
+                       fitContent="true"
+                       showFooter="false"
+                       class="tableContentPage sapUiNoContentPadding">
 
-        <semantic:content>
-            <!--<PullToRefresh id="pullToRefresh" refresh="onRefresh" visible="{device>/support/touch}"/>-->
+            <f:header>
+                <f:DynamicPageHeader pinnable="false" class="sapUiNoContentPadding">
+                    <f:content>
+                        <l:VerticalLayout class="sapUiNoContentPadding" >
+                            <l:HorizontalLayout class="sapUiNoContentPadding" >
+                                <vm:VariantManagement standardItemText="Standard"></vm:VariantManagement>
+                            </l:HorizontalLayout>
+                            <SearchField id="searchField"
+                                         liveChange="onSearch"
+                                         showRefreshButton="{= !${device>/support/touch} }"
+                                         width="100%">
+                            </SearchField>
+                        </l:VerticalLayout>
+                    </f:content>
+                </f:DynamicPageHeader>
+            </f:header>
 
-            <smartTable:SmartTable
-                    id="droppableTable"
-                    entitySet="TechnicianSet"
-                    tableType="TreeTable"
-                    useExportToExcel="false"
-                    useVariantManagement="false"
-                    useTablePersonalisation="false"
-                    header="Technician"
-                    showRowCount="false"
-                    enableAutoBinding="true"
-                    beforeRebindTable="onBeforeRebindTable"
-                    updateFinished="onUpdateFinished"
-                    initiallyVisibleFields="DESCRIPTION"
-                    toolbarStyleClass="treeTableHeader">
-                <!-- layout data used to make the table growing but the filter bar fixed -->
-                <smartTable:layoutData>
-                    <FlexItemData growFactor="1" />
-                </smartTable:layoutData>
+            <f:content>
+                <smartTable:SmartTable
+                        id="droppableTable"
+                        entitySet="TechnicianSet"
+                        tableType="TreeTable"
+                        useExportToExcel="false"
+                        useVariantManagement="false"
+                        useTablePersonalisation="false"
+                        header="Technician"
+                        showRowCount="false"
+                        enableAutoBinding="true"
+                        beforeRebindTable="onBeforeRebindTable"
+                        updateFinished="onUpdateFinished"
+                        initiallyVisibleFields="DESCRIPTION"
+                        toolbarStyleClass="treeTableHeader">
+                    <!-- layout data used to make the table growing but the filter bar fixed -->
+                    <smartTable:layoutData>
+                        <FlexItemData growFactor="1" />
+                    </smartTable:layoutData>
+                </smartTable:SmartTable>
+            </f:content>
 
-                <table:TreeTable
-                        width="100%"
-                        selectionMode="None"
-                        enableColumnReordering="false"
-                        columnHeaderVisible="false"
-                        editable="false"
-                        enableBusyIndicator="true"
-                        busyStateChanged="onBusyStateChanged">
-                </table:TreeTable>
-            </smartTable:SmartTable>
+        </f:DynamicPage>
 
-        </semantic:content>
-
-        <semantic:filter>
-            <semantic:FilterAction press="onFilterButtonPress"/>
-        </semantic:filter>
-        <semantic:addAction>
-            <semantic:AddAction press="onSemanticButtonPress"/>
-        </semantic:addAction>
-
-    </semantic:MasterPage>
+        <footer>
+            <OverflowToolbar>
+                <ToolbarSpacer/>
+            </OverflowToolbar>
+        </footer>
+    </Page>
 </mvc:View>

@@ -1,0 +1,247 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1"/>
+    </edmx:Reference>
+    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Measures.V1"/>
+    </edmx:Reference>
+    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_TIMELINE',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Timeline.v1"/>
+    </edmx:Reference>
+    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="com.evorait.evodashboard.evosupervisor" xml:lang="en" sap:schema-version="1">
+            <EntityType Name="UserLogin" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Username"/>
+                </Key>
+                <Property Name="Username" Type="Edm.String" Nullable="false" MaxLength="12" sap:label="User"/>
+                <Property Name="Fullname" Type="Edm.String" Nullable="false" MaxLength="80" sap:label="Full Name"/>
+                <Property Name="Supervisor" Type="Edm.Boolean" Nullable="false" sap:label="Indicator"/>
+            </EntityType>
+            <EntityType Name="UserStatusVH" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="OrderType"/>
+                    <PropertyRef Name="StatusProf"/>
+                    <PropertyRef Name="UserStatus"/>
+                </Key>
+                <Property Name="OrderType" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Order Type"/>
+                <Property Name="OrderTypeDescription" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Short Text" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="StatusProf" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Status Profile" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="UserStatus" Type="Edm.String" Nullable="false" MaxLength="5" sap:label="User status" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="UserStatusShort" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Status" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="UserStatusDescription" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="Status" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="UsersVH" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Username"/>
+                </Key>
+                <Property Name="Supervisor" Type="Edm.Boolean" Nullable="false" sap:label="Indicator" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Username" Type="Edm.String" Nullable="false" MaxLength="12" sap:label="User" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="WorkCenter" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Work center"/>
+                <Property Name="Lastname" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Last name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="WorkCenterFunction" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Firstname" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="First name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Fullname" Type="Edm.String" Nullable="false" MaxLength="80" sap:label="Full Name" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="Technician" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="HIERARCHY_NODE" />
+                </Key>
+                <Property Name="HIERARCHY_NODE" Type="Edm.String" Nullable="false" MaxLength="32" sap:hierarchy-node-for="HIERARCHY_NODE"/>
+                <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="100" />
+                <Property Name="LEVEL" Type="Edm.Int32" sap:hierarchy-level-for="HIERARCHY_NODE" />
+                <Property Name="PARENT_NODE" Type="Edm.String" MaxLength="32" sap:hierarchy-parent-node-for="HIERARCHY_NODE" />
+                <Property Name="DRILLDOWN_STATE" Type="Edm.String" MaxLength="16" sap:hierarchy-drill-state-for="HIERARCHY_NODE" />
+                <Property Name="MAGNITUDE" Type="Edm.Int32" sap:hierarchy-node-descendant-count-for="HIERARCHY_NODE" />
+                <Property Name="SERVER_INDEX" Type="Edm.Int32" />
+                <Property Name="ISCONTAINER" Type="Edm.Int32" />
+                <NavigationProperty Name="toChildren" Relationship="com.evorait.evodashboard.evosupervisor.TechnicianChildren" FromRole="TechnicianPrincipal" ToRole="TechnicianDependent" />
+            </EntityType>
+            <EntityType Name="WorkOrderHeader" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="WorkOrder"/>
+                </Key>
+                <Property Name="WorkOrder" Type="Edm.String" Nullable="false" MaxLength="12" sap:label="Order" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="WorkOrderDescription" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="OrderType" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Order Type" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="UserStatus" Type="Edm.String" Nullable="false" MaxLength="100" sap:label="User Status" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="SystemStatus" Type="Edm.String" Nullable="false" MaxLength="100" sap:label="System Status" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Priority" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Priority" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="PriorityDescription" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Priority" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="FunctionalLocation" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Functional loc." sap:creatable="false" sap:updatable="false"/>
+                <Property Name="FunctionalLocationDescription" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Equipment" Type="Edm.String" Nullable="false" MaxLength="18" sap:label="Equipment" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="EquipmentDescription" Type="Edm.String" Nullable="false" MaxLength="15" sap:label="Facilities" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Assembly" Type="Edm.String" Nullable="false" MaxLength="18" sap:label="Assembly" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="PersonResponsible" Type="Edm.String" Nullable="false" MaxLength="12" sap:label="Partner" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="PersonName" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="Server name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="CreatedBy" Type="Edm.String" Nullable="false" MaxLength="12" sap:label="Created By" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Customer" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Customer" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="CustomerName" Type="Edm.String" Nullable="false" MaxLength="100" sap:label="Customer Name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Street" Type="Edm.String" Nullable="false" MaxLength="60" sap:label="Street" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Location" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Street 5" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="PlannerGroup" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Planner group" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="WorkCenter" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Main WorkCtr" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="CreatedOn" Type="Edm.DateTime" Precision="7" sap:label="Created On" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="StartDate" Type="Edm.DateTime" Precision="7" sap:label="Date" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="StartTime" Type="Edm.Time" Precision="0" sap:label="ActualStart" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="EndDate" Type="Edm.DateTime" Precision="7" sap:label="Actual finish" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="EndTime" Type="Edm.Time" Precision="0" sap:label="Actual Finish" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="RervationsNumber" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Reservation" sap:creatable="false" sap:updatable="false"/>
+                <NavigationProperty Name="WorkOrderHeadertoOperation" Relationship="com.evorait.evodashboard.evosupervisor.WorkOrderHeadertoOperation" FromRole="FromRole_WorkOrderHeadertoOperation" ToRole="ToRole_WorkOrderHeadertoOperation"/>
+                <NavigationProperty Name="WorkOrderHeadertoComponent" Relationship="com.evorait.evodashboard.evosupervisor.WorkOrderHeadertoComponent" FromRole="FromRole_WorkOrderHeadertoComponent" ToRole="ToRole_WorkOrderHeadertoComponent"/>
+            </EntityType>
+            <EntityType Name="WorkOrderOperation" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="WorkOrder"/>
+                    <PropertyRef Name="Operation"/>
+                </Key>
+                <Property Name="WorkOrder" Type="Edm.String" Nullable="false" MaxLength="12" sap:label="Order" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Operation" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Activity" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="OperationDescription" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Opr. short text" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Plant" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Plant" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="WorkCenterId" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Object ID" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="WorkCenter" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Main WorkCtr"/>
+                <Property Name="PersonResponsible" Type="Edm.String" Nullable="false" MaxLength="12" sap:label="Partner" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="PersonName" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="Server name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ControlKey" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Control key" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ActivityType" Type="Edm.String" Nullable="false" MaxLength="6" sap:label="Activity Type" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ActualWork" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" sap:label="Actual work" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ActualDuration" Type="Edm.Decimal" Nullable="false" Precision="5" Scale="1" sap:label="Normal duration" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="WorkPercent" Type="Edm.Byte" Nullable="false" sap:label="Percent" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="CapacityId" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Capacity ID" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="HrObject" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Object ID" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="WorkOrderComponent" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="WorkOrder"/>
+                    <PropertyRef Name="Component"/>
+                </Key>
+                <Property Name="WorkOrder" Type="Edm.String" Nullable="false" MaxLength="12" sap:label="Order"/>
+                <Property Name="Component" Type="Edm.String" Nullable="false" MaxLength="18" sap:label="Material"/>
+                <Property Name="ComponentDescription" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Item Text"/>
+                <Property Name="Material" Type="Edm.String" Nullable="false" MaxLength="18" sap:label="Material"/>
+                <Property Name="Plant" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Plant"/>
+                <Property Name="Reservation" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Reservation"/>
+                <Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" sap:label="Requirement qty"/>
+                <Property Name="RequiredDate" Type="Edm.DateTime" Precision="7" sap:label="Reqmts date"/>
+            </EntityType>
+            <EntityType Name="PriorityVH" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="PriorityType"/>
+                    <PropertyRef Name="Priority"/>
+                </Key>
+                <Property Name="PriorityType" Type="Edm.String" Nullable="false" MaxLength="2" sap:label="PriorityType" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Priority" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Priority" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="PriorityDescription" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Priority" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="OrderTypeVH" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="OrderType"/>
+                </Key>
+                <Property Name="OrderType" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Order Type" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="OrderTypeDescription" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Short Text" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="WorkCenterVH" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Object"/>
+                    <PropertyRef Name="ObjectType"/>
+                </Key>
+                <Property Name="Object" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Object ID" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ObjectType" Type="Edm.String" Nullable="false" MaxLength="2" sap:label="Object Type"/>
+                <Property Name="WorkCenter" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Work center" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Plant" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Plant" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="WorkCenterDescription" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="PlantVH" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Plant"/>
+                </Key>
+                <Property Name="Plant" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Plant" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="PlantDescription" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="Name 1" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="PlannerGroupVH" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Plant"/>
+                    <PropertyRef Name="PlannerGroup"/>
+                </Key>
+                <Property Name="Plant" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Planning plant" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="PlannerGroup" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Planner group" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="PlannerGroupDescription" Type="Edm.String" Nullable="false" MaxLength="18" sap:label="PM PlGrp name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="OrderType" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Order Type" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="SysStatusVH" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="SystemStatus"/>
+                </Key>
+                <Property Name="SystemStatus" Type="Edm.String" Nullable="false" MaxLength="5" sap:label="System status"/>
+                <Property Name="StatusShort" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Status"/>
+                <Property Name="StatusDescription" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="Status"/>
+            </EntityType>
+            <Association Name="WorkOrderHeadertoComponent" sap:content-version="1">
+                <End Type="com.evorait.evodashboard.evosupervisor.WorkOrderHeader" Multiplicity="1" Role="FromRole_WorkOrderHeadertoComponent"/>
+                <End Type="com.evorait.evodashboard.evosupervisor.WorkOrderComponent" Multiplicity="*" Role="ToRole_WorkOrderHeadertoComponent"/>
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_WorkOrderHeadertoComponent">
+                        <PropertyRef Name="WorkOrder"/>
+                    </Principal>
+                    <Dependent Role="ToRole_WorkOrderHeadertoComponent">
+                        <PropertyRef Name="WorkOrder"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <Association Name="WorkOrderHeadertoOperation" sap:content-version="1">
+                <End Type="com.evorait.evodashboard.evosupervisor.WorkOrderHeader" Multiplicity="1" Role="FromRole_WorkOrderHeadertoOperation"/>
+                <End Type="com.evorait.evodashboard.evosupervisor.WorkOrderOperation" Multiplicity="*" Role="ToRole_WorkOrderHeadertoOperation"/>
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_WorkOrderHeadertoOperation">
+                        <PropertyRef Name="WorkOrder"/>
+                    </Principal>
+                    <Dependent Role="ToRole_WorkOrderHeadertoOperation">
+                        <PropertyRef Name="WorkOrder"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <EntityContainer Name="com.evorait.evodashboard.evosupervisor_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="UserLoginSet" EntityType="com.evorait.evodashboard.evosupervisor.UserLogin" sap:content-version="1"/>
+                <EntitySet Name="UserStatusVHSet" EntityType="com.evorait.evodashboard.evosupervisor.UserStatusVH" sap:content-version="1"/>
+                <EntitySet Name="UsersVHSet" EntityType="com.evorait.evodashboard.evosupervisor.UsersVH" sap:content-version="1"/>
+                <EntitySet Name="TechnicianSet" EntityType="com.evorait.evodashboard.evosupervisor.Technician" sap:content-version="1"/>
+                <EntitySet Name="WorkOrderHeaderSet" EntityType="com.evorait.evodashboard.evosupervisor.WorkOrderHeader" sap:content-version="1"/>
+                <EntitySet Name="WorkOrderOperationSet" EntityType="com.evorait.evodashboard.evosupervisor.WorkOrderOperation" sap:content-version="1"/>
+                <EntitySet Name="WorkOrderComponentSet" EntityType="com.evorait.evodashboard.evosupervisor.WorkOrderComponent" sap:content-version="1"/>
+                <EntitySet Name="PriorityVHSet" EntityType="com.evorait.evodashboard.evosupervisor.PriorityVH" sap:content-version="1"/>
+                <EntitySet Name="OrderTypeVHSet" EntityType="com.evorait.evodashboard.evosupervisor.OrderTypeVH" sap:content-version="1"/>
+                <EntitySet Name="WorkCenterVHSet" EntityType="com.evorait.evodashboard.evosupervisor.WorkCenterVH" sap:content-version="1"/>
+                <EntitySet Name="PlantVHSet" EntityType="com.evorait.evodashboard.evosupervisor.PlantVH" sap:content-version="1"/>
+                <EntitySet Name="PlannerGroupVHSet" EntityType="com.evorait.evodashboard.evosupervisor.PlannerGroupVH" sap:content-version="1"/>
+                <EntitySet Name="SysStatusVHSet" EntityType="com.evorait.evodashboard.evosupervisor.SysStatusVH" sap:content-version="1"/>
+                <AssociationSet Name="WorkOrderHeadertoOperationSet" Association="com.evorait.evodashboard.evosupervisor.WorkOrderHeadertoOperation" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="WorkOrderHeaderSet" Role="FromRole_WorkOrderHeadertoOperation"/>
+                    <End EntitySet="WorkOrderOperationSet" Role="ToRole_WorkOrderHeadertoOperation"/>
+                </AssociationSet>
+                <AssociationSet Name="WorkOrderHeadertoComponentSet" Association="com.evorait.evodashboard.evosupervisor.WorkOrderHeadertoComponent" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="WorkOrderHeaderSet" Role="FromRole_WorkOrderHeadertoComponent"/>
+                    <End EntitySet="WorkOrderComponentSet" Role="ToRole_WorkOrderHeadertoComponent"/>
+                </AssociationSet>
+            </EntityContainer>
+            <Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evodashboard.evosupervisor.PriorityVH/PriorityType">
+                <Annotation Term="com.sap.vocabularies.Common.v1.FilterDefaultValue" Path=""/>
+            </Annotations>
+            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="self" href="https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EVOSUPRVISR_DASHBOARD_SRV/$metadata"/>
+            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="latest-version" href="https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EVOSUPRVISR_DASHBOARD_SRV/$metadata"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

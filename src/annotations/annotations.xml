@@ -25,7 +25,7 @@
 	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.UsersVH">
+			<Annotations Target="ZEVORA_MAIN_SRV.UsersVH">
 				<Annotation Term="UI.LineItem">
 					<Collection>
 						<Record Type="UI.DataField">
@@ -34,512 +34,45 @@
 					</Collection>
 				</Annotation>
 			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader">
+			<Annotations Target="ZEVORA_MAIN_SRV.Demand">
 				<Annotation Term="UI.SelectionFields">
 					<Collection>
-						<!--<PropertyPath>WorkOrder</PropertyPath>
-						<PropertyPath>OrderType</PropertyPath>
-						<PropertyPath>Equipment</PropertyPath>
-						<PropertyPath>FunctionalLocation</PropertyPath>
-						<PropertyPath>WorkCenter</PropertyPath>
-						<PropertyPath>CreationOn</PropertyPath>
-						<PropertyPath>StartDate</PropertyPath>
-						<PropertyPath>EndDate</PropertyPath>-->
+						<!--<PropertyPath>Guid</PropertyPath>
+						<PropertyPath>DemandDesc</PropertyPath>
+						<PropertyPath>ExtKey</PropertyPath>
+						<PropertyPath>Source</PropertyPath>-->
 					</Collection>
 				</Annotation>
 				<Annotation Term="UI.LineItem">
 					<Collection>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="WorkOrderDescription"/>
+							<PropertyValue Property="Value" Path="Guid"/>
 							<Annotation Term="UI.Importance" EnumMember="UI.Importance/High"/>
 						</Record>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="WorkOrder"/>
+							<PropertyValue Property="Value" Path="DemandDesc"/>
 							<Annotation Term="UI.Importance" EnumMember="UI.Importance/High"/>
 						</Record>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="FunctionalLocationDescription"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="EquipmentDescription"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="StartDate"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="EndDate"/>
-						</Record>
-					</Collection>
-				</Annotation>
-				<Annotation Term="UI.FieldGroup" Qualifier="Dates">
-					<Record Type="UI.FieldGroupType">
-						<PropertyValue Property="Label" String="Dates"/>
-						<PropertyValue Property="Data">
-							<Collection>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="CreatedOn"/>
-									<PropertyValue Property="Label" String="Created"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="StartDate"/>
-									<PropertyValue Property="Label" String="Started"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="StartTime"/>
-									<PropertyValue Property="Label" String="Started at"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="EndDate"/>
-									<PropertyValue Property="Label" String="Completed"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="EndTime"/>
-									<PropertyValue Property="Label" String="Completed at"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-				<Annotation Term="UI.FieldGroup" Qualifier="General">
-					<Record Type="UI.FieldGroupType">
-						<PropertyValue Property="Label" String="General"/>
-						<PropertyValue Property="Data">
-							<Collection>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="WorkOrder"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="OrderType"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="Priority"/>
-									<Annotation Term="UI.Importance" EnumMember="UI.Importance/High"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="PersonResponsible"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="CreatedBy"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-				<Annotation Term="UI.FieldGroup" Qualifier="Location">
-					<Record Type="UI.FieldGroupType">
-						<PropertyValue Property="Label" String="Location Data"/>
-						<PropertyValue Property="Data">
-							<Collection>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="Street"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="Location"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="WorkCenter"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/FunctionalLocation">
-				<Annotation Term="Common.Text" Path="FunctionalLocationDescription"/>
-				<Annotation Term="Common.FieldControl" Path="FieldControlOptional"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/Equipment">
-				<Annotation Term="Common.Text" Path="EquipmentDescription"/>
-				<Annotation Term="Common.FieldControl" Path="FieldControlOptional"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/Assembly">
-				<Annotation Term="Common.FieldControl" Path="FieldControlOptional"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/Customer">
-				<Annotation Term="Common.Text" Path="CustomerName"/>
-				<Annotation Term="Common.FieldControl" Path="FieldControlOptional"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/Location">
-				<Annotation Term="Common.Text" Path="Location"/>
-				<Annotation Term="Common.SemanticObject" String="Location" />
-				<Annotation Term="Common.FieldControl" Path="FieldControlOptional"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/CreatedBy">
-				<Annotation Term="Core.Computed" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/CreatedOn">
-				<Annotation Term="Core.Computed" Bool="true"/>
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/WorkOrder">
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
-				<Annotation Term="Common.Label" String="ID"/>
-				<Annotation Term="Core.Computed" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/WorkOrderDescription">
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-				<Annotation Term="Common.Label" String="Work Order"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/WorkCenter">
-				<Annotation Term="Common.Label" String="Work Center"/>
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/Street">
-				<Annotation Term="Common.Label" String="Street"/>
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/StartDate">
-				<Annotation Term="Common.Label" String="Basic Start"/>
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/StartTime">
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/EndDate">
-				<Annotation Term="Common.Label" String="Basic End"/>
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/EndTime">
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.PriorityVH/PriorityType">
-				<Annotation Term="Common.FilterDefaultValue" String="PM"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/Priority">
-				<Annotation Term="Common.Text" Path="PriorityDescription"/>
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-				<Annotation Term="Common.ValueList">
-					<Record Type="Common.ValueListType">
-						<PropertyValue Property="Label" String="Priority"/>
-						<PropertyValue Property="CollectionPath" String="PriorityVHSet"/>
-						<PropertyValue Property="CollectionRoot" String=""/>
-						<PropertyValue Property="SearchSupported" Bool="false"/>
-						<PropertyValue Property="Parameters">
-							<Collection>
-								<Record Type="Common.ValueListParameterInOut">
-									<PropertyValue Property="ValueListProperty" String="PriorityType"/>
-									<PropertyValue Property="LocalDataProperty" PropertyPath="PriorityType"/>
-								</Record>
-								<Record Type="Common.ValueListParameterInOut">
-									<PropertyValue Property="ValueListProperty" String="Priority"/>
-									<PropertyValue Property="LocalDataProperty" PropertyPath="Priority"/>
-								</Record>
-								<Record Type="Common.ValueListParameterDisplayOnly">
-									<PropertyValue Property="ValueListProperty" String="PriorityDescription"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/OrderType">
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-				<Annotation Term="Common.ValueList">
-					<Record Type="Common.ValueListType">
-						<PropertyValue Property="Label" String="Order Type"/>
-						<PropertyValue Property="CollectionPath" String="OrderTypeVHSet"/>
-						<PropertyValue Property="CollectionRoot" String=""/>
-						<PropertyValue Property="SearchSupported" Bool="false"/>
-						<PropertyValue Property="Parameters">
-							<Collection>
-								<Record Type="Common.ValueListParameterInOut">
-									<PropertyValue Property="ValueListProperty" String="OrderType"/>
-									<PropertyValue Property="LocalDataProperty" PropertyPath="OrderType"/>
-								</Record>
-								<Record Type="Common.ValueListParameterDisplayOnly">
-									<PropertyValue Property="ValueListProperty" String="OrderTypeDescription"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/WorkCenter">
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-				<Annotation Term="Common.ValueList">
-					<Record Type="Common.ValueListType">
-						<PropertyValue Property="Label" String="Work Center"/>
-						<PropertyValue Property="CollectionPath" String="WorkCenterVHSet"/>
-						<PropertyValue Property="CollectionRoot" String=""/>
-						<PropertyValue Property="SearchSupported" Bool="false"/>
-						<PropertyValue Property="Parameters">
-							<Collection>
-								<Record Type="Common.ValueListParameterInOut">
-									<PropertyValue Property="ValueListProperty" String="WorkCenter"/>
-									<PropertyValue Property="LocalDataProperty" PropertyPath="WorkCenter"/>
-								</Record>
-								<Record Type="Common.ValueListParameterDisplayOnly">
-									<PropertyValue Property="ValueListProperty" String="WorkCenterDescription"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/Plant">
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-				<Annotation Term="Common.ValueList">
-					<Record Type="Common.ValueListType">
-						<PropertyValue Property="Label" String="Plant"/>
-						<PropertyValue Property="CollectionPath" String="PlantVHSet"/>
-						<PropertyValue Property="CollectionRoot" String=""/>
-						<PropertyValue Property="SearchSupported" Bool="false"/>
-						<PropertyValue Property="Parameters">
-							<Collection>
-								<Record Type="Common.ValueListParameterInOut">
-									<PropertyValue Property="ValueListProperty" String="Plant"/>
-									<PropertyValue Property="LocalDataProperty" PropertyPath="Plant"/>
-								</Record>
-								<Record Type="Common.ValueListParameterDisplayOnly">
-									<PropertyValue Property="ValueListProperty" String="PlantDescription"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/SystemStatus">
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-				<!--<Annotation Term="Common.FilterDefaultValue" String="I0002"/>-->
-				<Annotation Term="Common.ValueList">
-					<Record Type="Common.ValueListType">
-						<PropertyValue Property="Label" String="Status"/>
-						<PropertyValue Property="CollectionPath" String="SysStatusVHSet"/>
-						<PropertyValue Property="CollectionRoot" String=""/>
-						<PropertyValue Property="SearchSupported" Bool="false"/>
-						<PropertyValue Property="Parameters">
-							<Collection>
-								<Record Type="Common.ValueListParameterInOut">
-									<PropertyValue Property="ValueListProperty" String="SystemStatus"/>
-									<PropertyValue Property="LocalDataProperty" PropertyPath="SystemStatus"/>
-								</Record>
-								<Record Type="Common.ValueListParameterDisplayOnly">
-									<PropertyValue Property="ValueListProperty" String="StatusDescription"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/PlannerGroup">
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-				<Annotation Term="Common.ValueList">
-					<Record Type="Common.ValueListType">
-						<PropertyValue Property="Label" String="Plannergroup"/>
-						<PropertyValue Property="CollectionPath" String="PlannerGroupVHSet"/>
-						<PropertyValue Property="CollectionRoot" String=""/>
-						<PropertyValue Property="SearchSupported" Bool="false"/>
-						<PropertyValue Property="Parameters">
-							<Collection>
-								<Record Type="Common.ValueListParameterInOut">
-									<PropertyValue Property="ValueListProperty" String="PlannerGroup"/>
-									<PropertyValue Property="LocalDataProperty" PropertyPath="PlannerGroup"/>
-								</Record>
-								<Record Type="Common.ValueListParameterDisplayOnly">
-									<PropertyValue Property="ValueListProperty" String="PlannerGroupDescription"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader/PersonResponsible">
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-				<Annotation Term="Common.ValueList">
-					<Record Type="Common.ValueListType">
-						<PropertyValue Property="Label" String="Dispatcher"/>
-						<PropertyValue Property="CollectionPath" String="UsersVHSet"/>
-						<PropertyValue Property="CollectionRoot" String=""/>
-						<PropertyValue Property="SearchSupported" Bool="false"/>
-						<PropertyValue Property="Parameters">
-							<Collection>
-								<Record Type="Common.ValueListParameterInOut">
-									<PropertyValue Property="ValueListProperty" String="PersonResponsible"/>
-									<PropertyValue Property="LocalDataProperty" PropertyPath="PersonResponsible"/>
-								</Record>
-								<Record Type="Common.ValueListParameterDisplayOnly">
-									<PropertyValue Property="ValueListProperty" String="Fullname"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderHeader">
-				<Annotation Term="UI.HeaderInfo">
-					<Record Type="UI.HeaderInfoType">
-						<PropertyValue Property="TypeName" String="Work Order"/>
-						<PropertyValue Property="TypeNamePlural" String="Work Orders"/>
-						<PropertyValue Property="TypeImageUrl" String=""/>
-						<PropertyValue Property="Title">
-							<Record Type="UI.DataField">
-								<PropertyValue Property="Value" Path="WorkOrder"/>
-								<PropertyValue Property="Description">
-									<Record Type="UI.DataField">
-										<PropertyValue Property="Value" Path="WorkOrderDescription"/>
-										<PropertyValue Property="ImageUrl" String=""/>
-									</Record>
-								</PropertyValue>
-							</Record>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
-
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderOperation">
-				<Annotation Term="UI.SelectionFields">
-					<Collection>
-						<PropertyPath>WorkOrder</PropertyPath>
-						<PropertyPath>Operation</PropertyPath>
-						<PropertyPath>PersonName</PropertyPath>
-					</Collection>
-				</Annotation>
-				<Annotation Term="UI.LineItem">
-					<Collection>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="WorkOrder"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="Operation"/>
+							<PropertyValue Property="Value" Path="ExtKey"/>
 							<Annotation Term="UI.Importance" EnumMember="UI.Importance/High"/>
 						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="Source"/>
+						</Record>
 					</Collection>
 				</Annotation>
-				<Annotation Term="UI.PresentationVariant">
-					<Record>
-						<PropertyValue Property="RequestAtLeast">
-							<Collection>
-								<PropertyPath>Plant</PropertyPath>
-								<PropertyPath>WorkCenter</PropertyPath>
-								<PropertyPath>PersonResponsible</PropertyPath>
-								<PropertyPath>PersonName</PropertyPath>
-								<PropertyPath>ActualWork</PropertyPath>
-								<PropertyPath>ActualDuration</PropertyPath>
-								<PropertyPath>WorkPercent</PropertyPath>
-								<PropertyPath>CapacityId</PropertyPath>
-								<PropertyPath>HrObject</PropertyPath>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-				<Annotation Term="UI.Chart">
-					<Record>
-						<PropertyValue Property="Title" String="Line Items" />
-						<PropertyValue Property="ChartType" EnumMember="UI.ChartType/Column" />
-						<PropertyValue Property="Dimensions">
-							<Collection>
-								<PropertyPath>Name</PropertyPath>
-								<PropertyPath>Category</PropertyPath>
-							</Collection>
-						</PropertyValue>
-						<PropertyValue Property="Measures">
-							<Collection>
-								<PropertyPath>Price</PropertyPath>
-								<PropertyPath>Quantity</PropertyPath>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-				<Annotation Term="UI.FieldGroup" Qualifier="Dates">
-					<Record Type="UI.FieldGroupType">
-						<PropertyValue Property="Label" String="Dates"/>
-						<PropertyValue Property="Data">
-							<Collection>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="CreatedOn"/>
-									<PropertyValue Property="Label" String="Created"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="StartDate"/>
-									<PropertyValue Property="Label" String="Started"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="StartTime"/>
-									<PropertyValue Property="Label" String="Started at"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="EndDate"/>
-									<PropertyValue Property="Label" String="Completed"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="EndTime"/>
-									<PropertyValue Property="Label" String="Completed at"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-				<Annotation Term="UI.FieldGroup" Qualifier="General">
-					<Record Type="UI.FieldGroupType">
-						<PropertyValue Property="Label" String="General"/>
-						<PropertyValue Property="Data">
-							<Collection>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="WorkOrder"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="OrderType"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="Priority"/>
-									<Annotation Term="UI.Importance" EnumMember="UI.Importance/High"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="PersonResponsible"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="CreatedBy"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-				<Annotation Term="UI.FieldGroup" Qualifier="Location">
-					<Record Type="UI.FieldGroupType">
-						<PropertyValue Property="Label" String="Location Data"/>
-						<PropertyValue Property="Data">
-							<Collection>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="Street"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="Location"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="WorkCenter"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
 			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderOperation/WorkOrder">
-				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+			<Annotations Target="ZEVORA_MAIN_SRV.Demand/Guid">
+				<Annotation Term="Common.FieldControl" Path="FieldControlOptional"/>
+			</Annotations>
+			<Annotations Target="ZEVORA_MAIN_SRV.Demand/Source">
 				<Annotation Term="Core.Computed" Bool="true"/>
 			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderOperation/PersonResponsible">
+			<Annotations Target="ZEVORA_MAIN_SRV.Demand/DemandDesc">
 				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
-				<Annotation Term="Common.ValueList">
-					<Record Type="Common.ValueListType">
-						<PropertyValue Property="Label" String="Dispatcher"/>
-						<PropertyValue Property="CollectionPath" String="UsersVHSet"/>
-						<PropertyValue Property="CollectionRoot" String=""/>
-						<PropertyValue Property="SearchSupported" Bool="false"/>
-						<PropertyValue Property="Parameters">
-							<Collection>
-								<Record Type="Common.ValueListParameterInOut">
-									<PropertyValue Property="ValueListProperty" String="PersonResponsible"/>
-									<PropertyValue Property="LocalDataProperty" PropertyPath="PersonResponsible"/>
-								</Record>
-								<Record Type="Common.ValueListParameterDisplayOnly">
-									<PropertyValue Property="ValueListProperty" String="Fullname"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
 			</Annotations>
-			<Annotations Target="com.evorait.evodashboard.evosupervisor.WorkOrderOperation/PersonName">
+			<Annotations Target="ZEVORA_MAIN_SRV.Demand/Source">
 				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
 			</Annotations>
 		</Schema>
