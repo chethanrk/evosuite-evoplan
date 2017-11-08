@@ -5,7 +5,7 @@
         xmlns:l="sap.ui.layout"
         xmlns:vm="sap.ui.comp.variants">
 
-    <ViewSettingsDialog title="Filter and Variants" confirm="onFilterSettingsConfirm">
+    <ViewSettingsDialog title="Filter" confirm="onFilterSettingsConfirm">
         <filterItems>
             <ViewSettingsFilterItem
                     text="View"
@@ -29,17 +29,6 @@
                 </items>
             </ViewSettingsFilterItem>
         </filterItems>
-        <customTabs>
-            <ViewSettingsCustomTab id="tree-variant" icon="sap-icon://arrow-down" title="Variants" tooltip="Technician Variants">
-                <content>
-                    <Panel>
-                        <content>
-                            <vm:VariantManagement standardItemText="Standard"></vm:VariantManagement>
-                        </content>
-                    </Panel>
-                </content>
-            </ViewSettingsCustomTab>
-        </customTabs>
     </ViewSettingsDialog>
 
 </core:FragmentDefinition>

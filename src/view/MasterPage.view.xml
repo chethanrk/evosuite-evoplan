@@ -18,21 +18,27 @@
                        preserveHeaderStateOnScroll="true"
                        fitContent="true"
                        showFooter="false"
-                       class="tableContentPage sapUiNoContentPadding">
+                       class="tableContentPage">
+            <f:title>
+                <f:DynamicPageTitle>
+                    <f:heading>
+                        <vm:VariantManagement standardItemText="Standard"></vm:VariantManagement>
+                    </f:heading>
+                    <f:actions>
+                        <ToolbarSpacer/>
+                        <Button icon="sap-icon://filter" type="Transparent" press="onFilterButtonPress" />
+                    </f:actions>
+                </f:DynamicPageTitle>
+            </f:title>
 
             <f:header>
-                <f:DynamicPageHeader pinnable="false" class="sapUiNoContentPadding">
+                <f:DynamicPageHeader pinnable="false">
                     <f:content>
-                        <l:VerticalLayout class="sapUiNoContentPadding" >
-                            <l:HorizontalLayout class="sapUiNoContentPadding" >
-                                <vm:VariantManagement standardItemText="Standard"></vm:VariantManagement>
-                            </l:HorizontalLayout>
-                            <SearchField id="searchField"
-                                         liveChange="onSearch"
-                                         showRefreshButton="{= !${device>/support/touch} }"
-                                         width="100%">
-                            </SearchField>
-                        </l:VerticalLayout>
+                        <SearchField id="searchField"
+                                     liveChange="onSearch"
+                                     showRefreshButton="{= !${device>/support/touch} }"
+                                     width="100%">
+                        </SearchField>
                     </f:content>
                 </f:DynamicPageHeader>
             </f:header>
@@ -64,6 +70,7 @@
         <footer>
             <OverflowToolbar>
                 <ToolbarSpacer/>
+                <Button icon="sap-icon://filter" press="onFilterButtonPress" />
             </OverflowToolbar>
         </footer>
     </Page>
