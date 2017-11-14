@@ -12,21 +12,40 @@
             </EntityType>
             <EntityType Name="Technician">
                 <Key>
-                    <PropertyRef Name="HIERARCHY_NODE" />
+                    <PropertyRef Name="NodeID" />
                 </Key>
-                <Property Name="HIERARCHY_NODE" Type="Edm.String" Nullable="false" MaxLength="32" sap:hierarchy-node-for="HIERARCHY_NODE"/>
-                <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="100" />
-                <Property Name="LEVEL" Type="Edm.Int32" sap:hierarchy-level-for="HIERARCHY_NODE" />
-                <Property Name="PARENT_NODE" Type="Edm.String" MaxLength="32" sap:hierarchy-parent-node-for="HIERARCHY_NODE" />
-                <Property Name="DRILLDOWN_STATE" Type="Edm.String" MaxLength="16" sap:hierarchy-drill-state-for="HIERARCHY_NODE" />
-                <Property Name="MAGNITUDE" Type="Edm.Int32" sap:hierarchy-node-descendant-count-for="HIERARCHY_NODE" />
-                <Property Name="SERVER_INDEX" Type="Edm.Int32" />
-                <Property Name="ISCONTAINER" Type="Edm.Int32" />
-                <NavigationProperty Name="toChildren" Relationship="com.evorait.evodashboard.evosupervisor.TechnicianChildren" FromRole="TechnicianPrincipal" ToRole="TechnicianDependent" />
+                <Property Name="NodeID" Type="Edm.String" Nullable="false" MaxLength="32" sap:hierarchy-node-for="NodeID"/>
+                <Property Name="Description" Type="Edm.String" MaxLength="100" />
+                <Property Name="HierarchyLevel" Type="Edm.Int32" sap:hierarchy-level-for="HierarchyLevel" />
+                <Property Name="ParentNodeID" Type="Edm.String" MaxLength="32" sap:hierarchy-parent-node-for="ParentNodeID" />
+                <Property Name="DrillState" Type="Edm.String" MaxLength="16" sap:hierarchy-drill-state-for="DrillState" />
+            </EntityType>
+            <EntityType Name="Node">
+                <Key>
+                    <PropertyRef Name="NodeID" />
+                </Key>
+                <Property Name="NodeID" Type="Edm.Int32" Nullable="false" sap:hierarchy-node-for="NodeID"/>
+                <Property Name="HierarchyLevel" Type="Edm.Int32" Nullable="false" sap:hierarchy-level-for="NodeID"/>
+                <Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+                <Property Name="ParentNodeID" Type="Edm.Int32" Nullable="true" sap:hierarchy-parent-node-for="NodeID"/>
+                <Property Name="DrillState" Type="Edm.String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" sap:hierarchy-drill-state-for="NodeID" />
+            </EntityType>
+            <EntityType Name="SaveMessage">
+                <Key>
+                    <PropertyRef Name="Type" />
+                    <PropertyRef Name="Title" />
+                </Key>
+                <Property Name="Type" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="Title" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="SubTitle" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="Counter" Type="Edm.Int32" />
             </EntityType>
             <EntityContainer Name="ZEVORA_MAIN_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
                 <EntitySet Name="DemandSet" EntityType="ZEVORA_MAIN_SRV.Demand" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="TechnicianSet" EntityType="ZEVORA_MAIN_SRV.Technician" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="Nodes" EntityType="ZEVORA_MAIN_SRV.Node" />
+                <EntitySet Name="SaveMessageSet" EntityType="ZEVORA_MAIN_SRV.SaveMessage" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
             </EntityContainer>
             <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="self" href="https://ed1.evorait.net:50103/sap/opu/odata/SAP/ZEVORA_MAIN_SRV/$metadata"/>
             <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="latest-version" href="https://ed1.evorait.net:50103/sap/opu/odata/SAP/ZEVORA_MAIN_SRV/$metadata"/>

@@ -5,8 +5,10 @@ sap.ui.define([
 		"sap/m/Dialog",
 		"sap/m/Button",
 		"sap/m/Text",
-		"sap/m/MessageToast"
-	], function (Controller, History, Dialog, Button, Text, MessageToast) {
+		"sap/m/MessageToast",
+		"sap/ui/model/Filter",
+		"sap/ui/model/FilterOperator"
+	], function (Controller, History, Dialog, Button, Text, MessageToast, Filter, FilterOperator) {
 		"use strict";
 
 		return Controller.extend("com.evorait.evoplan.controller.BaseController", {
@@ -96,6 +98,24 @@ sap.ui.define([
 					}
 				});
 			},
+			
+			onSearchTreeTable: function (oTable, sQuery) {
+                var aFilters = [];
+
+                if (sQuery && sQuery.length > 0) {
+                    //only search on 0 and 1 Level
+                    var filter = new Filter("Description", FilterOperator.Contains, sQuery);
+                    var filterLevel = new Filter("HierarchyLevel", FilterOperator.LE, 1);
+                    aFilters.push(filter);
+                }
+                // update table binding
+                var binding = oTable.getBinding("rows");
+                binding.filter(aFilters, "Application");
+            },
+			
+			saveAssignedDemands: function (source, target) {
+				
+            }
 
 		});
 

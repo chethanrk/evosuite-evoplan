@@ -9,7 +9,7 @@
         controllerName="com.evorait.evoplan.controller.List">
 
     <Page id="listPage"
-          title="Demands"
+          title="{viewModel>/viewTitle}"
           showFooter="true"
           showHeader="true">
 
@@ -17,7 +17,8 @@
                        preserveHeaderStateOnScroll="true"
                        fitContent="true"
                        showFooter="false"
-                       class="tableContentPage">
+                       toggleHeaderOnTitleClick="false"
+                       class="">
 
             <f:header>
                 <f:DynamicPageHeader pinnable="true">
@@ -52,11 +53,16 @@
         </f:DynamicPage>
 
         <footer>
-            <OverflowToolbar id="otbFooter">
+            <OverflowToolbar>
                 <Button icon="sap-icon://message-popup" text="{/messagesLength}" type="Emphasized"
-                        press="handleMessagePopoverPress"/>
+                        press="onMessagePopoverPress"/>
                 <ToolbarSpacer/>
-                <Button text="Assign" icon="sap-icon://activity-individual" press="onAssignButtonPress">
+                <Button text="{i18n>xbut.changeStatus}" icon="sap-icon://flag" press="onChangeStatusButtonPress">
+                    <layoutData>
+                        <ToolbarLayoutData shrinkable="true" />
+                    </layoutData>
+                </Button>
+                <Button text="{i18n>xbut.assign}" icon="sap-icon://activity-individual" press="onAssignButtonPress">
                     <layoutData>
                         <ToolbarLayoutData shrinkable="true" />
                     </layoutData>

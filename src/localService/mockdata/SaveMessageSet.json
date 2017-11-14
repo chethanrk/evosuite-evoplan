@@ -1,0 +1,30 @@
+[{
+  "Type": "Error",
+  "Title": "Error message",
+  "Description": "sErrorDescription",
+  "SubTitle": "Example of SubTitle",
+  "Counter": 1
+}, {
+  "Type": "Warning",
+  "Title": "Warning without Description",
+  "Description": "",
+  "Counter": 1
+}, {
+  "Type": "Success",
+  "Title": "Success message",
+  "Description": "First Success message Description",
+  "SubTitle": "Example of SubTitle",
+  "Counter": 1
+}, {
+  "Type": "Error",
+  "Title": "Error message",
+  "Description": "Second Error message Description",
+  "SubTitle": "Example of SubTitle",
+  "Counter": 2
+}, {
+  "Type": "Information",
+  "Title": "Information message",
+  "Description": "First Information message Description",
+  "SubTitle": "Example of SubTitle",
+  "Counter": 1
+}]

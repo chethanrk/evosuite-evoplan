@@ -9,7 +9,7 @@
           xmlns:f="sap.f">
 
     <Page id="masterPage"
-          title="Technicians"
+          title="{i18n>masterTitle}"
           showFooter="true"
           showHeader="true"
           icon="sap-icon://action">
@@ -18,11 +18,16 @@
                        preserveHeaderStateOnScroll="true"
                        fitContent="true"
                        showFooter="false"
+                       toggleHeaderOnTitleClick="false"
                        class="tableContentPage">
             <f:title>
                 <f:DynamicPageTitle>
                     <f:heading>
-                        <vm:VariantManagement standardItemText="Standard"></vm:VariantManagement>
+                        <vm:VariantManagement
+                                standardItemText="Standard"
+                                showExecuteOnSelection="true"
+                                showShare="true"
+                                showSetAsDefault="true"></vm:VariantManagement>
                     </f:heading>
                     <f:actions>
                         <ToolbarSpacer/>
@@ -51,12 +56,12 @@
                         useExportToExcel="false"
                         useVariantManagement="false"
                         useTablePersonalisation="false"
-                        header="Technician"
+                        header="{i18n>masterTitle}"
                         showRowCount="false"
                         enableAutoBinding="true"
                         beforeRebindTable="onBeforeRebindTable"
                         updateFinished="onUpdateFinished"
-                        initiallyVisibleFields="DESCRIPTION"
+                        initiallyVisibleFields="Description"
                         toolbarStyleClass="treeTableHeader">
                     <!-- layout data used to make the table growing but the filter bar fixed -->
                     <smartTable:layoutData>
@@ -70,7 +75,7 @@
         <footer>
             <OverflowToolbar>
                 <ToolbarSpacer/>
-                <Button icon="sap-icon://filter" press="onFilterButtonPress" />
+                <!--<Button icon="sap-icon://filter" press="onFilterButtonPress" />-->
             </OverflowToolbar>
         </footer>
     </Page>

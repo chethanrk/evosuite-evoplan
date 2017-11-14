@@ -5,8 +5,7 @@ sap.ui.define([
     "sap/ui/model/FilterOperator",
     "sap/ui/model/FilterType",
     "com/evorait/evoplan/controller/BaseController",
-    "sap/m/CustomTreeItem"
-], function(Device, JSONModel, Filter, FilterOperator, FilterType, BaseController, CustomTreeItem) {
+], function(Device, JSONModel, Filter, FilterOperator, FilterType, BaseController) {
     "use strict";
 
     return BaseController.extend('com.evorait.evoplan.controller.MasterPage', {
@@ -51,12 +50,7 @@ sap.ui.define([
 
         onBeforeRebindTable: function(oEvent) {
             var oBindingParams = oEvent.getParameter('bindingParams');
-
             oBindingParams.parameters.numberOfExpandedLevels = 2;
-
-            /*var aFilters = oEvent.mParameters.bindingParams.filters,
-                aSorters = oEvent.mParameters.bindingParams.sorter;*/
-
         },
 
         /**
@@ -71,11 +65,12 @@ sap.ui.define([
             }
         },
 
+        /**
+         * @param oEvent
+         */
         onSearch : function (oEvent) {
-            var sQuery = oEvent.getSource().getValue(),
-                aFilters = [];
-            var tableBindingPath = this._oDroppableTable.getTableBindingPath();
-            //this._oDroppableTable.fireBeforeRebindTable();
+            var sQuery = oEvent.getSource().getValue();
+            this.onSearchTreeTable(this._oDataTable, sQuery);
         },
 
         /**
@@ -85,22 +80,10 @@ sap.ui.define([
         onFilterButtonPress : function (oEvent) {
             if (!this._oFilterSettingsDialog) {
                 this._oFilterSettingsDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.FilterSettingsDialog", this);
+                this.getView().addDependent(this._oFilterSettingsDialog);
             }
             // toggle compact style
-            jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oFilterSettingsDialog);
             this._oFilterSettingsDialog.open();
-        },
-
-        /**
-         *
-         * @param oEvent
-         */
-        onSwitchViewButtonPress : function (oEvent) {
-            if (!this._oViewSettingsPopover) {
-                this._oViewSettingsPopover = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ViewSettingsPopover", this);
-                this.getView().addDependent(this._oViewSettingsPopover);
-            }
-            this._oViewSettingsPopover.openBy(oEvent.getSource());
         },
 
         /**
@@ -110,9 +93,6 @@ sap.ui.define([
         onExit: function() {
             if(this._oFilterSettingsDialog){
                 this._oFilterSettingsDialog.destroy();
-            }
-            if(this._oViewSettingsPopover){
-                this._oViewSettingsPopover.destroy();
             }
         },
 
@@ -124,10 +104,12 @@ sap.ui.define([
             oDataTable.setEnableBusyIndicator(true);
             oDataTable.setSelectionMode('None');
             oDataTable.setColumnHeaderVisible(false);
+            oDataTable.setEnableCellFilter(false);
             oDataTable.setEnableColumnReordering(false);
             oDataTable.setEditable(false);
             oDataTable.setWidth("100%");
             oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
+            oDataTable.attachFilter(this.onFilterChanged, this);
         },
 
         _jDroppable: function (_this) {
@@ -157,9 +139,12 @@ sap.ui.define([
 
                         if(oContext){
                             var targetPath = oContext.getPath();
+                            var aSources = [];
                             $(draggedElements).find('li').each(function (idx, obj) {
                                 _this._addEntries($(this).attr('id'), targetPath);
+                                aSources.push($(this).attr('id'));
                             });
+                            //this.saveAssignedDemands(aSources, targetPath);
                         }
                     }
                 });

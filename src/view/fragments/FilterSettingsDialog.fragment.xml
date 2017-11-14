@@ -1,5 +1,4 @@
 <core:FragmentDefinition
-        controllerName="com.evorait.evoplan.controller.FilterSettingsDialog"
         xmlns="sap.m"
         xmlns:core="sap.ui.core"
         xmlns:l="sap.ui.layout"
@@ -8,7 +7,7 @@
     <ViewSettingsDialog title="Filter" confirm="onFilterSettingsConfirm">
         <filterItems>
             <ViewSettingsFilterItem
-                    text="View"
+                    text="{i18n>xtit.filterTitleView}"
                     key="View"
                     multiSelect="false">
                 <items>
@@ -18,16 +17,18 @@
                     <ViewSettingsItem text="Simple" key="Simple" />
                 </items>
             </ViewSettingsFilterItem>
-            <ViewSettingsFilterItem
-                    text="Group"
-                    key="Group"
-                    multiSelect="false">
-                <items>
-                    <ViewSettingsItem text="Less Than 100" key="Price___LE___100___X" />
-                    <ViewSettingsItem text="Between 100 and 1000" key="Price___BT___100___1000" />
-                    <ViewSettingsItem text="More Than 1000" key="Price___GT___1000___X" />
-                </items>
-            </ViewSettingsFilterItem>
+            <ViewSettingsCustomItem
+                    id="idCustomFilterItem"
+                    text="{i18n>xtit.filterTitleGroup}"
+                    key="ResourceGroup">
+                <customControl>
+                    <MultiInput id="multiInput"
+                                showValueHelp="true"
+                                width="90%"
+                                class="sapUiSmallMargin">
+                    </MultiInput>
+                </customControl>
+            </ViewSettingsCustomItem>
         </filterItems>
     </ViewSettingsDialog>
 

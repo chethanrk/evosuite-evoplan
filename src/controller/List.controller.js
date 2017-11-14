@@ -20,17 +20,17 @@ sap.ui.define([
         });
 
         var oMessageTemplate = new MessagePopoverItem({
-            type: '{type}',
-            title: '{title}',
-            description: '{description}',
-            subtitle: '{subtitle}',
-            counter: '{counter}',
+            type: '{Type}',
+            title: '{Title}',
+            description: '{Description}',
+            subtitle: '{Subtitle}',
+            counter: '{Counter}',
             link: oLink
         });
 
         var oMessagePopover = new MessagePopover({
             items: {
-                path: '/',
+                path: '/SaveMessageSet',
                 template: oMessageTemplate
             }
         });
@@ -56,12 +56,12 @@ sap.ui.define([
                 this._aSelectedRowsIdx = [];
 
 				// Model used to manipulate control states
-				var tableTitle = this.getResourceBundle().getText("demandTableTitle");
+				var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle");
 				oViewModel = new JSONModel({
-					viewTitle : this.getResourceBundle().getText("demandViewTitle"),
+					viewTitle : this.getResourceBundle().getText("xtit.itemListTitle"),
 					filterEntity: "Demand",
 					tableEntity : "DemandSet",
-					tableTitle : this.getResourceBundle().getText("demandTableTitle"),
+					tableTitle : tableTitle,
 					tableNoDataText : this.getResourceBundle().getText("tableNoDataText", [tableTitle]),
 					tableBusyDelay : 0
 				});
@@ -109,21 +109,69 @@ sap.ui.define([
                 this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
                 if(this._aSelectedRowsIdx.length > 0){
                     if (!this._oAssignDialog) {
-                        this._oAssignDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.SelectDialog", this);
-                        this._oAssignDialog.setModel(this.getView().getModel());
+                        this._oAssignDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.AssignSelectDialog", this);
+                        this.getView().addDependent(this._oAssignDialog);
                     }
-                    this._oAssignDialog.getBinding("items").filter([]);
                     this._oAssignDialog.open();
 				}else{
-                    var msg = this.getResourceBundle().getText('ymsg.selectOrderForAssign');
+                    var msg = this.getResourceBundle().getText('ymsg.selectMinItem');
                     MessageToast.show(msg);
 				}
+            },
+
+            /**
+             * close assign modal
+             * @param oEvent
+             */
+            onSearchAssignModal : function (oEvent) {
+                var sQuery = oEvent.getSource().getValue(),
+                    oTable = sap.ui.getCore().byId("assignModalTable");
+                this.onSearchTreeTable(oTable, sQuery);
+            },
+
+            /**
+             *
+             * @param oEvent
+             */
+            onSelectionChangeAssignModal : function (oEvent) {
+                var oContext = oEvent.getParameter("rowContext");
+                var targetPath = oContext.sPath;
+                //this.saveAssignedDemands([], targetPath);
+                this._oAssignDialog.close();
+            },
+
+            onChangeStatusButtonPress : function (oEvent) {
+                this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+                if(this._aSelectedRowsIdx.length > 0){
+                    if (!this._oStatusDialog) {
+                        this._oStatusDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.StatusSelectDialog", this);
+                        this.getView().addDependent(this._oAssignDialog);
+                    }
+                    this._oStatusDialog.open();
+                }else{
+                    var msg = this.getResourceBundle().getText('ymsg.selectMinItem');
+                    MessageToast.show(msg);
+                }
+            },
+
+            onMessagePopoverPress: function (oEvent) {
+                oMessagePopover.openBy(oEvent.getSource());
             },
 
             onExit: function() {
                 if(this._oAssignDialog){
                     this._oAssignDialog.destroy();
                 }
+                if(this._oStatusDialog){
+                    this._oStatusDialog.destroy();
+                }
+            },
+
+            /**
+             * @param oEvent
+             */
+            onCancelAssginModal : function (oEvent) {
+                this._oAssignDialog.close();
             },
 
 			/* =========================================================== */
