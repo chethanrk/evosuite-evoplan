@@ -3,6 +3,7 @@
           xmlns:mvc="sap.ui.core.mvc"
           xmlns:semantic="sap.m.semantic"
           xmlns:smartTable="sap.ui.comp.smarttable"
+          xmlns:smartVariant="sap.ui.comp.smartvariants"
           xmlns:table="sap.ui.table"
           xmlns:l="sap.ui.layout"
           xmlns:vm="sap.ui.comp.variants"
@@ -23,11 +24,15 @@
             <f:title>
                 <f:DynamicPageTitle>
                     <f:heading>
-                        <vm:VariantManagement
-                                standardItemText="Standard"
-                                showExecuteOnSelection="true"
+                        <smartVariant:SmartVariantManagement
+                                id="treeVariantManagment"
+                                persistencyKey="searchListReportVariant"
+                                select="onSelectVariant"
                                 showShare="true"
-                                showSetAsDefault="true"></vm:VariantManagement>
+                                showSetAsDefault="true"
+                                showExecuteOnSelection="true"
+                                lifecycleSupport="true">
+                        </smartVariant:SmartVariantManagement>
                     </f:heading>
                     <f:actions>
                         <ToolbarSpacer/>

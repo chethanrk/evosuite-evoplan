@@ -87,6 +87,14 @@ sap.ui.define([
         },
 
         /**
+         * when variant was selected
+         * @param oEvent
+         */
+        onSelectTreeVariant : function (oEvent) {
+
+        },
+
+        /**
          * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
          * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage
          **/

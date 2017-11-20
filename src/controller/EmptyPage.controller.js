@@ -1,5 +1,5 @@
 sap.ui.define([
-		"nw/epm/refapps/purchaseorders/approve/controller/BaseController"
+		"com/evorait/evoplan/controller/BaseController"
 	], function(BaseController) {
 	"use strict";
 

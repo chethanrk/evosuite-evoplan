@@ -36,12 +36,12 @@
 				}
 			},
 			applications: {
-                "evoplan-dispatch": {
+                "EvoPlan-dispatch": {
                     additionalInformation: "SAPUI5.Component=com.evorait.evoplan",
                 	applicationType: "URL",
             		url: "../",
-                	description: "SAP Fiori Ref. App",
-					title: "Approve Purchase Orders"
+                	description: "Dispatch demands",
+					title: "evoPlan"
                }
 			}   
 		};
@@ -52,15 +52,29 @@
 	<!-- Bootstrap the UI5 core library -->
 	<!-- //src="../resources/sap-ui-core.js" -->
 	<!-- https://ed1.evorait.net:50103/sap/public/bc/ui5_ui5/1/resources/sap-ui-core.js -->
+
+	<!-- Bootstrapping UI5 -->
+	<!-- https://sapui5.hana.ondemand.com/resources/sap-ui-core.js -->
 	<script id="sap-ui-bootstrap"
 			src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
 			data-sap-ui-preload="async"
-			data-sap-ui-libs="sap.m, sap.ushell, sap.ndc"
+			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ushell, sap.ndc"
 			data-sap-ui-theme="sap_belize"
-			data-sap-ui-language="en"
 			data-sap-ui-compatVersion="edge"
-            data-sap-ui-resourceroots='{"com.evorait.evoplan": "../"}'
-			data-sap-ui-frameOptions='allow'> // NON-SECURE setting for testing environment
+			data-sap-ui-language="en"
+			data-sap-ui-resourceroots='{"com.evorait.evoplan": "../"}'
+			data-sap-ui-frameOptions='allow'>    // NON-SECURE setting for testing environment
+	</script>
+
+	<script type="text/javascript">
+        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-core');
+        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-widget');
+        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-mouse');
+        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-sortable');
+        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-droppable');
+        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-draggable');
+
+        sap.ui.localResources("sapui5draganddrop");
 	</script>
 
 	<script type="text/javascript">
@@ -71,9 +85,11 @@
 			], function (server) {
 				// set up test service for local testing
 				server.init();
+				var renderer = sap.ushell.Container.createRenderer();
+                console.log(renderer);
 
-				// initialize the ushell sandbox component
-				sap.ushell.Container.createRenderer().placeAt("content");
+                // initialize the ushell sandbox component
+                renderer.placeAt("content");
 			});
 		});
 	</script>

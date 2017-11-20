@@ -4,7 +4,7 @@
 sap.ui.define([
 		"sap/ui/Device",
 		"sap/m/MessageBox",
-		"nw/epm/refapps/purchaseorders/approve/model/utilities"
+		"com/evorait/evoplan/model/utilities"
 	], function(Device, MessageBox, utilities) {
 	"use strict";
 
