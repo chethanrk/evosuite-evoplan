@@ -17,14 +17,12 @@
 		},
 		"dataSources": {
 			"mainService": {
-				"uri": "https://ed1.evorait.net:50103/sap/opu/odata/SAP/ZEVORA_MAIN_SRV/",
+				"uri": "/sap/opu/odata/sap/ZEVORA_MAIN_SRV/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
 					"localUri": "localService/metadata.xml",
-					"annotations": [
-						"annotations"
-					]
+					"annotations": []
 				}
 			},
 			"annotations": {
@@ -42,7 +40,6 @@
 					"action": "dispatch",
 					"title": "{{appTitle}}",
 					"subTitle": "{{appDescription}}",
-					"icon": "sap-icon://Fiori7/F1373",
 					"indicatorDataSource": {
 						"dataSource": "mainService",
 						"path": "DemandSet/$count",
@@ -70,7 +67,11 @@
 			"tablet": true,
 			"phone": true
 		},
-		"supportedThemes": ["sap_hcb", "sap_bluecrystal", "sap_belize"]
+		"supportedThemes": [
+			"sap_hcb",
+			"sap_bluecrystal",
+			"sap_belize"
+		]
 	},
 	"sap.ui5": {
 		"rootView": {
@@ -79,13 +80,13 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.40.0",
+			"minUI5Version": "1.48.0",
 			"libs": {
 				"sap.ui.core": {
-					"minVersion": "1.40.0"
+					"minVersion": "1.48.0"
 				},
 				"sap.m": {
-					"minVersion": "1.40.0"
+					"minVersion": "1.48.0"
 				},
 				"sap.uxap": {
 					"minVersion": ""
@@ -112,9 +113,11 @@
 			}
 		},
 		"resources": {
-			"css": [{
-				"uri": "assets/css/style.css"
-			}]
+			"css": [
+				{
+					"uri": "assets/css/style.css"
+				}
+			]
 		},
 		"routing": {
 			"config": {
@@ -123,19 +126,31 @@
 				"viewPath": "com.evorait.evoplan.view",
 				"controlId": "app",
 				"bypassed": {
-					"target": ["master", "empty"]
+					"target": [
+						"master",
+						"empty"
+					]
 				},
 				"async": true
 			},
-			"routes": [{
-				"pattern": "",
-				"name": "main",
-				"target": ["list", "master"]
-			}, {
-				"pattern": "WorkOrder/{objectId}",
-				"name": "detail",
-				"target": ["master", "detail"]
-			}],
+			"routes": [
+				{
+					"pattern": "",
+					"name": "main",
+					"target": [
+						"list",
+						"master"
+					]
+				},
+				{
+					"pattern": "WorkOrder/{objectId}",
+					"name": "detail",
+					"target": [
+						"master",
+						"detail"
+					]
+				}
+			],
 			"targets": {
 				"master": {
 					"viewName": "MasterPage",

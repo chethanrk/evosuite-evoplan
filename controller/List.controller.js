@@ -15,7 +15,7 @@ sap.ui.define([
 
         var oLink = new sap.m.Link({
             text: "Show more information",
-            href: "http://sap.com",
+            href: "",
             target: "_blank"
         });
 

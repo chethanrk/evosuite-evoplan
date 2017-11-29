@@ -9,31 +9,26 @@
     <!-- Bootstrapping UI5 -->
     <!-- https://sapui5.hana.ondemand.com/resources/sap-ui-core.js -->
     <script id="sap-ui-bootstrap"
-            src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
+            src="../resources/sap-ui-core.js"
             data-sap-ui-libs="sap.m, sap.ui.layout"
             data-sap-ui-theme="sap_belize"
             data-sap-ui-compatVersion="edge"
             data-sap-ui-resourceroots='{"com.evorait.evoplan": "../"}'
             data-sap-ui-frameOptions='allow'>    // NON-SECURE setting for testing environment
     </script>
+    
+    <script type="text/javascript" src="cordova.js"></script>
 
     <script type="text/javascript">
-        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-core');
-        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-widget');
-        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-mouse');
-        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-sortable');
-        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-droppable');
-        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-draggable');
+        jQuery.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-core');
+        jQuery.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-widget');
+        jQuery.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-mouse');
+        jQuery.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-sortable');
+        jQuery.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-droppable');
+        jQuery.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-draggable');
 
         sap.ui.localResources("sapui5draganddrop");
     </script>
-
-
-    <!-- get user related data? -->
-    <!--<script src="https://ed1.evorait.net:50103/sap/public/bc/ui2/shell-api/sap/ui2/shell/shell.js"></script>
-    <script src="https://ed1.evorait.net:50103/sap/public/bc/ui2/services/sap/ui2/srvc/error.js"></script>
-    <script src="https://ed1.evorait.net:50103/sap/public/bc/ui2/services/sap/ui2/srvc/utils.js"></script>
-    <script src="https://ed1.evorait.net:50103/sap/public/bc/ui2/shell-api/sap/ui2/shell/startup.js"></script>-->
 
     <script type="text/javascript">
         /*=====================================================================

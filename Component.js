@@ -69,35 +69,6 @@ sap.ui.define([
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
 
-			//Todo: define more UserModel
-			if(sap.ui2 && sap.ui2.shell){
-				var oUser = sap.ui2.shell.getUser();
-				oUser.load({}, function(){
-						var fullName = oUser.getFullName();
-						var userID = oUser.getId();
-						console.log('you are loggin in with ' + fullName);
-					},
-					function(sError){
-						console.log('user fetching failed ' + sError );
-					});
-
-			}else{
-				var oModel = this.getModel(),
-					sUser = oModel.oMetadata.sUser,
-					oUser = {};
-
-				if(sUser){
-					oModel.read("/LoggedUser('"+sUser+"')",{
-						success: function(data, response){
-							console.log(data);
-						},
-						error: function(error){
-						}
-					});
-				}
-			}
-			this.setModel(models.createUserModel(oUser), "user");
-
 			// create the views based on the url/hash
 			this.getRouter().initialize();
 		},
