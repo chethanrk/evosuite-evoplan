@@ -78,20 +78,69 @@
 	</script>
 
 	<script type="text/javascript">
-		sap.ui.getCore().attachInit(function() {
+		/*=====================================================================
+		 The following onError function is used to trap any errors that occur
+		 while the application is running. Cordova fails silently whenever it
+		 encounters an error in HTML or JavaScript code. So, with that being
+		 the case, developers cannot tell when/why their applications are
+		 failing. Any code error will cause the function to fire and display
+		 the error in an alert dialog.
+		 ======================================================================*/
+        window.onerror = function (msg, url, line) {
+            var idx = url.lastIndexOf("/");
+            if (idx > -1) {
+                url = url.substring(idx + 1);
+            }
+            alert("ERROR in " + url + " (line #" + line + ")\n" + msg);
+            console.error(msg);
+            return false;
+        };
+	</script>
 
-			sap.ui.require([
-				"com/evorait/evoplan/localService/mockserver"
-			], function (server) {
-				// set up test service for local testing
-				server.init();
-				var renderer = sap.ushell.Container.createRenderer();
-                console.log(renderer);
+	<script>
 
-                // initialize the ushell sandbox component
-                renderer.placeAt("content");
-			});
-		});
+        function getUrlParameterName(sParam) {
+            var sPageURL = window.location.search.substring(1);
+            var sURLVariables = sPageURL.split('&');
+            for (var i = 0; i < sURLVariables.length; i++) {
+                var sParameterName = sURLVariables[i].split('=');
+                if (sParameterName[0] == sParam) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function startApp() {
+            sap.ui.getCore().attachInit(function() {
+
+                sap.ui.require([
+                    "com/evorait/evoplan/localService/mockserver"
+                ], function (server) {
+                    // set up test service for local testing
+                    server.init();
+                    var shell = sap.ushell;
+                    var renderer = shell.Container.createRenderer();
+
+                    // initialize the ushell sandbox component
+                    renderer.placeAt("content");
+                });
+            });
+        }
+
+        window.onload = function () {
+            jQuery.sap.require("com.evorait.evoplan.dev.devapp");
+            if (window.cordova || getUrlParameterName("companionbuster")) {
+                var page = window.location.pathname.split("/").pop();
+                if (page === "preview_hidden.html") {
+                    window.sap_webide_FacadePreview = true;
+                }
+                com.evorait.evoplan.dev.devapp.initialize();
+            }
+            else {
+                startApp();
+            }
+        }
 	</script>
 
 </head>

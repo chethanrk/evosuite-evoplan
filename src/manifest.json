@@ -6,6 +6,12 @@
 		"i18n": "i18n/i18n.properties",
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
+		"tags": {
+			"keywords": [
+				"{{xfld.keyWord1}}",
+				"{{xfld.keyWord2}}"
+			]
+		},
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -29,9 +35,24 @@
 				}
 			}
 		},
-		"sourceTemplate": {
-			"id": "sap.ui.ui5-template-plugin.1worklist",
-			"version": "1.38.3"
+		"crossNavigation": {
+			"inbounds": {
+				"productsManage": {
+					"semanticObject": "evoPlan",
+					"action": "dispatch",
+					"title": "{{appTitle}}",
+					"subTitle": "{{appDescription}}",
+					"icon": "sap-icon://Fiori7/F1373",
+					"indicatorDataSource": {
+						"dataSource": "mainService",
+						"path": "DemandSet/$count",
+						"refresh": 450
+					},
+					"signature": {
+						"additionalParameters": "allowed"
+					}
+				}
+			}
 		}
 	},
 	"sap.ui": {

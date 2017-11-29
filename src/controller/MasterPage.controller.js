@@ -20,22 +20,19 @@ sap.ui.define([
             this._oDataTable = this._oDroppableTable.getTable();
             this._configureDataTable(this._oDataTable);
 
+            this._oTreeVariant = this.byId("treeVariantManagment");
+
+            //add fragment FilterSettingsDialog to the view
+            if (!this._oFilterSettingsDialog) {
+                this._oFilterSettingsDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.FilterSettingsDialog", this);
+                this.getView().addDependent(this._oFilterSettingsDialog);
+            }
+
             this._oPullToRefresh = this.byId("pullToRefresh");
             this._oListFilterState = {
                 aSearch: []
             };
             this._iRunningListUpdates = 0;
-            //this._initializeViewModel();
-
-        },
-
-        /**
-        * Similar to onAfterRendering, but this hook is invoked before the controller's View is re-rendered
-        * (NOT before the first rendering! onInit() is used for that one!).
-        * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage
-        **/
-        onBeforeRendering: function() {
-
         },
 
         /**
@@ -46,6 +43,11 @@ sap.ui.define([
             if(this._oDroppableTable){
                 this._jDroppable(this);
             }
+
+            var oSearch = this.byId("searchField");
+            var oFilterViewDialog = sap.ui.getCore().byId("filterViewDialog");
+            //this._oTreeVariant.addPersonalizableControl(oSearch);
+           //this._oTreeVariant.addPersonalizableControl(oFilterViewDialog);
         },
 
         onBeforeRebindTable: function(oEvent) {

@@ -1,10 +1,8 @@
 <core:FragmentDefinition
         xmlns="sap.m"
-        xmlns:core="sap.ui.core"
-        xmlns:l="sap.ui.layout"
-        xmlns:vm="sap.ui.comp.variants">
+        xmlns:core="sap.ui.core">
 
-    <ViewSettingsDialog title="Filter" confirm="onFilterSettingsConfirm">
+    <ViewSettingsDialog id="filterViewDialog" title="Filter" confirm="onFilterSettingsConfirm">
         <filterItems>
             <ViewSettingsFilterItem
                     text="{i18n>xtit.filterTitleView}"

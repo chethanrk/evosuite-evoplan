@@ -43,7 +43,7 @@
             </EntityType>
             <EntityContainer Name="ZEVORA_MAIN_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
                 <EntitySet Name="DemandSet" EntityType="ZEVORA_MAIN_SRV.Demand" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
-                <EntitySet Name="TechnicianSet" EntityType="ZEVORA_MAIN_SRV.Technician" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="ResourceGroupSet" EntityType="ZEVORA_MAIN_SRV.Technician" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="Nodes" EntityType="ZEVORA_MAIN_SRV.Node" />
                 <EntitySet Name="SaveMessageSet" EntityType="ZEVORA_MAIN_SRV.SaveMessage" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
             </EntityContainer>
