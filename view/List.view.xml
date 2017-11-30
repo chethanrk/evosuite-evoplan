@@ -36,7 +36,7 @@
                         direction="Column"
                         fitContainer="true"
                         enableAutoBinding="true"
-                        entitySet="{viewModel>/tableEntity}"
+                        entitySet="DemandSet"
                         smartFilterId="listReportFilter"
                         showRowCount="true"
                         header="{viewModel>/tableTitle}"
@@ -54,8 +54,7 @@
 
         <footer>
             <OverflowToolbar>
-                <Button icon="sap-icon://message-popup" text="{/messagesLength}" type="Emphasized"
-                        press="onMessagePopoverPress"/>
+                <Button icon="sap-icon://message-popup" text="{/messagesLength}" type="Emphasized" press="onMessagePopoverPress"/>
                 <ToolbarSpacer/>
                 <Button text="{i18n>xbut.changeStatus}" icon="sap-icon://flag" press="onChangeStatusButtonPress">
                     <layoutData>

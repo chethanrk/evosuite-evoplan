@@ -5,7 +5,7 @@
 
     <smartFilterBar:SmartFilterBar
             id="listReportFilter"
-            entityType="{viewModel>/filterEntity}"
+            entityType="Demand"
             persistencyKey="searchListReportVariant"
             enableBasicSearch="false"
             useToolbar="true"

@@ -22,7 +22,9 @@
 				"settings": {
 					"odataVersion": "2.0",
 					"localUri": "localService/metadata.xml",
-					"annotations": []
+					"annotations": [
+						"annotations"
+					]
 				}
 			},
 			"annotations": {
@@ -46,6 +48,11 @@
 						"refresh": 450
 					},
 					"signature": {
+						"parameters": {
+							"Demand": {
+								"required": false
+							}
+						},
 						"additionalParameters": "allowed"
 					}
 				}
@@ -110,6 +117,10 @@
 			"": {
 				"dataSource": "mainService",
 				"preload": true
+			},
+			"@i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"uri": "i18n/i18n.properties"
 			}
 		},
 		"resources": {

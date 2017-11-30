@@ -60,7 +60,6 @@ sap.ui.define([
 				oViewModel = new JSONModel({
 					viewTitle : this.getResourceBundle().getText("xtit.itemListTitle"),
 					filterEntity: "Demand",
-					tableEntity : "DemandSet",
 					tableTitle : tableTitle,
 					tableNoDataText : this.getResourceBundle().getText("tableNoDataText", [tableTitle]),
 					tableBusyDelay : 0
