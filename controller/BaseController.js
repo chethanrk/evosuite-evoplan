@@ -118,63 +118,35 @@ sap.ui.define([
 				var targetObj = oModel.getProperty(sTargetPath);
 				var resourceGroupId = targetObj.ParentNodeId;
 				var resourceId = targetObj.NodeId;
-                //var readPath = "/ResourceSet('"+resourceId+"')";
-                var readPath = "/ResourceGroupSet('"+resourceId+"')";
 
                 if(targetObj.ParentNodeId === ""){
                     resourceGroupId = targetObj.NodeId;
                     resourceId = "";
-                    readPath = "/ResourceGroupSet('"+resourceGroupId+"')";
 				}
 				
-				var oAssignData = {
-					metaPath: readPath,
-                    aSourcePaths: aSourcePaths,
-                    resourceGroupId: resourceGroupId,
-                    resourceId: resourceId
-				};
-                this._readAndSaveResourceData(oAssignData);
-			},
+                for(var i = 0; i < aSourcePaths.length; i++) {
+                    var obj = aSourcePaths[i];
+                    var demandObj = oModel.getProperty(obj.sPath);
 
-            _readAndSaveResourceData: function (oAssignData) {
-				var oModel = this.getModel();
-                oModel.read(oAssignData.metaPath, {
-					success: function(data){
-						console.log(data);
+                    oModel.callFunction("/CreateAssignment", // function import name
+                        "POST", // http method
+                        {	// function import parameters
+                            "DemandGuid" : demandObj.Guid,
+                            "ResourceGroupGuid" : resourceGroupId,
+                            "ResourceGuid" : resourceGroupId
+                        },
+                        null,
+                        function(oData, response) {
+                            console.log(oData, response);
+                            // callback function for success
+                        },
+                        function(oError){
+                            // callback function for error
+                        }
+                    );
+                }
+			}
 
-						for(var i = 0; i < oAssignData.aSourcePaths.length; i++) {
-							var obj = oAssignData.aSourcePaths[i];
-							var demandObj = oModel.getProperty(obj.sPath);
-							var callObj = {	// function import parameters
-								"DemandGuid" : demandObj.Guid,
-								"ResourceGroupGuid" : oAssignData.resourceGroupId,
-								"ResourceGuid" : oAssignData.resourceId,
-								"DateFrom" : data.DateFrom,
-								"DateTo" : data.DateTo,
-								"TimeFrom" : data.TimeFrom,
-								"TimeTo" : data.TimeTo
-							};
-							console.log(callObj);
-
-							oModel.callFunction("/CreateAssignment", // function import name
-								"POST", // http method
-								callObj,
-								null,
-								function(oData, response) {
-									console.log(oData, response);
-									// callback function for success
-								},
-								function(oError){
-									// callback function for error
-								}
-							);
-						}
-					},
-					error: function(error){
-						console.log(error);
-					}
-				});
-            }
 
 
 		});

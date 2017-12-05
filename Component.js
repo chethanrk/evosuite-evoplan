@@ -74,7 +74,7 @@ sap.ui.define([
                 subFilterEntity: "Demand",
                 subTableSet: "DemandSet",
                 tableBusyDelay : 0,
-                persistencyKey: ""
+                persistencyKey: "persistencyKey"
             });
             this.setModel(oViewModel, "viewModel");
 

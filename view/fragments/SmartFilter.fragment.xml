@@ -9,10 +9,7 @@
             persistencyKey="{viewModel>/persistencyKey}"
             enableBasicSearch="false"
             useToolbar="true"
-            considerSelectionVariants="true"
-            beforeVariantSave="onBeforeVariantSave"
-            beforeVariantFetch="onBeforeVariantFetch"
-            afterVariantLoad="onAfterVariantLoad">
+            considerSelectionVariants="true">
 
         <!-- layout data used to make the table growing but the filter bar fixed -->
         <smartFilterBar:layoutData>

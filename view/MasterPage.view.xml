@@ -22,12 +22,20 @@
                     <f:heading>
                         <smartVariant:SmartVariantManagement
                                 id="treeVariantManagment"
-                                persistencyKey="searchListReportVariant"
+                                persistencyKey="{viewModel>/persistencyKey}"
                                 select="onSelectVariant"
                                 showShare="true"
                                 showSetAsDefault="true"
                                 showExecuteOnSelection="true"
-                                lifecycleSupport="true">
+                                lifecycleSupport="true"
+                                beforeVariantSave="onBeforeVariantSave"
+                                beforeVariantFetch="onBeforeVariantFetch"
+                                afterVariantLoad="onAfterVariantLoad">
+
+                            <smartVariant:personalizableControls>
+
+                            </smartVariant:personalizableControls>
+
                         </smartVariant:SmartVariantManagement>
                     </f:heading>
                     <f:actions>
