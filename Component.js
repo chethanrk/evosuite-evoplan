@@ -69,6 +69,15 @@ sap.ui.define([
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
 
+            var oViewModel = new JSONModel({
+                treeSet: "ResourceHierarchySet",
+                subFilterEntity: "Demand",
+                subTableSet: "DemandSet",
+                tableBusyDelay : 0,
+                persistencyKey: ""
+            });
+            this.setModel(oViewModel, "viewModel");
+
 			// create the views based on the url/hash
 			this.getRouter().initialize();
 		},

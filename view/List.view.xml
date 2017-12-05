@@ -11,14 +11,14 @@
     <Page id="listPage"
           title="{viewModel>/viewTitle}"
           showFooter="true"
-          showHeader="true">
+          showHeader="true"
+          class="sapUiNoContentPadding tableContentPage">
 
         <f:DynamicPage headerExpanded="true"
                        preserveHeaderStateOnScroll="true"
                        fitContent="true"
                        showFooter="false"
-                       toggleHeaderOnTitleClick="false"
-                       class="">
+                       toggleHeaderOnTitleClick="false">
 
             <f:header>
                 <f:DynamicPageHeader pinnable="true">
@@ -36,10 +36,10 @@
                         direction="Column"
                         fitContainer="true"
                         enableAutoBinding="true"
-                        entitySet="DemandSet"
+                        entitySet="{viewModel>/subTableSet}"
                         smartFilterId="listReportFilter"
                         showRowCount="true"
-                        header="{viewModel>/tableTitle}"
+                        header="{viewModel>/subTableTitle}"
                         useExportToExcel="true"
                         useVariantManagement="true"
                         useTablePersonalisation="true">

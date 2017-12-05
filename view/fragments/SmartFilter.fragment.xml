@@ -5,8 +5,8 @@
 
     <smartFilterBar:SmartFilterBar
             id="listReportFilter"
-            entityType="Demand"
-            persistencyKey="searchListReportVariant"
+            entityType="{viewModel>/subFilterEntity}"
+            persistencyKey="{viewModel>/persistencyKey}"
             enableBasicSearch="false"
             useToolbar="true"
             considerSelectionVariants="true"

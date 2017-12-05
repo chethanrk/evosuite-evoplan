@@ -82,7 +82,7 @@ sap.ui.define([
 			 * trigger logout
 			 */
 			onLogout: function () {
-				var externalURL = "https://ed1.evorait.net:50103";
+				var externalURL = "";
 
                 if (com.evorait.evoplan.dev.devapp.externalURL) {
                     externalURL = com.evorait.evoplan.dev.devapp.externalURL;
@@ -105,17 +105,77 @@ sap.ui.define([
                 if (sQuery && sQuery.length > 0) {
                     //only search on 0 and 1 Level
                     var filter = new Filter("Description", FilterOperator.Contains, sQuery);
-                    var filterLevel = new Filter("HierarchyLevel", FilterOperator.LE, 1);
+                    //var filterLevel = new Filter("HierarchyLevel", FilterOperator.LE, 1);
                     aFilters.push(filter);
                 }
                 // update table binding
                 var binding = oTable.getBinding("rows");
                 binding.filter(aFilters, "Application");
             },
-			
-			saveAssignedDemands: function (source, target) {
+
+            assignedDemands: function (aSourcePaths, sTargetPath) {
+				var oModel = this.getModel();
+				var targetObj = oModel.getProperty(sTargetPath);
+				var resourceGroupId = targetObj.ParentNodeId;
+				var resourceId = targetObj.NodeId;
+                //var readPath = "/ResourceSet('"+resourceId+"')";
+                var readPath = "/ResourceGroupSet('"+resourceId+"')";
+
+                if(targetObj.ParentNodeId === ""){
+                    resourceGroupId = targetObj.NodeId;
+                    resourceId = "";
+                    readPath = "/ResourceGroupSet('"+resourceGroupId+"')";
+				}
 				
+				var oAssignData = {
+					metaPath: readPath,
+                    aSourcePaths: aSourcePaths,
+                    resourceGroupId: resourceGroupId,
+                    resourceId: resourceId
+				};
+                this._readAndSaveResourceData(oAssignData);
+			},
+
+            _readAndSaveResourceData: function (oAssignData) {
+				var oModel = this.getModel();
+                oModel.read(oAssignData.metaPath, {
+					success: function(data){
+						console.log(data);
+
+						for(var i = 0; i < oAssignData.aSourcePaths.length; i++) {
+							var obj = oAssignData.aSourcePaths[i];
+							var demandObj = oModel.getProperty(obj.sPath);
+							var callObj = {	// function import parameters
+								"DemandGuid" : demandObj.Guid,
+								"ResourceGroupGuid" : oAssignData.resourceGroupId,
+								"ResourceGuid" : oAssignData.resourceId,
+								"DateFrom" : data.DateFrom,
+								"DateTo" : data.DateTo,
+								"TimeFrom" : data.TimeFrom,
+								"TimeTo" : data.TimeTo
+							};
+							console.log(callObj);
+
+							oModel.callFunction("/CreateAssignment", // function import name
+								"POST", // http method
+								callObj,
+								null,
+								function(oData, response) {
+									console.log(oData, response);
+									// callback function for success
+								},
+								function(oError){
+									// callback function for error
+								}
+							);
+						}
+					},
+					error: function(error){
+						console.log(error);
+					}
+				});
             }
+
 
 		});
 

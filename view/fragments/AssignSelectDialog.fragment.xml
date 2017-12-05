@@ -16,7 +16,7 @@
                     expandFirstLevel="false"
                     columnHeaderVisible="false"
                     rowSelectionChange="onSelectionChangeAssignModal"
-                    rows="{path : '/TechnicianSet'}">
+                    rows="{path : '/ResourceHierarchySet'}">
 
                 <table:columns>
                     <table:Column label="Description">
@@ -28,8 +28,12 @@
             </table:TreeTable>
         </content>
 
+        <beginButton>
+            <Button text="Cancel" press="onAssignModalCancel" />
+        </beginButton>
+
         <endButton>
-            <Button text="Cancel" press="onCancelAssginModal" />
+            <Button text="Ok" press="onAssignModalSave" />
         </endButton>
     </Dialog>
 

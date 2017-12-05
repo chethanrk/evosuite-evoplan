@@ -1,0 +1,402 @@
+{
+  "d": {
+    "results": [
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B389D3AAE967D70C')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B389D3AAE967D70C')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B389D3AAE967D70C",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01ED7B389D3AAE967D70C",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B487CF7C0CA15D73')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B487CF7C0CA15D73')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B487CF7C0CA15D73",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01ED7B487CF7C0CA15D73",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B487CD6C0D855D72')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B487CD6C0D855D72')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B487CD6C0D855D72",
+        "ParentNodeId": "0A51491BD5A01ED7B487CF7C0CA15D73",
+        "HierarchyLevel": 1,
+        "Description": "Group: 0A51491BD5A01ED7B487CD6C0D855D72",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B487CD2B92AE1D72')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B487CD2B92AE1D72')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B487CD2B92AE1D72",
+        "ParentNodeId": "0A51491BD5A01ED7B487CD6C0D855D72",
+        "HierarchyLevel": 2,
+        "Description": "Group: 0A51491BD5A01ED7B487CD2B92AE1D72",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B389D5622A59D70F')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B389D5622A59D70F')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B389D5622A59D70F",
+        "ParentNodeId": "0A51491BD5A01ED7B487CD2B92AE1D72",
+        "HierarchyLevel": 3,
+        "Description": "Group: 0A51491BD5A01ED7B389D5622A59D70F",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5AFFC737B22861C')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5AFFC737B22861C')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B5AFFC737B22861C",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01ED7B5AFFC737B22861C",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5AFFC737B23A61C')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5AFFC737B23A61C')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B5AFFC737B23A61C",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01ED7B5AFFC737B23A61C",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5AFFDBA99EC461C')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5AFFDBA99EC461C')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B5AFFDBA99EC461C",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01ED7B5AFFDBA99EC461C",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5AFFDBA99ED661C')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5AFFDBA99ED661C')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B5AFFDBA99ED661C",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01ED7B5AFFDBA99ED661C",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B213921E19488F')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B213921E19488F')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B5B213921E19488F",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01ED7B5B213921E19488F",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B2144F5CF62892')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B2144F5CF62892')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B5B2144F5CF62892",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01ED7B5B2144F5CF62892",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B2CA382EC52966')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B2CA382EC52966')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B5B2CA382EC52966",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01ED7B5B2CA382EC52966",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B2CA382EC64966')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B2CA382EC64966')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B5B2CA382EC64966",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01ED7B5B2CA382EC64966",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B2E46A7403A985')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B2E46A7403A985')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B5B2E46A7403A985",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01ED7B5B2E46A7403A985",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B2E46A7404C985')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B2E46A7404C985')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B5B2E46A7404C985",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01ED7B5B2E46A7404C985",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B2EA8E6DC42997')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B2EA8E6DC42997')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B5B2EA8E6DC42997",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01ED7B5B2EA8E6DC42997",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B2EA8E6DC54997')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED7B5B2EA8E6DC54997')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01ED7B5B2EA8E6DC54997",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01ED7B5B2EA8E6DC54997",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59AD44335BC89E1')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59AD44335BC89E1')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59AD44335BC89E1",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59AD44335BC89E1",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59AD52BD732E9E1')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59AD52BD732E9E1')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59AD52BD732E9E1",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59AD52BD732E9E1",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59AD94E7E1609E2')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59AD94E7E1609E2')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59AD94E7E1609E2",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59AD94E7E1609E2",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59ADA8635CD89E4')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59ADA8635CD89E4')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59ADA8635CD89E4",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59ADA8635CD89E4",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59AE7AFB081C9FE')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59AE7AFB081C9FE')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59AE7AFB081C9FE",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59AE7AFB081C9FE",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59AE8CE5D4F8A01')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59AE8CE5D4F8A01')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59AE8CE5D4F8A01",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59AE8CE5D4F8A01",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B19C464D08A4B')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B19C464D08A4B')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59B19C464D08A4B",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59B19C464D08A4B",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B1BE46874CA4B')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B1BE46874CA4B')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59B1BE46874CA4B",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59B1BE46874CA4B",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B268B46028A50')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B268B46028A50')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59B268B46028A50",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59B268B46028A50",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B2E249CE46A63')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B2E249CE46A63')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59B2E249CE46A63",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59B2E249CE46A63",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B4279544D4A78')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B4279544D4A78')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59B4279544D4A78",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59B4279544D4A78",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B4AB5A9D78A7F')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B4AB5A9D78A7F')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59B4AB5A9D78A7F",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59B4AB5A9D78A7F",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B4F018E798A80')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B4F018E798A80')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59B4F018E798A80",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59B4F018E798A80",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B9487BB128AC9')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59B9487BB128AC9')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59B9487BB128AC9",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59B9487BB128AC9",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59C8AF2FA07AC0D')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B59C8AF2FA07AC0D')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B59C8AF2FA07AC0D",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B59C8AF2FA07AC0D",
+        "DrillState": "expanded"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B5A5BCFB71EC97C5')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01EE7B5A5BCFB71EC97C5')",
+          "type": "com.evorait.evoplan.ResourceHierarchy"
+        },
+        "NodeId": "0A51491BD5A01EE7B5A5BCFB71EC97C5",
+        "ParentNodeId": "",
+        "HierarchyLevel": 0,
+        "Description": "Group: 0A51491BD5A01EE7B5A5BCFB71EC97C5",
+        "DrillState": "expanded"
+      }
+    ]
+  }
+}

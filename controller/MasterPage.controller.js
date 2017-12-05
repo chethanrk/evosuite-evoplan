@@ -15,11 +15,9 @@ sap.ui.define([
         * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
         onInit: function() {
-            //this._oApplication = this.getApplication();
             this._oDroppableTable = this.byId("droppableTable");
             this._oDataTable = this._oDroppableTable.getTable();
             this._configureDataTable(this._oDataTable);
-
             this._oTreeVariant = this.byId("treeVariantManagment");
 
             //add fragment FilterSettingsDialog to the view
@@ -151,34 +149,14 @@ sap.ui.define([
                             var targetPath = oContext.getPath();
                             var aSources = [];
                             $(draggedElements).find('li').each(function (idx, obj) {
-                                _this._addEntries($(this).attr('id'), targetPath);
-                                aSources.push($(this).attr('id'));
+                                aSources.push({sPath: $(this).attr('id')});
                             });
-                            //this.saveAssignedDemands(aSources, targetPath);
+                            _this.assignedDemands(aSources, targetPath);
                         }
                     }
                 });
             }, 1000);
-        },
-
-        _addEntries: function (sourcePath, targetPath) {
-            var sourceData = this.getModel().getProperty(sourcePath),
-                targetData = this.getModel().getProperty(targetPath);
-
-            var newRowObj = {
-                PARENT_NODE: targetData.HIERARCHY_NODE,
-                DESCRIPTION: sourceData.Guid +" "+sourceData.DemandDesc,
-                DRILLDOWN_STATE: "collapsed",
-                LEVEL: targetData.LEVEL+1,
-                MAGNITUDE: 0,
-                SERVER_INDEX: 0,
-                ISCONTAINER: 0
-            };
-
-            var newEntry = this.getModel().createEntry('/TechnicianSet', {properties: newRowObj});
-            this._oDroppableTable.getModel().refresh();
         }
-
 
     });
 });

@@ -25,7 +25,7 @@
 	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">
-			<Annotations Target="ZEVORA_MAIN_SRV.Demand">
+			<Annotations Target="com.evorait.evoplan.Demand">
 				<Annotation Term="UI.SelectionFields">
 					<Collection>
 						<PropertyPath>Guid</PropertyPath>
@@ -51,40 +51,60 @@
 						<Record Type="UI.DataField">
 							<PropertyValue Property="Value" Path="Source"/>
 						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="DateFrom"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="DateTo"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="TimeFrom"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="TimeTo"/>
+						</Record>
 					</Collection>
 				</Annotation>
 			</Annotations>
-			<Annotations Target="ZEVORA_MAIN_SRV.Demand/Guid">
+			<Annotations Target="com.evorait.evoplan.Demand/Guid">
 				<Annotation Term="Common.FieldControl" Path="FieldControlOptional"/>
 			</Annotations>
-			<Annotations Target="ZEVORA_MAIN_SRV.Demand/Source">
+			<Annotations Target="com.evorait.evoplan.Demand/Source">
 				<Annotation Term="Core.Computed" Bool="true"/>
 			</Annotations>
-			<Annotations Target="ZEVORA_MAIN_SRV.Demand/DemandDesc">
+			<Annotations Target="com.evorait.evoplan.Demand/DemandDesc">
 				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
 			</Annotations>
-			<Annotations Target="ZEVORA_MAIN_SRV.Demand/Source">
+			<Annotations Target="com.evorait.evoplan.Demand/Source">
 				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
 			</Annotations>
-			<Annotations Target="ZEVORA_MAIN_SRV.ResourceGroup">
-				<Annotation Term="UI.SelectionFields">
-					<Collection>
-						<PropertyPath>Guid</PropertyPath>
-						<PropertyPath>ResourceGroupId</PropertyPath>
-					</Collection>
-				</Annotation>
-				<Annotation Term="UI.LineItem">
-					<Collection>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="Guid"/>
-							<Annotation Term="UI.Importance" EnumMember="UI.Importance/High"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="ResourceGroupId"/>
-							<Annotation Term="UI.Importance" EnumMember="UI.Importance/High"/>
-						</Record>
-					</Collection>
-				</Annotation>
+			<Annotations Target="com.evorait.evoplan.Demand/DateFrom">
+				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Demand/TimeFrom">
+				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Demand/DateTo">
+				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Demand/TimeTo">
+				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
+			</Annotations>
+
+			<Annotations Target="com.evorait.evoplan.ResourceHierarchy/NodeId">
+				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceHierarchy/ParentNodeId">
+				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceHierarchy/HierarchyLevel">
+				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceHierarchy/Description">
+				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceHierarchy/DrillState">
+				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

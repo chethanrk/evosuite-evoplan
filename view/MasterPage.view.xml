@@ -4,23 +4,19 @@
           xmlns:semantic="sap.m.semantic"
           xmlns:smartTable="sap.ui.comp.smarttable"
           xmlns:smartVariant="sap.ui.comp.smartvariants"
-          xmlns:table="sap.ui.table"
-          xmlns:l="sap.ui.layout"
-          xmlns:vm="sap.ui.comp.variants"
           xmlns:f="sap.f">
 
     <Page id="masterPage"
           title="{i18n>masterTitle}"
           showFooter="true"
           showHeader="true"
-          icon="sap-icon://action">
+          class="sapUiNoContentPadding tableContentPage">
 
         <f:DynamicPage headerExpanded="true"
                        preserveHeaderStateOnScroll="true"
                        fitContent="true"
                        showFooter="false"
-                       toggleHeaderOnTitleClick="false"
-                       class="tableContentPage">
+                       toggleHeaderOnTitleClick="false">
             <f:title>
                 <f:DynamicPageTitle>
                     <f:heading>
@@ -56,7 +52,7 @@
             <f:content>
                 <smartTable:SmartTable
                         id="droppableTable"
-                        entitySet="ResourceGroupSet"
+                        entitySet="{viewModel>/treeSet}"
                         tableType="TreeTable"
                         useExportToExcel="false"
                         useVariantManagement="false"
@@ -66,9 +62,8 @@
                         enableAutoBinding="true"
                         beforeRebindTable="onBeforeRebindTable"
                         updateFinished="onUpdateFinished"
-                        initiallyVisibleFields="ResourceGroupId"
+                        initiallyVisibleFields="Description"
                         toolbarStyleClass="treeTableHeader">
-                    <!-- layout data used to make the table growing but the filter bar fixed -->
                     <smartTable:layoutData>
                         <FlexItemData growFactor="1" />
                     </smartTable:layoutData>

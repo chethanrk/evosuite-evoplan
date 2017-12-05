@@ -48,23 +48,10 @@ sap.ui.define([
 			 * @public
 			 */
 			onInit : function () {
-				var oViewModel;
-
                 this._oDraggableTable = this.byId("draggableList");
                 this._oDataTable = this._oDraggableTable.getTable();
                 this._configureDataTable(this._oDataTable);
                 this._aSelectedRowsIdx = [];
-
-				// Model used to manipulate control states
-				var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle");
-				oViewModel = new JSONModel({
-					viewTitle : this.getResourceBundle().getText("xtit.itemListTitle"),
-					filterEntity: "Demand",
-					tableTitle : tableTitle,
-					tableNoDataText : this.getResourceBundle().getText("tableNoDataText", [tableTitle]),
-					tableBusyDelay : 0
-				});
-				this.setModel(oViewModel, "viewModel");
 			},
 
 			/* =========================================================== */
@@ -85,7 +72,13 @@ sap.ui.define([
 			 * after rendering of view
              * @param oEvent
              */
-            onAfterRendering: function (oEvent) {},
+            onAfterRendering: function (oEvent) {
+                var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle");
+                var noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]);
+                var viewModel = this.getModel("viewModel");
+                viewModel.setProperty("subViewTitle", tableTitle);
+                viewModel.setProperty("subTableNoDataText", noDataText);
+            },
 
             /**
 			 * initial draggable after every refresh of table
@@ -134,8 +127,30 @@ sap.ui.define([
              */
             onSelectionChangeAssignModal : function (oEvent) {
                 var oContext = oEvent.getParameter("rowContext");
-                var targetPath = oContext.sPath;
-                //this.saveAssignedDemands([], targetPath);
+                this._assignPath = oContext.sPath;
+            },
+
+            /**
+             *
+             * @param oEvent
+             */
+            onAssignModalSave : function (oEvent) {
+                if(this._assignPath){
+                    var selectedIdx = this._oDataTable.getSelectedIndices();
+                    var selectedPaths = this._getSelectedRowPaths(selectedIdx);
+                    this.assignedDemands(selectedPaths, this._assignPath);
+                    this._oAssignDialog.close();
+                }else{
+                    //Todo: show error msg
+                }
+
+            },
+
+            /**
+             *
+             * @param oEvent
+             */
+            onAssignModalCancel : function (oEvent) {
                 this._oAssignDialog.close();
             },
 
@@ -164,13 +179,6 @@ sap.ui.define([
                 if(this._oStatusDialog){
                     this._oStatusDialog.destroy();
                 }
-            },
-
-            /**
-             * @param oEvent
-             */
-            onCancelAssginModal : function (oEvent) {
-                this._oAssignDialog.close();
             },
 
 			/* =========================================================== */
@@ -269,9 +277,6 @@ sap.ui.define([
                                     aPathsData = _this._getSingleDraggedElement(target.attr('id'));
 								}
                             }
-                            if(!aPathsData){
-
-							}
                             //get helper html list
 							var oHtml = _this._generateDragHelperHTML(aPathsData);
                             _this.multiSelect = false;
