@@ -15,6 +15,10 @@
     display: none;
 }
 
+.listTreeTable .sapMTB{
+    height: 0;
+}
+
 .tableContentPage .sapFDynamicPageContent,
 .tableContentPage .sapFDynamicPageContentFitContainer{
     padding-top: 0 !important;

@@ -110,6 +110,9 @@ sap.ui.define([
                 }
                 // update table binding
                 var binding = oTable.getBinding("rows");
+                if(!binding){
+                    binding = oTable.getBinding("items");
+				}
                 binding.filter(aFilters, "Application");
             },
 
@@ -119,31 +122,29 @@ sap.ui.define([
 				var resourceGroupId = targetObj.ParentNodeId;
 				var resourceId = targetObj.NodeId;
 
-                if(targetObj.ParentNodeId === ""){
+                if(!targetObj.ParentNodeId || targetObj.ParentNodeId === ""){
                     resourceGroupId = targetObj.NodeId;
-                    resourceId = "";
+                    resourceId = null;
 				}
 				
                 for(var i = 0; i < aSourcePaths.length; i++) {
                     var obj = aSourcePaths[i];
                     var demandObj = oModel.getProperty(obj.sPath);
 
-                    oModel.callFunction("/CreateAssignment", // function import name
-                        "POST", // http method
-                        {	// function import parameters
+                    oModel.callFunction("/CreateAssignment", {
+                        method: "POST",
+                        urlParameters: {
                             "DemandGuid" : demandObj.Guid,
                             "ResourceGroupGuid" : resourceGroupId,
-                            "ResourceGuid" : resourceGroupId
+                            "ResourceGuid" : resourceId
                         },
-                        null,
-                        function(oData, response) {
-                            console.log(oData, response);
-                            // callback function for success
+                        success: function(oData, oResponse){
+                            //Handle Success
                         },
-                        function(oError){
-                            // callback function for error
+                        error: function(oError){
+                            //Handle Error
                         }
-                    );
+                    });
                 }
 			}
 

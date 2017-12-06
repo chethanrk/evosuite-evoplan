@@ -16,8 +16,22 @@ sap.ui.define([
         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
         onInit: function() {
             this._oDroppableTable = this.byId("droppableTable");
-            this._oDataTable = this._oDroppableTable.getTable();
-            this._configureDataTable(this._oDataTable);
+
+            try {
+                this._oDataTable = this._oDroppableTable.getTable();
+                if(this._oDataTable){
+                    this._configureDataTable(this._oDataTable);
+                }
+            }catch (error){
+                console.warn(error);
+            }
+
+            try {
+                this._oDataTable = this._oDroppableTable.getList();
+            }catch (error){
+                console.warn(error);
+            }
+
             this._oTreeVariant = this.byId("treeVariantManagment");
 
             //add fragment FilterSettingsDialog to the view
@@ -123,7 +137,7 @@ sap.ui.define([
         _jDroppable: function (_this) {
             setTimeout(function() {
                 var droppableTableId = _this._oDroppableTable.getId();
-                var droppedElement = $("#"+droppableTableId+" tbody tr");
+                var droppedElement = $("#"+droppableTableId+" tbody tr, #"+droppableTableId+" li");
 
                 try{
                     if(droppedElement.hasClass("ui-droppable")){

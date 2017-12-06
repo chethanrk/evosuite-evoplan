@@ -11,7 +11,7 @@
         "ParentNodeId": "",
         "HierarchyLevel": 0,
         "Description": "Group: 0A51491BD5A01ED7B389D3AAE967D70C",
-        "DrillState": "expanded"
+        "DrillState": "leaf"
       },
       {
         "__metadata": {
@@ -59,7 +59,7 @@
         "ParentNodeId": "0A51491BD5A01ED7B487CD2B92AE1D72",
         "HierarchyLevel": 3,
         "Description": "Group: 0A51491BD5A01ED7B389D5622A59D70F",
-        "DrillState": "expanded"
+        "DrillState": "leaf"
       }
     ]
   }
