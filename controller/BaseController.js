@@ -98,24 +98,13 @@ sap.ui.define([
 					}
 				});
 			},
-			
-			onSearchTreeTable: function (oTable, sQuery) {
-                var aFilters = [];
 
-                if (sQuery && sQuery.length > 0) {
-                    //only search on 0 and 1 Level
-                    var filter = new Filter("Description", FilterOperator.Contains, sQuery);
-                    //var filterLevel = new Filter("HierarchyLevel", FilterOperator.LE, 1);
-                    aFilters.push(filter);
-                }
-                // update table binding
-                var binding = oTable.getBinding("rows");
-                if(!binding){
-                    binding = oTable.getBinding("items");
-				}
-                binding.filter(aFilters, "Application");
-            },
-
+            /**
+			 * Todo: set right parameters in callFaunction
+			 * save assignment after drop
+             * @param aSourcePaths
+             * @param sTargetPath
+             */
             assignedDemands: function (aSourcePaths, sTargetPath) {
 				var oModel = this.getModel();
 				var targetObj = oModel.getProperty(sTargetPath);
@@ -147,9 +136,6 @@ sap.ui.define([
                     });
                 }
 			}
-
-
-
 		});
 
 	}

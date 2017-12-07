@@ -16,35 +16,14 @@ sap.ui.define([
         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
         onInit: function() {
             this._oDroppableTable = this.byId("droppableTable");
-
-            try {
-                this._oDataTable = this._oDroppableTable.getTable();
-                if(this._oDataTable){
-                    this._configureDataTable(this._oDataTable);
-                }
-            }catch (error){
-                console.warn(error);
-            }
-
-            try {
-                this._oDataTable = this._oDroppableTable.getList();
-            }catch (error){
-                console.warn(error);
-            }
-
             this._oTreeVariant = this.byId("treeVariantManagment");
+            this._aFilters = [];
 
             //add fragment FilterSettingsDialog to the view
             if (!this._oFilterSettingsDialog) {
                 this._oFilterSettingsDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.FilterSettingsDialog", this);
                 this.getView().addDependent(this._oFilterSettingsDialog);
             }
-
-            this._oPullToRefresh = this.byId("pullToRefresh");
-            this._oListFilterState = {
-                aSearch: []
-            };
-            this._iRunningListUpdates = 0;
         },
 
         /**
@@ -55,26 +34,15 @@ sap.ui.define([
             if(this._oDroppableTable){
                 this._jDroppable(this);
             }
-
-            var oSearch = this.byId("searchField");
-            var oFilterViewDialog = sap.ui.getCore().byId("filterViewDialog");
-            //this._oTreeVariant.addPersonalizableControl(oSearch);
-           //this._oTreeVariant.addPersonalizableControl(oFilterViewDialog);
-        },
-
-        onBeforeRebindTable: function(oEvent) {
-            var oBindingParams = oEvent.getParameter('bindingParams');
-            oBindingParams.parameters.numberOfExpandedLevels = 2;
         },
 
         /**
-         * initial draggable after every refresh of table
-         * for example after go to next page
+         * initialize or update droppable after updating tree list
          * @param oEvent
          */
-        onBusyStateChanged : function (oEvent) {
-            var parameters = oEvent.getParameters();
-            if(parameters.busy === false){
+        refreshDroppable : function (oEvent) {
+            console.log(oEvent.getParameters());
+            if(this._oDroppableTable){
                 this._jDroppable(this);
             }
         },
@@ -84,11 +52,20 @@ sap.ui.define([
          */
         onSearch : function (oEvent) {
             var sQuery = oEvent.getSource().getValue();
-            this.onSearchTreeTable(this._oDataTable, sQuery);
+            var aFilters = this._aFilters;
+            var binding = this._oDroppableTable.getBinding("items");
+
+            if (sQuery && sQuery.length > 0) {
+                //only search on 0 and 1 Level
+                var filter = new Filter("Description", FilterOperator.Contains, sQuery);
+                //var filterLevel = new Filter("HierarchyLevel", FilterOperator.LE, 1);
+                aFilters.push(filter);
+            }
+            binding.filter(aFilters, "Application");
         },
 
         /**
-         *
+         * open FilterSettingsDialog
          * @param oEvent
          */
         onFilterButtonPress : function (oEvent) {
@@ -96,16 +73,82 @@ sap.ui.define([
                 this._oFilterSettingsDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.FilterSettingsDialog", this);
                 this.getView().addDependent(this._oFilterSettingsDialog);
             }
-            // toggle compact style
             this._oFilterSettingsDialog.open();
         },
 
         /**
-         * when variant was selected
+         * Todo: get saved variant
+         * when a new variant is selected
+         * values will be populated to FilterSettingsDialog
+         * new Filters are bind to tree table
          * @param oEvent
          */
-        onSelectTreeVariant : function (oEvent) {
+        onSelectVariant : function (oEvent) {
+            var params = oEvent.getParameters();
+            var oBinding = this._oDroppableTable.getBinding("items");
+            var oGroupFilter = sap.ui.getCore().byId("idCustomFilterItem").getCustomControl();
+            var oViewFilter = sap.ui.getCore().byId("viewFilterItem").getControl();
+            this._aFilters = [];
 
+            //set values in FilterSettingsDialog
+            //filter for Resource group
+            var value = "blub";
+            oGroupFilter.setValue(value);
+            oGroupFilter.setFilterCount(1);
+            this._aFilters.push(new Filter("ParentNodeId", FilterOperator.Contains, value));
+
+            //filter view
+            var key = "monthly";
+            oViewFilter.setKey(key);
+            this._aFilters.push(new Filter("View", FilterOperator.Contains, key));
+
+            oBinding.filter(this._aFilters, "Application");
+        },
+
+        /**
+         * Todo: save this._aFilters
+         * when the Save Variant dialog is closed with OK for a variant
+         * @param oEvent
+         */
+        onSaveVariant : function (oEvent) {
+            //todo save this._aFilters
+        },
+
+        /**
+         * Todo: is this needed?
+         * when users apply changes to variants in the Manage Variants dialog
+         * @param oEvent
+         */
+        onManageVariant : function (oEvent) {
+
+        },
+
+        /**
+         * Todo: set right view filter parameters
+         * ViewSettingsDialog confirm filter
+         * @param oEvent
+         */
+        onFilterSettingsConfirm : function (oEvent) {
+            var params = oEvent.getParameters();
+            var oBinding = this._oDroppableTable.getBinding("items");
+            var oGroupFilter = sap.ui.getCore().byId("idCustomFilterItem").getCustomControl();
+            var oGroupFilterValue = oCustomFilter.getValue();
+            var aFilters = [];
+
+            //filter for selected view
+            for (var i = 0; i < params.filterItems.length; i++) {
+                var obj = params.filterItems[i];
+                var key = obj.getKey();
+                var filter = new Filter("View", FilterOperator.Contains, key);
+                aFilters.push(filter);
+            }
+
+            //filter for Resource group
+            var customFilter = new Filter("ParentNodeId", FilterOperator.Contains, oGroupFilterValue);
+            aFilters.push(customFilter);
+            //hold view settings globally for variant managment
+            this._aFilters = aFilters;
+            oBinding.filter(aFilters, "Application");
         },
 
         /**
@@ -122,18 +165,6 @@ sap.ui.define([
         /* internal methods                                            */
         /* =========================================================== */
 
-        _configureDataTable : function (oDataTable) {
-            oDataTable.setEnableBusyIndicator(true);
-            oDataTable.setSelectionMode('None');
-            oDataTable.setColumnHeaderVisible(false);
-            oDataTable.setEnableCellFilter(false);
-            oDataTable.setEnableColumnReordering(false);
-            oDataTable.setEditable(false);
-            oDataTable.setWidth("100%");
-            oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
-            oDataTable.attachFilter(this.onFilterChanged, this);
-        },
-
         _jDroppable: function (_this) {
             setTimeout(function() {
                 var droppableTableId = _this._oDroppableTable.getId();
@@ -144,7 +175,7 @@ sap.ui.define([
                         droppedElement.droppable( "destroy" );
                     }
                 }catch(error){
-                    console.log(error);
+                    console.warn(error);
                 }
 
                 droppedElement.droppable({

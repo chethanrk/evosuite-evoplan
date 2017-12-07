@@ -196,6 +196,18 @@ sap.ui.define([
                 oDataTable.setRowSettingsTemplate(new RowSettings({
                     highlight: "Information"
                 }));
+
+                //enable/disable buttons on footer when there is some/no selected rows
+                oDataTable.attachRowSelectionChange(function () {
+                    var selected = this._oDataTable.getSelectedIndices();
+                    if(selected.length > 0){
+                        this.byId("assignButton").setEnabled(true);
+                        this.byId("changeStatusButton").setEnabled(true);
+                    }else{
+                        this.byId("assignButton").setEnabled(false);
+                        this.byId("changeStatusButton").setEnabled(false);
+                    }
+                }, this)
             },
 
             /**

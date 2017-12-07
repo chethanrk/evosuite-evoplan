@@ -3,6 +3,7 @@
           xmlns="sap.m"
           xmlns:mvc="sap.ui.core.mvc"
           xmlns:layout="sap.ui.layout"
+          xmlns:vm="sap.ui.comp.variants"
           xmlns:smartTable="sap.ui.comp.smarttable"
           xmlns:smartVariant="sap.ui.comp.smartvariants"
           xmlns:smartList="sap.ui.comp.smartlist"
@@ -22,20 +23,17 @@
             <f:title>
                 <f:DynamicPageTitle>
                     <f:heading>
-                        <smartVariant:SmartVariantManagement
-                                id="treeVariantManagment"
-                                persistencyKey="{viewModel>/persistencyKey}"
-                                select="onSelectVariant"
+                        <vm:VariantManagement
+                                defaultVariantKey=""
+                                standardItemText="Standard"
                                 showShare="true"
                                 showSetAsDefault="true"
                                 showExecuteOnSelection="true"
-                                lifecycleSupport="true">
-
-                            <smartVariant:personalizableControls>
-
-                            </smartVariant:personalizableControls>
-
-                        </smartVariant:SmartVariantManagement>
+                                lifecycleSupport="true"
+                                save="onSaveVariant"
+                                select="onSelectVariant"
+                                manage="onManageVariant">
+                        </vm:VariantManagement>
                     </f:heading>
                     <f:actions>
                         <ToolbarSpacer/>
@@ -58,38 +56,13 @@
 
             <f:content>
                 <layout:VerticalLayout width="100%" class="listTreeTable" >
-                    <smartList:SmartList
-                            id="droppableTable"
-                            listType="Tree"
-                            enableAutoBinding="true"
-                            showRowCount="false"
-                            showFullScreenButton="false"
-                            listBindingPath="/{viewModel>/treeSet}">
-                        <smartList:listItemTemplate>
-                            <StandardTreeItem title="{Description}" />
-                        </smartList:listItemTemplate>
-                    </smartList:SmartList>
+                    <Tree id="droppableTable"
+                          toggleOpenState="refreshDroppable"
+                          updateFinished="refreshDroppable"
+                          items="{path: '/ResourceHierarchySet'}">
+                        <StandardTreeItem title="{Description}"/>
+                    </Tree>
                 </layout:VerticalLayout>
-
-
-                <!--<smartTable:SmartTable
-                        id="droppableTable"
-                        entitySet="{viewModel>/treeSet}"
-                        tableType="TreeTable"
-                        useExportToExcel="false"
-                        useVariantManagement="false"
-                        useTablePersonalisation="false"
-                        header="{i18n>masterTitle}"
-                        showRowCount="false"
-                        enableAutoBinding="true"
-                        beforeRebindTable="onBeforeRebindTable"
-                        updateFinished="onUpdateFinished"
-                        initiallyVisibleFields="Description"
-                        toolbarStyleClass="treeTableHeader">
-                    <smartTable:layoutData>
-                        <FlexItemData growFactor="1" />
-                    </smartTable:layoutData>
-                </smartTable:SmartTable>-->
             </f:content>
 
         </f:DynamicPage>

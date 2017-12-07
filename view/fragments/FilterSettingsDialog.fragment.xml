@@ -5,6 +5,7 @@
     <ViewSettingsDialog id="filterViewDialog" title="Filter" confirm="onFilterSettingsConfirm">
         <filterItems>
             <ViewSettingsFilterItem
+                    id="viewFilterItem"
                     text="{i18n>xtit.filterTitleView}"
                     key="View"
                     multiSelect="false">
