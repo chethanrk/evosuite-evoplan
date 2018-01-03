@@ -119,19 +119,40 @@ sap.ui.define([
                 for(var i = 0; i < aSourcePaths.length; i++) {
                     var obj = aSourcePaths[i];
                     var demandObj = oModel.getProperty(obj.sPath);
-
+					var oDate = new Date();
                     oModel.callFunction("/CreateAssignment", {
                         method: "POST",
                         urlParameters: {
+                        	"DateFrom" : oDate,
+                        	"DateTo" :  oDate,
                             "DemandGuid" : demandObj.Guid,
                             "ResourceGroupGuid" : resourceGroupId,
-                            "ResourceGuid" : resourceId
+                            "ResourceGuid" : resourceId,
+                            "TimeFrom" :{ __edmtype: "Edm.Time", ms: oDate.getTime()},
+                            "TimeTo" :{ __edmtype: "Edm.Time", ms: oDate.getTime()}
                         },
                         success: function(oData, oResponse){
                             //Handle Success
+                             var sMsg = ""; 
+							 var errMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData();
+					 		 for( var i=0; i < errMsg.length; i++){
+					 		 	sMsg = sMsg + errMsg[i].message;
+					 		 }
+					 	
+							MessageToast.show(sMsg, {
+							duration: 5000
+							});
                         },
                         error: function(oError){
                             //Handle Error
+                              var sMsg = ""; 
+							 var errMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData();
+					 		 for( var i=0; i < errMsg.length; i++){
+					 		 	sMsg = sMsg + errMsg[i].message;
+					 		 }
+					 	
+							MessageToast.show(sMsg, {
+							duration: 5000 });
                         }
                     });
                 }
