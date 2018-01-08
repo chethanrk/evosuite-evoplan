@@ -30,7 +30,7 @@ sap.ui.define([
 
         var oMessagePopover = new MessagePopover({
             items: {
-                path: '/SaveMessageSet',
+                path: '/',
                 template: oMessageTemplate
             }
         });
@@ -52,6 +52,9 @@ sap.ui.define([
                 this._oDataTable = this._oDraggableTable.getTable();
                 this._configureDataTable(this._oDataTable);
                 this._aSelectedRowsIdx = [];
+                var oModel = new JSONModel();
+                sap.ui.getCore().setModel(oModel, "MessageSetModel");
+                oMessagePopover.setModel(oModel);
 			},
 
 			/* =========================================================== */
@@ -141,7 +144,7 @@ sap.ui.define([
                     this.assignedDemands(selectedPaths, this._assignPath);
                     this._oAssignDialog.close();
                 }else{
-                    //Todo: show error msg
+                     //Todo: show error msg
                 }
 
             },
@@ -207,7 +210,7 @@ sap.ui.define([
                         this.byId("assignButton").setEnabled(false);
                         this.byId("changeStatusButton").setEnabled(false);
                     }
-                }, this)
+                }, this);
             },
 
             /**

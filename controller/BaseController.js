@@ -7,8 +7,9 @@ sap.ui.define([
 		"sap/m/Text",
 		"sap/m/MessageToast",
 		"sap/ui/model/Filter",
-		"sap/ui/model/FilterOperator"
-	], function (Controller, History, Dialog, Button, Text, MessageToast, Filter, FilterOperator) {
+		"sap/ui/model/FilterOperator",
+		'sap/ui/model/json/JSONModel'
+	], function (Controller, History, Dialog, Button, Text, MessageToast, Filter, FilterOperator, JSONModel) {
 		"use strict";
 
 		return Controller.extend("com.evorait.evoplan.controller.BaseController", {
@@ -98,7 +99,70 @@ sap.ui.define([
 					}
 				});
 			},
-
+			
+			/**on Success of oData call capture messages **/
+			
+			onSuccess: function(oData, errMsg, oMsgModel) {
+				 var sMsg = "";
+				 var sMessages = [];
+				 var count_err = 0, count_war = 0, count_suc = 0, counter = 0;
+				 var item = {};
+		 		 for( var i=0; i < errMsg.length; i++){
+		 		 	if (errMsg[i].type === "Error")
+		 		 	{
+		 		 		count_err = count_err + 1;
+		 		 		counter = count_err;
+		 		 	}
+		 		 	if (errMsg[i].type === "Warning")
+		 		 	{
+		 		 		count_err = count_war + 1;
+		 		 		counter = count_war;
+		 		 	}
+		 		 	if (errMsg[i].type === "Success")
+		 		 	{
+		 		 		count_err = count_suc + 1;
+		 		 		counter = count_suc;
+		 		 	}
+		 		 	if(errMsg[i].type === "Error")
+		 		 	{
+		 		 	sMsg = "Errors Occurred, Please check below Messages for Details";
+		 		 	}
+		 		 	item["Type"] = errMsg[i].type;
+		 		 	item["Title"] = oData.DemandGuid;
+		 		 	item["Description"] = errMsg[i].message;
+		 		 	item["Subtitle"] = errMsg[i].type;
+		 		 	item["Counter"] = counter;
+		 		 	
+		 		 	sMessages.push(item);
+		 		 }
+					oMsgModel.setData(sMessages);
+					if(sMsg === ""){
+						sMsg = "Assignment Successfull";
+					}
+		 		MessageToast.show(sMsg, {
+				duration: 5000
+				});
+			},
+			/**on Error of oData call capture messages **/
+			onError: function (oError, oMsgModel){
+				var sMsg = ""; 
+			    var sMessages = [];
+			    var item = {};
+	 		 	sMsg = "Errors Occurred, Please check below Messages for Details";
+	 		 	item["Type"] = "Error";
+	 		 	item["Title"] = JSON.parse(oError.responseText).error.code;
+	 		 	item["Description"] = JSON.parse(oError.responseText).error.message.value;
+	 		 	item["Subtitle"] = "Error";
+	 		 	item["Counter"] = 1;
+	 		 	
+	 		 	sMessages.push(item);
+	 		 
+	 		//	var oMsgModel = sap.ui.getCore().getModel("MessageSetModel");
+				oMsgModel.setData(sMessages);
+		 		MessageToast.show(sMsg, {
+				duration: 5000
+				});
+			},
             /**
 			 * Todo: set right parameters in callFaunction
 			 * save assignment after drop
@@ -110,10 +174,13 @@ sap.ui.define([
 				var targetObj = oModel.getProperty(sTargetPath);
 				var resourceGroupId = targetObj.ParentNodeId;
 				var resourceId = targetObj.NodeId;
-
+                var oMsgModel = sap.ui.getCore().getModel("MessageSetModel");
+				oMsgModel.setData({modelData:{}});
+				oMsgModel.updateBindings(true);
+				 
                 if(!targetObj.ParentNodeId || targetObj.ParentNodeId === ""){
                     resourceGroupId = targetObj.NodeId;
-                    resourceId = null;
+                    resourceId = " ";
 				}
 				
                 for(var i = 0; i < aSourcePaths.length; i++) {
@@ -132,27 +199,13 @@ sap.ui.define([
                             "TimeTo" :{ __edmtype: "Edm.Time", ms: oDate.getTime()}
                         },
                         success: function(oData, oResponse){
-                            //Handle Success
-                             var sMsg = ""; 
+                        //Handle Success
 							 var errMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData();
-					 		 for( var i=0; i < errMsg.length; i++){
-					 		 	sMsg = sMsg + errMsg[i].message;
-					 		 }
-					 	
-							MessageToast.show(sMsg, {
-							duration: 5000
-							});
+							 this.onSuccess(oData, errMsg, oMsgModel);
                         },
                         error: function(oError){
-                            //Handle Error
-                              var sMsg = ""; 
-							 var errMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData();
-					 		 for( var i=0; i < errMsg.length; i++){
-					 		 	sMsg = sMsg + errMsg[i].message;
-					 		 }
-					 	
-							MessageToast.show(sMsg, {
-							duration: 5000 });
+                          //Handle Error
+                            this.onError(oError, oMsgModel);
                         }
                     });
                 }
