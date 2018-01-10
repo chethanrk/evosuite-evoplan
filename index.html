@@ -9,11 +9,13 @@
 	<!-- Bootstrapping UI5 -->
 	<script id="sap-ui-bootstrap"
 			src="resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m, sap.ui.layout"
+			data-sap-ui-libs="sap.m, sap.ui.layout, sap.uxap"
 			data-sap-ui-theme="sap_belize"
 			data-sap-ui-compatVersion="edge"
 			data-sap-ui-resourceroots='{"com.evorait.evoplan": "."}'
-			data-sap-ui-frameOptions="trusted">
+			data-sap-ui-frameOptions="trusted"
+			data-sap-ui-language="en"
+			data-sap-ui-preload="async">
 	</script>
 	
 	<!--<script type="text/javascript" src="cordova.js"></script>-->
@@ -72,7 +74,9 @@
                         app: new ComponentContainer({
                             name: "com.evorait.evoplan",
                             height: "100%",
-                            width: "100%"
+                            width: "100%",
+                            manifestFirst: true,
+                            async: true
                         }),
                         id: "appShell",
                         appWidthLimited: false

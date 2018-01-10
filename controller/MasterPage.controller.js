@@ -41,7 +41,6 @@ sap.ui.define([
          * @param oEvent
          */
         refreshDroppable : function (oEvent) {
-            console.log(oEvent.getParameters());
             if(this._oDroppableTable){
                 this._jDroppable(this);
             }
@@ -132,7 +131,7 @@ sap.ui.define([
             var params = oEvent.getParameters();
             var oBinding = this._oDroppableTable.getBinding("items");
             var oGroupFilter = sap.ui.getCore().byId("idCustomFilterItem").getCustomControl();
-            var oGroupFilterValue = oCustomFilter.getValue();
+            var oGroupFilterValue = oGroupFilter.getValue();
             var aFilters = [];
 
             //filter for selected view

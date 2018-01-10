@@ -67,10 +67,6 @@ sap.ui.define([
 				}
 			},
 
-			onPressHome : function () {
-				this.getRouter().navTo("master", {}, true);
-			},
-
             /**
              * Convenience method
              * @returns {object} the application controller
@@ -79,53 +75,32 @@ sap.ui.define([
                 return this.getGlobalModel().getProperty("/application");
             },
 
+			
 			/**
-			 * trigger logout
+			 * on Success of oData call capture messages
+			 * 
 			 */
-			onLogout: function () {
-				var externalURL = "";
-
-                if (com.evorait.evoplan.dev.devapp.externalURL) {
-                    externalURL = com.evorait.evoplan.dev.devapp.externalURL;
-                }
-
-				$.ajax(externalURL+"/sap/public/bc/icf/logoff", {
-					success: function() {
-						console.log("Successfully logged off");
-						window.location.reload();
-					},
-					error: function(jqXHR, textStatus, errorThrown) {
-						console.error("Error when logging off:", errorThrown);
-					}
-				});
-			},
-			
-			/**on Success of oData call capture messages **/
-			
 			onSuccess: function(oData, errMsg, oMsgModel) {
 				 var sMsg = "";
 				 var sMessages = [];
 				 var count_err = 0, count_war = 0, count_suc = 0, counter = 0;
 				 var item = {};
+				 
 		 		 for( var i=0; i < errMsg.length; i++){
-		 		 	if (errMsg[i].type === "Error")
-		 		 	{
+		 		 	if (errMsg[i].type === "Error"){
 		 		 		count_err = count_err + 1;
 		 		 		counter = count_err;
 		 		 	}
-		 		 	if (errMsg[i].type === "Warning")
-		 		 	{
+		 		 	if (errMsg[i].type === "Warning"){
 		 		 		count_err = count_war + 1;
 		 		 		counter = count_war;
 		 		 	}
-		 		 	if (errMsg[i].type === "Success")
-		 		 	{
+		 		 	if (errMsg[i].type === "Success"){
 		 		 		count_err = count_suc + 1;
 		 		 		counter = count_suc;
 		 		 	}
-		 		 	if(errMsg[i].type === "Error")
-		 		 	{
-		 		 	sMsg = "Errors Occurred, Please check below Messages for Details";
+		 		 	if(errMsg[i].type === "Error"){
+		 		 		sMsg = "Errors Occurred, Please check below Messages for Details";
 		 		 	}
 		 		 	item["Type"] = errMsg[i].type;
 		 		 	item["Title"] = oData.DemandGuid;
@@ -135,15 +110,17 @@ sap.ui.define([
 		 		 	
 		 		 	sMessages.push(item);
 		 		 }
-					oMsgModel.setData(sMessages);
-					if(sMsg === ""){
-						sMsg = "Assignment Successfull";
-					}
-		 		MessageToast.show(sMsg, {
-				duration: 5000
-				});
+		 		 
+				oMsgModel.setData(sMessages);
+				if(sMsg === ""){
+					sMsg = "Assignment Successfull";
+				}
+		 		MessageToast.show(sMsg, {duration: 5000});
 			},
-			/**on Error of oData call capture messages **/
+			
+			/**
+			* on Error of oData call capture messages
+			*/
 			onError: function (oError, oMsgModel){
 				var sMsg = ""; 
 			    var sMessages = [];
@@ -157,12 +134,11 @@ sap.ui.define([
 	 		 	
 	 		 	sMessages.push(item);
 	 		 
-	 		//	var oMsgModel = sap.ui.getCore().getModel("MessageSetModel");
+	 			//	var oMsgModel = sap.ui.getCore().getModel("MessageSetModel");
 				oMsgModel.setData(sMessages);
-		 		MessageToast.show(sMsg, {
-				duration: 5000
-				});
+		 		MessageToast.show(sMsg, {duration: 5000});
 			},
+			
             /**
 			 * Todo: set right parameters in callFaunction
 			 * save assignment after drop
@@ -199,14 +175,14 @@ sap.ui.define([
                             "TimeTo" :{ __edmtype: "Edm.Time", ms: oDate.getTime()}
                         },
                         success: function(oData, oResponse){
-                        //Handle Success
+                        	//Handle Success
 							 var errMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData();
 							 this.onSuccess(oData, errMsg, oMsgModel);
-                        },
+                        }.bind(this),
                         error: function(oError){
-                          //Handle Error
+                        	//Handle Error
                             this.onError(oError, oMsgModel);
-                        }
+                        }.bind(this)
                     });
                 }
 			}

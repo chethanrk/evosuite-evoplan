@@ -335,7 +335,8 @@ sap.ui.define([
                 var helperTemplate = $('<ul id="dragHelper"></ul>');
                 for (var i=0; i<aPathsData.length; i++) {
                     var item = $('<li id="'+aPathsData[i].sPath+'" class="ui-draggable-dragging-item"></li>');
-                    var text = '<span class="demandId">'+aPathsData[i].oData.Guid+'</span> - '+aPathsData[i].oData.DemandDesc;
+                    //var text = '<span class="demandId">'+aPathsData[i].oData.Guid+'</span> - '+aPathsData[i].oData.DemandDesc;
+                    var text = aPathsData[i].oData.DemandDesc;
                     item.html(text);
                     helperTemplate.append(item);
                 }
