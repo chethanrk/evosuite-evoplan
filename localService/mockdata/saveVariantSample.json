@@ -1,0 +1,39 @@
+{
+  "fileName": "id_1515592241417_269_filterBar",
+  "fileType": "variant",
+  "changeType": "filterBar",
+  "reference": "com.evorait.evoplan.Component",
+  "packageName": "",
+  "content": {
+    "version": "V2",
+    "filterbar": [],
+    "filterBarVariant": "{\"Guid\":{\"value\":null,\"ranges\":[{\"exclude\":false,\"operation\":\"Contains\",\"keyField\":\"Guid\",\"value1\":\"0A51\",\"value2\":\"\",\"tokenText\":\"*0A51*\"}],\"items\":[]},\"DemandDesc\":{\"value\":null,\"ranges\":[{\"exclude\":false,\"operation\":\"Contains\",\"keyField\":\"DemandDesc\",\"value1\":\"Test\",\"value2\":\"\",\"tokenText\":\"*Test*\"}],\"items\":[]},\"ExtKey\":{\"value\":null,\"ranges\":[{\"exclude\":false,\"operation\":\"Contains\",\"keyField\":\"ExtKey\",\"value1\":\"PMWOO\",\"value2\":\"\",\"tokenText\":\"*PMWOO*\"}],\"items\":[]},\"Source\":{\"value\":null,\"ranges\":[{\"exclude\":false,\"operation\":\"Contains\",\"keyField\":\"Source\",\"value1\":\"ECW\",\"value2\":\"\",\"tokenText\":\"*ECW*\"}],\"items\":[]},\"DateFrom\":{\"value\":null,\"ranges\":[],\"items\":[]},\"TimeFrom\":{\"value\":null,\"ranges\":[],\"items\":[]},\"DateTo\":{\"value\":null,\"ranges\":[],\"items\":[]},\"TimeTo\":{\"value\":null,\"ranges\":[],\"items\":[]},\"EFFORT\":{\"value\":null,\"ranges\":[],\"items\":[]},\"EFFORT_UNIT\":{\"value\":null,\"ranges\":[],\"items\":[]},\"OBJNR\":{\"value\":null,\"ranges\":[],\"items\":[]},\"ADRNR\":{\"value\":null,\"ranges\":[],\"items\":[]},\"NAME1\":{\"value\":null,\"ranges\":[],\"items\":[]},\"NAME2\":{\"value\":null,\"ranges\":[],\"items\":[]},\"NAME3\":{\"value\":null,\"ranges\":[],\"items\":[]},\"NAME4\":{\"value\":null,\"ranges\":[],\"items\":[]},\"SMTP_ADDR\":{\"value\":null,\"ranges\":[],\"items\":[]},\"TEL_NUMBER\":{\"value\":null,\"ranges\":[],\"items\":[]},\"POST_CODE1\":{\"value\":null,\"ranges\":[],\"items\":[]},\"CITY1\":{\"value\":null,\"ranges\":[],\"items\":[]},\"DISTRICT\":{\"value\":null,\"ranges\":[],\"items\":[]},\"COUNTRY\":{\"value\":null,\"ranges\":[],\"items\":[]},\"REGION\":{\"value\":null,\"ranges\":[],\"items\":[]},\"STREET\":{\"value\":null,\"ranges\":[],\"items\":[]},\"HOUSE_NUM1\":{\"value\":null,\"ranges\":[],\"items\":[]},\"BUILDING\":{\"value\":null,\"ranges\":[],\"items\":[]},\"LOCATION\":{\"value\":null,\"ranges\":[],\"items\":[]},\"LATITUDE\":{\"value\":null,\"ranges\":[],\"items\":[]},\"LONGITUDE\":{\"value\":null,\"ranges\":[],\"items\":[]},\"GEO_SOURCE\":{\"value\":null,\"ranges\":[],\"items\":[]},\"ALTITUDE\":{\"value\":null,\"ranges\":[],\"items\":[]},\"FLOOR\":{\"value\":null,\"ranges\":[],\"items\":[]}}",
+    "executeOnSelection": true
+  },
+  "selector": {
+    "persistencyKey": "evoPlan_ui"
+  },
+  "layer": "USER",
+  "texts": {
+    "variantName": {
+      "value": "Test",
+      "type": "XFLD"
+    }
+  },
+  "namespace": "apps/com.evorait.evoplan/changes/",
+  "creation": "2018-01-10T13:50:41.7423500Z",
+  "originalLanguage": "EN",
+  "conditions": {},
+  "context": "",
+  "support": {
+    "generator": "Change.createInitialFileContent",
+    "service": "",
+    "user": "SCHLAGEM",
+    "sapui5Version": "1.50.7"
+  },
+  "dependentSelector": {},
+  "validAppVersions": {
+    "creation": "1.0.0",
+    "from": "1.0.0"
+  }
+}

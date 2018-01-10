@@ -4,30 +4,34 @@
 
 module.exports = function(grunt) {
 
-    grunt.loadNpmTasks('grunt-openui5');
-
     grunt.initConfig({
         openui5_preload: {
             component: {
                 options: {
                     resources: {
-                        cwd: '',
+                        cwd: '.',
                         prefix: 'com/evorait/evoplan',
                         src: [
-                            './view/**/*.fragment.xml',
-                            './view/**/*.view.xml',
-                            './block/**/*.fragment.xml',
-                            './block/**/*.view.xml'
+                            'view/**/*.fragment.xml',
+                            'view/**/*.view.xml',
+                            'block/**/*.view.xml',
+                            'model/**/*.js',
+                            'controller/**/*.js',
+                            'block/**/*.js',
+                            'dev/**/*.js',
+                            'i18n/*.properties',
+                            'Component.js'
                         ]
                     },
-                    dest: ''
+                    dest: '.'
                 },
-                components: true
+                components: 'com/evorait/evoplan'
             }
         }
     });
 
-    // Default task(s).
+    grunt.loadNpmTasks('grunt-openui5');
+
     grunt.registerTask('default', ['openui5_preload']);
 
 };

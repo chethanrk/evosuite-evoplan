@@ -19,12 +19,6 @@
     "type": "git",
     "url": "git+https://marklanger@bitbucket.org/evorait/evoplan-ui5.git"
   },
-  "keywords": [
-    "Planning",
-    "Dispatch",
-    "Orders",
-    "Work",
-  ],
   "author": "Evora IT Solutions",
   "license": "ISC",
   "homepage": "https://bitbucket.org/evorait/evoplan-ui5#readme"
