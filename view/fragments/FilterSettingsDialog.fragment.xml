@@ -13,18 +13,48 @@
                     <ViewSettingsItem text="Daily" key="Daily" />
                     <ViewSettingsItem text="Weekly" key="Weekly" />
                     <ViewSettingsItem text="Monthly" key="Monthly" />
-                    <ViewSettingsItem text="Simple" key="Simple" />
+                    <ViewSettingsItem text="Simple" key="Simple" selected="true"/>
                 </items>
             </ViewSettingsFilterItem>
+
             <ViewSettingsCustomItem
-                    id="idCustomFilterItem"
+                    id="idTimeframeFilterItem"
+                    text="{i18n>xtit.filterTitleDateRange}"
+                    key="TimeFrame">
+                <customControl>
+                    <VBox class="sapUiSmallMargin">
+                        <Label text="{i18n>xtit.filterDateFrom}" labelFor="dateRange1"/>
+                        <DatePicker
+                                id="dateRange1"
+                                class="sapUiSmallMarginBottom"
+                                valueFormat="{i18n>dateFormat}"
+                                change="onChangeDateRangeFilter"
+                                value="{
+                                    type : 'sap.ui.model.type.String',
+                                    constraints : {
+                                        minLength: 1
+                                    }
+                                }"/>
+                        <Label text="{i18n>xtit.filterDateTo}" labelFor="dateRange2"/>
+                        <DatePicker
+                                id="dateRange2"
+                                valueFormat="{i18n>dateFormat}"
+                                class="sapUiSmallMarginBottom"
+                                change="onChangeDateRangeFilter"/>
+                    </VBox>
+                </customControl>
+            </ViewSettingsCustomItem>
+
+            <ViewSettingsCustomItem
+                    id="idGroupFilterItem"
                     text="{i18n>xtit.filterTitleGroup}"
                     key="ResourceGroup">
                 <customControl>
                     <MultiInput id="multiInput"
                                 showValueHelp="true"
                                 width="90%"
-                                class="sapUiSmallMargin">
+                                class="sapUiSmallMargin"
+                                change="onChangeGroupFilter">
                     </MultiInput>
                 </customControl>
             </ViewSettingsCustomItem>

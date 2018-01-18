@@ -45,8 +45,8 @@
             <f:header>
                 <f:DynamicPageHeader pinnable="false">
                     <f:content>
-                        <SearchField id="searchField"
-                                     liveChange="onSearch"
+                        <SearchField id="searchFieldResources"
+                                     search="onSearchResources"
                                      showRefreshButton="{= !${device>/support/touch} }"
                                      width="100%">
                         </SearchField>

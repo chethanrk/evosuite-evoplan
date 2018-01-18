@@ -22,7 +22,7 @@ sap.ui.define([
         },
 
         date: function(date) {
-            var oDateFormat = DateFormat.getDateTimeInstance({pattern: "dd.MM.YYYY"});
+            var oDateFormat = DateFormat.getDateTimeInstance({pattern: "YYYY-MM-dd"});
             return oDateFormat.format(new Date(date));
         },
 
