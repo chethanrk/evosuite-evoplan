@@ -60,7 +60,19 @@
                           toggleOpenState="refreshDroppable"
                           updateFinished="refreshDroppable"
                           items="{path: '/ResourceHierarchySet'}">
-                        <StandardTreeItem title="{Description}"/>
+                        <CustomTreeItem>
+                            <FlexBox alignItems="Start"
+                                     justifyContent="SpaceBetween"
+                                     width="100%">
+                                <items>
+                                    <VBox>
+                                        <Title level="H3" text="{Description}" />
+                                        <Label text="{Utilization}" />
+                                    </VBox>
+                                    <Text text="{AssignmentCount}" class="sapUiTinyMarginTopBottom sapMH4FontSize" />
+                                </items>
+                            </FlexBox>
+                        </CustomTreeItem>
                     </Tree>
                 </layout:VerticalLayout>
             </f:content>
