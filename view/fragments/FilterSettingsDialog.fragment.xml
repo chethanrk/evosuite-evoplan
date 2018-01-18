@@ -1,6 +1,7 @@
 <core:FragmentDefinition
         xmlns="sap.m"
-        xmlns:core="sap.ui.core">
+        xmlns:core="sap.ui.core"
+        xmlns:form="sap.ui.layout.form">
 
     <ViewSettingsDialog id="filterViewDialog" title="Filter" confirm="onFilterSettingsConfirm">
         <filterItems>
@@ -16,8 +17,29 @@
                     <ViewSettingsItem text="Simple" key="Simple" />
                 </items>
             </ViewSettingsFilterItem>
+
             <ViewSettingsCustomItem
-                    id="idCustomFilterItem"
+                    id="idTimeframeFilterItem"
+                    text="{i18n>xtit.filterTitleDateRange}"
+                    key="TimeFrame">
+                <customControl>
+                    <VBox class="sapUiSmallMargin">
+                        <Label text="{i18n>xtit.filterDateFrom}" labelFor="DP1"/>
+                        <DatePicker
+                                id="DP1"
+                                class="sapUiSmallMarginBottom"
+                                value="2014-03-26" valueFormat="yyyy-MM-dd"/>
+                        <Label text="{i18n>xtit.filterDateTo}" labelFor="DP2"/>
+                        <DatePicker
+                                id="DP2"
+                                value="2014-03-26" valueFormat="yyyy-MM-dd" displayFormat="long"
+                                class="sapUiSmallMarginBottom"/>
+                    </VBox>
+                </customControl>
+            </ViewSettingsCustomItem>
+
+            <ViewSettingsCustomItem
+                    id="idResourceGroupFilterItem"
                     text="{i18n>xtit.filterTitleGroup}"
                     key="ResourceGroup">
                 <customControl>

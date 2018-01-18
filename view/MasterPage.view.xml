@@ -4,10 +4,9 @@
           xmlns:mvc="sap.ui.core.mvc"
           xmlns:layout="sap.ui.layout"
           xmlns:vm="sap.ui.comp.variants"
-          xmlns:smartTable="sap.ui.comp.smarttable"
-          xmlns:smartVariant="sap.ui.comp.smartvariants"
-          xmlns:smartList="sap.ui.comp.smartlist"
-          xmlns:f="sap.f">
+          xmlns:f="sap.f"
+          xmlns:smartVariantManagement="sap.ui.comp.smartvariants"
+          xmlns:controls="com.evorait.evoplan.ui.controls">
 
     <Page id="masterPage"
           title="{i18n>masterTitle}"
@@ -23,17 +22,28 @@
             <f:title>
                 <f:DynamicPageTitle>
                     <f:heading>
-                        <vm:VariantManagement
-                                defaultVariantKey=""
-                                standardItemText="Standard"
-                                showShare="true"
-                                showSetAsDefault="true"
-                                showExecuteOnSelection="true"
-                                lifecycleSupport="true"
-                                save="onSaveVariant"
+
+                        <controls:CustomSmartVariant
+                                id="customVariant"
+                                persistencyKey="{viewModel>/persistencyKey}"
+                                beforeSave="onBeforeSaveVariant"/>
+
+                        <!--<controls:CustomVariantManagement
+                                id="customVariant"
                                 select="onSelectVariant"
-                                manage="onManageVariant">
-                        </vm:VariantManagement>
+                                save="onSaveVariant"
+                                enabled="true"
+                                manage="onManageVariant"
+                                showExecuteOnSelection="true"
+                                showShare="true"
+                                lifecycleSupport="true"
+                                persistencyKey="{viewModel>/persistencyKey}">
+                            <controls:variantItems>
+                                <vm:VariantItem text="Accounts by Name" key="ABN" global="true" readOnly="true" lifecyclePackage="/UIF/LREP_HOME_CONTENT" accessOptions="R"/>
+                                <vm:VariantItem text="Accounts by ID" key="ABI" global="true" readOnly="false" lifecyclePackage="/UIF/LREP_HOME_CONTENT" accessOptions="RWD"/>
+                            </controls:variantItems>
+                        </controls:CustomVariantManagement>-->
+
                     </f:heading>
                     <f:actions>
                         <ToolbarSpacer/>
@@ -46,7 +56,7 @@
                 <f:DynamicPageHeader pinnable="false">
                     <f:content>
                         <SearchField id="searchField"
-                                     liveChange="onSearch"
+                                     search="onSearch"
                                      showRefreshButton="{= !${device>/support/touch} }"
                                      width="100%">
                         </SearchField>

@@ -5,7 +5,9 @@ sap.ui.define([
     "sap/ui/model/FilterOperator",
     "sap/ui/model/FilterType",
     "com/evorait/evoplan/controller/BaseController",
-], function(Device, JSONModel, Filter, FilterOperator, FilterType, BaseController) {
+    "sap/ui/fl/Persistence",
+    "sap/ui/comp/smartvariants/PersonalizableInfo"
+], function(Device, JSONModel, Filter, FilterOperator, FilterType, BaseController, Persistence, PersonalizableInfo) {
     "use strict";
 
     return BaseController.extend('com.evorait.evoplan.controller.MasterPage', {
@@ -16,8 +18,10 @@ sap.ui.define([
         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
         onInit: function() {
             this._oDroppableTable = this.byId("droppableTable");
-            this._oTreeVariant = this.byId("treeVariantManagment");
             this._aFilters = [];
+
+            //todo fetch variantSet
+            //this.byId("customVariant").currentVariantSetModified(true);
 
             //add fragment FilterSettingsDialog to the view
             if (!this._oFilterSettingsDialog) {
@@ -34,6 +38,7 @@ sap.ui.define([
             if(this._oDroppableTable){
                 this._jDroppable(this);
             }
+            this._initialCustomVariant();
         },
 
         /**
@@ -68,10 +73,7 @@ sap.ui.define([
          * @param oEvent
          */
         onFilterButtonPress : function (oEvent) {
-            if (!this._oFilterSettingsDialog) {
-                this._oFilterSettingsDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.FilterSettingsDialog", this);
-                this.getView().addDependent(this._oFilterSettingsDialog);
-            }
+            this._initialFilterDialog();
             this._oFilterSettingsDialog.open();
         },
 
@@ -88,6 +90,8 @@ sap.ui.define([
             var oGroupFilter = sap.ui.getCore().byId("idCustomFilterItem").getCustomControl();
             var oViewFilter = sap.ui.getCore().byId("viewFilterItem").getControl();
             this._aFilters = [];
+
+            this._initialFilterDialog();
 
             //set values in FilterSettingsDialog
             //filter for Resource group
@@ -109,8 +113,14 @@ sap.ui.define([
          * when the Save Variant dialog is closed with OK for a variant
          * @param oEvent
          */
-        onSaveVariant : function (oEvent) {
-            //todo save this._aFilters
+        onBeforeSaveVariant : function (oEvent) {
+            var params = oEvent.getParameters();
+            console.log(params);
+            console.log("onBeforeSaveVariant");
+
+            if(params.overwrite){
+
+            }
         },
 
         /**
@@ -163,6 +173,33 @@ sap.ui.define([
         /* =========================================================== */
         /* internal methods                                            */
         /* =========================================================== */
+
+        _initialCustomVariant: function () {
+            var oVariant = this.byId("customVariant");
+            //console.log(oVariant);
+            /*var persistencyKey = this.getModel("viewModel").getProperty("/persistencyKey");
+            oVariant.setProperty("persistencyKey", persistencyKey);
+            var _oControlPersistence = new Persistence(oVariant, "persistencyKey");
+            console.log(_oControlPersistence);*/
+
+            var searchField = this.byId("searchField");
+            //console.log(this._oDroppableTable.getEntityType());
+
+            var oPersInfo = new sap.ui.comp.smartvariants.PersonalizableInfo({
+                type: "filterResources",
+                keyName: "persistencyKey"
+                //dataSource: ""
+            });
+            oPersInfo.setControl(searchField);
+            oVariant.addPersonalizableControl(oPersInfo);
+        },
+
+        _initialFilterDialog: function () {
+            if (!this._oFilterSettingsDialog) {
+                this._oFilterSettingsDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.FilterSettingsDialog", this);
+                this.getView().addDependent(this._oFilterSettingsDialog);
+            }
+        },
 
         _jDroppable: function (_this) {
             setTimeout(function() {

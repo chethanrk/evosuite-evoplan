@@ -7,8 +7,9 @@
 	<title>EvoPlan</title>
 
 	<!-- Bootstrapping UI5 -->
+	<!-- https://sapui5.hana.ondemand.com/resources/sap-ui-core.js -->
 	<script id="sap-ui-bootstrap"
-			src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
+			src="resources/sap-ui-core-dbg.js"
 			data-sap-ui-libs="sap.m, sap.ui.layout, sap.uxap"
 			data-sap-ui-theme="sap_belize"
 			data-sap-ui-compatVersion="edge"
@@ -75,7 +76,6 @@
                             name: "com.evorait.evoplan",
                             height: "100%",
                             width: "100%",
-                            manifestFirst: true,
                             async: true
                         }),
                         id: "appShell",
