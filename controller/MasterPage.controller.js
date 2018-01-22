@@ -263,8 +263,6 @@ sap.ui.define([
                 aFilters.push(groupFilter);
             }
 
-            aFilters.push(new Filter("HierarchyLevel", FilterOperator.GE, 0));
-
             return  new Filter({
                 filters: aFilters,
                 and: true
