@@ -32,10 +32,8 @@ sap.ui.define([
         * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.
         * This hook is the same one that SAPUI5 controls get after being rendered.
         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
-        onAfterRendering: function() {
-            if(this._oDroppableTable){
-                this._jDroppable(this);
-            }
+        onAfterRendering: function(oEvent) {
+            this.refreshDroppable(oEvent);
         },
 
         /**
@@ -49,12 +47,23 @@ sap.ui.define([
         },
 
         /**
+         *
+         * @param oEvent
+         */
+        onToggleOpenState: function (oEvent) {
+            var params = oEvent.getParameters();
+            console.log(params);
+            if(params.expanded){
+
+            }
+        },
+
+        /**
          * @param oEvent
          */
         onSearchResources : function (oEvent) {
             var binding = this._oDroppableTable.getBinding("items");
             var aFilters = this._getAllFilters();
-            console.log(aFilters);
             binding.filter(aFilters, "Application");
         },
 
@@ -121,7 +130,6 @@ sap.ui.define([
         onFilterSettingsConfirm : function (oEvent) {
             var oBinding = this._oDroppableTable.getBinding("items");
             var aFilters = this._getAllFilters();
-            console.log(aFilters);
             oBinding.filter(aFilters, "Application");
         },
 
@@ -215,11 +223,30 @@ sap.ui.define([
 
             //get search field value
             var sSearchField = this.byId("searchFieldResources").getValue();
-
             if (sSearchField && sSearchField.length > 0) {
                 //only search on 0 and 1 Level
-                var filter = new Filter("Description", FilterOperator.Contains, sSearchField);
-                aFilters.push(filter);
+                var searchFilterH0 = new Filter({
+                    filters: [
+                        new Filter("Description", FilterOperator.Contains, sSearchField),
+                        new Filter("HierarchyLevel", FilterOperator.EQ, 0)
+                    ],
+                    and: true
+                });
+                var searchFilterH1 = new Filter({
+                    filters: [
+                        new Filter("Description", FilterOperator.Contains, sSearchField),
+                        new Filter("HierarchyLevel", FilterOperator.EQ, 1)
+                    ],
+                    and: true
+                });
+
+                //search field filter: ((string && Level0) || (string && Level1))
+                var mergedSearch = new Filter({
+                    filters: [searchFilterH0, searchFilterH1],
+                    and: false
+                });
+
+                aFilters.push(mergedSearch);
             }
 
             // filter dialog values

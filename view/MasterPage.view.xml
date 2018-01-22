@@ -57,9 +57,9 @@
             <f:content>
                 <layout:VerticalLayout width="100%" class="listTreeTable" >
                     <Tree id="droppableTable"
-                          toggleOpenState="refreshDroppable"
                           updateFinished="refreshDroppable"
-                          items="{path: '/ResourceHierarchySet'}">
+                          items="{path: '/ResourceHierarchySet'}"
+                          toggleOpenState="onToggleOpenState">
                         <CustomTreeItem>
                             <FlexBox alignItems="Start"
                                      justifyContent="SpaceBetween"
