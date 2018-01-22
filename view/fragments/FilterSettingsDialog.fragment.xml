@@ -1,7 +1,6 @@
 <core:FragmentDefinition
         xmlns="sap.m"
-        xmlns:core="sap.ui.core"
-        xmlns:form="sap.ui.layout.form">
+        xmlns:core="sap.ui.core">
 
     <ViewSettingsDialog id="filterViewDialog" title="Filter" confirm="onFilterSettingsConfirm">
         <filterItems>
@@ -11,10 +10,10 @@
                     key="View"
                     multiSelect="false">
                 <items>
-                    <ViewSettingsItem text="Daily" key="Daily" />
-                    <ViewSettingsItem text="Weekly" key="Weekly" />
-                    <ViewSettingsItem text="Monthly" key="Monthly" />
-                    <ViewSettingsItem text="Simple" key="Simple" />
+                    <ViewSettingsItem text="Daily" key="TIMEDAY" />
+                    <ViewSettingsItem text="Weekly" key="TIMEWEEK" />
+                    <ViewSettingsItem text="Monthly" key="TIMEMONTH" />
+                    <ViewSettingsItem text="Simple" key="TIMENONE" selected="true"/>
                 </items>
             </ViewSettingsFilterItem>
 
@@ -24,29 +23,38 @@
                     key="TimeFrame">
                 <customControl>
                     <VBox class="sapUiSmallMargin">
-                        <Label text="{i18n>xtit.filterDateFrom}" labelFor="DP1"/>
+                        <Label text="{i18n>xtit.filterDateFrom}" labelFor="dateRange1"/>
                         <DatePicker
-                                id="DP1"
+                                id="dateRange1"
                                 class="sapUiSmallMarginBottom"
-                                value="2014-03-26" valueFormat="yyyy-MM-dd"/>
-                        <Label text="{i18n>xtit.filterDateTo}" labelFor="DP2"/>
+                                valueFormat="{i18n>dateFormat}"
+                                change="onChangeDateRangeFilter"
+                                value="{
+                                    type : 'sap.ui.model.type.String',
+                                    constraints : {
+                                        minLength: 1
+                                    }
+                                }"/>
+                        <Label text="{i18n>xtit.filterDateTo}" labelFor="dateRange2"/>
                         <DatePicker
-                                id="DP2"
-                                value="2014-03-26" valueFormat="yyyy-MM-dd" displayFormat="long"
-                                class="sapUiSmallMarginBottom"/>
+                                id="dateRange2"
+                                valueFormat="{i18n>dateFormat}"
+                                class="sapUiSmallMarginBottom"
+                                change="onChangeDateRangeFilter"/>
                     </VBox>
                 </customControl>
             </ViewSettingsCustomItem>
 
             <ViewSettingsCustomItem
-                    id="idResourceGroupFilterItem"
+                    id="idGroupFilterItem"
                     text="{i18n>xtit.filterTitleGroup}"
                     key="ResourceGroup">
                 <customControl>
                     <MultiInput id="multiInput"
                                 showValueHelp="true"
                                 width="90%"
-                                class="sapUiSmallMargin">
+                                class="sapUiSmallMargin"
+                                change="onChangeGroupFilter">
                     </MultiInput>
                 </customControl>
             </ViewSettingsCustomItem>

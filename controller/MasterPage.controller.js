@@ -4,6 +4,7 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/model/FilterType",
+    "com/evorait/evoplan/model/formatter",
     "com/evorait/evoplan/controller/BaseController",
     "sap/ui/fl/Persistence",
     "sap/ui/comp/smartvariants/PersonalizableInfo"
@@ -12,32 +13,29 @@ sap.ui.define([
 
     return BaseController.extend('com.evorait.evoplan.controller.MasterPage', {
 
+        formatter: formatter,
+
+        defaultDateRange: [],
+
         /**
         * Called when a controller is instantiated and its View controls (if available) are already created.
         * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
         onInit: function() {
             this._oDroppableTable = this.byId("droppableTable");
+            this._oTreeVariant = this.byId("treeVariantManagment");
             this._aFilters = [];
 
-            //todo fetch variantSet
-            //this.byId("customVariant").currentVariantSetModified(true);
-
             //add fragment FilterSettingsDialog to the view
-            if (!this._oFilterSettingsDialog) {
-                this._oFilterSettingsDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.FilterSettingsDialog", this);
-                this.getView().addDependent(this._oFilterSettingsDialog);
-            }
+            this._initFilterDialog();
         },
 
         /**
         * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.
         * This hook is the same one that SAPUI5 controls get after being rendered.
         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
-        onAfterRendering: function() {
-            if(this._oDroppableTable){
-                this._jDroppable(this);
-            }
+        onAfterRendering: function(oEvent) {
+            this.refreshDroppable(oEvent);
             this._initialCustomVariant();
         },
 
@@ -52,19 +50,23 @@ sap.ui.define([
         },
 
         /**
+         *
          * @param oEvent
          */
-        onSearch : function (oEvent) {
-            var sQuery = oEvent.getSource().getValue();
-            var aFilters = this._aFilters;
-            var binding = this._oDroppableTable.getBinding("items");
+        onToggleOpenState: function (oEvent) {
+            var params = oEvent.getParameters();
+            console.log(params);
+            if(params.expanded){
 
-            if (sQuery && sQuery.length > 0) {
-                //only search on 0 and 1 Level
-                var filter = new Filter("Description", FilterOperator.Contains, sQuery);
-                //var filterLevel = new Filter("HierarchyLevel", FilterOperator.LE, 1);
-                aFilters.push(filter);
             }
+        },
+
+        /**
+         * @param oEvent
+         */
+        onSearchResources : function (oEvent) {
+            var binding = this._oDroppableTable.getBinding("items");
+            var aFilters = this._getAllFilters();
             binding.filter(aFilters, "Application");
         },
 
@@ -73,7 +75,7 @@ sap.ui.define([
          * @param oEvent
          */
         onFilterButtonPress : function (oEvent) {
-            this._initialFilterDialog();
+            this._initFilterDialog();
             this._oFilterSettingsDialog.open();
         },
 
@@ -89,9 +91,6 @@ sap.ui.define([
             var oBinding = this._oDroppableTable.getBinding("items");
             var oGroupFilter = sap.ui.getCore().byId("idCustomFilterItem").getCustomControl();
             var oViewFilter = sap.ui.getCore().byId("viewFilterItem").getControl();
-            this._aFilters = [];
-
-            this._initialFilterDialog();
 
             //set values in FilterSettingsDialog
             //filter for Resource group
@@ -133,31 +132,49 @@ sap.ui.define([
         },
 
         /**
-         * Todo: set right view filter parameters
          * ViewSettingsDialog confirm filter
          * @param oEvent
          */
         onFilterSettingsConfirm : function (oEvent) {
-            var params = oEvent.getParameters();
             var oBinding = this._oDroppableTable.getBinding("items");
-            var oGroupFilter = sap.ui.getCore().byId("idCustomFilterItem").getCustomControl();
-            var oGroupFilterValue = oGroupFilter.getValue();
-            var aFilters = [];
-
-            //filter for selected view
-            for (var i = 0; i < params.filterItems.length; i++) {
-                var obj = params.filterItems[i];
-                var key = obj.getKey();
-                var filter = new Filter("View", FilterOperator.Contains, key);
-                aFilters.push(filter);
-            }
-
-            //filter for Resource group
-            var customFilter = new Filter("ParentNodeId", FilterOperator.Contains, oGroupFilterValue);
-            aFilters.push(customFilter);
-            //hold view settings globally for variant managment
-            this._aFilters = aFilters;
+            var aFilters = this._getAllFilters();
             oBinding.filter(aFilters, "Application");
+        },
+
+        /**
+         *  on multiinput changed
+         * @param oEvent
+         */
+        onChangeGroupFilter: function (oEvent) {
+            var oNewValue = oEvent.getParameter("value");
+            var oCustomFilter = sap.ui.getCore().byId("idGroupFilterItem");
+
+            // if the value has changed
+            if (oNewValue && oNewValue !== "") {
+                oCustomFilter.setFilterCount(1);
+                oCustomFilter.setSelected(true);
+            } else {
+                oCustomFilter.setFilterCount(0);
+                oCustomFilter.setSelected(false);
+            }
+        },
+
+        /**
+         * on date input changed
+         * @param oEvent
+         */
+        onChangeDateRangeFilter: function (oEvent) {
+            var oSource = oEvent.getSource();
+            var oNewValue = oEvent.getParameter("value");
+            var oCustomFilter = sap.ui.getCore().byId("idTimeframeFilterItem");
+            oCustomFilter.setFilterCount(1);
+            oCustomFilter.setSelected(true);
+
+            // Date range should be never empty
+            if (!oNewValue && oNewValue === "") {
+                var lastValue = this.defaultDateRange[oSource.getId()] || this.formatter.date(new Date());
+                oSource.setValue(lastValue);
+            }
         },
 
         /**
@@ -194,11 +211,88 @@ sap.ui.define([
             oVariant.addPersonalizableControl(oPersInfo);
         },
 
-        _initialFilterDialog: function () {
+        _initFilterDialog: function () {
             if (!this._oFilterSettingsDialog) {
                 this._oFilterSettingsDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.FilterSettingsDialog", this);
                 this.getView().addDependent(this._oFilterSettingsDialog);
+
+                //set default date range from 1month
+                var oCustomFilter = sap.ui.getCore().byId("idTimeframeFilterItem");
+                var dateControl1 = sap.ui.getCore().byId("dateRange1");
+                var dateControl2 = sap.ui.getCore().byId("dateRange2");
+                var d = new Date();
+                d.setMonth(d.getMonth() - 1);
+
+                // save default date range global
+                this.defaultDateRange[dateControl1.getId()] = this.formatter.date(d);
+                this.defaultDateRange[dateControl2.getId()] = this.formatter.date(new Date());
+
+                dateControl1.setValue(this.defaultDateRange[dateControl1.getId()]);
+                dateControl2.setValue(this.defaultDateRange[dateControl2.getId()]);
+                oCustomFilter.setFilterCount(1);
+                oCustomFilter.setSelected(true);
             }
+
+            //trigger first filter search
+
+        },
+
+        /**
+         * collection of all filter from view settings dialog and also from search field
+         * @returns {Array}
+         * @private
+         */
+        _getAllFilters: function () {
+            var aFilters = [];
+
+            //get search field value
+            var sSearchField = this.byId("searchFieldResources").getValue();
+            if (sSearchField && sSearchField.length > 0) {
+                aFilters.push(new Filter("Description", FilterOperator.Contains, sSearchField));
+            }
+
+            // filter dialog values
+            //view setting
+            var oViewFilter = sap.ui.getCore().byId("viewFilterItem");
+            var oViewFilterItems = oViewFilter.getItems();
+
+            for (var i = 0; i < oViewFilterItems.length; i++) {
+                var obj = oViewFilterItems[i];
+                if(obj.getSelected()){
+                    var key = obj.getKey();
+                    aFilters.push(new Filter("NodeType", FilterOperator.EQ, key));
+                }
+            }
+
+            //set default date range
+            var sDateControl1 = sap.ui.getCore().byId("dateRange1").getValue();
+            var sDateControl2 = sap.ui.getCore().byId("dateRange2").getValue();
+            sDateControl1 = this.formatter.formatFilterDate(sDateControl1);
+            sDateControl2 = this.formatter.formatFilterDate(sDateControl2);
+            var oDateRangeFilter = new Filter("StartDate", FilterOperator.BT, sDateControl1, sDateControl2);
+            aFilters.push(oDateRangeFilter);
+
+            //filter for Resource group
+            var oGroupFilter = sap.ui.getCore().byId("idGroupFilterItem").getCustomControl();
+            var sGroupFilterVal = oGroupFilter.getValue();
+
+            if(sGroupFilterVal && sGroupFilterVal !== ""){
+                var groupFilter = new Filter({
+                    filters: [
+                        new Filter("ParentNodeId", FilterOperator.EQ, ""),
+                        new Filter("Description", FilterOperator.Contains, sGroupFilterVal)
+                    ],
+                    and: true
+                });
+                aFilters.push(groupFilter);
+            }
+
+            aFilters.push(new Filter("HierarchyLevel", FilterOperator.GE, 0));
+
+            return  new Filter({
+                filters: aFilters,
+                and: true
+            });
         },
 
         _jDroppable: function (_this) {
