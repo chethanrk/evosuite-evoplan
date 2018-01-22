@@ -62,9 +62,17 @@ sap.ui.define([
          * @param oEvent
          */
         onSearchResources : function (oEvent) {
-            var binding = this._oDroppableTable.getBinding("items");
-            var aFilters = this._getAllFilters();
-            binding.filter(aFilters, "Application");
+            //var binding = this._oDroppableTable.getBinding("items");
+            var oItem = this._oDroppableTable.getItems(0);
+            var oTemplateItem = oItem.clone();
+            this._oDroppableTable.unbindAggregation("items");
+            this._oDroppableTable.bindAggregation("items", {
+            	path: "",
+            	template: oTemplateItem,
+            	filter: this.getAllFilters()
+            });
+            // var aFilters = this._getAllFilters();
+            //binding.filter(aFilters, "Application");
         },
 
         /**
