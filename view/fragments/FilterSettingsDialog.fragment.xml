@@ -10,10 +10,10 @@
                     key="View"
                     multiSelect="false">
                 <items>
-                    <ViewSettingsItem text="Daily" key="Daily" />
-                    <ViewSettingsItem text="Weekly" key="Weekly" />
-                    <ViewSettingsItem text="Monthly" key="Monthly" />
-                    <ViewSettingsItem text="Simple" key="Simple" selected="true"/>
+                    <ViewSettingsItem text="Daily" key="TIMEDAY" />
+                    <ViewSettingsItem text="Weekly" key="TIMEWEEK" />
+                    <ViewSettingsItem text="Monthly" key="TIMEMONTH" />
+                    <ViewSettingsItem text="Simple" key="TIMENONE" selected="true"/>
                 </items>
             </ViewSettingsFilterItem>
 

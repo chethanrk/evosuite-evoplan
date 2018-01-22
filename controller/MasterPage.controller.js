@@ -88,7 +88,6 @@ sap.ui.define([
             var oBinding = this._oDroppableTable.getBinding("items");
             var oGroupFilter = sap.ui.getCore().byId("idCustomFilterItem").getCustomControl();
             var oViewFilter = sap.ui.getCore().byId("viewFilterItem").getControl();
-            this._aFilters = [];
 
             //set values in FilterSettingsDialog
             //filter for Resource group
@@ -103,6 +102,7 @@ sap.ui.define([
             this._aFilters.push(new Filter("View", FilterOperator.Contains, key));
 
             oBinding.filter(this._aFilters, "Application");
+
         },
 
         /**
@@ -224,33 +224,10 @@ sap.ui.define([
             //get search field value
             var sSearchField = this.byId("searchFieldResources").getValue();
             if (sSearchField && sSearchField.length > 0) {
-                //only search on 0 and 1 Level
-                var searchFilterH0 = new Filter({
-                    filters: [
-                        new Filter("Description", FilterOperator.Contains, sSearchField),
-                        new Filter("HierarchyLevel", FilterOperator.EQ, 0)
-                    ],
-                    and: true
-                });
-                var searchFilterH1 = new Filter({
-                    filters: [
-                        new Filter("Description", FilterOperator.Contains, sSearchField),
-                        new Filter("HierarchyLevel", FilterOperator.EQ, 1)
-                    ],
-                    and: true
-                });
-
-                //search field filter: ((string && Level0) || (string && Level1))
-                var mergedSearch = new Filter({
-                    filters: [searchFilterH0, searchFilterH1],
-                    and: false
-                });
-
-                aFilters.push(mergedSearch);
+                aFilters.push(new Filter("Description", FilterOperator.Contains, sSearchField));
             }
 
             // filter dialog values
-
             //view setting
             var oViewFilter = sap.ui.getCore().byId("viewFilterItem");
             var oViewFilterItems = oViewFilter.getItems();
@@ -259,7 +236,7 @@ sap.ui.define([
                 var obj = oViewFilterItems[i];
                 if(obj.getSelected()){
                     var key = obj.getKey();
-                    //aFilters.push(new Filter("View", FilterOperator.EQ, key));
+                    aFilters.push(new Filter("NodeType", FilterOperator.EQ, key));
                 }
             }
 
