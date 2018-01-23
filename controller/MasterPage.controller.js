@@ -66,6 +66,10 @@ sap.ui.define([
          */
         onToggleOpenState: function (oEvent) {
             var params = oEvent.getParameters();
+            console.log(params);
+            if(params.expanded){
+
+            }
         },
 
         /**
@@ -275,8 +279,6 @@ sap.ui.define([
                 });
                 aFilters.push(groupFilter);
             }
-
-            //aFilters.push(new Filter("HierarchyLevel", FilterOperator.GE, 0));
 
             return  new Filter({
                 filters: aFilters,
