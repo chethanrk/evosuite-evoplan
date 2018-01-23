@@ -15,6 +15,8 @@ sap.ui.define([
 
         defaultDateRange: [],
 
+        firstLoad: false,
+
         /**
         * Called when a controller is instantiated and its View controls (if available) are already created.
         * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -22,7 +24,8 @@ sap.ui.define([
         onInit: function() {
             this._oDroppableTable = this.byId("droppableTable");
             this._oTreeVariant = this.byId("treeVariantManagment");
-            this._aFilters = [];
+
+            //this._oDroppableTable.expandToLevel(1);
 
             //add fragment FilterSettingsDialog to the view
             this._initFilterDialog();
@@ -33,6 +36,7 @@ sap.ui.define([
         * This hook is the same one that SAPUI5 controls get after being rendered.
         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
         onAfterRendering: function(oEvent) {
+            //init droppable
             this.refreshDroppable(oEvent);
         },
 
@@ -47,24 +51,28 @@ sap.ui.define([
         },
 
         /**
+         * trigger add filter to tree table for the first time
+         */
+        onTreeUpdateStarted: function () {
+            if(!this.firstLoad){
+                this._triggerFilterSearch();
+                this.firstLoad = true;
+            }
+        },
+
+        /**
          *
          * @param oEvent
          */
         onToggleOpenState: function (oEvent) {
             var params = oEvent.getParameters();
-            console.log(params);
-            if(params.expanded){
-
-            }
         },
 
         /**
          * @param oEvent
          */
         onSearchResources : function (oEvent) {
-            var binding = this._oDroppableTable.getBinding("items");
-            var aFilters = this._getAllFilters();
-            binding.filter(aFilters, "Application");
+            this._triggerFilterSearch();
         },
 
         /**
@@ -88,21 +96,21 @@ sap.ui.define([
             var oBinding = this._oDroppableTable.getBinding("items");
             var oGroupFilter = sap.ui.getCore().byId("idCustomFilterItem").getCustomControl();
             var oViewFilter = sap.ui.getCore().byId("viewFilterItem").getControl();
+            var aFilters = [];
 
             //set values in FilterSettingsDialog
             //filter for Resource group
             var value = "blub";
             oGroupFilter.setValue(value);
             oGroupFilter.setFilterCount(1);
-            this._aFilters.push(new Filter("ParentNodeId", FilterOperator.Contains, value));
+            aFilters.push(new Filter("ParentNodeId", FilterOperator.Contains, value));
 
             //filter view
             var key = "monthly";
             oViewFilter.setKey(key);
-            this._aFilters.push(new Filter("View", FilterOperator.Contains, key));
+            aFilters.push(new Filter("NodeType", FilterOperator.Contains, key));
 
-            oBinding.filter(this._aFilters, "Application");
-
+            oBinding.filter(aFilters, "Application");
         },
 
         /**
@@ -128,9 +136,7 @@ sap.ui.define([
          * @param oEvent
          */
         onFilterSettingsConfirm : function (oEvent) {
-            var oBinding = this._oDroppableTable.getBinding("items");
-            var aFilters = this._getAllFilters();
-            oBinding.filter(aFilters, "Application");
+            this._triggerFilterSearch();
         },
 
         /**
@@ -208,9 +214,16 @@ sap.ui.define([
                 oCustomFilter.setFilterCount(1);
                 oCustomFilter.setSelected(true);
             }
+        },
 
-            //trigger first filter search
-
+        /**
+         * triggers request with all setted filters
+         * @private
+         */
+        _triggerFilterSearch: function () {
+            var binding = this._oDroppableTable.getBinding("items");
+            var aFilters = this._getAllFilters();
+            binding.filter(aFilters, "Application");
         },
 
         /**
@@ -263,7 +276,7 @@ sap.ui.define([
                 aFilters.push(groupFilter);
             }
 
-            aFilters.push(new Filter("HierarchyLevel", FilterOperator.GE, 0));
+            //aFilters.push(new Filter("HierarchyLevel", FilterOperator.GE, 0));
 
             return  new Filter({
                 filters: aFilters,

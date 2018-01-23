@@ -58,6 +58,7 @@
                 <layout:VerticalLayout width="100%" class="listTreeTable" >
                     <Tree id="droppableTable"
                           updateFinished="refreshDroppable"
+                          updateStarted="onTreeUpdateStarted"
                           items="{path: '/ResourceHierarchySet'}"
                           toggleOpenState="onToggleOpenState">
                         <CustomTreeItem>
