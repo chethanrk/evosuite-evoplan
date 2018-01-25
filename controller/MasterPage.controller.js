@@ -4,11 +4,10 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/model/FilterType",
+    "sap/m/Token",
     "com/evorait/evoplan/model/formatter",
     "com/evorait/evoplan/controller/BaseController",
-    "sap/ui/fl/Persistence",
-    "sap/ui/comp/smartvariants/PersonalizableInfo"
-], function(Device, JSONModel, Filter, FilterOperator, FilterType, BaseController, Persistence, PersonalizableInfo) {
+], function(Device, JSONModel, Filter, FilterOperator, FilterType, Token, formatter, BaseController) {
     "use strict";
 
     return BaseController.extend('com.evorait.evoplan.controller.MasterPage', {
@@ -67,7 +66,7 @@ sap.ui.define([
         onSearchResources : function (oEvent) {
             var binding = this._oDroppableTable.getBinding("items");
             var aFilters = this._getAllFilters();
-            binding.filter(aFilters, "Application");
+            //binding.filter(aFilters, "Application");
         },
 
         /**
@@ -87,47 +86,6 @@ sap.ui.define([
          * @param oEvent
          */
         onSelectVariant : function (oEvent) {
-            var params = oEvent.getParameters();
-            var oBinding = this._oDroppableTable.getBinding("items");
-            var oGroupFilter = sap.ui.getCore().byId("idCustomFilterItem").getCustomControl();
-            var oViewFilter = sap.ui.getCore().byId("viewFilterItem").getControl();
-
-            //set values in FilterSettingsDialog
-            //filter for Resource group
-            var value = "blub";
-            oGroupFilter.setValue(value);
-            oGroupFilter.setFilterCount(1);
-            this._aFilters.push(new Filter("ParentNodeId", FilterOperator.Contains, value));
-
-            //filter view
-            var key = "monthly";
-            oViewFilter.setKey(key);
-            this._aFilters.push(new Filter("View", FilterOperator.Contains, key));
-
-            oBinding.filter(this._aFilters, "Application");
-        },
-
-        /**
-         * Todo: save this._aFilters
-         * when the Save Variant dialog is closed with OK for a variant
-         * @param oEvent
-         */
-        onBeforeSaveVariant : function (oEvent) {
-            var params = oEvent.getParameters();
-            console.log(params);
-            console.log("onBeforeSaveVariant");
-
-            if(params.overwrite){
-
-            }
-        },
-
-        /**
-         * Todo: is this needed?
-         * when users apply changes to variants in the Manage Variants dialog
-         * @param oEvent
-         */
-        onManageVariant : function (oEvent) {
 
         },
 
@@ -138,7 +96,7 @@ sap.ui.define([
         onFilterSettingsConfirm : function (oEvent) {
             var oBinding = this._oDroppableTable.getBinding("items");
             var aFilters = this._getAllFilters();
-            oBinding.filter(aFilters, "Application");
+            //oBinding.filter(aFilters, "Application");
         },
 
         /**
@@ -192,23 +150,16 @@ sap.ui.define([
         /* =========================================================== */
 
         _initialCustomVariant: function () {
-            var oVariant = this.byId("customVariant");
-            //console.log(oVariant);
-            /*var persistencyKey = this.getModel("viewModel").getProperty("/persistencyKey");
-            oVariant.setProperty("persistencyKey", persistencyKey);
-            var _oControlPersistence = new Persistence(oVariant, "persistencyKey");
-            console.log(_oControlPersistence);*/
-
+            var oVariant = this.byId("customResourceVariant");
             var searchField = this.byId("searchField");
-            //console.log(this._oDroppableTable.getEntityType());
 
-            var oPersInfo = new sap.ui.comp.smartvariants.PersonalizableInfo({
-                type: "filterResources",
-                keyName: "persistencyKey"
-                //dataSource: ""
-            });
-            oPersInfo.setControl(searchField);
-            oVariant.addPersonalizableControl(oPersInfo);
+            this._initFilterDialog();
+
+            oVariant.addFilter(searchField);
+            oVariant.addFilter(sap.ui.getCore().byId("dateRange1"));
+            oVariant.addFilter(sap.ui.getCore().byId("viewFilterItem"));
+            oVariant.addFilter(sap.ui.getCore().byId("multiGroupInput"));
+
         },
 
         _initFilterDialog: function () {
@@ -231,10 +182,14 @@ sap.ui.define([
                 dateControl2.setValue(this.defaultDateRange[dateControl2.getId()]);
                 oCustomFilter.setFilterCount(1);
                 oCustomFilter.setSelected(true);
+
+                //*** add checkbox validator
+                var oMultiInput = sap.ui.getCore().byId("multiGroupInput");
+                oMultiInput.addValidator(function(args){
+                    var text = args.text;
+                    return new Token({key: text, text: text});
+                });
             }
-
-            //trigger first filter search
-
         },
 
         /**
@@ -246,7 +201,7 @@ sap.ui.define([
             var aFilters = [];
 
             //get search field value
-            var sSearchField = this.byId("searchFieldResources").getValue();
+            var sSearchField = this.byId("searchField").getValue();
             if (sSearchField && sSearchField.length > 0) {
                 aFilters.push(new Filter("Description", FilterOperator.Contains, sSearchField));
             }
@@ -272,20 +227,25 @@ sap.ui.define([
             var oDateRangeFilter = new Filter("StartDate", FilterOperator.BT, sDateControl1, sDateControl2);
             aFilters.push(oDateRangeFilter);
 
-            //filter for Resource group
+            //filter for Resource group multi token input
             var oGroupFilter = sap.ui.getCore().byId("idGroupFilterItem").getCustomControl();
-            var sGroupFilterVal = oGroupFilter.getValue();
-
-            if(sGroupFilterVal && sGroupFilterVal !== ""){
+            var aGroupToken = oGroupFilter.getTokens();
+            var aTokenFilter = [];
+            for (var j = 0; j < aGroupToken.length; j++) {
+                var key = aGroupToken[j].getKey();
                 var groupFilter = new Filter({
                     filters: [
                         new Filter("ParentNodeId", FilterOperator.EQ, ""),
-                        new Filter("Description", FilterOperator.Contains, sGroupFilterVal)
+                        new Filter("Description", FilterOperator.Contains, key)
                     ],
                     and: true
                 });
-                aFilters.push(groupFilter);
+                aTokenFilter.push(groupFilter);
             }
+            aFilters.push(new Filter({
+                filters: aTokenFilter,
+                and: false
+            }));
 
             aFilters.push(new Filter("HierarchyLevel", FilterOperator.GE, 0));
 

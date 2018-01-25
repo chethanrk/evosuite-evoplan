@@ -6,7 +6,7 @@
     <smartFilterBar:SmartFilterBar
             id="listReportFilter"
             entityType="{viewModel>/subFilterEntity}"
-            persistencyKey="{viewModel>/persistencyKey}"
+            persistencyKey="{viewModel>/persistencyKeyTable}"
             enableBasicSearch="false"
             useToolbar="true"
             considerSelectionVariants="true">

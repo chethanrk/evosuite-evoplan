@@ -23,26 +23,17 @@
                 <f:DynamicPageTitle>
                     <f:heading>
 
-                        <controls:CustomSmartVariant
-                                id="customVariant"
-                                persistencyKey="{viewModel>/persistencyKey}"
-                                beforeSave="onBeforeSaveVariant"/>
-
-                        <!--<controls:CustomVariantManagement
-                                id="customVariant"
+                        <controls:CustomVariantManagement
+                                id="customResourceVariant"
                                 select="onSelectVariant"
-                                save="onSaveVariant"
                                 enabled="true"
                                 manage="onManageVariant"
                                 showExecuteOnSelection="true"
                                 showShare="true"
                                 lifecycleSupport="true"
-                                persistencyKey="{viewModel>/persistencyKey}">
-                            <controls:variantItems>
-                                <vm:VariantItem text="Accounts by Name" key="ABN" global="true" readOnly="true" lifecyclePackage="/UIF/LREP_HOME_CONTENT" accessOptions="R"/>
-                                <vm:VariantItem text="Accounts by ID" key="ABI" global="true" readOnly="false" lifecyclePackage="/UIF/LREP_HOME_CONTENT" accessOptions="RWD"/>
-                            </controls:variantItems>
-                        </controls:CustomVariantManagement>-->
+                                persistencyKey="{viewModel>/persistencyKeyTree}"
+                                entitySet="{viewModel>/treeSet}">
+                        </controls:CustomVariantManagement>
 
                     </f:heading>
                     <f:actions>
