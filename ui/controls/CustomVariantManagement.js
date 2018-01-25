@@ -225,14 +225,10 @@ sap.ui.define([
         CustomVariantManagement.prototype._applyFilterContent = function (oFilterInfo, oFilterData) {
             for (var j = 0; j < this.aFilterControls.length; j++) {
                 var oControl = this.aFilterControls[j];
-                var oControlName = oControl.getId();
-
-                try{
-                    oControlName = oControl.getName();
-                }catch(e){}
+                var oControlName = this._getControlName(oControl);
 
                 if(oControlName === oFilterInfo.name){
-                    var oFilter = oFilterData[oControlName];
+                    var oFilter = oFilterData[oControlName]
 
                     try{
                         oControl.setEnabled(oFilterInfo.enabled);
@@ -255,34 +251,12 @@ sap.ui.define([
                                 }; break;
 
                             case "ItemsKey":
-                                try{
-                                    var items = oControl.getItems();
-                                    for (var k = 0; k < items.length; k++) {
-                                        if(items[k].getKey() === oFilter.value){
-                                            items[k].setSelected(true);
-                                        }else{
-                                            items[k].setSelected(false);
-                                        }
-                                    }
-                                }catch(e){
-                                    console.error("set itemsKey in _applyFilterContent not working!");
-                                }; break;
+                                this._setControlItemsKey(oControl, oFilter.value);
+                                break;
 
                             case "Token":
-                                try{
-                                    var aTokens = [];
-                                    var aValues = oFilter.value;
-                                    oControl.removeAllTokens();
-                                    console.log(aValues instanceof Array);
-                                    if(aValues instanceof Array){
-                                        for (var l = 0; l < aValues.length; l++) {
-                                            aTokens.push(new Token({key: aValues[l], text: aValues[l]}));
-                                        }
-                                        oControl.setTokens(aTokens);
-                                    }
-                                }catch(e){
-                                    console.error("set token in _applyFilterContent not working!");
-                                }; break;
+                                this._setControlToken(oControl, oFilter.value);
+                                break;
                         }
                     }
                 }
@@ -421,7 +395,6 @@ sap.ui.define([
                 }
             }
 
-            console.log(oFiltersData);
             oVariant.version = "V2";
             oVariant.filterbar = aFiltersInfo;
             oVariant.filterBarVariant = JSON.stringify(oFiltersData);
@@ -483,17 +456,11 @@ sap.ui.define([
          */
         CustomVariantManagement.prototype._getFilterInfos = function (oControl, type) {
             var oFilter = {
-                name: oControl.getId(),
+                name: this._getControlName(oControl),
                 type: type || "",
                 partOfCurrentVariant: true,
                 enabled: true
             };
-            try{
-                oFilter.name = oControl.getName();
-                if(!oFilter.name || oFilter.name === ""){
-                    oFilter.name = oControl.getId();
-                }
-            }catch (e){}
             try{
                 if(!type || type === ""){
                     oFilter.type = oControl.getType();
@@ -537,6 +504,47 @@ sap.ui.define([
             if (oPersoControl.variantsInitialized) {
                 oPersoControl.variantsInitialized();
             }
+        };
+
+        CustomVariantManagement.prototype._getControlName = function (oControl) {
+            var name = oControl.getId();
+            try{
+                name = oControl.getName();
+                if(!name || name === ""){
+                    name = oControl.getId();
+                }
+            }catch (e){}
+            return name;
+        };
+
+        CustomVariantManagement.prototype._setControlItemsKey = function (oControl, sValue) {
+            try{
+                var items = oControl.getItems();
+                for (var k = 0; k < items.length; k++) {
+                    if(items[k].getKey() === sValue){
+                        items[k].setSelected(true);
+                    }else{
+                        items[k].setSelected(false);
+                    }
+                }
+            }catch(e){
+                console.error("set itemsKey in _applyFilterContent not working!");
+            };
+        };
+
+        CustomVariantManagement.prototype._setControlToken = function(oControl, aValues){
+            try{
+                var aTokens = [];
+                oControl.removeAllTokens();
+                if(aValues instanceof Array){
+                    for (var l = 0; l < aValues.length; l++) {
+                        aTokens.push(new Token({key: aValues[l], text: aValues[l]}));
+                    }
+                    oControl.setTokens(aTokens);
+                }
+            }catch(e){
+                console.error("set token in _applyFilterContent not working!");
+            };
         };
 
         CustomVariantManagement.prototype.exit = function() {
