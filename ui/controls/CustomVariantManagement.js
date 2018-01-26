@@ -44,7 +44,6 @@ sap.ui.define([
         };
 
         /**
-         * Todo
          * @param fCallback
          * @param oPersoControl
          */
@@ -194,20 +193,53 @@ sap.ui.define([
                 oContent = this._oAppStdContent;
             }
 
+
+            oContent = this._fetchVariant();
             if (oContent) {
+                oContent = jQuery.extend(true, {}, oContent);
+            }
+
+            //set standard variant content global
+            this._setStandardVariant(this);
+
+            if (oContent) {
+                //init apply
                 this._applyControlVariant(oContent, true);
             }
 
-            if ((this._getCurrentVariantId() === this.getStandardVariantKey()) && this.getExecuteOnSelectForStandardVariant()) {
-                //Todo trigger search
-                /*if (oCurrentControlWrapper.control.search) {
-                    oCurrentControlWrapper.control.search();
-                }*/
+            this.fireEvent("initialise", parameter);
+        };
+
+        CustomVariantManagement.prototype._setStandardVariant = function() {
+            var oContent = this._fetchVariant();
+            if (oContent) {
+                this._oAppStdContent = jQuery.extend(true, {}, oContent);
+            }
+        };
+
+        CustomVariantManagement.prototype._getStandardVariant = function() {
+            return this._oAppStdContent;
+        };
+
+        CustomVariantManagement.prototype._triggerSelectVariant = function(sVariantKey, sContext) {
+            var oContent, oHandler = this._checkForSelectionHandler(sVariantKey);
+
+            if (oHandler) {
+                oContent = this._triggerSpecialSelectVariant(sVariantKey, sContext, oHandler);
+            } else {
+                oContent = this._triggerGeneralSelectVariant(sVariantKey, sContext);
+            }
+
+            if(this.getStandardVariantKey() === sVariantKey){
+                oContent = this._getStandardVariant();
+            }
+            if(oContent){
+                this._applyControlVariant(oContent, false);
             }
         };
 
         CustomVariantManagement.prototype._applyControlVariant = function (oContent, bInitial) {
-            var aFilterInfo = oContent.filterbar;
+            var aFilterInfo = oContent.filterbar || {};
             var oFilterData = null;
 
             try{
@@ -219,7 +251,6 @@ sap.ui.define([
                     this._applyFilterContent(aFilterInfo[i], oFilterData);
                 }
             }
-
         };
 
         CustomVariantManagement.prototype._applyFilterContent = function (oFilterInfo, oFilterData) {
@@ -228,36 +259,14 @@ sap.ui.define([
                 var oControlName = this._getControlName(oControl);
 
                 if(oControlName === oFilterInfo.name){
-                    var oFilter = oFilterData[oControlName]
+                    var oFilter = oFilterData[oControlName];
 
                     try{
                         oControl.setEnabled(oFilterInfo.enabled);
                     }catch(e){};
 
-                    if(oFilter && oFilter.value !== ""){
-                        switch(oFilterInfo.type){
-                            case "Text":
-                                try{
-                                    oControl.setValue(oFilter.value);
-                                }catch(e){
-                                    console.error("setValue in _applyFilterContent not working!");
-                                }; break;
-
-                            case "Key":
-                                try{
-                                    oControl.setKey(oFilter.value);
-                                }catch(e){
-                                    console.error("setKey in _applyFilterContent not working!");
-                                }; break;
-
-                            case "ItemsKey":
-                                this._setControlItemsKey(oControl, oFilter.value);
-                                break;
-
-                            case "Token":
-                                this._setControlToken(oControl, oFilter.value);
-                                break;
-                        }
+                    if(oFilter){
+                        this._setFilterValues(oControl, oFilter.value, oFilterInfo.type);
                     }
                 }
             }
@@ -472,6 +481,11 @@ sap.ui.define([
             return oFilter;
         };
 
+        /**
+         *
+         * @param oControl
+         * @private
+         */
         CustomVariantManagement.prototype._handleGetChanges = function(oControl) {
             var that = this;
             if (oControl && this._oControlPersistence) {
@@ -488,6 +502,13 @@ sap.ui.define([
             }
         };
 
+        /**
+         *
+         * @param sErrorText
+         * @param fCallback
+         * @param oPersoControl
+         * @private
+         */
         CustomVariantManagement.prototype._errorHandling = function(sErrorText, fCallback, oPersoControl) {
             var parameter = {
                 variantKeys: []
@@ -506,6 +527,11 @@ sap.ui.define([
             }
         };
 
+        /**
+         * gets name or id of added filter control
+         * @param oControl
+         * @private
+         */
         CustomVariantManagement.prototype._getControlName = function (oControl) {
             var name = oControl.getId();
             try{
@@ -517,6 +543,48 @@ sap.ui.define([
             return name;
         };
 
+        CustomVariantManagement.prototype._setFilterValues = function (oControl, sValue, sType) {
+            switch(sType){
+                case "Text":
+                    this._setControlText(oControl, sValue);
+                    break;
+
+                case "Key":
+                    this._setControlKey(oControl, sValue);
+                    break;
+
+                case "ItemsKey":
+                    this._setControlItemsKey(oControl, sValue);
+                    break;
+
+                case "Token":
+                    this._setControlToken(oControl, sValue);
+                    break;
+            }
+        };
+
+        CustomVariantManagement.prototype._setControlText = function (oControl, sValue) {
+            try{
+                oControl.setValue(sValue);
+            }catch(e){
+                console.error("setValue in _applyFilterContent not working!");
+            };
+        };
+
+        CustomVariantManagement.prototype._setControlKey = function (oControl, sValue) {
+            try{
+                oControl.setKey(sValue);
+            }catch(e){
+                console.error("setKey in _applyFilterContent not working!");
+            }
+        };
+
+        /**
+         * set key of filter groups like radio button
+         * @param oControl
+         * @param sValue
+         * @private
+         */
         CustomVariantManagement.prototype._setControlItemsKey = function (oControl, sValue) {
             try{
                 var items = oControl.getItems();
@@ -532,6 +600,12 @@ sap.ui.define([
             };
         };
 
+        /**
+         * sets token for multiInput
+         * @param oControl
+         * @param aValues
+         * @private
+         */
         CustomVariantManagement.prototype._setControlToken = function(oControl, aValues){
             try{
                 var aTokens = [];
