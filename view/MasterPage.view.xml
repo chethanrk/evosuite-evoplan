@@ -4,10 +4,9 @@
           xmlns:mvc="sap.ui.core.mvc"
           xmlns:layout="sap.ui.layout"
           xmlns:vm="sap.ui.comp.variants"
-          xmlns:smartTable="sap.ui.comp.smarttable"
-          xmlns:smartVariant="sap.ui.comp.smartvariants"
-          xmlns:smartList="sap.ui.comp.smartlist"
-          xmlns:f="sap.f">
+          xmlns:f="sap.f"
+          xmlns:smartVariantManagement="sap.ui.comp.smartvariants"
+          xmlns:controls="com.evorait.evoplan.ui.controls">
 
     <Page id="masterPage"
           title="{i18n>masterTitle}"
@@ -23,17 +22,18 @@
             <f:title>
                 <f:DynamicPageTitle>
                     <f:heading>
-                        <vm:VariantManagement
-                                defaultVariantKey=""
-                                standardItemText="Standard"
-                                showShare="true"
-                                showSetAsDefault="true"
-                                showExecuteOnSelection="true"
-                                lifecycleSupport="true"
-                                save="onSaveVariant"
+
+                        <controls:CustomVariantManagement
+                                id="customResourceVariant"
                                 select="onSelectVariant"
-                                manage="onManageVariant">
-                        </vm:VariantManagement>
+                                enabled="true"
+                                showExecuteOnSelection="true"
+                                showShare="true"
+                                lifecycleSupport="true"
+                                persistencyKey="{viewModel>/persistencyKeyTree}"
+                                entitySet="{viewModel>/treeSet}">
+                        </controls:CustomVariantManagement>
+
                     </f:heading>
                     <f:actions>
                         <ToolbarSpacer/>
@@ -45,7 +45,7 @@
             <f:header>
                 <f:DynamicPageHeader pinnable="false">
                     <f:content>
-                        <SearchField id="searchFieldResources"
+                        <SearchField id="searchField"
                                      search="onSearchResources"
                                      showRefreshButton="{= !${device>/support/touch} }"
                                      width="100%">

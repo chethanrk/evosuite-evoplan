@@ -50,11 +50,12 @@
                     text="{i18n>xtit.filterTitleGroup}"
                     key="ResourceGroup">
                 <customControl>
-                    <MultiInput id="multiInput"
-                                showValueHelp="true"
+                    <MultiInput id="multiGroupInput"
                                 width="90%"
                                 class="sapUiSmallMargin"
-                                change="onChangeGroupFilter">
+                                change="onChangeGroupFilter"
+                                enableMultiLineMode="true"
+                                showValueHelp="false">
                     </MultiInput>
                 </customControl>
             </ViewSettingsCustomItem>

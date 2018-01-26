@@ -4,9 +4,10 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/model/FilterType",
+    "sap/m/Token",
     "com/evorait/evoplan/model/formatter",
     "com/evorait/evoplan/controller/BaseController",
-], function(Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController) {
+], function(Device, JSONModel, Filter, FilterOperator, FilterType, Token, formatter, BaseController) {
     "use strict";
 
     return BaseController.extend('com.evorait.evoplan.controller.MasterPage', {
@@ -23,7 +24,7 @@ sap.ui.define([
         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
         onInit: function() {
             this._oDroppableTable = this.byId("droppableTable");
-            this._oTreeVariant = this.byId("treeVariantManagment");
+            this._oTreeVariant = this.byId("customResourceVariant");
 
             //this._oDroppableTable.expandToLevel(1);
 
@@ -38,6 +39,7 @@ sap.ui.define([
         onAfterRendering: function(oEvent) {
             //init droppable
             this.refreshDroppable(oEvent);
+            this._initialCustomVariant();
         },
 
         /**
@@ -89,50 +91,12 @@ sap.ui.define([
         },
 
         /**
-         * Todo: get saved variant
-         * when a new variant is selected
-         * values will be populated to FilterSettingsDialog
+         * when a new variant is selected trigger search
          * new Filters are bind to tree table
          * @param oEvent
          */
         onSelectVariant : function (oEvent) {
-            var params = oEvent.getParameters();
-            var oBinding = this._oDroppableTable.getBinding("items");
-            var oGroupFilter = sap.ui.getCore().byId("idCustomFilterItem").getCustomControl();
-            var oViewFilter = sap.ui.getCore().byId("viewFilterItem").getControl();
-            var aFilters = [];
-
-            //set values in FilterSettingsDialog
-            //filter for Resource group
-            var value = "blub";
-            oGroupFilter.setValue(value);
-            oGroupFilter.setFilterCount(1);
-            aFilters.push(new Filter("ParentNodeId", FilterOperator.Contains, value));
-
-            //filter view
-            var key = "monthly";
-            oViewFilter.setKey(key);
-            aFilters.push(new Filter("NodeType", FilterOperator.Contains, key));
-
-            oBinding.filter(aFilters, "Application");
-        },
-
-        /**
-         * Todo: save this._aFilters
-         * when the Save Variant dialog is closed with OK for a variant
-         * @param oEvent
-         */
-        onSaveVariant : function (oEvent) {
-            //todo save this._aFilters
-        },
-
-        /**
-         * Todo: is this needed?
-         * when users apply changes to variants in the Manage Variants dialog
-         * @param oEvent
-         */
-        onManageVariant : function (oEvent) {
-
+            this._triggerFilterSearch();
         },
 
         /**
@@ -193,6 +157,17 @@ sap.ui.define([
         /* internal methods                                            */
         /* =========================================================== */
 
+        _initialCustomVariant: function () {
+            var oVariant = this.byId("customResourceVariant");
+            this._initFilterDialog();
+
+            oVariant.addFilter(this.byId("searchField"));
+            oVariant.addFilter(sap.ui.getCore().byId("dateRange1"));
+            oVariant.addFilter(sap.ui.getCore().byId("viewFilterItem"));
+            oVariant.addFilter(sap.ui.getCore().byId("multiGroupInput"));
+
+        },
+
         /**
          * set default filter
          * @private
@@ -217,6 +192,13 @@ sap.ui.define([
                 dateControl2.setValue(this.defaultDateRange[dateControl2.getId()]);
                 oCustomFilter.setFilterCount(1);
                 oCustomFilter.setSelected(true);
+
+                //*** add checkbox validator
+                var oMultiInput = sap.ui.getCore().byId("multiGroupInput");
+                oMultiInput.addValidator(function(args){
+                    var text = args.text;
+                    return new Token({key: text, text: text});
+                });
             }
         },
 
@@ -239,7 +221,7 @@ sap.ui.define([
             var aFilters = [];
 
             //get search field value
-            var sSearchField = this.byId("searchFieldResources").getValue();
+            var sSearchField = this.byId("searchField").getValue();
             if (sSearchField && sSearchField.length > 0) {
                 aFilters.push(new Filter("Description", FilterOperator.Contains, sSearchField));
             }
