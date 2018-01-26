@@ -1,10 +1,9 @@
 sap.ui.define([
-    "sap/ui/comp/variants/VariantManagement",
     "sap/ui/comp/smartvariants/SmartVariantManagement",
     "sap/ui/fl/Persistence",
     "sap/m/Token",
     "sap/ui/core/format/DateFormat"
-    ], function(VariantManagement, SmartVariantManagement, Persistence, Token, DateFormat) {
+    ], function(SmartVariantManagement, Persistence, Token, DateFormat) {
 
         var CustomVariantManagement = SmartVariantManagement.extend("com.evorait.evoplan.ui.controls.CustomVariantManagement",{
             metadata: {

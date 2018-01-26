@@ -24,7 +24,6 @@ sap.ui.define([
         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
         onInit: function() {
             this._oDroppableTable = this.byId("droppableTable");
-            this._oTreeVariant = this.byId("customResourceVariant");
 
             //this._oDroppableTable.expandToLevel(1);
 
