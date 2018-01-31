@@ -3,9 +3,9 @@
           xmlns="sap.m"
           xmlns:mvc="sap.ui.core.mvc"
           xmlns:layout="sap.ui.layout"
-          xmlns:vm="sap.ui.comp.variants"
           xmlns:f="sap.f"
-          xmlns:smartVariantManagement="sap.ui.comp.smartvariants"
+          xmlns:smartTable="sap.ui.comp.smarttable"
+          xmlns:table="sap.ui.table"
           xmlns:controls="com.evorait.evoplan.ui.controls">
 
     <Page id="masterPage"
@@ -55,6 +55,26 @@
             </f:header>
 
             <f:content>
+
+
+                <!--<table:TreeTable
+                        id="droppableTable"
+                        selectionMode="Single"
+                        enableColumnReordering="false"
+                        expandFirstLevel="true"
+                        toolbarStyleClass="treeTableHeader"
+                        rows="{path : '/ResourceHierarchySet',
+                            parameters : {countMode: 'Inline'}}">
+
+                    <table:columns>
+                        <table:Column label="Description">
+                            <table:template>
+                                <Text text="{Description}" wrapping="false" />
+                            </table:template>
+                        </table:Column>
+                    </table:columns>
+                </table:TreeTable>-->
+
                 <layout:VerticalLayout width="100%" class="listTreeTable" >
                     <Tree id="droppableTable"
                           updateFinished="refreshDroppable"
@@ -66,11 +86,12 @@
                                      justifyContent="SpaceBetween"
                                      width="100%">
                                 <items>
-                                    <VBox>
-                                        <Title level="H3" text="{Description}" />
-                                        <Label text="{Utilization}" />
-                                    </VBox>
-                                    <Text text="{AssignmentCount}" class="sapUiTinyMarginTopBottom sapMH4FontSize" />
+                                    <Link class="sapMH4FontSize"
+                                          text="{Description}"
+                                          subtle="true"
+                                          press="onPressResourceLink" />
+                                    <Text text="{Utilization}" />
+                                    <Label text="{AssignmentCount}" class="sapMH5FontSize" />
                                 </items>
                             </FlexBox>
                         </CustomTreeItem>

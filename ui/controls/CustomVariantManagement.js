@@ -583,10 +583,10 @@ sap.ui.define([
 
         CustomVariantManagement.prototype._setControlDate = function (oControl, sValue) {
             try{
-                var oDateFormat = DateFormat.getDateTimeInstance({pattern: "YYYY-MM-dd"});
-                var d = oDateFormat.format(new Date(sValue));
-                if(d){
-                    oControl.setValue(d);
+                var oDateFormat = DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd"});
+                var dateString = oDateFormat.format(new Date(sValue));
+                if(dateString){
+                    oControl.setValue(dateString);
                 }
             }catch(e){
                 console.error("setValue in _setControlDate not working!");

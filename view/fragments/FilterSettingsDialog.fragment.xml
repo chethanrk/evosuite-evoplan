@@ -27,7 +27,7 @@
                         <DatePicker
                                 id="dateRange1"
                                 class="sapUiSmallMarginBottom"
-                                valueFormat="{i18n>dateFormat}"
+                                valueFormat="yyyy-MM-dd"
                                 change="onChangeDateRangeFilter"
                                 value="{
                                     type : 'sap.ui.model.type.String',
@@ -38,7 +38,7 @@
                         <Label text="{i18n>xtit.filterDateTo}" labelFor="dateRange2"/>
                         <DatePicker
                                 id="dateRange2"
-                                valueFormat="{i18n>dateFormat}"
+                                valueFormat="yyyy-MM-dd"
                                 class="sapUiSmallMarginBottom"
                                 change="onChangeDateRangeFilter"/>
                     </VBox>

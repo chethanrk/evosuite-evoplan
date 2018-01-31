@@ -22,8 +22,10 @@ sap.ui.define([
         },
 
         date: function(date) {
-            var oDateFormat = DateFormat.getDateTimeInstance({pattern: "YYYY-MM-dd"});
-            return oDateFormat.format(new Date(date));
+            var d = new Date(date);
+            var oDateFormat = DateFormat.getDateInstance({pattern: "yyyy-MM-dd"});
+            var dateString =  oDateFormat.format(d);
+            return dateString
         },
 
         /**
@@ -32,7 +34,7 @@ sap.ui.define([
          * @returns {*}
          */
         formatFilterDate: function (date) {
-            var oDateFormat = DateFormat.getDateTimeInstance({pattern: "YYYY-MM-ddT00:00:00"});
+            var oDateFormat = DateFormat.getDateTimeInstance({pattern: "yyyy-MM-ddT00:00:00"});
             return oDateFormat.format(new Date(date));
         },
 

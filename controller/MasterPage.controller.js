@@ -24,6 +24,8 @@ sap.ui.define([
         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
         onInit: function() {
             this._oDroppableTable = this.byId("droppableTable");
+            this._oDataTable = this._oDroppableTable;
+            //this._configureDataTable(this._oDataTable);
 
             //this._oDroppableTable.expandToLevel(1);
 
@@ -39,6 +41,23 @@ sap.ui.define([
             //init droppable
             this.refreshDroppable(oEvent);
             this._initialCustomVariant();
+        },
+
+        onBeforeRebindTable: function(oEvent) {
+            var oBindingParams = oEvent.getParameter('bindingParams');
+            oBindingParams.parameters.numberOfExpandedLevels = 1;
+        },
+
+        /**
+         * initial draggable after every refresh of table
+         * for example after go to next page
+         * @param oEvent
+         */
+        onBusyStateChanged : function (oEvent) {
+            var parameters = oEvent.getParameters();
+            if(parameters.busy === false){
+                this._jDroppable(this);
+            }
         },
 
         /**
@@ -155,6 +174,17 @@ sap.ui.define([
         /* =========================================================== */
         /* internal methods                                            */
         /* =========================================================== */
+        _configureDataTable : function (oDataTable) {
+            oDataTable.setEnableBusyIndicator(true);
+            oDataTable.setSelectionMode('None');
+            oDataTable.setColumnHeaderVisible(false);
+            oDataTable.setEnableCellFilter(false);
+            oDataTable.setEnableColumnReordering(false);
+            oDataTable.setEditable(false);
+            oDataTable.setWidth("100%");
+            oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
+            oDataTable.attachFilter(this.onFilterChanged, this);
+        },
 
         _initialCustomVariant: function () {
             var oVariant = this.byId("customResourceVariant");
@@ -206,7 +236,7 @@ sap.ui.define([
          * @private
          */
         _triggerFilterSearch: function () {
-            var binding = this._oDroppableTable.getBinding("items");
+            var binding = this._oDataTable.getBinding("items");
             var aFilters = this._getAllFilters();
             binding.filter(aFilters, "Application");
         },
@@ -241,8 +271,8 @@ sap.ui.define([
             //set default date range
             var sDateControl1 = sap.ui.getCore().byId("dateRange1").getValue();
             var sDateControl2 = sap.ui.getCore().byId("dateRange2").getValue();
-            sDateControl1 = this.formatter.formatFilterDate(sDateControl1);
-            sDateControl2 = this.formatter.formatFilterDate(sDateControl2);
+            sDateControl1 = this.formatter.date(sDateControl1);
+            sDateControl2 = this.formatter.date(sDateControl2);
             var oDateRangeFilter = new Filter("StartDate", FilterOperator.BT, sDateControl1, sDateControl2);
             aFilters.push(oDateRangeFilter);
 
