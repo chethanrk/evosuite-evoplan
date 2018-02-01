@@ -25,9 +25,7 @@ sap.ui.define([
         onInit: function() {
             this._oDroppableTable = this.byId("droppableTable");
             this._oDataTable = this._oDroppableTable;
-            //this._configureDataTable(this._oDataTable);
-
-            //this._oDroppableTable.expandToLevel(1);
+            this._configureDataTable(this._oDataTable);
 
             //add fragment FilterSettingsDialog to the view
             this._initFilterDialog();
@@ -38,9 +36,12 @@ sap.ui.define([
         * This hook is the same one that SAPUI5 controls get after being rendered.
         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
         onAfterRendering: function(oEvent) {
+            //add form fields to variant
+            this._initialCustomVariant();
+            //trigger first filter
+            this.onTreeUpdateStarted();
             //init droppable
             this.refreshDroppable(oEvent);
-            this._initialCustomVariant();
         },
 
         onBeforeRebindTable: function(oEvent) {
@@ -77,18 +78,6 @@ sap.ui.define([
             if(!this.firstLoad){
                 this._triggerFilterSearch();
                 this.firstLoad = true;
-            }
-        },
-
-        /**
-         *
-         * @param oEvent
-         */
-        onToggleOpenState: function (oEvent) {
-            var params = oEvent.getParameters();
-            console.log(params);
-            if(params.expanded){
-
             }
         },
 
@@ -161,6 +150,38 @@ sap.ui.define([
             }
         },
 
+        onPressResourceTitle: function (oEvent) {
+            var oSource = oEvent.getSource();
+            var parent = oSource.getParent();
+            var binding = parent.getBindingContext();
+            var oParams = oEvent.getParameters();
+            console.log(oParams);
+        },
+
+        onCheckResource: function (oEvent) {
+            var oSource = oEvent.getSource();
+            var parent = oSource.getParent();
+            var sPath = parent.getBindingContext().getPath();
+            var oParams = oEvent.getParameters();
+            var data = this.getModel().getProperty(sPath);
+
+            if(data.NodeType === "RES_GROUP"){
+                //this._selectResourceGroupChilds(oParams.selected, parent, sPath);
+            }
+        },
+
+        onPressShowPlanningCal: function (oEvent) {
+            if (!this._oPlanningCalDialog) {
+                this._oPlanningCalDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceCalendarDialog", this);
+                this.getView().addDependent(this._oPlanningCalDialog);
+            }
+            this._oPlanningCalDialog.open();
+        },
+
+        onCalendarModalCancel: function (oEvent) {
+            this._oPlanningCalDialog.close();
+        },
+
         /**
          * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
          * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage
@@ -168,6 +189,9 @@ sap.ui.define([
         onExit: function() {
             if(this._oFilterSettingsDialog){
                 this._oFilterSettingsDialog.destroy();
+            }
+            if (this._oPlanningCalDialog) {
+                this._oPlanningCalDialog.destroy();
             }
         },
 
@@ -183,7 +207,7 @@ sap.ui.define([
             oDataTable.setEditable(false);
             oDataTable.setWidth("100%");
             oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
-            oDataTable.attachFilter(this.onFilterChanged, this);
+            //oDataTable.attachFilter(this.onFilterChanged, this);
         },
 
         _initialCustomVariant: function () {
@@ -194,7 +218,6 @@ sap.ui.define([
             oVariant.addFilter(sap.ui.getCore().byId("dateRange1"));
             oVariant.addFilter(sap.ui.getCore().byId("viewFilterItem"));
             oVariant.addFilter(sap.ui.getCore().byId("multiGroupInput"));
-
         },
 
         /**
@@ -236,7 +259,10 @@ sap.ui.define([
          * @private
          */
         _triggerFilterSearch: function () {
-            var binding = this._oDataTable.getBinding("items");
+            //tree list
+            //var binding = this._oDataTable.getBinding("items");
+            //tree table
+            var binding = this._oDataTable.getBinding("rows");
             var aFilters = this._getAllFilters();
             binding.filter(aFilters, "Application");
         },
@@ -297,6 +323,11 @@ sap.ui.define([
             });
         },
 
+        /**
+         * dropped demands assign and save
+         * @param _this
+         * @private
+         */
         _jDroppable: function (_this) {
             setTimeout(function() {
                 var droppableTableId = _this._oDroppableTable.getId();
@@ -319,12 +350,19 @@ sap.ui.define([
                     drop: function( event, ui ) {
                         var dropTargetId = event.target.id,
                             targetElement = sap.ui.getCore().byId(dropTargetId),
-                            oContext = targetElement.getBindingContext(),
-                            draggedElements = ui.helper[0];
+                            oContext = targetElement.getBindingContext();
 
                         if(oContext){
                             var targetPath = oContext.getPath();
-                            var aSources = [];
+                            var targetObj = _this.getModel().getProperty(targetPath);
+
+                            //don't drop on orders
+                            if(targetObj.NodeType === "ASSIGNMENT"){
+                                return;
+                            }
+
+                            var draggedElements = ui.helper[0],
+                                aSources = [];
                             $(draggedElements).find('li').each(function (idx, obj) {
                                 aSources.push({sPath: $(this).attr('id')});
                             });

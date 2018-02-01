@@ -11,9 +11,9 @@
                     multiSelect="false">
                 <items>
                     <ViewSettingsItem text="Daily" key="TIMEDAY" />
-                    <ViewSettingsItem text="Weekly" key="TIMEWEEK" />
+                    <ViewSettingsItem text="Weekly" key="TIMEWEEK" selected="true"/>
                     <ViewSettingsItem text="Monthly" key="TIMEMONTH" />
-                    <ViewSettingsItem text="Simple" key="TIMENONE" selected="true"/>
+                    <ViewSettingsItem text="Simple" key="TIMENONE"/>
                 </items>
             </ViewSettingsFilterItem>
 

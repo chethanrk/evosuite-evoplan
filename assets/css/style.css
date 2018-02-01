@@ -1,3 +1,7 @@
+.sapMSplitContainerMaster{
+    width: 450px;
+}
+
 .ui-draggable-dragging{
     //width: 320px;
     background-color: white !important;
@@ -17,6 +21,15 @@
 
 .listTreeTable .sapMTB{
     height: 0;
+}
+
+.listTreeTable .sapUiTableTr>td{
+    border-right-width: 0px;
+}
+
+.listTreeTable .sapMPI{
+    min-width: 100%;
+    width: 100%;
 }
 
 .tableContentPage .sapFDynamicPageContent,
