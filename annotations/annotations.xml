@@ -28,16 +28,18 @@
 			<Annotations Target="com.evorait.evoplan.Demand">
 				<Annotation Term="UI.SelectionFields">
 					<Collection>
-						<PropertyPath>Guid</PropertyPath>
 						<PropertyPath>DemandDesc</PropertyPath>
 						<PropertyPath>ExtKey</PropertyPath>
 						<PropertyPath>Source</PropertyPath>
+						<PropertyPath>UserStatusShortText</PropertyPath>
+						<PropertyPath>DateFrom</PropertyPath>
+						<PropertyPath>DateTo</PropertyPath>
 					</Collection>
 				</Annotation>
 				<Annotation Term="UI.LineItem">
 					<Collection>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="Guid"/>
+							<PropertyValue Property="Value" Path="ExtKey"/>
 							<Annotation Term="UI.Importance" EnumMember="UI.Importance/High"/>
 						</Record>
 						<Record Type="UI.DataField">
@@ -45,11 +47,10 @@
 							<Annotation Term="UI.Importance" EnumMember="UI.Importance/High"/>
 						</Record>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="ExtKey"/>
-							<Annotation Term="UI.Importance" EnumMember="UI.Importance/High"/>
+							<PropertyValue Property="Value" Path="Source"/>
 						</Record>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="Source"/>
+							<PropertyValue Property="Value" Path="UserStatusShortText"/>
 						</Record>
 						<Record Type="UI.DataField">
 							<PropertyValue Property="Value" Path="DateFrom"/>
@@ -68,6 +69,10 @@
 			</Annotations>
 			<Annotations Target="com.evorait.evoplan.Demand/Guid">
 				<Annotation Term="Common.FieldControl" Path="FieldControlOptional"/>
+				<Annotation Term="Common.Text" Path="DemandDesc"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Demand/ExtKey">
+				<Annotation Term="Common.Text" Path="DemandDesc"/>
 			</Annotations>
 			<Annotations Target="com.evorait.evoplan.Demand/Source">
 				<Annotation Term="Core.Computed" Bool="true"/>
@@ -90,9 +95,9 @@
 			<Annotations Target="com.evorait.evoplan.Demand/TimeTo">
 				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
 			</Annotations>
-
 			<Annotations Target="com.evorait.evoplan.ResourceHierarchy/NodeId">
 				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
+				<Annotation Term="Common.Text" Path="Description"/>
 			</Annotations>
 			<Annotations Target="com.evorait.evoplan.ResourceHierarchy/ParentNodeId">
 				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
@@ -105,6 +110,28 @@
 			</Annotations>
 			<Annotations Target="com.evorait.evoplan.ResourceHierarchy/DrillState">
 				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Optional"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Demand/UserStatusShortText">
+				<Annotation Term="Common.Text" Path="UserStatusLongText"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record Type="com.sap.vocabularies.Common.v1.ValueListType">
+						<PropertyValue Property="Label" String="Status"/>
+						<PropertyValue Property="CollectionPath" String="StatusTextsSet"/>
+						<PropertyValue Property="CollectionRoot" String=""/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="ValueListProperty" String="UserStatusShortText"/>
+									<PropertyValue Property="LocalDataProperty" PropertyPath="UserStatusShortText"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="UserStatusLongText"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>
