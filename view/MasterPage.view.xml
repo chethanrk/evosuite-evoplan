@@ -5,7 +5,6 @@
           xmlns:layout="sap.ui.layout"
           xmlns:f="sap.f"
           xmlns:table="sap.ui.table"
-          xmlns:micro="sap.suite.ui.microchart"
           xmlns:controls="com.evorait.evoplan.ui.controls">
 
     <Page id="masterPage"

@@ -32,6 +32,10 @@
     width: 100%;
 }
 
+.treeTableDialog .sapMDialogScroll{
+    height: 100%;
+}
+
 .tableContentPage .sapFDynamicPageContent,
 .tableContentPage .sapFDynamicPageContentFitContainer{
     padding-top: 0 !important;

@@ -29,6 +29,10 @@ sap.ui.define([
 
             //add fragment FilterSettingsDialog to the view
             this._initFilterDialog();
+
+            //eventbus of assignemnt handling
+            var eventBus = sap.ui.getCore().getEventBus();
+            eventBus.subscribe("BaseController", "refreshTable", this._triggerFilterSearch, this);
         },
 
         /**
@@ -150,14 +154,6 @@ sap.ui.define([
             }
         },
 
-        onPressResourceTitle: function (oEvent) {
-            var oSource = oEvent.getSource();
-            var parent = oSource.getParent();
-            var binding = parent.getBindingContext();
-            var oParams = oEvent.getParameters();
-            console.log(oParams);
-        },
-
         onCheckResource: function (oEvent) {
             var oSource = oEvent.getSource();
             var parent = oSource.getParent();
@@ -229,21 +225,7 @@ sap.ui.define([
                 this._oFilterSettingsDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.FilterSettingsDialog", this);
                 this.getView().addDependent(this._oFilterSettingsDialog);
 
-                //set default date range from 1month
-                var oCustomFilter = sap.ui.getCore().byId("idTimeframeFilterItem");
-                var dateControl1 = sap.ui.getCore().byId("dateRange1");
-                var dateControl2 = sap.ui.getCore().byId("dateRange2");
-                var d = new Date();
-                d.setMonth(d.getMonth() - 1);
-
-                // save default date range global
-                this.defaultDateRange[dateControl1.getId()] = this.formatter.date(d);
-                this.defaultDateRange[dateControl2.getId()] = this.formatter.date(new Date());
-
-                dateControl1.setValue(this.defaultDateRange[dateControl1.getId()]);
-                dateControl2.setValue(this.defaultDateRange[dateControl2.getId()]);
-                oCustomFilter.setFilterCount(1);
-                oCustomFilter.setSelected(true);
+                this._setDefaultFilterDateRange();
 
                 //*** add checkbox validator
                 var oMultiInput = sap.ui.getCore().byId("multiGroupInput");
@@ -274,12 +256,7 @@ sap.ui.define([
          */
         _getAllFilters: function () {
             var aFilters = [];
-
-            //get search field value
-            var sSearchField = this.byId("searchField").getValue();
-            if (sSearchField && sSearchField.length > 0) {
-                aFilters.push(new Filter("Description", FilterOperator.Contains, sSearchField));
-            }
+            var oViewModel = this.getModel("viewModel");
 
             // filter dialog values
             //view setting
@@ -316,11 +293,37 @@ sap.ui.define([
                 });
                 aFilters.push(groupFilter);
             }
+            oViewModel.setProperty("/resourceFilterView", aFilters);
 
-            return  new Filter({
-                filters: aFilters,
-                and: true
-            });
+            //get search field value
+            var sSearchField = this.byId("searchField").getValue();
+            oViewModel.setProperty("/resourceSearchString", sSearchField);
+            if (sSearchField && sSearchField.length > 0) {
+                aFilters.push(new Filter("Description", FilterOperator.Contains, sSearchField));
+            }
+
+            var resourceFilter = new Filter({filters: aFilters, and: true});
+            oViewModel.setProperty("/resourceFilterAll", resourceFilter);
+
+            return  resourceFilter;
+        },
+
+        _setDefaultFilterDateRange: function () {
+            //set default date range from 1month
+            var oCustomFilter = sap.ui.getCore().byId("idTimeframeFilterItem");
+            var dateControl1 = sap.ui.getCore().byId("dateRange1");
+            var dateControl2 = sap.ui.getCore().byId("dateRange2");
+
+            var d = new Date();
+            d.setMonth(d.getMonth() - 1);
+            // save default date range global
+            this.defaultDateRange[dateControl1.getId()] = this.formatter.date(d);
+            this.defaultDateRange[dateControl2.getId()] = this.formatter.date(new Date());
+
+            dateControl1.setValue(this.defaultDateRange[dateControl1.getId()]);
+            dateControl2.setValue(this.defaultDateRange[dateControl2.getId()]);
+            oCustomFilter.setFilterCount(1);
+            oCustomFilter.setSelected(true);
         },
 
         /**

@@ -85,5 +85,7 @@ sap.ui.define([
 
     CustomTitle.prototype.setIcon = function(sUrl){
         this.setProperty("icon", sUrl);
-    }
+    };
+
+    return CustomTitle;
 });

@@ -79,8 +79,8 @@ sap.ui.define([
                 var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle");
                 var noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]);
                 var viewModel = this.getModel("viewModel");
-                viewModel.setProperty("subViewTitle", tableTitle);
-                viewModel.setProperty("subTableNoDataText", noDataText);
+                viewModel.setProperty("/subViewTitle", tableTitle);
+                viewModel.setProperty("/subTableNoDataText", noDataText);
             },
 
             /**
@@ -97,7 +97,7 @@ sap.ui.define([
 
             /**
 			 * on press assign button in footer
-			 * show modal with user for selcet
+			 * show modal with user for select
              * @param oEvent
              */
             onAssignButtonPress : function (oEvent) {
@@ -114,14 +114,33 @@ sap.ui.define([
 				}
             },
 
+            refreshDialogTable: function (oEvent) {
+                var oTable = sap.ui.getCore().byId("assignModalTable");
+                var binding = oTable.getBinding("rows");
+                var aFilters = this.getModel("viewModel").getProperty("/resourceFilterAll");
+                binding.filter(aFilters, "Application");
+            },
+
             /**
              * close assign modal
              * @param oEvent
              */
             onSearchAssignModal : function (oEvent) {
-                var sQuery = oEvent.getSource().getValue(),
+                var sQuery = oEvent.getSource().getValue() || "",
                     oTable = sap.ui.getCore().byId("assignModalTable");
-                this.onSearchTreeTable(oTable, sQuery);
+
+                var viewModel = this.getModel("viewModel"),
+                    binding = oTable.getBinding("rows"),
+                    viewFilters = viewModel.getProperty("/resourceFilterView"),
+                    aFilters = viewFilters.slice(0);
+
+                if(!aFilters && aFilters.length == 0){
+                    return;
+                }
+
+                aFilters.push(new Filter("Description", FilterOperator.Contains, sQuery));
+                var resourceFilter = new Filter({filters: aFilters, and: true});
+                binding.filter(resourceFilter, "Application");
             },
 
             /**
@@ -146,7 +165,6 @@ sap.ui.define([
                 }else{
                      //Todo: show error msg
                 }
-
             },
 
             /**

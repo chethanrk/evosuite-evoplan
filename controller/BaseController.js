@@ -140,44 +140,40 @@ sap.ui.define([
 			},
 			
             /**
-			 * Todo: set right parameters in callFaunction
 			 * save assignment after drop
              * @param aSourcePaths
              * @param sTargetPath
              */
             assignedDemands: function (aSourcePaths, sTargetPath) {
-				var oModel = this.getModel();
-				var targetObj = oModel.getProperty(sTargetPath);
-				var resourceGroupId = targetObj.ParentNodeId;
-				var resourceId = targetObj.NodeId;
-                var oMsgModel = sap.ui.getCore().getModel("MessageSetModel");
+				var oModel = this.getModel(),
+                    eventBus = sap.ui.getCore().getEventBus(),
+					targetObj = oModel.getProperty(sTargetPath),
+                	oMsgModel = sap.ui.getCore().getModel("MessageSetModel");
+
 				oMsgModel.setData({modelData:{}});
 				oMsgModel.updateBindings(true);
-				 
-                if(!targetObj.ParentNodeId || targetObj.ParentNodeId === ""){
-                    resourceGroupId = targetObj.NodeId;
-                    resourceId = " ";
-				}
-				
+
                 for(var i = 0; i < aSourcePaths.length; i++) {
-                    var obj = aSourcePaths[i];
-                    var demandObj = oModel.getProperty(obj.sPath);
-					var oDate = new Date();
+                    var obj = aSourcePaths[i],
+                    	demandObj = oModel.getProperty(obj.sPath),
+                    	oParams = {
+							"DateFrom" : targetObj.StartDate || 0,
+							"DateTo" :  targetObj.EndDate || 0,
+							"DemandGuid" : demandObj.Guid,
+							"ResourceGroupGuid" : targetObj.ResourceGroupGuid,
+							"ResourceGuid" : targetObj.ResourceGuid,
+							"TimeFrom" : targetObj.StartTime,
+							"TimeTo" : targetObj.EndTime
+						};
+
                     oModel.callFunction("/CreateAssignment", {
                         method: "POST",
-                        urlParameters: {
-                        	"DateFrom" : oDate,
-                        	"DateTo" :  oDate,
-                            "DemandGuid" : demandObj.Guid,
-                            "ResourceGroupGuid" : resourceGroupId,
-                            "ResourceGuid" : resourceId,
-                            "TimeFrom" :{ __edmtype: "Edm.Time", ms: oDate.getTime()},
-                            "TimeTo" :{ __edmtype: "Edm.Time", ms: oDate.getTime()}
-                        },
+                        urlParameters: oParams,
                         success: function(oData, oResponse){
-                        	//Handle Success
+                            //Handle Success
 							 var errMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData();
 							 this.onSuccess(oData, errMsg, oMsgModel);
+							 eventBus.publish("BaseController", "refreshTable", {});
                         }.bind(this),
                         error: function(oError){
                         	//Handle Error
