@@ -1,16 +1,50 @@
 <core:FragmentDefinition
         xmlns="sap.m"
-        xmlns:l="sap.ui.layout"
-        xmlns:table="sap.ui.table"
-        xmlns:core="sap.ui.core">
+        xmlns:core="sap.ui.core"
+        xmlns:unified="sap.ui.unified">
 
-    <Dialog title="{i18n>xtit.calendarModalTitle}">
+    <Dialog id="planCalendarDialog"
+            title="{i18n>xtit.calendarModalTitle}"
+            contentWidth="100%"
+            resizable="false">
         <content>
-            <Toolbar>
-                <!--<SearchField liveChange="onSearchAssignModal" width="100%" />-->
-            </Toolbar>
-
-
+            <VBox class="sapUiSmallMargin">
+                <PlanningCalendar
+                        id="planningCalendar"
+                        startDate="{path: 'calendarModel>/startDate'}"
+                        rows="{path: 'calendarModel>/people'}"
+                        appointmentsVisualization="Filled"
+                        appointmentSelect="handleAppointmentSelect"
+                        showEmptyIntervalHeaders="false"
+                        showWeekNumbers="true">
+                    <rows>
+                        <PlanningCalendarRow
+                                icon="sap-icon://employee"
+                                title="{calendarModel>name}"
+                                text="{calendarModel>role}"
+                                appointments="{path : 'calendarModel>appointments', templateShareable: 'true'}"
+                                intervalHeaders="{path: 'calendarModel>headers', templateShareable: 'true'}">
+                            <appointments>
+                                <unified:CalendarAppointment
+                                        startDate="{calendarModel>start}"
+                                        endDate="{calendarModel>end}"
+                                        title="{calendarModel>title}"
+                                        text="{calendarModel>info}"
+                                        type="{calendarModel>type}">
+                                </unified:CalendarAppointment>
+                            </appointments>
+                            <intervalHeaders>
+                                <unified:CalendarAppointment
+                                        startDate="{calendarModel>start}"
+                                        endDate="{calendarModel>end}"
+                                        title="{calendarModel>title}"
+                                        type="{calendarModel>type}">
+                                </unified:CalendarAppointment>
+                            </intervalHeaders>
+                        </PlanningCalendarRow>
+                    </rows>
+                </PlanningCalendar>
+            </VBox>
         </content>
 
         <beginButton>

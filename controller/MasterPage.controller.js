@@ -27,8 +27,7 @@ sap.ui.define([
         * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
         onInit: function() {
-            this._oDroppableTable = this.byId("droppableTable");
-            this._oDataTable = this._oDroppableTable;
+            this._oDataTable = this.byId("droppableTable");
             this._configureDataTable(this._oDataTable);
 
             //add fragment FilterSettingsDialog to the view
@@ -50,6 +49,9 @@ sap.ui.define([
             this.onTreeUpdateStarted();
             //init droppable
             this.refreshDroppable(oEvent);
+
+            //Todo: remove example data when filter request is working
+            this._initPlanCalendarDialog();
         },
 
         /**
@@ -78,7 +80,7 @@ sap.ui.define([
          * @param oEvent
          */
         refreshDroppable : function (oEvent) {
-            if(this._oDroppableTable){
+            if(this._oDataTable){
                 this._jDroppable(this);
             }
         },
@@ -177,6 +179,10 @@ sap.ui.define([
             }
         },
 
+        /**
+         * Todo:
+         * @param oEvent
+         */
         onCheckResource: function (oEvent) {
             var oSource = oEvent.getSource();
             var parent = oSource.getParent();
@@ -190,10 +196,6 @@ sap.ui.define([
         },
 
         onPressShowPlanningCal: function (oEvent) {
-            if (!this._oPlanningCalDialog) {
-                this._oPlanningCalDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceCalendarDialog", this);
-                this.getView().addDependent(this._oPlanningCalDialog);
-            }
             this._oPlanningCalDialog.open();
         },
 
@@ -268,14 +270,19 @@ sap.ui.define([
             }
         },
 
+        _initPlanCalendarDialog: function () {
+            if (!this._oPlanningCalDialog) {
+                this._oPlanningCalDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceCalendarDialog", this);
+                this.getView().addDependent(this._oPlanningCalDialog);
+                this._setCalendarModel();
+            }
+        },
+
         /**
          * triggers request with all setted filters
          * @private
          */
         _triggerFilterSearch: function () {
-            //tree list
-            //var binding = this._oDataTable.getBinding("items");
-            //tree table
             var binding = this._oDataTable.getBinding("rows");
             var aFilters = this._getAllFilters();
             binding.filter(aFilters, "Application");
@@ -381,7 +388,7 @@ sap.ui.define([
          */
         _jDroppable: function (_this) {
             setTimeout(function() {
-                var droppableTableId = _this._oDroppableTable.getId();
+                var droppableTableId = _this._oDataTable.getId();
                 var droppedElement = $("#"+droppableTableId+" tbody tr, #"+droppableTableId+" li");
 
                 try{
@@ -422,6 +429,379 @@ sap.ui.define([
                     }
                 });
             }, 1000);
+        },
+
+
+        _setCalendarModel: function () {
+            var aUsers = [];
+            var aFilters = [];
+
+            aUsers.push(new Filter("ObjectGuid", FilterOperator.EQ, "0A51491BD5A01ED7BD9236B3C76C1EA1"));
+            aUsers.push(new Filter("ObjectGuid", FilterOperator.EQ, "0A51491BD5A01ED7BD91D1BF3A55BE34"));
+
+            aFilters.push(new Filter({
+                filters: aUsers,
+                and: false
+            }));
+
+            var sDateControl1 = this._filterDateRange1.getValue();
+            sDateControl1 = this.formatter.date(sDateControl1);
+            var oDateRangeFilter = new Filter("DateFrom", FilterOperator.GE, sDateControl1);
+            aFilters.push(oDateRangeFilter);
+
+            var modelFilter = new Filter({
+                filters: aFilters,
+                and: true
+            });
+
+            /*this.getModel().read("/ResourceSet", {
+                filters: aFilters,
+                success: function(data, response){
+                    console.log(response);
+                },
+                error: function(error){
+                    console.log(error);
+                }
+            });*/
+
+            var oModel = new JSONModel();
+            oModel.setData({
+                startDate: new Date("2017", "0", "15", "8", "0"),
+                people: [{
+                    pic: "test-resources/sap/ui/demokit/explored/img/John_Miller.png",
+                    name: "John Miller",
+                    role: "team member",
+                    appointments: [
+                        {
+                            start: new Date("2017", "0", "8", "08", "30"),
+                            end: new Date("2017", "0", "8", "09", "30"),
+                            title: "Meet Max Mustermann",
+                            key: "0123456789",
+                            type: "Type04"
+                        },
+                        {
+                            start: new Date("2017", "0", "11", "10", "0"),
+                            end: new Date("2017", "0", "11", "12", "0"),
+                            title: "Team meeting",
+                            info: "room 1"
+                        },
+                        {
+                            start: new Date("2017", "0", "12", "11", "30"),
+                            end: new Date("2017", "0", "12", "13", "30"),
+                            title: "Lunch"
+                        },
+                        {
+                            start: new Date("2017", "0", "15", "08", "30"),
+                            end: new Date("2017", "0", "15", "09", "30"),
+                            title: "Meet Max Mustermann"
+                        },
+                        {
+                            start: new Date("2017", "0", "15", "10", "0"),
+                            end: new Date("2017", "0", "15", "12", "0"),
+                            title: "Team meeting",
+                            info: "room 1"
+                        },
+                        {
+                            start: new Date("2017", "0", "15", "11", "30"),
+                            end: new Date("2017", "0", "15", "13", "30"),
+                            title: "Lunch"
+                        },
+                        {
+                            start: new Date("2017", "0", "15", "13", "30"),
+                            end: new Date("2017", "0", "15", "17", "30"),
+                            title: "Discussion with clients"
+                        },
+                        {
+                            start: new Date("2017", "0", "16", "04", "00"),
+                            end: new Date("2017", "0", "16", "22", "30"),
+                            title: "Discussion of the plan"
+                        },
+                        {
+                            start: new Date("2017", "0", "18", "08", "30"),
+                            end: new Date("2017", "0", "18", "09", "30"),
+                            title: "Meeting with the manager"
+                        },
+                        {
+                            start: new Date("2017", "0", "18", "11", "30"),
+                            end: new Date("2017", "0", "18", "13", "30"),
+                            title: "Lunch"
+                        },
+                        {
+                            start: new Date("2017", "0", "18", "1", "0"),
+                            end: new Date("2017", "0", "18", "22", "0"),
+                            title: "Team meeting",
+                            info: "regular"
+                        },
+                        {
+                            start: new Date("2017", "0", "21", "00", "30"),
+                            end: new Date("2017", "0", "21", "23", "30"),
+                            title: "New Product",
+                            info: "room 105"
+                        },
+                        {
+                            start: new Date("2017", "0", "25", "11", "30"),
+                            end: new Date("2017", "0", "25", "13", "30"),
+                            title: "Lunch"
+                        },
+                        {
+                            start: new Date("2017", "0", "29", "10", "0"),
+                            end: new Date("2017", "0", "29", "12", "0"),
+                            title: "Team meeting",
+                            info: "room 1"
+                        },
+                        {
+                            start: new Date("2017", "0", "30", "08", "30"),
+                            end: new Date("2017", "0", "30", "09", "30"),
+                            title: "Meet Max Mustermann"
+                        },
+                        {
+                            start: new Date("2017", "0", "30", "10", "0"),
+                            end: new Date("2017", "0", "30", "12", "0"),
+                            title: "Team meeting",
+                            info: "room 1"
+                        },
+                        {
+                            start: new Date("2017", "0", "30", "11", "30"),
+                            end: new Date("2017", "0", "30", "13", "30"),
+                            title: "Lunch"
+                        },
+                        {
+                            start: new Date("2017", "0", "30", "13", "30"),
+                            end: new Date("2017", "0", "30", "17", "30"),
+                            title: "Discussion with clients"
+                        },
+                        {
+                            start: new Date("2017", "0", "31", "10", "00"),
+                            end: new Date("2017", "0", "31", "11", "30"),
+                            title: "Discussion of the plan",
+                            info: "Online meeting"
+                        },
+                        {
+                            start: new Date("2017", "1", "3", "08", "30"),
+                            end: new Date("2017", "1", "13", "09", "30"),
+                            title: "Meeting with the manager"
+                        },
+                        {
+                            start: new Date("2017", "1", "4", "10", "0"),
+                            end: new Date("2017", "1", "4", "12", "0"),
+                            title: "Team meeting",
+                            info: "room 1"
+                        },
+                        {
+                            start: new Date("2017", "2", "30", "10", "0"),
+                            end: new Date("2017", "4", "33", "12", "0"),
+                            title: "Working out of the building"
+                        }
+                    ],
+                },
+                    {
+                        pic: "test-resources/sap/ui/demokit/explored/img/Donna_Moore.jpg",
+                        name: "Donna Moore",
+                        role: "team member",
+                        appointments: [
+                            {
+                                start: new Date("2017", "0", "10", "18", "00"),
+                                end: new Date("2017", "0", "10", "19", "10"),
+                                title: "Discussion of the plan",
+                                info: "Online meeting",
+                                type: "Type04",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "0", "9", "10", "0"),
+                                end: new Date("2017", "0", "13", "12", "0"),
+                                title: "Workshop out of the country",
+                                type: "Type07",
+                                pic: "sap-icon://sap-ui5",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "0", "15", "08", "00"),
+                                end: new Date("2017", "0", "15", "09", "30"),
+                                title: "Discussion of the plan",
+                                info: "Online meeting",
+                                type: "Type04",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "0", "15", "10", "0"),
+                                end: new Date("2017", "0", "15", "12", "0"),
+                                title: "Team meeting",
+                                info: "room 1",
+                                type: "Type01",
+                                pic: "sap-icon://sap-ui5",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "0", "15", "18", "00"),
+                                end: new Date("2017", "0", "15", "19", "10"),
+                                title: "Discussion of the plan",
+                                info: "Online meeting",
+                                type: "Type04",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "0", "16", "10", "0"),
+                                end: new Date("2017", "0", "31", "12", "0"),
+                                title: "Workshop out of the country",
+                                type: "Type07",
+                                pic: "sap-icon://sap-ui5",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2018", "0", "1", "0", "0"),
+                                end: new Date("2018", "2", "31", "23", "59"),
+                                title: "New quarter",
+                                type: "Type10",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "01", "11", "10", "0"),
+                                end: new Date("2017", "02", "20", "12", "0"),
+                                title: "Team collaboration",
+                                info: "room 1",
+                                type: "Type01",
+                                pic: "sap-icon://sap-ui5",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "3", "01", "10", "0"),
+                                end: new Date("2017", "3", "31", "12", "0"),
+                                title: "Workshop out of the country",
+                                type: "Type07",
+                                pic: "sap-icon://sap-ui5",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "4", "01", "10", "0"),
+                                end: new Date("2017", "4", "31", "12", "0"),
+                                title: "Out of the office",
+                                type: "Type08",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "7", "1", "0", "0"),
+                                end: new Date("2017", "7", "31", "23", "59"),
+                                title: "Vacation",
+                                info: "out of office",
+                                type: "Type04",
+                                tentative: false
+                            }
+                        ],
+                    },
+                    {
+                        pic: "sap-icon://employee",
+                        name: "Max Mustermann",
+                        role: "team member",
+                        appointments: [
+                            {
+                                start: new Date("2017", "0", "15", "08", "30"),
+                                end: new Date("2017", "0", "15", "09", "30"),
+                                title: "Meet John Miller",
+                                type: "Type02",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "0", "15", "10", "0"),
+                                end: new Date("2017", "0", "15", "12", "0"),
+                                title: "Team meeting",
+                                info: "room 1",
+                                type: "Type01",
+                                pic: "sap-icon://sap-ui5",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "0", "15", "13", "00"),
+                                end: new Date("2017", "0", "15", "16", "00"),
+                                title: "Discussion with clients",
+                                info: "online",
+                                type: "Type02",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "0", "16", "0", "0"),
+                                end: new Date("2017", "0", "16", "23", "59"),
+                                title: "Vacation",
+                                info: "out of office",
+                                type: "Type04",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "0", "17", "1", "0"),
+                                end: new Date("2017", "0", "18", "22", "0"),
+                                title: "Workshop",
+                                info: "regular",
+                                type: "Type07",
+                                pic: "sap-icon://sap-ui5",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "0", "19", "08", "30"),
+                                end: new Date("2017", "0", "19", "18", "30"),
+                                title: "Meet John Doe",
+                                type: "Type02",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "0", "19", "10", "0"),
+                                end: new Date("2017", "0", "19", "16", "0"),
+                                title: "Team meeting",
+                                info: "room 1",
+                                type: "Type01",
+                                pic: "sap-icon://sap-ui5",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "0", "19", "07", "00"),
+                                end: new Date("2017", "0", "19", "17", "30"),
+                                title: "Discussion with clients",
+                                type: "Type02",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "0", "20", "0", "0"),
+                                end: new Date("2017", "0", "20", "23", "59"),
+                                title: "Vacation",
+                                info: "out of office",
+                                type: "Type04",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "0", "22", "07", "00"),
+                                end: new Date("2017", "0", "27", "17", "30"),
+                                title: "Discussion with clients",
+                                info: "out of office",
+                                type: "Type02",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "2", "13", "9", "0"),
+                                end: new Date("2017", "2", "17", "10", "0"),
+                                title: "Payment week",
+                                type: "Type06"
+                            },
+                            {
+                                start: new Date("2017", "03", "10", "0", "0"),
+                                end: new Date("2017", "05", "16", "23", "59"),
+                                title: "Vacation",
+                                info: "out of office",
+                                type: "Type04",
+                                tentative: false
+                            },
+                            {
+                                start: new Date("2017", "07", "1", "0", "0"),
+                                end: new Date("2017", "09", "31", "23", "59"),
+                                title: "New quarter",
+                                type: "Type10",
+                                tentative: false
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            //sap.ui.getCore().byId("planningCalendar").setModel(oModel);
+            this.setModel(oModel, "calendarModel");
         }
 
     });
