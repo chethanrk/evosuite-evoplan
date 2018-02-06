@@ -2,7 +2,10 @@
         xmlns="sap.m"
         xmlns:core="sap.ui.core">
 
-    <ViewSettingsDialog id="filterViewDialog" title="Filter" confirm="onFilterSettingsConfirm">
+    <ViewSettingsDialog id="filterViewDialog"
+                        title="Filter"
+                        confirm="onFilterSettingsConfirm"
+                        resetFilters="onFilterSettingsReset">
         <filterItems>
             <ViewSettingsFilterItem
                     id="viewFilterItem"
@@ -11,9 +14,9 @@
                     multiSelect="false">
                 <items>
                     <ViewSettingsItem text="Daily" key="TIMEDAY" />
-                    <ViewSettingsItem text="Weekly" key="TIMEWEEK" selected="true"/>
+                    <ViewSettingsItem text="Weekly" key="TIMEWEEK"/>
                     <ViewSettingsItem text="Monthly" key="TIMEMONTH" />
-                    <ViewSettingsItem text="Simple" key="TIMENONE"/>
+                    <ViewSettingsItem text="Simple" key="TIMENONE" />
                 </items>
             </ViewSettingsFilterItem>
 
@@ -53,7 +56,7 @@
                     <MultiInput id="multiGroupInput"
                                 width="90%"
                                 class="sapUiSmallMargin"
-                                change="onChangeGroupFilter"
+                                tokenUpdate="onChangeGroupFilter"
                                 enableMultiLineMode="true"
                                 showValueHelp="false">
                     </MultiInput>

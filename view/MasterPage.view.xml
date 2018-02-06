@@ -34,7 +34,10 @@
                                         persistencyKey="{viewModel>/persistencyKeyTree}"
                                         entitySet="{viewModel>/treeSet}">
                                 </controls:CustomVariantManagement>
-                                <Button icon="sap-icon://filter" type="Transparent" press="onFilterButtonPress" />
+                                <Button type="Transparent"
+                                        icon="sap-icon://filter"
+                                        text="{viewModel>/counterResourceFilter}"
+                                        press="onFilterButtonPress" />
                             </items>
                         </FlexBox>
                         <SearchField id="searchField"

@@ -18,6 +18,10 @@ sap.ui.define([
 
         firstLoad: false,
 
+        counterResourceFilter: 2,
+
+        defaultViewSelected: "TIMENONE",
+
         /**
         * Called when a controller is instantiated and its View controls (if available) are already created.
         * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -48,6 +52,10 @@ sap.ui.define([
             this.refreshDroppable(oEvent);
         },
 
+        /**
+         *
+         * @param oEvent
+         */
         onBeforeRebindTable: function(oEvent) {
             var oBindingParams = oEvent.getParameter('bindingParams');
             oBindingParams.parameters.numberOfExpandedLevels = 1;
@@ -119,21 +127,33 @@ sap.ui.define([
         },
 
         /**
+         * reset custom controls
+         * @param oEvent
+         */
+        onFilterSettingsReset : function (oEvent) {
+            //reset multiInput custom filter
+            var oCustomFilter = sap.ui.getCore().byId("idGroupFilterItem");
+            this._filterGroupInput.setTokens([]);
+            oCustomFilter.setFilterCount(0);
+
+            //set default view setting
+            this._setDefaultFilterView();
+
+            //set default date range
+            this._setDefaultFilterDateRange();
+        },
+
+        /**
          *  on multiinput changed
          * @param oEvent
          */
         onChangeGroupFilter: function (oEvent) {
-            var oNewValue = oEvent.getParameter("value");
             var oCustomFilter = sap.ui.getCore().byId("idGroupFilterItem");
+            var aTokens = this._filterGroupInput.getTokens();
 
-            // if the value has changed
-            if (oNewValue && oNewValue !== "") {
-                oCustomFilter.setFilterCount(1);
-                oCustomFilter.setSelected(true);
-            } else {
-                oCustomFilter.setFilterCount(0);
-                oCustomFilter.setSelected(false);
-            }
+            oCustomFilter.setFilterCount(aTokens.length);
+            this.counterResourceFilter = aTokens.length+2;
+            this.getModel("viewModel").setProperty("/counterResourceFilter", this.counterResourceFilter);
         },
 
         /**
@@ -141,16 +161,19 @@ sap.ui.define([
          * @param oEvent
          */
         onChangeDateRangeFilter: function (oEvent) {
-            var oSource = oEvent.getSource();
-            var oNewValue = oEvent.getParameter("value");
             var oCustomFilter = sap.ui.getCore().byId("idTimeframeFilterItem");
             oCustomFilter.setFilterCount(1);
             oCustomFilter.setSelected(true);
 
-            // Date range should be never empty
-            if (!oNewValue && oNewValue === "") {
-                var lastValue = this.defaultDateRange[oSource.getId()] || this.formatter.date(new Date());
-                oSource.setValue(lastValue);
+            if(oEvent){
+                var oSource = oEvent.getSource();
+                var oNewValue = oEvent.getParameter("value");
+
+                // Date range should be never empty
+                if (!oNewValue && oNewValue === "") {
+                    var lastValue = this.defaultDateRange[oSource.getId()] || this.formatter.date(new Date());
+                    oSource.setValue(lastValue);
+                }
             }
         },
 
@@ -210,10 +233,10 @@ sap.ui.define([
             var oVariant = this.byId("customResourceVariant");
             this._initFilterDialog();
 
-            oVariant.addFilter(this.byId("searchField"));
-            oVariant.addFilter(sap.ui.getCore().byId("dateRange1"));
-            oVariant.addFilter(sap.ui.getCore().byId("viewFilterItem"));
-            oVariant.addFilter(sap.ui.getCore().byId("multiGroupInput"));
+            oVariant.addFilter(this._searchField);
+            oVariant.addFilter(this._filterDateRange1);
+            oVariant.addFilter(this._filterSelectView);
+            oVariant.addFilter(this._filterGroupInput);
         },
 
         /**
@@ -225,11 +248,20 @@ sap.ui.define([
                 this._oFilterSettingsDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.FilterSettingsDialog", this);
                 this.getView().addDependent(this._oFilterSettingsDialog);
 
+                //counter for default date range and default selected view
+                this._searchField = this.byId("searchField");
+                this._filterSelectView = sap.ui.getCore().byId("viewFilterItem");
+                this._filterDateRange1 = sap.ui.getCore().byId("dateRange1");
+                this._filterDateRange2 = sap.ui.getCore().byId("dateRange2");
+
+                //set default view setting
+                this._setDefaultFilterView();
+                //set default date range
                 this._setDefaultFilterDateRange();
 
                 //*** add checkbox validator
-                var oMultiInput = sap.ui.getCore().byId("multiGroupInput");
-                oMultiInput.addValidator(function(args){
+                this._filterGroupInput = sap.ui.getCore().byId("multiGroupInput");
+                this._filterGroupInput.addValidator(function(args){
                     var text = args.text;
                     return new Token({key: text, text: text});
                 });
@@ -258,11 +290,11 @@ sap.ui.define([
             var aFilters = [];
             var oViewModel = this.getModel("viewModel");
 
+            oViewModel.setProperty("/counterResourceFilter", this.counterResourceFilter);
+
             // filter dialog values
             //view setting
-            var oViewFilter = sap.ui.getCore().byId("viewFilterItem");
-            var oViewFilterItems = oViewFilter.getItems();
-
+            var oViewFilterItems = this._filterSelectView.getItems();
             for (var i = 0; i < oViewFilterItems.length; i++) {
                 var obj = oViewFilterItems[i];
                 if(obj.getSelected()){
@@ -271,32 +303,40 @@ sap.ui.define([
                 }
             }
 
-            //set default date range
-            var sDateControl1 = sap.ui.getCore().byId("dateRange1").getValue();
-            var sDateControl2 = sap.ui.getCore().byId("dateRange2").getValue();
+            //set date range
+            var sDateControl1 = this._filterDateRange1.getValue();
+            var sDateControl2 = this._filterDateRange2.getValue();
             sDateControl1 = this.formatter.date(sDateControl1);
             sDateControl2 = this.formatter.date(sDateControl2);
             var oDateRangeFilter = new Filter("StartDate", FilterOperator.BT, sDateControl1, sDateControl2);
             aFilters.push(oDateRangeFilter);
 
             //filter for Resource group
-            var oGroupFilter = sap.ui.getCore().byId("idGroupFilterItem").getCustomControl();
-            var sGroupFilterVal = oGroupFilter.getValue();
+            var aTokens = this._filterGroupInput.getTokens(),
+                aTokenFilter = [];
 
-            if(sGroupFilterVal && sGroupFilterVal !== ""){
-                var groupFilter = new Filter({
-                    filters: [
-                        new Filter("ParentNodeId", FilterOperator.EQ, ""),
-                        new Filter("Description", FilterOperator.Contains, sGroupFilterVal)
-                    ],
+            if(aTokens && aTokens.length > 0){
+                var parentNodeFilter = new Filter("ParentNodeId", FilterOperator.EQ, "");
+                //get all tokens
+                for (var j = 0; j < aTokens.length; j++) {
+                    var token = aTokens[j];
+                    aTokenFilter.push(
+                        new Filter("Description", FilterOperator.Contains, token.getKey())
+                    );
+                }
+                aFilters.push(new Filter({
+                    filters: aTokenFilter,
+                    and: false
+                }));
+                /*aFilters.push(new Filter({
+                    filters: [groupFilter, parentNodeFilter],
                     and: true
-                });
-                aFilters.push(groupFilter);
+                }));*/
             }
             oViewModel.setProperty("/resourceFilterView", aFilters);
 
             //get search field value
-            var sSearchField = this.byId("searchField").getValue();
+            var sSearchField = this._searchField.getValue();
             oViewModel.setProperty("/resourceSearchString", sSearchField);
             if (sSearchField && sSearchField.length > 0) {
                 aFilters.push(new Filter("Description", FilterOperator.Contains, sSearchField));
@@ -310,20 +350,28 @@ sap.ui.define([
 
         _setDefaultFilterDateRange: function () {
             //set default date range from 1month
-            var oCustomFilter = sap.ui.getCore().byId("idTimeframeFilterItem");
-            var dateControl1 = sap.ui.getCore().byId("dateRange1");
-            var dateControl2 = sap.ui.getCore().byId("dateRange2");
-
             var d = new Date();
             d.setMonth(d.getMonth() - 1);
-            // save default date range global
-            this.defaultDateRange[dateControl1.getId()] = this.formatter.date(d);
-            this.defaultDateRange[dateControl2.getId()] = this.formatter.date(new Date());
+            var dateRange1Id = this._filterDateRange1.getId();
+            var dateRange2Id = this._filterDateRange2.getId();
 
-            dateControl1.setValue(this.defaultDateRange[dateControl1.getId()]);
-            dateControl2.setValue(this.defaultDateRange[dateControl2.getId()]);
-            oCustomFilter.setFilterCount(1);
-            oCustomFilter.setSelected(true);
+            // save default date range global
+            this.defaultDateRange[dateRange1Id] = this.formatter.date(d);
+            this.defaultDateRange[dateRange2Id] = this.formatter.date(new Date());
+
+            this._filterDateRange1.setValue(this.defaultDateRange[dateRange1Id]);
+            this._filterDateRange2.setValue(this.defaultDateRange[dateRange2Id]);
+            this.onChangeDateRangeFilter();
+        },
+
+        _setDefaultFilterView: function () {
+            var oViewFilterItems = this._filterSelectView.getItems();
+            for (var i = 0; i < oViewFilterItems.length; i++) {
+                var obj = oViewFilterItems[i];
+                if(obj.getKey() === this.defaultViewSelected){
+                    obj.setSelected(true);
+                }
+            }
         },
 
         /**
