@@ -22,6 +22,8 @@ sap.ui.define([
 
         defaultViewSelected: "TIMENONE",
 
+        selectedResources: [],
+
         /**
         * Called when a controller is instantiated and its View controls (if available) are already created.
         * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -180,22 +182,35 @@ sap.ui.define([
         },
 
         /**
-         * Todo:
+         * Todo: on deselect
          * @param oEvent
          */
-        onCheckResource: function (oEvent) {
+        onChangeSelectResource: function (oEvent) {
             var oSource = oEvent.getSource();
             var parent = oSource.getParent();
             var sPath = parent.getBindingContext().getPath();
             var oParams = oEvent.getParameters();
-            var data = this.getModel().getProperty(sPath);
 
-            if(data.NodeType === "RES_GROUP"){
-                //this._selectResourceGroupChilds(oParams.selected, parent, sPath);
+            if(oParams.selected){
+                this.selectedResources.push(sPath);
+
+            }else if(this.selectedResources.indexOf(sPath) >= 0){
+                //todo remove path from this.selectedResources
+            }
+
+            if(this.selectedResources.length > 0){
+                this.byId("showPlanCalendar").setEnabled(true);
+            }else{
+                this.byId("showPlanCalendar").setEnabled(false);
             }
         },
 
+        /**
+         * Todo: set up filter of selected resources in this.selectedResources
+         * @param oEvent
+         */
         onPressShowPlanningCal: function (oEvent) {
+            this._setCalendarModel();
             this._oPlanningCalDialog.open();
         },
 
@@ -432,12 +447,30 @@ sap.ui.define([
         },
 
 
+        /**
+         * Todo: call ResourceSet and ResourceGroupSet with Assignments
+         * and merge into one json model for planning calendar
+         * @private
+         */
         _setCalendarModel: function () {
             var aUsers = [];
+            var aGroups = [];
             var aFilters = [];
+            var oModel = this.getModel();
 
-            aUsers.push(new Filter("ObjectGuid", FilterOperator.EQ, "0A51491BD5A01ED7BD9236B3C76C1EA1"));
-            aUsers.push(new Filter("ObjectGuid", FilterOperator.EQ, "0A51491BD5A01ED7BD91D1BF3A55BE34"));
+            if(this.selectedResources.length <= 0){
+                return;
+            }
+
+            for (var i = 0; i < this.selectedResources.length; i++) {
+                var obj = oModel.getProperty(this.selectedResources[i]);
+                console.log(obj);
+                if(obj.NodeType === "RESOURCE"){
+                    aUsers.push(new Filter("ObjectGuid", FilterOperator.EQ, obj.ResourceGuid));
+                }else if(obj.NodeType === "RES_GROUP"){
+                    aGroups.push(new Filter("ObjectGuid", FilterOperator.EQ, obj.ResourceGroupGuid));
+                }
+            }
 
             aFilters.push(new Filter({
                 filters: aUsers,
@@ -454,6 +487,7 @@ sap.ui.define([
                 and: true
             });
 
+            //Todo: add expand to assignment
             /*this.getModel().read("/ResourceSet", {
                 filters: aFilters,
                 success: function(data, response){
