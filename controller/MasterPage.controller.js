@@ -1,27 +1,30 @@
 sap.ui.define([
-    "sap/ui/Device",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
-    "sap/ui/model/FilterType",
-    "sap/m/Token",
-    "com/evorait/evoplan/model/formatter",
-    "com/evorait/evoplan/controller/BaseController",
+	"sap/ui/Device",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterType",
+	"sap/m/Token",
+	"com/evorait/evoplan/model/formatter",
+	"com/evorait/evoplan/controller/BaseController",
 ], function(Device, JSONModel, Filter, FilterOperator, FilterType, Token, formatter, BaseController) {
-    "use strict";
+	"use strict";
 
-    return BaseController.extend('com.evorait.evoplan.controller.MasterPage', {
+	return BaseController.extend('com.evorait.evoplan.controller.MasterPage', {
 
-        formatter: formatter,
+		formatter: formatter,
 
-        defaultDateRange: [],
+		defaultDateRange: [],
 
-        firstLoad: false,
+		firstLoad: false,
 
-        counterResourceFilter: 2,
+		counterResourceFilter: 2,
 
-        defaultViewSelected: "TIMENONE",
+		defaultViewSelected: "TIMENONE",
 
+<<<<<<< HEAD
+		selectedResources: [],
+=======
         selectedResources: [],
 
         /**
@@ -31,156 +34,166 @@ sap.ui.define([
         onInit: function() {
             this._oDataTable = this.byId("droppableTable");
             this._configureDataTable(this._oDataTable);
+>>>>>>> branch 'EVOPLAN2-73' of https://RahulInamadar@bitbucket.org/evorait/evoplan2-ui5.git
 
-            //add fragment FilterSettingsDialog to the view
-            this._initFilterDialog();
+		/**
+		 * Called when a controller is instantiated and its View controls (if available) are already created.
+		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
+		 * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
+		onInit: function() {
+			this._oDataTable = this.byId("droppableTable");
+			this._configureDataTable(this._oDataTable);
 
-            //eventbus of assignemnt handling
-            var eventBus = sap.ui.getCore().getEventBus();
-            eventBus.subscribe("BaseController", "refreshTable", this._triggerFilterSearch, this);
-        },
+			//add fragment FilterSettingsDialog to the view
+			this._initFilterDialog();
 
-        /**
-        * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.
-        * This hook is the same one that SAPUI5 controls get after being rendered.
-        * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
-        onAfterRendering: function(oEvent) {
-            //add form fields to variant
-            this._initialCustomVariant();
-            //trigger first filter
-            this.onTreeUpdateStarted();
-            //init droppable
-            this.refreshDroppable(oEvent);
+			//eventbus of assignemnt handling
+			var eventBus = sap.ui.getCore().getEventBus();
+			eventBus.subscribe("BaseController", "refreshTable", this._triggerFilterSearch, this);
+		},
 
-            //Todo: remove example data when filter request is working
-            this._initPlanCalendarDialog();
-        },
+		/**
+		 * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.
+		 * This hook is the same one that SAPUI5 controls get after being rendered.
+		 * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
+		onAfterRendering: function(oEvent) {
+			//add form fields to variant
+			this._initialCustomVariant();
+			//trigger first filter
+			this.onTreeUpdateStarted();
+			//init droppable
+			this.refreshDroppable(oEvent);
 
-        /**
-         *
-         * @param oEvent
-         */
-        onBeforeRebindTable: function(oEvent) {
-            var oBindingParams = oEvent.getParameter('bindingParams');
-            oBindingParams.parameters.numberOfExpandedLevels = 1;
-        },
+			//Todo: remove example data when filter request is working
+			this._initPlanCalendarDialog();
+		},
 
-        /**
-         * initial draggable after every refresh of table
-         * for example after go to next page
-         * @param oEvent
-         */
-        onBusyStateChanged : function (oEvent) {
-            var parameters = oEvent.getParameters();
-            if(parameters.busy === false){
-                this._jDroppable(this);
-            }
-        },
+		/**
+		 *
+		 * @param oEvent
+		 */
+		onBeforeRebindTable: function(oEvent) {
+			var oBindingParams = oEvent.getParameter('bindingParams');
+			oBindingParams.parameters.numberOfExpandedLevels = 1;
+		},
 
-        /**
-         * initialize or update droppable after updating tree list
-         * @param oEvent
-         */
-        refreshDroppable : function (oEvent) {
-            if(this._oDataTable){
-                this._jDroppable(this);
-            }
-        },
+		/**
+		 * initial draggable after every refresh of table
+		 * for example after go to next page
+		 * @param oEvent
+		 */
+		onBusyStateChanged: function(oEvent) {
+			var parameters = oEvent.getParameters();
+			if (parameters.busy === false) {
+				this._jDroppable(this);
+			}
+		},
 
-        /**
-         * trigger add filter to tree table for the first time
-         */
-        onTreeUpdateStarted: function () {
-            if(!this.firstLoad){
-                this._triggerFilterSearch();
-                this.firstLoad = true;
-            }
-        },
+		/**
+		 * initialize or update droppable after updating tree list
+		 * @param oEvent
+		 */
+		refreshDroppable: function(oEvent) {
+			if (this._oDataTable) {
+				this._jDroppable(this);
+			}
+		},
 
-        /**
-         * @param oEvent
-         */
-        onSearchResources : function (oEvent) {
-            this._triggerFilterSearch();
-        },
+		/**
+		 * trigger add filter to tree table for the first time
+		 */
+		onTreeUpdateStarted: function() {
+			if (!this.firstLoad) {
+				this._triggerFilterSearch();
+				this.firstLoad = true;
+			}
+		},
 
-        /**
-         * open FilterSettingsDialog
-         * @param oEvent
-         */
-        onFilterButtonPress : function (oEvent) {
-            this._initFilterDialog();
-            this._oFilterSettingsDialog.open();
-        },
+		/**
+		 * @param oEvent
+		 */
+		onSearchResources: function(oEvent) {
+			this._triggerFilterSearch();
+		},
 
-        /**
-         * when a new variant is selected trigger search
-         * new Filters are bind to tree table
-         * @param oEvent
-         */
-        onSelectVariant : function (oEvent) {
-            this._triggerFilterSearch();
-        },
+		/**
+		 * open FilterSettingsDialog
+		 * @param oEvent
+		 */
+		onFilterButtonPress: function(oEvent) {
+			this._initFilterDialog();
+			this._oFilterSettingsDialog.open();
+		},
 
-        /**
-         * ViewSettingsDialog confirm filter
-         * @param oEvent
-         */
-        onFilterSettingsConfirm : function (oEvent) {
-            this._triggerFilterSearch();
-        },
+		/**
+		 * when a new variant is selected trigger search
+		 * new Filters are bind to tree table
+		 * @param oEvent
+		 */
+		onSelectVariant: function(oEvent) {
+			this._triggerFilterSearch();
+		},
 
-        /**
-         * reset custom controls
-         * @param oEvent
-         */
-        onFilterSettingsReset : function (oEvent) {
-            //reset multiInput custom filter
-            var oCustomFilter = sap.ui.getCore().byId("idGroupFilterItem");
-            this._filterGroupInput.setTokens([]);
-            oCustomFilter.setFilterCount(0);
+		/**
+		 * ViewSettingsDialog confirm filter
+		 * @param oEvent
+		 */
+		onFilterSettingsConfirm: function(oEvent) {
+			this._triggerFilterSearch();
+		},
 
-            //set default view setting
-            this._setDefaultFilterView();
+		/**
+		 * reset custom controls
+		 * @param oEvent
+		 */
+		onFilterSettingsReset: function(oEvent) {
+			//reset multiInput custom filter
+			var oCustomFilter = sap.ui.getCore().byId("idGroupFilterItem");
+			this._filterGroupInput.setTokens([]);
+			oCustomFilter.setFilterCount(0);
 
-            //set default date range
-            this._setDefaultFilterDateRange();
-        },
+			//set default view setting
+			this._setDefaultFilterView();
 
-        /**
-         *  on multiinput changed
-         * @param oEvent
-         */
-        onChangeGroupFilter: function (oEvent) {
-            var oCustomFilter = sap.ui.getCore().byId("idGroupFilterItem");
-            var aTokens = this._filterGroupInput.getTokens();
+			//set default date range
+			this._setDefaultFilterDateRange();
+		},
 
-            oCustomFilter.setFilterCount(aTokens.length);
-            this.counterResourceFilter = aTokens.length+2;
-            this.getModel("viewModel").setProperty("/counterResourceFilter", this.counterResourceFilter);
-        },
+		/**
+		 *  on multiinput changed
+		 * @param oEvent
+		 */
+		onChangeGroupFilter: function(oEvent) {
+			var oCustomFilter = sap.ui.getCore().byId("idGroupFilterItem");
+			var aTokens = this._filterGroupInput.getTokens();
 
-        /**
-         * on date input changed
-         * @param oEvent
-         */
-        onChangeDateRangeFilter: function (oEvent) {
-            var oCustomFilter = sap.ui.getCore().byId("idTimeframeFilterItem");
-            oCustomFilter.setFilterCount(1);
-            oCustomFilter.setSelected(true);
+			oCustomFilter.setFilterCount(aTokens.length);
+			this.counterResourceFilter = aTokens.length + 2;
+			this.getModel("viewModel").setProperty("/counterResourceFilter", this.counterResourceFilter);
+		},
 
-            if(oEvent){
-                var oSource = oEvent.getSource();
-                var oNewValue = oEvent.getParameter("value");
+		/**
+		 * on date input changed
+		 * @param oEvent
+		 */
+		onChangeDateRangeFilter: function(oEvent) {
+			var oCustomFilter = sap.ui.getCore().byId("idTimeframeFilterItem");
+			oCustomFilter.setFilterCount(1);
+			oCustomFilter.setSelected(true);
 
-                // Date range should be never empty
-                if (!oNewValue && oNewValue === "") {
-                    var lastValue = this.defaultDateRange[oSource.getId()] || this.formatter.date(new Date());
-                    oSource.setValue(lastValue);
-                }
-            }
-        },
+			if (oEvent) {
+				var oSource = oEvent.getSource();
+				var oNewValue = oEvent.getParameter("value");
 
+<<<<<<< HEAD
+				// Date range should be never empty
+				if (!oNewValue && oNewValue === "") {
+					var lastValue = this.defaultDateRange[oSource.getId()] || this.formatter.date(new Date());
+					oSource.setValue(lastValue);
+				}
+			}
+		},
+=======
         /**
          * Todo: on deselect
          * @param oEvent
@@ -190,7 +203,19 @@ sap.ui.define([
             var parent = oSource.getParent();
             var sPath = parent.getBindingContext().getPath();
             var oParams = oEvent.getParameters();
+>>>>>>> branch 'EVOPLAN2-73' of https://RahulInamadar@bitbucket.org/evorait/evoplan2-ui5.git
 
+<<<<<<< HEAD
+		/**
+		 * Todo: on deselect
+		 * @param oEvent
+		 */
+		onChangeSelectResource: function(oEvent) {
+			var oSource = oEvent.getSource();
+			var parent = oSource.getParent();
+			var sPath = parent.getBindingContext().getPath();
+			var oParams = oEvent.getParameters();
+=======
             if(oParams.selected){
                 this.selectedResources.push(sPath);
 
@@ -204,7 +229,12 @@ sap.ui.define([
                 this.byId("showPlanCalendar").setEnabled(false);
             }
         },
+>>>>>>> branch 'EVOPLAN2-73' of https://RahulInamadar@bitbucket.org/evorait/evoplan2-ui5.git
 
+<<<<<<< HEAD
+			if (oParams.selected) {
+				this.selectedResources.push(sPath);
+=======
         /**
          * Todo: set up filter of selected resources in this.selectedResources
          * @param oEvent
@@ -213,240 +243,286 @@ sap.ui.define([
             this._setCalendarModel();
             this._oPlanningCalDialog.open();
         },
+>>>>>>> branch 'EVOPLAN2-73' of https://RahulInamadar@bitbucket.org/evorait/evoplan2-ui5.git
 
-        onCalendarModalCancel: function (oEvent) {
-            this._oPlanningCalDialog.close();
-        },
+			} else if (this.selectedResources.indexOf(sPath) >= 0) {
+				//removing the path from this.selectedResources when user unselect the checkbox
+				this.selectedResources.splice(this.selectedResources.indexOf(sPath), 1);
+			}
 
-        /**
-         * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
-         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage
-         **/
-        onExit: function() {
-            if(this._oFilterSettingsDialog){
-                this._oFilterSettingsDialog.destroy();
-            }
-            if (this._oPlanningCalDialog) {
-                this._oPlanningCalDialog.destroy();
-            }
-        },
+			if (this.selectedResources.length > 0) {
+				this.byId("showPlanCalendar").setEnabled(true);
+			} else {
+				this.byId("showPlanCalendar").setEnabled(false);
+			}
+		},
 
-        /* =========================================================== */
-        /* internal methods                                            */
-        /* =========================================================== */
-        _configureDataTable : function (oDataTable) {
-            oDataTable.setEnableBusyIndicator(true);
-            oDataTable.setSelectionMode('None');
-            oDataTable.setColumnHeaderVisible(false);
-            oDataTable.setEnableCellFilter(false);
-            oDataTable.setEnableColumnReordering(false);
-            oDataTable.setEditable(false);
-            oDataTable.setWidth("100%");
-            oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
-            //oDataTable.attachFilter(this.onFilterChanged, this);
-        },
+		/**
+		 * Todo: set up filter of selected resources in this.selectedResources
+		 * @param oEvent
+		 */
+		onPressShowPlanningCal: function(oEvent) {
+			this._setCalendarModel();
+			this._oPlanningCalDialog.open();
+		},
 
-        _initialCustomVariant: function () {
-            var oVariant = this.byId("customResourceVariant");
-            this._initFilterDialog();
+		onCalendarModalCancel: function(oEvent) {
+			this._oPlanningCalDialog.close();
+		},
 
-            oVariant.addFilter(this._searchField);
-            oVariant.addFilter(this._filterDateRange1);
-            oVariant.addFilter(this._filterSelectView);
-            oVariant.addFilter(this._filterGroupInput);
-        },
+		/**
+		 * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
+		 * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage
+		 **/
+		onExit: function() {
+			if (this._oFilterSettingsDialog) {
+				this._oFilterSettingsDialog.destroy();
+			}
+			if (this._oPlanningCalDialog) {
+				this._oPlanningCalDialog.destroy();
+			}
+		},
 
-        /**
-         * set default filter
-         * @private
-         */
-        _initFilterDialog: function () {
-            if (!this._oFilterSettingsDialog) {
-                this._oFilterSettingsDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.FilterSettingsDialog", this);
-                this.getView().addDependent(this._oFilterSettingsDialog);
+		/* =========================================================== */
+		/* internal methods                                            */
+		/* =========================================================== */
+		_configureDataTable: function(oDataTable) {
+			oDataTable.setEnableBusyIndicator(true);
+			oDataTable.setSelectionMode('None');
+			oDataTable.setColumnHeaderVisible(false);
+			oDataTable.setEnableCellFilter(false);
+			oDataTable.setEnableColumnReordering(false);
+			oDataTable.setEditable(false);
+			oDataTable.setWidth("100%");
+			oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
+			//oDataTable.attachFilter(this.onFilterChanged, this);
+		},
 
-                //counter for default date range and default selected view
-                this._searchField = this.byId("searchField");
-                this._filterSelectView = sap.ui.getCore().byId("viewFilterItem");
-                this._filterDateRange1 = sap.ui.getCore().byId("dateRange1");
-                this._filterDateRange2 = sap.ui.getCore().byId("dateRange2");
+		_initialCustomVariant: function() {
+			var oVariant = this.byId("customResourceVariant");
+			this._initFilterDialog();
 
-                //set default view setting
-                this._setDefaultFilterView();
-                //set default date range
-                this._setDefaultFilterDateRange();
+			oVariant.addFilter(this._searchField);
+			oVariant.addFilter(this._filterDateRange1);
+			oVariant.addFilter(this._filterSelectView);
+			oVariant.addFilter(this._filterGroupInput);
+		},
 
-                //*** add checkbox validator
-                this._filterGroupInput = sap.ui.getCore().byId("multiGroupInput");
-                this._filterGroupInput.addValidator(function(args){
-                    var text = args.text;
-                    return new Token({key: text, text: text});
-                });
-            }
-        },
+		/**
+		 * set default filter
+		 * @private
+		 */
+		_initFilterDialog: function() {
+			if (!this._oFilterSettingsDialog) {
+				this._oFilterSettingsDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.FilterSettingsDialog", this);
+				this.getView().addDependent(this._oFilterSettingsDialog);
 
-        _initPlanCalendarDialog: function () {
-            if (!this._oPlanningCalDialog) {
-                this._oPlanningCalDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceCalendarDialog", this);
-                this.getView().addDependent(this._oPlanningCalDialog);
-                this._setCalendarModel();
-            }
-        },
+				//counter for default date range and default selected view
+				this._searchField = this.byId("searchField");
+				this._filterSelectView = sap.ui.getCore().byId("viewFilterItem");
+				this._filterDateRange1 = sap.ui.getCore().byId("dateRange1");
+				this._filterDateRange2 = sap.ui.getCore().byId("dateRange2");
 
-        /**
-         * triggers request with all setted filters
-         * @private
-         */
-        _triggerFilterSearch: function () {
-            var binding = this._oDataTable.getBinding("rows");
-            var aFilters = this._getAllFilters();
-            binding.filter(aFilters, "Application");
-        },
+				//set default view setting
+				this._setDefaultFilterView();
+				//set default date range
+				this._setDefaultFilterDateRange();
 
-        /**
-         * collection of all filter from view settings dialog and also from search field
-         * @returns {Array}
-         * @private
-         */
-        _getAllFilters: function () {
-            var aFilters = [];
-            var oViewModel = this.getModel("viewModel");
+				//*** add checkbox validator
+				this._filterGroupInput = sap.ui.getCore().byId("multiGroupInput");
+				this._filterGroupInput.addValidator(function(args) {
+					var text = args.text;
+					return new Token({
+						key: text,
+						text: text
+					});
+				});
+			}
+		},
 
-            oViewModel.setProperty("/counterResourceFilter", this.counterResourceFilter);
+		_initPlanCalendarDialog: function() {
+			if (!this._oPlanningCalDialog) {
+				this._oPlanningCalDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceCalendarDialog", this);
+				this.getView().addDependent(this._oPlanningCalDialog);
+				this._setCalendarModel();
+			}
+		},
 
-            // filter dialog values
-            //view setting
-            var oViewFilterItems = this._filterSelectView.getItems();
-            for (var i = 0; i < oViewFilterItems.length; i++) {
-                var obj = oViewFilterItems[i];
-                if(obj.getSelected()){
-                    var key = obj.getKey();
-                    aFilters.push(new Filter("NodeType", FilterOperator.EQ, key));
-                }
-            }
+		/**
+		 * triggers request with all setted filters
+		 * @private
+		 */
+		_triggerFilterSearch: function() {
+			var binding = this._oDataTable.getBinding("rows");
+			var aFilters = this._getAllFilters();
+			binding.filter(aFilters, "Application");
+		},
 
-            //set date range
-            var sDateControl1 = this._filterDateRange1.getValue();
-            var sDateControl2 = this._filterDateRange2.getValue();
-            sDateControl1 = this.formatter.date(sDateControl1);
-            sDateControl2 = this.formatter.date(sDateControl2);
-            var oDateRangeFilter = new Filter("StartDate", FilterOperator.BT, sDateControl1, sDateControl2);
-            aFilters.push(oDateRangeFilter);
+		/**
+		 * collection of all filter from view settings dialog and also from search field
+		 * @returns {Array}
+		 * @private
+		 */
+		_getAllFilters: function() {
+			var aFilters = [];
+			var oViewModel = this.getModel("viewModel");
 
-            //filter for Resource group
-            var aTokens = this._filterGroupInput.getTokens(),
-                aTokenFilter = [];
+			oViewModel.setProperty("/counterResourceFilter", this.counterResourceFilter);
 
-            if(aTokens && aTokens.length > 0){
-                var parentNodeFilter = new Filter("ParentNodeId", FilterOperator.EQ, "");
-                //get all tokens
-                for (var j = 0; j < aTokens.length; j++) {
-                    var token = aTokens[j];
-                    aTokenFilter.push(
-                        new Filter("Description", FilterOperator.Contains, token.getKey())
-                    );
-                }
-                aFilters.push(new Filter({
-                    filters: aTokenFilter,
-                    and: false
-                }));
-                /*aFilters.push(new Filter({
-                    filters: [groupFilter, parentNodeFilter],
-                    and: true
-                }));*/
-            }
-            oViewModel.setProperty("/resourceFilterView", aFilters);
+			// filter dialog values
+			//view setting
+			var oViewFilterItems = this._filterSelectView.getItems();
+			for (var i = 0; i < oViewFilterItems.length; i++) {
+				var obj = oViewFilterItems[i];
+				if (obj.getSelected()) {
+					var key = obj.getKey();
+					aFilters.push(new Filter("NodeType", FilterOperator.EQ, key));
+				}
+			}
 
-            //get search field value
-            var sSearchField = this._searchField.getValue();
-            oViewModel.setProperty("/resourceSearchString", sSearchField);
-            if (sSearchField && sSearchField.length > 0) {
-                aFilters.push(new Filter("Description", FilterOperator.Contains, sSearchField));
-            }
+			//set date range
+			var sDateControl1 = this._filterDateRange1.getValue();
+			var sDateControl2 = this._filterDateRange2.getValue();
+			sDateControl1 = this.formatter.date(sDateControl1);
+			sDateControl2 = this.formatter.date(sDateControl2);
+			var oDateRangeFilter = new Filter("StartDate", FilterOperator.BT, sDateControl1, sDateControl2);
+			aFilters.push(oDateRangeFilter);
 
-            var resourceFilter = new Filter({filters: aFilters, and: true});
-            oViewModel.setProperty("/resourceFilterAll", resourceFilter);
+			//filter for Resource group
+			var aTokens = this._filterGroupInput.getTokens(),
+				aTokenFilter = [];
 
-            return  resourceFilter;
-        },
+			if (aTokens && aTokens.length > 0) {
+				var parentNodeFilter = new Filter("ParentNodeId", FilterOperator.EQ, "");
+				//get all tokens
+				for (var j = 0; j < aTokens.length; j++) {
+					var token = aTokens[j];
+					aTokenFilter.push(
+						new Filter("Description", FilterOperator.Contains, token.getKey())
+					);
+				}
+				aFilters.push(new Filter({
+					filters: aTokenFilter,
+					and: false
+				}));
+				/*aFilters.push(new Filter({
+				    filters: [groupFilter, parentNodeFilter],
+				    and: true
+				}));*/
+			}
+			oViewModel.setProperty("/resourceFilterView", aFilters);
 
-        _setDefaultFilterDateRange: function () {
-            //set default date range from 1month
-            var d = new Date();
-            d.setMonth(d.getMonth() - 1);
-            var dateRange1Id = this._filterDateRange1.getId();
-            var dateRange2Id = this._filterDateRange2.getId();
+			//get search field value
+			var sSearchField = this._searchField.getValue();
+			oViewModel.setProperty("/resourceSearchString", sSearchField);
+			if (sSearchField && sSearchField.length > 0) {
+				aFilters.push(new Filter("Description", FilterOperator.Contains, sSearchField));
+			}
 
-            // save default date range global
-            this.defaultDateRange[dateRange1Id] = this.formatter.date(d);
-            this.defaultDateRange[dateRange2Id] = this.formatter.date(new Date());
+			var resourceFilter = new Filter({
+				filters: aFilters,
+				and: true
+			});
+			oViewModel.setProperty("/resourceFilterAll", resourceFilter);
 
-            this._filterDateRange1.setValue(this.defaultDateRange[dateRange1Id]);
-            this._filterDateRange2.setValue(this.defaultDateRange[dateRange2Id]);
-            this.onChangeDateRangeFilter();
-        },
+			return resourceFilter;
+		},
 
-        _setDefaultFilterView: function () {
-            var oViewFilterItems = this._filterSelectView.getItems();
-            for (var i = 0; i < oViewFilterItems.length; i++) {
-                var obj = oViewFilterItems[i];
-                if(obj.getKey() === this.defaultViewSelected){
-                    obj.setSelected(true);
-                }
-            }
-        },
+		_setDefaultFilterDateRange: function() {
+			//set default date range from 1month
+			var d = new Date();
+			d.setMonth(d.getMonth() - 1);
+			var dateRange1Id = this._filterDateRange1.getId();
+			var dateRange2Id = this._filterDateRange2.getId();
 
-        /**
-         * dropped demands assign and save
-         * @param _this
-         * @private
-         */
-        _jDroppable: function (_this) {
-            setTimeout(function() {
-                var droppableTableId = _this._oDataTable.getId();
-                var droppedElement = $("#"+droppableTableId+" tbody tr, #"+droppableTableId+" li");
+			// save default date range global
+			this.defaultDateRange[dateRange1Id] = this.formatter.date(d);
+			this.defaultDateRange[dateRange2Id] = this.formatter.date(new Date());
 
-                try{
-                    if(droppedElement.hasClass("ui-droppable")){
-                        droppedElement.droppable( "destroy" );
-                    }
-                }catch(error){
-                    console.warn(error);
-                }
+			this._filterDateRange1.setValue(this.defaultDateRange[dateRange1Id]);
+			this._filterDateRange2.setValue(this.defaultDateRange[dateRange2Id]);
+			this.onChangeDateRangeFilter();
+		},
 
-                droppedElement.droppable({
-                    accept: ".ui-draggable",
-                    classes: {
-                        "ui-droppable-hover": "ui-droppable-hover",
-                        "ui-droppable-active": "ui-droppable-active"
-                    },
-                    drop: function( event, ui ) {
-                        var dropTargetId = event.target.id,
-                            targetElement = sap.ui.getCore().byId(dropTargetId),
-                            oContext = targetElement.getBindingContext();
+		_setDefaultFilterView: function() {
+			var oViewFilterItems = this._filterSelectView.getItems();
+			for (var i = 0; i < oViewFilterItems.length; i++) {
+				var obj = oViewFilterItems[i];
+				if (obj.getKey() === this.defaultViewSelected) {
+					obj.setSelected(true);
+				}
+			}
+		},
 
-                        if(oContext){
-                            var targetPath = oContext.getPath();
-                            var targetObj = _this.getModel().getProperty(targetPath);
+		/**
+		 * dropped demands assign and save
+		 * @param _this
+		 * @private
+		 */
+		_jDroppable: function(_this) {
+			setTimeout(function() {
+				var droppableTableId = _this._oDataTable.getId();
+				var droppedElement = $("#" + droppableTableId + " tbody tr, #" + droppableTableId + " li");
 
-                            //don't drop on orders
-                            if(targetObj.NodeType === "ASSIGNMENT"){
-                                return;
-                            }
+				try {
+					if (droppedElement.hasClass("ui-droppable")) {
+						droppedElement.droppable("destroy");
+					}
+				} catch (error) {
+					console.warn(error);
+				}
 
-                            var draggedElements = ui.helper[0],
-                                aSources = [];
-                            $(draggedElements).find('li').each(function (idx, obj) {
-                                aSources.push({sPath: $(this).attr('id')});
-                            });
-                            _this.assignedDemands(aSources, targetPath);
-                        }
-                    }
-                });
-            }, 1000);
-        },
+				droppedElement.droppable({
+					accept: ".ui-draggable",
+					classes: {
+						"ui-droppable-hover": "ui-droppable-hover",
+						"ui-droppable-active": "ui-droppable-active"
+					},
+					drop: function(event, ui) {
+						var dropTargetId = event.target.id,
+							targetElement = sap.ui.getCore().byId(dropTargetId),
+							oContext = targetElement.getBindingContext();
 
+						if (oContext) {
+							var targetPath = oContext.getPath();
+							var targetObj = _this.getModel().getProperty(targetPath);
 
+							//don't drop on orders
+							if (targetObj.NodeType === "ASSIGNMENT") {
+								return;
+							}
+
+							var draggedElements = ui.helper[0],
+								aSources = [];
+							$(draggedElements).find('li').each(function(idx, obj) {
+								aSources.push({
+									sPath: $(this).attr('id')
+								});
+							});
+							_this.assignedDemands(aSources, targetPath);
+						}
+					}
+				});
+			}, 1000);
+		},
+
+		/**
+		 * Todo: call ResourceSet and ResourceGroupSet with Assignments
+		 * and merge into one json model for planning calendar
+		 * @private
+		 */
+		_setCalendarModel: function() {
+			var aUsers = [];
+			var aGroups = [];
+			var aResourceFilters = [];
+			var aResourceGroupFilters = [];
+			var oModel = this.getModel();
+
+<<<<<<< HEAD
+			if (this.selectedResources.length <= 0) {
+				return;
+			}
+=======
         /**
          * Todo: call ResourceSet and ResourceGroupSet with Assignments
          * and merge into one json model for planning calendar
@@ -457,7 +533,18 @@ sap.ui.define([
             var aGroups = [];
             var aFilters = [];
             var oModel = this.getModel();
+>>>>>>> branch 'EVOPLAN2-73' of https://RahulInamadar@bitbucket.org/evorait/evoplan2-ui5.git
 
+<<<<<<< HEAD
+			for (var i = 0; i < this.selectedResources.length; i++) {
+				var obj = oModel.getProperty(this.selectedResources[i]);
+				if (obj.NodeType === "RESOURCE") {
+					aUsers.push(new Filter("ObjectGuid", FilterOperator.EQ, obj.ResourceGuid));
+				} else if (obj.NodeType === "RES_GROUP") {
+					aGroups.push(new Filter("ObjectGuid", FilterOperator.EQ, obj.ResourceGroupGuid));
+				}
+			}
+=======
             if(this.selectedResources.length <= 0){
                 return;
             }
@@ -471,22 +558,61 @@ sap.ui.define([
                     aGroups.push(new Filter("ObjectGuid", FilterOperator.EQ, obj.ResourceGroupGuid));
                 }
             }
+>>>>>>> branch 'EVOPLAN2-73' of https://RahulInamadar@bitbucket.org/evorait/evoplan2-ui5.git
 
-            aFilters.push(new Filter({
-                filters: aUsers,
-                and: false
-            }));
+			aResourceFilters.push(new Filter({
+				filters: aUsers,
+				and: false
+			}));
+			
+			aResourceGroupFilters.push(new Filter({
+				filters: aGroups,
+				and: false
+			}));
 
-            var sDateControl1 = this._filterDateRange1.getValue();
-            sDateControl1 = this.formatter.date(sDateControl1);
-            var oDateRangeFilter = new Filter("DateFrom", FilterOperator.GE, sDateControl1);
-            aFilters.push(oDateRangeFilter);
+			var sDateControl1 = this._filterDateRange1.getValue();
+			sDateControl1 = this.formatter.date(sDateControl1);
+			var oDateRangeFilter = new Filter("DateFrom", FilterOperator.GE, sDateControl1);
+			aResourceFilters.push(oDateRangeFilter);
+			aResourceGroupFilters.push(oDateRangeFilter);
 
-            var modelFilter = new Filter({
-                filters: aFilters,
-                and: true
-            });
+			/*var modelFilter = new Filter({
+				filters: aFilters,
+				and: true
+			});*/
 
+<<<<<<< HEAD
+			oModel.read("/ResourceSet",{
+					groupId: "calendarBatch",
+					filters: aResourceFilters,
+					urlParameters:{
+						"$expand": "AssignmentSet" //curently it is not working
+					}
+					
+				});
+			oModel.read("/ResourceGroupSet",{
+					groupId: "calendarBatch",
+					filters: aResourceGroupFilters,
+					urlParameters:{
+						"$expand": "AssignmentSet" 
+					}
+				});
+				
+			var aDeferredGroups = oModel.getDeferredGroups();
+			aDeferredGroups=aDeferredGroups.concat(["calendarBatch"]);
+			oModel.setDeferredGroups(aDeferredGroups);
+			
+			//TODO Call the batcg request
+		/*	oModel.submitChanges({
+				groupId:"calendarBatch",
+				success: function(data, response) {
+					console.log(response);
+					//TODO Need to merge both request data into single json model
+				},
+				error: function(error) {
+					console.log(error);
+				}});*/
+=======
             //Todo: add expand to assignment
             /*this.getModel().read("/ResourceSet", {
                 filters: aFilters,
@@ -497,346 +623,116 @@ sap.ui.define([
                     console.log(error);
                 }
             });*/
+>>>>>>> branch 'EVOPLAN2-73' of https://RahulInamadar@bitbucket.org/evorait/evoplan2-ui5.git
 
-            var oModel = new JSONModel();
-            oModel.setData({
-                startDate: new Date("2017", "0", "15", "8", "0"),
-                people: [{
-                    pic: "test-resources/sap/ui/demokit/explored/img/John_Miller.png",
-                    name: "John Miller",
-                    role: "team member",
-                    appointments: [
-                        {
-                            start: new Date("2017", "0", "8", "08", "30"),
-                            end: new Date("2017", "0", "8", "09", "30"),
-                            title: "Meet Max Mustermann",
-                            key: "0123456789",
-                            type: "Type04"
-                        },
-                        {
-                            start: new Date("2017", "0", "11", "10", "0"),
-                            end: new Date("2017", "0", "11", "12", "0"),
-                            title: "Team meeting",
-                            info: "room 1"
-                        },
-                        {
-                            start: new Date("2017", "0", "12", "11", "30"),
-                            end: new Date("2017", "0", "12", "13", "30"),
-                            title: "Lunch"
-                        },
-                        {
-                            start: new Date("2017", "0", "15", "08", "30"),
-                            end: new Date("2017", "0", "15", "09", "30"),
-                            title: "Meet Max Mustermann"
-                        },
-                        {
-                            start: new Date("2017", "0", "15", "10", "0"),
-                            end: new Date("2017", "0", "15", "12", "0"),
-                            title: "Team meeting",
-                            info: "room 1"
-                        },
-                        {
-                            start: new Date("2017", "0", "15", "11", "30"),
-                            end: new Date("2017", "0", "15", "13", "30"),
-                            title: "Lunch"
-                        },
-                        {
-                            start: new Date("2017", "0", "15", "13", "30"),
-                            end: new Date("2017", "0", "15", "17", "30"),
-                            title: "Discussion with clients"
-                        },
-                        {
-                            start: new Date("2017", "0", "16", "04", "00"),
-                            end: new Date("2017", "0", "16", "22", "30"),
-                            title: "Discussion of the plan"
-                        },
-                        {
-                            start: new Date("2017", "0", "18", "08", "30"),
-                            end: new Date("2017", "0", "18", "09", "30"),
-                            title: "Meeting with the manager"
-                        },
-                        {
-                            start: new Date("2017", "0", "18", "11", "30"),
-                            end: new Date("2017", "0", "18", "13", "30"),
-                            title: "Lunch"
-                        },
-                        {
-                            start: new Date("2017", "0", "18", "1", "0"),
-                            end: new Date("2017", "0", "18", "22", "0"),
-                            title: "Team meeting",
-                            info: "regular"
-                        },
-                        {
-                            start: new Date("2017", "0", "21", "00", "30"),
-                            end: new Date("2017", "0", "21", "23", "30"),
-                            title: "New Product",
-                            info: "room 105"
-                        },
-                        {
-                            start: new Date("2017", "0", "25", "11", "30"),
-                            end: new Date("2017", "0", "25", "13", "30"),
-                            title: "Lunch"
-                        },
-                        {
-                            start: new Date("2017", "0", "29", "10", "0"),
-                            end: new Date("2017", "0", "29", "12", "0"),
-                            title: "Team meeting",
-                            info: "room 1"
-                        },
-                        {
-                            start: new Date("2017", "0", "30", "08", "30"),
-                            end: new Date("2017", "0", "30", "09", "30"),
-                            title: "Meet Max Mustermann"
-                        },
-                        {
-                            start: new Date("2017", "0", "30", "10", "0"),
-                            end: new Date("2017", "0", "30", "12", "0"),
-                            title: "Team meeting",
-                            info: "room 1"
-                        },
-                        {
-                            start: new Date("2017", "0", "30", "11", "30"),
-                            end: new Date("2017", "0", "30", "13", "30"),
-                            title: "Lunch"
-                        },
-                        {
-                            start: new Date("2017", "0", "30", "13", "30"),
-                            end: new Date("2017", "0", "30", "17", "30"),
-                            title: "Discussion with clients"
-                        },
-                        {
-                            start: new Date("2017", "0", "31", "10", "00"),
-                            end: new Date("2017", "0", "31", "11", "30"),
-                            title: "Discussion of the plan",
-                            info: "Online meeting"
-                        },
-                        {
-                            start: new Date("2017", "1", "3", "08", "30"),
-                            end: new Date("2017", "1", "13", "09", "30"),
-                            title: "Meeting with the manager"
-                        },
-                        {
-                            start: new Date("2017", "1", "4", "10", "0"),
-                            end: new Date("2017", "1", "4", "12", "0"),
-                            title: "Team meeting",
-                            info: "room 1"
-                        },
-                        {
-                            start: new Date("2017", "2", "30", "10", "0"),
-                            end: new Date("2017", "4", "33", "12", "0"),
-                            title: "Working out of the building"
-                        }
-                    ],
-                },
-                    {
-                        pic: "test-resources/sap/ui/demokit/explored/img/Donna_Moore.jpg",
-                        name: "Donna Moore",
-                        role: "team member",
-                        appointments: [
-                            {
-                                start: new Date("2017", "0", "10", "18", "00"),
-                                end: new Date("2017", "0", "10", "19", "10"),
-                                title: "Discussion of the plan",
-                                info: "Online meeting",
-                                type: "Type04",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "0", "9", "10", "0"),
-                                end: new Date("2017", "0", "13", "12", "0"),
-                                title: "Workshop out of the country",
-                                type: "Type07",
-                                pic: "sap-icon://sap-ui5",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "0", "15", "08", "00"),
-                                end: new Date("2017", "0", "15", "09", "30"),
-                                title: "Discussion of the plan",
-                                info: "Online meeting",
-                                type: "Type04",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "0", "15", "10", "0"),
-                                end: new Date("2017", "0", "15", "12", "0"),
-                                title: "Team meeting",
-                                info: "room 1",
-                                type: "Type01",
-                                pic: "sap-icon://sap-ui5",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "0", "15", "18", "00"),
-                                end: new Date("2017", "0", "15", "19", "10"),
-                                title: "Discussion of the plan",
-                                info: "Online meeting",
-                                type: "Type04",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "0", "16", "10", "0"),
-                                end: new Date("2017", "0", "31", "12", "0"),
-                                title: "Workshop out of the country",
-                                type: "Type07",
-                                pic: "sap-icon://sap-ui5",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2018", "0", "1", "0", "0"),
-                                end: new Date("2018", "2", "31", "23", "59"),
-                                title: "New quarter",
-                                type: "Type10",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "01", "11", "10", "0"),
-                                end: new Date("2017", "02", "20", "12", "0"),
-                                title: "Team collaboration",
-                                info: "room 1",
-                                type: "Type01",
-                                pic: "sap-icon://sap-ui5",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "3", "01", "10", "0"),
-                                end: new Date("2017", "3", "31", "12", "0"),
-                                title: "Workshop out of the country",
-                                type: "Type07",
-                                pic: "sap-icon://sap-ui5",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "4", "01", "10", "0"),
-                                end: new Date("2017", "4", "31", "12", "0"),
-                                title: "Out of the office",
-                                type: "Type08",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "7", "1", "0", "0"),
-                                end: new Date("2017", "7", "31", "23", "59"),
-                                title: "Vacation",
-                                info: "out of office",
-                                type: "Type04",
-                                tentative: false
-                            }
-                        ],
-                    },
-                    {
-                        pic: "sap-icon://employee",
-                        name: "Max Mustermann",
-                        role: "team member",
-                        appointments: [
-                            {
-                                start: new Date("2017", "0", "15", "08", "30"),
-                                end: new Date("2017", "0", "15", "09", "30"),
-                                title: "Meet John Miller",
-                                type: "Type02",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "0", "15", "10", "0"),
-                                end: new Date("2017", "0", "15", "12", "0"),
-                                title: "Team meeting",
-                                info: "room 1",
-                                type: "Type01",
-                                pic: "sap-icon://sap-ui5",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "0", "15", "13", "00"),
-                                end: new Date("2017", "0", "15", "16", "00"),
-                                title: "Discussion with clients",
-                                info: "online",
-                                type: "Type02",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "0", "16", "0", "0"),
-                                end: new Date("2017", "0", "16", "23", "59"),
-                                title: "Vacation",
-                                info: "out of office",
-                                type: "Type04",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "0", "17", "1", "0"),
-                                end: new Date("2017", "0", "18", "22", "0"),
-                                title: "Workshop",
-                                info: "regular",
-                                type: "Type07",
-                                pic: "sap-icon://sap-ui5",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "0", "19", "08", "30"),
-                                end: new Date("2017", "0", "19", "18", "30"),
-                                title: "Meet John Doe",
-                                type: "Type02",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "0", "19", "10", "0"),
-                                end: new Date("2017", "0", "19", "16", "0"),
-                                title: "Team meeting",
-                                info: "room 1",
-                                type: "Type01",
-                                pic: "sap-icon://sap-ui5",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "0", "19", "07", "00"),
-                                end: new Date("2017", "0", "19", "17", "30"),
-                                title: "Discussion with clients",
-                                type: "Type02",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "0", "20", "0", "0"),
-                                end: new Date("2017", "0", "20", "23", "59"),
-                                title: "Vacation",
-                                info: "out of office",
-                                type: "Type04",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "0", "22", "07", "00"),
-                                end: new Date("2017", "0", "27", "17", "30"),
-                                title: "Discussion with clients",
-                                info: "out of office",
-                                type: "Type02",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "2", "13", "9", "0"),
-                                end: new Date("2017", "2", "17", "10", "0"),
-                                title: "Payment week",
-                                type: "Type06"
-                            },
-                            {
-                                start: new Date("2017", "03", "10", "0", "0"),
-                                end: new Date("2017", "05", "16", "23", "59"),
-                                title: "Vacation",
-                                info: "out of office",
-                                type: "Type04",
-                                tentative: false
-                            },
-                            {
-                                start: new Date("2017", "07", "1", "0", "0"),
-                                end: new Date("2017", "09", "31", "23", "59"),
-                                title: "New quarter",
-                                type: "Type10",
-                                tentative: false
-                            }
-                        ]
-                    }
-                ]
-            });
+			var oModel = new JSONModel();
+			//MockData for Planning calendar
+			oModel.setData({
+				startDate: new Date(sDateControl1),
+				people: [{
+					pic: "sap-icon://collaborate",
+					name: "Resource Group",  //Name of resource
+					role: "",  
+					appointments: [{
+						start:new Date("2018", "0", "8", "08", "0"),
+						end: new Date("2018", "0", "8", "09", "30"),
+						title: "Meet Max Mustermann",
+						key: "0123456789",
+						type: "Type04"
+					}, {
+						start: new Date("2018", "0", "8", "10", "0"),
+						end: new Date("2018", "0", "8", "12", "0"),
+						title: "Team meeting",
+						info: "room 1"
+					}, {
+						start: new Date("2018", "0", "8", "12", "30"),
+						end: new Date("2018", "0", "8", "13", "30"),
+						title: "Lunch"
+					}, {
+						start: new Date("2018", "0", "8", "14", "30"),
+						end: new Date("2018", "0", "8", "15", "30"),
+						title: "Team Meeting 2",
+						info: "room 3"
+					}]
+				}, {
+					pic: "sap-icon://employee",
+					name: "Resource",
+					role: "team member",
+					appointments: [{
+						start:new Date("2018", "0", "8", "08", "0"),
+						end: new Date("2018", "0", "8", "09", "30"),
+						title: "Meet Max Mustermann",
+						key: "0123456789",
+						type: "Type04"
+					}, {
+						start: new Date("2018", "0", "8", "10", "0"),
+						end: new Date("2018", "0", "8", "12", "0"),
+						title: "Team meeting",
+						info: "room 1"
+					}, {
+						start: new Date("2018", "0", "8", "12", "30"),
+						end: new Date("2018", "0", "8", "13", "30"),
+						title: "Lunch"
+					}, {
+						start: new Date("2018", "0", "8", "14", "30"),
+						end: new Date("2018", "0", "8", "15", "30"),
+						title: "Team Meeting 2",
+						info: "room 3"
+					},
+					{
+						start: new Date("2018", "0", "8", "16", "30"),
+						end: new Date("2018", "0", "8", "17", "30"),
+						title: "Tea",
+						info: "room 3"
+					},
+					{
+						start: new Date("2018", "0", "8", "17", "30"),
+						end: new Date("2018", "0", "8", "18", "10"),
+						title: "Tea"
+					}]
+				},
+				{
+					pic: "sap-icon://employee",
+					name: "Resource",
+					role: "team member",
+					appointments: [{
+						start:new Date("2018", "0", "8", "08", "0"),
+						end: new Date("2018", "0", "8", "09", "30"),
+						title: "Meet Max Mustermann",
+						key: "0123456789",
+						type: "Type04"
+					}, {
+						start: new Date("2018", "0", "8", "10", "0"),
+						end: new Date("2018", "0", "8", "12", "0"),
+						title: "Team meeting",
+						info: "room 1"
+					}, {
+						start: new Date("2018", "0", "8", "12", "30"),
+						end: new Date("2018", "0", "8", "13", "30"),
+						title: "Lunch"
+					}, {
+						start: new Date("2018", "0", "8", "14", "30"),
+						end: new Date("2018", "0", "8", "15", "30"),
+						title: "Team Meeting 2",
+						info: "room 3"
+					},
+					{
+						start: new Date("2018", "0", "8", "16", "30"),
+						end: new Date("2018", "0", "8", "17", "30"),
+						title: "Tea",
+						info: "room 3"
+					},
+					{
+						start: new Date("2018", "0", "8", "17", "30"),
+						end: new Date("2018", "0", "8", "18", "10"),
+						title: "Tea"
+					}]
+				}]
+			});
 
-            //sap.ui.getCore().byId("planningCalendar").setModel(oModel);
-            this.setModel(oModel, "calendarModel");
-        }
+			//sap.ui.getCore().byId("planningCalendar").setModel(oModel);
+			this.setModel(oModel, "calendarModel");
+		}
 
-    });
+	});
 });

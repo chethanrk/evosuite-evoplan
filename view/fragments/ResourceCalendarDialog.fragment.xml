@@ -19,11 +19,10 @@
                         showWeekNumbers="true">
                     <rows>
                         <PlanningCalendarRow
-                                icon="sap-icon://employee"
+                                icon="{calendarModel>pic}"
                                 title="{calendarModel>name}"
                                 text="{calendarModel>role}"
-                                appointments="{path : 'calendarModel>appointments', templateShareable: 'true'}"
-                                intervalHeaders="{path: 'calendarModel>headers', templateShareable: 'true'}">
+                                appointments="{path : 'calendarModel>appointments', templateShareable: 'true'}">
                             <appointments>
                                 <unified:CalendarAppointment
                                         startDate="{calendarModel>start}"
@@ -33,14 +32,6 @@
                                         type="{calendarModel>type}">
                                 </unified:CalendarAppointment>
                             </appointments>
-                            <intervalHeaders>
-                                <unified:CalendarAppointment
-                                        startDate="{calendarModel>start}"
-                                        endDate="{calendarModel>end}"
-                                        title="{calendarModel>title}"
-                                        type="{calendarModel>type}">
-                                </unified:CalendarAppointment>
-                            </intervalHeaders>
                         </PlanningCalendarRow>
                     </rows>
                 </PlanningCalendar>
