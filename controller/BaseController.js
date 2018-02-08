@@ -75,12 +75,15 @@ sap.ui.define([
                 return this.getGlobalModel().getProperty("/application");
             },
 
-			
+			showMessageToast: function (sMsg) {
+                MessageToast.show(sMsg, {duration: 5000});
+            },
+
 			/**
 			 * on Success of oData call capture messages
 			 * 
 			 */
-			onSuccess: function(oData, errMsg, oMsgModel) {
+            onSuccessAssignment: function(oData, errMsg, oMsgModel) {
 				 var sMsg = "";
 				 var sMessages = [];
 				 var count_err = 0, count_war = 0, count_suc = 0, counter = 0;
@@ -115,7 +118,7 @@ sap.ui.define([
 				if(sMsg === ""){
 					sMsg = "Assignment Successfull";
 				}
-		 		MessageToast.show(sMsg, {duration: 5000});
+		 		this.showMessageToast(sMsg)
 			},
 			
 			/**
@@ -172,7 +175,7 @@ sap.ui.define([
                         success: function(oData, oResponse){
                             //Handle Success
 							 var errMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData();
-							 this.onSuccess(oData, errMsg, oMsgModel);
+							 this.onSuccessAssignment(oData, errMsg, oMsgModel);
 							 eventBus.publish("BaseController", "refreshTable", {});
                         }.bind(this),
                         error: function(oError){

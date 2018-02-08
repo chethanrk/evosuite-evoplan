@@ -67,15 +67,21 @@
                                 label="{i18n>xtit.tableObject}"
                                 name="{i18n>xtit.tableObject}">
                             <table:template>
-                                <controls:CustomTitle text="{Description}"
-                                       titleStyle="{
+                                <controls:CustomTitle
+                                        text="{Description}"
+                                        titleStyle="{
                                             path: 'NodeType',
                                             formatter: '.formatter.formatResourceTitle'
-                                       }"
-                                       icon="{
+                                        }"
+                                        icon="{
                                               path: 'NodeType',
                                               formatter: '.formatter.getResourceIcon'
-                                       }"/>
+                                        }"
+                                        isLink="{
+                                              path: 'NodeType',
+                                              formatter: '.formatter.isAssignment'
+                                        }"
+                                        press="onPressAssignmentLink"/>
                             </table:template>
                         </table:Column>
                         <table:Column

@@ -13,13 +13,8 @@ sap.ui.require([
 	"sap/ui/test/opaQunit",
 	"com/evorait/evoplan/test/integration/pages/App",
 	"com/evorait/evoplan/test/integration/pages/Browser",
-	"com/evorait/evoplan/test/integration/pages/Overview",
-	"com/evorait/evoplan/test/integration/pages/NotFound",
-	"com/evorait/evoplan/test/integration/pages/Worklist",
-	"com/evorait/evoplan/test/integration/pages/Detail",
-	"com/evorait/evoplan/test/integration/pages/ObjectOperation",
-	"com/evorait/evoplan/test/integration/pages/ObjectComponent",
-	"com/evorait/evoplan/test/integration/pages/Dispatch"
+	"com/evorait/evoplan/test/integration/pages/MasterPage",
+	"com/evorait/evoplan/test/integration/pages/NotFound"
 ], function (Opa5, Common) {
 	"use strict";
 	Opa5.extendConfig({
