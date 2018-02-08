@@ -22,19 +22,7 @@ sap.ui.define([
 
 		defaultViewSelected: "TIMENONE",
 
-<<<<<<< HEAD
-		selectedResources: [],
-=======
         selectedResources: [],
-
-        /**
-        * Called when a controller is instantiated and its View controls (if available) are already created.
-        * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
-        * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
-        onInit: function() {
-            this._oDataTable = this.byId("droppableTable");
-            this._configureDataTable(this._oDataTable);
->>>>>>> branch 'EVOPLAN2-73' of https://RahulInamadar@bitbucket.org/evorait/evoplan2-ui5.git
 
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
@@ -185,7 +173,7 @@ sap.ui.define([
 				var oSource = oEvent.getSource();
 				var oNewValue = oEvent.getParameter("value");
 
-<<<<<<< HEAD
+
 				// Date range should be never empty
 				if (!oNewValue && oNewValue === "") {
 					var lastValue = this.defaultDateRange[oSource.getId()] || this.formatter.date(new Date());
@@ -193,19 +181,7 @@ sap.ui.define([
 				}
 			}
 		},
-=======
-        /**
-         * Todo: on deselect
-         * @param oEvent
-         */
-        onChangeSelectResource: function (oEvent) {
-            var oSource = oEvent.getSource();
-            var parent = oSource.getParent();
-            var sPath = parent.getBindingContext().getPath();
-            var oParams = oEvent.getParameters();
->>>>>>> branch 'EVOPLAN2-73' of https://RahulInamadar@bitbucket.org/evorait/evoplan2-ui5.git
 
-<<<<<<< HEAD
 		/**
 		 * Todo: on deselect
 		 * @param oEvent
@@ -215,35 +191,9 @@ sap.ui.define([
 			var parent = oSource.getParent();
 			var sPath = parent.getBindingContext().getPath();
 			var oParams = oEvent.getParameters();
-=======
-            if(oParams.selected){
-                this.selectedResources.push(sPath);
 
-            }else if(this.selectedResources.indexOf(sPath) >= 0){
-                //todo remove path from this.selectedResources
-            }
-
-            if(this.selectedResources.length > 0){
-                this.byId("showPlanCalendar").setEnabled(true);
-            }else{
-                this.byId("showPlanCalendar").setEnabled(false);
-            }
-        },
->>>>>>> branch 'EVOPLAN2-73' of https://RahulInamadar@bitbucket.org/evorait/evoplan2-ui5.git
-
-<<<<<<< HEAD
 			if (oParams.selected) {
 				this.selectedResources.push(sPath);
-=======
-        /**
-         * Todo: set up filter of selected resources in this.selectedResources
-         * @param oEvent
-         */
-        onPressShowPlanningCal: function (oEvent) {
-            this._setCalendarModel();
-            this._oPlanningCalDialog.open();
-        },
->>>>>>> branch 'EVOPLAN2-73' of https://RahulInamadar@bitbucket.org/evorait/evoplan2-ui5.git
 
 			} else if (this.selectedResources.indexOf(sPath) >= 0) {
 				//removing the path from this.selectedResources when user unselect the checkbox
@@ -518,33 +468,6 @@ sap.ui.define([
 			var aResourceGroupFilters = [];
 			var oModel = this.getModel();
 
-<<<<<<< HEAD
-			if (this.selectedResources.length <= 0) {
-				return;
-			}
-=======
-        /**
-         * Todo: call ResourceSet and ResourceGroupSet with Assignments
-         * and merge into one json model for planning calendar
-         * @private
-         */
-        _setCalendarModel: function () {
-            var aUsers = [];
-            var aGroups = [];
-            var aFilters = [];
-            var oModel = this.getModel();
->>>>>>> branch 'EVOPLAN2-73' of https://RahulInamadar@bitbucket.org/evorait/evoplan2-ui5.git
-
-<<<<<<< HEAD
-			for (var i = 0; i < this.selectedResources.length; i++) {
-				var obj = oModel.getProperty(this.selectedResources[i]);
-				if (obj.NodeType === "RESOURCE") {
-					aUsers.push(new Filter("ObjectGuid", FilterOperator.EQ, obj.ResourceGuid));
-				} else if (obj.NodeType === "RES_GROUP") {
-					aGroups.push(new Filter("ObjectGuid", FilterOperator.EQ, obj.ResourceGroupGuid));
-				}
-			}
-=======
             if(this.selectedResources.length <= 0){
                 return;
             }
@@ -558,7 +481,6 @@ sap.ui.define([
                     aGroups.push(new Filter("ObjectGuid", FilterOperator.EQ, obj.ResourceGroupGuid));
                 }
             }
->>>>>>> branch 'EVOPLAN2-73' of https://RahulInamadar@bitbucket.org/evorait/evoplan2-ui5.git
 
 			aResourceFilters.push(new Filter({
 				filters: aUsers,
@@ -581,7 +503,6 @@ sap.ui.define([
 				and: true
 			});*/
 
-<<<<<<< HEAD
 			oModel.read("/ResourceSet",{
 					groupId: "calendarBatch",
 					filters: aResourceFilters,
@@ -612,18 +533,6 @@ sap.ui.define([
 				error: function(error) {
 					console.log(error);
 				}});*/
-=======
-            //Todo: add expand to assignment
-            /*this.getModel().read("/ResourceSet", {
-                filters: aFilters,
-                success: function(data, response){
-                    console.log(response);
-                },
-                error: function(error){
-                    console.log(error);
-                }
-            });*/
->>>>>>> branch 'EVOPLAN2-73' of https://RahulInamadar@bitbucket.org/evorait/evoplan2-ui5.git
 
 			var oModel = new JSONModel();
 			//MockData for Planning calendar
