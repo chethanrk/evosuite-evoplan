@@ -22,7 +22,7 @@ sap.ui.define([
 
 		defaultViewSelected: "TIMENONE",
 
-        selectedResources: [],
+		selectedResources: [],
 
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
@@ -172,7 +172,6 @@ sap.ui.define([
 			if (oEvent) {
 				var oSource = oEvent.getSource();
 				var oNewValue = oEvent.getParameter("value");
-
 
 				// Date range should be never empty
 				if (!oNewValue && oNewValue === "") {
@@ -457,190 +456,178 @@ sap.ui.define([
 		},
 
 		/**
-		 * Todo: call ResourceSet and ResourceGroupSet with Assignments
+		 * call ResourceSet with Assignments
 		 * and merge into one json model for planning calendar
 		 * @private
 		 */
 		_setCalendarModel: function() {
 			var aUsers = [];
-			var aGroups = [];
 			var aResourceFilters = [];
-			var aResourceGroupFilters = [];
 			var oModel = this.getModel();
 
-            if(this.selectedResources.length <= 0){
-                return;
-            }
+			if (this.selectedResources.length <= 0) {
+				return;
+			}
 
-            for (var i = 0; i < this.selectedResources.length; i++) {
-                var obj = oModel.getProperty(this.selectedResources[i]);
-                console.log(obj);
-                if(obj.NodeType === "RESOURCE"){
-                    aUsers.push(new Filter("ObjectGuid", FilterOperator.EQ, obj.ResourceGuid));
-                }else if(obj.NodeType === "RES_GROUP"){
-                    aGroups.push(new Filter("ObjectGuid", FilterOperator.EQ, obj.ResourceGroupGuid));
-                }
-            }
+			for (var i = 0; i < this.selectedResources.length; i++) {
+				var obj = oModel.getProperty(this.selectedResources[i]);
+				if (obj.NodeType === "RESOURCE") {
+					aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
+				} else if (obj.NodeType === "RES_GROUP") {
+					aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
+				}
+			}
+			if (aUsers.length > 0) {
+				aResourceFilters.push(new Filter({
+					filters: aUsers,
+					and: false
+				}));
+			}
 
-			aResourceFilters.push(new Filter({
-				filters: aUsers,
-				and: false
-			}));
-			
-			aResourceGroupFilters.push(new Filter({
-				filters: aGroups,
-				and: false
-			}));
-
-			var sDateControl1 = this._filterDateRange1.getValue();
+			/*var sDateControl1 = this._filterDateRange1.getValue();
 			sDateControl1 = this.formatter.date(sDateControl1);
 			var oDateRangeFilter = new Filter("DateFrom", FilterOperator.GE, sDateControl1);
-			aResourceFilters.push(oDateRangeFilter);
-			aResourceGroupFilters.push(oDateRangeFilter);
+			aResourceFilters.push(oDateRangeFilter);*/
 
-			/*var modelFilter = new Filter({
-				filters: aFilters,
-				and: true
-			});*/
-
-			oModel.read("/ResourceSet",{
-					groupId: "calendarBatch",
-					filters: aResourceFilters,
-					urlParameters:{
-						"$expand": "AssignmentSet" //curently it is not working
-					}
-					
-				});
-			oModel.read("/ResourceGroupSet",{
-					groupId: "calendarBatch",
-					filters: aResourceGroupFilters,
-					urlParameters:{
-						"$expand": "AssignmentSet" 
-					}
-				});
-				
-			var aDeferredGroups = oModel.getDeferredGroups();
-			aDeferredGroups=aDeferredGroups.concat(["calendarBatch"]);
-			oModel.setDeferredGroups(aDeferredGroups);
-			
-			//TODO Call the batcg request
-		/*	oModel.submitChanges({
-				groupId:"calendarBatch",
+			oModel.read("/ResourceSet", {
+				filters: aResourceFilters,
+				urlParameters: {
+					"$expand": "ResourceToAssignments" // To fetch the assignments associated with Resource or ResourceGroup
+				},
 				success: function(data, response) {
 					console.log(response);
-					//TODO Need to merge both request data into single json model
-				},
-				error: function(error) {
-					console.log(error);
-				}});*/
+					/*var oCalendarModel = new JSONModel();
+					oCalendarModel.setData({
+						startDate: new Date(sDateControl1),
+						viewKey:"Hour",
+						resources: data.results
+					});
+					this.setModel(oCalendarModel, "calendarModel");
+					this._oPlanningCalDialog.open();*/
+				}.bind(this),
+				error: function(error, response) {
+					console.log(response);
+					//TODO Error notification in Message Popover
+				}
 
-			var oModel = new JSONModel();
+			});
+			
+
+			var oCalendarModel = new JSONModel();
 			//MockData for Planning calendar
-			oModel.setData({
-				startDate: new Date(sDateControl1),
-				people: [{
-					pic: "sap-icon://collaborate",
-					name: "Resource Group",  //Name of resource
-					role: "",  
-					appointments: [{
-						start:new Date("2018", "0", "8", "08", "0"),
-						end: new Date("2018", "0", "8", "09", "30"),
-						title: "Meet Max Mustermann",
-						key: "0123456789",
-						type: "Type04"
-					}, {
-						start: new Date("2018", "0", "8", "10", "0"),
-						end: new Date("2018", "0", "8", "12", "0"),
-						title: "Team meeting",
-						info: "room 1"
-					}, {
-						start: new Date("2018", "0", "8", "12", "30"),
-						end: new Date("2018", "0", "8", "13", "30"),
-						title: "Lunch"
-					}, {
-						start: new Date("2018", "0", "8", "14", "30"),
-						end: new Date("2018", "0", "8", "15", "30"),
-						title: "Team Meeting 2",
-						info: "room 3"
-					}]
+			oCalendarModel.setData({
+				startDate: new Date("2018", "1", "12"),
+				viewKey:"Hour",
+				resources: [{
+					"ObjectId": "0A51491BD5A01ED7BD91D1BF3A55BE34//0A51491BD5A01ED7BD91D1BF3A559E34",
+					"ObjectType": "RESOURCE",
+					"ResourceGuid": "0A51491BD5A01ED7BD91D1BF3A55BE34",
+					"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
+					"DateFrom": null,
+					"Description": "Raghavendra Ghooli",
+					"DateTo": null,
+					"TimeFrom": "PT10H00M00S",
+					"TimeTo": "PT10H00M00S",
+					"ResourceToAssignments": {
+						"results": [{
+							"Guid": "0A51491BD5A01EE7BDA0E52A8AB02F8F",
+							"ObjectId": "0A51491BD5A01ED7BD91D1BF3A559E34//0A51491BD5A01ED7BD91D1BF3A55BE34",
+							"Description": "Motor breakdown",
+							"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
+							"ResourceGuid": "0A51491BD5A01ED7BD91D1BF3A55BE34",
+							"DemandGuid": "0A51491BD5A01EE7BC805E1A033B5A92",
+							"DateFrom": new Date("2018", "1", "12"),
+							"DateTo": new Date("2018", "1", "12"),
+							"TimeFrom":{ms: 18000000, __edmType: "Edm.Time"},
+							"TimeTo":{ms: 20000000, __edmType: "Edm.Time"},
+							"Effort": "1.0",
+							"EffortUnit": "H"
+						}, {
+							"Guid": "0A51491BD5A01EE7BDA991A3DBEB79C9",
+							"ObjectId": "0A51491BD5A01ED7BD91D1BF3A559E34//0A51491BD5A01ED7BD91D1BF3A55BE34",
+							"Description": "Motor breakdown",
+							"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
+							"ResourceGuid": "0A51491BD5A01ED7BD91D1BF3A55BE34",
+							"DemandGuid": "0A51491BD5A01EE7BC805E1A033B5A92",
+							"DateFrom": new Date("2018", "1", "12"),
+							"TimeFrom": {ms: 21000000, __edmType: "Edm.Time"},
+							"TimeTo": {ms: 25000000, __edmType: "Edm.Time"},
+							"DateTo": new Date("2018", "1", "12"),
+							"Effort": "1.0",
+							"EffortUnit": "H"
+						}, {
+							"Guid": "0A51491BD5A01ED7BDB5F3AE581828ED",
+							"ObjectId": "0A51491BD5A01ED7BD91D1BF3A559E34//0A51491BD5A01ED7BD91D1BF3A55BE34",
+							"Description": "Motor breakdown",
+							"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
+							"ResourceGuid": "0A51491BD5A01ED7BD91D1BF3A55BE34",
+							"DemandGuid": "0A51491BD5A01EE7BC805E1A033B5A92",
+							"DateFrom": new Date("2018", "1", "12"),
+							"TimeFrom": {ms: 26000000, __edmType: "Edm.Time"},
+							"TimeTo": {ms: 30000000, __edmType: "Edm.Time"},
+							"DateTo": new Date("2018", "1", "12"),
+							"Effort": "2.0",
+							"EffortUnit": ""
+						}, {
+							"Guid": "0A51491BD5A01EE881B90D3B13F975C0",
+							"ObjectId": "0A51491BD5A01ED7BD91D1BF3A559E34//0A51491BD5A01ED7BD91D1BF3A55BE34",
+							"Description": "Motor breakdown",
+							"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
+							"ResourceGuid": "0A51491BD5A01ED7BD91D1BF3A55BE34",
+							"DemandGuid": "0A51491BD5A01EE881B90D3B13F955C0",
+							"DateFrom": new Date("2018", "1", "12"),
+							"TimeFrom": {ms: 31000000, __edmType: "Edm.Time"},
+							"TimeTo": {ms: 40000000, __edmType: "Edm.Time"},
+							"DateTo": new Date("2018", "1", "13"),
+							"Effort": "0.0",
+							"EffortUnit": ""
+						}]
+					}
 				}, {
-					pic: "sap-icon://employee",
-					name: "Resource",
-					role: "team member",
-					appointments: [{
-						start:new Date("2018", "0", "8", "08", "0"),
-						end: new Date("2018", "0", "8", "09", "30"),
-						title: "Meet Max Mustermann",
-						key: "0123456789",
-						type: "Type04"
-					}, {
-						start: new Date("2018", "0", "8", "10", "0"),
-						end: new Date("2018", "0", "8", "12", "0"),
-						title: "Team meeting",
-						info: "room 1"
-					}, {
-						start: new Date("2018", "0", "8", "12", "30"),
-						end: new Date("2018", "0", "8", "13", "30"),
-						title: "Lunch"
-					}, {
-						start: new Date("2018", "0", "8", "14", "30"),
-						end: new Date("2018", "0", "8", "15", "30"),
-						title: "Team Meeting 2",
-						info: "room 3"
-					},
-					{
-						start: new Date("2018", "0", "8", "16", "30"),
-						end: new Date("2018", "0", "8", "17", "30"),
-						title: "Tea",
-						info: "room 3"
-					},
-					{
-						start: new Date("2018", "0", "8", "17", "30"),
-						end: new Date("2018", "0", "8", "18", "10"),
-						title: "Tea"
-					}]
-				},
-				{
-					pic: "sap-icon://employee",
-					name: "Resource",
-					role: "team member",
-					appointments: [{
-						start:new Date("2018", "0", "8", "08", "0"),
-						end: new Date("2018", "0", "8", "09", "30"),
-						title: "Meet Max Mustermann",
-						key: "0123456789",
-						type: "Type04"
-					}, {
-						start: new Date("2018", "0", "8", "10", "0"),
-						end: new Date("2018", "0", "8", "12", "0"),
-						title: "Team meeting",
-						info: "room 1"
-					}, {
-						start: new Date("2018", "0", "8", "12", "30"),
-						end: new Date("2018", "0", "8", "13", "30"),
-						title: "Lunch"
-					}, {
-						start: new Date("2018", "0", "8", "14", "30"),
-						end: new Date("2018", "0", "8", "15", "30"),
-						title: "Team Meeting 2",
-						info: "room 3"
-					},
-					{
-						start: new Date("2018", "0", "8", "16", "30"),
-						end: new Date("2018", "0", "8", "17", "30"),
-						title: "Tea",
-						info: "room 3"
-					},
-					{
-						start: new Date("2018", "0", "8", "17", "30"),
-						end: new Date("2018", "0", "8", "18", "10"),
-						title: "Tea"
-					}]
+					"ObjectId": "0A51491BD5A01ED7BD9236B3C76C1EA1//0A51491BD5A01ED7BD91D1BF3A559E34",
+					"ObjectType": "RESOURCE",
+					"ResourceGuid": "0A51491BD5A01ED7BD9236B3C76C1EA1",
+					"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
+					"DateFrom": null,
+					"Description": "Matthias Heitmann",
+					"DateTo": null,
+					"TimeFrom": "PT00H00M00S",
+					"TimeTo": "PT00H00M00S",
+					"ResourceToAssignments": {
+						"results": []
+					}
+				}, {
+
+					"ObjectId": "0A51491BD5A01ED7BD91D1BF3A559E34",
+					"ObjectType": "RES_GROUP",
+					"ResourceGuid": "",
+					"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
+					"DateFrom": null,
+					"Description": "Product cluster",
+					"DateTo": null,
+					"TimeFrom": "PT10H00M00S",
+					"TimeTo": "PT10H00M00S",
+					"ResourceToAssignments": {
+						"results": [{
+							"Guid": "0A51491BD5A01EE7BDA0EFCECFDA2F97",
+							"ObjectId": "0A51491BD5A01ED7BD91D1BF3A559E34",
+							"Description": "Motor breakdown",
+							"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
+							"ResourceGuid": "",
+							"DemandGuid": "0A51491BD5A01EE7BC805E1A033B5A92",
+							"DateFrom": new Date("2018", "1", "12"),
+							"TimeFrom": {ms: 20000000, __edmType: "Edm.Time"},
+							"TimeTo": {ms: 30000000, __edmType: "Edm.Time"},
+							"DateTo": new Date("2018", "1", "12"),
+							"Effort": "1.0",
+							"EffortUnit": "H"
+						}]
+					}
 				}]
 			});
-
+			this.setModel(oCalendarModel, "calendarModel");
 			//sap.ui.getCore().byId("planningCalendar").setModel(oModel);
-			this.setModel(oModel, "calendarModel");
+			
 		}
 
 	});

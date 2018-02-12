@@ -12,23 +12,39 @@
                 <PlanningCalendar
                         id="planningCalendar"
                         startDate="{path: 'calendarModel>/startDate'}"
-                        rows="{path: 'calendarModel>/people'}"
+                        rows="{path: 'calendarModel>/resources'}"
+                        viewKey="{calendarModel>/viewKey}"
                         appointmentsVisualization="Filled"
                         appointmentSelect="handleAppointmentSelect"
                         showEmptyIntervalHeaders="false"
                         showWeekNumbers="true">
                     <rows>
                         <PlanningCalendarRow
-                                icon="{calendarModel>pic}"
-                                title="{calendarModel>name}"
-                                text="{calendarModel>role}"
-                                appointments="{path : 'calendarModel>appointments', templateShareable: 'true'}">
+                                icon="{
+                                              path: 'calendarModel>ObjectType',
+                                              formatter: '.formatter.getResourceIcon'
+                                       }"
+                                title="{calendarModel>Description}"
+                                text="{calendarModel>Description}"
+                                appointments="{path : 'calendarModel>ResourceToAssignments/results', templateShareable: 'true'}">
                             <appointments>
                                 <unified:CalendarAppointment
-                                        startDate="{calendarModel>start}"
-                                        endDate="{calendarModel>end}"
-                                        title="{calendarModel>title}"
-                                        text="{calendarModel>info}"
+                                        startDate="{
+                                        		parts:[
+                                        			{path:'calendarModel>DateFrom'},
+                                        			{path:'calendarModel>TimeFrom'}
+                                        		],
+                                        		formatter: '.formatter.getCalendarDate'
+                                        	}"
+                                        endDate="{
+                                        		parts:[
+                                        			{path:'calendarModel>DateTo'},
+                                        			{path:'calendarModel>TimeTo'}
+                                        		],
+                                        		formatter: '.formatter.getCalendarDate'
+                                        	}"
+                                        title="{calendarModel>Description}"           
+                                        text="{calendarModel>DemandGuid}"
                                         type="{calendarModel>type}">
                                 </unified:CalendarAppointment>
                             </appointments>
