@@ -119,7 +119,7 @@
                                 class="sapUiNoContentPadding">
                             <table:template>
                                 <CheckBox enabled="true"
-                                          select="onCheckResource"
+                                          select="onChangeSelectResource"
                                           visible="{
                                               path: 'NodeType',
                                               formatter: '.formatter.isMainResource'
@@ -140,7 +140,7 @@
                         text="{i18n>xbut.showPlanningCal}"
                         icon="sap-icon://flag"
                         press="onPressShowPlanningCal"
-                        enabled="true">
+                        enabled="false">
                     <layoutData>
                         <ToolbarLayoutData shrinkable="true" />
                     </layoutData>
