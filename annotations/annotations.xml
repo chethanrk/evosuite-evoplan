@@ -36,36 +36,6 @@
 						<PropertyPath>DateTo</PropertyPath>
 					</Collection>
 				</Annotation>
-				<Annotation Term="UI.LineItem">
-					<Collection>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="ExtKey"/>
-							<Annotation Term="UI.Importance" EnumMember="UI.Importance/High"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="DemandDesc"/>
-							<Annotation Term="UI.Importance" EnumMember="UI.Importance/High"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="Source"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="UserStatusShortText"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="DateFrom"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="DateTo"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="TimeFrom"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="TimeTo"/>
-						</Record>
-					</Collection>
-				</Annotation>
 			</Annotations>
 			<Annotations Target="com.evorait.evoplan.Demand/Guid">
 				<Annotation Term="Common.FieldControl" Path="FieldControlOptional"/>
