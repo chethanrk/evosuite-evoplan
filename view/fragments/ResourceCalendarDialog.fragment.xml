@@ -35,7 +35,6 @@
                                         startDate="{calendarModel>DateFrom}"
                                         endDate="{calendarModel>DateTo}"
                                         title="{calendarModel>Description}"           
-                                        text="{calendarModel>DemandGuid}"
                                         type="{calendarModel>type}">
                                 </unified:CalendarAppointment>
                             </appointments>
