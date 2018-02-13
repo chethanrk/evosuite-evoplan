@@ -13,7 +13,10 @@
                         id="planningCalendar"
                         startDate="{path: 'calendarModel>/startDate'}"
                         rows="{path: 'calendarModel>/resources'}"
-                        viewKey="{calendarModel>/viewKey}"
+                        viewKey="{
+                        	path:'calendarModel>/viewKey',
+                            formatter:'.formatter.getCalendarView'
+                        }"
                         appointmentsVisualization="Filled"
                         appointmentSelect="handleAppointmentSelect"
                         showEmptyIntervalHeaders="false"
@@ -29,20 +32,8 @@
                                 appointments="{path : 'calendarModel>ResourceToAssignments/results', templateShareable: 'true'}">
                             <appointments>
                                 <unified:CalendarAppointment
-                                        startDate="{
-                                        		parts:[
-                                        			{path:'calendarModel>DateFrom'},
-                                        			{path:'calendarModel>TimeFrom'}
-                                        		],
-                                        		formatter: '.formatter.getCalendarDate'
-                                        	}"
-                                        endDate="{
-                                        		parts:[
-                                        			{path:'calendarModel>DateTo'},
-                                        			{path:'calendarModel>TimeTo'}
-                                        		],
-                                        		formatter: '.formatter.getCalendarDate'
-                                        	}"
+                                        startDate="{calendarModel>DateFrom}"
+                                        endDate="{calendarModel>DateTo}"
                                         title="{calendarModel>Description}"           
                                         text="{calendarModel>DemandGuid}"
                                         type="{calendarModel>type}">

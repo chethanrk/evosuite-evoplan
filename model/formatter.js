@@ -14,15 +14,18 @@ sap.ui.define([
 		},
 		TIMEDAY: {
 			title: "H5",
-			icon: "sap-icon://calendar"
+			icon: "sap-icon://calendar",
+			calendarView:"Hour"
 		},
 		TIMEWEEK: {
 			title: "H5",
-			icon: "sap-icon://accelerated"
+			icon: "sap-icon://accelerated",
+			calendarView:"Week"
 		},
 		TIMEMONTH: {
 			title: "H5",
-			icon: "sap-icon://appointment-2"
+			icon: "sap-icon://appointment-2",
+			calendarView:"Month"
 		},
 		ASSIGNMENT: {
 			title: "H6",
@@ -90,6 +93,19 @@ sap.ui.define([
 			return "";
 		},
 		/**
+		 * @Author Rahul
+		 * format the calendar view
+		 * @param sValue
+		 * @returns calendarView respective calendar view
+		 */
+		getCalendarView: function(sValue){
+			var sView = resourceFormats[sValue];
+			if (sView) {
+				return sView.calendarView || "Hour";
+			}
+		},
+		/**
+		 * @Author Rahul
 		 * Foarmatter formats the Date by combining the Date and Time object
 		 * 
 		 * @param sDate DateFrom or DateTo from the assignment
@@ -97,8 +113,6 @@ sap.ui.define([
 		 * @returns Date object by combining Date and Time
 		*/
 		 getCalendarDate: function(sDate, oTime) {
-			console.log(sDate);
-			console.log(oTime);
 			var sTime;
 			var oTimeFormat;
 			var sTimeString;

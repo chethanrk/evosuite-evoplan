@@ -212,7 +212,7 @@ sap.ui.define([
 		 */
 		onPressShowPlanningCal: function(oEvent) {
 			this._setCalendarModel();
-			this._oPlanningCalDialog.open();
+			/*this._oPlanningCalDialog.open();*/ // As we are opening the dialog when set model data
 		},
 
 		onCalendarModalCancel: function(oEvent) {
@@ -464,6 +464,10 @@ sap.ui.define([
 			var aUsers = [];
 			var aResourceFilters = [];
 			var oModel = this.getModel();
+			var oMsgModel = sap.ui.getCore().getModel("MessageSetModel");
+
+			oMsgModel.setData({modelData:{}});
+			oMsgModel.updateBindings(true);
 
 			if (this.selectedResources.length <= 0) {
 				return;
@@ -484,11 +488,20 @@ sap.ui.define([
 				}));
 			}
 
-			/*var sDateControl1 = this._filterDateRange1.getValue();
+			var sDateControl1 = this._filterDateRange1.getValue();
 			sDateControl1 = this.formatter.date(sDateControl1);
-			var oDateRangeFilter = new Filter("DateFrom", FilterOperator.GE, sDateControl1);
+			
+			var sCaledarView; 
+			var oViewFilterItems = this._filterSelectView.getItems();
+			for (var j in oViewFilterItems) {
+				var oViewFilterItem = oViewFilterItems[j];
+				if (oViewFilterItem.getSelected()) {
+					sCaledarView = oViewFilterItem.getKey();
+				}
+			}
+			
+		/*	var oDateRangeFilter = new Filter("DateFrom", FilterOperator.GE, sDateControl1);
 			aResourceFilters.push(oDateRangeFilter);*/
-
 			oModel.read("/ResourceSet", {
 				filters: aResourceFilters,
 				urlParameters: {
@@ -496,138 +509,20 @@ sap.ui.define([
 				},
 				success: function(data, response) {
 					console.log(response);
-					/*var oCalendarModel = new JSONModel();
+					var oCalendarModel = new JSONModel();
 					oCalendarModel.setData({
 						startDate: new Date(sDateControl1),
-						viewKey:"Hour",
+						viewKey:sCaledarView,
 						resources: data.results
 					});
 					this.setModel(oCalendarModel, "calendarModel");
-					this._oPlanningCalDialog.open();*/
+					sap.ui.core.BusyIndicator.hide();
+					this._oPlanningCalDialog.open();
 				}.bind(this),
 				error: function(error, response) {
-					console.log(response);
-					//TODO Error notification in Message Popover
-				}
-
+					this.onError(error, oMsgModel);
+				}.bind(this)
 			});
-			
-
-			var oCalendarModel = new JSONModel();
-			//MockData for Planning calendar
-			oCalendarModel.setData({
-				startDate: new Date("2018", "1", "12"),
-				viewKey:"Hour",
-				resources: [{
-					"ObjectId": "0A51491BD5A01ED7BD91D1BF3A55BE34//0A51491BD5A01ED7BD91D1BF3A559E34",
-					"ObjectType": "RESOURCE",
-					"ResourceGuid": "0A51491BD5A01ED7BD91D1BF3A55BE34",
-					"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
-					"DateFrom": null,
-					"Description": "Raghavendra Ghooli",
-					"DateTo": null,
-					"TimeFrom": "PT10H00M00S",
-					"TimeTo": "PT10H00M00S",
-					"ResourceToAssignments": {
-						"results": [{
-							"Guid": "0A51491BD5A01EE7BDA0E52A8AB02F8F",
-							"ObjectId": "0A51491BD5A01ED7BD91D1BF3A559E34//0A51491BD5A01ED7BD91D1BF3A55BE34",
-							"Description": "Motor breakdown",
-							"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
-							"ResourceGuid": "0A51491BD5A01ED7BD91D1BF3A55BE34",
-							"DemandGuid": "0A51491BD5A01EE7BC805E1A033B5A92",
-							"DateFrom": new Date("2018", "1", "12"),
-							"DateTo": new Date("2018", "1", "12"),
-							"TimeFrom":{ms: 18000000, __edmType: "Edm.Time"},
-							"TimeTo":{ms: 20000000, __edmType: "Edm.Time"},
-							"Effort": "1.0",
-							"EffortUnit": "H"
-						}, {
-							"Guid": "0A51491BD5A01EE7BDA991A3DBEB79C9",
-							"ObjectId": "0A51491BD5A01ED7BD91D1BF3A559E34//0A51491BD5A01ED7BD91D1BF3A55BE34",
-							"Description": "Motor breakdown",
-							"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
-							"ResourceGuid": "0A51491BD5A01ED7BD91D1BF3A55BE34",
-							"DemandGuid": "0A51491BD5A01EE7BC805E1A033B5A92",
-							"DateFrom": new Date("2018", "1", "12"),
-							"TimeFrom": {ms: 21000000, __edmType: "Edm.Time"},
-							"TimeTo": {ms: 25000000, __edmType: "Edm.Time"},
-							"DateTo": new Date("2018", "1", "12"),
-							"Effort": "1.0",
-							"EffortUnit": "H"
-						}, {
-							"Guid": "0A51491BD5A01ED7BDB5F3AE581828ED",
-							"ObjectId": "0A51491BD5A01ED7BD91D1BF3A559E34//0A51491BD5A01ED7BD91D1BF3A55BE34",
-							"Description": "Motor breakdown",
-							"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
-							"ResourceGuid": "0A51491BD5A01ED7BD91D1BF3A55BE34",
-							"DemandGuid": "0A51491BD5A01EE7BC805E1A033B5A92",
-							"DateFrom": new Date("2018", "1", "12"),
-							"TimeFrom": {ms: 26000000, __edmType: "Edm.Time"},
-							"TimeTo": {ms: 30000000, __edmType: "Edm.Time"},
-							"DateTo": new Date("2018", "1", "12"),
-							"Effort": "2.0",
-							"EffortUnit": ""
-						}, {
-							"Guid": "0A51491BD5A01EE881B90D3B13F975C0",
-							"ObjectId": "0A51491BD5A01ED7BD91D1BF3A559E34//0A51491BD5A01ED7BD91D1BF3A55BE34",
-							"Description": "Motor breakdown",
-							"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
-							"ResourceGuid": "0A51491BD5A01ED7BD91D1BF3A55BE34",
-							"DemandGuid": "0A51491BD5A01EE881B90D3B13F955C0",
-							"DateFrom": new Date("2018", "1", "12"),
-							"TimeFrom": {ms: 31000000, __edmType: "Edm.Time"},
-							"TimeTo": {ms: 40000000, __edmType: "Edm.Time"},
-							"DateTo": new Date("2018", "1", "13"),
-							"Effort": "0.0",
-							"EffortUnit": ""
-						}]
-					}
-				}, {
-					"ObjectId": "0A51491BD5A01ED7BD9236B3C76C1EA1//0A51491BD5A01ED7BD91D1BF3A559E34",
-					"ObjectType": "RESOURCE",
-					"ResourceGuid": "0A51491BD5A01ED7BD9236B3C76C1EA1",
-					"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
-					"DateFrom": null,
-					"Description": "Matthias Heitmann",
-					"DateTo": null,
-					"TimeFrom": "PT00H00M00S",
-					"TimeTo": "PT00H00M00S",
-					"ResourceToAssignments": {
-						"results": []
-					}
-				}, {
-
-					"ObjectId": "0A51491BD5A01ED7BD91D1BF3A559E34",
-					"ObjectType": "RES_GROUP",
-					"ResourceGuid": "",
-					"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
-					"DateFrom": null,
-					"Description": "Product cluster",
-					"DateTo": null,
-					"TimeFrom": "PT10H00M00S",
-					"TimeTo": "PT10H00M00S",
-					"ResourceToAssignments": {
-						"results": [{
-							"Guid": "0A51491BD5A01EE7BDA0EFCECFDA2F97",
-							"ObjectId": "0A51491BD5A01ED7BD91D1BF3A559E34",
-							"Description": "Motor breakdown",
-							"ResourceGroupGuid": "0A51491BD5A01ED7BD91D1BF3A559E34",
-							"ResourceGuid": "",
-							"DemandGuid": "0A51491BD5A01EE7BC805E1A033B5A92",
-							"DateFrom": new Date("2018", "1", "12"),
-							"TimeFrom": {ms: 20000000, __edmType: "Edm.Time"},
-							"TimeTo": {ms: 30000000, __edmType: "Edm.Time"},
-							"DateTo": new Date("2018", "1", "12"),
-							"Effort": "1.0",
-							"EffortUnit": "H"
-						}]
-					}
-				}]
-			});
-			this.setModel(oCalendarModel, "calendarModel");
-			//sap.ui.getCore().byId("planningCalendar").setModel(oModel);
-			
 		}
 
 	});
