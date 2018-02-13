@@ -1,13 +1,11 @@
 <core:FragmentDefinition
         xmlns="sap.m"
-        xmlns:l="sap.ui.layout"
-        xmlns:table="sap.ui.table"
         xmlns:core="sap.ui.core"
-        xmlns:f="sap.ui.layout.form">
+        xmlns:form="sap.ui.layout.form">
 
     <Dialog title="{i18n>xtit.assignInfoModalTitle}">
         <content>
-            <f:SimpleForm id="assignmentInfoForm"
+            <form:SimpleForm id="assignmentInfoForm"
                           editable="true"
                           layout="ResponsiveGridLayout"
                           labelSpanXL="3"
@@ -22,36 +20,41 @@
                           columnsL="1"
                           columnsM="1"
                           singleContainerFullSize="false" >
-                <f:content>
+                <form:content>
                     <Label text="{i18n>xfld.demandName}" />
-                    <Text text="{Description}"/>
+                    <Text name="Description"
+                          text="{Description}"/>
                     <Label text="{i18n>xfld.startDate}" />
                     <DatePicker
-                        valueFormat="yyyy-MM-dd"
-                        value="{StartDate}"/>
+                            name="StartDate"
+                            valueFormat="yyyy-MM-dd"
+                            value="{StartDate}"/>
                     <Label text="{i18n>xfld.endDate}" />
                     <DatePicker
+                            name="EndDate"
                             valueFormat="yyyy-MM-dd"
                             value="{EndDate}"/>
                     <Label text="{i18n>xfld.status}" />
                     <ComboBox
+                            name="UserStatusShortText"
+                            key="{UserStatusShortText}"
                             items="{
                             path: '/StatusTextsSet'
                             }">
                         <core:ListItem key="{UserStatusShortText}"
                                        text="{UserStatusLongText}"/>
                     </ComboBox>
-                </f:content>
-            </f:SimpleForm>
+                </form:content>
+            </form:SimpleForm>
 
         </content>
 
         <beginButton>
-            <Button text="{i18n>xbut.buttonClose}" press="onModalCancel" />
+            <Button text="{i18n>xbut.buttonClose}" press="onCloseDialog" />
         </beginButton>
 
         <endButton>
-            <Button text="{i18n>xbut.buttonSave}" press="onModalSaveAssignInfo" />
+            <Button text="{i18n>xbut.buttonSave}" type="Emphasized" press="onSaveDialog" />
         </endButton>
     </Dialog>
 

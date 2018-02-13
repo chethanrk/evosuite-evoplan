@@ -6,7 +6,7 @@ sap.ui.define([
     "sap/ui/model/FilterType",
     "sap/m/Token",
     "com/evorait/evoplan/model/formatter",
-    "com/evorait/evoplan/controller/BaseController",
+    "com/evorait/evoplan/controller/BaseController"
 ], function(Device, JSONModel, Filter, FilterOperator, FilterType, Token, formatter, BaseController) {
     "use strict";
 
@@ -22,10 +22,12 @@ sap.ui.define([
 
         defaultViewSelected: "TIMENONE",
 
+        assignmentPath: null,
+
         /**
         * Called when a controller is instantiated and its View controls (if available) are already created.
         * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
-        * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
+        **/
         onInit: function() {
             this._oDroppableTable = this.byId("droppableTable");
             this._oDataTable = this._oDroppableTable;
@@ -214,9 +216,6 @@ sap.ui.define([
             if (this._oPlanningCalDialog) {
                 this._oPlanningCalDialog.close();
             }
-            if (this._oAssignInfoDialog) {
-                this._oAssignInfoDialog.close();
-            }
         },
 
         /**
@@ -226,19 +225,11 @@ sap.ui.define([
          */
         onPressAssignmentLink: function (oEvent) {
             var oSource = oEvent.getSource(),
-                oRowContext = oSource.getParent().getBindingContext(),
-                sPath = null;
-
-            if (!this._oAssignInfoDialog) {
-                this._oAssignInfoDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.AssignInfoDialog", this);
-                this.getView().addDependent(this._oAssignInfoDialog);
-            }
+                oRowContext = oSource.getParent().getBindingContext();
 
             if(oRowContext) {
-                sPath = oRowContext.getPath();
-                this._oAssignInfoDialog.bindElement(sPath);
-                this._oAssignInfoDialog.open();
-                console.log(this.getModel().getProperty(sPath));
+                this.assignmentPath = oRowContext.getPath();
+                this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath);
             }else{
                 var msg = this.getResourceBundle().getText("notFoundContext");
                 this.showMessageToast(msg);
@@ -254,9 +245,6 @@ sap.ui.define([
             }
             if (this._oPlanningCalDialog) {
                 this._oPlanningCalDialog.destroy();
-            }
-            if (this._oAssignInfoDialog) {
-                this._oAssignInfoDialog.destroy();
             }
         },
 
