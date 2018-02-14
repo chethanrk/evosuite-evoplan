@@ -505,7 +505,7 @@ sap.ui.define([
 			oModel.read("/ResourceSet", {
 				filters: aResourceFilters,
 				urlParameters: {
-					"$expand": "ResourceToAssignments" // To fetch the assignments associated with Resource or ResourceGroup
+					"$expand": "ResourceToAssignments,ResourceToAssignments/Demand" // To fetch the assignments associated with Resource or ResourceGroup
 				},
 				success: function(data, response) {
 					console.log(response);
