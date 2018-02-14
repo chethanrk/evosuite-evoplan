@@ -32,7 +32,8 @@ sap.ui.define([
                     DemandGuid: oDemand.DemandGuid,
                     DemandDesc: oDemand.Description,
                     StartDate: oDemand.StartDate,
-                    EndDate: oDemand.EndDate
+                    EndDate: oDemand.EndDate,
+                    Assign: ""
                 };
 
             this._oView = oView;
@@ -61,6 +62,17 @@ sap.ui.define([
         onSaveDialog : function (oEvent) {
             var oForm = sap.ui.getCore().byId("assignmentInfoForm");
             this._getDialogForms(oForm.getContent());
+        },
+
+        /**
+         *
+         * @param oEvent
+         */
+        onChangeAssignment: function (oEvent) {
+            var oParams = oEvent.getParameters();
+            if(oParams.value === "Reassign"){
+
+            }
         },
 
         /**

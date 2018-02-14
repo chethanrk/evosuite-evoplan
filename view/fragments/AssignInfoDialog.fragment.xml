@@ -31,20 +31,18 @@
                     <Label text="{i18n>xfld.startDate}" />
                     <DateTimePicker
                             name="StartDate"
-                            value="{StartDate}"/>
+                            value="{assignment>/StartDate}"/>
                     <Label text="{i18n>xfld.endDate}" />
                     <DateTimePicker
                             name="EndDate"
-                            value="{EndDate}"/>
+                            value="{assignment>/EndDate}"/>
                     <Label text="{i18n>xfld.status}" />
                     <ComboBox
-                            name="UserStatusShortText"
-                            key="{UserStatusShortText}"
-                            items="{
-                            path: '/StatusTextsSet'
-                            }">
-                        <core:ListItem key="{UserStatusShortText}"
-                                       text="{UserStatusLongText}"/>
+                            name="Assign"
+                            key="{assignment>/Assign}"
+                            change="onChangeAssignment">
+                        <core:ListItem key="unassign" text="Unassign"/>
+                        <core:ListItem key="reassign" text="Reassign"/>
                     </ComboBox>
                 </form:content>
             </form:SimpleForm>
