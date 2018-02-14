@@ -42,7 +42,8 @@
                         header="{i18n>xtit.itemListTitle}"
                         useExportToExcel="true"
                         useVariantManagement="true"
-                        useTablePersonalisation="true">
+                        useTablePersonalisation="true"
+                        requestAtLeastFields="Guid">
                     <!-- layout data used to make the table growing but the filter bar fixed -->
                     <smartTable:layoutData>
                         <FlexItemData growFactor="1" />

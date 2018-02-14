@@ -27,7 +27,8 @@ sap.ui.define([
                 sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oControl.getLevel()) || sap.ui.core.TitleLevel.Auto,
                 bAutoLevel = sLevel == sap.ui.core.TitleLevel.Auto,
                 sTag = bAutoLevel ? "div" : sLevel,
-                isLink = oControl.getProperty("isLink");
+                isLink = oControl.getProperty("isLink"),
+                titleText = oAssoTitle ? oAssoTitle.getText() : oControl.getText();
 
             oRm.write("<", sTag);
             oRm.writeControlData(oControl);
@@ -93,18 +94,19 @@ sap.ui.define([
                 oRm.addClass("sapMLnk");
                 oRm.writeClasses();
                 oRm.writeAttribute("href", "#");
+                oRm.writeAttributeEscaped("title", titleText);
             }
 
             //title
             oRm.write("<span");
             oRm.writeAttribute("id", oControl.getId() + "-inner");
             oRm.write(">");
-            oRm.writeEscaped(oAssoTitle ? oAssoTitle.getText() : oControl.getText());
+            oRm.writeEscaped(titleText);
             oRm.write("</span>");
 
             //when link mode is set
             if(isLink){
-                oRm.write("></a>");
+                oRm.write("</a>");
             }
 
             oRm.write("</", sTag, ">");

@@ -15,7 +15,13 @@ sap.ui.define([
 				var oModel = new JSONModel(User);
 				oModel.setDefaultBindingMode("OneWay");
 				return oModel;
-			}
+			},
+
+			createAssignmentModel : function (Assignment) {
+                var oModel = new JSONModel(Assignment);
+                oModel.setDefaultBindingMode("OneWay");
+                return oModel;
+            }
 		};
 
 	}

@@ -149,12 +149,7 @@ sap.ui.define([
              */
             assignedDemands: function (aSourcePaths, sTargetPath) {
 				var oModel = this.getModel(),
-                    eventBus = sap.ui.getCore().getEventBus(),
-					targetObj = oModel.getProperty(sTargetPath),
-                	oMsgModel = sap.ui.getCore().getModel("MessageSetModel");
-
-				oMsgModel.setData({modelData:{}});
-				oMsgModel.updateBindings(true);
+					targetObj = oModel.getProperty(sTargetPath);
 
                 for(var i = 0; i < aSourcePaths.length; i++) {
                     var obj = aSourcePaths[i],
@@ -168,23 +163,73 @@ sap.ui.define([
 							"TimeFrom" : targetObj.StartTime,
 							"TimeTo" : targetObj.EndTime
 						};
-
-                    oModel.callFunction("/CreateAssignment", {
-                        method: "POST",
-                        urlParameters: oParams,
-                        success: function(oData, oResponse){
-                            //Handle Success
-							 var errMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData();
-							 this.onSuccessAssignment(oData, errMsg, oMsgModel);
-							 eventBus.publish("BaseController", "refreshTable", {});
-                        }.bind(this),
-                        error: function(oError){
-                        	//Handle Error
-                            this.onError(oError, oMsgModel);
-                        }.bind(this)
-                    });
+                    this.callFunctionImport(oParams, "CreateAssignment", "POST");
                 }
-			}
+			},
+
+            /**
+			 * update assignment
+             * @param sPath
+             */
+			updateAssignment: function (sPath) {
+                var oModel = this.getModel(),
+					oAssignment = oModel.getProperty(sPath);
+
+                console.log(oAssignment);
+                var oParams = {
+                    "DateFrom" : oAssignment.StartDate || 0,
+                    "DateTo" :  oAssignment.EndDate || 0,
+                    "AssignmentGUID" : oAssignment.Guid,
+                    "EffortUnit" : "",
+                    "Effort" : "",
+                    "TimeFrom" : oAssignment.TimeFrom,
+                    "TimeTo" : oAssignment.TimeTo
+                };
+
+                this.callFunctionImport(oParams, "UpdateAssignment", "POST");
+            },
+
+            /**
+			 * delete assignment
+             * @param sPath
+             */
+			deleteAssignment: function (sPath) {
+                var oModel = this.getModel(),
+                    oAssignment = oModel.getProperty(sPath),
+					oParams = {
+						"AssignmentGUID" : oAssignment.Guid
+					};
+                this.callFunctionImport(oParams, "DeleteAssignment", "POST");
+            },
+
+            /**
+			 * send oData request of FunctionImport
+             * @param oParams
+             * @param sFuncName
+             * @param sMethod
+             */
+			callFunctionImport: function (oParams, sFuncName, sMethod) {
+                var eventBus = sap.ui.getCore().getEventBus(),
+                    oMsgModel = sap.ui.getCore().getModel("MessageSetModel");
+
+                oMsgModel.setData({modelData:{}});
+                oMsgModel.updateBindings(true);
+
+                this.getModel().callFunction("/"+sFuncName, {
+                    method: sMethod || "POST",
+                    urlParameters: oParams,
+                    success: function(oData, oResponse){
+                        //Handle Success
+                        var errMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData();
+                        this.onSuccessAssignment(oData, errMsg, oMsgModel);
+                        eventBus.publish("BaseController", "refreshTable", {});
+                    }.bind(this),
+                    error: function(oError){
+                        //Handle Error
+                        this.onError(oError, oMsgModel);
+                    }.bind(this)
+                });
+            }
 		});
 
 	}

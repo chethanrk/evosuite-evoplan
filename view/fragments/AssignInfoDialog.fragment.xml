@@ -3,7 +3,7 @@
         xmlns:core="sap.ui.core"
         xmlns:form="sap.ui.layout.form">
 
-    <Dialog title="{i18n>xtit.assignInfoModalTitle}">
+    <Dialog title="{i18n>xtit.assignInfoModalTitle}" stretch="false">
         <content>
             <form:SimpleForm id="assignmentInfoForm"
                           editable="true"
@@ -22,17 +22,19 @@
                           singleContainerFullSize="false" >
                 <form:content>
                     <Label text="{i18n>xfld.demandName}" />
-                    <Text name="Description"
-                          text="{Description}"/>
+                    <Text text="{assignment>/DemandDesc}"/>
+                    <Label text="{i18n>xfld.ResourceName}" />
+                    <Text text="{assignment>/ResourceDesc}"/>
+                    <Label text="{i18n>xfld.ResourceGroupName}" />
+                    <Text text="{assignment>/ResourceGroupDesc}"/>
+
                     <Label text="{i18n>xfld.startDate}" />
-                    <DatePicker
+                    <DateTimePicker
                             name="StartDate"
-                            valueFormat="yyyy-MM-dd"
                             value="{StartDate}"/>
                     <Label text="{i18n>xfld.endDate}" />
-                    <DatePicker
+                    <DateTimePicker
                             name="EndDate"
-                            valueFormat="yyyy-MM-dd"
                             value="{EndDate}"/>
                     <Label text="{i18n>xfld.status}" />
                     <ComboBox
