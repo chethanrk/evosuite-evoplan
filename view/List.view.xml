@@ -54,7 +54,7 @@
 
         <footer>
             <OverflowToolbar>
-                <Button icon="sap-icon://message-popup" text="{/messagesLength}" type="Emphasized" press="onMessagePopoverPress"/>
+                <Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}" type="Emphasized" press="onMessagePopoverPress"/>
                 <ToolbarSpacer/>
                 <Button id="changeStatusButton"
                         text="{i18n>xbut.changeStatus}"

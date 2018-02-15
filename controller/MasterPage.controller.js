@@ -7,7 +7,9 @@ sap.ui.define([
 	"sap/m/Token",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/controller/BaseController",
-], function(Device, JSONModel, Filter, FilterOperator, FilterType, Token, formatter, BaseController) {
+	"com/evorait/evoplan/controller/ErrorHandler",
+	"sap/m/MessageToast"
+], function(Device, JSONModel, Filter, FilterOperator, FilterType, Token, formatter, BaseController,ErrorHandler,MessageToast) {
 	"use strict";
 
 	return BaseController.extend('com.evorait.evoplan.controller.MasterPage', {
@@ -464,10 +466,10 @@ sap.ui.define([
 			var aUsers = [];
 			var aResourceFilters = [];
 			var oModel = this.getModel();
-			var oMsgModel = sap.ui.getCore().getModel("MessageSetModel");
+			/*var oMsgModel = sap.ui.getCore().getModel("MessageSetModel");
 
 			oMsgModel.setData({modelData:{}});
-			oMsgModel.updateBindings(true);
+			oMsgModel.updateBindings(true);*/
 
 			if (this.selectedResources.length <= 0) {
 				return;
@@ -520,8 +522,8 @@ sap.ui.define([
 					this._oPlanningCalDialog.open();
 				}.bind(this),
 				error: function(error, response) {
-					this.onError(error, oMsgModel);
-				}.bind(this)
+						MessageToast.show("Errors Occurred, Please check below Messages for Details", {duration: 5000});
+				}
 			});
 		}
 
