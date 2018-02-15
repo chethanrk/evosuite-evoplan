@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	'sap/ui/model/json/JSONModel'
-], function(Controller, History, Dialog, Button, Text, MessageToast, Filter, FilterOperator, JSONModel) {
+	'sap/ui/model/json/JSONModel',
+	"sap/m/MessageBox"
+], function(Controller, History, Dialog, Button, Text, MessageToast, Filter, FilterOperator, JSONModel,MessageBox) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.BaseController", {
@@ -74,7 +75,38 @@ sap.ui.define([
 		getApplication: function() {
 			return this.getGlobalModel().getProperty("/application");
 		},
-
+		
+		showMessage : function(oResponse){
+			if(oResponse && oResponse.headers["sap-message"]){
+				try{
+					var oData = JSON.parse(oResponse.headers["sap-message"]);
+				}catch(ex){
+					jQuery.sap.log.error("Failed to parse the message header");
+				}
+					if(oData && oData.severity === "error"){
+						var sMessage = oData.message+"\n"+"Please check the below messages for more details";
+						this._showErrorMessage(sMessage);
+					}else{
+						MessageToast.show(oData.message, {duration: 5000});
+					}
+			}
+		},
+		
+		_showErrorMessage: function(sMessage){
+				if (this._bMessageOpen) {
+					return;
+				}
+				this._bMessageOpen = true;
+				MessageBox.error(sMessage,{
+						id : "errorMessageBox",
+						styleClass: this.getOwnerComponent().getContentDensityClass(),
+						actions: [MessageBox.Action.CLOSE],
+						onClose: function () {
+							this._bMessageOpen = false;
+						}.bind(this)
+					}
+				);
+		},
 		/**
 		 * save assignment after drop
 		 * @param aSourcePaths
@@ -104,7 +136,7 @@ sap.ui.define([
 					urlParameters: oParams,
 					success: function(oData, oResponse) {
 						//Handle Success
-						MessageToast.show(oResourceBundle.getText("assignmentSuccess"), {duration: 5000});
+						this.showMessage(oResponse);
 						eventBus.publish("BaseController", "refreshTable", {});
 					}.bind(this),
 					error: function(oError) {

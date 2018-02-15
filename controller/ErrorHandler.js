@@ -115,7 +115,9 @@ sap.ui.define([
 	 		 		JSON.parse(oError.responseText);
 	 		 		this._oComponent.createMessages();
 	 		 	}catch(ex){
-	 		 		this._showServiceError(oError);
+	 		 		if (oError.statusCode !== "404" || (oError.statusCode === 404 && oError.responseText.indexOf("Cannot POST") === 0)) {
+						this._showServiceError(oError);
+					}
 	 		 	}
 			}
 		});

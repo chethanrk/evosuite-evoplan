@@ -173,7 +173,7 @@ sap.ui.define([
 		 		 		iCounter = iCountInfo;
 		 		 	}
 		 		 	item.type = oData[i].type;
-		 		 	item.description = oData[i].description;
+		 		 	item.description = oData[i].message;
 		 		 	item.subtitle = oData[i].message;
 		 		 	item.counter = iCounter;
 		 		 	
