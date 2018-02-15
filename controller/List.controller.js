@@ -16,7 +16,7 @@ sap.ui.define([
 	"use strict";
 
 	var oLink = new Link({
-		text: "Show more information",
+		text: "{i18n>xtit.showMoreInfo}",
 		href: "",
 		target: "_blank"
 	});

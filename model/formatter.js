@@ -15,7 +15,7 @@ sap.ui.define([
 		TIMEDAY: {
 			title: "H5",
 			icon: "sap-icon://calendar",
-			calendarView:"Hour"
+			calendarView:"Day"
 		},
 		TIMEWEEK: {
 			title: "H5",
@@ -103,44 +103,6 @@ sap.ui.define([
 			if (sView) {
 				return sView.calendarView || "Hour";
 			}
-		},
-		/**
-		 * @Author Rahul
-		 * Foarmatter formats the Date by combining the Date and Time object
-		 * 
-		 * @param sDate DateFrom or DateTo from the assignment
-		 * @param oTime TimeFrom or TimeTo from the assignment
-		 * @returns Date object by combining Date and Time
-		*/
-		 getCalendarDate: function(sDate, oTime) {
-			var sTime;
-			var oTimeFormat;
-			var sTimeString;
-			var sActualDate;
-			var oDateFormat;
-			var sDateString;
-			if (oTime && oTime.ms) {
-				sTime = new Date(oTime.ms);
-				oTimeFormat = DateFormat.getTimeInstance({
-					pattern: "HH:mm:ss"
-				});
-				sTimeString = oTimeFormat.format(sTime);
-			}
-			
-			if (sDate) {
-				sActualDate = new Date(sDate);
-				oDateFormat = DateFormat.getDateInstance({
-					pattern: "yyyy-MM-dd"
-				});
-				sDateString = oDateFormat.format(sActualDate);
-			}
-			if(sDateString && sTimeString)
-				return new Date(sDateString + "T" + sTimeString);
-			else{
-				jQuery.sap.log.error("Something is wrong in date/time formatting");
-				return new Date(0);
-			}
 		}
-
 	};
 });

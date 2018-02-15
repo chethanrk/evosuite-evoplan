@@ -83,7 +83,8 @@ sap.ui.define([
 		assignedDemands: function(aSourcePaths, sTargetPath) {
 			var oModel = this.getModel(),
 				eventBus = sap.ui.getCore().getEventBus(),
-				targetObj = oModel.getProperty(sTargetPath);
+				targetObj = oModel.getProperty(sTargetPath),
+				oResourceBundle = this.getResourceBundle();
 
 			for (var i = 0; i < aSourcePaths.length; i++) {
 				var obj = aSourcePaths[i],
@@ -103,13 +104,12 @@ sap.ui.define([
 					urlParameters: oParams,
 					success: function(oData, oResponse) {
 						//Handle Success
-						MessageToast.show("Assignment Successful", {duration: 5000});
-						this.getOwnerComponent().createMessages();
+						MessageToast.show(oResourceBundle.getText("assignmentSuccess"), {duration: 5000});
 						eventBus.publish("BaseController", "refreshTable", {});
 					}.bind(this),
 					error: function(oError) {
 						//Handle Error
-						MessageToast.show("Errors Occurred, Please check below Messages for Details", {duration: 5000});
+						MessageToast.show(oResourceBundle.getText("errorMessage"), {duration: 5000});
 					}
 				});
 			}

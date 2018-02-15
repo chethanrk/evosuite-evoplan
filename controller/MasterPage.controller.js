@@ -466,11 +466,8 @@ sap.ui.define([
 			var aUsers = [];
 			var aResourceFilters = [];
 			var oModel = this.getModel();
-			/*var oMsgModel = sap.ui.getCore().getModel("MessageSetModel");
-
-			oMsgModel.setData({modelData:{}});
-			oMsgModel.updateBindings(true);*/
-
+			var oResourceBundle = this.getResourceBundle();
+			
 			if (this.selectedResources.length <= 0) {
 				return;
 			}
@@ -510,7 +507,6 @@ sap.ui.define([
 					"$expand": "ResourceToAssignments,ResourceToAssignments/Demand" // To fetch the assignments associated with Resource or ResourceGroup
 				},
 				success: function(data, response) {
-					console.log(response);
 					var oCalendarModel = new JSONModel();
 					oCalendarModel.setData({
 						startDate: new Date(sDateControl1),
@@ -518,11 +514,10 @@ sap.ui.define([
 						resources: data.results
 					});
 					this.setModel(oCalendarModel, "calendarModel");
-					sap.ui.core.BusyIndicator.hide();
 					this._oPlanningCalDialog.open();
 				}.bind(this),
 				error: function(error, response) {
-						MessageToast.show("Errors Occurred, Please check below Messages for Details", {duration: 5000});
+						MessageToast.show(oResourceBundle.getText("errorMessage"), {duration: 5000});
 				}
 			});
 		}

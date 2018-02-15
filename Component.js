@@ -145,6 +145,7 @@ sap.ui.define([
 				 var iCountError = 0, iCountWarning = 0, iCountSuccess = 0, iCounter = 0, iCountInfo = 0;
 				 var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 				 var oData= oMessageModel.getData();
+				 var oResourceBundle = this.getModel("i18n").getResourceBundle();
 				 
 				 if(oData.length === 0)
 					return;
@@ -152,22 +153,22 @@ sap.ui.define([
 		 		 for( var i = 0; i < oData.length; i++){
 		 		 	var item = {};
 		 		 	if (oData[i].type === "Error"){
-		 		 		item.title = "Error message";
+		 		 		item.title = oResourceBundle.getText("xtit.errorMsg");
 		 		 		iCountError = iCountError + 1;
 		 		 		iCounter = iCountError;
 		 		 	}
 		 		 	if (oData[i].type === "Warning"){
-		 		 		item.title = "Warning message";
+		 		 		item.title = oResourceBundle.getText("xtit.warningMsg");
 		 		 		iCountWarning = iCountWarning + 1;
 		 		 		iCounter = iCountWarning;
 		 		 	}
 		 		 	if (oData[i].type === "Success"){
-		 		 		item.title = "Success message";
+		 		 		item.title = oResourceBundle.getText("xtit.successMsg");
 		 		 		iCountSuccess = iCountSuccess + 1;
 		 		 		iCounter = iCountSuccess;
 		 		 	}
 		 		 	if (oData[i].type === "Information"){
-		 		 		item.title = "Information message";
+		 		 		item.title = oResourceBundle.getText("xtit.informationMsg");
 		 		 		iCountInfo = iCountInfo + 1;
 		 		 		iCounter = iCountInfo;
 		 		 	}
