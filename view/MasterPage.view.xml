@@ -92,7 +92,6 @@
                                 width="5rem"
                                 hAlign="End">
                             <table:template>
-                                <!--<Text text="{Utilization}" wrapper="false" />-->
                                 <ProgressIndicator
                                         percentValue="{Utilization}"
                                         displayValue="{Utilization}%"
