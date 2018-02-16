@@ -75,20 +75,37 @@ sap.ui.define([
 		getApplication: function() {
 			return this.getGlobalModel().getProperty("/application");
 		},
-		
+		/**
+		 * Helper method to show the error and success information on the scree
+		 * @param {oResponse} Response object of success or error callback of oData service
+		 * @returns
+		 */
 		showMessage : function(oResponse){
+			var oData,
+				oResourceBundle = this.getResourceBundle();
 			if(oResponse && oResponse.headers["sap-message"]){
 				try{
-					var oData = JSON.parse(oResponse.headers["sap-message"]);
+					oData = JSON.parse(oResponse.headers["sap-message"]);
 				}catch(ex){
 					jQuery.sap.log.error("Failed to parse the message header");
 				}
 					if(oData && oData.severity === "error"){
-						var sMessage = oData.message+"\n"+"Please check the below messages for more details";
+						var sMessage = oData.message+"\n"+oResourceBundle.getText("errorMessage");
 						this._showErrorMessage(sMessage);
 					}else{
 						MessageToast.show(oData.message, {duration: 5000});
 					}
+			}else{
+				try{
+					oData = JSON.parse(oResponse.responseText);
+				}catch(ex){
+					jQuery.sap.log.error("Failed to parse the message header");
+				}
+				if(oData && oData.error){
+					this._showErrorMessage(oData.error.message.value);
+				}else{
+					MessageToast.show(oResourceBundle.getText("errorMessage"), {duration: 5000});
+				}
 			}
 		},
 		
@@ -142,7 +159,7 @@ sap.ui.define([
 					error: function(oError) {
 						//Handle Error
 						MessageToast.show(oResourceBundle.getText("errorMessage"), {duration: 5000});
-					}
+					}.bind(this)
 				});
 			}
 		}

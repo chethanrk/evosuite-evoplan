@@ -517,8 +517,8 @@ sap.ui.define([
 					this._oPlanningCalDialog.open();
 				}.bind(this),
 				error: function(error, response) {
-						MessageToast.show(oResourceBundle.getText("errorMessage"), {duration: 5000});
-				}
+					MessageToast.show(oResourceBundle.getText("errorMessage"), {duration: 5000});
+				}.bind(this)
 			});
 		}
 
