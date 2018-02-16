@@ -53,10 +53,7 @@ sap.ui.define([
                 oRm.addClass("sapMTitleTB");
             }
 
-            var sTooltip = oAssoTitle ? oAssoTitle.getTooltip_AsString() : oControl.getTooltip_AsString();
-            if (sTooltip) {
-                oRm.writeAttributeEscaped("title", sTooltip);
-            }
+            oRm.writeAttributeEscaped("title", titleText);
 
             if (bAutoLevel) {
                 oRm.writeAttribute("role", "heading");

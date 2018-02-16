@@ -29,7 +29,7 @@
                     visibleRowCount="10"
                     visibleRowCountMode="Auto"
                     class="listTreeTable sapUiSizeCondensed"
-                    rowSelectionChange="onSelectionChangeAssignModal"
+                    rowSelectionChange="onSelectionChange"
                     rows="{path : '/ResourceHierarchySet'}">
 
                 <table:columns>
@@ -37,15 +37,16 @@
                             label="{i18n>xtit.tableObject}"
                             name="{i18n>xtit.tableObject}">
                         <table:template>
-                            <controls:CustomTitle text="{Description}"
-                                                  titleStyle="{
-                                            path: 'NodeType',
-                                            formatter: '.formatter.formatResourceTitle'
-                                       }"
-                                                  icon="{
-                                              path: 'NodeType',
-                                              formatter: '.formatter.getResourceIcon'
-                                       }"/>
+                            <controls:CustomTitle
+                                    text="{Description}"
+                                    titleStyle="{
+                                        path: 'NodeType',
+                                        formatter: '.formatter.formatResourceTitle'
+                                    }"
+                                    icon="{
+                                      path: 'NodeType',
+                                      formatter: '.formatter.getResourceIcon'
+                                    }"/>
                         </table:template>
                     </table:Column>
                     <table:Column
@@ -84,11 +85,11 @@
         </content>
 
         <beginButton>
-            <Button text="{i18n>xbut.buttonCancel}" press="onAssignModalCancel" />
+            <Button text="{i18n>xbut.buttonCancel}" press="onCloseDialog" />
         </beginButton>
 
         <endButton>
-            <Button text="{i18n>xbut.buttonOK}" type="Emphasized" press="onAssignModalSave" />
+            <Button text="{i18n>xbut.buttonOK}" type="Emphasized" press="onSaveDialog" />
         </endButton>
     </Dialog>
 

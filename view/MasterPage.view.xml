@@ -51,7 +51,7 @@
 
             <f:content>
                 <!--<VBox width="100%" height="100%">-->
-                    <table:TreeTable
+                <table:TreeTable
                         id="droppableTable"
                         selectionMode="None"
                         enableColumnReordering="false"

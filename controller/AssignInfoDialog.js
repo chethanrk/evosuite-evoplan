@@ -1,10 +1,20 @@
 sap.ui.define([
     "com/evorait/evoplan/controller/BaseController",
-    "com/evorait/evoplan/model/models"
-], function (BaseController, models) {
+    "com/evorait/evoplan/model/models",
+    "sap/ui/core/ListItem"
+], function (BaseController, models, ListItem) {
     "use strict";
 
     return BaseController.extend("com.evorait.evoplan.controller.AssignInfoDialog", {
+
+        reassignKey: "REASSIGN",
+        unassignKey: "UNASSIGN",
+
+
+        init: function () {
+            var eventBus = sap.ui.getCore().getEventBus();
+            eventBus.subscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);
+        },
 
         /**
          * init and get dialog view
@@ -27,28 +37,34 @@ sap.ui.define([
          */
         open : function (oView, sBindPath) {
             var oDialog = this.getDialog(),
-                oDemand = oView.getModel().getProperty(sBindPath),
+                oResource = oView.getModel().getProperty(sBindPath),
                 oAssignment = {
-                    DemandGuid: oDemand.DemandGuid,
-                    DemandDesc: oDemand.Description,
-                    StartDate: oDemand.StartDate,
-                    EndDate: oDemand.EndDate,
-                    Assign: ""
+                    showError: false,
+                    AssignmentGuid: oResource.AssignmentGuid,
+                    Description: oResource.Description,
+                    AllowReassign: false,
+                    AllowUnassign: false,
+                    assignPath: null,
+                    NewAssignId: null,
+                    NewAssignDesc: null,
+                    isNewAssignment: false
                 };
 
             this._oView = oView;
             oView.setModel(models.createAssignmentModel(oAssignment), "assignment");
+            this.oAssignmentModel = oView.getModel("assignment");
 
-            if(oDemand.ResourceGroupGuid && oDemand.ResourceGroupGuid !== ""){
-                this._getAssignResourceGroup(oDemand.ResourceGroupGuid);
+            if(oResource.ResourceGroupGuid && oResource.ResourceGroupGuid !== ""){
+                this._getAssignResourceGroup(oResource.ResourceGroupGuid);
             }
-            if(oDemand.ResourceGuid && oDemand.ResourceGuid !== ""){
-                this._getAssignResouce(oDemand.ResourceGuid);
+            if(oResource.ResourceGuid && oResource.ResourceGuid !== ""){
+                this._getAssignResource(oResource.ResourceGuid);
             }
 
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
-            oDialog.bindElement(sBindPath);
+            this._getAssignedDemand(oResource.AssignmentGuid);
+            //oDialog.bindElement(sBindPath);
             this._bindingPath = sBindPath;
 
             // open dialog
@@ -60,19 +76,41 @@ sap.ui.define([
          * @param oEvent
          */
         onSaveDialog : function (oEvent) {
-            var oForm = sap.ui.getCore().byId("assignmentInfoForm");
-            this._getDialogForms(oForm.getContent());
+            this.updateAssignment(this.oAssignmentModel, this.unAssign, this.reAssign, this._oView.getModel());
+            this.onCloseDialog();
         },
 
         /**
          *
          * @param oEvent
          */
-        onChangeAssignment: function (oEvent) {
-            var oParams = oEvent.getParameters();
-            if(oParams.value === "Reassign"){
+        onChangeAssignType: function (oEvent) {
+            var oSource = oEvent.getSource(),
+                selectedKey = oSource.getSelectedKey(),
+                reassignBtn = sap.ui.getCore().byId("reassignDialogButton");
 
+            this.reAssign = selectedKey === this.reassignKey;
+            this.unAssign = selectedKey === this.unassignKey;
+            reassignBtn.setEnabled(this.reAssign);
+
+            if(!this.reAssign){
+                this.oAssignmentModel.setProperty("/assignPath", null);
+                this.oAssignmentModel.setProperty("/NewAssignId", null);
+                this.oAssignmentModel.setProperty("/NewAssignDesc", null);
+                this.oAssignmentModel.setProperty("/isNewAssignment", false);
             }
+        },
+
+        /**
+         * trigger event for open select assign tree table dialog
+         * @param oEvent
+         */
+        onPressReAssign: function (oEvent) {
+            var eventBus = sap.ui.getCore().getEventBus();
+            eventBus.publish("AssignInfoDialog", "selectAssign", {
+                oView: this._oView,
+                isReassign: this.reAssign
+            });
         },
 
         /**
@@ -83,16 +121,61 @@ sap.ui.define([
         },
 
         /**
+         *
+         * @param sId
+         * @private
+         */
+        _getAssignedDemand: function (sId) {
+            var sPath = "/AssignmentSet('"+sId+"')",
+                oDialog = this.getDialog(),
+                oModel = this.oAssignmentModel;
+
+            oDialog.bindElement({
+                path: sPath,
+                parameters: {
+                    expand: "Demand"
+                },
+                events: {
+                    change: function () {
+                        var oElementBinding = oDialog.getElementBinding(),
+                            oContext = oElementBinding.getBoundContext();
+
+                        if(!oContext){
+                            oModel.setProperty("/showError", true);
+                            return;
+                        }
+
+                        oModel.setProperty("/showError", false);
+                        oModel.setProperty("/DateFrom", oContext.getProperty("DateFrom"));
+                        oModel.setProperty("/DateTo", oContext.getProperty("DateTo"));
+                        oModel.setProperty("/Effort", oContext.getProperty("Effort"));
+                        oModel.setProperty("/EffortUnit", oContext.getProperty("EffortUnit"));
+
+                        var oDemandData = oContext.getProperty("Demand");
+                        oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
+                        oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
+                    },
+                    dataRequested: function () {
+                        oDialog.setBusy(true);
+                    },
+                    dataReceived: function () {
+                        oDialog.setBusy(false);
+                    }
+                }
+            });
+
+        },
+
+        /**
          * get assignment resource details
          * @param resId
          * @private
          */
-        _getAssignResouce: function (resId) {
-            var oData = this._getResourceInfo(resId),
-                oAssignModel = this._oView.getModel("assignment");
+        _getAssignResource: function (resId) {
+            var oData = this._getResourceInfo(resId);
 
-            oAssignModel.setProperty("/ResourceGuid", resId);
-            oAssignModel.setProperty("/ResourceDesc", oData.Description);
+            this.oAssignmentModel.setProperty("/ResourceGuid", resId);
+            this.oAssignmentModel.setProperty("/ResourceDesc", oData.Description);
         },
 
         /**
@@ -101,11 +184,10 @@ sap.ui.define([
          * @private
          */
         _getAssignResourceGroup: function (groupId) {
-            var oData = this._getResourceInfo(groupId),
-                oAssignModel = this._oView.getModel("assignment");
+            var oData = this._getResourceInfo(groupId);
 
-            oAssignModel.setProperty("/ResourceGroupGuid", groupId);
-            oAssignModel.setProperty("/ResourceGroupDesc", oData.Description);
+            this.oAssignmentModel.setProperty("/ResourceGroupGuid", groupId);
+            this.oAssignmentModel.setProperty("/ResourceGroupDesc", oData.Description);
         },
 
         /**
@@ -136,5 +218,15 @@ sap.ui.define([
                 }catch(e){}
             }
         },
+
+        _showNewAssignment: function (sChanel, sEvent, oData) {
+            if(sEvent === "selectedAssignment"){
+                var oNewAssign = this._oView.getModel().getProperty(oData.sPath);
+                this.oAssignmentModel.setProperty("/assignPath", oData.sPath);
+                this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid);
+                this.oAssignmentModel.setProperty("/NewAssignDesc", oNewAssign.Description);
+                this.oAssignmentModel.setProperty("/isNewAssignment", true);
+            }
+        }
     });
 });
