@@ -1,99 +1,98 @@
 sap.ui.define([
-		"com/evorait/evoplan/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"com/evorait/evoplan/model/formatter",
-		"sap/ui/model/Filter",
-		"sap/ui/model/FilterOperator",
-    	"sap/ui/table/Table",
-    	"sap/ui/table/Row",
-    	"sap/ui/table/RowSettings",
-    	"sap/m/MessageToast",
-        'sap/m/MessagePopover',
-        'sap/m/MessagePopoverItem'
-	], function (BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, RowSettings, MessageToast, MessagePopover, MessagePopoverItem) {
-		"use strict";
+	"com/evorait/evoplan/controller/BaseController",
+	"sap/ui/model/json/JSONModel",
+	"com/evorait/evoplan/model/formatter",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/table/Table",
+	"sap/ui/table/Row",
+	"sap/ui/table/RowSettings",
+	"sap/m/MessageToast",
+	"sap/m/MessagePopover",
+	"sap/m/MessagePopoverItem",
+	"sap/m/Link"
+], function(BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, RowSettings, MessageToast, MessagePopover,
+	MessagePopoverItem, Link) {
+	"use strict";
 
-        var oLink = new sap.m.Link({
-            text: "Show more information",
-            href: "",
-            target: "_blank"
-        });
+	var oLink = new Link({
+		text: "{i18n>xtit.showMoreInfo}",
+		href: "",
+		target: "_blank"
+	});
 
-        var oMessageTemplate = new MessagePopoverItem({
-            type: '{Type}',
-            title: '{Title}',
-            description: '{Description}',
-            subtitle: '{Subtitle}',
-            counter: '{Counter}',
-            link: oLink
-        });
+	var oMessageTemplate = new MessagePopoverItem({
+		type: '{MessageModel>type}',
+		title: '{MessageModel>title}',
+		description: '{MessageModel>description}',
+		subtitle: '{MessageModel>subtitle}',
+		counter: '{MessageModel>counter}',
+		link: oLink
+	});
 
-        var oMessagePopover = new MessagePopover({
-            items: {
-                path: '/',
-                template: oMessageTemplate
-            }
-        });
+	var oMessagePopover = new MessagePopover({
+		items: {
+			path: 'MessageModel>/',
+			template: oMessageTemplate
+		}
+	});
+	return BaseController.extend("com.evorait.evoplan.controller.List", {
 
-		return BaseController.extend("com.evorait.evoplan.controller.List", {
+		formatter: formatter,
 
-			formatter: formatter,
+		/* =========================================================== */
+		/* lifecycle methods                                           */
+		/* =========================================================== */
 
-			/* =========================================================== */
-			/* lifecycle methods                                           */
-			/* =========================================================== */
+		/**
+		 * Called when the demand controller is instantiated.
+		 * @public
+		 */
+		onInit: function() {
+			this._oDraggableTable = this.byId("draggableList");
+			this._oDataTable = this._oDraggableTable.getTable();
+			this._configureDataTable(this._oDataTable);
+			this._aSelectedRowsIdx = [];
+			this.getView().addDependent(oMessagePopover);
+		},
 
-			/**
-			 * Called when the demand controller is instantiated.
-			 * @public
-			 */
-			onInit : function () {
-                this._oDraggableTable = this.byId("draggableList");
-                this._oDataTable = this._oDraggableTable.getTable();
-                this._configureDataTable(this._oDataTable);
-                this._aSelectedRowsIdx = [];
-                var oModel = new JSONModel();
-                sap.ui.getCore().setModel(oModel, "MessageSetModel");
-                oMessagePopover.setModel(oModel);
-			},
+		/* =========================================================== */
+		/* event handlers                                              */
+		/* =========================================================== */
 
-			/* =========================================================== */
-			/* event handlers                                              */
-			/* =========================================================== */
+		/**
+		 * Triggered by the table's 'updateFinished' event: after new table
+		 * data is available, this handler method updates the table counter.
+		 * This should only happen if the update was successful, which is
+		 * why this handler is attached to 'updateFinished' and not to the
+		 * table's list binding's 'dataReceived' method.
+		 * @param {sap.ui.base.Event} oEvent the update finished event
+		 * @public
+		 */
 
-			/**
-			 * Triggered by the table's 'updateFinished' event: after new table
-			 * data is available, this handler method updates the table counter.
-			 * This should only happen if the update was successful, which is
-			 * why this handler is attached to 'updateFinished' and not to the
-			 * table's list binding's 'dataReceived' method.
-			 * @param {sap.ui.base.Event} oEvent the update finished event
-			 * @public
-			 */
+		/**
+		 * after rendering of view
+		 * @param oEvent
+		 */
+		onAfterRendering: function(oEvent) {
+			var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle");
+			var noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]);
+			var viewModel = this.getModel("viewModel");
+			viewModel.setProperty("/subViewTitle", tableTitle);
+			viewModel.setProperty("/subTableNoDataText", noDataText);
+		},
 
-            /**
-			 * after rendering of view
-             * @param oEvent
-             */
-            onAfterRendering: function (oEvent) {
-                var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle");
-                var noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]);
-                var viewModel = this.getModel("viewModel");
-                viewModel.setProperty("/subViewTitle", tableTitle);
-                viewModel.setProperty("/subTableNoDataText", noDataText);
-            },
-
-            /**
-			 * initial draggable after every refresh of table
-			 * for example after go to next page
-             * @param oEvent
-             */
-            onBusyStateChanged : function (oEvent) {
-                var parameters = oEvent.getParameters();
-				if(parameters.busy === false){
-                    this._jDraggable(this);
-				}
-			},
+		/**
+		 * initial draggable after every refresh of table
+		 * for example after go to next page
+		 * @param oEvent
+		 */
+		onBusyStateChanged: function(oEvent) {
+			var parameters = oEvent.getParameters();
+			if (parameters.busy === false) {
+				this._jDraggable(this);
+			}
+		},
 
             /**
 			 * on press assign button in footer
@@ -146,9 +145,9 @@ sap.ui.define([
                 }
             },
 
-            onMessagePopoverPress: function (oEvent) {
-                oMessagePopover.openBy(oEvent.getSource());
-            },
+		onMessagePopoverPress: function(oEvent) {
+			oMessagePopover.openBy(oEvent.getSource());
+		},
 
             onExit: function() {
                 if(this._oStatusDialog){
@@ -203,8 +202,6 @@ sap.ui.define([
 				setTimeout(function() {
                     var draggableTableId = _this._oDraggableTable.getId(), // sapUiTableRowHdr
                         aPathsData = [];
-
-
                     //checkbox is not inside tr so needs to select by class .sapUiTableRowHdr
                     var jDragElement = $("#"+draggableTableId+" tbody tr, #"+draggableTableId+" .sapUiTableRowHdr")
                         .not(".sapUiTableColHdrTr, .sapUiTableRowHidden");

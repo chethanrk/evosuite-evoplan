@@ -6,11 +6,13 @@ sap.ui.define([
     "sap/m/Button",
     "sap/m/Text",
     "sap/m/MessageToast",
+    "sap/m/MessagePopover",
+    "sap/m/MessagePopoverItem",
 	"com/evorait/evoplan/model/models",
 	"com/evorait/evoplan/controller/ErrorHandler",
     "com/evorait/evoplan/controller/AssignInfoDialog",
     "com/evorait/evoplan/controller/AssignTreeDialog"
-], function(UIComponent, Device, JSONModel, Dialog, Button, Text, MessageToast, models, ErrorHandler, AssignInfoDialog, AssignTreeDialog) {
+], function(UIComponent, Device, JSONModel, Dialog, Button, Text, MessageToast, MessagePopover, MessagePopoverItem, models, ErrorHandler, AssignInfoDialog, AssignTreeDialog) {
 	"use strict";
 
 	return UIComponent.extend("com.evorait.evoplan.Component", {
@@ -29,7 +31,6 @@ sap.ui.define([
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 
-
 			// handle the main oData model based on the environment
 			// the path for mobile applications depends on the current information from
 			// the logon plugin - if it's not running as hybrid application then the initialization
@@ -37,22 +38,22 @@ sap.ui.define([
 			// as metadata reference
 			var oModel;
 			var appContext;
-		    var externalURL;
+			var externalURL;
 
 			if (com.evorait.evoplan.dev.devapp.externalURL) {
 				externalURL = com.evorait.evoplan.dev.devapp.externalURL;
 			}
 
-		    if (com.evorait.evoplan.dev.devapp.devLogon) {
-			  appContext = com.evorait.evoplan.dev.devapp.devLogon.appContext;
-		    }
+			if (com.evorait.evoplan.dev.devapp.devLogon) {
+				appContext = com.evorait.evoplan.dev.devapp.devLogon.appContext;
+			}
 
-		    if (window.cordova && appContext && !window.sap_webide_companion && !externalURL) {
+			if (window.cordova && appContext && !window.sap_webide_companion && !externalURL) {
 				var url = appContext.applicationEndpointURL + "/";
 				var oHeader = {
 					"X-SMP-APPCID": appContext.applicationConnectionId
 				};
-				
+
 				// this would allow to pass basic authentication from the user registration to the
 				// backend request - do not do this yet
 				/**
@@ -81,8 +82,13 @@ sap.ui.define([
                 counterResourceFilter: ""
             });
             this.setModel(oViewModel, "viewModel");
-            
+
             this._initDialogs();
+
+			//Creating the Global message model from MessageManager
+			var oMessageModel = new JSONModel();
+			oMessageModel.setData([]);
+			this.setModel(oMessageModel, "MessageModel");
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();
@@ -107,16 +113,16 @@ sap.ui.define([
 		 * @return {string} css class, either 'sapUiSizeCompact' or 'sapUiSizeCozy' - or an empty string if no css class should be set
 		 */
 		getContentDensityClass: function() {
-            if (this._sContentDensityClass === undefined) {
+			if (this._sContentDensityClass === undefined) {
 				// check whether FLP has already set the content density class; do nothing in this case
 				if (jQuery(document.body).hasClass("sapUiSizeCozy") || jQuery(document.body).hasClass("sapUiSizeCompact")) {
 					this._sContentDensityClass = "";
 				} else if (Device.support.touch && this._isMobile()) { // apply "compact" mode if touch is not supported
-                    // "cozy" in case of touch support; default for most sap.m controls, but needed for desktop-first controls like sap.ui.table.Table
-                    this._sContentDensityClass = "sapUiSizeCozy";
+					// "cozy" in case of touch support; default for most sap.m controls, but needed for desktop-first controls like sap.ui.table.Table
+					this._sContentDensityClass = "sapUiSizeCozy";
 				} else {
-                    //sapUiSizeCompact
-                    this._sContentDensityClass = "sapUiSizeCompact";
+					//sapUiSizeCompact
+					this._sContentDensityClass = "sapUiSizeCompact";
 				}
 			}
 			return this._sContentDensityClass;
@@ -132,6 +138,60 @@ sap.ui.define([
             this.assignInfoDialog.init();
             this.assignTreeDialog = new AssignTreeDialog();
             this.assignTreeDialog.init();
+        },
+
+        /**
+         * Extract messages from a the MessageModel.
+         *
+         * @Author Rahul
+         * @param {object} oData data of MessageModel
+         * @return
+         * @function
+         * @public
+         */
+        createMessages : function(){
+            var aMessages = [];
+            var iCountError = 0, iCountWarning = 0, iCountSuccess = 0, iCounter = 0, iCountInfo = 0;
+            var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+            var oData= oMessageModel.getData();
+            var oResourceBundle = this.getModel("i18n").getResourceBundle();
+
+            if(oData.length === 0){
+                oMessageModel.setData([]);
+                return;
+            }
+
+            for( var i = 0; i < oData.length; i++){
+                var item = {};
+                if (oData[i].type === "Error"){
+                    item.title = oResourceBundle.getText("xtit.errorMsg");
+                    iCountError = iCountError + 1;
+                    iCounter = iCountError;
+                }
+                if (oData[i].type === "Warning"){
+                    item.title = oResourceBundle.getText("xtit.warningMsg");
+                    iCountWarning = iCountWarning + 1;
+                    iCounter = iCountWarning;
+                }
+                if (oData[i].type === "Success"){
+                    item.title = oResourceBundle.getText("xtit.successMsg");
+                    iCountSuccess = iCountSuccess + 1;
+                    iCounter = iCountSuccess;
+                }
+                if (oData[i].type === "Information"){
+                    item.title = oResourceBundle.getText("xtit.informationMsg");
+                    iCountInfo = iCountInfo + 1;
+                    iCounter = iCountInfo;
+                }
+                item.type = oData[i].type;
+                item.description = oData[i].message;
+                item.subtitle = oData[i].message;
+                item.counter = iCounter;
+
+                aMessages.push(item);
+            }
+            this.getModel("MessageModel").setData(aMessages);
+            oMessageModel.setData([]);
         }
 
 	});

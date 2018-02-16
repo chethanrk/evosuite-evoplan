@@ -1,7 +1,8 @@
 sap.ui.define([
 		"sap/ui/base/Object",
-		"sap/m/MessageBox"
-	], function (UI5Object, MessageBox) {
+		"sap/m/MessageBox",
+		"sap/m/MessageToast"
+	], function (UI5Object, MessageBox, MessageToast) {
 		"use strict";
 
 		return UI5Object.extend("com.evorait.evoplan.controller.ErrorHandler", {
@@ -19,12 +20,12 @@ sap.ui.define([
 				this._oModel = oComponent.getModel();
 				this._bMessageOpen = false;
 				this._sErrorText = this._oResourceBundle.getText("errorText");
-
+				
 				this._oModel.attachMetadataFailed(function (oEvent) {
 					var oParams = oEvent.getParameters();
 					this._showServiceError(oParams.response);
 				}, this);
-
+				
 				this._oModel.attachRequestFailed(function (oEvent) {
 					var oParams = oEvent.getParameters();
 					// An entity that was not found in the service is also throwing a 404 error in oData.
@@ -33,6 +34,15 @@ sap.ui.define([
 					if (oParams.response.statusCode !== "404" || (oParams.response.statusCode === 404 && oParams.response.responseText.indexOf("Cannot POST") === 0)) {
 						this._showServiceError(oParams.response);
 					}
+					this.onError(oParams.response);
+				}, this);
+				this._oModel.attachBatchRequestCompleted(function (oEvent) {
+					var oParams = oEvent.getParameters();
+					if(oParams.success){
+						this._oComponent.createMessages();
+					}/*else{
+						this.onError(oParams.response);
+					}*/
 				}, this);
 			},
 
@@ -94,6 +104,21 @@ sap.ui.define([
 					}
 				}
 				return sDetails;
+			},
+			
+			
+			/**
+			* on Error of oData call capture messages
+			*/
+			onError: function (oError){
+	 		 	try{
+	 		 		JSON.parse(oError.responseText);
+	 		 		this._oComponent.createMessages();
+	 		 	}catch(ex){
+	 		 		if (oError.statusCode !== "404" || (oError.statusCode === 404 && oError.responseText.indexOf("Cannot POST") === 0)) {
+						this._showServiceError(oError);
+					}
+	 		 	}
 			}
 		});
 	}

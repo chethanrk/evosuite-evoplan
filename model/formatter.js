@@ -1,7 +1,7 @@
 sap.ui.define([
-    "sap/ui/core/format/DateFormat"
-], function (DateFormat) {
-    "use strict";
+	"sap/ui/core/format/DateFormat"
+], function(DateFormat) {
+	"use strict";
 
     var resourceFormats = {
         RES_GROUP: {
@@ -91,8 +91,19 @@ sap.ui.define([
                 return true;
             }
             return false;
-        }
+        },
 
-
-    };
+		/**
+		 * @Author Rahul
+		 * format the calendar view
+		 * @param sValue
+		 * @returns calendarView respective calendar view
+		 */
+		getCalendarView: function(sValue){
+			var sView = resourceFormats[sValue];
+			if (sView) {
+				return sView.calendarView || "Hour";
+			}
+		}
+	};
 });

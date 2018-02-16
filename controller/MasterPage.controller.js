@@ -1,14 +1,16 @@
 sap.ui.define([
-    "sap/ui/Device",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
-    "sap/ui/model/FilterType",
-    "sap/m/Token",
-    "com/evorait/evoplan/model/formatter",
-    "com/evorait/evoplan/controller/BaseController"
-], function(Device, JSONModel, Filter, FilterOperator, FilterType, Token, formatter, BaseController) {
-    "use strict";
+	"sap/ui/Device",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterType",
+	"sap/m/Token",
+	"com/evorait/evoplan/model/formatter",
+	"com/evorait/evoplan/controller/BaseController",
+	"com/evorait/evoplan/controller/ErrorHandler",
+	"sap/m/MessageToast"
+], function(Device, JSONModel, Filter, FilterOperator, FilterType, Token, formatter, BaseController,ErrorHandler,MessageToast) {
+	"use strict";
 
     return BaseController.extend('com.evorait.evoplan.controller.MasterPage', {
 
@@ -41,18 +43,21 @@ sap.ui.define([
             eventBus.subscribe("BaseController", "refreshTable", this._triggerFilterSearch, this);
         },
 
-        /**
-        * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.
-        * This hook is the same one that SAPUI5 controls get after being rendered.
-        * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
-        onAfterRendering: function(oEvent) {
-            //add form fields to variant
-            this._initialCustomVariant();
-            //trigger first filter
-            this.onTreeUpdateStarted();
-            //init droppable
-            this.refreshDroppable(oEvent);
-        },
+		/**
+		 * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.
+		 * This hook is the same one that SAPUI5 controls get after being rendered.
+		 * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
+		onAfterRendering: function(oEvent) {
+			//add form fields to variant
+			this._initialCustomVariant();
+			//trigger first filter
+			this.onTreeUpdateStarted();
+			//init droppable
+			this.refreshDroppable(oEvent);
+
+			//Todo: remove example data when filter request is working
+			this._initPlanCalendarDialog();
+		},
 
         /**
          *
@@ -112,39 +117,39 @@ sap.ui.define([
             this._oFilterSettingsDialog.open();
         },
 
-        /**
-         * when a new variant is selected trigger search
-         * new Filters are bind to tree table
-         * @param oEvent
-         */
-        onSelectVariant : function (oEvent) {
-            this._triggerFilterSearch();
-        },
+		/**
+		 * when a new variant is selected trigger search
+		 * new Filters are bind to tree table
+		 * @param oEvent
+		 */
+		onSelectVariant: function(oEvent) {
+			this._triggerFilterSearch();
+		},
 
-        /**
-         * ViewSettingsDialog confirm filter
-         * @param oEvent
-         */
-        onFilterSettingsConfirm : function (oEvent) {
-            this._triggerFilterSearch();
-        },
+		/**
+		 * ViewSettingsDialog confirm filter
+		 * @param oEvent
+		 */
+		onFilterSettingsConfirm: function(oEvent) {
+			this._triggerFilterSearch();
+		},
 
-        /**
-         * reset custom controls
-         * @param oEvent
-         */
-        onFilterSettingsReset : function (oEvent) {
-            //reset multiInput custom filter
-            var oCustomFilter = sap.ui.getCore().byId("idGroupFilterItem");
-            this._filterGroupInput.setTokens([]);
-            oCustomFilter.setFilterCount(0);
+		/**
+		 * reset custom controls
+		 * @param oEvent
+		 */
+		onFilterSettingsReset: function(oEvent) {
+			//reset multiInput custom filter
+			var oCustomFilter = sap.ui.getCore().byId("idGroupFilterItem");
+			this._filterGroupInput.setTokens([]);
+			oCustomFilter.setFilterCount(0);
 
-            //set default view setting
-            this._setDefaultFilterView();
+			//set default view setting
+			this._setDefaultFilterView();
 
-            //set default date range
-            this._setDefaultFilterDateRange();
-        },
+			//set default date range
+			this._setDefaultFilterDateRange();
+		},
 
         /**
          * on multiinput changed in filter settings dialog
@@ -180,34 +185,43 @@ sap.ui.define([
             }
         },
 
-        /**
-         * on select checkbox in resource tree row
-         * @param oEvent
-         */
-        onCheckResource: function (oEvent) {
-            var oSource = oEvent.getSource();
-            var parent = oSource.getParent();
-            var sPath = parent.getBindingContext().getPath();
-            var oParams = oEvent.getParameters();
-            var data = this.getModel().getProperty(sPath);
+		/**
+		 * Todo: on deselect
+		 * @param oEvent
+		 */
+		onChangeSelectResource: function(oEvent) {
+			var oSource = oEvent.getSource();
+			var parent = oSource.getParent();
+			var sPath = parent.getBindingContext().getPath();
+			var oParams = oEvent.getParameters();
 
-            if(data.NodeType === "RES_GROUP"){
-                //this._selectResourceGroupChilds(oParams.selected, parent, sPath);
-            }
-        },
+			if (oParams.selected) {
+				this.selectedResources.push(sPath);
 
-        /**
-         * button press in footer show dialog planning calendar
-         * @param oEvent
-         */
-        onPressShowPlanningCal: function (oEvent) {
-            if (!this._oPlanningCalDialog) {
-                this._oPlanningCalDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceCalendarDialog", this);
-                this.getView().addDependent(this._oPlanningCalDialog);
-            }
-            this._oPlanningCalDialog.open();
-        },
+			} else if (this.selectedResources.indexOf(sPath) >= 0) {
+				//removing the path from this.selectedResources when user unselect the checkbox
+				this.selectedResources.splice(this.selectedResources.indexOf(sPath), 1);
+			}
 
+			if (this.selectedResources.length > 0) {
+				this.byId("showPlanCalendar").setEnabled(true);
+			} else {
+				this.byId("showPlanCalendar").setEnabled(false);
+			}
+		},
+
+		/**
+		 * Todo: set up filter of selected resources in this.selectedResources
+		 * @param oEvent
+		 */
+		onPressShowPlanningCal: function(oEvent) {
+			this._setCalendarModel();
+			/*this._oPlanningCalDialog.open();*/ // As we are opening the dialog when set model data
+		},
+
+		onCalendarModalCancel: function(oEvent) {
+			this._oPlanningCalDialog.close();
+		},
         /**
          * on press cancel in dialog close it
          * @param oEvent
@@ -303,14 +317,25 @@ sap.ui.define([
                 //set default date range
                 this._setDefaultFilterDateRange();
 
-                //*** add checkbox validator
-                this._filterGroupInput = sap.ui.getCore().byId("multiGroupInput");
-                this._filterGroupInput.addValidator(function(args){
-                    var text = args.text;
-                    return new Token({key: text, text: text});
-                });
-            }
-        },
+				//*** add checkbox validator
+				this._filterGroupInput = sap.ui.getCore().byId("multiGroupInput");
+				this._filterGroupInput.addValidator(function(args) {
+					var text = args.text;
+					return new Token({
+						key: text,
+						text: text
+					});
+				});
+			}
+		},
+
+		_initPlanCalendarDialog: function() {
+			if (!this._oPlanningCalDialog) {
+				this._oPlanningCalDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceCalendarDialog", this);
+				this.getView().addDependent(this._oPlanningCalDialog);
+				this._setCalendarModel();
+			}
+		},
 
         /**
          * triggers request with all setted filters
@@ -383,11 +408,14 @@ sap.ui.define([
                 aFilters.push(new Filter("Description", FilterOperator.Contains, sSearchField));
             }
 
-            var resourceFilter = new Filter({filters: aFilters, and: true});
-            oViewModel.setProperty("/resourceFilterAll", resourceFilter);
+			var resourceFilter = new Filter({
+				filters: aFilters,
+				and: true
+			});
+			oViewModel.setProperty("/resourceFilterAll", resourceFilter);
 
-            return  resourceFilter;
-        },
+			return resourceFilter;
+		},
 
         /**
          * set filter date range before first request in filter settings dialog
@@ -461,17 +489,84 @@ sap.ui.define([
                                 return;
                             }
 
-                            var draggedElements = ui.helper[0],
-                                aSources = [];
-                            $(draggedElements).find('li').each(function (idx, obj) {
-                                aSources.push({sPath: $(this).attr('id')});
-                            });
-                            _this.assignedDemands(aSources, targetPath);
-                        }
-                    }
-                });
-            }, 1000);
-        }
+							var draggedElements = ui.helper[0],
+								aSources = [];
+							$(draggedElements).find('li').each(function(idx, obj) {
+								aSources.push({
+									sPath: $(this).attr('id')
+								});
+							});
+							_this.assignedDemands(aSources, targetPath);
+						}
+					}
+				});
+			}, 1000);
+		},
 
-    });
+		/**
+		 * call ResourceSet with Assignments
+		 * and merge into one json model for planning calendar
+		 * @private
+		 */
+		_setCalendarModel: function() {
+			var aUsers = [];
+			var aResourceFilters = [];
+			var oModel = this.getModel();
+			var oResourceBundle = this.getResourceBundle();
+
+			if (this.selectedResources.length <= 0) {
+				return;
+			}
+
+			for (var i = 0; i < this.selectedResources.length; i++) {
+				var obj = oModel.getProperty(this.selectedResources[i]);
+				if (obj.NodeType === "RESOURCE") {
+					aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
+				} else if (obj.NodeType === "RES_GROUP") {
+					aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
+				}
+			}
+			if (aUsers.length > 0) {
+				aResourceFilters.push(new Filter({
+					filters: aUsers,
+					and: false
+				}));
+			}
+
+			var sDateControl1 = this._filterDateRange1.getValue();
+			sDateControl1 = this.formatter.date(sDateControl1);
+
+			var sCaledarView;
+			var oViewFilterItems = this._filterSelectView.getItems();
+			for (var j in oViewFilterItems) {
+				var oViewFilterItem = oViewFilterItems[j];
+				if (oViewFilterItem.getSelected()) {
+					sCaledarView = oViewFilterItem.getKey();
+				}
+			}
+
+		/*	var oDateRangeFilter = new Filter("DateFrom", FilterOperator.GE, sDateControl1);
+			aResourceFilters.push(oDateRangeFilter);*/
+			oModel.read("/ResourceSet", {
+				filters: aResourceFilters,
+				urlParameters: {
+					"$expand": "ResourceToAssignments,ResourceToAssignments/Demand" // To fetch the assignments associated with Resource or ResourceGroup
+				},
+				success: function(data, response) {
+					var oCalendarModel = new JSONModel();
+					oCalendarModel.setData({
+						startDate: new Date(sDateControl1),
+						viewKey:sCaledarView,
+						resources: data.results
+					});
+					this.setModel(oCalendarModel, "calendarModel");
+					this._oPlanningCalDialog.open();
+				}.bind(this),
+				error: function(error, response) {
+					MessageToast.show(oResourceBundle.getText("errorMessage"), {duration: 5000});
+				}.bind(this)
+			});
+		}
+
+	});
 });

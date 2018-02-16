@@ -1,135 +1,116 @@
-<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
-           xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
-           xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
-    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-                    Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
         <edmx:Include Namespace="Org.OData.Capabilities.V1"/>
     </edmx:Reference>
-    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-                    Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
         <edmx:Include Namespace="Org.OData.Core.V1"/>
     </edmx:Reference>
-    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-                    Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
         <edmx:Include Namespace="com.sap.vocabularies.Common.v1"/>
     </edmx:Reference>
-    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-                    Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
+    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
         <edmx:Include Namespace="com.sap.vocabularies.Communication.v1"/>
     </edmx:Reference>
-    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-                    Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
         <edmx:Include Namespace="Org.OData.Measures.V1"/>
     </edmx:Reference>
-    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-                    Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_TIMELINE',Version='0001',SAP__Origin='LOCAL')/$value">
+    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_TIMELINE',Version='0001',SAP__Origin='LOCAL')/$value">
         <edmx:Include Namespace="com.sap.vocabularies.Timeline.v1"/>
     </edmx:Reference>
-    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-                    Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+    <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
         <edmx:Include Namespace="com.sap.vocabularies.UI.v1"/>
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
     </edmx:Reference>
     <edmx:DataServices m:DataServiceVersion="2.0">
-        <Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="com.evorait.evoplan" xml:lang="en"
-                sap:schema-version="1">
+        <Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="com.evorait.evoplan" xml:lang="en" sap:schema-version="1">
             <EntityType Name="ResourceHierarchy" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="NodeId"/>
                 </Key>
-                <Property Name="NodeId" Type="Edm.String" Nullable="false" MaxLength="32"
-                          sap:hierarchy-node-for="NodeId"/>
-                <Property Name="ParentNodeId" Type="Edm.String" Nullable="false" MaxLength="32"
-                          sap:hierarchy-parent-node-for="NodeId"/>
-                <Property Name="HierarchyLevel" Type="Edm.Byte" Nullable="false" sap:hierarchy-level-for="NodeId"
-                          sap:label="Int."/>
-                <Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="40"/>
-                <Property Name="DrillState" Type="Edm.String" Nullable="false" MaxLength="8"
-                          sap:hierarchy-drill-state-for="NodeId"/>
+                <Property Name="ResourceGroupGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Resource group GUID"/>
+                <Property Name="NodeId" Type="Edm.String" Nullable="false" MaxLength="132" sap:hierarchy-node-for="NodeId" sap:label="Node Id"/>
+                <Property Name="ResourceGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Resource GUID"/>
+                <Property Name="NodeType" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Object type"/>
+                <Property Name="DemandGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Demand GUID"/>
+                <Property Name="ParentNodeId" Type="Edm.String" MaxLength="132" sap:hierarchy-parent-node-for="NodeId" sap:label="Parent Node Id"/>
+                <Property Name="AssignmentGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Assignemnt GUID"/>
+                <Property Name="HierarchyLevel" Type="Edm.Byte" Nullable="false" sap:hierarchy-level-for="NodeId" sap:label="Hierarchy level"/>
+                <Property Name="DrillState" Type="Edm.String" Nullable="false" MaxLength="8" sap:hierarchy-drill-state-for="NodeId" sap:label="Drill State"/>
+                <Property Name="Description" Type="Edm.String" MaxLength="30" sap:label="Resource group desc."/>
+                <Property Name="AssignmentCount" Type="Edm.Byte" sap:label="EvoPlan: Assignment count"/>
+                <Property Name="Utilization" Type="Edm.Decimal" Precision="3" Scale="2" sap:label="EvoPlan: Utilization"/>
+                <Property Name="StartDate" Type="Edm.DateTime" Precision="0" sap:label="Start date"/>
+                <Property Name="StartTime" Type="Edm.Time" Precision="0" sap:label="From time"/>
+                <Property Name="EndDate" Type="Edm.DateTime" Precision="7" sap:label="End date"/>
+                <Property Name="EndTime" Type="Edm.Time" Precision="0" sap:label="To time"/>
             </EntityType>
             <EntityType Name="Assignment" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="Guid"/>
                 </Key>
                 <Property Name="Guid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Assignemnt GUID"/>
-                <Property Name="ResourceGroupGuid" Type="Edm.String" Nullable="false" MaxLength="32"
-                          sap:label="Resource group GUID"/>
-                <Property Name="ResourceGuid" Type="Edm.String" Nullable="false" MaxLength="32"
-                          sap:label="Resource GUID"/>
+                <Property Name="ResourceGroupGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Resource group GUID"/>
+                <Property Name="ResourceGuid" Type="Edm.String" MaxLength="32" sap:label="Resource GUID"/>
                 <Property Name="DemandGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Demand GUID"/>
                 <Property Name="DateFrom" Type="Edm.DateTime" Precision="7" sap:label="From date"/>
                 <Property Name="TimeFrom" Type="Edm.Time" Precision="0" sap:label="From time"/>
                 <Property Name="DateTo" Type="Edm.DateTime" Precision="7" sap:label="To date"/>
                 <Property Name="TimeTo" Type="Edm.Time" Precision="0" sap:label="To time"/>
-                <Property Name="Effort" Type="Edm.Decimal" Precision="7" Scale="2" sap:unit="EffortUnit"
-                          sap:label="Effort"/>
-                <Property Name="EffortUnit" Type="Edm.String" MaxLength="3" sap:label="Effort unit"
-                          sap:semantics="unit-of-measure"/>
+                <Property Name="Effort" Type="Edm.Decimal" Precision="7" Scale="1" sap:unit="EffortUnit" sap:label="Effort"/>
+                <Property Name="EffortUnit" Type="Edm.String" MaxLength="3" sap:label="Effort unit" sap:semantics="unit-of-measure"/>
+            </EntityType>
+            <EntityType Name="StatusTexts" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="UserStatusShortText"/>
+                </Key>
+                <Property Name="UserStatusShortText" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Status"/>
+                <Property Name="UserStatusLongText" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="Status"/>
             </EntityType>
             <EntityType Name="Demand" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="Guid"/>
                 </Key>
-                <Property Name="Guid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Demand GUID"/>
-                <Property Name="ExtKey" Type="Edm.String" MaxLength="32" sap:label="External key"/>
-                <Property Name="Source" Type="Edm.String" MaxLength="16" sap:label="Object Source"/>
-                <Property Name="DemandDesc" Type="Edm.String" MaxLength="30" sap:label="Demand description"/>
+                <Property Name="Guid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Demand GUID" sap:filterable="false"/>
+                <Property Name="ExtKey" Type="Edm.String" MaxLength="32" sap:label="External key" sap:filterable="false"/>
+                <Property Name="Source" Type="Edm.String" MaxLength="16" sap:label="Source of Object"/>
+                <Property Name="DemandDesc" Type="Edm.String" MaxLength="40" sap:label="Demand description"/>
                 <Property Name="DateFrom" Type="Edm.DateTime" Precision="7" sap:label="From date"/>
                 <Property Name="TimeFrom" Type="Edm.Time" Precision="0" sap:label="From time"/>
                 <Property Name="DateTo" Type="Edm.DateTime" Precision="7" sap:label="To date"/>
                 <Property Name="TimeTo" Type="Edm.Time" Precision="0" sap:label="To time"/>
-                <Property Name="EFFORT" Type="Edm.Decimal" Precision="7" Scale="2" sap:unit="EFFORT_UNIT"
-                          sap:label="Effort" sap:is-extension-field="true"/>
-                <Property Name="EFFORT_UNIT" Type="Edm.String" MaxLength="3" sap:label="Effort unit"
-                          sap:is-extension-field="true" sap:semantics="unit-of-measure"/>
-                <Property Name="OBJNR" Type="Edm.String" MaxLength="22" sap:label="Object number"
-                          sap:is-extension-field="true"/>
-                <Property Name="ADRNR" Type="Edm.String" MaxLength="10" sap:label="Address number"
-                          sap:is-extension-field="true"/>
+                <Property Name="UserStatusShortText" Type="Edm.String" MaxLength="4" sap:label="Status"/>
+                <Property Name="UserStatusLongText" Type="Edm.String" MaxLength="30" sap:label="Status"/>
+                <Property Name="EFFORT" Type="Edm.Decimal" Precision="7" Scale="1" sap:unit="EFFORT_UNIT" sap:label="Effort" sap:is-extension-field="true"/>
+                <Property Name="EFFORT_UNIT" Type="Edm.String" MaxLength="3" sap:label="Effort unit" sap:is-extension-field="true" sap:semantics="unit-of-measure"/>
+                <Property Name="OBJNR" Type="Edm.String" MaxLength="22" sap:label="Object number" sap:is-extension-field="true"/>
+                <Property Name="ADRNR" Type="Edm.String" MaxLength="10" sap:label="Address number" sap:is-extension-field="true"/>
                 <Property Name="NAME1" Type="Edm.String" MaxLength="40" sap:label="Name" sap:is-extension-field="true"/>
-                <Property Name="NAME2" Type="Edm.String" MaxLength="40" sap:label="Name 2"
-                          sap:is-extension-field="true"/>
-                <Property Name="NAME3" Type="Edm.String" MaxLength="40" sap:label="Name 3"
-                          sap:is-extension-field="true"/>
-                <Property Name="NAME4" Type="Edm.String" MaxLength="40" sap:label="Name 4"
-                          sap:is-extension-field="true"/>
-                <Property Name="SMTP_ADDR" Type="Edm.String" MaxLength="241" sap:label="E-Mail Address"
-                          sap:is-extension-field="true"/>
-                <Property Name="TEL_NUMBER" Type="Edm.String" MaxLength="30" sap:label="Telephone"
-                          sap:is-extension-field="true"/>
-                <Property Name="POST_CODE1" Type="Edm.String" MaxLength="10" sap:label="Postal Code"
-                          sap:is-extension-field="true"/>
+                <Property Name="NAME2" Type="Edm.String" MaxLength="40" sap:label="Name 2" sap:is-extension-field="true"/>
+                <Property Name="NAME3" Type="Edm.String" MaxLength="40" sap:label="Name 3" sap:is-extension-field="true"/>
+                <Property Name="NAME4" Type="Edm.String" MaxLength="40" sap:label="Name 4" sap:is-extension-field="true"/>
+                <Property Name="SMTP_ADDR" Type="Edm.String" MaxLength="241" sap:label="E-Mail Address" sap:is-extension-field="true"/>
+                <Property Name="TEL_NUMBER" Type="Edm.String" MaxLength="30" sap:label="Telephone" sap:is-extension-field="true"/>
+                <Property Name="POST_CODE1" Type="Edm.String" MaxLength="10" sap:label="Postal Code" sap:is-extension-field="true"/>
                 <Property Name="CITY1" Type="Edm.String" MaxLength="40" sap:label="City" sap:is-extension-field="true"/>
-                <Property Name="DISTRICT" Type="Edm.String" MaxLength="40" sap:label="District"
-                          sap:is-extension-field="true"/>
-                <Property Name="COUNTRY" Type="Edm.String" MaxLength="3" sap:label="Country"
-                          sap:is-extension-field="true"/>
-                <Property Name="REGION" Type="Edm.String" MaxLength="3" sap:label="Region"
-                          sap:is-extension-field="true"/>
-                <Property Name="STREET" Type="Edm.String" MaxLength="60" sap:label="Street"
-                          sap:is-extension-field="true"/>
-                <Property Name="HOUSE_NUM1" Type="Edm.String" MaxLength="10" sap:label="House Number"
-                          sap:is-extension-field="true"/>
-                <Property Name="BUILDING" Type="Edm.String" MaxLength="20" sap:label="Building Code"
-                          sap:is-extension-field="true"/>
-                <Property Name="LOCATION" Type="Edm.String" MaxLength="40" sap:label="Street 5"
-                          sap:is-extension-field="true"/>
-                <Property Name="LATITUDE" Type="Edm.Decimal" Precision="15" Scale="0" sap:label="Geo Loc. Latitude"
-                          sap:is-extension-field="true"/>
-                <Property Name="LONGITUDE" Type="Edm.Decimal" Precision="15" Scale="12" sap:label="Geo Loc. Longitude"
-                          sap:is-extension-field="true"/>
-                <Property Name="GEO_SOURCE" Type="Edm.String" MaxLength="10" sap:label="Source of Geo loc."
-                          sap:is-extension-field="true"/>
-                <Property Name="ALTITUDE" Type="Edm.Decimal" Precision="9" Scale="3" sap:label="Altitude"
-                          sap:is-extension-field="true"/>
-                <Property Name="FLOOR" Type="Edm.String" MaxLength="10" sap:label="Floor"
-                          sap:is-extension-field="true"/>
+                <Property Name="DISTRICT" Type="Edm.String" MaxLength="40" sap:label="District" sap:is-extension-field="true"/>
+                <Property Name="COUNTRY" Type="Edm.String" MaxLength="3" sap:label="Country" sap:is-extension-field="true"/>
+                <Property Name="REGION" Type="Edm.String" MaxLength="3" sap:label="Region" sap:is-extension-field="true"/>
+                <Property Name="STREET" Type="Edm.String" MaxLength="60" sap:label="Street" sap:is-extension-field="true"/>
+                <Property Name="HOUSE_NUM1" Type="Edm.String" MaxLength="10" sap:label="House Number" sap:is-extension-field="true"/>
+                <Property Name="BUILDING" Type="Edm.String" MaxLength="20" sap:label="Building Code" sap:is-extension-field="true"/>
+                <Property Name="LOCATION" Type="Edm.String" MaxLength="40" sap:label="Street 5" sap:is-extension-field="true"/>
+                <Property Name="LATITUDE" Type="Edm.Decimal" Precision="15" Scale="0" sap:label="Geo Loc. Latitude" sap:is-extension-field="true"/>
+                <Property Name="LONGITUDE" Type="Edm.Decimal" Precision="15" Scale="12" sap:label="Geo Loc. Longitude" sap:is-extension-field="true"/>
+                <Property Name="GEO_SOURCE" Type="Edm.String" MaxLength="10" sap:label="Source of Geo loc." sap:is-extension-field="true"/>
+                <Property Name="ALTITUDE" Type="Edm.Decimal" Precision="9" Scale="3" sap:label="Altitude" sap:is-extension-field="true"/>
+                <Property Name="FLOOR" Type="Edm.String" MaxLength="10" sap:label="Floor" sap:is-extension-field="true"/>
+                <NavigationProperty Name="DemandToAssignment" Relationship="com.evorait.evoplan.DemandToAssignment" FromRole="FromRole_DemandToAssignment" ToRole="ToRole_DemandToAssignment"/>
             </EntityType>
             <EntityType Name="ResourceGroup" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="ObjectGuid"/>
                 </Key>
-                <Property Name="ObjectGuid" Type="Edm.String" Nullable="false" MaxLength="32"
-                          sap:label="Resource GUID"/>
+                <Property Name="ObjectGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Resource GUID"/>
                 <Property Name="ObjectType" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Object type"/>
                 <Property Name="ObjectName" Type="Edm.String" MaxLength="61" sap:label="Object name"/>
                 <Property Name="HierarchyLevel" Type="Edm.Byte" sap:label="Hierarchy level"/>
@@ -139,17 +120,14 @@
                 <Property Name="TimeTo" Type="Edm.Time" Precision="0" sap:label="To time"/>
                 <Property Name="ResourceAvailable" Type="Edm.String" MaxLength="1" sap:label="Resource available?"/>
                 <Property Name="ResourceAssignable" Type="Edm.String" MaxLength="1" sap:label="Resource assignable?"/>
-                <NavigationProperty Name="ResGroupToResources"
-                                    Relationship="com.evorait.evoplan.ResourceGroupToResources"
-                                    FromRole="FromRole_ResourceGroupToResources"
-                                    ToRole="ToRole_ResourceGroupToResources"/>
+                <NavigationProperty Name="ResGroupToResources" Relationship="com.evorait.evoplan.ResourceGroupToResources" FromRole="FromRole_ResourceGroupToResources" ToRole="ToRole_ResourceGroupToResources"/>
+                <NavigationProperty Name="ResourceGroupToAssignment" Relationship="com.evorait.evoplan.ResourceGroupToAssignment" FromRole="FromRole_ResourceGroupToAssignment" ToRole="ToRole_ResourceGroupToAssignment"/>
             </EntityType>
             <EntityType Name="Resource" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="ObjectGuid"/>
                 </Key>
-                <Property Name="ObjectGuid" Type="Edm.String" Nullable="false" MaxLength="32"
-                          sap:label="Resource GUID"/>
+                <Property Name="ObjectGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Resource GUID"/>
                 <Property Name="ObjectType" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Object type"/>
                 <Property Name="ObjectName" Type="Edm.String" MaxLength="61" sap:label="Object name"/>
                 <Property Name="HierarchyLevel" Type="Edm.Byte" sap:label="Hierarchy level"/>
@@ -159,14 +137,35 @@
                 <Property Name="TimeTo" Type="Edm.Time" Precision="0" sap:label="To time"/>
                 <Property Name="ResourceAvailable" Type="Edm.String" MaxLength="1" sap:label="Resource available?"/>
                 <Property Name="ResourceAssignable" Type="Edm.String" MaxLength="1" sap:label="Resource assignable?"/>
-                <NavigationProperty Name="ResourcesToResGroup"
-                                    Relationship="com.evorait.evoplan.ResourceToResourceGroup"
-                                    FromRole="FromRole_ResourceToResourceGroup"
-                                    ToRole="ToRole_ResourceToResourceGroup"/>
+                <NavigationProperty Name="ResourcesToResGroup" Relationship="com.evorait.evoplan.ResourceToResourceGroup" FromRole="FromRole_ResourceToResourceGroup" ToRole="ToRole_ResourceToResourceGroup"/>
+                <NavigationProperty Name="ResourceToAssignments" Relationship="com.evorait.evoplan.ResourceToAssignments" FromRole="FromRole_ResourceToAssignments" ToRole="ToRole_ResourceToAssignments"/>
             </EntityType>
+            <Association Name="DemandToAssignment" sap:content-version="1">
+                <End Type="com.evorait.evoplan.Demand" Multiplicity="1" Role="FromRole_DemandToAssignment"/>
+                <End Type="com.evorait.evoplan.Assignment" Multiplicity="*" Role="ToRole_DemandToAssignment"/>
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_DemandToAssignment">
+                        <PropertyRef Name="Guid"/>
+                    </Principal>
+                    <Dependent Role="ToRole_DemandToAssignment">
+                        <PropertyRef Name="DemandGuid"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <Association Name="ResourceGroupToAssignment" sap:content-version="1">
+                <End Type="com.evorait.evoplan.ResourceGroup" Multiplicity="1" Role="FromRole_ResourceGroupToAssignment"/>
+                <End Type="com.evorait.evoplan.Assignment" Multiplicity="*" Role="ToRole_ResourceGroupToAssignment"/>
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_ResourceGroupToAssignment">
+                        <PropertyRef Name="ObjectGuid"/>
+                    </Principal>
+                    <Dependent Role="ToRole_ResourceGroupToAssignment">
+                        <PropertyRef Name="ResourceGroupGuid"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
             <Association Name="ResourceGroupToResources" sap:content-version="1">
-                <End Type="com.evorait.evoplan.ResourceGroup" Multiplicity="1"
-                     Role="FromRole_ResourceGroupToResources"/>
+                <End Type="com.evorait.evoplan.ResourceGroup" Multiplicity="1" Role="FromRole_ResourceGroupToResources"/>
                 <End Type="com.evorait.evoplan.Resource" Multiplicity="*" Role="ToRole_ResourceGroupToResources"/>
                 <ReferentialConstraint>
                     <Principal Role="FromRole_ResourceGroupToResources">
@@ -189,43 +188,168 @@
                     </Dependent>
                 </ReferentialConstraint>
             </Association>
-            <EntityContainer Name="com_evorait_evoplan_Entities" m:IsDefaultEntityContainer="true"
-                             sap:supported-formats="atom json xlsx">
-                <EntitySet Name="ResourceHierarchySet" EntityType="com.evorait.evoplan.ResourceHierarchy"
-                           sap:content-version="1"/>
+            <Association Name="ResourceToAssignments" sap:content-version="1">
+                <End Type="com.evorait.evoplan.Resource" Multiplicity="1" Role="FromRole_ResourceToAssignments"/>
+                <End Type="com.evorait.evoplan.Assignment" Multiplicity="*" Role="ToRole_ResourceToAssignments"/>
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_ResourceToAssignments">
+                        <PropertyRef Name="ObjectGuid"/>
+                    </Principal>
+                    <Dependent Role="ToRole_ResourceToAssignments">
+                        <PropertyRef Name="ResourceGuid"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <EntityContainer Name="com_evorait_evoplan_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="ResourceHierarchySet" EntityType="com.evorait.evoplan.ResourceHierarchy" sap:content-version="1"/>
                 <EntitySet Name="AssignmentSet" EntityType="com.evorait.evoplan.Assignment" sap:content-version="1"/>
+                <EntitySet Name="StatusTextsSet" EntityType="com.evorait.evoplan.StatusTexts" sap:content-version="1"/>
                 <EntitySet Name="DemandSet" EntityType="com.evorait.evoplan.Demand" sap:content-version="1"/>
-                <EntitySet Name="ResourceGroupSet" EntityType="com.evorait.evoplan.ResourceGroup"
-                           sap:content-version="1"/>
+                <EntitySet Name="ResourceGroupSet" EntityType="com.evorait.evoplan.ResourceGroup" sap:content-version="1"/>
                 <EntitySet Name="ResourceSet" EntityType="com.evorait.evoplan.Resource" sap:content-version="1"/>
-                <AssociationSet Name="ResourceGroupToResourcesSet"
-                                Association="com.evorait.evoplan.ResourceGroupToResources" sap:creatable="false"
-                                sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                <AssociationSet Name="DemandToAssignmentSet" Association="com.evorait.evoplan.DemandToAssignment" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="DemandSet" Role="FromRole_DemandToAssignment"/>
+                    <End EntitySet="AssignmentSet" Role="ToRole_DemandToAssignment"/>
+                </AssociationSet>
+                <AssociationSet Name="ResourceToAssignmentsSet" Association="com.evorait.evoplan.ResourceToAssignments" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="ResourceSet" Role="FromRole_ResourceToAssignments"/>
+                    <End EntitySet="AssignmentSet" Role="ToRole_ResourceToAssignments"/>
+                </AssociationSet>
+                <AssociationSet Name="ResourceGroupToResourcesSet" Association="com.evorait.evoplan.ResourceGroupToResources" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
                     <End EntitySet="ResourceGroupSet" Role="FromRole_ResourceGroupToResources"/>
                     <End EntitySet="ResourceSet" Role="ToRole_ResourceGroupToResources"/>
                 </AssociationSet>
-                <AssociationSet Name="ResourceToResourceGroupSet"
-                                Association="com.evorait.evoplan.ResourceToResourceGroup" sap:creatable="false"
-                                sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                <AssociationSet Name="ResourceGroupToAssignmentSet" Association="com.evorait.evoplan.ResourceGroupToAssignment" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="ResourceGroupSet" Role="FromRole_ResourceGroupToAssignment"/>
+                    <End EntitySet="AssignmentSet" Role="ToRole_ResourceGroupToAssignment"/>
+                </AssociationSet>
+                <AssociationSet Name="ResourceToResourceGroupSet" Association="com.evorait.evoplan.ResourceToResourceGroup" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
                     <End EntitySet="ResourceSet" Role="FromRole_ResourceToResourceGroup"/>
                     <End EntitySet="ResourceGroupSet" Role="ToRole_ResourceToResourceGroup"/>
                 </AssociationSet>
-                <FunctionImport Name="CreateAssignment" ReturnType="com.evorait.evoplan.Assignment"
-                                EntitySet="AssignmentSet" m:HttpMethod="POST"
-                                sap:action-for="com.evorait.evoplan.Resource">
+                <FunctionImport Name="CreateAssignment" ReturnType="com.evorait.evoplan.Assignment" EntitySet="AssignmentSet" m:HttpMethod="POST" sap:action-for="com.evorait.evoplan.Assignment">
+                    <Parameter Name="TimeTo" Type="Edm.Time" Mode="In" Precision="0"/>
                     <Parameter Name="DemandGuid" Type="Edm.String" Mode="In"/>
                     <Parameter Name="ResourceGroupGuid" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="ResourceGuid" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="TimeFrom" Type="Edm.Time" Mode="In" Precision="0"/>
+                    <Parameter Name="ResourceGuid" Type="Edm.String" Mode="In" Nullable="true"/>
                     <Parameter Name="DateFrom" Type="Edm.DateTime" Mode="In" Precision="0"/>
                     <Parameter Name="DateTo" Type="Edm.DateTime" Mode="In" Precision="0"/>
-                    <Parameter Name="TimeFrom" Type="Edm.Time" Mode="In" Precision="0"/>
-                    <Parameter Name="TimeTo" Type="Edm.Time" Mode="In" Precision="0"/>
                 </FunctionImport>
             </EntityContainer>
-            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="self"
-                       href="https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/$metadata"/>
-            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="latest-version"
-                       href="https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/$metadata"/>
+            <Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="EP_MAIN_SRV.Demand">
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="Guid"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ExtKey"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="Source"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="DemandDesc"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="DateFrom"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="TimeFrom"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="DateTo"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="TimeTo"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="UserStatusShortText"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="UserStatusLongText"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="EFFORT"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="EFFORT_UNIT"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="OBJNR"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ADRNR"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="NAME1"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="NAME2"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="NAME3"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="NAME4"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="SMTP_ADDR"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="TEL_NUMBER"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="POST_CODE1"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="CITY1"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="DISTRICT"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="COUNTRY"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="REGION"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="STREET"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="HOUSE_NUM1"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="BUILDING"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="LOCATION"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="LATITUDE"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="LONGITUDE"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="GEO_SOURCE"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ALTITUDE"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="FLOOR"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection/>
+                </Annotation>
+            </Annotations>
+            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="self" href="https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/$metadata"/>
+            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="latest-version" href="https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/$metadata"/>
         </Schema>
     </edmx:DataServices>
 </edmx:Edmx>
