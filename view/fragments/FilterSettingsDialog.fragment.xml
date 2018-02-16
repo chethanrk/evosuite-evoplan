@@ -13,10 +13,10 @@
                     key="View"
                     multiSelect="false">
                 <items>
-                    <ViewSettingsItem text="Daily" key="TIMEDAY" />
-                    <ViewSettingsItem text="Weekly" key="TIMEWEEK"/>
-                    <ViewSettingsItem text="Monthly" key="TIMEMONTH" />
-                    <ViewSettingsItem text="Simple" key="TIMENONE" />
+                    <ViewSettingsItem text="{i18n>xfld.viewFilterDaily}" key="TIMEDAY" />
+                    <ViewSettingsItem text="{i18n>xfld.viewFilterWeek}" key="TIMEWEEK"/>
+                    <ViewSettingsItem text="{i18n>xfld.viewFilterMonth}" key="TIMEMONTH" />
+                    <ViewSettingsItem text="{i18n>xfld.viewFilterNone}" key="TIMENONE" />
                 </items>
             </ViewSettingsFilterItem>
 

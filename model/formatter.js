@@ -84,6 +84,13 @@ sap.ui.define([
                 return iconFormat.icon || "";
             }
             return "";
+        },
+
+        isAssignment: function (sValue) {
+            if(sValue === "ASSIGNMENT"){
+                return true;
+            }
+            return false;
         }
 
 

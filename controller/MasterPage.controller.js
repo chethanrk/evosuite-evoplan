@@ -6,7 +6,7 @@ sap.ui.define([
     "sap/ui/model/FilterType",
     "sap/m/Token",
     "com/evorait/evoplan/model/formatter",
-    "com/evorait/evoplan/controller/BaseController",
+    "com/evorait/evoplan/controller/BaseController"
 ], function(Device, JSONModel, Filter, FilterOperator, FilterType, Token, formatter, BaseController) {
     "use strict";
 
@@ -22,10 +22,12 @@ sap.ui.define([
 
         defaultViewSelected: "TIMENONE",
 
+        assignmentPath: null,
+
         /**
         * Called when a controller is instantiated and its View controls (if available) are already created.
         * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
-        * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
+        **/
         onInit: function() {
             this._oDroppableTable = this.byId("droppableTable");
             this._oDataTable = this._oDroppableTable;
@@ -94,6 +96,7 @@ sap.ui.define([
         },
 
         /**
+         * search on searchfield in header
          * @param oEvent
          */
         onSearchResources : function (oEvent) {
@@ -144,7 +147,7 @@ sap.ui.define([
         },
 
         /**
-         *  on multiinput changed
+         * on multiinput changed in filter settings dialog
          * @param oEvent
          */
         onChangeGroupFilter: function (oEvent) {
@@ -157,7 +160,7 @@ sap.ui.define([
         },
 
         /**
-         * on date input changed
+         * on date input changed in filter settings dialog
          * @param oEvent
          */
         onChangeDateRangeFilter: function (oEvent) {
@@ -177,6 +180,10 @@ sap.ui.define([
             }
         },
 
+        /**
+         * on select checkbox in resource tree row
+         * @param oEvent
+         */
         onCheckResource: function (oEvent) {
             var oSource = oEvent.getSource();
             var parent = oSource.getParent();
@@ -189,6 +196,10 @@ sap.ui.define([
             }
         },
 
+        /**
+         * button press in footer show dialog planning calendar
+         * @param oEvent
+         */
         onPressShowPlanningCal: function (oEvent) {
             if (!this._oPlanningCalDialog) {
                 this._oPlanningCalDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceCalendarDialog", this);
@@ -197,14 +208,37 @@ sap.ui.define([
             this._oPlanningCalDialog.open();
         },
 
-        onCalendarModalCancel: function (oEvent) {
-            this._oPlanningCalDialog.close();
+        /**
+         * on press cancel in dialog close it
+         * @param oEvent
+         */
+        onModalCancel: function (oEvent) {
+            if (this._oPlanningCalDialog) {
+                this._oPlanningCalDialog.close();
+            }
+        },
+
+        /**
+         * on press link of assignment in resource tree row
+         * get parent row path and bind this path to the dialog or showing assignment information
+         * @param oEvent
+         */
+        onPressAssignmentLink: function (oEvent) {
+            var oSource = oEvent.getSource(),
+                oRowContext = oSource.getParent().getBindingContext();
+
+            if(oRowContext) {
+                this.assignmentPath = oRowContext.getPath();
+                this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath);
+            }else{
+                var msg = this.getResourceBundle().getText("notFoundContext");
+                this.showMessageToast(msg);
+            }
         },
 
         /**
          * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
-         * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage
-         **/
+         */
         onExit: function() {
             if(this._oFilterSettingsDialog){
                 this._oFilterSettingsDialog.destroy();
@@ -217,6 +251,12 @@ sap.ui.define([
         /* =========================================================== */
         /* internal methods                                            */
         /* =========================================================== */
+
+        /**
+         * configure tree table
+         * @param oDataTable
+         * @private
+         */
         _configureDataTable : function (oDataTable) {
             oDataTable.setEnableBusyIndicator(true);
             oDataTable.setSelectionMode('None');
@@ -229,6 +269,10 @@ sap.ui.define([
             //oDataTable.attachFilter(this.onFilterChanged, this);
         },
 
+        /**
+         * init custom smart variant management and add filter controls to it
+         * @private
+         */
         _initialCustomVariant: function () {
             var oVariant = this.byId("customResourceVariant");
             this._initFilterDialog();
@@ -240,7 +284,7 @@ sap.ui.define([
         },
 
         /**
-         * set default filter
+         * set default filter for resource tree
          * @private
          */
         _initFilterDialog: function () {
@@ -273,9 +317,6 @@ sap.ui.define([
          * @private
          */
         _triggerFilterSearch: function () {
-            //tree list
-            //var binding = this._oDataTable.getBinding("items");
-            //tree table
             var binding = this._oDataTable.getBinding("rows");
             var aFilters = this._getAllFilters();
             binding.filter(aFilters, "Application");
@@ -348,6 +389,10 @@ sap.ui.define([
             return  resourceFilter;
         },
 
+        /**
+         * set filter date range before first request in filter settings dialog
+         * @private
+         */
         _setDefaultFilterDateRange: function () {
             //set default date range from 1month
             var d = new Date();
@@ -364,6 +409,10 @@ sap.ui.define([
             this.onChangeDateRangeFilter();
         },
 
+        /**
+         * set filter for view before first request in filter settings dialog
+         * @private
+         */
         _setDefaultFilterView: function () {
             var oViewFilterItems = this._filterSelectView.getItems();
             for (var i = 0; i < oViewFilterItems.length; i++) {

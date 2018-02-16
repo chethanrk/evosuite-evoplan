@@ -10,7 +10,14 @@ sap.ui.define([
                 /**
                  * Defines the URL for icon display
                  */
-                icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null}
+                icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
+                isLink : {type : "boolean", group : "Misc", defaultValue : false},
+            },
+            events: {
+                /**
+                 * This event is fired when click on title.
+                 */
+                press : {allowPreventDefault : true}
             }
         },
         renderer: function(oRm, oControl){
@@ -19,7 +26,9 @@ sap.ui.define([
             var oAssoTitle = oControl._getTitle(),
                 sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oControl.getLevel()) || sap.ui.core.TitleLevel.Auto,
                 bAutoLevel = sLevel == sap.ui.core.TitleLevel.Auto,
-                sTag = bAutoLevel ? "div" : sLevel;
+                sTag = bAutoLevel ? "div" : sLevel,
+                isLink = oControl.getProperty("isLink"),
+                titleText = oAssoTitle ? oAssoTitle.getText() : oControl.getText();
 
             oRm.write("<", sTag);
             oRm.writeControlData(oControl);
@@ -44,13 +53,15 @@ sap.ui.define([
                 oRm.addClass("sapMTitleTB");
             }
 
-            var sTooltip = oAssoTitle ? oAssoTitle.getTooltip_AsString() : oControl.getTooltip_AsString();
-            if (sTooltip) {
-                oRm.writeAttributeEscaped("title", sTooltip);
-            }
+            oRm.writeAttributeEscaped("title", titleText);
 
             if (bAutoLevel) {
                 oRm.writeAttribute("role", "heading");
+            }
+
+            //when link mode is set
+            if(isLink){
+                oRm.addClass("sapUiLnk");
             }
 
             oRm.writeClasses();
@@ -74,18 +85,51 @@ sap.ui.define([
             oRm.writeStyles();
             oRm.write("></span>");
 
+            //when link mode is set
+            if(isLink){
+                oRm.write("<a");
+                oRm.addClass("sapMLnk");
+                oRm.writeClasses();
+                oRm.writeAttribute("href", "#");
+                oRm.writeAttributeEscaped("title", titleText);
+            }
+
             //title
             oRm.write("<span");
             oRm.writeAttribute("id", oControl.getId() + "-inner");
             oRm.write(">");
-            oRm.writeEscaped(oAssoTitle ? oAssoTitle.getText() : oControl.getText());
-            oRm.write("</span></", sTag, ">");
+            oRm.writeEscaped(titleText);
+            oRm.write("</span>");
+
+            //when link mode is set
+            if(isLink){
+                oRm.write("</a>");
+            }
+
+            oRm.write("</", sTag, ">");
         }
     });
 
     CustomTitle.prototype.setIcon = function(sUrl){
         this.setProperty("icon", sUrl);
     };
+
+    CustomTitle.prototype.setIsLink = function(bool){
+        this.setProperty("isLink", bool);
+    };
+
+    CustomTitle.prototype._handlePress = function (oEvent) {
+        oEvent.setMarked();
+        if (!this.firePress()) { // fire event and check return value whether default action should be prevented
+            oEvent.preventDefault();
+        }
+    };
+
+    if (sap.ui.Device.support.touch) {
+        CustomTitle.prototype.ontap = CustomTitle.prototype._handlePress;
+    } else {
+        CustomTitle.prototype.onclick = CustomTitle.prototype._handlePress;
+    }
 
     return CustomTitle;
 });

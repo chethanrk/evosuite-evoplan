@@ -103,22 +103,11 @@ sap.ui.define([
             onAssignButtonPress : function (oEvent) {
                 this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
                 if(this._aSelectedRowsIdx.length > 0){
-                    if (!this._oAssignDialog) {
-                        this._oAssignDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.AssignSelectDialog", this);
-                        this.getView().addDependent(this._oAssignDialog);
-                    }
-                    this._oAssignDialog.open();
+                    this.getOwnerComponent().assignTreeDialog.open(this.getView(), false);
 				}else{
                     var msg = this.getResourceBundle().getText('ymsg.selectMinItem');
                     MessageToast.show(msg);
 				}
-            },
-
-            refreshDialogTable: function (oEvent) {
-                var oTable = sap.ui.getCore().byId("assignModalTable");
-                var binding = oTable.getBinding("rows");
-                var aFilters = this.getModel("viewModel").getProperty("/resourceFilterAll");
-                binding.filter(aFilters, "Application");
             },
 
             /**
@@ -143,44 +132,12 @@ sap.ui.define([
                 binding.filter(resourceFilter, "Application");
             },
 
-            /**
-             *
-             * @param oEvent
-             */
-            onSelectionChangeAssignModal : function (oEvent) {
-                var oContext = oEvent.getParameter("rowContext");
-                this._assignPath = oContext.sPath;
-            },
-
-            /**
-             *
-             * @param oEvent
-             */
-            onAssignModalSave : function (oEvent) {
-                if(this._assignPath){
-                    var selectedIdx = this._oDataTable.getSelectedIndices();
-                    var selectedPaths = this._getSelectedRowPaths(selectedIdx);
-                    this.assignedDemands(selectedPaths, this._assignPath);
-                    this._oAssignDialog.close();
-                }else{
-                     //Todo: show error msg
-                }
-            },
-
-            /**
-             *
-             * @param oEvent
-             */
-            onAssignModalCancel : function (oEvent) {
-                this._oAssignDialog.close();
-            },
-
             onChangeStatusButtonPress : function (oEvent) {
                 this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
                 if(this._aSelectedRowsIdx.length > 0){
                     if (!this._oStatusDialog) {
                         this._oStatusDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.StatusSelectDialog", this);
-                        this.getView().addDependent(this._oAssignDialog);
+                        this.getView().addDependent(this._oStatusDialog);
                     }
                     this._oStatusDialog.open();
                 }else{
@@ -194,9 +151,6 @@ sap.ui.define([
             },
 
             onExit: function() {
-                if(this._oAssignDialog){
-                    this._oAssignDialog.destroy();
-                }
                 if(this._oStatusDialog){
                     this._oStatusDialog.destroy();
                 }
@@ -232,29 +186,6 @@ sap.ui.define([
             },
 
             /**
-			 * get all selected rows from table and return to draggable helper function
-             * @param aSelectedRowsIdx
-             * @private
-             */
-            _getSelectedRowPaths : function (aSelectedRowsIdx) {
-            	var aPathsData = [];
-                this.multiSelect = false;
-
-                for (var i=0; i<aSelectedRowsIdx.length; i++) {
-					var oContext = this._oDataTable.getContextByIndex(aSelectedRowsIdx[i]);
-					var sPath = oContext.getPath();
-                    aPathsData.push({
-						sPath: sPath,
-						oData: this.getModel().getProperty(sPath)
-					});
-                }
-                if(aPathsData.length > 0){
-                    this.multiSelect = true;
-				}
-				return aPathsData;
-            },
-
-            /**
 			 * deselect all checkboxes in table
              * @private
              */
@@ -270,8 +201,10 @@ sap.ui.define([
              */
 			_jDraggable : function (_this) {
 				setTimeout(function() {
-                    var draggableTableId = _this._oDraggableTable.getId(); // sapUiTableRowHdr
-                    var aPathsData = [];
+                    var draggableTableId = _this._oDraggableTable.getId(), // sapUiTableRowHdr
+                        aPathsData = [];
+
+
                     //checkbox is not inside tr so needs to select by class .sapUiTableRowHdr
                     var jDragElement = $("#"+draggableTableId+" tbody tr, #"+draggableTableId+" .sapUiTableRowHdr")
                         .not(".sapUiTableColHdrTr, .sapUiTableRowHidden");
@@ -298,13 +231,13 @@ sap.ui.define([
 
                             //get all selected rows
                             if(selectedIdx.length > 0){
-                                aPathsData = _this._getSelectedRowPaths(selectedIdx);
+                                aPathsData = _this._getSelectedRowPaths(_this.getModel(), _this._oDataTable, selectedIdx);
                             }
                             if(!_this.multiSelect){
                                 //single drag by checkbox row index
                             	if(targetDataCheckbox >= 0){
                                     selectedIdx = [targetDataCheckbox];
-                                    aPathsData = _this._getSelectedRowPaths(selectedIdx);
+                                    aPathsData = _this._getSelectedRowPaths(_this.getModel(), _this._oDataTable, selectedIdx);
 								}else{
                                     //table tr single dragged element
                                     aPathsData = _this._getSingleDraggedElement(target.attr('id'));

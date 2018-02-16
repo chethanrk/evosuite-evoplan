@@ -5,14 +5,12 @@ sap.ui.define([
 		"sap/m/Dialog",
 		"sap/m/Button",
 		"sap/m/Text",
-		"sap/m/MessageToast",
-		"sap/ui/model/Filter",
-		"sap/ui/model/FilterOperator",
-		'sap/ui/model/json/JSONModel'
-	], function (Controller, History, Dialog, Button, Text, MessageToast, Filter, FilterOperator, JSONModel) {
+		"sap/m/MessageToast"
+	], function (Controller, History, Dialog, Button, Text, MessageToast) {
 		"use strict";
 
 		return Controller.extend("com.evorait.evoplan.controller.BaseController", {
+
 			/**
 			 * Convenience method for accessing the router in every controller of the application.
 			 * @public
@@ -28,7 +26,10 @@ sap.ui.define([
 			 * @param {string} sName the model name
 			 * @returns {sap.ui.model.Model} the model instance
 			 */
-			getModel : function (sName) {
+			getModel : function (sName, oView) {
+				if(oView){
+                    return oView.getModel(sName);
+				}
 				return this.getView().getModel(sName);
 			},
 
@@ -75,12 +76,15 @@ sap.ui.define([
                 return this.getGlobalModel().getProperty("/application");
             },
 
-			
+			showMessageToast: function (sMsg) {
+                MessageToast.show(sMsg, {duration: 5000});
+            },
+
 			/**
 			 * on Success of oData call capture messages
 			 * 
 			 */
-			onSuccess: function(oData, errMsg, oMsgModel) {
+            onSuccessAssignment: function(oData, errMsg, oMsgModel) {
 				 var sMsg = "";
 				 var sMessages = [];
 				 var count_err = 0, count_war = 0, count_suc = 0, counter = 0;
@@ -115,7 +119,7 @@ sap.ui.define([
 				if(sMsg === ""){
 					sMsg = "Assignment Successfull";
 				}
-		 		MessageToast.show(sMsg, {duration: 5000});
+		 		this.showMessageToast(sMsg)
 			},
 			
 			/**
@@ -144,44 +148,120 @@ sap.ui.define([
              * @param aSourcePaths
              * @param sTargetPath
              */
-            assignedDemands: function (aSourcePaths, sTargetPath) {
-				var oModel = this.getModel(),
-                    eventBus = sap.ui.getCore().getEventBus(),
-					targetObj = oModel.getProperty(sTargetPath),
-                	oMsgModel = sap.ui.getCore().getModel("MessageSetModel");
-
-				oMsgModel.setData({modelData:{}});
-				oMsgModel.updateBindings(true);
+            assignedDemands: function (aSourcePaths, sTargetPath, oModel) {
+            	var oModel = oModel || this.getModel();
+				var targetObj = oModel.getProperty(sTargetPath);
 
                 for(var i = 0; i < aSourcePaths.length; i++) {
                     var obj = aSourcePaths[i],
                     	demandObj = oModel.getProperty(obj.sPath),
                     	oParams = {
-							"DateFrom" : targetObj.StartDate || 0,
-							"DateTo" :  targetObj.EndDate || 0,
 							"DemandGuid" : demandObj.Guid,
 							"ResourceGroupGuid" : targetObj.ResourceGroupGuid,
-							"ResourceGuid" : targetObj.ResourceGuid,
-							"TimeFrom" : targetObj.StartTime,
-							"TimeTo" : targetObj.EndTime
+							"ResourceGuid" : targetObj.ResourceGuid
 						};
 
-                    oModel.callFunction("/CreateAssignment", {
-                        method: "POST",
-                        urlParameters: oParams,
-                        success: function(oData, oResponse){
-                            //Handle Success
-							 var errMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData();
-							 this.onSuccess(oData, errMsg, oMsgModel);
-							 eventBus.publish("BaseController", "refreshTable", {});
-                        }.bind(this),
-                        error: function(oError){
-                        	//Handle Error
-                            this.onError(oError, oMsgModel);
-                        }.bind(this)
+                    if(targetObj.StartDate){
+                    	oParams.DateFrom = targetObj.StartDate;
+                    	oParams.TimeFrom = targetObj.StartTime;
+					}
+					if(targetObj.EndDate){
+                    	oParams.DateTo = targetObj.EndDate;
+                    	oParams.TimeTo = targetObj.EndTime;
+					}
+                    this.callFunctionImport(oParams, "CreateAssignment", "POST", oModel);
+                }
+			},
+
+            /**
+			 * update assignment
+             * @param sPath
+             */
+			updateAssignment: function (oAssignModel, isReassign, oModel) {
+				var oData = oAssignModel.oData,
+                    sAssignmentGUID = oData.AssignmentGuid;
+
+                var oParams = {
+                    "DateFrom" : oData.DateFrom || 0,
+					"TimeFrom" : { __edmtype: "Edm.Time", ms: oData.DateFrom.getTime()},
+                    "DateTo" :  oData.DateTo || 0,
+					"TimeTo" : { __edmtype: "Edm.Time", ms: oData.DateTo.getTime()},
+                    "AssignmentGUID" : sAssignmentGUID,
+                    "EffortUnit" : oData.EffortUnit,
+                    "Effort" : oData.Effort
+                };
+
+                if(isReassign){
+                	var oResource = oModel.getProperty(oData.NewAssignPath);
+                    oParams.ResourceGroupGuid = oResource.ResourceGroupGuid;
+                    oParams.ResourceGuid = oResource.ResourceGuid;
+				}
+                this.callFunctionImport(oParams, "UpdateAssignment", "POST", oModel);
+            },
+
+            /**
+			 * delete assignment
+             * @param sPath
+             */
+			deleteAssignment: function (sId, oModel) {
+				var oParams = {
+					"AssignmentGUID" : sId
+				};
+                this.callFunctionImport(oParams, "DeleteAssignment", "POST", oModel);
+            },
+
+            /**
+			 * send oData request of FunctionImport
+             * @param oParams
+             * @param sFuncName
+             * @param sMethod
+             */
+			callFunctionImport: function (oParams, sFuncName, sMethod, oModel) {
+                var eventBus = sap.ui.getCore().getEventBus(),
+                    oMsgModel = sap.ui.getCore().getModel("MessageSetModel"),
+                	oModel = oModel || this.getModel();
+
+                oMsgModel.setData({modelData:{}});
+                oMsgModel.updateBindings(true);
+
+                oModel.callFunction("/"+sFuncName, {
+                    method: sMethod || "POST",
+                    urlParameters: oParams,
+                    success: function(oData, oResponse){
+                        //Handle Success
+                        var errMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData();
+                        this.onSuccessAssignment(oData, errMsg, oMsgModel);
+                        eventBus.publish("BaseController", "refreshTable", {});
+                    }.bind(this),
+                    error: function(oError){
+                        //Handle Error
+                        this.onError(oError, oMsgModel);
+                    }.bind(this)
+                });
+            },
+
+            /**
+             * get all selected rows from table and return to draggable helper function
+             * @param aSelectedRowsIdx
+             * @private
+             */
+            _getSelectedRowPaths : function (oModel, oTable, aSelectedRowsIdx) {
+                var aPathsData = [];
+                this.multiSelect = false;
+
+                for (var i=0; i<aSelectedRowsIdx.length; i++) {
+                    var oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
+                    var sPath = oContext.getPath();
+                    aPathsData.push({
+                        sPath: sPath,
+                        oData: oModel.getProperty(sPath)
                     });
                 }
-			}
+                if(aPathsData.length > 0){
+                    this.multiSelect = true;
+                }
+                return aPathsData;
+            },
 		});
 
 	}
