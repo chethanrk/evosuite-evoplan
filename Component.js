@@ -147,8 +147,10 @@ sap.ui.define([
 				 var oData= oMessageModel.getData();
 				 var oResourceBundle = this.getModel("i18n").getResourceBundle();
 				 
-				 if(oData.length === 0)
+				 if(oData.length === 0){
+				 	oMessageModel.setData([]);
 					return;
+				 }
 					
 		 		 for( var i = 0; i < oData.length; i++){
 		 		 	var item = {};

@@ -117,7 +117,7 @@ sap.ui.define([
 				eventBus = sap.ui.getCore().getEventBus(),
 				targetObj = oModel.getProperty(sTargetPath),
 				oResourceBundle = this.getResourceBundle();
-
+			sap.ui.getCore().getMessageManager().removeAllMessages(); // removing existing messages in message model
 			for (var i = 0; i < aSourcePaths.length; i++) {
 				var obj = aSourcePaths[i],
 					demandObj = oModel.getProperty(obj.sPath),
