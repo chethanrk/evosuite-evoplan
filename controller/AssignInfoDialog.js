@@ -7,9 +7,6 @@ sap.ui.define([
 
     return BaseController.extend("com.evorait.evoplan.controller.AssignInfoDialog", {
 
-        reassignKey: "REASSIGN",
-        unassignKey: "UNASSIGN",
-
 
         init: function () {
             var eventBus = sap.ui.getCore().getEventBus();
@@ -44,7 +41,7 @@ sap.ui.define([
                     Description: oResource.Description,
                     AllowReassign: false,
                     AllowUnassign: false,
-                    assignPath: null,
+                    NewAssignPath: null,
                     NewAssignId: null,
                     NewAssignDesc: null,
                     isNewAssignment: false
@@ -76,7 +73,13 @@ sap.ui.define([
          * @param oEvent
          */
         onSaveDialog : function (oEvent) {
-            this.updateAssignment(this.oAssignmentModel, this.unAssign, this.reAssign, this._oView.getModel());
+            this.updateAssignment(this.oAssignmentModel, this.reAssign, this._oView.getModel());
+            this.onCloseDialog();
+        },
+
+        onDeleteAssignment : function (oEvent) {
+            var sId = this.oAssignmentModel.getProperty("/AssignmentGuid");
+            this.deleteAssignment(sId, this._oView.getModel());
             this.onCloseDialog();
         },
 
@@ -85,19 +88,16 @@ sap.ui.define([
          * @param oEvent
          */
         onChangeAssignType: function (oEvent) {
-            var oSource = oEvent.getSource(),
-                selectedKey = oSource.getSelectedKey(),
+            var oParams = oEvent.getParameters(),
                 reassignBtn = sap.ui.getCore().byId("reassignDialogButton");
 
-            this.reAssign = selectedKey === this.reassignKey;
-            this.unAssign = selectedKey === this.unassignKey;
+            this.reAssign = oParams.selected;
             reassignBtn.setEnabled(this.reAssign);
 
             if(!this.reAssign){
-                this.oAssignmentModel.setProperty("/assignPath", null);
+                this.oAssignmentModel.setProperty("/NewAssignPath", null);
                 this.oAssignmentModel.setProperty("/NewAssignId", null);
                 this.oAssignmentModel.setProperty("/NewAssignDesc", null);
-                this.oAssignmentModel.setProperty("/isNewAssignment", false);
             }
         },
 
@@ -222,10 +222,9 @@ sap.ui.define([
         _showNewAssignment: function (sChanel, sEvent, oData) {
             if(sEvent === "selectedAssignment"){
                 var oNewAssign = this._oView.getModel().getProperty(oData.sPath);
-                this.oAssignmentModel.setProperty("/assignPath", oData.sPath);
+                this.oAssignmentModel.setProperty("/NewAssignPath", oData.sPath);
                 this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid);
                 this.oAssignmentModel.setProperty("/NewAssignDesc", oNewAssign.Description);
-                this.oAssignmentModel.setProperty("/isNewAssignment", true);
             }
         }
     });

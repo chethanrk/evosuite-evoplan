@@ -177,14 +177,9 @@ sap.ui.define([
 			 * update assignment
              * @param sPath
              */
-			updateAssignment: function (oAssignModel, isUnassign, isReassign, oModel) {
+			updateAssignment: function (oAssignModel, isReassign, oModel) {
 				var oData = oAssignModel.oData,
                     sAssignmentGUID = oData.AssignmentGuid;
-
-                if(isUnassign){
-                	this.deleteAssignment(sAssignmentGUID, oModel);
-					return;
-				}
 
                 var oParams = {
                     "DateFrom" : oData.DateFrom || 0,
@@ -197,7 +192,7 @@ sap.ui.define([
                 };
 
                 if(isReassign){
-                	var oResource = oModel.getProperty(oData.assignPath);
+                	var oResource = oModel.getProperty(oData.NewAssignPath);
                     oParams.ResourceGroupGuid = oResource.ResourceGroupGuid;
                     oParams.ResourceGuid = oResource.ResourceGuid;
 				}

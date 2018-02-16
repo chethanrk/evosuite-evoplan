@@ -64,36 +64,29 @@
                            name="effortUnit"
                            value="{assignment>/EffortUnit}"/>
 
-                    <Label text="{i18n>xfld.assign}" />
-                    <ComboBox id="assignDialogComboBox"
-                            name="Assign"
-                            change="onChangeAssignType">
-                        <core:ListItem key="UNASSIGN"
-                                       text="Unassign"
-                                       enabled="{assignment>/AllowUnassign}"/>
-                        <core:ListItem key="REASSIGN"
-                                       text="Reassign"
-                                       enabled="{assignment>/AllowReassign}"/>
-                    </ComboBox>
+                    <Label text="{i18n>xfld.newAssign}" />
+                    <CheckBox enabled="{assignment>/AllowReassign}"
+                              select="onChangeAssignType"
+                              selected="{assignment>/isNewAssignment}"/>
+
                     <Button id="reassignDialogButton"
                             text="{i18n>xbut.selectResource}"
                             press="onPressReAssign"
                             enabled="false"/>
 
-                    <Label text="{i18n>xfld.newAssign}" visible="{assignment>/isNewAssignment}" />
+                    <Label text="{i18n>xfld.newAssignment}" visible="{assignment>/isNewAssignment}" />
                     <Text text="{assignment>/NewAssignDesc}" visible="{assignment>/isNewAssignment}"/>
                 </form:content>
             </form:SimpleForm>
 
         </content>
 
-        <beginButton>
+        <buttons>
             <Button text="{i18n>xbut.buttonClose}" press="onCloseDialog" />
-        </beginButton>
-
-        <endButton>
+            <Button text="{i18n>xbut.buttonUnassign}" type="Reject" press="onDeleteAssignment" />
             <Button text="{i18n>xbut.buttonSave}" type="Emphasized" press="onSaveDialog" />
-        </endButton>
+        </buttons>
+
     </Dialog>
 
 </core:FragmentDefinition>
