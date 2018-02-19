@@ -179,9 +179,10 @@ sap.ui.define([
          */
         _getAssignResource: function (resId) {
             var oData = this._getResourceInfo(resId);
-
-            this.oAssignmentModel.setProperty("/ResourceGuid", resId);
-            this.oAssignmentModel.setProperty("/ResourceDesc", oData.Description);
+            if(oData){
+                this.oAssignmentModel.setProperty("/ResourceGuid", resId);
+                this.oAssignmentModel.setProperty("/ResourceDesc", oData.Description);
+            }
         },
 
         /**
@@ -191,9 +192,10 @@ sap.ui.define([
          */
         _getAssignResourceGroup: function (groupId) {
             var oData = this._getResourceInfo(groupId);
-
-            this.oAssignmentModel.setProperty("/ResourceGroupGuid", groupId);
-            this.oAssignmentModel.setProperty("/ResourceGroupDesc", oData.Description);
+            if(oData){
+                this.oAssignmentModel.setProperty("/ResourceGroupGuid", groupId);
+                this.oAssignmentModel.setProperty("/ResourceGroupDesc", oData.Description);
+            }
         },
 
         /**
