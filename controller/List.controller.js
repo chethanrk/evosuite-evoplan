@@ -54,6 +54,10 @@ sap.ui.define([
 			this._configureDataTable(this._oDataTable);
 			this._aSelectedRowsIdx = [];
 			this.getView().addDependent(oMessagePopover);
+
+
+            var eventBus = sap.ui.getCore().getEventBus();
+            eventBus.subscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
 		},
 
 		/* =========================================================== */
@@ -289,6 +293,12 @@ sap.ui.define([
                     helperTemplate.append(item);
                 }
                 return helperTemplate;
+            },
+
+            _triggerSaveAssignment: function (sChanel, sEvent, oData) {
+                if(sEvent === "assignSelectedDemand"){
+                    this.assignedDemands(oData.selectedPaths, oData.assignPath);
+                }
             }
 		});
 	}

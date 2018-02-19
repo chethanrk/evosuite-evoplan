@@ -67,8 +67,9 @@ sap.ui.define([
          */
         onSaveDialog : function (oEvent) {
             if(this._assignPath){
+                var eventBus = sap.ui.getCore().getEventBus();
+
                 if(this._reAssign){
-                    var eventBus = sap.ui.getCore().getEventBus();
                     eventBus.publish("AssignTreeDialog", "selectedAssignment", {
                         sPath: this._assignPath
                     });
@@ -79,10 +80,13 @@ sap.ui.define([
                 if(this._oDataTable){
                     var selectedIdx = this._oDataTable.getSelectedIndices();
                     var selectedPaths = this._getSelectedRowPaths(this._oView.getModel(), this._oDataTable, selectedIdx);
-                    this.assignedDemands(selectedPaths, this._assignPath, this._oView.getModel());
+
+                    eventBus.publish("AssignTreeDialog", "assignSelectedDemand", {
+                        selectedPaths: selectedPaths,
+                        assignPath: this._assignPath
+                    });
                     this.onCloseDialog();
                     return;
-
                 }
                 //show error message
                 var msg = this.getResourceBundle().getText("notFoundContext");

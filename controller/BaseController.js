@@ -135,8 +135,8 @@ sap.ui.define([
              * @param aSourcePaths
              * @param sTargetPath
              */
-            assignedDemands: function (aSourcePaths, sTargetPath, oModel) {
-            	var oModel = oModel || this.getModel();
+            assignedDemands: function (aSourcePaths, sTargetPath) {
+            	var oModel = this.getModel();
 				var targetObj = oModel.getProperty(sTargetPath);
 
                 for(var i = 0; i < aSourcePaths.length; i++) {
@@ -156,7 +156,7 @@ sap.ui.define([
                     	oParams.DateTo = targetObj.EndDate;
                     	oParams.TimeTo = targetObj.EndTime;
 					}
-                    this.callFunctionImport(oParams, "CreateAssignment", "POST", oModel);
+                    this.callFunctionImport(oParams, "CreateAssignment", "POST");
                 }
 			},
 
@@ -164,8 +164,8 @@ sap.ui.define([
 			 * update assignment
              * @param sPath
              */
-			updateAssignment: function (oAssignModel, isReassign, oModel) {
-				var oData = oAssignModel.oData,
+			updateAssignment: function (oAssignModel, isReassign) {
+				var oData = this.getModel("assignment").oData,
                     sAssignmentGUID = oData.AssignmentGuid;
 
                 var oParams = {
@@ -178,23 +178,23 @@ sap.ui.define([
                     "Effort" : oData.Effort
                 };
 
-                if(isReassign){
-                	var oResource = oModel.getProperty(oData.NewAssignPath);
+                if(isReassign && oData.NewAssignPath){
+                    var oResource = this.getModel().getProperty(oData.NewAssignPath);
                     oParams.ResourceGroupGuid = oResource.ResourceGroupGuid;
                     oParams.ResourceGuid = oResource.ResourceGuid;
 				}
-                this.callFunctionImport(oParams, "UpdateAssignment", "POST", oModel);
+                this.callFunctionImport(oParams, "UpdateAssignment", "POST");
             },
 
             /**
 			 * delete assignment
              * @param sPath
              */
-			deleteAssignment: function (sId, oModel) {
+			deleteAssignment: function (sId) {
 				var oParams = {
 					"AssignmentGUID" : sId
 				};
-                this.callFunctionImport(oParams, "DeleteAssignment", "POST", oModel);
+                this.callFunctionImport(oParams, "DeleteAssignment", "POST");
             },
 
             /**
@@ -203,9 +203,9 @@ sap.ui.define([
              * @param sFuncName
              * @param sMethod
              */
-			callFunctionImport: function (oParams, sFuncName, sMethod, oModel) {
+			callFunctionImport: function (oParams, sFuncName, sMethod) {
                 var eventBus = sap.ui.getCore().getEventBus(),
-                	oModel = oModel || this.getModel(),
+                	oModel = this.getModel(),
                 	oResourceBundle = this.getResourceBundle();
 
 

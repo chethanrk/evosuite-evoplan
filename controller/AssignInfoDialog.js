@@ -73,13 +73,19 @@ sap.ui.define([
          * @param oEvent
          */
         onSaveDialog : function (oEvent) {
-            this.updateAssignment(this.oAssignmentModel, this.reAssign, this._oView.getModel());
+            var eventBus = sap.ui.getCore().getEventBus();
+            eventBus.publish("AssignInfoDialog", "updateAssignment", {
+                isReassign: this.reAssign
+            });
             this.onCloseDialog();
         },
 
         onDeleteAssignment : function (oEvent) {
             var sId = this.oAssignmentModel.getProperty("/AssignmentGuid");
-            this.deleteAssignment(sId, this._oView.getModel());
+            var eventBus = sap.ui.getCore().getEventBus();
+            eventBus.publish("AssignInfoDialog", "deleteAssignment", {
+                sId: sId
+            });
             this.onCloseDialog();
         },
 

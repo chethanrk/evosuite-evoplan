@@ -43,6 +43,8 @@ sap.ui.define([
             //eventbus of assignemnt handling
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("BaseController", "refreshTable", this._triggerFilterSearch, this);
+            eventBus.subscribe("AssignInfoDialog", "updateAssignment", this._triggerUpdateAssign, this);
+            eventBus.subscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
         },
 
 		/**
@@ -346,6 +348,18 @@ sap.ui.define([
             var binding = this._oDataTable.getBinding("rows");
             var aFilters = this._getAllFilters();
             binding.filter(aFilters, "Application");
+        },
+
+        _triggerUpdateAssign: function (sChanel, sEvent, oData) {
+            if(sEvent === "updateAssignment"){
+                this.updateAssignment(oData.isReassign);
+            }
+        },
+
+        _triggerDeleteAssign: function (sChanel, sEvent, oData) {
+            if(sEvent === "deleteAssignment"){
+                this.deleteAssignment(oData.sId);
+            }
         },
 
         /**
