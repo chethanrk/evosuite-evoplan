@@ -98,7 +98,7 @@ sap.ui.define([
                         var sMessage = oData.message+"\n"+oResourceBundle.getText("errorMessage");
                         this._showErrorMessage(sMessage);
                     }else{
-                        MessageToast.show(oData.message, {duration: 5000});
+                        this.showMessageToast(oData.message);
                     }
                 }else{
                     try{
@@ -109,7 +109,7 @@ sap.ui.define([
                     if(oData && oData.error){
                         this._showErrorMessage(oData.error.message.value);
                     }else{
-                        MessageToast.show(oResourceBundle.getText("errorMessage"), {duration: 5000});
+                        this.showMessageToast(oResourceBundle.getText("errorMessage"));
                     }
                 }
             },
@@ -205,11 +205,9 @@ sap.ui.define([
              */
 			callFunctionImport: function (oParams, sFuncName, sMethod, oModel) {
                 var eventBus = sap.ui.getCore().getEventBus(),
-                    oMsgModel = sap.ui.getCore().getModel("MessageSetModel"),
-                	oModel = oModel || this.getModel();
+                	oModel = oModel || this.getModel(),
+                	oResourceBundle = this.getResourceBundle();
 
-                oMsgModel.setData({modelData:{}});
-                oMsgModel.updateBindings(true);
 
                 oModel.callFunction("/"+sFuncName, {
                     method: sMethod || "POST",
@@ -247,7 +245,7 @@ sap.ui.define([
                     this.multiSelect = true;
                 }
                 return aPathsData;
-            },
+            }
 		});
 
 });
