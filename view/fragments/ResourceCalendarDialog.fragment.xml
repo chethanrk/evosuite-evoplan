@@ -18,7 +18,7 @@
                             formatter:'.formatter.getCalendarView'
                         }"
                         appointmentsVisualization="Filled"
-                        appointmentSelect="handleAppointmentSelect"
+                        appointmentSelect="onClickCalendarAssignment"
                         showEmptyIntervalHeaders="false"
                         showWeekNumbers="true">
                     <rows>
