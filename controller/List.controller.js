@@ -58,6 +58,7 @@ sap.ui.define([
 
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
+            eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 		},
 
 		/* =========================================================== */
@@ -298,6 +299,11 @@ sap.ui.define([
             _triggerSaveAssignment: function (sChanel, sEvent, oData) {
                 if(sEvent === "assignSelectedDemand"){
                     this.assignedDemands(oData.selectedPaths, oData.assignPath);
+                }
+            },
+            _triggerDemandFilter: function(sChanel, sEvent, oData){
+            	if(sEvent === "refreshDemandTable"){
+                    this.byId("draggableList").rebindTable();
                 }
             }
 		});
