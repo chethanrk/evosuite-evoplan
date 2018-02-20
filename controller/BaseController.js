@@ -175,7 +175,9 @@ sap.ui.define([
 					"TimeTo" : { __edmtype: "Edm.Time", ms: oData.DateTo.getTime()},
                     "AssignmentGUID" : sAssignmentGUID,
                     "EffortUnit" : oData.EffortUnit,
-                    "Effort" : oData.Effort
+                    "Effort" : oData.Effort,
+                    "ResourceGroupGuid" : "",
+                    "ResourceGuid" : ""
                 };
 
                 if(isReassign && oData.NewAssignPath){
