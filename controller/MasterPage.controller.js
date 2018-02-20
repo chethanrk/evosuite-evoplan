@@ -252,7 +252,16 @@ sap.ui.define([
                 this.showMessageToast(msg);
             }
         },
-
+		
+		onClickCalendarAssignment: function(oEvent){
+			var oAppointment = oEvent.getParameter("appointment");
+			var oContext = oAppointment.getBindingContext("calendarModel");
+			var oModel = oContext.getModel();
+			var sPath = oContext.getPath();
+			var oAppointmentData = oModel.getProperty(sPath);
+			this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAppointmentData);
+			
+		},
         /**
          * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
          */

@@ -32,37 +32,55 @@ sap.ui.define([
          * @param oView
          * @param sBindPath
          */
-        open : function (oView, sBindPath) {
+        open : function (oView, sBindPath,oAssignMentData) {
             var oDialog = this.getDialog(),
-                oResource = oView.getModel().getProperty(sBindPath),
-                oAssignment = {
-                    showError: false,
-                    AssignmentGuid: oResource.AssignmentGuid,
-                    Description: oResource.Description,
-                    AllowReassign: false,
-                    AllowUnassign: false,
-                    NewAssignPath: null,
-                    NewAssignId: null,
-                    NewAssignDesc: null,
-                    isNewAssignment: false
-                };
+            			oAssignment={
+		                    showError: false,
+		                    AssignmentGuid: "",
+		                    Description: "",
+		                    AllowReassign: false,
+		                    AllowUnassign: false,
+		                    NewAssignPath: null,
+		                    NewAssignId: null,
+		                    NewAssignDesc: null,
+		                    isNewAssignment: false
+            			 },
+            			oResource,
+            			sResourceGroupGuid,
+            			sResourceGuid;
+          
+          if(sBindPath && sBindPath !==""){
+        		oResource = oView.getModel().getProperty(sBindPath);	
+        		
+        		oAssignment.AssignmentGuid = oResource.AssignmentGuid;
+                oAssignment.Description = oResource.Description;
+                sResourceGroupGuid = oResource.ResourceGroupGuid;
+                sResourceGuid = oResource.ResourceGuid;
+                
+                this._bindingPath = sBindPath;
+          }else{
+        		oAssignment.AssignmentGuid = oAssignMentData.Guid;
+                oAssignment.Description = oAssignMentData.Demand.DemandDesc;
+                sResourceGroupGuid = oAssignMentData.ResourceGroupGuid;
+                sResourceGuid = oAssignMentData.ResourceGuid;
+          }
 
             this._oView = oView;
             oView.setModel(models.createAssignmentModel(oAssignment), "assignment");
             this.oAssignmentModel = oView.getModel("assignment");
 
-            if(oResource.ResourceGroupGuid && oResource.ResourceGroupGuid !== ""){
-                this._getAssignResourceGroup(oResource.ResourceGroupGuid);
+            if(sResourceGroupGuid && sResourceGroupGuid !== ""){
+                this._getAssignResourceGroup(sResourceGroupGuid);
             }
-            if(oResource.ResourceGuid && oResource.ResourceGuid !== ""){
-                this._getAssignResource(oResource.ResourceGuid);
+            if(sResourceGuid && sResourceGuid !== ""){
+                this._getAssignResource(sResourceGuid+"%2F%2F"+sResourceGroupGuid);
             }
 
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
-            this._getAssignedDemand(oResource.AssignmentGuid);
+            this._getAssignedDemand(oAssignment.AssignmentGuid);
             //oDialog.bindElement(sBindPath);
-            this._bindingPath = sBindPath;
+            
 
             // open dialog
             oDialog.open();
