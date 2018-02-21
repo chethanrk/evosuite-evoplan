@@ -105,13 +105,19 @@ sap.ui.define([
              * @param oEvent
              */
             onAssignButtonPress : function (oEvent) {
-                this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-                if(this._aSelectedRowsIdx.length > 0){
+            	var oResourceBundle = this.getResourceBundle(),
+            		oData = this.checkSelectedDemands(this.getModel(), this._oDataTable, this._oDataTable.getSelectedIndices());
+            	this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+                if(oData.oSelectedData.length > 0){
                     this.getOwnerComponent().assignTreeDialog.open(this.getView(), false);
-				}else{
-                    var msg = this.getResourceBundle().getText('ymsg.selectMinItem');
-                    MessageToast.show(msg);
 				}
+				 if(oData.bNonAssignable){
+                    	if(oData.aDemands.length === 1){
+                    		this.showMessageToast(oResourceBundle.getText("assignmentNotPossibleS",[oData.aDemands.toString()]));
+                    	}else{
+                    		this.showMessageToast(oResourceBundle.getText("assignmentNotPossibleM",[oData.aDemands.toString()]));
+                		}
+                    }
             },
 
             /**
@@ -150,9 +156,9 @@ sap.ui.define([
                 }
             },
 
-		onMessagePopoverPress: function(oEvent) {
-			oMessagePopover.openBy(oEvent.getSource());
-		},
+			onMessagePopoverPress: function(oEvent) {
+				oMessagePopover.openBy(oEvent.getSource());
+			},
 
             onExit: function() {
                 if(this._oStatusDialog){

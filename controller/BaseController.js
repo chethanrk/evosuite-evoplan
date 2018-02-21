@@ -236,16 +236,23 @@ sap.ui.define([
              * @private
              */
             _getSelectedRowPaths : function (oModel, oTable, aSelectedRowsIdx) {
-                var aPathsData = [];
+                var aPathsData = [],
+                	oResourceBundle = this.getResourceBundle();
                 this.multiSelect = false;
 
                 for (var i=0; i<aSelectedRowsIdx.length; i++) {
                     var oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
                     var sPath = oContext.getPath();
-                    aPathsData.push({
-                        sPath: sPath,
-                        oData: oModel.getProperty(sPath)
-                    });
+                    var oData = oModel.getProperty(sPath);
+                    if(this._isAssignmentPossible(oData)){
+	                    aPathsData.push({
+	                        sPath: sPath,
+	                        oData: oData
+	                    });
+	                    oTable.setSelectedIndex(i);
+                    }else{
+                    	this.showMessageToast(oResourceBundle.getText("assignmentNotPossibleS",[oData.Guid]));
+                    }
                 }
                 if(aPathsData.length > 0){
                     this.multiSelect = true;
@@ -259,6 +266,55 @@ sap.ui.define([
              */
             clearMessageModel:function(){
             	sap.ui.getCore().getMessageManager().removeAllMessages();
+            },
+            _isAssignmentPossible:function(oData){
+            	return oData.ALLOW_ASSIGN;
+            },
+            /**
+             * Checks the selected demand can be assignable or not by checking ALLOW_ASSIGN flag in the demand data
+             * @param oModel
+             * @param oTable
+             * @param aSelectedRowsIdx
+             * @public
+             * @return object 
+             */
+            checkSelectedDemands: function(oModel, oTable, aSelectedRowsIdx){
+            	var aPathsData = [],
+            		bNonAssignableDemandsExist = false,
+            		aNonAssignableDemands =[];
+            	
+            	this.multiSelect = false;
+            	oTable.clearSelection();
+                for (var i=0; i<aSelectedRowsIdx.length; i++) {
+                    var oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
+                    var sPath = oContext.getPath();
+                    var oData = oModel.getProperty(sPath);
+                    if(this._isAssignmentPossible(oData)){
+	                    aPathsData.push({
+	                        sPath: sPath,
+	                        oData: oData
+	                    });
+	                    oTable.setSelectedIndex(i);
+                    }else{
+                    	aNonAssignableDemands.push(oData.Guid);
+                    	bNonAssignableDemandsExist = true;
+                    }
+                }
+                if(aPathsData.length > 0){
+                    this.multiSelect = true;
+                }
+                 /*if(bNonAssignableDemandsExist){
+                    	if(aNonAssignableDemands.length === 1){
+                    		this.showMessageToast(oResourceBundle.getText("assignmentNotPossibleS",[aNonAssignableDemands.toString()]));
+                    	}else{
+                    		this.showMessageToast(oResourceBundle.getText("assignmentNotPossibleM",[aNonAssignableDemands.toString()]));
+                		}
+                }*/
+                return {
+                	oSelectedData:aPathsData,
+                	bNonAssignable:bNonAssignableDemandsExist,
+                	aDemands:aNonAssignableDemands
+                };
             }
 		});
 
