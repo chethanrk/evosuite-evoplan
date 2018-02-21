@@ -301,6 +301,14 @@ sap.ui.define([
                     this.assignedDemands(oData.selectedPaths, oData.assignPath);
                 }
             },
+             /**
+			 * generates html list for dragged paths and gives back to helper function
+             * @param sChanel
+             * @param sEvent event which is getting triggered
+             * @param oData Data passed while publishing the event
+             * @returns 
+             * @private
+             */
             _triggerDemandFilter: function(sChanel, sEvent, oData){
             	if(sEvent === "refreshDemandTable"){
                     this.byId("draggableList").rebindTable();

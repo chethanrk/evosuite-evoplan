@@ -220,7 +220,6 @@ sap.ui.define([
                         this.showMessage(oResponse);
                         eventBus.publish("BaseController", "refreshTable", {});
                         eventBus.publish("BaseController", "refreshDemandTable",{});
-                       // this.getModel().refresh();
                     }.bind(this),
                     error: function(oError){
                         //Handle Error
