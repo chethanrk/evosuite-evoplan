@@ -109,7 +109,7 @@ sap.ui.define([
                     if(oData && oData.error){
                         this._showErrorMessage(oData.error.message.value);
                     }else{
-                        this.showMessageToast(oResourceBundle.getText("errorMessage"));
+                        //this.showMessageToast(oResourceBundle.getText("errorMessage"));
                     }
                 }
             },
@@ -138,7 +138,7 @@ sap.ui.define([
             assignedDemands: function (aSourcePaths, sTargetPath) {
             	var oModel = this.getModel();
 				var targetObj = oModel.getProperty(sTargetPath);
-
+				this.clearMessageModel();
                 for(var i = 0; i < aSourcePaths.length; i++) {
                     var obj = aSourcePaths[i],
                     	demandObj = oModel.getProperty(obj.sPath),
@@ -164,7 +164,7 @@ sap.ui.define([
 			 * update assignment
              * @param sPath
              */
-			updateAssignment: function (oAssignModel, isReassign) {
+			updateAssignment: function (isReassign) {
 				var oData = this.getModel("assignment").oData,
                     sAssignmentGUID = oData.AssignmentGuid;
 
@@ -185,6 +185,7 @@ sap.ui.define([
                     oParams.ResourceGroupGuid = oResource.ResourceGroupGuid;
                     oParams.ResourceGuid = oResource.ResourceGuid;
 				}
+				this.clearMessageModel();
                 this.callFunctionImport(oParams, "UpdateAssignment", "POST");
             },
 
@@ -196,6 +197,7 @@ sap.ui.define([
 				var oParams = {
 					"AssignmentGUID" : sId
 				};
+				this.clearMessageModel();
                 this.callFunctionImport(oParams, "DeleteAssignment", "POST");
             },
 
@@ -210,14 +212,16 @@ sap.ui.define([
                 	oModel = this.getModel(),
                 	oResourceBundle = this.getResourceBundle();
 
-
+				
                 oModel.callFunction("/"+sFuncName, {
                     method: sMethod || "POST",
                     urlParameters: oParams,
+                    refreshAfterChange:true,
                     success: function(oData, oResponse){
                         //Handle Success
                         this.showMessage(oResponse);
                         eventBus.publish("BaseController", "refreshTable", {});
+                        eventBus.publish("BaseController", "refreshDemandTable",{});
                     }.bind(this),
                     error: function(oError){
                         //Handle Error
@@ -247,6 +251,14 @@ sap.ui.define([
                     this.multiSelect = true;
                 }
                 return aPathsData;
+            },
+            /**
+             * Clears the Message Model
+             * @param 
+             * @public
+             */
+            clearMessageModel:function(){
+            	sap.ui.getCore().getMessageManager().removeAllMessages();
             }
 		});
 

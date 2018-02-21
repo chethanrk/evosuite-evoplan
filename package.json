@@ -1,6 +1,6 @@
 {
   "name": "evoplan-ui5",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "Dispatch Work Orders and manage your service engineers' capacities.",
   "main": "Component.js",
   "directories": {
