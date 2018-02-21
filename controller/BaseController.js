@@ -164,7 +164,7 @@ sap.ui.define([
 			 * update assignment
              * @param sPath
              */
-			updateAssignment: function (oAssignModel, isReassign) {
+			updateAssignment: function (isReassign) {
 				var oData = this.getModel("assignment").oData,
                     sAssignmentGUID = oData.AssignmentGuid;
 
