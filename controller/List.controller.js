@@ -59,6 +59,16 @@ sap.ui.define([
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
             eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
+
+
+            // event listener for changing device orientation with fallback of window resize
+            var orientationEvent = this.getOrientationEvent(),
+                _this = this;
+
+            window.addEventListener(orientationEvent, function() {
+                console.log(orientationEvent);
+                _this._jDraggable(_this)
+            }, false);
 		},
 
 		/* =========================================================== */
@@ -306,7 +316,7 @@ sap.ui.define([
              * @param sChanel
              * @param sEvent event which is getting triggered
              * @param oData Data passed while publishing the event
-             * @returns 
+             * @returns
              * @private
              */
             _triggerDemandFilter: function(sChanel, sEvent, oData){

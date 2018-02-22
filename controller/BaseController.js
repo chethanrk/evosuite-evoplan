@@ -68,17 +68,17 @@ sap.ui.define([
 			}
 		},
 
-            /**
-             * Convenience method
-             * @returns {object} the application controller
-             */
-            getApplication: function() {
-                return this.getGlobalModel().getProperty("/application");
-            },
+        /**
+         * Convenience method
+         * @returns {object} the application controller
+         */
+        getApplication: function() {
+            return this.getGlobalModel().getProperty("/application");
+        },
 
-			showMessageToast: function (sMsg) {
-                MessageToast.show(sMsg, {duration: 5000});
-            },
+        showMessageToast: function (sMsg) {
+            MessageToast.show(sMsg, {duration: 5000});
+        },
 
             /**
              * Helper method to show the error and success information on the scree
@@ -114,21 +114,21 @@ sap.ui.define([
                 }
             },
 
-            _showErrorMessage: function(sMessage){
-                if (this._bMessageOpen) {
-                    return;
+        _showErrorMessage: function(sMessage){
+            if (this._bMessageOpen) {
+                return;
+            }
+            this._bMessageOpen = true;
+            MessageBox.error(sMessage,{
+                    id : "errorMessageBox",
+                    styleClass: this.getOwnerComponent().getContentDensityClass(),
+                    actions: [MessageBox.Action.CLOSE],
+                    onClose: function () {
+                        this._bMessageOpen = false;
+                    }.bind(this)
                 }
-                this._bMessageOpen = true;
-                MessageBox.error(sMessage,{
-                        id : "errorMessageBox",
-                        styleClass: this.getOwnerComponent().getContentDensityClass(),
-                        actions: [MessageBox.Action.CLOSE],
-                        onClose: function () {
-                            this._bMessageOpen = false;
-                        }.bind(this)
-                    }
-                );
-            },
+            );
+        },
 
             /**
 			 * save assignment after drop
@@ -148,17 +148,17 @@ sap.ui.define([
 							"ResourceGuid" : targetObj.ResourceGuid
 						};
 
-                    if(targetObj.StartDate){
-                    	oParams.DateFrom = targetObj.StartDate;
-                    	oParams.TimeFrom = targetObj.StartTime;
-					}
-					if(targetObj.EndDate){
-                    	oParams.DateTo = targetObj.EndDate;
-                    	oParams.TimeTo = targetObj.EndTime;
-					}
-                    this.callFunctionImport(oParams, "CreateAssignment", "POST");
+                if(targetObj.StartDate){
+                    oParams.DateFrom = targetObj.StartDate;
+                    oParams.TimeFrom = targetObj.StartTime;
                 }
-			},
+                if(targetObj.EndDate){
+                    oParams.DateTo = targetObj.EndDate;
+                    oParams.TimeTo = targetObj.EndTime;
+                }
+                this.callFunctionImport(oParams, "CreateAssignment", "POST");
+            }
+        },
 
             /**
 			 * update assignment
@@ -201,18 +201,18 @@ sap.ui.define([
                 this.callFunctionImport(oParams, "DeleteAssignment", "POST");
             },
 
-            /**
-			 * send oData request of FunctionImport
-             * @param oParams
-             * @param sFuncName
-             * @param sMethod
-             */
-			callFunctionImport: function (oParams, sFuncName, sMethod) {
-                var eventBus = sap.ui.getCore().getEventBus(),
-                	oModel = this.getModel(),
-                	oResourceBundle = this.getResourceBundle();
+        /**
+         * send oData request of FunctionImport
+         * @param oParams
+         * @param sFuncName
+         * @param sMethod
+         */
+        callFunctionImport: function (oParams, sFuncName, sMethod) {
+            var eventBus = sap.ui.getCore().getEventBus(),
+                oModel = this.getModel(),
+                oResourceBundle = this.getResourceBundle();
 
-				
+
                 oModel.callFunction("/"+sFuncName, {
                     method: sMethod || "POST",
                     urlParameters: oParams,
@@ -230,14 +230,23 @@ sap.ui.define([
                 });
             },
 
-            /**
-             * get all selected rows from table and return to draggable helper function
-             * @param aSelectedRowsIdx
-             * @private
-             */
-            _getSelectedRowPaths : function (oModel, oTable, aSelectedRowsIdx) {
-                var aPathsData = [];
-                this.multiSelect = false;
+
+        /**
+         * device orientation with fallback of window resize
+         * important for drag and drop functionality
+         */
+        getOrientationEvent: function () {
+            return window.onorientationchange ? "orientationchange" : "resize";
+        },
+
+        /**
+         * get all selected rows from table and return to draggable helper function
+         * @param aSelectedRowsIdx
+         * @private
+         */
+        _getSelectedRowPaths : function (oModel, oTable, aSelectedRowsIdx) {
+            var aPathsData = [];
+            this.multiSelect = false;
 
                 for (var i=0; i<aSelectedRowsIdx.length; i++) {
                     var oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
@@ -254,7 +263,7 @@ sap.ui.define([
             },
             /**
              * Clears the Message Model
-             * @param 
+             * @param
              * @public
              */
             clearMessageModel:function(){
