@@ -48,6 +48,10 @@ sap.ui.define([
                 this._oDataTable = oDraggableTable.getTable();
             }
 
+            //remove selection maybe from last time
+            var oList = sap.ui.getCore().byId("selectStatusList");
+            oList.clearSelection();
+
             // open dialog
             oDialog.open();
         },

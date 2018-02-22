@@ -8,6 +8,7 @@
             class="selectStatusDialog">
         <content>
             <SelectList
+                    id="selectStatusList"
                     selectionChange="onSelectionChange"
                     items="{
                         path: '/DemandFunctionsSet',
