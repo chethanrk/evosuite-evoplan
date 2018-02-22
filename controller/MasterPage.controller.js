@@ -504,13 +504,16 @@ sap.ui.define([
 
                 droppedElement.droppable({
                     accept: ".ui-draggable",
-                    classes: {
-                        "ui-droppable-hover": "ui-droppable-hover",
-                        "ui-droppable-active": "ui-droppable-active"
-                    },
                     drop: function( event, ui ) {
-                        var dropTargetId = event.target.id,
-                            targetElement = sap.ui.getCore().byId(dropTargetId),
+                        //get hovered marked row, there could be a difference with dropped row
+                        var hoverRow = $("#"+droppableTableId+" .sapUiTableRowHvr"),
+                            dropTargetId = hoverRow.attr("id");
+
+                        if(!dropTargetId){
+                            dropTargetId = event.target.id;
+                        }
+
+                        var targetElement = sap.ui.getCore().byId(dropTargetId),
                             oContext = targetElement.getBindingContext();
 
                         if(oContext){
@@ -529,7 +532,7 @@ sap.ui.define([
 									sPath: $(this).attr('id')
 								});
 							});
-							_this.assignedDemands(aSources, targetPath);
+                            _this.assignedDemands(aSources, targetPath);
 						}
 					}
 				});
