@@ -62,7 +62,10 @@
                     <Label text="{i18n>xfld.effortUnit}" />
                     <Input type="Text"
                            name="effortUnit"
-                           value="{assignment>/EffortUnit}"/>
+                           value="{assignment>/EffortUnit}"
+                           showValueHelp="true"
+                           valueHelpOnly="true"
+                           valueHelpRequest="onPressValuePress"/>
 
                     <Label text="{i18n>xfld.newAssign}" />
                     <CheckBox enabled="{assignment>/AllowReassign}"

@@ -1,8 +1,10 @@
 sap.ui.define([
     "com/evorait/evoplan/controller/BaseController",
     "com/evorait/evoplan/model/models",
-    "sap/ui/core/ListItem"
-], function (BaseController, models, ListItem) {
+    "sap/ui/core/ListItem",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator"
+], function (BaseController, models, ListItem, Filter, FilterOperator) {
     "use strict";
 
     return BaseController.extend("com.evorait.evoplan.controller.AssignInfoDialog", {
@@ -24,6 +26,18 @@ sap.ui.define([
                 this._oDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.AssignInfoDialog", this);
             }
             return this._oDialog;
+        },
+        /**
+         * Initialize Effort units select dialog
+         * @returns {sap.ui.core.Control|sap.ui.core.Control[]|*}
+         */
+        getEfforUnitSelectDialog: function(){
+        	 // create dialog lazily
+        	if (!this._oEffortUnitDialog) {
+                // create dialog via fragment factory
+                this._oEffortUnitDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.EffortUnitsSelectDialog", this);
+            }
+            return this._oEffortUnitDialog;
         },
 
         /**
@@ -85,7 +99,51 @@ sap.ui.define([
             // open dialog
             oDialog.open();
         },
-
+        /**
+         * open dialog
+         * get detail data from resource and resource group
+         * @param oView
+         * @param sBindPath
+         */
+        openEffortUnitsDialog : function(){
+        	var oDialog = this.getEfforUnitSelectDialog();
+        	this._oView.addDependent(oDialog);
+        	oDialog.open();
+        	oDialog.getBinding("items").filter([],"Application");
+        },
+        /**
+         * Method get triggers when user selects any perticular unit from value help
+         * and outputs the same in input
+         * @param oEvent Select oEvent
+         */
+        _onSelectUnit:function(oEvent){
+        	var oSelected = oEvent.getParameter("selectedItem"),
+        		oModel = this._oView.getModel("assignment");
+        	if(oSelected){
+        		oModel.setProperty("/EffortUnit",oSelected.getTitle());
+        	}
+        },
+        /**
+         * Filters the units data on search
+         * get detail data from resource and resource group
+         * @param oEvent
+         */
+        _onSearchUnits:function(oEvent){
+        	var sValue = oEvent.getParameter("value"),
+        		oFilter = [];
+        		if(sValue){
+					oFilter = [
+						new Filter("Msehi",FilterOperator.Contains, sValue)
+					];
+        		}
+			oEvent.getSource().getBinding("items").filter(oFilter,"Application");
+        },
+        /**
+         * open EffortUnit dialog
+         */
+		onPressValuePress:function(){
+			this.openEffortUnitsDialog();
+		},
         /**
          * save form data
          * @param oEvent
