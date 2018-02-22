@@ -45,6 +45,15 @@ sap.ui.define([
             eventBus.subscribe("BaseController", "refreshTable", this._triggerFilterSearch, this);
             eventBus.subscribe("AssignInfoDialog", "updateAssignment", this._triggerUpdateAssign, this);
             eventBus.subscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
+
+            // event listener for changing device orientation with fallback of window resize
+            var orientationEvent = this.getOrientationEvent(),
+                _this = this;
+
+            window.addEventListener(orientationEvent, function() {
+                console.log(orientationEvent);
+                _this._jDroppable(_this)
+            }, false);
         },
 
 		/**

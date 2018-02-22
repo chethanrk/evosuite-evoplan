@@ -58,6 +58,16 @@ sap.ui.define([
 
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
+
+
+            // event listener for changing device orientation with fallback of window resize
+            var orientationEvent = this.getOrientationEvent(),
+                _this = this;
+
+            window.addEventListener(orientationEvent, function() {
+                console.log(orientationEvent);
+                _this._jDraggable(_this)
+            }, false);
 		},
 
 		/* =========================================================== */
