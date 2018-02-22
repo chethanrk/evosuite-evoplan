@@ -106,18 +106,18 @@ sap.ui.define([
              */
             onAssignButtonPress : function (oEvent) {
             	var oResourceBundle = this.getResourceBundle(),
-            		oData = this.checkSelectedDemands(this.getModel(), this._oDataTable, this._oDataTable.getSelectedIndices());
+            		oData = this._getSelectedRowPaths(this.getModel(), this._oDataTable, this._oDataTable.getSelectedIndices());
             	this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
                 if(oData.oSelectedData.length > 0){
                     this.getOwnerComponent().assignTreeDialog.open(this.getView(), false);
 				}
-				 if(oData.bNonAssignable){
+				if(oData.bNonAssignable){
                     	if(oData.aDemands.length === 1){
                     		this.showMessageToast(oResourceBundle.getText("assignmentNotPossibleS",[oData.aDemands.toString()]));
                     	}else{
                     		this.showMessageToast(oResourceBundle.getText("assignmentNotPossibleM",[oData.aDemands.toString()]));
                 		}
-                    }
+                }
             },
 
             /**
@@ -236,21 +236,29 @@ sap.ui.define([
                             //single drag by checkbox, checkbox is not inside tr so have to find out row index
                             var targetDataCheckbox = target.data("sapUiRowindex");
                             var selectedIdx = _this._oDataTable.getSelectedIndices();
-
+							var oValidatedData = _this._getSelectedRowPaths(_this.getModel(), _this._oDataTable, selectedIdx);
+							var oResourceBundle = _this.getResourceBundle();
                             //get all selected rows
                             if(selectedIdx.length > 0){
-                                aPathsData = _this._getSelectedRowPaths(_this.getModel(), _this._oDataTable, selectedIdx);
+                                aPathsData = oValidatedData.oSelectedData;                         
                             }
                             if(!_this.multiSelect){
                                 //single drag by checkbox row index
                             	if(targetDataCheckbox >= 0){
                                     selectedIdx = [targetDataCheckbox];
-                                    aPathsData = _this._getSelectedRowPaths(_this.getModel(), _this._oDataTable, selectedIdx);
+                                    aPathsData = oValidatedData.oSelectedData;
 								}else{
                                     //table tr single dragged element
                                     aPathsData = _this._getSingleDraggedElement(target.attr('id'));
 								}
                             }
+                            if(oValidatedData.bNonAssignable){
+                    			if(oValidatedData.aDemands.length === 1){
+                    				_this.showMessageToast(oResourceBundle.getText("assignmentNotPossibleS",[oValidatedData.aDemands.toString()]));
+                    			}else{
+                    				_this.showMessageToast(oResourceBundle.getText("assignmentNotPossibleM",[oValidatedData.aDemands.toString()]));
+                				}
+                			}
                             //get helper html list
 							var oHtml = _this._generateDragHelperHTML(aPathsData);
                             _this.multiSelect = false;
