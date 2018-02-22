@@ -259,7 +259,7 @@ sap.ui.define([
          * @param aSelectedRowsIdx
          * @private
          */
-        _getSelectedRowPaths : function (oTable, aSelectedRowsIdx, oView) {
+        _getSelectedRowPaths : function (oTable, aSelectedRowsIdx, oView, checkAssignAllowed) {
             var aPathsData = [],
                 bNonAssignableDemandsExist = false,
                 aNonAssignableDemands =[],
@@ -274,22 +274,32 @@ sap.ui.define([
                 resourceBundle = this.getResourceBundle();
             }
 
-            oTable.clearSelection();
+            if(checkAssignAllowed){
+                oTable.clearSelection();
+            }
 
             for (var i=0; i<aSelectedRowsIdx.length; i++) {
                 var oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
                 var sPath = oContext.getPath();
                 var oData = oModel.getProperty(sPath);
 
-                if(!!oData.ALLOW_ASSIGN){
+                //on check on oData property ALLOW_ASSIGN when flag was given
+                if(checkAssignAllowed){
+                    if(!!oData.ALLOW_ASSIGN){
+                        aPathsData.push({
+                            sPath: sPath,
+                            oData: oData
+                        });
+                        oTable.addSelectionInterval(aSelectedRowsIdx[i],aSelectedRowsIdx[i]);
+                    }else{
+                        aNonAssignableDemands.push(oData.DemandDesc);
+                        bNonAssignableDemandsExist = true;
+                    }
+                }else{
                     aPathsData.push({
                         sPath: sPath,
                         oData: oData
                     });
-                    oTable.addSelectionInterval(aSelectedRowsIdx[i],aSelectedRowsIdx[i]);
-                }else{
-                    aNonAssignableDemands.push(oData.DemandDesc);
-                    bNonAssignableDemandsExist = true;
                 }
             }
 

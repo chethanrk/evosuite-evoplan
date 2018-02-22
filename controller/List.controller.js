@@ -117,7 +117,7 @@ sap.ui.define([
          */
         onAssignButtonPress : function (oEvent){
             this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-            var aSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx);
+            var aSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, null, true);
 
             if(aSelectedPaths.length > 0){
                 this.getOwnerComponent().assignTreeDialog.open(this.getView(), false);
@@ -223,13 +223,13 @@ sap.ui.define([
 
                         //get all selected rows when checkboxes in table selected
                         if(selectedIdx.length > 0){
-                            aPathsData = _this._getSelectedRowPaths(_this._oDataTable, selectedIdx);
+                            aPathsData = _this._getSelectedRowPaths(_this._oDataTable, selectedIdx, null, true);
 
                         } else {
                             //single drag by checkbox row index
                             if(targetCheckboxIdx >= 0){
                                 selectedIdx = [targetCheckboxIdx];
-                                aPathsData = _this._getSelectedRowPaths(_this._oDataTable, selectedIdx);
+                                aPathsData = _this._getSelectedRowPaths(_this._oDataTable, selectedIdx, null, true);
                             }else{
                                 //table tr single dragged element
                                 aPathsData = _this._getSingleDraggedElement(target.attr('id'));

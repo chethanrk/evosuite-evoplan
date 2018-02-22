@@ -103,7 +103,7 @@ sap.ui.define([
 
                 if(this._oDataTable){
                     var selectedIdx = this._oDataTable.getSelectedIndices();
-                    var selectedPaths = this._getSelectedRowPaths(this._oDataTable, selectedIdx, this._oView);
+                    var selectedPaths = this._getSelectedRowPaths(this._oDataTable, selectedIdx, this._oView, true);
 
                     eventBus.publish("AssignTreeDialog", "assignSelectedDemand", {
                         selectedPaths: selectedPaths,
