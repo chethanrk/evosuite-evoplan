@@ -20,18 +20,18 @@ sap.ui.define([
 			return this.getOwnerComponent().getRouter();
 		},
 
-			/**
-			 * Convenience method for getting the view model by name in every controller of the application.
-			 * @public
-			 * @param {string} sName the model name
-			 * @returns {sap.ui.model.Model} the model instance
-			 */
-			getModel : function (sName, oView) {
-				if(oView){
-                    return oView.getModel(sName);
-				}
-				return this.getView().getModel(sName);
-			},
+        /**
+         * Convenience method for getting the view model by name in every controller of the application.
+         * @public
+         * @param {string} sName the model name
+         * @returns {sap.ui.model.Model} the model instance
+         */
+        getModel : function (sName, oView) {
+            if(oView){
+                return oView.getModel(sName);
+            }
+            return this.getView().getModel(sName);
+        },
 
 		/**
 		 * Convenience method for setting the view model in every controller of the application.
@@ -80,39 +80,39 @@ sap.ui.define([
             MessageToast.show(sMsg, {duration: 5000});
         },
 
-            /**
-             * Helper method to show the error and success information on the scree
-             * @param {oResponse} Response object of success or error callback of oData service
-             * @returns
-             */
-            showMessage : function(oResponse){
-                var oData,
-                    oResourceBundle = this.getResourceBundle();
-                if(oResponse && oResponse.headers["sap-message"]){
-                    try{
-                        oData = JSON.parse(oResponse.headers["sap-message"]);
-                    }catch(ex){
-                        jQuery.sap.log.error("Failed to parse the message header");
-                    }
-                    if(oData && oData.severity === "error"){
-                        var sMessage = oData.message+"\n"+oResourceBundle.getText("errorMessage");
-                        this._showErrorMessage(sMessage);
-                    }else{
-                        this.showMessageToast(oData.message);
-                    }
-                }else{
-                    try{
-                        oData = JSON.parse(oResponse.responseText);
-                    }catch(ex){
-                        jQuery.sap.log.error("Failed to parse the message header");
-                    }
-                    if(oData && oData.error){
-                        this._showErrorMessage(oData.error.message.value);
-                    }else{
-                        //this.showMessageToast(oResourceBundle.getText("errorMessage"));
-                    }
+        /**
+         * Helper method to show the error and success information on the scree
+         * @param {oResponse} Response object of success or error callback of oData service
+         * @returns
+         */
+        showMessage : function(oResponse){
+            var oData,
+                oResourceBundle = this.getResourceBundle();
+            if(oResponse && oResponse.headers["sap-message"]){
+                try{
+                    oData = JSON.parse(oResponse.headers["sap-message"]);
+                }catch(ex){
+                    jQuery.sap.log.error("Failed to parse the message header");
                 }
-            },
+                if(oData && oData.severity === "error"){
+                    var sMessage = oData.message+"\n"+oResourceBundle.getText("errorMessage");
+                    this._showErrorMessage(sMessage);
+                }else{
+                    this.showMessageToast(oData.message);
+                }
+            }else{
+                try{
+                    oData = JSON.parse(oResponse.responseText);
+                }catch(ex){
+                    jQuery.sap.log.error("Failed to parse the message header");
+                }
+                if(oData && oData.error){
+                    this._showErrorMessage(oData.error.message.value);
+                }else{
+                    //this.showMessageToast(oResourceBundle.getText("errorMessage"));
+                }
+            }
+        },
 
         _showErrorMessage: function(sMessage){
             if (this._bMessageOpen) {
@@ -130,23 +130,23 @@ sap.ui.define([
             );
         },
 
-            /**
-			 * save assignment after drop
-             * @param aSourcePaths
-             * @param sTargetPath
-             */
-            assignedDemands: function (aSourcePaths, sTargetPath) {
-            	var oModel = this.getModel();
-				var targetObj = oModel.getProperty(sTargetPath);
-				this.clearMessageModel();
-                for(var i = 0; i < aSourcePaths.length; i++) {
-                    var obj = aSourcePaths[i],
-                    	demandObj = oModel.getProperty(obj.sPath),
-                    	oParams = {
-							"DemandGuid" : demandObj.Guid,
-							"ResourceGroupGuid" : targetObj.ResourceGroupGuid,
-							"ResourceGuid" : targetObj.ResourceGuid
-						};
+        /**
+         * save assignment after drop
+         * @param aSourcePaths
+         * @param sTargetPath
+         */
+        assignedDemands: function (aSourcePaths, sTargetPath) {
+            var oModel = this.getModel();
+            var targetObj = oModel.getProperty(sTargetPath);
+            this.clearMessageModel();
+            for(var i = 0; i < aSourcePaths.length; i++) {
+                var obj = aSourcePaths[i],
+                    demandObj = oModel.getProperty(obj.sPath),
+                    oParams = {
+                        "DemandGuid" : demandObj.Guid,
+                        "ResourceGroupGuid" : targetObj.ResourceGroupGuid,
+                        "ResourceGuid" : targetObj.ResourceGuid
+                    };
 
                 if(targetObj.StartDate){
                     oParams.DateFrom = targetObj.StartDate;
@@ -160,46 +160,62 @@ sap.ui.define([
             }
         },
 
-            /**
-			 * update assignment
-             * @param sPath
-             */
-			updateAssignment: function (isReassign) {
-				var oData = this.getModel("assignment").oData,
-                    sAssignmentGUID = oData.AssignmentGuid;
+        /**
+         * update assignment
+         * @param sPath
+         */
+        updateAssignment: function (isReassign) {
+            var oData = this.getModel("assignment").oData,
+                sAssignmentGUID = oData.AssignmentGuid;
 
-                var oParams = {
-                    "DateFrom" : oData.DateFrom || 0,
-					"TimeFrom" : { __edmtype: "Edm.Time", ms: oData.DateFrom.getTime()},
-                    "DateTo" :  oData.DateTo || 0,
-					"TimeTo" : { __edmtype: "Edm.Time", ms: oData.DateTo.getTime()},
-                    "AssignmentGUID" : sAssignmentGUID,
-                    "EffortUnit" : oData.EffortUnit,
-                    "Effort" : oData.Effort,
-                    "ResourceGroupGuid" : "",
-                    "ResourceGuid" : ""
-                };
+            var oParams = {
+                "DateFrom" : oData.DateFrom || 0,
+                "TimeFrom" : { __edmtype: "Edm.Time", ms: oData.DateFrom.getTime()},
+                "DateTo" :  oData.DateTo || 0,
+                "TimeTo" : { __edmtype: "Edm.Time", ms: oData.DateTo.getTime()},
+                "AssignmentGUID" : sAssignmentGUID,
+                "EffortUnit" : oData.EffortUnit,
+                "Effort" : oData.Effort,
+                "ResourceGroupGuid" : "",
+                "ResourceGuid" : ""
+            };
 
-                if(isReassign && oData.NewAssignPath){
-                    var oResource = this.getModel().getProperty(oData.NewAssignPath);
-                    oParams.ResourceGroupGuid = oResource.ResourceGroupGuid;
-                    oParams.ResourceGuid = oResource.ResourceGuid;
-				}
-				this.clearMessageModel();
-                this.callFunctionImport(oParams, "UpdateAssignment", "POST");
-            },
+            if(isReassign && oData.NewAssignPath){
+                var oResource = this.getModel().getProperty(oData.NewAssignPath);
+                oParams.ResourceGroupGuid = oResource.ResourceGroupGuid;
+                oParams.ResourceGuid = oResource.ResourceGuid;
+            }
+            this.clearMessageModel();
+            this.callFunctionImport(oParams, "UpdateAssignment", "POST");
+        },
 
-            /**
-			 * delete assignment
-             * @param sPath
-             */
-			deleteAssignment: function (sId) {
-				var oParams = {
-					"AssignmentGUID" : sId
-				};
-				this.clearMessageModel();
-                this.callFunctionImport(oParams, "DeleteAssignment", "POST");
-            },
+        /**
+         * delete assignment
+         * @param sPath
+         */
+        deleteAssignment: function (sId) {
+            var oParams = {
+                "AssignmentGUID" : sId
+            };
+            this.clearMessageModel();
+            this.callFunctionImport(oParams, "DeleteAssignment", "POST");
+        },
+
+        /**
+         * update demand function status on selected pathes
+         * @param aSelectedPaths
+         * @param sFunctionKey
+         */
+        updateFunctionDemand: function (aSelectedPaths, sFunctionKey) {
+            var oParams = {
+                "Function": sFunctionKey
+            };
+
+            for (var i = 0; i < aSelectedPaths.length; i++) {
+                oParams.DemandGuid = aSelectedPaths[i].oData.Guid;
+                this.callFunctionImport(oParams, "ExecuteDemandFunction", "POST");
+            }
+        },
 
         /**
          * send oData request of FunctionImport
@@ -248,27 +264,26 @@ sap.ui.define([
             var aPathsData = [];
             this.multiSelect = false;
 
-                for (var i=0; i<aSelectedRowsIdx.length; i++) {
-                    var oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
-                    var sPath = oContext.getPath();
-                    aPathsData.push({
-                        sPath: sPath,
-                        oData: oModel.getProperty(sPath)
-                    });
-                }
-                if(aPathsData.length > 0){
-                    this.multiSelect = true;
-                }
-                return aPathsData;
-            },
-            /**
-             * Clears the Message Model
-             * @param
-             * @public
-             */
-            clearMessageModel:function(){
-            	sap.ui.getCore().getMessageManager().removeAllMessages();
+            for (var i=0; i<aSelectedRowsIdx.length; i++) {
+                var oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
+                var sPath = oContext.getPath();
+                aPathsData.push({
+                    sPath: sPath,
+                    oData: oModel.getProperty(sPath)
+                });
             }
-		});
+            if(aPathsData.length > 0){
+                this.multiSelect = true;
+            }
+            return aPathsData;
+        },
 
+        /**
+         * Clears the Message Model
+         */
+        clearMessageModel:function(){
+            sap.ui.getCore().getMessageManager().removeAllMessages();
+        }
+
+	});
 });

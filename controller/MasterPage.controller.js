@@ -51,7 +51,6 @@ sap.ui.define([
                 _this = this;
 
             window.addEventListener(orientationEvent, function() {
-                console.log(orientationEvent);
                 _this._jDroppable(_this)
             }, false);
         },
@@ -299,7 +298,7 @@ sap.ui.define([
             oDataTable.setEnableCellFilter(false);
             oDataTable.setEnableColumnReordering(false);
             oDataTable.setEditable(false);
-            oDataTable.setWidth("100%");
+            oDataTable.setVisibleRowCountMode("Auto");
             oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
             //oDataTable.attachFilter(this.onFilterChanged, this);
         },
