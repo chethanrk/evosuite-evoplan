@@ -1,5 +1,6 @@
 /**
  * Created by Michaela on 10/10/2017.
+ * grunt build: creates Component-preload.js
  */
 
 module.exports = function(grunt) {
@@ -32,6 +33,6 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-openui5');
 
-    grunt.registerTask('default', ['openui5_preload']);
+    grunt.registerTask('build', ['openui5_preload']);
 
 };

@@ -45,7 +45,7 @@
         </content>
 
         <beginButton>
-            <Button text="{i18n>xbut.buttonCancel}" press="onModalCancel" />
+            <Button text="{i18n>xbut.buttonClose}" press="onModalCancel" />
         </beginButton>
 
         <endButton>
