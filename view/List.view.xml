@@ -51,7 +51,7 @@
                         useExportToExcel="true"
                         useVariantManagement="true"
                         useTablePersonalisation="true"
-                        requestAtLeastFields="Guid">
+                        requestAtLeastFields="Guid,ALLOW_ASSIGN">
                     <!-- layout data used to make the table growing but the filter bar fixed -->
                     <smartTable:layoutData>
                         <FlexItemData growFactor="1" />

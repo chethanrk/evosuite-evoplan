@@ -230,7 +230,6 @@ sap.ui.define([
                 });
             },
 
-
         /**
          * device orientation with fallback of window resize
          * important for drag and drop functionality
@@ -239,27 +238,41 @@ sap.ui.define([
             return window.onorientationchange ? "orientationchange" : "resize";
         },
 
-        /**
-         * get all selected rows from table and return to draggable helper function
-         * @param aSelectedRowsIdx
-         * @private
-         */
-        _getSelectedRowPaths : function (oModel, oTable, aSelectedRowsIdx) {
-            var aPathsData = [];
-            this.multiSelect = false;
-
+            /**
+             * get all selected rows from table and return to draggable helper function
+             * @param aSelectedRowsIdx
+             * @private
+             */
+            _getSelectedRowPaths : function (oModel, oTable, aSelectedRowsIdx) {
+            	var aPathsData = [],
+            		bNonAssignableDemandsExist = false,
+            		aNonAssignableDemands =[];
+            	
+            	this.multiSelect = false;
+            	oTable.clearSelection();
                 for (var i=0; i<aSelectedRowsIdx.length; i++) {
                     var oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
                     var sPath = oContext.getPath();
-                    aPathsData.push({
-                        sPath: sPath,
-                        oData: oModel.getProperty(sPath)
-                    });
+                    var oData = oModel.getProperty(sPath);
+                    if(this._isAssignmentPossible(oData)){
+	                    aPathsData.push({
+	                        sPath: sPath,
+	                        oData: oData
+	                    });
+	                    oTable.setSelectedIndex(i);
+                    }else{
+                    	aNonAssignableDemands.push(oData.Guid);
+                    	bNonAssignableDemandsExist = true;
+                    }
                 }
                 if(aPathsData.length > 0){
                     this.multiSelect = true;
                 }
-                return aPathsData;
+                return {
+                	oSelectedData:aPathsData,
+                	bNonAssignable:bNonAssignableDemandsExist,
+                	aDemands:aNonAssignableDemands
+                };
             },
             /**
              * Clears the Message Model
@@ -268,6 +281,9 @@ sap.ui.define([
              */
             clearMessageModel:function(){
             	sap.ui.getCore().getMessageManager().removeAllMessages();
+            },
+            _isAssignmentPossible:function(oData){
+            	return oData.ALLOW_ASSIGN;
             }
 		});
 
