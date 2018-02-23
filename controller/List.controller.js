@@ -143,6 +143,9 @@ sap.ui.define([
 		},
 
         onExit: function() {
+        	if(this._infoDialog){
+        		this._infoDialog.destroy();
+        	}
         },
 
         /* =========================================================== */
@@ -322,6 +325,18 @@ sap.ui.define([
             if(sEvent === "changeStatusDemand"){
                 this.updateFunctionDemand(oData.selectedPaths, oData.functionKey);
             }
+        },
+        
+        onIconPress: function(oEvent){
+        	// create popover
+			if (!this._infoDialog) {
+				this._infoDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.InformationPopover", this);
+				this.getView().addDependent(this._infoDialog);
+			}
+			this._infoDialog.open();
+        },
+        onCloseDialog: function(){
+        	this._infoDialog.close();
         }
 	});
 });
