@@ -11,6 +11,18 @@
             useToolbar="true"
             considerSelectionVariants="true">
 
+        <smartFilterBar:controlConfiguration>
+            <smartFilterBar:ControlConfiguration
+                    key="UserStatusShortText"
+                    preventInitialDataFetchInValueHelpDialog="false">
+            </smartFilterBar:ControlConfiguration>
+
+            <smartFilterBar:ControlConfiguration
+                    key="EFFORT_UNIT"
+                    preventInitialDataFetchInValueHelpDialog="false">
+            </smartFilterBar:ControlConfiguration>
+        </smartFilterBar:controlConfiguration>
+
         <!-- layout data used to make the table growing but the filter bar fixed -->
         <smartFilterBar:layoutData>
             <FlexItemData shrinkFactor="0"/>
