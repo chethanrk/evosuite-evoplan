@@ -1,28 +1,42 @@
 sap.ui.define([
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/Device"
-	], function (JSONModel, Device) {
-		"use strict";
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/Device"
+], function(JSONModel, Device) {
+	"use strict";
 
-		return {
-			createDeviceModel : function () {
-				var oModel = new JSONModel(Device);
-				oModel.setDefaultBindingMode("OneWay");
-				return oModel;
-			},
+	return {
+		createDeviceModel: function() {
+			var oModel = new JSONModel(Device);
+			oModel.setDefaultBindingMode("OneWay");
+			return oModel;
+		},
 
-			createUserModel : function (User) {
-				var oModel = new JSONModel(User);
-				oModel.setDefaultBindingMode("OneWay");
-				return oModel;
-			},
+		createUserModel: function(User) {
+			var oModel = new JSONModel(User);
+			oModel.setDefaultBindingMode("OneWay");
+			return oModel;
+		},
 
-			createAssignmentModel : function (Assignment) {
-                var oModel = new JSONModel(Assignment);
-                oModel.setDefaultBindingMode("TwoWay");
-                return oModel;
-            }
-		};
+		createAssignmentModel: function(Assignment) {
+			var oModel = new JSONModel(Assignment);
+			oModel.setDefaultBindingMode("TwoWay");
+			return oModel;
+		},
 
-	}
-);
+		createInformationModel: function(oComponent) {
+			var oMetadata = oComponent.getMetadata();
+			var oManifest = oMetadata._oManifest;
+			var oBaseUri = oManifest._oBaseUri;
+			var oModel = new JSONModel();
+
+			var oInformation = {
+				appVersion: oManifest._oManifest["sap.app"].applicationVersion.version,
+				ui5Version: sap.ui.getCore().getConfiguration().getVersion().toString(),
+				serverConnection: oBaseUri._string
+			};
+			oModel.setData(oInformation);
+			return oModel;
+		}
+	};
+
+});

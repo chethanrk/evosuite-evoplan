@@ -20,6 +20,7 @@
                    height="100%"
                    alt="EvoPlan">
             </Image>
+            <Button icon="sap-icon://hint" press="onIconPress" />
         </headerContent>
 
         <f:DynamicPage headerExpanded="true"

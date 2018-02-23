@@ -1,0 +1,50 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form">
+	<Dialog title="{i18n>xtit.infoDialogTitle}"
+			icon="sap-icon://hint"
+            contentWidth="50%"
+            resizable="true"
+            type="Message">
+		<content>
+		<form:SimpleForm
+                    id="idInfoDialog"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="3"
+                    labelSpanS="12"
+                    emptySpanXL="2"
+                    emptySpanL="2"
+                    emptySpanM="2"
+                    emptySpanS="0"
+                    columnsXL="1"
+                    columnsL="1"
+                    columnsM="1"
+                    singleContainerFullSize="false" >
+                <form:content>
+				<Label text="{i18n>xfld.evoplanVersion}">
+				</Label>
+				<Text text="{InformationModel>/appVersion}">
+				</Text>
+				<Label text="{i18n>xfld.username}">
+				</Label>
+				<Text text="{user>/userName}">
+				</Text>
+				<Label text="{i18n>xfld.sapui5Version}">
+				</Label>
+				<Text text="{InformationModel>/ui5Version}">
+				</Text>
+				<Label text="{i18n>xfld.serverConnection}">
+				</Label>
+				<Text text="{InformationModel>/serverConnection}">
+				</Text>
+			</form:content>
+            </form:SimpleForm>
+		</content>
+		 <buttons>
+            <Button text="{i18n>xbut.buttonClose}" press="onCloseDialog" />
+        </buttons>
+	</Dialog>
+</core:FragmentDefinition>
