@@ -6,6 +6,13 @@
 module.exports = function(grunt) {
 
     grunt.initConfig({
+        copy: {
+            lang: {
+                files: [
+                    {src: 'i18n/i18n_en.properties', dest: 'i18n/i18n.properties'}
+                ]
+            }
+        },
         openui5_preload: {
             component: {
                 options: {
@@ -32,7 +39,10 @@ module.exports = function(grunt) {
     });
 
     grunt.loadNpmTasks('grunt-openui5');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
-    grunt.registerTask('build', ['openui5_preload']);
+    grunt.registerTask('minimize', ['openui5_preload']);
+    grunt.registerTask('copy-lang', ['copy:lang']);
 
+    grunt.registerTask('default', ['copy:lang', 'openui5_preload']);
 };
