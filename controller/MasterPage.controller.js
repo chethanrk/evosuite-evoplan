@@ -51,7 +51,7 @@ sap.ui.define([
                 _this = this;
 
             window.addEventListener(orientationEvent, function() {
-                _this._jDroppable(_this)
+                _this._jDroppable(_this);
             }, false);
         },
 
@@ -66,8 +66,7 @@ sap.ui.define([
 			this.onTreeUpdateStarted();
 			//init droppable
 			this.refreshDroppable(oEvent);
-
-			//Todo: remove example data when filter request is working
+			//init planning calendar dialog
 			this._initPlanCalendarDialog();
 		},
 
