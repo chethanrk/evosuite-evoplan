@@ -67,15 +67,17 @@
                            valueHelpOnly="true"
                            valueHelpRequest="onPressValuePress"/>
 
-                    <Label text="{i18n>xfld.newAssign}" />
-                    <CheckBox enabled="{assignment>/AllowReassign}"
+                    <Label text="{i18n>xfld.newAssign}"
+                           visible="{assignment>/AllowReassign}" />
+                    <CheckBox visible="{assignment>/AllowReassign}"
+                              enabled="{assignment>/AllowReassign}"
                               select="onChangeAssignType"
                               selected="{assignment>/isNewAssignment}"/>
-
                     <Button id="reassignDialogButton"
                             text="{i18n>xbut.selectResource}"
                             press="onPressReAssign"
-                            enabled="false"/>
+                            enabled="false"
+                            visible="{assignment>/AllowReassign}"/>
 
                     <Label text="{i18n>xfld.newAssignment}" visible="{assignment>/isNewAssignment}" />
                     <Text text="{assignment>/NewAssignDesc}" visible="{assignment>/isNewAssignment}"/>
@@ -85,9 +87,15 @@
         </content>
 
         <buttons>
-            <Button text="{i18n>xbut.buttonClose}" press="onCloseDialog" />
-            <Button text="{i18n>xbut.buttonUnassign}" type="Reject" press="onDeleteAssignment" />
-            <Button text="{i18n>xbut.buttonSave}" type="Emphasized" press="onSaveDialog" />
+            <Button text="{i18n>xbut.buttonClose}"
+                    press="onCloseDialog" />
+            <Button text="{i18n>xbut.buttonUnassign}"
+                    type="Reject"
+                    press="onDeleteAssignment"
+                    visible="{assignment>/AllowUnassign}"/>
+            <Button text="{i18n>xbut.buttonSave}"
+                    type="Emphasized"
+                    press="onSaveDialog" />
         </buttons>
 
     </Dialog>
