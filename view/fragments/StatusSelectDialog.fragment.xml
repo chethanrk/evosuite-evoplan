@@ -1,24 +1,27 @@
 <core:FragmentDefinition
         xmlns="sap.m"
         xmlns:core="sap.ui.core">
-    <TableSelectDialog
-            noDataText="{i18n>xtit.notFoundTitle}"
-            title="{i18n>xtit.assignModalTitle}"
-            search="handleSearch"
-            confirm="handleClose"
-            cancel="handleClose"
-            items="{path : '/TechnicianSet'}">
-        <ColumnListItem>
-            <cells>
-                <ObjectIdentifier title="{Description}" />
-            </cells>
-        </ColumnListItem>
-        <columns>
-            <Column>
-                <header>
-                    <Text text="" />
-                </header>
-            </Column>
-        </columns>
-    </TableSelectDialog>
+
+    <Dialog title="{i18n>xtit.selectStatusModalTitle}"
+            contentWidth="50%"
+            resizable="true"
+            class="selectStatusDialog">
+        <content>
+            <SelectList
+                    id="selectStatusList"
+                    selectionChange="onSelectionChange"
+                    items="{
+                        path: '/DemandFunctionsSet',
+                        sorter: { path: 'Description' }
+                    }">
+                <core:Item key="{Function}" text="{Description}" />
+            </SelectList>
+        </content>
+
+        <buttons>
+            <Button text="{i18n>xbut.buttonClose}" press="onCloseDialog" />
+            <Button text="{i18n>xbut.buttonSave}" type="Emphasized" press="onSaveDialog" />
+        </buttons>
+    </Dialog>
+
 </core:FragmentDefinition>

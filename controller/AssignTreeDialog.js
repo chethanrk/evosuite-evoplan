@@ -1,8 +1,10 @@
 sap.ui.define([
     "com/evorait/evoplan/controller/BaseController",
     "com/evorait/evoplan/model/models",
-    "com/evorait/evoplan/model/formatter"
-], function (BaseController, models, formatter) {
+    "com/evorait/evoplan/model/formatter",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator"
+], function (BaseController, models, formatter, Filter, FilterOperator) {
     "use strict";
 
     return BaseController.extend("com.evorait.evoplan.controller.AssignTreeDialog", {
@@ -52,6 +54,28 @@ sap.ui.define([
         },
 
         /**
+         * search on resource tree
+         * @param oEvent
+         */
+        onSearchModal : function (oEvent) {
+            var sQuery = oEvent.getSource().getValue() || "",
+                oTable = sap.ui.getCore().byId("assignModalTable");
+
+            var viewModel = this._oView.getModel("viewModel"),
+                binding = oTable.getBinding("rows"),
+                viewFilters = viewModel.getProperty("/resourceFilterView"),
+                aFilters = viewFilters.slice(0);
+
+            if(!aFilters && aFilters.length == 0){
+                return;
+            }
+
+            aFilters.push(new Filter("Description", FilterOperator.Contains, sQuery));
+            var resourceFilter = new Filter({filters: aFilters, and: true});
+            binding.filter(resourceFilter, "Application");
+        },
+
+        /**
          *
          * @param oEvent
          */
@@ -79,7 +103,7 @@ sap.ui.define([
 
                 if(this._oDataTable){
                     var selectedIdx = this._oDataTable.getSelectedIndices();
-                    var selectedPaths = this._getSelectedRowPaths(this._oView.getModel(), this._oDataTable, selectedIdx);
+                    var selectedPaths = this._getSelectedRowPaths(this._oDataTable, selectedIdx, this._oView, true);
 
                     eventBus.publish("AssignTreeDialog", "assignSelectedDemand", {
                         selectedPaths: selectedPaths,
@@ -88,10 +112,11 @@ sap.ui.define([
                     this.onCloseDialog();
                     return;
                 }
-                //show error message
-                var msg = this.getResourceBundle().getText("notFoundContext");
-                this.showMessageToast(msg);
             }
+
+            //show error message
+            var msg = this._oView.getResourceBundle().getText("notFoundContext");
+            this.showMessageToast(msg);
         },
 
         refreshDialogTable: function (oEvent) {

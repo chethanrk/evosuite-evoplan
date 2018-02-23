@@ -36,6 +36,7 @@ sap.ui.define([
 			template: oMessageTemplate
 		}
 	});
+
 	return BaseController.extend("com.evorait.evoplan.controller.List", {
 
 		formatter: formatter,
@@ -58,7 +59,17 @@ sap.ui.define([
 
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
+            eventBus.subscribe("StatusSelectDialog", "changeStatusDemand", this._triggerSaveDemandStatus, this);
             eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
+
+
+            // event listener for changing device orientation with fallback of window resize
+            var orientationEvent = this.getOrientationEvent(),
+                _this = this;
+
+            window.addEventListener(orientationEvent, function() {
+                _this._jDraggable(_this)
+            }, false);
 		},
 
 		/* =========================================================== */
@@ -99,221 +110,219 @@ sap.ui.define([
 			}
 		},
 
-            /**
-			 * on press assign button in footer
-			 * show modal with user for select
-             * @param oEvent
-             */
-            onAssignButtonPress : function (oEvent) {
-                this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-                if(this._aSelectedRowsIdx.length > 0){
-                    this.getOwnerComponent().assignTreeDialog.open(this.getView(), false);
-				}else{
-                    var msg = this.getResourceBundle().getText('ymsg.selectMinItem');
-                    MessageToast.show(msg);
-				}
-            },
+        /**
+         * on press assign button in footer
+         * show modal with user for select
+         * @param oEvent
+         */
+        onAssignButtonPress : function (oEvent){
+            this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+            var aSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, null, true);
 
-            /**
-             * close assign modal
-             * @param oEvent
-             */
-            onSearchAssignModal : function (oEvent) {
-                var sQuery = oEvent.getSource().getValue() || "",
-                    oTable = sap.ui.getCore().byId("assignModalTable");
+            if(aSelectedPaths.length > 0){
+                this.getOwnerComponent().assignTreeDialog.open(this.getView(), false);
+            }
+        },
 
-                var viewModel = this.getModel("viewModel"),
-                    binding = oTable.getBinding("rows"),
-                    viewFilters = viewModel.getProperty("/resourceFilterView"),
-                    aFilters = viewFilters.slice(0);
-
-                if(!aFilters && aFilters.length == 0){
-                    return;
-                }
-
-                aFilters.push(new Filter("Description", FilterOperator.Contains, sQuery));
-                var resourceFilter = new Filter({filters: aFilters, and: true});
-                binding.filter(resourceFilter, "Application");
-            },
-
-            onChangeStatusButtonPress : function (oEvent) {
-                this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-                if(this._aSelectedRowsIdx.length > 0){
-                    if (!this._oStatusDialog) {
-                        this._oStatusDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.StatusSelectDialog", this);
-                        this.getView().addDependent(this._oStatusDialog);
-                    }
-                    this._oStatusDialog.open();
-                }else{
-                    var msg = this.getResourceBundle().getText('ymsg.selectMinItem');
-                    MessageToast.show(msg);
-                }
-            },
+        /**
+         * open change status dialog
+         * @param oEvent
+         */
+        onChangeStatusButtonPress : function (oEvent) {
+            this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+            if(this._aSelectedRowsIdx.length > 0){
+                this.getOwnerComponent().statusSelectDialog.open(this.getView());
+            }else{
+                var msg = this.getResourceBundle().getText('ymsg.selectMinItem');
+                MessageToast.show(msg);
+            }
+        },
 
 		onMessagePopoverPress: function(oEvent) {
 			oMessagePopover.openBy(oEvent.getSource());
 		},
 
-            onExit: function() {
-                if(this._oStatusDialog){
-                    this._oStatusDialog.destroy();
+        onExit: function() {
+        },
+
+        /* =========================================================== */
+        /* internal methods                                            */
+        /* =========================================================== */
+
+        /**
+         * add configuration to demand table
+         * @param oDataTable
+         * @private
+         */
+        _configureDataTable : function (oDataTable) {
+            oDataTable.setEnableBusyIndicator(true);
+            oDataTable.setSelectionMode('MultiToggle');
+            oDataTable.setEnableColumnReordering(false);
+            oDataTable.setEnableCellFilter(false);
+            oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
+
+            //this highlight is only to show that rows can be dragged - nice to see
+            oDataTable.setRowSettingsTemplate(new RowSettings({
+                highlight: "Information"
+            }));
+
+            //enable/disable buttons on footer when there is some/no selected rows
+            oDataTable.attachRowSelectionChange(function () {
+                var selected = this._oDataTable.getSelectedIndices();
+                if(selected.length > 0){
+                    this.byId("assignButton").setEnabled(true);
+                    this.byId("changeStatusButton").setEnabled(true);
+                }else{
+                    this.byId("assignButton").setEnabled(false);
+                    this.byId("changeStatusButton").setEnabled(false);
                 }
-            },
+            }, this);
+        },
 
-			/* =========================================================== */
-			/* internal methods                                            */
-			/* =========================================================== */
+        /**
+         * deselect all checkboxes in table
+         * @private
+         */
+        _deselectAll : function () {
+            this._oDataTable.clearSelection();
+        },
 
-            _configureDataTable : function (oDataTable) {
-                oDataTable.setEnableBusyIndicator(true);
-                oDataTable.setSelectionMode('MultiToggle');
-                oDataTable.setEnableColumnReordering(false);
-                oDataTable.setEnableCellFilter(false);
-                oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
+        /**
+         * destroy already initial draggable and build again
+         * timeout to make sure draggable is really after loading finish added
+         * @param elem
+         * @private
+         */
+        _jDraggable : function (_this) {
+            setTimeout(function() {
+                var draggableTableId = _this._oDraggableTable.getId(), // sapUiTableRowHdr
+                    aPathsData = [];
+                //checkbox is not inside tr so needs to select by class .sapUiTableRowHdr
+                var jDragElement = $("#"+draggableTableId+" tbody tr, #"+draggableTableId+" .sapUiTableRowHdr")
+                    .not(".sapUiTableColHdrTr, .sapUiTableRowHidden");
 
-                //this highlight is only to show that rows can be dragged - nice to see
-                oDataTable.setRowSettingsTemplate(new RowSettings({
-                    highlight: "Information"
-                }));
-
-                //enable/disable buttons on footer when there is some/no selected rows
-                oDataTable.attachRowSelectionChange(function () {
-                    var selected = this._oDataTable.getSelectedIndices();
-                    if(selected.length > 0){
-                        this.byId("assignButton").setEnabled(true);
-                        this.byId("changeStatusButton").setEnabled(true);
-                    }else{
-                        this.byId("assignButton").setEnabled(false);
-                        this.byId("changeStatusButton").setEnabled(false);
+                try{
+                    if(jDragElement.hasClass("ui-draggable")){
+                        jDragElement.draggable( "destroy" );
                     }
-                }, this);
-            },
+                }catch(error){
+                    console.warn(error);
+                }
 
-            /**
-			 * deselect all checkboxes in table
-             * @private
-             */
-            _deselectAll : function () {
-                this._oDataTable.clearSelection();
-            },
-
-            /**
-			 * destroy already initial draggable and build again
-			 * timeout to make sure draggable is really after loading finish added
-             * @param elem
-             * @private
-             */
-			_jDraggable : function (_this) {
-				setTimeout(function() {
-                    var draggableTableId = _this._oDraggableTable.getId(), // sapUiTableRowHdr
+                jDragElement.draggable({
+                    revertDuration: 10,
+                    stop: function (event, ui) {
                         aPathsData = [];
-                    //checkbox is not inside tr so needs to select by class .sapUiTableRowHdr
-                    var jDragElement = $("#"+draggableTableId+" tbody tr, #"+draggableTableId+" .sapUiTableRowHdr")
-                        .not(".sapUiTableColHdrTr, .sapUiTableRowHidden");
+                        _this._deselectAll();
+                    },
+                    helper: function (event, ui) {
+                        var target = $(event.currentTarget);
+                        //single drag by checkbox, checkbox is not inside tr so have to find out row index
+                        var targetCheckboxIdx = target.data("sapUiRowindex");
+                        var selectedIdx = _this._oDataTable.getSelectedIndices();
 
-                    try{
-                        if(jDragElement.hasClass("ui-draggable")){
-                            jDragElement.draggable( "destroy" );
+                        //get all selected rows when checkboxes in table selected
+                        if(selectedIdx.length > 0){
+                            aPathsData = _this._getSelectedRowPaths(_this._oDataTable, selectedIdx, null, true);
+
+                        } else {
+                            //single drag by checkbox row index
+                            if(targetCheckboxIdx >= 0){
+                                selectedIdx = [targetCheckboxIdx];
+                                aPathsData = _this._getSelectedRowPaths(_this._oDataTable, selectedIdx, null, true);
+                            }else{
+                                //table tr single dragged element
+                                aPathsData = _this._getSingleDraggedElement(target.attr('id'));
+                            }
                         }
-                    }catch(error){
-                        console.log(error);
-                    }
+                        //get helper html list
+                        var oHtml = _this._generateDragHelperHTML(aPathsData);
+                        return oHtml;
+                    },
+                    cursor: "move",
+                    cursorAt: { top: -3, left: -3 },
+                    zIndex: 10000,
+                    containment: "document",
+                    appendTo: "body"
+                });
+            }, 1000);
+        },
 
-                    jDragElement.draggable({
-						revertDuration: 10,
-						stop: function (event, ui) {
-                            aPathsData = [];
-                            _this._deselectAll();
-                        },
-						helper: function (event, ui) {
-                            var target = $(event.currentTarget);
-                            //single drag by checkbox, checkbox is not inside tr so have to find out row index
-                            var targetDataCheckbox = target.data("sapUiRowindex");
-                            var selectedIdx = _this._oDataTable.getSelectedIndices();
-
-                            //get all selected rows
-                            if(selectedIdx.length > 0){
-                                aPathsData = _this._getSelectedRowPaths(_this.getModel(), _this._oDataTable, selectedIdx);
-                            }
-                            if(!_this.multiSelect){
-                                //single drag by checkbox row index
-                            	if(targetDataCheckbox >= 0){
-                                    selectedIdx = [targetDataCheckbox];
-                                    aPathsData = _this._getSelectedRowPaths(_this.getModel(), _this._oDataTable, selectedIdx);
-								}else{
-                                    //table tr single dragged element
-                                    aPathsData = _this._getSingleDraggedElement(target.attr('id'));
-								}
-                            }
-                            //get helper html list
-							var oHtml = _this._generateDragHelperHTML(aPathsData);
-                            _this.multiSelect = false;
-                            return oHtml;
-						},
-						cursor: "move",
-						cursorAt: { top: -3, left: -3 },
-						zIndex: 10000,
-						containment: "document",
-						appendTo: "body"
-					});
-				}, 1000);
-            },
-
-            /**
-			 * single dragged element when no checkboxes was selected
-             * @param targetId
-             * @returns {*}
-             * @private
-             */
-            _getSingleDraggedElement : function (targetId) {
-                var draggedElement = sap.ui.getCore().byId(targetId),
-                    oContext = draggedElement.getBindingContext();
-                if(oContext){
-                    var sPath = oContext.getPath();
-                    return [{
-                        oData: this.getModel().getProperty(sPath),
-                        sPath: sPath
-                    }];
-				}
-				return false;
-            },
-
-            /**
-			 * generates html list for dragged paths and gives back to helper function
-             * @param aPathsData
-             * @returns {jQuery|HTMLElement}
-             * @private
-             */
-            _generateDragHelperHTML : function (aPathsData) {
-                var helperTemplate = $('<ul id="dragHelper"></ul>');
-                for (var i=0; i<aPathsData.length; i++) {
-                    var item = $('<li id="'+aPathsData[i].sPath+'" class="ui-draggable-dragging-item"></li>');
-                    //var text = '<span class="demandId">'+aPathsData[i].oData.Guid+'</span> - '+aPathsData[i].oData.DemandDesc;
-                    var text = aPathsData[i].oData.DemandDesc;
-                    item.html(text);
-                    helperTemplate.append(item);
-                }
-                return helperTemplate;
-            },
-
-            _triggerSaveAssignment: function (sChanel, sEvent, oData) {
-                if(sEvent === "assignSelectedDemand"){
-                    this.assignedDemands(oData.selectedPaths, oData.assignPath);
-                }
-            },
-             /**
-			 * generates html list for dragged paths and gives back to helper function
-             * @param sChanel
-             * @param sEvent event which is getting triggered
-             * @param oData Data passed while publishing the event
-             * @returns 
-             * @private
-             */
-            _triggerDemandFilter: function(sChanel, sEvent, oData){
-            	if(sEvent === "refreshDemandTable"){
-                    this.byId("draggableList").rebindTable();
-                }
+        /**
+         * single dragged element when no checkboxes was selected
+         * @param targetId
+         * @returns {*}
+         * @private
+         */
+        _getSingleDraggedElement : function (targetId) {
+            var draggedElement = sap.ui.getCore().byId(targetId),
+                oContext = draggedElement.getBindingContext();
+            if(oContext){
+                var sPath = oContext.getPath();
+                return [{
+                    oData: this.getModel().getProperty(sPath),
+                    sPath: sPath
+                }];
             }
-		});
-	}
-);
+            return false;
+        },
+
+        /**
+         * generates html list for dragged paths and gives back to helper function
+         * @param aPathsData
+         * @returns {jQuery|HTMLElement}
+         * @private
+         */
+        _generateDragHelperHTML : function (aPathsData) {
+            var helperTemplate = $('<ul id="dragHelper"></ul>');
+            for (var i=0; i<aPathsData.length; i++) {
+                var item = $('<li id="'+aPathsData[i].sPath+'" class="ui-draggable-dragging-item"></li>');
+                //var text = '<span class="demandId">'+aPathsData[i].oData.Guid+'</span> - '+aPathsData[i].oData.DemandDesc;
+                var text = aPathsData[i].oData.DemandDesc;
+                item.html(text);
+                helperTemplate.append(item);
+            }
+            return helperTemplate;
+        },
+
+        /**
+         * catch event from dialog for save demand assignment
+         * @param sChanel
+         * @param sEvent
+         * @param oData
+         * @private
+         */
+        _triggerSaveAssignment: function (sChanel, sEvent, oData) {
+            if(sEvent === "assignSelectedDemand"){
+                this.assignedDemands(oData.selectedPaths, oData.assignPath);
+            }
+        },
+
+         /**
+         * generates html list for dragged paths and gives back to helper function
+         * @param sChanel
+         * @param sEvent event which is getting triggered
+         * @param oData Data passed while publishing the event
+         * @returns
+         * @private
+         */
+        _triggerDemandFilter: function(sChanel, sEvent, oData){
+            if(sEvent === "refreshDemandTable"){
+                this.byId("draggableList").rebindTable();
+            }
+        },
+
+        /**
+         * catch event from dialog for saving demand status change
+         * @param sChanel
+         * @param sEvent
+         * @param oData
+         * @private
+         */
+        _triggerSaveDemandStatus: function (sChanel, sEvent, oData) {
+            if(sEvent === "changeStatusDemand"){
+                this.updateFunctionDemand(oData.selectedPaths, oData.functionKey);
+            }
+        }
+	});
+});
