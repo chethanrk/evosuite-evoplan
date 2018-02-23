@@ -141,7 +141,7 @@
                 <ToolbarSpacer/>
                 <Button id="showPlanCalendar"
                         text="{i18n>xbut.showPlanningCal}"
-                        icon="sap-icon://flag"
+                        icon="sap-icon://calendar"
                         press="onPressShowPlanningCal"
                         enabled="false">
                     <layoutData>

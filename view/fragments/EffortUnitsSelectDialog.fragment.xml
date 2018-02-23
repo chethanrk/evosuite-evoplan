@@ -2,7 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<SelectDialog
-		title="{i18n>effortUnits}"
+		title="{i18n>xtit.effortUnits}"
 		class="sapUiPopupWithPadding"
 		items="{/TimeUnitsSet}"
 		search="_onSearchUnits"
