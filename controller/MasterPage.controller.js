@@ -89,6 +89,7 @@ sap.ui.define([
             var parameters = oEvent.getParameters();
             if(parameters.busy === false){
                 this._jDroppable(this);
+                this._oDataTable.setVisibleRowCountMode("Auto");
             }
         },
 
@@ -298,9 +299,8 @@ sap.ui.define([
             oDataTable.setEnableCellFilter(false);
             oDataTable.setEnableColumnReordering(false);
             oDataTable.setEditable(false);
-            oDataTable.setVisibleRowCountMode("Auto");
+            oDataTable.setVisibleRowCountMode("Fixed");
             oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
-            //oDataTable.attachFilter(this.onFilterChanged, this);
         },
 
         /**
