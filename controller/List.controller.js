@@ -117,10 +117,13 @@ sap.ui.define([
          */
         onAssignButtonPress : function (oEvent){
             this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-            var aSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, null, true);
+            var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 
-            if(aSelectedPaths.length > 0){
-                this.getOwnerComponent().assignTreeDialog.open(this.getView(), false);
+            if(oSelectedPaths.aPathsData.length > 0){
+                this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
+            }
+            if(oSelectedPaths.aNonAssignable.length > 0){
+                this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
             }
         },
 
@@ -130,8 +133,10 @@ sap.ui.define([
          */
         onChangeStatusButtonPress : function (oEvent) {
             this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+            var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
+
             if(this._aSelectedRowsIdx.length > 0){
-                this.getOwnerComponent().statusSelectDialog.open(this.getView());
+                this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData);
             }else{
                 var msg = this.getResourceBundle().getText('ymsg.selectMinItem');
                 MessageToast.show(msg);
@@ -218,22 +223,31 @@ sap.ui.define([
                     helper: function (event, ui) {
                         var target = $(event.currentTarget);
                         //single drag by checkbox, checkbox is not inside tr so have to find out row index
-                        var targetCheckboxIdx = target.data("sapUiRowindex");
-                        var selectedIdx = _this._oDataTable.getSelectedIndices();
+                        var targetCheckboxIdx = target.data("sapUiRowindex"),
+                            selectedIdx = _this._oDataTable.getSelectedIndices(),
+                            oSelectedPaths = null;
+
 
                         //get all selected rows when checkboxes in table selected
                         if(selectedIdx.length > 0){
-                            aPathsData = _this._getSelectedRowPaths(_this._oDataTable, selectedIdx, null, true);
+                            oSelectedPaths = _this._getSelectedRowPaths(_this._oDataTable, selectedIdx, true);
+                            aPathsData = oSelectedPaths.aPathsData;
 
                         } else {
                             //single drag by checkbox row index
                             if(targetCheckboxIdx >= 0){
                                 selectedIdx = [targetCheckboxIdx];
-                                aPathsData = _this._getSelectedRowPaths(_this._oDataTable, selectedIdx, null, true);
+                                oSelectedPaths = _this._getSelectedRowPaths(_this._oDataTable, selectedIdx, true);
+                                aPathsData = oSelectedPaths.aPathsData;
                             }else{
                                 //table tr single dragged element
                                 aPathsData = _this._getSingleDraggedElement(target.attr('id'));
                             }
+                        }
+
+                        if(oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0){
+                            _this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+                            //_this._stopDrag(jDragElement);
                         }
                         //get helper html list
                         var oHtml = _this._generateDragHelperHTML(aPathsData);
@@ -246,6 +260,20 @@ sap.ui.define([
                     appendTo: "body"
                 });
             }, 1000);
+        },
+
+        _stopDrag: function (jDragElement) {
+            // need to restore this later
+            var origRevertDuration = jDragElement.draggable('option', 'revertDuration');
+            var origRevertValue = jDragElement.draggable('option', 'revert');
+
+            jDragElement
+                .css({top: '0px', left: '0px'})
+                .draggable('option', 'revert', true)
+                .draggable('option', 'revertDuration', 0)
+                .trigger('mouseup')
+                .draggable('option', 'revertDuration', origRevertDuration)
+                .draggable('option', 'revert', origRevertValue);
         },
 
         /**

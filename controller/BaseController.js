@@ -6,8 +6,9 @@ sap.ui.define([
 		"sap/m/Button",
 		"sap/m/Text",
 		"sap/m/MessageToast",
-        "sap/m/MessageBox"
-	], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox) {
+        "sap/m/MessageBox",
+        "sap/m/FormattedText"
+	], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText) {
 		"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.BaseController", {
@@ -259,20 +260,10 @@ sap.ui.define([
          * @param aSelectedRowsIdx
          * @private
          */
-        _getSelectedRowPaths : function (oTable, aSelectedRowsIdx, oView, checkAssignAllowed) {
+        _getSelectedRowPaths : function (oTable, aSelectedRowsIdx, checkAssignAllowed) {
             var aPathsData = [],
                 bNonAssignableDemandsExist = false,
-                aNonAssignableDemands =[],
-                oModel = null,
-                resourceBundle = null;
-
-            if(oView){
-                oModel = oView.getModel();
-                resourceBundle = oView.getModel("i18n").getResourceBundle();
-            }else{
-                oModel = this.getModel();
-                resourceBundle = this.getResourceBundle();
-            }
+                aNonAssignableDemands =[];
 
             if(checkAssignAllowed){
                 oTable.clearSelection();
@@ -281,35 +272,53 @@ sap.ui.define([
             for (var i=0; i<aSelectedRowsIdx.length; i++) {
                 var oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
                 var sPath = oContext.getPath();
-                var oData = oModel.getProperty(sPath);
+                var oData = this.getModel().getProperty(sPath);
 
                 //on check on oData property ALLOW_ASSIGN when flag was given
                 if(checkAssignAllowed){
                     if(!!oData.ALLOW_ASSIGN){
-                        aPathsData.push({
-                            sPath: sPath,
-                            oData: oData
-                        });
+                        aPathsData.push({ sPath: sPath, oData: oData });
                         oTable.addSelectionInterval(aSelectedRowsIdx[i],aSelectedRowsIdx[i]);
                     }else{
                         aNonAssignableDemands.push(oData.DemandDesc);
                         bNonAssignableDemandsExist = true;
                     }
                 }else{
-                    aPathsData.push({
-                        sPath: sPath,
-                        oData: oData
-                    });
+                    aPathsData.push({ sPath: sPath, oData: oData });
                 }
             }
+            return {
+                aPathsData: aPathsData,
+                aNonAssignable: aNonAssignableDemands
+            };
+        },
 
-            //show message when there are demands who are not allowed to assign
-            if(bNonAssignableDemandsExist){
-                var msg = resourceBundle.getText("assignmentNotPossible",[aNonAssignableDemands.join(", ")]);
-                this.showMessageToast(msg);
-            }
+        /**
+         * show error dialog for demands who are not assignable
+         * @param aNonAssignable
+         * @private
+         */
+        _showAssignErrorDialog: function (aNonAssignable) {
+            var msg = this.getResourceBundle().getText("assignmentNotPossible");
 
-            return aPathsData;
+            var dialog = new Dialog({
+                title: 'Error',
+                type: 'Message',
+                state: 'Error',
+                content: new FormattedText({
+                    htmlText: "<strong>"+msg+"</strong><br/><br/>"+aNonAssignable.join(",<br/>")
+                }),
+                beginButton: new Button({
+                    text: 'OK',
+                    press: function () {
+                        dialog.close();
+                    }
+                }),
+                afterClose: function() {
+                    dialog.destroy();
+                }
+            });
+            dialog.open();
         },
 
         /**

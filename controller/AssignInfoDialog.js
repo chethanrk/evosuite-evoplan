@@ -27,6 +27,7 @@ sap.ui.define([
             }
             return this._oDialog;
         },
+
         /**
          * Initialize Effort units select dialog
          * @returns {sap.ui.core.Control|sap.ui.core.Control[]|*}
@@ -46,22 +47,22 @@ sap.ui.define([
          * @param oView
          * @param sBindPath
          */
-        open : function (oView, sBindPath,oAssignMentData) {
+        open : function (oView, sBindPath, oAssignmentData) {
             var oDialog = this.getDialog(),
-            			oAssignment={
-		                    showError: false,
-		                    AssignmentGuid: "",
-		                    Description: "",
-		                    AllowReassign: false,
-		                    AllowUnassign: false,
-		                    NewAssignPath: null,
-		                    NewAssignId: null,
-		                    NewAssignDesc: null,
-		                    isNewAssignment: false
-            			 },
-            			oResource,
-            			sResourceGroupGuid,
-            			sResourceGuid;
+                oAssignment={
+                    showError: false,
+                    AssignmentGuid: "",
+                    Description: "",
+                    AllowReassign: false,
+                    AllowUnassign: false,
+                    NewAssignPath: null,
+                    NewAssignId: null,
+                    NewAssignDesc: null,
+                    isNewAssignment: false
+                 },
+                oResource,
+                sResourceGroupGuid,
+                sResourceGuid;
           
           if(sBindPath && sBindPath !==""){
         		oResource = oView.getModel().getProperty(sBindPath);	
@@ -73,10 +74,10 @@ sap.ui.define([
                 
                 this._bindingPath = sBindPath;
           }else{
-        		oAssignment.AssignmentGuid = oAssignMentData.Guid;
-                oAssignment.Description = oAssignMentData.Demand.DemandDesc;
-                sResourceGroupGuid = oAssignMentData.ResourceGroupGuid;
-                sResourceGuid = oAssignMentData.ResourceGuid;
+        		oAssignment.AssignmentGuid = oAssignmentData.Guid;
+                oAssignment.Description = oAssignmentData.Demand.DemandDesc;
+                sResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
+                sResourceGuid = oAssignmentData.ResourceGuid;
           }
 
             this._oView = oView;
@@ -234,6 +235,7 @@ sap.ui.define([
                         oModel.setProperty("/EffortUnit", oContext.getProperty("EffortUnit"));
 
                         var oDemandData = oContext.getProperty("Demand");
+                        console.log(oDemandData);
                         oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
                         oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
                     },
