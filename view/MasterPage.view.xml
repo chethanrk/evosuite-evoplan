@@ -13,6 +13,17 @@
           showHeader="true"
           class="sapUiNoContentPadding tableContentPage">
 
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Image src="assets/img/evoplan_h50px.png"
+                           densityAware="false"
+                           height="100%"
+                           alt="EvoPlan" />
+                </contentLeft>
+            </Bar>
+        </customHeader>
+
         <f:DynamicPage headerExpanded="true"
                        preserveHeaderStateOnScroll="true"
                        fitContent="false"

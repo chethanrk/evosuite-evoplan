@@ -15,12 +15,7 @@
           class="sapUiNoContentPadding tableContentPage">
 
         <headerContent>
-            <Image src="assets/img/evoplan_transparent3.png"
-                   densityAware="false"
-                   height="100%"
-                   alt="EvoPlan">
-            </Image>
-            <Button icon="sap-icon://hint" press="onIconPress" />
+            <Button icon="sap-icon://sys-help" press="onIconPress" />
         </headerContent>
 
         <f:DynamicPage headerExpanded="true"
