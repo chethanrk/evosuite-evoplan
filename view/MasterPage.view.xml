@@ -137,8 +137,7 @@
                                           visible="{
                                               path: 'NodeType',
                                               formatter: '.formatter.isMainResource'
-                                              }"
-                                              selected="{IsSelected}"/>
+                                              }"/>
                             </table:template>
                         </table:Column>
                     </table:columns>
