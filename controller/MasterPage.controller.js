@@ -207,6 +207,7 @@ sap.ui.define([
 			var sPath = parent.getBindingContext().getPath();
 			var oParams = oEvent.getParameters();
 
+			this.getModel().setProperty(sPath+"/IsSelected",oParams.selected);
 			if (oParams.selected) {
 				this.selectedResources.push(sPath);
 
