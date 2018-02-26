@@ -224,19 +224,27 @@ sap.ui.define([
                             username: oUser.getFullName(),
                             user: oUser.getId()
                         };
-                        console.log('you are loggin in with ' + oUser.username);
                         this.setModel(models.createUserModel(oUser), "user");
                     },
                     function(sError){
-                        console.log('user fetching failed ' + sError );
+                    	//TODO Error
                     });
             }else{
-                var oModel = this.getModel(),
-                	sUser = oModel.sUser,
-                    oUser = {
-                        username: sUser
-                    };
-               this.setModel(models.createUserModel(oUser), "user");
+               if(window.jQuery){
+	            	jQuery.ajax({
+            			type : "GET",
+            			contentType : "application/json",
+            			url : "/sap/bc/ui2/start_up",
+            			dataType : "json",
+            			success : function(data,response,jqXHR) {
+            				var oUserData = {
+            					username:data.fullName,
+            					user:data.id
+            				};
+            				 this.setModel(models.createUserModel(oUserData), "user");
+            			}.bind(this)
+    				 });
+               }
             }
         }
 	});

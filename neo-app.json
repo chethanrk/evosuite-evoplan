@@ -37,11 +37,11 @@
       "description": "SAPUI5 Test Resources"
     },
     {
-      "path": "/sap/opu/odata",
+      "path": "/sap",
       "target": {
         "type": "destination",
         "name": "ED1CloudConnector",
-        "entryPath": "/sap/opu/odata"
+        "entryPath": "/sap"
       },
       "description": "ED1 via Cloud Connector"
     }

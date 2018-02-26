@@ -206,6 +206,9 @@ sap.ui.define([
 			var parent = oSource.getParent();
 			var sPath = parent.getBindingContext().getPath();
 			var oParams = oEvent.getParameters();
+			
+			// setting property manually to the IsSelected property od ResourceHierarchy
+			this.getModel().setProperty(sPath+"/IsSelected",oParams.selected);
 
 			if (oParams.selected) {
 				this.selectedResources.push(sPath);

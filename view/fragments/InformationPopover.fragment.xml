@@ -30,7 +30,7 @@
 				</Text>
 				<Label text="{i18n>xfld.username}">
 				</Label>
-				<Text text="{user>/userName}">
+				<Text text="{user>/username}">
 				</Text>
 				<Label text="{i18n>xfld.sapui5Version}">
 				</Label>
