@@ -26,13 +26,11 @@ sap.ui.define([
 		createInformationModel: function(oComponent) {
 			var oMetadata = oComponent.getMetadata();
 			var oManifest = oMetadata._oManifest;
-			var oBaseUri = oManifest._oBaseUri;
 			var oModel = new JSONModel();
 
 			var oInformation = {
 				appVersion: oManifest._oManifest["sap.app"].applicationVersion.version,
 				ui5Version: sap.ui.getCore().getConfiguration().getVersion().toString(),
-				serverConnection: oBaseUri._string
 			};
 			oModel.setData(oInformation);
 			return oModel;

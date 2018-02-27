@@ -90,7 +90,7 @@ sap.ui.define([
             //creates the Information model and sets to the component
 			this.setModel(models.createInformationModel(this),"InformationModel");
 			//create the user information model
-			this._getUserInfo();
+		//	this._getUserInfo();
 			
             this._initDialogs();
 
