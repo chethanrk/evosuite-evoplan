@@ -83,6 +83,7 @@ sap.ui.define([
                 tableBusyDelay : 0,
                 persistencyKeyTable: "evoPlan_ui",
                 persistencyKeyTree: "evoPlan_resource",
+                persistencyKeyDemandTable:"evoPlan_demands",
                 counterResourceFilter: ""
             });
             this.setModel(oViewModel, "viewModel");
