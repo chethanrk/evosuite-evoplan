@@ -332,6 +332,16 @@ sap.ui.define([
 			if (!this._infoDialog) {
 				this._infoDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.InformationPopover", this);
 				this.getView().addDependent(this._infoDialog);
+				this._infoDialog.bindElement({path:"/SystemInformationSet('')",
+                    events: {
+                    	dataRequested: function () {
+                        	this._infoDialog.setBusy(true);
+                    	}.bind(this),
+                    	dataReceived: function () {
+                        	this._infoDialog.setBusy(false);
+                		}.bind(this)
+                    }
+                });
 			}
 			this._infoDialog.open();
         },
