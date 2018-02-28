@@ -326,15 +326,36 @@ sap.ui.define([
                 this.updateFunctionDemand(oData.selectedPaths, oData.functionKey);
             }
         },
-        
+        /**
+         * Initialize and open the Information dialog with necessary details
+         * @Author Rahul
+         * @param oEvent Button press event
+         */
         onIconPress: function(oEvent){
         	// create popover
 			if (!this._infoDialog) {
 				this._infoDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.InformationPopover", this);
 				this.getView().addDependent(this._infoDialog);
+				this._infoDialog.bindElement(
+					{
+						path:"/SystemInformationSet('')",
+                    	events: {
+                    		dataRequested: function () {
+                        		this._infoDialog.setBusy(true);
+                    		}.bind(this),
+                    		dataReceived: function () {
+                        		this._infoDialog.setBusy(false);
+                			}.bind(this)
+                    	}
+                	}
+                );
 			}
 			this._infoDialog.open();
         },
+        /**
+         * Closes the information dialog
+         * @Author Rahul
+         */
         onCloseDialog: function(){
         	this._infoDialog.close();
         }

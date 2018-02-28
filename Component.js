@@ -89,8 +89,6 @@ sap.ui.define([
             
             //creates the Information model and sets to the component
 			this.setModel(models.createInformationModel(this),"InformationModel");
-			//create the user information model
-			this._getUserInfo();
 			
             this._initDialogs();
 
@@ -215,29 +213,6 @@ sap.ui.define([
             }
             this.getModel("MessageModel").setData(aMessages);
             oMessageModel.setData([]);
-        },
-        _getUserInfo: function(){
-        	if(sap.ui2 && sap.ui2.shell){
-                var oUser = sap.ui2.shell.getUser();
-                oUser.load({}, function(){
-                        oUser = {
-                            username: oUser.getFullName(),
-                            user: oUser.getId()
-                        };
-                        console.log('you are loggin in with ' + oUser.username);
-                        this.setModel(models.createUserModel(oUser), "user");
-                    },
-                    function(sError){
-                        console.log('user fetching failed ' + sError );
-                    });
-            }else{
-                var oModel = this.getModel(),
-                	sUser = oModel.sUser,
-                    oUser = {
-                        username: sUser
-                    };
-               this.setModel(models.createUserModel(oUser), "user");
-            }
         }
 	});
 });
