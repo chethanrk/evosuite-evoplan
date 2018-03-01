@@ -34,7 +34,7 @@ sap.ui.define([
          * @param oView
          * @param sBindPath
          */
-        open : function (oView) {
+        open : function (oView, aSelectedPaths) {
             var oDialog = this.getDialog(),
                 oDraggableTable = oView.byId("draggableList");
             // connect dialog to view (models, lifecycle)
@@ -42,11 +42,7 @@ sap.ui.define([
 
             this._oView = oView;
             this._selectedFunction = null;
-            this._oDataTable = null;
-
-            if(oDraggableTable){
-                this._oDataTable = oDraggableTable.getTable();
-            }
+            this._aSelectedPaths = aSelectedPaths;
 
             //remove selection maybe from last time
             var oList = sap.ui.getCore().byId("selectStatusList");
@@ -73,12 +69,9 @@ sap.ui.define([
             if(this._selectedFunction && this._selectedFunction !== ""){
                 var eventBus = sap.ui.getCore().getEventBus();
 
-                if(this._oDataTable){
-                    var selectedIdx = this._oDataTable.getSelectedIndices();
-                    var selectedPaths = this._getSelectedRowPaths(this._oDataTable, selectedIdx, this._oView, false);
-
+                if(this._aSelectedPaths){
                     eventBus.publish("StatusSelectDialog", "changeStatusDemand", {
-                        selectedPaths: selectedPaths,
+                        selectedPaths: this._aSelectedPaths,
                         functionKey: this._selectedFunction
                     });
                     this.onCloseDialog();

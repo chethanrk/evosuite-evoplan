@@ -428,10 +428,6 @@ sap.ui.define([
                     filters: aTokenFilter,
                     and: false
                 }));
-                /*aFilters.push(new Filter({
-                    filters: [groupFilter, parentNodeFilter],
-                    and: true
-                }));*/
             }
             oViewModel.setProperty("/resourceFilterView", aFilters);
 
