@@ -247,10 +247,10 @@ sap.ui.define([
 
                         if(oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0){
                             _this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
-                            //_this._stopDrag(jDragElement);
+                            _this._stopDrag(jDragElement);
                         }
                         //get helper html list
-                        var oHtml = _this._generateDragHelperHTML(aPathsData);
+                        var oHtml = _this._generateDragHelperHTML(aPathsData,oSelectedPaths.aNonAssignable);
                         return oHtml;
                     },
                     cursor: "move",
@@ -266,7 +266,6 @@ sap.ui.define([
             // need to restore this later
             var origRevertDuration = jDragElement.draggable('option', 'revertDuration');
             var origRevertValue = jDragElement.draggable('option', 'revert');
-
             jDragElement
                 .css({top: '0px', left: '0px'})
                 .draggable('option', 'revert', true)
@@ -274,6 +273,7 @@ sap.ui.define([
                 .trigger('mouseup')
                 .draggable('option', 'revertDuration', origRevertDuration)
                 .draggable('option', 'revert', origRevertValue);
+                
         },
 
         /**
@@ -301,8 +301,18 @@ sap.ui.define([
          * @returns {jQuery|HTMLElement}
          * @private
          */
-        _generateDragHelperHTML : function (aPathsData) {
-            var helperTemplate = $('<ul id="dragHelper"></ul>');
+        _generateDragHelperHTML : function (aPathsData,aNonAssignable) {
+        	var $Element = $("#dragHelper"),
+        		helperTemplate;
+        	if($Element.length > 0){
+        		$Element.remove();
+        	}
+        	if(aNonAssignable.length <= 0){
+        		helperTemplate = $('<ul id="dragHelper"></ul>');
+        	}else{
+        		helperTemplate = $('<ul id="dragHelper" style="display:none"></ul>');
+        	}
+            
             for (var i=0; i<aPathsData.length; i++) {
                 var item = $('<li id="'+aPathsData[i].sPath+'" class="ui-draggable-dragging-item"></li>');
                 var text = aPathsData[i].oData.DemandDesc;
