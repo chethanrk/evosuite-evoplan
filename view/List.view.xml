@@ -46,6 +46,7 @@
                         header="{i18n>xtit.itemListTitle}"
                         useExportToExcel="true"
                         useVariantManagement="true"
+                        persistencyKey="{viewModel>/persistencyKeyDemandTable}"
                         useTablePersonalisation="true"
                         requestAtLeastFields="Guid,ALLOW_ASSIGN">
                     <!-- layout data used to make the table growing but the filter bar fixed -->

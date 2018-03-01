@@ -54,14 +54,16 @@ sap.ui.define([
                 tableBusyDelay : 0,
                 persistencyKeyTable: "evoPlan_ui",
                 persistencyKeyTree: "evoPlan_resource",
+                persistencyKeyDemandTable:"evoPlan_demands",
                 counterResourceFilter: ""
             });
             this.setModel(oViewModel, "viewModel");
             
             //creates the Information model and sets to the component
 			this.setModel(models.createInformationModel(this),"InformationModel");
-			//create the user information model
-			this._getUserInfo();
+			
+			//sets user model
+			this._getSystemInformation();
 			
             this._initDialogs();
 
@@ -187,28 +189,18 @@ sap.ui.define([
             this.getModel("MessageModel").setData(aMessages);
             oMessageModel.setData([]);
         },
-        _getUserInfo: function(){
-        	if(sap.ui2 && sap.ui2.shell){
-                var oUser = sap.ui2.shell.getUser();
-                oUser.load({}, function(){
-                        oUser = {
-                            username: oUser.getFullName(),
-                            user: oUser.getId()
-                        };
-                        console.log('you are loggin in with ' + oUser.username);
-                        this.setModel(models.createUserModel(oUser), "user");
-                    },
-                    function(sError){
-                        console.log('user fetching failed ' + sError );
-                    });
-            }else{
-                var oModel = this.getModel(),
-                	sUser = oModel.sUser,
-                    oUser = {
-                        username: sUser
-                    };
-               this.setModel(models.createUserModel(oUser), "user");
-            }
+        
+        _getSystemInformation: function(){
+        	this.getModel().callFunction("/GetSystemInformation", {
+                method:"GET",
+                success: function(oData, oResponse){
+                    //Handle Success
+                    this.setModel(models.createUserModel(oData), "user");
+                }.bind(this),
+                error: function(oError){
+                    //Handle Error
+                }.bind(this)
+            });
         }
 	});
 });

@@ -326,7 +326,11 @@ sap.ui.define([
                 this.updateFunctionDemand(oData.selectedPaths, oData.functionKey);
             }
         },
-        
+        /**
+         * Initialize and open the Information dialog with necessary details
+         * @Author Rahul
+         * @param oEvent Button press event
+         */
         onIconPress: function(oEvent){
         	// create popover
 			if (!this._infoDialog) {
@@ -335,6 +339,10 @@ sap.ui.define([
 			}
 			this._infoDialog.open();
         },
+        /**
+         * Closes the information dialog
+         * @Author Rahul
+         */
         onCloseDialog: function(){
         	this._infoDialog.close();
         }

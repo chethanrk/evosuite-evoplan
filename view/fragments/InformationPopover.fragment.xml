@@ -30,7 +30,7 @@
 				</Text>
 				<Label text="{i18n>xfld.username}">
 				</Label>
-				<Text text="{user>/userName}">
+				<Text text="{user>/Fullname}">
 				</Text>
 				<Label text="{i18n>xfld.sapui5Version}">
 				</Label>
@@ -38,7 +38,7 @@
 				</Text>
 				<Label text="{i18n>xfld.serverConnection}">
 				</Label>
-				<Text text="{InformationModel>/serverConnection}">
+				<Text text="{user>/ServerPath}">
 				</Text>
 			</form:content>
             </form:SimpleForm>
