@@ -91,6 +91,9 @@ sap.ui.define([
             //creates the Information model and sets to the component
 			this.setModel(models.createInformationModel(this),"InformationModel");
 			
+			//sets user model
+			this._getSystemInformation();
+			
             this._initDialogs();
 
 			//Creating the Global message model from MessageManager
@@ -214,6 +217,19 @@ sap.ui.define([
             }
             this.getModel("MessageModel").setData(aMessages);
             oMessageModel.setData([]);
+        },
+        
+        _getSystemInformation: function(){
+        	this.getModel().callFunction("/GetSystemInformation", {
+                method:"GET",
+                success: function(oData, oResponse){
+                    //Handle Success
+                    this.setModel(models.createUserModel(oData), "user");
+                }.bind(this),
+                error: function(oError){
+                    //Handle Error
+                }.bind(this)
+            });
         }
 	});
 });
