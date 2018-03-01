@@ -40,35 +40,6 @@ sap.ui.define([
 			// the logon plugin - if it's not running as hybrid application then the initialization
 			// of the oData service happens by the entries in the manifest.json which is used
 			// as metadata reference
-			var oModel;
-			var appContext;
-			var externalURL;
-
-			if (com.evorait.evoplan.dev.devapp.externalURL) {
-				externalURL = com.evorait.evoplan.dev.devapp.externalURL;
-			}
-
-			if (com.evorait.evoplan.dev.devapp.devLogon) {
-				appContext = com.evorait.evoplan.dev.devapp.devLogon.appContext;
-			}
-
-			if (window.cordova && appContext && !window.sap_webide_companion && !externalURL) {
-				var url = appContext.applicationEndpointURL + "/";
-				var oHeader = {
-					"X-SMP-APPCID": appContext.applicationConnectionId
-				};
-
-				// this would allow to pass basic authentication from the user registration to the
-				// backend request - do not do this yet
-				/**
-				if (appContext.registrationContext.user) {
-					oHeader.Authorization = "Basic " + btoa(appContext.registrationContext.user + ":" + appContext.registrationContext.password);
-				}
-				**/
-				// set the central model (default model has no name)
-				oModel = new sap.ui.model.odata.ODataModel(url, true, null, null, oHeader);
-				this.setModel(oModel);
-			}
 
 			// initialize the error handler with the component
 			this._oErrorHandler = new ErrorHandler(this);

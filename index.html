@@ -4,6 +4,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 	<title>EvoPlan</title>
 
 	<!-- Bootstrapping UI5 -->
@@ -86,20 +87,9 @@
 				});
 			});
 		}
+
+        startApp();
 			
-		window.onload = function() {
-			jQuery.sap.require("com.evorait.evoplan.dev.devapp");
-			if (window.cordova || getUrlParameterName("companionbuster")) {
-				var page = window.location.pathname.split("/").pop();
-                if(page === "preview_hidden.html") {
-                    window.sap_webide_FacadePreview = true;
-                }
-				com.evorait.evoplan.dev.devapp.initialize();
-			}
-			else {
-				startApp();
-			}
-		}
 	</script>
 
 </head>
