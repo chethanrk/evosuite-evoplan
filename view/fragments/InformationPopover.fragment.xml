@@ -13,7 +13,7 @@
                     layout="ResponsiveGridLayout"
                     labelSpanXL="3"
                     labelSpanL="3"
-                    labelSpanM="3"
+                    labelSpanM="4"
                     labelSpanS="12"
                     emptySpanXL="2"
                     emptySpanL="2"
@@ -43,6 +43,10 @@
 				<Label text="{i18n>xfld.serverConnection}">
 				</Label>
 				<Text text="{user>/ServerPath}">
+				</Text>
+				<Label text="{i18n>xfld.logonLanguage}">
+				</Label>
+				<Text text="{InformationModel>/language}">
 				</Text>
 				
 			</form:content>
