@@ -35,17 +35,12 @@ sap.ui.define([
          * @param oView
          * @param sBindPath
          */
-        open : function (oView, isReassign) {
-            var oDialog = this.getDialog(),
-                oDraggableTable = oView.byId("draggableList");
+        open : function (oView, isReassign, aSelectedPaths) {
+            var oDialog = this.getDialog();
 
             this._oView = oView;
             this._reAssign = isReassign;
-            this._oDataTable = null;
-
-            if(oDraggableTable){
-                this._oDataTable = oDraggableTable.getTable();
-            }
+            this._aSelectedPaths = aSelectedPaths;
 
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
@@ -101,12 +96,9 @@ sap.ui.define([
                     return;
                 }
 
-                if(this._oDataTable){
-                    var selectedIdx = this._oDataTable.getSelectedIndices();
-                    var selectedPaths = this._getSelectedRowPaths(this._oDataTable, selectedIdx, this._oView, true);
-
+                if(this._aSelectedPaths){
                     eventBus.publish("AssignTreeDialog", "assignSelectedDemand", {
-                        selectedPaths: selectedPaths,
+                        selectedPaths: this._aSelectedPaths,
                         assignPath: this._assignPath
                     });
                     this.onCloseDialog();

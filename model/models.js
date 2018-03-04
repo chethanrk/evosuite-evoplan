@@ -31,6 +31,7 @@ sap.ui.define([
 			var oInformation = {
 				appVersion: oManifest._oManifest["sap.app"].applicationVersion.version,
 				ui5Version: sap.ui.getCore().getConfiguration().getVersion().toString(),
+				language : sap.ui.getCore().getConfiguration().getLocale().getSAPLogonLanguage()
 			};
 			oModel.setData(oInformation);
 			return oModel;

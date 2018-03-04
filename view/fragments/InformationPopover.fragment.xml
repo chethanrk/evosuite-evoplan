@@ -13,7 +13,7 @@
                     layout="ResponsiveGridLayout"
                     labelSpanXL="3"
                     labelSpanL="3"
-                    labelSpanM="3"
+                    labelSpanM="4"
                     labelSpanS="12"
                     emptySpanXL="2"
                     emptySpanL="2"
@@ -24,13 +24,17 @@
                     columnsM="1"
                     singleContainerFullSize="false" >
                 <form:content>
+				<Label text="{i18n>xfld.username}">
+				</Label>
+				<Text text="{user>/Fullname} ({user>/Username})">
+				</Text>
 				<Label text="{i18n>xfld.evoplanVersion}">
 				</Label>
 				<Text text="{InformationModel>/appVersion}">
 				</Text>
-				<Label text="{i18n>xfld.username}">
+				<Label text="{i18n>xfld.coreVersion}">
 				</Label>
-				<Text text="{user>/Fullname}">
+				<Text text="{user>/CoreVersion}">
 				</Text>
 				<Label text="{i18n>xfld.sapui5Version}">
 				</Label>
@@ -40,6 +44,11 @@
 				</Label>
 				<Text text="{user>/ServerPath}">
 				</Text>
+				<Label text="{i18n>xfld.logonLanguage}">
+				</Label>
+				<Text text="{InformationModel>/language}">
+				</Text>
+				
 			</form:content>
             </form:SimpleForm>
 		</content>

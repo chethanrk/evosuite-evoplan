@@ -14,15 +14,18 @@ sap.ui.define([
         },
         TIMEDAY: {
             title: "H5",
-            icon: "sap-icon://calendar"
+            icon: "sap-icon://calendar",
+            calendarView:"Day"
         },
         TIMEWEEK: {
             title: "H5",
-            icon: "sap-icon://accelerated"
+            icon: "sap-icon://accelerated",
+            calendarView:"Week"
         },
         TIMEMONTH: {
             title: "H5",
-            icon: "sap-icon://appointment-2"
+            icon: "sap-icon://appointment-2",
+            calendarView:"Month"
         },
         ASSIGNMENT: {
             title: "H6",
