@@ -46,6 +46,6 @@
       "description": "ED1 via Cloud Connector"
     }
   ],
-  "welcomeFile": "/test/flpSandbox.html",
+  "welcomeFile": "/index.html",
   "sendWelcomeFileRedirect": true
 }
