@@ -66,7 +66,8 @@
                         text="{i18n>xbut.changeStatus}"
                         icon="sap-icon://flag"
                         press="onChangeStatusButtonPress"
-                        enabled="false">
+                        enabled="false"
+                        visible="{viewModel>/showStatusChangeButton}">
                     <layoutData>
                         <ToolbarLayoutData shrinkable="true" />
                     </layoutData>

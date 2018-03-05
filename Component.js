@@ -55,7 +55,8 @@ sap.ui.define([
                 persistencyKeyTable: "evoPlan_ui",
                 persistencyKeyTree: "evoPlan_resource",
                 persistencyKeyDemandTable:"evoPlan_demands",
-                counterResourceFilter: ""
+                counterResourceFilter: "",
+                showStatusChangeButton: false
             });
             this.setModel(oViewModel, "viewModel");
             
@@ -66,6 +67,9 @@ sap.ui.define([
 			this._getSystemInformation();
 			
             this._initDialogs();
+
+            //proof if there are a status set and button in footer should be visible
+            this._getFunctionSetCount();
 
 			//Creating the Global message model from MessageManager
 			var oMessageModel = new JSONModel();
@@ -196,6 +200,19 @@ sap.ui.define([
                 success: function(oData, oResponse){
                     //Handle Success
                     this.setModel(models.createUserModel(oData), "user");
+                }.bind(this),
+                error: function(oError){
+                    //Handle Error
+                }.bind(this)
+            });
+        },
+
+        _getFunctionSetCount: function () {
+            this.getModel().read("/DemandFunctionsSet/$count", {
+                success: function (oData, oResponse) {
+                    if(oData && oData > 0){
+                        this.getModel("viewModel").setProperty("/showStatusChangeButton", true);
+                    }
                 }.bind(this),
                 error: function(oError){
                     //Handle Error
