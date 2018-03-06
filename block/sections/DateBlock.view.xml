@@ -1,133 +1,50 @@
-<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:layout="sap.ui.layout"
-		  xmlns:smartField="sap.ui.comp.smartfield" xmlns:smartForm="sap.ui.comp.smartform"
-		  xmlns:forms="sap.ui.layout.form"
+<mvc:View xmlns:mvc="sap.ui.core.mvc" 
+		  xmlns="sap.m"
+		  xmlns:smartField="sap.ui.comp.smartfield" 
+		  xmlns:smartForm="sap.ui.comp.smartform"
 		  xmlns:core="sap.ui.core">
-	
-	<!--<forms:SimpleForm labelSpanL="3" labelSpanM="4"
-					  labelSpanS="12" emptySpanL="0" emptySpanM="0" emptySpanS="0"
-					  maxContainerCols="2"
-					  layout="ResponsiveLayout"
-					  width="100%">
-		<core:Title text="General"></core:Title>
-		
-		<smartField:SmartLabel labelFor="idODateFrom" />
-		<smartField:SmartField value="{DateFrom}" id="idODateFrom" editable="false"> 
-		</smartField:SmartField>
-		
-		<smartField:SmartLabel labelFor="idOTimeFrom" />
-		<smartField:SmartField value="{TimeFrom}" id="idOTimeFrom" editable="false"/>
-		
-		<smartField:SmartLabel labelFor="idODateTo" />
-		<smartField:SmartField value="{DateTo}" id="idODateTo" editable="false"/>
-		
-		<smartField:SmartLabel labelFor="idOTimeTo" />
-		<smartField:SmartField value="{TimeTo}" id="idOTimeTo" editable="false"/>
-		<smartField:SmartLabel labelFor="idOEffort" />
-		<smartField:SmartField value="{EFFORT}" id="idOEffort" editable="false"/>
-		<smartField:SmartLabel labelFor="idOEffortUnit" />
-		<smartField:SmartField value="{EFFORT_UNIT}" id="idOEffortUnit" editable="false"/>
-						
-	</forms:SimpleForm>-->
-	
-		<layout:Grid defaultSpan="L4 M6 S12" hSpacing="0" width="100%">
-		<layout:content>
-			<layout:VerticalLayout>
-				<layout:HorizontalLayout>
-					<layout:Grid defaultSpan="L4 M4 S4" hSpacing="0" width="100%">
-						<layout:content>
-							<layout:VerticalLayout>
-									<smartField:SmartLabel labelFor="idODateFrom" />
-		<smartField:SmartField value="{DateFrom}" id="idODateFrom" editable="false"> 
-		</smartField:SmartField>
-		
-								<layout:layoutData>
-									<layout:GridData span="L12 M12 S12"/>
-								</layout:layoutData>
-							</layout:VerticalLayout>
-						</layout:content>
-					</layout:Grid>
-				</layout:HorizontalLayout>
+	<smartForm:SmartForm id="smartForm" >
+			<smartForm:layout>
+				<smartForm:Layout labelSpanXL="3"
+					labelSpanL="3"
+					labelSpanM="3"
+					labelSpanS="12"
+					emptySpanXL="0"
+					emptySpanL="0"
+					emptySpanM="0"
+					emptySpanS="0"
+					columnsXL="2"
+					columnsL="2"
+					columnsM="2"></smartForm:Layout>
+			</smartForm:layout>
+				<smartForm:Group>
+					<smartForm:GroupElement>
+						<smartField:SmartField value="{DateFrom}" /> 
+					</smartForm:GroupElement>
+					<smartForm:GroupElement>
+						<smartField:SmartField value="{TimeFrom}" />
+					</smartForm:GroupElement>
+					<!--<smartForm:GroupElement>
+						<smartField:SmartField value="{DateTo}" />
+					</smartForm:GroupElement>
+					<smartForm:GroupElement>
+						<smartField:SmartField value="{TimeTo}" />
+					</smartForm:GroupElement>-->
+				</smartForm:Group>
+				<smartForm:Group>
+					<!--<smartForm:GroupElement>
+						<smartField:SmartField value="{DateFrom}" /> 
+					</smartForm:GroupElement>
+					<smartForm:GroupElement>
+						<smartField:SmartField value="{TimeFrom}" />
+					</smartForm:GroupElement>-->
+					<smartForm:GroupElement>
+						<smartField:SmartField value="{DateTo}" />
+					</smartForm:GroupElement>
+					<smartForm:GroupElement>
+						<smartField:SmartField value="{TimeTo}" />
+					</smartForm:GroupElement>
+				</smartForm:Group>
 				
-				<layout:HorizontalLayout>
-					<layout:Grid defaultSpan="L4 M4 S4" hSpacing="0" width="100%">
-						<layout:content>
-							<layout:VerticalLayout>
-									
-		<smartField:SmartLabel labelFor="idOTimeFrom" />
-		<smartField:SmartField value="{TimeFrom}" id="idOTimeFrom" editable="false"/>
-								<layout:layoutData>
-									<layout:GridData span="L12 M12 S12"/>
-								</layout:layoutData>
-							</layout:VerticalLayout>
-						</layout:content>
-					</layout:Grid>
-				</layout:HorizontalLayout>
-
-			</layout:VerticalLayout>
-
-			<layout:VerticalLayout>
-				<layout:HorizontalLayout>
-					<layout:Grid defaultSpan="L4 M4 S4" hSpacing="0" width="100%">
-						<layout:content>
-							<layout:VerticalLayout>
-								<smartField:SmartLabel labelFor="idODateTo" />
-		<smartField:SmartField value="{DateTo}" id="idODateTo" editable="false"/>
-		
-		
-								<layout:layoutData>
-									<layout:GridData span="L12 M12 S12"/>
-								</layout:layoutData>
-							</layout:VerticalLayout>
-						</layout:content>
-					</layout:Grid>
-				</layout:HorizontalLayout>
-
-
-				<layout:HorizontalLayout>
-					<layout:Grid defaultSpan="L4 M4 S4" hSpacing="0" width="100%">
-						<layout:VerticalLayout>
-								<smartField:SmartLabel labelFor="idOTimeTo" />
-		<smartField:SmartField value="{TimeTo}" id="idOTimeTo" editable="false"/>
-							<layout:layoutData>
-								<layout:GridData span="L12 M12 S12"/>
-							</layout:layoutData>
-						</layout:VerticalLayout>
-					</layout:Grid>
-				</layout:HorizontalLayout>
-			</layout:VerticalLayout>
-			
-			<layout:VerticalLayout>
-				<layout:HorizontalLayout>
-					<layout:Grid defaultSpan="L4 M4 S4" hSpacing="0" width="100%">
-						<layout:content>
-							<layout:VerticalLayout>
-								<smartField:SmartLabel labelFor="idOEffort" />
-		<smartField:SmartField value="{EFFORT}" id="idOEffort" contextEditable="false"/>
-								<layout:layoutData>
-									<layout:GridData span="L12 M12 S12"/>
-								</layout:layoutData>
-							</layout:VerticalLayout>
-						</layout:content>
-					</layout:Grid>
-				</layout:HorizontalLayout>
-
-
-				<layout:HorizontalLayout>
-					<layout:Grid defaultSpan="L4 M4 S4" hSpacing="0" width="100%">
-						<layout:VerticalLayout>
-								
-		<smartField:SmartLabel labelFor="idOEffortUnit" />
-		<smartField:SmartField value="{EFFORT_UNIT}" id="idOEffortUnit" editable="false"/>
-							<layout:layoutData>
-								<layout:GridData span="L12 M12 S12"/>
-							</layout:layoutData>
-						</layout:VerticalLayout>
-					</layout:Grid>
-				</layout:HorizontalLayout>
-			</layout:VerticalLayout>
-			
-			
-
-		</layout:content>
-	</layout:Grid>
+			</smartForm:SmartForm>
 	</mvc:View>
