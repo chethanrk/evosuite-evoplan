@@ -32,12 +32,7 @@ sap.ui.define([
 					oViewModel = new JSONModel({
 						busy : true,
 						delay : 0,
-						isNew : false,
-						isEdit : false,
-						editable: false,
-						editMode : false,
-						tableBusyDelay : 0,
-						viewTitle : this.getResourceBundle().getText("objectTitle")
+						tableBusyDelay : 0
 					});
 
 				this.getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
@@ -80,43 +75,6 @@ sap.ui.define([
 				}
 			},
 			
-			/**
-			 * show edit forms
-			 */
-			onPressEdit : function() {
-				this._setEditMode(true);
-			},
-			
-			/**
-			 * reset changed data
-			 * when create workorders remove all values
-			 */
-			onPressCancel : function() {
-				if(this.oForm){
-					this.cancelFormHandling(this.oForm);
-				}
-			},
-			
-			/**
-			 * validate and submit form data changes
-			 */
-			onPressSave : function() {
-				if(this.oForm){
-					this.saveSubmitHandling(this.oForm);
-				}
-			},
-			
-			/**
-			 * fired edit toggle event from subsection block DetailsFormBlock
-			 */
-			onFiredEditMode : function(oEvent) {
-				var oParameters = oEvent.getParameters();
-				this._setEditMode(oParameters.editable);
-				
-				if(!this.oForm){
-					this.oForm = sap.ui.getCore().byId(oParameters.id);
-				}
-			},
 
 			/* =========================================================== */
 			/* internal methods                                            */
@@ -129,33 +87,14 @@ sap.ui.define([
 			 * @private
 			 */
 			_onObjectMatched : function (oEvent) {
-				var sObjectId =  oEvent.getParameter("arguments").objectId,
-					oViewModel = this.getModel("viewModel"),
-					oDataModel = this.getModel(),
-					isNew = (sObjectId === "new");
-
-				oDataModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
-				oDataModel.metadataLoaded().then( function() {
-					oViewModel.setProperty("/isNew", isNew);
-					oViewModel.setProperty("/isEdit", !isNew);
-					this._setEditMode(isNew);
-					this.showAllSmartFields(this.oForm);
+				var sGuid =  oEvent.getParameter("arguments").guid,
+					oDataModel = this.getModel();
 					
-					if(isNew){
-						var oContext = oDataModel.createEntry("/WorkOrderHeaderSet");
-						this.getView().unbindElement();
-						this.getView().setBindingContext(oContext);
-						this._isEditable(oContext);
-
-						oViewModel.setProperty("/Title", this.getResourceBundle().getText("objectNewTitle"));
-						oViewModel.setProperty("/showAdd", false);
-						oViewModel.setProperty("/busy", false);
-					}else{
-						var sObjectPath = this.getModel().createKey("WorkOrderHeaderSet", {
-							WorkOrder :  sObjectId
+				oDataModel.metadataLoaded().then( function() {
+						var sPath = this.getModel().createKey("DemandSet", {
+							Guid :  sGuid
 						});
-						this._bindView("/" + sObjectPath);
-					}
+						this._bindView("/" + sPath);
 				}.bind(this));
 			},
 
@@ -196,34 +135,7 @@ sap.ui.define([
 					this.getRouter().getTargets().display("notFound");
 					return;
 				}
-				
-				if(this.oForm){
-					this.oForm.setEditable(false);
-				}
-				
-				// Everything went fine.
-				this._setNewHeaderTitle();
-				this._isEditable(oContext);
 				oViewModel.setProperty("/busy", false);
-			},
-			
-			_setEditMode : function(isEdit){
-				this.getModel("viewModel").setProperty("/editable", !isEdit);
-				this.getModel("viewModel").setProperty("/editMode", isEdit);
-			},
-			
-			_isEditable : function(oContext){
-				var data = this.getModel().getProperty(oContext.sPath);
-				if(data && (data.IsCompleted || data.IsDeleted) || this.getModel("viewModel").getProperty("/editMode")){
-					this.getModel("viewModel").setProperty("/editable", false);
-				}else{
-					this.getModel("viewModel").setProperty("/editable", true);
-				}
-			},
-			
-			_setNewHeaderTitle : function(){
-				var oContext = this.getView().getBindingContext();
-				this.getModel("viewModel").setProperty("/Title", this.getModel().getProperty(oContext.sPath+"/WorkOrderDescription"));
 			}
 
 		});

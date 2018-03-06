@@ -1,0 +1,76 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:smartTable="sap.ui.comp.smarttable"
+	xmlns="sap.m">
+	<Table id="idAssignmentTable"
+		class="sapUiNoContentPadding"
+		items="{
+			path: 'DemandToAssignment',
+			templateShareable: true
+		}">
+		<columns>
+			<Column>
+				<Text text="ResourceGuid" />
+			</Column>
+			<Column minScreenWidth="Tablet"
+                        demandPopin="true">
+				<Text text="Effort" />
+			</Column>
+			<Column minScreenWidth="Tablet"
+                        demandPopin="true">
+				<Text text="EffortUnit" />
+			</Column>
+			<Column minScreenWidth="Tablet"
+                        demandPopin="true">
+				<Text text="DateFrom" />
+			</Column>
+			<Column minScreenWidth="Tablet"
+                        demandPopin="true">
+				<Text text="DateTo" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text text="{ResourceGuid}" />
+					<Text text="{Effort}" />
+					<Text text="{EffortUnit}" />
+					<Text text="{
+							path:'DateFrom',
+							type:'sap.ui.model.odata.type.DateTimeOffset'
+							}" />
+					<Text text="{
+							path:'DateTo',
+							type:'sap.ui.model.odata.type.DateTimeOffset'
+							}" />
+				</cells>
+				
+			</ColumnListItem>
+		</items>
+	</Table>
+	
+	<!--<smartTable:SmartTable id="AssignmentSmartTable"  tableType="Table" useExportToExcel="true" useVariantManagement="false" useTablePersonalisation="true" tableBindingPath="{DemandToAssignment}" showRowCount="true" enableAutoBinding="true" class="sapUiResponsiveContentPadding">
+				<smartTable:layoutData>
+						<FlexItemData growFactor="1" baseSize="0%"/>
+				</smartTable:layoutData>
+			</smartTable:SmartTable>-->
+			
+			<!--<smartTable:SmartTable
+                        id="idAssignmentSmartTable"
+                        height="100%"
+                        width="100%"
+                        direction="Column"
+                        fitContainer="true"
+                        enableAutoBinding="true"
+                        tableBindingPath="{DemandToAssignment}"
+                        showRowCount="true"
+                        header="{i18n>xtit.itemListTitle}"
+                        useExportToExcel="true"
+                        useTablePersonalisation="true"
+                        requestAtLeastFields="">
+                    <smartTable:layoutData>
+                        <FlexItemData growFactor="1" />
+                    </smartTable:layoutData>
+                </smartTable:SmartTable>-->
+</mvc:View>
