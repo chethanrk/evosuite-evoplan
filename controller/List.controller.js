@@ -10,9 +10,11 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
-	"sap/m/Link"
+	"sap/m/Link",
+	"sap/ui/table/RowAction",
+	"sap/ui/table/RowActionItem"
 ], function(BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, RowSettings, MessageToast, MessagePopover,
-	MessagePopoverItem, Link) {
+	MessagePopoverItem, Link, RowAction, RowActionItem) {
 	"use strict";
 
 	var oLink = new Link({
@@ -142,6 +144,19 @@ sap.ui.define([
                 MessageToast.show(msg);
             }
         },
+        /**
+         * on click on navigate acion navigate to overview page
+         * @param oEvent
+         */
+        onActionPress:function(oEvent){
+        	var oRouter = this.getRouter();
+        	var oRow = oEvent.getParameter("row");
+        	var oContext = oRow.getBindingContext();
+        	var sPath = oContext.getPath();
+        	var oModel = oContext.getModel();
+        	var oData = oModel.getProperty(sPath);
+        	oRouter.navTo("detail", {guid:oData.Guid});
+        },
 
 		onMessagePopoverPress: function(oEvent) {
 			oMessagePopover.openBy(oEvent.getSource());
@@ -173,7 +188,24 @@ sap.ui.define([
             oDataTable.setRowSettingsTemplate(new RowSettings({
                 highlight: "Information"
             }));
-
+            
+            var onClickNavigation = this.onActionPress.bind(this);
+            var oTemplate = oDataTable.getRowActionTemplate();
+			if (oTemplate) {
+				oTemplate.destroy();
+				oTemplate = null;
+			}
+            oTemplate = new RowAction({
+            			items: [
+							new RowActionItem({
+								type: "Navigation",
+								press: onClickNavigation
+							})
+						]
+            		});
+			oDataTable.setRowActionTemplate(oTemplate);
+			oDataTable.setRowActionCount(1);
+			
             //enable/disable buttons on footer when there is some/no selected rows
             oDataTable.attachRowSelectionChange(function () {
                 var selected = this._oDataTable.getSelectedIndices();
@@ -250,7 +282,7 @@ sap.ui.define([
 
                         if(oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0){
                             _this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
-                            _this._stopDrag(jDragElement);
+                            // _this._stopDrag(jDragElement);
                         }
                         //get helper html list
                         var oHtml = _this._generateDragHelperHTML(aPathsData,oSelectedPaths.aNonAssignable);

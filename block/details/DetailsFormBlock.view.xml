@@ -2,14 +2,14 @@
 		  xmlns:smartField="sap.ui.comp.smartfield" xmlns:smartForm="sap.ui.comp.smartform"
 		  controllerName="com.evorait.evoplan.block.details.DetailsFormBlockController">
 	
-	<smartForm:SmartForm id="SmartWorkorderForm" editTogglable="false" editToggled="onEditPress" editable="{viewModel>/editMode}">
+	<smartForm:SmartForm id="SmartWorkorderForm">
 		
 		<smartForm:Group label="{i18n>@GENERAL}">
 			<smartForm:layout>
 				<layout:GridData span="L6 M6 S12"/>
 			</smartForm:layout>
 			<smartForm:GroupElement>
-				<smartField:SmartField value="{WorkOrder}" editableChanged="onEditChanged"/>
+				<smartField:SmartField value="{WorkOrder}"/>
 			</smartForm:GroupElement>
 			<smartForm:GroupElement>
 				<smartField:SmartField value="{WorkOrderDescription}"/>
@@ -116,13 +116,13 @@
 					</smartField:configuration>
 				</smartField:SmartField>
 			</smartForm:GroupElement>
-			<smartForm:GroupElement>
+			<!--<smartForm:GroupElement>
 				<smartField:SmartField value="{StartTime}">
 					<smartField:configuration>
 						<smartField:Configuration controlType="timePicker" displayBehaviour="descriptionAndId"/>
 					</smartField:configuration>
 				</smartField:SmartField>
-			</smartForm:GroupElement>
+			</smartForm:GroupElement>-->
 			<smartForm:GroupElement>
 				<smartField:SmartField value="{EndDate}">
 					<smartField:configuration>

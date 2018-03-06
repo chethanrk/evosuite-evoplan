@@ -154,7 +154,7 @@
 					]
 				},
 				{
-					"pattern": "WorkOrder/{objectId}",
+					"pattern": "Demand/{guid}",
 					"name": "detail",
 					"target": [
 						"master",
