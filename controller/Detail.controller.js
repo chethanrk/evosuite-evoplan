@@ -136,6 +136,9 @@ sap.ui.define([
 					return;
 				}
 				oViewModel.setProperty("/busy", false);
+			},
+			getResource:function(id){
+				console.log(id);
 			}
 
 		});

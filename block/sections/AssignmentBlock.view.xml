@@ -7,35 +7,32 @@
 		class="sapUiNoContentPadding"
 		items="{
 			path: 'DemandToAssignment',
+			parameters : {expand:'Resource'},
 			templateShareable: true
 		}">
 		<columns>
 			<Column>
-				<Text text="ResourceGuid" />
+				<Text text="{i18n>xfld.ResourceName}" />
+			</Column>
+			<Column minScreenWidth="Tablet"
+                        demandPopin="true"
+                        width="4em">
+				<Text text="{i18n>xfld.effort}" />
 			</Column>
 			<Column minScreenWidth="Tablet"
                         demandPopin="true">
-				<Text text="Effort" />
+				<Text text="{i18n>xtit.filterDateFrom}" />
 			</Column>
 			<Column minScreenWidth="Tablet"
                         demandPopin="true">
-				<Text text="EffortUnit" />
-			</Column>
-			<Column minScreenWidth="Tablet"
-                        demandPopin="true">
-				<Text text="DateFrom" />
-			</Column>
-			<Column minScreenWidth="Tablet"
-                        demandPopin="true">
-				<Text text="DateTo" />
+				<Text text="{i18n>xtit.filterDateTo}" />
 			</Column>
 		</columns>
 		<items>
 			<ColumnListItem>
 				<cells>
-					<Text text="{ResourceGuid}" />
-					<Text text="{Effort}" />
-					<Text text="{EffortUnit}" />
+					<Text text="{Resource/Description}" />
+					<Text text="{Effort} {EffortUnit}" />
 					<Text text="{
 							path:'DateFrom',
 							type:'sap.ui.model.odata.type.DateTimeOffset'
@@ -49,28 +46,4 @@
 			</ColumnListItem>
 		</items>
 	</Table>
-	
-	<!--<smartTable:SmartTable id="AssignmentSmartTable"  tableType="Table" useExportToExcel="true" useVariantManagement="false" useTablePersonalisation="true" tableBindingPath="{DemandToAssignment}" showRowCount="true" enableAutoBinding="true" class="sapUiResponsiveContentPadding">
-				<smartTable:layoutData>
-						<FlexItemData growFactor="1" baseSize="0%"/>
-				</smartTable:layoutData>
-			</smartTable:SmartTable>-->
-			
-			<!--<smartTable:SmartTable
-                        id="idAssignmentSmartTable"
-                        height="100%"
-                        width="100%"
-                        direction="Column"
-                        fitContainer="true"
-                        enableAutoBinding="true"
-                        tableBindingPath="{DemandToAssignment}"
-                        showRowCount="true"
-                        header="{i18n>xtit.itemListTitle}"
-                        useExportToExcel="true"
-                        useTablePersonalisation="true"
-                        requestAtLeastFields="">
-                    <smartTable:layoutData>
-                        <FlexItemData growFactor="1" />
-                    </smartTable:layoutData>
-                </smartTable:SmartTable>-->
 </mvc:View>
