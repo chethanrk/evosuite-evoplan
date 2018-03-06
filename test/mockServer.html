@@ -9,14 +9,14 @@
     <!-- Bootstrapping UI5 -->
     <!-- https://sapui5.hana.ondemand.com/resources/sap-ui-core.js -->
     <script id="sap-ui-bootstrap"
-            src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
-            data-sap-ui-libs="sap.m, sap.ui.layout"
+            src="../resources/sap-ui-core-dbg.js"
+            data-sap-ui-libs="sap.m, sap.ui.layout, sap.uxap"
             data-sap-ui-theme="sap_belize"
             data-sap-ui-compatVersion="edge"
             data-sap-ui-resourceroots='{"com.evorait.evoplan": "../"}'
             data-sap-ui-frameOptions='allow'>    // NON-SECURE setting for testing environment
     </script>
-    
+
     <script type="text/javascript">
         jQuery.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-core');
         jQuery.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-widget');
@@ -28,39 +28,7 @@
         sap.ui.localResources("sapui5draganddrop");
     </script>
 
-    <script type="text/javascript">
-        /*=====================================================================
-         The following onError function is used to trap any errors that occur
-         while the application is running. Cordova fails silently whenever it
-         encounters an error in HTML or JavaScript code. So, with that being
-         the case, developers cannot tell when/why their applications are
-         failing. Any code error will cause the function to fire and display
-         the error in an alert dialog.
-         ======================================================================*/
-		window.onerror = function (msg, url, line) {
-			var idx = url.lastIndexOf("/");
-			if (idx > -1) {
-				url = url.substring(idx + 1);
-			}
-			alert("ERROR in " + url + " (line #" + line + ")\n" + msg);
-			console.error(msg);
-			return false;
-		};
-    </script>
-
     <script>
-
-		function getUrlParameterName(sParam) {
-			var sPageURL = window.location.search.substring(1);
-			var sURLVariables = sPageURL.split('&');
-			for (var i = 0; i < sURLVariables.length; i++) {
-				var sParameterName = sURLVariables[i].split('=');
-				if (sParameterName[0] == sParam) {
-					return true;
-				}
-			}
-			return false;
-		}
 
 		function startApp() {
 			sap.ui.getCore().attachInit(function () {
@@ -73,34 +41,23 @@
 					server.init();
 					// initialize the UI component
 					// create a new Shell that contains the rootview
-					var oShell = new sap.m.Shell({
-						app: new ComponentContainer({
-							name: "com.evorait.evoplan",
-							height: "100%",
-							width: "100%"
-						}),
-						id: "appShell",
+                    var oShell = new sap.m.Shell({
+                        app: new ComponentContainer({
+                            name: "com.evorait.evoplan",
+                            height: "100%",
+                            width: "100%",
+                            async: true
+                        }),
+                        id: "appShell",
                         appWidthLimited: false
-					});
+                    });
 					// load the view that contains the unified shell
 					oShell.placeAt("content");
 				});
 			});
 		}
 
-		window.onload = function () {
-			jQuery.sap.require("com.evorait.evoplan.dev.devapp");
-			if (window.cordova || getUrlParameterName("companionbuster")) {
-				var page = window.location.pathname.split("/").pop();
-				if (page === "preview_hidden.html") {
-					window.sap_webide_FacadePreview = true;
-				}
-				com.evorait.evoplan.dev.devapp.initialize();
-			}
-			else {
-				startApp();
-			}
-		}
+        startApp();
     </script>
 
 </head>

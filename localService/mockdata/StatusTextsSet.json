@@ -1,1 +1,119 @@
-[]
+[
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('INIT')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('INIT')",
+      "type": "com.evorait.evoplan.StatusTexts"
+    },
+    "UserStatusShortText": "INIT",
+    "UserStatusLongText": "Initial Status of the demand"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('ASGN')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('ASGN')",
+      "type": "com.evorait.evoplan.StatusTexts"
+    },
+    "UserStatusShortText": "ASGN",
+    "UserStatusLongText": "Demand is assigned to resourcs"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('APPT')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('APPT')",
+      "type": "com.evorait.evoplan.StatusTexts"
+    },
+    "UserStatusShortText": "APPT",
+    "UserStatusLongText": "Appointment for the demand"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('DISP')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('DISP')",
+      "type": "com.evorait.evoplan.StatusTexts"
+    },
+    "UserStatusShortText": "DISP",
+    "UserStatusLongText": "Dispatched"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('MOBI')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('MOBI')",
+      "type": "com.evorait.evoplan.StatusTexts"
+    },
+    "UserStatusShortText": "MOBI",
+    "UserStatusLongText": "Demand transferred to Mobile"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('ROUT')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('ROUT')",
+      "type": "com.evorait.evoplan.StatusTexts"
+    },
+    "UserStatusShortText": "ROUT",
+    "UserStatusLongText": "Enroute"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('STRT')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('STRT')",
+      "type": "com.evorait.evoplan.StatusTexts"
+    },
+    "UserStatusShortText": "STRT",
+    "UserStatusLongText": "Work Started on demand"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('HOLD')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('HOLD')",
+      "type": "com.evorait.evoplan.StatusTexts"
+    },
+    "UserStatusShortText": "HOLD",
+    "UserStatusLongText": "Work Paused / On Hold"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('COMP')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('COMP')",
+      "type": "com.evorait.evoplan.StatusTexts"
+    },
+    "UserStatusShortText": "COMP",
+    "UserStatusLongText": "Work Completed"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('INCP')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('INCP')",
+      "type": "com.evorait.evoplan.StatusTexts"
+    },
+    "UserStatusShortText": "INCP",
+    "UserStatusLongText": "Work Incomplete"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('CLSD')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('CLSD')",
+      "type": "com.evorait.evoplan.StatusTexts"
+    },
+    "UserStatusShortText": "CLSD",
+    "UserStatusLongText": "Closed"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('ACK')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('ACK')",
+      "type": "com.evorait.evoplan.StatusTexts"
+    },
+    "UserStatusShortText": "ACK",
+    "UserStatusLongText": "User acknowledged demand"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('REJ')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('REJ')",
+      "type": "com.evorait.evoplan.StatusTexts"
+    },
+    "UserStatusShortText": "REJ",
+    "UserStatusLongText": "User Rejected to work on Deman"
+  }
+]
