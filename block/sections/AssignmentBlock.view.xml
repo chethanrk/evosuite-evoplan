@@ -8,7 +8,9 @@
 		class="sapUiNoContentPadding"
 		items="{
 			path: 'DemandToAssignment',
-			parameters : {expand:'Resource'},
+			parameters : {
+				expand:'Resource,Demand'
+			},
 			templateShareable: true
 		}"
 		itemPress="onClickRow">
@@ -33,16 +35,18 @@
 		<items>
 			<ColumnListItem type="Active">
 				<cells>
-					<Text text="{Resource/Description}" />
+					<ObjectIdentifier
+						title="{Resource/GroupDescription}"
+						text="{Resource/ResourceDescription}"/>
 					<Text text="{Effort} {EffortUnit}" />
 					<Text text="{
-							path:'DateFrom',
-							type:'sap.ui.model.odata.type.DateTimeOffset'
-							}" />
+								path:'DateFrom',
+								type:'sap.ui.model.odata.type.DateTimeOffset'
+							}"/>
 					<Text text="{
-							path:'DateTo',
-							type:'sap.ui.model.odata.type.DateTimeOffset'
-							}" />
+								path:'DateTo',
+								type:'sap.ui.model.odata.type.DateTimeOffset'
+							}"/>
 				</cells>
 				
 			</ColumnListItem>
