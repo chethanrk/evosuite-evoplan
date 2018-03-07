@@ -18,15 +18,14 @@
 			<uxap:headerTitle>
 			<uxap:ObjectPageHeader objectImageURI="sap-icon://eam-work-order"
 							  objectImageShape="Circle"
-							  objectTitle="{i18n>xfld.demandName}"
-							  objectSubtitle="{DemandDesc}"
+							  objectTitle="{DemandDesc}"
+							  objectSubtitle="{ExtKey}"
 							  id="ObjectPageLayoutHeaderTitle">
 			</uxap:ObjectPageHeader>
 		</uxap:headerTitle>
 			<uxap:headerContent>
 				<layout:VerticalLayout>
-					<ObjectStatus title="{i18n>xtit.ExtKey}" text="{ExtKey}"/>
-					<ObjectStatus title="{i18n>xfld.status}" text="{UserStatusLongText}"/>
+					<ObjectStatus title="{i18n>xfld.status}" text="{UserStatusShortText} ({UserStatusLongText})"/>
 					<ObjectStatus title="{i18n>xtit.source}" text="{Source}"/>
 				</layout:VerticalLayout>
 			</uxap:headerContent>
@@ -66,7 +65,7 @@
 					<uxap:subSections>
 						<uxap:ObjectPageSubSection>
 							<uxap:blocks>
-								<sections:AssignmentBlock id="assignMentsBlock" />
+								<sections:AssignmentBlock id="assignMentsBlock" dummy="onDummy"/>
 							</uxap:blocks>
 						</uxap:ObjectPageSubSection>
 					</uxap:subSections>

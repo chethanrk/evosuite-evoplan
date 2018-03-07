@@ -2,14 +2,16 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
 	xmlns:smartTable="sap.ui.comp.smarttable"
-	xmlns="sap.m">
+	xmlns="sap.m"
+	controllerName="com.evorait.evoplan.block.sections.AssignmentBlockController">
 	<Table id="idAssignmentTable"
 		class="sapUiNoContentPadding"
 		items="{
 			path: 'DemandToAssignment',
 			parameters : {expand:'Resource'},
 			templateShareable: true
-		}">
+		}"
+		itemPress="onClickRow">
 		<columns>
 			<Column>
 				<Text text="{i18n>xfld.ResourceName}" />
@@ -29,7 +31,7 @@
 			</Column>
 		</columns>
 		<items>
-			<ColumnListItem>
+			<ColumnListItem type="Active">
 				<cells>
 					<Text text="{Resource/Description}" />
 					<Text text="{Effort} {EffortUnit}" />

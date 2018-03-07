@@ -30,17 +30,18 @@
 	
 	<smartForm:SmartForm id="smartForm" >
 		<smartForm:layout>
-				<smartForm:Layout labelSpanXL="3"
-					labelSpanL="3"
-					labelSpanM="3"
+				<smartForm:Layout 
+					labelSpanXL="3"
+					labelSpanL="5"
+					labelSpanM="5"
 					labelSpanS="12"
 					emptySpanXL="0"
 					emptySpanL="0"
 					emptySpanM="0"
 					emptySpanS="0"
-					columnsXL="1"
-					columnsL="1"
-					columnsM="1"></smartForm:Layout>
+					columnsXL="2"
+					columnsL="2"
+					columnsM="2"></smartForm:Layout>
 			</smartForm:layout>
 				<smartForm:Group>
 					<smartForm:GroupElement>
@@ -52,6 +53,23 @@
 					<smartForm:GroupElement>
 						<smartField:SmartField value="{OPERATIONID}" editable="false"/>
 					</smartForm:GroupElement>
+					<!--<smartForm:GroupElement>
+						<smartField:SmartField value="{SUBOPERATIONID}" editable="false"/>
+					</smartForm:GroupElement>
+					<smartForm:GroupElement>
+						<smartField:SmartField value="{OPERATION_DESC}" editable="false"/>
+					</smartForm:GroupElement>-->
+				</smartForm:Group>
+				<smartForm:Group>
+					<!--<smartForm:GroupElement>
+						<smartField:SmartField value="{ORDERID}" editable="false" /> 
+					</smartForm:GroupElement>
+					<smartForm:GroupElement>
+						<smartField:SmartField value="{ORDER_DESC}" editable="false"/>
+					</smartForm:GroupElement>
+					<smartForm:GroupElement>
+						<smartField:SmartField value="{OPERATIONID}" editable="false"/>
+					</smartForm:GroupElement>-->
 					<smartForm:GroupElement>
 						<smartField:SmartField value="{SUBOPERATIONID}" editable="false"/>
 					</smartForm:GroupElement>

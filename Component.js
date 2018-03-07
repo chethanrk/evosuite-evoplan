@@ -67,6 +67,7 @@ sap.ui.define([
 			
             this._initDialogs();
 
+			this.setModel(models.createAssignmentModel({}),"assignment");
 			//Creating the Global message model from MessageManager
 			var oMessageModel = new JSONModel();
 			oMessageModel.setData([]);
