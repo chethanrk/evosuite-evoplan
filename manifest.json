@@ -147,7 +147,7 @@
 			"routes": [
 				{
 					"pattern": "",
-					"name": "main",
+					"name": "list",
 					"target": [
 						"list",
 						"master"

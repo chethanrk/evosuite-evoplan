@@ -60,9 +60,6 @@ sap.ui.define([
 			 * @public
 			 */
 			onNavBack : function() {
-				if(this.oForm){
-					this.cancelFormHandling(this.oForm);
-				}
 				this.navBack();
 			},
 			
@@ -137,14 +134,52 @@ sap.ui.define([
 				}
 				oViewModel.setProperty("/busy", false);
 			},
-			onDummy: function (oEvent) {
-				var oAppointment = oEvent.getParameter("listItem");
-				var oContext = oAppointment.getBindingContext();
+			/**
+			 * Opens the AssignInfo dialog to update the assignment
+			 * @Author Rahul
+			 * @return
+			 * @param oEvent
+			 */
+			onRowClick: function (oEvent) {
+				var oAssignment = oEvent.getParameter("listItem");
+				var oContext = oAssignment.getBindingContext();
 				var oModel = oContext.getModel();
 				var sPath = oContext.getPath();
-				var oAppointmentData = oModel.getProperty(sPath);
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAppointmentData);
+				var oAssignmentData = oModel.getProperty(sPath);
+				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAssignmentData);
 			
+			},
+			/**
+			 * Opens the AssignDialog to assign the demand to resources
+			 * @Author Rahul
+			 * @return
+			 * @param oEvent
+			 */
+			onClickAssign:function(oEvent){
+				var oSource = oEvent.getSource();
+				var oContext = oSource.getBindingContext();
+				var oModel = oContext.getModel();
+				var sPath = oContext.getPath();
+				var oData = oModel.getProperty(sPath);
+				if(oData.ALLOW_ASSIGN){
+					 this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oData);
+				}else{
+                	this._showAssignErrorDialog([oData.DemandDesc]);
+				}
+			},
+			/**
+			 * Opens the StatusDialog to change status
+			 * @Author Rahul
+			 * @return
+			 * @param oEvent
+			 */
+			onClickStatus:function(oEvent){
+				var oSource = oEvent.getSource();
+				var oContext = oSource.getBindingContext();
+				var oModel = oContext.getModel();
+				var sPath = oContext.getPath();
+				var oData = oModel.getProperty(sPath);
+				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oData);
 			}
 
 		});

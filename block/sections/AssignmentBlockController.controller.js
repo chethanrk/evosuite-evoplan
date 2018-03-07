@@ -10,13 +10,7 @@ sap.ui.define([
     return BaseController.extend('com.evorait.evoplan.block.sections.AssignmentBlockController', {
     	
 		onClickRow: function(oEvent){
-			// var oAppointment = oEvent.getParameter("listItem");
-			// var oContext = oAppointment.getBindingContext();
-			// var oModel = oContext.getModel();
-			// var sPath = oContext.getPath();
-			// var oAppointmentData = oModel.getProperty(sPath);
-			// this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAppointmentData);
-			this.oParentBlock.fireDummy(oEvent.getParameters());
+			this.oParentBlock.fireOnRowClick(oEvent.getParameters());
 		}
     });
 	
