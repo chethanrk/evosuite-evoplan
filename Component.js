@@ -22,7 +22,10 @@ sap.ui.define([
 	return UIComponent.extend("com.evorait.evoplan.Component", {
 
 		metadata: {
-			manifest: "json"
+			manifest: "json",
+            config : {
+                fullWidth : true
+            }
 		},
 
 		/**

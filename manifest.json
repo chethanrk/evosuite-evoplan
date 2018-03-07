@@ -81,6 +81,9 @@
 		]
 	},
 	"sap.ui5": {
+		"config": {
+			"fullWidth": true
+		},
 		"rootView": {
 			"viewName": "com.evorait.evoplan.view.App",
 			"type": "XML",

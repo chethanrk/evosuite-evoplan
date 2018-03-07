@@ -49,6 +49,18 @@ sap.ui.define([
             return parseFloat(sValue).toFixed(2);
         },
 
+        /**
+         * return right path of logo for every system
+         */
+        getLogoImageLink: function () {
+            var path = $.sap.getModulePath("com.evorait.evoplan", "/assets/img/evoplan_h50px.png");
+            return path;
+        },
+
+        /**
+         * format date in format yyyy-MM-dd
+         * @param date
+         */
         date: function(date) {
             var d = new Date(date);
             var oDateFormat = DateFormat.getDateInstance({pattern: "yyyy-MM-dd"});

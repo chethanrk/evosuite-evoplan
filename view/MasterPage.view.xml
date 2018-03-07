@@ -16,7 +16,7 @@
         <customHeader>
             <Bar>
                 <contentLeft>
-                    <Image src="assets/img/evoplan_h50px.png"
+                    <Image src="{path: '', formatter: '.formatter.getLogoImageLink' }"
                            densityAware="false"
                            height="100%"
                            alt="EvoPlan" />
