@@ -6,8 +6,8 @@
 	<smartForm:SmartForm id="smartForm" >
 			<smartForm:layout>
 				<smartForm:Layout labelSpanXL="3"
-					labelSpanL="3"
-					labelSpanM="3"
+					labelSpanL="5"
+					labelSpanM="5"
 					labelSpanS="12"
 					emptySpanXL="0"
 					emptySpanL="0"
@@ -24,10 +24,10 @@
 					<smartForm:GroupElement>
 						<smartField:SmartField value="{TimeFrom}" />
 					</smartForm:GroupElement>
-					<!--<smartForm:GroupElement>
-						<smartField:SmartField value="{DateTo}" />
-					</smartForm:GroupElement>
 					<smartForm:GroupElement>
+						<smartField:SmartField value="{EFFORT}" />
+					</smartForm:GroupElement>
+				<!--	<smartForm:GroupElement>
 						<smartField:SmartField value="{TimeTo}" />
 					</smartForm:GroupElement>-->
 				</smartForm:Group>

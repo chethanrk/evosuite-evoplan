@@ -137,8 +137,14 @@ sap.ui.define([
 				}
 				oViewModel.setProperty("/busy", false);
 			},
-			getResource:function(id){
-				console.log(id);
+			onDummy: function (oEvent) {
+				var oAppointment = oEvent.getParameter("listItem");
+				var oContext = oAppointment.getBindingContext();
+				var oModel = oContext.getModel();
+				var sPath = oContext.getPath();
+				var oAppointmentData = oModel.getProperty(sPath);
+				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAppointmentData);
+			
 			}
 
 		});
