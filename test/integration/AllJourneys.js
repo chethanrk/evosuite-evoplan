@@ -25,13 +25,8 @@ sap.ui.require([
     //"com/evorait/evoplan/test/integration/NotFoundJourney",
 
 	sap.ui.require([
-		"com/evorait/evoplan/test/integration/OverviewJourney",
 		"com/evorait/evoplan/test/integration/BusyJourney",
-		"com/evorait/evoplan/test/integration/WorklistJourney",
-		"com/evorait/evoplan/test/integration/ObjectJourney",
-		"com/evorait/evoplan/test/integration/ObjectOperationJourney",
-		"com/evorait/evoplan/test/integration/ObjectComponentJourney",
-		"com/evorait/evoplan/test/integration/DispatchJourney"
+		"com/evorait/evoplan/test/integration/MasterPageJourney"
 	], function () {
 		QUnit.start();
 	});

@@ -3,52 +3,32 @@ sap.ui.require(
 	function (opaTest) {
 		"use strict";
  
-		QUnit.module("WorkOrders");
+		QUnit.module("MasterPage");
 
-		opaTest("Should see the table with all WorkOrders", function (Given, When, Then) {
+		opaTest("Should see the resource table with different controls", function (Given, When, Then) {
 			// Arrangements
 			Given.iStartTheApp();
 			//Actions
-			When.onTheOverviewPage.iPressTheQuickLinkWithId("menuSearch");
+			When.onTheMasterPage.iLookAtTheScreen();
 			// Assertions
-			Then.onTheWorklistPage.iShouldSeeThePage()
-				.and.theTableShouldHaveAllEntries(5);
+			Then.onTheMasterPage.iShouldSeeThePage()
+				.and.iShouldSeeTheTable()
+                .and.iShouldSeeTheFilterButton()
+                .and.theButtonTextShouldDisplayFilterNumber("2")
+                .and.iShouldSeeTheSearchField()
+                .and.iShouldSeeTheCustomVariant()
+				.and.iShouldSeeFooterPlanningButton();
 		});
 
-		opaTest("Should go to the object page", function (Given, When, Then) {
+		opaTest("Should press on filter button and see the filter dialog", function (Given, When, Then) {
 			// Actions
-			When.onTheWorklistPage.iPressOnTheItemWithTheID("613586");
+            When.onTheMasterPage.iPressOnFilterButton();
 			// Assertions
-			Then.onTheObjectPage.iShouldSeeThePage()
-				.and.theTitleShouldDisplayTheName("Fix Vending Machine", "613586");
+			Then.onTheMasterPage.iShouldSeeFilterDialog()
+                .and.iShouldSeeFilterItemWithTitle("xtit.filterTitleView");
+        		.and.iShouldSeeFilterItemWithTitle("xtit.filterTitleView");
+                //.and.iTeardownMyAppFrame();
 		});
-		
-		opaTest("Should go back to the TablePage", function (Given, When, Then) {
-			// Actions
-			When.onTheObjectPage.iPressTheBackButton();
-			// Assertions
-			Then.onTheWorklistPage.iShouldSeeTheTable()
-				.and.iTeardownMyAppFrame();
-		});
-
-		/*opaTest("Should see the not found text for no search results", function (Given, When, Then) {
-
-			//Actions
-			When.onTheWorklistPage.iSearchForSomethingWithNoResults();
-
-			// Assertions
-			Then.onTheWorklistPage.iShouldSeeTheNoDataTextForNoSearchResults().
-			and.iTeardownMyAppFrame();
-		});*/
-		
-		/*opaTest("Should be able to load more items", function (Given, When, Then) {
-			//Actions
-			When.onTheWorklistPage.iPressOnMoreData();
- 
-			// Assertions
-			Then.onTheWorklistPage.theTableShouldHaveAllEntries().
-				and.iTeardownMyAppFrame();
-		});*/
  
 	}
 );

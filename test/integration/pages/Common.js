@@ -71,15 +71,6 @@ sap.ui.define([
 				});
 			},
 
-			onNavHome : function (sViewName) {
-				return this.waitFor({
-					id: "navHomeBtn",
-					viewName: sViewName,
-					actions: new Press(),
-					errorMessage: "Did not find the Home button on the page '"+sViewName+"'"
-				});
-			},
-
 			iPressOnTheBlockTableWithTheTitle: function (sBlockNamespace, sBlockName, sTitle) {
 				return this.waitFor({
 					controlType: "sap.m.ObjectIdentifier",

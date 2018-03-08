@@ -1,0 +1,146 @@
+[
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='D',Msehl='Days')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='D',Msehl='Days')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "D",
+    "Msehl": "Days"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='H',Msehl='Hour')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='H',Msehl='Hour')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "H",
+    "Msehl": "Hour"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='YR',Msehl='Years')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='YR',Msehl='Years')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "YR",
+    "Msehl": "Years"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='MIN',Msehl='Minute')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='MIN',Msehl='Minute')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "MIN",
+    "Msehl": "Minute"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='MIS',Msehl='Microsecond')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='MIS',Msehl='Microsecond')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "MIS",
+    "Msehl": "Microsecond"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='MON',Msehl='Months')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='MON',Msehl='Months')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "MON",
+    "Msehl": "Months"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='MSE',Msehl='Millisecond')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='MSE',Msehl='Millisecond')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "MSE",
+    "Msehl": "Millisecond"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='NS',Msehl='Nanosecond')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='NS',Msehl='Nanosecond')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "NS",
+    "Msehl": "Nanosecond"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='FTE',Msehl='Consulting%20Days')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='FTE',Msehl='Consulting%20Days')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "FTE",
+    "Msehl": "Consulting Days"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='PS',Msehl='Picosecond')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='PS',Msehl='Picosecond')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "PS",
+    "Msehl": "Picosecond"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='S',Msehl='Second')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='S',Msehl='Second')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "S",
+    "Msehl": "Second"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='SEC',Msehl='Second')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='SEC',Msehl='Second')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "SEC",
+    "Msehl": "Second"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='HR',Msehl='Hours')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='HR',Msehl='Hours')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "HR",
+    "Msehl": "Hours"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='DAY',Msehl='Days')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='DAY',Msehl='Days')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "DAY",
+    "Msehl": "Days"
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='001',Msehl='')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='001',Msehl='')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "001",
+    "Msehl": ""
+  },
+  {
+    "__metadata": {
+      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='WK',Msehl='Weeks')",
+      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/TimeUnitsSet(Msehi='WK',Msehl='Weeks')",
+      "type": "com.evorait.evoplan.TimeUnits"
+    },
+    "Msehi": "WK",
+    "Msehl": "Weeks"
+  }
+]
