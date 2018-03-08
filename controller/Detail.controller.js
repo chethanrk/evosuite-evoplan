@@ -29,17 +29,12 @@ sap.ui.define([
 				// detail page is busy indication immediately so there is no break in
 				// between the busy indication for loading the view's meta data
 				var iOriginalBusyDelay,
-					oViewModel = new JSONModel({
-						busy : true,
-						delay : 0,
-						tableBusyDelay : 0
-					});
-
+				oViewModel = this.getOwnerComponent().getModel("viewModel");
+				
 				this.getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
 				
 				// Store original busy indicator delay, so it can be restored later on
 				iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
-				this.setModel(oViewModel, "viewModel");
 				this.getOwnerComponent().getModel().metadataLoaded().then(function () {
 						// Restore original busy indicator delay for the object view
 						oViewModel.setProperty("/delay", iOriginalBusyDelay);
@@ -180,6 +175,10 @@ sap.ui.define([
 				var sPath = oContext.getPath();
 				var oData = oModel.getProperty(sPath);
 				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oData);
+			},
+			
+			format:function(data){
+				console.log(data);
 			}
 
 		});

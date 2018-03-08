@@ -192,6 +192,7 @@ sap.ui.define([
 
                         var oDemandData = oContext.getProperty("Demand");
                         console.log(oDemandData);
+                        oModel.setProperty("/Description", oDemandData.DemandDesc);
                         oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
                         oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
                     },
