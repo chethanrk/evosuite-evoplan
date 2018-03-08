@@ -146,8 +146,6 @@ sap.ui.define([
                     },
                     iShouldSeeFilterItemWithTitle: function (id, text) {
                         var sExpectedText = oI18nResourceBundle.getText(text);
-                        console.log("---------------------------");
-                        console.log(sExpectedText);
                         return this.waitFor({
                             searchOpenDialogs : true,
                             controlType: "sap.m.ViewSettingsFilterItem",
