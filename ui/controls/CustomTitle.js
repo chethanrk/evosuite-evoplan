@@ -119,9 +119,11 @@ sap.ui.define([
     };
 
     CustomTitle.prototype._handlePress = function (oEvent) {
-        oEvent.setMarked();
-        if (!this.firePress()) { // fire event and check return value whether default action should be prevented
-            oEvent.preventDefault();
+        if(this.getIsLink()){
+	        oEvent.setMarked();
+	        if (!this.firePress()) { // fire event and check return value whether default action should be prevented
+	            oEvent.preventDefault();
+	        }
         }
     };
 
