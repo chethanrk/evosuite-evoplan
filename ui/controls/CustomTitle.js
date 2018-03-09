@@ -90,7 +90,7 @@ sap.ui.define([
                 oRm.write("<a");
                 oRm.addClass("sapMLnk");
                 oRm.writeClasses();
-                oRm.writeAttribute("href", "#");
+                // oRm.writeAttribute("href", "#");
                 oRm.writeAttributeEscaped("title", titleText);
             }
 

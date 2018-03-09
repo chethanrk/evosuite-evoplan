@@ -156,8 +156,9 @@ sap.ui.define([
 				var oModel = oContext.getModel();
 				var sPath = oContext.getPath();
 				var oData = oModel.getProperty(sPath);
+				var oSelectedData = [{sPath:sPath,oData:oData}];
 				if(oData.ALLOW_ASSIGN){
-					 this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oData);
+					 this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData);
 				}else{
                 	this._showAssignErrorDialog([oData.DemandDesc]);
 				}
