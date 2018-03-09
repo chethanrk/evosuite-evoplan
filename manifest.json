@@ -150,14 +150,14 @@
 			"routes": [
 				{
 					"pattern": "",
-					"name": "main",
+					"name": "list",
 					"target": [
 						"list",
 						"master"
 					]
 				},
 				{
-					"pattern": "WorkOrder/{objectId}",
+					"pattern": "Demand/{guid}",
 					"name": "detail",
 					"target": [
 						"master",

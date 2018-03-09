@@ -27,8 +27,8 @@
                                               path: 'calendarModel>ObjectType',
                                               formatter: '.formatter.getResourceIcon'
                                        }"
-                                title="{calendarModel>Description}"
-                                text="{calendarModel>Description}"
+                                title="{calendarModel>GroupDescription}"
+                                text="{calendarModel>ResourceDescription}"
                                 appointments="{path : 'calendarModel>ResourceToAssignments/results', templateShareable: 'true'}">
                             <appointments>
                                 <unified:CalendarAppointment
