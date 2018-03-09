@@ -33,5 +33,10 @@
       "templateVersion": "3.0.0",
       "dateTimeStamp": "Tue, 17 Oct 2017 16:33:06 GMT"
     }
-  ]
+  ],
+  "hcpdeploy": {
+    "account": "ad74c0790",
+    "name": "evoplan2ui5",
+    "lastVersionWeTriedToDeploy": "1.0.2"
+  }
 }
