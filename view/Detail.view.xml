@@ -30,8 +30,8 @@
 		</uxap:headerTitle>
 			<uxap:headerContent>
 				<layout:VerticalLayout>
-					<ObjectStatus title="{i18n>xfld.status}" text="{UserStatusShortText} ({UserStatusLongText})"/>
-					<ObjectStatus title="{i18n>xtit.source}" text="{Source}"/>
+					<ObjectStatus title="{/#StatusTexts/UserStatusShortText/@sap:label}" text="{UserStatusShortText} ({UserStatusLongText})"/>
+					<ObjectStatus title="{/#Demand/Source/@sap:label}" text="{Source}"/>
 				</layout:VerticalLayout>
 			</uxap:headerContent>
 

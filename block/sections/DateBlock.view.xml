@@ -27,17 +27,8 @@
 					<smartForm:GroupElement>
 						<smartField:SmartField value="{EFFORT}" />
 					</smartForm:GroupElement>
-				<!--	<smartForm:GroupElement>
-						<smartField:SmartField value="{TimeTo}" />
-					</smartForm:GroupElement>-->
 				</smartForm:Group>
 				<smartForm:Group>
-					<!--<smartForm:GroupElement>
-						<smartField:SmartField value="{DateFrom}" /> 
-					</smartForm:GroupElement>
-					<smartForm:GroupElement>
-						<smartField:SmartField value="{TimeFrom}" />
-					</smartForm:GroupElement>-->
 					<smartForm:GroupElement>
 						<smartField:SmartField value="{DateTo}" />
 					</smartForm:GroupElement>
@@ -45,6 +36,5 @@
 						<smartField:SmartField value="{TimeTo}" />
 					</smartForm:GroupElement>
 				</smartForm:Group>
-				
 			</smartForm:SmartForm>
 	</mvc:View>

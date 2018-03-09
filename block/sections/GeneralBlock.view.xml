@@ -25,24 +25,12 @@
 					<smartForm:GroupElement>
 						<smartField:SmartField value="{ExtKey}"/>
 					</smartForm:GroupElement>
-					<!--<smartForm:GroupElement>
-						<smartField:SmartField value="{Source}"/>
-					</smartForm:GroupElement>
-					<smartForm:GroupElement label="{i18n>xfld.status}">
-						<smartField:SmartField value="{UserStatusLongText}"/>
-					</smartForm:GroupElement>-->
 				</smartForm:Group>
 				<smartForm:Group>
-					<!--<smartForm:GroupElement>
-						<smartField:SmartField value="{DemandDesc}" /> 
-					</smartForm:GroupElement>
-					<smartForm:GroupElement>
-						<smartField:SmartField value="{ExtKey}"/>
-					</smartForm:GroupElement>-->
 					<smartForm:GroupElement>
 						<smartField:SmartField value="{Source}"/>
 					</smartForm:GroupElement>
-					<smartForm:GroupElement label="{i18n>xfld.status}">
+					<smartForm:GroupElement label="{/#StatusTexts/UserStatusShortText/@sap:label}">
 						<smartField:SmartField value="{UserStatusLongText}"/>
 					</smartForm:GroupElement>
 				</smartForm:Group>
