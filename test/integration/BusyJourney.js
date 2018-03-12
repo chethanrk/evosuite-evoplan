@@ -13,11 +13,10 @@ sap.ui.define([
 			When.onTheAppPage.iLookAtTheScreen();
 
 			// Assertions
-			Then.onTheAppPage.iShouldSeeTheBusyIndicator().
-				and.iTeardownMyAppFrame();
+			Then.onTheAppPage.iShouldSeeTheBusyIndicator();
 		});
 
-		opaTest("Should see a busy indication after loading the metadata", function (Given, When, Then) {
+		opaTest("Should see a busy indication after loading for resource table", function (Given, When, Then) {
 			// Arrangements
 			Given.iStartTheAppWithDelay("", 2000);
 
@@ -25,7 +24,7 @@ sap.ui.define([
 			When.onTheAppPage.iWaitUntilTheBusyIndicatorIsGone();
 
 			// Assertions
-			Then.onTheOverviewPage.iShouldSeeTheCardBusyIndicatorWithId("workOrderCardList").
+			Then.onTheMasterPage.iShouldSeeTableBusyIndicatorWithId("droppableTable").
 				and.iTeardownMyAppFrame();
 		});
 

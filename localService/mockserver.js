@@ -5,7 +5,8 @@ sap.ui.define([
 
 		var oMockServer,
 			_sAppModulePath = "com/evorait/evoplan/",
-			_sJsonFilesModulePath = _sAppModulePath + "localService/mockdata";
+			_sLocalPath = "localService/",
+			_sJsonFilesModulePath = _sAppModulePath + _sLocalPath + "mockdata";
 
 		return {
 			/**
@@ -19,7 +20,7 @@ sap.ui.define([
 				var oUriParameters = jQuery.sap.getUriParameters(),
 					sJsonFilesUrl = jQuery.sap.getModulePath(_sJsonFilesModulePath),
 					sManifestUrl = jQuery.sap.getModulePath(_sAppModulePath + "manifest", ".json"),
-					sEntity = "WorkOrderHeaderSet",
+					sEntity = "ResourceHierarchySet",
 					sErrorParam = oUriParameters.get("errorType"),
 					iErrorCode = sErrorParam === "badRequest" ? 400 : 500,
 					oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data,
@@ -43,7 +44,23 @@ sap.ui.define([
 					bGenerateMissingMockData : true
 				});
 
-				var aRequests = oMockServer.getRequests(),
+                var aRequests = oMockServer.getRequests();
+                aRequests.push({
+                    method: "GET",
+                    path: new RegExp("GetSystemInformation(.*)"),
+                    response: function(oXhr, sUrlParams) {
+                        jQuery.sap.log.debug("Incoming request for GetSystemInformation");
+                        var oResponse = $.ajax({
+                            url: sJsonFilesUrl + "/SystemInformationSet.json"
+                        });
+                        oXhr.respondJSON(200, {}, JSON.stringify(oResponse.data));
+                        return true;
+                    }
+                });
+                oMockServer.setRequests(aRequests);
+
+
+                var aRequests = oMockServer.getRequests(),
 					fnResponse = function (iErrCode, sMessage, aRequest) {
 						aRequest.response = function(oXhr){
 							oXhr.respond(iErrCode, {"Content-Type": "text/plain;charset=utf-8"}, sMessage);
