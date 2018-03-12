@@ -1,5 +1,5 @@
 {
-	"_version": "1.0.1",
+	"_version": "1.0.3",
 	"sap.app": {
 		"id": "com.evorait.evoplan",
 		"type": "application",
@@ -13,7 +13,7 @@
 			]
 		},
 		"applicationVersion": {
-			"version": "1.0.2"
+			"version": "1.0.3"
 		},
 		"dataSources": {
 			"mainService": {
@@ -150,14 +150,14 @@
 			"routes": [
 				{
 					"pattern": "",
-					"name": "main",
+					"name": "list",
 					"target": [
 						"list",
 						"master"
 					]
 				},
 				{
-					"pattern": "WorkOrder/{objectId}",
+					"pattern": "Demand/{guid}",
 					"name": "detail",
 					"target": [
 						"master",

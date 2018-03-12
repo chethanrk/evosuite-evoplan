@@ -68,9 +68,10 @@ sap.ui.define([
           }
 
             this._oView = oView;
-            oView.setModel(models.createAssignmentModel(oAssignment), "assignment");
+            // oView.setModel(models.createAssignmentModel(oAssignment), "assignment");
             this.oAssignmentModel = oView.getModel("assignment");
-
+			this.oAssignmentModel.setData(oAssignment);
+			
             if(sResourceGroupGuid && sResourceGroupGuid !== ""){
                 this._getAssignResourceGroup(sResourceGroupGuid);
             }
@@ -155,6 +156,7 @@ sap.ui.define([
          */
         onCloseDialog : function () {
             this.getDialog().close();
+            this.oAssignmentModel.setData({});
         },
 
         /**
@@ -190,6 +192,7 @@ sap.ui.define([
 
                         var oDemandData = oContext.getProperty("Demand");
                         console.log(oDemandData);
+                        oModel.setProperty("/Description", oDemandData.DemandDesc);
                         oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
                         oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
                     },

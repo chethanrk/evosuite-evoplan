@@ -29,22 +29,12 @@ sap.ui.define([
 				// detail page is busy indication immediately so there is no break in
 				// between the busy indication for loading the view's meta data
 				var iOriginalBusyDelay,
-					oViewModel = new JSONModel({
-						busy : true,
-						delay : 0,
-						isNew : false,
-						isEdit : false,
-						editable: false,
-						editMode : false,
-						tableBusyDelay : 0,
-						viewTitle : this.getResourceBundle().getText("objectTitle")
-					});
-
+				oViewModel = this.getOwnerComponent().getModel("viewModel");
+				
 				this.getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
 				
 				// Store original busy indicator delay, so it can be restored later on
 				iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
-				this.setModel(oViewModel, "viewModel");
 				this.getOwnerComponent().getModel().metadataLoaded().then(function () {
 						// Restore original busy indicator delay for the object view
 						oViewModel.setProperty("/delay", iOriginalBusyDelay);
@@ -65,9 +55,6 @@ sap.ui.define([
 			 * @public
 			 */
 			onNavBack : function() {
-				if(this.oForm){
-					this.cancelFormHandling(this.oForm);
-				}
 				this.navBack();
 			},
 			
@@ -80,43 +67,6 @@ sap.ui.define([
 				}
 			},
 			
-			/**
-			 * show edit forms
-			 */
-			onPressEdit : function() {
-				this._setEditMode(true);
-			},
-			
-			/**
-			 * reset changed data
-			 * when create workorders remove all values
-			 */
-			onPressCancel : function() {
-				if(this.oForm){
-					this.cancelFormHandling(this.oForm);
-				}
-			},
-			
-			/**
-			 * validate and submit form data changes
-			 */
-			onPressSave : function() {
-				if(this.oForm){
-					this.saveSubmitHandling(this.oForm);
-				}
-			},
-			
-			/**
-			 * fired edit toggle event from subsection block DetailsFormBlock
-			 */
-			onFiredEditMode : function(oEvent) {
-				var oParameters = oEvent.getParameters();
-				this._setEditMode(oParameters.editable);
-				
-				if(!this.oForm){
-					this.oForm = sap.ui.getCore().byId(oParameters.id);
-				}
-			},
 
 			/* =========================================================== */
 			/* internal methods                                            */
@@ -129,33 +79,14 @@ sap.ui.define([
 			 * @private
 			 */
 			_onObjectMatched : function (oEvent) {
-				var sObjectId =  oEvent.getParameter("arguments").objectId,
-					oViewModel = this.getModel("viewModel"),
-					oDataModel = this.getModel(),
-					isNew = (sObjectId === "new");
-
-				oDataModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
-				oDataModel.metadataLoaded().then( function() {
-					oViewModel.setProperty("/isNew", isNew);
-					oViewModel.setProperty("/isEdit", !isNew);
-					this._setEditMode(isNew);
-					this.showAllSmartFields(this.oForm);
+				var sGuid =  oEvent.getParameter("arguments").guid,
+					oDataModel = this.getModel();
 					
-					if(isNew){
-						var oContext = oDataModel.createEntry("/WorkOrderHeaderSet");
-						this.getView().unbindElement();
-						this.getView().setBindingContext(oContext);
-						this._isEditable(oContext);
-
-						oViewModel.setProperty("/Title", this.getResourceBundle().getText("objectNewTitle"));
-						oViewModel.setProperty("/showAdd", false);
-						oViewModel.setProperty("/busy", false);
-					}else{
-						var sObjectPath = this.getModel().createKey("WorkOrderHeaderSet", {
-							WorkOrder :  sObjectId
+				oDataModel.metadataLoaded().then( function() {
+						var sPath = this.getModel().createKey("DemandSet", {
+							Guid :  sGuid
 						});
-						this._bindView("/" + sObjectPath);
-					}
+						this._bindView("/" + sPath);
 				}.bind(this));
 			},
 
@@ -196,34 +127,59 @@ sap.ui.define([
 					this.getRouter().getTargets().display("notFound");
 					return;
 				}
-				
-				if(this.oForm){
-					this.oForm.setEditable(false);
-				}
-				
-				// Everything went fine.
-				this._setNewHeaderTitle();
-				this._isEditable(oContext);
 				oViewModel.setProperty("/busy", false);
 			},
+			/**
+			 * Opens the AssignInfo dialog to update the assignment
+			 * @Author Rahul
+			 * @return
+			 * @param oEvent
+			 */
+			onRowClick: function (oEvent) {
+				var oAssignment = oEvent.getParameter("listItem");
+				var oContext = oAssignment.getBindingContext();
+				var oModel = oContext.getModel();
+				var sPath = oContext.getPath();
+				var oAssignmentData = oModel.getProperty(sPath);
+				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAssignmentData);
 			
-			_setEditMode : function(isEdit){
-				this.getModel("viewModel").setProperty("/editable", !isEdit);
-				this.getModel("viewModel").setProperty("/editMode", isEdit);
 			},
-			
-			_isEditable : function(oContext){
-				var data = this.getModel().getProperty(oContext.sPath);
-				if(data && (data.IsCompleted || data.IsDeleted) || this.getModel("viewModel").getProperty("/editMode")){
-					this.getModel("viewModel").setProperty("/editable", false);
+			/**
+			 * Opens the AssignDialog to assign the demand to resources
+			 * @Author Rahul
+			 * @return
+			 * @param oEvent
+			 */
+			onClickAssign:function(oEvent){
+				var oSource = oEvent.getSource();
+				var oContext = oSource.getBindingContext();
+				var oModel = oContext.getModel();
+				var sPath = oContext.getPath();
+				var oData = oModel.getProperty(sPath);
+				var oSelectedData = [{sPath:sPath,oData:oData}];
+				if(oData.ALLOW_ASSIGN){
+					 this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData);
 				}else{
-					this.getModel("viewModel").setProperty("/editable", true);
+                	this._showAssignErrorDialog([oData.DemandDesc]);
 				}
 			},
+			/**
+			 * Opens the StatusDialog to change status
+			 * @Author Rahul
+			 * @return
+			 * @param oEvent
+			 */
+			onClickStatus:function(oEvent){
+				var oSource = oEvent.getSource();
+				var oContext = oSource.getBindingContext();
+				var oModel = oContext.getModel();
+				var sPath = oContext.getPath();
+				var oData = oModel.getProperty(sPath);
+				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oData);
+			},
 			
-			_setNewHeaderTitle : function(){
-				var oContext = this.getView().getBindingContext();
-				this.getModel("viewModel").setProperty("/Title", this.getModel().getProperty(oContext.sPath+"/WorkOrderDescription"));
+			format:function(data){
+				console.log(data);
 			}
 
 		});

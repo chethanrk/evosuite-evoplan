@@ -1,0 +1,55 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:smartTable="sap.ui.comp.smarttable"
+	xmlns="sap.m"
+	controllerName="com.evorait.evoplan.block.sections.AssignmentBlockController">
+	<Table id="idAssignmentTable"
+		class="sapUiNoContentPadding"
+		items="{
+			path: 'DemandToAssignment',
+			parameters : {
+				expand:'Resource,Demand'
+			},
+			templateShareable: true
+		}"
+		itemPress="onClickRow">
+		<columns>
+			<Column>
+				<Text text="{i18n>xfld.ResourceName}" />
+			</Column>
+			<Column minScreenWidth="Tablet"
+                        demandPopin="true"
+                        width="4em">
+				<Text text="{/#Demand/EFFORT/@sap:label}" />
+			</Column>
+			<Column minScreenWidth="Tablet"
+                        demandPopin="true">
+				<Text text="{/#Demand/DateFrom/@sap:label}" />
+			</Column>
+			<Column minScreenWidth="Tablet"
+                        demandPopin="true">
+				<Text text="{/#Demand/DateTo/@sap:label}" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem type="Active">
+				<cells>
+					<ObjectIdentifier
+						title="{Resource/GroupDescription}"
+						text="{Resource/ResourceDescription}"/>
+					<Text text="{Effort} {EffortUnit}" />
+					<Text text="{
+								path:'DateFrom',
+								type:'sap.ui.model.odata.type.DateTimeOffset'
+							}"/>
+					<Text text="{
+								path:'DateTo',
+								type:'sap.ui.model.odata.type.DateTimeOffset'
+							}"/>
+				</cells>
+				
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>
