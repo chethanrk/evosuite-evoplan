@@ -6,12 +6,12 @@ sap.ui.define([
 		"sap/ui/test/matchers/PropertyStrictEquals",
 		"sap/ui/test/matchers/AggregationLengthEquals",
 		"sap/ui/test/matchers/BindingPath",
-    	"sap/ui/test/matchers/Properties"
-	], function(Opa5, Press, Enter, Common, PropertyStrictEquals, AggregationLengthEquals, BindingPath, Properties) {
+    	"sap/ui/test/matchers/Properties",
+        "sap/ui/test/matchers/I18NText"
+	], function(Opa5, Press, EnterText, Common, PropertyStrictEquals, AggregationLengthEquals, BindingPath, Properties, I18NText) {
 		"use strict";
 
 		var sViewName = "MasterPage",
-			sControl = "MasterPage",
 			oI18nResourceBundle = undefined;
 
 		Opa5.createPageObjects({
@@ -28,7 +28,10 @@ sap.ui.define([
 						});
 					},
 					iSearchForSomethingWithNoResults : function () {
-						return this.iSearchForValue([new EnterText({text: sSomethingThatCannotBeFound}), new Press()]);
+						return this.iSearchForValue([
+						    new EnterText({
+                                text: ""
+						    }), new Press()]);
 					},
                     iPressOnFilterButton: function () {
                         var alreadyPressed = false;
@@ -65,7 +68,7 @@ sap.ui.define([
 							viewName: sViewName,
 							success: function (oPage) {
 								oI18nResourceBundle = oPage.getModel("i18n").getResourceBundle();
-								Opa5.assert.ok(true, "The Page is visible");
+                                Opa5.assert.ok(true, "The Page is visible");
 							},
 							errorMessage: "The Page is not visible."
 						});
@@ -144,8 +147,8 @@ sap.ui.define([
                             errorMessage: "Can not find open filter dialog"
                         });
                     },
-                    iShouldSeeFilterItemWithTitle: function (id, text) {
-                        var sExpectedText = oI18nResourceBundle.getText(text);
+                    iShouldSeeFilterItemWithTitle: function (sExpectedText) {
+                        sExpectedText = oI18nResourceBundle.getText(sExpectedText);
                         return this.waitFor({
                             searchOpenDialogs : true,
                             controlType: "sap.m.ViewSettingsFilterItem",
