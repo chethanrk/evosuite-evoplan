@@ -67,12 +67,15 @@
                         id="droppableTable"
                         selectionMode="None"
                         enableColumnReordering="false"
-                        expandFirstLevel="true"
                         toolbarStyleClass="treeTableHeader"
-                        beforeRebindTable="onBeforeRebindTable"
                         class="listTreeTable"
-                        rows="{path : '/ResourceHierarchySet'}">
-
+                    	rows="{
+                        		path : '/ResourceHierarchySet',
+                        		parameters:{
+                        			numberOfExpandedLevels:1,
+                        			restoreTreeStateAfterChange:true
+                        		}
+                        }">
                     <table:columns>
                         <table:Column
                                 label="{i18n>xtit.tableObject}"
