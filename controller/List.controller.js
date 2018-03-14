@@ -64,14 +64,20 @@ sap.ui.define([
             eventBus.subscribe("StatusSelectDialog", "changeStatusDemand", this._triggerSaveDemandStatus, this);
             eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 
-
+			this.getRouter().getRoute("list").attachPatternMatched(this._onObjectMatched, this);
+			
             // event listener for changing device orientation with fallback of window resize
             var orientationEvent = this.getOrientationEvent(),
                 _this = this;
 
             window.addEventListener(orientationEvent, function() {
-                _this._jDraggable(_this)
+                _this._jDraggable(_this);
             }, false);
+		},
+		
+		_onObjectMatched:function(oEvent){
+			 var _this = this;
+			 _this._jDraggable(_this);
 		},
 
 		/* =========================================================== */

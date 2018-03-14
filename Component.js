@@ -37,6 +37,14 @@ sap.ui.define([
 		init: function() {
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
+			
+			$.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-core');
+	    	$.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-widget');
+	    	$.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-mouse');
+	    	$.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-draggable');
+	    	$.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-sortable');
+        	$.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-droppable');
+        	sap.ui.localResources("sapui5draganddrop");
 
 			// handle the main oData model based on the environment
 			// the path for mobile applications depends on the current information from
