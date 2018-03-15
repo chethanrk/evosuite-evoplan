@@ -64,14 +64,27 @@ sap.ui.define([
             eventBus.subscribe("StatusSelectDialog", "changeStatusDemand", this._triggerSaveDemandStatus, this);
             eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 
-
+			this.getRouter().getRoute("list").attachPatternMatched(this._onObjectMatched, this);
+			
             // event listener for changing device orientation with fallback of window resize
             var orientationEvent = this.getOrientationEvent(),
                 _this = this;
 
             window.addEventListener(orientationEvent, function() {
-                _this._jDraggable(_this)
+                _this._jDraggable(_this);
             }, false);
+		},
+		/**
+		 * Method get call when ever the hash mathes the route name 
+		 * Registering draggable functionality to make sure it will work all the time
+		 * @Author Rahul
+		 * @version 1.0.4
+		 * @param oEvent
+		 * @private
+		 */
+		_onObjectMatched:function(oEvent){
+			 var _this = this;
+			 _this._jDraggable(_this);
 		},
 
 		/* =========================================================== */
