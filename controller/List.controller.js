@@ -74,7 +74,14 @@ sap.ui.define([
                 _this._jDraggable(_this);
             }, false);
 		},
-		
+		/**
+		 * Method get call when ever the hash mathes the route name 
+		 * Registering draggable functionality to make sure it will work all the time
+		 * @Author Rahul
+		 * @version 1.0.4
+		 * @param oEvent
+		 * @private
+		 */
 		_onObjectMatched:function(oEvent){
 			 var _this = this;
 			 _this._jDraggable(_this);

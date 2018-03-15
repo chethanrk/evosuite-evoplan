@@ -38,6 +38,8 @@ sap.ui.define([
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 			
+			//Required third-party libraries for drag and drop functionality
+			//which loaded here in component to make available throughout the application
 			$.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-core');
 	    	$.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-widget');
 	    	$.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-mouse');
