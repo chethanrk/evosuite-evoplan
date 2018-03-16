@@ -104,7 +104,8 @@
                                 minScreenWidth="Tablet"
                                 demandPopin="true"
                                 width="5rem"
-                                hAlign="End">
+                                hAlign="End"
+                                visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
                             <table:template>
                                 <ProgressIndicator
                                         percentValue="{Utilization}"
@@ -125,7 +126,7 @@
                                 width="2rem"
                                 hAlign="End">
                             <table:template>
-                                <Text text="{AssignmentCount}" wrapper="false" />
+                                <Text text="{AssignmentCount}" wrapping="false" />
                             </table:template>
                         </table:Column>
                         <table:Column
