@@ -237,7 +237,7 @@ sap.ui.define([
                 success: function(oData, oResponse){
                     //Handle Success
                     this.showMessage(oResponse);
-                    eventBus.publish("BaseController", "refreshTable", {});
+                    eventBus.publish("BaseController", "refreshTreeTable",{});
                     eventBus.publish("BaseController", "refreshDemandTable",{});
                 }.bind(this),
                 error: function(oError){

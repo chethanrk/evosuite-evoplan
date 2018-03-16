@@ -42,7 +42,7 @@ sap.ui.define([
 
             //eventbus of assignemnt handling
             var eventBus = sap.ui.getCore().getEventBus();
-            eventBus.subscribe("BaseController", "refreshTable", this._triggerFilterSearch, this);
+            eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
             eventBus.subscribe("AssignInfoDialog", "updateAssignment", this._triggerUpdateAssign, this);
             eventBus.subscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
 
@@ -537,7 +537,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * call ResourceSet with Assignments
+		 * Method reads ResourceSet with Assignments
 		 * and merge into one json model for planning calendar
 		 * @private
 		 */
@@ -577,9 +577,7 @@ sap.ui.define([
 					sCaledarView = oViewFilterItem.getKey();
 				}
 			}
-
-		/*	var oDateRangeFilter = new Filter("DateFrom", FilterOperator.GE, sDateControl1);
-			aResourceFilters.push(oDateRangeFilter);*/
+			
 			oModel.read("/ResourceSet", {
 				filters: aResourceFilters,
 				urlParameters: {
@@ -599,7 +597,25 @@ sap.ui.define([
 					MessageToast.show(oResourceBundle.getText("errorMessage"), {duration: 5000});
 				}.bind(this)
 			});
+		},
+		/**
+		 * Method will refresh the data of tree by restoring its state
+		 * 
+		 * @Author Rahul
+		 * @version 1.0.4
+		 * @return 
+		 * @private
+		 */
+		_triggerRefreshTree:function(){
+			var oContext = this.byId("droppableTable").getBinding("rows").getContextByIndex(0),
+            	oModel = oContext.getModel(),
+            	sPath = oContext.getPath();
+            	
+                oModel.setProperty(sPath+"/IsSelected",true); // changing the property in order trigger submit change 
+                this.byId("droppableTable").getBinding("rows").submitChanges();// submit change will refresh of tree according maintained parameters
+				//Resetting selected resource for calendar as by default IsSelected will come as false from backend
+				this.selectedResources = [];
+				this.byId("showPlanCalendar").setEnabled(false);
 		}
-
 	});
 });
