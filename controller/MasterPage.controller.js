@@ -89,6 +89,8 @@ sap.ui.define([
             if(parameters.busy === false){
                 this._jDroppable(this);
                 this._oDataTable.setVisibleRowCountMode("Auto");
+            }else{
+                this.onTreeUpdateStarted();
             }
         },
 
