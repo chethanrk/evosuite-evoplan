@@ -617,7 +617,7 @@
 					<PropertyRef Name="Guid"/>
 				</Key>
 				<Property Name="Guid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Demand GUID" sap:filterable="false"/>
-				<Property Name="ExtKey" Type="Edm.String" MaxLength="32" sap:label="External key" sap:filterable="false"/>
+				<Property Name="ExtKey" Type="Edm.String" MaxLength="36" sap:label="External key" sap:filterable="false"/>
 				<Property Name="Source" Type="Edm.String" MaxLength="16" sap:label="Source of Object"/>
 				<Property Name="DemandDesc" Type="Edm.String" MaxLength="40" sap:label="Demand description"/>
 				<Property Name="DateFrom" Type="Edm.DateTime" Precision="7" sap:display-format="Date" sap:label="From Date"/>
@@ -797,15 +797,15 @@
 				</FunctionImport>
 				<FunctionImport Name="UpdateAssignment" ReturnType="com.evorait.evoplan.Assignment" EntitySet="AssignmentSet" m:HttpMethod="POST"
 					sap:action-for="com.evorait.evoplan.Assignment">
-					<Parameter Name="EffortUnit" Type="Edm.String" Mode="In" MaxLength="3"/>
-					<Parameter Name="Effort" Type="Edm.Decimal" Mode="In" Precision="1" Scale="1"/>
-					<Parameter Name="TimeTo" Type="Edm.Time" Mode="In" Precision="0"/>
-					<Parameter Name="TimeFrom" Type="Edm.Time" Mode="In" Precision="0"/>
-					<Parameter Name="DateTo" Type="Edm.DateTime" Mode="In" Precision="0"/>
-					<Parameter Name="DateFrom" Type="Edm.DateTime" Mode="In" Precision="0"/>
 					<Parameter Name="AssignmentGUID" Type="Edm.String" Mode="In" MaxLength="32"/>
 					<Parameter Name="ResourceGroupGuid" Type="Edm.String" Mode="In" MaxLength="32"/>
 					<Parameter Name="ResourceGuid" Type="Edm.String" Mode="In" MaxLength="32"/>
+					<Parameter Name="DateFrom" Type="Edm.DateTime" Mode="In" Precision="0"/>
+					<Parameter Name="DateTo" Type="Edm.DateTime" Mode="In" Precision="0"/>
+					<Parameter Name="TimeFrom" Type="Edm.Time" Mode="In" Precision="0"/>
+					<Parameter Name="TimeTo" Type="Edm.Time" Mode="In" Precision="0"/>
+					<Parameter Name="Effort" Type="Edm.Decimal" Mode="In" Precision="1" Scale="1"/>
+					<Parameter Name="EffortUnit" Type="Edm.String" Mode="In" MaxLength="3"/>
 				</FunctionImport>
 				<FunctionImport Name="DeleteAssignment" ReturnType="com.evorait.evoplan.Assignment" EntitySet="AssignmentSet" m:HttpMethod="POST"
 					sap:action-for="com.evorait.evoplan.Assignment">
@@ -813,8 +813,8 @@
 				</FunctionImport>
 				<FunctionImport Name="ExecuteDemandFunction" ReturnType="com.evorait.evoplan.Demand" EntitySet="DemandSet" m:HttpMethod="POST"
 					sap:action-for="com.evorait.evoplan.Demand">
-					<Parameter Name="Function" Type="Edm.String" Mode="In"/>
 					<Parameter Name="DemandGuid" Type="Edm.String" Mode="In"/>
+					<Parameter Name="Function" Type="Edm.String" Mode="In"/>
 				</FunctionImport>
 				<FunctionImport Name="GetSystemInformation" ReturnType="com.evorait.evoplan.SystemInformation" EntitySet="SystemInformationSet"
 					m:HttpMethod="GET" sap:action-for="com.evorait.evoplan.SystemInformation"/>
@@ -857,16 +857,20 @@
 							<PropertyValue Property="Position" Int="4"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
-							<PropertyValue Property="Value" Path="UserStatusShortText"/>
+							<PropertyValue Property="Value" Path="SUBOPERATIONID"/>
 							<PropertyValue Property="Position" Int="5"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
-							<PropertyValue Property="Value" Path="DateFrom"/>
+							<PropertyValue Property="Value" Path="UserStatusShortText"/>
 							<PropertyValue Property="Position" Int="6"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="DateFrom"/>
+							<PropertyValue Property="Position" Int="7"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
 							<PropertyValue Property="Value" Path="DateTo"/>
-							<PropertyValue Property="Position" Int="6"/>
+							<PropertyValue Property="Position" Int="8"/>
 						</Record>
 					</Collection>
 				</Annotation>
