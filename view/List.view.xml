@@ -53,6 +53,20 @@
                     <smartTable:layoutData>
                         <FlexItemData growFactor="1" />
                     </smartTable:layoutData>
+                    <table:Table rows="{/DemandSet}">
+                    	<table:columns>
+                    		<table:Column hAlign="Center" width="3rem">
+                    			<table:customData>
+									<core:CustomData key="p13nData" value='\{"columnKey": "STATUS_ICON", "leadingProperty": "STATUS_ICON"}' />
+								</table:customData>
+								<Label text="{/#Demand/STATUS_ICON/@sap:label}" />
+								<table:template>
+									<core:Icon src="{STATUS_ICON}">
+									</core:Icon>
+								</table:template>
+							</table:Column>
+                    	</table:columns>
+                    </table:Table>
                 </smartTable:SmartTable>
             </f:content>
 

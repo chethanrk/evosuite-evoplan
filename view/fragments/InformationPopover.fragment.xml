@@ -49,6 +49,16 @@
 				<Text text="{InformationModel>/language}">
 				</Text>
 				
+				<Label text="{/#SystemInformation/Systemid/@sap:label}">
+				</Label>
+				<Text text="{user>/Systemid}">
+				</Text>
+				
+				<Label text="{/#SystemInformation/Client/@sap:label}">
+				</Label>
+				<Text text="{user>/Client}">
+				</Text>
+				
 			</form:content>
             </form:SimpleForm>
 		</content>
