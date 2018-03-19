@@ -5,11 +5,12 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
 	"sap/m/Token",
+	"sap/m/Tokenizer",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/controller/ErrorHandler",
 	"sap/m/MessageToast"
-], function(Device, JSONModel, Filter, FilterOperator, FilterType, Token, formatter, BaseController,ErrorHandler,MessageToast) {
+], function(Device, JSONModel, Filter, FilterOperator, FilterType, Token, Tokenizer, formatter, BaseController,ErrorHandler,MessageToast) {
 	"use strict";
 
     return BaseController.extend('com.evorait.evoplan.controller.MasterPage', {
@@ -20,7 +21,7 @@ sap.ui.define([
 
         firstLoad: false,
 
-        counterResourceFilter: 2,
+        counterResourceFilter: 0,
 
         defaultViewSelected: "TIMENONE",
 
@@ -154,9 +155,14 @@ sap.ui.define([
 		 */
 		onFilterSettingsReset: function(oEvent) {
 			//reset multiInput custom filter
-			var oCustomFilter = sap.ui.getCore().byId("idGroupFilterItem");
+			var oCustomGroupFilter = sap.ui.getCore().byId("idGroupFilterItem"),
+                aTokens = this._filterGroupInput.getTokens();
+
 			this._filterGroupInput.setTokens([]);
-			oCustomFilter.setFilterCount(0);
+            oCustomGroupFilter.setFilterCount(0);
+
+            this.counterResourceFilter -= aTokens.length;
+            this.getModel("viewModel").setProperty("/counterResourceFilter", this.counterResourceFilter);
 
 			//set default view setting
 			this._setDefaultFilterView();
@@ -169,12 +175,20 @@ sap.ui.define([
          * on multiinput changed in filter settings dialog
          * @param oEvent
          */
-        onChangeGroupFilter: function (oEvent) {
-            var oCustomFilter = sap.ui.getCore().byId("idGroupFilterItem");
-            var aTokens = this._filterGroupInput.getTokens();
+        onUpdateGroupFilter: function (oEvent) {
+            var oCustomFilter = sap.ui.getCore().byId("idGroupFilterItem"),
+                aTokens = this._filterGroupInput.getTokens(),
+                tokenLen = aTokens.length;
 
-            oCustomFilter.setFilterCount(aTokens.length);
-            this.counterResourceFilter = aTokens.length+2;
+            if (oEvent.getParameter('type') === Tokenizer.TokenUpdateType.Added) {
+                this.counterResourceFilter += 1;
+
+            }else if (oEvent.getParameter('type') === Tokenizer.TokenUpdateType.Removed) {
+                tokenLen -= 1;
+                this.counterResourceFilter -= 1;
+            }
+
+            oCustomFilter.setFilterCount(tokenLen);
             this.getModel("viewModel").setProperty("/counterResourceFilter", this.counterResourceFilter);
         },
 
@@ -338,8 +352,10 @@ sap.ui.define([
 
                 //set default view setting
                 this._setDefaultFilterView();
+                this.counterResourceFilter +=1;
                 //set default date range
                 this._setDefaultFilterDateRange();
+                this.counterResourceFilter +=1;
 
 				//*** add checkbox validator
 				this._filterGroupInput = sap.ui.getCore().byId("multiGroupInput");

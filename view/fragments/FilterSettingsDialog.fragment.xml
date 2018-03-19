@@ -56,7 +56,7 @@
                     <MultiInput id="multiGroupInput"
                                 width="90%"
                                 class="sapUiSmallMargin"
-                                tokenUpdate="onChangeGroupFilter"
+                                tokenUpdate="onUpdateGroupFilter"
                                 enableMultiLineMode="true"
                                 showValueHelp="false">
                     </MultiInput>
