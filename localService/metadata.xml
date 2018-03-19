@@ -1,31 +1,31 @@
 <edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
 	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
 	<edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-		Uri="https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+		Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="Org.OData.Capabilities.V1"/>
 	</edmx:Reference>
 	<edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-		Uri="https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+		Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="Org.OData.Core.V1"/>
 	</edmx:Reference>
 	<edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-		Uri="https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.Common.v1"/>
 	</edmx:Reference>
 	<edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-		Uri="https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1"/>
 	</edmx:Reference>
 	<edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-		Uri="https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="Org.OData.Measures.V1"/>
 	</edmx:Reference>
 	<edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-		Uri="https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_TIMELINE',Version='0001',SAP__Origin='LOCAL')/$value">
+		Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_TIMELINE',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.Timeline.v1"/>
 	</edmx:Reference>
 	<edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-		Uri="https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+		Uri="https://ed1.evorait.net:50103/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.UI.v1"/>
 		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
 		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="COMMON"/>
@@ -107,21 +107,20 @@
 				<Key>
 					<PropertyRef Name="Guid"/>
 				</Key>
+				<Property Name="Effort" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="1" sap:unit="EffortUnit" sap:label="Effort"/>
 				<Property Name="Guid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Demand GUID" sap:filterable="false"/>
+				<Property Name="EffortUnit" Type="Edm.String" MaxLength="3" sap:label="Effort unit" sap:semantics="unit-of-measure"/>
 				<Property Name="ExtKey" Type="Edm.String" MaxLength="36" sap:label="External key" sap:filterable="false"/>
+				<Property Name="Objnr" Type="Edm.String" MaxLength="22" sap:label="Object number"/>
 				<Property Name="Source" Type="Edm.String" MaxLength="16" sap:label="Source of Object"/>
 				<Property Name="DemandDesc" Type="Edm.String" MaxLength="40" sap:label="Demand description"/>
+				<Property Name="Status" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Status"/>
 				<Property Name="DateFrom" Type="Edm.DateTime" Precision="7" sap:display-format="Date" sap:label="From Date"/>
+				<Property Name="StatusDesc" Type="Edm.String" MaxLength="30" sap:label="Status"/>
 				<Property Name="TimeFrom" Type="Edm.Time" Precision="0" sap:label="From time"/>
 				<Property Name="DateTo" Type="Edm.DateTime" Precision="7" sap:display-format="Date" sap:label="To Date"/>
 				<Property Name="TimeTo" Type="Edm.Time" Precision="0" sap:label="To time"/>
-				<Property Name="UserStatusShortText" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Status"/>
-				<Property Name="UserStatusLongText" Type="Edm.String" MaxLength="30" sap:label="Status"/>
 				<Property Name="STATUS_ICON" Type="Edm.String" MaxLength="255" sap:label="UI Status Icon" sap:is-extension-field="true"/>
-				<Property Name="EFFORT" Type="Edm.Decimal" Precision="7" Scale="1" sap:unit="EFFORT_UNIT" sap:label="Effort" sap:is-extension-field="true"/>
-				<Property Name="EFFORT_UNIT" Type="Edm.String" MaxLength="3" sap:label="Effort unit" sap:is-extension-field="true"
-					sap:semantics="unit-of-measure"/>
-				<Property Name="OBJNR" Type="Edm.String" MaxLength="22" sap:label="Object number" sap:is-extension-field="true"/>
 				<Property Name="ADRNR" Type="Edm.String" MaxLength="10" sap:label="Address number" sap:is-extension-field="true"/>
 				<Property Name="NAME1" Type="Edm.String" MaxLength="40" sap:label="Name" sap:is-extension-field="true"/>
 				<Property Name="NAME2" Type="Edm.String" MaxLength="40" sap:label="Name 2" sap:is-extension-field="true"/>
@@ -137,56 +136,75 @@
 				<Property Name="STREET" Type="Edm.String" MaxLength="60" sap:label="Street" sap:is-extension-field="true"/>
 				<Property Name="HOUSE_NUM1" Type="Edm.String" MaxLength="10" sap:label="House Number" sap:is-extension-field="true"/>
 				<Property Name="BUILDING" Type="Edm.String" MaxLength="20" sap:label="Building Code" sap:is-extension-field="true"/>
+				<Property Name="FLOOR" Type="Edm.String" MaxLength="10" sap:label="Floor" sap:is-extension-field="true"/>
 				<Property Name="LOCATION" Type="Edm.String" MaxLength="40" sap:label="Street 5" sap:is-extension-field="true"/>
 				<Property Name="LATITUDE" Type="Edm.Decimal" Precision="15" Scale="0" sap:label="Geo Loc. Latitude" sap:is-extension-field="true"/>
 				<Property Name="LONGITUDE" Type="Edm.Decimal" Precision="15" Scale="12" sap:label="Geo Loc. Longitude" sap:is-extension-field="true"/>
 				<Property Name="GEO_SOURCE" Type="Edm.String" MaxLength="10" sap:label="Source of Geo loc." sap:is-extension-field="true"/>
 				<Property Name="ALTITUDE" Type="Edm.Decimal" Precision="9" Scale="3" sap:label="Altitude" sap:is-extension-field="true"/>
-				<Property Name="FLOOR" Type="Edm.String" MaxLength="10" sap:label="Floor" sap:is-extension-field="true"/>
 				<Property Name="ALLOW_ASSIGN" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
 				<Property Name="ALLOW_REASSIGN" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
 				<Property Name="ALLOW_UNASSIGN" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+				<Property Name="ALLOW_APPOINTMNT" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+				<Property Name="ALLOW_DISPATCHED" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+				<Property Name="ALLOW_DEM_MOBILE" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+				<Property Name="ALLOW_ACKNOWLDGE" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+				<Property Name="ALLOW_REJECT" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+				<Property Name="ALLOW_ENROUTE" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+				<Property Name="ALLOW_STARTED" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+				<Property Name="ALLOW_ONHOLD" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+				<Property Name="ALLOW_COMPLETE" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+				<Property Name="ALLOW_INCOMPLETE" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+				<Property Name="ALLOW_CLOSED" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
 				<Property Name="ORDERID" Type="Edm.String" MaxLength="12" sap:label="Order ID" sap:is-extension-field="true"/>
 				<Property Name="ORDER_DESC" Type="Edm.String" MaxLength="40" sap:label="Order description" sap:is-extension-field="true"/>
+				<Property Name="ORDER_TYPE" Type="Edm.String" MaxLength="4" sap:label="Order Type" sap:is-extension-field="true"/>
+				<Property Name="ORDER_WORKCENTER" Type="Edm.String" MaxLength="8" sap:label="Main WorkCtr" sap:is-extension-field="true"/>
+				<Property Name="ORDER_PLANT" Type="Edm.String" MaxLength="4" sap:label="Plnt WorkCenter" sap:is-extension-field="true"/>
+				<Property Name="NOTIFICATION" Type="Edm.String" MaxLength="12" sap:label="Notification" sap:is-extension-field="true"/>
+				<Property Name="MAINT_ACT_TYPE" Type="Edm.String" MaxLength="3" sap:label="MaintActivType" sap:is-extension-field="true"/>
+				<Property Name="START_DATE" Type="Edm.DateTime" Precision="0" sap:label="Bas. start date" sap:is-extension-field="true"/>
+				<Property Name="END_DATE" Type="Edm.DateTime" Precision="0" sap:label="Basic fin. date" sap:is-extension-field="true"/>
+				<Property Name="PRIORITY" Type="Edm.String" MaxLength="1" sap:label="Priority" sap:is-extension-field="true"/>
+				<Property Name="FUNCTIONAL_LOC" Type="Edm.String" MaxLength="40" sap:label="Functional loc." sap:is-extension-field="true"/>
+				<Property Name="FUNC_LOC_DESCR" Type="Edm.String" MaxLength="40" sap:label="FLOC Descr." sap:is-extension-field="true"/>
+				<Property Name="EQUIPMENT" Type="Edm.String" MaxLength="18" sap:label="Equipment" sap:is-extension-field="true"/>
+				<Property Name="EQUI_DESCR" Type="Edm.String" MaxLength="40" sap:label="Equip. Descr." sap:is-extension-field="true"/>
+				<Property Name="SORT_FIELD" Type="Edm.String" MaxLength="30" sap:label="Sort field" sap:is-extension-field="true"/>
 				<Property Name="OPERATIONID" Type="Edm.String" MaxLength="4" sap:label="Operation" sap:is-extension-field="true"/>
 				<Property Name="SUBOPERATIONID" Type="Edm.String" MaxLength="4" sap:label="Suboperation" sap:is-extension-field="true"/>
 				<Property Name="OPERATION_DESC" Type="Edm.String" MaxLength="40" sap:label="Operation desc." sap:is-extension-field="true"/>
-				<Property Name="SORT_FIELD" Type="Edm.String" MaxLength="30" sap:label="Sort field" sap:is-extension-field="true"/>
-				<Property Name="AUART" Type="Edm.String" MaxLength="4" sap:label="Order Type" sap:is-extension-field="true"/>
-				<Property Name="VAPLZ" Type="Edm.String" MaxLength="8" sap:label="Main WorkCtr" sap:is-extension-field="true"/>
-				<Property Name="WAWRK" Type="Edm.String" MaxLength="4" sap:label="Plnt WorkCenter" sap:is-extension-field="true"/>
-				<Property Name="QMNUM" Type="Edm.String" MaxLength="12" sap:label="Notification" sap:is-extension-field="true"/>
-				<Property Name="ILART" Type="Edm.String" MaxLength="3" sap:label="MaintActivType" sap:is-extension-field="true"/>
-				<Property Name="GSTRP" Type="Edm.DateTime" Precision="0" sap:label="Bas. start date" sap:is-extension-field="true"/>
-				<Property Name="GLTRP" Type="Edm.DateTime" Precision="0" sap:label="Basic fin. date" sap:is-extension-field="true"/>
-				<Property Name="PRIOK" Type="Edm.String" MaxLength="1" sap:label="Priority" sap:is-extension-field="true"/>
-				<Property Name="TPLNR" Type="Edm.String" MaxLength="40" sap:label="Functional loc." sap:is-extension-field="true"/>
-				<Property Name="PLTXT" Type="Edm.String" MaxLength="40" sap:label="Description" sap:is-extension-field="true"/>
-				<Property Name="EQUNR" Type="Edm.String" MaxLength="18" sap:label="Equipment" sap:is-extension-field="true"/>
-				<Property Name="EQKTX" Type="Edm.String" MaxLength="40" sap:label="Description" sap:is-extension-field="true"/>
-				<Property Name="LTXA1" Type="Edm.String" MaxLength="40" sap:label="Opr. short text" sap:is-extension-field="true"/>
-				<Property Name="ARBPL" Type="Edm.String" MaxLength="8" sap:label="Work center" sap:is-extension-field="true"/>
-				<Property Name="WERKS" Type="Edm.String" MaxLength="4" sap:label="Plant" sap:is-extension-field="true"/>
-				<Property Name="STEUS" Type="Edm.String" MaxLength="4" sap:label="Control key" sap:is-extension-field="true"/>
-				<Property Name="LARNT" Type="Edm.String" MaxLength="6" sap:label="Activity Type" sap:is-extension-field="true"/>
-				<Property Name="ARBEI" Type="Edm.Decimal" Precision="7" Scale="1" sap:unit="ARBEH" sap:label="Work" sap:is-extension-field="true"/>
-				<Property Name="ARBEH" Type="Edm.String" MaxLength="3" sap:label="Unit for work" sap:is-extension-field="true"
+				<Property Name="OPER_WORKCENTER" Type="Edm.String" MaxLength="8" sap:label="Work center" sap:is-extension-field="true"/>
+				<Property Name="OPER_PLANT" Type="Edm.String" MaxLength="4" sap:label="Plant" sap:is-extension-field="true"/>
+				<Property Name="CONTROL_KEY" Type="Edm.String" MaxLength="4" sap:label="Control key" sap:is-extension-field="true"/>
+				<Property Name="ACTIVITY_TYPE" Type="Edm.String" MaxLength="6" sap:label="Activity Type" sap:is-extension-field="true"/>
+				<Property Name="DURATION" Type="Edm.Decimal" Precision="5" Scale="1" sap:unit="DURATION_UNIT" sap:label="Normal duration"
+					sap:is-extension-field="true"/>
+				<Property Name="DURATION_UNIT" Type="Edm.String" MaxLength="3" sap:label="Norm.duratn un." sap:is-extension-field="true"
 					sap:semantics="unit-of-measure"/>
-				<Property Name="ANZZL" Type="Edm.Byte" sap:label="Number" sap:is-extension-field="true"/>
-				<Property Name="FSAVD" Type="Edm.DateTime" Precision="0" sap:label="Earl.start date" sap:is-extension-field="true"/>
-				<Property Name="FSAVZ" Type="Edm.Time" Precision="0" sap:label="Earl.start time" sap:is-extension-field="true"/>
-				<Property Name="FSEDD" Type="Edm.DateTime" Precision="0" sap:label="EarliestEndDate" sap:is-extension-field="true"/>
-				<Property Name="FSEDZ" Type="Edm.Time" Precision="0" sap:label="Earliest finish" sap:is-extension-field="true"/>
-				<Property Name="SSAVD" Type="Edm.DateTime" Precision="0" sap:label="Latest start" sap:is-extension-field="true"/>
-				<Property Name="SSAVZ" Type="Edm.Time" Precision="0" sap:label="Lat. start time" sap:is-extension-field="true"/>
-				<Property Name="SSEDD" Type="Edm.DateTime" Precision="0" sap:label="Lat.finish date" sap:is-extension-field="true"/>
-				<Property Name="SSEDZ" Type="Edm.Time" Precision="0" sap:label="Latest fin.time" sap:is-extension-field="true"/>
-				<Property Name="EINSA" Type="Edm.String" MaxLength="1" sap:label="StartConstraint" sap:is-extension-field="true"/>
-				<Property Name="EINSE" Type="Edm.String" MaxLength="1" sap:label="Fin. constraint" sap:is-extension-field="true"/>
-				<Property Name="NTANF" Type="Edm.DateTime" Precision="0" sap:label="Start constr." sap:is-extension-field="true"/>
-				<Property Name="NTANZ" Type="Edm.Time" Precision="0" sap:label="StartTimeConstr" sap:is-extension-field="true"/>
-				<Property Name="NTEND" Type="Edm.DateTime" Precision="0" sap:label="Finish constr." sap:is-extension-field="true"/>
-				<Property Name="NTENZ" Type="Edm.Time" Precision="0" sap:label="Fin.time constr" sap:is-extension-field="true"/>
+				<Property Name="NUMBER_OF_CAPACITIES" Type="Edm.Byte" sap:label="Number" sap:is-extension-field="true"/>
+				<Property Name="EARL_SCHED_START_DATE" Type="Edm.DateTime" Precision="0" sap:label="Earl.start date" sap:is-extension-field="true"/>
+				<Property Name="EARL_SCHED_START_TIME" Type="Edm.Time" Precision="0" sap:label="Earl.start time" sap:is-extension-field="true"/>
+				<Property Name="EARL_SCHED_FIN_DATE" Type="Edm.DateTime" Precision="0" sap:label="EarliestEndDate" sap:is-extension-field="true"/>
+				<Property Name="EARL_SCHED_FIN_TIME" Type="Edm.Time" Precision="0" sap:label="Earliest finish" sap:is-extension-field="true"/>
+				<Property Name="LATE_SCHED_START_DATE" Type="Edm.DateTime" Precision="0" sap:label="Latest start" sap:is-extension-field="true"/>
+				<Property Name="LATE_SCHED_START_TIME" Type="Edm.Time" Precision="0" sap:label="Lat. start time" sap:is-extension-field="true"/>
+				<Property Name="LATE_SCHED_FIN_DATE" Type="Edm.DateTime" Precision="0" sap:label="Lat.finish date" sap:is-extension-field="true"/>
+				<Property Name="LATE_SCHED_FIN_TIME" Type="Edm.Time" Precision="0" sap:label="Latest fin.time" sap:is-extension-field="true"/>
+				<Property Name="CONSTRAINT_TYPE_START" Type="Edm.String" MaxLength="1" sap:label="StartConstraint" sap:is-extension-field="true"/>
+				<Property Name="CONSTRAINT_TYPE_FINISH" Type="Edm.String" MaxLength="1" sap:label="Fin. constraint" sap:is-extension-field="true"/>
+				<Property Name="START_CONS" Type="Edm.DateTime" Precision="0" sap:label="Start constr." sap:is-extension-field="true"/>
+				<Property Name="STRTTIMCON" Type="Edm.Time" Precision="0" sap:label="StartTimeConstr" sap:is-extension-field="true"/>
+				<Property Name="FIN_CONSTR" Type="Edm.DateTime" Precision="0" sap:label="Finish constr." sap:is-extension-field="true"/>
+				<Property Name="FINTIMCONS" Type="Edm.Time" Precision="0" sap:label="Fin.time constr" sap:is-extension-field="true"/>
+				<Property Name="ORDER_WORKCENTER_DESC" Type="Edm.String" MaxLength="40" sap:label="Ord. WrkCtr. Descr." sap:is-extension-field="true"/>
+				<Property Name="OPER_WORKCENTER_DESC" Type="Edm.String" MaxLength="40" sap:label="Oper. WrkCtr. Descr." sap:is-extension-field="true"/>
+				<Property Name="ORDER_PLANT_NAME" Type="Edm.String" MaxLength="30" sap:label="Order Plant Name" sap:is-extension-field="true"/>
+				<Property Name="OPER_PLANT_NAME" Type="Edm.String" MaxLength="30" sap:label="Oper Plant Name" sap:is-extension-field="true"/>
+				<Property Name="NOTIFICATION_TYPE" Type="Edm.String" MaxLength="2" sap:label="Notifictn Type" sap:is-extension-field="true"/>
+				<Property Name="NOTIFICATION_TYPE_DESC" Type="Edm.String" MaxLength="20" sap:label="NotifcatnType" sap:is-extension-field="true"/>
+				<Property Name="ORDER_TYPE_DESC" Type="Edm.String" MaxLength="40" sap:label="Order Type Text" sap:is-extension-field="true"/>
+				<Property Name="PRIORITY_DESC" Type="Edm.String" MaxLength="20" sap:label="Priority Text" sap:is-extension-field="true"/>
 				<NavigationProperty Name="DemandToAssignment" Relationship="com.evorait.evoplan.DemandToAssignment" FromRole="FromRole_DemandToAssignment"
 					ToRole="ToRole_DemandToAssignment"/>
 			</EntityType>
@@ -289,11 +307,11 @@
 				</FunctionImport>
 				<FunctionImport Name="UpdateAssignment" ReturnType="com.evorait.evoplan.Assignment" EntitySet="AssignmentSet" m:HttpMethod="POST"
 					sap:action-for="com.evorait.evoplan.Assignment">
+					<Parameter Name="DateTo" Type="Edm.DateTime" Mode="In" Precision="0"/>
+					<Parameter Name="DateFrom" Type="Edm.DateTime" Mode="In" Precision="0"/>
+					<Parameter Name="AssignmentGUID" Type="Edm.String" Mode="In" MaxLength="32"/>
 					<Parameter Name="ResourceGroupGuid" Type="Edm.String" Mode="In" MaxLength="32"/>
 					<Parameter Name="ResourceGuid" Type="Edm.String" Mode="In" MaxLength="32"/>
-					<Parameter Name="AssignmentGUID" Type="Edm.String" Mode="In" MaxLength="32"/>
-					<Parameter Name="DateFrom" Type="Edm.DateTime" Mode="In" Precision="0"/>
-					<Parameter Name="DateTo" Type="Edm.DateTime" Mode="In" Precision="0"/>
 					<Parameter Name="TimeFrom" Type="Edm.Time" Mode="In" Precision="0"/>
 					<Parameter Name="TimeTo" Type="Edm.Time" Mode="In" Precision="0"/>
 					<Parameter Name="Effort" Type="Edm.Decimal" Mode="In" Precision="1" Scale="1"/>
@@ -353,7 +371,7 @@
 							<PropertyValue Property="Position" Int="5"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
-							<PropertyValue Property="Value" Path="UserStatusShortText"/>
+							<PropertyValue Property="Value" Path="Status"/>
 							<PropertyValue Property="Position" Int="6"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
@@ -372,7 +390,7 @@
 						<PropertyPath>Source</PropertyPath>
 						<PropertyPath>ORDERID</PropertyPath>
 						<PropertyPath>OPERATIONID</PropertyPath>
-						<PropertyPath>UserStatusShortText</PropertyPath>
+						<PropertyPath>Status</PropertyPath>
 						<PropertyPath>DateFrom</PropertyPath>
 						<PropertyPath>DateTo</PropertyPath>
 					</Collection>
@@ -390,7 +408,7 @@
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/DemandDesc">
 				<Annotation Term="Org.OData.Core.V1.FieldControl" EnumMember="Org.OData.Core.V1.FieldControlType/Optional"/>
 			</Annotations>
-			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/UserStatusShortText">
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/Status">
 				<Annotation Term="COMMON.Label" String="Status"/>
 				<Annotation Term="com.sap.vocabularies.Common.v1.IsUpperCase" Bool="true"/>
 				<Annotation Term="COMMON.ValueList">
@@ -402,7 +420,7 @@
 						<PropertyValue Property="Parameters">
 							<Collection>
 								<Record Type="COMMON.ValueListParameterInOut">
-									<PropertyValue Property="LocalDataProperty" PropertyPath="UserStatusShortText"/>
+									<PropertyValue Property="LocalDataProperty" PropertyPath="Status"/>
 									<PropertyValue Property="ValueListProperty" String="UserStatusShortText"/>
 								</Record>
 								<Record Type="COMMON.ValueListParameterDisplayOnly">
@@ -413,7 +431,7 @@
 					</Record>
 				</Annotation>
 			</Annotations>
-			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/UserStatusLongText">
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/StatusDesc">
 				<Annotation Term="COMMON.Label" String="Status Longtext"/>
 			</Annotations>
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/DateFrom">
@@ -435,6 +453,39 @@
 				<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
 			</Annotations>
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/ALLOW_UNASSIGN">
+				<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/ALLOW_APPOINTMNT">
+				<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/ALLOW_DISPATCHED">
+				<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/ALLOW_DEM_MOBILE">
+				<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/ALLOW_ACKNOWLDGE">
+				<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/ALLOW_REJECT">
+				<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/ALLOW_ENROUTE">
+				<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/ALLOW_STARTED">
+				<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/ALLOW_ONHOLD">
+				<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/ALLOW_COMPLETE">
+				<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/ALLOW_INCOMPLETE">
+				<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/ALLOW_CLOSED">
 				<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
 			</Annotations>
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/EFFORT_UNIT">
@@ -465,9 +516,9 @@
 				<Annotation Term="COMMON.Text" Path="Msehl"/>
 			</Annotations>
 			<atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="self"
-				href="https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/$metadata"/>
+				href="https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/$metadata"/>
 			<atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="latest-version"
-				href="https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/$metadata"/>
+				href="https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/$metadata"/>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

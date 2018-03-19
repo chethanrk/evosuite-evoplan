@@ -27,7 +27,7 @@ sap.ui.define([
 					var sId = oSearchField.getId(),
 						sFilteredValue;
 					if(sId.search("/DemandDesc/i") === -1)
-						sFilteredValue = oModel.getProperty("/"+aKeys[i]+"/UserStatusShortText");
+						sFilteredValue = oModel.getProperty("/"+aKeys[i]+"/Status");
 					else
 						sFilteredValue = oModel.getProperty("/"+aKeys[i]+"/DemandDesc");
 						
@@ -107,7 +107,7 @@ sap.ui.define([
 				},
 				iSearchWithDemandStatusValue:function(sStatus){
 						this.waitFor({
-							id : createIdFor(sFilter, "UserStatusShortText"),
+							id : createIdFor(sFilter, "Status"),
 							viewName : sViewName,
 							actions: new EnterText({
 								text: sStatus
@@ -250,7 +250,7 @@ sap.ui.define([
 					},
 					iShouldSeeTheTableEntriesWithStatus:function(sStatus){
 						return this.waitFor({
-							id : [sTableId, createIdFor(sFilter, "UserStatusShortText")],
+							id : [sTableId, createIdFor(sFilter, "Status")],
 							viewName : sViewName,
 							check:  allItemsInTheListContainTheSearchTerm,
 							success : function () {
@@ -321,6 +321,7 @@ sap.ui.define([
 								Opa5.assert.strictEqual(oTable.getTable().getBinding().getLength(), iExpectedNumberOfItems, "The Demand Table has " + iExpectedNumberOfItems + " entries");
 							},
 							errorMessage : "Table does not have all entries."
+
 						});
 					}
 			})

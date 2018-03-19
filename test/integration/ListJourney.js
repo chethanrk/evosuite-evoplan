@@ -46,7 +46,7 @@ sap.ui.define([
 
 		Then.onTheListPage.iShouldSeeTheEmptyTable().and.iTeardownMyAppFrame();
 	});
-	opaTest("Should Display the empty table when we search for wrong value", function(Given, When, Then) {
+	opaTest("Should Enable the Buttons when I select demand", function(Given, When, Then) {
 		Given.iStartTheApp();
 
 		When.onTheListPage.iSelectDemandFromDemandTable();
@@ -63,12 +63,6 @@ sap.ui.define([
 		Then.onTheListPage.iShouldSeeTheInformationPopupWithTitle("xtit.infoDialogTitle").and.iTeardownMyAppFrame();
 	});
 	
-	/*opaTest("Should Navigate to the Demand overview page", function(Given, When, Then) {
-		Given.iStartTheApp();
 
-		When.onTheListPage.iPressATableItemAtPosition(1);
-
-		Then.onTheListPage.iShouldSeeTheDemandOverviewPage("i18n>xtit.demandOverview");
-	});*/
 
 });
