@@ -321,6 +321,7 @@ sap.ui.define([
 								Opa5.assert.strictEqual(oTable.getTable().getBinding().getLength(), iExpectedNumberOfItems, "The Demand Table has " + iExpectedNumberOfItems + " entries");
 							},
 							errorMessage : "Table does not have all entries."
+
 						});
 					}
 			})

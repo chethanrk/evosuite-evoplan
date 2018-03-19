@@ -69,6 +69,7 @@ sap.ui.define([
 		When.onTheListPage.iPressATableItemAtPosition(1);
 
 		Then.onTheListPage.iShouldSeeTheDemandOverviewPage("i18n>xtit.demandOverview");
+
 	});*/
 
 });
