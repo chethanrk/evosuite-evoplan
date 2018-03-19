@@ -1,3 +1,4 @@
+<<<<<<< Upstream, based on 95cfab1bf8d088ae447225b9f4157faba425c9f4
 [{
 		"__metadata": {
 			"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/SystemInformationSet('INAMR')",
@@ -10,6 +11,19 @@
 		"Systemid": "ED1",
 		"Lastname": "INAMR",
 		"Fullname": "INAMR",
+=======
+[
+	{
+		"__metadata": {
+			"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/SystemInformationSet('INAMR')",
+			"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/SystemInformationSet('INAMR')",
+			"type": "com.evorait.evoplan.SystemInformation"
+		},
+		"Username": "INAMR",
+		"Firstname": "",
+		"Lastname": "INAMR",
+		"Fullname": "Rahul Inamadar",
+>>>>>>> 426fe82 metadata and mockdata is updated.
 		"ServerPath": "ed1.evorait.net:50003",
 		"CoreVersion": "2.0.4",
 		"IntegrationVersion": "2.0.4"
