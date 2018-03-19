@@ -1,46 +1,27 @@
-[
-  {
-    "__metadata": {
-      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED887E69FF93CD53AB6')",
-      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED887E69FF93CD53AB6')",
-      "type": "com.evorait.evoplan.Assignment"
-    },
-    "DateFrom": "\/Date(1518998400000)\/",
-    "Guid": "0A51491BD5A01ED887E69FF93CD53AB6",
-    "DateTo": "\/Date(1519776000000)\/",
-    "ObjectId": "0A51491BD5A01EE884D81F1CAC8219CC//0A51491BD5A01EE884D81F1CAC81D9CC",
-    "Description": "",
-    "ResourceGroupGuid": "0A51491BD5A01EE884D81F1CAC8219CC",
-    "ResourceGuid": "0A51491BD5A01EE884D81F1CAC81D9CC",
-    "DemandGuid": "0A51491BD5A01ED880BB4CE41F7943A6",
-    "Effort": "2.0",
-    "EffortUnit": "H",
-    "Demand": {
-      "__deferred": {
-        "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED887E69FF93CD53AB6')/Demand"
-      }
-    }
-  },
-  {
-    "__metadata": {
-      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE88695FDBEE13F7A9D')",
-      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE88695FDBEE13F7A9D')",
-      "type": "com.evorait.evoplan.Assignment"
-    },
-    "DateFrom": "\/Date(1518393600000)\/",
-    "Guid": "0A51491BD5A01EE88695FDBEE13F7A9D",
-    "DateTo": "\/Date(1518912000000)\/",
-    "ObjectId": "0A51491BD5A01EE884D81F1CAC8219CC",
-    "Description": "",
-    "ResourceGroupGuid": "0A51491BD5A01EE884D81F1CAC8219CC",
-    "ResourceGuid": "",
-    "DemandGuid": "0A51491BD5A01EE7BC805E1A033B5A92",
-    "Effort": "2.0",
-    "EffortUnit": "H",
-    "Demand": {
-      "__deferred": {
-        "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE88695FDBEE13F7A9D')/Demand"
-      }
-    }
-  }
-]
+[{
+	"__metadata": {
+		"id": "https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED88AAE88A243637185')",
+		"uri": "https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED88AAE88A243637185')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"DateFrom": "\/Date(1519689600000)\/",
+	"Guid": "0A51491BD5A01ED88AAE88A243637185",
+	"DateTo": "\/Date(1519689600000)\/",
+	"ObjectId": "0A51491BD5A01ED889D621FAE6CF5C5C//0A51491BD5A01ED889D621FAE6CFFC5C",
+	"Description": "",
+	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
+	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CF5C5C",
+	"DemandGuid": "0A51491BD5A01ED88AAE85C31097B182",
+	"Effort": "3.0",
+	"EffortUnit": "H",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED88AAE88A243637185')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED88AAE88A243637185')/Resource"
+		}
+	}
+}]
