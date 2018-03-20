@@ -6,8 +6,13 @@ sap.ui.define([
 	QUnit.module("List page");
 	 var sDescription = "Test order for EvoPlan integration",
 		 sStatusCode = "INIT",
+<<<<<<< Upstream, based on 0ac0511dd014e38d9529f5e334de6b9f774fc397
 		 sDescriptionFalseCase = "11122";
 		 
+=======
+		 sDescriptionFalseCase = "11122"
+	 
+>>>>>>> 6b6a97a Opa Test Continued.
 	opaTest("Should See the Demand Table", function(Given, When, Then) {
 		Given.iStartTheApp();
 		
@@ -75,6 +80,7 @@ sap.ui.define([
 		Then.onTheListPage.iShouldSeeTheDemandOverviewPage("i18n>xtit.demandOverview");
 
 	});*/
+
 
 
 });
