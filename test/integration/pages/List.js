@@ -4,10 +4,8 @@ sap.ui.define([
 	"sap/ui/test/actions/EnterText",
 	"com/evorait/evoplan/test/integration/pages/Common",
 	"sap/ui/test/matchers/AggregationFilled",
-	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/matchers/BindingPath",
-	"sap/ui/test/matchers/I18NText"
-], function(Opa5, Press, EnterText, Common, AggregationFilled, PropertyStrictEquals, BindingPath, I18NText) {
+	"sap/ui/test/matchers/PropertyStrictEquals"
+], function(Opa5, Press, EnterText, Common, AggregationFilled, PropertyStrictEquals) {
 	"use strict";
 	
 	var sViewName = "List",
@@ -379,7 +377,6 @@ sap.ui.define([
 								Opa5.assert.strictEqual(oTable.getTable().getBinding().getLength(), iExpectedNumberOfItems, "The Demand Table has " + iExpectedNumberOfItems + " entries");
 							},
 							errorMessage : "Table does not have all entries."
-
 						});
 					}
 			})
