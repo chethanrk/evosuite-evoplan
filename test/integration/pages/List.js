@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/test/actions/EnterText",
 	"com/evorait/evoplan/test/integration/pages/Common",
 	"sap/ui/test/matchers/AggregationFilled",
-	"sap/ui/test/matchers/PropertyStrictEquals"
-], function(Opa5, Press, EnterText, Common, AggregationFilled, PropertyStrictEquals) {
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/BindingPath"
+], function(Opa5, Press, EnterText, Common, AggregationFilled, PropertyStrictEquals, BindingPath) {
 	"use strict";
 	
 	var sViewName = "List",
@@ -15,16 +16,22 @@ sap.ui.define([
 		function allItemsInTheListContainTheSearchTerm (aControls) {
 			var oTable = aControls[0],
 				oSearchField = aControls[1],
-				aItems = oTable.getItems();
-
-			// table needs items
-			if (aItems.length === 0) {
-				return false;
-			}
-
-			return aItems.every(function (oItem) {
-				return oItem.getCells()[0].getTitle().indexOf(oSearchField.getValue()) !== -1;
-			});
+				oTableBinding  = oTable.getTable().getBinding("rows"),
+				oModel = oTableBinding.getModel(),
+				aKeys = oTableBinding.aKeys, 
+				bFlag  = false,
+				sStatus = oSearchField.getTokens()[0].getKey();
+				
+				for(var i in aKeys){
+					var sStatusCode = oModel.getProperty("/"+aKeys[i]+"/UserStatusShortText");
+					if(sStatusCode === sStatus){
+						bFlag = true;
+					}else{
+						bFlag = false;
+						break;
+					}
+				}
+			return bFlag;
 		}
 		
 		function createWaitForItemAtPosition (oOptions) {
@@ -41,6 +48,10 @@ sap.ui.define([
 			};
 		}
 		
+		function createIdFor(sFilterBarId, sEntityPropertyName) {
+			return sFilterBarId + "-filterItemControl_BASIC-" + sEntityPropertyName;
+		}
+		
 	Opa5.createPageObjects({
 		
 		onTheListPage: {
@@ -51,6 +62,35 @@ sap.ui.define([
 							position : iPosition,
 							actions : new Press()
 						}));
+				},
+				iSearchWithDemandDecriptionValue :  function (sText) {
+						this.waitFor({
+							id : createIdFor(sFilter, "DemandDesc"),
+							viewName : sViewName,
+							actions: new EnterText({
+								text: sText
+							})
+						});
+						
+						return this.waitFor({
+							id : sFilter+"-btnGo",
+							viewName : sViewName,
+							actions: new Press()
+						});
+				},
+				iSearchWithDemandStatusValue:function(sStatus){
+						this.waitFor({
+							id : createIdFor(sFilter, "UserStatusShortText"),
+							viewName : sViewName,
+							actions: new EnterText({
+								text: sStatus
+							})
+						});
+							return this.waitFor({
+							id : sFilter+"-btnGo",
+							viewName : sViewName,
+							actions: new Press()
+						});
 				}
 			}),
 			assertions: jQuery.extend({
@@ -115,7 +155,49 @@ sap.ui.define([
 							errorMessage : "Was not able see the Assign button or Assign button is enabled"
 						});
 					},
-
+					iShouldSeeTheTableWithDemandDescription : function (sDescription) {
+						return this.waitFor({
+							controlType: "sap.ui.table.Row",
+							viewName : sViewName,
+							matchers: new BindingPath({
+								path: "/DemandSet('0A51491BD5A01ED88AAE865216887184')"
+							}),
+							success : function (aRows) {
+								var oContext = aRows[0].getBindingContext(),
+								    oModel = oContext.getModel(),
+								    sPath = oContext.getPath();
+								    
+								    var Description = oModel.getProperty(sPath+"/DemandDesc");
+								
+								Opa5.assert.equal(Description, sDescription,"The table filtered with respective demand");
+							},
+							errorMessage : "The is not filtered correctly"
+						});
+					},
+					iShouldSeeTheTableEntriesWithStatus:function(){
+						return this.waitFor({
+							id : [sTableId, createIdFor(sFilter, "UserStatusShortText")],
+							viewName : sViewName,
+							check:  allItemsInTheListContainTheSearchTerm,
+							success : function () {
+								Opa5.assert.ok(true, "Every item did contain the Status");
+							},
+							errorMessage : "The table did not have items"
+						});
+					},
+					iShouldSeeTheEmptyTable:function(){
+						return this.waitFor({
+							id: sTableId,
+							viewName : sViewName,
+							matchers: function(oTable) {
+								var oBinding = oTable.getTable().getBinding("rows");
+								return oBinding && oBinding.getLength() === 0;
+							},
+							success: function() {
+								Opa5.assert.ok(true, "Table has no rows!");
+							}
+						});
+					},
 					theTableShouldHaveAllEntries : function () {
 						var aAllEntities,
 							iExpectedNumberOfItems;

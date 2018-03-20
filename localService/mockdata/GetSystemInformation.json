@@ -1,1 +1,9 @@
-[]
+{
+		"Username": "INAMR",
+		"Firstname": "",
+		"Lastname": "INAMR",
+		"Fullname": "Rahul Inamadar",
+		"ServerPath": "ed1.evorait.net:50003",
+		"CoreVersion": "2.0.4",
+		"IntegrationVersion": "2.0.4"
+}
