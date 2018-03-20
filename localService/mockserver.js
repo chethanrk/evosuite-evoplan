@@ -51,7 +51,7 @@ sap.ui.define([
                     response: function(oXhr, sUrlParams) {
                         jQuery.sap.log.debug("Incoming request for GetSystemInformation");
                         var oResponse = $.ajax({
-                            url: sJsonFilesUrl + "/SystemInformationSet.json"
+                            url: "/SystemInformationSet"
                         });
                         oXhr.respondJSON(200, {}, JSON.stringify(oResponse.data));
                         return true;
