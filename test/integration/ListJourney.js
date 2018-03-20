@@ -19,8 +19,12 @@ sap.ui.define([
 		and.theTableHasEntries()
 		.and.iShouldSeetheAboutDialogIcon()
 		.and.iShouldSeeTheFilterBar()
+<<<<<<< Upstream, based on 0ac0511dd014e38d9529f5e334de6b9f774fc397
 		.and.iShouldSeeTheAssignButtonAs(false)
 		.and.iShouldSeeTheChangeStatusButtonAs(false).
+=======
+		.and.iShouldSeeTheAssignButtonAsDisabled().
+>>>>>>> 42773ba Opa tests continued.
 		and.theTableShouldHaveAllEntries();
 	});
 	
