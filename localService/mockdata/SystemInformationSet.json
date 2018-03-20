@@ -1,8 +1,8 @@
 [
 	{
 		"__metadata": {
-			"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/SystemInformationSet('INAMR')",
-			"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/SystemInformationSet('INAMR')",
+			"id": "https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/SystemInformationSet('INAMR')",
+			"uri": "https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/SystemInformationSet('INAMR')",
 			"type": "com.evorait.evoplan.SystemInformation"
 		},
 		"Username": "INAMR",
