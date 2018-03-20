@@ -109,10 +109,14 @@ sap.ui.define([
             return "Auto";
         },
 
-        getResourceIcon: function (sValue) {
+        getResourceIcon: function (sValue,sIcon) {
             var iconFormat = resourceFormats[sValue];
-            if(iconFormat){
-                return iconFormat.icon || "";
+            if(sIcon){
+                return sIcon;
+            }else{
+                if(iconFormat){
+                    return iconFormat.icon || "";
+                }
             }
             return "";
         },
