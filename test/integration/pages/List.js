@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/test/actions/EnterText",
 	"com/evorait/evoplan/test/integration/pages/Common",
 	"sap/ui/test/matchers/AggregationFilled",
-	"sap/ui/test/matchers/PropertyStrictEquals"
-], function(Opa5, Press, EnterText, Common, AggregationFilled, PropertyStrictEquals) {
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/BindingPath"
+], function(Opa5, Press, EnterText, Common, AggregationFilled, PropertyStrictEquals, BindingPath) {
 	"use strict";
 	
 	var sViewName = "List",
@@ -51,6 +52,10 @@ sap.ui.define([
 				success : oOptions.success,
 				errorMessage : "Table in view '" + sViewName + "' does not contain an Item at position '" + iPosition + "'"
 			};
+		}
+		
+		function createIdFor(sFilterBarId, sEntityPropertyName) {
+			return sFilterBarId + "-filterItemControl_BASIC-" + sEntityPropertyName;
 		}
 		
 		function createIdFor(sFilterBarId, sEntityPropertyName) {
@@ -150,6 +155,7 @@ sap.ui.define([
 							}
 						}));
 					}
+
 			}),
 			assertions: jQuery.extend({
 				iShouldSeeTheTable : function () {
@@ -292,6 +298,7 @@ sap.ui.define([
                             }),
 							success: function(sTitleText) {
 								Opa5.assert.ok(true, "The infomation pop up with title About");
+
 							}
 						});
 					},

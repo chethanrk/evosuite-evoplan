@@ -7,6 +7,7 @@ sap.ui.define([
 	 var sDescription = "Test order for EvoPlan integration",
 		 sStatusCode = "INIT",
 		 sDescriptionFalseCase = "11122";
+
 	 
 	opaTest("Should See the Demand Table", function(Given, When, Then) {
 		Given.iStartTheApp();
@@ -62,7 +63,6 @@ sap.ui.define([
 
 		Then.onTheListPage.iShouldSeeTheInformationPopupWithTitle("xtit.infoDialogTitle").and.iTeardownMyAppFrame();
 	});
-	
 
 
 });
