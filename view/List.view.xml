@@ -15,7 +15,7 @@
           class="sapUiNoContentPadding tableContentPage">
 
         <headerContent>
-            <Button icon="sap-icon://sys-help" press="onIconPress" />
+            <Button id="idButtonAboutDialog" icon="sap-icon://sys-help" press="onIconPress" />
         </headerContent>
 
         <f:DynamicPage headerExpanded="true"
@@ -77,7 +77,7 @@
 
         <footer>
             <OverflowToolbar>
-                <Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}" type="Emphasized" press="onMessagePopoverPress"/>
+                <Button id="idButtonMessagePopup" icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}" type="Emphasized" press="onMessagePopoverPress"/>
                 <ToolbarSpacer/>
                 <Button id="changeStatusButton"
                         text="{i18n>xbut.changeStatus}"
