@@ -16,7 +16,7 @@
 		<uxap:ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" busy="{viewModel>/busy}" busyIndicatorDelay="{viewModel>/delay}" >
 
 			<uxap:headerTitle>
-			<uxap:ObjectPageHeader objectImageURI="sap-icon://eam-work-order"
+			<uxap:ObjectPageHeader objectImageURI="{STATUS_ICON}"
 							  objectImageShape="Circle"
 							  objectTitle="{DemandDesc}"
 							  objectSubtitle="{ExtKey}"
