@@ -59,6 +59,10 @@ sap.ui.define([
 			return sFilterBarId + "-filterItemControl_BASIC-" + sEntityPropertyName;
 		}
 		
+		function createIdFor(sFilterBarId, sEntityPropertyName) {
+			return sFilterBarId + "-filterItemControl_BASIC-" + sEntityPropertyName;
+		}
+		
 	Opa5.createPageObjects({
 		
 		onTheListPage: {
