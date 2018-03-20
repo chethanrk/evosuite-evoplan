@@ -57,9 +57,20 @@
                                 width="90%"
                                 class="sapUiSmallMargin"
                                 tokenUpdate="onUpdateGroupFilter"
+                                showValueHelp="false"
+                                startSuggestion="0"
+                                showSuggestion="true"
+                                filterSuggests="false"
+                                liveChange="onGroupFilterValueChange"
                                 enableMultiLineMode="true"
-                                showValueHelp="false">
+                                suggestionItems="{
+                                    path: '/ResourceSet',
+                                    sorter: { path: 'ObjectId' }
+                                }">
+				        <core:Item key="{GroupDescription}//{ResourceDescription}"
+                                   text="{GroupDescription} {ResourceDescription}" />
                     </MultiInput>
+
                 </customControl>
             </ViewSettingsCustomItem>
         </filterItems>

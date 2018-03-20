@@ -193,6 +193,19 @@ sap.ui.define([
         },
 
         /**
+         * trigger show suggestions of filter dialog group filter
+         * @param oEvent
+         */
+        onGroupFilterValueChange: function (oEvent) {
+            if (oEvent.getSource().getValue() === "") {
+                oEvent.getSource().setProperty("filterSuggests", false);
+            } else {
+                oEvent.getSource().setProperty("filterSuggests", true);
+            }
+
+        },
+
+        /**
          * on date input changed in filter settings dialog
          * @param oEvent
          */
@@ -360,10 +373,9 @@ sap.ui.define([
 				//*** add checkbox validator
 				this._filterGroupInput = sap.ui.getCore().byId("multiGroupInput");
 				this._filterGroupInput.addValidator(function(args) {
-					var text = args.text;
-					return new Token({
-						key: text,
-						text: text
+                    return new Token({
+						key: args.suggestedToken.getProperty("key"),
+						text: args.text
 					});
 				});
 			}
@@ -429,24 +441,12 @@ sap.ui.define([
             var oDateRangeFilter = new Filter("StartDate", FilterOperator.BT, sDateControl1, sDateControl2);
             aFilters.push(oDateRangeFilter);
 
-            //filter for Resource group
-            var aTokens = this._filterGroupInput.getTokens(),
-                aTokenFilter = [];
-
-            if(aTokens && aTokens.length > 0){
-                var parentNodeFilter = new Filter("ParentNodeId", FilterOperator.EQ, "");
-                //get all tokens
-                for (var j = 0; j < aTokens.length; j++) {
-                    var token = aTokens[j];
-                    aTokenFilter.push(
-                        new Filter("Description", FilterOperator.Contains, token.getKey())
-                    );
-                }
-                aFilters.push(new Filter({
-                    filters: aTokenFilter,
-                    and: false
-                }));
+            //get all token from group filter
+            var tokenFilter = this._getFilterDialogGroupToken();
+            if(tokenFilter){
+                aFilters.push(tokenFilter);
             }
+
             oViewModel.setProperty("/resourceFilterView", aFilters);
 
             //get search field value
@@ -497,6 +497,37 @@ sap.ui.define([
                     obj.setSelected(true);
                 }
             }
+        },
+
+
+        /**
+         * get all token from filter dialog group filter
+         * @private
+         */
+        _getFilterDialogGroupToken: function () {
+            //filter for Resource group
+            var aTokens = this._filterGroupInput.getTokens(),
+                aTokenFilter = [];
+
+            if(aTokens && aTokens.length > 0){
+                //get all tokens
+                for (var j = 0; j < aTokens.length; j++) {
+                    var token = aTokens[j],
+                        aTokenKeys = token.getKey().split("//");
+
+                    if(aTokenKeys[1] && aTokenKeys[1].trim() !== ""){
+                        aTokenFilter.push(
+                            new Filter("Description", FilterOperator.Contains, aTokenKeys[1].trim())
+                        );
+                    }else if(aTokenKeys[0] && aTokenKeys[0].trim() !== ""){
+                        aTokenFilter.push(
+                            new Filter("Description", FilterOperator.Contains, aTokenKeys[0].trim())
+                        );
+                    }
+                }
+                return new Filter({filters: aTokenFilter, and: false});
+            }
+            return false;
         },
 
         /**
