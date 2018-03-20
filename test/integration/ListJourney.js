@@ -9,11 +9,15 @@ sap.ui.define([
 		Given.iStartTheApp();
 		
 		//Actions
-		When.onTheListPage.iLookAtTheScreen();
+		// When.onTheListPage.iLookAtTheScreen();
 		
 		//Assersions
 		Then.onTheListPage.iShouldSeeTheTable().
-		and.theTableHasEntries();
+		and.theTableHasEntries()
+		.and.iShouldSeetheAboutDialogIcon()
+		.and.iShouldSeeTheFilterBar()
+		.and.iShouldSeeTheAssignButtonAsDisabled().
+		and.theTableShouldHaveAllEntries();
 	});
 	
 	/*opaTest("Should Navigate to Demand Overview page", function(Given, When, Then) {
