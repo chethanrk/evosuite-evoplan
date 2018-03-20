@@ -78,6 +78,22 @@ sap.ui.define([
             return oDateFormat.format(new Date(date));
         },
 
+        /**
+         * merge given date and time to datetime and format
+         * @param date
+         * @param time
+         */
+        mergeDateTime: function (date, time) {
+            var offsetMs = new Date(0).getTimezoneOffset()*60*1000,
+                dateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern : "yyyy-MM-dd" }),
+                timeFormat = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "HH:mm:ss"});
+
+            var dateStr = dateFormat.format(new Date(date.getTime() + offsetMs));
+            var timeStr = timeFormat.format(new Date(time.ms + offsetMs));
+
+            return new Date(dateStr + "T" + timeStr);
+        },
+
         isMainResource: function (sValue) {
             if(sValue === "RESOURCE" || sValue == "RES_GROUP"){
                 return true;
