@@ -44,7 +44,7 @@
 					"subTitle": "{{appDescription}}",
 					"indicatorDataSource": {
 						"dataSource": "mainService",
-						"path": "DemandSet/$count",
+						"path": "/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandSet/$count?$filter=UserStatusShortText eq 'INIT'",
 						"refresh": 450
 					},
 					"signature": {
