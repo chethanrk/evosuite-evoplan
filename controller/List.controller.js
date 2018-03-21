@@ -58,13 +58,10 @@ sap.ui.define([
 			this._aSelectedRowsIdx = [];
 			this.getView().addDependent(oMessagePopover);
 
-
             var eventBus = sap.ui.getCore().getEventBus();
-            eventBus.subscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
-            eventBus.subscribe("StatusSelectDialog", "changeStatusDemand", this._triggerSaveDemandStatus, this);
             eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 
-			this.getRouter().getRoute("list").attachPatternMatched(this._onObjectMatched, this);
+            this.getRouter().getRoute("list").attachPatternMatched(this._onObjectMatched, this);
 			
             // event listener for changing device orientation with fallback of window resize
             var orientationEvent = this.getOrientationEvent(),
@@ -369,22 +366,8 @@ sap.ui.define([
             }
             return helperTemplate;
         },
-
         /**
-         * catch event from dialog for save demand assignment
-         * @param sChanel
-         * @param sEvent
-         * @param oData
-         * @private
-         */
-        _triggerSaveAssignment: function (sChanel, sEvent, oData) {
-            if(sEvent === "assignSelectedDemand"){
-                this.assignedDemands(oData.selectedPaths, oData.assignPath);
-            }
-        },
-
-         /**
-         * generates html list for dragged paths and gives back to helper function
+         * Refresh's the demand table
          * @param sChanel
          * @param sEvent event which is getting triggered
          * @param oData Data passed while publishing the event
@@ -394,19 +377,6 @@ sap.ui.define([
         _triggerDemandFilter: function(sChanel, sEvent, oData){
             if(sEvent === "refreshDemandTable"){
                 this.byId("draggableList").rebindTable();
-            }
-        },
-
-        /**
-         * catch event from dialog for saving demand status change
-         * @param sChanel
-         * @param sEvent
-         * @param oData
-         * @private
-         */
-        _triggerSaveDemandStatus: function (sChanel, sEvent, oData) {
-            if(sEvent === "changeStatusDemand"){
-                this.updateFunctionDemand(oData.selectedPaths, oData.functionKey);
             }
         },
         /**

@@ -239,6 +239,8 @@ sap.ui.define([
                     this.showMessage(oResponse);
                     eventBus.publish("BaseController", "refreshTreeTable",{});
                     eventBus.publish("BaseController", "refreshDemandTable",{});
+                    eventBus.publish("BaseController", "refreshDemandOverview",{}); // refresh the demand overview page binding
+
                 }.bind(this),
                 error: function(oError){
                     //Handle Error

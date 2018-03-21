@@ -7,7 +7,12 @@ sap.ui.define([
 		return BaseController.extend("com.evorait.evoplan.controller.App", {
 
 			onInit : function () {
-				var oViewModel,
+                var eventBus = sap.ui.getCore().getEventBus();
+                //Event are subscription Demand assignment and change status of demand
+                eventBus.subscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
+                eventBus.subscribe("StatusSelectDialog", "changeStatusDemand", this._triggerSaveDemandStatus, this);
+
+                var oViewModel,
 					fnSetAppNotBusy,
 					iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
 
@@ -28,7 +33,32 @@ sap.ui.define([
 				// apply content density mode to root view
                 this._oAppControl = this.byId("approvalApp");
 				this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
-			}
+			},
+            /**
+             * catch event from dialog for save demand assignment
+             * @param sChanel
+             * @param sEvent
+             * @param oData
+             * @private
+             */
+            _triggerSaveAssignment: function (sChanel, sEvent, oData) {
+                if(sEvent === "assignSelectedDemand"){
+                    this.assignedDemands(oData.selectedPaths, oData.assignPath);
+                }
+            },
+
+            /**
+             * catch event from dialog for saving demand status change
+             * @param sChanel
+             * @param sEvent
+             * @param oData
+             * @private
+             */
+            _triggerSaveDemandStatus: function (sChanel, sEvent, oData) {
+                if(sEvent === "changeStatusDemand"){
+                    this.updateFunctionDemand(oData.selectedPaths, oData.functionKey);
+                }
+            }
 
 		});
 

@@ -30,8 +30,13 @@ sap.ui.define([
 				// between the busy indication for loading the view's meta data
 				var iOriginalBusyDelay,
 				oViewModel = this.getOwnerComponent().getModel("viewModel");
-				
-				this.getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
+
+                var eventBus = sap.ui.getCore().getEventBus();
+                //event registration for refreshing the context in case any change in the view
+                eventBus.subscribe("BaseController", "refreshDemandOverview", this._triggerRefreshDemand, this);
+
+
+                this.getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
 				
 				// Store original busy indicator delay, so it can be restored later on
 				iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
@@ -122,6 +127,9 @@ sap.ui.define([
 					oElementBinding = oView.getElementBinding(),
 					oContext = oElementBinding.getBoundContext();
 
+                // refreshing the binding
+				oElementBinding.refresh();
+
 				// No data for the binding
 				if (!oContext) {
 					this.getRouter().getTargets().display("notFound");
@@ -179,10 +187,16 @@ sap.ui.define([
                 this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedData);
 
 			},
-			
-			format:function(data){
-				console.log(data);
-			}
+            /**
+			 * This method required when user directly open the demand overview page
+			 * and change status or assignment actions are performed
+             * Refresh the binding to ensure that the data shown is updated.
+             * @Author Rahul
+             * @return
+             */
+            _triggerRefreshDemand:function () {
+                this.getView().getElementBinding().refresh();
+            }
 
 		});
 	}
