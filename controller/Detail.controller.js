@@ -175,7 +175,9 @@ sap.ui.define([
 				var oModel = oContext.getModel();
 				var sPath = oContext.getPath();
 				var oData = oModel.getProperty(sPath);
-				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oData);
+                var oSelectedData = [{sPath:sPath,oData:oData}];
+                this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedData);
+
 			},
 			
 			format:function(data){
