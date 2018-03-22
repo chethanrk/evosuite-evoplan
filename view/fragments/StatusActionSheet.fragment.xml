@@ -1,0 +1,17 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <ActionSheet id="idStatusActionSheet" placement="VerticalPreferedBottom">
+        <buttons>
+            <Button icon="sap-icon://email" id="idButtonAck" text="Acknowledge" press="onClickStatus" visible="{ALLOW_ACKNOWLDGE}" />
+            <Button icon="sap-icon://email" id="idButtonAmnt" text="Appointment" press="onClickStatus" visible="{ALLOW_APPOINTMNT}" />
+            <Button icon="sap-icon://email" id="idButtoncls" text="Close" press="onClickStatus" visible="{ALLOW_CLOSED}" />
+            <Button icon="sap-icon://complete" id="idButtonComp" text="Complete" press="onClickStatus" visible="{ALLOW_COMPLETE}" />
+            <Button icon="sap-icon://ipad" id="idButtonMobi" text="Transfer to mobile" press="onClickStatus" visible="{ALLOW_DEM_MOBILE}" />
+            <Button icon="sap-icon://email" id="idButtonDisp" text="Dispatch" press="onClickStatus" visible="{ALLOW_DISPATCHED}" />
+            <Button icon="sap-icon://shipping-status" id="idButtonEnr" text="Enroute" press="onClickStatus" visible="{ALLOW_ENROUTE}" />
+            <Button icon="sap-icon://email" id="idButtonIncomp" text="Incomplete" press="onClickStatus" visible="{ALLOW_INCOMPLETE}" />
+            <Button icon="sap-icon://email" id="idButtonHold" text="On Hold" press="onClickStatus" visible="{ALLOW_ONHOLD}" />
+            <Button icon="sap-icon://email" id="idButtonReje" text="Reject" press="onClickStatus" visible="{ALLOW_REJECT}" />
+            <Button icon="sap-icon://begin" id="idButtonStat" text="Start" press="onClickStatus" visible="{ALLOW_STARTED}" />
+        </buttons>
+    </ActionSheet>
+</core:FragmentDefinition>

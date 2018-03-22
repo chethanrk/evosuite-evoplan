@@ -178,13 +178,24 @@ sap.ui.define([
 			 * @param oEvent
 			 */
 			onClickStatus:function(oEvent){
-				var oSource = oEvent.getSource();
-				var oContext = oSource.getBindingContext();
-				var oModel = oContext.getModel();
-				var sPath = oContext.getPath();
-				var oData = oModel.getProperty(sPath);
-                var oSelectedData = [{sPath:sPath,oData:oData}];
-                this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedData);
+				var oSource = oEvent.getSource(),
+                 eventBus = sap.ui.getCore().getEventBus(),
+                 sBindingPath = oEvent.getSource().getBinding("visible").getPath(),
+				 sFunctionKey =  sBindingPath.slice(sBindingPath.indexOf("_")+1),
+                 oContext = oSource.getBindingContext(),
+                 oModel = oContext.getModel(),
+                 sPath = oContext.getPath(),
+                 oData = oModel.getProperty(sPath),
+                 oSelectedData = [{sPath:sPath,oData:oData}];
+
+                eventBus.publish("StatusSelectDialog", "changeStatusDemand", {
+                    selectedPaths: oSelectedData,
+                    functionKey: sFunctionKey
+                });
+
+
+
+                // this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedData);
 
 			},
             /**
@@ -196,7 +207,17 @@ sap.ui.define([
              */
             _triggerRefreshDemand:function () {
                 this.getView().getElementBinding().refresh();
-            }
+            },
+            onClickAction: function(oEvent) {
+                if (!this._oActionSheet) {
+                    this._oActionSheet = sap.ui.xmlfragment(this.getView().getId(), "com.evorait.evoplan.view.fragments.StatusActionSheet", this);
+                    this.getView().addDependent(this._oActionSheet);
+                }
+                this._oActionSheet.openBy(oEvent.getSource());
+            },
+            getVisible:function(a,b,c){
+            	return a && !b && c !== "COMP";
+			}
 
 		});
 	}
