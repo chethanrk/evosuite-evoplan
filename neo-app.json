@@ -40,19 +40,19 @@
       "path": "/sap/opu/odata",
       "target": {
         "type": "destination",
-        "name": "ED1CloudConnector",
+        "name": "MainService",
         "entryPath": "/sap/opu/odata"
       },
-      "description": "ED1 via Cloud Connector"
+      "description": "Main Data Service Connection"
     },
     {
       "path": "/sap/bc/lrep",
       "target": {
         "type": "destination",
-        "name": "ED1CloudConnector",
+        "name": "UIFlexibility",
         "entryPath": "/sap/bc/lrep"
       },
-      "description": "ED1 via Cloud Connector"
+      "description": "UI Flexibility Service Connection"
     }
   ],
   "welcomeFile": "/index.html",
