@@ -1,4 +1,3 @@
-<<<<<<< Upstream, based on 95cfab1bf8d088ae447225b9f4157faba425c9f4
 [{
 	"__metadata": {
 		"id": "https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE88AF82330D6AD65C3')",
@@ -181,32 +180,5 @@
 			"uri": "https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE88AF85027032665EF')/Resource"
 		}
 	}
-=======
-[{
-	"__metadata": {
-		"id": "https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED88AAE88A243637185')",
-		"uri": "https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED88AAE88A243637185')",
-		"type": "com.evorait.evoplan.Assignment"
-	},
-	"DateFrom": "\/Date(1519689600000)\/",
-	"Guid": "0A51491BD5A01ED88AAE88A243637185",
-	"DateTo": "\/Date(1519689600000)\/",
-	"ObjectId": "0A51491BD5A01ED889D621FAE6CF5C5C//0A51491BD5A01ED889D621FAE6CFFC5C",
-	"Description": "",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
-	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CF5C5C",
-	"DemandGuid": "0A51491BD5A01ED88AAE85C31097B182",
-	"Effort": "3.0",
-	"EffortUnit": "H",
-	"Demand": {
-		"__deferred": {
-			"uri": "https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED88AAE88A243637185')/Demand"
-		}
-	},
-	"Resource": {
-		"__deferred": {
-			"uri": "https://webidetesting3456226-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED88AAE88A243637185')/Resource"
-		}
-	}
->>>>>>> 426fe82 metadata and mockdata is updated.
+
 }]

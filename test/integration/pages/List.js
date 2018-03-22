@@ -5,8 +5,9 @@ sap.ui.define([
 	"com/evorait/evoplan/test/integration/pages/Common",
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/matchers/BindingPath"
-], function(Opa5, Press, EnterText, Common, AggregationFilled, PropertyStrictEquals, BindingPath) {
+	"sap/ui/test/matchers/BindingPath",
+	"sap/ui/test/matchers/I18NText"
+], function(Opa5, Press, EnterText, Common, AggregationFilled, PropertyStrictEquals, BindingPath, I18NText) {
 	"use strict";
 	
 	var sViewName = "List",
@@ -156,6 +157,7 @@ sap.ui.define([
 						}));
 					}
 
+
 			}),
 			assertions: jQuery.extend({
 				iShouldSeeTheTable : function () {
@@ -298,7 +300,6 @@ sap.ui.define([
                             }),
 							success: function(sTitleText) {
 								Opa5.assert.ok(true, "The infomation pop up with title About");
-
 							}
 						});
 					},
