@@ -44,6 +44,15 @@
         "entryPath": "/sap/opu/odata"
       },
       "description": "ED1 via Cloud Connector"
+    },
+    {
+      "path": "/sap/bc/lrep",
+      "target": {
+        "type": "destination",
+        "name": "ED1CloudConnector",
+        "entryPath": "/sap/bc/lrep"
+      },
+      "description": "ED1 via Cloud Connector"
     }
   ],
   "welcomeFile": "/index.html",
