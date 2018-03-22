@@ -549,6 +549,7 @@
 					<PropertyRef Name="NodeId"/>
 				</Key>
 				<Property Name="ChildCount" Type="Edm.Int32" Nullable="false" sap:hierarchy-node-descendant-count-for="NodeId" sap:label="Child Count"/>
+				<Property Name="StatusIcon" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="UI Status Icon"/>
 				<Property Name="IsSelected" Type="Edm.Boolean" sap:label="TRUE"/>
 				<Property Name="NodeId" Type="Edm.String" Nullable="false" MaxLength="132" sap:hierarchy-node-for="NodeId" sap:label="Node Id"/>
 				<Property Name="ResourceGroupGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Resource group GUID"/>
@@ -598,7 +599,7 @@
 					<PropertyRef Name="Function"/>
 				</Key>
 				<Property Name="Function" Type="Edm.String" Nullable="false" MaxLength="15"/>
-				<Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="30"/>
+				<Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="60"/>
 			</EntityType>
 			<EntityType Name="SystemInformation" sap:content-version="1">
 				<Key>
@@ -606,6 +607,8 @@
 				</Key>
 				<Property Name="Username" Type="Edm.String" Nullable="false" MaxLength="12" sap:label="User Name"/>
 				<Property Name="Firstname" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="First name"/>
+				<Property Name="Client" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Client"/>
+				<Property Name="Systemid" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="SAP System ID"/>
 				<Property Name="Lastname" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Last name"/>
 				<Property Name="Fullname" Type="Edm.String" Nullable="false" MaxLength="80" sap:label="Full Name"/>
 				<Property Name="ServerPath" Type="Edm.String" Nullable="false" sap:label="Server path"/>
@@ -626,6 +629,7 @@
 				<Property Name="TimeTo" Type="Edm.Time" Precision="0" sap:label="To time"/>
 				<Property Name="UserStatusShortText" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Status"/>
 				<Property Name="UserStatusLongText" Type="Edm.String" MaxLength="30" sap:label="Status"/>
+				<Property Name="STATUS_ICON" Type="Edm.String" MaxLength="255" sap:label="UI Status Icon" sap:is-extension-field="true"/>
 				<Property Name="EFFORT" Type="Edm.Decimal" Precision="7" Scale="1" sap:unit="EFFORT_UNIT" sap:label="Effort" sap:is-extension-field="true"/>
 				<Property Name="EFFORT_UNIT" Type="Edm.String" MaxLength="3" sap:label="Effort unit" sap:is-extension-field="true"
 					sap:semantics="unit-of-measure"/>
@@ -797,9 +801,9 @@
 				</FunctionImport>
 				<FunctionImport Name="UpdateAssignment" ReturnType="com.evorait.evoplan.Assignment" EntitySet="AssignmentSet" m:HttpMethod="POST"
 					sap:action-for="com.evorait.evoplan.Assignment">
-					<Parameter Name="AssignmentGUID" Type="Edm.String" Mode="In" MaxLength="32"/>
 					<Parameter Name="ResourceGroupGuid" Type="Edm.String" Mode="In" MaxLength="32"/>
 					<Parameter Name="ResourceGuid" Type="Edm.String" Mode="In" MaxLength="32"/>
+					<Parameter Name="AssignmentGUID" Type="Edm.String" Mode="In" MaxLength="32"/>
 					<Parameter Name="DateFrom" Type="Edm.DateTime" Mode="In" Precision="0"/>
 					<Parameter Name="DateTo" Type="Edm.DateTime" Mode="In" Precision="0"/>
 					<Parameter Name="TimeFrom" Type="Edm.Time" Mode="In" Precision="0"/>

@@ -330,6 +330,31 @@ sap.ui.define([
 							}
 						});
 					},
+					iShouldSeeTheDemandOverviewPageWithTitle:function(sTitle){
+						return this.waitFor({
+							id:"objectPage",
+							viewName:"Detail",
+							matchers: new I18NText({
+								propertyName:"title",
+                                key: sTitle
+                            }),
+							success: function(sTitleText) {
+								Opa5.assert.ok(true, "Navigated to Demand overview page with title Demand Overview");
+							}
+						});
+					},
+					iShouldSeeTheInformationPopupWithTitle:function(sTitle){
+						return this.waitFor({
+							controlType: "sap.m.Dialog",
+							matchers: new I18NText({
+								propertyName:"title",
+                                key: sTitle
+                            }),
+							success: function(sTitleText) {
+								Opa5.assert.ok(true, "The infomation pop up with title About");
+							}
+						});
+					},
 					theTableShouldHaveAllEntries : function () {
 						var aAllEntities,
 							iExpectedNumberOfItems;
