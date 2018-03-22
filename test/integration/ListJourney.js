@@ -37,7 +37,6 @@ sap.ui.define([
 
 		When.onTheListPage.iSearchWithDemandStatusValue(sStatusCode);
 
-<<<<<<< Upstream, based on 0ac0511dd014e38d9529f5e334de6b9f774fc397
 		Then.onTheListPage.iShouldSeeTheTableEntriesWithStatus(sStatusCode);
 	});
 	opaTest("Should Display the empty table when we search for wrong value", function(Given, When, Then) {
@@ -72,16 +71,6 @@ sap.ui.define([
 		Then.onTheListPage.iShouldSeeTheDemandOverviewPage("i18n>xtit.demandOverview");
 
 	});*/
-=======
-		Then.onTheListPage.iShouldSeeTheTableEntriesWithStatus();
-	});
-	opaTest("Should Display the empty table when we search for wrong value", function(Given, When, Then) {
-		Given.iStartTheApp();
 
-		When.onTheListPage.iSearchWithDemandDecriptionValue(sDescriptionFalseCase);
-
-		Then.onTheListPage.iShouldSeeTheEmptyTable();
-	});
->>>>>>> 6bb8ce1 Opa Test Continued.
 
 });

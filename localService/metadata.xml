@@ -289,7 +289,6 @@
 				</FunctionImport>
 				<FunctionImport Name="UpdateAssignment" ReturnType="com.evorait.evoplan.Assignment" EntitySet="AssignmentSet" m:HttpMethod="POST"
 					sap:action-for="com.evorait.evoplan.Assignment">
-
 					<Parameter Name="ResourceGroupGuid" Type="Edm.String" Mode="In" MaxLength="32"/>
 					<Parameter Name="ResourceGuid" Type="Edm.String" Mode="In" MaxLength="32"/>
 					<Parameter Name="AssignmentGUID" Type="Edm.String" Mode="In" MaxLength="32"/>
