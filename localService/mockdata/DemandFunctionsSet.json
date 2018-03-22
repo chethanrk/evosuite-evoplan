@@ -1,1 +1,33 @@
-[]
+[{
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandFunctionsSet('DEM_MOBILE')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandFunctionsSet('DEM_MOBILE')",
+		"type": "com.evorait.evoplan.DemandFunctions"
+	},
+	"Function": "DEM_MOBILE",
+	"Description": "Set as transferred to mobile device"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandFunctionsSet('ENROUTE')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandFunctionsSet('ENROUTE')",
+		"type": "com.evorait.evoplan.DemandFunctions"
+	},
+	"Function": "ENROUTE",
+	"Description": "Set as enroute to location"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandFunctionsSet('STARTED')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandFunctionsSet('STARTED')",
+		"type": "com.evorait.evoplan.DemandFunctions"
+	},
+	"Function": "STARTED",
+	"Description": "Set as work started"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandFunctionsSet('COMPLETE')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandFunctionsSet('COMPLETE')",
+		"type": "com.evorait.evoplan.DemandFunctions"
+	},
+	"Function": "COMPLETE",
+	"Description": "Set as work completed"
+}]
