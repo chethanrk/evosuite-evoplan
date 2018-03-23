@@ -6,7 +6,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/ErrorHandler",
     "com/evorait/evoplan/controller/AssignInfoDialog",
     "com/evorait/evoplan/controller/AssignTreeDialog",
-    "com/evorait/evoplan/controller/StatusSelectDialog"
+    "com/evorait/evoplan/controller/StatusSelectDialog",
+    "com/evorait/evoplan/controller/FilterSettingsDialog"
 ], function(
 	UIComponent,
 	Device,
@@ -15,7 +16,8 @@ sap.ui.define([
 	ErrorHandler,
 	AssignInfoDialog,
 	AssignTreeDialog,
-    StatusSelectDialog) {
+    StatusSelectDialog,
+    FilterSettingsDialog) {
 
 	"use strict";
 
@@ -145,6 +147,8 @@ sap.ui.define([
          * @private
          */
         _initDialogs: function () {
+            //resource tree filter settings dialog
+            this.filterSettingsDialog = new FilterSettingsDialog();
 			//display and change assignment dialog
             this.assignInfoDialog = new AssignInfoDialog();
             this.assignInfoDialog.init();
