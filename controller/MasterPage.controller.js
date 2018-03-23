@@ -146,6 +146,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onFilterSettingsConfirm: function(oEvent) {
+            this.openGroupFilterSuggest = false;
 			this._triggerFilterSearch();
 		},
 
@@ -158,6 +159,7 @@ sap.ui.define([
 			var oCustomGroupFilter = sap.ui.getCore().byId("idGroupFilterItem"),
                 aTokens = this._filterGroupInput.getTokens();
 
+            this.openGroupFilterSuggest = false;
 			this._filterGroupInput.setTokens([]);
             oCustomGroupFilter.setFilterCount(0);
 
@@ -188,8 +190,36 @@ sap.ui.define([
                 this.counterResourceFilter -= 1;
             }
 
+            this.openGroupFilterSuggest = false;
             oCustomFilter.setFilterCount(tokenLen);
             this.getModel("viewModel").setProperty("/counterResourceFilter", this.counterResourceFilter);
+        },
+
+        /**
+         * trigger show suggestions of filter dialog group filter
+         * @param oEvent
+         */
+        onGroupFilterValueChange: function (oEvent) {
+            if (oEvent.getSource().getValue() !== "") {
+                oEvent.getSource().setProperty("filterSuggests", true);
+
+            }else if(this.openGroupFilterSuggest && oEvent.getSource().getValue() === ""){
+                oEvent.getSource().setProperty("filterSuggests", false);
+            }
+        },
+
+        onGroupFilterValueHelpRequest: function (oEvent) {
+            if(!this.openGroupFilterSuggest){
+                this.openGroupFilterSuggest = true;
+
+                if (oEvent.getSource().getValue() === "") {
+                    oEvent.getSource().setProperty("filterSuggests", false);
+                    return;
+                }
+            }else{
+                this.openGroupFilterSuggest = false;
+            }
+            oEvent.getSource().setProperty("filterSuggests", true);
         },
 
         /**
@@ -360,11 +390,12 @@ sap.ui.define([
 				//*** add checkbox validator
 				this._filterGroupInput = sap.ui.getCore().byId("multiGroupInput");
 				this._filterGroupInput.addValidator(function(args) {
-					var text = args.text;
-					return new Token({
-						key: text,
-						text: text
-					});
+				    if(args.suggestedToken){
+                        return new Token({
+                            key: args.suggestedToken.getProperty("key"),
+                            text: args.text
+                        });
+                    }
 				});
 			}
 		},
@@ -429,24 +460,12 @@ sap.ui.define([
             var oDateRangeFilter = new Filter("StartDate", FilterOperator.BT, sDateControl1, sDateControl2);
             aFilters.push(oDateRangeFilter);
 
-            //filter for Resource group
-            var aTokens = this._filterGroupInput.getTokens(),
-                aTokenFilter = [];
-
-            if(aTokens && aTokens.length > 0){
-                var parentNodeFilter = new Filter("ParentNodeId", FilterOperator.EQ, "");
-                //get all tokens
-                for (var j = 0; j < aTokens.length; j++) {
-                    var token = aTokens[j];
-                    aTokenFilter.push(
-                        new Filter("Description", FilterOperator.Contains, token.getKey())
-                    );
-                }
-                aFilters.push(new Filter({
-                    filters: aTokenFilter,
-                    and: false
-                }));
+            //get all token from group filter
+            var tokenFilter = this._getFilterDialogGroupToken();
+            if(tokenFilter){
+                aFilters.push(tokenFilter);
             }
+
             oViewModel.setProperty("/resourceFilterView", aFilters);
 
             //get search field value
@@ -497,6 +516,37 @@ sap.ui.define([
                     obj.setSelected(true);
                 }
             }
+        },
+
+
+        /**
+         * get all token from filter dialog group filter
+         * @private
+         */
+        _getFilterDialogGroupToken: function () {
+            //filter for Resource group
+            var aTokens = this._filterGroupInput.getTokens(),
+                aTokenFilter = [];
+
+            if(aTokens && aTokens.length > 0){
+                //get all tokens
+                for (var j = 0; j < aTokens.length; j++) {
+                    var token = aTokens[j],
+                        aTokenKeys = token.getKey().split("//");
+
+                    if(aTokenKeys[1] && aTokenKeys[1].trim() !== ""){
+                        aTokenFilter.push(
+                            new Filter("Description", FilterOperator.Contains, aTokenKeys[1].trim())
+                        );
+                    }else if(aTokenKeys[0] && aTokenKeys[0].trim() !== ""){
+                        aTokenFilter.push(
+                            new Filter("Description", FilterOperator.Contains, aTokenKeys[0].trim())
+                        );
+                    }
+                }
+                return new Filter({filters: aTokenFilter, and: false});
+            }
+            return false;
         },
 
         /**

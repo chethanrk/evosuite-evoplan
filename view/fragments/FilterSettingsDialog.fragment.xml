@@ -57,9 +57,24 @@
                                 width="90%"
                                 class="sapUiSmallMargin"
                                 tokenUpdate="onUpdateGroupFilter"
+                                showValueHelp="true"
+                                startSuggestion="0"
+                                showSuggestion="true"
+                                filterSuggests="true"
+                                valueHelpRequest="onGroupFilterValueHelpRequest"
+                                liveChange="onGroupFilterValueChange"
                                 enableMultiLineMode="true"
-                                showValueHelp="false">
+                                suggestionItems="{
+                                    path: '/ResourceSet',
+                                    sorter: { path: 'ObjectId' },
+                                    filters : [
+                                        { path : 'ObjectType', operator : 'EQ', value1 : 'RES_GROUP'}
+                                    ]
+                                }">
+				        <core:Item key="{GroupDescription}"
+                                   text="{GroupDescription}" />
                     </MultiInput>
+
                 </customControl>
             </ViewSettingsCustomItem>
         </filterItems>

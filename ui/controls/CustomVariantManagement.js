@@ -452,7 +452,10 @@ sap.ui.define([
                 sType = "Token";
                 sValue = [];
                 for (var j = 0; j < items.length; j++) {
-                    sValue.push(items[j].getKey());
+                    sValue.push({
+                        key: items[j].getKey(),
+                        text: items[j].getText()
+                    });
                 }
             }catch (e){}
 
@@ -634,7 +637,7 @@ sap.ui.define([
                 oControl.removeAllTokens();
                 if(aValues instanceof Array){
                     for (var l = 0; l < aValues.length; l++) {
-                        aTokens.push(new Token({key: aValues[l], text: aValues[l]}));
+                        aTokens.push(new Token({key: aValues[l].key, text: aValues[l].text}));
                     }
                     oControl.setTokens(aTokens);
                 }
