@@ -84,7 +84,7 @@ sap.ui.define([
                             this._oView.byId("draggableList").getTable().addSelectionInterval(oData.aIndices[j],oData.aIndices[j]);
                         }
                         this.onCloseDialog();
-                        this._showAssignErrorDialog.call(this._oView.getController(),oData.aNonChangable);
+                        this._showAssignErrorDialog.call(this._oView.getController(),oData.aNonChangable,true);
                         return;
                     }
 

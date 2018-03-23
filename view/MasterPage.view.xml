@@ -126,7 +126,12 @@
                                 width="2rem"
                                 hAlign="End">
                             <table:template>
-                                <Text text="{AssignmentCount}" wrapping="false" />
+                                <Text text="{AssignmentCount}"
+                                      visible="{
+                                              path: 'NodeType',
+                                              formatter: '.formatter.isMainResource'
+                                       }"
+                                      wrapping="false" />
                             </table:template>
                         </table:Column>
                         <table:Column

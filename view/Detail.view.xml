@@ -24,7 +24,7 @@
 							  id="ObjectPageLayoutHeaderTitle">
 				<uxap:actions>
 						<uxap:ObjectPageHeaderActionButton text="{i18n>xbut.assign}" type="Emphasized" hideIcon="false" hideText="false" press="onClickAssign"/>
-						<uxap:ObjectPageHeaderActionButton icon="sap-icon://action" tooltip="{i18n>xbut.changeStatus}"
+						<uxap:ObjectPageHeaderActionButton text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
 														   visible="{
 														   		parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'UserStatusShortText'}],
 														   		formatter: '.getVisible'
