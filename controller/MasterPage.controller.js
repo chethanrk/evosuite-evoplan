@@ -146,6 +146,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onFilterSettingsConfirm: function(oEvent) {
+            this.openGroupFilterSuggest = false;
 			this._triggerFilterSearch();
 		},
 
@@ -158,6 +159,7 @@ sap.ui.define([
 			var oCustomGroupFilter = sap.ui.getCore().byId("idGroupFilterItem"),
                 aTokens = this._filterGroupInput.getTokens();
 
+            this.openGroupFilterSuggest = false;
 			this._filterGroupInput.setTokens([]);
             oCustomGroupFilter.setFilterCount(0);
 
@@ -188,6 +190,7 @@ sap.ui.define([
                 this.counterResourceFilter -= 1;
             }
 
+            this.openGroupFilterSuggest = false;
             oCustomFilter.setFilterCount(tokenLen);
             this.getModel("viewModel").setProperty("/counterResourceFilter", this.counterResourceFilter);
         },
@@ -197,12 +200,26 @@ sap.ui.define([
          * @param oEvent
          */
         onGroupFilterValueChange: function (oEvent) {
-            if (oEvent.getSource().getValue() === "") {
-                oEvent.getSource().setProperty("filterSuggests", false);
-            } else {
+            if (oEvent.getSource().getValue() !== "") {
                 oEvent.getSource().setProperty("filterSuggests", true);
-            }
 
+            }else if(this.openGroupFilterSuggest && oEvent.getSource().getValue() === ""){
+                oEvent.getSource().setProperty("filterSuggests", false);
+            }
+        },
+
+        onGroupFilterValueHelpRequest: function (oEvent) {
+            if(!this.openGroupFilterSuggest){
+                this.openGroupFilterSuggest = true;
+
+                if (oEvent.getSource().getValue() === "") {
+                    oEvent.getSource().setProperty("filterSuggests", false);
+                    return;
+                }
+            }else{
+                this.openGroupFilterSuggest = false;
+            }
+            oEvent.getSource().setProperty("filterSuggests", true);
         },
 
         /**
@@ -373,10 +390,12 @@ sap.ui.define([
 				//*** add checkbox validator
 				this._filterGroupInput = sap.ui.getCore().byId("multiGroupInput");
 				this._filterGroupInput.addValidator(function(args) {
-                    return new Token({
-						key: args.suggestedToken.getProperty("key"),
-						text: args.text
-					});
+				    if(args.suggestedToken){
+                        return new Token({
+                            key: args.suggestedToken.getProperty("key"),
+                            text: args.text
+                        });
+                    }
 				});
 			}
 		},
