@@ -69,7 +69,8 @@
                                     sorter: { path: 'ObjectId' },
                                     filters : [
                                         { path : 'ObjectType', operator : 'EQ', value1 : 'RES_GROUP'}
-                                    ]
+                                    ],
+                                    templateShareable: true
                                 }">
 				        <core:Item key="{GroupDescription}"
                                    text="{GroupDescription}" />
