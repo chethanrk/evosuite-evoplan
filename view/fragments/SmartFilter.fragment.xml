@@ -10,7 +10,8 @@
             enableBasicSearch="false"
             useToolbar="true"
             considerSelectionVariants="true"
-            showClearButton="true">
+            showClearButton="true"
+            showClearOnFB="true">
 
         <smartFilterBar:controlConfiguration>
             <smartFilterBar:ControlConfiguration
