@@ -279,14 +279,14 @@ sap.ui.define([
                 //on check on oData property ALLOW_ASSIGN when flag was given
                 if(checkAssignAllowed){
                     if(!!oData.ALLOW_ASSIGN){
-                        aPathsData.push({ sPath: sPath, oData: oData });
+                        aPathsData.push({ sPath: sPath, oData: oData ,index:aSelectedRowsIdx[i]});
                         oTable.addSelectionInterval(aSelectedRowsIdx[i],aSelectedRowsIdx[i]);
                     }else{
                         aNonAssignableDemands.push(oData.DemandDesc);
                         bNonAssignableDemandsExist = true;
                     }
                 }else{
-                    aPathsData.push({ sPath: sPath, oData: oData });
+                    aPathsData.push({ sPath: sPath, oData: oData ,index:aSelectedRowsIdx[i]});
                 }
             }
             return {
@@ -296,19 +296,24 @@ sap.ui.define([
         },
 
         /**
-         * show error dialog for demands who are not assignable
-         * @param aNonAssignable
+         * show error dialog for demands which are not assignable or for which status transition
+         * is not possible
+         * @param aDemands {object} array of demand descriptions
          * @private
          */
-        _showAssignErrorDialog: function (aNonAssignable) {
-            var msg = this.getResourceBundle().getText("assignmentNotPossible");
+        _showAssignErrorDialog: function (aDemands,isStatus) {
+            var msg = "";
+            if(isStatus)
+                msg = this.getResourceBundle().getText("changeStatusNotPossible");
+            else
+                msg = this.getResourceBundle().getText("assignmentNotPossible");
 
             var dialog = new Dialog({
                 title: 'Error',
                 type: 'Message',
                 state: 'Error',
                 content: new FormattedText({
-                    htmlText: "<strong>"+msg+"</strong><br/><br/>"+aNonAssignable.join(",<br/>")
+                    htmlText: "<strong>"+msg+"</strong><br/><br/>"+aDemands.join(",<br/>")
                 }),
                 beginButton: new Button({
                     text: 'OK',

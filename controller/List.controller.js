@@ -193,6 +193,7 @@ sap.ui.define([
             oDataTable.setEnableColumnReordering(false);
             oDataTable.setEnableCellFilter(false);
             oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
+            oDataTable.setVisibleRowCountMode("Auto");
 
             //this highlight is only to show that rows can be dragged - nice to see
             oDataTable.setRowSettingsTemplate(new RowSettings({

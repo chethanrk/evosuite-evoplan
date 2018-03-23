@@ -77,7 +77,9 @@
                             width="4rem"
                             hAlign="End">
                         <table:template>
-                            <Text text="{AssignmentCount}" wrapper="false" />
+                            <Text text="{AssignmentCount}"
+                                  visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }"
+                                  wrapper="false" />
                         </table:template>
                     </table:Column>
                 </table:columns>

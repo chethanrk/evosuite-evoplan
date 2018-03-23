@@ -70,17 +70,48 @@ sap.ui.define([
                 var eventBus = sap.ui.getCore().getEventBus();
 
                 if(this._aSelectedPaths){
-                    eventBus.publish("StatusSelectDialog", "changeStatusDemand", {
-                        selectedPaths: this._aSelectedPaths,
-                        functionKey: this._selectedFunction
-                    });
-                    this.onCloseDialog();
-                    return;
+                    var oData = this.validateStatusTransition(this._aSelectedPaths,this._selectedFunction);
+                    if(oData.bChangable) {
+                        eventBus.publish("StatusSelectDialog", "changeStatusDemand", {
+                            selectedPaths: this._aSelectedPaths,
+                            functionKey: this._selectedFunction
+                        });
+                        this.onCloseDialog();
+                        return;
+                    }else{
+                        this._oView.byId("draggableList").getTable().clearSelection();
+                        for(var j in oData.aIndices){
+                            this._oView.byId("draggableList").getTable().addSelectionInterval(oData.aIndices[j],oData.aIndices[j]);
+                        }
+                        this.onCloseDialog();
+                        this._showAssignErrorDialog.call(this._oView.getController(),oData.aNonChangable,true);
+                        return;
+                    }
+
                 }
             }
             //show error message
-            var msg = this._oView.getResourceBundle().getText("notFoundContext");
+            var msg = this._oView.getController().getResourceBundle().getText("notFoundContext");
             this.showMessageToast(msg);
+        },
+
+        validateStatusTransition : function(aSelectedPaths,sSelectedFunction){
+            var aNonChangable  = [],aIndices = [],
+                bChangable = true;
+            for(var i in aSelectedPaths){
+                var oDemand = aSelectedPaths[i].oData;
+                if(!oDemand["ALLOW_"+sSelectedFunction]){
+                    aNonChangable.push(oDemand.DemandDesc);
+                    bChangable = false;
+                }else{
+                    aIndices.push(aSelectedPaths[i].index);
+                }
+            }
+            return {
+                aNonChangable:aNonChangable,
+                bChangable:bChangable,
+                aIndices:aIndices
+            }
         },
 
         /**
