@@ -127,10 +127,7 @@
                                 hAlign="End">
                             <table:template>
                                 <Text text="{AssignmentCount}"
-                                      visible="{
-                                              path: 'NodeType',
-                                              formatter: '.formatter.isMainResource'
-                                       }"
+                                      visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }"
                                       wrapping="false" />
                             </table:template>
                         </table:Column>
