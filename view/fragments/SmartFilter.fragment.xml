@@ -9,7 +9,8 @@
             persistencyKey="{viewModel>/persistencyKeyTable}"
             enableBasicSearch="false"
             useToolbar="true"
-            considerSelectionVariants="true">
+            considerSelectionVariants="true"
+            showClearButton="true">
 
         <smartFilterBar:controlConfiguration>
             <smartFilterBar:ControlConfiguration
