@@ -1,9 +1,11 @@
 sap.ui.define([
     "sap/ui/comp/smartvariants/SmartVariantManagement",
+    "sap/ui/fl/Utils",
     "sap/ui/fl/Persistence",
+    "sap/ui/comp/variants/VariantItem",
     "sap/m/Token",
     "sap/ui/core/format/DateFormat"
-    ], function(SmartVariantManagement, Persistence, Token, DateFormat) {
+    ], function(SmartVariantManagement, FlexUtils, Persistence, VariantItem, Token, DateFormat) {
 
         var CustomVariantManagement = SmartVariantManagement.extend("com.evorait.evoplan.ui.controls.CustomVariantManagement",{
             metadata: {
@@ -102,6 +104,86 @@ sap.ui.define([
                 this._errorHandling("'getChanges' throws an exception");
             }
         };
+
+        /**
+         * Creates entries into the variant management control, based on the list of variants.
+         *
+         * @private
+         * @param {map} mVariants list of variants, as determined by the flex layer
+         * @returns {array} containing all variant keys
+         */
+        SmartVariantManagement.prototype._createVariantEntries = function(mVariants) {
+
+            var n = null;
+            var sVariantKey, sUserName, sStandardVariantKey = null;
+            var oVariant, oVariantItem;
+            var aVariantKeys = [];
+
+            this.removeAllItems();
+
+            if (mVariants) {
+                for (n in mVariants) {
+                    if (n) {
+                        oVariant = mVariants[n];
+                        if (oVariant.isVariant()) {
+
+                            sUserName = this._getLRepUser(oVariant);
+
+                            oVariantItem = new VariantItem({
+                                key: oVariant.getId(),
+                                // text: oVariant.getText("variantName"), // issue with curly brackets
+                                global: !oVariant.isUserDependent(),
+                                executeOnSelection: this._getExecuteOnSelection(oVariant),
+                                lifecycleTransportId: oVariant.getRequest(),
+                                lifecyclePackage: oVariant.getPackage(),
+                                namespace: oVariant.getNamespace(),
+                                readOnly: this._isReadOnly(oVariant),
+                                labelReadOnly: oVariant.isLabelReadOnly(),
+                                author: sUserName
+                            });
+                            oVariantItem.setText(oVariant.getText("variantName"));
+
+                            if (this._hasStoredStandardVariant(oVariant)) {
+                                sStandardVariantKey = oVariant.getId();
+                            }
+
+                            this.addVariantItem(oVariantItem);
+
+                            aVariantKeys.push(oVariant.getId());
+                        }
+                    }
+                }
+            }
+
+            if (this._oPersoControl) {
+                sVariantKey = this._getDefaultVariantKey();
+                if (sVariantKey) {
+                    this.setInitialSelectionKey(sVariantKey); // set the current selected variant
+                }
+
+                var bFlag = this._isApplicationVariant(this._oPersoControl);
+                if (bFlag) {
+                    this.setIndustrySolutionMode(bFlag);
+
+                    bFlag = FlexUtils.isVendorLayer();
+                    this._setVendorLayer(bFlag);
+                }
+
+                if (this.getIndustrySolutionMode()) {
+                    if (sStandardVariantKey) {
+                        this._sAppStandardVariantKey = sStandardVariantKey;
+                        this.setStandardVariantKey(sStandardVariantKey);
+                    }
+                }
+
+                if (this._oControlPersistence && this._oControlPersistence.isVariantDownport()) {
+                    this._enableManualVariantKey(true);
+                }
+            }
+
+            return aVariantKeys;
+        };
+
 
         /**
          * Eventhandler for the save event of the <code>SmartVariantManagement</code> control.

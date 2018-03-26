@@ -80,9 +80,10 @@ sap.ui.define([
             var parameters = oEvent.getParameters();
             if(parameters.busy === false){
                 this._jDroppable(this);
-                this._oDataTable.setVisibleRowCountMode("Auto");
+                this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
             }else{
                 this.onTreeUpdateStarted();
+                this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
             }
         },
 
@@ -236,7 +237,7 @@ sap.ui.define([
             oDataTable.setEnableCellFilter(false);
             oDataTable.setEnableColumnReordering(false);
             oDataTable.setEditable(false);
-            oDataTable.setVisibleRowCountMode("Fixed");
+            oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
             oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
         },
 
