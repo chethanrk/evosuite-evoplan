@@ -109,7 +109,6 @@ sap.ui.define([
         getAllFilters: function () {
             var aFilters = [],
                 oViewModel = this._oView.getModel("viewModel");
-
             oViewModel.setProperty("/counterResourceFilter", this.counterResourceFilter);
 
             // filter dialog values
@@ -266,6 +265,26 @@ sap.ui.define([
         },
 
         /**
+         *
+         * @param oEvent
+         */
+        onItemPropertyChanged: function (oEvent) {
+            var oParameters = oEvent.getParameters();
+
+            if(oParameters.propertyKey === "selected" && oParameters.propertyValue === true){
+                var oSource = oParameters.changedItem,
+                    selectedTimeFormat = formatter.getResourceFormatByKey(oSource.getProperty("key"));
+
+                if(selectedTimeFormat){
+                    this._filterDateRange1.setValue(this.formatter.date(selectedTimeFormat.getDateBegin()));
+                    this._filterDateRange2.setValue(this.formatter.date(selectedTimeFormat.getDateEnd()));
+                }else{
+                    this._setDefaultFilterDateRange();
+                }
+            }
+        },
+
+        /**
          * close dialog
          */
         onCloseDialog : function () {
@@ -350,10 +369,16 @@ sap.ui.define([
          * set filter to varaint which should be tracked
          * @private
          */
-        _updateFiltersDependencies: function () {
-            this._oVariant.addFilter(this.getSearchField());
-            this._oVariant.addFilter(this.getFilterSelectView());
-            this._oVariant.addFilter(this.getFilterGroupInput());
+        _updateFiltersDependencies: function (force) {
+            if(this._filterSelectView.getSelected() === this.defaultViewSelected){
+
+            }
+
+            if(force){
+                this._oVariant.addFilter(this._searchField);
+                this._oVariant.addFilter(this._filterSelectView);
+                this._oVariant.addFilter(this._filterGroupInput);
+            }
         },
 
         /**

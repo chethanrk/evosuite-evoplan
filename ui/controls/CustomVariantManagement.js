@@ -141,17 +141,39 @@ sap.ui.define([
             }
         };
 
-
-
         /**
          * public function
          * add filter controls to array
          * @param oControl
          */
         CustomVariantManagement.prototype.addFilter = function (oControl) {
-            this.aFilterControls.push(oControl);
+            var controlId = oControl.getId(),
+                isInside = false;
+            for(var i = 0; i < this.aFilterControls.length; i++){
+                var objId = this.aFilterControls[i].getId();
+                if(objId === controlId){
+                    isInside = true;
+                    break;
+                }
+            }
+            if(!isInside){
+                this.aFilterControls.push(oControl);
+            }
         };
 
+        /**
+         * remove filter control from array
+         * @param oControl
+         */
+        CustomVariantManagement.prototype.removeFilter = function (oControl) {
+            var controlId = oControl.getId();
+            for(var i = 0; i < this.aFilterControls.length; i++){
+                var objId = this.aFilterControls[i].getId();
+                if(objId === controlId){
+                    this.aFilterControls.splice(i, 1);
+                }
+            }
+        };
 
         /**
          * create persitency of this variant management

@@ -1,37 +1,10 @@
 sap.ui.define([
-	"sap/ui/core/format/DateFormat"
-], function(DateFormat) {
+	"sap/ui/core/format/DateFormat",
+    "com/evorait/evoplan/model/utilities"
+], function(DateFormat, utilities) {
 	"use strict";
 
-    var resourceFormats = {
-        RES_GROUP: {
-            title: "H4",
-            icon: "sap-icon://collaborate"
-        },
-        RESOURCE: {
-            title: "H5",
-            icon: "sap-icon://employee"
-        },
-        TIMEDAY: {
-            title: "H5",
-            icon: "sap-icon://calendar",
-            calendarView:"Day"
-        },
-        TIMEWEEK: {
-            title: "H5",
-            icon: "sap-icon://accelerated",
-            calendarView:"Week"
-        },
-        TIMEMONTH: {
-            title: "H5",
-            icon: "sap-icon://appointment-2",
-            calendarView:"Month"
-        },
-        ASSIGNMENT: {
-            title: "H6",
-            icon: "sap-icon://eam-work-order"
-        }
-    };
+	var resourceFormats = utilities.getResourceFormats();
 
     return {
         /**
@@ -45,7 +18,6 @@ sap.ui.define([
             if (!sValue) {
                 return "";
             }
-
             return parseFloat(sValue).toFixed(2);
         },
 
@@ -119,6 +91,10 @@ sap.ui.define([
                 }
             }
             return "";
+        },
+
+        getResourceFormatByKey: function (sValue) {
+            return resourceFormats[sValue];
         },
 
         isAssignment: function (sValue) {

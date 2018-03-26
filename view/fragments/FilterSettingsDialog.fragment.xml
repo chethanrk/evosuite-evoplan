@@ -11,9 +11,10 @@
                     id="viewFilterItem"
                     text="{i18n>xtit.filterTitleView}"
                     key="View"
-                    multiSelect="false">
+                    multiSelect="false"
+                    itemPropertyChanged="onItemPropertyChanged">
                 <items>
-                    <ViewSettingsItem text="{i18n>xfld.viewFilterDaily}" key="TIMEDAY" />
+                    <ViewSettingsItem text="{i18n>xfld.viewFilterDaily}" key="TIMEDAY"/>
                     <ViewSettingsItem text="{i18n>xfld.viewFilterWeek}" key="TIMEWEEK"/>
                     <ViewSettingsItem text="{i18n>xfld.viewFilterMonth}" key="TIMEMONTH" />
                     <ViewSettingsItem text="{i18n>xfld.viewFilterNone}" key="TIMENONE" />
