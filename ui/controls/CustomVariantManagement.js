@@ -149,6 +149,7 @@ sap.ui.define([
         CustomVariantManagement.prototype.addFilter = function (oControl) {
             var controlId = oControl.getId(),
                 isInside = false;
+
             for(var i = 0; i < this.aFilterControls.length; i++){
                 var objId = this.aFilterControls[i].getId();
                 if(objId === controlId){

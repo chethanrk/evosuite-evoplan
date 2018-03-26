@@ -113,13 +113,9 @@ sap.ui.define([
 
             // filter dialog values
             //view setting
-            var oViewFilterItems = this.getFilterSelectView().getItems();
-            for (var i = 0; i < oViewFilterItems.length; i++) {
-                var obj = oViewFilterItems[i];
-                if(obj.getSelected()){
-                    var key = obj.getKey();
-                    aFilters.push(new Filter("NodeType", FilterOperator.EQ, key));
-                }
+            var selectedViewKey = this._getFilterViewSelectedKey();
+            if(selectedViewKey && selectedViewKey !== ""){
+                aFilters.push(new Filter("NodeType", FilterOperator.EQ, selectedViewKey));
             }
 
             //set date range
@@ -281,6 +277,10 @@ sap.ui.define([
                 }else{
                     this._setDefaultFilterDateRange();
                 }
+
+                if(this._oDialog && this._oVariant){
+                    this._updateFiltersDependencies(false);
+                }
             }
         },
 
@@ -362,7 +362,7 @@ sap.ui.define([
          */
         setVariant: function (oVariant) {
             this._oVariant = oVariant;
-            this._updateFiltersDependencies();
+            this._updateFiltersDependencies(true);
         },
 
         /**
@@ -370,8 +370,14 @@ sap.ui.define([
          * @private
          */
         _updateFiltersDependencies: function (force) {
-            if(this._filterSelectView.getSelected() === this.defaultViewSelected){
+            var selectedViewKey = this._getFilterViewSelectedKey();
 
+            if(selectedViewKey === this.defaultViewSelected){
+                this._oVariant.addFilter(this._filterDateRange1);
+                this._oVariant.addFilter(this._filterDateRange2);
+            }else{
+                this._oVariant.removeFilter(this._filterDateRange1);
+                this._oVariant.removeFilter(this._filterDateRange2);
             }
 
             if(force){
@@ -411,6 +417,20 @@ sap.ui.define([
                 var obj = oViewFilterItems[i];
                 if(obj.getKey() === this.defaultViewSelected){
                     obj.setSelected(true);
+                }
+            }
+        },
+
+        /**
+         * get selected view
+         * @private
+         */
+        _getFilterViewSelectedKey: function () {
+            var oViewFilterItems = this.getFilterSelectView().getItems();
+            for (var i = 0; i < oViewFilterItems.length; i++) {
+                var obj = oViewFilterItems[i];
+                if(obj.getSelected()){
+                    return obj.getKey();
                 }
             }
         }
