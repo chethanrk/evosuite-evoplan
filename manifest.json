@@ -1,5 +1,5 @@
 {
-	"_version": "2.0.4",
+	"_version": "1.4.0",
 	"sap.app": {
 		"id": "com.evorait.evoplan",
 		"type": "application",
