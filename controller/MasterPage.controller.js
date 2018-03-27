@@ -45,7 +45,9 @@ sap.ui.define([
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
             eventBus.subscribe("AssignInfoDialog", "updateAssignment", this._triggerUpdateAssign, this);
+            eventBus.subscribe("AssignTreeDialog", "bulkReAssignment", this._triggerUpdateAssign, this);
             eventBus.subscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
+            eventBus.subscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
 
             // event listener for changing device orientation with fallback of window resize
             var orientationEvent = this.getOrientationEvent(),
@@ -266,8 +268,12 @@ sap.ui.define([
 
 			if (this.selectedResources.length > 0) {
 				this.byId("showPlanCalendar").setEnabled(true);
+                this.byId("idButtonreassign").setEnabled(true);
+                this.byId("idButtonunassign").setEnabled(true);
 			} else {
 				this.byId("showPlanCalendar").setEnabled(false);
+                this.byId("idButtonreassign").setEnabled(false);
+                this.byId("idButtonunassign").setEnabled(false);
 			}
 		},
 
@@ -319,6 +325,13 @@ sap.ui.define([
 			this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAppointmentData);
 			
 		},
+        onPressReassign: function (oEvent){
+            this.getOwnerComponent().assignActionsDialog.open(this.getView(),this.selectedResources,false);
+        },
+        onPressUnassign: function (oEvent) {
+            this.getOwnerComponent().assignActionsDialog.open(this.getView(),this.selectedResources,true);
+        },
+
         /**
          * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
          */
@@ -421,12 +434,16 @@ sap.ui.define([
         _triggerUpdateAssign: function (sChanel, sEvent, oData) {
             if(sEvent === "updateAssignment"){
                 this.updateAssignment(oData.isReassign);
+            }else if(sEvent === "bulkReAssignment"){
+                this.bulkReAssignment(oData.sPath,oData.aContexts);
             }
         },
 
         _triggerDeleteAssign: function (sChanel, sEvent, oData) {
             if(sEvent === "deleteAssignment"){
                 this.deleteAssignment(oData.sId);
+            }else if(sEvent === "bulkDeleteAssignment"){
+                this.bulkDeleteAssignment(oData.aContexts);
             }
         },
 
@@ -670,7 +687,7 @@ sap.ui.define([
 		 * Method will refresh the data of tree by restoring its state
 		 * 
 		 * @Author Rahul
-		 * @version 1.0.4
+		 * @version 2.0.4
 		 * @return 
 		 * @private
 		 */
@@ -684,6 +701,8 @@ sap.ui.define([
 				//Resetting selected resource for calendar as by default IsSelected will come as false from backend
 				this.selectedResources = [];
 				this.byId("showPlanCalendar").setEnabled(false);
+                this.byId("idButtonreassign").setEnabled(false);
+                this.byId("idButtonunassign").setEnabled(false);
 		}
 	});
 });

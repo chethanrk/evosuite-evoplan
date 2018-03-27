@@ -190,7 +190,57 @@ sap.ui.define([
             this.clearMessageModel();
             this.callFunctionImport(oParams, "UpdateAssignment", "POST");
         },
+        /**
+         * Calls the update assignment function import for selected assignment in order to
+         * bulk reassignment
+         *
+         * @Author Rahul
+         * @version 2.0.6
+         * @param sAssignPath {string} new assign path for reassign
+         * @param aPaths {Array} selected assignment paths
+         */
+        bulkReAssignment:function (sAssignPath,aContexts) {
+            var oModel = this.getModel(),
+                oResource = oModel.getProperty(sAssignPath);
+            // Clears the Message model
+            this.clearMessageModel();
 
+            for(var i in aContexts){
+                var sPath =  aContexts[i].getPath();
+                var oAssignment = oModel.getProperty(sPath);
+                var oParams = {
+                    "DateFrom" : oAssignment.DateFrom || 0,
+                    "TimeFrom" : { __edmtype: "Edm.Time", ms: oAssignment.DateFrom.getTime()},
+                    "DateTo" :  oAssignment.DateTo || 0,
+                    "TimeTo" : { __edmtype: "Edm.Time", ms: oAssignment.DateTo.getTime()},
+                    "AssignmentGUID" : oAssignment.Guid,
+                    "EffortUnit" : oAssignment.EffortUnit,
+                    "Effort" : oAssignment.Effort,
+                    "ResourceGroupGuid" : oResource.ResourceGroupGuid,
+                    "ResourceGuid" : oResource.ResourceGuid
+                };
+                // call function import
+                this.callFunctionImport(oParams, "UpdateAssignment", "POST", true);
+            }
+
+        },
+        /**
+         * delete assignments in bulk
+         * @Author Rahul
+         * @version 2.0.6
+         * @param aContexts {Array} Assignments contexts to be deleted.
+         */
+        bulkDeleteAssignment: function (aContexts) {
+            var oModel = this.getModel();
+            this.clearMessageModel();
+            for(var i in aContexts){
+                var sPath =  aContexts[i].getPath();
+                var oParams = {
+                    "AssignmentGUID" : oModel.getProperty(sPath+"/Guid")
+                };
+                this.callFunctionImport(oParams, "DeleteAssignment", "POST", true);
+            }
+        },
         /**
          * delete assignment
          * @param sPath
