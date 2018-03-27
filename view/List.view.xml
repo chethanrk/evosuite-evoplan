@@ -53,7 +53,7 @@
                     <smartTable:layoutData>
                         <FlexItemData growFactor="1" />
                     </smartTable:layoutData>
-                    <table:Table rows="{/DemandSet}" >
+                    <table:Table>
                     	<!--<table:rowSettingsTemplate>
 							<table:RowSettings highlight="Information"/>
 						</table:rowSettingsTemplate>-->
