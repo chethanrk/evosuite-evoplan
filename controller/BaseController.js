@@ -201,27 +201,33 @@ sap.ui.define([
          */
         bulkReAssignment:function (sAssignPath,aContexts) {
             var oModel = this.getModel(),
-                oResource = oModel.getProperty(sAssignPath);
+                oResource = oModel.getProperty(sAssignPath),
+                eventBus = sap.ui.getCore().getEventBus();
             // Clears the Message model
             this.clearMessageModel();
 
             for(var i in aContexts){
                 var sPath =  aContexts[i].getPath();
-                var oAssignment = oModel.getProperty(sPath);
-                var oParams = {
-                    "DateFrom" : oAssignment.DateFrom || 0,
-                    "TimeFrom" : { __edmtype: "Edm.Time", ms: oAssignment.DateFrom.getTime()},
-                    "DateTo" :  oAssignment.DateTo || 0,
-                    "TimeTo" : { __edmtype: "Edm.Time", ms: oAssignment.DateTo.getTime()},
-                    "AssignmentGUID" : oAssignment.Guid,
-                    "EffortUnit" : oAssignment.EffortUnit,
-                    "Effort" : oAssignment.Effort,
-                    "ResourceGroupGuid" : oResource.ResourceGroupGuid,
-                    "ResourceGuid" : oResource.ResourceGuid
-                };
-                // call function import
-                this.callFunctionImport(oParams, "UpdateAssignment", "POST", true);
+                var sAssignmentPaths =  oModel.getProperty(sPath+"/DemandToAssignment");
+                for(var j in sAssignmentPaths) {
+                    var sAssignPath = sAssignmentPaths[j];
+                    var oAssignment = oModel.getProperty("/"+sAssignPath);
+                    var oParams = {
+                        "DateFrom": oAssignment.DateFrom || 0,
+                        "TimeFrom": {__edmtype: "Edm.Time", ms: oAssignment.DateFrom.getTime()},
+                        "DateTo": oAssignment.DateTo || 0,
+                        "TimeTo": {__edmtype: "Edm.Time", ms: oAssignment.DateTo.getTime()},
+                        "AssignmentGUID": oAssignment.Guid,
+                        "EffortUnit": oAssignment.EffortUnit,
+                        "Effort": oAssignment.Effort,
+                        "ResourceGroupGuid": oResource.ResourceGroupGuid,
+                        "ResourceGuid": oResource.ResourceGuid
+                    };
+                    // call function import
+                    this.callFunctionImport(oParams, "UpdateAssignment", "POST", true);
+                }
             }
+            eventBus.publish("BaseController", "refreshActionTable", {});
 
         },
         /**
@@ -235,10 +241,15 @@ sap.ui.define([
             this.clearMessageModel();
             for(var i in aContexts){
                 var sPath =  aContexts[i].getPath();
-                var oParams = {
-                    "AssignmentGUID" : oModel.getProperty(sPath+"/Guid")
-                };
-                this.callFunctionImport(oParams, "DeleteAssignment", "POST", true);
+                var sAssignmentPaths =  oModel.getProperty(sPath+"/DemandToAssignment");
+                for(var j in sAssignmentPaths){
+                    var sAssignPath = sAssignmentPaths[j];
+                    var oParams = {
+                        "AssignmentGUID" : oModel.getProperty("/"+sAssignPath+"/Guid")
+                    };
+                    this.callFunctionImport(oParams, "DeleteAssignment", "POST", true);
+                }
+
             }
         },
         /**
@@ -283,7 +294,6 @@ sap.ui.define([
             oModel.callFunction("/"+sFuncName, {
                 method: sMethod || "POST",
                 urlParameters: oParams,
-                refreshAfterChange:true,
                 success: function(oData, oResponse){
                     //Handle Success
                     this.showMessage(oResponse);
