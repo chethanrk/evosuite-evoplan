@@ -25,7 +25,7 @@
 						<smartField:SmartField value="{TimeFrom}" />
 					</smartForm:GroupElement>
 					<smartForm:GroupElement>
-						<smartField:SmartField value="{EFFORT}" />
+						<smartField:SmartField value="{Effort}" />
 					</smartForm:GroupElement>
 				</smartForm:Group>
 				<smartForm:Group>

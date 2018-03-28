@@ -21,7 +21,7 @@
 			<Column minScreenWidth="Tablet"
                         demandPopin="true"
                         width="4em">
-				<Text text="{/#Demand/EFFORT/@sap:label}" />
+				<Text text="{/#Demand/Effort/@sap:label}" />
 			</Column>
 			<Column minScreenWidth="Tablet"
                         demandPopin="true">
