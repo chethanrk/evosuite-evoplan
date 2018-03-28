@@ -9,7 +9,7 @@
             contentHeight="80%"
             stretch="false">
         <content>
-                <Table id="idDemandAssignmentTable"
+                <!--<Table id="idDemandAssignmentTable"
                    class="sapUiNoContentPadding"
                    mode="MultiSelect"
                    items="{
@@ -49,20 +49,30 @@
 
                     </ColumnListItem>
                 </items>
-            </Table>
+            </Table>-->
 
-            <!--<smartTable:SmartTable
+            <smartTable:SmartTable
                     id="idDemandAssignmentTable"
-                    entitySet="AssignmentSet"
-                    beforeRebindTable="onBeforeRebind"
+                    height="100%"
+                    width="100%"
+                    direction="Column"
                     tableType="ResponsiveTable"
-                    useExportToExcel="false"
-                    useVariantManagement="false"
-                    showRowCount="true"
-                    persistencyKey="SmartTableAnalytical_Explored"
                     enableAutoBinding="true"
-                    demandPopin="true"
-                    class="sapUiResponsiveContentPadding"/>-->
+                    entitySet="DemandSet"
+                    header="{i18n>xtit.itemListTitle}"
+                    showRowCount="true"
+                    useTablePersonalisation="false"
+                    useExportToExcel="false"
+                    beforeRebindTable="onBeforeRebind"
+                    requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_UNASSIGN,ALLOW_REASSIGN,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,DemandToAssignment">
+                <!-- layout data used to make the table growing but the filter bar fixed -->
+                <smartTable:layoutData>
+                    <FlexItemData growFactor="1" />
+                </smartTable:layoutData>
+                <Table mode="MultiSelect"
+                       growing="true">
+                </Table>
+            </smartTable:SmartTable>
 
         </content>
         <buttons>
