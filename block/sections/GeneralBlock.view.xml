@@ -30,8 +30,8 @@
 					<smartForm:GroupElement>
 						<smartField:SmartField value="{Source}"/>
 					</smartForm:GroupElement>
-					<smartForm:GroupElement label="{/#StatusTexts/UserStatusShortText/@sap:label}">
-						<smartField:SmartField value="{UserStatusLongText}"/>
+					<smartForm:GroupElement label="{/#Demand/Status/@sap:label}">
+						<smartField:SmartField value="{StatusDesc}"/>
 					</smartForm:GroupElement>
 				</smartForm:Group>
 			</smartForm:SmartForm>

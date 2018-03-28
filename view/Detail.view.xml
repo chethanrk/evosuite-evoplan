@@ -26,7 +26,7 @@
 						<uxap:ObjectPageHeaderActionButton text="{i18n>xbut.assign}" type="Emphasized" hideIcon="false" hideText="false" press="onClickAssign"/>
 						<uxap:ObjectPageHeaderActionButton text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
 														   visible="{
-														   		parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'UserStatusShortText'}],
+														   		parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'}],
 														   		formatter: '.getVisible'
 						 									}"  hideIcon="false" hideText="false" press="onClickAction"/>
 				</uxap:actions>
@@ -34,7 +34,7 @@
 		</uxap:headerTitle>
 			<uxap:headerContent>
 				<layout:VerticalLayout>
-					<ObjectStatus title="{/#StatusTexts/UserStatusShortText/@sap:label}" text="{UserStatusShortText} ({UserStatusLongText})"/>
+					<ObjectStatus title="{/#Demand/Status/@sap:label}" text="{Status} ({StatusDesc})"/>
 					<ObjectStatus title="{/#Demand/Source/@sap:label}" text="{Source}"/>
 				</layout:VerticalLayout>
 			</uxap:headerContent>
