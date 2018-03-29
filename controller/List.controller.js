@@ -280,20 +280,13 @@ sap.ui.define([
                             aPathsData = oSelectedPaths.aPathsData;
 
                         } else {
-                            //single drag by checkbox row index
-                            if(targetCheckboxIdx >= 0){
-                                selectedIdx = [targetCheckboxIdx];
-                                oSelectedPaths = _this._getSelectedRowPaths(_this._oDataTable, selectedIdx, true);
-                                aPathsData = oSelectedPaths.aPathsData;
-                            }else{
                                 //table tr single dragged element
-                                aPathsData = _this._getSingleDraggedElement(target.attr('id'));
-                            }
+                                oSelectedPaths = _this._getSelectedRowPaths(_this._oDataTable, [_this._getDraggedElementIndex(target.attr('id'))], true);
+                                aPathsData = oSelectedPaths.aPathsData;
                         }
 
                         if(oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0){
                             _this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
-                            // _this._stopDrag(jDragElement);
                         }
                         //get helper html list
                         var oHtml = _this._generateDragHelperHTML(aPathsData,oSelectedPaths.aNonAssignable);
@@ -308,37 +301,15 @@ sap.ui.define([
             }, 1000);
         },
 
-        _stopDrag: function (jDragElement) {
-            // need to restore this later
-            var origRevertDuration = jDragElement.draggable('option', 'revertDuration');
-            var origRevertValue = jDragElement.draggable('option', 'revert');
-            jDragElement
-                .css({top: '0px', left: '0px'})
-                .draggable('option', 'revert', true)
-                .draggable('option', 'revertDuration', 0)
-                .trigger('mouseup')
-                .draggable('option', 'revertDuration', origRevertDuration)
-                .draggable('option', 'revert', origRevertValue);
-                
-        },
-
         /**
-         * single dragged element when no checkboxes was selected
+         * single dragged element's index
          * @param targetId
          * @returns {*}
          * @private
          */
-        _getSingleDraggedElement : function (targetId) {
-            var draggedElement = sap.ui.getCore().byId(targetId),
-                oContext = draggedElement.getBindingContext();
-            if(oContext){
-                var sPath = oContext.getPath();
-                return [{
-                    oData: this.getModel().getProperty(sPath),
-                    sPath: sPath
-                }];
-            }
-            return false;
+        _getDraggedElementIndex : function (targetId) {
+            var draggedElement = sap.ui.getCore().byId(targetId);
+            return draggedElement.getIndex();
         },
 
         /**
