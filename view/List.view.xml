@@ -48,7 +48,7 @@
                         useVariantManagement="true"
                         persistencyKey="{viewModel>/persistencyKeyDemandTable}"
                         useTablePersonalisation="true"
-                        requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE">
+                        requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc">
                     <!-- layout data used to make the table growing but the filter bar fixed -->
                     <smartTable:layoutData>
                         <FlexItemData growFactor="1" />
@@ -64,7 +64,7 @@
 								</table:customData>
 								<Label text="{/#Demand/STATUS_ICON/@sap:label}" />
 								<table:template>
-									<core:Icon src="{STATUS_ICON}" tooltip="{UserStatusLongText}">
+									<core:Icon src="{STATUS_ICON}" tooltip="{StatusDesc}">
 									</core:Icon>
 								</table:template>
 							</table:Column>

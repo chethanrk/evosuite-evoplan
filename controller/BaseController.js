@@ -190,7 +190,66 @@ sap.ui.define([
             this.clearMessageModel();
             this.callFunctionImport(oParams, "UpdateAssignment", "POST");
         },
+        /**
+         * Calls the update assignment function import for selected assignment in order to
+         * bulk reassignment
+         *
+         * @Author Rahul
+         * @version 2.0.6
+         * @param sAssignPath {string} new assign path for reassign
+         * @param aPaths {Array} selected assignment paths
+         */
+        bulkReAssignment:function (sAssignPath,aContexts) {
+            var oModel = this.getModel(),
+                oResource = oModel.getProperty(sAssignPath),
+                eventBus = sap.ui.getCore().getEventBus();
+            // Clears the Message model
+            this.clearMessageModel();
 
+            for(var i in aContexts){
+                var sPath =  aContexts[i].getPath();
+                var sAssignmentPaths =  oModel.getProperty(sPath+"/DemandToAssignment");
+                for(var j in sAssignmentPaths) {
+                    var sAssignPath = sAssignmentPaths[j];
+                    var oAssignment = oModel.getProperty("/"+sAssignPath);
+                    var oParams = {
+                        "DateFrom": oAssignment.DateFrom || 0,
+                        "TimeFrom": {__edmtype: "Edm.Time", ms: oAssignment.DateFrom.getTime()},
+                        "DateTo": oAssignment.DateTo || 0,
+                        "TimeTo": {__edmtype: "Edm.Time", ms: oAssignment.DateTo.getTime()},
+                        "AssignmentGUID": oAssignment.Guid,
+                        "EffortUnit": oAssignment.EffortUnit,
+                        "Effort": oAssignment.Effort,
+                        "ResourceGroupGuid": oResource.ResourceGroupGuid,
+                        "ResourceGuid": oResource.ResourceGuid
+                    };
+                    // call function import
+                    this.callFunctionImport(oParams, "UpdateAssignment", "POST", true);
+                }
+            }
+        },
+        /**
+         * delete assignments in bulk
+         * @Author Rahul
+         * @version 2.0.6
+         * @param aContexts {Array} Assignments contexts to be deleted.
+         */
+        bulkDeleteAssignment: function (aContexts) {
+            var oModel = this.getModel();
+            this.clearMessageModel();
+            for(var i in aContexts){
+                var sPath =  aContexts[i].getPath();
+                var sAssignmentPaths =  oModel.getProperty(sPath+"/DemandToAssignment");
+                for(var j in sAssignmentPaths){
+                    var sAssignPath = sAssignmentPaths[j];
+                    var oParams = {
+                        "AssignmentGUID" : oModel.getProperty("/"+sAssignPath+"/Guid")
+                    };
+                    this.callFunctionImport(oParams, "DeleteAssignment", "POST", true);
+                }
+
+            }
+        },
         /**
          * delete assignment
          * @param sPath
@@ -233,7 +292,6 @@ sap.ui.define([
             oModel.callFunction("/"+sFuncName, {
                 method: sMethod || "POST",
                 urlParameters: oParams,
-                refreshAfterChange:true,
                 success: function(oData, oResponse){
                     //Handle Success
                     this.showMessage(oResponse);

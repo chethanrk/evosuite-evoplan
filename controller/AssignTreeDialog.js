@@ -14,6 +14,7 @@ sap.ui.define([
         init: function () {
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("AssignInfoDialog", "selectAssign", this._triggerOpenDialog, this);
+            eventBus.subscribe("AssignActionsDialog", "selectAssign", this._triggerOpenDialog, this);
         },
 
         /**
@@ -34,13 +35,15 @@ sap.ui.define([
          * get detail data from resource and resource group
          * @param oView
          * @param sBindPath
+         * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
          */
-        open : function (oView, isReassign, aSelectedPaths) {
+        open : function (oView, isReassign, aSelectedPaths, isBulkReAssign) {
             var oDialog = this.getDialog();
 
             this._oView = oView;
             this._reAssign = isReassign;
             this._aSelectedPaths = aSelectedPaths;
+            this._bulkReAssign = isBulkReAssign;
 
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
@@ -87,7 +90,17 @@ sap.ui.define([
         onSaveDialog : function (oEvent) {
             if(this._assignPath){
                 var eventBus = sap.ui.getCore().getEventBus();
-
+                // In case of bulk reassign
+                if(this._bulkReAssign){
+                    eventBus.publish("AssignTreeDialog", "bulkReAssignment", {
+                        sPath: this._assignPath,
+                        aContexts: this._aSelectedPaths
+                    });
+                    this.onCloseDialog();
+                    eventBus.publish("AssignTreeDialog", "closeActionDialog", {});
+                    return;
+                }
+                // In case single reassign
                 if(this._reAssign){
                     eventBus.publish("AssignTreeDialog", "selectedAssignment", {
                         sPath: this._assignPath
@@ -126,8 +139,10 @@ sap.ui.define([
         },
 
         _triggerOpenDialog: function (sChanel, sEvent, oData) {
-            if(sEvent === "selectAssign"){
+            if(sChanel === "AssignInfoDialog" && sEvent === "selectAssign"){
                 this.open(oData.oView, oData.isReassign);
+            }else if(sChanel === "AssignActionsDialog" && sEvent === "selectAssign"){
+                this.open(oData.oView, oData.isReassign, oData.aSelectedContexts, oData.isBulkReassign);
             }
         }
 

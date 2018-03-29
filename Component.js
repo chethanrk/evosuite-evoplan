@@ -6,7 +6,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/ErrorHandler",
     "com/evorait/evoplan/controller/AssignInfoDialog",
     "com/evorait/evoplan/controller/AssignTreeDialog",
-    "com/evorait/evoplan/controller/StatusSelectDialog"
+    "com/evorait/evoplan/controller/StatusSelectDialog",
+    "com/evorait/evoplan/controller/AssignActionsDialog"
 ], function(
 	UIComponent,
 	Device,
@@ -15,7 +16,8 @@ sap.ui.define([
 	ErrorHandler,
 	AssignInfoDialog,
 	AssignTreeDialog,
-    StatusSelectDialog) {
+    StatusSelectDialog,
+    AssignActionsDialog) {
 
 	"use strict";
 
@@ -154,6 +156,9 @@ sap.ui.define([
             //change status of demand
             this.statusSelectDialog = new StatusSelectDialog();
             this.statusSelectDialog.init();
+            // bulk operations for unassign/reassign demands
+            this.assignActionsDialog = new AssignActionsDialog();
+            this.assignActionsDialog.init();
         },
 
         /**
