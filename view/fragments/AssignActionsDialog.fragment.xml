@@ -9,48 +9,6 @@
             contentHeight="80%"
             stretch="false">
         <content>
-                <!--<Table id="idDemandAssignmentTable"
-                   class="sapUiNoContentPadding"
-                   mode="MultiSelect"
-                   items="{
-                    path: '/AssignmentSet',
-                    parameters : {
-                        expand:'Resource,Demand'
-                    },
-                    templateShareable: true
-                }">
-                <columns>
-                    <Column>
-                        <Text text="{i18n>xfld.demandName}" />
-                    </Column>
-                    <Column minScreenWidth="Tablet"
-                            demandPopin="true">
-                        <Text text="{/#Demand/ORDERID/@sap:label}" />
-                    </Column>
-                    <Column minScreenWidth="Tablet"
-                            demandPopin="true">
-                        <Text text="{/#Demand/ORDER_DESC/@sap:label}" />
-                    </Column>
-                    <Column minScreenWidth="Tablet"
-                            demandPopin="true">
-                        <Text text="{/#Demand/OPERATIONID/@sap:label}" />
-                    </Column>
-                </columns>
-                <items>
-                    <ColumnListItem>
-                        <cells>
-                            <ObjectIdentifier
-                                    title="{Demand/DemandDesc}"
-                                    text="{Demand/Guid}"/>
-                            <Text text="{Demand/ORDERID}"/>
-                            <Text text="{Demand/ORDER_DESC}"/>
-                            <Text text="{Demand/OPERATIONID}"/>
-                        </cells>
-
-                    </ColumnListItem>
-                </items>
-            </Table>-->
-
             <smartTable:SmartTable
                     id="idDemandAssignmentTable"
                     height="100%"
@@ -61,7 +19,7 @@
                     entitySet="DemandSet"
                     header="{i18n>xtit.itemListTitle}"
                     showRowCount="true"
-                    useTablePersonalisation="false"
+                    useTablePersonalisation="true"
                     useExportToExcel="false"
                     beforeRebindTable="onBeforeRebind"
                     requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_UNASSIGN,ALLOW_REASSIGN,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,DemandToAssignment">
@@ -70,7 +28,8 @@
                     <FlexItemData growFactor="1" />
                 </smartTable:layoutData>
                 <Table mode="MultiSelect"
-                       growing="true">
+                       growing="true"
+                       selectionChange="onSelectionChange">
                 </Table>
             </smartTable:SmartTable>
 
@@ -80,11 +39,11 @@
                     text="{i18n>xbut.buttonClose}"
                     press="onCloseDialog" />
             <Button id="idButtonBulkUnAssign"
-                    text="{i18n>xbut.unassign}"
+                    text="{i18n>xbut.buttonUnassign}"
                     type="Emphasized"
                     press="onUnassign"/>
             <Button id="idButtonBulkReAssign"
-                    text="{i18n>xbut.reassign}"
+                    text="{i18n>xfld.newAssign}"
                     type="Emphasized"
                     press="onReassign"/>
         </buttons>

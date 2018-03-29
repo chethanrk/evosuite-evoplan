@@ -35,6 +35,7 @@ sap.ui.define([
          * get detail data from resource and resource group
          * @param oView
          * @param sBindPath
+         * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
          */
         open : function (oView, isReassign, aSelectedPaths, isBulkReAssign) {
             var oDialog = this.getDialog();
@@ -89,16 +90,17 @@ sap.ui.define([
         onSaveDialog : function (oEvent) {
             if(this._assignPath){
                 var eventBus = sap.ui.getCore().getEventBus();
-
+                // In case of bulk reassign
                 if(this._bulkReAssign){
                     eventBus.publish("AssignTreeDialog", "bulkReAssignment", {
                         sPath: this._assignPath,
                         aContexts: this._aSelectedPaths
                     });
                     this.onCloseDialog();
+                    eventBus.publish("AssignTreeDialog", "closeActionDialog", {});
                     return;
                 }
-
+                // In case single reassign
                 if(this._reAssign){
                     eventBus.publish("AssignTreeDialog", "selectedAssignment", {
                         sPath: this._assignPath

@@ -159,7 +159,7 @@
             <OverflowToolbar>
                 <ToolbarSpacer/>
                 <Button id="idButtonunassign"
-                        text="{i18n>xbut.unassign}"
+                        text="{i18n>xbut.buttonUnassign}"
                         press="onPressUnassign"
                         enabled="false">
                     <layoutData>
@@ -167,7 +167,7 @@
                     </layoutData>
                 </Button>
                 <Button id="idButtonreassign"
-                        text="{i18n>xbut.reassign}"
+                        text="{i18n>xfld.newAssign}"
                         press="onPressReassign"
                         enabled="false">
                     <layoutData>

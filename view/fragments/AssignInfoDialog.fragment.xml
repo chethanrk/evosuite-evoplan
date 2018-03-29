@@ -61,7 +61,7 @@
                            value="{assignment>/Effort}"/>
                            
 					<smartField:SmartLabel labelFor="idEfforUnit" />
-					<smartField:SmartField value="{Demand/EFFORT_UNIT}" id="idEfforUnit"
+					<smartField:SmartField value="{Demand/EffortUnit}" id="idEfforUnit"
 						change="onChangeUnit">
 						<smartField:configuration>
 							<smartField:Configuration 

@@ -64,7 +64,7 @@
 								</table:customData>
 								<Label text="{/#Demand/STATUS_ICON/@sap:label}" />
 								<table:template>
-									<core:Icon src="{STATUS_ICON}" tooltip="{UserStatusLongText}">
+									<core:Icon src="{STATUS_ICON}" tooltip="{StatusDesc}">
 									</core:Icon>
 								</table:template>
 							</table:Column>

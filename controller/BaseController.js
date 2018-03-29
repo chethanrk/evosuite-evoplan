@@ -227,8 +227,6 @@ sap.ui.define([
                     this.callFunctionImport(oParams, "UpdateAssignment", "POST", true);
                 }
             }
-            eventBus.publish("BaseController", "refreshActionTable", {});
-
         },
         /**
          * delete assignments in bulk
