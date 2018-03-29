@@ -366,7 +366,7 @@ sap.ui.define([
         },
 
         /**
-         * set filter to varaint which should be tracked
+         * set filter to variant which should be tracked
          * @private
          */
         _updateFiltersDependencies: function (force) {

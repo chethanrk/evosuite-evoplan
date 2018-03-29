@@ -30,6 +30,8 @@ sap.ui.define([
             this._oDataTable = this._oDroppableTable;
             this._configureDataTable(this._oDataTable);
             this.getOwnerComponent().filterSettingsDialog.init(this.getView());
+            //add form fields to variant
+            this.initCustomVariant();
 
             //eventbus of assignemnt handling
             var eventBus = sap.ui.getCore().getEventBus();
@@ -52,8 +54,6 @@ sap.ui.define([
 		 * This hook is the same one that SAPUI5 controls get after being rendered.
 		 * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
 		onAfterRendering: function(oEvent) {
-			//add form fields to variant
-			this.initCustomVariant();
 			//trigger first filter
 			this.onTreeUpdateStarted();
 			//init droppable
@@ -129,7 +129,8 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onSelectVariant: function(oEvent) {
-			this._triggerFilterSearch();
+            console.log("onSelectVariant");
+            this._triggerFilterSearch();
 		},
 
 		/**
