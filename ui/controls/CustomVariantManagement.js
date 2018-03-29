@@ -1,11 +1,9 @@
 sap.ui.define([
     "sap/ui/comp/smartvariants/SmartVariantManagement",
-    "sap/ui/fl/Utils",
     "sap/ui/fl/Persistence",
-    "sap/ui/comp/variants/VariantItem",
     "sap/m/Token",
     "sap/ui/core/format/DateFormat"
-    ], function(SmartVariantManagement, FlexUtils, Persistence, VariantItem, Token, DateFormat) {
+    ], function(SmartVariantManagement, Persistence, Token, DateFormat) {
 
         var CustomVariantManagement = SmartVariantManagement.extend("com.evorait.evoplan.ui.controls.CustomVariantManagement",{
             metadata: {
@@ -106,139 +104,6 @@ sap.ui.define([
         };
 
         /**
-		 * Creates entries into the variant management control, based on the list of variants.
-		 * @private
-		 * @param {map} mVariants list of variants, as determined by the flex layer
-		 * @returns {array} containing all variant keys
-		 */
-		SmartVariantManagement.prototype._createVariantEntries = function(mVariants) {
-			var n = null;
-			var sVariantKey, sStandardVariantKey = null;
-			var oVariant, oVariantItem;
-			var aVariantKeys = [];
-			var aFavoriteChanges = [];
-	
-			this.removeAllVariantItems();
-	
-			if (mVariants) {
-				for (n in mVariants) {
-					if (n) {
-						oVariant = mVariants[n];
-						
-						if (oVariant.isVariant()) {
-							oVariantItem = new VariantItem({
-								key: oVariant.getId(),
-								// text: oVariant.getText("variantName"), // issue with curly brackets
-								global: !oVariant.isUserDependent(),
-								executeOnSelection: this._getExecuteOnSelection(oVariant),
-								lifecycleTransportId: oVariant.getRequest(),
-								lifecyclePackage: oVariant.getPackage(),
-								namespace: oVariant.getNamespace(),
-								readOnly: this._isReadOnly(oVariant),
-								labelReadOnly: oVariant.isLabelReadOnly(),
-								author: this._getLRepUser(oVariant)
-							});
-							oVariantItem.setText(oVariant.getText("variantName"));
-	
-							if (this._hasStoredStandardVariant(oVariant)) {
-								sStandardVariantKey = oVariant.getId();
-							}
-	
-							this.addVariantItem(oVariantItem);
-							aVariantKeys.push(oVariant.getId());
-							
-						} else {
-							/* eslint-disable no-lonely-if */
-							if ((oVariant.getChangeType() === sap.ui.comp.smartvariants.ChangeHandlerType.addFavorite) || (oVariant.getChangeType() === sap.ui.comp.smartvariants.ChangeHandlerType.removeFavorite)) {
-								aFavoriteChanges.push(oVariant);
-							}
-							/* eslint-enable no-lonely-if */
-						}
-					}
-				}
-			}
-	
-			if (this._oPersoControl) {
-				sVariantKey = this._getDefaultVariantKey();
-				if (sVariantKey) {
-					this.setInitialSelectionKey(sVariantKey); // set the current selected variant
-				}
-	
-				var bFlag = this._isApplicationVariant(this._oPersoControl);
-				if (bFlag) {
-					this.setIndustrySolutionMode(bFlag);
-					bFlag = FlexUtils.isVendorLayer();
-					this._setVendorLayer(bFlag);
-				}
-	
-				if (this.getIndustrySolutionMode()) {
-					if (sStandardVariantKey) {
-						this._sAppStandardVariantKey = sStandardVariantKey;
-						this.setStandardVariantKey(sStandardVariantKey);
-					}
-				}
-	
-				if (this._oControlPersistence && this._oControlPersistence.isVariantDownport()) {
-					this._enableManualVariantKey(true);
-				}
-			}
-			// favorites handling
-			this._aFavoriteChanges = aFavoriteChanges;
-			this.applyDefaultFavorites(aVariantKeys);
-			return aVariantKeys;
-		};
-
-		/**
-		 * Applies the favorites.
-		 * @protected
-		 * @param {array} aVariantKeys Contains the added variant keys
-		 * @param {boolean} bSelectionVariants Defines if this is the SelectionVariant scenario
-		 */
-		SmartVariantManagement.prototype.applyDefaultFavorites = function(aVariantKeys, bSelectionVariants) {
-			console.log(this._aFavoriteChanges);
-			if (this._aFavoriteChanges && (this._aFavoriteChanges.length > 0)) {
-				this._applyFavorites(this._aFavoriteChanges);
-			} else {
-				/* eslint-disable no-lonely-if */
-				if (!bSelectionVariants) {
-					this._applyDefaultFavorites(aVariantKeys);
-				} else {
-					console.log(aVariantKeys);
-					this._applyDefaultFavoritesForSelectionVariants(aVariantKeys);
-				}
-				/* eslint-enable no-lonely-if */
-			}
-		};
-		
-		SmartVariantManagement.prototype._applyDefaultFavoritesForSelectionVariants = function(aVariantKeys) {
-			aVariantKeys.forEach(function(sVariantKey) {
-				var oVariantItem = this.getItemByKey(sVariantKey);
-				if (oVariantItem) {
-					this._setFavorite(sVariantKey);
-				}
-			}.bind(this));
-		};
-
-		SmartVariantManagement.prototype._applyDefaultFavorites = function(aVariantKeys) {
-			if (!this._sAppStandardVariantKey) {
-				this.setStandardFavorite(true);
-				this._setFavorite(this.STANDARDVARIANTKEY);
-			}
-	
-			aVariantKeys.forEach(function(sVariantKey) {
-				var oChange = this._getChange(sVariantKey);
-				var oVariantItem = this.getItemByKey(sVariantKey);
-				if (oChange && oVariantItem) {
-					if (!this._isReadOnly(oChange)) {
-						this._setFavorite(sVariantKey);
-					} else if (oChange.getLayer() === "VENDOR") {
-						this._setFavorite(sVariantKey);
-					}
-				}
-			}.bind(this));
-		};
-
-        /**
          * Eventhandler for the save event of the <code>SmartVariantManagement</code> control.
          * @param {object} oVariantInfo Describes the variant to be saved
          */
@@ -284,7 +149,6 @@ sap.ui.define([
         CustomVariantManagement.prototype.addFilter = function (oControl) {
             var controlId = oControl.getId(),
                 isInside = false;
-
             for(var i = 0; i < this.aFilterControls.length; i++){
                 var objId = this.aFilterControls[i].getId();
                 if(objId === controlId){
@@ -310,6 +174,7 @@ sap.ui.define([
                 }
             }
         };
+
 
         /**
          * create persitency of this variant management
@@ -508,6 +373,9 @@ sap.ui.define([
                 if (oVariantInfo.def === true) {
                     this._oControlPersistence.setDefaultVariantIdSync(sId);
                 }
+
+                // new variants are always created with favorite flag set
+                this._setFavorite(sId);
             }
         };
 

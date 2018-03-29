@@ -46,6 +46,7 @@
                                         persistencyKey="{viewModel>/persistencyKeyTree}"
                                         entitySet="{viewModel>/treeSet}">
                                 </controls:CustomVariantManagement>
+
                                 <Button type="Transparent"
                                         id="filterResourceButton"
                                         icon="sap-icon://filter"
