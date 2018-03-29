@@ -73,7 +73,7 @@ sap.ui.define([
                                 oDefaultContent = that._getChangeContent(sKey);
                                 if (oDefaultContent) {
                                     that.setDefaultVariantKey(sKey); // set the default variant
-                                    that.setInitialSelectionKey(sKey); // set the current selected variant
+                                    that.setInitialSelectionKey(sKey, oDefaultContent); // set the current selected variant
                                 }
                             }
 
@@ -81,7 +81,6 @@ sap.ui.define([
                                 //set standard variant content global
                                 that._setStandardVariant(oDefaultContent);
                             }
-
                         }
                         that._initialize(parameter);
 
@@ -206,7 +205,6 @@ sap.ui.define([
             this.setProperty("entitySet", sKey);
         };
 
-
         CustomVariantManagement.prototype._initialize = function(parameter) {
             var sKey, oContent = null;
             sKey = this.getSelectionKey();
@@ -229,6 +227,10 @@ sap.ui.define([
             }
 
             this.fireEvent("initialise", parameter);
+        };
+
+        CustomVariantManagement.prototype.setStandardVariantValues = function(oContent) {
+            this._standardVariantValues = oContent;
         };
 
         CustomVariantManagement.prototype._setStandardVariant = function(oContent) {
@@ -272,6 +274,10 @@ sap.ui.define([
             if(oFilterData){
                 for (var i = 0; i < aFilterInfo.length; i++) {
                     this._applyFilterContent(aFilterInfo[i], oFilterData);
+                }
+
+                if(bInitial){
+                    this.fireEvent("select", oContent);
                 }
             }
         };
