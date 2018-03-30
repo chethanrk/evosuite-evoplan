@@ -31,7 +31,7 @@ sap.ui.define([
             this._configureDataTable(this._oDataTable);
             this.getOwnerComponent().filterSettingsDialog.init(this.getView());
             //add form fields to variant
-            this.initCustomVariant();
+            this._initCustomVariant();
 
             //eventbus of assignemnt handling
             var eventBus = sap.ui.getCore().getEventBus();
@@ -54,8 +54,6 @@ sap.ui.define([
 		 * This hook is the same one that SAPUI5 controls get after being rendered.
 		 * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
 		onAfterRendering: function(oEvent) {
-			//trigger first filter
-			this.onTreeUpdateStarted();
 			//init droppable
 			this.refreshDroppable(oEvent);
 			//init planning calendar dialog
@@ -81,6 +79,11 @@ sap.ui.define([
             if(parameters.busy === false){
                 this._jDroppable(this);
                 this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+
+                if(this.hasCustomDefaultVariant){
+                    this.hasCustomDefaultVariant = false;
+                    this._triggerFilterSearch();
+				}
             }else{
                 this.onTreeUpdateStarted();
                 this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
@@ -123,13 +126,19 @@ sap.ui.define([
             this.getOwnerComponent().filterSettingsDialog.open(this.getView());
         },
 
+        onInitialiseVariant: function (oEvent) {
+        	var oParameters = oEvent.getParameters();
+            if(oParameters.defaultContent && !oParameters.isStandard){
+            	this.hasCustomDefaultVariant = true;
+            }
+        },
+
 		/**
 		 * when a new variant is selected trigger search
 		 * new Filters are bind to tree table
 		 * @param oEvent
 		 */
 		onSelectVariant: function(oEvent) {
-            console.log("onSelectVariant");
             this._triggerFilterSearch();
 		},
 
@@ -246,7 +255,7 @@ sap.ui.define([
          * init custom smart variant management and add filter controls to it
          * @private
          */
-        initCustomVariant: function () {
+        _initCustomVariant: function () {
             var oVariant = this.byId("customResourceVariant");
             this.getOwnerComponent().filterSettingsDialog.setVariant(oVariant);
         },

@@ -181,8 +181,7 @@ sap.ui.define([
          */
         onFilterSettingsConfirm: function(oEvent) {
             this.openGroupFilterSuggest = false;
-            var eventBus = sap.ui.getCore().getEventBus();
-            eventBus.publish("FilterSettingsDialog", "triggerSearch", {});
+            this.triggerSearch();
         },
 
         /**
@@ -363,6 +362,11 @@ sap.ui.define([
         setVariant: function (oVariant) {
             this._oVariant = oVariant;
             this._updateFiltersDependencies(true);
+        },
+
+        triggerSearch: function () {
+            var eventBus = sap.ui.getCore().getEventBus();
+            eventBus.publish("FilterSettingsDialog", "triggerSearch", {});
         },
 
         /**

@@ -39,6 +39,7 @@
                                 <controls:CustomVariantManagement
                                         id="customResourceVariant"
                                         select="onSelectVariant"
+                                        initialise="onInitialiseVariant"
                                         enabled="true"
                                         showExecuteOnSelection="true"
                                         showShare="true"
