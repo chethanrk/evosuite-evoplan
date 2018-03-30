@@ -2,8 +2,9 @@ sap.ui.define([
     "sap/ui/comp/smartvariants/SmartVariantManagement",
     "sap/ui/fl/Persistence",
     "sap/m/Token",
+    "sap/m/Tokenizer",
     "sap/ui/core/format/DateFormat"
-    ], function(SmartVariantManagement, Persistence, Token, DateFormat) {
+    ], function(SmartVariantManagement, Persistence, Token, Tokenizer, DateFormat) {
 
         var CustomVariantManagement = SmartVariantManagement.extend("com.evorait.evoplan.ui.controls.CustomVariantManagement",{
             metadata: {
@@ -62,6 +63,7 @@ sap.ui.define([
                         if (!that._bIsInitialized) {
                             that._bIsInitialized = true;
                             parameter.variantKeys = that._createVariantEntries(mVariants);
+                            parameter.isStandard = true;
 
                             bFlag = that._getExecuteOnSelectOnStandardVariant();
                             if (bFlag !== null) {
@@ -73,15 +75,18 @@ sap.ui.define([
                                 oDefaultContent = that._getChangeContent(sKey);
                                 if (oDefaultContent) {
                                     that.setDefaultVariantKey(sKey); // set the default variant
-                                    that.setInitialSelectionKey(sKey); // set the current selected variant
+                                    that.setInitialSelectionKey(sKey, oDefaultContent); // set the current selected variant
+                                    parameter.defaultContent = oDefaultContent;
+                                    parameter.isStandard = false;
                                 }
                             }
 
                             if (that.getStandardVariantKey() === sKey) {
                                 //set standard variant content global
                                 that._setStandardVariant(oDefaultContent);
+                                parameter.isStandard = true;
+                                parameter.defaultContent = oDefaultContent;
                             }
-
                         }
                         that._initialize(parameter);
 
@@ -141,15 +146,38 @@ sap.ui.define([
             }
         };
 
-
-
         /**
          * public function
          * add filter controls to array
          * @param oControl
          */
         CustomVariantManagement.prototype.addFilter = function (oControl) {
-            this.aFilterControls.push(oControl);
+            var controlId = oControl.getId(),
+                isInside = false;
+            for(var i = 0; i < this.aFilterControls.length; i++){
+                var objId = this.aFilterControls[i].getId();
+                if(objId === controlId){
+                    isInside = true;
+                    break;
+                }
+            }
+            if(!isInside){
+                this.aFilterControls.push(oControl);
+            }
+        };
+
+        /**
+         * remove filter control from array
+         * @param oControl
+         */
+        CustomVariantManagement.prototype.removeFilter = function (oControl) {
+            var controlId = oControl.getId();
+            for(var i = 0; i < this.aFilterControls.length; i++){
+                var objId = this.aFilterControls[i].getId();
+                if(objId === controlId){
+                    this.aFilterControls.splice(i, 1);
+                }
+            }
         };
 
 
@@ -183,25 +211,28 @@ sap.ui.define([
             this.setProperty("entitySet", sKey);
         };
 
-
         CustomVariantManagement.prototype._initialize = function(parameter) {
             var sKey, oContent = null;
-            sKey = this.getSelectionKey();
 
+            sKey = this.getSelectionKey();
             if (sKey && (sKey !== this.getStandardVariantKey())) {
                 oContent = this._getChangeContent(sKey);
             } else if (this._oAppStdContent) {
                 oContent = this._oAppStdContent;
+            } else{
+                oContent = this._fetchVariant();
+                if (oContent) {
+                    oContent = jQuery.extend(true, {}, oContent);
+                }
             }
 
-
-            oContent = this._fetchVariant();
-            if (oContent) {
-                oContent = jQuery.extend(true, {}, oContent);
+            if (this._sAppStandardVariantKey) {
+                this._setStandardVariant(this._oAppStdContent);
+            } else {
+                this._setStandardVariant();
             }
 
             if (oContent) {
-                //init apply
                 this._applyControlVariant(oContent, true);
             }
 
@@ -249,6 +280,10 @@ sap.ui.define([
             if(oFilterData){
                 for (var i = 0; i < aFilterInfo.length; i++) {
                     this._applyFilterContent(aFilterInfo[i], oFilterData);
+                }
+
+                if(bInitial){
+                    this.fireEvent("select", oContent);
                 }
             }
         };
@@ -350,6 +385,9 @@ sap.ui.define([
                 if (oVariantInfo.def === true) {
                     this._oControlPersistence.setDefaultVariantIdSync(sId);
                 }
+
+                // new variants are always created with favorite flag set
+                this._setFavorite(sId);
             }
         };
 
@@ -632,20 +670,41 @@ sap.ui.define([
          * @private
          */
         CustomVariantManagement.prototype._setControlToken = function(oControl, aValues){
+            this._removeControlTokens(oControl);
+
             try{
-                var aTokens = [];
-                oControl.removeAllTokens();
                 if(aValues instanceof Array){
                     for (var l = 0; l < aValues.length; l++) {
-                        aTokens.push(new Token({key: aValues[l].key, text: aValues[l].text}));
+                        oControl.addToken(new Token({key: aValues[l].key, text: aValues[l].text}));
+                        oControl.fireTokenUpdate({type: Tokenizer.TokenUpdateType.Added});
                     }
-                    oControl.setTokens(aTokens);
                 }
             }catch(e){
                 console.error("set token in _setControlToken not working!");
-            };
+            }
         };
 
+        /**
+         * remove all token
+         * @param oControl
+         * @private
+         */
+        CustomVariantManagement.prototype._removeControlTokens = function (oControl) {
+            try{
+                var aTokens = oControl.getTokens();
+                for (var i = 0; i < aTokens.length; i++) {
+                    oControl.removeToken(aTokens[i]);
+                    oControl.fireTokenUpdate({type: Tokenizer.TokenUpdateType.Removed});
+                }
+
+            }catch(e){
+                console.error("remove all token in _removeControlTokens not working!");
+            }
+        };
+
+        /**
+         * Exit
+         */
         CustomVariantManagement.prototype.exit = function() {
             SmartVariantManagement.prototype.exit.apply(this, arguments);
 

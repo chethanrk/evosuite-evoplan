@@ -3,21 +3,25 @@ sap.ui.define([
 	"sap/ui/Device",
     "sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/models",
+	"com/evorait/evoplan/assets/js/moment-with-locales.min",
 	"com/evorait/evoplan/controller/ErrorHandler",
     "com/evorait/evoplan/controller/AssignInfoDialog",
     "com/evorait/evoplan/controller/AssignTreeDialog",
     "com/evorait/evoplan/controller/StatusSelectDialog",
-    "com/evorait/evoplan/controller/AssignActionsDialog"
+    "com/evorait/evoplan/controller/AssignActionsDialog",
+    "com/evorait/evoplan/controller/FilterSettingsDialog"
 ], function(
 	UIComponent,
 	Device,
 	JSONModel,
 	models,
+	moment,
 	ErrorHandler,
 	AssignInfoDialog,
 	AssignTreeDialog,
     StatusSelectDialog,
-    AssignActionsDialog) {
+    AssignActionsDialog,
+    FilterSettingsDialog) {
 
 	"use strict";
 
@@ -147,6 +151,8 @@ sap.ui.define([
          * @private
          */
         _initDialogs: function () {
+            //resource tree filter settings dialog
+            this.filterSettingsDialog = new FilterSettingsDialog();
 			//display and change assignment dialog
             this.assignInfoDialog = new AssignInfoDialog();
             this.assignInfoDialog.init();
