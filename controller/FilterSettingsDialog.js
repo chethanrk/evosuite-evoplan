@@ -197,7 +197,9 @@ sap.ui.define([
                 this.counterResourceFilter += 1;
 
             }else if (oEvent.getParameter('type') === Tokenizer.TokenUpdateType.Removed) {
-                tokenLen -= 1;
+            	if(tokenLen > 0){
+            		tokenLen -= 1;
+            	}
                 this.counterResourceFilter -= 1;
             }
 

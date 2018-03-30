@@ -681,7 +681,7 @@ sap.ui.define([
                 }
             }catch(e){
                 console.error("set token in _setControlToken not working!");
-            };
+            }
         };
 
         /**
