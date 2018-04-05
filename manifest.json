@@ -66,6 +66,7 @@
 		"ach": "CA"
 	},
 	"sap.ui": {
+		"_version": "1.3.0",
 		"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://task",
@@ -88,6 +89,7 @@
 		]
 	},
 	"sap.ui5": {
+		"_version": "1.2.0",
 		"config": {
 			"fullWidth": true
 		},
