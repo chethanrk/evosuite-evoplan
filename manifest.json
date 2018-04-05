@@ -44,7 +44,7 @@
 					"subTitle": "{{appDescription}}",
 					"indicatorDataSource": {
 						"dataSource": "mainService",
-						"path": "/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandSet/$count?$filter=UserStatusShortText eq 'INIT'",
+						"path": "/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandSet/$count?$filter=Status eq 'INIT'",
 						"refresh": 450
 					},
 					"signature": {
@@ -75,9 +75,10 @@
 			"phone": true
 		},
 		"supportedThemes": [
-			"sap_hcb",
-			"sap_bluecrystal",
-			"sap_belize"
+			"sap_belize",
+			"sap_belize_plus",
+			"sap_belize_hcb",
+			"sap_belize_hcw"
 		]
 	},
 	"sap.ui5": {
@@ -90,19 +91,19 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.48.0",
+			"minUI5Version": "1.52.0",
 			"libs": {
 				"sap.ui.core": {
-					"minVersion": "1.48.0"
+					"minVersion": "1.52.0"
 				},
 				"sap.m": {
-					"minVersion": "1.48.0"
+					"minVersion": "1.52.0"
 				},
 				"sap.uxap": {
-					"minVersion": ""
+					"minVersion": "1.52.0"
 				},
 				"sap.ui.comp": {
-					"minVersion": ""
+					"minVersion": "1.52.0"
 				}
 			}
 		},
