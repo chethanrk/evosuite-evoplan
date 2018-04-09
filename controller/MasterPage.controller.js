@@ -242,6 +242,9 @@ sap.ui.define([
             if (this._oPlanningCalDialog) {
                 this._oPlanningCalDialog.destroy();
             }
+            if(this.getOwnerComponent().filterSettingsDialog) {
+                this.getOwnerComponent().filterSettingsDialog.getDialog().destroy();
+            }
         },
 
         /* =========================================================== */

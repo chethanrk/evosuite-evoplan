@@ -48,6 +48,13 @@
     box-shadow: inset 0 -0.0625rem #d1e0ee !important;
 }
 
+.sapUiTheme-sap_belize_plus .tableContentPage .sapMPageHeader{
+    background-color: #3f5161 !important;
+    box-shadow: inset 0 -0.0625rem #4f667a !important;
+}
+
+
+
 .assignInfoDialog .sapUiFormTitle{
     display: none;
 }

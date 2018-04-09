@@ -8,11 +8,12 @@ sap.ui.define([
     "use strict";
 
     return BaseController.extend("com.evorait.evoplan.controller.AssignActionsDialog", {
-
+        formatter: formatter,
 
         init: function () {
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog,this);
+
         },
         /**
          * initialize and get dialog object
@@ -174,7 +175,12 @@ sap.ui.define([
         _getResourceFilters: function(aSelectedResources){
             var aResources = [],
                 aResourceFilters = [],
-                oModel = this._oView.getModel();
+                oModel = this._oView.getModel(),
+                oViewFilterSettings = this._oView.getController().getOwnerComponent().filterSettingsDialog,
+                sDateFrom,
+                sDateTo;
+
+            var aFilters=[],aActualFilters=[];
 
             for (var i = 0; i < aSelectedResources.length; i++) {
                 var obj = oModel.getProperty(aSelectedResources[i]);
@@ -184,13 +190,34 @@ sap.ui.define([
                     aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
                 }
             }
+
+
+            var sDateControl1 = oViewFilterSettings.getFilterDateRange()[0].getValue();
+            sDateFrom = this.formatter.date(sDateControl1);
+
+            // var sDateControl2 = oViewFilterSettings.getFilterDateRange()[1].getValue();
+            // sDateTo = this.formatter.date(sDateControl2);
+
+            // aResources.push(new Filter("DateFrom", FilterOperator.GE, sDateControl1));
+
             if (aResources.length > 0) {
-                aResourceFilters.push(new Filter({
+
+                aFilters.push(new Filter({
                     filters: aResources,
                     and: false
                 }));
+                aFilters.push(new Filter("DateFrom", FilterOperator.GE, sDateControl1));
+
+                if(aFilters.length > 0){
+                    aActualFilters.push(new Filter({
+                            filters: aFilters,
+                            and: true
+                        }
+                    ));
+                }
+
             }
-            return aResourceFilters;
+            return aActualFilters;
         },
         /**
          * Filters the demand by demand guids for filter assignments

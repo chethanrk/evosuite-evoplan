@@ -30,6 +30,7 @@
                     visibleRowCountMode="Auto"
                     class="listTreeTable sapUiSizeCondensed"
                     rowSelectionChange="onSelectionChange"
+                    selectionBehavior = "Row"
                     rows="{path : '/ResourceHierarchySet'}">
 
                 <table:columns>
@@ -44,9 +45,9 @@
                                         formatter: '.formatter.formatResourceTitle'
                                     }"
                                     icon="{
-                                      path: 'NodeType',
-                                      formatter: '.formatter.getResourceIcon'
-                                    }"/>
+                                              parts:[{path: 'NodeType'},{path: 'StatusIcon'}],
+                                              formatter: '.formatter.getResourceIcon'
+                                     }"/>
                         </table:template>
                     </table:Column>
                     <table:Column

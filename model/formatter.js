@@ -113,7 +113,7 @@ sap.ui.define([
 		getCalendarView: function(sValue){
 			var sView = resourceFormats[sValue];
 			if (sView) {
-				return sView.calendarView || "Hour";
+				return sView.calendarView || "One Month";
 			}
 		}
 	};
