@@ -9,7 +9,10 @@ sap.ui.define([
     "com/evorait/evoplan/controller/AssignTreeDialog",
     "com/evorait/evoplan/controller/StatusSelectDialog",
     "com/evorait/evoplan/controller/AssignActionsDialog",
-    "com/evorait/evoplan/controller/FilterSettingsDialog"
+    "com/evorait/evoplan/controller/FilterSettingsDialog",
+    "sap/m/MessagePopover",
+    "sap/m/MessagePopoverItem",
+    "sap/m/Link"
 ], function(
 	UIComponent,
 	Device,
@@ -21,7 +24,10 @@ sap.ui.define([
 	AssignTreeDialog,
     StatusSelectDialog,
     AssignActionsDialog,
-    FilterSettingsDialog) {
+    FilterSettingsDialog,
+    MessagePopover,
+    MessagePopoverItem,
+    Link) {
 
 	"use strict";
 
@@ -100,6 +106,31 @@ sap.ui.define([
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();
+
+			// Message popover link
+            var oLink = new Link({
+                text: "{i18n>xtit.showMoreInfo}",
+                href: "",
+                target: "_blank"
+            });
+
+            // Message popover template
+            var oMessageTemplate = new MessagePopoverItem({
+                type: '{MessageModel>type}',
+                title: '{MessageModel>title}',
+                description: '{MessageModel>description}',
+                subtitle: '{MessageModel>subtitle}',
+                counter: '{MessageModel>counter}',
+                link: oLink
+            });
+
+            //Message Popover
+            var oMessagePopover = new MessagePopover("idMessagePopover",{
+                items: {
+                    path: 'MessageModel>/',
+                    template: oMessageTemplate
+                }
+            });
 		},
 
 		/**

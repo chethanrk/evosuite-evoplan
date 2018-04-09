@@ -8,36 +8,12 @@ sap.ui.define([
 	"sap/ui/table/Row",
 	"sap/ui/table/RowSettings",
 	"sap/m/MessageToast",
-	"sap/m/MessagePopover",
-	"sap/m/MessagePopoverItem",
-	"sap/m/Link",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem"
-], function(BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, RowSettings, MessageToast, MessagePopover,
-	MessagePopoverItem, Link, RowAction, RowActionItem) {
+], function(BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, RowSettings, MessageToast,
+	 RowAction, RowActionItem) {
 	"use strict";
 
-	var oLink = new Link({
-		text: "{i18n>xtit.showMoreInfo}",
-		href: "",
-		target: "_blank"
-	});
-
-	var oMessageTemplate = new MessagePopoverItem({
-		type: '{MessageModel>type}',
-		title: '{MessageModel>title}',
-		description: '{MessageModel>description}',
-		subtitle: '{MessageModel>subtitle}',
-		counter: '{MessageModel>counter}',
-		link: oLink
-	});
-
-	var oMessagePopover = new MessagePopover({
-		items: {
-			path: 'MessageModel>/',
-			template: oMessageTemplate
-		}
-	});
 
 	return BaseController.extend("com.evorait.evoplan.controller.List", {
 
@@ -56,7 +32,8 @@ sap.ui.define([
 			this._oDataTable = this._oDraggableTable.getTable();
 			this._configureDataTable(this._oDataTable);
 			this._aSelectedRowsIdx = [];
-			this.getView().addDependent(oMessagePopover);
+			this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
+			this.getView().addDependent(this._oMessagePopover);
 
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
@@ -169,13 +146,16 @@ sap.ui.define([
         },
 
 		onMessagePopoverPress: function(oEvent) {
-			oMessagePopover.openBy(oEvent.getSource());
+            this._oMessagePopover.openBy(oEvent.getSource());
 		},
 
         onExit: function() {
         	if(this._infoDialog){
         		this._infoDialog.destroy();
         	}
+        	if(this._oMessagePopover){
+                this._oMessagePopover.destroy();
+			}
         },
 
         /* =========================================================== */
