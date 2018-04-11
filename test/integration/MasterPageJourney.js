@@ -25,8 +25,8 @@ sap.ui.require(
             When.onTheMasterPage.iPressOnFilterButton();
 			// Assertions
 			Then.onTheMasterPage.iShouldSeeFilterDialog()
-                .and.iShouldSeeFilterItemWithTitle("xtit.filterTitleView");
-                //.and.iTeardownMyAppFrame();
+                .and.iShouldSeeFilterItemWithTitle("xtit.filterTitleView")
+                .and.iTeardownMyAppFrame();
 		});
  
 	}

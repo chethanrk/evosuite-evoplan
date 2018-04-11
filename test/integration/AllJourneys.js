@@ -15,7 +15,7 @@ sap.ui.require([
 	"com/evorait/evoplan/test/integration/pages/Browser",
 	"com/evorait/evoplan/test/integration/pages/MasterPage",
 	"com/evorait/evoplan/test/integration/pages/NotFound",
-	/*"com/evorait/evoplan/test/integration/pages/OverviewPage",*/
+	"com/evorait/evoplan/test/integration/pages/OverviewPage",
 	"com/evorait/evoplan/test/integration/pages/List"
 ], function(Opa5, Common) {
 	"use strict";
@@ -29,7 +29,8 @@ sap.ui.require([
 	sap.ui.require([
 		"com/evorait/evoplan/test/integration/BusyJourney",
 		"com/evorait/evoplan/test/integration/MasterPageJourney",
-		/*"com/evorait/evoplan/test/integration/OverviewPageJourney",*/
+		"com/evorait/evoplan/test/integration/OverviewPageJourney",
+		"com/evorait/evoplan/test/integration/NavigationJourney",
 		"com/evorait/evoplan/test/integration/ListJourney"
 	], function() {
 		QUnit.start();

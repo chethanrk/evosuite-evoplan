@@ -150,8 +150,8 @@ sap.ui.define([
 								// Don't remember objects just strings since IE will not allow accessing objects of destroyed frames
 								this.getContext().currentItem = {
 									bindingPath: oBindingContext.getPath(),
-									id: oBindingContext.getProperty("ObjectID"),
-									name: oBindingContext.getProperty("Name")
+									id: oBindingContext.getProperty(oBindingContext.getPath()+"/Guid"),
+									name: oBindingContext.getProperty(oBindingContext.getPath()+"/DemandDesc")
 								};
 							}
 						}));
