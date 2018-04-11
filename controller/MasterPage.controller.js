@@ -88,7 +88,7 @@ sap.ui.define([
 				}
             }else{
                 this.onTreeUpdateStarted();
-                this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
+                // this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
             }
         },
 
@@ -181,7 +181,7 @@ sap.ui.define([
 		 */
 		onPressShowPlanningCal: function(oEvent) {
 			this._setCalendarModel();
-			/*this._oPlanningCalDialog.open();*/ // As we are opening the dialog when set model data
+			this._oPlanningCalDialog.open(); // As we are opening the dialog when set model data
 		},
 
 		onCalendarModalCancel: function(oEvent) {
@@ -377,6 +377,7 @@ sap.ui.define([
 		_setCalendarModel: function() {
 			var aUsers = [],
                 aResourceFilters = [],
+                aActualFilters = [],
                 oModel = this.getModel(),
                 oResourceBundle = this.getResourceBundle(),
                 oViewFilterSettings = this.getOwnerComponent().filterSettingsDialog;
@@ -394,15 +395,27 @@ sap.ui.define([
 					aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
 				}
 			}
+            var sDateControl1 = oViewFilterSettings.getFilterDateRange()[0].getValue();
+            var sDateControl2 = oViewFilterSettings.getFilterDateRange()[1].getValue();
+
 			if (aUsers.length > 0) {
 				aResourceFilters.push(new Filter({
 					filters: aUsers,
 					and: false
 				}));
+
+                aResourceFilters.push(new Filter("DateFrom", FilterOperator.BT, sDateControl1,sDateControl2));
+
+                if(aResourceFilters.length > 0){
+                    aActualFilters.push(new Filter({
+                            filters: aResourceFilters,
+                            and: true
+                        }
+                    ));
+                }
 			}
 
-			var sDateControl1 = oViewFilterSettings.getFilterDateRange()[0].getValue();
-			sDateControl1 = this.formatter.date(sDateControl1);
+
 
 			var sCalendarView;
 			var oViewFilterItems = oViewFilterSettings.getFilterSelectView().getItems();
@@ -412,27 +425,55 @@ sap.ui.define([
 					sCalendarView = oViewFilterItem.getKey();
 				}
 			}
-			
-			oModel.read("/ResourceSet", {
+            this._oPlanningCalDialog.setBusy(true);
+			oModel.read("/AssignmentSet", {
 				filters: aResourceFilters,
 				urlParameters: {
-					"$expand": "ResourceToAssignments,ResourceToAssignments/Demand" // To fetch the assignments associated with Resource or ResourceGroup
+					"$expand": "Resource,Demand" // To fetch the assignments associated with Resource or ResourceGroup
 				},
 				success: function(data, response) {
+
 					var oCalendarModel = new JSONModel();
 					oCalendarModel.setData({
 						startDate: new Date(sDateControl1),
 						viewKey: sCalendarView,
-						resources: data.results
+						resources: this._createData(data)
 					});
 					this.setModel(oCalendarModel, "calendarModel");
-					this._oPlanningCalDialog.open();
+                    this._oPlanningCalDialog.setBusy(false);
+					// this._oPlanningCalDialog.open();
 				}.bind(this),
 				error: function(error, response) {
+                    this._oPlanningCalDialog.setBusy(false);
 					MessageToast.show(oResourceBundle.getText("errorMessage"), {duration: 5000});
 				}.bind(this)
 			});
 		},
+        /**
+         * Create data for planning calendar
+         *
+         * @param data
+         * @return {Array}
+         * @private
+         */
+        _createData:function(data){
+		    var aResources = [],
+            oResourceMap={};
+		    for(var i in data.results){
+                oResourceMap[data.results[i].ObjectId] = data.results[i].Resource;
+                oResourceMap[data.results[i].ObjectId].Assignments = [];
+            }
+            for(var j in oResourceMap){
+                var sObjectId = oResourceMap[j].ObjectId;
+                for(var k in data.results){
+                    if(data.results[k].ObjectId === sObjectId){
+                        oResourceMap[j].Assignments.push(data.results[k])
+                    }
+                }
+                aResources.push(oResourceMap[j]);
+            }
+            return aResources;
+        },
 
 		/**
 		 * Method will refresh the data of tree by restoring its state

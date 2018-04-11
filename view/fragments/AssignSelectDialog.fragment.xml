@@ -24,14 +24,19 @@
                     id="assignModalTable"
                     selectionMode="Single"
                     enableColumnReordering="false"
-                    expandFirstLevel="true"
                     columnHeaderVisible="false"
                     visibleRowCount="10"
                     visibleRowCountMode="Auto"
                     class="listTreeTable sapUiSizeCondensed"
                     rowSelectionChange="onSelectionChange"
                     selectionBehavior = "Row"
-                    rows="{path : '/ResourceHierarchySet'}">
+                    rows="{
+                        		path : '/ResourceHierarchySet',
+                        		parameters:{
+                        			numberOfExpandedLevels:1,
+                        			restoreTreeStateAfterChange:true
+                        		}
+                    }">
 
                 <table:columns>
                     <table:Column

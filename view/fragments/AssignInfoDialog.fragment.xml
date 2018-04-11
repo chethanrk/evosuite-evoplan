@@ -80,7 +80,7 @@
                     <Button id="reassignDialogButton"
                             text="{i18n>xbut.selectResource}"
                             press="onPressReAssign"
-                            enabled="false"
+                            enabled="{assignment>/isNewAssignment}"
                             visible="{assignment>/AllowReassign}"/>
 
                     <Label text="{i18n>xfld.newAssignment}" visible="{assignment>/isNewAssignment}" />

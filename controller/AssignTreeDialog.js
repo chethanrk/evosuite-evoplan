@@ -125,10 +125,11 @@ sap.ui.define([
         },
 
         refreshDialogTable: function (oEvent) {
-            var oTable = sap.ui.getCore().byId("assignModalTable");
-            var binding = oTable.getBinding("rows");
-            var aFilters = this._oView.getModel("viewModel").getProperty("/resourceFilterAll");
-            binding.filter(aFilters, "Application");
+                var oTable = sap.ui.getCore().byId("assignModalTable");
+                var binding = oTable.getBinding("rows");
+                var aFilters = this._oView.getModel("viewModel").getProperty("/resourceFilterAll");
+                binding.filter(aFilters, "Application");
+
         },
 
         /**

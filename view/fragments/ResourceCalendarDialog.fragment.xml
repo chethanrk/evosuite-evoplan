@@ -29,7 +29,7 @@
                                        }"
                                 title="{calendarModel>GroupDescription}"
                                 text="{calendarModel>ResourceDescription}"
-                                appointments="{path : 'calendarModel>ResourceToAssignments/results', templateShareable: 'true'}">
+                                appointments="{path : 'calendarModel>Assignments', templateShareable: 'true'}">
                             <appointments>
                                 <unified:CalendarAppointment
                                         startDate="{calendarModel>DateFrom}"

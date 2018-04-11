@@ -193,20 +193,15 @@ sap.ui.define([
 
 
             var sDateControl1 = oViewFilterSettings.getFilterDateRange()[0].getValue();
-            sDateFrom = this.formatter.date(sDateControl1);
+            var sDateControl2 = oViewFilterSettings.getFilterDateRange()[1].getValue();
 
-            // var sDateControl2 = oViewFilterSettings.getFilterDateRange()[1].getValue();
-            // sDateTo = this.formatter.date(sDateControl2);
-
-            // aResources.push(new Filter("DateFrom", FilterOperator.GE, sDateControl1));
 
             if (aResources.length > 0) {
-
                 aFilters.push(new Filter({
                     filters: aResources,
                     and: false
                 }));
-                aFilters.push(new Filter("DateFrom", FilterOperator.GE, sDateControl1));
+                aFilters.push(new Filter([new Filter("DateFrom", FilterOperator.BT, sDateControl1,sDateControl2)],false));
 
                 if(aFilters.length > 0){
                     aActualFilters.push(new Filter({
@@ -215,7 +210,6 @@ sap.ui.define([
                         }
                     ));
                 }
-
             }
             return aActualFilters;
         },
