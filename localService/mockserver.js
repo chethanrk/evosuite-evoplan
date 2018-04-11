@@ -50,7 +50,7 @@ sap.ui.define([
                     path: new RegExp("GetSystemInformation(.*)"),
                     response: function(oXhr, sUrlParams) {
                         jQuery.sap.log.debug("Incoming request for GetSystemInformation");
-                        var oResponse = $.ajax({
+                        var oResponse = jQuery.sap.sjax({
                             url: sJsonFilesUrl+"/GetSystemInformation.json"
                         });
                         oXhr.respondJSON(200, {}, JSON.stringify(oResponse.data));

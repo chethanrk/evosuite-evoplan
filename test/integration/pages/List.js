@@ -27,7 +27,7 @@ sap.ui.define([
 					var sId = oSearchField.getId(),
 						sFilteredValue;
 					if(sId.search("/DemandDesc/i") === -1)
-						sFilteredValue = oModel.getProperty("/"+aKeys[i]+"/UserStatusShortText");
+						sFilteredValue = oModel.getProperty("/"+aKeys[i]+"/Status");
 					else
 						sFilteredValue = oModel.getProperty("/"+aKeys[i]+"/DemandDesc");
 						
@@ -107,7 +107,7 @@ sap.ui.define([
 				},
 				iSearchWithDemandStatusValue:function(sStatus){
 						this.waitFor({
-							id : createIdFor(sFilter, "UserStatusShortText"),
+							id : createIdFor(sFilter, "Status"),
 							viewName : sViewName,
 							actions: new EnterText({
 								text: sStatus
@@ -146,8 +146,8 @@ sap.ui.define([
 								// Don't remember objects just strings since IE will not allow accessing objects of destroyed frames
 								this.getContext().currentItem = {
 									bindingPath: oBindingContext.getPath(),
-									id: oBindingContext.getProperty("ObjectID"),
-									name: oBindingContext.getProperty("Name")
+									id: oBindingContext.getProperty(oBindingContext.getPath()+"/Guid"),
+									name: oBindingContext.getProperty(oBindingContext.getPath()+"/DemandDesc")
 								};
 							}
 						}));
@@ -250,7 +250,7 @@ sap.ui.define([
 					},
 					iShouldSeeTheTableEntriesWithStatus:function(sStatus){
 						return this.waitFor({
-							id : [sTableId, createIdFor(sFilter, "UserStatusShortText")],
+								id : [sTableId, createIdFor(sFilter, "Status")],
 							viewName : sViewName,
 							check:  allItemsInTheListContainTheSearchTerm,
 							success : function () {
