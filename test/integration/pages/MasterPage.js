@@ -7,8 +7,9 @@ sap.ui.define([
 		"sap/ui/test/matchers/AggregationLengthEquals",
 		"sap/ui/test/matchers/BindingPath",
     	"sap/ui/test/matchers/Properties",
-        "sap/ui/test/matchers/I18NText"
-	], function(Opa5, Press, EnterText, Common, PropertyStrictEquals, AggregationLengthEquals, BindingPath, Properties, I18NText) {
+        "sap/ui/test/matchers/I18NText",
+        "sap/ui/test/matchers/AggregationContainsPropertyEqual"
+	], function(Opa5, Press, EnterText, Common, PropertyStrictEquals, AggregationLengthEquals, BindingPath, Properties, I18NText, AggregationContainsPropertyEqual) {
 		"use strict";
 
 		var sViewName = "MasterPage",
@@ -150,13 +151,13 @@ sap.ui.define([
                     iShouldSeeFilterItemWithTitle: function (sExpectedText) {
                         sExpectedText = oI18nResourceBundle.getText(sExpectedText);
                         return this.waitFor({
-                            searchOpenDialogs : true,
-                            controlType: "sap.m.ViewSettingsFilterItem",
-                            viewName: sViewName,
-                            matchers: new Properties({
-                                text: sExpectedText
-                            }),
-                            success: function () {
+                        	searchOpenDialogs : true,
+                        	id: "filterViewDialog",
+                        	viewName: sViewName,
+                            matchers:function(oDialog){
+                            	console.log(oDialog);
+                            },
+                            success: function (oItems) {
                                 Opa5.assert.ok(true, "The filter dialog has filter settings for " + sExpectedText);
                             },
                             errorMessage: "Can not find in filter dialog setting for " + sExpectedText

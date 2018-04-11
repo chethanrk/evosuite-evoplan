@@ -14,7 +14,7 @@ sap.ui.define([
 						return this.waitFor(this.createAWaitForAnEntitySet({
 							entitySet : "Objects",
 							success : function (aEntitySet) {
-								Opa5.getHashChanger().setHash("/WorkOrders/" + aEntitySet[iObjIndex].WorkOrder);
+								Opa5.getHashChanger().setHash("/Demand/" + aEntitySet[iObjIndex].Demand);
 							}
 						}));
 					},
@@ -23,7 +23,7 @@ sap.ui.define([
 						return this.waitFor({
 							success : function () {
 								var sObjectId = this.getContext().currentItem.id;
-								Opa5.getHashChanger().setHash("/WorkOrders/" + sObjectId);
+								Opa5.getHashChanger().setHash("/Demand/" + sObjectId);
 							}
 						});
 					},
