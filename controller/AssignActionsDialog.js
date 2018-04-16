@@ -201,8 +201,9 @@ sap.ui.define([
                     filters: aResources,
                     and: false
                 }));
-                aFilters.push(new Filter([new Filter("DateFrom", FilterOperator.BT, sDateControl1,sDateControl2)],false));
-
+               // aFilters.push(new Filter([new Filter("DateTo", FilterOperator.GE, sDateControl1),new Filter("DateFrom", FilterOperator.LE, sDateControl2)],true));
+                aFilters.push(new Filter("DateTo", FilterOperator.GE, sDateControl1));
+                aFilters.push(new Filter("DateFrom", FilterOperator.LE, sDateControl2));
                 if(aFilters.length > 0){
                     aActualFilters.push(new Filter({
                             filters: aFilters,
