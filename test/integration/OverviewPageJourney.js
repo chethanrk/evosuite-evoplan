@@ -19,7 +19,7 @@ sap.ui.define([
 
 		// Actions
 		When.onTheListPage.iLookAtTheScreen();
-		When.onTheListPage.iRememberTheItemAtPosition(2);
+		When.onTheListPage.iRememberTheItemAtPosition(0);
 		When.onTheBrowserPage.iChangeTheHashToTheRememberedItem();
 
 		// Assertions
@@ -34,8 +34,33 @@ sap.ui.define([
 		// Assertions
 		Then.onOverviewPage.iShouldSeeTheAssignButton("i18n>xbut.assign").
 			and.iShouldSeeTheChangeStatusButton("i18n>xbut.changeStatus").
-			and.iShouldSeeTheDemandTitleAs("Test order for EvoPlan integration (22)").
-			and.iShouldSeeTheSections().and.iShouldSeeAssignmentTable().and.iTeardownMyAppFrame();
+			and.iShouldSeeTheDemandTitleAs("Test order for EvoPlan integration").
+			and.iShouldSeeTheSections().and.iShouldSeeAssignmentTable();
+	});
+	opaTest("Should see the specific staus when I click on change status", function (Given, When, Then) {
+		// Actions
+		When.onOverviewPage.iLookAtTheScreen();
+
+		// Assertions
+		Then.onOverviewPage.iShouldSeeTheChangeStatusButton("i18n>xbut.changeStatus");
+		
+		When.onOverviewPage.iClickOnTheChangeStatus();
+		
+			Then.onOverviewPage.iShouldSeeRespectiveStatus().and.iShouldSeeStatus("Complete");
+	});
+	opaTest("Should see the assignment update Dialog", function (Given, When, Then) {
+		// Actions
+		When.onOverviewPage.iLookAtTheScreen();
+
+		// Assertions
+		Then.onOverviewPage.iShouldSeeTheSections().and.iShouldSeeAssignmentTable();
+		
+		When.onOverviewPage.iClickOnTheAssignment();
+		Then.onOverviewPage.iShouldSeeAssignInfoDialog("xtit.assignInfoModalTitle");
+			When.onOverviewPage.iCloseAssignInfoDialog();
+			Then.onOverviewPage.iShouldSeeTheSections().and.iTeardownMyAppFrame();
+		// Then.onOverviewPage.iShouldSeeTheAssignmentUpdateDialog();
+		
 	});
 
 });

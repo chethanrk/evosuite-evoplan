@@ -5,8 +5,9 @@ sap.ui.define([
 	"com/evorait/evoplan/test/integration/pages/Common",
 	"sap/ui/test/matchers/I18NText",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/matchers/AggregationFilled"
-], function(Opa5, Press, EnterText,Common,I18NText,PropertyStrictEquals,AggregationFilled) {
+	"sap/ui/test/matchers/AggregationFilled",
+	"sap/ui/test/matchers/Properties"
+], function(Opa5, Press, EnterText,Common,I18NText,PropertyStrictEquals,AggregationFilled, Properties) {
 	"use strict";
     
     var sViewName = "Detail";
@@ -21,6 +22,47 @@ sap.ui.define([
 							viewName : sViewName,
 							actions: new Press(),
 							errorMessage : "Did not find the nav button on object page"
+						});
+					},
+					iClickOnTheChangeStatus:function(){
+							return this.waitFor({
+							id : "idStatusHeaderAction",
+							viewName : sViewName,
+							actions: new Press(),
+							errorMessage : "Did not see the change status button"
+						});
+					},
+					iClickOnTheAssignment:function(){
+						return this.waitFor({
+							id : "assignMentsBlock",
+							viewName : sViewName,
+							success : function (oPage) {
+								var oTable = oPage.getAggregation("_views")[0].getAggregation("content")[0];
+								if(oTable){
+									var oItem = oTable.getAggregation("items")[0];
+									oTable.fireItemPress({
+										listItem:oItem
+									});
+								}
+							},
+							actions: new Press(),
+							errorMessage : "Page doesn't have Assignment Table"
+						});
+					},
+					iCloseAssignInfoDialog: function(){
+						return this.waitFor({
+							controlType:"sap.m.Button",
+							viewName : sViewName,
+							searchOpenDialogs : true,
+							success:function(aButton){
+								for(var i in aButton){
+									if(aButton[i].getId() === "idCloseAssignInfD"){
+										aButton[i].firePress();
+										Opa5.assert.ok(true, "Close button pressed.");
+									}
+								}
+							},
+							errorMessage : "AssignInfo Dialog doesn't have Close Button"
 						});
 					}
 			},
@@ -41,6 +83,33 @@ sap.ui.define([
 									errorMessage : "Remembered object " + sBindingPath + " is not shown"
 								});
 							}
+						});
+					},
+					iShouldSeeRespectiveStatus:function(){
+						return this.waitFor({
+							id : "idStatusActionSheet",
+							viewName : sViewName,
+							matchers : new AggregationFilled({
+									name:"buttons"
+							}),
+							success : function (aButtons) {
+								Opa5.assert.ok(true, "We can see only one status transition.");
+							},
+							errorMessage : "Action sheet is not visible"
+						});
+					},
+					iShouldSeeStatus:function(sStatus){
+						return this.waitFor({
+							viewName : sViewName,
+							searchOpenDialogs : true,
+							controlType:"sap.m.Button",
+							matchers:function(oButton){
+								return oButton.getText() === sStatus && oButton.getVisible();
+							},
+							success : function (oButton) {
+								Opa5.assert.ok(true, "We can see "+sStatus+" Status button.");
+							},
+							errorMessage : "Action sheet is not visible"
 						});
 					},
 					theViewIsNotBusyAnymore : function () {
@@ -113,7 +182,18 @@ sap.ui.define([
 									Opa5.assert.ok(true, "The assianment table is found.");
 								}
 							},
-							errorMessage : "Page doesn't have any sections"
+							errorMessage : "Page doesn't have Assignment Table"
+						});
+					},
+					iShouldSeeAssignInfoDialog: function(sTitle){
+						return this.waitFor({
+							controlType:"sap.m.Dialog",
+							viewName : sViewName,
+							searchOpenDialogs : true,
+							success : function (oDialog) {
+									Opa5.assert.ok(oDialog[0].getTitle() === "Assignment", "AssignInfo Dialog is opened.");
+							},
+							errorMessage : "Page doesn't have AssignInfo Dialog"
 						});
 					}
 					

@@ -4,7 +4,8 @@
         xmlns:form="sap.ui.layout.form"
         xmlns:smartField="sap.ui.comp.smartfield">
 
-    <Dialog title="{i18n>xtit.assignInfoModalTitle}"
+    <Dialog id="idAssignInfoDialog"
+    		title="{i18n>xtit.assignInfoModalTitle}"
             contentWidth="100%"
             resizable="true"
             class="assignInfoDialog">
@@ -91,7 +92,8 @@
         </content>
 
         <buttons>
-            <Button text="{i18n>xbut.buttonClose}"
+            <Button id="idCloseAssignInfD"
+            		text="{i18n>xbut.buttonClose}"
                     press="onCloseDialog" />
             <Button text="{i18n>xbut.buttonUnassign}"
                     type="Reject"

@@ -2,7 +2,7 @@
         xmlns:core="sap.ui.core"
         xmlns="sap.m"
         xmlns:smartTable="sap.ui.comp.smarttable">
-    <Dialog title="{i18n>xtit.selectDemands}"
+    <Dialog id="idAssignActionsD"
             afterOpen="onDialogOpen"
             contentWidth="100%"
             resizable="true"
