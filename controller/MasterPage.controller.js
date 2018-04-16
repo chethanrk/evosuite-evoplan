@@ -87,7 +87,7 @@ sap.ui.define([
                     this._triggerFilterSearch();
 				}
             }else{
-                this.onTreeUpdateStarted();
+                //this.onTreeUpdateStarted();
                 // this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
             }
         },

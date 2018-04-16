@@ -49,10 +49,23 @@ sap.ui.define([
 	opaTest("Should Enable the Buttons when I select demand", function(Given, When, Then) {
 		Given.iStartTheApp();
 
-		When.onTheListPage.iSelectDemandFromDemandTable();
+		When.onTheListPage.iSelectDemandFromDemandTable(1);
 
 		Then.onTheListPage.iShouldSeeTheAssignButtonAs(true)
 		.and.iShouldSeeTheChangeStatusButtonAs(true);
+	});
+	
+	opaTest("Should Show up the error dialog", function(Given, When, Then) {
+		// Given.iStartTheApp();
+		When.onTheListPage.iLookAtTheScreen();
+
+		When.onTheListPage.iSelectDemandFromDemandTable(1);
+
+		Then.onTheListPage.iShouldSeeTheAssignButtonAs(true)
+		.and.iShouldSeeTheChangeStatusButtonAs(true);
+		
+		When.onTheListPage.iClickonAssignButton();
+			Then.onTheListPage.iShouldSeeErrorDialog().and.iTeardownMyAppFrame();
 	});
 	
 	opaTest("Should Display the Information popup", function(Given, When, Then) {

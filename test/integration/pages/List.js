@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/BindingPath",
-	"sap/ui/test/matchers/I18NText"
-], function(Opa5, Press, EnterText, Common, AggregationFilled, PropertyStrictEquals, BindingPath, I18NText) {
+	"sap/ui/test/matchers/I18NText",
+	"sap/ui/test/matchers/Properties"
+], function(Opa5, Press, EnterText, Common, AggregationFilled, PropertyStrictEquals, BindingPath, I18NText, Properties) {
 	"use strict";
 	
 	var sViewName = "List",
@@ -58,10 +59,7 @@ sap.ui.define([
 		function createIdFor(sFilterBarId, sEntityPropertyName) {
 			return sFilterBarId + "-filterItemControl_BASIC-" + sEntityPropertyName;
 		}
-		
-		function createIdFor(sFilterBarId, sEntityPropertyName) {
-			return sFilterBarId + "-filterItemControl_BASIC-" + sEntityPropertyName;
-		}
+	
 		
 	Opa5.createPageObjects({
 		
@@ -123,12 +121,12 @@ sap.ui.define([
 							actions: new Press()
 						});
 				},
-				iSelectDemandFromDemandTable:function(){
+				iSelectDemandFromDemandTable:function(index){
 					return this.waitFor({
 							id : sTableId,
 							viewName : sViewName,
 							success : function (oTable) {
-								oTable.getTable().setSelectedIndex(1);
+								oTable.getTable().setSelectedIndex(index);
 							},
 							errorMessage : "Can't see the Demand Table."
 						});
@@ -155,6 +153,14 @@ sap.ui.define([
 								};
 							}
 						}));
+					},
+					iClickonAssignButton : function (){
+						return this.waitFor({
+							viewName : sViewName,
+							id : "assignButton",
+							actions:new Press(),
+							errorMessage : "Was not able see the Assign button or Assign button is enabled"
+						});
 					}
 
 
@@ -328,7 +334,18 @@ sap.ui.define([
 							},
 							errorMessage : "Table does not have all entries."
 						});
-					}
+					},
+					iShouldSeeErrorDialog:function(){
+						return this.waitFor({
+							controlType: "sap.m.Dialog",
+							matchers: function(oDialog){
+								return oDialog.getTitle() === "Error" && oDialog.getState();
+							},
+							success: function(sTitleText) {
+								Opa5.assert.ok(true, "The Error has be shown");
+							}
+						});
+					},
 			})
 		}
 	});

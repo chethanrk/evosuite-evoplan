@@ -17,7 +17,38 @@ sap.ui.require(
                 .and.theButtonTextShouldDisplayFilterNumber("2")
                 .and.iShouldSeeTheSearchField()
                 .and.iShouldSeeTheCustomVariant()
-				.and.iShouldSeeFooterPlanningButton();
+				.and.iShouldSeeFooterPlanningButtonAs(false)
+				.and.iShouldSeeFooterUnassignButtonAs(false)
+				.and.iShouldSeeFooterAssignNewButtonAs(false);
+		});
+		opaTest("Should press on filter button and see the filter dialog", function (Given, When, Then) {
+			// Actions
+            When.onTheMasterPage.iCheckOneResource();
+			// Assertions
+			Then.onTheMasterPage.and.iShouldSeeFooterPlanningButtonAs(true)
+				.and.iShouldSeeFooterUnassignButtonAs(true)
+				.and.iShouldSeeFooterAssignNewButtonAs(true);
+                
+		});
+		opaTest("Should See The Dialog", function (Given, When, Then) {
+			// Actions
+            When.onTheMasterPage.iClickOnThePlanningCal();
+			// Assertions
+			Then.onTheMasterPage.iShouldSeePlanningCalendar("xtit.calendarModalTitle")
+			.and.iCloseTheDialog();
+			
+			// When.onTheMasterPage.iClickOnTheUnassign();
+			
+			// Then.onTheMasterPage.iShouldSeeTheDialog().and
+			// // .iShouldSeeAssignUnassignDialog("Select Demands for unassignment").and
+			// .iCloseTheDialog();
+			
+			// When.onTheMasterPage.iClickOnTheAssignNew();
+			
+			// Then.onTheMasterPage.iShouldSeeTheDialog().and
+			// // .iShouldSeeAssignUnassignDialog("Select Demands for reassignment").and
+			// .iCloseTheDialog();
+                
 		});
 
 		opaTest("Should press on filter button and see the filter dialog", function (Given, When, Then) {
@@ -25,9 +56,13 @@ sap.ui.require(
             When.onTheMasterPage.iPressOnFilterButton();
 			// Assertions
 			Then.onTheMasterPage.iShouldSeeFilterDialog()
-                .and.iShouldSeeFilterItemWithTitle("xtit.filterTitleView")
-                .and.iTeardownMyAppFrame();
+                .and.iShouldSeeFilterItems().and.iTeardownMyAppFrame();
+                
 		});
+		
+		
+		
+		
  
 	}
 );

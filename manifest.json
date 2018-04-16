@@ -12,10 +12,7 @@
 		"info": "{{info}}",
 		"description": "{{appDescription}}",
 		"tags": {
-			"keywords": [
-				"{{xfld.keyWord1}}",
-				"{{xfld.keyWord2}}"
-			]
+			"keywords": ["{{xfld.keyWord1}}", "{{xfld.keyWord2}}"]
 		},
 		"applicationVersion": {
 			"version": "2.0.6"
@@ -27,9 +24,7 @@
 				"settings": {
 					"odataVersion": "2.0",
 					"localUri": "localService/metadata.xml",
-					"annotations": [
-						"annotations"
-					]
+					"annotations": ["annotations"]
 				}
 			},
 			"annotations": {
@@ -56,6 +51,16 @@
 						"parameters": {
 							"Demand": {
 								"required": false
+							},
+							"Status": {
+								"defaultValue": {
+									"value": "INIT"
+								},
+								"required": false,
+								"filter": {
+									"value": "[a-b]",
+									"format": "regexp"
+								}
 							}
 						},
 						"additionalParameters": "allowed"
@@ -82,12 +87,7 @@
 			"tablet": true,
 			"phone": true
 		},
-		"supportedThemes": [
-			"sap_belize",
-			"sap_belize_plus",
-			"sap_belize_hcb",
-			"sap_belize_hcw"
-		]
+		"supportedThemes": ["sap_belize", "sap_belize_plus", "sap_belize_hcb", "sap_belize_hcw"]
 	},
 	"sap.ui5": {
 		"_version": "1.2.0",
@@ -137,11 +137,9 @@
 			}
 		},
 		"resources": {
-			"css": [
-				{
-					"uri": "assets/css/style.css"
-				}
-			]
+			"css": [{
+				"uri": "assets/css/style.css"
+			}]
 		},
 		"routing": {
 			"config": {
@@ -150,31 +148,19 @@
 				"viewPath": "com.evorait.evoplan.view",
 				"controlId": "app",
 				"bypassed": {
-					"target": [
-						"master",
-						"empty"
-					]
+					"target": ["master", "empty"]
 				},
 				"async": true
 			},
-			"routes": [
-				{
-					"pattern": "",
-					"name": "list",
-					"target": [
-						"list",
-						"master"
-					]
-				},
-				{
-					"pattern": "Demand/{guid}",
-					"name": "detail",
-					"target": [
-						"master",
-						"detail"
-					]
-				}
-			],
+			"routes": [{
+				"pattern": "",
+				"name": "list",
+				"target": ["list", "master"]
+			}, {
+				"pattern": "Demand/{guid}",
+				"name": "detail",
+				"target": ["master", "detail"]
+			}],
 			"targets": {
 				"master": {
 					"viewName": "MasterPage",

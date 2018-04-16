@@ -1,7 +1,7 @@
 [{
 	"__metadata": {
-		"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CFDC5C')",
-		"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CFDC5C')",
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CFDC5C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CFDC5C')",
 		"type": "com.evorait.evoplan.ResourceHierarchy"
 	},
 	"ChildCount": 0,
@@ -25,8 +25,8 @@
 	"EndTime": "PT00H00M00S"
 }, {
 	"__metadata": {
-		"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CFFC5C')",
-		"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CFFC5C')",
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CFFC5C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CFFC5C')",
 		"type": "com.evorait.evoplan.ResourceHierarchy"
 	},
 	"ChildCount": 3,
@@ -42,7 +42,7 @@
 	"HierarchyLevel": 0,
 	"DrillState": "expanded",
 	"Description": "Product cluster",
-	"AssignmentCount": 2,
+	"AssignmentCount": 1,
 	"Utilization": "0.00",
 	"StartDate": null,
 	"StartTime": "PT00H00M00S",
@@ -50,8 +50,8 @@
 	"EndTime": "PT00H00M00S"
 }, {
 	"__metadata": {
-		"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CF3C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
-		"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CF3C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CF3C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CF3C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
 		"type": "com.evorait.evoplan.ResourceHierarchy"
 	},
 	"ChildCount": 0,
@@ -65,9 +65,9 @@
 	"ParentNodeId": "0A51491BD5A01ED889D621FAE6CFFC5C",
 	"AssignmentGuid": "",
 	"HierarchyLevel": 1,
-	"DrillState": "collapsed",
+	"DrillState": "leaf",
 	"Description": "Raghavendra Ghooli",
-	"AssignmentCount": 1,
+	"AssignmentCount": 0,
 	"Utilization": "0.00",
 	"StartDate": null,
 	"StartTime": "PT00H00M00S",
@@ -75,8 +75,8 @@
 	"EndTime": "PT00H00M00S"
 }, {
 	"__metadata": {
-		"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CF5C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
-		"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CF5C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CF5C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CF5C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
 		"type": "com.evorait.evoplan.ResourceHierarchy"
 	},
 	"ChildCount": 0,
@@ -100,8 +100,8 @@
 	"EndTime": "PT00H00M00S"
 }, {
 	"__metadata": {
-		"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CFBC5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
-		"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CFBC5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CFBC5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CFBC5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
 		"type": "com.evorait.evoplan.ResourceHierarchy"
 	},
 	"ChildCount": 0,
@@ -125,8 +125,8 @@
 	"EndTime": "PT00H00M00S"
 }, {
 	"__metadata": {
-		"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6D01C5C')",
-		"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6D01C5C')",
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6D01C5C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6D01C5C')",
 		"type": "com.evorait.evoplan.ResourceHierarchy"
 	},
 	"ChildCount": 1,
@@ -142,7 +142,7 @@
 	"HierarchyLevel": 0,
 	"DrillState": "expanded",
 	"Description": "Royal cluster",
-	"AssignmentCount": 2,
+	"AssignmentCount": 0,
 	"Utilization": "0.00",
 	"StartDate": null,
 	"StartTime": "PT00H00M00S",
@@ -150,8 +150,8 @@
 	"EndTime": "PT00H00M00S"
 }, {
 	"__metadata": {
-		"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CF9C5C%2F%2F0A51491BD5A01ED889D621FAE6D01C5C')",
-		"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CF9C5C%2F%2F0A51491BD5A01ED889D621FAE6D01C5C')",
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CF9C5C%2F%2F0A51491BD5A01ED889D621FAE6D01C5C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CF9C5C%2F%2F0A51491BD5A01ED889D621FAE6D01C5C')",
 		"type": "com.evorait.evoplan.ResourceHierarchy"
 	},
 	"ChildCount": 0,
@@ -165,9 +165,9 @@
 	"ParentNodeId": "0A51491BD5A01ED889D621FAE6D01C5C",
 	"AssignmentGuid": "",
 	"HierarchyLevel": 1,
-	"DrillState": "collapsed",
+	"DrillState": "leaf",
 	"Description": "Vivek Joshi",
-	"AssignmentCount": 2,
+	"AssignmentCount": 0,
 	"Utilization": "0.00",
 	"StartDate": null,
 	"StartTime": "PT00H00M00S",
