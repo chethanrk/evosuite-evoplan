@@ -92,6 +92,9 @@ sap.ui.define([
                 oRm.writeClasses();
                 // oRm.writeAttribute("href", "#");
                 oRm.writeAttributeEscaped("title", titleText);
+                oRm.addStyle("display", "inline");
+                oRm.writeStyles();
+                oRm.write(">");
             }
 
             //title
