@@ -15,13 +15,16 @@
 
         <smartFilterBar:controlConfiguration>
             <smartFilterBar:ControlConfiguration
-                    key="UserStatusShortText"
+                    key="Status"
                     preventInitialDataFetchInValueHelpDialog="false">
             </smartFilterBar:ControlConfiguration>
-
             <smartFilterBar:ControlConfiguration
-                    key="EFFORT_UNIT"
+                    key="EffortUnit"
                     preventInitialDataFetchInValueHelpDialog="false">
+            </smartFilterBar:ControlConfiguration>
+            <smartFilterBar:ControlConfiguration
+                    key="DateFrom" visibleInAdvancedArea="true"
+                    conditionType="sap.ui.comp.config.condition.DateRangeType">
             </smartFilterBar:ControlConfiguration>
         </smartFilterBar:controlConfiguration>
 
