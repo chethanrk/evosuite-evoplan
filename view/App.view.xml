@@ -1,10 +1,37 @@
 <mvc:View
 	controllerName="com.evorait.evoplan.controller.App"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:layout="sap.ui.layout"
+	xmlns="sap.m"
 	displayBlock="true"
 	busy="{appView>/busy}"
-	busyIndicatorDelay="{appView>/delay}"
-	xmlns="sap.m">
-	<SplitApp id="app" />
+	busyIndicatorDelay="{appView>/delay}">
+	<App id="app"
+		 busy="{appView>/busy}"
+		 busyIndicatorDelay="{appView>/delay}" >
+
+		<layout:ResponsiveSplitter defaultPane="leftPanel">
+			<layout:PaneContainer>
+
+				<layout:SplitPane requiredParentWidth="450">
+					<VBox  id="leftPanel"
+						   fitContainer="true"
+						   alignItems="Stretch"
+						   class="stretchPage">
+					</VBox>
+					<layout:layoutData><layout:SplitterLayoutData size="30%" /></layout:layoutData>
+				</layout:SplitPane>
+
+				<layout:SplitPane requiredParentWidth="800">
+					<VBox  id="rightPanel"
+						   fitContainer="true"
+						   alignItems="Stretch"
+						   class="stretchPage"/>
+				</layout:SplitPane>
+
+			</layout:PaneContainer>
+		</layout:ResponsiveSplitter>
+
+	</App>
 </mvc:View>
 

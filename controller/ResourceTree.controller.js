@@ -11,7 +11,7 @@ sap.ui.define([
 ], function(Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController,ErrorHandler,MessageToast) {
 	"use strict";
 
-    return BaseController.extend('com.evorait.evoplan.controller.MasterPage', {
+    return BaseController.extend('com.evorait.evoplan.controller.ResourceTree', {
 
         formatter: formatter,
 
@@ -54,7 +54,7 @@ sap.ui.define([
 		/**
 		 * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.
 		 * This hook is the same one that SAPUI5 controls get after being rendered.
-		 * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.MasterPage **/
+		 * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.ResourceTree **/
 		onAfterRendering: function(oEvent) {
 			//init droppable
 			this.refreshDroppable(oEvent);

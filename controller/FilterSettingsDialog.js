@@ -29,9 +29,6 @@ sap.ui.define([
          * init maybe some events
          */
         init: function (oView) {
-            var eventBus = sap.ui.getCore().getEventBus();
-            //eventBus.subscribe("MasterPage", "triggerSearch", this._triggerOpenDialog, this);
-
             this._oView = oView;
             this.initDialog();
         },
