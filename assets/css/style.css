@@ -1,15 +1,4 @@
-.sapMSplitContainerMaster{
-    width: 450px;
-}
-
-.stretchPage > div{
-    min-height: 100%;
-    max-height: 100%;
-    height: 100%;
-}
-
 .ui-draggable-dragging{
-    //width: 320px;
     background-color: white !important;
     list-style: none;
     margin: 0;

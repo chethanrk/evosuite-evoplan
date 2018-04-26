@@ -14,19 +14,14 @@
 			<layout:PaneContainer>
 
 				<layout:SplitPane requiredParentWidth="450">
-					<VBox  id="leftPanel"
-						   fitContainer="true"
-						   alignItems="Stretch"
-						   class="stretchPage">
-					</VBox>
-					<layout:layoutData><layout:SplitterLayoutData size="30%" /></layout:layoutData>
+					<NavContainer id="leftPanel"/>
+					<layout:layoutData>
+						<layout:SplitterLayoutData size="30%" />
+					</layout:layoutData>
 				</layout:SplitPane>
 
 				<layout:SplitPane requiredParentWidth="800">
-					<VBox  id="rightPanel"
-						   fitContainer="true"
-						   alignItems="Stretch"
-						   class="stretchPage"/>
+					<NavContainer id="rightPanel"/>
 				</layout:SplitPane>
 
 			</layout:PaneContainer>

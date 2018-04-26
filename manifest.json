@@ -22,7 +22,7 @@
 		},
 		"dataSources": {
 			"mainService": {
-				"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/",
+				"uri": "/sap/opu/odata/EVORA/EP_MAIN_SRV/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
@@ -180,31 +180,31 @@
 					"viewName": "ResourceTree",
 					"viewLevel": 1,
 					"controlId": "leftPanel",
-					"controlAggregation": "items"
+					"controlAggregation": "pages"
 				},
 				"demands": {
 					"viewName": "Demands",
 					"viewLevel": 2,
 					"controlId": "rightPanel",
-					"controlAggregation": "items"
+					"controlAggregation": "pages"
 				},
 				"detail": {
 					"viewName": "Detail",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"controlAggregation": "items"
+					"controlAggregation": "pages"
 				},
 				"empty": {
 					"viewName": "EmptyPage",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"controlAggregation": "items"
+					"controlAggregation": "pages"
 				},
 				"notFound": {
 					"viewName": "NotFound",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"controlAggregation": "items"
+					"controlAggregation": "pages"
 				}
 			}
 		}
