@@ -14,14 +14,14 @@
 			<layout:PaneContainer>
 
 				<layout:SplitPane requiredParentWidth="450">
-					<NavContainer id="leftPanel"/>
+					<NavContainer id="leftPanel" class="panelPage"/>
 					<layout:layoutData>
 						<layout:SplitterLayoutData size="30%" />
 					</layout:layoutData>
 				</layout:SplitPane>
 
 				<layout:SplitPane requiredParentWidth="800">
-					<NavContainer id="rightPanel"/>
+					<NavContainer id="rightPanel" class="panelPage"/>
 				</layout:SplitPane>
 
 			</layout:PaneContainer>

@@ -1,3 +1,7 @@
+.panelPage{
+    white-space: normal;
+}
+
 .ui-draggable-dragging{
     background-color: white !important;
     list-style: none;
