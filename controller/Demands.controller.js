@@ -15,7 +15,7 @@ sap.ui.define([
 	"use strict";
 
 
-	return BaseController.extend("com.evorait.evoplan.controller.List", {
+	return BaseController.extend("com.evorait.evoplan.controller.Demands", {
 
 		formatter: formatter,
 
@@ -38,7 +38,7 @@ sap.ui.define([
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 
-            this.getRouter().getRoute("list").attachPatternMatched(this._onObjectMatched, this);
+            this.getRouter().getRoute("demands").attachPatternMatched(this._onObjectMatched, this);
 			
             // event listener for changing device orientation with fallback of window resize
             var orientationEvent = this.getOrientationEvent(),

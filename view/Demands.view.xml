@@ -6,7 +6,9 @@
         xmlns:smartTable="sap.ui.comp.smarttable"
         xmlns:semantic="sap.m.semantic"
         xmlns:table="sap.ui.table"
-        controllerName="com.evorait.evoplan.controller.List">
+        controllerName="com.evorait.evoplan.controller.Demands"
+        displayBlock="true"
+        height="100%">
 
     <Page id="listPage"
           title="{i18n>xtit.itemListTitle}"

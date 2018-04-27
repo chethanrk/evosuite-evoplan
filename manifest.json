@@ -151,7 +151,7 @@
 				"controlId": "app",
 				"bypassed": {
 					"target": [
-						"master",
+						"resourceTree",
 						"empty"
 					]
 				},
@@ -160,46 +160,51 @@
 			"routes": [
 				{
 					"pattern": "",
-					"name": "list",
+					"name": "demands",
 					"target": [
-						"list",
-						"master"
+						"demands",
+						"resourceTree"
 					]
 				},
 				{
 					"pattern": "Demand/{guid}",
 					"name": "detail",
 					"target": [
-						"master",
+						"resourceTree",
 						"detail"
 					]
 				}
 			],
 			"targets": {
-				"master": {
-					"viewName": "MasterPage",
+				"resourceTree": {
+					"viewName": "ResourceTree",
 					"viewLevel": 1,
-					"controlAggregation": "masterPages"
+					"controlId": "leftPanel",
+					"controlAggregation": "pages"
 				},
-				"list": {
-					"viewName": "List",
+				"demands": {
+					"viewName": "Demands",
 					"viewLevel": 2,
-					"controlAggregation": "detailPages"
+					"controlId": "rightPanel",
+					"controlAggregation": "pages"
 				},
 				"detail": {
 					"viewName": "Detail",
 					"viewLevel": 3,
-					"controlAggregation": "detailPages"
+					"controlId": "rightPanel",
+					"controlAggregation": "pages"
 				},
 				"empty": {
 					"viewName": "EmptyPage",
 					"viewLevel": 3,
-					"controlAggregation": "detailPages"
+					"controlId": "rightPanel",
+					"controlAggregation": "pages"
 				},
 				"notFound": {
 					"viewName": "NotFound",
 					"viewLevel": 3,
-					"controlAggregation": "detailPages"
+					"controlId": "rightPanel",
+					"controlAggregation": "pages"
 				}
 			}
 		}

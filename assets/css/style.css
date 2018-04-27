@@ -1,9 +1,8 @@
-.sapMSplitContainerMaster{
-    width: 450px;
+.panelPage{
+    white-space: normal;
 }
 
 .ui-draggable-dragging{
-    //width: 320px;
     background-color: white !important;
     list-style: none;
     margin: 0;
