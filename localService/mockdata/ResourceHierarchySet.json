@@ -1,6 +1,3 @@
-<<<<<<< Upstream, based on 0ac0511dd014e38d9529f5e334de6b9f774fc397
-[]
-=======
 [{
 	"__metadata": {
 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceHierarchySet('0A51491BD5A01ED889D621FAE6CFDC5C')",
@@ -177,4 +174,3 @@
 	"EndDate": null,
 	"EndTime": "PT00H00M00S"
 }]
->>>>>>> 57b960a OPA Tests Continued.
