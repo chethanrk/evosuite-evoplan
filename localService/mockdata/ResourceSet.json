@@ -1,0 +1,162 @@
+[{
+			"__metadata": {
+				"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFDC5C')",
+				"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFDC5C')",
+				"type": "com.evorait.evoplan.Resource"
+			},
+			"ObjectId": "0A51491BD5A01ED889D621FAE6CFDC5C",
+			"GroupDescription": "Emerald cluster",
+			"ResourceDescription": "",
+			"ObjectType": "RES_GROUP",
+			"ResourceGuid": "",
+			"GroupUnitDescription": "EVORA_CLUSTR",
+			"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFDC5C",
+			"DateFrom": null,
+			"Description": "Emerald cluster",
+			"DateTo": null,
+			"TimeFrom": "PT00H00M00S",
+			"TimeTo": "PT00H00M00S",
+			"ResourceToAssignments": {
+				"__deferred": {
+					"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFDC5C')/ResourceToAssignments"
+				}
+			}
+		}, {
+			"__metadata": {
+				"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF3C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
+				"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF3C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
+				"type": "com.evorait.evoplan.Resource"
+			},
+			"ObjectId": "0A51491BD5A01ED889D621FAE6CF3C5C//0A51491BD5A01ED889D621FAE6CFFC5C",
+			"GroupDescription": "Product cluster",
+			"ResourceDescription": "Raghavendra Ghooli",
+			"ObjectType": "RESOURCE",
+			"ResourceGuid": "0A51491BD5A01ED889D621FAE6CF3C5C",
+			"GroupUnitDescription": "EVORA_CLUSTR",
+			"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
+			"DateFrom": null,
+			"Description": "Raghavendra Ghooli",
+			"DateTo": null,
+			"TimeFrom": "PT00H00M00S",
+			"TimeTo": "PT00H00M00S",
+			"ResourceToAssignments": {
+				"__deferred": {
+					"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF3C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceToAssignments"
+				}
+			}
+		}, {
+			"__metadata": {
+				"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF5C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
+				"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF5C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
+				"type": "com.evorait.evoplan.Resource"
+			},
+			"ObjectId": "0A51491BD5A01ED889D621FAE6CF5C5C//0A51491BD5A01ED889D621FAE6CFFC5C",
+			"GroupDescription": "Product cluster",
+			"ResourceDescription": "Matthias Heitmann",
+			"ObjectType": "RESOURCE",
+			"ResourceGuid": "0A51491BD5A01ED889D621FAE6CF5C5C",
+			"GroupUnitDescription": "EVORA_CLUSTR",
+			"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
+			"DateFrom": null,
+			"Description": "Matthias Heitmann",
+			"DateTo": null,
+			"TimeFrom": "PT00H00M00S",
+			"TimeTo": "PT00H00M00S",
+			"ResourceToAssignments": {
+				"__deferred": {
+					"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF5C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceToAssignments"
+				}
+			}
+		}, {
+			"__metadata": {
+				"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFBC5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
+				"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFBC5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
+				"type": "com.evorait.evoplan.Resource"
+			},
+			"ObjectId": "0A51491BD5A01ED889D621FAE6CFBC5C//0A51491BD5A01ED889D621FAE6CFFC5C",
+			"GroupDescription": "Product cluster",
+			"ResourceDescription": "Rahul Inamdar",
+			"ObjectType": "RESOURCE",
+			"ResourceGuid": "0A51491BD5A01ED889D621FAE6CFBC5C",
+			"GroupUnitDescription": "EVORA_CLUSTR",
+			"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
+			"DateFrom": null,
+			"Description": "Rahul Inamdar",
+			"DateTo": null,
+			"TimeFrom": "PT00H00M00S",
+			"TimeTo": "PT00H00M00S",
+			"ResourceToAssignments": {
+				"__deferred": {
+					"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFBC5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceToAssignments"
+				}
+			}
+		}, {
+			"__metadata": {
+				"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFFC5C')",
+				"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFFC5C')",
+				"type": "com.evorait.evoplan.Resource"
+			},
+			"ObjectId": "0A51491BD5A01ED889D621FAE6CFFC5C",
+			"GroupDescription": "Product cluster",
+			"ResourceDescription": "",
+			"ObjectType": "RES_GROUP",
+			"ResourceGuid": "",
+			"GroupUnitDescription": "EVORA_CLUSTR",
+			"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
+			"DateFrom": null,
+			"Description": "Product cluster",
+			"DateTo": null,
+			"TimeFrom": "PT00H00M00S",
+			"TimeTo": "PT00H00M00S",
+			"ResourceToAssignments": {
+				"__deferred": {
+					"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceToAssignments"
+				}
+			}
+		}, {
+			"__metadata": {
+				"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF9C5C%2F%2F0A51491BD5A01ED889D621FAE6D01C5C')",
+				"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF9C5C%2F%2F0A51491BD5A01ED889D621FAE6D01C5C')",
+				"type": "com.evorait.evoplan.Resource"
+			},
+			"ObjectId": "0A51491BD5A01ED889D621FAE6CF9C5C//0A51491BD5A01ED889D621FAE6D01C5C",
+			"GroupDescription": "Royal cluster",
+			"ResourceDescription": "Vivek Joshi",
+			"ObjectType": "RESOURCE",
+			"ResourceGuid": "0A51491BD5A01ED889D621FAE6CF9C5C",
+			"GroupUnitDescription": "EVORA_CLUSTR",
+			"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6D01C5C",
+			"DateFrom": null,
+			"Description": "Vivek Joshi",
+			"DateTo": null,
+			"TimeFrom": "PT00H00M00S",
+			"TimeTo": "PT00H00M00S",
+			"ResourceToAssignments": {
+				"__deferred": {
+					"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF9C5C%2F%2F0A51491BD5A01ED889D621FAE6D01C5C')/ResourceToAssignments"
+				}
+			}
+		}, {
+			"__metadata": {
+				"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6D01C5C')",
+				"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6D01C5C')",
+				"type": "com.evorait.evoplan.Resource"
+			},
+			"ObjectId": "0A51491BD5A01ED889D621FAE6D01C5C",
+			"GroupDescription": "Royal cluster",
+			"ResourceDescription": "",
+			"ObjectType": "RES_GROUP",
+			"ResourceGuid": "",
+			"GroupUnitDescription": "EVORA_CLUSTR",
+			"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6D01C5C",
+			"DateFrom": null,
+			"Description": "Royal cluster",
+			"DateTo": null,
+			"TimeFrom": "PT00H00M00S",
+			"TimeTo": "PT00H00M00S",
+			"ResourceToAssignments": {
+				"__deferred": {
+					"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6D01C5C')/ResourceToAssignments"
+				}
+			}
+		}]
