@@ -11,7 +11,7 @@ sap.ui.define([
 ], function(Opa5, Press, EnterText, Common, AggregationFilled, PropertyStrictEquals, BindingPath, I18NText, Properties) {
 	"use strict";
 	
-	var sViewName = "List",
+	var sViewName = "Demands",
 		sTableId = "draggableList",
 		sFilter = "listReportFilter";
 		

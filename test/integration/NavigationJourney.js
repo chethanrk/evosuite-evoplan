@@ -15,14 +15,27 @@ sap.ui.define([
 		When.onTheListPage.iLookAtTheScreen();
 
 		// Assertions
-		Then.onTheListPage.iShouldSeeTheTable().and.theTableHasEntries();
+		Then.onTheListPage.iShouldSeeTheTable();
 	});
 
-	opaTest("Should react on hashchange", function (Given, When, Then) {
+opaTest("Should see the table entries", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp();
+		// Given.iStartTheAppWithDelay("",0);
 		
 		// Actions
+		When.onTheListPage.iLookAtTheScreen();
+		
+		Then.onTheListPage.theTableHasEntries();
+		
+	});
+	opaTest("Should react on hashchange", function (Given, When, Then) {
+		// Arrangements
+		// Given.iStartTheAppWithDelay("",0);
+		
+		// Actions
+		When.onTheListPage.iLookAtTheScreen();
+		
+		Then.onTheListPage.iShouldSeeTheTable().and.theTableHasEntries();
 		
 		When.onTheListPage.iRememberTheItemAtPosition(2);
 		When.onTheBrowserPage.iChangeTheHashToTheRememberedItem();

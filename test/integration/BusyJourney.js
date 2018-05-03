@@ -13,7 +13,7 @@ sap.ui.define([
 			When.onTheAppPage.iLookAtTheScreen();
 
 			// Assertions
-			Then.onTheAppPage.iShouldSeeTheBusyIndicator();
+			Then.onTheAppPage.iShouldSeeTheBusyIndicator().and.iTeardownMyAppFrame();
 		});
 
 		opaTest("Should see a busy indication after loading for resource table", function (Given, When, Then) {

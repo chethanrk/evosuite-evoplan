@@ -17,7 +17,7 @@
           class="sapUiNoContentPadding tableContentPage">
 
         <headerContent>
-            <Button icon="sap-icon://sys-help" press="onIconPress" />
+            <Button icon="sap-icon://sys-help" id="idButtonAboutDialog" press="onIconPress" />
         </headerContent>
 
         <f:DynamicPage headerExpanded="true"

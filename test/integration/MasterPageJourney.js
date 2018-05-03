@@ -3,7 +3,7 @@ sap.ui.require(
 	function (opaTest) {
 		"use strict";
  
-		QUnit.module("MasterPage");
+		QUnit.module("Resource Tree");
 
 		opaTest("Should see the resource table with different controls", function (Given, When, Then) {
 			// Arrangements
@@ -21,8 +21,10 @@ sap.ui.require(
 				.and.iShouldSeeFooterUnassignButtonAs(false)
 				.and.iShouldSeeFooterAssignNewButtonAs(false);
 		});
-		opaTest("Should press on filter button and see the filter dialog", function (Given, When, Then) {
+		opaTest("Should See footer buttons as enabled", function (Given, When, Then) {
 			// Actions
+			When.onTheMasterPage.iLookAtTheScreen();
+				
             When.onTheMasterPage.iCheckOneResource();
 			// Assertions
 			Then.onTheMasterPage.and.iShouldSeeFooterPlanningButtonAs(true)

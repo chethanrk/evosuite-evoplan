@@ -11,11 +11,20 @@ sap.ui.define([
 
 		When.onTheListPage.iLookAtTheScreen();
 		
-		Then.onTheListPage.iShouldSeeTheTable().and.theTableHasEntries();
+		Then.onTheListPage.iShouldSeeTheTable();
 	});
-	
+	opaTest("Should see the table entries", function (Given, When, Then) {
+		// Arrangements
+		// Given.iStartTheAppWithDelay("",0);
+		
+		// Actions
+		When.onTheListPage.iLookAtTheScreen();
+		
+		Then.onTheListPage.theTableHasEntries();
+		
+	});
 	opaTest("Should navigate to demand Overview page", function (Given, When, Then) {
-		Given.iStartTheApp();
+		// Given.iStartTheApp();
 
 		// Actions
 		When.onTheListPage.iLookAtTheScreen();

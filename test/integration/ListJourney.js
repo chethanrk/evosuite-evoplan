@@ -3,7 +3,7 @@ sap.ui.define([
 ], function(opaTest) {
 	"use strict";
 
-	QUnit.module("List page");
+	QUnit.module("Demands page");
 	 var sDescription = "Test order for EvoPlan integration",
 		 sStatusCode = "INIT",
 		 sDescriptionFalseCase = "11122";
@@ -25,8 +25,10 @@ sap.ui.define([
 	});
 	
 	opaTest("Should filter entries based on the demand description", function(Given, When, Then) {
-		Given.iStartTheApp();
-
+		// Given.iStartTheApp();
+		
+		When.onTheListPage.iLookAtTheScreen();
+		
 		When.onTheListPage.iSearchWithDemandDecriptionValue(sDescription);
 
 		Then.onTheListPage.iShouldSeeTheTableWithDemandDescription(sDescription).and.iTeardownMyAppFrame();
@@ -40,7 +42,7 @@ sap.ui.define([
 		Then.onTheListPage.iShouldSeeTheTableEntriesWithStatus(sStatusCode);
 	});
 	opaTest("Should Display the empty table when we search for wrong value", function(Given, When, Then) {
-		Given.iStartTheApp();
+		// Given.iStartTheApp();
 
 		When.onTheListPage.iSearchWithDemandDecriptionValue(sDescriptionFalseCase);
 
