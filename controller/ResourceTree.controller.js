@@ -485,7 +485,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree:function(){
-			var oContext = this.byId("droppableTable").getBinding("rows").getContextByIndex(0),
+			var oContext = this.byId("droppableTable").getAggregation("rows")[0].getBindingContext(),
             	oModel = oContext.getModel(),
             	sPath = oContext.getPath();
             	
