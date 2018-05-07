@@ -11,7 +11,7 @@
             draggable="true"
             icon="sap-icon://activity-individual"
             class="treeTableDialog"
-            afterOpen="refreshDialogTable">
+            beforeOpen="refreshDialogTable">
         <content>
             <Toolbar>
                 <SearchField search="onSearchModal"
