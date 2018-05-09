@@ -78,6 +78,9 @@ sap.ui.define([
         open : function (oView) {
             this._oView = oView;
             var oDialog = this.getDialog();
+            this._component = this._oView.getController().getOwnerComponent();
+            // setting the content density class on dialog
+            oDialog.addStyleClass(this._component.getContentDensityClass());
 
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);

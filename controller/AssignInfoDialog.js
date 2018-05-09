@@ -80,8 +80,11 @@ sap.ui.define([
                 this.oAssignmentModel.setProperty("/ResourceDesc", resource.ResourceDesc);
             }
 
+            this._component = this._oView.getController().getOwnerComponent();
+            oDialog.addStyleClass(this._component.getContentDensityClass());
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
+
             this._getAssignedDemand(oAssignment.AssignmentGuid);
             //oDialog.bindElement(sBindPath);
             

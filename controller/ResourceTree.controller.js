@@ -283,6 +283,7 @@ sap.ui.define([
 		_initPlanCalendarDialog: function() {
 			if (!this._oPlanningCalDialog) {
 				this._oPlanningCalDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceCalendarDialog", this);
+                this._oPlanningCalDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass())
 				this.getView().addDependent(this._oPlanningCalDialog);
 				this._setCalendarModel();
 			}
@@ -496,7 +497,6 @@ sap.ui.define([
                     oModel.setProperty(sPath+"/IsSelected",true); // changing the property in order trigger submit change
                     this.byId("droppableTable").getBinding("rows").submitChanges();// submit change will refresh of tree according maintained parameters
                 }else{
-			        //TODO refresh the tree
                     this._triggerFilterSearch();
                 }
             	//Resetting selected resource for calendar as by default IsSelected will come as false from backend

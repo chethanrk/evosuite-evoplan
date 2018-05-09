@@ -43,7 +43,9 @@ sap.ui.define([
             this._oView = oView;
             this._selectedFunction = null;
             this._aSelectedPaths = aSelectedPaths;
-
+            this._component = this._oView.getController().getOwnerComponent();
+            // setting the content density class on dialog
+            oDialog.addStyleClass(this._component.getContentDensityClass());
             //remove selection maybe from last time
             var oList = sap.ui.getCore().byId("selectStatusList");
             oList.clearSelection();
