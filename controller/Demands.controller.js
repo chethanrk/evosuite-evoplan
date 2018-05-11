@@ -175,11 +175,6 @@ sap.ui.define([
             oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
             oDataTable.setVisibleRowCountMode("Auto");
 
-            //this highlight is only to show that rows can be dragged - nice to see
-            oDataTable.setRowSettingsTemplate(new RowSettings({
-                highlight: "Information"
-            }));
-            
             var onClickNavigation = this.onActionPress.bind(this);
             var oTemplate = oDataTable.getRowActionTemplate();
 			if (oTemplate) {

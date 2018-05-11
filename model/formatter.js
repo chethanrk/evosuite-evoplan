@@ -4,7 +4,8 @@ sap.ui.define([
 ], function(DateFormat, utilities) {
 	"use strict";
 
-	var resourceFormats = utilities.getResourceFormats();
+	var resourceFormats = utilities.getResourceFormats(),
+        resourceAvailability = utilities.getResourceAvailability();
 
     return {
         /**
@@ -115,6 +116,41 @@ sap.ui.define([
 			if (sView) {
 				return sView.calendarView || "One Month";
 			}
-		}
+		},
+        /**
+         * @Author Rahul
+         * format the color acording availability
+         * @param sValue
+         */
+        formatIconColor:function(sValue){
+            var oBundle = this.getResourceBundle();
+            if(sValue && sValue!== "")
+                return resourceAvailability[sValue].color;
+            else
+                return "#333333";
+        },
+        /**
+         * @Author Rahul
+         * format the color acording availability
+         * @param sValue
+         */
+        formatIconTooltip:function(sValue){
+            var oBundle = this.getResourceBundle();
+            if(sValue && sValue!== "")
+                return oBundle.getText(resourceAvailability[sValue].tooltip);
+            else
+                return oBundle.getText("xtit.available");
+        },
+        formatCriticality:function (sValue) {
+            if (sValue === "1") {
+                return "Error";
+            } else if (sValue === "2") {
+                return "Warning";
+            } else if (sValue === "3") {
+                return "Infromation";
+            } else {
+                return "Success";
+            }
+        }
 	};
 });

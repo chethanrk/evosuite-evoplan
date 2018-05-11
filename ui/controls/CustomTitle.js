@@ -12,6 +12,8 @@ sap.ui.define([
                  */
                 icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
                 isLink : {type : "boolean", group : "Misc", defaultValue : false},
+                iconColor: {type: "sap.ui.core.CSSColor", group : "Appearance", defaultValue :" #333333"},
+                iconTooltip:{type : "string", group : "Misc", defaultValue : null}
             },
             events: {
                 /**
@@ -75,7 +77,9 @@ sap.ui.define([
 
             if (oIconInfo) {
                 oRm.writeAttributeEscaped("data-sap-ui-icon-content", oIconInfo.content);
+                oRm.writeAttributeEscaped("title",oControl.getIconTooltip());
                 oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
+                oRm.addStyle("color", oControl.getIconColor());
             }
             if (oIconInfo && !oIconInfo.suppressMirroring) {
                 oRm.addClass("sapUiIconMirrorInRTL");

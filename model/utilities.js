@@ -75,6 +75,21 @@ sap.ui.define([
         }
     };
 
+    var oResourceAvailability = {
+        "P":{
+            tooltip:"xtit.partialAvailable",
+            color :"#A9C6DE"
+        },
+        "A":{
+            tooltip:"xtit.available",
+            color :"#333333"
+        },
+        "N":{
+            tooltip:"xtit.notAvailable",
+            color :"#E5E5E5"
+        }
+    }
+
 	return {
 		// provide the density class that should be used according to the environment (may be "")
 		getContentDensityClass: function() {
@@ -90,6 +105,11 @@ sap.ui.define([
 		//returns the whole object with settings
         getResourceFormats: function () {
             return oResourceFormats;
+        },
+
+        //returns the resource availability settings
+        getResourceAvailability: function () {
+            return oResourceAvailability;
         }
 	};
 });
