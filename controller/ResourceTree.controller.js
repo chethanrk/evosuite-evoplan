@@ -486,20 +486,11 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree:function(){
-			var oContext = this.byId("droppableTable").getAggregation("rows")[0].getBindingContext(),
-                oModel,
-                sPath;
-
-			    if(oContext){
-                    oModel = oContext.getModel();
-                    sPath = oContext.getPath();
-
-                    oModel.setProperty(sPath+"/IsSelected",true); // changing the property in order trigger submit change
-                    this.byId("droppableTable").getBinding("rows").submitChanges();// submit change will refresh of tree according maintained parameters
-                }else{
-                    this._triggerFilterSearch();
+            	var oTreeBinding = this.byId("droppableTable").getBinding("rows");
+            	if(oTreeBinding){
+                    oTreeBinding._restoreTreeState();
                 }
-            	//Resetting selected resource for calendar as by default IsSelected will come as false from backend
+                //Resetting selected resource for calendar as by default IsSelected will come as false from backend
 				this.selectedResources = [];
 				this.byId("showPlanCalendar").setEnabled(false);
                 this.byId("idButtonreassign").setEnabled(false);

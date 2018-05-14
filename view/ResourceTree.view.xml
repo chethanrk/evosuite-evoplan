@@ -95,14 +95,6 @@
                                               parts:[{path: 'NodeType'},{path: 'StatusIcon'}],
                                               formatter: '.formatter.getResourceIcon'
                                         }"
-                                        iconColor="{
-                                            path: 'IS_AVAILABLE',
-                                            formatter: '.formatter.formatIconColor'
-                                        }"
-                                        iconTooltip="{
-                                            path: 'IS_AVAILABLE',
-                                            formatter: '.formatter.formatIconTooltip'
-                                        }"
                                         isLink="{
                                               path: 'NodeType',
                                               formatter: '.formatter.isAssignment'
