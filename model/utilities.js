@@ -67,10 +67,11 @@ sap.ui.define([
         },
         TIMENONE: {
             getDateBegin: function () {
-                return moment().subtract(1, 'months').toDate();
+                return new Date("01-01-1990");
             },
             getDateEnd: function () {
-                return moment().toDate();
+                var d = moment().endOf('year');
+                return d.add(20, 'years').toDate();
             }
         }
     };

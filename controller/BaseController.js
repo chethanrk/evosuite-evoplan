@@ -153,10 +153,15 @@ sap.ui.define([
                 if(targetObj.StartDate){
                     oParams.DateFrom = targetObj.StartDate;
                     oParams.TimeFrom = targetObj.StartTime;
+                }else{
+                    oParams.DateFrom = new Date() // When Start Date Null/In the Simple view today date will sent
                 }
+
                 if(targetObj.EndDate){
                     oParams.DateTo = targetObj.EndDate;
                     oParams.TimeTo = targetObj.EndTime;
+                }else{
+                    oParams.DateTo = new Date() // When Start Date Null/In the Simple view today date will sent
                 }
                 this.callFunctionImport(oParams, "CreateAssignment", "POST");
             }
@@ -263,7 +268,7 @@ sap.ui.define([
         },
 
         /**
-         * update demand function status on selected pathes
+         * update demand function status on selected paths
          * @param aSelectedPaths
          * @param sFunctionKey
          */

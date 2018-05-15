@@ -446,7 +446,7 @@ sap.ui.define([
 
 					var oCalendarModel = new JSONModel();
 					oCalendarModel.setData({
-						startDate: new Date(sDateControl1),
+						startDate: new Date(),
 						viewKey: sCalendarView,
 						resources: this._createData(data)
 					});
