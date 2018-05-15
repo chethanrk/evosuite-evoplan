@@ -37,6 +37,7 @@ sap.ui.define([
 
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
+            eventBus.subscribe("App", "RegisterDrag", this._registerDnD, this);
 
             this.getRouter().getRoute("demands").attachPatternMatched(this._onObjectMatched, this);
 			
@@ -48,6 +49,14 @@ sap.ui.define([
                 _this._jDraggable(_this);
             }, false);
 		},
+        /**
+         * Register Draggable
+         * @private
+         */
+        _registerDnD:function(){
+            var _this = this;
+            _this._jDraggable(_this);
+        },
 		/**
 		 * Method get call when ever the hash mathes the route name 
 		 * Registering draggable functionality to make sure it will work all the time

@@ -58,7 +58,15 @@ sap.ui.define([
                 if(sEvent === "changeStatusDemand"){
                     this.updateFunctionDemand(oData.selectedPaths, oData.functionKey);
                 }
-            }
+            },
+            /**
+			 * Registering the event when resized the splitter
+             */
+            onResize:function(){
+                var eventBus = sap.ui.getCore().getEventBus();
+                eventBus.publish("App","RegisterDrop",{})
+                eventBus.publish("App","RegisterDrag",{})
+			}
 
 		});
 

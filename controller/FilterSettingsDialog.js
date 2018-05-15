@@ -84,6 +84,9 @@ sap.ui.define([
 
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
+            // Removing the reset button on the ViewSettingDialog
+            oDialog._getResetButton().setVisible(false);
+
             // open dialog
             oDialog.open();
         },
@@ -438,6 +441,16 @@ sap.ui.define([
                 if(obj.getSelected()){
                     return obj.getKey();
                 }
+            }
+        },
+        /**
+         * Setting the reset button false when any view is opened
+         * @param oEvent
+         */
+        onFilterDetailPageOpened:function(oEvent){
+            this._oDialog._getPage2().getAggregation("customHeader").getAggregation("contentRight")[0].setVisible(false);
+            if(this._oDialog._getPage1().getAggregation("customHeader").getAggregation("contentRight")){
+                this._oDialog._getPage1().getAggregation("customHeader").getAggregation("contentRight")[0].setVisible(false);
             }
         }
     });

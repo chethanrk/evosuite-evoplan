@@ -27,7 +27,8 @@
             </Bar>
         </customHeader>
 
-        <f:DynamicPage headerExpanded="true"
+        <f:DynamicPage id="idResourcePage"
+                       headerExpanded="true"
                        preserveHeaderStateOnScroll="true"
                        fitContent="false"
                        showFooter="false"

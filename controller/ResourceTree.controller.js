@@ -41,6 +41,7 @@ sap.ui.define([
             eventBus.subscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
             eventBus.subscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
             eventBus.subscribe("FilterSettingsDialog", "triggerSearch", this._triggerFilterSearch, this);
+            eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
 
             // event listener for changing device orientation with fallback of window resize
             var orientationEvent = this.getOrientationEvent(),
@@ -50,7 +51,14 @@ sap.ui.define([
                 _this._jDroppable(_this);
             }, false);
         },
-
+        /**
+         * Register's the DnD
+         * @private
+         */
+        _registerDnD:function(){
+            var _this = this;
+            _this._jDroppable(_this);
+        },
 		/**
 		 * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.
 		 * This hook is the same one that SAPUI5 controls get after being rendered.
@@ -88,7 +96,7 @@ sap.ui.define([
 				}
             }else{
                 this.onTreeUpdateStarted();
-                // this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+                this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
             }
         },
 
@@ -486,12 +494,24 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree:function(){
-            	var oTreeBinding = this.byId("droppableTable").getBinding("rows");
-            	if(oTreeBinding){
+                var oTreeTable = this.byId("droppableTable");
+                var oTreeBinding = oTreeTable.getBinding("rows");
+                var oPage = this.byId("idResourcePage");
+                oPage.setHeaderExpanded(false);
+                if(oTreeBinding){
                     oTreeBinding._restoreTreeState();
                 }
+                // Scrolled manually to fix the rendering bug
+                // var bScrolled = oTreeTable._getScrollExtension().scrollVertically(1);
+            	// When there is no scroll
+                // oTreeTable.invalidate();
                 //Resetting selected resource for calendar as by default IsSelected will come as false from backend
-				this.selectedResources = [];
+
+                setTimeout(function(){
+                    oPage.setHeaderExpanded(true);
+                }.bind(this),1100)
+
+                this.selectedResources = [];
 				this.byId("showPlanCalendar").setEnabled(false);
                 this.byId("idButtonreassign").setEnabled(false);
                 this.byId("idButtonunassign").setEnabled(false);

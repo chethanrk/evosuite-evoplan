@@ -5,7 +5,8 @@
     <ViewSettingsDialog id="filterViewDialog"
                         title="Filter"
                         confirm="onFilterSettingsConfirm"
-                        resetFilters="onFilterSettingsReset">
+                        resetFilters="onFilterSettingsReset"
+                        filterDetailPageOpened="onFilterDetailPageOpened">
         <filterItems>
             <ViewSettingsFilterItem
                     id="viewFilterItem"
