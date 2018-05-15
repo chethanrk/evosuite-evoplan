@@ -21,6 +21,7 @@ sap.ui.define([
 
         selectedResources: [],
 
+
         /**
         * Called when a controller is instantiated and its View controls (if available) are already created.
         * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -497,20 +498,21 @@ sap.ui.define([
                 var oTreeTable = this.byId("droppableTable");
                 var oTreeBinding = oTreeTable.getBinding("rows");
                 var oPage = this.byId("idResourcePage");
-                oPage.setHeaderExpanded(false);
+
                 if(oTreeBinding){
                     oTreeBinding._restoreTreeState();
                 }
                 // Scrolled manually to fix the rendering bug
-                // var bScrolled = oTreeTable._getScrollExtension().scrollVertically(1);
-            	// When there is no scroll
-                // oTreeTable.invalidate();
+                var bScrolled = oTreeTable._getScrollExtension().scrollVertically(1);
+                // If there is no scroll bar present
+                if(!bScrolled){
+                    oPage.setHeaderExpanded(false);
+                    setTimeout(function(){
+                        oPage.setHeaderExpanded(true);
+                    }.bind(this),1100);
+                }
+
                 //Resetting selected resource for calendar as by default IsSelected will come as false from backend
-
-                setTimeout(function(){
-                    oPage.setHeaderExpanded(true);
-                }.bind(this),1100)
-
                 this.selectedResources = [];
 				this.byId("showPlanCalendar").setEnabled(false);
                 this.byId("idButtonreassign").setEnabled(false);
