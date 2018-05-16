@@ -79,15 +79,18 @@ sap.ui.define([
     var oResourceAvailability = {
         "P":{
             tooltip:"xtit.partialAvailable",
-            color :"#A9C6DE"
+            icon :"sap-icon://away",
+            color:"#E78C07"
         },
         "A":{
             tooltip:"xtit.available",
-            color :"#333333"
+            icon :null,
+            color:""
         },
         "N":{
             tooltip:"xtit.notAvailable",
-            color :"#E5E5E5"
+            icon :"sap-icon://busy",
+            color:"#BB0000"
         }
     }
 

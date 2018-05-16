@@ -43,7 +43,11 @@ sap.ui.define([
              */
             _triggerSaveAssignment: function (sChanel, sEvent, oData) {
                 if(sEvent === "assignSelectedDemand"){
-                    this.assignedDemands(oData.selectedPaths, oData.assignPath);
+					if(this.isAvailable(oData.assignPath)){
+                        this.assignedDemands(oData.selectedPaths, oData.assignPath);
+					}else{
+						this.showMessageToProceed(oData.selectedPaths, oData.assignPath);
+					}
                 }
             },
 

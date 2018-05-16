@@ -119,15 +119,21 @@ sap.ui.define([
 		},
         /**
          * @Author Rahul
-         * format the color acording availability
+         * format the icon acording availability
+         * @param sValue
+         */
+        getAvailabilityIcon:function(sValue){
+            if(sValue && sValue!== "")
+                return resourceAvailability[sValue].icon;
+        },
+        /**
+         * @Author Rahul
+         * format the icon acording availability
          * @param sValue
          */
         formatIconColor:function(sValue){
-            var oBundle = this.getResourceBundle();
             if(sValue && sValue!== "")
                 return resourceAvailability[sValue].color;
-            else
-                return "#333333";
         },
         /**
          * @Author Rahul
@@ -135,7 +141,13 @@ sap.ui.define([
          * @param sValue
          */
         formatIconTooltip:function(sValue){
-            var oBundle = this.getResourceBundle();
+            var oComponent = this._component,
+                oBundle;
+            if(oComponent){
+                oBundle = oComponent.getModel("i18n").getResourceBundle();
+            }else{
+                oBundle = this.getResourceBundle();
+            }
             if(sValue && sValue!== "")
                 return oBundle.getText(resourceAvailability[sValue].tooltip);
             else
@@ -143,13 +155,13 @@ sap.ui.define([
         },
         formatCriticality:function (sValue) {
             if (sValue === "1") {
-                return "Error";
+                return sap.ui.core.MessageType.Error;
             } else if (sValue === "2") {
-                return "Warning";
+                return sap.ui.core.MessageType.Warning;
             } else if (sValue === "3") {
-                return "Infromation";
+                return sap.ui.core.MessageType.Information;
             } else {
-                return "Success";
+                return sap.ui.core.MessageType.Success;
             }
         }
 	};

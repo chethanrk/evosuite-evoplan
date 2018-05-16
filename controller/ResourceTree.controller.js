@@ -7,8 +7,11 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/controller/ErrorHandler",
-	"sap/m/MessageToast"
-], function(Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController,ErrorHandler,MessageToast) {
+	"sap/m/MessageToast",
+    "sap/m/MessageBox"
+], function(Device, JSONModel, Filter, FilterOperator,
+            FilterType, formatter, BaseController,
+            ErrorHandler,MessageToast,MessageBox) {
 	"use strict";
 
     return BaseController.extend('com.evorait.evoplan.controller.ResourceTree', {
@@ -43,6 +46,7 @@ sap.ui.define([
             eventBus.subscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
             eventBus.subscribe("FilterSettingsDialog", "triggerSearch", this._triggerFilterSearch, this);
             eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
+            eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
 
             // event listener for changing device orientation with fallback of window resize
             var orientationEvent = this.getOrientationEvent(),
@@ -194,7 +198,7 @@ sap.ui.define([
 		},
 
 		onCalendarModalCancel: function(oEvent) {
-			this._oPlanningCalDialog.close();
+			this._closeCalendar();
 		},
         /**
          * on press cancel in dialog close it
@@ -312,7 +316,12 @@ sap.ui.define([
             if(sEvent === "updateAssignment"){
                 this.updateAssignment(oData.isReassign);
             }else if(sEvent === "bulkReAssignment"){
-                this.bulkReAssignment(oData.sPath,oData.aContexts);
+                if(this.isAvailable(oData.sPath)){
+                    this.bulkReAssignment(oData.sPath, oData.aContexts);
+                }else{
+                    this.showMessageToProceed(null, oData.sPath, true, oData.aContexts)
+                }
+
             }
         },
 
@@ -347,7 +356,9 @@ sap.ui.define([
                     drop: function( event, ui ) {
                         //get hovered marked row, there could be a difference with dropped row
                         var hoverRow = $("#"+droppableTableId+" .sapUiTableRowHvr"),
-                            dropTargetId = hoverRow.attr("id");
+                            dropTargetId = hoverRow.attr("id"),
+                            oComponent = _this.getOwnerComponent(),
+                            oResourceBundle = _this.getResourceBundle();
 
                         if(!dropTargetId){
                             dropTargetId = event.target.id;
@@ -372,7 +383,13 @@ sap.ui.define([
 									sPath: $(this).attr('id')
 								});
 							});
-                            _this.assignedDemands(aSources, targetPath);
+							// If the Resource is Not/Partially available
+
+                            if(_this.isAvailable(targetPath)){
+                                _this.assignedDemands(aSources, targetPath);
+                            }else{
+                                _this.showMessageToProceed(aSources, targetPath)
+                            }
 						}
 					}
 				});
@@ -495,12 +512,14 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree:function(){
-                var oTreeTable = this.byId("droppableTable");
-                var oTreeBinding = oTreeTable.getBinding("rows");
-                var oPage = this.byId("idResourcePage");
+                var oTreeTable = this.byId("droppableTable"),
+                    oTreeBinding = oTreeTable.getBinding("rows"),
+                    oPage = this.byId("idResourcePage"),
+                    oModel = this.getModel();
 
                 if(oTreeBinding){
                     oTreeBinding._restoreTreeState();
+                    oModel.resetChanges();
                 }
                 // Scrolled manually to fix the rendering bug
                 var bScrolled = oTreeTable._getScrollExtension().scrollVertically(1);
@@ -517,6 +536,14 @@ sap.ui.define([
 				this.byId("showPlanCalendar").setEnabled(false);
                 this.byId("idButtonreassign").setEnabled(false);
                 this.byId("idButtonunassign").setEnabled(false);
-		}
+		},
+        /**
+         * Close the Planning calendar
+         * @private
+         */
+        _closeCalendar:function() {
+            this._oPlanningCalDialog.close();
+        }
+
 	});
 });

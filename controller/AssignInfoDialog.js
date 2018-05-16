@@ -122,6 +122,7 @@ sap.ui.define([
                         isReassign: this.reAssign
                     });
                     this.onCloseDialog();
+                    eventBus.publish("AssignInfoDialog", "CloseCalendar",{}); // Close the calendar
                 } else {
                     this.showMessageToast(sMsg);
                 }
@@ -137,6 +138,7 @@ sap.ui.define([
                 sId: sId
             });
             this.onCloseDialog();
+            eventBus.publish("AssignInfoDialog", "CloseCalendar",{});
         },
 
         /**
@@ -174,6 +176,7 @@ sap.ui.define([
          */
         onCloseDialog : function () {
             this.getDialog().close();
+            this.reAssign = false; // setting to default on close of Dialog
             this.oAssignmentModel.setData({});
         },
 
@@ -195,15 +198,16 @@ sap.ui.define([
                 events: {
                     change: function () {
                         var oElementBinding = oDialog.getElementBinding(),
-                            oContext = oElementBinding.getBoundContext(),
-                            oDateToField = sap.ui.getCore().byId("idDateToAssignInf");
+                            oContext = oElementBinding.getBoundContext();
+
+                            // oDateToField = sap.ui.getCore().byId("idDateToAssignInf");
 
                         if(!oContext){
                             oModel.setProperty("/showError", true);
                             return;
                         }
                         //Setting min date to DateTo to restrict selection of invalid dates
-                        oDateToField.setMinDate(oContext.getProperty("DateFrom"));
+                        // oDateToField.setMinDate(oContext.getProperty("DateFrom"));
 
                         oModel.setProperty("/showError", false);
                         oModel.setProperty("/DateFrom", oContext.getProperty("DateFrom"));
@@ -318,22 +322,6 @@ sap.ui.define([
                 newAssignDesc = resourceGroup.ResourceGroupDesc + "\n" + newAssignDesc;
             }
             return newAssignDesc;
-        },
-        /**
-         * To set min date on change of From Date
-         * @param oEvent
-         */
-        onChangeDate:function(oEvent){
-            var oDateTo = sap.ui.getCore().byId("idDateToAssignInf"),
-                oMinDate,
-                oDateToValue = new Date(oDateTo.getValue());
-            if(oEvent.getParameter("newValue") !== "") {
-                oMinDate = new Date(oEvent.getParameter("newValue"));
-                if (oMinDate.getTime() > oDateToValue.getTime()) {
-                    this.oAssignmentModel.setProperty("/DateTo", oMinDate)
-                }
-                oDateTo.setMinDate(oMinDate);
-            }
         }
     });
 });
