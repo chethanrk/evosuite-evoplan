@@ -154,14 +154,14 @@ sap.ui.define([
                 return oBundle.getText("xtit.available");
         },
         formatCriticality:function (sValue) {
-            if (sValue === "1") {
+            if (sValue === 1) {
                 return sap.ui.core.MessageType.Error;
-            } else if (sValue === "2") {
+            } else if (sValue === 2) {
                 return sap.ui.core.MessageType.Warning;
-            } else if (sValue === "3") {
-                return sap.ui.core.MessageType.Information;
-            } else {
+            } else if (sValue === 3) {
                 return sap.ui.core.MessageType.Success;
+            } else {
+                return sap.ui.core.MessageType.Information;
             }
         }
 	};
