@@ -78,9 +78,15 @@ sap.ui.define([
         open : function (oView) {
             this._oView = oView;
             var oDialog = this.getDialog();
+            this._component = this._oView.getController().getOwnerComponent();
+            // setting the content density class on dialog
+            oDialog.addStyleClass(this._component.getContentDensityClass());
 
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
+            // Removing the reset button on the ViewSettingDialog
+            oDialog._getResetButton().setVisible(false);
+
             // open dialog
             oDialog.open();
         },
@@ -122,8 +128,10 @@ sap.ui.define([
 
             sDateControl1 = this.formatter.date(sDateControl1);
             sDateControl2 = this.formatter.date(sDateControl2);
-            var oDateRangeFilter = new Filter("StartDate", FilterOperator.BT, sDateControl1, sDateControl2);
-            aFilters.push(oDateRangeFilter);
+            var oDateRangeFilter1 = new Filter("StartDate", FilterOperator.LE,sDateControl2),
+                oDateRangeFilter2 = new Filter("EndDate", FilterOperator.GE,sDateControl1);
+            aFilters.push(oDateRangeFilter1);
+            aFilters.push(oDateRangeFilter2);
 
             //get all token from group filter
             var tokenFilter = this.getFilterDialogGroupToken();
@@ -395,15 +403,17 @@ sap.ui.define([
          * @private
          */
         _setDefaultFilterDateRange: function () {
-            //set default date range from 1month
-            var d = new Date();
-            d.setMonth(d.getMonth() - 1);
+            //set default date range
+            var oDateFrom = new Date("01-01-1990");
+
+            var oDateTo = moment().endOf('year');
+            oDateTo =  oDateTo.add(20, 'years').toDate();
             var dateRange1Id = this._filterDateRange1.getId();
             var dateRange2Id = this._filterDateRange2.getId();
 
             // save default date range global
-            this.defaultDateRange[dateRange1Id] = this.formatter.date(d);
-            this.defaultDateRange[dateRange2Id] = this.formatter.date(new Date());
+            this.defaultDateRange[dateRange1Id] = this.formatter.date(oDateFrom);
+            this.defaultDateRange[dateRange2Id] = this.formatter.date(oDateTo);
 
             this._filterDateRange1.setValue(this.defaultDateRange[dateRange1Id]);
             this._filterDateRange2.setValue(this.defaultDateRange[dateRange2Id]);
@@ -435,6 +445,16 @@ sap.ui.define([
                 if(obj.getSelected()){
                     return obj.getKey();
                 }
+            }
+        },
+        /**
+         * Setting the reset button false when any view is opened
+         * @param oEvent
+         */
+        onFilterDetailPageOpened:function(oEvent){
+            this._oDialog._getPage2().getAggregation("customHeader").getAggregation("contentRight")[0].setVisible(false);
+            if(this._oDialog._getPage1().getAggregation("customHeader").getAggregation("contentRight")){
+                this._oDialog._getPage1().getAggregation("customHeader").getAggregation("contentRight")[0].setVisible(false);
             }
         }
     });

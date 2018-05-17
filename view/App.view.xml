@@ -10,23 +10,15 @@
 		 busy="{appView>/busy}"
 		 busyIndicatorDelay="{appView>/delay}" >
 
-		<layout:ResponsiveSplitter defaultPane="leftPanel">
-			<layout:PaneContainer>
+		<layout:Splitter resize="onResize">
+			<NavContainer id="leftPanel" class="panelPage" >
+				<layoutData>
+					<layout:SplitterLayoutData size="30%" />
+				</layoutData>
+			</NavContainer>
 
-				<layout:SplitPane requiredParentWidth="450">
-					<NavContainer id="leftPanel" class="panelPage"/>
-					<layout:layoutData>
-						<layout:SplitterLayoutData size="30%" />
-					</layout:layoutData>
-				</layout:SplitPane>
-
-				<layout:SplitPane requiredParentWidth="800">
-					<NavContainer id="rightPanel" class="panelPage"/>
-				</layout:SplitPane>
-
-			</layout:PaneContainer>
-		</layout:ResponsiveSplitter>
-
+			<NavContainer id="rightPanel" class="panelPage"/>
+		</layout:Splitter>
 	</App>
 </mvc:View>
 

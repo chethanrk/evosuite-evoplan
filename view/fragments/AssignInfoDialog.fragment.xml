@@ -50,7 +50,8 @@
                                     }"/>
 
                     <Label text="{i18n>xfld.endDate}" />
-                    <DateTimePicker name="DateTo"
+                    <DateTimePicker id="idDateToAssignInf"
+                                    name="DateTo"
                                     value="{path:'assignment>/DateTo',
                                     type:'sap.ui.model.type.DateTime',
                                     formatOptions: { style: 'medium', strictParsing: true}

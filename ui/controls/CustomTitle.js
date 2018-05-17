@@ -12,6 +12,9 @@ sap.ui.define([
                  */
                 icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
                 isLink : {type : "boolean", group : "Misc", defaultValue : false},
+                availabilityIcon: {type: "sap.ui.core.URI", group : "Appearance", defaultValue :null},
+                iconTooltip:{type : "string", group : "Misc", defaultValue : null},
+                iconColor: {type: "sap.ui.core.CSSColor", group : "Appearance", defaultValue :null}
             },
             events: {
                 /**
@@ -21,8 +24,8 @@ sap.ui.define([
             }
         },
         renderer: function(oRm, oControl){
-            //sap.m.TitleRenderer.render(oRm, oControl);
             var oIconInfo = IconPool.getIconInfo(oControl.getIcon());
+            var oAvailabilityIcon = IconPool.getIconInfo(oControl.getAvailabilityIcon());
             var oAssoTitle = oControl._getTitle(),
                 sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oControl.getLevel()) || sap.ui.core.TitleLevel.Auto,
                 bAutoLevel = sLevel == sap.ui.core.TitleLevel.Auto,
@@ -76,21 +79,33 @@ sap.ui.define([
             if (oIconInfo) {
                 oRm.writeAttributeEscaped("data-sap-ui-icon-content", oIconInfo.content);
                 oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
+                if (oIconInfo && !oIconInfo.suppressMirroring) {
+                    oRm.addClass("sapUiIconMirrorInRTL");
+                }
+                oRm.writeClasses();
+                oRm.writeStyles();
+                oRm.write(">");
+                // Availability icon
+                oRm.write("<span");
+                oRm.addClass("sapUiIcon");
+                oRm.addClass("sapUiTinyMarginBegin");
+                if(oAvailabilityIcon){
+                    oRm.writeAttributeEscaped("data-sap-ui-icon-content", oAvailabilityIcon.content);
+                    oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
+                    oRm.writeAttributeEscaped("title",oControl.getIconTooltip());
+                    oRm.addStyle("color", oControl.getIconColor());
+                }
+                oRm.writeClasses();
+                oRm.writeStyles();
+                oRm.write("></span>");
             }
-            if (oIconInfo && !oIconInfo.suppressMirroring) {
-                oRm.addClass("sapUiIconMirrorInRTL");
-            }
-
-            oRm.writeClasses();
-            oRm.writeStyles();
-            oRm.write("></span>");
+            oRm.write("</span>");
 
             //when link mode is set
             if(isLink){
                 oRm.write("<a");
                 oRm.addClass("sapMLnk");
                 oRm.writeClasses();
-                // oRm.writeAttribute("href", "#");
                 oRm.writeAttributeEscaped("title", titleText);
                 oRm.addStyle("display", "inline");
                 oRm.writeStyles();

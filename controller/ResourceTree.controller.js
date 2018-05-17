@@ -7,8 +7,11 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/controller/ErrorHandler",
-	"sap/m/MessageToast"
-], function(Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController,ErrorHandler,MessageToast) {
+	"sap/m/MessageToast",
+    "sap/m/MessageBox"
+], function(Device, JSONModel, Filter, FilterOperator,
+            FilterType, formatter, BaseController,
+            ErrorHandler,MessageToast,MessageBox) {
 	"use strict";
 
     return BaseController.extend('com.evorait.evoplan.controller.ResourceTree', {
@@ -20,6 +23,7 @@ sap.ui.define([
         assignmentPath: null,
 
         selectedResources: [],
+
 
         /**
         * Called when a controller is instantiated and its View controls (if available) are already created.
@@ -41,6 +45,8 @@ sap.ui.define([
             eventBus.subscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
             eventBus.subscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
             eventBus.subscribe("FilterSettingsDialog", "triggerSearch", this._triggerFilterSearch, this);
+            eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
+            eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
 
             // event listener for changing device orientation with fallback of window resize
             var orientationEvent = this.getOrientationEvent(),
@@ -50,7 +56,14 @@ sap.ui.define([
                 _this._jDroppable(_this);
             }, false);
         },
-
+        /**
+         * Register's the DnD
+         * @private
+         */
+        _registerDnD:function(){
+            var _this = this;
+            _this._jDroppable(_this);
+        },
 		/**
 		 * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.
 		 * This hook is the same one that SAPUI5 controls get after being rendered.
@@ -88,7 +101,7 @@ sap.ui.define([
 				}
             }else{
                 this.onTreeUpdateStarted();
-                // this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+                this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
             }
         },
 
@@ -185,7 +198,7 @@ sap.ui.define([
 		},
 
 		onCalendarModalCancel: function(oEvent) {
-			this._oPlanningCalDialog.close();
+			this._closeCalendar();
 		},
         /**
          * on press cancel in dialog close it
@@ -283,6 +296,7 @@ sap.ui.define([
 		_initPlanCalendarDialog: function() {
 			if (!this._oPlanningCalDialog) {
 				this._oPlanningCalDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceCalendarDialog", this);
+                this._oPlanningCalDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass())
 				this.getView().addDependent(this._oPlanningCalDialog);
 				this._setCalendarModel();
 			}
@@ -302,7 +316,12 @@ sap.ui.define([
             if(sEvent === "updateAssignment"){
                 this.updateAssignment(oData.isReassign);
             }else if(sEvent === "bulkReAssignment"){
-                this.bulkReAssignment(oData.sPath,oData.aContexts);
+                if(this.isAvailable(oData.sPath)){
+                    this.bulkReAssignment(oData.sPath, oData.aContexts);
+                }else{
+                    this.showMessageToProceed(null, oData.sPath, true, oData.aContexts)
+                }
+
             }
         },
 
@@ -337,7 +356,9 @@ sap.ui.define([
                     drop: function( event, ui ) {
                         //get hovered marked row, there could be a difference with dropped row
                         var hoverRow = $("#"+droppableTableId+" .sapUiTableRowHvr"),
-                            dropTargetId = hoverRow.attr("id");
+                            dropTargetId = hoverRow.attr("id"),
+                            oComponent = _this.getOwnerComponent(),
+                            oResourceBundle = _this.getResourceBundle();
 
                         if(!dropTargetId){
                             dropTargetId = event.target.id;
@@ -362,7 +383,13 @@ sap.ui.define([
 									sPath: $(this).attr('id')
 								});
 							});
-                            _this.assignedDemands(aSources, targetPath);
+							// If the Resource is Not/Partially available
+
+                            if(_this.isAvailable(targetPath)){
+                                _this.assignedDemands(aSources, targetPath);
+                            }else{
+                                _this.showMessageToProceed(aSources, targetPath)
+                            }
 						}
 					}
 				});
@@ -436,7 +463,7 @@ sap.ui.define([
 
 					var oCalendarModel = new JSONModel();
 					oCalendarModel.setData({
-						startDate: new Date(sDateControl1),
+						startDate: new Date(),
 						viewKey: sCalendarView,
 						resources: this._createData(data)
 					});
@@ -485,17 +512,38 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree:function(){
-			var oContext = this.byId("droppableTable").getBinding("rows").getContextByIndex(0),
-            	oModel = oContext.getModel(),
-            	sPath = oContext.getPath();
-            	
-                oModel.setProperty(sPath+"/IsSelected",true); // changing the property in order trigger submit change 
-                this.byId("droppableTable").getBinding("rows").submitChanges();// submit change will refresh of tree according maintained parameters
-				//Resetting selected resource for calendar as by default IsSelected will come as false from backend
-				this.selectedResources = [];
+                var oTreeTable = this.byId("droppableTable"),
+                    oTreeBinding = oTreeTable.getBinding("rows"),
+                    oPage = this.byId("idResourcePage"),
+                    oModel = this.getModel();
+
+                if(oTreeBinding){
+                    oTreeBinding._restoreTreeState();
+                    oModel.resetChanges();
+                }
+                // Scrolled manually to fix the rendering bug
+                var bScrolled = oTreeTable._getScrollExtension().scrollVertically(1);
+                // If there is no scroll bar present
+                if(!bScrolled){
+                    oPage.setHeaderExpanded(false);
+                    setTimeout(function(){
+                        oPage.setHeaderExpanded(true);
+                    }.bind(this),1100);
+                }
+
+                //Resetting selected resource for calendar as by default IsSelected will come as false from backend
+                this.selectedResources = [];
 				this.byId("showPlanCalendar").setEnabled(false);
                 this.byId("idButtonreassign").setEnabled(false);
                 this.byId("idButtonunassign").setEnabled(false);
-		}
+		},
+        /**
+         * Close the Planning calendar
+         * @private
+         */
+        _closeCalendar:function() {
+            this._oPlanningCalDialog.close();
+        }
+
 	});
 });

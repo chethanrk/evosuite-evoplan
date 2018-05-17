@@ -43,7 +43,11 @@ sap.ui.define([
              */
             _triggerSaveAssignment: function (sChanel, sEvent, oData) {
                 if(sEvent === "assignSelectedDemand"){
-                    this.assignedDemands(oData.selectedPaths, oData.assignPath);
+					if(this.isAvailable(oData.assignPath)){
+                        this.assignedDemands(oData.selectedPaths, oData.assignPath);
+					}else{
+						this.showMessageToProceed(oData.selectedPaths, oData.assignPath);
+					}
                 }
             },
 
@@ -58,7 +62,15 @@ sap.ui.define([
                 if(sEvent === "changeStatusDemand"){
                     this.updateFunctionDemand(oData.selectedPaths, oData.functionKey);
                 }
-            }
+            },
+            /**
+			 * Registering the event when resized the splitter
+             */
+            onResize:function(){
+                var eventBus = sap.ui.getCore().getEventBus();
+                eventBus.publish("App","RegisterDrop",{})
+                eventBus.publish("App","RegisterDrag",{})
+			}
 
 		});
 

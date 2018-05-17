@@ -45,6 +45,8 @@ sap.ui.define([
             this._aSelectedPaths = aSelectedPaths;
             this._bulkReAssign = isBulkReAssign;
 
+            this._component = this._oView.getController().getOwnerComponent();
+            oDialog.addStyleClass(this._component.getContentDensityClass());
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
             // open dialog

@@ -11,7 +11,7 @@
             draggable="true"
             icon="sap-icon://activity-individual"
             class="treeTableDialog"
-            afterOpen="refreshDialogTable">
+            beforeOpen="refreshDialogTable">
         <content>
             <Toolbar>
                 <SearchField search="onSearchModal"
@@ -50,9 +50,22 @@
                                         formatter: '.formatter.formatResourceTitle'
                                     }"
                                     icon="{
-                                              parts:[{path: 'NodeType'},{path: 'StatusIcon'}],
-                                              formatter: '.formatter.getResourceIcon'
-                                     }"/>
+                                         parts:[{path: 'NodeType'},{path: 'StatusIcon'}],
+                                         formatter: '.formatter.getResourceIcon'
+                                    }"
+                                    availabilityIcon="{
+                                           path: 'IS_AVAILABLE',
+                                           formatter: '.formatter.getAvailabilityIcon'
+                                    }"
+                                    iconColor="{
+                                           path: 'IS_AVAILABLE',
+                                           formatter: '.formatter.formatIconColor'
+                                    }"
+                                    iconTooltip="{
+                                           path: 'IS_AVAILABLE',
+                                           formatter: '.formatter.formatIconTooltip'
+                                    }"
+                                    />
                         </table:template>
                     </table:Column>
                     <table:Column

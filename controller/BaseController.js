@@ -153,10 +153,15 @@ sap.ui.define([
                 if(targetObj.StartDate){
                     oParams.DateFrom = targetObj.StartDate;
                     oParams.TimeFrom = targetObj.StartTime;
+                }else{
+                    oParams.DateFrom = new Date() // When Start Date Null/In the Simple view today date will sent
                 }
+
                 if(targetObj.EndDate){
                     oParams.DateTo = targetObj.EndDate;
                     oParams.TimeTo = targetObj.EndTime;
+                }else{
+                    oParams.DateTo = new Date() // When Start Date Null/In the Simple view today date will sent
                 }
                 this.callFunctionImport(oParams, "CreateAssignment", "POST");
             }
@@ -188,7 +193,11 @@ sap.ui.define([
                 oParams.ResourceGuid = oResource.ResourceGuid;
             }
             this.clearMessageModel();
-            this.callFunctionImport(oParams, "UpdateAssignment", "POST");
+            if(isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)){
+                this.showMessageToProceed(null,null,null,null,true,oParams);
+            }else{
+                this.callFunctionImport(oParams, "UpdateAssignment", "POST");
+            }
         },
         /**
          * Calls the update assignment function import for selected assignment in order to
@@ -213,16 +222,26 @@ sap.ui.define([
                     var sAssignPath = sAssignmentPaths[j];
                     var oAssignment = oModel.getProperty("/"+sAssignPath);
                     var oParams = {
-                        "DateFrom": oAssignment.DateFrom || 0,
-                        "TimeFrom": {__edmtype: "Edm.Time", ms: oAssignment.DateFrom.getTime()},
-                        "DateTo": oAssignment.DateTo || 0,
-                        "TimeTo": {__edmtype: "Edm.Time", ms: oAssignment.DateTo.getTime()},
                         "AssignmentGUID": oAssignment.Guid,
                         "EffortUnit": oAssignment.EffortUnit,
                         "Effort": oAssignment.Effort,
                         "ResourceGroupGuid": oResource.ResourceGroupGuid,
                         "ResourceGuid": oResource.ResourceGuid
                     };
+
+                    if(oResource.StartDate){
+                        oParams.DateFrom = oResource.StartDate;
+                        oParams.TimeFrom = oResource.StartTime;
+                    }else{
+                        oParams.DateFrom = new Date() // When Start Date Null/In the Simple view today date will sent
+                    }
+
+                    if(oResource.EndDate){
+                        oParams.DateTo = oResource.EndDate;
+                        oParams.TimeTo = oResource.EndTime;
+                    }else{
+                        oParams.DateTo = new Date() // When Start Date Null/In the Simple view today date will sent
+                    }
                     // call function import
                     this.callFunctionImport(oParams, "UpdateAssignment", "POST", true);
                 }
@@ -263,7 +282,7 @@ sap.ui.define([
         },
 
         /**
-         * update demand function status on selected pathes
+         * update demand function status on selected paths
          * @param aSelectedPaths
          * @param sFunctionKey
          */
@@ -298,7 +317,6 @@ sap.ui.define([
                     eventBus.publish("BaseController", "refreshTreeTable",{});
                     eventBus.publish("BaseController", "refreshDemandTable",{});
                     eventBus.publish("BaseController", "refreshDemandOverview",{}); // refresh the demand overview page binding
-
                 }.bind(this),
                 error: function(oError){
                     //Handle Error
@@ -393,7 +411,54 @@ sap.ui.define([
          */
         clearMessageModel:function(){
             sap.ui.getCore().getMessageManager().removeAllMessages();
+        },
+        /**
+         * Method checks the availability of resources
+         * @param sTargetPath : Resource path on which assignment needs to be created
+         * @return {boolean} return true is available
+         */
+        isAvailable:function (sTargetPath) {
+            var oModel = this.getModel(),
+                oTargetObj = oModel.getProperty(sTargetPath);
+
+            // If the Resource is Not/Partially available
+            if(oTargetObj.IS_AVAILABLE !== "A") {
+                return false;
+            }
+            return true;
+        },
+        /**
+         * Show the message to proceed with the assignment
+         * @param aSources Demands to be assigned
+         * @param sTargetPath Resource path
+         * @param bBulkReassign flag which says is it bulk reassignment
+         * @param aContexts - Assignment contexts to be reassigned
+         *
+         */
+        showMessageToProceed:function (aSources, sTargetPath , bBulkReassign ,aContexts ,bUpdate, oParams) {
+            var oResourceBundle= this.getResourceBundle(),
+                oComponent = this.getOwnerComponent(),
+                sAction = oResourceBundle.getText("xbut.proceed"),
+                sMessage = oResourceBundle.getText("ymsg.availability");
+
+            MessageBox.warning(
+                sMessage,
+                {
+                    actions: [sAction, sap.m.MessageBox.Action.CANCEL],
+                    styleClass: oComponent.getContentDensityClass(),
+                    onClose: function(sValue) {
+                        if(sValue === sAction && !bBulkReassign && !bUpdate){
+                            this.assignedDemands(aSources, sTargetPath);
+                        }else if(sValue === sAction && bBulkReassign){
+                            this.bulkReAssignment(sTargetPath, aContexts);
+                        }else if(sValue === sAction && bUpdate){
+                            this.callFunctionImport(oParams, "UpdateAssignment", "POST");
+                        }
+                    }.bind(this)
+                }
+            );
         }
+
 
 	});
 

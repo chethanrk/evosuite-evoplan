@@ -80,8 +80,11 @@ sap.ui.define([
                 this.oAssignmentModel.setProperty("/ResourceDesc", resource.ResourceDesc);
             }
 
+            this._component = this._oView.getController().getOwnerComponent();
+            oDialog.addStyleClass(this._component.getContentDensityClass());
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
+
             this._getAssignedDemand(oAssignment.AssignmentGuid);
             //oDialog.bindElement(sBindPath);
             
@@ -106,11 +109,26 @@ sap.ui.define([
          * @param oEvent
          */
         onSaveDialog : function (oEvent) {
-            var eventBus = sap.ui.getCore().getEventBus();
-            eventBus.publish("AssignInfoDialog", "updateAssignment", {
-                isReassign: this.reAssign
-            });
-            this.onCloseDialog();
+            var eventBus = sap.ui.getCore().getEventBus(),
+                oDateFrom =this.oAssignmentModel.getProperty("/DateFrom"),
+                oDateTo =this.oAssignmentModel.getProperty("/DateTo"),
+                sMsg = this._oView.getController().getResourceBundle().getText('ymsg.datesInvalid');
+            if(oDateTo !== undefined && oDateFrom !== undefined) {
+                oDateFrom = oDateFrom.getTime();
+                oDateTo = oDateTo.getTime();
+                // To Validate DateTo and DateFrom
+                if (oDateTo >= oDateFrom) {
+                    eventBus.publish("AssignInfoDialog", "updateAssignment", {
+                        isReassign: this.reAssign
+                    });
+                    this.onCloseDialog();
+                    eventBus.publish("AssignInfoDialog", "CloseCalendar",{}); // Close the calendar
+                } else {
+                    this.showMessageToast(sMsg);
+                }
+            }else {
+                this.showMessageToast(sMsg);
+            }
         },
 
         onDeleteAssignment : function (oEvent) {
@@ -120,6 +138,7 @@ sap.ui.define([
                 sId: sId
             });
             this.onCloseDialog();
+            eventBus.publish("AssignInfoDialog", "CloseCalendar",{});
         },
 
         /**
@@ -157,6 +176,7 @@ sap.ui.define([
          */
         onCloseDialog : function () {
             this.getDialog().close();
+            this.reAssign = false; // setting to default on close of Dialog
             this.oAssignmentModel.setData({});
         },
 
@@ -180,17 +200,20 @@ sap.ui.define([
                         var oElementBinding = oDialog.getElementBinding(),
                             oContext = oElementBinding.getBoundContext();
 
+                            // oDateToField = sap.ui.getCore().byId("idDateToAssignInf");
+
                         if(!oContext){
                             oModel.setProperty("/showError", true);
                             return;
                         }
+                        //Setting min date to DateTo to restrict selection of invalid dates
+                        // oDateToField.setMinDate(oContext.getProperty("DateFrom"));
 
                         oModel.setProperty("/showError", false);
                         oModel.setProperty("/DateFrom", oContext.getProperty("DateFrom"));
                         oModel.setProperty("/DateTo", oContext.getProperty("DateTo"));
                         oModel.setProperty("/Effort", oContext.getProperty("Effort"));
                         oModel.setProperty("/EffortUnit", oContext.getProperty("EffortUnit"));
-
                         var oDemandData = oContext.getProperty("Demand");
                         oModel.setProperty("/Description", oDemandData.DemandDesc);
                         oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);

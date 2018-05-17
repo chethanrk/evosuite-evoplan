@@ -67,13 +67,32 @@ sap.ui.define([
         },
         TIMENONE: {
             getDateBegin: function () {
-                return moment().subtract(1, 'months').toDate();
+                return new Date("01-01-1990");
             },
             getDateEnd: function () {
-                return moment().toDate();
+                var d = moment().endOf('year');
+                return d.add(20, 'years').toDate();
             }
         }
     };
+
+    var oResourceAvailability = {
+        "P":{
+            tooltip:"xtit.partialAvailable",
+            icon :"sap-icon://away",
+            color:"#E78C07"
+        },
+        "A":{
+            tooltip:"xtit.available",
+            icon :null,
+            color:""
+        },
+        "N":{
+            tooltip:"xtit.notAvailable",
+            icon :"sap-icon://busy",
+            color:"#BB0000"
+        }
+    }
 
 	return {
 		// provide the density class that should be used according to the environment (may be "")
@@ -90,6 +109,11 @@ sap.ui.define([
 		//returns the whole object with settings
         getResourceFormats: function () {
             return oResourceFormats;
+        },
+
+        //returns the resource availability settings
+        getResourceAvailability: function () {
+            return oResourceAvailability;
         }
 	};
 });

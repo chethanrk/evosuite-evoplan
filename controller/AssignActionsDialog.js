@@ -40,7 +40,9 @@ sap.ui.define([
             this._aSelectedResources = aSelectedResources;
             this._isUnAssign = isUnAssign;
             this._resourceBundle = this._oView.getController().getResourceBundle();
+            this._component = this._oView.getController().getOwnerComponent();
             var oDialog = this.getDialog();
+            oDialog.addStyleClass(this._component.getContentDensityClass());
             oView.addDependent(oDialog);
             oDialog.open();
         },

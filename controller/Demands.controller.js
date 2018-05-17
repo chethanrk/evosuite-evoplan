@@ -37,6 +37,7 @@ sap.ui.define([
 
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
+            eventBus.subscribe("App", "RegisterDrag", this._registerDnD, this);
 
             this.getRouter().getRoute("demands").attachPatternMatched(this._onObjectMatched, this);
 			
@@ -48,6 +49,14 @@ sap.ui.define([
                 _this._jDraggable(_this);
             }, false);
 		},
+        /**
+         * Register Draggable
+         * @private
+         */
+        _registerDnD:function(){
+            var _this = this;
+            _this._jDraggable(_this);
+        },
 		/**
 		 * Method get call when ever the hash mathes the route name 
 		 * Registering draggable functionality to make sure it will work all the time
@@ -145,10 +154,16 @@ sap.ui.define([
         	oRouter.navTo("detail", {guid:oData.Guid});
         },
 
+        /**
+         * open's the message popover by it source
+         * @param oEvent
+         */
 		onMessagePopoverPress: function(oEvent) {
             this._oMessagePopover.openBy(oEvent.getSource());
 		},
-
+        /**
+         * Called when view attached is destroyed
+         */
         onExit: function() {
         	if(this._infoDialog){
         		this._infoDialog.destroy();
@@ -175,11 +190,7 @@ sap.ui.define([
             oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
             oDataTable.setVisibleRowCountMode("Auto");
 
-            //this highlight is only to show that rows can be dragged - nice to see
-            oDataTable.setRowSettingsTemplate(new RowSettings({
-                highlight: "Information"
-            }));
-            
+            // Row Action template to navigate to Detail page
             var onClickNavigation = this.onActionPress.bind(this);
             var oTemplate = oDataTable.getRowActionTemplate();
 			if (oTemplate) {
