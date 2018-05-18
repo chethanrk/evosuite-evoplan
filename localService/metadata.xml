@@ -55,6 +55,7 @@
 				<Property Name="StartTime" Type="Edm.Time" Precision="0" sap:label="From time"/>
 				<Property Name="EndDate" Type="Edm.DateTime" Precision="7" sap:label="End date"/>
 				<Property Name="EndTime" Type="Edm.Time" Precision="0" sap:label="To time"/>
+				<Property Name="IS_AVAILABLE" Type="Edm.String" MaxLength="1" sap:label="Resource available?" sap:is-extension-field="true"/>
 			</EntityType>
 			<EntityType Name="Assignment" sap:content-version="1">
 				<Key>
@@ -205,6 +206,7 @@
 				<Property Name="NOTIFICATION_TYPE_DESC" Type="Edm.String" MaxLength="20" sap:label="NotifcatnType" sap:is-extension-field="true"/>
 				<Property Name="ORDER_TYPE_DESC" Type="Edm.String" MaxLength="40" sap:label="Order Type Text" sap:is-extension-field="true"/>
 				<Property Name="PRIORITY_DESC" Type="Edm.String" MaxLength="20" sap:label="Priority Text" sap:is-extension-field="true"/>
+				<Property Name="CRITICALITY" Type="Edm.String" MaxLength="1" sap:label="Criticality" sap:is-extension-field="true"/>
 				<NavigationProperty Name="DemandToAssignment" Relationship="com.evorait.evoplan.DemandToAssignment" FromRole="FromRole_DemandToAssignment"
 					ToRole="ToRole_DemandToAssignment"/>
 			</EntityType>
@@ -234,6 +236,23 @@
 				</Key>
 				<Property Name="Msehi" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Int. Meas. Unit" sap:semantics="unit-of-measure"/>
 				<Property Name="Msehl" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="Unit text"/>
+			</EntityType>
+			<EntityType Name="DynamicTile" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="title"/>
+				</Key>
+				<Property Name="icon" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Text, 40 Characters Long"/>
+				<Property Name="info" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Text, 40 Characters Long"/>
+				<Property Name="infoState" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Text, 40 Characters Long"/>
+				<Property Name="number" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Text, 40 Characters Long"/>
+				<Property Name="numberDigits" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Text, 40 Characters Long"/>
+				<Property Name="numberFactor" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Text, 40 Characters Long"/>
+				<Property Name="numberState" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Text, 40 Characters Long"/>
+				<Property Name="numberUnit" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Text, 40 Characters Long"/>
+				<Property Name="stateArrow" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Text, 40 Characters Long"/>
+				<Property Name="subtitle" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Text, 40 Characters Long"/>
+				<Property Name="targetParams" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Text, 40 Characters Long"/>
+				<Property Name="title" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Tile Title"/>
 			</EntityType>
 			<Association Name="DemandToAssignment" sap:content-version="1">
 				<End Type="com.evorait.evoplan.Demand" Multiplicity="1" Role="FromRole_DemandToAssignment"/>
@@ -280,6 +299,7 @@
 				<EntitySet Name="DemandSet" EntityType="com.evorait.evoplan.Demand" sap:content-version="1"/>
 				<EntitySet Name="ResourceSet" EntityType="com.evorait.evoplan.Resource" sap:content-version="1"/>
 				<EntitySet Name="TimeUnitsSet" EntityType="com.evorait.evoplan.TimeUnits" sap:content-version="1"/>
+				<EntitySet Name="DynamicTileSet" EntityType="com.evorait.evoplan.DynamicTile" sap:content-version="1"/>
 				<AssociationSet Name="DemandToAssignmentSet" Association="com.evorait.evoplan.DemandToAssignment" sap:creatable="false"
 					sap:updatable="false" sap:deletable="false" sap:content-version="1">
 					<End EntitySet="DemandSet" Role="FromRole_DemandToAssignment"/>
@@ -307,11 +327,11 @@
 				</FunctionImport>
 				<FunctionImport Name="UpdateAssignment" ReturnType="com.evorait.evoplan.Assignment" EntitySet="AssignmentSet" m:HttpMethod="POST"
 					sap:action-for="com.evorait.evoplan.Assignment">
-					<Parameter Name="DateTo" Type="Edm.DateTime" Mode="In" Precision="0"/>
-					<Parameter Name="DateFrom" Type="Edm.DateTime" Mode="In" Precision="0"/>
-					<Parameter Name="AssignmentGUID" Type="Edm.String" Mode="In" MaxLength="32"/>
 					<Parameter Name="ResourceGroupGuid" Type="Edm.String" Mode="In" MaxLength="32"/>
 					<Parameter Name="ResourceGuid" Type="Edm.String" Mode="In" MaxLength="32"/>
+					<Parameter Name="AssignmentGUID" Type="Edm.String" Mode="In" MaxLength="32"/>
+					<Parameter Name="DateFrom" Type="Edm.DateTime" Mode="In" Precision="0"/>
+					<Parameter Name="DateTo" Type="Edm.DateTime" Mode="In" Precision="0"/>
 					<Parameter Name="TimeFrom" Type="Edm.Time" Mode="In" Precision="0"/>
 					<Parameter Name="TimeTo" Type="Edm.Time" Mode="In" Precision="0"/>
 					<Parameter Name="Effort" Type="Edm.Decimal" Mode="In" Precision="1" Scale="1"/>
@@ -488,7 +508,7 @@
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/ALLOW_CLOSED">
 				<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
 			</Annotations>
-			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/EFFORT_UNIT">
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand/EffortUnit">
 				<Annotation Term="COMMON.ValueList">
 					<Record Type="COMMON.ValueListType">
 						<PropertyValue Property="Label" String="Effort Unit"/>
@@ -498,7 +518,7 @@
 						<PropertyValue Property="Parameters">
 							<Collection>
 								<Record Type="COMMON.ValueListParameterInOut">
-									<PropertyValue Property="LocalDataProperty" PropertyPath="EFFORT_UNIT"/>
+									<PropertyValue Property="LocalDataProperty" PropertyPath="EffortUnit"/>
 									<PropertyValue Property="ValueListProperty" String="Msehi"/>
 								</Record>
 								<Record Type="COMMON.ValueListParameterDisplayOnly">
