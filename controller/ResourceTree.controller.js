@@ -316,12 +316,14 @@ sap.ui.define([
             if(sEvent === "updateAssignment"){
                 this.updateAssignment(oData.isReassign);
             }else if(sEvent === "bulkReAssignment"){
+                if(!this.isAssignable({sPath:oData.sPath})){
+                    return;
+                }
                 if(this.isAvailable(oData.sPath)){
                     this.bulkReAssignment(oData.sPath, oData.aContexts);
                 }else{
                     this.showMessageToProceed(null, oData.sPath, true, oData.aContexts)
                 }
-
             }
         },
 
@@ -383,6 +385,9 @@ sap.ui.define([
 									sPath: $(this).attr('id')
 								});
 							});
+							if(!_this.isAssignable({data:targetObj})){
+                                return;
+                            }
 							// If the Resource is Not/Partially available
 
                             if(_this.isAvailable(targetPath)){
