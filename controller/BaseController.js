@@ -193,7 +193,7 @@ sap.ui.define([
                 oParams.ResourceGuid = oResource.ResourceGuid;
             }
             this.clearMessageModel();
-            if(!this.isAssignable({sPath:oData.NewAssignPath})){
+            if(isReassign && !this.isAssignable({sPath:oData.NewAssignPath})){
                 return;
             }
             if(isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)){

@@ -46,7 +46,7 @@ sap.ui.define([
             eventBus.subscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
             eventBus.subscribe("FilterSettingsDialog", "triggerSearch", this._triggerFilterSearch, this);
             eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
-            eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
+            // eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
 
             // event listener for changing device orientation with fallback of window resize
             var orientationEvent = this.getOrientationEvent(),
@@ -71,18 +71,8 @@ sap.ui.define([
 		onAfterRendering: function(oEvent) {
 			//init droppable
 			this.refreshDroppable(oEvent);
-			//init planning calendar dialog
-			this._initPlanCalendarDialog();
 		},
 
-        /**
-         *
-         * @param oEvent
-         */
-        onBeforeRebindTable: function(oEvent) {
-            var oBindingParams = oEvent.getParameter('bindingParams');
-            oBindingParams.parameters.numberOfExpandedLevels = 1;
-        },
 
         /**
          * initial draggable after every refresh of table
@@ -190,25 +180,13 @@ sap.ui.define([
 		},
 
 		/**
+         * Open the planning calendar for selected resources
 		 * @param oEvent
 		 */
 		onPressShowPlanningCal: function(oEvent) {
-			this._setCalendarModel();
-			this._oPlanningCalDialog.open(); // As we are opening the dialog when set model data
+			this.getOwnerComponent().planningCalendarDialog.open(this.getView(),this.selectedResources); // As we are opening the dialog when set model data
 		},
 
-		onCalendarModalCancel: function(oEvent) {
-			this._closeCalendar();
-		},
-        /**
-         * on press cancel in dialog close it
-         * @param oEvent
-         */
-        onModalCancel: function (oEvent) {
-            if (this._oPlanningCalDialog) {
-                this._oPlanningCalDialog.close();
-            }
-        },
 
         /**
          * on press link of assignment in resource tree row
@@ -228,19 +206,6 @@ sap.ui.define([
             }
         },
 
-        /**
-         * show assignment info dialog on clicked calendar entry
-         * @param oEvent
-         */
-		onClickCalendarAssignment: function(oEvent){
-			var oAppointment = oEvent.getParameter("appointment");
-			var oContext = oAppointment.getBindingContext("calendarModel");
-			var oModel = oContext.getModel();
-			var sPath = oContext.getPath();
-			var oAppointmentData = oModel.getProperty(sPath);
-			this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAppointmentData);
-			
-		},
         onPressReassign: function (oEvent){
             this.getOwnerComponent().assignActionsDialog.open(this.getView(),this.selectedResources,false);
         },
@@ -252,8 +217,8 @@ sap.ui.define([
          * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
          */
         onExit: function() {
-            if (this._oPlanningCalDialog) {
-                this._oPlanningCalDialog.destroy();
+            if (this.getOwnerComponent().planningCalendarDialog) {
+                this.getOwnerComponent().planningCalendarDialog.getDialog().destroy();
             }
             if(this.getOwnerComponent().filterSettingsDialog) {
                 this.getOwnerComponent().filterSettingsDialog.getDialog().destroy();
@@ -288,19 +253,6 @@ sap.ui.define([
             var oVariant = this.byId("customResourceVariant");
             this.getOwnerComponent().filterSettingsDialog.setVariant(oVariant);
         },
-
-        /**
-         *
-         * @private
-         */
-		_initPlanCalendarDialog: function() {
-			if (!this._oPlanningCalDialog) {
-				this._oPlanningCalDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceCalendarDialog", this);
-                this._oPlanningCalDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass())
-				this.getView().addDependent(this._oPlanningCalDialog);
-				this._setCalendarModel();
-			}
-		},
 
         /**
          * triggers request with all setted filters
@@ -400,114 +352,6 @@ sap.ui.define([
 				});
 			}, 1000);
 		},
-
-		/**
-		 * Method reads ResourceSet with Assignments
-		 * and merge into one json model for planning calendar
-		 * @private
-		 */
-		_setCalendarModel: function() {
-			var aUsers = [],
-                aResourceFilters = [],
-                aActualFilters = [],
-                oModel = this.getModel(),
-                oResourceBundle = this.getResourceBundle(),
-                oViewFilterSettings = this.getOwnerComponent().filterSettingsDialog;
-
-
-			if (this.selectedResources.length <= 0) {
-				return;
-			}
-
-			for (var i = 0; i < this.selectedResources.length; i++) {
-				var obj = oModel.getProperty(this.selectedResources[i]);
-				if (obj.NodeType === "RESOURCE") {
-					aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
-				} else if (obj.NodeType === "RES_GROUP") {
-					aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
-				}
-			}
-            var sDateControl1 = oViewFilterSettings.getFilterDateRange()[0].getValue();
-            var sDateControl2 = oViewFilterSettings.getFilterDateRange()[1].getValue();
-
-			if (aUsers.length > 0) {
-				aResourceFilters.push(new Filter({
-					filters: aUsers,
-					and: false
-				}));
-
-                // aResourceFilters.push(new Filter([new Filter("DateTo", FilterOperator.GE, sDateControl1),new Filter("DateFrom", FilterOperator.LE, sDateControl2)],true));
-                aResourceFilters.push(new Filter("DateTo", FilterOperator.GE, sDateControl1));
-                aResourceFilters.push(new Filter("DateFrom", FilterOperator.LE, sDateControl2));
-                if(aResourceFilters.length > 0){
-                    aActualFilters.push(new Filter({
-                            filters: aResourceFilters,
-                            and: true
-                        }
-                    ));
-                }
-			}
-
-
-
-			var sCalendarView;
-			var oViewFilterItems = oViewFilterSettings.getFilterSelectView().getItems();
-			for (var j in oViewFilterItems) {
-				var oViewFilterItem = oViewFilterItems[j];
-				if (oViewFilterItem.getSelected()) {
-					sCalendarView = oViewFilterItem.getKey();
-				}
-			}
-            this._oPlanningCalDialog.setBusy(true);
-			oModel.read("/AssignmentSet", {
-				filters: aResourceFilters,
-				urlParameters: {
-					"$expand": "Resource,Demand" // To fetch the assignments associated with Resource or ResourceGroup
-				},
-				success: function(data, response) {
-
-					var oCalendarModel = new JSONModel();
-					oCalendarModel.setData({
-						startDate: new Date(),
-						viewKey: sCalendarView,
-						resources: this._createData(data)
-					});
-					this.setModel(oCalendarModel, "calendarModel");
-                    this._oPlanningCalDialog.setBusy(false);
-					// this._oPlanningCalDialog.open();
-				}.bind(this),
-				error: function(error, response) {
-                    this._oPlanningCalDialog.setBusy(false);
-					MessageToast.show(oResourceBundle.getText("errorMessage"), {duration: 5000});
-				}.bind(this)
-			});
-		},
-        /**
-         * Create data for planning calendar
-         *
-         * @param data
-         * @return {Array}
-         * @private
-         */
-        _createData:function(data){
-		    var aResources = [],
-            oResourceMap={};
-		    for(var i in data.results){
-                oResourceMap[data.results[i].ObjectId] = data.results[i].Resource;
-                oResourceMap[data.results[i].ObjectId].Assignments = [];
-            }
-            for(var j in oResourceMap){
-                var sObjectId = oResourceMap[j].ObjectId;
-                for(var k in data.results){
-                    if(data.results[k].ObjectId === sObjectId){
-                        oResourceMap[j].Assignments.push(data.results[k])
-                    }
-                }
-                aResources.push(oResourceMap[j]);
-            }
-            return aResources;
-        },
-
 		/**
 		 * Method will refresh the data of tree by restoring its state
 		 * 
@@ -541,14 +385,6 @@ sap.ui.define([
 				this.byId("showPlanCalendar").setEnabled(false);
                 this.byId("idButtonreassign").setEnabled(false);
                 this.byId("idButtonunassign").setEnabled(false);
-		},
-        /**
-         * Close the Planning calendar
-         * @private
-         */
-        _closeCalendar:function() {
-            this._oPlanningCalDialog.close();
-        }
-
+		}
 	});
 });
