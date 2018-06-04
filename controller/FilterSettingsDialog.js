@@ -85,7 +85,8 @@ sap.ui.define([
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
             // Removing the reset button on the ViewSettingDialog
-            oDialog._getResetButton().setVisible(false);
+            if(oDialog._getResetButton())
+                oDialog._getResetButton().setVisible(false);
 
             // open dialog
             oDialog.open();
