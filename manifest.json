@@ -15,7 +15,7 @@
 			"keywords": ["{{xfld.keyWord1}}", "{{xfld.keyWord2}}"]
 		},
 		"applicationVersion": {
-			"version": "2.0.10"
+			"version": "2.0.11"
 		},
 		"dataSources": {
 			"mainService": {

@@ -17,10 +17,11 @@
                         	path:'calendarModel>/viewKey',
                             formatter:'.formatter.getCalendarView'
                         }"
-                        appointmentsVisualization="Filled"
                         appointmentSelect="onClickCalendarAssignment"
+                        appointmentsVisualization="Filled"
                         showEmptyIntervalHeaders="false"
-                        showWeekNumbers="true">
+                        showWeekNumbers="true"
+                        groupAppointmentsMode="Expanded">
                     <rows>
                         <PlanningCalendarRow
                                 icon="{
@@ -29,7 +30,8 @@
                                        }"
                                 title="{calendarModel>GroupDescription}"
                                 text="{calendarModel>ResourceDescription}"
-                                appointments="{path : 'calendarModel>Assignments', templateShareable: 'true'}">
+                                appointments="{path : 'calendarModel>Assignments', templateShareable: 'true'}"
+                                intervalHeaders="{path: 'calendarModel>AbsenceInfo', templateShareable: 'true'}">
                             <appointments>
                                 <unified:CalendarAppointment
                                         startDate="{calendarModel>DateFrom}"
@@ -38,6 +40,14 @@
                                         type="{calendarModel>type}">
                                 </unified:CalendarAppointment>
                             </appointments>
+                            <intervalHeaders>
+                                <unified:CalendarAppointment
+                                        startDate="{calendarModel>DateFrom}"
+                                        endDate="{calendarModel>DateTo}"
+                                        title="{calendarModel>Description}"
+                                        type="Type06">
+                                </unified:CalendarAppointment>
+                            </intervalHeaders>
                         </PlanningCalendarRow>
                     </rows>
                 </PlanningCalendar>

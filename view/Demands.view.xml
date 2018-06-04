@@ -69,7 +69,12 @@
 								</table:customData>
 								<Label text="{/#Demand/STATUS_ICON/@sap:label}" />
 								<table:template>
-									<core:Icon src="{STATUS_ICON}" tooltip="{StatusDesc}">
+									<core:Icon src="{STATUS_ICON}"
+                                               color="{
+							                        path:'CRITICALITY',
+							                        formatter:'.formatter.formatStatusIconColor'
+							                   }"
+                                               tooltip="{StatusDesc}">
 									</core:Icon>
 								</table:template>
 							</table:Column>

@@ -193,6 +193,9 @@ sap.ui.define([
                 oParams.ResourceGuid = oResource.ResourceGuid;
             }
             this.clearMessageModel();
+            if(isReassign && !this.isAssignable({sPath:oData.NewAssignPath})){
+                return;
+            }
             if(isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)){
                 this.showMessageToProceed(null,null,null,null,true,oParams);
             }else{
@@ -433,6 +436,8 @@ sap.ui.define([
          * @param sTargetPath Resource path
          * @param bBulkReassign flag which says is it bulk reassignment
          * @param aContexts - Assignment contexts to be reassigned
+         * @param bUpdate - Single reassignment
+         * @param oParams - Update parameter for single assignment
          *
          */
         showMessageToProceed:function (aSources, sTargetPath , bBulkReassign ,aContexts ,bUpdate, oParams) {
@@ -457,6 +462,26 @@ sap.ui.define([
                     }.bind(this)
                 }
             );
+        },
+        /**
+         * Validates pool function configuration to check possibility of assignment
+         * on group node.
+         * @param mParameters - object containing the data of target object
+         * @return {boolean}
+         */
+        isAssignable : function (mParameters) {
+            var oModel = this.getModel("user"),
+                sPoolFunction = oModel.getProperty("/POOL_FUNCTION_ENABLED"),
+                oResource = mParameters.data,
+                oResourceBundle = this.getResourceBundle();
+            if(oResource === undefined){
+                oResource = this.getModel().getProperty(mParameters.sPath);
+            }
+            if(oResource.NodeType === "RES_GROUP" && !sPoolFunction){
+                this.showMessageToast(oResourceBundle.getText("ymsg.notassignable"));
+                return false;
+            }
+            return true;
         }
 
 

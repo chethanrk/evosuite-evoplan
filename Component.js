@@ -10,6 +10,7 @@ sap.ui.define([
     "com/evorait/evoplan/controller/StatusSelectDialog",
     "com/evorait/evoplan/controller/AssignActionsDialog",
     "com/evorait/evoplan/controller/FilterSettingsDialog",
+    "com/evorait/evoplan/controller/PlanningCalendarDialog",
     "sap/m/MessagePopover",
     "sap/m/MessagePopoverItem",
     "sap/m/Link"
@@ -25,6 +26,7 @@ sap.ui.define([
     StatusSelectDialog,
     AssignActionsDialog,
     FilterSettingsDialog,
+    PlanningCalendarDialog,
     MessagePopover,
     MessagePopoverItem,
     Link) {
@@ -97,12 +99,19 @@ sap.ui.define([
 
             //proof if there are a status set and button in footer should be visible
             this._getFunctionSetCount();
-			
+
+            //Creating the Global assignment model for assignInfo Dialog
 			this.setModel(models.createAssignmentModel({}),"assignment");
+
 			//Creating the Global message model from MessageManager
 			var oMessageModel = new JSONModel();
 			oMessageModel.setData([]);
 			this.setModel(oMessageModel, "MessageModel");
+
+			//Creating the global for planning calendar
+            var oCalendarModel = new JSONModel();
+            oCalendarModel.setData({});
+            this.setModel(oCalendarModel, "calendarModel");
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();
@@ -196,6 +205,9 @@ sap.ui.define([
             // bulk operations for unassign/reassign demands
             this.assignActionsDialog = new AssignActionsDialog();
             this.assignActionsDialog.init();
+
+            this.planningCalendarDialog = new PlanningCalendarDialog();
+            this.planningCalendarDialog.init();
         },
 
         /**
