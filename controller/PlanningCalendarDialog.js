@@ -73,7 +73,10 @@ sap.ui.define([
             for (var i = 0; i < this.selectedResources.length; i++) {
                 var obj = oModel.getProperty(this.selectedResources[i]);
                 if (obj.NodeType === "RESOURCE") {
-                    aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
+                    if(obj.ResourceGuid && obj.ResourceGuid !== "") // This check is required for POOL Node.
+                        aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
+                    else
+                        aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
                 } else if (obj.NodeType === "RES_GROUP") {
                     aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
                 }
@@ -181,11 +184,12 @@ sap.ui.define([
          * @private
          */
         _createData:function(data){
-            var aResources = [],
-                oResourceMap={};
+            var aResources = [];
+
             if(data.__batchResponses) {
                 var oAssignData = data.__batchResponses[0].data;
                 var oAbsenceData = data.__batchResponses[1].data;
+                var oResourceMap={};
                 for(var l in data.__batchResponses) {
 
                     var oData = data.__batchResponses[l].data;
