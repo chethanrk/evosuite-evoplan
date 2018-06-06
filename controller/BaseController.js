@@ -154,14 +154,16 @@ sap.ui.define([
                     oParams.DateFrom = targetObj.StartDate;
                     oParams.TimeFrom = targetObj.StartTime;
                 }else{
-                    oParams.DateFrom = new Date() // When Start Date Null/In the Simple view today date will sent
+                    oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
+                    oParams.TimeFrom = targetObj.StartTime;
                 }
 
                 if(targetObj.EndDate){
                     oParams.DateTo = targetObj.EndDate;
                     oParams.TimeTo = targetObj.EndTime;
                 }else{
-                    oParams.DateTo = new Date() // When Start Date Null/In the Simple view today date will sent
+                    oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
+                    oParams.TimeTo = targetObj.EndTime;
                 }
                 this.callFunctionImport(oParams, "CreateAssignment", "POST");
             }
@@ -236,14 +238,16 @@ sap.ui.define([
                         oParams.DateFrom = oResource.StartDate;
                         oParams.TimeFrom = oResource.StartTime;
                     }else{
-                        oParams.DateFrom = new Date() // When Start Date Null/In the Simple view today date will sent
+                        oParams.DateFrom = new Date();// When Start Date Null/In the Simple view today date will sent
+                        oParams.TimeFrom = oResource.StartTime;
                     }
 
                     if(oResource.EndDate){
                         oParams.DateTo = oResource.EndDate;
                         oParams.TimeTo = oResource.EndTime;
                     }else{
-                        oParams.DateTo = new Date() // When Start Date Null/In the Simple view today date will sent
+                        oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
+                        oParams.TimeTo = oResource.EndTime;
                     }
                     // call function import
                     this.callFunctionImport(oParams, "UpdateAssignment", "POST", true);
