@@ -1,4 +1,4 @@
- [{
+[{
  	"__metadata": {
  		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandSet('0A51491BD5A01ED88AEE3DC24BD139F3')",
  		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandSet('0A51491BD5A01ED88AEE3DC24BD139F3')",
@@ -10,7 +10,7 @@
  	"ExtKey": "PMWOOPLOCAL     00000400002300100000",
  	"Objnr": "EP1000000029",
  	"Source": "ECC",
- 	"DemandDesc": "Travelling to location",
+ 	"DemandDesc": "Test order for EvoPlan integration",
  	"Status": "STRT",
  	"DateFrom": "/Date(1520726400000)/",
  	"StatusDesc": "Work Started on demand",
