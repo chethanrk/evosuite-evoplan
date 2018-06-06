@@ -12,7 +12,8 @@
 		"Lastname": "INAMR",
 		"Fullname": "INAMR",
 		"ServerPath": "ed1.evorait.net:50003",
-		"CoreVersion": "2.0.4",
-		"IntegrationVersion": "2.0.4"
+		"CoreVersion": "2.0.11",
+		"IntegrationVersion": "2.0.11",
+		"POOL_FUNCTION_ENABLED":true
 	}
 }

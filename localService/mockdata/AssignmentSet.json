@@ -1,157 +1,105 @@
-[{
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B99120D1DA072C')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B99120D1DA072C')",
-		"type": "com.evorait.evoplan.Assignment"
-	},
-	"DateFrom": "/Date(1520726400000)/",
-	"Guid": "0A51491BD5A01ED893B99120D1DA072C",
-	"DateTo": "/Date(1521158400000)/",
-	"ObjectId": "0A51491BD5A01ED889D621FAE6CF3C5C//0A51491BD5A01ED889D621FAE6CFFC5C",
-	"Description": "",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
-	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CF3C5C",
-	"DemandGuid": "0A51491BD5A01ED88AEE3DC24BD139F3",
-	"Effort": "0.0",
-	"EffortUnit": "H",
-	"Demand": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B99120D1DA072C')/Demand"
-		}
-	},
-	"Resource": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B99120D1DA072C')/Resource"
-		}
-	}
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B9D8A2E59CE788')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B9D8A2E59CE788')",
-		"type": "com.evorait.evoplan.Assignment"
-	},
-	"DateFrom": "/Date(1522108800000)/",
-	"Guid": "0A51491BD5A01ED893B9D8A2E59CE788",
-	"DateTo": "/Date(1522108800000)/",
-	"ObjectId": "0A51491BD5A01ED889D621FAE6CFBC5C//0A51491BD5A01ED889D621FAE6CFFC5C",
-	"Description": "",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
-	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CFBC5C",
-	"DemandGuid": "0A51491BD5A01ED88CB302E150259059",
-	"Effort": "0.0",
-	"EffortUnit": "H",
-	"Demand": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B9D8A2E59CE788')/Demand"
-		}
-	},
-	"Resource": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B9D8A2E59CE788')/Resource"
-		}
-	}
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED896B11BDAE0FCE3F4')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED896B11BDAE0FCE3F4')",
-		"type": "com.evorait.evoplan.Assignment"
-	},
-	"DateFrom": "/Date(1526515200000)/",
-	"Guid": "0A51491BD5A01ED896B11BDAE0FCE3F4",
-	"DateTo": "/Date(1526601599000)/",
-	"ObjectId": "0A51491BD5A01ED889D621FAE6CF9C5C//0A51491BD5A01ED889D621FAE6D01C5C",
-	"Description": "",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6D01C5C",
-	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CF9C5C",
-	"DemandGuid": "0A51491BD5A01ED88AEE3DC24BD159F3",
-	"Effort": "1.0",
-	"EffortUnit": "***",
-	"Demand": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED896B11BDAE0FCE3F4')/Demand"
-		}
-	},
-	"Resource": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED896B11BDAE0FCE3F4')/Resource"
-		}
-	}
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED896B139D3708A2419')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED896B139D3708A2419')",
-		"type": "com.evorait.evoplan.Assignment"
-	},
-	"DateFrom": "/Date(1526515200000)/",
-	"Guid": "0A51491BD5A01ED896B139D3708A2419",
-	"DateTo": "/Date(1526601599000)/",
-	"ObjectId": "0A51491BD5A01ED889D621FAE6CF5C5C//0A51491BD5A01ED889D621FAE6CFFC5C",
-	"Description": "",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
-	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CF5C5C",
-	"DemandGuid": "0A51491BD5A01EE88C9BE2A86DB373E7",
-	"Effort": "0.0",
-	"EffortUnit": "H",
-	"Demand": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED896B139D3708A2419')/Demand"
-		}
-	},
-	"Resource": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED896B139D3708A2419')/Resource"
-		}
-	}
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE8918EC6A1988424CE')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE8918EC6A1988424CE')",
-		"type": "com.evorait.evoplan.Assignment"
-	},
-	"DateFrom": "/Date(1522108800000)/",
-	"Guid": "0A51491BD5A01EE8918EC6A1988424CE",
-	"DateTo": "/Date(1522108800000)/",
-	"ObjectId": "0A51491BD5A01ED889D621FAE6CF5C5C//0A51491BD5A01ED889D621FAE6CFFC5C",
-	"Description": "",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
-	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CF5C5C",
-	"DemandGuid": "0A51491BD5A01ED88CB2F7BF36ADB04F",
-	"Effort": "0.0",
-	"EffortUnit": "H",
-	"Demand": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE8918EC6A1988424CE')/Demand"
-		}
-	},
-	"Resource": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE8918EC6A1988424CE')/Resource"
-		}
-	}
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE8969F0BD59DF3AACF')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE8969F0BD59DF3AACF')",
-		"type": "com.evorait.evoplan.Assignment"
-	},
-	"DateFrom": "/Date(1525132800000)/",
-	"Guid": "0A51491BD5A01EE8969F0BD59DF3AACF",
-	"DateTo": "/Date(1527033599000)/",
-	"ObjectId": "0A51491BD5A01ED889D621FAE6CFBC5C//0A51491BD5A01ED889D621FAE6CFFC5C",
-	"Description": "",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
-	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CFBC5C",
-	"DemandGuid": "0A51491BD5A01ED88CB2CA614B52F01B",
-	"Effort": "0.0",
-	"EffortUnit": "H",
-	"Demand": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE8969F0BD59DF3AACF')/Demand"
-		}
-	},
-	"Resource": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE8969F0BD59DF3AACF')/Resource"
-		}
-	}
-}]
+ [{
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B99120D1DA072C')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B99120D1DA072C')",
+ 		"type": "com.evorait.evoplan.Assignment"
+ 	},
+ 	"DateFrom": "/Date(1520726400000)/",
+ 	"Guid": "0A51491BD5A01ED893B99120D1DA072C",
+ 	"DateTo": "/Date(1521158400000)/",
+ 	"ObjectId": "0A51491BD5A01ED889D621FAE6CF3C5C//0A51491BD5A01ED889D621FAE6CFFC5C",
+ 	"Description": "",
+ 	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
+ 	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CF3C5C",
+ 	"DemandGuid": "0A51491BD5A01ED88AEE3DC24BD139F3",
+ 	"Effort": "0.0",
+ 	"EffortUnit": "H",
+ 	"Demand": {
+ 		"__deferred": {
+ 			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B99120D1DA072C')/Demand"
+ 		}
+ 	},
+ 	"Resource": {
+ 		"__deferred": {
+ 			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B99120D1DA072C')/Resource"
+ 		}
+ 	}
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B9D8A2E59CE788')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B9D8A2E59CE788')",
+ 		"type": "com.evorait.evoplan.Assignment"
+ 	},
+ 	"DateFrom": "/Date(1522108800000)/",
+ 	"Guid": "0A51491BD5A01ED893B9D8A2E59CE788",
+ 	"DateTo": "/Date(1524873600000)/",
+ 	"ObjectId": "0A51491BD5A01ED889D621FAE6CFBC5C//0A51491BD5A01ED889D621FAE6CFFC5C",
+ 	"Description": "",
+ 	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
+ 	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CFBC5C",
+ 	"DemandGuid": "0A51491BD5A01ED88CB302E150259059",
+ 	"Effort": "0.0",
+ 	"EffortUnit": "H",
+ 	"Demand": {
+ 		"__deferred": {
+ 			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B9D8A2E59CE788')/Demand"
+ 		}
+ 	},
+ 	"Resource": {
+ 		"__deferred": {
+ 			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED893B9D8A2E59CE788')/Resource"
+ 		}
+ 	}
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED89A98E57E156CBB81')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED89A98E57E156CBB81')",
+ 		"type": "com.evorait.evoplan.Assignment"
+ 	},
+ 	"DateFrom": "/Date(1528156800000)/",
+ 	"Guid": "0A51491BD5A01ED89A98E57E156CBB81",
+ 	"DateTo": "/Date(1528243199000)/",
+ 	"ObjectId": "0A51491BD5A01ED889D621FAE6D01C5C",
+ 	"Description": "",
+ 	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6D01C5C",
+ 	"ResourceGuid": "",
+ 	"DemandGuid": "0A51491BD5A01EE88BBBAC5E64D1D31E",
+ 	"Effort": "0.0",
+ 	"EffortUnit": "H",
+ 	"Demand": {
+ 		"__deferred": {
+ 			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED89A98E57E156CBB81')/Demand"
+ 		}
+ 	},
+ 	"Resource": {
+ 		"__deferred": {
+ 			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED89A98E57E156CBB81')/Resource"
+ 		}
+ 	}
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE8918EC6A1988424CE')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE8918EC6A1988424CE')",
+ 		"type": "com.evorait.evoplan.Assignment"
+ 	},
+ 	"DateFrom": "/Date(1522108800000)/",
+ 	"Guid": "0A51491BD5A01EE8918EC6A1988424CE",
+ 	"DateTo": "/Date(1522108800000)/",
+ 	"ObjectId": "0A51491BD5A01ED889D621FAE6CF5C5C//0A51491BD5A01ED889D621FAE6CFFC5C",
+ 	"Description": "",
+ 	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
+ 	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CF5C5C",
+ 	"DemandGuid": "0A51491BD5A01ED88CB2F7BF36ADB04F",
+ 	"Effort": "0.0",
+ 	"EffortUnit": "H",
+ 	"Demand": {
+ 		"__deferred": {
+ 			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE8918EC6A1988424CE')/Demand"
+ 		}
+ 	},
+ 	"Resource": {
+ 		"__deferred": {
+ 			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE8918EC6A1988424CE')/Resource"
+ 		}
+ 	}
+ }]
