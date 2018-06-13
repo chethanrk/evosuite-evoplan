@@ -274,7 +274,7 @@ sap.ui.define([
                 if(this.isAvailable(oData.sPath)){
                     this.bulkReAssignment(oData.sPath, oData.aContexts);
                 }else{
-                    this.showMessageToProceed(null, oData.sPath, true, oData.aContexts)
+                    this.showMessageToProceed(null, oData.sPath, true, oData.aContexts);
                 }
             }
         },
@@ -310,9 +310,7 @@ sap.ui.define([
                     drop: function( event, ui ) {
                         //get hovered marked row, there could be a difference with dropped row
                         var hoverRow = $("#"+droppableTableId+" .sapUiTableRowHvr"),
-                            dropTargetId = hoverRow.attr("id"),
-                            oComponent = _this.getOwnerComponent(),
-                            oResourceBundle = _this.getResourceBundle();
+                            dropTargetId = hoverRow.attr("id");
 
                         if(!dropTargetId){
                             dropTargetId = event.target.id;
@@ -340,12 +338,12 @@ sap.ui.define([
 							if(!_this.isAssignable({data:targetObj})){
                                 return;
                             }
+                            
 							// If the Resource is Not/Partially available
-
                             if(_this.isAvailable(targetPath)){
                                 _this.assignedDemands(aSources, targetPath);
                             }else{
-                                _this.showMessageToProceed(aSources, targetPath)
+                                _this.showMessageToProceed(aSources, targetPath);
                             }
 						}
 					}
@@ -362,25 +360,26 @@ sap.ui.define([
 		 */
 		_triggerRefreshTree:function(){
                 var oTreeTable = this.byId("droppableTable"),
-                    oTreeBinding = oTreeTable.getBinding("rows"),
-                    oPage = this.byId("idResourcePage"),
-                    oModel = this.getModel();
-
+                    oTreeBinding = oTreeTable.getBinding("rows");
+                
+                //reset the changes    
+                this.resetChanges();
+                
                 if(oTreeBinding){
                     oTreeBinding._restoreTreeState();
-                    oModel.resetChanges();
                 }
-                // Scrolled manually to fix the rendering bug
-                var bScrolled = oTreeTable._getScrollExtension().scrollVertically(1);
-                // If there is no scroll bar present
-                if(!bScrolled){
-                    oPage.setHeaderExpanded(false);
-                    setTimeout(function(){
-                        oPage.setHeaderExpanded(true);
-                    }.bind(this),1100);
+		},
+		/**
+		 * Resets the selected resource if selected  
+		 */
+		resetChanges: function(){
+                var oModel = this.getModel();
+                
+                // reset the model changes
+                if(oModel.hasPendingChanges()){
+                	oModel.resetChanges();
                 }
-
-                //Resetting selected resource for calendar as by default IsSelected will come as false from backend
+                // Resetting selected resource 
                 this.selectedResources = [];
 				this.byId("showPlanCalendar").setEnabled(false);
                 this.byId("idButtonreassign").setEnabled(false);
