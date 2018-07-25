@@ -35,8 +35,8 @@
     }
   ],
   "hcpdeploy": {
-    "account": "ac142449b",
+    "account": "ad74c0790",
     "name": "evoplan2ui5",
-    "lastVersionWeTriedToDeploy": "2.0.12.1"
+    "lastVersionWeTriedToDeploy": "2.0.12.2"
   }
 }

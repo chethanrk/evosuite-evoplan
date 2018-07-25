@@ -92,7 +92,7 @@ sap.ui.define([
             icon :"sap-icon://busy",
             color:"#BB0000"
         }
-    }
+    };
 
 	return {
 		// provide the density class that should be used according to the environment (may be "")
