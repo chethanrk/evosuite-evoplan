@@ -360,13 +360,27 @@ sap.ui.define([
 		 */
 		_triggerRefreshTree:function(){
                 var oTreeTable = this.byId("droppableTable"),
-                    oTreeBinding = oTreeTable.getBinding("rows");
-                
+                    oTreeBinding = oTreeTable.getBinding("rows"),
+                     oPage = this.byId("idResourcePage");
+                var UIMinorVersion  = sap.ui.getCore().getConfiguration().getVersion().getMinor();
                 //reset the changes    
                 this.resetChanges();
                 
                 if(oTreeBinding){
                     oTreeBinding._restoreTreeState();
+                }
+                // this check is used as a workaround for tree restoration for above 1.52.* version
+                // OSS has been raised for the same
+                if(parseInt(UIMinorVersion,10) > 52){  
+	                // Scrolled manually to fix the rendering bug
+	                var bScrolled = oTreeTable._getScrollExtension().scrollVertically(1);
+	                // If there is no scroll bar present
+	                if(!bScrolled){
+	                    oPage.setHeaderExpanded(false);
+	                    setTimeout(function(){
+	                        oPage.setHeaderExpanded(true);
+	                    },1100);
+					}
                 }
 		},
 		/**

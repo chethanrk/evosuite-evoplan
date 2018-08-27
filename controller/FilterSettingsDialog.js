@@ -406,7 +406,7 @@ sap.ui.define([
          */
         _setDefaultFilterDateRange: function () {
             //set default date range
-            var oDateFrom = new Date("01-01-1990");
+            var oDateFrom = new Date("01/01/1990");
 
             var oDateTo = moment().endOf('year');
             oDateTo =  oDateTo.add(20, 'years').toDate();
