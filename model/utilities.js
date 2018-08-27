@@ -67,7 +67,7 @@ sap.ui.define([
         },
         TIMENONE: {
             getDateBegin: function () {
-                return new Date("01-01-1990");
+                return new Date("01/01/1990");
             },
             getDateEnd: function () {
                 var d = moment().endOf('year');
