@@ -359,41 +359,27 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree:function(){
-                var oTreeTable = this.byId("droppableTable"),
-                    oTreeBinding = oTreeTable.getBinding("rows"),
-                     oPage = this.byId("idResourcePage");
-                var UIMinorVersion  = sap.ui.getCore().getConfiguration().getVersion().getMinor();
-                //reset the changes    
-                this.resetChanges();
-                
-                if(oTreeBinding){
-                    oTreeBinding._restoreTreeState();
+			var oContext = this.byId("droppableTable").getAggregation("rows")[0].getBindingContext(),
+                oModel,
+                sPath;
+				
+				this.resetChanges();
+				
+			    if(oContext){
+                    oModel = oContext.getModel();
+                    sPath = oContext.getPath();
+
+                    oModel.setProperty(sPath+"/IsSelected",true); // changing the property in order trigger submit change
+                    this.byId("droppableTable").getBinding("rows").submitChanges();// submit change will refresh of tree according maintained parameters
+                }else{
+                    this._triggerFilterSearch();
                 }
-                // this check is used as a workaround for tree restoration for above 1.52.* version
-                // OSS has been raised for the same
-                if(parseInt(UIMinorVersion,10) > 52){  
-	                // Scrolled manually to fix the rendering bug
-	                var bScrolled = oTreeTable._getScrollExtension().scrollVertically(1);
-	                // If there is no scroll bar present
-	                if(!bScrolled){
-	                    oPage.setHeaderExpanded(false);
-	                    setTimeout(function(){
-	                        oPage.setHeaderExpanded(true);
-	                    },1100);
-					}
-                }
+			
 		},
 		/**
 		 * Resets the selected resource if selected  
 		 */
 		resetChanges: function(){
-                var oModel = this.getModel();
-                
-                // reset the model changes
-                if(oModel.hasPendingChanges()){
-                	oModel.resetChanges();
-                }
-                // Resetting selected resource 
                 this.selectedResources = [];
 				this.byId("showPlanCalendar").setEnabled(false);
                 this.byId("idButtonreassign").setEnabled(false);
