@@ -25,6 +25,7 @@
 	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

@@ -6,12 +6,11 @@ sap.ui.define([
 	"sap/ui/model/FilterType",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/controller/BaseController",
-	"com/evorait/evoplan/controller/ErrorHandler",
 	"sap/m/MessageToast",
     "sap/m/MessageBox"
 ], function(Device, JSONModel, Filter, FilterOperator,
             FilterType, formatter, BaseController,
-            ErrorHandler,MessageToast,MessageBox) {
+            MessageToast,MessageBox) {
 	"use strict";
 
     return BaseController.extend('com.evorait.evoplan.controller.ResourceTree', {

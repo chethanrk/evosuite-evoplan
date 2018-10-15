@@ -17,6 +17,7 @@
           class="sapUiNoContentPadding tableContentPage">
 
         <headerContent>
+        	<Button text="{i18n>xbut.assetsPlanning}" press="actionSelected" />
             <Button icon="sap-icon://sys-help" press="onIconPress" />
         </headerContent>
 

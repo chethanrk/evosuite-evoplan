@@ -85,7 +85,8 @@ sap.ui.define([
                 counterResourceFilter: "",
                 showStatusChangeButton: false,
                 busy : true,
-				delay : 0
+				delay : 0,
+				assetStartDate:new Date()
             });
             this.setModel(oViewModel, "viewModel");
             

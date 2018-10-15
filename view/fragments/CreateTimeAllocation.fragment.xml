@@ -1,0 +1,59 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form">
+	 <Dialog title="Zeitzuweisung anlegen"
+            contentWidth="60%"
+            resizable="true">
+        <content>
+
+            <form:Form width="100%" editable="true" visible="true">
+
+										<form:formContainers>
+											<form:FormContainer visible="true">
+												<form:formElements>
+													<form:FormElement visible="true">
+														<form:label>
+															<Label text="Instandhaltung Anfangsdatum" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit"
+																visible="true"/>
+														</form:label>
+														<form:fields>
+															<DateTimePicker width="auto" displayFormat="medium" enabled="true" visible="true" valueFormat="yyyyMMddHHmmssZ"/>
+														</form:fields>
+													</form:FormElement>
+													<form:FormElement visible="true">
+														<form:label>
+															<Label text="Instandhaltung Eckendtermin" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+														</form:label>
+														<form:fields>
+															<DateTimePicker width="auto" displayFormat="medium" enabled="true" visible="true" valueFormat="yyyyMMddHHmmssZ"/>
+														</form:fields>
+													</form:FormElement>
+													<form:FormElement visible="true">
+														<form:label>
+															<Label text="Beschreibung" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+														</form:label>
+														<form:fields>
+															<Input type="Text"/>
+														</form:fields>
+													</form:FormElement>
+												</form:formElements>
+											</form:FormContainer>
+										</form:formContainers>
+										<form:layout>
+											<form:ResponsiveGridLayout adjustLabelSpan="false" columnsL="2" labelSpanL="6" columnsM="1" labelSpanM="6" labelSpanS="12"/>
+										</form:layout>
+									</form:Form>
+
+        </content>
+
+        <buttons>
+            <Button text="{i18n>xbut.buttonClose}"
+                    press="onCloseDialog" />
+            <Button text="{i18n>xbut.buttonSave}"
+                    type="Emphasized"
+                    press="onCloseDialog" />
+        </buttons>
+
+    </Dialog>
+</core:FragmentDefinition>

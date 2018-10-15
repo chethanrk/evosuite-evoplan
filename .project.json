@@ -32,6 +32,11 @@
       "templateId": "fiorireferenceapps.evoplan",
       "templateVersion": "3.0.0",
       "dateTimeStamp": "Tue, 17 Oct 2017 16:33:06 GMT"
+    },
+    {
+      "templateId": "ui5template.basicSAPUI5ApplicationComponent",
+      "templateVersion": "1.4.0",
+      "dateTimeStamp": "Wed, 03 Oct 2018 12:25:41 GMT"
     }
   ],
   "hcpdeploy": {

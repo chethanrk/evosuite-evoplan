@@ -173,6 +173,30 @@
 						"resourceTree",
 						"detail"
 					]
+				},
+				{
+					"pattern": "AssetPlanning/{assets}",
+					"name": "assetManager",
+					"target": [
+						"assets",
+						"assetsOrders"
+					]
+				},
+				{
+					"pattern": "AssetPlanning/OrderCreate",
+					"name": "orderCreate",
+					"target": [
+						"assets",
+						"orderCreate"
+					]
+				},
+				{
+					"pattern": "AssetPlanning/Demand/{guid}",
+					"name": "assetDemandDetail",
+					"target": [
+						"assets",
+						"detail"
+					]
 				}
 			],
 			"targets": {
@@ -191,6 +215,24 @@
 				"detail": {
 					"viewName": "Detail",
 					"viewLevel": 3,
+					"controlId": "rightPanel",
+					"controlAggregation": "pages"
+				},
+				"assets": {
+					"viewName": "Assets",
+					"viewLevel": 4,
+					"controlId": "leftPanel",
+					"controlAggregation": "pages"
+				},
+				"assetsOrders": {
+					"viewName": "AssetsOrders",
+					"viewLevel": 5,
+					"controlId": "rightPanel",
+					"controlAggregation": "pages"
+				},
+				"orderCreate": {
+					"viewName": "OrderCreate",
+					"viewLevel": 6,
 					"controlId": "rightPanel",
 					"controlAggregation": "pages"
 				},
