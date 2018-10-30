@@ -37,6 +37,7 @@ sap.ui.define([
 
 
                 this.getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
+                this.getRouter().getRoute("assetDemandDetail").attachPatternMatched(this._onObjectMatched, this);
 				
 				// Store original busy indicator delay, so it can be restored later on
 				iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();

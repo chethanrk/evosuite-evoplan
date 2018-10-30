@@ -1,0 +1,54 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:layout="sap.ui.layout"
+          xmlns:smartField="sap.ui.comp.smartfield" xmlns:smartForm="sap.ui.comp.smartform"
+          xmlns:f="sap.ui.layout.form"
+          xmlns:core="sap.ui.core">
+
+    <smartForm:SmartForm id="idOrderCreForm" editable="true">
+        <smartForm:layout>
+            <smartForm:Layout
+                    labelSpanXL="3"
+                    labelSpanL="5"
+                    labelSpanM="5"
+                    labelSpanS="12"
+                    emptySpanXL="0"
+                    emptySpanL="0"
+                    emptySpanM="0"
+                    emptySpanS="0"
+                    columnsXL="2"
+                    columnsL="2"
+                    columnsM="2"></smartForm:Layout>
+        </smartForm:layout>
+        <smartForm:Group>
+            <smartForm:GroupElement>
+                <smartField:SmartField value="{OrderType}"/>
+            </smartForm:GroupElement>
+            <smartForm:GroupElement>
+                <smartField:SmartField value="{OrderDescription}"/>
+            </smartForm:GroupElement>
+            <smartForm:GroupElement>
+                <smartField:SmartField value="{ActivityType}"/>
+            </smartForm:GroupElement>
+            <smartForm:GroupElement>
+                <smartField:SmartField value="{BusinessArea}"/>
+            </smartForm:GroupElement>
+
+            <smartForm:GroupElement>
+                <smartField:SmartField value="{StartTimestamp}"/>
+            </smartForm:GroupElement>
+            <smartForm:GroupElement>
+                <smartField:SmartField value="{EndTimestamp}"/>
+            </smartForm:GroupElement>
+        </smartForm:Group>
+        <smartForm:Group>
+            <smartForm:GroupElement>
+                <smartField:SmartField value="{MainWorkCenter}"/>
+            </smartForm:GroupElement>
+            <smartForm:GroupElement>
+                <smartField:SmartField value="{TechnicalObject}"/>
+            </smartForm:GroupElement>
+            <smartForm:GroupElement>
+                <smartField:SmartField value="{Plant}"/>
+            </smartForm:GroupElement>
+        </smartForm:Group>
+    </smartForm:SmartForm>
+</mvc:View>

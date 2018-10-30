@@ -1,99 +1,103 @@
-<mvc:View 
-	xmlns:core="sap.ui.core" 
-	xmlns:mvc="sap.ui.core.mvc" 
-	xmlns="sap.m"
-	xmlns:fb="sap.ui.comp.filterbar"
-	controllerName="com.evorait.evoplan.controller.AssetsOrders"
-	xmlns:unified="sap.ui.unified"
-	xmlns:f="sap.f">
-	<Page title="{i18n>xtit.assetOrders}" class="sapUiNoContentPadding tableContentPage" >
-		<content>
-			
-			<f:DynamicPage id="idResourcePage"
-                       headerExpanded="true"
-                       preserveHeaderStateOnScroll="true"
-                       fitContent="false"
-                       showFooter="false"
-                       toggleHeaderOnTitleClick="false">
-            <f:header>
-                <f:DynamicPageHeader pinnable="true">
-                    <f:content>
-                     <DateRangeSelection change="onChangeDateRange"/>
-                    </f:content>
-                </f:DynamicPageHeader>
-            </f:header>
+<mvc:View
+        xmlns:core="sap.ui.core"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns="sap.m"
+        xmlns:fb="sap.ui.comp.filterbar"
+        controllerName="com.evorait.evoplan.controller.AssetsOrders"
+        xmlns:unified="sap.ui.unified"
+        xmlns:f="sap.f">
+    <Page title="{i18n>xtit.assetOrders}" class="sapUiNoContentPadding tableContentPage">
+        <content>
 
-            <f:content>
-					<PlanningCalendar 
-				id="PC1" 
-				startDate="{viewModel>/assetStartDate}"
-				rows="{path: '/AssetSet'}"
-				appointmentsReducedHeight="true"
-				appointmentsVisualization="Filled"
-				appointmentSelect="showDetails"
-				showEmptyIntervalHeaders="false" 
-				showWeekNumbers="true"
-				class="sapUiNoContentPadding tableContentPage"
-				intervalSelect="intervalSelect"
-				groupAppointmentsMode="Expanded"
-				viewKey="Month"
-				>
-				<toolbarContent>
-					<Title text="{i18n>xtit.orders}" 
-						titleStyle="H4"
-					/>
-					<ToolbarSpacer/>
-				<Button text="{i18n>xbut.createOrder}" press="createOrder" />
-					<Button text="{i18n>xbut.createTimeAlloc}" press="createTimeAlloc" />
-				</toolbarContent>
-				<rows>
-					<PlanningCalendarRow 
-						icon="sap-icon://functional-location" 
-						title="{Description}" 
-						text="{AssetGuid}" 
-						appointments="{path : 'DemandSet', templateShareable: 'true'}">
-						<!--intervalHeaders="{path: 'AssetUnavailabilitySet', templateShareable: 'true'}">-->
-						<!--<customData>
-							<core:CustomData key="emp-name" value="{name}" writeToDom="true"/>
-						</customData>-->
-						<appointments>
-							<unified:CalendarAppointment 
-								startDate="{DateFrom}" 
-								endDate="{DateTo}"
-								icon="sap-icon://functional-location" 
-								title="{DemandDesc}" 
-								text="{info}" 
-								type="type05">
-							</unified:CalendarAppointment>
-						</appointments>
-					<!--	<intervalHeaders>
-							<unified:CalendarAppointment 
-								startDate="{
-									path:'DateFrom',
-									formatter:'.formatter.toJsDate'
-								}"
-								endDate="{
-									path:'DateTo',
-									formatter:'.formatter.toJsDate'
-								}"
-								icon="{pic}" 
-								title="{DemandDesc}" 
-								type="{type}">
-							</unified:CalendarAppointment>
-						</intervalHeaders>-->
-					</PlanningCalendarRow>
-				</rows>
-			</PlanningCalendar>
-					  </f:content>
+            <f:DynamicPage id="idResourcePage"
+                           headerExpanded="true"
+                           preserveHeaderStateOnScroll="true"
+                           fitContent="false"
+                           showFooter="false"
+                           toggleHeaderOnTitleClick="false">
+                <f:header>
+                    <f:DynamicPageHeader pinnable="true">
+                        <f:content>
+                                <DateRangeSelection id="idDateRange" change="onChangeDateRange"/>
+                            <!--    <PlanningCalendarLegend id="PlanningCalendarLegend" standardItems="Today">
+                                    <items>
+                                        <unified:CalendarLegendItem text="Demands" type="type08" tooltip="Demands" />
+                                        <unified:CalendarLegendItem text="Unavailability" type="type03" tooltip="Unavailability" />
+                                    </items>
+                                </PlanningCalendarLegend>-->
 
-        </f:DynamicPage>
-			
-			
-		</content>
-		<footer>
-			<OverflowToolbar>
-			
-			</OverflowToolbar>
-		</footer>
-	</Page>
+
+
+                        </f:content>
+                    </f:DynamicPageHeader>
+                </f:header>
+                <f:content>
+                    <PlanningCalendar
+                            id="PC1"
+                            startDate="{viewModel>/assetStartDate}"
+                            rows="{
+                                path: '/AssetSet',
+                                parameters: {
+                                    expand : 'AssetPlanningDataSet'
+                                }
+                            }"
+                            appointmentsReducedHeight="true"
+                            busyIndicatorDelay="0"
+                            appointmentsVisualization="Filled"
+                            appointmentSelect="showDetails"
+                            showEmptyIntervalHeaders="false"
+                            showWeekNumbers="true"
+                            class="sapUiNoContentPadding"
+                            intervalSelect="intervalSelect"
+                            groupAppointmentsMode="Expanded"
+                            viewKey="Month"
+                            rowSelectionChange="onRowSelectionChange">
+                        <toolbarContent>
+                            <Title text="{i18n>xtit.orders}"
+                                   titleStyle="H4"
+                            />
+                            <ToolbarSpacer/>
+                            <Button id="idCreateBut" text="{i18n>xbut.createOrder}" press="createOrder"
+                                    enabled="false"/>
+                            <Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc"
+                                    enabled="false"/>
+                        </toolbarContent>
+                        <rows>
+                            <PlanningCalendarRow
+                                    icon="{
+							            path:'TechnicalObjectType',
+							            formatter:'.formatter.getAssetIcon'
+						            }"
+                                    title="{Description}"
+                                    text="{TechnicalObject}"
+                                    appointments="{path : 'AssetPlanningDataSet', templateShareable: 'true'}">
+                                <!--<customData>
+                                    <core:CustomData key="emp-name" value="{name}" writeToDom="true"/>
+                                </customData>-->
+                                <appointments>
+                                    <unified:CalendarAppointment
+                                            startDate="{StartTimestamp}"
+                                            endDate="{EndTimestamp}"
+                                            title="{Description}"
+                                            text="{OrderId}"
+                                            type="{
+                                                path:'AssetPlandatatype',
+                                                formatter: '.formatter.formatAppointMent'
+                                            }">
+                                    </unified:CalendarAppointment>
+                                </appointments>
+                            </PlanningCalendarRow>
+                        </rows>
+                    </PlanningCalendar>
+                </f:content>
+            </f:DynamicPage>
+        </content>
+        <footer>
+            <OverflowToolbar>
+                <Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
+                        type="Emphasized" press="onMessagePopoverPress"></Button>
+                <ToolbarSpacer/>
+            </OverflowToolbar>
+        </footer>
+    </Page>
 </mvc:View>

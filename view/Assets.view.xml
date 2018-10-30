@@ -64,7 +64,7 @@
                     	rows="{
                         		path : '/AssetHierarchySet',
                         		parameters:{
-                        			numberOfExpandedLevels:0
+                        			numberOfExpandedLevels:1
                         		}
                         }">
                     <table:columns>
@@ -103,7 +103,7 @@
                                 width="2rem"
                                 hAlign="End">
                         	<table:template>
-                                <core:Icon src="sap-icon://drill-down" hoverColor="#ccc" activeColor="#abc" press="onShowWithChildren"/>
+                                <core:Icon src="sap-icon://drill-down" hoverColor="#ccc" activeColor="#abc" tootip="Show With Children" press="onShowWithChildren"/>
                             </table:template>
                         </table:Column>
                         

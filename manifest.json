@@ -129,7 +129,10 @@
 			},
 			"": {
 				"dataSource": "mainService",
-				"preload": true
+				"preload": true,
+				"settings":{
+					"defaultBindingMode":"TwoWay"
+				}
 			},
 			"@i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -175,7 +178,7 @@
 					]
 				},
 				{
-					"pattern": "AssetPlanning/{assets}",
+					"pattern": "AssetPlanning/{assets}/:withChildren:",
 					"name": "assetManager",
 					"target": [
 						"assets",
@@ -183,7 +186,7 @@
 					]
 				},
 				{
-					"pattern": "AssetPlanning/OrderCreate",
+					"pattern": "AssetPlanning/{asset}/OrderCreate/{desc},{floc},{wc},{plant},{type}",
 					"name": "orderCreate",
 					"target": [
 						"assets",
@@ -191,7 +194,7 @@
 					]
 				},
 				{
-					"pattern": "AssetPlanning/Demand/{guid}",
+					"pattern": "AssetPlanning/{asset}/Demand/{guid}",
 					"name": "assetDemandDetail",
 					"target": [
 						"assets",

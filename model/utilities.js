@@ -76,6 +76,20 @@ sap.ui.define([
         }
     };
 
+    var oAssetCalendarLegends = {
+        "A":{
+            type:sap.ui.unified.CalendarDayType.Type03,
+            text:"Demands",
+            tooltip:"Demands"
+        },
+        "D":{
+            type:sap.ui.unified.CalendarDayType.Type08,
+            text:"Unavailability",
+            tooltip:"Unavailability"
+        }
+
+    }
+
     var oResourceAvailability = {
         "P":{
             tooltip:"xtit.partialAvailable",
@@ -114,6 +128,11 @@ sap.ui.define([
         //returns the resource availability settings
         getResourceAvailability: function () {
             return oResourceAvailability;
+        },
+
+        //returns the resource availability settings
+        getAssetCalLegends: function () {
+            return oAssetCalendarLegends;
         }
 	};
 });

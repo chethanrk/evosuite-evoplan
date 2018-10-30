@@ -20,7 +20,7 @@ sap.ui.define([
 					busy : true,
 					delay : 0
 				});
-				this.setModel(oViewModel, "appView");
+                this.getOwnerComponent().setModel(oViewModel, "appView");
 
 				fnSetAppNotBusy = function() {
 					oViewModel.setProperty("/busy", false);

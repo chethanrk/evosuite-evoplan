@@ -313,17 +313,22 @@ sap.ui.define([
         callFunctionImport: function (oParams, sFuncName, sMethod) {
             var eventBus = sap.ui.getCore().getEventBus(),
                 oModel = this.getModel(),
+                oViewModel = this.getModel("appView"),
                 oResourceBundle = this.getResourceBundle();
 
+            oViewModel.setProperty("/busy",true);
             oModel.callFunction("/"+sFuncName, {
                 method: sMethod || "POST",
                 urlParameters: oParams,
+                refreshAfterChange:false,
                 success: function(oData, oResponse){
                     //Handle Success
+                    oViewModel.setProperty("/busy",false);
                     this.showMessage(oResponse);
                     eventBus.publish("BaseController", "refreshTreeTable",{});
                     eventBus.publish("BaseController", "refreshDemandTable",{});
                     eventBus.publish("BaseController", "refreshDemandOverview",{}); // refresh the demand overview page binding
+                    eventBus.publish("BaseController", "refreshAssetCal", {});
                 }.bind(this),
                 error: function(oError){
                     //Handle Error
@@ -486,6 +491,24 @@ sap.ui.define([
                 return false;
             }
             return true;
+        },
+        /**
+         * Shows the confirmation Box.
+         *
+         * @Athour Rahul
+         * @version 2.1
+         */
+        showConfirmMessageBox: function(message, fnCallback) {
+            var oController = this;
+            MessageBox.confirm(
+                message, {
+                    styleClass:oController.getOwnerComponent().getContentDensityClass(),
+                    icon: sap.m.MessageBox.Icon.CONFIRM,
+                    title: this.getResourceBundle().getText("xtit.confirm"),
+                    actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+                    onClose: fnCallback
+                }
+            );
         }
 
 

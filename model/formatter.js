@@ -5,7 +5,8 @@ sap.ui.define([
 	"use strict";
 
 	var resourceFormats = utilities.getResourceFormats(),
-		resourceAvailability = utilities.getResourceAvailability();
+		resourceAvailability = utilities.getResourceAvailability(),
+		assetCalLegends = utilities.getAssetCalLegends();
 
 	return {
 		/**
@@ -202,6 +203,35 @@ sap.ui.define([
 					sIcon =  "sap-icon://functional-location";
 			}
 			return sIcon;
-		}
+		},
+        /**
+		 * Differentiate the planning data as demands and unavailability
+         * @param sValue
+         */
+        formatAppointMent: function (sValue) {
+				return assetCalLegends[sValue].type;
+        },
+        /**
+		 * Save button must not visible for if planning dat guid is present that indicate the update
+         * @param sValue
+         * @return {boolean}
+         */
+        formatSaveButton: function (sValue) {
+        	if(sValue){
+        		return false;
+			}
+
+        },
+        /**
+		 * Update button must not visible for if planning dat guid is present that indicate the create
+         * @param sValue
+         * @return {boolean}
+         */
+        formatUpdateButton: function (sValue) {
+            if(!sValue){
+                return false;
+            }
+
+        }
 	};
 });

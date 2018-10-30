@@ -20,6 +20,19 @@ sap.ui.define([
 			onInit: function() {
 				var oAssetTree = this.byId("idAssetTree");
             	this._configureDataTable(oAssetTree);
+
+				var iOriginalBusyDelay,
+					oViewModel = this.getOwnerComponent().getModel("viewModel");
+
+				this.getRouter().getRoute("assetManager").attachPatternMatched(this._onObjectMatched, this);
+
+				// Store original busy indicator delay, so it can be restored later on
+				iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
+				this.getOwnerComponent().getModel().metadataLoaded().then(function () {
+						// Restore original busy indicator delay for the object view
+						oViewModel.setProperty("/delay", iOriginalBusyDelay);
+					}
+				);
 			},
 
 		/**
@@ -48,6 +61,17 @@ sap.ui.define([
 		//	onExit: function() {
 		//
 		//	}
+
+        _onObjectMatched : function (oEvent) {
+            var oDataTable = this.byId("idAssetTree"),
+				oArguments =  oEvent.getParameter("arguments"),
+				aAssets = oArguments.assets.split(",");
+
+            if(aAssets[0] === "NA"){
+                oDataTable.clearSelection();
+			}
+
+        },
 		/**
 		 * Configure the tree table with basic configuration
 		 * 
@@ -82,7 +106,9 @@ sap.ui.define([
 				oBindings = oAssetTree.getBinding("rows"),
 				oModel = oBindings.getModel();
 				
-				oModel.resetChanges();
+			oModel.resetChanges();
+            this._selectedAssets =[];
+            this.checkButtons();
 				
 		},
 		/**
@@ -137,28 +163,45 @@ sap.ui.define([
 				this._selectedAssets.splice(this._selectedAssets.indexOf(this.getModel().getProperty(sPath+"/NodeId")), 1);
 			}
 
-			if (this._selectedAssets.length > 0) {
-				this.byId("idButtonShoWD").setEnabled(true);
-                this.byId("idClr").setEnabled(true);
-			} else {
-				this.byId("idButtonShoWD").setEnabled(false);
-                this.byId("idClr").setEnabled(false);
-			}
+            this.checkButtons();
 		},
 		
 		onSelectionChange:function(oEvent){
-			var oContext = oEvent.getParameter("rowContext");
-			var oModel = oContext.getModel();
-			var sPath = oContext.getPath();
-			var oData = oModel.getProperty(sPath);
-			var aAssets = [];
-			
-			aAssets.push(oData.NodeId);
-			
-			this.getRouter().navTo("assetManager", {
-				assets:aAssets.join(",")
-			});
-		}
+			var oContext = oEvent.getParameter("rowContext"),
+				oModel, sPath, oData;
+
+			if(oContext){
+                oModel = oContext.getModel();
+                sPath = oContext.getPath();
+                oData = oModel.getProperty(sPath);
+                this.getRouter().navTo("assetManager", {
+                    assets:oData.NodeId
+                });
+			}
+
+		},
+
+		checkButtons : function () {
+            if (this._selectedAssets.length > 0) {
+                this.byId("idButtonShoWD").setEnabled(true);
+                this.byId("idClr").setEnabled(true);
+            } else {
+                this.byId("idButtonShoWD").setEnabled(false);
+                this.byId("idClr").setEnabled(false);
+            }
+        },
+        onShowWithChildren : function (oEvent) {
+            // oEvent.cancelBubble();
+            var oSource = oEvent.getSource(),
+                oParent = oSource.getParent(),
+                sPath = oParent.getBindingContext().getPath(),
+				oData = this.getModel().getProperty(sPath);
+
+            this.getRouter().navTo("assetManager", {
+                assets:oData.NodeId,
+                withChildren:"Children"
+            });
+        }
 
 	});
 
