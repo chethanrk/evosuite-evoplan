@@ -103,7 +103,7 @@
                                 width="2rem"
                                 hAlign="End">
                         	<table:template>
-                                <core:Icon src="sap-icon://drill-down" hoverColor="#ccc" activeColor="#abc" tootip="Show With Children" press="onShowWithChildren"/>
+                                <core:Icon src="sap-icon://drill-down" hoverColor="#ccc" activeColor="#abc" tooltip="{i18n>xtit.showWithChild}" press="onShowWithChildren"/>
                             </table:template>
                         </table:Column>
                         

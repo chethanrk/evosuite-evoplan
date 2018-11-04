@@ -104,23 +104,30 @@ sap.ui.define([
         _onObjectMatched: function (oEvent) {
             var oArguments = oEvent.getParameter("arguments"),
                 sAsset = oArguments.asset,
-                sFloc = oArguments.floc,
+                sFloc = this.getModel("viewModel").getProperty("/assetFloc"),
                 sWc = oArguments.wc,
                 sPlant = oArguments.plant,
                 oDesc = oArguments.desc,
                 sAsssetType = oArguments.type;
             this.getModel().metadataLoaded().then(function () {
-                var oContext = this.getModel().createEntry("/EvoPlanOrderSet", {
-                    properties: {
-                        TechnicalObject: sFloc,
-                        Plant: sPlant,
-                        MainWorkCenter: sWc,
-                        AssetGuid: sAsset,
-                        AssetDescription: oDesc,
-                        TechnicalObjectType: sAsssetType
-                    }
-                });
-                this.getView().setBindingContext(oContext);
+                if(sFloc && sFloc !== ""){
+                    var oContext = this.getModel().createEntry("/EvoPlanOrderSet", {
+                        properties: {
+                            TechnicalObject: sFloc,
+                            Plant: sPlant,
+                            MainWorkCenter: sWc,
+                            AssetGuid: sAsset,
+                            AssetDescription: oDesc,
+                            TechnicalObjectType: sAsssetType
+                        }
+                    });
+                    this.getView().setBindingContext(oContext);
+                }else{
+                    this.getRouter().navTo("assetManager", {
+                        assets: sAsset
+                    }, true);
+                }
+
             }.bind(this));
 
 
@@ -136,6 +143,7 @@ sap.ui.define([
                 oForm = oOrderBlock.byId("idOrderCreForm"),
                 aErrorFields = oForm.check();
             if (aErrorFields.length === 0) {
+                this.clearMessageModel();
                 this.getModel("appView").setProperty("/busy", true);
                 this.getModel().submitChanges({
                     success: this.onSuccessCreate.bind(this),
@@ -154,18 +162,28 @@ sap.ui.define([
          */
         onSuccessCreate: function (data, response) {
             var oContext = this.getView().getBindingContext();
+            var sOrderId, oResponse;
             this.getModel("appView").setProperty("/busy", false);
             if (data && data.__batchResponses) {
                 for (var i in data.__batchResponses) {
                     if (data.__batchResponses[i].response) {
                         if (!data.__batchResponses[i].response.statusCode.startsWith("2")) {
                             this.getModel().deleteCreatedEntry(oContext);
+                            return;
+                        }
+                    }else{
+                        for(var i in data.__batchResponses[i].__changeResponses){
+                            sOrderId = data.__batchResponses[i].__changeResponses[0].data.OrderId;
+                            oResponse = data.__batchResponses[i].__changeResponses[0];
                         }
                     }
                 }
-                var msg = this.getResourceBundle().getText("createSuccessMsg");
-                this.showMessageToast(msg);
-                this.navBack();
+                if(this.showMessage(oResponse,function () {
+                        this.navBack();
+                    }.bind(this)))
+                    this.getModel().resetChanges();
+                else
+                    this.navBack();
             }
         },
         /**
@@ -179,6 +197,7 @@ sap.ui.define([
             this.getModel("appView").setProperty("/busy", false);
             if (oContext) {
                 this.getModel().deleteCreatedEntry(oContext);
+                this.navBack();
             }
         },
         /**

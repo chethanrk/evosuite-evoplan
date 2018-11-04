@@ -86,7 +86,7 @@ sap.ui.define([
          * @param {oResponse} Response object of success or error callback of oData service
          * @returns
          */
-        showMessage : function(oResponse){
+        showMessage : function(oResponse,fnCallback){
             var oData,
                 oResourceBundle = this.getResourceBundle();
             if(oResponse && oResponse.headers["sap-message"]){
@@ -95,38 +95,52 @@ sap.ui.define([
                 }catch(ex){
                     jQuery.sap.log.error("Failed to parse the message header");
                 }
-                if(oData && oData.severity === "error"){
-                    var sMessage = oData.message+"\n"+oResourceBundle.getText("errorMessage");
-                    this._showErrorMessage(sMessage);
-                }else{
-                    this.showMessageToast(oData.message);
+                if(oData && oData.details.length > 0){
+                    var oMessage,bContainsError;
+                    for(var i in oData.details){
+                        if(oData.details[i].severity === "error"){
+                            bContainsError = true;
+                            oMessage = oData.details[i];
+                            break;
+                        }
+                    }
+                    if(bContainsError){
+                        var sMessage = oMessage.message+"\n"+oResourceBundle.getText("errorMessage");
+                        this._showErrorMessage(sMessage, fnCallback);
+                    }else
+                        this.showMessageToast(oData.message);
                 }
             }else{
-                try{
-                    oData = JSON.parse(oResponse.responseText);
-                }catch(ex){
-                    jQuery.sap.log.error("Failed to parse the message header");
-                }
-                if(oData && oData.error){
-                    this._showErrorMessage(oData.error.message.value);
-                }else{
-                    //this.showMessageToast(oResourceBundle.getText("errorMessage"));
+                if(oResponse){
+                    try{
+                        oData = JSON.parse(oResponse.responseText);
+                    }catch(ex){
+                        jQuery.sap.log.error("Failed to parse the message header");
+                    }
+                    if(oData && oData.error){
+                        this._showErrorMessage(oData.error.message.value);
+                    }
                 }
             }
+            return bContainsError;
         },
 
-        _showErrorMessage: function(sMessage){
-            if (this._bMessageOpen) {
-                return;
+        _showErrorMessage: function(sMessage, fnCallback){
+            var fnClose = function () {
+                this._bMessageOpen = false;
+            }.bind(this);
+            if(fnCallback){
+                fnClose = fnCallback
             }
-            this._bMessageOpen = true;
+            if (this._bMessageOpen) {
+                // return;
+            }
+            // this._bMessageOpen = true;
             MessageBox.error(sMessage,{
                     id : "errorMessageBox",
                     styleClass: this.getOwnerComponent().getContentDensityClass(),
                     actions: [MessageBox.Action.CLOSE],
-                    onClose: function () {
-                        this._bMessageOpen = false;
-                    }.bind(this)
+                    onClose: fnClose
                 }
             );
         },

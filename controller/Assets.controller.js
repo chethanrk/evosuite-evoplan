@@ -61,7 +61,15 @@ sap.ui.define([
 		//	onExit: function() {
 		//
 		//	}
-
+        /**
+		 * The Method gets call when the pattern matched for registered route.
+		 * Clears selected if any selected row persisted of table
+		 *
+		 * @Author Rahul
+         * @since 2.1
+         * @param oEvent
+         * @private
+         */
         _onObjectMatched : function (oEvent) {
             var oDataTable = this.byId("idAssetTree"),
 				oArguments =  oEvent.getParameter("arguments"),
@@ -104,11 +112,16 @@ sap.ui.define([
 		onClearSelection : function(){
 			var oAssetTree = this.byId("idAssetTree"),
 				oBindings = oAssetTree.getBinding("rows"),
-				oModel = oBindings.getModel();
+				oModel = oBindings.getModel(),
+				oRouter = this.getRouter();
 				
 			oModel.resetChanges();
             this._selectedAssets =[];
             this.checkButtons();
+
+            oRouter.navTo("assetManager", {
+                assets:"NA"
+            });
 				
 		},
 		/**
@@ -165,7 +178,14 @@ sap.ui.define([
 
             this.checkButtons();
 		},
-		
+        /**
+		 * When any row is selected on tree table then navigating to assetManager
+		 * with nodeId which is AssetId
+		 *
+		 * @Author Rahul
+         * @since 2.1
+         * @param oEvent
+         */
 		onSelectionChange:function(oEvent){
 			var oContext = oEvent.getParameter("rowContext"),
 				oModel, sPath, oData;
@@ -180,7 +200,9 @@ sap.ui.define([
 			}
 
 		},
-
+        /**
+		 * Enable or disable footer buttons on selection of rows in tree table
+         */
 		checkButtons : function () {
             if (this._selectedAssets.length > 0) {
                 this.byId("idButtonShoWD").setEnabled(true);
@@ -190,8 +212,11 @@ sap.ui.define([
                 this.byId("idClr").setEnabled(false);
             }
         },
+        /**
+		 * Navigating to assetmanager route which hash with children
+         * @param oEvent
+         */
         onShowWithChildren : function (oEvent) {
-            // oEvent.cancelBubble();
             var oSource = oEvent.getSource(),
                 oParent = oSource.getParent(),
                 sPath = oParent.getBindingContext().getPath(),

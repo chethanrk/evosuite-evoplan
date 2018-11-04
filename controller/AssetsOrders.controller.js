@@ -128,12 +128,12 @@ sap.ui.define([
 
             oRouter.navTo("orderCreate", {
                 asset: this._selectedAsset.AssetGuid,
-                floc: this._selectedAsset.TechnicalObject,
                 wc: this._selectedAsset.MainWorkCenter,
                 plant: this._selectedAsset.Plant,
                 desc: this._selectedAsset.Description,
                 type: this._selectedAsset.TechnicalObjectType
             });
+            this.getModel("viewModel").setProperty("/assetFloc",this._selectedAsset.TechnicalObject)
         },
 
         /**
@@ -228,19 +228,26 @@ sap.ui.define([
             if (!sDateFrom) {
                 oFromDate.setValueState("Error");
                 oFromDate.setValueStateText(oResourceBundle.getText("ymsg.fieldMandatory"));
+                return;
             }
 
             if (!sDateTo) {
                 oToDate.setValueState("Error");
                 oToDate.setValueStateText(oResourceBundle.getText("ymsg.fieldMandatory"));
+                return;
             }
 
             if (!sDesc.trim()) {
                 sDescription.setValueState("Error");
                 sDescription.setValueStateText(oResourceBundle.getText("ymsg.fieldMandatory"));
+                return;
             }
 
             if (sDateFrom && sDateTo && sDesc.trim()) {
+                if(sDateFrom.getTime() > sDateTo.getTime()){
+                    this.showMessageToast(oResourceBundle.getText("ymsg.datesInvalid"));
+                    return;
+                }
                 var oParams = {
                     AssetGuid: sAssetGuid ? sAssetGuid :oSelectedAsset.AssetGuid,
                     StartTimestamp: sDateFrom,
@@ -302,7 +309,6 @@ sap.ui.define([
             oTimeAllocModel.setProperty("/dateTo",null);
             oTimeAllocModel.setProperty("/desc","");
             oTimeAllocModel.setProperty("/assetGuid","");
-            // oTimeAllocModel.setProperty("/update",false);
 
             oFromDate.setValueState("None");
             oFromDate.setValueStateText("");
