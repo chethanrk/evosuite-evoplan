@@ -177,6 +177,7 @@
                 <ToolbarSpacer/>
                 <Button id="idButtonunassign"
                         text="{i18n>xbut.buttonUnassign}"
+                        tooltip="{i18n>xbut.buttonUnassign}"
                         press="onPressUnassign"
                         enabled="false">
                     <layoutData>
@@ -185,6 +186,7 @@
                 </Button>
                 <Button id="idButtonreassign"
                         text="{i18n>xfld.newAssign}"
+                        tooltip="{i18n>xfld.newAssign}"
                         press="onPressReassign"
                         enabled="false">
                     <layoutData>
@@ -193,6 +195,7 @@
                 </Button>
                 <Button id="showPlanCalendar"
                         text="{i18n>xbut.showPlanningCal}"
+                        tooltip="{i18n>xbut.showPlanningCal}"
                         icon="sap-icon://calendar"
                         press="onPressShowPlanningCal"
                         enabled="false">

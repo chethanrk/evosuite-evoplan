@@ -57,9 +57,9 @@
                                    titleStyle="H4"
                             />
                             <ToolbarSpacer/>
-                            <Button id="idCreateBut" text="{i18n>xbut.createOrder}" press="createOrder"
+                            <Button id="idCreateBut" text="{i18n>xbut.createOrder}" tooltip="{i18n>xbut.createOrder}" press="createOrder"
                                     enabled="false"/>
-                            <Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc"
+                            <Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" tooltip="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc"
                                     enabled="false"/>
                         </toolbarContent>
                         <rows>

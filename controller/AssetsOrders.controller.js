@@ -307,7 +307,6 @@ sap.ui.define([
         _enableHeaderButton: function (bState) {
             this.byId("idCreateBut").setEnabled(bState);
             this.byId("idTimeAlloBut").setEnabled(bState);
-            this.byId("assignButton").setEnabled(bState);
         },
         /**
          * Clears the Time Allocation fields
@@ -372,6 +371,7 @@ sap.ui.define([
                 aAllFilters.push(oDateRangeFilter);
             oBinding.filter(aAllFilters);
             this._enableHeaderButton(false);
+            this.byId("assignButton").setEnabled(false);
             this._aSelectedDemands=[];
         },
         /**
