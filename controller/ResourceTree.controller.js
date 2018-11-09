@@ -39,10 +39,6 @@ sap.ui.define([
             //eventbus of assignemnt handling
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
-            eventBus.subscribe("AssignInfoDialog", "updateAssignment", this._triggerUpdateAssign, this);
-            eventBus.subscribe("AssignTreeDialog", "bulkReAssignment", this._triggerUpdateAssign, this);
-            eventBus.subscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
-            eventBus.subscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
             eventBus.subscribe("FilterSettingsDialog", "triggerSearch", this._triggerFilterSearch, this);
             eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
             // eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
@@ -263,7 +259,7 @@ sap.ui.define([
             binding.filter(aFilters, "Application");
         },
 
-        _triggerUpdateAssign: function (sChanel, sEvent, oData) {
+        /*_triggerUpdateAssign: function (sChanel, sEvent, oData) {
             if(sEvent === "updateAssignment"){
                 this.updateAssignment(oData.isReassign);
             }else if(sEvent === "bulkReAssignment"){
@@ -284,7 +280,7 @@ sap.ui.define([
             }else if(sEvent === "bulkDeleteAssignment"){
                 this.bulkDeleteAssignment(oData.aContexts);
             }
-        },
+        },*/
 
         /**
          * dropped demands assign and save

@@ -12,6 +12,8 @@ sap.ui.define([
         formatter: formatter,
 
         _selectedAsset: undefined,
+
+        _aSelectedDemands :[],
         /**
          * Called when a controller is instantiated and its View controls (if available) are already created.
          * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -149,23 +151,37 @@ sap.ui.define([
             var oModel = oContext.getModel();
             var sPath = oContext.getPath();
             var oData = oModel.getProperty(sPath);
-            var oTimeAllocModel = this.getModel("timeAlloc")
-            if (oData.AssetPlandatatype === "A") {
-                oTimeAllocModel.setProperty("/guid",oData.Guid);
-                oTimeAllocModel.setProperty("/assetGuid",oData.AssetGuid);
-                oTimeAllocModel.setProperty("/dateFrom",oData.StartTimestamp);
-                oTimeAllocModel.setProperty("/dateTo",oData.EndTimestamp);
-                oTimeAllocModel.setProperty("/desc",oData.Description);
-                this.createTimeAlloc();
+            var oTimeAllocModel = this.getModel("timeAlloc");
+            if(oEvent.getParameter("multiSelect")){
 
+                if (oData.AssetPlandatatype === "D") {
+                    this._aSelectedDemands.push(oSelectedDemand);
+                    this.byId("assignButton").setEnabled(true);
+                }else{
+                    oSelectedDemand.setSelected(false);
+                    this.showMessageToast("Selected item is not demand")
+                }
                 return;
+            }else{
+                this._aSelectedDemands = [];
+                this.byId("assignButton").setEnabled(false);
+                if (oData.AssetPlandatatype === "A") {
+                    oTimeAllocModel.setProperty("/guid",oData.Guid);
+                    oTimeAllocModel.setProperty("/assetGuid",oData.AssetGuid);
+                    oTimeAllocModel.setProperty("/dateFrom",oData.StartTimestamp);
+                    oTimeAllocModel.setProperty("/dateTo",oData.EndTimestamp);
+                    oTimeAllocModel.setProperty("/desc",oData.Description);
+                    this.createTimeAlloc();
+                    return;
+                }
+
+                var oRouter = this.getRouter();
+                oRouter.navTo("assetDemandDetail", {
+                    guid: oData.Guid,
+                    asset: oData.AssetGuid
+                });
             }
 
-            var oRouter = this.getRouter();
-            oRouter.navTo("assetDemandDetail", {
-                guid: oData.Guid,
-                asset: oData.AssetGuid
-            });
         },
         /**
          * close dialog
@@ -291,6 +307,7 @@ sap.ui.define([
         _enableHeaderButton: function (bState) {
             this.byId("idCreateBut").setEnabled(bState);
             this.byId("idTimeAlloBut").setEnabled(bState);
+            this.byId("assignButton").setEnabled(bState);
         },
         /**
          * Clears the Time Allocation fields
@@ -355,6 +372,7 @@ sap.ui.define([
                 aAllFilters.push(oDateRangeFilter);
             oBinding.filter(aAllFilters);
             this._enableHeaderButton(false);
+            this._aSelectedDemands=[];
         },
         /**
          * Generates filters for assets based the date range to filter Demand and unavailability of
@@ -403,8 +421,20 @@ sap.ui.define([
          */
         onMessagePopoverPress: function (oEvent) {
             this._oMessagePopover.openBy(oEvent.getSource());
-        }
+        },
+        /**
+         * Multi Assignment from asset view
+         */
+        onAssignButtonPress: function () {
+            var oSelectedPaths = this._getSelectedRowPaths(null,null,null,this._aSelectedDemands);
 
+            if (oSelectedPaths.aPathsData.length > 0) {
+                this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
+            }
+            if (oSelectedPaths.aNonAssignable.length > 0) {
+                this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+            }
+        }
     });
 
 });

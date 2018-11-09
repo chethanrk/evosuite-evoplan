@@ -129,13 +129,17 @@ sap.ui.define([
             var fnClose = function () {
                 this._bMessageOpen = false;
             }.bind(this);
+
             if(fnCallback){
                 fnClose = fnCallback
             }
-            if (this._bMessageOpen) {
-                // return;
+            if(!fnCallback){
+                if (this._bMessageOpen) {
+                    return;
+                }
+                this._bMessageOpen = true;
             }
-            // this._bMessageOpen = true;
+
             MessageBox.error(sMessage,{
                     id : "errorMessageBox",
                     styleClass: this.getOwnerComponent().getContentDensityClass(),
@@ -144,7 +148,6 @@ sap.ui.define([
                 }
             );
         },
-
         /**
          * save assignment after drop
          * @param aSourcePaths
@@ -334,7 +337,6 @@ sap.ui.define([
             oModel.callFunction("/"+sFuncName, {
                 method: sMethod || "POST",
                 urlParameters: oParams,
-                refreshAfterChange:false,
                 success: function(oData, oResponse){
                     //Handle Success
                     oViewModel.setProperty("/busy",false);
@@ -364,31 +366,47 @@ sap.ui.define([
          * @param aSelectedRowsIdx
          * @private
          */
-        _getSelectedRowPaths : function (oTable, aSelectedRowsIdx, checkAssignAllowed) {
+        _getSelectedRowPaths : function (oTable, aSelectedRowsIdx, checkAssignAllowed, aDemands) {
             var aPathsData = [],
                 bNonAssignableDemandsExist = false,
-                aNonAssignableDemands =[];
+                aNonAssignableDemands =[],
+                 oData ;
 
             if(checkAssignAllowed){
                 oTable.clearSelection();
             }
+            if(!aDemands) {
+                for (var i = 0; i < aSelectedRowsIdx.length; i++) {
+                    var oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
+                    var sPath = oContext.getPath();
+                     oData = this.getModel().getProperty(sPath);
 
-            for (var i=0; i<aSelectedRowsIdx.length; i++) {
-                var oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
-                var sPath = oContext.getPath();
-                var oData = this.getModel().getProperty(sPath);
-
-                //on check on oData property ALLOW_ASSIGN when flag was given
-                if(checkAssignAllowed){
-                    if(!!oData.ALLOW_ASSIGN){
-                        aPathsData.push({ sPath: sPath, oData: oData ,index:aSelectedRowsIdx[i]});
-                        oTable.addSelectionInterval(aSelectedRowsIdx[i],aSelectedRowsIdx[i]);
-                    }else{
-                        aNonAssignableDemands.push(oData.DemandDesc);
-                        bNonAssignableDemandsExist = true;
+                    //on check on oData property ALLOW_ASSIGN when flag was given
+                    if (checkAssignAllowed) {
+                        if (!!oData.ALLOW_ASSIGN) {
+                            aPathsData.push({sPath: sPath, oData: oData, index: aSelectedRowsIdx[i]});
+                            oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
+                        } else {
+                            aNonAssignableDemands.push(oData.DemandDesc);
+                            bNonAssignableDemandsExist = true;
+                        }
+                    } else {
+                        aPathsData.push({sPath: sPath, oData: oData, index: aSelectedRowsIdx[i]});
                     }
-                }else{
-                    aPathsData.push({ sPath: sPath, oData: oData ,index:aSelectedRowsIdx[i]});
+                }
+
+            }else{
+                for(var i in aDemands){
+                    var oContext = aDemands[i].getBindingContext();
+                    var sPath = oContext.getPath();
+                    oData = this.getModel().getProperty(sPath);
+                    if (!!oData.ALLOW_ASSIGN) {
+                        aPathsData.push({sPath: sPath, oData: oData});
+                    } else {
+                        aDemands[i].setSelected(false);
+                        aNonAssignableDemands.push(oData.Description);
+                        delete aDemands[i];
+                    }
                 }
             }
             return {
@@ -396,6 +414,7 @@ sap.ui.define([
                 aNonAssignable: aNonAssignableDemands
             };
         },
+
 
         /**
          * show error dialog for demands which are not assignable or for which status transition

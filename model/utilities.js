@@ -77,18 +77,18 @@ sap.ui.define([
     };
 
     var oAssetCalendarLegends = {
-        "A":{
-            type:sap.ui.unified.CalendarDayType.Type03,
+        "D":{
+            type:sap.ui.unified.CalendarDayType.Type01,
             text:"Demands",
             tooltip:"Demands"
         },
-        "D":{
-            type:sap.ui.unified.CalendarDayType.Type08,
+        "A":{
+            type:sap.ui.unified.CalendarDayType.Type06,
             text:"Unavailability",
             tooltip:"Unavailability"
         }
 
-    }
+    };
 
     var oResourceAvailability = {
         "P":{
