@@ -18,7 +18,7 @@
 			]
 		},
 		"applicationVersion": {
-			"version": "2.1"
+			"version": "2.1.0"
 		},
 		"dataSources": {
 			"mainService": {
@@ -130,8 +130,8 @@
 			"": {
 				"dataSource": "mainService",
 				"preload": true,
-				"settings":{
-					"defaultBindingMode":"TwoWay"
+				"settings": {
+					"defaultBindingMode": "TwoWay"
 				}
 			},
 			"@i18n": {
