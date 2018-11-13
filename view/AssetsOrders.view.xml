@@ -6,7 +6,7 @@
         controllerName="com.evorait.evoplan.controller.AssetsOrders"
         xmlns:unified="sap.ui.unified"
         xmlns:f="sap.f">
-    <Page title="{i18n>xtit.assetOrders}" class="sapUiNoContentPadding tableContentPage">
+    <Page title="{i18n>xtit.orders}" class="sapUiNoContentPadding tableContentPage">
         <content>
 
             <f:DynamicPage id="idResourcePage"
@@ -19,15 +19,6 @@
                     <f:DynamicPageHeader pinnable="true">
                         <f:content>
                                 <DateRangeSelection id="idDateRange" change="onChangeDateRange"/>
-                            <!--    <PlanningCalendarLegend id="PlanningCalendarLegend" standardItems="Today">
-                                    <items>
-                                        <unified:CalendarLegendItem text="Demands" type="type08" tooltip="Demands" />
-                                        <unified:CalendarLegendItem text="Unavailability" type="type03" tooltip="Unavailability" />
-                                    </items>
-                                </PlanningCalendarLegend>-->
-
-
-
                         </f:content>
                     </f:DynamicPageHeader>
                 </f:header>

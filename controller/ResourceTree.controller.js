@@ -160,7 +160,7 @@ sap.ui.define([
 
 			} else if (this.selectedResources.indexOf(sPath) >= 0) {
 				//removing the path from this.selectedResources when user unselect the checkbox
-				this.selectedResources.splice(this.selectedResources.indexOf(sPath), 1);
+                this.selectedResources.splice(this.selectedResources.indexOf(sPath), 1);
 			}
 
 			if (this.selectedResources.length > 0) {

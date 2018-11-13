@@ -65,9 +65,9 @@ sap.ui.define([
          * (NOT before the first rendering! onInit() is used for that one!).
          * @memberOf com.evorait.evoplan.view.AssetsOrders
          */
-        onBeforeRendering: function () {
-
-        },
+        // onBeforeRendering: function () {
+        //
+        // },
 
         /**
          * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.
@@ -95,6 +95,8 @@ sap.ui.define([
             if (this._oMessagePopover) {
                 this._oMessagePopover.destroy();
             }
+            this._selectedAsset = undefined;
+            this._aSelectedDemands =[];
         },
 
         /**
@@ -108,11 +110,11 @@ sap.ui.define([
                 oDateRange = this.byId("idDateRange"),
                 oForm = oDateRange.getDateValue(),
                 oTo = oDateRange.getSecondDateValue();
-
+            // Generates and add to json model the Date range filter by defaulting the dates
             this._generateRangeFilter(oForm, oTo);
-
+            // Generate and add to json model the selected assets filter
             this._generateAssetFilter(oArguments);
-
+            // Triggers filter
             this._triggerAssetFilter();
         },
 
@@ -146,20 +148,29 @@ sap.ui.define([
          * @param oEvent
          */
         showDetails: function (oEvent) {
-            var oSelectedDemand = oEvent.getParameter("appointment");
-            var oContext = oSelectedDemand.getBindingContext();
-            var oModel = oContext.getModel();
-            var sPath = oContext.getPath();
-            var oData = oModel.getProperty(sPath);
-            var oTimeAllocModel = this.getModel("timeAlloc");
-            if(oEvent.getParameter("multiSelect")){
+            var oSelectedDemand = oEvent.getParameter("appointment"),
+                oContext = oSelectedDemand.getBindingContext(),
+                oModel = oContext.getModel(),
+                sPath = oContext.getPath(),
+                oData = oModel.getProperty(sPath),
+                oTimeAllocModel = this.getModel("timeAlloc"),
+                oResourceBundle = this.getResourceBundle();
+            if(oEvent.getParameter("multiSelect")){  // CTL+ <appointment> will trigger this parameter (Not documented in SAPUI5 Demokit)
 
                 if (oData.AssetPlandatatype === "D") {
-                    this._aSelectedDemands.push(oSelectedDemand);
-                    this.byId("assignButton").setEnabled(true);
+                    if(this._aSelectedDemands.indexOf(oSelectedDemand) >= 0){
+                        this._aSelectedDemands.splice(this._aSelectedDemands.indexOf(sPath), 1);
+                        oSelectedDemand.setSelected(false);  // if the selected demand is selected again Demad has to be unselected.
+                    }else{
+                        this._aSelectedDemands.push(oSelectedDemand);
+                    }
+                    if(this._aSelectedDemands.length > 0 )
+                        this.byId("assignButton").setEnabled(true);
+                    else
+                        this.byId("assignButton").setEnabled(false);
                 }else{
                     oSelectedDemand.setSelected(false);
-                    this.showMessageToast("Selected item is not demand")
+                    this.showMessageToast(oResourceBundle.getText("ymsg.notDemand"))
                 }
                 return;
             }else{

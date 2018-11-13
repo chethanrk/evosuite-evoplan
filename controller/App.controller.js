@@ -60,6 +60,7 @@ sap.ui.define([
 
             /**
              * catch event from dialog for saving demand status change
+             *
              * @param sChanel
              * @param sEvent
              * @param oData
