@@ -186,7 +186,7 @@
 					]
 				},
 				{
-					"pattern": "AssetPlanning/{asset}/OrderCreate/{desc},{wc},{plant},{type}",
+					"pattern": "AssetPlanning/{asset}/OrderCreate/{desc},:wc:,{plant},{type}",
 					"name": "orderCreate",
 					"target": [
 						"assets",
