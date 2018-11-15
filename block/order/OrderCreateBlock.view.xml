@@ -31,7 +31,9 @@
             <smartForm:GroupElement>
                 <smartField:SmartField value="{BusinessArea}"/>
             </smartForm:GroupElement>
-
+			<smartForm:GroupElement>
+                <smartField:SmartField value="{REVISION_NO}"/>
+            </smartForm:GroupElement>
             <smartForm:GroupElement>
                 <smartField:SmartField value="{StartTimestamp}"/>
             </smartForm:GroupElement>

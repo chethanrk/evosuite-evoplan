@@ -3,7 +3,6 @@
         xmlns="sap.m"
         xmlns:smartTable="sap.ui.comp.smarttable">
     <Dialog title=""
-            afterOpen="onDialogOpen"
             contentWidth="100%"
             resizable="true"
             contentHeight="80%"

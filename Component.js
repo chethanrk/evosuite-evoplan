@@ -108,6 +108,11 @@ sap.ui.define([
 			var oMessageModel = new JSONModel();
 			oMessageModel.setData([]);
 			this.setModel(oMessageModel, "MessageModel");
+			
+			//Creating the Global user model for Global properties
+			this.setModel(models.createUserModel({
+				ASSET_PLANNING_ENABLED:false
+			}), "user");
 
 			//Creating the global for planning calendar
             var oCalendarModel = new JSONModel();
