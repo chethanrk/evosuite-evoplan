@@ -109,6 +109,8 @@ sap.ui.define([
                         this._showErrorMessage(sMessage, fnCallback);
                     }else
                         this.showMessageToast(oData.message);
+                }else{
+                    this.showMessageToast(oData.message);
                 }
             }else{
                 if(oResponse){
