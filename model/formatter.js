@@ -232,6 +232,14 @@ sap.ui.define([
                 return false;
             }
 
+        },
+        
+        formatDemandTooltip: function(sDesc , sStatusDesc){
+        	if(sStatusDesc && sStatusDesc!== ""){
+        		return sDesc+" : "+sStatusDesc;
+        	}else{
+        		return sDesc;
+        	}
         }
 	};
 });

@@ -105,9 +105,9 @@ sap.ui.define([
             var oArguments = oEvent.getParameter("arguments"),
                 sAsset = oArguments.asset,
                 sFloc = this.getModel("viewModel").getProperty("/assetFloc"),
+                sDesc = this.getModel("viewModel").getProperty("/assetDesc"),
                 sWc = oArguments.wc,
                 sPlant = oArguments.plant,
-                oDesc = oArguments.desc,
                 sAsssetType = oArguments.type;
             this.getModel().metadataLoaded().then(function () {
                 if(sFloc && sFloc !== ""){
@@ -117,7 +117,7 @@ sap.ui.define([
                             Plant: sPlant,
                             MainWorkCenter: sWc,
                             AssetGuid: sAsset,
-                            AssetDescription: oDesc,
+                            AssetDescription: sDesc,
                             TechnicalObjectType: sAsssetType
                         }
                     });
@@ -179,6 +179,7 @@ sap.ui.define([
                     }
                 }
                 if(this.showMessage(oResponse,function () {
+                		this.getModel().deleteCreatedEntry(oContext);
                         this.navBack();
                     }.bind(this)))
                     this.getModel().resetChanges();

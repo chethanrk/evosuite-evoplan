@@ -28,7 +28,7 @@ sap.ui.define([
                 desc: "",
                 assetGuid:"",
                 guid:""
-            })
+            });
             this.setModel(oTimeAllocModel, "timeAlloc");
 
             this._setDefaultDateRange();
@@ -134,10 +134,11 @@ sap.ui.define([
                 asset: this._selectedAsset.AssetGuid,
                 wc: this._selectedAsset.MainWorkCenter,
                 plant: this._selectedAsset.Plant,
-                desc: this._selectedAsset.Description,
+                // desc: this._selectedAsset.Description,
                 type: this._selectedAsset.TechnicalObjectType
             });
-            this.getModel("viewModel").setProperty("/assetFloc",this._selectedAsset.TechnicalObject)
+            this.getModel("viewModel").setProperty("/assetFloc",this._selectedAsset.TechnicalObject);
+            this.getModel("viewModel").setProperty("/assetDesc",this._selectedAsset.Description);
         },
 
         /**
@@ -170,7 +171,7 @@ sap.ui.define([
                         this.byId("assignButton").setEnabled(false);
                 }else{
                     oSelectedDemand.setSelected(false);
-                    this.showMessageToast(oResourceBundle.getText("ymsg.notDemand"))
+                    this.showMessageToast(oResourceBundle.getText("ymsg.notDemand"));
                 }
                 return;
             }else{

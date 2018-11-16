@@ -17,8 +17,8 @@
           class="sapUiNoContentPadding tableContentPage">
 
         <headerContent>
-        	<Button text="{i18n>xbut.assetsPlanning}" visible="{user>/ASSET_PLANNING_ENABLED}" press="actionSelected" />
-            <Button icon="sap-icon://sys-help" press="onIconPress" />
+        	<Button text="{i18n>xbut.assetsPlanning}" tooltip="{i18n>xbut.assetsPlanning}" visible="{user>/ASSET_PLANNING_ENABLED}" press="actionSelected" />
+            <Button icon="sap-icon://sys-help" tooltip="{i18n>xtit.infoDialogTitle}" press="onIconPress" />
         </headerContent>
 
         <f:DynamicPage headerExpanded="true"

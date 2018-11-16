@@ -72,7 +72,13 @@
                                             title="{Description}"
                                             text="{OrderId}"
                                             icon="{STATUS_ICON}"
-                                            tooltip="{Description} : {STATUS_DESC}"
+                                            tooltip="{
+                                            	parts:[
+                                            		{path:'Description'},
+                                            		{path:'STATUS_DESC'}
+                                            	],
+                                            	formatter:'.formatter.formatDemandTooltip'
+                                            }"
                                             type="{
                                                 path:'AssetPlandatatype',
                                                 formatter: '.formatter.formatAppointMent'
