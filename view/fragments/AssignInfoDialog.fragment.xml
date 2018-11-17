@@ -61,7 +61,7 @@
                            name="Effort"
                            value="{assignment>/Effort}"/>
                            
-					<smartField:SmartLabel labelFor="idEfforUnit" />
+					<!--<smartField:SmartLabel labelFor="idEfforUnit" />
 					<smartField:SmartField value="{Demand/EffortUnit}" id="idEfforUnit"
 						change="onChangeUnit">
 						<smartField:configuration>
@@ -70,7 +70,15 @@
 								displayBehaviour="idAndDescription">
 							</smartField:Configuration>
 						</smartField:configuration>
-					</smartField:SmartField>
+					</smartField:SmartField>-->
+					<Label text="{/#Demand/EffortUnit/@sap:label}" />
+					<Select
+					selectedKey="{assignment>/EffortUnit}"
+					items="{
+						path: '/TimeUnitsSet'
+					}">
+					<core:Item key="{Msehi}" text="{Msehl}" />
+				</Select>
 
                     <Label text="{i18n>xfld.newAssign}"
                            visible="{assignment>/AllowReassign}" />
