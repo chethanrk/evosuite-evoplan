@@ -115,7 +115,8 @@
 			<OverflowToolbar>
 				<ToolbarSpacer/>
 				<Button id="idButtonShoWD" 
-						text="{i18n>xbut.showDemands}" 
+						text="{i18n>xbut.showDemands}"
+						tooltip="{i18n>xbut.showDemands}"
 						press="onShowDemands"
 						enabled="false">
 					<layoutData>
@@ -123,7 +124,8 @@
 					</layoutData>
 				</Button>
 				<Button id="idClr" 
-						text="{i18n>xbut.clearSelection}" 
+						text="{i18n>xbut.clearSelection}"
+						tooltip="{i18n>xbut.clearSelection}"
 						enabled="false"
 						press="onClearSelection">
 					<layoutData>
