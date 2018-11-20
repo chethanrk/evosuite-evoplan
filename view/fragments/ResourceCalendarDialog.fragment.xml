@@ -40,7 +40,11 @@
                                         tooltip="{calendarModel>Demand/DemandDesc} : {calendarModel>Demand/StatusDesc}"
                                         icon="{calendarModel>Demand/STATUS_ICON}"
                                         text="{calendarModel>Demand/ORDERID}"
-                                        type="{calendarModel>type}">
+                                        type="{calendarModel>type}"
+                                        color="{
+							                        path:'calendarModel>Demand/CRITICALITY',
+							                        formatter:'.formatter.formatStatusIconColor'
+							                   }">
                                 </unified:CalendarAppointment>
                             </appointments>
                             <intervalHeaders>
