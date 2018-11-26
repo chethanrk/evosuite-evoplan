@@ -41,7 +41,7 @@ sap.ui.define([
 				pattern: "yyyy-MM-dd"
 			});
 			var dateString = oDateFormat.format(d);
-			return dateString
+			return dateString;
 		},
 
 		/**

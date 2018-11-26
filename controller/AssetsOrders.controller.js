@@ -23,8 +23,8 @@ sap.ui.define([
 
             var oTimeAllocModel = new JSONModel();
             oTimeAllocModel.setData({
-                dateFrom: null,
-                dateTo: null,
+                dateFrom: moment().startOf('day').toDate(),
+                dateTo: moment().endOf('day').toDate(),
                 desc: "",
                 assetGuid:"",
                 guid:""
@@ -333,8 +333,8 @@ sap.ui.define([
             var oTimeAllocModel = this.getModel("timeAlloc");
 
             oTimeAllocModel.setProperty("/guid","");
-            oTimeAllocModel.setProperty("/dateFrom",null);
-            oTimeAllocModel.setProperty("/dateTo",null);
+            oTimeAllocModel.setProperty("/dateFrom",moment().startOf('day').toDate());
+            oTimeAllocModel.setProperty("/dateTo",moment().endOf('day').toDate());
             oTimeAllocModel.setProperty("/desc","");
             oTimeAllocModel.setProperty("/assetGuid","");
 
