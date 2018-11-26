@@ -114,6 +114,9 @@ sap.ui.define([
 		 */
 		onAssignButtonPress: function(oEvent) {
 			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+			if(this._aSelectedRowsIdx.length > 100){
+                this._aSelectedRowsIdx.length = 100;
+			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
@@ -265,17 +268,22 @@ sap.ui.define([
 							selectedIdx = _this._oDataTable.getSelectedIndices(),
 							oSelectedPaths = null;
 
+						/* As the table will be loaded with only 100 items initially.
+                         Maximum 100 item are selected at a time.*/
+						if(selectedIdx.length > 100){
+                            selectedIdx.length = 100;
+						}
 						//get all selected rows when checkboxes in table selected
 						if (selectedIdx.length > 0) {
 							oSelectedPaths = _this._getSelectedRowPaths(_this._oDataTable, selectedIdx, true);
 							aPathsData = oSelectedPaths.aPathsData;
-
 						} else {
 							//table tr single dragged element
 							oSelectedPaths = _this._getSelectedRowPaths(_this._oDataTable, [_this._getDraggedElementIndex(target.attr('id'))], true);
 							aPathsData = oSelectedPaths.aPathsData;
 						}
-
+						// keeping the data in drag session
+						_this.getModel("viewModel").setProperty("/dragSession",aPathsData);
 						if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
 							_this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 						}
@@ -328,7 +336,15 @@ sap.ui.define([
 				var item = $('<li id="' + aPathsData[i].sPath + '" class="ui-draggable-dragging-item"></li>');
 				var text = aPathsData[i].oData.DemandDesc;
 				item.html(text);
-				helperTemplate.append(item);
+				if(i === 2){
+                     item = $('<li id="' + aPathsData[i].sPath + '" class="ui-draggable-dragging-item"></li>');
+                     text = aPathsData.length +" items ...";
+                    item.html(text);
+                    helperTemplate.append(item);
+                    break;
+				}
+                helperTemplate.append(item);
+
 			}
 			return helperTemplate;
 		},

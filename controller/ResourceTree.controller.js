@@ -305,7 +305,8 @@ sap.ui.define([
                     drop: function( event, ui ) {
                         //get hovered marked row, there could be a difference with dropped row
                         var hoverRow = $("#"+droppableTableId+" .sapUiTableRowHvr"),
-                            dropTargetId = hoverRow.attr("id");
+                            dropTargetId = hoverRow.attr("id"),
+                            aSources = [];
 
                         if(!dropTargetId){
                             dropTargetId = event.target.id;
@@ -318,22 +319,15 @@ sap.ui.define([
                             var targetPath = oContext.getPath();
                             var targetObj = _this.getModel().getProperty(targetPath);
 
-                            //don't drop on orders
+                            //don't drop on assignments
                             if(targetObj.NodeType === "ASSIGNMENT"){
                                 return;
                             }
 
-							var draggedElements = ui.helper[0],
-								aSources = [];
-							$(draggedElements).find('li').each(function(idx, obj) {
-								aSources.push({
-									sPath: $(this).attr('id')
-								});
-							});
 							if(!_this.isAssignable({data:targetObj})){
                                 return;
                             }
-                            
+                            aSources = _this.getModel("viewModel").getProperty("/dragSession");
 							// If the Resource is Not/Partially available
                             if(_this.isAvailable(targetPath)){
                                 _this.assignedDemands(aSources, targetPath);

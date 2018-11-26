@@ -86,7 +86,8 @@ sap.ui.define([
                 showStatusChangeButton: false,
                 busy : true,
 				delay : 0,
-				assetStartDate:new Date()
+				assetStartDate:new Date(),
+                dragSession:null     // Drag session added as we are keeping dragged data in the model.
             });
             this.setModel(oViewModel, "viewModel");
             
