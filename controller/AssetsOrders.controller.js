@@ -20,22 +20,7 @@ sap.ui.define([
          * @memberOf com.evorait.evoplan.view.AssetsOrders
          */
         onInit: function () {
-
-            var oTimeAllocModel = new JSONModel();
-            oTimeAllocModel.setData({
-                dateFrom: moment().startOf('day').toDate(),
-                dateTo: moment().endOf('day').toDate(),
-                desc: "",
-                assetGuid:"",
-                guid:""
-            });
-            this.setModel(oTimeAllocModel, "timeAlloc");
-
-            this._setDefaultDateRange();
-            this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
-            this.getView().addDependent(this._oMessagePopover);
-
-
+            this._configureTimeAlloc();
             // Model used to manipulate control states. The chosen values make sure,
             // detail page is busy indication immediately so there is no break in
             // between the busy indication for loading the view's meta data
@@ -45,11 +30,7 @@ sap.ui.define([
             var eventBus = sap.ui.getCore().getEventBus();
             //event registration for refreshing the context in case any change in the view
             eventBus.subscribe("BaseController", "refreshAssetCal", this._triggerAssetFilter, this);
-
-
-
             this.getRouter().getRoute("assetManager").attachPatternMatched(this._onObjectMatched, this);
-
             // Store original busy indicator delay, so it can be restored later on
             iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
             this.getOwnerComponent().getModel().metadataLoaded().then(function () {
@@ -59,7 +40,24 @@ sap.ui.define([
             );
 
         },
-
+        /**
+         * Initialize the time allocation Dialog with default values
+         * @private
+         */
+        _configureTimeAlloc : function () {
+            var oTimeAllocModel = new JSONModel();
+            oTimeAllocModel.setData({
+                dateFrom: moment().startOf('day').toDate(),
+                dateTo: moment().endOf('day').toDate(),
+                desc: "",
+                assetGuid:"",
+                guid:""
+            });
+            this.setModel(oTimeAllocModel, "timeAlloc");
+            this._setDefaultDateRange();
+            this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
+            this.getView().addDependent(this._oMessagePopover);
+        },
         /**
          * Similar to onAfterRendering, but this hook is invoked before the controller's View is re-rendered
          * (NOT before the first rendering! onInit() is used for that one!).
@@ -134,7 +132,6 @@ sap.ui.define([
                 asset: this._selectedAsset.AssetGuid,
                 wc: this._selectedAsset.MainWorkCenter,
                 plant: this._selectedAsset.Plant,
-                // desc: this._selectedAsset.Description,
                 type: this._selectedAsset.TechnicalObjectType
             });
             this.getModel("viewModel").setProperty("/assetFloc",this._selectedAsset.TechnicalObject);
@@ -153,47 +150,63 @@ sap.ui.define([
                 oContext = oSelectedDemand.getBindingContext(),
                 oModel = oContext.getModel(),
                 sPath = oContext.getPath(),
-                oData = oModel.getProperty(sPath),
-                oTimeAllocModel = this.getModel("timeAlloc"),
-                oResourceBundle = this.getResourceBundle();
+                oData = oModel.getProperty(sPath);
             if(oEvent.getParameter("multiSelect")){  // CTL+ <appointment> will trigger this parameter (Not documented in SAPUI5 Demokit)
-
-                if (oData.AssetPlandatatype === "D") {
-                    if(this._aSelectedDemands.indexOf(oSelectedDemand) >= 0){
-                        this._aSelectedDemands.splice(this._aSelectedDemands.indexOf(sPath), 1);
-                        oSelectedDemand.setSelected(false);  // if the selected demand is selected again Demad has to be unselected.
-                    }else{
-                        this._aSelectedDemands.push(oSelectedDemand);
-                    }
-                    if(this._aSelectedDemands.length > 0 )
-                        this.byId("assignButton").setEnabled(true);
-                    else
-                        this.byId("assignButton").setEnabled(false);
-                }else{
-                    oSelectedDemand.setSelected(false);
-                    this.showMessageToast(oResourceBundle.getText("ymsg.notDemand"));
-                }
+                this._multiAssignment(oData,oSelectedDemand);
                 return;
             }else{
                 this._aSelectedDemands = [];
                 this.byId("assignButton").setEnabled(false);
                 if (oData.AssetPlandatatype === "A") {
-                    oTimeAllocModel.setProperty("/guid",oData.Guid);
-                    oTimeAllocModel.setProperty("/assetGuid",oData.AssetGuid);
-                    oTimeAllocModel.setProperty("/dateFrom",oData.StartTimestamp);
-                    oTimeAllocModel.setProperty("/dateTo",oData.EndTimestamp);
-                    oTimeAllocModel.setProperty("/desc",oData.Description);
-                    this.createTimeAlloc();
-                    return;
+                    this._openTimeAllocUpdate(oData);
+                }else{
+                    var oRouter = this.getRouter();
+                    oRouter.navTo("assetDemandDetail", {
+                        guid: oData.Guid,
+                        asset: oData.AssetGuid
+                    });
                 }
-
-                var oRouter = this.getRouter();
-                oRouter.navTo("assetDemandDetail", {
-                    guid: oData.Guid,
-                    asset: oData.AssetGuid
-                });
             }
+        },
+        /**
+         * Select or unselect appointment(Demand)
+         * @param oData
+         * @param oSelectedDemand
+         * @private
+         */
+        _multiAssignment: function (oData,oSelectedDemand) {
+            var oResourceBundle = this.getResourceBundle(),
+                oContext = oSelectedDemand.getBindingContext(),
+                sPath = oContext.getPath();
+            if (oData.AssetPlandatatype === "D") {
+                if(this._aSelectedDemands.indexOf(oSelectedDemand) >= 0){
+                    this._aSelectedDemands.splice(this._aSelectedDemands.indexOf(sPath), 1);
+                    oSelectedDemand.setSelected(false);  // if the selected demand is selected again Demad has to be unselected.
+                }else{
+                    this._aSelectedDemands.push(oSelectedDemand);
+                }
+                if(this._aSelectedDemands.length > 0 )
+                    this.byId("assignButton").setEnabled(true);
+                else
+                    this.byId("assignButton").setEnabled(false);
+            }else{
+                oSelectedDemand.setSelected(false);
+                this.showMessageToast(oResourceBundle.getText("ymsg.notDemand"));
+            }
+        },
+        /**
+         * Open Time allocation dialog to update
+         * @private
+         */
+        _openTimeAllocUpdate: function (oData) {
+            var oTimeAllocModel = this.getModel("timeAlloc");
 
+            oTimeAllocModel.setProperty("/guid",oData.Guid);
+            oTimeAllocModel.setProperty("/assetGuid",oData.AssetGuid);
+            oTimeAllocModel.setProperty("/dateFrom",oData.StartTimestamp);
+            oTimeAllocModel.setProperty("/dateTo",oData.EndTimestamp);
+            oTimeAllocModel.setProperty("/desc",oData.Description);
+            this.createTimeAlloc();
         },
         /**
          * close dialog
