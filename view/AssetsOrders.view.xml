@@ -14,11 +14,30 @@
                            preserveHeaderStateOnScroll="true"
                            fitContent="false"
                            showFooter="false"
+                           class="sapUiNoContentPadding"
                            toggleHeaderOnTitleClick="false">
                 <f:header>
-                    <f:DynamicPageHeader pinnable="true">
+                    <f:DynamicPageHeader pinnable="true" class="sapUiNoContentPadding">
                         <f:content>
-                                <DateRangeSelection id="idDateRange" change="onChangeDateRange"/>
+                            <OverflowToolbar design="Transparent" class="sapUiNoContentPadding">
+                                <DateRangeSelection
+                                        width="30%"
+                                        id="idDateRange"
+                                        class="sapUiNoContentPadding"
+                                        change="onChangeDateRange"/>
+                                <ToolbarSpacer/>
+                                <!--<RadioButtonGroup columns="2" selectedIndex="1" class="">
+                                    <buttons>
+                                        <RadioButton id="RB2-1" text="Demands"/>
+                                        <RadioButton id="RB2-2" text="Time Allocation"/>
+                                    </buttons>
+                                </RadioButtonGroup>-->
+                                <Button id="idCreateBut" text="{i18n>xbut.createOrder}" tooltip="{i18n>xbut.createOrder}" press="createOrder"
+                                        enabled="false" type="Emphasized"/>
+                                <Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" tooltip="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc"
+                                        enabled="false" type="Emphasized"/>
+                            </OverflowToolbar>
+
                         </f:content>
                     </f:DynamicPageHeader>
                 </f:header>
@@ -43,16 +62,12 @@
                             groupAppointmentsMode="Expanded"
                             viewKey="Month"
                             rowSelectionChange="onRowSelectionChange">
-                        <toolbarContent>
+                        <!--<toolbarContent>
                             <Title text="{i18n>xtit.orders}"
                                    titleStyle="H4"
                             />
-                            <ToolbarSpacer/>
-                            <Button id="idCreateBut" text="{i18n>xbut.createOrder}" tooltip="{i18n>xbut.createOrder}" press="createOrder"
-                                    enabled="false"/>
-                            <Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" tooltip="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc"
-                                    enabled="false"/>
-                        </toolbarContent>
+
+                        </toolbarContent>-->
                         <rows>
                             <PlanningCalendarRow
                                     icon="{

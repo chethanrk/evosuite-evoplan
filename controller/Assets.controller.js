@@ -143,8 +143,8 @@ sap.ui.define([
 		 * @since 2.1
 		 * 
 		 */
-		onSearchOfAsset: function(oEvent){
-			var sValue = oEvent.getSource().getValue(),
+        onSearchAsset: function(){
+			var sValue = this.byId("searchFieldAsset").getValue(),
 				oAssetTree =  this.byId("idAssetTree"),
 				aAllFilters =[],
 				oBinding = oAssetTree.getBinding();	
@@ -226,6 +226,16 @@ sap.ui.define([
                 assets:oData.NodeId,
                 withChildren:"Children"
             });
+        },
+
+        onSelectVariant : function () {
+            this.onSearchAsset();
+        },
+        onInitialiseVariant : function () {
+            var oParameters = oEvent.getParameters();
+            if(oParameters.defaultContent && !oParameters.isStandard){
+                this.hasCustomDefaultVariant = true;
+            }
         }
 
 	});

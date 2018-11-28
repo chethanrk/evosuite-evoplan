@@ -25,9 +25,26 @@
 			<f:header>
 				<f:DynamicPageHeader pinnable="true">
 					<f:content>
+						<FlexBox alignItems="Start"
+								 justifyContent="SpaceBetween">
+							<items>
+								<controls:CustomVariantManagement
+										id="customAssetVariant"
+										select="onSelectVariant"
+										initialise="onInitialiseVariant"
+										enabled="true"
+										showExecuteOnSelection="true"
+										showShare="true"
+										lifecycleSupport="true"
+										persistencyKey="{viewModel>/persistencyKeyTree}"
+										entitySet="{viewModel>/treeSet}">
+								</controls:CustomVariantManagement>
+
+							</items>
+						</FlexBox>
 						<SearchField 
-							id="searchField" 
-							search="onSearchOfAsset" 
+							id="searchFieldAsset"
+							search="onSearchAsset"
 							showRefreshButton="{= !${device>/support/touch} }" 
 							width="100%"></SearchField>
 					</f:content>
@@ -74,6 +91,7 @@
                         	<table:template>
                                 <controls:CustomTitle
                                         text="{Description}"
+										tooltip="{Description}"
                                         icon="{
                                         		path: 'NodeType',
                                             	formatter: '.formatter.getAssetIcon'
@@ -103,7 +121,7 @@
                                 width="2rem"
                                 hAlign="End">
                         	<table:template>
-                                <core:Icon src="sap-icon://drill-down" hoverColor="#ccc" activeColor="#abc" tooltip="{i18n>xtit.showWithChild}" press="onShowWithChildren"/>
+                                <core:Icon src="sap-icon://drill-down" hoverColor="#418ac7" tooltip="{i18n>xtit.showWithChild}" press="onShowWithChildren"/>
                             </table:template>
                         </table:Column>
                         

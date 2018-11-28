@@ -246,6 +246,7 @@ sap.ui.define([
 
             this._generateRangeFilter(oFrom, oTo);
             this._triggerAssetFilter();
+            this._setMinMaxToCalendar(oFrom,oTo);
         },
         /**
          * Create the Time Allocation for specified the date range
@@ -378,6 +379,8 @@ sap.ui.define([
 
             oDateRange.setDateValue(oStartDate);
             oDateRange.setSecondDateValue(oEndDate);
+            this._setMinMaxToCalendar(oStartDate,oEndDate);
+
 
         },
         /**
@@ -459,6 +462,17 @@ sap.ui.define([
             if (oSelectedPaths.aNonAssignable.length > 0) {
                 this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
             }
+        },
+        /**
+         * Set maxdate and min date
+         * @param from
+         * @param to
+         * @private
+         */
+        _setMinMaxToCalendar :function (sFrom, sTo) {
+            var oPlanCal = this.byId("PC1");
+            oPlanCal.setMinDate(sFrom);
+            oPlanCal.setMaxDate(sTo);
         }
     });
 
