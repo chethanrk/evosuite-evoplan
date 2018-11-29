@@ -13,7 +13,7 @@ sap.ui.define([
 
         _selectedAsset: undefined,
 
-        _aSelectedDemands :[],
+        _aSelectedDemands: [],
         /**
          * Called when a controller is instantiated and its View controls (if available) are already created.
          * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -44,16 +44,17 @@ sap.ui.define([
          * Initialize the time allocation Dialog with default values
          * @private
          */
-        _configureTimeAlloc : function () {
+        _configureTimeAlloc: function () {
             var oTimeAllocModel = new JSONModel();
             oTimeAllocModel.setData({
                 dateFrom: moment().startOf('day').toDate(),
                 dateTo: moment().endOf('day').toDate(),
                 desc: "",
-                assetGuid:"",
-                guid:""
+                assetGuid: "",
+                guid: ""
             });
             this.setModel(oTimeAllocModel, "timeAlloc");
+            // Set default date range
             this._setDefaultDateRange();
             this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
             this.getView().addDependent(this._oMessagePopover);
@@ -94,7 +95,7 @@ sap.ui.define([
                 this._oMessagePopover.destroy();
             }
             this._selectedAsset = undefined;
-            this._aSelectedDemands =[];
+            this._aSelectedDemands = [];
         },
 
         /**
@@ -134,12 +135,13 @@ sap.ui.define([
                 plant: this._selectedAsset.Plant,
                 type: this._selectedAsset.TechnicalObjectType
             });
-            this.getModel("viewModel").setProperty("/assetFloc",this._selectedAsset.TechnicalObject);
-            this.getModel("viewModel").setProperty("/assetDesc",this._selectedAsset.Description);
+            this.getModel("viewModel").setProperty("/assetFloc", this._selectedAsset.TechnicalObject);
+            this.getModel("viewModel").setProperty("/assetDesc", this._selectedAsset.Description);
         },
 
         /**
-         * On Click on Demands for an asset it navigates to the Demand details page
+         * On Click on Demands for an asset it navigates to the Demand details page.
+         * If it is multi assignment, The demands get selected by selecting demands with CTRL pressed.
          * @Author Rahul
          * @since 2.1
          * @public
@@ -150,17 +152,17 @@ sap.ui.define([
                 oContext = oSelectedDemand.getBindingContext(),
                 oModel = oContext.getModel(),
                 sPath = oContext.getPath(),
-                oData = oModel.getProperty(sPath);
-            if(oEvent.getParameter("multiSelect")){  // CTL+ <appointment> will trigger this parameter (Not documented in SAPUI5 Demokit)
-                this._multiAssignment(oData,oSelectedDemand);
+                oData = oModel.getProperty(sPath),
+                oRouter = this.getRouter();
+            if (oEvent.getParameter("multiSelect")) {  // CTL+ <appointment> will trigger this parameter (Not documented in SAPUI5 Demokit)
+                this._multiAssignment(oData, oSelectedDemand);
                 return;
-            }else{
+            } else {
                 this._aSelectedDemands = [];
                 this.byId("assignButton").setEnabled(false);
                 if (oData.AssetPlandatatype === "A") {
                     this._openTimeAllocUpdate(oData);
-                }else{
-                    var oRouter = this.getRouter();
+                } else {
                     oRouter.navTo("assetDemandDetail", {
                         guid: oData.Guid,
                         asset: oData.AssetGuid
@@ -174,22 +176,22 @@ sap.ui.define([
          * @param oSelectedDemand
          * @private
          */
-        _multiAssignment: function (oData,oSelectedDemand) {
+        _multiAssignment: function (oData, oSelectedDemand) {
             var oResourceBundle = this.getResourceBundle(),
                 oContext = oSelectedDemand.getBindingContext(),
                 sPath = oContext.getPath();
             if (oData.AssetPlandatatype === "D") {
-                if(this._aSelectedDemands.indexOf(oSelectedDemand) >= 0){
+                if (this._aSelectedDemands.indexOf(oSelectedDemand) >= 0) {
                     this._aSelectedDemands.splice(this._aSelectedDemands.indexOf(sPath), 1);
                     oSelectedDemand.setSelected(false);  // if the selected demand is selected again Demad has to be unselected.
-                }else{
+                } else {
                     this._aSelectedDemands.push(oSelectedDemand);
                 }
-                if(this._aSelectedDemands.length > 0 )
+                if (this._aSelectedDemands.length > 0)
                     this.byId("assignButton").setEnabled(true);
                 else
                     this.byId("assignButton").setEnabled(false);
-            }else{
+            } else {
                 oSelectedDemand.setSelected(false);
                 this.showMessageToast(oResourceBundle.getText("ymsg.notDemand"));
             }
@@ -200,12 +202,11 @@ sap.ui.define([
          */
         _openTimeAllocUpdate: function (oData) {
             var oTimeAllocModel = this.getModel("timeAlloc");
-
-            oTimeAllocModel.setProperty("/guid",oData.Guid);
-            oTimeAllocModel.setProperty("/assetGuid",oData.AssetGuid);
-            oTimeAllocModel.setProperty("/dateFrom",oData.StartTimestamp);
-            oTimeAllocModel.setProperty("/dateTo",oData.EndTimestamp);
-            oTimeAllocModel.setProperty("/desc",oData.Description);
+            oTimeAllocModel.setProperty("/guid", oData.Guid);
+            oTimeAllocModel.setProperty("/assetGuid", oData.AssetGuid);
+            oTimeAllocModel.setProperty("/dateFrom", oData.StartTimestamp);
+            oTimeAllocModel.setProperty("/dateTo", oData.EndTimestamp);
+            oTimeAllocModel.setProperty("/desc", oData.Description);
             this.createTimeAlloc();
         },
         /**
@@ -228,7 +229,7 @@ sap.ui.define([
             this._infoDialog.open();
         },
         /**
-         * Trigger filters
+         * On Close TimeAllocation dialog clear the all fields in the dialog
          */
         onCloseTimeAlloc: function () {
             this._clearTimeAllocFields();
@@ -246,11 +247,11 @@ sap.ui.define([
 
             this._generateRangeFilter(oFrom, oTo);
             this._triggerAssetFilter();
-            this._setMinMaxToCalendar(oFrom,oTo);
+            this._setMinMaxToCalendar(oFrom, oTo);
         },
         /**
          * Create the Time Allocation for specified the date range
-         *
+         * @since 2.1
          * @param oEvent
          */
         onSaveTimeAlloc: function (oEvent) {
@@ -265,7 +266,7 @@ sap.ui.define([
                 sDateFrom = oTimeAllocModel.getProperty("/dateFrom"),
                 sDateTo = oTimeAllocModel.getProperty("/dateTo"),
                 sDesc = oTimeAllocModel.getProperty("/desc"),
-                sAssetGuid =oTimeAllocModel.getProperty("/assetGuid");
+                sAssetGuid = oTimeAllocModel.getProperty("/assetGuid");
 
             if (!sDateFrom) {
                 oFromDate.setValueState("Error");
@@ -286,19 +287,19 @@ sap.ui.define([
             }
 
             if (sDateFrom && sDateTo && sDesc.trim()) {
-                if(sDateFrom.getTime() > sDateTo.getTime()){
+                if (sDateFrom.getTime() > sDateTo.getTime()) {
                     this.showMessageToast(oResourceBundle.getText("ymsg.datesInvalid"));
                     return;
                 }
                 var oParams = {
-                    AssetGuid: sAssetGuid ? sAssetGuid :oSelectedAsset.AssetGuid,
+                    AssetGuid: sAssetGuid ? sAssetGuid : oSelectedAsset.AssetGuid,
                     StartTimestamp: sDateFrom,
                     EndTimestamp: sDateTo,
                     DowntimeDesc: sDesc.trim(),
                     AssetUnavailabilityGuid: sGuid
                 };
                 this.clearMessageModel();
-                if(sGuid && sGuid!== "")
+                if (sGuid && sGuid !== "")
                     this.callFunctionImport(oParams, "UpdateAssetUnavailability", "POST", true);
                 else
                     this.callFunctionImport(oParams, "CreateAssetUnavailability", "POST", true);
@@ -346,11 +347,11 @@ sap.ui.define([
             var sDescription = sap.ui.getCore().byId("idTimeAllocDesc");
             var oTimeAllocModel = this.getModel("timeAlloc");
 
-            oTimeAllocModel.setProperty("/guid","");
-            oTimeAllocModel.setProperty("/dateFrom",moment().startOf('day').toDate());
-            oTimeAllocModel.setProperty("/dateTo",moment().endOf('day').toDate());
-            oTimeAllocModel.setProperty("/desc","");
-            oTimeAllocModel.setProperty("/assetGuid","");
+            oTimeAllocModel.setProperty("/guid", "");
+            oTimeAllocModel.setProperty("/dateFrom", moment().startOf('day').toDate());
+            oTimeAllocModel.setProperty("/dateTo", moment().endOf('day').toDate());
+            oTimeAllocModel.setProperty("/desc", "");
+            oTimeAllocModel.setProperty("/assetGuid", "");
 
             oFromDate.setValueState("None");
             oFromDate.setValueStateText("");
@@ -370,6 +371,7 @@ sap.ui.define([
         },
         /**
          * Sets the Default date range to Start of month to a year ahead
+         * @since 2.1
          * @private
          */
         _setDefaultDateRange: function () {
@@ -379,12 +381,13 @@ sap.ui.define([
 
             oDateRange.setDateValue(oStartDate);
             oDateRange.setSecondDateValue(oEndDate);
-            this._setMinMaxToCalendar(oStartDate,oEndDate);
+            this._setMinMaxToCalendar(oStartDate, oEndDate);
 
 
         },
         /**
-         * Triggers the filter on Asset entity
+         * Triggers the filter on Asset entity set by combining the selected assets and date filters
+         * @since 2.1
          *
          * @param bChildren flag indicate apply filters for children nodes
          * @private
@@ -395,17 +398,19 @@ sap.ui.define([
                 aAssetFilters = this.getModel("viewModel").getProperty("/assetsFilter"),
                 oDateRangeFilter = this.getModel("viewModel").getProperty("/assetsRangeFilter"),
                 aAllFilters = jQuery.extend(true, [], aAssetFilters);
-            if (oDateRangeFilter)
+            if (oDateRangeFilter) {
                 aAllFilters.push(oDateRangeFilter);
+            }
             oBinding.filter(aAllFilters);
             this._enableHeaderButton(false);
             this.byId("assignButton").setEnabled(false);
-            this._aSelectedDemands=[];
+            this._aSelectedDemands = [];
         },
         /**
          * Generates filters for assets based the date range to filter Demand and unavailability of
          * assets withing date range
          *
+         * @since 2.1
          * @param oFrom
          * @param oTo
          * @private
@@ -427,6 +432,7 @@ sap.ui.define([
         /**
          * Genarates filters for Assets based on the selected assets in the Asset tree
          *
+         * @since 2.1
          * @param args
          * @return {Array}
          * @private
@@ -445,16 +451,18 @@ sap.ui.define([
         },
         /**
          * open's the message popover by it source
+         * @since 2.1
          * @param oEvent
          */
         onMessagePopoverPress: function (oEvent) {
             this._oMessagePopover.openBy(oEvent.getSource());
         },
         /**
-         * Multi Assignment from asset view
+         * Multi Assignment from asset view. Opens the Tree table dialog to select resource
+         * @since 2.1
          */
         onAssignButtonPress: function () {
-            var oSelectedPaths = this._getSelectedRowPaths(null,null,null,this._aSelectedDemands);
+            var oSelectedPaths = this._getSelectedRowPaths(null, null, null, this._aSelectedDemands);
 
             if (oSelectedPaths.aPathsData.length > 0) {
                 this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
@@ -469,7 +477,7 @@ sap.ui.define([
          * @param to
          * @private
          */
-        _setMinMaxToCalendar :function (sFrom, sTo) {
+        _setMinMaxToCalendar: function (sFrom, sTo) {
             var oPlanCal = this.byId("PC1");
             oPlanCal.setMinDate(sFrom);
             oPlanCal.setMaxDate(sTo);

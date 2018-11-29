@@ -175,7 +175,7 @@ sap.ui.define([
 				//removing the path from this._selectedAssets when user unselect the checkbox
 				this._selectedAssets.splice(this._selectedAssets.indexOf(this.getModel().getProperty(sPath+"/NodeId")), 1);
 			}
-
+			// To enable or desable the footer buttons
             this.checkButtons();
 		},
         /**
@@ -213,7 +213,7 @@ sap.ui.define([
             }
         },
         /**
-		 * Navigating to assetmanager route which hash with children
+		 * Navigating to asset planning view with route parameter "Children"
          * @param oEvent
          */
         onShowWithChildren : function (oEvent) {
@@ -229,7 +229,7 @@ sap.ui.define([
         },
 
         /**
-         * init custom smart variant management and add filter controls to it
+         * Init custom smart variant management and add filter controls to it
          * @private
          */
         _initCustomVariant: function () {
@@ -254,9 +254,16 @@ sap.ui.define([
                 this._oVariant.addFilter(oSearchField);
             }
         },
+        /**
+		 * Trigger on select variant. Refreshing the asset tree with selected variant.
+         */
         onSelectVariant : function () {
             this.onSearchAsset();
         },
+        /**
+		 * Setting default variant flag on initializing the custom varuant.
+         * @param oEvent
+         */
         onInitialiseVariant : function (oEvent) {
             var oParameters = oEvent.getParameters();
             if(oParameters.defaultContent && !oParameters.isStandard){
