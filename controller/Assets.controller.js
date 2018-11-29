@@ -20,7 +20,7 @@ sap.ui.define([
 			onInit: function() {
 				var oAssetTree = this.byId("idAssetTree");
             	this._configureDataTable(oAssetTree);
-
+				// this._initCustomVariant();
 				var iOriginalBusyDelay,
 					oViewModel = this.getOwnerComponent().getModel("viewModel");
 
@@ -228,10 +228,36 @@ sap.ui.define([
             });
         },
 
+        /**
+         * init custom smart variant management and add filter controls to it
+         * @private
+         */
+        _initCustomVariant: function () {
+            var oVariant = this.byId("customAssetVariant");
+            this._setVariant(oVariant);
+        },
+        /**
+         * set depend variant
+         * @param oVariant
+         */
+        _setVariant: function (oVariant) {
+            this._oVariant = oVariant;
+            this._updateFiltersDependencies(true);
+        },
+        /**
+         * set filter to variant which should be tracked
+         * @private
+         */
+        _updateFiltersDependencies: function (force) {
+            var oSearchField = this.byId("searchFieldAsset");
+            if(force){
+                this._oVariant.addFilter(oSearchField);
+            }
+        },
         onSelectVariant : function () {
             this.onSearchAsset();
         },
-        onInitialiseVariant : function () {
+        onInitialiseVariant : function (oEvent) {
             var oParameters = oEvent.getParameters();
             if(oParameters.defaultContent && !oParameters.isStandard){
                 this.hasCustomDefaultVariant = true;

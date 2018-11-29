@@ -141,7 +141,7 @@
                                 name="{i18n>xtit.tableAssignment}"
                                 minScreenWidth="Tablet"
                                 demandPopin="true"
-                                width="2rem"
+                                width="3rem"
                                 hAlign="End">
                             <table:template>
                                 <Text text="{AssignmentCount}"
