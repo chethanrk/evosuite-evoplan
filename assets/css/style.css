@@ -3,15 +3,17 @@
 }
 
 .ui-draggable-dragging{
-    background-color: white !important;
+    background-color: #eff4f9 !important;
     list-style: none;
+    opacity: .7;
     margin: 0;
     padding: 0;
 }
 
 .ui-draggable-dragging-item{
-    padding: 10px;
-    border: 2px solid #427cac;
+    padding: .2rem;
+    border: 1px solid #418ac7;
+    font-size: .9rem;
 }
 
 .treeTableHeader{
