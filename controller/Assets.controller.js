@@ -20,7 +20,7 @@ sap.ui.define([
 			onInit: function() {
 				var oAssetTree = this.byId("idAssetTree");
             	this._configureDataTable(oAssetTree);
-				// this._initCustomVariant();
+				this._initCustomVariant();
 				var iOriginalBusyDelay,
 					oViewModel = this.getOwnerComponent().getModel("viewModel");
 
