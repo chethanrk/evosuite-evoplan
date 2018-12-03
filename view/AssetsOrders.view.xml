@@ -1,0 +1,127 @@
+<mvc:View
+        xmlns:core="sap.ui.core"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns="sap.m"
+        xmlns:fb="sap.ui.comp.filterbar"
+        controllerName="com.evorait.evoplan.controller.AssetsOrders"
+        xmlns:unified="sap.ui.unified"
+        xmlns:f="sap.f">
+    <Page title="{i18n>xtit.orders}" class="sapUiNoContentPadding tableContentPage">
+        <content>
+
+            <f:DynamicPage id="idResourcePage"
+                           headerExpanded="true"
+                           preserveHeaderStateOnScroll="true"
+                           fitContent="false"
+                           showFooter="false"
+                           class="sapUiNoContentPadding"
+                           toggleHeaderOnTitleClick="false">
+                <f:header>
+                    <f:DynamicPageHeader pinnable="true" class="sapUiNoContentPadding">
+                        <f:content>
+                            <OverflowToolbar design="Transparent" class="sapUiNoContentPadding">
+                                <DateRangeSelection
+                                        width="30%"
+                                        id="idDateRange"
+                                        class="sapUiNoContentPadding"
+                                        change="onChangeDateRange"/>
+                                <ToolbarSpacer/>
+                                <!--<RadioButtonGroup columns="2" selectedIndex="1" class="">
+                                    <buttons>
+                                        <RadioButton id="RB2-1" text="Demands"/>
+                                        <RadioButton id="RB2-2" text="Time Allocation"/>
+                                    </buttons>
+                                </RadioButtonGroup>-->
+                                <Button id="idCreateBut" text="{i18n>xbut.createOrder}" tooltip="{i18n>xbut.createOrder}" press="createOrder"
+                                        enabled="false" type="Emphasized"/>
+                                <Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" tooltip="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc"
+                                        enabled="false" type="Emphasized"/>
+                            </OverflowToolbar>
+
+                        </f:content>
+                    </f:DynamicPageHeader>
+                </f:header>
+                <f:content>
+                    <PlanningCalendar
+                            id="PC1"
+                            startDate="{viewModel>/assetStartDate}"
+                            rows="{
+                                path: '/AssetSet',
+                                parameters: {
+                                    expand : 'AssetPlanningDataSet'
+                                }
+                            }"
+                            appointmentsReducedHeight="true"
+                            busyIndicatorDelay="0"
+                            appointmentsVisualization="Filled"
+                            appointmentSelect="showDetails"
+                            showEmptyIntervalHeaders="false"
+                            showWeekNumbers="true"
+                            class="sapUiNoContentPadding"
+                            intervalSelect="intervalSelect"
+                            groupAppointmentsMode="Expanded"
+                            viewKey="Month"
+                            rowSelectionChange="onRowSelectionChange">
+                        <!--<toolbarContent>
+                            <Title text="{i18n>xtit.orders}"
+                                   titleStyle="H4"
+                            />
+
+                        </toolbarContent>-->
+                        <rows>
+                            <PlanningCalendarRow
+                                    icon="{
+							            path:'TechnicalObjectType',
+							            formatter:'.formatter.getAssetIcon'
+						            }"
+                                    title="{Description}"
+                                    text="{TechnicalObject}"
+                                    appointments="{path : 'AssetPlanningDataSet', templateShareable: 'true'}">
+                                <!--<customData>
+                                    <core:CustomData key="emp-name" value="{name}" writeToDom="true"/>
+                                </customData>-->
+                                <appointments>
+                                    <unified:CalendarAppointment
+                                            startDate="{StartTimestamp}"
+                                            endDate="{EndTimestamp}"
+                                            title="{Description}"
+                                            text="{OrderId}"
+                                            icon="{STATUS_ICON}"
+                                            tooltip="{
+                                            	parts:[
+                                            		{path:'Description'},
+                                            		{path:'STATUS_DESC'}
+                                            	],
+                                            	formatter:'.formatter.formatDemandTooltip'
+                                            }"
+                                            type="{
+                                                path:'AssetPlandatatype',
+                                                formatter: '.formatter.formatAppointMent'
+                                            }">
+                                    </unified:CalendarAppointment>
+                                </appointments>
+                            </PlanningCalendarRow>
+                        </rows>
+                    </PlanningCalendar>
+                </f:content>
+            </f:DynamicPage>
+        </content>
+        <footer>
+            <OverflowToolbar>
+                <Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
+                        type="Emphasized" press="onMessagePopoverPress"></Button>
+                <ToolbarSpacer/>
+                <Button id="assignButton"
+                        text="{i18n>xbut.assign}"
+                        tooltip="{i18n>xbut.assign}"
+                        icon="sap-icon://activity-individual"
+                        press="onAssignButtonPress"
+                        enabled="false">
+                    <layoutData>
+                        <ToolbarLayoutData shrinkable="true" />
+                    </layoutData>
+                </Button>
+            </OverflowToolbar>
+        </footer>
+    </Page>
+</mvc:View>

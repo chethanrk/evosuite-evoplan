@@ -14,9 +14,9 @@
             beforeOpen="refreshDialogTable">
         <content>
             <Toolbar>
-                <SearchField search="onSearchModal"
+                <SearchField id="idSeachModalTree"
+                			 search="onSearchModal"
                              showRefreshButton="{= !${device>/support/touch} }"
-                             value="{viewModel>/resourceSearchString}"
                              width="100%" />
             </Toolbar>
 

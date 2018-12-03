@@ -86,7 +86,7 @@ sap.ui.define([
          * @param {oResponse} Response object of success or error callback of oData service
          * @returns
          */
-        showMessage : function(oResponse){
+        showMessage : function(oResponse,fnCallback){
             var oData,
                 oResourceBundle = this.getResourceBundle();
             if(oResponse && oResponse.headers["sap-message"]){
@@ -95,42 +95,61 @@ sap.ui.define([
                 }catch(ex){
                     jQuery.sap.log.error("Failed to parse the message header");
                 }
-                if(oData && oData.severity === "error"){
-                    var sMessage = oData.message+"\n"+oResourceBundle.getText("errorMessage");
-                    this._showErrorMessage(sMessage);
+                if(oData && oData.details.length > 0){
+                    var oMessage,bContainsError;
+                    for(var i in oData.details){
+                        if(oData.details[i].severity === "error"){
+                            bContainsError = true;
+                            oMessage = oData.details[i];
+                            break;
+                        }
+                    }
+                    if(bContainsError){
+                        var sMessage = oMessage.message+"\n"+oResourceBundle.getText("errorMessage");
+                        this._showErrorMessage(sMessage, fnCallback);
+                    }else
+                        this.showMessageToast(oData.message);
                 }else{
                     this.showMessageToast(oData.message);
                 }
             }else{
-                try{
-                    oData = JSON.parse(oResponse.responseText);
-                }catch(ex){
-                    jQuery.sap.log.error("Failed to parse the message header");
-                }
-                if(oData && oData.error){
-                    this._showErrorMessage(oData.error.message.value);
-                }else{
-                    //this.showMessageToast(oResourceBundle.getText("errorMessage"));
+                if(oResponse){
+                    try{
+                        oData = JSON.parse(oResponse.responseText);
+                    }catch(ex){
+                        jQuery.sap.log.error("Failed to parse the message header");
+                    }
+                    if(oData && oData.error){
+                        this._showErrorMessage(oData.error.message.value);
+                    }
                 }
             }
+            return bContainsError;
         },
 
-        _showErrorMessage: function(sMessage){
-            if (this._bMessageOpen) {
-                return;
+        _showErrorMessage: function(sMessage, fnCallback){
+            var fnClose = function () {
+                this._bMessageOpen = false;
+            }.bind(this);
+
+            if(fnCallback){
+                fnClose = fnCallback
             }
-            this._bMessageOpen = true;
+            if(!fnCallback){
+                if (this._bMessageOpen) {
+                    return;
+                }
+                this._bMessageOpen = true;
+            }
+
             MessageBox.error(sMessage,{
                     id : "errorMessageBox",
                     styleClass: this.getOwnerComponent().getContentDensityClass(),
                     actions: [MessageBox.Action.CLOSE],
-                    onClose: function () {
-                        this._bMessageOpen = false;
-                    }.bind(this)
+                    onClose: fnClose
                 }
             );
         },
-
         /**
          * save assignment after drop
          * @param aSourcePaths
@@ -154,14 +173,16 @@ sap.ui.define([
                     oParams.DateFrom = targetObj.StartDate;
                     oParams.TimeFrom = targetObj.StartTime;
                 }else{
-                    oParams.DateFrom = new Date() // When Start Date Null/In the Simple view today date will sent
+                    oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
+                    oParams.TimeFrom = targetObj.StartTime;
                 }
 
                 if(targetObj.EndDate){
                     oParams.DateTo = targetObj.EndDate;
                     oParams.TimeTo = targetObj.EndTime;
                 }else{
-                    oParams.DateTo = new Date() // When Start Date Null/In the Simple view today date will sent
+                    oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
+                    oParams.TimeTo = targetObj.EndTime;
                 }
                 this.callFunctionImport(oParams, "CreateAssignment", "POST");
             }
@@ -236,14 +257,16 @@ sap.ui.define([
                         oParams.DateFrom = oResource.StartDate;
                         oParams.TimeFrom = oResource.StartTime;
                     }else{
-                        oParams.DateFrom = new Date() // When Start Date Null/In the Simple view today date will sent
+                        oParams.DateFrom = new Date();// When Start Date Null/In the Simple view today date will sent
+                        oParams.TimeFrom = oResource.StartTime;
                     }
 
                     if(oResource.EndDate){
                         oParams.DateTo = oResource.EndDate;
                         oParams.TimeTo = oResource.EndTime;
                     }else{
-                        oParams.DateTo = new Date() // When Start Date Null/In the Simple view today date will sent
+                        oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
+                        oParams.TimeTo = oResource.EndTime;
                     }
                     // call function import
                     this.callFunctionImport(oParams, "UpdateAssignment", "POST", true);
@@ -309,17 +332,21 @@ sap.ui.define([
         callFunctionImport: function (oParams, sFuncName, sMethod) {
             var eventBus = sap.ui.getCore().getEventBus(),
                 oModel = this.getModel(),
+                oViewModel = this.getModel("appView"),
                 oResourceBundle = this.getResourceBundle();
 
+            oViewModel.setProperty("/busy",true);
             oModel.callFunction("/"+sFuncName, {
                 method: sMethod || "POST",
                 urlParameters: oParams,
                 success: function(oData, oResponse){
                     //Handle Success
+                    oViewModel.setProperty("/busy",false);
                     this.showMessage(oResponse);
                     eventBus.publish("BaseController", "refreshTreeTable",{});
                     eventBus.publish("BaseController", "refreshDemandTable",{});
                     eventBus.publish("BaseController", "refreshDemandOverview",{}); // refresh the demand overview page binding
+                    eventBus.publish("BaseController", "refreshAssetCal", {});
                 }.bind(this),
                 error: function(oError){
                     //Handle Error
@@ -341,31 +368,47 @@ sap.ui.define([
          * @param aSelectedRowsIdx
          * @private
          */
-        _getSelectedRowPaths : function (oTable, aSelectedRowsIdx, checkAssignAllowed) {
+        _getSelectedRowPaths : function (oTable, aSelectedRowsIdx, checkAssignAllowed, aDemands) {
             var aPathsData = [],
                 bNonAssignableDemandsExist = false,
-                aNonAssignableDemands =[];
+                aNonAssignableDemands =[],
+                 oData ;
 
             if(checkAssignAllowed){
                 oTable.clearSelection();
             }
+            if(!aDemands) {
+                for (var i = 0; i < aSelectedRowsIdx.length; i++) {
+                    var oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
+                    var sPath = oContext.getPath();
+                     oData = this.getModel().getProperty(sPath);
 
-            for (var i=0; i<aSelectedRowsIdx.length; i++) {
-                var oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
-                var sPath = oContext.getPath();
-                var oData = this.getModel().getProperty(sPath);
-
-                //on check on oData property ALLOW_ASSIGN when flag was given
-                if(checkAssignAllowed){
-                    if(!!oData.ALLOW_ASSIGN){
-                        aPathsData.push({ sPath: sPath, oData: oData ,index:aSelectedRowsIdx[i]});
-                        oTable.addSelectionInterval(aSelectedRowsIdx[i],aSelectedRowsIdx[i]);
-                    }else{
-                        aNonAssignableDemands.push(oData.DemandDesc);
-                        bNonAssignableDemandsExist = true;
+                    //on check on oData property ALLOW_ASSIGN when flag was given
+                    if (checkAssignAllowed) {
+                        if (!!oData.ALLOW_ASSIGN) {
+                            aPathsData.push({sPath: sPath, oData: oData, index: aSelectedRowsIdx[i]});
+                            oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
+                        } else {
+                            aNonAssignableDemands.push(oData.DemandDesc);
+                            bNonAssignableDemandsExist = true;
+                        }
+                    } else {
+                        aPathsData.push({sPath: sPath, oData: oData, index: aSelectedRowsIdx[i]});
                     }
-                }else{
-                    aPathsData.push({ sPath: sPath, oData: oData ,index:aSelectedRowsIdx[i]});
+                }
+
+            }else{
+                for(var i in aDemands){
+                    var oContext = aDemands[i].getBindingContext();
+                    var sPath = oContext.getPath();
+                    oData = this.getModel().getProperty(sPath);
+                    if (!!oData.ALLOW_ASSIGN) {
+                        aPathsData.push({sPath: sPath, oData: oData});
+                    } else {
+                        aDemands[i].setSelected(false);
+                        aNonAssignableDemands.push(oData.Description);
+                        delete aDemands[i];
+                    }
                 }
             }
             return {
@@ -373,6 +416,7 @@ sap.ui.define([
                 aNonAssignable: aNonAssignableDemands
             };
         },
+
 
         /**
          * show error dialog for demands which are not assignable or for which status transition
@@ -482,6 +526,24 @@ sap.ui.define([
                 return false;
             }
             return true;
+        },
+        /**
+         * Shows the confirmation Box.
+         *
+         * @Athour Rahul
+         * @version 2.1
+         */
+        showConfirmMessageBox: function(message, fnCallback) {
+            var oController = this;
+            MessageBox.confirm(
+                message, {
+                    styleClass:oController.getOwnerComponent().getContentDensityClass(),
+                    icon: sap.m.MessageBox.Icon.CONFIRM,
+                    title: this.getResourceBundle().getText("xtit.confirm"),
+                    actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+                    onClose: fnCallback
+                }
+            );
         }
 
 

@@ -66,10 +66,9 @@ sap.ui.define([
                 viewFilters = viewModel.getProperty("/resourceFilterView"),
                 aFilters = viewFilters.slice(0);
 
-            if(!aFilters && aFilters.length == 0){
+            if(!aFilters && aFilters.length === 0){
                 return;
             }
-
             aFilters.push(new Filter("Description", FilterOperator.Contains, sQuery));
             var resourceFilter = new Filter({filters: aFilters, and: true});
             binding.filter(resourceFilter, "Application");
@@ -125,11 +124,16 @@ sap.ui.define([
             var msg = this._oView.getResourceBundle().getText("notFoundContext");
             this.showMessageToast(msg);
         },
-
+		/**
+		 * Refresh the table before opening the dialog
+		 */
         refreshDialogTable: function (oEvent) {
-                var oTable = sap.ui.getCore().byId("assignModalTable");
-                var binding = oTable.getBinding("rows");
-                var aFilters = this._oView.getModel("viewModel").getProperty("/resourceFilterAll");
+                var oTable = sap.ui.getCore().byId("assignModalTable"),
+                	oSearchField = sap.ui.getCore().byId("idSeachModalTree"),
+                	binding = oTable.getBinding("rows"),
+                	aFilters = this._oView.getModel("viewModel").getProperty("/resourceFilterView");
+                 // Search field should be empty
+                oSearchField.setValue("");
                 binding.filter(aFilters, "Application");
 
         },

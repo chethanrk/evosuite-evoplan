@@ -85,7 +85,9 @@ sap.ui.define([
                 counterResourceFilter: "",
                 showStatusChangeButton: false,
                 busy : true,
-				delay : 0
+				delay : 0,
+				assetStartDate:new Date(),
+                dragSession:null     // Drag session added as we are keeping dragged data in the model.
             });
             this.setModel(oViewModel, "viewModel");
             
@@ -107,6 +109,11 @@ sap.ui.define([
 			var oMessageModel = new JSONModel();
 			oMessageModel.setData([]);
 			this.setModel(oMessageModel, "MessageModel");
+			
+			//Creating the Global user model for Global properties
+			this.setModel(models.createUserModel({
+				ASSET_PLANNING_ENABLED:false
+			}), "user");
 
 			//Creating the global for planning calendar
             var oCalendarModel = new JSONModel();

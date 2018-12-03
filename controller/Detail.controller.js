@@ -37,6 +37,7 @@ sap.ui.define([
 
 
                 this.getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
+                this.getRouter().getRoute("assetDemandDetail").attachPatternMatched(this._onObjectMatched, this);
 				
 				// Store original busy indicator delay, so it can be restored later on
 				iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
@@ -107,6 +108,9 @@ sap.ui.define([
 					
 				this.getView().bindElement({
 					path: sObjectPath,
+                    parameters:{
+						expand:"DemandToAssignment"
+					},
 					events: {
 						change: this._onBindingChange.bind(this),
 						dataRequested: function () {

@@ -15,7 +15,7 @@
 			"keywords": ["{{xfld.keyWord1}}", "{{xfld.keyWord2}}"]
 		},
 		"applicationVersion": {
-			"version": "2.0.11"
+			"version": "2.1.0"
 		},
 		"dataSources": {
 			"mainService": {
@@ -129,7 +129,10 @@
 			},
 			"": {
 				"dataSource": "mainService",
-				"preload": true
+				"preload": true,
+				"settings": {
+					"defaultBindingMode": "TwoWay"
+				}
 			},
 			"@i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -171,6 +174,30 @@
 						"resourceTree",
 						"detail"
 					]
+				},
+				{
+					"pattern": "AssetPlanning/{assets}/:withChildren:",
+					"name": "assetManager",
+					"target": [
+						"assets",
+						"assetsOrders"
+					]
+				},
+				{
+					"pattern": "AssetPlanning/{asset}/OrderCreate/:wc:,{plant},{type}",
+					"name": "orderCreate",
+					"target": [
+						"assets",
+						"orderCreate"
+					]
+				},
+				{
+					"pattern": "AssetPlanning/{asset}/Demand/{guid}",
+					"name": "assetDemandDetail",
+					"target": [
+						"assets",
+						"detail"
+					]
 				}
 			],
 			"targets": {
@@ -189,6 +216,24 @@
 				"detail": {
 					"viewName": "Detail",
 					"viewLevel": 3,
+					"controlId": "rightPanel",
+					"controlAggregation": "pages"
+				},
+				"assets": {
+					"viewName": "Assets",
+					"viewLevel": 4,
+					"controlId": "leftPanel",
+					"controlAggregation": "pages"
+				},
+				"assetsOrders": {
+					"viewName": "AssetsOrders",
+					"viewLevel": 5,
+					"controlId": "rightPanel",
+					"controlAggregation": "pages"
+				},
+				"orderCreate": {
+					"viewName": "OrderCreate",
+					"viewLevel": 6,
 					"controlId": "rightPanel",
 					"controlAggregation": "pages"
 				},

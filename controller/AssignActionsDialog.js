@@ -45,6 +45,7 @@ sap.ui.define([
             oDialog.addStyleClass(this._component.getContentDensityClass());
             oView.addDependent(oDialog);
             oDialog.open();
+            this._onAfterOpen();
         },
         /**
          * Adding the expand clause to smart table by setting binding parameters on beforeRebind event
@@ -65,7 +66,7 @@ sap.ui.define([
          * @version 2.0.6
          * @param oEvent
          */
-        onDialogOpen : function (oEvent) {
+        _onAfterOpen : function (oEvent) {
             var oUnAssignBtn =  sap.ui.getCore().byId("idButtonBulkUnAssign");
             var oReAssignBtn =  sap.ui.getCore().byId("idButtonBulkReAssign");
             var oDialog = this.getDialog();

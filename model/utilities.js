@@ -67,13 +67,27 @@ sap.ui.define([
         },
         TIMENONE: {
             getDateBegin: function () {
-                return new Date("01-01-1990");
+                return new Date("01/01/1990");
             },
             getDateEnd: function () {
                 var d = moment().endOf('year');
                 return d.add(20, 'years').toDate();
             }
         }
+    };
+
+    var oAssetCalendarLegends = {
+        "D":{
+            type:sap.ui.unified.CalendarDayType.Type01,
+            text:"Demands",
+            tooltip:"Demands"
+        },
+        "A":{
+            type:sap.ui.unified.CalendarDayType.Type06,
+            text:"Unavailability",
+            tooltip:"Unavailability"
+        }
+
     };
 
     var oResourceAvailability = {
@@ -92,7 +106,7 @@ sap.ui.define([
             icon :"sap-icon://busy",
             color:"#BB0000"
         }
-    }
+    };
 
 	return {
 		// provide the density class that should be used according to the environment (may be "")
@@ -114,6 +128,11 @@ sap.ui.define([
         //returns the resource availability settings
         getResourceAvailability: function () {
             return oResourceAvailability;
+        },
+
+        //returns the resource availability settings
+        getAssetCalLegends: function () {
+            return oAssetCalendarLegends;
         }
 	};
 });

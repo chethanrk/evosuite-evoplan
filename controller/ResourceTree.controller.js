@@ -6,12 +6,11 @@ sap.ui.define([
 	"sap/ui/model/FilterType",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/controller/BaseController",
-	"com/evorait/evoplan/controller/ErrorHandler",
 	"sap/m/MessageToast",
     "sap/m/MessageBox"
 ], function(Device, JSONModel, Filter, FilterOperator,
             FilterType, formatter, BaseController,
-            ErrorHandler,MessageToast,MessageBox) {
+            MessageToast,MessageBox) {
 	"use strict";
 
     return BaseController.extend('com.evorait.evoplan.controller.ResourceTree', {
@@ -40,10 +39,6 @@ sap.ui.define([
             //eventbus of assignemnt handling
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
-            eventBus.subscribe("AssignInfoDialog", "updateAssignment", this._triggerUpdateAssign, this);
-            eventBus.subscribe("AssignTreeDialog", "bulkReAssignment", this._triggerUpdateAssign, this);
-            eventBus.subscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
-            eventBus.subscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
             eventBus.subscribe("FilterSettingsDialog", "triggerSearch", this._triggerFilterSearch, this);
             eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
             // eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
@@ -165,7 +160,7 @@ sap.ui.define([
 
 			} else if (this.selectedResources.indexOf(sPath) >= 0) {
 				//removing the path from this.selectedResources when user unselect the checkbox
-				this.selectedResources.splice(this.selectedResources.indexOf(sPath), 1);
+                this.selectedResources.splice(this.selectedResources.indexOf(sPath), 1);
 			}
 
 			if (this.selectedResources.length > 0) {
@@ -264,7 +259,7 @@ sap.ui.define([
             binding.filter(aFilters, "Application");
         },
 
-        _triggerUpdateAssign: function (sChanel, sEvent, oData) {
+        /*_triggerUpdateAssign: function (sChanel, sEvent, oData) {
             if(sEvent === "updateAssignment"){
                 this.updateAssignment(oData.isReassign);
             }else if(sEvent === "bulkReAssignment"){
@@ -274,7 +269,7 @@ sap.ui.define([
                 if(this.isAvailable(oData.sPath)){
                     this.bulkReAssignment(oData.sPath, oData.aContexts);
                 }else{
-                    this.showMessageToProceed(null, oData.sPath, true, oData.aContexts)
+                    this.showMessageToProceed(null, oData.sPath, true, oData.aContexts);
                 }
             }
         },
@@ -285,7 +280,7 @@ sap.ui.define([
             }else if(sEvent === "bulkDeleteAssignment"){
                 this.bulkDeleteAssignment(oData.aContexts);
             }
-        },
+        },*/
 
         /**
          * dropped demands assign and save
@@ -311,8 +306,7 @@ sap.ui.define([
                         //get hovered marked row, there could be a difference with dropped row
                         var hoverRow = $("#"+droppableTableId+" .sapUiTableRowHvr"),
                             dropTargetId = hoverRow.attr("id"),
-                            oComponent = _this.getOwnerComponent(),
-                            oResourceBundle = _this.getResourceBundle();
+                            aSources = [];
 
                         if(!dropTargetId){
                             dropTargetId = event.target.id;
@@ -325,27 +319,20 @@ sap.ui.define([
                             var targetPath = oContext.getPath();
                             var targetObj = _this.getModel().getProperty(targetPath);
 
-                            //don't drop on orders
+                            //don't drop on assignments
                             if(targetObj.NodeType === "ASSIGNMENT"){
                                 return;
                             }
 
-							var draggedElements = ui.helper[0],
-								aSources = [];
-							$(draggedElements).find('li').each(function(idx, obj) {
-								aSources.push({
-									sPath: $(this).attr('id')
-								});
-							});
 							if(!_this.isAssignable({data:targetObj})){
                                 return;
                             }
+                            aSources = _this.getModel("viewModel").getProperty("/dragSession");
 							// If the Resource is Not/Partially available
-
                             if(_this.isAvailable(targetPath)){
                                 _this.assignedDemands(aSources, targetPath);
                             }else{
-                                _this.showMessageToProceed(aSources, targetPath)
+                                _this.showMessageToProceed(aSources, targetPath);
                             }
 						}
 					}
@@ -361,26 +348,27 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree:function(){
-                var oTreeTable = this.byId("droppableTable"),
-                    oTreeBinding = oTreeTable.getBinding("rows"),
-                    oPage = this.byId("idResourcePage"),
-                    oModel = this.getModel();
+			var oContext = this.byId("droppableTable").getAggregation("rows")[0].getBindingContext(),
+                oModel,
+                sPath;
+				
+				this.resetChanges();
+				
+			    if(oContext){
+                    oModel = oContext.getModel();
+                    sPath = oContext.getPath();
 
-                if(oTreeBinding){
-                    oTreeBinding._restoreTreeState();
-                    oModel.resetChanges();
+                    oModel.setProperty(sPath+"/IsSelected",true); // changing the property in order trigger submit change
+                    this.byId("droppableTable").getBinding("rows").submitChanges();// submit change will refresh of tree according maintained parameters
+                }else{
+                    this._triggerFilterSearch();
                 }
-                // Scrolled manually to fix the rendering bug
-                var bScrolled = oTreeTable._getScrollExtension().scrollVertically(1);
-                // If there is no scroll bar present
-                if(!bScrolled){
-                    oPage.setHeaderExpanded(false);
-                    setTimeout(function(){
-                        oPage.setHeaderExpanded(true);
-                    }.bind(this),1100);
-                }
-
-                //Resetting selected resource for calendar as by default IsSelected will come as false from backend
+			
+		},
+		/**
+		 * Resets the selected resource if selected  
+		 */
+		resetChanges: function(){
                 this.selectedResources = [];
 				this.byId("showPlanCalendar").setEnabled(false);
                 this.byId("idButtonreassign").setEnabled(false);

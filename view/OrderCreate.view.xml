@@ -1,0 +1,43 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" controllerName="com.evorait.evoplan.controller.OrderCreate"
+          xmlns:uxap="sap.uxap" xmlns="sap.m" xmlns:form="sap.ui.layout.form" 	xmlns:order="com.evorait.evoplan.block.order">
+    <Page title="{i18n>xbut.createOrder}"
+          navButtonPress="onBack"
+          showNavButton="true">
+        <content>
+            <uxap:ObjectPageLayout showTitleInHeaderContent="true" showHeaderContent="true" showAnchorBar="false" showFooter="false"
+                                   subSectionLayout="TitleOnTop" busyIndicatorDelay="{viewModel>/delay}">
+                <uxap:headerContent>
+                    <!--	<Label text="Work Center" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>-->
+                </uxap:headerContent>
+                <uxap:headerTitle>
+                    <uxap:ObjectPageHeader objectImageURI="sap-icon://create" objectTitle="{AssetDescription}"
+                                           objectImageShape="Circle" isObjectIconAlwaysVisible="false" isObjectTitleAlwaysVisible="false" isObjectSubtitleAlwaysVisible="false"
+                                           isActionAreaAlwaysVisible="true">
+                        <uxap:actions>
+                            <Button text="{i18n>xbut.buttonSave}" tooltip="{i18n>xbut.buttonSave}" type="Emphasized" press="onSaveOrder"/>
+                        </uxap:actions>
+                    </uxap:ObjectPageHeader>
+                </uxap:headerTitle>
+                <uxap:sections>
+                    <uxap:ObjectPageSection showTitle="true" title="Page Section Title" titleUppercase="true" visible="true">
+                        <uxap:subSections>
+                            <uxap:ObjectPageSubSection title="{i18n>xtit.general}" mode="Expanded">
+                                <uxap:blocks>
+                                    <order:OrderCreateBlock id="idorderCreateB" />
+                                </uxap:blocks>
+                            </uxap:ObjectPageSubSection>
+                        </uxap:subSections>
+                    </uxap:ObjectPageSection>
+                </uxap:sections>
+            </uxap:ObjectPageLayout>
+        </content>
+        <footer>
+            <OverflowToolbar>
+                <Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
+                        type="Emphasized" press="onMessagePopoverPress"></Button>
+                <ToolbarSpacer/>
+
+            </OverflowToolbar>
+        </footer>
+    </Page>
+</mvc:View>

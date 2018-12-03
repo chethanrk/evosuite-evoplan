@@ -17,7 +17,8 @@
           class="sapUiNoContentPadding tableContentPage">
 
         <headerContent>
-            <Button icon="sap-icon://sys-help" id="idButtonAboutDialog" press="onIconPress" />
+        	<Button text="{i18n>xbut.assetsPlanning}" tooltip="{i18n>xbut.assetsPlanning}" visible="{user>/ASSET_PLANNING_ENABLED}" press="actionSelected" />
+            <Button icon="sap-icon://sys-help" id="idButtonAboutDialog" tooltip="{i18n>xtit.infoDialogTitle}" press="onIconPress" />
         </headerContent>
 
         <f:DynamicPage headerExpanded="true"
@@ -50,7 +51,7 @@
                         useVariantManagement="true"
                         persistencyKey="{viewModel>/persistencyKeyDemandTable}"
                         useTablePersonalisation="true"
-                        requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY">
+                        requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY">
                     <!-- layout data used to make the table growing but the filter bar fixed -->
                     <smartTable:layoutData>
                         <FlexItemData growFactor="1" />
@@ -91,6 +92,7 @@
                 <ToolbarSpacer/>
                 <Button id="changeStatusButton"
                         text="{i18n>xbut.changeStatus}"
+                        tooltip="{i18n>xbut.changeStatus}"
                         icon="sap-icon://flag"
                         press="onChangeStatusButtonPress"
                         enabled="false"
@@ -101,6 +103,7 @@
                 </Button>
                 <Button id="assignButton"
                         text="{i18n>xbut.assign}"
+                        tooltip="{i18n>xbut.assign}"
                         icon="sap-icon://activity-individual"
                         press="onAssignButtonPress"
                         enabled="false">

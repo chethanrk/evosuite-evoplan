@@ -23,7 +23,7 @@
                     preventInitialDataFetchInValueHelpDialog="false">
             </smartFilterBar:ControlConfiguration>
             <smartFilterBar:ControlConfiguration
-                    key="DateFrom" visibleInAdvancedArea="true"
+                    key="DateFrom" visibleInAdvancedArea="false"
                     conditionType="sap.ui.comp.config.condition.DateRangeType">
             </smartFilterBar:ControlConfiguration>
         </smartFilterBar:controlConfiguration>

@@ -108,9 +108,10 @@ sap.ui.define([
         /**
          * collection of all filter from view settings dialog and also from search field
          * @returns {Array}
+         * @param {bFromDialog : boolean} Which indicate the
          * @private
          */
-        getAllFilters: function () {
+        getAllFilters: function (bFromDialog) {
             var aFilters = [],
                 oViewModel = this._oView.getModel("viewModel");
             oViewModel.setProperty("/counterResourceFilter", this.counterResourceFilter);
@@ -142,15 +143,15 @@ sap.ui.define([
 
             oViewModel.setProperty("/resourceFilterView", aFilters);
 
-            //get search field value
             var sSearchField = this.getSearchField().getValue();
-            oViewModel.setProperty("/resourceSearchString", sSearchField);
+            var aAllFilters = jQuery.extend(true,[],aFilters);
+            
             if (sSearchField && sSearchField.length > 0) {
-                aFilters.push(new Filter("Description", FilterOperator.Contains, sSearchField));
+                aAllFilters.push(new Filter("Description", FilterOperator.Contains,sSearchField));
             }
 
             var resourceFilter = new Filter({
-                filters: aFilters,
+                filters: aAllFilters,
                 and: true
             });
             oViewModel.setProperty("/resourceFilterAll", resourceFilter);
@@ -405,7 +406,7 @@ sap.ui.define([
          */
         _setDefaultFilterDateRange: function () {
             //set default date range
-            var oDateFrom = new Date("01-01-1990");
+            var oDateFrom = new Date("01/01/1990");
 
             var oDateTo = moment().endOf('year');
             oDateTo =  oDateTo.add(20, 'years').toDate();
