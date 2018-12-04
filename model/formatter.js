@@ -5,8 +5,7 @@ sap.ui.define([
 	"use strict";
 
 	var resourceFormats = utilities.getResourceFormats(),
-		resourceAvailability = utilities.getResourceAvailability(),
-		assetCalLegends = utilities.getAssetCalLegends();
+		resourceAvailability = utilities.getResourceAvailability();
 
 	return {
 		/**
