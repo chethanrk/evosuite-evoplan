@@ -209,7 +209,13 @@ sap.ui.define([
          * @param sValue
          */
         formatAppointMent: function (sValue) {
-				return assetCalLegends[sValue].type;
+				if(sValue === "D"){
+					return sap.ui.unified.CalendarDayType.Type01;
+				}else if(sValue === "A"){
+					return sap.ui.unified.CalendarDayType.Type06;
+				}else{
+					return sap.ui.unified.CalendarDayType.Type01;
+				}
         },
         /**
 		 * Save button must not visible for if planning dat guid is present that indicate the update

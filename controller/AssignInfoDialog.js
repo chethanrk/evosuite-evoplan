@@ -42,7 +42,8 @@ sap.ui.define([
                     NewAssignPath: null,
                     NewAssignId: null,
                     NewAssignDesc: null,
-                    isNewAssignment: false
+                    isNewAssignment: false,
+                    DemandGuid:""
                  },
                 oResource,
                 sResourceGroupGuid,
@@ -55,6 +56,7 @@ sap.ui.define([
                 oAssignment.Description = oResource.Description;
                 sResourceGroupGuid = oResource.ResourceGroupGuid;
                 sResourceGuid = oResource.ResourceGuid;
+                oAssignment.DemandGuid = oResource.DemandGuid;
                 
                 this._bindingPath = sBindPath;
           }else{
@@ -62,6 +64,7 @@ sap.ui.define([
                 oAssignment.Description = oAssignmentData.Demand.DemandDesc;
                 sResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
                 sResourceGuid = oAssignmentData.ResourceGuid;
+                oAssignment.DemandGuid = oAssignmentData.DemandGuid;
           }
 
             this._oView = oView;
@@ -322,6 +325,16 @@ sap.ui.define([
                 newAssignDesc = resourceGroup.ResourceGroupDesc + "\n" + newAssignDesc;
             }
             return newAssignDesc;
+        },
+        onGotoDemand: function(oEvent){
+        	var oRouter = this._component.getRouter(),
+        		oAssignment = this.oAssignmentModel,
+        		sDemandGuid = oAssignment.getProperty("/DemandGuid");
+        		
+        	this.onCloseDialog();
+        	oRouter.navTo("detail", {
+				guid:sDemandGuid
+			});
         }
     });
 });

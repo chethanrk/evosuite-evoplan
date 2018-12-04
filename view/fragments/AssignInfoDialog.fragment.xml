@@ -100,6 +100,9 @@
         </content>
 
         <buttons>
+        	<Button text="Go To Demand"
+                    type="Emphasized"
+                    press="onGotoDemand" />
             <Button text="{i18n>xbut.buttonClose}"
                     press="onCloseDialog" />
             <Button text="{i18n>xbut.buttonUnassign}"
