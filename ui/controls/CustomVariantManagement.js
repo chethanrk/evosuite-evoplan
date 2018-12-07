@@ -298,8 +298,7 @@ sap.ui.define([
                     var oControlName = this._getControlName(oControl),
                     	sFilterInfoName = oFilterInfo.name;
                     if(oControlName === sFilterInfoName || sFilterInfoName.indexOf(oControlName) >= 0){
-                        var oFilter = oFilterData[oControlName];
-
+                        var oFilter = oFilterData[sFilterInfoName];
 						if(oControl.setEnabled){
 							oControl.setEnabled(oFilterInfo.enabled);
 						}
