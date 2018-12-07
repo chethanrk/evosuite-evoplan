@@ -275,8 +275,10 @@ sap.ui.define([
 
             try{
                 oFilterData = JSON.parse(oContent.filterBarVariant);
-            }catch(e){}
-
+            }catch(e){
+            	//error
+            }
+            
             if(oFilterData){
                 for (var i = 0; i < aFilterInfo.length; i++) {
                     this._applyFilterContent(aFilterInfo[i], oFilterData);
@@ -293,14 +295,14 @@ sap.ui.define([
                 var oControl = this.aFilterControls[j];
 
                 if(oControl){
-                    var oControlName = this._getControlName(oControl);
-                    if(oControlName === oFilterInfo.name){
+                    var oControlName = this._getControlName(oControl),
+                    	sFilterInfoName = oFilterInfo.name;
+                    if(oControlName === sFilterInfoName || sFilterInfoName.indexOf(oControlName) >= 0){
                         var oFilter = oFilterData[oControlName];
 
-                        try{
-                            oControl.setEnabled(oFilterInfo.enabled);
-                        }catch(e){};
-
+						if(oControl.setEnabled){
+							oControl.setEnabled(oFilterInfo.enabled);
+						}
                         if(oFilter){
                             this._setFilterValues(oControl, oFilter.value, oFilterInfo.type);
                         }
@@ -465,16 +467,22 @@ sap.ui.define([
 
             try{
                 sValue = oControl.getValue();
-                sType = "Text"
-            }catch (e){}
+                sType = "Text";
+            }catch (e){
+            	//error
+            }
             try{
                 sValue = oControl.getDateValue();
-                sType = "Date"
-            }catch (e){}
+                sType = "Date";
+            }catch (e){
+            	//error
+            }
             try{
                 sValue = oControl.getKey();
-                sType = "Key"
-            }catch (e){}
+                sType = "Key";
+            }catch (e){
+            	//error
+            }
             try{
                 var items = oControl.getItems();
                 for (var i = 0; i < items.length; i++) {
@@ -484,7 +492,9 @@ sap.ui.define([
                         break;
                     }
                 }
-            }catch (e){}
+            }catch (e){
+            	//error
+            }
             try{
                 var items = oControl.getTokens();
                 sType = "Token";
@@ -495,12 +505,14 @@ sap.ui.define([
                         text: items[j].getText()
                     });
                 }
-            }catch (e){}
+            }catch (e){
+            	//error
+            }
 
             return {
                 value: sValue,
                 type: sType
-            }
+            };
         };
 
         /**
@@ -517,14 +529,13 @@ sap.ui.define([
                 partOfCurrentVariant: true,
                 enabled: true
             };
-            try{
-                if(!type || type === ""){
-                    oFilter.type = oControl.getType();
-                }
-            }catch (e){}
-            try{
-                oFilter.enabled = oControl.getEnabled();
-            }catch (e){}
+            
+            if(oControl.getType && !type || type === ""){
+            	oFilter.type = oControl.getType();
+            }
+            if(oControl.getEnabled){
+            	oFilter.enabled = oControl.getEnabled();
+            }
             return oFilter;
         };
 
@@ -579,15 +590,25 @@ sap.ui.define([
          * @param oControl
          * @private
          */
-        CustomVariantManagement.prototype._getControlName = function (oControl) {
-            var name = oControl.getId();
-            try{
-                name = oControl.getName();
-                if(!name || name === ""){
-                    name = oControl.getId();
-                }
-            }catch (e){}
-            return name;
+        CustomVariantManagement.prototype._getControlName = function (oControl, sName) {
+            var sControlId = sName ? sName : oControl.getId(),
+            	sControlName = "",
+            	splittedId = sControlId.split("--");
+            
+            if(oControl.getName){
+            	sControlName = oControl.getName();
+            }
+            if(!sControlName || sControlName === ""){
+            	sControlName = splittedId[0];
+            	if(splittedId.length > 1){
+					if(splittedId[1].indexOf("xmlview") >= 0){
+						sControlName = this._getControlName(oControl, splittedId[1]);
+					}else{
+						sControlName = splittedId[1];
+					}
+				}
+			}
+            return sControlName;
         };
 
         CustomVariantManagement.prototype._setFilterValues = function (oControl, sValue, sType) {
@@ -660,7 +681,7 @@ sap.ui.define([
                 }
             }catch(e){
                 console.error("set itemsKey in _setControlItemsKey not working!");
-            };
+            }
         };
 
         /**
