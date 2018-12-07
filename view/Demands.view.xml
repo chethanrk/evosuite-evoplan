@@ -56,7 +56,7 @@
                     <smartTable:layoutData>
                         <FlexItemData growFactor="1" />
                     </smartTable:layoutData>
-                    <table:Table>
+                    <table:Table enableGrouping="true" groupBy="OrderId">
                     	<table:rowSettingsTemplate>
 							<table:RowSettings highlight="{
 							        path:'CRITICALITY',

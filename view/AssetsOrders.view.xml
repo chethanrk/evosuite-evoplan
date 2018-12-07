@@ -26,12 +26,16 @@
                                         class="sapUiNoContentPadding"
                                         change="onChangeDateRange"/>
                                 <ToolbarSpacer/>
-                                <!--<RadioButtonGroup columns="2" selectedIndex="1" class="">
-                                    <buttons>
-                                        <RadioButton id="RB2-1" text="Demands"/>
-                                        <RadioButton id="RB2-2" text="Time Allocation"/>
-                                    </buttons>
-                                </RadioButtonGroup>-->
+                                <CheckBox text="{i18n>xtit.orders}" selected="true" select="onSelectType">
+                                	<customData>
+                						<core:CustomData key="type" value="D" />
+                					</customData>
+                				</CheckBox>
+								<CheckBox text="{i18n>TimeAllocation}" select="onSelectType">	
+									<customData>
+                						<core:CustomData key="type" value="A" />
+                					</customData>
+                				</CheckBox>
                                 <Button id="idCreateBut" text="{i18n>xbut.createOrder}" tooltip="{i18n>xbut.createOrder}" press="createOrder"
                                         enabled="false" type="Emphasized"/>
                                 <Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" tooltip="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc"

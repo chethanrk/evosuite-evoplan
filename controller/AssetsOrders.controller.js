@@ -14,6 +14,8 @@ sap.ui.define([
         _selectedAsset: undefined,
 
         _aSelectedDemands: [],
+        
+        _aSelectedTypes: [{type:"D"}],
         /**
          * Called when a controller is instantiated and its View controls (if available) are already created.
          * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -113,6 +115,8 @@ sap.ui.define([
             this._generateRangeFilter(oForm, oTo);
             // Generate and add to json model the selected assets filter
             this._generateAssetFilter(oArguments);
+            // Generate and add to json model the selected planning data type filter
+            this._generateTypeFilter();
             // Triggers filter
             this._triggerAssetFilter();
         },
@@ -397,9 +401,13 @@ sap.ui.define([
                 oBinding = oPlanCal.getBinding("rows"),
                 aAssetFilters = this.getModel("viewModel").getProperty("/assetsFilter"),
                 oDateRangeFilter = this.getModel("viewModel").getProperty("/assetsRangeFilter"),
+                oPlanningDataTypeFilter = this.getModel("viewModel").getProperty("/planningDataTypeFilter"),
                 aAllFilters = jQuery.extend(true, [], aAssetFilters);
             if (oDateRangeFilter) {
                 aAllFilters.push(oDateRangeFilter);
+            }
+            if(oPlanningDataTypeFilter){
+            	aAllFilters.push(oPlanningDataTypeFilter);
             }
             oBinding.filter(aAllFilters);
             this._enableHeaderButton(false);
@@ -443,11 +451,23 @@ sap.ui.define([
             for (var i in aAssets) {
                 aFilters.push(new Filter("AssetGuid", FilterOperator.EQ, aAssets[i]));
             }
+            
             if (args.withChildren) {
                 aFilters.push(new Filter("ActionType", FilterOperator.EQ, "X"));
             }
             this.getModel("viewModel").setProperty("/assetsFilter", aFilters);
             return aFilters;
+        },
+        _generateTypeFilter: function(){
+        	var oFilter;
+        	if(this._aSelectedTypes.length === 1){
+            	oFilter = new Filter("AssetPlandatatype", FilterOperator.EQ, this._aSelectedTypes[0].type);
+            }else if(this._aSelectedTypes.length === 2){
+            	oFilter = new Filter("AssetPlandatatype", FilterOperator.EQ, "X");
+            }else{
+            	oFilter = new Filter("AssetPlandatatype", FilterOperator.EQ, "N");
+            }
+            this.getModel("viewModel").setProperty("/planningDataTypeFilter", oFilter);
         },
         /**
          * open's the message popover by it source
@@ -481,6 +501,22 @@ sap.ui.define([
             var oPlanCal = this.byId("PC1");
             oPlanCal.setMinDate(sFrom);
             oPlanCal.setMaxDate(sTo);
+        },
+        /**
+         * on select planning data type check box 
+         */
+        onSelectType: function(oEvent){
+        	var oSource = oEvent.getSource(),
+        		oCustomData = oSource.getCustomData();
+        		
+        	var oSelectedType = {type:oCustomData[0].getValue()};
+        	if(oEvent.getParameter("selected")){
+        		this._aSelectedTypes.push(oSelectedType);
+        	}else if(this._aSelectedTypes.indexOf(oSelectedType) >= 0){
+        		this._aSelectedTypes.splice(this._aSelectedType.indexOf(oSelectedType),1);
+        	}
+        	this._generateTypeFilter();
+        	this._triggerAssetFilter();
         }
     });
 
