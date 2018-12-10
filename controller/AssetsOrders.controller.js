@@ -15,7 +15,7 @@ sap.ui.define([
 
         _aSelectedDemands: [],
         
-        _aSelectedTypes: [{type:"D"}],
+        _aSelectedTypes: ["D"],
         /**
          * Called when a controller is instantiated and its View controls (if available) are already created.
          * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -461,7 +461,7 @@ sap.ui.define([
         _generateTypeFilter: function(){
         	var oFilter;
         	if(this._aSelectedTypes.length === 1){
-            	oFilter = new Filter("AssetPlandatatype", FilterOperator.EQ, this._aSelectedTypes[0].type);
+            	oFilter = new Filter("AssetPlandatatype", FilterOperator.EQ, this._aSelectedTypes[0]);
             }else if(this._aSelectedTypes.length === 2){
             	oFilter = new Filter("AssetPlandatatype", FilterOperator.EQ, "X");
             }else{
@@ -509,11 +509,11 @@ sap.ui.define([
         	var oSource = oEvent.getSource(),
         		oCustomData = oSource.getCustomData();
         		
-        	var oSelectedType = {type:oCustomData[0].getValue()};
+        	var oSelectedType = oCustomData[0].getValue();
         	if(oEvent.getParameter("selected")){
         		this._aSelectedTypes.push(oSelectedType);
         	}else if(this._aSelectedTypes.indexOf(oSelectedType) >= 0){
-        		this._aSelectedTypes.splice(this._aSelectedType.indexOf(oSelectedType),1);
+        		this._aSelectedTypes.splice(this._aSelectedTypes.indexOf(oSelectedType),1);
         	}
         	this._generateTypeFilter();
         	this._triggerAssetFilter();
