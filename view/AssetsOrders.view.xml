@@ -31,7 +31,7 @@
                 						<core:CustomData key="type" value="D" />
                 					</customData>
                 				</CheckBox>
-								<CheckBox text="{i18n>timeAllocations}" select="onSelectType">
+								<CheckBox text="{i18n>xtit.timeAllocations}" select="onSelectType">
 									<customData>
                 						<core:CustomData key="type" value="A" />
                 					</customData>
