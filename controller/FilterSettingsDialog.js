@@ -146,6 +146,14 @@ sap.ui.define([
             var sSearchField = this.getSearchField().getValue();
             var aAllFilters = jQuery.extend(true,[],aFilters);
             
+            // if (sSearchField && sSearchField.length > 0) {
+            // 	if(tokenFilter){
+            // 		aAllFilters.splice(3,1);
+            // 		aAllFilters.push(new Filter("Description", FilterOperator.Contains,sSearchField));
+            // 	}else{
+            // 		aAllFilters.push(new Filter("Description", FilterOperator.Contains,sSearchField));
+            // 	}
+            // }
             if (sSearchField && sSearchField.length > 0) {
                 aAllFilters.push(new Filter("Description", FilterOperator.Contains,sSearchField));
             }

@@ -52,7 +52,8 @@
                             rows="{
                                 path: '/AssetSet',
                                 parameters: {
-                                    expand : 'AssetPlanningDataSet'
+                                    expand : 'AssetPlanningDataSet',
+                                    groupId:'AssetCal'
                                 }
                             }"
                             appointmentsReducedHeight="true"

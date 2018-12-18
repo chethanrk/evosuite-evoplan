@@ -81,7 +81,8 @@
                     	rows="{
                         		path : '/AssetHierarchySet',
                         		parameters:{
-                        			numberOfExpandedLevels:1
+                        			numberOfExpandedLevels:1,
+                        			 groupId:'AssetTree'
                         		}
                         }">
                     <table:columns>
