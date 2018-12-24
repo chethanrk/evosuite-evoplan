@@ -13,7 +13,6 @@ sap.ui.define([
         init: function () {
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog,this);
-
         },
         /**
          * initialize and get dialog object
@@ -45,7 +44,6 @@ sap.ui.define([
             oDialog.addStyleClass(this._component.getContentDensityClass());
             oView.addDependent(oDialog);
             oDialog.open();
-            this._onAfterOpen();
         },
         /**
          * Adding the expand clause to smart table by setting binding parameters on beforeRebind event
@@ -54,9 +52,10 @@ sap.ui.define([
          * @param oEvent
          */
         onBeforeRebind: function(oEvent) {
-            var mBindingParams = oEvent.getParameter("bindingParams");
-            mBindingParams.parameters["expand"] = "DemandToAssignment";
-            this._filterDemandTable(this._aSelectedResources);
+        	var mBindingParams = oEvent.getParameter("bindingParams");
+        	mBindingParams.parameters["expand"] = "Demand";
+        	var oFilter = new Filter(this._getResourceFilters(this._aSelectedResources),true);
+        	mBindingParams.filters.push(oFilter);
         },
         /**
          * Setting initial setting for dialog when it opens
@@ -66,13 +65,11 @@ sap.ui.define([
          * @version 2.0.6
          * @param oEvent
          */
-        _onAfterOpen : function (oEvent) {
+        onBeforeOpen : function (oEvent) {
             var oUnAssignBtn =  sap.ui.getCore().byId("idButtonBulkUnAssign");
             var oReAssignBtn =  sap.ui.getCore().byId("idButtonBulkReAssign");
             var oDialog = this.getDialog();
-            this._oAssignMentSmartTable = sap.ui.getCore().byId("idDemandAssignmentTable");
             this._oAssignMentTable = sap.ui.getCore().byId("idDemandAssignmentTable").getTable();
-
 
             if(this._isUnAssign){
                 oUnAssignBtn.setVisible(true);
@@ -84,7 +81,7 @@ sap.ui.define([
                 oDialog.setTitle(this._resourceBundle.getText("xtit.reAssignTitle"));
             }
             if(this.isFirstTime)
-                this._filterDemandTable(this._aSelectedResources);
+                sap.ui.getCore().byId("idDemandAssignmentTable").rebindTable();
 
             this.isFirstTime = true;
         },
@@ -98,8 +95,7 @@ sap.ui.define([
         onUnassign:function (oEvent) {
             var eventBus = sap.ui.getCore().getEventBus(),
                 oTable = this._oAssignMentTable,
-                aContexts = oTable.getSelectedContexts(),
-                oData;
+                aContexts = oTable.getSelectedContexts();
 
             //check at least one demand selected
             if(aContexts.length === 0){
@@ -122,8 +118,7 @@ sap.ui.define([
          */
         onReassign:function (oEvent) {
             var eventBus = sap.ui.getCore().getEventBus(),
-                aContexts = this._oAssignMentTable.getSelectedContexts(),
-                oData;
+                aContexts = this._oAssignMentTable.getSelectedContexts();
 
             //check at least one demand selected
             if(aContexts.length === 0){
@@ -158,9 +153,9 @@ sap.ui.define([
                     bFlag = undefined;
 
                 if (bForReassign)
-                    bFlag  = oModel.getProperty(sPath+"/ALLOW_UNASSIGN");
+                    bFlag  = oModel.getProperty(sPath+"/Demand/ALLOW_UNASSIGN");
                 else
-                    bFlag  = oModel.getProperty(sPath+"/ALLOW_REASSIGN");
+                    bFlag  = oModel.getProperty(sPath+"/Demand/ALLOW_REASSIGN");
 
                 if(bFlag){
                     this._oAssignMentTable.setSelectedItem(oItem);
@@ -177,20 +172,17 @@ sap.ui.define([
          */
         _getResourceFilters: function(aSelectedResources){
             var aResources = [],
-                aResourceFilters = [],
                 oModel = this._oView.getModel(),
-                oViewFilterSettings = this._oView.getController().getOwnerComponent().filterSettingsDialog,
-                sDateFrom,
-                sDateTo;
+                oViewFilterSettings = this._oView.getController().getOwnerComponent().filterSettingsDialog;
 
-            var aFilters=[],aActualFilters=[];
+            var aFilters=[];
 
             for (var i = 0; i < aSelectedResources.length; i++) {
                 var obj = oModel.getProperty(aSelectedResources[i]);
                 if (obj.NodeType === "RESOURCE") {
                     aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
                 } else if (obj.NodeType === "RES_GROUP") {
-                    aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
+                    aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid+"//X"));
                 }
             }
 
@@ -207,15 +199,8 @@ sap.ui.define([
                // aFilters.push(new Filter([new Filter("DateTo", FilterOperator.GE, sDateControl1),new Filter("DateFrom", FilterOperator.LE, sDateControl2)],true));
                 aFilters.push(new Filter("DateTo", FilterOperator.GE, sDateControl1));
                 aFilters.push(new Filter("DateFrom", FilterOperator.LE, sDateControl2));
-                if(aFilters.length > 0){
-                    aActualFilters.push(new Filter({
-                            filters: aFilters,
-                            and: true
-                        }
-                    ));
-                }
             }
-            return aActualFilters;
+            return aFilters;
         },
         /**
          * Filters the demand by demand guids for filter assignments
@@ -226,34 +211,10 @@ sap.ui.define([
          * @private
          */
         _filterDemandTable: function(aSelectedResources){
-            var oModel = this._oView.getModel();
-
-            oModel.read("/AssignmentSet",{
-                filters:this._getResourceFilters(aSelectedResources),
-                success:function (oData, oResponse) {
-                    var aAssignments = oData.results,
-                        aDemands = [],
-                        aDemandFilters = [];
-                    for(var i in aAssignments){
-                        aDemands.push(new Filter("Guid",FilterOperator.EQ,aAssignments[i].DemandGuid));
-                    }
-                    if (aDemands.length > 0) {
-                        aDemandFilters.push(new Filter({
-                            filters: aDemands,
-                            and: false
-                        }));
-                    }else{
-                        aDemandFilters.push(new Filter({
-                            filters: [new Filter("Guid",FilterOperator.EQ,null)],
-                            and: false
-                        }));
-
-                    }
-                    this._oAssignMentTable.getBinding("items").filter(aDemandFilters);
-
-                }.bind(this)
-            });
-        },
+            if(this._oAssignMentTable && this._oAssignMentTable.getBinding("items")){
+            	this._oAssignMentTable.getBinding("items").filter(this._getResourceFilters(aSelectedResources));
+            }        
+       },
         /**
          * Checking selected demand is allowed for respective action on selection change of demand
          *
@@ -267,13 +228,12 @@ sap.ui.define([
                     oContext = oListItem.getBindingContext(),
                     sPath = oContext.getPath(),
                     oModel = oContext.getModel(),
-                    msg = "",
                     bFlag = false;
 
                 if (!this._isUnAssign) {
-                    bFlag = oModel.getProperty(sPath + "/ALLOW_REASSIGN");
+                    bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_REASSIGN");
                 } else {
-                    bFlag = oModel.getProperty(sPath + "/ALLOW_UNASSIGN");
+                    bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_UNASSIGN");
                 }
                 oListItem.setSelected(bFlag);
             }else{

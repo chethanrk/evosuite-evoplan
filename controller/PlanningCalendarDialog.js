@@ -61,7 +61,7 @@ sap.ui.define([
                 aResourceFilters = [],
                 aActualFilters = [],
                 oModel = this._oView.getModel(),
-                oResourceBundle = this._oResourceBundle,
+                // oResourceBundle = this._oResourceBundle,
                 oViewFilterSettings = this._component.filterSettingsDialog,
                 oPlanningCalDialog = this.getDialog();
 
@@ -76,7 +76,7 @@ sap.ui.define([
                     if(obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
                         aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
                     }else {
-                        aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
+                        aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid+"//X"));
                     }
                 } else if (obj.NodeType === "RES_GROUP") {
                     aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
@@ -94,6 +94,7 @@ sap.ui.define([
                 // aResourceFilters.push(new Filter([new Filter("DateTo", FilterOperator.GE, sDateControl1),new Filter("DateFrom", FilterOperator.LE, sDateControl2)],true));
                 aResourceFilters.push(new Filter("DateTo", FilterOperator.GE, sDateControl1));
                 aResourceFilters.push(new Filter("DateFrom", FilterOperator.LE, sDateControl2));
+                
                 if(aResourceFilters.length > 0){
                     aActualFilters.push(new Filter({
                             filters: aResourceFilters,
@@ -131,7 +132,7 @@ sap.ui.define([
          * @param response
          */
         onSuccess: function(data,response){
-            console.log(this._createData(data));
+            // console.log(this._createData(data));
             this._oCalendarModel.setData({
                 startDate: new Date(),
                 viewKey: this.getSelectedView(),
@@ -146,7 +147,7 @@ sap.ui.define([
          */
         onError: function(){
             this._oDialog.setBusy(false);
-            this.showMessageToast(oResourceBundle.getText("errorMessage"));
+            // this.showMessageToast(oResourceBundle.getText("errorMessage"));
         },
         /**
          * Get selected filter view
@@ -205,12 +206,12 @@ sap.ui.define([
                         var sObjectId = oResourceMap[j].ObjectId;
                         for (var k in oAssignData.results) {
                             if (oAssignData.results[k].ObjectId === sObjectId) {
-                                oResourceMap[j].Assignments.push(oAssignData.results[k])
+                                oResourceMap[j].Assignments.push(oAssignData.results[k]);
                             }
                         }
-                        for (var k in oAbsenceData.results) {
-                            if (oAbsenceData.results[k].ObjectId === sObjectId) {
-                                oResourceMap[j].AbsenceInfo.push(oAbsenceData.results[k])
+                        for (var m in oAbsenceData.results) {
+                            if (oAbsenceData.results[m].ObjectId === sObjectId) {
+                                oResourceMap[j].AbsenceInfo.push(oAbsenceData.results[m]);
                             }
                         }
                         aResources.push(oResourceMap[j]);
@@ -229,7 +230,6 @@ sap.ui.define([
             if(this._oDialog){
                 this._oDialog.close();
             }
-
         }
 
     });

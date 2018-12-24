@@ -6,7 +6,8 @@
             contentWidth="100%"
             resizable="true"
             contentHeight="80%"
-            stretch="false">
+            stretch="false"
+            beforeOpen="onBeforeOpen">
         <content>
             <smartTable:SmartTable
                     id="idDemandAssignmentTable"
@@ -15,13 +16,14 @@
                     direction="Column"
                     tableType="ResponsiveTable"
                     enableAutoBinding="true"
-                    entitySet="DemandSet"
+                    entitySet="AssignmentSet"
                     header="{i18n>xtit.itemListTitle}"
                     showRowCount="true"
                     useTablePersonalisation="true"
                     useExportToExcel="false"
                     beforeRebindTable="onBeforeRebind"
-                    requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_UNASSIGN,ALLOW_REASSIGN,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,DemandToAssignment">
+                    initiallyVisibleFields="Effort,DateFrom,DateTo,PERSON_NUMBER,FIRSTNAME,LASTNAME"
+                    requestAtLeastFields="Guid,Demand">
                 <!-- layout data used to make the table growing but the filter bar fixed -->
                 <smartTable:layoutData>
                     <FlexItemData growFactor="1" />
@@ -29,6 +31,29 @@
                 <Table mode="MultiSelect"
                        growing="true"
                        selectionChange="onSelectionChange">
+                	<columns>
+								<Column hAlign="Left" visible="{/#Demand/ORDERID/@sap:visible}">
+									<customData>
+									<core:CustomData key="p13nData" value='\{"columnKey": "Demand/ORDERID", "leadingProperty": "Demand/ORDERID"}' />
+								</customData>
+										<Text text="{/#Demand/ORDERID/@sap:label}"/>
+								</Column>
+								<Column hAlign="Left" visible="{/#Demand/Status/@sap:visible}">
+									<customData>
+									<core:CustomData key="p13nData" value='\{"columnKey": "Demand/Status", "leadingProperty": "Demand/Status"}' />
+								</customData>
+										<Text text="{/#Demand/Status/@sap:label}"/>
+								</Column>
+							</columns>
+                	<items>
+                		<ColumnListItem>
+                			<cells>
+                				<Text text="{Demand/ORDERID}" />
+                				<Text text="{Demand/Status}" />
+                			</cells>
+                		</ColumnListItem>
+                		
+                	</items>
                 </Table>
             </smartTable:SmartTable>
 

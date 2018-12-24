@@ -137,26 +137,36 @@ sap.ui.define([
 
             //get all token from group filter
             var tokenFilter = this.getFilterDialogGroupToken();
+            
+            // var sSearchField = this.getSearchField().getValue();
+            // if (sSearchField && sSearchField.length > 0 && tokenFilter) {
+            //     tokenFilter.aFilters.push(new Filter("Description", FilterOperator.Contains,sSearchField));
+            // }else{
+            	
+            // }
+            
             if(tokenFilter){
                 aFilters.push(tokenFilter);
             }
 
             oViewModel.setProperty("/resourceFilterView", aFilters);
 
-            var sSearchField = this.getSearchField().getValue();
+           
             var aAllFilters = jQuery.extend(true,[],aFilters);
             
-            // if (sSearchField && sSearchField.length > 0) {
-            // 	if(tokenFilter){
-            // 		aAllFilters.splice(3,1);
-            // 		aAllFilters.push(new Filter("Description", FilterOperator.Contains,sSearchField));
-            // 	}else{
-            // 		aAllFilters.push(new Filter("Description", FilterOperator.Contains,sSearchField));
-            // 	}
-            // }
+            var sSearchField = this.getSearchField().getValue();
             if (sSearchField && sSearchField.length > 0) {
-                aAllFilters.push(new Filter("Description", FilterOperator.Contains,sSearchField));
+            	if(tokenFilter){
+            		aAllFilters.splice(3,1);
+            		aAllFilters.push(new Filter("Description", FilterOperator.Contains,sSearchField));
+            	}else{
+            		aAllFilters.push(new Filter("Description", FilterOperator.Contains,sSearchField));
+            	}
             }
+            
+            // if (sSearchField && sSearchField.length > 0) {
+            //     aAllFilters.push(new Filter("Description", FilterOperator.Contains,sSearchField));
+            // }
 
             var resourceFilter = new Filter({
                 filters: aAllFilters,

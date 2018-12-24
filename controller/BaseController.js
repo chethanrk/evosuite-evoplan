@@ -234,17 +234,13 @@ sap.ui.define([
          */
         bulkReAssignment:function (sAssignPath,aContexts) {
             var oModel = this.getModel(),
-                oResource = oModel.getProperty(sAssignPath),
-                eventBus = sap.ui.getCore().getEventBus();
+                oResource = oModel.getProperty(sAssignPath);
             // Clears the Message model
             this.clearMessageModel();
 
             for(var i in aContexts){
                 var sPath =  aContexts[i].getPath();
-                var sAssignmentPaths =  oModel.getProperty(sPath+"/DemandToAssignment");
-                for(var j in sAssignmentPaths) {
-                    var sAssignPath = sAssignmentPaths[j];
-                    var oAssignment = oModel.getProperty("/"+sAssignPath);
+                var oAssignment =  oModel.getProperty(sPath);
                     var oParams = {
                         "AssignmentGUID": oAssignment.Guid,
                         "EffortUnit": oAssignment.EffortUnit,
@@ -271,7 +267,6 @@ sap.ui.define([
                     // call function import
                     this.callFunctionImport(oParams, "UpdateAssignment", "POST", true);
                 }
-            }
         },
         /**
          * delete assignments in bulk
@@ -284,14 +279,11 @@ sap.ui.define([
             this.clearMessageModel();
             for(var i in aContexts){
                 var sPath =  aContexts[i].getPath();
-                var sAssignmentPaths =  oModel.getProperty(sPath+"/DemandToAssignment");
-                for(var j in sAssignmentPaths){
-                    var sAssignPath = sAssignmentPaths[j];
-                    var oParams = {
-                        "AssignmentGUID" : oModel.getProperty("/"+sAssignPath+"/Guid")
-                    };
-                    this.callFunctionImport(oParams, "DeleteAssignment", "POST", true);
-                }
+                var sAssignmentGuid =  oModel.getProperty(sPath+"/Guid");
+                var oParams = {
+                    "AssignmentGUID" : sAssignmentGuid
+                };
+                this.callFunctionImport(oParams, "DeleteAssignment", "POST", true);
 
             }
         },

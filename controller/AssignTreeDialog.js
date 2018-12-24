@@ -69,7 +69,11 @@ sap.ui.define([
             if(!aFilters && aFilters.length === 0){
                 return;
             }
-            aFilters.push(new Filter("Description", FilterOperator.Contains, sQuery));
+            if(sQuery && sQuery!==""){
+	            aFilters.splice(3,1);
+	            aFilters.push(new Filter("Description", FilterOperator.Contains, sQuery));
+            }
+            
             var resourceFilter = new Filter({filters: aFilters, and: true});
             binding.filter(resourceFilter, "Application");
         },

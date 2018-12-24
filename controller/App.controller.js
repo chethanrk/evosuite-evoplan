@@ -76,8 +76,8 @@ sap.ui.define([
              */
             onResize: function () {
                 var eventBus = sap.ui.getCore().getEventBus();
-                eventBus.publish("App", "RegisterDrop", {})
-                eventBus.publish("App", "RegisterDrag", {})
+                eventBus.publish("App", "RegisterDrop", {});
+                eventBus.publish("App", "RegisterDrag", {});
             },
             /**
              * Event to trigger Update Assignment
