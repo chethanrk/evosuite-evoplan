@@ -180,9 +180,13 @@ sap.ui.define([
             for (var i = 0; i < aSelectedResources.length; i++) {
                 var obj = oModel.getProperty(aSelectedResources[i]);
                 if (obj.NodeType === "RESOURCE") {
-                    aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
+                    if(obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
+                        aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
+                    }else{
+                        aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid+"//X"));
+                    }
                 } else if (obj.NodeType === "RES_GROUP") {
-                    aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid+"//X"));
+                    aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
                 }
             }
 

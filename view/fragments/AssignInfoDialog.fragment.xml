@@ -39,6 +39,12 @@
                     <Text text="{assignment>/ResourceDesc}"/>
                     <Label text="{i18n>xfld.ResourceGroupName}" />
                     <Text text="{assignment>/ResourceGroupDesc}"/>
+                    <Label text="{i18n>xfld.Order}" />
+                    <Text text="{assignment>/OrderId}"/>
+                    <Label text="{i18n>xfld.Operation}" />
+                    <Text text="{assignment>/OperationNumber}"/>
+                    <Label text="{i18n>xfld.SubOperation}" />
+                    <Text text="{assignment>/SubOperationNumber}"/>
 
                     <core:Title text="" />
                     <Label text="{i18n>xfld.startDate}" />
@@ -100,7 +106,7 @@
         </content>
 
         <buttons>
-        	<Button text="Go To Demand"
+        	<Button text="{i18n>xbut.gotodemand}"
                     type="Emphasized"
                     press="onGotoDemand" />
             <Button text="{i18n>xbut.buttonClose}"

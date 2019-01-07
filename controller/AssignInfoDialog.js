@@ -43,7 +43,10 @@ sap.ui.define([
                     NewAssignId: null,
                     NewAssignDesc: null,
                     isNewAssignment: false,
-                    DemandGuid:""
+                    DemandGuid:"",
+                    OrderId:"",
+                    OperationNumber:"",
+                    SubOperationNumber:""
                  },
                 oResource,
                 sResourceGroupGuid,
@@ -57,6 +60,7 @@ sap.ui.define([
                 sResourceGroupGuid = oResource.ResourceGroupGuid;
                 sResourceGuid = oResource.ResourceGuid;
                 oAssignment.DemandGuid = oResource.DemandGuid;
+
                 
                 this._bindingPath = sBindPath;
           }else{
@@ -65,6 +69,9 @@ sap.ui.define([
                 sResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
                 sResourceGuid = oAssignmentData.ResourceGuid;
                 oAssignment.DemandGuid = oAssignmentData.DemandGuid;
+              // oAssignment.DemandGuid = oAssignmentData.DemandGuid;
+              // oAssignment.DemandGuid = oAssignmentData.DemandGuid;
+              // oAssignment.DemandGuid = oAssignmentData.DemandGuid;
           }
 
             this._oView = oView;
@@ -221,6 +228,9 @@ sap.ui.define([
                         oModel.setProperty("/Description", oDemandData.DemandDesc);
                         oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
                         oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
+                        oModel.setProperty("/OrderId", oDemandData.ORDERID);
+                        oModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
+                        oModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
                     },
                     dataRequested: function () {
                         oDialog.setBusy(true);
