@@ -61,17 +61,12 @@ sap.ui.define([
                 sResourceGuid = oResource.ResourceGuid;
                 oAssignment.DemandGuid = oResource.DemandGuid;
 
-                
-                this._bindingPath = sBindPath;
           }else{
         		oAssignment.AssignmentGuid = oAssignmentData.Guid;
                 oAssignment.Description = oAssignmentData.Demand.DemandDesc;
                 sResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
                 sResourceGuid = oAssignmentData.ResourceGuid;
                 oAssignment.DemandGuid = oAssignmentData.DemandGuid;
-              // oAssignment.DemandGuid = oAssignmentData.DemandGuid;
-              // oAssignment.DemandGuid = oAssignmentData.DemandGuid;
-              // oAssignment.DemandGuid = oAssignmentData.DemandGuid;
           }
 
             this._oView = oView;
