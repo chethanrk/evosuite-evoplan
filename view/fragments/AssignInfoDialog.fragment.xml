@@ -52,7 +52,9 @@
                                     value="{path:'assignment>/DateFrom',
                                     type:'sap.ui.model.type.DateTime',
                                     formatOptions: { style: 'medium', strictParsing: true}
-                                    }"/>
+                                    }"
+                                    editable="{= ${assignment>/DemandStatus} === 'COMP' ? false :true }"
+                    />
 
                     <Label text="{i18n>xfld.endDate}" />
                     <DateTimePicker id="idDateToAssignInf"
@@ -60,12 +62,14 @@
                                     value="{path:'assignment>/DateTo',
                                     type:'sap.ui.model.type.DateTime',
                                     formatOptions: { style: 'medium', strictParsing: true}
-                                    }"/>
+                                    }"
+                                    editable="{= ${assignment>/DemandStatus} === 'COMP' ? false :true }"/>
 
                     <Label text="{i18n>xfld.effort}" />
                     <Input type="Text"
                            name="Effort"
-                           value="{assignment>/Effort}"/>
+                           value="{assignment>/Effort}"
+                           editable="{= ${assignment>/DemandStatus} === 'COMP' ? false :true }"/>
                            
 					<!--<smartField:SmartLabel labelFor="idEfforUnit" />
 					<smartField:SmartField value="{Demand/EffortUnit}" id="idEfforUnit"
@@ -82,7 +86,8 @@
 					selectedKey="{assignment>/EffortUnit}"
 					items="{
 						path: '/TimeUnitsSet'
-					}">
+					}"
+                    editable="{= ${assignment>/DemandStatus} === 'COMP' ? false :true }">
 					<core:Item key="{Msehi}" text="{Msehl}" />
 				</Select>
 
@@ -117,7 +122,8 @@
                     visible="{assignment>/AllowUnassign}"/>
             <Button text="{i18n>xbut.buttonSave}"
                     type="Emphasized"
-                    press="onSaveDialog" />
+                    press="onSaveDialog"
+                    visible="{= ${assignment>/DemandStatus} === 'COMP' ? false :true }"/>
         </buttons>
 
     </Dialog>

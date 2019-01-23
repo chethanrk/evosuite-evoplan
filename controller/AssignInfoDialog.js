@@ -44,6 +44,7 @@ sap.ui.define([
                     NewAssignDesc: null,
                     isNewAssignment: false,
                     DemandGuid:"",
+                    DemandStatus:"",
                     OrderId:"",
                     OperationNumber:"",
                     SubOperationNumber:""
@@ -67,6 +68,7 @@ sap.ui.define([
                 sResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
                 sResourceGuid = oAssignmentData.ResourceGuid;
                 oAssignment.DemandGuid = oAssignmentData.DemandGuid;
+                oAssignment.DemandStatus = oAssignmentData.Demand.Status;
           }
 
             this._oView = oView;
@@ -226,6 +228,7 @@ sap.ui.define([
                         oModel.setProperty("/OrderId", oDemandData.ORDERID);
                         oModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
                         oModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
+                        oModel.setProperty("/DemandStatus", oDemandData.Status);
                     },
                     dataRequested: function () {
                         oDialog.setBusy(true);
