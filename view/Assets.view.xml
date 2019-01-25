@@ -25,7 +25,7 @@
 			<f:header>
 				<f:DynamicPageHeader pinnable="true">
 					<f:content>
-						<!--<FlexBox alignItems="Start"
+						<FlexBox alignItems="Start"
 								 justifyContent="SpaceBetween">
 							<items>
 								<controls:CustomVariantManagement
@@ -41,7 +41,7 @@
 								</controls:CustomVariantManagement>
 
 							</items>
-						</FlexBox>-->
+						</FlexBox>
 						<SearchField 
 							id="searchFieldAsset"
 							search="onSearchAsset"
