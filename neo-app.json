@@ -55,6 +55,6 @@
       "description": "UI Flexibility Service Connection"
     }
   ],
-  "welcomeFile": "/index.html",
+  "welcomeFile": "/webapp/index.html",
   "sendWelcomeFileRedirect": true
 }

@@ -7,12 +7,14 @@
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
 		"title": "{{appTitle}}",
-		"subtitle": "{{subtitle}}",
 		"shortTitle": "{{shorttitle}}",
 		"info": "{{info}}",
 		"description": "{{appDescription}}",
 		"tags": {
-			"keywords": ["{{xfld.keyWord1}}", "{{xfld.keyWord2}}"]
+			"keywords": [
+				"{{xfld.keyWord1}}",
+				"{{xfld.keyWord2}}"
+			]
 		},
 		"applicationVersion": {
 			"version": "2.1.1"
@@ -24,7 +26,9 @@
 				"settings": {
 					"odataVersion": "2.0",
 					"localUri": "localService/metadata.xml",
-					"annotations": ["annotations"]
+					"annotations": [
+						"annotations"
+					]
 				}
 			},
 			"annotations": {
@@ -77,7 +81,12 @@
 			"tablet": true,
 			"phone": true
 		},
-		"supportedThemes": ["sap_belize", "sap_belize_plus", "sap_belize_hcb", "sap_belize_hcw"]
+		"supportedThemes": [
+			"sap_belize",
+			"sap_belize_plus",
+			"sap_belize_hcb",
+			"sap_belize_hcw"
+		]
 	},
 	"sap.ui5": {
 		"_version": "1.2.0",
@@ -130,9 +139,11 @@
 			}
 		},
 		"resources": {
-			"css": [{
-				"uri": "assets/css/style.css"
-			}]
+			"css": [
+				{
+					"uri": "assets/css/style.css"
+				}
+			]
 		},
 		"routing": {
 			"config": {
@@ -141,31 +152,55 @@
 				"viewPath": "com.evorait.evoplan.view",
 				"controlId": "app",
 				"bypassed": {
-					"target": ["resourceTree", "empty"]
+					"target": [
+						"resourceTree",
+						"empty"
+					]
 				},
 				"async": true
 			},
-			"routes": [{
-				"pattern": "",
-				"name": "demands",
-				"target": ["demands", "resourceTree"]
-			}, {
-				"pattern": "Demand/{guid}",
-				"name": "detail",
-				"target": ["resourceTree", "detail"]
-			}, {
-				"pattern": "AssetPlanning/{assets}/:withChildren:",
-				"name": "assetManager",
-				"target": ["assets", "assetsOrders"]
-			}, {
-				"pattern": "AssetPlanning/{asset}/OrderCreate/:wc:,{plant},{type}",
-				"name": "orderCreate",
-				"target": ["assets", "orderCreate"]
-			}, {
-				"pattern": "AssetPlanning/{asset}/Demand/{guid}",
-				"name": "assetDemandDetail",
-				"target": ["assets", "detail"]
-			}],
+			"routes": [
+				{
+					"pattern": "",
+					"name": "demands",
+					"target": [
+						"demands",
+						"resourceTree"
+					]
+				},
+				{
+					"pattern": "Demand/{guid}",
+					"name": "detail",
+					"target": [
+						"resourceTree",
+						"detail"
+					]
+				},
+				{
+					"pattern": "AssetPlanning/{assets}/:withChildren:",
+					"name": "assetManager",
+					"target": [
+						"assets",
+						"assetsOrders"
+					]
+				},
+				{
+					"pattern": "AssetPlanning/{asset}/OrderCreate/:wc:,{plant},{type}",
+					"name": "orderCreate",
+					"target": [
+						"assets",
+						"orderCreate"
+					]
+				},
+				{
+					"pattern": "AssetPlanning/{asset}/Demand/{guid}",
+					"name": "assetDemandDetail",
+					"target": [
+						"assets",
+						"detail"
+					]
+				}
+			],
 			"targets": {
 				"resourceTree": {
 					"viewName": "ResourceTree",
