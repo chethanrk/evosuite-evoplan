@@ -129,7 +129,6 @@ sap.ui.define([
                         isReassign: this.reAssign
                     });
                     this.onCloseDialog();
-                    eventBus.publish("AssignInfoDialog", "CloseCalendar",{}); // Close the calendar
                 } else {
                     this.showMessageToast(sMsg);
                 }
@@ -145,7 +144,7 @@ sap.ui.define([
                 sId: sId
             });
             this.onCloseDialog();
-            eventBus.publish("AssignInfoDialog", "CloseCalendar",{});
+            // eventBus.publish("AssignInfoDialog", "CloseCalendar",{});
         },
 
         /**

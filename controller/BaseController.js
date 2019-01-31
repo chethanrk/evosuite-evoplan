@@ -339,6 +339,7 @@ sap.ui.define([
                     eventBus.publish("BaseController", "refreshDemandTable",{});
                     eventBus.publish("BaseController", "refreshDemandOverview",{}); // refresh the demand overview page binding
                     eventBus.publish("BaseController", "refreshAssetCal", {});
+                    eventBus.publish("AssignInfoDialog", "CloseCalendar",{});
                 }.bind(this),
                 error: function(oError){
                     //Handle Error
