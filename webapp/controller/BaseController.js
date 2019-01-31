@@ -133,7 +133,7 @@ sap.ui.define([
             }.bind(this);
 
             if(fnCallback){
-                fnClose = fnCallback
+                fnClose = fnCallback;
             }
             if(!fnCallback){
                 if (this._bMessageOpen) {
@@ -152,8 +152,9 @@ sap.ui.define([
         },
         /**
          * save assignment after drop
-         * @param aSourcePaths
-         * @param sTargetPath
+         * 
+         * @param {Object} aSourcePaths
+         * @param {String} sTargetPath
          */
         assignedDemands: function (aSourcePaths, sTargetPath) {
             var oModel = this.getModel();
@@ -189,11 +190,11 @@ sap.ui.define([
         },
 
         /**
-         * update assignment
-         * @param sPath
+         * update assignment 
+         * @param {String} sPath
          */
         updateAssignment: function (isReassign) {
-            var oData = this.getModel("assignment").oData,
+            var oData = this.getModel("assignment").getData(),
                 sAssignmentGUID = oData.AssignmentGuid;
 
             var oParams = {
@@ -272,7 +273,7 @@ sap.ui.define([
          * delete assignments in bulk
          * @Author Rahul
          * @version 2.0.6
-         * @param aContexts {Array} Assignments contexts to be deleted.
+         * @param {Array} aContexts  Assignments contexts to be deleted.
          */
         bulkDeleteAssignment: function (aContexts) {
             var oModel = this.getModel();

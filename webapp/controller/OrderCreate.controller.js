@@ -103,12 +103,13 @@ sap.ui.define([
          */
         _onObjectMatched: function (oEvent) {
             var oArguments = oEvent.getParameter("arguments"),
+            	oSelectedAsset = this.getModel("viewModel").getProperty("/createOrderDefaults"),
                 sAsset = oArguments.asset,
-                sFloc = this.getModel("viewModel").getProperty("/assetFloc"),
-                sDesc = this.getModel("viewModel").getProperty("/assetDesc"),
-                sWc = oArguments.wc,
-                sPlant = oArguments.plant,
-                sAsssetType = oArguments.type;
+                sFloc = oSelectedAsset ? oSelectedAsset.assetFloc : "",
+                sDesc = oSelectedAsset ? oSelectedAsset.assetDesc  : "",
+                sWc = oSelectedAsset ? oSelectedAsset.wc : "",
+                sPlant = oSelectedAsset ? oSelectedAsset.plant : "",
+                sAsssetType = oSelectedAsset ? oSelectedAsset.type : "";
             this.getModel().metadataLoaded().then(function () {
                 if(sFloc && sFloc !== ""){
                     var oContext = this.getModel().createEntry("/EvoPlanOrderSet", {
@@ -162,7 +163,7 @@ sap.ui.define([
          */
         onSuccessCreate: function (data, response) {
             var oContext = this.getView().getBindingContext();
-            var sOrderId, oResponse;
+            var oResponse;
             this.getModel("appView").setProperty("/busy", false);
             if (data && data.__batchResponses) {
                 for (var i in data.__batchResponses) {
@@ -172,9 +173,9 @@ sap.ui.define([
                             return;
                         }
                     }else{
-                        for(var i in data.__batchResponses[i].__changeResponses){
-                            sOrderId = data.__batchResponses[i].__changeResponses[0].data.OrderId;
-                            oResponse = data.__batchResponses[i].__changeResponses[0];
+                        for(var j in data.__batchResponses[i].__changeResponses){
+                            // sOrderId = data.__batchResponses[j].__changeResponses[0].data.OrderId;
+                            oResponse = data.__batchResponses[j].__changeResponses[0];
                         }
                     }
                 }
