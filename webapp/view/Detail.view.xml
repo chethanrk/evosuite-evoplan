@@ -1,92 +1,71 @@
-<mvc:View
-	controllerName="com.evorait.evoplan.controller.Detail"
-	xmlns="sap.m" 
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core" 
-	xmlns:uxap="sap.uxap"
-	xmlns:sections="com.evorait.evoplan.block.sections"
-	xmlns:layout="sap.ui.layout"
-	displayBlock="true"
-	height="100%">
-	
-	<Page id="objectPage"
-		  class="sapUiNoContentPadding"
-		  title="{i18n>xtit.demandOverview}"
-		  navButtonPress="navBack"
-		  showNavButton="true">
-
-		<uxap:ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" busy="{viewModel>/busy}" busyIndicatorDelay="{viewModel>/delay}" >
-
-			<uxap:headerTitle>
-			<uxap:ObjectPageHeader objectImageURI="{STATUS_ICON}"
-							  objectImageShape="Circle"
-							  objectTitle="{DemandDesc}"
-							  objectSubtitle="{ExtKey}"
-							  objectImageAlt="{i18n>xfld.demandName}"
-							  id="ObjectPageLayoutHeaderTitle">
+<mvc:View controllerName="com.evorait.evoplan.controller.Detail" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
+	xmlns:uxap="sap.uxap" xmlns:sections="com.evorait.evoplan.block.sections" xmlns:layout="sap.ui.layout" displayBlock="true" height="100%">
+	<uxap:ObjectPageLayout id="ObjectPageLayout" class="sapUiNoContentPadding" enableLazyLoading="false" busy="{viewModel>/busy}"
+		busyIndicatorDelay="{viewModel>/delay}" isChildPage="true" showFooter="true">
+		<uxap:headerTitle>
+			<uxap:ObjectPageHeader objectImageURI="{STATUS_ICON}" objectImageShape="Circle" objectTitle="{DemandDesc}" objectSubtitle="{ExtKey}"
+				objectImageAlt="{i18n>xfld.demandName}" id="ObjectPageLayoutHeaderTitle">
 				<uxap:actions>
-						<uxap:ObjectPageHeaderActionButton text="{i18n>xbut.assign}"
-														   tooltip="{i18n>xbut.assign}" type="Emphasized" hideIcon="false" hideText="false" press="onClickAssign"/>
-						<uxap:ObjectPageHeaderActionButton text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
-														   visible="{
-														   		parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'}],
-														   		formatter: '.getVisible'
-						 									}"  hideIcon="false" hideText="false" press="onClickAction"/>
+					<uxap:ObjectPageHeaderActionButton text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" type="Emphasized" hideIcon="false"
+						hideText="false" press="onClickAssign"/>
+					<uxap:ObjectPageHeaderActionButton text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
+						visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'}], formatter: '.getVisible' }"
+						hideIcon="false" hideText="false" press="onClickAction"/>
+					<Button text="{i18n>xbut.buttonCancel}" tooltip="{i18n>xbut.buttonCancel}" type="Default" press="navBack"/>
 				</uxap:actions>
+				<uxap:breadcrumbs>
+					<Breadcrumbs currentLocationText="{i18n>xtit.demandDetail}">
+						<Link text="{i18n>xtit.itemListTitle}" press="navBack"/>
+					</Breadcrumbs>
+				</uxap:breadcrumbs>
 			</uxap:ObjectPageHeader>
 		</uxap:headerTitle>
-			<uxap:headerContent>
-				<layout:VerticalLayout>
-					<ObjectStatus title="{/#Demand/Status/@sap:label}" text="{Status} ({StatusDesc})"/>
-					<ObjectStatus title="{/#Demand/Source/@sap:label}" text="{Source}"/>
-				</layout:VerticalLayout>
-			</uxap:headerContent>
-
-			<uxap:sections>
-				<uxap:ObjectPageSection title="{i18n>xtit.general}">
-					<uxap:subSections>
-						<uxap:ObjectPageSubSection>
-							<uxap:blocks>
-								<sections:GeneralBlock id="detailsFormBlock" />
-							</uxap:blocks>
-						</uxap:ObjectPageSubSection>
-					</uxap:subSections>
-				</uxap:ObjectPageSection>
-				
-				<uxap:ObjectPageSection title="{i18n>xtit.dates}">
-					<uxap:subSections>
-						<uxap:ObjectPageSubSection>
-							<uxap:blocks>
-								<sections:DateBlock id="datesBlock" />
-							</uxap:blocks>
-						</uxap:ObjectPageSubSection>
-					</uxap:subSections>
-				</uxap:ObjectPageSection>
-				
-				<uxap:ObjectPageSection title="{i18n>xtit.pmDetails}">
-					<uxap:subSections>
-						<uxap:ObjectPageSubSection>
-							<uxap:blocks>
-								<sections:PMDetailsBlock id="pmDetailBlock" />
-							</uxap:blocks>
-						</uxap:ObjectPageSubSection>
-					</uxap:subSections>
-				</uxap:ObjectPageSection>
-				
-				<uxap:ObjectPageSection title="{i18n>xtit.assignments}">
-					<uxap:subSections>
-						<uxap:ObjectPageSubSection>
-							<uxap:blocks>
-								<sections:AssignmentBlock id="assignMentsBlock" onRowClick="onRowClick"/>
-							</uxap:blocks>
-						</uxap:ObjectPageSubSection>
-					</uxap:subSections>
-				</uxap:ObjectPageSection>
-			</uxap:sections>
-		</uxap:ObjectPageLayout>
-		 <footer>
-            <OverflowToolbar>
-            </OverflowToolbar>
-        </footer>
-	</Page>
+		<uxap:headerContent>
+			<layout:VerticalLayout>
+				<ObjectStatus title="{/#Demand/Status/@sap:label}" text="{Status} ({StatusDesc})"/>
+				<ObjectStatus title="{/#Demand/Source/@sap:label}" text="{Source}"/>
+			</layout:VerticalLayout>
+		</uxap:headerContent>
+		<uxap:sections>
+			<uxap:ObjectPageSection title="{i18n>xtit.general}">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection>
+						<uxap:blocks>
+							<sections:GeneralBlock id="detailsFormBlock"/>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+			<uxap:ObjectPageSection title="{i18n>xtit.dates}">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection>
+						<uxap:blocks>
+							<sections:DateBlock id="datesBlock"/>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+			<uxap:ObjectPageSection title="{i18n>xtit.pmDetails}">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection>
+						<uxap:blocks>
+							<sections:PMDetailsBlock id="pmDetailBlock"/>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+			<uxap:ObjectPageSection title="{i18n>xtit.assignments}">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection>
+						<uxap:blocks>
+							<sections:AssignmentBlock id="assignMentsBlock" onRowClick="onRowClick"/>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+		</uxap:sections>
+		<uxap:footer>
+			<OverflowToolbar></OverflowToolbar>
+		</uxap:footer>
+	</uxap:ObjectPageLayout>
 </mvc:View>
