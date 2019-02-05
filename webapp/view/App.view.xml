@@ -14,7 +14,7 @@
 									<items>
 										<MenuItem text="{i18n>xbut.pageDemands}"/>
 										<MenuItem text="{i18n>xbut.pageAssetManager}"/>
-										<MenuItem text="{i18n>xbut.pageWeeklyPlanner}"/>
+										<!--<MenuItem text="{i18n>xbut.pageWeeklyPlanner}"/>-->
 									</items>
 								</Menu>
 							</menu>
