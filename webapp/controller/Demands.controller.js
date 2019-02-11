@@ -1,5 +1,5 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/BaseController",
+	"com/evorait/evoplan/controller/AssignmentsController",
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
@@ -67,6 +67,7 @@ sap.ui.define([
 		_onObjectMatched: function(oEvent) {
 			var _this = this;
 			_this._jDraggable(_this);
+			this.byId("draggableList").rebindTable();
 		},
 
 		/* =========================================================== */
@@ -136,7 +137,7 @@ sap.ui.define([
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
 
 			if (this._aSelectedRowsIdx.length > 0) {
-				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData);
+				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData,{bFromHome:true});
 			} else {
 				var msg = this.getResourceBundle().getText('ymsg.selectMinItem');
 				MessageToast.show(msg);
@@ -252,7 +253,7 @@ sap.ui.define([
 						jDragElement.draggable("destroy");
 					}
 				} catch (error) {
-					console.warn(error);
+					// console.warn(error);
 				}
 
 				jDragElement.draggable({

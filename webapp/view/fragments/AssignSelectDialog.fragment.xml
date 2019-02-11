@@ -71,8 +71,6 @@
                     <table:Column
                             label="{i18n>xtit.tableWorkload}"
                             name="{i18n>xtit.tableWorkload}"
-                            minScreenWidth="Tablet"
-                            demandPopin="true"
                             width="7rem"
                             hAlign="End"
                             visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
@@ -91,14 +89,11 @@
                     <table:Column
                             label="{i18n>xtit.tableAssignment}"
                             name="{i18n>xtit.tableAssignment}"
-                            minScreenWidth="Tablet"
-                            demandPopin="true"
                             width="4rem"
                             hAlign="End">
                         <table:template>
                             <Text text="{AssignmentCount}"
-                                  visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }"
-                                  wrapper="false" />
+                                  visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }"/>
                         </table:template>
                     </table:Column>
                 </table:columns>

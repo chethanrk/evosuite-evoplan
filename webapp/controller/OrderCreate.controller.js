@@ -1,5 +1,5 @@
 sap.ui.define([
-    "com/evorait/evoplan/controller/BaseController",
+    "com/evorait/evoplan/controller/AssignmentsController",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/routing/History"
 ], function (Controller, JSONModel, History) {

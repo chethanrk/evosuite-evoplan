@@ -1,5 +1,5 @@
 sap.ui.define([
-    "com/evorait/evoplan/controller/BaseController",
+    "com/evorait/evoplan/controller/AssignmentsController",
     "com/evorait/evoplan/model/models",
     "com/evorait/evoplan/model/formatter",
     "sap/ui/model/Filter",
@@ -12,7 +12,6 @@ sap.ui.define([
         formatter: formatter,
 
         init: function () {
-            var eventBus = sap.ui.getCore().getEventBus();
         },
 
         /**
@@ -34,12 +33,12 @@ sap.ui.define([
          * @param oView
          * @param sBindPath
          */
-        open : function (oView, aSelectedPaths) {
-            var oDialog = this.getDialog(),
-                oDraggableTable = oView.byId("draggableList");
+        open : function (oView, aSelectedPaths, mParameters) {
+            var oDialog = this.getDialog();
+            
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
-
+			this._mParameters = mParameters;
             this._oView = oView;
             this._selectedFunction = null;
             this._aSelectedPaths = aSelectedPaths;
@@ -76,7 +75,8 @@ sap.ui.define([
                     if(oData.bChangable) {
                         eventBus.publish("StatusSelectDialog", "changeStatusDemand", {
                             selectedPaths: this._aSelectedPaths,
-                            functionKey: this._selectedFunction
+                            functionKey: this._selectedFunction,
+                            parameters : this._mParameters
                         });
                         this.onCloseDialog();
                         return;
@@ -113,7 +113,7 @@ sap.ui.define([
                 aNonChangable:aNonChangable,
                 bChangable:bChangable,
                 aIndices:aIndices
-            }
+            };
         },
 
         /**

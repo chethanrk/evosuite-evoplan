@@ -1,5 +1,5 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/BaseController",
+	"com/evorait/evoplan/controller/AssignmentsController",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/core/routing/History",
 	"sap/ui/model/json/JSONModel",
@@ -517,7 +517,7 @@ sap.ui.define([
 			var oSelectedPaths = this._getSelectedRowPaths(null, null, null, this._aSelectedDemands);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
-				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData,false,{bFromAsset:true});
 			}
 			if (oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);

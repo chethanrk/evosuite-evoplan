@@ -1,5 +1,5 @@
 sap.ui.define([
-    "com/evorait/evoplan/controller/BaseController",
+    "com/evorait/evoplan/controller/AssignmentsController",
     "com/evorait/evoplan/model/formatter",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
@@ -13,7 +13,7 @@ sap.ui.define([
 
         init: function () {
             var eventBus = sap.ui.getCore().getEventBus();
-            eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this.onModalCancel, this);
+            eventBus.subscribe("AssignInfoDialog", "RefreshCalendar", this._setCalendarModel, this);
         },
         /**
          * init and get dialog view
@@ -43,6 +43,7 @@ sap.ui.define([
             this._component = this._oView.getController().getOwnerComponent();
             this._oResourceBundle = this._component.getModel("i18n").getResourceBundle();
             this._oCalendarModel = this._component.getModel("calendarModel");
+            this._oPlanningCalendar = sap.ui.getCore().byId("planningCalendar");
             oDialog.addStyleClass(this._component.getContentDensityClass());
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
@@ -60,12 +61,13 @@ sap.ui.define([
             var aUsers = [],
                 aResourceFilters = [],
                 aActualFilters = [],
-                oModel = this._oView.getModel(),
+                oModel = this._oView ? this._oView.getModel() : null,
                 // oResourceBundle = this._oResourceBundle,
-                oViewFilterSettings = this._component.filterSettingsDialog,
-                oPlanningCalDialog = this.getDialog();
+                oViewFilterSettings = this._component ? this._component.filterSettingsDialog : null;
 
-
+            if(!oModel){
+                return;
+            }
             if (this.selectedResources.length <= 0) {
                 return;
             }
@@ -104,7 +106,7 @@ sap.ui.define([
                 }
             }
 
-            oPlanningCalDialog.setBusy(true);
+            this._oPlanningCalendar.setBusy(true);
             oModel.read("/AssignmentSet",{
                     groupId: "calendarBatch",
                     filters: aResourceFilters,
@@ -139,7 +141,7 @@ sap.ui.define([
                 resources: this._createData(data)
             });
             this._oCalendarModel.refresh();
-            this._oDialog.setBusy(false);
+            this._oPlanningCalendar.setBusy(false);
         },
 
         /**
@@ -224,9 +226,9 @@ sap.ui.define([
          * @param oEvent
          */
         onModalCancel: function (oEvent) {
-            if(this._oCalendarModel){
-                this._oCalendarModel.setData({});
-            }
+            // if(this._oCalendarModel){
+            //     this._oCalendarModel.setData({});
+            // }
             if(this._oDialog){
                 this._oDialog.close();
             }

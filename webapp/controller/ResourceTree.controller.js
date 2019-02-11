@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
 	"com/evorait/evoplan/model/formatter",
-	"com/evorait/evoplan/controller/BaseController",
+	"com/evorait/evoplan/controller/AssignmentsController",
 	"sap/m/MessageToast",
     "sap/m/MessageBox"
 ], function(Device, JSONModel, Filter, FilterOperator,
@@ -259,29 +259,6 @@ sap.ui.define([
             binding.filter(aFilters, "Application");
         },
 
-        /*_triggerUpdateAssign: function (sChanel, sEvent, oData) {
-            if(sEvent === "updateAssignment"){
-                this.updateAssignment(oData.isReassign);
-            }else if(sEvent === "bulkReAssignment"){
-                if(!this.isAssignable({sPath:oData.sPath})){
-                    return;
-                }
-                if(this.isAvailable(oData.sPath)){
-                    this.bulkReAssignment(oData.sPath, oData.aContexts);
-                }else{
-                    this.showMessageToProceed(null, oData.sPath, true, oData.aContexts);
-                }
-            }
-        },
-
-        _triggerDeleteAssign: function (sChanel, sEvent, oData) {
-            if(sEvent === "deleteAssignment"){
-                this.deleteAssignment(oData.sId);
-            }else if(sEvent === "bulkDeleteAssignment"){
-                this.bulkDeleteAssignment(oData.aContexts);
-            }
-        },*/
-
         /**
          * dropped demands assign and save
          * @param _this
@@ -297,7 +274,7 @@ sap.ui.define([
                         droppedElement.droppable( "destroy" );
                     }
                 }catch(error){
-                    console.warn(error);
+                    jQuery.sap.log.warning(error);                                                       
                 }
 
                 droppedElement.droppable({
@@ -330,9 +307,9 @@ sap.ui.define([
                             aSources = _this.getModel("viewModel").getProperty("/dragSession");
 							// If the Resource is Not/Partially available
                             if(_this.isAvailable(targetPath)){
-                                _this.assignedDemands(aSources, targetPath);
+                                _this.assignedDemands(aSources, targetPath, {bFromHome: true});
                             }else{
-                                _this.showMessageToProceed(aSources, targetPath);
+                                _this.showMessageToProceed(aSources, targetPath, {bFromHome: true});
                             }
 						}
 					}

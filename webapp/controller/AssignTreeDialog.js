@@ -1,5 +1,5 @@
 sap.ui.define([
-    "com/evorait/evoplan/controller/BaseController",
+    "com/evorait/evoplan/controller/AssignmentsController",
     "com/evorait/evoplan/model/models",
     "com/evorait/evoplan/model/formatter",
     "sap/ui/model/Filter",
@@ -37,14 +37,14 @@ sap.ui.define([
          * @param sBindPath
          * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
          */
-        open : function (oView, isReassign, aSelectedPaths, isBulkReAssign) {
+        open : function (oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters) {
             var oDialog = this.getDialog();
 
             this._oView = oView;
             this._reAssign = isReassign;
             this._aSelectedPaths = aSelectedPaths;
             this._bulkReAssign = isBulkReAssign;
-
+			this._mParameters = mParameters;
             this._component = this._oView.getController().getOwnerComponent();
             oDialog.addStyleClass(this._component.getContentDensityClass());
             // connect dialog to view (models, lifecycle)
@@ -99,7 +99,8 @@ sap.ui.define([
                 if(this._bulkReAssign){
                     eventBus.publish("AssignTreeDialog", "bulkReAssignment", {
                         sPath: this._assignPath,
-                        aContexts: this._aSelectedPaths
+                        aContexts: this._aSelectedPaths,
+                        parameters : this._mParameters
                     });
                     this.onCloseDialog();
                     eventBus.publish("AssignTreeDialog", "closeActionDialog", {});
@@ -117,8 +118,10 @@ sap.ui.define([
                 if(this._aSelectedPaths){
                     eventBus.publish("AssignTreeDialog", "assignSelectedDemand", {
                         selectedPaths: this._aSelectedPaths,
-                        assignPath: this._assignPath
+                        assignPath: this._assignPath,
+                        parameters : this._mParameters
                     });
+                    
                     this.onCloseDialog();
                     return;
                 }
@@ -151,9 +154,9 @@ sap.ui.define([
 
         _triggerOpenDialog: function (sChanel, sEvent, oData) {
             if(sChanel === "AssignInfoDialog" && sEvent === "selectAssign"){
-                this.open(oData.oView, oData.isReassign);
+                this.open(oData.oView, oData.isReassign, oData.parameters);
             }else if(sChanel === "AssignActionsDialog" && sEvent === "selectAssign"){
-                this.open(oData.oView, oData.isReassign, oData.aSelectedContexts, oData.isBulkReassign);
+                this.open(oData.oView, oData.isReassign, oData.aSelectedContexts, oData.isBulkReassign, oData.parameters);
             }
         }
 

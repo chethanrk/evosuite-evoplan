@@ -1,6 +1,6 @@
 /*global location*/
 sap.ui.define([
-		"com/evorait/evoplan/controller/BaseController",
+		"com/evorait/evoplan/controller/AssignmentsController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/core/routing/History",
 		"com/evorait/evoplan/model/formatter"
@@ -153,7 +153,7 @@ sap.ui.define([
 				var oModel = oContext.getModel();
 				var sPath = oContext.getPath();
 				var oAssignmentData = oModel.getProperty(sPath);
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAssignmentData);
+				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAssignmentData,{bFromDetail:true});
 			
 			},
 			/**
@@ -170,7 +170,7 @@ sap.ui.define([
 				var oData = oModel.getProperty(sPath);
 				var oSelectedData = [{sPath:sPath,oData:oData}];
 				if(oData.ALLOW_ASSIGN){
-					 this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData);
+					 this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData,false,{bFromDetail:true});
 				}else{
                 	this._showAssignErrorDialog([oData.DemandDesc]);
 				}
@@ -194,7 +194,8 @@ sap.ui.define([
 
                 eventBus.publish("StatusSelectDialog", "changeStatusDemand", {
                     selectedPaths: oSelectedData,
-                    functionKey: sFunctionKey
+                    functionKey: sFunctionKey,
+                    parameters:{bFromDetail:true}
                 });
 
 
