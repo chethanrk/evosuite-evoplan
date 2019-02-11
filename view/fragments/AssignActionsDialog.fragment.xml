@@ -46,7 +46,7 @@
 								</Column>
 						<Column hAlign="Left" visible="{/#Demand/DemandDesc/@sap:visible}">
 							<customData>
-								<core:CustomData key="p13nData" value='\{"columnKey": "Demand/DemandDesc", "leadingProperty": "Demand/DemandDesc"}' />
+								<core:CustomData key="p13nData" value='\{"columnKey": "Demand/DemandDesc", "columnIndex":"9", "leadingProperty": "Demand/DemandDesc"}' />
 							</customData>
 							<Text text="{/#Demand/DemandDesc/@sap:label}"/>
 						</Column>
