@@ -3,7 +3,7 @@
 	<f:DynamicPage id="idResourcePage" headerExpanded="true" preserveHeaderStateOnScroll="true" fitContent="false" showFooter="true"
 		class="sapUiNoContentPadding tableContentPage" toggleHeaderOnTitleClick="false">
 		<f:header>
-			<f:DynamicPageHeader pinnable="true" class="sapUiNoContentPadding">
+			<f:DynamicPageHeader pinnable="true">
 				<f:content>
 					<OverflowToolbar design="Transparent" class="sapUiNoContentPadding">
 						<DateRangeSelection width="30%" id="idDateRange" class="sapUiNoContentPadding" change="onChangeDateRange"/>
