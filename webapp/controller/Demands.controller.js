@@ -67,7 +67,7 @@ sap.ui.define([
 		_onObjectMatched: function(oEvent) {
 			var _this = this;
 			_this._jDraggable(_this);
-			this.byId("draggableList").rebindTable();
+			// this.byId("draggableList").rebindTable();
 		},
 
 		/* =========================================================== */

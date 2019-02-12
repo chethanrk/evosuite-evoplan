@@ -204,10 +204,9 @@ sap.ui.define([
 			if (oParameter.bFromHome) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				eventBus.publish("BaseController", "refreshDemandTable", {});
+				eventBus.publish("BaseController", "refreshDemandOverview", {});
 			} else if (oParameter.bFromAsset) {
 				eventBus.publish("BaseController", "refreshAssetCal", {});
-				eventBus.publish("BaseController", "refreshTreeTable", {});
-				eventBus.publish("BaseController", "refreshDemandTable", {});
 			} else if (oParameter.bFromPlannCal) {
 				eventBus.publish("AssignInfoDialog", "RefreshCalendar", {});
 				eventBus.publish("BaseController", "refreshTreeTable", {});

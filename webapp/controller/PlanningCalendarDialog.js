@@ -35,7 +35,7 @@ sap.ui.define([
          * @param sBindPath
          * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
          */
-        open : function (oView,aSelectedResources) {
+        open : function (oView,aSelectedResources,mParameters) {
             var oDialog = this.getDialog();
 
             this._oView = oView;
@@ -44,6 +44,7 @@ sap.ui.define([
             this._oResourceBundle = this._component.getModel("i18n").getResourceBundle();
             this._oCalendarModel = this._component.getModel("calendarModel");
             this._oPlanningCalendar = sap.ui.getCore().byId("planningCalendar");
+            this._mParameters = mParameters;
             oDialog.addStyleClass(this._component.getContentDensityClass());
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
@@ -177,7 +178,7 @@ sap.ui.define([
             var oModel = oContext.getModel();
             var sPath = oContext.getPath();
             var oAppointmentData = oModel.getProperty(sPath);
-            this._component.assignInfoDialog.open(this._oView, null, oAppointmentData);
+            this._component.assignInfoDialog.open(this._oView, null, oAppointmentData, this._mParameters);
 
         },
         /**

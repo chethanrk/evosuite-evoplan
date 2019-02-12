@@ -15,6 +15,7 @@ sap.ui.define([
 			eventBus.subscribe("AssignTreeDialog", "bulkReAssignment", this._triggerUpdateAssign, this);
 			eventBus.subscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
 			eventBus.subscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
+			this.getRouter().getRoute("demands").attachPatternMatched(this._onObjectMatched, this);
 
 			var oViewModel,
 				fnSetAppNotBusy,
@@ -37,6 +38,11 @@ sap.ui.define([
 			// apply content density mode to root view
 			this._oAppControl = this.byId("approvalApp");
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
+		},
+		_onObjectMatched: function () {
+			var eventBus = sap.ui.getCore().getEventBus();
+			eventBus.publish("BaseController", "refreshTreeTable", {});
+			eventBus.publish("BaseController", "refreshDemandTable", {});
 		},
 		/**
 		 * catch event from dialog for save demand assignment

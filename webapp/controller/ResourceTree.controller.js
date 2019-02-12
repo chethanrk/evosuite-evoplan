@@ -307,9 +307,9 @@ sap.ui.define([
                             aSources = _this.getModel("viewModel").getProperty("/dragSession");
 							// If the Resource is Not/Partially available
                             if(_this.isAvailable(targetPath)){
-                                _this.assignedDemands(aSources, targetPath, {bFromHome: true});
+                                _this.assignedDemands(aSources, targetPath);
                             }else{
-                                _this.showMessageToProceed(aSources, targetPath, {bFromHome: true});
+                                _this.showMessageToProceed(aSources, targetPath);
                             }
 						}
 					}
