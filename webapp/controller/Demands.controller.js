@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem"
-], function(BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, RowSettings, MessageToast,
+], function (BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, RowSettings, MessageToast,
 	RowAction, RowActionItem) {
 	"use strict";
 
@@ -26,7 +26,7 @@ sap.ui.define([
 		 * Called when the demand controller is instantiated.
 		 * @public
 		 */
-		onInit: function() {
+		onInit: function () {
 			this._oDraggableTable = this.byId("draggableList");
 			this._oDataTable = this._oDraggableTable.getTable();
 			this._configureDataTable(this._oDataTable);
@@ -44,7 +44,7 @@ sap.ui.define([
 			var orientationEvent = this.getOrientationEvent(),
 				_this = this;
 
-			window.addEventListener(orientationEvent, function() {
+			window.addEventListener(orientationEvent, function () {
 				_this._jDraggable(_this);
 			}, false);
 		},
@@ -52,7 +52,7 @@ sap.ui.define([
 		 * Register Draggable
 		 * @private
 		 */
-		_registerDnD: function() {
+		_registerDnD: function () {
 			var _this = this;
 			_this._jDraggable(_this);
 		},
@@ -64,7 +64,7 @@ sap.ui.define([
 		 * @param oEvent
 		 * @private
 		 */
-		_onObjectMatched: function(oEvent) {
+		_onObjectMatched: function (oEvent) {
 			var _this = this;
 			_this._jDraggable(_this);
 			// this.byId("draggableList").rebindTable();
@@ -88,7 +88,7 @@ sap.ui.define([
 		 * after rendering of view
 		 * @param oEvent
 		 */
-		onAfterRendering: function(oEvent) {
+		onAfterRendering: function (oEvent) {
 			var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle");
 			var noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]);
 			var viewModel = this.getModel("viewModel");
@@ -101,7 +101,7 @@ sap.ui.define([
 		 * for example after go to next page
 		 * @param oEvent
 		 */
-		onBusyStateChanged: function(oEvent) {
+		onBusyStateChanged: function (oEvent) {
 			var parameters = oEvent.getParameters();
 			if (parameters.busy === false) {
 				this._jDraggable(this);
@@ -113,10 +113,10 @@ sap.ui.define([
 		 * show modal with user for select
 		 * @param oEvent
 		 */
-		onAssignButtonPress: function(oEvent) {
+		onAssignButtonPress: function (oEvent) {
 			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			if(this._aSelectedRowsIdx.length > 100){
-                this._aSelectedRowsIdx.length = 100;
+			if (this._aSelectedRowsIdx.length > 100) {
+				this._aSelectedRowsIdx.length = 100;
 			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 
@@ -132,7 +132,7 @@ sap.ui.define([
 		 * open change status dialog
 		 * @param oEvent
 		 */
-		onChangeStatusButtonPress: function(oEvent) {
+		onChangeStatusButtonPress: function (oEvent) {
 			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
 
@@ -147,7 +147,7 @@ sap.ui.define([
 		 * on click on navigate acion navigate to overview page
 		 * @param oEvent
 		 */
-		onActionPress: function(oEvent) {
+		onActionPress: function (oEvent) {
 			var oRouter = this.getRouter();
 			var oRow = oEvent.getParameter("row");
 			var oContext = oRow.getBindingContext();
@@ -163,13 +163,13 @@ sap.ui.define([
 		 * open's the message popover by it source
 		 * @param oEvent
 		 */
-		onMessagePopoverPress: function(oEvent) {
+		onMessagePopoverPress: function (oEvent) {
 			this._oMessagePopover.openBy(oEvent.getSource());
 		},
 		/**
 		 * Called when view attached is destroyed
 		 */
-		onExit: function() {
+		onExit: function () {
 			if (this._infoDialog) {
 				this._infoDialog.destroy();
 			}
@@ -187,7 +187,7 @@ sap.ui.define([
 		 * @param oDataTable
 		 * @private
 		 */
-		_configureDataTable: function(oDataTable) {
+		_configureDataTable: function (oDataTable) {
 			oDataTable.setEnableBusyIndicator(true);
 			oDataTable.setSelectionMode('MultiToggle');
 			oDataTable.setEnableColumnReordering(false);
@@ -214,7 +214,7 @@ sap.ui.define([
 			oDataTable.setRowActionCount(1);
 
 			//enable/disable buttons on footer when there is some/no selected rows
-			oDataTable.attachRowSelectionChange(function() {
+			oDataTable.attachRowSelectionChange(function () {
 				var selected = this._oDataTable.getSelectedIndices();
 				if (selected.length > 0) {
 					this.byId("assignButton").setEnabled(true);
@@ -230,7 +230,7 @@ sap.ui.define([
 		 * deselect all checkboxes in table
 		 * @private
 		 */
-		_deselectAll: function() {
+		_deselectAll: function () {
 			this._oDataTable.clearSelection();
 		},
 
@@ -240,8 +240,8 @@ sap.ui.define([
 		 * @param elem
 		 * @private
 		 */
-		_jDraggable: function(_this) {
-			setTimeout(function() {
+		_jDraggable: function (_this) {
+			setTimeout(function () {
 				var draggableTableId = _this._oDraggableTable.getId(), // sapUiTableRowHdr
 					aPathsData = [];
 				//checkbox is not inside tr so needs to select by class .sapUiTableRowHdr
@@ -258,11 +258,11 @@ sap.ui.define([
 
 				jDragElement.draggable({
 					revertDuration: 10,
-					stop: function(event, ui) {
+					stop: function (event, ui) {
 						aPathsData = [];
 						_this._deselectAll();
 					},
-					helper: function(event, ui) {
+					helper: function (event, ui) {
 						var target = $(event.currentTarget);
 						//single drag by checkbox, checkbox is not inside tr so have to find out row index
 						var targetCheckboxIdx = target.data("sapUiRowindex"),
@@ -271,8 +271,8 @@ sap.ui.define([
 
 						/* As the table will be loaded with only 100 items initially.
                          Maximum 100 item are selected at a time.*/
-						if(selectedIdx.length > 100){
-                            selectedIdx.length = 100;
+						if (selectedIdx.length > 100) {
+							selectedIdx.length = 100;
 						}
 						//get all selected rows when checkboxes in table selected
 						if (selectedIdx.length > 0) {
@@ -284,7 +284,7 @@ sap.ui.define([
 							aPathsData = oSelectedPaths.aPathsData;
 						}
 						// keeping the data in drag session
-						_this.getModel("viewModel").setProperty("/dragSession",aPathsData);
+						_this.getModel("viewModel").setProperty("/dragSession", aPathsData);
 						if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
 							_this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 						}
@@ -310,7 +310,7 @@ sap.ui.define([
 		 * @returns {*}
 		 * @private
 		 */
-		_getDraggedElementIndex: function(targetId) {
+		_getDraggedElementIndex: function (targetId) {
 			var draggedElement = sap.ui.getCore().byId(targetId);
 			return draggedElement.getIndex();
 		},
@@ -321,7 +321,7 @@ sap.ui.define([
 		 * @returns {jQuery|HTMLElement}
 		 * @private
 		 */
-		_generateDragHelperHTML: function(aPathsData, aNonAssignable) {
+		_generateDragHelperHTML: function (aPathsData, aNonAssignable) {
 			var $Element = $("#dragHelper"),
 				helperTemplate;
 			if ($Element.length > 0) {
@@ -337,14 +337,14 @@ sap.ui.define([
 				var item = $('<li id="' + aPathsData[i].sPath + '" class="ui-draggable-dragging-item"></li>');
 				var text = aPathsData[i].oData.DemandDesc;
 				item.html(text);
-				if(i === 2){
-                     item = $('<li id="' + aPathsData[i].sPath + '" class="ui-draggable-dragging-item"></li>');
-                     text = aPathsData.length +" items ...";
-                    item.html(text);
-                    helperTemplate.append(item);
-                    break;
+				if (i === 2) {
+					item = $('<li id="' + aPathsData[i].sPath + '" class="ui-draggable-dragging-item"></li>');
+					text = aPathsData.length + " items ...";
+					item.html(text);
+					helperTemplate.append(item);
+					break;
 				}
-                helperTemplate.append(item);
+				helperTemplate.append(item);
 
 			}
 			return helperTemplate;
@@ -357,40 +357,10 @@ sap.ui.define([
 		 * @returns
 		 * @private
 		 */
-		_triggerDemandFilter: function(sChanel, sEvent, oData) {
+		_triggerDemandFilter: function (sChanel, sEvent, oData) {
 			if (sEvent === "refreshDemandTable") {
 				this.byId("draggableList").rebindTable();
 			}
 		},
-		/**
-		 * Initialize and open the Information dialog with necessary details
-		 * @Author Rahul
-		 * @param oEvent Button press event
-		 */
-		onIconPress: function(oEvent) {
-			// create popover
-			if (!this._infoDialog) {
-				this._infoDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.InformationPopover", this);
-				this.getView().addDependent(this._infoDialog);
-			}
-			this._infoDialog.open();
-		},
-		/**
-		 * Closes the information dialog
-		 * @Author Rahul
-		 */
-		onCloseDialog: function() {
-			this._infoDialog.close();
-		},
-		/**
-		 * Opens the asset planning view
-		 * @Author Rahul
-		 */
-		actionSelected: function(oEvent) {
-			var oRouter = this.getRouter();
-			oRouter.navTo("assetManager", {
-				assets:"NA"
-			});
-		}
 	});
 });

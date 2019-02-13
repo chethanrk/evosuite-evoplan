@@ -1,24 +1,33 @@
-<mvc:View
-	controllerName="com.evorait.evoplan.controller.App"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:layout="sap.ui.layout"
-	xmlns="sap.m"
-	displayBlock="true"
-	busy="{appView>/busy}"
-	busyIndicatorDelay="{appView>/delay}">
-	<App id="app"
-		 busy="{appView>/busy}"
-		 busyIndicatorDelay="{appView>/delay}" >
-
-		<layout:Splitter resize="onResize">
-			<NavContainer id="leftPanel" class="panelPage" >
-				<layoutData>
-					<layout:SplitterLayoutData size="30%" />
-				</layoutData>
-			</NavContainer>
-
-			<NavContainer id="rightPanel" class="panelPage"/>
-		</layout:Splitter>
+<mvc:View controllerName="com.evorait.evoplan.controller.App" xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns="sap.m"
+	displayBlock="true" busy="{appView>/busy}" busyIndicatorDelay="{appView>/delay}">
+	<App id="idAppControl" busy="{appView>/busy}" busyIndicatorDelay="{appView>/delay}">
+		<Page>
+			<customHeader>
+				<Bar>
+					<contentLeft>
+						<Image src="{path: '', formatter: '.formatter.getLogoImageLink' }" densityAware="false" height="100%" alt="EvoPlan" id="imageLogo"/>
+					</contentLeft>
+					<contentMiddle>
+						<MenuButton text="{appView>/pageTitle}">
+							<menu>
+								<Menu itemSelected="onSelectMenuButton">
+									<items>
+										<MenuItem text="{i18n>xbut.pageDemands}"/>
+										<MenuItem text="{i18n>xbut.pageAssetManager}"/>
+										<!--<MenuItem text="{i18n>xbut.pageWeeklyPlanner}"/>-->
+									</items>
+								</Menu>
+							</menu>
+						</MenuButton>
+					</contentMiddle>
+					<contentRight>
+						<Button icon="sap-icon://sys-help" tooltip="{i18n>xtit.infoDialogTitle}" press="onIconPress"/>
+					</contentRight>
+				</Bar>
+			</customHeader>
+			<content>
+				<NavContainer id="appPanel" class="panelPage"/>
+			</content>
+		</Page>
 	</App>
 </mvc:View>
-

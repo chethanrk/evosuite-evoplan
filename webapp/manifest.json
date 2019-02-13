@@ -141,7 +141,10 @@
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
 				"viewPath": "com.evorait.evoplan.view",
-				"controlId": "app",
+				"controlAggregation": "pages",
+				"controlId": "idAppControl",
+				"clearControlAggregation": false,
+				"viewLevel": 1,
 				"bypassed": {
 					"target": [
 						"resourceTree",
@@ -193,53 +196,90 @@
 				}
 			],
 			"targets": {
+				"targetApp": {
+					"viewType": "XML",
+					"transition": "slide",
+					"clearControlAggregation": true,
+					"viewName": "App",
+					"viewLevel": 1
+				},
+				"splitNavigation": {
+					"viewType": "XML",
+					"viewName": "layouts.Split2ViewsNavi",
+					"viewLevel": 2,
+					"clearControlAggregation": true,
+					"controlId": "appPanel",
+					"parent": "targetApp"
+				},
+				"fullNavigation": {
+					"viewType": "XML",
+					"viewName": "layouts.FullViewNavi",
+					"viewLevel": 2,
+					"clearControlAggregation": true,
+					"controlId": "appPanel",
+					"parent": "targetApp"
+				},
 				"resourceTree": {
+					"viewType": "XML",
 					"viewName": "ResourceTree",
-					"viewLevel": 1,
+					"viewLevel": 3,
 					"controlId": "leftPanel",
-					"controlAggregation": "pages"
+					"parent": "splitNavigation"
 				},
 				"demands": {
+					"viewType": "XML",
 					"viewName": "Demands",
-					"viewLevel": 2,
-					"controlId": "rightPanel",
-					"controlAggregation": "pages"
-				},
-				"detail": {
-					"viewName": "Detail",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"controlAggregation": "pages"
+					"parent": "splitNavigation"
+				},
+				"detail": {
+					"viewType": "XML",
+					"viewName": "Detail",
+					"viewLevel": 4,
+					"controlId": "rightPanel",
+					"parent": "splitNavigation"
 				},
 				"assets": {
 					"viewName": "Assets",
-					"viewLevel": 4,
+					"viewLevel": 3,
 					"controlId": "leftPanel",
-					"controlAggregation": "pages"
+					"parent": "splitNavigation"
 				},
 				"assetsOrders": {
+					"viewType": "XML",
 					"viewName": "AssetsOrders",
-					"viewLevel": 5,
+					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"controlAggregation": "pages"
+					"parent": "splitNavigation"
 				},
 				"orderCreate": {
+					"viewType": "XML",
 					"viewName": "OrderCreate",
-					"viewLevel": 6,
+					"viewLevel": 4,
 					"controlId": "rightPanel",
-					"controlAggregation": "pages"
+					"parent": "splitNavigation"
 				},
 				"empty": {
+					"viewType": "XML",
 					"viewName": "EmptyPage",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"controlAggregation": "pages"
+					"parent": "splitNavigation"
 				},
 				"notFound": {
+					"viewType": "XML",
 					"viewName": "NotFound",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"controlAggregation": "pages"
+					"parent": "splitNavigation"
+				},
+				"weeklyPlanner": {
+					"viewType": "XML",
+					"viewName": "WeeklyPlanner",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 3
 				}
 			}
 		}

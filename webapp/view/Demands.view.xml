@@ -1,118 +1,62 @@
-<mvc:View
-        xmlns="sap.m"
-        xmlns:mvc="sap.ui.core.mvc"
-        xmlns:core="sap.ui.core"
-        xmlns:f="sap.f"
-        xmlns:smartTable="sap.ui.comp.smarttable"
-        xmlns:semantic="sap.m.semantic"
-        xmlns:table="sap.ui.table"
-        controllerName="com.evorait.evoplan.controller.Demands"
-        displayBlock="true"
-        height="100%">
-
-    <Page id="listPage"
-          title="{i18n>xtit.itemListTitle}"
-          showFooter="true"
-          showHeader="true"
-          class="sapUiNoContentPadding tableContentPage">
-
-        <headerContent>
-        	<Button text="{i18n>xbut.assetsPlanning}" tooltip="{i18n>xbut.assetsPlanning}" visible="{user>/ASSET_PLANNING_ENABLED}" press="actionSelected" />
-            <Button icon="sap-icon://sys-help" tooltip="{i18n>xtit.infoDialogTitle}" press="onIconPress" />
-        </headerContent>
-
-        <f:DynamicPage headerExpanded="true"
-                       preserveHeaderStateOnScroll="true"
-                       fitContent="true"
-                       showFooter="false"
-                       toggleHeaderOnTitleClick="false">
-
-            <f:header>
-                <f:DynamicPageHeader pinnable="true">
-                    <f:content>
-                        <core:Fragment fragmentName="com.evorait.evoplan.view.fragments.SmartFilter" type="XML"/>
-                    </f:content>
-                </f:DynamicPageHeader>
-            </f:header>
-
-            <f:content>
-                <smartTable:SmartTable
-                        id="draggableList"
-                        height="100%"
-                        width="100%"
-                        direction="Column"
-                        fitContainer="true"
-                        enableAutoBinding="true"
-                        entitySet="{viewModel>/subTableSet}"
-                        smartFilterId="listReportFilter"
-                        showRowCount="true"
-                        header="{i18n>xtit.itemListTitle}"
-                        useExportToExcel="true"
-                        useVariantManagement="true"
-                        persistencyKey="{viewModel>/persistencyKeyDemandTable}"
-                        useTablePersonalisation="true"
-                        requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY">
-                    <!-- layout data used to make the table growing but the filter bar fixed -->
-                    <smartTable:layoutData>
-                        <FlexItemData growFactor="1" />
-                    </smartTable:layoutData>
-                    <table:Table enableGrouping="true" groupBy="OrderId">
-                    	<table:rowSettingsTemplate>
-							<table:RowSettings highlight="{
-							        path:'CRITICALITY',
-							        formatter:'.formatter.formatCriticality'
-							        }"/>
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:f="sap.f" xmlns:smartTable="sap.ui.comp.smarttable"
+	xmlns:semantic="sap.m.semantic" xmlns:table="sap.ui.table" controllerName="com.evorait.evoplan.controller.Demands" displayBlock="true"
+	height="100%">
+	<Page id="listPage" title="{i18n>xtit.itemListTitle}" showFooter="false" showHeader="false">
+		<f:DynamicPage headerExpanded="true" preserveHeaderStateOnScroll="true" showFooter="true" toggleHeaderOnTitleClick="false"
+			class="sapUiNoContentPadding tableContentPage">
+			<f:header>
+				<f:DynamicPageHeader pinnable="true">
+					<f:content>
+						<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.SmartFilter" type="XML"/>
+					</f:content>
+				</f:DynamicPageHeader>
+			</f:header>
+			<f:content>
+				<smartTable:SmartTable id="draggableList" height="100%" width="100%" direction="Column" fitContainer="true" enableAutoBinding="true"
+					entitySet="{viewModel>/subTableSet}" smartFilterId="listReportFilter" showRowCount="true" header="{i18n>xtit.itemListTitle}"
+					useExportToExcel="true" useVariantManagement="true" persistencyKey="{viewModel>/persistencyKeyDemandTable}" useTablePersonalisation="true"
+					requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY">
+					<!-- layout data used to make the table growing but the filter bar fixed -->
+					<smartTable:layoutData>
+						<FlexItemData growFactor="1"/>
+					</smartTable:layoutData>
+					<table:Table enableGrouping="true" groupBy="OrderId">
+						<table:rowSettingsTemplate>
+							<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
 						</table:rowSettingsTemplate>
-                    	<table:columns>
-                    		<table:Column hAlign="Center" width="3rem" visible="{/#Demand/STATUS_ICON/@sap:visible}">
-                    			<table:customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "STATUS_ICON", "leadingProperty": "STATUS_ICON"}' />
+						<table:columns>
+							<table:Column hAlign="Center" width="3rem" visible="{/#Demand/STATUS_ICON/@sap:visible}">
+								<table:customData>
+									<core:CustomData key="p13nData" value='\{"columnKey": "STATUS_ICON", "leadingProperty": "STATUS_ICON"}'/>
 								</table:customData>
-								<Label text="{/#Demand/STATUS_ICON/@sap:label}" />
+								<Label text="{/#Demand/STATUS_ICON/@sap:label}"/>
 								<table:template>
-									<core:Icon src="{STATUS_ICON}"
-                                               color="{
-							                        path:'CRITICALITY',
-							                        formatter:'.formatter.formatStatusIconColor'
-							                   }"
-                                               tooltip="{StatusDesc}">
-									</core:Icon>
+									<core:Icon src="{STATUS_ICON}" color="{ path:'CRITICALITY', formatter:'.formatter.formatStatusIconColor' }" tooltip="{StatusDesc}"></core:Icon>
 								</table:template>
 							</table:Column>
-                    	</table:columns>
-                    </table:Table>
-                </smartTable:SmartTable>
-            </f:content>
-
-        </f:DynamicPage>
-
-        <footer>
-            <OverflowToolbar>
-                <Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}" type="Emphasized" press="onMessagePopoverPress"/>
-                <ToolbarSpacer/>
-                <Button id="changeStatusButton"
-                        text="{i18n>xbut.changeStatus}"
-                        tooltip="{i18n>xbut.changeStatus}"
-                        icon="sap-icon://flag"
-                        press="onChangeStatusButtonPress"
-                        enabled="false"
-                        visible="{viewModel>/showStatusChangeButton}">
-                    <layoutData>
-                        <ToolbarLayoutData shrinkable="true" />
-                    </layoutData>
-                </Button>
-                <Button id="assignButton"
-                        text="{i18n>xbut.assign}"
-                        tooltip="{i18n>xbut.assign}"
-                        icon="sap-icon://activity-individual"
-                        press="onAssignButtonPress"
-                        enabled="false">
-                    <layoutData>
-                        <ToolbarLayoutData shrinkable="true" />
-                    </layoutData>
-                </Button>
-            </OverflowToolbar>
-        </footer>
-
-    </Page>
+						</table:columns>
+					</table:Table>
+				</smartTable:SmartTable>
+			</f:content>
+			<f:footer>
+				<OverflowToolbar>
+					<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
+						type="Emphasized" press="onMessagePopoverPress"/>
+					<ToolbarSpacer/>
+					<Button id="changeStatusButton" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}" icon="sap-icon://flag"
+						press="onChangeStatusButtonPress" enabled="false" visible="{viewModel>/showStatusChangeButton}">
+						<layoutData>
+							<ToolbarLayoutData shrinkable="true"/>
+						</layoutData>
+					</Button>
+					<Button id="assignButton" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" icon="sap-icon://activity-individual"
+						press="onAssignButtonPress" enabled="false">
+						<layoutData>
+							<ToolbarLayoutData shrinkable="true"/>
+						</layoutData>
+					</Button>
+				</OverflowToolbar>
+			</f:footer>
+		</f:DynamicPage>
+	</Page>
 </mvc:View>

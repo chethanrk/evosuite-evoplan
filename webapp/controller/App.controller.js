@@ -1,10 +1,11 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/AssignmentsController",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
 ], function (BaseController, JSONModel) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.App", {
+
 
 		onInit: function () {
 			var eventBus = sap.ui.getCore().getEventBus();
@@ -15,11 +16,11 @@ sap.ui.define([
 			eventBus.subscribe("AssignTreeDialog", "bulkReAssignment", this._triggerUpdateAssign, this);
 			eventBus.subscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
 			eventBus.subscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
-			this.getRouter().getRoute("demands").attachPatternMatched(this._onObjectMatched, this);
 
 			var oViewModel,
 				fnSetAppNotBusy,
-				iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
+				iOriginalBusyDelay = this.getView().getBusyIndicatorDelay(),
+				oRouter = this.getOwnerComponent().getRouter();
 
 			oViewModel = new JSONModel({
 				busy: true,
@@ -38,12 +39,88 @@ sap.ui.define([
 			// apply content density mode to root view
 			this._oAppControl = this.byId("approvalApp");
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
+
+			//set init page title
+			oRouter.attachRouteMatched(this._onRouteMatched, this);
 		},
-		_onObjectMatched: function () {
-			var eventBus = sap.ui.getCore().getEventBus();
-			eventBus.publish("BaseController", "refreshTreeTable", {});
-			eventBus.publish("BaseController", "refreshDemandTable", {});
+
+		/**
+		 * on select menu item navigate to the page and change header title
+		 * @param oEvent Button press event
+		 */
+		onSelectMenuButton: function (oEvent) {
+			var oItem = oEvent.getParameter("item"),
+				sItemText = oItem.getText(),
+				oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				oRouter = this.getOwnerComponent().getRouter(),
+				oAppViewModel = this.getOwnerComponent().getModel("appView");
+
+			oAppViewModel.setProperty("/pageTitle", sItemText);
+			oAppViewModel.setProperty("/busy", true);
+
+			switch (sItemText) {
+			case oResourceBundle.getText("xbut.pageDemands"):
+				oRouter.navTo("demands", {});
+				break;
+			case oResourceBundle.getText("xbut.pageAssetManager"):
+				oRouter.navTo("assetManager", {
+					assets: "NA"
+				});
+				break;
+			case oResourceBundle.getText("xbut.pageWeeklyPlanner"):
+				//oRouter.navTo("TestFull", {});
+				break;
+			default:
+				oRouter.navTo("demands", {});
+				oAppViewModel.setProperty("/pageTitle", oResourceBundle.getText("xbut.pageDemands"));
+				oAppViewModel.setProperty("/busy", false);
+				break;
+			}
 		},
+
+		/**
+		 * Initialize and open the Information dialog with necessary details
+		 * @Author Rahul
+		 * @param oEvent Button press event
+		 */
+		onIconPress: function (oEvent) {
+			// create popover
+			if (!this._infoDialog) {
+				this._infoDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.InformationPopover", this);
+				this.getView().addDependent(this._infoDialog);
+			}
+			this._infoDialog.open();
+		},
+
+		/**
+		 * Closes the information dialog
+		 * @Author Rahul
+		 */
+		onCloseDialog: function () {
+			this._infoDialog.close();
+		},
+
+		/**
+		 * on route change hide busy loader
+		 * set on first load the age title
+		 * @param sEvent
+		 */
+		_onRouteMatched: function (oEvent) {
+			var oAppViewModel = this.getOwnerComponent().getModel("appView"),
+				oParams = oEvent.getParameters();
+
+			if (!this.hasLoaded) {
+				this.hasLoaded = true;
+				var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+					pageTitle = oResourceBundle.getText("xbut.pageDemands");
+				if (oParams.config.pattern.indexOf("AssetPlanning") >= 0) {
+					pageTitle = oResourceBundle.getText("xbut.pageAssetManager");
+				}
+				oAppViewModel.setProperty("/pageTitle", pageTitle);
+			}
+			oAppViewModel.setProperty("/busy", false);
+		},
+
 		/**
 		 * catch event from dialog for save demand assignment
 		 * @param sChanel
@@ -59,9 +136,9 @@ sap.ui.define([
 					return;
 				}
 				if (this.isAvailable(oData.assignPath)) {
-					this.assignedDemands(oData.selectedPaths, oData.assignPath, oData.parameters);
+					this.assignedDemands(oData.selectedPaths, oData.assignPath);
 				} else {
-					this.showMessageToProceed(oData.selectedPaths, oData.assignPath, false, false, false, null, oData.parameters);
+					this.showMessageToProceed(oData.selectedPaths, oData.assignPath);
 				}
 			}
 		},
@@ -76,7 +153,7 @@ sap.ui.define([
 		 */
 		_triggerSaveDemandStatus: function (sChanel, sEvent, oData) {
 			if (sEvent === "changeStatusDemand") {
-				this.updateFunctionDemand(oData.selectedPaths, oData.functionKey, oData.parameters);
+				this.updateFunctionDemand(oData.selectedPaths, oData.functionKey);
 			}
 		},
 		/**
@@ -97,7 +174,7 @@ sap.ui.define([
 		 */
 		_triggerUpdateAssign: function (sChanel, sEvent, oData) {
 			if (sEvent === "updateAssignment") {
-				this.updateAssignment(oData.isReassign, oData.parameters);
+				this.updateAssignment(oData.isReassign);
 			} else if (sEvent === "bulkReAssignment") {
 				if (!this.isAssignable({
 						sPath: oData.sPath
@@ -105,9 +182,9 @@ sap.ui.define([
 					return;
 				}
 				if (this.isAvailable(oData.sPath)) {
-					this.bulkReAssignment(oData.sPath, oData.aContexts, oData.parameters);
+					this.bulkReAssignment(oData.sPath, oData.aContexts);
 				} else {
-					this.showMessageToProceed(null, oData.sPath, true, oData.aContexts, oData.parameters);
+					this.showMessageToProceed(null, oData.sPath, true, oData.aContexts);
 				}
 			}
 		},
@@ -121,9 +198,9 @@ sap.ui.define([
 		 */
 		_triggerDeleteAssign: function (sChanel, sEvent, oData) {
 			if (sEvent === "deleteAssignment") {
-				this.deleteAssignment(oData.sId, oData.parameters);
+				this.deleteAssignment(oData.sId);
 			} else if (sEvent === "bulkDeleteAssignment") {
-				this.bulkDeleteAssignment(oData.aContexts, oData.parameters);
+				this.bulkDeleteAssignment(oData.aContexts);
 			}
 		}
 
