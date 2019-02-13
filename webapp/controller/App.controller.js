@@ -1,11 +1,13 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/AssignmentsController",
 	"sap/ui/model/json/JSONModel",
-], function (BaseController, JSONModel) {
+	"com/evorait/evoplan/model/formatter"
+], function (BaseController, JSONModel, formatter) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.App", {
 
+		formatter: formatter,
 
 		onInit: function () {
 			var eventBus = sap.ui.getCore().getEventBus();
@@ -41,7 +43,8 @@ sap.ui.define([
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
 
 			//set init page title
-			oRouter.attachRouteMatched(this._onRouteMatched, this);
+			oRouter.attachRouteMatched(this._onAllRouteMatched, this);
+			this.getRouter().getRoute("demands").attachPatternMatched(this._onObjectMatched, this);
 		},
 
 		/**
@@ -53,8 +56,12 @@ sap.ui.define([
 				sItemText = oItem.getText(),
 				oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
 				oRouter = this.getOwnerComponent().getRouter(),
-				oAppViewModel = this.getOwnerComponent().getModel("appView");
+				oAppViewModel = this.getOwnerComponent().getModel("appView"),
+				sCurrentTitle = oAppViewModel.getProperty("/pageTitle");
 
+			if (sCurrentTitle === sItemText) {
+				return;
+			}
 			oAppViewModel.setProperty("/pageTitle", sItemText);
 			oAppViewModel.setProperty("/busy", true);
 
@@ -105,19 +112,17 @@ sap.ui.define([
 		 * set on first load the age title
 		 * @param sEvent
 		 */
-		_onRouteMatched: function (oEvent) {
+		_onAllRouteMatched: function (oEvent) {
 			var oAppViewModel = this.getOwnerComponent().getModel("appView"),
 				oParams = oEvent.getParameters();
 
-			if (!this.hasLoaded) {
-				this.hasLoaded = true;
-				var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
-					pageTitle = oResourceBundle.getText("xbut.pageDemands");
-				if (oParams.config.pattern.indexOf("AssetPlanning") >= 0) {
-					pageTitle = oResourceBundle.getText("xbut.pageAssetManager");
-				}
-				oAppViewModel.setProperty("/pageTitle", pageTitle);
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				pageTitle = oResourceBundle.getText("xbut.pageDemands");
+				
+			if (oParams.config.pattern.indexOf("AssetPlanning") >= 0) {
+				pageTitle = oResourceBundle.getText("xbut.pageAssetManager");
 			}
+			oAppViewModel.setProperty("/pageTitle", pageTitle);
 			oAppViewModel.setProperty("/busy", false);
 		},
 
@@ -142,7 +147,15 @@ sap.ui.define([
 				}
 			}
 		},
-
+		/** 
+		 * Refresh's the resource tree and demand table
+		 * @constructor 
+		 */
+		_onObjectMatched: function () {
+			var eventBus = sap.ui.getCore().getEventBus();
+			eventBus.publish("BaseController", "refreshTreeTable", {});
+			eventBus.publish("BaseController", "refreshDemandTable", {});
+		},
 		/**
 		 * catch event from dialog for saving demand status change
 		 *

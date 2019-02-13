@@ -3,10 +3,7 @@ sap.ui.define([
 		"sap/m/MessageBox"
 ], function (BaseController,MessageBox) {
 	return BaseController.extend("com.evorait.evoplan.controller.AssignmentsController", {
-		
-		init: function(){
-			
-		},
+	
 		/**
 		 * save assignment after drop
 		 * 

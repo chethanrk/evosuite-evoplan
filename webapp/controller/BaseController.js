@@ -145,7 +145,6 @@ sap.ui.define([
 			}
 
 			MessageBox.error(sMessage, {
-				id: "errorMessageBox",
 				styleClass: this.getOwnerComponent().getContentDensityClass(),
 				actions: [MessageBox.Action.CLOSE],
 				onClose: fnClose
