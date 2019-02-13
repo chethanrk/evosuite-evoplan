@@ -1,0 +1,47 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+	<smartFilterBar:SmartFilterBar id="resourceTreeFilterBar" class="treeTableFilterBar" persistencyKey="{viewModel>/persistencyKeyTree}"
+		considerSelectionVariants="true" entitySet="{viewModel>/treeSet}" enableBasicSearch="false" useDateRangeType="true" liveMode="true"
+		showGoOnFB="false" showRestoreButton="false">
+		<smartFilterBar:controlConfiguration>
+			<smartFilterBar:ControlConfiguration key="NodeType" label="{i18n>xtit.filterTitleView}" visibleInAdvancedArea="false" mandatory="mandatory"
+				width="100%" groupId="_BASIC" index="0">
+				<smartFilterBar:customControl>
+					<Select width="100%" customData:hasValue="true" selectedKey="TIMENONE">
+						<core:Item text="{i18n>xfld.viewFilterDaily}" key="TIMEDAY"/>
+						<core:Item text="{i18n>xfld.viewFilterWeek}" key="TIMEWEEK"/>
+						<core:Item text="{i18n>xfld.viewFilterMonth}" key="TIMEMONTH"/>
+						<core:Item text="{i18n>xfld.viewFilterNone}" key="TIMENONE"/>
+					</Select>
+				</smartFilterBar:customControl>
+			</smartFilterBar:ControlConfiguration>
+			<smartFilterBar:ControlConfiguration key="resourceGroupToken" label="{i18n>xtit.filterTitleGroup}" visibleInAdvancedArea="false"
+				width="100%" groupId="_BASIC" index="2">
+				<smartFilterBar:customControl>
+					<MultiInput width="100%" tokenUpdate="onUpdateGroupFilter" showValueHelp="true" startSuggestion="0" showSuggestion="true"
+						filterSuggests="true" valueHelpRequest="onGroupFilterValueHelpRequest" liveChange="onGroupFilterValueChange" enableMultiLineMode="true"
+						suggestionItems="{ path: '/ResourceSet', sorter: { path: 'ObjectId' }, filters : [ { path : 'ObjectType', operator : 'EQ', value1 : 'RES_GROUP'} ], templateShareable: true }">
+						<core:Item key="{GroupDescription}" text="{GroupDescription}"/>
+					</MultiInput>
+				</smartFilterBar:customControl>
+			</smartFilterBar:ControlConfiguration>
+			<smartFilterBar:ControlConfiguration key="StartDate" controlType="date" visibleInAdvancedArea="false" filterType="single"/>
+			<smartFilterBar:ControlConfiguration key="EndDate" controlType="date" visibleInAdvancedArea="false" filterType="single"/>
+			<smartFilterBar:ControlConfiguration key="resourceDateRange" label="{i18n>xtit.dateRange}" visibleInAdvancedArea="false" width="100%"
+				groupId="_BASIC" index="1">
+				<smartFilterBar:customControl>
+					<DateRangeSelection change="handleChange"/>
+				</smartFilterBar:customControl>
+			</smartFilterBar:ControlConfiguration>
+			<smartFilterBar:ControlConfiguration key="basicSearch" label="{i18n>xtit.search}" visibleInAdvancedArea="true" width="100%" groupId="_BASIC">
+				<smartFilterBar:customControl>
+					<SearchField showRefreshButton="{= !${device>/support/touch} }" width="100%"/>
+				</smartFilterBar:customControl>
+			</smartFilterBar:ControlConfiguration>
+		</smartFilterBar:controlConfiguration>
+		<!-- layout data used to make the table growing but the filter bar fixed -->
+		<smartFilterBar:layoutData>
+			<FlexItemData shrinkFactor="0"/>
+		</smartFilterBar:layoutData>
+	</smartFilterBar:SmartFilterBar>
+</core:FragmentDefinition>
