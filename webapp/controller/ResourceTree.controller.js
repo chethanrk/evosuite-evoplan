@@ -179,7 +179,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onPressShowPlanningCal: function(oEvent) {
-			this.getOwnerComponent().planningCalendarDialog.open(this.getView(),this.selectedResources); // As we are opening the dialog when set model data
+			this.getOwnerComponent().planningCalendarDialog.open(this.getView(),this.selectedResources,{bFromPlannCal:true}); // As we are opening the dialog when set model data
 		},
 
 
@@ -325,21 +325,24 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree:function(){
-			var oContext = this.byId("droppableTable").getAggregation("rows")[0].getBindingContext(),
+			var oTable = this.byId("droppableTable"),
+				aRows = oTable ? oTable.getAggregation("rows") : null,
+				oContext = aRows ? aRows[0].getBindingContext() : null,
                 oModel,
                 sPath;
 				
 				this.resetChanges();
-				
+				if(oTable && aRows && oContext){
 			    if(oContext){
                     oModel = oContext.getModel();
                     sPath = oContext.getPath();
 
                     oModel.setProperty(sPath+"/IsSelected",true); // changing the property in order trigger submit change
-                    this.byId("droppableTable").getBinding("rows").submitChanges();// submit change will refresh of tree according maintained parameters
+                    oTable.getBinding("rows").submitChanges();// submit change will refresh of tree according maintained parameters
                 }else{
                     this._triggerFilterSearch();
                 }
+				}
 			
 		},
 		/**

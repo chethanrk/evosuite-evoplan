@@ -87,7 +87,8 @@ sap.ui.define([
                 busy : true,
 				delay : 0,
 				assetStartDate:new Date(),
-                dragSession:null     // Drag session added as we are keeping dragged data in the model.
+                dragSession:null, // Drag session added as we are keeping dragged data in the model.
+                detailPageBreadCrum:""
             });
             this.setModel(oViewModel, "viewModel");
             

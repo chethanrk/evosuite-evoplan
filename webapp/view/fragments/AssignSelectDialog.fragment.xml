@@ -75,7 +75,7 @@
                             hAlign="End"
                             visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
                         <table:template>
-                            <ProgressIndicator
+                           <!-- <ProgressIndicator
                                     percentValue="{Utilization}"
                                     displayValue="{Utilization}%"
                                     showValue="true"
@@ -83,7 +83,12 @@
                                     visible="{
                                               path: 'NodeType',
                                               formatter: '.formatter.isMainResource'
-                                        }"/>
+                                        }"/>-->
+                                        
+                                <Text 
+                                	text="{Utilization}H" 
+                                	visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }" 
+                                	wrapping="false"/>
                         </table:template>
                     </table:Column>
                     <table:Column

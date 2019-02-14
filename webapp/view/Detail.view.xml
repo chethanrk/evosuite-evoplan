@@ -3,7 +3,7 @@
 	<uxap:ObjectPageLayout id="ObjectPageLayout" class="sapUiNoContentPadding" enableLazyLoading="false" busy="{viewModel>/busy}"
 		busyIndicatorDelay="{viewModel>/delay}" isChildPage="true" showFooter="true">
 		<uxap:headerTitle>
-			<uxap:ObjectPageHeader objectImageURI="{STATUS_ICON}" objectImageShape="Circle" objectTitle="{DemandDesc}" objectSubtitle="{ExtKey}"
+			<uxap:ObjectPageHeader class="sapUiNoContentPadding" objectImageURI="{STATUS_ICON}" objectImageShape="Circle" objectTitle="{DemandDesc}" objectSubtitle="{ExtKey}"
 				objectImageAlt="{i18n>xfld.demandName}" id="ObjectPageLayoutHeaderTitle">
 				<uxap:actions>
 					<uxap:ObjectPageHeaderActionButton text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" type="Emphasized" hideIcon="false"
@@ -15,7 +15,7 @@
 				</uxap:actions>
 				<uxap:breadcrumbs>
 					<Breadcrumbs currentLocationText="{i18n>xtit.demandDetail}">
-						<Link text="{i18n>xtit.itemListTitle}" press="navBack"/>
+						<Link text="{viewModel>/detailPageBreadCrum}" press="navBack"/>
 					</Breadcrumbs>
 				</uxap:breadcrumbs>
 			</uxap:ObjectPageHeader>

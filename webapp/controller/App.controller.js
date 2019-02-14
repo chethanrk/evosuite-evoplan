@@ -118,7 +118,7 @@ sap.ui.define([
 
 			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
 				pageTitle = oResourceBundle.getText("xbut.pageDemands");
-				
+
 			if (oParams.config.pattern.indexOf("AssetPlanning") >= 0) {
 				pageTitle = oResourceBundle.getText("xbut.pageAssetManager");
 			}
@@ -141,9 +141,9 @@ sap.ui.define([
 					return;
 				}
 				if (this.isAvailable(oData.assignPath)) {
-					this.assignedDemands(oData.selectedPaths, oData.assignPath);
+					this.assignedDemands(oData.selectedPaths, oData.assignPath, oData.parameters);
 				} else {
-					this.showMessageToProceed(oData.selectedPaths, oData.assignPath);
+					this.showMessageToProceed(oData.selectedPaths, oData.assignPath, false, false, false, false, oData.parameters);
 				}
 			}
 		},
@@ -166,7 +166,7 @@ sap.ui.define([
 		 */
 		_triggerSaveDemandStatus: function (sChanel, sEvent, oData) {
 			if (sEvent === "changeStatusDemand") {
-				this.updateFunctionDemand(oData.selectedPaths, oData.functionKey);
+				this.updateFunctionDemand(oData.selectedPaths, oData.functionKey, oData.parameters);
 			}
 		},
 		/**
@@ -187,7 +187,7 @@ sap.ui.define([
 		 */
 		_triggerUpdateAssign: function (sChanel, sEvent, oData) {
 			if (sEvent === "updateAssignment") {
-				this.updateAssignment(oData.isReassign);
+				this.updateAssignment(oData.isReassign, oData.parameters);
 			} else if (sEvent === "bulkReAssignment") {
 				if (!this.isAssignable({
 						sPath: oData.sPath
@@ -195,9 +195,9 @@ sap.ui.define([
 					return;
 				}
 				if (this.isAvailable(oData.sPath)) {
-					this.bulkReAssignment(oData.sPath, oData.aContexts);
+					this.bulkReAssignment(oData.sPath, oData.aContexts, oData.parameters);
 				} else {
-					this.showMessageToProceed(null, oData.sPath, true, oData.aContexts);
+					this.showMessageToProceed(null, oData.sPath, true, oData.aContexts, false, false, oData.parameters);
 				}
 			}
 		},
@@ -211,9 +211,9 @@ sap.ui.define([
 		 */
 		_triggerDeleteAssign: function (sChanel, sEvent, oData) {
 			if (sEvent === "deleteAssignment") {
-				this.deleteAssignment(oData.sId);
+				this.deleteAssignment(oData.sId, oData.parameters);
 			} else if (sEvent === "bulkDeleteAssignment") {
-				this.bulkDeleteAssignment(oData.aContexts);
+				this.bulkDeleteAssignment(oData.aContexts, oData.parameters);
 			}
 		}
 

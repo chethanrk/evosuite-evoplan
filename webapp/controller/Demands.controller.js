@@ -67,7 +67,6 @@ sap.ui.define([
 		_onObjectMatched: function (oEvent) {
 			var _this = this;
 			_this._jDraggable(_this);
-			// this.byId("draggableList").rebindTable();
 		},
 
 		/* =========================================================== */
@@ -154,6 +153,9 @@ sap.ui.define([
 			var sPath = oContext.getPath();
 			var oModel = oContext.getModel();
 			var oData = oModel.getProperty(sPath);
+			var oResourceBundle = this.getResourceBundle();
+			// setting the bread crum value xtit.itemListTitle
+			this.getModel("viewModel").setProperty("/detailPageBreadCrum",oResourceBundle.getText("xbut.pageDemands"));
 			oRouter.navTo("detail", {
 				guid: oData.Guid
 			});

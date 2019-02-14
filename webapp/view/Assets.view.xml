@@ -12,7 +12,7 @@
 		</f:header>
 		<f:content>
 			<table:TreeTable id="idAssetTree" selectionMode="Single" selectionBehavior="RowOnly" enableColumnReordering="false"
-				toolbarStyleClass="treeTableHeader" class="listTreeTable" rowSelectionChange="onSelectionChange"
+				 class="listTreeTable" rowSelectionChange="onSelectionChange"
 				rows="{ path : '/AssetHierarchySet', parameters:{ numberOfExpandedLevels:1, groupId:'AssetTree' } }">
 				<table:columns>
 					<table:Column label="{i18n>xtit.tableObject}" name="{i18n>xtit.tableObject}">
@@ -20,13 +20,13 @@
 							<controls:CustomTitle text="{Description}" tooltip="{Description}" icon="{ path: 'NodeType', formatter: '.formatter.getAssetIcon' }"/>
 						</table:template>
 					</table:Column>
-					<table:Column label="{i18n>xtit.tableCheckbox}" name="{i18n>xtit.tableCheckbox}" minScreenWidth="Tablet" demandPopin="false" width="3rem"
+					<table:Column label="{i18n>xtit.tableCheckbox}" name="{i18n>xtit.tableCheckbox}"  width="3rem"
 						hAlign="Center" class="sapUiNoContentPadding">
 						<table:template>
 							<CheckBox enabled="true" select="onChangeAsset" selected="{IsSelected}"/>
 						</table:template>
 					</table:Column>
-					<table:Column label="{i18n>xtit.tableObject}" name="{i18n>xtit.tableObject}" minScreenWidth="Tablet" demandPopin="true" width="2rem"
+					<table:Column label="{i18n>xtit.tableObject}" name="{i18n>xtit.tableObject}" width="2rem"
 						hAlign="End">
 						<table:template>
 							<core:Icon src="sap-icon://drill-down" hoverColor="#418ac7" tooltip="{i18n>xtit.showWithChild}" press="onShowWithChildren"/>

@@ -142,9 +142,7 @@
 				"viewType": "XML",
 				"viewPath": "com.evorait.evoplan.view",
 				"controlAggregation": "pages",
-				"controlId": "idAppControl",
-				"clearControlAggregation": false,
-				"viewLevel": 1,
+				"controlId": "appPanel",
 				"bypassed": {
 					"target": [
 						"resourceTree",
@@ -196,28 +194,17 @@
 				}
 			],
 			"targets": {
-				"targetApp": {
-					"viewType": "XML",
-					"transition": "slide",
-					"clearControlAggregation": true,
-					"viewName": "App",
-					"viewLevel": 1
-				},
 				"splitNavigation": {
 					"viewType": "XML",
 					"viewName": "layouts.Split2ViewsNavi",
 					"viewLevel": 2,
-					"clearControlAggregation": true,
-					"controlId": "appPanel",
-					"parent": "targetApp"
+					"controlId": "appPanel"
 				},
 				"fullNavigation": {
 					"viewType": "XML",
 					"viewName": "layouts.FullViewNavi",
 					"viewLevel": 2,
-					"clearControlAggregation": true,
-					"controlId": "appPanel",
-					"parent": "targetApp"
+					"controlId": "appPanel"
 				},
 				"resourceTree": {
 					"viewType": "XML",
