@@ -77,6 +77,10 @@ sap.ui.define([
 			return this.getGlobalModel().getProperty("/application");
 		},
 
+		/** 
+		 * Shows the toast message on the screen
+		 * @param sMsg Messgae to be shown
+		 */
 		showMessageToast: function (sMsg) {
 			MessageToast.show(sMsg, {
 				duration: 5000
@@ -129,6 +133,13 @@ sap.ui.define([
 			return bContainsError;
 		},
 
+		/** 
+		 * Shows the error message 
+		 * @constructor 
+		 * @param sMessage The message to be shown
+		 * @param fnCallback A callback function when user close the dialog
+		 * @returns
+		 */
 		_showErrorMessage: function (sMessage, fnCallback) {
 			var fnClose = function () {
 				this._bMessageOpen = false;
@@ -153,9 +164,9 @@ sap.ui.define([
 
 		/**
 		 * send oData request of FunctionImport
-		 * @param oParams
-		 * @param sFuncName
-		 * @param sMethod
+		 * @param oParams Data to passed to function import
+		 * @param sFuncName Function name of the function import
+		 * @param sMethod method of http operation ex: GET/POST/PUT/DELETE
 		 */
 		callFunctionImport: function (oParams, sFuncName, sMethod, mParameters) {
 			var oModel = this.getModel(),
@@ -171,11 +182,6 @@ sap.ui.define([
 					oViewModel.setProperty("/busy", false);
 					this.showMessage(oResponse);
 					this.afterUpdateOperations(mParameters);
-					// eventBus.publish("BaseController", "refreshTreeTable", {});
-					// eventBus.publish("BaseController", "refreshDemandTable", {});
-					// eventBus.publish("BaseController", "refreshDemandOverview", {}); // refresh the demand overview page binding
-					// eventBus.publish("BaseController", "refreshAssetCal", {});
-					// eventBus.publish("AssignInfoDialog", "RefreshCalendar",{});
 				}.bind(this),
 				error: function (oError) {
 					//Handle Error
@@ -233,17 +239,16 @@ sap.ui.define([
 		 */
 		_getSelectedRowPaths: function (oTable, aSelectedRowsIdx, checkAssignAllowed, aDemands) {
 			var aPathsData = [],
-				bNonAssignableDemandsExist = false,
 				aNonAssignableDemands = [],
-				oData;
+				oData,oContext,sPath;
 
 			if (checkAssignAllowed) {
 				oTable.clearSelection();
 			}
 			if (!aDemands) {
 				for (var i = 0; i < aSelectedRowsIdx.length; i++) {
-					var oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
-					var sPath = oContext.getPath();
+					 oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
+					 sPath = oContext.getPath();
 					oData = this.getModel().getProperty(sPath);
 
 					//on check on oData property ALLOW_ASSIGN when flag was given
@@ -257,7 +262,6 @@ sap.ui.define([
 							oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
 						} else {
 							aNonAssignableDemands.push(oData.DemandDesc);
-							bNonAssignableDemandsExist = true;
 						}
 					} else {
 						aPathsData.push({
@@ -269,9 +273,9 @@ sap.ui.define([
 				}
 
 			} else {
-				for (var i in aDemands) {
-					var oContext = aDemands[i].getBindingContext();
-					var sPath = oContext.getPath();
+				for (var j in aDemands) {
+					 oContext = aDemands[j].getBindingContext();
+					 sPath = oContext.getPath();
 					oData = this.getModel().getProperty(sPath);
 					if (oData.ALLOW_ASSIGN) {
 						aPathsData.push({
@@ -279,9 +283,9 @@ sap.ui.define([
 							oData: oData
 						});
 					} else {
-						aDemands[i].setSelected(false);
+						aDemands[j].setSelected(false);
 						aNonAssignableDemands.push(oData.Description);
-						delete aDemands[i];
+						delete aDemands[j];
 					}
 				}
 			}
@@ -305,14 +309,14 @@ sap.ui.define([
 				msg = this.getResourceBundle().getText("assignmentNotPossible");
 
 			var dialog = new Dialog({
-				title: 'Error',
-				type: 'Message',
-				state: 'Error',
+				title: "Error",
+				type: "Message",
+				state: "Error",
 				content: new FormattedText({
 					htmlText: "<strong>" + msg + "</strong><br/><br/>" + aDemands.join(",<br/>")
 				}),
 				beginButton: new Button({
-					text: 'OK',
+					text: "OK",
 					press: function () {
 						dialog.close();
 					}

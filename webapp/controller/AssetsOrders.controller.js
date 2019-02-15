@@ -49,8 +49,8 @@ sap.ui.define([
 		_configureTimeAlloc: function () {
 			var oTimeAllocModel = new JSONModel();
 			oTimeAllocModel.setData({
-				dateFrom: moment().startOf('day').toDate(),
-				dateTo: moment().endOf('day').toDate(),
+				dateFrom: moment().startOf("day").toDate(),
+				dateTo: moment().endOf("day").toDate(),
 				desc: "",
 				assetGuid: "",
 				guid: ""
@@ -380,8 +380,8 @@ sap.ui.define([
 			var oTimeAllocModel = this.getModel("timeAlloc");
 
 			oTimeAllocModel.setProperty("/guid", "");
-			oTimeAllocModel.setProperty("/dateFrom", moment().startOf('day').toDate());
-			oTimeAllocModel.setProperty("/dateTo", moment().endOf('day').toDate());
+			oTimeAllocModel.setProperty("/dateFrom", moment().startOf("day").toDate());
+			oTimeAllocModel.setProperty("/dateTo", moment().endOf("day").toDate());
 			oTimeAllocModel.setProperty("/desc", "");
 			oTimeAllocModel.setProperty("/assetGuid", "");
 
@@ -408,8 +408,8 @@ sap.ui.define([
 		 */
 		_setDefaultDateRange: function () {
 			var oDateRange = this.byId("idDateRange");
-			var oStartDate = moment().startOf('month').toDate();
-			var oEndDate = moment().startOf('month').add(1, 'years').toDate();
+			var oStartDate = moment().startOf("month").toDate();
+			var oEndDate = moment().startOf("month").add(1, "years").toDate();
 
 			oDateRange.setDateValue(oStartDate);
 			oDateRange.setSecondDateValue(oEndDate);

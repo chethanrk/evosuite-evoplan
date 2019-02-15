@@ -138,7 +138,7 @@ sap.ui.define([
 			if (this._aSelectedRowsIdx.length > 0) {
 				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData,{bFromHome:true});
 			} else {
-				var msg = this.getResourceBundle().getText('ymsg.selectMinItem');
+				var msg = this.getResourceBundle().getText("ymsg.selectMinItem");
 				MessageToast.show(msg);
 			}
 		},
@@ -191,7 +191,7 @@ sap.ui.define([
 		 */
 		_configureDataTable: function (oDataTable) {
 			oDataTable.setEnableBusyIndicator(true);
-			oDataTable.setSelectionMode('MultiToggle');
+			oDataTable.setSelectionMode("MultiToggle");
 			oDataTable.setEnableColumnReordering(false);
 			oDataTable.setEnableCellFilter(false);
 			oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
@@ -267,8 +267,7 @@ sap.ui.define([
 					helper: function (event, ui) {
 						var target = $(event.currentTarget);
 						//single drag by checkbox, checkbox is not inside tr so have to find out row index
-						var targetCheckboxIdx = target.data("sapUiRowindex"),
-							selectedIdx = _this._oDataTable.getSelectedIndices(),
+						var	selectedIdx = _this._oDataTable.getSelectedIndices(),
 							oSelectedPaths = null;
 
 						/* As the table will be loaded with only 100 items initially.
@@ -282,7 +281,7 @@ sap.ui.define([
 							aPathsData = oSelectedPaths.aPathsData;
 						} else {
 							//table tr single dragged element
-							oSelectedPaths = _this._getSelectedRowPaths(_this._oDataTable, [_this._getDraggedElementIndex(target.attr('id'))], true);
+							oSelectedPaths = _this._getSelectedRowPaths(_this._oDataTable, [_this._getDraggedElementIndex(target.attr("id"))], true);
 							aPathsData = oSelectedPaths.aPathsData;
 						}
 						// keeping the data in drag session
@@ -363,6 +362,6 @@ sap.ui.define([
 			if (sEvent === "refreshDemandTable") {
 				this.byId("draggableList").rebindTable();
 			}
-		},
+		}
 	});
 });

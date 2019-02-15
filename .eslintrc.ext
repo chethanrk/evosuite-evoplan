@@ -36,7 +36,7 @@
 			"helpUrl": "http://eslint.org/docs/rules/no-mixed-requires"
 		},
 		"quotes": {
-			"severity": "info",
+			"severity": "warning",
 			"category": "Stylistic Issue",
 			"helpUrl": "http://eslint.org/docs/rules/quotes"
 		},

@@ -218,10 +218,10 @@ sap.ui.define([
                 aTokens = this._filterGroupInput.getTokens(),
                 tokenLen = aTokens.length;
 
-            if (oEvent.getParameter('type') === Tokenizer.TokenUpdateType.Added) {
+            if (oEvent.getParameter("type") === Tokenizer.TokenUpdateType.Added) {
                 this.counterResourceFilter += 1;
 
-            }else if (oEvent.getParameter('type') === Tokenizer.TokenUpdateType.Removed) {
+            }else if (oEvent.getParameter("type") === Tokenizer.TokenUpdateType.Removed) {
             	if(tokenLen > 0){
             		tokenLen -= 1;
             	}
@@ -426,8 +426,8 @@ sap.ui.define([
             //set default date range
             var oDateFrom = new Date("01/01/1990");
 
-            var oDateTo = moment().endOf('year');
-            oDateTo =  oDateTo.add(20, 'years').toDate();
+            var oDateTo = moment().endOf("year");
+            oDateTo =  oDateTo.add(20, "years").toDate();
             var dateRange1Id = this._filterDateRange1.getId();
             var dateRange2Id = this._filterDateRange2.getId();
 

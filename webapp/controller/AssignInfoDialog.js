@@ -120,7 +120,7 @@ sap.ui.define([
 			var eventBus = sap.ui.getCore().getEventBus(),
 				oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
-				sMsg = this._oView.getController().getResourceBundle().getText('ymsg.datesInvalid');
+				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid");
 			if (oDateTo !== undefined && oDateFrom !== undefined) {
 				oDateFrom = oDateFrom.getTime();
 				oDateTo = oDateTo.getTime();
@@ -139,6 +139,10 @@ sap.ui.define([
 			}
 		},
 
+		/** 
+		 * On unassign assignment of assignment the unassign function import will be called
+		 * @param oEvent
+		 */
 		onDeleteAssignment: function (oEvent) {
 			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid");
 			var eventBus = sap.ui.getCore().getEventBus();

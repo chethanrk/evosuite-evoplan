@@ -100,7 +100,7 @@ sap.ui.define([
 
 			//check at least one demand selected
 			if (aContexts.length === 0) {
-				var msg = this._oView.getController().getResourceBundle().getText('ymsg.selectMinItem');
+				var msg = this._oView.getController().getResourceBundle().getText("ymsg.selectMinItem");
 				MessageToast.show(msg);
 				return;
 			}
@@ -124,7 +124,7 @@ sap.ui.define([
 
 			//check at least one demand selected
 			if (aContexts.length === 0) {
-				var msg = this._oView.getController().getResourceBundle().getText('ymsg.selectMinItem');
+				var msg = this._oView.getController().getResourceBundle().getText("ymsg.selectMinItem");
 				MessageToast.show(msg);
 				return;
 			}

@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"com/evorait/evoplan/model/utilities"
-], function(DateFormat, utilities) {
+], function (DateFormat, utilities) {
 	"use strict";
 
 	var resourceFormats = utilities.getResourceFormats(),
@@ -15,7 +15,7 @@ sap.ui.define([
 		 * @param {string} sValue value to be formatted
 		 * @returns {string} formatted currency value with 2 digits
 		 */
-		currencyValue: function(sValue) {
+		currencyValue: function (sValue) {
 			if (!sValue) {
 				return "";
 			}
@@ -25,7 +25,7 @@ sap.ui.define([
 		/**
 		 * return right path of logo for every system
 		 */
-		getLogoImageLink: function() {
+		getLogoImageLink: function () {
 			var path = $.sap.getModulePath("com.evorait.evoplan", "/assets/img/evoplan_h50px.png");
 			return path;
 		},
@@ -34,7 +34,7 @@ sap.ui.define([
 		 * format date in format yyyy-MM-dd
 		 * @param date
 		 */
-		date: function(date) {
+		date: function (date) {
 			var d = new Date(date);
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: "yyyy-MM-dd"
@@ -48,7 +48,7 @@ sap.ui.define([
 		 * @param date
 		 * @returns {*}
 		 */
-		formatFilterDate: function(date) {
+		formatFilterDate: function (date) {
 			var oDateFormat = DateFormat.getDateTimeInstance({
 				pattern: "yyyy-MM-ddT00:00:00"
 			});
@@ -60,7 +60,7 @@ sap.ui.define([
 		 * @param date
 		 * @param time
 		 */
-		mergeDateTime: function(date, time) {
+		mergeDateTime: function (date, time) {
 			var offsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
 				dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 					pattern: "yyyy-MM-dd"
@@ -75,14 +75,14 @@ sap.ui.define([
 			return new Date(dateStr + "T" + timeStr);
 		},
 
-		isMainResource: function(sValue) {
-			if (sValue === "RESOURCE" || sValue == "RES_GROUP") {
+		isMainResource: function (sValue) {
+			if (sValue === "RESOURCE" || sValue === "RES_GROUP") {
 				return true;
 			}
 			return false;
 		},
 
-		formatResourceTitle: function(sValue) {
+		formatResourceTitle: function (sValue) {
 			var titleFormat = resourceFormats[sValue];
 			if (titleFormat) {
 				return titleFormat.title || "Auto";
@@ -90,7 +90,7 @@ sap.ui.define([
 			return "Auto";
 		},
 
-		getResourceIcon: function(sValue, sIcon) {
+		getResourceIcon: function (sValue, sIcon) {
 			var iconFormat = resourceFormats[sValue];
 			if (sIcon) {
 				return sIcon;
@@ -102,11 +102,11 @@ sap.ui.define([
 			return "";
 		},
 
-		getResourceFormatByKey: function(sValue) {
+		getResourceFormatByKey: function (sValue) {
 			return resourceFormats[sValue];
 		},
 
-		isAssignment: function(sValue) {
+		isAssignment: function (sValue) {
 			if (sValue === "ASSIGNMENT") {
 				return true;
 			}
@@ -119,36 +119,41 @@ sap.ui.define([
 		 * @param sValue
 		 * @returns calendarView respective calendar view
 		 */
-		getCalendarView: function(sValue) {
+		getCalendarView: function (sValue) {
 			var sView = resourceFormats[sValue];
 			if (sView) {
 				return sView.calendarView || "One Month";
 			}
+			return "One Month";
 		},
 		/**
 		 * @Author Rahul
 		 * format the icon acording availability
 		 * @param sValue
 		 */
-		getAvailabilityIcon: function(sValue) {
-			if (sValue && sValue !== "")
+		getAvailabilityIcon: function (sValue) {
+			if (sValue && sValue !== "") {
 				return resourceAvailability[sValue].icon;
+			}
+			return "";
 		},
 		/**
 		 * @Author Rahul
 		 * format the icon acording availability
 		 * @param sValue
 		 */
-		formatIconColor: function(sValue) {
-			if (sValue && sValue !== "")
+		formatIconColor: function (sValue) {
+			if (sValue && sValue !== "") {
 				return resourceAvailability[sValue].color;
+			}
+			return "";
 		},
 		/**
 		 * @Author Rahul
 		 * format the color acording availability
 		 * @param sValue
 		 */
-		formatIconTooltip: function(sValue) {
+		formatIconTooltip: function (sValue) {
 			var oComponent = this._component,
 				oBundle;
 			if (oComponent) {
@@ -156,12 +161,13 @@ sap.ui.define([
 			} else {
 				oBundle = this.getResourceBundle();
 			}
-			if (sValue && sValue !== "")
+			if (sValue && sValue !== "") {
 				return oBundle.getText(resourceAvailability[sValue].tooltip);
-			else
+			} else {
 				return oBundle.getText("xtit.available");
+			}
 		},
-		formatCriticality: function(sValue) {
+		formatCriticality: function (sValue) {
 			if (sValue === 1) {
 				return sap.ui.core.MessageType.Error;
 			} else if (sValue === 2) {
@@ -172,7 +178,7 @@ sap.ui.define([
 				return sap.ui.core.MessageType.Information;
 			}
 		},
-		formatStatusIconColor: function(sValue) {
+		formatStatusIconColor: function (sValue) {
 			if (sValue === 1) {
 				return "#BB0000";
 			} else if (sValue === 2) {
@@ -189,62 +195,62 @@ sap.ui.define([
 		 * @since 2.1
 		 * @param {oAssetTree : TreeTable} 
 		 */
-		getAssetIcon: function(sValue) {
+		getAssetIcon: function (sValue) {
 			var sIcon;
 			switch (sValue) {
-				case "FLOC":
-					sIcon = "sap-icon://functional-location";
-					break;
-				case "EQUI":
-					 sIcon = "sap-icon://technical-object";
-					break;
-				default:
-					sIcon =  "sap-icon://functional-location";
+			case "FLOC":
+				sIcon = "sap-icon://functional-location";
+				break;
+			case "EQUI":
+				sIcon = "sap-icon://technical-object";
+				break;
+			default:
+				sIcon = "sap-icon://functional-location";
 			}
 			return sIcon;
 		},
-        /**
+		/**
 		 * Differentiate the planning data as demands and unavailability
-         * @param sValue
-         */
-        formatAppointMent: function (sValue) {
-				if(sValue === "D"){
-					return sap.ui.unified.CalendarDayType.Type01;
-				}else if(sValue === "A"){
-					return sap.ui.unified.CalendarDayType.Type06;
-				}else{
-					return sap.ui.unified.CalendarDayType.Type01;
-				}
-        },
-        /**
-		 * Save button must not visible for if planning dat guid is present that indicate the update
-         * @param sValue
-         * @return {boolean}
-         */
-        formatSaveButton: function (sValue) {
-        	if(sValue){
-        		return false;
+		 * @param sValue
+		 */
+		formatAppointMent: function (sValue) {
+			if (sValue === "D") {
+				return sap.ui.unified.CalendarDayType.Type01;
+			} else if (sValue === "A") {
+				return sap.ui.unified.CalendarDayType.Type06;
+			} else {
+				return sap.ui.unified.CalendarDayType.Type01;
 			}
-
-        },
-        /**
+		},
+		/**
+		 * Save button must not visible for if planning dat guid is present that indicate the update
+		 * @param sValue
+		 * @return {boolean}
+		 */
+		formatSaveButton: function (sValue) {
+			if (sValue) {
+				return false;
+			}
+			return true;
+		},
+		/**
 		 * Update button must not visible for if planning dat guid is present that indicate the create
-         * @param sValue
-         * @return {boolean}
-         */
-        formatUpdateButton: function (sValue) {
-            if(!sValue){
-                return false;
-            }
+		 * @param sValue
+		 * @return {boolean}
+		 */
+		formatUpdateButton: function (sValue) {
+			if (!sValue) {
+				return false;
+			}
+			return true;
+		},
 
-        },
-        
-        formatDemandTooltip: function(sDesc , sStatusDesc){
-        	if(sStatusDesc && sStatusDesc!== ""){
-        		return sDesc+" : "+sStatusDesc;
-        	}else{
-        		return sDesc;
-        	}
-        }
+		formatDemandTooltip: function (sDesc, sStatusDesc) {
+			if (sStatusDesc && sStatusDesc !== "") {
+				return sDesc + " : " + sStatusDesc;
+			} else {
+				return sDesc;
+			}
+		}
 	};
 });

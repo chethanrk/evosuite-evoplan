@@ -56,6 +56,9 @@ sap.ui.define([
                 this._oMessagePopover.destroy();
             }
         },
+        /** 
+         * Navigation back. If any changes in entity are present confirmation box will shown
+         */
         onBack: function () {
             var oModel = this.getModel(),
                 bChanges = oModel.hasPendingChanges(),
