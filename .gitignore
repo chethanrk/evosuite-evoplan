@@ -16,3 +16,4 @@ preview.json
 cp.project.properties.json
 /.user.project.json
 /resources
+/dist/
