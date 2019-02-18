@@ -44,12 +44,19 @@
 								</customData>
 										<Text text="{/#Demand/Status/@sap:label}"/>
 								</Column>
+								<Column hAlign="Left" visible="{/#Demand/DemandDesc/@sap:visible}">
+							<customData>
+								<core:CustomData key="p13nData" value='\{"columnKey": "Demand/DemandDesc", "columnIndex":"9", "leadingProperty": "Demand/DemandDesc"}' />
+							</customData>
+							<Text text="{/#Demand/DemandDesc/@sap:label}"/>
+						</Column>
 							</columns>
                 	<items>
                 		<ColumnListItem>
                 			<cells>
                 				<Text text="{Demand/ORDERID}" />
                 				<Text text="{Demand/Status}" />
+                				<Text text="{Demand/DemandDesc}" />
                 			</cells>
                 		</ColumnListItem>
                 		
