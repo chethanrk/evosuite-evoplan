@@ -272,7 +272,7 @@
 		}
 	},
 	"sap.platform.hcp": {
-		"uri": "",
+		"uri": "webapp",
 		"_version": "1.1.0"
 	}
 }
