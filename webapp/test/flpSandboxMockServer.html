@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+<html>
+<!-- Copyright (c) 2015 SAP AG, All Rights Reserved -->
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Approve Purchase Orders</title>
+
+	<!-- Bootstrap the unified shell in sandbox mode for standalone usage.
+
+         The renderer is specified in the global Unified Shell configuration object "sap-ushell-config".
+
+         The fiori2 renderer will render the shell header allowing, for instance,
+         testing of additional application setting buttons.
+
+         The navigation target resolution service is configured in a way that the empty URL hash is
+         resolved to our own application.
+
+         This example uses relative path references for the SAPUI5 resources and test-resources;
+         it might be necessary to adapt them depending on the target runtime platform.
+         The sandbox platform is restricted to development or demo use cases and must NOT be used
+         for productive scenarios.
+    -->
+	<script type="text/javascript">
+		window["sap-ushell-config"] = {
+			defaultRenderer : "fiori2",
+			renderers: {
+				fiori2: {
+					componentData: {
+						config: {
+							search: "hidden",
+							enableMergeAppAndShellHeaders: true
+						}
+					}
+				}
+			},
+			applications: {
+                "EvoPlan-dispatch": {
+                    additionalInformation: "SAPUI5.Component=com.evorait.evoplan",
+                	applicationType: "URL",
+            		url: "../",
+                	description: "Dispatch demands",
+					title: "evoPlan"
+               }
+			}   
+		};
+	</script>
+
+	<script src="../test-resources/sap/ushell/bootstrap/sandbox.js" id="sap-ushell-bootstrap"></script>
+
+	<!-- Bootstrap the UI5 core library -->
+	<script id="sap-ui-bootstrap"
+			src="../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ushell, sap.ndc"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-resourceroots='{"com.evorait.evoplan": "../"}'
+			data-sap-ui-frameOptions='allow'> // NON-SECURE setting for testing environment
+	</script>
+	
+	<script type="text/javascript">
+        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-core');
+        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-widget');
+        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-mouse');
+        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-sortable');
+        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-droppable');
+        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-draggable');
+
+        sap.ui.localResources("sapui5draganddrop");
+	</script>
+
+	<script>
+		sap.ui.getCore().attachInit(function() {
+
+			sap.ui.require([
+				"com/evorait/test/localService/mockserver"
+			], function (mockserver) {
+				// set up test service for local testing
+				mockserver.init();
+
+				// initialize the ushell sandbox component
+				sap.ushell.Container.createRenderer().placeAt("content");
+			});
+		});
+	</script>
+	
+
+</head>
+
+<!-- UI Content -->
+<body class="sapUiBody" id="content">
+</body>
+</html>

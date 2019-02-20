@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>EvoPlan</title>
+
+    <!-- Bootstrapping UI5 -->
+    <!-- https://sapui5.hana.ondemand.com/resources/sap-ui-core.js -->
+    <script id="sap-ui-bootstrap"
+            src="../resources/sap-ui-core.js"
+            data-sap-ui-libs="sap.m, sap.ui.layout, sap.uxap"
+            data-sap-ui-theme="sap_belize"
+            data-sap-ui-compatVersion="edge"
+            data-sap-ui-resourceroots='{"com.evorait.evoplan": "../"}'
+            data-sap-ui-frameOptions='allow'>    // NON-SECURE setting for testing environment
+    </script>
+
+    <script type="text/javascript">
+        jQuery.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-core');
+        jQuery.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-widget');
+        jQuery.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-mouse');
+        jQuery.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-sortable');
+        jQuery.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-droppable');
+        jQuery.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-draggable');
+
+        sap.ui.localResources("sapui5draganddrop");
+    </script>
+
+    <script>
+
+		function startApp() {
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"com/evorait/evoplan/localService/mockserver",
+					"sap/m/Shell",
+					"sap/ui/core/ComponentContainer"
+				], function (server, Shell, ComponentContainer) {
+					// set up test service for local testing
+					server.init();
+					// initialize the UI component
+					// create a new Shell that contains the rootview
+                    var oShell = new sap.m.Shell({
+                        app: new ComponentContainer({
+                            name: "com.evorait.evoplan",
+                            height: "100%",
+                            width: "100%",
+                            async: true
+                        }),
+                        id: "appShell",
+                        appWidthLimited: false
+                    });
+					// load the view that contains the unified shell
+					oShell.placeAt("content");
+				});
+			});
+		}
+
+        startApp();
+    </script>
+
+</head>
+
+<!-- UI Content -->
+<body class="sapUiBody" id="content">
+</body>
+</html>

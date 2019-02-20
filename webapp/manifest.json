@@ -1,0 +1,278 @@
+{
+	"_version": "1.9.0",
+	"start_url": "index.html",
+	"sap.app": {
+		"_version": "1.3.0",
+		"id": "com.evorait.evoplan",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"shortTitle": "{{shorttitle}}",
+		"info": "{{info}}",
+		"description": "{{appDescription}}",
+		"tags": {
+			"keywords": [
+				"{{xfld.keyWord1}}",
+				"{{xfld.keyWord2}}"
+			]
+		},
+		"applicationVersion": {
+			"version": "2.1.1"
+		},
+		"dataSources": {
+			"mainService": {
+				"uri": "/sap/opu/odata/EVORA/EP_MAIN_SRV/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/metadata.xml",
+					"annotations": []
+				}
+			}
+		},
+		"crossNavigation": {
+			"inbounds": {
+				"productsManage": {
+					"semanticObject": "evoPlan",
+					"action": "dispatch",
+					"title": "{{appTitle}}",
+					"subTitle": "{{appDescription}}",
+					"indicatorDataSource": {
+						"dataSource": "mainService",
+						"path": "/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandSet/$count?$filter=Status eq 'INIT'",
+						"refresh": 450
+					},
+					"signature": {
+						"parameters": {
+							"Demand": {
+								"required": false
+							}
+						},
+						"additionalParameters": "allowed"
+					},
+					"icon": "sap-icon://task"
+				}
+			}
+		},
+		"ach": "CA"
+	},
+	"sap.ui": {
+		"_version": "1.3.0",
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://task",
+			"favIcon": "",
+			"phone": "sap-icon://task",
+			"phone@2": "sap-icon://task",
+			"tablet": "sap-icon://task",
+			"tablet@2": "sap-icon://task"
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_belize",
+			"sap_belize_plus",
+			"sap_belize_hcb",
+			"sap_belize_hcw"
+		]
+	},
+	"sap.ui5": {
+		"_version": "1.2.0",
+		"config": {
+			"fullWidth": true
+		},
+		"rootView": {
+			"viewName": "com.evorait.evoplan.view.App",
+			"type": "XML",
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.52.0",
+			"libs": {
+				"sap.ui.core": {
+					"minVersion": "1.52.0"
+				},
+				"sap.m": {
+					"minVersion": "1.52.0"
+				},
+				"sap.uxap": {
+					"minVersion": "1.52.0"
+				},
+				"sap.ui.comp": {
+					"minVersion": "1.52.0"
+				}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "com.evorait.evoplan.i18n.i18n"
+				}
+			},
+			"": {
+				"dataSource": "mainService",
+				"preload": true,
+				"settings": {
+					"defaultBindingMode": "TwoWay"
+				}
+			},
+			"@i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"uri": "i18n/i18n.properties"
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "assets/css/style.css"
+				}
+			]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "com.evorait.evoplan.view",
+				"controlAggregation": "pages",
+				"controlId": "appPanel",
+				"bypassed": {
+					"target": [
+						"resourceTree",
+						"empty"
+					]
+				},
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "demands",
+					"target": [
+						"demands",
+						"resourceTree"
+					]
+				},
+				{
+					"pattern": "Demand/{guid}",
+					"name": "detail",
+					"target": [
+						"resourceTree",
+						"detail"
+					]
+				},
+				{
+					"pattern": "AssetPlanning/{assets}/:withChildren:",
+					"name": "assetManager",
+					"target": [
+						"assets",
+						"assetsOrders"
+					]
+				},
+				{
+					"pattern": "AssetPlanning/{asset}/OrderCreate/new",
+					"name": "orderCreate",
+					"target": [
+						"assets",
+						"orderCreate"
+					]
+				},
+				{
+					"pattern": "AssetPlanning/{asset}/Demand/{guid}",
+					"name": "assetDemandDetail",
+					"target": [
+						"assets",
+						"detail"
+					]
+				}
+			],
+			"targets": {
+				"splitNavigation": {
+					"viewType": "XML",
+					"viewName": "layouts.Split2ViewsNavi",
+					"viewLevel": 2,
+					"controlId": "appPanel"
+				},
+				"fullNavigation": {
+					"viewType": "XML",
+					"viewName": "layouts.FullViewNavi",
+					"viewLevel": 2,
+					"controlId": "appPanel"
+				},
+				"resourceTree": {
+					"viewType": "XML",
+					"viewName": "ResourceTree",
+					"viewLevel": 3,
+					"controlId": "leftPanel",
+					"parent": "splitNavigation"
+				},
+				"demands": {
+					"viewType": "XML",
+					"viewName": "Demands",
+					"viewLevel": 3,
+					"controlId": "rightPanel",
+					"parent": "splitNavigation"
+				},
+				"detail": {
+					"viewType": "XML",
+					"viewName": "Detail",
+					"viewLevel": 4,
+					"controlId": "rightPanel",
+					"parent": "splitNavigation"
+				},
+				"assets": {
+					"viewName": "Assets",
+					"viewLevel": 3,
+					"controlId": "leftPanel",
+					"parent": "splitNavigation"
+				},
+				"assetsOrders": {
+					"viewType": "XML",
+					"viewName": "AssetsOrders",
+					"viewLevel": 3,
+					"controlId": "rightPanel",
+					"parent": "splitNavigation"
+				},
+				"orderCreate": {
+					"viewType": "XML",
+					"viewName": "OrderCreate",
+					"viewLevel": 4,
+					"controlId": "rightPanel",
+					"parent": "splitNavigation"
+				},
+				"empty": {
+					"viewType": "XML",
+					"viewName": "EmptyPage",
+					"viewLevel": 3,
+					"controlId": "rightPanel",
+					"parent": "splitNavigation"
+				},
+				"notFound": {
+					"viewType": "XML",
+					"viewName": "NotFound",
+					"viewLevel": 3,
+					"controlId": "rightPanel",
+					"parent": "splitNavigation"
+				},
+				"weeklyPlanner": {
+					"viewType": "XML",
+					"viewName": "WeeklyPlanner",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 3
+				}
+			}
+		}
+	},
+	"sap.platform.hcp": {
+		"uri": "webapp",
+		"_version": "1.1.0"
+	}
+}

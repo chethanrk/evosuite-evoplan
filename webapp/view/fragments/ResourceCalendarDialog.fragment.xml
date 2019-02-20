@@ -1,0 +1,72 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:unified="sap.ui.unified">
+
+    <Dialog id="planCalendarDialog"
+            title="{i18n>xtit.calendarModalTitle}"
+            contentWidth="100%"
+            resizable="false">
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <PlanningCalendar
+                        id="planningCalendar"
+                        startDate="{path: 'calendarModel>/startDate'}"
+                        rows="{path: 'calendarModel>/resources'}"
+                        viewKey="{
+                        	path:'calendarModel>/viewKey',
+                            formatter:'.formatter.getCalendarView'
+                        }"
+                        appointmentSelect="onClickCalendarAssignment"
+                        appointmentsVisualization="Filled"
+                        showEmptyIntervalHeaders="false"
+                        showWeekNumbers="true"
+                        groupAppointmentsMode="Expanded">
+                    <rows>
+                        <PlanningCalendarRow
+                                icon="{
+                                              path: 'calendarModel>ObjectType',
+                                              formatter: '.formatter.getResourceIcon'
+                                       }"
+                                title="{calendarModel>GroupDescription}"
+                                text="{calendarModel>ResourceDescription}"
+                                appointments="{path : 'calendarModel>Assignments', templateShareable: 'true'}"
+                                intervalHeaders="{path: 'calendarModel>AbsenceInfo', templateShareable: 'true'}">
+                            <appointments>
+                                <unified:CalendarAppointment
+                                        startDate="{calendarModel>DateFrom}"
+                                        endDate="{calendarModel>DateTo}"
+                                        title="{calendarModel>Demand/DemandDesc}"
+                                        tooltip="{calendarModel>Demand/ORDERID}- {calendarModel>Demand/DemandDesc} : {calendarModel>Demand/StatusDesc}"
+                                        icon="{calendarModel>Demand/STATUS_ICON}"
+                                        text="{calendarModel>Demand/ORDERID}"
+                                        type="{calendarModel>type}"
+                                        color="{
+							                        path:'calendarModel>Demand/CRITICALITY',
+							                        formatter:'.formatter.formatStatusIconColor'
+							                   }">
+                                </unified:CalendarAppointment>
+                            </appointments>
+                            <intervalHeaders>
+                                <unified:CalendarAppointment
+                                        startDate="{calendarModel>DateFrom}"
+                                        endDate="{calendarModel>DateTo}"
+                                        title="{calendarModel>Description}"
+                                        type="Type06">
+                                </unified:CalendarAppointment>
+                            </intervalHeaders>
+                        </PlanningCalendarRow>
+                    </rows>
+                </PlanningCalendar>
+            </VBox>
+        </content>
+
+        <beginButton>
+            <Button text="{i18n>xbut.buttonClose}" press="onModalCancel" />
+        </beginButton>
+
+        <endButton>
+        </endButton>
+    </Dialog>
+
+</core:FragmentDefinition>
