@@ -1,0 +1,290 @@
+[
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('0001')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('0001')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "0001",
+        "BusinessAreaDesc": "Business area 0001"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('1000')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('1000')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "1000",
+        "BusinessAreaDesc": "Mechanical engineering"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('1500')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('1500')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "1500",
+        "BusinessAreaDesc": "Consumer Products: Food"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('2000')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('2000')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "2000",
+        "BusinessAreaDesc": "Plant engineering & construct."
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('2700')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('2700')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "2700",
+        "BusinessAreaDesc": "Mechanical engineering"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('3000')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('3000')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "3000",
+        "BusinessAreaDesc": "Automotive"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('3400')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('3400')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "3400",
+        "BusinessAreaDesc": "Metal, Wood and Paper"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('3500')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('3500')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "3500",
+        "BusinessAreaDesc": "Aerospace & Defence"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('4000')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('4000')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "4000",
+        "BusinessAreaDesc": "Chemicals"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('4300')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('4300')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "4300",
+        "BusinessAreaDesc": "Best Run India"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('4500')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('4500')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "4500",
+        "BusinessAreaDesc": "Engineering & Construction"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('5000')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('5000')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "5000",
+        "BusinessAreaDesc": "Consumer Products: Non-Food"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6000')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6000')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "6000",
+        "BusinessAreaDesc": "Pharmaceuticals"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6650')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6650')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "6650",
+        "BusinessAreaDesc": "Electronic Products - Jeddah"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6651')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6651')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "6651",
+        "BusinessAreaDesc": "Services - Riyadh"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6652')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6652')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "6652",
+        "BusinessAreaDesc": "Consumer electronics - Al Khob"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6700')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6700')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "6700",
+        "BusinessAreaDesc": "Electronic Products - Cairo"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6701')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6701')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "6701",
+        "BusinessAreaDesc": "Services - Alexandria"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6702')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6702')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "6702",
+        "BusinessAreaDesc": "Consumer electronics - Esmaili"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6750')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('6750')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "6750",
+        "BusinessAreaDesc": "Electronic Products Dubai(UAE)"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('7000')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('7000')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "7000",
+        "BusinessAreaDesc": "Electronic Products"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('7220')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('7220')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "7220",
+        "BusinessAreaDesc": "Electronic Products France"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('8000')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('8000')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "8000",
+        "BusinessAreaDesc": "External Services"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('9000')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('9000')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "9000",
+        "BusinessAreaDesc": "Accessories"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('9100')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('9100')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "9100",
+        "BusinessAreaDesc": "Real Estate"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('9900')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('9900')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "9900",
+        "BusinessAreaDesc": "Corporate Other"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('BA00')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('BA00')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "BA00",
+        "BusinessAreaDesc": "Business Area 01"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('IN47')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('IN47')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "IN47",
+        "BusinessAreaDesc": "India Business area"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('IS00')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('IS00')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "IS00",
+        "BusinessAreaDesc": "Internal Service Group 00"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('LS01')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('LS01')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "LS01",
+        "BusinessAreaDesc": "Legal Services"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('RETL')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('RETL')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "RETL",
+        "BusinessAreaDesc": "Retail"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('WSLE')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('WSLE')",
+          "type": "com.evorait.evoplan.BusinessArea"
+        },
+        "BusinessAreaCode": "WSLE",
+        "BusinessAreaDesc": "Wholesale"
+      }
+    ]

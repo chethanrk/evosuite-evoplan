@@ -7,11 +7,12 @@ sap.ui.define([
 		"sap/ui/test/matchers/AggregationLengthEquals",
 		"sap/ui/test/matchers/BindingPath",
     	"sap/ui/test/matchers/Properties",
-        "sap/ui/test/matchers/I18NText"
-	], function(Opa5, Press, EnterText, Common, PropertyStrictEquals, AggregationLengthEquals, BindingPath, Properties, I18NText) {
+        "sap/ui/test/matchers/I18NText",
+        "sap/ui/test/matchers/AggregationContainsPropertyEqual"
+	], function(Opa5, Press, EnterText, Common, PropertyStrictEquals, AggregationLengthEquals, BindingPath, Properties, I18NText, AggregationContainsPropertyEqual) {
 		"use strict";
 
-		var sViewName = "MasterPage",
+		var sViewName = "ResourceTree",
 			oI18nResourceBundle = undefined;
 
 		Opa5.createPageObjects({
@@ -46,6 +47,42 @@ sap.ui.define([
                             },
                             errorMessage: "Could not press filter button."
                         });
+                    },
+                    iCheckOneResource:function(){
+                    	return this.waitFor({
+							id: "droppableTable",
+							viewName: sViewName,
+							success: function (oTable) {
+								var oCheckBox = oTable.getAggregation("rows")[0].getAggregation("cells")[2]; 
+								oCheckBox.fireSelect({selected:true});
+								
+							},
+							errorMessage: "Was not able to see the table."
+						});
+                    },
+                     iClickOnThePlanningCal:function(){
+                    	return this.waitFor({
+                            id: "showPlanCalendar",
+                            viewName: sViewName,
+                        	actions:new Press(),
+                            errorMessage: "Was not able to see Button Planning Calendar."
+                        });
+                    },
+                     iClickOnTheUnassign:function(){
+                    	return this.waitFor({
+                            id: "idButtonunassign",
+                            viewName: sViewName,
+                            actions:new Press(),
+                            errorMessage: "Was not able to see Button Unassign."
+                        });
+                    },
+                     iClickOnTheAssignNew:function(){
+                    	return this.waitFor({
+                            id: "idButtonreassign",
+                            viewName: sViewName,
+                        	actions:new Press(),
+                            errorMessage: "Was not able to see Button Reassign new."
+                        });
                     }
 
 				},
@@ -56,7 +93,6 @@ sap.ui.define([
                             id: id,
                             viewName: sViewName,
                             success: function (oRootView) {
-                                console.log(oRootView);
                                 Opa5.assert.ok(oRootView.getBusy(), "The table with ID "+id+" is busy");
                             },
                             errorMessage: "The busy indicator for table with ID "+id+" is not visible."
@@ -91,7 +127,7 @@ sap.ui.define([
                                 Opa5.assert.ok(true, "The filter button is visible");
                             },
                             errorMessage: "Was not able to see filter button."
-                        })
+                        });
                     },
                     iShouldSeeTheSearchField: function () {
                         return this.waitFor({
@@ -101,7 +137,7 @@ sap.ui.define([
                                 Opa5.assert.ok(true, "Search field is visible");
                             },
                             errorMessage: "Was not able to see search field."
-                        })
+                        });
                     },
                     iShouldSeeTheCustomVariant: function () {
                         return this.waitFor({
@@ -111,17 +147,21 @@ sap.ui.define([
                                 Opa5.assert.ok(true, "Custom variant is visible");
                             },
                             errorMessage: "Was not able to see custom variant."
-                        })
+                        });
                     },
-                    iShouldSeeFooterPlanningButton: function () {
+                    iShouldSeeFooterPlanningButtonAs: function (bEnabled) {
                         return this.waitFor({
                             id: "showPlanCalendar",
                             viewName: sViewName,
+                            matchers:new PropertyStrictEquals({
+                            	name:"enabled",
+                            	value:bEnabled
+                            }),
                             success: function () {
-                                Opa5.assert.ok(true, "Footer button Planning Calendar is visible");
+                                Opa5.assert.ok(true, "Footer button Planning Calendar is visible and it is enabled("+bEnabled+")");
                             },
                             errorMessage: "Was not able to see Button Planning Calendar."
-                        })
+                        });
                     },
                     theButtonTextShouldDisplayFilterNumber: function (sExpectedNumber) {
                         return this.waitFor({
@@ -147,19 +187,99 @@ sap.ui.define([
                             errorMessage: "Can not find open filter dialog"
                         });
                     },
-                    iShouldSeeFilterItemWithTitle: function (sExpectedText) {
-                        sExpectedText = oI18nResourceBundle.getText(sExpectedText);
+                    iShouldSeeFilterItems: function () {
                         return this.waitFor({
-                            searchOpenDialogs : true,
-                            controlType: "sap.m.ViewSettingsFilterItem",
+                        	controlType:"sap.m.ViewSettingsDialog",
+                            success: function (aDialogs) {
+                            	var oDialog = aDialogs[0];
+                            	var aItems = oDialog.getAggregation("filterItems");
+                                Opa5.assert.ok(aItems.length === 3, "The filter dialog has "+aItems.length+" filter Settings");
+                            },
+                            errorMessage: "Can not find open filter settings"
+                        });
+                    },
+                    iShouldSeeFooterUnassignButtonAs:function(bEnabled){
+                    	 return this.waitFor({
+                            id: "idButtonunassign",
                             viewName: sViewName,
-                            matchers: new Properties({
-                                text: sExpectedText
+                            matchers:new PropertyStrictEquals({
+                            	name:"enabled",
+                            	value:bEnabled
                             }),
                             success: function () {
-                                Opa5.assert.ok(true, "The filter dialog has filter settings for " + sExpectedText);
+                                Opa5.assert.ok(true, "Footer button Unassign is visible and it is enabled("+bEnabled+")");
                             },
-                            errorMessage: "Can not find in filter dialog setting for " + sExpectedText
+                            errorMessage: "Was not able to see Button Unassign."
+                        });
+                    },
+                    iShouldSeeFooterAssignNewButtonAs:function(bEnabled){
+                    	 return this.waitFor({
+                            id: "idButtonreassign",
+                            viewName: sViewName,
+                            matchers:new PropertyStrictEquals({
+                            	name:"enabled",
+                            	value:bEnabled
+                            }),
+                            success: function () {
+                                Opa5.assert.ok(true, "Footer button Planning Calendar is visible and it is enabled("+bEnabled+")");
+                            },
+                            errorMessage: "Was not able to see Button Reassign new."
+                        });
+                    },
+                    iShouldSeePlanningCalendar:function(key){
+                    	 return this.waitFor({
+                            controlType:"sap.m.Dialog",
+                            viewName: sViewName,
+                            success: function (oDialog) {
+                            	Opa5.assert.ok(oDialog[0].getTitle() === "Resource Planning Calendar", "Planning calendar is visible");
+                            },
+                            errorMessage: "Was not able to see Button Reassign new."
+                        });
+                    },
+                    iShouldSeeAssignUnassignDialog:function(key){
+                    	 return this.waitFor({
+                        	controlType:"sap.m.Dialog",
+                            viewName: sViewName,
+                            success: function (oDialog) {
+                            	setTimeout(function(){
+                            		return this.waitFor({
+			                        	controlType:"sap.m.Dialog",
+			                            viewName: sViewName,
+			                            success: function (oDialog) {
+			                            	Opa5.assert.ok(oDialog[0].getTitle() === key, "Dialog has the title "+key);
+			                            },
+			                            errorMessage: "Was not able to see Button Reassign new."
+			                        });
+                            		
+                            	}, 500);
+			                       
+                            },
+                            errorMessage: "Was not able to see Button Reassign new."
+                        });
+                    },
+                    iCloseTheDialog:function(){
+                    	return this.waitFor({
+							controlType:"sap.m.Button",
+							searchOpenDialogs : true,
+							success:function(aButton){
+								for(var i in aButton){
+									if(aButton[i].getText() === "Close"){
+										aButton[i].firePress();
+										 Opa5.assert.ok(true, "Dialog is Closed");
+									}
+								}
+							},
+							errorMessage : "Dialog doesn't have Close Button"
+						});
+                    },
+                    iShouldSeeTheDialog: function(){
+                    	 return this.waitFor({
+                        	controlType:"sap.m.Dialog",
+                            viewName: sViewName,
+                            success: function (oDialog) {
+			                      Opa5.assert.ok(true, "Dialog is visible");
+                            },
+                            errorMessage: "Was not able to see the dialog."
                         });
                     }
 

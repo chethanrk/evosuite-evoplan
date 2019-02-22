@@ -1,0 +1,52 @@
+ [{
+ 	"__metadata": {
+ 		"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssetPlanningDataSet('0AA10FE57E901EE98BB961C7890CE203')",
+ 		"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssetPlanningDataSet('0AA10FE57E901EE98BB961C7890CE203')",
+ 		"type": "com.evorait.evoplan.AssetPlanningData"
+ 	},
+ 	"OrderId": "825557",
+ 	"AssetGuid": "0AA10FE57E901EE8B2909CD2EB09A3F7",
+ 	"Guid": "0AA10FE57E901EE98BB961C7890CE203",
+ 	"Description": "Test",
+ 	"EndTimestamp": "\/Date(1549872000000)\/",
+ 	"StartTimestamp": "\/Date(1550044800000)\/",
+ 	"AssetPlandatatype": "D",
+ 	"ALLOW_ASSIGN": true,
+ 	"STATUS": "INIT",
+ 	"STATUS_DESC": "Initial Status of the demand",
+ 	"STATUS_ICON": "sap-icon://check-availability"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssetPlanningDataSet('0AA10FE57E901EE98DB2CFED66C53220')",
+ 		"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssetPlanningDataSet('0AA10FE57E901EE98DB2CFED66C53220')",
+ 		"type": "com.evorait.evoplan.AssetPlanningData"
+ 	},
+ 	"OrderId": "",
+ 	"AssetGuid": "0AA10FE57E901EE8B2909CD2EB09A3F7",
+ 	"Guid": "0AA10FE57E901EE98DB2CFED66C53220",
+ 	"Description": "Test",
+ 	"EndTimestamp": "\/Date(1550773800000)\/",
+ 	"StartTimestamp": "\/Date(1550687400000)\/",
+ 	"AssetPlandatatype": "A",
+ 	"ALLOW_ASSIGN": false,
+ 	"STATUS": "",
+ 	"STATUS_DESC": "",
+ 	"STATUS_ICON": ""
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssetPlanningDataSet('0AA10FE57E901EE98DB31C47C819D28C')",
+ 		"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssetPlanningDataSet('0AA10FE57E901EE98DB31C47C819D28C')",
+ 		"type": "com.evorait.evoplan.AssetPlanningData"
+ 	},
+ 	"OrderId": "",
+ 	"AssetGuid": "0AA10FE57E901EE8B2909CD2EB09A3F7",
+ 	"Guid": "0AA10FE57E901EE98DB31C47C819D28C",
+ 	"Description": "DownTime",
+ 	"EndTimestamp": "\/Date(1551378599000)\/",
+ 	"StartTimestamp": "\/Date(1550687400000)\/",
+ 	"AssetPlandatatype": "A",
+ 	"ALLOW_ASSIGN": false,
+ 	"STATUS": "",
+ 	"STATUS_DESC": "",
+ 	"STATUS_ICON": ""
+ }]

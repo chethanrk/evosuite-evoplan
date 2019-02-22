@@ -298,9 +298,9 @@ sap.ui.define([
 				};
 				this.clearMessageModel();
 				if (oTimeAllocData.guid && oTimeAllocData.guid !== "")
-					this.callFunctionImport(oParams, "UpdateAssetUnavailability", "POST", true);
+					this.callFunctionImport(oParams, "UpdateAssetUnavailability", "POST", {bFromAsset:true});
 				else
-					this.callFunctionImport(oParams, "CreateAssetUnavailability", "POST", true);
+					this.callFunctionImport(oParams, "CreateAssetUnavailability", "POST", {bFromAsset:true});
 			} else {
 				return;
 			}

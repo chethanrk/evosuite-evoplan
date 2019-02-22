@@ -1,0 +1,42 @@
+[
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/RevisionNumberSet(Plant='0001',Revnr='00000001')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/RevisionNumberSet(Plant='0001',Revnr='00000001')",
+          "type": "com.evorait.evoplan.RevisionNumber"
+        },
+        "Plant": "0001",
+        "Revnr": "00000001",
+        "Revtx": "Revision Nr. 1"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/RevisionNumberSet(Plant='1200',Revnr='10001')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/RevisionNumberSet(Plant='1200',Revnr='10001')",
+          "type": "com.evorait.evoplan.RevisionNumber"
+        },
+        "Plant": "1200",
+        "Revnr": "10001",
+        "Revtx": "Test - Revision - EvoPlan"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/RevisionNumberSet(Plant='3000',Revnr='OSHA-96')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/RevisionNumberSet(Plant='3000',Revnr='OSHA-96')",
+          "type": "com.evorait.evoplan.RevisionNumber"
+        },
+        "Plant": "3000",
+        "Revnr": "OSHA-96",
+        "Revtx": "New Safety Requirements"
+      },
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/RevisionNumberSet(Plant='6000',Revnr='00000001')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/RevisionNumberSet(Plant='6000',Revnr='00000001')",
+          "type": "com.evorait.evoplan.RevisionNumber"
+        },
+        "Plant": "6000",
+        "Revnr": "00000001",
+        "Revtx": "Revision Nr. 1"
+      }
+    ]

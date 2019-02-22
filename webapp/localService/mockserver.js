@@ -50,10 +50,66 @@ sap.ui.define([
                     path: new RegExp("GetSystemInformation(.*)"),
                     response: function(oXhr, sUrlParams) {
                         jQuery.sap.log.debug("Incoming request for GetSystemInformation");
-                        var oResponse = $.ajax({
-                            url: sJsonFilesUrl + "/SystemInformationSet.json"
+                        var oResponse = jQuery.sap.sjax({
+                            url: sJsonFilesUrl+"/GetSystemInformation.json"
                         });
                         oXhr.respondJSON(200, {}, JSON.stringify(oResponse.data));
+                        return true;
+                    }
+                });
+                
+                /* aRequests.push({
+                    method: "GET",
+                    path: new RegExp("AssetSet(.*)"),
+                    response: function(oXhr, sUrlParams) {
+                        jQuery.sap.log.debug("Incoming request for AssetPlanningDataSet");
+                        var oResponse = jQuery.sap.sjax({
+                            url: sJsonFilesUrl+"/AssetPlanningDataSet.json"
+                        });
+                        oXhr.respondJSON(200, {}, JSON.stringify(oResponse.data));
+                        return true;
+                    }
+                });*/
+                
+                aRequests.push({
+                    method: "POST",
+                    path: new RegExp("CreateAssignment(.*)"),
+                    response: function(oXhr, sUrlParams) {
+                        jQuery.sap.log.debug("Incoming request for CreateAssignment");
+                        var oResponse = jQuery.sap.sjax({
+                            url: sJsonFilesUrl+"/Assignment.json"
+                        });
+                        var header = {
+								"code": "/EVORA/EP_MSG_CLS/038",
+								"message": "Assignment dates have been adjusted to match the dates of the resource ",
+								"severity": "warning",
+								"target": "",
+								"details": [{
+									"code": " / EVORA / EP_MSG_CLS / 018 ",
+									"message": "Assignment end date is later than demand end date ",
+									"target": "",
+									"severity": "warning"
+								}, {
+									"code": " / EVORA / EP_MSG_CLS / 012 ",
+									"message": "Assignment of demand Travelling to location to resource Rahul Inamdar of resource group Product cluster is successful ",
+									"target": "",
+									"severity": "info"
+								}, {
+									"code": "/EVORA/EP_MSG_CLS/018",
+									"message": "Assignment end date is later than demand end date",
+									"target": "",
+									"severity": "warning"
+								}]
+							};
+                        
+                        var oHeaders = {
+							"Content-Type":"application/json",
+							"DataServiceVersion":"2.0",
+							"location":"https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED890A79BFB8D42B65E')",
+							"sap-message":JSON.stringify(header)
+
+                        };
+                        oXhr.respondJSON(201, oHeaders, JSON.stringify(oResponse.data));
                         return true;
                     }
                 });

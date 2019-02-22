@@ -1,0 +1,25 @@
+[
+      {
+        "__metadata": {
+          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssetSet('0AA10FE57E901EE8B2909CD2EB09A3F7')",
+          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssetSet('0AA10FE57E901EE8B2909CD2EB09A3F7')",
+          "type": "com.evorait.evoplan.Asset"
+        },
+        "TechnicalObject": "?0100000000000002964",
+        "ActionType": "",
+        "AssetPlandatatype": "X",
+        "AssetGuid": "0AA10FE57E901EE8B2909CD2EB09A3F7",
+        "SuperiorAssetGuid": "",
+        "TechnicalObjectType": "FLOC",
+        "Description": "Hitech",
+        "DateFrom": "/Date(1550731475784)/",
+        "MainWorkCenter": "PC-SERV",
+        "DateTo": "/Date(1550731475784)/",
+        "Plant": "1200",
+        "AssetPlanningDataSet": {
+          "__deferred": {
+            "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssetSet('0AA10FE57E901EE8B2909CD2EB09A3F7')/AssetPlanningDataSet"
+          }
+        }
+      }
+    ]
