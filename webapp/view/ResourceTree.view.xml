@@ -38,7 +38,7 @@
 						<table:template>
 							<!--<ProgressIndicator percentValue="{Utilization}" displayValue="{Utilization}%" showValue="true" state="None"
 								visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"/>-->
-								<Text text="{Utilization}H" visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }" wrapping="false"/>
+								<Text text="{Utilization}H"  wrapping="false"/>
 						</table:template>
 					</table:Column>
 					<table:Column label="{i18n>xtit.tableAssignment}" name="{i18n>xtit.tableAssignment}" width="3rem"
