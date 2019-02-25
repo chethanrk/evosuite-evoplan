@@ -95,7 +95,6 @@ sap.ui.define([
 					this.waitFor({
 						id: createIdFor(sFilter, "DemandDesc"),
 						viewName: sViewName,
-						autoWait: true,
 						actions: new EnterText({
 							text: sText
 						})
@@ -104,7 +103,6 @@ sap.ui.define([
 					return this.waitFor({
 						id: sFilter + "-btnGo",
 						viewName: sViewName,
-						autoWait: true,
 						actions: new Press()
 					});
 				},
@@ -246,7 +244,7 @@ sap.ui.define([
 						controlType: "sap.ui.table.Row",
 						viewName: sViewName,
 						matchers: new BindingPath({
-							path: "/DemandSet('0A51491BD5A01ED88AEE3E1FEF5FF9F3')"
+							path: "/DemandSet('0A51491BD5A01EE8A596C4137A4CB7BA')"
 						}),
 						success: function (aRows) {
 							var oContext = aRows[0].getBindingContext(),
@@ -316,7 +314,6 @@ sap.ui.define([
 					// retrieve all Objects to be able to check for the total amount
 					this.waitFor(this.createAWaitForAnEntitySet({
 						entitySet: "DemandSet",
-						autoWait: true,
 						success: function (aEntityData) {
 							aAllEntities = aEntityData;
 						}
@@ -325,7 +322,6 @@ sap.ui.define([
 					return this.waitFor({
 						id: sTableId,
 						viewName: sViewName,
-						autoWait: true,
 						matchers: function (oTable) {
 							// If there are less items in the list than the growingThreshold, only check for this number.
 							iExpectedNumberOfItems = aAllEntities.length;

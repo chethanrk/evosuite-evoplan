@@ -136,7 +136,9 @@ sap.ui.define([
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
 
 			if (this._aSelectedRowsIdx.length > 0) {
-				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData,{bFromHome:true});
+				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData, {
+					bFromHome: true
+				});
 			} else {
 				var msg = this.getResourceBundle().getText("ymsg.selectMinItem");
 				MessageToast.show(msg);
@@ -153,9 +155,7 @@ sap.ui.define([
 			var sPath = oContext.getPath();
 			var oModel = oContext.getModel();
 			var oData = oModel.getProperty(sPath);
-			var oResourceBundle = this.getResourceBundle();
-			// setting the bread crum value xtit.itemListTitle
-			this.getModel("viewModel").setProperty("/detailPageBreadCrum",oResourceBundle.getText("xbut.pageDemands"));
+
 			oRouter.navTo("detail", {
 				guid: oData.Guid
 			});
@@ -267,7 +267,7 @@ sap.ui.define([
 					helper: function (event, ui) {
 						var target = $(event.currentTarget);
 						//single drag by checkbox, checkbox is not inside tr so have to find out row index
-						var	selectedIdx = _this._oDataTable.getSelectedIndices(),
+						var selectedIdx = _this._oDataTable.getSelectedIndices(),
 							oSelectedPaths = null;
 
 						/* As the table will be loaded with only 100 items initially.

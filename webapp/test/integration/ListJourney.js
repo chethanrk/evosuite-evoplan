@@ -25,7 +25,7 @@ sap.ui.define([
 	});
 	
 	opaTest("Should filter entries based on the demand description", function(Given, When, Then) {
-		Given.iStartTheApp();
+		// Given.iStartTheApp();
 		
 		When.onTheListPage.iLookAtTheScreen();
 		

@@ -163,8 +163,7 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oData = oModel.getProperty(sPath),
-				oRouter = this.getRouter(),
-				oResourceBundle = this.getResourceBundle();
+				oRouter = this.getRouter();
 			if (oEvent.getParameter("multiSelect")) { // CTL+ <appointment> will trigger this parameter (Not documented in SAPUI5 Demokit)
 				this._multiAssignment(oData, oSelectedDemand);
 				return;
@@ -174,7 +173,6 @@ sap.ui.define([
 				if (oData.AssetPlandatatype === "A") {
 					this._openTimeAllocUpdate(oData);
 				} else {
-					this.getModel("viewModel").setProperty("/detailPageBreadCrum",oResourceBundle.getText("xbut.pageAssetManager"));
 					oRouter.navTo("assetDemandDetail", {
 						guid: oData.Guid,
 						asset: oData.AssetGuid
