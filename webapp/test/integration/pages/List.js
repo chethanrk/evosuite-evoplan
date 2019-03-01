@@ -124,18 +124,11 @@ sap.ui.define([
 					return this.waitFor({
 						id: sTableId,
 						viewName: sViewName,
+						autoWait:true,
 						success: function (oTable) {
 							oTable.getTable().setSelectedIndex(index);
 						},
 						errorMessage: "Can't see the Demand Table."
-					});
-				},
-				iClickOnTheAboutIcon: function () {
-					return this.waitFor({
-						id: "idButtonAboutDialog",
-						viewName: sViewName,
-						actions: new Press(),
-						errorMessage: "Can't see the About Button."
 					});
 				},
 				iRememberTheItemAtPosition: function (iPosition) {
@@ -185,20 +178,6 @@ sap.ui.define([
 							Opa5.assert.ok(true, "The table has entries");
 						},
 						errorMessage: "The table had no entries"
-					});
-				},
-				iShouldSeetheAboutDialogIcon: function () {
-					return this.waitFor({
-						viewName: sViewName,
-						id: "idButtonAboutDialog",
-						matchers: new PropertyStrictEquals({
-							name: "icon",
-							value: "sap-icon://sys-help"
-						}),
-						success: function () {
-							Opa5.assert.ok(true, "I can see the button icon");
-						},
-						errorMessage: "There is no Button icon available for information pop up"
 					});
 				},
 				iShouldSeeTheFilterBar: function () {
@@ -292,18 +271,6 @@ sap.ui.define([
 						}),
 						success: function (sTitleText) {
 							Opa5.assert.ok(true, "Navigated to Demand overview page with title Demand Overview");
-						}
-					});
-				},
-				iShouldSeeTheInformationPopupWithTitle: function (sTitle) {
-					return this.waitFor({
-						controlType: "sap.m.Dialog",
-						matchers: new I18NText({
-							propertyName: "title",
-							key: sTitle
-						}),
-						success: function (sTitleText) {
-							Opa5.assert.ok(true, "The infomation pop up with title About");
 						}
 					});
 				},

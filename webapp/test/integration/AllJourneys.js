@@ -16,8 +16,9 @@ sap.ui.require([
 	"com/evorait/evoplan/test/integration/pages/MasterPage",
 	"com/evorait/evoplan/test/integration/pages/NotFound",
 	"com/evorait/evoplan/test/integration/pages/OverviewPage",
-	"com/evorait/evoplan/test/integration/pages/List"
-], function(Opa5, Common) {
+	"com/evorait/evoplan/test/integration/pages/List",
+	"com/evorait/evoplan/test/integration/pages/AssetTree"
+], function (Opa5, Common) {
 	"use strict";
 	Opa5.extendConfig({
 		arrangements: new Common(),
@@ -31,8 +32,10 @@ sap.ui.require([
 		"com/evorait/evoplan/test/integration/MasterPageJourney",
 		"com/evorait/evoplan/test/integration/OverviewPageJourney",
 		"com/evorait/evoplan/test/integration/NavigationJourney",
-		"com/evorait/evoplan/test/integration/ListJourney"
-	], function() {
+		"com/evorait/evoplan/test/integration/ListJourney",
+		"com/evorait/evoplan/test/integration/AppJourney",
+		"com/evorait/evoplan/test/integration/AssetListJourney"
+	], function () {
 		QUnit.start();
 	});
 });

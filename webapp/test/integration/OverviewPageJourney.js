@@ -55,7 +55,7 @@ sap.ui.define([
 		
 		When.onOverviewPage.iClickOnTheChangeStatus();
 		
-			Then.onOverviewPage.iShouldSeeRespectiveStatus().and.iShouldSeeStatus("Complete");
+			Then.onOverviewPage.iShouldSeeRespectiveStatus().and.iShouldSeeStatus("Transfer to mobile");
 	});
 	opaTest("Should see the assignment update Dialog", function (Given, When, Then) {
 		// Actions

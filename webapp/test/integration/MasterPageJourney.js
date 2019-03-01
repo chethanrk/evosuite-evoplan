@@ -5,7 +5,7 @@ sap.ui.require(
  
 		QUnit.module("Resource Tree");
 
-		opaTest("Should see the resource table with different controls", function (Given, When, Then) {
+		/*opaTest("Should see the resource table with different controls", function (Given, When, Then) {
 			// Arrangements
 			Given.iStartTheApp();
 			//Actions
@@ -20,8 +20,8 @@ sap.ui.require(
 				.and.iShouldSeeFooterPlanningButtonAs(false)
 				.and.iShouldSeeFooterUnassignButtonAs(false)
 				.and.iShouldSeeFooterAssignNewButtonAs(false);
-		});
-		opaTest("Should See footer buttons as enabled", function (Given, When, Then) {
+		});*/
+	/*	opaTest("Should See footer buttons as enabled", function (Given, When, Then) {
 			// Actions
 			When.onTheMasterPage.iLookAtTheScreen();
 				
@@ -31,8 +31,8 @@ sap.ui.require(
 				.and.iShouldSeeFooterUnassignButtonAs(true)
 				.and.iShouldSeeFooterAssignNewButtonAs(true);
                 
-		});
-		opaTest("Should See The Dialog", function (Given, When, Then) {
+		});*/
+		/*opaTest("Should See The Dialog", function (Given, When, Then) {
 			// Actions
             When.onTheMasterPage.iClickOnThePlanningCal();
 			// Assertions
@@ -51,9 +51,13 @@ sap.ui.require(
 			// // .iShouldSeeAssignUnassignDialog("Select Demands for reassignment").and
 			// .iCloseTheDialog();
                 
-		});
+		});*/
 
 		opaTest("Should press on filter button and see the filter dialog", function (Given, When, Then) {
+				// Arrangements
+			Given.iStartTheApp();
+			//Actions
+			When.onTheMasterPage.iLookAtTheScreen();
 			// Actions
             When.onTheMasterPage.iPressOnFilterButton();
 			// Assertions

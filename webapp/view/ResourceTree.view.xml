@@ -33,6 +33,19 @@
 								isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink"/>
 						</table:template>
 					</table:Column>
+				<!--	<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}"  width="5rem"
+						hAlign="End" visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
+						<table:template>
+								<Text text="{Utilization}H"  wrapping="false"/>
+						</table:template>
+					</table:Column>
+					<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}"  width="5rem"
+						hAlign="End" visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
+						<table:template>
+							<ProgressIndicator percentValue="{Utilization}" displayValue="{Utilization}%" showValue="true" state="None"
+								visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"/>
+						</table:template>
+					</table:Column>-->
 					<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}"  width="5rem"
 						hAlign="End" visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
 						<table:template>

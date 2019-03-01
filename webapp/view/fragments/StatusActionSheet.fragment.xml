@@ -5,7 +5,7 @@
             <Button icon="sap-icon://email" id="idButtonAmnt" text="{i18n>xbut.app}" press="onClickStatus" visible="{ALLOW_APPOINTMNT}" />
             <Button icon="sap-icon://email" id="idButtoncls" text="{i18n>xbut.buttonClose}" press="onClickStatus" visible="{ALLOW_CLOSED}" />
             <Button icon="sap-icon://complete" id="idButtonComp" text="{i18n>xbut.comp}" press="onClickStatus" visible="{ALLOW_COMPLETE}" />
-            <Button icon="sap-icon://ipad" id="idButtonMobi" text="{i18n>xbut.tranMob} to mobile" press="onClickStatus" visible="{ALLOW_DEM_MOBILE}" />
+            <Button icon="sap-icon://ipad" id="idButtonMobi" text="{i18n>xbut.tranMob}" press="onClickStatus" visible="{ALLOW_DEM_MOBILE}" />
             <Button icon="sap-icon://email" id="idButtonDisp" text="{i18n>xbut.disp}" press="onClickStatus" visible="{ALLOW_DISPATCHED}" />
             <Button icon="sap-icon://shipping-status" id="idButtonEnr" text="{i18n>xbut.enroute}" press="onClickStatus" visible="{ALLOW_ENROUTE}" />
             <Button icon="sap-icon://email" id="idButtonIncomp" text="{i18n>xbut.inComp}" press="onClickStatus" visible="{ALLOW_INCOMPLETE}" />

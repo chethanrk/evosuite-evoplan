@@ -8,7 +8,7 @@
 						<Image src="{path: '', formatter: '.formatter.getLogoImageLink' }" densityAware="false" height="100%" alt="EvoPlan" id="imageLogo"/>
 					</contentLeft>
 					<contentMiddle>
-						<MenuButton text="{appView>/pageTitle}">
+						<MenuButton id="idHeaderMenu" text="{appView>/pageTitle}">
 							<menu>
 								<Menu itemSelected="onSelectMenuButton">
 									<items>
@@ -21,7 +21,7 @@
 						</MenuButton>
 					</contentMiddle>
 					<contentRight>
-						<Button icon="sap-icon://sys-help" tooltip="{i18n>xtit.infoDialogTitle}" press="onIconPress"/>
+						<Button id="idButtonAboutDialog" icon="sap-icon://sys-help" tooltip="{i18n>xtit.infoDialogTitle}" press="onIconPress"/>
 					</contentRight>
 				</Bar>
 			</customHeader>

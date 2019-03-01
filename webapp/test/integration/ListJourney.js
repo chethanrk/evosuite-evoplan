@@ -69,14 +69,6 @@ sap.ui.define([
 		When.onTheListPage.iClickonAssignButton();
 			Then.onTheListPage.iShouldSeeErrorDialog().and.iTeardownMyAppFrame();
 	});
-	
-	opaTest("Should Display the Information popup", function(Given, When, Then) {
-		Given.iStartTheApp();
-
-		When.onTheListPage.iClickOnTheAboutIcon();
-
-		Then.onTheListPage.iShouldSeeTheInformationPopupWithTitle("xtit.infoDialogTitle").and.iTeardownMyAppFrame();
-	});
 
 
 });
