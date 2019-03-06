@@ -21,13 +21,12 @@ sap.ui.define([
 
 		init: function (oView, sControlId) {
 			this._oView = oView;
-			this._oFilterBar = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceTreeFilterBar", this);
+			var oFragment = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceTreeFilterBar", this);
 			var oLayout = oView.byId(sControlId);
-			//this._oFilterBar = sap.ui.getCore().byId("resourceTreeFilterBar");
+			this._oFilterBar = sap.ui.getCore().byId("resourceTreeFilterBar");
 
 			// connect filterbar to view (models, lifecycle)
-			oLayout.addContent(this._oFilterBar);
-			//this._oView.addDependent(this._oFilterBar);
+			oLayout.addContent(oFragment);
 		},
 
 		/**
@@ -47,6 +46,26 @@ sap.ui.define([
 				this.openGroupFilterSuggest = false;
 			}
 			oEvent.getSource().setProperty("filterSuggests", true);
+		},
+
+		onBeforeVariantSave: function (oEvent) {},
+
+		onBeforeVariantFetch: function (oEvent) {},
+
+		onFilterChange: function (oEvent) {},
+
+		onAfterVariantLoad: function (oEvent) {
+			//Todo: set custom fields
+			if (this._oFilterBar) {
+				var oData = this._oFilterBar.getFilterData();
+				var oCustomFieldData = oData["_CUSTOM"];
+				if (oCustomFieldData) {
+					var oCtrl = this._oFilterBar.determineControlByName("MyOwnFilterField");
+					if (oCtrl) {
+						oCtrl.setSelectedKey(oCustomFieldData.MyOwnFilterField);
+					}
+				}
+			}
 		},
 
 		onExit: function () {
