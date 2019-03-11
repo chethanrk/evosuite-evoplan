@@ -1,10 +1,13 @@
 <mvc:View controllerName="com.evorait.evoplan.controller.ResourceTree" xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"
-	xmlns:f="sap.f" xmlns:table="sap.ui.table" xmlns:controls="com.evorait.evoplan.ui.controls" displayBlock="true" height="100%">
+	xmlns:f="sap.f" xmlns:table="sap.ui.table" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" xmlns:controls="com.evorait.evoplan.ui.controls"
+	xmlns:smartVariantManagement="sap.ui.comp.smartvariants" displayBlock="true" height="100%">
 	<f:DynamicPage id="idResourcePage" headerExpanded="true" preserveHeaderStateOnScroll="true" fitContent="false" showFooter="true"
 		class="sapUiNoContentPadding tableContentPage" toggleHeaderOnTitleClick="false">
 		<f:header>
-			<f:DynamicPageHeader pinnable="true">
+			<f:DynamicPageHeader id="resourceTreePageHeader" pinnable="true">
 				<f:content>
+					<!--<core:Fragment id="resourceTreeFilterFragment" fragmentName="com.evorait.evoplan.view.fragments.ResourceTreeFilterBar" type="XML"></core:Fragment>-->
 					<FlexBox alignItems="Start" justifyContent="SpaceBetween">
 						<items>
 							<controls:CustomVariantManagement id="customResourceVariant" select="onSelectVariant" initialise="onInitialiseVariant" enabled="true"

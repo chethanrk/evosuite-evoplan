@@ -6,10 +6,11 @@ sap.ui.define([
 	"sap/ui/model/FilterType",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/controller/AssignmentsController",
-	"sap/m/MessageToast",
+    "com/evorait/evoplan/controller/ResourceTreeFilterBar",
+    "sap/m/MessageToast",
 	"sap/m/MessageBox"
 ], function (Device, JSONModel, Filter, FilterOperator,
-	FilterType, formatter, BaseController,
+	FilterType, formatter, BaseController, ResourceTreeFilterBar,
 	MessageToast, MessageBox) {
 	"use strict";
 
@@ -34,6 +35,9 @@ sap.ui.define([
 			this.getOwnerComponent().filterSettingsDialog.init(this.getView());
 			//add form fields to variant
 			this._initCustomVariant();
+
+            this._oFilterConfigsController = new ResourceTreeFilterBar();
+            this._oFilterConfigsController.init(this.getView(), "resourceTreePageHeader");
 
 			//eventbus of assignemnt handling
 			var eventBus = sap.ui.getCore().getEventBus();
