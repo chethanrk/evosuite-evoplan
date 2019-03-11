@@ -3,7 +3,7 @@
 	<layout:Splitter resize="onResize">
 		<NavContainer id="leftPanel" class="panelPage">
 			<layoutData>
-				<layout:SplitterLayoutData size="30%"/>
+				<layout:SplitterLayoutData size="40%"/>
 			</layoutData>
 		</NavContainer>
 		<NavContainer id="rightPanel" class="panelPage"/>

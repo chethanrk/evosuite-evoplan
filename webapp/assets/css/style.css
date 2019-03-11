@@ -16,6 +16,10 @@
     font-size: .9rem;
 }
 
+.treeTableFilterBar .sapUiCompFilterBarBasicArea > div:first-of-type{
+    width: 20rem !important;
+}
+
 .treeTableHeader{
     display: none;
 }
