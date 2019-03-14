@@ -140,7 +140,8 @@ sap.ui.define([
 				plant: this._selectedAsset.Plant,
 				type: this._selectedAsset.TechnicalObjectType,
 				assetFloc: this._selectedAsset.TechnicalObject,
-				assetDesc: this._selectedAsset.Description
+				assetDesc: this._selectedAsset.Description,
+				businessArea : this._selectedAsset.BusinessArea
 			};
 			this.getModel("viewModel").setProperty("/createOrderDefaults", oOrderDetails);
 
