@@ -7,7 +7,6 @@
 		<f:header>
 			<f:DynamicPageHeader id="resourceTreePageHeader" pinnable="true">
 				<f:content>
-					<!--<core:Fragment id="resourceTreeFilterFragment" fragmentName="com.evorait.evoplan.view.fragments.ResourceTreeFilterBar" type="XML"></core:Fragment>-->
 					<FlexBox alignItems="Start" justifyContent="SpaceBetween">
 						<items>
 							<controls:CustomVariantManagement id="customResourceVariant" select="onSelectVariant" initialise="onInitialiseVariant" enabled="true"
@@ -22,8 +21,8 @@
 			</f:DynamicPageHeader>
 		</f:header>
 		<f:content>
-			<table:TreeTable id="droppableTable" selectionMode="None" enableColumnReordering="false" 
-				class="listTreeTable" rows="{ path : '/ResourceHierarchySet', parameters:{ numberOfExpandedLevels:1, restoreTreeStateAfterChange:true } }">
+			<table:TreeTable id="droppableTable" selectionMode="None" enableColumnReordering="false" class="listTreeTable"
+				rows="{ path : '/ResourceHierarchySet', parameters:{ numberOfExpandedLevels:1, restoreTreeStateAfterChange:true } }">
 				<table:columns>
 					<table:Column label="{i18n>xtit.tableObject}" name="{i18n>xtit.tableObject}">
 						<table:template>
@@ -36,7 +35,7 @@
 								isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink"/>
 						</table:template>
 					</table:Column>
-				<!--	<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}"  width="5rem"
+					<!--	<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}"  width="5rem"
 						hAlign="End" visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
 						<table:template>
 								<Text text="{Utilization}H"  wrapping="false"/>
@@ -49,16 +48,15 @@
 								visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"/>
 						</table:template>
 					</table:Column>-->
-					<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}"  width="5rem"
-						hAlign="End" visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
+					<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="5rem" hAlign="End"
+						visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
 						<table:template>
 							<!--<ProgressIndicator percentValue="{Utilization}" displayValue="{Utilization}%" showValue="true" state="None"
 								visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"/>-->
-								<Text text="{Utilization}H"  wrapping="false"/>
+							<Text text="{Utilization}H" wrapping="false"/>
 						</table:template>
 					</table:Column>
-					<table:Column label="{i18n>xtit.tableAssignment}" name="{i18n>xtit.tableAssignment}" width="3rem"
-						hAlign="End">
+					<table:Column label="{i18n>xtit.tableAssignment}" name="{i18n>xtit.tableAssignment}" width="3rem" hAlign="End">
 						<table:template>
 							<Text text="{AssignmentCount}" visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }" wrapping="false"/>
 						</table:template>
