@@ -91,6 +91,11 @@ sap.ui.define([
 			tooltip: "xtit.notAvailable",
 			icon: "sap-icon://busy",
 			color: "#BB0000"
+		},
+		"F": {
+			tooltip: "xtit.available",
+			icon: null,
+			color: ""
 		}
 	};
 

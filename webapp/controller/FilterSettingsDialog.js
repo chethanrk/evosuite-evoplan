@@ -334,11 +334,11 @@ sap.ui.define([
 
                     if(aTokenKeys[1] && aTokenKeys[1].trim() !== ""){
                         aTokenFilter.push(
-                            new Filter("Description", FilterOperator.Contains, aTokenKeys[1].trim())
+                            new Filter("Description", FilterOperator.EQ, aTokenKeys[1].trim())
                         );
                     }else if(aTokenKeys[0] && aTokenKeys[0].trim() !== ""){
                         aTokenFilter.push(
-                            new Filter("Description", FilterOperator.Contains, aTokenKeys[0].trim())
+                            new Filter("Description", FilterOperator.EQ, aTokenKeys[0].trim())
                         );
                     }
                 }
