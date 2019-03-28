@@ -32,9 +32,6 @@ sap.ui.define([
 			this._oDroppableTable = this.byId("droppableTable");
 			this._oDataTable = this._oDroppableTable;
 			this._configureDataTable(this._oDataTable);
-			this.getOwnerComponent().filterSettingsDialog.init(this.getView());
-			//add form fields to variant
-			this._initCustomVariant();
 
 			this._oFilterConfigsController = new ResourceTreeFilterBar();
 			this._oFilterConfigsController.init(this.getView(), "resourceTreePageHeader");
@@ -42,7 +39,7 @@ sap.ui.define([
 			//eventbus of assignemnt handling
 			var eventBus = sap.ui.getCore().getEventBus();
 			eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
-			eventBus.subscribe("FilterSettingsDialog", "triggerSearch", this._triggerFilterSearch, this);
+			eventBus.subscribe("ResourceTreeFilterBar", "triggerSearch", this._triggerFilterSearch, this);
 			eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
 			// eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
 
@@ -81,13 +78,7 @@ sap.ui.define([
 			if (parameters.busy === false) {
 				this._jDroppable(this);
 				this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
-
-				if (this.hasCustomDefaultVariant) {
-					this.hasCustomDefaultVariant = false;
-					this._triggerFilterSearch();
-				}
 			} else {
-				this.onTreeUpdateStarted();
 				this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
 			}
 		},
@@ -100,48 +91,6 @@ sap.ui.define([
 			if (this._oDroppableTable) {
 				this._jDroppable(this);
 			}
-		},
-
-		/**
-		 * trigger add filter to tree table for the first time
-		 */
-		onTreeUpdateStarted: function () {
-			if (!this.firstLoad) {
-				this._triggerFilterSearch();
-				this.firstLoad = true;
-			}
-		},
-
-		/**
-		 * search on searchfield in header
-		 * @param oEvent
-		 */
-		onSearchResources: function (oEvent) {
-			this._triggerFilterSearch();
-		},
-
-		/**
-		 * open FilterSettingsDialog
-		 * @param oEvent
-		 */
-		onFilterButtonPress: function (oEvent) {
-			this.getOwnerComponent().filterSettingsDialog.open(this.getView());
-		},
-
-		onInitialiseVariant: function (oEvent) {
-			var oParameters = oEvent.getParameters();
-			if (oParameters.defaultContent && !oParameters.isStandard) {
-				this.hasCustomDefaultVariant = true;
-			}
-		},
-
-		/**
-		 * when a new variant is selected trigger search
-		 * new Filters are bind to tree table
-		 * @param oEvent
-		 */
-		onSelectVariant: function (oEvent) {
-			this._triggerFilterSearch();
 		},
 
 		/**
@@ -218,9 +167,6 @@ sap.ui.define([
 			if (this.getOwnerComponent().planningCalendarDialog) {
 				this.getOwnerComponent().planningCalendarDialog.getDialog().destroy();
 			}
-			if (this.getOwnerComponent().filterSettingsDialog) {
-				this.getOwnerComponent().filterSettingsDialog.getDialog().destroy();
-			}
 		},
 
 		/* =========================================================== */
@@ -244,22 +190,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * init custom smart variant management and add filter controls to it
-		 * @private
-		 */
-		_initCustomVariant: function () {
-			var oVariant = this.byId("customResourceVariant");
-			this.getOwnerComponent().filterSettingsDialog.setVariant(oVariant);
-		},
-
-		/**
 		 * triggers request with all setted filters
 		 * @private
 		 */
 		_triggerFilterSearch: function () {
+			var aFilters = this._oFilterConfigsController.getAllFilters();
 			var binding = this._oDataTable.getBinding("rows");
-			var aFilters = this.getOwnerComponent().filterSettingsDialog.getAllFilters();
-			binding.filter(aFilters, "Application");
+			binding.filter(aFilters, sap.ui.model.FilterType.Application);
 		},
 
 		/**

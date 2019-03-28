@@ -1,20 +1,20 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
 	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<smartFilterBar:SmartFilterBar id="resourceTreeFilterBar" class="treeTableFilterBar" persistencyKey="{viewModel>/persistencyKeyTree}"
-		considerSelectionVariants="true" entitySet="{viewModel>/treeSet}" enableBasicSearch="false" liveMode="true" filterContainerWidth="12rem"
+		considerSelectionVariants="true" entitySet="{viewModel>/treeSet}" enableBasicSearch="false" liveMode="true" filterContainerWidth="15rem"
 		showGoOnFB="false" showRestoreButton="false" filterBarExpanded="false" beforeVariantFetch="onBeforeVariantFetch"
-		afterVariantLoad="onAfterVariantLoad" filterChange="onFilterChange" initialized="onInitialized" containerQuery="true">
+		afterVariantLoad="onAfterVariantLoad" filterChange="onPendingChanged" containerQuery="true">
 		<smartFilterBar:controlConfiguration>
-			<smartFilterBar:ControlConfiguration key="SearchGroup" label="{i18n>xtit.search}" visibleInAdvancedArea="true" width="100%" groupId="_BASIC"
+			<smartFilterBar:ControlConfiguration key="Description" label="{i18n>xtit.search}" visibleInAdvancedArea="true" width="100%" groupId="_BASIC"
 				index="0">
 				<smartFilterBar:customControl>
-					<SearchField showRefreshButton="false" search="onFilterChange" width="100%"></SearchField>
+					<SearchField showRefreshButton="false" search="onCustomFilterChange" width="100%"></SearchField>
 				</smartFilterBar:customControl>
 			</smartFilterBar:ControlConfiguration>
 			<smartFilterBar:ControlConfiguration key="NodeType" label="{i18n>xtit.filterTitleView}" visibleInAdvancedArea="false" mandatory="mandatory"
 				width="100%" groupId="_BASIC" index="1">
 				<smartFilterBar:customControl>
-					<Select width="100%" customData:hasValue="true" selectedKey="TIMENONE">
+					<Select width="100%" customData:hasValue="true" change="onChangeTimeView" selectedKey="TIMENONE">
 						<core:Item text="{i18n>xfld.viewFilterDaily}" key="TIMEDAY"/>
 						<core:Item text="{i18n>xfld.viewFilterWeek}" key="TIMEWEEK"/>
 						<core:Item text="{i18n>xfld.viewFilterMonth}" key="TIMEMONTH"/>
@@ -22,20 +22,28 @@
 					</Select>
 				</smartFilterBar:customControl>
 			</smartFilterBar:ControlConfiguration>
-			<smartFilterBar:ControlConfiguration key="ResourceGroupToken" label="{i18n>xtit.filterTitleGroup}" visibleInAdvancedArea="false"
-				width="100%" groupId="_BASIC" index="2">
+			<smartFilterBar:ControlConfiguration key="ResourceGroupGuid" label="{i18n>xtit.filterTitleGroup}" visibleInAdvancedArea="false" width="100%"
+				groupId="_BASIC" index="2">
 				<smartFilterBar:customControl>
-					<MultiInput width="100%" tokenUpdate="onUpdateGroupFilter" showValueHelp="true" startSuggestion="0" showSuggestion="true"
-						filterSuggests="true" valueHelpRequest="onGroupFilterValueHelpRequest" liveChange="onFilterChange" enableMultiLineMode="true"
-						suggestionItems="{ path: '/ResourceSet', sorter: { path: 'ObjectId' }, filters : [ { path : 'ObjectType', operator : 'EQ', value1 : 'RES_GROUP'} ], templateShareable: true }">
+					<MultiComboBox
+						items="{ path: '/ResourceSet', sorter: { path: 'ObjectId' }, filters : [ { path : 'ObjectType', operator : 'EQ', value1 : 'RES_GROUP'} ], templateShareable: true }"
+						selectionChange="onCustomFilterChange">
 						<core:Item key="{ObjectId}" text="{GroupDescription}"/>
-					</MultiInput>
+					</MultiComboBox>
 				</smartFilterBar:customControl>
 			</smartFilterBar:ControlConfiguration>
-			<smartFilterBar:ControlConfiguration key="StartDate" controlType="date" groupId="_BASIC" visibleInAdvancedArea="false" filterType="single"
-				index="3" mandatory="mandatory"/>
-			<smartFilterBar:ControlConfiguration key="EndDate" controlType="date" groupId="_BASIC" visibleInAdvancedArea="false" filterType="single"
-				index="4" mandatory="mandatory"/>
+			<smartFilterBar:ControlConfiguration key="StartDate" visibleInAdvancedArea="false" width="100%" groupId="_BASIC" index="3"
+				mandatory="mandatory">
+				<smartFilterBar:customControl>
+					<DatePicker width="100%"/>
+				</smartFilterBar:customControl>
+			</smartFilterBar:ControlConfiguration>
+			<smartFilterBar:ControlConfiguration key="EndDate" visibleInAdvancedArea="false" width="100%" groupId="_BASIC" index="3"
+				mandatory="mandatory">
+				<smartFilterBar:customControl>
+					<DatePicker width="100%"/>
+				</smartFilterBar:customControl>
+			</smartFilterBar:ControlConfiguration>
 		</smartFilterBar:controlConfiguration>
 		<!-- layout data used to make the table growing but the filter bar fixed -->
 		<smartFilterBar:layoutData>

@@ -5,19 +5,8 @@
 	<f:DynamicPage id="idResourcePage" headerExpanded="true" preserveHeaderStateOnScroll="true" fitContent="false" showFooter="true"
 		class="sapUiNoContentPadding tableContentPage" toggleHeaderOnTitleClick="false">
 		<f:header>
-			<f:DynamicPageHeader id="resourceTreePageHeader" pinnable="true">
-				<f:content>
-					<FlexBox alignItems="Start" justifyContent="SpaceBetween">
-						<items>
-							<controls:CustomVariantManagement id="customResourceVariant" select="onSelectVariant" initialise="onInitialiseVariant" enabled="true"
-								showExecuteOnSelection="true" showShare="true" lifecycleSupport="true" persistencyKey="{viewModel>/persistencyKeyTree}"
-								entitySet="{viewModel>/treeSet}"></controls:CustomVariantManagement>
-							<Button type="Transparent" id="filterResourceButton" icon="sap-icon://filter" text="{viewModel>/counterResourceFilter}"
-								press="onFilterButtonPress"/>
-						</items>
-					</FlexBox>
-					<SearchField id="searchField" search="onSearchResources" showRefreshButton="{= !${device>/support/touch} }" width="100%"></SearchField>
-				</f:content>
+			<f:DynamicPageHeader id="resourceTreePageHeader" pinnable="false">
+				<f:content></f:content>
 			</f:DynamicPageHeader>
 		</f:header>
 		<f:content>
