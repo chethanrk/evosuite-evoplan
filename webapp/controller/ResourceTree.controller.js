@@ -195,8 +195,20 @@ sap.ui.define([
 		 */
 		_triggerFilterSearch: function () {
 			var aFilters = this._oFilterConfigsController.getAllFilters();
-			var binding = this._oDataTable.getBinding("rows");
-			binding.filter(aFilters, sap.ui.model.FilterType.Application);
+			if (this._isLoaded) {
+				var binding = this._oDataTable.getBinding("rows");
+				binding.filter(aFilters, sap.ui.model.FilterType.Application);
+			} else {
+				this._isLoaded = true;
+				this._oDataTable.bindRows({
+					path: "/ResourceHierarchySet",
+					parameters: {
+						numberOfExpandedLevels: 1,
+						restoreTreeStateAfterChange: true
+					},
+					filters: aFilters
+				});
+			}
 		},
 
 		/**
