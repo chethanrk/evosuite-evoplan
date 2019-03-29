@@ -9,7 +9,7 @@ sap.ui.define([
 
     return BaseController.extend("com.evorait.evoplan.controller.PlanningCalendarDialog", {
 
-        formatter:formatter,
+        formatter: formatter,
 
         init: function () {
             var eventBus = sap.ui.getCore().getEventBus();
@@ -19,7 +19,7 @@ sap.ui.define([
          * init and get dialog view
          * @returns {sap.ui.core.Control|sap.ui.core.Control[]|*}
          */
-        getDialog : function () {
+        getDialog: function () {
             // create dialog lazily
             if (!this._oDialog) {
                 // create dialog via fragment factory
@@ -35,7 +35,7 @@ sap.ui.define([
          * @param sBindPath
          * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
          */
-        open : function (oView,aSelectedResources,mParameters) {
+        open: function (oView, aSelectedResources, mParameters) {
             var oDialog = this.getDialog();
 
             this._oView = oView;
@@ -58,7 +58,7 @@ sap.ui.define([
          * and merge into one json model for planning calendar
          * @private
          */
-        _setCalendarModel: function() {
+        _setCalendarModel: function () {
             var aUsers = [],
                 aResourceFilters = [],
                 aActualFilters = [],
@@ -66,7 +66,7 @@ sap.ui.define([
                 // oResourceBundle = this._oResourceBundle,
                 oViewFilterSettings = this._component ? this._component.filterSettingsDialog : null;
 
-            if(!oModel){
+            if (!oModel) {
                 return;
             }
             if (this.selectedResources.length <= 0) {
@@ -76,10 +76,10 @@ sap.ui.define([
             for (var i = 0; i < this.selectedResources.length; i++) {
                 var obj = oModel.getProperty(this.selectedResources[i]);
                 if (obj.NodeType === "RESOURCE") {
-                    if(obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
+                    if (obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
                         aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
-                    }else {
-                        aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid+"//X"));
+                    } else {
+                        aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid + "//X"));
                     }
                 } else if (obj.NodeType === "RES_GROUP") {
                     aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
@@ -97,8 +97,8 @@ sap.ui.define([
                 // aResourceFilters.push(new Filter([new Filter("DateTo", FilterOperator.GE, sDateControl1),new Filter("DateFrom", FilterOperator.LE, sDateControl2)],true));
                 aResourceFilters.push(new Filter("DateTo", FilterOperator.GE, sDateControl1));
                 aResourceFilters.push(new Filter("DateFrom", FilterOperator.LE, sDateControl2));
-                
-                if(aResourceFilters.length > 0){
+
+                if (aResourceFilters.length > 0) {
                     aActualFilters.push(new Filter({
                             filters: aResourceFilters,
                             and: true
@@ -108,14 +108,14 @@ sap.ui.define([
             }
 
             this._oPlanningCalendar.setBusy(true);
-            oModel.read("/AssignmentSet",{
-                    groupId: "calendarBatch",
-                    filters: aResourceFilters,
-                    urlParameters: {
-                        "$expand": "Resource,Demand" // To fetch the assignments associated with Resource or ResourceGroup
-                    }
-                });
-            oModel.read("/ResourceAvailabilitySet",{
+            oModel.read("/AssignmentSet", {
+                groupId: "calendarBatch",
+                filters: aResourceFilters,
+                urlParameters: {
+                    "$expand": "Resource,Demand" // To fetch the assignments associated with Resource or ResourceGroup
+                }
+            });
+            oModel.read("/ResourceAvailabilitySet", {
                 groupId: "calendarBatch",
                 filters: aResourceFilters,
                 urlParameters: {
@@ -126,7 +126,11 @@ sap.ui.define([
             aDeferredGroups = aDeferredGroups.concat(["calendarBatch"]);
             oModel.setDeferredGroups(aDeferredGroups);
 
-            oModel.submitChanges({groupId:"calendarBatch", success: this.onSuccess.bind(this), error: this.onError.bind(this)});
+            oModel.submitChanges({
+                groupId: "calendarBatch",
+                success: this.onSuccess.bind(this),
+                error: this.onError.bind(this)
+            });
         },
 
         /**
@@ -134,7 +138,7 @@ sap.ui.define([
          * @param data
          * @param response
          */
-        onSuccess: function(data,response){
+        onSuccess: function (data, response) {
             // console.log(this._createData(data));
             this._oCalendarModel.setData({
                 startDate: new Date(),
@@ -148,7 +152,7 @@ sap.ui.define([
         /**
          * Error callback for a batch read of assignments and absence infos
          */
-        onError: function(){
+        onError: function () {
             this._oDialog.setBusy(false);
             // this.showMessageToast(oResourceBundle.getText("errorMessage"));
         },
@@ -156,7 +160,7 @@ sap.ui.define([
          * Get selected filter view
          * @return {string}
          */
-        getSelectedView : function () {
+        getSelectedView: function () {
             var sCalendarView = "TIMENONE",
                 oViewFilterSettings = this._component.filterSettingsDialog;
             var oViewFilterItems = oViewFilterSettings.getFilterSelectView().getItems();
@@ -172,7 +176,7 @@ sap.ui.define([
          * show assignment info dialog on clicked calendar entry
          * @param oEvent
          */
-        onClickCalendarAssignment: function(oEvent){
+        onClickCalendarAssignment: function (oEvent) {
             var oAppointment = oEvent.getParameter("appointment");
             var oContext = oAppointment.getBindingContext("calendarModel");
             var oModel = oContext.getModel();
@@ -188,14 +192,14 @@ sap.ui.define([
          * @return {Array}
          * @private
          */
-        _createData:function(data){
+        _createData: function (data) {
             var aResources = [];
 
-            if(data.__batchResponses) {
+            if (data.__batchResponses) {
                 var oAssignData = data.__batchResponses[0].data;
                 var oAbsenceData = data.__batchResponses[1].data;
-                var oResourceMap={};
-                for(var l in data.__batchResponses) {
+                var oResourceMap = {};
+                for (var l in data.__batchResponses) {
 
                     var oData = data.__batchResponses[l].data;
                     for (var i in oData.results) {
@@ -205,20 +209,20 @@ sap.ui.define([
                     }
                 }
 
-                    for (var j in oResourceMap) {
-                        var sObjectId = oResourceMap[j].ObjectId;
-                        for (var k in oAssignData.results) {
-                            if (oAssignData.results[k].ObjectId === sObjectId) {
-                                oResourceMap[j].Assignments.push(oAssignData.results[k]);
-                            }
+                for (var j in oResourceMap) {
+                    var sObjectId = oResourceMap[j].ObjectId;
+                    for (var k in oAssignData.results) {
+                        if (oAssignData.results[k].ObjectId === sObjectId) {
+                            oResourceMap[j].Assignments.push(oAssignData.results[k]);
                         }
-                        for (var m in oAbsenceData.results) {
-                            if (oAbsenceData.results[m].ObjectId === sObjectId) {
-                                oResourceMap[j].AbsenceInfo.push(oAbsenceData.results[m]);
-                            }
-                        }
-                        aResources.push(oResourceMap[j]);
                     }
+                    for (var m in oAbsenceData.results) {
+                        if (oAbsenceData.results[m].ObjectId === sObjectId) {
+                            oResourceMap[j].AbsenceInfo.push(oAbsenceData.results[m]);
+                        }
+                    }
+                    aResources.push(oResourceMap[j]);
+                }
             }
             return aResources;
         },
@@ -230,7 +234,7 @@ sap.ui.define([
             // if(this._oCalendarModel){
             //     this._oCalendarModel.setData({});
             // }
-            if(this._oDialog){
+            if (this._oDialog) {
                 this._oDialog.close();
             }
         }

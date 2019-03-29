@@ -6,7 +6,8 @@
     <Dialog id="planCalendarDialog"
             title="{i18n>xtit.calendarModalTitle}"
             contentWidth="100%"
-            resizable="false">
+            resizable="true"
+            stretch="true">
         <content>
             <VBox class="sapUiSmallMargin">
                 <PlanningCalendar

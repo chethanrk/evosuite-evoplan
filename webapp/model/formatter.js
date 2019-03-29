@@ -244,13 +244,56 @@ sap.ui.define([
 			}
 			return true;
 		},
-
+        /**
+		 * Concatenate status and description
+         * @param sDesc
+         * @param sStatusDesc
+         * @return {*}
+         */
 		formatDemandTooltip: function (sDesc, sStatusDesc) {
 			if (sStatusDesc && sStatusDesc !== "") {
 				return sDesc + " : " + sStatusDesc;
 			} else {
 				return sDesc;
 			}
-		}
+		},
+        /**
+		 * Checks the is it Resource or not. And return true if the node type Resource and date node.
+         * @param sValue
+         * @return {boolean}
+         */
+        isResource: function (sValue) {
+            if (sValue !== "RES_GROUP" && sValue !== "ASSIGNMENT") {
+                return true;
+            }
+            return false;
+        },
+        /**
+		 * Format percentage value of progress bar based the utilization value
+         * @param sValue
+         */
+
+        formatProgress:function (data) {
+            var iValue = parseInt(data);
+            if(iValue > 100){
+                return 100;
+            }else{
+                return iValue;
+            }
+        },
+        /**
+         * Format state of progress bar based the utilization value
+         * @param sValue
+         */
+        formatProgressState:function (data) {
+            var iValue = parseInt(data);
+            if(iValue <= 50){
+                return sap.ui.core.ValueState.Success;
+            }else if(iValue > 50 && iValue <= 70){
+                return sap.ui.core.ValueState.Warning;
+            }else{
+                return sap.ui.core.ValueState.Error;
+            }
+        }
 	};
 });

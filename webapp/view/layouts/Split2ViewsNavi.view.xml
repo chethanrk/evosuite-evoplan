@@ -1,9 +1,9 @@
 <mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:layout="sap.ui.layout"
-	xmlns:html="http://www.w3.org/1999/xhtml">
+		  xmlns:html="http://www.w3.org/1999/xhtml">
 	<layout:Splitter resize="onResize">
 		<NavContainer id="leftPanel" class="panelPage">
 			<layoutData>
-				<layout:SplitterLayoutData size="30%"/>
+				<layout:SplitterLayoutData size="{viewModel>/splitterDivider}"/>
 			</layoutData>
 		</NavContainer>
 		<NavContainer id="rightPanel" class="panelPage"/>
