@@ -30,6 +30,16 @@
 		<edmx:Include Alias="Validation" Namespace="Org.OData.Validation.V1"/>
 	</edmx:Reference>
 	<edmx:DataServices>
-		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm"></Schema>
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceHierarchy">
+				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="Description"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

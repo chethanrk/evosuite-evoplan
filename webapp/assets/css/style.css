@@ -24,6 +24,10 @@
     display: none;
 }
 
+.listTreeTable .sapUiCompSmartTableToolbar {
+    display: none;
+}
+
 .listTreeTable .sapMTB {
     height: 0;
 }

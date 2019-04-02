@@ -30,16 +30,16 @@ sap.ui.define([
 		 **/
 		onInit: function () {
 			this._oDroppableTable = this.byId("droppableTable");
-			this._oDataTable = this._oDroppableTable;
+			this._oDataTable = this._oDroppableTable.getTable();
 			this._configureDataTable(this._oDataTable);
 
 			this._oFilterConfigsController = new ResourceTreeFilterBar();
-			this._oFilterConfigsController.init(this.getView(), "resourceTreePageHeader");
+			this._oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
 
 			//eventbus of assignemnt handling
 			var eventBus = sap.ui.getCore().getEventBus();
 			eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
-			eventBus.subscribe("ResourceTreeFilterBar", "triggerSearch", this._triggerFilterSearch, this);
+			//eventBus.subscribe("ResourceTreeFilterBar", "triggerSearch", this._triggerFilterSearch, this);
 			eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
 			// eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
 
@@ -79,6 +79,7 @@ sap.ui.define([
 				this._jDroppable(this);
 				this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
 			} else {
+				//this.onTreeUpdateStarted();
 				this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
 			}
 		},
@@ -90,6 +91,16 @@ sap.ui.define([
 		refreshDroppable: function (oEvent) {
 			if (this._oDroppableTable) {
 				this._jDroppable(this);
+			}
+		},
+
+		/**
+		 * trigger add filter to tree table for the first time
+		 */
+		onTreeUpdateStarted: function () {
+			if (!this.firstLoad) {
+				//this._triggerFilterSearch();
+				this.firstLoad = true;
 			}
 		},
 
@@ -160,6 +171,16 @@ sap.ui.define([
 			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true);
 		},
 
+		onBeforeRebindTable: function (oEvent) {
+			var oParams = oEvent.getParameters(),
+				oBinding = oParams.bindingParams;
+			var aFilter = this._oFilterConfigsController.getAllCustomFilters();
+			console.log(aFilter);
+			oBinding.parameters.numberOfExpandedLevels = 1;
+			oBinding.parameters.restoreTreeStateAfterChange = true;
+			oBinding.filters = aFilter;
+		},
+
 		/**
 		 * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
 		 */
@@ -195,6 +216,7 @@ sap.ui.define([
 		 */
 		_triggerFilterSearch: function () {
 			var aFilters = this._oFilterConfigsController.getAllFilters();
+			this._isLoaded = true;
 			if (this._isLoaded) {
 				var binding = this._oDataTable.getBinding("rows");
 				binding.filter(aFilters, sap.ui.model.FilterType.Application);
@@ -294,7 +316,7 @@ sap.ui.define([
 					oModel.setProperty(sPath + "/IsSelected", true); // changing the property in order trigger submit change
 					oTable.getBinding("rows").submitChanges(); // submit change will refresh of tree according maintained parameters
 				} else {
-					this._triggerFilterSearch();
+					//this._triggerFilterSearch();
 				}
 			}
 

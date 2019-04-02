@@ -21,7 +21,7 @@ sap.ui.define([
 
 		_oFilterBar: null,
 
-		_oCustomFilters: {
+		_oCustomFilterData: {
 			_CUSTOM: {}
 		},
 
@@ -63,6 +63,13 @@ sap.ui.define([
 			oLayout.addContent(oFragment);
 		},
 
+		getFilterBar: function () {
+			if (!this._oFilterBar) {
+				this._oFilterBar = sap.ui.getCore().byId("resourceTreeFilterBar");
+			}
+			return this._oFilterBar;
+		},
+
 		/**
 		 * set filter suggest
 		 * if no value the full list of suggestion should be displayed
@@ -86,17 +93,23 @@ sap.ui.define([
 			this._updateCustomFilterData();
 		},
 
-		onPendingChanged: function (oEvent) {
-			var oParams = oEvent.getParameters();
+		onFilterBarChanged: function (oEvent) {
+			/*var oParams = oEvent.getParameters();
 			if (oParams.getId() === "change") {
-				this._updateCustomFilterData();
-				this._triggerSearch();
-			}
+			}*/
 		},
 
 		onCustomFilterChange: function (oEvent) {
-			this._updateCustomFilterData();
-			this._triggerSearch();
+			if (this.getFilterBar()) {
+				this._updateCustomFilterData();
+			}
+		},
+
+		onCustomSearchChange: function (oEvent) {
+			if (this.getFilterBar()) {
+				this._updateCustomFilterData();
+				this._triggerSearch();
+			}
 		},
 
 		onChangeTimeView: function (oEvent) {
@@ -119,11 +132,14 @@ sap.ui.define([
 			this._waitForTokenValidation = false;
 
 			var oData = this._oFilterBar.getFilterData(),
-				oCustomFieldData = oData._CUSTOM,
+				oCustomFieldData = {},
 				selectedVariantKey = this._oVariantMangement.getSelectionKey(),
 				oVariantContent = this._oVariantMangement.getVariantContent(null, selectedVariantKey);
 
-			if (!oData._CUSTOM) {
+			if (oData._CUSTOM) {
+				this._oCustomFilterData._CUSTOM = oData._CUSTOM;
+				oCustomFieldData = oData._CUSTOM;
+			} else {
 				//maybe there are old variants saved from deprecated custom variant managment control
 				var aIsOldVariant = this._mapOldVariant(oVariantContent);
 				if (aIsOldVariant) {
@@ -147,38 +163,50 @@ sap.ui.define([
 
 		},
 
-		getAllFilters: function () {
-			var oCustomFilterData = this._oFilterBar.getFilterData();
+		getAllCustomFilters: function () {
 			var aStandardFilter = this._oFilterBar.getFilters();
 			var aFilters = aStandardFilter[0] ? aStandardFilter[0].aFilters : [];
 
-			for (var key in oCustomFilterData._CUSTOM) {
+			for (var key in this._oCustomFilterData._CUSTOM) {
 				if (key === this._aCustomFilters.search.origin) {
 					//Decription field
-					if (oCustomFilterData._CUSTOM[key]) {
-						aFilters.push(new Filter(key, FilterOperator.Contains, oCustomFilterData._CUSTOM[key]));
+					if (this._oCustomFilterData._CUSTOM[key]) {
+						aFilters.push(new Filter(key, FilterOperator.Contains, this._oCustomFilterData._CUSTOM[key]));
 					}
 				} else if (key === this._aCustomFilters.viewType.origin) {
 					//NodeType field
-					aFilters.push(new Filter(key, FilterOperator.EQ, oCustomFilterData._CUSTOM[key]));
+					aFilters.push(new Filter(key, FilterOperator.EQ, this._oCustomFilterData._CUSTOM[key]));
 				} else if (key === this._aCustomFilters.startDate.origin) {
 					//StartDate field
-					aFilters.push(new Filter(key, FilterOperator.LE, oCustomFilterData._CUSTOM[key]));
+					aFilters.push(new Filter(key, FilterOperator.LE, this._oCustomFilterData._CUSTOM[key]));
 				} else if (key === this._aCustomFilters.endDate.origin) {
 					//EndDate field
-					aFilters.push(new Filter(key, FilterOperator.GE, oCustomFilterData._CUSTOM[key]));
-				} else if (typeof oCustomFilterData._CUSTOM[key] === "object") {
+					aFilters.push(new Filter(key, FilterOperator.GE, this._oCustomFilterData._CUSTOM[key]));
+				} else if (typeof this._oCustomFilterData._CUSTOM[key] === "object") {
 					//ResourceGroupId tokens
 					var aResourceGroupFilter = [];
-					for (var i = 0; i < oCustomFilterData._CUSTOM[key].length; i++) {
-						aResourceGroupFilter.push(new Filter(key, FilterOperator.EQ, oCustomFilterData._CUSTOM[key][i]));
+					for (var i = 0; i < this._oCustomFilterData._CUSTOM[key].length; i++) {
+						aResourceGroupFilter.push(new Filter(key, FilterOperator.EQ, this._oCustomFilterData._CUSTOM[key][i]));
 					}
 					if (aResourceGroupFilter.length > 0) {
 						aFilters.push(new Filter(aResourceGroupFilter, false));
 					}
 				}
 			}
-			return [new Filter(aFilters, true)];
+			return aFilters;
+		},
+
+		getDateRange: function () {
+			return this._getDateRangeValues();
+		},
+
+		getViewType: function () {
+			if (this._oCustomFilterData._CUSTOM[this._aCustomFilters.viewType.origin]) {
+				return this._oCustomFilterData._CUSTOM[this._aCustomFilters.viewType.origin];
+			} else {
+				var oCtrl = this._oFilterBar.getControlByKey(this._aCustomFilters.viewType.origin);
+				return oCtrl.getSelectedKey();
+			}
 		},
 
 		/**
@@ -186,25 +214,23 @@ sap.ui.define([
 		 * @private
 		 */
 		_updateCustomFilterData: function () {
-			var oCustom = {
-				_CUSTOM: {}
-			};
+			this._oCustomFilterData._CUSTOM = {};
+
 			for (var key in this._aCustomFilters) {
 				var sFilterKey = this._aCustomFilters[key].origin,
 					oCtrl = this._oFilterBar.getControlByKey(sFilterKey);
 				if (oCtrl) {
 					try {
-						oCustom._CUSTOM[sFilterKey] = oCtrl.getValue();
+						this._oCustomFilterData._CUSTOM[sFilterKey] = oCtrl.getValue();
 					} catch (e) { /*do nothing*/ }
 					try {
-						oCustom._CUSTOM[sFilterKey] = oCtrl.getSelectedKey();
+						this._oCustomFilterData._CUSTOM[sFilterKey] = oCtrl.getSelectedKey();
 					} catch (e) { /*do nothing*/ }
 					try {
-						oCustom._CUSTOM[sFilterKey] = oCtrl.getSelectedKeys();
+						this._oCustomFilterData._CUSTOM[sFilterKey] = oCtrl.getSelectedKeys();
 					} catch (e) { /*do nothing*/ }
 				}
 			}
-			this._oFilterBar.setFilterData(oCustom);
 		},
 
 		_mapOldVariant: function (oVariant) {
@@ -291,35 +317,29 @@ sap.ui.define([
 		},
 
 		_triggerSearch: function () {
-			var eventBus = sap.ui.getCore().getEventBus();
-			eventBus.publish("ResourceTreeFilterBar", "triggerSearch", {});
+			this._oFilterBar.fireSearch();
 		},
 
 		_setResourceGroupToken: function (oToken, oCtrl, sKey, idx) {
-			var currFilterData = this._oFilterBar.getFilterData();
-			if (!currFilterData._CUSTOM) {
-				currFilterData._CUSTOM = {};
-			}
-			if (!idx || idx === 0 || !currFilterData._CUSTOM[sKey]) {
+			var currFilterData = this._oCustomFilterData._CUSTOM || {};
+
+			if (!idx || idx === 0 || !currFilterData[sKey]) {
 				oCtrl.setSelectedKeys([]);
-				currFilterData._CUSTOM[sKey] = [];
+				currFilterData[sKey] = [];
 			}
 
 			if (oToken) {
 				//set visible token for custom field with key ResourceGroupGuid
 				oCtrl.addSelectedKeys([oToken.key]);
-				currFilterData._CUSTOM[sKey].push(oToken.key);
+				currFilterData[sKey].push(oToken.key);
 			}
-			this._oFilterBar.setFilterData(currFilterData);
+			this._oCustomFilterData._CUSTOM = currFilterData;
 		},
 
 		_setCustomFilterDataValue: function (sKey, sValue) {
-			var currFilterData = this._oFilterBar.getFilterData();
-			if (!currFilterData._CUSTOM) {
-				currFilterData._CUSTOM = {};
-			}
-			currFilterData._CUSTOM[sKey] = sValue || "";
-			this._oFilterBar.setFilterData(currFilterData);
+			var currFilterData = this._oCustomFilterData._CUSTOM || {};
+			currFilterData[sKey] = sValue || "";
+			this._oCustomFilterData._CUSTOM = currFilterData;
 		},
 
 		_getDateRangeValues: function (oData, sDateRangeType) {
@@ -333,12 +353,18 @@ sap.ui.define([
 					selectedTimeFormat = formatter.getResourceFormatByKey(sViewType);
 					return [this.formatter.date(selectedTimeFormat.getDateBegin()), this.formatter.date(selectedTimeFormat.getDateEnd())];
 				}
-			}
-			if (sDateRangeType) {
+			} else if (sDateRangeType) {
 				selectedTimeFormat = formatter.getResourceFormatByKey(sDateRangeType);
 				return [this.formatter.date(selectedTimeFormat.getDateBegin()), this.formatter.date(selectedTimeFormat.getDateEnd())];
+			} else if (this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin]) {
+				return [
+					this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin],
+					this._oCustomFilterData._CUSTOM[this._aCustomFilters.endDate.origin]
+				];
 			}
-			return [];
+			var startDateCtrl = this._oFilterBar.getControByKey(this._aCustomFilters.startDate.origin),
+				endDateCrtl = this._oFilterBar.getControByKey(this._aCustomFilters.endDate.origin);
+			return [startDateCtrl.getValue(), endDateCrtl.getValue()];
 		}
 	});
 
