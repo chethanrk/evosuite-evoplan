@@ -116,9 +116,8 @@ sap.ui.define([
          */
 		onBeforeVariantFetch: function (oEvent) {
 			console.log("onBeforeVariantFetch");
-            console.log(oEvent.getParameter("context"));
             this._updateCustomFilterData();
-            if (oEvent.getParameter("context") === "STANDARD") {
+            if (this._oVariantMangement.getSelectionKey() === "STANDARD") {
             	this._triggerSearch();
 			}
 		},

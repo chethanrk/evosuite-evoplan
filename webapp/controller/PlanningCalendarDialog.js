@@ -64,7 +64,7 @@ sap.ui.define([
                 aActualFilters = [],
                 oModel = this._oView ? this._oView.getModel() : null,
                 // oResourceBundle = this._oResourceBundle,
-                oViewFilterSettings = this._component ? this._component.filterSettingsDialog : null;
+                oViewFilterSettings = this._oView.getController().oFilterConfigsController || null;
 
             if(!oModel){
                 return;
@@ -85,8 +85,16 @@ sap.ui.define([
                     aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
                 }
             }
-            var sDateControl1 = oViewFilterSettings.getFilterDateRange()[0].getValue();
-            var sDateControl2 = oViewFilterSettings.getFilterDateRange()[1].getValue();
+
+            if(oViewFilterSettings){
+                var dateRangeValues = oViewFilterSettings.getDateRange();
+                var sDateControl1 = dateRangeValues[0];
+                var sDateControl2 = dateRangeValues[1];
+            }else{
+                var selectedTimeFormat = formatter.getResourceFormatByKey("TIMENONE");
+                var sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin());
+                var sDateControl2 = this.formatter.date(selectedTimeFormat.getDateEnd());
+            }
 
             if (aUsers.length > 0) {
                 aResourceFilters.push(new Filter({
@@ -158,13 +166,9 @@ sap.ui.define([
          */
         getSelectedView : function () {
             var sCalendarView = "TIMENONE",
-                oViewFilterSettings = this._component.filterSettingsDialog;
-            var oViewFilterItems = oViewFilterSettings.getFilterSelectView().getItems();
-            for (var j in oViewFilterItems) {
-                var oViewFilterItem = oViewFilterItems[j];
-                if (oViewFilterItem.getSelected()) {
-                    sCalendarView = oViewFilterItem.getKey();
-                }
+                oViewFilterSettings = this._oView.getController().oFilterConfigsController || null;
+            if(oViewFilterSettings){
+                sCalendarView = oViewFilterSettings.getViewType();
             }
             return sCalendarView;
         },

@@ -176,7 +176,7 @@ sap.ui.define([
 		_getResourceFilters: function (aSelectedResources) {
 			var aResources = [],
 				oModel = this._oView.getModel(),
-				oViewFilterSettings = this._oView.getController().getOwnerComponent().filterSettingsDialog;
+				oViewFilterSettings = this._oView.getController().oFilterConfigsController || null;
 
 			var aFilters = [];
 
@@ -193,8 +193,15 @@ sap.ui.define([
 				}
 			}
 
-			var sDateControl1 = oViewFilterSettings.getFilterDateRange()[0].getValue();
-			var sDateControl2 = oViewFilterSettings.getFilterDateRange()[1].getValue();
+            if(oViewFilterSettings){
+                var dateRangeValues = oViewFilterSettings.getDateRange();
+                var sDateControl1 = dateRangeValues[0];
+                var sDateControl2 = dateRangeValues[1];
+            }else{
+                var selectedTimeFormat = formatter.getResourceFormatByKey("TIMENONE");
+                var sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin());
+                var sDateControl2 = this.formatter.date(selectedTimeFormat.getDateEnd());
+            }
 
 			if (aResources.length > 0) {
 				aFilters.push(new Filter({

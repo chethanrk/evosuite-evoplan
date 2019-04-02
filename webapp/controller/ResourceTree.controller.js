@@ -24,6 +24,8 @@ sap.ui.define([
 
 		selectedResources: [],
 
+        oFilterConfigsController: null,
+
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -33,8 +35,8 @@ sap.ui.define([
 			this._oDataTable = this._oDroppableTable.getTable();
 			this._configureDataTable(this._oDataTable);
 
-			this._oFilterConfigsController = new ResourceTreeFilterBar();
-			this._oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
+			this.oFilterConfigsController = new ResourceTreeFilterBar();
+			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
 
 			//eventbus of assignemnt handling
 			var eventBus = sap.ui.getCore().getEventBus();
@@ -174,7 +176,7 @@ sap.ui.define([
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams;
-			var aFilter = this._oFilterConfigsController.getAllCustomFilters();
+			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			console.log(aFilter);
 			oBinding.parameters.numberOfExpandedLevels = 1;
 			oBinding.parameters.restoreTreeStateAfterChange = true;
@@ -215,7 +217,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerFilterSearch: function () {
-			var aFilters = this._oFilterConfigsController.getAllFilters();
+			var aFilters = this.oFilterConfigsController.getAllFilters();
 			this._isLoaded = true;
 			if (this._isLoaded) {
 				var binding = this._oDataTable.getBinding("rows");
