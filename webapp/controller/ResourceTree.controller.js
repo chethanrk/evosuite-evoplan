@@ -66,29 +66,6 @@ sap.ui.define([
             //init droppable
             // var oController = this;
             this.refreshDroppable(oEvent);
-            /*	var oTable = this.byId("droppableTable");
-                var oTimeout;
-                oTable.addEventDelegate({
-                    onAfterRendering: function (events) {
-                        $("tr.sapUiTableTr").mouseenter(function (e) {
-                            oTimeout = setTimeout(function () {
-                                console.log("In");
-                                console.log(e);
-                                var id= e.currentTarget.dataset["sapUi"];
-                                var oControl = sap.ui.getCore().byId(id);
-                                if (!oController._oPopover) {
-                                    oController._oPopover = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.CapacitiveAssignments", oController);
-                                    oController.getView().addDependent(oController._oPopover);
-                                }
-
-                                oController._oPopover.openBy(oControl);
-                            }, 1000);
-                        }).mouseleave(function (e) {
-                            clearTimeout(oTimeout);
-                            // oController._oPopover.close();
-                        });
-                    }
-                });*/
         },
 
         /**

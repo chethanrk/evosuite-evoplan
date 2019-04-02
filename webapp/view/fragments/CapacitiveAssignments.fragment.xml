@@ -32,7 +32,7 @@
                 <items>
                     <ColumnListItem type="Active">
                         <cells>
-                            <Link text="{Description}"/>
+                            <Text text="{Description}"/>
                             <Text text="{Effort}" />
                         </cells>
                     </ColumnListItem>

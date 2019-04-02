@@ -294,6 +294,18 @@ sap.ui.define([
             }else{
                 return sap.ui.core.ValueState.Error;
             }
+        },
+        formatProgressBarVisibility: function (isCapacity, sSelectedView) {
+            if (isCapacity === true && sSelectedView !=="TIMENONE" ) {
+                return true;
+            }
+            return false;
+        },
+        formatWorkTimesVisibility:function (sNodeType, sSelectedView) {
+            if (sNodeType !== "RES_GROUP" && sNodeType !== "ASSIGNMENT" && sSelectedView !== "TIMENONE" ) {
+                return true;
+            }
+            return false;
         }
 	};
 });

@@ -92,7 +92,8 @@ sap.ui.define([
                 dragSession:null, // Drag session added as we are keeping dragged data in the model.
                 detailPageBreadCrum:"",
                 capacityPlanning:false,
-                splitterDivider:"35%"
+                splitterDivider:"35%",
+                selectedHierarchyView:"TIMENONE"
             });
             this.setModel(oViewModel, "viewModel");
             

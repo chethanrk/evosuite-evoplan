@@ -37,17 +37,17 @@ sap.ui.define([
                     group: "Appearance",
                     defaultValue: "orange"
                 },
-				capacity: {
+				workTime: {
                     type: "string",
                     group: "Misc",
                     defaultValue: 8
 				},
-				isCapacityEnabled:{
+				isWorkTimeEnabled:{
                     type: "boolean",
                     group: "Misc",
                     defaultValue: false
 				},
-				showCapacity: {
+				showWorkTime: {
                     type: "boolean",
                     group: "Misc",
                     defaultValue: false
@@ -125,47 +125,12 @@ sap.ui.define([
                 oRm.writeStyles();
                 oRm.write(">");
 
-                if(!oControl.getIsCapacityEnabled()) {
+                if(!oControl.getIsWorkTimeEnabled()) {
                     // Availability icon
-                    oRm.write("<span");
-                    oRm.addClass("sapUiIcon");
-                    oRm.addClass("sapUiTinyMarginBegin");
-                    if (oAvailabilityIcon) {
-                        oRm.writeAttributeEscaped("data-sap-ui-icon-content", oAvailabilityIcon.content);
-                        oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
-                        oRm.writeAttributeEscaped("title", oControl.getIconTooltip());
-                        oRm.addStyle("color", oControl.getIconColor());
-                    }
-                    oRm.writeClasses();
-                    oRm.writeStyles();
-                    oRm.write("></span>");
+                    oControl._renderAvailabilityIcon(oRm, oIconInfo, oAvailabilityIcon,oControl);
                 }else {
-                	if(oControl.getShowCapacity()){
-						oRm.write("<div");
-						oRm.addClass("worktimeAvailability");
-						oRm.addClass("sapUiTinyMarginBegin");
-						oRm.addStyle("display", "inline-block");
-                        oRm.writeAttributeEscaped("title", oControl.getIconTooltip());
-						oRm.addStyle("background-color", oControl.getIconColor());
-                        if(oControl.getIconColor() === ""){
-                            oRm.addStyle("border", "#ccc 1px solid");
-                        }else{
-                            oRm.addStyle("border", "none");
-                        }
-						oRm.writeClasses();
-						oRm.writeStyles();
-						oRm.write(">");
-						oRm.write("<span");
-						if(oControl.getIconColor() !== ""){
-                            oRm.addStyle("color", "#ffffff");
-						}else{
-                            oRm.addStyle("color", "#000000");
-						}
-						oRm.addClass("workTimeAvailabilityText");
-						oRm.writeClasses();
-                        oRm.writeStyles();
-						oRm.write(">"+oControl.getCapacity()+"</span>");
-						oRm.write("</div>");
+                	if(oControl.getShowWorkTime()){
+                	    oControl._renderWorkTimeInfo(oRm, oControl);
                     }
                 }
             }
@@ -195,6 +160,61 @@ sap.ui.define([
             }
 
             oRm.write("</", sTag, ">");
+        },
+        /**
+         * Create the HTML Content for Availability Icon
+         *
+         * @param oRm Render manager
+         * @param oAvailabilityIcon Availability icon
+         * @param oControl Custom title
+         * @private
+         */
+        _renderAvailabilityIcon : function (oRm, oIconInfo, oAvailabilityIcon, oControl) {
+            oRm.write("<span");
+            oRm.addClass("sapUiIcon");
+            oRm.addClass("sapUiTinyMarginBegin");
+            if (oAvailabilityIcon) {
+                oRm.writeAttributeEscaped("data-sap-ui-icon-content", oAvailabilityIcon.content);
+                oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
+                oRm.writeAttributeEscaped("title", oControl.getIconTooltip());
+                oRm.addStyle("color", oControl.getIconColor());
+            }
+            oRm.writeClasses();
+            oRm.writeStyles();
+            oRm.write("></span>");
+        },
+        /**
+         * Create the HTML content to show the Work time information
+         * @param oRm Render manager
+         * @param oControl Custom title
+         * @private
+         */
+        _renderWorkTimeInfo : function (oRm, oControl) {
+            oRm.write("<div");
+            oRm.addClass("worktimeAvailability");
+            oRm.addClass("sapUiTinyMarginBegin");
+            oRm.addStyle("display", "inline-block");
+            oRm.writeAttributeEscaped("title", oControl.getIconTooltip());
+            oRm.addStyle("background-color", oControl.getIconColor());
+            if(oControl.getIconColor() === ""){
+                oRm.addStyle("border", "#ccc 1px solid");
+            }else{
+                oRm.addStyle("border", "none");
+            }
+            oRm.writeClasses();
+            oRm.writeStyles();
+            oRm.write(">");
+            oRm.write("<span");
+            if(oControl.getIconColor() !== ""){
+                oRm.addStyle("color", "#ffffff");
+            }else{
+                oRm.addStyle("color", "#000000");
+            }
+            oRm.addClass("workTimeAvailabilityText");
+            oRm.writeClasses();
+            oRm.writeStyles();
+            oRm.write(">"+oControl.getWorkTime()+"</span>");
+            oRm.write("</div>");
         }
     });
 
