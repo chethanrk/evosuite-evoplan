@@ -11,7 +11,7 @@
 														  entitySet="{viewModel>/treeSet}"></controls:CustomVariantManagement>
 
 						<ToolbarSpacer/>
-						<CheckBox text="Capacity" selected="{viewModel>/capacityPlanning}" select="onSelectCapacity" />
+						<CheckBox text="Capacity" selected="{viewModel>/capacityPlanning}" enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }" select="onSelectCapacity" />
 						<Button type="Transparent" id="filterResourceButton" icon="sap-icon://filter" text="{viewModel>/counterResourceFilter}"
 								press="onFilterButtonPress"/>
 
@@ -33,8 +33,8 @@
 												  iconTooltip="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconTooltip' }"
 												  icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'}], formatter: '.formatter.getResourceIcon' }"
 												  isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink"
-												  isWorkTimeEnabled="{viewModel>/capacityPlanning}"
-												  showWorkTime="{ parts:[{path: 'NodeType'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatWorkTimesVisibility' }"
+												  isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}"
+												  showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
 												  workTime="{path:'ACTUAL_WORKING_HOURS',
 												  			type:'sap.ui.model.type.Float',
 												  			formatOptions:{
@@ -49,14 +49,14 @@
 						</table:template>
 					</table:Column>
 					<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}"  width="4.5rem"
-								  hAlign="End"  visible="{ parts:[{path: 'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility' }">
+								  hAlign="End"  visible="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}">
 						<table:template>
 							<ProgressIndicator percentValue="{path:'Utilization',formatter:'.formatter.formatProgress'}" displayValue="{path:'Utilization',type:'sap.ui.model.type.Integer'}%" tooltip="{Utilization}" showValue="true" state="{path:'Utilization',formatter:'.formatter.formatProgressState'}"
 											   visible="{ path: 'NodeType', formatter: '.formatter.isResource' }"/>
 						</table:template>
 					</table:Column>
 					<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}"  width="3.5rem"
-						hAlign="End" visible="{viewModel>/capacityPlanning}">
+						hAlign="End" visible="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}">
 						<table:template>
 								<Link text="{CAPACITIVE_EFFORT}" visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }" press="openCapacitivePopup"/>
 						</table:template>
