@@ -2,7 +2,7 @@
 	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<smartFilterBar:SmartFilterBar id="resourceTreeFilterBar" class="treeTableFilterBar" persistencyKey="{viewModel>/persistencyKeyTree}"
 		considerSelectionVariants="true" entitySet="{viewModel>/treeSet}" enableBasicSearch="false" liveMode="true" filterContainerWidth="15rem"
-		showGoOnFB="false" showRestoreButton="false" filterBarExpanded="false" beforeVariantFetch="onBeforeVariantFetch"
+		showGoOnFB="false" showRestoreButton="false" filterBarExpanded="false" initialized="onInitialized" beforeVariantFetch="onBeforeVariantFetch"
 		afterVariantLoad="onAfterVariantLoad" filterChange="onFilterBarChanged" containerQuery="true">
 		<smartFilterBar:controlConfiguration>
 			<smartFilterBar:ControlConfiguration key="Description" label="{i18n>xtit.search}" visibleInAdvancedArea="true" width="100%" groupId="_BASIC"
