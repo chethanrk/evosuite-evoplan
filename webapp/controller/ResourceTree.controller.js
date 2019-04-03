@@ -41,7 +41,6 @@ sap.ui.define([
 			//eventbus of assignemnt handling
 			var eventBus = sap.ui.getCore().getEventBus();
 			eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
-			//eventBus.subscribe("ResourceTreeFilterBar", "triggerSearch", this._triggerFilterSearch, this);
 			eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
 			// eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
 
@@ -93,16 +92,6 @@ sap.ui.define([
 		refreshDroppable: function (oEvent) {
 			if (this._oDroppableTable) {
 				this._jDroppable(this);
-			}
-		},
-
-		/**
-		 * trigger add filter to tree table for the first time
-		 */
-		onTreeUpdateStarted: function () {
-			if (!this.firstLoad) {
-				//this._triggerFilterSearch();
-				this.firstLoad = true;
 			}
 		},
 
@@ -176,10 +165,14 @@ sap.ui.define([
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams;
+
+			if(!this._isLoaded){
+                this._isLoaded = true;
+                oBinding.parameters.numberOfExpandedLevels = 1;
+                oBinding.parameters.restoreTreeStateAfterChange = true;
+			}
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
-			oBinding.parameters.numberOfExpandedLevels = 1;
-			oBinding.parameters.restoreTreeStateAfterChange = true;
-			oBinding.filters = aFilter;
+			oBinding.filters = [new Filter(aFilter, true)];
 		},
 
 		/**
@@ -216,22 +209,10 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerFilterSearch: function () {
-			var aFilters = this.oFilterConfigsController.getAllFilters();
-			this._isLoaded = true;
-			if (this._isLoaded) {
-				var binding = this._oDataTable.getBinding("rows");
-				binding.filter(aFilters, sap.ui.model.FilterType.Application);
-			} else {
-				this._isLoaded = true;
-				this._oDataTable.bindRows({
-					path: "/ResourceHierarchySet",
-					parameters: {
-						numberOfExpandedLevels: 1,
-						restoreTreeStateAfterChange: true
-					},
-					filters: aFilters
-				});
-			}
+			/*var aFilters = this.oFilterConfigsController.getAllFilters();
+			var binding = this._oDataTable.getBinding("rows");
+			binding.filter([new Filter(aFilters, true)], sap.ui.model.FilterType.Application);*/
+			this._oDroppableTable.rebindTable();
 		},
 
 		/**
@@ -302,7 +283,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree: function () {
-			var oTable = this.byId("droppableTable"),
+			var oTable = this._oDataTable,
 				aRows = oTable ? oTable.getAggregation("rows") : null,
 				oContext = aRows ? aRows[0].getBindingContext() : null,
 				oModel,
@@ -317,7 +298,7 @@ sap.ui.define([
 					oModel.setProperty(sPath + "/IsSelected", true); // changing the property in order trigger submit change
 					oTable.getBinding("rows").submitChanges(); // submit change will refresh of tree according maintained parameters
 				} else {
-					//this._triggerFilterSearch();
+					this._triggerFilterSearch();
 				}
 			}
 

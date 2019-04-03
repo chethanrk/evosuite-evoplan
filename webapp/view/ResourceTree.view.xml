@@ -11,7 +11,7 @@
 			</f:DynamicPageHeader>
 		</f:header>
 		<f:content>
-			<!--<smartTable:SmartTable id="droppableTable" entitySet="{viewModel>/treeSet}" class="listTreeTable" tableType="TreeTable" fitContainer="true"
+			<smartTable:SmartTable id="droppableTable" entitySet="{viewModel>/treeSet}" class="listTreeTable" tableType="TreeTable" fitContainer="true"
 				useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false" smartFilterId="resourceTreeFilterBar"
 				header="Hierarchy" showRowCount="false" enableAutoBinding="false" beforeRebindTable="onBeforeRebindTable" requestAtLeastFields="*"
 				initiallyVisibleFields="Description">
@@ -62,7 +62,7 @@
 					</table:Column>
 				</table:columns>
 			</table:TreeTable>
-		</smartTable:SmartTable>-->
+		</smartTable:SmartTable>
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
