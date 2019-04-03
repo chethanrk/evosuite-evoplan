@@ -79,7 +79,8 @@ sap.ui.define([
                 sResourceGroup = oNodeData.ResourceGroupGuid,
                 oStartDate = oNodeData.StartDate || this.formatter.date(this._dateFrom.getValue()),
                 oEndDate = oNodeData.EndDate || this.formatter.date(this._dateTo.getValue()),
-                aFilters = [];
+                aFilters = [],
+                sSelectedView = this._component.getModel("viewModel").getProperty("/selectedHierarchyView");
 
             if (oNodeData.NodeType === "RESOURCE") {
                 aFilters.push(new Filter("ObjectId", FilterOperator.EQ, sResource + "//" + sResourceGroup));
@@ -89,6 +90,7 @@ sap.ui.define([
                 aFilters.push(new Filter("ObjectId", FilterOperator.EQ, sResource + "//" + sResourceGroup));
             }
             aFilters.push(new Filter("AssignmentType", FilterOperator.EQ, "CAP"));
+            aFilters.push(new Filter("NODE_TYPE", FilterOperator.EQ, sSelectedView));
             aFilters.push(new Filter("DateFrom", FilterOperator.LE, oEndDate));
             aFilters.push(new Filter("DateTo", FilterOperator.GE, oStartDate));
             oBinding.filter(aFilters);
