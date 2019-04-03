@@ -38,7 +38,8 @@ sap.ui.define([
 			},
 			viewType: {
 				origin: "NodeType",
-				old: "viewFilterItem"
+				old: "viewFilterItem",
+				default: "TIMENONE"
 			},
 			startDate: {
 				origin: "StartDate",
@@ -52,11 +53,11 @@ sap.ui.define([
 
 		defaultDateRange: [],
 
-        /**
+		/**
 		 * initialize controller and add filterBar fragment in view
-         * @param oView
-         * @param sControlId
-         */
+		 * @param oView
+		 * @param sControlId
+		 */
 		init: function (oView, sControlId) {
 			this._oView = oView;
 			var oFragment = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceTreeFilterBar", this);
@@ -68,10 +69,10 @@ sap.ui.define([
 			oLayout.addContent(oFragment);
 		},
 
-        /**
+		/**
 		 * get FilterBar by ID
-         * @returns {null}
-         */
+		 * @returns {null}
+		 */
 		getFilterBar: function () {
 			if (!this._oFilterBar) {
 				this._oFilterBar = sap.ui.getCore().byId("resourceTreeFilterBar");
@@ -79,17 +80,16 @@ sap.ui.define([
 			return this._oFilterBar;
 		},
 
-
-        /**
-         * event when SmartFilterBar was initialized
-         * set date range based on selected NodeType key
-         */
-        onInitialized: function () {
-            var timeViewCtrl = this._oFilterBar.getControlByKey(this._aCustomFilters.viewType.origin);
-            if(timeViewCtrl){
-            	this._setDateFilterControls(timeViewCtrl.getSelectedKey());
-            }
-        },
+		/**
+		 * event when SmartFilterBar was initialized
+		 * set date range based on selected NodeType key
+		 */
+		onInitialized: function () {
+			var timeViewCtrl = this._oFilterBar.getControlByKey(this._aCustomFilters.viewType.origin);
+			if (timeViewCtrl) {
+				this._setDateFilterControls(timeViewCtrl.getSelectedKey());
+			}
+		},
 
 		/**
 		 * set filter suggest
@@ -110,42 +110,46 @@ sap.ui.define([
 			oEvent.getSource().setProperty("filterSuggests", true);
 		},
 
-        /**
+		/**
 		 * event before variant is loaded
-         * @param oEvent
-         */
+		 * @param oEvent
+		 */
 		onBeforeVariantFetch: function (oEvent) {
-			console.log("onBeforeVariantFetch");
-            this._updateCustomFilterData();
-            if (this._oVariantMangement.getSelectionKey() === "STANDARD") {
-            	this._triggerSearch();
+			if (this._oVariantMangement.getSelectionKey() === "*standard*") {
+				this._setDateFilterControls(this._aCustomFilters.viewType.default);
+				this._updateCustomFilterData();
+				this._oFilterBar.setFilterData(this._oCustomFilterData);
+				this._triggerSearch();
+				return;
 			}
+			this._updateCustomFilterData();
+			this._oFilterBar.setFilterData(this._oCustomFilterData);
 		},
 
-        /**
+		/**
 		 * event when something in SmartFileterBar was changed
-         * @param oEvent
-         */
+		 * @param oEvent
+		 */
 		onFilterBarChanged: function (oEvent) {
 			/*var oParams = oEvent.getParameters();
 			if (oParams.getId() === "change") {
 			}*/
 		},
 
-        /**
+		/**
 		 * event when a custom control value changed
-         * @param oEvent
-         */
+		 * @param oEvent
+		 */
 		onCustomFilterChange: function (oEvent) {
 			if (this.getFilterBar()) {
 				this._updateCustomFilterData();
 			}
 		},
 
-        /**
+		/**
 		 * event when searchField search was triggered
-         * @param oEvent
-         */
+		 * @param oEvent
+		 */
 		onCustomSearchChange: function (oEvent) {
 			if (this.getFilterBar()) {
 				this._updateCustomFilterData();
@@ -153,11 +157,11 @@ sap.ui.define([
 			}
 		},
 
-        /**
+		/**
 		 * when select control of property NodeTYpe was changed
 		 * change also StartDate and EndDate controls
-         * @param oEvent
-         */
+		 * @param oEvent
+		 */
 		onChangeTimeView: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oItem = oParams.selectedItem;
@@ -170,12 +174,11 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onAfterVariantLoad: function (oEvent) {
-            console.log("onAfterVariantLoad");
 			this._isOldVariant = false;
 			this._waitForTokenValidation = false;
 
 			var oData = this._oFilterBar.getFilterData(),
-				oCustomFieldData = {},
+				oCustomFieldData = undefined,
 				selectedVariantKey = this._oVariantMangement.getSelectionKey(),
 				oVariantContent = this._oVariantMangement.getVariantContent(null, selectedVariantKey);
 
@@ -191,29 +194,36 @@ sap.ui.define([
 				}
 			}
 
-			//set date range filter values
 			var aDateRange = this._getDateRangeValues(oCustomFieldData);
+			if (!oCustomFieldData) {
+				oCustomFieldData = {};
+				oCustomFieldData[this._aCustomFilters.viewType.origin] = this._aCustomFilters.viewType.default;
+				aDateRange = this._getDateRangeValues(null, this._aCustomFilters.viewType.default);
+			}
+
 			oCustomFieldData[this._aCustomFilters.startDate.origin] = aDateRange[0];
 			oCustomFieldData[this._aCustomFilters.endDate.origin] = aDateRange[1];
 			this._setCustomFilterControls(oCustomFieldData);
+			this._updateCustomFilterData();
+			this._oFilterBar.setFilterData(this._oCustomFilterData);
 
 			if (!this._waitForTokenValidation) {
 				this._triggerSearch();
 			}
 		},
 
-        /**
+		/**
 		 *
-         */
+		 */
 		onExit: function () {
 
 		},
 
-        /**
+		/**
 		 * get all filters from SmartFilterBar
 		 * merges standard filters with custom controls filters
-         * @returns {Array}
-         */
+		 * @returns {Array}
+		 */
 		getAllCustomFilters: function () {
 			var aStandardFilter = this._oFilterBar.getFilters();
 			var aFilters = aStandardFilter[0] ? aStandardFilter[0].aFilters : [];
@@ -247,18 +257,18 @@ sap.ui.define([
 			return aFilters;
 		},
 
-        /**
+		/**
 		 * returns property values of StartDate in index 0 and EndDate in index 1
-         * @returns {*|*[]}
-         */
+		 * @returns {*|*[]}
+		 */
 		getDateRange: function () {
 			return this._getDateRangeValues();
 		},
 
-        /**
+		/**
 		 * returns selected viewType of property NodeType
-         * @returns {*}
-         */
+		 * @returns {*}
+		 */
 		getViewType: function () {
 			if (this._oCustomFilterData._CUSTOM[this._aCustomFilters.viewType.origin]) {
 				return this._oCustomFilterData._CUSTOM[this._aCustomFilters.viewType.origin];
@@ -293,12 +303,12 @@ sap.ui.define([
 			}
 		},
 
-        /**
+		/**
 		 * transforms json object fro old variant to new keys in SmartFilterBar
-         * @param oVariant
-         * @returns {*}
-         * @private
-         */
+		 * @param oVariant
+		 * @returns {*}
+		 * @private
+		 */
 		_mapOldVariant: function (oVariant) {
 			var oFilterData = JSON.parse(oVariant.filterBarVariant),
 				newMapping = {};
@@ -312,12 +322,12 @@ sap.ui.define([
 			return Object.getOwnPropertyNames(newMapping).length > 0 ? newMapping : false;
 		},
 
-        /**
+		/**
 		 * is setting json object by control key to its custom control in SmartFilterBar
 		 * integrates validation of ResourceGroup description for old saved variants
-         * @param oData
-         * @private
-         */
+		 * @param oData
+		 * @private
+		 */
 		_setCustomFilterControls: function (oData) {
 			for (var key in this._aCustomFilters) {
 				var sFilterKey = this._aCustomFilters[key].origin,
@@ -363,19 +373,19 @@ sap.ui.define([
 			}
 		},
 
-        /**
+		/**
 		 * only for old saved variants
 		 * searches by description and object type ResourceGroup in ResourceSet
 		 * when result array is not empty this resource group exists and
 		 * will be added with ID to ResourceGroupGuid custom control in SmartFilterbar
 		 * because of asynchron search search of filterBar is triggered when resource groups was validated
-         * @param oToken
-         * @param oCtrl
-         * @param sKey
-         * @param idx
-         * @param isLast
-         * @private
-         */
+		 * @param oToken
+		 * @param oCtrl
+		 * @param sKey
+		 * @param idx
+		 * @param isLast
+		 * @private
+		 */
 		_validateResourceGroupToken: function (oToken, oCtrl, sKey, idx, isLast) {
 			var oFilt1 = new Filter("ObjectType", FilterOperator.EQ, "RES_GROUP"),
 				oFilt2 = new Filter("Description", FilterOperator.EQ, oToken.text),
@@ -401,22 +411,22 @@ sap.ui.define([
 			});
 		},
 
-        /**
+		/**
 		 * fire search for SmartFilterBar manually
-         * @private
-         */
+		 * @private
+		 */
 		_triggerSearch: function () {
 			this._oFilterBar.fireSearch();
 		},
 
-        /**
+		/**
 		 * set new token key in custom control for ResourceGroupGuid
-         * @param oToken
-         * @param oCtrl
-         * @param sKey
-         * @param idx
-         * @private
-         */
+		 * @param oToken
+		 * @param oCtrl
+		 * @param sKey
+		 * @param idx
+		 * @private
+		 */
 		_setResourceGroupToken: function (oToken, oCtrl, sKey, idx) {
 			var currFilterData = this._oCustomFilterData._CUSTOM || {};
 			if (!idx || idx === 0 || !currFilterData[sKey]) {
@@ -431,42 +441,42 @@ sap.ui.define([
 			this._oCustomFilterData._CUSTOM = currFilterData;
 		},
 
-        /**
+		/**
 		 * save custom control value by key in global _CUSTOM object
-         * @param sKey
-         * @param sValue
-         * @private
-         */
+		 * @param sKey
+		 * @param sValue
+		 * @private
+		 */
 		_setCustomFilterDataValue: function (sKey, sValue) {
 			var currFilterData = this._oCustomFilterData._CUSTOM || {};
 			currFilterData[sKey] = sValue || "";
 			this._oCustomFilterData._CUSTOM = currFilterData;
 		},
 
-        /**
+		/**
 		 * set startDate and endDate controls in SmartFilterbar
 		 * based on selected NodeType property
-         * @param sKey
-         * @private
-         */
-        _setDateFilterControls: function (sKey) {
-            var newDateRange = this._getDateRangeValues(null, sKey);
-            var oStartDate = this._oFilterBar.getControlByKey(this._aCustomFilters.startDate.origin),
-                oEndDate = this._oFilterBar.getControlByKey(this._aCustomFilters.endDate.origin);
-            oStartDate.setValue(newDateRange[0]);
-            oEndDate.setValue(newDateRange[1]);
-        },
+		 * @param sKey
+		 * @private
+		 */
+		_setDateFilterControls: function (sKey) {
+			var newDateRange = this._getDateRangeValues(null, sKey);
+			var oStartDate = this._oFilterBar.getControlByKey(this._aCustomFilters.startDate.origin),
+				oEndDate = this._oFilterBar.getControlByKey(this._aCustomFilters.endDate.origin);
+			oStartDate.setValue(newDateRange[0]);
+			oEndDate.setValue(newDateRange[1]);
+		},
 
-        /**
+		/**
 		 * get startDate and endDate by loaded variant oData or
 		 * by NodeType (viewType) or
 		 * by global saved _CUSTOM data or
 		 * by custom controls value in SmartFilterBar
-         * @param oData
-         * @param sDateRangeType
-         * @returns {*[]}
-         * @private
-         */
+		 * @param oData
+		 * @param sDateRangeType
+		 * @returns {*[]}
+		 * @private
+		 */
 		_getDateRangeValues: function (oData, sDateRangeType) {
 			var selectedTimeFormat = undefined;
 			if (oData) {
@@ -489,7 +499,10 @@ sap.ui.define([
 			}
 			var startDateCtrl = this._oFilterBar.getControByKey(this._aCustomFilters.startDate.origin),
 				endDateCrtl = this._oFilterBar.getControByKey(this._aCustomFilters.endDate.origin);
-			return [startDateCtrl.getValue(), endDateCrtl.getValue()];
+			if (startDateCtrl && endDateCrtl) {
+				return [startDateCtrl.getValue(), endDateCrtl.getValue()];
+			}
+			return this._getDateRangeValues(null, this._aCustomFilters.viewType.default);
 		}
 	});
 

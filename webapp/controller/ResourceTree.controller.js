@@ -24,7 +24,7 @@ sap.ui.define([
 
 		selectedResources: [],
 
-        oFilterConfigsController: null,
+		oFilterConfigsController: null,
 
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
@@ -177,7 +177,6 @@ sap.ui.define([
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams;
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
-			console.log(aFilter);
 			oBinding.parameters.numberOfExpandedLevels = 1;
 			oBinding.parameters.restoreTreeStateAfterChange = true;
 			oBinding.filters = aFilter;
