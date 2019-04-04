@@ -11,6 +11,7 @@ sap.ui.define([
     "com/evorait/evoplan/controller/AssignActionsDialog",
     "com/evorait/evoplan/controller/FilterSettingsDialog",
     "com/evorait/evoplan/controller/PlanningCalendarDialog",
+    "com/evorait/evoplan/controller/CapacitiveAssignments",
     "sap/m/MessagePopover",
     "sap/m/MessagePopoverItem",
     "sap/m/Link"
@@ -27,6 +28,7 @@ sap.ui.define([
     AssignActionsDialog,
     FilterSettingsDialog,
     PlanningCalendarDialog,
+    CapacitiveAssignments,
     MessagePopover,
     MessagePopoverItem,
     Link) {
@@ -88,7 +90,10 @@ sap.ui.define([
 				delay : 0,
 				assetStartDate:new Date(),
                 dragSession:null, // Drag session added as we are keeping dragged data in the model.
-                detailPageBreadCrum:""
+                detailPageBreadCrum:"",
+                capacityPlanning:false,
+                splitterDivider:"35%",
+                selectedHierarchyView:"TIMENONE"
             });
             this.setModel(oViewModel, "viewModel");
             
@@ -217,6 +222,8 @@ sap.ui.define([
 
             this.planningCalendarDialog = new PlanningCalendarDialog();
             this.planningCalendarDialog.init();
+            this.capacitiveAssignments = new CapacitiveAssignments();
+            this.capacitiveAssignments.init();
         },
 
         /**

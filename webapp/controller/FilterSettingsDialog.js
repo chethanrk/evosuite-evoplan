@@ -30,6 +30,7 @@ sap.ui.define([
          */
         init: function (oView) {
             this._oView = oView;
+            this._component = this._oView.getController().getOwnerComponent();
             this.initDialog();
         },
 
@@ -78,7 +79,7 @@ sap.ui.define([
         open : function (oView) {
             this._oView = oView;
             var oDialog = this.getDialog();
-            this._component = this._oView.getController().getOwnerComponent();
+
             // setting the content density class on dialog
             oDialog.addStyleClass(this._component.getContentDensityClass());
 
@@ -291,11 +292,15 @@ sap.ui.define([
          * @param oEvent
          */
         onItemPropertyChanged: function (oEvent) {
-            var oParameters = oEvent.getParameters();
+            var oParameters = oEvent.getParameters(),
+                oViewModel = this._component.getModel("viewModel");
 
             if(oParameters.propertyKey === "selected" && oParameters.propertyValue === true){
                 var oSource = oParameters.changedItem,
-                    selectedTimeFormat = formatter.getResourceFormatByKey(oSource.getProperty("key"));
+                    sKey =oSource.getProperty("key"),
+                    selectedTimeFormat = formatter.getResourceFormatByKey(sKey);
+
+                oViewModel.setProperty("/selectedHierarchyView",sKey)
 
                 if(selectedTimeFormat){
                     this._filterDateRange1.setValue(this.formatter.date(selectedTimeFormat.getDateBegin()));

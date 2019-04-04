@@ -1,69 +1,76 @@
 <mvc:View controllerName="com.evorait.evoplan.controller.ResourceTree" xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"
-	xmlns:f="sap.f" xmlns:table="sap.ui.table" xmlns:controls="com.evorait.evoplan.ui.controls" displayBlock="true" height="100%">
+		  xmlns:f="sap.f" xmlns:table="sap.ui.table" xmlns:controls="com.evorait.evoplan.ui.controls" displayBlock="true" height="100%">
 	<f:DynamicPage id="idResourcePage" headerExpanded="true" preserveHeaderStateOnScroll="true" fitContent="false" showFooter="true"
-		class="sapUiNoContentPadding tableContentPage" toggleHeaderOnTitleClick="false">
+				   class="sapUiNoContentPadding tableContentPage" toggleHeaderOnTitleClick="false">
 		<f:header>
 			<f:DynamicPageHeader pinnable="true">
 				<f:content>
-					<FlexBox alignItems="Start" justifyContent="SpaceBetween">
-						<items>
-							<controls:CustomVariantManagement id="customResourceVariant" select="onSelectVariant" initialise="onInitialiseVariant" enabled="true"
-								showExecuteOnSelection="true" showShare="true" lifecycleSupport="true" persistencyKey="{viewModel>/persistencyKeyTree}"
-								entitySet="{viewModel>/treeSet}"></controls:CustomVariantManagement>
-							<Button type="Transparent" id="filterResourceButton" icon="sap-icon://filter" text="{viewModel>/counterResourceFilter}"
+					<Toolbar id="idResToolbar">
+						<controls:CustomVariantManagement id="customResourceVariant" select="onSelectVariant" initialise="onInitialiseVariant" enabled="true"
+														  showExecuteOnSelection="true" showShare="true" lifecycleSupport="true" persistencyKey="{viewModel>/persistencyKeyTree}"
+														  entitySet="{viewModel>/treeSet}"></controls:CustomVariantManagement>
+
+						<ToolbarSpacer/>
+						<CheckBox text="Capacity" selected="{viewModel>/capacityPlanning}" enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }" select="onSelectCapacity" />
+						<Button type="Transparent" id="filterResourceButton" icon="sap-icon://filter" text="{viewModel>/counterResourceFilter}"
 								press="onFilterButtonPress"/>
-						</items>
-					</FlexBox>
+
+					</Toolbar>
 					<SearchField id="searchField" search="onSearchResources" showRefreshButton="{= !${device>/support/touch} }" width="100%"></SearchField>
 				</f:content>
 			</f:DynamicPageHeader>
 		</f:header>
 		<f:content>
-			<table:TreeTable id="droppableTable" selectionMode="None" enableColumnReordering="false" 
-				class="listTreeTable" rows="{ path : '/ResourceHierarchySet', parameters:{ numberOfExpandedLevels:1, restoreTreeStateAfterChange:true } }">
+			<table:TreeTable id="droppableTable" selectionMode="None" enableColumnReordering="false"
+							 class="listTreeTable" rows="{ path : '/ResourceHierarchySet', parameters:{ numberOfExpandedLevels:1, restoreTreeStateAfterChange:true } }">
 				<table:columns>
 					<table:Column label="{i18n>xtit.tableObject}" name="{i18n>xtit.tableObject}">
 						<table:template>
 							<controls:CustomTitle text="{Description}" tooltip="{Description}"
-								titleStyle="{ path: 'NodeType', formatter: '.formatter.formatResourceTitle' }"
-								availabilityIcon="{ path: 'IS_AVAILABLE', formatter: '.formatter.getAvailabilityIcon' }"
-								iconColor="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconColor' }"
-								iconTooltip="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconTooltip' }"
-								icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'}], formatter: '.formatter.getResourceIcon' }"
-								isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink"/>
+												  titleStyle="{ path: 'NodeType', formatter: '.formatter.formatResourceTitle' }"
+												  availabilityIcon="{ path: 'IS_AVAILABLE', formatter: '.formatter.getAvailabilityIcon' }"
+												  iconColor="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconColor' }"
+												  iconTooltip="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconTooltip' }"
+												  icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'}], formatter: '.formatter.getResourceIcon' }"
+												  isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink"
+												  isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}"
+												  showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
+												  workTime="{path:'ACTUAL_WORKING_HOURS',
+												  			type:'sap.ui.model.type.Float',
+												  			formatOptions:{
+												  				'decimals': 1
+												  			}}"/>
 						</table:template>
 					</table:Column>
-				<!--	<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}"  width="5rem"
-						hAlign="End" visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
+					<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}"  width="4.5rem"
+								  hAlign="End" visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
 						<table:template>
-								<Text text="{Utilization}H"  wrapping="false"/>
+							<Text text="{TOTAL_EFFORT}"  wrapping="false"/>
 						</table:template>
 					</table:Column>
-					<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}"  width="5rem"
-						hAlign="End" visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
+					<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}"  width="4.5rem"
+								  hAlign="End"  visible="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}">
 						<table:template>
-							<ProgressIndicator percentValue="{Utilization}" displayValue="{Utilization}%" showValue="true" state="None"
-								visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"/>
-						</table:template>
-					</table:Column>-->
-					<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}"  width="5rem"
-						hAlign="End" visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
-						<table:template>
-							<!--<ProgressIndicator percentValue="{Utilization}" displayValue="{Utilization}%" showValue="true" state="None"
-								visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"/>-->
-								<Text text="{TOTAL_EFFORT}H"  wrapping="false"/>
+							<ProgressIndicator percentValue="{path:'Utilization',formatter:'.formatter.formatProgress'}" displayValue="{path:'Utilization',type:'sap.ui.model.type.Integer'}%" tooltip="{Utilization}" showValue="true" state="{path:'Utilization',formatter:'.formatter.formatProgressState'}"
+											   visible="{ path: 'NodeType', formatter: '.formatter.isResource' }"/>
 						</table:template>
 					</table:Column>
-					<table:Column label="{i18n>xtit.tableAssignment}" name="{i18n>xtit.tableAssignment}" width="3rem"
-						hAlign="End">
+					<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}"  width="3.5rem"
+						hAlign="End" visible="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}">
+						<table:template>
+								<Link text="{CAPACITIVE_EFFORT}" visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }" press="openCapacitivePopup"/>
+						</table:template>
+					</table:Column>
+					<table:Column label="{i18n>xtit.tableAssignment}" name="{i18n>xtit.tableAssignment}" width="2.5rem"
+								  hAlign="End">
 						<table:template>
 							<Text text="{AssignmentCount}" visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }" wrapping="false"/>
 						</table:template>
 					</table:Column>
-					<table:Column label="{i18n>xtit.tableCheckbox}" name="{i18n>xtit.tableCheckbox}" width="4rem" class="sapUiNoContentPadding">
+					<table:Column label="{i18n>xtit.tableCheckbox}" name="{i18n>xtit.tableCheckbox}" width="2.5rem" class="sapUiNoContentPadding">
 						<table:template>
 							<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"
-								selected="{IsSelected}"/>
+									  selected="{IsSelected}"/>
 						</table:template>
 					</table:Column>
 				</table:columns>
@@ -83,7 +90,7 @@
 					</layoutData>
 				</Button>
 				<Button id="showPlanCalendar" text="{i18n>xbut.showPlanningCal}" tooltip="{i18n>xbut.showPlanningCal}" icon="sap-icon://calendar"
-					press="onPressShowPlanningCal" enabled="false">
+						press="onPressShowPlanningCal" enabled="false">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="true"/>
 					</layoutData>
