@@ -364,6 +364,8 @@ sap.ui.define([
         onSelectCapacity:function (oEvent) {
 			var bSelect = oEvent.getParameter("selected"),
 				oViewModel = this.getModel("viewModel");
+			
+			this._jDroppable(this);
 			if(bSelect){
                 oViewModel.setProperty("/splitterDivider","39%");
 			}else{

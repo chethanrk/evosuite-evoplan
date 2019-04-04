@@ -2,7 +2,7 @@
         xmlns="sap.m"
         xmlns:core="sap.ui.core">
     <ResponsivePopover
-            title="Capacitive Assignments({= ${MessageModel>/}.length})"
+            title="Capacitive Assignments"
             class="sapUiPopupWithPadding"
             placement="Auto"
             contentWidth="35%">
