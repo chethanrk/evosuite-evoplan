@@ -84,3 +84,18 @@ div.worktimeAvailability > .workTimeAvailabilityText {
     max-width: 100%;
     /*color: #ffffff;*/
 }
+
+.workTimeWithBorder{
+	border: #ccc 1px solid
+}
+.workTimeWithoutBorder{
+	border:#ccc 1px solid
+}
+
+.workTimeTextWhite{
+	color:#ffffff;
+}
+
+.workTimeTextBlack{
+	color:#000000;
+}
