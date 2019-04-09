@@ -2,7 +2,7 @@
         xmlns="sap.m"
         xmlns:core="sap.ui.core">
     <ResponsivePopover
-            title="{i18n>xtit.capacitiveAssignments}"
+            title="{i18n>xtit.capacitiveAssignments}({local>/count})"
             class="sapUiPopupWithPadding"
             placement="Auto"
             contentWidth="35%">

@@ -33,7 +33,8 @@ sap.ui.define([
          */
         open: function (oView, oEvent) {
             var oDialog = this.getDialog();
-
+			oDialog.setModel(new JSONModel({count:0}),"local");
+			
             this._dateFrom = sap.ui.getCore().byId("dateRange1");
             this._dateTo = sap.ui.getCore().byId("dateRange2");
             this._oView = oView;
@@ -64,7 +65,12 @@ sap.ui.define([
                 oRow = oEvent.getSource().getParent(),
                 oContext = oRow.getBindingContext(),
                 oNodeData = oContext.getModel().getProperty(oContext.getPath());
-
+			
+			// To show busy indicator when filter getting applied
+            oBinding.attachDataReceived(function (e) {
+                var aResults = e.getParameter("data").results;
+                oDialog.getModel("local").setProperty("/count",aResults.length);
+            });
             this._filterAssignments(oBinding, oNodeData);
         },
         /**
