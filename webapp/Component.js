@@ -9,7 +9,6 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/AssignTreeDialog",
 	"com/evorait/evoplan/controller/StatusSelectDialog",
 	"com/evorait/evoplan/controller/AssignActionsDialog",
-	"com/evorait/evoplan/controller/FilterSettingsDialog",
 	"com/evorait/evoplan/controller/PlanningCalendarDialog",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
@@ -25,7 +24,6 @@ sap.ui.define([
 	AssignTreeDialog,
 	StatusSelectDialog,
 	AssignActionsDialog,
-	FilterSettingsDialog,
 	PlanningCalendarDialog,
 	MessagePopover,
 	MessagePopoverItem,
@@ -200,8 +198,6 @@ sap.ui.define([
 		 * @private
 		 */
 		_initDialogs: function () {
-			//resource tree filter settings dialog
-			this.filterSettingsDialog = new FilterSettingsDialog();
 			//display and change assignment dialog
 			this.assignInfoDialog = new AssignInfoDialog();
 			this.assignInfoDialog.init();

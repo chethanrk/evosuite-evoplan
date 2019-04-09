@@ -18,7 +18,7 @@ sap.ui.define([
 
 		formatter: formatter,
 
-		firstLoad: false,
+        isLoaded: false,
 
 		assignmentPath: null,
 
@@ -51,6 +51,19 @@ sap.ui.define([
 			window.addEventListener(orientationEvent, function () {
 				_this._jDroppable(_this);
 			}, false);
+
+			// register drop every time table was new rendered
+            this._oDataTable.onAfterRendering = function() {
+                if (sap.ui.table.TreeTable.prototype.onAfterRendering) {
+                    sap.ui.table.TreeTable.prototype.onAfterRendering.apply(this, arguments);
+                }
+                //when app was already loaded
+				// On SmartFilterbar expand or collapse drag and drop is not working anymore
+				//so when table is finished with rendering init dragDrop again
+                if(_this.isLoaded){
+					_this._jDroppable(_this);
+				}
+            };
 		},
 		/**
 		 * Register's the DnD
@@ -64,10 +77,7 @@ sap.ui.define([
 		 * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.
 		 * This hook is the same one that SAPUI5 controls get after being rendered.
 		 * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.ResourceTree **/
-		onAfterRendering: function (oEvent) {
-			//init droppable
-			this.refreshDroppable(oEvent);
-		},
+		onAfterRendering: function (oEvent) {},
 
 		/**
 		 * initial draggable after every refresh of table
@@ -77,21 +87,10 @@ sap.ui.define([
 		onBusyStateChanged: function (oEvent) {
 			var parameters = oEvent.getParameters();
 			if (parameters.busy === false) {
-				this._jDroppable(this);
 				this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
 			} else {
 				//this.onTreeUpdateStarted();
 				this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
-			}
-		},
-
-		/**
-		 * initialize or update droppable after updating tree list
-		 * @param oEvent
-		 */
-		refreshDroppable: function (oEvent) {
-			if (this._oDroppableTable) {
-				this._jDroppable(this);
 			}
 		},
 
@@ -166,8 +165,8 @@ sap.ui.define([
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams;
 
-			if(!this._isLoaded){
-                this._isLoaded = true;
+			if(!this.isLoaded){
+                this.isLoaded = true;
                 oBinding.parameters.numberOfExpandedLevels = 1;
                 oBinding.parameters.restoreTreeStateAfterChange = true;
 			}
