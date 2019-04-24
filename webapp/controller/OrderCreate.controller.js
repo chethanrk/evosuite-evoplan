@@ -124,7 +124,9 @@ sap.ui.define([
                             AssetGuid: sAsset,
                             AssetDescription: sDesc,
                             TechnicalObjectType: sAsssetType,
-                            BusinessArea :sBusinessarea
+                            BusinessArea :sBusinessarea,
+                            StartTimestamp:new Date(),
+                            EndTimestamp:new Date()
                         }
                     });
                     this.getView().setBindingContext(oContext);
