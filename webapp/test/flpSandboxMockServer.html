@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Approve Purchase Orders</title>
+	<title>Evoplan</title>
 
 	<!-- Bootstrap the unified shell in sandbox mode for standalone usage.
 
@@ -36,43 +36,37 @@
 				}
 			},
 			applications: {
-                "EvoPlan-dispatch": {
+               "EvoPlan-dispatch": {
                     additionalInformation: "SAPUI5.Component=com.evorait.evoplan",
                 	applicationType: "URL",
             		url: "../",
                 	description: "Dispatch demands",
 					title: "evoPlan"
                }
-			}   
+            }
 		};
 	</script>
 
-	<script src="../test-resources/sap/ushell/bootstrap/sandbox.js" id="sap-ushell-bootstrap"></script>
+	<script src="../../test-resources/sap/ushell/bootstrap/sandbox.js" id="sap-ushell-bootstrap"></script>
 
 	<!-- Bootstrap the UI5 core library -->
 	<script id="sap-ui-bootstrap"
-			src="../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ushell, sap.ndc"
+			src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
+			data-sap-ui-preload="async"
+			data-sap-ui-libs="sap.m, sap.ushell"
 			data-sap-ui-theme="sap_belize"
+			data-sap-ui-language="en"
 			data-sap-ui-compatVersion="edge"
-			data-sap-ui-resourceroots='{"com.evorait.evoplan": "../"}'
+        	data-sap-ui-resourceroots='{"com.evorait.evoplan": "../", "com.evorait.evoplan.test": "."}'
 			data-sap-ui-frameOptions='allow'> // NON-SECURE setting for testing environment
 	</script>
-	
+
+
 	<script type="text/javascript">
-        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-core');
-        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-widget');
-        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-mouse');
-        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-sortable');
-        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-droppable');
-        $.sap.require('sap.ui.thirdparty.jqueryui.jquery-ui-draggable');
-
-        sap.ui.localResources("sapui5draganddrop");
-	</script>
-
-	<script>
 		sap.ui.getCore().attachInit(function() {
-
+			// initialize the ushell sandbox component
+			// sap.ushell.Container.createRenderer().placeAt("content");
+			
 			sap.ui.require([
 				"com/evorait/evoplan/localService/mockserver"
 			], function (mockserver) {
@@ -83,8 +77,9 @@
 				sap.ushell.Container.createRenderer().placeAt("content");
 			});
 		});
+		
+		
 	</script>
-	
 
 </head>
 
