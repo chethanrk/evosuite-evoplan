@@ -22,7 +22,8 @@
                         appointmentsVisualization="Filled"
                         showEmptyIntervalHeaders="false"
                         showWeekNumbers="true"
-                        groupAppointmentsMode="Expanded">
+                        groupAppointmentsMode="Expanded"
+                        stickyHeader="true">
                     <rows>
                         <PlanningCalendarRow
                                 icon="{
@@ -31,6 +32,11 @@
                                        }"
                                 title="{calendarModel>GroupDescription}"
                                 text="{calendarModel>ResourceDescription}"
+                                enableAppointmentsDragAndDrop="true"
+                                enableAppointmentsResize="false"
+                                appointmentDragEnter="onAppointmentDragEnter"
+                                appointmentDrop="onAppointmentDrop"
+                                appointmentResize="onAppointmentResize"
                                 appointments="{path : 'calendarModel>Assignments', templateShareable: 'true'}"
                                 intervalHeaders="{path: 'calendarModel>AbsenceInfo', templateShareable: 'true'}">
                             <appointments>

@@ -18,6 +18,7 @@ sap.ui.define([
 			eventBus.subscribe("AssignTreeDialog", "bulkReAssignment", this._triggerUpdateAssign, this);
 			eventBus.subscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
 			eventBus.subscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
+			eventBus.subscribe("PlanningCalendarDialog", "saveAllAssignments", this._triggerSaveAllAssignments, this);
 
 			var oViewModel,
 				fnSetAppNotBusy,
@@ -153,8 +154,10 @@ sap.ui.define([
 		 */
 		_onObjectMatched: function () {
 			var eventBus = sap.ui.getCore().getEventBus();
-			eventBus.publish("BaseController", "refreshTreeTable", {});
-			eventBus.publish("BaseController", "refreshDemandTable", {});
+			if(!this._firstTime){
+				eventBus.publish("BaseController", "refreshTreeTable", {});
+				eventBus.publish("BaseController", "refreshDemandTable", {});
+			}
 		},
 		/**
 		 * catch event from dialog for saving demand status change
@@ -215,6 +218,10 @@ sap.ui.define([
 			} else if (sEvent === "bulkDeleteAssignment") {
 				this.bulkDeleteAssignment(oData.aContexts, oData.parameters);
 			}
+		},
+		
+		_triggerSaveAllAssignments: function (sChanel, sEvent, oData) {
+			this.saveAllAssignments(oData.assignments);
 		}
 
 	});

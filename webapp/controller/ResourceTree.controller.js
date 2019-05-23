@@ -326,36 +326,109 @@ sap.ui.define([
          * @return
          * @private
          */
-        _triggerRefreshTree: function () {
-            var oTable = this.byId("droppableTable"),
-                aRows = oTable ? oTable.getAggregation("rows") : null,
-                oContext = aRows ? aRows[0].getBindingContext() : null,
+        // _triggerRefreshTree: function () {
+        //     var oTable = this.byId("droppableTable"),
+        //         aRows = oTable ? oTable.getAggregation("rows") : null,
+        //         oContext = aRows ? aRows[0].getBindingContext() : null,
+        //         oModel,
+        //         sPath;
+
+        //     this.resetChanges();
+        //     if (oTable && aRows && oContext) {
+        //         if (oContext) {
+        //             oModel = oContext.getModel();
+        //             sPath = oContext.getPath();
+
+        //             oModel.setProperty(sPath + "/IsSelected", true); // changing the property in order trigger submit change
+        //             oTable.getBinding("rows").submitChanges(); // submit change will refresh of tree according maintained parameters
+        //         } else {
+        //             this._triggerFilterSearch();
+        //         }
+        //     }
+
+        // },
+        _triggerRefreshTree:function(){
+			/*var oContext = this.byId("droppableTable").getAggregation("rows")[0].getBindingContext(),
                 oModel,
                 sPath;
-
-            this.resetChanges();
-            if (oTable && aRows && oContext) {
-                if (oContext) {
+				
+				this.resetChanges();
+				
+			    if(oContext){
                     oModel = oContext.getModel();
                     sPath = oContext.getPath();
 
-                    oModel.setProperty(sPath + "/IsSelected", true); // changing the property in order trigger submit change
-                    oTable.getBinding("rows").submitChanges(); // submit change will refresh of tree according maintained parameters
-                } else {
+                    oModel.setProperty(sPath+"/IsSelected",true); // changing the property in order trigger submit change
+                    this.byId("droppableTable").getBinding("rows").submitChanges();// submit change will refresh of tree according maintained parameters
+                }else{
                     this._triggerFilterSearch();
                 }
+
+*/
+
+            var oTreeTable = this.byId("droppableTable"),
+                oTreeBinding = oTreeTable.getBinding("rows"),
+                oPage = this.byId("idResourcePage");
+            var UIMinorVersion  = sap.ui.getCore().getConfiguration().getVersion().getMinor();
+            var bIsScrollBar = oTreeTable._getScrollExtension()._oVerticalScrollbar.className.match("sapUiTableHidden");
+            //reset the changes
+            this.resetChanges();
+
+            if(oTreeBinding){
+                oTreeBinding._restoreTreeState().then(function(){
+                    if(parseInt(UIMinorVersion,10) > 52){
+                        // this check is used as a workaround for tree restoration for above 1.52.* version
+                        // OSS has been raised for the same
+                        // Scrolled manually to fix the rendering bug
+                        var oScrollContainer = oTreeTable._getScrollExtension();
+                        var iScrollIndex = oScrollContainer.getRowIndexAtCurrentScrollPosition();
+                        var bScrolled;
+                        if(iScrollIndex === 0){
+                            oTreeTable._getScrollExtension().updateVerticalScrollPosition(33);
+                            bScrolled = true;
+                        }else{
+                            bScrolled = oTreeTable._getScrollExtension().scrollVertically(1);
+                        }
+
+                        // If there is no scroll bar present
+                        if(bIsScrollBar){
+                            oPage.setHeaderExpanded(false);
+                            setTimeout(function(){
+                                oPage.setHeaderExpanded(true);
+                            },100);
+                        }
+                    }
+                });
             }
 
-        },
+
+			
+		},
+		/**
+		 * Resets the selected resource if selected  
+		 */
+		resetChanges: function(){
+            var oModel = this.getModel();
+
+            // reset the model changes
+            if(oModel.hasPendingChanges()){
+                oModel.resetChanges();
+            }
+            // Resetting selected resource
+                this.selectedResources = [];
+				this.byId("showPlanCalendar").setEnabled(false);
+                this.byId("idButtonreassign").setEnabled(false);
+                this.byId("idButtonunassign").setEnabled(false);
+		},
         /**
          * Resets the selected resource if selected
          */
-        resetChanges: function () {
-            this.selectedResources = [];
-            this.byId("showPlanCalendar").setEnabled(false);
-            this.byId("idButtonreassign").setEnabled(false);
-            this.byId("idButtonunassign").setEnabled(false);
-        },
+        // resetChanges: function () {
+        //     this.selectedResources = [];
+        //     this.byId("showPlanCalendar").setEnabled(false);
+        //     this.byId("idButtonreassign").setEnabled(false);
+        //     this.byId("idButtonunassign").setEnabled(false);
+        // },
 
         /**
 		 * On select of capacitive checkbox the adjusting splitter length

@@ -10,6 +10,8 @@ sap.ui.define([
     return BaseController.extend("com.evorait.evoplan.controller.PlanningCalendarDialog", {
 
         formatter: formatter,
+       
+       _changedAssignments : [],
 
         init: function () {
             var eventBus = sap.ui.getCore().getEventBus();
@@ -29,7 +31,7 @@ sap.ui.define([
             return this._oDialog;
         },
         /**
-         * open dialog
+         * open's the planning calendar dialog
          * get detail data from resource and resource group
          * @param oView
          * @param sBindPath
@@ -59,12 +61,8 @@ sap.ui.define([
          * @private
          */
         _setCalendarModel: function () {
-            var aUsers = [],
-                aResourceFilters = [],
-                aActualFilters = [],
-                oModel = this._oView ? this._oView.getModel() : null,
-                // oResourceBundle = this._oResourceBundle,
-                oViewFilterSettings = this._component ? this._component.filterSettingsDialog : null;
+            var aResourceFilters = [],
+                oModel = this._oView ? this._oView.getModel() : null;
 
             if (!oModel) {
                 return;
@@ -72,8 +70,49 @@ sap.ui.define([
             if (this.selectedResources.length <= 0) {
                 return;
             }
+			
+			// get All selected resource filters
+			aResourceFilters = this._generateResourceFilters();
 
-            for (var i = 0; i < this.selectedResources.length; i++) {
+            this._oPlanningCalendar.setBusy(true);
+            oModel.read("/AssignmentSet", {
+                groupId: "calendarBatch",
+                filters: aResourceFilters,
+                urlParameters: {
+                    "$expand": "Resource,Demand" // To fetch the assignments associated with Resource or ResourceGroup
+                }
+            });
+            oModel.read("/ResourceAvailabilitySet", {
+                groupId: "calendarBatch",
+                filters: aResourceFilters,
+                urlParameters: {
+                    "$expand": "Resource" // To fetch the assignments associated with Resource or ResourceGroup
+                }
+            });
+            var aDeferredGroups = oModel.getDeferredGroups();
+            aDeferredGroups = aDeferredGroups.concat(["calendarBatch"]);
+            oModel.setDeferredGroups(aDeferredGroups);
+
+            oModel.submitChanges({
+                groupId: "calendarBatch",
+                success: this.onSuccess.bind(this),
+                error: this.onError.bind(this)
+            });
+        },
+        /**
+         * Generate resource filters
+         * 
+         * @returns {Array} resource filters
+         */
+		_generateResourceFilters : function (){
+			var aUsers = [],
+                aResourceFilters = [],
+                aActualFilters = [],
+                oModel = this._oView ? this._oView.getModel() : null,
+                // oResourceBundle = this._oResourceBundle,
+                oViewFilterSettings = this._component ? this._component.filterSettingsDialog : null;
+                
+			for (var i = 0; i < this.selectedResources.length; i++) {
                 var obj = oModel.getProperty(this.selectedResources[i]);
                 if (obj.NodeType === "RESOURCE") {
                     if (obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
@@ -106,33 +145,8 @@ sap.ui.define([
                     ));
                 }
             }
-
-            this._oPlanningCalendar.setBusy(true);
-            oModel.read("/AssignmentSet", {
-                groupId: "calendarBatch",
-                filters: aResourceFilters,
-                urlParameters: {
-                    "$expand": "Resource,Demand" // To fetch the assignments associated with Resource or ResourceGroup
-                }
-            });
-            oModel.read("/ResourceAvailabilitySet", {
-                groupId: "calendarBatch",
-                filters: aResourceFilters,
-                urlParameters: {
-                    "$expand": "Resource" // To fetch the assignments associated with Resource or ResourceGroup
-                }
-            });
-            var aDeferredGroups = oModel.getDeferredGroups();
-            aDeferredGroups = aDeferredGroups.concat(["calendarBatch"]);
-            oModel.setDeferredGroups(aDeferredGroups);
-
-            oModel.submitChanges({
-                groupId: "calendarBatch",
-                success: this.onSuccess.bind(this),
-                error: this.onError.bind(this)
-            });
-        },
-
+            return aActualFilters;
+		},
         /**
          * Success callback for a batch read of assignments and absence infos
          * @param data
@@ -185,8 +199,106 @@ sap.ui.define([
             this._component.assignInfoDialog.open(this._oView, null, oAppointmentData, this._mParameters);
 
         },
+    	/**
+    	 * @since 2.1.4
+    	 * On drag assigments the method will be triggered. 
+    	 */
+        onAppointmentDragEnter : function (oEvent) {
+        	// No needs to be done
+        },
+        /** 
+         * Called on Assignment drop
+         * @param oEvent
+         */
+        onAppointmentDrop: function(oEvent) {
+        	this._refreshAppointment(oEvent);
+        },
+        /** 
+         * Called when assignment resize
+         * @param oEvent
+         */
+        onAppointmentResize: function(oEvent){
+        	this._refreshAppointment(oEvent);
+        },
+        /**
+         * Refresh the changed assignments in the local model
+         * 
+         * @param {Object} oEvent 
+         */
+        _refreshAppointment : function (oEvent) {
+        	var oAppointment = oEvent.getParameter("appointment"),
+        		oRow = oEvent.getParameter("calendarRow"),
+        		eventBus = sap.ui.getCore().getEventBus(),
+        		oStartDate = oEvent.getParameter("startDate"),
+        		oEndDate = oEvent.getParameter("endDate"),
+        		oAppointmentContext =  oAppointment.getBindingContext("calendarModel"),
+        		oModel = oAppointmentContext.getModel(),
+        		sAppointmentPath = oAppointmentContext.getPath(),
+        		oAssignmentData = oModel.getProperty(sAppointmentPath),
+        		oRowContext = oRow.getBindingContext("calendarModel"),
+        		sRowPath = oRowContext.getPath(),
+        		oRowData = oModel.getProperty(sRowPath),
+        		oParams = {
+					"DateFrom": oStartDate || 0,
+					"TimeFrom": {
+						__edmtype: "Edm.Time",
+						ms: oStartDate.getTime()
+					},
+					"DateTo": oEndDate || 0,
+					"TimeTo": {
+						__edmtype: "Edm.Time",
+						ms: oEndDate.getTime()
+					},
+					"AssignmentGUID": oAssignmentData.Guid,
+					"EffortUnit": oAssignmentData.EffortUnit,
+					"Effort": oAssignmentData.Effort,
+					"ResourceGroupGuid": oRowData.ResourceGroupGuid,
+					"ResourceGuid": oRowData.ResourceGuid
+				};
+				
+				if (oAppointment.getParent() !== oRow) {
+					this.onDropOnAnotherResource(oModel, oAppointment, oAssignmentData, oRowData, sRowPath, oStartDate, oEndDate);
+				}else{
+					oModel.setProperty(sAppointmentPath+"/DateFrom",oStartDate);
+					oModel.setProperty(sAppointmentPath+"/DateTo",oEndDate);
+				}
+				
+				this._oPlanningCalendar.setBusy(true);
+				
+				eventBus.publish("PlanningCalendarDialog", "saveAllAssignments", {
+						assignments:[oParams]
+				});
+        },
+        /** 
+         *  When assignments drop to different resource the assignment removed from the old row and added to new row
+         * 
+         * @param oModel - Json Model
+         * @param oAppointment - Dragged assignment
+         * @param oAssignmentData - Dragged Assignments data
+         * @param oRowData - Dropped rowdata
+         * @param sRowPath - Dropped row path
+         * @param oStartDate - new Start date
+         * @param oEndDate - new end date
+         */
+        onDropOnAnotherResource : function (oModel, oAppointment, oAssignmentData, oRowData, sRowPath, oStartDate, oEndDate){
+        		var oCopyAssignmentData = jQuery.extend({},oAssignmentData),
+        			oDraggedRowContext = oAppointment.getParent().getBindingContext("calendarModel"),
+        			sDraggedRowPath = oDraggedRowContext.getPath(),
+        			sDraggedRowData = oModel.getProperty(sDraggedRowPath);
+        			
+        			//remove from the old row
+        			sDraggedRowData.Assignments.splice(oRowData.Assignments.indexOf(oCopyAssignmentData),1);
+        			oModel.setProperty(sDraggedRowPath,sDraggedRowData);
+        			
+        			//add it in new row
+        			oCopyAssignmentData.DateFrom = oStartDate;
+					oCopyAssignmentData.DateTo = oEndDate;
+					oRowData.Assignments.push(oCopyAssignmentData);
+					oModel.setProperty(sRowPath,oRowData);
+        },
         /**
          * Create data for planning calendar
+         * Loop over the batch response and create the data as required by the the planning calendar
          *
          * @param data
          * @return {Array}

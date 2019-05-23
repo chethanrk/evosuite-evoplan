@@ -53,7 +53,7 @@
                                     type:'sap.ui.model.type.DateTime',
                                     formatOptions: { style: 'medium', strictParsing: true}
                                     }"
-                                    editable="{= ${assignment>/DemandStatus} === 'COMP' ? false :true }"
+                                    editable="{= ${assignment>/Demand/Status} === 'COMP' ? false :true }"
                     />
 
                     <Label text="{i18n>xfld.endDate}" />
@@ -63,13 +63,13 @@
                                     type:'sap.ui.model.type.DateTime',
                                     formatOptions: { style: 'medium', strictParsing: true}
                                     }"
-                                    editable="{= ${assignment>/DemandStatus} === 'COMP' ? false :true }"/>
+                                    editable="{= ${assignment>/Demand/Status} === 'COMP' ? false :true }"/>
 
                     <Label text="{i18n>xfld.effort}" />
                     <Input type="Text"
                            name="Effort"
                            value="{assignment>/Effort}"
-                           editable="{= ${assignment>/DemandStatus} === 'COMP' ? false :true }"/>
+                           editable="{= ${assignment>/Demand/Status} === 'COMP' ? false :true }"/>
                            
 					<!--<smartField:SmartLabel labelFor="idEfforUnit" />
 					<smartField:SmartField value="{Demand/EffortUnit}" id="idEfforUnit"
@@ -87,7 +87,7 @@
 					items="{
 						path: '/TimeUnitsSet'
 					}"
-                    editable="{= ${assignment>/DemandStatus} === 'COMP' ? false :true }">
+                    enabled="{= ${assignment>/Demand/Status} === 'COMP' ? false :true }">
 					<core:Item key="{Msehi}" text="{Msehl}" />
 				</Select>
 

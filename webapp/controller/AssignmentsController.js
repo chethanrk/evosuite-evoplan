@@ -177,6 +177,17 @@ sap.ui.define([
 				this.callFunctionImport(oParams, "ExecuteDemandFunction", "POST", mParameters);
 			}
 		},
+		
+		/** 
+		 * 
+		 * @param aAssignments
+		 */
+		saveAllAssignments : function (aAssignments) {
+			for (var i = 0; i < aAssignments.length; i++) {	
+				// call function import
+				this.callFunctionImport(aAssignments[i], "UpdateAssignment", "POST",{bFromPlannCal:true});
+			}
+		},
 		/**
 		 * Show the message to proceed with the assignment
 		 * @param aSources Demands to be assigned

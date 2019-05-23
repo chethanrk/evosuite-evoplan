@@ -339,6 +339,10 @@ sap.ui.define([
 			}
 			return newAssignDesc;
 		},
+		/**
+		 * On press navigates to demand detail page of linked demand. 
+		 * 
+		 */
 		onGotoDemand: function (oEvent) {
 			var oRouter = this._component.getRouter(),
 				oAssignment = this.oAssignmentModel,
