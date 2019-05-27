@@ -178,6 +178,7 @@ sap.ui.define([
          * @param oEvent
          */
         onPressShowPlanningCal: function (oEvent) {
+        	this.getModel("viewModel").setProperty("/calendarBusy",true);
             this.getOwnerComponent().planningCalendarDialog.open(this.getView(), this.selectedResources, {
                 bFromPlannCal: true
             }); // As we are opening the dialog when set model data
@@ -201,9 +202,17 @@ sap.ui.define([
             }
         },
 
+        /** 
+         * Open's Dialog containing assignments to reassign
+         * @param oEvent
+         */
         onPressReassign: function (oEvent) {
             this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false);
         },
+        /** 
+         * Open's Dialog containing assignments to unassign
+         * @param oEvent
+         */
         onPressUnassign: function (oEvent) {
             this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true);
         },
@@ -318,59 +327,17 @@ sap.ui.define([
                 });
             }, 1000);
         },
-        /**
-         * Method will refresh the data of tree by restoring its state
-         *
-         * @Author Rahul
-         * @version 2.0.4
-         * @return
-         * @private
+        
+        /** 
+         * Refresh's resource heirarchy table also restore the state of tree.
+         * @constructor 
          */
-        // _triggerRefreshTree: function () {
-        //     var oTable = this.byId("droppableTable"),
-        //         aRows = oTable ? oTable.getAggregation("rows") : null,
-        //         oContext = aRows ? aRows[0].getBindingContext() : null,
-        //         oModel,
-        //         sPath;
-
-        //     this.resetChanges();
-        //     if (oTable && aRows && oContext) {
-        //         if (oContext) {
-        //             oModel = oContext.getModel();
-        //             sPath = oContext.getPath();
-
-        //             oModel.setProperty(sPath + "/IsSelected", true); // changing the property in order trigger submit change
-        //             oTable.getBinding("rows").submitChanges(); // submit change will refresh of tree according maintained parameters
-        //         } else {
-        //             this._triggerFilterSearch();
-        //         }
-        //     }
-
-        // },
         _triggerRefreshTree:function(){
-			/*var oContext = this.byId("droppableTable").getAggregation("rows")[0].getBindingContext(),
-                oModel,
-                sPath;
-				
-				this.resetChanges();
-				
-			    if(oContext){
-                    oModel = oContext.getModel();
-                    sPath = oContext.getPath();
-
-                    oModel.setProperty(sPath+"/IsSelected",true); // changing the property in order trigger submit change
-                    this.byId("droppableTable").getBinding("rows").submitChanges();// submit change will refresh of tree according maintained parameters
-                }else{
-                    this._triggerFilterSearch();
-                }
-
-*/
-
             var oTreeTable = this.byId("droppableTable"),
                 oTreeBinding = oTreeTable.getBinding("rows"),
                 oPage = this.byId("idResourcePage");
             var UIMinorVersion  = sap.ui.getCore().getConfiguration().getVersion().getMinor();
-            var bIsScrollBar = oTreeTable._getScrollExtension()._oVerticalScrollbar.className.match("sapUiTableHidden");
+            var bIsScrollBar = oTreeTable._getScrollExtension().getVerticalScrollbar().className.match("sapUiTableHidden");
             //reset the changes
             this.resetChanges();
 
@@ -378,8 +345,7 @@ sap.ui.define([
                 oTreeBinding._restoreTreeState().then(function(){
                     if(parseInt(UIMinorVersion,10) > 52){
                         // this check is used as a workaround for tree restoration for above 1.52.* version
-                        // OSS has been raised for the same
-                        // Scrolled manually to fix the rendering bug
+                        // Scrolled manually to fix the rendering 
                         var oScrollContainer = oTreeTable._getScrollExtension();
                         var iScrollIndex = oScrollContainer.getRowIndexAtCurrentScrollPosition();
                         var bScrolled;
@@ -421,16 +387,6 @@ sap.ui.define([
                 this.byId("idButtonunassign").setEnabled(false);
 		},
         /**
-         * Resets the selected resource if selected
-         */
-        // resetChanges: function () {
-        //     this.selectedResources = [];
-        //     this.byId("showPlanCalendar").setEnabled(false);
-        //     this.byId("idButtonreassign").setEnabled(false);
-        //     this.byId("idButtonunassign").setEnabled(false);
-        // },
-
-        /**
 		 * On select of capacitive checkbox the adjusting splitter length
          * @param oEvent checkbox event
          */
@@ -445,6 +401,10 @@ sap.ui.define([
                 oViewModel.setProperty("/splitterDivider","31%");
 			}
         },
+		/** 
+		 * Open's popover containing capacitive assignments
+		 * @param oEvent
+		 */
 		openCapacitivePopup : function (oEvent) {
             var oComponent = this.getOwnerComponent();
             oComponent.capacitiveAssignments.open(this.getView(),oEvent);

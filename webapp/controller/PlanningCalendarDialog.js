@@ -11,7 +11,7 @@ sap.ui.define([
 
         formatter: formatter,
        
-       _changedAssignments : [],
+       _changedAssignments : {},
 
         init: function () {
             var eventBus = sap.ui.getCore().getEventBus();
@@ -39,7 +39,8 @@ sap.ui.define([
          */
         open: function (oView, aSelectedResources, mParameters) {
             var oDialog = this.getDialog();
-
+			this._changedAssignments = {};
+			this._selectedView = undefined;
             this._oView = oView;
             this.selectedResources = aSelectedResources;
             this._component = this._oView.getController().getOwnerComponent();
@@ -53,7 +54,7 @@ sap.ui.define([
 
             this._setCalendarModel();
             // open dialog
-            oDialog.open();
+            // oDialog.open();
         },
         /**
          * Method reads ResourceSet with Assignments
@@ -153,13 +154,16 @@ sap.ui.define([
          * @param response
          */
         onSuccess: function (data, response) {
+        	 var oDialog = this.getDialog();
             // console.log(this._createData(data));
             this._oCalendarModel.setData({
                 startDate: new Date(),
-                viewKey: this.getSelectedView(),
+                viewKey: this._selectedView ? this.formatter.formatViewKey(this._selectedView) : this.getSelectedView(),
                 resources: this._createData(data)
             });
-            this._oCalendarModel.refresh();
+            // this._oCalendarModel.get.refresh();
+        	oDialog.open();
+        	this._oView.getModel("viewModel").setProperty("/calendarBusy",false);
             this._oPlanningCalendar.setBusy(false);
         },
 
@@ -168,6 +172,7 @@ sap.ui.define([
          */
         onError: function () {
             this._oDialog.setBusy(false);
+            this._oPlanningCalendar.setBusy(false);
             // this.showMessageToast(oResourceBundle.getText("errorMessage"));
         },
         /**
@@ -204,7 +209,26 @@ sap.ui.define([
     	 * On drag assigments the method will be triggered. 
     	 */
         onAppointmentDragEnter : function (oEvent) {
-        	// No needs to be done
+        	var oAppointment = oEvent.getParameter("appointment"),
+            	oContext = oAppointment.getBindingContext("calendarModel"),
+            	oModel = oContext.getModel(),
+            	sPath = oContext.getPath(),
+            	oAppointmentData = oModel.getProperty(sPath);
+            	// If the assignment is completed the assignment cannot be changed
+            	if(!this.validateAssignment(oAppointmentData)){
+            		oEvent.preventDefault();
+            	}
+        },
+        validateAssignment : function (oAppointmentData) {
+        	if(oAppointmentData.Demand.Status === "COMP"){
+            		this.showMessageToast(this._oResourceBundle.getText("ymsg.assignmentCompleted"));
+            		return false;
+            }
+           
+            return true;
+        },
+        onViewChange : function(oEvent){
+        	this._selectedView = oEvent.getSource().getViewKey();
         },
         /** 
          * Called on Assignment drop
@@ -228,7 +252,6 @@ sap.ui.define([
         _refreshAppointment : function (oEvent) {
         	var oAppointment = oEvent.getParameter("appointment"),
         		oRow = oEvent.getParameter("calendarRow"),
-        		eventBus = sap.ui.getCore().getEventBus(),
         		oStartDate = oEvent.getParameter("startDate"),
         		oEndDate = oEvent.getParameter("endDate"),
         		oAppointmentContext =  oAppointment.getBindingContext("calendarModel"),
@@ -238,7 +261,7 @@ sap.ui.define([
         		oRowContext = oRow.getBindingContext("calendarModel"),
         		sRowPath = oRowContext.getPath(),
         		oRowData = oModel.getProperty(sRowPath),
-        		oParams = {
+        		oParams = jQuery.extend({},{
 					"DateFrom": oStartDate || 0,
 					"TimeFrom": {
 						__edmtype: "Edm.Time",
@@ -254,20 +277,25 @@ sap.ui.define([
 					"Effort": oAssignmentData.Effort,
 					"ResourceGroupGuid": oRowData.ResourceGroupGuid,
 					"ResourceGuid": oRowData.ResourceGuid
-				};
+				},true);
 				
 				if (oAppointment.getParent() !== oRow) {
-					this.onDropOnAnotherResource(oModel, oAppointment, oAssignmentData, oRowData, sRowPath, oStartDate, oEndDate);
+					this.onDropOnAnotherResource(oModel, oAppointment, oAssignmentData, oRowData, sRowPath, oStartDate, oEndDate, oParams);
 				}else{
+					 if(oAssignmentData.Demand.Status === "COMP"){
+        				this.showMessageToast(this._oResourceBundle.getText("ymsg.assignmentCompleted"));
+        				return;
+        			}	
 					oModel.setProperty(sAppointmentPath+"/DateFrom",oStartDate);
 					oModel.setProperty(sAppointmentPath+"/DateTo",oEndDate);
+					this._changedAssignments[oParams.AssignmentGUID] = oParams;
 				}
+				oModel.setProperty("/viewKey",this.formatter.formatViewKey(this._selectedView));
+				oModel.refresh(true);
 				
-				this._oPlanningCalendar.setBusy(true);
+				// this._oPlanningCalendar.setBusy(true);
 				
-				eventBus.publish("PlanningCalendarDialog", "saveAllAssignments", {
-						assignments:[oParams]
-				});
+			
         },
         /** 
          *  When assignments drop to different resource the assignment removed from the old row and added to new row
@@ -280,14 +308,20 @@ sap.ui.define([
          * @param oStartDate - new Start date
          * @param oEndDate - new end date
          */
-        onDropOnAnotherResource : function (oModel, oAppointment, oAssignmentData, oRowData, sRowPath, oStartDate, oEndDate){
+        onDropOnAnotherResource : function (oModel, oAppointment, oAssignmentData, oRowData, sRowPath, oStartDate, oEndDate, oParams){
         		var oCopyAssignmentData = jQuery.extend({},oAssignmentData),
         			oDraggedRowContext = oAppointment.getParent().getBindingContext("calendarModel"),
         			sDraggedRowPath = oDraggedRowContext.getPath(),
         			sDraggedRowData = oModel.getProperty(sDraggedRowPath);
         			
+        			// Check the assignments for reassign functionality
+        			if(!oCopyAssignmentData.Demand.ALLOW_REASSIGN){
+        				this.showMessageToast(this._oResourceBundle.getText("ymsg.noReassignPossible"));
+        				return;
+        			}
+        			
         			//remove from the old row
-        			sDraggedRowData.Assignments.splice(oRowData.Assignments.indexOf(oCopyAssignmentData),1);
+        			sDraggedRowData.Assignments.splice(sDraggedRowData.Assignments.findIndex(function(x){return x.Guid === oCopyAssignmentData.Guid;}),1);
         			oModel.setProperty(sDraggedRowPath,sDraggedRowData);
         			
         			//add it in new row
@@ -295,6 +329,7 @@ sap.ui.define([
 					oCopyAssignmentData.DateTo = oEndDate;
 					oRowData.Assignments.push(oCopyAssignmentData);
 					oModel.setProperty(sRowPath,oRowData);
+					this._changedAssignments[oParams.AssignmentGUID] = oParams;
         },
         /**
          * Create data for planning calendar
@@ -305,12 +340,25 @@ sap.ui.define([
          * @private
          */
         _createData: function (data) {
-            var aResources = [];
+            var aResources = [],
+            	oModel = this._oView ? this._oView.getModel() : null;
 
             if (data.__batchResponses) {
                 var oAssignData = data.__batchResponses[0].data;
                 var oAbsenceData = data.__batchResponses[1].data;
                 var oResourceMap = {};
+                
+                for (var a = 0; a < this.selectedResources.length; a++) {
+                		var oResource = oModel.getProperty(this.selectedResources[a]);
+                		oResource["ResourceDescription"] = oResource.Description;
+                		oResource["ObjectType"] = oResource.NodeType;
+                		oResource["GroupDescription"] = oModel.getProperty("/ResourceHierarchySet('"+oResource.ResourceGroupGuid+"')").Description;
+                       
+                		oResourceMap[oResource.NodeId] = oResource;
+                		oResourceMap[oResource.NodeId].Assignments = [];
+                        oResourceMap[oResource.NodeId].AbsenceInfo = [];
+                }
+                
                 for (var l in data.__batchResponses) {
 
                     var oData = data.__batchResponses[l].data;
@@ -338,6 +386,18 @@ sap.ui.define([
             }
             return aResources;
         },
+        onSaveDialog : function (oEvent) {
+        	if(Object.keys(this._changedAssignments).length > 0 && this._changedAssignments.constructor === Object){
+        		this._oPlanningCalendar.setBusy(true);
+        		var eventBus = sap.ui.getCore().getEventBus();
+        		eventBus.publish("PlanningCalendarDialog", "saveAllAssignments", {
+						assignments:this._changedAssignments
+				});
+				this._changedAssignments = {};
+        	}else{
+        		this.showMessageToast(this._oResourceBundle.getText("ymsg.noChangestoSave"));
+        	}
+        },
         /**
          * on press cancel in dialog close it
          * @param oEvent
@@ -346,6 +406,11 @@ sap.ui.define([
             // if(this._oCalendarModel){
             //     this._oCalendarModel.setData({});
             // }
+            if(Object.keys(this._changedAssignments).length > 0 && this._changedAssignments.constructor === Object){
+            		this.showMessageToast(this._oResourceBundle.getText("ymsg.changedDataLost"));
+            		this._changedAssignments = {};
+            }
+            
             if (this._oDialog) {
                 this._oDialog.close();
             }

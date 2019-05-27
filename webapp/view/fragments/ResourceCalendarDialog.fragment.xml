@@ -23,7 +23,8 @@
                         showEmptyIntervalHeaders="false"
                         showWeekNumbers="true"
                         groupAppointmentsMode="Expanded"
-                        stickyHeader="true">
+                        stickyHeader="true"
+                        viewChange ="onViewChange">
                     <rows>
                         <PlanningCalendarRow
                                 icon="{
@@ -33,7 +34,7 @@
                                 title="{calendarModel>GroupDescription}"
                                 text="{calendarModel>ResourceDescription}"
                                 enableAppointmentsDragAndDrop="true"
-                                enableAppointmentsResize="false"
+                                enableAppointmentsResize="true"
                                 appointmentDragEnter="onAppointmentDragEnter"
                                 appointmentDrop="onAppointmentDrop"
                                 appointmentResize="onAppointmentResize"
@@ -69,10 +70,12 @@
         </content>
 
         <beginButton>
-            <Button text="{i18n>xbut.buttonClose}" press="onModalCancel" />
+        	<Button text="{i18n>xbut.buttonSave}" type="Emphasized"
+                    press="onSaveDialog" />
         </beginButton>
 
         <endButton>
+        	 <Button text="{i18n>xbut.buttonClose}" press="onModalCancel" />
         </endButton>
     </Dialog>
 

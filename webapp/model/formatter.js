@@ -274,7 +274,7 @@ sap.ui.define([
          */
 
         formatProgress: function (data) {
-            var iValue = parseInt(data);
+            var iValue = parseInt(data,10);
             if (iValue > 100) {
                 return 100;
             } else {
@@ -286,7 +286,7 @@ sap.ui.define([
          * @param sValue
          */
         formatProgressState: function (data) {
-            var iValue = parseInt(data);
+            var iValue = parseInt(data,10);
             if (iValue <= 50) {
                 return sap.ui.core.ValueState.Success;
             } else if (iValue > 50 && iValue <= 70) {
@@ -295,23 +295,56 @@ sap.ui.define([
                 return sap.ui.core.ValueState.Error;
             }
         },
+        /** 
+         * 
+         * @param isCapacity
+         * @param sSelectedView
+         * @returns
+         */
         formatProgressBarVisibility: function (isCapacity, sSelectedView) {
             if (isCapacity === true && sSelectedView !== "TIMENONE") {
                 return true;
             }
             return false;
         },
+        /** 
+         * 
+         * @param sNodeType
+         * @param sSelectedView
+         * @returns
+         */
         formatWorkTimesVisibility: function (sNodeType, sSelectedView) {
             if (sNodeType !== "RES_GROUP" && sNodeType !== "ASSIGNMENT" && sSelectedView !== "TIMENONE") {
                 return true;
             }
             return false;
         },
+        /** 
+         * 
+         * @param sNodeType
+         * @param sSelectedView
+         * @returns
+         */
         formatCapacityView: function (sNodeType, sSelectedView) {
             if (sSelectedView !== "TIMENONE") {
                 return true;
             }
             return false;
+        },
+         
+         /**
+         * @Author Rahul
+         * format the calendar view
+         * @param sValue
+         * @returns calendarView respective calendar view
+         */
+        formatViewKey: function (sValue) {
+        	for(var i in resourceFormats){
+        		if(resourceFormats[i].calendarView === sValue){
+        			return i;
+        		}
+        	}
+        	return "TIMENONE";
         }
     };
 });

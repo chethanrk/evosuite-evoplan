@@ -61,6 +61,9 @@ sap.ui.define([
 				return d.add(2, "months").toDate();
 			}
 		},
+		TIMEHOUR:{
+			calendarView: "Hour"
+		},
 		ASSIGNMENT: {
 			title: "H6",
 			icon: "sap-icon://eam-work-order"

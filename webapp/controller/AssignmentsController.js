@@ -183,7 +183,7 @@ sap.ui.define([
 		 * @param aAssignments
 		 */
 		saveAllAssignments : function (aAssignments) {
-			for (var i = 0; i < aAssignments.length; i++) {	
+			for (var i in aAssignments) {	
 				// call function import
 				this.callFunctionImport(aAssignments[i], "UpdateAssignment", "POST",{bFromPlannCal:true});
 			}
