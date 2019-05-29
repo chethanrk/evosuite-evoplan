@@ -215,17 +215,10 @@ sap.ui.define([
             	sPath = oContext.getPath(),
             	oAppointmentData = oModel.getProperty(sPath);
             	// If the assignment is completed the assignment cannot be changed
-            	if(!this.validateAssignment(oAppointmentData)){
-            		oEvent.preventDefault();
-            	}
-        },
-        validateAssignment : function (oAppointmentData) {
-        	if(oAppointmentData.Demand.Status === "COMP"){
-            		this.showMessageToast(this._oResourceBundle.getText("ymsg.assignmentCompleted"));
-            		return false;
+            if(!oAppointmentData.Demand.ASGNMNT_CHANGE_ALLOWED){
+                this.showMessageToast(this._oResourceBundle.getText("ymsg.assignmentCompleted"));
+                oEvent.preventDefault();
             }
-           
-            return true;
         },
         onViewChange : function(oEvent){
         	this._selectedView = oEvent.getSource().getViewKey();
@@ -282,11 +275,11 @@ sap.ui.define([
 				if (oAppointment.getParent() !== oRow) {
 					this.onDropOnAnotherResource(oModel, oAppointment, oAssignmentData, oRowData, sRowPath, oStartDate, oEndDate, oParams);
 				}else{
-					 if(oAssignmentData.Demand.Status === "COMP"){
-        				this.showMessageToast(this._oResourceBundle.getText("ymsg.assignmentCompleted"));
-        				return;
-        			}	
-					oModel.setProperty(sAppointmentPath+"/DateFrom",oStartDate);
+                    if(!oAssignmentData.Demand.ASGNMNT_CHANGE_ALLOWED){
+                        this.showMessageToast(this._oResourceBundle.getText("ymsg.assignmentCompleted"));
+                        return;
+                    }
+                    oModel.setProperty(sAppointmentPath+"/DateFrom",oStartDate);
 					oModel.setProperty(sAppointmentPath+"/DateTo",oEndDate);
 					this._changedAssignments[oParams.AssignmentGUID] = oParams;
 				}

@@ -345,6 +345,18 @@ sap.ui.define([
         		}
         	}
         	return "TIMENONE";
+        },
+        /**
+         *
+         * @param bEnableDragDrop
+         * @param bEnableResize
+         * @return {*}
+         */
+        formatResizeEnable :function(bEnableDragDrop, bEnableResize){
+            if(!bEnableDragDrop){
+                return false;
+            }
+            return bEnableResize;
         }
     };
 });

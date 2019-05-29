@@ -33,8 +33,12 @@
                                        }"
                                 title="{calendarModel>GroupDescription}"
                                 text="{calendarModel>ResourceDescription}"
-                                enableAppointmentsDragAndDrop="true"
-                                enableAppointmentsResize="true"
+                                enableAppointmentsDragAndDrop="{user>/ENABLE_DRAG_DROP}"
+                                enableAppointmentsResize="{ parts:[
+                                {path:'user>/ENABLE_DRAG_DROP'},
+                                {path:'user>/ENABLE_RESIZE'}
+                                ],
+                                formatter:'.formatter.formatResizeEnable'}"
                                 appointmentDragEnter="onAppointmentDragEnter"
                                 appointmentDrop="onAppointmentDrop"
                                 appointmentResize="onAppointmentResize"

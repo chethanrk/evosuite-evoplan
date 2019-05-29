@@ -38,6 +38,7 @@ sap.ui.define([
 					Description: "",
 					AllowReassign: false,
 					AllowUnassign: false,
+                    AllowChange:true,
 					NewAssignPath: null,
 					NewAssignId: null,
 					NewAssignDesc: null,
@@ -230,6 +231,7 @@ sap.ui.define([
 						oModel.setProperty("/Description", oDemandData.DemandDesc);
 						oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
 						oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
+                        oModel.setProperty("/AllowChange", oDemandData.ASGNMNT_CHANGE_ALLOWED);
 						oModel.setProperty("/OrderId", oDemandData.ORDERID);
 						oModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
 						oModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
