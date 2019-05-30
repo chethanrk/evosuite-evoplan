@@ -9,6 +9,8 @@ sap.ui.define([
 
 		formatter: formatter,
 
+        _firstTime : true,
+
 		onInit: function () {
 			var eventBus = sap.ui.getCore().getEventBus();
 			//Event are subscription Demand assignment and change status of demand
@@ -157,6 +159,8 @@ sap.ui.define([
 			if(!this._firstTime){
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				eventBus.publish("BaseController", "refreshDemandTable", {});
+                this._firstTime = false;
+
 			}
 		},
 		/**
@@ -221,7 +225,7 @@ sap.ui.define([
 		},
 		
 		_triggerSaveAllAssignments: function (sChanel, sEvent, oData) {
-			this.saveAllAssignments(oData.assignments);
+			this.saveAllAssignments(oData.assignments, oData.mParameters);
 		}
 
 	});

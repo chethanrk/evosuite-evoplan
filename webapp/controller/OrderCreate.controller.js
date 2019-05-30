@@ -113,7 +113,8 @@ sap.ui.define([
                 sWc = oSelectedAsset ? oSelectedAsset.wc : "",
                 sPlant = oSelectedAsset ? oSelectedAsset.plant : "",
                 sAsssetType = oSelectedAsset ? oSelectedAsset.type : "",
-                sBusinessarea = oSelectedAsset ? oSelectedAsset.businessArea:"";
+                sBusinessarea = oSelectedAsset ? oSelectedAsset.businessArea:"",
+                OrderType = this.getModel("user").getProperty("/DEFAULT_ORDER_TYPE");
             this.getModel().metadataLoaded().then(function () {
                 if(sFloc && sFloc !== ""){
                     var oContext = this.getModel().createEntry("/EvoPlanOrderSet", {
@@ -126,7 +127,8 @@ sap.ui.define([
                             TechnicalObjectType: sAsssetType,
                             BusinessArea :sBusinessarea,
                             StartTimestamp:new Date(),
-                            EndTimestamp:new Date()
+                            EndTimestamp:new Date(),
+                            OrderType : OrderType
                         }
                     });
                     this.getView().setBindingContext(oContext);
