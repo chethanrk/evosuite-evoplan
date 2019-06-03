@@ -273,20 +273,20 @@ sap.ui.define([
                 }, true);
 
             if (oAppointment.getParent() !== oRow) {
-                this.onDropOnAnotherResource(oModel, oAppointment, oAssignmentData, oRowData, sRowPath, oStartDate, oEndDate, oParams);
+                this.onDropOnAnotherResource(oModel, oAppointmentContext, oParams, oRowContext);
             } else {
                 if (!oAssignmentData.Demand.ASGNMNT_CHANGE_ALLOWED) {
                     this.showMessageToast(this._oResourceBundle.getText("ymsg.assignmentCompleted"));
                     return;
                 }
-                oModel.setProperty(sAppointmentPath + "/DateFrom", oStartDate);
-                oModel.setProperty(sAppointmentPath + "/DateTo", oEndDate);
+                oModel.setProperty("DateFrom", oStartDate,oAppointmentContext);
+                oModel.setProperty("DateTo", oEndDate, oAppointmentContext);
                 this._changedAssignments[oParams.AssignmentGUID] = oParams;
             }
             oModel.setProperty("/viewKey", this.formatter.formatViewKey(this._selectedView));
             oModel.refresh(true);
 
-            // this._oPlanningCalendar.setBusy(true);
+            this._oPlanningCalendar.rerender();
 
 
         },
@@ -301,29 +301,22 @@ sap.ui.define([
          * @param oStartDate - new Start date
          * @param oEndDate - new end date
          */
-        onDropOnAnotherResource: function (oModel, oAppointment, oAssignmentData, oRowData, sRowPath, oStartDate, oEndDate, oParams) {
-            var oCopyAssignmentData = jQuery.extend({}, oAssignmentData),
-                oDraggedRowContext = oAppointment.getParent().getBindingContext("calendarModel"),
-                sDraggedRowPath = oDraggedRowContext.getPath(),
-                sDraggedRowData = oModel.getProperty(sDraggedRowPath);
-
+        onDropOnAnotherResource: function (oModel, oAppointmentContext, oParams, oRowContext) {
+           var aPath = oAppointmentContext.getPath().split("/"),
+                iIndex = aPath.pop(),
+                sRowAppointmentsPath = aPath.join("/"),
+                oAssignmentData = oModel.getProperty(oAppointmentContext.getPath());
+                oAssignmentData.DateFrom = oParams.DateFrom;
+            	oAssignmentData.DateTo = oParams.DateTo;
+                
             // Check the assignments for reassign functionality
-            if (!oCopyAssignmentData.Demand.ALLOW_REASSIGN) {
+            if (!oAssignmentData.Demand.ALLOW_REASSIGN) {
                 this.showMessageToast(this._oResourceBundle.getText("ymsg.noReassignPossible"));
                 return;
             }
-
-            //remove from the old row
-            sDraggedRowData.Assignments.splice(sDraggedRowData.Assignments.findIndex(function (x) {
-                return x.Guid === oCopyAssignmentData.Guid;
-            }), 1);
-            oModel.setProperty(sDraggedRowPath, sDraggedRowData);
-
-            //add it in new row
-            oCopyAssignmentData.DateFrom = oStartDate;
-            oCopyAssignmentData.DateTo = oEndDate;
-            oRowData.Assignments.push(oCopyAssignmentData);
-            oModel.setProperty(sRowPath, oRowData);
+            
+            oRowContext.getObject().Assignments.push(oAssignmentData);
+            oModel.getProperty(sRowAppointmentsPath).splice(iIndex, 1);
             this._changedAssignments[oParams.AssignmentGUID] = oParams;
         },
         /**

@@ -20,7 +20,6 @@
                         }"
                         appointmentSelect="onClickCalendarAssignment"
                         appointmentsVisualization="Filled"
-                        showEmptyIntervalHeaders="false"
                         showWeekNumbers="true"
                         groupAppointmentsMode="Expanded"
                         stickyHeader="true"
