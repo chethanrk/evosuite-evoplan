@@ -283,7 +283,9 @@ sap.ui.define([
                 oModel.setProperty("DateTo", oEndDate, oAppointmentContext);
                 this._changedAssignments[oParams.AssignmentGUID] = oParams;
             }
-            oModel.setProperty("/viewKey", this.formatter.formatViewKey(this._selectedView));
+            if(this._selectedView){
+            	oModel.setProperty("/viewKey", this.formatter.formatViewKey(this._selectedView));
+            }
             oModel.refresh(true);
 
             this._oPlanningCalendar.rerender();
