@@ -300,7 +300,7 @@ sap.ui.define([
                     sKey =oSource.getProperty("key"),
                     selectedTimeFormat = formatter.getResourceFormatByKey(sKey);
 
-                oViewModel.setProperty("/selectedHierarchyView",sKey)
+                oViewModel.setProperty("/selectedHierarchyView",sKey);
 
                 if(selectedTimeFormat){
                     this._filterDateRange1.setValue(this.formatter.date(selectedTimeFormat.getDateBegin()));
