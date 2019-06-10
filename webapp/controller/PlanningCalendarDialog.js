@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.PlanningCalendarDialog", {
-	
+
 		formatter: formatter,
 
 		_changedAssignments: {},
@@ -192,7 +192,7 @@ sap.ui.define([
 			return sCalendarView;
 		},
 		/**
-		 * show assignment info dialog on clicked calendar entry
+		 * show assignment info dialog on clicked on calendar entry
 		 * @param oEvent
 		 */
 		onClickCalendarAssignment: function (oEvent) {
@@ -207,6 +207,8 @@ sap.ui.define([
 		/**
 		 * @since 2.1.4
 		 * On drag assigments the method will be triggered.
+		 * Check for wheather an assignment is eligible for changes or not
+		 * if not prevent the action
 		 */
 		onAppointmentDragEnter: function (oEvent) {
 			var oAppointment = oEvent.getParameter("appointment"),
@@ -239,6 +241,7 @@ sap.ui.define([
 		},
 		/**
 		 * Refresh the changed assignments in the local model
+		 * Check the wheather the method triggerd via drag and drop or from the assigninfo dialog.
 		 *
 		 * @param {Object} oEvent
 		 */
@@ -296,6 +299,11 @@ sap.ui.define([
 			this._oPlanningCalendar.rerender();
 
 		},
+		/** 
+		 * Method will be triggered When Any changes done in assignment info dialog and save it.
+		 * @constructor 
+		 * @param oData the event data
+		 */
 		_refreshAssignment: function (oData) {
 			var oAssignMentModel = this._component.getModel("assignment"),
 				oChangedData = oAssignMentModel.getData();
@@ -303,11 +311,17 @@ sap.ui.define([
 				this._reAssignment(oChangedData);
 			} else if (oData.unassign) {
 				this._removeAssignment();
-				this._storeChanges(oChangedData,true);
+				this._storeChanges(oChangedData, true);
 			} else {
 				this._changeDatesofAssignment(oChangedData);
 			}
 		},
+		/** 
+		 * Method will be triggered when user select the new resource in assignment dialog and save it.
+		 * Changes will be saved locally and changes will be reflected in planning calendar.
+		 * @constructor 
+		 * @param oChangedData the changed data
+		 */
 		_reAssignment: function (oChangedData) {
 			var oModel = this.oSelectedContext.getModel(),
 				sPath = this.oSelectedContext.getPath(),
@@ -315,22 +329,29 @@ sap.ui.define([
 				oAssignmentData = oModel.getProperty(sPath),
 				sObjectId = oChangedData.NewAssignId,
 				aIds = oChangedData.NewAssignId.split("//");
-				
-				oChangedData.ResourceGroupGuid = aIds[1];
-				oChangedData.ResourceGuid = aIds[0];
-				oAssignmentData.DateFrom = oChangedData.DateFrom;
-				oAssignmentData.DateTo = oChangedData.DateTo;
-				this._removeAssignment();
-				this._storeChanges(oChangedData);
-				for(var i in oCalendarData.resources){
-					if(oCalendarData.resources[i].ObjectId === sObjectId){
-						oCalendarData.resources[i].Assignments.push(oAssignmentData);
-						break;
-					}
+
+			oChangedData.ResourceGroupGuid = aIds[1];
+			oChangedData.ResourceGuid = aIds[0];
+			oAssignmentData.DateFrom = oChangedData.DateFrom;
+			oAssignmentData.DateTo = oChangedData.DateTo;
+			this._removeAssignment();
+			this._storeChanges(oChangedData);
+			for (var i in oCalendarData.resources) {
+				if (oCalendarData.resources[i].ObjectId === sObjectId) {
+					oCalendarData.resources[i].Assignments.push(oAssignmentData);
+					break;
 				}
-				oModel.setData(oCalendarData);
-	
+			}
+			oModel.setData(oCalendarData);
+
 		},
+		/** 
+		 * 
+		 * Method will triggered on unassign to remove the assignment locally
+		 * 
+		 * @Athour
+		 * @constructor 
+		 */
 		_removeAssignment: function () {
 			var aPath = this.oSelectedContext.getPath().split("/"),
 				iIndex = aPath.pop(),
@@ -338,12 +359,25 @@ sap.ui.define([
 
 			this.oSelectedContext.getProperty(sRowAppointmentsPath).splice(iIndex, 1);
 		},
+		/** 
+		 * Method will be triggered when there is only change in the date to refresh respective assignment
+		 * 
+		 * @Athour Rahul
+		 * @constructor 
+		 * @param oChangedData
+		 */
 		_changeDatesofAssignment: function (oChangedData) {
 			var oModel = this.oSelectedContext.getModel();
 			oModel.setProperty("DateFrom", oChangedData.DateFrom, this.oSelectedContext);
 			oModel.setProperty("DateTo", oChangedData.DateTo, this.oSelectedContext);
 			this._storeChanges(oChangedData);
 		},
+		/** 
+		 * @Athour Rahul
+		 * @constructor 
+		 * @param oChangedData changed data
+		 * @param bIsUnAssign {boolean} flag indicate the action that is it unassign or reassign.
+		 */
 		_storeChanges: function (oChangedData, bIsUnAssign) {
 			var oParams = oChangedData ? jQuery.extend({}, {
 				"DateFrom": oChangedData.DateFrom || 0,
@@ -362,16 +396,17 @@ sap.ui.define([
 				"ResourceGroupGuid": oChangedData.ResourceGroupGuid,
 				"ResourceGuid": oChangedData.ResourceGuid
 			}, true) : null;
-			
-			if(!bIsUnAssign){
+
+			if (!bIsUnAssign) {
 				this._changedAssignments[oParams.AssignmentGUID] = oParams;
-			}else{
+			} else {
 				this._changedAssignments[oParams.AssignmentGUID] = null;
 			}
 		},
 		/**
 		 *  When assignments drop to different resource the assignment removed from the old row and added to new row
 		 *
+		 * @Athour Rahul
 		 * @param oModel - Json Model
 		 * @param oAppointment - Dragged assignment
 		 * @param oAssignmentData - Dragged Assignments data
@@ -385,8 +420,12 @@ sap.ui.define([
 				iIndex = aPath.pop(),
 				sRowAppointmentsPath = aPath.join("/"),
 				oAssignmentData = oModel.getProperty(oAppointmentContext.getPath());
+			// Assign new dates
 			oAssignmentData.DateFrom = oParams.DateFrom;
 			oAssignmentData.DateTo = oParams.DateTo;
+			// Assign new resource and resourcegroup
+			oAssignmentData.ResourceGuid = oParams.ResourceGuid;
+			oAssignmentData.ResourceGroupGuid = oParams.ResourceGroupGuid;
 
 			// Check the assignments for reassign functionality
 			if (!oAssignmentData.Demand.ALLOW_REASSIGN) {
@@ -453,6 +492,12 @@ sap.ui.define([
 			}
 			return aResources;
 		},
+		/** 
+		 * On save dialog check if there are any changes in calendar data
+		 * if there are changes trigger save assignment 
+		 * if not message will be shown
+		 * @param oEvent
+		 */
 		onSaveDialog: function (oEvent) {
 			if (Object.keys(this._changedAssignments).length > 0 && this._changedAssignments.constructor === Object) {
 				this._oPlanningCalendar.setBusy(true);
@@ -463,6 +508,9 @@ sap.ui.define([
 		},
 		/**
 		 * on press cancel in dialog close it
+		 * check if there are any changes in calendar data 
+		 * if there are changes Show confirmation box to validate the action 
+		 * if not close the dialog
 		 * @param oEvent
 		 */
 		onModalCancel: function (oEvent) {
