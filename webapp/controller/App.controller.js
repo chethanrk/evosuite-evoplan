@@ -225,7 +225,7 @@ sap.ui.define([
 		},
 		
 		_triggerSaveAllAssignments: function (sChanel, sEvent, oData) {
-			this.saveAllAssignments(oData.assignments, oData.mParameters);
+			this.saveAllAssignments(oData.assignments, oData.parameters);
 		}
 
 	});

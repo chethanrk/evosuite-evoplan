@@ -185,8 +185,13 @@ sap.ui.define([
 		saveAllAssignments : function (aAssignments , mParameters) {
 			for (var i in aAssignments) {	
 				// call function import
-				this.callFunctionImport(aAssignments[i], "UpdateAssignment", "POST", mParameters);
+				if(aAssignments[i]){
+					this.callFunctionImport(aAssignments[i], "UpdateAssignment", "POST", mParameters);
+				}else{
+					this.callFunctionImport({AssignmentGUID:i}, "DeleteAssignment", "POST", mParameters);
+				}
 			}
+			
 		},
 		/**
 		 * Show the message to proceed with the assignment

@@ -47,7 +47,9 @@ sap.ui.define([
 					DemandStatus: "",
 					OrderId: "",
 					OperationNumber: "",
-					SubOperationNumber: ""
+					SubOperationNumber: "",
+					DateFrom:"",
+					DateTo:""
 				},
 				oResource,
 				sResourceGroupGuid,
@@ -69,6 +71,8 @@ sap.ui.define([
 				sResourceGuid = oAssignmentData.ResourceGuid;
 				oAssignment.DemandGuid = oAssignmentData.DemandGuid;
 				oAssignment.DemandStatus = oAssignmentData.Demand.Status;
+				oAssignment.DateFrom = oAssignmentData.DateFrom;
+				oAssignment.DateTo = oAssignmentData.DateTo;
 			}
 
 			this._oView = oView;
@@ -127,10 +131,16 @@ sap.ui.define([
 				oDateTo = oDateTo.getTime();
 				// To Validate DateTo and DateFrom
 				if (oDateTo >= oDateFrom) {
-					eventBus.publish("AssignInfoDialog", "updateAssignment", {
-						isReassign: this.reAssign,
-						parameters: this._mParameters
-					});
+					if(this._mParameters.bFromPlannCal){
+						eventBus.publish("AssignInfoDialog", "refreshAssignment", {
+							reassign:this.reAssign
+						});						
+					}else{
+						eventBus.publish("AssignInfoDialog", "updateAssignment", {
+							isReassign: this.reAssign,
+							parameters: this._mParameters
+						});
+					}
 					this.onCloseDialog();
 				} else {
 					this.showMessageToast(sMsg);
@@ -147,10 +157,16 @@ sap.ui.define([
 		onDeleteAssignment: function (oEvent) {
 			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid");
 			var eventBus = sap.ui.getCore().getEventBus();
-			eventBus.publish("AssignInfoDialog", "deleteAssignment", {
-				sId: sId,
-				parameters: this._mParameters
-			});
+			if(this._mParameters.bFromPlannCal){
+						eventBus.publish("AssignInfoDialog", "refreshAssignment", {
+							unassign:true
+						});						
+					}else{
+						eventBus.publish("AssignInfoDialog", "deleteAssignment", {
+							sId: sId,
+							parameters: this._mParameters
+						});
+					}
 			this.onCloseDialog();
 		},
 
@@ -223,8 +239,11 @@ sap.ui.define([
 						// oDateToField.setMinDate(oContext.getProperty("DateFrom"));
 
 						oModel.setProperty("/showError", false);
-						oModel.setProperty("/DateFrom", oContext.getProperty("DateFrom"));
-						oModel.setProperty("/DateTo", oContext.getProperty("DateTo"));
+						if(oModel.getProperty("/DateFrom") === "" || oModel.getProperty("/DateTo") === ""){
+							oModel.setProperty("/DateFrom", oContext.getProperty("DateFrom"));
+							oModel.setProperty("/DateTo", oContext.getProperty("DateTo"));	
+						}
+						
 						oModel.setProperty("/Effort", oContext.getProperty("Effort"));
 						oModel.setProperty("/EffortUnit", oContext.getProperty("EffortUnit"));
 						var oDemandData = oContext.getProperty("Demand");
@@ -256,7 +275,7 @@ sap.ui.define([
 		_getAssignResource: function (resId) {
 			var oData = this._getResourceInfo(resId);
 			return {
-				ResourceGuid: oData ? resId : "",
+				ResourceGuid: oData ? oData.ResourceGuid : "",
 				ResourceDesc: oData ? oData.Description : ""
 			};
 		},
