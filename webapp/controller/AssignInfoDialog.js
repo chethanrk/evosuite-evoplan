@@ -131,7 +131,7 @@ sap.ui.define([
 				oDateTo = oDateTo.getTime();
 				// To Validate DateTo and DateFrom
 				if (oDateTo >= oDateFrom) {
-					if(this._mParameters.bFromPlannCal){
+					if(this._mParameters && this._mParameters.bFromPlannCal){
 						eventBus.publish("AssignInfoDialog", "refreshAssignment", {
 							reassign:this.reAssign
 						});						
@@ -157,7 +157,7 @@ sap.ui.define([
 		onDeleteAssignment: function (oEvent) {
 			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid");
 			var eventBus = sap.ui.getCore().getEventBus();
-			if(this._mParameters.bFromPlannCal){
+			if(this._mParameters && this._mParameters.bFromPlannCal){
 						eventBus.publish("AssignInfoDialog", "refreshAssignment", {
 							unassign:true
 						});						
