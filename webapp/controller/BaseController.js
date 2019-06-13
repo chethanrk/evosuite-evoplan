@@ -168,7 +168,7 @@ sap.ui.define([
 		 * @param sFuncName Function name of the function import
 		 * @param sMethod method of http operation ex: GET/POST/PUT/DELETE
 		 */
-		callFunctionImport: function (oParams, sFuncName, sMethod, mParameters) {
+		callFunctionImport: function (oParams, sFuncName, sMethod, mParameters, bIsLast) {
 			var oModel = this.getModel(),
 				oViewModel = this.getModel("appView"),
 				oResourceBundle = this.getResourceBundle();
@@ -179,9 +179,11 @@ sap.ui.define([
 				urlParameters: oParams,
 				success: function (oData, oResponse) {
 					//Handle Success
-					oViewModel.setProperty("/busy", false);
-					this.showMessage(oResponse);
-					this.afterUpdateOperations(mParameters);
+					if(bIsLast){
+						oViewModel.setProperty("/busy", false);
+						this.showMessage(oResponse);
+						this.afterUpdateOperations(mParameters);
+					}
 				}.bind(this),
 				error: function (oError) {
 					//Handle Error

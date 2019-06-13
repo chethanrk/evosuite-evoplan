@@ -12,7 +12,8 @@ sap.ui.define([
 		 */
 		assignedDemands: function (aSourcePaths, sTargetPath, mParameters) {
 			var oModel = this.getModel();
-			var targetObj = oModel.getProperty(sTargetPath);
+			var targetObj = oModel.getProperty(sTargetPath),
+				bIsLast = null;
 			this.clearMessageModel();
 
 			for (var i = 0; i < aSourcePaths.length; i++) {
@@ -39,7 +40,10 @@ sap.ui.define([
 					oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
 					oParams.TimeTo = targetObj.EndTime;
 				}
-				this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters);
+				if(parseInt(i,10) === aSourcePaths.length-1){
+					bIsLast = true;
+				}
+				this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
 			}
 		},
 
@@ -97,7 +101,8 @@ sap.ui.define([
 		 */
 		bulkReAssignment: function (sAssignPath, aContexts, mParameters) {
 			var oModel = this.getModel(),
-				oResource = oModel.getProperty(sAssignPath);
+				oResource = oModel.getProperty(sAssignPath),
+				 bIsLast = null;
 			// Clears the Message model
 			this.clearMessageModel();
 
@@ -127,8 +132,11 @@ sap.ui.define([
 					oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
 					oParams.TimeTo = oResource.EndTime;
 				}
+				if(parseInt(i,10) === aContexts.length-1){
+					bIsLast = true;
+				}
 				// call function import
-				this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters);
+				this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, bIsLast);
 			}
 		},
 		/**
@@ -138,7 +146,8 @@ sap.ui.define([
 		 * @param {Array} aContexts  Assignments contexts to be deleted.
 		 */
 		bulkDeleteAssignment: function (aContexts, mParameters) {
-			var oModel = this.getModel();
+			var oModel = this.getModel(),
+				 bIsLast = null;
 			this.clearMessageModel();
 			for (var i in aContexts) {
 				var sPath = aContexts[i].getPath();
@@ -146,7 +155,11 @@ sap.ui.define([
 				var oParams = {
 					"AssignmentGUID": sAssignmentGuid
 				};
-				this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters);
+				if(parseInt(i,10) === aContexts.length-1){
+					bIsLast = true;
+				}
+				
+				this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, bIsLast);
 
 			}
 		},
@@ -170,11 +183,15 @@ sap.ui.define([
 		updateFunctionDemand: function (aSelectedPaths, sFunctionKey, mParameters) {
 			var oParams = {
 				"Function": sFunctionKey
-			};
+			},
+			bIsLast = null;
 
 			for (var i = 0; i < aSelectedPaths.length; i++) {
 				oParams.DemandGuid = aSelectedPaths[i].oData.Guid;
-				this.callFunctionImport(oParams, "ExecuteDemandFunction", "POST", mParameters);
+				if(parseInt(i,10) === aSelectedPaths.length-1){
+					bIsLast = true;
+				}
+				this.callFunctionImport(oParams, "ExecuteDemandFunction", "POST", mParameters, bIsLast);
 			}
 		},
 		
@@ -183,12 +200,18 @@ sap.ui.define([
 		 * @param aAssignments
 		 */
 		saveAllAssignments : function (aAssignments , mParameters) {
+			var aKeys = Object.keys(aAssignments),
+				bIsLast = null;
 			for (var i in aAssignments) {	
+				
+				if(aAssignments[aKeys[aKeys.length-1]] === aAssignments[i]){
+					bIsLast = true;
+				}
 				// call function import
 				if(aAssignments[i]){
-					this.callFunctionImport(aAssignments[i], "UpdateAssignment", "POST", mParameters);
+					this.callFunctionImport(aAssignments[i], "UpdateAssignment", "POST", mParameters, bIsLast);
 				}else{
-					this.callFunctionImport({AssignmentGUID:i}, "DeleteAssignment", "POST", mParameters);
+					this.callFunctionImport({AssignmentGUID:i}, "DeleteAssignment", "POST", mParameters, bIsLast);
 				}
 			}
 			
