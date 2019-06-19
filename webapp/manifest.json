@@ -200,6 +200,13 @@
 						"assets",
 						"detail"
 					]
+				},
+				{
+					"pattern": "MessageCockpit",
+					"name": "messageCockpit",
+					"target": [
+						"messageCockpit"
+					]
 				}
 			],
 			"targets": {
@@ -276,6 +283,13 @@
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",
 					"viewLevel": 3
+				},
+				"messageCockpit": {
+					"viewType": "XML",
+					"viewName": "MessageCockpit",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 4
 				}
 			}
 		}

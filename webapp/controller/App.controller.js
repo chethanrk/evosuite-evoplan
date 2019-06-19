@@ -9,7 +9,7 @@ sap.ui.define([
 
 		formatter: formatter,
 
-        _firstTime : true,
+		_firstTime: true,
 
 		onInit: function () {
 			var eventBus = sap.ui.getCore().getEventBus();
@@ -80,6 +80,9 @@ sap.ui.define([
 			case oResourceBundle.getText("xbut.pageWeeklyPlanner"):
 				//oRouter.navTo("TestFull", {});
 				break;
+			case oResourceBundle.getText("xbut.pageMessageCockpit"):
+				oRouter.navTo("messageCockpit", {});
+				break;
 			default:
 				oRouter.navTo("demands", {});
 				oAppViewModel.setProperty("/pageTitle", oResourceBundle.getText("xbut.pageDemands"));
@@ -124,6 +127,8 @@ sap.ui.define([
 
 			if (oParams.config.pattern.indexOf("AssetPlanning") >= 0) {
 				pageTitle = oResourceBundle.getText("xbut.pageAssetManager");
+			}else if(oParams.config.pattern.indexOf("MessageCockpit") >= 0){
+				pageTitle = oResourceBundle.getText("xbut.pageMessageCockpit");
 			}
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
 			oAppViewModel.setProperty("/busy", false);
@@ -156,10 +161,10 @@ sap.ui.define([
 		 */
 		_onObjectMatched: function () {
 			var eventBus = sap.ui.getCore().getEventBus();
-			if(!this._firstTime){
+			if (!this._firstTime) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				eventBus.publish("BaseController", "refreshDemandTable", {});
-                this._firstTime = false;
+				this._firstTime = false;
 
 			}
 		},
@@ -223,7 +228,7 @@ sap.ui.define([
 				this.bulkDeleteAssignment(oData.aContexts, oData.parameters);
 			}
 		},
-		
+
 		_triggerSaveAllAssignments: function (sChanel, sEvent, oData) {
 			this.saveAllAssignments(oData.assignments, oData.parameters);
 		}

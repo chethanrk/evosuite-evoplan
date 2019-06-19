@@ -87,7 +87,7 @@ sap.ui.define([
 			if (isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)) {
 				this.showMessageToProceed(null, null, null, null, true, oParams, mParameters);
 			} else {
-				this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters);
+				this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters,true);
 			}
 		},
 		/**
@@ -242,7 +242,7 @@ sap.ui.define([
 						} else if (sValue === sAction && bBulkReassign) {
 							this.bulkReAssignment(sTargetPath, aContexts, mParameters);
 						} else if (sValue === sAction && bUpdate) {
-							this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters);
+							this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters,true);
 						}
 					}.bind(this)
 				}

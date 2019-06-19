@@ -93,7 +93,8 @@ sap.ui.define([
                 detailPageBreadCrum:"",
                 capacityPlanning:false,
                 splitterDivider:"35%",
-                selectedHierarchyView:"TIMENONE"
+                selectedHierarchyView:"TIMENONE",
+                enableReprocess:false
             });
             this.setModel(oViewModel, "viewModel");
             

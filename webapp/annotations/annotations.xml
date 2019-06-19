@@ -31,7 +31,27 @@
 	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">
-		
+			<Annotations Target="com.evorait.evoplan.Process">
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="OrderId"/>
+						</Record>
+							<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="OperationNo"/>
+						</Record>
+							<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="DemandDescription"/>
+						</Record>
+							<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="OperationDescription"/>
+						</Record>
+							<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="Reason"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>
