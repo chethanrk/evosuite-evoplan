@@ -179,7 +179,7 @@ sap.ui.define([
 				urlParameters: oParams,
 				success: function (oData, oResponse) {
 					//Handle Success
-					if(bIsLast){
+					if (bIsLast) {
 						oViewModel.setProperty("/busy", false);
 						this.showMessage(oResponse);
 						this.afterUpdateOperations(mParameters);
@@ -193,25 +193,25 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
-	/**
+		/**
 		 * send oData request of FunctionImport
 		 * @param oParams Data to passed to function import
 		 * @param sFuncName Function name of the function import
 		 * @param sMethod method of http operation ex: GET/POST/PUT/DELETE
 		 */
 		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod) {
-			return Promise(function(resolve, reject){
-				oModel.callFunction("/" + sFuncName, {
-					method: sMethod || "POST",
-					urlParameters: oParams,
-					success: function (oData, oResponse) {
-						resolve(oData, oResponse);
-					}.bind(this),
-					error: function (oError) {
-						reject(oError);
-					}.bind(this)
+				return new Promise(function (resolve, reject) {
+					oModel.callFunction("/" + sFuncName, {
+						method: sMethod || "POST",
+						urlParameters: oParams,
+						success: function (oData, oResponse) {
+							resolve(oData, oResponse);
+						}.bind(this),
+						error: function (oError) {
+							reject(oError);
+						}.bind(this)
+					});
 				});
-			});
 		},
 		/** 
 		 * Method check the parameter and refreshes the required part of screen 
@@ -261,15 +261,15 @@ sap.ui.define([
 		_getSelectedRowPaths: function (oTable, aSelectedRowsIdx, checkAssignAllowed, aDemands) {
 			var aPathsData = [],
 				aNonAssignableDemands = [],
-				oData,oContext,sPath;
+				oData, oContext, sPath;
 
 			if (checkAssignAllowed) {
 				oTable.clearSelection();
 			}
 			if (!aDemands) {
 				for (var i = 0; i < aSelectedRowsIdx.length; i++) {
-					 oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
-					 sPath = oContext.getPath();
+					oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
+					sPath = oContext.getPath();
 					oData = this.getModel().getProperty(sPath);
 
 					//on check on oData property ALLOW_ASSIGN when flag was given
@@ -295,8 +295,8 @@ sap.ui.define([
 
 			} else {
 				for (var j in aDemands) {
-					 oContext = aDemands[j].getBindingContext();
-					 sPath = oContext.getPath();
+					oContext = aDemands[j].getBindingContext();
+					sPath = oContext.getPath();
 					oData = this.getModel().getProperty(sPath);
 					if (oData.ALLOW_ASSIGN) {
 						aPathsData.push({

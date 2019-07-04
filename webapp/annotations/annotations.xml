@@ -29,25 +29,34 @@
 	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Validation.V1.xml">
 		<edmx:Include Alias="Validation" Namespace="Org.OData.Validation.V1"/>
 	</edmx:Reference>
+	<edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/462030211/Analytics.xml">
+		<edmx:Include Alias="Analytics" Namespace="com.sap.vocabularies.Analytics.v1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/496435637/PersonalData.xml">
+		<edmx:Include Alias="PersonalData" Namespace="com.sap.vocabularies.PersonalData.v1"/>
+	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">
-			<Annotations Target="com.evorait.evoplan.Process">
+			<Annotations Target="com.evorait.evoplan.Message">
 				<Annotation Term="UI.LineItem">
 					<Collection>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="OrderId"/>
+							<PropertyValue Property="Value" Path="Orderid"/>
 						</Record>
-							<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="OperationNo"/>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="OrderDesc"/>
 						</Record>
-							<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="DemandDescription"/>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="CreatedAt"/>
 						</Record>
-							<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="OperationDescription"/>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="DateFrom"/>
 						</Record>
-							<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="Reason"/>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="DateTo"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ObjectType"/>
 						</Record>
 					</Collection>
 				</Annotation>

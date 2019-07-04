@@ -143,6 +143,11 @@
 				{
 					"uri": "assets/css/style.css"
 				}
+			],
+			"js" : [
+				{
+					"uri": "assets/js/promise-polyfills"
+				}
 			]
 		},
 		"routing": {

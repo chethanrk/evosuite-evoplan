@@ -35,6 +35,12 @@ sap.ui.define([
 			};
 			oModel.setData(oInformation);
 			return oModel;
+		},
+		
+		createMessageCounterModel : function (oCounter){
+			var oModel = new JSONModel(oCounter);
+			oModel.setDefaultBindingMode("OneWay");
+			return oModel;
 		}
 	};
 

@@ -1,0 +1,39 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:smartTable="sap.ui.comp.smarttable" 
+        xmlns:table="sap.ui.table">
+    <ResponsivePopover
+    		id="idMessageInfo"
+            title="{i18n>xtit.messages}"
+            class="sapUiPopupWithPadding"
+            placement="Auto"
+            contentWidth="39%">
+        <!--<endButton>-->
+        <!--    <Button text="{i18n>xbut.buttonClose}" press="handleCloseButton" />-->
+        <!--</endButton>-->
+        <content>
+            	<smartTable:SmartTable 
+						id="idMessageTable" 
+						height="100%" 
+						width="100%" 
+						direction="Column" 
+						fitContainer="true" 
+						enableAutoBinding="true"
+						entitySet="MessageInfoSet" 
+						showRowCount="true" 
+						header="{i18n>xtit.messages}"
+						useExportToExcel="false"
+						tableType="ResponsiveTable"
+						useVariantManagement="false" 
+						persistencyKey="_keyForMessages" 
+						useTablePersonalisation="false"
+						tableBindingPath="MessageToMessageInfos"
+						initiallyVisibleFields="Message">
+					<smartTable:layoutData>
+						<FlexItemData growFactor="1"/>
+					</smartTable:layoutData>
+				</smartTable:SmartTable>
+        </content>
+    </ResponsivePopover>
+</core:FragmentDefinition>
