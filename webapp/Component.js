@@ -1,21 +1,21 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-    "sap/ui/model/json/JSONModel",
+	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/models",
 	"com/evorait/evoplan/assets/js/moment-with-locales.min",
 	"com/evorait/evoplan/controller/ErrorHandler",
-    "com/evorait/evoplan/controller/AssignInfoDialog",
-    "com/evorait/evoplan/controller/AssignTreeDialog",
-    "com/evorait/evoplan/controller/StatusSelectDialog",
-    "com/evorait/evoplan/controller/AssignActionsDialog",
-    "com/evorait/evoplan/controller/FilterSettingsDialog",
-    "com/evorait/evoplan/controller/PlanningCalendarDialog",
-    "com/evorait/evoplan/controller/CapacitiveAssignments",
-    "sap/m/MessagePopover",
-    "sap/m/MessagePopoverItem",
-    "sap/m/Link"
-], function(
+	"com/evorait/evoplan/controller/AssignInfoDialog",
+	"com/evorait/evoplan/controller/AssignTreeDialog",
+	"com/evorait/evoplan/controller/StatusSelectDialog",
+	"com/evorait/evoplan/controller/AssignActionsDialog",
+	"com/evorait/evoplan/controller/FilterSettingsDialog",
+	"com/evorait/evoplan/controller/PlanningCalendarDialog",
+	"com/evorait/evoplan/controller/CapacitiveAssignments",
+	"sap/m/MessagePopover",
+	"sap/m/MessagePopoverItem",
+	"sap/m/Link"
+], function (
 	UIComponent,
 	Device,
 	JSONModel,
@@ -24,14 +24,14 @@ sap.ui.define([
 	ErrorHandler,
 	AssignInfoDialog,
 	AssignTreeDialog,
-    StatusSelectDialog,
-    AssignActionsDialog,
-    FilterSettingsDialog,
-    PlanningCalendarDialog,
-    CapacitiveAssignments,
-    MessagePopover,
-    MessagePopoverItem,
-    Link) {
+	StatusSelectDialog,
+	AssignActionsDialog,
+	FilterSettingsDialog,
+	PlanningCalendarDialog,
+	CapacitiveAssignments,
+	MessagePopover,
+	MessagePopoverItem,
+	Link) {
 
 	"use strict";
 
@@ -39,9 +39,9 @@ sap.ui.define([
 
 		metadata: {
 			manifest: "json",
-            config : {
-                fullWidth : true
-            }
+			config: {
+				fullWidth: true
+			}
 		},
 
 		/**
@@ -50,19 +50,19 @@ sap.ui.define([
 		 * @public
 		 * @override
 		 */
-		init: function() {
+		init: function () {
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
-			
+
 			//Required third-party libraries for drag and drop functionality
 			//which loaded here in component to make available throughout the application
 			$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-core");
-	    	$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-widget");
-	    	$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-mouse");
-	    	$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-draggable");
-	    	$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-sortable");
-        	$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-droppable");
-        	sap.ui.localResources("sapui5draganddrop");
+			$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-widget");
+			$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-mouse");
+			$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-draggable");
+			$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-sortable");
+			$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-droppable");
+			sap.ui.localResources("sapui5draganddrop");
 
 			// handle the main oData model based on the environment
 			// the path for mobile applications depends on the current information from
@@ -100,63 +100,64 @@ sap.ui.define([
             
             //creates the Information model and sets to the component
 			this.setModel(models.createInformationModel(this),"InformationModel");
-			
+
 			//sets user model
 			this._getSystemInformation();
-			
-            this._initDialogs();
 
-            //proof if there are a status set and button in footer should be visible
-            this._getFunctionSetCount();
+			this._initDialogs();
 
             //Creating the Global assignment model for assignInfo Dialog
 			this.setModel(models.createAssignmentModel({}),"assignment");
 			
 			this.setModel(models.createMessageCounterModel({S:0,E:0,I:0}),"messageCounter");
 
+			//proof if there are a status set and button in footer should be visible
+			this._getFunctionSetCount();
+
+
 			//Creating the Global message model from MessageManager
 			var oMessageModel = new JSONModel();
 			oMessageModel.setData([]);
 			this.setModel(oMessageModel, "MessageModel");
-			
+
 			//Creating the Global user model for Global properties
 			this.setModel(models.createUserModel({
-				ASSET_PLANNING_ENABLED:false
+				ASSET_PLANNING_ENABLED: false
 			}), "user");
 
 			//Creating the global for planning calendar
-            var oCalendarModel = new JSONModel();
-            oCalendarModel.setData({});
-            this.setModel(oCalendarModel, "calendarModel");
+			var oCalendarModel = new JSONModel();
+			oCalendarModel.setData({});
+			this.setModel(oCalendarModel, "calendarModel");
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();
 
 			// Message popover link
-            var oLink = new Link({
-                text: "{i18n>xtit.showMoreInfo}",
-                href: "",
-                target: "_blank"
-            });
+			var oLink = new Link({
+				text: "{i18n>xtit.showMoreInfo}",
+				href: "",
+				target: "_blank"
+			});
 
-            // Message popover template
-            var oMessageTemplate = new MessagePopoverItem({
-                type: "{MessageModel>type}",
-                title: "{MessageModel>title}",
-                description: "{MessageModel>description}",
-                subtitle: "{MessageModel>subtitle}",
-                counter: "{MessageModel>counter}",
-                link: oLink
-            });
+			// Message popover template
+			var oMessageTemplate = new MessagePopoverItem({
+				type: "{MessageModel>type}",
+				title: "{MessageModel>title}",
+				description: "{MessageModel>description}",
+				subtitle: "{MessageModel>subtitle}",
+				counter: "{MessageModel>counter}",
+				link: oLink
+			});
 
-            //Message Popover
-            var oMessagePopover = new MessagePopover("idMessagePopover",{
-                items: {
-                    path: "MessageModel>/",
-                    template: oMessageTemplate
-                }
-            });
-            this._oMessagePopover = oMessagePopover;
+			//Message Popover
+			var oMessagePopover = new MessagePopover("idMessagePopover", {
+				items: {
+					path: "MessageModel>/",
+					template: oMessageTemplate
+				}
+			});
+			this._oMessagePopover = oMessagePopover;
 		},
 
 		/**
@@ -165,7 +166,7 @@ sap.ui.define([
 		 * @public
 		 * @override
 		 */
-		destroy: function() {
+		destroy: function () {
 			this._oErrorHandler.destroy();
 			// call the base component's destroy function
 			UIComponent.prototype.destroy.apply(this, arguments);
@@ -177,12 +178,12 @@ sap.ui.define([
 		 * @public
 		 * @return {string} css class, either 'sapUiSizeCompact' or 'sapUiSizeCozy' - or an empty string if no css class should be set
 		 */
-		getContentDensityClass: function() {
+		getContentDensityClass: function () {
 			if (this._sContentDensityClass === undefined) {
 				// check whether FLP has already set the content density class; do nothing in this case
 				if (jQuery(document.body).hasClass("sapUiSizeCozy") || jQuery(document.body).hasClass("sapUiSizeCompact")) {
 					this._sContentDensityClass = "";
-				} else if (Device.support.touch && this._isMobile()) { // apply "compact" mode if touch is not supported
+				} else if (Device.support.touch) { // apply "compact" mode if touch is not supported
 					// "cozy" in case of touch support; default for most sap.m controls, but needed for desktop-first controls like sap.ui.table.Table
 					this._sContentDensityClass = "sapUiSizeCozy";
 				} else {
@@ -193,111 +194,114 @@ sap.ui.define([
 			return this._sContentDensityClass;
 		},
 
-
-        /**
+		/**
 		 * init different global dialogs with controls
-         * @private
-         */
-        _initDialogs: function () {
-            //resource tree filter settings dialog
-            this.filterSettingsDialog = new FilterSettingsDialog();
+		 * @private
+		 */
+		_initDialogs: function () {
+			//resource tree filter settings dialog
+			this.filterSettingsDialog = new FilterSettingsDialog();
 			//display and change assignment dialog
-            this.assignInfoDialog = new AssignInfoDialog();
-            this.assignInfoDialog.init();
-            //select resource from tree for assigning dialog
-            this.assignTreeDialog = new AssignTreeDialog();
-            this.assignTreeDialog.init();
-            //change status of demand
-            this.statusSelectDialog = new StatusSelectDialog();
-            this.statusSelectDialog.init();
-            // bulk operations for unassign/reassign demands
-            this.assignActionsDialog = new AssignActionsDialog();
-            this.assignActionsDialog.init();
+			this.assignInfoDialog = new AssignInfoDialog();
+			this.assignInfoDialog.init();
+			//select resource from tree for assigning dialog
+			this.assignTreeDialog = new AssignTreeDialog();
+			this.assignTreeDialog.init();
+			//change status of demand
+			this.statusSelectDialog = new StatusSelectDialog();
+			this.statusSelectDialog.init();
+			// bulk operations for unassign/reassign demands
+			this.assignActionsDialog = new AssignActionsDialog();
+			this.assignActionsDialog.init();
 
-            this.planningCalendarDialog = new PlanningCalendarDialog();
-            this.planningCalendarDialog.init();
-            this.capacitiveAssignments = new CapacitiveAssignments();
-            this.capacitiveAssignments.init();
-        },
+			this.planningCalendarDialog = new PlanningCalendarDialog();
+			this.planningCalendarDialog.init();
+			this.capacitiveAssignments = new CapacitiveAssignments();
+			this.capacitiveAssignments.init();
+		},
 
-        /**
-         * Extract messages from a the MessageModel.
-         *
-         * @Author Rahul
-         * @param {object} oData data of MessageModel
-         * @return
-         * @function
-         * @public
-         */
-        createMessages : function(){
-            var aMessages = [];
-            var iCountError = 0, iCountWarning = 0, iCountSuccess = 0, iCounter = 0, iCountInfo = 0;
-            var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
-            var oData= oMessageModel.getData();
-            var oResourceBundle = this.getModel("i18n").getResourceBundle();
+		/**
+		 * Extract messages from a the MessageModel.
+		 *
+		 * @Author Rahul
+		 * @param {object} oData data of MessageModel
+		 * @return
+		 * @function
+		 * @public
+		 */
+		createMessages: function () {
+			var aMessages = [];
+			var iCountError = 0,
+				iCountWarning = 0,
+				iCountSuccess = 0,
+				iCounter = 0,
+				iCountInfo = 0;
+			var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+			var oData = oMessageModel.getData();
+			var oResourceBundle = this.getModel("i18n").getResourceBundle();
 
-            if(oData.length === 0){
-                oMessageModel.setData([]);
-                return;
-            }
+			if (oData.length === 0) {
+				oMessageModel.setData([]);
+				return;
+			}
 
-            for( var i = 0; i < oData.length; i++){
-                var item = {};
-                if (oData[i].type === "Error"){
-                    item.title = oResourceBundle.getText("xtit.errorMsg");
-                    iCountError = iCountError + 1;
-                    iCounter = iCountError;
-                }
-                if (oData[i].type === "Warning"){
-                    item.title = oResourceBundle.getText("xtit.warningMsg");
-                    iCountWarning = iCountWarning + 1;
-                    iCounter = iCountWarning;
-                }
-                if (oData[i].type === "Success"){
-                    item.title = oResourceBundle.getText("xtit.successMsg");
-                    iCountSuccess = iCountSuccess + 1;
-                    iCounter = iCountSuccess;
-                }
-                if (oData[i].type === "Information"){
-                    item.title = oResourceBundle.getText("xtit.informationMsg");
-                    iCountInfo = iCountInfo + 1;
-                    iCounter = iCountInfo;
-                }
-                item.type = oData[i].type;
-                item.description = oData[i].message;
-                item.subtitle = oData[i].message;
-                item.counter = iCounter;
+			for (var i = 0; i < oData.length; i++) {
+				var item = {};
+				if (oData[i].type === "Error") {
+					item.title = oResourceBundle.getText("xtit.errorMsg");
+					iCountError = iCountError + 1;
+					iCounter = iCountError;
+				}
+				if (oData[i].type === "Warning") {
+					item.title = oResourceBundle.getText("xtit.warningMsg");
+					iCountWarning = iCountWarning + 1;
+					iCounter = iCountWarning;
+				}
+				if (oData[i].type === "Success") {
+					item.title = oResourceBundle.getText("xtit.successMsg");
+					iCountSuccess = iCountSuccess + 1;
+					iCounter = iCountSuccess;
+				}
+				if (oData[i].type === "Information") {
+					item.title = oResourceBundle.getText("xtit.informationMsg");
+					iCountInfo = iCountInfo + 1;
+					iCounter = iCountInfo;
+				}
+				item.type = oData[i].type;
+				item.description = oData[i].message;
+				item.subtitle = oData[i].message;
+				item.counter = iCounter;
 
-                aMessages.push(item);
-            }
-            this.getModel("MessageModel").setData(aMessages);
-            oMessageModel.setData([]);
-        },
-        
-        _getSystemInformation: function(){
-        	this.getModel().callFunction("/GetSystemInformation", {
-                method:"GET",
-                success: function(oData, oResponse){
-                    //Handle Success
-                    this.setModel(models.createUserModel(oData), "user");
-                }.bind(this),
-                error: function(oError){
-                    //Handle Error
-                }.bind(this)
-            });
-        },
+				aMessages.push(item);
+			}
+			this.getModel("MessageModel").setData(aMessages);
+			oMessageModel.setData([]);
+		},
 
-        _getFunctionSetCount: function () {
-            this.getModel().read("/DemandFunctionsSet/$count", {
-                success: function (oData, oResponse) {
-                    if(oData && oData > 0){
-                        this.getModel("viewModel").setProperty("/showStatusChangeButton", true);
-                    }
-                }.bind(this),
-                error: function(oError){
-                    //Handle Error
-                }.bind(this)
-            });
-        }
+		_getSystemInformation: function () {
+			this.getModel().callFunction("/GetSystemInformation", {
+				method: "GET",
+				success: function (oData, oResponse) {
+					//Handle Success
+					this.setModel(models.createUserModel(oData), "user");
+				}.bind(this),
+				error: function (oError) {
+					//Handle Error
+				}.bind(this)
+			});
+		},
+
+		_getFunctionSetCount: function () {
+			this.getModel().read("/DemandFunctionsSet/$count", {
+				success: function (oData, oResponse) {
+					if (oData && oData > 0) {
+						this.getModel("viewModel").setProperty("/showStatusChangeButton", true);
+					}
+				}.bind(this),
+				error: function (oError) {
+					//Handle Error
+				}.bind(this)
+			});
+		}
 	});
 });
