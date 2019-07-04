@@ -172,7 +172,7 @@ sap.ui.define([
 				"AssignmentGUID": sId
 			};
 			this.clearMessageModel();
-			this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters);
+			this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters,true);
 		},
 
 		/**
