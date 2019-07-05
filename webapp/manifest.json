@@ -144,7 +144,7 @@
 					"uri": "assets/css/style.css"
 				}
 			],
-			"js" : [
+			"js": [
 				{
 					"uri": "assets/js/promise-polyfills"
 				}
