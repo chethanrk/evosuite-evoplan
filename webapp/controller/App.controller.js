@@ -2,10 +2,10 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/AssignmentsController",
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter"
-], function (BaseController, JSONModel, formatter) {
+], function (AssignmentsController, JSONModel, formatter) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.App", {
+	return AssignmentsController.extend("com.evorait.evoplan.controller.App", {
 
 		formatter: formatter,
 
@@ -83,6 +83,9 @@ sap.ui.define([
 			case oResourceBundle.getText("xbut.pageMessageCockpit"):
 				oRouter.navTo("messageCockpit", {});
 				break;
+			case oResourceBundle.getText("xbut.pageGanttChart"):
+				oRouter.navTo("gantt", {});
+				break;
 			default:
 				oRouter.navTo("demands", {});
 				oAppViewModel.setProperty("/pageTitle", oResourceBundle.getText("xbut.pageDemands"));
@@ -129,6 +132,8 @@ sap.ui.define([
 				pageTitle = oResourceBundle.getText("xbut.pageAssetManager");
 			}else if(oParams.config.pattern.indexOf("MessageCockpit") >= 0){
 				pageTitle = oResourceBundle.getText("xbut.pageMessageCockpit");
+			}else if(oParams.config.pattern.indexOf("Gantt") >= 0){
+				pageTitle = oResourceBundle.getText("xbut.pageGanttChart");
 			}
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
 			oAppViewModel.setProperty("/busy", false);

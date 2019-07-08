@@ -39,7 +39,7 @@
 				</smartTable:SmartTable>
 			</f:content>
 			<f:footer>
-				<OverflowToolbar>
+				<OverflowToolbar visible="{= ${viewModel>/ganttSettings/active} !== true}">
 					<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
 						type="Emphasized" press="onMessagePopoverPress"/>
 					<ToolbarSpacer/>

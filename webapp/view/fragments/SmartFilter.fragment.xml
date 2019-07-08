@@ -11,7 +11,8 @@
             useToolbar="true"
             considerSelectionVariants="true"
             showClearButton="true"
-            showClearOnFB="true">
+            showClearOnFB="true"
+            visible="{= ${viewModel>/ganttSettings/active} !== true}">
 
         <smartFilterBar:controlConfiguration>
             <smartFilterBar:ControlConfiguration

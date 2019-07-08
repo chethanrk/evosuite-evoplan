@@ -94,7 +94,10 @@ sap.ui.define([
                 capacityPlanning:false,
                 splitterDivider:"35%",
                 selectedHierarchyView:"TIMENONE",
-                enableReprocess:false
+                enableReprocess:false,
+				ganttSettings: {
+                	active: false
+				}
             });
             this.setModel(oViewModel, "viewModel");
             
