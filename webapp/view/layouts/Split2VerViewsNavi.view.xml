@@ -3,7 +3,7 @@
 	<layout:Splitter id="horizontalSplit" orientation="Vertical">
 		<NavContainer id="topPanel" class="panelPage">
 			<layoutData>
-				<layout:SplitterLayoutData size="60%"/>
+				<layout:SplitterLayoutData size="66%"/>
 			</layoutData>
 		</NavContainer>
 		<NavContainer id="bottomPanel" class="panelPage"/>

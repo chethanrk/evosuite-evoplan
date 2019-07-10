@@ -23,6 +23,16 @@ sap.ui.define([
         },
 
         /**
+         * default date range for resource tree ind Demands and Gantt view
+         */
+        getDefaultDateRange: function(){
+            return {
+                dateFrom: new Date("01/01/1990"),
+                dateTo: moment().endOf("year").add(20, "years").toDate()
+            }
+        },
+
+        /**
          * return right path of logo for every system
          */
         getLogoImageLink: function () {

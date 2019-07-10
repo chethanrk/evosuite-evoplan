@@ -217,7 +217,7 @@
 					"pattern": "Gantt",
 					"name": "gantt",
 					"target": [
-						"demandsGantt",
+						"empty",
 						"gantt"
 					]
 				}
@@ -257,7 +257,7 @@
 				},
 				"demandsGantt": {
 					"viewType": "XML",
-					"viewName": "Demands",
+					"viewName": "GanttDemands",
 					"viewLevel": 3,
 					"controlId": "bottomPanel",
 					"parent": "splitVerNavigation"

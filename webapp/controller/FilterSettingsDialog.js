@@ -429,16 +429,13 @@ sap.ui.define([
          */
         _setDefaultFilterDateRange: function () {
             //set default date range
-            var oDateFrom = new Date("01/01/1990");
-
-            var oDateTo = moment().endOf("year");
-            oDateTo =  oDateTo.add(20, "years").toDate();
+            var defDateRange = formatter.getDefaultDateRange();
             var dateRange1Id = this._filterDateRange1.getId();
             var dateRange2Id = this._filterDateRange2.getId();
 
             // save default date range global
-            this.defaultDateRange[dateRange1Id] = this.formatter.date(oDateFrom);
-            this.defaultDateRange[dateRange2Id] = this.formatter.date(oDateTo);
+            this.defaultDateRange[dateRange1Id] = this.formatter.date(defDateRange.dateFrom);
+            this.defaultDateRange[dateRange2Id] = this.formatter.date(defDateRange.dateTo);
 
             this._filterDateRange1.setValue(this.defaultDateRange[dateRange1Id]);
             this._filterDateRange2.setValue(this.defaultDateRange[dateRange2Id]);

@@ -1,17 +1,85 @@
-<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:f="sap.f" xmlns:smartTable="sap.ui.comp.smarttable"
-	xmlns:semantic="sap.m.semantic" xmlns:table="sap.ui.table" controllerName="com.evorait.evoplan.controller.Gantt" displayBlock="true"
-	height="100%">
-	<Page id="listPage" title="{i18n>xtit.itemListTitle}" showFooter="false" showHeader="false">
-		<f:DynamicPage headerExpanded="true" preserveHeaderStateOnScroll="true" showFooter="true" toggleHeaderOnTitleClick="false"
-			class="sapUiNoContentPadding tableContentPage">
-			<f:header>
-				<f:DynamicPageHeader pinnable="true">
-					<f:content>
-					</f:content>
-				</f:DynamicPageHeader>
-			</f:header>
-			<f:content>
-			</f:content>
-		</f:DynamicPage>
+<mvc:View xmlns="sap.m"
+		  xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:core="sap.ui.core"
+		  xmlns:gnt2="sap.gantt.simple"
+		  xmlns:table="sap.ui.table"
+		  controllerName="com.evorait.evoplan.controller.Gantt"
+		  displayBlock="true"
+		  height="100%">
+	<Page id="ganttPage" showFooter="false" showHeader="false">
+
+
+		<gnt2:GanttChartContainer id="container" enableTimeScrollSync="true">
+			<gnt2:toolbar>
+				<gnt2:ContainerToolbar design="Auto" showBirdEyeButton="true" showLegendButton="true">
+					<Select forceSelection="false" selectedKey="ReqAndRes" change="onLayoutChange">
+						<items>
+							<core:Item key="ReqAndRes" text="Requirement And Resource"/>
+							<core:Item key="Resource" text="Resource"/>
+							<core:Item key="Requirement" text="Requirement"/>
+						</items>
+					</Select>
+
+					<gnt2:legendContainer>
+						<gnt2:LegendContainer width="230px" height="250px">
+							<gnt2:ListLegend title="Requirement Document">
+								<gnt2:ListLegendItem interactive="true" selected="true" interactiveChange=".onLegendItemInteractiveChange">
+									<gnt2:BaseRectangle shapeId="legendItemFO" fill="#99D101" title="Freight Order" showTitle="false"/>
+								</gnt2:ListLegendItem>
+
+								<gnt2:ListLegendItem interactive="false" selected="false">
+									<gnt2:BaseRectangle shapeId="legendItemFU"  stroke="#99D101" strokeWidth="2" strokeDasharray="2" fill="#fff" title="Freight Unit" showTitle="false"/>
+								</gnt2:ListLegendItem>
+
+							</gnt2:ListLegend>
+						</gnt2:LegendContainer>
+					</gnt2:legendContainer>
+
+				</gnt2:ContainerToolbar>
+			</gnt2:toolbar>
+
+			<gnt2:GanttChartWithTable id="FreightOrderAndFreightUnit" ghostAlignment="Start" adhocLineLayer="Bottom"
+									  shapeSelectionMode = "Single"
+									  shapeSelectionSettings="{color:'red', strokeDasharray:'1,0'}"
+									  shapeDrop="onShapeDrop"
+									  shapeDoubleClick="onShapeDoubleClick"
+			>
+				<gnt2:table>
+					<table:TreeTable
+							id="ganttResourceTreeTable"
+							selectionMode="Single"
+							visibleRowCountMode="Auto"
+							selectionBehavior="RowSelector"
+							enableColumnReordering="true"
+							fixedColumnCount="1"
+							busyStateChanged="onBusyStateChanged"
+							rows="{
+								path: '/ResourceHierarchySet',
+								parameters: {
+									operationMode: 'Server'
+								}
+							}">
+						<table:extension>
+							<!--<OverflowToolbar></OverflowToolbar>-->
+						</table:extension>
+						<table:rowSettingsTemplate>
+							<gnt2:GanttRowSettings rowId="{NodeId}">
+								<gnt2:shapes1>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.Requirement" type="XML"/>
+								</gnt2:shapes1>
+							</gnt2:GanttRowSettings>
+						</table:rowSettingsTemplate>
+
+						<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.ResourceTreeColumns" type="XML"/>
+					</table:TreeTable>
+				</gnt2:table>
+
+				<gnt2:axisTimeStrategy>
+					<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.AxisTimeStrategy" type="XML"/>
+				</gnt2:axisTimeStrategy>
+			</gnt2:GanttChartWithTable>
+
+		</gnt2:GanttChartContainer>
+
 	</Page>
 </mvc:View>

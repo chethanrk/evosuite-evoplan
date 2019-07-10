@@ -66,7 +66,6 @@ sap.ui.define([
             //init droppable
             // var oController = this;
             this.refreshDroppable(oEvent);
-            this.getModel("viewModel").setProperty("/ganttSettings/active", false);
         },
 
         /**

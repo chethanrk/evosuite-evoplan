@@ -128,12 +128,15 @@ sap.ui.define([
 			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
 				pageTitle = oResourceBundle.getText("xbut.pageDemands");
 
+			this.getModel("viewModel").setProperty("/ganttSettings/active", false);
+
 			if (oParams.config.pattern.indexOf("AssetPlanning") >= 0) {
 				pageTitle = oResourceBundle.getText("xbut.pageAssetManager");
 			}else if(oParams.config.pattern.indexOf("MessageCockpit") >= 0){
 				pageTitle = oResourceBundle.getText("xbut.pageMessageCockpit");
 			}else if(oParams.config.pattern.indexOf("Gantt") >= 0){
 				pageTitle = oResourceBundle.getText("xbut.pageGanttChart");
+				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
 			}
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
 			oAppViewModel.setProperty("/busy", false);

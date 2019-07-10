@@ -1,0 +1,61 @@
+<core:FragmentDefinition
+        xmlns="sap.ui.table"
+        xmlns:m="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:axistime="sap.gantt.axistime"
+        xmlns:config="sap.gantt.config"
+        xmlns:gnt2="sap.gantt.simple">>
+    <gnt2:BaseRectangle
+            shapeId="{NodeId}"
+            countInBirdEye="true"
+            time="{
+                parts: [
+                    'StartDate',
+                    'StartTime',
+                    'NodeType'
+                ],
+                formatter: '.ganttFormatter.getMergedDateObject'
+            }"
+            endTime="{
+                parts: [
+                    'EndDate',
+                    'EndTime',
+                    'NodeType'
+                ],
+                formatter: '.ganttFormatter.getMergedDateObject'
+            }"
+            resizable="false"
+            selectable="true"
+            draggable= "true"
+            title="{Description}"
+            showTitle="true"
+            tooltip="{NodeId}: {Description}"
+            stroke="{
+			parts: [
+				'NodeType',
+				'PlanStatus'
+			],
+			formatter: '.ganttFormatter.strokeColor'
+		}"
+            strokeWidth="{
+			parts: [
+				'NodeType',
+				'PlanStatus'
+			],
+			formatter: '.ganttFormatter.strokeWidth'
+		}"
+            strokeDasharray="{
+			parts: [
+				'NodeType',
+				'PlanStatus'
+			],
+			formatter: '.ganttFormatter.strokeDasharray'
+		}"
+            fill="{
+			parts: [
+				'NodeType',
+				'PlanStatus'
+			],
+			formatter: '.ganttFormatter.fillColor'
+		}"/>
+</core:FragmentDefinition>

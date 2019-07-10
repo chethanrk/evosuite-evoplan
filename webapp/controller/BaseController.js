@@ -31,6 +31,9 @@ sap.ui.define([
 			if (oView) {
 				return oView.getModel(sName);
 			}
+			if(!this.getView().getModel(sName)){
+				return this.getOwnerComponent().getModel(sName);
+			}
 			return this.getView().getModel(sName);
 		},
 

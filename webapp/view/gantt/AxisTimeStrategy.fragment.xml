@@ -1,0 +1,22 @@
+<core:FragmentDefinition
+        xmlns="sap.ui.table"
+        xmlns:m="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:axistime="sap.gantt.axistime"
+        xmlns:config="sap.gantt.config"
+        xmlns:gnt2="sap.gantt.simple">
+
+    <axistime:ProportionZoomStrategy>
+        <axistime:totalHorizon>
+            <config:TimeHorizon
+                    startTime="{viewModel>/ganttSettings/totalStartTime}"
+                    endTime="{viewModel>/ganttSettings/totalEndTime}"/>
+        </axistime:totalHorizon>
+        <axistime:visibleHorizon>
+            <config:TimeHorizon
+                    startTime="{viewModel>/ganttSettings/visibleStartTime}"
+                    endTime="{viewModel>/ganttSettings/visibleEndTime}"/>
+        </axistime:visibleHorizon>
+    </axistime:ProportionZoomStrategy>
+
+</core:FragmentDefinition>
