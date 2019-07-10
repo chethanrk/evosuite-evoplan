@@ -3,6 +3,8 @@ sap.ui.define([
 ], function (Currency) {
     "use strict";
 
+    var shapeNodeType = "ASSIGNMENT";
+
     var mColorMapping = {
         "FU_PLANNED" : {
             strokeWidth: 2,
@@ -33,44 +35,48 @@ sap.ui.define([
             strokeWidth: 2,
             fill: "#ffa0aa",
             strokeDasharray: "5,1"
+        },
+        "INVISIBLE": {
+            stroke: "#ffffff",
+            strokeWidth: 0,
+            fill: "#ffffff",
+            strokeDasharray: ""
         }
     };
 
-    function getMappingItem(sType, sPlanStatus) {
-        var sKey = (sType && sPlanStatus) ? sType.toUpperCase() + "_" + sPlanStatus.toUpperCase() : "DEFAULT";
-
+    function getMappingItem(sNodeType, sIcon) {
+        if(sNodeType !== shapeNodeType){
+            return mColorMapping["INVISIBLE"];
+        }
+        var sKey = (sNodeType && sIcon) ? sNodeType.toUpperCase() + "_" + sIcon.toUpperCase() : "DEFAULT";
         return mColorMapping[sKey];
     }
 
     return {
 
-        orderTitle: function(sRequirementId, sSource, sDestination) {
-            return [sRequirementId, ':', sSource, "->", sDestination].join(" ");
-        },
-
-        strokeColor: function(sType, sPlanStatus) {
-            if(getMappingItem(sType, sPlanStatus)){
-                return getMappingItem(sType, sPlanStatus)["stroke"];
+        strokeColor: function(sNodeType, sPlanStatus) {
+            if(getMappingItem(sNodeType, sPlanStatus)){
+                return getMappingItem(sNodeType, sPlanStatus)["stroke"];
             }
             return getMappingItem()["stroke"];
         },
-        strokeWidth: function(sType, sPlanStatus) {
-            if(getMappingItem(sType, sPlanStatus)){
-                return getMappingItem(sType, sPlanStatus)["strokeWidth"];
+        strokeWidth: function(sNodeType, sPlanStatus) {
+            if(getMappingItem(sNodeType, sPlanStatus)){
+                return getMappingItem(sNodeType, sPlanStatus)["strokeWidth"];
             }
             return getMappingItem()["strokeWidth"];
         },
 
-        strokeDasharray: function(sType, sPlanStatus) {
-            if(getMappingItem(sType, sPlanStatus)){
-                return getMappingItem(sType, sPlanStatus)["strokeWidth"];
+        strokeDasharray: function(sNodeType, sPlanStatus) {
+            if(getMappingItem(sNodeType, sPlanStatus)){
+                return getMappingItem(sNodeType, sPlanStatus)["strokeWidth"];
             }
             return getMappingItem()["strokeWidth"];
         },
 
-        fillColor: function(sType, sPlanStatus) {
-            if(getMappingItem(sType, sPlanStatus)){
-                return getMappingItem(sType, sPlanStatus)["fill"];
+        fillColor: function(sNodeType, sPlanStatus) {
+            if(getMappingItem(sNodeType, sPlanStatus)){
+                return getMappingItem(sNodeType, sPlanStatus)["fill"];
             }
             return getMappingItem()["fill"];
         },
@@ -92,7 +98,7 @@ sap.ui.define([
         },
 
         getMergedDateObject: function (oDate, oTime, sNodeType) {
-            if(sNodeType !== "ASSIGNMENT"){
+            if(sNodeType !== shapeNodeType){
                 return null;
             }
             if(!oDate && (!oTime || !oTime.ms)){

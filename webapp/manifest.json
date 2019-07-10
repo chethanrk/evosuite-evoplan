@@ -217,7 +217,7 @@
 					"pattern": "Gantt",
 					"name": "gantt",
 					"target": [
-						"empty",
+						"demandsGantt",
 						"gantt"
 					]
 				}

@@ -38,7 +38,9 @@
 				</gnt2:ContainerToolbar>
 			</gnt2:toolbar>
 
-			<gnt2:GanttChartWithTable id="FreightOrderAndFreightUnit" ghostAlignment="Start" adhocLineLayer="Bottom"
+			<gnt2:GanttChartWithTable id="FreightOrderAndFreightUnit"
+									  ghostAlignment="Start"
+									  adhocLineLayer="Bottom"
 									  shapeSelectionMode = "Single"
 									  shapeSelectionSettings="{color:'red', strokeDasharray:'1,0'}"
 									  shapeDrop="onShapeDrop"
@@ -56,7 +58,8 @@
 							rows="{
 								path: '/ResourceHierarchySet',
 								parameters: {
-									operationMode: 'Server'
+									numberOfExpandedLevels:1,
+									restoreTreeStateAfterChange:true
 								}
 							}">
 						<table:extension>

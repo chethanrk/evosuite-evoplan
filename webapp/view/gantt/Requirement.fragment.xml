@@ -4,7 +4,7 @@
         xmlns:core="sap.ui.core"
         xmlns:axistime="sap.gantt.axistime"
         xmlns:config="sap.gantt.config"
-        xmlns:gnt2="sap.gantt.simple">>
+        xmlns:gnt2="sap.gantt.simple">
     <gnt2:BaseRectangle
             shapeId="{NodeId}"
             countInBirdEye="true"

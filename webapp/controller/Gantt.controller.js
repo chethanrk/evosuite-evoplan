@@ -35,6 +35,13 @@ sap.ui.define([
 
 			//set on first load required filters
 			this._treeTable = this.getView().byId("ganttResourceTreeTable");
+
+			this._treeTable.setEnableBusyIndicator(true);
+			this._treeTable.setSelectionMode("None");
+			this._treeTable.setEnableCellFilter(false);
+			this._treeTable.setEnableColumnReordering(false);
+			this._treeTable.setEditable(false);
+			this._treeTable.attachBusyStateChanged(this.onBusyStateChanged, this);
 		},
 
 		/**
@@ -58,7 +65,6 @@ sap.ui.define([
 
 		onBusyStateChanged: function(oEvent){
 			var parameters = oEvent.getParameters();
-			console.log(parameters);
 			if (parameters.busy !== false && !this._isLoaded) {
 				this._isLoaded = true;
 				this._setDefaultTreeDateRange();
@@ -87,14 +93,13 @@ sap.ui.define([
 			var defDateRange = formatter.getDefaultDateRange(),
 				aFilters = [];
 
-			var oDateRangeFilter1 = new Filter("StartDate", FilterOperator.LE, formatter.date(defDateRange.dateFrom)),
-				oDateRangeFilter2 = new Filter("EndDate", FilterOperator.GE, formatter.date(defDateRange.dateTo));
+			aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(defDateRange.dateFrom)));
+			aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(defDateRange.dateTo)));
+			aFilters.push(new Filter("NodeType", FilterOperator.GE, "TIMENONE"));
 
-			aFilters.push(oDateRangeFilter1);
-			aFilters.push(oDateRangeFilter2);
-
-			var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
-			binding.filter(aFilters, "Application");
+			//Todo when tree fetch is fixed in backend use this filters
+			//var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
+			//binding.filter(aFilters, "Application");
 		}
 
 
