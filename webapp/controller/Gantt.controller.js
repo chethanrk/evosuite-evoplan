@@ -93,13 +93,12 @@ sap.ui.define([
 			var defDateRange = formatter.getDefaultDateRange(),
 				aFilters = [];
 
-			aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(defDateRange.dateFrom)));
-			aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(defDateRange.dateTo)));
+			aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(defDateRange.dateTo)));
+			aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(defDateRange.dateFrom)));
 			aFilters.push(new Filter("NodeType", FilterOperator.GE, "TIMENONE"));
 
-			//Todo when tree fetch is fixed in backend use this filters
-			//var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
-			//binding.filter(aFilters, "Application");
+			var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
+			binding.filter(aFilters, "Application");
 		}
 
 
