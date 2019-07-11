@@ -11,7 +11,7 @@
 														  entitySet="{viewModel>/treeSet}"></controls:CustomVariantManagement>
 
 						<ToolbarSpacer/>
-						<CheckBox text="{i18n>xtit.capacity}" selected="{viewModel>/capacityPlanning}" enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }" select="onSelectCapacity" />
+						<CheckBox text="{i18n>xtit.capacity}" selected="{viewModel>/capacityPlanning}" enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }" select="onSelectCapacity" visible="{user>/CAPACITY_ENABLED}" />
 						<Button type="Transparent" id="filterResourceButton" icon="sap-icon://filter" text="{viewModel>/counterResourceFilter}"
 								press="onFilterButtonPress"/>
 

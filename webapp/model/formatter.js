@@ -357,6 +357,37 @@ sap.ui.define([
                 return false;
             }
             return bEnableResize;
+        },
+        
+        /** 
+         * Formats the color of Icon for sync status
+         * @param sStatus
+         * @returns
+         */
+        formatSyncIconColor : function(sStatus){
+        	if(sStatus === "E"){
+        		return "Negative";
+        	}else if(sStatus === "Q"){
+        		return "Critical";
+        	}else if(sStatus === "S"){
+        		return "Positive";
+        	}else{
+        		return "Default";
+        	}
+        },
+        
+        formatSyncTooltip : function(sStatus){
+        	var oBundle = this.getResourceBundle();
+        	if(sStatus === "E"){
+        		return oBundle.getText("syncFail");
+        	}else if(sStatus === "Q"){
+        		return oBundle.getText("stuckQueue");
+        	}else if(sStatus === "S"){
+        		return oBundle.getText("sync");
+        	}else{
+        		return "Default";
+        	}
         }
+        
     };
 });
