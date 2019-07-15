@@ -170,13 +170,13 @@ sap.ui.define([
 				aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
 				this._firstTime = true;
 			}else{
-                if (sSelectedKey === "error") {
-                    aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
-                } else if (sSelectedKey === "success") {
-                    aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
-                } else {
-                    aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
-                }
+                // if (sSelectedKey === "error") {
+                //     aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
+                // } else if (sSelectedKey === "success") {
+                //     aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
+                // } else {
+                //     aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
+                // }
 			}
 		},
 
