@@ -375,7 +375,11 @@ sap.ui.define([
         		return "Default";
         	}
         },
-        
+        /**
+         *
+         * @param sStatus Sync status
+         * @return {*}
+         */
         formatSyncTooltip : function(sStatus){
         	var oBundle = this.getResourceBundle();
         	if(sStatus === "E"){
@@ -387,6 +391,17 @@ sap.ui.define([
         	}else{
         		return "Default";
         	}
+        },
+        formatSyncIcon : function (sStatus) {
+            if(sStatus === "E"){
+                return "sap-icon://decline"
+            }else if(sStatus === "Q"){
+                return "sap-icon://project-definition-triangle-2"
+            }else if(sStatus === "S"){
+                return "sap-icon://connected"
+            }else{
+                return "sap-icon://circle-task-2";
+            }
         }
         
     };

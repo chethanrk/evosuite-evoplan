@@ -40,7 +40,7 @@
 								</table:customData>
 								<Label text="{/#Demand/SYNC_STATUS/@sap:label}"/>
 								<table:template>
-									<core:Icon src="sap-icon://circle-task-2" color="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIconColor' }" tooltip="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncTooltip' }"></core:Icon>
+									<core:Icon src="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIcon' }" color="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIconColor' }" tooltip="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncTooltip' }"></core:Icon>
 								</table:template>
 							</table:Column>
 						</table:columns>
