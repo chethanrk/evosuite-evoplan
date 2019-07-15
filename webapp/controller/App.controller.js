@@ -13,6 +13,7 @@ sap.ui.define([
 
 		onInit: function () {
 			var eventBus = sap.ui.getCore().getEventBus();
+			
 			//Event are subscription Demand assignment and change status of demand
 			eventBus.subscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
 			eventBus.subscribe("StatusSelectDialog", "changeStatusDemand", this._triggerSaveDemandStatus, this);
@@ -48,6 +49,11 @@ sap.ui.define([
 			//set init page title
 			oRouter.attachRouteMatched(this._onAllRouteMatched, this);
 			this.getRouter().getRoute("demands").attachPatternMatched(this._onObjectMatched, this);
+		},
+		
+		onAfterRendering : function () {
+			this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
+			this.getView().addDependent(this._oMessagePopover);
 		},
 
 		/**
@@ -239,6 +245,13 @@ sap.ui.define([
 
 		_triggerSaveAllAssignments: function (sChanel, sEvent, oData) {
 			this.saveAllAssignments(oData.assignments, oData.parameters);
+		},
+		/**
+		 * open's the message popover by it source
+		 * @param oEvent
+		 */
+		onMessagePopoverPress: function (oEvent) {
+			this._oMessagePopover.openBy(oEvent.getSource());
 		}
 
 	});

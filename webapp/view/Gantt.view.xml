@@ -3,6 +3,7 @@
 		  xmlns:core="sap.ui.core"
 		  xmlns:gnt2="sap.gantt.simple"
 		  xmlns:table="sap.ui.table"
+			xmlns:dnd="sap.ui.core.dnd"
 		  controllerName="com.evorait.evoplan.controller.Gantt"
 		  displayBlock="true"
 		  height="100%">
@@ -11,16 +12,20 @@
 
 		<gnt2:GanttChartContainer id="container" enableTimeScrollSync="true">
 			<gnt2:toolbar>
-				<gnt2:ContainerToolbar design="Auto" showBirdEyeButton="true" showLegendButton="true">
-					<Select forceSelection="false" selectedKey="ReqAndRes" change="onLayoutChange">
+				<gnt2:ContainerToolbar design="Auto" showBirdEyeButton="false" showLegendButton="false">
+					<DateRangeSelection
+						id="idDateRangeGantt"
+						width="20%"
+					/>
+<!--					<Select forceSelection="false" selectedKey="ReqAndRes" change="onLayoutChange">
 						<items>
 							<core:Item key="ReqAndRes" text="Requirement And Resource"/>
 							<core:Item key="Resource" text="Resource"/>
 							<core:Item key="Requirement" text="Requirement"/>
 						</items>
-					</Select>
+					</Select>-->
 
-					<gnt2:legendContainer>
+					<!--<gnt2:legendContainer>
 						<gnt2:LegendContainer width="230px" height="250px">
 							<gnt2:ListLegend title="Requirement Document">
 								<gnt2:ListLegendItem interactive="true" selected="true" interactiveChange=".onLegendItemInteractiveChange">
@@ -33,28 +38,29 @@
 
 							</gnt2:ListLegend>
 						</gnt2:LegendContainer>
-					</gnt2:legendContainer>
+					</gnt2:legendContainer>-->
+					
 
 				</gnt2:ContainerToolbar>
 			</gnt2:toolbar>
 
-			<gnt2:GanttChartWithTable id="FreightOrderAndFreightUnit"
+			<gnt2:GanttChartWithTable id="ganttResourceAssignments"
 									  ghostAlignment="Start"
 									  adhocLineLayer="Bottom"
 									  shapeSelectionMode = "Single"
 									  shapeSelectionSettings="{color:'red', strokeDasharray:'1,0'}"
 									  shapeDrop="onShapeDrop"
+									  shapeResize="onShapeResize"
 									  shapeDoubleClick="onShapeDoubleClick"
 			>
 				<gnt2:table>
 					<table:TreeTable
 							id="ganttResourceTreeTable"
-							selectionMode="Single"
+							selectionMode="None"
 							visibleRowCountMode="Auto"
-							selectionBehavior="RowSelector"
-							enableColumnReordering="true"
-							fixedColumnCount="1"
+							enableColumnReordering="false"
 							busyStateChanged="onBusyStateChanged"
+							enableCellFilter="false"
 							rows="{
 								path: '/ResourceHierarchySet',
 								parameters: {
@@ -70,16 +76,31 @@
 								<gnt2:shapes1>
 									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.Requirement" type="XML"/>
 								</gnt2:shapes1>
+								
 							</gnt2:GanttRowSettings>
 						</table:rowSettingsTemplate>
 
 						<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.ResourceTreeColumns" type="XML"/>
+						<table:dragDropConfig>
+							<dnd:DropInfo
+								groupName="demandsDragnDrop"
+								targetAggregation="rows"
+								dropPosition="On"
+								drop="onDropOnResource" />
+						</table:dragDropConfig>
 					</table:TreeTable>
 				</gnt2:table>
 
 				<gnt2:axisTimeStrategy>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.AxisTimeStrategy" type="XML"/>
 				</gnt2:axisTimeStrategy>
+				<!--<gnt2:dragDropConfig>
+							<dnd:DropInfo
+								groupName="demandsDragnDrop"
+								targetAggregation="adhocLines"
+								dropPosition="On"
+								drop="onDropOnGantt" />
+				</gnt2:dragDropConfig>-->
 			</gnt2:GanttChartWithTable>
 
 		</gnt2:GanttChartContainer>
