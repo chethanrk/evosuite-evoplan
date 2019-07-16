@@ -14,8 +14,7 @@
 									<items>
 										<MenuItem text="{i18n>xbut.pageDemands}"/>
 										<MenuItem text="{i18n>xbut.pageAssetManager}" visible="{user>/ASSET_PLANNING_ENABLED}"/>
-										<MenuItem text="{i18n>xbut.pageMessageCockpit}" visible="{user>/ASSET_PLANNING_ENABLED}"/>
-										<MenuItem text="{i18n>xbut.pageGanttChart}"/>
+										<MenuItem text="{i18n>xbut.pageMessageCockpit}" visible="{user>/EMP_ENABLED}"/>
 										<!--<MenuItem text="{i18n>xbut.pageWeeklyPlanner}"/>-->
 									</items>
 								</Menu>

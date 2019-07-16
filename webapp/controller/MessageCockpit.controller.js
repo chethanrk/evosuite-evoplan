@@ -82,19 +82,19 @@ sap.ui.define([
 			oModel.read("/MessageSet/$count", {
 				groupId: "counter",
 				filters: [
-					new Filter("Type", FilterOperator.EQ, "E")
+					new Filter("SyncStatus", FilterOperator.EQ, "E")
 				]
 			});
 			oModel.read("/MessageSet/$count", {
 				groupId: "counter",
 				filters: [
-					new Filter("Type", FilterOperator.EQ, "S")
+					new Filter("SyncStatus", FilterOperator.EQ, "S")
 				]
 			});
 			oModel.read("/MessageSet/$count", {
 				groupId: "counter",
 				filters: [
-					new Filter("Type", FilterOperator.EQ, "Q")
+					new Filter("SyncStatus", FilterOperator.EQ, "Q")
 				]
 			});
 
@@ -140,17 +140,23 @@ sap.ui.define([
 		onSelect: function (oEvent) {
 			var oDataTable = this.getView().byId("idProcessTable").getTable(),
 				oBinding = oDataTable.getBinding("rows"),
-				sSelectedKey = oEvent.getParameter("selectedKey");
+				sSelectedKey = oEvent.getParameter("selectedKey"),
+				oSyncButton = this.getView().byId("idSyncButton");
 
 			oBinding.aApplicationFilters = [];
 
 			if (sSelectedKey === "error") {
-				oBinding.filter(new Filter("Type", FilterOperator.EQ, "E"));
+				oBinding.filter(new Filter("SyncStatus", FilterOperator.EQ, "E"));
+				oSyncButton.setVisible(true);
 			} else if (sSelectedKey === "success") {
-				oBinding.filter(new Filter("Type", FilterOperator.EQ, "S"));
+				oBinding.filter(new Filter("SyncStatus", FilterOperator.EQ, "S"));
+				oSyncButton.setVisible(false);
 			} else {
-				oBinding.filter(new Filter("Type", FilterOperator.EQ, "Q"));
+				oBinding.filter(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
+				oSyncButton.setVisible(true);
 			}
+			// Refresh message count
+			this._refreshCounts();
 		},
 		/** 
 		 * Initially filtered by the error messages
@@ -158,9 +164,19 @@ sap.ui.define([
 		 */
 		onBeforeRebindTable: function (oEvent) {
 			var aFilters = oEvent.getParameter("bindingParams").filters;
+            var oIconTab = this.getView().byId("idIconTabBar"),
+                sSelectedKey = oIconTab.getSelectedKey();
 			if (!this._firstTime) {
-				aFilters.push(new Filter("Type", FilterOperator.EQ, "E"));
+				aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
 				this._firstTime = true;
+			}else{
+                // if (sSelectedKey === "error") {
+                //     aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
+                // } else if (sSelectedKey === "success") {
+                //     aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
+                // } else {
+                //     aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
+                // }
 			}
 		},
 

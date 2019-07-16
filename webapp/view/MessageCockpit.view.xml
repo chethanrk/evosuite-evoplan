@@ -54,6 +54,7 @@
 						persistencyKey="_keyForProesses" 
 						useTablePersonalisation="true"
 						requestAtLeastFields="SyncGuid"
+						ignoreFromPersonalisation="DeletionIndicator,EvoProduct"
 						beforeRebindTable="onBeforeRebindTable">
 					<!-- layout data used to make the table growing but the filter bar fixed -->
 					<smartTable:layoutData>
@@ -63,7 +64,12 @@
 							<OverflowToolbar>
 								<content>
 									<ToolbarSpacer/>
-									<Button icon="sap-icon://synchronize" tooltip="{i18n>xtit.reprocess}" enabled="{viewModel>/enableReprocess}" press="onClickReprocess"/>
+									<Label text="{i18n>xtit.lastChanged} : " />
+									<Text text="{
+													path : 'user>/LastSyncTimestamp',
+													type: 'sap.ui.model.odata.type.DateTime'
+												}" />
+									<Button id="idSyncButton" icon="sap-icon://synchronize" tooltip="{i18n>xtit.reprocess}" enabled="{viewModel>/enableReprocess}" press="onClickReprocess"/>
 								</content>
 							</OverflowToolbar>
 					</smartTable:customToolbar>

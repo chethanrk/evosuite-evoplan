@@ -367,6 +367,52 @@ sap.ui.define([
                 return false;
             }
             return bEnableResize;
+        },
+        
+        /** 
+         * Formats the color of Icon for sync status
+         * @param sStatus
+         * @returns
+         */
+        formatSyncIconColor : function(sStatus){
+        	if(sStatus === "E"){
+        		return "Negative";
+        	}else if(sStatus === "Q"){
+        		return "Critical";
+        	}else if(sStatus === "S"){
+        		return "Positive";
+        	}else{
+        		return "Default";
+        	}
+        },
+        /**
+         *
+         * @param sStatus Sync status
+         * @return {*}
+         */
+        formatSyncTooltip : function(sStatus){
+        	var oBundle = this.getResourceBundle();
+        	if(sStatus === "E"){
+        		return oBundle.getText("syncFail");
+        	}else if(sStatus === "Q"){
+        		return oBundle.getText("stuckQueue");
+        	}else if(sStatus === "S"){
+        		return oBundle.getText("sync");
+        	}else{
+        		return "Default";
+        	}
+        },
+        formatSyncIcon : function (sStatus) {
+            if(sStatus === "E"){
+                return "sap-icon://decline"
+            }else if(sStatus === "Q"){
+                return "sap-icon://project-definition-triangle-2"
+            }else if(sStatus === "S"){
+                return "sap-icon://connected"
+            }else{
+                return "sap-icon://circle-task-2";
+            }
         }
+        
     };
 });
