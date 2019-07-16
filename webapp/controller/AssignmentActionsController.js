@@ -1,3 +1,9 @@
+/**
+ * The file AssignmentActionsController will be exactly same as AssignmentController.
+ * All methods in this file will call executeFunctionImport method and will return promise
+ * of action performed.
+ * 
+ */
 sap.ui.define([
 	"com/evorait/evoplan/controller/BaseController",
 		"sap/m/MessageBox"
@@ -6,6 +12,7 @@ sap.ui.define([
 	
 		/**
 		 * save assignment after drop
+		 * Calls the function import of create assignment the returns the promise.
 		 * 
 		 * @param {Object} aSourcePaths
 		 * @param {String} sTargetPath

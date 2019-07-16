@@ -96,7 +96,7 @@ sap.ui.define([
 			binding.filter(aFilters, "Application");
 		},
 		/**
-		 * On Drop on the resource 
+		 * On Drop on the resource call the function import for 
 		 * @Author Rahul
 		 * @since 3.0
 		 * 
@@ -109,12 +109,14 @@ sap.ui.define([
 				oPromise,
 				oEventBus =  sap.ui.getCore().getEventBus();
 				
-			if(this.isAvailable(oDropContext.getPath())){
-				oPromise = this.assignedDemands([oDragContext.getPath()],oDropContext.getPath());
-			}
+			// if(this.isAvailable(oDropContext.getPath())){
+			// 	oPromise = this.assignedDemands([oDragContext.getPath()],oDropContext.getPath());
+			// }
+			
+			oPromise = this.assignedDemands([oDragContext.getPath()],oDropContext.getPath());
 			
 			oPromise.then(function(data, response){
-				this._refreshAfterOperations();
+				this._refreshGanttChart();
 				oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}.bind(this));
 			
