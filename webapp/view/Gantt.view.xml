@@ -12,10 +12,11 @@
 
 		<gnt2:GanttChartContainer id="container" enableTimeScrollSync="true">
 			<gnt2:toolbar>
-				<gnt2:ContainerToolbar design="Auto" showBirdEyeButton="false" showLegendButton="false">
+				<gnt2:ContainerToolbar design="Auto" showBirdEyeButton="true" showLegendButton="false">
 					<DateRangeSelection
 						id="idDateRangeGantt"
 						width="20%"
+						change="onChangeDateRange"
 					/>
 <!--					<Select forceSelection="false" selectedKey="ReqAndRes" change="onLayoutChange">
 						<items>
