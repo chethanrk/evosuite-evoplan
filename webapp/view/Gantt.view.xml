@@ -52,15 +52,18 @@
 									  shapeDrop="onShapeDrop"
 									  shapeResize="onShapeResize"
 									  shapeDoubleClick="onShapeDoubleClick"
+									  shapeContextMenu="onShapeContextMenu"
 			>
 				<gnt2:table>
 					<table:TreeTable
 							id="ganttResourceTreeTable"
-							selectionMode="None"
+							selectionMode="Single"
 							visibleRowCountMode="Auto"
 							enableColumnReordering="false"
+							enableBusyIndicator="true"
 							busyStateChanged="onBusyStateChanged"
 							enableCellFilter="false"
+							selectionBehavior="RowSelector"
 							rows="{
 								path: '/ResourceHierarchySet',
 								parameters: {
@@ -76,7 +79,6 @@
 								<gnt2:shapes1>
 									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.Requirement" type="XML"/>
 								</gnt2:shapes1>
-								
 							</gnt2:GanttRowSettings>
 						</table:rowSettingsTemplate>
 
