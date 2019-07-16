@@ -197,6 +197,9 @@ sap.ui.define([
 			});
 		},
 		/**
+		 * @Athour Rahul
+		 * @since 3.0
+		 * 
 		 * send oData request of FunctionImport
 		 * @param oParams Data to passed to function import
 		 * @param sFuncName Function name of the function import
@@ -227,7 +230,8 @@ sap.ui.define([
 				bFromHome: true,
 				bFromAseet: false,
 				bFromPlannCal: false,
-				bFromDetail: false
+				bFromDetail: false,
+				bFromGantt:false
 			};
 
 			if (oParameter.bFromHome) {
@@ -245,6 +249,9 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				eventBus.publish("BaseController", "refreshDemandOverview", {});
 				eventBus.publish("BaseController", "refreshDemandTable", {});
+			}else if(oParameter.bFromGantt){
+				eventBus.publish("BaseController", "refreshGanttChart", {});
+				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
 
 		},
@@ -374,6 +381,17 @@ sap.ui.define([
 				return false;
 			}
 			return true;
+		},
+		/**
+		 * @Athour Rahul
+		 * @since 3.0
+		 * Checks the Demand is assignable or not by validating the ALLOW_ASSIGN frag in demand object
+		 */
+		isDemandAssignable : function (sTargetPath){
+			var oModel = this.getModel(),
+				oTargetObj = oModel.getProperty(sTargetPath);
+
+			return oTargetObj.ALLOW_ASSIGN;
 		},
 
 		/**

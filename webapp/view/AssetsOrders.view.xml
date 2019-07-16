@@ -55,8 +55,8 @@
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
-				<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
-					type="Emphasized" press="onMessagePopoverPress"></Button>
+				<!--<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"-->
+				<!--	type="Emphasized" press="onMessagePopoverPress"></Button>-->
 				<ToolbarSpacer/>
 				<Button id="assignButton" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" icon="sap-icon://activity-individual"
 					press="onAssignButtonPress" enabled="false">

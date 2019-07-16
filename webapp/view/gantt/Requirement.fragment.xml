@@ -24,7 +24,7 @@
                 ],
                 formatter: '.ganttFormatter.getMergedDateObject'
             }"
-            resizable="false"
+            resizable="true"
             selectable="true"
             draggable= "true"
             title="{Description}"

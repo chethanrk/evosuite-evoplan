@@ -21,7 +21,7 @@
 		},
 		"dataSources": {
 			"mainService": {
-				"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/",
+				"uri": "/sap/opu/odata/EVORA/EP_MAIN_SRV/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
@@ -99,19 +99,19 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.52.0",
+			"minUI5Version": "1.60.0",
 			"libs": {
 				"sap.ui.core": {
-					"minVersion": "1.52.0"
+					"minVersion": "1.60.0"
 				},
 				"sap.m": {
-					"minVersion": "1.52.0"
+					"minVersion": "1.60.0"
 				},
 				"sap.uxap": {
-					"minVersion": "1.52.0"
+					"minVersion": "1.60.0"
 				},
 				"sap.ui.comp": {
-					"minVersion": "1.52.0"
+					"minVersion": "1.60.0"
 				}
 			}
 		},
