@@ -165,18 +165,24 @@ sap.ui.define([
 		onBeforeRebindTable: function (oEvent) {
 			var aFilters = oEvent.getParameter("bindingParams").filters;
             var oIconTab = this.getView().byId("idIconTabBar"),
-                sSelectedKey = oIconTab.getSelectedKey();
+                sSelectedKey = oIconTab.getSelectedKey(),
+                 oDataTable = this.getView().byId("idProcessTable").getTable(),
+				oBinding = oDataTable.getBinding("rows");
+				
+				// oBinding.aApplicationFilters = [];
 			if (!this._firstTime) {
 				aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
 				this._firstTime = true;
 			}else{
-                // if (sSelectedKey === "error") {
-                //     aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
-                // } else if (sSelectedKey === "success") {
-                //     aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
-                // } else {
-                //     aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
-                // }
+				if(oBinding.aFilters.length === 0){
+	                if (sSelectedKey === "error") {
+	                    aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
+	                } else if (sSelectedKey === "success") {
+	                    aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
+	                } else {
+	                    aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
+	                }
+				}
 			}
 		},
 
