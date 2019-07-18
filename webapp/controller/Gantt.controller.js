@@ -5,10 +5,10 @@ sap.ui.define([
 	"com/evorait/evoplan/model/ganttFormatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
-], function (AssignmentsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator) {
+], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator) {
 	"use strict";
 
-	return AssignmentsController.extend("com.evorait.evoplan.controller.Gantt", {
+	return AssignmentActionsController.extend("com.evorait.evoplan.controller.Gantt", {
 
 		formatter: formatter,
 
@@ -18,12 +18,15 @@ sap.ui.define([
 
 		_oEventBus: null,
 
+		_oAssignementModel: null,
+
 
 		/**
 		 * controller life cycle on init event
 		 */
 		onInit: function () {
 			this._oEventBus = sap.ui.getCore().getEventBus();
+			this._oAssignementModel = this.getModel("assignment");
 
 			//set gantt chart view range
 			var defDateRange = formatter.getDefaultDateRange(),
@@ -84,83 +87,65 @@ sap.ui.define([
 		 */
 		onShapeDrop: function(oEvent){
 			console.log("onShapeDrop");
+			console.log(oEvent.getParameters());
 			var oParams = oEvent.getParameters(),
-				targetContext = oParams.targetRow.getBindingContext(),
+				draggedShape = oParams.draggedShapeDates;
+
+			if(!oParams.targetRow){
+				//Todo: show message
+			}
+
+			var targetContext = oParams.targetRow.getBindingContext(),
 				targetData = targetContext.getObject(),
-				draggedShape = oParams.draggedShapeDates,
-				sLastDraggedShapeUid = oEvent.getParameter("lastDraggedShapeUid"),
-				oNewDateTime = oEvent.getParameter("newDateTime"),
-				oOldStartDateTime = draggedShape[sLastDraggedShapeUid].time,
-				oOldEndDateTime = draggedShape[sLastDraggedShapeUid].endTime;
+				draggedShape = oParams.draggedShapeDates;
 
 			Object.keys(draggedShape).forEach(function (sShapeUid) {
 				var sourcePath = this._getShapeBindingContextPath(sShapeUid),
-					sourceData = this.getModel().getProperty(sourcePath);
+					sourceData = this.getModel().getProperty(sourcePath),
+					isReassign = sourceData.NodeId !== targetData.NodeId;
 
-				console.log(sourceData);
+				var oSourceStartDate = moment(draggedShape[sShapeUid].time),
+					oSourceEndDate = moment(draggedShape[sShapeUid].endTime),
+					duration = oSourceEndDate.diff(oSourceStartDate, "seconds"),
+					newEndDate = moment(oParams.newDateTime).add(duration, "seconds");
 
-				if(targetData.NodeType === "ASSIGNMENT" && sourceData.NodeId !== targetData.NodeId){
-					//Todo: show message that drag to another assignment is not possible
+
+				if(targetData.NodeType === "ASSIGNMENT" && isReassign){
+					//Todo: what to do here?
 					return;
 				}
 
-				var iMoveWidthInMs = oNewDateTime.getTime() - oOldStartDateTime.getTime();
-				var oOldDateTime = draggedShape[sShapeUid].time;
-				oOldEndDateTime = draggedShape[sShapeUid].endTime;
-				oNewDateTime = new Date(oOldDateTime.getTime() + iMoveWidthInMs);
-				var oNewEndDateTime = new Date(oOldEndDateTime.getTime() + iMoveWidthInMs);
+				this._updateAssignmentModel(sourceData.AssignmentGuid).then(function (oAssignmentObj) {
+					oAssignmentObj.DateFrom = oParams.newDateTime;
+					oAssignmentObj.DateTo = newEndDate.toDate();
+					oAssignmentObj.NewAssignPath = targetContext.getPath();
 
+					this._oAssignementModel.setData(oAssignmentObj);
 
-				//this._saveDraggedShape();
-				var newPath = targetContext.getPath(),
-					newDateTime = oParams.newDateTime;
+					console.log(oAssignmentObj);
 
-				var oAssignment = {
-					showError: false,
-					AssignmentGuid: sourceData.AssignmentGuid,
-					Description: sourceData.Description,
-					AllowReassign: false,
-					AllowUnassign: false,
-					AllowChange:true,
-					NewAssignPath: null,
-					NewAssignId: null,
-					NewAssignDesc: null,
-					isNewAssignment: false,
-					DemandGuid: sourceData.DemandGuid,
-					DemandStatus: "",
-					OrderId: "",
-					OperationNumber: "",
-					SubOperationNumber: "",
-					DateFrom:"",
-					DateTo:""
-				};
-
-				/*oAssignment.AssignmentGuid = oAssignmentData.Guid;
-				oAssignment.Description = oAssignmentData.Demand.DemandDesc;
-				oAssignment.DemandGuid = oAssignmentData.DemandGuid;
-				oAssignment.DemandStatus = oAssignmentData.Demand.Status;
-				oAssignment.DateFrom = oAssignmentData.DateFrom;
-				oAssignment.DateTo = oAssignmentData.DateTo;
-				this.oAssignmentModel = oView.getModel("assignment");
-				this.oAssignmentModel.setData(oAssignment);*/
-
-				/*this._oEventBus.publish("AssignInfoDialog", "updateAssignment", {
-					isReassign: sourceData.NodeId !== targetData.NodeId,
-					parameters: {
-
-					}
-				});*/
+					this.updateAssignment(isReassign, {bFromGantt: true});
+				}.bind(this));
 
 			}.bind(this));
 		},
 
 		/**
 		 * when the shape off assignment was resized save new timespan to backend
-		 * Todo
+		 * @param oEvent
 		 */
 		onShapeResize: function(oEvent){
-			console.log("onShapeResize");
-			var oParams = oEvent.getParameters();
+			var oParams = oEvent.getParameters(),
+				oRowContext = oParams.shape.getBindingContext(),
+				oData = this.getModel().getProperty(oRowContext.getPath());
+
+			this._updateAssignmentModel(oData.AssignmentGuid).then(function (oAssignmentObj) {
+				oAssignmentObj.DateFrom = oParams.newTime[0];
+				oAssignmentObj.DateTo = oParams.newTime[1];
+
+				this._oAssignementModel.setData(oAssignmentObj);
+				this.updateAssignment(false, {bFromGantt: true});
+			}.bind(this));
 		},
 
 		/**
@@ -169,7 +154,6 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onShapeDoubleClick: function(oEvent){
-			console.log("onShapeDoubleClick");
 			var oParams = oEvent.getParameters();
 			var oRowContext = oParams.shape.getBindingContext();
 
@@ -281,7 +265,74 @@ sap.ui.define([
 		_getShapeBindingContextPath: function(sShapeUid){
 			var oParsedUid = sap.gantt.misc.Utility.parseUid(sShapeUid);
 			return oParsedUid.shapeDataName;
-		}
+		},
 
-});
+		/**
+		 *
+		 * @param sAssignmentGuid
+		 * @param isReassign
+		 * @private
+		 */
+		_updateAssignmentModel: function (sAssignmentGuid, isReassign) {
+			return new Promise(function (resolve, reject) {
+				var sPath = this.getModel().createKey("AssignmentSet", {
+					Guid: sAssignmentGuid
+				});
+				var oAssignmentData = this.getModel().getProperty("/"+sPath);
+
+				if(!oAssignmentData){
+					this.getModel().read("/"+sPath, {
+						urlParameters: {
+							"$expand": "Demand"
+						},
+						success: function (result) {
+							var obj = this._getAssignmentModelObject(result);
+							this._oAssignementModel.setData(obj);
+							resolve(obj);
+						}.bind(this),
+						error: function (error) {
+							reject(error);
+						}
+					});
+				}else{
+					var obj = this._getAssignmentModelObject(oAssignmentData);
+					this._oAssignementModel.setData(obj);
+					resolve(obj);
+				}
+			}.bind(this));
+		},
+
+		/**
+		 * get prepared assignment object for reassign, update requests
+		 * @param oData
+		 * @returns {*|{DemandGuid, Description, Effort, OperationNumber, AllowUnassign, ResourceGuid, NewAssignId, OrderId, isNewAssignment, SubOperationNumber, AllowReassign, NewAssignPath, showError, AllowChange, DateFrom, ResourceGroupGuid, AssignmentGuid, NewAssignDesc, DemandStatus, EffortUnit, DateTo}}
+		 * @private
+		 */
+		_getAssignmentModelObject: function (oData) {
+			var oDefaultObject = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject();
+			oDefaultObject.AssignmentGuid = oData.Guid;
+
+			for (var key in oDefaultObject) {
+				if(oData.hasOwnProperty(key)){
+					oDefaultObject[key] = oData[key];
+				}
+			}
+			if(!oData.Demand.Status){
+				var sPath = this.getModel().createKey("DemandSet", {
+					Guid: oData.DemandGuid
+				});
+				oData.Demand = this.getModel().getProperty("/"+sPath);
+			}
+			if(oData.Demand){
+				oDefaultObject.AllowChange = oData.Demand.ASGNMNT_CHANGE_ALLOWED;
+				oDefaultObject.AllowReassign = oData.Demand.ALLOW_REASSIGN;
+				oDefaultObject.AllowUnassign = oData.Demand.ALLOW_UNASSIGN;
+				oDefaultObject.OrderId = oData.Demand.ORDERID;
+				oDefaultObject.OperationNumber = oData.Demand.OPERATIONID;
+				oDefaultObject.SubOperationNumber = oData.Demand.SUBOPERATIONID;
+				oDefaultObject.DemandStatus = oData.Demand.Status;
+			}
+			return oDefaultObject;
+		}
+	});
 });

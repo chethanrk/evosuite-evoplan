@@ -84,10 +84,11 @@ sap.ui.define([
 				})) {
 				return;
 			}
+			console.log(oParams);
 			if (isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)) {
 				this.showMessageToProceed(null, null, null, null, true, oParams, mParameters);
 			} else {
-				this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters,true);
+				this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
 			}
 		},
 		/**

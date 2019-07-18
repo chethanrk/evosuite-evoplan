@@ -32,25 +32,7 @@ sap.ui.define([
 		 */
 		open: function (oView, sBindPath, oAssignmentData, mParameters) {
 			var oDialog = this.getDialog(),
-				oAssignment = {
-					showError: false,
-					AssignmentGuid: "",
-					Description: "",
-					AllowReassign: false,
-					AllowUnassign: false,
-                    AllowChange:true,
-					NewAssignPath: null,
-					NewAssignId: null,
-					NewAssignDesc: null,
-					isNewAssignment: false,
-					DemandGuid: "",
-					DemandStatus: "",
-					OrderId: "",
-					OperationNumber: "",
-					SubOperationNumber: "",
-					DateFrom:"",
-					DateTo:""
-				},
+				oAssignment = this.getDefaultAssignmentModelObject(),
 				oResource,
 				sResourceGroupGuid,
 				sResourceGuid;
@@ -207,6 +189,35 @@ sap.ui.define([
 			this.getDialog().close();
 			this.reAssign = false; // setting to default on close of Dialog
 			this.oAssignmentModel.setData({});
+		},
+
+		/**
+		 * default structure of assignment JSOn model
+		 */
+		getDefaultAssignmentModelObject: function(){
+			return {
+				AllowChange:true,
+				AllowReassign: false,
+				AllowUnassign: false,
+				AssignmentGuid: "",
+				DateFrom:"",
+				DateTo:"",
+				DemandGuid: "",
+				DemandStatus: "",
+				Description: "",
+				Effort: null,
+				EffortUnit: null,
+				NewAssignPath: null,
+				NewAssignId: null,
+				NewAssignDesc: null,
+				OperationNumber: "",
+				OrderId: "",
+				ResourceGroupGuid: "",
+				ResourceGuid: "",
+				SubOperationNumber: "",
+				isNewAssignment: false,
+				showError: false
+			};
 		},
 
 		/**
