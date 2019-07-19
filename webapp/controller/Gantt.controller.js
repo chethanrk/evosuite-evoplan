@@ -104,30 +104,32 @@ sap.ui.define([
 				oDragContext = oDraggedControl.getBindingContext(),
 				oDropContext = oDroppedControl.getBindingContext(),
 				oPromise,
-				oEventBus =  sap.ui.getCore().getEventBus();
+                oResourceBundle = this.getResourceBundle(),
+                sMessage = oResourceBundle.getText("ymsg.availability");
 
-			// if(this.isAvailable(oDropContext.getPath())){
-			// 	oPromise = this.assignedDemands([oDragContext.getPath()],oDropContext.getPath());
-			// }
-
-			oPromise = this.assignedDemands([oDragContext.getPath()],oDropContext.getPath());
-
-			oPromise.then(function(data, response){
-				this._refreshGanttChart();
-				oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			}.bind(this));
-
+			if(!this.isAvailable(oDropContext.getPath())){
+                oPromise = this._showConfirmMessageBox(sMessage); // this method will resolve promise
+                oPromise.then(function(data){
+                    if(data === "YES"){
+                        this._assignDemands([oDragContext.getPath()],oDropContext.getPath());
+                    }
+                }.bind(this));
+			}else{
+                this._assignDemands([oDragContext.getPath()],oDropContext.getPath());
+            }
 		},
-		/**
-		 * On Drop on the resource
-		 * @Author Rahul
-		 * @since 3.0
-		 *
-		 */
-		onDropOnGantt : function(oEvent) {
-			// TODO Checking the possibility on dropping on gantt
-		},
-
+        /**
+         * Calls the respective function import to create assignments
+         * @param aSources Demand paths
+         * @param oTarget Resource Path
+         * @private
+         */
+        _assignDemands : function (aSources, oTarget) {
+            var oPromise = this.assignedDemands(aSources,oTarget);
+            oPromise.then(this._refreshAreas.bind(this)).catch(function(error) {
+                console.log(error);
+            }.bind(this));
+        },
 		/**
 		 * Refreshes the Gantt tree table.
 		 * Note: There is workaround code written to fix the restore tree state.
@@ -196,6 +198,49 @@ sap.ui.define([
                 this.showMessageToast(msg);
             }
         },
+        /**
+		 * Event triggered when right clicked on gantt shape,
+		 * The context menu showing un-assign button will be shown.
+         * @param oEvent
+         */
+        onShapeContextMenu : function (oEvent) {
+            var oShape = oEvent.getParameter("shape");
+            if(oShape){
+            	this._selectedShapeContext = oShape.getBindingContext();
+                if (!this._menu) {
+                    this._menu = sap.ui.xmlfragment(
+                        "com.evorait.evoplan.view.fragments.shapeContextMenu",
+                        this
+                    );
+                    this.getView().addDependent(this._menu);
+                }
+                var eDock = sap.ui.core.Popup.Dock;
+                this._menu.open(false,oShape, eDock.BeginTop, eDock.endBottom, oShape);
+            }
+        },
+        /**
+		 * Calls the delete assignment method when you select un-assign button
+         * @param oEvent
+         */
+        handleMenuItemPress : function (oEvent) {
+			var oModel = this._selectedShapeContext.getModel(),
+				sPath = this._selectedShapeContext.getPath(),
+				sAssignGuid = oModel.getProperty(sPath).AssignmentGuid;
+
+			this.deleteAssignment(oModel, sAssignGuid).then(this._refreshAreas.bind(this));
+        },
+        /**
+		 * Refresh the Gantt tree and Demand table of Gantt view.
+         * @param data
+         * @param oResponse
+         * @private
+         */
+		_refreshAreas : function (data,oResponse) {
+            var oEventBus = sap.ui.getCore().getEventBus();
+            this.showMessage(oResponse);
+            this._refreshGanttChart();
+            oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+        }
 
 });
 });
