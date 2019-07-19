@@ -120,13 +120,11 @@ sap.ui.define([
 					oAssignmentObj.DateTo = newEndDate.toDate();
 					oAssignmentObj.NewAssignPath = targetContext.getPath();
 
-					this._oAssignementModel.setData(oAssignmentObj);
-
 					console.log(oAssignmentObj);
 
+                    this._oAssignementModel.setData(oAssignmentObj);
 					this.updateAssignment(isReassign, {bFromGantt: true});
 				}.bind(this));
-
 			}.bind(this));
 		},
 
@@ -268,7 +266,8 @@ sap.ui.define([
 		},
 
 		/**
-		 *
+		 * Promise for fetching details about asignment demand
+         * coming from backend or alsready loaded data
 		 * @param sAssignmentGuid
 		 * @param isReassign
 		 * @private
@@ -282,9 +281,7 @@ sap.ui.define([
 
 				if(!oAssignmentData){
 					this.getModel().read("/"+sPath, {
-						urlParameters: {
-							"$expand": "Demand"
-						},
+						urlParameters: { "$expand": "Demand" },
 						success: function (result) {
 							var obj = this._getAssignmentModelObject(result);
 							this._oAssignementModel.setData(obj);
