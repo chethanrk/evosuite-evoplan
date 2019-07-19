@@ -12,10 +12,15 @@
 
 		<gnt2:GanttChartContainer id="container" enableTimeScrollSync="true">
 			<gnt2:toolbar>
-				<gnt2:ContainerToolbar design="Auto" showBirdEyeButton="false" showLegendButton="false">
+				<gnt2:ContainerToolbar
+						design="Auto"
+						showBirdEyeButton="true"
+						showLegendButton="false"
+						>
 					<DateRangeSelection
 						id="idDateRangeGantt"
 						width="20%"
+						change="onChangeDateRange"
 					/>
 <!--					<Select forceSelection="false" selectedKey="ReqAndRes" change="onLayoutChange">
 						<items>
@@ -52,7 +57,7 @@
 									  shapeDrop="onShapeDrop"
 									  shapeResize="onShapeResize"
 									  shapeDoubleClick="onShapeDoubleClick"
-			>
+									  shapeContextMenu="onShapeContextMenu">
 				<gnt2:table>
 					<table:TreeTable
 							id="ganttResourceTreeTable"
@@ -95,15 +100,15 @@
 				<gnt2:axisTimeStrategy>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.AxisTimeStrategy" type="XML"/>
 				</gnt2:axisTimeStrategy>
-				<!--<gnt2:dragDropConfig>
-							<dnd:DropInfo
-								groupName="demandsDragnDrop"
-								targetAggregation="adhocLines"
-								dropPosition="On"
-								drop="onDropOnGantt" />
-				</gnt2:dragDropConfig>-->
-			</gnt2:GanttChartWithTable>
 
+			</gnt2:GanttChartWithTable>
+			<!--<gnt2:dragDropConfig>
+				<dnd:DropInfo
+						groupName="demandsAny"
+						targetAggregation="rows"
+						dropPosition="On"
+						drop="onDropOnGantt" />
+			</gnt2:dragDropConfig>-->
 		</gnt2:GanttChartContainer>
 
 	</Page>

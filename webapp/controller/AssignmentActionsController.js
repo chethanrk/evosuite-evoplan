@@ -16,6 +16,7 @@ sap.ui.define([
 		 * 
 		 * @param {Object} aSourcePaths
 		 * @param {String} sTargetPath
+		 * @return {Promise}
 		 */
 		assignedDemands: function (aSourcePaths, sTargetPath) {
 			var oModel = this.getModel();
@@ -48,8 +49,19 @@ sap.ui.define([
 				}
 				return this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST");
 			}
-		}
-
-
+		},
+        /**
+		 * Deletes the assignment
+		 *
+		 * @since 3.0
+         * @param oModel Odata model
+         * @param sAssignmentGuid
+         * @return {Promise}
+         */
+        deleteAssignment : function (oModel, sAssignmentGuid) {
+            return this.executeFunctionImport(oModel, {
+                "AssignmentGUID": sAssignmentGuid
+            }, "DeleteAssignment", "POST");
+        }
 	});
 });

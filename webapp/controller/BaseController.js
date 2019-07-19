@@ -419,6 +419,7 @@ sap.ui.define([
 		 *
 		 * @Athour Rahul
 		 * @version 2.1
+		 * @deprecated
 		 */
 		showConfirmMessageBox: function (message, fnCallback) {
 			var oController = this;
@@ -431,7 +432,32 @@ sap.ui.define([
 					onClose: fnCallback
 				}
 			);
-		}
+		},
+
+        /**
+         * Shows the confirmation Box.
+		 * New Confirm box which return Promise object
+         * Promise resolve when Message box will get close.
+		 *
+         * @Athour Rahul
+         * @version 3.0
+         */
+        _showConfirmMessageBox: function (message) {
+            var oController = this;
+            return new Promise(function (resolve, reject) {
+                MessageBox.confirm(
+                    message, {
+                        styleClass: oController.getOwnerComponent().getContentDensityClass(),
+                        icon: sap.m.MessageBox.Icon.CONFIRM,
+                        title: oController.getResourceBundle().getText("xtit.confirm"),
+                        actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+                        onClose: function (oEvent) {
+                            resolve(oEvent);
+                        }
+                    }
+                );
+            });
+        }
 
 	});
 

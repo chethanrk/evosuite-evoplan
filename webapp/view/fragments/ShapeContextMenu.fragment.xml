@@ -1,0 +1,10 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:u="sap.ui.unified">
+    <u:Menu
+            itemSelect="handleMenuItemPress">
+        <u:MenuItem
+                text="{i18n>xbut.buttonUnassign}"/>
+    </u:Menu>
+</core:FragmentDefinition>
