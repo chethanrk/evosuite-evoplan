@@ -206,18 +206,18 @@ sap.ui.define([
 		 * @param sMethod method of http operation ex: GET/POST/PUT/DELETE
 		 */
 		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod) {
-				return new Promise(function (resolve, reject) {
-					oModel.callFunction("/" + sFuncName, {
-						method: sMethod || "POST",
-						urlParameters: oParams,
-						success: function (oData, oResponse) {
-							resolve(oData, oResponse);
-						}.bind(this),
-						error: function (oError) {
-							reject(oError);
-						}.bind(this)
-					});
+			return new Promise(function (resolve, reject) {
+				oModel.callFunction("/" + sFuncName, {
+					method: sMethod || "POST",
+					urlParameters: oParams,
+					success: function (oData, oResponse) {
+						resolve(oData, oResponse);
+					}.bind(this),
+					error: function (oError) {
+						reject(oError);
+					}.bind(this)
 				});
+			});
 		},
 		/** 
 		 * Method check the parameter and refreshes the required part of screen 

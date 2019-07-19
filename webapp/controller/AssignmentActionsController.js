@@ -5,10 +5,10 @@
  * 
  */
 sap.ui.define([
-	"com/evorait/evoplan/controller/BaseController",
-		"sap/m/MessageBox"
-], function (BaseController,MessageBox) {
-	return BaseController.extend("com.evorait.evoplan.controller.AssignmentActionsController", {
+	"com/evorait/evoplan/controller/AssignmentsController",
+	"sap/m/MessageBox"
+], function (AssignmentsController,MessageBox) {
+	return AssignmentsController.extend("com.evorait.evoplan.controller.AssignmentActionsController", {
 	
 		/**
 		 * save assignment after drop
@@ -49,5 +49,7 @@ sap.ui.define([
 				return this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST");
 			}
 		}
+
+
 	});
 });
