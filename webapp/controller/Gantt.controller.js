@@ -86,13 +86,13 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onShapeDrop: function(oEvent){
-			console.log("onShapeDrop");
-			console.log(oEvent.getParameters());
 			var oParams = oEvent.getParameters(),
 				draggedShape = oParams.draggedShapeDates;
 
 			if(!oParams.targetRow){
-				//Todo: show message
+				var msg = this.getResourceBundle().getText("msg.ganttShapeDropError");
+				this.showMessageToast(msg);
+				return;
 			}
 
 			var targetContext = oParams.targetRow.getBindingContext(),
@@ -109,19 +109,17 @@ sap.ui.define([
 					duration = oSourceEndDate.diff(oSourceStartDate, "seconds"),
 					newEndDate = moment(oParams.newDateTime).add(duration, "seconds");
 
-
-				if(targetData.NodeType === "ASSIGNMENT" && isReassign){
-					//Todo: what to do here?
-					return;
-				}
-
 				this._updateAssignmentModel(sourceData.AssignmentGuid).then(function (oAssignmentObj) {
 					oAssignmentObj.DateFrom = oParams.newDateTime;
 					oAssignmentObj.DateTo = newEndDate.toDate();
 					oAssignmentObj.NewAssignPath = targetContext.getPath();
 
-					console.log(oAssignmentObj);
-
+					if(targetData.NodeType === "ASSIGNMENT" && isReassign){
+						//assign with new date times to parent node
+						oAssignmentObj.NewAssignPath = "/"+this.getModel().createKey("ResourceHierarchySet", {
+							NodeId: targetData.ParentNodeId
+						});
+					}
                     this._oAssignementModel.setData(oAssignmentObj);
 					this.updateAssignment(isReassign, {bFromGantt: true});
 				}.bind(this));
