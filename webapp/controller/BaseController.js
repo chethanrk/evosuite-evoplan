@@ -332,12 +332,14 @@ sap.ui.define([
 		 * @param aDemands {object} array of demand descriptions
 		 * @private
 		 */
-		_showAssignErrorDialog: function (aDemands, isStatus) {
-			var msg = "";
-			if (isStatus)
-				msg = this.getResourceBundle().getText("changeStatusNotPossible");
-			else
-				msg = this.getResourceBundle().getText("assignmentNotPossible");
+		_showAssignErrorDialog: function (aDemands, isStatus, msg) {
+			if(!msg){
+				if (isStatus){
+					msg = this.getResourceBundle().getText("changeStatusNotPossible");
+				} else {
+					msg = this.getResourceBundle().getText("assignmentNotPossible");
+				}
+			}
 
 			var dialog = new Dialog({
 				title: "Error",

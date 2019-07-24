@@ -29,8 +29,7 @@ sap.ui.define([
             this._oAssignementModel = this.getModel("assignment");
 
             //set gantt chart view range
-            var defDateRange = formatter.getDefaultDateRange(),
-                oEventBus = sap.ui.getCore().getEventBus();
+            var defDateRange = formatter.getDefaultDateRange();
 
             this._setGanttTimeHorizon(defDateRange);
             // oViewModel = this.getModel("viewModel");
@@ -45,6 +44,7 @@ sap.ui.define([
             //route matched
             this.getRouter().getRoute("gantt").attachPatternMatched(this._onObjectMatched, this);
             this._oEventBus.subscribe("BaseController", "refreshGanttChart", this._refreshGanttChart, this);
+            this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
 
             //set on first load required filters
             this._treeTable = this.getView().byId("ganttResourceTreeTable");
@@ -61,7 +61,8 @@ sap.ui.define([
          * on page exit
          */
         onExit: function () {
-
+            this._oEventBus.unsubscribe("BaseController", "refreshGanttChart");
+            this._oEventBus.unsubscribe("AssignTreeDialog", "ganttShapeReassignment");
         },
 
 
@@ -76,7 +77,6 @@ sap.ui.define([
                 this._setDefaultTreeDateRange();
             }
         },
-
 
         /**
          * ################### Internal functions ###################
@@ -222,26 +222,59 @@ sap.ui.define([
                 this._selectedShapeContext = oShape.getBindingContext();
                 if (!this._menu) {
                     this._menu = sap.ui.xmlfragment(
-                        "com.evorait.evoplan.view.fragments.shapeContextMenu",
+                        "com.evorait.evoplan.view.gantt.shapeContextMenu",
                         this
                     );
                     this.getView().addDependent(this._menu);
                 }
                 var eDock = sap.ui.core.Popup.Dock;
-                this._menu.open(false, oShape, eDock.BeginTop, eDock.endBottom, oShape);
+                this._menu.open(false, oShape, eDock.BeginTop, eDock.BeginBottom, oShape);
             }
         },
         /**
          * Calls the delete assignment method when you select un-assign button
+		 * show reassignment dialog when select menu "Assign new"
          * @param oEvent
          */
         handleMenuItemPress: function (oEvent) {
-            var oModel = this._selectedShapeContext.getModel(),
-                sPath = this._selectedShapeContext.getPath(),
-                sAssignGuid = oModel.getProperty(sPath).AssignmentGuid;
+        	var oParams = oEvent.getParameters(),
+				sButtonText = oParams.item.getText();
 
-            this.deleteAssignment(oModel, sAssignGuid).then(this._refreshAreas.bind(this));
+			var oModel = this._selectedShapeContext.getModel(),
+				sPath = this._selectedShapeContext.getPath(),
+				sAssignGuid = oModel.getProperty(sPath).AssignmentGuid;
+
+
+			if(sButtonText === this.getResourceBundle().getText("xbut.buttonUnassign")){
+				//do unassign
+				this.deleteAssignment(oModel, sAssignGuid).then(this._refreshAreas.bind(this));
+
+			} else if(sButtonText === this.getResourceBundle().getText("xbut.buttonReassign")){
+				//show reassign dialog
+				console.log("show reassign dialog");
+				//oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
+                this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
+			}
         },
+
+
+        /**
+         * reassign a demand to a new resource by context menu
+         * @private
+         */
+        _reassignShape: function(sChannel, sEvent, oData){
+            if(sEvent === "ganttShapeReassignment"){
+                for (var i = 0; i < oData.aSourcePaths.length; i++) {
+                    var sourceData = this.getModel().getProperty(oData.aSourcePaths[i]);
+                    this._updateAssignmentModel(sourceData.AssignmentGuid).then(function (oAssignmentObj) {
+                        oAssignmentObj.NewAssignPath = oData.sAssignPath;
+                        this._oAssignementModel.setData(oAssignmentObj);
+                        this.updateAssignment(true, {bFromGantt: true});
+                    }.bind(this));
+                }
+            }
+        },
+
         /**
          * Refresh the Gantt tree and Demand table of Gantt view.
          * @param data
@@ -249,10 +282,9 @@ sap.ui.define([
          * @private
          */
         _refreshAreas: function (data, oResponse) {
-            var oEventBus = sap.ui.getCore().getEventBus();
             this.showMessage(oResponse);
             this._refreshGanttChart();
-            oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
         },
 
         /**

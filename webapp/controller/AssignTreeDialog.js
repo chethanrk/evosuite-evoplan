@@ -37,7 +37,7 @@ sap.ui.define([
          * @param sBindPath
          * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
          */
-        open : function (oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters) {
+        open : function (oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent) {
             var oDialog = this.getDialog();
 
             this._oView = oView;
@@ -45,6 +45,7 @@ sap.ui.define([
             this._aSelectedPaths = aSelectedPaths;
             this._bulkReAssign = isBulkReAssign;
 			this._mParameters = mParameters;
+			this._callbackEvent = callbackEvent;
             this._component = this._oView.getController().getOwnerComponent();
             oDialog.addStyleClass(this._component.getContentDensityClass());
             // connect dialog to view (models, lifecycle)
@@ -95,6 +96,15 @@ sap.ui.define([
         onSaveDialog : function (oEvent) {
             if(this._assignPath){
                 var eventBus = sap.ui.getCore().getEventBus();
+                if(this._callbackEvent){
+                    eventBus.publish("AssignTreeDialog", this._callbackEvent, {
+                        sAssignPath: this._assignPath,
+                        aSourcePaths: this._aSelectedPaths,
+                        parameters : this._mParameters
+                    });
+                    this.onCloseDialog();
+                    return;
+                }
                 // In case of bulk reassign
                 if(this._bulkReAssign){
                     eventBus.publish("AssignTreeDialog", "bulkReAssignment", {
@@ -114,7 +124,6 @@ sap.ui.define([
                     this.onCloseDialog();
                     return;
                 }
-
                 if(this._aSelectedPaths){
                     eventBus.publish("AssignTreeDialog", "assignSelectedDemand", {
                         selectedPaths: this._aSelectedPaths,

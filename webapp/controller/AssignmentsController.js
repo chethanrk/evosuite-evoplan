@@ -55,6 +55,12 @@ sap.ui.define([
 			var oData = this.getModel("assignment").getData(),
 				sAssignmentGUID = oData.AssignmentGuid;
 
+			if(isReassign && !oData.AllowReassign){
+				var msg = this.getResourceBundle().getText("reAssignFailMsg");
+				this._showAssignErrorDialog([oData.Description], null, msg);
+				return;
+			}
+
 			var oParams = {
 				"DateFrom": oData.DateFrom || 0,
 				"TimeFrom": {
