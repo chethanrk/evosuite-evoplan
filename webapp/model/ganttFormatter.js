@@ -6,83 +6,67 @@ sap.ui.define([
     var shapeNodeType = "ASSIGNMENT";
 
     var mColorMapping = {
-        "FU_PLANNED" : {
-            strokeWidth: 2,
-            fill: "#99D101",
-            strokeDasharray: ""
+        "CAP" : {
+            stroke: "#ad783c",
+            strokeWidth: 1,
+            fill: "#f7bf42"
         },
-        "FU_UNPLANNED": {
-            stroke: "#99D101",
-            strokeWidth: 2,
-            fill: "#fff",
-            strokeDasharray: "3,3"
-        },
-
-        "FO_PLANNED" : {
-            strokeWidth: 0,
-            fill: "#99D101",
-            stroke: "#99D101",
-            strokeDasharray: ""
-        },
-        "FO_UNPLANNED": {
-            stroke: "#99D101",
-            strokeWidth: 3,
-            fill: "#fff",
-            strokeDasharray: "3,3"
+        "CON": {
+            stroke: "#7088ac",
+            strokeWidth: 1,
+            fill: "#b6daff"
         },
         "DEFAULT": {
-            stroke: "#ff00ff",
-            strokeWidth: 2,
-            fill: "#ffa0aa",
-            strokeDasharray: "5,1"
+            stroke: "#65814e",
+            strokeWidth: 1,
+            fill: "#c5e7a0"
         },
         "INVISIBLE": {
             stroke: "#ffffff",
             strokeWidth: 0,
-            fill: "#ffffff",
-            strokeDasharray: ""
+            fill: "#ffffff"
         }
     };
 
-    function getMappingItem(sNodeType, sIcon) {
+    function getMappingItem(sType, sStatus, sNodeType) {
         if(sNodeType !== shapeNodeType){
             return mColorMapping["INVISIBLE"];
         }
-        var sKey = (sNodeType && sIcon) ? sNodeType.toUpperCase() + "_" + sIcon.toUpperCase() : "DEFAULT";
+        var sKey = (sType && sStatus) ? sType.toUpperCase() : "DEFAULT";
         return mColorMapping[sKey];
     }
 
     return {
 
-        strokeColor: function(sNodeType, sPlanStatus) {
-            if(getMappingItem(sNodeType, sPlanStatus)){
-                return getMappingItem(sNodeType, sPlanStatus)["stroke"];
+        strokeColor: function(sType, sStatus, sNodeType) {
+            if(getMappingItem(sType, sStatus)){
+                return getMappingItem(sType, sStatus, sNodeType)["stroke"];
             }
             return getMappingItem()["stroke"];
         },
-        strokeWidth: function(sNodeType, sPlanStatus) {
-            if(getMappingItem(sNodeType, sPlanStatus)){
-                return getMappingItem(sNodeType, sPlanStatus)["strokeWidth"];
+        strokeWidth: function(sType, sStatus, sNodeType) {
+            if(getMappingItem(sType, sStatus)){
+                return getMappingItem(sType, sStatus, sNodeType)["strokeWidth"];
             }
             return getMappingItem()["strokeWidth"];
         },
 
-        strokeDasharray: function(sNodeType, sPlanStatus) {
-            if(getMappingItem(sNodeType, sPlanStatus)){
-                return getMappingItem(sNodeType, sPlanStatus)["strokeWidth"];
+        strokeDasharray: function(sType, sStatus, sNodeType) {
+            if(getMappingItem(sType, sStatus)){
+                return getMappingItem(sType, sStatus, sNodeType)["strokeWidth"];
             }
             return getMappingItem()["strokeWidth"];
         },
 
-        fillColor: function(sNodeType, sPlanStatus) {
-            if(getMappingItem(sNodeType, sPlanStatus)){
-                return getMappingItem(sNodeType, sPlanStatus)["fill"];
+        fillColor: function(sType, sStatus, sNodeType) {
+            if(getMappingItem(sType, sStatus)){
+                return getMappingItem(sType, sStatus, sNodeType)["fill"];
             }
             return getMappingItem()["fill"];
         },
 
-        statusIconColor: function(sPlanStatus) {
-            return sPlanStatus === "planned" ? "Success" : "Normal";
+        statusIconColor: function(sStatus) {
+            return sStatus === "planned" ? "Success" : "Normal";
         },
 
         /**
@@ -97,8 +81,8 @@ sap.ui.define([
             return new Date(parseInt(d));
         },
 
-        getMergedDateObject: function (oDate, oTime, sNodeType) {
-            if(sNodeType !== shapeNodeType){
+        getMergedDateObject: function (oDate, oTime, sType) {
+            if(sType !== shapeNodeType){
                 return null;
             }
             if(!oDate && (!oTime || !oTime.ms)){
