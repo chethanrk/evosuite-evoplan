@@ -15,13 +15,19 @@
 				<gnt2:ContainerToolbar
 						design="Auto"
 						showBirdEyeButton="true"
-						showLegendButton="false"
+						showLegendButton="true"
+						class="gantt_toolbar"
 						>
-					<DateRangeSelection
-						id="idDateRangeGantt"
-						width="20%"
-						change="onChangeDateRange"
-					/>
+					<gnt2:content>
+						<ToolbarSpacer />
+						<Label text="Gantt" />
+						<DateRangeSelection
+								id="idDateRangeGantt1"
+								width="15%"
+								change="onChangeHorizon"
+						/>
+					</gnt2:content>
+
 <!--					<Select forceSelection="false" selectedKey="ReqAndRes" change="onLayoutChange">
 						<items>
 							<core:Item key="ReqAndRes" text="Requirement And Resource"/>
@@ -29,21 +35,20 @@
 							<core:Item key="Requirement" text="Requirement"/>
 						</items>
 					</Select>-->
-
-					<!--<gnt2:legendContainer>
+					<gnt2:legendContainer>
 						<gnt2:LegendContainer width="230px" height="250px">
 							<gnt2:ListLegend title="Requirement Document">
-								<gnt2:ListLegendItem interactive="true" selected="true" interactiveChange=".onLegendItemInteractiveChange">
-									<gnt2:BaseRectangle shapeId="legendItemFO" fill="#99D101" title="Freight Order" showTitle="false"/>
-								</gnt2:ListLegendItem>
+								<!--<gnt2:ListLegendItem interactive="true" selected="true" interactiveChange=".onLegendItemInteractiveChange">-->
+									<!--<gnt2:BaseRectangle shapeId="legendItemFO" fill="#99D101" title="Freight Order" showTitle="false"/>-->
+								<!--</gnt2:ListLegendItem>-->
 
-								<gnt2:ListLegendItem interactive="false" selected="false">
-									<gnt2:BaseRectangle shapeId="legendItemFU"  stroke="#99D101" strokeWidth="2" strokeDasharray="2" fill="#fff" title="Freight Unit" showTitle="false"/>
-								</gnt2:ListLegendItem>
+								<!--<gnt2:ListLegendItem interactive="false" selected="false">-->
+									<!--<gnt2:BaseRectangle shapeId="legendItemFU"  stroke="#99D101" strokeWidth="2" strokeDasharray="2" fill="#fff" title="Freight Unit" showTitle="false"/>-->
+								<!--</gnt2:ListLegendItem>-->
 
 							</gnt2:ListLegend>
 						</gnt2:LegendContainer>
-					</gnt2:legendContainer>-->
+					</gnt2:legendContainer>
 					
 
 				</gnt2:ContainerToolbar>
@@ -57,17 +62,17 @@
 									  shapeDrop="onShapeDrop"
 									  shapeResize="onShapeResize"
 									  shapeDoubleClick="onShapeDoubleClick"
-									  shapeContextMenu="onShapeContextMenu">
+									  shapeContextMenu="onShapeContextMenu"
+									  showShapeTimeOnDrag="true">
 				<gnt2:table>
 					<table:TreeTable
 							id="ganttResourceTreeTable"
-							selectionMode="Single"
+							selectionMode="None"
 							visibleRowCountMode="Auto"
 							enableColumnReordering="false"
 							enableBusyIndicator="true"
 							busyStateChanged="onBusyStateChanged"
 							enableCellFilter="false"
-							selectionBehavior="RowSelector"
 							rows="{
 								path: '/ResourceHierarchySet',
 								parameters: {
@@ -76,7 +81,13 @@
 								}
 							}">
 						<table:extension>
-							<!--<OverflowToolbar></OverflowToolbar>-->
+							<OverflowToolbar>
+								<DateRangeSelection
+										id="idDateRangeGantt2"
+										width="60%"
+										change="onChangeDateRange"
+								/>
+							</OverflowToolbar>
 						</table:extension>
 						<table:rowSettingsTemplate>
 							<gnt2:GanttRowSettings rowId="{NodeId}">
@@ -91,7 +102,7 @@
 							<dnd:DropInfo
 								groupName="demandsDragnDrop"
 								targetAggregation="rows"
-								dropPosition="On"
+								dropPosition="OnOrBetween"
 								drop="onDropOnResource" />
 						</table:dragDropConfig>
 					</table:TreeTable>

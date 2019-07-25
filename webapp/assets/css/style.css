@@ -107,3 +107,7 @@ div.worktimeAvailability > .workTimeAvailabilityText {
 .workTimeTextBlack{
 	color:#000000;
 }
+
+.gantt_toolbar [data-sap-ui='__spacer4']{
+    display: none;
+}

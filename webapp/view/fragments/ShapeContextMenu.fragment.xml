@@ -5,6 +5,10 @@
     <u:Menu
             itemSelect="handleMenuItemPress">
         <u:MenuItem
-                text="{i18n>xbut.buttonUnassign}"/>
+                text="{i18n>xbut.buttonUnassign}"
+        visible="{viewModel>/ganttSettings/shapeOpearation/unassign}"/>
+        <u:MenuItem
+                text="{i18n>xbut.buttonChange}"
+                visible="{viewModel>/ganttSettings/shapeOpearation/change}"/>
     </u:Menu>
 </core:FragmentDefinition>
