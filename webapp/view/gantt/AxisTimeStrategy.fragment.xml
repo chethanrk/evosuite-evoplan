@@ -1,10 +1,8 @@
 <core:FragmentDefinition
         xmlns="sap.ui.table"
-        xmlns:m="sap.m"
         xmlns:core="sap.ui.core"
         xmlns:axistime="sap.gantt.axistime"
-        xmlns:config="sap.gantt.config"
-        xmlns:gnt2="sap.gantt.simple">
+        xmlns:config="sap.gantt.config">
 
     <axistime:ProportionZoomStrategy>
         <axistime:totalHorizon>

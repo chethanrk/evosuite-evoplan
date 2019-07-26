@@ -87,6 +87,12 @@ sap.ui.define([
          * @private
          */
         _setDefaultTreeDateRange: function (mParameters) {
+            var aFilters = this._getDefaultFilters(mParameters);
+
+            var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
+            binding.filter(aFilters, "Application");
+        },
+        _getDefaultFilters : function (mParameters) {
             var defDateRange = mParameters || formatter.getDefaultDateRange(),
                 aFilters = [];
 
@@ -94,8 +100,7 @@ sap.ui.define([
             aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(defDateRange.dateFrom)));
             aFilters.push(new Filter("NodeType", FilterOperator.GE, "TIMENONE"));
 
-            var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
-            binding.filter(aFilters, "Application");
+            return aFilters;
         },
         /**
          * On Drop on the resource call the function import for
@@ -417,16 +422,32 @@ sap.ui.define([
             var oRowContext = oParams.shape.getBindingContext();
 
             if (oRowContext) {
-                this.getOwnerComponent().assignInfoDialog.open(this.getView(), oRowContext.getPath());
+                this.getOwnerComponent().assignInfoDialog.open(this.getView(), oRowContext.getPath(), null, {bFromGantt: true});
             } else {
                 var msg = this.getResourceBundle().getText("notFoundContext");
                 this.showMessageToast(msg);
             }
         },
+        /**
+         * on change date range for time horizon for gantt chart
+         * @param oEvent
+         */
         onChangeHorizon : function (oEvent) {
             var oFrom = oEvent.getParameter("from"),
                 oTo = oEvent.getParameter("to");
             this._setGanttTimeHorizon({dateTo: oTo, dateFrom: oFrom});
+        },
+        /**
+         * on search the filter the gantt tree resource
+         * @param oEvent
+         */
+        onSearchResource : function (oEvent) {
+            debugger;
+            var sQuery = oEvent.getParameter("query");
+            if(oEvent.getParameter("clearButtonPressed")){
+
+            }
+
         }
 
     });

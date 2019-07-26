@@ -381,9 +381,16 @@ sap.ui.define([
 				sDemandGuid = oAssignment.getProperty("/DemandGuid");
 
 			this.onCloseDialog();
-			oRouter.navTo("detail", {
-				guid: sDemandGuid
-			});
+			if(this._mParameters.bFromGantt){
+                oRouter.navTo("ganttDemandDetails", {
+                    guid: sDemandGuid
+                });
+			}else{
+                oRouter.navTo("detail", {
+                    guid: sDemandGuid
+                });
+			}
+
 		}
 	});
 });
