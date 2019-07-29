@@ -5,8 +5,11 @@ sap.ui.define([
 	"com/evorait/evoplan/model/ganttFormatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/m/MessageToast"
-], function (AssignmentsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, MessageToast) {
+	"sap/m/MessageToast",
+    "sap/ui/table/RowAction",
+    "sap/ui/table/RowActionItem"
+
+], function (AssignmentsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, MessageToast, RowAction, RowActionItem) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.GanttDemands", {
@@ -20,8 +23,37 @@ sap.ui.define([
 			
 			this._oDraggableTable = this.byId("draggableList");
 			this._oDataTable = this._oDraggableTable.getTable();
+            // Row Action template to navigate to Detail page
+            var onClickNavigation = this._onActionPress.bind(this);
+            var oTemplate = this._oDataTable.getRowActionTemplate();
+            if (oTemplate) {
+                oTemplate.destroy();
+                oTemplate = null;
+            }
+            oTemplate = new RowAction({
+                items: [
+                    new RowActionItem({
+                        type: "Navigation",
+                        press: onClickNavigation
+                    })
+                ]
+            });
+            this._oDataTable.setRowActionTemplate(oTemplate);
+            this._oDataTable.setRowActionCount(1);
+
 		},
-		
+        _onActionPress : function (oEvent) {
+            var oRouter = this.getRouter();
+            var oRow = oEvent.getParameter("row");
+            var oContext = oRow.getBindingContext();
+            var sPath = oContext.getPath();
+            var oModel = oContext.getModel();
+            var oData = oModel.getProperty(sPath);
+
+            oRouter.navTo("ganttDemandDetails", {
+                guid: oData.Guid
+            });
+        },
 		/** 
 		 * On Drag start restrict demand having status other init
 		 * @param oEvent

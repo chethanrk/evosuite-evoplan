@@ -37,6 +37,7 @@ sap.ui.define([
 
 			this.getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
 			this.getRouter().getRoute("assetDemandDetail").attachPatternMatched(this._onObjectMatched, this);
+            this.getRouter().getRoute("ganttDemandDetails").attachPatternMatched(this._onObjectMatched, this);
 
 			// Store original busy indicator delay, so it can be restored later on
 			iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
@@ -89,9 +90,11 @@ sap.ui.define([
 			// setting the bread crum value xtit.itemListTitle
 			if (sRouteName === "detail") {
 				this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageDemands"));
-			} else {
-				this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageAssetManager"));
-			}
+			} else if(sRouteName === "ganttDemandDetails"){
+				this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageGanttChart"));
+			}else {
+                this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageAssetManager"));
+            }
 
 			oDataModel.metadataLoaded().then(function () {
 				var sPath = this.getModel().createKey("DemandSet", {

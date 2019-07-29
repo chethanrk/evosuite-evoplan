@@ -96,7 +96,11 @@ sap.ui.define([
                 selectedHierarchyView:"TIMENONE",
                 enableReprocess:false,
 				ganttSettings: {
-                	active: false
+                	active: false,
+					shapeOpearation:{
+                		unassign:false,
+						reassign:false
+					}
 				}
             });
             this.setModel(oViewModel, "viewModel");

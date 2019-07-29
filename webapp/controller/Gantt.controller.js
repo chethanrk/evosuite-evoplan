@@ -4,8 +4,9 @@ sap.ui.define([
     "com/evorait/evoplan/model/formatter",
     "com/evorait/evoplan/model/ganttFormatter",
     "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator"
-], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator) {
+    "sap/ui/model/FilterOperator",
+    "sap/ui/core/Popup"
+], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, Popup) {
     "use strict";
 
     return AssignmentActionsController.extend("com.evorait.evoplan.controller.Gantt", {
@@ -32,14 +33,6 @@ sap.ui.define([
             var defDateRange = formatter.getDefaultDateRange();
 
             this._setGanttTimeHorizon(defDateRange);
-            // oViewModel = this.getModel("viewModel");
-            //oViewModel.setProperty("/ganttSettings/totalStartTime", defDateRange.dateFrom);
-            //oViewModel.setProperty("/ganttSettings/totalEndTime", defDateRange.dateTo);
-
-            // oViewModel.setProperty("/ganttSettings/totalStartTime", moment().startOf("month").subtract(2, "months").toDate());
-            // oViewModel.setProperty("/ganttSettings/totalEndTime", moment().endOf("month").add(2, "months").toDate());
-            // oViewModel.setProperty("/ganttSettings/visibleStartTime", moment().startOf("month").toDate()); 	// start of month
-            // oViewModel.setProperty("/ganttSettings/visibleEndTime", moment().endOf("month").toDate()); 		// end of month
 
             //route matched
             this.getRouter().getRoute("gantt").attachPatternMatched(this._onObjectMatched, this);
@@ -95,6 +88,12 @@ sap.ui.define([
          * @private
          */
         _setDefaultTreeDateRange: function (mParameters) {
+            var aFilters = this._getDefaultFilters(mParameters);
+
+            var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
+            binding.filter(aFilters, "Application");
+        },
+        _getDefaultFilters : function (mParameters) {
             var defDateRange = mParameters || formatter.getDefaultDateRange(),
                 aFilters = [];
 
@@ -102,8 +101,7 @@ sap.ui.define([
             aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(defDateRange.dateFrom)));
             aFilters.push(new Filter("NodeType", FilterOperator.GE, "TIMENONE"));
 
-            var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
-            binding.filter(aFilters, "Application");
+            return aFilters;
         },
         /**
          * On Drop on the resource call the function import for
@@ -112,6 +110,7 @@ sap.ui.define([
          *
          */
         onDropOnResource: function (oEvent) {
+            debugger;
             var oDraggedControl = oEvent.getParameter("draggedControl"),
                 oDroppedControl = oEvent.getParameter("droppedControl"),
                 oDragContext = oDraggedControl.getBindingContext(),
@@ -152,7 +151,8 @@ sap.ui.define([
          */
         _refreshGanttChart: function (oEvent) {
             var oTreeTable = this.getView().byId("ganttResourceTreeTable"),
-                oTreeBinding = oTreeTable.getBinding("rows");
+                oTreeBinding = oTreeTable.getBinding("rows"),
+                oGanttContainer = this.getView().byId("container");
 
             if (oTreeBinding) {
                 oTreeBinding._restoreTreeState().then(function () {
@@ -163,8 +163,9 @@ sap.ui.define([
                         oTreeTable._getScrollExtension().updateVerticalScrollPosition(33);
                     } else {
                         oTreeTable._getScrollExtension().scrollVertically(1);
+                        oTreeTable._getScrollExtension().scrollVertically(-1);
                     }
-
+                    oGanttContainer.setBusy(false);
                 });
 
             }
@@ -179,7 +180,6 @@ sap.ui.define([
                 oTo = oEvent.getParameter("to");
 
             this._setDefaultTreeDateRange({dateTo: oTo, dateFrom: oFrom});
-            this._setGanttTimeHorizon({dateTo: oTo, dateFrom: oFrom});
         },
         /**
          * Set Time Horizon for Gantt chart
@@ -217,9 +217,13 @@ sap.ui.define([
          * @param oEvent
          */
         onShapeContextMenu: function (oEvent) {
-            var oShape = oEvent.getParameter("shape");
+            var oShape = oEvent.getParameter("shape"),
+                oViewModel = this.getModel("viewModel");
             if (oShape) {
                 this._selectedShapeContext = oShape.getBindingContext();
+                var oModel = this._selectedShapeContext.getModel(),
+                    sPath = this._selectedShapeContext.getPath(),
+                    sAssignGuid = oModel.getProperty(sPath).AssignmentGuid;
                 if (!this._menu) {
                     this._menu = sap.ui.xmlfragment(
                         "com.evorait.evoplan.view.gantt.shapeContextMenu",
@@ -227,8 +231,18 @@ sap.ui.define([
                     );
                     this.getView().addDependent(this._menu);
                 }
-                var eDock = sap.ui.core.Popup.Dock;
-                this._menu.open(false, oShape, eDock.BeginTop, eDock.BeginBottom, oShape);
+
+                // oShape.setBusy(true);
+                this._updateAssignmentModel(sAssignGuid).then(function(data){
+                    oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign",data.AllowUnassign);
+                    oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign",data.AllowReassign)
+                    oViewModel.setProperty("/ganttSettings/shapeOpearation/change",data.AllowChange);
+                    // oShape.setBusy(false);
+                    var eDock = Popup.Dock;
+                    this._menu.open(false, oShape, eDock.BeginTop, eDock.endBottom, oShape);
+                }.bind(this));
+
+
             }
         },
         /**
@@ -282,6 +296,9 @@ sap.ui.define([
          * @private
          */
         _refreshAreas: function (data, oResponse) {
+            var oEventBus = sap.ui.getCore().getEventBus(),
+                oGanttContainer = this.getView().byId("container");
+            oGanttContainer.setBusy(true);
             this.showMessage(oResponse);
             this._refreshGanttChart();
 			this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
@@ -439,11 +456,33 @@ sap.ui.define([
             var oRowContext = oParams.shape.getBindingContext();
 
             if (oRowContext) {
-                this.getOwnerComponent().assignInfoDialog.open(this.getView(), oRowContext.getPath());
+                this.getOwnerComponent().assignInfoDialog.open(this.getView(), oRowContext.getPath(), null, {bFromGantt: true});
             } else {
                 var msg = this.getResourceBundle().getText("notFoundContext");
                 this.showMessageToast(msg);
             }
+        },
+        /**
+         * on change date range for time horizon for gantt chart
+         * @param oEvent
+         */
+        onChangeHorizon : function (oEvent) {
+            var oFrom = oEvent.getParameter("from"),
+                oTo = oEvent.getParameter("to");
+            this._setGanttTimeHorizon({dateTo: oTo, dateFrom: oFrom});
+        },
+        /**
+         * on search the filter the gantt tree resource
+         * @param oEvent
+         */
+        onSearchResource : function (oEvent) {
+            var sQuery = oEvent.getParameter("query");
+            var oFilter = new Filter("Description",FilterOperator.Contains, sQuery);
+            var aFilters = this._getDefaultFilters();
+            aFilters.push(oFilter);
+            var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
+            binding.filter(aFilters, "Application");
+
         }
 
     });
