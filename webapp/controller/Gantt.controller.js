@@ -204,8 +204,7 @@ sap.ui.define([
                 oRowContext = oSource.getParent().getBindingContext();
 
             if (oRowContext) {
-                this.assignmentPath = oRowContext.getPath();
-                this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, {bFromGantt: true});
+                this.getOwnerComponent().assignInfoDialog.open(this.getView(), oRowContext.getPath(), null, {bFromGantt: true});
             } else {
                 var msg = this.getResourceBundle().getText("notFoundContext");
                 this.showMessageToast(msg);
@@ -268,7 +267,9 @@ sap.ui.define([
 				console.log("show reassign dialog");
 				//oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
                 this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
-			}
+			}else if(sButtonText === this.getResourceBundle().getText("xbut.buttonChange")){
+                    this.getOwnerComponent().assignInfoDialog.open(this.getView(), sPath, null, {bFromGantt: true});
+            }
         },
 
 

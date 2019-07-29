@@ -25,7 +25,7 @@
 								change="onChangeDateRange"
 						/>
 						<ToolbarSpacer />
-						<Label text="{i18n>timeHorizon} :" />
+						<Label text="{i18n>xtit.timeHorizon} :" />
 						<DateRangeSelection
 								id="idDateRangeGantt1"
 								width="15%"
