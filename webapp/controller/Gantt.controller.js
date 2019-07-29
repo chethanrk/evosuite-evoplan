@@ -442,11 +442,12 @@ sap.ui.define([
          * @param oEvent
          */
         onSearchResource : function (oEvent) {
-            debugger;
             var sQuery = oEvent.getParameter("query");
-            if(oEvent.getParameter("clearButtonPressed")){
-
-            }
+            var oFilter = new Filter("Description",FilterOperator.Contains, sQuery);
+            var aFilters = this._getDefaultFilters();
+            aFilters.push(oFilter);
+            var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
+            binding.filter(aFilters, "Application");
 
         }
 
