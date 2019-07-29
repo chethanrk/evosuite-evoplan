@@ -21,7 +21,7 @@
 		},
 		"dataSources": {
 			"mainService": {
-				"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/",
+				"uri": "/sap/opu/odata/EVORA/EP_MAIN_SRV/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
@@ -220,6 +220,13 @@
 						"demandsGantt",
 						"gantt"
 					]
+				},
+				{
+					"pattern": "Gantt/Demand/{guid}",
+					"name": "ganttDemandDetails",
+					"target": [
+						"ganttDemandDetails"
+					]
 				}
 			],
 			"targets": {
@@ -320,6 +327,13 @@
 				"messageCockpit": {
 					"viewType": "XML",
 					"viewName": "MessageCockpit",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 4
+				},
+				"ganttDemandDetails":{
+					"viewType": "XML",
+					"viewName": "Detail",
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",
 					"viewLevel": 4
