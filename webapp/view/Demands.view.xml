@@ -20,7 +20,7 @@
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1"/>
 					</smartTable:layoutData>
-					<table:Table enableGrouping="true" groupBy="OrderId">
+					<table:Table columnResize="onColumnResize">
 						<table:rowSettingsTemplate>
 							<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
 						</table:rowSettingsTemplate>

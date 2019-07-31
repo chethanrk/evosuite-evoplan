@@ -362,6 +362,12 @@ sap.ui.define([
 			if (sEvent === "refreshDemandTable") {
 				this.byId("draggableList").rebindTable();
 			}
+		},
+		/**
+		 * Register the drag and drop again
+		 */
+		onColumnResize: function() {
+			this._jDraggable(this);
 		}
 	});
 });
