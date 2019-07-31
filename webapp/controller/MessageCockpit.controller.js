@@ -246,7 +246,11 @@ sap.ui.define([
 		 * @param response response from the function import
 		 */
 		_onReprocessed : function (data, response){
-			var oIconTab = this.getView().byId("idIconTabBar");
+			var oIconTab = this.getView().byId("idIconTabBar"),
+				oUserModel = this.getModel("user");
+			if(data.length !== 0){
+				oUserModel.setProperty("/LastSyncTimestamp",data[0].LAST_SYNC_TIME);
+			}
 			this._refreshCounts();
 			oIconTab.setSelectedKey("success");
 			oIconTab.fireSelect({
