@@ -54,7 +54,7 @@
 						persistencyKey="_keyForProesses" 
 						useTablePersonalisation="true"
 						requestAtLeastFields="SyncGuid"
-						ignoreFromPersonalisation="DeletionIndicator,EvoProduct"
+						ignoreFromPersonalisation="DeletionIndicator,EvoProduct,LAST_SYNC_TIME,SyncStatus,SyncGuid,ObjectGuid,ExternalKey,ProcessingType"
 						beforeRebindTable="onBeforeRebindTable">
 					<!-- layout data used to make the table growing but the filter bar fixed -->
 					<smartTable:layoutData>
