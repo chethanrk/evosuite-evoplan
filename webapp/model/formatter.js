@@ -27,8 +27,8 @@ sap.ui.define([
          */
         getDefaultDateRange: function(){
             return {
-                dateFrom: moment().startOf("year").subtract(2, "years").toDate(),
-                dateTo: moment().endOf("year").add(2, "years").toDate()
+                dateFrom: moment().startOf("year").subtract(5, "years").toDate(),
+                dateTo: moment().endOf("year").add(5, "years").toDate()
             }
         },
 

@@ -26,18 +26,17 @@ sap.ui.define([
          * controller life cycle on init event
          */
         onInit: function () {
+
             this._oEventBus = sap.ui.getCore().getEventBus();
             this._oAssignementModel = this.getModel("assignment");
 
-            //set gantt chart view range
-            var defDateRange = formatter.getDefaultDateRange();
-
-            this._setGanttTimeHorizon(defDateRange);
-
             //route matched
-            this.getRouter().getRoute("gantt").attachPatternMatched(this._onObjectMatched, this);
+            // this.getRouter().getRoute("gantt").attachPatternMatched(this._onObjectMatched, this);
             this._oEventBus.subscribe("BaseController", "refreshGanttChart", this._refreshGanttChart, this);
+            // this._oEventBus.subscribe("BaseController", "refreshChart", this._setDefaultTreeDateRange, this);
             this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
+
+
 
             //set on first load required filters
             this._treeTable = this.getView().byId("ganttResourceTreeTable");
@@ -93,6 +92,13 @@ sap.ui.define([
             var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
             binding.filter(aFilters, "Application");
         },
+        /**
+         * Gets default filters for gantt
+         *
+         * @param mParameters
+         * @return {Array}
+         * @private
+         */
         _getDefaultFilters : function (mParameters) {
             var defDateRange = mParameters || formatter.getDefaultDateRange(),
                 aFilters = [];
@@ -100,6 +106,8 @@ sap.ui.define([
             aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(defDateRange.dateTo)));
             aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(defDateRange.dateFrom)));
             aFilters.push(new Filter("NodeType", FilterOperator.GE, "TIMENONE"));
+            aFilters.push(new Filter("GANTT_ENABLED", FilterOperator.EQ, "X"));
+
 
             return aFilters;
         },
@@ -118,6 +126,11 @@ sap.ui.define([
                 oPromise,
                 oResourceBundle = this.getResourceBundle(),
                 sMessage = oResourceBundle.getText("ymsg.availability");
+            if(this.getModel().getProperty(oDropContext.getPath()).NodeType === "ASSIGNMENT"){
+                // oEvent.preventDefault();
+                this.showMessageToast(oResourceBundle.getText("ymsg.notPossible"));
+                return;
+            }
 
             if (!this.isAvailable(oDropContext.getPath())) {
                 oPromise = this._showConfirmMessageBox(sMessage); // this method will resolve promise
@@ -157,14 +170,14 @@ sap.ui.define([
             if (oTreeBinding) {
                 oTreeBinding._restoreTreeState().then(function () {
                     // Scrolled manually to fix the rendering
-                    var oScrollContainer = oTreeTable._getScrollExtension();
-                    var iScrollIndex = oScrollContainer.getRowIndexAtCurrentScrollPosition();
-                    if (iScrollIndex === 0) {
-                        oTreeTable._getScrollExtension().updateVerticalScrollPosition(33);
-                    } else {
-                        oTreeTable._getScrollExtension().scrollVertically(1);
-                        oTreeTable._getScrollExtension().scrollVertically(-1);
-                    }
+                    // var oScrollContainer = oTreeTable._getScrollExtension();
+                    // var iScrollIndex = oScrollContainer.getRowIndexAtCurrentScrollPosition();
+                    // if (iScrollIndex === 0) {
+                    //     oTreeTable._getScrollExtension().updateVerticalScrollPosition(33);
+                    // } else {
+                    //     oTreeTable._getScrollExtension().scrollVertically(1);
+                    //     oTreeTable._getScrollExtension().scrollVertically(-1);
+                    // }
                     oGanttContainer.setBusy(false);
                 });
 
@@ -180,19 +193,6 @@ sap.ui.define([
                 oTo = oEvent.getParameter("to");
 
             this._setDefaultTreeDateRange({dateTo: oTo, dateFrom: oFrom});
-        },
-        /**
-         * Set Time Horizon for Gantt chart
-         * @since 3.0
-         * @param defDateRange
-         */
-        _setGanttTimeHorizon: function (defDateRange) {
-            var oViewModel = this.getModel("viewModel");
-
-            oViewModel.setProperty("/ganttSettings/totalStartTime", defDateRange.dateFrom);
-            oViewModel.setProperty("/ganttSettings/totalEndTime", defDateRange.dateTo);
-            oViewModel.setProperty("/ganttSettings/visibleStartTime", moment().startOf("month").toDate()); 	// start of month
-            oViewModel.setProperty("/ganttSettings/visibleEndTime", moment().endOf("month").toDate());
         },
         /**
          * on press link of assignment in resource tree row
@@ -462,15 +462,6 @@ sap.ui.define([
                 var msg = this.getResourceBundle().getText("notFoundContext");
                 this.showMessageToast(msg);
             }
-        },
-        /**
-         * on change date range for time horizon for gantt chart
-         * @param oEvent
-         */
-        onChangeHorizon : function (oEvent) {
-            var oFrom = oEvent.getParameter("from"),
-                oTo = oEvent.getParameter("to");
-            this._setGanttTimeHorizon({dateTo: oTo, dateFrom: oFrom});
         },
         /**
          * on search the filter the gantt tree resource

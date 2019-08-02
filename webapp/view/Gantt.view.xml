@@ -24,22 +24,7 @@
 								width="15%"
 								change="onChangeDateRange"
 						/>
-						<ToolbarSpacer />
-						<Label text="{i18n>xtit.timeHorizon} :" />
-						<DateRangeSelection
-								id="idDateRangeGantt1"
-								width="15%"
-								change="onChangeHorizon"
-						/>
 					</gnt2:content>
-
-<!--					<Select forceSelection="false" selectedKey="ReqAndRes" change="onLayoutChange">
-						<items>
-							<core:Item key="ReqAndRes" text="Requirement And Resource"/>
-							<core:Item key="Resource" text="Resource"/>
-							<core:Item key="Requirement" text="Requirement"/>
-						</items>
-					</Select>-->
 					<gnt2:legendContainer>
 						<gnt2:LegendContainer width="230px" height="250px">
 							<gnt2:ListLegend title="Requirement Document">
@@ -83,7 +68,8 @@
 								path: '/ResourceHierarchySet',
 								parameters: {
 									numberOfExpandedLevels:1,
-									restoreTreeStateAfterChange:true
+									restoreTreeStateAfterChange:true,
+									expand:'AssignmentSet'
 								}
 							}">
 						<table:extension>
@@ -92,17 +78,22 @@
 							</OverflowToolbar>
 						</table:extension>
 						<table:rowSettingsTemplate>
-							<gnt2:GanttRowSettings rowId="{NodeId}">
+							<gnt2:GanttRowSettings rowId="{NodeId}"
+								shapes1="{
+									path:'AssignmentSet',
+									templateShareable:true
+								}">
 								<gnt2:shapes1>
 									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.Requirement" type="XML"/>
 								</gnt2:shapes1>
+
 							</gnt2:GanttRowSettings>
 						</table:rowSettingsTemplate>
 
 						<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.ResourceTreeColumns" type="XML"/>
 						<table:dragDropConfig>
 							<dnd:DropInfo
-								groupName="demandsDragnDrop"
+								groupName="demandsAny"
 								targetAggregation="rows"
 								dropPosition="OnOrBetween"
 								drop="onDropOnResource" />
@@ -115,13 +106,7 @@
 				</gnt2:axisTimeStrategy>
 
 			</gnt2:GanttChartWithTable>
-			<!--<gnt2:dragDropConfig>
-				<dnd:DropInfo
-						groupName="demandsAny"
-						targetAggregation="rows"
-						dropPosition="On"
-						drop="onDropOnGantt" />
-			</gnt2:dragDropConfig>-->
+
 		</gnt2:GanttChartContainer>
 
 	</Page>

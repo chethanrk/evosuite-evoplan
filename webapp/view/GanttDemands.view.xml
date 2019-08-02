@@ -58,7 +58,7 @@
             	</table:columns>
             	<table:dragDropConfig>
 					<dnd:DragInfo
-						groupName="demandsDragnDrop"
+						groupName="demandsAny"
 						sourceAggregation="rows"
 						dragStart="onDragStart" />
 				</table:dragDropConfig>

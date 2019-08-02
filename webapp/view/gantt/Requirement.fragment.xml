@@ -6,8 +6,8 @@
         xmlns:config="sap.gantt.config"
         xmlns:gnt2="sap.gantt.simple">
 
-    <gnt2:BaseGroup time="{parts: ['StartDate','StartTime','NodeType'],formatter: '.ganttFormatter.getMergedDateObject'}"
-                    endTime="{parts: ['EndDate','EndTime','NodeType'],formatter: '.ganttFormatter.getMergedDateObject'}"
+    <gnt2:BaseGroup time="{DateFrom}"
+                    endTime="{DateTo}"
                     tooltip="{Description}"
                     resizable="true"
                     selectable="true"
@@ -17,19 +17,19 @@
             <gnt2:BaseRectangle
                     shapeId="{NodeId}"
                     countInBirdEye="true"
-                    time="{parts: ['StartDate','StartTime','NodeType'],formatter: '.ganttFormatter.getMergedDateObject'}"
-                    endTime="{parts: ['EndDate','EndTime','NodeType'],formatter: '.ganttFormatter.getMergedDateObject'}"
+                    time="{DateFrom}"
+                    endTime="{DateTo}"
                     resizable="false"
                     selectable="false"
                     draggable= "false"
                     title="{Description}"
                     showTitle="true"
                     tooltip="{Description}"
-                    fill="{parts: ['ASSIGNMENT_TYPE','ASSIGNMENT_STATUS','NodeType'],formatter: '.ganttFormatter.fillColor'}"
-                    stroke="{parts: ['ASSIGNMENT_TYPE','ASSIGNMENT_STATUS','NodeType'],formatter: '.ganttFormatter.strokeColor'}"
-                    strokeWidth="{parts: ['ASSIGNMENT_TYPE','ASSIGNMENT_STATUS','NodeType'],formatter: '.ganttFormatter.strokeWidth'}"/>
+                    fill="#b6daff"
+                    stroke="#7088ac"
+                    strokeWidth="1"/>
 
-            <gnt2:BaseImage src="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'}], formatter: '.formatter.getResourceIcon' }"
+           <!-- <gnt2:BaseImage src="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'}], formatter: '.formatter.getResourceIcon' }"
                             tooltip="{Description}"
                             height="15"
                             width="15"
@@ -37,7 +37,7 @@
                             selectable="false"
                             draggable= "false"
                             xBias="-20"
-                            fill="{parts: ['ASSIGNMENT_TYPE','ASSIGNMENT_STATUS','NodeType'],formatter: '.ganttFormatter.strokeColor'}"/>
+                            fill="{parts: ['ASSIGNMENT_TYPE','ASSIGNMENT_STATUS','NodeType'],formatter: '.ganttFormatter.strokeColor'}"/>-->
         </gnt2:shapes>
 
     </gnt2:BaseGroup>

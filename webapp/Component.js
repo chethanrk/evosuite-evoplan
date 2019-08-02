@@ -20,7 +20,7 @@ sap.ui.define([
 	Device,
 	JSONModel,
 	models,
-	moment,
+	momentjs,
 	ErrorHandler,
 	AssignInfoDialog,
 	AssignTreeDialog,
@@ -51,8 +51,8 @@ sap.ui.define([
 		 * @override
 		 */
 		init: function () {
-			// call the base component's init function
-			UIComponent.prototype.init.apply(this, arguments);
+			// // call the base component's init function
+			// UIComponent.prototype.init.apply(this, arguments);
 
 			//Required third-party libraries for drag and drop functionality
 			//which loaded here in component to make available throughout the application
@@ -99,7 +99,8 @@ sap.ui.define([
                 	active: false,
 					shapeOpearation:{
                 		unassign:false,
-						reassign:false
+						reassign:false,
+						change:false
 					}
 				}
             });
@@ -108,8 +109,6 @@ sap.ui.define([
             //creates the Information model and sets to the component
 			this.setModel(models.createInformationModel(this),"InformationModel");
 
-			//sets user model
-			this._getSystemInformation();
 
 			this._initDialogs();
 
@@ -121,24 +120,19 @@ sap.ui.define([
 			//proof if there are a status set and button in footer should be visible
 			this._getFunctionSetCount();
 
-
+            this.setModel(models.createUserModel({ASSET_PLANNING_ENABLED: false,GANT_START_DATE:moment().startOf("year").subtract(5, "years").toDate()
+				,GANT_END_DATE:moment().endOf("year").add(5, "years").toDate()}), "user");
 			//Creating the Global message model from MessageManager
 			var oMessageModel = new JSONModel();
 			oMessageModel.setData([]);
 			this.setModel(oMessageModel, "MessageModel");
-
-			//Creating the Global user model for Global properties
-			this.setModel(models.createUserModel({
-				ASSET_PLANNING_ENABLED: false
-			}), "user");
 
 			//Creating the global for planning calendar
 			var oCalendarModel = new JSONModel();
 			oCalendarModel.setData({});
 			this.setModel(oCalendarModel, "calendarModel");
 
-			// create the views based on the url/hash
-			this.getRouter().initialize();
+
 
 			// Message popover link
 			var oLink = new Link({
@@ -165,6 +159,14 @@ sap.ui.define([
 				}
 			});
 			this._oMessagePopover = oMessagePopover;
+
+            //sets user model
+            this._getSystemInformation();
+
+            UIComponent.prototype.init.apply(this, arguments);
+
+            // create the views based on the url/hash
+            this.getRouter().initialize();
 		},
 
 		/**
@@ -290,7 +292,11 @@ sap.ui.define([
 				method: "GET",
 				success: function (oData, oResponse) {
 					//Handle Success
-					this.setModel(models.createUserModel(oData), "user");
+                    this.getModel("user").setData(oData);
+                    var oViewModel = this.getModel("viewModel");
+
+                    oViewModel.setProperty("/ganttSettings/visibleStartTime", moment().startOf("month").toDate()); 	// start of month
+                    oViewModel.setProperty("/ganttSettings/visibleEndTime", moment().endOf("month").toDate());
 				}.bind(this),
 				error: function (oError) {
 					//Handle Error

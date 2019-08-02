@@ -9,7 +9,8 @@ sap.ui.define([
 
 		formatter: formatter,
 
-		_firstTime: true,
+        _firstTimeG: false,
+        _firstTimeD: false,
 
 		onInit: function () {
 			var eventBus = sap.ui.getCore().getEventBus();
@@ -49,6 +50,7 @@ sap.ui.define([
 			//set init page title
 			oRouter.attachRouteMatched(this._onAllRouteMatched, this);
 			this.getRouter().getRoute("demands").attachPatternMatched(this._onObjectMatched, this);
+            this.getRouter().getRoute("gantt").attachPatternMatched(this._onObjectMatched, this);
 		},
 		
 		onAfterRendering : function () {
@@ -173,14 +175,18 @@ sap.ui.define([
 		 * Refresh's the resource tree and demand table
 		 * @constructor 
 		 */
-		_onObjectMatched: function () {
+		_onObjectMatched: function (oEvent) {
+			debugger;
+			var sRoute = oEvent.getParameter("name");
 			var eventBus = sap.ui.getCore().getEventBus();
-			if (!this._firstTime) {
-				eventBus.publish("BaseController", "refreshTreeTable", {});
-				eventBus.publish("BaseController", "refreshDemandTable", {});
-				this._firstTime = false;
-
+			if(sRoute === "gantt"){
+                    eventBus.publish("BaseController", "refreshGanttChart", {});
+                    eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			}else{
+                    eventBus.publish("BaseController", "refreshTreeTable", {});
+                    eventBus.publish("BaseController", "refreshDemandTable", {});
 			}
+
 		},
 		/**
 		 * catch event from dialog for saving demand status change
