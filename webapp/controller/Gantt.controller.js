@@ -118,7 +118,6 @@ sap.ui.define([
          *
          */
         onDropOnResource: function (oEvent) {
-            debugger;
             var oDraggedControl = oEvent.getParameter("draggedControl"),
                 oDroppedControl = oEvent.getParameter("droppedControl"),
                 oDragContext = oDraggedControl.getBindingContext(),

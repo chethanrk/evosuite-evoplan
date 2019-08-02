@@ -173,10 +173,11 @@ sap.ui.define([
 		},
 		/** 
 		 * Refresh's the resource tree and demand table
+		 * When any changes done in gantt or demand view should reflect in other
+		 * view when user navigates it.
 		 * @constructor 
 		 */
 		_onObjectMatched: function (oEvent) {
-			debugger;
 			var sRoute = oEvent.getParameter("name");
 			var eventBus = sap.ui.getCore().getEventBus();
 			if(sRoute === "gantt"){
