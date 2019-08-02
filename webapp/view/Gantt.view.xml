@@ -79,13 +79,34 @@
 						</table:extension>
 						<table:rowSettingsTemplate>
 							<gnt2:GanttRowSettings rowId="{NodeId}"
-								shapes1="{
+								shapes2="{
 									path:'AssignmentSet',
 									templateShareable:true
 								}">
+
 								<gnt2:shapes1>
-									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.Requirement" type="XML"/>
+									<gnt2:BaseRectangle
+											shapeId="{NodeId}"
+											scheme="hiddenBackground"
+											countInBirdEye="false"
+											time="{user>/GANT_START_DATE}"
+											endTime="{user>/GANT_END_DATE}"
+											connectable="false"
+											resizable="false"
+											selectable="true"
+											draggable= "false"
+											showTitle="false"
+											fill="transparent"
+											fillOpacity="0"
+											strokeOpacity="0"
+											opacity="0"
+											stroke="transparent"
+											strokeWidth="0"/>
 								</gnt2:shapes1>
+
+								<gnt2:shapes2>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.AssignmentShape" type="XML"/>
+								</gnt2:shapes2>
 
 							</gnt2:GanttRowSettings>
 						</table:rowSettingsTemplate>
@@ -95,7 +116,7 @@
 							<dnd:DropInfo
 								groupName="demandsAny"
 								targetAggregation="rows"
-								dropPosition="OnOrBetween"
+								dropPosition="On"
 								drop="onDropOnResource" />
 						</table:dragDropConfig>
 					</table:TreeTable>

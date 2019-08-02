@@ -120,8 +120,11 @@ sap.ui.define([
 			//proof if there are a status set and button in footer should be visible
 			this._getFunctionSetCount();
 
-            this.setModel(models.createUserModel({ASSET_PLANNING_ENABLED: false,GANT_START_DATE:moment().startOf("year").subtract(5, "years").toDate()
-				,GANT_END_DATE:moment().endOf("year").add(5, "years").toDate()}), "user");
+            this.setModel(models.createUserModel({
+				ASSET_PLANNING_ENABLED: false,
+				GANT_START_DATE:moment().startOf("year").subtract(5, "years").toDate(),
+				GANT_END_DATE:moment().endOf("year").add(5, "years").toDate()}), "user");
+
 			//Creating the Global message model from MessageManager
 			var oMessageModel = new JSONModel();
 			oMessageModel.setData([]);
