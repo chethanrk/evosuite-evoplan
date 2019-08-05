@@ -25,7 +25,7 @@
             useVariantManagement="true" 
             persistencyKey="{viewModel>/persistencyKeyDemandTable}" 
             useTablePersonalisation="true"
-            requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY">
+            requestAtLeastFields="Guid,ASGNMNT_CHANGE_ALLOWED,ALLOW_REASSIGN,ALLOW_UNASSIGN,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY">
         <!-- layout data used to make the table growing but the filter bar fixed -->
 	        <smartTable:layoutData>
 	            <FlexItemData growFactor="1"/>

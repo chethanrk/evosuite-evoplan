@@ -30,7 +30,7 @@ sap.ui.define([
 		 * @param oView
 		 * @param sBindPath
 		 */
-		open: function (oView, sBindPath, oAssignmentData, mParameters) {
+		open: function (oView, sBindPath, oAssignmentData, mParameters, oAssignementPath) {
 			var oDialog = this.getDialog(),
 				oAssignment = this.getDefaultAssignmentModelObject(),
 				oResource,
@@ -46,7 +46,14 @@ sap.ui.define([
 				sResourceGuid = oResource.ResourceGuid;
 				oAssignment.DemandGuid = oResource.DemandGuid;
 
-			} else {
+			} else if(oAssignementPath){
+                oAssignment = oView.getModel().getProperty(oAssignementPath);
+
+                oAssignment.AssignmentGuid = oAssignment.Guid;
+                oAssignment.Description = oAssignment.Description;
+                sResourceGroupGuid = oAssignment.ResourceGroupGuid;
+                sResourceGuid = oAssignment.ResourceGuid;
+			}else {
 				oAssignment.AssignmentGuid = oAssignmentData.Guid;
 				oAssignment.Description = oAssignmentData.Demand.DemandDesc;
 				sResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
@@ -266,6 +273,7 @@ sap.ui.define([
 						oModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
 						oModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
 						oModel.setProperty("/DemandStatus", oDemandData.Status);
+						oModel.setProperty("/DemandGuid", oDemandData.Guid);
 					},
 					dataRequested: function () {
 						oDialog.setBusy(true);

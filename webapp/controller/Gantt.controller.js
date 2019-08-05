@@ -168,15 +168,6 @@ sap.ui.define([
 
             if (oTreeBinding) {
                 oTreeBinding._restoreTreeState().then(function () {
-                    // Scrolled manually to fix the rendering
-                    // var oScrollContainer = oTreeTable._getScrollExtension();
-                    // var iScrollIndex = oScrollContainer.getRowIndexAtCurrentScrollPosition();
-                    // if (iScrollIndex === 0) {
-                    //     oTreeTable._getScrollExtension().updateVerticalScrollPosition(33);
-                    // } else {
-                    //     oTreeTable._getScrollExtension().scrollVertically(1);
-                    //     oTreeTable._getScrollExtension().scrollVertically(-1);
-                    // }
                     oGanttContainer.setBusy(false);
                 });
 
@@ -217,11 +208,11 @@ sap.ui.define([
         onShapeContextMenu: function (oEvent) {
             var oShape = oEvent.getParameter("shape"),
                 oViewModel = this.getModel("viewModel");
-            if (oShape) {
+            if (oShape && oShape.sParentAggregationName === "shapes2") {
                 this._selectedShapeContext = oShape.getBindingContext();
                 var oModel = this._selectedShapeContext.getModel(),
                     sPath = this._selectedShapeContext.getPath(),
-                    sAssignGuid = oModel.getProperty(sPath).AssignmentGuid;
+                    sAssignGuid = oModel.getProperty(sPath).Guid;
                 if (!this._menu) {
                     this._menu = sap.ui.xmlfragment(
                         "com.evorait.evoplan.view.gantt.shapeContextMenu",
@@ -254,7 +245,7 @@ sap.ui.define([
 
 			var oModel = this._selectedShapeContext.getModel(),
 				sPath = this._selectedShapeContext.getPath(),
-				sAssignGuid = oModel.getProperty(sPath).AssignmentGuid;
+				sAssignGuid = oModel.getProperty(sPath).Guid;
 
 
 			if(sButtonText === this.getResourceBundle().getText("xbut.buttonUnassign")){
@@ -267,7 +258,8 @@ sap.ui.define([
 				//oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
                 this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
 			}else if(sButtonText === this.getResourceBundle().getText("xbut.buttonChange")){
-                    this.getOwnerComponent().assignInfoDialog.open(this.getView(), sPath, null, {bFromGantt: true});
+			    // Change
+			    this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, {bFromGantt: true}, sPath);
             }
         },
 
@@ -280,7 +272,7 @@ sap.ui.define([
             if(sEvent === "ganttShapeReassignment"){
                 for (var i = 0; i < oData.aSourcePaths.length; i++) {
                     var sourceData = this.getModel().getProperty(oData.aSourcePaths[i]);
-                    this._updateAssignmentModel(sourceData.AssignmentGuid).then(function (oAssignmentObj) {
+                    this._updateAssignmentModel(sourceData.Guid).then(function (oAssignmentObj) {
                         oAssignmentObj.NewAssignPath = oData.sAssignPath;
                         this._oAssignementModel.setData(oAssignmentObj);
                         this.updateAssignment(true, {bFromGantt: true});
@@ -391,37 +383,37 @@ sap.ui.define([
             var oParams = oEvent.getParameters(),
                 draggedShape = oParams.draggedShapeDates;
 
-            if (!oParams.targetRow) {
+            if (!oParams.targetRow && !oParams.targetShape) {
                 var msg = this.getResourceBundle().getText("msg.ganttShapeDropError");
                 this.showMessageToast(msg);
                 return;
             }
 
-            var targetContext = oParams.targetRow.getBindingContext(),
+            var targetContext = oParams.targetRow ? oParams.targetRow.getBindingContext() :oParams.targetShape.getParent().getParent().getBindingContext() ,
                 targetData = targetContext.getObject(),
                 draggedShape = oParams.draggedShapeDates;
 
             Object.keys(draggedShape).forEach(function (sShapeUid) {
                 var sourcePath = this._getShapeBindingContextPath(sShapeUid),
                     sourceData = this.getModel().getProperty(sourcePath),
-                    isReassign = sourceData.NodeId !== targetData.NodeId;
+                    isReassign = sourceData.ObjectId !== targetData.NodeId;
 
                 var oSourceStartDate = moment(draggedShape[sShapeUid].time),
                     oSourceEndDate = moment(draggedShape[sShapeUid].endTime),
                     duration = oSourceEndDate.diff(oSourceStartDate, "seconds"),
                     newEndDate = moment(oParams.newDateTime).add(duration, "seconds");
 
-                this._updateAssignmentModel(sourceData.AssignmentGuid).then(function (oAssignmentObj) {
+                this._updateAssignmentModel(sourceData.Guid).then(function (oAssignmentObj) {
                     oAssignmentObj.DateFrom = oParams.newDateTime;
                     oAssignmentObj.DateTo = newEndDate.toDate();
                     oAssignmentObj.NewAssignPath = targetContext.getPath();
 
-                    if (targetData.NodeType === "ASSIGNMENT" && isReassign) {
-                        //assign with new date times to parent node
-                        oAssignmentObj.NewAssignPath = "/" + this.getModel().createKey("ResourceHierarchySet", {
-                            NodeId: targetData.ParentNodeId
-                        });
-                    }
+                    // if (targetData.NodeType === "ASSIGNMENT" && isReassign) {
+                    //     //assign with new date times to parent node
+                    //     oAssignmentObj.NewAssignPath = "/" + this.getModel().createKey("ResourceHierarchySet", {
+                    //         NodeId: targetData.ParentNodeId
+                    //     });
+                    // }
                     this._oAssignementModel.setData(oAssignmentObj);
                     this.updateAssignment(isReassign, {bFromGantt: true});
                 }.bind(this));
@@ -436,14 +428,15 @@ sap.ui.define([
             var oParams = oEvent.getParameters(),
                 oRowContext = oParams.shape.getBindingContext(),
                 oData = this.getModel().getProperty(oRowContext.getPath());
+            if (oParams.shape && oParams.shape.sParentAggregationName === "shapes2") {
+                this._updateAssignmentModel(oData.Guid).then(function (oAssignmentObj) {
+                    oAssignmentObj.DateFrom = oParams.newTime[0];
+                    oAssignmentObj.DateTo = oParams.newTime[1];
 
-            this._updateAssignmentModel(oData.AssignmentGuid).then(function (oAssignmentObj) {
-                oAssignmentObj.DateFrom = oParams.newTime[0];
-                oAssignmentObj.DateTo = oParams.newTime[1];
-
-                this._oAssignementModel.setData(oAssignmentObj);
-                this.updateAssignment(false, {bFromGantt: true});
-            }.bind(this));
+                    this._oAssignementModel.setData(oAssignmentObj);
+                    this.updateAssignment(false, {bFromGantt: true});
+                }.bind(this));
+            }
         },
 
         /**
@@ -453,13 +446,14 @@ sap.ui.define([
          */
         onShapeDoubleClick: function (oEvent) {
             var oParams = oEvent.getParameters();
-            var oRowContext = oParams.shape.getBindingContext();
-
-            if (oRowContext) {
-                this.getOwnerComponent().assignInfoDialog.open(this.getView(), oRowContext.getPath(), null, {bFromGantt: true});
-            } else {
-                var msg = this.getResourceBundle().getText("notFoundContext");
-                this.showMessageToast(msg);
+            var oContext = oParams.shape.getBindingContext();
+            if (oParams.shape && oParams.shape.sParentAggregationName === "shapes2") {
+                if (oContext) {
+                    this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, {bFromGantt: true}, oContext.getPath());
+                } else {
+                    var msg = this.getResourceBundle().getText("notFoundContext");
+                    this.showMessageToast(msg);
+                }
             }
         },
         /**

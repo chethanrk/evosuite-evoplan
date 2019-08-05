@@ -108,6 +108,7 @@
 									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.AssignmentShape" type="XML"/>
 								</gnt2:shapes2>
 
+
 							</gnt2:GanttRowSettings>
 						</table:rowSettingsTemplate>
 
