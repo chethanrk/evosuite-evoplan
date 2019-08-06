@@ -1,0 +1,178 @@
+{
+  "results": [
+    [
+      {
+        "RequirementID": "FO_01",
+        "ResourceID": "TRUCK_01",
+        "Type": "FO",
+        "PlanStatus": "planned",
+        "StartTime": "/Date(1532400487162)/",
+        "EndTime": "/Date(1533400487162)/",
+        "SourceLocation": "Beijing",
+        "DestinationLocation": "Shanghai",
+        "ParentResourceID" : "TRUCK_01",
+        "ParentRequirementID": null,
+        "HierarchyLevel": 0,
+        "DrillState": "expanded"
+      },
+
+      {
+        "RequirementID": "FO_01_FU_01",
+        "ResourceID": "TRUCK_01",
+        "Type": "FU",
+        "PlanStatus": "planned",
+        "StartTime": "/Date(1532400487162)/",
+        "EndTime": "/Date(1533400487162)/",
+        "SourceLocation": "Beijing",
+        "DestinationLocation": "Shanghai",
+        "ParentResourceID" : null,
+        "ParentRequirementID": "FO_01",
+        "HierarchyLevel": 1,
+        "DrillState": "leaf"
+      },
+
+      {
+        "RequirementID": "FU_02",
+        "ResourceID": null,
+        "Type": "FU",
+        "PlanStatus": "unplanned",
+        "StartTime": "/Date(1532300487162)/",
+        "EndTime": "/Date(1533300487162)/",
+        "SourceLocation": "Beijing",
+        "DestinationLocation": "Shanghai",
+        "ParentResourceID" : null,
+        "ParentRequirementID": null,
+        "HierarchyLevel": 0,
+        "DrillState": "leaf"
+      },
+
+      {
+        "RequirementID": "FO_02",
+        "ResourceID": "TRUCK_01",
+        "Type": "FO",
+        "PlanStatus": "planned",
+        "StartTime": "/Date(1530400487162)/",
+        "EndTime": "/Date(1531400487162)/",
+        "SourceLocation": "London",
+        "DestinationLocation": "Berlin",
+        "ParentResourceID" : "TRUCK_01",
+        "ParentRequirementID": null,
+        "HierarchyLevel": 0,
+        "DrillState": "leaf"
+      },
+
+      {
+        "RequirementID": "FO_03",
+        "ResourceID": null,
+        "Type": "FO",
+        "PlanStatus": "unplanned",
+        "StartTime": "/Date(1532800487162)/",
+        "EndTime": "/Date(1533100487162)/",
+        "SourceLocation": "Suzhou",
+        "DestinationLocation": "Nanjing",
+        "ParentResourceID" : null,
+        "ParentRequirementID": null,
+        "HierarchyLevel": 0,
+        "DrillState": "leaf"
+      },
+
+      {
+        "RequirementID": "FO_04",
+        "ResourceID": "TRUCK_02",
+        "Type": "FO",
+        "PlanStatus": "planned",
+        "StartTime": "/Date(1531200487162)/",
+        "EndTime": "/Date(1532000487162)/",
+        "SourceLocation": "Wuhan",
+        "DestinationLocation": "Shanghai",
+        "ParentResourceID" : "TRUCK_02",
+        "ParentRequirementID": null,
+        "HierarchyLevel": 0,
+        "DrillState": "leaf"
+      },
+
+      {
+        "RequirementID": "FO_05",
+        "ResourceID": null,
+        "Type": "FO",
+        "PlanStatus": "unplanned",
+        "StartTime": "/Date(1532900487162)/",
+        "EndTime": "/Date(1533300487162)/",
+        "SourceLocation": "Chengdu",
+        "DestinationLocation": "Chongqing",
+        "ParentResourceID" : null,
+        "ParentRequirementID": null,
+        "HierarchyLevel": 0,
+        "DrillState": "leaf"
+      },
+
+      {
+        "RequirementID": "FO_06",
+        "ResourceID": null,
+        "Type": "FO",
+        "PlanStatus": "unplanned",
+        "StartTime": "/Date(1533400487162)/",
+        "EndTime": "/Date(1534000487162)/",
+        "SourceLocation": "Guangzhou",
+        "DestinationLocation": "Shenzhen",
+        "ParentResourceID" : null,
+        "ParentRequirementID": null,
+        "HierarchyLevel": 0,
+        "DrillState": "leaf"
+      },
+
+      {
+        "RequirementID": "FO_07",
+        "ResourceID": null,
+        "Type": "FO",
+        "PlanStatus": "unplanned",
+        "StartTime": "/Date(1532100487162)/",
+        "EndTime": "/Date(1532800487162)/",
+        "SourceLocation": "Changsha",
+        "DestinationLocation": "Beijing",
+        "ParentResourceID" : null,
+        "ParentRequirementID": null,
+        "HierarchyLevel": 0,
+        "DrillState": "leaf"
+      }
+    ]
+  ],
+
+  "ResourceHierarchySet": [
+    [
+      {
+        "RequirementID": "FO_01",
+        "ResourceID": "TRUCK_01",
+        "Type": "FO",
+        "PlanStatus": "planned",
+        "SourceLocation": "Beijing",
+        "DestinationLocation": "Shanghai",
+        "ParentResourceID" : "TRUCK_01",
+        "ParentRequirementID": null,
+        "ChildCount": 19,
+        "StatusIcon": "",
+        "IsSelected": false,
+        "NodeId": "0A51491BD5A01ED88AEE4A4681A35A0A",
+        "ResourceGroupGuid": "0A51491BD5A01ED88AEE4A4681A35A0A",
+        "NodeType": "RES_GROUP",
+        "ResourceGuid": "",
+        "DemandGuid": "",
+        "ParentNodeId": "",
+        "AssignmentGuid": "",
+        "HierarchyLevel": 0,
+        "DrillState": "expanded",
+        "Description": "Evora Electricians",
+        "AssignmentCount": 142,
+        "Utilization": "0.00",
+        "StartTime": "/Date(1532400487162)/",
+        "EndTime": "/Date(1533400487162)/",
+        "IS_AVAILABLE": "A",
+        "TOTAL_EFFORT": "188.60",
+        "ACTUAL_WORKING_HOURS": "0.00",
+        "PLANNED_WORKING_HOURS": "0.00",
+        "CAPACITIVE_EFFORT": "0.00"
+      }
+    ]
+  ]
+
+}

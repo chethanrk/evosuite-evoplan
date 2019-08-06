@@ -17,7 +17,7 @@
 			]
 		},
 		"applicationVersion": {
-			"version": "2.1.4"
+			"version": "3.0"
 		},
 		"dataSources": {
 			"mainService": {
@@ -99,19 +99,19 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.52.0",
+			"minUI5Version": "1.60.0",
 			"libs": {
 				"sap.ui.core": {
-					"minVersion": "1.52.0"
+					"minVersion": "1.60.0"
 				},
 				"sap.m": {
-					"minVersion": "1.52.0"
+					"minVersion": "1.60.0"
 				},
 				"sap.uxap": {
-					"minVersion": "1.52.0"
+					"minVersion": "1.60.0"
 				},
 				"sap.ui.comp": {
-					"minVersion": "1.52.0"
+					"minVersion": "1.60.0"
 				}
 			}
 		},
@@ -212,12 +212,33 @@
 					"target": [
 						"messageCockpit"
 					]
+				},
+				{
+					"pattern": "Gantt",
+					"name": "gantt",
+					"target": [
+						"demandsGantt",
+						"gantt"
+					]
+				},
+				{
+					"pattern": "Gantt/Demand/{guid}",
+					"name": "ganttDemandDetails",
+					"target": [
+						"ganttDemandDetails"
+					]
 				}
 			],
 			"targets": {
-				"splitNavigation": {
+				"splitHorNavigation": {
 					"viewType": "XML",
-					"viewName": "layouts.Split2ViewsNavi",
+					"viewName": "layouts.Split2HorViewsNavi",
+					"viewLevel": 2,
+					"controlId": "appPanel"
+				},
+				"splitVerNavigation": {
+					"viewType": "XML",
+					"viewName": "layouts.Split2VerViewsNavi",
 					"viewLevel": 2,
 					"controlId": "appPanel"
 				},
@@ -232,55 +253,69 @@
 					"viewName": "ResourceTree",
 					"viewLevel": 3,
 					"controlId": "leftPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
 				},
 				"demands": {
 					"viewType": "XML",
 					"viewName": "Demands",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
+				},
+				"demandsGantt": {
+					"viewType": "XML",
+					"viewName": "GanttDemands",
+					"viewLevel": 3,
+					"controlId": "bottomPanel",
+					"parent": "splitVerNavigation"
+				},
+				"gantt": {
+					"viewType": "XML",
+					"viewName": "Gantt",
+					"viewLevel": 3,
+					"controlId": "topPanel",
+					"parent": "splitVerNavigation"
 				},
 				"detail": {
 					"viewType": "XML",
 					"viewName": "Detail",
 					"viewLevel": 4,
 					"controlId": "rightPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
 				},
 				"assets": {
 					"viewName": "Assets",
 					"viewLevel": 3,
 					"controlId": "leftPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
 				},
 				"assetsOrders": {
 					"viewType": "XML",
 					"viewName": "AssetsOrders",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
 				},
 				"orderCreate": {
 					"viewType": "XML",
 					"viewName": "OrderCreate",
 					"viewLevel": 4,
 					"controlId": "rightPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
 				},
 				"empty": {
 					"viewType": "XML",
 					"viewName": "EmptyPage",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
 				},
 				"notFound": {
 					"viewType": "XML",
 					"viewName": "NotFound",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
 				},
 				"weeklyPlanner": {
 					"viewType": "XML",
@@ -292,6 +327,13 @@
 				"messageCockpit": {
 					"viewType": "XML",
 					"viewName": "MessageCockpit",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 4
+				},
+				"ganttDemandDetails":{
+					"viewType": "XML",
+					"viewName": "Detail",
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",
 					"viewLevel": 4

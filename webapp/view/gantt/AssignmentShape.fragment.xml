@@ -1,0 +1,45 @@
+<core:FragmentDefinition
+        xmlns="sap.ui.table"
+        xmlns:m="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:axistime="sap.gantt.axistime"
+        xmlns:config="sap.gantt.config"
+        xmlns:gnt2="sap.gantt.simple">
+
+    <gnt2:BaseGroup time="{DateFrom}"
+                    endTime="{DateTo}"
+                    tooltip="{Description}"
+                    resizable="true"
+                    selectable="true"
+                    draggable= "true">
+        <gnt2:shapes>
+
+            <gnt2:BaseRectangle
+                    shapeId="{NodeId}"
+                    countInBirdEye="true"
+                    time="{DateFrom}"
+                    endTime="{DateTo}"
+                    resizable="false"
+                    selectable="false"
+                    draggable= "false"
+                    title="{Description}"
+                    showTitle="true"
+                    tooltip="{Description}"
+                    fill="#b6daff"
+                    stroke="#7088ac"
+                    strokeWidth="1"/>
+
+            <gnt2:BaseImage src="{DEMAND_STATUS_ICON}"
+                            tooltip="{Description}"
+                            height="15"
+                            width="15"
+                            resizable="false"
+                            selectable="false"
+                            draggable= "false"
+                            xBias="-20"
+                            fill="#05537a"/>
+        </gnt2:shapes>
+
+    </gnt2:BaseGroup>
+
+</core:FragmentDefinition>

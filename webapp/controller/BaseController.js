@@ -31,6 +31,9 @@ sap.ui.define([
 			if (oView) {
 				return oView.getModel(sName);
 			}
+			if(!this.getView().getModel(sName)){
+				return this.getOwnerComponent().getModel(sName);
+			}
 			return this.getView().getModel(sName);
 		},
 
@@ -194,24 +197,27 @@ sap.ui.define([
 			});
 		},
 		/**
+		 * @Athour Rahul
+		 * @since 3.0
+		 * 
 		 * send oData request of FunctionImport
 		 * @param oParams Data to passed to function import
 		 * @param sFuncName Function name of the function import
 		 * @param sMethod method of http operation ex: GET/POST/PUT/DELETE
 		 */
 		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod) {
-				return new Promise(function (resolve, reject) {
-					oModel.callFunction("/" + sFuncName, {
-						method: sMethod || "POST",
-						urlParameters: oParams,
-						success: function (oData, oResponse) {
-							resolve(oData, oResponse);
-						}.bind(this),
-						error: function (oError) {
-							reject(oError);
-						}.bind(this)
-					});
+			return new Promise(function (resolve, reject) {
+				oModel.callFunction("/" + sFuncName, {
+					method: sMethod || "POST",
+					urlParameters: oParams,
+					success: function (oData, oResponse) {
+						resolve(oData, oResponse);
+					}.bind(this),
+					error: function (oError) {
+						reject(oError);
+					}.bind(this)
 				});
+			});
 		},
 		/** 
 		 * Method check the parameter and refreshes the required part of screen 
@@ -224,7 +230,8 @@ sap.ui.define([
 				bFromHome: true,
 				bFromAseet: false,
 				bFromPlannCal: false,
-				bFromDetail: false
+				bFromDetail: false,
+				bFromGantt:false
 			};
 
 			if (oParameter.bFromHome) {
@@ -242,6 +249,9 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				eventBus.publish("BaseController", "refreshDemandOverview", {});
 				eventBus.publish("BaseController", "refreshDemandTable", {});
+			}else if(oParameter.bFromGantt){
+				eventBus.publish("BaseController", "refreshGanttChart", {});
+				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
 
 		},
@@ -322,12 +332,14 @@ sap.ui.define([
 		 * @param aDemands {object} array of demand descriptions
 		 * @private
 		 */
-		_showAssignErrorDialog: function (aDemands, isStatus) {
-			var msg = "";
-			if (isStatus)
-				msg = this.getResourceBundle().getText("changeStatusNotPossible");
-			else
-				msg = this.getResourceBundle().getText("assignmentNotPossible");
+		_showAssignErrorDialog: function (aDemands, isStatus, msg) {
+			if(!msg){
+				if (isStatus){
+					msg = this.getResourceBundle().getText("changeStatusNotPossible");
+				} else {
+					msg = this.getResourceBundle().getText("assignmentNotPossible");
+				}
+			}
 
 			var dialog = new Dialog({
 				title: "Error",
@@ -372,6 +384,17 @@ sap.ui.define([
 			}
 			return true;
 		},
+		/**
+		 * @Athour Rahul
+		 * @since 3.0
+		 * Checks the Demand is assignable or not by validating the ALLOW_ASSIGN frag in demand object
+		 */
+		isDemandAssignable : function (sTargetPath){
+			var oModel = this.getModel(),
+				oTargetObj = oModel.getProperty(sTargetPath);
+
+			return oTargetObj.ALLOW_ASSIGN;
+		},
 
 		/**
 		 * Validates pool function configuration to check possibility of assignment
@@ -398,6 +421,7 @@ sap.ui.define([
 		 *
 		 * @Athour Rahul
 		 * @version 2.1
+		 * @deprecated
 		 */
 		showConfirmMessageBox: function (message, fnCallback) {
 			var oController = this;
@@ -410,7 +434,32 @@ sap.ui.define([
 					onClose: fnCallback
 				}
 			);
-		}
+		},
+
+        /**
+         * Shows the confirmation Box.
+		 * New Confirm box which return Promise object
+         * Promise resolve when Message box will get close.
+		 *
+         * @Athour Rahul
+         * @version 3.0
+         */
+        _showConfirmMessageBox: function (message) {
+            var oController = this;
+            return new Promise(function (resolve, reject) {
+                MessageBox.confirm(
+                    message, {
+                        styleClass: oController.getOwnerComponent().getContentDensityClass(),
+                        icon: sap.m.MessageBox.Icon.CONFIRM,
+                        title: oController.getResourceBundle().getText("xtit.confirm"),
+                        actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+                        onClose: function (oEvent) {
+                            resolve(oEvent);
+                        }
+                    }
+                );
+            });
+        }
 
 	});
 

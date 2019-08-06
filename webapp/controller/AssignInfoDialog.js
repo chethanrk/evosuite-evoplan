@@ -30,28 +30,11 @@ sap.ui.define([
 		 * @param oView
 		 * @param sBindPath
 		 */
-		open: function (oView, sBindPath, oAssignmentData, mParameters) {
+		open: function (oView, sBindPath, oAssignmentData, mParameters, oAssignementPath) {
 			var oDialog = this.getDialog(),
-				oAssignment = {
-					showError: false,
-					AssignmentGuid: "",
-					Description: "",
-					AllowReassign: false,
-					AllowUnassign: false,
-                    AllowChange:true,
-					NewAssignPath: null,
-					NewAssignId: null,
-					NewAssignDesc: null,
-					isNewAssignment: false,
-					DemandGuid: "",
-					DemandStatus: "",
-					OrderId: "",
-					OperationNumber: "",
-					SubOperationNumber: "",
-					DateFrom:"",
-					DateTo:""
-				},
+				oAssignment = this.getDefaultAssignmentModelObject(),
 				oResource,
+                oAssignData,
 				sResourceGroupGuid,
 				sResourceGuid;
 
@@ -64,7 +47,20 @@ sap.ui.define([
 				sResourceGuid = oResource.ResourceGuid;
 				oAssignment.DemandGuid = oResource.DemandGuid;
 
-			} else {
+			} else if(oAssignementPath){
+				// From gantt
+				// When we have Assignment path <AssignmentSet(<key>)>
+                oAssignData = oView.getModel().getProperty(oAssignementPath);
+
+                oAssignment.AssignmentGuid = oAssignData.Guid;
+                oAssignment.Description = oAssignData.Description;
+                sResourceGroupGuid = oAssignData.ResourceGroupGuid;
+                sResourceGuid = oAssignData.ResourceGuid;
+                oAssignment.DemandGuid = oAssignData.DemandGuid;
+                oAssignment.DemandStatus = oAssignData.Demand.Status;
+                oAssignment.DateFrom = oAssignData.DateFrom;
+                oAssignment.DateTo = oAssignData.DateTo;
+			}else {
 				oAssignment.AssignmentGuid = oAssignmentData.Guid;
 				oAssignment.Description = oAssignmentData.Demand.DemandDesc;
 				sResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
@@ -210,6 +206,35 @@ sap.ui.define([
 		},
 
 		/**
+		 * default structure of assignment JSOn model
+		 */
+		getDefaultAssignmentModelObject: function(){
+			return {
+				AllowChange:false,
+				AllowReassign: false,
+				AllowUnassign: false,
+				AssignmentGuid: "",
+				DateFrom:"",
+				DateTo:"",
+				DemandGuid: "",
+				DemandStatus: "",
+				Description: "",
+				Effort: null,
+				EffortUnit: null,
+				NewAssignPath: null,
+				NewAssignId: null,
+				NewAssignDesc: null,
+				OperationNumber: "",
+				OrderId: "",
+				ResourceGroupGuid: "",
+				ResourceGuid: "",
+				SubOperationNumber: "",
+				isNewAssignment: false,
+				showError: false
+			};
+		},
+
+		/**
 		 *
 		 * @param sId
 		 * @private
@@ -255,6 +280,7 @@ sap.ui.define([
 						oModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
 						oModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
 						oModel.setProperty("/DemandStatus", oDemandData.Status);
+						oModel.setProperty("/DemandGuid", oDemandData.Guid);
 					},
 					dataRequested: function () {
 						oDialog.setBusy(true);
@@ -370,9 +396,16 @@ sap.ui.define([
 				sDemandGuid = oAssignment.getProperty("/DemandGuid");
 
 			this.onCloseDialog();
-			oRouter.navTo("detail", {
-				guid: sDemandGuid
-			});
+			if(this._mParameters.bFromGantt){
+                oRouter.navTo("ganttDemandDetails", {
+                    guid: sDemandGuid
+                });
+			}else{
+                oRouter.navTo("detail", {
+                    guid: sDemandGuid
+                });
+			}
+
 		}
 	});
 });

@@ -1,0 +1,29 @@
+<core:FragmentDefinition
+        xmlns="sap.ui.table"
+        xmlns:m="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:axistime="sap.gantt.axistime"
+        xmlns:config="sap.gantt.config"
+        xmlns:dnd="sap.ui.core.dnd">
+
+    <axistime:ProportionZoomStrategy>
+        <axistime:totalHorizon>
+            <config:TimeHorizon
+                    startTime="{user>/GANT_START_DATE}"
+                    endTime="{user>/GANT_END_DATE}"/>
+        </axistime:totalHorizon>
+        <axistime:visibleHorizon>
+            <config:TimeHorizon
+                    startTime="{viewModel>/ganttSettings/visibleStartTime}"
+                    endTime="{viewModel>/ganttSettings/visibleEndTime}"/>
+        </axistime:visibleHorizon>
+        <!--<axistime:dragDropConfig>
+            <dnd:DropInfo
+                    groupName="demandsAny"
+                    targetAggregation="totalHorizon"
+                    dropPosition="OnOrBettween"
+                    drop="onDropOnGantt" />
+        </axistime:dragDropConfig>-->
+    </axistime:ProportionZoomStrategy>
+
+</core:FragmentDefinition>

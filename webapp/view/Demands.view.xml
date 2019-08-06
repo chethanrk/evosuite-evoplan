@@ -48,23 +48,7 @@
 				</smartTable:SmartTable>
 			</f:content>
 			<f:footer>
-				<OverflowToolbar>
-					<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
-						type="Emphasized" press="onMessagePopoverPress"/>
-					<ToolbarSpacer/>
-					<Button id="changeStatusButton" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}" icon="sap-icon://flag"
-						press="onChangeStatusButtonPress" enabled="false" visible="{viewModel>/showStatusChangeButton}">
-						<layoutData>
-							<ToolbarLayoutData shrinkable="true"/>
-						</layoutData>
-					</Button>
-					<Button id="assignButton" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" icon="sap-icon://activity-individual"
-						press="onAssignButtonPress" enabled="false">
-						<layoutData>
-							<ToolbarLayoutData shrinkable="true"/>
-						</layoutData>
-					</Button>
-				</OverflowToolbar>
+				<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandToolbar" type="XML"/>
 			</f:footer>
 		</f:DynamicPage>
 	</Page>

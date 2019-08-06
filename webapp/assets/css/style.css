@@ -107,3 +107,8 @@ div.worktimeAvailability > .workTimeAvailabilityText {
 .workTimeTextBlack{
 	color:#000000;
 }
+
+.sapGanttChartSelection .sapGanttSelectedPath{
+    stroke-width: 0 !important;
+    stroke: transparent !important;
+}

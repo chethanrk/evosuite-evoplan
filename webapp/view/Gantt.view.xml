@@ -1,0 +1,136 @@
+<mvc:View xmlns="sap.m"
+		  xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:core="sap.ui.core"
+		  xmlns:gnt2="sap.gantt.simple"
+		  xmlns:table="sap.ui.table"
+		  xmlns:dnd="sap.ui.core.dnd"
+		  controllerName="com.evorait.evoplan.controller.Gantt"
+		  displayBlock="true"
+		  height="100%">
+	<Page id="ganttPage" showFooter="false" showHeader="false">
+
+
+		<gnt2:GanttChartContainer id="container" enableTimeScrollSync="true">
+			<gnt2:toolbar>
+				<gnt2:ContainerToolbar
+						design="Auto"
+						showBirdEyeButton="true"
+						showLegendButton="true"
+						class="gantt_toolbar"
+						>
+					<gnt2:content>
+						<DateRangeSelection
+								id="idDateRangeGantt2"
+								width="15%"
+								change="onChangeDateRange"
+						/>
+					</gnt2:content>
+					<gnt2:legendContainer>
+						<gnt2:LegendContainer width="230px" height="250px">
+							<gnt2:ListLegend title="Requirement Document">
+								<!--<gnt2:ListLegendItem interactive="true" selected="true" interactiveChange=".onLegendItemInteractiveChange">-->
+									<!--<gnt2:BaseRectangle shapeId="legendItemFO" fill="#99D101" title="Freight Order" showTitle="false"/>-->
+								<!--</gnt2:ListLegendItem>-->
+
+								<!--<gnt2:ListLegendItem interactive="false" selected="false">-->
+									<!--<gnt2:BaseRectangle shapeId="legendItemFU"  stroke="#99D101" strokeWidth="2" strokeDasharray="2" fill="#fff" title="Freight Unit" showTitle="false"/>-->
+								<!--</gnt2:ListLegendItem>-->
+
+							</gnt2:ListLegend>
+						</gnt2:LegendContainer>
+					</gnt2:legendContainer>
+					
+
+				</gnt2:ContainerToolbar>
+			</gnt2:toolbar>
+
+			<gnt2:GanttChartWithTable id="ganttResourceAssignments"
+									  ghostAlignment="Start"
+									  adhocLineLayer="Bottom"
+									  shapeSelectionMode = "Single"
+									  shapeSelectionSettings="{color:'red', strokeDasharray:'1,0'}"
+									  shapeDrop="onShapeDrop"
+									  shapeResize="onShapeResize"
+									  shapeDoubleClick="onShapeDoubleClick"
+									  shapeContextMenu="onShapeContextMenu"
+									  showShapeTimeOnDrag="true"
+									  selectionPanelSize="25%">
+				<gnt2:table>
+					<table:TreeTable
+							id="ganttResourceTreeTable"
+							selectionMode="None"
+							visibleRowCountMode="Auto"
+							enableColumnReordering="false"
+							enableBusyIndicator="true"
+							busyStateChanged="onBusyStateChanged"
+							enableCellFilter="false"
+							columnHeaderVisible="false"
+							rows="{
+								path: '/ResourceHierarchySet',
+								parameters: {
+									numberOfExpandedLevels:1,
+									restoreTreeStateAfterChange:true,
+									expand:'AssignmentSet'
+								}
+							}">
+						<table:extension>
+							<OverflowToolbar>
+								<SearchField width="95%" search="onSearchResource"/>
+							</OverflowToolbar>
+						</table:extension>
+						<table:rowSettingsTemplate>
+							<gnt2:GanttRowSettings rowId="{NodeId}"
+								shapes2="{
+									path:'AssignmentSet',
+									templateShareable:true
+								}">
+
+								<gnt2:shapes1>
+									<gnt2:BaseRectangle
+											shapeId="{NodeId}"
+											scheme="hiddenBackground"
+											countInBirdEye="false"
+											time="{user>/GANT_START_DATE}"
+											endTime="{user>/GANT_END_DATE}"
+											connectable="false"
+											resizable="false"
+											selectable="true"
+											draggable= "false"
+											showTitle="false"
+											fill="transparent"
+											fillOpacity="0"
+											strokeOpacity="0"
+											opacity="0"
+											stroke="transparent"
+											strokeWidth="0"/>
+								</gnt2:shapes1>
+
+								<gnt2:shapes2>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.AssignmentShape" type="XML"/>
+								</gnt2:shapes2>
+
+
+							</gnt2:GanttRowSettings>
+						</table:rowSettingsTemplate>
+
+						<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.ResourceTreeColumns" type="XML"/>
+						<table:dragDropConfig>
+							<dnd:DropInfo
+								groupName="demandsAny"
+								targetAggregation="rows"
+								dropPosition="On"
+								drop="onDropOnResource" />
+						</table:dragDropConfig>
+					</table:TreeTable>
+				</gnt2:table>
+
+				<gnt2:axisTimeStrategy>
+					<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.AxisTimeStrategy" type="XML"/>
+				</gnt2:axisTimeStrategy>
+
+			</gnt2:GanttChartWithTable>
+
+		</gnt2:GanttChartContainer>
+
+	</Page>
+</mvc:View>
