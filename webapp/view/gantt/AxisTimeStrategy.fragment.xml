@@ -17,13 +17,6 @@
                     startTime="{viewModel>/ganttSettings/visibleStartTime}"
                     endTime="{viewModel>/ganttSettings/visibleEndTime}"/>
         </axistime:visibleHorizon>
-        <!--<axistime:dragDropConfig>
-            <dnd:DropInfo
-                    groupName="demandsAny"
-                    targetAggregation="totalHorizon"
-                    dropPosition="OnOrBettween"
-                    drop="onDropOnGantt" />
-        </axistime:dragDropConfig>-->
     </axistime:ProportionZoomStrategy>
 
 </core:FragmentDefinition>

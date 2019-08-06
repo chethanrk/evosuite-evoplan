@@ -112,6 +112,9 @@
 				},
 				"sap.ui.comp": {
 					"minVersion": "1.60.0"
+				},
+				"sap.ui.unified" :{
+					"minVersion": "1.60.0"
 				}
 			}
 		},

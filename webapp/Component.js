@@ -122,7 +122,7 @@ sap.ui.define([
 
             this.setModel(models.createUserModel({
 				ASSET_PLANNING_ENABLED: false,
-				GANT_START_DATE:moment().startOf("year").subtract(5, "years").toDate(),
+				GANT_START_DATE:moment().startOf("year").subtract(2, "years").toDate(),
 				GANT_END_DATE:moment().endOf("year").add(5, "years").toDate()}), "user");
 
 			//Creating the Global message model from MessageManager
@@ -298,8 +298,8 @@ sap.ui.define([
                     this.getModel("user").setData(oData);
                     var oViewModel = this.getModel("viewModel");
 
-                    oViewModel.setProperty("/ganttSettings/visibleStartTime", moment().startOf("month").toDate()); 	// start of month
-                    oViewModel.setProperty("/ganttSettings/visibleEndTime", moment().endOf("month").toDate());
+                    oViewModel.setProperty("/ganttSettings/visibleStartTime", moment().startOf("isoWeek").subtract(1,"weeks").toDate()); 	// start of month
+                    oViewModel.setProperty("/ganttSettings/visibleEndTime", moment().endOf("isoWeek").add(4,"weeks").toDate());
 				}.bind(this),
 				error: function (oError) {
 					//Handle Error

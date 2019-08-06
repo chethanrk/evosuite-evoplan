@@ -27,9 +27,9 @@ sap.ui.define([
          */
         getDefaultDateRange: function(){
             return {
-                dateFrom: moment().startOf("year").subtract(5, "years").toDate(),
-                dateTo: moment().endOf("year").add(5, "years").toDate()
-            }
+                dateFrom: moment().startOf("year").subtract(3, "years").toDate(),
+                dateTo: moment().endOf("year").add(3, "years").toDate()
+            };
         },
 
         /**
@@ -404,13 +404,28 @@ sap.ui.define([
         },
         formatSyncIcon : function (sStatus) {
             if(sStatus === "E"){
-                return "sap-icon://decline"
+                return "sap-icon://decline";
             }else if(sStatus === "Q"){
-                return "sap-icon://project-definition-triangle-2"
+                return "sap-icon://project-definition-triangle-2";
             }else if(sStatus === "S"){
-                return "sap-icon://connected"
+                return "sap-icon://connected";
             }else{
                 return "sap-icon://circle-task-2";
+            }
+        },
+        getColorCode : function(sStatus){
+        	if(sStatus === "ASGN"){
+                return "#90EE90";
+            }else if(sStatus === "PASS"){
+                return "#FFFF00";
+            }else if(sStatus === "MOBI"){
+                return "#87cefa";
+            }else if(sStatus === "ROUT"){
+                return "#FFA500";
+            }else if(sStatus === "STRT"){
+                return "#E6E6FA";
+            }else if(sStatus === "COMP"){
+                return "#006400";
             }
         }
         

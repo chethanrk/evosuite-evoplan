@@ -189,7 +189,7 @@ sap.ui.define([
                     sAssignGuid = oModel.getProperty(sPath).Guid;
                 if (!this._menu) {
                     this._menu = sap.ui.xmlfragment(
-                        "com.evorait.evoplan.view.gantt.shapeContextMenu",
+                        "com.evorait.evoplan.view.gantt.ShapeContextMenu",
                         this
                     );
                     this.getView().addDependent(this._menu);

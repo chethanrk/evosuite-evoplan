@@ -24,12 +24,12 @@
                     draggable= "false"
                     title="{Description}"
                     showTitle="true"
-                    tooltip="{Description}"
-                    fill="#b6daff"
+                    tooltip="{Description} - {DEMAND_STATUS}"
+                    fill="{path:'DEMAND_STATUS', formatter:'.formatter.getColorCode'}"
                     stroke="#7088ac"
                     strokeWidth="1"/>
 
-            <gnt2:BaseImage src="{DEMAND_STATUS_ICON}"
+            <!--<gnt2:BaseImage src="{DEMAND_STATUS_ICON}"
                             tooltip="{Description}"
                             height="15"
                             width="15"
@@ -37,7 +37,7 @@
                             selectable="false"
                             draggable= "false"
                             xBias="-20"
-                            fill="#05537a"/>
+                            fill="#05537a"/>-->
         </gnt2:shapes>
 
     </gnt2:BaseGroup>

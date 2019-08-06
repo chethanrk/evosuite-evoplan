@@ -27,15 +27,25 @@
 					</gnt2:content>
 					<gnt2:legendContainer>
 						<gnt2:LegendContainer width="230px" height="250px">
-							<gnt2:ListLegend title="Requirement Document">
-								<!--<gnt2:ListLegendItem interactive="true" selected="true" interactiveChange=".onLegendItemInteractiveChange">-->
-									<!--<gnt2:BaseRectangle shapeId="legendItemFO" fill="#99D101" title="Freight Order" showTitle="false"/>-->
-								<!--</gnt2:ListLegendItem>-->
-
-								<!--<gnt2:ListLegendItem interactive="false" selected="false">-->
-									<!--<gnt2:BaseRectangle shapeId="legendItemFU"  stroke="#99D101" strokeWidth="2" strokeDasharray="2" fill="#fff" title="Freight Unit" showTitle="false"/>-->
-								<!--</gnt2:ListLegendItem>-->
-
+							<gnt2:ListLegend title="Color Codes">
+								<gnt2:ListLegendItem>
+									<gnt2:BaseRectangle shapeId="legendStatus3" fill="#90EE90" title="{i18n>xtit.tableAssignment}" showTitle="false"/>
+								</gnt2:ListLegendItem>
+								<gnt2:ListLegendItem>
+									<gnt2:BaseRectangle shapeId="legendStatus4" fill="#FFFF00" title="{i18n>xtit.partiallyAsgn}" showTitle="false"/>
+								</gnt2:ListLegendItem>
+								<gnt2:ListLegendItem>
+									<gnt2:BaseRectangle shapeId="legendStatus2" fill="#87cefa" title="{i18n>xbut.tranMob}" showTitle="false"/>
+								</gnt2:ListLegendItem>
+								<gnt2:ListLegendItem>
+									<gnt2:BaseRectangle shapeId="legendStatus5" fill="#FFA500" title="{i18n>xbut.enroute}" showTitle="false"/>
+								</gnt2:ListLegendItem>
+								<gnt2:ListLegendItem>
+									<gnt2:BaseRectangle shapeId="legendStatus6" fill="#E6E6FA" title="{i18n>xbut.start}" showTitle="false"/>
+								</gnt2:ListLegendItem>
+								<gnt2:ListLegendItem>
+									<gnt2:BaseRectangle shapeId="legendStatus1" fill="#006400" title="{i18n>xbut.comp}" showTitle="false"/>
+								</gnt2:ListLegendItem>
 							</gnt2:ListLegend>
 						</gnt2:LegendContainer>
 					</gnt2:legendContainer>
