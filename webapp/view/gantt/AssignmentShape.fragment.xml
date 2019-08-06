@@ -37,7 +37,7 @@
                             selectable="false"
                             draggable= "false"
                             xBias="-20"
-                            fill="#65814e"/>
+                            fill="#05537a"/>
         </gnt2:shapes>
 
     </gnt2:BaseGroup>

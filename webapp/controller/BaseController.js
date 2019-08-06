@@ -180,7 +180,6 @@ sap.ui.define([
 			oModel.callFunction("/" + sFuncName, {
 				method: sMethod || "POST",
 				urlParameters: oParams,
-                refreshAfterChange:false,
 				success: function (oData, oResponse) {
 					//Handle Success
 					if (bIsLast) {
@@ -211,7 +210,6 @@ sap.ui.define([
 				oModel.callFunction("/" + sFuncName, {
 					method: sMethod || "POST",
 					urlParameters: oParams,
-                    refreshAfterChange:false,
 					success: function (oData, oResponse) {
 						resolve(oData, oResponse);
 					}.bind(this),

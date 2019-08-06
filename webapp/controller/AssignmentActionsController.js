@@ -18,7 +18,7 @@ sap.ui.define([
 		 * @param {String} sTargetPath
 		 * @return {Promise}
 		 */
-		assignedDemands: function (aSourcePaths, sTargetPath) {
+		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate) {
 			var oModel = this.getModel();
 			var targetObj = oModel.getProperty(sTargetPath);
 			this.clearMessageModel();
@@ -31,22 +31,31 @@ sap.ui.define([
 						"ResourceGroupGuid": targetObj.ResourceGroupGuid,
 						"ResourceGuid": targetObj.ResourceGuid
 					};
+				// When we drop on the Gantt chart directly
+				if(oTargetDate){
+                    oParams.DateFrom = oTargetDate;
+                    oParams.TimeFrom = targetObj.StartTime;
+                    oParams.DateTo = oTargetDate;
+                    oParams.TimeTo = targetObj.EndTime;
+				}else{
+					// When we drop it on resource tree rows
+                    if (targetObj.StartDate) {
+                        oParams.DateFrom = targetObj.StartDate;
+                        oParams.TimeFrom = targetObj.StartTime;
+                    } else {
+                        oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
+                        oParams.TimeFrom = targetObj.StartTime;
+                    }
 
-				if (targetObj.StartDate) {
-					oParams.DateFrom = targetObj.StartDate;
-					oParams.TimeFrom = targetObj.StartTime;
-				} else {
-					oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
-					oParams.TimeFrom = targetObj.StartTime;
+                    if (targetObj.EndDate) {
+                        oParams.DateTo = targetObj.EndDate;
+                        oParams.TimeTo = targetObj.EndTime;
+                    } else {
+                        oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
+                        oParams.TimeTo = targetObj.EndTime;
+                    }
 				}
 
-				if (targetObj.EndDate) {
-					oParams.DateTo = targetObj.EndDate;
-					oParams.TimeTo = targetObj.EndTime;
-				} else {
-					oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
-					oParams.TimeTo = targetObj.EndTime;
-				}
 				return this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST");
 			}
 		},

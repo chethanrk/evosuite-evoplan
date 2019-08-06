@@ -34,6 +34,7 @@ sap.ui.define([
 			var oDialog = this.getDialog(),
 				oAssignment = this.getDefaultAssignmentModelObject(),
 				oResource,
+                oAssignData,
 				sResourceGroupGuid,
 				sResourceGuid;
 
@@ -47,12 +48,18 @@ sap.ui.define([
 				oAssignment.DemandGuid = oResource.DemandGuid;
 
 			} else if(oAssignementPath){
-                oAssignment = oView.getModel().getProperty(oAssignementPath);
+				// From gantt
+				// When we have Assignment path <AssignmentSet(<key>)>
+                oAssignData = oView.getModel().getProperty(oAssignementPath);
 
-                oAssignment.AssignmentGuid = oAssignment.Guid;
-                oAssignment.Description = oAssignment.Description;
-                sResourceGroupGuid = oAssignment.ResourceGroupGuid;
-                sResourceGuid = oAssignment.ResourceGuid;
+                oAssignment.AssignmentGuid = oAssignData.Guid;
+                oAssignment.Description = oAssignData.Description;
+                sResourceGroupGuid = oAssignData.ResourceGroupGuid;
+                sResourceGuid = oAssignData.ResourceGuid;
+                oAssignment.DemandGuid = oAssignData.DemandGuid;
+                oAssignment.DemandStatus = oAssignData.Demand.Status;
+                oAssignment.DateFrom = oAssignData.DateFrom;
+                oAssignment.DateTo = oAssignData.DateTo;
 			}else {
 				oAssignment.AssignmentGuid = oAssignmentData.Guid;
 				oAssignment.Description = oAssignmentData.Demand.DemandDesc;
@@ -203,7 +210,7 @@ sap.ui.define([
 		 */
 		getDefaultAssignmentModelObject: function(){
 			return {
-				AllowChange:true,
+				AllowChange:false,
 				AllowReassign: false,
 				AllowUnassign: false,
 				AssignmentGuid: "",

@@ -64,6 +64,7 @@
 							enableBusyIndicator="true"
 							busyStateChanged="onBusyStateChanged"
 							enableCellFilter="false"
+							columnHeaderVisible="false"
 							rows="{
 								path: '/ResourceHierarchySet',
 								parameters: {

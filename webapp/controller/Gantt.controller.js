@@ -5,8 +5,9 @@ sap.ui.define([
     "com/evorait/evoplan/model/ganttFormatter",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "sap/ui/core/Popup"
-], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, Popup) {
+    "sap/ui/core/Popup",
+    "sap/gantt/misc/Utility"
+], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, Popup, Utility) {
     "use strict";
 
     return AssignmentActionsController.extend("com.evorait.evoplan.controller.Gantt", {
@@ -30,23 +31,11 @@ sap.ui.define([
             this._oEventBus = sap.ui.getCore().getEventBus();
             this._oAssignementModel = this.getModel("assignment");
 
-            //route matched
-            // this.getRouter().getRoute("gantt").attachPatternMatched(this._onObjectMatched, this);
             this._oEventBus.subscribe("BaseController", "refreshGanttChart", this._refreshGanttChart, this);
-            // this._oEventBus.subscribe("BaseController", "refreshChart", this._setDefaultTreeDateRange, this);
             this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
-
-
 
             //set on first load required filters
             this._treeTable = this.getView().byId("ganttResourceTreeTable");
-        },
-
-        /**
-         * after page rendering
-         */
-        onAfterRendering: function () {
-
         },
 
         /**
@@ -73,14 +62,6 @@ sap.ui.define([
         /**
          * ################### Internal functions ###################
          */
-
-        /**
-         * when routing was matched
-         * @private
-         */
-        _onObjectMatched: function () {
-
-        },
 
         /**
          * set default filters for tree table
@@ -112,7 +93,10 @@ sap.ui.define([
             return aFilters;
         },
         /**
-         * On Drop on the resource call the function import for
+         * On Drop on the resource tree rows or on the Gantt chart
+         * call the function import to create the assignment
+         *
+         * @param {object} oEvent
          * @Author Rahul
          * @since 3.0
          *
@@ -120,36 +104,42 @@ sap.ui.define([
         onDropOnResource: function (oEvent) {
             var oDraggedControl = oEvent.getParameter("draggedControl"),
                 oDroppedControl = oEvent.getParameter("droppedControl"),
+                oBrowserEvent = oEvent.getParameter("browserEvent"),
                 oDragContext = oDraggedControl.getBindingContext(),
                 oDropContext = oDroppedControl.getBindingContext(),
-                oPromise,
+                oPromise,pageX,
+                oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
                 oResourceBundle = this.getResourceBundle(),
                 sMessage = oResourceBundle.getText("ymsg.availability");
-            if(this.getModel().getProperty(oDropContext.getPath()).NodeType === "ASSIGNMENT"){
-                // oEvent.preventDefault();
-                this.showMessageToast(oResourceBundle.getText("ymsg.notPossible"));
-                return;
-            }
 
-            if (!this.isAvailable(oDropContext.getPath())) {
-                oPromise = this._showConfirmMessageBox(sMessage); // this method will resolve promise
-                oPromise.then(function (data) {
-                    if (data === "YES") {
-                        this._assignDemands([oDragContext.getPath()], oDropContext.getPath());
-                    }
-                }.bind(this));
-            } else {
-                this._assignDemands([oDragContext.getPath()], oDropContext.getPath());
+            this.byId("container").setBusy(true);
+
+            if(oBrowserEvent.target.tagName === "rect"){
+                // When we drop on gantt chart
+                pageX = oBrowserEvent.pageX;
+                // oAxisTime.viewToTime(<pageX>) will give the time stamp for dropped location
+                this._assignDemands([oDragContext.getPath()], oDropContext.getPath(),oAxisTime.viewToTime(pageX));
+            }else{
+                if (!this.isAvailable(oDropContext.getPath())) {
+                    oPromise = this._showConfirmMessageBox(sMessage); // this method will resolve promise
+                    oPromise.then(function (data) {
+                        if (data === "YES") {
+                            this._assignDemands([oDragContext.getPath()], oDropContext.getPath());
+                        }
+                    }.bind(this));
+                } else {
+                    this._assignDemands([oDragContext.getPath()], oDropContext.getPath());
+                }
             }
         },
         /**
          * Calls the respective function import to create assignments
-         * @param aSources Demand paths
-         * @param oTarget Resource Path
+         * @param {Object} aSources Demand paths
+         * @param {Object} oTarget Resource Path
          * @private
          */
-        _assignDemands: function (aSources, oTarget) {
-            var oPromise = this.assignedDemands(aSources, oTarget);
+        _assignDemands: function (aSources, oTarget, oTargetDate) {
+            var oPromise = this.assignedDemands(aSources, oTarget, oTargetDate);
             oPromise.then(this._refreshAreas.bind(this)).catch(function (error) {
                 console.log(error);
             }.bind(this));
@@ -183,22 +173,6 @@ sap.ui.define([
                 oTo = oEvent.getParameter("to");
 
             this._setDefaultTreeDateRange({dateTo: oTo, dateFrom: oFrom});
-        },
-        /**
-         * on press link of assignment in resource tree row
-         * get parent row path and bind this path to the dialog or showing assignment information
-         * @param oEvent
-         */
-        onPressAssignmentLink: function (oEvent) {
-            var oSource = oEvent.getSource(),
-                oRowContext = oSource.getParent().getBindingContext();
-
-            if (oRowContext) {
-                this.getOwnerComponent().assignInfoDialog.open(this.getView(), oRowContext.getPath(), null, {bFromGantt: true});
-            } else {
-                var msg = this.getResourceBundle().getText("notFoundContext");
-                this.showMessageToast(msg);
-            }
         },
         /**
          * Event triggered when right clicked on gantt shape,
@@ -250,6 +224,7 @@ sap.ui.define([
 
 			if(sButtonText === this.getResourceBundle().getText("xbut.buttonUnassign")){
 				//do unassign
+                this.byId("container").setBusy(true);
 				this.deleteAssignment(oModel, sAssignGuid).then(this._refreshAreas.bind(this));
 
 			} else if(sButtonText === this.getResourceBundle().getText("xbut.buttonReassign")){
@@ -288,8 +263,7 @@ sap.ui.define([
          * @private
          */
         _refreshAreas: function (data, oResponse) {
-            var oEventBus = sap.ui.getCore().getEventBus(),
-                oGanttContainer = this.getView().byId("container");
+            var oGanttContainer = this.getView().byId("container");
             oGanttContainer.setBusy(true);
             this.showMessage(oResponse);
             this._refreshGanttChart();
@@ -303,7 +277,7 @@ sap.ui.define([
          * @private
          */
         _getShapeBindingContextPath: function (sShapeUid) {
-            var oParsedUid = sap.gantt.misc.Utility.parseUid(sShapeUid);
+            var oParsedUid = Utility.parseUid(sShapeUid);
             return oParsedUid.shapeDataName;
         },
 
@@ -320,8 +294,8 @@ sap.ui.define([
                     Guid: sAssignmentGuid
                 });
                 var oAssignmentData = this.getModel().getProperty("/" + sPath);
-
-                if (!oAssignmentData) {
+                // Demnad data or assignment data will be missing some time
+                if (!oAssignmentData || !oAssignmentData.Demand || !oAssignmentData.Demand.Guid) {
                     this.getModel().read("/" + sPath, {
                         urlParameters: {"$expand": "Demand"},
                         success: function (result) {
@@ -407,13 +381,6 @@ sap.ui.define([
                     oAssignmentObj.DateFrom = oParams.newDateTime;
                     oAssignmentObj.DateTo = newEndDate.toDate();
                     oAssignmentObj.NewAssignPath = targetContext.getPath();
-
-                    // if (targetData.NodeType === "ASSIGNMENT" && isReassign) {
-                    //     //assign with new date times to parent node
-                    //     oAssignmentObj.NewAssignPath = "/" + this.getModel().createKey("ResourceHierarchySet", {
-                    //         NodeId: targetData.ParentNodeId
-                    //     });
-                    // }
                     this._oAssignementModel.setData(oAssignmentObj);
                     this.updateAssignment(isReassign, {bFromGantt: true});
                 }.bind(this));
