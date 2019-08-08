@@ -18,10 +18,8 @@
                     shapeId="{NodeId}"
                     countInBirdEye="true"
                     time="{DateFrom}"
+                    height="23"
                     endTime="{DateTo}"
-                    resizable="false"
-                    selectable="false"
-                    draggable= "false"
                     title="{Description}"
                     showTitle="true"
                     tooltip="{Description} - {DEMAND_STATUS}"
@@ -29,15 +27,23 @@
                     stroke="#7088ac"
                     strokeWidth="1"/>
 
-            <!--<gnt2:BaseImage src="{DEMAND_STATUS_ICON}"
-                            tooltip="{Description}"
-                            height="15"
-                            width="15"
-                            resizable="false"
-                            selectable="false"
-                            draggable= "false"
-                            xBias="-20"
-                            fill="#05537a"/>-->
+          <!--<gnt2:BaseImage src="{DEMAND_STATUS_ICON}"
+        			shapeId="{NodeId}"
+                    text="{Description}"
+                    title="{Description}"
+                    showTitle="true"
+                    tooltip="{Description} - {DEMAND_STATUS}"
+                    stroke="#7088ac"
+                    strokeWidth="1"/>-->
+                            
+                            
+                <!-- <gnt2:BaseText
+                    shapeId="{NodeId}"
+                    text="{Description}"
+                    tooltip="{Description} - {DEMAND_STATUS}"
+                    fill="{path:'DEMAND_STATUS', formatter:'.formatter.getColorCode'}"
+                    stroke="#7088ac"
+                    strokeWidth="1"/>-->
         </gnt2:shapes>
 
     </gnt2:BaseGroup>

@@ -368,6 +368,13 @@ sap.ui.define([
 		 */
 		onColumnResize: function() {
 			this._jDraggable(this);
+		},
+		/**
+		 *	Navigates to evoOrder detail page with static url. 
+		 */
+		OnClickOrderId : function(oEvent){
+			var sOrderId = oEvent.getSource().getText();
+			window.open("https://ed1.evorait.net:50103/sap/bc/ui5_ui5/evocu/evoorder/index.html?sap-client=800#/WorkOrder/"+sOrderId, "_blank");
 		}
 	});
 });

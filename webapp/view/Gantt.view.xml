@@ -80,7 +80,8 @@
 								parameters: {
 									numberOfExpandedLevels:1,
 									restoreTreeStateAfterChange:true,
-									expand:'AssignmentSet'
+									expand:'AssignmentSet',
+									operationMode: 'Server'
 								}
 							}">
 						<table:extension>
@@ -118,6 +119,10 @@
 								<gnt2:shapes2>
 									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.AssignmentShape" type="XML"/>
 								</gnt2:shapes2>
+								
+								<!--<gnt2:calendars>-->
+								<!--	<gnt2:BaseCalendar shapeId="Calendar" fillOpacity="0.4" opacity="0.4" calendarName="Calendar" fill="#ccc"/>-->
+								<!--</gnt2:calendars>-->
 
 
 							</gnt2:GanttRowSettings>
