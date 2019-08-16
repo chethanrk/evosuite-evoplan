@@ -36,6 +36,7 @@ sap.ui.define([
 
             //set on first load required filters
             this._treeTable = this.getView().byId("ganttResourceTreeTable");
+            this._defaultGanttHorizon();
         },
 
         /**
@@ -74,6 +75,20 @@ sap.ui.define([
             binding.filter(aFilters, "Application");
         },
         /**
+         * Set Default Horizon times
+         * @private
+         */
+        _defaultGanttHorizon : function () {
+            var oDefaultDateRange = formatter.getDefaultDateRange(),
+                oViewModel = this.getModel("viewModel");
+            oViewModel.setProperty("/ganttSettings/totalStartTime", oDefaultDateRange.dateFrom);
+            oViewModel.setProperty("/ganttSettings/totalEndTime", oDefaultDateRange.dateTo);
+
+            oViewModel.setProperty("/ganttSettings/visibleStartTime", moment().startOf("isoWeek").subtract(1,"weeks").toDate()); 	// start of month
+            oViewModel.setProperty("/ganttSettings/visibleEndTime", moment().endOf("isoWeek").add(4,"weeks").toDate());
+
+        },
+        /**
          * Gets default filters for gantt
          *
          * @param mParameters
@@ -86,10 +101,6 @@ sap.ui.define([
 
             aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(defDateRange.dateTo)));
             aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(defDateRange.dateFrom)));
-            aFilters.push(new Filter("NodeType", FilterOperator.GE, "TIMENONE"));
-            aFilters.push(new Filter("GANTT_ENABLED", FilterOperator.EQ, "X"));
-
-
             return aFilters;
         },
         /**
@@ -153,11 +164,10 @@ sap.ui.define([
          */
         _refreshGanttChart: function (oEvent) {
             var oTreeTable = this.getView().byId("ganttResourceTreeTable"),
-                oTreeBinding = oTreeTable.getBinding("rows"),
                 oGanttContainer = this.getView().byId("container");
 
-            if (oTreeBinding) {
-                oTreeBinding._restoreTreeState().then(function () {
+            if (oTreeTable && oTreeTable.getBinding("rows") && oGanttContainer) {
+                oTreeTable.getBinding("rows")._restoreTreeState().then(function () {
                     oGanttContainer.setBusy(false);
                 });
 
@@ -182,7 +192,7 @@ sap.ui.define([
         onShapeContextMenu: function (oEvent) {
             var oShape = oEvent.getParameter("shape"),
                 oViewModel = this.getModel("viewModel");
-            if (oShape && oShape.sParentAggregationName === "shapes2") {
+            if (oShape && oShape.sParentAggregationName === "shapes3") {
                 this._selectedShapeContext = oShape.getBindingContext();
                 var oModel = this._selectedShapeContext.getModel(),
                     sPath = this._selectedShapeContext.getPath(),
@@ -195,12 +205,10 @@ sap.ui.define([
                     this.getView().addDependent(this._menu);
                 }
 
-                // oShape.setBusy(true);
                 this._updateAssignmentModel(sAssignGuid).then(function(data){
                     oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign",data.AllowUnassign);
                     oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign",data.AllowReassign)
                     oViewModel.setProperty("/ganttSettings/shapeOpearation/change",data.AllowChange);
-                    // oShape.setBusy(false);
                     var eDock = Popup.Dock;
                     this._menu.open(false, oShape, eDock.BeginTop, eDock.endBottom, oShape);
                 }.bind(this));
@@ -395,7 +403,7 @@ sap.ui.define([
             var oParams = oEvent.getParameters(),
                 oRowContext = oParams.shape.getBindingContext(),
                 oData = this.getModel().getProperty(oRowContext.getPath());
-            if (oParams.shape && oParams.shape.sParentAggregationName === "shapes2") {
+            if (oParams.shape && oParams.shape.sParentAggregationName === "shapes3") {
                 this._updateAssignmentModel(oData.Guid).then(function (oAssignmentObj) {
                     oAssignmentObj.DateFrom = oParams.newTime[0];
                     oAssignmentObj.DateTo = oParams.newTime[1];
@@ -413,10 +421,12 @@ sap.ui.define([
          */
         onShapeDoubleClick: function (oEvent) {
             var oParams = oEvent.getParameters();
-            var oContext = oParams.shape.getBindingContext();
-            if (oParams.shape && oParams.shape.sParentAggregationName === "shapes2") {
+            var oContext = oParams.shape.getBindingContext(),
+                oRowContext = oParams.rowSettings.getParent().getBindingContext(),
+                oShape = oParams.shape;
+            if (oShape && oShape.sParentAggregationName === "shapes3") {
                 if (oContext) {
-                    this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, {bFromGantt: true}, oContext.getPath());
+                    this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], {bFromGantt: true},oShape.getTime());
                 } else {
                     var msg = this.getResourceBundle().getText("notFoundContext");
                     this.showMessageToast(msg);
@@ -435,7 +445,39 @@ sap.ui.define([
             var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
             binding.filter(aFilters, "Application");
 
+        },
+        /**
+         * open the create unavailability dialog for selected resource
+         * @param oEvent
+         */
+        onCreateAbsence : function (oEvent) {
+            var oTreeTable = this.getView().byId("ganttResourceTreeTable"),
+                aIndices = oTreeTable.getSelectedIndices(),oContext,
+                oResourceBundle = this.getResourceBundle();
+            if(aIndices.length === 0){
+                this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"))
+                return;
+            }
+            oContext = oTreeTable.getContextByIndex(aIndices[0]);
+           this.getOwnerComponent().createUnAvail.open(this.getView(), oContext.getPath(), {bFromGantt: true});
+
+        },
+        /**
+         * on row selection change enable/disable the create absence
+         * @param oEvent
+         */
+        onRowSelectionChange: function (oEvent) {
+            var aIndices = oEvent.getSource().getSelectedIndices(),
+                oButton = this.getView().byId("idCreateAb"),
+                oContext = aIndices.length > 0 ? oEvent.getSource().getContextByIndex(aIndices[0]) : null,
+                oData = oContext !== null ? oContext.getModel().getProperty(oContext.getPath()) : null;
+            if(aIndices.length > 0 && oData && oData.NodeType === "RESOURCE"){
+                oButton.setEnabled(true);
+            }else{
+                oButton.setEnabled(false);
+            }
         }
+
 
     });
 });

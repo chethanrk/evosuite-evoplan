@@ -38,7 +38,7 @@ sap.ui.define([
 		 * @param sBindPath
 		 * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
 		 */
-		open: function (oView, aSelectedResources, mParameters) {
+		open: function (oView, aSelectedResources, mParameters, oStartDate) {
 			var oDialog = this.getDialog();
 			this._changedAssignments = {};
 			this._selectedView = undefined;
@@ -49,6 +49,7 @@ sap.ui.define([
 			this._oCalendarModel = this._component.getModel("calendarModel");
 			this._oPlanningCalendar = sap.ui.getCore().byId("planningCalendar");
 			this._mParameters = mParameters;
+			this._startDate = oStartDate;
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 			// connect dialog to view (models, lifecycle)
 			oView.addDependent(oDialog);
@@ -112,7 +113,9 @@ sap.ui.define([
 				aActualFilters = [],
 				oModel = this._oView ? this._oView.getModel() : null,
 				// oResourceBundle = this._oResourceBundle,
-				oViewFilterSettings = this._component ? this._component.filterSettingsDialog : null;
+				oViewFilterSettings = this._component ? this._component.filterSettingsDialog : null,
+             	sDateControl1 ,
+             	sDateControl2 ;
 
 			for (var i = 0; i < this.selectedResources.length; i++) {
 				var obj = oModel.getProperty(this.selectedResources[i]);
@@ -126,8 +129,15 @@ sap.ui.define([
 					aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
 				}
 			}
-			var sDateControl1 = oViewFilterSettings.getFilterDateRange()[0].getValue();
-			var sDateControl2 = oViewFilterSettings.getFilterDateRange()[1].getValue();
+			if(this._mParameters.bFromGantt){
+				// if we decide to keep different date range for demand view and gantt view
+                sDateControl1 = formatter.getDefaultDateRange().dateFrom;
+                sDateControl2 = formatter.getDefaultDateRange().dateTo;
+			}else{
+                sDateControl1 = oViewFilterSettings.getFilterDateRange()[0].getValue();
+                sDateControl2 = oViewFilterSettings.getFilterDateRange()[1].getValue();
+			}
+
 
 			if (aUsers.length > 0) {
 				aResourceFilters.push(new Filter({
@@ -157,11 +167,15 @@ sap.ui.define([
 			var oDialog = this.getDialog();
 			// console.log(this._createData(data));
 			this._oCalendarModel.setData({
-				startDate: new Date(),
-				viewKey: this._selectedView ? this.formatter.formatViewKey(this._selectedView) : this.getSelectedView(),
 				resources: this._createData(data)
 			});
 			// this._oCalendarModel.get.refresh();
+			if(this._mParameters.bFromGantt){
+                this._oCalendarModel.setProperty("/startDate",this._startDate || new Date());
+			}else{
+                this._oCalendarModel.setProperty("/startDate",new Date());
+                this._oCalendarModel.setProperty("/viewKey",this._selectedView ? this.formatter.formatViewKey(this._selectedView) : this.getSelectedView());
+			}
 			oDialog.open();
 			this._oView.getModel("viewModel").setProperty("/calendarBusy", false);
 			this._oPlanningCalendar.setBusy(false);
@@ -201,7 +215,7 @@ sap.ui.define([
 			var oModel = this.oSelectedContext.getModel();
 			var sPath = this.oSelectedContext.getPath();
 			var oAppointmentData = oModel.getProperty(sPath);
-			this._component.assignInfoDialog.open(this._oView, null, oAppointmentData, this._mParameters);
+			this._component.assignInfoDialog.open(this._oView, null, oAppointmentData, {bFromPlannCal:true});
 
 		},
 		/**
@@ -455,10 +469,11 @@ sap.ui.define([
 				var oResourceMap = {};
 
 				for (var a = 0; a < this.selectedResources.length; a++) {
-					var oResource = oModel.getProperty(this.selectedResources[a]);
+					var oResource = oModel.getProperty(this.selectedResources[a]),
+						sEntitySet = this.selectedResources[a].split("(")[0];
 					oResource["ResourceDescription"] = oResource.Description;
 					oResource["ObjectType"] = oResource.NodeType;
-					oResource["GroupDescription"] = oModel.getProperty("/ResourceHierarchySet('" + oResource.ResourceGroupGuid + "')").Description;
+					oResource["GroupDescription"] = oModel.getProperty(sEntitySet+"('" + oResource.ResourceGroupGuid + "')").Description;
 
 					oResourceMap[oResource.NodeId] = oResource;
 					oResourceMap[oResource.NodeId].Assignments = [];
@@ -519,6 +534,10 @@ sap.ui.define([
 					this));
 			} else {
 				this._oDialog.close();
+				if(this._mParameters.bFromGantt){
+                    var eventBus = sap.ui.getCore().getEventBus();
+                    eventBus.publish("BaseController", "refreshGanttChart", {});
+				}
 			}
 		},
 		/**

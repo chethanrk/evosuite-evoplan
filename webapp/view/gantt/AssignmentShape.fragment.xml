@@ -1,33 +1,34 @@
 <core:FragmentDefinition
         xmlns="sap.ui.table"
-        xmlns:m="sap.m"
         xmlns:core="sap.ui.core"
-        xmlns:axistime="sap.gantt.axistime"
-        xmlns:config="sap.gantt.config"
         xmlns:gnt2="sap.gantt.simple">
 
-    <gnt2:BaseGroup time="{DateFrom}"
+    <!--<gnt2:BaseGroup time="{DateFrom}"
                     endTime="{DateTo}"
                     tooltip="{Description}"
                     resizable="true"
                     selectable="true"
                     draggable= "true">
-        <gnt2:shapes>
+        <gnt2:shapes>-->
 
             <gnt2:BaseRectangle
-                    shapeId="{NodeId}"
+                    shapeId="{Guid}"
                     countInBirdEye="true"
                     time="{DateFrom}"
                     height="23"
                     endTime="{DateTo}"
                     title="{Description}"
                     showTitle="true"
-                    tooltip="{Description} - {DEMAND_STATUS}"
-                    fill="{path:'DEMAND_STATUS', formatter:'.formatter.getColorCode'}"
+                    tooltip="{Description} - {DEMAND_STATUS}- {Guid}"
+                    fill="{DEMAND_STATUS_COLOR}"
                     stroke="#7088ac"
-                    strokeWidth="1"/>
+                    strokeWidth="1"
+                    resizable="true"
+                    selectable="true"
+                    draggable= "true"/>
 
           <!--<gnt2:BaseImage src="{DEMAND_STATUS_ICON}"
+           fill="{path:'DEMAND_STATUS', formatter:'.formatter.getColorCode'}"
         			shapeId="{NodeId}"
                     text="{Description}"
                     title="{Description}"
@@ -44,8 +45,8 @@
                     fill="{path:'DEMAND_STATUS', formatter:'.formatter.getColorCode'}"
                     stroke="#7088ac"
                     strokeWidth="1"/>-->
-        </gnt2:shapes>
+     <!--   </gnt2:shapes>-->
 
-    </gnt2:BaseGroup>
+   <!-- </gnt2:BaseGroup>-->
 
 </core:FragmentDefinition>

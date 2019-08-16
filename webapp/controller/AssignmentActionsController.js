@@ -34,7 +34,10 @@ sap.ui.define([
 				// When we drop on the Gantt chart directly
 				if(oTargetDate){
                     oParams.DateFrom = oTargetDate;
-                    oParams.TimeFrom = targetObj.StartTime;
+                    oParams.TimeFrom = {
+                    	ms:oTargetDate.getTime(),
+						__edmType:"Edm.Time"
+					};
                     oParams.DateTo = oTargetDate;
                     oParams.TimeTo = targetObj.EndTime;
 				}else{

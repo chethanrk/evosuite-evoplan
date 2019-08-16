@@ -12,6 +12,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/FilterSettingsDialog",
 	"com/evorait/evoplan/controller/PlanningCalendarDialog",
 	"com/evorait/evoplan/controller/CapacitiveAssignments",
+    "com/evorait/evoplan/controller/CreateResourceUnAvailability",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
 	"sap/m/Link"
@@ -29,6 +30,7 @@ sap.ui.define([
 	FilterSettingsDialog,
 	PlanningCalendarDialog,
 	CapacitiveAssignments,
+    CreateResourceUnAvailability,
 	MessagePopover,
 	MessagePopoverItem,
 	Link) {
@@ -95,6 +97,7 @@ sap.ui.define([
                 splitterDivider:"35%",
                 selectedHierarchyView:"TIMENONE",
                 enableReprocess:false,
+				first_load:false,
 				ganttSettings: {
                 	active: false,
 					shapeOpearation:{
@@ -230,6 +233,9 @@ sap.ui.define([
 			this.planningCalendarDialog.init();
 			this.capacitiveAssignments = new CapacitiveAssignments();
 			this.capacitiveAssignments.init();
+
+            this.createUnAvail = new CreateResourceUnAvailability();
+            this.createUnAvail.init();
 		},
 
 		/**
@@ -296,11 +302,7 @@ sap.ui.define([
 				success: function (oData, oResponse) {
 					//Handle Success
                     this.getModel("user").setData(oData);
-                    var oViewModel = this.getModel("viewModel");
-
-                    oViewModel.setProperty("/ganttSettings/visibleStartTime", moment().startOf("isoWeek").subtract(1,"weeks").toDate()); 	// start of month
-                    oViewModel.setProperty("/ganttSettings/visibleEndTime", moment().endOf("isoWeek").add(4,"weeks").toDate());
-				}.bind(this),
+                 }.bind(this),
 				error: function (oError) {
 					//Handle Error
 				}.bind(this)
