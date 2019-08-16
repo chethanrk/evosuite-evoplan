@@ -24,10 +24,11 @@
 								width="15%"
 								change="onChangeDateRange"
 						/>
+						<Button id="idCreateAb" enabled="false" text="{i18n>xtit.createUnAvailability}" press="onCreateAbsence"/>
 					</gnt2:content>
 					<gnt2:legendContainer>
 						<gnt2:LegendContainer width="230px" height="250px">
-							<gnt2:ListLegend title="Color Codes">
+							<gnt2:ListLegend title="{i18n>xtit.colorCodes}">
 								<gnt2:ListLegendItem>
 									<gnt2:BaseRectangle shapeId="legendStatus3" fill="#90EE90" title="{i18n>xtit.tableAssignment}" showTitle="false"/>
 								</gnt2:ListLegendItem>
@@ -64,24 +65,26 @@
 									  shapeDoubleClick="onShapeDoubleClick"
 									  shapeContextMenu="onShapeContextMenu"
 									  showShapeTimeOnDrag="true"
-									  selectionPanelSize="25%">
+									  selectionPanelSize="23%">
 				<gnt2:table>
 					<table:TreeTable
 							id="ganttResourceTreeTable"
-							selectionMode="None"
+							selectionMode="Single"
 							visibleRowCountMode="Auto"
 							enableColumnReordering="false"
 							enableBusyIndicator="true"
 							busyStateChanged="onBusyStateChanged"
 							enableCellFilter="false"
 							columnHeaderVisible="false"
+							SelectionBehavior="Row"
+							rowSelectionChange="onRowSelectionChange"
 							rows="{
-								path: '/ResourceHierarchySet',
+								path: '/GanttResourceHierarchySet',
 								parameters: {
 									numberOfExpandedLevels:1,
 									restoreTreeStateAfterChange:true,
-									expand:'AssignmentSet',
-									operationMode: 'Server'
+									operationMode: 'Server',
+									expand:'AssignmentSet,ResourceAvailabilitySet'
 								}
 							}">
 						<table:extension>
@@ -91,9 +94,13 @@
 						</table:extension>
 						<table:rowSettingsTemplate>
 							<gnt2:GanttRowSettings rowId="{NodeId}"
-								shapes2="{
+								shapes3="{
 									path:'AssignmentSet',
 									templateShareable:true
+								}"
+								shapes2="{
+										path:'ResourceAvailabilitySet',
+										templateShareable:true
 								}">
 
 								<gnt2:shapes1>
@@ -101,8 +108,8 @@
 											shapeId="{NodeId}"
 											scheme="hiddenBackground"
 											countInBirdEye="false"
-											time="{user>/GANT_START_DATE}"
-											endTime="{user>/GANT_END_DATE}"
+											time="{viewModel>/ganttSettings/totalStartTime}"
+											endTime="{viewModel>/ganttSettings/totalEndTime}"
 											connectable="false"
 											resizable="false"
 											selectable="true"
@@ -117,12 +124,30 @@
 								</gnt2:shapes1>
 
 								<gnt2:shapes2>
-									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.AssignmentShape" type="XML"/>
+									<gnt2:BaseRectangle
+											shapeId="{Guid}"
+											scheme="hiddenBackground"
+											countInBirdEye="false"
+											time="{DateFrom}"
+											endTime="{DateTo}"
+											tooltip="{Description}"
+											connectable="false"
+											resizable="false"
+											selectable="false"
+											draggable= "false"
+											height="31"
+											showTitle="false"
+											fill="#ccc"
+											fillOpacity="1"
+											strokeOpacity="0"
+											opacity="1"
+											stroke="transparent"
+											strokeWidth="0"/>
 								</gnt2:shapes2>
-								
-								<!--<gnt2:calendars>-->
-								<!--	<gnt2:BaseCalendar shapeId="Calendar" fillOpacity="0.4" opacity="0.4" calendarName="Calendar" fill="#ccc"/>-->
-								<!--</gnt2:calendars>-->
+
+								<gnt2:shapes3>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.AssignmentShape" type="XML"/>
+								</gnt2:shapes3>
 
 
 							</gnt2:GanttRowSettings>

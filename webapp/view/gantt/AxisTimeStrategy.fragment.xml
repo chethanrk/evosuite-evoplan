@@ -9,8 +9,8 @@
     <axistime:ProportionZoomStrategy>
         <axistime:totalHorizon>
             <config:TimeHorizon
-                    startTime="{user>/GANT_START_DATE}"
-                    endTime="{user>/GANT_END_DATE}"/>
+                    startTime="{viewModel>/ganttSettings/totalStartTime}"
+                    endTime="{viewModel>/ganttSettings/totalEndTime}"/>
         </axistime:totalHorizon>
         <axistime:visibleHorizon>
             <config:TimeHorizon

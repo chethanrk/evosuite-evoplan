@@ -180,6 +180,10 @@ sap.ui.define([
 		_onObjectMatched: function (oEvent) {
 			var sRoute = oEvent.getParameter("name");
 			var eventBus = sap.ui.getCore().getEventBus();
+			// if(!this.getModel("viewModel").getProperty("/first_load")){
+             //    this.getModel("viewModel").setProperty("/first_load",true);
+             //    return;
+			// }
 			if(sRoute === "gantt"){
                     eventBus.publish("BaseController", "refreshGanttChart", {});
                     eventBus.publish("BaseController", "refreshDemandGanttTable", {});

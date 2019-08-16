@@ -27,8 +27,8 @@ sap.ui.define([
          */
         getDefaultDateRange: function(){
             return {
-                dateFrom: moment().startOf("year").subtract(3, "years").toDate(),
-                dateTo: moment().endOf("year").add(3, "years").toDate()
+                dateFrom: new Date("01/01/2010"),
+                dateTo: moment().endOf("year").add(5, "years").toDate()
             };
         },
 
@@ -402,6 +402,11 @@ sap.ui.define([
         		return "Default";
         	}
         },
+        /**
+         * Format Sync Icon in demand view based on sync status of demand
+         * @param sStatus
+         * @return {string}
+         */
         formatSyncIcon : function (sStatus) {
             if(sStatus === "E"){
                 return "sap-icon://decline";
@@ -412,22 +417,6 @@ sap.ui.define([
             }else{
                 return "sap-icon://circle-task-2";
             }
-        },
-        getColorCode : function(sStatus){
-        	if(sStatus === "ASGN"){
-                return "#90EE90";
-            }else if(sStatus === "PASS"){
-                return "#FFFF00";
-            }else if(sStatus === "MOBI"){
-                return "#87cefa";
-            }else if(sStatus === "ROUT"){
-                return "#FFA500";
-            }else if(sStatus === "STRT"){
-                return "#E6E6FA";
-            }else if(sStatus === "COMP"){
-                return "#006400";
-            }
         }
-        
     };
 });

@@ -459,6 +459,19 @@ sap.ui.define([
                     }
                 );
             });
+        },
+        /**
+         * Change view horizon time at specified timestamp
+		 * @param oModel {object} viewModel
+         * @param start {object} timestamp
+         * @param end {object} timestamp
+         */
+        changeGanttHorizonAt : function (oModel, start, end) {
+            var oViewModel = oModel,
+                sStartDate = start ? moment(start).startOf("isoWeek").subtract(1,"weeks").toDate(): moment().startOf("isoWeek").subtract(1,"weeks").toDate(),
+                sEndDate = end ? moment(end).endOf("isoWeek").add(1,"weeks").toDate() : moment().endOf("isoWeek").add(4,"weeks").toDate();
+            oViewModel.setProperty("/ganttSettings/visibleStartTime",sStartDate);
+            oViewModel.setProperty("/ganttSettings/visibleEndTime",sEndDate);
         }
 
 	});
