@@ -171,10 +171,11 @@ sap.ui.define([
 			});
 			// this._oCalendarModel.get.refresh();
 			if(this._mParameters.bFromGantt){
+				this._oCalendarModel.setProperty("/viewKey","TIMEHOUR");
                 this._oCalendarModel.setProperty("/startDate",this._startDate || new Date());
 			}else{
+				this._oCalendarModel.setProperty("/viewKey",this._selectedView ? this.formatter.formatViewKey(this._selectedView) : this.getSelectedView());
                 this._oCalendarModel.setProperty("/startDate",new Date());
-                this._oCalendarModel.setProperty("/viewKey",this._selectedView ? this.formatter.formatViewKey(this._selectedView) : this.getSelectedView());
 			}
 			oDialog.open();
 			this._oView.getModel("viewModel").setProperty("/calendarBusy", false);
