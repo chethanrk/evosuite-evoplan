@@ -115,9 +115,9 @@ sap.ui.define([
          * @private
          */
         _refreshTreeGantt : function (oData) {
-            var eventBus = sap.ui.getCore().getEventBus();
+            // var eventBus = sap.ui.getCore().getEventBus();
             // eventBus.publish("BaseController", "refreshGanttChart", {});
-            this.changeGanttHorizonAt(this._component.getModel("viewModel"),oData.dateFrom,oData.dateTo);
+            this.changeGanttHorizonViewAt(this._component.getModel("viewModel"),oData.dateFrom,oData.dateTo);
             this._oDialog.setBusy(false);
             this._oDialog.close();
         },

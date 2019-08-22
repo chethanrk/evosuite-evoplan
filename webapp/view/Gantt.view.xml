@@ -25,6 +25,7 @@
 								change="onChangeDateRange"
 						/>
 						<Button id="idCreateAb" enabled="false" text="{i18n>xtit.createUnAvailability}" press="onCreateAbsence"/>
+						<Button id="idToday" text="{i18n>xtit.today}" press="onPressToday"/>
 					</gnt2:content>
 					<gnt2:legendContainer>
 						<gnt2:LegendContainer width="230px" height="250px">
@@ -65,7 +66,7 @@
 									  shapeDoubleClick="onShapeDoubleClick"
 									  shapeContextMenu="onShapeContextMenu"
 									  showShapeTimeOnDrag="true"
-									  selectionPanelSize="23%">
+									  selectionPanelSize="10%">
 				<gnt2:table>
 					<table:TreeTable
 							id="ganttResourceTreeTable"
@@ -76,7 +77,7 @@
 							busyStateChanged="onBusyStateChanged"
 							enableCellFilter="false"
 							columnHeaderVisible="false"
-							SelectionBehavior="Row"
+							selectionBehavior="RowOnly"
 							rowSelectionChange="onRowSelectionChange"
 							rows="{
 								path: '/GanttResourceHierarchySet',
@@ -89,7 +90,7 @@
 							}">
 						<table:extension>
 							<OverflowToolbar>
-								<SearchField width="95%" search="onSearchResource"/>
+								<SearchField search="onSearchResource"/>
 							</OverflowToolbar>
 						</table:extension>
 						<table:rowSettingsTemplate>
@@ -133,7 +134,7 @@
 											tooltip="{Description}"
 											connectable="false"
 											resizable="false"
-											selectable="false"
+											selectable="true"
 											draggable= "false"
 											height="31"
 											showTitle="false"

@@ -130,6 +130,13 @@ sap.ui.define([
 		 */
 		_refreshDemandTable : function() {
 			this._oDraggableTable.rebindTable();
+		},
+		/**
+		 *	Navigates to evoOrder detail page with static url. 
+		 */
+		OnClickOrderId : function(oEvent){
+			var sOrderId = oEvent.getSource().getText();
+			this.openEvoOrder(sOrderId);
 		}
 	});
 	

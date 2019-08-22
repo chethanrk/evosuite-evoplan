@@ -6,8 +6,9 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/core/Popup",
-    "sap/gantt/misc/Utility"
-], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, Popup, Utility) {
+    "sap/gantt/misc/Utility",
+    "sap/gantt/simple/CoordinateUtils"
+], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, Popup, Utility, CoordinateUtils) {
     "use strict";
 
     return AssignmentActionsController.extend("com.evorait.evoplan.controller.Gantt", {
@@ -36,6 +37,7 @@ sap.ui.define([
 
             //set on first load required filters
             this._treeTable = this.getView().byId("ganttResourceTreeTable");
+            this._ganttChart = this.getView().byId("ganttResourceAssignments");
             this._defaultGanttHorizon();
         },
 
@@ -79,14 +81,12 @@ sap.ui.define([
          * @private
          */
         _defaultGanttHorizon : function () {
-            var oDefaultDateRange = formatter.getDefaultDateRange(),
+            var oDefaultDateRange = formatter.getDefaultGanttDateRange(),
                 oViewModel = this.getModel("viewModel");
             oViewModel.setProperty("/ganttSettings/totalStartTime", oDefaultDateRange.dateFrom);
             oViewModel.setProperty("/ganttSettings/totalEndTime", oDefaultDateRange.dateTo);
-
-            oViewModel.setProperty("/ganttSettings/visibleStartTime", moment().startOf("isoWeek").subtract(1,"weeks").toDate()); 	// start of month
-            oViewModel.setProperty("/ganttSettings/visibleEndTime", moment().endOf("isoWeek").add(4,"weeks").toDate());
-
+            
+            this.changeGanttHorizonViewAt(oViewModel);
         },
         /**
          * Gets default filters for gantt
@@ -118,7 +118,7 @@ sap.ui.define([
                 oBrowserEvent = oEvent.getParameter("browserEvent"),
                 oDragContext = oDraggedControl.getBindingContext(),
                 oDropContext = oDroppedControl.getBindingContext(),
-                oPromise,pageX,
+                oPromise,
                 oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
                 oResourceBundle = this.getResourceBundle(),
                 sMessage = oResourceBundle.getText("ymsg.availability");
@@ -127,9 +127,9 @@ sap.ui.define([
 
             if(oBrowserEvent.target.tagName === "rect"){
                 // When we drop on gantt chart
-                pageX = oBrowserEvent.pageX;
-                // oAxisTime.viewToTime(<pageX>) will give the time stamp for dropped location
-                this._assignDemands([oDragContext.getPath()], oDropContext.getPath(),oAxisTime.viewToTime(pageX));
+                var oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement,oBrowserEvent);
+                // oAxisTime.viewToTime(<oSvgPoint>) will give the time stamp for dropped location
+                this._assignDemands([oDragContext.getPath()], oDropContext.getPath(),oAxisTime.viewToTime(oSvgPoint.x));
             }else{
                 if (!this.isAvailable(oDropContext.getPath())) {
                     oPromise = this._showConfirmMessageBox(sMessage); // this method will resolve promise
@@ -476,6 +476,9 @@ sap.ui.define([
             }else{
                 oButton.setEnabled(false);
             }
+        },
+        onPressToday : function (oEvent) {
+            this.changeGanttHorizonViewAt(this.getModel("viewModel"));
         }
 
 

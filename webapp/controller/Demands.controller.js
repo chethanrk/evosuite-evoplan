@@ -373,11 +373,8 @@ sap.ui.define([
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
 		OnClickOrderId : function(oEvent){
-			var sOrderId = oEvent.getSource().getText(),
-				sLanguage = this.getModel("InformationModel").getProperty("/language"),
-				sHost = location.host,
-				sProtocol = location.protocol;
-			window.open(sProtocol+"//"+sHost+"/sap/bc/ui5_ui5/evocu/evoorder/index.html?sap-client=800&sap-language="+sLanguage+"#/WorkOrder/"+sOrderId, "_blank");
+			var sOrderId = oEvent.getSource().getText();
+			this.openEvoOrder(sOrderId);
 		}
 	});
 });

@@ -6,7 +6,7 @@
         xmlns:config="sap.gantt.config"
         xmlns:dnd="sap.ui.core.dnd">
 
-    <axistime:ProportionZoomStrategy>
+    <axistime:StepwiseZoomStrategy zoomLevel="3">
         <axistime:totalHorizon>
             <config:TimeHorizon
                     startTime="{viewModel>/ganttSettings/totalStartTime}"
@@ -17,6 +17,6 @@
                     startTime="{viewModel>/ganttSettings/visibleStartTime}"
                     endTime="{viewModel>/ganttSettings/visibleEndTime}"/>
         </axistime:visibleHorizon>
-    </axistime:ProportionZoomStrategy>
+    </axistime:StepwiseZoomStrategy>
 
 </core:FragmentDefinition>

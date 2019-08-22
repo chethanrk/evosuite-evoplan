@@ -466,13 +466,22 @@ sap.ui.define([
          * @param start {object} timestamp
          * @param end {object} timestamp
          */
-        changeGanttHorizonAt : function (oModel, start, end) {
+        changeGanttHorizonViewAt : function (oModel, start, end) {
             var oViewModel = oModel,
-                sStartDate = start ? moment(start).startOf("isoWeek").subtract(1,"weeks").toDate(): moment().startOf("isoWeek").subtract(1,"weeks").toDate(),
-                sEndDate = end ? moment(end).endOf("isoWeek").add(1,"weeks").toDate() : moment().endOf("isoWeek").add(4,"weeks").toDate();
+                sStartDate = start ? moment(start).startOf("day").subtract(1,"day").toDate(): moment().startOf("day").subtract(1,"day").toDate(),
+                sEndDate = end ? moment(end).endOf("day").add(1,"day").toDate() : moment().endOf("day").add(1,"day").toDate();
             oViewModel.setProperty("/ganttSettings/visibleStartTime",sStartDate);
             oViewModel.setProperty("/ganttSettings/visibleEndTime",sEndDate);
-        }
+        },
+		/**
+		 *	Navigates to evoOrder detail page with static url. 
+		 */
+		openEvoOrder : function(sOrderId){
+			var sLanguage = this.getModel("InformationModel").getProperty("/language"),
+				sHost = location.host,
+				sProtocol = location.protocol;
+			window.open(sProtocol+"//"+sHost+"/sap/bc/ui5_ui5/evocu/evoorder/index.html?sap-client=800&sap-language="+sLanguage+"#/WorkOrder/"+sOrderId, "_blank");
+		}
 
 	});
 
