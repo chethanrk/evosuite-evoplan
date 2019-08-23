@@ -105,45 +105,11 @@
 								}">
 
 								<gnt2:shapes1>
-									<gnt2:BaseRectangle
-											shapeId="{NodeId}"
-											scheme="hiddenBackground"
-											countInBirdEye="false"
-											time="{viewModel>/ganttSettings/totalStartTime}"
-											endTime="{viewModel>/ganttSettings/totalEndTime}"
-											connectable="false"
-											resizable="false"
-											selectable="true"
-											draggable= "false"
-											showTitle="false"
-											fill="transparent"
-											fillOpacity="0"
-											strokeOpacity="0"
-											opacity="0"
-											stroke="transparent"
-											strokeWidth="0"/>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.BackGroundShape" type="XML"/>
 								</gnt2:shapes1>
 
 								<gnt2:shapes2>
-									<gnt2:BaseRectangle
-											shapeId="{Guid}"
-											scheme="hiddenBackground"
-											countInBirdEye="false"
-											time="{DateFrom}"
-											endTime="{DateTo}"
-											tooltip="{Description}"
-											connectable="false"
-											resizable="false"
-											selectable="true"
-											draggable= "false"
-											height="31"
-											showTitle="false"
-											fill="#ccc"
-											fillOpacity="1"
-											strokeOpacity="0"
-											opacity="1"
-											stroke="transparent"
-											strokeWidth="0"/>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.UnAvailabilityShape" type="XML"/>
 								</gnt2:shapes2>
 
 								<gnt2:shapes3>

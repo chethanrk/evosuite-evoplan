@@ -2,15 +2,7 @@
         xmlns="sap.ui.table"
         xmlns:core="sap.ui.core"
         xmlns:gnt2="sap.gantt.simple">
-
-    <!--<gnt2:BaseGroup time="{DateFrom}"
-                    endTime="{DateTo}"
-                    tooltip="{Description}"
-                    resizable="true"
-                    selectable="true"
-                    draggable= "true">
-        <gnt2:shapes>-->
-
+	<!-- Assignment shape -->
             <gnt2:BaseRectangle
                     shapeId="{Guid}"
                     countInBirdEye="true"
@@ -26,27 +18,4 @@
                     resizable="true"
                     selectable="true"
                     draggable= "true"/>
-
-          <!--<gnt2:BaseImage src="{DEMAND_STATUS_ICON}"
-           fill="{path:'DEMAND_STATUS', formatter:'.formatter.getColorCode'}"
-        			shapeId="{NodeId}"
-                    text="{Description}"
-                    title="{Description}"
-                    showTitle="true"
-                    tooltip="{Description} - {DEMAND_STATUS}"
-                    stroke="#7088ac"
-                    strokeWidth="1"/>-->
-                            
-                            
-                <!-- <gnt2:BaseText
-                    shapeId="{NodeId}"
-                    text="{Description}"
-                    tooltip="{Description} - {DEMAND_STATUS}"
-                    fill="{path:'DEMAND_STATUS', formatter:'.formatter.getColorCode'}"
-                    stroke="#7088ac"
-                    strokeWidth="1"/>-->
-     <!--   </gnt2:shapes>-->
-
-   <!-- </gnt2:BaseGroup>-->
-
 </core:FragmentDefinition>

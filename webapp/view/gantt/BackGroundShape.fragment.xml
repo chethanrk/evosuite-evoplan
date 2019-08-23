@@ -1,0 +1,23 @@
+<core:FragmentDefinition
+        xmlns="sap.ui.table"
+        xmlns:core="sap.ui.core"
+        xmlns:gnt2="sap.gantt.simple">
+	<!-- Background transparent shape (Workaround for the drop on the gantt) -->
+            <gnt2:BaseRectangle
+					shapeId="{NodeId}"
+					scheme="hiddenBackground"
+					countInBirdEye="false"
+					time="{viewModel>/ganttSettings/totalStartTime}"
+					endTime="{viewModel>/ganttSettings/totalEndTime}"
+					connectable="false"
+					resizable="false"
+					selectable="true"
+					draggable= "false"
+					showTitle="false"
+					fill="transparent"
+					fillOpacity="0"
+					strokeOpacity="0"
+					opacity="0"
+					stroke="transparent"
+					strokeWidth="0"/>
+</core:FragmentDefinition>

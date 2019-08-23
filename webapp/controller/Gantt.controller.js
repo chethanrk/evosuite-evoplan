@@ -477,6 +477,9 @@ sap.ui.define([
                 oButton.setEnabled(false);
             }
         },
+        /**
+         * on click on today adjust the view of Gantt horizon. 
+         */
         onPressToday : function (oEvent) {
             this.changeGanttHorizonViewAt(this.getModel("viewModel"));
         }
