@@ -485,21 +485,28 @@ sap.ui.define([
 
 					var oData = data.__batchResponses[l].data;
 					for (var i in oData.results) {
-						oResourceMap[oData.results[i].ObjectId] = oData.results[i].Resource;
+						oResourceMap[oData.results[i].ObjectId] = {};
 						oResourceMap[oData.results[i].ObjectId].Assignments = [];
 						oResourceMap[oData.results[i].ObjectId].AbsenceInfo = [];
 					}
 				}
 
 				for (var j in oResourceMap) {
-					var sObjectId = oResourceMap[j].ObjectId;
+					var sObjectId = j;
 					for (var k in oAssignData.results) {
 						if (oAssignData.results[k].ObjectId === sObjectId) {
+							
+						oResourceMap[j].ResourceDescription = oAssignData.results[k].RESOURCE_DESCRIPTION;
+						oResourceMap[j].ObjectType = oAssignData.results[k].NODE_TYPE;
+						oResourceMap[j].GroupDescription = oAssignData.results[k].GROUP_DESCRIPTION;
 							oResourceMap[j].Assignments.push(oAssignData.results[k]);
 						}
 					}
 					for (var m in oAbsenceData.results) {
 						if (oAbsenceData.results[m].ObjectId === sObjectId) {
+								oResourceMap[j].ResourceDescription = oAbsenceData.results[m].ResourceDescription;
+						oResourceMap[j].ObjectType = oAbsenceData.results[m].NodeType;
+						oResourceMap[j].GroupDescription = oAbsenceData.results[m].GroupDescription;
 							oResourceMap[j].AbsenceInfo.push(oAbsenceData.results[m]);
 						}
 					}
