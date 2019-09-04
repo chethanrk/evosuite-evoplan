@@ -76,6 +76,9 @@ sap.ui.define([
 				var d = moment().endOf("year");
 				return d.add(20, "years").toDate();
 			}
+		},
+		ASSET : {
+            icon: "sap-icon://functional-location"
 		}
 	};
 

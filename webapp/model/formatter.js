@@ -371,11 +371,23 @@ sap.ui.define([
          * @param bEnableResize
          * @return {*}
          */
-        formatResizeEnable :function(bEnableDragDrop, bEnableResize){
+        formatResizeEnable :function(bEnableDragDrop, bEnableResize, sObjectType){
+            if(sObjectType==="ASSET"){
+                return false;
+            }
             if(!bEnableDragDrop){
                 return false;
             }
             return bEnableResize;
+        },
+        /**
+         *
+         */
+        formatDragAndDropEnable: function (bDragDrop, sObjectType) {
+            if(bDragDrop && sObjectType!=="ASSET"){
+                return true;
+            }
+            return false;
         },
         
         /** 

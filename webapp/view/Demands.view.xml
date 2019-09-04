@@ -20,7 +20,7 @@
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1"/>
 					</smartTable:layoutData>
-					<table:Table columnResize="onColumnResize">
+					<table:Table columnResize="onColumnResize" minAutoRowCount="5">
 						<table:rowSettingsTemplate>
 							<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
 						</table:rowSettingsTemplate>

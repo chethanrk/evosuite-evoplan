@@ -38,6 +38,7 @@ sap.ui.define([
             //set on first load required filters
             this._treeTable = this.getView().byId("ganttResourceTreeTable");
             this._ganttChart = this.getView().byId("ganttResourceAssignments");
+            // this._setDefaultTreeDateRange();
             this._defaultGanttHorizon();
         },
 
@@ -96,7 +97,7 @@ sap.ui.define([
          * @private
          */
         _getDefaultFilters : function (mParameters) {
-            var defDateRange = mParameters || formatter.getDefaultDateRange(),
+            var defDateRange = mParameters || formatter.getDefaultGanttDateRange(),
                 aFilters = [];
 
             aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(defDateRange.dateTo)));
@@ -121,9 +122,11 @@ sap.ui.define([
                 oPromise,
                 oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
                 oResourceBundle = this.getResourceBundle(),
-                sMessage = oResourceBundle.getText("ymsg.availability");
+                sMessage = oResourceBundle.getText("ymsg.availability"),
+                oViewModel = this.getModel("viewModel");
 
-            this.byId("container").setBusy(true);
+
+            oViewModel.setProperty("/ganttSettings/busy",true);
 
             if(oBrowserEvent.target.tagName === "rect"){
                 // When we drop on gantt chart
@@ -164,11 +167,11 @@ sap.ui.define([
          */
         _refreshGanttChart: function (oEvent) {
             var oTreeTable = this.getView().byId("ganttResourceTreeTable"),
-                oGanttContainer = this.getView().byId("container");
+                oViewModel = this.getModel("viewModel");
 
-            if (oTreeTable && oTreeTable.getBinding("rows") && oGanttContainer) {
+            if (oTreeTable && oTreeTable.getBinding("rows")) {
                 oTreeTable.getBinding("rows")._restoreTreeState().then(function () {
-                    oGanttContainer.setBusy(false);
+                    oViewModel.setProperty("/ganttSettings/busy",false);
                 });
 
             }
@@ -271,8 +274,6 @@ sap.ui.define([
          * @private
          */
         _refreshAreas: function (data, oResponse) {
-            var oGanttContainer = this.getView().byId("container");
-            oGanttContainer.setBusy(true);
             this.showMessage(oResponse);
             this._refreshGanttChart();
 			this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
@@ -363,7 +364,10 @@ sap.ui.define([
          */
         onShapeDrop: function (oEvent) {
             var oParams = oEvent.getParameters(),
-                draggedShape = oParams.draggedShapeDates;
+                draggedShape = oParams.draggedShapeDates,
+                oViewModel = this.getModel("viewModel");
+
+            oViewModel.setProperty("/ganttSettings/busy",true);
 
             if (!oParams.targetRow && !oParams.targetShape) {
                 var msg = this.getResourceBundle().getText("msg.ganttShapeDropError");
@@ -402,7 +406,11 @@ sap.ui.define([
         onShapeResize: function (oEvent) {
             var oParams = oEvent.getParameters(),
                 oRowContext = oParams.shape.getBindingContext(),
-                oData = this.getModel().getProperty(oRowContext.getPath());
+                oData = this.getModel().getProperty(oRowContext.getPath()),
+                oViewModel = this.getModel("viewModel");
+
+            oViewModel.setProperty("/ganttSettings/busy",true);
+
             if (oParams.shape && oParams.shape.sParentAggregationName === "shapes3") {
                 this._updateAssignmentModel(oData.Guid).then(function (oAssignmentObj) {
                     oAssignmentObj.DateFrom = oParams.newTime[0];
@@ -459,7 +467,7 @@ sap.ui.define([
                 return;
             }
             oContext = oTreeTable.getContextByIndex(aIndices[0]);
-           this.getOwnerComponent().createUnAvail.open(this.getView(), oContext.getPath(), {bFromGantt: true});
+           this.getOwnerComponent().createUnAvail.open(this.getView(), [oContext.getPath()], {bFromGantt: true});
 
         },
         /**

@@ -10,7 +10,7 @@
 	<Page id="ganttPage" showFooter="false" showHeader="false">
 
 
-		<gnt2:GanttChartContainer id="container" enableTimeScrollSync="true">
+		<gnt2:GanttChartContainer id="container" enableTimeScrollSync="true" busy="{viewModel>/ganttSettings/busy}">
 			<gnt2:toolbar>
 				<gnt2:ContainerToolbar
 						design="Auto"
@@ -66,7 +66,7 @@
 									  shapeDoubleClick="onShapeDoubleClick"
 									  shapeContextMenu="onShapeContextMenu"
 									  showShapeTimeOnDrag="true"
-									  selectionPanelSize="10%">
+									  selectionPanelSize="30%">
 				<gnt2:table>
 					<table:TreeTable
 							id="ganttResourceTreeTable"
@@ -79,13 +79,15 @@
 							columnHeaderVisible="false"
 							selectionBehavior="RowOnly"
 							rowSelectionChange="onRowSelectionChange"
+							threshold="5"
 							rows="{
 								path: '/GanttResourceHierarchySet',
 								parameters: {
 									numberOfExpandedLevels:1,
 									restoreTreeStateAfterChange:true,
 									operationMode: 'Server',
-									expand:'AssignmentSet,ResourceAvailabilitySet'
+									expand:'AssignmentSet,ResourceAvailabilitySet',
+									groupId:'GanttTree'
 								}
 							}">
 						<table:extension>

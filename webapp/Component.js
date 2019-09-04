@@ -100,6 +100,7 @@ sap.ui.define([
 				first_load:false,
 				ganttSettings: {
                 	active: false,
+					busy : false,
 					shapeOpearation:{
                 		unassign:false,
 						reassign:false,

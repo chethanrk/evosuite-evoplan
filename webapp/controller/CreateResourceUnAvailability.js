@@ -30,12 +30,13 @@ sap.ui.define([
          * @param oView
          * @param oEvent
          */
-        open: function (oView, sSelectedPath, mParameters) {
+        open: function (oView, aSelectedPath, mParameters) {
             var oDialog = this.getDialog();
             this._oView = oView;
             this._component = oView.getController().getOwnerComponent();
             this._oModel = this._component.getModel();
-            this._resource = this._oModel.getProperty(sSelectedPath+"/ResourceGuid");
+            this._resource = this._oModel.getProperty(aSelectedPath[0]+"/ResourceGuid");
+            this._mParameters = mParameters;
 
             oDialog.addStyleClass(this._component.getContentDensityClass());
             // connect dialog to view (models, lifecycle)
@@ -115,9 +116,13 @@ sap.ui.define([
          * @private
          */
         _refreshTreeGantt : function (oData) {
-            // var eventBus = sap.ui.getCore().getEventBus();
-            // eventBus.publish("BaseController", "refreshGanttChart", {});
-            this.changeGanttHorizonViewAt(this._component.getModel("viewModel"),oData.dateFrom,oData.dateTo);
+            var eventBus = sap.ui.getCore().getEventBus();
+            if(this._mParameters.bFromGantt){
+                // this.changeGanttHorizonViewAt(this._component.getModel("viewModel"),oData.dateFrom,oData.dateTo);
+                eventBus.publish("BaseController", "refreshGanttChart", {});
+            }else if(this._mParameters.bFromHome){
+                eventBus.publish("BaseController", "refreshTreeTable", {});
+            }
             this._oDialog.setBusy(false);
             this._oDialog.close();
         },

@@ -171,6 +171,11 @@ sap.ui.define([
                 this.byId("idButtonreassign").setEnabled(false);
                 this.byId("idButtonunassign").setEnabled(false);
             }
+            if(this.selectedResources.length === 1){
+                this.byId("idButtonCreUA").setEnabled(true);
+            }else{
+                this.byId("idButtonCreUA").setEnabled(false);
+            }
         },
 
         /**
@@ -408,7 +413,30 @@ sap.ui.define([
 		openCapacitivePopup : function (oEvent) {
             var oComponent = this.getOwnerComponent();
             oComponent.capacitiveAssignments.open(this.getView(),oEvent);
+        },
+        /**
+         * on press, open the dialog to create an unavailability for selected resources
+         * @param oEvent
+         */
+        onPressCreateUA : function (oEvent) {
+            this.getOwnerComponent().createUnAvail.open(this.getView(), this.selectedResources);
+        },
+        /**
+         * On click on expand the tree nodes gets expand to level 1
+         * On click on collapse all the tree nodes will be collapsed to root.
+         * @param oEvent
+         */
+        onClickExpandCollapse : function (oEvent) {
+            var oButton = oEvent.getSource(),
+                oCustomData = oButton.getCustomData();
+
+            if(oCustomData[0].getValue() === "EXPAND" && this._oDroppableTable){
+                this._oDroppableTable.expandToLevel(1);
+            }else{
+                this._oDroppableTable.collapseAll();
+            }
         }
+        
 
     });
 });

@@ -23,7 +23,8 @@
                         showWeekNumbers="true"
                         groupAppointmentsMode="Expanded"
                         stickyHeader="true"
-                        viewChange ="onViewChange">
+                        viewChange ="onViewChange"
+                        appointmentsReducedHeight="true">
                     <rows>
                         <PlanningCalendarRow
                                 icon="{
@@ -32,10 +33,16 @@
                                        }"
                                 title="{calendarModel>GroupDescription}"
                                 text="{calendarModel>ResourceDescription}"
-                                enableAppointmentsDragAndDrop="{user>/ENABLE_DRAG_DROP}"
+                                enableAppointmentsDragAndDrop="{
+                                        parts:[
+                                            {path:'user>/ENABLE_DRAG_DROP'},
+                                            {path:'calendarModel>ObjectType'}
+                                            ],
+                                            formatter:'.formatter.formatDragAndDropEnable'}"
                                 enableAppointmentsResize="{ parts:[
                                 {path:'user>/ENABLE_DRAG_DROP'},
-                                {path:'user>/ENABLE_RESIZE'}
+                                {path:'user>/ENABLE_RESIZE'},
+                                {path:'calendarModel>ObjectType'}
                                 ],
                                 formatter:'.formatter.formatResizeEnable'}"
                                 appointmentDragEnter="onAppointmentDragEnter"
@@ -48,7 +55,7 @@
                                         startDate="{calendarModel>DateFrom}"
                                         endDate="{calendarModel>DateTo}"
                                         title="{calendarModel>Demand/DemandDesc}"
-                                        tooltip="{calendarModel>Demand/ORDERID}- {calendarModel>Demand/DemandDesc} : {calendarModel>Demand/StatusDesc}"
+                                        tooltip="{calendarModel>Demand/ORDERID}: {calendarModel>Demand/DemandDesc} : {calendarModel>Demand/StatusDesc}"
                                         icon="{calendarModel>Demand/STATUS_ICON}"
                                         text="{calendarModel>Demand/ORDERID}"
                                         type="{calendarModel>type}"

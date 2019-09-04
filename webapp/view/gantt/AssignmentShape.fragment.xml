@@ -11,7 +11,7 @@
                     endTime="{DateTo}"
                     title="{Description}"
                     showTitle="true"
-                    tooltip="{Description} - {DEMAND_STATUS}- {Guid}"
+                    tooltip="{Description} - {DEMAND_STATUS}"
                     fill="{DEMAND_STATUS_COLOR}"
                     stroke="#7088ac"
                     strokeWidth="1"

@@ -36,7 +36,6 @@
 					
 	        <table:Table 
 	        	enableGrouping="true" 
-	        	groupBy="OrderId"
 	        	visibleRowCountMode="Auto"
 	        	enableColumnReordering="false"
 	        	enableCellFilter="true"
