@@ -510,7 +510,7 @@ sap.ui.define([
                 // put asset data
                 for (var n in oAssetUNData.results) {
                     oAsset.ObjectType = "ASSET";
-                    oAsset.GroupDescription = "Asset Unavailability";
+                    oAsset.GroupDescription = this._oResourceBundle.getText("xtit.assetUA");
                     oAsset.Assignments.push({
                         DateFrom: oAssetUNData.results[n].StartTimestamp,
                         DateTo: oAssetUNData.results[n].EndTimestamp,
