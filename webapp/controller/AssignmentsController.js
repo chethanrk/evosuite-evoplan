@@ -205,22 +205,36 @@ sap.ui.define([
 		 * 
 		 * @param aAssignments
 		 */
-		saveAllAssignments : function (aAssignments , mParameters) {
-			var aKeys = Object.keys(aAssignments),
+		saveAllAssignments : function (oData) {
+			var aAssignmentKeys = Object.keys(oData.assignments),
+				aAbsenceKeys = Object.keys(oData.absences),
+            	aAssignments = oData.assignments,
+				aAbsences = oData.absences,
 				bIsLast = null;
-			for (var i in aAssignments) {	
-				
-				if(aAssignments[aKeys[aKeys.length-1]] === aAssignments[i]){
+			for (var i in aAssignments) {
+                bIsLast = null;
+				if(aAssignments[aAssignmentKeys[aAssignmentKeys.length-1]] === aAssignments[i]){
 					bIsLast = true;
 				}
 				// call function import
 				if(aAssignments[i]){
-					this.callFunctionImport(aAssignments[i], "UpdateAssignment", "POST", mParameters, bIsLast);
+					this.callFunctionImport(aAssignments[i], "UpdateAssignment", "POST", oData.mParameters, bIsLast);
 				}else{
-					this.callFunctionImport({AssignmentGUID:i}, "DeleteAssignment", "POST", mParameters, bIsLast);
+					this.callFunctionImport({AssignmentGUID:i}, "DeleteAssignment", "POST", oData.mParameters, bIsLast);
 				}
 			}
-			
+            for (var j in aAbsences) {
+                bIsLast = null;
+                if(aAbsences[aAbsenceKeys[aAbsenceKeys.length-1]] === aAbsences[j]){
+                    bIsLast = true;
+                }
+                // call function import
+                if(aAbsences[j]){
+                    this.callFunctionImport(aAbsences[j], "CreateAbsence", "POST", oData.mParameters, bIsLast);
+                }else{
+                    //
+                }
+            }
 		},
 		/**
 		 * Show the message to proceed with the assignment

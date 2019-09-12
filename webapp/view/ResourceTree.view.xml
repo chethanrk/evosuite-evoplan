@@ -14,7 +14,7 @@
 								icon="sap-icon://expand-all"
 								press="onClickExpandCollapse"
 						        type="Transparent"
-                                tooltip="{i18n>expandAll}">
+                                tooltip="{i18n>xbut.expandAll}">
 							<customData>
 								<core:CustomData key="Function" value="EXPAND"/>
 							</customData>
@@ -23,7 +23,7 @@
 								icon="sap-icon://collapse-all"
 								press="onClickExpandCollapse"
 								type="Transparent"
-                                tooltip="{i18n>collapseAll}">
+                                tooltip="{i18n>xbut.collapseAll}">
 							<customData>
 								<core:CustomData key="Function" value="COLLAPSE"/>
 							</customData>

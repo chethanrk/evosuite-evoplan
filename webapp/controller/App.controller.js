@@ -255,7 +255,7 @@ sap.ui.define([
 		},
 
 		_triggerSaveAllAssignments: function (sChanel, sEvent, oData) {
-			this.saveAllAssignments(oData.assignments, oData.parameters);
+			this.saveAllAssignments(oData);
 		},
 		/**
 		 * open's the message popover by it source

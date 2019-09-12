@@ -25,7 +25,7 @@
 							<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
 						</table:rowSettingsTemplate>
 						<table:columns>
-							<table:Column hAlign="Center" width="3rem" visible="{/#Demand/STATUS_ICON/@sap:visible}">
+							<table:Column hAlign="Center" width="3rem" visible="{= ${/#Demand/STATUS_ICON/@sap:visible} === 'false' ? false : true}">
 								<table:customData>
 									<core:CustomData key="p13nData" value='\{"columnKey": "STATUS_ICON", "leadingProperty": "STATUS_ICON"}'/>
 								</table:customData>
@@ -34,7 +34,7 @@
 									<core:Icon src="{STATUS_ICON}" color="{ path:'CRITICALITY', formatter:'.formatter.formatStatusIconColor' }" tooltip="{StatusDesc}"></core:Icon>
 								</table:template>
 							</table:Column>
-							<table:Column hAlign="Center" width="3rem" visible="{/#Demand/SYNC_STATUS/@sap:visible}">
+							<table:Column hAlign="Center" width="3rem" visible="{= ${/#Demand/SYNC_STATUS/@sap:visible} === 'false' ? false : true}">
 								<table:customData>
 									<core:CustomData key="p13nData" value='\{"columnKey": "SYNC_STATUS", "leadingProperty": "SYNC_STATUS"}'/>
 								</table:customData>
@@ -43,7 +43,7 @@
 									<core:Icon src="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIcon' }" color="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIconColor' }" tooltip="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncTooltip' }"></core:Icon>
 								</table:template>
 							</table:Column>
-							<table:Column hAlign="Center" width="6rem" visible="{/#Demand/ORDERID/@sap:visible}">
+							<table:Column hAlign="Center" width="6rem" visible="{= ${/#Demand/ORDERID/@sap:visible} === 'false' ? false : true}">
 								<table:customData>
 									<core:CustomData key="p13nData" value='\{"columnKey": "ORDERID", "leadingProperty": "ORDERID"}'/>
 								</table:customData>

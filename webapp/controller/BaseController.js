@@ -213,9 +213,14 @@ sap.ui.define([
 					urlParameters: oParams,
                     refreshAfterChange: false,
 					success: function (oData, oResponse) {
+                        this.showMessage(oResponse);
 						resolve(oData, oResponse);
 					}.bind(this),
 					error: function (oError) {
+                        //Handle Error
+                        MessageToast.show(oResourceBundle.getText("errorMessage"), {
+                            duration: 5000
+                        });
 						reject(oError);
 					}.bind(this)
 				});

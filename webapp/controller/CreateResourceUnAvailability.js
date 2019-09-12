@@ -35,8 +35,14 @@ sap.ui.define([
             this._oView = oView;
             this._component = oView.getController().getOwnerComponent();
             this._oModel = this._component.getModel();
-            this._resource = this._oModel.getProperty(aSelectedPath[0]+"/ResourceGuid");
+            this._calendarModel = this._component.getModel("calendarModel")
             this._mParameters = mParameters;
+            if(this._mParameters.bFromPlannCal){
+                this._resource = this._calendarModel.getProperty(aSelectedPath[0]).ResourceGuid;
+            }else{
+                this._resource = this._oModel.getProperty(aSelectedPath[0]+"/ResourceGuid");
+            }
+
 
             oDialog.addStyleClass(this._component.getContentDensityClass());
             // connect dialog to view (models, lifecycle)
@@ -67,18 +73,35 @@ sap.ui.define([
          */
 
         _resetFields : function (oResourceAvailModel) {
+            var sLanguage = this._component.getModel("InformationModel").getProperty("/language");
             oResourceAvailModel.setData({
                 dateFrom: moment().startOf("day").toDate(),
                 dateTo: moment().endOf("day").toDate(),
-                availType:"CL_LEAVE"
+                availType:"CL_LEAVE",
+                description : this._component.getModel().getProperty("/AvailabilityTypeSet(Spras='"+sLanguage+"',AvailabilityType='CL_LEAVE')/AvailabilityDesc")
             });
+        },
+        /**
+         *
+         * @param oEvent
+         */
+        onChangeType : function (oEvent) {
+            var slectedItem = oEvent.getParameter("selectedItem"),
+                oResourceAvailModel = this._component.getModel("resourceAvail"),
+                oContext = slectedItem.getBindingContext(),
+                oModel = oContext.getModel(),
+                sDesc = oModel.getProperty(oContext.getPath()+"/AvailabilityDesc");
+
+            oResourceAvailModel.setProperty("/description",sDesc);
+
         },
         /**
          * calls the function import createAbsence
          */
         onSaveUnAvail : function () {
             var oResourceAvailModel = this._component.getModel("resourceAvail"),
-                oData  = oResourceAvailModel.getData();
+                oData  = oResourceAvailModel.getData(),
+                eventBus = sap.ui.getCore().getEventBus();
             var oParams = {
                 ResourceGuid:this._resource,
                 EndTimestamp:oData.dateTo,
@@ -86,9 +109,15 @@ sap.ui.define([
                 AvailabilityType:oData.availType
             };
             this._oDialog.setBusy(true);
-
+            if(this._mParameters.bFromPlannCal){
+                var oUAData = oParams.Description = oData.description
+                eventBus.publish("CreateUnAvailability", "refreshAbsence",oParams );
+                this._oDialog.setBusy(false);
+                this._oDialog.close();
+                return;
+            }
             if(this.validateFields()){
-                this.executeFunctionImport(this._oModel,oParams,"CreateAbsence","POST").then(this._refreshTreeGantt.bind(this,oData));
+                this.executeFunctionImport(this._oModel,oParams,"CreateAbsence","POST").then(this._refreshTreeGantt.bind(this));
             }else{
                 this._oDialog.setBusy(false);
             }
@@ -115,7 +144,7 @@ sap.ui.define([
          * Refresh the Gantt chart
          * @private
          */
-        _refreshTreeGantt : function (oData) {
+        _refreshTreeGantt : function (response) {
             var eventBus = sap.ui.getCore().getEventBus();
             if(this._mParameters.bFromGantt){
                 // this.changeGanttHorizonViewAt(this._component.getModel("viewModel"),oData.dateFrom,oData.dateTo);

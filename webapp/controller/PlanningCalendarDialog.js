@@ -13,10 +13,13 @@ sap.ui.define([
 
         _changedAssignments: {},
 
+        _changedAbsences :{},
+
         init: function () {
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("AssignInfoDialog", "RefreshCalendar", this._setCalendarModel, this);
             eventBus.subscribe("AssignInfoDialog", "refreshAssignment", this._refreshAppointment, this);
+            eventBus.subscribe("CreateUnAvailability", "refreshAbsence", this._refreshIntervalHeader, this);
         },
         /**
          * init and get dialog view
@@ -41,6 +44,7 @@ sap.ui.define([
         open: function (oView, aSelectedResources, mParameters, oStartDate) {
             var oDialog = this.getDialog();
             this._changedAssignments = {};
+            this._changedAbsences = {};
             this._selectedView = undefined;
             this._oView = oView;
             this.selectedResources = aSelectedResources;
@@ -55,6 +59,9 @@ sap.ui.define([
             oView.addDependent(oDialog);
 
             this._setCalendarModel();
+            // To enable or disable the save button
+            this.checkDirty();
+            this._enableCreateUABtn();
             // open dialog
             // oDialog.open();
         },
@@ -192,6 +199,8 @@ sap.ui.define([
                 this._oCalendarModel.setProperty("/startDate", new Date());
             }
             oDialog.open();
+
+
             this._oView.getModel("viewModel").setProperty("/calendarBusy", false);
             this._oPlanningCalendar.setBusy(false);
         },
@@ -270,6 +279,7 @@ sap.ui.define([
          */
         onAppointmentDrop: function (oEvent) {
             this._refreshAppointment(oEvent);
+            this.checkDirty();
         },
         /**
          * Called when assignment resize
@@ -277,6 +287,7 @@ sap.ui.define([
          */
         onAppointmentResize: function (oEvent) {
             this._refreshAppointment(oEvent);
+            this.checkDirty();
         },
         /**
          * Refresh the changed assignments in the local model
@@ -502,7 +513,8 @@ sap.ui.define([
                     oResource["ResourceDescription"] = oResource.Description;
                     oResource["ObjectType"] = oResource.NodeType;
                     oResource["GroupDescription"] = oModel.getProperty(sEntitySet + "('" + oResource.ResourceGroupGuid + "')").Description;
-
+                    oResource["ResourceGuid"] = oResource.ResourceGuid;
+                    oResource["ResourceGroupGuid"] = oResource.ResourceGroupGuid;
                     oResourceMap[oResource.NodeId] = oResource;
                     oResourceMap[oResource.NodeId].Assignments = [];
                     oResourceMap[oResource.NodeId].AbsenceInfo = [];
@@ -543,6 +555,8 @@ sap.ui.define([
                             oResourceMap[j].ResourceDescription = oAssignData.results[k].RESOURCE_DESCRIPTION;
                             oResourceMap[j].ObjectType = oAssignData.results[k].NODE_TYPE;
                             oResourceMap[j].GroupDescription = oAssignData.results[k].GROUP_DESCRIPTION;
+                            oResourceMap[j].ResourceGuid = oAssignData.results[k].ResourceGuid;
+                            oResourceMap[j].ResourceGroupGuid = oAssignData.results[k].ResourceGroupGuid;
                             oResourceMap[j].Assignments.push(oAssignData.results[k]);
                         }
                     }
@@ -552,6 +566,8 @@ sap.ui.define([
                             oResourceMap[j].ResourceDescription = oAbsenceData.results[m].ResourceDescription;
                             oResourceMap[j].ObjectType = oAbsenceData.results[m].NodeType;
                             oResourceMap[j].GroupDescription = oAbsenceData.results[m].GroupDescription;
+                            oResourceMap[j].ResourceGuid = oAbsenceData.results[m].ResourceGuid;
+                            oResourceMap[j].ResourceGroupGuid = oAbsenceData.results[m].ResourceGroupGuid;
                             oResourceMap[j].AbsenceInfo.push(oAbsenceData.results[m]);
                         }
                     }
@@ -568,9 +584,11 @@ sap.ui.define([
          * @param oEvent
          */
         onSaveDialog: function (oEvent) {
-            if (Object.keys(this._changedAssignments).length > 0 && this._changedAssignments.constructor === Object) {
+            if (this.checkDirty()) {
                 this._oPlanningCalendar.setBusy(true);
                 this._triggerSaveAssignments();
+                // enable or disable the button after the operation
+                this.checkDirty();
             } else {
                 this.showMessageToast(this._oResourceBundle.getText("ymsg.noChangestoSave"));
             }
@@ -583,7 +601,7 @@ sap.ui.define([
          * @param oEvent
          */
         onModalCancel: function (oEvent) {
-            if (Object.keys(this._changedAssignments).length > 0 && this._changedAssignments.constructor === Object) {
+            if (this.checkDirty()) {
                 this.showConfirmMessageBox.call(this._oView.getController(), this._oResourceBundle.getText("ymsg.changedDataLost"), this.onClose.bind(
                     this));
             } else {
@@ -625,9 +643,86 @@ sap.ui.define([
 
             eventBus.publish("PlanningCalendarDialog", "saveAllAssignments", {
                 assignments: this._changedAssignments,
-                parameters: mParameters
+                absences : this._changedAbsences,
+                mParameters: mParameters
             });
+            // Reset global values
             this._changedAssignments = {};
+            this._changedAbsences = {};
+        },
+        /**
+         * On selection on calendar row
+         * @param oEvent
+         */
+        onRowSelectionChange : function (oEvent) {
+            var aSelected, oContext, oModel, sPath, oData;
+            aSelected = oEvent.getSource().getSelectedRows();
+            if(aSelected.length === 0){
+                return;
+            }
+            oContext = aSelected[0].getBindingContext("calendarModel");
+            oModel = oContext.getModel();
+            sPath = oContext.getPath();
+            oData = oModel.getProperty(sPath);
+
+            if(oData.ObjectType === "ASSET" || oData.ObjectType === "RES_GROUP"){
+                this._enableCreateUABtn(false);
+                return;
+            }
+            this._enableCreateUABtn(true);
+        },
+        /**
+         * Check for data dirty
+         * This method also enable or disable the save button based on data changed
+         * @return {boolean} true if changed false if unchaged
+         */
+        checkDirty : function () {
+            if((Object.keys(this._changedAssignments).length > 0 && this._changedAssignments.constructor === Object) || (Object.keys(this._changedAbsences).length > 0 && this._changedAbsences.constructor === Object)){
+                sap.ui.getCore().byId("idCreateSave").setEnabled(true);
+                return true;
+            }else{
+                sap.ui.getCore().byId("idCreateSave").setEnabled(false);
+                return false;
+            }
+        },
+        /**
+         * enable or disable the create unavailability button
+         */
+        _enableCreateUABtn : function () {
+            var oCreateUAButton = sap.ui.getCore().byId("idCreateUA"),
+             aRows = this._oPlanningCalendar.getSelectedRows();
+            aRows.length > 0 ? oCreateUAButton.setEnabled(true): oCreateUAButton.setEnabled(false);
+        },
+        /**
+         *
+         * @param oEvent
+         */
+        onCreateUnAvail : function (oEvent) {
+            var oSelected = this._oPlanningCalendar.getSelectedRows(),
+                oContext = oSelected[0].getBindingContext("calendarModel"),
+                oModel = oContext.getModel(),
+                sPath = oContext.getPath(),
+                oData = oModel.getProperty(sPath);
+            this._component.createUnAvail.open(this._oView, [sPath], {bFromPlannCal: true});
+        },
+        /**
+         *
+         * @private
+         */
+        _refreshIntervalHeader:function (sChanel, sEvent, oData) {
+            var oSelected = this._oPlanningCalendar.getSelectedRows(),
+                oRowContext = oSelected[0].getBindingContext("calendarModel");
+            oRowContext.getObject().AbsenceInfo.push({
+                DateFrom:oData.StartTimestamp,
+                DateTo:oData.EndTimestamp,
+                Description:oData.Description
+            });
+            oRowContext.getModel().refresh();
+            var oNewAbsense = Object.assign({}, oData);
+            delete oNewAbsense.Description;
+            this._changedAbsences[oData.Guid || new Date()] = oNewAbsense;
+            this.checkDirty();
+
         }
 
     });

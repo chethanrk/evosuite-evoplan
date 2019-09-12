@@ -34,7 +34,7 @@
                                 </form:label>
                                 <form:fields>
                                     <Select selectedKey="{resourceAvail>/availType}"
-                                            items="{/AvailabilityTypeSet}">
+                                            items="{/AvailabilityTypeSet}" change="onChangeType">
                                         <core:Item key="{AvailabilityType}" text="{AvailabilityDesc}" />
                                     </Select>
                                 </form:fields>
