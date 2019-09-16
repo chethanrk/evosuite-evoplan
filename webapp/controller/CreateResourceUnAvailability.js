@@ -36,7 +36,7 @@ sap.ui.define([
             this._component = oView.getController().getOwnerComponent();
             this._oModel = this._component.getModel();
             this._calendarModel = this._component.getModel("calendarModel")
-            this._mParameters = mParameters;
+            this._mParameters = mParameters || {bFromHome:true};
             if(this._mParameters.bFromPlannCal){
                 this._resource = this._calendarModel.getProperty(aSelectedPath[0]).ResourceGuid;
             }else{

@@ -72,7 +72,7 @@ sap.ui.define([
 			}
 
 			this._oView = oView;
-			this._mParameters = mParameters;
+			this._mParameters = mParameters  || {bFromHome:true};
 			// oView.setModel(models.createAssignmentModel(oAssignment), "assignment");
 			this.oAssignmentModel = oView.getModel("assignment");
 			this.oAssignmentModel.setData(oAssignment);

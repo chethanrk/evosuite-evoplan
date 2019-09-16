@@ -52,7 +52,7 @@ sap.ui.define([
             this._oResourceBundle = this._component.getModel("i18n").getResourceBundle();
             this._oCalendarModel = this._component.getModel("calendarModel");
             this._oPlanningCalendar = sap.ui.getCore().byId("planningCalendar");
-            this._mParameters = mParameters;
+            this._mParameters = mParameters || {bFromHome:true};
             this._startDate = oStartDate;
             oDialog.addStyleClass(this._component.getContentDensityClass());
             // connect dialog to view (models, lifecycle)
@@ -100,7 +100,7 @@ sap.ui.define([
                     "$expand": "Resource" // To fetch the assignments associated with Resource or ResourceGroup
                 }
             });
-            if(oUserModel.getProperty("/ASSET_PLANNING_ENABLED") && oUserModel.getProperty("/ASSET_PLANNING_ENABLED")){
+            if(oUserModel.getProperty("/ASSET_PLANNING_ENABLED") && oUserModel.getProperty("/ASSETUNAVL_PLANNING_CALENDAR")){
                 oModel.read("/AssetPlanningDataSet", {
                     groupId: "calendarBatch",
                     filters: this._generateResourceFilters(true)

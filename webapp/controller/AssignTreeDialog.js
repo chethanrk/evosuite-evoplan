@@ -44,7 +44,7 @@ sap.ui.define([
             this._reAssign = isReassign;
             this._aSelectedPaths = aSelectedPaths;
             this._bulkReAssign = isBulkReAssign;
-			this._mParameters = mParameters;
+			this._mParameters = mParameters  || {bFromHome:true};
 			this._callbackEvent = callbackEvent;
             this._component = this._oView.getController().getOwnerComponent();
             oDialog.addStyleClass(this._component.getContentDensityClass());

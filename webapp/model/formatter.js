@@ -434,10 +434,17 @@ sap.ui.define([
             }else if(sStatus === "Q"){
                 return "sap-icon://project-definition-triangle-2";
             }else if(sStatus === "S"){
-                return "sap-icon://connected";
+                return "sap-icon://connected"
             }else{
                 return "sap-icon://circle-task-2";
             }
+        },
+        formatAvailType: function(sType){
+        	if(sType === "RES_INACT"){
+        		return "#A9A9A9";
+        	}else{
+        		return "";
+        	}
         }
     };
 });

@@ -72,6 +72,10 @@
                                         startDate="{calendarModel>DateFrom}"
                                         endDate="{calendarModel>DateTo}"
                                         title="{calendarModel>Description}"
+                                        color="{
+                                        	path:'calendarModel>AvailType',
+                                        	formatter:'.formatter.formatAvailType'
+                                        }"
                                         type="Type06">
                                 </unified:CalendarAppointment>
                             </intervalHeaders>

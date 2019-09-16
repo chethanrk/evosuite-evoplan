@@ -224,7 +224,7 @@ sap.ui.define([
 						reject(oError);
 					}.bind(this)
 				});
-			});
+			}.bind(this));
 		},
 		/** 
 		 * Method check the parameter and refreshes the required part of screen 
