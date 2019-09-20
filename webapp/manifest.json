@@ -70,7 +70,7 @@
 		"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://task",
-			"favIcon": "",
+			"favIcon": "sap-icon://task",
 			"phone": "sap-icon://task",
 			"phone@2": "sap-icon://task",
 			"tablet": "sap-icon://task",

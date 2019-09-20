@@ -117,7 +117,7 @@ sap.ui.define([
                 return;
             }
             if(this.validateFields()){
-                this.executeFunctionImport(this._oModel,oParams,"CreateAbsence","POST").then(this._refreshTreeGantt.bind(this));
+                this.executeFunctionImport.call(this._oView.getController(), this._oModel,oParams,"CreateAbsence","POST").then(this._refreshTreeGantt.bind(this));
             }else{
                 this._oDialog.setBusy(false);
             }

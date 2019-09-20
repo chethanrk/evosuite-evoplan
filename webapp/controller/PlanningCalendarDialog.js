@@ -61,7 +61,7 @@ sap.ui.define([
             this._setCalendarModel();
             // To enable or disable the save button
             this.checkDirty();
-            this._enableCreateUABtn();
+            this._enableCreateUABtn(false);
             // open dialog
             // oDialog.open();
         },
@@ -345,7 +345,7 @@ sap.ui.define([
                 oModel.setProperty("/viewKey", this.formatter.formatViewKey(this._selectedView));
             }
             oModel.refresh(true);
-
+			this.checkDirty();
             this._oPlanningCalendar.rerender();
 
         },
@@ -365,6 +365,7 @@ sap.ui.define([
             } else {
                 this._changeDatesofAssignment(oChangedData);
             }
+            this.checkDirty();
         },
         /**
          * Method will be triggered when user select the new resource in assignment dialog and save it.
@@ -529,7 +530,8 @@ sap.ui.define([
                         Demand: {
                             DemandDesc: oAssetUNData.results[n].Description
                         },
-                        type: "Type06"
+                        type: "Type06",
+                        color:oAssetUNData.results[n].AssetUnavailityColor
                     });
                 }
                 if(oAsset.Assignments.length > 0){
@@ -628,6 +630,15 @@ sap.ui.define([
             }
         },
         /**
+         * Unselecting selected column 
+         */
+        onBeforeClose : function (oEvent){
+        	var oSelected = this._oPlanningCalendar.getSelectedRows();
+        	if(oSelected.length > 0){
+        		oSelected[0].setSelected(false);
+        	}
+        },
+        /**
          * Triggers assignments save
          * @param bConfirm Boolean value true says not to refresh the calendar
          * as the Dialog is getting closed. False says to refresh the calendar
@@ -688,10 +699,9 @@ sap.ui.define([
         /**
          * enable or disable the create unavailability button
          */
-        _enableCreateUABtn : function () {
-            var oCreateUAButton = sap.ui.getCore().byId("idCreateUA"),
-             aRows = this._oPlanningCalendar.getSelectedRows();
-            aRows.length > 0 ? oCreateUAButton.setEnabled(true): oCreateUAButton.setEnabled(false);
+        _enableCreateUABtn : function (bState) {
+            var oCreateUAButton = sap.ui.getCore().byId("idCreateUA");
+             oCreateUAButton.setEnabled(bState);
         },
         /**
          *

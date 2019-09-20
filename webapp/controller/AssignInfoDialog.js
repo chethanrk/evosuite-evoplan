@@ -54,21 +54,29 @@ sap.ui.define([
 
                 oAssignment.AssignmentGuid = oAssignData.Guid;
                 oAssignment.Description = oAssignData.Description;
-                sResourceGroupGuid = oAssignData.ResourceGroupGuid;
-                sResourceGuid = oAssignData.ResourceGuid;
+                // sResourceGroupGuid = oAssignData.ResourceGroupGuid;
+                // sResourceGuid = oAssignData.ResourceGuid;
                 oAssignment.DemandGuid = oAssignData.DemandGuid;
                 oAssignment.DemandStatus = oAssignData.Demand.Status;
                 oAssignment.DateFrom = oAssignData.DateFrom;
                 oAssignment.DateTo = oAssignData.DateTo;
+                oAssignment.ResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
+				oAssignment.ResourceGroupDesc = oAssignmentData.GROUP_DESCRIPTION;
+				oAssignment.ResourceGuid = oAssignmentData.ResourceGuid;
+				oAssignment.ResourceDesc = oAssignmentData.RESOURCE_DESCRIPTION;
 			}else {
 				oAssignment.AssignmentGuid = oAssignmentData.Guid;
 				oAssignment.Description = oAssignmentData.Demand.DemandDesc;
-				sResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
-				sResourceGuid = oAssignmentData.ResourceGuid;
+				// sResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
+				// sResourceGuid = oAssignmentData.ResourceGuid;
 				oAssignment.DemandGuid = oAssignmentData.DemandGuid;
 				oAssignment.DemandStatus = oAssignmentData.Demand.Status;
 				oAssignment.DateFrom = oAssignmentData.DateFrom;
 				oAssignment.DateTo = oAssignmentData.DateTo;
+				oAssignment.ResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
+				oAssignment.ResourceGroupDesc = oAssignmentData.GROUP_DESCRIPTION;
+				oAssignment.ResourceGuid = oAssignmentData.ResourceGuid;
+				oAssignment.ResourceDesc = oAssignmentData.RESOURCE_DESCRIPTION;
 			}
 
 			this._oView = oView;
@@ -78,13 +86,13 @@ sap.ui.define([
 			this.oAssignmentModel.setData(oAssignment);
 
 			//Set the ResourceGroupGuid 
-			if (sResourceGroupGuid && sResourceGroupGuid !== "") {
+			if (sResourceGroupGuid && sResourceGroupGuid !== "" && sBindPath && sBindPath !== "") {
 				var resourceGroup = this._getAssignResourceGroup(sResourceGroupGuid);
 				this.oAssignmentModel.setProperty("/ResourceGroupGuid", resourceGroup.ResourceGroupGuid);
 				this.oAssignmentModel.setProperty("/ResourceGroupDesc", resourceGroup.ResourceGroupDesc);
 			}
 			//Set the ResourceGuid 
-			if (sResourceGuid && sResourceGuid !== "") {
+			if (sResourceGuid && sResourceGuid !== "" && sBindPath && sBindPath !== "") {
 				var resource = this._getAssignResource(sResourceGuid + "%2F%2F" + sResourceGroupGuid);
 				this.oAssignmentModel.setProperty("/ResourceGuid", resource.ResourceGuid);
 				this.oAssignmentModel.setProperty("/ResourceDesc", resource.ResourceDesc);

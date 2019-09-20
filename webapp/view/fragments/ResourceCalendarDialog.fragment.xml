@@ -7,7 +7,8 @@
             title="{i18n>xtit.calendarModalTitle}"
             contentWidth="100%"
             stretch="true"
-            resizable="false">
+            resizable="false"
+            beforeClose="onBeforeClose">
         <content>
             <VBox class="sapUiSmallMargin">
                 <PlanningCalendar
@@ -57,12 +58,20 @@
                                         startDate="{calendarModel>DateFrom}"
                                         endDate="{calendarModel>DateTo}"
                                         title="{calendarModel>Demand/DemandDesc}"
-                                        tooltip="{calendarModel>Demand/ORDERID}: {calendarModel>Demand/DemandDesc} : {calendarModel>Demand/StatusDesc}"
+                                        tooltip="{
+                                        	parts:[
+                                        		{path:'calendarModel>Demand/ORDERID'},
+                                        		{path:'calendarModel>Demand/DemandDesc'},
+                                        		{path:'calendarModel>Demand/StatusDesc'}
+                                        	],
+											formatter: '.formatter.formatAsnToolTip'}"
                                         icon="{calendarModel>Demand/STATUS_ICON}"
                                         text="{calendarModel>Demand/ORDERID}"
                                         type="{calendarModel>type}"
                                         color="{
-							                        path:'calendarModel>Demand/CRITICALITY',
+                                        			parts:[
+							                        	{path:'calendarModel>Demand/CRITICALITY'},
+							                        	{path:'calendarModel>color'}],
 							                        formatter:'.formatter.formatStatusIconColor'
 							                   }">
                                 </unified:CalendarAppointment>

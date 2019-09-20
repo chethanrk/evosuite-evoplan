@@ -197,7 +197,10 @@ sap.ui.define([
                 return sap.ui.core.MessageType.Information;
             }
         },
-        formatStatusIconColor: function (sValue) {
+        formatStatusIconColor: function (sValue, sColor) {
+        	if(sColor && sColor !== ""){
+        		return sColor;
+        	}
             if (sValue === 1) {
                 return "#BB0000";
             } else if (sValue === 2) {
@@ -434,17 +437,28 @@ sap.ui.define([
             }else if(sStatus === "Q"){
                 return "sap-icon://project-definition-triangle-2";
             }else if(sStatus === "S"){
-                return "sap-icon://connected"
+                return "sap-icon://connected";
             }else{
                 return "sap-icon://circle-task-2";
             }
         },
+        /**
+         * If the avail type is RES_INACT showing the Grey color appointment
+         */
         formatAvailType: function(sType){
         	if(sType === "RES_INACT"){
         		return "#A9A9A9";
         	}else{
         		return "";
         	}
+        },
+        /**
+         * Format tooltip according to values in the parts
+         * @Author Rahul
+         * 
+         */
+        formatAsnToolTip: function(id, desc, statusDesc){
+        	return (id? id: "")+((id && desc)? " : "+desc : desc)+((desc && statusDesc) ? " : "+statusDesc : "");
         }
     };
 });

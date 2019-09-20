@@ -29,6 +29,21 @@
                             </form:FormElement>
                             <form:FormElement visible="true">
                                 <form:label>
+                                    <Label text="{i18n>xtit.priority}" required="false"
+                                           textAlign="Begin"/>
+                                </form:label>
+                                <form:fields>
+                                    <!--<Input id="idTimeAllocColr" value="{timeAlloc>/priority}" change="onChange" required="true"/>-->
+                                    <ComboBox id="idTimeAllocColr" selectedKey="{timeAlloc>/priority}"
+										items="{
+												path: '/UnavailabilityCodesSet'
+											}">
+										<core:Item key="{UnavailabilityCode}" text="{UnavailabilityCodeDesc}" />
+									</ComboBox>
+                                </form:fields>
+                            </form:FormElement>
+                            <form:FormElement visible="true">
+                                <form:label>
                                     <Label text="{i18n>xtit.tableObject}" required="true"
                                            textAlign="Begin"/>
                                 </form:label>
@@ -36,6 +51,7 @@
                                     <Input id="idTimeAllocDesc" value="{timeAlloc>/desc}" change="onChange" required="true"/>
                                 </form:fields>
                             </form:FormElement>
+                            
                         </form:formElements>
                     </form:FormContainer>
                 </form:formContainers>

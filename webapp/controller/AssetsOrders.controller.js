@@ -218,6 +218,7 @@ sap.ui.define([
 			oTimeAllocModel.setProperty("/dateFrom", oData.StartTimestamp);
 			oTimeAllocModel.setProperty("/dateTo", oData.EndTimestamp);
 			oTimeAllocModel.setProperty("/desc", oData.Description);
+			oTimeAllocModel.setProperty("/priority", oData.AssetUnavailityCode);
 			// open create time allocation dialog
 			this.createTimeAlloc();
 		},
@@ -272,6 +273,7 @@ sap.ui.define([
 			 oFromDate = sap.ui.getCore().byId("idTimeAllocSD"),
 			 oToDate = sap.ui.getCore().byId("idTimeAllocED"),
 			 sDescription = sap.ui.getCore().byId("idTimeAllocDesc"),
+			 sColor = sap.ui.getCore().byId("idTimeAllocColr"),
 			 oTimeAllocModel = this.getModel("timeAlloc"),
 			 oTimeAllocData = oTimeAllocModel ? oTimeAllocModel.getData() : null;
 			 
@@ -293,7 +295,8 @@ sap.ui.define([
 					StartTimestamp: oTimeAllocData.dateFrom,
 					EndTimestamp: oTimeAllocData.dateTo,
 					DowntimeDesc: oTimeAllocData.desc.trim(),
-					AssetUnavailabilityGuid: oTimeAllocData.guid
+					AssetUnavailabilityGuid: oTimeAllocData.guid,
+					AssetUnavailityCode:oTimeAllocData.priority
 				};
 				this.clearMessageModel();
 				if (oTimeAllocData.guid && oTimeAllocData.guid !== "")
