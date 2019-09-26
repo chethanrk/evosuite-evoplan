@@ -419,7 +419,7 @@ sap.ui.define([
          * @param oEvent
          */
         onPressCreateUA : function (oEvent) {
-            this.getOwnerComponent().createUnAvail.open(this.getView(), this.selectedResources);
+            this.getOwnerComponent().manageAvail.open(this.getView(), this.selectedResources);
         },
         /**
          * On click on expand the tree nodes gets expand to level 1

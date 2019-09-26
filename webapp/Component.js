@@ -13,6 +13,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/PlanningCalendarDialog",
 	"com/evorait/evoplan/controller/CapacitiveAssignments",
     "com/evorait/evoplan/controller/CreateResourceUnAvailability",
+    "com/evorait/evoplan/controller/ManageResourceAvailability",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
 	"sap/m/Link"
@@ -31,6 +32,7 @@ sap.ui.define([
 	PlanningCalendarDialog,
 	CapacitiveAssignments,
     CreateResourceUnAvailability,
+    ManageResourceAvailability,
 	MessagePopover,
 	MessagePopoverItem,
 	Link) {
@@ -237,6 +239,9 @@ sap.ui.define([
 
             this.createUnAvail = new CreateResourceUnAvailability();
             this.createUnAvail.init();
+
+            this.manageAvail = new ManageResourceAvailability();
+            this.manageAvail.init();
 		},
 
 		/**
