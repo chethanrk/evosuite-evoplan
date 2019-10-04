@@ -49,6 +49,8 @@ sap.ui.define([
             this._resourceBundle = this._oView.getController().getResourceBundle();
             this._id = this._oView.getId();
             this._oApp = Fragment.byId(this._id,"navCon");
+            this._oSmartList = Fragment.byId(this._id, "idResourceAvailList");
+            this._oList = Fragment.byId(this._id, "idResourceAvailList").getList();
             if(this._mParameters.bFromPlannCal){
                 this._resource = this._calendarModel.getProperty(aSelectedPath[0]).ResourceGuid;
             }else{
@@ -90,26 +92,40 @@ sap.ui.define([
             }else{
                 this._showConfirmMessageBox.call(this._oView.getController(),this._resourceBundle.getText("ymsg.confirmMsg")).then(function(data){
                     if(data === "YES"){
-                        this._oApp.back();
+                        this.onSaveAvail(oEvent);
                     }else{
                         this._oModel.resetChanges();
+                        this._oApp.back();
                     }
                 }.bind(this))
             }
 
         },
-        _getChangedData : function(oEvent){
+        _getChangedData : function(oEvent, sProperty){
             var oSource = oEvent.getSource(),
-                oContext = oSource.getBindingContext(),
+                // In case of delete action the context fetch will be different
+                oContext = (sProperty !== "DELETE") ? oSource.getBindingContext() :
+                    oEvent.getParameter("listItem").getBindingContext(),
                 sPath = oContext.getPath(),
+                oData = this._oModel.getProperty(sPath),
                 aPath = sPath.split(""),
                 oChanges;
+
 
             // remove the first character
             aPath.shift();
 
             oChanges = this._oModel.hasPendingChanges() ? this._oModel.getPendingChanges()[aPath.join("")] : undefined;
-            return oChanges;
+            if(oChanges && sProperty !== "DELETE"){
+                oData.DateFrom =oChanges.DateFrom ? oChanges.DateFrom : oData.DateFrom;
+                oData.DateTo = oChanges.DateTo ? oChanges.DateTo : oData.DateTo;
+                oData.AvailType=oChanges.AvailType ? oChanges.AvailType : oData.AvailType;
+                return oData;
+            }else if(sProperty === "DELETE"){
+                return oData;
+            }
+            return undefined;
+
 
         },
         configureList: function (oEvent) {
@@ -120,10 +136,28 @@ sap.ui.define([
 
             oBinding.filter(new Filter("ResourceGuid",FilterOperator.EQ, this._resource));
         },
-        onSaveAvail : function (oEvent) {
-            var oChanges = this._getChangedData(oEvent);
+        onAction : function (oEvent, sProperty) {
+            var oChanges = this._getChangedData(oEvent, sProperty),
+                oUpdateData = {
+                    ResourceGuid:this._resource
+                };
             if(oChanges){
+                if(sProperty === "SAVE"){
+                    oUpdateData.StartTimestamp = oChanges.DateFrom;
+                    oUpdateData.EndTimestamp = oChanges.DateTo;
+                    oUpdateData.Guid = oChanges.Guid;
+                    this._callFunction(oUpdateData);
+                }else if(sProperty === "CREATE"){
+                    oUpdateData.StartTimestamp = oChanges.DateFrom;
+                    oUpdateData.EndTimestamp = oChanges.DateTo;
+                    oUpdateData.AvailabilityType = oChanges.AvailType;
+                    this._callFunction(oUpdateData);
+                }else {
+                    oUpdateData.Guid = oChanges.Guid;
+                    this._callFunction(oUpdateData);
+                }
                 this._oModel.resetChanges();
+                this._oApp.back();
             }else {
                 this.showMessageToast(this._resourceBundle.getText("sdf"))
             }
@@ -136,6 +170,7 @@ sap.ui.define([
                         DateFrom: new Date(),
                         DateTo: new Date(),
                         AvailType: "",
+                        Description:"",
                         ResourceDescription:this._resourceName
                     }
                 });
@@ -143,6 +178,15 @@ sap.ui.define([
                 oDetail.setBindingContext(oContext);
                 this._oApp.to(this._id+"--create");
             }.bind(this));
+        },
+
+        _callFunction : function (oData) {
+            this._oDialog.setBusy(true);
+            this.executeFunctionImport.call(this._oView.getController(), this._oModel, oData, "ManageAbsence" ,"POST").then(this._refreshList.bind(this))
+        },
+        _refreshList: function (data) {
+            this._oDialog.setBusy(false);
+            this._oSmartList.rebindList();
         },
         /**
          * On Close check for data dirty

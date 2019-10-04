@@ -69,8 +69,7 @@
 							<Collection>
 								<Record Type="Common.ValueListParameterOut">
 									<PropertyValue Property="LocalDataProperty" PropertyPath="AvailType"/>
-									<PropertyValue Property="ValueListProperty" String="AvailabilityType"/>
-									<Annotation Term="Common.Label" String="aeraer"/>
+									<PropertyValue Property="ValueListProperty" String="AvailabilityTypeCode"/>
 								</Record>
 								<Record Type="Common.ValueListParameterOut">
 									<PropertyValue Property="LocalDataProperty" PropertyPath="Description"/>
