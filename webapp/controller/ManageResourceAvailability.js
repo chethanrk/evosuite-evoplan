@@ -12,6 +12,8 @@ sap.ui.define([
 
         formatter: formatter,
 
+        _dataDirty : false,
+
         init: function () {
         },
         /**
@@ -22,7 +24,7 @@ sap.ui.define([
             // create dialog lazily
             if (!this._oDialog) {
                 Fragment.load({
-                    id: oView.getId(),
+                    id: "ManageAbsense",
                     name: "com.evorait.evoplan.view.fragments.ManageResourceAvailability",
                     controller: this
                 }).then(function (oDialog) {
@@ -35,6 +37,7 @@ sap.ui.define([
         },
 
         /**
+         * Sets the necessary value as global to this controller
          * Open's the popover
          * @param oView
          * @param oEvent
@@ -47,7 +50,8 @@ sap.ui.define([
             this._calendarModel = this._component.getModel("calendarModel")
             this._mParameters = mParameters || {bFromHome:true};
             this._resourceBundle = this._oView.getController().getResourceBundle();
-            this._id = this._oView.getId();
+            this._id = "ManageAbsense";
+            this._dataDirty = false;
             this._oApp = Fragment.byId(this._id,"navCon");
             this._oSmartList = Fragment.byId(this._id, "idResourceAvailList");
             this._oList = Fragment.byId(this._id, "idResourceAvailList").getList();
@@ -66,6 +70,10 @@ sap.ui.define([
             // this.configureList(this._resource);
             oDialog.open();
         },
+        /**
+         * Navigates to detail page on click on item
+         * @param oEvent
+         */
         onClickItem : function (oEvent) {
             var oSelectedItem = oEvent.getParameter("listItem"),
                 oContext = oSelectedItem.getBindingContext(),
@@ -77,8 +85,6 @@ sap.ui.define([
             oDetail.bindElement(sPath);
 
             this._oApp.to(this._id+"--detail");
-
-
         },
         /**
          * On back check for data dirty
@@ -94,13 +100,22 @@ sap.ui.define([
                     if(data === "YES"){
                         this.onSaveAvail(oEvent);
                     }else{
-                        this._oModel.resetChanges();
+                        this._resetChanges(oEvent);
                         this._oApp.back();
                     }
                 }.bind(this))
             }
 
         },
+        /**
+         * Checks if data dirty if data is dirty returns the changed data
+         * if not dirty then returns undefined
+         * @param oEvent
+         * @param sProperty
+         * @return {*} if data is dirty returns the changed data
+         * if not dirty then returns undefined
+         * @private
+         */
         _getChangedData : function(oEvent, sProperty){
             var oSource = oEvent.getSource(),
                 // In case of delete action the context fetch will be different
@@ -156,13 +171,18 @@ sap.ui.define([
                     oUpdateData.Guid = oChanges.Guid;
                     this._callFunction(oUpdateData);
                 }
-                this._oModel.resetChanges();
+                this._dataDirty = true;
+                this._resetChanges(oEvent, sProperty);
                 this._oApp.back();
             }else {
-                this.showMessageToast(this._resourceBundle.getText("sdf"))
+                this._dataDirty = false;
+                this.showMessageToast(this._resourceBundle.getText("No Changes"));
             }
         },
-
+        _resetChanges : function (oEvent,sProperty) {
+            var oEventBus = sap.ui.getCore().getEventBus();
+            oEventBus.publish("ManageAbsences","ClearSelection",{});
+        },
         onCreateUnAvail : function (oEvent) {
             this._oModel.metadataLoaded().then(function () {
                 var oContext = this._oModel.createEntry("/ResourceAvailabilitySet", {
@@ -194,7 +214,19 @@ sap.ui.define([
          * @param oEvent
          */
         onClose : function (oEvent) {
-            this._oDialog.close();
+            this._refreshTreeGantt(oEvent);
         },
+        _refreshTreeGantt : function (oEvent) {
+            var eventBus = sap.ui.getCore().getEventBus();
+            if(this._dataDirty && this._mParameters.bFromGantt){
+                // this.changeGanttHorizonViewAt(this._component.getModel("viewModel"),oData.dateFrom,oData.dateTo);
+                eventBus.publish("BaseController", "refreshGanttChart", {});
+            }else if(this._dataDirty && this._mParameters.bFromHome){
+                eventBus.publish("BaseController", "refreshTreeTable", {});
+            }
+            this._dataDirty = false;
+            this._oDialog.setBusy(false);
+            this._oDialog.close();
+        }
     });
 });

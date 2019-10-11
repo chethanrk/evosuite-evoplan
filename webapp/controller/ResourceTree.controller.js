@@ -40,6 +40,7 @@ sap.ui.define([
             eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
             eventBus.subscribe("FilterSettingsDialog", "triggerSearch", this._triggerFilterSearch, this);
             eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
+            eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
             // eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
 
             // event listener for changing device orientation with fallback of window resize
@@ -389,7 +390,8 @@ sap.ui.define([
                 this.selectedResources = [];
 				this.byId("showPlanCalendar").setEnabled(false);
                 this.byId("idButtonreassign").setEnabled(false);
-                this.byId("idButtonunassign").setEnabled(false);
+                this.byId("idButtonunassign").setEnabled(false)
+                this.byId("idButtonCreUA").setEnabled(false);
 		},
         /**
 		 * On select of capacitive checkbox the adjusting splitter length
@@ -436,7 +438,5 @@ sap.ui.define([
                 this._oDroppableTable.collapseAll();
             }
         }
-        
-
     });
 });

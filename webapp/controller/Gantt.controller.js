@@ -467,7 +467,8 @@ sap.ui.define([
                 return;
             }
             oContext = oTreeTable.getContextByIndex(aIndices[0]);
-           this.getOwnerComponent().createUnAvail.open(this.getView(), [oContext.getPath()], {bFromGantt: true});
+           // this.getOwnerComponent().createUnAvail.open(this.getView(), [oContext.getPath()], {bFromGantt: true});
+           this.getOwnerComponent().manageAvail.open(this.getView(), [oContext.getPath()], {bFromGantt: true});
 
         },
         /**

@@ -79,7 +79,6 @@
 							columnHeaderVisible="false"
 							selectionBehavior="RowOnly"
 							rowSelectionChange="onRowSelectionChange"
-							threshold="5"
 							rows="{
 								path: '/GanttResourceHierarchySet',
 								parameters: {
