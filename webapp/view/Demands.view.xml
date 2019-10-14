@@ -2,7 +2,7 @@
 	xmlns:semantic="sap.m.semantic" xmlns:table="sap.ui.table" controllerName="com.evorait.evoplan.controller.Demands" displayBlock="true"
 	height="100%">
 	<Page id="listPage" title="{i18n>xtit.itemListTitle}" showFooter="false" showHeader="false">
-		<f:DynamicPage headerExpanded="true" preserveHeaderStateOnScroll="true" showFooter="true" toggleHeaderOnTitleClick="false"
+		<f:DynamicPage headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true" showFooter="true" toggleHeaderOnTitleClick="false"
 			class="sapUiNoContentPadding tableContentPage">
 			<f:header>
 				<f:DynamicPageHeader pinnable="true">

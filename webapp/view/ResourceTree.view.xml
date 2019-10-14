@@ -1,9 +1,9 @@
 <mvc:View controllerName="com.evorait.evoplan.controller.ResourceTree" xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"
 		  xmlns:f="sap.f" xmlns:table="sap.ui.table" xmlns:controls="com.evorait.evoplan.ui.controls" displayBlock="true" height="100%">
-	<f:DynamicPage id="idResourcePage" headerExpanded="true" preserveHeaderStateOnScroll="true" fitContent="false" showFooter="true"
+	<f:DynamicPage id="idResourcePage" headerExpanded="true" preserveHeaderStateOnScroll="true" fitContent="true" showFooter="true"
 				   class="sapUiNoContentPadding tableContentPage" toggleHeaderOnTitleClick="false">
 		<f:header>
-			<f:DynamicPageHeader pinnable="true">
+			<f:DynamicPageHeader id="idTreePageHeader" pinnable="true">
 				<f:content>
 					<Toolbar id="idResToolbar">
 						<controls:CustomVariantManagement id="customResourceVariant" select="onSelectVariant" initialise="onInitialiseVariant" enabled="true"
@@ -11,6 +11,7 @@
 														  entitySet="{viewModel>/treeSet}"></controls:CustomVariantManagement>
 
 						<Button
+								id="idExpandAll"
 								icon="sap-icon://expand-all"
 								press="onClickExpandCollapse"
 						        type="Transparent"
@@ -20,6 +21,7 @@
 							</customData>
 						</Button>
 						<Button
+								id="idColapseAll"
 								icon="sap-icon://collapse-all"
 								press="onClickExpandCollapse"
 								type="Transparent"
@@ -29,7 +31,7 @@
 							</customData>
 						</Button>
 						<ToolbarSpacer/>
-						<CheckBox text="{i18n>xtit.capacity}" selected="{viewModel>/capacityPlanning}" enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }" select="onSelectCapacity" visible="{user>/CAPACITY_ENABLED}" />
+						<CheckBox id ="idCapaCheck" text="{i18n>xtit.capacity}" selected="{viewModel>/capacityPlanning}" enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }" select="onSelectCapacity" visible="{user>/CAPACITY_ENABLED}" />
 						<Button type="Transparent" id="filterResourceButton" icon="sap-icon://filter" text="{viewModel>/counterResourceFilter}"
 								press="onFilterButtonPress"/>
 
