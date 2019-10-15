@@ -40,8 +40,8 @@
 			<ColumnListItem type="Active">
 				<cells>
 					<ObjectIdentifier
-						title="{Resource/GroupDescription}"
-						text="{Resource/ResourceDescription}"/>
+						title="{GROUP_DESCRIPTION}"
+						text="{RESOURCE_DESCRIPTION}"/>
 					<Text text="{Effort} {EffortUnit}" />
 					<Text text="{
 								path:'PERSON_NUMBER'
