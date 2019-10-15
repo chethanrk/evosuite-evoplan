@@ -143,6 +143,10 @@ sap.ui.define([
 
 
         },
+        /**
+         * Filter's the list by selected resource
+         * @param oEvent
+         */
         configureList: function (oEvent) {
             var oList, oBinding;
 
@@ -151,6 +155,11 @@ sap.ui.define([
 
             oBinding.filter(new Filter("ResourceGuid",FilterOperator.EQ, this._resource));
         },
+        /**
+         * This Event is triggered when creating/updating/deleting
+         * @param oEvent
+         * @param sProperty - The event parameters passed
+         */
         onAction : function (oEvent, sProperty) {
             var oChanges = this._getChangedData(oEvent, sProperty),
                 oUpdateData = {
@@ -179,16 +188,35 @@ sap.ui.define([
                 this.showMessageToast(this._resourceBundle.getText("No Changes"));
             }
         },
+        _validateDates : function (oData) {
+            if(oData.dateFrom !== "" && oData.dateTo !== "" && oData.availType !== ""){
+                if(oData.dateFrom.getTime() >= oData.dateTo.getTime()){
+                    this.showMessageToast(oResourceBundle.getText("ymsg.datesInvalid"));
+                    return false;
+                }
+                return true;
+            }
+        },
+        /**
+         * Resets changed values and resource tree selection
+         * @param oEvent
+         * @param sProperty
+         * @private
+         */
         _resetChanges : function (oEvent,sProperty) {
             var oEventBus = sap.ui.getCore().getEventBus();
             oEventBus.publish("ManageAbsences","ClearSelection",{});
         },
+        /**
+         * Method triggered to create the unavailability
+         * @param oEvent
+         */
         onCreateUnAvail : function (oEvent) {
             this._oModel.metadataLoaded().then(function () {
                 var oContext = this._oModel.createEntry("/ResourceAvailabilitySet", {
                     properties: {
-                        DateFrom: new Date(),
-                        DateTo: new Date(),
+                        DateFrom: moment().startOf("day").toDate(),
+                        DateTo: moment().endOf("day").toDate(),
                         AvailType: "",
                         Description:"",
                         ResourceDescription:this._resourceName
@@ -199,11 +227,20 @@ sap.ui.define([
                 this._oApp.to(this._id+"--create");
             }.bind(this));
         },
-
+        /**
+         * Calls the respective function import
+         * @param oData
+         * @private
+         */
         _callFunction : function (oData) {
             this._oDialog.setBusy(true);
             this.executeFunctionImport.call(this._oView.getController(), this._oModel, oData, "ManageAbsence" ,"POST").then(this._refreshList.bind(this))
         },
+        /**
+         * Refresh's the List
+         * @param data
+         * @private
+         */
         _refreshList: function (data) {
             this._oDialog.setBusy(false);
             this._oSmartList.rebindList();
@@ -216,6 +253,12 @@ sap.ui.define([
         onClose : function (oEvent) {
             this._refreshTreeGantt(oEvent);
         },
+        /**
+         * If any absence are created/updated/deleted the resource tree/ gantt will refreshed
+         * based on the parameter
+         * @param oEvent
+         * @private
+         */
         _refreshTreeGantt : function (oEvent) {
             var eventBus = sap.ui.getCore().getEventBus();
             if(this._dataDirty && this._mParameters.bFromGantt){
