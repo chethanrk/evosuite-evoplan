@@ -490,7 +490,19 @@ sap.ui.define([
          */
         onPressToday : function (oEvent) {
             this.changeGanttHorizonViewAt(this.getModel("viewModel"));
+        },
+
+        getPattern : function (sType) {
+            return "url(#"+this._viewId+"--unavailability)";
+        },
+
+        formatLegend: function (sCode, sType) {
+        if(sType === "COLOUR"){
+            return sCode;
+        }else{
+            return "url(#"+this._viewId+"--unavailability)";
         }
+    }
 
 
     });

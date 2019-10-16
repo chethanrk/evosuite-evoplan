@@ -16,7 +16,10 @@
 					draggable= "false"
 					height="31"
 					showTitle="false"
-					fill="#ccc"
+					fill="{
+						path:'Guid',
+						formatter:'.getPattern'
+					}"
 					fillOpacity="1"
 					strokeOpacity="0"
 					opacity="1"

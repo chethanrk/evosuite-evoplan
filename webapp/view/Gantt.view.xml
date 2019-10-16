@@ -2,6 +2,8 @@
 		  xmlns:mvc="sap.ui.core.mvc"
 		  xmlns:core="sap.ui.core"
 		  xmlns:gnt2="sap.gantt.simple"
+		  xmlns:def="sap.gantt.def"
+		  xmlns:pattern="sap.gantt.def.pattern"
 		  xmlns:table="sap.ui.table"
 		  xmlns:dnd="sap.ui.core.dnd"
 		  controllerName="com.evorait.evoplan.controller.Gantt"
@@ -31,7 +33,11 @@
 						<gnt2:LegendContainer width="230px" height="250px">
 							<gnt2:ListLegend title="{i18n>xtit.colorCodes}" items="{/GanttLegendSet}">
 								<gnt2:ListLegendItem>
-									<gnt2:BaseRectangle shapeId="{CharactersticCode}" fill="{Colourcode}" title="{CharactersticDescription}" showTitle="false"/>
+									<gnt2:BaseRectangle shapeId="{CharactersticCode}" fill="{parts:[{path:'Colourcode'},
+									{path:'Legendtype'}
+
+									],
+									formatter:'.formatLegend'}" title="{CharactersticDescription}" showTitle="false"/>
 								</gnt2:ListLegendItem>
 							</gnt2:ListLegend>
 						</gnt2:LegendContainer>
@@ -121,6 +127,14 @@
 				<gnt2:axisTimeStrategy>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.AxisTimeStrategy" type="XML"/>
 				</gnt2:axisTimeStrategy>
+
+				<gnt2:svgDefs>
+					<def:SvgDefs>
+						<def:defs>
+							<pattern:SlashPattern id="unavailability" backgroundColor="white" stroke="#ccc"></pattern:SlashPattern>
+						</def:defs>
+					</def:SvgDefs>
+				</gnt2:svgDefs>
 
 			</gnt2:GanttChartWithTable>
 
