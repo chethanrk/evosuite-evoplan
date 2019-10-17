@@ -60,10 +60,10 @@ sap.ui.define([
                 oAssignment.DemandStatus = oAssignData.Demand.Status;
                 oAssignment.DateFrom = oAssignData.DateFrom;
                 oAssignment.DateTo = oAssignData.DateTo;
-                oAssignment.ResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
-				oAssignment.ResourceGroupDesc = oAssignmentData.GROUP_DESCRIPTION;
-				oAssignment.ResourceGuid = oAssignmentData.ResourceGuid;
-				oAssignment.ResourceDesc = oAssignmentData.RESOURCE_DESCRIPTION;
+                oAssignment.ResourceGroupGuid = oAssignData.ResourceGroupGuid;
+				oAssignment.ResourceGroupDesc = oAssignData.GROUP_DESCRIPTION;
+				oAssignment.ResourceGuid = oAssignData.ResourceGuid;
+				oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
 			}else {
 				oAssignment.AssignmentGuid = oAssignmentData.Guid;
 				oAssignment.Description = oAssignmentData.Demand.DemandDesc;
