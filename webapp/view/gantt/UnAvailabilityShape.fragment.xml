@@ -4,8 +4,7 @@
         xmlns:gnt2="sap.gantt.simple">
 	<!-- To visualize the unavailability of a resource shape -->
             <gnt2:BaseRectangle
-					shapeId="{Guid}"
-					scheme="hiddenBackground"
+					shapeId="{Guid}_Counter"
 					countInBirdEye="false"
 					time="{DateFrom}"
 					endTime="{DateTo}"
@@ -16,7 +15,10 @@
 					draggable= "false"
 					height="31"
 					showTitle="false"
-					fill="#ccc"
+					fill="{
+						path:'Guid',
+						formatter:'.getPattern'
+					}"
 					fillOpacity="1"
 					strokeOpacity="0"
 					opacity="1"

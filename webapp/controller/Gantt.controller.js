@@ -7,9 +7,22 @@ sap.ui.define([
     "sap/ui/model/FilterOperator",
     "sap/ui/core/Popup",
     "sap/gantt/misc/Utility",
-    "sap/gantt/simple/CoordinateUtils"
-], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, Popup, Utility, CoordinateUtils) {
+    "sap/gantt/simple/CoordinateUtils",
+    "sap/gantt/misc/AxisTime"
+], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, Popup, Utility, CoordinateUtils,AxisTime) {
     "use strict";
+
+    AxisTime.prototype.getNowLabel = function () {
+        var date = new Date();
+        var utcDate = new Date(date.getTime());
+        var value = this.timeToView(utcDate);
+        var localDate = d3.time.second.offset(utcDate, this.timeZoneOffset);
+
+        return [{
+            "date": localDate,
+            "value": Math.round(value)
+        }];
+    };
 
     return AssignmentActionsController.extend("com.evorait.evoplan.controller.Gantt", {
 
@@ -22,6 +35,8 @@ sap.ui.define([
         _oEventBus: null,
 
         _oAssignementModel: null,
+
+        _viewId:"",
 
 
         /**
@@ -40,6 +55,8 @@ sap.ui.define([
             this._ganttChart = this.getView().byId("ganttResourceAssignments");
             // this._setDefaultTreeDateRange();
             this._defaultGanttHorizon();
+
+            this._viewId = this.getView().getId();
         },
 
         /**
@@ -490,7 +507,19 @@ sap.ui.define([
          */
         onPressToday : function (oEvent) {
             this.changeGanttHorizonViewAt(this.getModel("viewModel"));
+        },
+
+        getPattern : function (sType) {
+            return "url(#"+this._viewId+"--unavailability)";
+        },
+
+        formatLegend: function (sCode, sType) {
+        if(sType === "COLOUR"){
+            return sCode;
+        }else{
+            return "url(#"+this._viewId+"--unavailability)";
         }
+    }
 
 
     });
