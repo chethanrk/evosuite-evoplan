@@ -5,7 +5,8 @@
     <Dialog title="{i18n>xtit.createUnAvailability}"
             contentWidth="60%"
             resizable="true"
-            afterClose="afterCloseDialog">
+            afterClose="afterCloseDialog"
+    afterOpen="onAfterOpen">
         <content>
             <form:Form id="idResourceAvail" width="100%" editable="true" visible="true">
                 <form:formContainers>
@@ -33,9 +34,9 @@
                                            textAlign="Begin"/>
                                 </form:label>
                                 <form:fields>
-                                    <Select selectedKey="{resourceAvail>/availType}"
+                                    <Select id="idAvailTypeCB" selectedKey="{resourceAvail>/availType}"
                                             items="{/AvailabilityTypeSet}" change="onChangeType">
-                                        <core:Item key="{AvailabilityType}" text="{AvailabilityDesc}" />
+                                        <core:Item key="{AvailabilityTypeCode}" text="{AvailabilityDesc}" />
                                     </Select>
                                 </form:fields>
                             </form:FormElement>

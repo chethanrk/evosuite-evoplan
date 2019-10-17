@@ -47,8 +47,11 @@ sap.ui.define([
             oDialog.addStyleClass(this._component.getContentDensityClass());
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
-            this._configureResourceAvail();
+
             oDialog.open();
+        },
+        onAfterOpen : function (oEvent) {
+            this._configureResourceAvail();
         },
 
         /**
@@ -73,12 +76,11 @@ sap.ui.define([
          */
 
         _resetFields : function (oResourceAvailModel) {
-            var sLanguage = this._component.getModel("InformationModel").getProperty("/language");
             oResourceAvailModel.setData({
                 dateFrom: moment().startOf("day").toDate(),
                 dateTo: moment().endOf("day").toDate(),
                 availType:"CL_LEAVE",
-                description : this._component.getModel().getProperty("/AvailabilityTypeSet(Spras='"+sLanguage+"',AvailabilityType='CL_LEAVE')/AvailabilityDesc")
+                description : this._component.getModel().getProperty("/AvailabilityTypeSet('CL_LEAVE')/AvailabilityDesc")
             });
         },
         /**
