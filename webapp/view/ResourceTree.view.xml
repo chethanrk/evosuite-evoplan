@@ -100,7 +100,7 @@
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
-				<Button id="idButtonCreUA" text="{i18n>xtit.createUnAvailability}" tooltip="{i18n>xtit.createUnAvailability}" press="onPressCreateUA" enabled="false">
+				<Button id="idButtonCreUA" text="{i18n>xbut.manageAbsence}" tooltip="{i18n>xbut.manageAbsence}" press="onPressCreateUA" enabled="false">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="true"/>
 					</layoutData>
