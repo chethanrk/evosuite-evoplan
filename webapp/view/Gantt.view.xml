@@ -26,7 +26,7 @@
 								width="15%"
 								change="onChangeDateRange"
 						/>
-						<Button id="idCreateAb" enabled="false" text="{i18n>xtit.createUnAvailability}" visible="{user>/CREATE_UNAVAILABILITY_UI_ENABL}" press="onCreateAbsence"/>
+						<Button id="idCreateAb" enabled="false" text="{i18n>xbut.manageAbsence}" press="onCreateAbsence"/>
 						<Button id="idToday" text="{i18n>xtit.today}" press="onPressToday"/>
 					</gnt2:content>
 					<gnt2:legendContainer>

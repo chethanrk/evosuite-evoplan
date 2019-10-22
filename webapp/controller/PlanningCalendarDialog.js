@@ -704,7 +704,7 @@ sap.ui.define([
              oCreateUAButton.setEnabled(bState);
         },
         /**
-         *
+         * Open's the dialog containing the fields to create absence
          * @param oEvent
          */
         onCreateUnAvail : function (oEvent) {

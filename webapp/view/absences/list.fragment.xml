@@ -1,0 +1,29 @@
+<core:FragmentDefinition
+        xmlns:core="sap.ui.core"
+        xmlns="sap.m"
+        xmlns:smartList="sap.ui.comp.smartlist">
+    <Page id="master"
+          title="Products"
+          showHeader="false">
+        <content>
+            <smartList:SmartList id="idResourceAvailList" entitySet="ResourceAvailabilitySet" header="Absences"
+                                 showRowCount="true" enableAutoBinding="true"
+                                 selectFields="Description,DateFrom,DateTo,ResourceDescription,Guid">
+                <smartList:listItemTemplate>
+                    <StandardListItem title="{Description}" type="Active"
+                                      description="{path : 'DateFrom', type : 'sap.ui.model.odata.type.DateTime'} -
+                                {path : 'DateTo', type : 'sap.ui.model.odata.type.DateTime'}" />
+                </smartList:listItemTemplate>
+                <List itemPress="onClickItem" growing="true" growingThreshold="20" mode="Delete" delete=".onAction($event, 'DELETE')"></List>
+            </smartList:SmartList>
+        </content>
+        <footer>
+            <OverflowToolbar>
+                <ToolbarSpacer/>
+                <Button id="idCreateAbsence" text="{i18n>xtit.createUnAvailability}" type="Emphasized" enabled="true"
+                        press="onCreateUnAvail"/>
+                <Button id="idCreateCancel" text="{i18n>xbut.buttonClose}" press="onClose"/>
+            </OverflowToolbar>
+        </footer>
+    </Page>
+</core:FragmentDefinition>
