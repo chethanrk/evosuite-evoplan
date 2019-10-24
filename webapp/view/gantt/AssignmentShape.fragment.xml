@@ -7,7 +7,7 @@
                     shapeId="{Guid}"
                     countInBirdEye="true"
                     time="{DateFrom}"
-                    height="23"
+                    height="20"
                     endTime="{DateTo}"
                     title="{Description}"
                     showTitle="true"
