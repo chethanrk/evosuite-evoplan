@@ -144,6 +144,11 @@ sap.ui.define([
 
 
             oViewModel.setProperty("/ganttSettings/busy",true);
+            // Check the resource assignable or not
+            if(!this.isAssignable({data: this.getModel().getProperty(oDropContext.getPath())})){
+                oViewModel.setProperty("/ganttSettings/busy",false);
+                return;
+            }
 
             if(oBrowserEvent.target.tagName === "rect"){
                 // When we drop on gantt chart
@@ -151,16 +156,16 @@ sap.ui.define([
                 // oAxisTime.viewToTime(<oSvgPoint>) will give the time stamp for dropped location
                 this._assignDemands([oDragContext.getPath()], oDropContext.getPath(),oAxisTime.viewToTime(oSvgPoint.x));
             }else{
-                if (!this.isAvailable(oDropContext.getPath())) {
-                    oPromise = this._showConfirmMessageBox(sMessage); // this method will resolve promise
-                    oPromise.then(function (data) {
-                        if (data === "YES") {
-                            this._assignDemands([oDragContext.getPath()], oDropContext.getPath());
-                        }
-                    }.bind(this));
-                } else {
+                // if (!this.isAvailable(oDropContext.getPath())) {
+                //     oPromise = this._showConfirmMessageBox(sMessage); // this method will resolve promise
+                //     oPromise.then(function (data) {
+                //         if (data === "YES") {
+                //             this._assignDemands([oDragContext.getPath()], oDropContext.getPath());
+                //         }
+                //     }.bind(this));
+                // } else {
                     this._assignDemands([oDragContext.getPath()], oDropContext.getPath());
-                }
+                // }
             }
         },
         /**
@@ -396,6 +401,11 @@ sap.ui.define([
                 targetData = targetContext.getObject(),
                 draggedShape = oParams.draggedShapeDates;
 
+            // Check the resource assignable or not
+            if(!this.isAssignable({data: targetData})){
+                oViewModel.setProperty("/ganttSettings/busy",false);
+                return;
+            }
             Object.keys(draggedShape).forEach(function (sShapeUid) {
                 var sourcePath = this._getShapeBindingContextPath(sShapeUid),
                     sourceData = this.getModel().getProperty(sourcePath),
@@ -509,9 +519,23 @@ sap.ui.define([
         onPressToday : function (oEvent) {
             this.changeGanttHorizonViewAt(this.getModel("viewModel"));
         },
-
+        /**
+         * Formatter for the color fill
+         * Based on the group type the fill the color will be rendered.
+         * A -> White
+         * N -> Pattern
+         * @param sType
+         * @return {string}
+         */
         getPattern : function (sType) {
-            return "url(#"+this._viewId+"--unavailability)";
+            if(sType === "N"){
+                return "url(#"+this._viewId+"--unavailability)";
+            }else if(sType === "A"){
+                return "#FFF";
+            }else{
+                return "#000";
+            }
+
         },
 
         formatLegend: function (sCode, sType) {

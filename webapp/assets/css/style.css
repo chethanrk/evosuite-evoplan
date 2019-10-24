@@ -107,8 +107,15 @@ div.worktimeAvailability > .workTimeAvailabilityText {
 .workTimeTextBlack{
 	color:#000000;
 }
+/* Gantt custom Css */
 
 .sapGanttChartSelection .sapGanttSelectedPath{
     stroke-width: 0 !important;
     stroke: transparent !important;
 }
+
+div.resourceGanttWithTable .sapGanttBackground .sapGanttBackgroundSVG{
+    background: #ccc !important;
+}
+
+

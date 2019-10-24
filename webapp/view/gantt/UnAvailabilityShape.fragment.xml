@@ -13,10 +13,10 @@
 					resizable="false"
 					selectable="true"
 					draggable= "false"
-					height="31"
+					height="25"
 					showTitle="false"
 					fill="{
-						path:'Guid',
+						path:'AvailabilityTypeGroup',
 						formatter:'.getPattern'
 					}"
 					fillOpacity="1"
