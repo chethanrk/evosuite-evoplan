@@ -500,7 +500,8 @@ sap.ui.define([
          */
         _createData: function (data) {
             var aResources = [],
-                oModel = this._oView ? this._oView.getModel() : null;
+                oModel = this._oView ? this._oView.getModel() : null,
+                oUserModel = this._component ? this._component.getModel("user") : null;
 
             if (data.__batchResponses) {
                 var oAssignData = data.__batchResponses[0].data;
@@ -513,14 +514,17 @@ sap.ui.define([
                 for (var a = 0; a < this.selectedResources.length; a++) {
                     var oResource = oModel.getProperty(this.selectedResources[a]),
                         sEntitySet = this.selectedResources[a].split("(")[0];
-                    oResource["ResourceDescription"] = oResource.Description;
-                    oResource["ObjectType"] = oResource.NodeType;
-                    oResource["GroupDescription"] = oModel.getProperty(sEntitySet + "('" + oResource.ResourceGroupGuid + "')").Description;
-                    oResource["ResourceGuid"] = oResource.ResourceGuid;
-                    oResource["ResourceGroupGuid"] = oResource.ResourceGroupGuid;
-                    oResourceMap[oResource.NodeId] = oResource;
-                    oResourceMap[oResource.NodeId].Assignments = [];
-                    oResourceMap[oResource.NodeId].AbsenceInfo = [];
+                    if(oResource.Nodetype=== "RESOURCE" || (oResource.Nodetype=== "RES_GROUP" && oUserModel.getProperty("/POOL_FUNCTION_ENABLED"))){
+                        oResource["ResourceDescription"] = oResource.Description;
+                        oResource["ObjectType"] = oResource.NodeType;
+                        oResource["GroupDescription"] = oModel.getProperty(sEntitySet + "('" + oResource.ResourceGroupGuid + "')").Description;
+                        oResource["ResourceGuid"] = oResource.ResourceGuid;
+                        oResource["ResourceGroupGuid"] = oResource.ResourceGroupGuid;
+                        oResourceMap[oResource.NodeId] = oResource;
+                        oResourceMap[oResource.NodeId].Assignments = [];
+                        oResourceMap[oResource.NodeId].AbsenceInfo = [];
+                    }
+
                 }
                 // put asset data
                 for (var n in oAssetUNData.results) {
