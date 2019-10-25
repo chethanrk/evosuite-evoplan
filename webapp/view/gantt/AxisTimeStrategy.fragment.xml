@@ -6,11 +6,11 @@
         xmlns:config="sap.gantt.config"
         xmlns:dnd="sap.ui.core.dnd">
 
-    <axistime:StepwiseZoomStrategy zoomLevel="3">
+    <axistime:StepwiseZoomStrategy id="idAxisTime" zoomLevel="3">
         <axistime:totalHorizon>
             <config:TimeHorizon
-                    startTime="{viewModel>/ganttSettings/totalStartTime}"
-                    endTime="{viewModel>/ganttSettings/totalEndTime}"/>
+                    startTime="{user>/GANT_START_DATE}"
+                    endTime="{user>/GANT_END_DATE}"/>
         </axistime:totalHorizon>
         <axistime:visibleHorizon>
             <config:TimeHorizon

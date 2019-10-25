@@ -53,6 +53,7 @@ sap.ui.define([
             //set on first load required filters
             this._treeTable = this.getView().byId("ganttResourceTreeTable");
             this._ganttChart = this.getView().byId("ganttResourceAssignments");
+            this._axisTime = this.getView().byId("idAxisTime");
             // this._setDefaultTreeDateRange();
             this._defaultGanttHorizon();
 
@@ -91,6 +92,7 @@ sap.ui.define([
         _setDefaultTreeDateRange: function (mParameters) {
             var aFilters = this._getDefaultFilters(mParameters);
 
+
             var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
             binding.filter(aFilters, "Application");
         },
@@ -99,12 +101,20 @@ sap.ui.define([
          * @private
          */
         _defaultGanttHorizon : function () {
-            var oDefaultDateRange = formatter.getDefaultGanttDateRange(),
-                oViewModel = this.getModel("viewModel");
-            oViewModel.setProperty("/ganttSettings/totalStartTime", oDefaultDateRange.dateFrom);
-            oViewModel.setProperty("/ganttSettings/totalEndTime", oDefaultDateRange.dateTo);
-            
+            var oViewModel = this.getModel("viewModel");
+
+            this._setTotalHorizon();
             this.changeGanttHorizonViewAt(oViewModel);
+        },
+
+        _setTotalHorizon : function (mParameters) {
+            var oTotalHorizon = this._axisTime.getAggregation("totalHorizon"),
+                oUserModel = this.getModel("user"),
+                sStartDate = mParameters? mParameters.dateTo : oUserModel.getProperty("/GANT_START_DATE"),
+                sEndDate = mParameters? mParameters.dateFrom :oUserModel.getProperty("/GANT_END_DATE") ;
+
+            oTotalHorizon.setEndTime(formatter.date(sStartDate));
+            oTotalHorizon.setStartTime(formatter.date(sEndDate));
         },
         /**
          * Gets default filters for gantt
@@ -114,11 +124,14 @@ sap.ui.define([
          * @private
          */
         _getDefaultFilters : function (mParameters) {
-            var defDateRange = mParameters || formatter.getDefaultGanttDateRange(),
-                aFilters = [];
+            var oDateFrom, oDateTo, oUserModel = this.getModel("user"),aFilters = [];
 
-            aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(defDateRange.dateTo)));
-            aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(defDateRange.dateFrom)));
+            oDateFrom = oUserModel.getProperty("/GANT_START_DATE");
+            oDateTo = oUserModel.getProperty("/GANT_END_DATE");
+
+
+            aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oDateTo)));
+            aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oDateFrom)));
             return aFilters;
         },
         /**
@@ -206,7 +219,7 @@ sap.ui.define([
         onChangeDateRange: function (oEvent) {
             var oFrom = oEvent.getParameter("from"),
                 oTo = oEvent.getParameter("to");
-
+            this._setTotalHorizon({dateTo: oTo, dateFrom: oFrom});
             this._setDefaultTreeDateRange({dateTo: oTo, dateFrom: oFrom});
         },
         /**
@@ -537,7 +550,12 @@ sap.ui.define([
             }
 
         },
-
+        /**
+         * Format legend colors to differentiate between pattern and colors
+         * @param sCode
+         * @param sType
+         * @return {*}
+         */
         formatLegend: function (sCode, sType) {
         if(sType === "COLOUR"){
             return sCode;

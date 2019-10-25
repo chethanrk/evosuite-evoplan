@@ -128,8 +128,8 @@ sap.ui.define([
 
             this.setModel(models.createUserModel({
 				ASSET_PLANNING_ENABLED: false,
-				GANT_START_DATE:moment().startOf("year").subtract(2, "years").toDate(),
-				GANT_END_DATE:moment().endOf("year").add(5, "years").toDate()}), "user");
+				GANT_START_DATE:moment().startOf("year").toDate(),
+				GANT_END_DATE:moment().endOf("year").add(1, "years").toDate()}), "user");
 
 			//Creating the Global message model from MessageManager
 			var oMessageModel = new JSONModel();
@@ -170,12 +170,19 @@ sap.ui.define([
 			this._oMessagePopover = oMessagePopover;
 
             //sets user model
-            this._getSystemInformation();
+            this._getSystemInformation().then(function(data){
+                this.getModel("user").setData(data);
+
+			}.bind(this));
 
             UIComponent.prototype.init.apply(this, arguments);
 
             // create the views based on the url/hash
             this.getRouter().initialize();
+
+            this.getModel().setSizeLimit(300);
+
+
 		},
 
 		/**
@@ -303,16 +310,21 @@ sap.ui.define([
 		},
 
 		_getSystemInformation: function () {
-			this.getModel().callFunction("/GetSystemInformation", {
-				method: "GET",
-				success: function (oData, oResponse) {
-					//Handle Success
-                    this.getModel("user").setData(oData);
-                 }.bind(this),
-				error: function (oError) {
-					//Handle Error
-				}.bind(this)
-			});
+            return new Promise(function (resolve, reject) {
+                this.getModel().callFunction("/GetSystemInformation", {
+                    method: "GET",
+                    success: function (oData, oResponse) {
+                    	resolve(oData);
+                        //Handle Success
+                        // this.getModel("user").setData(oData);
+                        // console.log(oData);
+                    }.bind(this),
+                    error: function (oError) {
+                        //Handle Error
+						reject(oError);
+                    }.bind(this)
+                });
+            }.bind(this))
 		},
 
 		_getFunctionSetCount: function () {

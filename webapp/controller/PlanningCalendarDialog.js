@@ -82,20 +82,17 @@ sap.ui.define([
                 return;
             }
 
-            // get All selected resource filters
-            aResourceFilters = this._generateResourceFilters();
-
             this._oPlanningCalendar.setBusy(true);
             oModel.read("/AssignmentSet", {
                 groupId: "calendarBatch",
-                filters: aResourceFilters,
+                filters: this._generateResourceFiltersFor("ASSIGNMENT"), // to fetch filters required for assignments
                 urlParameters: {
                     "$expand": "Resource,Demand" // To fetch the assignments associated with Resource or ResourceGroup
                 }
             });
             oModel.read("/ResourceAvailabilitySet", {
                 groupId: "calendarBatch",
-                filters: aResourceFilters,
+                filters: this._generateResourceFiltersFor("ABSENCE"), // to fetch filters required for absences
                 urlParameters: {
                     "$expand": "Resource" // To fetch the assignments associated with Resource or ResourceGroup
                 }
@@ -103,7 +100,7 @@ sap.ui.define([
             if(oUserModel.getProperty("/ASSET_PLANNING_ENABLED") && oUserModel.getProperty("/ASSETUNAVL_PLANNING_CALENDAR")){
                 oModel.read("/AssetPlanningDataSet", {
                     groupId: "calendarBatch",
-                    filters: this._generateResourceFilters(true)
+                    filters: this._generateResourceFiltersFor("ASSETUA")
                 });
             }
 
@@ -120,11 +117,11 @@ sap.ui.define([
         /**
          * Generate resource filters
          *
-         * @param bForAssetUnavailability {boolean} Will be true if filters required for Asset Availability
+         * @param sType {String} Will be true if filters required for Asset Availability
          * @return {Array}
          * @private
          */
-        _generateResourceFilters: function (bForAssetUnavailability) {
+        _generateResourceFiltersFor: function (sType) {
             var aUsers = [],
                 aResourceFilters = [],
                 aActualFilters = [],
@@ -132,7 +129,8 @@ sap.ui.define([
                 // oResourceBundle = this._oResourceBundle,
                 oViewFilterSettings = this._component ? this._component.filterSettingsDialog : null,
                 sDateControl1,
-                sDateControl2;
+                sDateControl2,
+                oUserModel = this._component.getModel("user");
 
             for (var i = 0; i < this.selectedResources.length; i++) {
                 var obj = oModel.getProperty(this.selectedResources[i]);
@@ -148,15 +146,15 @@ sap.ui.define([
             }
             if (this._mParameters.bFromGantt) {
                 // if we decide to keep different date range for demand view and gantt view
-                sDateControl1 = formatter.getDefaultGanttDateRange().dateFrom;
-                sDateControl2 = formatter.getDefaultGanttDateRange().dateTo;
+                sDateControl1 = oUserModel.getProperty("/GANT_START_DATE");
+                sDateControl2 = oUserModel.getProperty("/GANT_END_DATE");
             } else {
                 sDateControl1 = oViewFilterSettings.getFilterDateRange()[0].getValue();
                 sDateControl2 = oViewFilterSettings.getFilterDateRange()[1].getValue();
             }
 
 
-            if (aUsers.length > 0 && !bForAssetUnavailability) {
+            if (aUsers.length > 0 && (sType === "ASSIGNMENT" || sType === "ABSENCE")) {
                 aResourceFilters.push(new Filter({
                     filters: aUsers,
                     and: false
@@ -165,6 +163,10 @@ sap.ui.define([
                 // aResourceFilters.push(new Filter([new Filter("DateTo", FilterOperator.GE, sDateControl1),new Filter("DateFrom", FilterOperator.LE, sDateControl2)],true));
                 aResourceFilters.push(new Filter("DateTo", FilterOperator.GE, sDateControl1));
                 aResourceFilters.push(new Filter("DateFrom", FilterOperator.LE, sDateControl2));
+                // To fetch only Absences we need to set AvailabilityGrouptype filter as "N"
+                if(sType === "ABSENCE"){
+                    aResourceFilters.push(new Filter("AvailabilityTypeGroup", FilterOperator.EQ, "N"));
+                }
 
                 if (aResourceFilters.length > 0) {
                     aActualFilters.push(new Filter({
@@ -172,7 +174,7 @@ sap.ui.define([
                         and: true
                     }));
                 }
-            } else {
+            } else if(aUsers.length > 0 && sType === "ASSETUA"){
                 aActualFilters.push(new Filter("AssetPlandatatype", FilterOperator.EQ, "A"));
                 aActualFilters.push(new Filter("EndTimestamp", FilterOperator.GE, sDateControl1));
                 aActualFilters.push(new Filter("StartTimestamp", FilterOperator.LE, sDateControl2));

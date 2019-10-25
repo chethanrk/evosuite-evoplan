@@ -150,15 +150,26 @@ sap.ui.define([
         configureList: function (oEvent) {
             var oList, oBinding, aFilters,
                 oViewFilterSettings = this._component ? this._component.filterSettingsDialog : null,
-                sDateControl1 = oViewFilterSettings.getFilterDateRange()[0].getValue(),
+                sDateControl1,
+                sDateControl2,
+                oUserModel = this._component.getModel("user");
+
+            if (this._mParameters.bFromGantt) {
+                // if we decide to keep different date range for demand view and gantt view
+                sDateControl1 = oUserModel.getProperty("/GANT_START_DATE");
+                sDateControl2 = oUserModel.getProperty("/GANT_END_DATE");
+            } else {
+                sDateControl1 = oViewFilterSettings.getFilterDateRange()[0].getValue();
                 sDateControl2 = oViewFilterSettings.getFilterDateRange()[1].getValue();
+            }
 
             oList = Fragment.byId(this._id, "idResourceAvailList").getList();
             oBinding = oList.getBinding("items");
             aFilters = [
                 new Filter("ResourceGuid",FilterOperator.EQ, this._resource),
                 new Filter("DateFrom",FilterOperator.GE, sDateControl2),
-                new Filter("DateTo",FilterOperator.LE, sDateControl1)
+                new Filter("DateTo",FilterOperator.LE, sDateControl1),
+                new Filter("AvailabilityTypeGroup",FilterOperator.EQ, "N")
             ];
             oBinding.filter(new Filter({
                 filters: aFilters,
