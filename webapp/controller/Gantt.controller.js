@@ -546,7 +546,7 @@ sap.ui.define([
             }else if(sType === "A"){
                 return "#FFF";
             }else{
-                return "#000";
+                return "#FFF";
             }
 
         },
