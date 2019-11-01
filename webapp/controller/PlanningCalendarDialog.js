@@ -514,7 +514,7 @@ sap.ui.define([
                 for (var a = 0; a < this.selectedResources.length; a++) {
                     var oResource = oModel.getProperty(this.selectedResources[a]),
                         sEntitySet = this.selectedResources[a].split("(")[0];
-                    if(oResource.Nodetype=== "RESOURCE" || (oResource.Nodetype=== "RES_GROUP" && oUserModel.getProperty("/POOL_FUNCTION_ENABLED"))){
+                    if(oResource.NodeType=== "RESOURCE" || (oResource.NodeType=== "RES_GROUP" && oUserModel.getProperty("/POOL_FUNCTION_ENABLED"))){
                         oResource["ResourceDescription"] = oResource.Description;
                         oResource["ObjectType"] = oResource.NodeType;
                         oResource["GroupDescription"] = oModel.getProperty(sEntitySet + "('" + oResource.ResourceGroupGuid + "')").Description;
