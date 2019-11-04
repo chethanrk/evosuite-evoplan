@@ -226,7 +226,11 @@ sap.ui.define([
          */
         _resetChanges : function (oEvent,sProperty) {
             var oEventBus = sap.ui.getCore().getEventBus();
-            oEventBus.publish("ManageAbsences","ClearSelection",{});
+            if(this._mParameters.bFromGantt){
+                this._oModel.resetChanges();
+            }else if(this._mParameters.bFromHome){
+                oEventBus.publish("ManageAbsences","ClearSelection",{});
+            }
         },
         /**
          * Method triggered to create the unavailability
