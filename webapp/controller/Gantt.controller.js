@@ -60,6 +60,9 @@ sap.ui.define([
             this._viewId = this.getView().getId();
         },
 
+        // onAfterRendering : function(){
+        //     this._setDefaultTreeDateRange();
+        // },
         /**
          * on page exit
          */
@@ -113,8 +116,9 @@ sap.ui.define([
                 sStartDate = mParameters? mParameters.dateTo : oUserModel.getProperty("/GANT_START_DATE"),
                 sEndDate = mParameters? mParameters.dateFrom :oUserModel.getProperty("/GANT_END_DATE") ;
 
-            oTotalHorizon.setEndTime(formatter.date(sStartDate));
-            oTotalHorizon.setStartTime(formatter.date(sEndDate));
+            oTotalHorizon.setStartTime(formatter.date(sStartDate));
+            oTotalHorizon.setEndTime(formatter.date(sEndDate));
+
         },
         /**
          * Gets default filters for gantt
@@ -219,6 +223,10 @@ sap.ui.define([
         onChangeDateRange: function (oEvent) {
             var oFrom = oEvent.getParameter("from"),
                 oTo = oEvent.getParameter("to");
+            if(oFrom === null || oTo === null){
+                this.getResourceBundle().getText("xtit.datenotselected");
+                return;
+            }
             this._setTotalHorizon({dateTo: oTo, dateFrom: oFrom});
             this._setDefaultTreeDateRange({dateTo: oTo, dateFrom: oFrom});
         },

@@ -64,9 +64,15 @@ sap.ui.define([
          * This hook is the same one that SAPUI5 controls get after being rendered.
          * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.ResourceTree **/
         onAfterRendering: function (oEvent) {
+
+            var oUserModel = this.getModel("user");
             //init droppable
             // var oController = this;
             this.refreshDroppable(oEvent);
+            // Configuration values
+            if(oUserModel.getProperty("/RESOURCE_TREE_EXPAND")){
+                this._oDataTable.expandToLevel(1);
+            }
         },
 
         /**
@@ -253,6 +259,7 @@ sap.ui.define([
             oDataTable.setEditable(false);
             oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
             oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
+
         },
 
         /**
