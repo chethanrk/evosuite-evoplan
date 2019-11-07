@@ -504,9 +504,9 @@ sap.ui.define([
                 oUserModel = this._component ? this._component.getModel("user") : null;
 
             if (data.__batchResponses) {
-                var oAssignData = data.__batchResponses[0].data;
-                var oAbsenceData = data.__batchResponses[1].data;
-                var oAssetUNData = data.__batchResponses[2].data;
+                var oAssignData = data.__batchResponses[0]?data.__batchResponses[0].data:[];
+                var oAbsenceData = data.__batchResponses[1]?data.__batchResponses[1].data:[];
+                var oAssetUNData = data.__batchResponses[2]?data.__batchResponses[2].data:[];
                 var oAsset = {};
                 oAsset.Assignments = [];
                 var oResourceMap = {};
