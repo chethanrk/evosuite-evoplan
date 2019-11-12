@@ -4,7 +4,7 @@
         xmlns:gnt2="sap.gantt.simple">
 	<!-- To visualize the unavailability of a resource shape -->
             <gnt2:BaseRectangle
-					shapeId="{Guid}_Counter"
+					shapeId="{Guid}_{Counter}"
 					countInBirdEye="false"
 					time="{DateFrom}"
 					endTime="{DateTo}"

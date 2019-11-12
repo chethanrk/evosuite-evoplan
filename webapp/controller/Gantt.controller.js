@@ -43,7 +43,6 @@ sap.ui.define([
          * controller life cycle on init event
          */
         onInit: function () {
-
             this._oEventBus = sap.ui.getCore().getEventBus();
             this._oAssignementModel = this.getModel("assignment");
 
@@ -54,9 +53,24 @@ sap.ui.define([
             this._treeTable = this.getView().byId("ganttResourceTreeTable");
             this._ganttChart = this.getView().byId("ganttResourceAssignments");
             this._axisTime = this.getView().byId("idAxisTime");
-            // this._setDefaultTreeDateRange();
-            this._defaultGanttHorizon();
 
+            //sets user model
+            this.getOwnerComponent()._getSystemInformation().then(function(data){
+                this.getModel("user").setData(data);
+                this._defaultGanttHorizon();
+                this._treeTable.bindAggregation("rows",{
+                    path:'/GanttResourceHierarchySet',
+                    parameters:{
+                        'numberOfExpandedLevels':1,
+                        'restoreTreeStateAfterChange':true,
+                        'operationMode': 'Server',
+                        'expand':'AssignmentSet,ResourceAvailabilitySet',
+                        'groupId':'GanttTree'
+
+                    }
+                });
+            }.bind(this));
+            // this._setDefaultTreeDateRange();
             this._viewId = this.getView().getId();
         },
 
@@ -109,15 +123,20 @@ sap.ui.define([
             this._setTotalHorizon();
             this.changeGanttHorizonViewAt(oViewModel);
         },
-
+        /**
+         * Setting the Time horizon for configured values.
+         * @param mParameters
+         * @private
+         */
         _setTotalHorizon : function (mParameters) {
             var oTotalHorizon = this._axisTime.getAggregation("totalHorizon"),
                 oUserModel = this.getModel("user"),
-                sStartDate = mParameters? mParameters.dateTo : oUserModel.getProperty("/GANT_START_DATE"),
-                sEndDate = mParameters? mParameters.dateFrom :oUserModel.getProperty("/GANT_END_DATE") ;
+                sStartDate = mParameters? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE"),
+                sEndDate = mParameters? mParameters.dateTo :oUserModel.getProperty("/GANT_END_DATE");
 
             oTotalHorizon.setStartTime(formatter.date(sStartDate));
             oTotalHorizon.setEndTime(formatter.date(sEndDate));
+            oTotalHorizon.rerender();
 
         },
         /**
@@ -130,9 +149,8 @@ sap.ui.define([
         _getDefaultFilters : function (mParameters) {
             var oDateFrom, oDateTo, oUserModel = this.getModel("user"),aFilters = [];
 
-            oDateFrom = oUserModel.getProperty("/GANT_START_DATE");
-            oDateTo = oUserModel.getProperty("/GANT_END_DATE");
-
+            oDateFrom = mParameters? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE");
+            oDateTo = mParameters? mParameters.dateTo :oUserModel.getProperty("/GANT_END_DATE");
 
             aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oDateTo)));
             aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oDateFrom)));

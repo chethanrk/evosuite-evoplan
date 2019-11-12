@@ -77,17 +77,7 @@
 							selectionBehavior="RowOnly"
 							rowSelectionChange="onRowSelectionChange"
 							rowHeight="25"
-							threshold="5"
-							rows="{
-								path: '/GanttResourceHierarchySet',
-								parameters: {
-									numberOfExpandedLevels:1,
-									restoreTreeStateAfterChange:true,
-									operationMode: 'Server',
-									expand:'AssignmentSet,ResourceAvailabilitySet',
-									groupId:'GanttTree'
-								}
-							}">
+							threshold="5">
 						<table:extension>
 							<OverflowToolbar>
 								<SearchField search="onSearchResource"/>
