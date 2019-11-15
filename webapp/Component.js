@@ -128,8 +128,8 @@ sap.ui.define([
 
             this.setModel(models.createUserModel({
 				ASSET_PLANNING_ENABLED: false,
-				GANT_START_DATE:moment().startOf("year").toDate(),
-				GANT_END_DATE:moment().endOf("year").add(1, "years").toDate()}), "user");
+				GANT_START_DATE:new Date(),
+				GANT_END_DATE:new Date()}), "user");
 
 			//Creating the Global message model from MessageManager
 			var oMessageModel = new JSONModel();

@@ -167,8 +167,8 @@ sap.ui.define([
             oBinding = oList.getBinding("items");
             aFilters = [
                 new Filter("ResourceGuid",FilterOperator.EQ, this._resource),
-                new Filter("DateFrom",FilterOperator.GE, sDateControl2),
-                new Filter("DateTo",FilterOperator.LE, sDateControl1),
+                new Filter("DateFrom",FilterOperator.LE, sDateControl2),
+                new Filter("DateTo",FilterOperator.GE, sDateControl1),
                 new Filter("AvailabilityTypeGroup",FilterOperator.EQ, "N")
             ];
             oBinding.filter(new Filter({

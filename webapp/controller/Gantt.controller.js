@@ -9,7 +9,7 @@ sap.ui.define([
     "sap/gantt/misc/Utility",
     "sap/gantt/simple/CoordinateUtils",
     "sap/gantt/misc/AxisTime"
-], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, Popup, Utility, CoordinateUtils,AxisTime) {
+], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, Popup, Utility, CoordinateUtils, AxisTime) {
     "use strict";
 
     AxisTime.prototype.getNowLabel = function () {
@@ -36,7 +36,7 @@ sap.ui.define([
 
         _oAssignementModel: null,
 
-        _viewId:"",
+        _viewId: "",
 
 
         /**
@@ -55,17 +55,17 @@ sap.ui.define([
             this._axisTime = this.getView().byId("idAxisTime");
 
             //sets user model
-            this.getOwnerComponent()._getSystemInformation().then(function(data){
+            this.getOwnerComponent()._getSystemInformation().then(function (data) {
                 this.getModel("user").setData(data);
                 this._defaultGanttHorizon();
-                this._treeTable.bindAggregation("rows",{
-                    path:'/GanttResourceHierarchySet',
-                    parameters:{
-                        'numberOfExpandedLevels':1,
-                        'restoreTreeStateAfterChange':true,
+                this._treeTable.bindAggregation("rows", {
+                    path: '/GanttResourceHierarchySet',
+                    parameters: {
+                        'numberOfExpandedLevels': 1,
+                        'restoreTreeStateAfterChange': true,
                         'operationMode': 'Server',
-                        'expand':'AssignmentSet,ResourceAvailabilitySet',
-                        'groupId':'GanttTree'
+                        'expand': 'AssignmentSet,ResourceAvailabilitySet',
+                        'groupId': 'GanttTree'
 
                     }
                 });
@@ -117,7 +117,7 @@ sap.ui.define([
          * Set Default Horizon times
          * @private
          */
-        _defaultGanttHorizon : function () {
+        _defaultGanttHorizon: function () {
             var oViewModel = this.getModel("viewModel");
 
             this._setTotalHorizon();
@@ -128,11 +128,11 @@ sap.ui.define([
          * @param mParameters
          * @private
          */
-        _setTotalHorizon : function (mParameters) {
+        _setTotalHorizon: function (mParameters) {
             var oTotalHorizon = this._axisTime.getAggregation("totalHorizon"),
                 oUserModel = this.getModel("user"),
-                sStartDate = mParameters? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE"),
-                sEndDate = mParameters? mParameters.dateTo :oUserModel.getProperty("/GANT_END_DATE");
+                sStartDate = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE"),
+                sEndDate = mParameters ? mParameters.dateTo : oUserModel.getProperty("/GANT_END_DATE");
 
             oTotalHorizon.setStartTime(formatter.date(sStartDate));
             oTotalHorizon.setEndTime(formatter.date(sEndDate));
@@ -146,11 +146,11 @@ sap.ui.define([
          * @return {Array}
          * @private
          */
-        _getDefaultFilters : function (mParameters) {
-            var oDateFrom, oDateTo, oUserModel = this.getModel("user"),aFilters = [];
+        _getDefaultFilters: function (mParameters) {
+            var oDateFrom, oDateTo, oUserModel = this.getModel("user"), aFilters = [];
 
-            oDateFrom = mParameters? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE");
-            oDateTo = mParameters? mParameters.dateTo :oUserModel.getProperty("/GANT_END_DATE");
+            oDateFrom = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE");
+            oDateTo = mParameters ? mParameters.dateTo : oUserModel.getProperty("/GANT_END_DATE");
 
             aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oDateTo)));
             aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oDateFrom)));
@@ -178,29 +178,34 @@ sap.ui.define([
                 oViewModel = this.getModel("viewModel");
 
 
-            oViewModel.setProperty("/ganttSettings/busy",true);
+            oViewModel.setProperty("/ganttSettings/busy", true);
             // Check the resource assignable or not
-            if(!this.isAssignable({data: this.getModel().getProperty(oDropContext.getPath())})){
-                oViewModel.setProperty("/ganttSettings/busy",false);
+            if (!this.isAssignable({data: this.getModel().getProperty(oDropContext.getPath())})) {
+                oViewModel.setProperty("/ganttSettings/busy", false);
                 return;
             }
 
-            if(oBrowserEvent.target.tagName === "rect"){
+            if (oBrowserEvent.target.tagName === "rect") {
                 // When we drop on gantt chart
-                var oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement,oBrowserEvent);
-                // oAxisTime.viewToTime(<oSvgPoint>) will give the time stamp for dropped location
-                this._assignDemands([oDragContext.getPath()], oDropContext.getPath(),oAxisTime.viewToTime(oSvgPoint.x));
-            }else{
-                // if (!this.isAvailable(oDropContext.getPath())) {
-                //     oPromise = this._showConfirmMessageBox(sMessage); // this method will resolve promise
-                //     oPromise.then(function (data) {
-                //         if (data === "YES") {
-                //             this._assignDemands([oDragContext.getPath()], oDropContext.getPath());
-                //         }
-                //     }.bind(this));
-                // } else {
-                    this._assignDemands([oDragContext.getPath()], oDropContext.getPath());
-                // }
+                var oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
+                var oNodeData = oBrowserEvent.target.dataset;
+                if (oNodeData.type === "NA") {
+                    oPromise = this._showConfirmMessageBox(sMessage); // this method will resolve promise
+                    oPromise.then(function (data) {
+                        if (data === "YES") {
+                            // oAxisTime.viewToTime(<oSvgPoint>) will give the time stamp for dropped location
+                            this._assignDemands([oDragContext.getPath()], oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
+                        }else{
+                            oViewModel.setProperty("/ganttSettings/busy", false);
+                            return;
+                        }
+                    }.bind(this));
+                } else {
+                    // oAxisTime.viewToTime(<oSvgPoint>) will give the time stamp for dropped location
+                    this._assignDemands([oDragContext.getPath()], oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
+                }
+            } else {
+                this._assignDemands([oDragContext.getPath()], oDropContext.getPath());
             }
         },
         /**
@@ -228,7 +233,7 @@ sap.ui.define([
 
             if (oTreeTable && oTreeTable.getBinding("rows")) {
                 oTreeTable.getBinding("rows")._restoreTreeState().then(function () {
-                    oViewModel.setProperty("/ganttSettings/busy",false);
+                    oViewModel.setProperty("/ganttSettings/busy", false);
                 });
 
             }
@@ -241,7 +246,7 @@ sap.ui.define([
         onChangeDateRange: function (oEvent) {
             var oFrom = oEvent.getParameter("from"),
                 oTo = oEvent.getParameter("to");
-            if(oFrom === null || oTo === null){
+            if (oFrom === null || oTo === null) {
                 this.getResourceBundle().getText("xtit.datenotselected");
                 return;
             }
@@ -269,10 +274,10 @@ sap.ui.define([
                     this.getView().addDependent(this._menu);
                 }
 
-                this._updateAssignmentModel(sAssignGuid).then(function(data){
-                    oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign",data.AllowUnassign);
-                    oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign",data.AllowReassign)
-                    oViewModel.setProperty("/ganttSettings/shapeOpearation/change",data.AllowChange);
+                this._updateAssignmentModel(sAssignGuid).then(function (data) {
+                    oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign", data.AllowUnassign);
+                    oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign", data.AllowReassign)
+                    oViewModel.setProperty("/ganttSettings/shapeOpearation/change", data.AllowChange);
                     var eDock = Popup.Dock;
                     this._menu.open(false, oShape, eDock.BeginTop, eDock.endBottom, oShape);
                 }.bind(this));
@@ -282,31 +287,31 @@ sap.ui.define([
         },
         /**
          * Calls the delete assignment method when you select un-assign button
-		 * show reassignment dialog when select menu "Assign new"
+         * show reassignment dialog when select menu "Assign new"
          * @param oEvent
          */
         handleMenuItemPress: function (oEvent) {
-        	var oParams = oEvent.getParameters(),
-				sButtonText = oParams.item.getText();
+            var oParams = oEvent.getParameters(),
+                sButtonText = oParams.item.getText();
 
-			var oModel = this._selectedShapeContext.getModel(),
-				sPath = this._selectedShapeContext.getPath(),
-				sAssignGuid = oModel.getProperty(sPath).Guid;
+            var oModel = this._selectedShapeContext.getModel(),
+                sPath = this._selectedShapeContext.getPath(),
+                sAssignGuid = oModel.getProperty(sPath).Guid;
 
 
-			if(sButtonText === this.getResourceBundle().getText("xbut.buttonUnassign")){
-				//do unassign
+            if (sButtonText === this.getResourceBundle().getText("xbut.buttonUnassign")) {
+                //do unassign
                 this.byId("container").setBusy(true);
-				this.deleteAssignment(oModel, sAssignGuid).then(this._refreshAreas.bind(this));
+                this.deleteAssignment(oModel, sAssignGuid).then(this._refreshAreas.bind(this));
 
-			} else if(sButtonText === this.getResourceBundle().getText("xbut.buttonReassign")){
-				//show reassign dialog
-				console.log("show reassign dialog");
-				//oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
+            } else if (sButtonText === this.getResourceBundle().getText("xbut.buttonReassign")) {
+                //show reassign dialog
+                console.log("show reassign dialog");
+                //oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
                 this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
-			}else if(sButtonText === this.getResourceBundle().getText("xbut.buttonChange")){
-			    // Change
-			    this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, {bFromGantt: true}, sPath);
+            } else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
+                // Change
+                this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, {bFromGantt: true}, sPath);
             }
         },
 
@@ -315,8 +320,8 @@ sap.ui.define([
          * reassign a demand to a new resource by context menu
          * @private
          */
-        _reassignShape: function(sChannel, sEvent, oData){
-            if(sEvent === "ganttShapeReassignment"){
+        _reassignShape: function (sChannel, sEvent, oData) {
+            if (sEvent === "ganttShapeReassignment") {
                 for (var i = 0; i < oData.aSourcePaths.length; i++) {
                     var sourceData = this.getModel().getProperty(oData.aSourcePaths[i]);
                     this._updateAssignmentModel(sourceData.Guid).then(function (oAssignmentObj) {
@@ -337,7 +342,7 @@ sap.ui.define([
         _refreshAreas: function (data, oResponse) {
             this.showMessage(oResponse);
             this._refreshGanttChart();
-			this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+            this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
         },
 
         /**
@@ -428,7 +433,7 @@ sap.ui.define([
                 draggedShape = oParams.draggedShapeDates,
                 oViewModel = this.getModel("viewModel");
 
-            oViewModel.setProperty("/ganttSettings/busy",true);
+            oViewModel.setProperty("/ganttSettings/busy", true);
 
             if (!oParams.targetRow && !oParams.targetShape) {
                 var msg = this.getResourceBundle().getText("msg.ganttShapeDropError");
@@ -436,13 +441,13 @@ sap.ui.define([
                 return;
             }
 
-            var targetContext = oParams.targetRow ? oParams.targetRow.getBindingContext() :oParams.targetShape.getParent().getParent().getBindingContext() ,
+            var targetContext = oParams.targetRow ? oParams.targetRow.getBindingContext() : oParams.targetShape.getParent().getParent().getBindingContext(),
                 targetData = targetContext.getObject(),
                 draggedShape = oParams.draggedShapeDates;
 
             // Check the resource assignable or not
-            if(!this.isAssignable({data: targetData})){
-                oViewModel.setProperty("/ganttSettings/busy",false);
+            if (!this.isAssignable({data: targetData})) {
+                oViewModel.setProperty("/ganttSettings/busy", false);
                 return;
             }
             Object.keys(draggedShape).forEach(function (sShapeUid) {
@@ -475,7 +480,7 @@ sap.ui.define([
                 oData = this.getModel().getProperty(oRowContext.getPath()),
                 oViewModel = this.getModel("viewModel");
 
-            oViewModel.setProperty("/ganttSettings/busy",true);
+            oViewModel.setProperty("/ganttSettings/busy", true);
 
             if (oParams.shape && oParams.shape.sParentAggregationName === "shapes3") {
                 this._updateAssignmentModel(oData.Guid).then(function (oAssignmentObj) {
@@ -500,7 +505,7 @@ sap.ui.define([
                 oShape = oParams.shape;
             if (oShape && oShape.sParentAggregationName === "shapes3") {
                 if (oContext) {
-                    this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], {bFromGantt: true},oShape.getTime());
+                    this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], {bFromGantt: true}, oShape.getTime());
                 } else {
                     var msg = this.getResourceBundle().getText("notFoundContext");
                     this.showMessageToast(msg);
@@ -511,9 +516,9 @@ sap.ui.define([
          * on search the filter the gantt tree resource
          * @param oEvent
          */
-        onSearchResource : function (oEvent) {
+        onSearchResource: function (oEvent) {
             var sQuery = oEvent.getParameter("query");
-            var oFilter = new Filter("Description",FilterOperator.Contains, sQuery);
+            var oFilter = new Filter("Description", FilterOperator.Contains, sQuery);
             var aFilters = this._getDefaultFilters();
             aFilters.push(oFilter);
             var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
@@ -524,17 +529,17 @@ sap.ui.define([
          * open the create unavailability dialog for selected resource
          * @param oEvent
          */
-        onCreateAbsence : function (oEvent) {
+        onCreateAbsence: function (oEvent) {
             var oTreeTable = this.getView().byId("ganttResourceTreeTable"),
-                aIndices = oTreeTable.getSelectedIndices(),oContext,
+                aIndices = oTreeTable.getSelectedIndices(), oContext,
                 oResourceBundle = this.getResourceBundle();
-            if(aIndices.length === 0){
+            if (aIndices.length === 0) {
                 this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"))
                 return;
             }
             oContext = oTreeTable.getContextByIndex(aIndices[0]);
-           // this.getOwnerComponent().createUnAvail.open(this.getView(), [oContext.getPath()], {bFromGantt: true});
-           this.getOwnerComponent().manageAvail.open(this.getView(), [oContext.getPath()], {bFromGantt: true});
+            // this.getOwnerComponent().createUnAvail.open(this.getView(), [oContext.getPath()], {bFromGantt: true});
+            this.getOwnerComponent().manageAvail.open(this.getView(), [oContext.getPath()], {bFromGantt: true});
 
         },
         /**
@@ -546,16 +551,16 @@ sap.ui.define([
                 oButton = this.getView().byId("idCreateAb"),
                 oContext = aIndices.length > 0 ? oEvent.getSource().getContextByIndex(aIndices[0]) : null,
                 oData = oContext !== null ? oContext.getModel().getProperty(oContext.getPath()) : null;
-            if(aIndices.length > 0 && oData && oData.NodeType === "RESOURCE"){
+            if (aIndices.length > 0 && oData && oData.NodeType === "RESOURCE") {
                 oButton.setEnabled(true);
-            }else{
+            } else {
                 oButton.setEnabled(false);
             }
         },
         /**
-         * on click on today adjust the view of Gantt horizon. 
+         * on click on today adjust the view of Gantt horizon.
          */
-        onPressToday : function (oEvent) {
+        onPressToday: function (oEvent) {
             this.changeGanttHorizonViewAt(this.getModel("viewModel"));
         },
         /**
@@ -566,12 +571,12 @@ sap.ui.define([
          * @param sType
          * @return {string}
          */
-        getPattern : function (sType) {
-            if(sType === "N"){
-                return "url(#"+this._viewId+"--unavailability)";
-            }else if(sType === "A"){
+        getPattern: function (sType) {
+            if (sType === "N") {
+                return "url(#" + this._viewId + "--unavailability)";
+            } else if (sType === "A") {
                 return "#FFF";
-            }else{
+            } else {
                 return "#FFF";
             }
 
@@ -583,12 +588,22 @@ sap.ui.define([
          * @return {*}
          */
         formatLegend: function (sCode, sType) {
-        if(sType === "COLOUR"){
-            return sCode;
-        }else{
-            return "url(#"+this._viewId+"--unavailability)";
+            if (sType === "COLOUR") {
+                return sCode;
+            } else {
+                return "url(#" + this._viewId + "--unavailability)";
+            }
+        },
+
+        formatAvailType : function (sType) {
+            if (sType === "N") {
+                return "NA";
+            } else if (sType === "A") {
+                return "AV";
+            } else {
+                return "XX";
+            }
         }
-    }
 
 
     });

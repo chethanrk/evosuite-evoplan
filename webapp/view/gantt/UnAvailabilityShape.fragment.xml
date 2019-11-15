@@ -23,5 +23,12 @@
 					strokeOpacity="0"
 					opacity="1"
 					stroke="transparent"
-					strokeWidth="0"/>
+					strokeWidth="0">
+				<gnt2:customData>
+					<core:CustomData key="type" value="{
+						path:'AvailabilityTypeGroup',
+						formatter:'.formatAvailType'
+					}" writeToDom="true"></core:CustomData>
+				</gnt2:customData>
+			</gnt2:BaseRectangle>
 </core:FragmentDefinition>
