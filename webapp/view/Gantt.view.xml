@@ -16,7 +16,7 @@
 			<gnt2:toolbar>
 				<gnt2:ContainerToolbar
 						design="Auto"
-						showBirdEyeButton="true"
+						showBirdEyeButton="false"
 						showLegendButton="true"
 						class="gantt_toolbar"
 						>
