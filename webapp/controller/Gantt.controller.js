@@ -38,6 +38,10 @@ sap.ui.define([
 
         _viewId: "",
 
+        _AssignshapeHoverColor:"#FFFFFF",
+
+        _AssignShapeColor:"#FFFFFF",
+
 
         /**
          * controller life cycle on init event
@@ -136,7 +140,6 @@ sap.ui.define([
 
             oTotalHorizon.setStartTime(formatter.date(sStartDate));
             oTotalHorizon.setEndTime(formatter.date(sEndDate));
-            oTotalHorizon.rerender();
 
         },
         /**
@@ -576,8 +579,10 @@ sap.ui.define([
                 return "url(#" + this._viewId + "--unavailability)";
             } else if (sType === "A") {
                 return "#FFF";
+            } else if (sType === "O") {
+                return "transparent";
             } else {
-                return "#FFF";
+                return "transparent";
             }
 
         },
@@ -603,8 +608,21 @@ sap.ui.define([
             } else {
                 return "XX";
             }
+        },
+        /**
+         * On mouse enter the assignment shape
+         * To change the fill color
+         * // TODO To show pop over of more information assi
+         * @param oEvent
+         */
+        onShapeMouseEnter : function (oEvent) {
+            var oShape = oEvent.getParameter("shape");
+            this._AssignShapeColor = oShape.getFill();
+            oShape.setFill(this._AssignshapeHoverColor);
+        },
+        onShapeMouseLeave : function (oEvent) {
+            var oShape = oEvent.getParameter("shape");
+            oShape.setFill(this._AssignShapeColor);
         }
-
-
     });
 });

@@ -59,6 +59,8 @@
 									  shapeSelectionSettings="{color:'red', strokeDasharray:'1,0'}"
 									  shapeDrop="onShapeDrop"
 									  shapeResize="onShapeResize"
+									  shapeMouseEnter="onShapeMouseEnter"
+									  shapeMouseLeave="onShapeMouseLeave"
 									  shapeDoubleClick="onShapeDoubleClick"
 									  shapeContextMenu="onShapeContextMenu"
 									  showShapeTimeOnDrag="true"
