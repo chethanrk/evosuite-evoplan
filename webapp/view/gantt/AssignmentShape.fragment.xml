@@ -17,7 +17,8 @@
                     strokeWidth="1"
                     resizable="true"
                     selectable="true"
-                    draggable= "true">
+                    draggable= "true"
+                    hoverable="true">
                 <gnt2:customData>
                     <core:CustomData key="type" value="AV" writeToDom="true"></core:CustomData>
                 </gnt2:customData>

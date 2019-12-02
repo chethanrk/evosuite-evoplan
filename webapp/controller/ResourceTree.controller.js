@@ -69,10 +69,15 @@ sap.ui.define([
             //init droppable
             // var oController = this;
             this.refreshDroppable(oEvent);
-            // Configuration values
-            if(oUserModel.getProperty("/RESOURCE_TREE_EXPAND")){
-                this._oDataTable.expandToLevel(1);
-            }
+
+            this.getOwnerComponent()._getSystemInformation().then(function (data) {
+                oUserModel.setData(data);
+                // Configuration values
+                if(oUserModel.getProperty("/RESOURCE_TREE_EXPAND")){
+                    this._oDataTable.expandToLevel(1);
+                }
+            }.bind(this));
+
         },
 
         /**
