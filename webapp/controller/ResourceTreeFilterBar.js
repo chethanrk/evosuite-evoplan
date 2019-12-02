@@ -239,10 +239,10 @@ sap.ui.define([
 					aFilters.push(new Filter(key, FilterOperator.EQ, this._oCustomFilterData._CUSTOM[key]));
 				} else if (key === this._aCustomFilters.startDate.origin) {
 					//StartDate field
-					aFilters.push(new Filter(key, FilterOperator.LE, this._oCustomFilterData._CUSTOM[key]));
+					aFilters.push(new Filter("EndDate", FilterOperator.GE, this._oCustomFilterData._CUSTOM[key]));
 				} else if (key === this._aCustomFilters.endDate.origin) {
 					//EndDate field
-					aFilters.push(new Filter(key, FilterOperator.GE, this._oCustomFilterData._CUSTOM[key]));
+					aFilters.push(new Filter("StartDate", FilterOperator.LE, this._oCustomFilterData._CUSTOM[key]));
 				} else if (typeof this._oCustomFilterData._CUSTOM[key] === "object") {
 					//ResourceGroupId tokens
 					var aResourceGroupFilter = [];
