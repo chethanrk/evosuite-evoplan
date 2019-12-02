@@ -102,7 +102,7 @@
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
-				<Button id="idButtonCreUA" text="{i18n>xbut.manageAbsence}" tooltip="{i18n>xbut.manageAbsence}" press="onPressCreateUA" enabled="false">
+				<Button id="idButtonCreUA" text="{i18n>xbut.manageAbsence}" tooltip="{i18n>xbut.manageAbsence}" press="onPressCreateUA" enabled="false" visible="{user>/MANAGE_ABSENCE_ENABLE}">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="true"/>
 					</layoutData>
