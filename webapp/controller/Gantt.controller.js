@@ -237,6 +237,7 @@ sap.ui.define([
             if (oTreeTable && oTreeTable.getBinding("rows")) {
                 oTreeTable.getBinding("rows")._restoreTreeState().then(function () {
                     oViewModel.setProperty("/ganttSettings/busy", false);
+                    oTreeTable.clearSelection();
                 });
 
             }
@@ -615,12 +616,12 @@ sap.ui.define([
          * // TODO To show pop over of more information assi
          * @param oEvent
          */
-        onShapeMouseEnter : function (oEvent) {
+        _onShapeMouseEnter : function (oEvent) {
             var oShape = oEvent.getParameter("shape");
             this._AssignShapeColor = oShape.getFill();
             oShape.setFill(this._AssignshapeHoverColor);
         },
-        onShapeMouseLeave : function (oEvent) {
+        _onShapeMouseLeave : function (oEvent) {
             var oShape = oEvent.getParameter("shape");
             oShape.setFill(this._AssignShapeColor);
         }

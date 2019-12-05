@@ -8,7 +8,7 @@
         <table:template>
             <controls:CustomTitle text="{Description}" tooltip="{Description}"
                                   titleStyle="{ path: 'NodeType', formatter: '.formatter.formatResourceTitle' }"
-                                  icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'}], formatter: '.formatter.getResourceIcon' }"
+                                  icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'},{path: 'ResourceIcon'} ], formatter: '.formatter.getResourceIcon' }"
                                   isWorkTimeEnabled="false"/>
         </table:template>
     </table:Column>
