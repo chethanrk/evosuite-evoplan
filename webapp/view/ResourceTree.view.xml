@@ -51,7 +51,7 @@
 												  availabilityIcon="{ path: 'IS_AVAILABLE', formatter: '.formatter.getAvailabilityIcon' }"
 												  iconColor="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconColor' }"
 												  iconTooltip="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconTooltip' }"
-												  icon="{RESOURCE_ICON}"
+												  icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'},{path: 'ResourceIcon'} ], formatter: '.formatter.getResourceIcon' }"
 												  isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink"
 												  isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}"
 												  showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
