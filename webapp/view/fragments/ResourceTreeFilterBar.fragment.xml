@@ -32,16 +32,16 @@
 					</MultiComboBox>
 				</smartFilterBar:customControl>
 			</smartFilterBar:ControlConfiguration>
-			<smartFilterBar:ControlConfiguration key="StartDate" change="onCustomFilterChange" visibleInAdvancedArea="false" width="100%"
+			<smartFilterBar:ControlConfiguration key="StartDate"  visibleInAdvancedArea="false" width="100%"
 				groupId="_BASIC" index="3" mandatory="mandatory">
 				<smartFilterBar:customControl>
-					<DatePicker width="100%"/>
+					<DatePicker width="100%" change="onCustomFilterChange" />
 				</smartFilterBar:customControl>
 			</smartFilterBar:ControlConfiguration>
-			<smartFilterBar:ControlConfiguration key="EndDate" change="onCustomFilterChange" visibleInAdvancedArea="false" width="100%" groupId="_BASIC"
+			<smartFilterBar:ControlConfiguration key="EndDate"  visibleInAdvancedArea="false" width="100%" groupId="_BASIC"
 				index="3" mandatory="mandatory">
 				<smartFilterBar:customControl>
-					<DatePicker width="100%"/>
+					<DatePicker width="100%" change="onCustomFilterChange"/>
 				</smartFilterBar:customControl>
 			</smartFilterBar:ControlConfiguration>
 		</smartFilterBar:controlConfiguration>

@@ -166,6 +166,7 @@ sap.ui.define([
 			var oParams = oEvent.getParameters(),
 				oItem = oParams.selectedItem;
 			this._setDateFilterControls(oItem.getKey());
+            this._updateCustomFilterData();
 		},
 
 		/**
