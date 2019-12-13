@@ -78,9 +78,6 @@ sap.ui.define([
             this._viewId = this.getView().getId();
         },
 
-        // onAfterRendering : function(){
-        //     this._setDefaultTreeDateRange();
-        // },
         /**
          * on page exit
          */
@@ -178,12 +175,13 @@ sap.ui.define([
                 oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
                 oResourceBundle = this.getResourceBundle(),
                 sMessage = oResourceBundle.getText("ymsg.availability"),
-                oViewModel = this.getModel("viewModel");
+                oViewModel = this.getModel("viewModel"),
+                oResourceData = this.getModel().getProperty(oDropContext.getPath());
 
 
             oViewModel.setProperty("/ganttSettings/busy", true);
             // Check the resource assignable or not
-            if (!this.isAssignable({data: this.getModel().getProperty(oDropContext.getPath())})) {
+            if (!this.isAssignable({data: oResourceData})) {
                 oViewModel.setProperty("/ganttSettings/busy", false);
                 return;
             }
@@ -191,24 +189,10 @@ sap.ui.define([
             if (oBrowserEvent.target.tagName === "rect") {
                 // When we drop on gantt chart
                 var oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
-                var oNodeData = oBrowserEvent.target.dataset;
-                if (oNodeData.type === "NA") {
-                    oPromise = this._showConfirmMessageBox(sMessage); // this method will resolve promise
-                    oPromise.then(function (data) {
-                        if (data === "YES") {
-                            // oAxisTime.viewToTime(<oSvgPoint>) will give the time stamp for dropped location
-                            this._assignDemands([oDragContext.getPath()], oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
-                        }else{
-                            oViewModel.setProperty("/ganttSettings/busy", false);
-                            return;
-                        }
-                    }.bind(this));
-                } else {
-                    // oAxisTime.viewToTime(<oSvgPoint>) will give the time stamp for dropped location
-                    this._assignDemands([oDragContext.getPath()], oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
-                }
+                // oAxisTime.viewToTime(<oSvgPoint>) will give the time stamp for dropped location
+                this._assignDemands(oResourceData,[oDragContext.getPath()], oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
             } else {
-                this._assignDemands([oDragContext.getPath()], oDropContext.getPath());
+                this._assignDemands(oResourceData,[oDragContext.getPath()], oDropContext.getPath());
             }
         },
         /**
@@ -217,11 +201,41 @@ sap.ui.define([
          * @param {Object} oTarget Resource Path
          * @private
          */
-        _assignDemands: function (aSources, oTarget, oTargetDate) {
-            var oPromise = this.assignedDemands(aSources, oTarget, oTargetDate);
-            oPromise.then(this._refreshAreas.bind(this)).catch(function (error) {
-                console.log(error);
-            }.bind(this));
+        _assignDemands: function (oResourceData, aSources, oTarget, oTargetDate) {
+            var oUserModel = this.getModel("user");
+            // TODO Check resource availability
+            if(oUserModel.getProperty("/ENABLE_ASSIGNMENT_STRETCH") && oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && obj.ResourceGuid && obj.ResourceGuid !== "")){
+
+                this._checkAvailability(aSources,oTarget,oTargetDate).then(function(data){
+                    if(!data.Unavailable){
+                        this.assignedDemands(aSources, oTarget, oTargetDate)
+                            .then(this._refreshAreas.bind(this)).catch(function (error) {
+                                console.log(error);
+                            }.bind(this));
+                    }else{
+                        this._showConfirmMessageBox("Needs translation here").then(function (value) {
+                            if(value === "YES"){
+                                this.assignedDemands(aSources, oTarget, oTargetDate,true)
+                                    .then(this._refreshAreas.bind(this)).catch(function (error) {
+                                        console.log(error);
+                                    }.bind(this));
+                            }else {
+                                this.assignedDemands(aSources, oTarget, oTargetDate)
+                                    .then(this._refreshAreas.bind(this)).catch(function (error) {
+                                        console.log(error);
+                                    }.bind(this));
+                            }
+                        }.bind(this));
+                    }
+                }.bind(this));
+
+            }else{
+                this.assignedDemands(aSources, oTarget, oTargetDate)
+                    .then(this._refreshAreas.bind(this)).catch(function (error) {
+                    console.log(error);
+                }.bind(this));
+            }
+
         },
         /**
          * Refreshes the Gantt tree table.
@@ -566,6 +580,25 @@ sap.ui.define([
          */
         onPressToday: function (oEvent) {
             this.changeGanttHorizonViewAt(this.getModel("viewModel"));
+        },
+        /**
+         *
+         * @param aSources
+         * @param oTarget
+         * @param oTargetDate
+         * @private
+         */
+        _checkAvailability : function(aSources,oTarget,oTargetDate){
+            var oModel = this.getModel();
+            return new Promise(function (resolve, reject) {
+                this.executeFunctionImport(oModel,{
+                    ResourceGuid:oModel.getProperty(oTarget+"/ResourceGuid"),
+                    StartTimestamp:oTargetDate,
+                    DemandGuid:oModel.getProperty(aSources[0]+"/Guid")
+                },"ResourceAvailabilityCheck","GET").then(function(data){
+                    resolve(data);
+                });
+            }.bind(this));
         },
         /**
          * Formatter for the color fill

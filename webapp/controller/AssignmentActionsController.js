@@ -18,7 +18,7 @@ sap.ui.define([
 		 * @param {String} sTargetPath
 		 * @return {Promise}
 		 */
-		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate) {
+		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, isStreched) {
 			var oModel = this.getModel();
 			var targetObj = oModel.getProperty(sTargetPath);
 			this.clearMessageModel();
@@ -58,7 +58,9 @@ sap.ui.define([
                         oParams.TimeTo = targetObj.EndTime;
                     }
 				}
-
+				if(isStreched){
+                    oParams.Stretched = true;
+				}
 				return this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST");
 			}
 		},
