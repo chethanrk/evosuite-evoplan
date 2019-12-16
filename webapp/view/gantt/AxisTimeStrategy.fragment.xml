@@ -1,10 +1,8 @@
 <core:FragmentDefinition
         xmlns="sap.ui.table"
-        xmlns:m="sap.m"
         xmlns:core="sap.ui.core"
         xmlns:axistime="sap.gantt.axistime"
-        xmlns:config="sap.gantt.config"
-        xmlns:dnd="sap.ui.core.dnd">
+        xmlns:config="sap.gantt.config">
 
     <axistime:StepwiseZoomStrategy id="idAxisTime" zoomLevel="3">
         <axistime:totalHorizon>

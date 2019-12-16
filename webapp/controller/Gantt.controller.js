@@ -252,6 +252,7 @@ sap.ui.define([
                 oTreeTable.getBinding("rows")._restoreTreeState().then(function () {
                     oViewModel.setProperty("/ganttSettings/busy", false);
                     oTreeTable.clearSelection();
+                    oTreeTable.rerender();
                 });
 
             }
