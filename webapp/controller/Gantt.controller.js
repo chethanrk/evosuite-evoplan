@@ -202,9 +202,10 @@ sap.ui.define([
          * @private
          */
         _assignDemands: function (oResourceData, aSources, oTarget, oTargetDate) {
-            var oUserModel = this.getModel("user");
+            var oUserModel = this.getModel("user"),
+                oResourceModel = this.getResourceBundle();
             // TODO Check resource availability
-            if(oUserModel.getProperty("/ENABLE_ASSIGNMENT_STRETCH") && oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && obj.ResourceGuid && obj.ResourceGuid !== "")){
+            if(oUserModel.getProperty("/ENABLE_RESOURCE_AVAILABILITY") && oUserModel.getProperty("/ENABLE_ASSIGNMENT_STRETCH") && oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && oResourceData.ResourceGuid && oResourceData.ResourceGuid !== "")){
 
                 this._checkAvailability(aSources,oTarget,oTargetDate).then(function(data){
                     if(!data.Unavailable){
@@ -213,7 +214,7 @@ sap.ui.define([
                                 console.log(error);
                             }.bind(this));
                     }else{
-                        this._showConfirmMessageBox("Needs translation here").then(function (value) {
+                        this._showConfirmMessageBox(oResourceModel.getText("ymsg.extendMsg")).then(function (value) {
                             if(value === "YES"){
                                 this.assignedDemands(aSources, oTarget, oTargetDate,true)
                                     .then(this._refreshAreas.bind(this)).catch(function (error) {
