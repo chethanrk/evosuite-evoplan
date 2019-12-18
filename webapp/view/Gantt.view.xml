@@ -52,7 +52,6 @@
 			</gnt2:toolbar>
 
 			<gnt2:GanttChartWithTable id="ganttResourceAssignments"
-									  class="resourceGanttWithTable"
 									  ghostAlignment="Start"
 									  adhocLineLayer="Bottom"
 									  shapeSelectionMode = "Single"

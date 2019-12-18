@@ -61,6 +61,9 @@ sap.ui.define([
             //sets user model
             this.getOwnerComponent()._getSystemInformation().then(function (data) {
                 this.getModel("user").setData(data);
+                if(data.ENABLE_RESOURCE_AVAILABILITY){
+                    this._treeTable.addStyleClass("resourceGanttWithTable");
+                }
                 this._defaultGanttHorizon();
                 this._treeTable.bindAggregation("rows", {
                     path: '/GanttResourceHierarchySet',
@@ -178,6 +181,10 @@ sap.ui.define([
                 oViewModel = this.getModel("viewModel"),
                 oResourceData = this.getModel().getProperty(oDropContext.getPath());
 
+            //Null check for
+            if(!oDragContext && !oDropContext){
+                return;
+            }
 
             oViewModel.setProperty("/ganttSettings/busy", true);
             // Check the resource assignable or not
@@ -450,26 +457,29 @@ sap.ui.define([
          */
         onShapeDrop: function (oEvent) {
             var oParams = oEvent.getParameters(),
-                draggedShape = oParams.draggedShapeDates,
-                oViewModel = this.getModel("viewModel");
-
-            oViewModel.setProperty("/ganttSettings/busy", true);
+                oViewModel = this.getModel("viewModel"),
+                msg = this.getResourceBundle().getText("msg.ganttShapeDropError");;
 
             if (!oParams.targetRow && !oParams.targetShape) {
-                var msg = this.getResourceBundle().getText("msg.ganttShapeDropError");
                 this.showMessageToast(msg);
                 return;
             }
 
             var targetContext = oParams.targetRow ? oParams.targetRow.getBindingContext() : oParams.targetShape.getParent().getParent().getBindingContext(),
-                targetData = targetContext.getObject(),
+                targetData = targetContext ? targetContext.getObject() : null,
                 draggedShape = oParams.draggedShapeDates;
+            if(!targetData){
+                this.showMessageToast(msg);
+                return;
+            }
 
             // Check the resource assignable or not
             if (!this.isAssignable({data: targetData})) {
                 oViewModel.setProperty("/ganttSettings/busy", false);
                 return;
             }
+
+            oViewModel.setProperty("/ganttSettings/busy", true);
             Object.keys(draggedShape).forEach(function (sShapeUid) {
                 var sourcePath = this._getShapeBindingContextPath(sShapeUid),
                     sourceData = this.getModel().getProperty(sourcePath),
