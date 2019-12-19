@@ -605,7 +605,7 @@ sap.ui.define([
             return new Promise(function (resolve, reject) {
                 this.executeFunctionImport(oModel,{
                     ResourceGuid:oModel.getProperty(oTarget+"/ResourceGuid"),
-                    StartTimestamp:oTargetDate,
+                    StartTimestamp:oTargetDate || new Date(),
                     DemandGuid:oModel.getProperty(aSources[0]+"/Guid")
                 },"ResourceAvailabilityCheck","GET").then(function(data){
                     resolve(data);
