@@ -62,7 +62,7 @@ sap.ui.define([
             this.getOwnerComponent()._getSystemInformation().then(function (data) {
                 this.getModel("user").setData(data);
                 if(data.ENABLE_RESOURCE_AVAILABILITY){
-                    this._treeTable.addStyleClass("resourceGanttWithTable");
+                    this._ganttChart.addStyleClass("resourceGanttWithTable");
                 }
                 this._defaultGanttHorizon();
                 this._treeTable.bindAggregation("rows", {
