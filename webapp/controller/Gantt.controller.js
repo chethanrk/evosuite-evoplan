@@ -222,7 +222,7 @@ sap.ui.define([
                             }.bind(this));
                     }else{
                         this._showConfirmMessageBox(oResourceModel.getText("ymsg.extendMsg")).then(function (value) {
-                            if(value === "YES"){
+                            if(value === "NO"){
                                 this.assignedDemands(aSources, oTarget, oTargetDate,true)
                                     .then(this._refreshAreas.bind(this)).catch(function (error) {
                                         console.log(error);
