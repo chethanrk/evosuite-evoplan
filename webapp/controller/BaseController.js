@@ -488,9 +488,21 @@ sap.ui.define([
 		openEvoOrder : function(sOrderId){
 			var sLanguage = this.getModel("InformationModel").getProperty("/language"),
 				sHost = location.host,
-				sProtocol = location.protocol;
-			// window.open(sProtocol+"//"+sHost+"/sap/bc/ui5_ui5/evocu/evoorder/index.html?sap-client=800&sap-language="+sLanguage+"#/WorkOrder/"+sOrderId, "_blank");
-			window.open("https://ed1.evorait.net:50103/sap/bc/ui5_ui5/evocu/evoorder/index.html?sap-client=800&sap-language="+sLanguage+"#/WorkOrder/"+sOrderId, "_blank");
+				sProtocol = location.protocol,sUri,sSemanticObject,parameters,
+                sLaunchMode = this.getModel("user").getProperty("/LAUNCH_MODE"),
+				sAdditionInfo = this.getModel("user").getProperty("/LAUNCH_DETAILS");
+			if(sLaunchMode === "BSP"){
+                sUri = sAdditionInfo.replace("\\place_h1\\",sOrderId);
+                window.open(sUri, "_blank");
+			}else if(sLaunchMode === "LAUNCHPAD"){
+				sSemanticObject = sAdditionInfo.split("\\_\\")[0];
+				parameters = sAdditionInfo.split("\\_\\")[1];
+				return;
+			}else{
+				return;
+			}
+
+			// window.open("https://ed1.evorait.net:50103/sap/bc/ui5_ui5/evocu/evoorder/index.html?sap-client=800&sap-language="+sLanguage+"#/WorkOrder/"+sOrderId, "_blank");
 		}
 
 	});

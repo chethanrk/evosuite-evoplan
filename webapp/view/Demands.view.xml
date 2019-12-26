@@ -43,15 +43,7 @@
 									<core:Icon src="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIcon' }" color="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIconColor' }" tooltip="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncTooltip' }"></core:Icon>
 								</table:template>
 							</table:Column>
-						<!--<table:Column hAlign="Center" width="6rem" visible="{= ${/#Demand/ORDERID/@sap:visible} === 'false' ? false : true}">
-								<table:customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "ORDERID", "leadingProperty": "ORDERID"}'/>
-								</table:customData>
-								<Label text="{/#Demand/ORDERID/@sap:label}"/>
-								<table:template>
-									<Link text="{ORDERID}" press="OnClickOrderId"></Link>
-								</table:template>
-							</table:Column>-->
+							<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.OrderIdColumn" type="XML"/>
 						</table:columns>
 					</table:Table>
 				</smartTable:SmartTable>
