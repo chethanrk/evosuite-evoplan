@@ -161,7 +161,7 @@ sap.ui.define([
 			});
 
 			//Message Popover
-			var oMessagePopover = new MessagePopover("idMessagePopover", {
+			var oMessagePopover = new MessagePopover({
 				items: {
 					path: "MessageModel>/",
 					template: oMessageTemplate
@@ -179,7 +179,7 @@ sap.ui.define([
 
             // create the views based on the url/hash
             this.getRouter().initialize();
-
+			// Not able load more than 100 associations
             this.getModel().setSizeLimit(300);
 
 
@@ -324,7 +324,7 @@ sap.ui.define([
 						reject(oError);
                     }.bind(this)
                 });
-            }.bind(this))
+            }.bind(this));
 		},
 
 		_getFunctionSetCount: function () {

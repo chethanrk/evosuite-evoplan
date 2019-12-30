@@ -491,10 +491,10 @@ sap.ui.define([
 				sProtocol = location.protocol,sUri,sSemanticObject,parameters,
                 sLaunchMode = this.getModel("user").getProperty("/LAUNCH_MODE"),
 				sAdditionInfo = this.getModel("user").getProperty("/LAUNCH_DETAILS");
-			if(sLaunchMode === "BSP"){
-                sUri = sAdditionInfo.replace("\\place_h1\\",sOrderId);
+			if(sLaunchMode === "BSP" && sAdditionInfo.trim() !== ""){
+                sUri = sAdditionInfo+"&sap-language="+sLanguage.replace("\\place_h1\\",sOrderId);
                 window.open(sUri, "_blank");
-			}else if(sLaunchMode === "LAUNCHPAD"){
+			}else if(sLaunchMode === "LAUNCHPAD" && sAdditionInfo.trim() !== "" ){
 				sSemanticObject = sAdditionInfo.split("\\_\\")[0];
 				parameters = sAdditionInfo.split("\\_\\")[1];
 				return;

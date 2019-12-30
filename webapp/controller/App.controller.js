@@ -54,7 +54,7 @@ sap.ui.define([
 		},
 		
 		onAfterRendering : function () {
-			this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
+			this._oMessagePopover = this.getOwnerComponent()._oMessagePopover;
 			this.getView().addDependent(this._oMessagePopover);
 		},
 

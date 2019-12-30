@@ -31,8 +31,8 @@ sap.ui.define([
 			this._oDataTable = this._oDraggableTable.getTable();
 			this._configureDataTable(this._oDataTable);
 			this._aSelectedRowsIdx = [];
-			this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
-			this.getView().addDependent(this._oMessagePopover);
+			// this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
+			// this.getView().addDependent(this._oMessagePopover);
 
 			var eventBus = sap.ui.getCore().getEventBus();
 			eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
@@ -166,7 +166,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onMessagePopoverPress: function (oEvent) {
-			this._oMessagePopover.openBy(oEvent.getSource());
+			// this._oMessagePopover.openBy(oEvent.getSource());
 		},
 		/**
 		 * Called when view attached is destroyed
@@ -175,9 +175,9 @@ sap.ui.define([
 			if (this._infoDialog) {
 				this._infoDialog.destroy();
 			}
-			if (this._oMessagePopover) {
-				this._oMessagePopover.destroy();
-			}
+			// if (this._oMessagePopover) {
+			// 	this._oMessagePopover.destroy();
+			// }
 		},
 
 		/* =========================================================== */
