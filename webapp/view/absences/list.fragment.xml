@@ -14,7 +14,7 @@
                                       description="{path : 'DateFrom', type : 'sap.ui.model.odata.type.DateTime'} -
                                 {path : 'DateTo', type : 'sap.ui.model.odata.type.DateTime'}" />
                 </smartList:listItemTemplate>
-                <List itemPress="onClickItem" growing="true" growingThreshold="20" mode="Delete" delete=".onAction($event, 'DELETE')"></List>
+                <List itemPress="onClickItem" growing="true" growingThreshold="20" mode="{= ${user>/ENABLE_ABSENCE_DELETE} ? 'Delete' : 'None'}" delete=".onAction($event, 'DELETE')"></List>
             </smartList:SmartList>
         </content>
         <footer>

@@ -199,7 +199,7 @@ sap.ui.define([
                 // oAxisTime.viewToTime(<oSvgPoint>) will give the time stamp for dropped location
                 this._assignDemands(oResourceData,[oDragContext.getPath()], oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
             } else {
-                this._assignDemands(oResourceData,[oDragContext.getPath()], oDropContext.getPath());
+                this._assignDemands(oResourceData,[oDragContext.getPath()], oDropContext.getPath(),null,true);
             }
         },
         /**
@@ -208,11 +208,11 @@ sap.ui.define([
          * @param {Object} oTarget Resource Path
          * @private
          */
-        _assignDemands: function (oResourceData, aSources, oTarget, oTargetDate) {
+        _assignDemands: function (oResourceData, aSources, oTarget, oTargetDate, bCheckAvail) {
             var oUserModel = this.getModel("user"),
                 oResourceModel = this.getResourceBundle();
             // TODO Check resource availability
-            if(oUserModel.getProperty("/ENABLE_RESOURCE_AVAILABILITY") && oUserModel.getProperty("/ENABLE_ASSIGNMENT_STRETCH") && oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && oResourceData.ResourceGuid && oResourceData.ResourceGuid !== "")){
+            if(!bCheckAvail && oUserModel.getProperty("/ENABLE_RESOURCE_AVAILABILITY") && oUserModel.getProperty("/ENABLE_ASSIGNMENT_STRETCH") && oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && oResourceData.ResourceGuid && oResourceData.ResourceGuid !== "")){
 
                 this._checkAvailability(aSources,oTarget,oTargetDate).then(function(data){
                     if(!data.Unavailable){
@@ -352,9 +352,14 @@ sap.ui.define([
                 for (var i = 0; i < oData.aSourcePaths.length; i++) {
                     var sourceData = this.getModel().getProperty(oData.aSourcePaths[i]);
                     this._updateAssignmentModel(sourceData.Guid).then(function (oAssignmentObj) {
-                        oAssignmentObj.NewAssignPath = oData.sAssignPath;
-                        this._oAssignementModel.setData(oAssignmentObj);
-                        this.updateAssignment(true, {bFromGantt: true});
+                        if(oAssignmentObj.AllowReassign){
+                            oAssignmentObj.NewAssignPath = oData.sAssignPath;
+                            this._oAssignementModel.setData(oAssignmentObj);
+                            this.updateAssignment(true, {bFromGantt: true});
+                        }else{
+                            this.getModel().resetChanges(oData.aSourcePaths);
+                        }
+
                     }.bind(this));
                 }
             }
@@ -458,7 +463,8 @@ sap.ui.define([
         onShapeDrop: function (oEvent) {
             var oParams = oEvent.getParameters(),
                 oViewModel = this.getModel("viewModel"),
-                msg = this.getResourceBundle().getText("msg.ganttShapeDropError");;
+                msg = this.getResourceBundle().getText("msg.ganttShapeDropError"),
+                oModel = this.getModel();
 
             if (!oParams.targetRow && !oParams.targetShape) {
                 this.showMessageToast(msg);
@@ -468,6 +474,7 @@ sap.ui.define([
             var targetContext = oParams.targetRow ? oParams.targetRow.getBindingContext() : oParams.targetShape.getParent().getParent().getBindingContext(),
                 targetData = targetContext ? targetContext.getObject() : null,
                 draggedShape = oParams.draggedShapeDates;
+            // If you drop in empty gantt area where there is no data
             if(!targetData){
                 this.showMessageToast(msg);
                 return;
@@ -491,11 +498,21 @@ sap.ui.define([
                     newEndDate = moment(oParams.newDateTime).add(duration, "seconds");
 
                 this._updateAssignmentModel(sourceData.Guid).then(function (oAssignmentObj) {
-                    oAssignmentObj.DateFrom = oParams.newDateTime;
-                    oAssignmentObj.DateTo = newEndDate.toDate();
-                    oAssignmentObj.NewAssignPath = targetContext.getPath();
-                    this._oAssignementModel.setData(oAssignmentObj);
-                    this.updateAssignment(isReassign, {bFromGantt: true});
+                    if(isReassign && !oAssignmentObj.AllowReassign){
+                        oModel.resetChanges([sourcePath]);
+                        oViewModel.setProperty("/ganttSettings/busy", false);
+                        return;
+                    }else if(!oAssignmentObj.AllowChange){
+                        oModel.resetChanges([sourcePath]);
+                        oViewModel.setProperty("/ganttSettings/busy", false);
+                        return;
+                    }else {
+                        oAssignmentObj.DateFrom = oParams.newDateTime;
+                        oAssignmentObj.DateTo = newEndDate.toDate();
+                        oAssignmentObj.NewAssignPath = targetContext.getPath();
+                        this._oAssignementModel.setData(oAssignmentObj);
+                        this.updateAssignment(isReassign, {bFromGantt: true});
+                    }
                 }.bind(this));
             }.bind(this));
         },
@@ -508,17 +525,25 @@ sap.ui.define([
             var oParams = oEvent.getParameters(),
                 oRowContext = oParams.shape.getBindingContext(),
                 oData = this.getModel().getProperty(oRowContext.getPath()),
-                oViewModel = this.getModel("viewModel");
+                oViewModel = this.getModel("viewModel"),
+                oModel = oRowContext.getModel();
 
             oViewModel.setProperty("/ganttSettings/busy", true);
 
             if (oParams.shape && oParams.shape.sParentAggregationName === "shapes3") {
                 this._updateAssignmentModel(oData.Guid).then(function (oAssignmentObj) {
-                    oAssignmentObj.DateFrom = oParams.newTime[0];
-                    oAssignmentObj.DateTo = oParams.newTime[1];
+                    if(oAssignmentObj.AllowReassign){
+                        oAssignmentObj.DateFrom = oParams.newTime[0];
+                        oAssignmentObj.DateTo = oParams.newTime[1];
 
-                    this._oAssignementModel.setData(oAssignmentObj);
-                    this.updateAssignment(false, {bFromGantt: true});
+                        this._oAssignementModel.setData(oAssignmentObj);
+                        this.updateAssignment(false, {bFromGantt: true});
+                    }else{
+                        oModel.resetChanges([oRowContext.getPath()]);
+                        oViewModel.setProperty("/ganttSettings/busy", false);
+                        return;
+                    }
+
                 }.bind(this));
             }
         },

@@ -9,6 +9,7 @@ sap.ui.define([
 		 * 
 		 * @param {Object} aSourcePaths
 		 * @param {String} sTargetPath
+		 * @deprecated
 		 */
 		assignedDemands: function (aSourcePaths, sTargetPath, mParameters) {
 			var oModel = this.getModel();

@@ -616,7 +616,7 @@ sap.ui.define([
                 this._oDialog.close();
                 if (this._mParameters.bFromGantt) {
                     var eventBus = sap.ui.getCore().getEventBus();
-                    eventBus.publish("BaseController", "refreshGanttChart", {});
+                    // eventBus.publish("BaseController", "refreshGanttChart", {});
                 }
             }
         },

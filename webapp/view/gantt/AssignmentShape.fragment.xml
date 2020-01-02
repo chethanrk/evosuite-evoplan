@@ -15,9 +15,9 @@
                     fill="{DEMAND_STATUS_COLOR}"
                     stroke="#7088ac"
                     strokeWidth="1"
-                    resizable="true"
+                    resizable="{user>/ENABLE_RESIZE}"
                     selectable="true"
-                    draggable= "true"
+                    draggable= "{user>/ENABLE_DRAG_DROP}"
                     hoverable="true">
             </gnt2:BaseRectangle>
 </core:FragmentDefinition>

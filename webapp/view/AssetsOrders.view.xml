@@ -18,9 +18,9 @@
 								<core:CustomData key="type" value="A"/>
 							</customData>
 						</CheckBox>
-						<Button id="idCreateBut" text="{i18n>xbut.createOrder}" tooltip="{i18n>xbut.createOrder}" press="createOrder" enabled="false"
+						<Button id="idCreateBut" text="{i18n>xbut.createOrder}" visisble="{user>/ENABLE_CREATE_ORDER}"  tooltip="{i18n>xbut.createOrder}" press="createOrder" enabled="false"
 							type="Emphasized"/>
-						<Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" tooltip="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc" enabled="false"
+						<Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" visisble="{user>/ENABLE_CREATE_ASSET_TIME_ALLOC}" tooltip="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc" enabled="false"
 							type="Emphasized"/>
 					</OverflowToolbar>
 				</f:content>

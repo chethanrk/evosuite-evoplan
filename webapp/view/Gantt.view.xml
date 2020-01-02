@@ -77,8 +77,7 @@
 							columnHeaderVisible="false"
 							selectionBehavior="RowOnly"
 							rowSelectionChange="onRowSelectionChange"
-							rowHeight="25"
-							threshold="5">
+							rowHeight="25">
 						<table:extension>
 							<OverflowToolbar>
 								<SearchField search="onSearchResource"/>

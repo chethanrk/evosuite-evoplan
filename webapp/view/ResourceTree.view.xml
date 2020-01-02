@@ -108,12 +108,12 @@
 					</layoutData>
 				</Button>
 				<ToolbarSpacer/>
-				<Button id="idButtonunassign" text="{i18n>xbut.buttonUnassign}" tooltip="{i18n>xbut.buttonUnassign}" press="onPressUnassign" enabled="false">
+				<Button id="idButtonunassign" text="{i18n>xbut.buttonUnassign}" tooltip="{i18n>xbut.buttonUnassign}" press="onPressUnassign" enabled="false" visible="{user>/ENABLE_UNASSIGN}">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="true"/>
 					</layoutData>
 				</Button>
-				<Button id="idButtonreassign" text="{i18n>xfld.newAssign}" tooltip="{i18n>xfld.newAssign}" press="onPressReassign" enabled="false">
+				<Button id="idButtonreassign" text="{i18n>xfld.newAssign}" tooltip="{i18n>xfld.newAssign}" press="onPressReassign" enabled="false" visible="{user>/ENABLE_ASSIGN_NEW}">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="true"/>
 					</layoutData>

@@ -69,7 +69,7 @@
 													path : 'user>/LastSyncTimestamp',
 													type: 'sap.ui.model.odata.type.DateTime'
 												}" />
-									<Button id="idSyncButton" icon="sap-icon://synchronize" tooltip="{i18n>xtit.reprocess}" enabled="{viewModel>/enableReprocess}" press="onClickReprocess"/>
+									<Button id="idSyncButton" icon="sap-icon://synchronize" tooltip="{i18n>xtit.reprocess}" enabled="{viewModel>/enableReprocess}" visible="{user>/ENABLE_REPROCESS}" press="onClickReprocess"/>
 								</content>
 							</OverflowToolbar>
 					</smartTable:customToolbar>

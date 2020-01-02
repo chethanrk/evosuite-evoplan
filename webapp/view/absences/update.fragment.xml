@@ -13,10 +13,10 @@
             </smartForm:layout>
             <smartForm:Group>
                 <smartForm:GroupElement >
-                    <smartField:SmartField value="{DateFrom}" />
+                    <smartField:SmartField value="{DateFrom}" editable="{user>/ENABLE_ABSENCE_CHANGE}" contextEditable="{user>/ENABLE_ABSENCE_CHANGE}"/>
                 </smartForm:GroupElement>
                 <smartForm:GroupElement >
-                    <smartField:SmartField value="{DateTo}" />
+                    <smartField:SmartField value="{DateTo}" editable="{user>/ENABLE_ABSENCE_CHANGE}" contextEditable="{user>/ENABLE_ABSENCE_CHANGE}" />
                 </smartForm:GroupElement>
                 <smartForm:GroupElement>
                     <smartField:SmartField value="{Description}" editable="false" contextEditable="false">
@@ -28,7 +28,7 @@
             <OverflowToolbar>
                 <Button id="idBack" text="{i18n>xbut.buttonBack}" press="onNavBack"/>
                 <ToolbarSpacer/>
-                <Button id="idSaveAvail" text="{i18n>xbut.buttonSave}" type="Emphasized" enabled="true"
+                <Button id="idSaveAvail" text="{i18n>xbut.buttonSave}" visible="{user>/ENABLE_ABSENCE_CHANGE}" type="Emphasized" enabled="true"
                         press=".onAction($event,'SAVE')"></Button>
             </OverflowToolbar>
         </footer>

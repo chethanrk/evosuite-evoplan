@@ -381,9 +381,6 @@ sap.ui.define([
             if(sObjectType==="ASSET"){
                 return false;
             }
-            if(!bEnableDragDrop){
-                return false;
-            }
             return bEnableResize;
         },
         /**
@@ -462,6 +459,10 @@ sap.ui.define([
          */
         formatAsnToolTip: function(id, desc, statusDesc){
         	return (id? id: "")+((id && desc)? " : "+desc : desc)+((desc && statusDesc) ? " : "+statusDesc : "");
+        },
+
+        formatListMode : function (bIsActive) {
+
         }
     };
 });
