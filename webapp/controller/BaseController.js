@@ -31,6 +31,9 @@ sap.ui.define([
 			if (oView) {
 				return oView.getModel(sName);
 			}
+			if(!this.getView().getModel(sName)){
+				return this.getOwnerComponent().getModel(sName);
+			}
 			return this.getView().getModel(sName);
 		},
 
@@ -168,7 +171,7 @@ sap.ui.define([
 		 * @param sFuncName Function name of the function import
 		 * @param sMethod method of http operation ex: GET/POST/PUT/DELETE
 		 */
-		callFunctionImport: function (oParams, sFuncName, sMethod, mParameters) {
+		callFunctionImport: function (oParams, sFuncName, sMethod, mParameters, bIsLast) {
 			var oModel = this.getModel(),
 				oViewModel = this.getModel("appView"),
 				oResourceBundle = this.getResourceBundle();
@@ -177,11 +180,14 @@ sap.ui.define([
 			oModel.callFunction("/" + sFuncName, {
 				method: sMethod || "POST",
 				urlParameters: oParams,
+                refreshAfterChange: false,
 				success: function (oData, oResponse) {
 					//Handle Success
-					oViewModel.setProperty("/busy", false);
-					this.showMessage(oResponse);
-					this.afterUpdateOperations(mParameters);
+					if (bIsLast) {
+						oViewModel.setProperty("/busy", false);
+						this.showMessage(oResponse);
+						this.afterUpdateOperations(mParameters);
+					}
 				}.bind(this),
 				error: function (oError) {
 					//Handle Error
@@ -191,7 +197,37 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
-
+		/**
+		 * @Athour Rahul
+		 * @since 3.0
+		 * 
+		 * send oData request of FunctionImport
+		 * @param oParams Data to passed to function import
+		 * @param sFuncName Function name of the function import
+		 * @param sMethod method of http operation ex: GET/POST/PUT/DELETE
+		 */
+		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod) {
+			var oResourceBundle = this.getResourceBundle();
+			
+			return new Promise(function (resolve, reject) {
+				oModel.callFunction("/" + sFuncName, {
+					method: sMethod || "POST",
+					urlParameters: oParams,
+                    refreshAfterChange: false,
+					success: function (oData, oResponse) {
+                        this.showMessage(oResponse);
+						resolve(oData, oResponse);
+					}.bind(this),
+					error: function (oError) {
+                        //Handle Error
+                        MessageToast.show(oResourceBundle.getText("errorMessage"), {
+                            duration: 5000
+                        });
+						reject(oError);
+					}.bind(this)
+				});
+			}.bind(this));
+		},
 		/** 
 		 * Method check the parameter and refreshes the required part of screen 
 		 * @param {Object} mParameters contains flag which will be passed from where it is get called.
@@ -203,7 +239,8 @@ sap.ui.define([
 				bFromHome: true,
 				bFromAseet: false,
 				bFromPlannCal: false,
-				bFromDetail: false
+				bFromDetail: false,
+				bFromGantt:false
 			};
 
 			if (oParameter.bFromHome) {
@@ -221,6 +258,9 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				eventBus.publish("BaseController", "refreshDemandOverview", {});
 				eventBus.publish("BaseController", "refreshDemandTable", {});
+			}else if(oParameter.bFromGantt){
+				eventBus.publish("BaseController", "refreshGanttChart", {});
+				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
 
 		},
@@ -240,15 +280,15 @@ sap.ui.define([
 		_getSelectedRowPaths: function (oTable, aSelectedRowsIdx, checkAssignAllowed, aDemands) {
 			var aPathsData = [],
 				aNonAssignableDemands = [],
-				oData,oContext,sPath;
+				oData, oContext, sPath;
 
 			if (checkAssignAllowed) {
 				oTable.clearSelection();
 			}
 			if (!aDemands) {
 				for (var i = 0; i < aSelectedRowsIdx.length; i++) {
-					 oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
-					 sPath = oContext.getPath();
+					oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
+					sPath = oContext.getPath();
 					oData = this.getModel().getProperty(sPath);
 
 					//on check on oData property ALLOW_ASSIGN when flag was given
@@ -274,8 +314,8 @@ sap.ui.define([
 
 			} else {
 				for (var j in aDemands) {
-					 oContext = aDemands[j].getBindingContext();
-					 sPath = oContext.getPath();
+					oContext = aDemands[j].getBindingContext();
+					sPath = oContext.getPath();
 					oData = this.getModel().getProperty(sPath);
 					if (oData.ALLOW_ASSIGN) {
 						aPathsData.push({
@@ -301,12 +341,14 @@ sap.ui.define([
 		 * @param aDemands {object} array of demand descriptions
 		 * @private
 		 */
-		_showAssignErrorDialog: function (aDemands, isStatus) {
-			var msg = "";
-			if (isStatus)
-				msg = this.getResourceBundle().getText("changeStatusNotPossible");
-			else
-				msg = this.getResourceBundle().getText("assignmentNotPossible");
+		_showAssignErrorDialog: function (aDemands, isStatus, msg) {
+			if(!msg){
+				if (isStatus){
+					msg = this.getResourceBundle().getText("changeStatusNotPossible");
+				} else {
+					msg = this.getResourceBundle().getText("assignmentNotPossible");
+				}
+			}
 
 			var dialog = new Dialog({
 				title: "Error",
@@ -351,6 +393,17 @@ sap.ui.define([
 			}
 			return true;
 		},
+		/**
+		 * @Athour Rahul
+		 * @since 3.0
+		 * Checks the Demand is assignable or not by validating the ALLOW_ASSIGN frag in demand object
+		 */
+		isDemandAssignable : function (sTargetPath){
+			var oModel = this.getModel(),
+				oTargetObj = oModel.getProperty(sTargetPath);
+
+			return oTargetObj.ALLOW_ASSIGN;
+		},
 
 		/**
 		 * Validates pool function configuration to check possibility of assignment
@@ -377,6 +430,7 @@ sap.ui.define([
 		 *
 		 * @Athour Rahul
 		 * @version 2.1
+		 * @deprecated
 		 */
 		showConfirmMessageBox: function (message, fnCallback) {
 			var oController = this;
@@ -389,6 +443,66 @@ sap.ui.define([
 					onClose: fnCallback
 				}
 			);
+		},
+
+        /**
+         * Shows the confirmation Box.
+		 * New Confirm box which return Promise object
+         * Promise resolve when Message box will get close.
+		 *
+         * @Athour Rahul
+         * @version 3.0
+         */
+        _showConfirmMessageBox: function (message) {
+            var oController = this;
+            return new Promise(function (resolve, reject) {
+                MessageBox.confirm(
+                    message, {
+                        styleClass: oController.getOwnerComponent().getContentDensityClass(),
+                        icon: sap.m.MessageBox.Icon.CONFIRM,
+                        title: oController.getResourceBundle().getText("xtit.confirm"),
+                        actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+                        onClose: function (oEvent) {
+                            resolve(oEvent);
+                        }
+                    }
+                );
+            });
+        },
+        /**
+         * Change view horizon time at specified timestamp
+		 * @param oModel {object} viewModel
+         * @param start {object} timestamp
+         * @param end {object} timestamp
+         */
+        changeGanttHorizonViewAt : function (oModel, start, end) {
+            var oViewModel = oModel,
+                sStartDate = start ? moment(start).startOf("day").subtract(1,"day").toDate(): moment().startOf("day").subtract(1,"day").toDate(),
+                sEndDate = end ? moment(end).endOf("day").add(1,"day").toDate() : moment().endOf("day").add(1,"day").toDate();
+            oViewModel.setProperty("/ganttSettings/visibleStartTime",sStartDate);
+            oViewModel.setProperty("/ganttSettings/visibleEndTime",sEndDate);
+        },
+		/**
+		 *	Navigates to evoOrder detail page with static url. 
+		 */
+		openEvoOrder : function(sOrderId){
+			var sLanguage = this.getModel("InformationModel").getProperty("/language"),
+				sHost = location.host,
+				sProtocol = location.protocol,sUri,sSemanticObject,parameters,
+                sLaunchMode = this.getModel("user").getProperty("/LAUNCH_MODE"),
+				sAdditionInfo = this.getModel("user").getProperty("/LAUNCH_DETAILS");
+			if(sLaunchMode === "BSP" && sAdditionInfo.trim() !== ""){
+                sUri = sAdditionInfo+"&sap-language="+sLanguage.replace("\\place_h1\\",sOrderId);
+                window.open(sUri, "_blank");
+			}else if(sLaunchMode === "LAUNCHPAD" && sAdditionInfo.trim() !== "" ){
+				sSemanticObject = sAdditionInfo.split("\\_\\")[0];
+				parameters = sAdditionInfo.split("\\_\\")[1];
+				return;
+			}else{
+				return;
+			}
+
+			// window.open("https://ed1.evorait.net:50103/sap/bc/ui5_ui5/evocu/evoorder/index.html?sap-client=800&sap-language="+sLanguage+"#/WorkOrder/"+sOrderId, "_blank");
 		}
 
 	});

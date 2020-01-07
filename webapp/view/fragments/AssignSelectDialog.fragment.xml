@@ -44,27 +44,19 @@
                             name="{i18n>xtit.tableObject}">
                         <table:template>
                             <controls:CustomTitle
-                                    text="{Description}"
-                                    titleStyle="{
-                                        path: 'NodeType',
-                                        formatter: '.formatter.formatResourceTitle'
-                                    }"
-                                    icon="{
-                                         parts:[{path: 'NodeType'},{path: 'StatusIcon'}],
-                                         formatter: '.formatter.getResourceIcon'
-                                    }"
-                                    availabilityIcon="{
-                                           path: 'IS_AVAILABLE',
-                                           formatter: '.formatter.getAvailabilityIcon'
-                                    }"
-                                    iconColor="{
-                                           path: 'IS_AVAILABLE',
-                                           formatter: '.formatter.formatIconColor'
-                                    }"
-                                    iconTooltip="{
-                                           path: 'IS_AVAILABLE',
-                                           formatter: '.formatter.formatIconTooltip'
-                                    }"
+                                   text="{Description}" tooltip="{Description}"
+												  titleStyle="{ path: 'NodeType', formatter: '.formatter.formatResourceTitle' }"
+												  availabilityIcon="{ path: 'IS_AVAILABLE', formatter: '.formatter.getAvailabilityIcon' }"
+												  iconColor="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconColor' }"
+												  iconTooltip="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconTooltip' }"
+												  icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'}], formatter: '.formatter.getResourceIcon' }"
+												  isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}"
+												  showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
+												  workTime="{path:'ACTUAL_WORKING_HOURS',
+												  			type:'sap.ui.model.type.Float',
+												  			formatOptions:{
+												  				'decimals': 1
+												  			}}"
                                     />
                         </table:template>
                     </table:Column>

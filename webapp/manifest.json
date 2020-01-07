@@ -17,7 +17,7 @@
 			]
 		},
 		"applicationVersion": {
-			"version": "2.1.1"
+			"version": "3.1"
 		},
 		"dataSources": {
 			"mainService": {
@@ -32,8 +32,8 @@
 				}
 			},
 			"annotations": {
-				"uri": "annotations/annotations.xml",
 				"type": "ODataAnnotation",
+				"uri": "annotations/annotations.xml",
 				"settings": {
 					"localUri": "annotations/annotations.xml"
 				}
@@ -70,7 +70,7 @@
 		"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://task",
-			"favIcon": "",
+			"favIcon": "sap-icon://task",
 			"phone": "sap-icon://task",
 			"phone@2": "sap-icon://task",
 			"tablet": "sap-icon://task",
@@ -99,19 +99,27 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.52.0",
+			"minUI5Version": "1.60.0",
 			"libs": {
-				"sap.m": {
-					"minVersion": "1.52.0"
-				},
-				"sap.ui.comp": {
-					"minVersion": "1.52.0"
-				},
 				"sap.ui.core": {
-					"minVersion": "1.52.0"
+					"minVersion": "1.60.0",
+					"lazy": true
+				},
+				"sap.m": {
+					"minVersion": "1.60.0",
+					"lazy": true
 				},
 				"sap.uxap": {
-					"minVersion": "1.52.0"
+					"minVersion": "1.60.0",
+					"lazy": true
+				},
+				"sap.ui.comp": {
+					"minVersion": "1.60.0",
+					"lazy": true
+				},
+				"sap.ui.unified": {
+					"minVersion": "1.60.0",
+					"lazy": true
 				}
 			}
 		},
@@ -142,6 +150,11 @@
 			"css": [
 				{
 					"uri": "assets/css/style.css"
+				}
+			],
+			"js": [
+				{
+					"uri": "assets/js/promise-polyfills"
 				}
 			]
 		},
@@ -200,12 +213,40 @@
 						"assets",
 						"detail"
 					]
+				},
+				{
+					"pattern": "MessageCockpit",
+					"name": "messageCockpit",
+					"target": [
+						"messageCockpit"
+					]
+				},
+				{
+					"pattern": "Gantt",
+					"name": "gantt",
+					"target": [
+						"demandsGantt",
+						"gantt"
+					]
+				},
+				{
+					"pattern": "Gantt/Demand/{guid}",
+					"name": "ganttDemandDetails",
+					"target": [
+						"ganttDemandDetails"
+					]
 				}
 			],
 			"targets": {
-				"splitNavigation": {
+				"splitHorNavigation": {
 					"viewType": "XML",
-					"viewName": "layouts.Split2ViewsNavi",
+					"viewName": "layouts.Split2HorViewsNavi",
+					"viewLevel": 2,
+					"controlId": "appPanel"
+				},
+				"splitVerNavigation": {
+					"viewType": "XML",
+					"viewName": "layouts.Split2VerViewsNavi",
 					"viewLevel": 2,
 					"controlId": "appPanel"
 				},
@@ -220,55 +261,69 @@
 					"viewName": "ResourceTree",
 					"viewLevel": 3,
 					"controlId": "leftPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
 				},
 				"demands": {
 					"viewType": "XML",
 					"viewName": "Demands",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
+				},
+				"demandsGantt": {
+					"viewType": "XML",
+					"viewName": "GanttDemands",
+					"viewLevel": 3,
+					"controlId": "bottomPanel",
+					"parent": "splitVerNavigation"
+				},
+				"gantt": {
+					"viewType": "XML",
+					"viewName": "Gantt",
+					"viewLevel": 3,
+					"controlId": "topPanel",
+					"parent": "splitVerNavigation"
 				},
 				"detail": {
 					"viewType": "XML",
 					"viewName": "Detail",
 					"viewLevel": 4,
 					"controlId": "rightPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
 				},
 				"assets": {
 					"viewName": "Assets",
 					"viewLevel": 3,
 					"controlId": "leftPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
 				},
 				"assetsOrders": {
 					"viewType": "XML",
 					"viewName": "AssetsOrders",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
 				},
 				"orderCreate": {
 					"viewType": "XML",
 					"viewName": "OrderCreate",
 					"viewLevel": 4,
 					"controlId": "rightPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
 				},
 				"empty": {
 					"viewType": "XML",
 					"viewName": "EmptyPage",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
 				},
 				"notFound": {
 					"viewType": "XML",
 					"viewName": "NotFound",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
-					"parent": "splitNavigation"
+					"parent": "splitHorNavigation"
 				},
 				"weeklyPlanner": {
 					"viewType": "XML",
@@ -276,12 +331,30 @@
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",
 					"viewLevel": 3
+				},
+				"messageCockpit": {
+					"viewType": "XML",
+					"viewName": "MessageCockpit",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 4
+				},
+				"ganttDemandDetails": {
+					"viewType": "XML",
+					"viewName": "Detail",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 4
 				}
 			}
 		}
 	},
 	"sap.platform.hcp": {
 		"uri": "webapp",
+		"_version": "1.1.0"
+	},
+	"sap.platform.abap": {
+		"uri": "/sap/bc/ui5_ui5/evora/ep_ui5/webapp",
 		"_version": "1.1.0"
 	}
 }

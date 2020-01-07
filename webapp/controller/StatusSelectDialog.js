@@ -38,7 +38,7 @@ sap.ui.define([
             
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
-			this._mParameters = mParameters;
+			this._mParameters = mParameters || {bFromHome:true};
             this._oView = oView;
             this._selectedFunction = null;
             this._aSelectedPaths = aSelectedPaths;

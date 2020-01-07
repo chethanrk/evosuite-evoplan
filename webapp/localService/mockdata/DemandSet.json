@@ -10,7 +10,7 @@
 	"ExtKey": "PMWOOPLOCAL     00000082522800100000",
 	"Objnr": "EP1000001295",
 	"Source": "ECC",
-	"DemandDesc": "Test order for EvoPlan integration",
+	"DemandDesc": "#EvoPlan-dispatch&/Demand/0AA10FE57E901EE8B89807BC7A1F7139",
 	"Status": "ASGN",
 	"DateFrom": "\/Date(1541376000000)\/",
 	"StatusDesc": "Demand is assigned to resourcs",

@@ -1,0 +1,20 @@
+<core:FragmentDefinition
+        xmlns="sap.ui.table"
+        xmlns:core="sap.ui.core"
+        xmlns:axistime="sap.gantt.axistime"
+        xmlns:config="sap.gantt.config">
+
+    <axistime:StepwiseZoomStrategy id="idAxisTime" zoomLevel="3">
+        <axistime:totalHorizon>
+            <config:TimeHorizon
+                    startTime="{user>/GANT_START_DATE}"
+                    endTime="{user>/GANT_END_DATE}"/>
+        </axistime:totalHorizon>
+        <axistime:visibleHorizon>
+            <config:TimeHorizon
+                    startTime="{viewModel>/ganttSettings/visibleStartTime}"
+                    endTime="{viewModel>/ganttSettings/visibleEndTime}"/>
+        </axistime:visibleHorizon>
+    </axistime:StepwiseZoomStrategy>
+
+</core:FragmentDefinition>

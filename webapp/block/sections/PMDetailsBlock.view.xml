@@ -35,6 +35,9 @@
 					<smartForm:GroupElement>
 						<smartField:SmartField value="{OPERATION_DESC}" editable="false"/>
 					</smartForm:GroupElement>
+					<smartForm:GroupElement>
+						<smartField:SmartField value="{REVISION_NO}" editable="false"/>
+					</smartForm:GroupElement>
 				</smartForm:Group>
 			</smartForm:SmartForm>
 	</mvc:View>

@@ -1,7 +1,7 @@
 module.exports = function (grunt) {
 	"use strict";
 	
-	var config ={
+	var config = {
 		copy: {
             lang: {
                 files: [

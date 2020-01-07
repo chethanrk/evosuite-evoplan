@@ -34,12 +34,10 @@
 			<smartForm:GroupElement>
                 <smartField:SmartField value="{REVISION_NO}"/>
             </smartForm:GroupElement>
-            <smartForm:GroupElement>
-                <smartField:SmartField value="{StartTimestamp}"/>
-            </smartForm:GroupElement>
-            <smartForm:GroupElement>
-                <smartField:SmartField value="{EndTimestamp}"/>
-            </smartForm:GroupElement>
+            
+            <smartForm:GroupElement label="{/#EvoPlanOrder/LongText/@sap:label}">
+               <TextArea value="{LongText}" rows="10" width="100%" />
+           </smartForm:GroupElement>
         </smartForm:Group>
         <smartForm:Group>
             <smartForm:GroupElement>
@@ -51,6 +49,25 @@
             <smartForm:GroupElement>
                 <smartField:SmartField value="{Plant}"/>
             </smartForm:GroupElement>
+            <smartForm:GroupElement>
+                <smartField:SmartField value="{StartTimestamp}"/>
+            </smartForm:GroupElement>
+            <smartForm:GroupElement>
+                <smartField:SmartField value="{EndTimestamp}"/>
+            </smartForm:GroupElement>
+            
+             
         </smartForm:Group>
+        <!-- <smartForm:Group>-->
+        <!--    <smartForm:layoutData>-->
+        <!--    <layout:GridData-->
+        <!--            span="L12 M12 S12"></layout:GridData>-->
+        <!--</smartForm:layoutData>-->
+        <!--     <smartForm:GroupElement label="{/#EvoPlanOrder/LongText/@sap:label}">-->
+        <!--        <TextArea value="{LongText}" />-->
+        <!--    </smartForm:GroupElement>-->
+        <!--</smartForm:Group>-->
+        
     </smartForm:SmartForm>
+    
 </mvc:View>

@@ -58,8 +58,8 @@ sap.ui.define([
 			this.setModel(oTimeAllocModel, "timeAlloc");
 			// Set default date range
 			this._setDefaultDateRange();
-			this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
-			this.getView().addDependent(this._oMessagePopover);
+			// this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
+			// this.getView().addDependent(this._oMessagePopover);
 		},
 		/**
 		 * Similar to onAfterRendering, but this hook is invoked before the controller's View is re-rendered
@@ -95,9 +95,9 @@ sap.ui.define([
 		onExit: function () {
 			if (this._infoDialog)
 				this._infoDialog.destroy();
-			if (this._oMessagePopover) {
-				this._oMessagePopover.destroy();
-			}
+			// if (this._oMessagePopover) {
+			// 	this._oMessagePopover.destroy();
+			// }
 			this._selectedAsset = undefined;
 			this._aSelectedDemands = [];
 		},
@@ -140,7 +140,8 @@ sap.ui.define([
 				plant: this._selectedAsset.Plant,
 				type: this._selectedAsset.TechnicalObjectType,
 				assetFloc: this._selectedAsset.TechnicalObject,
-				assetDesc: this._selectedAsset.Description
+				assetDesc: this._selectedAsset.Description,
+				businessArea : this._selectedAsset.BusinessArea
 			};
 			this.getModel("viewModel").setProperty("/createOrderDefaults", oOrderDetails);
 
@@ -217,6 +218,7 @@ sap.ui.define([
 			oTimeAllocModel.setProperty("/dateFrom", oData.StartTimestamp);
 			oTimeAllocModel.setProperty("/dateTo", oData.EndTimestamp);
 			oTimeAllocModel.setProperty("/desc", oData.Description);
+			oTimeAllocModel.setProperty("/priority", oData.AssetUnavailityCode);
 			// open create time allocation dialog
 			this.createTimeAlloc();
 		},
@@ -271,6 +273,7 @@ sap.ui.define([
 			 oFromDate = sap.ui.getCore().byId("idTimeAllocSD"),
 			 oToDate = sap.ui.getCore().byId("idTimeAllocED"),
 			 sDescription = sap.ui.getCore().byId("idTimeAllocDesc"),
+			 sColor = sap.ui.getCore().byId("idTimeAllocColr"),
 			 oTimeAllocModel = this.getModel("timeAlloc"),
 			 oTimeAllocData = oTimeAllocModel ? oTimeAllocModel.getData() : null;
 			 
@@ -292,13 +295,14 @@ sap.ui.define([
 					StartTimestamp: oTimeAllocData.dateFrom,
 					EndTimestamp: oTimeAllocData.dateTo,
 					DowntimeDesc: oTimeAllocData.desc.trim(),
-					AssetUnavailabilityGuid: oTimeAllocData.guid
+					AssetUnavailabilityGuid: oTimeAllocData.guid,
+					AssetUnavailityCode:oTimeAllocData.priority
 				};
 				this.clearMessageModel();
 				if (oTimeAllocData.guid && oTimeAllocData.guid !== "")
-					this.callFunctionImport(oParams, "UpdateAssetUnavailability", "POST", {bFromAsset:true});
+					this.callFunctionImport(oParams, "UpdateAssetUnavailability", "POST", {bFromAsset:true},true);
 				else
-					this.callFunctionImport(oParams, "CreateAssetUnavailability", "POST", {bFromAsset:true});
+					this.callFunctionImport(oParams, "CreateAssetUnavailability", "POST", {bFromAsset:true},true);
 			} else {
 				return;
 			}
@@ -507,7 +511,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onMessagePopoverPress: function (oEvent) {
-			this._oMessagePopover.openBy(oEvent.getSource());
+			// this._oMessagePopover.openBy(oEvent.getSource());
 		},
 		/**
 		 * Multi Assignment from asset view. Opens the Tree table dialog to select resource

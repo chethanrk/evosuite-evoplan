@@ -112,7 +112,9 @@ sap.ui.define([
                 sDesc = oSelectedAsset ? oSelectedAsset.assetDesc  : "",
                 sWc = oSelectedAsset ? oSelectedAsset.wc : "",
                 sPlant = oSelectedAsset ? oSelectedAsset.plant : "",
-                sAsssetType = oSelectedAsset ? oSelectedAsset.type : "";
+                sAsssetType = oSelectedAsset ? oSelectedAsset.type : "",
+                sBusinessarea = oSelectedAsset ? oSelectedAsset.businessArea:"",
+                OrderType = this.getModel("user").getProperty("/DEFAULT_ORDER_TYPE");
             this.getModel().metadataLoaded().then(function () {
                 if(sFloc && sFloc !== ""){
                     var oContext = this.getModel().createEntry("/EvoPlanOrderSet", {
@@ -122,7 +124,11 @@ sap.ui.define([
                             MainWorkCenter: sWc,
                             AssetGuid: sAsset,
                             AssetDescription: sDesc,
-                            TechnicalObjectType: sAsssetType
+                            TechnicalObjectType: sAsssetType,
+                            BusinessArea :sBusinessarea,
+                            StartTimestamp:new Date(),
+                            EndTimestamp:new Date(),
+                            OrderType : OrderType
                         }
                     });
                     this.getView().setBindingContext(oContext);

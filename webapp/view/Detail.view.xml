@@ -63,6 +63,15 @@
 					</uxap:ObjectPageSubSection>
 				</uxap:subSections>
 			</uxap:ObjectPageSection>
+			<uxap:ObjectPageSection title="{i18n>xtit.longText}">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection>
+						<uxap:blocks>
+							<sections:LongTextBlock id="longTextBlock"/>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
 		</uxap:sections>
 		<uxap:footer>
 			<OverflowToolbar></OverflowToolbar>

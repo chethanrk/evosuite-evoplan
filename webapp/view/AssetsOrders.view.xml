@@ -18,9 +18,9 @@
 								<core:CustomData key="type" value="A"/>
 							</customData>
 						</CheckBox>
-						<Button id="idCreateBut" text="{i18n>xbut.createOrder}" tooltip="{i18n>xbut.createOrder}" press="createOrder" enabled="false"
+						<Button id="idCreateBut" text="{i18n>xbut.createOrder}" visisble="{user>/ENABLE_CREATE_ORDER}"  tooltip="{i18n>xbut.createOrder}" press="createOrder" enabled="false"
 							type="Emphasized"/>
-						<Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" tooltip="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc" enabled="false"
+						<Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" visisble="{user>/ENABLE_CREATE_ASSET_TIME_ALLOC}" tooltip="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc" enabled="false"
 							type="Emphasized"/>
 					</OverflowToolbar>
 				</f:content>
@@ -47,7 +47,7 @@
 						<appointments>
 							<unified:CalendarAppointment startDate="{StartTimestamp}" endDate="{EndTimestamp}" title="{Description}" text="{OrderId}"
 								icon="{STATUS_ICON}" tooltip="{ parts:[ {path:'Description'}, {path:'STATUS_DESC'} ], formatter:'.formatter.formatDemandTooltip' }"
-								type="{ path:'AssetPlandatatype', formatter: '.formatter.formatAppointMent' }"></unified:CalendarAppointment>
+								type="{ path:'AssetPlandatatype', formatter: '.formatter.formatAppointMent' }" color="{AssetUnavailityColor}"></unified:CalendarAppointment>
 						</appointments>
 					</PlanningCalendarRow>
 				</rows>
@@ -55,8 +55,8 @@
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
-				<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
-					type="Emphasized" press="onMessagePopoverPress"></Button>
+				<!--<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"-->
+				<!--	type="Emphasized" press="onMessagePopoverPress"></Button>-->
 				<ToolbarSpacer/>
 				<Button id="assignButton" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" icon="sap-icon://activity-individual"
 					press="onAssignButtonPress" enabled="false">

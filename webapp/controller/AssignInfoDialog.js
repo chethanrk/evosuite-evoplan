@@ -30,25 +30,11 @@ sap.ui.define([
 		 * @param oView
 		 * @param sBindPath
 		 */
-		open: function (oView, sBindPath, oAssignmentData, mParameters) {
+		open: function (oView, sBindPath, oAssignmentData, mParameters, oAssignementPath) {
 			var oDialog = this.getDialog(),
-				oAssignment = {
-					showError: false,
-					AssignmentGuid: "",
-					Description: "",
-					AllowReassign: false,
-					AllowUnassign: false,
-					NewAssignPath: null,
-					NewAssignId: null,
-					NewAssignDesc: null,
-					isNewAssignment: false,
-					DemandGuid: "",
-					DemandStatus: "",
-					OrderId: "",
-					OperationNumber: "",
-					SubOperationNumber: ""
-				},
+				oAssignment = this.getDefaultAssignmentModelObject(),
 				oResource,
+                oAssignData,
 				sResourceGroupGuid,
 				sResourceGuid;
 
@@ -61,29 +47,52 @@ sap.ui.define([
 				sResourceGuid = oResource.ResourceGuid;
 				oAssignment.DemandGuid = oResource.DemandGuid;
 
-			} else {
+			} else if(oAssignementPath){
+				// From gantt
+				// When we have Assignment path <AssignmentSet(<key>)>
+                oAssignData = oView.getModel().getProperty(oAssignementPath);
+
+                oAssignment.AssignmentGuid = oAssignData.Guid;
+                oAssignment.Description = oAssignData.Description;
+                // sResourceGroupGuid = oAssignData.ResourceGroupGuid;
+                // sResourceGuid = oAssignData.ResourceGuid;
+                oAssignment.DemandGuid = oAssignData.DemandGuid;
+                oAssignment.DemandStatus = oAssignData.Demand.Status;
+                oAssignment.DateFrom = oAssignData.DateFrom;
+                oAssignment.DateTo = oAssignData.DateTo;
+                oAssignment.ResourceGroupGuid = oAssignData.ResourceGroupGuid;
+				oAssignment.ResourceGroupDesc = oAssignData.GROUP_DESCRIPTION;
+				oAssignment.ResourceGuid = oAssignData.ResourceGuid;
+				oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
+			}else {
 				oAssignment.AssignmentGuid = oAssignmentData.Guid;
 				oAssignment.Description = oAssignmentData.Demand.DemandDesc;
-				sResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
-				sResourceGuid = oAssignmentData.ResourceGuid;
+				// sResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
+				// sResourceGuid = oAssignmentData.ResourceGuid;
 				oAssignment.DemandGuid = oAssignmentData.DemandGuid;
 				oAssignment.DemandStatus = oAssignmentData.Demand.Status;
+				oAssignment.DateFrom = oAssignmentData.DateFrom;
+				oAssignment.DateTo = oAssignmentData.DateTo;
+				oAssignment.ResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
+				oAssignment.ResourceGroupDesc = oAssignmentData.GROUP_DESCRIPTION;
+				oAssignment.ResourceGuid = oAssignmentData.ResourceGuid;
+				oAssignment.ResourceDesc = oAssignmentData.RESOURCE_DESCRIPTION;
 			}
 
 			this._oView = oView;
-			this._mParameters = mParameters;
+			this._mParameters = mParameters  || {bFromHome:true};
 			// oView.setModel(models.createAssignmentModel(oAssignment), "assignment");
 			this.oAssignmentModel = oView.getModel("assignment");
 			this.oAssignmentModel.setData(oAssignment);
 
 			//Set the ResourceGroupGuid 
-			if (sResourceGroupGuid && sResourceGroupGuid !== "") {
+			if (sResourceGroupGuid && sResourceGroupGuid !== "" && sBindPath && sBindPath !== "") {
 				var resourceGroup = this._getAssignResourceGroup(sResourceGroupGuid);
 				this.oAssignmentModel.setProperty("/ResourceGroupGuid", resourceGroup.ResourceGroupGuid);
 				this.oAssignmentModel.setProperty("/ResourceGroupDesc", resourceGroup.ResourceGroupDesc);
 			}
 			//Set the ResourceGuid 
-			if (sResourceGuid && sResourceGuid !== "") {
+			if (sResourceGuid && sResourceGuid !== "" && sBindPath && sBindPath !== "") {
 				var resource = this._getAssignResource(sResourceGuid + "%2F%2F" + sResourceGroupGuid);
 				this.oAssignmentModel.setProperty("/ResourceGuid", resource.ResourceGuid);
 				this.oAssignmentModel.setProperty("/ResourceDesc", resource.ResourceDesc);
@@ -126,10 +135,16 @@ sap.ui.define([
 				oDateTo = oDateTo.getTime();
 				// To Validate DateTo and DateFrom
 				if (oDateTo >= oDateFrom) {
-					eventBus.publish("AssignInfoDialog", "updateAssignment", {
-						isReassign: this.reAssign,
-						parameters: this._mParameters
-					});
+					if(this._mParameters && this._mParameters.bFromPlannCal){
+						eventBus.publish("AssignInfoDialog", "refreshAssignment", {
+							reassign:this.reAssign
+						});						
+					}else{
+						eventBus.publish("AssignInfoDialog", "updateAssignment", {
+							isReassign: this.reAssign,
+							parameters: this._mParameters
+						});
+					}
 					this.onCloseDialog();
 				} else {
 					this.showMessageToast(sMsg);
@@ -146,10 +161,16 @@ sap.ui.define([
 		onDeleteAssignment: function (oEvent) {
 			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid");
 			var eventBus = sap.ui.getCore().getEventBus();
-			eventBus.publish("AssignInfoDialog", "deleteAssignment", {
-				sId: sId,
-				parameters: this._mParameters
-			});
+			if(this._mParameters && this._mParameters.bFromPlannCal){
+						eventBus.publish("AssignInfoDialog", "refreshAssignment", {
+							unassign:true
+						});						
+					}else{
+						eventBus.publish("AssignInfoDialog", "deleteAssignment", {
+							sId: sId,
+							parameters: this._mParameters
+						});
+					}
 			this.onCloseDialog();
 		},
 
@@ -193,6 +214,35 @@ sap.ui.define([
 		},
 
 		/**
+		 * default structure of assignment JSOn model
+		 */
+		getDefaultAssignmentModelObject: function(){
+			return {
+				AllowChange:false,
+				AllowReassign: false,
+				AllowUnassign: false,
+				AssignmentGuid: "",
+				DateFrom:"",
+				DateTo:"",
+				DemandGuid: "",
+				DemandStatus: "",
+				Description: "",
+				Effort: null,
+				EffortUnit: null,
+				NewAssignPath: null,
+				NewAssignId: null,
+				NewAssignDesc: null,
+				OperationNumber: "",
+				OrderId: "",
+				ResourceGroupGuid: "",
+				ResourceGuid: "",
+				SubOperationNumber: "",
+				isNewAssignment: false,
+				showError: false
+			};
+		},
+
+		/**
 		 *
 		 * @param sId
 		 * @private
@@ -222,18 +272,23 @@ sap.ui.define([
 						// oDateToField.setMinDate(oContext.getProperty("DateFrom"));
 
 						oModel.setProperty("/showError", false);
-						oModel.setProperty("/DateFrom", oContext.getProperty("DateFrom"));
-						oModel.setProperty("/DateTo", oContext.getProperty("DateTo"));
+						if(oModel.getProperty("/DateFrom") === "" || oModel.getProperty("/DateTo") === ""){
+							oModel.setProperty("/DateFrom", oContext.getProperty("DateFrom"));
+							oModel.setProperty("/DateTo", oContext.getProperty("DateTo"));	
+						}
+						
 						oModel.setProperty("/Effort", oContext.getProperty("Effort"));
 						oModel.setProperty("/EffortUnit", oContext.getProperty("EffortUnit"));
 						var oDemandData = oContext.getProperty("Demand");
 						oModel.setProperty("/Description", oDemandData.DemandDesc);
 						oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
 						oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
+                        oModel.setProperty("/AllowChange", oDemandData.ASGNMNT_CHANGE_ALLOWED);
 						oModel.setProperty("/OrderId", oDemandData.ORDERID);
 						oModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
 						oModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
 						oModel.setProperty("/DemandStatus", oDemandData.Status);
+						oModel.setProperty("/DemandGuid", oDemandData.Guid);
 					},
 					dataRequested: function () {
 						oDialog.setBusy(true);
@@ -254,7 +309,7 @@ sap.ui.define([
 		_getAssignResource: function (resId) {
 			var oData = this._getResourceInfo(resId);
 			return {
-				ResourceGuid: oData ? resId : "",
+				ResourceGuid: oData ? oData.ResourceGuid : "",
 				ResourceDesc: oData ? oData.Description : ""
 			};
 		},
@@ -339,15 +394,26 @@ sap.ui.define([
 			}
 			return newAssignDesc;
 		},
+		/**
+		 * On press navigates to demand detail page of linked demand. 
+		 * 
+		 */
 		onGotoDemand: function (oEvent) {
 			var oRouter = this._component.getRouter(),
 				oAssignment = this.oAssignmentModel,
 				sDemandGuid = oAssignment.getProperty("/DemandGuid");
 
 			this.onCloseDialog();
-			oRouter.navTo("detail", {
-				guid: sDemandGuid
-			});
+			if(this._mParameters.bFromGantt){
+                oRouter.navTo("ganttDemandDetails", {
+                    guid: sDemandGuid
+                });
+			}else{
+                oRouter.navTo("detail", {
+                    guid: sDemandGuid
+                });
+			}
+
 		}
 	});
 });

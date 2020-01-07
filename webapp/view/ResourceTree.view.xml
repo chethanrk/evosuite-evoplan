@@ -26,12 +26,19 @@
 						</table:customData>
 						<table:template>
 							<controls:CustomTitle text="{Description}" tooltip="{Description}"
-								titleStyle="{ path: 'NodeType', formatter: '.formatter.formatResourceTitle' }"
-								availabilityIcon="{ path: 'IS_AVAILABLE', formatter: '.formatter.getAvailabilityIcon' }"
-								iconColor="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconColor' }"
-								iconTooltip="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconTooltip' }"
-								icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'}], formatter: '.formatter.getResourceIcon' }"
-								isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink"/>
+												  titleStyle="{ path: 'NodeType', formatter: '.formatter.formatResourceTitle' }"
+												  availabilityIcon="{ path: 'IS_AVAILABLE', formatter: '.formatter.getAvailabilityIcon' }"
+												  iconColor="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconColor' }"
+												  iconTooltip="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconTooltip' }"
+												  icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'},{path: 'ResourceIcon'} ], formatter: '.formatter.getResourceIcon' }"
+												  isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink"
+												  isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}"
+												  showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
+												  workTime="{path:'ACTUAL_WORKING_HOURS',
+												  			type:'sap.ui.model.type.Float',
+												  			formatOptions:{
+												  				'decimals': 1
+												  			}}"/>
 						</table:template>
 					</table:Column>
 					<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="5rem" hAlign="End"
@@ -57,7 +64,7 @@
 						</table:customData>
 						<table:template>
 							<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"
-								selected="{IsSelected}"/>
+									  selected="{IsSelected}"/>
 						</table:template>
 					</table:Column>
 				</table:columns>
@@ -66,19 +73,24 @@
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
-				<ToolbarSpacer/>
-				<Button id="idButtonunassign" text="{i18n>xbut.buttonUnassign}" tooltip="{i18n>xbut.buttonUnassign}" press="onPressUnassign" enabled="false">
+				<Button id="idButtonCreUA" text="{i18n>xbut.manageAbsence}" tooltip="{i18n>xbut.manageAbsence}" press="onPressCreateUA" enabled="false" visible="{user>/MANAGE_ABSENCE_ENABLE}">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="true"/>
 					</layoutData>
 				</Button>
-				<Button id="idButtonreassign" text="{i18n>xfld.newAssign}" tooltip="{i18n>xfld.newAssign}" press="onPressReassign" enabled="false">
+				<ToolbarSpacer/>
+				<Button id="idButtonunassign" text="{i18n>xbut.buttonUnassign}" tooltip="{i18n>xbut.buttonUnassign}" press="onPressUnassign" enabled="false" visible="{user>/ENABLE_UNASSIGN}">
+					<layoutData>
+						<ToolbarLayoutData shrinkable="true"/>
+					</layoutData>
+				</Button>
+				<Button id="idButtonreassign" text="{i18n>xfld.newAssign}" tooltip="{i18n>xfld.newAssign}" press="onPressReassign" enabled="false" visible="{user>/ENABLE_ASSIGN_NEW}">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="true"/>
 					</layoutData>
 				</Button>
 				<Button id="showPlanCalendar" text="{i18n>xbut.showPlanningCal}" tooltip="{i18n>xbut.showPlanningCal}" icon="sap-icon://calendar"
-					press="onPressShowPlanningCal" enabled="false">
+						press="onPressShowPlanningCal" enabled="false" busy="{viewModel>/calendarBusy}" busyIndicatorDelay="0">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="true"/>
 					</layoutData>

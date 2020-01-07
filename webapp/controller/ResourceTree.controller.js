@@ -14,15 +14,15 @@ sap.ui.define([
 	MessageToast, MessageBox) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.ResourceTree", {
+    return BaseController.extend("com.evorait.evoplan.controller.ResourceTree", {
 
-		formatter: formatter,
+        formatter: formatter,
 
         isLoaded: false,
 
-		assignmentPath: null,
+        assignmentPath: null,
 
-		selectedResources: [],
+        selectedResources: [],
 
 		oFilterConfigsController: null,
 
@@ -38,15 +38,17 @@ sap.ui.define([
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
 			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
 
-			//eventbus of assignemnt handling
-			var eventBus = sap.ui.getCore().getEventBus();
-			eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
-			eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
-			// eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
+            //eventbus of assignemnt handling
+            var eventBus = sap.ui.getCore().getEventBus();
+            eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
+            eventBus.subscribe("FilterSettingsDialog", "triggerSearch", this._triggerFilterSearch, this);
+            eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
+            eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
+            // eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
 
-			// event listener for changing device orientation with fallback of window resize
-			var orientationEvent = this.getOrientationEvent(),
-				_this = this;
+            // event listener for changing device orientation with fallback of window resize
+            var orientationEvent = this.getOrientationEvent(),
+                _this = this;
 
 			window.addEventListener(orientationEvent, function () {
 				_this._jDroppable(_this);
@@ -79,87 +81,159 @@ sap.ui.define([
 		 * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.ResourceTree **/
 		onAfterRendering: function (oEvent) {},
 
-		/**
-		 * initial draggable after every refresh of table
-		 * for example after go to next page
-		 * @param oEvent
-		 */
-		onBusyStateChanged: function (oEvent) {
-			var parameters = oEvent.getParameters();
-			if (parameters.busy === false) {
-				this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
-			} else {
-				//this.onTreeUpdateStarted();
-				this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
-			}
-		},
+        /**
+         * initial draggable after every refresh of table
+         * for example after go to next page
+         * @param oEvent
+         */
+        onBusyStateChanged: function (oEvent) {
+            var parameters = oEvent.getParameters();
+            if (parameters.busy === false) {
+                this._jDroppable(this);
+                this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
 
-		/**
-		 * Todo: on deselect
-		 * @param oEvent
-		 */
-		onChangeSelectResource: function (oEvent) {
-			var oSource = oEvent.getSource();
-			var parent = oSource.getParent();
-			var sPath = parent.getBindingContext().getPath();
-			var oParams = oEvent.getParameters();
+                if (this.hasCustomDefaultVariant) {
+                    this.hasCustomDefaultVariant = false;
+                    this._triggerFilterSearch();
+                }
+            } else {
+                this.onTreeUpdateStarted();
+                this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
+            }
+        },
 
-			//Sets the property IsSelected manually 
-			this.getModel().setProperty(sPath + "/IsSelected", oParams.selected);
+        /**
+         * initialize or update droppable after updating tree list
+         * @param oEvent
+         */
+        refreshDroppable: function (oEvent) {
+            if (this._oDroppableTable) {
+                this._jDroppable(this);
+            }
+        },
 
-			if (oParams.selected) {
-				this.selectedResources.push(sPath);
+        /**
+         * trigger add filter to tree table for the first time
+         */
+        onTreeUpdateStarted: function () {
+            if (!this.firstLoad) {
+                this._triggerFilterSearch();
+                this.firstLoad = true;
+            }
+        },
 
-			} else if (this.selectedResources.indexOf(sPath) >= 0) {
-				//removing the path from this.selectedResources when user unselect the checkbox
-				this.selectedResources.splice(this.selectedResources.indexOf(sPath), 1);
-			}
+        /**
+         * search on searchfield in header
+         * @param oEvent
+         */
+        onSearchResources: function (oEvent) {
+            this._triggerFilterSearch();
+        },
 
-			if (this.selectedResources.length > 0) {
-				this.byId("showPlanCalendar").setEnabled(true);
-				this.byId("idButtonreassign").setEnabled(true);
-				this.byId("idButtonunassign").setEnabled(true);
-			} else {
-				this.byId("showPlanCalendar").setEnabled(false);
-				this.byId("idButtonreassign").setEnabled(false);
-				this.byId("idButtonunassign").setEnabled(false);
-			}
-		},
+        /**
+         * open FilterSettingsDialog
+         * @param oEvent
+         */
+        onFilterButtonPress: function (oEvent) {
+            this.getOwnerComponent().filterSettingsDialog.open(this.getView());
+        },
 
-		/**
-		 * Open the planning calendar for selected resources
-		 * @param oEvent
-		 */
-		onPressShowPlanningCal: function (oEvent) {
-			this.getOwnerComponent().planningCalendarDialog.open(this.getView(), this.selectedResources, {
-				bFromPlannCal: true
-			}); // As we are opening the dialog when set model data
-		},
+        onInitialiseVariant: function (oEvent) {
+            var oParameters = oEvent.getParameters();
+            if (oParameters.defaultContent && !oParameters.isStandard) {
+                this.hasCustomDefaultVariant = true;
+            }
+        },
 
-		/**
-		 * on press link of assignment in resource tree row
-		 * get parent row path and bind this path to the dialog or showing assignment information
-		 * @param oEvent
-		 */
-		onPressAssignmentLink: function (oEvent) {
-			var oSource = oEvent.getSource(),
-				oRowContext = oSource.getParent().getBindingContext();
+        /**
+         * when a new variant is selected trigger search
+         * new Filters are bind to tree table
+         * @param oEvent
+         */
+        onSelectVariant: function (oEvent) {
+            this._triggerFilterSearch();
+        },
 
-			if (oRowContext) {
-				this.assignmentPath = oRowContext.getPath();
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath);
-			} else {
-				var msg = this.getResourceBundle().getText("notFoundContext");
-				this.showMessageToast(msg);
-			}
-		},
+        /**
+         * Todo: on deselect
+         * @param oEvent
+         */
+        onChangeSelectResource: function (oEvent) {
+            var oSource = oEvent.getSource();
+            var parent = oSource.getParent();
+            var sPath = parent.getBindingContext().getPath();
+            var oParams = oEvent.getParameters();
 
-		onPressReassign: function (oEvent) {
-			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false);
-		},
-		onPressUnassign: function (oEvent) {
-			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true);
-		},
+            //Sets the property IsSelected manually
+            this.getModel().setProperty(sPath + "/IsSelected", oParams.selected);
+
+            if (oParams.selected) {
+                this.selectedResources.push(sPath);
+
+            } else if (this.selectedResources.indexOf(sPath) >= 0) {
+                //removing the path from this.selectedResources when user unselect the checkbox
+                this.selectedResources.splice(this.selectedResources.indexOf(sPath), 1);
+            }
+
+            if (this.selectedResources.length > 0) {
+                this.byId("showPlanCalendar").setEnabled(true);
+                this.byId("idButtonreassign").setEnabled(true);
+                this.byId("idButtonunassign").setEnabled(true);
+            } else {
+                this.byId("showPlanCalendar").setEnabled(false);
+                this.byId("idButtonreassign").setEnabled(false);
+                this.byId("idButtonunassign").setEnabled(false);
+            }
+            if(this.selectedResources.length === 1){
+                this.byId("idButtonCreUA").setEnabled(true);
+            }else{
+                this.byId("idButtonCreUA").setEnabled(false);
+            }
+        },
+
+        /**
+         * Open the planning calendar for selected resources
+         * @param oEvent
+         */
+        onPressShowPlanningCal: function (oEvent) {
+        	this.getModel("viewModel").setProperty("/calendarBusy",true);
+            this.getOwnerComponent().planningCalendarDialog.open(this.getView(), this.selectedResources, {
+                bFromPlannCal: true
+            }); // As we are opening the dialog when set model data
+        },
+
+        /**
+         * on press link of assignment in resource tree row
+         * get parent row path and bind this path to the dialog or showing assignment information
+         * @param oEvent
+         */
+        onPressAssignmentLink: function (oEvent) {
+            var oSource = oEvent.getSource(),
+                oRowContext = oSource.getParent().getBindingContext();
+
+            if (oRowContext) {
+                this.assignmentPath = oRowContext.getPath();
+                this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath);
+            } else {
+                var msg = this.getResourceBundle().getText("notFoundContext");
+                this.showMessageToast(msg);
+            }
+        },
+
+        /**
+         * Open's Dialog containing assignments to reassign
+         * @param oEvent
+         */
+        onPressReassign: function (oEvent) {
+            this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false);
+        },
+        /**
+         * Open's Dialog containing assignments to unassign
+         * @param oEvent
+         */
+        onPressUnassign: function (oEvent) {
+            this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true);
+        },
 
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
@@ -174,34 +248,38 @@ sap.ui.define([
 			oBinding.filters = [new Filter(aFilter, true)];
 		},
 
-		/**
-		 * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
-		 */
-		onExit: function () {
-			if (this.getOwnerComponent().planningCalendarDialog) {
-				this.getOwnerComponent().planningCalendarDialog.getDialog().destroy();
-			}
-		},
+        /**
+         * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
+         */
+        onExit: function () {
+            if (this.getOwnerComponent().planningCalendarDialog) {
+                this.getOwnerComponent().planningCalendarDialog.getDialog().destroy();
+            }
+            if (this.getOwnerComponent().filterSettingsDialog) {
+                this.getOwnerComponent().filterSettingsDialog.getDialog().destroy();
+            }
+        },
 
-		/* =========================================================== */
-		/* internal methods                                            */
-		/* =========================================================== */
+        /* =========================================================== */
+        /* internal methods                                            */
+        /* =========================================================== */
 
-		/**
-		 * configure tree table
-		 * @param oDataTable
-		 * @private
-		 */
-		_configureDataTable: function (oDataTable) {
-			oDataTable.setEnableBusyIndicator(true);
-			oDataTable.setSelectionMode("None");
-			oDataTable.setColumnHeaderVisible(false);
-			oDataTable.setEnableCellFilter(false);
-			oDataTable.setEnableColumnReordering(false);
-			oDataTable.setEditable(false);
-			oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
-			oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
-		},
+        /**
+         * configure tree table
+         * @param oDataTable
+         * @private
+         */
+        _configureDataTable: function (oDataTable) {
+            oDataTable.setEnableBusyIndicator(true);
+            oDataTable.setSelectionMode("None");
+            oDataTable.setColumnHeaderVisible(false);
+            oDataTable.setEnableCellFilter(false);
+            oDataTable.setEnableColumnReordering(false);
+            oDataTable.setEditable(false);
+            oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
+            oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
+
+        },
 
 		/**
 		 * triggers request with all setted filters
@@ -214,47 +292,47 @@ sap.ui.define([
 			this._oDroppableTable.rebindTable();
 		},
 
-		/**
-		 * dropped demands assign and save
-		 * @param _this
-		 * @private
-		 */
-		_jDroppable: function (_this) {
-			setTimeout(function () {
-				var droppableTableId = _this._oDroppableTable.getId();
-				var droppedElement = $("#" + droppableTableId + " tbody tr, #" + droppableTableId + " li");
+        /**
+         * dropped demands assign and save
+         * @param _this
+         * @private
+         */
+        _jDroppable: function (_this) {
+            setTimeout(function () {
+                var droppableTableId = _this._oDroppableTable.getId();
+                var droppedElement = $("#" + droppableTableId + " tbody tr, #" + droppableTableId + " li");
 
-				try {
-					if (droppedElement.hasClass("ui-droppable")) {
-						droppedElement.droppable("destroy");
-					}
-				} catch (error) {
-					jQuery.sap.log.warning(error);
-				}
+                try {
+                    if (droppedElement.hasClass("ui-droppable")) {
+                        droppedElement.droppable("destroy");
+                    }
+                } catch (error) {
+                    jQuery.sap.log.warning(error);
+                }
 
-				droppedElement.droppable({
-					accept: ".ui-draggable",
-					drop: function (event, ui) {
-						//get hovered marked row, there could be a difference with dropped row
-						var hoverRow = $("#" + droppableTableId + " .sapUiTableRowHvr"),
-							dropTargetId = hoverRow.attr("id"),
-							aSources = [];
+                droppedElement.droppable({
+                    accept: ".ui-draggable",
+                    drop: function (event, ui) {
+                        //get hovered marked row, there could be a difference with dropped row
+                        var hoverRow = $("#" + droppableTableId + " .sapUiTableRowHvr"),
+                            dropTargetId = hoverRow.attr("id"),
+                            aSources = [];
 
-						if (!dropTargetId) {
-							dropTargetId = event.target.id;
-						}
+                        if (!dropTargetId) {
+                            dropTargetId = event.target.id;
+                        }
 
-						var targetElement = sap.ui.getCore().byId(dropTargetId),
-							oContext = targetElement.getBindingContext();
+                        var targetElement = sap.ui.getCore().byId(dropTargetId),
+                            oContext = targetElement.getBindingContext();
 
-						if (oContext) {
-							var targetPath = oContext.getPath();
-							var targetObj = _this.getModel().getProperty(targetPath);
+                        if (oContext) {
+                            var targetPath = oContext.getPath();
+                            var targetObj = _this.getModel().getProperty(targetPath);
 
-							//don't drop on assignments
-							if (targetObj.NodeType === "ASSIGNMENT") {
-								return;
-							}
+                            //don't drop on assignments
+                            if (targetObj.NodeType === "ASSIGNMENT") {
+                                return;
+                            }
 
 							if (!_this.isAssignable({
 									data: targetObj
@@ -294,22 +372,96 @@ sap.ui.define([
 					oModel = oContext.getModel();
 					sPath = oContext.getPath();
 
-					oModel.setProperty(sPath + "/IsSelected", true); // changing the property in order trigger submit change
-					oTable.getBinding("rows").submitChanges(); // submit change will refresh of tree according maintained parameters
-				} else {
-					this._triggerFilterSearch();
-				}
-			}
+            if(oTreeBinding){
+                oTreeBinding._restoreTreeState().then(function(){
+                    if(parseInt(UIMinorVersion,10) > 52){
+                        // this check is used as a workaround for tree restoration for above 1.52.* version
+                        // Scrolled manually to fix the rendering
+                        var oScrollContainer = oTreeTable._getScrollExtension();
+                        var iScrollIndex = oScrollContainer.getRowIndexAtCurrentScrollPosition();
+                        var bScrolled;
+                        if(iScrollIndex === 0){
+                            oTreeTable._getScrollExtension().updateVerticalScrollPosition(33);
+                            bScrolled = true;
+                        }else{
+                            bScrolled = oTreeTable._getScrollExtension().scrollVertically(1);
+                        }
+
+                        // If there is no scroll bar present
+                        if(bIsScrollBar){
+                            oPage.setHeaderExpanded(false);
+                            setTimeout(function(){
+                                oPage.setHeaderExpanded(true);
+                            },100);
+                        }
+                    }
+                });
+            }
+
+
 
 		},
 		/**
 		 * Resets the selected resource if selected  
 		 */
-		resetChanges: function () {
-			this.selectedResources = [];
-			this.byId("showPlanCalendar").setEnabled(false);
-			this.byId("idButtonreassign").setEnabled(false);
-			this.byId("idButtonunassign").setEnabled(false);
-		}
-	});
+		resetChanges: function(){
+            var oModel = this.getModel();
+
+            // reset the model changes
+            if(oModel.hasPendingChanges()){
+                oModel.resetChanges();
+            }
+            // Resetting selected resource
+                this.selectedResources = [];
+				this.byId("showPlanCalendar").setEnabled(false);
+                this.byId("idButtonreassign").setEnabled(false);
+                this.byId("idButtonunassign").setEnabled(false)
+                this.byId("idButtonCreUA").setEnabled(false);
+		},
+        /**
+		 * On select of capacitive checkbox the adjusting splitter length
+         * @param oEvent checkbox event
+         */
+        onSelectCapacity:function (oEvent) {
+			var bSelect = oEvent.getParameter("selected"),
+				oViewModel = this.getModel("viewModel");
+
+			this._jDroppable(this);
+			if(bSelect){
+                oViewModel.setProperty("/splitterDivider","39%");
+			}else{
+                oViewModel.setProperty("/splitterDivider","31%");
+			}
+        },
+		/**
+		 * Open's popover containing capacitive assignments
+		 * @param oEvent
+		 */
+		openCapacitivePopup : function (oEvent) {
+            var oComponent = this.getOwnerComponent();
+            oComponent.capacitiveAssignments.open(this.getView(),oEvent);
+        },
+        /**
+         * on press, open the dialog to create an unavailability for selected resources
+         * @param oEvent
+         */
+        onPressCreateUA : function (oEvent) {
+            this.getOwnerComponent().manageAvail.open(this.getView(), this.selectedResources);
+        },
+        /**
+         * On click on expand the tree nodes gets expand to level 1
+         * On click on collapse all the tree nodes will be collapsed to root.
+         * @param oEvent
+         */
+        onClickExpandCollapse : function (oEvent) {
+            var oButton = oEvent.getSource(),
+                oCustomData = oButton.getCustomData();
+
+            if(oCustomData[0].getValue() === "EXPAND" && this._oDroppableTable){
+                this._oDroppableTable.expandToLevel(1);
+            }else{
+                this._oDroppableTable.collapseAll();
+            }
+        }
+    });
 });

@@ -1,0 +1,11 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:layout="sap.ui.layout"
+		  >
+	<layout:Splitter id="verticalSplit" resize="onResize">
+		<NavContainer id="leftPanel" class="panelPage">
+			<layoutData>
+				<layout:SplitterLayoutData size="{viewModel>/splitterDivider}"/>
+			</layoutData>
+		</NavContainer>
+		<NavContainer id="rightPanel" class="panelPage"/>
+	</layout:Splitter>
+</mvc:View>

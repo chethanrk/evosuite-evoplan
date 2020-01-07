@@ -61,6 +61,9 @@ sap.ui.define([
 				return d.add(2, "months").toDate();
 			}
 		},
+		TIMEHOUR:{
+			calendarView: "Hour"
+		},
 		ASSIGNMENT: {
 			title: "H6",
 			icon: "sap-icon://eam-work-order"
@@ -73,6 +76,9 @@ sap.ui.define([
 				var d = moment().endOf("year");
 				return d.add(20, "years").toDate();
 			}
+		},
+		ASSET : {
+            icon: "sap-icon://functional-location"
 		}
 	};
 
@@ -91,6 +97,11 @@ sap.ui.define([
 			tooltip: "xtit.notAvailable",
 			icon: "sap-icon://busy",
 			color: "#BB0000"
+		},
+		"F": {
+			tooltip: "xtit.available",
+			icon: null,
+			color: ""
 		}
 	};
 

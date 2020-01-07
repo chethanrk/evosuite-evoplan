@@ -2,15 +2,19 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/AssignmentsController",
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter"
-], function (BaseController, JSONModel, formatter) {
+], function (AssignmentsController, JSONModel, formatter) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.App", {
+	return AssignmentsController.extend("com.evorait.evoplan.controller.App", {
 
 		formatter: formatter,
 
+        _firstTimeG: false,
+        _firstTimeD: false,
+
 		onInit: function () {
 			var eventBus = sap.ui.getCore().getEventBus();
+			
 			//Event are subscription Demand assignment and change status of demand
 			eventBus.subscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
 			eventBus.subscribe("StatusSelectDialog", "changeStatusDemand", this._triggerSaveDemandStatus, this);
@@ -18,6 +22,7 @@ sap.ui.define([
 			eventBus.subscribe("AssignTreeDialog", "bulkReAssignment", this._triggerUpdateAssign, this);
 			eventBus.subscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
 			eventBus.subscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
+			eventBus.subscribe("PlanningCalendarDialog", "saveAllAssignments", this._triggerSaveAllAssignments, this);
 
 			var oViewModel,
 				fnSetAppNotBusy,
@@ -45,6 +50,12 @@ sap.ui.define([
 			//set init page title
 			oRouter.attachRouteMatched(this._onAllRouteMatched, this);
 			this.getRouter().getRoute("demands").attachPatternMatched(this._onObjectMatched, this);
+            this.getRouter().getRoute("gantt").attachPatternMatched(this._onObjectMatched, this);
+		},
+		
+		onAfterRendering : function () {
+			this._oMessagePopover = this.getOwnerComponent()._oMessagePopover;
+			this.getView().addDependent(this._oMessagePopover);
 		},
 
 		/**
@@ -76,6 +87,12 @@ sap.ui.define([
 				break;
 			case oResourceBundle.getText("xbut.pageWeeklyPlanner"):
 				//oRouter.navTo("TestFull", {});
+				break;
+			case oResourceBundle.getText("xbut.pageMessageCockpit"):
+				oRouter.navTo("messageCockpit", {});
+				break;
+			case oResourceBundle.getText("xbut.pageGanttChart"):
+				oRouter.navTo("gantt", {});
 				break;
 			default:
 				oRouter.navTo("demands", {});
@@ -119,8 +136,15 @@ sap.ui.define([
 			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
 				pageTitle = oResourceBundle.getText("xbut.pageDemands");
 
+			this.getModel("viewModel").setProperty("/ganttSettings/active", false);
+
 			if (oParams.config.pattern.indexOf("AssetPlanning") >= 0) {
 				pageTitle = oResourceBundle.getText("xbut.pageAssetManager");
+			}else if(oParams.config.pattern.indexOf("MessageCockpit") >= 0){
+				pageTitle = oResourceBundle.getText("xbut.pageMessageCockpit");
+			}else if(oParams.config.pattern.indexOf("Gantt") >= 0){
+				pageTitle = oResourceBundle.getText("xbut.pageGanttChart");
+				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
 			}
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
 			oAppViewModel.setProperty("/busy", false);
@@ -149,12 +173,25 @@ sap.ui.define([
 		},
 		/** 
 		 * Refresh's the resource tree and demand table
+		 * When any changes done in gantt or demand view should reflect in other
+		 * view when user navigates it.
 		 * @constructor 
 		 */
-		_onObjectMatched: function () {
+		_onObjectMatched: function (oEvent) {
+			var sRoute = oEvent.getParameter("name");
 			var eventBus = sap.ui.getCore().getEventBus();
-			eventBus.publish("BaseController", "refreshTreeTable", {});
-			eventBus.publish("BaseController", "refreshDemandTable", {});
+			// if(!this.getModel("viewModel").getProperty("/first_load")){
+             //    this.getModel("viewModel").setProperty("/first_load",true);
+             //    return;
+			// }
+			if(sRoute === "gantt"){
+                    eventBus.publish("BaseController", "refreshGanttChart", {});
+                    eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			}else{
+                    eventBus.publish("BaseController", "refreshTreeTable", {});
+                    eventBus.publish("BaseController", "refreshDemandTable", {});
+			}
+
 		},
 		/**
 		 * catch event from dialog for saving demand status change
@@ -215,6 +252,17 @@ sap.ui.define([
 			} else if (sEvent === "bulkDeleteAssignment") {
 				this.bulkDeleteAssignment(oData.aContexts, oData.parameters);
 			}
+		},
+
+		_triggerSaveAllAssignments: function (sChanel, sEvent, oData) {
+			this.saveAllAssignments(oData);
+		},
+		/**
+		 * open's the message popover by it source
+		 * @param oEvent
+		 */
+		onMessagePopoverPress: function (oEvent) {
+			this._oMessagePopover.openBy(oEvent.getSource());
 		}
 
 	});
