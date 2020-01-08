@@ -224,8 +224,6 @@ sap.ui.define([
 		 * @private
 		 */
 		_initDialogs: function () {
-			//resource tree filter settings dialog
-			this.filterSettingsDialog = new FilterSettingsDialog();
 			//display and change assignment dialog
 			this.assignInfoDialog = new AssignInfoDialog();
 			this.assignInfoDialog.init();
@@ -241,6 +239,7 @@ sap.ui.define([
 
 			this.planningCalendarDialog = new PlanningCalendarDialog();
 			this.planningCalendarDialog.init();
+
 			this.capacitiveAssignments = new CapacitiveAssignments();
 			this.capacitiveAssignments.init();
 

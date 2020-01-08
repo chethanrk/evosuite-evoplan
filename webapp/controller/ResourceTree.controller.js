@@ -41,7 +41,6 @@ sap.ui.define([
             //eventbus of assignemnt handling
             var eventBus = sap.ui.getCore().getEventBus();
             eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
-            eventBus.subscribe("FilterSettingsDialog", "triggerSearch", this._triggerFilterSearch, this);
             eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
             eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
             // eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
@@ -89,69 +88,11 @@ sap.ui.define([
         onBusyStateChanged: function (oEvent) {
             var parameters = oEvent.getParameters();
             if (parameters.busy === false) {
-                this._jDroppable(this);
                 this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
-
-                if (this.hasCustomDefaultVariant) {
-                    this.hasCustomDefaultVariant = false;
-                    this._triggerFilterSearch();
-                }
             } else {
-                this.onTreeUpdateStarted();
+                //this.onTreeUpdateStarted();
                 this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
             }
-        },
-
-        /**
-         * initialize or update droppable after updating tree list
-         * @param oEvent
-         */
-        refreshDroppable: function (oEvent) {
-            if (this._oDroppableTable) {
-                this._jDroppable(this);
-            }
-        },
-
-        /**
-         * trigger add filter to tree table for the first time
-         */
-        onTreeUpdateStarted: function () {
-            if (!this.firstLoad) {
-                this._triggerFilterSearch();
-                this.firstLoad = true;
-            }
-        },
-
-        /**
-         * search on searchfield in header
-         * @param oEvent
-         */
-        onSearchResources: function (oEvent) {
-            this._triggerFilterSearch();
-        },
-
-        /**
-         * open FilterSettingsDialog
-         * @param oEvent
-         */
-        onFilterButtonPress: function (oEvent) {
-            this.getOwnerComponent().filterSettingsDialog.open(this.getView());
-        },
-
-        onInitialiseVariant: function (oEvent) {
-            var oParameters = oEvent.getParameters();
-            if (oParameters.defaultContent && !oParameters.isStandard) {
-                this.hasCustomDefaultVariant = true;
-            }
-        },
-
-        /**
-         * when a new variant is selected trigger search
-         * new Filters are bind to tree table
-         * @param oEvent
-         */
-        onSelectVariant: function (oEvent) {
-            this._triggerFilterSearch();
         },
 
         /**
@@ -255,9 +196,9 @@ sap.ui.define([
             if (this.getOwnerComponent().planningCalendarDialog) {
                 this.getOwnerComponent().planningCalendarDialog.getDialog().destroy();
             }
-            if (this.getOwnerComponent().filterSettingsDialog) {
-                this.getOwnerComponent().filterSettingsDialog.getDialog().destroy();
-            }
+            // if (this.getOwnerComponent().filterSettingsDialog) {
+            //     this.getOwnerComponent().filterSettingsDialog.getDialog().destroy();
+            // }
         },
 
         /* =========================================================== */
@@ -359,48 +300,27 @@ sap.ui.define([
 		 * @return 
 		 * @private
 		 */
-		_triggerRefreshTree: function () {
-			var oTable = this._oDataTable,
-				aRows = oTable ? oTable.getAggregation("rows") : null,
-				oContext = aRows ? aRows[0].getBindingContext() : null,
-				oModel,
-				sPath;
+        _triggerRefreshTree: function () {
+            var oTable = this._oDataTable,
+                aRows = oTable ? oTable.getAggregation("rows") : null,
+                oContext = aRows ? aRows[0].getBindingContext() : null,
+                oModel,
+                sPath;
 
-			this.resetChanges();
-			if (oTable && aRows && oContext) {
-				if (oContext) {
-					oModel = oContext.getModel();
-					sPath = oContext.getPath();
+            this.resetChanges();
+            if (oTable && aRows && oContext) {
+                if (oContext) {
+                    oModel = oContext.getModel();
+                    sPath = oContext.getPath();
 
-            if(oTreeBinding){
-                oTreeBinding._restoreTreeState().then(function(){
-                    if(parseInt(UIMinorVersion,10) > 52){
-                        // this check is used as a workaround for tree restoration for above 1.52.* version
-                        // Scrolled manually to fix the rendering
-                        var oScrollContainer = oTreeTable._getScrollExtension();
-                        var iScrollIndex = oScrollContainer.getRowIndexAtCurrentScrollPosition();
-                        var bScrolled;
-                        if(iScrollIndex === 0){
-                            oTreeTable._getScrollExtension().updateVerticalScrollPosition(33);
-                            bScrolled = true;
-                        }else{
-                            bScrolled = oTreeTable._getScrollExtension().scrollVertically(1);
-                        }
-
-                        // If there is no scroll bar present
-                        if(bIsScrollBar){
-                            oPage.setHeaderExpanded(false);
-                            setTimeout(function(){
-                                oPage.setHeaderExpanded(true);
-                            },100);
-                        }
-                    }
-                });
+                    oModel.setProperty(sPath + "/IsSelected", true); // changing the property in order trigger submit change
+                    oTable.getBinding("rows").submitChanges(); // submit change will refresh of tree according maintained parameters
+                } else {
+                    this._triggerFilterSearch();
+                }
             }
 
-
-
-		},
+        },
 		/**
 		 * Resets the selected resource if selected  
 		 */

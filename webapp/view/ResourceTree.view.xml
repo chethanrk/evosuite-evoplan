@@ -1,7 +1,7 @@
 <mvc:View controllerName="com.evorait.evoplan.controller.ResourceTree" xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f" xmlns:table="sap.ui.table" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:controls="com.evorait.evoplan.ui.controls"
 	xmlns:l="sap.ui.layout" displayBlock="true" height="100%">
-	<f:DynamicPage id="idResourcePage" headerExpanded="true" preserveHeaderStateOnScroll="true" fitContent="false" showFooter="true"
+	<f:DynamicPage id="idResourcePage" headerExpanded="true" preserveHeaderStateOnScroll="true" fitContent="true" showFooter="true"
 		class="sapUiNoContentPadding tableContentPage" toggleHeaderOnTitleClick="false">
 		<f:header>
 			<f:DynamicPageHeader id="resourceTreePageHeader" pinnable="true">
@@ -18,7 +18,7 @@
 			<smartTable:layoutData>
 				<FlexItemData growFactor="1"/>
 			</smartTable:layoutData>
-			<table:TreeTable selectionMode="None" enableColumnReordering="false">
+			<table:TreeTable>
 				<table:columns>
 					<table:Column label="{i18n>xtit.tableObject}" name="{i18n>xtit.tableObject}">
 						<table:customData>
