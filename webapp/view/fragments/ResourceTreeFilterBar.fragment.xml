@@ -49,5 +49,8 @@
 		<smartFilterBar:layoutData>
 			<FlexItemData shrinkFactor="0"/>
 		</smartFilterBar:layoutData>
+		<smartFilterBar:content>
+			<Button text="button" />
+		</smartFilterBar:content>
 	</smartFilterBar:SmartFilterBar>
 </core:FragmentDefinition>

@@ -301,24 +301,40 @@ sap.ui.define([
 		 * @private
 		 */
         _triggerRefreshTree: function () {
-            var oTable = this._oDataTable,
-                aRows = oTable ? oTable.getAggregation("rows") : null,
-                oContext = aRows ? aRows[0].getBindingContext() : null,
-                oModel,
-                sPath;
-
+        	var oTreeTable = this._oDataTable,
+                oTreeBinding = oTreeTable.getBinding("rows"),
+                oPage = this.byId("idResourcePage");
+            var UIMinorVersion  = sap.ui.getCore().getConfiguration().getVersion().getMinor();
+            var bIsScrollBar = oTreeTable._getScrollExtension().getVerticalScrollbar().className.match("sapUiTableHidden");
+            //reset the changes
             this.resetChanges();
-            if (oTable && aRows && oContext) {
-                if (oContext) {
-                    oModel = oContext.getModel();
-                    sPath = oContext.getPath();
 
-                    oModel.setProperty(sPath + "/IsSelected", true); // changing the property in order trigger submit change
-                    oTable.getBinding("rows").submitChanges(); // submit change will refresh of tree according maintained parameters
-                } else {
-                    this._triggerFilterSearch();
-                }
+            if(oTreeBinding){
+                oTreeBinding._restoreTreeState().then(function(){
+                    if(parseInt(UIMinorVersion,10) > 52){
+                        // this check is used as a workaround for tree restoration for above 1.52.* version
+                        // Scrolled manually to fix the rendering 
+                        var oScrollContainer = oTreeTable._getScrollExtension();
+                        var iScrollIndex = oScrollContainer.getRowIndexAtCurrentScrollPosition();
+                        var bScrolled;
+                        if(iScrollIndex === 0){
+                            oTreeTable._getScrollExtension().updateVerticalScrollPosition(33);
+                            bScrolled = true;
+                        }else{
+                            bScrolled = oTreeTable._getScrollExtension().scrollVertically(1);
+                        }
+
+                        // If there is no scroll bar present
+                        if(bIsScrollBar){
+                            oPage.setHeaderExpanded(false);
+                            setTimeout(function(){
+                                oPage.setHeaderExpanded(true);
+                            },100);
+                        }
+                    }
+                });
             }
+
 
         },
 		/**
