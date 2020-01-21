@@ -32,11 +32,12 @@ sap.ui.define([
          * @param oEvent
          */
         open: function (oView, oEvent) {
-            var oDialog = this.getDialog();
+            var oDialog = this.getDialog(),
+            	oViewFilterSettings = oView.getController().oFilterConfigsController || null;
 			oDialog.setModel(new JSONModel({count:0}),"local");
 			
-            this._dateFrom = sap.ui.getCore().byId("dateRange1");
-            this._dateTo = sap.ui.getCore().byId("dateRange2");
+            this._dateFrom = oViewFilterSettings.getDateRange()[0];
+            this._dateTo = oViewFilterSettings.getDateRange()[1];
             this._oView = oView;
             this._component = oView.getController().getOwnerComponent();
             oDialog.addStyleClass(this._component.getContentDensityClass());
@@ -83,8 +84,8 @@ sap.ui.define([
         _filterAssignments: function (oBinding, oNodeData) {
             var sResource = oNodeData.ResourceGuid,
                 sResourceGroup = oNodeData.ResourceGroupGuid,
-                oStartDate = oNodeData.StartDate || this.formatter.date(this._dateFrom.getValue()),
-                oEndDate = oNodeData.EndDate || this.formatter.date(this._dateTo.getValue()),
+                oStartDate = oNodeData.StartDate || this._dateFrom,
+                oEndDate = oNodeData.EndDate || this._dateTo,
                 aFilters = [],
                 sSelectedView = this._component.getModel("viewModel").getProperty("/selectedHierarchyView");
 

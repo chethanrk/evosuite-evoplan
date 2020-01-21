@@ -149,7 +149,7 @@ sap.ui.define([
          */
         configureList: function (oEvent) {
             var oList, oBinding, aFilters,
-                oViewFilterSettings = this._component ? this._component.filterSettingsDialog : null,
+            	oViewFilterSettings = this._oView.getController().oFilterConfigsController || null,
                 sDateControl1,
                 sDateControl2,
                 oUserModel = this._component.getModel("user");
@@ -159,8 +159,8 @@ sap.ui.define([
                 sDateControl1 = oUserModel.getProperty("/GANT_START_DATE");
                 sDateControl2 = oUserModel.getProperty("/GANT_END_DATE");
             } else {
-                sDateControl1 = oViewFilterSettings.getFilterDateRange()[0].getValue();
-                sDateControl2 = oViewFilterSettings.getFilterDateRange()[1].getValue();
+                sDateControl1 = oViewFilterSettings.getDateRange()[0];
+                sDateControl2 = oViewFilterSettings.getDateRange()[1];
             }
 
             oList = Fragment.byId(this._id, "idResourceAvailList").getList();

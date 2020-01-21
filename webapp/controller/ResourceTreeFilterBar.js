@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/Token",
-	"sap/m/Tokenizer"
-], function (BaseController, formatter, Filter, FilterOperator, Token, Tokenizer) {
+	"sap/m/Tokenizer",
+    "sap/ui/core/Fragment"
+], function (BaseController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.ResourceTreeFilterBar", {
@@ -60,13 +61,18 @@ sap.ui.define([
 		 */
 		init: function (oView, sControlId) {
 			this._oView = oView;
-			var oFragment = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceTreeFilterBar", this);
+            this._component = this._oView.getController().getOwnerComponent();
 			var oLayout = oView.byId(sControlId);
-			this._oFilterBar = sap.ui.getCore().byId("resourceTreeFilterBar");
-			this._oVariantMangement = this._oFilterBar.getSmartVariant();
-
-			// connect filterbar to view (models, lifecycle)
-			oLayout.addContent(oFragment);
+			  // create fragment lazily
+            Fragment.load({
+                name: "com.evorait.evoplan.view.fragments.ResourceTreeFilterBar",
+                controller: this
+            }).then(function (content) {
+            	this._oFilterBar = sap.ui.getCore().byId("resourceTreeFilterBar");
+				this._oVariantMangement = this._oFilterBar.getSmartVariant();
+				// connect filterbar to view (models, lifecycle)
+				oLayout.addContent(content);
+            }.bind(this));
 		},
 
 		/**
@@ -164,7 +170,10 @@ sap.ui.define([
 		 */
 		onChangeTimeView: function (oEvent) {
 			var oParams = oEvent.getParameters(),
-				oItem = oParams.selectedItem;
+				oItem = oParams.selectedItem,
+                oViewModel = this._component.getModel("viewModel");
+				
+				oViewModel.setProperty("/selectedHierarchyView",oItem.getKey());
 			this._setDateFilterControls(oItem.getKey());
             this._updateCustomFilterData();
 		},

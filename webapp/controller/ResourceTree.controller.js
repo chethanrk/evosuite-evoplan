@@ -351,7 +351,7 @@ sap.ui.define([
                 this.selectedResources = [];
 				this.byId("showPlanCalendar").setEnabled(false);
                 this.byId("idButtonreassign").setEnabled(false);
-                this.byId("idButtonunassign").setEnabled(false)
+                this.byId("idButtonunassign").setEnabled(false);
                 this.byId("idButtonCreUA").setEnabled(false);
 		},
         /**
@@ -389,14 +389,14 @@ sap.ui.define([
          * On click on collapse all the tree nodes will be collapsed to root.
          * @param oEvent
          */
-        onClickExpandCollapse : function (oEvent) {
+	        onClickExpandCollapse : function (oEvent) {
             var oButton = oEvent.getSource(),
                 oCustomData = oButton.getCustomData();
 
-            if(oCustomData[0].getValue() === "EXPAND" && this._oDroppableTable){
-                this._oDroppableTable.expandToLevel(1);
+            if(oCustomData[0].getValue() === "EXPAND" && this._oDataTable){
+                this._oDataTable.expandToLevel(1);
             }else{
-                this._oDroppableTable.collapseAll();
+                this._oDataTable.collapseAll();
             }
         }
     });

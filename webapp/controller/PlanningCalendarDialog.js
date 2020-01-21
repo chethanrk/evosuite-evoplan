@@ -70,13 +70,8 @@ sap.ui.define([
          * and merge into one json model for planning calendar
          * @private
          */
-        _setCalendarModel: function() {
-            var aUsers = [],
-                aResourceFilters = [],
-                aActualFilters = [],
-                oModel = this._oView ? this._oView.getModel() : null,
-                // oResourceBundle = this._oResourceBundle,
-                oViewFilterSettings = this._oView.getController().oFilterConfigsController || null,
+        _setCalendarModel: function () {
+            var oModel = this._oView ? this._oView.getModel() : null,
                 oUserModel = this._oView.getModel("user");
 
             if (!oModel) {
@@ -131,7 +126,7 @@ sap.ui.define([
                 aActualFilters = [],
                 oModel = this._oView ? this._oView.getModel() : null,
                 // oResourceBundle = this._oResourceBundle,
-                oViewFilterSettings = this._component ? this._component.filterSettingsDialog : null,
+                oViewFilterSettings = this._oView.getController().oFilterConfigsController || null,
                 sDateControl1,
                 sDateControl2,
                 oUserModel = this._component.getModel("user");
@@ -148,15 +143,13 @@ sap.ui.define([
                     aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
                 }
             }
-
-            if(oViewFilterSettings){
-                var dateRangeValues = oViewFilterSettings.getDateRange();
-                var sDateControl1 = dateRangeValues[0];
-                var sDateControl2 = dateRangeValues[1];
-            }else{
-                var selectedTimeFormat = formatter.getResourceFormatByKey("TIMENONE");
-                var sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin());
-                var sDateControl2 = this.formatter.date(selectedTimeFormat.getDateEnd());
+            if (this._mParameters.bFromGantt) {
+                // if we decide to keep different date range for demand view and gantt view
+                sDateControl1 = oUserModel.getProperty("/GANT_START_DATE");
+                sDateControl2 = oUserModel.getProperty("/GANT_END_DATE");
+            } else {
+                 sDateControl1 = oViewFilterSettings.getDateRange()[0];
+                 sDateControl2 = oViewFilterSettings.getDateRange()[1];
             }
 
 
@@ -638,7 +631,7 @@ sap.ui.define([
             }
         },
         /**
-         * Unselecting selected column
+         * Unselecting selected column 
          */
         onBeforeClose : function (oEvent){
         	var oSelected = this._oPlanningCalendar.getSelectedRows();
