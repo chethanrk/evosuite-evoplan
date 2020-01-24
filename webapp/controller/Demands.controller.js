@@ -17,6 +17,8 @@ sap.ui.define([
 	return BaseController.extend("com.evorait.evoplan.controller.Demands", {
 
 		formatter: formatter,
+		
+		_bFirstTime : true,
 
 		/* =========================================================== */
 		/* lifecycle methods                                           */
@@ -359,9 +361,10 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerDemandFilter: function (sChanel, sEvent, oData) {
-			if (sEvent === "refreshDemandTable") {
+			if (sEvent === "refreshDemandTable" && !this._bFirstTime) {
 				this.byId("draggableList").rebindTable();
 			}
+			this._bFirstTime = false;
 		},
 		/**
 		 * Register the drag and drop again

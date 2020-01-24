@@ -337,7 +337,7 @@
 					"viewName": "MessageCockpit",
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",
-					"viewLevel": 4
+					"viewLevel": 3
 				},
 				"ganttDemandDetails": {
 					"viewType": "XML",
