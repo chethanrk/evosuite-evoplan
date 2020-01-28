@@ -1,8 +1,8 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
 	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<smartFilterBar:SmartFilterBar id="resourceTreeFilterBar" class="treeTableFilterBar" persistencyKey="{viewModel>/persistencyKeyTree}"
-		considerSelectionVariants="true" entitySet="{viewModel>/treeSet}" enableBasicSearch="false" liveMode="true" filterContainerWidth="10rem"
-		showGoOnFB="false" showRestoreButton="false" filterBarExpanded="false" initialized="onInitialized" beforeVariantFetch="onBeforeVariantFetch"
+		considerSelectionVariants="true" entitySet="{viewModel>/treeSet}" enableBasicSearch="false" liveMode="true" showGoOnFB="false"
+		showRestoreButton="false" filterBarExpanded="false" initialized="onInitialized" beforeVariantFetch="onBeforeVariantFetch"
 		afterVariantLoad="onAfterVariantLoad" filterChange="onFilterBarChanged" containerQuery="true">
 		<smartFilterBar:controlConfiguration>
 			<smartFilterBar:ControlConfiguration key="Description" label="{i18n>xtit.search}" visibleInAdvancedArea="true" width="100%" groupId="_BASIC"
@@ -32,14 +32,14 @@
 					</MultiComboBox>
 				</smartFilterBar:customControl>
 			</smartFilterBar:ControlConfiguration>
-			<smartFilterBar:ControlConfiguration key="StartDate"  controlType="date" visibleInAdvancedArea="false" width="100%"
-				groupId="_BASIC" index="3" mandatory="mandatory">
+			<smartFilterBar:ControlConfiguration key="StartDate" controlType="date" visibleInAdvancedArea="false" width="100%" groupId="_BASIC"
+				index="3" mandatory="mandatory">
 				<smartFilterBar:customControl>
-					<DatePicker width="100%" valueFormat="yyyy-MM-dd" change="onCustomFilterChange" />
+					<DatePicker width="100%" valueFormat="yyyy-MM-dd" change="onCustomFilterChange"/>
 				</smartFilterBar:customControl>
 			</smartFilterBar:ControlConfiguration>
-			<smartFilterBar:ControlConfiguration key="EndDate" controlType="date" visibleInAdvancedArea="false" width="100%" groupId="_BASIC"
-				index="4" mandatory="mandatory">
+			<smartFilterBar:ControlConfiguration key="EndDate" controlType="date" visibleInAdvancedArea="false" width="100%" groupId="_BASIC" index="4"
+				mandatory="mandatory">
 				<smartFilterBar:customControl>
 					<DatePicker width="100%" valueFormat="yyyy-MM-dd" change="onCustomFilterChange"/>
 				</smartFilterBar:customControl>

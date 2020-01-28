@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/m/Token",
 	"sap/m/Tokenizer",
-    "sap/ui/core/Fragment"
+	"sap/ui/core/Fragment"
 ], function (BaseController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment) {
 	"use strict";
 
@@ -21,6 +21,8 @@ sap.ui.define([
 		_oView: null,
 
 		_oFilterBar: null,
+
+		_isInitalizedProm: null,
 
 		_oCustomFilterData: {
 			_CUSTOM: {}
@@ -61,18 +63,32 @@ sap.ui.define([
 		 */
 		init: function (oView, sControlId) {
 			this._oView = oView;
-            this._component = this._oView.getController().getOwnerComponent();
+			this._component = this._oView.getController().getOwnerComponent();
 			var oLayout = oView.byId(sControlId);
-			  // create fragment lazily
-            Fragment.load({
-                name: "com.evorait.evoplan.view.fragments.ResourceTreeFilterBar",
-                controller: this
-            }).then(function (content) {
-            	this._oFilterBar = sap.ui.getCore().byId("resourceTreeFilterBar");
-				this._oVariantMangement = this._oFilterBar.getSmartVariant();
-				// connect filterbar to view (models, lifecycle)
-				oLayout.addContent(content);
-            }.bind(this));
+
+			//use global promise for getting when filterbar was fully initalized
+			this._isInitalizedProm = new Promise(function (resolve, reject) {
+				// create fragment lazily
+				Fragment.load({
+					name: "com.evorait.evoplan.view.fragments.ResourceTreeFilterBar",
+					controller: this
+				}).then(function (content) {
+					this._oFilterBar = sap.ui.getCore().byId("resourceTreeFilterBar");
+					this._oVariantMangement = this._oFilterBar.getSmartVariant();
+
+					//Filterbar is now official initialized
+					this._oFilterBar.attachInitialized(function (oEvent) {
+						this.onInitialized(oEvent);
+						resolve();
+					}.bind(this));
+					// connect filterbar to view (models, lifecycle)
+					oLayout.addContent(content);
+				}.bind(this));
+			}.bind(this));
+		},
+
+		getInitalizedPromise: function () {
+			return this._isInitalizedProm;
 		},
 
 		/**
@@ -90,7 +106,7 @@ sap.ui.define([
 		 * event when SmartFilterBar was initialized
 		 * set date range based on selected NodeType key
 		 */
-		onInitialized: function () {
+		onInitialized: function (oEvent) {
 			var timeViewCtrl = this._oFilterBar.getControlByKey(this._aCustomFilters.viewType.origin);
 			if (timeViewCtrl) {
 				this._setDateFilterControls(timeViewCtrl.getSelectedKey());
@@ -121,15 +137,17 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onBeforeVariantFetch: function (oEvent) {
-			if (this._oVariantMangement.getSelectionKey() === "*standard*") {
-				this._setDateFilterControls(this._aCustomFilters.viewType.default);
+			this.getInitalizedPromise().then(function () {
+				if (this._oVariantMangement.getSelectionKey() === "*standard*") {
+					this._setDateFilterControls(this._aCustomFilters.viewType.default);
+					this._updateCustomFilterData();
+					this._oFilterBar.setFilterData(this._oCustomFilterData);
+					this._triggerSearch();
+					return;
+				}
 				this._updateCustomFilterData();
 				this._oFilterBar.setFilterData(this._oCustomFilterData);
-				this._triggerSearch();
-				return;
-			}
-			this._updateCustomFilterData();
-			this._oFilterBar.setFilterData(this._oCustomFilterData);
+			}.bind(this));
 		},
 
 		/**
@@ -171,11 +189,11 @@ sap.ui.define([
 		onChangeTimeView: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oItem = oParams.selectedItem,
-                oViewModel = this._component.getModel("viewModel");
-				
-				oViewModel.setProperty("/selectedHierarchyView",oItem.getKey());
+				oViewModel = this._component.getModel("viewModel");
+
+			oViewModel.setProperty("/selectedHierarchyView", oItem.getKey());
 			this._setDateFilterControls(oItem.getKey());
-            this._updateCustomFilterData();
+			this._updateCustomFilterData();
 		},
 
 		/**
@@ -310,6 +328,11 @@ sap.ui.define([
 						this._oCustomFilterData._CUSTOM[sFilterKey] = oCtrl.getSelectedKeys();
 					} catch (e) { /*do nothing*/ }
 				}
+			}
+			//update counter for filters
+			//is internal function so just proof if this function is still there
+			if (this.getFilterBar()._updateToolbarText) {
+				this.getFilterBar()._updateToolbarText();
 			}
 		},
 

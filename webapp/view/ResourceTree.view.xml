@@ -6,25 +6,25 @@
 		<f:header>
 			<f:DynamicPageHeader id="resourceTreePageHeader" pinnable="true">
 				<f:content>
-					<l:VerticalLayout id="resourceTreeFilterBarFragment" width="100%">
-					
-					</l:VerticalLayout>
-					<Toolbar id="idResToolbar">
-							<Button id="idExpandAll" icon="sap-icon://expand-all" press="onClickExpandCollapse" type="Transparent" tooltip="{i18n>xbut.expandAll}">
-								<customData>
-									<core:CustomData key="Function" value="EXPAND"/>
-								</customData>
-							</Button>
-							<Button id="idColapseAll" icon="sap-icon://collapse-all" press="onClickExpandCollapse" type="Transparent" tooltip="{i18n>xbut.collapseAll}">
-								<customData>
-									<core:CustomData key="Function" value="COLLAPSE"/>
-								</customData>
-							</Button>
-							<ToolbarSpacer/>
+					<l:VerticalLayout id="resourceTreeFilterBarFragment" width="100%"></l:VerticalLayout>
+					<FlexBox id="idResToolbar" alignItems="Start" justifyContent="SpaceBetween">
+						<items>
+							<HBox>
+								<Button id="idExpandAll" icon="sap-icon://expand-all" press="onClickExpandCollapse" type="Transparent" tooltip="{i18n>xbut.expandAll}">
+									<customData>
+										<core:CustomData key="Function" value="EXPAND"/>
+									</customData>
+								</Button>
+								<Button id="idColapseAll" icon="sap-icon://collapse-all" press="onClickExpandCollapse" type="Transparent" tooltip="{i18n>xbut.collapseAll}">
+									<customData>
+										<core:CustomData key="Function" value="COLLAPSE"/>
+									</customData>
+								</Button>
+							</HBox>
 							<CheckBox id="idCapaCheck" text="{i18n>xtit.capacity}" selected="{viewModel>/capacityPlanning}"
 								enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }" select="onSelectCapacity" visible="{user>/CAPACITY_ENABLED}"/>
-					</Toolbar>
-					
+						</items>
+					</FlexBox>
 				</f:content>
 			</f:DynamicPageHeader>
 		</f:header>
