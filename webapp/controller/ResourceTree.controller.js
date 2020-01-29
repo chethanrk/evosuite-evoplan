@@ -41,6 +41,7 @@ sap.ui.define([
 
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
 			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
+			this.pIsFilterBarInitalized = this.oFilterConfigsController.getInitalizedPromise();
 
 			//eventbus of assignemnt handling
 			var eventBus = sap.ui.getCore().getEventBus();
@@ -183,7 +184,8 @@ sap.ui.define([
 			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true);
 		},
 		/**
-		 * Setting custom filters to the table everytime
+		 * bind resource tree table only when filterbar was initalized
+		 * @param oEvent
 		 */
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
@@ -198,6 +200,7 @@ sap.ui.define([
 			// setting filters in local model to access in assignTree dialog.
 			this.getModel("viewModel").setProperty("/resourceFilterView", aFilter);
 			oBinding.filters = [new Filter(aFilter, true)];
+
 		},
 
 		/**
@@ -309,17 +312,18 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree: function () {
-			var oTreeTable = this._oDataTable,
-			oTreeBinding = oTreeTable.getBinding("rows");
+			this.pIsFilterBarInitalized.then(function () {
+				var oTreeTable = this._oDataTable,
+					oTreeBinding = oTreeTable.getBinding("rows");
 
-			//reset the changes
-			this.resetChanges();
-
-			if (oTreeBinding && !this._bFirsrTime) {
-				this.mTreeState = this._getTreeState();
-				oTreeBinding.refresh();
-			}
-			this._bFirsrTime = false;
+				//reset the changes
+				this.resetChanges();
+				if (oTreeBinding && !this._bFirsrTime) {
+					this.mTreeState = this._getTreeState();
+					oTreeBinding.refresh();
+				}
+				this._bFirsrTime = false;
+			}.bind(this));
 		},
 		/**
 		 * Resets the selected resource if selected  
@@ -432,6 +436,6 @@ sap.ui.define([
 			} else {
 				this.mTreeState = {};
 			}
-		},
+		}
 	});
 });
