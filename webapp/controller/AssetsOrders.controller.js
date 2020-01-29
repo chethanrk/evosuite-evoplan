@@ -30,9 +30,9 @@ sap.ui.define([
 			var iOriginalBusyDelay,
 				oViewModel = this.getOwnerComponent().getModel("viewModel");
 
-			var eventBus = sap.ui.getCore().getEventBus();
+			this._eventBus = sap.ui.getCore().getEventBus();
 			//event registration for refreshing the context in case any change in the view
-			eventBus.subscribe("BaseController", "refreshAssetCal", this._triggerAssetFilter, this);
+			this._eventBus.subscribe("BaseController", "refreshAssetCal", this._triggerAssetFilter, this);
 			this.getRouter().getRoute("assetManager").attachPatternMatched(this._onObjectMatched, this);
 			// Store original busy indicator delay, so it can be restored later on
 			iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
@@ -93,11 +93,11 @@ sap.ui.define([
 		 * @memberOf com.evorait.evoplan.view.AssetsOrders
 		 */
 		onExit: function () {
-			if (this._infoDialog)
+			if (this._infoDialog){
 				this._infoDialog.destroy();
-			// if (this._oMessagePopover) {
-			// 	this._oMessagePopover.destroy();
-			// }
+			}
+			this._eventBus.unsubscribe("BaseController", "refreshAssetCal");
+			
 			this._selectedAsset = undefined;
 			this._aSelectedDemands = [];
 		},

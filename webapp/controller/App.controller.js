@@ -13,16 +13,16 @@ sap.ui.define([
         _firstTimeD: false,
 
 		onInit: function () {
-			var eventBus = sap.ui.getCore().getEventBus();
+			this._eventBus = sap.ui.getCore().getEventBus();
 			
 			//Event are subscription Demand assignment and change status of demand
-			eventBus.subscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
-			eventBus.subscribe("StatusSelectDialog", "changeStatusDemand", this._triggerSaveDemandStatus, this);
-			eventBus.subscribe("AssignInfoDialog", "updateAssignment", this._triggerUpdateAssign, this);
-			eventBus.subscribe("AssignTreeDialog", "bulkReAssignment", this._triggerUpdateAssign, this);
-			eventBus.subscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
-			eventBus.subscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
-			eventBus.subscribe("PlanningCalendarDialog", "saveAllAssignments", this._triggerSaveAllAssignments, this);
+			this._eventBus.subscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
+			this._eventBus.subscribe("StatusSelectDialog", "changeStatusDemand", this._triggerSaveDemandStatus, this);
+			this._eventBus.subscribe("AssignInfoDialog", "updateAssignment", this._triggerUpdateAssign, this);
+			this._eventBus.subscribe("AssignTreeDialog", "bulkReAssignment", this._triggerUpdateAssign, this);
+			this._eventBus.subscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
+			this._eventBus.subscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
+			this._eventBus.subscribe("PlanningCalendarDialog", "saveAllAssignments", this._triggerSaveAllAssignments, this);
 
 			var oViewModel,
 				fnSetAppNotBusy,
@@ -179,17 +179,12 @@ sap.ui.define([
 		 */
 		_onObjectMatched: function (oEvent) {
 			var sRoute = oEvent.getParameter("name");
-			var eventBus = sap.ui.getCore().getEventBus();
-			// if(!this.getModel("viewModel").getProperty("/first_load")){
-             //    this.getModel("viewModel").setProperty("/first_load",true);
-             //    return;
-			// }
 			if(sRoute === "gantt"){
-                    eventBus.publish("BaseController", "refreshGanttChart", {});
-                    eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+                    this._eventBus.publish("BaseController", "refreshGanttChart", {});
+                    this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}else{
-                    eventBus.publish("BaseController", "refreshTreeTable", {});
-                    eventBus.publish("BaseController", "refreshDemandTable", {});
+                    this._eventBus.publish("BaseController", "refreshTreeTable", {});
+                    this._eventBus.publish("BaseController", "refreshDemandTable", {});
 			}
 
 		},
@@ -210,9 +205,8 @@ sap.ui.define([
 		 * Registering the event when resized the splitter
 		 */
 		onResize: function () {
-			var eventBus = sap.ui.getCore().getEventBus();
-			eventBus.publish("App", "RegisterDrop", {});
-			eventBus.publish("App", "RegisterDrag", {});
+			this._eventBus.publish("App", "RegisterDrop", {});
+			this._eventBus.publish("App", "RegisterDrag", {});
 		},
 		/**
 		 * Event to trigger Update Assignment
@@ -263,8 +257,22 @@ sap.ui.define([
 		 */
 		onMessagePopoverPress: function (oEvent) {
 			this._oMessagePopover.openBy(oEvent.getSource());
+		},
+		
+		/**
+		 * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
+		 * @memberOf com.evorait.evoplan.view.Assets
+		 */
+		onExit: function() {
+			//Event are subscription Demand assignment and change status of demand
+			this._eventBus.unsubscribe("AssignTreeDialog", "assignSelectedDemand");
+			this._eventBus.unsubscribe("StatusSelectDialog", "changeStatusDemand");
+			this._eventBus.unsubscribe("AssignInfoDialog", "updateAssignment");
+			this._eventBus.unsubscribe("AssignTreeDialog", "bulkReAssignment");
+			this._eventBus.unsubscribe("AssignInfoDialog", "deleteAssignment");
+			this._eventBus.unsubscribe("AssignActionsDialog", "bulkDeleteAssignment");
+			this._eventBus.unsubscribe("PlanningCalendarDialog", "saveAllAssignments");
 		}
-
 	});
 
 });

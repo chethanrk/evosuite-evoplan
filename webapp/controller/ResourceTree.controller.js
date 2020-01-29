@@ -182,7 +182,9 @@ sap.ui.define([
 		onPressUnassign: function (oEvent) {
 			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true);
 		},
-
+		/**
+		 * Setting custom filters to the table everytime
+		 */
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams;
@@ -193,6 +195,7 @@ sap.ui.define([
 				oBinding.parameters.restoreTreeStateAfterChange = true;
 			}
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
+			// setting filters in local model to access in assignTree dialog.
 			this.getModel("viewModel").setProperty("/resourceFilterView", aFilter);
 			oBinding.filters = [new Filter(aFilter, true)];
 		},
@@ -204,9 +207,6 @@ sap.ui.define([
 			if (this.getOwnerComponent().planningCalendarDialog) {
 				this.getOwnerComponent().planningCalendarDialog.getDialog().destroy();
 			}
-			// if (this.getOwnerComponent().filterSettingsDialog) {
-			//     this.getOwnerComponent().filterSettingsDialog.getDialog().destroy();
-			// }
 		},
 
 		/* =========================================================== */
@@ -309,42 +309,8 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree: function () {
-			/*	var oTreeTable = this._oDataTable,
-					oTreeBinding = oTreeTable.getBinding("rows"),
-					oPage = this.byId("idResourcePage");
-				var UIMinorVersion = sap.ui.getCore().getConfiguration().getVersion().getMinor();
-				var bIsScrollBar = oTreeTable._getScrollExtension().getVerticalScrollbar().className.match("sapUiTableHidden");
-				//reset the changes
-				this.resetChanges();
-
-				if (oTreeBinding) {
-					oTreeBinding._restoreTreeState().then(function () {
-						if (parseInt(UIMinorVersion, 10) > 52) {
-							// this check is used as a workaround for tree restoration for above 1.52.* version
-							// Scrolled manually to fix the rendering 
-							var oScrollContainer = oTreeTable._getScrollExtension();
-							var iScrollIndex = oScrollContainer.getRowIndexAtCurrentScrollPosition();
-							var bScrolled;
-							if (iScrollIndex === 0) {
-								oTreeTable._getScrollExtension().updateVerticalScrollPosition(33);
-								bScrolled = true;
-							} else {
-								bScrolled = oTreeTable._getScrollExtension().scrollVertically(1);
-							}
-
-							// If there is no scroll bar present
-							if (bIsScrollBar) {
-								oPage.setHeaderExpanded(false);
-								setTimeout(function () {
-									oPage.setHeaderExpanded(true);
-								}, 100);
-							}
-						}
-					});
-				}*/
-
 			var oTreeTable = this._oDataTable,
-				oTreeBinding = oTreeTable.getBinding("rows");
+			oTreeBinding = oTreeTable.getBinding("rows");
 
 			//reset the changes
 			this.resetChanges();
@@ -354,7 +320,6 @@ sap.ui.define([
 				oTreeBinding.refresh();
 			}
 			this._bFirsrTime = false;
-
 		},
 		/**
 		 * Resets the selected resource if selected  

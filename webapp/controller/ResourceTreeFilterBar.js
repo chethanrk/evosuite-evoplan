@@ -137,9 +137,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onFilterBarChanged: function (oEvent) {
-			/*var oParams = oEvent.getParameters();
-			if (oParams.getId() === "change") {
-			}*/
+			this._updateCustomFilterData();
 		},
 
 		/**
