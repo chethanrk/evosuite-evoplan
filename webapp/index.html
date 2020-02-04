@@ -12,46 +12,16 @@
 	<script id="sap-ui-bootstrap"
 			src="https://sapui5.hana.ondemand.com/1.60.22/resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_belize"
+			data-sap-ui-resourceroots='{"com.evorait.evoplan": "./"}'
 			data-sap-ui-compatVersion="edge"
-			data-sap-ui-resourceroots='{"com.evorait.evoplan": "."}'
-			data-sap-ui-frameOptions="trusted"
-			data-sap-ui-language="en"
-			data-sap-ui-preload="async">
+			data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
+			data-sap-ui-async="true"
+			data-sap-ui-frameOptions="trusted">
 	</script>
-
-
-	<script>
-       
-		
-		function startApp() {
-		
-			
-			sap.ui.getCore().attachInit(function () {
-				sap.ui.require([
-					"sap/ui/core/ComponentContainer",
-					"sap/ui/core/Component",
-				], function (ComponentContainer, Component) {
-					sap.ui.component({
-						name: "com.evorait.evoplan",
-						async: true
-					}).then(function(oComponent) {
-							new ComponentContainer({
-								component: oComponent,
-								height: "100%",
-                        		width: "100%"
-							}).placeAt("content");
-					});
-				});
-			});
-		}
-
-        startApp();
-			
-	</script>
-
 </head>
 
 <!-- UI Content -->
-<body class="sapUiBody" id="content">
+<body class="sapUiBody">
+		<div data-sap-ui-component data-name="com.evorait.evoplan" data-id="container" data-settings='{"id" : "evoplan"}'></div>
 </body>
 </html>

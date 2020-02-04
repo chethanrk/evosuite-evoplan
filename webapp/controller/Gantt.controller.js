@@ -12,7 +12,7 @@ sap.ui.define([
 ], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, Popup, Utility, CoordinateUtils, AxisTime) {
     "use strict";
 
-    /*AxisTime.prototype.getNowLabel = function () {
+    AxisTime.prototype.getNowLabel = function () {
         var date = new Date();
         var utcDate = new Date(date.getTime());
         var value = this.timeToView(utcDate);
@@ -22,7 +22,7 @@ sap.ui.define([
             "date": localDate,
             "value": Math.round(value)
         }];
-    };*/
+    };
 
     return AssignmentActionsController.extend("com.evorait.evoplan.controller.Gantt", {
 

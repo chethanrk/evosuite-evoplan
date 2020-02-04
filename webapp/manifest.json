@@ -1,8 +1,6 @@
 {
-	"_version": "1.9.0",
-	"start_url": "index.html",
+	"_version": "1.12.0",
 	"sap.app": {
-		"_version": "1.3.0",
 		"id": "com.evorait.evoplan",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
@@ -10,6 +8,10 @@
 		"shortTitle": "{{shorttitle}}",
 		"info": "{{info}}",
 		"description": "{{appDescription}}",
+		"sourceTemplate": {
+			"id": "ui5template.basicSAPUI5ApplicationProject",
+			"version": "1.40.12"
+		},
 		"tags": {
 			"keywords": [
 				"{{xfld.keyWord1}}",
@@ -66,7 +68,6 @@
 		"ach": "CA"
 	},
 	"sap.ui": {
-		"_version": "1.3.0",
 		"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://task",
@@ -85,42 +86,30 @@
 			"sap_belize",
 			"sap_belize_plus",
 			"sap_belize_hcb",
-			"sap_belize_hcw"
+			"sap_belize_hcw",
+			"sap_fiori_3"
 		]
 	},
 	"sap.ui5": {
-		"_version": "1.2.0",
+		"flexEnabled": false,
 		"config": {
 			"fullWidth": true
 		},
 		"rootView": {
 			"viewName": "com.evorait.evoplan.view.App",
 			"type": "XML",
-			"id": "app"
+			"id": "app",
+			"async": true
 		},
 		"dependencies": {
 			"minUI5Version": "1.60.0",
 			"libs": {
-				"sap.ui.core": {
-					"minVersion": "1.60.0",
-					"lazy": true
-				},
-				"sap.m": {
-					"minVersion": "1.60.0",
-					"lazy": true
-				},
-				"sap.uxap": {
-					"minVersion": "1.60.0",
-					"lazy": true
-				},
-				"sap.ui.comp": {
-					"minVersion": "1.60.0",
-					"lazy": true
-				},
-				"sap.ui.unified": {
-					"minVersion": "1.60.0",
-					"lazy": true
-				}
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.uxap": {},
+				"sap.ui.comp": {},
+				"sap.ui.unified": {},
+				"sap.gantt": {}
 			}
 		},
 		"contentDensities": {
@@ -165,9 +154,9 @@
 				"viewPath": "com.evorait.evoplan.view",
 				"controlAggregation": "pages",
 				"controlId": "appPanel",
+				"clearControlAggregation": false,
 				"bypassed": {
 					"target": [
-						"resourceTree",
 						"empty"
 					]
 				},
@@ -315,15 +304,8 @@
 					"viewType": "XML",
 					"viewName": "EmptyPage",
 					"viewLevel": 3,
-					"controlId": "rightPanel",
-					"parent": "splitHorNavigation"
-				},
-				"notFound": {
-					"viewType": "XML",
-					"viewName": "NotFound",
-					"viewLevel": 3,
-					"controlId": "rightPanel",
-					"parent": "splitHorNavigation"
+					"parent": "fullNavigation",
+					"controlId": "fullPanel"
 				},
 				"weeklyPlanner": {
 					"viewType": "XML",
@@ -337,7 +319,7 @@
 					"viewName": "MessageCockpit",
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",
-					"viewLevel": 3
+					"viewLevel": 4
 				},
 				"ganttDemandDetails": {
 					"viewType": "XML",
@@ -351,10 +333,6 @@
 	},
 	"sap.platform.hcp": {
 		"uri": "webapp",
-		"_version": "1.1.0"
-	},
-	"sap.platform.abap": {
-		"uri": "/sap/bc/ui5_ui5/evora/ep_ui5/webapp",
 		"_version": "1.1.0"
 	}
 }
