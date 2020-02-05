@@ -118,7 +118,7 @@
 						<ToolbarLayoutData shrinkable="true"/>
 					</layoutData>
 				</Button>
-				<Button id="showPlanCalendar" text="{i18n>xbut.showPlanningCal}" tooltip="{i18n>xbut.showPlanningCal}" icon="sap-icon://calendar"
+				<Button id="showPlanCalendar" visible="{user>/ENABLE_PLANNING_CALENDAR}" text="{i18n>xbut.showPlanningCal}" tooltip="{i18n>xbut.showPlanningCal}" icon="sap-icon://calendar"
 						press="onPressShowPlanningCal" enabled="false" busy="{viewModel>/calendarBusy}" busyIndicatorDelay="0">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="true"/>
