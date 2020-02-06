@@ -65,6 +65,8 @@ sap.ui.define([
 			this._oView = oView;
 			this._component = this._oView.getController().getOwnerComponent();
 			var oLayout = oView.byId(sControlId);
+			this._oDroppableTable = oView.byId("droppableTable");
+			this._oDataTable = this._oDroppableTable.getTable();
 
 			//use global promise for getting when filterbar was fully initalized
 			this._isInitalizedProm = new Promise(function (resolve, reject) {
@@ -155,7 +157,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onFilterBarChanged: function (oEvent) {
-			//this._updateCustomFilterData();
+			// this._oDataTable.setBusy(true);
 		},
 
 		/**
@@ -447,7 +449,8 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerSearch: function () {
-			this._oFilterBar.fireSearch();
+			this._oFilterBar.search();
+			// this._oDataTable.getBinding("rows").refresh();
 		},
 
 		/**

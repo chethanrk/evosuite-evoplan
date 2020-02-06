@@ -160,7 +160,9 @@ sap.ui.define([
         onCloseDialog : function () {
             this.getDialog().close();
         },
-
+		/**
+		 * Open's dialog as per event channel to list the resources to reassign 
+		 */
         _triggerOpenDialog: function (sChanel, sEvent, oData) {
             if(sChanel === "AssignInfoDialog" && sEvent === "selectAssign"){
                 this.open(oData.oView, oData.isReassign, oData.parameters);

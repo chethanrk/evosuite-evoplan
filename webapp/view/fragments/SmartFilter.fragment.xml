@@ -5,10 +5,11 @@
 
     <smartFilterBar:SmartFilterBar
             id="listReportFilter"
-            entityType="{viewModel>/subFilterEntity}"
+            entitySet="{viewModel>/subTableSet}"
             persistencyKey="{viewModel>/persistencyKeyTable}"
             enableBasicSearch="false"
             useToolbar="true"
+            liveMode="true"
             considerSelectionVariants="true"
             showClearButton="true"
             showClearOnFB="true">

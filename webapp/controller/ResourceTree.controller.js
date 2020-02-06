@@ -70,6 +70,7 @@ sap.ui.define([
 					_this._jDroppable(_this);
 				}
 			};
+			
 		},
 		/**
 		 * Register's the DnD
@@ -83,7 +84,14 @@ sap.ui.define([
 		 * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.
 		 * This hook is the same one that SAPUI5 controls get after being rendered.
 		 * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.ResourceTree **/
-		onAfterRendering: function (oEvent) {},
+		onAfterRendering: function (oEvent) {
+			/*this._oDataTable.getBinding("rows").attachDataRequested(function(){
+				this._oDataTable.setBusy(true);
+			}.bind(this));
+			this._oDataTable.getBinding("rows").attachDataReceived(function(){
+				this._oDataTable.setBusy(false);
+			}.bind(this));*/
+		},
 
 		/**
 		 * initial draggable after every refresh of table
@@ -98,7 +106,6 @@ sap.ui.define([
 				}
 				this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
 			} else {
-				//this.onTreeUpdateStarted();
 				this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
 			}
 		},
@@ -194,7 +201,6 @@ sap.ui.define([
 			if (!this.isLoaded) {
 				this.isLoaded = true;
 				oBinding.parameters.numberOfExpandedLevels = 1;
-				oBinding.parameters.restoreTreeStateAfterChange = true;
 			}
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			// setting filters in local model to access in assignTree dialog.

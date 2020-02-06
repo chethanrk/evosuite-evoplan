@@ -36,9 +36,9 @@ sap.ui.define([
 			// this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
 			// this.getView().addDependent(this._oMessagePopover);
 
-			var eventBus = sap.ui.getCore().getEventBus();
-			eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
-			eventBus.subscribe("App", "RegisterDrag", this._registerDnD, this);
+			this._eventBus = sap.ui.getCore().getEventBus();
+			this._eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
+			this._eventBus.subscribe("App", "RegisterDrag", this._registerDnD, this);
 
 			this.getRouter().getRoute("demands").attachPatternMatched(this._onObjectMatched, this);
 
@@ -177,9 +177,8 @@ sap.ui.define([
 			if (this._infoDialog) {
 				this._infoDialog.destroy();
 			}
-			// if (this._oMessagePopover) {
-			// 	this._oMessagePopover.destroy();
-			// }
+			this._eventBus.unsubscribe("BaseController", "refreshDemandTable");
+			this._eventBus.unsubscribe("App", "RegisterDrag");
 		},
 
 		/* =========================================================== */

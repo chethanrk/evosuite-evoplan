@@ -31,9 +31,9 @@ sap.ui.define([
 			var iOriginalBusyDelay,
 				oViewModel = this.getOwnerComponent().getModel("viewModel");
 
-			var eventBus = sap.ui.getCore().getEventBus();
+			this._eventBus = sap.ui.getCore().getEventBus();
 			//event registration for refreshing the context in case any change in the view
-			eventBus.subscribe("BaseController", "refreshDemandOverview", this._triggerRefreshDemand, this);
+			this._eventBus.subscribe("BaseController", "refreshDemandOverview", this._triggerRefreshDemand, this);
 
 			this.getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
 			this.getRouter().getRoute("assetDemandDetail").attachPatternMatched(this._onObjectMatched, this);
@@ -132,7 +132,9 @@ sap.ui.define([
 				}
 			});
 		},
-
+		/**
+		 * When ever binding changes the view should be busy and Bindings are refreshed. 
+		 */
 		_onBindingChange: function () {
 			var oView = this.getView(),
 				oViewModel = this.getModel("viewModel"),
@@ -198,7 +200,6 @@ sap.ui.define([
 		 */
 		onClickStatus: function (oEvent) {
 			var oSource = oEvent.getSource(),
-				eventBus = sap.ui.getCore().getEventBus(),
 				sBindingPath = oEvent.getSource().getBinding("visible").getPath(),
 				sFunctionKey = sBindingPath.slice(sBindingPath.indexOf("_") + 1),
 				oContext = oSource.getBindingContext(),
@@ -210,7 +211,7 @@ sap.ui.define([
 					oData: oData
 				}];
 
-			eventBus.publish("StatusSelectDialog", "changeStatusDemand", {
+			this._eventBus.publish("StatusSelectDialog", "changeStatusDemand", {
 				selectedPaths: oSelectedData,
 				functionKey: sFunctionKey,
 				parameters: {
@@ -231,6 +232,9 @@ sap.ui.define([
 		_triggerRefreshDemand: function () {
 			this.getView().getElementBinding().refresh();
 		},
+		/**
+		 * open's a action sheets with possible statuses. 
+		 */
 		onClickAction: function (oEvent) {
 			if (!this._oActionSheet) {
 				this._oActionSheet = sap.ui.xmlfragment(this.getView().getId(), "com.evorait.evoplan.view.fragments.StatusActionSheet", this);
@@ -240,6 +244,12 @@ sap.ui.define([
 		},
 		getVisible: function (a, b, c) {
 			return a && !b && c !== "COMP";
+		},
+		/**
+		 * View life cycle methods when view gets destroy 
+		 */
+		onExit : function(){
+			this._eventBus.unsubscribe("BaseController", "refreshDemandOverview");
 		}
 
 	});
