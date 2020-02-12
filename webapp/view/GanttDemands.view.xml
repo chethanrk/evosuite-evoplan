@@ -58,9 +58,9 @@
             	</table:columns>
             	<table:dragDropConfig>
 					<dnd:DragInfo
-						groupName="demandsAny"
 						sourceAggregation="rows"
-						dragStart="onDragStart" />
+						dragStart="onDragStart"
+						dragEnd="onDragEnd"/>
 				</table:dragDropConfig>
         	</table:Table>
     	</smartTable:SmartTable>

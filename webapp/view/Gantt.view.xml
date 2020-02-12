@@ -113,7 +113,6 @@
 						<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.ResourceTreeColumns" type="XML"/>
 						<table:dragDropConfig>
 							<dnd:DropInfo
-								groupName="demandsAny"
 								targetAggregation="rows"
 								dropPosition="On"
 								drop="onDropOnResource" />
