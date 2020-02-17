@@ -7,7 +7,7 @@
 				objectImageAlt="{i18n>xfld.demandName}" id="ObjectPageLayoutHeaderTitle">
 				<uxap:actions>
 					<uxap:ObjectPageHeaderActionButton id="idAssignHeaderAction" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" type="Emphasized" hideIcon="false"
-						hideText="false" press="onClickAssign"/>
+						hideText="false" press="onClickAssign" visible="{ALLOW_ASSIGN}"/>
 					<uxap:ObjectPageHeaderActionButton id="idStatusHeaderAction" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
 						visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'}], formatter: '.getVisible' }"
 						hideIcon="false" hideText="false" press="onClickAction"/>
