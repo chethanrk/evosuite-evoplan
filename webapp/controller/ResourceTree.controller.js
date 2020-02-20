@@ -70,7 +70,7 @@ sap.ui.define([
 					_this._jDroppable(_this);
 				}
 			};
-			
+
 		},
 		/**
 		 * Register's the DnD
@@ -85,12 +85,17 @@ sap.ui.define([
 		 * This hook is the same one that SAPUI5 controls get after being rendered.
 		 * @memberOf C:.Users.Michaela.Documents.EvoraIT.EvoPlan2.evoplan2-ui5.src.view.ResourceTree **/
 		onAfterRendering: function (oEvent) {
-			/*this._oDataTable.getBinding("rows").attachDataRequested(function(){
-				this._oDataTable.setBusy(true);
+			var oUserModel = this.getModel("user");
+
+			// For the first time when user want tree to expand/collapsed
+			// From the next time hierarchy level is set in before rebind event
+			this.getOwnerComponent()._getSystemInformation().then(function (data) {
+				oUserModel.setData(data);
+				// Configuration values
+				if (oUserModel.getProperty("/RESOURCE_TREE_EXPAND")) {
+					this._oDataTable.expandToLevel(1);
+				}
 			}.bind(this));
-			this._oDataTable.getBinding("rows").attachDataReceived(function(){
-				this._oDataTable.setBusy(false);
-			}.bind(this));*/
 		},
 
 		/**
@@ -196,12 +201,15 @@ sap.ui.define([
 		 */
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
-				oBinding = oParams.bindingParams;
+				oBinding = oParams.bindingParams,
+				oUserModel = this.getModel("user");
 
 			if (!this.isLoaded) {
 				this.isLoaded = true;
-				oBinding.parameters.numberOfExpandedLevels = 1;
 			}
+			// Bug fix for some time tree getting collapsed
+			oBinding.parameters.numberOfExpandedLevels = oUserModel.getProperty("/RESOURCE_TREE_EXPAND") ? 1 : 0;
+
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			// setting filters in local model to access in assignTree dialog.
 			this.getModel("viewModel").setProperty("/resourceFilterView", aFilter);

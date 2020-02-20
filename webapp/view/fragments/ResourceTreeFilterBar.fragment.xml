@@ -26,9 +26,9 @@
 				groupId="_BASIC" index="2">
 				<smartFilterBar:customControl>
 					<MultiComboBox
-						items="{ path: '/ResourceSet', sorter: { path: 'ObjectId' }, filters : [ { path : 'ObjectType', operator : 'EQ', value1 : 'RES_GROUP'} ], templateShareable: true }"
+						items="{ path: 'resGroups>/', templateShareable: true }"
 						selectionChange="onCustomFilterChange">
-						<core:Item key="{ObjectId}" text="{GroupDescription}"/>
+						<core:Item key="{resGroups>ObjectId}" text="{resGroups>GroupDescription}"/>
 					</MultiComboBox>
 				</smartFilterBar:customControl>
 			</smartFilterBar:ControlConfiguration>

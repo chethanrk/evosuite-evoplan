@@ -15,7 +15,9 @@ sap.ui.define([
     "com/evorait/evoplan/controller/ManageResourceAvailability",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
-	"sap/m/Link"
+	"sap/m/Link",
+	"sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator"
 ], function (
 	UIComponent,
 	Device,
@@ -33,7 +35,9 @@ sap.ui.define([
     ManageResourceAvailability,
 	MessagePopover,
 	MessagePopoverItem,
-	Link) {
+	Link,
+	Filter,
+	FilterOperator) {
 
 	"use strict";
 
@@ -172,6 +176,7 @@ sap.ui.define([
                 this.getModel("user").setData(data);
 
 			}.bind(this));
+			this._getResourceGroups();
 
             UIComponent.prototype.init.apply(this, arguments);
 
@@ -329,6 +334,22 @@ sap.ui.define([
 				success: function (oData, oResponse) {
 					if (oData && oData > 0) {
 						this.getModel("viewModel").setProperty("/showStatusChangeButton", true);
+					}
+				}.bind(this),
+				error: function (oError) {
+					//Handle Error
+				}.bind(this)
+			});
+		},
+
+		_getResourceGroups: function () {
+			this.getModel().read("/ResourceSet", {
+				filters:[
+					new Filter("ObjectType", FilterOperator.EQ, "RES_GROUP")
+				],
+				success: function (oData, oResponse) {
+					if (oData && oData.results.length > 0) {
+						this.setModel(new JSONModel(oData.results),"resGroups");
 					}
 				}.bind(this),
 				error: function (oError) {

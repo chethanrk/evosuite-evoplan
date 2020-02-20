@@ -1,4 +1,3 @@
-
 <core:FragmentDefinition
         xmlns="sap.m"
         xmlns:table="sap.ui.table"
@@ -6,7 +5,7 @@
 
 <table:Column hAlign="Center" width="6rem" visible="{= ${/#Demand/ORDERID/@sap:visible} === 'false' ? false : true}">
     <table:customData>
-        <core:CustomData key="p13nData" value='\{"columnKey": "ORDERID", "leadingProperty": "ORDERID"}'/>
+        <core:CustomData key="p13nData" value='\{"columnKey": "ORDERID", "leadingProperty": "ORDERID", "sortProperty": "ORDERID", "filterProperty": "ORDERID"}'/>
     </table:customData>
     <Label text="{/#Demand/ORDERID/@sap:label}"/>
     <table:template>

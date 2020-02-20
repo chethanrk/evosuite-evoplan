@@ -32,8 +32,8 @@
 			<smartTable:SmartTable id="droppableTable" entitySet="{viewModel>/treeSet}" class="listTreeTable" tableType="TreeTable" fitContainer="true"
 				useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false" smartFilterId="resourceTreeFilterBar"
 				header="Hierarchy" showRowCount="false" beforeRebindTable="onBeforeRebindTable"
-				requestAtLeastFields="ChildCount,StatusIcon,IsSelected,NodeId,ResourceGroupGuid,NodeType,ResourceGuid,DemandGuid,ParentNodeId,AssignmentGuid,HierarchyLevel,DrillState,Description,AssignmentCount,Utilization,StartDate,StartTime,EndDate,EndTime,IS_AVAILABLE,TOTAL_EFFORT,ACTUAL_WORKING_HOURS,PLANNED_WORKING_HOURS,CAPACITIVE_EFFORT,ASSIGNMENT_TYPE,ResourceIcon,GANTT_ENABLED"
-				initiallyVisibleFields="Description">
+				requestAtLeastFields="StatusIcon,IsSelected,NodeId,ResourceGroupGuid,NodeType,ResourceGuid,DemandGuid,ParentNodeId,AssignmentGuid,HierarchyLevel,DrillState,Description,AssignmentCount,Utilization,StartDate,StartTime,EndDate,EndTime,IS_AVAILABLE,TOTAL_EFFORT,ACTUAL_WORKING_HOURS,PLANNED_WORKING_HOURS,CAPACITIVE_EFFORT,ASSIGNMENT_TYPE,ResourceIcon,GANTT_ENABLED"
+				>
 				<smartTable:layoutData>
 					<FlexItemData growFactor="1"/>
 				</smartTable:layoutData>
