@@ -6,7 +6,7 @@
           title="Products"
           showHeader="false">
         <content>
-            <smartList:SmartList id="idResourceAvailList" entitySet="ResourceAvailabilitySet" header="Absences"
+            <smartList:SmartList id="idResourceAvailList" entitySet="ResourceAvailabilitySet" header="{i18n>xtit.absences}"
                                  showRowCount="true" enableAutoBinding="true"
                                  selectFields="Description,DateFrom,DateTo,ResourceDescription,Guid">
                 <smartList:listItemTemplate>
