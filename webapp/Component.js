@@ -11,13 +11,13 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/AssignActionsDialog",
 	"com/evorait/evoplan/controller/PlanningCalendarDialog",
 	"com/evorait/evoplan/controller/CapacitiveAssignments",
-    "com/evorait/evoplan/controller/CreateResourceUnAvailability",
-    "com/evorait/evoplan/controller/ManageResourceAvailability",
+	"com/evorait/evoplan/controller/CreateResourceUnAvailability",
+	"com/evorait/evoplan/controller/ManageResourceAvailability",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
 	"sap/m/Link",
 	"sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator"
+	"sap/ui/model/FilterOperator"
 ], function (
 	UIComponent,
 	Device,
@@ -31,8 +31,8 @@ sap.ui.define([
 	AssignActionsDialog,
 	PlanningCalendarDialog,
 	CapacitiveAssignments,
-    CreateResourceUnAvailability,
-    ManageResourceAvailability,
+	CreateResourceUnAvailability,
+	ManageResourceAvailability,
 	MessagePopover,
 	MessagePopoverItem,
 	Link,
@@ -82,56 +82,60 @@ sap.ui.define([
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
 
-            var oViewModel = new JSONModel({
-                treeSet: "ResourceHierarchySet",
-                subFilterEntity: "Demand",
-                subTableSet: "DemandSet",
-                tableBusyDelay : 0,
-                persistencyKeyTable: "evoPlan_ui",
-                persistencyKeyTree: "evoPlan_resource",
-                persistencyKeyDemandTable:"evoPlan_demands",
-                counterResourceFilter: "",
-                showStatusChangeButton: false,
-                busy : true,
-				delay : 0,
-				assetStartDate:new Date(),
-                dragSession:null, // Drag session added as we are keeping dragged data in the model.
-                detailPageBreadCrum:"",
-                capacityPlanning:false,
-                splitterDivider:"35%",
-                selectedHierarchyView:"TIMENONE",
-                enableReprocess:false,
-				first_load:false,
+			var oViewModel = new JSONModel({
+				treeSet: "ResourceHierarchySet",
+				subFilterEntity: "Demand",
+				subTableSet: "DemandSet",
+				tableBusyDelay: 0,
+				persistencyKeyTable: "evoPlan_ui",
+				persistencyKeyTree: "evoPlan_resource",
+				persistencyKeyDemandTable: "evoPlan_demands",
+				counterResourceFilter: "",
+				showStatusChangeButton: false,
+				busy: true,
+				delay: 0,
+				assetStartDate: new Date(),
+				dragSession: null, // Drag session added as we are keeping dragged data in the model.
+				detailPageBreadCrum: "",
+				capacityPlanning: false,
+				splitterDivider: "35%",
+				selectedHierarchyView: "TIMENONE",
+				enableReprocess: false,
+				first_load: false,
 				ganttSettings: {
-                	active: false,
-					busy : false,
-					shapeOpearation:{
-                		unassign:false,
-						reassign:false,
-						change:false
+					active: false,
+					busy: false,
+					shapeOpearation: {
+						unassign: false,
+						reassign: false,
+						change: false
 					}
 				}
-            });
-            this.setModel(oViewModel, "viewModel");
+			});
+			this.setModel(oViewModel, "viewModel");
 
-            //creates the Information model and sets to the component
-			this.setModel(models.createInformationModel(this),"InformationModel");
-
+			//creates the Information model and sets to the component
+			this.setModel(models.createInformationModel(this), "InformationModel");
 
 			this._initDialogs();
 
-            //Creating the Global assignment model for assignInfo Dialog
-			this.setModel(models.createAssignmentModel({}),"assignment");
+			//Creating the Global assignment model for assignInfo Dialog
+			this.setModel(models.createAssignmentModel({}), "assignment");
 
-			this.setModel(models.createMessageCounterModel({S:0,E:0,I:0}),"messageCounter");
+			this.setModel(models.createMessageCounterModel({
+				S: 0,
+				E: 0,
+				I: 0
+			}), "messageCounter");
 
 			//proof if there are a status set and button in footer should be visible
 			this._getFunctionSetCount();
 
-            this.setModel(models.createUserModel({
+			this.setModel(models.createUserModel({
 				ASSET_PLANNING_ENABLED: false,
-				GANT_START_DATE:new Date(),
-				GANT_END_DATE:new Date()}), "user");
+				GANT_START_DATE: new Date(),
+				GANT_END_DATE: new Date()
+			}), "user");
 
 			//Creating the Global message model from MessageManager
 			var oMessageModel = new JSONModel();
@@ -142,8 +146,8 @@ sap.ui.define([
 			var oCalendarModel = new JSONModel();
 			oCalendarModel.setData({});
 			this.setModel(oCalendarModel, "calendarModel");
-
-
+			// Resource groups model
+			this.setModel(new JSONModel([]), "resGroups");
 
 			// Message popover link
 			var oLink = new Link({
@@ -171,20 +175,19 @@ sap.ui.define([
 			});
 			this._oMessagePopover = oMessagePopover;
 
-            //sets user model
-            this._getSystemInformation().then(function(data){
-                this.getModel("user").setData(data);
+			//sets user model
+			this._getSystemInformation().then(function (data) {
+				this.getModel("user").setData(data);
 
 			}.bind(this));
 			this._getResourceGroups();
 
-            UIComponent.prototype.init.apply(this, arguments);
+			UIComponent.prototype.init.apply(this, arguments);
 
-            // create the views based on the url/hash
-            this.getRouter().initialize();
+			// create the views based on the url/hash
+			this.getRouter().initialize();
 			// Not able load more than 100 associations
-            this.getModel().setSizeLimit(300);
-
+			this.getModel().setSizeLimit(300);
 
 		},
 
@@ -194,7 +197,7 @@ sap.ui.define([
 		 * @public
 		 * @override
 		 */
-		destroy: function() {
+		destroy: function () {
 			this._oErrorHandler.destroy();
 			// call the base component's destroy function
 			UIComponent.prototype.destroy.apply(this, arguments);
@@ -246,11 +249,11 @@ sap.ui.define([
 			this.capacitiveAssignments = new CapacitiveAssignments();
 			this.capacitiveAssignments.init();
 
-            this.createUnAvail = new CreateResourceUnAvailability();
-            this.createUnAvail.init();
+			this.createUnAvail = new CreateResourceUnAvailability();
+			this.createUnAvail.init();
 
-            this.manageAvail = new ManageResourceAvailability();
-            this.manageAvail.init();
+			this.manageAvail = new ManageResourceAvailability();
+			this.manageAvail.init();
 		},
 
 		/**
@@ -312,21 +315,21 @@ sap.ui.define([
 		},
 
 		_getSystemInformation: function () {
-            return new Promise(function (resolve, reject) {
-                this.getModel().callFunction("/GetSystemInformation", {
-                    method: "GET",
-                    success: function (oData, oResponse) {
-                    	resolve(oData);
-                        //Handle Success
-                        // this.getModel("user").setData(oData);
-                        // console.log(oData);
-                    }.bind(this),
-                    error: function (oError) {
-                        //Handle Error
+			return new Promise(function (resolve, reject) {
+				this.getModel().callFunction("/GetSystemInformation", {
+					method: "GET",
+					success: function (oData, oResponse) {
+						resolve(oData);
+						//Handle Success
+						// this.getModel("user").setData(oData);
+						// console.log(oData);
+					}.bind(this),
+					error: function (oError) {
+						//Handle Error
 						reject(oError);
-                    }.bind(this)
-                });
-            }.bind(this));
+					}.bind(this)
+				});
+			}.bind(this));
 		},
 
 		_getFunctionSetCount: function () {
@@ -344,12 +347,12 @@ sap.ui.define([
 
 		_getResourceGroups: function () {
 			this.getModel().read("/ResourceSet", {
-				filters:[
+				filters: [
 					new Filter("ObjectType", FilterOperator.EQ, "RES_GROUP")
 				],
 				success: function (oData, oResponse) {
 					if (oData && oData.results.length > 0) {
-						this.setModel(new JSONModel(oData.results),"resGroups");
+						this.getModel("resGroups").setData(oData.results);
 					}
 				}.bind(this),
 				error: function (oError) {

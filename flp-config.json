@@ -1,0 +1,36 @@
+{
+    "application": {
+        "id": "",
+        "title": "com.evorait.evoplan.evoplan2-ui5",
+        "description": "Evoplan",
+        "type": "SAP_UI5_Component",
+        "componentUrl": "/",
+        "appUrl": "#evoplan2ui5-Display",
+        "navigationComponentName": "com.evorait.evoplan",
+        "intentSemanticObject": "evoplan2-ui5",
+        "intentAction": "Display",
+        "html5ApplicationName": "evoplan2ui5",
+        "HCPParentApplicationName": ""
+    },
+    "assignment": {
+        "groups": [
+            "b478a4ee-18d8-4350-9348-44cb1bdc8f3c-1542192314226"
+        ],
+        "contentPackages": [
+            "cf946040-be32-4313-b5e8-21b851b473f1-1520252139334"
+        ],
+        "categories": []
+    },
+    "tile": {
+        "type": "DynamicTile",
+        "title": "Evoplan",
+        "subtitle": "Demand Management",
+        "searchKeywords": "Evoplan,Demand Management",
+        "displayIconUrl": "sap-icon://approvals",
+        "displayInfoText": "",
+        "size": "1x1",
+        "serviceURL": "/sap/fiori/evoplan2ui5/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandSet/$count",
+        "refreshInterval": 10,
+        "displayNumberUnit": "Demand"
+    }
+}

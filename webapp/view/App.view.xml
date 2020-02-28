@@ -26,6 +26,7 @@
 						<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
 						type="Emphasized" press="onMessagePopoverPress"/>
 						<Button id="idButtonAboutDialog" icon="sap-icon://sys-help" tooltip="{i18n>xtit.infoDialogTitle}" press="onIconPress"/>
+						<Button id="idButtonRefresh" icon="sap-icon://refresh" tooltip="{i18n>xtit.infoRefresh}" press="onRefreshBuffer"/>
 					</contentRight>
 				</Bar>
 			</customHeader>

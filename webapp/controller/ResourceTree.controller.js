@@ -109,9 +109,9 @@ sap.ui.define([
 				if (Object.keys(this.mTreeState).length > 0) {
 					this._restoreTreeState();
 				}
-				this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+				// this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
 			} else {
-				this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
+				// this._oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
 			}
 		},
 
@@ -242,7 +242,7 @@ sap.ui.define([
 			oDataTable.setEnableCellFilter(false);
 			oDataTable.setEnableColumnReordering(false);
 			oDataTable.setEditable(false);
-			oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
+			oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
 			oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
 
 		},

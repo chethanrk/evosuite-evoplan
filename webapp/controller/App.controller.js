@@ -258,6 +258,22 @@ sap.ui.define([
 		onMessagePopoverPress: function (oEvent) {
 			this._oMessagePopover.openBy(oEvent.getSource());
 		},
+		/**
+		 * calls function import which refreshes the shared memory in the backend 
+		 */
+		onRefreshBuffer: function(oEvent){
+			var oComponent = this.getOwnerComponent();
+			
+			this.executeFunctionImport(this.getModel(),{},"RefreshSharedMemoryAreas","POST").then(function(){
+				oComponent._getResourceGroups.call(oComponent);
+				this._eventBus.publish("BaseController", "refreshDemandTable",{});
+				this._eventBus.publish("BaseController", "refreshTreeTable",{});
+			}.bind(this),function(data){
+				//
+			}.bind(this)).catch(function(data){
+				//
+			}.bind(this));
+		},
 		
 		/**
 		 * Called when the Controller is destroyed. Use this one to free resources and finalize activities.

@@ -30,6 +30,11 @@
 						selectionChange="onCustomFilterChange">
 						<core:Item key="{resGroups>ObjectId}" text="{resGroups>GroupDescription}"/>
 					</MultiComboBox>
+					<!--<MultiComboBox
+						items="{ path: '/ResourceSet', sorter: { path: 'ObjectId' }, filters : [ { path : 'ObjectType', operator : 'EQ', value1 : 'RES_GROUP'} ], templateShareable: true }"
+						selectionChange="onCustomFilterChange" loadItems="onLoadItems">
+						<core:Item key="{ObjectId}" text="{GroupDescription}"/>
+					</MultiComboBox>-->
 				</smartFilterBar:customControl>
 			</smartFilterBar:ControlConfiguration>
 			<smartFilterBar:ControlConfiguration key="StartDate" controlType="date" visibleInAdvancedArea="false" width="100%" groupId="_BASIC"

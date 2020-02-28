@@ -64,16 +64,13 @@ sap.ui.define([
                 if(data.ENABLE_RESOURCE_AVAILABILITY){
                     this._ganttChart.addStyleClass("resourceGanttWithTable");
                 }
-                this._defaultGanttHorizon();
+                // this._defaultGanttHorizon();
                 this._treeTable.bindAggregation("rows", {
                     path: '/GanttResourceHierarchySet',
                     parameters: {
                         'numberOfExpandedLevels': 1,
-                        'restoreTreeStateAfterChange': true,
-                        'operationMode': 'Server',
                         'expand': 'AssignmentSet,ResourceAvailabilitySet',
                         'groupId': 'GanttTree'
-
                     }
                 });
             }.bind(this));
@@ -211,26 +208,22 @@ sap.ui.define([
         _assignDemands: function (oResourceData, aSources, oTarget, oTargetDate, bCheckAvail) {
             var oUserModel = this.getModel("user"),
                 oResourceModel = this.getResourceBundle();
-            // TODO Check resource availability
             if(!bCheckAvail && oUserModel.getProperty("/ENABLE_RESOURCE_AVAILABILITY") && oUserModel.getProperty("/ENABLE_ASSIGNMENT_STRETCH") && oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && oResourceData.ResourceGuid && oResourceData.ResourceGuid !== "")){
 
                 this._checkAvailability(aSources,oTarget,oTargetDate).then(function(data){
                     if(!data.Unavailable){
                         this.assignedDemands(aSources, oTarget, oTargetDate)
                             .then(this._refreshAreas.bind(this)).catch(function (error) {
-                                console.log(error);
                             }.bind(this));
                     }else{
                         this._showConfirmMessageBox(oResourceModel.getText("ymsg.extendMsg")).then(function (value) {
                             if(value === "NO"){
                                 this.assignedDemands(aSources, oTarget, oTargetDate,true)
                                     .then(this._refreshAreas.bind(this)).catch(function (error) {
-                                        console.log(error);
                                     }.bind(this));
                             }else {
                                 this.assignedDemands(aSources, oTarget, oTargetDate)
                                     .then(this._refreshAreas.bind(this)).catch(function (error) {
-                                        console.log(error);
                                     }.bind(this));
                             }
                         }.bind(this));
@@ -240,7 +233,6 @@ sap.ui.define([
             }else{
                 this.assignedDemands(aSources, oTarget, oTargetDate)
                     .then(this._refreshAreas.bind(this)).catch(function (error) {
-                    console.log(error);
                 }.bind(this));
             }
 
