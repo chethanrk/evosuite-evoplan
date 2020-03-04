@@ -608,7 +608,7 @@ sap.ui.define([
          * on click on today adjust the view of Gantt horizon.
          */
         onPressToday: function (oEvent) {
-            this.changeGanttHorizonViewAt(this.getModel("viewModel"));
+            this.changeGanttHorizonViewAt(this.getModel("viewModel"),this._axisTime.getZoomLevel());
         },
         /**
          *

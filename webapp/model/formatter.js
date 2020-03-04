@@ -463,6 +463,10 @@ sap.ui.define([
 
         formatListMode : function (bIsActive) {
 
+        },
+        
+        formartVisibleReassign : function(bChange, bAssign){
+        	return bChange && bAssign;
         }
     };
 });

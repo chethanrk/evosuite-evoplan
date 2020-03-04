@@ -31,7 +31,7 @@ sap.ui.define([
 			if (oView) {
 				return oView.getModel(sName);
 			}
-			if(!this.getView().getModel(sName)){
+			if (!this.getView().getModel(sName)) {
 				return this.getOwnerComponent().getModel(sName);
 			}
 			return this.getView().getModel(sName);
@@ -180,7 +180,7 @@ sap.ui.define([
 			oModel.callFunction("/" + sFuncName, {
 				method: sMethod || "POST",
 				urlParameters: oParams,
-                refreshAfterChange: false,
+				refreshAfterChange: false,
 				success: function (oData, oResponse) {
 					//Handle Success
 					if (bIsLast) {
@@ -208,21 +208,21 @@ sap.ui.define([
 		 */
 		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod) {
 			var oResourceBundle = this.getResourceBundle();
-			
+
 			return new Promise(function (resolve, reject) {
 				oModel.callFunction("/" + sFuncName, {
 					method: sMethod || "POST",
 					urlParameters: oParams,
-                    refreshAfterChange: false,
+					refreshAfterChange: false,
 					success: function (oData, oResponse) {
-                        this.showMessage(oResponse);
+						this.showMessage(oResponse);
 						resolve(oData, oResponse);
 					}.bind(this),
 					error: function (oError) {
-                        //Handle Error
-                        MessageToast.show(oResourceBundle.getText("errorMessage"), {
-                            duration: 5000
-                        });
+						//Handle Error
+						MessageToast.show(oResourceBundle.getText("errorMessage"), {
+							duration: 5000
+						});
 						reject(oError);
 					}.bind(this)
 				});
@@ -240,7 +240,7 @@ sap.ui.define([
 				bFromAseet: false,
 				bFromPlannCal: false,
 				bFromDetail: false,
-				bFromGantt:false
+				bFromGantt: false
 			};
 
 			if (oParameter.bFromHome) {
@@ -258,7 +258,7 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				eventBus.publish("BaseController", "refreshDemandOverview", {});
 				eventBus.publish("BaseController", "refreshDemandTable", {});
-			}else if(oParameter.bFromGantt){
+			} else if (oParameter.bFromGantt) {
 				eventBus.publish("BaseController", "refreshGanttChart", {});
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
@@ -342,8 +342,8 @@ sap.ui.define([
 		 * @private
 		 */
 		_showAssignErrorDialog: function (aDemands, isStatus, msg) {
-			if(!msg){
-				if (isStatus){
+			if (!msg) {
+				if (isStatus) {
 					msg = this.getResourceBundle().getText("changeStatusNotPossible");
 				} else {
 					msg = this.getResourceBundle().getText("assignmentNotPossible");
@@ -398,7 +398,7 @@ sap.ui.define([
 		 * @since 3.0
 		 * Checks the Demand is assignable or not by validating the ALLOW_ASSIGN frag in demand object
 		 */
-		isDemandAssignable : function (sTargetPath){
+		isDemandAssignable: function (sTargetPath) {
 			var oModel = this.getModel(),
 				oTargetObj = oModel.getProperty(sTargetPath);
 
@@ -445,60 +445,68 @@ sap.ui.define([
 			);
 		},
 
-        /**
-         * Shows the confirmation Box.
+		/**
+		 * Shows the confirmation Box.
 		 * New Confirm box which return Promise object
-         * Promise resolve when Message box will get close.
+		 * Promise resolve when Message box will get close.
 		 *
-         * @Athour Rahul
-         * @version 3.0
-         */
-        _showConfirmMessageBox: function (message) {
-            var oController = this;
-            return new Promise(function (resolve, reject) {
-                MessageBox.confirm(
-                    message, {
-                        styleClass: oController.getOwnerComponent().getContentDensityClass(),
-                        icon: sap.m.MessageBox.Icon.CONFIRM,
-                        title: oController.getResourceBundle().getText("xtit.confirm"),
-                        actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-                        onClose: function (oEvent) {
-                            resolve(oEvent);
-                        }
-                    }
-                );
-            });
-        },
-        /**
-         * Change view horizon time at specified timestamp
+		 * @Athour Rahul
+		 * @version 3.0
+		 */
+		_showConfirmMessageBox: function (message) {
+			var oController = this;
+			return new Promise(function (resolve, reject) {
+				MessageBox.confirm(
+					message, {
+						styleClass: oController.getOwnerComponent().getContentDensityClass(),
+						icon: sap.m.MessageBox.Icon.CONFIRM,
+						title: oController.getResourceBundle().getText("xtit.confirm"),
+						actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+						onClose: function (oEvent) {
+							resolve(oEvent);
+						}
+					}
+				);
+			});
+		},
+		/**
+		 * Change view horizon time at specified timestamp
 		 * @param oModel {object} viewModel
-         * @param start {object} timestamp
-         * @param end {object} timestamp
-         */
-        changeGanttHorizonViewAt : function (oModel, start, end) {
-            var oViewModel = oModel,
-                sStartDate = start ? moment(start).startOf("day").subtract(1,"day").toDate(): moment().startOf("day").subtract(1,"day").toDate(),
-                sEndDate = end ? moment(end).endOf("day").add(1,"day").toDate() : moment().endOf("day").add(1,"day").toDate();
-            oViewModel.setProperty("/ganttSettings/visibleStartTime",sStartDate);
-            oViewModel.setProperty("/ganttSettings/visibleEndTime",sEndDate);
-        },
+		 * @param start {object} timestamp
+		 * @param end {object} timestamp
+		 */
+		changeGanttHorizonViewAt: function (oModel, iZoomLevel) {
+			var oViewModel = oModel,
+				sStartDate, sEndDate;
+
+			if (iZoomLevel >= 8) {
+				sStartDate = moment().startOf("hour").toDate();
+				sEndDate = moment().endOf("hour").add(1, "hour").toDate();
+			} else {
+				sStartDate = moment().startOf("day").subtract(1, "day").toDate();
+				sEndDate = moment().endOf("day").add(1, "day").toDate();
+			}
+			oViewModel.setProperty("/ganttSettings/visibleStartTime", sStartDate);
+			oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
+		},
 		/**
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
-		openEvoOrder : function(sOrderId){
+		openEvoOrder: function (sOrderId) {
 			var sLanguage = this.getModel("InformationModel").getProperty("/language"),
 				sHost = location.host,
-				sProtocol = location.protocol,sUri,sSemanticObject,parameters,
-                sLaunchMode = this.getModel("user").getProperty("/LAUNCH_MODE"),
+				sProtocol = location.protocol,
+				sUri, sSemanticObject, parameters,
+				sLaunchMode = this.getModel("user").getProperty("/LAUNCH_MODE"),
 				sAdditionInfo = this.getModel("user").getProperty("/LAUNCH_DETAILS");
-			if(sLaunchMode === "BSP" && sAdditionInfo.trim() !== ""){
-                sUri = (sAdditionInfo).replace("\\place_h1\\",sOrderId);
-                window.open(sUri, "_blank");
-			}else if(sLaunchMode === "LAUNCHPAD" && sAdditionInfo.trim() !== "" ){
+			if (sLaunchMode === "BSP" && sAdditionInfo.trim() !== "") {
+				sUri = (sAdditionInfo).replace("\\place_h1\\", sOrderId);
+				window.open(sUri, "_blank");
+			} else if (sLaunchMode === "LAUNCHPAD" && sAdditionInfo.trim() !== "") {
 				sSemanticObject = sAdditionInfo.split("\\_\\")[0];
 				parameters = sAdditionInfo.split("\\_\\")[1];
 				return;
-			}else{
+			} else {
 				return;
 			}
 

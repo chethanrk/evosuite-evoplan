@@ -5,7 +5,9 @@ sap.ui.define([
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.AssignInfoDialog", {
-
+		
+		formatter:formatter,
+		
 		init: function () {
 			var eventBus = sap.ui.getCore().getEventBus();
 			eventBus.subscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);

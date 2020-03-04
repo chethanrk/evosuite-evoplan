@@ -93,7 +93,13 @@
 
                     <Label text="{i18n>xfld.newAssign}"
                            visible="{assignment>/AllowReassign}" />
-                    <CheckBox visible="{assignment>/AllowReassign}"
+                    <CheckBox visible="{
+                    			parts:[
+                    				{path:'assignment>/AllowChange'},
+                    				{path:'assignment>/AllowReassign'}
+                    			],
+                    			formatter:'.formatter.formartVisibleReassign'
+                    		}"
                               enabled="{assignment>/AllowReassign}"
                               select="onChangeAssignType"
                               selected="{assignment>/isNewAssignment}"/>
