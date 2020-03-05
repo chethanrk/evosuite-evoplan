@@ -493,24 +493,42 @@ sap.ui.define([
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
 		openEvoOrder: function (sOrderId) {
-			var sLanguage = this.getModel("InformationModel").getProperty("/language"),
-				sHost = location.host,
-				sProtocol = location.protocol,
-				sUri, sSemanticObject, parameters,
-				sLaunchMode = this.getModel("user").getProperty("/LAUNCH_MODE"),
+			var sUri, sSemanticObject, parameter, 
+				sAction,
 				sAdditionInfo = this.getModel("user").getProperty("/LAUNCH_DETAILS");
-			if (sLaunchMode === "BSP" && sAdditionInfo.trim() !== "") {
+			if (sap.ushell && sap.ushell.Container && sAdditionInfo.trim() !== "") {
+				sSemanticObject = sAdditionInfo.split("\\_\\")[0];
+				sAction = sAdditionInfo.split("\\_\\")[1] || "dispatch";
+				parameter = sAdditionInfo.split("\\_\\")[2];
+				if(sSemanticObject && sAction){
+					this.navToApp(sSemanticObject, parameter, sAction);
+				}
+				return;
+			} else if (sAdditionInfo.trim() !== "") {
 				sUri = (sAdditionInfo).replace("\\place_h1\\", sOrderId);
 				window.open(sUri, "_blank");
-			} else if (sLaunchMode === "LAUNCHPAD" && sAdditionInfo.trim() !== "") {
-				sSemanticObject = sAdditionInfo.split("\\_\\")[0];
-				parameters = sAdditionInfo.split("\\_\\")[1];
-				return;
 			} else {
 				return;
 			}
 
 			// window.open("https://ed1.evorait.net:50103/sap/bc/ui5_ui5/evocu/evoorder/index.html?sap-client=800&sap-language="+sLanguage+"#/WorkOrder/"+sOrderId, "_blank");
+		},
+		navToApp: function (sSemanticObject, sParameter, sAction) {
+			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
+			var sHash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
+				target: {
+					semanticObject: sSemanticObject,
+					action: sAction
+				}
+			})) || ""; // generate the Hash to display a Notification details app
+			if(sParameter){
+				sHash = oCrossAppNavigator.hrefForAppSpecificHash("WorkOrder/"+sParameter);
+			}
+			oCrossAppNavigator.toExternal({
+				target: {
+					shellHash: sHash
+				}
+			});
 		}
 
 	});
