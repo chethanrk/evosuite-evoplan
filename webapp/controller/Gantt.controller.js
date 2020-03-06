@@ -207,10 +207,15 @@ sap.ui.define([
          */
         _assignDemands: function (oResourceData, aSources, oTarget, oTargetDate, bCheckAvail) {
             var oUserModel = this.getModel("user"),
-                oResourceModel = this.getResourceBundle();
+                oResourceModel = this.getResourceBundle(),
+                oViewModel = this.getModel("viewModel");
             if(!bCheckAvail && oUserModel.getProperty("/ENABLE_RESOURCE_AVAILABILITY") && oUserModel.getProperty("/ENABLE_ASSIGNMENT_STRETCH") && oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && oResourceData.ResourceGuid && oResourceData.ResourceGuid !== "")){
 
                 this._checkAvailability(aSources,oTarget,oTargetDate).then(function(data){
+                	if(data.PastFail){
+                		oViewModel.setProperty("/ganttSettings/busy", false);
+                		return;
+                	}
                     if(!data.Unavailable){
                         this.assignedDemands(aSources, oTarget, oTargetDate)
                             .then(this._refreshAreas.bind(this)).catch(function (error) {
