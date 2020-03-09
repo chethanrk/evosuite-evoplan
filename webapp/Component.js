@@ -132,9 +132,7 @@ sap.ui.define([
 			this._getFunctionSetCount();
 
 			this.setModel(models.createUserModel({
-				ASSET_PLANNING_ENABLED: false,
-				GANT_START_DATE: new Date(),
-				GANT_END_DATE: new Date()
+				ASSET_PLANNING_ENABLED: false
 			}), "user");
 
 			//Creating the Global message model from MessageManager
@@ -175,19 +173,21 @@ sap.ui.define([
 			});
 			this._oMessagePopover = oMessagePopover;
 
-			//sets user model
-			this._getSystemInformation().then(function (data) {
-				this.getModel("user").setData(data);
 
-			}.bind(this));
 			this._getResourceGroups();
 
 			UIComponent.prototype.init.apply(this, arguments);
 
-			// create the views based on the url/hash
-			this.getRouter().initialize();
+            //sets user model - model has to be intantiated before any view is loaded
+            this._getSystemInformation().then(function (data) {
+                this.getModel("user").setData(data);
+                // create the views based on the url/hash
+                this.getRouter().initialize();
+            }.bind(this));
+
 			// Not able load more than 100 associations
 			this.getModel().setSizeLimit(300);
+            // this.renderRecastChatbot();
 
 		},
 
@@ -359,6 +359,16 @@ sap.ui.define([
 					//Handle Error
 				}.bind(this)
 			});
-		}
+		},
+        renderRecastChatbot: function() {
+            if (!document.getElementById("cai-webchat")) {
+                var s = document.createElement("script");
+                s.setAttribute("id", "cai-webchat");
+                s.setAttribute("src", "https://cdn.cai.tools.sap/webchat/webchat.js");
+                document.body.appendChild(s);
+            }
+            s.setAttribute("channelId", "8edc3f42-00ed-439b-9ac1-2744b41c3083");
+            s.setAttribute("token", "f687d38fe889eab53bd9368302209256");
+        }
 	});
 });

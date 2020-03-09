@@ -15,6 +15,8 @@ sap.ui.define([
 	return AssignmentsController.extend("com.evorait.evoplan.controller.GanttDemands", {
 		
 		formatter: formatter,
+
+		_bLoaded : false,
 		
 		onInit : function(){
 			var oEventBus = sap.ui.getCore().getEventBus(); 
@@ -129,7 +131,10 @@ sap.ui.define([
 		 * 
 		 */
 		_refreshDemandTable : function() {
-			this._oDraggableTable.rebindTable();
+			if(this._bLoaded){
+                this._oDraggableTable.rebindTable();
+			}
+            this._bLoaded = true;
 		},
 		/**
 		 *	Navigates to evoOrder detail page with static url. 

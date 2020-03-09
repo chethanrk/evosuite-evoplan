@@ -42,6 +42,7 @@ sap.ui.define([
 
         _AssignShapeColor:"#FFFFFF",
 
+        _bLoaded : false,
 
         /**
          * controller life cycle on init event
@@ -57,24 +58,12 @@ sap.ui.define([
             this._treeTable = this.getView().byId("ganttResourceTreeTable");
             this._ganttChart = this.getView().byId("ganttResourceAssignments");
             this._axisTime = this.getView().byId("idAxisTime");
+            this._userData = this.getModel("user").getData();
 
-            //sets user model
-            this.getOwnerComponent()._getSystemInformation().then(function (data) {
-                this.getModel("user").setData(data);
-                if(data.ENABLE_RESOURCE_AVAILABILITY){
-                    this._ganttChart.addStyleClass("resourceGanttWithTable");
-                }
-                // this._defaultGanttHorizon();
-                this._treeTable.bindAggregation("rows", {
-                    path: '/GanttResourceHierarchySet',
-                    parameters: {
-                        'numberOfExpandedLevels': 1,
-                        'expand': 'AssignmentSet,ResourceAvailabilitySet',
-                        'groupId': 'GanttTree'
-                    }
-                });
-            }.bind(this));
-            // this._setDefaultTreeDateRange();
+            if(this._userData.ENABLE_RESOURCE_AVAILABILITY){
+                this._ganttChart.addStyleClass("resourceGanttWithTable");
+            }
+            this._defaultGanttHorizon();
             this._viewId = this.getView().getId();
         },
 
@@ -109,8 +98,6 @@ sap.ui.define([
          */
         _setDefaultTreeDateRange: function (mParameters) {
             var aFilters = this._getDefaultFilters(mParameters);
-
-
             var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
             binding.filter(aFilters, "Application");
         },
@@ -120,24 +107,21 @@ sap.ui.define([
          */
         _defaultGanttHorizon: function () {
             var oViewModel = this.getModel("viewModel");
-
-            this._setTotalHorizon();
             this.changeGanttHorizonViewAt(oViewModel);
         },
+
         /**
-         * Setting the Time horizon for configured values.
-         * @param mParameters
-         * @private
+         * Change view horizon time at specified timestamp
+         * @param oModel {object} viewModel
+         * @param start {object} timestamp
+         * @param end {object} timestamp
          */
-        _setTotalHorizon: function (mParameters) {
-            var oTotalHorizon = this._axisTime.getAggregation("totalHorizon"),
-                oUserModel = this.getModel("user"),
-                sStartDate = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE"),
-                sEndDate = mParameters ? mParameters.dateTo : oUserModel.getProperty("/GANT_END_DATE");
-
-            oTotalHorizon.setStartTime(formatter.date(sStartDate));
-            oTotalHorizon.setEndTime(formatter.date(sEndDate));
-
+        changeGanttHorizonViewAt : function (oModel, start, end) {
+            var oViewModel = oModel,
+                sStartDate = start ? moment(start).startOf("day").subtract(1,"day").toDate(): moment().startOf("day").subtract(1,"day").toDate(),
+                sEndDate = end ? moment(end).endOf("day").add(1,"day").toDate() : moment().endOf("day").add(1,"day").toDate();
+            oViewModel.setProperty("/ganttSettings/visibleStartTime",sStartDate);
+            oViewModel.setProperty("/ganttSettings/visibleEndTime",sEndDate);
         },
         /**
          * Gets default filters for gantt
@@ -253,14 +237,14 @@ sap.ui.define([
             var oTreeTable = this.getView().byId("ganttResourceTreeTable"),
                 oViewModel = this.getModel("viewModel");
 
-            if (oTreeTable && oTreeTable.getBinding("rows")) {
+            if (this._bLoaded && oTreeTable && oTreeTable.getBinding("rows")) {
                 oTreeTable.getBinding("rows")._restoreTreeState().then(function () {
                     oViewModel.setProperty("/ganttSettings/busy", false);
                     oTreeTable.clearSelection();
                     oTreeTable.rerender();
                 });
-
             }
+            this._bLoaded = true;
         },
         /**
          * on change of date range trigger the filter for gantt tree.
