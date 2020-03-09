@@ -187,7 +187,6 @@ sap.ui.define([
 
 			// Not able load more than 100 associations
 			this.getModel().setSizeLimit(300);
-            // this.renderRecastChatbot();
 
 		},
 
@@ -359,16 +358,6 @@ sap.ui.define([
 					//Handle Error
 				}.bind(this)
 			});
-		},
-        renderRecastChatbot: function() {
-            if (!document.getElementById("cai-webchat")) {
-                var s = document.createElement("script");
-                s.setAttribute("id", "cai-webchat");
-                s.setAttribute("src", "https://cdn.cai.tools.sap/webchat/webchat.js");
-                document.body.appendChild(s);
-            }
-            s.setAttribute("channelId", "8edc3f42-00ed-439b-9ac1-2744b41c3083");
-            s.setAttribute("token", "f687d38fe889eab53bd9368302209256");
-        }
+		}
 	});
 });
