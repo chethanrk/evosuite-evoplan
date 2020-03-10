@@ -1,7 +1,7 @@
 <core:FragmentDefinition
         xmlns:core="sap.ui.core"
         xmlns="sap.m">
-    <Dialog afterOpen="configureList" contentWidth="40%">
+    <Dialog afterOpen="configureList" contentWidth="40%" contentHeight="100%">
         <content>
             <App id="navCon"
                  initialPage="master">

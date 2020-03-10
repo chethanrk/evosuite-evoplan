@@ -3,7 +3,7 @@
 	<smartFilterBar:SmartFilterBar id="resourceTreeFilterBar" class="treeTableFilterBar" persistencyKey="{viewModel>/persistencyKeyTree}"
 		considerSelectionVariants="true" entitySet="{viewModel>/treeSet}" enableBasicSearch="false" liveMode="true" showGoOnFB="true"
 		filterBarExpanded="false" beforeVariantFetch="onBeforeVariantFetch" afterVariantLoad="onAfterVariantLoad" filterContainerWidth="10rem"
-		filterChange="onFilterBarChanged" containerQuery="true" showRestoreOnFB="true" showClearOnFB="false">
+		filterChange="onFilterBarChanged" containerQuery="true" showRestoreOnFB="true" showClearOnFB="false" showFilterConfiguration="false">
 		<smartFilterBar:controlConfiguration>
 			<smartFilterBar:ControlConfiguration key="Description" label="{i18n>xtit.search}" visibleInAdvancedArea="true" width="100%" groupId="_BASIC"
 				index="0">

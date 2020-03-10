@@ -109,20 +109,6 @@ sap.ui.define([
             var oViewModel = this.getModel("viewModel");
             this.changeGanttHorizonViewAt(oViewModel);
         },
-
-        /**
-         * Change view horizon time at specified timestamp
-         * @param oModel {object} viewModel
-         * @param start {object} timestamp
-         * @param end {object} timestamp
-         */
-        changeGanttHorizonViewAt : function (oModel, start, end) {
-            var oViewModel = oModel,
-                sStartDate = start ? moment(start).startOf("day").subtract(1,"day").toDate(): moment().startOf("day").subtract(1,"day").toDate(),
-                sEndDate = end ? moment(end).endOf("day").add(1,"day").toDate() : moment().endOf("day").add(1,"day").toDate();
-            oViewModel.setProperty("/ganttSettings/visibleStartTime",sStartDate);
-            oViewModel.setProperty("/ganttSettings/visibleEndTime",sEndDate);
-        },
         /**
          * Gets default filters for gantt
          *
@@ -260,6 +246,21 @@ sap.ui.define([
             }
             this._setTotalHorizon({dateTo: oTo, dateFrom: oFrom});
             this._setDefaultTreeDateRange({dateTo: oTo, dateFrom: oFrom});
+        },
+        /**
+         * Setting the Time horizon for configured values.
+         * @param mParameters
+         * @private
+         */
+        _setTotalHorizon: function (mParameters) {
+            var oTotalHorizon = this._axisTime.getAggregation("totalHorizon"),
+                oUserModel = this.getModel("user"),
+                sStartDate = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE"),
+                sEndDate = mParameters ? mParameters.dateTo : oUserModel.getProperty("/GANT_END_DATE");
+
+            oTotalHorizon.setStartTime(formatter.date(sStartDate));
+            oTotalHorizon.setEndTime(formatter.date(sEndDate));
+
         },
         /**
          * Event triggered when right clicked on gantt shape,

@@ -157,7 +157,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onFilterBarChanged: function (oEvent) {
-			// this._oDataTable.setBusy(true);
+			this._updateCustomFilterData();
 		},
 
 		/**
