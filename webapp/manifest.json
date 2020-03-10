@@ -104,12 +104,24 @@
 		"dependencies": {
 			"minUI5Version": "1.60.0",
 			"libs": {
-				"sap.ui.core": {},
-				"sap.m": {},
-				"sap.uxap": {},
-				"sap.ui.comp": {},
-				"sap.ui.unified": {},
-				"sap.gantt": {}
+				"sap.ui.core": {
+					"lazy": true
+				},
+				"sap.m": {
+					"lazy": true
+				},
+				"sap.uxap": {
+					"lazy": true
+				},
+				"sap.ui.comp": {
+					"lazy": true
+				},
+				"sap.ui.unified": {
+					"lazy": true
+				},
+				"sap.gantt": {
+					"lazy": true
+				}
 			}
 		},
 		"contentDensities": {
