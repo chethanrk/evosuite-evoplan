@@ -96,7 +96,7 @@ sap.ui.define([
 			if (this._infoDialog){
 				this._infoDialog.destroy();
 			}
-			this._eventBus.unsubscribe("BaseController", "refreshAssetCal");
+			this._eventBus.unsubscribe("BaseController", "refreshAssetCal", this._triggerAssetFilter, this);
 			
 			this._selectedAsset = undefined;
 			this._aSelectedDemands = [];
@@ -164,16 +164,17 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oData = oModel.getProperty(sPath),
-				oRouter = this.getRouter();
+				oRouter = this.getRouter(),
+				oUserModel = this.getModel("user");
 			if (oEvent.getParameter("multiSelect")) { // CTL+ <appointment> will trigger this parameter (Not documented in SAPUI5 Demokit)
 				this._multiAssignment(oData, oSelectedDemand);
 				return;
 			} else {
 				this._aSelectedDemands = [];
 				this.byId("assignButton").setEnabled(false);
-				if (oData.AssetPlandatatype === "A") {
+				if (oData.AssetPlandatatype === "A" && oUserModel && oUserModel.getProperty("/ENABLE_CHANGE_ASSET_TIME_ALLOC")) {
 					this._openTimeAllocUpdate(oData);
-				} else {
+				} else if(oData.AssetPlandatatype === "D"){
 					oRouter.navTo("assetDemandDetail", {
 						guid: oData.Guid,
 						asset: oData.AssetGuid

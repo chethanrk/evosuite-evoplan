@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
-	"sap/m/FormattedText"
-], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText) {
+	"sap/m/FormattedText",
+	"com/evorait/evoplan/model/Constants"
+], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText, Constants) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.BaseController", {
@@ -489,31 +490,45 @@ sap.ui.define([
 			oViewModel.setProperty("/ganttSettings/visibleStartTime", sStartDate);
 			oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
 		},
+		_getNavLinks: function (aAdditionInfo) {
+			var oLinks = {};
+			for (var i in aAdditionInfo) {
+				if (aAdditionInfo[i].ApplicationId === Constants.APPLICATION.EVOORDER) {
+					oLinks[aAdditionInfo[i].LaunchMode] = aAdditionInfo[i];
+				}
+			}
+			return oLinks;
+
+		},
 		/**
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
 		openEvoOrder: function (sOrderId) {
-			var sUri, sSemanticObject, parameter, 
+			var sUri, sSemanticObject, sParameter,
 				sAction,
-				sAdditionInfo = this.getModel("user").getProperty("/LAUNCH_DETAILS");
-			if (sap.ushell && sap.ushell.Container && sAdditionInfo.trim() !== "") {
-				sSemanticObject = sAdditionInfo.split("\\_\\")[0];
-				sAction = sAdditionInfo.split("\\_\\")[1] || "dispatch";
-				parameter = sAdditionInfo.split("\\_\\")[2];
-				if(sSemanticObject && sAction){
-					this.navToApp(sSemanticObject, parameter, sAction);
+				aLinksInfo = this.getModel("navLinks").getData(),
+				oLinks = this._getNavLinks(aLinksInfo),
+				sAdditionInfo,
+				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode");
+
+			if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
+				sAdditionInfo = oLinks[sLaunchMode].Value1 || "";
+				sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];
+				sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "dispatch";
+				sParameter = sAdditionInfo.split("\\\\_\\\\")[2];
+				if (sSemanticObject && sAction) {
+					this.navToApp(sSemanticObject, sAction, sParameter, sOrderId);
 				}
 				return;
-			} else if (sAdditionInfo.trim() !== "") {
+			} else {
+				sAdditionInfo = oLinks[sLaunchMode].Value1;
 				sUri = (sAdditionInfo).replace("\\place_h1\\", sOrderId);
 				window.open(sUri, "_blank");
-			} else {
-				return;
 			}
 
 			// window.open("https://ed1.evorait.net:50103/sap/bc/ui5_ui5/evocu/evoorder/index.html?sap-client=800&sap-language="+sLanguage+"#/WorkOrder/"+sOrderId, "_blank");
 		},
-		navToApp: function (sSemanticObject, sParameter, sAction) {
+		navToApp: function (sSemanticObject, sAction, sParameter, sOrderId) {
 			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
 			var sHash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
 				target: {
@@ -521,12 +536,10 @@ sap.ui.define([
 					action: sAction
 				}
 			})) || ""; // generate the Hash to display a Notification details app
-			if(sParameter){
-				sHash = oCrossAppNavigator.hrefForAppSpecificHash("WorkOrder/"+sParameter);
-			}
+
 			oCrossAppNavigator.toExternal({
 				target: {
-					shellHash: sHash
+					shellHash: sHash + "&/" + sParameter + "/" + sOrderId
 				}
 			});
 		}

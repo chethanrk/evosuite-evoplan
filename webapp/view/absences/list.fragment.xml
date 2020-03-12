@@ -20,7 +20,7 @@
         <footer>
             <OverflowToolbar>
                 <ToolbarSpacer/>
-                <Button id="idCreateAbsence" text="{i18n>xtit.createUnAvailability}" type="Emphasized" enabled="true"
+                <Button id="idCreateAbsence" visible="{user>/ENABLE_ABSENCE_CREATE}" text="{i18n>xtit.createUnAvailability}" type="Emphasized" enabled="true"
                         press="onCreateUnAvail"/>
                 <Button id="idCreateCancel" text="{i18n>xbut.buttonClose}" press="onClose"/>
             </OverflowToolbar>

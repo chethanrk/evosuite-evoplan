@@ -9,8 +9,8 @@ sap.ui.define([
 		formatter:formatter,
 		
 		init: function () {
-			var eventBus = sap.ui.getCore().getEventBus();
-			eventBus.subscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);
+			this._eventBus = sap.ui.getCore().getEventBus();
+			this._eventBus.subscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);
 		},
 
 		/**
@@ -128,8 +128,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onSaveDialog: function (oEvent) {
-			var eventBus = sap.ui.getCore().getEventBus(),
-				oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
+			var oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
 				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid");
 			if (oDateTo !== undefined && oDateFrom !== undefined) {
@@ -138,11 +137,11 @@ sap.ui.define([
 				// To Validate DateTo and DateFrom
 				if (oDateTo >= oDateFrom) {
 					if(this._mParameters && this._mParameters.bFromPlannCal){
-						eventBus.publish("AssignInfoDialog", "refreshAssignment", {
+						this._eventBus.publish("AssignInfoDialog", "refreshAssignment", {
 							reassign:this.reAssign
 						});						
 					}else{
-						eventBus.publish("AssignInfoDialog", "updateAssignment", {
+						this._eventBus.publish("AssignInfoDialog", "updateAssignment", {
 							isReassign: this.reAssign,
 							parameters: this._mParameters
 						});
@@ -162,13 +161,12 @@ sap.ui.define([
 		 */
 		onDeleteAssignment: function (oEvent) {
 			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid");
-			var eventBus = sap.ui.getCore().getEventBus();
 			if(this._mParameters && this._mParameters.bFromPlannCal){
-						eventBus.publish("AssignInfoDialog", "refreshAssignment", {
+						this._eventBus.publish("AssignInfoDialog", "refreshAssignment", {
 							unassign:true
 						});						
 					}else{
-						eventBus.publish("AssignInfoDialog", "deleteAssignment", {
+						this._eventBus.publish("AssignInfoDialog", "deleteAssignment", {
 							sId: sId,
 							parameters: this._mParameters
 						});
@@ -199,8 +197,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onPressReAssign: function (oEvent) {
-			var eventBus = sap.ui.getCore().getEventBus();
-			eventBus.publish("AssignInfoDialog", "selectAssign", {
+			this._eventBus.publish("AssignInfoDialog", "selectAssign", {
 				oView: this._oView,
 				isReassign: this.reAssign
 			});
@@ -416,6 +413,9 @@ sap.ui.define([
                 });
 			}
 
+		},
+		exit : function(){
+			this._eventBus.unsubscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);
 		}
 	});
 });

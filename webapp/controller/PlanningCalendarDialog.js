@@ -16,10 +16,10 @@ sap.ui.define([
         _changedAbsences :{},
 
         init: function () {
-            var eventBus = sap.ui.getCore().getEventBus();
-            eventBus.subscribe("AssignInfoDialog", "RefreshCalendar", this._setCalendarModel, this);
-            eventBus.subscribe("AssignInfoDialog", "refreshAssignment", this._refreshAppointment, this);
-            eventBus.subscribe("CreateUnAvailability", "refreshAbsence", this._refreshIntervalHeader, this);
+            this._eventBus = sap.ui.getCore().getEventBus();
+            this._eventBus.subscribe("AssignInfoDialog", "RefreshCalendar", this._setCalendarModel, this);
+            this._eventBus.subscribe("AssignInfoDialog", "refreshAssignment", this._refreshAppointment, this);
+            this._eventBus.subscribe("CreateUnAvailability", "refreshAbsence", this._refreshIntervalHeader, this);
         },
         /**
          * init and get dialog view
@@ -610,8 +610,7 @@ sap.ui.define([
             } else {
                 this._oDialog.close();
                 if (this._mParameters.bFromGantt) {
-                    var eventBus = sap.ui.getCore().getEventBus();
-                    eventBus.publish("BaseController", "refreshGanttChart", {});
+                    this._eventBus.publish("BaseController", "refreshGanttChart", {});
                 }
             }
         },
@@ -646,14 +645,13 @@ sap.ui.define([
          * @private
          */
         _triggerSaveAssignments: function (bConfirm) {
-            var eventBus = sap.ui.getCore().getEventBus(),
-                mParameters = bConfirm ? {
+            var mParameters = bConfirm ? {
                     bFromHome: true
                 } : {
                     bFromPlannCal: true
                 };
 
-            eventBus.publish("PlanningCalendarDialog", "saveAllAssignments", {
+            this._eventBus.publish("PlanningCalendarDialog", "saveAllAssignments", {
                 assignments: this._changedAssignments,
                 absences : this._changedAbsences,
                 mParameters: mParameters
@@ -711,9 +709,7 @@ sap.ui.define([
         onCreateUnAvail : function (oEvent) {
             var oSelected = this._oPlanningCalendar.getSelectedRows(),
                 oContext = oSelected[0].getBindingContext("calendarModel"),
-                oModel = oContext.getModel(),
-                sPath = oContext.getPath(),
-                oData = oModel.getProperty(sPath);
+                sPath = oContext.getPath();
             this._component.createUnAvail.open(this._oView, [sPath], {bFromPlannCal: true});
         },
         /**
@@ -734,6 +730,11 @@ sap.ui.define([
             this._changedAbsences[oData.Guid || new Date()] = oNewAbsense;
             this.checkDirty();
 
+        },
+        exit : function(){
+        	this._eventBus.unsubscribe("AssignInfoDialog", "RefreshCalendar", this._setCalendarModel, this);
+            this._eventBus.unsubscribe("AssignInfoDialog", "refreshAssignment", this._refreshAppointment, this);
+            this._eventBus.unsubscribe("CreateUnAvailability", "refreshAbsence", this._refreshIntervalHeader, this);
         }
 
     });

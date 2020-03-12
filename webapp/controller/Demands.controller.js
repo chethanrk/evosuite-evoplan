@@ -177,8 +177,8 @@ sap.ui.define([
 			if (this._infoDialog) {
 				this._infoDialog.destroy();
 			}
-			this._eventBus.unsubscribe("BaseController", "refreshDemandTable");
-			this._eventBus.unsubscribe("App", "RegisterDrag");
+			this._eventBus.unsubscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
+			this._eventBus.unsubscribe("App", "RegisterDrag", this._registerDnD, this);
 		},
 
 		/* =========================================================== */
@@ -361,7 +361,7 @@ sap.ui.define([
 		 */
 		_triggerDemandFilter: function (sChanel, sEvent, oData) {
 			if (sEvent === "refreshDemandTable" && !this._bFirstTime) {
-				this.byId("draggableList").rebindTable();
+				this._oDraggableTable.rebindTable();
 			}
 			this._bFirstTime = false;
 		},

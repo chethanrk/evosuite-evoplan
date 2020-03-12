@@ -23,7 +23,8 @@ sap.ui.define([
 			// this._initCustomVariant();
 			var iOriginalBusyDelay,
 				oViewModel = this.getOwnerComponent().getModel("viewModel");
-
+			this._eventBus = sap.ui.getCore().getEventBus();
+			this._eventBus.subscribe("BaseController", "refreshAssets",this._triggerRefreshAssets, this);
 			this.getRouter().getRoute("assetManager").attachPatternMatched(this._onObjectMatched, this);
 
 			// Store original busy indicator delay, so it can be restored later on
@@ -57,9 +58,9 @@ sap.ui.define([
 		 * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
 		 * @memberOf com.evorait.evoplan.view.Assets
 		 */
-		//	onExit: function() {
-		//
-		//	}
+			onExit: function() {
+				this._eventBus.unsubscribe("BaseController", "refreshAssets",this._triggerRefreshAssets, this);
+			},
 		/**
 		 * The Method gets call when the pattern matched for registered route.
 		 * Clears selected if any selected row persisted of table
@@ -260,6 +261,13 @@ sap.ui.define([
 			if (oParameters.defaultContent && !oParameters.isStandard) {
 				this.hasCustomDefaultVariant = true;
 			}
+		},
+		/**
+		 * refreshes the assets tree 
+		 */
+		_triggerRefreshAssets : function(oEvent){
+			var oAssetTree = this.byId("idAssetTree");
+			oAssetTree.getBinding("rows").refresh();
 		}
 
 	});

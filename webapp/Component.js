@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/m/MessagePopoverItem",
 	"sap/m/Link",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
+	"sap/ui/model/FilterOperator",
+	"com/evorait/evoplan/model/Constants"
 ], function (
 	UIComponent,
 	Device,
@@ -37,7 +38,8 @@ sap.ui.define([
 	MessagePopoverItem,
 	Link,
 	Filter,
-	FilterOperator) {
+	FilterOperator,
+	Constants) {
 
 	"use strict";
 
@@ -49,6 +51,8 @@ sap.ui.define([
 				fullWidth: true
 			}
 		},
+		
+		_appId: "evoplan",
 
 		/**
 		 * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
@@ -81,7 +85,6 @@ sap.ui.define([
 
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
-
 			var oViewModel = new JSONModel({
 				treeSet: "ResourceHierarchySet",
 				subFilterEntity: "Demand",
@@ -102,6 +105,7 @@ sap.ui.define([
 				selectedHierarchyView: "TIMENONE",
 				enableReprocess: false,
 				first_load: false,
+				launchMode:Constants.LAUNCH_MODE.BSP,
 				ganttSettings: {
 					active: false,
 					busy: false,
@@ -121,6 +125,9 @@ sap.ui.define([
 
 			//Creating the Global assignment model for assignInfo Dialog
 			this.setModel(models.createAssignmentModel({}), "assignment");
+			
+			//Creating the Global assignment model for assignInfo Dialog
+			this.setModel(models.createNavLinksModel([]), "navLinks");
 
 			this.setModel(models.createMessageCounterModel({
 				S: 0,
@@ -177,10 +184,18 @@ sap.ui.define([
 			this._getResourceGroups();
 
 			UIComponent.prototype.init.apply(this, arguments);
-
+			if(sap.ushell && sap.ushell.Container){
+				this.getModel("viewModel").setProperty("/launchMode",Constants.LAUNCH_MODE.FIORI);
+			}
+			var aPromises = [];
+			aPromises.push(this._getSystemInformation());
+			aPromises.push(this._getData("/NavigationLinksSet"));
             //sets user model - model has to be intantiated before any view is loaded
-            this._getSystemInformation().then(function (data) {
-                this.getModel("user").setData(data);
+            Promise.all(aPromises).then(function (data) {
+                this.getModel("user").setData(data[0]);
+                if(data[1].results.length > 0){
+                	this.getModel("navLinks").setData(data[1].results);
+                }
                 // create the views based on the url/hash
                 this.getRouter().initialize();
             }.bind(this));
@@ -198,8 +213,14 @@ sap.ui.define([
 		 */
 		destroy: function () {
 			this._oErrorHandler.destroy();
+			this.assignInfoDialog.exit();
+			this.assignTreeDialog.exit();
+			this.assignActionsDialog.exit();
+			this.planningCalendarDialog.exit();
 			// call the base component's destroy function
 			UIComponent.prototype.destroy.apply(this, arguments);
+			
+			
 		},
 
 		/**
@@ -312,7 +333,9 @@ sap.ui.define([
 			this.getModel("MessageModel").setData(aMessages);
 			oMessageModel.setData([]);
 		},
-
+		/**
+		 * Calls the GetSystemInformation 
+		 */
 		_getSystemInformation: function () {
 			return new Promise(function (resolve, reject) {
 				this.getModel().callFunction("/GetSystemInformation", {
@@ -330,7 +353,25 @@ sap.ui.define([
 				});
 			}.bind(this));
 		},
-
+		/**
+		 * Calls the GetSystemInformation 
+		 */
+		_getData: function (sUri, aFilters) {
+			return new Promise(function (resolve, reject) {
+				this.getModel().read(sUri, {
+				success: function (oData, oResponse) {
+					resolve(oData);
+				}.bind(this),
+				error: function (oError) {
+					//Handle Error
+					reject(oError);
+				}.bind(this)
+			});
+			}.bind(this));
+		},
+		/**
+		 * gets the Count of Demand functions configured
+		 */
 		_getFunctionSetCount: function () {
 			this.getModel().read("/DemandFunctionsSet/$count", {
 				success: function (oData, oResponse) {

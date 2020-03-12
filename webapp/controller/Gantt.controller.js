@@ -12,7 +12,7 @@ sap.ui.define([
 ], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, Popup, Utility, CoordinateUtils, AxisTime) {
     "use strict";
 
-    AxisTime.prototype.getNowLabel = function () {
+   /* AxisTime.prototype.getNowLabel = function () {
         var date = new Date();
         var utcDate = new Date(date.getTime());
         var value = this.timeToView(utcDate);
@@ -22,7 +22,7 @@ sap.ui.define([
             "date": localDate,
             "value": Math.round(value)
         }];
-    };
+    };*/
 
     return AssignmentActionsController.extend("com.evorait.evoplan.controller.Gantt", {
 
@@ -71,8 +71,8 @@ sap.ui.define([
          * on page exit
          */
         onExit: function () {
-            this._oEventBus.unsubscribe("BaseController", "refreshGanttChart");
-            this._oEventBus.unsubscribe("AssignTreeDialog", "ganttShapeReassignment");
+           this._oEventBus.unsubscribe("BaseController", "refreshGanttChart", this._refreshGanttChart, this);
+           this._oEventBus.unsubscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
         },
 
 
@@ -514,7 +514,7 @@ sap.ui.define([
 
             if (oParams.shape && oParams.shape.sParentAggregationName === "shapes3") {
                 this._updateAssignmentModel(oData.Guid).then(function (oAssignmentObj) {
-                    if(oAssignmentObj.AllowReassign){
+                    if(oAssignmentObj.AllowChange){
                         oAssignmentObj.DateFrom = oParams.newTime[0];
                         oAssignmentObj.DateTo = oParams.newTime[1];
 

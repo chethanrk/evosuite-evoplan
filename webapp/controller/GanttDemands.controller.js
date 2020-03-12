@@ -19,9 +19,9 @@ sap.ui.define([
 		_bLoaded : false,
 		
 		onInit : function(){
-			var oEventBus = sap.ui.getCore().getEventBus(); 
+			this._oEventBus = sap.ui.getCore().getEventBus(); 
 			
-			oEventBus.subscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
+			this._oEventBus.subscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
 			
 			this._oDraggableTable = this.byId("draggableList");
 			this._oDataTable = this._oDraggableTable.getTable();
@@ -115,9 +115,7 @@ sap.ui.define([
 		 * @since 3.0
 		 */
 		onRowSelectionChange : function(){
-			var oDraggableTable = this.byId("draggableList"),
-				oDataTable = oDraggableTable.getTable();
-				var selected = oDataTable.getSelectedIndices();
+				var selected = this._oDataTable.getSelectedIndices();
 				if (selected.length > 0) {
 					this.byId("assignButton").setEnabled(true);
 					this.byId("changeStatusButton").setEnabled(true);
@@ -142,6 +140,9 @@ sap.ui.define([
 		OnClickOrderId : function(oEvent){
 			var sOrderId = oEvent.getSource().getText();
 			this.openEvoOrder(sOrderId);
+		},
+		onExit : function(){
+			this._oEventBus.unsubscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
 		}
 	});
 	

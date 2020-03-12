@@ -47,7 +47,7 @@ sap.ui.define([
             this._oView = oView;
             this._component = oView.getController().getOwnerComponent();
             this._oModel = this._component.getModel();
-            this._calendarModel = this._component.getModel("calendarModel")
+            this._calendarModel = this._component.getModel("calendarModel");
             this._mParameters = mParameters || {bFromHome:true};
             this._resourceBundle = this._oView.getController().getResourceBundle();
             this._id = "ManageAbsense";
@@ -77,9 +77,7 @@ sap.ui.define([
         onClickItem : function (oEvent) {
             var oSelectedItem = oEvent.getParameter("listItem"),
                 oContext = oSelectedItem.getBindingContext(),
-                oModel = oContext.getModel(),
-                sPath = oContext.getPath(),
-                oData = oModel.getProperty(sPath);
+                sPath = oContext.getPath();
 
             var oDetail = Fragment.byId(this._id,"detail");
             oDetail.bindElement(sPath);
@@ -97,13 +95,13 @@ sap.ui.define([
                 this._oApp.back();
             }else{
                 this._showConfirmMessageBox.call(this._oView.getController(),this._resourceBundle.getText("ymsg.confirmMsg")).then(function(data){
-                    if(data === "YES"){
+                    if(data === "NO"){
                         this.onSaveAvail(oEvent);
                     }else{
                         this._resetChanges(oEvent);
                         this._oApp.back();
                     }
-                }.bind(this))
+                }.bind(this));
             }
 
         },
@@ -199,7 +197,7 @@ sap.ui.define([
                     this._callFunction(oUpdateData);
                 }else {
                     oUpdateData.Guid = oChanges.Guid;
-                    this._callFunction(oUpdateData);
+                    this._deleteUnavailability(oUpdateData);
                 }
                 this._dataDirty = true;
                 this._resetChanges(oEvent, sProperty);
@@ -212,7 +210,7 @@ sap.ui.define([
         _validateDates : function (oData) {
             if(oData.dateFrom !== "" && oData.dateTo !== "" && oData.availType !== ""){
                 if(oData.dateFrom.getTime() >= oData.dateTo.getTime()){
-                    this.showMessageToast(oResourceBundle.getText("ymsg.datesInvalid"));
+                    this.showMessageToast(this._resourceBundle.getText("ymsg.datesInvalid"));
                     return false;
                 }
                 return true;
@@ -252,6 +250,15 @@ sap.ui.define([
                 this._oApp.to(this._id+"--create");
             }.bind(this));
         },
+        _deleteUnavailability:function(oUpdateData){
+        	 this._showConfirmMessageBox.call(this._oView.getController(),this._resourceBundle.getText("ymsg.confirmDel")).then(function(data){
+                    if(data === "YES"){
+                       this._callFunction(oUpdateData);
+                    }else{
+                       return;
+                    }
+                }.bind(this));
+        },
         /**
          * Calls the respective function import
          * @param oData
@@ -259,7 +266,7 @@ sap.ui.define([
          */
         _callFunction : function (oData) {
             this._oDialog.setBusy(true);
-            this.executeFunctionImport.call(this._oView.getController(), this._oModel, oData, "ManageAbsence" ,"POST").then(this._refreshList.bind(this))
+            this.executeFunctionImport.call(this._oView.getController(), this._oModel, oData, "ManageAbsence" ,"POST").then(this._refreshList.bind(this));
         },
         /**
          * Refresh's the List

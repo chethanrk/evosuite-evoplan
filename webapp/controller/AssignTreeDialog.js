@@ -12,9 +12,9 @@ sap.ui.define([
         formatter: formatter,
 
         init: function () {
-            var eventBus = sap.ui.getCore().getEventBus();
-            eventBus.subscribe("AssignInfoDialog", "selectAssign", this._triggerOpenDialog, this);
-            eventBus.subscribe("AssignActionsDialog", "selectAssign", this._triggerOpenDialog, this);
+            this._eventBus = sap.ui.getCore().getEventBus();
+            this._eventBus.subscribe("AssignInfoDialog", "selectAssign", this._triggerOpenDialog, this);
+            this._eventBus.subscribe("AssignActionsDialog", "selectAssign", this._triggerOpenDialog, this);
         },
 
         /**
@@ -95,9 +95,8 @@ sap.ui.define([
          */
         onSaveDialog : function (oEvent) {
             if(this._assignPath){
-                var eventBus = sap.ui.getCore().getEventBus();
                 if(this._callbackEvent){
-                    eventBus.publish("AssignTreeDialog", this._callbackEvent, {
+                    this._eventBus.publish("AssignTreeDialog", this._callbackEvent, {
                         sAssignPath: this._assignPath,
                         aSourcePaths: this._aSelectedPaths,
                         parameters : this._mParameters
@@ -107,25 +106,25 @@ sap.ui.define([
                 }
                 // In case of bulk reassign
                 if(this._bulkReAssign){
-                    eventBus.publish("AssignTreeDialog", "bulkReAssignment", {
+                    this._eventBus.publish("AssignTreeDialog", "bulkReAssignment", {
                         sPath: this._assignPath,
                         aContexts: this._aSelectedPaths,
                         parameters : this._mParameters
                     });
                     this.onCloseDialog();
-                    eventBus.publish("AssignTreeDialog", "closeActionDialog", {});
+                    this._eventBus.publish("AssignTreeDialog", "closeActionDialog", {});
                     return;
                 }
                 // In case single reassign
                 if(this._reAssign){
-                    eventBus.publish("AssignTreeDialog", "selectedAssignment", {
+                    this._eventBus.publish("AssignTreeDialog", "selectedAssignment", {
                         sPath: this._assignPath
                     });
                     this.onCloseDialog();
                     return;
                 }
                 if(this._aSelectedPaths){
-                    eventBus.publish("AssignTreeDialog", "assignSelectedDemand", {
+                    this._eventBus.publish("AssignTreeDialog", "assignSelectedDemand", {
                         selectedPaths: this._aSelectedPaths,
                         assignPath: this._assignPath,
                         parameters : this._mParameters
@@ -169,6 +168,10 @@ sap.ui.define([
             }else if(sChanel === "AssignActionsDialog" && sEvent === "selectAssign"){
                 this.open(oData.oView, oData.isReassign, oData.aSelectedContexts, oData.isBulkReassign, oData.parameters);
             }
+        },
+        exit:function(){
+            this._eventBus.unsubscribe("AssignInfoDialog", "selectAssign", this._triggerOpenDialog, this);
+            this._eventBus.unsubscribe("AssignActionsDialog", "selectAssign", this._triggerOpenDialog, this);
         }
 
 

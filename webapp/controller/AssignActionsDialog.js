@@ -11,8 +11,8 @@ sap.ui.define([
 		formatter: formatter,
 
 		init: function () {
-			var eventBus = sap.ui.getCore().getEventBus();
-			eventBus.subscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog, this);
+			this._eventBus = sap.ui.getCore().getEventBus();
+			this._eventBus.subscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog, this);
 		},
 		/**
 		 * initialize and get dialog object
@@ -94,8 +94,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onUnassign: function (oEvent) {
-			var eventBus = sap.ui.getCore().getEventBus(),
-				oTable = this._oAssignMentTable,
+			var oTable = this._oAssignMentTable,
 				aContexts = oTable.getSelectedContexts();
 
 			//check at least one demand selected
@@ -105,7 +104,7 @@ sap.ui.define([
 				return;
 			}
 
-			eventBus.publish("AssignActionsDialog", "bulkDeleteAssignment", {
+			this._eventBus.publish("AssignActionsDialog", "bulkDeleteAssignment", {
 				aContexts: aContexts,
 				parameters: this._mParameters
 			});
@@ -119,8 +118,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onReassign: function (oEvent) {
-			var eventBus = sap.ui.getCore().getEventBus(),
-				aContexts = this._oAssignMentTable.getSelectedContexts();
+			var aContexts = this._oAssignMentTable.getSelectedContexts();
 
 			//check at least one demand selected
 			if (aContexts.length === 0) {
@@ -128,7 +126,7 @@ sap.ui.define([
 				MessageToast.show(msg);
 				return;
 			}
-			eventBus.publish("AssignActionsDialog", "selectAssign", {
+			this._eventBus.publish("AssignActionsDialog", "selectAssign", {
 				oView: this._oView,
 				isReassign: this.reAssign,
 				aSelectedContexts: aContexts,
@@ -261,6 +259,9 @@ sap.ui.define([
 		onCloseDialog: function () {
 			this._oAssignMentTable.removeSelections();
 			this.getDialog().close();
+		},
+		exit : function(){
+			this._eventBus.unsubscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog, this);
 		}
 	});
 });

@@ -249,7 +249,7 @@ sap.ui.define([
 		 * View life cycle methods when view gets destroy 
 		 */
 		onExit : function(){
-			this._eventBus.unsubscribe("BaseController", "refreshDemandOverview");
+			this._eventBus.unsubscribe("BaseController", "refreshDemandOverview", this._triggerRefreshDemand, this);
 		}
 
 	});

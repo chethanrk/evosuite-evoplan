@@ -44,10 +44,10 @@ sap.ui.define([
             this.pIsFilterBarInitalized = this.oFilterConfigsController.getInitalizedPromise();
 
             //eventbus of assignemnt handling
-            var eventBus = sap.ui.getCore().getEventBus();
-            eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
-            eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
-            eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
+            this._eventBus = sap.ui.getCore().getEventBus();
+            this._eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
+            this._eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
+            this._eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
             // eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
 
             // event listener for changing device orientation with fallback of window resize
@@ -204,6 +204,9 @@ sap.ui.define([
             if (this.getOwnerComponent().planningCalendarDialog) {
                 this.getOwnerComponent().planningCalendarDialog.getDialog().destroy();
             }
+            this._eventBus.unsubscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
+            this._eventBus.unsubscribe("App", "RegisterDrop", this._registerDnD, this);
+            this._eventBus.unsubscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
         },
 
         /* =========================================================== */

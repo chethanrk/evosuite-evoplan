@@ -10,8 +10,8 @@
     <Label text="{/#Demand/ORDERID/@sap:label}"/>
     <table:template>
         <HBox>
-            <Link text="{ORDERID}" visible="{= ${user>/LAUNCH_MODE} !== '' ? true : false}" press="OnClickOrderId"></Link>
-            <Text text="{ORDERID}" visible="{= ${user>/LAUNCH_MODE} === '' ? true : false}"></Text>
+            <Link text="{ORDERID}" visible="{= ${user>/ENABLE_EVOORDER_LINK} === true ? true : false}" press="OnClickOrderId"></Link>
+            <Text text="{ORDERID}" visible="{= ${user>/ENABLE_EVOORDER_LINK} === false ? true : false}"></Text>
         </HBox>
 
     </table:template>

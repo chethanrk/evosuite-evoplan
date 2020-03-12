@@ -268,6 +268,10 @@ sap.ui.define([
 				oComponent._getResourceGroups.call(oComponent);
 				this._eventBus.publish("BaseController", "refreshDemandTable",{});
 				this._eventBus.publish("BaseController", "refreshTreeTable",{});
+				this._eventBus.publish("BaseController", "refreshAssetCal",{});
+				this._eventBus.publish("BaseController", "refreshAssets",{});
+				this._eventBus.publish("BaseController", "refreshGanttChart", {});
+				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}.bind(this),function(data){
 				//
 			}.bind(this)).catch(function(data){
@@ -281,13 +285,13 @@ sap.ui.define([
 		 */
 		onExit: function() {
 			//Event are subscription Demand assignment and change status of demand
-			this._eventBus.unsubscribe("AssignTreeDialog", "assignSelectedDemand");
-			this._eventBus.unsubscribe("StatusSelectDialog", "changeStatusDemand");
-			this._eventBus.unsubscribe("AssignInfoDialog", "updateAssignment");
-			this._eventBus.unsubscribe("AssignTreeDialog", "bulkReAssignment");
-			this._eventBus.unsubscribe("AssignInfoDialog", "deleteAssignment");
-			this._eventBus.unsubscribe("AssignActionsDialog", "bulkDeleteAssignment");
-			this._eventBus.unsubscribe("PlanningCalendarDialog", "saveAllAssignments");
+			this._eventBus.unsubscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
+			this._eventBus.unsubscribe("StatusSelectDialog", "changeStatusDemand", this._triggerSaveDemandStatus, this);
+			this._eventBus.unsubscribe("AssignInfoDialog", "updateAssignment", this._triggerUpdateAssign, this);
+			this._eventBus.unsubscribe("AssignTreeDialog", "bulkReAssignment", this._triggerUpdateAssign, this);
+			this._eventBus.unsubscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
+			this._eventBus.unsubscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
+			this._eventBus.unsubscribe("PlanningCalendarDialog", "saveAllAssignments", this._triggerSaveAllAssignments, this);
 		}
 	});
 
