@@ -106,7 +106,7 @@ sap.ui.define([
 		"O": {
 			tooltip: "xtit.freeday",
 			icon: "sap-icon://busy",
-			color: "#008000"
+			color: "#6e7a75"
 		}
 	};
 
