@@ -115,7 +115,7 @@ sap.ui.define([
 						}
 					}
 					if (bContainsError) {
-						var sMessage = oMessage.message + "\n" + oResourceBundle.getText("errorMessage");
+						var sMessage = oMessage.message;
 						this._showErrorMessage(sMessage, fnCallback);
 					} else
 						this.showMessageToast(oData.message);

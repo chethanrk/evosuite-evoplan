@@ -1,106 +1,41 @@
-<core:FragmentDefinition
-        xmlns="sap.m"
-        xmlns:core="sap.ui.core"
-        xmlns:unified="sap.ui.unified">
-
-    <Dialog id="planCalendarDialog"
-            title="{i18n>xtit.calendarModalTitle}"
-            contentWidth="100%"
-            stretch="true"
-            resizable="false"
-            beforeClose="onBeforeClose">
-        <content>
-            <VBox class="sapUiSmallMargin">
-                <PlanningCalendar
-                        id="planningCalendar"
-                        startDate="{path: 'calendarModel>/startDate'}"
-                        rows="{path: 'calendarModel>/resources'}"
-                        viewKey="{
-                        	path:'calendarModel>/viewKey',
-                            formatter:'.formatter.getCalendarView'
-                        }"
-                        appointmentSelect="onClickCalendarAssignment"
-                        appointmentsVisualization="Filled"
-                        showWeekNumbers="true"
-                        groupAppointmentsMode="Expanded"
-                        stickyHeader="true"
-                        viewChange ="onViewChange"
-                        appointmentsReducedHeight="true"
-                        rowSelectionChange="onRowSelectionChange"
-                        singleSelection="true">
-                    <rows>
-                        <PlanningCalendarRow
-                                icon="{
-                                              path: 'calendarModel>ObjectType',
-                                              formatter: '.formatter.getResourceIcon'
-                                       }"
-                                title="{calendarModel>GroupDescription}"
-                                text="{calendarModel>ResourceDescription}"
-                                enableAppointmentsDragAndDrop="{
-                                        parts:[
-                                            {path:'user>/ENABLE_DRAG_DROP'},
-                                            {path:'calendarModel>ObjectType'}
-                                            ],
-                                            formatter:'.formatter.formatDragAndDropEnable'}"
-                                enableAppointmentsResize="{ parts:[
-                                {path:'user>/ENABLE_DRAG_DROP'},
-                                {path:'user>/ENABLE_RESIZE'},
-                                {path:'calendarModel>ObjectType'}
-                                ],
-                                formatter:'.formatter.formatResizeEnable'}"
-                                appointmentDragEnter="onAppointmentDragEnter"
-                                appointmentDrop="onAppointmentDrop"
-                                appointmentResize="onAppointmentResize"
-                                appointments="{path : 'calendarModel>Assignments', templateShareable: 'true'}"
-                                intervalHeaders="{path: 'calendarModel>AbsenceInfo', templateShareable: 'true'}">
-                            <appointments>
-                                <unified:CalendarAppointment
-                                        startDate="{calendarModel>DateFrom}"
-                                        endDate="{calendarModel>DateTo}"
-                                        title="{calendarModel>Demand/DemandDesc}"
-                                        tooltip="{
-                                        	parts:[
-                                        		{path:'calendarModel>Demand/ORDERID'},
-                                        		{path:'calendarModel>Demand/DemandDesc'},
-                                        		{path:'calendarModel>Demand/StatusDesc'}
-                                        	],
-											formatter: '.formatter.formatAsnToolTip'}"
-                                        icon="{calendarModel>Demand/STATUS_ICON}"
-                                        text="{calendarModel>Demand/ORDERID}"
-                                        type="{calendarModel>type}"
-                                        color="{
-                                        			parts:[
-							                        	{path:'calendarModel>Demand/CRITICALITY'},
-							                        	{path:'calendarModel>color'}],
-							                        formatter:'.formatter.formatStatusIconColor'
-							                   }">
-                                </unified:CalendarAppointment>
-                            </appointments>
-                            <intervalHeaders>
-                                <unified:CalendarAppointment
-                                        startDate="{calendarModel>DateFrom}"
-                                        endDate="{calendarModel>DateTo}"
-                                        title="{calendarModel>Description}"
-                                        color="{
-                                        	path:'calendarModel>AvailType',
-                                        	formatter:'.formatter.formatAvailType'
-                                        }"
-                                        type="Type06">
-                                </unified:CalendarAppointment>
-                            </intervalHeaders>
-                        </PlanningCalendarRow>
-                    </rows>
-                </PlanningCalendar>
-            </VBox>
-        </content>
-        <buttons>
-            <Button id="idCreateUA" text="{i18n>xtit.createUnAvailability}" visible="{user>/CREATE_UNAVAILABILITY_UI_ENABL}" type="Emphasized" enabled="false"
-                    press="onCreateUnAvail" />
-            <Button id="idCreateSave" text="{i18n>xbut.buttonSave}" type="Emphasized" enabled="false"
-                    press="onSaveDialog" />
-            <Button id="idCreateCancel" text="{i18n>xbut.buttonClose}" press="onModalCancel" />
-        </buttons>
-
-    </Dialog>
-
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:unified="sap.ui.unified">
+	<Dialog id="planCalendarDialog" title="{i18n>xtit.calendarModalTitle}" contentWidth="100%" stretch="true" resizable="false"
+		beforeClose="onBeforeClose">
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<PlanningCalendar id="planningCalendar" startDate="{path: 'calendarModel>/startDate'}" rows="{path: 'calendarModel>/resources'}"
+					viewKey="{ path:'calendarModel>/viewKey', formatter:'.formatter.getCalendarView' }" appointmentSelect="onClickCalendarAssignment"
+					appointmentsVisualization="Filled" showWeekNumbers="true" groupAppointmentsMode="Expanded" stickyHeader="true" viewChange="onViewChange"
+					appointmentsReducedHeight="true" rowSelectionChange="onRowSelectionChange" singleSelection="true">
+					<rows>
+						<PlanningCalendarRow icon="{ path: 'calendarModel>ObjectType', formatter: '.formatter.getResourceIcon' }"
+							title="{calendarModel>GroupDescription}" text="{calendarModel>ResourceDescription}"
+							enableAppointmentsDragAndDrop="{ parts:[ {path:'user>/ENABLE_DRAG_DROP'}, {path:'calendarModel>ObjectType'} ], formatter:'.formatter.formatDragAndDropEnable'}"
+							enableAppointmentsResize="{ parts:[ {path:'user>/ENABLE_DRAG_DROP'}, {path:'user>/ENABLE_RESIZE'}, {path:'calendarModel>ObjectType'} ], formatter:'.formatter.formatResizeEnable'}"
+							appointmentDragEnter="onAppointmentDragEnter" appointmentDrop="onAppointmentDrop" appointmentResize="onAppointmentResize"
+							appointments="{path : 'calendarModel>Assignments', templateShareable: 'true'}"
+							intervalHeaders="{path: 'calendarModel>AbsenceInfo', templateShareable: 'true'}">
+							<appointments>
+								<unified:CalendarAppointment startDate="{calendarModel>DateFrom}" endDate="{calendarModel>DateTo}" title="{calendarModel>Demand/DemandDesc}"
+									tooltip="{ parts:[ {path:'calendarModel>Demand/ORDERID'}, {path:'calendarModel>Demand/DemandDesc'}, {path:'calendarModel>Demand/StatusDesc'} ], formatter: '.formatter.formatAsnToolTip'}"
+									icon="{calendarModel>Demand/STATUS_ICON}" text="{calendarModel>Demand/ORDERID}" type="{calendarModel>type}"
+									color="{ parts:[ {path:'calendarModel>Demand/CRITICALITY'}, {path:'calendarModel>color'}], formatter:'.formatter.formatStatusIconColor' }"></unified:CalendarAppointment>
+							</appointments>
+							<intervalHeaders>
+								<unified:CalendarAppointment startDate="{calendarModel>DateFrom}" endDate="{calendarModel>DateTo}" title="{calendarModel>Description}"
+									color="{ path:'calendarModel>AvailType', formatter:'.formatter.formatAvailType' }" type="Type06"></unified:CalendarAppointment>
+							</intervalHeaders>
+						</PlanningCalendarRow>
+					</rows>
+				</PlanningCalendar>
+			</VBox>
+		</content>
+		<buttons>
+			<Button id="idCreateUA" text="{i18n>xtit.createUnAvailability}"
+				visible="{ parts:[ {path:'user>/CREATE_UNAVAILABILITY_UI_ENABL'}, {path:'user>/ENABLE_ABSENCES_DISPLAY_IN_PC'} ], formatter: '.formatter.formatCrtABFromPC'}"
+				type="Emphasized" enabled="false" press="onCreateUnAvail"/>
+			<Button id="idCreateSave" text="{i18n>xbut.buttonSave}" type="Emphasized" enabled="false" press="onSaveDialog"/>
+			<Button id="idCreateCancel" text="{i18n>xbut.buttonClose}" press="onModalCancel"/>
+		</buttons>
+	</Dialog>
 </core:FragmentDefinition>

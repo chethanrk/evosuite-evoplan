@@ -464,9 +464,21 @@ sap.ui.define([
         formatListMode : function (bIsActive) {
 
         },
-        
+        /**
+         * formatter formats the visibility of reassign button based on the two flags
+         * 1. Allow change
+         * 2. Allow reassign
+         */
         formartVisibleReassign : function(bChange, bAssign){
         	return bChange && bAssign;
+        },
+        /**
+         * formatter formats the visibility of create unavailability button based on the two flags
+         * 1. Allow create in PC
+         * 2. Absences are visualized in PC or not
+         */
+        formatCrtABFromPC : function(bAllowCreate, bShowInPC){
+        	return bAllowCreate && bShowInPC;
         }
     };
 });

@@ -104,7 +104,8 @@ sap.ui.define([
             var parent = oSource.getParent();
             var sPath = parent.getBindingContext().getPath();
             var oParams = oEvent.getParameters();
-
+			var oNewNode = this.getModel().getProperty(sPath),
+				oSelectedData;
             //Sets the property IsSelected manually
             this.getModel().setProperty(sPath + "/IsSelected", oParams.selected);
 
@@ -125,8 +126,17 @@ sap.ui.define([
                 this.byId("idButtonreassign").setEnabled(false);
                 this.byId("idButtonunassign").setEnabled(false);
             }
+            // Disable the Manage absence button when more than one resources are selected
+            // Disble the button for the selection on Group and Pool Node.
             if (this.selectedResources.length === 1) {
-                this.byId("idButtonCreUA").setEnabled(true);
+            	oSelectedData = this.getModel().getProperty(this.selectedResources[0]);
+            	if(oParams.selected && oNewNode.NodeType === "RESOURCE" && oNewNode.ResourceGuid !== "" && oNewNode.ResourceGroupGuid !== ""){
+            		this.byId("idButtonCreUA").setEnabled(true);
+            	}else if(oSelectedData.NodeType === "RESOURCE" && oSelectedData.ResourceGuid !== "" && oSelectedData.ResourceGroupGuid !== ""){
+            		this.byId("idButtonCreUA").setEnabled(true);
+            	}else{
+            		this.byId("idButtonCreUA").setEnabled(false);
+            	}
             } else {
                 this.byId("idButtonCreUA").setEnabled(false);
             }
@@ -367,7 +377,14 @@ sap.ui.define([
          * @param oEvent
          */
         onPressCreateUA: function (oEvent) {
-            this.getOwnerComponent().manageAvail.open(this.getView(), this.selectedResources);
+        	var oSelectedResource = this.selectedResources[0];
+        	var oResData = this.getModel().getProperty(oSelectedResource);
+        	
+        	if(oResData.NodeType === "RESOURCE" && oResData.ResourceGuid !== "" && oResData.ResourceGroupGuid !== ""){
+            	this.getOwnerComponent().manageAvail.open(this.getView(), this.selectedResources);
+        	}else{
+        		this.showMessageToast(this.getResourceBundle().getText("ymsg.selectResoure"));
+        	}
         },
         /**
          * On click on expand the tree nodes gets expand to level 1

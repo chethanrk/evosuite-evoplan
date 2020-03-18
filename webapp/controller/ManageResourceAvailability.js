@@ -189,17 +189,23 @@ sap.ui.define([
                     oUpdateData.StartTimestamp = oChanges.DateFrom;
                     oUpdateData.EndTimestamp = oChanges.DateTo;
                     oUpdateData.Guid = oChanges.Guid;
-                    this._callFunction(oUpdateData);
+                    if(this._checkMandaoryFields(oChanges)){
+                    	this._callFunction(oUpdateData);
+                    }
                 }else if(sProperty === "CREATE"){
                     oUpdateData.StartTimestamp = oChanges.DateFrom;
                     oUpdateData.EndTimestamp = oChanges.DateTo;
                     oUpdateData.AvailabilityType = oChanges.AvailType;
-                    this._callFunction(oUpdateData);
+                    if(this._checkMandaoryFields(oChanges)){
+                    	this._callFunction(oUpdateData);
+                    }
                 }else {
                     oUpdateData.Guid = oChanges.Guid;
                     this._deleteUnavailability(oUpdateData);
                 }
-                this._dataDirty = true;
+                if(!this._checkMandaoryFields(oChanges)){
+                    return;
+                }
                 this._resetChanges(oEvent, sProperty);
                 this._oApp.back();
             }else {
@@ -207,6 +213,10 @@ sap.ui.define([
                 this.showMessageToast(this._resourceBundle.getText("No Changes"));
             }
         },
+        /**
+         * validates the dates entered
+         * from date should be less than the to date
+         */
         _validateDates : function (oData) {
             if(oData.dateFrom !== "" && oData.dateTo !== "" && oData.availType !== ""){
                 if(oData.dateFrom.getTime() >= oData.dateTo.getTime()){
@@ -215,6 +225,16 @@ sap.ui.define([
                 }
                 return true;
             }
+        },
+        /**
+         * Checks madatory fields 
+         */
+        _checkMandaoryFields : function(oChanges){
+        	if(oChanges.DateFrom !== "" && oChanges.DateTo !== "" && oChanges.AvailType !==""){
+        		return true;
+        	}
+        	this.showMessageToast(this._resourceBundle.getText("formValidateErrorMsg"));
+        	return false;
         },
         /**
          * Resets changed values and resource tree selection
@@ -250,6 +270,9 @@ sap.ui.define([
                 this._oApp.to(this._id+"--create");
             }.bind(this));
         },
+        /**
+         * Deletes the absences 
+         */
         _deleteUnavailability:function(oUpdateData){
         	 this._showConfirmMessageBox.call(this._oView.getController(),this._resourceBundle.getText("ymsg.confirmDel")).then(function(data){
                     if(data === "YES"){
@@ -266,6 +289,7 @@ sap.ui.define([
          */
         _callFunction : function (oData) {
             this._oDialog.setBusy(true);
+            this._dataDirty = true;
             this.executeFunctionImport.call(this._oView.getController(), this._oModel, oData, "ManageAbsence" ,"POST").then(this._refreshList.bind(this));
         },
         /**

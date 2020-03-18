@@ -54,6 +54,15 @@
 	                        <core:Icon src="{STATUS_ICON}" color="{ path:'CRITICALITY', formatter:'.formatter.formatStatusIconColor' }" tooltip="{StatusDesc}"></core:Icon>
 	                    </table:template>
 	                </table:Column>
+	                <table:Column hAlign="Center" width="3rem" visible="{user>/EMP_ENABLED}">
+								<table:customData>
+									<core:CustomData key="p13nData" value='\{"columnKey": "SYNC_STATUS", "leadingProperty": "SYNC_STATUS"}'/>
+								</table:customData>
+								<Label text="{/#Demand/SYNC_STATUS/@sap:label}"/>
+								<table:template>
+									<core:Icon src="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIcon' }" color="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIconColor' }" tooltip="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncTooltip' }"></core:Icon>
+								</table:template>
+					</table:Column>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.OrderIdColumn" type="XML"/>
             	</table:columns>
             	<table:dragDropConfig>

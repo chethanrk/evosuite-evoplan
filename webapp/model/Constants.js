@@ -9,6 +9,11 @@ sap.ui.define([], function () {
 		LAUNCH_MODE:{
 			FIORI:"LAUNCHPAD",
 			BSP:"BSP"
+		},
+		PLANNINGCAL:{
+			ABSENCE:"ABSENCE",
+			ASSET_UNAVAILABILITY:"ASSETUA",
+			ASSIGNMENTS:"ASSIGNMENT"
 		}
 	};
 

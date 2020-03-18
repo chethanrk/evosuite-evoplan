@@ -49,6 +49,16 @@ sap.ui.define([
 			window.addEventListener(orientationEvent, function () {
 				_this._jDraggable(_this);
 			}, false);
+			  // register drop every time table was new rendered
+            this._oDataTable.onAfterRendering = function () {
+                if (sap.ui.table.TreeTable.prototype.onAfterRendering) {
+                    sap.ui.table.TreeTable.prototype.onAfterRendering.apply(this, arguments);
+                }
+                //when app was already loaded
+                // On SmartFilterbar expand or collapse drag and drop is not working anymore
+                //so when table is finished with rendering init dragDrop again
+                _this._jDraggable(_this);
+            };
 		},
 		/**
 		 * Register Draggable
