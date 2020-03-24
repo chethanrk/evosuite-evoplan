@@ -517,13 +517,13 @@ sap.ui.define([
 		_getDateRangeValues: function (oData, sDateRangeType) {
 			var selectedTimeFormat = undefined;
 			if (oData) {
-				if (!oData.hasOwnProperty(this._aCustomFilters.startDate.origin) || oData.hasOwnProperty(this._aCustomFilters.endDate.origin)) {
+				if (oData.hasOwnProperty(this._aCustomFilters.startDate.origin) || oData.hasOwnProperty(this._aCustomFilters.endDate.origin)) {
 					var sViewType = oData[this._aCustomFilters.viewType.origin];
 					if (!sViewType) {
 						sViewType = this._oFilterBar.getControlByKey(this._aCustomFilters.viewType.origin).getSelectedKey();
 					}
 					selectedTimeFormat = formatter.getResourceFormatByKey(sViewType);
-					return [this.formatter.date(selectedTimeFormat.getDateBegin()), this.formatter.date(selectedTimeFormat.getDateEnd())];
+					return [this.formatter.date(this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin]), this.formatter.date(this._oCustomFilterData._CUSTOM[this._aCustomFilters.endDate.origin])];
 				}
 			} else if (sDateRangeType) {
 				selectedTimeFormat = formatter.getResourceFormatByKey(sDateRangeType);
