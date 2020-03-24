@@ -41,7 +41,7 @@ sap.ui.define([
 
             this.oFilterConfigsController = new ResourceTreeFilterBar();
             this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
-            this.pIsFilterBarInitalized = this.oFilterConfigsController.getInitalizedPromise();
+            // this.pIsFilterBarInitalized = this.oFilterConfigsController.getInitalizedPromise();
 
             //eventbus of assignemnt handling
             this._eventBus = sap.ui.getCore().getEventBus();
@@ -319,7 +319,7 @@ sap.ui.define([
          * @private
          */
         _triggerRefreshTree: function () {
-            this.pIsFilterBarInitalized.then(function () {
+            // this.pIsFilterBarInitalized.then(function () {
                 var oTreeTable = this._oDataTable,
                     oTreeBinding = oTreeTable.getBinding("rows");
 
@@ -330,7 +330,7 @@ sap.ui.define([
                     oTreeBinding.refresh();
                 }
                 this._bFirsrTime = false;
-            }.bind(this));
+            // }.bind(this));
         },
         /**
          * Resets the selected resource if selected
