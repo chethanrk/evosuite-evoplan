@@ -110,7 +110,8 @@ sap.ui.define([
 		 */
 		onInitialized: function (oEvent) {
 			var timeViewCtrl = this._oFilterBar.getControlByKey(this._aCustomFilters.viewType.origin);
-			if (timeViewCtrl) {
+			var sVariantId = this._oVariantMangement.getCurrentVariantId();
+			if (timeViewCtrl && sVariantId === "*standard*") {
 				this._setDateFilterControls(timeViewCtrl.getSelectedKey());
 			}
 		},
@@ -523,7 +524,11 @@ sap.ui.define([
 						sViewType = this._oFilterBar.getControlByKey(this._aCustomFilters.viewType.origin).getSelectedKey();
 					}
 					selectedTimeFormat = formatter.getResourceFormatByKey(sViewType);
-					return [this.formatter.date(this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin]), this.formatter.date(this._oCustomFilterData._CUSTOM[this._aCustomFilters.endDate.origin])];
+					if(this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin] && this._oCustomFilterData._CUSTOM[this._aCustomFilters.endDate.origin]){
+						return [this.formatter.date(this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin]), this.formatter.date(this._oCustomFilterData._CUSTOM[this._aCustomFilters.endDate.origin])];
+					}else{
+						return [this.formatter.date(selectedTimeFormat.getDateBegin()), this.formatter.date(selectedTimeFormat.getDateEnd())];	
+					}
 				}
 			} else if (sDateRangeType) {
 				selectedTimeFormat = formatter.getResourceFormatByKey(sDateRangeType);

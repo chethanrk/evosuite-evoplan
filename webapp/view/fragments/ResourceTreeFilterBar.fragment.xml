@@ -40,13 +40,13 @@
 			<smartFilterBar:ControlConfiguration key="StartDate" controlType="date" visibleInAdvancedArea="false" width="100%" groupId="_BASIC"
 				index="3" mandatory="mandatory">
 				<smartFilterBar:customControl>
-					<DatePicker width="100%" valueFormat="yyyy-MM-dd" change="onCustomFilterChange"/>
+					<DatePicker id="idStartDate" width="100%" valueFormat="yyyy-MM-dd" change="onCustomFilterChange"/>
 				</smartFilterBar:customControl>
 			</smartFilterBar:ControlConfiguration>
 			<smartFilterBar:ControlConfiguration key="EndDate" controlType="date" visibleInAdvancedArea="false" width="100%" groupId="_BASIC" index="4"
 				mandatory="mandatory">
 				<smartFilterBar:customControl>
-					<DatePicker width="100%" valueFormat="yyyy-MM-dd" change="onCustomFilterChange"/>
+					<DatePicker id="idEndDate" width="100%" valueFormat="yyyy-MM-dd" change="onCustomFilterChange"/>
 				</smartFilterBar:customControl>
 			</smartFilterBar:ControlConfiguration>
 		</smartFilterBar:controlConfiguration>
