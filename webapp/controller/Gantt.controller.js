@@ -13,7 +13,7 @@ sap.ui.define([
 	AxisTime) {
 	"use strict";
 
-	AxisTime.prototype.getNowLabel = function () {
+/*	AxisTime.prototype.getNowLabel = function () {
 		var date = new Date();
 		var utcDate = new Date(date.getTime());
 		var value = this.timeToView(utcDate);
@@ -23,7 +23,7 @@ sap.ui.define([
 			"date": localDate,
 			"value": Math.round(value)
 		}];
-	};
+	};*/
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.Gantt", {
 
@@ -225,11 +225,12 @@ sap.ui.define([
 				oViewModel = this.getModel("viewModel");
 
 			if (this._bLoaded && oTreeTable && oTreeTable.getBinding("rows")) {
+				this._ganttChart.setSelectionPanelSize("25%");
 				oTreeTable.getBinding("rows")._restoreTreeState().then(function () {
 					oViewModel.setProperty("/ganttSettings/busy", false);
 					oTreeTable.clearSelection();
 					oTreeTable.rerender();
-				});
+				}.bind(this));
 			}
 			this._bLoaded = true;
 		},

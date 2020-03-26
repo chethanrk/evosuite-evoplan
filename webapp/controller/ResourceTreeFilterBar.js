@@ -22,7 +22,7 @@ sap.ui.define([
 
 		_oFilterBar: null,
 
-		_isInitalizedProm: null,
+		// _isInitalizedProm: null,
 
 		_oCustomFilterData: {
 			_CUSTOM: {}
@@ -67,9 +67,9 @@ sap.ui.define([
 			var oLayout = oView.byId(sControlId);
 			this._oDroppableTable = oView.byId("droppableTable");
 			this._oDataTable = this._oDroppableTable.getTable();
-
+			this._viewModel = this._component.getModel("viewModel");
 			//use global promise for getting when filterbar was fully initalized
-			this._isInitalizedProm = new Promise(function (resolve, reject) {
+			// this._isInitalizedProm = new Promise(function (resolve, reject) {
 				// create fragment lazily
 				Fragment.load({
 					name: "com.evorait.evoplan.view.fragments.ResourceTreeFilterBar",
@@ -81,12 +81,12 @@ sap.ui.define([
 					//Filterbar is now official initialized
 					this._oFilterBar.attachInitialized(function (oEvent) {
 						this.onInitialized(oEvent);
-						resolve();
+						// resolve();
 					}.bind(this));
 					// connect filterbar to view (models, lifecycle)
 					oLayout.addContent(content);
 				}.bind(this));
-			}.bind(this));
+			// }.bind(this));
 		},
 
 		getInitalizedPromise: function () {
@@ -110,7 +110,8 @@ sap.ui.define([
 		 */
 		onInitialized: function (oEvent) {
 			var timeViewCtrl = this._oFilterBar.getControlByKey(this._aCustomFilters.viewType.origin);
-			if (timeViewCtrl) {
+			var sVariantId = this._oVariantMangement.getCurrentVariantId();
+			if (timeViewCtrl && sVariantId === "*standard*") {
 				this._setDateFilterControls(timeViewCtrl.getSelectedKey());
 			}
 		},
@@ -139,7 +140,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onBeforeVariantFetch: function (oEvent) {
-			this.getInitalizedPromise().then(function () {
+			// this.getInitalizedPromise().then(function () {
 				if (this._oVariantMangement.getSelectionKey() === "*standard*") {
 					this._setDateFilterControls(this._aCustomFilters.viewType.default);
 					this._updateCustomFilterData();
@@ -149,7 +150,7 @@ sap.ui.define([
 				}
 				this._updateCustomFilterData();
 				this._oFilterBar.setFilterData(this._oCustomFilterData);
-			}.bind(this));
+			// }.bind(this));
 		},
 
 		/**
@@ -157,7 +158,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onFilterBarChanged: function (oEvent) {
-			this._updateCustomFilterData();
+			// this._updateCustomFilterData();
 		},
 
 		/**
@@ -231,6 +232,9 @@ sap.ui.define([
 
 			oCustomFieldData[this._aCustomFilters.startDate.origin] = aDateRange[0];
 			oCustomFieldData[this._aCustomFilters.endDate.origin] = aDateRange[1];
+			if (oCustomFieldData && oCustomFieldData.NodeType) {
+				this._viewModel.setProperty("/selectedHierarchyView",oCustomFieldData.NodeType);
+			}
 			this._setCustomFilterControls(oCustomFieldData);
 			this._updateCustomFilterData();
 			this._oFilterBar.setFilterData(this._oCustomFilterData);
@@ -514,13 +518,17 @@ sap.ui.define([
 		_getDateRangeValues: function (oData, sDateRangeType) {
 			var selectedTimeFormat = undefined;
 			if (oData) {
-				if (!oData.hasOwnProperty(this._aCustomFilters.startDate.origin) || oData.hasOwnProperty(this._aCustomFilters.endDate.origin)) {
+				if (oData.hasOwnProperty(this._aCustomFilters.startDate.origin) || oData.hasOwnProperty(this._aCustomFilters.endDate.origin)) {
 					var sViewType = oData[this._aCustomFilters.viewType.origin];
 					if (!sViewType) {
 						sViewType = this._oFilterBar.getControlByKey(this._aCustomFilters.viewType.origin).getSelectedKey();
 					}
 					selectedTimeFormat = formatter.getResourceFormatByKey(sViewType);
-					return [this.formatter.date(selectedTimeFormat.getDateBegin()), this.formatter.date(selectedTimeFormat.getDateEnd())];
+					if(this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin] && this._oCustomFilterData._CUSTOM[this._aCustomFilters.endDate.origin]){
+						return [this.formatter.date(this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin]), this.formatter.date(this._oCustomFilterData._CUSTOM[this._aCustomFilters.endDate.origin])];
+					}else{
+						return [this.formatter.date(selectedTimeFormat.getDateBegin()), this.formatter.date(selectedTimeFormat.getDateEnd())];	
+					}
 				}
 			} else if (sDateRangeType) {
 				selectedTimeFormat = formatter.getResourceFormatByKey(sDateRangeType);
