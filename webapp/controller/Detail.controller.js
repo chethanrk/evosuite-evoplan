@@ -142,7 +142,7 @@ sap.ui.define([
 				oContext = oElementBinding.getBoundContext();
 
 			// refreshing the binding
-			oElementBinding.refresh();
+			// oElementBinding.refresh();
 
 			// No data for the binding
 			if (!oContext) {
