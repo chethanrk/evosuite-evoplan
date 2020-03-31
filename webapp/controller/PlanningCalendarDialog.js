@@ -499,32 +499,93 @@ sap.ui.define([
 		 */
 		_createData: function (data) {
 			var aResources = [],
-				oModel = this._oView ? this._oView.getModel() : null,
-				oUserModel = this._component ? this._component.getModel("user") : null,
-				oAssignData = {}, oAssetUNData ={}, oAbsenceData = {};
-			var oResourceMap = {};
+				oResourceMap = {},
+				oDataObject={},
+				oAsset= {};
 			if (data.__batchResponses) {
-
+				// fetch respective data 
+				oDataObject = this._getRespectiveData(data);
 				
+				// To create resource map from object id.
+				oResourceMap = this._createResourceMap(data);
+				
+				// Get Asset data from batchresponse
+				oAsset = this._getAssetData(oDataObject);
+				
+				if (oAsset.Assignments.length > 0) {
+					aResources.push(oAsset);
+				}
+
+				// Push assignment into respective resource
+				for (var j in oResourceMap) {
+					var sObjectId = j;
+					for (var k in oDataObject.oAssignData.results) {
+						if (oDataObject.oAssignData.results[k].ObjectId === sObjectId) {
+
+							oResourceMap[j].ResourceDescription = oDataObject.oAssignData.results[k].RESOURCE_DESCRIPTION;
+							oResourceMap[j].ObjectType = oDataObject.oAssignData.results[k].NODE_TYPE;
+							oResourceMap[j].GroupDescription = oDataObject.oAssignData.results[k].GROUP_DESCRIPTION;
+							oResourceMap[j].ResourceGuid = oDataObject.oAssignData.results[k].ResourceGuid;
+							oResourceMap[j].ResourceGroupGuid = oDataObject.oAssignData.results[k].ResourceGroupGuid;
+							oResourceMap[j].Assignments.push(oDataObject.oAssignData.results[k]);
+						}
+					}
+					// Push unavailability into respective resource
+					for (var m in oDataObject.oAbsenceData.results) {
+						if (oDataObject.oAbsenceData.results[m].ObjectId === sObjectId) {
+							oResourceMap[j].ResourceDescription = oDataObject.oAbsenceData.results[m].ResourceDescription;
+							oResourceMap[j].ObjectType = oDataObject.oAbsenceData.results[m].NodeType;
+							oResourceMap[j].GroupDescription = oDataObject.oAbsenceData.results[m].GroupDescription;
+							oResourceMap[j].ResourceGuid = oDataObject.oAbsenceData.results[m].ResourceGuid;
+							oResourceMap[j].ResourceGroupGuid = oDataObject.oAbsenceData.results[m].ResourceGroupGuid;
+							oResourceMap[j].AbsenceInfo.push(oDataObject.oAbsenceData.results[m]);
+						}
+					}
+					aResources.push(oResourceMap[j]);
+				}
+
+			}
+			return aResources;
+		},
+		/**
+		 * Fetch respective data from batch response because the batch responses might differ
+		 * based on cofiguration
+		 */
+		_getRespectiveData: function(data){
+			var oDataObject = {
+				oAssignData:{},
+				oAbsenceData:{},
+				oAssetUNData:{}
+			};
 				for (var l = 0; l < data.__batchResponses.length; l++) {
 					var oData = data.__batchResponses[l] ? data.__batchResponses[l].data : {};
-						// as 
-						if (oData.results.length > 0 && oData.results[0].__metadata.type === "com.evorait.evoplan.Assignment") {
-							oAssignData = oData;
-						} else if (oData.results.length > 0 &&  oData.results[0].__metadata.type === "com.evorait.evoplan.ResourceAvailability") {
-							oAbsenceData = oData;
-						} else if(oData.results.length > 0){
-							oAssetUNData = oData;
-						}
-						
+					// as 
+					if (oData.results.length > 0 && oData.results[0].__metadata.type === "com.evorait.evoplan.Assignment") {
+						oDataObject.oAssignData = oData;
+					} else if (oData.results.length > 0 && oData.results[0].__metadata.type === "com.evorait.evoplan.ResourceAvailability") {
+						oDataObject.oAbsenceData = oData;
+					} else if (oData.results.length > 0) {
+						oDataObject.oAssetUNData = oData;
+					}
+
 				}
-				// To create resource map from object id.
-				for (var c = 0; c < data.__batchResponses.length; c++) {
+				return oDataObject;
+		},
+		/**
+		 * Create the resource map based the assignemnt and availability data
+		 * 
+		 */
+		_createResourceMap : function(data){
+			var oResourceMap={},
+				oModel = this._oView ? this._oView.getModel() : null,
+				oUserModel = this._component ? this._component.getModel("user") : null;
+			for (var c = 0; c < data.__batchResponses.length; c++) {
 
 					var oBatchData = data.__batchResponses[c] ? data.__batchResponses[c].data : {};
 					for (var i in oBatchData.results) {
-						var	oFirstRecord = oBatchData.results[0];
-						if(oFirstRecord && oFirstRecord.__metadata && (oFirstRecord.__metadata.type === "com.evorait.evoplan.Assignment" || oFirstRecord.__metadata.type === "com.evorait.evoplan.ResourceAvailability")) {
+						var oFirstRecord = oBatchData.results[0];
+						if (oFirstRecord && oFirstRecord.__metadata && (oFirstRecord.__metadata.type === "com.evorait.evoplan.Assignment" ||
+								oFirstRecord.__metadata.type === "com.evorait.evoplan.ResourceAvailability")) {
 							oResourceMap[oBatchData.results[i].ObjectId] = {};
 							oResourceMap[oBatchData.results[i].ObjectId].Assignments = [];
 							oResourceMap[oBatchData.results[i].ObjectId].AbsenceInfo = [];
@@ -533,11 +594,8 @@ sap.ui.define([
 						}
 					}
 				}
-
-				var oAsset = {};
-				oAsset.Assignments = [];
-
-				// create selected resource in resource map
+				
+					// create selected resource in resource map
 				for (var a = 0; a < this.selectedResources.length; a++) {
 					var oResource = oModel.getProperty(this.selectedResources[a]),
 						sEntitySet = this.selectedResources[a].split("(")[0];
@@ -553,54 +611,31 @@ sap.ui.define([
 					}
 
 				}
-				// put asset data
-				for (var n in oAssetUNData.results) {
+				return oResourceMap;
+		},
+		/**
+		 * Get asset data from batch response 
+		 * 
+		 */
+		_getAssetData : function(oDataObject){
+			var oAsset = {};
+				oAsset.Assignments = [];
+			
+				// Set asset data
+				for (var n in oDataObject.oAssetUNData.results) {
 					oAsset.ObjectType = "ASSET";
 					oAsset.GroupDescription = this._oResourceBundle.getText("xtit.assetUA");
 					oAsset.Assignments.push({
-						DateFrom: oAssetUNData.results[n].StartTimestamp,
-						DateTo: oAssetUNData.results[n].EndTimestamp,
+						DateFrom: oDataObject.oAssetUNData.results[n].StartTimestamp,
+						DateTo: oDataObject.oAssetUNData.results[n].EndTimestamp,
 						Demand: {
-							DemandDesc: oAssetUNData.results[n].Description
+							DemandDesc: oDataObject.oAssetUNData.results[n].Description
 						},
 						type: "Type06",
-						color: oAssetUNData.results[n].AssetUnavailityColor
+						color: oDataObject.oAssetUNData.results[n].AssetUnavailityColor
 					});
 				}
-				if (oAsset.Assignments.length > 0) {
-					aResources.push(oAsset);
-				}
-
-				// Push assignment into respective assignment
-				for (var j in oResourceMap) {
-					var sObjectId = j;
-					for (var k in oAssignData.results) {
-						if (oAssignData.results[k].ObjectId === sObjectId) {
-
-							oResourceMap[j].ResourceDescription = oAssignData.results[k].RESOURCE_DESCRIPTION;
-							oResourceMap[j].ObjectType = oAssignData.results[k].NODE_TYPE;
-							oResourceMap[j].GroupDescription = oAssignData.results[k].GROUP_DESCRIPTION;
-							oResourceMap[j].ResourceGuid = oAssignData.results[k].ResourceGuid;
-							oResourceMap[j].ResourceGroupGuid = oAssignData.results[k].ResourceGroupGuid;
-							oResourceMap[j].Assignments.push(oAssignData.results[k]);
-						}
-					}
-					// Push unavailability into respective assignment
-					for (var m in oAbsenceData.results) {
-						if (oAbsenceData.results[m].ObjectId === sObjectId) {
-							oResourceMap[j].ResourceDescription = oAbsenceData.results[m].ResourceDescription;
-							oResourceMap[j].ObjectType = oAbsenceData.results[m].NodeType;
-							oResourceMap[j].GroupDescription = oAbsenceData.results[m].GroupDescription;
-							oResourceMap[j].ResourceGuid = oAbsenceData.results[m].ResourceGuid;
-							oResourceMap[j].ResourceGroupGuid = oAbsenceData.results[m].ResourceGroupGuid;
-							oResourceMap[j].AbsenceInfo.push(oAbsenceData.results[m]);
-						}
-					}
-					aResources.push(oResourceMap[j]);
-				}
-
-			}
-			return aResources;
+			return oAsset;
 		},
 		/**
 		 * On save dialog check if there are any changes in calendar data
