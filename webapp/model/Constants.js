@@ -14,6 +14,10 @@ sap.ui.define([], function () {
 			ABSENCE:"ABSENCE",
 			ASSET_UNAVAILABILITY:"ASSETUA",
 			ASSIGNMENTS:"ASSIGNMENT"
+		},
+		GANTT:{
+			NAME:"Gantt",
+			SPLIT:"GanttSplit"
 		}
 	};
 

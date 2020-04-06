@@ -18,6 +18,7 @@
 							<ToolbarLayoutData shrinkable="true"/>
 						</layoutData>
 					</Button>
+					<!--<ToggleButton text="Split Window" press="onClickSplit" />-->
 				</OverflowToolbar>
 				
 				

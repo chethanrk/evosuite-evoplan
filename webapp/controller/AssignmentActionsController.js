@@ -18,16 +18,17 @@ sap.ui.define([
 		 * @param {String} sTargetPath
 		 * @return {Promise}
 		 */
-		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, isStreched) {
-			var oModel = this.getModel();
-			var targetObj = oModel.getProperty(sTargetPath);
+		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, isStreched, aGuids) {
+			var oModel = this.getModel(),
+				targetObj = oModel.getProperty(sTargetPath),
+				aItems = aSourcePaths ? aSourcePaths : aGuids;
+				
 			this.clearMessageModel();
 
-			for (var i = 0; i < aSourcePaths.length; i++) {
-				var sPath = aSourcePaths[i],
-					demandObj = oModel.getProperty(sPath),
+			for (var i = 0; i < aItems.length; i++) {
+				var sDemandGuid = aSourcePaths ? oModel.getProperty(aItems[i]).Guid : aItems[i],
 					oParams = {
-						"DemandGuid": demandObj.Guid,
+						"DemandGuid": sDemandGuid,
 						"ResourceGroupGuid": targetObj.ResourceGroupGuid,
 						"ResourceGuid": targetObj.ResourceGuid
 					};

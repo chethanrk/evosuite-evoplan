@@ -525,8 +525,6 @@ sap.ui.define([
 				sUri = (sAdditionInfo).replace("\\place_h1\\", sOrderId);
 				window.open(sUri, "_blank");
 			}
-
-			// window.open("https://ed1.evorait.net:50103/sap/bc/ui5_ui5/evocu/evoorder/index.html?sap-client=800&sap-language="+sLanguage+"#/WorkOrder/"+sOrderId, "_blank");
 		},
 		navToApp: function (sSemanticObject, sAction, sParameter, sOrderId) {
 			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
@@ -542,6 +540,10 @@ sap.ui.define([
 					shellHash: sHash + "&/" + sParameter + "/" + sOrderId
 				}
 			});
+		},
+		clearLocalStorage: function(){
+			localStorage.removeItem("Evo-Dmnd-pageRefresh");
+			localStorage.removeItem("Evo-Dmnd-guid");
 		}
 
 	});
