@@ -19,7 +19,7 @@
 			]
 		},
 		"applicationVersion": {
-			"version": "3.0.2"
+			"version": "3.0.3"
 		},
 		"dataSources": {
 			"mainService": {
@@ -148,12 +148,16 @@
 			}
 		},
 		"resources": {
-			"css": [{
-				"uri": "assets/css/style.css"
-			}],
-			"js": [{
-				"uri": "assets/js/promise-polyfills"
-			}]
+			"css": [
+				{
+					"uri": "assets/css/style.css"
+				}
+			],
+			"js": [
+				{
+					"uri": "assets/js/promise-polyfills"
+				}
+			]
 		},
 		"routing": {
 			"config": {
@@ -170,73 +174,84 @@
 				},
 				"async": true
 			},
-			"routes": [{
-				"pattern": "",
-				"name": "demands",
-				"target": [
-					"demands",
-					"resourceTree"
-				]
-			}, {
-				"pattern": "Demand/{guid}",
-				"name": "detail",
-				"target": [
-					"resourceTree",
-					"detail"
-				]
-			}, {
-				"pattern": "AssetPlanning/{assets}/:withChildren:",
-				"name": "assetManager",
-				"target": [
-					"assets",
-					"assetsOrders"
-				]
-			}, {
-				"pattern": "AssetPlanning/{asset}/OrderCreate/new",
-				"name": "orderCreate",
-				"target": [
-					"assets",
-					"orderCreate"
-				]
-			}, {
-				"pattern": "AssetPlanning/{asset}/Demand/{guid}",
-				"name": "assetDemandDetail",
-				"target": [
-					"assets",
-					"detail"
-				]
-			}, {
-				"pattern": "MessageCockpit",
-				"name": "messageCockpit",
-				"target": [
-					"messageCockpit"
-				]
-			}, {
-				"pattern": "Gantt",
-				"name": "gantt",
-				"target": [
-					"demandsGantt",
-					"gantt"
-				]
-			}, {
-				"pattern": "Gantt/Demand/{guid}",
-				"name": "ganttDemandDetails",
-				"target": [
-					"ganttDemandDetails"
-				]
-			}, {
-				"pattern": "SplitPage/SplitDemands",
-				"name": "splitDemands",
-				"target": [
-					"demandsFullscreen"
-				]
-			}, {
-				"pattern": "SplitPage/SplitGantt",
-				"name": "ganttSplit",
-				"target": [
-					"ganttFullscreen"
-				]
-			}],
+			"routes": [
+				{
+					"pattern": "",
+					"name": "demands",
+					"target": [
+						"demands",
+						"resourceTree"
+					]
+				},
+				{
+					"pattern": "Demand/{guid}",
+					"name": "detail",
+					"target": [
+						"resourceTree",
+						"detail"
+					]
+				},
+				{
+					"pattern": "AssetPlanning/{assets}/:withChildren:",
+					"name": "assetManager",
+					"target": [
+						"assets",
+						"assetsOrders"
+					]
+				},
+				{
+					"pattern": "AssetPlanning/{asset}/OrderCreate/new",
+					"name": "orderCreate",
+					"target": [
+						"assets",
+						"orderCreate"
+					]
+				},
+				{
+					"pattern": "AssetPlanning/{asset}/Demand/{guid}",
+					"name": "assetDemandDetail",
+					"target": [
+						"assets",
+						"detail"
+					]
+				},
+				{
+					"pattern": "MessageCockpit",
+					"name": "messageCockpit",
+					"target": [
+						"messageCockpit"
+					]
+				},
+				{
+					"pattern": "Gantt",
+					"name": "gantt",
+					"target": [
+						"demandsGantt",
+						"gantt"
+					]
+				},
+				{
+					"pattern": "Gantt/Demand/{guid}",
+					"name": "ganttDemandDetails",
+					"target": [
+						"ganttDemandDetails"
+					]
+				},
+				{
+					"pattern": "SplitPage/SplitDemands",
+					"name": "splitDemands",
+					"target": [
+						"demandsFullscreen"
+					]
+				},
+				{
+					"pattern": "SplitPage/SplitGantt",
+					"name": "ganttSplit",
+					"target": [
+						"ganttFullscreen"
+					]
+				}
+			],
 			"targets": {
 				"splitHorNavigation": {
 					"viewType": "XML",
