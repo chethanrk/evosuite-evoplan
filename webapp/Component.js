@@ -189,7 +189,7 @@ sap.ui.define([
 			}
 			var aPromises = [];
 			aPromises.push(this._getSystemInformation());
-			aPromises.push(this._getData("/NavigationLinksSet"));
+			aPromises.push(this._getData("/NavigationLinksSet",[new Filter("LaunchMode",FilterOperator.EQ, this.getModel("viewModel").getProperty("/launchMode"))]));
             //sets user model - model has to be intantiated before any view is loaded
             Promise.all(aPromises).then(function (data) {
                 this.getModel("user").setData(data[0]);
@@ -359,6 +359,7 @@ sap.ui.define([
 		_getData: function (sUri, aFilters) {
 			return new Promise(function (resolve, reject) {
 				this.getModel().read(sUri, {
+				filters:aFilters,
 				success: function (oData, oResponse) {
 					resolve(oData);
 				}.bind(this),

@@ -490,29 +490,17 @@ sap.ui.define([
 			oViewModel.setProperty("/ganttSettings/visibleStartTime", sStartDate);
 			oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
 		},
-		_getNavLinks: function (aAdditionInfo) {
-			var oLinks = {};
-			for (var i in aAdditionInfo) {
-				if (aAdditionInfo[i].ApplicationId === Constants.APPLICATION.EVOORDER) {
-					oLinks[aAdditionInfo[i].LaunchMode] = aAdditionInfo[i];
-				}
-			}
-			return oLinks;
-
-		},
 		/**
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
-		openEvoOrder: function (sOrderId) {
+		openEvoOrder: function (sOrderId, oAppInfo) {
 			var sUri, sSemanticObject, sParameter,
 				sAction,
-				aLinksInfo = this.getModel("navLinks").getData(),
-				oLinks = this._getNavLinks(aLinksInfo),
 				sAdditionInfo,
 				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode");
 
 			if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
-				sAdditionInfo = oLinks[sLaunchMode].Value1 || "";
+				sAdditionInfo = oAppInfo.Value1 || "";
 				sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];
 				sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "dispatch";
 				sParameter = sAdditionInfo.split("\\\\_\\\\")[2];
@@ -521,7 +509,7 @@ sap.ui.define([
 				}
 				return;
 			} else {
-				sAdditionInfo = oLinks[sLaunchMode].Value1;
+				sAdditionInfo = oAppInfo.Value1;
 				sUri = (sAdditionInfo).replace("\\place_h1\\", sOrderId);
 				window.open(sUri, "_blank");
 			}
