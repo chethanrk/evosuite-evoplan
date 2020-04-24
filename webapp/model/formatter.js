@@ -457,8 +457,8 @@ sap.ui.define([
          * @Author Rahul
          * 
          */
-        formatAsnToolTip: function(id, desc, statusDesc){
-        	return (id? id: "")+((id && desc)? " : "+desc : desc)+((desc && statusDesc) ? " : "+statusDesc : "");
+        formatAsnToolTip: function(id, desc, operationId, oparationDesc, statusDesc){
+        	return (id? id: "")+((id && desc)? " : "+desc : desc)+((desc && operationId) ? " : "+operationId : operationId)+((operationId && oparationDesc) ? " : "+oparationDesc : oparationDesc)+((oparationDesc && statusDesc) ? " : "+statusDesc : statusDesc);
         },
 
         formatListMode : function (bIsActive) {
@@ -479,6 +479,12 @@ sap.ui.define([
          */
         formatCrtABFromPC : function(bAllowCreate, bShowInPC){
         	return bAllowCreate && bShowInPC;
-        }
+        },
+        /**
+         * Format change status button in the gantt chart 
+         */
+         formatChangeStatus : function(sStatus){
+         	return sStatus === "ASGN" && sStatus !== "COMP" &&  sStatus !== "PASS";
+         }
     };
 });

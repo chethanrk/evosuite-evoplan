@@ -6,11 +6,10 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/table/Table",
 	"sap/ui/table/Row",
-	"sap/ui/table/RowSettings",
 	"sap/m/MessageToast",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem"
-], function (BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, RowSettings, MessageToast,
+], function (BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, MessageToast,
 	RowAction, RowActionItem) {
 	"use strict";
 
@@ -211,25 +210,9 @@ sap.ui.define([
 			// Row Action template to navigate to Detail page
 			var onClickNavigation = this.onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
-			var oTemplate = oDataTable.getRowActionTemplate();
-			if (oTemplate) {
-				oTemplate.destroy();
-				oTemplate = null;
-			}
-			// oTemplate = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.RowActions", this);
-
-			oTemplate = new RowAction({
-				items: [
-					new RowActionItem({
-						type: "Navigation",
-						press: onClickNavigation
-					}),
-					new RowActionItem({icon: "sap-icon://action", text: "Navigate", press: openActionSheet})
-				]
-			});
-			oDataTable.setRowActionTemplate(oTemplate);
-			oDataTable.setRowActionCount(oTemplate.getItems().length);
-
+			
+			this._setRowActionTemplate(oDataTable, onClickNavigation, openActionSheet);
+			
 			//enable/disable buttons on footer when there is some/no selected rows
 			oDataTable.attachRowSelectionChange(function () {
 				var selected = this._oDataTable.getSelectedIndices();

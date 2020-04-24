@@ -28,10 +28,6 @@ sap.ui.define([
 
 		_viewId: "",
 
-		_AssignshapeHoverColor: "#FFFFFF",
-
-		_AssignShapeColor: "#FFFFFF",
-
 		_bLoaded: false,
 
 		/**
@@ -141,8 +137,8 @@ sap.ui.define([
 				oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
 				oViewModel = this.getModel("viewModel"),
 				oResourceData = this.getModel().getProperty(oDropContext.getPath()),
-				oSvgPoint; 
-				
+				oSvgPoint;
+
 			//Null check for
 			if ((!oDragContext || !sDragPath) && !oDropContext) {
 				return;
@@ -281,22 +277,26 @@ sap.ui.define([
 				this._selectedShapeContext = oShape.getBindingContext();
 				var oModel = this._selectedShapeContext.getModel(),
 					sPath = this._selectedShapeContext.getPath(),
-					sAssignGuid = oModel.getProperty(sPath).Guid;
+					sAssignGuid = oModel.getProperty(sPath).Guid,
+					sStatus = oModel.getProperty(sPath).DEMAND_STATUS;
 				if (!this._menu) {
 					this._menu = sap.ui.xmlfragment(
 						"com.evorait.evoplan.view.gantt.ShapeContextMenu",
-						this
+						this,
+						"gantt"
 					);
 					this.getView().addDependent(this._menu);
 				}
-
-				this._updateAssignmentModel(sAssignGuid).then(function (data) {
-					oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign", data.AllowUnassign);
-					oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign", data.AllowReassign);
-					oViewModel.setProperty("/ganttSettings/shapeOpearation/change", data.AllowChange);
-					var eDock = Popup.Dock;
-					this._menu.open(false, oShape, eDock.BeginTop, eDock.endBottom, oShape);
-				}.bind(this));
+				if(sStatus !== "COMP"){
+					this._updateAssignmentModel(sAssignGuid).then(function (data) {
+						oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign", data.AllowUnassign);
+						oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign", data.AllowReassign);
+						oViewModel.setProperty("/ganttSettings/shapeOpearation/change", data.AllowChange);
+						oViewModel.setProperty("/ganttSettings/shapeData", data);
+						var eDock = Popup.Dock;
+						this._menu.open(true, oShape, eDock.BeginTop, eDock.endBottom, oShape);
+					}.bind(this));
+				}
 
 			}
 		},
@@ -307,11 +307,19 @@ sap.ui.define([
 		 */
 		handleMenuItemPress: function (oEvent) {
 			var oParams = oEvent.getParameters(),
-				sButtonText = oParams.item.getText();
+				oSelectedItem = oParams.item,
+				sButtonText = oSelectedItem.getText(),
+				oCustomData = oSelectedItem.getAggregation("customData"),
+				sFunctionKey = oCustomData.length ? oCustomData[0].getValue() : null;
 
 			var oModel = this._selectedShapeContext.getModel(),
 				sPath = this._selectedShapeContext.getPath(),
-				sAssignGuid = oModel.getProperty(sPath).Guid;
+				sAssignGuid = oModel.getProperty(sPath).Guid,
+				oSelectedData = [{
+					oData: {
+						Guid: oModel.getProperty(sPath).DemandGuid
+					}
+				}];
 
 			if (sButtonText === this.getResourceBundle().getText("xbut.buttonUnassign")) {
 				//do unassign
@@ -327,6 +335,16 @@ sap.ui.define([
 				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, {
 					bFromGantt: true
 				}, sPath);
+			} else {
+				if (sFunctionKey) {
+					this._oEventBus.publish("StatusSelectDialog", "changeStatusDemand", {
+						selectedPaths: oSelectedData,
+						functionKey: sFunctionKey,
+						parameters: {
+							bFromGantt: true
+						}
+					});
+				}
 			}
 		},
 		/**
@@ -377,7 +395,7 @@ sap.ui.define([
 			this.showMessage(oResponse);
 			this._refreshGanttChart();
 			localStorage.setItem("Evo-Dmnd-pageRefresh", "YES");
-			if(this._routeName !== Constants.GANTT.SPLIT){
+			if (this._routeName !== Constants.GANTT.SPLIT) {
 				this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
 		},
@@ -458,6 +476,17 @@ sap.ui.define([
 				oDefaultObject.OperationNumber = oData.Demand.OPERATIONID;
 				oDefaultObject.SubOperationNumber = oData.Demand.SUBOPERATIONID;
 				oDefaultObject.DemandStatus = oData.Demand.Status;
+				oDefaultObject.AllowAppoint = oData.Demand.ALLOW_APPOINTMNT;
+				oDefaultObject.AlloDispatch = oData.Demand.ALLOW_DISPATCHED;
+				oDefaultObject.AllowDemMobile = oData.Demand.ALLOW_DEM_MOBILE;
+				oDefaultObject.AllowAcknowledge = oData.Demand.ALLOW_ACKNOWLDGE;
+				oDefaultObject.AllowReject = oData.Demand.ALLOW_REJECT;
+				oDefaultObject.AllowEnroute = oData.Demand.ALLOW_ENROUTE;
+				oDefaultObject.AllowStarted = oData.Demand.ALLOW_STARTED;
+				oDefaultObject.AllowHold = oData.Demand.ALLOW_ONHOLD;
+				oDefaultObject.AllowComplete = oData.Demand.ALLOW_COMPLETE;
+				oDefaultObject.AllowIncomplete = oData.Demand.ALLOW_INCOMPLETE;
+				oDefaultObject.AllowClosed = oData.Demand.ALLOW_CLOSED;
 			}
 			return oDefaultObject;
 		},
@@ -698,21 +727,6 @@ sap.ui.define([
 			} else {
 				return "XX";
 			}
-		},
-		/**
-		 * On mouse enter the assignment shape
-		 * To change the fill color
-		 * // TODO To show pop over of more information assi
-		 * @param oEvent
-		 */
-		_onShapeMouseEnter: function (oEvent) {
-			var oShape = oEvent.getParameter("shape");
-			this._AssignShapeColor = oShape.getFill();
-			oShape.setFill(this._AssignshapeHoverColor);
-		},
-		_onShapeMouseLeave: function (oEvent) {
-			var oShape = oEvent.getParameter("shape");
-			oShape.setFill(this._AssignShapeColor);
 		}
 	});
 });
