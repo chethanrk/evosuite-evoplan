@@ -8,8 +8,11 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/m/FormattedText",
-	"com/evorait/evoplan/model/Constants"
-], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText, Constants) {
+	"com/evorait/evoplan/model/Constants",
+	"sap/ui/table/RowAction",
+	"sap/ui/table/RowActionItem"
+], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText, Constants,
+	RowAction, RowActionItem) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.BaseController", {
@@ -489,6 +492,29 @@ sap.ui.define([
 			}
 			oViewModel.setProperty("/ganttSettings/visibleStartTime", sStartDate);
 			oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
+		},
+		
+		_setRowActionTemplate : function(oDataTable, onClickNavigation, openActionSheet){
+		
+			var oTemplate = oDataTable.getRowActionTemplate();
+			if (oTemplate) {
+				oTemplate.destroy();
+				oTemplate = null;
+			}
+			// oTemplate = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.RowActions", this);
+			oTemplate = new RowAction({
+				items: [
+					new RowActionItem({
+						type: "Navigation",
+						press: onClickNavigation
+					})
+				]
+			});
+			if(this.getModel("navLinks").getProperty("/").length > 0){
+				oTemplate.addItem(new RowActionItem({icon: "sap-icon://action", text: "Navigate", press: openActionSheet}));
+			}
+			oDataTable.setRowActionTemplate(oTemplate);
+			oDataTable.setRowActionCount(oTemplate.getItems().length);	
 		},
 		/**
 		 *	Navigates to evoOrder detail page with static url. 

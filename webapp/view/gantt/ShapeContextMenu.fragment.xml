@@ -3,7 +3,7 @@
 		<u:MenuItem text="{i18n>xbut.buttonChange}" visible="{viewModel>/ganttSettings/shapeOpearation/change}"/>
 		<u:MenuItem text="{i18n>xbut.buttonUnassign}" visible="{viewModel>/ganttSettings/shapeOpearation/unassign}"></u:MenuItem>
 		<u:MenuItem text="{i18n>xbut.buttonReassign}" visible="{viewModel>/ganttSettings/shapeOpearation/reassign}"/>
-		<u:MenuItem text="{i18n>xbut.changeStatus}" visible="{viewModel>/ganttSettings/shapeOpearation/changeStatus}">
+		<u:MenuItem text="{i18n>xbut.changeStatus}" visible="{path:'viewModel>/ganttSettings/shapeData/DemandStatus', formatter: '.formatter.formatChangeStatus'}">
 			<u:Menu itemSelect="handleStatusItemPress">
 				<u:MenuItem icon="sap-icon://email" id="idButtonAck" text="{i18n>xbut.ack}" visible="{viewModel>/ganttSettings/shapeData/AllowAcknowledge}">
 					<u:customData>
