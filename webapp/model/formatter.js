@@ -458,7 +458,13 @@ sap.ui.define([
          * 
          */
         formatAsnToolTip: function(id, desc, operationId, oparationDesc, statusDesc){
-        	return (id? id: "")+((id && desc)? " : "+desc : desc)+((desc && operationId) ? " : "+operationId : operationId)+((operationId && oparationDesc) ? " : "+oparationDesc : oparationDesc)+((oparationDesc && statusDesc) ? " : "+statusDesc : statusDesc);
+        	// return (id? id: "")+((id && desc)? " : "+desc : desc)+((desc && operationId) ? " : "+operationId : operationId)+((operationId && oparationDesc) ? " : "+oparationDesc : oparationDesc)+((oparationDesc && statusDesc) ? " : "+statusDesc : statusDesc);
+        	
+        	return  (id? id : "") +"\n"+
+        			(desc? desc : "") +"\n"+
+        			(operationId? operationId : "") +"\n"+
+        			(oparationDesc? oparationDesc : "") +"\n"+
+        			(statusDesc? statusDesc : "") +"\n";
         },
 
         formatListMode : function (bIsActive) {
