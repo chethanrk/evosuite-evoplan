@@ -38,9 +38,6 @@ sap.ui.define([
 
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
-
-			this.getRouter().getRoute("demands").attachPatternMatched(this._onObjectMatched, this);
-
 		},
 
 		/* =========================================================== */
@@ -259,12 +256,6 @@ sap.ui.define([
 				this._oDraggableTable.rebindTable();
 			}
 			this._bFirstTime = false;
-		},
-		/**
-		 * Register the drag and drop again
-		 */
-		onColumnResize: function() {
-			this._jDraggable(this);
 		},
 		/**
 		 *	Navigates to evoOrder detail page with static url. 
