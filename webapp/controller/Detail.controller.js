@@ -245,6 +245,7 @@ sap.ui.define([
 		getVisible: function (a, b, c) {
 			return a && !b && c !== "COMP";
 		},
+	
 		/**
 		 * View life cycle methods when view gets destroy 
 		 */
