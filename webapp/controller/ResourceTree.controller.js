@@ -46,40 +46,13 @@ sap.ui.define([
             //eventbus of assignemnt handling
             this._eventBus = sap.ui.getCore().getEventBus();
             this._eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
-            this._eventBus.subscribe("App", "RegisterDrop", this._registerDnD, this);
             this._eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
             // eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
 
-            // event listener for changing device orientation with fallback of window resize
-            var orientationEvent = this.getOrientationEvent(),
-                _this = this;
 
-            window.addEventListener(orientationEvent, function () {
-                _this._jDroppable(_this);
-            }, false);
-
-            // register drop every time table was new rendered
-            this._oDataTable.onAfterRendering = function () {
-                if (sap.ui.table.TreeTable.prototype.onAfterRendering) {
-                    sap.ui.table.TreeTable.prototype.onAfterRendering.apply(this, arguments);
-                }
-                //when app was already loaded
-                // On SmartFilterbar expand or collapse drag and drop is not working anymore
-                //so when table is finished with rendering init dragDrop again
-                if (_this.isLoaded) {
-                    _this._jDroppable(_this);
-                }
-            };
 
         },
-        /**
-         * Register's the DnD
-         * @private
-         */
-        _registerDnD: function () {
-            var _this = this;
-            _this._jDroppable(_this);
-        },
+
         /**
          * initial draggable after every refresh of table
          * for example after go to next page
@@ -215,7 +188,6 @@ sap.ui.define([
                 this.getOwnerComponent().planningCalendarDialog.getDialog().destroy();
             }
             this._eventBus.unsubscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
-            this._eventBus.unsubscribe("App", "RegisterDrop", this._registerDnD, this);
             this._eventBus.unsubscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
         },
 
@@ -245,70 +217,40 @@ sap.ui.define([
          * @private
          */
         _triggerFilterSearch: function () {
-            /*var aFilters = this.oFilterConfigsController.getAllFilters();
-            var binding = this._oDataTable.getBinding("rows");
-            binding.filter([new Filter(aFilters, true)], sap.ui.model.FilterType.Application);*/
             this._oDroppableTable.rebindTable();
         },
 
+
         /**
-         * dropped demands assign and save
-         * @param _this
-         * @private
+         * on drop on resource, triggers create assignment for dragged demands
          */
-        _jDroppable: function (_this) {
-            setTimeout(function () {
-                var droppableTableId = _this._oDroppableTable.getId();
-                var droppedElement = $("#" + droppableTableId + " tbody tr, #" + droppableTableId + " li");
+        onDropOnResource: function (oEvent) {
+            var oDraggedControl = oEvent.getParameter("droppedControl"),
+                oContext = oDraggedControl.getBindingContext(),
+                oModel = oContext.getModel(),
+                sPath = oContext.getPath(),
+                oTargetData = oModel.getProperty(sPath),
+                aSources=[];
 
-                try {
-                    if (droppedElement.hasClass("ui-droppable")) {
-                        droppedElement.droppable("destroy");
-                    }
-                } catch (error) {
-                    jQuery.sap.log.warning(error);
-                }
+            //don't drop on assignments
+            if (oTargetData.NodeType === "ASSIGNMENT") {
+                return;
+            }
 
-                droppedElement.droppable({
-                    accept: ".ui-draggable",
-                    drop: function (event, ui) {
-                        //get hovered marked row, there could be a difference with dropped row
-                        var hoverRow = $("#" + droppableTableId + " .sapUiTableRowHvr"),
-                            dropTargetId = hoverRow.attr("id"),
-                            aSources = [];
+            if (!this.isAssignable({
+                    data: oTargetData
+                })) {
+                return;
+            }
 
-                        if (!dropTargetId) {
-                            dropTargetId = event.target.id;
-                        }
+            aSources = this.getModel("viewModel").getProperty("/dragSession");
+            // If the Resource is Not/Partially available
+            if (this.isAvailable(sPath)) {
+                this.assignedDemands(aSources, sPath);
+            } else {
+                this.showMessageToProceed(aSources, sPath);
+            }
 
-                        var targetElement = sap.ui.getCore().byId(dropTargetId),
-                            oContext = targetElement.getBindingContext();
-
-                        if (oContext) {
-                            var targetPath = oContext.getPath();
-                            var targetObj = _this.getModel().getProperty(targetPath);
-
-                            //don't drop on assignments
-                            if (targetObj.NodeType === "ASSIGNMENT") {
-                                return;
-                            }
-
-                            if (!_this.isAssignable({
-                                    data: targetObj
-                                })) {
-                                return;
-                            }
-                            aSources = _this.getModel("viewModel").getProperty("/dragSession");
-                            // If the Resource is Not/Partially available
-                            if (_this.isAvailable(targetPath)) {
-                                _this.assignedDemands(aSources, targetPath);
-                            } else {
-                                _this.showMessageToProceed(aSources, targetPath);
-                            }
-                        }
-                    }
-                });
-            }, 1000);
         },
         /**
          * Method will refresh the data of tree by restoring its state

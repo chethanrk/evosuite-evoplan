@@ -38,47 +38,9 @@ sap.ui.define([
 
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
-			this._eventBus.subscribe("App", "RegisterDrag", this._registerDnD, this);
 
 			this.getRouter().getRoute("demands").attachPatternMatched(this._onObjectMatched, this);
 
-			// event listener for changing device orientation with fallback of window resize
-			var orientationEvent = this.getOrientationEvent(),
-				_this = this;
-
-			window.addEventListener(orientationEvent, function () {
-				_this._jDraggable(_this);
-			}, false);
-			  // register drop every time table was new rendered
-            this._oDataTable.onAfterRendering = function () {
-                if (sap.ui.table.TreeTable.prototype.onAfterRendering) {
-                    sap.ui.table.TreeTable.prototype.onAfterRendering.apply(this, arguments);
-                }
-                //when app was already loaded
-                // On SmartFilterbar expand or collapse drag and drop is not working anymore
-                //so when table is finished with rendering init dragDrop again
-                _this._jDraggable(_this);
-            };
-		},
-		/**
-		 * Register Draggable
-		 * @private
-		 */
-		_registerDnD: function () {
-			var _this = this;
-			_this._jDraggable(_this);
-		},
-		/**
-		 * Method get call when ever the hash mathes the route name 
-		 * Registering draggable functionality to make sure it will work all the time
-		 * @Author Rahul
-		 * @version 1.0.4
-		 * @param oEvent
-		 * @private
-		 */
-		_onObjectMatched: function (oEvent) {
-			var _this = this;
-			_this._jDraggable(_this);
 		},
 
 		/* =========================================================== */
@@ -115,7 +77,7 @@ sap.ui.define([
 		onBusyStateChanged: function (oEvent) {
 			var parameters = oEvent.getParameters();
 			if (parameters.busy === false) {
-				this._jDraggable(this);
+				// this._jDraggable(this);
 			}
 		},
 
@@ -188,7 +150,6 @@ sap.ui.define([
 				this._infoDialog.destroy();
 			}
 			this._eventBus.unsubscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
-			this._eventBus.unsubscribe("App", "RegisterDrag", this._registerDnD, this);
 		},
 
 		/* =========================================================== */
@@ -247,120 +208,44 @@ sap.ui.define([
 			this._oDataTable.clearSelection();
 		},
 
-		/**
-		 * destroy already initial draggable and build again
-		 * timeout to make sure draggable is really after loading finish added
-		 * @param elem
-		 * @private
-		 */
-		_jDraggable: function (_this) {
-			setTimeout(function () {
-				var draggableTableId = _this._oDraggableTable.getId(), // sapUiTableRowHdr
-					aPathsData = [];
-				//checkbox is not inside tr so needs to select by class .sapUiTableRowHdr
-				var jDragElement = $("#" + draggableTableId + " tbody tr, #" + draggableTableId + " .sapUiTableRowHdr")
-					.not(".sapUiTableColHdrTr, .sapUiTableRowHidden");
+        /**
+         * On DragStart set the dragSession selected demands
+         */
+        onDragStart : function (oEvent){
+            var oDragSession = oEvent.getParameter("dragSession"),
+                oDraggedControl = oDragSession.getDragControl();
 
-				try {
-					if (jDragElement.hasClass("ui-draggable")) {
-						jDragElement.draggable("destroy");
-					}
-				} catch (error) {
-					// console.warn(error);
-				}
+            var aIndices = this._oDataTable.getSelectedIndices(),
+                oSelectedPaths, aPathsData;
 
-				jDragElement.draggable({
-					revertDuration: 10,
-					stop: function (event, ui) {
-						aPathsData = [];
-						_this._deselectAll();
-					},
-					helper: function (event, ui) {
-						var target = $(event.currentTarget);
-						//single drag by checkbox, checkbox is not inside tr so have to find out row index
-						var selectedIdx = _this._oDataTable.getSelectedIndices(),
-							oSelectedPaths = null;
-
-						/* As the table will be loaded with only 100 items initially.
-                         Maximum 100 item are selected at a time.*/
-						if (selectedIdx.length > 100) {
-							selectedIdx.length = 100;
-						}
-						//get all selected rows when checkboxes in table selected
-						if (selectedIdx.length > 0) {
-							oSelectedPaths = _this._getSelectedRowPaths(_this._oDataTable, selectedIdx, true);
-							aPathsData = oSelectedPaths.aPathsData;
-						} else {
-							//table tr single dragged element
-							oSelectedPaths = _this._getSelectedRowPaths(_this._oDataTable, [_this._getDraggedElementIndex(target.attr("id"))], true);
-							aPathsData = oSelectedPaths.aPathsData;
-						}
-						// keeping the data in drag session
-						_this.getModel("viewModel").setProperty("/dragSession", aPathsData);
-						if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
-							_this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
-						}
-						//get helper html list
-						var oHtml = _this._generateDragHelperHTML(aPathsData, oSelectedPaths.aNonAssignable);
-						return oHtml;
-					},
-					cursor: "move",
-					cursorAt: {
-						top: -3,
-						left: -3
-					},
-					zIndex: 10000,
-					containment: "document",
-					appendTo: "body"
-				});
-			}, 1000);
-		},
-
-		/**
-		 * single dragged element's index
-		 * @param targetId
-		 * @returns {*}
-		 * @private
-		 */
-		_getDraggedElementIndex: function (targetId) {
-			var draggedElement = sap.ui.getCore().byId(targetId);
-			return draggedElement.getIndex();
-		},
-
-		/**
-		 * generates html list for dragged paths and gives back to helper function
-		 * @param aPathsData
-		 * @returns {jQuery|HTMLElement}
-		 * @private
-		 */
-		_generateDragHelperHTML: function (aPathsData, aNonAssignable) {
-			var $Element = $("#dragHelper"),
-				helperTemplate;
-			if ($Element.length > 0) {
-				$Element.remove();
-			}
-			if (aNonAssignable.length <= 0) {
-				helperTemplate = $('<ul id="dragHelper"></ul>');
-			} else {
-				helperTemplate = $('<ul id="dragHelper" style="display:none"></ul>');
-			}
-
-			for (var i = 0; i < aPathsData.length; i++) {
-				var item = $('<li id="' + aPathsData[i].sPath + '" class="ui-draggable-dragging-item"></li>');
-				var text = aPathsData[i].oData.DemandDesc;
-				item.html(text);
-				if (i === 2) {
-					item = $('<li id="' + aPathsData[i].sPath + '" class="ui-draggable-dragging-item"></li>');
-					text = aPathsData.length + " items ...";
-					item.html(text);
-					helperTemplate.append(item);
-					break;
-				}
-				helperTemplate.append(item);
-
-			}
-			return helperTemplate;
-		},
+            oDragSession.setTextData("Hi I am dragging");
+            //get all selected rows when checkboxes in table selected
+            if (aIndices.length > 0) {
+                oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, aIndices, true);
+                aPathsData = oSelectedPaths.aPathsData;
+            } else {
+                //table tr single dragged element
+                oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, [oDraggedControl.getIndex()], true);
+                aPathsData = oSelectedPaths.aPathsData;
+            }
+            // keeping the data in drag session
+            this.getModel("viewModel").setProperty("/dragSession", aPathsData);
+            if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
+                this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+                oEvent.preventDefault();
+            }
+        },
+        /**
+		 * On Drag end check for dropped control, If dropped control not found
+		 * then make reset the selection
+         * @param oEvent
+         */
+        onDragEnd: function(oEvent){
+            var oDroppedControl = oEvent.getParameter("dragSession").getDropControl();
+            if(!oDroppedControl){
+                this._deselectAll();
+            }
+        },
 		/**
 		 * Refresh's the demand table
 		 * @param sChanel
