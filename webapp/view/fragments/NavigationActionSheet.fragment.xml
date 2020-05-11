@@ -4,7 +4,7 @@
 			templateShareable:false
 		}">
 		<buttons>
-			<Button text="{navLinks>ApplicationName}" icon="sap-icon://action" press="onClickNavAction"/>
+			<Button text="{navLinks>ApplicationName}" press="onClickNavAction"/>
 		</buttons>
 	</ActionSheet>
 </core:FragmentDefinition>

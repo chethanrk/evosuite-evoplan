@@ -32,24 +32,7 @@ sap.ui.define([
 				// Row Action template to navigate to Detail page
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
-			var oTemplate = this._oDataTable.getRowActionTemplate();
-			if (oTemplate) {
-				oTemplate.destroy();
-				oTemplate = null;
-			}
-			// oTemplate = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.RowActions", this);
-
-			oTemplate = new RowAction({
-				items: [
-					new RowActionItem({
-						type: "Navigation",
-						press: onClickNavigation
-					}),
-					new RowActionItem({icon: "sap-icon://action", text: "Navigate", press: openActionSheet})
-				]
-			});
-			this._oDataTable.setRowActionTemplate(oTemplate);
-			this._oDataTable.setRowActionCount(oTemplate.getItems().length);
+			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
 		},
 		/**
 		 * 
