@@ -61,24 +61,6 @@ sap.ui.define([
 		 * @override
 		 */
 		init: function () {
-			// // call the base component's init function
-			// UIComponent.prototype.init.apply(this, arguments);
-
-			//Required third-party libraries for drag and drop functionality
-			//which loaded here in component to make available throughout the application
-			$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-core");
-			$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-widget");
-			$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-mouse");
-			$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-draggable");
-			$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-sortable");
-			$.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-droppable");
-			sap.ui.localResources("sapui5draganddrop");
-
-			// handle the main oData model based on the environment
-			// the path for mobile applications depends on the current information from
-			// the logon plugin - if it's not running as hybrid application then the initialization
-			// of the oData service happens by the entries in the manifest.json which is used
-			// as metadata reference
 
 			// initialize the error handler with the component
 			this._oErrorHandler = new ErrorHandler(this);

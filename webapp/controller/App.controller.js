@@ -212,13 +212,6 @@ sap.ui.define([
 			}
 		},
 		/**
-		 * Registering the event when resized the splitter
-		 */
-		onResize: function () {
-			this._eventBus.publish("App", "RegisterDrop", {});
-			this._eventBus.publish("App", "RegisterDrag", {});
-		},
-		/**
 		 * Event to trigger Update Assignment
 		 *
 		 * @param sChanel

@@ -1,6 +1,6 @@
 <mvc:View controllerName="com.evorait.evoplan.controller.ResourceTree" xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f" xmlns:table="sap.ui.table" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:controls="com.evorait.evoplan.ui.controls"
-	xmlns:l="sap.ui.layout" displayBlock="true" height="100%">
+	xmlns:l="sap.ui.layout" xmlns:dnd="sap.ui.core.dnd" displayBlock="true" height="100%">
 	<f:DynamicPage id="idResourcePage" headerExpanded="true" preserveHeaderStateOnScroll="true" fitContent="true" showFooter="true"
 		class="sapUiNoContentPadding tableContentPage" toggleHeaderOnTitleClick="false">
 		<f:header>
@@ -104,6 +104,9 @@
 							</table:template>
 						</table:Column>
 					</table:columns>
+					<table:dragDropConfig>
+						<dnd:DropInfo targetAggregation="rows" groupName="demandView" dropPosition="On" drop="onDropOnResource"/>
+					</table:dragDropConfig>
 				</table:TreeTable>
 			</smartTable:SmartTable>
 		</f:content>
