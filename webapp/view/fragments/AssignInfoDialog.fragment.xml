@@ -41,10 +41,14 @@
                     <Text text="{assignment>/ResourceGroupDesc}"/>
                     <Label text="{i18n>xfld.Order}" />
                     <Text text="{assignment>/OrderId}"/>
-                    <Label text="{i18n>xfld.Operation}" />
-                    <Text text="{assignment>/OperationNumber}"/>
-                    <Label text="{i18n>xfld.SubOperation}" />
-                    <Text text="{assignment>/SubOperationNumber}"/>
+                    <Label text="{i18n>xfld.Operation}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
+                    <Text text="{assignment>/OperationNumber}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
+                    <Label text="{i18n>xfld.SubOperation}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
+                    <Text text="{assignment>/SubOperationNumber}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
+                    <Label text="{i18n>xfld.Notification}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? true : false}"/>
+                     <Text text="{assignment>/Notification}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? true : false}"/>
+         
+                    
 
                     <core:Title text="" />
                     <Label text="{i18n>xfld.startDate}" />
@@ -66,10 +70,11 @@
                                     editable="{assignment>/AllowChange}"/>
 
                     <Label text="{i18n>xfld.effort}" />
-                    <Input type="Text"
+                    <Text text="{assignment>/Effort}"/>
+                   <!-- <Input type="Text"
                            name="Effort"
                            value="{assignment>/Effort}"
-                           editable="{assignment>/AllowChange}"/>
+                           editable="{assignment>/AllowChange}"/>-->
                            
 					<!--<smartField:SmartLabel labelFor="idEfforUnit" />
 					<smartField:SmartField value="{Demand/EffortUnit}" id="idEfforUnit"
@@ -82,14 +87,15 @@
 						</smartField:configuration>
 					</smartField:SmartField>-->
 					<Label text="{/#Demand/EffortUnit/@sap:label}" />
-					<Select
+					<Text text="{assignment>/EffortUnit}"/>
+					<!--<Select
 					selectedKey="{assignment>/EffortUnit}"
 					items="{
 						path: '/TimeUnitsSet'
 					}"
                     enabled="{assignment>/AllowChange}">
 					<core:Item key="{Msehi}" text="{Msehl}" />
-				</Select>
+				</Select>-->
 
                     <Label text="{i18n>xfld.newAssign}"
                            visible="{assignment>/AllowReassign}" />
