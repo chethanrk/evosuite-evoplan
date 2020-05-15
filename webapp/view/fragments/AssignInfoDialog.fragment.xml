@@ -70,11 +70,10 @@
                                     editable="{assignment>/AllowChange}"/>
 
                     <Label text="{i18n>xfld.effort}" />
-                    <Text text="{assignment>/Effort}"/>
-                   <!-- <Input type="Text"
+                   <Input type="Text"
                            name="Effort"
                            value="{assignment>/Effort}"
-                           editable="{assignment>/AllowChange}"/>-->
+                           editable="{assignment>/AllowChange}"/>
                            
 					<!--<smartField:SmartLabel labelFor="idEfforUnit" />
 					<smartField:SmartField value="{Demand/EffortUnit}" id="idEfforUnit"
