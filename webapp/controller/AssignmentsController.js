@@ -76,8 +76,8 @@ sap.ui.define([
 				"AssignmentGUID": sAssignmentGUID,
 				"EffortUnit": oData.EffortUnit,
 				"Effort": oData.Effort,
-				"ResourceGroupGuid": "",
-				"ResourceGuid": ""
+				"ResourceGroupGuid": oData.ResourceGroupGuid,
+				"ResourceGuid": oData.ResourceGuid
 			};
 
 			if (isReassign && oData.NewAssignPath) {
