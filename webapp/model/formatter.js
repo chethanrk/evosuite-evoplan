@@ -457,14 +457,15 @@ sap.ui.define([
          * @Author Rahul
          * 
          */
-        formatAsnToolTip: function(id, desc, operationId, oparationDesc, statusDesc){
+        formatAsnToolTip: function(orderId,demandDesc,opId,operaton,remTimelabel,status,id, desc, operationId, oparationDesc, statusDesc,remTime){
         	// return (id? id: "")+((id && desc)? " : "+desc : desc)+((desc && operationId) ? " : "+operationId : operationId)+((operationId && oparationDesc) ? " : "+oparationDesc : oparationDesc)+((oparationDesc && statusDesc) ? " : "+statusDesc : statusDesc);
         	
-        	return  (id? id : "") +"\n"+
-        			(desc? desc : "") +"\n"+
-        			(operationId? operationId : "") +"\n"+
-        			(oparationDesc? oparationDesc : "") +"\n"+
-        			(statusDesc? statusDesc : "") +"\n";
+        	return  (id? orderId + ":"+ id : "") +"\n" +
+        			(desc? demandDesc + ": "+ desc : "") +"\n" +
+        			(operationId? opId + ": "+ operationId : "") +"\n" +
+        			(oparationDesc? operaton+ ": "+ oparationDesc : "") +"\n"+
+        			(statusDesc? remTimelabel + ": "+ remTime : "") + "\n" +
+        			(statusDesc? status + ": " + statusDesc : "") + "\n";
         },
 
         formatListMode : function (bIsActive) {
