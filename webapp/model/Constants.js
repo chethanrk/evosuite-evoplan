@@ -17,7 +17,8 @@ sap.ui.define([], function () {
 		},
 		GANTT:{
 			NAME:"Gantt",
-			SPLIT:"GanttSplit"
+			SPLIT:"GanttSplit",
+			SPLITDMD:"splitDemands"
 		}
 	};
 
