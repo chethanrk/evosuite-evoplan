@@ -394,7 +394,6 @@ sap.ui.define([
 		_refreshAreas: function (data, oResponse) {
 			this.showMessage(oResponse);
 			this._refreshGanttChart();
-			localStorage.setItem("Evo-Dmnd-pageRefresh", "YES");
 			if (this._routeName !== Constants.GANTT.SPLIT) {
 				this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
@@ -727,6 +726,28 @@ sap.ui.define([
 			} else {
 				return "XX";
 			}
-		}
+		},
+		/**
+         * WebSocket on message which something is changed in the backend
+         * @param oEvent
+         * @private
+         */
+        _onMessage : function(oEvent){
+            if (oEvent.getParameter("pcpFields").errorText) {
+                // Message is an error text
+                return;
+            }
+            // Parse Message
+            var sMsg = oEvent.getParameter("data");
+            MessageToast.show(sMsg);
+
+            if (this._routeName === Constants.GANTT.SPLIT) {
+                setTimeout(function () {
+                    this._refreshGanttChart();
+                    this.clearLocalStorage();
+                }.bind(this), 2000);
+            }
+
+        }
 	});
 });

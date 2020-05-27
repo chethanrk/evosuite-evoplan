@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-	"com/evorait/evoplan/model/Constants"
+	"com/evorait/evoplan/model/Constants",
+    "com/evorait/evoplan/controller/WebSocket"
 ], function (AssignmentsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, MessageToast, RowAction, RowActionItem,
-	Constants) {
+	Constants, WebSocket) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.GanttDemands", {
@@ -27,12 +28,13 @@ sap.ui.define([
 			this._oDraggableTable = this.byId("draggableList");
 			this._oDataTable = this._oDraggableTable.getTable();
 			this.getRouter().getRoute("splitDemands").attachMatched(function () {
-				this._routeName = Constants.GANTT.SPLIT;
+				this._routeName = Constants.GANTT.SPLITDMD;
 			}.bind(this));
 				// Row Action template to navigate to Detail page
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
+            WebSocket.init(this._onMessage);
 		},
 		/**
 		 * 
@@ -183,6 +185,28 @@ sap.ui.define([
 					this.clearLocalStorage();
 				}.bind(this), 20000);
 			}
+		},
+        /**
+		 * WebSocket on message which something is changed in the backend
+         * @param oEvent
+         * @private
+         */
+        _onMessage : function(oEvent){
+            if (oEvent.getParameter("pcpFields").errorText) {
+                // Message is an error text
+                return;
+            }
+            // Parse Message
+            var sMsg = oEvent.getParameter("data");
+            MessageToast.show(sMsg);
+
+            if (this._routeName === Constants.GANTT.SPLITDMD) {
+                setTimeout(function () {
+                        this._refreshDemandTable();
+                        this.clearLocalStorage();
+                }.bind(this), 2000);
+            }
+
 		},
 		onClickSplit: function (oEvent) {
 			window.open("#Gantt/SplitDemands", "_blank");
