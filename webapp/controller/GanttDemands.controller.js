@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-	"com/evorait/evoplan/model/Constants",
-    "com/evorait/evoplan/controller/WebSocket"
+	"com/evorait/evoplan/model/Constants"
 ], function (AssignmentsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, MessageToast, RowAction, RowActionItem,
 	Constants, WebSocket) {
 	"use strict";
@@ -21,6 +20,9 @@ sap.ui.define([
 		_bLoaded: false,
 
 		onInit: function () {
+			// Row Action template to navigate to Detail page
+			var onClickNavigation = this._onActionPress.bind(this);
+			var openActionSheet = this.openActionSheet.bind(this);
 			this._oEventBus = sap.ui.getCore().getEventBus();
 
 			this._oEventBus.subscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
@@ -30,11 +32,9 @@ sap.ui.define([
 			this.getRouter().getRoute("splitDemands").attachMatched(function () {
 				this._routeName = Constants.GANTT.SPLITDMD;
 			}.bind(this));
-				// Row Action template to navigate to Detail page
-			var onClickNavigation = this._onActionPress.bind(this);
-			var openActionSheet = this.openActionSheet.bind(this);
+
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
-            WebSocket.init(this._onMessage);
+
 		},
 		/**
 		 * 
@@ -64,7 +64,7 @@ sap.ui.define([
 				oDemand = oContext.getModel().getProperty(sPath);
 
 			localStorage.setItem("Evo-Dmnd-guid", sPath.split("'")[1]);
-			localStorage.setItem("Evo-Dmnd-pageRefresh", "NO");
+			// localStorage.setItem("Evo-Dmnd-pageRefresh", "NO");
 			if (!this.isDemandAssignable(sPath)) {
 				this._showAssignErrorDialog([oDemand.DemandDesc]);
 				oEvent.preventDefault();
@@ -137,75 +137,75 @@ sap.ui.define([
 		/**
 		 *  opens the action sheet
 		 */
-		openActionSheet : function(oEvent){
+		openActionSheet: function (oEvent) {
 			var oContext = oEvent.getSource().getParent().getParent().getBindingContext(),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath();
-				if(!this._oNavActionSheet){
-					this._oNavActionSheet = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.NavigationActionSheet",this);
-					this.getView().addDependent(this._oNavActionSheet);
-				}
-				this.selectedDemandData = oModel.getProperty(sPath);
-				
+			if (!this._oNavActionSheet) {
+				this._oNavActionSheet = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.NavigationActionSheet", this);
+				this.getView().addDependent(this._oNavActionSheet);
+			}
+			this.selectedDemandData = oModel.getProperty(sPath);
+
 			this._oNavActionSheet.openBy(oEvent.getSource().getParent());
 		},
 		/**
 		 *  on click of navigation items opens the respective application
 		 */
-		onClickNavAction : function(oEvent){
+		onClickNavAction: function (oEvent) {
 			var oContext = oEvent.getSource().getBindingContext("navLinks"),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oData = oModel.getProperty(sPath);
-			
+
 			this.openEvoOrder(this.selectedDemandData.ORDERID, oData);
 		},
 		/**
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
-		OnClickOrderId : function(oEvent){
+		OnClickOrderId: function (oEvent) {
 			var sOrderId = oEvent.getSource().getText();
 			this.openEvoOrder(sOrderId);
 		},
 		/**
 		 * Drag end is to identify the event to refresh external demand list in other tab
 		 */
-		onDragEnd: function (oEvent) {
-			if (this._routeName === Constants.GANTT.SPLIT) {
-				var checkStatus = setInterval(function () {
-					var bRefresh = localStorage.getItem("Evo-Dmnd-pageRefresh");
-					if (bRefresh === "YES") {
-						this._refreshDemandTable();
-						clearInterval(checkStatus);
-						this.clearLocalStorage();
-					}
-				}.bind(this), 2000);
-				setTimeout(function () {
-					clearInterval(checkStatus);
-					this.clearLocalStorage();
-				}.bind(this), 20000);
-			}
-		},
-        /**
+		// onDragEnd: function (oEvent) {
+		// 	if (this._routeName === Constants.GANTT.SPLIT) {
+		// 		var checkStatus = setInterval(function () {
+		// 			var bRefresh = localStorage.getItem("Evo-Dmnd-pageRefresh");
+		// 			if (bRefresh === "YES") {
+		// 				this._refreshDemandTable();
+		// 				clearInterval(checkStatus);
+		// 				this.clearLocalStorage();
+		// 			}
+		// 		}.bind(this), 2000);
+		// 		setTimeout(function () {
+		// 			clearInterval(checkStatus);
+		// 			this.clearLocalStorage();
+		// 		}.bind(this), 20000);
+		// 	}
+		// },
+		/**
 		 * WebSocket on message which something is changed in the backend
-         * @param oEvent
-         * @private
-         */
-        _onMessage : function(oEvent){
-            if (oEvent.getParameter("pcpFields").errorText) {
-                // Message is an error text
-                return;
-            }
-            // Parse Message
-            var sMsg = oEvent.getParameter("data");
-            MessageToast.show(sMsg);
+		 * @param oEvent
+		 * @private
+		 */
+		_onMessage: function (oEvent) {
+			if (oEvent.getParameter("pcpFields").errorText) {
+				// Message is an error text
+				return;
+			}
+			// Parse Message
+			var sMsg = oEvent.getParameter("data");
+			this.showMessageToast(sMsg);
 
-            if (this._routeName === Constants.GANTT.SPLITDMD) {
-                setTimeout(function () {
-                        this._refreshDemandTable();
-                        this.clearLocalStorage();
-                }.bind(this), 2000);
-            }
+			if (this._routeName === Constants.GANTT.SPLITDMD) {
+				setTimeout(function () {
+					this._refreshDemandTable();
+					this.clearLocalStorage();
+				}.bind(this), 2000);
+			}
 
 		},
 		onClickSplit: function (oEvent) {

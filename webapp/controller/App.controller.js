@@ -152,6 +152,7 @@ sap.ui.define([
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
 			}
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
+			oAppViewModel.setProperty("/currentRoute", oParams.name);
 			oAppViewModel.setProperty("/busy", false);
 			
 			this._onObjectMatched(oParams.name);
