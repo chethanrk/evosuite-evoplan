@@ -34,6 +34,8 @@ sap.ui.define([
 		 * controller life cycle on init event
 		 */
 		onInit: function () {
+			var oUserModel = this.getModel("user");
+
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			this._oAssignementModel = this.getModel("assignment");
 
@@ -48,15 +50,17 @@ sap.ui.define([
 
 			this.getRouter().getRoute("gantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
-			});
+			}.bind(this));
 			this.getRouter().getRoute("ganttSplit").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.SPLIT;
-			});
+			}.bind(this));
+			
 			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
 				this._ganttChart.addStyleClass("resourceGanttWithTable");
 			}
 			this._defaultGanttHorizon();
 			this._viewId = this.getView().getId();
+
 		},
 
 		/**
@@ -287,7 +291,7 @@ sap.ui.define([
 					);
 					this.getView().addDependent(this._menu);
 				}
-				if(sStatus !== "COMP"){
+				if (sStatus !== "COMP") {
 					this._updateAssignmentModel(sAssignGuid).then(function (data) {
 						oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign", data.AllowUnassign);
 						oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign", data.AllowReassign);
@@ -726,28 +730,6 @@ sap.ui.define([
 			} else {
 				return "XX";
 			}
-		},
-		/**
-         * WebSocket on message which something is changed in the backend
-         * @param oEvent
-         * @private
-         */
-        _onMessage : function(oEvent){
-            if (oEvent.getParameter("pcpFields").errorText) {
-                // Message is an error text
-                return;
-            }
-            // Parse Message
-            var sMsg = oEvent.getParameter("data");
-            MessageToast.show(sMsg);
-
-            if (this._routeName === Constants.GANTT.SPLIT) {
-                setTimeout(function () {
-                    this._refreshGanttChart();
-                    this.clearLocalStorage();
-                }.bind(this), 2000);
-            }
-
-        }
+		}
 	});
 });
