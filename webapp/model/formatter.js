@@ -464,8 +464,8 @@ sap.ui.define([
         			(desc? demandDesc + ": "+ desc : "") +"\n" +
         			(operationId? opId + ": "+ operationId : "") +"\n" +
         			(oparationDesc? operaton+ ": "+ oparationDesc : "") +"\n"+
-        			(statusDesc? remTimelabel + ": "+ remTime : "") + "\n" +
-        			(statusDesc? status + ": " + statusDesc : "") + "\n";
+        			(statusDesc? status + ": "+ statusDesc : "") + "\n" +
+        			(remTime ? remTimelabel + ": " + remTime : "") + "\n";
         },
 
         formatListMode : function (bIsActive) {
