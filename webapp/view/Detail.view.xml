@@ -45,11 +45,18 @@
 					</uxap:ObjectPageSubSection>
 				</uxap:subSections>
 			</uxap:ObjectPageSection>
-			<uxap:ObjectPageSection title="{i18n>xtit.pmDetails}">
-				<uxap:subSections>
-					<uxap:ObjectPageSubSection>
+			<uxap:ObjectPageSection title="{i18n>xtit.details}">
+				<uxap:subSections >
+					<uxap:ObjectPageSubSection title="{i18n>xtit.pmDetails}" visible="{= ${OBJECT_SOURCE_TYPE} === 'DEM_PMWO' ? true : false}">
 						<uxap:blocks>
 							<sections:PMDetailsBlock id="pmDetailBlock"/>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>xtit.notDetails}" visible="{= ${OBJECT_SOURCE_TYPE} === 'DEM_PMNO' ? true : false}">
+						<uxap:blocks>
+							<sections:NotificationBlock id="notDetailBlock"/>
 						</uxap:blocks>
 					</uxap:ObjectPageSubSection>
 				</uxap:subSections>

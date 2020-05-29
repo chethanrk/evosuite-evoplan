@@ -546,6 +546,18 @@ sap.ui.define([
 			}
 			return this._getDateRangeValues(null, this._aCustomFilters.viewType.default);
 		}
+		// /**
+		//  * Check for valid date range 
+		//  */
+		// _validateDate : function(){
+		// 	var StartDate = sap.ui.getCore().byId("idStartDate").getValue();  
+		// 	var EndDate = sap.ui.getCore().byId("idEndDate").getValue();  
+		// 	if(new Date(StartDate).getTime() > new Date(EndDate).getTime()){
+		// 		this.showMessageToast(this._component.getModel("i18n").getResourceBundle().getText("ymsg.datesInvalid"));
+		// 		return false;
+		// 	}
+		// 	return true;
+		// }
 	});
 
 });

@@ -8,8 +8,11 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/m/FormattedText",
-	"com/evorait/evoplan/model/Constants"
-], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText, Constants) {
+	"com/evorait/evoplan/model/Constants",
+	"sap/ui/table/RowAction",
+	"sap/ui/table/RowActionItem"
+], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText, Constants,
+	RowAction, RowActionItem) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.BaseController", {
@@ -490,29 +493,40 @@ sap.ui.define([
 			oViewModel.setProperty("/ganttSettings/visibleStartTime", sStartDate);
 			oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
 		},
-		_getNavLinks: function (aAdditionInfo) {
-			var oLinks = {};
-			for (var i in aAdditionInfo) {
-				if (aAdditionInfo[i].ApplicationId === Constants.APPLICATION.EVOORDER) {
-					oLinks[aAdditionInfo[i].LaunchMode] = aAdditionInfo[i];
-				}
+		
+		_setRowActionTemplate : function(oDataTable, onClickNavigation, openActionSheet){
+		
+			var oTemplate = oDataTable.getRowActionTemplate();
+			if (oTemplate) {
+				oTemplate.destroy();
+				oTemplate = null;
 			}
-			return oLinks;
-
+			// oTemplate = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.RowActions", this);
+			oTemplate = new RowAction({
+				items: [
+					new RowActionItem({
+						type: "Navigation",
+						press: onClickNavigation
+					})
+				]
+			});
+			if(this.getModel("navLinks").getProperty("/").length > 0){
+				oTemplate.addItem(new RowActionItem({icon: "sap-icon://action", text: "Navigate", press: openActionSheet}));
+			}
+			oDataTable.setRowActionTemplate(oTemplate);
+			oDataTable.setRowActionCount(oTemplate.getItems().length);	
 		},
 		/**
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
-		openEvoOrder: function (sOrderId) {
+		openEvoOrder: function (sOrderId, oAppInfo) {
 			var sUri, sSemanticObject, sParameter,
 				sAction,
-				aLinksInfo = this.getModel("navLinks").getData(),
-				oLinks = this._getNavLinks(aLinksInfo),
 				sAdditionInfo,
 				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode");
 
 			if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
-				sAdditionInfo = oLinks[sLaunchMode].Value1 || "";
+				sAdditionInfo = oAppInfo.Value1 || "";
 				sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];
 				sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "dispatch";
 				sParameter = sAdditionInfo.split("\\\\_\\\\")[2];
@@ -521,12 +535,10 @@ sap.ui.define([
 				}
 				return;
 			} else {
-				sAdditionInfo = oLinks[sLaunchMode].Value1;
+				sAdditionInfo = oAppInfo.Value1;
 				sUri = (sAdditionInfo).replace("\\place_h1\\", sOrderId);
 				window.open(sUri, "_blank");
 			}
-
-			// window.open("https://ed1.evorait.net:50103/sap/bc/ui5_ui5/evocu/evoorder/index.html?sap-client=800&sap-language="+sLanguage+"#/WorkOrder/"+sOrderId, "_blank");
 		},
 		navToApp: function (sSemanticObject, sAction, sParameter, sOrderId) {
 			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
@@ -542,6 +554,10 @@ sap.ui.define([
 					shellHash: sHash + "&/" + sParameter + "/" + sOrderId
 				}
 			});
+		},
+		clearLocalStorage: function(){
+			localStorage.removeItem("Evo-Dmnd-pageRefresh");
+			localStorage.removeItem("Evo-Dmnd-guid");
 		}
 
 	});

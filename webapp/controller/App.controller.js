@@ -49,8 +49,6 @@ sap.ui.define([
 
 			//set init page title
 			oRouter.attachRouteMatched(this._onAllRouteMatched, this);
-			this.getRouter().getRoute("demands").attachPatternMatched(this._onObjectMatched, this);
-            this.getRouter().getRoute("gantt").attachPatternMatched(this._onObjectMatched, this);
 		},
 		
 		onAfterRendering : function () {
@@ -93,6 +91,10 @@ sap.ui.define([
 				break;
 			case oResourceBundle.getText("xbut.pageGanttChart"):
 				oRouter.navTo("gantt", {});
+				break;
+			case oResourceBundle.getText("xbut.pageGanttChartSplit"):
+				oRouter.navTo("ganttSplit", {});
+				window.open("#SplitPage/SplitDemands", "_blank");
 				break;
 			default:
 				oRouter.navTo("demands", {});
@@ -138,16 +140,21 @@ sap.ui.define([
 
 			this.getModel("viewModel").setProperty("/ganttSettings/active", false);
 
-			if (oParams.config.pattern.indexOf("AssetPlanning") >= 0) {
+			if (oParams.config.pattern.startsWith("AssetPlanning")) {
 				pageTitle = oResourceBundle.getText("xbut.pageAssetManager");
-			}else if(oParams.config.pattern.indexOf("MessageCockpit") >= 0){
+			}else if(oParams.config.pattern.startsWith("MessageCockpit")){
 				pageTitle = oResourceBundle.getText("xbut.pageMessageCockpit");
-			}else if(oParams.config.pattern.indexOf("Gantt") >= 0){
+			}else if(oParams.config.pattern.startsWith("Gantt")){
 				pageTitle = oResourceBundle.getText("xbut.pageGanttChart");
+				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
+			}else if(oParams.config.pattern.startsWith("SplitPage")){
+				pageTitle = oResourceBundle.getText("xbut.pageGanttChartSplit");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
 			}
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
 			oAppViewModel.setProperty("/busy", false);
+			
+			this._onObjectMatched(oParams.name);
 		},
 
 		/**
@@ -177,12 +184,20 @@ sap.ui.define([
 		 * view when user navigates it.
 		 * @constructor 
 		 */
-		_onObjectMatched: function (oEvent) {
-			var sRoute = oEvent.getParameter("name");
+		_onObjectMatched: function (sRoute) {
 			if(sRoute === "gantt"){
                     this._eventBus.publish("BaseController", "refreshGanttChart", {});
                     this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			}else{
+			}else if(sRoute === "ganttSplit"){
+					this._eventBus.publish("BaseController", "refreshGanttChart", {});
+			}else if(sRoute === "splitDemands"){
+					this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			}
+			else if(sRoute === "detail")
+			{
+				/* No action require */
+			}
+			else{
                     this._eventBus.publish("BaseController", "refreshTreeTable", {});
                     this._eventBus.publish("BaseController", "refreshDemandTable", {});
 			}
@@ -277,7 +292,6 @@ sap.ui.define([
 		 * @memberOf com.evorait.evoplan.view.Assets
 		 */
 		onExit: function() {
-			//Event are subscription Demand assignment and change status of demand
 			this._eventBus.unsubscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
 			this._eventBus.unsubscribe("StatusSelectDialog", "changeStatusDemand", this._triggerSaveDemandStatus, this);
 			this._eventBus.unsubscribe("AssignInfoDialog", "updateAssignment", this._triggerUpdateAssign, this);

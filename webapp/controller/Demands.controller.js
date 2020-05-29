@@ -6,11 +6,10 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/table/Table",
 	"sap/ui/table/Row",
-	"sap/ui/table/RowSettings",
 	"sap/m/MessageToast",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem"
-], function (BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, RowSettings, MessageToast,
+], function (BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, MessageToast,
 	RowAction, RowActionItem) {
 	"use strict";
 
@@ -168,21 +167,9 @@ sap.ui.define([
 
 			// Row Action template to navigate to Detail page
 			var onClickNavigation = this.onActionPress.bind(this);
-			var oTemplate = oDataTable.getRowActionTemplate();
-			if (oTemplate) {
-				oTemplate.destroy();
-				oTemplate = null;
-			}
-			oTemplate = new RowAction({
-				items: [
-					new RowActionItem({
-						type: "Navigation",
-						press: onClickNavigation
-					})
-				]
-			});
-			oDataTable.setRowActionTemplate(oTemplate);
-			oDataTable.setRowActionCount(1);
+			var openActionSheet = this.openActionSheet.bind(this);
+
+			this._setRowActionTemplate(oDataTable, onClickNavigation, openActionSheet);
 
 			//enable/disable buttons on footer when there is some/no selected rows
 			oDataTable.attachRowSelectionChange(function () {
@@ -257,8 +244,35 @@ sap.ui.define([
 			}
 			this._bFirstTime = false;
 		},
+        /**
+         *
+         * @param oEvent
+         */
+		openActionSheet : function(oEvent){
+			var oContext = oEvent.getSource().getParent().getParent().getBindingContext(),
+				oModel = oContext.getModel(),
+				sPath = oContext.getPath();
+				if(!this._oNavActionSheet){
+					this._oNavActionSheet = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.NavigationActionSheet",this);
+					this.getView().addDependent(this._oNavActionSheet);
+				}
+				this.selectedDemandData = oModel.getProperty(sPath);
+
+			this._oNavActionSheet.openBy(oEvent.getSource().getParent());
+		},
 		/**
-		 *	Navigates to evoOrder detail page with static url. 
+		 *
+		 */
+		onClickNavAction : function(oEvent){
+			var oContext = oEvent.getSource().getBindingContext("navLinks"),
+				oModel = oContext.getModel(),
+				sPath = oContext.getPath(),
+				oData = oModel.getProperty(sPath);
+
+			this.openEvoOrder(this.selectedDemandData.ORDERID, oData);
+		},
+		/**
+		 *	Navigates to evoOrder detail page with static url.
 		 */
 		OnClickOrderId : function(oEvent){
 			var sOrderId = oEvent.getSource().getText();

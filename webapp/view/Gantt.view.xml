@@ -29,6 +29,7 @@
 								maxDate="{user>/GANT_END_DATE}"
 								minDate="{user>/GANT_START_DATE}"
 								change="onChangeDateRange"
+								enabled="false"
 						/>
 						<Button id="idCreateAb" enabled="false" text="{i18n>xbut.manageAbsence}" visible="{user>/MANAGE_ABSENCE_ENABLE}" press="onCreateAbsence"/>
 						<Button id="idToday" text="{i18n>xtit.today}" press="onPressToday"/>

@@ -236,6 +236,20 @@
 					"target": [
 						"ganttDemandDetails"
 					]
+				},
+				{
+					"pattern": "SplitPage/SplitDemands",
+					"name": "splitDemands",
+					"target": [
+						"demandsFullscreen"
+					]
+				},
+				{
+					"pattern": "SplitPage/SplitGantt",
+					"name": "ganttSplit",
+					"target": [
+						"ganttFullscreen"
+					]
 				}
 			],
 			"targets": {
@@ -281,6 +295,7 @@
 				"gantt": {
 					"viewType": "XML",
 					"viewName": "Gantt",
+					"viewId": "idGantt",
 					"viewLevel": 4,
 					"controlId": "topPanel",
 					"parent": "splitVerNavigation"
@@ -336,6 +351,21 @@
 				"ganttDemandDetails": {
 					"viewType": "XML",
 					"viewName": "Detail",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 4
+				},
+				"demandsFullscreen": {
+					"viewType": "XML",
+					"viewName": "GanttDemands",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 4
+				},
+				"ganttFullscreen": {
+					"viewType": "XML",
+					"viewId": "idFullGantt",
+					"viewName": "Gantt",
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",
 					"viewLevel": 4

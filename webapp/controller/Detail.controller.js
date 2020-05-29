@@ -142,7 +142,7 @@ sap.ui.define([
 				oContext = oElementBinding.getBoundContext();
 
 			// refreshing the binding
-			oElementBinding.refresh();
+			// oElementBinding.refresh();
 
 			// No data for the binding
 			if (!oContext) {
@@ -245,6 +245,7 @@ sap.ui.define([
 		getVisible: function (a, b, c) {
 			return a && !b && c !== "COMP";
 		},
+	
 		/**
 		 * View life cycle methods when view gets destroy 
 		 */

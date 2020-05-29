@@ -8,22 +8,11 @@ sap.ui.define([
 	"sap/ui/core/Popup",
 	"sap/gantt/misc/Utility",
 	"sap/gantt/simple/CoordinateUtils",
-	"sap/gantt/misc/AxisTime"
+	"sap/gantt/misc/AxisTime",
+	"com/evorait/evoplan/model/Constants"
 ], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, Popup, Utility, CoordinateUtils,
-	AxisTime) {
+	AxisTime, Constants) {
 	"use strict";
-
-/*	AxisTime.prototype.getNowLabel = function () {
-		var date = new Date();
-		var utcDate = new Date(date.getTime());
-		var value = this.timeToView(utcDate);
-		var localDate = d3.time.second.offset(utcDate, this.timeZoneOffset);
-
-		return [{
-			"date": localDate,
-			"value": Math.round(value)
-		}];
-	};*/
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.Gantt", {
 
@@ -38,10 +27,6 @@ sap.ui.define([
 		_oAssignementModel: null,
 
 		_viewId: "",
-
-		_AssignshapeHoverColor: "#FFFFFF",
-
-		_AssignShapeColor: "#FFFFFF",
 
 		_bLoaded: false,
 
@@ -61,6 +46,12 @@ sap.ui.define([
 			this._axisTime = this.getView().byId("idAxisTime");
 			this._userData = this.getModel("user").getData();
 
+			this.getRouter().getRoute("gantt").attachPatternMatched(function () {
+				this._routeName = Constants.GANTT.NAME;
+			});
+			this.getRouter().getRoute("ganttSplit").attachPatternMatched(function () {
+				this._routeName = Constants.GANTT.SPLIT;
+			});
 			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
 				this._ganttChart.addStyleClass("resourceGanttWithTable");
 			}
@@ -140,17 +131,16 @@ sap.ui.define([
 			var oDraggedControl = oEvent.getParameter("draggedControl"),
 				oDroppedControl = oEvent.getParameter("droppedControl"),
 				oBrowserEvent = oEvent.getParameter("browserEvent"),
-				oDragContext = oDraggedControl.getBindingContext(),
+				oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext(),
-				oPromise,
+				sDragPath = oDragContext ? oDragContext.getPath() : localStorage.getItem("Evo-Dmnd-guid"),
 				oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
-				oResourceBundle = this.getResourceBundle(),
-				sMessage = oResourceBundle.getText("ymsg.availability"),
 				oViewModel = this.getModel("viewModel"),
-				oResourceData = this.getModel().getProperty(oDropContext.getPath());
+				oResourceData = this.getModel().getProperty(oDropContext.getPath()),
+				oSvgPoint;
 
 			//Null check for
-			if (!oDragContext && !oDropContext) {
+			if ((!oDragContext || !sDragPath) && !oDropContext) {
 				return;
 			}
 
@@ -163,13 +153,18 @@ sap.ui.define([
 				return;
 			}
 
-			if (oBrowserEvent.target.tagName === "rect") {
+			if (oBrowserEvent.target.tagName === "rect" && oDragContext) {
 				// When we drop on gantt chart
-				var oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
+				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				// oAxisTime.viewToTime(<oSvgPoint>) will give the time stamp for dropped location
-				this._assignDemands(oResourceData, [oDragContext.getPath()], oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
+				this._assignDemands(oResourceData, [sDragPath], oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
+			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) {
+				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
+				this._assignDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), false, [sDragPath]);
+			} else if (oDragContext) {
+				this._assignDemands(oResourceData, [sDragPath], oDropContext.getPath(), null, true);
 			} else {
-				this._assignDemands(oResourceData, [oDragContext.getPath()], oDropContext.getPath(), null, true);
+				this._assignDemands(oResourceData, null, oDropContext.getPath(), null, true, [sDragPath]);
 			}
 		},
 		/**
@@ -178,7 +173,7 @@ sap.ui.define([
 		 * @param {Object} oTarget Resource Path
 		 * @private
 		 */
-		_assignDemands: function (oResourceData, aSources, oTarget, oTargetDate, bCheckAvail) {
+		_assignDemands: function (oResourceData, aSources, oTarget, oTargetDate, bCheckAvail, aGuids) {
 			var oUserModel = this.getModel("user"),
 				oResourceModel = this.getResourceBundle(),
 				oViewModel = this.getModel("viewModel");
@@ -186,21 +181,21 @@ sap.ui.define([
 				oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && oResourceData.ResourceGuid && oResourceData.ResourceGuid !==
 					"")) {
 
-				this._checkAvailability(aSources, oTarget, oTargetDate).then(function (data) {
+				this._checkAvailability(aSources, oTarget, oTargetDate, aGuids).then(function (data) {
 					if (data.PastFail) {
 						oViewModel.setProperty("/ganttSettings/busy", false);
 						return;
 					}
 					if (!data.Unavailable) {
-						this.assignedDemands(aSources, oTarget, oTargetDate)
+						this.assignedDemands(aSources, oTarget, oTargetDate, false, aGuids)
 							.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
 					} else {
 						this._showConfirmMessageBox(oResourceModel.getText("ymsg.extendMsg")).then(function (value) {
 							if (value === "NO") {
-								this.assignedDemands(aSources, oTarget, oTargetDate, true)
+								this.assignedDemands(aSources, oTarget, oTargetDate, true, aGuids)
 									.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
 							} else {
-								this.assignedDemands(aSources, oTarget, oTargetDate)
+								this.assignedDemands(aSources, oTarget, oTargetDate, false, aGuids)
 									.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
 							}
 						}.bind(this));
@@ -208,7 +203,7 @@ sap.ui.define([
 				}.bind(this));
 
 			} else {
-				this.assignedDemands(aSources, oTarget, oTargetDate)
+				this.assignedDemands(aSources, oTarget, oTargetDate, false, aGuids)
 					.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
 			}
 
@@ -282,22 +277,26 @@ sap.ui.define([
 				this._selectedShapeContext = oShape.getBindingContext();
 				var oModel = this._selectedShapeContext.getModel(),
 					sPath = this._selectedShapeContext.getPath(),
-					sAssignGuid = oModel.getProperty(sPath).Guid;
+					sAssignGuid = oModel.getProperty(sPath).Guid,
+					sStatus = oModel.getProperty(sPath).DEMAND_STATUS;
 				if (!this._menu) {
 					this._menu = sap.ui.xmlfragment(
 						"com.evorait.evoplan.view.gantt.ShapeContextMenu",
-						this
+						this,
+						"gantt"
 					);
 					this.getView().addDependent(this._menu);
 				}
-
-				this._updateAssignmentModel(sAssignGuid).then(function (data) {
-					oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign", data.AllowUnassign);
-					oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign", data.AllowReassign);
-					oViewModel.setProperty("/ganttSettings/shapeOpearation/change", data.AllowChange);
-					var eDock = Popup.Dock;
-					this._menu.open(false, oShape, eDock.BeginTop, eDock.endBottom, oShape);
-				}.bind(this));
+				if(sStatus !== "COMP"){
+					this._updateAssignmentModel(sAssignGuid).then(function (data) {
+						oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign", data.AllowUnassign);
+						oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign", data.AllowReassign);
+						oViewModel.setProperty("/ganttSettings/shapeOpearation/change", data.AllowChange);
+						oViewModel.setProperty("/ganttSettings/shapeData", data);
+						var eDock = Popup.Dock;
+						this._menu.open(true, oShape, eDock.BeginTop, eDock.endBottom, oShape);
+					}.bind(this));
+				}
 
 			}
 		},
@@ -308,11 +307,19 @@ sap.ui.define([
 		 */
 		handleMenuItemPress: function (oEvent) {
 			var oParams = oEvent.getParameters(),
-				sButtonText = oParams.item.getText();
+				oSelectedItem = oParams.item,
+				sButtonText = oSelectedItem.getText(),
+				oCustomData = oSelectedItem.getAggregation("customData"),
+				sFunctionKey = oCustomData.length ? oCustomData[0].getValue() : null;
 
 			var oModel = this._selectedShapeContext.getModel(),
 				sPath = this._selectedShapeContext.getPath(),
-				sAssignGuid = oModel.getProperty(sPath).Guid;
+				sAssignGuid = oModel.getProperty(sPath).Guid,
+				oSelectedData = [{
+					oData: {
+						Guid: oModel.getProperty(sPath).DemandGuid
+					}
+				}];
 
 			if (sButtonText === this.getResourceBundle().getText("xbut.buttonUnassign")) {
 				//do unassign
@@ -328,6 +335,16 @@ sap.ui.define([
 				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, {
 					bFromGantt: true
 				}, sPath);
+			} else {
+				if (sFunctionKey) {
+					this._oEventBus.publish("StatusSelectDialog", "changeStatusDemand", {
+						selectedPaths: oSelectedData,
+						functionKey: sFunctionKey,
+						parameters: {
+							bFromGantt: true
+						}
+					});
+				}
 			}
 		},
 		/**
@@ -377,7 +394,10 @@ sap.ui.define([
 		_refreshAreas: function (data, oResponse) {
 			this.showMessage(oResponse);
 			this._refreshGanttChart();
-			this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			localStorage.setItem("Evo-Dmnd-pageRefresh", "YES");
+			if (this._routeName !== Constants.GANTT.SPLIT) {
+				this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			}
 		},
 
 		/**
@@ -456,6 +476,17 @@ sap.ui.define([
 				oDefaultObject.OperationNumber = oData.Demand.OPERATIONID;
 				oDefaultObject.SubOperationNumber = oData.Demand.SUBOPERATIONID;
 				oDefaultObject.DemandStatus = oData.Demand.Status;
+				oDefaultObject.AllowAppoint = oData.Demand.ALLOW_APPOINTMNT;
+				oDefaultObject.AlloDispatch = oData.Demand.ALLOW_DISPATCHED;
+				oDefaultObject.AllowDemMobile = oData.Demand.ALLOW_DEM_MOBILE;
+				oDefaultObject.AllowAcknowledge = oData.Demand.ALLOW_ACKNOWLDGE;
+				oDefaultObject.AllowReject = oData.Demand.ALLOW_REJECT;
+				oDefaultObject.AllowEnroute = oData.Demand.ALLOW_ENROUTE;
+				oDefaultObject.AllowStarted = oData.Demand.ALLOW_STARTED;
+				oDefaultObject.AllowHold = oData.Demand.ALLOW_ONHOLD;
+				oDefaultObject.AllowComplete = oData.Demand.ALLOW_COMPLETE;
+				oDefaultObject.AllowIncomplete = oData.Demand.ALLOW_INCOMPLETE;
+				oDefaultObject.AllowClosed = oData.Demand.ALLOW_CLOSED;
 			}
 			return oDefaultObject;
 		},
@@ -603,7 +634,7 @@ sap.ui.define([
 				oContext,
 				oResourceBundle = this.getResourceBundle();
 			if (aIndices.length === 0) {
-				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"))
+				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
 				return;
 			}
 			oContext = oTreeTable.getContextByIndex(aIndices[0]);
@@ -641,13 +672,14 @@ sap.ui.define([
 		 * @param oTargetDate
 		 * @private
 		 */
-		_checkAvailability: function (aSources, oTarget, oTargetDate) {
-			var oModel = this.getModel();
+		_checkAvailability: function (aSources, oTarget, oTargetDate, aGuids) {
+			var oModel = this.getModel(),
+				sGuid = aSources ? oModel.getProperty(aSources[0] + "/Guid") : aGuids[0];
 			return new Promise(function (resolve, reject) {
 				this.executeFunctionImport(oModel, {
 					ResourceGuid: oModel.getProperty(oTarget + "/ResourceGuid"),
 					StartTimestamp: oTargetDate || new Date(),
-					DemandGuid: oModel.getProperty(aSources[0] + "/Guid")
+					DemandGuid: sGuid
 				}, "ResourceAvailabilityCheck", "GET").then(function (data) {
 					resolve(data);
 				});
@@ -695,21 +727,6 @@ sap.ui.define([
 			} else {
 				return "XX";
 			}
-		},
-		/**
-		 * On mouse enter the assignment shape
-		 * To change the fill color
-		 * // TODO To show pop over of more information assi
-		 * @param oEvent
-		 */
-		_onShapeMouseEnter: function (oEvent) {
-			var oShape = oEvent.getParameter("shape");
-			this._AssignShapeColor = oShape.getFill();
-			oShape.setFill(this._AssignshapeHoverColor);
-		},
-		_onShapeMouseLeave: function (oEvent) {
-			var oShape = oEvent.getParameter("shape");
-			oShape.setFill(this._AssignShapeColor);
 		}
 	});
 });

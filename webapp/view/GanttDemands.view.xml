@@ -63,7 +63,7 @@
 									<core:Icon src="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIcon' }" color="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIconColor' }" tooltip="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncTooltip' }"></core:Icon>
 								</table:template>
 					</table:Column>
-					<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.OrderIdColumn" type="XML"/>
+					<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.OrderIdColumn" type="XML"/>-->
             	</table:columns>
             	<table:dragDropConfig>
 					<dnd:DragInfo

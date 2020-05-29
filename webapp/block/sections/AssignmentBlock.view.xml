@@ -8,9 +8,6 @@
 		class="sapUiNoContentPadding"
 		items="{
 			path: 'DemandToAssignment',
-			parameters : {
-				expand:'Resource,Demand'
-			},
 			templateShareable: true
 		}"
 		itemPress="onClickRow">

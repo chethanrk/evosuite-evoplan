@@ -17,7 +17,23 @@
 							intervalHeaders="{path: 'calendarModel>AbsenceInfo', templateShareable: 'true'}">
 							<appointments>
 								<unified:CalendarAppointment startDate="{calendarModel>DateFrom}" endDate="{calendarModel>DateTo}" title="{calendarModel>Demand/DemandDesc}"
-									tooltip="{ parts:[ {path:'calendarModel>Demand/ORDERID'}, {path:'calendarModel>Demand/DemandDesc'}, {path:'calendarModel>Demand/StatusDesc'} ], formatter: '.formatter.formatAsnToolTip'}"
+									tooltip="{ 
+												parts:[
+												    {path:'/#Demand/ORDERID/@sap:label'},
+												    {path:'/#Demand/DemandDesc/@sap:label'},
+												    {path:'/#Demand/OPERATIONID/@sap:label'},
+												    {path:'/#Demand/OPERATION_DESC/@sap:label'},
+												    {path:'/#Demand/StatusDesc/@sap:label'},
+												    {path:'/#Demand/REMAINING_WORK_TIME/@sap:label'},
+													{path:'calendarModel>Demand/ORDERID'},
+													{path:'calendarModel>Demand/DemandDesc'}, 
+													{path:'calendarModel>Demand/OPERATIONID'}, 
+													{path:'calendarModel>Demand/OPERATION_DESC'}, 
+													{path:'calendarModel>Demand/StatusDesc'}, 
+													{path:'calendarModel>Demand/REMAINING_WORK_TIME'} 
+												], 
+												formatter: '.formatter.formatAsnToolTip'
+											}"
 									icon="{calendarModel>Demand/STATUS_ICON}" text="{calendarModel>Demand/ORDERID}" type="{calendarModel>type}"
 									color="{ parts:[ {path:'calendarModel>Demand/CRITICALITY'}, {path:'calendarModel>color'}], formatter:'.formatter.formatStatusIconColor' }"></unified:CalendarAppointment>
 							</appointments>
