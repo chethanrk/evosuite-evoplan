@@ -172,7 +172,7 @@ sap.ui.define([
 					return;
 				}
 				if (this.isAvailable(oData.assignPath)) {
-					this.assignedDemands(oData.selectedPaths, oData.assignPath, oData.parameters);
+						this.assignedDemands(oData.selectedPaths, oData.assignPath, oData.parameters);
 				} else {
 					this.showMessageToProceed(oData.selectedPaths, oData.assignPath, false, false, false, false, oData.parameters);
 				}
@@ -234,7 +234,7 @@ sap.ui.define([
 					return;
 				}
 				if (this.isAvailable(oData.sPath)) {
-					this.bulkReAssignment(oData.sPath, oData.aContexts, oData.parameters);
+						this.bulkReAssignment(oData.sPath, oData.aContexts, oData.parameters);
 				} else {
 					this.showMessageToProceed(null, oData.sPath, true, oData.aContexts, false, false, oData.parameters);
 				}
