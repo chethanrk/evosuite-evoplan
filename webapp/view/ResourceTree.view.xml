@@ -112,25 +112,8 @@
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
-				<Button id="idButtonCreUA" text="{i18n>xbut.manageAbsence}" tooltip="{i18n>xbut.manageAbsence}" press="onPressCreateUA" enabled="false"
-					visible="{user>/MANAGE_ABSENCE_ENABLE}">
-					<layoutData>
-						<ToolbarLayoutData shrinkable="true"/>
-					</layoutData>
-				</Button>
+				<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.TreeFooterAction" type="XML"/>
 				<ToolbarSpacer/>
-				<Button id="idButtonunassign" text="{i18n>xbut.buttonUnassign}" tooltip="{i18n>xbut.buttonUnassign}" press="onPressUnassign" enabled="false"
-					visible="{user>/ENABLE_UNASSIGN}">
-					<layoutData>
-						<ToolbarLayoutData shrinkable="true"/>
-					</layoutData>
-				</Button>
-				<Button id="idButtonreassign" text="{i18n>xfld.newAssign}" tooltip="{i18n>xfld.newAssign}" press="onPressReassign" enabled="false"
-					visible="{user>/ENABLE_ASSIGN_NEW}">
-					<layoutData>
-						<ToolbarLayoutData shrinkable="true"/>
-					</layoutData>
-				</Button>
 				<Button id="showPlanCalendar" visible="{user>/ENABLE_PLANNING_CALENDAR}" text="{i18n>xbut.showPlanningCal}" tooltip="{i18n>xbut.showPlanningCal}" icon="sap-icon://calendar"
 						press="onPressShowPlanningCal" enabled="false" busy="{viewModel>/calendarBusy}" busyIndicatorDelay="0">
 					<layoutData>

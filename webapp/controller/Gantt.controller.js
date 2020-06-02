@@ -40,6 +40,7 @@ sap.ui.define([
 
 			this._oEventBus.subscribe("BaseController", "refreshGanttChart", this._refreshGanttChart, this);
 			this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
+			this._oEventBus.subscribe("BaseController", "refreshTreeTable", this._refreshGanttChart, this);
 
 			//set on first load required filters
 			this._treeTable = this.getView().byId("ganttResourceTreeTable");
@@ -66,6 +67,7 @@ sap.ui.define([
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshGanttChart", this._refreshGanttChart, this);
 			this._oEventBus.unsubscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
+			this._oEventBus.unsubscribe("BaseController", "refreshTreeTable", this._refreshGanttChart, this);
 		},
 
 		/**
@@ -219,7 +221,8 @@ sap.ui.define([
 		_refreshGanttChart: function (oEvent) {
 			var oTreeTable = this.getView().byId("ganttResourceTreeTable"),
 				oViewModel = this.getModel("viewModel");
-
+			//reset the changes
+                this.resetChanges();
 			if (this._bLoaded && oTreeTable && oTreeTable.getBinding("rows")) {
 				this._ganttChart.setSelectionPanelSize("25%");
 				oTreeTable.getBinding("rows")._restoreTreeState().then(function () {
@@ -651,7 +654,7 @@ sap.ui.define([
 		 */
 		onRowSelectionChange: function (oEvent) {
 			var aIndices = oEvent.getSource().getSelectedIndices(),
-				oButton = this.getView().byId("idCreateAb"),
+				oButton = this.getView().byId("idButtonCreUA"),
 				oContext = aIndices.length > 0 ? oEvent.getSource().getContextByIndex(aIndices[0]) : null,
 				oData = oContext !== null ? oContext.getModel().getProperty(oContext.getPath()) : null;
 			if (aIndices.length > 0 && oData && oData.NodeType === "RESOURCE" && oData.ResourceGuid !== "" && oData.ResourceGroupGuid !== "") {
@@ -679,8 +682,7 @@ sap.ui.define([
             var parent = oSource.getParent();
             var sPath = parent.getBindingContext().getPath();
             var oParams = oEvent.getParameters();
-			var oNewNode = this.getModel().getProperty(sPath),
-				oSelectedData;
+			
             //Sets the property IsSelected manually
             this.getModel().setProperty(sPath + "/IsSelected", oParams.selected);
 
@@ -732,6 +734,22 @@ sap.ui.define([
          */
         onPressUnassign: function (oEvent) {
             this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true);
+        },
+        /**
+         * Resets the selected resource if selected
+         */
+         resetChanges: function () {
+            var oModel = this.getModel();
+
+            // reset the model changes
+            if (oModel.hasPendingChanges()) {
+                oModel.resetChanges();
+            }
+            // Resetting selected resource
+            this.selectedResources = [];
+            this.byId("idButtonreassign").setEnabled(false);
+            this.byId("idButtonunassign").setEnabled(false);
+            this.byId("idButtonCreUA").setEnabled(false);
         },
 		
 		/**
