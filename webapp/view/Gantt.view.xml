@@ -31,7 +31,7 @@
 								change="onChangeDateRange"
 						/>
 						
-						<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.TreeFooterAction" type="XML"/>
+						<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.ResourceActions" type="XML"/>
 						<Button id="idToday" text="{i18n>xtit.today}" press="onPressToday"/>
 					</gnt2:content>
 					<gnt2:legendContainer>
@@ -92,16 +92,7 @@
 						<table:extension>
 							<OverflowToolbar>
 								<content>
-									<Button id="idExpandAll" icon="sap-icon://expand-all" press="onClickExpandCollapse" type="Transparent" tooltip="{i18n>xbut.expandAll}">
-									<customData>
-										<core:CustomData key="Function" value="EXPAND"/>
-									</customData>
-								</Button>
-								<Button id="idColapseAll" icon="sap-icon://collapse-all" press="onClickExpandCollapse" type="Transparent" tooltip="{i18n>xbut.collapseAll}">
-									<customData>
-										<core:CustomData key="Function" value="COLLAPSE"/>
-									</customData>
-								</Button>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.TreeExpandCollapse" type="XML"/>
 									<SearchField search="onSearchResource"/>
 							     </content>
 								

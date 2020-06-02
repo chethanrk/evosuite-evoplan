@@ -40,7 +40,7 @@ sap.ui.define([
 
 			this._oEventBus.subscribe("BaseController", "refreshGanttChart", this._refreshGanttChart, this);
 			this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
-			this._oEventBus.subscribe("BaseController", "refreshTreeTable", this._refreshGanttChart, this);
+		
 
 			//set on first load required filters
 			this._treeTable = this.getView().byId("ganttResourceTreeTable");
@@ -726,14 +726,18 @@ sap.ui.define([
          * @param oEvent
          */
         onPressReassign: function (oEvent) {
-            this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false);
+            this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false,{
+								bFromGantt: true
+							});
         },
         /**
          * Open's Dialog containing assignments to unassign
          * @param oEvent
          */
         onPressUnassign: function (oEvent) {
-            this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true);
+            this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true, {
+								bFromGantt: true
+							});
         },
         /**
          * Resets the selected resource if selected
