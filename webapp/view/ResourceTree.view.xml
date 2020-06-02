@@ -9,18 +9,7 @@
 					<l:VerticalLayout id="resourceTreeFilterBarFragment" width="100%"></l:VerticalLayout>
 					<FlexBox id="idResToolbar" alignItems="Start" justifyContent="SpaceBetween">
 						<items>
-							<HBox>
-								<Button id="idExpandAll" icon="sap-icon://expand-all" press="onClickExpandCollapse" type="Transparent" tooltip="{i18n>xbut.expandAll}">
-									<customData>
-										<core:CustomData key="Function" value="EXPAND"/>
-									</customData>
-								</Button>
-								<Button id="idColapseAll" icon="sap-icon://collapse-all" press="onClickExpandCollapse" type="Transparent" tooltip="{i18n>xbut.collapseAll}">
-									<customData>
-										<core:CustomData key="Function" value="COLLAPSE"/>
-									</customData>
-								</Button>
-							</HBox>
+							<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.TreeExpandCollapse" type="XML"/>
 							<CheckBox id="idCapaCheck" text="{i18n>xtit.capacity}" selected="{viewModel>/capacityPlanning}"
 								enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }" select="onSelectCapacity" visible="{user>/CAPACITY_ENABLED}"/>
 						</items>
@@ -112,25 +101,8 @@
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
-				<Button id="idButtonCreUA" text="{i18n>xbut.manageAbsence}" tooltip="{i18n>xbut.manageAbsence}" press="onPressCreateUA" enabled="false"
-					visible="{user>/MANAGE_ABSENCE_ENABLE}">
-					<layoutData>
-						<ToolbarLayoutData shrinkable="true"/>
-					</layoutData>
-				</Button>
+				<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.ResourceActions" type="XML"/>
 				<ToolbarSpacer/>
-				<Button id="idButtonunassign" text="{i18n>xbut.buttonUnassign}" tooltip="{i18n>xbut.buttonUnassign}" press="onPressUnassign" enabled="false"
-					visible="{user>/ENABLE_UNASSIGN}">
-					<layoutData>
-						<ToolbarLayoutData shrinkable="true"/>
-					</layoutData>
-				</Button>
-				<Button id="idButtonreassign" text="{i18n>xfld.newAssign}" tooltip="{i18n>xfld.newAssign}" press="onPressReassign" enabled="false"
-					visible="{user>/ENABLE_ASSIGN_NEW}">
-					<layoutData>
-						<ToolbarLayoutData shrinkable="true"/>
-					</layoutData>
-				</Button>
 				<Button id="showPlanCalendar" visible="{user>/ENABLE_PLANNING_CALENDAR}" text="{i18n>xbut.showPlanningCal}" tooltip="{i18n>xbut.showPlanningCal}" icon="sap-icon://calendar"
 						press="onPressShowPlanningCal" enabled="false" busy="{viewModel>/calendarBusy}" busyIndicatorDelay="0">
 					<layoutData>
