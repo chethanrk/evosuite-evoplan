@@ -398,6 +398,21 @@ sap.ui.define([
 			return true;
 		},
 		/**
+		 * Method checks the validity of resources
+		 * @param sTargetPath : Resource path on which assignment needs to be created
+		 * @return {boolean} return true is valid
+		 */
+		isTargetValid: function (sTargetPath) {
+			var oModel = this.getModel(),
+				oTargetObj = oModel.getProperty(sTargetPath),
+				startDate = oTargetObj.StartDate?oTargetObj.StartDate.getTime():null,
+				resAsgnStartDate = oTargetObj.RES_ASGN_START_DATE ?oTargetObj.RES_ASGN_START_DATE.getTime():null,
+				endDate = oTargetObj.EndDate ?oTargetObj.EndDate.getTime():null,
+				resAsgnEndDate = oTargetObj.RES_ASGN_END_DATE ?oTargetObj.RES_ASGN_END_DATE.getTime():null,
+				bValid = startDate === resAsgnStartDate && oTargetObj.StartTime.ms === oTargetObj.RES_ASGN_START_TIME.ms && endDate === resAsgnEndDate && oTargetObj.EndTime.ms === oTargetObj.RES_ASGN_END_TIME.ms;
+			return bValid;	
+		},
+		/**
 		 * @Athour Rahul
 		 * @since 3.0
 		 * Checks the Demand is assignable or not by validating the ALLOW_ASSIGN frag in demand object
