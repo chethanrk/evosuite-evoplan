@@ -26,45 +26,22 @@ sap.ui.define([
 						"ResourceGuid": targetObj.ResourceGuid
 					};
 				if (parseInt(i, 10) === aSourcePaths.length - 1) {
-						bIsLast = true;
-					}	
+					bIsLast = true;
+				}
 				if (this.isTargetValid(sTargetPath)) {
-					if (targetObj.StartDate) {
-						oParams.DateFrom = targetObj.StartDate;
-						oParams.TimeFrom = targetObj.StartTime;
-					} else {
-						oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
-						oParams.TimeFrom = targetObj.StartTime;
-					}
-
-					if (targetObj.EndDate) {
-						oParams.DateTo = targetObj.EndDate;
-						oParams.TimeTo = targetObj.EndTime;
-					} else {
-						oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
-						oParams.TimeTo = targetObj.EndTime;
-					}
+					oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
 					this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
 				} else {
 					this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.targetValidity")).then(function (value) {
 						if (value === "YES") {
-							if (targetObj.RES_ASGN_START_DATE) {
-								oParams.DateFrom = targetObj.RES_ASGN_START_DATE;
-								oParams.TimeFrom = targetObj.RES_ASGN_START_TIME;
-							} else {
-								oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
-								oParams.TimeFrom = targetObj.RES_ASGN_START_TIME;
-							}
-
-							if (targetObj.RES_ASGN_END_DATE) {
-								oParams.DateTo = targetObj.RES_ASGN_END_DATE;
-								oParams.TimeTo = targetObj.RES_ASGN_END_TIME;
-							} else {
-								oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
-								oParams.TimeTo = targetObj.RES_ASGN_END_TIME;
-							}
+							oParams = this.setDateTimeParams(oParams, targetObj.RES_ASGN_START_DATE, targetObj.RES_ASGN_START_TIME, targetObj.RES_ASGN_END_DATE,
+								targetObj.RES_ASGN_END_TIME);
 							this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
-						} 
+						}
+						if (value === "NO") {
+							oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
+							this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
+						}
 					}.bind(this));
 				}
 
@@ -293,6 +270,32 @@ sap.ui.define([
 					}.bind(this)
 				}
 			);
+		},
+		/**
+		 * method to set Date and time into the payload for the assignment
+		 * @param oParams Update parameter for single assignment
+		 * @param vStartdate start date for the assignment
+		 * @param vStartTime end time for the assignment
+		 * @param vEndDate end date for the assignment
+		 * @param vEndTime end time for the assignment
+		 */
+		setDateTimeParams: function (oParams, vStartdate, vStartTime, vEndDate, vEndTime) {
+			if (vStartdate) {
+				oParams.DateFrom = vStartdate;
+				oParams.TimeFrom = vStartTime;
+			} else {
+				oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
+				oParams.TimeFrom = vStartTime;
+			}
+
+			if (vEndDate) {
+				oParams.DateTo = vEndDate;
+				oParams.TimeTo = vEndTime;
+			} else {
+				oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
+				oParams.TimeTo = vEndTime;
+			}
+			return oParams;
 		}
 	});
 });
