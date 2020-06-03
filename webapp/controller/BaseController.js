@@ -244,7 +244,9 @@ sap.ui.define([
 				bFromAseet: false,
 				bFromPlannCal: false,
 				bFromDetail: false,
-				bFromGantt: false
+				bFromGantt: false,
+				bFromGanttSplit:false,
+				bFromDemandSplit:false
 			};
 
 			if (oParameter.bFromHome) {
@@ -264,6 +266,10 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshDemandTable", {});
 			} else if (oParameter.bFromGantt) {
 				eventBus.publish("BaseController", "refreshGanttChart", {});
+				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			} else if(oParameter.bFromGanttSplit){
+				eventBus.publish("BaseController", "refreshGanttChart", {});
+			} else if(oParameter.bFromDemandSplit){
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
 

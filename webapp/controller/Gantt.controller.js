@@ -159,7 +159,8 @@ sap.ui.define([
 				oViewModel.setProperty("/ganttSettings/busy", false);
 				return;
 			}
-
+			
+			localStorage.setItem("Evo-Action-page","ganttSplit");
 			if (oBrowserEvent.target.tagName === "rect" && oDragContext) {
 				// When we drop on gantt chart
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
@@ -280,7 +281,8 @@ sap.ui.define([
 		 */
 		onShapeContextMenu: function (oEvent) {
 			var oShape = oEvent.getParameter("shape"),
-				oViewModel = this.getModel("viewModel");
+				oViewModel = this.getModel("viewModel"),
+				oAppView = this.getModel("appView");
 			if (oShape && oShape.sParentAggregationName === "shapes3") {
 				this._selectedShapeContext = oShape.getBindingContext();
 				var oModel = this._selectedShapeContext.getModel(),
@@ -290,8 +292,7 @@ sap.ui.define([
 				if (!this._menu) {
 					this._menu = sap.ui.xmlfragment(
 						"com.evorait.evoplan.view.gantt.ShapeContextMenu",
-						this,
-						"gantt"
+						this, oAppView.getProperty("/currentRoute")
 					);
 					this.getView().addDependent(this._menu);
 				}
@@ -327,8 +328,16 @@ sap.ui.define([
 					oData: {
 						Guid: oModel.getProperty(sPath).DemandGuid
 					}
-				}];
-
+				}],
+				mParameters = {bFromGantt:true},
+				oAppModel = this.getModel("appView");
+				
+				if(oAppModel.getProperty("/currentRoute") === "ganttSplit"){
+					mParameters ={bFromGanttSplit:true};
+				}
+				// TODO comment
+			localStorage.setItem("Evo-Action-page","ganttSplit");
+			
 			if (sButtonText === this.getResourceBundle().getText("xbut.buttonUnassign")) {
 				//do unassign
 				this.byId("container").setBusy(true);
@@ -340,17 +349,13 @@ sap.ui.define([
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
 				// Change
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, {
-					bFromGantt: true
-				}, sPath);
+				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, mParameters, sPath);
 			} else {
 				if (sFunctionKey) {
 					this._oEventBus.publish("StatusSelectDialog", "changeStatusDemand", {
 						selectedPaths: oSelectedData,
 						functionKey: sFunctionKey,
-						parameters: {
-							bFromGantt: true
-						}
+						parameters: mParameters
 					});
 				}
 			}
@@ -513,7 +518,9 @@ sap.ui.define([
 				this.showMessageToast(msg);
 				return;
 			}
-
+			// TODO comment
+			localStorage.setItem("Evo-Action-page","ganttSplit");
+			
 			var targetContext = oParams.targetRow ? oParams.targetRow.getBindingContext() : oParams.targetShape.getParent().getParent().getBindingContext(),
 				targetData = targetContext ? targetContext.getObject() : null,
 				draggedShape = oParams.draggedShapeDates;
@@ -576,7 +583,9 @@ sap.ui.define([
 				oModel = oRowContext.getModel();
 
 			oViewModel.setProperty("/ganttSettings/busy", true);
-
+			// TODO comment
+			localStorage.setItem("Evo-Action-page","ganttSplit");
+			
 			if (oParams.shape && oParams.shape.sParentAggregationName === "shapes3") {
 				this._updateAssignmentModel(oData.Guid).then(function (oAssignmentObj) {
 					if (oAssignmentObj.AllowChange) {
@@ -608,6 +617,8 @@ sap.ui.define([
 				oRowContext = oParams.rowSettings.getParent().getBindingContext(),
 				oShape = oParams.shape;
 			if (oShape && oShape.sParentAggregationName === "shapes3") {
+				// TODO comment
+			localStorage.setItem("Evo-Action-page","ganttSplit");
 				if (oContext) {
 					this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], {
 						bFromGantt: true
@@ -644,6 +655,8 @@ sap.ui.define([
 				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
 				return;
 			}
+			// TODO comment
+			localStorage.setItem("Evo-Action-page","ganttSplit");
 			oContext = oTreeTable.getContextByIndex(aIndices[0]);
 			// this.getOwnerComponent().createUnAvail.open(this.getView(), [oContext.getPath()], {bFromGantt: true});
 			this.getOwnerComponent().manageAvail.open(this.getView(), [oContext.getPath()], {
