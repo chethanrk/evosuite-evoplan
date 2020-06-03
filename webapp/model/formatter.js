@@ -457,15 +457,14 @@ sap.ui.define([
          * @Author Rahul
          * 
          */
-        formatAsnToolTip: function(orderId,demandDesc,opId,operaton,status,remTimelabel,id, desc, operationId, oparationDesc, statusDesc,remTime){
+        formatAsnToolTip: function(id, desc, operationId, oparationDesc, statusDesc){
         	// return (id? id: "")+((id && desc)? " : "+desc : desc)+((desc && operationId) ? " : "+operationId : operationId)+((operationId && oparationDesc) ? " : "+oparationDesc : oparationDesc)+((oparationDesc && statusDesc) ? " : "+statusDesc : statusDesc);
         	
-        	return  (id? orderId + ":"+ id : "") +"\n" +
-        			(desc? demandDesc + ": "+ desc : "") +"\n" +
-        			(operationId? opId + ": "+ operationId : "") +"\n" +
-        			(oparationDesc? operaton+ ": "+ oparationDesc : "") +"\n"+
-        			(statusDesc? status + ": "+ statusDesc : "") + "\n" +
-        			(remTime ? remTimelabel + ": " + remTime : "") + "\n";
+        	return  (id? id : "") +"\n"+
+        			(desc? desc : "") +"\n"+
+        			(operationId? operationId : "") +"\n"+
+        			(oparationDesc? oparationDesc : "") +"\n"+
+        			(statusDesc? statusDesc : "") +"\n";
         },
 
         formatListMode : function (bIsActive) {
@@ -491,7 +490,8 @@ sap.ui.define([
          * Format change status button in the gantt chart 
          */
          formatChangeStatus : function(sStatus){
-         	return sStatus === "ASGN" && sStatus !== "COMP" &&  sStatus !== "PASS";
+         //	return sStatus === "ASGN" && sStatus !== "COMP" &&  sStatus !== "PASS";
+         	return sStatus !== "PASS";
          }
     };
 });
