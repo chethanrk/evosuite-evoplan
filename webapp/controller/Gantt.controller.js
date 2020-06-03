@@ -742,6 +742,7 @@ sap.ui.define([
          * @param oEvent
          */
         onPressReassign: function (oEvent) {
+            localStorage.setItem("Evo-Action-page","ganttSplit");
             this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false,{
 								bFromGantt: true
 							});
@@ -751,6 +752,7 @@ sap.ui.define([
          * @param oEvent
          */
         onPressUnassign: function (oEvent) {
+            localStorage.setItem("Evo-Action-page","ganttSplit");
             this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true, {
 								bFromGantt: true
 							});
