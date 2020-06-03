@@ -183,7 +183,9 @@ sap.ui.define([
                 // create the views based on the url/hash
                 this.getRouter().initialize();
                 // Initialize websocket
-                WebSocket.init(this);
+                if(data[0].ENABLE_PUSH_DEMAND){
+                	WebSocket.init(this);
+                }
             }.bind(this));
 
 			// Not able load more than 100 associations

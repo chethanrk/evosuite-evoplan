@@ -250,6 +250,20 @@
 					"target": [
 						"ganttFullscreen"
 					]
+				},
+				{
+					"pattern": "SplitPage/Demand/{guid}",
+					"name": "splitDemandDetails",
+					"target": [
+						"ganttDemandDetails"
+					]
+				},
+				{
+					"pattern": "SplitPage/Gantt/{guid}",
+					"name": "splitGanttDetails",
+					"target": [
+						"ganttDemandDetails"
+					]
 				}
 			],
 			"targets": {

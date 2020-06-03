@@ -22,7 +22,15 @@ sap.ui.define([
 		onInit: function () {
 			// Row Action template to navigate to Detail page
 			var onClickNavigation = this._onActionPress.bind(this);
-			var openActionSheet = this.openActionSheet.bind(this);
+			var openActionSheet = this.openActionSheet.bind(this),
+				oAppModel = this.getModel("appView");
+		
+			this._mParameters = {bFromGantt:true};
+
+				
+				if(oAppModel.getProperty("/currentRoute") === "splitDemands"){
+					this._mParameters ={bFromDemandSplit:true};
+				}
 			this._oEventBus = sap.ui.getCore().getEventBus();
 
 			this._oEventBus.subscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
@@ -47,10 +55,17 @@ sap.ui.define([
 			var sPath = oContext.getPath();
 			var oModel = oContext.getModel();
 			var oData = oModel.getProperty(sPath);
-
-			oRouter.navTo("ganttDemandDetails", {
-				guid: oData.Guid
-			});
+			var oUserDetail = this.getModel("appView");
+			
+			if(oUserDetail.getProperty("/currentRoute") === "splitDemands"){
+				oRouter.navTo("splitDemandDetails", {
+					guid: oData.Guid
+				});
+			}else{
+				oRouter.navTo("ganttDemandDetails", {
+					guid: oData.Guid
+				});
+			}
 		},
 		/** 
 		 * On Drag start restrict demand having status other init
@@ -83,9 +98,9 @@ sap.ui.define([
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
-				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, {
-					bFromGantt: true
-				});
+				// TODO comment
+			localStorage.setItem("Evo-Action-page","splitDemands");
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
 			}
 			if (oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
@@ -101,9 +116,9 @@ sap.ui.define([
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
 
 			if (this._aSelectedRowsIdx.length > 0) {
-				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData, {
-					bFromGantt: true
-				});
+				// TODO comment
+			localStorage.setItem("Evo-Action-page","splitDemands");
+				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData, this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("ymsg.selectMinItem");
 				MessageToast.show(msg);
@@ -167,47 +182,7 @@ sap.ui.define([
 			var sOrderId = oEvent.getSource().getText();
 			this.openEvoOrder(sOrderId);
 		},
-		/**
-		 * Drag end is to identify the event to refresh external demand list in other tab
-		 */
-		// onDragEnd: function (oEvent) {
-		// 	if (this._routeName === Constants.GANTT.SPLIT) {
-		// 		var checkStatus = setInterval(function () {
-		// 			var bRefresh = localStorage.getItem("Evo-Dmnd-pageRefresh");
-		// 			if (bRefresh === "YES") {
-		// 				this._refreshDemandTable();
-		// 				clearInterval(checkStatus);
-		// 				this.clearLocalStorage();
-		// 			}
-		// 		}.bind(this), 2000);
-		// 		setTimeout(function () {
-		// 			clearInterval(checkStatus);
-		// 			this.clearLocalStorage();
-		// 		}.bind(this), 20000);
-		// 	}
-		// },
-		/**
-		 * WebSocket on message which something is changed in the backend
-		 * @param oEvent
-		 * @private
-		 */
-		_onMessage: function (oEvent) {
-			if (oEvent.getParameter("pcpFields").errorText) {
-				// Message is an error text
-				return;
-			}
-			// Parse Message
-			var sMsg = oEvent.getParameter("data");
-			this.showMessageToast(sMsg);
-
-			if (this._routeName === Constants.GANTT.SPLITDMD) {
-				setTimeout(function () {
-					this._refreshDemandTable();
-					this.clearLocalStorage();
-				}.bind(this), 2000);
-			}
-
-		},
+		
 		onClickSplit: function (oEvent) {
 			window.open("#Gantt/SplitDemands", "_blank");
 		},
