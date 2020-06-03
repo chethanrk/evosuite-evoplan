@@ -70,7 +70,7 @@
 					<table:TreeTable
 							id="ganttResourceTreeTable"
 							class="resourceGanttTreeTable"
-							selectionMode="MultiToggle"
+							selectionMode="Single"
 							visibleRowCountMode="Auto"
 							enableColumnReordering="false"
 							enableBusyIndicator="true"
