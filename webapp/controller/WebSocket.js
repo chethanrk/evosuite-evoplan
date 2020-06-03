@@ -65,25 +65,32 @@ sap.ui.define([
 			}
 			// Parse Message
 			var sMsg = oEvent.getParameter("data");
-				MessageToast.show(sMsg);
+
 
 			if (sCurrentRoute === "splitDemands" || sCurrentRoute === "ganttSplit" || sCurrentRoute === "splitDemandDetails" || sCurrentRoute === "splitGanttDetails") {
 				setTimeout(function () {
 					if(sActionPage === "ganttSplit" && sCurrentRoute === "splitDemands"){
+                        	MessageToast.show(sMsg);
 							eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 					} else if(sActionPage === "ganttSplit" && sCurrentRoute === "splitDemandDetails"){
 						// refresh demand detail page
+                        MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandOverview", {});
 					}else if(sActionPage === "splitDemands" && sCurrentRoute === "ganttSplit"){
+                        MessageToast.show(sMsg);
 							eventBus.publish("BaseController", "refreshGanttChart", {});
 					}else if(sActionPage === "splitDemands" && sCurrentRoute === "splitGanttDetails"){
 						// refresh demand detail page
+                        MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandOverview", {});
 					}else if(sActionPage === "DemandDetails" && sCurrentRoute === "splitDemands"){
+                        MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 					}else if(sActionPage === "DemandDetails" && sCurrentRoute === "ganttSplit"){
+                        MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshGanttChart", {});
 					}else if(sActionPage === "DemandDetails" && (sCurrentRoute === "splitDemandDetails" || sCurrentRoute === "splitGanttDetails")){
+                        MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandOverview", {});
 					}
 					
