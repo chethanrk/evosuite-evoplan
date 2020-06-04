@@ -713,9 +713,12 @@ sap.ui.define([
             if (this.selectedResources.length > 0) {
                 this.byId("idButtonreassign").setEnabled(true);
                 this.byId("idButtonunassign").setEnabled(true);
+                 this.byId("idButtonCreUA").setEnabled(true);
             } else {
                 this.byId("idButtonreassign").setEnabled(false);
                 this.byId("idButtonunassign").setEnabled(false);
+                 this.byId("idButtonCreUA").setEnabled(false);
+                
             }
          
             
