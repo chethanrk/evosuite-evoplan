@@ -651,34 +651,20 @@ sap.ui.define([
 				aIndices = oTreeTable.getSelectedIndices(),
 				oContext,
 				oResourceBundle = this.getResourceBundle();
-			if (aIndices.length === 0) {
+			if (this.selectedResources.length === 0) {
 				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
 				return;
 			}
 			// TODO comment
 			localStorage.setItem("Evo-Action-page","ganttSplit");
-			oContext = oTreeTable.getContextByIndex(aIndices[0]);
+			//oContext = oTreeTable.getContextByIndex(aIndices[0]);
 			// this.getOwnerComponent().createUnAvail.open(this.getView(), [oContext.getPath()], {bFromGantt: true});
-			this.getOwnerComponent().manageAvail.open(this.getView(), [oContext.getPath()], {
+			this.getOwnerComponent().manageAvail.open(this.getView(), [this.selectedResources[0]], {
 				bFromGantt: true
 			});
 
 		},
-		/**
-		 * on row selection change enable/disable the create absence
-		 * @param oEvent
-		 */
-		onRowSelectionChange: function (oEvent) {
-			var aIndices = oEvent.getSource().getSelectedIndices(),
-				oButton = this.getView().byId("idButtonCreUA"),
-				oContext = aIndices.length > 0 ? oEvent.getSource().getContextByIndex(aIndices[0]) : null,
-				oData = oContext !== null ? oContext.getModel().getProperty(oContext.getPath()) : null;
-			if (aIndices.length > 0 && oData && oData.NodeType === "RESOURCE" && oData.ResourceGuid !== "" && oData.ResourceGroupGuid !== "") {
-				oButton.setEnabled(true);
-			} else {
-				oButton.setEnabled(false);
-			}
-		},
+		
 		/**
 		 * on click on today adjust the view of Gantt horizon.
 		 */
@@ -712,15 +698,19 @@ sap.ui.define([
 
             if (this.selectedResources.length > 0) {
                 this.byId("idButtonreassign").setEnabled(true);
-                this.byId("idButtonunassign").setEnabled(true);
-                 this.byId("idButtonCreUA").setEnabled(true);
+               this.byId("idButtonunassign").setEnabled(true);
+              
             } else {
                 this.byId("idButtonreassign").setEnabled(false);
                 this.byId("idButtonunassign").setEnabled(false);
+                 }
+            var oData = this.getModel().getProperty(this.selectedResources[0]);
+            
+           if (this.selectedResources.length === 1 && oData && oData.NodeType === "RESOURCE" && oData.ResourceGuid !== "" && oData.ResourceGroupGuid !== "") {
+                 this.byId("idButtonCreUA").setEnabled(true);
+            } else {
                  this.byId("idButtonCreUA").setEnabled(false);
-                
             }
-         
             
         },
         
