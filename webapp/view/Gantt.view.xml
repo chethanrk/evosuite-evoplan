@@ -79,7 +79,6 @@
 							enableCellFilter="false"
 							columnHeaderVisible="false"
 							selectionBehavior="RowOnly"
-							
 							rowHeight="25"
 							rows="{
 							 path: '/GanttResourceHierarchySet',
