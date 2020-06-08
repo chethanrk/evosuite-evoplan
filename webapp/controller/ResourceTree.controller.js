@@ -316,7 +316,7 @@ sap.ui.define([
 		 * on press, open the dialog to create an unavailability for selected resources
 		 * @param oEvent
 		 */
-		onPressCreateUA: function (oEvent) {
+		onCreateAbsence: function (oEvent) {
 			var oSelectedResource = this.selectedResources[0];
 			var oResData = this.getModel().getProperty(oSelectedResource);
 
