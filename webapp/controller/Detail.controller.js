@@ -251,7 +251,7 @@ sap.ui.define([
 				this.getView().addDependent(this._oActionSheet);
 			}
 			// TODO
-			localStorage.setItem("Evo-Action-page","ganttDemandDetails");
+			localStorage.setItem("Evo-Action-page","DemandDetails");
 			this._oActionSheet.openBy(oEvent.getSource());
 		},
 		getVisible: function (a, b, c) {
