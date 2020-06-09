@@ -1,0 +1,14 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+           <HBox>
+        	<Button id="idExpandAll" icon="sap-icon://expand-all" press="onClickExpandCollapse" type="Transparent" tooltip="{i18n>xbut.expandAll}">
+					<customData>
+						<core:CustomData key="Function" value="EXPAND"/>
+					</customData>
+			</Button>
+			<Button id="idColapseAll" icon="sap-icon://collapse-all" press="onClickExpandCollapse" type="Transparent" tooltip="{i18n>xbut.collapseAll}">
+				<customData>
+					<core:CustomData key="Function" value="COLLAPSE"/>
+				</customData>
+			</Button>
+        </HBox>
+</core:FragmentDefinition>

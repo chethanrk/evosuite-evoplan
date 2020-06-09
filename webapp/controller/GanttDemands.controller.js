@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/table/RowActionItem",
 	"com/evorait/evoplan/model/Constants"
 ], function (AssignmentsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, MessageToast, RowAction, RowActionItem,
-	Constants) {
+	Constants, WebSocket) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.GanttDemands", {
@@ -20,6 +20,17 @@ sap.ui.define([
 		_bLoaded: false,
 
 		onInit: function () {
+			// Row Action template to navigate to Detail page
+			var onClickNavigation = this._onActionPress.bind(this);
+			var openActionSheet = this.openActionSheet.bind(this),
+				oAppModel = this.getModel("appView");
+		
+			this._mParameters = {bFromGantt:true};
+
+				
+				if(oAppModel.getProperty("/currentRoute") === "splitDemands"){
+					this._mParameters ={bFromDemandSplit:true};
+				}
 			this._oEventBus = sap.ui.getCore().getEventBus();
 
 			this._oEventBus.subscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
@@ -27,12 +38,11 @@ sap.ui.define([
 			this._oDraggableTable = this.byId("draggableList");
 			this._oDataTable = this._oDraggableTable.getTable();
 			this.getRouter().getRoute("splitDemands").attachMatched(function () {
-				this._routeName = Constants.GANTT.SPLIT;
+				this._routeName = Constants.GANTT.SPLITDMD;
 			}.bind(this));
-				// Row Action template to navigate to Detail page
-			var onClickNavigation = this._onActionPress.bind(this);
-			var openActionSheet = this.openActionSheet.bind(this);
+
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
+
 		},
 		/**
 		 * 
@@ -45,10 +55,17 @@ sap.ui.define([
 			var sPath = oContext.getPath();
 			var oModel = oContext.getModel();
 			var oData = oModel.getProperty(sPath);
-
-			oRouter.navTo("ganttDemandDetails", {
-				guid: oData.Guid
-			});
+			var oUserDetail = this.getModel("appView");
+			
+			if(oUserDetail.getProperty("/currentRoute") === "splitDemands"){
+				oRouter.navTo("splitDemandDetails", {
+					guid: oData.Guid
+				});
+			}else{
+				oRouter.navTo("ganttDemandDetails", {
+					guid: oData.Guid
+				});
+			}
 		},
 		/** 
 		 * On Drag start restrict demand having status other init
@@ -62,7 +79,7 @@ sap.ui.define([
 				oDemand = oContext.getModel().getProperty(sPath);
 
 			localStorage.setItem("Evo-Dmnd-guid", sPath.split("'")[1]);
-			localStorage.setItem("Evo-Dmnd-pageRefresh", "NO");
+			// localStorage.setItem("Evo-Dmnd-pageRefresh", "NO");
 			if (!this.isDemandAssignable(sPath)) {
 				this._showAssignErrorDialog([oDemand.DemandDesc]);
 				oEvent.preventDefault();
@@ -81,9 +98,9 @@ sap.ui.define([
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
-				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, {
-					bFromGantt: true
-				});
+				// TODO comment
+			localStorage.setItem("Evo-Action-page","splitDemands");
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
 			}
 			if (oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
@@ -99,9 +116,9 @@ sap.ui.define([
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
 
 			if (this._aSelectedRowsIdx.length > 0) {
-				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData, {
-					bFromGantt: true
-				});
+				// TODO comment
+			localStorage.setItem("Evo-Action-page","splitDemands");
+				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData, this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("ymsg.selectMinItem");
 				MessageToast.show(msg);
@@ -135,55 +152,37 @@ sap.ui.define([
 		/**
 		 *  opens the action sheet
 		 */
-		openActionSheet : function(oEvent){
+		openActionSheet: function (oEvent) {
 			var oContext = oEvent.getSource().getParent().getParent().getBindingContext(),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath();
-				if(!this._oNavActionSheet){
-					this._oNavActionSheet = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.NavigationActionSheet",this);
-					this.getView().addDependent(this._oNavActionSheet);
-				}
-				this.selectedDemandData = oModel.getProperty(sPath);
-				
+			if (!this._oNavActionSheet) {
+				this._oNavActionSheet = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.NavigationActionSheet", this);
+				this.getView().addDependent(this._oNavActionSheet);
+			}
+			this.selectedDemandData = oModel.getProperty(sPath);
+
 			this._oNavActionSheet.openBy(oEvent.getSource().getParent());
 		},
 		/**
 		 *  on click of navigation items opens the respective application
 		 */
-		onClickNavAction : function(oEvent){
+		onClickNavAction: function (oEvent) {
 			var oContext = oEvent.getSource().getBindingContext("navLinks"),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oData = oModel.getProperty(sPath);
-			
+
 			this.openEvoOrder(this.selectedDemandData.ORDERID, oData);
 		},
 		/**
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
-		OnClickOrderId : function(oEvent){
+		OnClickOrderId: function (oEvent) {
 			var sOrderId = oEvent.getSource().getText();
 			this.openEvoOrder(sOrderId);
 		},
-		/**
-		 * Drag end is to identify the event to refresh external demand list in other tab
-		 */
-		onDragEnd: function (oEvent) {
-			if (this._routeName === Constants.GANTT.SPLIT) {
-				var checkStatus = setInterval(function () {
-					var bRefresh = localStorage.getItem("Evo-Dmnd-pageRefresh");
-					if (bRefresh === "YES") {
-						this._refreshDemandTable();
-						clearInterval(checkStatus);
-						this.clearLocalStorage();
-					}
-				}.bind(this), 2000);
-				setTimeout(function () {
-					clearInterval(checkStatus);
-					this.clearLocalStorage();
-				}.bind(this), 20000);
-			}
-		},
+		
 		onClickSplit: function (oEvent) {
 			window.open("#Gantt/SplitDemands", "_blank");
 		},

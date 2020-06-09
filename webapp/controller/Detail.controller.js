@@ -38,6 +38,8 @@ sap.ui.define([
 			this.getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
 			this.getRouter().getRoute("assetDemandDetail").attachPatternMatched(this._onObjectMatched, this);
             this.getRouter().getRoute("ganttDemandDetails").attachPatternMatched(this._onObjectMatched, this);
+            this.getRouter().getRoute("splitDemandDetails").attachPatternMatched(this._onObjectMatched, this);
+            this.getRouter().getRoute("splitGanttDetails").attachPatternMatched(this._onObjectMatched, this);
 
 			// Store original busy indicator delay, so it can be restored later on
 			iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
@@ -92,7 +94,9 @@ sap.ui.define([
 				this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageDemands"));
 			} else if(sRouteName === "ganttDemandDetails"){
 				this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageGanttChart"));
-			}else {
+			}else if(sRouteName === "splitDemandDetails" || sRouteName === "splitGanttDetails"){
+                this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageGanttChartSplit"));
+            }else {
                 this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageAssetManager"));
             }
 
@@ -163,6 +167,10 @@ sap.ui.define([
 			var oModel = oContext.getModel();
 			var sPath = oContext.getPath();
 			var oAssignmentData = oModel.getProperty(sPath);
+			
+			// TODO
+			localStorage.setItem("Evo-Action-page","DemandDetails");
+			
 			this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAssignmentData, {
 				bFromDetail: true
 			});
@@ -185,6 +193,8 @@ sap.ui.define([
 				oData: oData
 			}];
 			if (oData.ALLOW_ASSIGN) {
+				// TODO
+				localStorage.setItem("Evo-Action-page","DemandDetails");
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, {
 					bFromDetail: true
 				});
@@ -240,6 +250,8 @@ sap.ui.define([
 				this._oActionSheet = sap.ui.xmlfragment(this.getView().getId(), "com.evorait.evoplan.view.fragments.StatusActionSheet", this);
 				this.getView().addDependent(this._oActionSheet);
 			}
+			// TODO
+			localStorage.setItem("Evo-Action-page","DemandDetails");
 			this._oActionSheet.openBy(oEvent.getSource());
 		},
 		getVisible: function (a, b, c) {

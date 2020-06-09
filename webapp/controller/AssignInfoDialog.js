@@ -411,8 +411,12 @@ sap.ui.define([
                 oRouter.navTo("ganttDemandDetails", {
                     guid: sDemandGuid
                 });
+			}else if(this._mParameters.bFromGanttSplit){
+                oRouter.navTo("splitGanttDetails", {
+                    guid: sDemandGuid
+                });
 			}else{
-                oRouter.navTo("detail", {
+				oRouter.navTo("detail", {
                     guid: sDemandGuid
                 });
 			}

@@ -13,7 +13,7 @@
 
 
 		<gnt2:GanttChartContainer class="resourceGanttCont" id="container" enableTimeScrollSync="true" busy="{viewModel>/ganttSettings/busy}">
-			<gnt2:toolbar>
+			<gnt2:toolbar showDisplayTypeButton="true">
 				<gnt2:ContainerToolbar
 						design="Auto"
 						showBirdEyeButton="false"
@@ -31,7 +31,8 @@
 								change="onChangeDateRange"
 								enabled="false"
 						/>
-						<Button id="idCreateAb" enabled="false" text="{i18n>xbut.manageAbsence}" visible="{user>/MANAGE_ABSENCE_ENABLE}" press="onCreateAbsence"/>
+						
+						<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.ResourceActions" type="XML"/>
 						<Button id="idToday" text="{i18n>xtit.today}" press="onPressToday"/>
 					</gnt2:content>
 					<gnt2:legendContainer>
@@ -78,7 +79,6 @@
 							enableCellFilter="false"
 							columnHeaderVisible="false"
 							selectionBehavior="RowOnly"
-							rowSelectionChange="onRowSelectionChange"
 							rowHeight="25"
 							rows="{
 							 path: '/GanttResourceHierarchySet',
@@ -91,7 +91,11 @@
 							}">
 						<table:extension>
 							<OverflowToolbar>
-								<SearchField search="onSearchResource"/>
+								<content>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.TreeExpandCollapse" type="XML"/>
+									<SearchField search="onSearchResource"/>
+							     </content>
+								
 							</OverflowToolbar>
 						</table:extension>
 						<table:rowSettingsTemplate>
@@ -128,6 +132,17 @@
 								dropPosition="On"
 								drop="onDropOnResource" />
 						</table:dragDropConfig>
+						<table:columns>
+								<table:Column label="{i18n>xtit.tableCheckbox}" name="{i18n>xtit.tableCheckbox}" width="2.5rem" class="sapUiNoContentPadding">
+							<table:customData>
+								<core:CustomData key="p13nData" value='\{"columnKey": "NodeType", "leadingProperty": "NodeType"}'/>
+							</table:customData>
+							<table:template>
+								<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"
+									selected="{IsSelected}"/>
+							</table:template>
+						</table:Column>
+						</table:columns>
 					</table:TreeTable>
 				</gnt2:table>
 

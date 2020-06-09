@@ -10,12 +10,14 @@ sap.ui.define([
 	"sap/m/FormattedText",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/table/RowAction",
-	"sap/ui/table/RowActionItem"
+	"sap/ui/table/RowActionItem",
+		"com/evorait/evoplan/model/formatter",
 ], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText, Constants,
-	RowAction, RowActionItem) {
+	RowAction, RowActionItem,formatter) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.BaseController", {
+		formatter: formatter,
 		/**
 		 * Convenience method for accessing the router in every controller of the application.
 		 * @public
@@ -244,7 +246,9 @@ sap.ui.define([
 				bFromAseet: false,
 				bFromPlannCal: false,
 				bFromDetail: false,
-				bFromGantt: false
+				bFromGantt: false,
+				bFromGanttSplit:false,
+				bFromDemandSplit:false
 			};
 
 			if (oParameter.bFromHome) {
@@ -264,6 +268,10 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshDemandTable", {});
 			} else if (oParameter.bFromGantt) {
 				eventBus.publish("BaseController", "refreshGanttChart", {});
+				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			} else if(oParameter.bFromGanttSplit){
+				eventBus.publish("BaseController", "refreshGanttChart", {});
+			} else if(oParameter.bFromDemandSplit){
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
 
@@ -396,6 +404,21 @@ sap.ui.define([
 				return false;
 			}
 			return true;
+		},
+		/**
+		 * Method checks the validity of resources
+		 * @param sTargetPath : Resource path on which assignment needs to be created
+		 * @return {boolean} return true is valid
+		 */
+		isTargetValid: function (sTargetPath) {
+			var oModel = this.getModel(),
+				oTargetObj = oModel.getProperty(sTargetPath),
+				startDate = oTargetObj.StartDate?oTargetObj.StartDate.getTime():new Date(formatter.date(new Date())).getTime(),
+				resAsgnStartDate = oTargetObj.RES_ASGN_START_DATE ?oTargetObj.RES_ASGN_START_DATE.getTime():null,
+				endDate = oTargetObj.EndDate ?oTargetObj.EndDate.getTime():new Date(formatter.date(new Date())).getTime(),
+				resAsgnEndDate = oTargetObj.RES_ASGN_END_DATE ?oTargetObj.RES_ASGN_END_DATE.getTime():null,
+				bValid = startDate === resAsgnStartDate && oTargetObj.StartTime.ms === oTargetObj.RES_ASGN_START_TIME.ms && endDate === resAsgnEndDate && oTargetObj.EndTime.ms === oTargetObj.RES_ASGN_END_TIME.ms;
+			return bValid;	
 		},
 		/**
 		 * @Athour Rahul

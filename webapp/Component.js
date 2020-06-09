@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"com/evorait/evoplan/model/Constants"
+	"com/evorait/evoplan/model/Constants",
+	"com/evorait/evoplan/controller/WebSocket"
 ], function (
 	UIComponent,
 	Device,
@@ -39,7 +40,8 @@ sap.ui.define([
 	Link,
 	Filter,
 	FilterOperator,
-	Constants) {
+	Constants,
+	WebSocket) {
 
 	"use strict";
 
@@ -180,6 +182,10 @@ sap.ui.define([
                 }
                 // create the views based on the url/hash
                 this.getRouter().initialize();
+                // Initialize websocket
+                if(data[0].ENABLE_PUSH_DEMAND){
+                	WebSocket.init(this);
+                }
             }.bind(this));
 
 			// Not able load more than 100 associations

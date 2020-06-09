@@ -1,9 +1,9 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/BaseController",
-		"sap/m/MessageBox"
-], function (BaseController,MessageBox) {
+	"sap/m/MessageBox"
+], function (BaseController, MessageBox) {
 	return BaseController.extend("com.evorait.evoplan.controller.AssignmentsController", {
-	
+
 		/**
 		 * save assignment after drop
 		 * 
@@ -25,26 +25,26 @@ sap.ui.define([
 						"ResourceGroupGuid": targetObj.ResourceGroupGuid,
 						"ResourceGuid": targetObj.ResourceGuid
 					};
-
-				if (targetObj.StartDate) {
-					oParams.DateFrom = targetObj.StartDate;
-					oParams.TimeFrom = targetObj.StartTime;
-				} else {
-					oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
-					oParams.TimeFrom = targetObj.StartTime;
-				}
-
-				if (targetObj.EndDate) {
-					oParams.DateTo = targetObj.EndDate;
-					oParams.TimeTo = targetObj.EndTime;
-				} else {
-					oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
-					oParams.TimeTo = targetObj.EndTime;
-				}
-				if(parseInt(i,10) === aSourcePaths.length-1){
+				if (parseInt(i, 10) === aSourcePaths.length - 1) {
 					bIsLast = true;
 				}
-				this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
+				if (this.isTargetValid(sTargetPath)) {
+					oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
+					this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
+				} else {
+					this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.targetValidity")).then(function (value) {
+						if (value === "YES") {
+							oParams = this.setDateTimeParams(oParams, targetObj.RES_ASGN_START_DATE, targetObj.RES_ASGN_START_TIME, targetObj.RES_ASGN_END_DATE,
+								targetObj.RES_ASGN_END_TIME);
+							this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
+						}
+						if (value === "NO") {
+							oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
+							this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
+						}
+					}.bind(this));
+				}
+
 			}
 		},
 
@@ -56,7 +56,7 @@ sap.ui.define([
 			var oData = this.getModel("assignment").getData(),
 				sAssignmentGUID = oData.AssignmentGuid;
 
-			if(isReassign && !oData.AllowReassign){
+			if (isReassign && !oData.AllowReassign) {
 				var msg = this.getResourceBundle().getText("reAssignFailMsg");
 				this._showAssignErrorDialog([oData.Description], null, msg);
 				return;
@@ -109,7 +109,7 @@ sap.ui.define([
 		bulkReAssignment: function (sAssignPath, aContexts, mParameters) {
 			var oModel = this.getModel(),
 				oResource = oModel.getProperty(sAssignPath),
-				 bIsLast = null;
+				bIsLast = null;
 			// Clears the Message model
 			this.clearMessageModel();
 
@@ -139,7 +139,7 @@ sap.ui.define([
 					oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
 					oParams.TimeTo = oResource.EndTime;
 				}
-				if(parseInt(i,10) === aContexts.length-1){
+				if (parseInt(i, 10) === aContexts.length - 1) {
 					bIsLast = true;
 				}
 				// call function import
@@ -154,7 +154,7 @@ sap.ui.define([
 		 */
 		bulkDeleteAssignment: function (aContexts, mParameters) {
 			var oModel = this.getModel(),
-				 bIsLast = null;
+				bIsLast = null;
 			this.clearMessageModel();
 			for (var i in aContexts) {
 				var sPath = aContexts[i].getPath();
@@ -162,10 +162,10 @@ sap.ui.define([
 				var oParams = {
 					"AssignmentGUID": sAssignmentGuid
 				};
-				if(parseInt(i,10) === aContexts.length-1){
+				if (parseInt(i, 10) === aContexts.length - 1) {
 					bIsLast = true;
 				}
-				
+
 				this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, bIsLast);
 
 			}
@@ -179,7 +179,7 @@ sap.ui.define([
 				"AssignmentGUID": sId
 			};
 			this.clearMessageModel();
-			this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters,true);
+			this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, true);
 		},
 
 		/**
@@ -189,53 +189,55 @@ sap.ui.define([
 		 */
 		updateFunctionDemand: function (aSelectedPaths, sFunctionKey, mParameters) {
 			var oParams = {
-				"Function": sFunctionKey
-			},
-			bIsLast = null;
+					"Function": sFunctionKey
+				},
+				bIsLast = null;
 
 			for (var i = 0; i < aSelectedPaths.length; i++) {
 				oParams.DemandGuid = aSelectedPaths[i].oData.Guid;
-				if(parseInt(i,10) === aSelectedPaths.length-1){
+				if (parseInt(i, 10) === aSelectedPaths.length - 1) {
 					bIsLast = true;
 				}
 				this.callFunctionImport(oParams, "ExecuteDemandFunction", "POST", mParameters, bIsLast);
 			}
 		},
-		
+
 		/** 
 		 * 
 		 * @param aAssignments
 		 */
-		saveAllAssignments : function (oData) {
+		saveAllAssignments: function (oData) {
 			var aAssignmentKeys = Object.keys(oData.assignments),
 				aAbsenceKeys = Object.keys(oData.absences),
-            	aAssignments = oData.assignments,
+				aAssignments = oData.assignments,
 				aAbsences = oData.absences,
 				bIsLast = null;
 			for (var i in aAssignments) {
-                bIsLast = null;
-				if(aAssignments[aAssignmentKeys[aAssignmentKeys.length-1]] === aAssignments[i]){
+				bIsLast = null;
+				if (aAssignments[aAssignmentKeys[aAssignmentKeys.length - 1]] === aAssignments[i]) {
 					bIsLast = true;
 				}
 				// call function import
-				if(aAssignments[i]){
+				if (aAssignments[i]) {
 					this.callFunctionImport(aAssignments[i], "UpdateAssignment", "POST", oData.mParameters, bIsLast);
-				}else{
-					this.callFunctionImport({AssignmentGUID:i}, "DeleteAssignment", "POST", oData.mParameters, bIsLast);
+				} else {
+					this.callFunctionImport({
+						AssignmentGUID: i
+					}, "DeleteAssignment", "POST", oData.mParameters, bIsLast);
 				}
 			}
-            for (var j in aAbsences) {
-                bIsLast = null;
-                if(aAbsences[aAbsenceKeys[aAbsenceKeys.length-1]] === aAbsences[j]){
-                    bIsLast = true;
-                }
-                // call function import
-                if(aAbsences[j]){
-                    this.callFunctionImport(aAbsences[j], "CreateAbsence", "POST", oData.mParameters, bIsLast);
-                }else{
-                    //
-                }
-            }
+			for (var j in aAbsences) {
+				bIsLast = null;
+				if (aAbsences[aAbsenceKeys[aAbsenceKeys.length - 1]] === aAbsences[j]) {
+					bIsLast = true;
+				}
+				// call function import
+				if (aAbsences[j]) {
+					this.callFunctionImport(aAbsences[j], "CreateAbsence", "POST", oData.mParameters, bIsLast);
+				} else {
+					//
+				}
+			}
 		},
 		/**
 		 * Show the message to proceed with the assignment
@@ -263,11 +265,40 @@ sap.ui.define([
 						} else if (sValue === sAction && bBulkReassign) {
 							this.bulkReAssignment(sTargetPath, aContexts, mParameters);
 						} else if (sValue === sAction && bUpdate) {
-							this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters,true);
+							this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
 						}
 					}.bind(this)
 				}
 			);
+		},
+		/**
+		 * method to set Date and time into the payload for the assignment
+		 * @param oParams Update parameter for single assignment
+		 * @param vStartdate start date for the assignment
+		 * @param vStartTime end time for the assignment
+		 * @param vEndDate end date for the assignment
+		 * @param vEndTime end time for the assignment
+		 */
+		setDateTimeParams: function (oParams, vStartdate, vStartTime, vEndDate, vEndTime) {
+			var vCurrentTime = new Date().getTime();
+			if (vStartdate) {
+				oParams.DateFrom = vStartdate;
+				oParams.TimeFrom = vStartTime;
+			} else {
+				oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
+				oParams.TimeFrom = vStartTime;
+				oParams.TimeFrom.ms = vCurrentTime;
+			}
+
+			if (vEndDate) {
+				oParams.DateTo = vEndDate;
+				oParams.TimeTo = vEndTime;
+			} else {
+				oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
+				oParams.TimeTo = vEndTime;
+				oParams.TimeTo.ms = vCurrentTime;
+			}
+			return oParams;
 		}
 	});
 });

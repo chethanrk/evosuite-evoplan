@@ -29,16 +29,20 @@ sap.ui.define([
 		_viewId: "",
 
 		_bLoaded: false,
+		 selectedResources: [],
 
 		/**
 		 * controller life cycle on init event
 		 */
 		onInit: function () {
+			var oUserModel = this.getModel("user");
+
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			this._oAssignementModel = this.getModel("assignment");
 
 			this._oEventBus.subscribe("BaseController", "refreshGanttChart", this._refreshGanttChart, this);
 			this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
+		
 
 			//set on first load required filters
 			this._treeTable = this.getView().byId("ganttResourceTreeTable");
@@ -48,15 +52,17 @@ sap.ui.define([
 
 			this.getRouter().getRoute("gantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
-			});
+			}.bind(this));
 			this.getRouter().getRoute("ganttSplit").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.SPLIT;
-			});
+			}.bind(this));
+			
 			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
 				this._ganttChart.addStyleClass("resourceGanttWithTable");
 			}
 			this._defaultGanttHorizon();
 			this._viewId = this.getView().getId();
+
 		},
 
 		/**
@@ -65,6 +71,7 @@ sap.ui.define([
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshGanttChart", this._refreshGanttChart, this);
 			this._oEventBus.unsubscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
+			this._oEventBus.unsubscribe("BaseController", "refreshTreeTable", this._refreshGanttChart, this);
 		},
 
 		/**
@@ -152,7 +159,8 @@ sap.ui.define([
 				oViewModel.setProperty("/ganttSettings/busy", false);
 				return;
 			}
-
+			
+			localStorage.setItem("Evo-Action-page","ganttSplit");
 			if (oBrowserEvent.target.tagName === "rect" && oDragContext) {
 				// When we drop on gantt chart
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
@@ -218,7 +226,8 @@ sap.ui.define([
 		_refreshGanttChart: function (oEvent) {
 			var oTreeTable = this.getView().byId("ganttResourceTreeTable"),
 				oViewModel = this.getModel("viewModel");
-
+			//reset the changes
+                this.resetChanges();
 			if (this._bLoaded && oTreeTable && oTreeTable.getBinding("rows")) {
 				this._ganttChart.setSelectionPanelSize("25%");
 				oTreeTable.getBinding("rows")._restoreTreeState().then(function () {
@@ -272,7 +281,8 @@ sap.ui.define([
 		 */
 		onShapeContextMenu: function (oEvent) {
 			var oShape = oEvent.getParameter("shape"),
-				oViewModel = this.getModel("viewModel");
+				oViewModel = this.getModel("viewModel"),
+				oAppView = this.getModel("appView");
 			if (oShape && oShape.sParentAggregationName === "shapes3") {
 				this._selectedShapeContext = oShape.getBindingContext();
 				var oModel = this._selectedShapeContext.getModel(),
@@ -282,12 +292,11 @@ sap.ui.define([
 				if (!this._menu) {
 					this._menu = sap.ui.xmlfragment(
 						"com.evorait.evoplan.view.gantt.ShapeContextMenu",
-						this,
-						"gantt"
+						this, oAppView.getProperty("/currentRoute")
 					);
 					this.getView().addDependent(this._menu);
 				}
-				if(sStatus !== "COMP"){
+				if (sStatus !== "COMP") {
 					this._updateAssignmentModel(sAssignGuid).then(function (data) {
 						oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign", data.AllowUnassign);
 						oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign", data.AllowReassign);
@@ -319,8 +328,16 @@ sap.ui.define([
 					oData: {
 						Guid: oModel.getProperty(sPath).DemandGuid
 					}
-				}];
-
+				}],
+				mParameters = {bFromGantt:true},
+				oAppModel = this.getModel("appView");
+				
+				if(oAppModel.getProperty("/currentRoute") === "ganttSplit"){
+					mParameters ={bFromGanttSplit:true};
+				}
+				// TODO comment
+			localStorage.setItem("Evo-Action-page","ganttSplit");
+			
 			if (sButtonText === this.getResourceBundle().getText("xbut.buttonUnassign")) {
 				//do unassign
 				this.byId("container").setBusy(true);
@@ -332,17 +349,13 @@ sap.ui.define([
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
 				// Change
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, {
-					bFromGantt: true
-				}, sPath);
+				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, mParameters, sPath);
 			} else {
 				if (sFunctionKey) {
 					this._oEventBus.publish("StatusSelectDialog", "changeStatusDemand", {
 						selectedPaths: oSelectedData,
 						functionKey: sFunctionKey,
-						parameters: {
-							bFromGantt: true
-						}
+						parameters: mParameters
 					});
 				}
 			}
@@ -394,7 +407,6 @@ sap.ui.define([
 		_refreshAreas: function (data, oResponse) {
 			this.showMessage(oResponse);
 			this._refreshGanttChart();
-			localStorage.setItem("Evo-Dmnd-pageRefresh", "YES");
 			if (this._routeName !== Constants.GANTT.SPLIT) {
 				this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
@@ -506,7 +518,9 @@ sap.ui.define([
 				this.showMessageToast(msg);
 				return;
 			}
-
+			// TODO comment
+			localStorage.setItem("Evo-Action-page","ganttSplit");
+			
 			var targetContext = oParams.targetRow ? oParams.targetRow.getBindingContext() : oParams.targetShape.getParent().getParent().getBindingContext(),
 				targetData = targetContext ? targetContext.getObject() : null,
 				draggedShape = oParams.draggedShapeDates;
@@ -569,7 +583,9 @@ sap.ui.define([
 				oModel = oRowContext.getModel();
 
 			oViewModel.setProperty("/ganttSettings/busy", true);
-
+			// TODO comment
+			localStorage.setItem("Evo-Action-page","ganttSplit");
+			
 			if (oParams.shape && oParams.shape.sParentAggregationName === "shapes3") {
 				this._updateAssignmentModel(oData.Guid).then(function (oAssignmentObj) {
 					if (oAssignmentObj.AllowChange) {
@@ -601,6 +617,8 @@ sap.ui.define([
 				oRowContext = oParams.rowSettings.getParent().getBindingContext(),
 				oShape = oParams.shape;
 			if (oShape && oShape.sParentAggregationName === "shapes3") {
+				// TODO comment
+			localStorage.setItem("Evo-Action-page","ganttSplit");
 				if (oContext) {
 					this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], {
 						bFromGantt: true
@@ -633,38 +651,122 @@ sap.ui.define([
 				aIndices = oTreeTable.getSelectedIndices(),
 				oContext,
 				oResourceBundle = this.getResourceBundle();
-			if (aIndices.length === 0) {
+			if (this.selectedResources.length === 0) {
 				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
 				return;
 			}
-			oContext = oTreeTable.getContextByIndex(aIndices[0]);
+			// TODO comment
+			localStorage.setItem("Evo-Action-page","ganttSplit");
+			//oContext = oTreeTable.getContextByIndex(aIndices[0]);
 			// this.getOwnerComponent().createUnAvail.open(this.getView(), [oContext.getPath()], {bFromGantt: true});
-			this.getOwnerComponent().manageAvail.open(this.getView(), [oContext.getPath()], {
+			this.getOwnerComponent().manageAvail.open(this.getView(), [this.selectedResources[0]], {
 				bFromGantt: true
 			});
 
 		},
-		/**
-		 * on row selection change enable/disable the create absence
-		 * @param oEvent
-		 */
-		onRowSelectionChange: function (oEvent) {
-			var aIndices = oEvent.getSource().getSelectedIndices(),
-				oButton = this.getView().byId("idCreateAb"),
-				oContext = aIndices.length > 0 ? oEvent.getSource().getContextByIndex(aIndices[0]) : null,
-				oData = oContext !== null ? oContext.getModel().getProperty(oContext.getPath()) : null;
-			if (aIndices.length > 0 && oData && oData.NodeType === "RESOURCE" && oData.ResourceGuid !== "" && oData.ResourceGroupGuid !== "") {
-				oButton.setEnabled(true);
-			} else {
-				oButton.setEnabled(false);
-			}
-		},
+		
 		/**
 		 * on click on today adjust the view of Gantt horizon.
 		 */
 		onPressToday: function (oEvent) {
 			this.changeGanttHorizonViewAt(this.getModel("viewModel"), this._axisTime.getZoomLevel());
 		},
+		
+		/**
+         * When user select a resource by selecting checkbox enable/disables the
+         * appropriate buttons in the footer.
+         * @param oEvent
+          * @Author Pranav
+         */
+         
+		 onChangeSelectResource: function (oEvent) {
+            var oSource = oEvent.getSource();
+            var parent = oSource.getParent();
+            var sPath = parent.getBindingContext().getPath();
+            var oParams = oEvent.getParameters();
+			
+            //Sets the property IsSelected manually
+            this.getModel().setProperty(sPath + "/IsSelected", oParams.selected);
+
+            if (oParams.selected) {
+                this.selectedResources.push(sPath);
+
+            } else if (this.selectedResources.indexOf(sPath) >= 0) {
+                //removing the path from this.selectedResources when user unselect the checkbox
+                this.selectedResources.splice(this.selectedResources.indexOf(sPath), 1);
+            }
+
+            if (this.selectedResources.length > 0) {
+                this.byId("idButtonreassign").setEnabled(true);
+               this.byId("idButtonunassign").setEnabled(true);
+              
+            } else {
+                this.byId("idButtonreassign").setEnabled(false);
+                this.byId("idButtonunassign").setEnabled(false);
+                 }
+            var oData = this.getModel().getProperty(this.selectedResources[0]);
+            
+           if (this.selectedResources.length === 1 && oData && oData.NodeType === "RESOURCE" && oData.ResourceGuid !== "" && oData.ResourceGroupGuid !== "") {
+                 this.byId("idButtonCreUA").setEnabled(true);
+            } else {
+                 this.byId("idButtonCreUA").setEnabled(false);
+            }
+            
+        },
+        
+         /**
+         * On click on expand the tree nodes gets expand to level 1
+         * On click on collapse all the tree nodes will be collapsed to root.
+         * @param oEvent
+         */
+        onClickExpandCollapse: function (oEvent) {
+            var oButton = oEvent.getSource(),
+                oCustomData = oButton.getCustomData();
+
+            if (oCustomData[0].getValue() === "EXPAND" && this._treeTable) {
+                this._treeTable.expandToLevel(1);
+            } else {
+                this._treeTable.collapseAll();
+            }
+        },
+        
+        /**
+         * Open's Dialog containing assignments to reassign
+         * @param oEvent
+         */
+        onPressReassign: function (oEvent) {
+            localStorage.setItem("Evo-Action-page","ganttSplit");
+            this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false,{
+								bFromGantt: true
+							});
+        },
+        /**
+         * Open's Dialog containing assignments to unassign
+         * @param oEvent
+         */
+        onPressUnassign: function (oEvent) {
+            localStorage.setItem("Evo-Action-page","ganttSplit");
+            this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true, {
+								bFromGantt: true
+							});
+        },
+        /**
+         * Resets the selected resource if selected
+         */
+         resetChanges: function () {
+            var oModel = this.getModel();
+
+            // reset the model changes
+            if (oModel.hasPendingChanges()) {
+                oModel.resetChanges();
+            }
+            // Resetting selected resource
+            this.selectedResources = [];
+            this.byId("idButtonreassign").setEnabled(false);
+            this.byId("idButtonunassign").setEnabled(false);
+            this.byId("idButtonCreUA").setEnabled(false);
+        },
+		
 		/**
 		 *
 		 * @param aSources
