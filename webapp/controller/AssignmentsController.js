@@ -280,12 +280,14 @@ sap.ui.define([
 		 * @param vEndTime end time for the assignment
 		 */
 		setDateTimeParams: function (oParams, vStartdate, vStartTime, vEndDate, vEndTime) {
+			var vCurrentTime = new Date().getTime();
 			if (vStartdate) {
 				oParams.DateFrom = vStartdate;
 				oParams.TimeFrom = vStartTime;
 			} else {
 				oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
 				oParams.TimeFrom = vStartTime;
+				oParams.TimeFrom.ms = vCurrentTime;
 			}
 
 			if (vEndDate) {
@@ -294,6 +296,7 @@ sap.ui.define([
 			} else {
 				oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
 				oParams.TimeTo = vEndTime;
+				oParams.TimeTo.ms = vCurrentTime;
 			}
 			return oParams;
 		}
