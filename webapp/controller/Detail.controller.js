@@ -37,9 +37,9 @@ sap.ui.define([
 
 			this.getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
 			this.getRouter().getRoute("assetDemandDetail").attachPatternMatched(this._onObjectMatched, this);
-            this.getRouter().getRoute("ganttDemandDetails").attachPatternMatched(this._onObjectMatched, this);
-            this.getRouter().getRoute("splitDemandDetails").attachPatternMatched(this._onObjectMatched, this);
-            this.getRouter().getRoute("splitGanttDetails").attachPatternMatched(this._onObjectMatched, this);
+			this.getRouter().getRoute("ganttDemandDetails").attachPatternMatched(this._onObjectMatched, this);
+			this.getRouter().getRoute("splitDemandDetails").attachPatternMatched(this._onObjectMatched, this);
+			this.getRouter().getRoute("splitGanttDetails").attachPatternMatched(this._onObjectMatched, this);
 
 			// Store original busy indicator delay, so it can be restored later on
 			iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
@@ -92,13 +92,13 @@ sap.ui.define([
 			// setting the bread crum value xtit.itemListTitle
 			if (sRouteName === "detail") {
 				this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageDemands"));
-			} else if(sRouteName === "ganttDemandDetails"){
+			} else if (sRouteName === "ganttDemandDetails") {
 				this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageGanttChart"));
-			}else if(sRouteName === "splitDemandDetails" || sRouteName === "splitGanttDetails"){
-                this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageGanttChartSplit"));
-            }else {
-                this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageAssetManager"));
-            }
+			} else if (sRouteName === "splitDemandDetails" || sRouteName === "splitGanttDetails") {
+				this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageGanttChartSplit"));
+			} else {
+				this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageAssetManager"));
+			}
 
 			oDataModel.metadataLoaded().then(function () {
 				var sPath = this.getModel().createKey("DemandSet", {
@@ -135,6 +135,9 @@ sap.ui.define([
 					}
 				}
 			});
+			if (this.getView().getElementBinding()) {
+				this.getView().getElementBinding().refresh();
+			}
 		},
 		/**
 		 * When ever binding changes the view should be busy and Bindings are refreshed. 
@@ -167,10 +170,10 @@ sap.ui.define([
 			var oModel = oContext.getModel();
 			var sPath = oContext.getPath();
 			var oAssignmentData = oModel.getProperty(sPath);
-			
+
 			// TODO
-			localStorage.setItem("Evo-Action-page","DemandDetails");
-			
+			localStorage.setItem("Evo-Action-page", "DemandDetails");
+
 			this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAssignmentData, {
 				bFromDetail: true
 			});
@@ -194,7 +197,7 @@ sap.ui.define([
 			}];
 			if (oData.ALLOW_ASSIGN) {
 				// TODO
-				localStorage.setItem("Evo-Action-page","DemandDetails");
+				localStorage.setItem("Evo-Action-page", "DemandDetails");
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, {
 					bFromDetail: true
 				});
@@ -251,17 +254,17 @@ sap.ui.define([
 				this.getView().addDependent(this._oActionSheet);
 			}
 			// TODO
-			localStorage.setItem("Evo-Action-page","DemandDetails");
+			localStorage.setItem("Evo-Action-page", "DemandDetails");
 			this._oActionSheet.openBy(oEvent.getSource());
 		},
 		getVisible: function (a, b, c) {
 			return a && !b && c !== "COMP";
 		},
-	
+
 		/**
 		 * View life cycle methods when view gets destroy 
 		 */
-		onExit : function(){
+		onExit: function () {
 			this._eventBus.unsubscribe("BaseController", "refreshDemandOverview", this._triggerRefreshDemand, this);
 		}
 
