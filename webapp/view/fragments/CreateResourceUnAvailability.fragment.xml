@@ -35,7 +35,7 @@
                                 </form:label>
                                 <form:fields>
                                     <Select id="idAvailTypeCB" selectedKey="{resourceAvail>/availType}"
-                                            items="{ path:'/AvailabilityTypeSet',filters:[{ path: 'AvailabilityTypeGroup', operator: 'EQ', value1: 'N' }]}" change="onChangeType">
+                                            items="{path:'/AvailabilityTypeSet',filters:[{ path: 'AvailabilityTypeGroup', operator: 'EQ', value1: 'N' }]}" change="onChangeType">
                                         <core:Item key="{AvailabilityTypeCode}" text="{AvailabilityDesc}" />
                                     </Select>
                                 </form:fields>
