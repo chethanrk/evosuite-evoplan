@@ -19,17 +19,23 @@ sap.ui.define([
 				oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
 				this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
 			} else {
-				this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.targetValidity")).then(function (value) {
-					if (value === "YES") {
-						oParams = this.setDateTimeParams(oParams, targetObj.RES_ASGN_START_DATE, targetObj.RES_ASGN_START_TIME, targetObj.RES_ASGN_END_DATE,
-							targetObj.RES_ASGN_END_TIME);
-						this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
-					}
-					if (value === "NO") {
-						oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
-						this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
-					}
-				}.bind(this));
+				//Condition to check Global configuration for validation Mesg Popup
+				if (this.getModel("user").getProperty("/ENABLE_RES_ASGN_VALID_MESG_DEM")) {
+					this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.targetValidity")).then(function (value) {
+						if (value === "YES") {
+							oParams = this.setDateTimeParams(oParams, targetObj.RES_ASGN_START_DATE, targetObj.RES_ASGN_START_TIME, targetObj.RES_ASGN_END_DATE,
+								targetObj.RES_ASGN_END_TIME);
+							this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
+						}
+						if (value === "NO") {
+							oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
+							this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
+						}
+					}.bind(this));
+				} else {
+					oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
+					this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
+				}
 			}
 
 		},
