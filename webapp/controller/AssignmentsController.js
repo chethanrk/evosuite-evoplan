@@ -12,39 +12,58 @@ sap.ui.define([
 		 * @deprecated
 		 */
 		assignedDemands: function (aSourcePaths, sTargetPath, mParameters) {
-			var oModel = this.getModel();
-			var targetObj = oModel.getProperty(sTargetPath),
-				bIsLast = null;
-			this.clearMessageModel();
+			var oParams = [],
+				targetObj = this.getModel().getProperty(sTargetPath);
 
-			for (var i = 0; i < aSourcePaths.length; i++) {
-				var obj = aSourcePaths[i],
-					demandObj = oModel.getProperty(obj.sPath),
-					oParams = {
-						"DemandGuid": demandObj.Guid,
-						"ResourceGroupGuid": targetObj.ResourceGroupGuid,
-						"ResourceGuid": targetObj.ResourceGuid
-					};
-				if (parseInt(i, 10) === aSourcePaths.length - 1) {
-					bIsLast = true;
-				}
-				if (this.isTargetValid(sTargetPath)) {
-					oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
-					this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
-				} else {
+			if (this.isTargetValid(sTargetPath)) {
+				oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
+				this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
+			} else {
+				//Condition to check Global configuration for validation Mesg Popup
+				if (this.getModel("user").getProperty("/ENABLE_RES_ASGN_VALID_MESG_DEM")) {
 					this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.targetValidity")).then(function (value) {
 						if (value === "YES") {
 							oParams = this.setDateTimeParams(oParams, targetObj.RES_ASGN_START_DATE, targetObj.RES_ASGN_START_TIME, targetObj.RES_ASGN_END_DATE,
 								targetObj.RES_ASGN_END_TIME);
-							this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
+							this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
 						}
 						if (value === "NO") {
 							oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
-							this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
+							this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
 						}
 					}.bind(this));
+				} else {
+					oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
+					this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
 				}
+			}
 
+		},
+		/**
+		 * proceed to Service call after validation
+		 * 
+		 * @param {Object} aSourcePaths
+		 * @param {String} targetObj
+		 * @param {Object} mParameters
+		 * @param {Object} oParams
+		 * @deprecated
+		 */
+		proceedToServiceCallAssignDemands: function (aSourcePaths, targetObj, mParameters, oParams) {
+			var oModel = this.getModel(),
+				bIsLast = null;
+			this.clearMessageModel();
+			for (var i = 0; i < aSourcePaths.length; i++) {
+				var obj = aSourcePaths[i],
+					demandObj = oModel.getProperty(obj.sPath);
+
+				oParams.DemandGuid = demandObj.Guid;
+				oParams.ResourceGroupGuid = targetObj.ResourceGroupGuid;
+				oParams.ResourceGuid = targetObj.ResourceGuid;
+
+				if (parseInt(i, 10) === aSourcePaths.length - 1) {
+					bIsLast = true;
+				}
+				this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
 			}
 		},
 
