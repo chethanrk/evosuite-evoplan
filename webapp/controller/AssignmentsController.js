@@ -252,7 +252,7 @@ sap.ui.define([
 				}
 				// call function import
 				if (aAbsences[j]) {
-					this.callFunctionImport(aAbsences[j], "CreateAbsence", "POST", oData.mParameters, bIsLast);
+					this.callFunctionImport(aAbsences[j], "ManageAbsence", "POST", oData.mParameters, bIsLast);
 				} else {
 					//
 				}

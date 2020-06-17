@@ -72,6 +72,7 @@
 							class="resourceGanttTreeTable"
 							selectionMode="Single"
 							visibleRowCountMode="Auto"
+							threshold="10"
 							enableColumnReordering="false"
 							enableBusyIndicator="true"
 							busyStateChanged="onBusyStateChanged"
