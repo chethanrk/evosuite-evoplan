@@ -54,6 +54,15 @@
 	                        <core:Icon src="{STATUS_ICON}" color="{ path:'CRITICALITY', formatter:'.formatter.formatStatusIconColor' }" tooltip="{StatusDesc}"></core:Icon>
 	                    </table:template>
 	                </table:Column>
+	                <table:Column hAlign="Center" width="3rem" >
+								<table:customData>
+									<core:CustomData key="p13nData" value='\{"columnKey": "DEMAND_ICON", "leadingProperty": "DEMAND_ICON"}'/>
+								</table:customData>
+								<Label text="{/#Demand/DEMAND_ICON/@sap:label}"/>
+								<table:template>
+									<core:Icon src="{DEMAND_ICON}" tooltip="{DemandDesc}"></core:Icon>
+								</table:template>
+							</table:Column>
 	                <table:Column hAlign="Center" width="3rem" visible="{user>/EMP_ENABLED}">
 								<table:customData>
 									<core:CustomData key="p13nData" value='\{"columnKey": "SYNC_STATUS", "leadingProperty": "SYNC_STATUS"}'/>
