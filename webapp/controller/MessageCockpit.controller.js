@@ -69,7 +69,7 @@ sap.ui.define([
 		 * Fire the read request to fetch the count of error, success and inprocess messages
 		 * @constructor 
 		 */
-		 /**
+		/**
 		 * open's the message popover by it source
 		 * @param oEvent
 		 */
@@ -164,24 +164,24 @@ sap.ui.define([
 		 */
 		onBeforeRebindTable: function (oEvent) {
 			var aFilters = oEvent.getParameter("bindingParams").filters;
-            var oIconTab = this.getView().byId("idIconTabBar"),
-                sSelectedKey = oIconTab.getSelectedKey(),
-                 oDataTable = this.getView().byId("idProcessTable").getTable(),
+			var oIconTab = this.getView().byId("idIconTabBar"),
+				sSelectedKey = oIconTab.getSelectedKey(),
+				oDataTable = this.getView().byId("idProcessTable").getTable(),
 				oBinding = oDataTable.getBinding("rows");
-				
-				// oBinding.aApplicationFilters = [];
+
+			// oBinding.aApplicationFilters = [];
 			if (!this._firstTime) {
 				aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
 				this._firstTime = true;
-			}else{
-				if(oBinding.aFilters.length === 0){
-	                if (sSelectedKey === "error") {
-	                    aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
-	                } else if (sSelectedKey === "success") {
-	                    aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
-	                } else {
-	                    aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
-	                }
+			} else {
+				if (oBinding.aFilters.length === 0) {
+					if (sSelectedKey === "error") {
+						aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
+					} else if (sSelectedKey === "success") {
+						aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
+					} else {
+						aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
+					}
 				}
 			}
 		},
@@ -201,60 +201,63 @@ sap.ui.define([
 				this._oDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.MessageInfos", this);
 			}
 			this._oDialog.bindElement(sPath);
+			if (this._oDialog.getElementBinding()) {
+				this._oDialog.getElementBinding().refresh();
+			}
 			this.getView().addDependent(this._oDialog);
 			this._oDialog.openBy(oSource.getParent());
 		},
-		
+
 		/** 
 		 * Enables the reprocess button based the selected indices
 		 * @param oEvent
 		 */
-		onRowSelectionChange : function(oEvent) {
+		onRowSelectionChange: function (oEvent) {
 			var aSelectedIndices = oEvent.getSource().getSelectedIndices(),
 				oViewModel = this.getModel("viewModel");
-			if(aSelectedIndices.length === 0){
-				oViewModel.setProperty("/enableReprocess",false);
-			}else{
-				oViewModel.setProperty("/enableReprocess",true);
+			if (aSelectedIndices.length === 0) {
+				oViewModel.setProperty("/enableReprocess", false);
+			} else {
+				oViewModel.setProperty("/enableReprocess", true);
 			}
 		},
 		/** 
 		 * Fetch the selected entry and call the function import to reprocess those items
 		 * @param oEvent
 		 */
-		onClickReprocess : function(oEvent){
+		onClickReprocess: function (oEvent) {
 			var oDataTable = this.getView().byId("idProcessTable").getTable(),
 				aSelectedIndices = oDataTable.getSelectedIndices(),
 				oModel = this.getModel(),
-				oRowContext, oRowData, aPromises=[];
-			
-			for(var i in aSelectedIndices){
-				 oRowContext = oDataTable.getContextByIndex(aSelectedIndices[i]);
-				 oRowData = oModel.getProperty(oRowContext.getPath());
-				 // returns the promise
-				 aPromises.push(this.executeFunctionImport(oModel,{
-					SyncGuid:oRowData.SyncGuid
-				 },"ReprocessFailedItems","POST"));
+				oRowContext, oRowData, aPromises = [];
+
+			for (var i in aSelectedIndices) {
+				oRowContext = oDataTable.getContextByIndex(aSelectedIndices[i]);
+				oRowData = oModel.getProperty(oRowContext.getPath());
+				// returns the promise
+				aPromises.push(this.executeFunctionImport(oModel, {
+					SyncGuid: oRowData.SyncGuid
+				}, "ReprocessFailedItems", "POST"));
 			}
 			Promise.all(aPromises).then(this._onReprocessed.bind(this));
 		},
-		
+
 		/** 
 		 * 
 		 * @constructor 
 		 * @param data The response data from the function import
 		 * @param response response from the function import
 		 */
-		_onReprocessed : function (data, response){
+		_onReprocessed: function (data, response) {
 			var oIconTab = this.getView().byId("idIconTabBar"),
 				oUserModel = this.getModel("user");
-			if(data.length !== 0){
-				oUserModel.setProperty("/LastSyncTimestamp",data[0].LAST_SYNC_TIME);
+			if (data.length !== 0) {
+				oUserModel.setProperty("/LastSyncTimestamp", data[0].LAST_SYNC_TIME);
 			}
 			this._refreshCounts();
 			oIconTab.setSelectedKey("success");
 			oIconTab.fireSelect({
-				selectedKey:"success"
+				selectedKey: "success"
 			});
 		}
 

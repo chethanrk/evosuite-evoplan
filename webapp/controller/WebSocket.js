@@ -23,11 +23,11 @@ sap.ui.define([
 			this.oWebSocket = new SapPcpWebSocket(sWebSocHost + "//" + host + "/sap/bc/apc/evora/ep_core_push_apc");
 			// this.oWebSocket = new SapPcpWebSocket("wss://websocketad74c0790.hana.ondemand.com/websocket/Endpoint");
 			this.oWebSocket.attachOpen(function (e) {
-				MessageToast.show("Websocket connection opened");
+				console.log("Websocket connection opened");
 			});
 
 			this.oWebSocket.attachClose(function (e) {
-				MessageToast.show("Websocket connection closed");
+				console.log("Websocket connection closed");
 				setTimeout(function () {
 					this.getWsConnection(oComponent);
 				}.bind(this), 1000);
@@ -70,27 +70,27 @@ sap.ui.define([
 			if (sCurrentRoute === "splitDemands" || sCurrentRoute === "ganttSplit" || sCurrentRoute === "splitDemandDetails" || sCurrentRoute === "splitGanttDetails") {
 				setTimeout(function () {
 					if(sActionPage === "ganttSplit" && sCurrentRoute === "splitDemands"){
-                        	MessageToast.show(sMsg);
+                        	//MessageToast.show(sMsg);
 							eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 					} else if(sActionPage === "ganttSplit" && sCurrentRoute === "splitDemandDetails"){
 						// refresh demand detail page
-                        MessageToast.show(sMsg);
+                        //MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandOverview", {});
 					}else if(sActionPage === "splitDemands" && sCurrentRoute === "ganttSplit"){
-                        MessageToast.show(sMsg);
+                        //MessageToast.show(sMsg);
 							eventBus.publish("BaseController", "refreshGanttChart", {});
 					}else if(sActionPage === "splitDemands" && sCurrentRoute === "splitGanttDetails"){
 						// refresh demand detail page
-                        MessageToast.show(sMsg);
+                        //MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandOverview", {});
 					}else if(sActionPage === "DemandDetails" && sCurrentRoute === "splitDemands"){
-                        MessageToast.show(sMsg);
+                        //MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 					}else if(sActionPage === "DemandDetails" && sCurrentRoute === "ganttSplit"){
-                        MessageToast.show(sMsg);
+                        //MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshGanttChart", {});
 					}else if(sActionPage === "DemandDetails" && (sCurrentRoute === "splitDemandDetails" || sCurrentRoute === "splitGanttDetails")){
-                        MessageToast.show(sMsg);
+                        //MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandOverview", {});
 					}
 					
