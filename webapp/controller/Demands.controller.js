@@ -16,8 +16,8 @@ sap.ui.define([
 	return BaseController.extend("com.evorait.evoplan.controller.Demands", {
 
 		formatter: formatter,
-		
-		_bFirstTime : true,
+
+		_bFirstTime: true,
 
 		/* =========================================================== */
 		/* lifecycle methods                                           */
@@ -32,9 +32,6 @@ sap.ui.define([
 			this._oDataTable = this._oDraggableTable.getTable();
 			this._configureDataTable(this._oDataTable);
 			this._aSelectedRowsIdx = [];
-			// this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
-			// this.getView().addDependent(this._oMessagePopover);
-
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 		},
@@ -42,16 +39,6 @@ sap.ui.define([
 		/* =========================================================== */
 		/* event handlers                                              */
 		/* =========================================================== */
-
-		/**
-		 * Triggered by the table's 'updateFinished' event: after new table
-		 * data is available, this handler method updates the table counter.
-		 * This should only happen if the update was successful, which is
-		 * why this handler is attached to 'updateFinished' and not to the
-		 * table's list binding's 'dataReceived' method.
-		 * @param {sap.ui.base.Event} oEvent the update finished event
-		 * @public
-		 */
 
 		/**
 		 * after rendering of view
@@ -63,18 +50,6 @@ sap.ui.define([
 			var viewModel = this.getModel("viewModel");
 			viewModel.setProperty("/subViewTitle", tableTitle);
 			viewModel.setProperty("/subTableNoDataText", noDataText);
-		},
-
-		/**
-		 * initial draggable after every refresh of table
-		 * for example after go to next page
-		 * @param oEvent
-		 */
-		onBusyStateChanged: function (oEvent) {
-			var parameters = oEvent.getParameters();
-			if (parameters.busy === false) {
-				// this._jDraggable(this);
-			}
 		},
 
 		/**
@@ -119,25 +94,18 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onActionPress: function (oEvent) {
-			var oRouter = this.getRouter();
-			var oRow = oEvent.getParameter("row");
-			var oContext = oRow.getBindingContext();
-			var sPath = oContext.getPath();
-			var oModel = oContext.getModel();
-			var oData = oModel.getProperty(sPath);
+			var oRouter = this.getRouter(),
+				oRow = oEvent.getParameter("row"),
+				oContext = oRow.getBindingContext(),
+				sPath = oContext.getPath(),
+				oModel = oContext.getModel(),
+				oData = oModel.getProperty(sPath);
 
 			oRouter.navTo("detail", {
 				guid: oData.Guid
 			});
 		},
 
-		/**
-		 * open's the message popover by it source
-		 * @param oEvent
-		 */
-		onMessagePopoverPress: function (oEvent) {
-			// this._oMessagePopover.openBy(oEvent.getSource());
-		},
 		/**
 		 * Called when view attached is destroyed
 		 */
@@ -162,7 +130,6 @@ sap.ui.define([
 			oDataTable.setSelectionMode("MultiToggle");
 			oDataTable.setEnableColumnReordering(false);
 			oDataTable.setEnableCellFilter(false);
-			oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
 			oDataTable.setVisibleRowCountMode("Auto");
 
 			// Row Action template to navigate to Detail page
@@ -192,44 +159,44 @@ sap.ui.define([
 			this._oDataTable.clearSelection();
 		},
 
-        /**
-         * On DragStart set the dragSession selected demands
-         */
-        onDragStart : function (oEvent){
-            var oDragSession = oEvent.getParameter("dragSession"),
-                oDraggedControl = oDragSession.getDragControl();
+		/**
+		 * On DragStart set the dragSession selected demands
+		 */
+		onDragStart: function (oEvent) {
+			var oDragSession = oEvent.getParameter("dragSession"),
+				oDraggedControl = oDragSession.getDragControl();
 
-            var aIndices = this._oDataTable.getSelectedIndices(),
-                oSelectedPaths, aPathsData;
+			var aIndices = this._oDataTable.getSelectedIndices(),
+				oSelectedPaths, aPathsData;
 
-            oDragSession.setTextData("Hi I am dragging");
-            //get all selected rows when checkboxes in table selected
-            if (aIndices.length > 0) {
-                oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, aIndices, true);
-                aPathsData = oSelectedPaths.aPathsData;
-            } else {
-                //table tr single dragged element
-                oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, [oDraggedControl.getIndex()], true);
-                aPathsData = oSelectedPaths.aPathsData;
-            }
-            // keeping the data in drag session
-            this.getModel("viewModel").setProperty("/dragSession", aPathsData);
-            if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
-                this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
-                oEvent.preventDefault();
-            }
-        },
-        /**
+			oDragSession.setTextData("Hi I am dragging");
+			//get all selected rows when checkboxes in table selected
+			if (aIndices.length > 0) {
+				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, aIndices, true);
+				aPathsData = oSelectedPaths.aPathsData;
+			} else {
+				//table tr single dragged element
+				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, [oDraggedControl.getIndex()], true);
+				aPathsData = oSelectedPaths.aPathsData;
+			}
+			// keeping the data in drag session
+			this.getModel("viewModel").setProperty("/dragSession", aPathsData);
+			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
+				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+				oEvent.preventDefault();
+			}
+		},
+		/**
 		 * On Drag end check for dropped control, If dropped control not found
 		 * then make reset the selection
-         * @param oEvent
-         */
-        onDragEnd: function(oEvent){
-            var oDroppedControl = oEvent.getParameter("dragSession").getDropControl();
-            if(!oDroppedControl){
-                this._deselectAll();
-            }
-        },
+		 * @param oEvent
+		 */
+		onDragEnd: function (oEvent) {
+			var oDroppedControl = oEvent.getParameter("dragSession").getDropControl();
+			if (!oDroppedControl) {
+				this._deselectAll();
+			}
+		},
 		/**
 		 * Refresh's the demand table
 		 * @param sChanel
@@ -244,26 +211,29 @@ sap.ui.define([
 			}
 			this._bFirstTime = false;
 		},
-        /**
-         *
-         * @param oEvent
-         */
-		openActionSheet : function(oEvent){
+		
+		/**
+		 * Opens the popup containing button to nav to Evo Order App
+		 * @param oEvent
+		 */
+		openActionSheet: function (oEvent) {
 			var oContext = oEvent.getSource().getParent().getParent().getBindingContext(),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath();
-				if(!this._oNavActionSheet){
-					this._oNavActionSheet = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.NavigationActionSheet",this);
-					this.getView().addDependent(this._oNavActionSheet);
-				}
-				this.selectedDemandData = oModel.getProperty(sPath);
+			if (!this._oNavActionSheet) {
+				this._oNavActionSheet = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.NavigationActionSheet", this);
+				this.getView().addDependent(this._oNavActionSheet);
+			}
+			this.selectedDemandData = oModel.getProperty(sPath);
 
 			this._oNavActionSheet.openBy(oEvent.getSource().getParent());
 		},
+		
 		/**
-		 *
+		 * Method to navigate to Evo Order App
+		 * @param oEvent
 		 */
-		onClickNavAction : function(oEvent){
+		onClickNavAction: function (oEvent) {
 			var oContext = oEvent.getSource().getBindingContext("navLinks"),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
@@ -274,7 +244,7 @@ sap.ui.define([
 		/**
 		 *	Navigates to evoOrder detail page with static url.
 		 */
-		OnClickOrderId : function(oEvent){
+		OnClickOrderId: function (oEvent) {
 			var sOrderId = oEvent.getSource().getText();
 			this.openEvoOrder(sOrderId);
 		}

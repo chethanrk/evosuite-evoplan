@@ -13,29 +13,24 @@ sap.ui.define([
 		 */
 		assignedDemands: function (aSourcePaths, sTargetPath, mParameters) {
 			var oParams = [],
-				targetObj = this.getModel().getProperty(sTargetPath);
+				targetObj = this.getModel().getProperty(sTargetPath),
+				bValdiMsgPopupFlag = this.getModel("user").getProperty("/ENABLE_RES_ASGN_VALID_MESG_DEM"); //Condition to check Global configuration for validation Mesg Popup
 
-			if (this.isTargetValid(sTargetPath)) {
+			if (this.isTargetValid(sTargetPath) || !bValdiMsgPopupFlag) {
 				oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
 				this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
 			} else {
-				//Condition to check Global configuration for validation Mesg Popup
-				if (this.getModel("user").getProperty("/ENABLE_RES_ASGN_VALID_MESG_DEM")) {
-					this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.targetValidity")).then(function (value) {
-						if (value === "YES") {
-							oParams = this.setDateTimeParams(oParams, targetObj.RES_ASGN_START_DATE, targetObj.RES_ASGN_START_TIME, targetObj.RES_ASGN_END_DATE,
-								targetObj.RES_ASGN_END_TIME);
-							this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
-						}
-						if (value === "NO") {
-							oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
-							this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
-						}
-					}.bind(this));
-				} else {
-					oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
-					this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
-				}
+				this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.targetValidity")).then(function (value) {
+					if (value === "YES") {
+						oParams = this.setDateTimeParams(oParams, targetObj.RES_ASGN_START_DATE, targetObj.RES_ASGN_START_TIME, targetObj.RES_ASGN_END_DATE,
+							targetObj.RES_ASGN_END_TIME);
+						this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
+					}
+					if (value === "NO") {
+						oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
+						this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
+					}
+				}.bind(this));
 			}
 
 		},
@@ -142,22 +137,7 @@ sap.ui.define([
 					"ResourceGroupGuid": oResource.ResourceGroupGuid,
 					"ResourceGuid": oResource.ResourceGuid
 				};
-
-				if (oResource.StartDate) {
-					oParams.DateFrom = oResource.StartDate;
-					oParams.TimeFrom = oResource.StartTime;
-				} else {
-					oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
-					oParams.TimeFrom = oResource.StartTime;
-				}
-
-				if (oResource.EndDate) {
-					oParams.DateTo = oResource.EndDate;
-					oParams.TimeTo = oResource.EndTime;
-				} else {
-					oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
-					oParams.TimeTo = oResource.EndTime;
-				}
+				oParams = this.setDateTimeParams(oParams, oResource.StartDate, oResource.StartTime, oResource.EndDate, oResource.EndTime);
 				if (parseInt(i, 10) === aContexts.length - 1) {
 					bIsLast = true;
 				}
@@ -222,7 +202,7 @@ sap.ui.define([
 		},
 
 		/** 
-		 * 
+		 * Submittion of all assignments changes as delete, manage or create absence
 		 * @param aAssignments
 		 */
 		saveAllAssignments: function (oData) {

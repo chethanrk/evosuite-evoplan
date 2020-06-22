@@ -41,13 +41,11 @@ sap.ui.define([
 
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
 			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
-			// this.pIsFilterBarInitalized = this.oFilterConfigsController.getInitalizedPromise();
 
 			//eventbus of assignemnt handling
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
 			this._eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
-			// eventBus.subscribe("AssignInfoDialog", "CloseCalendar", this._closeCalendar, this);
 
 		},
 
@@ -71,11 +69,11 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onChangeSelectResource: function (oEvent) {
-			var oSource = oEvent.getSource();
-			var parent = oSource.getParent();
-			var sPath = parent.getBindingContext().getPath();
-			var oParams = oEvent.getParameters();
-			var oNewNode = this.getModel().getProperty(sPath),
+			var oSource = oEvent.getSource(),
+				parent = oSource.getParent(),
+				sPath = parent.getBindingContext().getPath(),
+				oParams = oEvent.getParameters(),
+				oNewNode = this.getModel().getProperty(sPath),
 				oSelectedData;
 			//Sets the property IsSelected manually
 			this.getModel().setProperty(sPath + "/IsSelected", oParams.selected);
@@ -227,8 +225,7 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
-				aSources = [],
-				bValid;
+				aSources = [];
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -245,7 +242,7 @@ sap.ui.define([
 
 			// If the Resource is Not/Partially available
 			if (this.isAvailable(sPath)) {
-					this.assignedDemands(aSources, sPath);
+				this.assignedDemands(aSources, sPath);
 			} else {
 				this.showMessageToProceed(aSources, sPath);
 			}
