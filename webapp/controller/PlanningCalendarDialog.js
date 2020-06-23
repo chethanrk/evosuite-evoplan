@@ -64,8 +64,7 @@ sap.ui.define([
 			// To enable or disable the save button
 			this.checkDirty();
 			this._enableCreateUABtn(false);
-			// open dialog
-			// oDialog.open();
+			
 		},
 		/**
 		 * Method reads ResourceSet with Assignments
@@ -129,7 +128,6 @@ sap.ui.define([
 				aResourceFilters = [],
 				aActualFilters = [],
 				oModel = this._oView ? this._oView.getModel() : null,
-				// oResourceBundle = this._oResourceBundle,
 				oViewFilterSettings = this._oView.getController().oFilterConfigsController || null,
 				sDateControl1,
 				sDateControl2,
@@ -162,7 +160,6 @@ sap.ui.define([
 					and: false
 				}));
 
-				// aResourceFilters.push(new Filter([new Filter("DateTo", FilterOperator.GE, sDateControl1),new Filter("DateFrom", FilterOperator.LE, sDateControl2)],true));
 				aResourceFilters.push(new Filter("DateTo", FilterOperator.GE, sDateControl1));
 				aResourceFilters.push(new Filter("DateFrom", FilterOperator.LE, sDateControl2));
 				// To fetch only Absences we need to set AvailabilityGrouptype filter as "N"
@@ -190,11 +187,9 @@ sap.ui.define([
 		 */
 		onSuccess: function (data, response) {
 			var oDialog = this.getDialog();
-			// console.log(this._createData(data));
 			this._oCalendarModel.setData({
 				resources: this._createData(data)
 			});
-			// this._oCalendarModel.get.refresh();
 			if (this._mParameters.bFromGantt) {
 				this._oCalendarModel.setProperty("/viewKey", "TIMEHOUR");
 				this._oCalendarModel.setProperty("/startDate", this._startDate || new Date());
@@ -214,7 +209,6 @@ sap.ui.define([
 		onError: function () {
 			this._oDialog.setBusy(false);
 			this._oPlanningCalendar.setBusy(false);
-			// this.showMessageToast(oResourceBundle.getText("errorMessage"));
 		},
 		/**
 		 * Get selected filter view
@@ -775,6 +769,7 @@ sap.ui.define([
 		/**
 		 *
 		 * @private
+		 * Rfreshing the Planning Calender post creating unavailability
 		 */
 		_refreshIntervalHeader: function (sChanel, sEvent, oData) {
 			var oSelected = this._oPlanningCalendar.getSelectedRows(),

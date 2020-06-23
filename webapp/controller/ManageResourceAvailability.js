@@ -67,7 +67,6 @@ sap.ui.define([
             oDialog.addStyleClass(this._component.getContentDensityClass());
             // connect dialog to view (models, lifecycle)
             oView.addDependent(oDialog);
-            // this.configureList(this._resource);
             oDialog.open();
         },
         /**
