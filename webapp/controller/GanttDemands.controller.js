@@ -79,7 +79,6 @@ sap.ui.define([
 				oDemand = oContext.getModel().getProperty(sPath);
 
 			localStorage.setItem("Evo-Dmnd-guid", sPath.split("'")[1]);
-			// localStorage.setItem("Evo-Dmnd-pageRefresh", "NO");
 			if (!this.isDemandAssignable(sPath)) {
 				this._showAssignErrorDialog([oDemand.DemandDesc]);
 				oEvent.preventDefault();
@@ -140,7 +139,7 @@ sap.ui.define([
 			}
 		},
 		/**
-		 * Refresh the demand the 
+		 * Refresh the demand table 
 		 * 
 		 */
 		_refreshDemandTable: function () {

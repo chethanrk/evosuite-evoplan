@@ -29,6 +29,7 @@ sap.ui.define([
 		_viewId: "",
 
 		_bLoaded: false,
+		
 		 selectedResources: [],
 
 		/**
@@ -159,7 +160,7 @@ sap.ui.define([
 				oViewModel.setProperty("/ganttSettings/busy", false);
 				return;
 			}
-			
+			// to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page","ganttSplit");
 			if (oBrowserEvent.target.tagName === "rect" && oDragContext) {
 				// When we drop on gantt chart
@@ -335,14 +336,13 @@ sap.ui.define([
 				if(oAppModel.getProperty("/currentRoute") === "ganttSplit"){
 					mParameters ={bFromGanttSplit:true};
 				}
-				// TODO comment
+			// to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page","ganttSplit");
 			
 			if (sButtonText === this.getResourceBundle().getText("xbut.buttonUnassign")) {
 				//do unassign
 				this.byId("container").setBusy(true);
 				this.deleteAssignment(oModel, sAssignGuid).then(this._refreshAreas.bind(this));
-				// this._deleteAssignment(oModel, sAssignGuid);
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonReassign")) {
 				//show reassign dialog
 				//oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
@@ -518,7 +518,7 @@ sap.ui.define([
 				this.showMessageToast(msg);
 				return;
 			}
-			// TODO comment
+			// to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page","ganttSplit");
 			
 			var targetContext = oParams.targetRow ? oParams.targetRow.getBindingContext() : oParams.targetShape.getParent().getParent().getBindingContext(),
@@ -583,7 +583,7 @@ sap.ui.define([
 				oModel = oRowContext.getModel();
 
 			oViewModel.setProperty("/ganttSettings/busy", true);
-			// TODO comment
+		    // to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page","ganttSplit");
 			
 			if (oParams.shape && oParams.shape.sParentAggregationName === "shapes3") {
@@ -617,7 +617,7 @@ sap.ui.define([
 				oRowContext = oParams.rowSettings.getParent().getBindingContext(),
 				oShape = oParams.shape;
 			if (oShape && oShape.sParentAggregationName === "shapes3") {
-				// TODO comment
+			// to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page","ganttSplit");
 				if (oContext) {
 					this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], {
@@ -655,10 +655,8 @@ sap.ui.define([
 				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
 				return;
 			}
-			// TODO comment
+		    // to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page","ganttSplit");
-			//oContext = oTreeTable.getContextByIndex(aIndices[0]);
-			// this.getOwnerComponent().createUnAvail.open(this.getView(), [oContext.getPath()], {bFromGantt: true});
 			this.getOwnerComponent().manageAvail.open(this.getView(), [this.selectedResources[0]], {
 				bFromGantt: true
 			});
@@ -735,6 +733,7 @@ sap.ui.define([
          * @param oEvent
          */
         onPressReassign: function (oEvent) {
+        	// to identify the action done on respective page
             localStorage.setItem("Evo-Action-page","ganttSplit");
             this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false,{
 								bFromGantt: true
@@ -745,6 +744,7 @@ sap.ui.define([
          * @param oEvent
          */
         onPressUnassign: function (oEvent) {
+           // to identify the action done on respective page
             localStorage.setItem("Evo-Action-page","ganttSplit");
             this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true, {
 								bFromGantt: true
@@ -772,6 +772,7 @@ sap.ui.define([
 		 * @param aSources
 		 * @param oTarget
 		 * @param oTargetDate
+		 * Checking Availability
 		 * @private
 		 */
 		_checkAvailability: function (aSources, oTarget, oTargetDate, aGuids) {
