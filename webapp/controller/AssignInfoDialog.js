@@ -56,8 +56,6 @@ sap.ui.define([
 
                 oAssignment.AssignmentGuid = oAssignData.Guid;
                 oAssignment.Description = oAssignData.Description;
-                // sResourceGroupGuid = oAssignData.ResourceGroupGuid;
-                // sResourceGuid = oAssignData.ResourceGuid;
                 oAssignment.DemandGuid = oAssignData.DemandGuid;
                 oAssignment.DemandStatus = oAssignData.Demand.Status;
                 oAssignment.DateFrom = oAssignData.DateFrom;
@@ -69,8 +67,6 @@ sap.ui.define([
 			}else {
 				oAssignment.AssignmentGuid = oAssignmentData.Guid;
 				oAssignment.Description = oAssignmentData.Demand.DemandDesc;
-				// sResourceGroupGuid = oAssignmentData.ResourceGroupGuid;
-				// sResourceGuid = oAssignmentData.ResourceGuid;
 				oAssignment.DemandGuid = oAssignmentData.DemandGuid;
 				oAssignment.DemandStatus = oAssignmentData.Demand.Status;
 				oAssignment.DateFrom = oAssignmentData.DateFrom;
@@ -83,7 +79,6 @@ sap.ui.define([
 
 			this._oView = oView;
 			this._mParameters = mParameters  || {bFromHome:true};
-			// oView.setModel(models.createAssignmentModel(oAssignment), "assignment");
 			this.oAssignmentModel = oView.getModel("assignment");
 			this.oAssignmentModel.setData(oAssignment);
 
@@ -175,7 +170,7 @@ sap.ui.define([
 		},
 
 		/**
-		 *
+		 * method to change Assignment
 		 * @param oEvent
 		 */
 		onChangeAssignType: function (oEvent) {
@@ -244,7 +239,7 @@ sap.ui.define([
 		},
 
 		/**
-		 *
+		 * Method to get list of assigned Demands
 		 * @param sId
 		 * @private
 		 */

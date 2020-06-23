@@ -40,7 +40,9 @@ sap.ui.define([
 			this._isUnAssign = isUnAssign;
 			this._resourceBundle = this._oView.getController().getResourceBundle();
 			this._component = this._oView.getController().getOwnerComponent();
-			this._mParameters = mParameters || {bFromHome:true};
+			this._mParameters = mParameters || {
+				bFromHome: true
+			};
 			var oDialog = this.getDialog();
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 			oView.addDependent(oDialog);
@@ -67,9 +69,9 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onBeforeOpen: function (oEvent) {
-			var oUnAssignBtn = sap.ui.getCore().byId("idButtonBulkUnAssign");
-			var oReAssignBtn = sap.ui.getCore().byId("idButtonBulkReAssign");
-			var oDialog = this.getDialog();
+			var oUnAssignBtn = sap.ui.getCore().byId("idButtonBulkUnAssign"),
+				oReAssignBtn = sap.ui.getCore().byId("idButtonBulkReAssign"),
+				oDialog = this.getDialog();
 			this._oAssignMentTable = sap.ui.getCore().byId("idDemandAssignmentTable").getTable();
 
 			if (this._isUnAssign) {
@@ -191,15 +193,15 @@ sap.ui.define([
 				}
 			}
 
-            if(oViewFilterSettings){
-                var dateRangeValues = oViewFilterSettings.getDateRange();
-                var sDateControl1 = dateRangeValues[0];
-                var sDateControl2 = dateRangeValues[1];
-            }else{
-                var selectedTimeFormat = formatter.getResourceFormatByKey("TIMENONE");
-                var sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin());
-                var sDateControl2 = this.formatter.date(selectedTimeFormat.getDateEnd());
-            }
+			if (oViewFilterSettings) {
+				var dateRangeValues = oViewFilterSettings.getDateRange(),
+					sDateControl1 = dateRangeValues[0],
+					sDateControl2 = dateRangeValues[1];
+			} else {
+				var selectedTimeFormat = formatter.getResourceFormatByKey("TIMENONE"),
+					sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin()),
+					sDateControl2 = this.formatter.date(selectedTimeFormat.getDateEnd());
+			}
 
 			if (aResources.length > 0) {
 				aFilters.push(new Filter({
@@ -260,7 +262,7 @@ sap.ui.define([
 			this._oAssignMentTable.removeSelections();
 			this.getDialog().close();
 		},
-		exit : function(){
+		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog, this);
 		}
 	});
