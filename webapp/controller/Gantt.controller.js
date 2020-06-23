@@ -79,7 +79,11 @@ sap.ui.define([
 		 */
 
 		onBusyStateChanged: function (oEvent) {
-			var parameters = oEvent.getParameters();
+			var parameters = oEvent.getParameters(),
+				oViewModel = this.getModel("viewModel");
+			// Busy indicator on full gantt chart
+            oViewModel.setProperty("/ganttSettings/busy", parameters.busy);
+
 			if (parameters.busy !== false && !this._isLoaded) {
 				this._isLoaded = true;
 				this._setDefaultTreeDateRange();
