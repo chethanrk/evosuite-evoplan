@@ -519,7 +519,8 @@ sap.ui.define([
 		
 		_setRowActionTemplate : function(oDataTable, onClickNavigation, openActionSheet){
 		
-			var oTemplate = oDataTable.getRowActionTemplate();
+			var oTemplate = oDataTable.getRowActionTemplate(),
+				oResourceBundle = this.getModel('i18n').getResourceBundle();
 			if (oTemplate) {
 				oTemplate.destroy();
 				oTemplate = null;
@@ -529,12 +530,13 @@ sap.ui.define([
 				items: [
 					new RowActionItem({
 						type: "Navigation",
+						tooltip: oResourceBundle.getText("xtol.details"),
 						press: onClickNavigation
 					})
 				]
 			});
 			if(this.getModel("navLinks").getProperty("/").length > 0){
-				oTemplate.addItem(new RowActionItem({icon: "sap-icon://action", text: "Navigate", press: openActionSheet}));
+				oTemplate.addItem(new RowActionItem({icon: "sap-icon://action",text: oResourceBundle.getText("xtol.navigate"), press: openActionSheet}));
 			}
 			oDataTable.setRowActionTemplate(oTemplate);
 			oDataTable.setRowActionCount(oTemplate.getItems().length);	

@@ -29,6 +29,7 @@
 								maxDate="{user>/GANT_END_DATE}"
 								minDate="{user>/GANT_START_DATE}"
 								change="onChangeDateRange"
+								enabled="false"
 						/>
 						
 						<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.ResourceActions" type="XML"/>
