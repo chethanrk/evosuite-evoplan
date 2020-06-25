@@ -91,7 +91,8 @@ sap.ui.define([
          */
         onAfterRendering: function () {
             var oTable = this.getView().byId("ganttResourceTreeTable"),
-                oBinding = oTable.getBinding("rows");
+                oBinding = oTable.getBinding("rows"),
+                oViewModel = this.getModel("viewModel");
 
             // To show busy indicator when filter getting applied.
             oBinding.attachDataRequested(function () {
