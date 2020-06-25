@@ -1,46 +1,4465 @@
-[
-  {
-    "__metadata": {
-      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED887E69FF93CD53AB6')",
-      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED887E69FF93CD53AB6')",
-      "type": "com.evorait.evoplan.Assignment"
-    },
-    "DateFrom": "\/Date(1518998400000)\/",
-    "Guid": "0A51491BD5A01ED887E69FF93CD53AB6",
-    "DateTo": "\/Date(1519776000000)\/",
-    "ObjectId": "0A51491BD5A01EE884D81F1CAC8219CC//0A51491BD5A01EE884D81F1CAC81D9CC",
-    "Description": "",
-    "ResourceGroupGuid": "0A51491BD5A01EE884D81F1CAC8219CC",
-    "ResourceGuid": "0A51491BD5A01EE884D81F1CAC81D9CC",
-    "DemandGuid": "0AA10FE57E901EE8B89807BC7A1F7139",
-    "Effort": "2.0",
-    "EffortUnit": "H",
-    "Demand": {
-      "__deferred": {
-        "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED887E69FF93CD53AB6')/Demand"
-      }
-    }
-  },
-  {
-    "__metadata": {
-      "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE88695FDBEE13F7A9D')",
-      "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE88695FDBEE13F7A9D')",
-      "type": "com.evorait.evoplan.Assignment"
-    },
-    "DateFrom": "\/Date(1518393600000)\/",
-    "Guid": "0A51491BD5A01EE88695FDBEE13F7A9D",
-    "DateTo": "\/Date(1518912000000)\/",
-    "ObjectId": "0A51491BD5A01EE884D81F1CAC8219CC",
-    "Description": "",
-    "ResourceGroupGuid": "0A51491BD5A01EE884D81F1CAC8219CC",
-    "ResourceGuid": "",
-    "DemandGuid": "0A51491BD5A01EE7BC805E1A033B5A92",
-    "Effort": "2.0",
-    "EffortUnit": "H",
-    "Demand": {
-      "__deferred": {
-        "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01EE88695FDBEE13F7A9D')/Demand"
-      }
-    }
-  }
-]
+[{
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA4B3ACCE9C5323')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA4B3ACCE9C5323')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592553900000)\/",
+	"Guid": "0AA10FE57E901EEAACA4B3ACCE9C5323",
+	"DateTo": "\/Date(1592561100000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE2C5C3A139AAC//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Monthly inspection of pump station",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE2C5C3A139AAC",
+	"DemandGuid": "0AA10FE57E901EDA9FF866FB97740D87",
+	"Effort": "2.0",
+	"EffortUnit": "***",
+	"PERSON_NUMBER": "00067108",
+	"LASTNAME": "Marchal",
+	"FIRSTNAME": "Derik",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Derik Marchal",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA4B3ACCE9C5323')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA4B3ACCE9C5323')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAAFCFF5DCF7BB42')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAAFCFF5DCF7BB42')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591628400000)\/",
+	"Guid": "0AA10FE57E901EDAAAAFCFF5DCF7BB42",
+	"DateTo": "\/Date(1591617720000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Test SCHORNS",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "",
+	"DemandGuid": "0AA10FE57E901EDA9FF866FB978A6D87",
+	"Effort": "0.0",
+	"EffortUnit": "***",
+	"PERSON_NUMBER": "00000000",
+	"LASTNAME": "",
+	"FIRSTNAME": "",
+	"NODE_TYPE": "RES_GROUP",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAAFCFF5DCF7BB42')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAAFCFF5DCF7BB42')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA4C1CCCCC167')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA4C1CCCCC167')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386200000)\/",
+	"Guid": "0AA10FE57E901EEAAC8FA4C1CCCCC167",
+	"DateTo": "\/Date(1592389800000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Chain torn on the conveyor belt",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF86805459B4D87",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA4C1CCCCC167')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA4C1CCCCC167')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADC01817722830BA')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADC01817722830BA')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592992440000)\/",
+	"Guid": "0AA10FE57E901EEAADC01817722830BA",
+	"DateTo": "\/Date(1592997840000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Carrying roller is stuck",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF86805459BCD87",
+	"Effort": "3.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADC01817722830BA')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADC01817722830BA')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F971BEAE72155')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F971BEAE72155')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592373600000)\/",
+	"Guid": "0AA10FE57E901EEAAC8F971BEAE72155",
+	"DateTo": "\/Date(1592357400000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Check the rope",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF86805459C2D87",
+	"Effort": "3.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F971BEAE72155')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F971BEAE72155')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F96F58B48E155')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F96F58B48E155')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386020000)\/",
+	"Guid": "0AA10FE57E901EEAAC8F96F58B48E155",
+	"DateTo": "\/Date(1592389620000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Change oil filter",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF86805459C8D87",
+	"Effort": "1.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F96F58B48E155')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F96F58B48E155')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F91EE0F66C14D')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F91EE0F66C14D')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592385960000)\/",
+	"Guid": "0AA10FE57E901EEAAC8F91EE0F66C14D",
+	"DateTo": "\/Date(1592389560000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Change oil filter",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF86805459CAD87",
+	"Effort": "1.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F91EE0F66C14D')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F91EE0F66C14D')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F92046CC0E14D')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F92046CC0E14D')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592380800000)\/",
+	"Guid": "0AA10FE57E901EEAAC8F92046CC0E14D",
+	"DateTo": "\/Date(1592355600000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Change oil filter",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF86805459CCD87",
+	"Effort": "1.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F92046CC0E14D')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F92046CC0E14D')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99274011D475A9E')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99274011D475A9E')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591827600000)\/",
+	"Guid": "0AA10FE57E901EEAA99274011D475A9E",
+	"DateTo": "\/Date(1592266800000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Filter dripping",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF86805459CED87",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99274011D475A9E')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99274011D475A9E')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBD5D77E5DCEE97')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBD5D77E5DCEE97')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592983080000)\/",
+	"Guid": "0AA10FE57E901EEAADBD5D77E5DCEE97",
+	"DateTo": "\/Date(1592990280000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "Check drive",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF86805459DAD87",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBD5D77E5DCEE97')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBD5D77E5DCEE97')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFDDB64D6B8E114')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFDDB64D6B8E114')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591885260000)\/",
+	"Guid": "0AA10FE57E901EEAAAFDDB64D6B8E114",
+	"DateTo": "\/Date(1591892460000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Annual maintenance on the conveyor belt",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF86805459EED87",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "PASS",
+	"DEMAND_STATUS_ICON": "sap-icon://customer-history",
+	"DEMAND_STATUS_COLOR": "#FFFF00",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFDDB64D6B8E114')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFDDB64D6B8E114')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAD8B2B86DDC4C7A7')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAD8B2B86DDC4C7A7')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592810640000)\/",
+	"Guid": "0AA10FE57E901EDAAD8B2B86DDC4C7A7",
+	"DateTo": "\/Date(1592819640000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Annual maintenance: packaging machine.",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF86805459F6D87",
+	"Effort": "5.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAD8B2B86DDC4C7A7')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAD8B2B86DDC4C7A7')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA880901F8F011B5B')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA880901F8F011B5B')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1590190620000)\/",
+	"Guid": "0AA10FE57E901EDAA880901F8F011B5B",
+	"DateTo": "\/Date(1590205020000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Motor maintenance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8682B541BED87",
+	"Effort": "4.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA880901F8F011B5B')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA880901F8F011B5B')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC936CF0E461049A')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC936CF0E461049A')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592901660000)\/",
+	"Guid": "0AA10FE57E901EEAAC936CF0E461049A",
+	"DateTo": "\/Date(1592912460000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Battery repair",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EDA9FF8682B541C2D87",
+	"Effort": "3.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC936CF0E461049A')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC936CF0E461049A')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA66727C60167')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA66727C60167')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386200000)\/",
+	"Guid": "0AA10FE57E901EEAAC8FA66727C60167",
+	"DateTo": "\/Date(1592746200000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Electrician",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF8682B541CAD87",
+	"Effort": "100.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA66727C60167')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA66727C60167')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA895A3611682F180')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA895A3611682F180')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1590647580000)\/",
+	"Guid": "0AA10FE57E901EEAA895A3611682F180",
+	"DateTo": "\/Date(1590652980000)\/",
+	"ObjectId": "0AA10FE57E901EEAA190B0A7A26C2254//0AA10FE57E901EEAA190B0A7A26BA254",
+	"Description": "Conveyor test",
+	"ResourceGroupGuid": "0AA10FE57E901EEAA190B0A7A26BA254",
+	"ResourceGuid": "0AA10FE57E901EEAA190B0A7A26C2254",
+	"DemandGuid": "0AA10FE57E901EDA9FF8682B541E2D87",
+	"Effort": "3.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "10003726",
+	"LASTNAME": "Reflow work center",
+	"FIRSTNAME": "1610",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Mechanical production",
+	"RESOURCE_DESCRIPTION": "1610 Reflow work center",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA895A3611682F180')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA895A3611682F180')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAF7A68D9E6FBC69')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAF7A68D9E6FBC69')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591863960000)\/",
+	"Guid": "0AA10FE57E901EDAAAF7A68D9E6FBC69",
+	"DateTo": "\/Date(1591872960000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4F248D20BFB75",
+	"Description": "Gearbox test",
+	"ResourceGroupGuid": "0AA10FE57E901ED9B7D4F248D20BFB75",
+	"ResourceGuid": "",
+	"DemandGuid": "0AA10FE57E901EDA9FF8682B542F8D87",
+	"Effort": "2.5",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000000",
+	"LASTNAME": "",
+	"FIRSTNAME": "",
+	"NODE_TYPE": "RES_GROUP",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team: Wartung",
+	"RESOURCE_DESCRIPTION": "",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAF7A68D9E6FBC69')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAF7A68D9E6FBC69')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBC90F3318B4E25')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBC90F3318B4E25')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592992140000)\/",
+	"Guid": "0AA10FE57E901EEAADBC90F3318B4E25",
+	"DateTo": "\/Date(1593001140000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE2C5C3A139AAC//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Gearbox test",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE2C5C3A139AAC",
+	"DemandGuid": "0AA10FE57E901EDA9FF8682B542F8D87",
+	"Effort": "5.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067108",
+	"LASTNAME": "Marchal",
+	"FIRSTNAME": "Derik",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Derik Marchal",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBC90F3318B4E25')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBC90F3318B4E25')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99280FAF6635AAF')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99280FAF6635AAF')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1590810120000)\/",
+	"Guid": "0AA10FE57E901EEAA99280FAF6635AAF",
+	"DateTo": "\/Date(1590824520000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Machine maintainance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8682B54302D87",
+	"Effort": "4.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99280FAF6635AAF')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99280FAF6635AAF')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93DEF0E267A4FB')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93DEF0E267A4FB')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592993520000)\/",
+	"Guid": "0AA10FE57E901EEAAC93DEF0E267A4FB",
+	"DateTo": "\/Date(1593000720000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "MOTOR TEST",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8682B54388D87",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93DEF0E267A4FB')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93DEF0E267A4FB')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA6B3EAA5EAD7FCEB')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA6B3EAA5EAD7FCEB')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591192920000)\/",
+	"Guid": "0AA10FE57E901EEAA6B3EAA5EAD7FCEB",
+	"DateTo": "\/Date(1591252200000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "MOTOR TEST",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8682B5438CD87",
+	"Effort": "1.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA6B3EAA5EAD7FCEB')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA6B3EAA5EAD7FCEB')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAABF9DA5B765843')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAABF9DA5B765843')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591609320000)\/",
+	"Guid": "0AA10FE57E901EDAAAABF9DA5B765843",
+	"DateTo": "\/Date(1591616520000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916DB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916DB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF8682B5439CD87",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067196",
+	"LASTNAME": "Adamy",
+	"FIRSTNAME": "Mirco",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "STRT",
+	"DEMAND_STATUS_ICON": "sap-icon://begin",
+	"DEMAND_STATUS_COLOR": "#E6E6FA",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Mirco Adamy",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAABF9DA5B765843')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAABF9DA5B765843')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFDD62163BEB0F')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFDD62163BEB0F')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591601460000)\/",
+	"Guid": "0AA10FE57E901EDAA9DFDD62163BEB0F",
+	"DateTo": "\/Date(1591615860000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Hi",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685192FA6D87",
+	"Effort": "4.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "MOBI",
+	"DEMAND_STATUS_ICON": "sap-icon://ipad",
+	"DEMAND_STATUS_COLOR": "#00BFFF",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFDD62163BEB0F')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFDD62163BEB0F')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93BE1811F5A4DD')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93BE1811F5A4DD')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592986140000)\/",
+	"Guid": "0AA10FE57E901EEAAC93BE1811F5A4DD",
+	"DateTo": "\/Date(1592993340000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Machine maintenance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685192FC8D87",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93BE1811F5A4DD')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93BE1811F5A4DD')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC9393C29042A4C2')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC9393C29042A4C2')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592835480000)\/",
+	"Guid": "0AA10FE57E901EEAAC9393C29042A4C2",
+	"DateTo": "\/Date(1592842680000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE2C5C3A139AAC//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Machine maintenance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE2C5C3A139AAC",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685192FCED87",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067108",
+	"LASTNAME": "Marchal",
+	"FIRSTNAME": "Derik",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Derik Marchal",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC9393C29042A4C2')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC9393C29042A4C2')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA89C1D2478E9D808')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA89C1D2478E9D808')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1590669840000)\/",
+	"Guid": "0AA10FE57E901EEAA89C1D2478E9D808",
+	"DateTo": "\/Date(1590741840000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Plumbing check",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685192FDAD87",
+	"Effort": "20.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "STRT",
+	"DEMAND_STATUS_ICON": "sap-icon://begin",
+	"DEMAND_STATUS_COLOR": "#E6E6FA",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA89C1D2478E9D808')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA89C1D2478E9D808')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667616C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667616C')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386320000)\/",
+	"Guid": "0AA10FE57E901EEAAC8FAFFA8667616C",
+	"DateTo": "\/Date(1592530320000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "FOundry maintenannce",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685192FECD87",
+	"Effort": "40.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667616C')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667616C')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FB28C431D6170')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FB28C431D6170')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386380000)\/",
+	"Guid": "0AA10FE57E901EEAAC8FB28C431D6170",
+	"DateTo": "\/Date(1592746380000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "FOundry maintenannce",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685192FEED87",
+	"Effort": "100.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000000",
+	"LASTNAME": "",
+	"FIRSTNAME": "",
+	"NODE_TYPE": "RES_GROUP",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FB28C431D6170')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FB28C431D6170')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93E423FF972500')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93E423FF972500')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1593081300000)\/",
+	"Guid": "0AA10FE57E901EEAAC93E423FF972500",
+	"DateTo": "\/Date(1593088500000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Gearbox repair task",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685192FF6D87",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93E423FF972500')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93E423FF972500')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93C803E10C64E5')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93C803E10C64E5')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592988480000)\/",
+	"Guid": "0AA10FE57E901EEAAC93C803E10C64E5",
+	"DateTo": "\/Date(1592995680000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916DB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "Gearbox repair task",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916DB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685192FF8D87",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067196",
+	"LASTNAME": "Adamy",
+	"FIRSTNAME": "Mirco",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Mirco Adamy",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93C803E10C64E5')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC93C803E10C64E5')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA993E7F463409BF9')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA993E7F463409BF9')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1590802920000)\/",
+	"Guid": "0AA10FE57E901EEAA993E7F463409BF9",
+	"DateTo": "\/Date(1590817320000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Düsen sind verstopft",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193012D87",
+	"Effort": "4.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA993E7F463409BF9')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA993E7F463409BF9')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFCDD99AB52B01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFCDD99AB52B01')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591618680000)\/",
+	"Guid": "0AA10FE57E901EDAA9DFCDD99AB52B01",
+	"DateTo": "\/Date(1591641060000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Machine repair",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193014D87",
+	"Effort": "4.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFCDD99AB52B01')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFCDD99AB52B01')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAB09C4B1E2D3BEE')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAB09C4B1E2D3BEE')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591619820000)\/",
+	"Guid": "0AA10FE57E901EDAAAB09C4B1E2D3BEE",
+	"DateTo": "\/Date(1591637820000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Machine repair",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193016D87",
+	"Effort": "5.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000000",
+	"LASTNAME": "",
+	"FIRSTNAME": "",
+	"NODE_TYPE": "RES_GROUP",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAB09C4B1E2D3BEE')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAB09C4B1E2D3BEE')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC269D30B0CC9F8')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC269D30B0CC9F8')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592560620000)\/",
+	"Guid": "0AA10FE57E901EDAACC269D30B0CC9F8",
+	"DateTo": "\/Date(1592582220000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "Machine repair",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193018D87",
+	"Effort": "6.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC269D30B0CC9F8')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC269D30B0CC9F8')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA7E69CCBE1DFC10D')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA7E69CCBE1DFC10D')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1590486000000)\/",
+	"Guid": "0AA10FE57E901EDAA7E69CCBE1DFC10D",
+	"DateTo": "\/Date(1590493200000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Battery Repair",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193028D87",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA7E69CCBE1DFC10D')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA7E69CCBE1DFC10D')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFC83B7495AAFC')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFC83B7495AAFC')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591362660000)\/",
+	"Guid": "0AA10FE57E901EDAA9DFC83B7495AAFC",
+	"DateTo": "\/Date(1591377060000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Battery Repair",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF868519302AD87",
+	"Effort": "4.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "COMP",
+	"DEMAND_STATUS_ICON": "sap-icon://complete",
+	"DEMAND_STATUS_COLOR": "#006400",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFC83B7495AAFC')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFC83B7495AAFC')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6CBE062E68CF4E3')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6CBE062E68CF4E3')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1589954340000)\/",
+	"Guid": "0AA10FE57E901EDAA6CBE062E68CF4E3",
+	"DateTo": "\/Date(1590158880000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A3B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": " Test",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A3B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF868519302ED87",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000001",
+	"LASTNAME": "Schmitt",
+	"FIRSTNAME": "Ted",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ted Schmitt",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6CBE062E68CF4E3')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6CBE062E68CF4E3')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDBB1F89E54B25D')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDBB1F89E54B25D')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592207700000)\/",
+	"Guid": "0AA10FE57E901EEAABDBB1F89E54B25D",
+	"DateTo": "\/Date(1592211300000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Downtime maintainance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193036D87",
+	"Effort": "1.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDBB1F89E54B25D')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDBB1F89E54B25D')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F9A634D446155')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F9A634D446155')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592344800000)\/",
+	"Guid": "0AA10FE57E901EEAAC8F9A634D446155",
+	"DateTo": "\/Date(1592355600000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Downtime maintainance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193038D87",
+	"Effort": "1.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F9A634D446155')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8F9A634D446155')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDB9CB80B467246')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDB9CB80B467246')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592207400000)\/",
+	"Guid": "0AA10FE57E901EEAABDB9CB80B467246",
+	"DateTo": "\/Date(1592247000000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE2C5C3A139AAC//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Downtime maintainance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE2C5C3A139AAC",
+	"DemandGuid": "0AA10FE57E901EDA9FF868519303AD87",
+	"Effort": "11.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067108",
+	"LASTNAME": "Marchal",
+	"FIRSTNAME": "Derik",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Derik Marchal",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDB9CB80B467246')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDB9CB80B467246')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA66727C5E167')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA66727C5E167')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386200000)\/",
+	"Guid": "0AA10FE57E901EEAAC8FA66727C5E167",
+	"DateTo": "\/Date(1592389800000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Downtime maintainance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF868519303CD87",
+	"Effort": "1.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA66727C5E167')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA66727C5E167')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDB39174B93B1E9')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDB39174B93B1E9')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592206080000)\/",
+	"Guid": "0AA10FE57E901EEAABDB39174B93B1E9",
+	"DateTo": "\/Date(1592216880000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Conveyor repair",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193062D87",
+	"Effort": "3.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDB39174B93B1E9')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDB39174B93B1E9')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA89B3D886D305721')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA89B3D886D305721')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1590654240000)\/",
+	"Guid": "0AA10FE57E901EEAA89B3D886D305721",
+	"DateTo": "\/Date(1590686640000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE2C5C3A139AAC//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE2C5C3A139AAC",
+	"DemandGuid": "0AA10FE57E901EDA9FF868519306ED87",
+	"Effort": "9.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067108",
+	"LASTNAME": "Marchal",
+	"FIRSTNAME": "Derik",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "MOBI",
+	"DEMAND_STATUS_ICON": "sap-icon://ipad",
+	"DEMAND_STATUS_COLOR": "#00BFFF",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Derik Marchal",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA89B3D886D305721')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA89B3D886D305721')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFC4CCE9F86AFB')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFC4CCE9F86AFB')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591265160000)\/",
+	"Guid": "0AA10FE57E901EDAA9DFC4CCE9F86AFB",
+	"DateTo": "\/Date(1591301160000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE2C5C3A139AAC//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE2C5C3A139AAC",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193070D87",
+	"Effort": "20.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067108",
+	"LASTNAME": "Marchal",
+	"FIRSTNAME": "Derik",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Derik Marchal",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFC4CCE9F86AFB')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DFC4CCE9F86AFB')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DEFD4685752A30')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DEFD4685752A30')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591345080000)\/",
+	"Guid": "0AA10FE57E901EDAA9DEFD4685752A30",
+	"DateTo": "\/Date(1591359960000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193072D87",
+	"Effort": "4.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DEFD4685752A30')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DEFD4685752A30')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99388BA3FD59BA9')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99388BA3FD59BA9')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1590897600000)\/",
+	"Guid": "0AA10FE57E901EEAA99388BA3FD59BA9",
+	"DateTo": "\/Date(1590904800000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193074D87",
+	"Effort": "4.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99388BA3FD59BA9')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99388BA3FD59BA9')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA9922AB29674BA55')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA9922AB29674BA55')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591027200000)\/",
+	"Guid": "0AA10FE57E901EEAA9922AB29674BA55",
+	"DateTo": "\/Date(1591113540000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916DB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916DB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193076D87",
+	"Effort": "6.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067196",
+	"LASTNAME": "Adamy",
+	"FIRSTNAME": "Mirco",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "COMP",
+	"DEMAND_STATUS_ICON": "sap-icon://complete",
+	"DEMAND_STATUS_COLOR": "#006400",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Mirco Adamy",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA9922AB29674BA55')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA9922AB29674BA55')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E35AF16E560E29')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E35AF16E560E29')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591340580000)\/",
+	"Guid": "0AA10FE57E901EDAA9E35AF16E560E29",
+	"DateTo": "\/Date(1593023400000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "test order Assign",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF868519307CD87",
+	"Effort": "6.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E35AF16E560E29')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E35AF16E560E29')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC637A6C298F23E')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC637A6C298F23E')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591697820000)\/",
+	"Guid": "0AA10FE57E901EEAAAC637A6C298F23E",
+	"DateTo": "\/Date(1591713060000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": " asd",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193092D87",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC637A6C298F23E')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC637A6C298F23E')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABE170E2C626379D')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABE170E2C626379D')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592227440000)\/",
+	"Guid": "0AA10FE57E901EEAABE170E2C626379D",
+	"DateTo": "\/Date(1592231040000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Plumbing",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193094D87",
+	"Effort": "1.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABE170E2C626379D')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABE170E2C626379D')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBA78257F582CC9')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBA78257F582CC9')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592857080000)\/",
+	"Guid": "0AA10FE57E901EEAADBA78257F582CC9",
+	"DateTo": "\/Date(1592864280000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE2C5C3A139AAC//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Maintenance task",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE2C5C3A139AAC",
+	"DemandGuid": "0AA10FE57E901EDA9FF8685193096D87",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067108",
+	"LASTNAME": "Marchal",
+	"FIRSTNAME": "Derik",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Derik Marchal",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBA78257F582CC9')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBA78257F582CC9')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA5405FBF6B739D')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA5405FBF6B739D')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592750820000)\/",
+	"Guid": "0AA10FE57E901EEAACA5405FBF6B739D",
+	"DateTo": "\/Date(1592819280000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Plumbing",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EDA9FF868519309CD87",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA5405FBF6B739D')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA5405FBF6B739D')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAFA6C7C67C8FE98')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAFA6C7C67C8FE98')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591873440000)\/",
+	"Guid": "0AA10FE57E901EDAAAFA6C7C67C8FE98",
+	"DateTo": "\/Date(1591909440000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF915DB5F//0AA10FE57E901ED9B7D4F248D20BFB75",
+	"Description": "Dreheinheit reparieren",
+	"ResourceGroupGuid": "0AA10FE57E901ED9B7D4F248D20BFB75",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF915DB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF868519319CD87",
+	"Effort": "10.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067188",
+	"LASTNAME": "Schmidt",
+	"FIRSTNAME": "Walter",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team: Wartung",
+	"RESOURCE_DESCRIPTION": "Walter Schmidt",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAFA6C7C67C8FE98')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAFA6C7C67C8FE98')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAFA6FC853783E99')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAFA6FC853783E99')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591873500000)\/",
+	"Guid": "0AA10FE57E901EDAAAFA6FC853783E99",
+	"DateTo": "\/Date(1591902300000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF915DB5F//0AA10FE57E901ED9B7D4F248D20BFB75",
+	"Description": "Düsen müssen gereinigt werden",
+	"ResourceGroupGuid": "0AA10FE57E901ED9B7D4F248D20BFB75",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF915DB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF868519319ED87",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067188",
+	"LASTNAME": "Schmidt",
+	"FIRSTNAME": "Walter",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team: Wartung",
+	"RESOURCE_DESCRIPTION": "Walter Schmidt",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAFA6FC853783E99')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAFA6FC853783E99')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA69D054E588725CC')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA69D054E588725CC')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1589674740000)\/",
+	"Guid": "0AA10FE57E901EEAA69D054E588725CC",
+	"DateTo": "\/Date(1589707140000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A3B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Düsen müssen gereinigt werden",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A3B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF86851931A0D87",
+	"Effort": "18.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000001",
+	"LASTNAME": "Schmitt",
+	"FIRSTNAME": "Ted",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ted Schmitt",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA69D054E588725CC')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA69D054E588725CC')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAC48A18DE16A')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAC48A18DE16A')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386260000)\/",
+	"Guid": "0AA10FE57E901EEAAC8FAC48A18DE16A",
+	"DateTo": "\/Date(1592415060000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "Antrieb auf Funktionalität bitte prüfen",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF86851931B8D87",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAC48A18DE16A')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAC48A18DE16A')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA6B392D769E2BC9B')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA6B392D769E2BC9B')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1589875980000)\/",
+	"Guid": "0AA10FE57E901EEAA6B392D769E2BC9B",
+	"DateTo": "\/Date(1589908380000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Conveyor Repair T",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF86851931CAD87",
+	"Effort": "9.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA6B392D769E2BC9B')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA6B392D769E2BC9B')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA61AF4A615D43F')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA61AF4A615D43F')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1593043200000)\/",
+	"Guid": "0AA10FE57E901EEAACA61AF4A615D43F",
+	"DateTo": "\/Date(1593129540000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Machine Inspection",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EDA9FF86851931CCD87",
+	"Effort": "9.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA61AF4A615D43F')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA61AF4A615D43F')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA60B29E55E7432')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA60B29E55E7432')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1593064800000)\/",
+	"Guid": "0AA10FE57E901EEAACA60B29E55E7432",
+	"DateTo": "\/Date(1593072000000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Inspection",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EDA9FF86851931D4D87",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA60B29E55E7432')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA60B29E55E7432')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC915EE66A0DA2E6')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC915EE66A0DA2E6')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592132940000)\/",
+	"Guid": "0AA10FE57E901EEAAC915EE66A0DA2E6",
+	"DateTo": "\/Date(1592165340000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Inspection",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDA9FF86851931D6D87",
+	"Effort": "9.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC915EE66A0DA2E6')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC915EE66A0DA2E6')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667016C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667016C')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386320000)\/",
+	"Guid": "0AA10FE57E901EEAAC8FAFFA8667016C",
+	"DateTo": "\/Date(1592415120000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "Elextrician task",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF86877A8D0CD87",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667016C')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667016C')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAB8D91937FFF4EB9')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAB8D91937FFF4EB9')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591939080000)\/",
+	"Guid": "0AA10FE57E901EEAAB8D91937FFF4EB9",
+	"DateTo": "\/Date(1591967880000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "Downtime Maintenance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EDA9FF86877A8D10D87",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAB8D91937FFF4EB9')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAB8D91937FFF4EB9')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA66727C5C167')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA66727C5C167')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386200000)\/",
+	"Guid": "0AA10FE57E901EEAAC8FA66727C5C167",
+	"DateTo": "\/Date(1592418600000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Downtime Maintenance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDA9FF86877A8D12D87",
+	"Effort": "9.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA66727C5C167')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FA66727C5C167')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD8CE8C7986680')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD8CE8C7986680')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592543940000)\/",
+	"Guid": "0AA10FE57E901EDAACBD8CE8C7986680",
+	"DateTo": "\/Date(1592576340000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Machine Repair",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDAA1BD97AE1AD2EFAE",
+	"Effort": "9.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD8CE8C7986680')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD8CE8C7986680')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD5E80A0A9865C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD5E80A0A9865C')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592543280000)\/",
+	"Guid": "0AA10FE57E901EDAACBD5E80A0A9865C",
+	"DateTo": "\/Date(1592550480000)\/",
+	"ObjectId": "0AA10FE57E901ED9A1AD46FF24755D46//0AA10FE57E901ED9B7D4F248D20BFB75",
+	"Description": "CNC repair",
+	"ResourceGroupGuid": "0AA10FE57E901ED9B7D4F248D20BFB75",
+	"ResourceGuid": "0AA10FE57E901ED9A1AD46FF24755D46",
+	"DemandGuid": "0AA10FE57E901EDAA2C28A203AD77A25",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00022000",
+	"LASTNAME": "Braun",
+	"FIRSTNAME": "Markus",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team: Wartung",
+	"RESOURCE_DESCRIPTION": "Markus Braun",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD5E80A0A9865C')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD5E80A0A9865C')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667216C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667216C')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386320000)\/",
+	"Guid": "0AA10FE57E901EEAAC8FAFFA8667216C",
+	"DateTo": "\/Date(1592393520000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "EvoPlan Notification.",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDAA4B67DB09B32C429",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667216C')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667216C')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD7EAFEFA7C671')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD7EAFEFA7C671')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592543760000)\/",
+	"Guid": "0AA10FE57E901EDAACBD7EAFEFA7C671",
+	"DateTo": "\/Date(1592543760000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Machine Repair",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDAA58B86E6DEC339A9",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD7EAFEFA7C671')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD7EAFEFA7C671')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC9397F2F20944C3')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC9397F2F20944C3')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592835120000)\/",
+	"Guid": "0AA10FE57E901EEAAC9397F2F20944C3",
+	"DateTo": "\/Date(1592842320000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916DB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "Machine Repair",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916DB5F",
+	"DemandGuid": "0AA10FE57E901EDAA5B474DE777BC053",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067196",
+	"LASTNAME": "Adamy",
+	"FIRSTNAME": "Mirco",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Mirco Adamy",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC9397F2F20944C3')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC9397F2F20944C3')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DF45EABA652A7C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DF45EABA652A7C')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591346640000)\/",
+	"Guid": "0AA10FE57E901EDAA9DF45EABA652A7C",
+	"DateTo": "\/Date(1591603920000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDAA5B923B327196450",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "MOBI",
+	"DEMAND_STATUS_ICON": "sap-icon://ipad",
+	"DEMAND_STATUS_COLOR": "#00BFFF",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DF45EABA652A7C')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9DF45EABA652A7C')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFE19E6FA16C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFE19E6FA16C')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386320000)\/",
+	"Guid": "0AA10FE57E901EEAAC8FAFE19E6FA16C",
+	"DateTo": "\/Date(1592411520000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "test (text changed).",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDAA5B923B327198450",
+	"Effort": "7.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFE19E6FA16C')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFE19E6FA16C')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFE19E6FC16C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFE19E6FC16C')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386320000)\/",
+	"Guid": "0AA10FE57E901EEAAC8FAFE19E6FC16C",
+	"DateTo": "\/Date(1592411520000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDAA5B936617146C45F",
+	"Effort": "7.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFE19E6FC16C')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFE19E6FC16C')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E7A7CF1D59F230')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E7A7CF1D59F230')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591777500000)\/",
+	"Guid": "0AA10FE57E901EDAA9E7A7CF1D59F230",
+	"DateTo": "\/Date(1591791900000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Battery test",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDAA5D46FBE4C8BDD91",
+	"Effort": "4.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E7A7CF1D59F230')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E7A7CF1D59F230')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBC5EF51EB14E01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBC5EF51EB14E01')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592909460000)\/",
+	"Guid": "0AA10FE57E901EEAADBC5EF51EB14E01",
+	"DateTo": "\/Date(1592923860000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE2C5C3A139AAC//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Battery test",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE2C5C3A139AAC",
+	"DemandGuid": "0AA10FE57E901EDAA5D46FBE4C8BDD91",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067108",
+	"LASTNAME": "Marchal",
+	"FIRSTNAME": "Derik",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Derik Marchal",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBC5EF51EB14E01')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBC5EF51EB14E01')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA8F9C80F4526E11F')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA8F9C80F4526E11F')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1590991800000)\/",
+	"Guid": "0AA10FE57E901EEAA8F9C80F4526E11F",
+	"DateTo": "\/Date(1590992340000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "changed.",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EDAA6B74C799EC2E05D",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "MOBI",
+	"DEMAND_STATUS_ICON": "sap-icon://ipad",
+	"DEMAND_STATUS_COLOR": "#00BFFF",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA8F9C80F4526E11F')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA8F9C80F4526E11F')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA9934E1736245B75')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA9934E1736245B75')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1590931440000)\/",
+	"Guid": "0AA10FE57E901EEAA9934E1736245B75",
+	"DateTo": "\/Date(1590931440000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "changed.",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDAA6B74C799EC3005D",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA9934E1736245B75')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA9934E1736245B75')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAAD0CEF6E16A')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAAD0CEF6E16A')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386260000)\/",
+	"Guid": "0AA10FE57E901EEAAC8FAAD0CEF6E16A",
+	"DateTo": "\/Date(1592404260000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDAA6B7E6195E87E102",
+	"Effort": "5.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAAD0CEF6E16A')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAAD0CEF6E16A')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99166F8B466D9A3')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99166F8B466D9A3')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1590888660000)\/",
+	"Guid": "0AA10FE57E901EEAA99166F8B466D9A3",
+	"DateTo": "\/Date(1590917460000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Conveyor Check",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDAA6B90513C5E561F4",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99166F8B466D9A3')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA99166F8B466D9A3')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6C9F705C0A392FE')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6C9F705C0A392FE')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1590005700000)\/",
+	"Guid": "0AA10FE57E901EDAA6C9F705C0A392FE",
+	"DateTo": "\/Date(1590034500000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Conveyor Check",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDAA6B90513C5E581F4",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6C9F705C0A392FE')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6C9F705C0A392FE')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6CBCEF21254B4D4')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6CBCEF21254B4D4')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1589954100000)\/",
+	"Guid": "0AA10FE57E901EDAA6CBCEF21254B4D4",
+	"DateTo": "\/Date(1589982900000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Conveyor belt repair",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDAA6CB66303A7D146A",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "MOBI",
+	"DEMAND_STATUS_ICON": "sap-icon://ipad",
+	"DEMAND_STATUS_COLOR": "#00BFFF",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6CBCEF21254B4D4')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6CBCEF21254B4D4')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAF7CD9625B37C85')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAF7CD9625B37C85')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591864440000)\/",
+	"Guid": "0AA10FE57E901EDAAAF7CD9625B37C85",
+	"DateTo": "\/Date(1591893240000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF915DB5F//0AA10FE57E901ED9B7D4F248D20BFB75",
+	"Description": "Conveyor belt repair",
+	"ResourceGroupGuid": "0AA10FE57E901ED9B7D4F248D20BFB75",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF915DB5F",
+	"DemandGuid": "0AA10FE57E901EDAA6CB66303A7D346A",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067188",
+	"LASTNAME": "Schmidt",
+	"FIRSTNAME": "Walter",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team: Wartung",
+	"RESOURCE_DESCRIPTION": "Walter Schmidt",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAF7CD9625B37C85')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAF7CD9625B37C85')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6D3DA708F599C3A')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6D3DA708F599C3A')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1589981700000)\/",
+	"Guid": "0AA10FE57E901EDAA6D3DA708F599C3A",
+	"DateTo": "\/Date(1589981700000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Rotor not working",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDAA6D176F343F759F2",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6D3DA708F599C3A')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6D3DA708F599C3A')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667416C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667416C')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386320000)\/",
+	"Guid": "0AA10FE57E901EEAAC8FAFFA8667416C",
+	"DateTo": "\/Date(1592386320000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "Evoplan test",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDAA6D1A36E8BABDA1E",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667416C')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAFFA8667416C')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA9930F9E15CFFB2D')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA9930F9E15CFFB2D')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1590754320000)\/",
+	"Guid": "0AA10FE57E901EEAA9930F9E15CFFB2D",
+	"DateTo": "\/Date(1590754320000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDAA6FD39983EA663B1",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA9930F9E15CFFB2D')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAA9930F9E15CFFB2D')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC48A8D785FF0F8')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC48A8D785FF0F8')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591221600000)\/",
+	"Guid": "0AA10FE57E901EEAAAC48A8D785FF0F8",
+	"DateTo": "\/Date(1591307940000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EDAA6FE81C86F89A507",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC48A8D785FF0F8')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC48A8D785FF0F8')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC473D42A35B0E8')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC473D42A35B0E8')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591655820000)\/",
+	"Guid": "0AA10FE57E901EEAAAC473D42A35B0E8",
+	"DateTo": "\/Date(1591655820000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE2C5C3A139AAC//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE2C5C3A139AAC",
+	"DemandGuid": "0AA10FE57E901EDAA6FE81C86F89C507",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067108",
+	"LASTNAME": "Marchal",
+	"FIRSTNAME": "Derik",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Derik Marchal",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC473D42A35B0E8')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC473D42A35B0E8')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAB91E08E3C47F22A')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAB91E08E3C47F22A')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591954080000)\/",
+	"Guid": "0AA10FE57E901EEAAB91E08E3C47F22A",
+	"DateTo": "\/Date(1591954080000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EDAA6FE81C86F89E507",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAB91E08E3C47F22A')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAB91E08E3C47F22A')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC678E711A39276')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC678E711A39276')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591872780000)\/",
+	"Guid": "0AA10FE57E901EEAAAC678E711A39276",
+	"DateTo": "\/Date(1591876380000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Test Work Order",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDAA8B4723FB36F1161",
+	"Effort": "1.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ROUT",
+	"DEMAND_STATUS_ICON": "sap-icon://shipping-status",
+	"DEMAND_STATUS_COLOR": "#FFA500",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC678E711A39276')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC678E711A39276')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC67D7632811277')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC67D7632811277')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591876860000)\/",
+	"Guid": "0AA10FE57E901EEAAAC67D7632811277",
+	"DateTo": "\/Date(1591880460000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Test Work Order",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EDAA8B4723FB36F1161",
+	"Effort": "1.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ROUT",
+	"DEMAND_STATUS_ICON": "sap-icon://shipping-status",
+	"DEMAND_STATUS_COLOR": "#FFA500",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC67D7632811277')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC67D7632811277')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC669B4AB267266')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC669B4AB267266')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591862640000)\/",
+	"Guid": "0AA10FE57E901EEAAAC669B4AB267266",
+	"DateTo": "\/Date(1591869840000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Test Work Order",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EDAA8B4723FB36F3161",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "COMP",
+	"DEMAND_STATUS_ICON": "sap-icon://complete",
+	"DEMAND_STATUS_COLOR": "#006400",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC669B4AB267266')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC669B4AB267266')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC687AEB3A3D285')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC687AEB3A3D285')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591946040000)\/",
+	"Guid": "0AA10FE57E901EEAAAC687AEB3A3D285",
+	"DateTo": "\/Date(1591951440000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Test Work Order",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDAA8B4723FB36F5161",
+	"Effort": "1.5",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ROUT",
+	"DEMAND_STATUS_ICON": "sap-icon://shipping-status",
+	"DEMAND_STATUS_COLOR": "#FFA500",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC687AEB3A3D285')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC687AEB3A3D285')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC68C32931CD285')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC68C32931CD285')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591947360000)\/",
+	"Guid": "0AA10FE57E901EEAAAC68C32931CD285",
+	"DateTo": "\/Date(1591952760000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Test Work Order",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDAA8B4723FB36F5161",
+	"Effort": "1.5",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ROUT",
+	"DEMAND_STATUS_ICON": "sap-icon://shipping-status",
+	"DEMAND_STATUS_COLOR": "#FFA500",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC68C32931CD285')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC68C32931CD285')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAAD0CEF7016A')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAAD0CEF7016A')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592386260000)\/",
+	"Guid": "0AA10FE57E901EEAAC8FAAD0CEF7016A",
+	"DateTo": "\/Date(1592386260000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDAA99B1843FE7FA307",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAAD0CEF7016A')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC8FAAD0CEF7016A')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC653932D0E5251')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC653932D0E5251')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591774260000)\/",
+	"Guid": "0AA10FE57E901EEAAAC653932D0E5251",
+	"DateTo": "\/Date(1591781460000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Test For Dates",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EDAA9DF04E19B7B4A36",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "STRT",
+	"DEMAND_STATUS_ICON": "sap-icon://begin",
+	"DEMAND_STATUS_COLOR": "#E6E6FA",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC653932D0E5251')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC653932D0E5251')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC658A3EDE93255')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC658A3EDE93255')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591859940000)\/",
+	"Guid": "0AA10FE57E901EEAAAC658A3EDE93255",
+	"DateTo": "\/Date(1591867140000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Test For Dates",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDAA9DF04E19B7B4A36",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "STRT",
+	"DEMAND_STATUS_ICON": "sap-icon://begin",
+	"DEMAND_STATUS_COLOR": "#E6E6FA",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC658A3EDE93255')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC658A3EDE93255')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E72E9A102591C6')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E72E9A102591C6')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591607880000)\/",
+	"Guid": "0AA10FE57E901EDAA9E72E9A102591C6",
+	"DateTo": "\/Date(1591622280000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Conveyor Repair",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EDAA9E3D40D33EDAE8A",
+	"Effort": "4.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "COMP",
+	"DEMAND_STATUS_ICON": "sap-icon://complete",
+	"DEMAND_STATUS_COLOR": "#006400",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E72E9A102591C6')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E72E9A102591C6')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E7389084D551CD')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E7389084D551CD')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591611300000)\/",
+	"Guid": "0AA10FE57E901EDAA9E7389084D551CD",
+	"DateTo": "\/Date(1591625700000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE2C5C3A139AAC//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Conveyor Repair",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE2C5C3A139AAC",
+	"DemandGuid": "0AA10FE57E901EDAA9E3D40D33EDAE8A",
+	"Effort": "4.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067108",
+	"LASTNAME": "Marchal",
+	"FIRSTNAME": "Derik",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "COMP",
+	"DEMAND_STATUS_ICON": "sap-icon://complete",
+	"DEMAND_STATUS_COLOR": "#006400",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Derik Marchal",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E7389084D551CD')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA9E7389084D551CD')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBDB64921C286A2')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBDB64921C286A2')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592544480000)\/",
+	"Guid": "0AA10FE57E901EDAACBDB64921C286A2",
+	"DateTo": "\/Date(1592573280000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Gear box testing",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDAACBDAC32E1426699",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBDB64921C286A2')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBDB64921C286A2')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC248849E9509E1')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC248849E9509E1')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592560200000)\/",
+	"Guid": "0AA10FE57E901EDAACC248849E9509E1",
+	"DateTo": "\/Date(1592592600000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "Gear box testing",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EDAACBDAC32E1428699",
+	"Effort": "9.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC248849E9509E1')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC248849E9509E1')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC6776496E0CC90')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC6776496E0CC90')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592048880000)\/",
+	"Guid": "0AA10FE57E901EDAACC6776496E0CC90",
+	"DateTo": "\/Date(1592131920000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF915DB5F//0AA10FE57E901ED9B7D4F248D20BFB75",
+	"Description": "monthly check",
+	"ResourceGroupGuid": "0AA10FE57E901ED9B7D4F248D20BFB75",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF915DB5F",
+	"DemandGuid": "0AA10FE57E901EDAACC65F5C4A5B2C82",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067188",
+	"LASTNAME": "Schmidt",
+	"FIRSTNAME": "Walter",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team: Wartung",
+	"RESOURCE_DESCRIPTION": "Walter Schmidt",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC6776496E0CC90')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC6776496E0CC90')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC6A28A53248CB0')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC6A28A53248CB0')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592401380000)\/",
+	"Guid": "0AA10FE57E901EDAACC6A28A53248CB0",
+	"DateTo": "\/Date(1592494200000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF915FB5F//0AA10FE57E901ED9B7D4F248D20BDB75",
+	"Description": "monatliche Prüfung",
+	"ResourceGroupGuid": "0AA10FE57E901ED9B7D4F248D20BDB75",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF915FB5F",
+	"DemandGuid": "0AA10FE57E901EDAACC687F0124F4C9E",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067189",
+	"LASTNAME": "Lief",
+	"FIRSTNAME": "Erwin",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "externe Mitarbeiter",
+	"RESOURCE_DESCRIPTION": "Erwin Lief",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC6A28A53248CB0')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACC6A28A53248CB0')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC901E6B16E321C8')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC901E6B16E321C8')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592387820000)\/",
+	"Guid": "0AA10FE57E901EEAAC901E6B16E321C8",
+	"DateTo": "\/Date(1592416620000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Foundry maintenance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EEAA29080CA3A83AA3A",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC901E6B16E321C8')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC901E6B16E321C8')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC901E6B16E341C8')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC901E6B16E341C8')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592387820000)\/",
+	"Guid": "0AA10FE57E901EEAAC901E6B16E341C8",
+	"DateTo": "\/Date(1592416620000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Foundry maintenance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EEAA29080CA3A83CA3A",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC901E6B16E341C8')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC901E6B16E341C8')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA61761C5F6F43C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA61761C5F6F43C')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1593043200000)\/",
+	"Guid": "0AA10FE57E901EEAACA61761C5F6F43C",
+	"DateTo": "\/Date(1593122340000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Maintenance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EEAA4EA10F384955634",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA61761C5F6F43C')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA61761C5F6F43C')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAFB9B360A48DF56')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAFB9B360A48DF56')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591962420000)\/",
+	"Guid": "0AA10FE57E901EDAAAFB9B360A48DF56",
+	"DateTo": "\/Date(1591969620000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916DB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "EvoPlan Notification.",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916DB5F",
+	"DemandGuid": "0AA10FE57E901EEAA4EE4477284B3AB4",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067196",
+	"LASTNAME": "Adamy",
+	"FIRSTNAME": "Mirco",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Mirco Adamy",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAFB9B360A48DF56')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAAAFB9B360A48DF56')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACAE2B4B5407BA25')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACAE2B4B5407BA25')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1593043200000)\/",
+	"Guid": "0AA10FE57E901EEAACAE2B4B5407BA25",
+	"DateTo": "\/Date(1593129540000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Machine Maintenance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EEAA4EE63637CD4BAD8",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACAE2B4B5407BA25')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACAE2B4B5407BA25')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACAE30CDB7B7DA32')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACAE30CDB7B7DA32')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1593043200000)\/",
+	"Guid": "0AA10FE57E901EEAACAE30CDB7B7DA32",
+	"DateTo": "\/Date(1593129540000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Machine Maintenance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EEAA4EE63637CD4DAD8",
+	"Effort": "9.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACAE30CDB7B7DA32')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACAE30CDB7B7DA32')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC94682B6BD8C56C')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC94682B6BD8C56C')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592470020000)\/",
+	"Guid": "0AA10FE57E901EEAAC94682B6BD8C56C",
+	"DateTo": "\/Date(1592502420000)\/",
+	"ObjectId": "0AA10FE57E901EEA9EB1B0A27BD4A798//0AA10FE57E901EEAA190B0A7A26BC254",
+	"Description": "Maintenance",
+	"ResourceGroupGuid": "0AA10FE57E901EEAA190B0A7A26BC254",
+	"ResourceGuid": "0AA10FE57E901EEA9EB1B0A27BD4A798",
+	"DemandGuid": "0AA10FE57E901EEAA5A2CB1F533CCF5D",
+	"Effort": "9.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "10003820",
+	"LASTNAME": "Packaging I",
+	"FIRSTNAME": "05",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production inspection I",
+	"RESOURCE_DESCRIPTION": "05 Packaging I",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC94682B6BD8C56C')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC94682B6BD8C56C')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC47B2F25C750EC')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC47B2F25C750EC')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591659180000)\/",
+	"Guid": "0AA10FE57E901EEAAAC47B2F25C750EC",
+	"DateTo": "\/Date(1591683780000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916DB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": " Test GK for FWD int",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916DB5F",
+	"DemandGuid": "0AA10FE57E901EEAA5B4076B355D5FE3",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067196",
+	"LASTNAME": "Adamy",
+	"FIRSTNAME": "Mirco",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Mirco Adamy",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC47B2F25C750EC')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC47B2F25C750EC')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6FD863D2CD1A3FA')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6FD863D2CD1A3FA')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1590124920000)\/",
+	"Guid": "0AA10FE57E901EDAA6FD863D2CD1A3FA",
+	"DateTo": "\/Date(1590157320000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF915FB5F//0AA10FE57E901ED9B7D4F248D20BDB75",
+	"Description": "changed.",
+	"ResourceGroupGuid": "0AA10FE57E901ED9B7D4F248D20BDB75",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF915FB5F",
+	"DemandGuid": "0AA10FE57E901EEAA6AE56075C60B6F4",
+	"Effort": "9.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067189",
+	"LASTNAME": "Lief",
+	"FIRSTNAME": "Erwin",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "externe Mitarbeiter",
+	"RESOURCE_DESCRIPTION": "Erwin Lief",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6FD863D2CD1A3FA')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAA6FD863D2CD1A3FA')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFD0EA4D20B4077')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFD0EA4D20B4077')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591761300000)\/",
+	"Guid": "0AA10FE57E901EEAAAFD0EA4D20B4077",
+	"DateTo": "\/Date(1591813080000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE2C5C3A139AAC//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "changed.",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE2C5C3A139AAC",
+	"DemandGuid": "0AA10FE57E901EEAA6AE56075C60D6F4",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067108",
+	"LASTNAME": "Marchal",
+	"FIRSTNAME": "Derik",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Derik Marchal",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFD0EA4D20B4077')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFD0EA4D20B4077')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFDCF0EB533610F')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFDCF0EB533610F')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591878120000)\/",
+	"Guid": "0AA10FE57E901EEAAAFDCF0EB533610F",
+	"DateTo": "\/Date(1591883400000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "changed.",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EEAA6B073E8BE449975",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFDCF0EB533610F')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFDCF0EB533610F')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC901E6B16E361C8')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC901E6B16E361C8')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592387820000)\/",
+	"Guid": "0AA10FE57E901EEAAC901E6B16E361C8",
+	"DateTo": "\/Date(1592395020000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Gearbox damaged",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EEAA6E5E3DA85FD4C43",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC901E6B16E361C8')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAC901E6B16E361C8')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBEF9C8A59A4FDC')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBEF9C8A59A4FDC')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592988600000)\/",
+	"Guid": "0AA10FE57E901EEAADBEF9C8A59A4FDC",
+	"DateTo": "\/Date(1592988600000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "AMC TEST - AK-2",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EEAA6ED9F69868412C1",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBEF9C8A59A4FDC')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBEF9C8A59A4FDC')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFDD02DC9C1C10F')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFDD02DC9C1C10F')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591885140000)\/",
+	"Guid": "0AA10FE57E901EEAAAFDD02DC9C1C10F",
+	"DateTo": "\/Date(1591885140000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "AMC TEST - AK-2",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EEAA6EDC010579492E2",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFDD02DC9C1C10F')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAFDD02DC9C1C10F')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAB8B381E7D48ECCC')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAB8B381E7D48ECCC')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591931160000)\/",
+	"Guid": "0AA10FE57E901EEAAB8B381E7D48ECCC",
+	"DateTo": "\/Date(1591931160000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF915DB5F//0AA10FE57E901ED9B7D4F248D20BDB75",
+	"Description": "Evoplan test - SH - 2",
+	"ResourceGroupGuid": "0AA10FE57E901ED9B7D4F248D20BDB75",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF915DB5F",
+	"DemandGuid": "0AA10FE57E901EEAA6EDC0552CF272E2",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067188",
+	"LASTNAME": "Schmidt",
+	"FIRSTNAME": "Walter",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "externe Mitarbeiter",
+	"RESOURCE_DESCRIPTION": "Walter Schmidt",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAB8B381E7D48ECCC')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAB8B381E7D48ECCC')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC49B2B31407105')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC49B2B31407105')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1591221600000)\/",
+	"Guid": "0AA10FE57E901EEAAAC49B2B31407105",
+	"DateTo": "\/Date(1591307940000)\/",
+	"ObjectId": "0AA10FE57E901ED9B6EF1FF547C916A5//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "AMC TEST - AK-2",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B6EF1FF547C916A5",
+	"DemandGuid": "0AA10FE57E901EEAA6EDD085436232F5",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00000015",
+	"LASTNAME": "Stuart",
+	"FIRSTNAME": "Michael",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Michael Stuart",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC49B2B31407105')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAAAC49B2B31407105')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACAD33BCCCA55986')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACAD33BCCCA55986')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592487720000)\/",
+	"Guid": "0AA10FE57E901EEAACAD33BCCCA55986",
+	"DateTo": "\/Date(1592494920000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE2C5C3A139AAC//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Test Noification",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE2C5C3A139AAC",
+	"DemandGuid": "0AA10FE57E901EEAAAC798CB91175342",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067108",
+	"LASTNAME": "Marchal",
+	"FIRSTNAME": "Derik",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Derik Marchal",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACAD33BCCCA55986')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACAD33BCCCA55986')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDD774F6B01F40A')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDD774F6B01F40A')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592213760000)\/",
+	"Guid": "0AA10FE57E901EEAABDD774F6B01F40A",
+	"DateTo": "\/Date(1592213760000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EEAABDC81EB9EA8931D",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDD774F6B01F40A')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAABDD774F6B01F40A')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA4B83EE572B326')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA4B83EE572B326')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592575860000)\/",
+	"Guid": "0AA10FE57E901EEAACA4B83EE572B326",
+	"DateTo": "\/Date(1592817120000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE2C5C3A139AAC//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "Machine maintenance",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE2C5C3A139AAC",
+	"DemandGuid": "0AA10FE57E901EEAACA433BF2A1D72B9",
+	"Effort": "2.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067108",
+	"LASTNAME": "Marchal",
+	"FIRSTNAME": "Derik",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Derik Marchal",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA4B83EE572B326')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA4B83EE572B326')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACADD2A16BA179E5')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACADD2A16BA179E5')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592489520000)\/",
+	"Guid": "0AA10FE57E901EEAACADD2A16BA179E5",
+	"DateTo": "\/Date(1592572320000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916DB5F//0AA10FE57E901EE9BBCE2297AA435A96",
+	"Description": "Quality inspection",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916DB5F",
+	"DemandGuid": "0AA10FE57E901EEAACA51ECF2974537D",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067196",
+	"LASTNAME": "Adamy",
+	"FIRSTNAME": "Mirco",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "External Team",
+	"RESOURCE_DESCRIPTION": "Mirco Adamy",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACADD2A16BA179E5')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACADD2A16BA179E5')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA7C5D705A73583')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA7C5D705A73583')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592209920000)\/",
+	"Guid": "0AA10FE57E901EEAACA7C5D705A73583",
+	"DateTo": "\/Date(1592220720000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "motor defect.",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A1B0D",
+	"DemandGuid": "0AA10FE57E901EEAACA7C38CAE1F7583",
+	"Effort": "3.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000000",
+	"LASTNAME": "Robb",
+	"FIRSTNAME": "Ian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Ian Robb",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA7C5D705A73583')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAACA7C5D705A73583')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD4AD0FCA3664E')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD4AD0FCA3664E')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592543040000)\/",
+	"Guid": "0AA10FE57E901EDAACBD4AD0FCA3664E",
+	"DateTo": "\/Date(1592543040000)\/",
+	"ObjectId": "0AA10FE57E901ED9A1AD46FF24755D46//0AA10FE57E901ED9B7D4F248D20BFB75",
+	"Description": "Gearbox damaged 1",
+	"ResourceGroupGuid": "0AA10FE57E901ED9B7D4F248D20BFB75",
+	"ResourceGuid": "0AA10FE57E901ED9A1AD46FF24755D46",
+	"DemandGuid": "0AA10FE57E901EEAACAE8180CAD2BA62",
+	"Effort": "0.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00022000",
+	"LASTNAME": "Braun",
+	"FIRSTNAME": "Markus",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team: Wartung",
+	"RESOURCE_DESCRIPTION": "Markus Braun",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD4AD0FCA3664E')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EDAACBD4AD0FCA3664E')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBDBDBBCD582EC9')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBDBDBBCD582EC9')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592984280000)\/",
+	"Guid": "0AA10FE57E901EEAADBDBDBBCD582EC9",
+	"DateTo": "\/Date(1593013080000)\/",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C31764A5B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+	"Description": "Conveyor check",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
+	"ResourceGuid": "0AA10FE57E901EE9BBCE7C31764A5B0D",
+	"DemandGuid": "0AA10FE57E901EEAADBD724120178EA2",
+	"Effort": "8.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "01000002",
+	"LASTNAME": "Bond",
+	"FIRSTNAME": "Maria",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "MOBI",
+	"DEMAND_STATUS_ICON": "sap-icon://ipad",
+	"DEMAND_STATUS_COLOR": "#00BFFF",
+	"GROUP_DESCRIPTION": "Production Line (TEST)",
+	"RESOURCE_DESCRIPTION": "Maria Bond",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBDBDBBCD582EC9')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADBDBDBBCD582EC9')/Resource"
+		}
+	}
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADC0510912FBF0DE')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADC0510912FBF0DE')",
+		"type": "com.evorait.evoplan.Assignment"
+	},
+	"AssignmentType": "",
+	"DateFrom": "\/Date(1592993220000)\/",
+	"Guid": "0AA10FE57E901EEAADC0510912FBF0DE",
+	"DateTo": "\/Date(1593004020000)\/",
+	"ObjectId": "0AA10FE57E901ED9B7D4E42EF916BB5F//0AA10FE57E901EE9BBCE2297AA437A96",
+	"Description": "AC is not working",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
+	"ResourceGuid": "0AA10FE57E901ED9B7D4E42EF916BB5F",
+	"DemandGuid": "0AA10FE57E901EEAADC04366E3E550D6",
+	"Effort": "3.0",
+	"EffortUnit": "H",
+	"PERSON_NUMBER": "00067195",
+	"LASTNAME": "Hard",
+	"FIRSTNAME": "Florian",
+	"NODE_TYPE": "RESOURCE",
+	"DEMAND_STATUS": "ASGN",
+	"DEMAND_STATUS_ICON": "sap-icon://employee-pane",
+	"DEMAND_STATUS_COLOR": "#90EE90",
+	"GROUP_DESCRIPTION": "Team Test",
+	"RESOURCE_DESCRIPTION": "Florian Hard",
+	"Demand": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADC0510912FBF0DE')/Demand"
+		}
+	},
+	"Resource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0AA10FE57E901EEAADC0510912FBF0DE')/Resource"
+		}
+	}
+}]
