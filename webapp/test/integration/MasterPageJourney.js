@@ -5,7 +5,7 @@ sap.ui.require(
  
 		QUnit.module("Resource Tree");
 
-		/*opaTest("Should see the resource table with different controls", function (Given, When, Then) {
+		opaTest("Should see the resource table with different controls", function (Given, When, Then) {
 			// Arrangements
 			Given.iStartTheApp();
 			//Actions
@@ -14,24 +14,25 @@ sap.ui.require(
 			Then.onTheMasterPage.iShouldSeeThePage()
 				.and.iShouldSeeTheTable()
                 .and.iShouldSeeTheFilterButton()
-                .and.theButtonTextShouldDisplayFilterNumber("2")
-                .and.iShouldSeeTheSearchField()
-                .and.iShouldSeeTheCustomVariant()
-				.and.iShouldSeeFooterPlanningButtonAs(false)
+                // .and.theButtonTextShouldDisplayFilterNumber("2")
+                // .and.iShouldSeeTheSearchField()
+                // .and.iShouldSeeTheCustomVariant();
+				.and.iShouldSeeFooterManageAbsenceButtonAs(false)
 				.and.iShouldSeeFooterUnassignButtonAs(false)
-				.and.iShouldSeeFooterAssignNewButtonAs(false);
-		});*/
-	/*	opaTest("Should See footer buttons as enabled", function (Given, When, Then) {
-			// Actions
-			When.onTheMasterPage.iLookAtTheScreen();
+				.and.iShouldSeeFooterAssignNewButtonAs(false).and.iTeardownMyAppFrame();
+				// .and.iShouldSeeFooterPlanningButtonAs(false);
+		});
+		// opaTest("Should See footer buttons as enabled", function (Given, When, Then) {
+		// 	// Actions
+		// 	When.onTheMasterPage.iLookAtTheScreen();
 				
-            When.onTheMasterPage.iCheckOneResource();
-			// Assertions
-			Then.onTheMasterPage.and.iShouldSeeFooterPlanningButtonAs(true)
-				.and.iShouldSeeFooterUnassignButtonAs(true)
-				.and.iShouldSeeFooterAssignNewButtonAs(true);
+  //          When.onTheMasterPage.iCheckOneResource();
+		// 	// Assertions
+		// 	Then.onTheMasterPage.and.iShouldSeeFooterPlanningButtonAs(true)
+		// 		.and.iShouldSeeFooterUnassignButtonAs(true)
+		// 		.and.iShouldSeeFooterAssignNewButtonAs(true);
                 
-		});*/
+		// });
 		/*opaTest("Should See The Dialog", function (Given, When, Then) {
 			// Actions
             When.onTheMasterPage.iClickOnThePlanningCal();
@@ -53,18 +54,18 @@ sap.ui.require(
                 
 		});*/
 
-		opaTest("Should press on filter button and see the filter dialog", function (Given, When, Then) {
-				// Arrangements
-			Given.iStartTheApp();
-			//Actions
-			When.onTheMasterPage.iLookAtTheScreen();
-			// Actions
-            When.onTheMasterPage.iPressOnFilterButton();
-			// Assertions
-			Then.onTheMasterPage.iShouldSeeFilterDialog()
-                .and.iShouldSeeFilterItems().and.iTeardownMyAppFrame();
+		// opaTest("Should press on filter button and see the filter dialog", function (Given, When, Then) {
+		// 		// Arrangements
+		// 	Given.iStartTheApp();
+		// 	//Actions
+		// 	When.onTheMasterPage.iLookAtTheScreen();
+		// 	// Actions
+  //          When.onTheMasterPage.iPressOnFilterButton();
+		// 	// Assertions
+		// 	Then.onTheMasterPage.iShouldSeeFilterDialog()
+  //              .and.iShouldSeeFilterItems().and.iTeardownMyAppFrame();
                 
-		});
+		// });
 		
 		
 		

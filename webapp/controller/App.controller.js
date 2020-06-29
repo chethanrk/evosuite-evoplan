@@ -1,8 +1,9 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/AssignmentsController",
 	"sap/ui/model/json/JSONModel",
-	"com/evorait/evoplan/model/formatter"
-], function (AssignmentsController, JSONModel, formatter) {
+	"com/evorait/evoplan/model/formatter",
+	"com/evorait/evoplan/test/integration/pages/App",
+], function (AssignmentsController, JSONModel, formatter,App) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.App", {

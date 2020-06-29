@@ -143,6 +143,26 @@ sap.ui.define([
 						errorMessage: "Change status button not found"
 					});
 				},
+				iShouldSeeTheCancelButton:function (sText) {
+					return this.waitFor({
+						id: "idBtnCancel",
+						viewName: sViewName,
+						success: function (oButton) {
+							Opa5.assert.equal(oButton.getText(), "Cancel", "Cancel Button Found .");
+						},
+						errorMessage: "Cancel button not found"
+					});
+				},
+				iShouldSeeBreadcrumbsLink:function () {
+					return this.waitFor({
+						id: "idbreadcrumbLink",
+						viewName: sViewName,
+						success: function (oButton) {
+							Opa5.assert.ok(true, "Breadcrumb link is Visible.");
+						},
+						errorMessage: "Breadcrumb link"
+					});
+				},
 				iShouldSeeTheDemandTitleAs: function (sText) {
 					return this.waitFor({
 						id: "ObjectPageLayoutHeaderTitle",

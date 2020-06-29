@@ -15,27 +15,26 @@ sap.ui.define([
 		When.onTheAppPage.iLookAtTheScreen();
 
 		// Assertions
-		Then.onTheAppPage.iShouldSeeEvoplanLogo().iShouldSeeAboutButton().iShouldSeeTheMenu();
+		Then.onTheAppPage.iShouldSeeEvoplanLogo().iShouldSeeTheMenu().iShouldSeeRefreshButton().iShouldSeeAboutButton();
 		// Cleanup
 		// Then.iTeardownMyAppFrame();
 	});
-	opaTest("Should See Menu Items", function(Given, When, Then) {
+	opaTest("Should See Menu Items", function (Given, When, Then) {
 		// Given.iStartTheApp();
 
 		When.onTheAppPage.iLookAtTheScreen();
-		
-			When.onTheAppPage.iClickOnTheMenu();
+
+		When.onTheAppPage.iClickOnTheMenu();
 
 		Then.onTheAppPage.iShouldSeeMenuItems().and.iTeardownMyAppFrame();
 	});
-	
-	opaTest("Should Display the Information popup", function(Given, When, Then) {
+
+	opaTest("Should Display the Information popup", function (Given, When, Then) {
 		Given.iStartTheApp();
 
 		When.onTheAppPage.iClickOnTheAboutIcon();
 
 		Then.onTheAppPage.iShouldSeeTheInformationPopupWithTitle("xtit.infoDialogTitle").and.iTeardownMyAppFrame();
 	});
-	
 
 });

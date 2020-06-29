@@ -11,11 +11,11 @@
 					<uxap:ObjectPageHeaderActionButton id="idStatusHeaderAction" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
 						visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'}], formatter: '.getVisible' }"
 						hideIcon="false" hideText="false" press="onClickAction"/>
-					<Button text="{i18n>xbut.buttonCancel}" tooltip="{i18n>xbut.buttonCancel}" type="Default" press="navBack"/>
+					<Button text="{i18n>xbut.buttonCancel}" id="idBtnCancel" tooltip="{i18n>xbut.buttonCancel}" type="Default" press="navBack"/>
 				</uxap:actions>
 				<uxap:breadcrumbs>
 					<Breadcrumbs currentLocationText="{i18n>xtit.demandDetail}">
-						<Link text="{viewModel>/detailPageBreadCrum}" press="navBack"/>
+						<Link id="idbreadcrumbLink" text="{viewModel>/detailPageBreadCrum}" press="navBack"/>
 					</Breadcrumbs>
 				</uxap:breadcrumbs>
 			</uxap:ObjectPageHeader>

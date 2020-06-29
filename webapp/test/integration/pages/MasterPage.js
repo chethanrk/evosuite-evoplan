@@ -100,7 +100,7 @@ sap.ui.define([
                     },
 					iShouldSeeThePage: function () {
 						return this.waitFor({
-							id: "masterPage",
+							id: "idResourcePage",
 							viewName: sViewName,
 							success: function (oPage) {
 								oI18nResourceBundle = oPage.getModel("i18n").getResourceBundle();
@@ -121,12 +121,12 @@ sap.ui.define([
 					},
                     iShouldSeeTheFilterButton: function () {
 					    return this.waitFor({
-                            id: "filterResourceButton",
+                            id: "resourceTreeFilterBarFragment",
                             viewName: sViewName,
                             success: function () {
-                                Opa5.assert.ok(true, "The filter button is visible");
+                                Opa5.assert.ok(true, "The filter is visible");
                             },
-                            errorMessage: "Was not able to see filter button."
+                            errorMessage: "Was not able to see filter."
                         });
                     },
                     iShouldSeeTheSearchField: function () {
@@ -198,6 +198,20 @@ sap.ui.define([
                             errorMessage: "Can not find open filter settings"
                         });
                     },
+                    iShouldSeeFooterManageAbsenceButtonAs:function(bEnabled){
+                    	 return this.waitFor({
+                            id: "idButtonCreUA",
+                            viewName: sViewName,
+                            matchers:new PropertyStrictEquals({
+                            	name:"enabled",
+                            	value:bEnabled
+                            }),
+                            success: function () {
+                                Opa5.assert.ok(true, "Footer button Manage Absence is visible and it is enabled("+bEnabled+")");
+                            },
+                            errorMessage: "Was not able to see Manage Absence."
+                        });
+                    },
                     iShouldSeeFooterUnassignButtonAs:function(bEnabled){
                     	 return this.waitFor({
                             id: "idButtonunassign",
@@ -221,7 +235,7 @@ sap.ui.define([
                             	value:bEnabled
                             }),
                             success: function () {
-                                Opa5.assert.ok(true, "Footer button Planning Calendar is visible and it is enabled("+bEnabled+")");
+                                Opa5.assert.ok(true, "Footer button Reassign new is visible and it is enabled("+bEnabled+")");
                             },
                             errorMessage: "Was not able to see Button Reassign new."
                         });
