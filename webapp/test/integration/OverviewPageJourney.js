@@ -5,7 +5,7 @@ sap.ui.define([
 
 	QUnit.module("OverviewPage");
 
-	opaTest("Should See the Table", function(Given, When, Then) {
+	opaTest("Should See the Demands Table", function(Given, When, Then) {
 		Given.iStartTheApp();
 
 
@@ -13,7 +13,7 @@ sap.ui.define([
 		
 		Then.onTheListPage.iShouldSeeTheTable();
 	});
-	opaTest("Should see the table entries", function (Given, When, Then) {
+	opaTest("Should see the Demands table entries", function (Given, When, Then) {
 		// Arrangements
 		// Given.iStartTheAppWithDelay("",0);
 		
@@ -41,9 +41,12 @@ sap.ui.define([
 		When.onOverviewPage.iLookAtTheScreen();
 
 		// Assertions
-		Then.onOverviewPage.iShouldSeeTheAssignButton("i18n>xbut.assign").
-			and.iShouldSeeTheChangeStatusButton("i18n>xbut.changeStatus").
-			and.iShouldSeeTheDemandTitleAs("Test order for EvoPlan integration").
+		Then.onOverviewPage
+			// .iShouldSeeTheAssignButton("i18n>xbut.assign").and
+			.iShouldSeeTheChangeStatusButton("i18n>xbut.changeStatus").
+			and.iShouldSeeTheCancelButton("i18n>xbut.buttonCancel").
+			and.iShouldSeeBreadcrumbsLink().
+			// and.iShouldSeeTheDemandTitleAs("Test order for EvoPlan integration").
 			and.iShouldSeeTheSections().and.iShouldSeeAssignmentTable();
 	});
 	opaTest("Should see the specific staus when I click on change status", function (Given, When, Then) {
@@ -55,7 +58,7 @@ sap.ui.define([
 		
 		When.onOverviewPage.iClickOnTheChangeStatus();
 		
-			Then.onOverviewPage.iShouldSeeRespectiveStatus().and.iShouldSeeStatus("Transfer to mobile");
+			Then.onOverviewPage.iShouldSeeRespectiveStatus().and.iShouldSeeStatus("Complete");
 	});
 	opaTest("Should see the assignment update Dialog", function (Given, When, Then) {
 		// Actions

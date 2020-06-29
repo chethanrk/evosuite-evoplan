@@ -42,7 +42,7 @@ sap.ui.define([
 		When.onTheBrowserPage.iChangeTheHashToTheRememberedItem();
 
 		// Assertions
-		Then.onGantt.theViewIsNotBusyAnymore();
+		Then.onGantt.theViewIsNotBusyAnymore().and.iTeardownMyAppFrame();
 	});
 /*	opaTest("Gantt Demand Header Button Check: ", function (Given, When, Then) {
 

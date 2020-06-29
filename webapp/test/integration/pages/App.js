@@ -111,6 +111,20 @@ sap.ui.define([
 						errorMessage: "There is no Logo Available"
 					});
 				},
+				iShouldSeeRefreshButton: function () {
+					return this.waitFor({
+						viewName: sViewName,
+						id: "idButtonRefresh",
+						matchers: new PropertyStrictEquals({
+							name: "icon",
+							value: "sap-icon://refresh"
+						}),
+						success: function () {
+							Opa5.assert.ok(true, "I can see the Refresh button icon");
+						},
+						errorMessage: "There is no Button available for refresh"
+					});
+				},
 				iShouldSeeAboutButton: function () {
 					return this.waitFor({
 						viewName: sViewName,
@@ -120,7 +134,7 @@ sap.ui.define([
 							value: "sap-icon://sys-help"
 						}),
 						success: function () {
-							Opa5.assert.ok(true, "I can see the button icon");
+							Opa5.assert.ok(true, "I can see the About button icon");
 						},
 						errorMessage: "There is no Button icon available for information pop up"
 					});
@@ -142,7 +156,7 @@ sap.ui.define([
 						autoWait: true,
 						success: function (oButton) {
 							var oItems = oButton.getAggregation("menu").getAggregation("items");
-							Opa5.assert.equal(2, oItems.length, "I can see the Menu Items");
+							Opa5.assert.equal(5, oItems.length, "I can see the Menu Items");
 						},
 						errorMessage: "There is no Button Available"
 					});
