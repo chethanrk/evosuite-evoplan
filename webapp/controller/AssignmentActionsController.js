@@ -21,7 +21,8 @@ sap.ui.define([
 		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, isStreched, aGuids) {
 			var oModel = this.getModel(),
 				targetObj = oModel.getProperty(sTargetPath),
-				aItems = aSourcePaths ? aSourcePaths : aGuids;
+				aItems = aSourcePaths ? aSourcePaths : aGuids,
+				aPromises = [];
 				
 			this.clearMessageModel();
 
@@ -62,8 +63,9 @@ sap.ui.define([
 				if(isStreched){
                     oParams.Stretched = true;
 				}
-				return this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST");
+				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}
+			return aPromises;
 		},
         /**
 		 * Deletes the assignment

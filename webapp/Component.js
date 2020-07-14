@@ -83,6 +83,7 @@ sap.ui.define([
 				delay: 0,
 				assetStartDate: new Date(),
 				dragSession: null, // Drag session added as we are keeping dragged data in the model.
+				gantDragSession: null, // Drag session from Gantt View added as we are keeping dragged data in the model.
 				detailPageBreadCrum: "",
 				capacityPlanning: false,
 				splitterDivider: "35%",

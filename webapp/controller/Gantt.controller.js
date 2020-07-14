@@ -157,7 +157,8 @@ sap.ui.define([
                 oBrowserEvent = oEvent.getParameter("browserEvent"),
                 oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
                 oDropContext = oDroppedControl.getBindingContext(),
-                sDragPath = oDragContext ? oDragContext.getPath() : localStorage.getItem("Evo-Dmnd-guid"),
+                slocStor = localStorage.getItem("Evo-Dmnd-guid"),
+                sDragPath =   this.getModel("viewModel").getProperty("/gantDragSession"),
                 oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
                 oViewModel = this.getModel("viewModel"),
                 oResourceData = this.getModel().getProperty(oDropContext.getPath()),
@@ -182,14 +183,14 @@ sap.ui.define([
 				// When we drop on gantt chart
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				// oAxisTime.viewToTime(<oSvgPoint>) will give the time stamp for dropped location
-				this._assignDemands(oResourceData, [sDragPath], oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
+				this._assignDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
 			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) {
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
-				this._assignDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), false, [sDragPath]);
+				this._assignDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), false, sDragPath);
 			} else if (oDragContext) {
-				this._assignDemands(oResourceData, [sDragPath], oDropContext.getPath(), null, true);
+				this._assignDemands(oResourceData, sDragPath, oDropContext.getPath(), null, true);
 			} else {
-				this._assignDemands(oResourceData, null, oDropContext.getPath(), null, true, [sDragPath]);
+				this._assignDemands(oResourceData, null, oDropContext.getPath(), null, true, sDragPath);
 			}
 		},
 		/**
@@ -212,17 +213,17 @@ sap.ui.define([
                         return;
                     }
                     if (!data.Unavailable) {
-                        this.assignedDemands(aSources, oTarget, oTargetDate, false, aGuids)
+                        Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, false, aGuids))
                             .then(this._refreshAreas.bind(this)).catch(function (error) {
                         }.bind(this));
                     } else {
                         this._showConfirmMessageBox(oResourceModel.getText("ymsg.extendMsg")).then(function (value) {
                             if (value === "NO") {
-                                this.assignedDemands(aSources, oTarget, oTargetDate, true, aGuids)
+                                Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, true, aGuids))
                                     .then(this._refreshAreas.bind(this)).catch(function (error) {
                                 }.bind(this));
                             } else {
-                                this.assignedDemands(aSources, oTarget, oTargetDate, false, aGuids)
+                                Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, false, aGuids))
                                     .then(this._refreshAreas.bind(this)).catch(function (error) {
                                 }.bind(this));
                             }
@@ -231,7 +232,7 @@ sap.ui.define([
                 }.bind(this));
 
             } else {
-                this.assignedDemands(aSources, oTarget, oTargetDate, false, aGuids)
+                Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, false, aGuids))
                     .then(this._refreshAreas.bind(this)).catch(function (error) {
                 }.bind(this));
             }

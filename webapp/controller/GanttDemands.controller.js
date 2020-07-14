@@ -72,7 +72,38 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onDragStart: function (oEvent) {
-			var oDragSession = oEvent.getParameter("dragSession"),
+				var oDragSession = oEvent.getParameter("dragSession"),
+				oDraggedControl = oDragSession.getDragControl();
+
+			var aIndices = this._oDataTable.getSelectedIndices(),
+				oSelectedPaths, aPathsData,aSelDemandGuid = [];
+
+			oDragSession.setTextData("Hi I am dragging");
+			//get all selected rows when checkboxes in table selected
+			if (aIndices.length > 0) {
+				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, aIndices, true);
+				aPathsData = oSelectedPaths.aPathsData;
+			} else {
+				//table tr single dragged element
+				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, [oDraggedControl.getIndex()], true);
+				aPathsData = oSelectedPaths.aPathsData;
+			}
+			
+			aPathsData.forEach(function(item) {
+					aSelDemandGuid.push(item.sPath);
+						});
+						
+			this.getModel("viewModel").setProperty("/gantDragSession", aSelDemandGuid);
+			localStorage.setItem("Evo-Dmnd-guid", aSelDemandGuid);
+			
+			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
+				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+				oEvent.preventDefault();
+			}
+			
+			
+			
+			/*var oDragSession = oEvent.getParameter("dragSession"),
 				oDraggedControl = oDragSession.getDragControl(),
 				oContext = oDraggedControl.getBindingContext(),
 				sPath = oContext.getPath(),
@@ -82,7 +113,7 @@ sap.ui.define([
 			if (!this.isDemandAssignable(sPath)) {
 				this._showAssignErrorDialog([oDemand.DemandDesc]);
 				oEvent.preventDefault();
-			}
+			}*/
 		},
 		/**
 		 * on press assign button in footer
