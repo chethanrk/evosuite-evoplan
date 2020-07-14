@@ -97,6 +97,9 @@ sap.ui.define([
 				oRouter.navTo("ganttSplit", {});
 				window.open("#SplitPage/SplitDemands", "_blank");
 				break;
+            case oResourceBundle.getText("xbut.pageMap"):
+                 oRouter.navTo("map", {});
+                 break;
 			default:
 				oRouter.navTo("demands", {});
 				oAppViewModel.setProperty("/pageTitle", oResourceBundle.getText("xbut.pageDemands"));
@@ -151,7 +154,9 @@ sap.ui.define([
 			}else if(oParams.config.pattern.startsWith("SplitPage")){
 				pageTitle = oResourceBundle.getText("xbut.pageGanttChartSplit");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
-			}
+			}else if(oParams.config.pattern.startsWith("Map")){
+                pageTitle = oResourceBundle.getText("xbut.pageMap");
+            }
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
 			oAppViewModel.setProperty("/currentRoute", oParams.name);
 			oAppViewModel.setProperty("/busy", false);

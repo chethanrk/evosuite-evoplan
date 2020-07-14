@@ -1,0 +1,30 @@
+<mvc:View xmlns="sap.m"
+          xmlns:mvc="sap.ui.core.mvc"
+          xmlns:vbm="sap.ui.vbm"
+          xmlns:vk="sap.ui.vk"
+          controllerName="com.evorait.evoplan.controller.map.Map"
+          displayBlock="true"
+          height="100%">
+    <Page id="MapPage" showFooter="true" showHeader="false">
+
+        <vk:MapContainer autoAdjustHeight="true">
+            <vk:content>
+                <vk:ContainerContent title="Geographic Map">
+                    <vk:content>
+                        <vbm:GeoMap id="idGeoMap" drop="onDrop" initialZoom="5" initialPosition="77.52633333206177;12.963101322467267;0.0">
+                            <vbm:vos>
+                                <vbm:Spots>
+                                    <vbm:Spot position="77;12;0" />
+                                    <vbm:Spot position="77;13;0" />
+                                </vbm:Spots>
+                            </vbm:vos>
+                        </vbm:GeoMap>
+                    </vk:content>
+                </vk:ContainerContent>
+            </vk:content>
+        </vk:MapContainer>
+
+
+    </Page>
+
+</mvc:View>
