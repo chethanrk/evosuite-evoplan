@@ -286,6 +286,12 @@
 					"viewLevel": 2,
 					"controlId": "appPanel"
 				},
+				"split3MapNavigation": {
+					"viewType": "XML",
+					"viewName": "layouts.Split3MapViewsNavi",
+					"viewLevel": 2,
+					"controlId": "appPanel"
+				},
 				"fullNavigation": {
 					"viewType": "XML",
 					"viewName": "layouts.FullViewNavi",
@@ -395,8 +401,8 @@
 					"viewType": "XML",
 					"viewName": "Map",
 					"viewPath": "com.evorait.evoplan.view.map",
-					"parent": "fullNavigation",
-					"controlId": "fullPanel",
+					"parent": "split3MapNavigation",
+					"controlId": "topRightPanel",
 					"viewLevel": 3
 				}
 			}
