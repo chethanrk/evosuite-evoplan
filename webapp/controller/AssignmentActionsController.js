@@ -21,12 +21,13 @@ sap.ui.define([
 		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, isStreched, aGuids) {
 			var oModel = this.getModel(),
 				targetObj = oModel.getProperty(sTargetPath),
-				aItems = aSourcePaths ? aSourcePaths : aGuids;
+				aItems = aSourcePaths ? aSourcePaths : aGuids,
+				aPromises = [];
 				
 			this.clearMessageModel();
 
 			for (var i = 0; i < aItems.length; i++) {
-				var sDemandGuid = aSourcePaths ? oModel.getProperty(aItems[i]).Guid : aItems[i],
+				var sDemandGuid =  oModel.getProperty(aItems[i]).Guid ,
 					oParams = {
 						"DemandGuid": sDemandGuid,
 						"ResourceGroupGuid": targetObj.ResourceGroupGuid,
@@ -62,8 +63,9 @@ sap.ui.define([
 				if(isStreched){
                     oParams.Stretched = true;
 				}
-				return this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST");
+				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}
+			return aPromises;
 		},
         /**
 		 * Deletes the assignment
