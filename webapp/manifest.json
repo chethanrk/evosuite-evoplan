@@ -19,7 +19,7 @@
 			]
 		},
 		"applicationVersion": {
-			"version": "3.1.4"
+			"version": "4.0.0"
 		},
 		"dataSources": {
 			"mainService": {
@@ -264,6 +264,13 @@
 					"target": [
 						"ganttDemandDetails"
 					]
+				},
+				{
+					"pattern": "Map",
+					"name": "map",
+					"target": [
+						"map"
+					]
 				}
 			],
 			"targets": {
@@ -383,6 +390,14 @@
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",
 					"viewLevel": 4
+				},
+				"map": {
+					"viewType": "XML",
+					"viewName": "Map",
+					"viewPath": "com.evorait.evoplan.view.map",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 3
 				}
 			}
 		}
