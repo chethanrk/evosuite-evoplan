@@ -1,18 +1,14 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:layout="sap.ui.layout">
 	<!--Layout for Map View-->
-	<layout:Splitter id="mapSplit" orientation="Vertical">
-		<layout:Splitter id="topSplit">
-			<NavContainer id="topLeftPanel" class="panelPage">
-				<layoutData>
-					<layout:SplitterLayoutData size="25%"/>
-				</layoutData>
-			</NavContainer>
-			<NavContainer id="topRightPanel" class="panelPage"/>
-		</layout:Splitter>
-		<NavContainer id="bottomPanel" class="panelPage">
+	<layout:Splitter id="mapSplit" >
+		<NavContainer id="leftPanel" class="panelPage">
 			<layoutData>
-				<layout:SplitterLayoutData size="32%"/>
+				<layout:SplitterLayoutData size="{viewModel>/splitterDivider}"/>
 			</layoutData>
 		</NavContainer>
+		<layout:Splitter id="rightSplit" orientation="Vertical">
+			<NavContainer id="topRightPanel" class="panelPage"/>
+			<NavContainer id="bottomRightPanel" class="panelPage"/>
+		</layout:Splitter>
 	</layout:Splitter>
 </mvc:View>
