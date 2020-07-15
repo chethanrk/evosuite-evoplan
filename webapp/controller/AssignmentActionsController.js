@@ -27,7 +27,7 @@ sap.ui.define([
 			this.clearMessageModel();
 
 			for (var i = 0; i < aItems.length; i++) {
-				var sDemandGuid = aSourcePaths ? oModel.getProperty(aItems[i]).Guid : aItems[i],
+				var sDemandGuid =  oModel.getProperty(aItems[i]).Guid ,
 					oParams = {
 						"DemandGuid": sDemandGuid,
 						"ResourceGroupGuid": targetObj.ResourceGroupGuid,

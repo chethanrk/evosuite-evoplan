@@ -158,7 +158,7 @@ sap.ui.define([
                 oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
                 oDropContext = oDroppedControl.getBindingContext(),
                 slocStor = localStorage.getItem("Evo-Dmnd-guid"),
-                sDragPath =   this.getModel("viewModel").getProperty("/gantDragSession"),
+                sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : slocStor.split(","),
                 oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
                 oViewModel = this.getModel("viewModel"),
                 oResourceData = this.getModel().getProperty(oDropContext.getPath()),
@@ -800,7 +800,7 @@ sap.ui.define([
          */
         _checkAvailability: function (aSources, oTarget, oTargetDate, aGuids) {
             var oModel = this.getModel(),
-                sGuid = aSources ? oModel.getProperty(aSources[0] + "/Guid") : aGuids[0];
+                sGuid = aSources ? oModel.getProperty(aSources[0] + "/Guid") : oModel.getProperty(aGuids[0] + "/Guid");
             return new Promise(function (resolve, reject) {
                 this.executeFunctionImport(oModel, {
                     ResourceGuid: oModel.getProperty(oTarget + "/ResourceGuid"),
