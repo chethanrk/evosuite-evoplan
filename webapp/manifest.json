@@ -269,7 +269,8 @@
 					"pattern": "Map",
 					"name": "map",
 					"target": [
-						"map"
+						"map",
+						"mapDemands"
 					]
 				}
 			],
@@ -403,6 +404,14 @@
 					"viewPath": "com.evorait.evoplan.view.map",
 					"parent": "split3MapNavigation",
 					"controlId": "topRightPanel",
+					"viewLevel": 3
+				},
+				"mapDemands": {
+					"viewType": "XML",
+					"viewName": "MapDemands",
+					"viewPath": "com.evorait.evoplan.view.map",
+					"parent": "split3MapNavigation",
+					"controlId": "bottomRightPanel",
 					"viewLevel": 3
 				}
 			}
