@@ -248,7 +248,8 @@ sap.ui.define([
 				bFromDetail: false,
 				bFromGantt: false,
 				bFromGanttSplit:false,
-				bFromDemandSplit:false
+				bFromDemandSplit:false,
+				bFromMap:false
 			};
 
 			if (oParameter.bFromHome) {
@@ -269,7 +270,12 @@ sap.ui.define([
 			} else if (oParameter.bFromGantt) {
 				eventBus.publish("BaseController", "refreshGanttChart", {});
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			} else if(oParameter.bFromGanttSplit){
+			}
+			else if (oParameter.bFromMap) {
+				eventBus.publish("BaseController", "refreshTreeTable", {});
+				eventBus.publish("BaseController", "refreshMapView", {});
+				eventBus.publish("BaseController", "refreshMapDemandTable", {});
+			}else if(oParameter.bFromGanttSplit){
 				eventBus.publish("BaseController", "refreshGanttChart", {});
 			} else if(oParameter.bFromDemandSplit){
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});

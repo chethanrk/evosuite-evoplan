@@ -23,7 +23,7 @@ sap.ui.define([
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
 			this._oEventBus = sap.ui.getCore().getEventBus();
-			this._oEventBus.subscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
+			this._oEventBus.subscribe("BaseController", "refreshMapDemandTable", this._refreshDemandTable, this);
 			this._oDraggableTable = this.byId("draggableList");
 			this._oDataTable = this._oDraggableTable.getTable();
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
@@ -149,7 +149,7 @@ sap.ui.define([
 			this.openEvoOrder(sOrderId);
 		},
 		onExit: function () {
-			this._oEventBus.unsubscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
+			this._oEventBus.unsubscribe("BaseController", "refreshMapDemandTable", this._refreshDemandTable, this);
 		}
 
 	});
