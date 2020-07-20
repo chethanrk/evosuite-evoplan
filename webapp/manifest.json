@@ -270,7 +270,8 @@
 					"name": "map",
 					"target": [
 						"map",
-						"mapDemands"
+						"mapDemands",
+						"ganttResourceTree"
 					]
 				}
 			],
@@ -412,6 +413,13 @@
 					"viewPath": "com.evorait.evoplan.view.map",
 					"parent": "split3MapNavigation",
 					"controlId": "bottomRightPanel",
+					"viewLevel": 3
+				},
+				"ganttResourceTree": {
+					"viewType": "XML",
+					"viewName": "ResourceTree",
+					"parent": "split3MapNavigation",
+					"controlId": "leftPanel",
 					"viewLevel": 3
 				}
 			}
