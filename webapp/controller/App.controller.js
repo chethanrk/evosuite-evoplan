@@ -207,6 +207,7 @@ sap.ui.define([
 			else{
                     this._eventBus.publish("BaseController", "refreshTreeTable", {});
                     this._eventBus.publish("BaseController", "refreshDemandTable", {});
+                    this._eventBus.publish("BaseController", "refreshMapView", {});
 			}
 
 		},
@@ -287,6 +288,8 @@ sap.ui.define([
 				this._eventBus.publish("BaseController", "refreshAssets",{});
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				this._eventBus.publish("BaseController", "refreshMapView", {});
+				this._eventBus.publish("BaseController", "refreshMapDemandTable", {});
 			}.bind(this),function(data){
 				//
 			}.bind(this)).catch(function(data){
