@@ -331,7 +331,7 @@ sap.ui.define([
 		onClickExpandCollapse: function (oEvent) {
 			var oButton = oEvent.getSource(),
 				oCustomData = oButton.getCustomData();
-
+            this.mTreeState = {};
 			if (oCustomData[0].getValue() === "EXPAND" && this._oDataTable) {
 				this._oDataTable.expandToLevel(1);
 			} else {
@@ -387,6 +387,9 @@ sap.ui.define([
 			} else {
 				this.mTreeState = {};
 			}
-		}
+		},
+        onToggleOpenState:function(){
+            this.mTreeState = {};
+        }
 	});
 });
