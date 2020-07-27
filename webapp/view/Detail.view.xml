@@ -1,87 +1,90 @@
 <mvc:View controllerName="com.evorait.evoplan.controller.Detail" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
 	xmlns:uxap="sap.uxap" xmlns:sections="com.evorait.evoplan.block.sections" xmlns:layout="sap.ui.layout" displayBlock="true" height="100%">
-	<uxap:ObjectPageLayout id="ObjectPageLayout" class="sapUiNoContentPadding" enableLazyLoading="false" busy="{viewModel>/busy}"
-		busyIndicatorDelay="{viewModel>/delay}" isChildPage="true" showFooter="true">
-		<uxap:headerTitle>
-			<uxap:ObjectPageHeader class="sapUiNoContentPadding" objectImageURI="{STATUS_ICON}" objectImageShape="Circle" objectTitle="{DemandDesc}" objectSubtitle="{ExtKey}"
-				objectImageAlt="{i18n>xfld.demandName}" id="ObjectPageLayoutHeaderTitle">
-				<uxap:actions>
-					<uxap:ObjectPageHeaderActionButton id="idAssignHeaderAction" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" type="Emphasized" hideIcon="false"
-						hideText="false" press="onClickAssign" visible="{ALLOW_ASSIGN}"/>
-					<uxap:ObjectPageHeaderActionButton id="idStatusHeaderAction" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
-						visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'}], formatter: '.getVisible' }"
-						hideIcon="false" hideText="false" press="onClickAction"/>
-					<Button text="{i18n>xbut.buttonCancel}" id="idBtnCancel" tooltip="{i18n>xbut.buttonCancel}" type="Default" press="navBack"/>
-				</uxap:actions>
-				<uxap:breadcrumbs>
-					<Breadcrumbs currentLocationText="{i18n>xtit.demandDetail}">
-						<Link id="idbreadcrumbLink" text="{viewModel>/detailPageBreadCrum}" press="navBack"/>
-					</Breadcrumbs>
-				</uxap:breadcrumbs>
-			</uxap:ObjectPageHeader>
-		</uxap:headerTitle>
-		<uxap:headerContent>
-			<layout:VerticalLayout>
-				<ObjectStatus title="{/#Demand/Status/@sap:label}" text="{Status} ({StatusDesc})"/>
-				<ObjectStatus title="{/#Demand/Source/@sap:label}" text="{Source}"/>
-			</layout:VerticalLayout>
-		</uxap:headerContent>
-		<uxap:sections>
-			<uxap:ObjectPageSection title="{i18n>xtit.general}">
-				<uxap:subSections>
-					<uxap:ObjectPageSubSection>
-						<uxap:blocks>
-							<sections:GeneralBlock id="detailsFormBlock"/>
-						</uxap:blocks>
-					</uxap:ObjectPageSubSection>
-				</uxap:subSections>
-			</uxap:ObjectPageSection>
-			<uxap:ObjectPageSection title="{i18n>xtit.dates}">
-				<uxap:subSections>
-					<uxap:ObjectPageSubSection>
-						<uxap:blocks>
-							<sections:DateBlock id="datesBlock"/>
-						</uxap:blocks>
-					</uxap:ObjectPageSubSection>
-				</uxap:subSections>
-			</uxap:ObjectPageSection>
-			<uxap:ObjectPageSection title="{i18n>xtit.details}">
-				<uxap:subSections >
-					<uxap:ObjectPageSubSection title="{i18n>xtit.pmDetails}" visible="{= ${OBJECT_SOURCE_TYPE} === 'DEM_PMWO' ? true : false}">
-						<uxap:blocks>
-							<sections:PMDetailsBlock id="pmDetailBlock"/>
-						</uxap:blocks>
-					</uxap:ObjectPageSubSection>
-				</uxap:subSections>
-				<uxap:subSections>
-					<uxap:ObjectPageSubSection title="{i18n>xtit.notDetails}" visible="{= ${OBJECT_SOURCE_TYPE} === 'DEM_PMNO' ? true : false}">
-						<uxap:blocks>
-							<sections:NotificationBlock id="notDetailBlock"/>
-						</uxap:blocks>
-					</uxap:ObjectPageSubSection>
-				</uxap:subSections>
-			</uxap:ObjectPageSection>
-			<uxap:ObjectPageSection title="{i18n>xtit.assignments}">
-				<uxap:subSections>
-					<uxap:ObjectPageSubSection>
-						<uxap:blocks>
-							<sections:AssignmentBlock id="assignMentsBlock" onRowClick="onRowClick"/>
-						</uxap:blocks>
-					</uxap:ObjectPageSubSection>
-				</uxap:subSections>
-			</uxap:ObjectPageSection>
-			<uxap:ObjectPageSection title="{i18n>xtit.longText}">
-				<uxap:subSections>
-					<uxap:ObjectPageSubSection>
-						<uxap:blocks>
-							<sections:LongTextBlock id="longTextBlock"/>
-						</uxap:blocks>
-					</uxap:ObjectPageSubSection>
-				</uxap:subSections>
-			</uxap:ObjectPageSection>
-		</uxap:sections>
-		<uxap:footer>
-			<OverflowToolbar></OverflowToolbar>
-		</uxap:footer>
-	</uxap:ObjectPageLayout>
+	<Page id="ObjectPageWrapper" class="sapUiNoContentPadding" showHeader="false" showFooter="false" showSubHeader="false" showNavButton="false">
+		<content></content>
+	</Page>
+	<!--<uxap:ObjectPageLayout id="ObjectPageLayout" class="sapUiNoContentPadding" enableLazyLoading="false" busy="{viewModel>/busy}"-->
+	<!--	busyIndicatorDelay="{viewModel>/delay}" isChildPage="true" showFooter="true">-->
+	<!--	<uxap:headerTitle>-->
+	<!--		<uxap:ObjectPageHeader class="sapUiNoContentPadding" objectImageURI="{STATUS_ICON}" objectImageShape="Circle" objectTitle="{DemandDesc}" objectSubtitle="{ExtKey}"-->
+	<!--			objectImageAlt="{i18n>xfld.demandName}" id="ObjectPageLayoutHeaderTitle">-->
+	<!--			<uxap:actions>-->
+	<!--				<uxap:ObjectPageHeaderActionButton id="idAssignHeaderAction" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" type="Emphasized" hideIcon="false"-->
+	<!--					hideText="false" press="onClickAssign" visible="{ALLOW_ASSIGN}"/>-->
+	<!--				<uxap:ObjectPageHeaderActionButton id="idStatusHeaderAction" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"-->
+	<!--					visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'}], formatter: '.getVisible' }"-->
+	<!--					hideIcon="false" hideText="false" press="onClickAction"/>-->
+	<!--				<Button text="{i18n>xbut.buttonCancel}" id="idBtnCancel" tooltip="{i18n>xbut.buttonCancel}" type="Default" press="navBack"/>-->
+	<!--			</uxap:actions>-->
+	<!--			<uxap:breadcrumbs>-->
+	<!--				<Breadcrumbs currentLocationText="{i18n>xtit.demandDetail}">-->
+	<!--					<Link id="idbreadcrumbLink" text="{viewModel>/detailPageBreadCrum}" press="navBack"/>-->
+	<!--				</Breadcrumbs>-->
+	<!--			</uxap:breadcrumbs>-->
+	<!--		</uxap:ObjectPageHeader>-->
+	<!--	</uxap:headerTitle>-->
+	<!--	<uxap:headerContent>-->
+	<!--		<layout:VerticalLayout>-->
+	<!--			<ObjectStatus title="{/#Demand/Status/@sap:label}" text="{Status} ({StatusDesc})"/>-->
+	<!--			<ObjectStatus title="{/#Demand/Source/@sap:label}" text="{Source}"/>-->
+	<!--		</layout:VerticalLayout>-->
+	<!--	</uxap:headerContent>-->
+	<!--	<uxap:sections>-->
+	<!--		<uxap:ObjectPageSection title="{i18n>xtit.general}">-->
+	<!--			<uxap:subSections>-->
+	<!--				<uxap:ObjectPageSubSection>-->
+	<!--					<uxap:blocks>-->
+	<!--						<sections:GeneralBlock id="detailsFormBlock"/>-->
+	<!--					</uxap:blocks>-->
+	<!--				</uxap:ObjectPageSubSection>-->
+	<!--			</uxap:subSections>-->
+	<!--		</uxap:ObjectPageSection>-->
+	<!--		<uxap:ObjectPageSection title="{i18n>xtit.dates}">-->
+	<!--			<uxap:subSections>-->
+	<!--				<uxap:ObjectPageSubSection>-->
+	<!--					<uxap:blocks>-->
+	<!--						<sections:DateBlock id="datesBlock"/>-->
+	<!--					</uxap:blocks>-->
+	<!--				</uxap:ObjectPageSubSection>-->
+	<!--			</uxap:subSections>-->
+	<!--		</uxap:ObjectPageSection>-->
+	<!--		<uxap:ObjectPageSection title="{i18n>xtit.details}">-->
+	<!--			<uxap:subSections >-->
+	<!--				<uxap:ObjectPageSubSection title="{i18n>xtit.pmDetails}" visible="{= ${OBJECT_SOURCE_TYPE} === 'DEM_PMWO' ? true : false}">-->
+	<!--					<uxap:blocks>-->
+	<!--						<sections:PMDetailsBlock id="pmDetailBlock"/>-->
+	<!--					</uxap:blocks>-->
+	<!--				</uxap:ObjectPageSubSection>-->
+	<!--			</uxap:subSections>-->
+	<!--			<uxap:subSections>-->
+	<!--				<uxap:ObjectPageSubSection title="{i18n>xtit.notDetails}" visible="{= ${OBJECT_SOURCE_TYPE} === 'DEM_PMNO' ? true : false}">-->
+	<!--					<uxap:blocks>-->
+	<!--						<sections:NotificationBlock id="notDetailBlock"/>-->
+	<!--					</uxap:blocks>-->
+	<!--				</uxap:ObjectPageSubSection>-->
+	<!--			</uxap:subSections>-->
+	<!--		</uxap:ObjectPageSection>-->
+	<!--		<uxap:ObjectPageSection title="{i18n>xtit.assignments}">-->
+	<!--			<uxap:subSections>-->
+	<!--				<uxap:ObjectPageSubSection>-->
+	<!--					<uxap:blocks>-->
+	<!--						<sections:AssignmentBlock id="assignMentsBlock" onRowClick="onRowClick"/>-->
+	<!--					</uxap:blocks>-->
+	<!--				</uxap:ObjectPageSubSection>-->
+	<!--			</uxap:subSections>-->
+	<!--		</uxap:ObjectPageSection>-->
+	<!--		<uxap:ObjectPageSection title="{i18n>xtit.longText}">-->
+	<!--			<uxap:subSections>-->
+	<!--				<uxap:ObjectPageSubSection>-->
+	<!--					<uxap:blocks>-->
+	<!--						<sections:LongTextBlock id="longTextBlock"/>-->
+	<!--					</uxap:blocks>-->
+	<!--				</uxap:ObjectPageSubSection>-->
+	<!--			</uxap:subSections>-->
+	<!--		</uxap:ObjectPageSection>-->
+	<!--	</uxap:sections>-->
+	<!--	<uxap:footer>-->
+	<!--		<OverflowToolbar></OverflowToolbar>-->
+	<!--	</uxap:footer>-->
+	<!--</uxap:ObjectPageLayout>-->
 </mvc:View>

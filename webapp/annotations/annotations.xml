@@ -81,13 +81,11 @@
 									<PropertyValue Property="LocalDataProperty" PropertyPath="Description"/>
 									<PropertyValue Property="ValueListProperty" String="AvailabilityDesc"/>
 								</Record>
-
 							</Collection>
 						</PropertyValue>
 					</Record>
 				</Annotation>
 			</Annotations>
-
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceHierarchy">
 				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
 					<Collection>
@@ -95,6 +93,228 @@
 							<PropertyValue Property="Value" Path="Description"/>
 						</Record>
 					</Collection>
+				</Annotation>
+			</Annotations>
+		</Schema>
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand">
+				<!--<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="General">-->
+				<!--	<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">-->
+				<!--		<PropertyValue Property="Data">-->
+				<!--			<Collection>-->
+				<!--				<Record Type="UI.DataField">-->
+				<!--					<PropertyValue Property="Value" Path="Guid"/>-->
+				<!--				</Record>-->
+				<!--				<Record Type="UI.DataField">-->
+				<!--					<PropertyValue Property="Value" Path="DemandDesc"/>-->
+				<!--				</Record>-->
+				<!--				<Record Type="UI.DataField">-->
+				<!--					<PropertyValue Property="Value" Path="Status"/>-->
+				<!--				</Record>-->
+				<!--				<Record Type="UI.DataField">-->
+				<!--					<PropertyValue Property="Value" Path="StatusDesc"/>-->
+				<!--				</Record>-->
+				<!--			</Collection>-->
+				<!--		</PropertyValue>-->
+				<!--		<PropertyValue Property="Label" String="General"/>-->
+				<!--	</Record>-->
+				<!--</Annotation>-->
+				<Annotation Term="UI.Identification">
+					<Collection/>
+				</Annotation>
+				<Annotation Term="UI.DataPoint" Qualifier="SOURCE">
+					<Record Type="com.sap.vocabularies.UI.v1.DataPointType">
+						<PropertyValue Property="Value" Path="Source"/>
+						<PropertyValue Property="Title" String="Source of Object"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.DataPoint" Qualifier="STATUS">
+					<Record Type="com.sap.vocabularies.UI.v1.DataPointType">
+						<PropertyValue Property="Value" Path="Status"/>
+						<PropertyValue Property="LongDescription" Path="StatusDesc"/>
+						<PropertyValue Property="Title" String="{@i18n&gt;xfld.status}"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.HeaderFacets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Target" AnnotationPath="@UI.DataPoint#STATUS"/>
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Target" AnnotationPath="@UI.DataPoint#SOURCE"/>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
+					<Record Type="com.sap.vocabularies.UI.v1.HeaderInfoType">
+						<PropertyValue Property="TypeName" String="Title"/>
+						<PropertyValue Property="TypeNamePlural" String="appTitle"/>
+						<PropertyValue Property="Title">
+							<Record Type="com.sap.vocabularies.UI.v1.DataField">
+								<PropertyValue Property="Label" String="Request Description"/>
+								<PropertyValue Property="Value" Path="DemandDesc"/>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<Record Type="com.sap.vocabularies.UI.v1.DataField">
+								<PropertyValue Property="Label" String="Request Description"/>
+								<PropertyValue Property="Value" Path="DemandDesc"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.Facets">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.CollectionFacet">
+							<PropertyValue Property="Label" String="General"/>
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#General"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+							<Annotation Term="Org.OData.Core.V1.Description" String="Form"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+							<PropertyValue Property="Label" String="Dates"/>
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#Dates"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+							<Annotation Term="Org.OData.Core.V1.Description" String="Form"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+							<PropertyValue Property="Label" String="PM Details"/>
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#PmDetails"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+							<Annotation Term="Org.OData.Core.V1.Description" String="Form"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+							<PropertyValue Property="Label" String="Assignments"/>
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#Assignments"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+							<PropertyValue Property="Label" String="Long Text"/>
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#LongText"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+							<Annotation Term="Org.OData.Core.V1.Description" String="Form"/>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="General">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<!--<PropertyValue Property="Label" String="General"/>-->
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="DemandDesc"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="ExtKey"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="Source"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="Status"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Dates">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<!--<PropertyValue Property="Label" String="Date"/>-->
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="DateFrom"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="TimeFrom"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="Effort"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="DateTo"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="TimeTo"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="PmDetails">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="ORDERID"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="ORDER_DESC"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="OPERATIONID"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="SUBOPERATIONID"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="OPERATION_DESC"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="REVISION_NO"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Assignments">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="DemandDesc"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="LongText">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="LONG_TEXT"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
 				</Annotation>
 			</Annotations>
 		</Schema>

@@ -3,15 +3,18 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/AssignmentsController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/routing/History",
-	"com/evorait/evoplan/model/formatter"
+	"com/evorait/evoplan/model/formatter",
+	"com/evorait/evoplan/controller/TemplateRenderController"
+
 ], function (
 	BaseController,
 	JSONModel,
 	History,
-	formatter
+	formatter,
+	TempCon
 ) {
 	"use strict";
-
+	var TempCon1 = sap.ui.controller("com.evorait.evoplan.controller.TemplateRenderController");
 	return BaseController.extend("com.evorait.evoplan.controller.Detail", {
 
 		formatter: formatter,
@@ -101,10 +104,12 @@ sap.ui.define([
 			}
 
 			oDataModel.metadataLoaded().then(function () {
-				var sPath = this.getModel().createKey("DemandSet", {
+				var sPath = this.getModel().createKey("/DemandSet", {
 					Guid: sGuid
 				});
-				this._bindView("/" + sPath);
+				this._bindView(sPath);
+
+				TempCon1.insertTemplateFragment(sPath, this.getView(), "ObjectPageWrapper",null, null, this);
 			}.bind(this));
 		},
 
