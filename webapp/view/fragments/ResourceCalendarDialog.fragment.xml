@@ -25,12 +25,16 @@
 												    {path:'/#Demand/OPERATION_DESC/@sap:label'},
 												    {path:'/#Demand/StatusDesc/@sap:label'},
 												    {path:'/#Demand/REMAINING_WORK_TIME/@sap:label'},
+												    {path:'i18n>xtit.headerSysStatus'},
+												    {path:'i18n>xtit.headerUsrStatus'},
 													{path:'calendarModel>Demand/ORDERID'},
 													{path:'calendarModel>Demand/DemandDesc'}, 
 													{path:'calendarModel>Demand/OPERATIONID'}, 
 													{path:'calendarModel>Demand/OPERATION_DESC'}, 
 													{path:'calendarModel>Demand/StatusDesc'}, 
-													{path:'calendarModel>Demand/REMAINING_WORK_TIME'} 
+													{path:'calendarModel>Demand/REMAINING_WORK_TIME'},
+													{path:'calendarModel>Demand/HeaderSStatus'},
+													{path:'calendarModel>Demand/HeaderUStatus'}
 												], 
 												formatter: '.formatter.formatAsnToolTip'
 											}"
