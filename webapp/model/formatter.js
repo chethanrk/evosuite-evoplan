@@ -458,14 +458,17 @@ sap.ui.define([
          * 
          */
          formatAsnToolTip: function(orderId,demandDesc,opId,operaton,status,remTimelabel,id, desc, operationId, oparationDesc, statusDesc,remTime){
-        	// return (id? id: "")+((id && desc)? " : "+desc : desc)+((desc && operationId) ? " : "+operationId : operationId)+((operationId && oparationDesc) ? " : "+oparationDesc : oparationDesc)+((oparationDesc && statusDesc) ? " : "+statusDesc : statusDesc);
-        	
-        	return  (id? orderId + ":"+ id : "") +"\n" +
-        			(desc? demandDesc + ": "+ desc : "") +"\n" +
-        			(operationId? opId + ": "+ operationId : "") +"\n" +
-        			(oparationDesc? operaton+ ": "+ oparationDesc : "") +"\n"+
-        			(statusDesc? status + ": "+ statusDesc : "") + "\n" +
-        			(remTime ? remTimelabel + ": " + remTime : "") + "\n";
+            var iArg = arguments.length, sToolTip="";
+
+            for(var i =0; i < iArg/2; i++){
+                if(i === (iArg/2)){
+                    sToolTip = sToolTip + (arguments[(iArg/2)+i]? arguments[i] + ":" + arguments[(iArg/2)+i] : "");
+                }else{
+                    sToolTip =sToolTip + (arguments[(iArg/2)+i]? arguments[i] + ":" + arguments[(iArg/2)+i] : "") + "\n";
+                }
+
+            }
+            return sToolTip;
         },
 
         formatListMode : function (bIsActive) {
