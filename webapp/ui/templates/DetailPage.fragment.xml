@@ -57,26 +57,26 @@
 												<template:if test="{:= (${sections>Org.OData.Core.V1.Description/String} === 'Form')}">
 													<template:then>
 														<template:with path="sections>Facets" var="facets">
-															<smartForm:SmartForm>
-																<smartForm:layout>
-																	<smartForm:Layout labelSpanXL="3" labelSpanL="5" labelSpanM="5" labelSpanS="12" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
-																		columnsXL="4" columnsL="4" columnsM="4"></smartForm:Layout>
-																</smartForm:layout>
-																<template:repeat list="{facets>}">
-																	<template:with path="facets>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
-																		<smartForm:Group label="{path:'target>Label',formatter:'.AH.format'}">
-																			<template:with path="target>Data" var="data">
-																				<template:repeat list="{data>}">
-																					<smartForm:GroupElement>
-																						<smartField:SmartField value="{path:'data>Value',formatter:'.AH.simplePath'}"/>
-																					</smartForm:GroupElement>
-																				</template:repeat>
-																			</template:with>
-																		</smartForm:Group>
-																	</template:with>
-																</template:repeat>
-															</smartForm:SmartForm>
-															
+															<!--<smartForm:SmartForm>-->
+															<!--	<smartForm:layout>-->
+															<!--		<smartForm:Layout labelSpanXL="3" labelSpanL="5" labelSpanM="5" labelSpanS="12" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"-->
+															<!--			columnsXL="4" columnsL="4" columnsM="4"></smartForm:Layout>-->
+															<!--	</smartForm:layout>-->
+															<!--	<template:repeat list="{facets>}">-->
+															<!--		<template:with path="facets>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">-->
+															<!--			<smartForm:Group label="{path:'target>Label',formatter:'.AH.format'}">-->
+															<!--				<template:with path="target>Data" var="data">-->
+															<!--					<template:repeat list="{data>}">-->
+															<!--						<smartForm:GroupElement>-->
+															<!--							<smartField:SmartField value="{path:'data>Value',formatter:'.AH.simplePath'}"/>-->
+															<!--						</smartForm:GroupElement>-->
+															<!--					</template:repeat>-->
+															<!--				</template:with>-->
+															<!--			</smartForm:Group>-->
+															<!--		</template:with>-->
+															<!--	</template:repeat>-->
+															<!--</smartForm:SmartForm>-->
+															<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.FormTemplate" type="XML"/>
 														</template:with>
 													</template:then>
 													<template:else>

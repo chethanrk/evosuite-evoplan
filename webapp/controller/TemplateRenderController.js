@@ -9,7 +9,7 @@ sap.ui.define([
 ], function (BaseController, Controller, CoreView, ViewType, AnnotationHelper, XMLTemplateProcessor, XMLPreprocessor) {
 	"use strict";
 
-	return Controller.extend("com.evorait.evoplan.controller.TemplateRenderController", {
+	return BaseController.extend("com.evorait.evoplan.controller.TemplateRenderController", {
 
 		mTemplates: {},
 
@@ -104,7 +104,7 @@ sap.ui.define([
 							oViewContainer.insertContent(oTemplateView);
 							this.bindView(oTemplateView, sPath, callbackFn);
 						}.bind(this);
-						this.createView(oModel, oMetaModel, sPath, sViewName, oController, oViewContainer, that);
+						this.GenerateForms(oModel, oMetaModel, sPath, sViewName, oController, oViewContainer, that);
 						// this.createView(oModel, oMetaModel, sPath, sViewName, oController).then(setTemplateAndBind);
 						// if (sControllerName) {
 						// 	Controller.create({
@@ -130,10 +130,11 @@ sap.ui.define([
 		 * @param sPath
 		 * @param sViewName
 		 */
-		createView: function (oModel, oMetaModel, sPath, oView, oController,oViewContainer, that) {
+		GenerateForms: function (oModel, oMetaModel, sPath, oView, oController, oViewContainer, that) {
 			var oFragment = XMLTemplateProcessor.loadTemplate("com.evorait.evoplan.ui.templates.DetailPage", "fragment");
 			oMetaModel.loaded().then(function () {
-				var oProcessedFragment = XMLPreprocessor.process(oFragment, {
+				// var oProcessedFragment = 
+				XMLPreprocessor.process(oFragment, {
 					caller: "XML-Fragment-templating"
 				}, {
 					bindingContexts: {
@@ -142,11 +143,16 @@ sap.ui.define([
 					models: {
 						meta: oMetaModel
 					}
-				});
-				var oContent = sap.ui.xmlfragment({
-					fragmentContent: oProcessedFragment
-				}, that);
-				oViewContainer.addContent(oContent);
+				}).then(function (oProcessedFragment) {
+					var oContent = sap.ui.xmlfragment({
+						fragmentContent: oProcessedFragment
+					}, that);
+					oViewContainer.addContent(oContent);
+				}.bind(this));
+				// var oContent = sap.ui.xmlfragment({
+				// 	fragmentContent: oProcessedFragment
+				// }, that);
+				// oViewContainer.addContent(oContent);
 			});
 			// var sViewId = this._getTemplateViewId(sViewNameId, true),
 			// 	sViewName = this._getTemplateViewId(sViewNameId, false),

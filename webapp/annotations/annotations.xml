@@ -240,6 +240,22 @@
 								</Record>
 							</Collection>
 						</PropertyValue>
+						<!--<PropertyValue Property="Data2">-->
+						<!--	<Collection>-->
+								<!--<Record Type="com.sap.vocabularies.UI.v1.DataField">-->
+								<!--	<PropertyValue Property="Value" Path="DemandDesc"/>-->
+								<!--</Record>-->
+								<!--<Record Type="com.sap.vocabularies.UI.v1.DataField">-->
+								<!--	<PropertyValue Property="Value" Path="ExtKey"/>-->
+								<!--</Record>-->
+						<!--		<Record Type="com.sap.vocabularies.UI.v1.DataField">-->
+						<!--			<PropertyValue Property="Value" Path="Source"/>-->
+						<!--		</Record>-->
+						<!--		<Record Type="com.sap.vocabularies.UI.v1.DataField">-->
+						<!--			<PropertyValue Property="Value" Path="Status"/>-->
+						<!--		</Record>-->
+						<!--	</Collection>-->
+						<!--</PropertyValue>-->
 					</Record>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Dates">

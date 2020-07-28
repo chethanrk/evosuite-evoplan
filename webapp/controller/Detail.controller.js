@@ -14,8 +14,7 @@ sap.ui.define([
 	TempCon
 ) {
 	"use strict";
-	var TempCon1 = sap.ui.controller("com.evorait.evoplan.controller.TemplateRenderController");
-	return BaseController.extend("com.evorait.evoplan.controller.Detail", {
+	return TempCon.extend("com.evorait.evoplan.controller.Detail", {
 
 		formatter: formatter,
 
@@ -109,7 +108,7 @@ sap.ui.define([
 				});
 				this._bindView(sPath);
 
-				TempCon1.insertTemplateFragment(sPath, this.getView(), "ObjectPageWrapper",null, null, this);
+				this.insertTemplateFragment(sPath, this.getView(), "ObjectPageWrapper",null, null, this);
 			}.bind(this));
 		},
 
