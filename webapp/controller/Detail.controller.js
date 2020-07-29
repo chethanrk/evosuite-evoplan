@@ -253,13 +253,9 @@ sap.ui.define([
 		 * open's a action sheets with possible statuses. 
 		 */
 		onClickAction: function (oEvent) {
-			if (!this._oActionSheet) {
-				this._oActionSheet = sap.ui.xmlfragment(this.getView().getId(), "com.evorait.evoplan.view.fragments.StatusActionSheet", this);
-				this.getView().addDependent(this._oActionSheet);
-			}
 			// TODO
 			localStorage.setItem("Evo-Action-page", "DemandDetails");
-			this._oActionSheet.openBy(oEvent.getSource());
+			sap.ui.getCore().byId("idStatusActionSheet").openBy(oEvent.getSource());
 		},
 		getVisible: function (a, b, c) {
 			return a && !b && c !== "COMP";

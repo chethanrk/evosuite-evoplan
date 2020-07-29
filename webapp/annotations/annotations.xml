@@ -95,30 +95,7 @@
 					</Collection>
 				</Annotation>
 			</Annotations>
-		<!--</Schema>-->
-		<!--<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">-->
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand">
-				<!--<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="General">-->
-				<!--	<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">-->
-				<!--		<PropertyValue Property="Data">-->
-				<!--			<Collection>-->
-				<!--				<Record Type="UI.DataField">-->
-				<!--					<PropertyValue Property="Value" Path="Guid"/>-->
-				<!--				</Record>-->
-				<!--				<Record Type="UI.DataField">-->
-				<!--					<PropertyValue Property="Value" Path="DemandDesc"/>-->
-				<!--				</Record>-->
-				<!--				<Record Type="UI.DataField">-->
-				<!--					<PropertyValue Property="Value" Path="Status"/>-->
-				<!--				</Record>-->
-				<!--				<Record Type="UI.DataField">-->
-				<!--					<PropertyValue Property="Value" Path="StatusDesc"/>-->
-				<!--				</Record>-->
-				<!--			</Collection>-->
-				<!--		</PropertyValue>-->
-				<!--		<PropertyValue Property="Label" String="General"/>-->
-				<!--	</Record>-->
-				<!--</Annotation>-->
 				<Annotation Term="UI.Identification">
 					<Collection/>
 				</Annotation>
@@ -347,6 +324,65 @@
 							</Collection>
 						</PropertyValue>
 					</Record>
+				</Annotation>
+				<Annotation Term="UI.LineItem" Qualifier="StatusActions">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_ACKNOWLDGE"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xbut.ack}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://email"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_APPOINTMNT"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xbut.app}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://email"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_CLOSED"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xbut.buttonClose}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://email"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_COMPLETE"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xbut.comp}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://complete"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_DEM_MOBILE"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xbut.tranMob}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://ipad"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_DISPATCHED"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xbut.disp}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://email"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_ENROUTE"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xbut.enroute}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://shipping-status"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_INCOMPLETE"/>
+							<PropertyValue Property="Label" String="{i18n&gt;xbut.inComp}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://email"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_ONHOLD"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://email"/>
+							<PropertyValue Property="Label" String="{i18n&gt;xbut.onhold}"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_REJECT"/>
+							<PropertyValue Property="Label" String="{i18n&gt;xbut.reject}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://email"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_STARTED"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://begin"/>
+							<PropertyValue Property="Label" String="{i18n&gt;xbut.start}"/>
+						</Record>
+					</Collection>
 				</Annotation>
 			</Annotations>
 		</Schema>

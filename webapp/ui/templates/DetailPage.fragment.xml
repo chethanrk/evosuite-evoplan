@@ -12,7 +12,11 @@
 							objectSubtitle="{ExtKey}" objectImageAlt="{i18n>xfld.demandName}" id="ObjectPageLayoutHeaderTitle">
 							<uxap:actions>
 								<uxap:ObjectPageHeaderActionButton id="idAssignHeaderAction" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" type="Emphasized"
-									hideIcon="false" hideText="false" press="onClickAssign" visible="{ALLOW_ASSIGN}"/>
+									hideIcon="false" hideText="false" press="onClickAssign" visible="{ALLOW_ASSIGN}">
+									<uxap:dependents>
+										<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.ActionSheetTemplate" type="XML"/>
+									</uxap:dependents>
+								</uxap:ObjectPageHeaderActionButton>
 								<uxap:ObjectPageHeaderActionButton id="idStatusHeaderAction" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
 									visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'}], formatter: '.getVisible' }"
 									hideIcon="false" hideText="false" press="onClickAction"/>
@@ -41,7 +45,6 @@
 												</template:else>
 											</template:if>
 										</template:with>
-										<!--<ObjectStatus title="{/#Demand/Source/@sap:label}" text="{Source}"/>-->
 									</template:repeat>
 								</layout:content>
 							</layout:VerticalLayout>
@@ -57,25 +60,6 @@
 												<template:if test="{:= (${sections>Org.OData.Core.V1.Description/String} === 'Form')}">
 													<template:then>
 														<template:with path="sections>Facets" var="facets">
-															<!--<smartForm:SmartForm>-->
-															<!--	<smartForm:layout>-->
-															<!--		<smartForm:Layout labelSpanXL="3" labelSpanL="5" labelSpanM="5" labelSpanS="12" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"-->
-															<!--			columnsXL="4" columnsL="4" columnsM="4"></smartForm:Layout>-->
-															<!--	</smartForm:layout>-->
-															<!--	<template:repeat list="{facets>}">-->
-															<!--		<template:with path="facets>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">-->
-															<!--			<smartForm:Group label="{path:'target>Label',formatter:'.AH.format'}">-->
-															<!--				<template:with path="target>Data" var="data">-->
-															<!--					<template:repeat list="{data>}">-->
-															<!--						<smartForm:GroupElement>-->
-															<!--							<smartField:SmartField value="{path:'data>Value',formatter:'.AH.simplePath'}"/>-->
-															<!--						</smartForm:GroupElement>-->
-															<!--					</template:repeat>-->
-															<!--				</template:with>-->
-															<!--			</smartForm:Group>-->
-															<!--		</template:with>-->
-															<!--	</template:repeat>-->
-															<!--</smartForm:SmartForm>-->
 															<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.FormTemplate" type="XML"/>
 														</template:with>
 													</template:then>
@@ -83,26 +67,6 @@
 														<sections:AssignmentBlock id="assignMentsBlock" onRowClick="onRowClick"/>
 													</template:else>
 												</template:if>
-												<!--<template:with path="sections>Facets" var="facets">-->
-												<!--<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.FormTemplate" type="XML"/>-->
-												<!--</template:with>-->
-												<!--<template:with path="sections>Facets" var="facets">-->
-												<!--	<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.FormTemplate" type="XML"/>-->
-												<!--</template:with>-->
-												<!--<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.FormTemplate" type="XML"/>-->
-												<!--<template:if test="{:= (${sections>Org.OData.Core.V1.Description/String} === 'Form')}">-->
-												<!--	<template:then>-->
-												<!--		<template:with path="sections>Facets" var="facets">-->
-												<!--			<core:Fragment fragmentName="com.evorait.evotime.ui.templates.FormTemplate" type="XML"/>-->
-												<!--		</template:with>-->
-												<!--	</template:then>-->
-												<!--	<template:elseif test="{:= (${sections>Org.OData.Core.V1.Description/String} === 'Date')}">-->
-												<!--						<date:DateBlock id="datesBlock" onEdit="onEdit"/>-->
-												<!--	</template:elseif>-->
-												<!--	<template:else>-->
-												<!--		<log:TimeLineBlock formatChangeIndicator="formatChangeIndicator"/>-->
-												<!--	</template:else>-->
-												<!--</template:if>-->
 											</uxap:blocks>
 										</uxap:ObjectPageSubSection>
 									</uxap:subSections>
@@ -113,25 +77,5 @@
 				</uxap:ObjectPageLayout>
 			</template:with>
 		</template:if>
-		<!--<Button text="ABC"></Button>-->
-		<!--<template:with path="meta>com.sap.vocabularies.UI.v1.FieldGroup#General" var="fieldGroup">-->
-		<!--	<template:if test="{meta>com.sap.vocabularies.UI.v1.FieldGroup#General}">-->
-		<!--		<smartForm:SmartForm>-->
-		<!--			<smartForm:layout>-->
-		<!--				<smartForm:Layout labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"-->
-		<!--					columnsXL="1" columnsL="1" columnsM="1"></smartForm:Layout>-->
-		<!--			</smartForm:layout>-->
-		<!--			<smartForm:Group label="{path:'fieldGroup>Label',formatter:'.AH.format'}">-->
-		<!--				<template:with path="fieldGroup>Data" var="data">-->
-		<!--					<template:repeat list="{data>}">-->
-		<!--						<smartForm:GroupElement>-->
-		<!--							<smartField:SmartField value="{path:'data>Value',formatter:'.AH.simplePath'}"/>-->
-		<!--						</smartForm:GroupElement>-->
-		<!--					</template:repeat>-->
-		<!--				</template:with>-->
-		<!--			</smartForm:Group>-->
-		<!--		</smartForm:SmartForm>-->
-		<!--	</template:if>-->
-		<!--</template:with>-->
 	</template:alias>
 </core:FragmentDefinition>

@@ -54,7 +54,7 @@ sap.ui.define([
 					// when template was already in use then just integrate in viewContainer and bind new path
 					// will improve performance
 					// oViewContainer.insertContent(this.mTemplates[sViewName]);
-					this.bindView(this.mTemplates[sViewName], sPath, callbackFn);
+					this.bindView(this.mTemplates[sViewName], sPath, callbackFn, sViewName);
 				} else {
 					//load template view ansync and interpret annotations based on metadata model
 					//and bind view path and save interpreted template global for reload
@@ -71,7 +71,7 @@ sap.ui.define([
 					}.bind(this));
 				}
 			} else {
-				this.bindView(aContent[0], sPath, callbackFn);
+				this.bindView(aContent[0], sPath, callbackFn, sViewName);
 			}
 		},
 
@@ -109,14 +109,13 @@ sap.ui.define([
 		 * @param oView
 		 * @param sPath
 		 */
-		bindView: function (oView, sPath, callbackFn) {
+		bindView: function (oView, sPath, callbackFn , sViewName) {
 			oView.unbindElement();
 			oView.bindElement({
 				path: sPath,
 				events: {
 					change: function () {
-						var sViewName = this._joinTemplateViewNameId(oView.getId(), oView.getViewName()),
-							eventBus = sap.ui.getCore().getEventBus();
+						var eventBus = sap.ui.getCore().getEventBus();
 
 						eventBus.publish("TemplateRenderer", "changedBinding", {
 							viewNameId: sViewName
