@@ -107,7 +107,7 @@ sap.ui.define([
 					Guid: sGuid
 				});
 				this._bindView(sPath);
-
+				//setting up the templates for the Sections
 				this.insertTemplateFragment(sPath, this.getView(), "ObjectPageWrapper",null, null, this);
 			}.bind(this));
 		},

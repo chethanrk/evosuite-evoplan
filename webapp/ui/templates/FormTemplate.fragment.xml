@@ -17,15 +17,6 @@
 						</template:repeat>
 					</template:with>
 				</smartForm:Group>
-				<!--<smartForm:Group label="{path:'target>Label',formatter:'.AH.format'}">-->
-				<!--	<template:with path="target>Data2" var="data">-->
-				<!--		<template:repeat list="{data>}">-->
-				<!--			<smartForm:GroupElement>-->
-				<!--				<smartField:SmartField value="{path:'data>Value',formatter:'.AH.simplePath'}"/>-->
-				<!--			</smartForm:GroupElement>-->
-				<!--		</template:repeat>-->
-				<!--	</template:with>-->
-				<!--</smartForm:Group>-->
 			</template:with>
 		</template:repeat>
 	</smartForm:SmartForm>
