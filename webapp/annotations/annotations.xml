@@ -95,8 +95,8 @@
 					</Collection>
 				</Annotation>
 			</Annotations>
-		</Schema>
-		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">
+		<!--</Schema>-->
+		<!--<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">-->
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand">
 				<!--<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="General">-->
 				<!--	<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">-->
@@ -170,7 +170,10 @@
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#General"/>
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#GeneralGroup1"/>
+									</Record>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#GeneralGroup2"/>
 									</Record>
 								</Collection>
 							</PropertyValue>
@@ -181,7 +184,10 @@
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#Dates"/>
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#DatesGroup1"/>
+									</Record>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#DatesGroup2"/>
 									</Record>
 								</Collection>
 							</PropertyValue>
@@ -192,7 +198,10 @@
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#PmDetails"/>
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#PmDetailsGroup1"/>
+									</Record>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#PmDetailsGroup2"/>
 									</Record>
 								</Collection>
 							</PropertyValue>
@@ -221,7 +230,7 @@
 						</Record>
 					</Collection>
 				</Annotation>
-				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="General">
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="GeneralGroup1">
 					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
 						<!--<PropertyValue Property="Label" String="General"/>-->
 						<PropertyValue Property="Data">
@@ -232,6 +241,15 @@
 								<Record Type="com.sap.vocabularies.UI.v1.DataField">
 									<PropertyValue Property="Value" Path="ExtKey"/>
 								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="GeneralGroup2">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<!--<PropertyValue Property="Label" String="General"/>-->
+						<PropertyValue Property="Data">
+							<Collection>
 								<Record Type="com.sap.vocabularies.UI.v1.DataField">
 									<PropertyValue Property="Value" Path="Source"/>
 								</Record>
@@ -240,25 +258,9 @@
 								</Record>
 							</Collection>
 						</PropertyValue>
-						<!--<PropertyValue Property="Data2">-->
-						<!--	<Collection>-->
-								<!--<Record Type="com.sap.vocabularies.UI.v1.DataField">-->
-								<!--	<PropertyValue Property="Value" Path="DemandDesc"/>-->
-								<!--</Record>-->
-								<!--<Record Type="com.sap.vocabularies.UI.v1.DataField">-->
-								<!--	<PropertyValue Property="Value" Path="ExtKey"/>-->
-								<!--</Record>-->
-						<!--		<Record Type="com.sap.vocabularies.UI.v1.DataField">-->
-						<!--			<PropertyValue Property="Value" Path="Source"/>-->
-						<!--		</Record>-->
-						<!--		<Record Type="com.sap.vocabularies.UI.v1.DataField">-->
-						<!--			<PropertyValue Property="Value" Path="Status"/>-->
-						<!--		</Record>-->
-						<!--	</Collection>-->
-						<!--</PropertyValue>-->
 					</Record>
 				</Annotation>
-				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Dates">
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="DatesGroup1">
 					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
 						<!--<PropertyValue Property="Label" String="Date"/>-->
 						<PropertyValue Property="Data">
@@ -272,6 +274,15 @@
 								<Record Type="com.sap.vocabularies.UI.v1.DataField">
 									<PropertyValue Property="Value" Path="Effort"/>
 								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="DatesGroup2">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<!--<PropertyValue Property="Label" String="Date"/>-->
+						<PropertyValue Property="Data">
+							<Collection>
 								<Record Type="com.sap.vocabularies.UI.v1.DataField">
 									<PropertyValue Property="Value" Path="DateTo"/>
 								</Record>
@@ -282,7 +293,7 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
-				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="PmDetails">
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="PmDetailsGroup1">
 					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
 						<PropertyValue Property="Data">
 							<Collection>
@@ -295,9 +306,14 @@
 								<Record Type="com.sap.vocabularies.UI.v1.DataField">
 									<PropertyValue Property="Value" Path="OPERATIONID"/>
 								</Record>
-								<Record Type="com.sap.vocabularies.UI.v1.DataField">
-									<PropertyValue Property="Value" Path="SUBOPERATIONID"/>
-								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="PmDetailsGroup2">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<PropertyValue Property="Data">
+							<Collection>
 								<Record Type="com.sap.vocabularies.UI.v1.DataField">
 									<PropertyValue Property="Value" Path="OPERATION_DESC"/>
 								</Record>
