@@ -96,9 +96,6 @@
 				</Annotation>
 			</Annotations>
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand">
-				<Annotation Term="UI.Identification">
-					<Collection/>
-				</Annotation>
 				<Annotation Term="UI.DataPoint" Qualifier="SOURCE">
 					<Record Type="com.sap.vocabularies.UI.v1.DataPointType">
 						<PropertyValue Property="Value" Path="Source"/>

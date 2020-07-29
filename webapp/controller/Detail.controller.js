@@ -11,10 +11,10 @@ sap.ui.define([
 	JSONModel,
 	History,
 	formatter,
-	TempCon
+	TemplateRenderController
 ) {
 	"use strict";
-	return TempCon.extend("com.evorait.evoplan.controller.Detail", {
+	return TemplateRenderController.extend("com.evorait.evoplan.controller.Detail", {
 
 		formatter: formatter,
 
@@ -89,7 +89,8 @@ sap.ui.define([
 			var sGuid = oEvent.getParameter("arguments").guid,
 				oDataModel = this.getModel(),
 				sRouteName = oEvent.getParameter("name"),
-				oResourceBundle = this.getResourceBundle();
+				oResourceBundle = this.getResourceBundle(),
+				iContentLength = this.getView().byId("ObjectPageWrapper").getContent().length;
 
 			// setting the bread crum value xtit.itemListTitle
 			if (sRouteName === "detail") {
@@ -108,7 +109,9 @@ sap.ui.define([
 				});
 				this._bindView(sPath);
 				//setting up the templates for the Sections
-				this.insertTemplateFragment(sPath, this.getView(), "ObjectPageWrapper",null, null, this);
+				if (!iContentLength) {
+					this.insertTemplateFragment(sPath, this.getView(), "ObjectPageWrapper", null, null, this);
+				}
 			}.bind(this));
 		},
 

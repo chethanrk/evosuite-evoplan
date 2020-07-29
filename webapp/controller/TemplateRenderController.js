@@ -42,37 +42,15 @@ sap.ui.define([
 				oModel = oView.getModel(),
 				sViewName = oView.getViewName().split(".").pop(),
 				aContent = oViewContainer.getContent();
-			// if (aContent.length > 0) {
-			// 	var sContentViewName = this._joinTemplateViewNameId(aContent[0].getId(), aContent[0].getViewName());
-			// 	if (sContentViewName !== sViewName) {
-			// 		oViewContainer.removeAllContent();
-			// 		aContent = oViewContainer.getContent();
-			// 	}
-			// }
 			if (aContent.length === 0 && sPath) {
-				if (this.mTemplates[sViewName]) {
-					// when template was already in use then just integrate in viewContainer and bind new path
-					// will improve performance
-					// oViewContainer.insertContent(this.mTemplates[sViewName]);
-					this.bindView(this.mTemplates[sViewName], sPath, callbackFn, sViewName);
-				} else {
-					//load template view ansync and interpret annotations based on metadata model
-					//and bind view path and save interpreted template global for reload
-					var oMetaModel = oModel.getMetaModel();
-					oMetaModel.loaded().then(function () {
-
-						//insert rendered template in content and bind path
-						var setTemplateAndBind = function (oTemplateView) {
-							this.mTemplates[sViewName] = oTemplateView;
-							oViewContainer.insertContent(oTemplateView);
-							this.bindView(oTemplateView, sPath, callbackFn);
-						}.bind(this);
-						this.GenerateForms(oModel, oMetaModel, sPath, sViewName, oController, oViewContainer, that);
-					}.bind(this));
-				}
-			} else {
-				this.bindView(aContent[0], sPath, callbackFn, sViewName);
-			}
+				//load template view ansync and interpret annotations based on metadata model
+				//and bind view path and save interpreted template global for reload
+				var oMetaModel = oModel.getMetaModel();
+				oMetaModel.loaded().then(function () {
+					//setting up the templates for the Sections
+					this.GenerateForms(oModel, oMetaModel, sPath, sViewName, oController, oViewContainer, that);
+				}.bind(this));
+			} 
 		},
 
 		/**
@@ -85,7 +63,6 @@ sap.ui.define([
 		GenerateForms: function (oModel, oMetaModel, sPath, oView, oController, oViewContainer, that) {
 			var oFragment = XMLTemplateProcessor.loadTemplate("com.evorait.evoplan.ui.templates.DetailPage", "fragment");
 			oMetaModel.loaded().then(function () {
-				// var oProcessedFragment = 
 				XMLPreprocessor.process(oFragment, {
 					caller: "XML-Fragment-templating"
 				}, {
@@ -101,33 +78,6 @@ sap.ui.define([
 					}, that);
 					oViewContainer.addContent(oContent);
 				}.bind(this));
-			});
-		},
-
-		/**
-		 * bind special view control with new path
-		 * @param oView
-		 * @param sPath
-		 */
-		bindView: function (oView, sPath, callbackFn , sViewName) {
-			oView.unbindElement();
-			oView.bindElement({
-				path: sPath,
-				events: {
-					change: function () {
-						var eventBus = sap.ui.getCore().getEventBus();
-
-						eventBus.publish("TemplateRenderer", "changedBinding", {
-							viewNameId: sViewName
-						});
-
-						if (callbackFn) {
-							callbackFn();
-						}
-					}.bind(this),
-					dataRequested: function () {}.bind(this),
-					dataReceived: function () {}.bind(this)
-				}
 			});
 		}
 	});
