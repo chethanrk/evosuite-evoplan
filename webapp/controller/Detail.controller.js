@@ -3,16 +3,18 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/AssignmentsController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/routing/History",
-	"com/evorait/evoplan/model/formatter"
+	"com/evorait/evoplan/model/formatter",
+	"com/evorait/evoplan/controller/TemplateRenderController"
+
 ], function (
 	BaseController,
 	JSONModel,
 	History,
-	formatter
+	formatter,
+	TemplateRenderController
 ) {
 	"use strict";
-
-	return BaseController.extend("com.evorait.evoplan.controller.Detail", {
+	return TemplateRenderController.extend("com.evorait.evoplan.controller.Detail", {
 
 		formatter: formatter,
 
@@ -87,7 +89,8 @@ sap.ui.define([
 			var sGuid = oEvent.getParameter("arguments").guid,
 				oDataModel = this.getModel(),
 				sRouteName = oEvent.getParameter("name"),
-				oResourceBundle = this.getResourceBundle();
+				oResourceBundle = this.getResourceBundle(),
+				iContentLength = this.getView().byId("ObjectPageWrapper").getContent().length;
 
 			// setting the bread crum value xtit.itemListTitle
 			if (sRouteName === "detail") {
@@ -101,10 +104,14 @@ sap.ui.define([
 			}
 
 			oDataModel.metadataLoaded().then(function () {
-				var sPath = this.getModel().createKey("DemandSet", {
+				var sPath = this.getModel().createKey("/DemandSet", {
 					Guid: sGuid
 				});
-				this._bindView("/" + sPath);
+				this._bindView(sPath);
+				//setting up the templates for the Sections
+				if (!iContentLength) {
+					this.insertTemplateFragment(sPath, this.getView(), "ObjectPageWrapper", null, null, this);
+				}
 			}.bind(this));
 		},
 
@@ -249,13 +256,9 @@ sap.ui.define([
 		 * open's a action sheets with possible statuses. 
 		 */
 		onClickAction: function (oEvent) {
-			if (!this._oActionSheet) {
-				this._oActionSheet = sap.ui.xmlfragment(this.getView().getId(), "com.evorait.evoplan.view.fragments.StatusActionSheet", this);
-				this.getView().addDependent(this._oActionSheet);
-			}
 			// TODO
 			localStorage.setItem("Evo-Action-page", "DemandDetails");
-			this._oActionSheet.openBy(oEvent.getSource());
+			sap.ui.getCore().byId("idStatusActionSheet").openBy(oEvent.getSource());
 		},
 		getVisible: function (a, b, c) {
 			return a && !b && c !== "COMP";
