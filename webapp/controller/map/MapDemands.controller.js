@@ -39,17 +39,9 @@ sap.ui.define([
 			var sPath = oContext.getPath();
 			var oModel = oContext.getModel();
 			var oData = oModel.getProperty(sPath);
-			var oUserDetail = this.getModel("appView");
-
-			if (oUserDetail.getProperty("/currentRoute") === "splitDemands") {
-				oRouter.navTo("splitDemandDetails", {
-					guid: oData.Guid
-				});
-			} else {
-				oRouter.navTo("ganttDemandDetails", {
-					guid: oData.Guid
-				});
-			}
+			oRouter.navTo("mapDemandDetails", {
+				guid: oData.Guid
+			});
 		},
 		/**
 		 * on press assign button in footer
