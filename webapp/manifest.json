@@ -273,6 +273,13 @@
 						"mapDemands",
 						"ganttResourceTree"
 					]
+				},
+				{
+					"pattern": "Map/Detail/{guid}",
+					"name": "mapDemandDetails",
+					"target": [
+						"mapDemandDetails"
+					]
 				}
 			],
 			"targets": {
@@ -414,6 +421,13 @@
 					"parent": "split3MapNavigation",
 					"controlId": "bottomRightPanel",
 					"viewLevel": 3
+				},
+				"mapDemandDetails": {
+					"viewType": "XML",
+					"viewName": "Detail",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 4
 				},
 				"ganttResourceTree": {
 					"viewType": "XML",

@@ -42,6 +42,7 @@ sap.ui.define([
 			this.getRouter().getRoute("ganttDemandDetails").attachPatternMatched(this._onObjectMatched, this);
 			this.getRouter().getRoute("splitDemandDetails").attachPatternMatched(this._onObjectMatched, this);
 			this.getRouter().getRoute("splitGanttDetails").attachPatternMatched(this._onObjectMatched, this);
+			this.getRouter().getRoute("mapDemandDetails").attachPatternMatched(this._onObjectMatched, this);
 
 			// Store original busy indicator delay, so it can be restored later on
 			iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
@@ -99,6 +100,8 @@ sap.ui.define([
 				this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageGanttChart"));
 			} else if (sRouteName === "splitDemandDetails" || sRouteName === "splitGanttDetails") {
 				this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageGanttChartSplit"));
+			} else if (sRouteName === "mapDemandDetails") {
+				this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageMap"));
 			} else {
 				this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageAssetManager"));
 			}
