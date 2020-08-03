@@ -7,7 +7,11 @@
 			</layoutData>
 		</NavContainer>
 		<layout:Splitter id="rightSplit" orientation="Vertical">
-			<NavContainer id="topRightPanel" class="panelPage"/>
+			<NavContainer id="topRightPanel" class="panelPage">
+				<layoutData>
+					<layout:SplitterLayoutData size="70%"/>
+				</layoutData>
+			</NavContainer>
 			<NavContainer id="bottomRightPanel" class="panelPage"/>
 		</layout:Splitter>
 	</layout:Splitter>

@@ -86,7 +86,7 @@ sap.ui.define([
 				gantDragSession: null, // Drag session from Gantt View added as we are keeping dragged data in the model.
 				detailPageBreadCrum: "",
 				capacityPlanning: false,
-				splitterDivider: "35%",
+				splitterDivider: "30%",
 				selectedHierarchyView: "TIMENONE",
 				enableReprocess: false,
 				first_load: false,
@@ -113,6 +113,9 @@ sap.ui.define([
 			
 			//Creating the Global assignment model for assignInfo Dialog
 			this.setModel(models.createNavLinksModel([]), "navLinks");
+			
+			//Creating the Global assignment model for assignInfo Dialog
+			this.setModel(models.createMapConfigModel([]), "mapConfig");
 
 			this.setModel(models.createMessageCounterModel({
 				S: 0,
@@ -175,18 +178,24 @@ sap.ui.define([
 			var aPromises = [];
 			aPromises.push(this._getSystemInformation());
 			aPromises.push(this._getData("/NavigationLinksSet",[new Filter("LaunchMode",FilterOperator.EQ, this.getModel("viewModel").getProperty("/launchMode"))]));
+			aPromises.push(this._getData("/MapProviderSet",[],{"$expand":"MapSource"}));
             //sets user model - model has to be intantiated before any view is loaded
             Promise.all(aPromises).then(function (data) {
                 this.getModel("user").setData(data[0]);
                 if(data[1].results.length > 0){
                 	this.getModel("navLinks").setData(data[1].results);
                 }
-                // create the views based on the url/hash
-                this.getRouter().initialize();
+                 if(data[2].results.length > 0){
+                	this.getModel("mapConfig").setData(data[2].results[0]);
+                }
+                
                 // Initialize websocket
                 if(data[0].ENABLE_PUSH_DEMAND){
                 	WebSocket.init(this);
                 }
+                
+                // create the views based on the url/hash
+                this.getRouter().initialize();
             }.bind(this));
 
 			// Not able load more than 100 associations
@@ -345,10 +354,11 @@ sap.ui.define([
 		/**
 		 * Calls the GetSystemInformation 
 		 */
-		_getData: function (sUri, aFilters) {
+		_getData: function (sUri, aFilters, mParameters) {
 			return new Promise(function (resolve, reject) {
 				this.getModel().read(sUri, {
 				filters:aFilters,
+				urlParameters:mParameters,
 				success: function (oData, oResponse) {
 					resolve(oData);
 				}.bind(this),

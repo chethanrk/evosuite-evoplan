@@ -47,6 +47,12 @@ sap.ui.define([
 			var oModel = new JSONModel(NavLinks);
 			oModel.setDefaultBindingMode("TwoWay");
 			return oModel;
+		},
+		
+		createMapConfigModel : function(mapConfig){
+			var oModel = new JSONModel(mapConfig);
+			oModel.setDefaultBindingMode("TwoWay");
+			return oModel;
 		}
 	};
 

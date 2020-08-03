@@ -20,21 +20,31 @@ sap.ui.define([
             //TODO with each provides query parameters will separately
             //TODO oMapData.queryParams
             //TODO Query parameters can token//api_key//username,password//session_key//App_Code
-            return oMapData.sources || [{
+            var aSources = oMapData.MapSource ? oMapData.MapSource.results : [];
+            var aMapSources = [];
+            if(aSources.length <= 0){
+            	aMapSources =undefined;
+            }
+            for(var i in aSources){
+            	var oSource = {};
+            	oSource.id = aSources[i].ID;
+            	oSource.url = aSources[i].URL;
+            	aMapSources.push(oSource);
+            }
+            return aMapSources || [{
                 "id": "s1",
                 "url": "https://a.tile.openstreetmap.org/{LOD}/{X}/{Y}.png"
-
             }];
         },
 
         getMapLayerStacks : function (oMapData) {
-            return oMapData.mapLayerStacks ||  [
+            return  [
                 {
                     "name": "Default",
                     "MapLayer": [
                         {
-                            "name": "OSM",
-                            "refMapProvider": "OSM"
+                            "name": oMapData.name,
+                            "refMapProvider": oMapData.name
                         }]
                 }];
 
@@ -43,7 +53,7 @@ sap.ui.define([
         getMapProviders : function (oMapData) {
             return [
                 {
-                    "name": oMapData.MapProvider || "OSM",
+                    "name": oMapData.name || "OSM",
                     "tileX": "256",
                     "tileY": "256",
                     "minLOD": oMapData.minZoom || "1",

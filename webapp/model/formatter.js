@@ -454,6 +454,7 @@ sap.ui.define([
         },
         /**
          * Format tooltip according to values in the parts
+         * Added the dynamic code to generate the tooltip based on binding
          * @Author Rahul
          * 
          */
