@@ -5,7 +5,7 @@
 			<customHeader>
 				<Bar>
 					<contentLeft>
-						<Image src="{path: '', formatter: '.formatter.getLogoImageLink' }" densityAware="false" height="100%" alt="EvoPlan" id="imageLogo"/>
+						<Image src="{path: '', formatter: '.formatter.getLogoImageLink' }" densityAware="false" height="85%" alt="EvoPlan" id="imageLogo"/>
 					</contentLeft>
 					<contentMiddle>
 						<MenuButton id="idHeaderMenu" text="{appView>/pageTitle}">
