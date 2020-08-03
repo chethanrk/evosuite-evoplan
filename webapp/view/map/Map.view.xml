@@ -2,15 +2,8 @@
 	controllerName="com.evorait.evoplan.controller.map.Map" displayBlock="true" height="100%">
 		<f:DynamicPage headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true" showFooter="true" toggleHeaderOnTitleClick="false"
 			class="sapUiNoContentPadding tableContentPage">
-			<f:header>
-				<f:DynamicPageHeader pinnable="true">
-					<f:content>
-						<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.SmartFilter" type="XML"/>
-					</f:content>
-				</f:DynamicPageHeader>
-			</f:header>
 			<f:content>
-				<vk:MapContainer autoAdjustHeight="true" settingsPressed="onSettingsPressed" >
+				<vk:MapContainer autoAdjustHeight="true" >
 					<vk:content>
 						<vk:ContainerContent title="Geographic Map">
 							<vk:content>
