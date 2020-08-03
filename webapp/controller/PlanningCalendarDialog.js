@@ -506,9 +506,6 @@ sap.ui.define([
 				// Get Asset data from batchresponse
 				oAsset = this._getAssetData(oDataObject);
 				
-				if (oAsset.Assignments.length > 0) {
-					aResources.push(oAsset);
-				}
 
 				// Push assignment into respective resource
 				for (var j in oResourceMap) {
@@ -539,6 +536,12 @@ sap.ui.define([
 				}
 
 			}
+			aResources.sort(this._compareResources);
+			
+			if (oAsset.Assignments.length > 0) {
+					aResources.unshift(oAsset);
+			}
+				
 			return aResources;
 		},
 		/**
@@ -785,6 +788,20 @@ sap.ui.define([
 			this._changedAbsences[oData.Guid || new Date()] = oNewAbsense;
 			this.checkDirty();
 
+		},
+		/**
+		 * Sorting the resources by Resource description 
+		 * 
+		 */
+		_compareResources: function (a, b) {
+			var nameA = a.ResourceDescription.toUpperCase(); // ignore upper and lowercase
+			var nameB = b.ResourceDescription.toUpperCase(); // ignore upper and lowercase
+			if (nameA < nameB) {
+				return -1;
+			}
+			if (nameA > nameB) {
+				return 1;
+			}
 		},
 		exit: function () {
 			this._eventBus.unsubscribe("AssignInfoDialog", "RefreshCalendar", this._setCalendarModel, this);
