@@ -77,7 +77,7 @@ sap.ui.define([
             }
             if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
                 sSemanticObject = oUrlParser.getShellHash(window.location);
-                sRoute = sSemanticObject+"&/SplitPage/SplitDemands";
+                sRoute = "#"+sSemanticObject+"&/SplitPage/SplitDemands";
             }else{
                 sRoute ="#SplitPage/SplitDemands";
             }
