@@ -1,8 +1,9 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/AssignmentsController",
 	"sap/ui/model/json/JSONModel",
-	"com/evorait/evoplan/model/formatter"
-], function (AssignmentsController, JSONModel, formatter) {
+	"com/evorait/evoplan/model/formatter",
+    "com/evorait/evoplan/model/Constants"
+], function (AssignmentsController, JSONModel, formatter, Constants) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.App", {
@@ -66,7 +67,20 @@ sap.ui.define([
 				oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
 				oRouter = this.getOwnerComponent().getRouter(),
 				oAppViewModel = this.getOwnerComponent().getModel("appView"),
-				sCurrentTitle = oAppViewModel.getProperty("/pageTitle");
+				sCurrentTitle = oAppViewModel.getProperty("/pageTitle"),
+                sLaunchMode = this.getModel("viewModel").getProperty("/launchMode"),
+                sSemanticObject = null,
+                sRoute;
+
+            if (sap.ushell && sap.ushell.Container) {
+                var oUrlParser = sap.ushell.Container.getService("URLParsing");
+            }
+            if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
+                sSemanticObject = oUrlParser.getShellHash(window.location);
+                sRoute = sSemanticObject+"&/SplitPage/SplitDemands";
+            }else{
+                sRoute ="#SplitPage/SplitDemands";
+            }
 
 			if (sCurrentTitle === sItemText) {
 				return;
@@ -94,7 +108,7 @@ sap.ui.define([
 				break;
 			case oResourceBundle.getText("xbut.pageGanttChartSplit"):
 				oRouter.navTo("ganttSplit", {});
-				window.open("#SplitPage/SplitDemands", "_blank");
+				window.open(sRoute, "_blank");
 				break;
 			default:
 				oRouter.navTo("demands", {});
