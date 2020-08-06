@@ -3,7 +3,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/test/integration/pages/App",
-], function (AssignmentsController, JSONModel, formatter,App) {
+	 "sap/ui/core/Fragment"
+], function (AssignmentsController, JSONModel, formatter,App,Fragment) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.App", {
@@ -116,10 +117,27 @@ sap.ui.define([
 		onIconPress: function (oEvent) {
 			// create popover
 			if (!this._infoDialog) {
-				this._infoDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.InformationPopover", this);
-				this.getView().addDependent(this._infoDialog);
-			}
-			this._infoDialog.open();
+				this.getOwnerComponent().getModel("appView").setProperty("/busy", true);
+                Fragment.load({
+                    id: "InfoDialog",
+                    name: "com.evorait.evoplan.view.fragments.InformationPopover",
+                    controller: this
+                }).then(function (oDialog) {
+                	this.getOwnerComponent().getModel("appView").setProperty("/busy", false);
+                    this._infoDialog = oDialog;
+                    this.open(oDialog);
+                }.bind(this));
+            }else {
+                this.open(this._infoDialog);
+            }
+		},
+		
+		open: function(oDialog)
+		{
+			var oView = this.getView();
+			oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+			oView.addDependent(oDialog);
+			oDialog.open();
 		},
 
 		/**

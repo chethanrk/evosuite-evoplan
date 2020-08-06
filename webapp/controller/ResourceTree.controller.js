@@ -116,7 +116,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onPressShowPlanningCal: function (oEvent) {
-			this.getModel("viewModel").setProperty("/calendarBusy", true);
+			this.getOwnerComponent().getModel("appView").setProperty("/busy", true);
 			this.getOwnerComponent().planningCalendarDialog.open(this.getView(), this.selectedResources, {
 				bFromPlannCal: true
 			}); // As we are opening the dialog when set model data

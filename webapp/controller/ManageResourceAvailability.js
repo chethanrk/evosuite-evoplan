@@ -23,11 +23,13 @@ sap.ui.define([
         open: function (oView, aSelectedPath, mParameters) {
             // create dialog lazily
             if (!this._oDialog) {
+            	oView.getModel("appView").setProperty("/busy", true);
                 Fragment.load({
                     id: "ManageAbsense",
                     name: "com.evorait.evoplan.view.fragments.ManageResourceAvailability",
                     controller: this
                 }).then(function (oDialog) {
+                	oView.getModel("appView").setProperty("/busy", false);
                     this._oDialog = oDialog;
                     this.onOpen(oDialog, oView, aSelectedPath, mParameters);
                 }.bind(this));

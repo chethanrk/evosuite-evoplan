@@ -3,8 +3,9 @@ sap.ui.define([
     "com/evorait/evoplan/model/models",
     "com/evorait/evoplan/model/formatter",
     "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator"
-], function (BaseController, models, formatter, Filter, FilterOperator) {
+    "sap/ui/model/FilterOperator",
+     "sap/ui/core/Fragment"
+], function (BaseController, models, formatter, Filter, FilterOperator,Fragment) {
     "use strict";
 
     return BaseController.extend("com.evorait.evoplan.controller.AssignTreeDialog", {
@@ -16,8 +17,7 @@ sap.ui.define([
             this._eventBus.subscribe("AssignInfoDialog", "selectAssign", this._triggerOpenDialog, this);
             this._eventBus.subscribe("AssignActionsDialog", "selectAssign", this._triggerOpenDialog, this);
         },
-
-        /**
+         /**
          * init and get dialog view
          * @returns {sap.ui.core.Control|sap.ui.core.Control[]|*}
          */
@@ -29,7 +29,23 @@ sap.ui.define([
             }
             return this._oDialog;
         },
-
+        
+        open: function (oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent) {
+            // create dialog lazily
+            if (!this._oDialog) {
+            	oView.getModel("appView").setProperty("/busy", true);
+                Fragment.load({
+                    name: "com.evorait.evoplan.view.fragments.AssignSelectDialog",
+                    controller: this
+                }).then(function (oDialog) {
+                	oView.getModel("appView").setProperty("/busy", false);
+                    this._oDialog = oDialog;
+                    this.onOpen(oDialog, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent);
+                }.bind(this));
+            }else {
+                this.onOpen(this._oDialog,oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent);
+            }
+        },
         /**
          * open dialog
          * get detail data from resource and resource group
@@ -37,9 +53,7 @@ sap.ui.define([
          * @param sBindPath
          * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
          */
-        open : function (oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent) {
-            var oDialog = this.getDialog();
-
+        onOpen : function (oDialog,oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent) {
             this._oView = oView;
             this._reAssign = isReassign;
             this._aSelectedPaths = aSelectedPaths;
