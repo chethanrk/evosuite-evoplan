@@ -208,7 +208,7 @@ sap.ui.define([
 		 * close dialog
 		 */
 		onCloseDialog: function () {
-			this.getDialog().close();
+			this._oDialog.close();
 			this.reAssign = false; // setting to default on close of Dialog
 			this.oAssignmentModel.setData({});
 		},
@@ -251,7 +251,7 @@ sap.ui.define([
 		 */
 		_getAssignedDemand: function (sId) {
 			var sPath = "/AssignmentSet('" + sId + "')",
-				oDialog = this.getDialog(),
+				oDialog = this._oDialog,
 				oModel = this.oAssignmentModel;
 
 			oDialog.bindElement({

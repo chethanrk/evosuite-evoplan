@@ -39,8 +39,6 @@ sap.ui.define([
 		},
 
 		onOpen: function (oDialog, oView, aSelectedPaths, mParameters) {
-			// var oDialog = this.getDialog();
-
 			// connect dialog to view (models, lifecycle)
 			oView.addDependent(oDialog);
 			this._mParameters = mParameters || {
@@ -128,7 +126,7 @@ sap.ui.define([
 		 * close dialog
 		 */
 		onCloseDialog: function (oEvent) {
-			this.getDialog().close();
+			this._oDialog.close();
 		}
 	});
 });

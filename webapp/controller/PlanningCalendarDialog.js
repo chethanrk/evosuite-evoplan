@@ -47,7 +47,6 @@ sap.ui.define([
         },
         
 		onOpen: function (oDialog,oView, aSelectedResources, mParameters, oStartDate) {
-		//	var oDialog = this.getDialog();
 			this._changedAssignments = {};
 			this._changedAbsences = {};
 			this._selectedView = undefined;

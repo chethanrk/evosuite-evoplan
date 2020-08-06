@@ -4,8 +4,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
-	 "sap/ui/core/Fragment"
-], function (BaseController, formatter, Filter, FilterOperator, JSONModel,Fragment) {
+	"sap/ui/core/Fragment"
+], function (BaseController, formatter, Filter, FilterOperator, JSONModel, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.CapacitiveAssignments", {
