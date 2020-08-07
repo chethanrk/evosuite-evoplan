@@ -62,7 +62,7 @@ sap.ui.define([
                }
                else if(sRouteName === "demands")
                {
-               	 this._mParameters = {bFromDetail:true};
+               	 this._mParameters = {bFromHome:true};
                }
          },
 
