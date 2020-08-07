@@ -20,7 +20,7 @@ sap.ui.define([
 		 * @param oView
 		 * @param sBindPath
 		 */
-		open: function (oView, oEvent) {
+		open: function (oView, oEvent,mParameters) {
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
@@ -31,10 +31,10 @@ sap.ui.define([
 				}).then(function (oDialog) {
 					oView.getModel("appView").setProperty("/busy", false);
 					this._oDialog = oDialog;
-					this.onOpen(oDialog, oView, oEvent);
+					this.onOpen(oDialog, oView, oEvent,mParameters);
 				}.bind(this));
 			} else {
-				this.onOpen(this._oDialog, oView, oEvent);
+				this.onOpen(this._oDialog, oView, oEvent,mParameters);
 			}
 		},
 
@@ -43,12 +43,14 @@ sap.ui.define([
 		 * @param oView
 		 * @param oEvent
 		 */
-		onOpen: function (oDialog, oView, oEvent) {
+		onOpen: function (oDialog, oView, oEvent,mParameters) {
 			var oViewFilterSettings = oView.getController().oFilterConfigsController || null;
 			oDialog.setModel(new JSONModel({
 				count: 0
 			}), "local");
-
+			this._mParameters = mParameters || {
+				bFromHome: true
+			};
 			this._dateFrom = oViewFilterSettings.getDateRange()[0];
 			this._dateTo = oViewFilterSettings.getDateRange()[1];
 			this._oView = oView;
@@ -124,7 +126,7 @@ sap.ui.define([
 			var oModel = oContext.getModel();
 			var sPath = oContext.getPath();
 			var oAssignmentData = oModel.getProperty(sPath);
-			this._component.assignInfoDialog.open(this._oView, null, oAssignmentData);
+			this._component.assignInfoDialog.open(this._oView, null, oAssignmentData,this._mParameters);
 		}
 
 	});

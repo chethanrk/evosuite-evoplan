@@ -48,7 +48,7 @@ sap.ui.define([
 			this._eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
 			
 			//route match function
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			var oRouter =  this.getOwnerComponent().getRouter();
                 oRouter.attachRouteMatched(this._routeMatched, this);
 
 		},
@@ -150,7 +150,7 @@ sap.ui.define([
 
 			if (oRowContext) {
 				this.assignmentPath = oRowContext.getPath();
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath,"",this._mParameters);
+				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath,null,this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
@@ -324,7 +324,7 @@ sap.ui.define([
 		 */
 		openCapacitivePopup: function (oEvent) {
 			var oComponent = this.getOwnerComponent();
-			oComponent.capacitiveAssignments.open(this.getView(), oEvent);
+			oComponent.capacitiveAssignments.open(this.getView(), oEvent,this._mParameters);
 		},
 		/**
 		 * on press, open the dialog to create an unavailability for selected resources
