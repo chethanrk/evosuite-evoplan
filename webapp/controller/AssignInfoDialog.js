@@ -1,7 +1,8 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/AssignmentsController",
-	"com/evorait/evoplan/model/formatter"
-], function (BaseController, formatter) {
+	"com/evorait/evoplan/model/formatter",
+	 "sap/ui/core/Fragment"
+], function (BaseController, formatter,Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.AssignInfoDialog", {
@@ -14,27 +15,32 @@ sap.ui.define([
 		},
 
 		/**
-		 * init and get dialog view
-		 * @returns {sap.ui.core.Control|sap.ui.core.Control[]|*}
-		 */
-		getDialog: function () {
-			// create dialog lazily
-			if (!this._oDialog) {
-				// create dialog via fragment factory
-				this._oDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.AssignInfoDialog", this);
-			}
-			return this._oDialog;
-		},
-
-		/**
 		 * open dialog
 		 * get detail data from resource and resource group
 		 * @param oView
 		 * @param sBindPath
 		 */
-		open: function (oView, sBindPath, oAssignmentData, mParameters, oAssignementPath) {
-			var oDialog = this.getDialog(),
-				oAssignment = this.getDefaultAssignmentModelObject(),
+		  open: function (oView, sBindPath, oAssignmentData, mParameters, oAssignementPath) {
+            // create dialog lazily
+            if (!this._oDialog) {
+            	oView.getModel("appView").setProperty("/busy", true);
+                Fragment.load({
+                    id: "AssignInfoDialog",
+                    name: "com.evorait.evoplan.view.fragments.AssignInfoDialog",
+                    controller: this
+                }).then(function (oDialog) {
+                	oView.getModel("appView").setProperty("/busy", false);
+                    this._oDialog = oDialog;
+                    this.onOpen(oDialog, sBindPath, oAssignmentData, mParameters, oAssignementPath);
+                }.bind(this));
+            }else {
+                this.onOpen(this._oDialog, sBindPath, oAssignmentData, mParameters, oAssignementPath);
+            }
+        },
+        
+		onOpen: function (oDialog,oView, sBindPath, oAssignmentData, mParameters, oAssignementPath) {
+	
+			var	oAssignment = this.getDefaultAssignmentModelObject(),
 				oResource,
                 oAssignData,
 				sResourceGroupGuid,
@@ -175,7 +181,7 @@ sap.ui.define([
 		 */
 		onChangeAssignType: function (oEvent) {
 			var oParams = oEvent.getParameters(),
-				reassignBtn = sap.ui.getCore().byId("reassignDialogButton");
+				reassignBtn = sap.ui.getCore().byId("AssignInfoDialog--reassignDialogButton");
 
 			this.reAssign = oParams.selected;
 			reassignBtn.setEnabled(this.reAssign);
@@ -202,7 +208,7 @@ sap.ui.define([
 		 * close dialog
 		 */
 		onCloseDialog: function () {
-			this.getDialog().close();
+			this._oDialog.close();
 			this.reAssign = false; // setting to default on close of Dialog
 			this.oAssignmentModel.setData({});
 		},
@@ -245,7 +251,7 @@ sap.ui.define([
 		 */
 		_getAssignedDemand: function (sId) {
 			var sPath = "/AssignmentSet('" + sId + "')",
-				oDialog = this.getDialog(),
+				oDialog = this._oDialog,
 				oModel = this.oAssignmentModel;
 
 			oDialog.bindElement({

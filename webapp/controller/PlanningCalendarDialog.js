@@ -3,8 +3,9 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/model/json/JSONModel"
-], function (BaseController, formatter, Filter, FilterOperator, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	 "sap/ui/core/Fragment"
+], function (BaseController, formatter, Filter, FilterOperator, JSONModel,Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.PlanningCalendarDialog", {
@@ -21,19 +22,7 @@ sap.ui.define([
 			this._eventBus.subscribe("AssignInfoDialog", "refreshAssignment", this._refreshAppointment, this);
 			this._eventBus.subscribe("CreateUnAvailability", "refreshAbsence", this._refreshIntervalHeader, this);
 		},
-		/**
-		 * init and get dialog view
-		 * @returns {sap.ui.core.Control|sap.ui.core.Control[]|*}
-		 */
-		getDialog: function () {
-			// create dialog lazily
-			if (!this._oDialog) {
-				// create dialog via fragment factory
-				this._oDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.ResourceCalendarDialog", this);
-
-			}
-			return this._oDialog;
-		},
+		
 		/**
 		 * open's the planning calendar dialog
 		 * get detail data from resource and resource group
@@ -41,8 +30,23 @@ sap.ui.define([
 		 * @param sBindPath
 		 * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
 		 */
-		open: function (oView, aSelectedResources, mParameters, oStartDate) {
-			var oDialog = this.getDialog();
+		 open: function (oView, aSelectedResources, mParameters,oStartDate) {
+            // create dialog lazily
+            if (!this._oDialog) {
+                Fragment.load({
+                    id: "PlanningCalender",
+                    name: "com.evorait.evoplan.view.fragments.ResourceCalendarDialog",
+                    controller: this
+                }).then(function (oDialog) {
+                    this._oDialog = oDialog;
+                    this.onOpen(oDialog, oView, aSelectedResources,mParameters,oStartDate);
+                }.bind(this));
+            }else {
+                this.onOpen(this._oDialog, oView, aSelectedResources,mParameters,oStartDate);
+            }
+        },
+        
+		onOpen: function (oDialog,oView, aSelectedResources, mParameters, oStartDate) {
 			this._changedAssignments = {};
 			this._changedAbsences = {};
 			this._selectedView = undefined;
@@ -51,7 +55,7 @@ sap.ui.define([
 			this._component = this._oView.getController().getOwnerComponent();
 			this._oResourceBundle = this._component.getModel("i18n").getResourceBundle();
 			this._oCalendarModel = this._component.getModel("calendarModel");
-			this._oPlanningCalendar = sap.ui.getCore().byId("planningCalendar");
+			this._oPlanningCalendar = sap.ui.getCore().byId("PlanningCalender--planningCalendar");
 			this._mParameters = mParameters || {
 				bFromHome: true
 			};
@@ -186,7 +190,7 @@ sap.ui.define([
 		 * @param response
 		 */
 		onSuccess: function (data, response) {
-			var oDialog = this.getDialog();
+			//var oDialog = this.getDialog();
 			this._oCalendarModel.setData({
 				resources: this._createData(data)
 			});
@@ -197,9 +201,9 @@ sap.ui.define([
 				this._oCalendarModel.setProperty("/viewKey", this._selectedView ? this.formatter.formatViewKey(this._selectedView) : this.getSelectedView());
 				this._oCalendarModel.setProperty("/startDate", new Date());
 			}
-			oDialog.open();
+			this._oDialog.open();
 
-			this._oView.getModel("viewModel").setProperty("/calendarBusy", false);
+		    this._oView.getModel("appView").setProperty("/busy", false);
 			this._oPlanningCalendar.setBusy(false);
 		},
 
@@ -743,10 +747,10 @@ sap.ui.define([
 		checkDirty: function () {
 			if ((Object.keys(this._changedAssignments).length > 0 && this._changedAssignments.constructor === Object) || (Object.keys(this._changedAbsences)
 					.length > 0 && this._changedAbsences.constructor === Object)) {
-				sap.ui.getCore().byId("idCreateSave").setEnabled(true);
+				sap.ui.getCore().byId("PlanningCalender--idCreateSave").setEnabled(true);
 				return true;
 			} else {
-				sap.ui.getCore().byId("idCreateSave").setEnabled(false);
+				sap.ui.getCore().byId("PlanningCalender--idCreateSave").setEnabled(false);
 				return false;
 			}
 		},
@@ -754,7 +758,7 @@ sap.ui.define([
 		 * enable or disable the create unavailability button
 		 */
 		_enableCreateUABtn: function (bState) {
-			var oCreateUAButton = sap.ui.getCore().byId("idCreateUA");
+			var oCreateUAButton = sap.ui.getCore().byId("PlanningCalender--idCreateUA");
 			oCreateUAButton.setEnabled(bState);
 		},
 		/**

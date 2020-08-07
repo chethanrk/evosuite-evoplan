@@ -3,8 +3,9 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/m/MessageToast"
-], function (BaseController, formatter, Filter, FilterOperator, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/ui/core/Fragment"
+], function (BaseController, formatter, Filter, FilterOperator, MessageToast, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.AssignActionsDialog", {
@@ -14,40 +15,54 @@ sap.ui.define([
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog, this);
 		},
-		/**
-		 * initialize and get dialog object
-		 * @returns {sap.ui.core.Control|sap.ui.core.Control[]|*}
-		 */
-		getDialog: function () {
-			// create dialog lazily
-			if (!this._oDialog) {
-				// create dialog via fragment factory
-				this._oDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.AssignActionsDialog", this);
-			}
-			return this._oDialog;
-		},
-		/**
+		/*
 		 * open dialog
-		 * @Author Rahul
+		 * @Author Pranav
 		 * @version 2.0.6
 		 * @param oView - view in which it getting invoked.
 		 * @param aSelectedResources - selected resources before opening the dialog.
 		 * @param isUnAssign - to Identify action for which it is opened.
+		 * init and get dialog view
+		 * @returns {sap.ui.core.Control|sap.ui.core.Control[]|*}
 		 */
 		open: function (oView, aSelectedResources, isUnAssign, mParameters) {
+			// create dialog lazily
+			if (!this._oDialog) {
+				oView.getModel("appView").setProperty("/busy", true);
+				Fragment.load({
+					id: "AssignActions",
+					name: "com.evorait.evoplan.view.fragments.AssignActionsDialog",
+					controller: this
+				}).then(function (oDialog) {
+					oView.getModel("appView").setProperty("/busy", false);
+					this._oDialog = oDialog;
+					this.onOpen(oDialog, oView, aSelectedResources, isUnAssign, mParameters);
+				}.bind(this));
+			} else {
+				this.onOpen(this._oDialog, oView, aSelectedResources, isUnAssign, mParameters);
+			}
+		},
+
+		/**
+		 * Sets the necessary value as global to this controller
+		 * Open's the popover
+		 * @param oView
+		 * @param oEvent
+		 */
+		onOpen: function (oDialog, oView, aSelectedPath, isUnAssign, mParameters) {
 			this._oView = oView;
-			this._aSelectedResources = aSelectedResources;
+			this._aSelectedResources = aSelectedPath;
 			this._isUnAssign = isUnAssign;
 			this._resourceBundle = this._oView.getController().getResourceBundle();
 			this._component = this._oView.getController().getOwnerComponent();
 			this._mParameters = mParameters || {
 				bFromHome: true
 			};
-			var oDialog = this.getDialog();
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 			oView.addDependent(oDialog);
 			oDialog.open();
 		},
+
 		/**
 		 * Adding the expand clause to smart table by setting binding parameters on beforeRebind event
 		 * @Author Rahul
@@ -69,10 +84,10 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onBeforeOpen: function (oEvent) {
-			var oUnAssignBtn = sap.ui.getCore().byId("idButtonBulkUnAssign"),
-				oReAssignBtn = sap.ui.getCore().byId("idButtonBulkReAssign"),
-				oDialog = this.getDialog();
-			this._oAssignMentTable = sap.ui.getCore().byId("idDemandAssignmentTable").getTable();
+			var oUnAssignBtn = sap.ui.getCore().byId("AssignActions--idButtonBulkUnAssign"),
+				oReAssignBtn = sap.ui.getCore().byId("AssignActions--idButtonBulkReAssign"),
+				oDialog = this._oDialog;
+			this._oAssignMentTable = sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable").getTable();
 
 			if (this._isUnAssign) {
 				oUnAssignBtn.setVisible(true);
@@ -84,7 +99,7 @@ sap.ui.define([
 				oDialog.setTitle(this._resourceBundle.getText("xtit.reAssignTitle"));
 			}
 			if (this.isFirstTime)
-				sap.ui.getCore().byId("idDemandAssignmentTable").rebindTable();
+				sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable").rebindTable();
 
 			this.isFirstTime = true;
 		},
@@ -260,7 +275,7 @@ sap.ui.define([
 		 */
 		onCloseDialog: function () {
 			this._oAssignMentTable.removeSelections();
-			this.getDialog().close();
+			this._oDialog.close();
 		},
 		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog, this);

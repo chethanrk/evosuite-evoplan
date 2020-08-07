@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/routing/History",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
-], function (Controller, formatter, History, JSONModel, Filter, FilterOperator) {
+	"sap/ui/model/FilterOperator",
+	"sap/ui/core/Fragment"
+], function (Controller, formatter, History, JSONModel, Filter, FilterOperator,Fragment) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.AssetsOrders", {
@@ -236,11 +237,26 @@ sap.ui.define([
 		createTimeAlloc: function () {
 			// create popover
 			if (!this._infoDialog) {
-				this._infoDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.CreateTimeAllocation", this);
-				this._infoDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-				this.getView().addDependent(this._infoDialog);
-			}
-			this._infoDialog.open();
+				this.getOwnerComponent().getModel("appView").setProperty("/busy", true);
+                Fragment.load({
+                    id: "InfoDialog",
+                    name: "com.evorait.evoplan.view.fragments.CreateTimeAllocation",
+                    controller: this
+                }).then(function (oDialog) {
+                	this.getOwnerComponent().getModel("appView").setProperty("/busy", false);
+                    this._infoDialog = oDialog;
+                    this.open(oDialog);
+                }.bind(this));
+            }else {
+                this.open(this._infoDialog);
+            }
+		},
+		open: function(oDialog)
+		{
+			var oView = this.getView();
+			oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+			oView.addDependent(oDialog);
+			oDialog.open();
 		},
 		/**
 		 * On Close TimeAllocation dialog clear the all fields in the dialog
