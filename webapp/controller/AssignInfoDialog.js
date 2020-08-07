@@ -31,10 +31,10 @@ sap.ui.define([
                 }).then(function (oDialog) {
                 	oView.getModel("appView").setProperty("/busy", false);
                     this._oDialog = oDialog;
-                    this.onOpen(oDialog, sBindPath, oAssignmentData, mParameters, oAssignementPath);
+                    this.onOpen(oDialog,oView, sBindPath, oAssignmentData, mParameters, oAssignementPath);
                 }.bind(this));
             }else {
-                this.onOpen(this._oDialog, sBindPath, oAssignmentData, mParameters, oAssignementPath);
+                this.onOpen(this._oDialog,oView, sBindPath, oAssignmentData, mParameters, oAssignementPath);
             }
         },
         

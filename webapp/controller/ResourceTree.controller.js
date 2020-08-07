@@ -150,7 +150,7 @@ sap.ui.define([
 
 			if (oRowContext) {
 				this.assignmentPath = oRowContext.getPath();
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, "", this._mParameters);
+				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath,"",this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
