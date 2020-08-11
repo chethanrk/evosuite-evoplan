@@ -46,8 +46,25 @@ sap.ui.define([
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
 			this._eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
+			
+			//route match function
+			var oRouter =  this.getOwnerComponent().getRouter();
+                oRouter.attachRouteMatched(this._routeMatched, this);
 
 		},
+		
+		_routeMatched: function(oEvent){
+            var oParameters = oEvent.getParameters(),
+               sRouteName = oParameters.name; // route name
+               if(sRouteName === "map")
+               {
+               	 this._mParameters = {bFromMap:true};
+               }
+               else if(sRouteName === "demands")
+               {
+               	 this._mParameters = {bFromHome:true};
+               }
+         },
 
 		/**
 		 * initial draggable after every refresh of table
@@ -133,7 +150,7 @@ sap.ui.define([
 
 			if (oRowContext) {
 				this.assignmentPath = oRowContext.getPath();
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath);
+				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath,null,this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
@@ -145,14 +162,14 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onPressReassign: function (oEvent) {
-			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false);
+			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false, this._mParameters);
 		},
 		/**
 		 * Open's Dialog containing assignments to unassign
 		 * @param oEvent
 		 */
 		onPressUnassign: function (oEvent) {
-			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true);
+			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true, this._mParameters);
 		},
 		/**
 		 * bind resource tree table only when filterbar was initalized
@@ -307,7 +324,7 @@ sap.ui.define([
 		 */
 		openCapacitivePopup: function (oEvent) {
 			var oComponent = this.getOwnerComponent();
-			oComponent.capacitiveAssignments.open(this.getView(), oEvent);
+			oComponent.capacitiveAssignments.open(this.getView(), oEvent,this._mParameters);
 		},
 		/**
 		 * on press, open the dialog to create an unavailability for selected resources
@@ -318,7 +335,7 @@ sap.ui.define([
 			var oResData = this.getModel().getProperty(oSelectedResource);
 
 			if (oResData.NodeType === "RESOURCE" && oResData.ResourceGuid !== "" && oResData.ResourceGroupGuid !== "") {
-				this.getOwnerComponent().manageAvail.open(this.getView(), this.selectedResources);
+				this.getOwnerComponent().manageAvail.open(this.getView(), this.selectedResources, this._mParameters);
 			} else {
 				this.showMessageToast(this.getResourceBundle().getText("ymsg.selectResoure"));
 			}
