@@ -1,24 +1,44 @@
 <mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:vbm="sap.ui.vbm" xmlns:vk="sap.ui.vk" xmlns:f="sap.f"
-	controllerName="com.evorait.evoplan.controller.map.Map" displayBlock="true" height="100%">
-		<f:DynamicPage headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true" showFooter="true" toggleHeaderOnTitleClick="false"
-			class="sapUiNoContentPadding tableContentPage">
-			<f:content>
-				<vk:MapContainer autoAdjustHeight="true" >
-					<vk:content>
-						<vk:ContainerContent title="Geographic Map">
+	controllerName="com.evorait.evoplan.controller.map.Map" displayBlock="true" height="100%" xmlns:l="sap.ui.layout">
+	<Page id="MapPage" showFooter="true" showHeader="false">
+		<l:Splitter orientation="Vertical">
+			<NavContainer id="leftPanel" class="panelPage">
+				<f:DynamicPage id="idMapDynamicPage" headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true" showFooter="true"
+					toggleHeaderOnTitleClick="false" class="sapUiNoContentPadding tableContentPage">
+					<f:header>
+						<f:DynamicPageHeader pinnable="true">
+							<f:content>
+								<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.SmartFilter" type="XML"/>
+							</f:content>
+						</f:DynamicPageHeader>
+					</f:header>
+					<f:content>
+						<vk:MapContainer id="idMapContainer" autoAdjustHeight="true" settingsPressed="onClickMapDemandFilter">
 							<vk:content>
-								<vbm:GeoMap id="idGeoMap" drop="onDrop" initialZoom="5" initialPosition="77.52633333206177;12.963101322467267;0.0">
-									<vbm:vos>
-										<vbm:Spots>
-											<vbm:Spot position="77;12;0"/>
-											<vbm:Spot position="77;13;0"/>
-										</vbm:Spots>
-									</vbm:vos>
-								</vbm:GeoMap>
+								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities">
+									<vk:content>
+										<vbm:GeoMap id="idGeoMap" drop="onDrop" initialZoom="5" initialPosition="77.52633333206177;12.963101322467267;0.0">
+											<vbm:vos>
+												<vbm:Spots>
+													<vbm:Spot position="77;12;0"/>
+													<vbm:Spot position="77;13;0"/>
+												</vbm:Spots>
+											</vbm:vos>
+										</vbm:GeoMap>
+									</vk:content>
+								</vk:ContainerContent>
 							</vk:content>
-						</vk:ContainerContent>
-					</vk:content>
-				</vk:MapContainer>
-			</f:content>
-		</f:DynamicPage>
+						</vk:MapContainer>
+					</f:content>
+				</f:DynamicPage>
+				<layoutData>
+					<l:SplitterLayoutData size="{=${appView>/showDemands} === true?'92%':'61%'}"/>
+				</layoutData>
+			</NavContainer>
+			<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandsTable" type="XML"></core:Fragment>
+		</l:Splitter>
+		<!--<dependents>-->
+		<!--	<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.SmartFilter" type="XML"/>-->
+		<!--</dependents> -->
+	</Page>
 </mvc:View>
