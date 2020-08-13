@@ -12,7 +12,56 @@
 				</f:DynamicPageHeader>
 			</f:header>
 			<f:content>
-				<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandsTable" type="XML"></core:Fragment>
+				<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandsTable" type="XML"></core:Fragment>-->
+				<smartTable:SmartTable id="draggableList" height="100%" width="100%" direction="Column" fitContainer="true" enableAutoBinding="true"
+					entitySet="{viewModel>/subTableSet}" smartFilterId="listReportFilter" showRowCount="true" header="{i18n>xtit.itemListTitle}"
+					useExportToExcel="true" useVariantManagement="true" persistencyKey="{viewModel>/persistencyKeyDemandTable}" useTablePersonalisation="true"
+					requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY">
+					<!-- layout data used to make the table growing but the filter bar fixed -->
+					<smartTable:layoutData>
+						<FlexItemData growFactor="1"/>
+					</smartTable:layoutData>
+					<table:Table columnResize="onColumnResize" minAutoRowCount="5" >
+						<table:rowSettingsTemplate>
+							<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
+						</table:rowSettingsTemplate>
+						<table:columns>
+							<table:Column hAlign="Center" width="3rem" visible="{= ${/#Demand/STATUS_ICON/@sap:visible} === 'false' ? false : true}">
+								<table:customData>
+									<core:CustomData key="p13nData" value='\{"columnKey": "STATUS_ICON", "leadingProperty": "STATUS_ICON"}'/>
+								</table:customData>
+								<Label text="{/#Demand/STATUS_ICON/@sap:label}"/>
+								<table:template>
+									<core:Icon src="{STATUS_ICON}" color="{ path:'CRITICALITY', formatter:'.formatter.formatStatusIconColor' }" tooltip="{StatusDesc}"></core:Icon>
+								</table:template>
+							</table:Column>
+							<table:Column hAlign="Center" width="3rem">
+								<table:customData>
+									<core:CustomData key="p13nData" value='\{"columnKey": "DEMAND_ICON", "leadingProperty": "DEMAND_ICON"}'/>
+								</table:customData>
+								<Label text="{/#Demand/DEMAND_ICON/@sap:label}"/>
+								<table:template>
+									<core:Icon src="{DEMAND_ICON}" tooltip="{DemandDesc}"></core:Icon>
+								</table:template>
+							</table:Column>
+							<table:Column hAlign="Center" width="3rem" visible="{user>/EMP_ENABLED}">
+								<table:customData>
+									<core:CustomData key="p13nData" value='\{"columnKey": "SYNC_STATUS", "leadingProperty": "SYNC_STATUS"}'/>
+								</table:customData>
+								<Label text="{/#Demand/SYNC_STATUS/@sap:label}"/>
+								<table:template>
+									<core:Icon src="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIcon' }"
+										color="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIconColor' }"
+										tooltip="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncTooltip' }"></core:Icon>
+								</table:template>
+							</table:Column>
+							<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.OrderIdColumn" type="XML"/>-->
+						</table:columns>
+						<table:dragDropConfig>
+							<dnd:DragInfo sourceAggregation="rows" groupName="demandView" dragStart="onDragStart" dragEnd="onDragEnd"/>
+						</table:dragDropConfig>
+					</table:Table>
+				</smartTable:SmartTable>
 			</f:content>
 			<f:footer><core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandToolbar" type="XML"/>
 			</f:footer>

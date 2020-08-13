@@ -9,9 +9,10 @@
 			<FlexItemData growFactor="1"/>
 		</smartTable:layoutData>
 		<smartTable:customToolbar>
-		<!--	<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandToolbar" type="XML"/>-->
+			<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandToolbar" type="XML"/>
 		</smartTable:customToolbar>
-		<table:Table columnResize="onColumnResize" minAutoRowCount="5">
+		<table:Table enableGrouping="true" visibleRowCountMode="Auto" enableColumnReordering="false" visible="{=${viewModel>/showDemands} === true?false:true}" enableCellFilter="false"
+			rowSelectionChange="onRowSelectionChange" minAutoRowCount="3">
 			<table:rowSettingsTemplate>
 				<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
 			</table:rowSettingsTemplate>

@@ -41,12 +41,12 @@ sap.ui.define([
 			oSettingButton.setIcon("sap-icon://filter");
 			oSettingButton.setTooltip("Filters");
 			this.getView().byId("listReportFilter").setFilterBarExpanded(false);
-			Fragment.load({
-				name: "com.evorait.evoplan.view.fragments.DemandToolbar",
-				controller: this
-			}).then(function (oFragment) {
-				this._oDraggableTable.setCustomToolbar(oFragment);
-			}.bind(this));
+			// Fragment.load({
+			// 	name: "com.evorait.evoplan.view.fragments.DemandToolbar",
+			// 	controller: this
+			// }).then(function (oFragment) {
+			// 	this._oDraggableTable.setCustomToolbar(oFragment);
+			// }.bind(this));
 		},
 		/**
 		 * 
