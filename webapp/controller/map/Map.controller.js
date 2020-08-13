@@ -1,13 +1,15 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/AssignmentActionsController",
+	"com/evorait/evoplan/controller/NavigationActionSheet",
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"com/evorait/evoplan/controller/map/MapConfig",
 	"sap/ui/core/Fragment",
-	"sap/m/Dialog"
-], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, Fragment,Dialog) {
+	"sap/m/Dialog",
+	"sap/m/Button",
+	"sap/m/MessageToast"
+], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, Fragment, Dialog, Button, MessageToast) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
@@ -27,6 +29,11 @@ sap.ui.define([
 			this._mParameters = {
 				bFromMap: true
 			};
+			//route match function
+			this.getRouter().getRoute("map").attachPatternMatched(this._onObjectMatched, this);
+		},
+		_onObjectMatched: function () {
+			this.getOwnerComponent().getModel("viewModel").setProperty("/isMapView", true);
 		},
 		onAfterRendering: function () {
 			var oToolbar = this.getView().byId("idMapContainer").getAggregation("toolbar");
@@ -34,6 +41,12 @@ sap.ui.define([
 			oSettingButton.setIcon("sap-icon://filter");
 			oSettingButton.setTooltip("Filters");
 			this.getView().byId("listReportFilter").setFilterBarExpanded(false);
+			Fragment.load({
+				name: "com.evorait.evoplan.view.fragments.DemandToolbar",
+				controller: this
+			}).then(function (oFragment) {
+				this._oDraggableTable.setCustomToolbar(oFragment);
+			}.bind(this));
 		},
 		/**
 		 * 
@@ -57,13 +70,16 @@ sap.ui.define([
 			var oContext = oEvent.getSource().getParent().getParent().getBindingContext(),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath();
-			if (!this._oNavActionSheet) {
-				this._oNavActionSheet = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.NavigationActionSheet", this);
-				this.getView().addDependent(this._oNavActionSheet);
-			}
 			this.selectedDemandData = oModel.getProperty(sPath);
+			this.getOwnerComponent().NavigationActionSheet.open(this.getView(), oEvent.getSource().getParent(), this.selectedDemandData);
+			// if (!this._oNavActionSheet) {
+			// 	this._oNavActionSheet = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.NavigationActionSheet", this);
+			// 	this.getView().addDependent(this._oNavActionSheet);
+			// }
+			// this.selectedDemandData = oModel.getProperty(sPath);
 
-			this._oNavActionSheet.openBy(oEvent.getSource().getParent());
+			// this._oNavActionSheet.openBy(oEvent.getSource().getParent());
+
 		},
 		onDrop: function (oEvent) {
 			console.log(oEvent);
@@ -93,7 +109,7 @@ sap.ui.define([
 					// 		this.oDefaultDialog.close();
 					// 	}.bind(this)
 					// }),
-					endButton: new sap.m.Button({
+					endButton: new Button({
 						text: "Close",
 						press: function () {
 							this.oFilterDialog.close();
@@ -104,6 +120,7 @@ sap.ui.define([
 					}.bind(this)
 				});
 				// to get access to the controller's model
+				this.oFilterDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 				this.getView().addDependent(this.oFilterDialog);
 			}
 			if (this.oFilterDialog.getContent().length < 1) {
@@ -121,11 +138,10 @@ sap.ui.define([
 
 			if (this._aSelectedRowsIdx.length > 0) {
 				// TODO comment
-				localStorage.setItem("Evo-Action-page", "splitDemands");
 				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData, this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("ymsg.selectMinItem");
-				sap.m.MessageToast.show(msg);
+				MessageToast.show(msg);
 			}
 		},
 		/**
@@ -142,17 +158,7 @@ sap.ui.define([
 				this.byId("changeStatusButton").setEnabled(false);
 			}
 		},
-		/**
-		 *  on click of navigation items opens the respective application
-		 */
-		onClickNavAction: function (oEvent) {
-			var oContext = oEvent.getSource().getBindingContext("navLinks"),
-				oModel = oContext.getModel(),
-				sPath = oContext.getPath(),
-				oData = oModel.getProperty(sPath);
 
-			this.openEvoOrder(this.selectedDemandData.ORDERID, oData);
-		},
 		/**
 		 * on press assign button in footer
 		 * show modal with user for select
@@ -167,7 +173,6 @@ sap.ui.define([
 
 			if (oSelectedPaths.aPathsData.length > 0) {
 				// TODO comment
-				localStorage.setItem("Evo-Action-page", "splitDemands");
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
 			}
 			if (oSelectedPaths.aNonAssignable.length > 0) {

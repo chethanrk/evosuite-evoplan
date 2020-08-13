@@ -33,9 +33,8 @@ sap.ui.define([
 
 			oViewModel = new JSONModel({
 				busy: true,
-				delay: 0,
-				showDemands: false,
-				isMapView: false
+				delay: 0
+				
 			});
 			this.getOwnerComponent().setModel(oViewModel, "appView");
 
@@ -77,9 +76,7 @@ sap.ui.define([
 			}
 			oAppViewModel.setProperty("/pageTitle", sItemText);
 			oAppViewModel.setProperty("/busy", true);
-			oAppViewModel.setProperty("/isMapView", false);
-			oAppViewModel.refresh(true);
-
+			this.getOwnerComponent().getModel("viewModel").setProperty("/isMapView", false);
 			switch (sItemText) {
 			case oResourceBundle.getText("xbut.pageDemands"):
 				oRouter.navTo("demands", {});
@@ -103,8 +100,6 @@ sap.ui.define([
 				window.open("#SplitPage/SplitDemands", "_blank");
 				break;
 			case oResourceBundle.getText("xbut.pageMap"):
-				oAppViewModel.setProperty("/isMapView", true);
-				oAppViewModel.refresh(true);
 				oRouter.navTo("map", {});
 				break;
 			default:
