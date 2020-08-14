@@ -13,6 +13,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/CapacitiveAssignments",
 	"com/evorait/evoplan/controller/CreateResourceUnAvailability",
 	"com/evorait/evoplan/controller/ManageResourceAvailability",
+	"com/evorait/evoplan/controller/NavigationActionSheet",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
 	"sap/m/Link",
@@ -35,6 +36,7 @@ sap.ui.define([
 	CapacitiveAssignments,
 	CreateResourceUnAvailability,
 	ManageResourceAvailability,
+	NavigationActionSheet,
 	MessagePopover,
 	MessagePopoverItem,
 	Link,
@@ -99,7 +101,9 @@ sap.ui.define([
 						reassign: false,
 						change: false
 					}
-				}
+				},
+				showDemands: false,
+				isMapView: false
 			});
 			this.setModel(oViewModel, "viewModel");
 
@@ -272,6 +276,9 @@ sap.ui.define([
 
 			this.manageAvail = new ManageResourceAvailability();
 			this.manageAvail.init();
+			
+			this.NavigationActionSheet = new NavigationActionSheet();
+			this.NavigationActionSheet.init();
 		},
 
 		/**

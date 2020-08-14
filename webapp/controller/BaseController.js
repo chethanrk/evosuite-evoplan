@@ -550,11 +550,11 @@ sap.ui.define([
 		/**
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
-		openEvoOrder: function (sOrderId, oAppInfo) {
+		openEvoOrder: function (sOrderId, oAppInfo,oViewModel) {
 			var sUri, sSemanticObject, sParameter,
 				sAction,
 				sAdditionInfo,
-				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode");
+				sLaunchMode = oViewModel?oViewModel.getProperty("/launchMode"):this.getModel("viewModel").getProperty("/launchMode");
 
 			if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
 				sAdditionInfo = oAppInfo.Value1 || "";
@@ -589,7 +589,7 @@ sap.ui.define([
 		clearLocalStorage: function(){
 			localStorage.removeItem("Evo-Dmnd-pageRefresh");
 			localStorage.removeItem("Evo-Dmnd-guid");
-		}
+		},
 
 	});
 

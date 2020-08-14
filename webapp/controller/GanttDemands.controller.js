@@ -186,24 +186,8 @@ sap.ui.define([
 			var oContext = oEvent.getSource().getParent().getParent().getBindingContext(),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath();
-			if (!this._oNavActionSheet) {
-				this._oNavActionSheet = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.NavigationActionSheet", this);
-				this.getView().addDependent(this._oNavActionSheet);
-			}
 			this.selectedDemandData = oModel.getProperty(sPath);
-
-			this._oNavActionSheet.openBy(oEvent.getSource().getParent());
-		},
-		/**
-		 *  on click of navigation items opens the respective application
-		 */
-		onClickNavAction: function (oEvent) {
-			var oContext = oEvent.getSource().getBindingContext("navLinks"),
-				oModel = oContext.getModel(),
-				sPath = oContext.getPath(),
-				oData = oModel.getProperty(sPath);
-
-			this.openEvoOrder(this.selectedDemandData.ORDERID, oData);
+			this.getOwnerComponent().NavigationActionSheet.open(this.getView(),oEvent.getSource().getParent(),this.selectedDemandData);
 		},
 		/**
 		 *	Navigates to evoOrder detail page with static url. 

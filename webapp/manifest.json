@@ -270,7 +270,6 @@
 					"name": "map",
 					"target": [
 						"map",
-						"mapDemands",
 						"ganttResourceTree"
 					]
 				},
@@ -292,12 +291,6 @@
 				"splitVerNavigation": {
 					"viewType": "XML",
 					"viewName": "layouts.Split2VerViewsNavi",
-					"viewLevel": 2,
-					"controlId": "appPanel"
-				},
-				"split3MapNavigation": {
-					"viewType": "XML",
-					"viewName": "layouts.Split3MapViewsNavi",
 					"viewLevel": 2,
 					"controlId": "appPanel"
 				},
@@ -410,16 +403,8 @@
 					"viewType": "XML",
 					"viewName": "Map",
 					"viewPath": "com.evorait.evoplan.view.map",
-					"parent": "split3MapNavigation",
-					"controlId": "topRightPanel",
-					"viewLevel": 3
-				},
-				"mapDemands": {
-					"viewType": "XML",
-					"viewName": "MapDemands",
-					"viewPath": "com.evorait.evoplan.view.map",
-					"parent": "split3MapNavigation",
-					"controlId": "bottomRightPanel",
+					"parent": "splitHorNavigation",
+					"controlId": "rightPanel",
 					"viewLevel": 3
 				},
 				"mapDemandDetails": {
@@ -432,7 +417,7 @@
 				"ganttResourceTree": {
 					"viewType": "XML",
 					"viewName": "ResourceTree",
-					"parent": "split3MapNavigation",
+					"parent": "splitHorNavigation",
 					"controlId": "leftPanel",
 					"viewLevel": 3
 				}
