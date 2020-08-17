@@ -256,8 +256,8 @@ sap.ui.define([
          * @param oEvent
          */
         onCreateUnAvail : function (oEvent) {
-            var oUserModel = this._oComponent.getModel("user"),
-                sAvailType = oUserModel.getProperty("DEFAULT_ABSENCE_TYPE").split(";");
+            var oUserModel = this._component.getModel("user"),
+                sAvailType = oUserModel.getProperty("/DEFAULT_ABSENCE_TYPE").split(";");
             this._oModel.metadataLoaded().then(function () {
                 var oContext = this._oModel.createEntry("/ResourceAvailabilitySet", {
                     properties: {
