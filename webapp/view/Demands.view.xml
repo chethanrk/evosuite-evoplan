@@ -21,7 +21,7 @@
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1"/>
 					</smartTable:layoutData>
-					<table:Table columnResize="onColumnResize" minAutoRowCount="5" >
+					<table:Table columnResize="onColumnResize" minAutoRowCount="5">
 						<table:rowSettingsTemplate>
 							<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
 						</table:rowSettingsTemplate>
@@ -63,7 +63,11 @@
 					</table:Table>
 				</smartTable:SmartTable>
 			</f:content>
-			<f:footer><core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandToolbar" type="XML"/>
+			<f:footer>
+				<OverflowToolbar>
+					<ToolbarSpacer/>
+					<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandToolbarButtons" type="XML"/>
+				</OverflowToolbar>
 			</f:footer>
 		</f:DynamicPage>
 	</Page>

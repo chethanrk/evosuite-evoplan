@@ -89,7 +89,6 @@ sap.ui.define([
 			}
 			oAppViewModel.setProperty("/pageTitle", sItemText);
 			oAppViewModel.setProperty("/busy", true);
-			this.getOwnerComponent().getModel("viewModel").setProperty("/isMapView", false);
 			switch (sItemText) {
 			case oResourceBundle.getText("xbut.pageDemands"):
 				oRouter.navTo("demands", {});

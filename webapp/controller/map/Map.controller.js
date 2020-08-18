@@ -16,8 +16,10 @@ sap.ui.define([
 
 		onInit: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
+				// oGeoMap2 = this.getView().byId("idGeoMap2"),
 				oMapModel = this.getModel("mapConfig");
 			oGeoMap.setMapConfiguration(MapConfig.getMapConfiguration(oMapModel));
+			// oGeoMap2.setMapConfiguration(MapConfig.getMapConfiguration(oMapModel));
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			this._oEventBus.subscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			var onClickNavigation = this._onActionPress.bind(this);
@@ -25,28 +27,9 @@ sap.ui.define([
 			this._oDraggableTable = this.byId("draggableList");
 			this._oDataTable = this._oDraggableTable.getTable();
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
-			this.getModel("appView").setProperty("/isMapView", true);
 			this._mParameters = {
 				bFromMap: true
 			};
-			//route match function
-			this.getRouter().getRoute("map").attachPatternMatched(this._onObjectMatched, this);
-		},
-		_onObjectMatched: function () {
-			this.getOwnerComponent().getModel("viewModel").setProperty("/isMapView", true);
-		},
-		onAfterRendering: function () {
-			var oToolbar = this.getView().byId("idMapContainer").getAggregation("toolbar");
-			var oSettingButton = oToolbar.getContent()[2];
-			oSettingButton.setIcon("sap-icon://filter");
-			oSettingButton.setTooltip("Filters");
-			this.getView().byId("listReportFilter").setFilterBarExpanded(false);
-			// Fragment.load({
-			// 	name: "com.evorait.evoplan.view.fragments.DemandToolbar",
-			// 	controller: this
-			// }).then(function (oFragment) {
-			// 	this._oDraggableTable.setCustomToolbar(oFragment);
-			// }.bind(this));
 		},
 		/**
 		 * 
@@ -72,14 +55,6 @@ sap.ui.define([
 				sPath = oContext.getPath();
 			this.selectedDemandData = oModel.getProperty(sPath);
 			this.getOwnerComponent().NavigationActionSheet.open(this.getView(), oEvent.getSource().getParent(), this.selectedDemandData);
-			// if (!this._oNavActionSheet) {
-			// 	this._oNavActionSheet = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.NavigationActionSheet", this);
-			// 	this.getView().addDependent(this._oNavActionSheet);
-			// }
-			// this.selectedDemandData = oModel.getProperty(sPath);
-
-			// this._oNavActionSheet.openBy(oEvent.getSource().getParent());
-
 		},
 		onDrop: function (oEvent) {
 			console.log(oEvent);
@@ -90,43 +65,6 @@ sap.ui.define([
 				this._oDraggableTable.rebindTable();
 			}
 			this._bLoaded = true;
-			var oGeoMap = this.getView().byId("idGeoMap");
-		},
-		/**
-		 * To Open SmartFilter dialoge for Map View 
-		 * 
-		 */
-		onClickMapDemandFilter: function (oEvent) {
-			if (!this.oFilterDialog) {
-				this.oFilterDialog = new Dialog({
-					title: "Demand Filter",
-					draggable: true,
-					content: this.getView().byId("listReportFilter"),
-					// beginButton: new Button({
-					// 	type: ButtonType.Emphasized,
-					// 	text: "OK",
-					// 	press: function () {
-					// 		this.oDefaultDialog.close();
-					// 	}.bind(this)
-					// }),
-					endButton: new Button({
-						text: "Close",
-						press: function () {
-							this.oFilterDialog.close();
-						}.bind(this)
-					}),
-					afterClose: function () {
-						this.getView().byId("idMapDynamicPage").getHeader().addContent(this.oFilterDialog.getContent()[0]);
-					}.bind(this)
-				});
-				// to get access to the controller's model
-				this.oFilterDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-				this.getView().addDependent(this.oFilterDialog);
-			}
-			if (this.oFilterDialog.getContent().length < 1) {
-				this.oFilterDialog.addContent(this.getView().byId("listReportFilter"));
-			}
-			this.oFilterDialog.open();
 		},
 		/**
 		 * open change status dialog
@@ -204,7 +142,7 @@ sap.ui.define([
 				}
 			}
 		},
-
+		
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 		}
