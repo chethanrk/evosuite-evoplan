@@ -62,6 +62,7 @@ sap.ui.define([
 		 * @param sControlId
 		 */
 		init: function (oView, sControlId) {
+			this._sId = oView.getId();
 			this._oView = oView;
 			this._component = this._oView.getController().getOwnerComponent();
 			var oLayout = oView.byId(sControlId);
@@ -73,9 +74,10 @@ sap.ui.define([
 				// create fragment lazily
 				Fragment.load({
 					name: "com.evorait.evoplan.view.fragments.ResourceTreeFilterBar",
+					id: this._sId,
 					controller: this
 				}).then(function (content) {
-					this._oFilterBar = sap.ui.getCore().byId("resourceTreeFilterBar");
+					this._oFilterBar =  this._oView.byId("resourceTreeFilterBar");
 					this._oVariantMangement = this._oFilterBar.getSmartVariant();
 
 					//Filterbar is now official initialized
@@ -99,7 +101,7 @@ sap.ui.define([
 		 */
 		getFilterBar: function () {
 			if (!this._oFilterBar) {
-				this._oFilterBar = sap.ui.getCore().byId("resourceTreeFilterBar");
+				this._oFilterBar = this._oView.byId("resourceTreeFilterBar");
 			}
 			return this._oFilterBar;
 		},

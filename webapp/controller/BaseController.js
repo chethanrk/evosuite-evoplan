@@ -272,7 +272,7 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
 			else if (oParameter.bFromMap) {
-				eventBus.publish("BaseController", "refreshTreeTable", {});
+				eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				eventBus.publish("BaseController", "refreshMapView", {});
 				eventBus.publish("BaseController", "refreshMapDemandTable", {});
 			}else if(oParameter.bFromGanttSplit){
