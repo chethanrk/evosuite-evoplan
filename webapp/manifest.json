@@ -270,7 +270,7 @@
 					"name": "map",
 					"target": [
 						"map",
-						"ganttResourceTree"
+						"mapResourceTree"
 					]
 				},
 				{
@@ -417,6 +417,13 @@
 				"ganttResourceTree": {
 					"viewType": "XML",
 					"viewName": "ResourceTree",
+					"parent": "splitHorNavigation",
+					"controlId": "leftPanel",
+					"viewLevel": 3
+				},
+				"mapResourceTree": {
+					"viewType": "XML",
+					"viewName": "MapResourceTree",
 					"parent": "splitHorNavigation",
 					"controlId": "leftPanel",
 					"viewLevel": 3

@@ -14,7 +14,7 @@ sap.ui.define([
 	MessageToast, MessageBox) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.ResourceTree", {
+	return BaseController.extend("com.evorait.evoplan.controller.MapResourceTree", {
 
 		formatter: formatter,
 
@@ -36,7 +36,7 @@ sap.ui.define([
 		 **/
 		onInit: function () {
 			this._oDroppableTable = this.byId("droppableTable");
-			//this._oDroppableTable.setSmartFilterId("demand--resourceTreeFilterBar");
+			//this._oDroppableTable.setSmartFilterId("map--resourceTreeFilterBar");
 			this._oDataTable = this._oDroppableTable.getTable();
 			this._configureDataTable(this._oDataTable);
 
@@ -45,7 +45,7 @@ sap.ui.define([
 
 			//eventbus of assignemnt handling
 			this._eventBus = sap.ui.getCore().getEventBus();
-			this._eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
+			this._eventBus.subscribe("BaseController", "refreshMapTreeTable", this._triggerRefreshTree, this);
 			this._eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
 			
 			//route match function
@@ -57,10 +57,11 @@ sap.ui.define([
 		_routeMatched: function(oEvent){
             var oParameters = oEvent.getParameters(),
                sRouteName = oParameters.name; // route name
-               if(sRouteName === "demands")
+               if(sRouteName === "map")
                {
-               	 this._mParameters = {bFromHome:true};
+               	 this._mParameters = {bFromMap:true};
                }
+              
          },
 
 		/**
@@ -197,7 +198,7 @@ sap.ui.define([
 			if (this.getOwnerComponent().planningCalendarDialog) {
 				this.getOwnerComponent().planningCalendarDialog.getDialog().destroy();
 			}
-			this._eventBus.unsubscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
+			this._eventBus.unsubscribe("BaseController", "refreshMapTreeTable", this._triggerRefreshTree, this);
 			this._eventBus.unsubscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
 		},
 
