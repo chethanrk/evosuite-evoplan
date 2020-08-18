@@ -8,12 +8,12 @@
 					<f:header>
 						<f:DynamicPageHeader pinnable="true">
 							<f:content>
-								<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.SmartFilter" type="XML"/>
+								<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.SmartFilterMapDemands" type="XML"/>
 							</f:content>
 						</f:DynamicPageHeader>
 					</f:header>
 					<f:content>
-						<vk:MapContainer id="idMapContainer" autoAdjustHeight="true" settingsPressed="onClickMapDemandFilter">
+						<vk:MapContainer id="idMapContainer" autoAdjustHeight="true" settingsPressed="onClickMapDemandFilter" >
 							<vk:content>
 								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities">
 									<vk:content>
@@ -37,8 +37,5 @@
 			</NavContainer>
 			<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandsTable" type="XML"></core:Fragment>
 		</l:Splitter>
-		<!--<dependents>-->
-		<!--	<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.SmartFilter" type="XML"/>-->
-		<!--</dependents> -->
 	</Page>
 </mvc:View>

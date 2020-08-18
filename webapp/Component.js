@@ -102,8 +102,7 @@ sap.ui.define([
 						change: false
 					}
 				},
-				showDemands: false,
-				isMapView: false
+				showDemands: true,
 			});
 			this.setModel(oViewModel, "viewModel");
 
