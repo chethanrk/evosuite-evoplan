@@ -31,6 +31,21 @@ sap.ui.define([
 				bFromMap: true
 			};
 		},
+		onAfterRendering: function () {
+			var oGeoMap = this.getView().byId("idGeoMap"),
+				oBinding = oGeoMap.getAggregation("vos")[0].getBinding("items");
+			this.setMapBusy(true);
+			// To show busy indicator when filter getting applied.
+			// oBinding.attachDataRequested(function () {
+			// 	oViewModel.setProperty("/mapBusy", true);
+			// });
+			oBinding.attachDataReceived(function () {
+				this.setMapBusy(false);
+			}.bind(this));
+		},
+		setMapBusy: function (bValue) {
+			this.getModel("viewModel").setProperty("/mapBusy", bValue);
+		},
 		/**
 		 * 
 		 * On click on demand actions to navigate to demand detail page 
@@ -142,7 +157,7 @@ sap.ui.define([
 				}
 			}
 		},
-		
+
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 		}
