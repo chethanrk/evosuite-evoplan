@@ -93,6 +93,7 @@ sap.ui.define([
 				enableReprocess: false,
 				first_load: false,
 				launchMode:Constants.LAUNCH_MODE.BSP,
+				DefaultDemandStatus:"",
 				ganttSettings: {
 					active: false,
 					busy: false,
@@ -103,8 +104,15 @@ sap.ui.define([
 					}
 				},
 				showDemands: true,
-			});
+			}),oComponentData,oStartUpParameters;
 			this.setModel(oViewModel, "viewModel");
+
+            oComponentData = this,getComponentData();
+            oStartUpParameters = oComponentData ? oComponentData.startupParameters : null;
+
+            if(oStartUpParameters && oStartUpParameters["Demand"]){
+            	this.getModel("viewModel").setProperty("/DefaultDemandStatus",oStartUpParameters["Demand"][0])
+			}
 
 			//creates the Information model and sets to the component
 			this.setModel(models.createInformationModel(this), "InformationModel");
@@ -116,7 +124,7 @@ sap.ui.define([
 			
 			//Creating the Global assignment model for assignInfo Dialog
 			this.setModel(models.createNavLinksModel([]), "navLinks");
-			
+
 			//Creating the Global assignment model for assignInfo Dialog
 			this.setModel(models.createMapConfigModel([]), "mapConfig");
 
@@ -191,12 +199,12 @@ sap.ui.define([
                  if(data[2].results.length > 0){
                 	this.getModel("mapConfig").setData(data[2].results[0]);
                 }
-                
+
                 // Initialize websocket
                 if(data[0].ENABLE_PUSH_DEMAND){
                 	WebSocket.init(this);
                 }
-                
+
                 // create the views based on the url/hash
                 this.getRouter().initialize();
             }.bind(this));
@@ -275,7 +283,7 @@ sap.ui.define([
 
 			this.manageAvail = new ManageResourceAvailability();
 			this.manageAvail.init();
-			
+
 			this.NavigationActionSheet = new NavigationActionSheet();
 			this.NavigationActionSheet.init();
 		},
@@ -390,7 +398,10 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
-
+        /**
+		 * Get All resource groups
+         * @private
+         */
 		_getResourceGroups: function () {
 			this.getModel().read("/ResourceSet", {
 				filters: [
