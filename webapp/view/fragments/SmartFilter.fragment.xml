@@ -12,7 +12,8 @@
             liveMode="true"
             considerSelectionVariants="true"
             showClearButton="true"
-            showClearOnFB="true">
+            showClearOnFB="true"
+            initialized="onInitialized">
 
         <smartFilterBar:controlConfiguration>
             <smartFilterBar:ControlConfiguration

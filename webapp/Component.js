@@ -90,6 +90,7 @@ sap.ui.define([
 				enableReprocess: false,
 				first_load: false,
 				launchMode:Constants.LAUNCH_MODE.BSP,
+				DefaultDemandStatus:"",
 				ganttSettings: {
 					active: false,
 					busy: false,
@@ -99,8 +100,15 @@ sap.ui.define([
 						change: false
 					}
 				}
-			});
+			}),oComponentData,oStartUpParameters;
 			this.setModel(oViewModel, "viewModel");
+
+            oComponentData = this,getComponentData();
+            oStartUpParameters = oComponentData ? oComponentData.startupParameters : null;
+
+            if(oStartUpParameters && oStartUpParameters["Demand"]){
+            	this.getModel("viewModel").setProperty("/DefaultDemandStatus",oStartUpParameters["Demand"][0])
+			}
 
 			//creates the Information model and sets to the component
 			this.setModel(models.createInformationModel(this), "InformationModel");
@@ -373,7 +381,10 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
-
+        /**
+		 * Get All resource groups
+         * @private
+         */
 		_getResourceGroups: function () {
 			this.getModel().read("/ResourceSet", {
 				filters: [
