@@ -104,15 +104,8 @@ sap.ui.define([
 					}
 				},
 				showDemands: true,
-			}),oComponentData,oStartUpParameters;
+			});
 			this.setModel(oViewModel, "viewModel");
-
-            oComponentData = this,getComponentData();
-            oStartUpParameters = oComponentData ? oComponentData.startupParameters : null;
-
-            if(oStartUpParameters && oStartUpParameters["Demand"]){
-            	this.getModel("viewModel").setProperty("/DefaultDemandStatus",oStartUpParameters["Demand"][0])
-			}
 
 			//creates the Information model and sets to the component
 			this.setModel(models.createInformationModel(this), "InformationModel");
