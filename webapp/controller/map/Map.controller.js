@@ -1,5 +1,5 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/NavigationActionSheet",
+	"com/evorait/evoplan/controller/common/NavigationActionSheet",
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",

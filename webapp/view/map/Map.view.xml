@@ -8,7 +8,7 @@
 					<f:header>
 						<f:DynamicPageHeader pinnable="true">
 							<f:content>
-								<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.SmartFilterMapDemands" type="XML"/>
+								<core:Fragment fragmentName="com.evorait.evoplan.view.map.fragments.SmartFilterMapDemands" type="XML"/>
 							</f:content>
 						</f:DynamicPageHeader>
 					</f:header>
@@ -35,7 +35,7 @@
 					<l:SplitterLayoutData size="{=${viewModel>/showDemands} === true?'92%':'61%'}"/>
 				</layoutData>
 			</NavContainer>
-			<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandsTable" type="XML"></core:Fragment>
+			<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandsTable" type="XML"></core:Fragment>
 		</l:Splitter>
 	</Page>
 </mvc:View>
