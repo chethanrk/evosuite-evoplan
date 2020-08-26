@@ -250,20 +250,9 @@ sap.ui.define([
 		 */
 		_refreshGanttChart: function (oEvent) {
 			var oTreeTable = this.getView().byId("ganttResourceTreeTable"),
-				oViewModel = this.getModel("viewModel"),
 				oTreeBinding = oTreeTable.getBinding("rows");
 			//reset the changes
 			this.resetChanges();
-			if (this._bLoaded && oTreeTable && oTreeTable.getBinding("rows")) {
-				this._ganttChart.setSelectionPanelSize("25%");
-				oTreeTable.getBinding("rows")._restoreTreeState().then(function () {
-					oViewModel.setProperty("/ganttSettings/busy", false);
-					oTreeTable.clearSelection();
-					oTreeTable.rerender();
-				}.bind(this));
-			}
-			this._bLoaded = true;
-
 			//Get the tree state of gantt tree table before refresh
 			if (oTreeBinding && !this._bFirsrTime) {
 				this.mTreeState = this._getTreeState();
