@@ -6,7 +6,7 @@
 		<u:MenuItem text="{i18n>xbut.changeStatus}"
 			visible="{path:'viewModel>/ganttSettings/shapeData/DemandStatus', formatter: '.formatter.formatChangeStatus'}">
 			<u:Menu itemSelect="handleStatusItemPress">
-				<u:MenuItem icon="sap-icon://email" id="idButtonAck" text="{i18n>xbut.ack}" visible="{viewModel>/ganttSettings/shapeData/AllowAcknowledge}">
+				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.ack}" visible="{viewModel>/ganttSettings/shapeData/AllowAcknowledge}">
 					<u:customData>
 						<core:CustomData key="Function" value="ACKNOWLDGE"/>
 					</u:customData>
