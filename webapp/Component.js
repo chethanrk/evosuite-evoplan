@@ -103,7 +103,10 @@ sap.ui.define([
 					}
 				},
 				showDemands: true,
-				mapBusy:false
+				mapSettings:{
+					busy:false,
+					filters:[]
+				}
 			});
 			this.setModel(oViewModel, "viewModel");
 
