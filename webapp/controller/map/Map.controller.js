@@ -31,6 +31,33 @@ sap.ui.define([
 				bFromMap: true
 			};
 		},
+		onSelectSpots: function (oEvent) {
+			// alert("selected");
+			// var oSelectedSpots = oEvent.getParameter("selected"),
+			// 	sPath;
+			// if (oSelectedSpots && oSelectedSpots.length > 0) {
+			// 	for(var i=0;i<oSelectedSpots.length;i++){
+			// 		sPath = oSelectedSpots[i].getBindingContext().getPath();
+			// 		this.getModel().setProperty(sPath + "/IS_SELECTED",true);
+			// 	}
+			// }
+		},
+		onDeselectSpots: function(oEvent){
+		alert("Deselect");	
+		},
+		onAfterRendering: function () {
+			var oGeoMap = this.getView().byId("idGeoMap"),
+				oBinding = oGeoMap.getAggregation("vos")[0].getBinding("items");
+			// To show busy indicator when map loads.
+			this.setMapBusy(true);
+			oBinding.attachDataReceived(function () {
+				this.setMapBusy(false);
+			}.bind(this));
+		},
+		setMapBusy: function (bValue) {
+			this.getModel("viewModel").setProperty("/mapSettings/busy", bValue);
+		},
+
 		/**
 		 * 
 		 * On click on demand actions to navigate to demand detail page 
@@ -59,12 +86,26 @@ sap.ui.define([
 		onDrop: function (oEvent) {
 			console.log(oEvent);
 		},
+		/**
+		 *  refresh the whole map view including map and demand table
+		 */
 		_refreshMapView: function (oEvent) {
 			// Code to refresh Map Demand Table
 			if (this._bLoaded) {
 				this._oDraggableTable.rebindTable();
+				this._refreshMapBinding();
 			}
 			this._bLoaded = true;
+		},
+		/**
+		 *  refresh the whole map container bindings
+		 */
+		_refreshMapBinding: function () {
+			// Code to refresh Map
+			this.setMapBusy(true);
+			var oGeoMap = this.getView().byId("idGeoMap"),
+				oBinding = oGeoMap.getAggregation("vos")[0].getBinding("items");
+			oBinding.refresh(true);
 		},
 		/**
 		 * open change status dialog
@@ -128,21 +169,20 @@ sap.ui.define([
 		 *	Get Filters from smartfilter dialog to apply on Map. 
 		 */
 		onDemandFilterChange: function (oEvent) {
-			if (this.getView().getControllerName().split(".").pop() === "Map") {
-				var oFilter = oEvent.getSource();
-				var aSelectedFilters = oFilter.getAllFiltersWithValues();
-				var aFilter = [];
-				for (var vProperty in aSelectedFilters) {
-					var aTokens = aSelectedFilters[vProperty].getControl().getTokens();
-					// var oControl = 
-					// for (var vTokenProperty in aTokens) {
-					// 	// alert(aTokens[vTokenProperty].getText());
-					// 	aFilter.push(new Filter(aSelectedFilters[vProperty].getName(), FilterOperator.EQ, aTokens[vTokenProperty].getText()));
-					// }
-				}
-			}
+			var aFilters = oEvent.getSource().getFilters();
+			this.getModel("viewModel").setProperty("/mapSettings/filters", aFilters);
+			this.applyFiltersToMap();
 		},
-		
+		/**
+		 *	Apply Filters into Map bindings. 
+		 */
+		applyFiltersToMap: function () {
+			var oGeoMap = this.getView().byId("idGeoMap"),
+				oBinding = oGeoMap.getAggregation("vos")[0].getBinding("items"),
+				oFilters = this.getModel("viewModel").getProperty("/mapSettings/filters");
+			this.setMapBusy(true);
+			oBinding.filter(oFilters);
+		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 		}

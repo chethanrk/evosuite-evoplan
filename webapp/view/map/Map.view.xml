@@ -4,7 +4,7 @@
 		<l:Splitter orientation="Vertical">
 			<NavContainer id="leftPanel" class="panelPage">
 				<f:DynamicPage id="idMapDynamicPage" headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true" showFooter="true"
-					toggleHeaderOnTitleClick="false" class="sapUiNoContentPadding tableContentPage">
+					toggleHeaderOnTitleClick="false" class="sapUiNoContentPadding tableContentPage" >
 					<f:header>
 						<f:DynamicPageHeader pinnable="true">
 							<f:content>
@@ -13,15 +13,16 @@
 						</f:DynamicPageHeader>
 					</f:header>
 					<f:content>
-						<vk:MapContainer id="idMapContainer" autoAdjustHeight="true" settingsPressed="onClickMapDemandFilter" >
+						<vk:MapContainer id="idMapContainer" autoAdjustHeight="true" settingsPressed="onClickMapDemandFilter" busy="{viewModel>/mapSettings/busy}">
 							<vk:content>
-								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities">
+								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities" >
 									<vk:content>
-										<vbm:GeoMap id="idGeoMap" drop="onDrop" initialZoom="5" initialPosition="77.52633333206177;12.963101322467267;0.0">
+										<vbm:GeoMap id="idGeoMap" drop="onDrop"  select="onSelectSpots" initialZoom="{user>/MAP_INITIAL_ZOOM}" initialPosition="{user>/MAP_INITIAL_POSITION}">
 											<vbm:vos>
-												<vbm:Spots>
-													<vbm:Spot position="77;12;0"/>
-													<vbm:Spot position="77;13;0"/>
+												<vbm:Spots items="{/DemandSet}" >
+													<vbm:items>
+														<vbm:Spot type="{path:'IS_SELECTED',formatter:'.formatter.getSpotType'}" select="{IS_SELECTED}" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="{STATUS_ICON}" changeable="true" position="{LONGITUDE};{LATITUDE};0"></vbm:Spot>
+													</vbm:items>
 												</vbm:Spots>
 											</vbm:vos>
 										</vbm:GeoMap>
