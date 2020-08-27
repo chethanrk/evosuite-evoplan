@@ -32,7 +32,18 @@ sap.ui.define([
 			};
 		},
 		onSelectSpots: function (oEvent) {
-			alert("abc");
+			// alert("selected");
+			// var oSelectedSpots = oEvent.getParameter("selected"),
+			// 	sPath;
+			// if (oSelectedSpots && oSelectedSpots.length > 0) {
+			// 	for(var i=0;i<oSelectedSpots.length;i++){
+			// 		sPath = oSelectedSpots[i].getBindingContext().getPath();
+			// 		this.getModel().setProperty(sPath + "/IS_SELECTED",true);
+			// 	}
+			// }
+		},
+		onDeselectSpots: function(oEvent){
+		alert("Deselect");	
 		},
 		onAfterRendering: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
@@ -171,9 +182,6 @@ sap.ui.define([
 				oFilters = this.getModel("viewModel").getProperty("/mapSettings/filters");
 			this.setMapBusy(true);
 			oBinding.filter(oFilters);
-		},
-		onSelectionChange: function (oEvent) {
-			alert("ContentChange");
 		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);

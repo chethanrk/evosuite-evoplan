@@ -17,11 +17,11 @@
 							<vk:content>
 								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities" >
 									<vk:content>
-										<vbm:GeoMap id="idGeoMap" drop="onDrop" initialZoom="{user>/MAP_INITIAL_ZOOM}" initialPosition="{user>/MAP_INITIAL_POSITION}">
+										<vbm:GeoMap id="idGeoMap" drop="onDrop"  select="onSelectSpots" initialZoom="{user>/MAP_INITIAL_ZOOM}" initialPosition="{user>/MAP_INITIAL_POSITION}">
 											<vbm:vos>
-												<vbm:Spots items="{/DemandSet}" select="onSelectSpots">
+												<vbm:Spots items="{/DemandSet}" >
 													<vbm:items>
-														<vbm:Spot position="{LONGITUDE};{LATITUDE};0"></vbm:Spot>
+														<vbm:Spot type="{path:'IS_SELECTED',formatter:'.formatter.getSpotType'}" select="{IS_SELECTED}" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="{STATUS_ICON}" changeable="true" position="{LONGITUDE};{LATITUDE};0"></vbm:Spot>
 													</vbm:items>
 												</vbm:Spots>
 											</vbm:vos>
