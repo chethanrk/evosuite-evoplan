@@ -55,7 +55,7 @@ sap.ui.define([
 				fullWidth: true
 			}
 		},
-		
+
 		_appId: "evoplan",
 
 		/**
@@ -92,8 +92,8 @@ sap.ui.define([
 				selectedHierarchyView: "TIMENONE",
 				enableReprocess: false,
 				first_load: false,
-				launchMode:Constants.LAUNCH_MODE.BSP,
-				DefaultDemandStatus:"",
+				launchMode: Constants.LAUNCH_MODE.BSP,
+				DefaultDemandStatus: "",
 				ganttSettings: {
 					active: false,
 					busy: false,
@@ -104,6 +104,11 @@ sap.ui.define([
 					}
 				},
 				showDemands: true,
+				mapSettings: {
+					busy: false,
+					filters: []
+				}
+
 			});
 			this.setModel(oViewModel, "viewModel");
 
@@ -114,7 +119,7 @@ sap.ui.define([
 
 			//Creating the Global assignment model for assignInfo Dialog
 			this.setModel(models.createAssignmentModel({}), "assignment");
-			
+
 			//Creating the Global assignment model for assignInfo Dialog
 			this.setModel(models.createNavLinksModel([]), "navLinks");
 
@@ -172,38 +177,40 @@ sap.ui.define([
 			});
 			this._oMessagePopover = oMessagePopover;
 
-
 			this._getResourceGroups();
 
 			UIComponent.prototype.init.apply(this, arguments);
-			if(sap.ushell && sap.ushell.Container){
-				this.getModel("viewModel").setProperty("/launchMode",Constants.LAUNCH_MODE.FIORI);
+			if (sap.ushell && sap.ushell.Container) {
+				this.getModel("viewModel").setProperty("/launchMode", Constants.LAUNCH_MODE.FIORI);
 			}
 			var aPromises = [];
 			aPromises.push(this._getSystemInformation());
-			aPromises.push(this._getData("/NavigationLinksSet",[new Filter("LaunchMode",FilterOperator.EQ, this.getModel("viewModel").getProperty("/launchMode"))]));
-			aPromises.push(this._getData("/MapProviderSet",[],{"$expand":"MapSource"}));
-            //sets user model - model has to be intantiated before any view is loaded
-            Promise.all(aPromises).then(function (data) {
-                this.getModel("user").setData(data[0]);
-                if(data[1].results.length > 0){
-                	this.getModel("navLinks").setData(data[1].results);
-                }
-                 if(data[2].results.length > 0){
-                	this.getModel("mapConfig").setData(data[2].results[0]);
-                }
+			aPromises.push(this._getData("/NavigationLinksSet", [new Filter("LaunchMode", FilterOperator.EQ, this.getModel("viewModel").getProperty(
+				"/launchMode"))]));
+			aPromises.push(this._getData("/MapProviderSet", [], {
+				"$expand": "MapSource"
+			}));
+			//sets user model - model has to be intantiated before any view is loaded
+			Promise.all(aPromises).then(function (data) {
+				this.getModel("user").setData(data[0]);
+				if (data[1].results.length > 0) {
+					this.getModel("navLinks").setData(data[1].results);
+				}
+				if (data[2].results.length > 0) {
+					this.getModel("mapConfig").setData(data[2].results[0]);
+				}
 
-                // Initialize websocket
-                if(data[0].ENABLE_PUSH_DEMAND){
-                	WebSocket.init(this);
-                }
+				// Initialize websocket
+				if (data[0].ENABLE_PUSH_DEMAND) {
+					WebSocket.init(this);
+				}
 
-                // create the views based on the url/hash
-                this.getRouter().initialize();
-            }.bind(this));
+				// create the views based on the url/hash
+				this.getRouter().initialize();
+			}.bind(this));
 
 			// Not able load more than 100 associations
-			this.getModel().setSizeLimit(300);
+			this.getModel().setSizeLimit(600);
 
 		},
 
@@ -221,8 +228,7 @@ sap.ui.define([
 			this.planningCalendarDialog.exit();
 			// call the base component's destroy function
 			UIComponent.prototype.destroy.apply(this, arguments);
-			
-			
+
 		},
 
 		/**
@@ -364,16 +370,16 @@ sap.ui.define([
 		_getData: function (sUri, aFilters, mParameters) {
 			return new Promise(function (resolve, reject) {
 				this.getModel().read(sUri, {
-				filters:aFilters,
-				urlParameters:mParameters,
-				success: function (oData, oResponse) {
-					resolve(oData);
-				}.bind(this),
-				error: function (oError) {
-					//Handle Error
-					reject(oError);
-				}.bind(this)
-			});
+					filters: aFilters,
+					urlParameters: mParameters,
+					success: function (oData, oResponse) {
+						resolve(oData);
+					}.bind(this),
+					error: function (oError) {
+						//Handle Error
+						reject(oError);
+					}.bind(this)
+				});
 			}.bind(this));
 		},
 		/**
@@ -391,10 +397,10 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
-        /**
+		/**
 		 * Get All resource groups
-         * @private
-         */
+		 * @private
+		 */
 		_getResourceGroups: function () {
 			this.getModel().read("/ResourceSet", {
 				filters: [
