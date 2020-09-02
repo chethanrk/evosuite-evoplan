@@ -22,6 +22,12 @@
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
+				<Button id="showRoute" enabled="false" visible="{user>/MANAGE_ABSENCE_ENABLE}" text="Route" tooltip="Route" 
+						press="onRoutePress" busyIndicatorDelay="0">
+					<layoutData>
+						<ToolbarLayoutData shrinkable="true"/>
+					</layoutData>
+				</Button>
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.ResourceActions" type="XML"/>
 				<ToolbarSpacer/>
 			   	<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.ResourcePlanningCalender" type="XML"/>
