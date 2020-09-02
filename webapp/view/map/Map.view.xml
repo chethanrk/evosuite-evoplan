@@ -4,7 +4,7 @@
 		<l:Splitter orientation="Vertical">
 			<NavContainer id="leftPanel" class="panelPage">
 				<f:DynamicPage id="idMapDynamicPage" headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true" showFooter="true"
-					toggleHeaderOnTitleClick="false" class="sapUiNoContentPadding tableContentPage">
+					toggleHeaderOnTitleClick="false" class="sapUiNoContentPadding tableContentPage" >
 					<f:header>
 						<f:DynamicPageHeader pinnable="true">
 							<f:content>
@@ -13,11 +13,11 @@
 						</f:DynamicPageHeader>
 					</f:header>
 					<f:content>
-						<vk:MapContainer id="idMapContainer" autoAdjustHeight="true" settingsPressed="onClickMapDemandFilter" >
+						<vk:MapContainer id="idMapContainer" autoAdjustHeight="true" settingsPressed="onClickMapDemandFilter" busy="{viewModel>/mapSettings/busy}">
 							<vk:content>
-								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities">
+								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities" >
 									<vk:content>
-										<vbm:GeoMap id="idGeoMap" drop="onDrop" initialZoom="5" initialPosition="77.52633333206177;12.963101322467267;0.0">
+										<vbm:GeoMap id="idGeoMap" drop="onDrop"  select="onSelectSpots" initialZoom="{user>/MAP_INITIAL_ZOOM}" initialPosition="{user>/MAP_INITIAL_POSITION}">
 											<vbm:vos>
 												<vbm:Routes items="{mapData>/routeData}">
 													<vbm:items>
@@ -25,9 +25,9 @@
 															colorBorder="rgb(255,255,255)" linewidth="3" routetype="Geodesic" click="onClickRoute" contextMenu="onContextMenuRoute"/>
 													</vbm:items>
 												</vbm:Routes>
-												<vbm:Spots items="{/DemandSet}">
+												<vbm:Spots items="{/DemandSet}" >
 													<vbm:items>
-														<vbm:Spot position="{LONGITUDE};{LATITUDE};0" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}"/>
+														<vbm:Spot tooltip="{ORDERID}" type="{path:'IS_SELECTED',formatter:'.formatter.getSpotType'}" select="{IS_SELECTED}" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="{STATUS_ICON}" changeable="true" position="{LONGITUDE};{LATITUDE};0" ></vbm:Spot>
 													</vbm:items>
 												</vbm:Spots>
 											</vbm:vos>

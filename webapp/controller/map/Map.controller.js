@@ -16,10 +16,8 @@ sap.ui.define([
 
 		onInit: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
-				// oGeoMap2 = this.getView().byId("idGeoMap2"),
 				oMapModel = this.getModel("mapConfig");
 			oGeoMap.setMapConfiguration(MapConfig.getMapConfiguration(oMapModel));
-			// oGeoMap2.setMapConfiguration(MapConfig.getMapConfiguration(oMapModel));
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			this._oEventBus.subscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			var onClickNavigation = this._onActionPress.bind(this);
@@ -30,6 +28,41 @@ sap.ui.define([
 			this._mParameters = {
 				bFromMap: true
 			};
+		},
+		/**
+		 * Event trigger whenever selection changed in map
+		 * @Author Rakesh Sahu
+		 * @return
+		 * @param oEvent
+		 */
+		onSelectSpots: function (oEvent) {
+			// alert("selected");
+			// var oSelectedSpots = oEvent.getParameter("selected"),
+			// 	sPath;
+			// if (oSelectedSpots && oSelectedSpots.length > 0) {
+			// 	for(var i=0;i<oSelectedSpots.length;i++){
+			// 		sPath = oSelectedSpots[i].getBindingContext().getPath();
+			// 		this.getModel().setProperty(sPath + "/IS_SELECTED",true);
+			// 	}
+			// }
+		},
+		onAfterRendering: function () {
+			var oGeoMap = this.getView().byId("idGeoMap"),
+				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items");
+			// To show busy indicator when map loads.
+			this.setMapBusy(true);
+			oBinding.attachDataReceived(function () {
+				this.setMapBusy(false);
+			}.bind(this));
+		},
+		/**
+		 * Enable/Disable busy indicator in map
+		 * @Author Rakesh Sahu
+		 * @return
+		 * @param oEvent
+		 */
+		setMapBusy: function (bValue) {
+			this.getModel("viewModel").setProperty("/mapSettings/busy", bValue);
 		},
 		/**
 		 * 
@@ -59,12 +92,29 @@ sap.ui.define([
 		onDrop: function (oEvent) {
 			console.log(oEvent);
 		},
+		/**
+		 *  refresh the whole map view including map and demand table
+		 */
 		_refreshMapView: function (oEvent) {
 			// Code to refresh Map Demand Table
 			if (this._bLoaded) {
 				this._oDraggableTable.rebindTable();
+				this._refreshMapBinding();
 			}
 			this._bLoaded = true;
+		},
+		/**
+		 * refresh the whole map container bindings
+		 * @Author Rakesh Sahu
+		 * @return
+		 * @param oEvent
+		 */
+		_refreshMapBinding: function () {
+			// Code to refresh Map
+			this.setMapBusy(true);
+			var oGeoMap = this.getView().byId("idGeoMap"),
+				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items");
+			oBinding.refresh(true);
 		},
 		/**
 		 * open change status dialog
@@ -86,7 +136,7 @@ sap.ui.define([
 		 * enable/disable buttons on footer when there is some/no selected rows
 		 * @since 3.0
 		 */
-		onRowSelectionChange: function () {
+		onRowSelectionChange: function (oEvent) {
 			var selected = this._oDataTable.getSelectedIndices();
 			if (selected.length > 0) {
 				this.byId("assignButton").setEnabled(true);
@@ -94,6 +144,14 @@ sap.ui.define([
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
+			}
+			//To make selection on map by selecting Demand from demand table
+			if (oEvent.getParameter("selectAll")) {
+				this.markAllDemandSpots(true);
+			} else if (oEvent.getParameter("rowIndex") === -1) {
+				this.markAllDemandSpots(false);
+			} else {
+				this.updateMapDemandSelection(oEvent);
 			}
 		},
 
@@ -125,24 +183,66 @@ sap.ui.define([
 			this.openEvoOrder(sOrderId);
 		},
 		/**
-		 *	Get Filters from smartfilter dialog to apply on Map. 
+		 * Get Filters from smartfilter dialog to apply on Map. 
+		 * @Author Rakesh Sahu
+		 * @return
+		 * @param oEvent
 		 */
 		onDemandFilterChange: function (oEvent) {
-			if (this.getView().getControllerName().split(".").pop() === "Map") {
-				var oFilter = oEvent.getSource();
-				var aSelectedFilters = oFilter.getAllFiltersWithValues();
-				var aFilter = [];
-				for (var vProperty in aSelectedFilters) {
-					var aTokens = aSelectedFilters[vProperty].getControl().getTokens();
-					// var oControl = 
-					// for (var vTokenProperty in aTokens) {
-					// 	// alert(aTokens[vTokenProperty].getText());
-					// 	aFilter.push(new Filter(aSelectedFilters[vProperty].getName(), FilterOperator.EQ, aTokens[vTokenProperty].getText()));
-					// }
-				}
+			var aFilters = oEvent.getSource().getFilters();
+			this.getModel("viewModel").setProperty("/mapSettings/filters", aFilters);
+			this.applyFiltersToMap();
+		},
+		/**
+		 * Apply Filters into Map bindings. 
+		 * @Author Rakesh Sahu
+		 * @return
+		 * @param oEvent
+		 */
+		applyFiltersToMap: function () {
+			var oGeoMap = this.getView().byId("idGeoMap"),
+				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items"),
+				oFilters = this.getModel("viewModel").getProperty("/mapSettings/filters");
+			this.setMapBusy(true);
+			oBinding.filter(oFilters);
+		},
+		/**
+		 * Select/Deselect All spots in map. 
+		 * @Author Rakesh Sahu
+		 * @return
+		 * @param oEvent
+		 */
+		markAllDemandSpots: function (bValue) {
+			var oGeoMap = this.getView().byId("idGeoMap"),
+				oBinding = oGeoMap.getVos()[1].getBinding("items"),
+				oContexts = oBinding.getContexts(),
+				oModel = oBinding.getModel(),
+				sPath;
+			for (var i = 0; i < oContexts.length; i++) {
+				sPath = oContexts[i].getPath();
+				oModel.setProperty(sPath + "/IS_SELECTED", bValue);
 			}
 		},
-		
+		/**
+		 * Select/Deselect All spots in map.
+		 * @Author Rakesh Sahu
+		 * @return
+		 * @param oEvent
+		 */
+		updateMapDemandSelection: function (oEvent) {
+			var selectedIndices = this._oDataTable.getSelectedIndices(),
+				index = oEvent.getParameter("rowIndex"),
+				sPath = oEvent.getParameter("rowContext").getPath(),
+				oGeoMap = this.getView().byId("idGeoMap"),
+				oBinding = oGeoMap.getVos()[1].getBinding("items");
+
+			if (selectedIndices.includes(index)) {
+				oBinding.getModel().setProperty(sPath + "/IS_SELECTED", true);
+			} else {
+				oBinding.getModel().setProperty(sPath + "/IS_SELECTED", false);
+			}
+		},
+
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 		}
