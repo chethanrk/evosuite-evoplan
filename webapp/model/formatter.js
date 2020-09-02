@@ -497,6 +497,16 @@ sap.ui.define([
          formatChangeStatus : function(sStatus){
          //	return sStatus === "ASGN" && sStatus !== "COMP" &&  sStatus !== "PASS";
          	return sStatus !== "PASS";
+         },
+          /**
+         * Format change spot in Map view
+         */
+          getSpotScale: function(spot){
+         	if(spot){
+        		return "2;2;2";
+        	}else{
+        		return "1;1;1";
+        	}
          }
     };
 });

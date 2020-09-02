@@ -8,10 +8,11 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"com/evorait/evoplan/controller/common/ResourceTreeFilterBar",
 	"sap/m/MessageToast",
-	"sap/m/MessageBox"
+	"sap/m/MessageBox",
+	"sap/ui/core/Fragment"
 ], function (Device, JSONModel, Filter, FilterOperator,
 	FilterType, formatter, BaseController, ResourceTreeFilterBar,
-	MessageToast, MessageBox) {
+	MessageToast, MessageBox,Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.map.MapResourceTree", {
@@ -23,12 +24,14 @@ sap.ui.define([
 		assignmentPath: null,
 
 		selectedResources: [],
-
+	
 		oFilterConfigsController: null,
 
 		mTreeState: {},
 
 		_bFirsrTime: true,
+		
+		aMapDemandGuid: [],
 
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
@@ -51,6 +54,11 @@ sap.ui.define([
 			//route match function
 			var oRouter =  this.getOwnerComponent().getRouter();
                 oRouter.attachRouteMatched(this._routeMatched, this);
+        // Demand Longitude/Latitude Details
+			var oModel = new JSONModel({
+				routeData: []
+			}); // Only set data here.
+			this.getOwnerComponent().setModel(oModel, "mapData");
 
 		},
 		
@@ -116,13 +124,17 @@ sap.ui.define([
 				oSelectedData = this.getModel().getProperty(this.selectedResources[0]);
 				if (oParams.selected && oNewNode.NodeType === "RESOURCE" && oNewNode.ResourceGuid !== "" && oNewNode.ResourceGroupGuid !== "") {
 					this.byId("idButtonCreUA").setEnabled(true);
+					this.byId("showRoute").setEnabled(true);
 				} else if (oSelectedData.NodeType === "RESOURCE" && oSelectedData.ResourceGuid !== "" && oSelectedData.ResourceGroupGuid !== "") {
 					this.byId("idButtonCreUA").setEnabled(true);
+					this.byId("showRoute").setEnabled(true);
 				} else {
 					this.byId("idButtonCreUA").setEnabled(false);
+					this.byId("showRoute").setEnabled(false);
 				}
 			} else {
 				this.byId("idButtonCreUA").setEnabled(false);
+				this.byId("showRoute").setEnabled(false);
 			}
 		},
 
@@ -405,6 +417,142 @@ sap.ui.define([
 		},
         onToggleOpenState:function(){
             this.mTreeState = {};
-        }
+        },
+		/**
+		 * method called on selection of date
+		 @Author: Pranav
+		 */
+		handleCalendarSelect: function (oEvent) {
+			var oSelectedDate = oEvent.getSource().getSelectedDates()[0].getStartDate();
+			this._getSelectedRoute(oSelectedDate);
+		},
+		/**
+		 * method called to open the Route Date Selection Popover
+		 @Author: Pranav
+		 */
+		onRoutePress: function (oEvent) {
+			var oButton = oEvent.getSource(),
+				oView = this.getView();
+
+			if (!this._oPopover) {
+				Fragment.load({
+					name: "com.evorait.evoplan.view.map.fragments.RouteDateFilter",
+					id: oView.getId(),
+					controller: this
+				}).then(function (oPopover) {
+					this._oPopover = oPopover;
+					this.getView().addDependent(this._oPopover);
+					oPopover.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+					this._oPopover.openBy(oButton);
+					this.byId("DRSMap").removeAllSelectedDates();
+				}.bind(this));
+			} else {
+				this._oPopover.openBy(oButton);
+				this.byId("DRSMap").removeAllSelectedDates();
+			}
+		},
+		/**
+		 * method called to close the date range fragment used for route creation
+		 @Author: Pranav
+		 */
+		onCloseDialog: function (oEvent) {
+			this._oPopover.close();
+		},
+		/**
+		 * method for getting selected route for selected date
+		 @Author: Pranav
+		 */
+		_getSelectedRoute: function (oSelectedDate) {
+			//Refresh the Map	
+			if (this.aMapDemandGuid.length > 0) {
+				this._refreshGeoMap();
+			}
+			//Filter Logic for Map
+			var oFilter = new Filter(this._getResourceFilters(this.selectedResources, oSelectedDate), true);
+			this.getModel("viewModel").setProperty("/mapSettings/busy", true);
+			this.getOwnerComponent()._getData("/AssignmentSet", [oFilter]).then(function (result) {
+
+				var aData = result.results;
+				//Route Creation in Map
+				this._routeCreationMap(aData);
+
+			}.bind(this));
+		},
+		/**
+		 * Return resource filters on selected resources
+		 * @param aSelectedResources {Array} Selected Resources
+		 * @return aResourceFilters Filters
+		 */
+		_getResourceFilters: function (aSelectedResources, oSelectedDate) {
+			var aResources = [],
+				oModel = this.getView().getModel();
+			var aFilters = [];
+
+			for (var i = 0; i < aSelectedResources.length; i++) {
+				var obj = oModel.getProperty(aSelectedResources[i]);
+				if (obj.NodeType === "RESOURCE") {
+					if (obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
+						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
+					} else {
+						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid + "//X"));
+					}
+				} else if (obj.NodeType === "RES_GROUP") {
+					aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
+				}
+			}
+
+			if (aResources.length > 0) {
+				aFilters.push(new Filter({
+					filters: aResources,
+					and: false
+				}));
+				aFilters.push(new Filter("DateTo", FilterOperator.EQ, oSelectedDate));
+			}
+			return aFilters;
+		},
+		/**
+		 * method for route creation
+		 @Author: Pranav
+		 */
+		_routeCreationMap: function (aData) {
+			var aMapLocations = [];
+
+			aData.forEach(function (entry) {
+				this.aMapDemandGuid.push(entry.DemandGuid);
+			}.bind(this));
+
+			for (var index = 0; index < aData.length - 1 && aData.length > 1; index++) {
+				var data = {
+					"sLong": aData[index].LONGITUDE,
+					"sLat": aData[index].LATITUDE,
+					"dLong": aData[index + 1].LONGITUDE,
+					"dLat": aData[index + 1].LATITUDE
+				};
+				aMapLocations.push(data);
+				this.getModel().setProperty("/DemandSet('" + aData[index].DemandGuid + "')/IS_SELECTED", true);
+			}
+			if (aData.length === 1) {
+				this.getModel().setProperty("/DemandSet('" + aData[0].DemandGuid + "')/IS_SELECTED", true);
+			} else if (aData.length > 1) {
+				this.getModel().setProperty("/DemandSet('" + aData[aData.length - 1].DemandGuid + "')/IS_SELECTED", true);
+			}
+			this.getOwnerComponent().getModel("mapData").setProperty("/routeData", aMapLocations);
+			this.getOwnerComponent().getModel("mapData").refresh();
+			this.getModel("viewModel").setProperty("/mapSettings/busy", false);
+		},
+		/**
+		 * method for refreshing the Map
+		 @Author: Pranav
+		 */
+		_refreshGeoMap: function (oEvent) {
+			var aDemandGuidEntity = [];
+			if (this.aMapDemandGuid.length > 0) {
+				(this.aMapDemandGuid).forEach(function (entry) {
+					aDemandGuidEntity.push("/DemandSet('" + entry + "')");
+				}.bind(this));
+				this.getModel().resetChanges(aDemandGuidEntity);
+			}
+		},
+        
 	});
 });
