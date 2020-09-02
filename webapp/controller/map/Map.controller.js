@@ -48,7 +48,7 @@ sap.ui.define([
 		},
 		onAfterRendering: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
-				oBinding = oGeoMap.getAggregation("vos")[0].getBinding("items");
+				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items");
 			// To show busy indicator when map loads.
 			this.setMapBusy(true);
 			oBinding.attachDataReceived(function () {
@@ -113,7 +113,7 @@ sap.ui.define([
 			// Code to refresh Map
 			this.setMapBusy(true);
 			var oGeoMap = this.getView().byId("idGeoMap"),
-				oBinding = oGeoMap.getAggregation("vos")[0].getBinding("items");
+				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items");
 			oBinding.refresh(true);
 		},
 		/**
@@ -201,7 +201,7 @@ sap.ui.define([
 		 */
 		applyFiltersToMap: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
-				oBinding = oGeoMap.getAggregation("vos")[0].getBinding("items"),
+				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items"),
 				oFilters = this.getModel("viewModel").getProperty("/mapSettings/filters");
 			this.setMapBusy(true);
 			oBinding.filter(oFilters);
@@ -214,7 +214,7 @@ sap.ui.define([
 		 */
 		markAllDemandSpots: function (bValue) {
 			var oGeoMap = this.getView().byId("idGeoMap"),
-				oBinding = oGeoMap.getVos()[0].getBinding("items"),
+				oBinding = oGeoMap.getVos()[1].getBinding("items"),
 				oContexts = oBinding.getContexts(),
 				oModel = oBinding.getModel(),
 				sPath;
@@ -234,7 +234,7 @@ sap.ui.define([
 				index = oEvent.getParameter("rowIndex"),
 				sPath = oEvent.getParameter("rowContext").getPath(),
 				oGeoMap = this.getView().byId("idGeoMap"),
-				oBinding = oGeoMap.getVos()[0].getBinding("items");
+				oBinding = oGeoMap.getVos()[1].getBinding("items");
 
 			if (selectedIndices.includes(index)) {
 				oBinding.getModel().setProperty(sPath + "/IS_SELECTED", true);

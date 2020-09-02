@@ -33,6 +33,7 @@ sap.ui.define([
 		 selectedResources: [],
 		 
 		 _firstVisit: "gantt",
+		 mTreeState: {},
 
         /**
          * controller life cycle on init event
@@ -88,6 +89,12 @@ sap.ui.define([
                 this._isLoaded = true;
                 this._setDefaultTreeDateRange();
             }
+              if (parameters.busy === false) {
+                                if (Object.keys(this.mTreeState).length > 0) {
+                                        this._restoreTreeState();
+                                }
+
+                        }
         },
         /**
          * @public
@@ -249,20 +256,69 @@ sap.ui.define([
          * @param oEvent
          */
         _refreshGanttChart: function (oEvent) {
-            var oTreeTable = this.getView().byId("ganttResourceTreeTable"),
-                oViewModel = this.getModel("viewModel");
-            //reset the changes
-            this.resetChanges();
-            if (this._bLoaded && oTreeTable && oTreeTable.getBinding("rows")) {
-                this._ganttChart.setSelectionPanelSize("25%");
-                oTreeTable.getBinding("rows")._restoreTreeState().then(function () {
-                    oViewModel.setProperty("/ganttSettings/busy", false);
-                    oTreeTable.clearSelection();
-                    oTreeTable.rerender();
-                }.bind(this));
-            }
-            this._bLoaded = true;
+           	var oTreeTable = this.getView().byId("ganttResourceTreeTable"),
+				oTreeBinding = oTreeTable.getBinding("rows");
+			//reset the changes
+			this.resetChanges();
+			//Get the tree state of gantt tree table before refresh
+			if (oTreeBinding && !this._bFirsrTime) {
+				this.mTreeState = this._getTreeState();
+				oTreeBinding.refresh();
+			}
+			this._bFirsrTime = false;
         },
+        	/* map the current tree state with expand and collapse on each level
+		 * before tree is doing a new GET request
+		 * @private
+		 */
+		_getTreeState: function () {
+			var oBindings = this._treeTable.getBinding(),
+				aNodes = oBindings.getNodes(),
+				oCollection = {};
+
+			for (var i = 0; i < aNodes.length; i++) {
+				oCollection[aNodes[i].key] = {
+					path: aNodes[i].key,
+					level: aNodes[i].level,
+					nodeState: aNodes[i].nodeState
+				};
+			}
+			return oCollection;
+		},
+
+		/**
+		 * After Resource tree GET request restore the expand/collapse state
+		 * from before refresh
+		 * @private
+		 * @Author: Pranav
+		 */
+		_restoreTreeState: function () {
+			var oBindings = this._treeTable.getBinding(),
+				aNodes = oBindings.getNodes(),
+				expandIdx = [],
+				collapseIdx = [];
+
+			for (var j = 0; j < aNodes.length; j++) {
+				if (this.mTreeState[aNodes[j].key] && !aNodes[j].nodeState.isLeaf) {
+					if (!aNodes[j].nodeState.expanded && this.mTreeState[aNodes[j].key].nodeState.expanded) {
+						expandIdx.push(j);
+						delete this.mTreeState[aNodes[j].key];
+					} else if (!aNodes[j].nodeState.collapsed && this.mTreeState[aNodes[j].key].nodeState.collapsed) {
+						collapseIdx.push(j);
+					}
+				}
+			}
+			collapseIdx.reverse();
+			if (expandIdx.length > 0) {
+				this._treeTable.expand(expandIdx);
+			} else if (collapseIdx.length > 0) {
+				for (var index = 0; index < collapseIdx.length; index++) {
+					this._treeTable.collapse(collapseIdx[index]);
+				}
+			} else {
+				this.mTreeState = {};
+			}
+		},
         /**
          * on change of date range trigger the filter for gantt tree.
          * @since 3.0

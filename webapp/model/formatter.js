@@ -469,38 +469,26 @@ sap.ui.define([
 				} else {
 					sToolTip = sToolTip + (arguments[(iArg / 2) + i] ? arguments[i] + ":" + arguments[(iArg / 2) + i] : "") + "\n";
 				}
+			}	
 
-			}
-			return sToolTip;
-		},
-
-		formatListMode: function (bIsActive) {
-
-		},
-		/**
-		 * formatter formats the visibility of reassign button based on the two flags
-		 * 1. Allow change
-		 * 2. Allow reassign
-		 */
-		formartVisibleReassign: function (bChange, bAssign) {
-			return bChange && bAssign;
-		},
-		/**
-		 * formatter formats the visibility of create unavailability button based on the two flags
-		 * 1. Allow create in PC
-		 * 2. Absences are visualized in PC or not
-		 */
-		formatCrtABFromPC: function (bAllowCreate, bShowInPC) {
-			return bAllowCreate && bShowInPC;
-		},
-		/**
-		 * Format change status button in the gantt chart 
-		 */
-		formatChangeStatus: function (sStatus) {
-			//	return sStatus === "ASGN" && sStatus !== "COMP" &&  sStatus !== "PASS";
-			return sStatus !== "PASS";
-		},
-		/**
+        },
+        /**
+         * formatter formats the visibility of reassign button based on the two flags
+         * 1. Allow change
+         * 2. Allow reassign
+         */
+        formartVisibleReassign : function(bChange, bAssign){
+        	return bChange && bAssign;
+        },
+        /**
+         * formatter formats the visibility of create unavailability button based on the two flags
+         * 1. Allow create in PC
+         * 2. Absences are visualized in PC or not
+         */
+        formatCrtABFromPC : function(bAllowCreate, bShowInPC){
+        	return bAllowCreate && bShowInPC;
+        },
+        /**
 		 * set scale on the basis of selected/deselected 
 		 */
 		getSpotScale: function (spot) {
@@ -520,5 +508,6 @@ sap.ui.define([
 				return "Default";
 			}
 		}
-	};
+
+    };
 });
