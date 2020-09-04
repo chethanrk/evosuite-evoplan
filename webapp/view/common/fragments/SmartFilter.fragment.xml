@@ -12,6 +12,8 @@
             liveMode="true"
             considerSelectionVariants="true"
             showClearButton="true"
+            showRestoreButton="true"
+            showRestoreOnFB="true"
             showClearOnFB="true"
             initialized="onInitialized">
 

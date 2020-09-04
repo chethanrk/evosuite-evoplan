@@ -13,7 +13,8 @@ sap.ui.define([
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
-
+		selectedDemands : [],
+		
 		onInit: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oMapModel = this.getModel("mapConfig");
@@ -30,22 +31,83 @@ sap.ui.define([
 			};
 		},
 		/**
-		 * Event trigger whenever selection changed in map
-		 * @Author Rakesh Sahu
-		 * @return
-		 * @param oEvent
+		 * Selected spots can be saved.
+		 * @author Rahul
+		 * @return Filter
 		 */
-		onSelectSpots: function (oEvent) {
-			// alert("selected");
-			// var oSelectedSpots = oEvent.getParameter("selected"),
-			// 	sPath;
-			// if (oSelectedSpots && oSelectedSpots.length > 0) {
-			// 	for(var i=0;i<oSelectedSpots.length;i++){
-			// 		sPath = oSelectedSpots[i].getBindingContext().getPath();
-			// 		this.getModel().setProperty(sPath + "/IS_SELECTED",true);
-			// 	}
-			// }
+		onSelect: function(oEvent){
+			var aSelected = oEvent.getParameter("selected"),
+				oViewModel = this.getModel("viewModel"),
+				oModel = this.getModel(),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
+				oContext,sPath,oDemand;
+			for(var i in aSelected){
+				oContext = aSelected[i].getBindingContext();
+				sPath = oContext.getPath();
+				oDemand = oModel.getProperty(sPath);
+				aSelectedDemands.push({context:oContext, guid: oDemand.Guid});
+			}
+			oViewModel.setProperty("/mapSettings/selectedDemands",aSelectedDemands);
+			this._oDraggableTable.rebindTable();
 		},
+		/**
+		 * DeSelected spots can be saved.
+		 * @author Rahul
+		 * @return Filter
+		 */
+		onDeselect: function(oEvent){
+			var aDeSelected = oEvent.getParameter("deselected"),
+				oViewModel = this.getModel("viewModel"),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
+				oModel = this.getModel(),
+				oContext,sPath,oDemand;
+			for(var i in aDeSelected){
+				oContext = aDeSelected[i].getBindingContext();
+				sPath = oContext.getPath();
+				oDemand = oModel.getProperty(sPath);
+				aSelectedDemands.splice(aSelectedDemands.indexOf({context:oContext, guid: oDemand.Guid}), 1);
+			}
+			oViewModel.setProperty("/mapSettings/selectedDemands",aSelectedDemands);
+			this._oDraggableTable.rebindTable();
+		},
+		/**
+		 * If you remove this event selection part will work 
+		 */
+		 
+		onSelectSpots: function(oEvent){
+			// I dunno why its required
+		},
+		/**
+		 * Create filters for the selected demands 
+		 * 
+		 * @author Rahul
+		 * @return Filter
+		 */
+		getSelectedDemandFilters : function(){
+			var aFilters = [],
+				oViewModel = this.getModel("viewModel"),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
+			for(var i in aSelectedDemands){
+				aFilters.push(new Filter("Guid", FilterOperator.EQ, aSelectedDemands[i].guid));
+			}
+			return new Filter({
+				filters:aFilters,
+				and:false
+			});
+		},
+		/**
+		 * Function will be called before the table refreshed. Before rebind pushing the selected filters
+		 * into the the smart table
+		 * 
+		 * @author Rahul
+		 * @return 
+		 */
+		onBeforeRebindTable: function(oEvent){
+			var aFilters = oEvent.getParameter("bindingParams").filters,
+				aDemandFilters = this.getSelectedDemandFilters();
+			aFilters.push(aDemandFilters);
+		},
+		
 		onAfterRendering: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items");
@@ -56,6 +118,45 @@ sap.ui.define([
 			}.bind(this));
 		},
 		/**
+		 * Clearing the selected demands the Reseting the selection
+		 * 
+		 * @author Rahul
+		 * @return 
+		 */
+		onReset: function(oEvent){
+			var oViewModel = this.getModel("viewModel");
+			this._resetMapSelection();
+			oViewModel.setProperty("/mapSettings/selectedDemands",[]);
+		},
+		/**
+		 * Clearing the selected demands the Reseting the selection
+		 * 
+		 * @author Rahul
+		 * @return 
+		 */
+		onClear: function(){
+			var oViewModel = this.getModel("viewModel");
+			this._resetMapSelection();
+			oViewModel.setProperty("/mapSettings/selectedDemands",[]);
+			this._oDraggableTable.rebindTable();
+		},
+		/**
+		 * Reset the map selection in the Model
+		 * @Author: Rahul
+		 */
+		_resetMapSelection: function () {
+			var aDemandGuidEntity = [],
+			oViewModel = this.getModel("viewModel"),
+			aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
+			if (aSelectedDemands.length > 0) {
+				(aSelectedDemands).forEach(function (entry) {
+					aDemandGuidEntity.push("/DemandSet('" + entry.guid + "')");
+				});
+				this.getModel().resetChanges(aDemandGuidEntity);
+			}
+		    oViewModel.setProperty("/mapSettings/selectedDemands",[]);
+		},
+		/**
 		 * Enable/Disable busy indicator in map
 		 * @Author Rakesh Sahu
 		 * @return
@@ -64,6 +165,8 @@ sap.ui.define([
 		setMapBusy: function (bValue) {
 			this.getModel("viewModel").setProperty("/mapSettings/busy", bValue);
 		},
+		
+		
 		/**
 		 * 
 		 * On click on demand actions to navigate to demand detail page 
@@ -89,8 +192,43 @@ sap.ui.define([
 			this.selectedDemandData = oModel.getProperty(sPath);
 			this.getOwnerComponent().NavigationActionSheet.open(this.getView(), oEvent.getSource().getParent(), this.selectedDemandData);
 		},
-		onDrop: function (oEvent) {
-			console.log(oEvent);
+			/**
+		 * On DragStart set the dragSession selected demands
+		 */
+		onDragStart: function (oEvent) {
+			var oDragSession = oEvent.getParameter("dragSession"),
+				oDraggedControl = oDragSession.getDragControl();
+
+			var aIndices = this._oDataTable.getSelectedIndices(),
+				oSelectedPaths, aPathsData;
+
+			oDragSession.setTextData("Hi I am dragging");
+			//get all selected rows when checkboxes in table selected
+			if (aIndices.length > 0) {
+				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, aIndices, true);
+				aPathsData = oSelectedPaths.aPathsData;
+			} else {
+				//table tr single dragged element
+				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, [oDraggedControl.getIndex()], true);
+				aPathsData = oSelectedPaths.aPathsData;
+			}
+			// keeping the data in drag session
+			this.getModel("viewModel").setProperty("/mapDragSession", aPathsData);
+			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
+				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+				oEvent.preventDefault();
+			}
+		},
+		/**
+		 * On Drag end check for dropped control, If dropped control not found
+		 * then make reset the selection
+		 * @param oEvent
+		 */
+		onDragEnd: function (oEvent) {
+			var oDroppedControl = oEvent.getParameter("dragSession").getDropControl();
+			if (!oDroppedControl) {
+				this._deselectAll();
+			}
 		},
 		/**
 		 *  refresh the whole map view including map and demand table

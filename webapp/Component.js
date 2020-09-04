@@ -106,7 +106,8 @@ sap.ui.define([
 				showDemands: true,
 				mapSettings: {
 					busy: false,
-					filters: []
+					filters: [],
+					selectedDemands:[]
 				}
 
 			});

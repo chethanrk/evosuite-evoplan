@@ -462,7 +462,7 @@ sap.ui.define([
 			remTime) {
 			var iArg = arguments.length,
 				sToolTip = "";
-
+			// changed by @rahul in order to handle dynamic arguments
 			for (var i = 0; i < iArg / 2; i++) {
 				if (i === (iArg / 2)) {
 					sToolTip = sToolTip + (arguments[(iArg / 2) + i] ? arguments[i] + ":" + arguments[(iArg / 2) + i] : "");
@@ -493,7 +493,7 @@ sap.ui.define([
 		 */
 		getSpotScale: function (spot) {
 			if (spot) {
-				return "1.2;1.2;1.2";
+				return "1.4;1.4;1.4";
 			} else {
 				return "1;1;1";
 			}
@@ -501,11 +501,15 @@ sap.ui.define([
 		/**
 		 * set spot color on the basis of selected/deselected 
 		 */
-		getSpotType: function (spot) {
-			if (spot) {
-				return "Success";
+		getSpotType: function (sValue) {
+			if (sValue === 1) {
+				return sap.ui.vbm.SemanticType.Error;
+			} else if (sValue === 2) {
+				return sap.ui.vbm.SemanticType.Warning;
+			} else if (sValue === 3) {
+				return sap.ui.vbm.SemanticType.Success;
 			} else {
-				return "Default";
+				return sap.ui.vbm.SemanticType.Information;
 			}
 		}
 

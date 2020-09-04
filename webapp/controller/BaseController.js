@@ -589,8 +589,8 @@ sap.ui.define([
 		clearLocalStorage: function(){
 			localStorage.removeItem("Evo-Dmnd-pageRefresh");
 			localStorage.removeItem("Evo-Dmnd-guid");
-		},
-
+		}
+	
 	});
 
 });

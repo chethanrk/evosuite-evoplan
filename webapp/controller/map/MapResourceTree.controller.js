@@ -252,7 +252,8 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
-				aSources = [];
+				aSources = [],
+				aSelectedDemands = [];
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -265,13 +266,12 @@ sap.ui.define([
 				return;
 			}
 
-			aSources = this.getModel("viewModel").getProperty("/dragSession");
-
+			aSources = this.getModel("viewModel").getProperty("/mapDragSession");
 			// If the Resource is Not/Partially available
 			if (this.isAvailable(sPath)) {
-				this.assignedDemands(aSources, sPath);
+				this.assignedDemands(aSources, sPath, this._mParameters);
 			} else {
-				this.showMessageToProceed(aSources, sPath);
+				this.showMessageToProceed(aSources, sPath, null, null, null, null, this._mParameters);
 			}
 
 		},
