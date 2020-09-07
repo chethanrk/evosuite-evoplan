@@ -33,25 +33,25 @@
                 <form:content>
 
                     <core:Title text="" />
-                    <Label text="{i18n>xfld.demandName}" />
+                    <Label text="{/#Demand/DemandDesc/@sap:label}" />
                     <Text text="{assignment>/Description}"/>
                     <Label text="{i18n>xfld.ResourceName}" />
                     <Text text="{assignment>/ResourceDesc}"/>
                     <Label text="{i18n>xfld.ResourceGroupName}" />
                     <Text text="{assignment>/ResourceGroupDesc}"/>
-                    <Label text="{i18n>xfld.Order}" />
+                    <Label text="{/#Demand/ORDERID/@sap:label}" />
                     <Text text="{assignment>/OrderId}"/>
-                    <Label text="{i18n>xfld.Operation}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
+                    <Label text="{/#Demand/OPERATIONID/@sap:label}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
                     <Text text="{assignment>/OperationNumber}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
-                    <Label text="{i18n>xfld.SubOperation}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
+                    <Label text="{/#Demand/SUBOPERATIONID/@sap:label}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
                     <Text text="{assignment>/SubOperationNumber}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
-                    <Label text="{i18n>xfld.Notification}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? true : false}"/>
+                    <Label text="{/#Demand/NOTIFICATION/@sap:label}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? true : false}"/>
                      <Text text="{assignment>/Notification}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? true : false}"/>
          
                     
 
                     <core:Title text="" />
-                    <Label text="{i18n>xfld.startDate}" />
+                    <Label text="{/#Demand/DateFrom/@sap:label}" />
                     <DateTimePicker name="DateFrom"
                                     value="{path:'assignment>/DateFrom',
                                     type:'sap.ui.model.type.DateTime',
@@ -60,7 +60,7 @@
                                     editable="{assignment>/AllowChange}"
                     />
 
-                    <Label text="{i18n>xfld.endDate}" />
+                    <Label text="{/#Demand/DateTo/@sap:label}" />
                     <DateTimePicker id="idDateToAssignInf"
                                     name="DateTo"
                                     value="{path:'assignment>/DateTo',
@@ -69,7 +69,7 @@
                                     }"
                                     editable="{assignment>/AllowChange}"/>
 
-                    <Label text="{i18n>xfld.effort}" />
+                    <Label text="{/#Demand/Effort/@sap:label}" />
                    <Input type="Text"
                            name="Effort"
                            value="{assignment>/Effort}"
