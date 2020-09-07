@@ -33,7 +33,7 @@
                 <form:content>
 
                     <core:Title text="" />
-                    <Label text="{i18n>xfld.demandName}" />
+                    <Label text="{/#Assignment/Description/@sap:label}" />
                     <Text text="{assignment>/Description}"/>
                     <Label text="{i18n>xfld.ResourceName}" />
                     <Text text="{assignment>/ResourceDesc}"/>
@@ -51,7 +51,7 @@
                     
 
                     <core:Title text="" />
-                    <Label text="{i18n>xfld.startDate}" />
+                    <Label text="{/#Assignment/DateFrom/@sap:label}" />
                     <DateTimePicker name="DateFrom"
                                     value="{path:'assignment>/DateFrom',
                                     type:'sap.ui.model.type.DateTime',
@@ -60,7 +60,7 @@
                                     editable="{assignment>/AllowChange}"
                     />
 
-                    <Label text="{i18n>xfld.endDate}" />
+                    <Label text="{/#Assignment/DateTo/@sap:label}" />
                     <DateTimePicker id="idDateToAssignInf"
                                     name="DateTo"
                                     value="{path:'assignment>/DateTo',
@@ -69,7 +69,7 @@
                                     }"
                                     editable="{assignment>/AllowChange}"/>
 
-                    <Label text="{i18n>xfld.effort}" />
+                    <Label text="{/#Assignment/Effort/@sap:label}" />
                    <Input type="Text"
                            name="Effort"
                            value="{assignment>/Effort}"
@@ -85,7 +85,7 @@
 							</smartField:Configuration>
 						</smartField:configuration>
 					</smartField:SmartField>-->
-					<Label text="{/#Demand/EffortUnit/@sap:label}" />
+					<Label text="{/#Assignment/EffortUnit/@sap:label}" />
 					<Text text="{assignment>/EffortUnit}"/>
 					<!--<Select
 					selectedKey="{assignment>/EffortUnit}"
