@@ -33,25 +33,25 @@
                 <form:content>
 
                     <core:Title text="" />
-                    <Label text="{/#Demand/DemandDesc/@sap:label}" />
+                    <Label text="{/#Assignment/Description/@sap:label}" />
                     <Text text="{assignment>/Description}"/>
                     <Label text="{i18n>xfld.ResourceName}" />
                     <Text text="{assignment>/ResourceDesc}"/>
                     <Label text="{i18n>xfld.ResourceGroupName}" />
                     <Text text="{assignment>/ResourceGroupDesc}"/>
-                    <Label text="{/#Demand/ORDERID/@sap:label}" />
+                    <Label text="{i18n>xfld.Order}" />
                     <Text text="{assignment>/OrderId}"/>
-                    <Label text="{/#Demand/OPERATIONID/@sap:label}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
+                    <Label text="{i18n>xfld.Operation}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
                     <Text text="{assignment>/OperationNumber}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
-                    <Label text="{/#Demand/SUBOPERATIONID/@sap:label}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
+                    <Label text="{i18n>xfld.SubOperation}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
                     <Text text="{assignment>/SubOperationNumber}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
-                    <Label text="{/#Demand/NOTIFICATION/@sap:label}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? true : false}"/>
+                    <Label text="{i18n>xfld.Notification}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? true : false}"/>
                      <Text text="{assignment>/Notification}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? true : false}"/>
          
                     
 
                     <core:Title text="" />
-                    <Label text="{/#Demand/DateFrom/@sap:label}" />
+                    <Label text="{/#Assignment/DateFrom/@sap:label}" />
                     <DateTimePicker name="DateFrom"
                                     value="{path:'assignment>/DateFrom',
                                     type:'sap.ui.model.type.DateTime',
@@ -60,7 +60,7 @@
                                     editable="{assignment>/AllowChange}"
                     />
 
-                    <Label text="{/#Demand/DateTo/@sap:label}" />
+                    <Label text="{/#Assignment/DateTo/@sap:label}" />
                     <DateTimePicker id="idDateToAssignInf"
                                     name="DateTo"
                                     value="{path:'assignment>/DateTo',
@@ -69,7 +69,7 @@
                                     }"
                                     editable="{assignment>/AllowChange}"/>
 
-                    <Label text="{/#Demand/Effort/@sap:label}" />
+                    <Label text="{/#Assignment/Effort/@sap:label}" />
                    <Input type="Text"
                            name="Effort"
                            value="{assignment>/Effort}"
@@ -85,7 +85,7 @@
 							</smartField:Configuration>
 						</smartField:configuration>
 					</smartField:SmartField>-->
-					<Label text="{/#Demand/EffortUnit/@sap:label}" />
+					<Label text="{/#Assignment/EffortUnit/@sap:label}" />
 					<Text text="{assignment>/EffortUnit}"/>
 					<!--<Select
 					selectedKey="{assignment>/EffortUnit}"
