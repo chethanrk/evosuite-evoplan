@@ -21,6 +21,9 @@ sap.ui.define([
 			oGeoMap.setMapConfiguration(MapConfig.getMapConfiguration(oMapModel));
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			this._oEventBus.subscribe("BaseController", "refreshMapView", this._refreshMapView, this);
+			this._oEventBus.subscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
+			this._oEventBus.subscribe("MapController", "setMapSelection", this._setMapSelection, this);
+			
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
 			this._oDraggableTable = this.byId("draggableList");
@@ -113,8 +116,12 @@ sap.ui.define([
 				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items");
 			// To show busy indicator when map loads.
 			this.setMapBusy(true);
+			
 			oBinding.attachDataReceived(function () {
 				this.setMapBusy(false);
+				setTimeout(function(){
+					this._setMapSelection();
+				}.bind(this),10);
 			}.bind(this));
 		},
 		/**
@@ -154,7 +161,20 @@ sap.ui.define([
 				});
 				this.getModel().resetChanges(aDemandGuidEntity);
 			}
-		    oViewModel.setProperty("/mapSettings/selectedDemands",[]);
+		    // oViewModel.setProperty("/mapSettings/selectedDemands",[]);
+		},
+		/**
+		 * Set the map selection in the Model
+		 * @Author: Rahul
+		 */
+		_setMapSelection: function () {
+			var oViewModel = this.getModel("viewModel"),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
+				if (aSelectedDemands.length > 0) {
+					(aSelectedDemands).forEach(function (entry) {
+						this.getModel().setProperty("/DemandSet('" + entry.guid + "')/IS_SELECTED", true);
+					}.bind(this));
+				}
 		},
 		/**
 		 * Enable/Disable busy indicator in map
@@ -166,7 +186,13 @@ sap.ui.define([
 			this.getModel("viewModel").setProperty("/mapSettings/busy", bValue);
 		},
 		
-		
+		/**
+		 * deselect all checkboxes in table
+		 * @private
+		 */
+		_deselectAll: function () {
+			this._oDataTable.clearSelection();
+		},
 		/**
 		 * 
 		 * On click on demand actions to navigate to demand detail page 
@@ -252,7 +278,7 @@ sap.ui.define([
 			this.setMapBusy(true);
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items");
-			oBinding.refresh(true);
+			oBinding.refresh();
 		},
 		/**
 		 * open change status dialog
@@ -356,6 +382,7 @@ sap.ui.define([
 				oContexts = oBinding.getContexts(),
 				oModel = oBinding.getModel(),
 				sPath;
+				// TODO Please keep the selected contexts in viewmodel under path mapSettings/selectedDemands
 			for (var i = 0; i < oContexts.length; i++) {
 				sPath = oContexts[i].getPath();
 				oModel.setProperty(sPath + "/IS_SELECTED", bValue);
@@ -383,6 +410,8 @@ sap.ui.define([
 
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
+			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
+			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
 		}
 
 	});

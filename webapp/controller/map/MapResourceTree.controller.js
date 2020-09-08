@@ -253,7 +253,7 @@ sap.ui.define([
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
 				aSources = [],
-				aSelectedDemands = [];
+				eventBus = sap.ui.getCore().getEventBus();
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -267,6 +267,7 @@ sap.ui.define([
 			}
 
 			aSources = this.getModel("viewModel").getProperty("/mapDragSession");
+			eventBus.publish("BaseController", "resetMapSelection", {});
 			// If the Resource is Not/Partially available
 			if (this.isAvailable(sPath)) {
 				this.assignedDemands(aSources, sPath, this._mParameters);
