@@ -19,9 +19,9 @@
 									<vk:content>
 										<vbm:GeoMap id="idGeoMap" lassoSelection="true" rectangularSelection="true" drop="onDrop"  select="onSelectSpots" initialZoom="{user>/MAP_INITIAL_ZOOM}" initialPosition="{user>/MAP_INITIAL_POSITION}">
 											<vbm:vos>
-												<vbm:Routes items="{mapData>/routeData}">
+												<vbm:Routes items="{viewModel>/mapSettings/routeData}">
 													<vbm:items>
-														<vbm:Route id="idMapRoute" position="{mapData>sLong};{mapData>sLat};0;{mapData>dLong};{mapData>dLat};0" color="rgb(117,148,34)"
+														<vbm:Route id="idMapRoute" position="{viewModel>sLong};{viewModel>sLat};0;{viewModel>dLong};{viewModel>dLat};0" color="rgb(117,148,34)"
 															colorBorder="rgb(255,255,255)" linewidth="3" routetype="Geodesic" click="onClickRoute" contextMenu="onContextMenuRoute"/>
 													</vbm:items>
 												</vbm:Routes>
