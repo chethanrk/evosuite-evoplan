@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment"
 ], function (Device, JSONModel, Filter, FilterOperator,
 	FilterType, formatter, BaseController, ResourceTreeFilterBar,
-	MessageToast, MessageBox,Fragment) {
+	MessageToast, MessageBox, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.map.MapResourceTree", {
@@ -24,13 +24,13 @@ sap.ui.define([
 		assignmentPath: null,
 
 		selectedResources: [],
-	
+
 		oFilterConfigsController: null,
 
 		mTreeState: {},
 
 		_bFirsrTime: true,
-		
+
 		aMapDemandGuid: [],
 
 		/**
@@ -50,27 +50,24 @@ sap.ui.define([
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshMapTreeTable", this._triggerRefreshTree, this);
 			this._eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
-			
+
 			//route match function
-			var oRouter =  this.getOwnerComponent().getRouter();
-                oRouter.attachRouteMatched(this._routeMatched, this);
-        // Demand Longitude/Latitude Details
-			var oModel = new JSONModel({
-				routeData: []
-			}); // Only set data here.
-			this.getOwnerComponent().setModel(oModel, "mapData");
+			var oRouter = this.getOwnerComponent().getRouter();
+			oRouter.attachRouteMatched(this._routeMatched, this);
+			
 
 		},
-		
-		_routeMatched: function(oEvent){
-            var oParameters = oEvent.getParameters(),
-               sRouteName = oParameters.name; // route name
-               if(sRouteName === "map")
-               {
-               	 this._mParameters = {bFromMap:true};
-               }
-              
-         },
+
+		_routeMatched: function (oEvent) {
+			var oParameters = oEvent.getParameters(),
+				sRouteName = oParameters.name; // route name
+			if (sRouteName === "map") {
+				this._mParameters = {
+					bFromMap: true
+				};
+			}
+
+		},
 
 		/**
 		 * initial draggable after every refresh of table
@@ -160,7 +157,7 @@ sap.ui.define([
 
 			if (oRowContext) {
 				this.assignmentPath = oRowContext.getPath();
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath,null,this._mParameters);
+				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
@@ -335,7 +332,7 @@ sap.ui.define([
 		 */
 		openCapacitivePopup: function (oEvent) {
 			var oComponent = this.getOwnerComponent();
-			oComponent.capacitiveAssignments.open(this.getView(), oEvent,this._mParameters);
+			oComponent.capacitiveAssignments.open(this.getView(), oEvent, this._mParameters);
 		},
 		/**
 		 * on press, open the dialog to create an unavailability for selected resources
@@ -359,7 +356,7 @@ sap.ui.define([
 		onClickExpandCollapse: function (oEvent) {
 			var oButton = oEvent.getSource(),
 				oCustomData = oButton.getCustomData();
-            this.mTreeState = {};
+			this.mTreeState = {};
 			if (oCustomData[0].getValue() === "EXPAND" && this._oDataTable) {
 				this._oDataTable.expandToLevel(1);
 			} else {
@@ -416,9 +413,9 @@ sap.ui.define([
 				this.mTreeState = {};
 			}
 		},
-        onToggleOpenState:function(){
-            this.mTreeState = {};
-        },
+		onToggleOpenState: function () {
+			this.mTreeState = {};
+		},
 		/**
 		 * method called on selection of date
 		 @Author: Pranav
@@ -464,9 +461,14 @@ sap.ui.define([
 		 @Author: Pranav
 		 */
 		_getSelectedRoute: function (oSelectedDate) {
-			//Refresh the Map	
-			if (this.aMapDemandGuid.length > 0) {
-				this._refreshGeoMap();
+			//Refresh the Map
+			var oViewModel = this.getModel("viewModel"),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
+			if (aSelectedDemands.length > 0) {
+				this._eventBus.publish("BaseController", "refreshMapDemandTable", {});
+				this._eventBus.publish("BaseController", "resetMapSelection", {});
+				this.getOwnerComponent().getModel("viewModel").setProperty("/mapSettings/routeData", []);
+					this.getOwnerComponent().getModel("viewModel").setProperty("/mapSettings/selectedDemands", []);
 			}
 			//Filter Logic for Map
 			var oFilter = new Filter(this._getResourceFilters(this.selectedResources, oSelectedDate), true);
@@ -507,7 +509,8 @@ sap.ui.define([
 					filters: aResources,
 					and: false
 				}));
-				aFilters.push(new Filter("DateTo", FilterOperator.EQ, oSelectedDate));
+				aFilters.push(new Filter("DateTo", FilterOperator.GE, oSelectedDate));
+				aFilters.push(new Filter("DateFrom", FilterOperator.LE, oSelectedDate.setHours(23, 59, 59, 999)));
 			}
 			return aFilters;
 		},
@@ -517,10 +520,15 @@ sap.ui.define([
 		 */
 		_routeCreationMap: function (aData) {
 			var aMapLocations = [];
-
+			var oViewModel = this.getModel("viewModel"),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
 			aData.forEach(function (entry) {
-				this.aMapDemandGuid.push(entry.DemandGuid);
-			}.bind(this));
+				aSelectedDemands.push({
+					context: undefined,
+					guid: entry.DemandGuid
+				});
+			});
+			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 
 			for (var index = 0; index < aData.length - 1 && aData.length > 1; index++) {
 				var data = {
@@ -537,23 +545,10 @@ sap.ui.define([
 			} else if (aData.length > 1) {
 				this.getModel().setProperty("/DemandSet('" + aData[aData.length - 1].DemandGuid + "')/IS_SELECTED", true);
 			}
-			this.getOwnerComponent().getModel("mapData").setProperty("/routeData", aMapLocations);
-			this.getOwnerComponent().getModel("mapData").refresh();
+			this.getOwnerComponent().getModel("viewModel").setProperty("/mapSettings/routeData", aMapLocations);
+			this.getOwnerComponent().getModel("viewModel").refresh();
 			this.getModel("viewModel").setProperty("/mapSettings/busy", false);
 		},
-		/**
-		 * method for refreshing the Map
-		 @Author: Pranav
-		 */
-		_refreshGeoMap: function (oEvent) {
-			var aDemandGuidEntity = [];
-			if (this.aMapDemandGuid.length > 0) {
-				(this.aMapDemandGuid).forEach(function (entry) {
-					aDemandGuidEntity.push("/DemandSet('" + entry + "')");
-				}.bind(this));
-				this.getModel().resetChanges(aDemandGuidEntity);
-			}
-		},
-        
+
 	});
 });

@@ -107,7 +107,8 @@ sap.ui.define([
 				mapSettings: {
 					busy: false,
 					filters: [],
-					selectedDemands:[]
+					selectedDemands:[],
+					routeData: []
 				}
 
 			});
