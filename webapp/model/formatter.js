@@ -320,8 +320,8 @@ sap.ui.define([
 				return sap.ui.core.ValueState.Error;
 			}
 		},
-		/** 
-		 * 
+		/**
+		 *
 		 * @param isCapacity
 		 * @param sSelectedView
 		 * @returns
@@ -332,8 +332,8 @@ sap.ui.define([
 			}
 			return false;
 		},
-		/** 
-		 * 
+		/**
+		 *
 		 * @param sNodeType
 		 * @param sSelectedView
 		 * @returns
@@ -344,8 +344,8 @@ sap.ui.define([
 			}
 			return false;
 		},
-		/** 
-		 * 
+		/**
+		 *
 		 * @param sNodeType
 		 * @param sSelectedView
 		 * @returns
@@ -393,7 +393,7 @@ sap.ui.define([
 			return false;
 		},
 
-		/** 
+		/**
 		 * Formats the color of Icon for sync status
 		 * @param sStatus
 		 * @returns
@@ -456,63 +456,62 @@ sap.ui.define([
 		 * Format tooltip according to values in the parts
 		 * Added the dynamic code to generate the tooltip based on binding
 		 * @Author Rahul
-		 * 
+		 *
 		 */
 		formatAsnToolTip: function (orderId, demandDesc, opId, operaton, status, remTimelabel, id, desc, operationId, oparationDesc, statusDesc,
 			remTime) {
 			var iArg = arguments.length,
 				sToolTip = "";
-
+			// changed by @rahul in order to handle dynamic arguments
 			for (var i = 0; i < iArg / 2; i++) {
 				if (i === (iArg / 2)) {
 					sToolTip = sToolTip + (arguments[(iArg / 2) + i] ? arguments[i] + ":" + arguments[(iArg / 2) + i] : "");
 				} else {
 					sToolTip = sToolTip + (arguments[(iArg / 2) + i] ? arguments[i] + ":" + arguments[(iArg / 2) + i] : "") + "\n";
 				}
-
 			}
-			return sToolTip;
-		},
 
-		formatListMode: function (bIsActive) {
-
-		},
-		/**
-		 * formatter formats the visibility of reassign button based on the two flags
-		 * 1. Allow change
-		 * 2. Allow reassign
+        },
+        /**
+         * formatter formats the visibility of reassign button based on the two flags
+         * 1. Allow change
+         * 2. Allow reassign
+         */
+        formartVisibleReassign : function(bChange, bAssign){
+        	return bChange && bAssign;
+        },
+        /**
+         * formatter formats the visibility of create unavailability button based on the two flags
+         * 1. Allow create in PC
+         * 2. Absences are visualized in PC or not
+         */
+        formatCrtABFromPC : function(bAllowCreate, bShowInPC){
+        	return bAllowCreate && bShowInPC;
+        },
+        /**
+		 * set scale on the basis of selected/deselected
 		 */
-		formartVisibleReassign: function (bChange, bAssign) {
-			return bChange && bAssign;
-		},
-		/**
-		 * formatter formats the visibility of create unavailability button based on the two flags
-		 * 1. Allow create in PC
-		 * 2. Absences are visualized in PC or not
-		 */
-		formatCrtABFromPC: function (bAllowCreate, bShowInPC) {
-			return bAllowCreate && bShowInPC;
-		},
-		/**
-		 * Format change status button in the gantt chart 
-		 */
-		formatChangeStatus: function (sStatus) {
-			//	return sStatus === "ASGN" && sStatus !== "COMP" &&  sStatus !== "PASS";
-			return sStatus !== "PASS";
-		},
 		getSpotScale: function (spot) {
 			if (spot) {
-				return "1.2;1.2;1.2";
+				return "1.4;1.4;1.4";
 			} else {
 				return "1;1;1";
 			}
 		},
-		getSpotType: function (spot) {
-			if (spot) {
-				return "Success";
+		/**
+		 * set spot color on the basis of selected/deselected
+		 */
+		getSpotType: function (sValue) {
+			if (sValue === 1) {
+				return sap.ui.vbm.SemanticType.Error;
+			} else if (sValue === 2) {
+				return sap.ui.vbm.SemanticType.Warning;
+			} else if (sValue === 3) {
+				return sap.ui.vbm.SemanticType.Success;
 			} else {
-				return "Default";
+				return sap.ui.vbm.SemanticType.Information;
 			}
 		}
-	};
+
+    };
 });

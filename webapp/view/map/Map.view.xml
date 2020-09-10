@@ -8,7 +8,7 @@
 					<f:header>
 						<f:DynamicPageHeader pinnable="true">
 							<f:content>
-								<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.SmartFilterMapDemands" type="XML"/>
+								<core:Fragment fragmentName="com.evorait.evoplan.view.map.fragments.SmartFilterMapDemands" type="XML"/>
 							</f:content>
 						</f:DynamicPageHeader>
 					</f:header>
@@ -17,11 +17,25 @@
 							<vk:content>
 								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities" >
 									<vk:content>
-										<vbm:GeoMap id="idGeoMap" drop="onDrop"  select="onSelectSpots" initialZoom="{user>/MAP_INITIAL_ZOOM}" initialPosition="{user>/MAP_INITIAL_POSITION}">
+										<vbm:GeoMap id="idGeoMap" lassoSelection="true" rectangularSelection="true" drop="onDrop"  select="onSelectSpots" initialZoom="{user>/MAP_INITIAL_ZOOM}" initialPosition="{user>/MAP_INITIAL_POSITION}">
 											<vbm:vos>
-												<vbm:Spots items="{/DemandSet}" >
+												<vbm:Routes items="{viewModel>/mapSettings/routeData}">
 													<vbm:items>
-														<vbm:Spot type="{path:'IS_SELECTED',formatter:'.formatter.getSpotType'}" select="{IS_SELECTED}" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="{STATUS_ICON}" changeable="true" position="{LONGITUDE};{LATITUDE};0"></vbm:Spot>
+														<vbm:Route id="idMapRoute" position="{viewModel>sLong};{viewModel>sLat};0;{viewModel>dLong};{viewModel>dLat};0" color="rgb(117,148,34)"
+															colorBorder="rgb(255,255,255)" linewidth="3" routetype="Geodesic" click="onClickRoute" contextMenu="onContextMenuRoute"/>
+													</vbm:items>
+												</vbm:Routes>
+												<vbm:Spots items="{/DemandSet}" select="onSelect" deselect="onDeselect" >
+													<vbm:items>
+														<vbm:Spot contentColor="{path:'CRITICALITY',formatter:'.formatter.formatStatusIconColor'}"
+																  hotScale="1.1;1.1;1.1"
+																  tooltip="{ORDERID} - {OPERATIONID}"
+																  type="{path:'CRITICALITY',formatter:'.formatter.getSpotType'}"
+																  select="{IS_SELECTED}" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}"
+																  icon="{STATUS_ICON}"
+																  changeable="true"
+																  position="{LONGITUDE};{LATITUDE};0"
+																  contextMenu="onContextMenu"></vbm:Spot>
 													</vbm:items>
 												</vbm:Spots>
 											</vbm:vos>
@@ -36,7 +50,7 @@
 					<l:SplitterLayoutData size="{=${viewModel>/showDemands} === true?'92%':'61%'}"/>
 				</layoutData>
 			</NavContainer>
-			<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandsTable" type="XML"></core:Fragment>
+			<core:Fragment fragmentName="com.evorait.evoplan.view.map.fragments.DemandsTable" type="XML"></core:Fragment>
 		</l:Splitter>
 	</Page>
 </mvc:View>

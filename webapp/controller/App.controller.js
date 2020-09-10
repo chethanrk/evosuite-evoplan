@@ -1,5 +1,5 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/AssignmentsController",
+	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/formatter",
@@ -133,7 +133,7 @@ sap.ui.define([
 				this.getOwnerComponent().getModel("appView").setProperty("/busy", true);
 				Fragment.load({
 					id: "InfoDialog",
-					name: "com.evorait.evoplan.view.fragments.InformationPopover",
+					name: "com.evorait.evoplan.view.common.fragments.InformationPopover",
 					controller: this
 				}).then(function (oDialog) {
 					this.getOwnerComponent().getModel("appView").setProperty("/busy", false);

@@ -272,6 +272,7 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
 			else if (oParameter.bFromMap) {
+			// eventBus.publish("BaseController", "resetMapSelection", {});
 				eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				eventBus.publish("BaseController", "refreshMapView", {});
 				eventBus.publish("BaseController", "refreshMapDemandTable", {});
@@ -590,7 +591,17 @@ sap.ui.define([
 			localStorage.removeItem("Evo-Dmnd-pageRefresh");
 			localStorage.removeItem("Evo-Dmnd-guid");
 		},
-
+		/**
+		 * TODO to be designed 
+		 */
+		loadFragment : function(sPath, oController, sId){
+				// return Fragment.load({
+				// 	name:sPath,
+				// 	id: sId,
+				// 	controller: oController
+				// });
+		}
+	
 	});
 
 });
