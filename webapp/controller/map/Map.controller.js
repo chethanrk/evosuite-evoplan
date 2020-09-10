@@ -37,32 +37,6 @@ sap.ui.define([
 				bFromMap: true
 			};
 		},
-		onSelectSpots: function (oEvent) {
-			// alert("selected");
-			// var oSelectedSpots = oEvent.getParameter("selected"),
-			// 	sPath;
-			// if (oSelectedSpots && oSelectedSpots.length > 0) {
-			// 	for(var i=0;i<oSelectedSpots.length;i++){
-			// 		sPath = oSelectedSpots[i].getBindingContext().getPath();
-			// 		this.getModel().setProperty(sPath + "/IS_SELECTED",true);
-			// 	}
-			// }
-		},
-		onDeselectSpots: function(oEvent){
-		alert("Deselect");
-		},
-		onAfterRendering: function () {
-			var oGeoMap = this.getView().byId("idGeoMap"),
-				oBinding = oGeoMap.getAggregation("vos")[0].getBinding("items");
-			// To show busy indicator when map loads.
-			this.setMapBusy(true);
-			oBinding.attachDataReceived(function () {
-				this.setMapBusy(false);
-			}.bind(this));
-		},
-		setMapBusy: function (bValue) {
-			this.getModel("viewModel").setProperty("/mapSettings/busy", bValue);
-		},
 
 		/**
 		 * Selected spots can be saved.
@@ -339,16 +313,6 @@ sap.ui.define([
 			oBinding.refresh();
 		},
 		/**
-		 *  refresh the whole map container bindings
-		 */
-		_refreshMapBinding: function () {
-			// Code to refresh Map
-			this.setMapBusy(true);
-			var oGeoMap = this.getView().byId("idGeoMap"),
-				oBinding = oGeoMap.getAggregation("vos")[0].getBinding("items");
-			oBinding.refresh(true);
-		},
-		/**
 		 * open change status dialog
 		 * @param oEvent
 		 */
@@ -480,6 +444,7 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
+            this._oEventBus.unsubscribe("BaseController", "refreshDemandTable", this._refreshDemandTable, this);
 		}
 
 	});
