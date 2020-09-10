@@ -25,9 +25,17 @@
 															colorBorder="rgb(255,255,255)" linewidth="3" routetype="Geodesic" click="onClickRoute" contextMenu="onContextMenuRoute"/>
 													</vbm:items>
 												</vbm:Routes>
-												<vbm:Spots items="{/DemandSet}" select="onSelect" deselect="onDeselect">
+												<vbm:Spots items="{/DemandSet}" select="onSelect" deselect="onDeselect" >
 													<vbm:items>
-														<vbm:Spot contentColor="{path:'CRITICALITY',formatter:'.formatter.formatStatusIconColor'}"  hotScale="1.1;1.1;1.1" tooltip="{ORDERID}" type="{path:'CRITICALITY',formatter:'.formatter.getSpotType'}" select="{IS_SELECTED}" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="{STATUS_ICON}" changeable="true" position="{LONGITUDE};{LATITUDE};0" ></vbm:Spot>
+														<vbm:Spot contentColor="{path:'CRITICALITY',formatter:'.formatter.formatStatusIconColor'}"  
+																  hotScale="1.1;1.1;1.1" 
+																  tooltip="{ORDERID} - {OPERATIONID}" 
+																  type="{path:'CRITICALITY',formatter:'.formatter.getSpotType'}" 
+																  select="{IS_SELECTED}" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" 
+																  icon="{STATUS_ICON}" 
+																  changeable="true" 
+																  position="{LONGITUDE};{LATITUDE};0"
+																  contextMenu="onContextMenu"></vbm:Spot>
 													</vbm:items>
 												</vbm:Spots>
 											</vbm:vos>
@@ -42,7 +50,7 @@
 					<l:SplitterLayoutData size="{=${viewModel>/showDemands} === true?'92%':'61%'}"/>
 				</layoutData>
 			</NavContainer>
-			<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandsTable" type="XML"></core:Fragment>
+			<core:Fragment fragmentName="com.evorait.evoplan.view.map.fragments.DemandsTable" type="XML"></core:Fragment>
 		</l:Splitter>
 	</Page>
 </mvc:View>

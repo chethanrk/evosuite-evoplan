@@ -590,6 +590,16 @@ sap.ui.define([
 		clearLocalStorage: function(){
 			localStorage.removeItem("Evo-Dmnd-pageRefresh");
 			localStorage.removeItem("Evo-Dmnd-guid");
+		},
+		/**
+		 * TODO to be designed 
+		 */
+		loadFragment : function(sPath, oController, sId){
+				// return Fragment.load({
+				// 	name:sPath,
+				// 	id: sId,
+				// 	controller: oController
+				// });
 		}
 	
 	});

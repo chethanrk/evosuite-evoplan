@@ -467,12 +467,12 @@ sap.ui.define([
 			if (aSelectedDemands.length > 0) {
 				this._eventBus.publish("BaseController", "refreshMapDemandTable", {});
 				this._eventBus.publish("BaseController", "resetMapSelection", {});
-				this.getOwnerComponent().getModel("viewModel").setProperty("/mapSettings/routeData", []);
-					this.getOwnerComponent().getModel("viewModel").setProperty("/mapSettings/selectedDemands", []);
+				oViewModel.setProperty("/mapSettings/routeData", []);
+				oViewModel.setProperty("/mapSettings/selectedDemands", []);
 			}
 			//Filter Logic for Map
 			var oFilter = new Filter(this._getResourceFilters(this.selectedResources, oSelectedDate), true);
-			this.getModel("viewModel").setProperty("/mapSettings/busy", true);
+			oViewModel.setProperty("/mapSettings/busy", true);
 			this.getOwnerComponent()._getData("/AssignmentSet", [oFilter]).then(function (result) {
 
 				var aData = result.results;
@@ -545,9 +545,10 @@ sap.ui.define([
 			} else if (aData.length > 1) {
 				this.getModel().setProperty("/DemandSet('" + aData[aData.length - 1].DemandGuid + "')/IS_SELECTED", true);
 			}
-			this.getOwnerComponent().getModel("viewModel").setProperty("/mapSettings/routeData", aMapLocations);
-			this.getOwnerComponent().getModel("viewModel").refresh();
-			this.getModel("viewModel").setProperty("/mapSettings/busy", false);
+			oViewModel.setProperty("/mapSettings/routeData", aMapLocations);
+			// this.getModel("viewModel").refresh();
+			oViewModel.setProperty("/mapSettings/busy", false);
+			this._eventBus.publish("BaseController", "refreshDemandTable", {});
 		},
 
 	});

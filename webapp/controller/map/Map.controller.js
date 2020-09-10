@@ -8,8 +8,11 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/m/Dialog",
 	"sap/m/Button",
-	"sap/m/MessageToast"
-], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, Fragment, Dialog, Button, MessageToast) {
+	"sap/m/MessageToast",
+    "sap/ui/core/Popup"
+], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, Fragment, Dialog, Button, MessageToast,
+
+    Popup) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
@@ -21,6 +24,7 @@ sap.ui.define([
 			oGeoMap.setMapConfiguration(MapConfig.getMapConfiguration(oMapModel));
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			this._oEventBus.subscribe("BaseController", "refreshMapView", this._refreshMapView, this);
+			this._oEventBus.subscribe("BaseController", "refreshDemandTable", this._refreshDemandTable, this);
 			this._oEventBus.subscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.subscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			
@@ -51,6 +55,7 @@ sap.ui.define([
 				aSelectedDemands.push({context:oContext, guid: oDemand.Guid});
 			}
 			oViewModel.setProperty("/mapSettings/selectedDemands",aSelectedDemands);
+			oViewModel.setProperty("/mapSettings/routeData", []);
 			this._oDraggableTable.rebindTable();
 		},
 		/**
@@ -71,6 +76,7 @@ sap.ui.define([
 				aSelectedDemands.splice(aSelectedDemands.indexOf({context:oContext, guid: oDemand.Guid}), 1);
 			}
 			oViewModel.setProperty("/mapSettings/selectedDemands",aSelectedDemands);
+			oViewModel.setProperty("/mapSettings/routeData", []);
 			this._oDraggableTable.rebindTable();
 		},
 		/**
@@ -79,6 +85,26 @@ sap.ui.define([
 		 
 		onSelectSpots: function(oEvent){
 			// I dunno why its required
+		},
+		/**
+		 * 
+		 */
+		onContextMenu:function(oEvent){
+			// var oMenu = oEvent.getParameter("menu"),
+			// 	oSpot = oEvent.getSource(),
+			// 	oView = this.getView();
+			
+				/*Fragment.load({
+					name: "com.evorait.evoplan.view.map.fragments.ActionSheet",
+					id: oView.getId(),
+					controller: this
+				}).then(function (items) {
+					for(var i in items){
+						oMenu.addItem(items[i]);
+					}
+					var eDock = Popup.Dock;
+                    oMenu.open(true, oSpot, eDock.BeginTop, eDock.endBottom, oSpot);
+				}.bind(this));*/
 		},
 		/**
 		 * Create filters for the selected demands 
@@ -134,6 +160,7 @@ sap.ui.define([
 			var oViewModel = this.getModel("viewModel");
 			this._resetMapSelection();
 			oViewModel.setProperty("/mapSettings/selectedDemands",[]);
+			oViewModel.setProperty("/mapSettings/routeData", []);
 		},
 		/**
 		 * Clearing the selected demands the Reseting the selection
@@ -145,6 +172,7 @@ sap.ui.define([
 			var oViewModel = this.getModel("viewModel");
 			this._resetMapSelection();
 			oViewModel.setProperty("/mapSettings/selectedDemands",[]);
+			oViewModel.setProperty("/mapSettings/routeData", []);
 			this._oDraggableTable.rebindTable();
 		},
 		/**
@@ -267,6 +295,9 @@ sap.ui.define([
 			}
 			this._bLoaded = true;
 		},
+		_refreshDemandTable : function(oEvent){
+			this._oDraggableTable.rebindTable();
+		},
 		/**
 		 * refresh the whole map container bindings
 		 * @Author Rakesh Sahu
@@ -310,13 +341,13 @@ sap.ui.define([
 				this.byId("changeStatusButton").setEnabled(false);
 			}
 			//To make selection on map by selecting Demand from demand table
-			if (oEvent.getParameter("selectAll")) {
+		/*	if (oEvent.getParameter("selectAll")) {
 				this.markAllDemandSpots(true);
 			} else if (oEvent.getParameter("rowIndex") === -1) {
 				this.markAllDemandSpots(false);
 			} else {
 				this.updateMapDemandSelection(oEvent);
-			}
+			}*/
 		},
 
 		/**
