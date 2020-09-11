@@ -247,6 +247,11 @@ sap.ui.define([
             var oEventBus = sap.ui.getCore().getEventBus();
             if(this._mParameters.bFromGantt){
                 this._oModel.resetChanges();
+                //to reset "Manage absence" btn enable/disable
+				this._oView.getController().selectedResources = [];
+				this._oView.byId("idButtonreassign").setEnabled(false);
+				this._oView.byId("idButtonunassign").setEnabled(false);
+				this._oView.byId("idButtonCreUA").setEnabled(false);
             }else if(this._mParameters.bFromHome){
                 oEventBus.publish("ManageAbsences","ClearSelection",{});
             }

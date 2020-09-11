@@ -30,7 +30,7 @@
 														<vbm:Spot contentColor="{path:'CRITICALITY',formatter:'.formatter.formatStatusIconColor'}"
 																  hotScale="1.1;1.1;1.1"
 																  tooltip="{ORDERID} - {OPERATIONID}"
-																  type="{path:'CRITICALITY',formatter:'.formatter.getSpotType'}"
+																  type="{parts:['CRITICALITY','IS_CHECKED'],formatter:'.formatter.getSpotType'}"
 																  select="{IS_SELECTED}" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}"
 																  icon="{STATUS_ICON}"
 																  changeable="true"
