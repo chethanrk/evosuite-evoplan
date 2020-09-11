@@ -501,7 +501,10 @@ sap.ui.define([
 		/**
 		 * set spot color on the basis of selected/deselected
 		 */
-		getSpotType: function (sValue) {
+		getSpotType: function (sValue, bIsChecked) {
+			if(bIsChecked){
+				return sap.ui.vbm.SemanticType.Default;
+			}
 			if (sValue === 1) {
 				return sap.ui.vbm.SemanticType.Error;
 			} else if (sValue === 2) {
