@@ -81,6 +81,10 @@
 									<PropertyValue Property="LocalDataProperty" PropertyPath="Description"/>
 									<PropertyValue Property="ValueListProperty" String="AvailabilityDesc"/>
 								</Record>
+								<Record Type="Common.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="Description"/>
+									<PropertyValue Property="ValueListProperty" String="AvailabilityTypeGroup"/>
+								</Record>
 							</Collection>
 						</PropertyValue>
 					</Record>
