@@ -59,6 +59,9 @@ sap.ui.define([
                  */
                 press: {
                     allowPreventDefault: true
+                },
+                resourceIconPress : {
+                	 allowPreventDefault: true
                 }
             }
         }
@@ -87,6 +90,17 @@ sap.ui.define([
     } else {
         CustomTitle.prototype.onclick = CustomTitle.prototype._handlePress;
     }
+    
+    CustomTitle.prototype.onAfterRendering = function(){
+    	jQuery(".resourceIcon").on("click", function(e){
+    		this.fireResourceIconPress({
+    			offsetX: e.offsetX,
+    			offsetY: e.offsetY,
+    			event: e
+    		});
+    		
+    	}.bind(this));
+    };
 
     return CustomTitle;
 });

@@ -404,6 +404,9 @@ sap.ui.define([
 		},
         onToggleOpenState:function(){
             this.mTreeState = {};
+        },
+        onResourceIconPress : function(oEvent){
+        	
         }
 	});
 });

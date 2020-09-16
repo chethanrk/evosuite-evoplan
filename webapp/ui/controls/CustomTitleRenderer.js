@@ -64,7 +64,7 @@ sap.ui.define([
             oRm.write("<span");
             oRm.addClass("sapUiIcon");
             oRm.addClass("sapUiTinyMarginEnd");
-
+			oRm.addClass("resourceIcon");
             if (oIconInfo) {
                 oRm.writeAttributeEscaped("data-sap-ui-icon-content", oIconInfo.content);
                 oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
