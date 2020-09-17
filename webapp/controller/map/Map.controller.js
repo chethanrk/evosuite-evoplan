@@ -74,7 +74,7 @@ sap.ui.define([
 				oContext = aDeSelected[i].getBindingContext();
 				sPath = oContext.getPath();
 				oDemand = oModel.getProperty(sPath);
-				aSelectedDemands.splice(sPath, 1);
+				aSelectedDemands.splice(aSelectedDemands.indexOf(sPath), 1);
 			}
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 			oViewModel.setProperty("/mapSettings/routeData", []);
@@ -239,6 +239,7 @@ sap.ui.define([
 			var sPath = oContext.getPath();
 			var oModel = oContext.getModel();
 			var oData = oModel.getProperty(sPath);
+			this.onReset();
 			oRouter.navTo("mapDemandDetails", {
 				guid: oData.Guid
 			});

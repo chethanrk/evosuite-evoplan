@@ -4,7 +4,7 @@
 		<l:Splitter orientation="Vertical">
 			<NavContainer id="leftPanel" class="panelPage">
 				<f:DynamicPage id="idMapDynamicPage" headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true" showFooter="true"
-					toggleHeaderOnTitleClick="false" class="sapUiNoContentPadding tableContentPage" >
+					toggleHeaderOnTitleClick="false" class="sapUiNoContentPadding tableContentPage">
 					<f:header>
 						<f:DynamicPageHeader pinnable="true">
 							<f:content>
@@ -15,9 +15,10 @@
 					<f:content>
 						<vk:MapContainer id="idMapContainer" autoAdjustHeight="true" settingsPressed="onClickMapDemandFilter" busy="{viewModel>/mapSettings/busy}">
 							<vk:content>
-								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities" >
+								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities">
 									<vk:content>
-										<vbm:GeoMap id="idGeoMap" lassoSelection="true" rectangularSelection="true" drop="onDrop"  select="onSelectSpots" initialZoom="{user>/MAP_INITIAL_ZOOM}" initialPosition="{user>/MAP_INITIAL_POSITION}">
+										<vbm:GeoMap id="idGeoMap" lassoSelection="true" rectangularSelection="true" drop="onDrop" select="onSelectSpots"
+											initialZoom="{user>/MAP_INITIAL_ZOOM}" initialPosition="{user>/MAP_INITIAL_POSITION}">
 											<vbm:vos>
 												<vbm:Routes items="{viewModel>/mapSettings/routeData}">
 													<vbm:items>
@@ -25,17 +26,13 @@
 															colorBorder="rgb(255,255,255)" linewidth="3" routetype="Geodesic" click="onClickRoute" contextMenu="onContextMenuRoute"/>
 													</vbm:items>
 												</vbm:Routes>
-												<vbm:Spots items="{/DemandSet}" select="onSelect" deselect="onDeselect" >
+												<vbm:Spots items="{/DemandSet}" select="onSelect" deselect="onDeselect">
 													<vbm:items>
-														<vbm:Spot contentColor="{path:'CRITICALITY',formatter:'.formatter.formatStatusIconColor'}"
-																  hotScale="1.1;1.1;1.1"
-																  tooltip="{ORDERID} - {OPERATIONID}"
-																  type="{parts:['CRITICALITY','IS_SELECTED'],formatter:'.formatter.getSpotType'}"
-																  select="{IS_SELECTED}" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}"
-																  icon="{STATUS_ICON}"
-																  changeable="true"
-																  position="{LONGITUDE};{LATITUDE};0"
-																  contextMenu="onContextMenu"></vbm:Spot>
+														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0)-->
+														<vbm:Spot selectColor="RHLSA(2.0;2.0;2.0;2.0)"  contentColor="#FF0000" hotScale="1.1;1.1;1.1"
+															tooltip="{ORDERID} - {OPERATIONID} - {Status}" type="Inactive" select="{IS_SELECTED}"
+															scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="sap-icon://overlay" contentSize="25rem" changeable="true"
+															position="{LONGITUDE};{LATITUDE};0" contextMenu="onContextMenu"></vbm:Spot>
 													</vbm:items>
 												</vbm:Spots>
 											</vbm:vos>
