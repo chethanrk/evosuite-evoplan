@@ -14,6 +14,23 @@
 					</f:header>
 					<f:content>
 						<vk:MapContainer id="idMapContainer" autoAdjustHeight="true" settingsPressed="onClickMapDemandFilter" busy="{viewModel>/mapSettings/busy}">
+							<vk:listPanelStack>
+								<vk:ListPanelStack width="230px">
+									<vk:content>
+										<vk:ListPanel items="{/GanttLegendSet}" headerText="Legend" expanded="false" selectionMode="SingleSelectMaster" headerIcon="sap-icon://legend">
+											<vk:items>
+												<!--<GroupHeaderListItem title="Icon + text" upperCase="false"/>-->
+												<!--<vk:LegendItem title="Truck" icon="sap-icon://shipping-status"/>-->
+												<!--<vk:LegendItem title="Train" icon="sap-icon://cargo-train"/>-->
+												<!--<GroupHeaderListItem title="Color indicator + text" upperCase="false"/>-->
+												<!--<vk:LegendItem icon="sap-icon://shipping-status" title="&gt; 1h delay" color="rgb(211,32,48)"/>-->
+												<vk:LegendItem color="{=${Legendtype}==='COLOUR'?${Colourcode}: '#808080'}" title="{CharactersticDescription}"/>
+												<!--<vk:LegendItem title="on time" color="rgb(97,166,86)"/>-->
+											</vk:items>
+										</vk:ListPanel>
+									</vk:content>
+								</vk:ListPanelStack>
+							</vk:listPanelStack>
 							<vk:content>
 								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities">
 									<vk:content>
@@ -29,10 +46,9 @@
 												<vbm:Spots items="{/DemandSet}" select="onSelect" deselect="onDeselect">
 													<vbm:items>
 														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0)-->
-														<vbm:Spot selectColor="RHLSA(2.0;2.0;2.0;2.0)"  contentColor="#FF0000" hotScale="1.1;1.1;1.1"
-															tooltip="{ORDERID} - {OPERATIONID} - {Status}" type="Inactive" select="{IS_SELECTED}"
-															scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="sap-icon://overlay" contentSize="25rem" changeable="true"
-															position="{LONGITUDE};{LATITUDE};0" contextMenu="onContextMenu"></vbm:Spot>
+														<vbm:Spot selectColor="RHLSA(2.0;2.0;2.0;2.0)" contentColor="#FF0000" hotScale="1.1;1.1;1.1" tooltip="{ORDERID} - {OPERATIONID} - {Status}"
+															type="Inactive" select="{IS_SELECTED}" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="sap-icon://overlay"
+															contentSize="25rem" changeable="true" position="{LONGITUDE};{LATITUDE};0" contextMenu="onContextMenu"></vbm:Spot>
 													</vbm:items>
 												</vbm:Spots>
 											</vbm:vos>
