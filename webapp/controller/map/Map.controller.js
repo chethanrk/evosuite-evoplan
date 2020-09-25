@@ -9,10 +9,11 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/MessageToast",
-	"sap/ui/core/Popup"
+	"sap/ui/core/Popup",
+	"sap/m/GroupHeaderListItem"
 ], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, Fragment, Dialog, Button, MessageToast,
 
-	Popup) {
+	Popup, GroupHeaderListItem) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
@@ -36,6 +37,13 @@ sap.ui.define([
 			this._mParameters = {
 				bFromMap: true
 			};
+		},
+
+		getGroupHeader: function (oGroup) {
+			return new GroupHeaderListItem({
+				title: oGroup.key,
+				upperCase: false
+			});
 		},
 
 		/**
@@ -168,6 +176,7 @@ sap.ui.define([
 			this._resetMapSelection();
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
 			oViewModel.setProperty("/mapSettings/routeData", []);
+			this.onResetLegendSelection();
 		},
 		/**
 		 * Clearing the selected demands the Reseting the selection
@@ -300,6 +309,7 @@ sap.ui.define([
 			if (this._bLoaded) {
 				this._oDraggableTable.rebindTable();
 				this._refreshMapBinding();
+				this.onResetLegendSelection();
 			}
 			this._bLoaded = true;
 		},
@@ -493,7 +503,51 @@ sap.ui.define([
 			}
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 		},
-
+		/**
+		 * Select item in Map Lagend to filter the map and Demand Table.
+		 * @Author Rakesh Sahu
+		 * @return
+		 * @param oEvent
+		 */
+		onSelectMapLagend: function (oEvent) {
+			var sValue = oEvent.getSource().getSelectedItem().getTitle(),
+				oStatusFilter = this.byId("listReportFilter").getControlByKey("Status"),
+				aTokens = [],
+				oLegendList = this.byId("idMapLegendsList")	;
+			if (sValue !== "Selected") {
+				aTokens.push(new sap.m.Token({
+					text: sValue,
+					key: sValue
+				}));
+			}
+			else{
+				oLegendList.setSelectedItem(oLegendList.getSelectedItem(), false);
+			}
+			oStatusFilter.setTokens(aTokens);
+		},
+		/**
+		 * remove Selection in Map Lagend to filter the map and Demand Table.
+		 * @Author Rakesh Sahu
+		 * @return
+		 * @param oEvent
+		 */
+		onResetLegendSelection: function (oEvent) {
+			var oLegendList = this.byId("idMapLegendsList"),
+				sValue = oLegendList.getSelectedItem().getTitle(),
+				oStatusFilter = this.byId("listReportFilter").getControlByKey("Status"),
+				aTokens = oStatusFilter.getTokens(),
+				index;
+			oLegendList.setSelectedItem(oLegendList.getSelectedItem(), false);
+			index = aTokens.filter(function (oToken, index) {
+				if (oToken.getText() === sValue) {
+					return index;
+				}
+			});
+			if (index >= 0) {
+				aTokens.splice(index, 1);
+			}
+			oStatusFilter.setTokens(aTokens);
+		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
