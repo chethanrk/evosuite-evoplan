@@ -14,6 +14,20 @@
 					</f:header>
 					<f:content>
 						<vk:MapContainer id="idMapContainer" autoAdjustHeight="true" settingsPressed="onClickMapDemandFilter" busy="{viewModel>/mapSettings/busy}">
+							<vk:listPanelStack>
+								<vk:ListPanelStack width="230px">
+									<vk:content>
+										<vk:ListPanel id="idMapLegendsList"
+											items="{ path: '/MapLegendSet', sorter: { path: 'CharactersticCode', group: true }, groupHeaderFactory: '.getGroupHeader'}"
+											headerText="Legend" expanded="false" selectionMode="SingleSelectMaster" selectionChange="onSelectMapLagend" headerIcon="sap-icon://legend"
+											expand="onExpandCollapseLegends">
+											<vk:items>
+												<vk:LegendItem color="{Colourcode}" title="{CharactersticValue}" tooltip="{CharactersticDescription}"/>
+											</vk:items>
+										</vk:ListPanel>
+									</vk:content>
+								</vk:ListPanelStack>
+							</vk:listPanelStack>
 							<vk:content>
 								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities">
 									<vk:content>
@@ -29,9 +43,9 @@
 												<vbm:Spots items="{/DemandSet}" select="onSelect" deselect="onDeselect">
 													<vbm:items>
 														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0)-->
-														<vbm:Spot selectColor="RHLSA(2.0;2.0;2.0;2.0)"  contentColor="#FF0000" hotScale="1.1;1.1;1.1"
+														<vbm:Spot selectColor="{user>/MAP_SELECTED_PIN_COLOUR}" contentColor="{MAP_MARKER_COLOUR}" hotScale="1.1;1.1;1.1"
 															tooltip="{ORDERID} - {OPERATIONID} - {Status}" type="Inactive" select="{IS_SELECTED}"
-															scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="sap-icon://overlay" contentSize="25rem" changeable="true"
+															scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="{user>/MAP_MARKER_ICON}" contentSize="25rem" changeable="true"
 															position="{LONGITUDE};{LATITUDE};0" contextMenu="onContextMenu"></vbm:Spot>
 													</vbm:items>
 												</vbm:Spots>

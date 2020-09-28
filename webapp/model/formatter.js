@@ -514,6 +514,12 @@ sap.ui.define([
 			} else {
 				return sap.ui.vbm.SemanticType.Information;
 			}
+		},
+		getGroupHeader: function (oGroup){
+			return new sap.m.GroupHeaderListItem({
+				title: oGroup.key,
+				upperCase: false
+			});
 		}
 
     };
