@@ -187,6 +187,7 @@ sap.ui.define([
 		onClear: function () {
 			var oViewModel = this.getModel("viewModel");
 			this._resetMapSelection();
+			this.onResetLegendSelection();
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			this._oDraggableTable.rebindTable();
@@ -513,14 +514,13 @@ sap.ui.define([
 			var sValue = oEvent.getSource().getSelectedItem().getTitle(),
 				oStatusFilter = this.byId("listReportFilter").getControlByKey("Status"),
 				aTokens = [],
-				oLegendList = this.byId("idMapLegendsList")	;
+				oLegendList = this.byId("idMapLegendsList");
 			if (sValue !== "Selected") {
 				aTokens.push(new sap.m.Token({
 					text: sValue,
 					key: sValue
 				}));
-			}
-			else{
+			} else {
 				oLegendList.setSelectedItem(oLegendList.getSelectedItem(), false);
 			}
 			oStatusFilter.setTokens(aTokens);
@@ -532,21 +532,8 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onResetLegendSelection: function (oEvent) {
-			var oLegendList = this.byId("idMapLegendsList"),
-				sValue = oLegendList.getSelectedItem().getTitle(),
-				oStatusFilter = this.byId("listReportFilter").getControlByKey("Status"),
-				aTokens = oStatusFilter.getTokens(),
-				index;
+			var oLegendList = this.byId("idMapLegendsList");
 			oLegendList.setSelectedItem(oLegendList.getSelectedItem(), false);
-			index = aTokens.filter(function (oToken, index) {
-				if (oToken.getText() === sValue) {
-					return index;
-				}
-			});
-			if (index >= 0) {
-				aTokens.splice(index, 1);
-			}
-			oStatusFilter.setTokens(aTokens);
 		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
