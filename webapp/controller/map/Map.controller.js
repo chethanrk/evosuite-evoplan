@@ -37,6 +37,7 @@ sap.ui.define([
 			this._mParameters = {
 				bFromMap: true
 			};
+			this.oVBI = this.getView().byId("idGeoMap");
 		},
 
 		getGroupHeader: function (oGroup) {
@@ -534,6 +535,62 @@ sap.ui.define([
 		onResetLegendSelection: function (oEvent) {
 			var oLegendList = this.byId("idMapLegendsList");
 			oLegendList.setSelectedItem(oLegendList.getSelectedItem(), false);
+		},
+		/**
+		 * On Click Map Demand Setting
+		 * @Author Pranav
+		 * @return
+		 * @param oEvent
+		 */
+		onClickMapDemandFilter: function (oEvent) {
+			var oButton = oEvent.getSource().getAggregation("toolbar").getContent()[2],
+				oView = this.getView();
+
+			if (!this._oPopover) {
+				Fragment.load({
+					name: "com.evorait.evoplan.view.map.fragments.ClusterSwitch",
+					id: oView.getId(),
+					controller: this
+				}).then(function (oPopover) {
+					this._oPopover = oPopover;
+					this.getView().addDependent(this._oPopover);
+					oPopover.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+					this._oPopover.openBy(oButton);
+				}.bind(this));
+			} else {
+				this._oPopover.openBy(oButton);
+			}
+		},
+		/**
+		 * Map Clustering
+		 * @Author Pranav Kumar
+		 * @return
+		 * @param oEvent
+		 */
+		onClusterSwitchPress: function (oEvent) {
+			var bCluster = oEvent.getParameters().state;
+
+			if (bCluster) {
+				if (!this.oCurrentClustering) {
+					this.oCurrentClustering = new sap.ui.vbm.ClusterDistance({
+						rule: "Status=INIT",
+						distance: {
+							path: "user>/MAP_CLUSTER_DISTANCE",
+							formatter: function (value) {
+								return parseInt(value);
+							}
+						},
+						vizTemplate: new sap.ui.vbm.Cluster({
+							type: "Success",
+							icon: "sap-icon://end-user-experience-monitoring"
+						})
+
+					});
+				}
+				this.oVBI.addCluster(this.oCurrentClustering);
+			} else {
+				this.oVBI.removeCluster(this.oCurrentClustering);
+			}
 		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
