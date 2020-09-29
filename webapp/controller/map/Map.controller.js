@@ -9,10 +9,11 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/MessageToast",
-	"sap/ui/core/Popup"
+	"sap/ui/core/Popup",
+	"sap/m/GroupHeaderListItem"
 ], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, Fragment, Dialog, Button, MessageToast,
 
-	Popup) {
+	Popup, GroupHeaderListItem) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
@@ -36,6 +37,14 @@ sap.ui.define([
 			this._mParameters = {
 				bFromMap: true
 			};
+			this.oVBI = this.getView().byId("idGeoMap");
+		},
+
+		getGroupHeader: function (oGroup) {
+			return new GroupHeaderListItem({
+				title: oGroup.key,
+				upperCase: false
+			});
 		},
 
 		/**
@@ -53,15 +62,11 @@ sap.ui.define([
 				oContext = aSelected[i].getBindingContext();
 				sPath = oContext.getPath();
 				oDemand = oModel.getProperty(sPath);
-				aSelectedDemands.push({
-					context: oContext,
-					guid: oDemand.Guid
-				});
+				aSelectedDemands.push(sPath);
 			}
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			this._oDraggableTable.rebindTable();
-			this.unCheckAllDemands();
 		},
 		/**
 		 * DeSelected spots can be saved.
@@ -78,10 +83,7 @@ sap.ui.define([
 				oContext = aDeSelected[i].getBindingContext();
 				sPath = oContext.getPath();
 				oDemand = oModel.getProperty(sPath);
-				aSelectedDemands.splice(aSelectedDemands.indexOf({
-					context: oContext,
-					guid: oDemand.Guid
-				}), 1);
+				aSelectedDemands.splice(aSelectedDemands.indexOf(sPath), 1);
 			}
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 			oViewModel.setProperty("/mapSettings/routeData", []);
@@ -125,7 +127,7 @@ sap.ui.define([
 				oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
 			for (var i in aSelectedDemands) {
-				aFilters.push(new Filter("Guid", FilterOperator.EQ, aSelectedDemands[i].guid));
+				aFilters.push(new Filter("Guid", FilterOperator.EQ, aSelectedDemands[i].split("'")[1]));
 			}
 			return new Filter({
 				filters: aFilters,
@@ -150,12 +152,18 @@ sap.ui.define([
 				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items");
 			// To show busy indicator when map loads.
 			this.setMapBusy(true);
-
 			oBinding.attachDataReceived(function () {
 				this.setMapBusy(false);
-				setTimeout(function () {
-					this._setMapSelection();
-				}.bind(this), 10);
+			}.bind(this));
+
+			//to select All demands on table rebinde based on selected markers in map
+			this._oDraggableTable.attachDataReceived(function () {
+				var oSelectedDemands = this.getModel("viewModel").getProperty("/mapSettings/selectedDemands");
+				if (oSelectedDemands && oSelectedDemands.length) {
+					setTimeout(function () {
+						this._oDraggableTable.getTable().selectAll();
+					}.bind(this), 10);
+				}
 			}.bind(this));
 		},
 		/**
@@ -169,6 +177,7 @@ sap.ui.define([
 			this._resetMapSelection();
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
 			oViewModel.setProperty("/mapSettings/routeData", []);
+			this.onResetLegendSelection();
 		},
 		/**
 		 * Clearing the selected demands the Reseting the selection
@@ -179,6 +188,7 @@ sap.ui.define([
 		onClear: function () {
 			var oViewModel = this.getModel("viewModel");
 			this._resetMapSelection();
+			this.onResetLegendSelection();
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			this._oDraggableTable.rebindTable();
@@ -193,7 +203,7 @@ sap.ui.define([
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
 			if (aSelectedDemands.length > 0) {
 				(aSelectedDemands).forEach(function (entry) {
-					aDemandGuidEntity.push("/DemandSet('" + entry.guid + "')");
+					aDemandGuidEntity.push("/DemandSet('" + entry.split("'")[1] + "')");
 				});
 				this.getModel().resetChanges(aDemandGuidEntity);
 			}
@@ -208,7 +218,7 @@ sap.ui.define([
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
 			if (aSelectedDemands.length > 0) {
 				(aSelectedDemands).forEach(function (entry) {
-					this.getModel().setProperty("/DemandSet('" + entry.guid + "')/IS_SELECTED", true);
+					this.getModel().setProperty("/DemandSet('" + entry.split("'")[1] + "')/IS_SELECTED", true);
 				}.bind(this));
 			}
 		},
@@ -240,6 +250,7 @@ sap.ui.define([
 			var sPath = oContext.getPath();
 			var oModel = oContext.getModel();
 			var oData = oModel.getProperty(sPath);
+			this.onReset();
 			oRouter.navTo("mapDemandDetails", {
 				guid: oData.Guid
 			});
@@ -300,6 +311,7 @@ sap.ui.define([
 			if (this._bLoaded) {
 				this._oDraggableTable.rebindTable();
 				this._refreshMapBinding();
+				this.onResetLegendSelection();
 			}
 			this._bLoaded = true;
 		},
@@ -426,19 +438,26 @@ sap.ui.define([
 				oModel = oGeoMap.getVos()[1].getModel(),
 				oSelectedIndices = this._oDataTable.getSelectedIndices(),
 				oViewModel = this.getModel("viewModel"),
-				aCheckedDemands = oViewModel.getProperty("/mapSettings/checkedDemands"),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
 				sPath;
 			if (oSelectedIndices.length > 100) {
 				oSelectedIndices.length = 100;
 			}
-			for (var i = 0; i < oSelectedIndices.length; i++) {
-				sPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath(); //oSelectedContexts[i].context.getPath();
-				if (!aCheckedDemands.includes(sPath)) {
-					oModel.setProperty(sPath + "/IS_CHECKED", true);
-					aCheckedDemands.push(sPath);
+			if (aSelectedDemands && aSelectedDemands.length) {
+				for (var i = 0; i < aSelectedDemands.length; i++) {
+					sPath = aSelectedDemands[i];
+					oModel.setProperty(sPath + "/IS_SELECTED", true);
 				}
+			} else {
+				for (var i = 0; i < oSelectedIndices.length; i++) {
+					sPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath(); //oSelectedContexts[i].context.getPath();
+					if (!aSelectedDemands.includes(sPath)) {
+						aSelectedDemands.push(sPath);
+					}
+					oModel.setProperty(sPath + "/IS_SELECTED", true);
+				}
+				oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 			}
-			oViewModel.setProperty("/mapSettings/checkedDemands", aCheckedDemands);
 			this.setMapBusy(false);
 		},
 		/**
@@ -452,13 +471,13 @@ sap.ui.define([
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oModel = oGeoMap.getVos()[1].getModel(),
 				oViewModel = this.getModel("viewModel"),
-				aCheckedDemands = oViewModel.getProperty("/mapSettings/checkedDemands"),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
 				sPath;
-			for (var i = 0; i < aCheckedDemands.length; i++) {
-				sPath = aCheckedDemands[i]; //oContext.getPath(); //oSelectedContexts[i].context.getPath();
-				oModel.setProperty(sPath + "/IS_CHECKED", false);
+			for (var i = 0; i < aSelectedDemands.length; i++) {
+				sPath = aSelectedDemands[i];
+				oModel.setProperty(sPath + "/IS_SELECTED", false);
 			}
-			oViewModel.setProperty("/mapSettings/checkedDemands", []);
+			oViewModel.setProperty("/mapSettings/selectedDemands", []);
 			this.setMapBusy(false);
 		},
 		/**
@@ -474,19 +493,105 @@ sap.ui.define([
 				oGeoMap = this.getView().byId("idGeoMap"),
 				oModel = oGeoMap.getVos()[1].getModel(),
 				oViewModel = this.getModel("viewModel"),
-				aCheckedDemands = oViewModel.getProperty("/mapSettings/checkedDemands");
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
 			if (selectedIndices.includes(index)) {
-				if (!aCheckedDemands.includes(sPath)) {
-					aCheckedDemands.push(sPath);
+				if (!aSelectedDemands.includes(sPath)) {
+					aSelectedDemands.push(sPath);
 				}
-				oModel.setProperty(sPath + "/IS_CHECKED", true);
+				oModel.setProperty(sPath + "/IS_SELECTED", true);
 			} else {
-				aCheckedDemands.splice(aCheckedDemands.indexOf(sPath), 1);
-				oModel.setProperty(sPath + "/IS_CHECKED", false);
+				aSelectedDemands.splice(aSelectedDemands.indexOf(sPath), 1);
+				oModel.setProperty(sPath + "/IS_SELECTED", false);
 			}
-			oViewModel.setProperty("/mapSettings/checkedDemands", aCheckedDemands);
+			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 		},
+		/**
+		 * Select item in Map Lagend to filter the map and Demand Table.
+		 * @Author Rakesh Sahu
+		 * @return
+		 * @param oEvent
+		 */
+		onSelectMapLagend: function (oEvent) {
+			var sValue = oEvent.getSource().getSelectedItem().getTitle(),
+				oStatusFilter = this.byId("listReportFilter").getControlByKey("Status"),
+				aTokens = [],
+				oLegendList = this.byId("idMapLegendsList");
+			if (sValue !== "Selected") {
+				aTokens.push(new sap.m.Token({
+					text: sValue,
+					key: sValue
+				}));
+			} else {
+				oLegendList.setSelectedItem(oLegendList.getSelectedItem(), false);
+			}
+			oStatusFilter.setTokens(aTokens);
+		},
+		/**
+		 * remove Selection in Map Lagend to filter the map and Demand Table.
+		 * @Author Rakesh Sahu
+		 * @return
+		 * @param oEvent
+		 */
+		onResetLegendSelection: function (oEvent) {
+			var oLegendList = this.byId("idMapLegendsList");
+			oLegendList.setSelectedItem(oLegendList.getSelectedItem(), false);
+		},
+		/**
+		 * On Click Map Demand Setting
+		 * @Author Pranav
+		 * @return
+		 * @param oEvent
+		 */
+		onClickMapDemandFilter: function (oEvent) {
+			var oButton = oEvent.getSource().getAggregation("toolbar").getContent()[2],
+				oView = this.getView();
 
+			if (!this._oPopover) {
+				Fragment.load({
+					name: "com.evorait.evoplan.view.map.fragments.ClusterSwitch",
+					id: oView.getId(),
+					controller: this
+				}).then(function (oPopover) {
+					this._oPopover = oPopover;
+					this.getView().addDependent(this._oPopover);
+					oPopover.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+					this._oPopover.openBy(oButton);
+				}.bind(this));
+			} else {
+				this._oPopover.openBy(oButton);
+			}
+		},
+		/**
+		 * Map Clustering
+		 * @Author Pranav Kumar
+		 * @return
+		 * @param oEvent
+		 */
+		onClusterSwitchPress: function (oEvent) {
+			var bCluster = oEvent.getParameters().state;
+
+			if (bCluster) {
+				if (!this.oCurrentClustering) {
+					this.oCurrentClustering = new sap.ui.vbm.ClusterDistance({
+						rule: "Status=INIT",
+						distance: {
+							path: "user>/MAP_CLUSTER_DISTANCE",
+							formatter: function (value) {
+								return parseInt(value);
+							}
+						},
+						vizTemplate: new sap.ui.vbm.Cluster({
+							type: "Success",
+							icon: "sap-icon://end-user-experience-monitoring"
+						})
+
+					});
+				}
+				this.oVBI.addCluster(this.oCurrentClustering);
+			} else {
+				this.oVBI.removeCluster(this.oCurrentClustering);
+			}
+		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);

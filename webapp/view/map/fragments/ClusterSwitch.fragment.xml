@@ -1,0 +1,11 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:u="sap.ui.unified" xmlns:core="sap.ui.core">
+	<ResponsivePopover title="Cluster" class="sapUiPopupWithPadding" placement="HorizontalPreferredRight">
+		<content>
+		<Switch state="false" change="onClusterSwitchPress">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+		</content>
+	</ResponsivePopover>
+</core:FragmentDefinition>
