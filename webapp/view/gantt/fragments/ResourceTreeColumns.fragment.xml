@@ -9,7 +9,8 @@
             <controls:CustomTitle text="{Description}" tooltip="{Description}"
                                   titleStyle="{ path: 'NodeType', formatter: '.formatter.formatResourceTitle' }"
                                   icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'},{path: 'ResourceIcon'} ], formatter: '.formatter.getResourceIcon' }"
-                                  isWorkTimeEnabled="false"/>
+                                  isWorkTimeEnabled="false"
+                                  resourceIconPress="onResourceIconPress"/>
         </table:template>
     </table:Column>
 </core:FragmentDefinition>

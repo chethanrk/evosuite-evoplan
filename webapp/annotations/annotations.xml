@@ -2,47 +2,20 @@
 	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">
 		<edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
 	</edmx:Reference>
-	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/Communication.xml">
-		<edmx:Include Alias="vCard" Namespace="com.sap.vocabularies.Communication.v1"/>
-	</edmx:Reference>
 	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/Common.xml">
 		<edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
 	</edmx:Reference>
 	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/vocabularies/Core.xml">
 		<edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
 	</edmx:Reference>
-	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Measures.V1.xml">
-		<edmx:Include Alias="CQP" Namespace="Org.OData.Measures.V1"/>
-	</edmx:Reference>
-	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Capabilities.V1.xml">
-		<edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
-	</edmx:Reference>
-	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/cs02/vocabularies/Org.OData.Aggregation.V1.xml">
-		<edmx:Include Alias="Aggregation" Namespace="Org.OData.Aggregation.V1"/>
-	</edmx:Reference>
 	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Timeline.V1.xml">
 		<edmx:Include Alias="Timeline" Namespace="com.sap.vocabularies.Timeline.v1"/>
 	</edmx:Reference>
-	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Authorization.V1.xml">
-		<edmx:Include Alias="Auth" Namespace="Org.OData.Authorization.V1"/>
-	</edmx:Reference>
-	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Validation.V1.xml">
-		<edmx:Include Alias="Validation" Namespace="Org.OData.Validation.V1"/>
-	</edmx:Reference>
-	<edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/462030211/Analytics.xml">
-		<edmx:Include Alias="Analytics" Namespace="com.sap.vocabularies.Analytics.v1"/>
-	</edmx:Reference>
-	<edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/496435637/PersonalData.xml">
-		<edmx:Include Alias="PersonalData" Namespace="com.sap.vocabularies.PersonalData.v1"/>
-	</edmx:Reference>
-	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Authorization.V1.xml">
-		<edmx:Include Alias="Auth" Namespace="Org.OData.Authorization.V1"/>
-	</edmx:Reference>
-	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Validation.V1.xml">
-		<edmx:Include Alias="Validation" Namespace="Org.OData.Validation.V1"/>
+	<edmx:Reference Uri="/sap/opu/odata/EVORA/EP_MAIN_SRV/$metadata">
+		<edmx:Include Alias="Metadata" Namespace="com.evorait.evoplan"/>
 	</edmx:Reference>
 	<edmx:DataServices>
-		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="evoplan2-ui5.annotations.annotations.com.evorait.evoplan">
 			<Annotations Target="com.evorait.evoplan.Message">
 				<Annotation Term="UI.LineItem">
 					<Collection>
@@ -194,6 +167,7 @@
 									</Record>
 								</Collection>
 							</PropertyValue>
+							<Annotation Term="Org.OData.Core.V1.Description" String="AssignmentTable"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
 							<PropertyValue Property="Label" String="Long Text"/>
@@ -205,6 +179,17 @@
 								</Collection>
 							</PropertyValue>
 							<Annotation Term="Org.OData.Core.V1.Description" String="Form"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+							<PropertyValue Property="Label" String="Qualifications"/>
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#LongText"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+							<Annotation Term="Org.OData.Core.V1.Description" String="QualificationTable"/>
 						</Record>
 					</Collection>
 				</Annotation>
@@ -300,7 +285,6 @@
 								</Record>
 							</Collection>
 						</PropertyValue>
-						
 					</Record>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Assignments">
@@ -312,7 +296,6 @@
 								</Record>
 							</Collection>
 						</PropertyValue>
-						
 					</Record>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="LongText">
@@ -382,6 +365,36 @@
 							<PropertyValue Property="Value" Path="ALLOW_STARTED"/>
 							<PropertyValue Property="IconUrl" String="sap-icon://begin"/>
 							<PropertyValue Property="Label" String="{i18n&gt;xbut.start}"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="Metadata.ResourceQualification">
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="PersonName"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="PersonNumber"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="QualificationType"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ScaleId"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="Metadata.DemandQualification">
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ProficiencyDesc"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="QualificationDesc"/>
 						</Record>
 					</Collection>
 				</Annotation>

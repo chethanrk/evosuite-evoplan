@@ -131,7 +131,7 @@ sap.ui.define([
 			this.getView().bindElement({
 				path: sObjectPath,
 				parameters: {
-					expand: "DemandToAssignment"
+					expand: "DemandToAssignment,DemandToQualification"
 				},
 				events: {
 					change: this._onBindingChange.bind(this),

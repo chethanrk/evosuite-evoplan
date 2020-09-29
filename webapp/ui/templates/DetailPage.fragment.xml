@@ -63,8 +63,14 @@
 															<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.FormTemplate" type="XML"/>
 														</template:with>
 													</template:then>
-													<template:else>
+													<template:elseif test="{:= (${sections>Org.OData.Core.V1.Description/String} === 'AssignmentTable')}">
 														<sections:AssignmentBlock id="assignMentsBlock" onRowClick="onRowClick"/>
+													</template:elseif>
+													<template:elseif test="{:= (${sections>Org.OData.Core.V1.Description/String} === 'QualificationTable')}">
+														<sections:DemandQualificationBlock id="qualificationBlock" />
+													</template:elseif>
+													<template:else>
+														
 													</template:else>
 												</template:if>
 											</uxap:blocks>

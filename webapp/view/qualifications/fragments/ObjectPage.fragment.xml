@@ -1,0 +1,28 @@
+<core:FragmentDefinition xmlns="sap.uxap" xmlns:layout="sap.ui.layout" xmlns:m="sap.m" xmlns:core="sap.ui.core" 
+	xmlns:smartTable="sap.ui.comp.smarttable" height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" showEditHeaderButton="true"
+		editHeaderButtonPress="handleEditBtnPress">
+		<headerTitle>
+			<ObjectPageHeader class="sapUiNoContentPadding" objectImageURI="sap-icon://menu" objectImageShape="Circle" objectTitle="{GroupDescription}"
+				objectSubtitle="{ResourceDescription}" id="ObjectPageLayoutHeaderTitle"></ObjectPageHeader>
+		</headerTitle>
+		<sections>
+			<ObjectPageSection id="Idqualifications" title="{i18n>xtit.qualifications}">
+				<subSections>
+					<ObjectPageSubSection id="qualifications">
+						<blocks>
+							<smartTable:SmartTable id="QualificationTable" entitySet="ResourceQualificationSet"
+								useExportToExcel="true" useVariantManagement="true" useTablePersonalisation="true" header="{xtit.qualifications}"
+								showRowCount="true" persistencyKey="com.evorait.evoplan.qualificationTable" enableAutoBinding="true" class="sapUiResponsiveContentPadding">
+								<!-- layout data used to make the table growing but the filter bar fixed -->
+								<smartTable:layoutData>
+									<m:FlexItemData growFactor="1" baseSize="0%"/>
+								</smartTable:layoutData>
+							</smartTable:SmartTable>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:FragmentDefinition>

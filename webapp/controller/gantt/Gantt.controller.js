@@ -914,6 +914,23 @@ sap.ui.define([
             } else {
                 return "XX";
             }
+        },
+        /**
+         * Opens the resource qualification dialog 
+         */
+        onResourceIconPress : function(oEvent){
+        	var oRow = oEvent.getSource().getParent(),
+        		oContext = oRow.getBindingContext(),
+        		sPath = oContext.getPath(),
+        		oModel = oContext.getModel(),
+        		oResourceNode = oModel.getProperty(sPath);
+        		
+        	var sObjectId = oResourceNode.NodeId;
+        	if(oResourceNode.NodeType !== "ASSIGNMENT"){
+        		this.getOwnerComponent().Qualifications.open(this.getView(), sObjectId);
+        	}else{
+        		//
+        	}
         }
     });
 });
