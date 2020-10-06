@@ -16,7 +16,7 @@
 				<smartTable:SmartTable id="draggableList" height="100%" width="100%" direction="Column" fitContainer="true" enableAutoBinding="true"
 					entitySet="{viewModel>/subTableSet}" smartFilterId="listReportFilter" showRowCount="true" header="{i18n>xtit.itemListTitle}"
 					useExportToExcel="true" useVariantManagement="true" persistencyKey="{viewModel>/persistencyKeyDemandTable}" useTablePersonalisation="true"
-					requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY">
+					requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,REQUIREMENT_PROFILE_ID">
 					<!-- layout data used to make the table growing but the filter bar fixed -->
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1"/>
@@ -42,6 +42,15 @@
 								<Label text="{/#Demand/DEMAND_ICON/@sap:label}"/>
 								<table:template>
 									<core:Icon src="{DEMAND_ICON}" tooltip="{DemandDesc}"></core:Icon>
+								</table:template>
+							</table:Column>
+							<table:Column visible="{user>/enable_qualification}" hAlign="Center" width="3rem">
+								<table:customData>
+									<core:CustomData key="p13nData" value='\{"columnKey": "QUALIFICATION_ICON", "leadingProperty": "QUALIFICATION_ICON"}'/>
+								</table:customData>
+								<Label text="{/#Demand/QUALIFICATION_ICON/@sap:label}"/>
+								<table:template>
+									<core:Icon src="{QUALIFICATION_ICON}" color="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIconColor' }" visible="{ path:'REQUIREMENT_PROFILE_ID', formatter:'.formatter.formatQualificationIcon' }" press="onDemandQualificationIconPress"></core:Icon>
 								</table:template>
 							</table:Column>
 							<table:Column hAlign="Center" width="3rem" visible="{user>/EMP_ENABLED}">
