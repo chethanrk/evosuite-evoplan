@@ -44,15 +44,7 @@
 									<core:Icon src="{DEMAND_ICON}" tooltip="{DemandDesc}"></core:Icon>
 								</table:template>
 							</table:Column>
-							<table:Column visible="{user>/enable_qualification}" hAlign="Center" width="3rem">
-								<table:customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "QUALIFICATION_ICON", "leadingProperty": "QUALIFICATION_ICON"}'/>
-								</table:customData>
-								<Label text="{/#Demand/QUALIFICATION_ICON/@sap:label}"/>
-								<table:template>
-									<core:Icon src="{QUALIFICATION_ICON}" color="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIconColor' }" visible="{ path:'REQUIREMENT_PROFILE_ID', formatter:'.formatter.formatQualificationIcon' }" press="onDemandQualificationIconPress"></core:Icon>
-								</table:template>
-							</table:Column>
+							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandQualificationColumn" type="XML"/>
 							<table:Column hAlign="Center" width="3rem" visible="{user>/EMP_ENABLED}">
 								<table:customData>
 									<core:CustomData key="p13nData" value='\{"columnKey": "SYNC_STATUS", "leadingProperty": "SYNC_STATUS"}'/>

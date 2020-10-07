@@ -1,0 +1,14 @@
+<core:FragmentDefinition xmlns="sap.m"
+        xmlns:table="sap.ui.table"
+        xmlns:core="sap.ui.core">
+	<table:Column visible="{= ${/#Demand/QUALIFICATION_ICON/@sap:visible} === 'false' ? false : true}" hAlign="Center" width="3rem">
+		<table:customData>
+			<core:CustomData key="p13nData" value='\{"columnKey": "QUALIFICATION_ICON", "leadingProperty": "QUALIFICATION_ICON"}'/>
+		</table:customData>
+		<Label text="{/#Demand/QUALIFICATION_ICON/@sap:label}"/>
+		<table:template>
+			<core:Icon src="{QUALIFICATION_ICON}" color="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIconColor' }"
+				visible="{ path:'REQUIREMENT_PROFILE_ID', formatter:'.formatter.formatQualificationIcon' }" press="onDemandQualificationIconPress"></core:Icon>
+		</table:template>
+	</table:Column>
+</core:FragmentDefinition>

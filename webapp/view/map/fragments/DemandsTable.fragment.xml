@@ -41,6 +41,7 @@
 						<core:Icon src="{DEMAND_ICON}" tooltip="{DemandDesc}"></core:Icon>
 					</table:template>
 				</table:Column>
+				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandQualificationColumn" type="XML"/>
 				<table:Column hAlign="Center" width="3rem" visible="{user>/EMP_ENABLED}">
 					<table:customData>
 						<core:CustomData key="p13nData" value='\{"columnKey": "SYNC_STATUS", "leadingProperty": "SYNC_STATUS"}'/>

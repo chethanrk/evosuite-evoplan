@@ -592,6 +592,16 @@ sap.ui.define([
 				this.oVBI.removeCluster(this.oCurrentClustering);
 			}
 		},
+		onDemandQualificationIconPress: function (oEvent) {
+			var oRow = oEvent.getSource().getParent(),
+				oContext = oRow.getBindingContext(),
+				sPath = oContext.getPath(),
+				oModel = oContext.getModel(),
+				oResourceNode = oModel.getProperty(sPath);
+			var sDemandGuid = oResourceNode.Guid;
+			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
+
+		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
