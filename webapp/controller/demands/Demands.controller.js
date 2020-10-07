@@ -344,6 +344,16 @@ sap.ui.define([
                 }
             }
             return false;
+        },
+          onDemandQualificationIconPress : function(oEvent){
+        	var oRow = oEvent.getSource().getParent(),
+        		oContext = oRow.getBindingContext(),
+        		sPath = oContext.getPath(),
+        		oModel = oContext.getModel(),
+        		oResourceNode = oModel.getProperty(sPath);
+        	var sDemandGuid = oResourceNode.Guid;
+     	this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
+        
         }
 	});
 });

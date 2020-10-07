@@ -520,6 +520,17 @@ sap.ui.define([
 				title: oGroup.key,
 				upperCase: false
 			});
+		},
+		/*
+		 * Visibility of Qualification Icon
+		 * @param REQUIREMENT_PROFILE_ID
+		 * @returns
+		 */
+		formatQualificationIcon: function (sReqProfileID) {
+			if (sReqProfileID === "00000000" || sReqProfileID === undefined) 
+				return false;
+		    else 
+				return true;
 		}
 
     };
