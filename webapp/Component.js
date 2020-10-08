@@ -15,8 +15,9 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/ManageResourceAvailability",
 	"com/evorait/evoplan/controller/common/NavigationActionSheet",
 	"com/evorait/evoplan/controller/qualifications/Qualifications",
+	"com/evorait/evoplan/controller/qualifications/QualificationCheck",
 	"com/evorait/evoplan/controller/qualifications/DemandQualifications",
-	"sap/m/MessagePopover",
+    "sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
 	"sap/m/Link",
 	"sap/ui/model/Filter",
@@ -40,8 +41,9 @@ sap.ui.define([
 	ManageResourceAvailability,
 	NavigationActionSheet,
 	Qualifications,
+	QualificationCheck,
 	DemandQualifications,
-	MessagePopover,
+    MessagePopover,
 	MessagePopoverItem,
 	Link,
 	Filter,
@@ -296,7 +298,10 @@ sap.ui.define([
 			this.Qualifications = new Qualifications();
 			this.Qualifications.init();
 			
-				this.DemandQualifications = new DemandQualifications();
+			this.QualificationCheck = new QualificationCheck();
+			this.QualificationCheck.init();
+            
+            this.DemandQualifications = new DemandQualifications();
 			this.DemandQualifications.init();
 		},
 

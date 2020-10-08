@@ -521,7 +521,7 @@ sap.ui.define([
 				upperCase: false
 			});
 		},
-		/*
+        /*
 		 * Visibility of Qualification Icon
 		 * @param REQUIREMENT_PROFILE_ID
 		 * @returns
@@ -531,6 +531,21 @@ sap.ui.define([
 				return false;
 		    else 
 				return true;
+		},
+		getQualificationFulfilled: function(bFulfilled){
+			if(bFulfilled){
+				return "Yes";
+			}else{
+				return "No";
+			}
+		},
+		getQualificationDialogTitle: function(sTitle){
+			if(sTitle ==="W"){
+				return "Warning"; 
+			}else{
+				return "Error";
+			}
+			
 		}
 
     };
