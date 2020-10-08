@@ -44,7 +44,7 @@
 													<vbm:items>
 														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0)-->
 														<vbm:Spot selectColor="{user>/MAP_SELECTED_PIN_COLOUR}" contentColor="{MAP_MARKER_COLOUR}" hotScale="1.1;1.1;1.1"
-															tooltip="{ORDERID} - {OPERATIONID} - {Status}" type="Inactive" select="{IS_SELECTED}"
+															tooltip="{DEMAND_KEY}" type="Inactive" select="{IS_SELECTED}"
 															scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="{user>/MAP_MARKER_ICON}" contentSize="25rem" changeable="true"
 															position="{LONGITUDE};{LATITUDE};0" contextMenu="onContextMenu">
 															<vbm:customData>
