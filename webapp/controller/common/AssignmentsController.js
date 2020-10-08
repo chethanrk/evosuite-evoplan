@@ -18,21 +18,76 @@ sap.ui.define([
 
 			if (this.isTargetValid(sTargetPath) || !bValdiMsgPopupFlag) {
 				oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
-				this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
+				this.checkQualification(aSourcePaths, targetObj, oParams, mParameters); //Proceed to check the Qualification
 			} else {
 				this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.targetValidity")).then(function (value) {
 					if (value === "YES") {
 						oParams = this.setDateTimeParams(oParams, targetObj.RES_ASGN_START_DATE, targetObj.RES_ASGN_START_TIME, targetObj.RES_ASGN_END_DATE,
 							targetObj.RES_ASGN_END_TIME);
-						this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
+						this.checkQualification(aSourcePaths, targetObj, oParams, mParameters); //Proceed to check the Qualification
 					}
 					if (value === "NO") {
 						oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
-						this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
+						this.checkQualification(aSourcePaths, targetObj, oParams, mParameters); //Proceed to check the Qualification
 					}
 				}.bind(this));
 			}
+		},
+		/**
+		 * proceed to Service call after validation
+		 * 
+		 * @param {Object} aSourcePaths
+		 * @param {String} targetObj
+		 * @param {Object} oParams
+		 * @param {Object} mParameters
+		 **/
+		checkQualification: function (aSourcePaths, targetObj, oParams, mParameters) {
+			if (this.getModel("user").getProperty("/QUALIF_UI_CHECK_TYPE")) {
+				//need to check Qualification 
+				var oQualificationParameters,
+					oModel = this.getModel(),
+					sDemandGuids = "";
+				for (var i = 0; i < aSourcePaths.length; i++) {
+					var obj = aSourcePaths[i],
+						demandObj = oModel.getProperty(obj.sPath);
+					if (sDemandGuids === "") {
+						sDemandGuids = demandObj.Guid;
+					} else {
+						sDemandGuids = sDemandGuids + "//" + demandObj.Guid;
+					}
+				}
+				oQualificationParameters = {
+					DemandMultiGuid: sDemandGuids,
+					ObjectId: targetObj.NodeId, //targetObj.ResourceGroupGuid,
+					DateFrom: oParams.DateFrom,
+					DateTo: oParams.DateTo
+				};
+				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData, response) {
+					if (oData.results && oData.results.length) {
+						this.getModel("viewModel").setProperty("/QualificationMatchList", {
+							"TargetObject": targetObj,
+							"QualificationData": oData.results
+						});
+						this.showQualificationResults(aSourcePaths, targetObj, mParameters, oQualificationParameters, oData);
+					}
+				}.bind(this));
+			} else {
+				//Qualification check is to be by-Passed
+				this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
+			}
 
+		},
+		/**
+		 * proceed to Service call after validation
+		 * 
+		 * @param {Object} aSourcePaths
+		 * @param {String} targetObj
+		 * @param {Object} mParameters
+		 * @param {Object} oParams
+		 * @deprecated
+		 */
+		showQualificationResults: function (aSourcePaths, targetObj, mParameters, oParams, oData) {
+			this.getOwnerComponent().QualificationCheck.open(this, this.getView());
 		},
 		/**
 		 * proceed to Service call after validation

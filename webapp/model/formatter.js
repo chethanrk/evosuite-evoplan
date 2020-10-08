@@ -520,6 +520,21 @@ sap.ui.define([
 				title: oGroup.key,
 				upperCase: false
 			});
+		},
+		getQualificationFulfilled: function(bFulfilled){
+			if(bFulfilled){
+				return "Yes";
+			}else{
+				return "No";
+			}
+		},
+		getQualificationDialogTitle: function(sTitle){
+			if(sTitle ==="W"){
+				return "Warning"; 
+			}else{
+				return "Error";
+			}
+			
 		}
 
     };
