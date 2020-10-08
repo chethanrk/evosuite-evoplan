@@ -1,0 +1,57 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:smartField="sap.ui.comp.smartfield"
+	xmlns:f="sap.f" xmlns:table="sap.ui.table">
+	<Dialog title="{path:'user>/QUALIF_UI_CHECK_TYPE',formatter:'.formatter.getQualificationDialogTitle'}" contentWidth="50%" resizable="true"
+		class="assignInfoDialog">
+		<content>
+			<f:DynamicPage id="idQualificationDynamicPage" showFooter="true">
+				<f:header>
+					<f:DynamicPageHeader pinnable="false">
+						<f:content>
+							<core:Icon src="sap-icon://employee-pane" class="size1 sapUiMediumMarginTop sapUiTinyMarginEnd" color="#031E48">
+								<core:layoutData>
+									<FlexItemData growFactor="1"/>
+								</core:layoutData>
+							</core:Icon>
+							<Text text="{viewModel>/QualificationMatchList/TargetObject/Description} {i18n>xmsg.textHeaderMsg}"/>
+						</f:content>
+					</f:DynamicPageHeader>
+				</f:header>
+				<f:content>
+					<table:Table rows="{viewModel>/QualificationMatchList/QualificationData}" selectionMode="MultiToggle" visibleRowCount="7" paste="onPaste"
+						ariaLabelledBy="title">
+						<table:extension>
+							<OverflowToolbar>
+								<Title id="title" text="Products"/>
+							</OverflowToolbar>
+						</table:extension>
+						<table:columns>
+							<table:Column width="12rem">
+								<Label text="Demand"/>
+								<table:template>
+									<Text text="{viewModel>OperationId}/{viewModel>OrderId}" wrapping="false"/>
+								</table:template>
+							</table:Column>
+							<table:Column>
+								<Label text="Qualification"/>
+								<table:template>
+									<Text text="{viewModel>QualificationDesc}"/>
+								</table:template>
+							</table:Column>
+							<table:Column >
+								<Label text="Fulfilled"/>
+								<table:template>
+									<Text text="{path:'viewModel>Fullfilled',formatter:'.formatter.getQualificationFulfilled'}"/>
+								</table:template>
+							</table:Column>
+						</table:columns>
+					</table:Table>
+				</f:content>
+			</f:DynamicPage>
+		</content>
+		<buttons>
+			<Button text="{i18n>xbut.buttonSelectAll}" press="onCloseDialog"/>
+			<Button text="{i18n>xbut.buttonCancel}" press="onCloseDialog"/>
+			<Button text="{i18n>xbut.buttonProceed}" press="onCloseDialog"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>
