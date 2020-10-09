@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/m/MessageBox"
 ], function (BaseController, MessageBox) {
 	return BaseController.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
-
 		/**
 		 * save assignment after drop
 		 * 
@@ -66,9 +65,15 @@ sap.ui.define([
 					if (oData.results && oData.results.length) {
 						this.getModel("viewModel").setProperty("/QualificationMatchList", {
 							"TargetObject": targetObj,
-							"QualificationData": oData.results
+							"QualificationData": oData.results,
+							"SourcePaths": aSourcePaths,
+							"mParameters": mParameters,
+							"oParams": oParams
 						});
-						this.showQualificationResults(aSourcePaths, targetObj, mParameters, oQualificationParameters, oData);
+						// this.showQualificationResults(aSourcePaths, targetObj, mParameters, oQualificationParameters, oData);
+						this.showQualificationResults();
+					} else {
+						this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
 					}
 				}.bind(this));
 			} else {
@@ -86,7 +91,7 @@ sap.ui.define([
 		 * @param {Object} oParams
 		 * @deprecated
 		 */
-		showQualificationResults: function (aSourcePaths, targetObj, mParameters, oParams, oData) {
+		showQualificationResults: function () {
 			this.getOwnerComponent().QualificationCheck.open(this, this.getView());
 		},
 		/**
