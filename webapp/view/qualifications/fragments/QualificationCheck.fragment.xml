@@ -1,13 +1,13 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:smartField="sap.ui.comp.smartfield"
 	xmlns:f="sap.f" xmlns:table="sap.ui.table">
-	<Dialog title="{path:'user>/QUALIF_UI_CHECK_TYPE',formatter:'.formatter.getQualificationDialogTitle'}" contentWidth="50%" resizable="true"
+	<Dialog title="{path:'user>/QUALIF_UI_CHECK_TYPE',formatter:'.formatter.getQualificationDialogTitle'}" contentWidth="50%"
 		class="assignInfoDialog">
 		<content>
 			<f:DynamicPage id="idQualificationDynamicPage" showFooter="true">
 				<f:header>
 					<f:DynamicPageHeader pinnable="false">
 						<f:content>
-							<core:Icon src="sap-icon://employee-pane" class="size1 sapUiMediumMarginTop sapUiTinyMarginEnd" color="#031E48">
+							<core:Icon src="sap-icon://employee" class="size1 sapUiMediumMarginTop sapUiTinyMarginEnd" color="#031E48">
 								<core:layoutData>
 									<FlexItemData growFactor="1"/>
 								</core:layoutData>
@@ -17,41 +17,71 @@
 					</f:DynamicPageHeader>
 				</f:header>
 				<f:content>
-					<table:Table rows="{viewModel>/QualificationMatchList/QualificationData}" selectionMode="MultiToggle" visibleRowCount="7" paste="onPaste"
-						ariaLabelledBy="title">
-						<table:extension>
-							<OverflowToolbar>
-								<Title id="title" text="Products"/>
-							</OverflowToolbar>
-						</table:extension>
-						<table:columns>
-							<table:Column width="12rem">
-								<Label text="Demand"/>
-								<table:template>
-									<Text text="{viewModel>OperationId}/{viewModel>OrderId}" wrapping="false"/>
-								</table:template>
-							</table:Column>
-							<table:Column>
-								<Label text="Qualification"/>
-								<table:template>
+					<Table id="idQualificationMatchTable" class="sapUiMediumMarginBottom" inset="false" mode="MultiSelect" selectionChange="onSelectionChangeQualificationTable"
+						items="{ path: 'viewModel>/QualificationMatchList/QualificationData', sorter: { path: 'DemandGuid'} }">
+						<!--<headerToolbar>-->
+						<!--	<OverflowToolbar>-->
+						<!--		<content>-->
+						<!--			<Title text="Products" level="H2"/>-->
+						<!--		</content>-->
+						<!--	</OverflowToolbar>-->
+						<!--</headerToolbar>-->
+						<columns>
+							<Column width="12em">
+								<Label text="Demand" design="Bold"/>
+							</Column>
+							<Column >
+								<Label text="Qualification" design="Bold"/>
+							</Column>
+							<Column>
+								<Label text="Fulfilled" design="Bold"/>
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem selected="{viewModel>IsSelected}">
+								<cells>
+									<Text text="{viewModel>OperationId}/{viewModel>OrderId}"/>
 									<Text text="{viewModel>QualificationDesc}"/>
-								</table:template>
-							</table:Column>
-							<table:Column >
-								<Label text="Fulfilled"/>
-								<table:template>
 									<Text text="{path:'viewModel>Fullfilled',formatter:'.formatter.getQualificationFulfilled'}"/>
-								</table:template>
-							</table:Column>
-						</table:columns>
-					</table:Table>
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+					<!--<table:Table id="idQualificationMatchTable" rows="{viewModel>/QualificationMatchList/QualificationData}" selectionMode="MultiToggle" visibleRowCount="7" paste="onPaste"-->
+					<!--	ariaLabelledBy="title">-->
+					<!--	<table:extension>-->
+					<!--		<OverflowToolbar>-->
+					<!--			<Title id="title" text="Products"/>-->
+					<!--		</OverflowToolbar>-->
+					<!--	</table:extension>-->
+					<!--	<table:columns>-->
+					<!--		<table:Column width="12rem">-->
+					<!--			<Label text="Demand"/>-->
+					<!--			<table:template>-->
+					<!--				<Text text="{viewModel>OperationId}/{viewModel>OrderId}" wrapping="false"/>-->
+					<!--			</table:template>-->
+					<!--		</table:Column>-->
+					<!--		<table:Column>-->
+					<!--			<Label text="Qualification"/>-->
+					<!--			<table:template>-->
+					<!--				<Text text="{viewModel>QualificationDesc}"/>-->
+					<!--			</table:template>-->
+					<!--		</table:Column>-->
+					<!--		<table:Column >-->
+					<!--			<Label text="Fulfilled"/>-->
+					<!--			<table:template>-->
+					<!--				<Text text="{path:'viewModel>Fullfilled',formatter:'.formatter.getQualificationFulfilled'}"/>-->
+					<!--			</table:template>-->
+					<!--		</table:Column>-->
+					<!--	</table:columns>-->
+					<!--</table:Table>-->
 				</f:content>
 			</f:DynamicPage>
 		</content>
 		<buttons>
-			<Button text="{i18n>xbut.buttonSelectAll}" press="onCloseDialog"/>
+			<Button text="{i18n>xbut.buttonSelectAll}" press="onSelectAll"/>
 			<Button text="{i18n>xbut.buttonCancel}" press="onCloseDialog"/>
-			<Button text="{i18n>xbut.buttonProceed}" press="onCloseDialog"/>
+			<Button text="{i18n>xbut.buttonProceed}" press="onProceed"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>
