@@ -1,5 +1,5 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/BaseController",
+	"com/evorait/evoplan/controller/common/AssignmentActionsController",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/core/Fragment"
 ], function (BaseController, formatter, Fragment) {
@@ -20,7 +20,7 @@ sap.ui.define([
 		 * @param sBindPath
 		 */
 		open: function (that, oView, mParameters) {
-			// create dialog lazily
+			this.oView = oView;
 			if (!this._oDialog) {
 				that.getModel("appView").setProperty("/busy", true);
 				Fragment.load({
@@ -29,14 +29,14 @@ sap.ui.define([
 				}).then(function (oDialog) {
 					that.getModel("appView").setProperty("/busy", false);
 					this._oDialog = oDialog;
-					this.onOpen(that, oDialog, oView, mParameters);
+					this.onOpen(that, oDialog, mParameters);
 				}.bind(this));
 			} else {
-				this.onOpen(that, this._oDialog, oView, mParameters);
+				this.onOpen(that, this._oDialog, mParameters);
 			}
 		},
 
-		onOpen: function (that, oDialog, oView, mParameters) {
+		onOpen: function (that, oDialog, mParameters) {
 			this._mParameters = mParameters || {
 				bFromHome: true
 			};
@@ -44,12 +44,15 @@ sap.ui.define([
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 			// oDialog.setModel(that.getModel("viewModel"), "viewModel");
 			// connect dialog to view (models, lifecycle)
-			oView.addDependent(oDialog);
+			this.oView.addDependent(oDialog);
 
 			// this._getResourceInfo(sId);
 
 			// open dialog
-			oDialog.open();
+			setTimeout(function () {
+				oDialog.open();
+			}, 100);
+
 		},
 
 		/**
@@ -57,13 +60,52 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onSelectAll: function (oEvent) {
-
+			sap.ui.getCore().byId("idQualificationMatchTable").selectAll();
 		},
 		onCloseDialog: function (oEvent) {
 			this._oDialog.close();
 		},
 		onProceed: function (oEvent) {
+			var oTable = sap.ui.getCore().byId("idQualificationMatchTable"),
+				oViewModel = oTable.getModel("viewModel"),
+				aListItems = oViewModel.getProperty("/QualificationMatchList/QualificationData"),
+				aSourcePaths = oViewModel.getProperty("/QualificationMatchList/SourcePaths"),
+				targetObj = oViewModel.getProperty("/QualificationMatchList/TargetObject"),
+				mParameters = oViewModel.getProperty("/QualificationMatchList/mParameters"),
+				oParams = oViewModel.getProperty("/QualificationMatchList/oParams"),
+				aSelectedGuids = [],
+				aSelectedSourcePaths = [];
+			if (oTable.isAllSelectableSelected()) {
+				aSelectedSourcePaths = aSourcePaths;
+			} else {
+				for (var i = 0; i < aListItems.length; i++) {
+					if (aListItems[i].IsSelected && !aSelectedGuids.includes(aListItems[i].DemandGuid)) {
+						aSelectedGuids.push(aListItems[i].DemandGuid);
+					}
+				}
+				aSelectedSourcePaths = aSourcePaths.filter(function (e) {
+					return aSelectedGuids.includes(e.oData.Guid);
+				});
+			}
+			this.proceedToServiceCallAssignDemands(aSelectedSourcePaths, targetObj, mParameters, oParams);
+			this.onCloseDialog();
 
+		},
+		onSelectionChangeQualificationTable: function (oEvent) {
+			var oTable = oEvent.getSource(),
+				oViewModel = oTable.getModel("viewModel"),
+				aListItems = oViewModel.getProperty("/QualificationMatchList/QualificationData"),
+				oSelectedPath = oEvent.getParameter("listItem").getBindingContextPath(),
+				bIsSelected = oEvent.getParameter("listItem").getSelected(),
+				vSelectedDemand = oViewModel.getProperty(oSelectedPath).DemandGuid;
+
+			for (var i = 0; i < aListItems.length; i++) {
+				if (aListItems[i].DemandGuid === vSelectedDemand) {
+					aListItems[i].IsSelected = bIsSelected;
+				}
+			}
+			oViewModel.setProperty("/QualificationMatchList/QualificationData", aListItems);
+			oViewModel.refresh();
 		},
 		exit: function () {
 			// unsubscribe
