@@ -18,14 +18,15 @@ sap.ui.define([
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
 		selectedDemands: [],
-
+		_bFirstTime: true,
+		_isDemandDraggable: false,
 		onInit: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oMapModel = this.getModel("mapConfig");
 			oGeoMap.setMapConfiguration(MapConfig.getMapConfiguration(oMapModel));
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			this._oEventBus.subscribe("BaseController", "refreshMapView", this._refreshMapView, this);
-			this._oEventBus.subscribe("BaseController", "refreshDemandTable", this._refreshDemandTable, this);
+			this._oEventBus.subscribe("BaseController", "refreshMapDemandTable", this._refreshDemandTable, this);
 			this._oEventBus.subscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.subscribe("MapController", "setMapSelection", this._setMapSelection, this);
 
@@ -276,6 +277,7 @@ sap.ui.define([
 				oSelectedPaths, aPathsData;
 
 			oDragSession.setTextData("Hi I am dragging");
+			this._isDemandDraggable = true;
 			//get all selected rows when checkboxes in table selected
 			if (aIndices.length > 0) {
 				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, aIndices, true);
@@ -298,6 +300,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onDragEnd: function (oEvent) {
+			this._isDemandDraggable = false;
 			var oDroppedControl = oEvent.getParameter("dragSession").getDropControl();
 			if (!oDroppedControl) {
 				this._deselectAll();
@@ -315,8 +318,19 @@ sap.ui.define([
 			}
 			this._bLoaded = true;
 		},
-		_refreshDemandTable: function (oEvent) {
-			this._oDraggableTable.rebindTable();
+		/**
+		 * Refresh's the Map demand table
+		 * @param sChanel
+		 * @param sEvent event which is getting triggered
+		 * @param oData Data passed while publishing the event
+		 * @returns
+		 * @private
+		 */
+		_refreshDemandTable: function (sChanel, sEvent, oData) {
+			if (sEvent === "refreshMapDemandTable" && !this._bFirstTime) {
+				this.byId("draggableList").rebindTable();
+			}
+			this._bFirstTime = false;
 		},
 		/**
 		 * refresh the whole map container bindings
@@ -366,6 +380,7 @@ sap.ui.define([
 			} else if (oEvent.getParameter("rowIndex") === -1) {
 				this.unCheckAllDemands();
 			} else {
+				//if(!this._isDemandDraggable)
 				this.updateMapDemandSelection(oEvent);
 			}
 		},
@@ -606,7 +621,7 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
-			this._oEventBus.unsubscribe("BaseController", "refreshDemandTable", this._refreshDemandTable, this);
+			this._oEventBus.unsubscribe("BaseController", "refreshMapDemandTable", this._refreshDemandTable, this);
 		}
 
 	});
