@@ -380,7 +380,7 @@ sap.ui.define([
 			} else if (oEvent.getParameter("rowIndex") === -1) {
 				this.unCheckAllDemands();
 			} else {
-				//if(!this._isDemandDraggable)
+				if(!this._isDemandDraggable)
 				this.updateMapDemandSelection(oEvent);
 			}
 		},
