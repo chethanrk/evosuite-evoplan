@@ -103,7 +103,7 @@ sap.ui.define([
 					DemandMultiGuid: sDemandGuids,
 					ObjectId: targetObj.NodeId, //targetObj.ResourceGroupGuid,
 					StartTimestamp: oTargetDate,
-					EndTimestamp: oNewEndDate | oTargetDate         
+					EndTimestamp: oNewEndDate ? oNewEndDate : oTargetDate         
 				};
 				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData,
 					response) {

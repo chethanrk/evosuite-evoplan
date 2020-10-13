@@ -242,8 +242,7 @@ sap.ui.define([
 		},
 		_checkAssignmentForStretch: function (oResourceData, aSources, oTarget, oTargetDate, aGuids, fnCheckValidation) {
 			var oViewModel = this.getModel("viewModel"),
-				oResourceModel = this.getResourceBundle(),
-				oNewEndDate;
+				oResourceModel = this.getResourceBundle();
 			if (oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && oResourceData.ResourceGuid &&
 					oResourceData.ResourceGuid !== "")) {
 
@@ -252,9 +251,8 @@ sap.ui.define([
 						oViewModel.setProperty("/ganttSettings/busy", false);
 						return;
 					}
-					oNewEndDate = availabilityData.Endtimestamp; // TODO make direct input
 					if (!availabilityData.Unavailable) {
-						if () {
+						if (fnCheckValidation) {
 							fnCheckValidation.call(this, aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids, this._mParameters);
 						} else {
 							Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids))
@@ -282,11 +280,11 @@ sap.ui.define([
 		},
 		_checkResourceQualification: function (aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids, mParameters) {
 			var oTargetObject = this.getModel().getProperty(oTarget);
-			this.checkQualification(aSourcePaths, oTarget, oTargetDate).then(function (data) {
-				if (oData.results.results && oData.results.results.length) {
+			this.checkQualification(aSourcePaths, oTargetObject, oTargetDate, oNewEndDate, aGuids).then(function (data) {
+				if (data.result.results && data.result.results.length) {
 					this.getModel("viewModel").setProperty("/QualificationMatchList", {
 						"TargetObject": oTargetObject,
-						"QualificationData": oData.results.results,
+						"QualificationData": data.result.results,
 						"SourcePaths": aSourcePaths,
 						"mParameters": mParameters,
 						"targetDate": oTargetDate,
@@ -298,7 +296,7 @@ sap.ui.define([
 						Promise.all(this.assignedDemands(aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids))
 									.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
 				}
-			});
+			}.bind(this));
 		},
 		/**
 		 * Refreshes the Gantt tree table.
