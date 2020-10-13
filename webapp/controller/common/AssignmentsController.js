@@ -103,19 +103,20 @@ sap.ui.define([
 		 * @param {Object} oParams
 		 * @deprecated
 		 */
-		proceedToServiceCallAssignDemands: function (aSourcePaths, targetObj, mParameters, oParams) {
+		proceedToServiceCallAssignDemands: function (aSourcePaths, targetObj, mParameters, oParams, aGuids) {
 			var oModel = this.getModel(),
-				bIsLast = null;
+				bIsLast = null,
+				aItems = aSourcePaths ? aSourcePaths : aGuids;
 			this.clearMessageModel();
-			for (var i = 0; i < aSourcePaths.length; i++) {
-				var obj = aSourcePaths[i],
+			for (var i = 0; i < aItems.length; i++) {
+				var obj = aItems[i],
 					demandObj = oModel.getProperty(obj.sPath);
 
 				oParams.DemandGuid = demandObj.Guid;
 				oParams.ResourceGroupGuid = targetObj.ResourceGroupGuid;
 				oParams.ResourceGuid = targetObj.ResourceGuid;
 
-				if (parseInt(i, 10) === aSourcePaths.length - 1) {
+				if (parseInt(i, 10) === aItems.length - 1) {
 					bIsLast = true;
 				}
 				this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
@@ -338,24 +339,24 @@ sap.ui.define([
 		 * @param vEndDate end date for the assignment
 		 * @param vEndTime end time for the assignment
 		 */
-		setDateTimeParams: function (oParams, vStartdate, vStartTime, vEndDate, vEndTime) {
+		setDateTimeParams: function (oParams, vStartdate, vStartTime, vEndDate, vEndTime, oTargetDate, oNewEndDate) {
 			var vCurrentTime = new Date().getTime();
 			if (vStartdate) {
-				oParams.DateFrom = vStartdate;
+				oParams.DateFrom = oTargetDate |vStartdate;
 				oParams.TimeFrom = vStartTime;
 			} else {
-				oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
+				oParams.DateFrom = oTargetDate | new Date(); // When Start Date Null/In the Simple view today date will sent
 				oParams.TimeFrom = vStartTime;
-				oParams.TimeFrom.ms = vCurrentTime;
+				oParams.TimeFrom.ms = oTargetDate ? oTargetDate.getTime() : vCurrentTime;
 			}
 
 			if (vEndDate) {
-				oParams.DateTo = vEndDate;
+				oParams.DateTo = oNewEndDate | vEndDate;
 				oParams.TimeTo = vEndTime;
 			} else {
-				oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
+				oParams.DateTo = oNewEndDate | new Date(); // When Start Date Null/In the Simple view today date will sent
 				oParams.TimeTo = vEndTime;
-				oParams.TimeTo.ms = vCurrentTime;
+				oParams.TimeTo.ms = oNewEndDate ? oNewEndDate.getTime() : vCurrentTime;
 			}
 			return oParams;
 		}

@@ -40,7 +40,7 @@ sap.ui.define([
 						ms: oTargetDate.getTime(),
 						__edmType: "Edm.Time"
 					};
-					oParams.DateTo = oTargetDate;
+					oParams.DateTo = oNewEndDate | oTargetDate;
 					oParams.TimeTo = targetObj.EndTime;
 				} else {
 					// When we drop it on resource tree rows

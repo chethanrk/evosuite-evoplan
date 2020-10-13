@@ -73,21 +73,20 @@ sap.ui.define([
 				targetObj = oViewModel.getProperty("/QualificationMatchList/TargetObject"),
 				mParameters = oViewModel.getProperty("/QualificationMatchList/mParameters"),
 				oParams = oViewModel.getProperty("/QualificationMatchList/oParams"),
-				aSelectedGuids = [],
-				aSelectedSourcePaths = [];
-			if (oTable.isAllSelectableSelected()) {
-				aSelectedSourcePaths = aSourcePaths;
+				oTargetDate = oViewModel.getProperty("/QualificationMatchList/targetDate"),
+				oNewEndDate = oViewModel.getProperty("/QualificationMatchList/newEndDate"),
+				aGuids = oViewModel.getProperty("/QualificationMatchList/aGuids"),
+				aSelectedSourcePaths = [],
+				aSelectedGuids = [];
+			if (aSourcePaths) {
+				aSelectedSourcePaths = this.getSelectedSources(oTable, aSourcePaths, aListItems);
 			} else {
-				for (var i = 0; i < aListItems.length; i++) {
-					if (aListItems[i].IsSelected && !aSelectedGuids.includes(aListItems[i].DemandGuid)) {
-						aSelectedGuids.push(aListItems[i].DemandGuid);
-					}
-				}
-				aSelectedSourcePaths = aSourcePaths.filter(function (e) {
-					return aSelectedGuids.includes(e.oData.Guid);
-				});
+				aSelectedGuids = this.getSelectedDemands(oTable, aGuids, aListItems);
 			}
-			this.proceedToServiceCallAssignDemands(aSelectedSourcePaths, targetObj, mParameters, oParams);
+			if (!oParams) {
+				this.setDateParams([], targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime, oTargetDate, oNewEndDate);
+			}
+			this.proceedToServiceCallAssignDemands(aSelectedSourcePaths, targetObj, mParameters, oParams, aSelectedGuids);
 			this.onCloseDialog();
 
 		},
@@ -106,6 +105,37 @@ sap.ui.define([
 			}
 			oViewModel.setProperty("/QualificationMatchList/QualificationData", aListItems);
 			oViewModel.refresh();
+		},
+		getSelectedSources: function (oTable, aSourcePaths, aListItems) {
+			var aSelectedGuids = [],
+				aSelectedSourcePaths = [];
+			if (oTable.isAllSelectableSelected()) {
+				aSelectedSourcePaths = aSourcePaths;
+			} else {
+				for (var i = 0; i < aListItems.length; i++) {
+					if (aListItems[i].IsSelected && !aSelectedGuids.includes(aListItems[i].DemandGuid)) {
+						aSelectedGuids.push(aListItems[i].DemandGuid);
+					}
+				}
+				aSelectedSourcePaths = aSourcePaths.filter(function (e) {
+					return aSelectedGuids.includes(e.oData.Guid);
+				});
+			}
+			return aSelectedSourcePaths;
+		},
+		getSelectedDemands: function (oTable, aGuids, aListItems) {
+			var aSelectedGuids = [];
+			if (oTable.isAllSelectableSelected()) {
+				aSelectedGuids = aGuids;
+			} else {
+				for (var i = 0; i < aListItems.length; i++) {
+					if (aListItems[i].IsSelected && !aSelectedGuids.includes(aListItems[i].DemandGuid)) {
+						aSelectedGuids.push("/DemandSet('" + aListItems[i].DemandGuid + "')");
+					}
+				}
+			}
+			return aSelectedGuids;
+
 		},
 		exit: function () {
 			// unsubscribe

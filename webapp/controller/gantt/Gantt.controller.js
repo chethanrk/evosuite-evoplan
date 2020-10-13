@@ -224,9 +224,9 @@ sap.ui.define([
 				oUserModel.getProperty("/ENABLE_ASSIGNMENT_STRETCH") && !oUserModel.getProperty("/ENABLE_QUALIFICATION")) {
 				this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids);
 			} else if (oUserModel.getProperty("/ENABLE_QUALIFICATION")) {
-				this._checkResourceQualification(aSources, oTarget, oTargetDate, aGuids);
+				this._checkResourceQualification(aSources, oTarget, oTargetDate, null, aGuids);
 			} else {
-				Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, false, aGuids))
+				Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, null, aGuids))
 					.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
 			}
 
