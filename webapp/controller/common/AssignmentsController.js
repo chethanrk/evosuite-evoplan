@@ -110,7 +110,8 @@ sap.ui.define([
 			this.clearMessageModel();
 			for (var i = 0; i < aItems.length; i++) {
 				var obj = aItems[i],
-					demandObj = oModel.getProperty(obj.sPath | obj);
+					sPath = obj.sPath ? obj.sPath : obj,
+					demandObj = oModel.getProperty(sPath);
 
 				oParams.DemandGuid = demandObj.Guid;
 				oParams.ResourceGroupGuid = targetObj.ResourceGroupGuid;
@@ -342,19 +343,19 @@ sap.ui.define([
 		setDateTimeParams: function (oParams, vStartdate, vStartTime, vEndDate, vEndTime, oTargetDate, oNewEndDate) {
 			var vCurrentTime = new Date().getTime();
 			if (vStartdate) {
-				oParams.DateFrom = oTargetDate | vStartdate;
+				oParams.DateFrom = oTargetDate? oTargetDate : vStartdate;
 				oParams.TimeFrom = vStartTime;
 			} else {
-				oParams.DateFrom = oTargetDate | new Date(); // When Start Date Null/In the Simple view today date will sent
+				oParams.DateFrom = oTargetDate? oTargetDate : new Date(); // When Start Date Null/In the Simple view today date will sent
 				oParams.TimeFrom = vStartTime;
 				oParams.TimeFrom.ms = oTargetDate ? oTargetDate.getTime() : vCurrentTime;
 			}
 
 			if (vEndDate) {
-				oParams.DateTo = oNewEndDate | vEndDate;
+				oParams.DateTo = oNewEndDate ? oNewEndDate : vEndDate;
 				oParams.TimeTo = vEndTime;
 			} else {
-				oParams.DateTo = oNewEndDate | new Date(); // When Start Date Null/In the Simple view today date will sent
+				oParams.DateTo = oNewEndDate ? oNewEndDate : new Date(); // When Start Date Null/In the Simple view today date will sent
 				oParams.TimeTo = vEndTime;
 				oParams.TimeTo.ms = oNewEndDate ? oNewEndDate.getTime() : vCurrentTime;
 			}

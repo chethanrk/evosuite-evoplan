@@ -84,7 +84,7 @@ sap.ui.define([
 				aSelectedGuids = this.getSelectedDemands(oTable, aGuids, aListItems);
 			}
 			if (!oParams) {
-				oParams = this.setDateParams([], targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime, oTargetDate, oNewEndDate);
+				oParams = this.setDateTimeParams([], targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime, oTargetDate, oNewEndDate);
 			}
 			this.proceedToServiceCallAssignDemands(aSelectedSourcePaths, targetObj, mParameters, oParams, aSelectedGuids);
 			this.onCloseDialog();
