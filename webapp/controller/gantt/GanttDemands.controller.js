@@ -81,7 +81,7 @@ sap.ui.define([
 			oDragSession.setTextData("Hi I am dragging");
 			//get all selected rows when checkboxes in table selected
 			if (aIndices.length > 0) {
-				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, aIndices, true);
+				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, [aIndices[0]], true);
 				aPathsData = oSelectedPaths.aPathsData;
 			} else {
 				//table tr single dragged element
