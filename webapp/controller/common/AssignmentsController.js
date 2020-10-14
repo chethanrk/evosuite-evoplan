@@ -33,15 +33,14 @@ sap.ui.define([
 			}
 		},
 		/**
-		 * proceed to Service call after validation
-		 * 
+		 * proceed to Qualification Check before Service call (Call Function Import) 
 		 * @param {Object} aSourcePaths
 		 * @param {String} targetObj
 		 * @param {Object} oParams
 		 * @param {Object} mParameters
 		 **/
 		checkQualification: function (aSourcePaths, targetObj, oParams, mParameters) {
-			if (this.getModel("user").getProperty("/QUALIF_UI_CHECK_TYPE")) {
+			if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
 				//need to check Qualification 
 				var oQualificationParameters,
 					oModel = this.getModel(),
@@ -58,8 +57,8 @@ sap.ui.define([
 				oQualificationParameters = {
 					DemandMultiGuid: sDemandGuids,
 					ObjectId: targetObj.NodeId, //targetObj.ResourceGroupGuid,
-					DateFrom: oParams.DateFrom,
-					DateTo: oParams.DateTo
+					StartTimestamp: oParams.DateFrom,
+					EndTimestamp: oParams.DateTo
 				};
 				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData, response) {
 					if (oData.results && oData.results.length) {
@@ -70,7 +69,6 @@ sap.ui.define([
 							"mParameters": mParameters,
 							"oParams": oParams
 						});
-						// this.showQualificationResults(aSourcePaths, targetObj, mParameters, oQualificationParameters, oData);
 						this.showQualificationResults();
 					} else {
 						this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
@@ -83,19 +81,14 @@ sap.ui.define([
 
 		},
 		/**
-		 * proceed to Service call after validation
-		 * 
-		 * @param {Object} aSourcePaths
-		 * @param {String} targetObj
-		 * @param {Object} mParameters
-		 * @param {Object} oParams
-		 * @deprecated
+		 * Opens the Dialog containing Qualification check Results
+		 * @param 
 		 */
 		showQualificationResults: function () {
 			this.getOwnerComponent().QualificationCheck.open(this, this.getView());
 		},
 		/**
-		 * proceed to Service call after validation
+		 * proceed to Service call(Call Function Import) after Availibility, validation and Qualification check
 		 * 
 		 * @param {Object} aSourcePaths
 		 * @param {String} targetObj
@@ -343,10 +336,10 @@ sap.ui.define([
 		setDateTimeParams: function (oParams, vStartdate, vStartTime, vEndDate, vEndTime, oTargetDate, oNewEndDate) {
 			var vCurrentTime = new Date().getTime();
 			if (vStartdate) {
-				oParams.DateFrom = oTargetDate? oTargetDate : vStartdate;
+				oParams.DateFrom = oTargetDate ? oTargetDate : vStartdate;
 				oParams.TimeFrom = vStartTime;
 			} else {
-				oParams.DateFrom = oTargetDate? oTargetDate : new Date(); // When Start Date Null/In the Simple view today date will sent
+				oParams.DateFrom = oTargetDate ? oTargetDate : new Date(); // When Start Date Null/In the Simple view today date will sent
 				oParams.TimeFrom = vStartTime;
 				oParams.TimeFrom.ms = oTargetDate ? oTargetDate.getTime() : vCurrentTime;
 			}
