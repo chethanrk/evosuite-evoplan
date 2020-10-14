@@ -14,10 +14,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * open dialog
-		 * get detail data from resource and resource group
+		 * Initialize the dialog for Qualification Match results 
+		 * @param that
 		 * @param oView
 		 * @param sBindPath
+		 * @param mParameters
 		 */
 		open: function (that, oView, mParameters) {
 			this.oView = oView;
@@ -36,35 +37,45 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Open the dialog for Qualification Match results 
+		 * @param that
+		 * @param oDialog
+		 * @param mParameters
+		 */
 		onOpen: function (that, oDialog, mParameters) {
 			this._mParameters = mParameters || {
 				bFromHome: true
 			};
 			this._component = that.getOwnerComponent();
 			oDialog.addStyleClass(this._component.getContentDensityClass());
-			// oDialog.setModel(that.getModel("viewModel"), "viewModel");
 			// connect dialog to view (models, lifecycle)
 			this.oView.addDependent(oDialog);
-
-			// this._getResourceInfo(sId);
-
 			// open dialog
-			setTimeout(function () {
-				oDialog.open();
-			}, 100);
+			oDialog.open();
 
 		},
 
 		/**
-		 * save form data
+		 * Select All items in the Qualication match table
 		 * @param oEvent
 		 */
 		onSelectAll: function (oEvent) {
 			sap.ui.getCore().byId("idQualificationMatchTable").selectAll();
 		},
+
+		/**
+		 * Close the dialog for Qualification Match results 
+		 * @param oEvent
+		 */
 		onCloseDialog: function (oEvent) {
 			this._oDialog.close();
 		},
+
+		/**
+		 * proceed to assgin the selected items from Qualification match Table 
+		 * @param oEvent
+		 */
 		onProceed: function (oEvent) {
 			var oTable = sap.ui.getCore().byId("idQualificationMatchTable"),
 				oViewModel = oTable.getModel("viewModel"),
@@ -84,12 +95,18 @@ sap.ui.define([
 				aSelectedGuids = this.getSelectedDemands(oTable, aGuids, aListItems);
 			}
 			if (!oParams) {
-				oParams = this.setDateTimeParams([], targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime, oTargetDate, oNewEndDate);
+				oParams = this.setDateTimeParams([], targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime, oTargetDate,
+					oNewEndDate);
 			}
 			this.proceedToServiceCallAssignDemands(aSelectedSourcePaths, targetObj, mParameters, oParams, aSelectedGuids);
 			this.onCloseDialog();
 
 		},
+
+		/**
+		 * Handle Selection/Deselection items from Qualification match Table 
+		 * @param oEvent
+		 */
 		onSelectionChangeQualificationTable: function (oEvent) {
 			var oTable = oEvent.getSource(),
 				oViewModel = oTable.getModel("viewModel"),
@@ -106,6 +123,11 @@ sap.ui.define([
 			oViewModel.setProperty("/QualificationMatchList/QualificationData", aListItems);
 			oViewModel.refresh();
 		},
+
+		/**
+		 * Return the Selected Demand object 
+		 * @param oEvent
+		 */
 		getSelectedSources: function (oTable, aSourcePaths, aListItems) {
 			var aSelectedGuids = [],
 				aSelectedSourcePaths = [];
@@ -123,6 +145,11 @@ sap.ui.define([
 			}
 			return aSelectedSourcePaths;
 		},
+
+		/**
+		 * Return the Selected Demand Guids 
+		 * @param oEvent
+		 */
 		getSelectedDemands: function (oTable, aGuids, aListItems) {
 			var aSelectedGuids = [];
 			if (oTable.isAllSelectableSelected()) {
