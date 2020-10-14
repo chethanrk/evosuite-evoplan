@@ -275,7 +275,7 @@ sap.ui.define([
 					}
 				}.bind(this));
 			} else {
-				//TODO ShowMessage
+					fnCheckValidation.call(this, aSources, oTarget, oTargetDate, null, aGuids, this._mParameters);
 			}
 		},
 		_checkResourceQualification: function (aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids, mParameters) {
@@ -916,7 +916,7 @@ sap.ui.define([
 		 */
 		_checkAvailability: function (aSources, oTarget, oTargetDate, aGuids) {
 			var oModel = this.getModel(),
-				sGuid = aSources ? oModel.getProperty(aSources[0] + "/Guid") : oModel.getProperty(aGuids[0] + "/Guid");
+				sGuid = aSources ? oModel.getProperty(aSources[0] + "/Guid") : aGuids[0].split("'")[1];
 			return new Promise(function (resolve, reject) {
 				this.executeFunctionImport(oModel, {
 					ResourceGuid: oModel.getProperty(oTarget + "/ResourceGuid"),

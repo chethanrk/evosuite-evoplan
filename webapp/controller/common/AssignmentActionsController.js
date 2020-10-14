@@ -27,7 +27,8 @@ sap.ui.define([
 			this.clearMessageModel();
 
 			for (var i = 0; i < aItems.length; i++) {
-				var sDemandGuid = oModel.getProperty(aItems[i]).Guid,
+				var oDemandObj = oModel.getProperty(aItems[i]);
+				var sDemandGuid = oDemandObj? oDemandObj.Guid : aItems[i].split("'")[1],
 					oParams = {
 						"DemandGuid": sDemandGuid,
 						"ResourceGroupGuid": targetObj.ResourceGroupGuid,
@@ -85,18 +86,21 @@ sap.ui.define([
 		 * @param {Object} oParams
 		 * @param {Object} mParameters
 		 **/
-		checkQualification: function (aSourcePaths, targetObj, oTargetDate, oNewEndDate) {
+		checkQualification: function (aSourcePaths, targetObj, oTargetDate, oNewEndDate, aGuids) {
 			var oQualificationParameters,
 				oModel = this.getModel(),
-				sDemandGuids = "";
+				sDemandGuids = "",
+				aItems = aSourcePaths ? aSourcePaths : aGuids;
 			return new Promise(function (resolve, reject) {
 
-				for (var i = 0; i < aSourcePaths.length; i++) {
-					var demandObj = oModel.getProperty(aSourcePaths[i]);
+				for (var i = 0; i < aItems.length; i++) {
+					var sPath = aItems[i].sPath ? aItems[i].sPath : aItems[i];
+					var demandObj = oModel.getProperty(sPath);
+					var sDemandGuid = demandObj ? demandObj.Guid : sPath.split("'")[1];
 					if (sDemandGuids === "") {
-						sDemandGuids = demandObj.Guid;
+						sDemandGuids = sDemandGuid;
 					} else {
-						sDemandGuids = sDemandGuids + "//" + demandObj.Guid;
+						sDemandGuids = sDemandGuids + "//" + sDemandGuid;
 					}
 				}
 				oQualificationParameters = {
