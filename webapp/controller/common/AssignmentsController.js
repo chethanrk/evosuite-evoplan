@@ -170,7 +170,13 @@ sap.ui.define([
 			if (isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)) {
 				this.showMessageToProceed(null, null, null, null, true, oParams, mParameters);
 			} else {
-				this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
+				if (this.getModel("user").getProperty("/QUALIF_UI_CHECK_TYPE")) {
+					//TODO Check Qualification
+				} else {
+					alert("Update Assignment Function Call");
+					return;
+					this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
+				}
 			}
 		},
 		/**
@@ -183,6 +189,15 @@ sap.ui.define([
 		 * @param aPaths {Array} selected assignment paths
 		 */
 		bulkReAssignment: function (sAssignPath, aContexts, mParameters) {
+			if (this.getModel("user").getProperty("/QUALIF_UI_CHECK_TYPE")) {
+				//TODO Check Qualification
+			} else {
+				this.bulkReAssignmentFinalCall(sAssignPath, aContexts, mParameters);
+			}
+		},
+		bulkReAssignmentFinalCall: function (sAssignPath, aContexts, mParameters) {
+			alert("BulkReassignment Function Call");
+			return;
 			var oModel = this.getModel(),
 				oResource = oModel.getProperty(sAssignPath),
 				bIsLast = null;
@@ -343,10 +358,10 @@ sap.ui.define([
 		setDateTimeParams: function (oParams, vStartdate, vStartTime, vEndDate, vEndTime, oTargetDate, oNewEndDate) {
 			var vCurrentTime = new Date().getTime();
 			if (vStartdate) {
-				oParams.DateFrom = oTargetDate? oTargetDate : vStartdate;
+				oParams.DateFrom = oTargetDate ? oTargetDate : vStartdate;
 				oParams.TimeFrom = vStartTime;
 			} else {
-				oParams.DateFrom = oTargetDate? oTargetDate : new Date(); // When Start Date Null/In the Simple view today date will sent
+				oParams.DateFrom = oTargetDate ? oTargetDate : new Date(); // When Start Date Null/In the Simple view today date will sent
 				oParams.TimeFrom = vStartTime;
 				oParams.TimeFrom.ms = oTargetDate ? oTargetDate.getTime() : vCurrentTime;
 			}
