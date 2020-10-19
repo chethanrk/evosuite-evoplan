@@ -72,8 +72,8 @@ sap.ui.define([
 				},
 				events: {
 					change: function () {
-						var oElementBinding = oDialog.getElementBinding(),
-							oContext = oElementBinding.getBoundContext();
+						var oElementBinding = oDialog.getElementBinding();
+							oElementBinding.refresh();
 
 					},
 					dataRequested: function () {
@@ -94,6 +94,7 @@ sap.ui.define([
 
 		},
 		onCloseDialog : function(oEvent){
+			this._oDialog.unbindElement();
 			this._oDialog.close();
 		},
 		
