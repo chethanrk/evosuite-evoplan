@@ -72,8 +72,8 @@ sap.ui.define([
 				},
 				events: {
 					change: function () {
-						var oElementBinding = oDialog.getElementBinding(),
-							oContext = oElementBinding.getBoundContext();
+						var oElementBinding = oDialog.getElementBinding();
+							oElementBinding.refresh();
 
 					},
 					dataRequested: function () {

@@ -67,6 +67,7 @@ sap.ui.define([
 		},
 		init: function () {
 			this._icon = new Icon({
+				tooltip:"{i18n>xtit.clicktosee}",
 				press:function(oEvent){
 					this.fireResourceIconPress(oEvent);
 				}.bind(this)
@@ -78,6 +79,8 @@ sap.ui.define([
 			}
 			if(this.getIcon() !== ""){
 				this._icon.setSrc(this.getIcon());
+			}else{
+				this._icon.setSrc("sap-icon://employee");
 			}
 		}
 
