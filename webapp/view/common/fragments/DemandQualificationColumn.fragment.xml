@@ -7,7 +7,7 @@
 		</table:customData>
 		<Label text="{/#Demand/QUALIFICATION_ICON/@sap:label}"/>
 		<table:template>
-			<core:Icon src="{QUALIFICATION_ICON}" color="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIconColor' }"
+			<core:Icon src="{QUALIFICATION_ICON}" color="{ path:'CRITICALITY', formatter:'.formatter.formatSyncIconColor' }"
 				visible="{ path:'REQUIREMENT_PROFILE_ID', formatter:'.formatter.formatQualificationIcon' }" press="onDemandQualificationIconPress"></core:Icon>
 		</table:template>
 	</table:Column>

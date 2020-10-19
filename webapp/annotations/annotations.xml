@@ -369,36 +369,6 @@
 					</Collection>
 				</Annotation>
 			</Annotations>
-			<Annotations Target="Metadata.ResourceQualification">
-				<Annotation Term="UI.LineItem">
-					<Collection>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="PersonName"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="PersonNumber"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="QualificationType"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="ScaleId"/>
-						</Record>
-					</Collection>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="Metadata.DemandQualification">
-				<Annotation Term="UI.LineItem">
-					<Collection>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="ProficiencyDesc"/>
-						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="QualificationDesc"/>
-						</Record>
-					</Collection>
-				</Annotation>
-			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>
