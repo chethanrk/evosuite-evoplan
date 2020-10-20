@@ -23,7 +23,7 @@
                     useExportToExcel="false"
                     beforeRebindTable="onBeforeRebind"
                     initiallyVisibleFields="Effort,DateFrom,DateTo,PERSON_NUMBER,FIRSTNAME,LASTNAME"
-                    requestAtLeastFields="Guid,Demand">
+                    requestAtLeastFields="Guid,DemandGuid">
                 <!-- layout data used to make the table growing but the filter bar fixed -->
                 <smartTable:layoutData>
                     <FlexItemData growFactor="1" />

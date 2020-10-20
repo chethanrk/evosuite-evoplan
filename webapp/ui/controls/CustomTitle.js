@@ -51,6 +51,11 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: false
+				},
+				enableQualification: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
 				}
 			},
 			events: {
@@ -69,7 +74,9 @@ sap.ui.define([
 			this._icon = new Icon({
 				tooltip:"{i18n>xtit.clicktosee}",
 				press:function(oEvent){
-					this.fireResourceIconPress(oEvent);
+					if(this.getEnableQualification()){
+						this.fireResourceIconPress(oEvent);
+					}
 				}.bind(this)
 			});
 		},
