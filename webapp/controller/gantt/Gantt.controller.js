@@ -942,7 +942,9 @@ sap.ui.define([
 				return "#FFF";
 			} else if (sType === "O") {
 				return "transparent";
-			} else {
+			} else if (sType === "T") {
+				return "url(#" + this._viewId + "--oncallorovertime)";
+			}else {
 				return "transparent";
 			}
 
@@ -957,7 +959,7 @@ sap.ui.define([
 			if (sType === "COLOUR") {
 				return sCode;
 			} else {
-				return "url(#" + this._viewId + "--unavailability)";
+				return "url(#" + this._viewId + "--"+sCode+")";
 			}
 		},
 
