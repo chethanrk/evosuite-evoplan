@@ -210,7 +210,7 @@ sap.ui.define([
 		onCloseDialog: function () {
 			this._oDialog.close();
 			this.reAssign = false; // setting to default on close of Dialog
-			this.oAssignmentModel.setData({});
+			// this.oAssignmentModel.setData({});// Commented to have data in Qualification Match Dialog Methods:by Rakesh Sahu
 		},
 
 		/**
