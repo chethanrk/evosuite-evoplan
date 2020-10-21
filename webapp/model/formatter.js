@@ -524,13 +524,14 @@ sap.ui.define([
 		/*
 		 * Visibility of Qualification Icon
 		 * @param REQUIREMENT_PROFILE_ID
+		 * @param bEnableQualification: Global Config
 		 * @returns
 		 */
-		formatQualificationIcon: function (sReqProfileID) {
-			if (sReqProfileID === "00000000" || sReqProfileID === undefined)
-				return false;
-			else
+		formatQualificationIcon: function (sReqProfileID, bEnableQualification) {
+			if (sReqProfileID && sReqProfileID !== "00000000" && bEnableQualification)
 				return true;
+			else
+				return false;
 		},
 		getQualificationFulfilled: function (bFulfilled) {
 			if (bFulfilled) {
