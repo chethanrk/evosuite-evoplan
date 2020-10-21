@@ -6,7 +6,7 @@
 		<Label text="{/#Demand/QUALIFICATION_ICON/@sap:label}"/>
 		<table:template>
 			<core:Icon src="{QUALIFICATION_ICON}" color="{ path:'CRITICALITY', formatter:'.formatter.formatSyncIconColor' }"
-				visible="{ parts:['REQUIREMENT_PROFILE_ID','user>ENABLE_QUALIFICATION'], formatter:'.formatter.formatQualificationIcon' }"
+				visible="{ parts:['REQUIREMENT_PROFILE_ID','user>/ENABLE_QUALIFICATION'], formatter:'.formatter.formatQualificationIcon' }"
 				press="onDemandQualificationIconPress"></core:Icon>
 		</table:template>
 	</table:Column>
