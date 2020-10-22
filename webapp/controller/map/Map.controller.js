@@ -440,6 +440,7 @@ sap.ui.define([
 				oBinding.filter([]);
 				oBinding.refresh();
 			}
+			this._mapDemandTableFilter(oFilters);
 		},
 		/**
 		 * Select All spots in map from Demand Table.
@@ -616,6 +617,12 @@ sap.ui.define([
 			var sDemandGuid = oResourceNode.Guid;
 			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
 
+		},
+		//Demand Table Filter
+		_mapDemandTableFilter: function(oFilters)
+		{
+			this._oDataTable.getBinding("rows").filter(oFilters, "Application");
+			this._refreshDemandTable();	
 		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
