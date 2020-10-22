@@ -622,7 +622,8 @@ sap.ui.define([
 		_mapDemandTableFilter: function(oFilters)
 		{
 			this._oDataTable.getBinding("rows").filter(oFilters, "Application");
-			this._refreshDemandTable();	
+			this._refreshDemandTable();
+			this.getModel("viewModel").setProperty("/mapSettings/routeData", []);
 		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
