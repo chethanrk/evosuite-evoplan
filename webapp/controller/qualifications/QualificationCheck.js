@@ -54,6 +54,8 @@ sap.ui.define([
 			this.oView.addDependent(oDialog);
 			// open dialog
 			oDialog.open();
+			if(mParameters.bFromGantt)
+			this.getModel("viewModel").setProperty("/ganttSettings/busy", false);
 
 		},
 
