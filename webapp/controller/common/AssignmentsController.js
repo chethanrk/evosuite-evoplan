@@ -116,6 +116,7 @@ sap.ui.define([
 					if (oData.results && oData.results.length) {
 						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog 
 						this.getModel("viewModel").setProperty("/QualificationMatchList", {
+							// "TargetObject": targetObj,//todo Pranav- get resource path from parameter and get object from model
 							"QualificationData": oData.results,
 							"mParameters": mParameters,
 							"oParams": oParams,
@@ -171,6 +172,7 @@ sap.ui.define([
 					if (oData.results && oData.results.length) {
 						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog 
 						this.getModel("viewModel").setProperty("/QualificationMatchList", {
+							// "TargetObject": targetObj,//todo Pranav- get resource path from parameter and get object from model
 							"AssignPath": sAssignPath,
 							"Contexts": aContexts,
 							"QualificationData": oData.results,

@@ -274,7 +274,7 @@ sap.ui.define([
 				// eventBus.publish("BaseController", "resetMapSelection", {});
 				eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				eventBus.publish("BaseController", "refreshMapView", {});
-				eventBus.publish("BaseController", "refreshMapDemandTable", {});
+				// eventBus.publish("BaseController", "refreshMapDemandTable", {});
 			} else if (oParameter.bFromGanttSplit) {
 				eventBus.publish("BaseController", "refreshGanttChart", {});
 			} else if (oParameter.bFromDemandSplit) {
