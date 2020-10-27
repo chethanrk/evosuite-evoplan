@@ -5,6 +5,7 @@
 		useExportToExcel="true" useVariantManagement="false" beforeRebindTable="onBeforeRebindTable" persistencyKey="{viewModel>/persistencyKeyDemandTable}" useTablePersonalisation="true"
 		requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY" customData:p13nDialogSettings='{filter:{visible:false},sort:{visible:false}}'>
 		<!-- layout data used to make the table growing but the filter bar fixed -->
+		<!--smartFilterId="listReportFilter"-->
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1"/>
 		</smartTable:layoutData>
