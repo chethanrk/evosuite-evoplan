@@ -463,6 +463,7 @@ sap.ui.define([
 			}
 			this._mapDemandTableFilter(oFilters);
 		},
+		
 		/**
 		 * Select All spots in map from Demand Table.
 		 * @Author Rakesh Sahu
