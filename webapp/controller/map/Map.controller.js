@@ -153,13 +153,13 @@ sap.ui.define([
 		onBeforeRebindTable: function (oEvent) {
 			var aFilters = this.byId("listReportFilter").getFilters(),
 				aDemandFilters = this.getModel("viewModel").getProperty("/mapSettings/selectedDemandsFilters");
-			//if (aDemandFilters && aDemandFilters.aFilters)
-            aFilters.push(aDemandFilters);
+			if (aDemandFilters && aDemandFilters.aFilters)
+				aFilters.push(aDemandFilters);
 			//setTimeOut has been added to make rebindTable() work
 			setTimeout(function () {
-						this._oDataTable.getBinding("rows").filter(aFilters, "Application");
-					}.bind(this), 15);
-		
+				this._oDataTable.getBinding("rows").filter(aFilters, "Application");
+			}.bind(this), 15);
+
 		},
 
 		onAfterRendering: function () {
@@ -640,23 +640,22 @@ sap.ui.define([
 
 		},
 		/* Demand Table Filter
-		* @Author Pranav
-		*/
-		_mapDemandTableFilter: function(oFilters)
-		{
+		 * @Author Pranav
+		 */
+		_mapDemandTableFilter: function (oFilters) {
 			this._oDataTable.getBinding("rows").filter(oFilters, "Application");
-			this._refreshDemandTable();
+			// this._refreshDemandTable();
+			this.byId("draggableList").rebindTable();
 			this.getModel("viewModel").setProperty("/mapSettings/routeData", []);
 		},
 		/*Refresh Route Data
-		* @Author Pranav
-		*/
-		_refreshRoute: function()
-		{
+		 * @Author Pranav
+		 */
+		_refreshRoute: function () {
 			var oViewModel = this.getModel("viewModel");
-		    this._resetMapSelection();
-		    this.unCheckAllDemands();
-		    this.byId("draggableList").rebindTable();
+			this._resetMapSelection();
+			this.unCheckAllDemands();
+			this.byId("draggableList").rebindTable();
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
 		},
 		onExit: function () {
