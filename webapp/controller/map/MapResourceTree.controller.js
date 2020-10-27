@@ -523,10 +523,8 @@ sap.ui.define([
 			var oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
 			aData.forEach(function (entry) {
-				aSelectedDemands.push({
-					context: undefined,
-					guid: entry.DemandGuid
-				});
+				var sSelectedDemandPath = "/DemandSet('" +entry.DemandGuid + "')";
+				aSelectedDemands.push(sSelectedDemandPath);
 			});
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 
@@ -548,7 +546,7 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/routeData", aMapLocations);
 			// this.getModel("viewModel").refresh();
 			oViewModel.setProperty("/mapSettings/busy", false);
-			this._eventBus.publish("BaseController", "refreshDemandTable", {});
+			this._eventBus.publish("BaseController", "refreshRoute", {});
 		},
         /**
          * Opens the resource qualification dialog 

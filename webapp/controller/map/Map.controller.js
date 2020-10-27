@@ -25,6 +25,7 @@ sap.ui.define([
 				oMapModel = this.getModel("mapConfig");
 			oGeoMap.setMapConfiguration(MapConfig.getMapConfiguration(oMapModel));
 			this._oEventBus = sap.ui.getCore().getEventBus();
+			this._oEventBus.subscribe("BaseController", "refreshRoute", this._refreshRoute, this);
 			this._oEventBus.subscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.subscribe("BaseController", "refreshMapDemandTable", this._refreshDemandTable, this);
 			this._oEventBus.subscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
@@ -143,9 +144,13 @@ sap.ui.define([
 		 * @return
 		 */
 		onBeforeRebindTable: function (oEvent) {
-			var aFilters = oEvent.getParameter("bindingParams").filters,
+			var aFilters = this.byId("listReportFilter").getFilters(),
 				aDemandFilters = this.getSelectedDemandFilters();
 			aFilters.push(aDemandFilters);
+			setTimeout(function () {
+						this._oDataTable.getBinding("rows").filter(aFilters, "Application");
+					}.bind(this), 15);
+		
 		},
 
 		onAfterRendering: function () {
@@ -625,7 +630,18 @@ sap.ui.define([
 			this._refreshDemandTable();
 			this.getModel("viewModel").setProperty("/mapSettings/routeData", []);
 		},
+		//Refresh Route Data
+		_refreshRoute: function()
+		{
+			var oViewModel = this.getModel("viewModel");
+		    this._resetMapSelection();
+		    this.unCheckAllDemands();
+		    this.byId("draggableList").rebindTable();
+			oViewModel.setProperty("/mapSettings/selectedDemands", []);
+			//this._oDraggableTable.getTable().refreshRows();
+		},
 		onExit: function () {
+			this._oEventBus.unsubscribe("BaseController", "refreshRoute", this._refreshRoute, this);
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
