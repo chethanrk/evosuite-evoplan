@@ -147,6 +147,7 @@ sap.ui.define([
 			var aFilters = this.byId("listReportFilter").getFilters(),
 				aDemandFilters = this.getSelectedDemandFilters();
 			aFilters.push(aDemandFilters);
+			//setTimeOut has been added to make rebindTable() work
 			setTimeout(function () {
 						this._oDataTable.getBinding("rows").filter(aFilters, "Application");
 					}.bind(this), 15);
@@ -623,14 +624,18 @@ sap.ui.define([
 			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
 
 		},
-		//Demand Table Filter
+		/* Demand Table Filter
+		* @Author Pranav
+		*/
 		_mapDemandTableFilter: function(oFilters)
 		{
 			this._oDataTable.getBinding("rows").filter(oFilters, "Application");
 			this._refreshDemandTable();
 			this.getModel("viewModel").setProperty("/mapSettings/routeData", []);
 		},
-		//Refresh Route Data
+		/*Refresh Route Data
+		* @Author Pranav
+		*/
 		_refreshRoute: function()
 		{
 			var oViewModel = this.getModel("viewModel");
@@ -638,7 +643,6 @@ sap.ui.define([
 		    this.unCheckAllDemands();
 		    this.byId("draggableList").rebindTable();
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
-			//this._oDraggableTable.getTable().refreshRows();
 		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshRoute", this._refreshRoute, this);
