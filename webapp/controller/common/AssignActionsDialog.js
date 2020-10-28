@@ -10,6 +10,7 @@ sap.ui.define([
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.AssignActionsDialog", {
 		formatter: formatter,
+		_bSelectAll: true,
 
 		init: function () {
 			this._eventBus = sap.ui.getCore().getEventBus();
@@ -71,7 +72,7 @@ sap.ui.define([
 		 */
 		onBeforeRebind: function (oEvent) {
 			var mBindingParams = oEvent.getParameter("bindingParams");
-			// mBindingParams.parameters["expand"] = "Demand";
+			mBindingParams.parameters["expand"] = "Demand";
 			var oFilter = new Filter(this._getResourceFilters(this._aSelectedResources), true);
 			mBindingParams.filters.push(oFilter);
 		},
@@ -265,8 +266,18 @@ sap.ui.define([
 				oListItem.setSelected(bFlag);
 			} else {
 				if (oEvent.getParameter("selectAll")) {
-					var aListItems = oEvent.getParameter("listItems");
-					this.validateDemands(aListItems, this._isUnAssign);
+					//_bSelectAll is used for toggling between select all & diselect all
+					if (this._bSelectAll) {
+						var aListItems = oEvent.getSource().getItems();
+						this.validateDemands(aListItems, this._isUnAssign);
+						this._bSelectAll = false;
+					} else {
+						this._oAssignMentTable.removeSelections();
+						this._bSelectAll = true;
+					}
+				} else {
+					this._oAssignMentTable.removeSelections();
+					this._bSelectAll = true;
 				}
 			}
 		},

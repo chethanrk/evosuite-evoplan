@@ -189,8 +189,9 @@ sap.ui.define([
 		 */
 		onReset: function (oEvent) {
 			var oViewModel = this.getModel("viewModel");
-			oViewModel.setProperty("/mapSettings/selectedDemandsFilters", []);
 			this._resetMapSelection();
+			this.unCheckAllDemands();
+			oViewModel.setProperty("/mapSettings/selectedDemandsFilters", []);
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			this.onResetLegendSelection();
@@ -654,9 +655,11 @@ sap.ui.define([
 		 */
 		_refreshRoute: function () {
 			var oViewModel = this.getModel("viewModel");
-			this._resetMapSelection();
-			this.unCheckAllDemands();
-			this.byId("draggableList").rebindTable();
+			oViewModel.setProperty("/mapSettings/selectedDemandsFilters", []);
+			//Code has been commented to keep the status of Map sport as it is
+		    //this._resetMapSelection();
+		    //this.unCheckAllDemands();
+		    this.byId("draggableList").rebindTable();
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
 		},
 		onExit: function () {
