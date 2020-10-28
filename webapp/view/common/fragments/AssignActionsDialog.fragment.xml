@@ -28,7 +28,7 @@
                 <smartTable:layoutData>
                     <FlexItemData growFactor="1" />
                 </smartTable:layoutData>
-                <Table mode="MultiSelect"
+               <!-- <Table mode="MultiSelect"
                        growing="true"
                        selectionChange="onSelectionChange">
                 	<columns>
@@ -61,7 +61,7 @@
                 		</ColumnListItem>
                 		
                 	</items>
-                </Table>
+                </Table>-->
             </smartTable:SmartTable>
 
         </content>
