@@ -215,7 +215,7 @@ sap.ui.define([
 					sPath = obj.sPath ? obj.sPath : obj,
 					demandObj = oModel.getProperty(sPath);
 
-				oParams.DemandGuid = demandObj.Guid;
+				oParams.DemandGuid = demandObj ? demandObj: sPath.split("'")[1];
 				oParams.ResourceGroupGuid = targetObj.ResourceGroupGuid;
 				oParams.ResourceGuid = targetObj.ResourceGuid;
 
