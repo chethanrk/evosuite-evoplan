@@ -76,7 +76,7 @@
 				<Annotation Term="UI.DataPoint" Qualifier="SOURCE">
 					<Record Type="com.sap.vocabularies.UI.v1.DataPointType">
 						<PropertyValue Property="Value" Path="Source"/>
-						<PropertyValue Property="Title" String="Source of Object"/>
+						<PropertyValue Property="Title" String="{@i18n&gt;xtit.sourceOfObject}"/>
 					</Record>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.DataPoint" Qualifier="STATUS">
@@ -117,7 +117,7 @@
 				<Annotation Term="com.sap.vocabularies.UI.v1.Facets">
 					<Collection>
 						<Record Type="com.sap.vocabularies.UI.v1.CollectionFacet">
-							<PropertyValue Property="Label" String="General"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xtit.general}"/>
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
@@ -131,7 +131,7 @@
 							<Annotation Term="Org.OData.Core.V1.Description" String="Form"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-							<PropertyValue Property="Label" String="Dates"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xtit.dates}"/>
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
@@ -145,7 +145,7 @@
 							<Annotation Term="Org.OData.Core.V1.Description" String="Form"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-							<PropertyValue Property="Label" String="PM Details"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xtit.pmDetails}"/>
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
@@ -159,7 +159,7 @@
 							<Annotation Term="Org.OData.Core.V1.Description" String="Form"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-							<PropertyValue Property="Label" String="Assignments"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xtit.assignments}"/>
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
@@ -170,7 +170,7 @@
 							<Annotation Term="Org.OData.Core.V1.Description" String="AssignmentTable"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-							<PropertyValue Property="Label" String="Long Text"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xtit.longText}"/>
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
@@ -181,7 +181,7 @@
 							<Annotation Term="Org.OData.Core.V1.Description" String="Form"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-							<PropertyValue Property="Label" String="Qualifications"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xtit.qualifications}"/>
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
