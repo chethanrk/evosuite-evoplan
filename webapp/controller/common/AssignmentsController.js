@@ -17,34 +17,36 @@ sap.ui.define([
 
 			if (this.isTargetValid(sTargetPath) || !bValdiMsgPopupFlag) {
 				oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
-				this.checkQualification(aSourcePaths, targetObj, oParams, mParameters); //Proceed to check the Qualification
+				this.checkQualificationAssignment(aSourcePaths, targetObj, oParams, mParameters); //Proceed to check the Qualification
 			} else {
 				this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.targetValidity")).then(function (value) {
 					if (value === "YES") {
 						oParams = this.setDateTimeParams(oParams, targetObj.RES_ASGN_START_DATE, targetObj.RES_ASGN_START_TIME, targetObj.RES_ASGN_END_DATE,
 							targetObj.RES_ASGN_END_TIME);
-						this.checkQualification(aSourcePaths, targetObj, oParams, mParameters); //Proceed to check the Qualification
+						this.checkQualificationAssignment(aSourcePaths, targetObj, oParams, mParameters); //Proceed to check the Qualification
 					}
 					if (value === "NO") {
 						oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
-						this.checkQualification(aSourcePaths, targetObj, oParams, mParameters); //Proceed to check the Qualification
+						this.checkQualificationAssignment(aSourcePaths, targetObj, oParams, mParameters); //Proceed to check the Qualification
 					}
 				}.bind(this));
 			}
 		},
 		/**
-		 * proceed to Qualification Check before Service call (Call Function Import) 
+		 * proceed to Qualification Check for Demand Assignment, before Service call (Call Function Import)
 		 * @param {Object} aSourcePaths
 		 * @param {String} targetObj
 		 * @param {Object} oParams
 		 * @param {Object} mParameters
+		 * @Author Rakesh Sahu
 		 **/
-		checkQualification: function (aSourcePaths, targetObj, oParams, mParameters) {
+		checkQualificationAssignment: function (aSourcePaths, targetObj, oParams, mParameters) {
 			if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
 				//need to check Qualification 
 				var oQualificationParameters,
 					oModel = this.getModel(),
 					sDemandGuids = "";
+				//loop to format Demand Guids to be passed in Qualification Service
 				for (var i = 0; i < aSourcePaths.length; i++) {
 					var obj = aSourcePaths[i],
 						demandObj = oModel.getProperty(obj.sPath);
@@ -54,31 +56,138 @@ sap.ui.define([
 						sDemandGuids = sDemandGuids + "//" + demandObj.Guid;
 					}
 				}
+				//Parameters to check Qualification
 				oQualificationParameters = {
 					DemandMultiGuid: sDemandGuids,
 					ObjectId: targetObj.NodeId, //targetObj.ResourceGroupGuid,
 					StartTimestamp: oParams.DateFrom,
 					EndTimestamp: oParams.DateTo
 				};
+
+				//Calling Funtion Import to Check Qualification
 				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData, response) {
+					// Condition to Check if Qualification match service returns any result or Empty
 					if (oData.results && oData.results.length) {
+						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog
 						this.getModel("viewModel").setProperty("/QualificationMatchList", {
 							"TargetObject": targetObj,
 							"QualificationData": oData.results,
 							"SourcePaths": aSourcePaths,
 							"mParameters": mParameters,
-							"oParams": oParams
+							"oParams": oParams,
+							"SourceMethod": "assignedDemands"
 						});
-						this.showQualificationResults();
+						this.showQualificationResults(); //Method to Open Qualification Dialog
 					} else {
 						this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
 					}
 				}.bind(this));
 			} else {
-				//Qualification check is to be by-Passed
+				//Qualification check is to be by-Passed, Directly Calling the final function for assignment
 				this.proceedToServiceCallAssignDemands(aSourcePaths, targetObj, mParameters, oParams);
 			}
+		},
+		/**
+		 * proceed to Qualification Check for reassignments, before Service call (Call Function Import)
+		 * @param {Object} oAssignmentData
+		 * @param {Object} oParams
+		 * @param {Object} mParameters
+		 * @Author Rakesh Sahu
+		 **/
+		checkQualificationUpdate: function (oAssignmentData, oParams, mParameters) {
+			if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
+				//need to check Qualification
+				var oQualificationParameters,
+					oModel = this.getModel(),
+					sObjectId = oParams.ResourceGroupGuid;
+					if(oParams.ResourceGuid){
+					sObjectId = sObjectId + "//" + oParams.ResourceGuid;
+					}
+				//Parameters to check Qualification
+				oQualificationParameters = {
+					DemandMultiGuid: oAssignmentData.DemandGuid,
+					ObjectId: sObjectId,
+					StartTimestamp: oAssignmentData.DateFrom,
+					EndTimestamp: oAssignmentData.DateTo
+				};
+				//Calling Funtion Import to Check Qualification
+				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData, response) {
+					// Condition to Check if Qualification match service returns any result or Empty
+					if (oData.results && oData.results.length) {
+						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog
+						this.getModel("viewModel").setProperty("/QualificationMatchList", {
+							// "TargetObject": targetObj,//todo Pranav- get resource path from parameter and get object from model
+							"QualificationData": oData.results,
+							"mParameters": mParameters,
+							"oParams": oParams,
+							"SourceMethod": "UpdateAssignment"
 
+						});
+						this.showQualificationResults(); //Method to Open Qualification Dialog
+					} else {
+						this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
+					}
+				}.bind(this));
+			} else {
+				//Qualification check is to be by-Passed, Directly Calling the final function for assignment
+				this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
+			}
+		},
+		/**
+		 * proceed to Qualification Check for reassignments, before Service call (Call Function Import)
+		 * @param {Object} sAssignPath: target Resource Path
+		 * @param {Object} aContexts: Source assginment objects
+		 * @param {Object} mParameters
+		 * @Author Rakesh Sahu
+		 **/
+		checkQualificationBulkReassignment: function (sAssignPath, aContexts, mParameters) {
+			if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
+				//need to check Qualification
+				var oQualificationParameters,
+					oModel = this.getModel(),
+					sDemandGuids = "",
+					oResource = oModel.getProperty(sAssignPath);
+				//loop to format Demand Guids to be passed in Qualification Service
+				for (var i = 0; i < aContexts.length; i++) {
+					var obj = aContexts[i],
+						DemandGuid = oModel.getProperty(obj.sPath + "/Demand/Guid");
+					if (sDemandGuids === "") {
+						sDemandGuids = DemandGuid;
+					} else {
+						sDemandGuids = sDemandGuids + "//" + DemandGuid;
+					}
+				}
+				var oParams = this.setDateTimeParams([], oResource.StartDate, oResource.StartTime, oResource.EndDate, oResource.EndTime);
+				//Parameters to check Qualification
+				oQualificationParameters = {
+					DemandMultiGuid: sDemandGuids,
+					ObjectId: oResource.NodeId, //targetObj.ResourceGroupGuid,
+					StartTimestamp: oParams.DateFrom,
+					EndTimestamp: oParams.DateTo
+				};
+
+				//Calling Funtion Import to Check Qualification
+				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData, response) {
+					// Condition to Check if Qualification match service returns any result or Empty
+					if (oData.results && oData.results.length) {
+						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog
+						this.getModel("viewModel").setProperty("/QualificationMatchList", {
+							// "TargetObject": targetObj,//todo Pranav- get resource path from parameter and get object from model
+							"AssignPath": sAssignPath,
+							"Contexts": aContexts,
+							"QualificationData": oData.results,
+							"mParameters": mParameters,
+							"SourceMethod": "bulkReAssignment"
+						});
+						this.showQualificationResults(); //Method to Open Qualification Dialog
+					} else {
+						this.bulkReAssignmentFinalCall(sAssignPath, aContexts, mParameters);
+					}
+				}.bind(this));
+			} else {
+				//Qualification check is to be by-Passed, Directly Calling the final function for assignment
+				this.bulkReAssignmentFinalCall(sAssignPath, aContexts, mParameters);
+			}
 		},
 		/**
 		 * Opens the Dialog containing Qualification check Results
@@ -163,7 +272,9 @@ sap.ui.define([
 			if (isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)) {
 				this.showMessageToProceed(null, null, null, null, true, oParams, mParameters);
 			} else {
-				this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
+				// Proceed to check the Qualification for UpdateAssignment
+				this.checkQualificationUpdate(oData, oParams, mParameters);
+				 //this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
 			}
 		},
 		/**
@@ -176,6 +287,10 @@ sap.ui.define([
 		 * @param aPaths {Array} selected assignment paths
 		 */
 		bulkReAssignment: function (sAssignPath, aContexts, mParameters) {
+			// Proceed to check the Qualification for Bulk Re-Assignment
+			this.checkQualificationBulkReassignment(sAssignPath, aContexts, mParameters);
+		},
+		bulkReAssignmentFinalCall: function (sAssignPath, aContexts, mParameters) {
 			var oModel = this.getModel(),
 				oResource = oModel.getProperty(sAssignPath),
 				bIsLast = null;
@@ -319,7 +434,9 @@ sap.ui.define([
 						} else if (sValue === sAction && bBulkReassign) {
 							this.bulkReAssignment(sTargetPath, aContexts, mParameters);
 						} else if (sValue === sAction && bUpdate) {
-							this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
+							//Proceed to check the Qualification for UpdateAssignment
+							this.checkQualificationUpdate(this.getModel("assignment").getData(), oParams, mParameters);
+							// this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
 						}
 					}.bind(this)
 				}

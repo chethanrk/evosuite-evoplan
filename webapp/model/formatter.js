@@ -471,24 +471,24 @@ sap.ui.define([
 				}
 			}
 
-        },
-        /**
-         * formatter formats the visibility of reassign button based on the two flags
-         * 1. Allow change
-         * 2. Allow reassign
-         */
-        formartVisibleReassign : function(bChange, bAssign){
-        	return bChange && bAssign;
-        },
-        /**
-         * formatter formats the visibility of create unavailability button based on the two flags
-         * 1. Allow create in PC
-         * 2. Absences are visualized in PC or not
-         */
-        formatCrtABFromPC : function(bAllowCreate, bShowInPC){
-        	return bAllowCreate && bShowInPC;
-        },
-        /**
+		},
+		/**
+		 * formatter formats the visibility of reassign button based on the two flags
+		 * 1. Allow change
+		 * 2. Allow reassign
+		 */
+		formartVisibleReassign: function (bChange, bAssign) {
+			return bChange && bAssign;
+		},
+		/**
+		 * formatter formats the visibility of create unavailability button based on the two flags
+		 * 1. Allow create in PC
+		 * 2. Absences are visualized in PC or not
+		 */
+		formatCrtABFromPC: function (bAllowCreate, bShowInPC) {
+			return bAllowCreate && bShowInPC;
+		},
+		/**
 		 * set scale on the basis of selected/deselected
 		 */
 		getSpotScale: function (spot) {
@@ -502,7 +502,7 @@ sap.ui.define([
 		 * set spot color on the basis of selected/deselected
 		 */
 		getSpotType: function (sValue, bIsChecked) {
-			if(bIsChecked){
+			if (bIsChecked) {
 				return sap.ui.vbm.SemanticType.Default;
 			}
 			if (sValue === 1) {
@@ -515,38 +515,46 @@ sap.ui.define([
 				return sap.ui.vbm.SemanticType.Information;
 			}
 		},
-		getGroupHeader: function (oGroup){
+		getGroupHeader: function (oGroup) {
 			return new sap.m.GroupHeaderListItem({
 				title: oGroup.key,
 				upperCase: false
 			});
 		},
-        /*
+		/*
 		 * Visibility of Qualification Icon
 		 * @param REQUIREMENT_PROFILE_ID
+		 * @param bEnableQualification: Global Config
 		 * @returns
 		 */
-		formatQualificationIcon: function (sReqProfileID) {
-			if (sReqProfileID === "00000000" || sReqProfileID === undefined) 
-				return false;
-		    else 
+		formatQualificationIcon: function (sReqProfileID, bEnableQualification) {
+			if (sReqProfileID && sReqProfileID !== "00000000" && bEnableQualification)
 				return true;
+			else
+				return false;
 		},
-		getQualificationFulfilled: function(bFulfilled){
-			if(bFulfilled){
+		getQualificationFulfilled: function (bFulfilled) {
+			if (bFulfilled) {
 				return "Yes";
-			}else{
+			} else {
 				return "No";
 			}
 		},
-		getQualificationDialogTitle: function(sTitle){
-			if(sTitle ==="W"){
-				return "Warning"; 
-			}else{
+		getQualificationDialogTitle: function (sTitle) {
+			if (sTitle === "W") {
+				return "Warning";
+			} else {
 				return "Error";
 			}
-			
+
+		},
+		getQualificationBtnVisibilty: function (bType) {
+			if (bType === "W") {
+				return true;
+			} else {
+				return false;
+			}
 		}
 
-    };
+	};
 });

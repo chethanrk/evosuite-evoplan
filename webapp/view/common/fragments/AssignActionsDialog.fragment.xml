@@ -23,7 +23,7 @@
                     useExportToExcel="false"
                     beforeRebindTable="onBeforeRebind"
                     initiallyVisibleFields="Effort,DateFrom,DateTo,PERSON_NUMBER,FIRSTNAME,LASTNAME"
-                    requestAtLeastFields="Guid,DemandGuid">
+                    requestAtLeastFields="Guid,DemandGuid,Demand">
                 <!-- layout data used to make the table growing but the filter bar fixed -->
                 <smartTable:layoutData>
                     <FlexItemData growFactor="1" />
@@ -31,36 +31,7 @@
                 <Table mode="MultiSelect"
                        growing="true"
                        selectionChange="onSelectionChange">
-                	<columns>
-								<Column hAlign="Left" visible="{/#Demand/ORDERID/@sap:visible}">
-									<customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "Demand/ORDERID", "leadingProperty": "Demand/ORDERID"}' />
-								</customData>
-										<Text text="{/#Demand/ORDERID/@sap:label}"/>
-								</Column>
-								<Column hAlign="Left" visible="{/#Demand/Status/@sap:visible}">
-									<customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "Demand/Status", "leadingProperty": "Demand/Status"}' />
-								</customData>
-										<Text text="{/#Demand/Status/@sap:label}"/>
-								</Column>
-								<Column hAlign="Left" visible="{/#Demand/DemandDesc/@sap:visible}">
-							<customData>
-								<core:CustomData key="p13nData" value='\{"columnKey": "Demand/DemandDesc", "columnIndex":"9", "leadingProperty": "Demand/DemandDesc"}' />
-							</customData>
-							<Text text="{/#Demand/DemandDesc/@sap:label}"/>
-						</Column>
-							</columns>
-                	<items>
-                		<ColumnListItem>
-                			<cells>
-                				<Text text="{Demand/ORDERID}" />
-                				<Text text="{Demand/Status}" />
-                				<Text text="{Demand/DemandDesc}" />
-                			</cells>
-                		</ColumnListItem>
-                		
-                	</items>
+                	
                 </Table>
             </smartTable:SmartTable>
 

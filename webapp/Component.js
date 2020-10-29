@@ -114,6 +114,7 @@ sap.ui.define([
 					busy: false,
 					filters: [],
 					selectedDemands: [],
+					selectedDemandsFilters: [],
 					routeData: [],
 					checkedDemands: []
 				}

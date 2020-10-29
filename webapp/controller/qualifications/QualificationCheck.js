@@ -1,8 +1,9 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentActionsController",
 	"com/evorait/evoplan/model/formatter",
-	"sap/ui/core/Fragment"
-], function (BaseController, formatter, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/m/MessageToast"
+], function (BaseController, formatter, Fragment, MessageToast) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.qualifications.QualificationCheck", {
@@ -53,6 +54,9 @@ sap.ui.define([
 			this.oView.addDependent(oDialog);
 			// open dialog
 			oDialog.open();
+			if(mParameters.bFromGantt){
+				this._component.getModel("viewModel").setProperty("/ganttSettings/busy", false);
+			}
 
 		},
 
@@ -81,24 +85,49 @@ sap.ui.define([
 				oViewModel = oTable.getModel("viewModel"),
 				aListItems = oViewModel.getProperty("/QualificationMatchList/QualificationData"),
 				aSourcePaths = oViewModel.getProperty("/QualificationMatchList/SourcePaths"),
+				oContext = oViewModel.getProperty("/QualificationMatchList/Contexts"),
 				targetObj = oViewModel.getProperty("/QualificationMatchList/TargetObject"),
+				sAssignPath = oViewModel.getProperty("/QualificationMatchList/AssignPath"),
 				mParameters = oViewModel.getProperty("/QualificationMatchList/mParameters"),
 				oParams = oViewModel.getProperty("/QualificationMatchList/oParams"),
 				oTargetDate = oViewModel.getProperty("/QualificationMatchList/targetDate"),
 				oNewEndDate = oViewModel.getProperty("/QualificationMatchList/newEndDate"),
 				aGuids = oViewModel.getProperty("/QualificationMatchList/aGuids"),
+				sSourceMethod = oViewModel.getProperty("/QualificationMatchList/SourceMethod"),
 				aSelectedSourcePaths = [],
 				aSelectedGuids = [];
+
+			//Check for no Items selected to Proceed
+			if (!oTable.getSelectedItems().length) {
+				MessageToast.show(this.getResourceBundle().getText("xmsg.msgItemSelect"));
+				return;
+			}
+
 			if (aSourcePaths) {
 				aSelectedSourcePaths = this.getSelectedSources(oTable, aSourcePaths, aListItems);
 			} else {
 				aSelectedGuids = this.getSelectedDemands(oTable, aGuids, aListItems);
 			}
-			if (!oParams) {
-				oParams = this.setDateTimeParams([], targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime, oTargetDate,
-					oNewEndDate);
+			//based on the opertion different method calls
+			switch (sSourceMethod) {
+			case "assignedDemands":
+				this.proceedToServiceCallAssignDemands(aSelectedSourcePaths, targetObj, mParameters, oParams);
+				break;
+			case "bulkReAssignment":
+				aSelectedSourcePaths = this.getSelectedContexts(oTable, oContext, aListItems);
+				this.bulkReAssignmentFinalCall(sAssignPath, aSelectedSourcePaths, mParameters);
+				break;
+			case "UpdateAssignment":
+				this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
+				break;
+			default: //Case for update Assignment from Gantt 
+				if (!oParams) {
+					oParams = this.setDateTimeParams([], targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime, oTargetDate,
+						oNewEndDate);
+				}
+				this.proceedToServiceCallAssignDemands(aSelectedSourcePaths, targetObj, mParameters, oParams, aSelectedGuids);
 			}
-			this.proceedToServiceCallAssignDemands(aSelectedSourcePaths, targetObj, mParameters, oParams, aSelectedGuids);
+
 			this.onCloseDialog();
 
 		},
@@ -113,7 +142,7 @@ sap.ui.define([
 				aListItems = oViewModel.getProperty("/QualificationMatchList/QualificationData"),
 				oSelectedPath = oEvent.getParameter("listItem").getBindingContextPath(),
 				bIsSelected = oEvent.getParameter("listItem").getSelected(),
-				vSelectedDemand = oViewModel.getProperty(oSelectedPath).DemandGuid;
+				vSelectedDemand = oViewModel.getProperty(oSelectedPath)?oViewModel.getProperty(oSelectedPath).DemandGuid:null;
 
 			for (var i = 0; i < aListItems.length; i++) {
 				if (aListItems[i].DemandGuid === vSelectedDemand) {
@@ -144,6 +173,27 @@ sap.ui.define([
 				});
 			}
 			return aSelectedSourcePaths;
+		},
+		/**
+		 * Return the Selected Assignment object 
+		 * @param oEvent
+		 */
+		getSelectedContexts: function (oTable, aSourceContexts, aListItems) {
+			var aSelectedGuids = [],
+				aSelectedContexts = [];
+			if (oTable.isAllSelectableSelected()) {
+				aSelectedContexts = aSourceContexts;
+			} else {
+				for (var i = 0; i < aListItems.length; i++) {
+					if (aListItems[i].IsSelected && !aSelectedGuids.includes(aListItems[i].DemandGuid)) {
+						aSelectedGuids.push(aListItems[i].DemandGuid);
+					}
+				}
+				aSelectedContexts = aSourceContexts.filter(function (e) {
+					return aSelectedGuids.includes(this.getModel().getProperty(e.getPath() + "/Demand/Guid"));
+				});
+			}
+			return aSelectedContexts;
 		},
 
 		/**
