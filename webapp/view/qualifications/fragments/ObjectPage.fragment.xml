@@ -4,7 +4,8 @@
 		editHeaderButtonPress="handleEditBtnPress">
 		<headerTitle>
 			<ObjectPageHeader class="sapUiNoContentPadding" objectImageURI="sap-icon://menu" objectImageShape="Circle" objectTitle="{GroupDescription}"
-				objectSubtitle="{ResourceDescription}" id="ObjectPageLayoutHeaderTitle"></ObjectPageHeader>
+				objectSubtitle="{ parts:['ResourceDescription','PersonNumber']
+				formatter: '.formatter.formartResourcePNo'}" id="ObjectPageLayoutHeaderTitle"></ObjectPageHeader>
 		</headerTitle>
 		<sections>
 			<ObjectPageSection id="Idqualifications" title="{i18n>xtit.qualifications}">

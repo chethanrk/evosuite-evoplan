@@ -40,7 +40,14 @@
 															colorBorder="rgb(255,255,255)" linewidth="3" routetype="Geodesic" click="onClickRoute" contextMenu="onContextMenuRoute"/>
 													</vbm:items>
 												</vbm:Routes>
-												<vbm:Spots customProperties="{= ['Status']}" items="{/DemandSet}" select="onSelect" deselect="onDeselect">
+												<vbm:Spots customProperties="{= ['Status']}" 
+												items="{
+														path:'/DemandSet',
+														parameters:{
+															batchGroupId:'mapdemands'
+														}
+												}" 
+												select="onSelect" deselect="onDeselect">
 													<vbm:items>
 														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0)-->
 														<vbm:Spot selectColor="{user>/MAP_SELECTED_PIN_COLOUR}" contentColor="{MAP_MARKER_COLOUR}" hotScale="1.1;1.1;1.1"
