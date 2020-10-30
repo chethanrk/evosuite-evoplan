@@ -113,10 +113,11 @@ sap.ui.define([
 				//Calling Funtion Import to Check Qualification
 				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData, response) {
 					// Condition to Check if Qualification match service returns any result or Empty
+				var targetObj = this.getModel().getProperty(oAssignmentData.NewAssignPath);
 					if (oData.results && oData.results.length) {
 						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog
 						this.getModel("viewModel").setProperty("/QualificationMatchList", {
-							// "TargetObject": targetObj,//todo Pranav- get resource path from parameter and get object from model
+							"TargetObject": targetObj,
 							"QualificationData": oData.results,
 							"mParameters": mParameters,
 							"oParams": oParams,
@@ -171,8 +172,9 @@ sap.ui.define([
 					// Condition to Check if Qualification match service returns any result or Empty
 					if (oData.results && oData.results.length) {
 						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog
+						var targetObj = this.getModel().getProperty(sAssignPath);
 						this.getModel("viewModel").setProperty("/QualificationMatchList", {
-							// "TargetObject": targetObj,//todo Pranav- get resource path from parameter and get object from model
+							"TargetObject": targetObj,
 							"AssignPath": sAssignPath,
 							"Contexts": aContexts,
 							"QualificationData": oData.results,

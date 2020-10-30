@@ -594,11 +594,15 @@ sap.ui.define([
 					this._oPopover = oPopover;
 					this.getView().addDependent(this._oPopover);
 					oPopover.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-					this._oPopover.openBy(oButton);
+					this._oPopover.open(oButton);
 				}.bind(this));
 			} else {
-				this._oPopover.openBy(oButton);
+				this._oPopover.open(oButton);
 			}
+		},
+		onCloseDialog: function()
+		{
+			this._oPopover.close();
 		},
 		/**
 		 * Map Clustering
