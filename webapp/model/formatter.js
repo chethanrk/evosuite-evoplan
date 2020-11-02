@@ -540,14 +540,6 @@ sap.ui.define([
 				return "No";
 			}
 		},
-		getQualificationDialogTitle: function (sTitle) {
-			if (sTitle === "W") {
-				return "Warning";
-			} else {
-				return "Error";
-			}
-
-		},
 		getQualificationBtnVisibilty: function (bType) {
 			if (bType === "W") {
 				return true;
