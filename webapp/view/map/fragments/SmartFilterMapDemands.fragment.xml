@@ -1,7 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar">
 	<smartFilterBar:SmartFilterBar id="listReportFilter" entitySet="{viewModel>/subTableSet}" persistencyKey="{viewModel>/persistencyKeyTable}"
 		enableBasicSearch="false" useToolbar="true" liveMode="true" considerSelectionVariants="true" showRestoreButton="true" showRestoreOnFB="true"
-		showClearButton="true" showClearOnFB="true" filterBarExpanded="false" filterChange="onDemandFilterChange" reset="onReset" clear="onClear">
+		showClearButton="true" showClearOnFB="true" filterBarExpanded="false" filterChange="onDemandFilterChange" reset="onReset" clear="onClear" initialized="onInitialized">
 		<smartFilterBar:controlConfiguration>
 			<smartFilterBar:ControlConfiguration key="Status" preventInitialDataFetchInValueHelpDialog="false"></smartFilterBar:ControlConfiguration>
 			<smartFilterBar:ControlConfiguration key="EffortUnit" preventInitialDataFetchInValueHelpDialog="false"></smartFilterBar:ControlConfiguration>

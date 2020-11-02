@@ -554,7 +554,16 @@ sap.ui.define([
 			} else {
 				return false;
 			}
-		}
+		},
+		/**
+		 * Person number is only visible if its exists 
+		 */
+		 formartResourcePNo : function(sName, iNumber){
+		 	if(sName && iNumber !== 0){
+		 		return sName +" - "+ iNumber;
+		 	}
+		 	return "";
+		 }
 
 	};
 });

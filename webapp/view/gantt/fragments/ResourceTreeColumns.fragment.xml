@@ -10,7 +10,8 @@
                                   titleStyle="{ path: 'NodeType', formatter: '.formatter.formatResourceTitle' }"
                                   icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'},{path: 'ResourceIcon'} ], formatter: '.formatter.getResourceIcon' }"
                                   isWorkTimeEnabled="false"
-                                  resourceIconPress="onResourceIconPress"/>
+                                  resourceIconPress="onResourceIconPress"
+                                  enableQualification="{user>/ENABLE_QUALIFICATION}"/>
         </table:template>
     </table:Column>
 </core:FragmentDefinition>

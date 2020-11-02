@@ -41,7 +41,8 @@ sap.ui.define([
 			};
 			this.oVBI = this.getView().byId("idGeoMap");
 		},
-
+		
+		//TODO comment
 		getGroupHeader: function (oGroup) {
 			return new GroupHeaderListItem({
 				title: oGroup.key,
@@ -182,6 +183,17 @@ sap.ui.define([
 			}.bind(this));
 		},
 		/**
+		 * On After variant load 
+		 */
+		onInitialized: function (oEvent){
+			var oSmartFilter = this.byId("listReportFilter"),
+				aFilter = oSmartFilter.getFilters(),
+				sVariant = oSmartFilter.getSmartVariant().getCurrentVariantId();
+				if(sVariant !== "*standard*"){
+					this.applyFiltersToMap(aFilter);
+				}
+		},
+		/**
 		 * Clearing the selected demands the Reseting the selection
 		 *
 		 * @author Rahul
@@ -190,7 +202,7 @@ sap.ui.define([
 		onReset: function (oEvent) {
 			var oViewModel = this.getModel("viewModel");
 			this._resetMapSelection();
-			this.unCheckAllDemands();
+			// this.unCheckAllDemands();
 			oViewModel.setProperty("/mapSettings/selectedDemandsFilters", []);
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
 			oViewModel.setProperty("/mapSettings/routeData", []);
@@ -225,7 +237,7 @@ sap.ui.define([
 				});
 				this.getModel().resetChanges(aDemandGuidEntity);
 			}
-			this.unCheckAllDemands();
+			// this.unCheckAllDemands();
 		},
 		/**
 		 * Set the map selection in the Model
@@ -402,8 +414,9 @@ sap.ui.define([
 			} else if (oEvent.getParameter("rowIndex") === -1) {
 				this.unCheckAllDemands();
 			} else {
-				if (!this._isDemandDraggable)
+				if (!this._isDemandDraggable){
 					this.updateMapDemandSelection(oEvent);
+				}
 			}
 		},
 
@@ -443,7 +456,9 @@ sap.ui.define([
 		onDemandFilterChange: function (oEvent) {
 			var aFilters = oEvent.getSource().getFilters();
 			this.getModel("viewModel").setProperty("/mapSettings/filters", aFilters);
-			this.applyFiltersToMap();
+			this.setMapBusy(true);
+			this.onReset();
+			setTimeout(this.applyFiltersToMap.bind(this), 0);
 		},
 		/**
 		 * Apply Filters into Map bindings.
@@ -451,10 +466,10 @@ sap.ui.define([
 		 * @return
 		 * @param oEvent
 		 */
-		applyFiltersToMap: function () {
+		applyFiltersToMap: function (aFilters) {
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items"),
-				oFilters = this.getModel("viewModel").getProperty("/mapSettings/filters");
+				oFilters = aFilters ? aFilters : this.getModel("viewModel").getProperty("/mapSettings/filters");
 			this.setMapBusy(true);
 			if (oFilters && oFilters.length) {
 				oBinding.filter(oFilters);
@@ -649,7 +664,7 @@ sap.ui.define([
 		 * @Author Pranav
 		 */
 		_mapDemandTableFilter: function (oFilters) {
-			this._oDataTable.getBinding("rows").filter(oFilters, "Application");
+			// this._oDataTable.getBinding("rows").filter(oFilters, "Application");
 			// this._refreshDemandTable();
 			this.byId("draggableList").rebindTable();
 			this.getModel("viewModel").setProperty("/mapSettings/routeData", []);
