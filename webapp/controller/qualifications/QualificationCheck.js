@@ -54,7 +54,7 @@ sap.ui.define([
 			this.oView.addDependent(oDialog);
 			// open dialog
 			oDialog.open();
-			if(mParameters.bFromGantt){
+			if(mParameters && mParameters.bFromGantt){
 				this._component.getModel("viewModel").setProperty("/ganttSettings/busy", false);
 			}
 
