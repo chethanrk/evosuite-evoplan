@@ -41,7 +41,7 @@ sap.ui.define([
 			};
 			this.oVBI = this.getView().byId("idGeoMap");
 		},
-		
+
 		//TODO comment
 		getGroupHeader: function (oGroup) {
 			return new GroupHeaderListItem({
@@ -68,10 +68,6 @@ sap.ui.define([
 				aSelectedDemands.push(sPath);
 			}
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
-			// var aFilters = oViewModel.getProperty("/mapSettings/filters");
-			// aFilters.push(this.getSelectedDemandFilters());
-			var aFilters = this.getSelectedDemandFilters();
-			oViewModel.setProperty("/mapSettings/selectedDemandsFilters", aFilters);
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			this._oDraggableTable.rebindTable();
 		},
@@ -93,8 +89,6 @@ sap.ui.define([
 				aSelectedDemands.splice(aSelectedDemands.indexOf(sPath), 1);
 			}
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
-			var aFilters = this.getSelectedDemandFilters();
-			oViewModel.setProperty("/mapSettings/selectedDemandsFilters", aFilters);
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			this._oDraggableTable.rebindTable();
 		},
@@ -138,7 +132,6 @@ sap.ui.define([
 			for (var i in aSelectedDemands) {
 				aFilters.push(new Filter("Guid", FilterOperator.EQ, aSelectedDemands[i].split("'")[1]));
 			}
-			// return aFilters;
 			return new Filter({
 				filters: aFilters,
 				and: false
@@ -153,7 +146,7 @@ sap.ui.define([
 		 */
 		onBeforeRebindTable: function (oEvent) {
 			var aFilters = this.byId("listReportFilter").getFilters(),
-				aDemandFilters = this.getModel("viewModel").getProperty("/mapSettings/selectedDemandsFilters");
+				aDemandFilters = this.getSelectedDemandFilters();
 			if (aDemandFilters && aDemandFilters.aFilters)
 				aFilters.push(aDemandFilters);
 			//setTimeOut has been added to make rebindTable() work
@@ -185,13 +178,13 @@ sap.ui.define([
 		/**
 		 * On After variant load 
 		 */
-		onInitialized: function (oEvent){
+		onInitialized: function (oEvent) {
 			var oSmartFilter = this.byId("listReportFilter"),
 				aFilter = oSmartFilter.getFilters(),
 				sVariant = oSmartFilter.getSmartVariant().getCurrentVariantId();
-				if(sVariant !== "*standard*"){
-					this.applyFiltersToMap(aFilter);
-				}
+			if (sVariant !== "*standard*") {
+				this.applyFiltersToMap(aFilter);
+			}
 		},
 		/**
 		 * Clearing the selected demands the Reseting the selection
@@ -202,8 +195,6 @@ sap.ui.define([
 		onReset: function (oEvent) {
 			var oViewModel = this.getModel("viewModel");
 			this._resetMapSelection();
-			// this.unCheckAllDemands();
-			oViewModel.setProperty("/mapSettings/selectedDemandsFilters", []);
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			this.onResetLegendSelection();
@@ -216,7 +207,6 @@ sap.ui.define([
 		 */
 		onClear: function () {
 			var oViewModel = this.getModel("viewModel");
-			oViewModel.setProperty("/mapSettings/selectedDemandsFilters", []);
 			this._resetMapSelection();
 			this.onResetLegendSelection();
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
@@ -235,9 +225,9 @@ sap.ui.define([
 				(aSelectedDemands).forEach(function (entry) {
 					aDemandGuidEntity.push("/DemandSet('" + entry.split("'")[1] + "')");
 				});
+				oViewModel.setProperty("/mapSettings/selectedDemands", []);
 				this.getModel().resetChanges(aDemandGuidEntity);
 			}
-			// this.unCheckAllDemands();
 		},
 		/**
 		 * Set the map selection in the Model
@@ -414,7 +404,7 @@ sap.ui.define([
 			} else if (oEvent.getParameter("rowIndex") === -1) {
 				this.unCheckAllDemands();
 			} else {
-				if (!this._isDemandDraggable){
+				if (!this._isDemandDraggable) {
 					this.updateMapDemandSelection(oEvent);
 				}
 			}
@@ -479,7 +469,7 @@ sap.ui.define([
 			}
 			this._mapDemandTableFilter(oFilters);
 		},
-		
+
 		/**
 		 * Select All spots in map from Demand Table.
 		 * @Author Rakesh Sahu
@@ -615,8 +605,7 @@ sap.ui.define([
 				this._oPopover.open(oButton);
 			}
 		},
-		onCloseDialog: function()
-		{
+		onCloseDialog: function () {
 			this._oPopover.close();
 		},
 		/**
@@ -674,11 +663,10 @@ sap.ui.define([
 		 */
 		_refreshRoute: function () {
 			var oViewModel = this.getModel("viewModel");
-			oViewModel.setProperty("/mapSettings/selectedDemandsFilters", []);
 			//Code has been commented to keep the status of Map sport as it is
-		    //this._resetMapSelection();
-		    //this.unCheckAllDemands();
-		    this.byId("draggableList").rebindTable();
+			//this._resetMapSelection();
+			//this.unCheckAllDemands();
+			this.byId("draggableList").rebindTable();
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
 		},
 		onExit: function () {
