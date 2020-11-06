@@ -192,10 +192,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onDragEnd: function (oEvent) {
-			var oDroppedControl = oEvent.getParameter("dragSession").getDropControl();
-			if (!oDroppedControl) {
-				this._deselectAll();
-			}
+			this._deselectAll();
 		},
 		/**
 		 * Refresh's the demand table
@@ -211,7 +208,7 @@ sap.ui.define([
 			}
 			this._bFirstTime = false;
 		},
-		
+
 		/**
 		 * Opens the popup containing button to nav to Evo Order App
 		 * @param oEvent
@@ -221,7 +218,7 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath();
 			this.selectedDemandData = oModel.getProperty(sPath);
-			this.getOwnerComponent().NavigationActionSheet.open(this.getView(),oEvent.getSource().getParent(),this.selectedDemandData);	
+			this.getOwnerComponent().NavigationActionSheet.open(this.getView(), oEvent.getSource().getParent(), this.selectedDemandData);
 		},
 		/**
 		 *	Navigates to evoOrder detail page with static url.
@@ -230,130 +227,130 @@ sap.ui.define([
 			var sOrderId = oEvent.getSource().getText();
 			this.openEvoOrder(sOrderId);
 		},
-        /**
+		/**
 		 * Event will triggered when the filter is initialized
-         * @param oEvent
-         */
-        onInitialized: function (oEvent) {
-            this._setDefaultFilters(oEvent.getSource());
-        },
-        /**
+		 * @param oEvent
+		 */
+		onInitialized: function (oEvent) {
+			this._setDefaultFilters(oEvent.getSource());
+		},
+		/**
 		 * Fetch filters from component data and set the initial filters to smart filterbar
-         * @param oFilterBar
-         * @private
-         */
-        _setDefaultFilters: function (oFilterBar) {
-            var	oComponent = this.getOwnerComponent(),
-                oStartupData = oComponent.getComponentData().startupParameters,
-                oServiceMetadata = this.getModel().getServiceMetadata(),
-                oSchema = oServiceMetadata.dataServices.schema[0],
-                aEntityTypes = oSchema.entityType,
-                oAnnotations = this.getModel().getServiceAnnotations(),
-                oFilterData = {},
-                bValueHelp = false,
-                bTypeDate = false;
-            if (!oStartupData) {
-                return;
-            }
-            var aKeys = Object.keys(oStartupData);
-            for (var i in aKeys) {
-                var sKey = aKeys[i];
-                oFilterData[aKeys[i]] = {
-                    items: [],
-                    ranges: [],
-                    value: ""
-                };
+		 * @param oFilterBar
+		 * @private
+		 */
+		_setDefaultFilters: function (oFilterBar) {
+			var oComponent = this.getOwnerComponent(),
+				oStartupData = oComponent.getComponentData().startupParameters,
+				oServiceMetadata = this.getModel().getServiceMetadata(),
+				oSchema = oServiceMetadata.dataServices.schema[0],
+				aEntityTypes = oSchema.entityType,
+				oAnnotations = this.getModel().getServiceAnnotations(),
+				oFilterData = {},
+				bValueHelp = false,
+				bTypeDate = false;
+			if (!oStartupData) {
+				return;
+			}
+			var aKeys = Object.keys(oStartupData);
+			for (var i in aKeys) {
+				var sKey = aKeys[i];
+				oFilterData[aKeys[i]] = {
+					items: [],
+					ranges: [],
+					value: ""
+				};
 
-                bValueHelp = this._checkValueHelp(sKey, oAnnotations);
-                bTypeDate = this._checkType(sKey, aEntityTypes);
-                if (bValueHelp) {
-                    var aValues = [];
-                    for (var j in oStartupData[sKey]) {
-                        aValues.push({
-                            key: oStartupData[sKey][j],
-                            text: oStartupData[sKey][j]
-                        });
-                    }
-                    oFilterData[aKeys[i]].items = aValues;
-                } else if (bTypeDate) {
-                    var aRanges = [];
-                    for (var k in oStartupData[sKey]) {
-                        aRanges.push({
-                            exclude: false,
-                            keyField: sKey,
-                            operation: "BT",
-                            value1: oStartupData[sKey][k],
-                            value2: oStartupData[sKey][k]
-                        });
-                    }
-                    oFilterData[aKeys[i]].ranges = aRanges;
-                } else {
-                    var aTexts = [];
-                    for (var l=0; l<oStartupData[sKey].length-1; l++) {
-                        aTexts.push({
-                            exclude: false,
-                            keyField: sKey,
-                            operation: "EQ",
-                            tokenText: "="+oStartupData[sKey][l],
-                            value1: oStartupData[sKey][l]
-                        });
-                    }
-                    oFilterData[aKeys[i]].ranges = aTexts;
-                    oFilterData[aKeys[i]].value = oStartupData[sKey][oStartupData[sKey].length - 1];
-                }
-            }
-            oFilterBar.setFilterData(oFilterData);
-        },
-        /**
-         * @Author Rahul
-         * Checks for the given key is there a value help or not
+				bValueHelp = this._checkValueHelp(sKey, oAnnotations);
+				bTypeDate = this._checkType(sKey, aEntityTypes);
+				if (bValueHelp) {
+					var aValues = [];
+					for (var j in oStartupData[sKey]) {
+						aValues.push({
+							key: oStartupData[sKey][j],
+							text: oStartupData[sKey][j]
+						});
+					}
+					oFilterData[aKeys[i]].items = aValues;
+				} else if (bTypeDate) {
+					var aRanges = [];
+					for (var k in oStartupData[sKey]) {
+						aRanges.push({
+							exclude: false,
+							keyField: sKey,
+							operation: "BT",
+							value1: oStartupData[sKey][k],
+							value2: oStartupData[sKey][k]
+						});
+					}
+					oFilterData[aKeys[i]].ranges = aRanges;
+				} else {
+					var aTexts = [];
+					for (var l = 0; l < oStartupData[sKey].length - 1; l++) {
+						aTexts.push({
+							exclude: false,
+							keyField: sKey,
+							operation: "EQ",
+							tokenText: "=" + oStartupData[sKey][l],
+							value1: oStartupData[sKey][l]
+						});
+					}
+					oFilterData[aKeys[i]].ranges = aTexts;
+					oFilterData[aKeys[i]].value = oStartupData[sKey][oStartupData[sKey].length - 1];
+				}
+			}
+			oFilterBar.setFilterData(oFilterData);
+		},
+		/**
+		 * @Author Rahul
+		 * Checks for the given key is there a value help or not
 		 * Basically checking for ValueList annotaion
-         */
-        _checkValueHelp: function (sKey, oAnnotations) {
-            var oPropAnnotations = oAnnotations.propertyAnnotations,
-                akeys = Object.keys(oPropAnnotations),
-                sEntity = "com.evorait.evoplan.Demand";
-            for (var i in akeys) {
-                if (akeys[i] === sEntity) {
-                    if (oPropAnnotations[akeys[i]][sKey] && oPropAnnotations[akeys[i]][sKey]["com.sap.vocabularies.Common.v1.ValueList"]) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            }
-            return false;
-        },
-        /**
+		 */
+		_checkValueHelp: function (sKey, oAnnotations) {
+			var oPropAnnotations = oAnnotations.propertyAnnotations,
+				akeys = Object.keys(oPropAnnotations),
+				sEntity = "com.evorait.evoplan.Demand";
+			for (var i in akeys) {
+				if (akeys[i] === sEntity) {
+					if (oPropAnnotations[akeys[i]][sKey] && oPropAnnotations[akeys[i]][sKey]["com.sap.vocabularies.Common.v1.ValueList"]) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+			}
+			return false;
+		},
+		/**
 		 * Checks the given key property type as Date or not
-         * @param sKey
-         * @param aEntityTypes
-         * @return {boolean}
-         * @private
-         */
-        _checkType: function (sKey, aEntityTypes) {
-            var sEntity = "Demand";
-            for (var i in aEntityTypes) {
-                if (aEntityTypes[i].name === sEntity) {
-                    for (var j in aEntityTypes[i].property) {
-                        if (aEntityTypes[i].property[j].name === sKey && (aEntityTypes[i].property[j].name.type === "Edm.DateTime" || aEntityTypes[i].property[
-                                j].name.type === "Edm.DateTimeOffset")) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        },
-          onDemandQualificationIconPress : function(oEvent){
-        	var oRow = oEvent.getSource().getParent(),
-        		oContext = oRow.getBindingContext(),
-        		sPath = oContext.getPath(),
-        		oModel = oContext.getModel(),
-        		oResourceNode = oModel.getProperty(sPath);
-        	var sDemandGuid = oResourceNode.Guid;
-     	this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
-        
-        }
+		 * @param sKey
+		 * @param aEntityTypes
+		 * @return {boolean}
+		 * @private
+		 */
+		_checkType: function (sKey, aEntityTypes) {
+			var sEntity = "Demand";
+			for (var i in aEntityTypes) {
+				if (aEntityTypes[i].name === sEntity) {
+					for (var j in aEntityTypes[i].property) {
+						if (aEntityTypes[i].property[j].name === sKey && (aEntityTypes[i].property[j].name.type === "Edm.DateTime" || aEntityTypes[i].property[
+								j].name.type === "Edm.DateTimeOffset")) {
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		},
+		onDemandQualificationIconPress: function (oEvent) {
+			var oRow = oEvent.getSource().getParent(),
+				oContext = oRow.getBindingContext(),
+				sPath = oContext.getPath(),
+				oModel = oContext.getModel(),
+				oResourceNode = oModel.getProperty(sPath);
+			var sDemandGuid = oResourceNode.Guid;
+			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
+
+		}
 	});
 });

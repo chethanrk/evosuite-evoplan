@@ -24,13 +24,16 @@ sap.ui.define([
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this),
 				oAppModel = this.getModel("appView");
-		
-			this._mParameters = {bFromGantt:true};
 
-				
-				if(oAppModel.getProperty("/currentRoute") === "splitDemands"){
-					this._mParameters ={bFromDemandSplit:true};
-				}
+			this._mParameters = {
+				bFromGantt: true
+			};
+
+			if (oAppModel.getProperty("/currentRoute") === "splitDemands") {
+				this._mParameters = {
+					bFromDemandSplit: true
+				};
+			}
 			this._oEventBus = sap.ui.getCore().getEventBus();
 
 			this._oEventBus.subscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
@@ -56,12 +59,12 @@ sap.ui.define([
 			var oModel = oContext.getModel();
 			var oData = oModel.getProperty(sPath);
 			var oUserDetail = this.getModel("appView");
-			
-			if(oUserDetail.getProperty("/currentRoute") === "splitDemands"){
+
+			if (oUserDetail.getProperty("/currentRoute") === "splitDemands") {
 				oRouter.navTo("splitDemandDetails", {
 					guid: oData.Guid
 				});
-			}else{
+			} else {
 				oRouter.navTo("ganttDemandDetails", {
 					guid: oData.Guid
 				});
@@ -72,11 +75,11 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onDragStart: function (oEvent) {
-				var oDragSession = oEvent.getParameter("dragSession"),
+			var oDragSession = oEvent.getParameter("dragSession"),
 				oDraggedControl = oDragSession.getDragControl();
 
 			var aIndices = this._oDataTable.getSelectedIndices(),
-				oSelectedPaths, aPathsData,aSelDemandGuid = [];
+				oSelectedPaths, aPathsData, aSelDemandGuid = [];
 
 			oDragSession.setTextData("Hi I am dragging");
 			//get all selected rows when checkboxes in table selected
@@ -88,21 +91,19 @@ sap.ui.define([
 				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, [oDraggedControl.getIndex()], true);
 				aPathsData = oSelectedPaths.aPathsData;
 			}
-			
-			aPathsData.forEach(function(item) {
-					aSelDemandGuid.push(item.sPath);
-						});
-						
+
+			aPathsData.forEach(function (item) {
+				aSelDemandGuid.push(item.sPath);
+			});
+
 			this.getModel("viewModel").setProperty("/gantDragSession", aSelDemandGuid);
 			localStorage.setItem("Evo-Dmnd-guid", aSelDemandGuid);
-			
+
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 				oEvent.preventDefault();
 			}
-			
-			
-			
+
 			/*var oDragSession = oEvent.getParameter("dragSession"),
 				oDraggedControl = oDragSession.getDragControl(),
 				oContext = oDraggedControl.getBindingContext(),
@@ -114,6 +115,21 @@ sap.ui.define([
 				this._showAssignErrorDialog([oDemand.DemandDesc]);
 				oEvent.preventDefault();
 			}*/
+		},
+		/**
+		 * On Drag end check for dropped control, If dropped control not found
+		 * then make reset the selection
+		 * @param oEvent
+		 */
+		onDragEnd: function (oEvent) {
+			this._deselectAll();
+		},
+		/**
+		 * deselect all checkboxes in table
+		 * @private
+		 */
+		_deselectAll: function () {
+			this._oDataTable.clearSelection();
 		},
 		/**
 		 * on press assign button in footer
@@ -129,7 +145,7 @@ sap.ui.define([
 
 			if (oSelectedPaths.aPathsData.length > 0) {
 				// TODO comment
-			localStorage.setItem("Evo-Action-page","splitDemands");
+				localStorage.setItem("Evo-Action-page", "splitDemands");
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
 			}
 			if (oSelectedPaths.aNonAssignable.length > 0) {
@@ -147,7 +163,7 @@ sap.ui.define([
 
 			if (this._aSelectedRowsIdx.length > 0) {
 				// TODO comment
-			localStorage.setItem("Evo-Action-page","splitDemands");
+				localStorage.setItem("Evo-Action-page", "splitDemands");
 				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData, this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("ymsg.selectMinItem");
@@ -187,7 +203,7 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath();
 			this.selectedDemandData = oModel.getProperty(sPath);
-			this.getOwnerComponent().NavigationActionSheet.open(this.getView(),oEvent.getSource().getParent(),this.selectedDemandData);
+			this.getOwnerComponent().NavigationActionSheet.open(this.getView(), oEvent.getSource().getParent(), this.selectedDemandData);
 		},
 		/**
 		 *	Navigates to evoOrder detail page with static url. 
@@ -196,7 +212,7 @@ sap.ui.define([
 			var sOrderId = oEvent.getSource().getText();
 			this.openEvoOrder(sOrderId);
 		},
-		
+
 		onClickSplit: function (oEvent) {
 			window.open("#Gantt/SplitDemands", "_blank");
 		},

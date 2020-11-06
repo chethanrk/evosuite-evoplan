@@ -73,6 +73,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onCloseDialog: function (oEvent) {
+			this._component.getModel("viewModel").setProperty("/ganttSettings/busy", false);
 			this._oDialog.close();
 		},
 
