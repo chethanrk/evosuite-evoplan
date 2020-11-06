@@ -319,11 +319,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onDragEnd: function (oEvent) {
-			this._isDemandDraggable = false;
-			var oDroppedControl = oEvent.getParameter("dragSession").getDropControl();
-			if (!oDroppedControl) {
-				this._deselectAll();
-			}
+			this._deselectAll();
 		},
 		/**
 		 *  refresh the whole map view including map and demand table
