@@ -105,6 +105,7 @@ sap.ui.define([
 					}
 				//Parameters to check Qualification
 				oQualificationParameters = {
+					AssignmentGUID: oAssignmentData.AssignmentGuid,
 					DemandMultiGuid: oAssignmentData.DemandGuid,
 					ObjectId: sObjectId,
 					StartTimestamp: oAssignmentData.DateFrom,
