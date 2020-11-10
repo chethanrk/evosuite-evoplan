@@ -216,6 +216,16 @@ sap.ui.define([
 		onClickSplit: function (oEvent) {
 			window.open("#Gantt/SplitDemands", "_blank");
 		},
+		onDemandQualificationIconPress: function (oEvent) {
+			var oRow = oEvent.getSource().getParent(),
+				oContext = oRow.getBindingContext(),
+				sPath = oContext.getPath(),
+				oModel = oContext.getModel(),
+				oResourceNode = oModel.getProperty(sPath);
+			var sDemandGuid = oResourceNode.Guid;
+			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
+
+		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
 		}
