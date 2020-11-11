@@ -156,8 +156,6 @@
 						<def:defs>
 							<pattern:SlashPattern id="unavailability" backgroundColor="white" stroke="#ccc"></pattern:SlashPattern>
 						</def:defs>
-					</def:SvgDefs>
-					<def:SvgDefs>
 						<def:defs>
 							<pattern:SlashPattern id="oncallorovertime" backgroundColor="white" stroke="#FFA500"></pattern:SlashPattern>
 						</def:defs>

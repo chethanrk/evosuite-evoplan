@@ -261,14 +261,14 @@ sap.ui.define([
 					} else {
 						this._showConfirmMessageBox(oResourceModel.getText("ymsg.extendMsg")).then(function (value) {
 							if (value === "NO" && fnCheckValidation) {
-									fnCheckValidation.call(this, aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids, this._mParameters);
-							} else if (value === "YES" && fnCheckValidation) {
 									fnCheckValidation.call(this, aSources, oTarget, oTargetDate, availabilityData.EndtimestampWithstretch, aGuids, this._mParameters);
+							} else if (value === "YES" && fnCheckValidation) {
+									fnCheckValidation.call(this, aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids, this._mParameters);
 							} else if (value === "YES") {
-								Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, availabilityData.EndtimestampWithstretch, aGuids))
+								Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids))
 									.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
 							} else {
-								Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids))
+								Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, availabilityData.EndtimestampWithstretch, aGuids))
 									.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
 							}
 						}.bind(this));
