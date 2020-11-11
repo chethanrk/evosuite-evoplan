@@ -268,7 +268,7 @@ sap.ui.define([
                     properties: {
                         DateFrom: moment().startOf("day").toDate(),
                         DateTo: moment().endOf("day").toDate(),
-                        AvaialabilityTypeGroup: "N",
+                        AvailabilityTypeGroup: "N",
                         AvailType: sAvailType[0],
                         Description:sAvailType[1],
                         ResourceDescription:this._resourceName
