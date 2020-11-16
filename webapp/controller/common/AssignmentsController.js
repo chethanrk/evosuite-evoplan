@@ -115,6 +115,11 @@ sap.ui.define([
 				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData, response) {
 					// Condition to Check if Qualification match service returns any result or Empty
 					var targetObj = this.getModel().getProperty(oAssignmentData.NewAssignPath);
+					if (!targetObj) {
+						targetObj = {
+							Description: oAssignmentData.ResourceDesc
+						};
+					}
 					if (oData.results && oData.results.length) {
 						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog
 						this.getModel("viewModel").setProperty("/QualificationMatchList", {
