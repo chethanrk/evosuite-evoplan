@@ -15,7 +15,7 @@ sap.ui.define([
 				targetObj = this.getModel().getProperty(sTargetPath),
 				bValdiMsgPopupFlag = this.getModel("user").getProperty("/ENABLE_RES_ASGN_VALID_MESG_DEM"); //Condition to check Global configuration for validation Mesg Popup
 
-			if (this.isTargetValid(sTargetPath) || !bValdiMsgPopupFlag) {
+			if ((targetObj.NodeType === "RESOURCE" && targetObj.ResourceGuid === "") || this.isTargetValid(sTargetPath) || !bValdiMsgPopupFlag) {
 				oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
 				this.checkQualificationAssignment(aSourcePaths, targetObj, oParams, mParameters); //Proceed to check the Qualification
 			} else {
