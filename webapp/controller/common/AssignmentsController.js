@@ -100,9 +100,9 @@ sap.ui.define([
 				var oQualificationParameters,
 					oModel = this.getModel(),
 					sObjectId = oParams.ResourceGroupGuid;
-					if(oParams.ResourceGuid){
-					sObjectId = sObjectId + "//" + oParams.ResourceGuid;
-					}
+				if (oParams.ResourceGuid) {
+					sObjectId = oParams.ResourceGuid + "//" + sObjectId;
+				}
 				//Parameters to check Qualification
 				oQualificationParameters = {
 					AssignmentGUID: oAssignmentData.AssignmentGuid,
@@ -114,7 +114,12 @@ sap.ui.define([
 				//Calling Funtion Import to Check Qualification
 				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData, response) {
 					// Condition to Check if Qualification match service returns any result or Empty
-				var targetObj = this.getModel().getProperty(oAssignmentData.NewAssignPath);
+					var targetObj = this.getModel().getProperty(oAssignmentData.NewAssignPath);
+					if (!targetObj) {
+						targetObj = {
+							Description: oAssignmentData.ResourceDesc
+						};
+					}
 					if (oData.results && oData.results.length) {
 						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog
 						this.getModel("viewModel").setProperty("/QualificationMatchList", {
@@ -277,7 +282,7 @@ sap.ui.define([
 			} else {
 				// Proceed to check the Qualification for UpdateAssignment
 				this.checkQualificationUpdate(oData, oParams, mParameters);
-				 //this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
+				//this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
 			}
 		},
 		/**
