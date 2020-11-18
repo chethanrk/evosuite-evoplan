@@ -311,6 +311,7 @@ sap.ui.define([
 			this.byId("idButtonreassign").setEnabled(false);
 			this.byId("idButtonunassign").setEnabled(false);
 			this.byId("idButtonCreUA").setEnabled(false);
+			this.byId("showRoute").setEnabled(false);
 		},
 		/**
 		 * On select of capacitive checkbox the adjusting splitter length

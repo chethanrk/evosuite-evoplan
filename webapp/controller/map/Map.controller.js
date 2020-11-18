@@ -327,6 +327,8 @@ sap.ui.define([
 		_refreshMapView: function (oEvent) {
 			// Code to refresh Map Demand Table
 			if (this._bLoaded) {
+				var oViewModel = this.getModel("viewModel");
+				oViewModel.setProperty("/mapSettings/routeData", []);
 				this._resetMapSelection();
 				setTimeout(function () {
 					this._refreshMapBinding();
