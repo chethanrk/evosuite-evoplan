@@ -204,9 +204,6 @@ sap.ui.define([
 		 * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
 		 */
 		onExit: function () {
-			if (this.getOwnerComponent().planningCalendarDialog) {
-				this.getOwnerComponent().planningCalendarDialog.getDialog().destroy();
-			}
 			this._eventBus.unsubscribe("BaseController", "refreshMapTreeTable", this._triggerRefreshTree, this);
 			this._eventBus.unsubscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
 		},
