@@ -11,7 +11,7 @@ sap.ui.define([
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-	"com/evorait/evoplan/model/formatter",
+	"com/evorait/evoplan/model/formatter"
 ], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText, Constants,
 	RowAction, RowActionItem, formatter) {
 	"use strict";
@@ -102,8 +102,7 @@ sap.ui.define([
 		 * @returns
 		 */
 		showMessage: function (oResponse, fnCallback) {
-			var oData,
-				oResourceBundle = this.getResourceBundle();
+			var oData;
 			if (oResponse && oResponse.headers["sap-message"]) {
 				try {
 					oData = JSON.parse(oResponse.headers["sap-message"]);
@@ -527,7 +526,7 @@ sap.ui.define([
 		_setRowActionTemplate: function (oDataTable, onClickNavigation, openActionSheet) {
 
 			var oTemplate = oDataTable.getRowActionTemplate(),
-				oResourceBundle = this.getModel('i18n').getResourceBundle();
+				oResourceBundle = this.getModel("i18n").getResourceBundle();
 			if (oTemplate) {
 				oTemplate.destroy();
 				oTemplate = null;
@@ -572,18 +571,18 @@ sap.ui.define([
 				return;
 			} else {
 				sAdditionInfo = oAppInfo.Value1;
-				sUri = (sAdditionInfo).replace("\\place_h1\\", sOrderId);
+				sUri = sAdditionInfo.replace("\\place_h1\\", sOrderId);
 				window.open(sUri, "_blank");
 			}
 		},
 		navToApp: function (sSemanticObject, sAction, sParameter, sOrderId) {
 			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
-			var sHash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
+			var sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
 				target: {
 					semanticObject: sSemanticObject,
 					action: sAction
 				}
-			})) || ""; // generate the Hash to display a Notification details app
+			}) || ""; // generate the Hash to display a Notification details app
 
 			oCrossAppNavigator.toExternal({
 				target: {

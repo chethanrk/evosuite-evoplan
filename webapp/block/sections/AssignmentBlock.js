@@ -3,7 +3,7 @@ sap.ui.define(["sap/uxap/BlockBase"], function (BlockBase) {
 	var myBlock = BlockBase.extend("com.evorait.evoplan.block.sections.AssignmentBlock", {
 		metadata: {
 			events: {
-				"onRowClick": {}
+				onRowClick: {}
 			}
 		}
 	});

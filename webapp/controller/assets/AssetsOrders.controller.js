@@ -290,7 +290,6 @@ sap.ui.define([
 			 oFromDate = sap.ui.getCore().byId("idTimeAllocSD"),
 			 oToDate = sap.ui.getCore().byId("idTimeAllocED"),
 			 sDescription = sap.ui.getCore().byId("idTimeAllocDesc"),
-			 sColor = sap.ui.getCore().byId("idTimeAllocColr"),
 			 oTimeAllocModel = this.getModel("timeAlloc"),
 			 oTimeAllocData = oTimeAllocModel ? oTimeAllocModel.getData() : null;
 			 

@@ -60,7 +60,7 @@ sap.ui.define([
 				oViewModel = this.getModel("viewModel"),
 				oModel = this.getModel(),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
-				oContext, sPath, oDemand;
+				oContext, sPath;
 			for (var i in aSelected) {
 				oContext = aSelected[i].getBindingContext();
 				sPath = oContext.getPath();

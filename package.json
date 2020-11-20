@@ -3,9 +3,24 @@
 	"version": "0.0.1",
 	"description": "",
 	"private": true,
+	"peerDependencies": {
+    	"grunt-cli": "^1.2.0"
+	},
 	"devDependencies": {
 		"@ui5/cli": "1.7.0",
-		"@sap/ui5-builder-webide-extension": "1.0.9"
+		"@sap/ui5-builder-webide-extension": "1.0.9",
+		"grunt": "^0.4.5",
+	    "grunt-cli": "^1.2.0",
+	    "grunt-contrib-clean": "^0.6.0",
+	    "grunt-contrib-compress": "^0.14.0",
+	    "grunt-contrib-connect": "^0.9.0",
+	    "grunt-contrib-copy": "^0.7.0",
+	    "grunt-contrib-qunit": "^1.0.1",
+	    "grunt-contrib-watch": "^0.6.1",
+	    "grunt-eslint": "^20.1.0",
+	    "grunt-open": "^0.2.3",
+	    "grunt-openui5": "^0.12.0",
+	    "grunt-qunit-junit": "^0.3.1"
 	},
 	"scripts": {
 		"build": "ui5 build --include-task=generateManifestBundle generateCachebusterInfo"
