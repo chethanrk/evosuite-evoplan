@@ -241,7 +241,6 @@ sap.ui.define([
 			if (!this._infoDialog) {
 				this.getOwnerComponent().getModel("appView").setProperty("/busy", true);
                 Fragment.load({
-                    id: "InfoDialog",
                     name: "com.evorait.evoplan.view.assets.fragments.CreateTimeAllocation",
                     controller: this
                 }).then(function (oDialog) {

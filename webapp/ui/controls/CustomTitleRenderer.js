@@ -22,6 +22,9 @@ sap.ui.define([
 				sTag = bAutoLevel ? "div" : sLevel,
 				isLink = oControl.getProperty("isLink"),
 				titleText = oAssoTitle ? oAssoTitle.getText() : oControl.getText();
+			var oResourceIcon = oControl._icon;
+			// Setting icon to render which resource we are showing
+			oResourceIcon.setSrc(oControl.getIcon() !== "" ? oControl.getIcon() : "sap-icon://employee");
 
 			oRm.write("<", sTag);
 			oRm.writeControlData(oControl);
@@ -61,7 +64,7 @@ sap.ui.define([
 			oRm.writeStyles();
 			oRm.write(">");
 
-			oRm.renderControl(oControl._icon);
+			oRm.renderControl(oResourceIcon);
 		
 
 			if (!oControl.getIsWorkTimeEnabled()) {

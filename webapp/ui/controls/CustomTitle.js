@@ -84,11 +84,11 @@ sap.ui.define([
 			if (sap.ui.core.Control.prototype.onAfterRendering) {
 				sap.ui.core.Control.prototype.onAfterRendering.apply(this, arguments);
 			}
-			if(this.getIcon() !== ""){
-				this._icon.setSrc(this.getIcon());
-			}else{
-				this._icon.setSrc("sap-icon://employee");
-			}
+			// if(this.getIcon() !== "" && this.getIcon() !== null){
+			// 	this._icon.setSrc(this.getIcon());
+			// }else{
+			// 	this._icon.setSrc("sap-icon://employee");
+			// }
 		}
 
 	});
