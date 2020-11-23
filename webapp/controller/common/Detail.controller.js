@@ -1,4 +1,4 @@
-/*global location*/
+
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"sap/ui/model/json/JSONModel",

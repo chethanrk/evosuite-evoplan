@@ -209,7 +209,7 @@ sap.ui.define([
 			this._waitForTokenValidation = false;
 
 			var oData = this._oFilterBar.getFilterData(),
-				oCustomFieldData = undefined,
+				oCustomFieldData,
 				selectedVariantKey = this._oVariantMangement.getSelectionKey(),
 				oVariantContent = this._oVariantMangement.getVariantContent(null, selectedVariantKey);
 
@@ -518,7 +518,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_getDateRangeValues: function (oData, sDateRangeType) {
-			var selectedTimeFormat = undefined;
+			var selectedTimeFormat;
 			if (oData) {
 				if (oData.hasOwnProperty(this._aCustomFilters.startDate.origin) || oData.hasOwnProperty(this._aCustomFilters.endDate.origin)) {
 					var sViewType = oData[this._aCustomFilters.viewType.origin];

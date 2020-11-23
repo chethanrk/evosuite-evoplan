@@ -1,4 +1,4 @@
-/*global history */
+
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History",
@@ -121,8 +121,9 @@ sap.ui.define([
 					if (bContainsError) {
 						var sMessage = oMessage.message;
 						this._showErrorMessage(sMessage, fnCallback);
-					} else
-						this.showMessageToast(oData.message);
+					} else {
+                        this.showMessageToast(oData.message);
+                    }
 				} else {
 					this.showMessageToast(oData.message);
 				}
@@ -199,7 +200,7 @@ sap.ui.define([
 					MessageToast.show(oResourceBundle.getText("errorMessage"), {
 						duration: 5000
 					});
-				}.bind(this)
+				}
 			});
 		},
 		/**
@@ -229,7 +230,7 @@ sap.ui.define([
 							duration: 5000
 						});
 						reject(oError);
-					}.bind(this)
+					}
 				});
 			}.bind(this));
 		},

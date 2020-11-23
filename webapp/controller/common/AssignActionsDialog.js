@@ -72,7 +72,7 @@ sap.ui.define([
 		 */
 		onBeforeRebind: function (oEvent) {
 			var mBindingParams = oEvent.getParameter("bindingParams");
-			mBindingParams.parameters["expand"] = "Demand";
+			mBindingParams.parameters.expand = "Demand";
 			var oFilter = new Filter(this._getResourceFilters(this._aSelectedResources), true);
 			mBindingParams.filters.push(oFilter);
 		},
@@ -99,8 +99,9 @@ sap.ui.define([
 				oReAssignBtn.setVisible(true);
 				oDialog.setTitle(this._resourceBundle.getText("xtit.reAssignTitle"));
 			}
-			if (this.isFirstTime)
-				sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable").rebindTable();
+			if (this.isFirstTime) {
+                sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable").rebindTable();
+            }
 
 			this.isFirstTime = true;
 		},
@@ -169,12 +170,14 @@ sap.ui.define([
 					oContext = oItem.getBindingContext(),
 					sPath = oContext.getPath(),
 					oModel = oContext.getModel(),
-					bFlag = undefined;
+					bFlag;
 
-				if (bForReassign)
-					bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_UNASSIGN");
-				else
-					bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_REASSIGN");
+				if (bForReassign) {
+                    bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_UNASSIGN");
+                }
+				else {
+                    bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_REASSIGN");
+                }
 
 				if (bFlag) {
 					this._oAssignMentTable.setSelectedItem(oItem);

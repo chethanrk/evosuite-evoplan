@@ -323,9 +323,9 @@ sap.ui.define([
 				this._eventBus.publish("BaseController", "refreshMapDemandTable", {});
 			}.bind(this), function (data) {
 				//
-			}.bind(this)).catch(function (data) {
+			}.catch(function (data) {
 				//
-			}.bind(this));
+			}));
 		},
 
 		/**

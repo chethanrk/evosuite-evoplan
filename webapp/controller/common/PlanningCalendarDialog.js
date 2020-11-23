@@ -45,7 +45,14 @@ sap.ui.define([
                 this.onOpen(this._oDialog, oView, aSelectedResources,mParameters,oStartDate);
             }
         },
-        
+        /**
+		 *
+         * @param oDialog
+         * @param oView
+         * @param aSelectedResources
+         * @param mParameters
+         * @param oStartDate
+         */
 		onOpen: function (oDialog,oView, aSelectedResources, mParameters, oStartDate) {
 			this._changedAssignments = {};
 			this._changedAbsences = {};
@@ -97,7 +104,7 @@ sap.ui.define([
 				groupId: "calendarBatch",
 				filters: this._generateResourceFiltersFor("ASSIGNMENT"), // to fetch filters required for assignments
 				urlParameters: {
-					"$expand": "Resource,Demand" // To fetch the assignments associated with Resource or ResourceGroup
+					$expand: "Resource,Demand" // To fetch the assignments associated with Resource or ResourceGroup
 				}
 			});
 			if (oUserModel.getProperty("/ENABLE_ABSENCES_DISPLAY_IN_PC")) {
@@ -105,7 +112,7 @@ sap.ui.define([
 					groupId: "calendarBatch",
 					filters: this._generateResourceFiltersFor("ABSENCE"), // to fetch filters required for absences
 					urlParameters: {
-						"$expand": "Resource" // To fetch the assignments associated with Resource or ResourceGroup
+						$expand: "Resource" // To fetch the assignments associated with Resource or ResourceGroup
 					}
 				});
 			}
@@ -310,21 +317,21 @@ sap.ui.define([
 					sRowPath = oRowContext.getPath(),
 					oRowData = oModel.getProperty(sRowPath),
 					oParams = jQuery.extend({}, {
-						"DateFrom": oStartDate || 0,
-						"TimeFrom": {
+						DateFrom: oStartDate || 0,
+						TimeFrom: {
 							__edmtype: "Edm.Time",
 							ms: oStartDate.getTime()
 						},
-						"DateTo": oEndDate || 0,
-						"TimeTo": {
+						DateTo: oEndDate || 0,
+						TimeTo: {
 							__edmtype: "Edm.Time",
 							ms: oEndDate.getTime()
 						},
-						"AssignmentGUID": oAssignmentData.Guid,
-						"EffortUnit": oAssignmentData.EffortUnit,
-						"Effort": oAssignmentData.Effort,
-						"ResourceGroupGuid": oRowData.ResourceGroupGuid,
-						"ResourceGuid": oRowData.ResourceGuid
+						AssignmentGUID: oAssignmentData.Guid,
+						EffortUnit: oAssignmentData.EffortUnit,
+						Effort: oAssignmentData.Effort,
+						ResourceGroupGuid: oRowData.ResourceGroupGuid,
+						ResourceGuid: oRowData.ResourceGuid
 					}, true);
 
 				if (oAppointment.getParent() !== oRow) {
@@ -430,21 +437,21 @@ sap.ui.define([
 		 */
 		_storeChanges: function (oChangedData, bIsUnAssign) {
 			var oParams = oChangedData ? jQuery.extend({}, {
-				"DateFrom": oChangedData.DateFrom || 0,
-				"TimeFrom": {
+				DateFrom: oChangedData.DateFrom || 0,
+				TimeFrom: {
 					__edmtype: "Edm.Time",
 					ms: oChangedData.DateFrom.getTime()
 				},
-				"DateTo": oChangedData.DateTo || 0,
-				"TimeTo": {
+				DateTo: oChangedData.DateTo || 0,
+				TimeTo: {
 					__edmtype: "Edm.Time",
 					ms: oChangedData.DateTo.getTime()
 				},
-				"AssignmentGUID": oChangedData.AssignmentGuid,
-				"EffortUnit": oChangedData.EffortUnit,
-				"Effort": oChangedData.Effort,
-				"ResourceGroupGuid": oChangedData.ResourceGroupGuid,
-				"ResourceGuid": oChangedData.ResourceGuid
+				AssignmentGUID: oChangedData.AssignmentGuid,
+				EffortUnit: oChangedData.EffortUnit,
+				Effort: oChangedData.Effort,
+				ResourceGroupGuid: oChangedData.ResourceGroupGuid,
+				ResourceGuid: oChangedData.ResourceGuid
 			}, true) : null;
 
 			if (!bIsUnAssign) {
@@ -601,11 +608,11 @@ sap.ui.define([
 					var oResource = oModel.getProperty(this.selectedResources[a]),
 						sEntitySet = this.selectedResources[a].split("(")[0];
 					if (oResource.NodeType === "RESOURCE" || oResource.NodeType === "RES_GROUP" && oUserModel.getProperty("/POOL_FUNCTION_ENABLED")) {
-						oResource["ResourceDescription"] = oResource.Description;
-						oResource["ObjectType"] = oResource.NodeType;
-						oResource["GroupDescription"] = oModel.getProperty(sEntitySet + "('" + oResource.ResourceGroupGuid + "')").Description;
-						oResource["ResourceGuid"] = oResource.ResourceGuid;
-						oResource["ResourceGroupGuid"] = oResource.ResourceGroupGuid;
+						oResource.ResourceDescription = oResource.Description;
+						oResource.ObjectType = oResource.NodeType;
+						oResource.GroupDescription = oModel.getProperty(sEntitySet + "('" + oResource.ResourceGroupGuid + "')").Description;
+						oResource.ResourceGuid = oResource.ResourceGuid;
+						oResource.ResourceGroupGuid = oResource.ResourceGroupGuid;
 						oResourceMap[oResource.NodeId] = oResource;
 						oResourceMap[oResource.NodeId].Assignments = [];
 						oResourceMap[oResource.NodeId].AbsenceInfo = [];

@@ -30,9 +30,9 @@ sap.ui.define([
 				var oDemandObj = oModel.getProperty(aItems[i]);
 				var sDemandGuid = oDemandObj? oDemandObj.Guid : aItems[i].split("'")[1],
 					oParams = {
-						"DemandGuid": sDemandGuid,
-						"ResourceGroupGuid": targetObj.ResourceGroupGuid,
-						"ResourceGuid": targetObj.ResourceGuid
+						DemandGuid: sDemandGuid,
+						ResourceGroupGuid: targetObj.ResourceGroupGuid,
+						ResourceGuid: targetObj.ResourceGuid
 					};
 				// When we drop on the Gantt chart directly
 				if (oTargetDate) {
@@ -75,7 +75,7 @@ sap.ui.define([
 		 */
 		deleteAssignment: function (oModel, sAssignmentGuid) {
 			return this.executeFunctionImport(oModel, {
-				"AssignmentGUID": sAssignmentGuid
+				AssignmentGUID: sAssignmentGuid
 			}, "DeleteAssignment", "POST");
 		},
 		/**
@@ -115,7 +115,7 @@ sap.ui.define([
 						params: oQualificationParameters,
 						result: oData
 					});
-				}.bind(this));
+				});
 			}.bind(this));
 		}
 	});

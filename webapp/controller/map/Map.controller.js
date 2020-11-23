@@ -143,8 +143,9 @@ sap.ui.define([
 		onBeforeRebindTable: function (oEvent) {
 			var aFilters = this.byId("listReportFilter").getFilters(),
 				aDemandFilters = this.getSelectedDemandFilters();
-			if (aDemandFilters && aDemandFilters.aFilters)
-				aFilters.push(aDemandFilters);
+			if (aDemandFilters && aDemandFilters.aFilters) {
+                aFilters.push(aDemandFilters);
+            }
 			//setTimeOut has been added to make rebindTable() work
 			setTimeout(function () {
 				this._oDataTable.getBinding("rows").filter(aFilters, "Application");

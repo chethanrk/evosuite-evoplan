@@ -529,9 +529,9 @@ sap.ui.define([
 		 */
 		formatQualificationIcon: function (sReqProfileID, bEnableQualification) {
 			if (sReqProfileID && sReqProfileID !== "00000000" && bEnableQualification)
-				return true;
+				{return true;}
 			else
-				return false;
+				{return false;}
 		},
 		getQualificationFulfilled: function (bFulfilled) {
 			if (bFulfilled) {

@@ -1,5 +1,3 @@
-/*global QUnit*/
-
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",

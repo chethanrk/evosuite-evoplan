@@ -191,10 +191,12 @@ sap.ui.define([
                 if(this.showMessage(oResponse,function () {
                 		this.getModel().deleteCreatedEntry(oContext);
                         this.navBack();
-                    }.bind(this)))
+                    }.bind(this))) {
                     this.getModel().resetChanges();
-                else
+                }
+                else {
                     this.navBack();
+                }
             }
         },
         /**

@@ -197,7 +197,7 @@ sap.ui.define([
 			aPromises.push(this._getData("/NavigationLinksSet", [new Filter("LaunchMode", FilterOperator.EQ, this.getModel("viewModel").getProperty(
 				"/launchMode"))]));
 			aPromises.push(this._getData("/MapProviderSet", [], {
-				"$expand": "MapSource"
+				$expand: "MapSource"
 			}));
 			//sets user model - model has to be intantiated before any view is loaded
 			Promise.all(aPromises).then(function (data) {
@@ -374,14 +374,11 @@ sap.ui.define([
 					method: "GET",
 					success: function (oData, oResponse) {
 						resolve(oData);
-						//Handle Success
-						// this.getModel("user").setData(oData);
-						// console.log(oData);
-					}.bind(this),
+					},
 					error: function (oError) {
 						//Handle Error
 						reject(oError);
-					}.bind(this)
+					}
 				});
 			}.bind(this));
 		},
@@ -395,11 +392,11 @@ sap.ui.define([
 					urlParameters: mParameters,
 					success: function (oData, oResponse) {
 						resolve(oData);
-					}.bind(this),
+					},
 					error: function (oError) {
 						//Handle Error
 						reject(oError);
-					}.bind(this)
+					}
 				});
 			}.bind(this));
 		},
@@ -415,7 +412,7 @@ sap.ui.define([
 				}.bind(this),
 				error: function (oError) {
 					//Handle Error
-				}.bind(this)
+				}
 			});
 		},
 		/**
@@ -434,7 +431,7 @@ sap.ui.define([
 				}.bind(this),
 				error: function (oError) {
 					//Handle Error
-				}.bind(this)
+				}
 			});
 		}
 	});

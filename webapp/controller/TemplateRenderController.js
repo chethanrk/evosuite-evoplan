@@ -48,7 +48,7 @@ sap.ui.define([
 				var oMetaModel = oModel.getMetaModel();
 				oMetaModel.loaded().then(function () {
 					//setting up the templates for the Sections
-					this.GenerateForms(oModel, oMetaModel, sPath, sViewName, oController, oViewContainer, that);
+					this.generateForms(oModel, oMetaModel, sPath, sViewName, oController, oViewContainer, that);
 				}.bind(this));
 			} 
 		},
@@ -60,7 +60,7 @@ sap.ui.define([
 		 * @param sPath
 		 * @param sViewName
 		 */
-		GenerateForms: function (oModel, oMetaModel, sPath, oView, oController, oViewContainer, that) {
+		generateForms: function (oModel, oMetaModel, sPath, oView, oController, oViewContainer, that) {
 			var oFragment = XMLTemplateProcessor.loadTemplate("com.evorait.evoplan.ui.templates.DetailPage", "fragment");
 			oMetaModel.loaded().then(function () {
 				XMLPreprocessor.process(oFragment, {
@@ -77,7 +77,7 @@ sap.ui.define([
 						fragmentContent: oProcessedFragment
 					}, that);
 					oViewContainer.addContent(oContent);
-				}.bind(this));
+				});
 			});
 		}
 	});

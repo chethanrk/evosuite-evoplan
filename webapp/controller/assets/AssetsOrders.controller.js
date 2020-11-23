@@ -200,10 +200,12 @@ sap.ui.define([
 				} else {
 					this._aSelectedDemands.push(oSelectedDemand);
 				}
-				if (this._aSelectedDemands.length > 0)
-					this.byId("assignButton").setEnabled(true);
-				else
-					this.byId("assignButton").setEnabled(false);
+				if (this._aSelectedDemands.length > 0) {
+                    this.byId("assignButton").setEnabled(true);
+                }
+				else {
+                    this.byId("assignButton").setEnabled(false);
+                }
 			} else {
 				oSelectedDemand.setSelected(false);
 				this.showMessageToast(oResourceBundle.getText("ymsg.notDemand"));
@@ -315,10 +317,12 @@ sap.ui.define([
 					AssetUnavailityCode:oTimeAllocData.priority
 				};
 				this.clearMessageModel();
-				if (oTimeAllocData.guid && oTimeAllocData.guid !== "")
-					this.callFunctionImport(oParams, "UpdateAssetUnavailability", "POST", {bFromAsset:true},true);
-				else
-					this.callFunctionImport(oParams, "CreateAssetUnavailability", "POST", {bFromAsset:true},true);
+				if (oTimeAllocData.guid && oTimeAllocData.guid !== "") {
+                    this.callFunctionImport(oParams, "UpdateAssetUnavailability", "POST", {bFromAsset: true}, true);
+                }
+				else {
+                    this.callFunctionImport(oParams, "CreateAssetUnavailability", "POST", {bFromAsset: true}, true);
+                }
 			} else {
 				return;
 			}
