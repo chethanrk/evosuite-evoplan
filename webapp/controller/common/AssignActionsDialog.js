@@ -214,8 +214,8 @@ sap.ui.define([
 					sDateControl1 = dateRangeValues[0],
 					sDateControl2 = dateRangeValues[1];
 			} else {
-				var selectedTimeFormat = formatter.getResourceFormatByKey("TIMENONE"),
-					sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin()),
+				var selectedTimeFormat = formatter.getResourceFormatByKey("TIMENONE");
+					sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin());
 					sDateControl2 = this.formatter.date(selectedTimeFormat.getDateEnd());
 			}
 

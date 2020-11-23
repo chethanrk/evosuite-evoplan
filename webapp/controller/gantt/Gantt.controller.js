@@ -39,8 +39,6 @@ sap.ui.define([
 		 * controller life cycle on init event
 		 */
 		onInit: function () {
-			var oUserModel = this.getModel("user");
-
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			this._oAssignementModel = this.getModel("assignment");
 
@@ -784,10 +782,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onCreateAbsence: function (oEvent) {
-			var oTreeTable = this.getView().byId("ganttResourceTreeTable"),
-				aIndices = oTreeTable.getSelectedIndices(),
-				oContext,
-				oResourceBundle = this.getResourceBundle();
+			var oResourceBundle = this.getResourceBundle();
 			if (this.selectedResources.length === 0) {
 				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
 				return;

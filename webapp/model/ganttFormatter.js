@@ -32,7 +32,7 @@ sap.ui.define([
         if(sNodeType !== shapeNodeType){
             return mColorMapping["INVISIBLE"];
         }
-        var sKey = (sType && sStatus) ? sType.toUpperCase() : "DEFAULT";
+        var sKey = sType && sStatus ? sType.toUpperCase() : "DEFAULT";
         return mColorMapping[sKey];
     }
 
@@ -77,7 +77,7 @@ sap.ui.define([
             if(!sDate){
                 return null;
             }
-            var d = (sDate).match(/\((.*)\)/).pop();
+            var d = sDate.match(/\((.*)\)/).pop();
             return new Date(parseInt(d));
         },
 

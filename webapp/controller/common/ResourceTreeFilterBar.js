@@ -390,7 +390,7 @@ sap.ui.define([
 							for (var l = 0; l < sValue.length; l++) {
 								//validate at first against backend service
 								this._waitForTokenValidation = true;
-								this._validateResourceGroupToken(sValue[l], oCtrl, sFilterKey, l, (l === (sValue.length - 1)));
+								this._validateResourceGroupToken(sValue[l], oCtrl, sFilterKey, l, l === sValue.length - 1);
 							}
 						} else {
 							oCtrl.setSelectedKeys(sValue);

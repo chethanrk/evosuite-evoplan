@@ -15,32 +15,32 @@ sap.ui.define([
 		sTableId = "draggableList",
 		sFilter = "listReportFilter";
 
-	function allItemsInTheListContainTheSearchTerm(aControls) {
-		var oTable = aControls[0],
-			oSearchField = aControls[1],
-			oTableBinding = oTable.getTable().getBinding("rows"),
-			oModel = oTableBinding.getModel(),
-			aKeys = oTableBinding.aKeys,
-			bFlag = false,
-			sValue = oSearchField.getTokens()[0].getKey();
+	// function allItemsInTheListContainTheSearchTerm(aControls) {
+	// 	var oTable = aControls[0],
+	// 		oSearchField = aControls[1],
+	// 		oTableBinding = oTable.getTable().getBinding("rows"),
+	// 		oModel = oTableBinding.getModel(),
+	// 		aKeys = oTableBinding.aKeys,
+	// 		bFlag = false,
+	// 		sValue = oSearchField.getTokens()[0].getKey();
 
-		for (var i in aKeys) {
-			var sId = oSearchField.getId(),
-				sFilteredValue;
-			if (sId.search("/DemandDesc/i") === -1)
-				sFilteredValue = oModel.getProperty("/" + aKeys[i] + "/Status");
-			else
-				sFilteredValue = oModel.getProperty("/" + aKeys[i] + "/DemandDesc");
+	// 	for (var i in aKeys) {
+	// 		var sId = oSearchField.getId(),
+	// 			sFilteredValue;
+	// 		if (sId.search("/DemandDesc/i") === -1)
+	// 			sFilteredValue = oModel.getProperty("/" + aKeys[i] + "/Status");
+	// 		else
+	// 			sFilteredValue = oModel.getProperty("/" + aKeys[i] + "/DemandDesc");
 
-			if (sFilteredValue === sValue) {
-				bFlag = true;
-			} else {
-				bFlag = false;
-				break;
-			}
-		}
-		return bFlag;
-	}
+	// 		if (sFilteredValue === sValue) {
+	// 			bFlag = true;
+	// 		} else {
+	// 			bFlag = false;
+	// 			break;
+	// 		}
+	// 	}
+	// 	return bFlag;
+	// }
 
 	function createWaitForItemAtPosition(oOptions) {
 		var iPosition = oOptions.position;

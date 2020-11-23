@@ -464,10 +464,10 @@ sap.ui.define([
 				sToolTip = "";
 			// changed by @rahul in order to handle dynamic arguments
 			for (var i = 0; i < iArg / 2; i++) {
-				if (i === (iArg / 2)) {
-					sToolTip = sToolTip + (arguments[(iArg / 2) + i] ? arguments[i] + ":" + arguments[(iArg / 2) + i] : "");
+				if (i === iArg / 2) {
+					sToolTip = sToolTip + (arguments[iArg / 2 + i] ? arguments[i] + ":" + arguments[iArg / 2 + i] : "");
 				} else {
-					sToolTip = sToolTip + (arguments[(iArg / 2) + i] ? arguments[i] + ":" + arguments[(iArg / 2) + i] : "") + "\n";
+					sToolTip = sToolTip + (arguments[iArg / 2 + i] ? arguments[i] + ":" + arguments[iArg / 2 + i] : "") + "\n";
 				}
 			}
 

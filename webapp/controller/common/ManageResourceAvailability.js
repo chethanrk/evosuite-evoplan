@@ -118,7 +118,7 @@ sap.ui.define([
         _getChangedData : function(oEvent, sProperty){
             var oSource = oEvent.getSource(),
                 // In case of delete action the context fetch will be different
-                oContext = (sProperty !== "DELETE") ? oSource.getBindingContext() :
+                oContext = sProperty !== "DELETE" ? oSource.getBindingContext() :
                     oEvent.getParameter("listItem").getBindingContext(),
                 sPath = oContext.getPath(),
                 oData = this._oModel.getProperty(sPath),
@@ -226,6 +226,7 @@ sap.ui.define([
                 }
                 return true;
             }
+            return false;
         },
         /**
          * Checks madatory fields 

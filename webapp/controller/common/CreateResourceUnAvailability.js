@@ -124,7 +124,6 @@ sap.ui.define([
 			};
 			this._oDialog.setBusy(true);
 			if (this._mParameters.bFromPlannCal) {
-				var oUAData = oParams.Description = oData.description;
 				eventBus.publish("CreateUnAvailability", "refreshAbsence", oParams);
 				this._oDialog.setBusy(false);
 				this._oDialog.close();

@@ -58,13 +58,11 @@ sap.ui.define([
 		onSelect: function (oEvent) {
 			var aSelected = oEvent.getParameter("selected"),
 				oViewModel = this.getModel("viewModel"),
-				oModel = this.getModel(),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
 				oContext, sPath;
 			for (var i in aSelected) {
 				oContext = aSelected[i].getBindingContext();
 				sPath = oContext.getPath();
-				oDemand = oModel.getProperty(sPath);
 				aSelectedDemands.push(sPath);
 			}
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
@@ -80,12 +78,10 @@ sap.ui.define([
 			var aDeSelected = oEvent.getParameter("deselected"),
 				oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
-				oModel = this.getModel(),
-				oContext, sPath, oDemand;
+				oContext, sPath;
 			for (var i in aDeSelected) {
 				oContext = aDeSelected[i].getBindingContext();
 				sPath = oContext.getPath();
-				oDemand = oModel.getProperty(sPath);
 				aSelectedDemands.splice(aSelectedDemands.indexOf(sPath), 1);
 			}
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
@@ -222,7 +218,7 @@ sap.ui.define([
 				oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
 			if (aSelectedDemands.length > 0) {
-				(aSelectedDemands).forEach(function (entry) {
+				aSelectedDemands.forEach(function (entry) {
 					aDemandGuidEntity.push("/DemandSet('" + entry.split("'")[1] + "')");
 				});
 				oViewModel.setProperty("/mapSettings/selectedDemands", []);
@@ -237,7 +233,7 @@ sap.ui.define([
 			var oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
 			if (aSelectedDemands.length > 0) {
-				(aSelectedDemands).forEach(function (entry) {
+				aSelectedDemands.forEach(function (entry) {
 					this.getModel().setProperty("/DemandSet('" + entry.split("'")[1] + "')/IS_SELECTED", true);
 				}.bind(this));
 			}
@@ -491,8 +487,8 @@ sap.ui.define([
 					oModel.setProperty(sPath + "/IS_SELECTED", true);
 				}
 			} else {
-				for (var i = 0; i < oSelectedIndices.length; i++) {
-					sPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath(); //oSelectedContexts[i].context.getPath();
+				for (var j = 0; j < oSelectedIndices.length; j++) {
+					sPath = this._oDataTable.getContextByIndex(oSelectedIndices[j]).getPath(); //oSelectedContexts[i].context.getPath();
 					if (!aSelectedDemands.includes(sPath)) {
 						aSelectedDemands.push(sPath);
 					}

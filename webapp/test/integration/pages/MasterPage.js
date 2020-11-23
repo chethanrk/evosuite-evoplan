@@ -12,8 +12,7 @@ sap.ui.define([
 	], function(Opa5, Press, EnterText, Common, PropertyStrictEquals, AggregationLengthEquals, BindingPath, Properties, I18NText, AggregationContainsPropertyEqual) {
 		"use strict";
 
-		var sViewName = "ResourceTree",
-			oI18nResourceBundle = undefined;
+		var sViewName = "ResourceTree";
 
 		Opa5.createPageObjects({
 			onTheMasterPage : {
@@ -103,7 +102,6 @@ sap.ui.define([
 							id: "idResourcePage",
 							viewName: sViewName,
 							success: function (oPage) {
-								oI18nResourceBundle = oPage.getModel("i18n").getResourceBundle();
                                 Opa5.assert.ok(true, "The Page is visible");
 							},
 							errorMessage: "The Page is not visible."
@@ -259,8 +257,8 @@ sap.ui.define([
                             		return this.waitFor({
 			                        	controlType:"sap.m.Dialog",
 			                            viewName: sViewName,
-			                            success: function (oDialog) {
-			                            	Opa5.assert.ok(oDialog[0].getTitle() === key, "Dialog has the title "+key);
+			                            success: function (dialog) {
+			                            	Opa5.assert.ok(dialog[0].getTitle() === key, "Dialog has the title "+key);
 			                            },
 			                            errorMessage: "Was not able to see Button Reassign new."
 			                        });

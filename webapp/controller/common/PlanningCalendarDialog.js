@@ -600,7 +600,7 @@ sap.ui.define([
 				for (var a = 0; a < this.selectedResources.length; a++) {
 					var oResource = oModel.getProperty(this.selectedResources[a]),
 						sEntitySet = this.selectedResources[a].split("(")[0];
-					if (oResource.NodeType === "RESOURCE" || (oResource.NodeType === "RES_GROUP" && oUserModel.getProperty("/POOL_FUNCTION_ENABLED"))) {
+					if (oResource.NodeType === "RESOURCE" || oResource.NodeType === "RES_GROUP" && oUserModel.getProperty("/POOL_FUNCTION_ENABLED")) {
 						oResource["ResourceDescription"] = oResource.Description;
 						oResource["ObjectType"] = oResource.NodeType;
 						oResource["GroupDescription"] = oModel.getProperty(sEntitySet + "('" + oResource.ResourceGroupGuid + "')").Description;
@@ -745,8 +745,8 @@ sap.ui.define([
 		 * @return {boolean} true if changed false if unchaged
 		 */
 		checkDirty: function () {
-			if ((Object.keys(this._changedAssignments).length > 0 && this._changedAssignments.constructor === Object) || (Object.keys(this._changedAbsences)
-					.length > 0 && this._changedAbsences.constructor === Object)) {
+			if (Object.keys(this._changedAssignments).length > 0 && this._changedAssignments.constructor === Object || Object.keys(this._changedAbsences)
+					.length > 0 && this._changedAbsences.constructor === Object) {
 				sap.ui.getCore().byId("PlanningCalender--idCreateSave").setEnabled(true);
 				return true;
 			} else {
@@ -806,6 +806,7 @@ sap.ui.define([
 			if (nameA > nameB) {
 				return 1;
 			}
+			return 0;
 		},
 		exit: function () {
 			this._eventBus.unsubscribe("AssignInfoDialog", "RefreshCalendar", this._setCalendarModel, this);

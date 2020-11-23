@@ -11,9 +11,7 @@ sap.ui.define([
 ], function (Opa5, Press, EnterText, Common, AggregationFilled, PropertyStrictEquals, BindingPath, I18NText, Properties) {
 	"use strict";
 
-	var sViewName = "App",
-		sTableId = "draggableList",
-		viewId = "idGantt";
+	var sViewName = "App";
 		
 		function createWaitForItemAtPosition(oOptions) {
 		var iPosition = oOptions.position;
@@ -119,7 +117,7 @@ sap.ui.define([
 							};
 						}
 					}));
-				},
+				}
 			
 			},
 			assertions: {
@@ -231,7 +229,7 @@ sap.ui.define([
 		
 						success: function (oPage) {
 							Opa5.assert.ok(true,"Navigated to Detail View");
-						},
+						}
 					
 					});
 				}

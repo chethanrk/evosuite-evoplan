@@ -36,7 +36,7 @@ sap.ui.define([
 				// configure mock server with a delay of .3s
 				MockServer.config({
 					autoRespond : true,
-					autoRespondAfter : (oUriParameters.get("serverDelay") || 300)
+					autoRespondAfter : oUriParameters.get("serverDelay") || 300
 				});
 
 				oMockServer.simulate(sMetadataUrl, {
@@ -116,8 +116,7 @@ sap.ui.define([
                 oMockServer.setRequests(aRequests);
 
 
-                var aRequests = oMockServer.getRequests(),
-					fnResponse = function (iErrCode, sMessage, aRequest) {
+                var fnResponse = function (iErrCode, sMessage, aRequest) {
 						aRequest.response = function(oXhr){
 							oXhr.respond(iErrCode, {"Content-Type": "text/plain;charset=utf-8"}, sMessage);
 						};
