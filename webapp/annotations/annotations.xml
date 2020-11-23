@@ -98,10 +98,10 @@
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#GeneralGroup1"/>
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#GeneralGroup1"/>
 									</Record>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#GeneralGroup2"/>
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#GeneralGroup2"/>
 									</Record>
 								</Collection>
 							</PropertyValue>
@@ -112,10 +112,10 @@
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#DatesGroup1"/>
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#DatesGroup1"/>
 									</Record>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#DatesGroup2"/>
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#DatesGroup2"/>
 									</Record>
 								</Collection>
 							</PropertyValue>
@@ -126,10 +126,10 @@
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#PmDetailsGroup1"/>
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#PmDetailsGroup1"/>
 									</Record>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#PmDetailsGroup2"/>
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#PmDetailsGroup2"/>
 									</Record>
 								</Collection>
 							</PropertyValue>
@@ -140,7 +140,7 @@
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#Assignments"/>
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#Assignments"/>
 									</Record>
 								</Collection>
 							</PropertyValue>
@@ -151,7 +151,7 @@
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#LongText"/>
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#LongText"/>
 									</Record>
 								</Collection>
 							</PropertyValue>
@@ -162,7 +162,7 @@
 							<PropertyValue Property="Facets">
 								<Collection>
 									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroup#LongText"/>
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#LongText"/>
 									</Record>
 								</Collection>
 							</PropertyValue>
@@ -170,7 +170,7 @@
 						</Record>
 					</Collection>
 				</Annotation>
-				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="GeneralGroup1">
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="GeneralGroup1">
 					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
 						<!--<PropertyValue Property="Label" String="General"/>-->
 						<PropertyValue Property="Data">
@@ -185,7 +185,7 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
-				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="GeneralGroup2">
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="GeneralGroup2">
 					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
 						<!--<PropertyValue Property="Label" String="General"/>-->
 						<PropertyValue Property="Data">
@@ -200,7 +200,7 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
-				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="DatesGroup1">
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="DatesGroup1">
 					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
 						<!--<PropertyValue Property="Label" String="Date"/>-->
 						<PropertyValue Property="Data">
@@ -218,7 +218,7 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
-				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="DatesGroup2">
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="DatesGroup2">
 					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
 						<!--<PropertyValue Property="Label" String="Date"/>-->
 						<PropertyValue Property="Data">
@@ -233,7 +233,7 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
-				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="PmDetailsGroup1">
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="PmDetailsGroup1">
 					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
 						<PropertyValue Property="Data">
 							<Collection>
@@ -250,7 +250,7 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
-				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="PmDetailsGroup2">
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="PmDetailsGroup2">
 					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
 						<PropertyValue Property="Data">
 							<Collection>
@@ -264,7 +264,7 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
-				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="Assignments">
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="Assignments">
 					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
 						<PropertyValue Property="Data">
 							<Collection>
@@ -275,7 +275,7 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
-				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup" Qualifier="LongText">
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="LongText">
 					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
 						<PropertyValue Property="Data">
 							<Collection>
