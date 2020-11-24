@@ -11,14 +11,13 @@ sap.ui.define([
 		formatter: formatter,
 
 		init: function () {
-			// this._eventBus = sap.ui.getCore().getEventBus();
+			// keeping this method empty as this is being used for initialize only
 		},
 
 		/**
 		 * Initialize the dialog for Qualification Match results 
 		 * @param that
 		 * @param oView
-		 * @param sBindPath
 		 * @param mParameters
 		 */
 		open: function (that, oView, mParameters) {
@@ -54,10 +53,9 @@ sap.ui.define([
 			this.oView.addDependent(oDialog);
 			// open dialog
 			oDialog.open();
-			if(mParameters && mParameters.bFromGantt){
+			if (mParameters && mParameters.bFromGantt) {
 				this._component.getModel("viewModel").setProperty("/ganttSettings/busy", false);
 			}
-
 		},
 
 		/**
@@ -84,17 +82,18 @@ sap.ui.define([
 		onProceed: function (oEvent) {
 			var oTable = sap.ui.getCore().byId("idQualificationMatchTable"),
 				oViewModel = oTable.getModel("viewModel"),
-				aListItems = oViewModel.getProperty("/QualificationMatchList/QualificationData"),
-				aSourcePaths = oViewModel.getProperty("/QualificationMatchList/SourcePaths"),
-				oContext = oViewModel.getProperty("/QualificationMatchList/Contexts"),
-				targetObj = oViewModel.getProperty("/QualificationMatchList/TargetObject"),
-				sAssignPath = oViewModel.getProperty("/QualificationMatchList/AssignPath"),
-				mParameters = oViewModel.getProperty("/QualificationMatchList/mParameters"),
-				oParams = oViewModel.getProperty("/QualificationMatchList/oParams"),
-				oTargetDate = oViewModel.getProperty("/QualificationMatchList/targetDate"),
-				oNewEndDate = oViewModel.getProperty("/QualificationMatchList/newEndDate"),
-				aGuids = oViewModel.getProperty("/QualificationMatchList/aGuids"),
-				sSourceMethod = oViewModel.getProperty("/QualificationMatchList/SourceMethod"),
+				aQualificationMatchList = oViewModel.getProperty("/QualificationMatchList"),
+				aQualificationItems = aQualificationMatchList.QualificationData, //rename Variable
+				aSourcePaths = aQualificationMatchList.SourcePaths,
+				oContext = aQualificationMatchList.Contexts,
+				targetObj = aQualificationMatchList.TargetObject,
+				sAssignPath = aQualificationMatchList.AssignPath,
+				mParameters = aQualificationMatchList.mParameter,
+				oParams = aQualificationMatchList.oParams,
+				oTargetDate = aQualificationMatchList.targetDate,
+				oNewEndDate = aQualificationMatchList.newEndDate,
+				aGuids = aQualificationMatchList.aGuids,
+				sSourceMethod = aQualificationMatchList.SourceMethod,
 				aSelectedSourcePaths = [],
 				aSelectedGuids = [];
 
@@ -103,11 +102,11 @@ sap.ui.define([
 				MessageToast.show(this.getResourceBundle().getText("xmsg.msgItemSelect"));
 				return;
 			}
-
-			if (aSourcePaths) {
-				aSelectedSourcePaths = this.getSelectedSources(oTable, aSourcePaths, aListItems);
+			//getting Selected Demands based on the Available parameter
+			if (aSourcePaths || oContext) {
+				aSelectedSourcePaths = this.getSelectedSources(oTable, aSourcePaths, oContext, aQualificationItems);
 			} else {
-				aSelectedGuids = this.getSelectedDemands(oTable, aGuids, aListItems);
+				aSelectedGuids = this.getSelectedDemands(oTable, aGuids, aQualificationItems);
 			}
 			//based on the opertion different method calls
 			switch (sSourceMethod) {
@@ -115,7 +114,6 @@ sap.ui.define([
 				this.proceedToServiceCallAssignDemands(aSelectedSourcePaths, targetObj, mParameters, oParams);
 				break;
 			case "bulkReAssignment":
-				aSelectedSourcePaths = this.getSelectedContexts(oTable, oContext, aListItems);
 				this.bulkReAssignmentFinalCall(sAssignPath, aSelectedSourcePaths, mParameters);
 				break;
 			case "UpdateAssignment":
@@ -130,7 +128,6 @@ sap.ui.define([
 			}
 
 			this.onCloseDialog();
-
 		},
 
 		/**
@@ -140,83 +137,70 @@ sap.ui.define([
 		onSelectionChangeQualificationTable: function (oEvent) {
 			var oTable = oEvent.getSource(),
 				oViewModel = oTable.getModel("viewModel"),
-				aListItems = oViewModel.getProperty("/QualificationMatchList/QualificationData"),
+				aQualificationItems = oViewModel.getProperty("/QualificationMatchList/QualificationData"),
 				oSelectedPath = oEvent.getParameter("listItem").getBindingContextPath(),
 				bIsSelected = oEvent.getParameter("listItem").getSelected(),
-				vSelectedDemand = oViewModel.getProperty(oSelectedPath)?oViewModel.getProperty(oSelectedPath).DemandGuid:null;
+				vSelectedDemand = oViewModel.getProperty(oSelectedPath) ? oViewModel.getProperty(oSelectedPath).DemandGuid : null;
 
-			for (var i = 0; i < aListItems.length; i++) {
-				if (aListItems[i].DemandGuid === vSelectedDemand) {
-					aListItems[i].IsSelected = bIsSelected;
+			for (var i = 0; i < aQualificationItems.length; i++) {
+				if (aQualificationItems[i].DemandGuid === vSelectedDemand) {
+					aQualificationItems[i].IsSelected = bIsSelected;
 				}
 			}
-			oViewModel.setProperty("/QualificationMatchList/QualificationData", aListItems);
+			oViewModel.setProperty("/QualificationMatchList/QualificationData", aQualificationItems);
 			oViewModel.refresh();
 		},
 
 		/**
-		 * Return the Selected Demand object 
+		 * Return the Selected Demand object/paths 
 		 * @param oEvent
 		 */
-		getSelectedSources: function (oTable, aSourcePaths, aListItems) {
-			var aSelectedGuids = [],
-				aSelectedSourcePaths = [];
+		getSelectedSources: function (oTable, aSourcePaths, aSourceContexts, aQualificationItems) {
+			var aSelectedGuids = this.getSelectedGuids(aQualificationItems),
+				aSelectedSources = [];
 			if (oTable.isAllSelectableSelected()) {
-				aSelectedSourcePaths = aSourcePaths;
-			} else {
-				for (var i = 0; i < aListItems.length; i++) {
-					if (aListItems[i].IsSelected && !aSelectedGuids.includes(aListItems[i].DemandGuid)) {
-						aSelectedGuids.push(aListItems[i].DemandGuid);
-					}
-				}
-				aSelectedSourcePaths = aSourcePaths.filter(function (e) {
+				// aSelectedSources = aSourcePaths;
+				aSelectedSources = aSourcePaths ? aSourcePaths : aSourceContexts;
+				return aSelectedSources;
+			}
+			if (aSourcePaths) {
+				aSelectedSources = aSourcePaths.filter(function (e) {
 					return aSelectedGuids.includes(e.oData.Guid);
 				});
-			}
-			return aSelectedSourcePaths;
-		},
-		/**
-		 * Return the Selected Assignment object 
-		 * @param oEvent
-		 */
-		getSelectedContexts: function (oTable, aSourceContexts, aListItems) {
-			var aSelectedGuids = [],
-				aSelectedContexts = [];
-			if (oTable.isAllSelectableSelected()) {
-				aSelectedContexts = aSourceContexts;
 			} else {
-				for (var i = 0; i < aListItems.length; i++) {
-					if (aListItems[i].IsSelected && !aSelectedGuids.includes(aListItems[i].DemandGuid)) {
-						aSelectedGuids.push(aListItems[i].DemandGuid);
-					}
-				}
-				aSelectedContexts = aSourceContexts.filter(function (e) {
+				aSelectedSources = aSourceContexts.filter(function (e) {
 					return aSelectedGuids.includes(this.getModel().getProperty(e.getPath() + "/Demand/Guid"));
-				});
+				}.bind(this));
 			}
-			return aSelectedContexts;
+			return aSelectedSources;
+		},
+		getSelectedGuids: function (aQualificationItems) {
+			var aSelectedGuids = [];
+			for (var i = 0; i < aQualificationItems.length; i++) {
+				if (aQualificationItems[i].IsSelected && !aSelectedGuids.includes(aQualificationItems[i].DemandGuid)) {
+					aSelectedGuids.push(aQualificationItems[i].DemandGuid);
+				}
+			}
+			return aSelectedGuids;
 		},
 
 		/**
 		 * Return the Selected Demand Guids 
 		 * @param oEvent
 		 */
-		getSelectedDemands: function (oTable, aGuids, aListItems) {
+		getSelectedDemands: function (oTable, aGuids, aQualificationItems) {
 			var aSelectedGuids = [];
 			if (oTable.isAllSelectableSelected()) {
 				aSelectedGuids = aGuids;
 			} else {
-				for (var i = 0; i < aListItems.length; i++) {
-					if (aListItems[i].IsSelected && !aSelectedGuids.includes(aListItems[i].DemandGuid)) {
-						aSelectedGuids.push("/DemandSet('" + aListItems[i].DemandGuid + "')");
-					}
-				}
+				//TODO the else part would never be executing as single selectio is being used for Gantt, keeping these code for Future use
+				// for (var i = 0; i < aQualificationItems.length; i++) {
+				// 	if (aQualificationItems[i].IsSelected && !aSelectedGuids.includes(aQualificationItems[i].DemandGuid)) {
+				// 		aSelectedGuids.push("/DemandSet('" + aQualificationItems[i].DemandGuid + "')");
+				// 	}
+				// }
 			}
 			return aSelectedGuids;
-
-		},
-		exit: function () {
-			// unsubscribe
 		}
 	});
 });

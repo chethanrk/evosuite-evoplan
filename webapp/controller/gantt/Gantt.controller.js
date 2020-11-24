@@ -284,7 +284,7 @@ sap.ui.define([
 						"TargetObject": oTargetObject,
 						"QualificationData": data.result.results,
 						"SourcePaths": aSourcePaths,
-						"mParameters": mParameters,
+						"mParameter": mParameters,
 						"targetDate": oTargetDate,
 						"newEndDate": oNewEndDate,
 						"aGuids": aGuids
