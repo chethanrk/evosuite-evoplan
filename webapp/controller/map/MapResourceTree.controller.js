@@ -54,7 +54,6 @@ sap.ui.define([
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.attachRouteMatched(this._routeMatched, this);
-			
 
 		},
 
@@ -419,7 +418,7 @@ sap.ui.define([
 		},
 		/**
 		 * method called on selection of date
-		 @Author: Pranav
+		 * @Author: Pranav
 		 */
 		handleCalendarSelect: function (oEvent) {
 			var oSelectedDate = oEvent.getSource().getSelectedDates()[0].getStartDate();
@@ -427,7 +426,7 @@ sap.ui.define([
 		},
 		/**
 		 * method called to open the Route Date Selection Popover
-		 @Author: Pranav
+		 * @Author: Pranav
 		 */
 		onRoutePress: function (oEvent) {
 			var oButton = oEvent.getSource(),
@@ -452,14 +451,14 @@ sap.ui.define([
 		},
 		/**
 		 * method called to close the date range fragment used for route creation
-		 @Author: Pranav
+		 * @Author: Pranav
 		 */
 		onCloseDialog: function (oEvent) {
 			this._oPopover.close();
 		},
 		/**
 		 * method for getting selected route for selected date
-		 @Author: Pranav
+		 * @Author: Pranav
 		 */
 		_getSelectedRoute: function (oSelectedDate) {
 			//Refresh the Map
@@ -485,6 +484,7 @@ sap.ui.define([
 		 * Return resource filters on selected resources
 		 * @param aSelectedResources {Array} Selected Resources
 		 * @return aResourceFilters Filters
+		 * @Author: Pranav
 		 */
 		_getResourceFilters: function (aSelectedResources, oSelectedDate) {
 			var aResources = [],
@@ -515,15 +515,15 @@ sap.ui.define([
 			return aFilters;
 		},
 		/**
-		 * method for route creation
-		 @Author: Pranav
+		 * Method for route creation in Map for selected Date
+		 * @Author: Pranav
 		 */
 		_routeCreationMap: function (aData) {
 			var aMapLocations = [];
 			var oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
 			aData.forEach(function (entry) {
-				var sSelectedDemandPath = "/DemandSet('" +entry.DemandGuid + "')";
+				var sSelectedDemandPath = "/DemandSet('" + entry.DemandGuid + "')";
 				aSelectedDemands.push(sSelectedDemandPath);
 			});
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
@@ -544,27 +544,26 @@ sap.ui.define([
 				this.getModel().setProperty("/DemandSet('" + aData[aData.length - 1].DemandGuid + "')/IS_SELECTED", true);
 			}
 			oViewModel.setProperty("/mapSettings/routeData", aMapLocations);
-			// this.getModel("viewModel").refresh();
 			oViewModel.setProperty("/mapSettings/busy", false);
-		//	this._eventBus.publish("BaseController", "refreshRoute", {});
 		},
-        /**
-         * Opens the resource qualification dialog 
-         */
-        onResourceIconPress : function(oEvent){
-        	var oRow = oEvent.getSource().getParent(),
-        		oContext = oRow.getBindingContext(),
-        		sPath = oContext.getPath(),
-        		oModel = oContext.getModel(),
-        		oResourceNode = oModel.getProperty(sPath);
-        		
-        	var sObjectId = oResourceNode.NodeId;
-        	if(oResourceNode.NodeType !== "ASSIGNMENT"){
-        		this.getOwnerComponent().Qualifications.open(this.getView(), sObjectId);
-        	}else{
-        		//
-        	}
-        }
+		/**
+		 * Opens the resource qualification dialog from Map demand table
+		 * @Author Rahul
+		 */
+		onResourceIconPress: function (oEvent) {
+			var oRow = oEvent.getSource().getParent(),
+				oContext = oRow.getBindingContext(),
+				sPath = oContext.getPath(),
+				oModel = oContext.getModel(),
+				oResourceNode = oModel.getProperty(sPath);
+
+			var sObjectId = oResourceNode.NodeId;
+			if (oResourceNode.NodeType !== "ASSIGNMENT") {
+				this.getOwnerComponent().Qualifications.open(this.getView(), sObjectId);
+			} else {
+				//
+			}
+		}
 
 	});
 });
