@@ -54,13 +54,13 @@ sap.ui.define([
 			this.getRouter().getRoute("gantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
-					bFromGantt: true	
+					bFromGantt: true
 				};
 			}.bind(this));
 			this.getRouter().getRoute("ganttSplit").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.SPLIT;
 				this._mParameters = {
-					bFromGanttSplit: true	
+					bFromGanttSplit: true
 				};
 			}.bind(this));
 
@@ -259,9 +259,9 @@ sap.ui.define([
 					} else {
 						this._showConfirmMessageBox(oResourceModel.getText("ymsg.extendMsg")).then(function (value) {
 							if (value === "NO" && fnCheckValidation) {
-									fnCheckValidation.call(this, aSources, oTarget, oTargetDate, availabilityData.EndtimestampWithstretch, aGuids, this._mParameters);
+								fnCheckValidation.call(this, aSources, oTarget, oTargetDate, availabilityData.EndtimestampWithstretch, aGuids, this._mParameters);
 							} else if (value === "YES" && fnCheckValidation) {
-									fnCheckValidation.call(this, aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids, this._mParameters);
+								fnCheckValidation.call(this, aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids, this._mParameters);
 							} else if (value === "YES") {
 								Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids))
 									.then(this._refreshAreas.bind(this)).catch(function (error) {});
@@ -273,7 +273,7 @@ sap.ui.define([
 					}
 				}.bind(this));
 			} else {
-					fnCheckValidation.call(this, aSources, oTarget, oTargetDate, null, aGuids, this._mParameters);
+				fnCheckValidation.call(this, aSources, oTarget, oTargetDate, null, aGuids, this._mParameters);
 			}
 		},
 		_checkResourceQualification: function (aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids, mParameters) {
@@ -290,9 +290,9 @@ sap.ui.define([
 						aGuids: aGuids
 					});
 					this.getOwnerComponent().QualificationCheck.open(this, this.getView(), mParameters);
-				}else{
-						Promise.all(this.assignedDemands(aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids))
-									.then(this._refreshAreas.bind(this)).catch(function (error) {});
+				} else {
+					Promise.all(this.assignedDemands(aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids))
+						.then(this._refreshAreas.bind(this)).catch(function (error) {});
 				}
 			}.bind(this));
 		},
@@ -939,7 +939,7 @@ sap.ui.define([
 				return "transparent";
 			} else if (sType === "T") {
 				return "url(#" + this._viewId + "--oncallorovertime)";
-			}else {
+			} else {
 				return "transparent";
 			}
 
@@ -954,7 +954,7 @@ sap.ui.define([
 			if (sType === "COLOUR") {
 				return sCode;
 			} else {
-				return "url(#" + this._viewId + "--"+sCode+")";
+				return "url(#" + this._viewId + "--" + sCode + ")";
 			}
 		},
 
