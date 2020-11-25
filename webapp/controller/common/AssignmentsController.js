@@ -134,14 +134,6 @@ sap.ui.define([
 					// Condition to Check if Qualification match service returns any result or Empty
 					if (oData.results && oData.results.length) {
 						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog
-						this.getModel("viewModel").setProperty("/QualificationMatchList", {
-							TargetObject: targetObj,
-							QualificationData: oData.results,
-							SourcePaths: aSourcePaths,
-							mParameters: mParameters,
-							oParams: oParams,
-							SourceMethod: "assignedDemands"
-						});
 						this.setQualificationMatchResults(targetObj, oData.results, mParameters, "assignedDemands", aSourcePaths, oParams);
 						this.showQualificationResults(); //Method to Open Qualification Dialog
 					} else {
@@ -179,14 +171,6 @@ sap.ui.define([
 					// Condition to Check if Qualification match service returns any result or Empty
 					if (oData.results && oData.results.length) {
 						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog
-						this.getModel("viewModel").setProperty("/QualificationMatchList", {
-							TargetObject: targetObj,
-							QualificationData: oData.results,
-							mParameters: mParameters,
-							oParams: oParams,
-							SourceMethod: "UpdateAssignment"
-
-						});
 						this.setQualificationMatchResults(targetObj, oData.results, mParameters, "UpdateAssignment", null, oParams);
 						this.showQualificationResults(); //Method to Open Qualification Dialog
 					} else {
@@ -219,15 +203,6 @@ sap.ui.define([
 					// Condition to Check if Qualification match service returns any result or Empty
 					if (oData.results && oData.results.length) {
 						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog
-						var targetObj = this.getModel().getProperty(sAssignPath);
-						this.getModel("viewModel").setProperty("/QualificationMatchList", {
-							TargetObject: targetObj,
-							AssignPath: sAssignPath,
-							Contexts: aContexts,
-							QualificationData: oData.results,
-							mParameters: mParameters,
-							SourceMethod: "bulkReAssignment"
-						});
 						this.setQualificationMatchResults(targetObj, oData.results, mParameters, "bulkReAssignment", null, null, sAssignPath,
 							aContexts);
 						this.showQualificationResults(); //Method to Open Qualification Dialog
