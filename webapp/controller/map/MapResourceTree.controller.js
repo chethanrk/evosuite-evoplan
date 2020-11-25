@@ -527,10 +527,10 @@ sap.ui.define([
 
 			for (var index = 0; index < aData.length - 1 && aData.length > 1; index++) {
 				var data = {
-					"sLong": aData[index].LONGITUDE,
-					"sLat": aData[index].LATITUDE,
-					"dLong": aData[index + 1].LONGITUDE,
-					"dLat": aData[index + 1].LATITUDE
+					sLong: aData[index].LONGITUDE,
+					sLat: aData[index].LATITUDE,
+					dLong: aData[index + 1].LONGITUDE,
+					dLat: aData[index + 1].LATITUDE
 				};
 				aMapLocations.push(data);
 				this.getModel().setProperty("/DemandSet('" + aData[index].DemandGuid + "')/IS_SELECTED", true);

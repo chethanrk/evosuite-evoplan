@@ -41,12 +41,12 @@
                     <Text text="{assignment>/ResourceGroupDesc}"/>
                     <Label text="{i18n>xfld.Order}" />
                     <Text text="{assignment>/OrderId}"/>
-                    <Label text="{i18n>xfld.Operation}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
-                    <Text text="{assignment>/OperationNumber}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
-                    <Label text="{i18n>xfld.SubOperation}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
-                    <Text text="{assignment>/SubOperationNumber}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? false : true}"/>
-                    <Label text="{i18n>xfld.Notification}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? true : false}"/>
-                     <Text text="{assignment>/Notification}" visible="{= ${assignment>/Obj_Source_Type} === 'DEM_PMNO' ? true : false}"/>
+                    <Label text="{i18n>xfld.Operation}" visible="{= ${assignment>/objSourceType} === 'DEM_PMNO' ? false : true}"/>
+                    <Text text="{assignment>/OperationNumber}" visible="{= ${assignment>/objSourceType} === 'DEM_PMNO' ? false : true}"/>
+                    <Label text="{i18n>xfld.SubOperation}" visible="{= ${assignment>/objSourceType} === 'DEM_PMNO' ? false : true}"/>
+                    <Text text="{assignment>/SubOperationNumber}" visible="{= ${assignment>/objSourceType} === 'DEM_PMNO' ? false : true}"/>
+                    <Label text="{i18n>xfld.Notification}" visible="{= ${assignment>/objSourceType} === 'DEM_PMNO' ? true : false}"/>
+                     <Text text="{assignment>/Notification}" visible="{= ${assignment>/objSourceType} === 'DEM_PMNO' ? true : false}"/>
          
                     
 

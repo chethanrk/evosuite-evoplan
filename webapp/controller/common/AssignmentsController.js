@@ -72,12 +72,12 @@ sap.ui.define([
 					if (oData.results && oData.results.length) {
 						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog
 						this.getModel("viewModel").setProperty("/QualificationMatchList", {
-							"TargetObject": targetObj,
-							"QualificationData": oData.results,
-							"SourcePaths": aSourcePaths,
-							"mParameters": mParameters,
-							"oParams": oParams,
-							"SourceMethod": "assignedDemands"
+							TargetObject: targetObj,
+							QualificationData: oData.results,
+							SourcePaths: aSourcePaths,
+							mParameters: mParameters,
+							oParams: oParams,
+							SourceMethod: "assignedDemands"
 						});
 						this.showQualificationResults(); //Method to Open Qualification Dialog
 					} else {
@@ -125,11 +125,11 @@ sap.ui.define([
 					if (oData.results && oData.results.length) {
 						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog
 						this.getModel("viewModel").setProperty("/QualificationMatchList", {
-							"TargetObject": targetObj,
-							"QualificationData": oData.results,
-							"mParameters": mParameters,
-							"oParams": oParams,
-							"SourceMethod": "UpdateAssignment"
+							TargetObject: targetObj,
+							QualificationData: oData.results,
+							mParameters: mParameters,
+							oParams: oParams,
+							SourceMethod: "UpdateAssignment"
 
 						});
 						this.showQualificationResults(); //Method to Open Qualification Dialog
@@ -182,12 +182,12 @@ sap.ui.define([
 						//Setting up the properties to Use it in the Proceed Method in Qualification Dialog
 						var targetObj = this.getModel().getProperty(sAssignPath);
 						this.getModel("viewModel").setProperty("/QualificationMatchList", {
-							"TargetObject": targetObj,
-							"AssignPath": sAssignPath,
-							"Contexts": aContexts,
-							"QualificationData": oData.results,
-							"mParameters": mParameters,
-							"SourceMethod": "bulkReAssignment"
+							TargetObject: targetObj,
+							AssignPath: sAssignPath,
+							Contexts: aContexts,
+							QualificationData: oData.results,
+							mParameters: mParameters,
+							SourceMethod: "bulkReAssignment"
 						});
 						this.showQualificationResults(); //Method to Open Qualification Dialog
 					} else {
@@ -251,21 +251,21 @@ sap.ui.define([
 			}
 
 			var oParams = {
-				"DateFrom": oData.DateFrom || 0,
-				"TimeFrom": {
+				DateFrom: oData.DateFrom || 0,
+				TimeFrom: {
 					__edmtype: "Edm.Time",
 					ms: oData.DateFrom.getTime()
 				},
-				"DateTo": oData.DateTo || 0,
-				"TimeTo": {
+				DateTo: oData.DateTo || 0,
+				TimeTo: {
 					__edmtype: "Edm.Time",
 					ms: oData.DateTo.getTime()
 				},
-				"AssignmentGUID": sAssignmentGUID,
-				"EffortUnit": oData.EffortUnit,
-				"Effort": oData.Effort,
-				"ResourceGroupGuid": oData.ResourceGroupGuid,
-				"ResourceGuid": oData.ResourceGuid
+				AssignmentGUID: sAssignmentGUID,
+				EffortUnit: oData.EffortUnit,
+				Effort: oData.Effort,
+				ResourceGroupGuid: oData.ResourceGroupGuid,
+				ResourceGuid: oData.ResourceGuid
 			};
 
 			if (isReassign && oData.NewAssignPath) {
@@ -311,11 +311,11 @@ sap.ui.define([
 				var sPath = aContexts[i].sPath;
 				var oAssignment = oModel.getProperty(sPath);
 				var oParams = {
-					"AssignmentGUID": oAssignment.Guid,
-					"EffortUnit": oAssignment.EffortUnit,
-					"Effort": oAssignment.Effort,
-					"ResourceGroupGuid": oResource.ResourceGroupGuid,
-					"ResourceGuid": oResource.ResourceGuid
+					AssignmentGUID: oAssignment.Guid,
+					EffortUnit: oAssignment.EffortUnit,
+					Effort: oAssignment.Effort,
+					ResourceGroupGuid: oResource.ResourceGroupGuid,
+					ResourceGuid: oResource.ResourceGuid
 				};
 				oParams = this.setDateTimeParams(oParams, oResource.StartDate, oResource.StartTime, oResource.EndDate, oResource.EndTime);
 				if (parseInt(i, 10) === aContexts.length - 1) {
@@ -339,7 +339,7 @@ sap.ui.define([
 				var sPath = aContexts[i].getPath();
 				var sAssignmentGuid = oModel.getProperty(sPath + "/Guid");
 				var oParams = {
-					"AssignmentGUID": sAssignmentGuid
+					AssignmentGUID: sAssignmentGuid
 				};
 				if (parseInt(i, 10) === aContexts.length - 1) {
 					bIsLast = true;
@@ -355,7 +355,7 @@ sap.ui.define([
 		 */
 		deleteAssignment: function (sId, mParameters) {
 			var oParams = {
-				"AssignmentGUID": sId
+				AssignmentGUID: sId
 			};
 			this.clearMessageModel();
 			this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, true);
@@ -368,7 +368,7 @@ sap.ui.define([
 		 */
 		updateFunctionDemand: function (aSelectedPaths, sFunctionKey, mParameters) {
 			var oParams = {
-					"Function": sFunctionKey
+					Function: sFunctionKey
 				},
 				bIsLast = null;
 

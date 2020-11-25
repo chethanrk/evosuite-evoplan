@@ -225,7 +225,7 @@ sap.ui.define([
 				this._checkResourceQualification(aSources, oTarget, oTargetDate, null, aGuids);
 			} else {
 				Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, null, aGuids))
-					.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
+					.then(this._refreshAreas.bind(this)).catch(function (error) {});
 			}
 
 			// if (!bCheckAvail && oUserModel.getProperty("/ENABLE_RESOURCE_AVAILABILITY") && oUserModel.getProperty("/ENABLE_ASSIGNMENT_STRETCH") &&
@@ -254,7 +254,7 @@ sap.ui.define([
 							fnCheckValidation.call(this, aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids, this._mParameters);
 						} else {
 							Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids))
-								.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
+								.then(this._refreshAreas.bind(this)).catch(function (error) {});
 						}
 					} else {
 						this._showConfirmMessageBox(oResourceModel.getText("ymsg.extendMsg")).then(function (value) {
@@ -264,10 +264,10 @@ sap.ui.define([
 									fnCheckValidation.call(this, aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids, this._mParameters);
 							} else if (value === "YES") {
 								Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids))
-									.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
+									.then(this._refreshAreas.bind(this)).catch(function (error) {});
 							} else {
 								Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, availabilityData.EndtimestampWithstretch, aGuids))
-									.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
+									.then(this._refreshAreas.bind(this)).catch(function (error) {});
 							}
 						}.bind(this));
 					}
@@ -281,18 +281,18 @@ sap.ui.define([
 			this.checkQualification(aSourcePaths, oTargetObject, oTargetDate, oNewEndDate, aGuids).then(function (data) {
 				if (data.result.results && data.result.results.length) {
 					this.getModel("viewModel").setProperty("/QualificationMatchList", {
-						"TargetObject": oTargetObject,
-						"QualificationData": data.result.results,
-						"SourcePaths": aSourcePaths,
-						"mParameters": mParameters,
-						"targetDate": oTargetDate,
-						"newEndDate": oNewEndDate,
-						"aGuids": aGuids
+						TargetObject: oTargetObject,
+						QualificationData: data.result.results,
+						SourcePaths: aSourcePaths,
+						mParameters: mParameters,
+						targetDate: oTargetDate,
+						newEndDate: oNewEndDate,
+						aGuids: aGuids
 					});
 					this.getOwnerComponent().QualificationCheck.open(this, this.getView(), mParameters);
 				}else{
 						Promise.all(this.assignedDemands(aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids))
-									.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
+									.then(this._refreshAreas.bind(this)).catch(function (error) {});
 				}
 			}.bind(this));
 		},
@@ -575,7 +575,7 @@ sap.ui.define([
 				if (!oAssignmentData || !oAssignmentData.Demand || !oAssignmentData.Demand.Guid) {
 					this.getModel().read("/" + sPath, {
 						urlParameters: {
-							"$expand": "Demand"
+							$expand: "Demand"
 						},
 						success: function (result) {
 							var obj = this._getAssignmentModelObject(result);

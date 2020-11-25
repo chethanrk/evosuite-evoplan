@@ -97,7 +97,6 @@ sap.ui.define([
 				splitterDivider: "30%",
 				selectedHierarchyView: "TIMENONE",
 				enableReprocess: false,
-				first_load: false,
 				launchMode: Constants.LAUNCH_MODE.BSP,
 				DefaultDemandStatus: "",
 				ganttSettings: {

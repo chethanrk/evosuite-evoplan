@@ -237,7 +237,7 @@ sap.ui.define([
 				ResourceGroupGuid: "",
 				ResourceGuid: "",
 				SubOperationNumber: "",
-				Obj_Source_Type: "",
+				objSourceType: "",
 				Notification: "",
 				isNewAssignment: false,
 				showError: false
@@ -292,7 +292,7 @@ sap.ui.define([
 						oModel.setProperty("/DemandStatus", oDemandData.Status);
 						oModel.setProperty("/DemandGuid", oDemandData.Guid);
 						oModel.setProperty("/Notification", oDemandData.NOTIFICATION);
-						oModel.setProperty("/Obj_Source_Type", oDemandData.OBJECT_SOURCE_TYPE);
+						oModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
 					},
 					dataRequested: function () {
 						oDialog.setBusy(true);
