@@ -543,24 +543,21 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/routeData", aMapLocations);
 			oViewModel.setProperty("/mapSettings/busy", false);
 		},
-		/**
-		 * Opens the resource qualification dialog from Map demand table
-		 * @Author Rahul
-		 */
-		onResourceIconPress: function (oEvent) {
-			var oRow = oEvent.getSource().getParent(),
-				oContext = oRow.getBindingContext(),
-				sPath = oContext.getPath(),
-				oModel = oContext.getModel(),
-				oResourceNode = oModel.getProperty(sPath);
-
-			var sObjectId = oResourceNode.NodeId;
-			if (oResourceNode.NodeType !== "ASSIGNMENT") {
-				this.getOwnerComponent().Qualifications.open(this.getView(), sObjectId);
-			} else {
-				//
-			}
-		}
-
+        /**
+         * Opens the resource qualification dialog 
+         * @Author Rahul
+         */
+        onResourceIconPress : function(oEvent){
+        	var oRow = oEvent.getSource().getParent(),
+        		oContext = oRow.getBindingContext(),
+        		sPath = oContext.getPath(),
+        		oModel = oContext.getModel(),
+        		oResourceNode = oModel.getProperty(sPath);
+        		
+        	var sObjectId = oResourceNode.NodeId;
+        	if(oResourceNode.NodeType !== "ASSIGNMENT"){
+        		this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
+        	}
+        }
 	});
 });

@@ -5,7 +5,7 @@ sap.ui.define([
 ], function (BaseController, formatter, Fragment) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.qualifications.Qualifications", {
+	return BaseController.extend("com.evorait.evoplan.controller.qualifications.ResourceQualifications", {
 
 		formatter: formatter,
 
@@ -46,9 +46,7 @@ sap.ui.define([
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 			// connect dialog to view (models, lifecycle)
 			oView.addDependent(oDialog);
-
 			this._getResourceInfo(sId);
-
 			// open dialog
 			oDialog.open();
 		},
@@ -74,7 +72,6 @@ sap.ui.define([
 					change: function () {
 						var oElementBinding = oDialog.getElementBinding();
 							oElementBinding.refresh();
-
 					},
 					dataRequested: function () {
 						oDialog.setBusy(true);
@@ -84,22 +81,14 @@ sap.ui.define([
 					}
 				}
 			});
-
 		},
 		/**
-		 * save form data
+		 * Close the Qualification Dialog
 		 * @param oEvent
 		 */
-		onSaveDialog: function (oEvent) {
-
-		},
 		onCloseDialog : function(oEvent){
 			this._oDialog.unbindElement();
 			this._oDialog.close();
-		},
-		
-		exit: function () {
-			// unsubscribe
 		}
 	});
 });

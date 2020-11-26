@@ -411,7 +411,7 @@ sap.ui.define([
         		
         	var sObjectId = oResourceNode.NodeId;
         	if(oResourceNode.NodeType !== "ASSIGNMENT"){
-        		this.getOwnerComponent().Qualifications.open(this.getView(), sObjectId);
+        		this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
         	}else{
         		//
         	}

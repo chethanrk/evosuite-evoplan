@@ -93,14 +93,26 @@ sap.ui.define([
 
 			return new Date(dateStr + "T" + timeStr);
 		},
-
+		
+		/**
+		 * Identifies the Target Type
+		 * @public
+		 * @param {string} sValue value of Node Type of Resource
+		 * @returns {boolean} true,if Target is either Resource or Resource Group else false(target is POOL) 
+		 */
 		isMainResource: function (sValue) {
 			if (sValue === "RESOURCE" || sValue === "RES_GROUP") {
 				return true;
 			}
 			return false;
 		},
-
+		
+		/**
+		 * Identifies the Title Type
+		 * @public
+		 * @param {string} sValue index for the format
+		 * @returns {string} Auto,if title formats is unavailable in Resource Formats else whatever format specified in Resource Formats 
+		 */
 		formatResourceTitle: function (sValue) {
 			var titleFormat = resourceFormats[sValue];
 			if (titleFormat) {
@@ -108,7 +120,15 @@ sap.ui.define([
 			}
 			return "Auto";
 		},
-
+		
+		/**
+		 * Provide the resource icon based on resource Type
+		 * @public
+		 * @param {string} sValue Resource Type 
+		 * @param {string} sStatusIcon icon for Status 
+		 * @param {string} sResourceIcon icon for Status Resource
+		 * @returns {string} icon for Resource base on Given Parameters
+		 */
 		getResourceIcon: function (sValue, sStatusIcon, sResourceIcon) {
 			var iconFormat = resourceFormats[sValue];
 			if (sValue === "RESOURCE") {
@@ -123,11 +143,23 @@ sap.ui.define([
 			}
 			return "";
 		},
-
+		
+		/**
+		 * Provides resource Format
+		 * @public
+		 * @param {string} sValue Resource Type
+		 * @returns {string} formate specified for given ResourceType
+		 */
 		getResourceFormatByKey: function (sValue) {
 			return resourceFormats[sValue];
 		},
-
+		
+		/**
+		 * Identifies whether its Assignment or not
+		 * @public
+		 * @param {string} sValue Operation Type
+		 * @returns {Boolean} true,if operation is 'Assignment' else false
+		 */
 		isAssignment: function (sValue) {
 			if (sValue === "ASSIGNMENT") {
 				return true;
@@ -189,6 +221,12 @@ sap.ui.define([
 				return oBundle.getText("xtit.available");
 			}
 		},
+		
+		/**
+		 * format the Message Box Criticality
+		 * @param sValue
+		 * @returns Message Type based on given Value
+		 */
 		formatCriticality: function (sValue) {
 			if (sValue === 1) {
 				return sap.ui.core.MessageType.Error;
@@ -200,6 +238,12 @@ sap.ui.define([
 				return sap.ui.core.MessageType.Information;
 			}
 		},
+
+		/**
+		 * Specifies the Color for Status Icon
+		 * @param sValue
+		 * @returns Color code based on given Value
+		 */
 		formatStatusIconColor: function (sValue, sColor) {
 			if (sColor && sColor !== "") {
 				return sColor;
@@ -533,6 +577,12 @@ sap.ui.define([
 			else
 				{return false;}
 		},
+		
+		/*
+		 * To Specify Qualification Fullfilled value in Yes/No base
+		 * @param bFulfilled 
+		 * @returns Yes/NO based on give Boolean value 
+		 */
 		getQualificationFulfilled: function (bFulfilled) {
 			if (bFulfilled) {
 				return "Yes";
@@ -540,6 +590,12 @@ sap.ui.define([
 				return "No";
 			}
 		},
+		
+		/*
+		 * To Specify Qualification Button visibilty 
+		 * @param bType Dialog type
+		 * @returns Boolean based on given Given Dialog type 
+		 */
 		getQualificationBtnVisibilty: function (bType) {
 			if (bType === "W") {
 				return true;
