@@ -139,7 +139,6 @@ sap.ui.define([
 		},
 		/**
 		 * Gets default filters for gantt
-		 *
 		 * @param mParameters
 		 * @return {Array}
 		 * @private
@@ -158,7 +157,6 @@ sap.ui.define([
 		/**
 		 * On Drop on the resource tree rows or on the Gantt chart
 		 * call the function import to create the assignment
-		 *
 		 * @param {object} oEvent
 		 * @Author Rahul
 		 * @since 3.0
@@ -227,17 +225,14 @@ sap.ui.define([
 				Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, null, aGuids))
 					.then(this._refreshAreas.bind(this)).catch(function (error) {});
 			}
-
-			// if (!bCheckAvail && oUserModel.getProperty("/ENABLE_RESOURCE_AVAILABILITY") && oUserModel.getProperty("/ENABLE_ASSIGNMENT_STRETCH") &&
-			// 	oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && oResourceData.ResourceGuid && oResourceData.ResourceGuid !==
-			// 		"")) {
-
-			// } else {
-			// 	Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, false, aGuids))
-			// 		.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
-			// }
-
 		},
+
+		/**
+		 * Proceed to assignment with Stretch, check if Date Time is not valid
+		 * @param {Object} aSources Demand paths
+		 * @param {Object} oTarget Resource Path
+		 * @private
+		 */
 		_checkAssignmentForStretch: function (oResourceData, aSources, oTarget, oTargetDate, aGuids, fnCheckValidation) {
 			var oViewModel = this.getModel("viewModel"),
 				oResourceModel = this.getResourceBundle();
@@ -276,6 +271,13 @@ sap.ui.define([
 				fnCheckValidation.call(this, aSources, oTarget, oTargetDate, null, aGuids, this._mParameters);
 			}
 		},
+
+		/**
+		 * Proceed to Qualification Check for Demand Assignment/Reassignment/Update, before Service call (Call Function Import) 
+		 * @param {Object} aSourcePaths Demand paths
+		 * @param {Object} oTarget Resource Path
+		 * @private
+		 */
 		_checkResourceQualification: function (aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids, mParameters) {
 			var oTargetObject = this.getModel().getProperty(oTarget);
 			this.checkQualification(aSourcePaths, oTargetObject, oTargetDate, oNewEndDate, aGuids).then(function (data) {
@@ -284,7 +286,7 @@ sap.ui.define([
 						TargetObject: oTargetObject,
 						QualificationData: data.result.results,
 						SourcePaths: aSourcePaths,
-						mParameters: mParameters,
+						mParameter: mParameters,
 						targetDate: oTargetDate,
 						newEndDate: oNewEndDate,
 						aGuids: aGuids
@@ -292,7 +294,7 @@ sap.ui.define([
 					this.getOwnerComponent().QualificationCheck.open(this, this.getView(), mParameters);
 				} else {
 					Promise.all(this.assignedDemands(aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids))
-						.then(this._refreshAreas.bind(this)).catch(function (error) {});
+						.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
 				}
 			}.bind(this));
 		},
@@ -412,13 +414,15 @@ sap.ui.define([
 			var oShape = oEvent.getParameter("shape"),
 				oViewModel = this.getModel("viewModel"),
 				oAppView = this.getModel("appView"),
-				sCurrentRoute = oAppView.getProperty("/currentRoute");
+				sCurrentRoute = oAppView.getProperty("/currentRoute"),
+				oModel, sPath, sAssignGuid, sStatus;
+
 			if (oShape && oShape.sParentAggregationName === "shapes3") {
 				this._selectedShapeContext = oShape.getBindingContext();
-				var oModel = this._selectedShapeContext.getModel(),
-					sPath = this._selectedShapeContext.getPath(),
-					sAssignGuid = oModel.getProperty(sPath).Guid,
-					sStatus = oModel.getProperty(sPath).DEMAND_STATUS;
+				oModel = this._selectedShapeContext.getModel();
+				sPath = this._selectedShapeContext.getPath();
+				sAssignGuid = oModel.getProperty(sPath).Guid;
+				sStatus = oModel.getProperty(sPath).DEMAND_STATUS;
 				if (!this._menu || sCurrentRoute !== this._firstVisit) {
 					this._menu = sap.ui.xmlfragment(
 						"com.evorait.evoplan.view.gantt.fragments.ShapeContextMenu",
@@ -450,9 +454,9 @@ sap.ui.define([
 				oSelectedItem = oParams.item,
 				sButtonText = oSelectedItem.getText(),
 				oCustomData = oSelectedItem.getAggregation("customData"),
-				sFunctionKey = oCustomData.length ? oCustomData[0].getValue() : null;
+				sFunctionKey = oCustomData.length ? oCustomData[0].getValue() : null,
 
-			var oModel = this._selectedShapeContext.getModel(),
+				oModel = this._selectedShapeContext.getModel(),
 				sPath = this._selectedShapeContext.getPath(),
 				sAssignGuid = oModel.getProperty(sPath).Guid,
 				oSelectedData = [{
@@ -514,9 +518,10 @@ sap.ui.define([
 		 * @private
 		 */
 		_reassignShape: function (sChannel, sEvent, oData) {
+			var sourceData;
 			if (sEvent === "ganttShapeReassignment") {
 				for (var i = 0; i < oData.aSourcePaths.length; i++) {
-					var sourceData = this.getModel().getProperty(oData.aSourcePaths[i]);
+					sourceData = this.getModel().getProperty(oData.aSourcePaths[i]);
 					this._updateAssignmentModel(sourceData.Guid).then(function (oAssignmentObj) {
 						if (oAssignmentObj.AllowReassign) {
 							oAssignmentObj.NewAssignPath = oData.sAssignPath;
@@ -567,10 +572,11 @@ sap.ui.define([
 		 */
 		_updateAssignmentModel: function (sAssignmentGuid, isReassign) {
 			return new Promise(function (resolve, reject) {
-				var sPath = this.getModel().createKey("AssignmentSet", {
-					Guid: sAssignmentGuid
-				});
-				var oAssignmentData = this.getModel().getProperty("/" + sPath);
+				var obj,
+					sPath = this.getModel().createKey("AssignmentSet", {
+						Guid: sAssignmentGuid
+					}),
+					oAssignmentData = this.getModel().getProperty("/" + sPath);
 				// Demnad data or assignment data will be missing some time
 				if (!oAssignmentData || !oAssignmentData.Demand || !oAssignmentData.Demand.Guid) {
 					this.getModel().read("/" + sPath, {
@@ -578,7 +584,7 @@ sap.ui.define([
 							$expand: "Demand"
 						},
 						success: function (result) {
-							var obj = this._getAssignmentModelObject(result);
+							obj = this._getAssignmentModelObject(result);
 							this._oAssignementModel.setData(obj);
 							resolve(obj);
 						}.bind(this),
@@ -587,7 +593,7 @@ sap.ui.define([
 						}
 					});
 				} else {
-					var obj = this._getAssignmentModelObject(oAssignmentData);
+					obj = this._getAssignmentModelObject(oAssignmentData);
 					this._oAssignementModel.setData(obj);
 					resolve(obj);
 				}
@@ -601,7 +607,9 @@ sap.ui.define([
 		 * @private
 		 */
 		_getAssignmentModelObject: function (oData) {
-			var oDefaultObject = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject();
+			var oDefaultObject = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject(),
+				sPath;
+
 			oDefaultObject.AssignmentGuid = oData.Guid;
 
 			for (var key in oDefaultObject) {
@@ -610,7 +618,7 @@ sap.ui.define([
 				}
 			}
 			if (!oData.Demand.Status) {
-				var sPath = this.getModel().createKey("DemandSet", {
+				sPath = this.getModel().createKey("DemandSet", {
 					Guid: oData.DemandGuid
 				});
 				oData.Demand = this.getModel().getProperty("/" + sPath);
@@ -647,7 +655,10 @@ sap.ui.define([
 			var oParams = oEvent.getParameters(),
 				oViewModel = this.getModel("viewModel"),
 				msg = this.getResourceBundle().getText("msg.ganttShapeDropError"),
-				oModel = this.getModel();
+				oModel = this.getModel(),
+				targetContext,
+				targetData,
+				draggedShape;
 
 			if (!oParams.targetRow && !oParams.targetShape) {
 				this.showMessageToast(msg);
@@ -656,9 +667,9 @@ sap.ui.define([
 			// to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page", "ganttSplit");
 
-			var targetContext = oParams.targetRow ? oParams.targetRow.getBindingContext() : oParams.targetShape.getParent().getParent().getBindingContext(),
-				targetData = targetContext ? targetContext.getObject() : null,
-				draggedShape = oParams.draggedShapeDates;
+			targetContext = oParams.targetRow ? oParams.targetRow.getBindingContext() : oParams.targetShape.getParent().getParent().getBindingContext();
+			targetData = targetContext ? targetContext.getObject() : null;
+			draggedShape = oParams.draggedShapeDates;
 			// If you drop in empty gantt area where there is no data
 			if (!targetData) {
 				this.showMessageToast(msg);
@@ -677,9 +688,8 @@ sap.ui.define([
 			Object.keys(draggedShape).forEach(function (sShapeUid) {
 				var sourcePath = this._getShapeBindingContextPath(sShapeUid),
 					sourceData = this.getModel().getProperty(sourcePath),
-					isReassign = sourceData.ObjectId !== targetData.NodeId;
-
-				var oSourceStartDate = moment(draggedShape[sShapeUid].time),
+					isReassign = sourceData.ObjectId !== targetData.NodeId,
+					oSourceStartDate = moment(draggedShape[sShapeUid].time),
 					oSourceEndDate = moment(draggedShape[sShapeUid].endTime),
 					duration = oSourceEndDate.diff(oSourceStartDate, "seconds"),
 					newEndDate = moment(oParams.newDateTime).add(duration, "seconds");
@@ -747,10 +757,11 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onShapeDoubleClick: function (oEvent) {
-			var oParams = oEvent.getParameters();
-			var oContext = oParams.shape.getBindingContext(),
+			var oParams = oEvent.getParameters(),
+				oContext = oParams.shape.getBindingContext(),
 				oRowContext = oParams.rowSettings.getParent().getBindingContext(),
-				oShape = oParams.shape;
+				oShape = oParams.shape,
+				sMsg;
 			if (oShape && oShape.sParentAggregationName === "shapes3") {
 				// to identify the action done on respective page
 				localStorage.setItem("Evo-Action-page", "ganttSplit");
@@ -759,8 +770,8 @@ sap.ui.define([
 						bFromGantt: true
 					}, oShape.getTime());
 				} else {
-					var msg = this.getResourceBundle().getText("notFoundContext");
-					this.showMessageToast(msg);
+					sMsg = this.getResourceBundle().getText("notFoundContext");
+					this.showMessageToast(sMsg);
 				}
 			}
 		},
@@ -769,13 +780,13 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onSearchResource: function (oEvent) {
-			var sQuery = oEvent.getParameter("query");
-			var oFilter = new Filter("Description", FilterOperator.Contains, sQuery);
-			var aFilters = this._getDefaultFilters();
-			aFilters.push(oFilter);
-			var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
-			binding.filter(aFilters, "Application");
+			var sQuery = oEvent.getParameter("query"),
+				oFilter = new Filter("Description", FilterOperator.Contains, sQuery),
+				aFilters = this._getDefaultFilters(),
+				binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
 
+			aFilters.push(oFilter);
+			binding.filter(aFilters, "Application");
 		},
 		/**
 		 * open the create unavailability dialog for selected resource
@@ -811,10 +822,10 @@ sap.ui.define([
 		 */
 
 		onChangeSelectResource: function (oEvent) {
-			var oSource = oEvent.getSource();
-			var parent = oSource.getParent();
-			var sPath = parent.getBindingContext().getPath();
-			var oParams = oEvent.getParameters();
+			var oSource = oEvent.getSource(),
+				parent = oSource.getParent(),
+				sPath = parent.getBindingContext().getPath(),
+				oParams = oEvent.getParameters();
 
 			//Sets the property IsSelected manually
 			this.getModel().setProperty(sPath + "/IsSelected", oParams.selected);
@@ -975,13 +986,11 @@ sap.ui.define([
 				oContext = oRow.getBindingContext(),
 				sPath = oContext.getPath(),
 				oModel = oContext.getModel(),
-				oResourceNode = oModel.getProperty(sPath);
+				oResourceNode = oModel.getProperty(sPath),
+				sObjectId = oResourceNode.NodeId;
 
-			var sObjectId = oResourceNode.NodeId;
 			if (oResourceNode.NodeType !== "ASSIGNMENT") {
-				this.getOwnerComponent().Qualifications.open(this.getView(), sObjectId);
-			} else {
-				//
+				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
 			}
 		}
 	});

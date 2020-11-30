@@ -84,9 +84,9 @@ sap.ui.define([
 				StartTimestamp: StartTimestamp,
 				EndTimestamp: EndTimestamp
 			};
-			if (AssignmentGUID)
+			if (AssignmentGUID) {
 				oQualificationParameters.AssignmentGUID = AssignmentGUID;
-
+			}
 			return oQualificationParameters;
 		},
 		/**
@@ -104,14 +104,14 @@ sap.ui.define([
 		setQualificationMatchResults: function (TargetObject, QualificationData, mParameters, SourceMethod, SourcePaths, oParams, AssignPath,
 			Contexts) {
 			this.getModel("viewModel").setProperty("/QualificationMatchList", {
-				"TargetObject": TargetObject,
-				"QualificationData": QualificationData,
-				"SourcePaths": SourcePaths,
-				"mParameter": mParameters,
-				"oParams": oParams,
-				"SourceMethod": SourceMethod,
-				"AssignPath": AssignPath,
-				"Contexts": Contexts
+				TargetObject: TargetObject,
+				QualificationData: QualificationData,
+				SourcePaths: SourcePaths,
+				mParameter: mParameters,
+				oParams: oParams,
+				SourceMethod: SourceMethod,
+				AssignPath: AssignPath,
+				Contexts: Contexts
 			});
 		},
 
