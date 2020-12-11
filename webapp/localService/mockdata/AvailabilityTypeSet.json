@@ -1,0 +1,91 @@
+[{
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('CL_LEAVE')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('CL_LEAVE')",
+		"type": "com.evorait.evoplan.AvailabilityType"
+	},
+	"AvailabilityTypeCode": "CL_LEAVE",
+	"AvailabilityDesc": "Casual Leave",
+	"AvailabilityTypeGroup": "N",
+	"IsAvailable": false
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('FREE_DAY')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('FREE_DAY')",
+		"type": "com.evorait.evoplan.AvailabilityType"
+	},
+	"AvailabilityTypeCode": "FREE_DAY",
+	"AvailabilityDesc": "Free Day (Weekends)",
+	"AvailabilityTypeGroup": "O",
+	"IsAvailable": false
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('I_WORK')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('I_WORK')",
+		"type": "com.evorait.evoplan.AvailabilityType"
+	},
+	"AvailabilityTypeCode": "I_WORK",
+	"AvailabilityDesc": "Infraserv Work Time",
+	"AvailabilityTypeGroup": "A",
+	"IsAvailable": true
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('NORM_WORK')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('NORM_WORK')",
+		"type": "com.evorait.evoplan.AvailabilityType"
+	},
+	"AvailabilityTypeCode": "NORM_WORK",
+	"AvailabilityDesc": "Normal Working Hours",
+	"AvailabilityTypeGroup": "A",
+	"IsAvailable": true
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('NOWORKTIME')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('NOWORKTIME')",
+		"type": "com.evorait.evoplan.AvailabilityType"
+	},
+	"AvailabilityTypeCode": "NOWORKTIME",
+	"AvailabilityDesc": "No work time",
+	"AvailabilityTypeGroup": "N",
+	"IsAvailable": false
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('PUBLIC_OFF')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('PUBLIC_OFF')",
+		"type": "com.evorait.evoplan.AvailabilityType"
+	},
+	"AvailabilityTypeCode": "PUBLIC_OFF",
+	"AvailabilityDesc": "Public/bank holiday",
+	"AvailabilityTypeGroup": "O",
+	"IsAvailable": false
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('SHIFT_OFF')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('SHIFT_OFF')",
+		"type": "com.evorait.evoplan.AvailabilityType"
+	},
+	"AvailabilityTypeCode": "SHIFT_OFF",
+	"AvailabilityDesc": "Shift off (Non working) hours",
+	"AvailabilityTypeGroup": "O",
+	"IsAvailable": false
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('TRAINING')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('TRAINING')",
+		"type": "com.evorait.evoplan.AvailabilityType"
+	},
+	"AvailabilityTypeCode": "TRAINING",
+	"AvailabilityDesc": "Internal training",
+	"AvailabilityTypeGroup": "P",
+	"IsAvailable": true
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('WORK_BREAK')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AvailabilityTypeSet('WORK_BREAK')",
+		"type": "com.evorait.evoplan.AvailabilityType"
+	},
+	"AvailabilityTypeCode": "WORK_BREAK",
+	"AvailabilityDesc": "Paid Leave",
+	"AvailabilityTypeGroup": "N",
+	"IsAvailable": false
+}]

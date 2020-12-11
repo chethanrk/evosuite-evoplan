@@ -1,0 +1,17 @@
+[{
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/UnavailabilityCodesSet('01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/UnavailabilityCodesSet('01')",
+		"type": "com.evorait.evoplan.UnavailabilityCodes"
+	},
+	"UnavailabilityCodeDesc": " Red",
+	"UnavailabilityCode": "01"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/UnavailabilityCodesSet('02')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/UnavailabilityCodesSet('02')",
+		"type": "com.evorait.evoplan.UnavailabilityCodes"
+	},
+	"UnavailabilityCodeDesc": "Blue",
+	"UnavailabilityCode": "02"
+}]

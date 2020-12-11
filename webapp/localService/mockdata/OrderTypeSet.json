@@ -1,470 +1,481 @@
-[
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('AD01')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('AD01')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "AD01",
-        "OrderTypeDesc": "Modification Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('AD02')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('AD02')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "AD02",
-        "OrderTypeDesc": "Repair Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('AD03')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('AD03')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "AD03",
-        "OrderTypeDesc": "Regular Maintenance Service"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('CS01')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('CS01')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "CS01",
-        "OrderTypeDesc": "Service Order (ClickSchedule)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('CS02')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('CS02')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "CS02",
-        "OrderTypeDesc": "Service Order (ClickSchedule w. Appt.)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('DC01')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('DC01')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "DC01",
-        "OrderTypeDesc": "Disconnection Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('FP01')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('FP01')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "FP01",
-        "OrderTypeDesc": "Service Order (with Revenues)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('FP02')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('FP02')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "FP02",
-        "OrderTypeDesc": "Service Order (with Revenues)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('MR01')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('MR01')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "MR01",
-        "OrderTypeDesc": "Meter reading order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('NLM2')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('NLM2')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "NLM2",
-        "OrderTypeDesc": "NLM Maintenance Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('NLM8')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('NLM8')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "NLM8",
-        "OrderTypeDesc": "NLM Maintenance Order new"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PAM')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PAM')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "PAM",
-        "OrderTypeDesc": "Maintenance Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM01')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM01')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "PM01",
-        "OrderTypeDesc": "Maintenance Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM02')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM02')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "PM02",
-        "OrderTypeDesc": "Regular Maintenance Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM03')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM03')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "PM03",
-        "OrderTypeDesc": "Preventive Maintenance"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM04')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM04')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "PM04",
-        "OrderTypeDesc": "Refurbishment Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM05')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM05')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "PM05",
-        "OrderTypeDesc": "Order (Incl. Notification)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM06')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM06')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "PM06",
-        "OrderTypeDesc": "Calibration Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM07')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM07')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "PM07",
-        "OrderTypeDesc": "Investment Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM09')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM09')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "PM09",
-        "OrderTypeDesc": "Maintenance Order w. Component Planning"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PMXX')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PMXX')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "PMXX",
-        "OrderTypeDesc": "Maintenance Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('RC01')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('RC01')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "RC01",
-        "OrderTypeDesc": "Reconnection order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM01')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM01')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "SM01",
-        "OrderTypeDesc": "Service Order (with contract)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM02')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM02')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "SM02",
-        "OrderTypeDesc": "Service Order (with Revenues)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM03')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM03')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "SM03",
-        "OrderTypeDesc": "Service Order: Repairs Processing"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM09')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM09')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "SM09",
-        "OrderTypeDesc": "Service Order  and SRM Integration"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SP01')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SP01')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "SP01",
-        "OrderTypeDesc": "Maintenance Order (Railway)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SP03')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SP03')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "SP03",
-        "OrderTypeDesc": "Preventive Maintenance (Railway)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SP04')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SP04')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "SP04",
-        "OrderTypeDesc": "Maintenance Order (Post)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SR01')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SR01')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "SR01",
-        "OrderTypeDesc": "Service Order (CRM Service Request)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SRM1')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SRM1')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "SRM1",
-        "OrderTypeDesc": "Maintenance Order SRM MDM"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SRM2')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SRM2')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "SRM2",
-        "OrderTypeDesc": "Maintenance Order SRM CCM"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('UGEN')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('UGEN')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "UGEN",
-        "OrderTypeDesc": "Utility General Maintenance Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZCNT')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZCNT')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZCNT",
-        "OrderTypeDesc": "Refurbishment Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZGRC')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZGRC')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZGRC",
-        "OrderTypeDesc": "GRC Audit Backup Object"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZI01')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZI01')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZI01",
-        "OrderTypeDesc": "RE Maintenance Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZIM1')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZIM1')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZIM1",
-        "OrderTypeDesc": "Infrastructure Maintenance"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZKP5')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZKP5')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZKP5",
-        "OrderTypeDesc": "Order type for INKB"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZKP6')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZKP6')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZKP6",
-        "OrderTypeDesc": "Order type - 2 for INKB"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZM01')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZM01')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZM01",
-        "OrderTypeDesc": "Service Order (Full Service Loop)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZME1')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZME1')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZME1",
-        "OrderTypeDesc": "Service Order (with contract)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZME2')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZME2')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZME2",
-        "OrderTypeDesc": "Service Order (with Revenues)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR1')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR1')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZMR1",
-        "OrderTypeDesc": "Service Order (with contract)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR2')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR2')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZMR2",
-        "OrderTypeDesc": "Service Order (with Revenues)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR3')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR3')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZMR3",
-        "OrderTypeDesc": "MRS Maintenance Order copy of PM01"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR4')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR4')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZMR4",
-        "OrderTypeDesc": "MRS Maintenance Order copy of PM02"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR5')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR5')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZMR5",
-        "OrderTypeDesc": "Service Order copy of SM01"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZPM1')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZPM1')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZPM1",
-        "OrderTypeDesc": "Maintenance Order"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZREJ')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZREJ')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZREJ",
-        "OrderTypeDesc": "Order for Facility Work-JP"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSP1')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSP1')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZSP1",
-        "OrderTypeDesc": "SP: Call Up Service"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSR1')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSR1')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZSR1",
-        "OrderTypeDesc": "Service Order (CRM Service Request)"
-      },
-      {
-        "__metadata": {
-          "id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSR2')",
-          "uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSR2')",
-          "type": "com.evorait.evoplan.OrderType"
-        },
-        "OrderTypeCode": "ZSR2",
-        "OrderTypeDesc": "Service Order (with contract)"
-      }
-    ]
+[{
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('AD01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('AD01')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "AD01",
+	"OrderTypeDesc": "Modification Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('AD02')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('AD02')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "AD02",
+	"OrderTypeDesc": "Repair Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('AD03')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('AD03')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "AD03",
+	"OrderTypeDesc": "Regular Maintenance Service"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('BW02')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('BW02')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "BW02",
+	"OrderTypeDesc": "Maintenance Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('CS01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('CS01')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "CS01",
+	"OrderTypeDesc": "Service Order (ClickSchedule)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('CS02')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('CS02')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "CS02",
+	"OrderTypeDesc": "Service Order (ClickSchedule w. Appt.)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('DC01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('DC01')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "DC01",
+	"OrderTypeDesc": "Disconnection Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('DFS1')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('DFS1')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "DFS1",
+	"OrderTypeDesc": "Maintenance Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ETT1')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ETT1')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ETT1",
+	"OrderTypeDesc": "Evora Test Team 1"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('EVO1')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('EVO1')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "EVO1",
+	"OrderTypeDesc": "Maintenance Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('EVO2')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('EVO2')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "EVO2",
+	"OrderTypeDesc": "Maintenance Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('EVO3')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('EVO3')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "EVO3",
+	"OrderTypeDesc": "Mass testing"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('FP01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('FP01')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "FP01",
+	"OrderTypeDesc": "Service Order (with Revenues)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('FP02')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('FP02')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "FP02",
+	"OrderTypeDesc": "Service Order (with Revenues)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('MR01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('MR01')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "MR01",
+	"OrderTypeDesc": "Meter reading order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('NLM2')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('NLM2')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "NLM2",
+	"OrderTypeDesc": "NLM Maintenance Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('NLM8')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('NLM8')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "NLM8",
+	"OrderTypeDesc": "NLM Maintenance Order new"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PAM')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PAM')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "PAM",
+	"OrderTypeDesc": "Maintenance Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM01')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "PM01",
+	"OrderTypeDesc": "Maintenance Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM02')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM02')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "PM02",
+	"OrderTypeDesc": "Regular Maintenance Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM03')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM03')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "PM03",
+	"OrderTypeDesc": "Preventive Maintenance"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM04')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM04')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "PM04",
+	"OrderTypeDesc": "Refurbishment Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM05')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM05')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "PM05",
+	"OrderTypeDesc": "Order (Incl. Notification)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM06')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM06')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "PM06",
+	"OrderTypeDesc": "Calibration Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM07')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM07')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "PM07",
+	"OrderTypeDesc": "Investment Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM09')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PM09')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "PM09",
+	"OrderTypeDesc": "Maintenance Order w. Component Planning"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PMXX')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('PMXX')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "PMXX",
+	"OrderTypeDesc": "Maintenance Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('RC01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('RC01')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "RC01",
+	"OrderTypeDesc": "Reconnection order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM01')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "SM01",
+	"OrderTypeDesc": "Service Order (with contract)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM02')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM02')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "SM02",
+	"OrderTypeDesc": "Service Order (with Revenues)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM03')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM03')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "SM03",
+	"OrderTypeDesc": "Service Order: Repairs Processing"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM09')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SM09')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "SM09",
+	"OrderTypeDesc": "Service Order  and SRM Integration"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SP01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SP01')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "SP01",
+	"OrderTypeDesc": "Maintenance Order (Railway)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SP03')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SP03')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "SP03",
+	"OrderTypeDesc": "Preventive Maintenance (Railway)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SP04')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SP04')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "SP04",
+	"OrderTypeDesc": "Maintenance Order (Post)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SR01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SR01')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "SR01",
+	"OrderTypeDesc": "Service Order (CRM Service Request)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SRM1')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SRM1')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "SRM1",
+	"OrderTypeDesc": "Maintenance Order SRM MDM"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SRM2')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('SRM2')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "SRM2",
+	"OrderTypeDesc": "Maintenance Order SRM CCM"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('UGEN')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('UGEN')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "UGEN",
+	"OrderTypeDesc": "Utility General Maintenance Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZCNT')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZCNT')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZCNT",
+	"OrderTypeDesc": "Refurbishment Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZGRC')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZGRC')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZGRC",
+	"OrderTypeDesc": "GRC Audit Backup Object"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZI01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZI01')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZI01",
+	"OrderTypeDesc": "RE Maintenance Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZIM1')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZIM1')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZIM1",
+	"OrderTypeDesc": "Infrastructure Maintenance"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZKP5')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZKP5')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZKP5",
+	"OrderTypeDesc": "Order type for INKB"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZKP6')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZKP6')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZKP6",
+	"OrderTypeDesc": "Order type - 2 for INKB"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZM01')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZM01')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZM01",
+	"OrderTypeDesc": "Service Order (Full Service Loop)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZME1')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZME1')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZME1",
+	"OrderTypeDesc": "Service Order (with contract)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZME2')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZME2')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZME2",
+	"OrderTypeDesc": "Service Order (with Revenues)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR1')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR1')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZMR1",
+	"OrderTypeDesc": "Service Order (with contract)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR2')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR2')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZMR2",
+	"OrderTypeDesc": "Service Order (with Revenues)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR3')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR3')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZMR3",
+	"OrderTypeDesc": "MRS Maintenance Order copy of PM01"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR4')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR4')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZMR4",
+	"OrderTypeDesc": "MRS Maintenance Order copy of PM02"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR5')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZMR5')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZMR5",
+	"OrderTypeDesc": "Service Order copy of SM01"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZPM1')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZPM1')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZPM1",
+	"OrderTypeDesc": "Maintenance Order"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZREJ')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZREJ')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZREJ",
+	"OrderTypeDesc": "Order for Facility Work-JP"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSM1')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSM1')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZSM1",
+	"OrderTypeDesc": "ZSM1: Service Order (with contract)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSM2')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSM2')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZSM2",
+	"OrderTypeDesc": "ZSM2: Service Order (with Revenues)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSP1')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSP1')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZSP1",
+	"OrderTypeDesc": "SP: Call Up Service"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSR1')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSR1')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZSR1",
+	"OrderTypeDesc": "Service Order (CRM Service Request)"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSR2')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/OrderTypeSet('ZSR2')",
+		"type": "com.evorait.evoplan.OrderType"
+	},
+	"OrderTypeCode": "ZSR2",
+	"OrderTypeDesc": "Service Order (with contract)"
+}]

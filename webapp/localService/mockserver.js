@@ -36,7 +36,7 @@ sap.ui.define([
 				// configure mock server with a delay of .3s
 				MockServer.config({
 					autoRespond : true,
-					autoRespondAfter : (oUriParameters.get("serverDelay") || 300)
+					autoRespondAfter : oUriParameters.get("serverDelay") || 300
 				});
 
 				oMockServer.simulate(sMetadataUrl, {
@@ -80,32 +80,32 @@ sap.ui.define([
                             url: sJsonFilesUrl+"/Assignment.json"
                         });
                         var header = {
-								"code": "/EVORA/EP_MSG_CLS/038",
-								"message": "Assignment dates have been adjusted to match the dates of the resource ",
-								"severity": "warning",
-								"target": "",
-								"details": [{
-									"code": " / EVORA / EP_MSG_CLS / 018 ",
-									"message": "Assignment end date is later than demand end date ",
-									"target": "",
-									"severity": "warning"
+								code: "/EVORA/EP_MSG_CLS/038",
+								message: "Assignment dates have been adjusted to match the dates of the resource ",
+								severity: "warning",
+								target: "",
+								details: [{
+									code: " / EVORA / EP_MSG_CLS / 018 ",
+									message: "Assignment end date is later than demand end date ",
+									target: "",
+									severity: "warning"
 								}, {
-									"code": " / EVORA / EP_MSG_CLS / 012 ",
-									"message": "Assignment of demand Travelling to location to resource Rahul Inamdar of resource group Product cluster is successful ",
-									"target": "",
-									"severity": "info"
+									code: " / EVORA / EP_MSG_CLS / 012 ",
+									message: "Assignment of demand Travelling to location to resource Rahul Inamdar of resource group Product cluster is successful ",
+									target: "",
+									severity: "info"
 								}, {
-									"code": "/EVORA/EP_MSG_CLS/018",
-									"message": "Assignment end date is later than demand end date",
-									"target": "",
-									"severity": "warning"
+									code: "/EVORA/EP_MSG_CLS/018",
+									message: "Assignment end date is later than demand end date",
+									target: "",
+									severity: "warning"
 								}]
 							};
                         
                         var oHeaders = {
 							"Content-Type":"application/json",
-							"DataServiceVersion":"2.0",
-							"location":"https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED890A79BFB8D42B65E')",
+							DataServiceVersion:"2.0",
+							location:"https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/AssignmentSet('0A51491BD5A01ED890A79BFB8D42B65E')",
 							"sap-message":JSON.stringify(header)
 
                         };
@@ -116,8 +116,7 @@ sap.ui.define([
                 oMockServer.setRequests(aRequests);
 
 
-                var aRequests = oMockServer.getRequests(),
-					fnResponse = function (iErrCode, sMessage, aRequest) {
+                var fnResponse = function (iErrCode, sMessage, aRequest) {
 						aRequest.response = function(oXhr){
 							oXhr.respond(iErrCode, {"Content-Type": "text/plain;charset=utf-8"}, sMessage);
 						};

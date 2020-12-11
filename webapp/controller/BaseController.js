@@ -1,4 +1,4 @@
-/*global history */
+
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History",
@@ -11,9 +11,9 @@ sap.ui.define([
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-		"com/evorait/evoplan/model/formatter",
+	"com/evorait/evoplan/model/formatter"
 ], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText, Constants,
-	RowAction, RowActionItem,formatter) {
+	RowAction, RowActionItem, formatter) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.BaseController", {
@@ -102,8 +102,7 @@ sap.ui.define([
 		 * @returns
 		 */
 		showMessage: function (oResponse, fnCallback) {
-			var oData,
-				oResourceBundle = this.getResourceBundle();
+			var oData;
 			if (oResponse && oResponse.headers["sap-message"]) {
 				try {
 					oData = JSON.parse(oResponse.headers["sap-message"]);
@@ -122,8 +121,9 @@ sap.ui.define([
 					if (bContainsError) {
 						var sMessage = oMessage.message;
 						this._showErrorMessage(sMessage, fnCallback);
-					} else
-						this.showMessageToast(oData.message);
+					} else {
+                        this.showMessageToast(oData.message);
+                    }
 				} else {
 					this.showMessageToast(oData.message);
 				}
@@ -200,7 +200,7 @@ sap.ui.define([
 					MessageToast.show(oResourceBundle.getText("errorMessage"), {
 						duration: 5000
 					});
-				}.bind(this)
+				}
 			});
 		},
 		/**
@@ -230,7 +230,7 @@ sap.ui.define([
 							duration: 5000
 						});
 						reject(oError);
-					}.bind(this)
+					}
 				});
 			}.bind(this));
 		},
@@ -247,8 +247,9 @@ sap.ui.define([
 				bFromPlannCal: false,
 				bFromDetail: false,
 				bFromGantt: false,
-				bFromGanttSplit:false,
-				bFromDemandSplit:false
+				bFromGanttSplit: false,
+				bFromDemandSplit: false,
+				bFromMap: false
 			};
 
 			if (oParameter.bFromHome) {
@@ -269,9 +270,14 @@ sap.ui.define([
 			} else if (oParameter.bFromGantt) {
 				eventBus.publish("BaseController", "refreshGanttChart", {});
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			} else if(oParameter.bFromGanttSplit){
+			} else if (oParameter.bFromMap) {
+				// eventBus.publish("BaseController", "resetMapSelection", {});
+				eventBus.publish("BaseController", "refreshMapTreeTable", {});
+				eventBus.publish("BaseController", "refreshMapView", {});
+				// eventBus.publish("BaseController", "refreshMapDemandTable", {});
+			} else if (oParameter.bFromGanttSplit) {
 				eventBus.publish("BaseController", "refreshGanttChart", {});
-			} else if(oParameter.bFromDemandSplit){
+			} else if (oParameter.bFromDemandSplit) {
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
 
@@ -413,12 +419,13 @@ sap.ui.define([
 		isTargetValid: function (sTargetPath) {
 			var oModel = this.getModel(),
 				oTargetObj = oModel.getProperty(sTargetPath),
-				startDate = oTargetObj.StartDate?oTargetObj.StartDate.getTime():new Date(formatter.date(new Date())).getTime(),
-				resAsgnStartDate = oTargetObj.RES_ASGN_START_DATE ?oTargetObj.RES_ASGN_START_DATE.getTime():null,
-				endDate = oTargetObj.EndDate ?oTargetObj.EndDate.getTime():new Date(formatter.date(new Date())).getTime(),
-				resAsgnEndDate = oTargetObj.RES_ASGN_END_DATE ?oTargetObj.RES_ASGN_END_DATE.getTime():null,
-				bValid = startDate === resAsgnStartDate && oTargetObj.StartTime.ms === oTargetObj.RES_ASGN_START_TIME.ms && endDate === resAsgnEndDate && oTargetObj.EndTime.ms === oTargetObj.RES_ASGN_END_TIME.ms;
-			return bValid;	
+				startDate = oTargetObj.StartDate ? oTargetObj.StartDate.getTime() : new Date(formatter.date(new Date())).getTime(),
+				resAsgnStartDate = oTargetObj.RES_ASGN_START_DATE ? oTargetObj.RES_ASGN_START_DATE.getTime() : null,
+				endDate = oTargetObj.EndDate ? oTargetObj.EndDate.getTime() : new Date(formatter.date(new Date())).getTime(),
+				resAsgnEndDate = oTargetObj.RES_ASGN_END_DATE ? oTargetObj.RES_ASGN_END_DATE.getTime() : null,
+				bValid = startDate === resAsgnStartDate && oTargetObj.StartTime.ms === oTargetObj.RES_ASGN_START_TIME.ms && endDate ===
+				resAsgnEndDate && oTargetObj.EndTime.ms === oTargetObj.RES_ASGN_END_TIME.ms;
+			return bValid;
 		},
 		/**
 		 * @Athour Rahul
@@ -516,11 +523,11 @@ sap.ui.define([
 			oViewModel.setProperty("/ganttSettings/visibleStartTime", sStartDate);
 			oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
 		},
-		
-		_setRowActionTemplate : function(oDataTable, onClickNavigation, openActionSheet){
-		
+
+		_setRowActionTemplate: function (oDataTable, onClickNavigation, openActionSheet) {
+
 			var oTemplate = oDataTable.getRowActionTemplate(),
-				oResourceBundle = this.getModel('i18n').getResourceBundle();
+				oResourceBundle = this.getModel("i18n").getResourceBundle();
 			if (oTemplate) {
 				oTemplate.destroy();
 				oTemplate = null;
@@ -535,20 +542,24 @@ sap.ui.define([
 					})
 				]
 			});
-			if(this.getModel("navLinks").getProperty("/").length > 0){
-				oTemplate.addItem(new RowActionItem({icon: "sap-icon://action",text: oResourceBundle.getText("xtol.navigate"), press: openActionSheet}));
+			if (this.getModel("navLinks").getProperty("/").length > 0) {
+				oTemplate.addItem(new RowActionItem({
+					icon: "sap-icon://action",
+					text: oResourceBundle.getText("xtol.navigate"),
+					press: openActionSheet
+				}));
 			}
 			oDataTable.setRowActionTemplate(oTemplate);
-			oDataTable.setRowActionCount(oTemplate.getItems().length);	
+			oDataTable.setRowActionCount(oTemplate.getItems().length);
 		},
 		/**
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
-		openEvoOrder: function (sOrderId, oAppInfo) {
+		openEvoOrder: function (sOrderId, oAppInfo, oViewModel) {
 			var sUri, sSemanticObject, sParameter,
 				sAction,
 				sAdditionInfo,
-				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode");
+				sLaunchMode = oViewModel ? oViewModel.getProperty("/launchMode") : this.getModel("viewModel").getProperty("/launchMode");
 
 			if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
 				sAdditionInfo = oAppInfo.Value1 || "";
@@ -561,18 +572,18 @@ sap.ui.define([
 				return;
 			} else {
 				sAdditionInfo = oAppInfo.Value1;
-				sUri = (sAdditionInfo).replace("\\place_h1\\", sOrderId);
+				sUri = sAdditionInfo.replace("\\place_h1\\", sOrderId);
 				window.open(sUri, "_blank");
 			}
 		},
 		navToApp: function (sSemanticObject, sAction, sParameter, sOrderId) {
 			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
-			var sHash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
+			var sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
 				target: {
 					semanticObject: sSemanticObject,
 					action: sAction
 				}
-			})) || ""; // generate the Hash to display a Notification details app
+			}) || ""; // generate the Hash to display a Notification details app
 
 			oCrossAppNavigator.toExternal({
 				target: {
@@ -580,10 +591,21 @@ sap.ui.define([
 				}
 			});
 		},
-		clearLocalStorage: function(){
+		clearLocalStorage: function () {
 			localStorage.removeItem("Evo-Dmnd-pageRefresh");
 			localStorage.removeItem("Evo-Dmnd-guid");
+		},
+		/**
+		 * TODO to be designed 
+		 */
+		loadFragment: function (sPath, oController, sId) {
+			// return Fragment.load({
+			// 	name:sPath,
+			// 	id: sId,
+			// 	controller: oController
+			// });
 		}
+		
 
 	});
 

@@ -5,7 +5,7 @@
 			<customHeader>
 				<Bar>
 					<contentLeft>
-						<Image src="{path: '', formatter: '.formatter.getLogoImageLink' }" densityAware="false" height="100%" alt="EvoPlan" id="imageLogo"/>
+						<Image src="{path: '', formatter: '.formatter.getLogoImageLink' }" densityAware="false" height="85%" alt="EvoPlan" id="imageLogo"/>
 					</contentLeft>
 					<contentMiddle>
 						<MenuButton id="idHeaderMenu" text="{appView>/pageTitle}">
@@ -17,7 +17,7 @@
 										<MenuItem text="{i18n>xbut.pageMessageCockpit}" visible="{user>/EMP_ENABLED}"/>
 										<MenuItem text="{i18n>xbut.pageGanttChart}" visible="{user>/ENABLE_GANTT}"/>
 										<MenuItem text="{i18n>xbut.pageGanttChartSplit}" visible="{user>/ENABLE_GANTT_SPLIT}"/>
-										<!--<MenuItem text="{i18n>xbut.pageWeeklyPlanner}"/>-->
+										<MenuItem text="{i18n>xbut.pageMap}" visible="{user>/ENABLE_MAPS}"/>
 									</items>
 								</Menu>
 							</menu>

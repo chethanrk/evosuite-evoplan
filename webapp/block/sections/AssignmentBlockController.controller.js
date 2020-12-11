@@ -7,7 +7,7 @@ sap.ui.define([
 ], function(JSONModel, formatter, BaseController,ErrorHandler,MessageToast) {
 	"use strict";
 
-    return BaseController.extend('com.evorait.evoplan.block.sections.AssignmentBlockController', {
+    return BaseController.extend("com.evorait.evoplan.block.sections.AssignmentBlockController", {
     	
 		onClickRow: function(oEvent){
 			this.oParentBlock.fireOnRowClick(oEvent.getParameters());

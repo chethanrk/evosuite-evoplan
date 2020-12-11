@@ -6,22 +6,22 @@ sap.ui.define([
     var shapeNodeType = "ASSIGNMENT";
 
     var mColorMapping = {
-        "CAP" : {
+        CAP : {
             stroke: "#ad783c",
             strokeWidth: 1,
             fill: "#f7bf42"
         },
-        "CON": {
+        CON: {
             stroke: "#7088ac",
             strokeWidth: 1,
             fill: "#b6daff"
         },
-        "DEFAULT": {
+        DEFAULT: {
             stroke: "#65814e",
             strokeWidth: 1,
             fill: "#c5e7a0"
         },
-        "INVISIBLE": {
+        INVISIBLE: {
             stroke: "#ffffff",
             strokeWidth: 0,
             fill: "#ffffff"
@@ -30,9 +30,9 @@ sap.ui.define([
 
     function getMappingItem(sType, sStatus, sNodeType) {
         if(sNodeType !== shapeNodeType){
-            return mColorMapping["INVISIBLE"];
+            return mColorMapping.INVISIBLE;
         }
-        var sKey = (sType && sStatus) ? sType.toUpperCase() : "DEFAULT";
+        var sKey = sType && sStatus ? sType.toUpperCase() : "DEFAULT";
         return mColorMapping[sKey];
     }
 
@@ -40,29 +40,29 @@ sap.ui.define([
 
         strokeColor: function(sType, sStatus, sNodeType) {
             if(getMappingItem(sType, sStatus)){
-                return getMappingItem(sType, sStatus, sNodeType)["stroke"];
+                return getMappingItem(sType, sStatus, sNodeType).stroke;
             }
-            return getMappingItem()["stroke"];
+            return getMappingItem().stroke;
         },
         strokeWidth: function(sType, sStatus, sNodeType) {
             if(getMappingItem(sType, sStatus)){
-                return getMappingItem(sType, sStatus, sNodeType)["strokeWidth"];
+                return getMappingItem(sType, sStatus, sNodeType).strokeWidth;
             }
-            return getMappingItem()["strokeWidth"];
+            return getMappingItem().strokeWidth;
         },
 
         strokeDasharray: function(sType, sStatus, sNodeType) {
             if(getMappingItem(sType, sStatus)){
-                return getMappingItem(sType, sStatus, sNodeType)["strokeWidth"];
+                return getMappingItem(sType, sStatus, sNodeType).strokeWidth;
             }
-            return getMappingItem()["strokeWidth"];
+            return getMappingItem().strokeWidth;
         },
 
         fillColor: function(sType, sStatus, sNodeType) {
             if(getMappingItem(sType, sStatus)){
-                return getMappingItem(sType, sStatus, sNodeType)["fill"];
+                return getMappingItem(sType, sStatus, sNodeType).fill;
             }
-            return getMappingItem()["fill"];
+            return getMappingItem().fill;
         },
 
         statusIconColor: function(sStatus) {
@@ -77,7 +77,7 @@ sap.ui.define([
             if(!sDate){
                 return null;
             }
-            var d = (sDate).match(/\((.*)\)/).pop();
+            var d = sDate.match(/\((.*)\)/).pop();
             return new Date(parseInt(d));
         },
 

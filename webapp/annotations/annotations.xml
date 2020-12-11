@@ -2,47 +2,20 @@
 	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">
 		<edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
 	</edmx:Reference>
-	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/Communication.xml">
-		<edmx:Include Alias="vCard" Namespace="com.sap.vocabularies.Communication.v1"/>
-	</edmx:Reference>
 	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/Common.xml">
 		<edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
 	</edmx:Reference>
 	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/vocabularies/Core.xml">
 		<edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
 	</edmx:Reference>
-	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Measures.V1.xml">
-		<edmx:Include Alias="CQP" Namespace="Org.OData.Measures.V1"/>
-	</edmx:Reference>
-	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Capabilities.V1.xml">
-		<edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
-	</edmx:Reference>
-	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/cs02/vocabularies/Org.OData.Aggregation.V1.xml">
-		<edmx:Include Alias="Aggregation" Namespace="Org.OData.Aggregation.V1"/>
-	</edmx:Reference>
 	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Timeline.V1.xml">
 		<edmx:Include Alias="Timeline" Namespace="com.sap.vocabularies.Timeline.v1"/>
 	</edmx:Reference>
-	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Authorization.V1.xml">
-		<edmx:Include Alias="Auth" Namespace="Org.OData.Authorization.V1"/>
-	</edmx:Reference>
-	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Validation.V1.xml">
-		<edmx:Include Alias="Validation" Namespace="Org.OData.Validation.V1"/>
-	</edmx:Reference>
-	<edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/462030211/Analytics.xml">
-		<edmx:Include Alias="Analytics" Namespace="com.sap.vocabularies.Analytics.v1"/>
-	</edmx:Reference>
-	<edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/496435637/PersonalData.xml">
-		<edmx:Include Alias="PersonalData" Namespace="com.sap.vocabularies.PersonalData.v1"/>
-	</edmx:Reference>
-	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Authorization.V1.xml">
-		<edmx:Include Alias="Auth" Namespace="Org.OData.Authorization.V1"/>
-	</edmx:Reference>
-	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Validation.V1.xml">
-		<edmx:Include Alias="Validation" Namespace="Org.OData.Validation.V1"/>
+	<edmx:Reference Uri="/sap/opu/odata/EVORA/EP_MAIN_SRV/$metadata">
+		<edmx:Include Alias="Metadata" Namespace="com.evorait.evoplan"/>
 	</edmx:Reference>
 	<edmx:DataServices>
-		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="evoplan2-ui5.annotations.annotations.com.evorait.evoplan">
 			<Annotations Target="com.evorait.evoplan.Message">
 				<Annotation Term="UI.LineItem">
 					<Collection>
@@ -67,32 +40,308 @@
 					</Collection>
 				</Annotation>
 			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/Description">
-				<Annotation Term="Common.ValueList">
-					<Record Type="Common.ValueListType">
-						<PropertyValue Property="CollectionPath" String="AvailabilityTypeSet"/>
-						<PropertyValue Property="Parameters">
-							<Collection>
-								<Record Type="Common.ValueListParameterOut">
-									<PropertyValue Property="LocalDataProperty" PropertyPath="AvailType"/>
-									<PropertyValue Property="ValueListProperty" String="AvailabilityTypeCode"/>
-								</Record>
-								<Record Type="Common.ValueListParameterOut">
-									<PropertyValue Property="LocalDataProperty" PropertyPath="Description"/>
-									<PropertyValue Property="ValueListProperty" String="AvailabilityDesc"/>
-								</Record>
-
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
-
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceHierarchy">
 				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
 					<Collection>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
 							<PropertyValue Property="Value" Path="Description"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand">
+				<Annotation Term="UI.DataPoint" Qualifier="SOURCE">
+					<Record Type="com.sap.vocabularies.UI.v1.DataPointType">
+						<PropertyValue Property="Value" Path="Source"/>
+						<PropertyValue Property="Title" String="{@i18n&gt;xtit.sourceOfObject}"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.DataPoint" Qualifier="STATUS">
+					<Record Type="com.sap.vocabularies.UI.v1.DataPointType">
+						<PropertyValue Property="Value" Path="Status"/>
+						<PropertyValue Property="LongDescription" Path="StatusDesc"/>
+						<PropertyValue Property="Title" String="{@i18n&gt;xfld.status}"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.HeaderFacets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Target" AnnotationPath="@UI.DataPoint#STATUS"/>
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Target" AnnotationPath="@UI.DataPoint#SOURCE"/>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
+					<Record Type="com.sap.vocabularies.UI.v1.HeaderInfoType">
+						<PropertyValue Property="TypeName" String="Title"/>
+						<PropertyValue Property="TypeNamePlural" String="appTitle"/>
+						<PropertyValue Property="Title">
+							<Record Type="com.sap.vocabularies.UI.v1.DataField">
+								<PropertyValue Property="Label" String="Request Description"/>
+								<PropertyValue Property="Value" Path="DemandDesc"/>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<Record Type="com.sap.vocabularies.UI.v1.DataField">
+								<PropertyValue Property="Label" String="Request Description"/>
+								<PropertyValue Property="Value" Path="DemandDesc"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.Facets">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.CollectionFacet">
+							<PropertyValue Property="Label" String="{@i18n&gt;xtit.general}"/>
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#GeneralGroup1"/>
+									</Record>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#GeneralGroup2"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+							<Annotation Term="Org.OData.Core.V1.Description" String="Form"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+							<PropertyValue Property="Label" String="{@i18n&gt;xtit.dates}"/>
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#DatesGroup1"/>
+									</Record>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#DatesGroup2"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+							<Annotation Term="Org.OData.Core.V1.Description" String="Form"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+							<PropertyValue Property="Label" String="{@i18n&gt;xtit.pmDetails}"/>
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#PmDetailsGroup1"/>
+									</Record>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#PmDetailsGroup2"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+							<Annotation Term="Org.OData.Core.V1.Description" String="Form"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+							<PropertyValue Property="Label" String="{@i18n&gt;xtit.assignments}"/>
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#Assignments"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+							<Annotation Term="Org.OData.Core.V1.Description" String="AssignmentTable"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+							<PropertyValue Property="Label" String="{@i18n&gt;xtit.longText}"/>
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#LongText"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+							<Annotation Term="Org.OData.Core.V1.Description" String="Form"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+							<PropertyValue Property="Label" String="{@i18n&gt;xtit.qualifications}"/>
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#LongText"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+							<Annotation Term="Org.OData.Core.V1.Description" String="QualificationTable"/>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="GeneralGroup1">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<!--<PropertyValue Property="Label" String="General"/>-->
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="DemandDesc"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="ExtKey"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="GeneralGroup2">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<!--<PropertyValue Property="Label" String="General"/>-->
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="Source"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="Status"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="DatesGroup1">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<!--<PropertyValue Property="Label" String="Date"/>-->
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="DateFrom"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="TimeFrom"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="Effort"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="DatesGroup2">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<!--<PropertyValue Property="Label" String="Date"/>-->
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="DateTo"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="TimeTo"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="PmDetailsGroup1">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="ORDERID"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="ORDER_DESC"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="OPERATIONID"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="PmDetailsGroup2">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="OPERATION_DESC"/>
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="REVISION_NO"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="Assignments">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="DemandDesc"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="LongText">
+					<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="LONG_TEXT"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.LineItem" Qualifier="StatusActions">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_ACKNOWLDGE"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xbut.ack}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://email"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_APPOINTMNT"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xbut.app}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://email"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_CLOSED"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xbut.buttonClose}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://email"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_COMPLETE"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xbut.comp}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://complete"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_DEM_MOBILE"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xbut.tranMob}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://ipad"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_DISPATCHED"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xbut.disp}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://email"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_ENROUTE"/>
+							<PropertyValue Property="Label" String="{@i18n&gt;xbut.enroute}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://shipping-status"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_INCOMPLETE"/>
+							<PropertyValue Property="Label" String="{i18n&gt;xbut.inComp}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://email"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_ONHOLD"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://email"/>
+							<PropertyValue Property="Label" String="{i18n&gt;xbut.onhold}"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_REJECT"/>
+							<PropertyValue Property="Label" String="{i18n&gt;xbut.reject}"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://email"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ALLOW_STARTED"/>
+							<PropertyValue Property="IconUrl" String="sap-icon://begin"/>
+							<PropertyValue Property="Label" String="{i18n&gt;xbut.start}"/>
 						</Record>
 					</Collection>
 				</Annotation>

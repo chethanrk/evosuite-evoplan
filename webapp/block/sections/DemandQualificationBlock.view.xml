@@ -1,0 +1,4 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable" xmlns="sap.m"
+	controllerName="com.evorait.evoplan.block.sections.DemandQualificationBlock">
+	<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandQualificationTable" type="XML"/>
+</mvc:View>

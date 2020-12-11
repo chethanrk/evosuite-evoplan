@@ -1,21 +1,22 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/AssignmentsController",
+	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/formatter",
     "com/evorait/evoplan/model/Constants"
-], function (AssignmentsController, JSONModel, formatter, Constants) {
+], function (AssignmentsController, JSONModel, Fragment, formatter, Constants) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.App", {
 
 		formatter: formatter,
 
-        _firstTimeG: false,
-        _firstTimeD: false,
+		_firstTimeG: false,
+		_firstTimeD: false,
 
 		onInit: function () {
 			this._eventBus = sap.ui.getCore().getEventBus();
-			
+
 			//Event are subscription Demand assignment and change status of demand
 			this._eventBus.subscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
 			this._eventBus.subscribe("StatusSelectDialog", "changeStatusDemand", this._triggerSaveDemandStatus, this);
@@ -33,6 +34,7 @@ sap.ui.define([
 			oViewModel = new JSONModel({
 				busy: true,
 				delay: 0
+
 			});
 			this.getOwnerComponent().setModel(oViewModel, "appView");
 
@@ -51,8 +53,8 @@ sap.ui.define([
 			//set init page title
 			oRouter.attachRouteMatched(this._onAllRouteMatched, this);
 		},
-		
-		onAfterRendering : function () {
+
+		onAfterRendering: function () {
 			this._oMessagePopover = this.getOwnerComponent()._oMessagePopover;
 			this.getView().addDependent(this._oMessagePopover);
 		},
@@ -87,7 +89,6 @@ sap.ui.define([
 			}
 			oAppViewModel.setProperty("/pageTitle", sItemText);
 			oAppViewModel.setProperty("/busy", true);
-
 			switch (sItemText) {
 			case oResourceBundle.getText("xbut.pageDemands"):
 				oRouter.navTo("demands", {});
@@ -110,6 +111,9 @@ sap.ui.define([
 				oRouter.navTo("ganttSplit", {});
 				window.open(sRoute, "_blank");
 				break;
+			case oResourceBundle.getText("xbut.pageMap"):
+				oRouter.navTo("map", {});
+				break;
 			default:
 				oRouter.navTo("demands", {});
 				oAppViewModel.setProperty("/pageTitle", oResourceBundle.getText("xbut.pageDemands"));
@@ -126,10 +130,26 @@ sap.ui.define([
 		onIconPress: function (oEvent) {
 			// create popover
 			if (!this._infoDialog) {
-				this._infoDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.InformationPopover", this);
-				this.getView().addDependent(this._infoDialog);
+				this.getOwnerComponent().getModel("appView").setProperty("/busy", true);
+				Fragment.load({
+					id: "InfoDialog",
+					name: "com.evorait.evoplan.view.common.fragments.InformationPopover",
+					controller: this
+				}).then(function (oDialog) {
+					this.getOwnerComponent().getModel("appView").setProperty("/busy", false);
+					this._infoDialog = oDialog;
+					this.open(oDialog);
+				}.bind(this));
+			} else {
+				this.open(this._infoDialog);
 			}
-			this._infoDialog.open();
+		},
+
+		open: function (oDialog) {
+			var oView = this.getView();
+			oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+			oView.addDependent(oDialog);
+			oDialog.open();
 		},
 
 		/**
@@ -156,19 +176,21 @@ sap.ui.define([
 
 			if (oParams.config.pattern.startsWith("AssetPlanning")) {
 				pageTitle = oResourceBundle.getText("xbut.pageAssetManager");
-			}else if(oParams.config.pattern.startsWith("MessageCockpit")){
+			} else if (oParams.config.pattern.startsWith("MessageCockpit")) {
 				pageTitle = oResourceBundle.getText("xbut.pageMessageCockpit");
-			}else if(oParams.config.pattern.startsWith("Gantt")){
+			} else if (oParams.config.pattern.startsWith("Gantt")) {
 				pageTitle = oResourceBundle.getText("xbut.pageGanttChart");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
-			}else if(oParams.config.pattern.startsWith("SplitPage")){
+			} else if (oParams.config.pattern.startsWith("SplitPage")) {
 				pageTitle = oResourceBundle.getText("xbut.pageGanttChartSplit");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
+			} else if (oParams.config.pattern.startsWith("Map")) {
+				pageTitle = oResourceBundle.getText("xbut.pageMap");
 			}
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
 			oAppViewModel.setProperty("/currentRoute", oParams.name);
 			oAppViewModel.setProperty("/busy", false);
-			
+
 			this._onObjectMatched(oParams.name);
 		},
 
@@ -187,7 +209,7 @@ sap.ui.define([
 					return;
 				}
 				if (this.isAvailable(oData.assignPath)) {
-						this.assignedDemands(oData.selectedPaths, oData.assignPath, oData.parameters);
+					this.assignedDemands(oData.selectedPaths, oData.assignPath, oData.parameters);
 				} else {
 					this.showMessageToProceed(oData.selectedPaths, oData.assignPath, false, false, false, false, oData.parameters);
 				}
@@ -200,21 +222,22 @@ sap.ui.define([
 		 * @constructor 
 		 */
 		_onObjectMatched: function (sRoute) {
-			if(sRoute === "gantt"){
-                    this._eventBus.publish("BaseController", "refreshGanttChart", {});
-                    this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			}else if(sRoute === "ganttSplit"){
-					this._eventBus.publish("BaseController", "refreshGanttChart", {});
-			}else if(sRoute === "splitDemands"){
-					this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			}
-			else if(sRoute === "detail")
-			{
+			if (sRoute === "gantt") {
+				this._eventBus.publish("BaseController", "refreshGanttChart", {});
+				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			} else if (sRoute === "ganttSplit") {
+				this._eventBus.publish("BaseController", "refreshGanttChart", {});
+			} else if (sRoute === "splitDemands") {
+				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			} else if (sRoute === "detail") {
 				/* No action require */
-			}
-			else{
-                    this._eventBus.publish("BaseController", "refreshTreeTable", {});
-                    this._eventBus.publish("BaseController", "refreshDemandTable", {});
+			}else if (sRoute === "map") {
+				this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
+				this._eventBus.publish("BaseController", "refreshMapView", {});
+			} 
+			else {
+				this._eventBus.publish("BaseController", "refreshTreeTable", {});
+				this._eventBus.publish("BaseController", "refreshDemandTable", {});
 			}
 
 		},
@@ -249,7 +272,7 @@ sap.ui.define([
 					return;
 				}
 				if (this.isAvailable(oData.sPath)) {
-						this.bulkReAssignment(oData.sPath, oData.aContexts, oData.parameters);
+					this.bulkReAssignment(oData.sPath, oData.aContexts, oData.parameters);
 				} else {
 					this.showMessageToProceed(null, oData.sPath, true, oData.aContexts, false, false, oData.parameters);
 				}
@@ -284,29 +307,32 @@ sap.ui.define([
 		/**
 		 * calls function import which refreshes the shared memory in the backend 
 		 */
-		onRefreshBuffer: function(oEvent){
+		onRefreshBuffer: function (oEvent) {
 			var oComponent = this.getOwnerComponent();
-			
-			this.executeFunctionImport(this.getModel(),{},"RefreshSharedMemoryAreas","POST").then(function(){
+
+			this.executeFunctionImport(this.getModel(), {}, "RefreshSharedMemoryAreas", "POST").then(function () {
 				oComponent._getResourceGroups.call(oComponent);
-				this._eventBus.publish("BaseController", "refreshDemandTable",{});
-				this._eventBus.publish("BaseController", "refreshTreeTable",{});
-				this._eventBus.publish("BaseController", "refreshAssetCal",{});
-				this._eventBus.publish("BaseController", "refreshAssets",{});
+				this._eventBus.publish("BaseController", "refreshDemandTable", {});
+				this._eventBus.publish("BaseController", "refreshTreeTable", {});
+				this._eventBus.publish("BaseController", "refreshAssetCal", {});
+				this._eventBus.publish("BaseController", "refreshAssets", {});
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			}.bind(this),function(data){
+				this._eventBus.publish("BaseController", "refreshMapView", {});
+				this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
+				this._eventBus.publish("BaseController", "refreshMapDemandTable", {});
+			}.bind(this), function (data) {
 				//
-			}.bind(this)).catch(function(data){
+			}.catch(function (data) {
 				//
-			}.bind(this));
+			}));
 		},
-		
+
 		/**
 		 * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
 		 * @memberOf com.evorait.evoplan.view.Assets
 		 */
-		onExit: function() {
+		onExit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "assignSelectedDemand", this._triggerSaveAssignment, this);
 			this._eventBus.unsubscribe("StatusSelectDialog", "changeStatusDemand", this._triggerSaveDemandStatus, this);
 			this._eventBus.unsubscribe("AssignInfoDialog", "updateAssignment", this._triggerUpdateAssign, this);

@@ -1,5 +1,5 @@
 sap.ui.define([
-		"com/evorait/evoplan/controller/AssignmentsController"
+		"com/evorait/evoplan/controller/common/AssignmentsController"
 	], function(BaseController) {
 	"use strict";
 

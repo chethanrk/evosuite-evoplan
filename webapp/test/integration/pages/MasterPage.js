@@ -12,8 +12,7 @@ sap.ui.define([
 	], function(Opa5, Press, EnterText, Common, PropertyStrictEquals, AggregationLengthEquals, BindingPath, Properties, I18NText, AggregationContainsPropertyEqual) {
 		"use strict";
 
-		var sViewName = "ResourceTree",
-			oI18nResourceBundle = undefined;
+		var sViewName = "ResourceTree";
 
 		Opa5.createPageObjects({
 			onTheMasterPage : {
@@ -100,10 +99,9 @@ sap.ui.define([
                     },
 					iShouldSeeThePage: function () {
 						return this.waitFor({
-							id: "masterPage",
+							id: "idResourcePage",
 							viewName: sViewName,
 							success: function (oPage) {
-								oI18nResourceBundle = oPage.getModel("i18n").getResourceBundle();
                                 Opa5.assert.ok(true, "The Page is visible");
 							},
 							errorMessage: "The Page is not visible."
@@ -121,12 +119,12 @@ sap.ui.define([
 					},
                     iShouldSeeTheFilterButton: function () {
 					    return this.waitFor({
-                            id: "filterResourceButton",
+                            id: "resourceTreeFilterBarFragment",
                             viewName: sViewName,
                             success: function () {
-                                Opa5.assert.ok(true, "The filter button is visible");
+                                Opa5.assert.ok(true, "The filter is visible");
                             },
-                            errorMessage: "Was not able to see filter button."
+                            errorMessage: "Was not able to see filter."
                         });
                     },
                     iShouldSeeTheSearchField: function () {
@@ -198,6 +196,20 @@ sap.ui.define([
                             errorMessage: "Can not find open filter settings"
                         });
                     },
+                    iShouldSeeFooterManageAbsenceButtonAs:function(bEnabled){
+                    	 return this.waitFor({
+                            id: "idButtonCreUA",
+                            viewName: sViewName,
+                            matchers:new PropertyStrictEquals({
+                            	name:"enabled",
+                            	value:bEnabled
+                            }),
+                            success: function () {
+                                Opa5.assert.ok(true, "Footer button Manage Absence is visible and it is enabled("+bEnabled+")");
+                            },
+                            errorMessage: "Was not able to see Manage Absence."
+                        });
+                    },
                     iShouldSeeFooterUnassignButtonAs:function(bEnabled){
                     	 return this.waitFor({
                             id: "idButtonunassign",
@@ -221,7 +233,7 @@ sap.ui.define([
                             	value:bEnabled
                             }),
                             success: function () {
-                                Opa5.assert.ok(true, "Footer button Planning Calendar is visible and it is enabled("+bEnabled+")");
+                                Opa5.assert.ok(true, "Footer button Reassign new is visible and it is enabled("+bEnabled+")");
                             },
                             errorMessage: "Was not able to see Button Reassign new."
                         });
@@ -245,8 +257,8 @@ sap.ui.define([
                             		return this.waitFor({
 			                        	controlType:"sap.m.Dialog",
 			                            viewName: sViewName,
-			                            success: function (oDialog) {
-			                            	Opa5.assert.ok(oDialog[0].getTitle() === key, "Dialog has the title "+key);
+			                            success: function (dialog) {
+			                            	Opa5.assert.ok(dialog[0].getTitle() === key, "Dialog has the title "+key);
 			                            },
 			                            errorMessage: "Was not able to see Button Reassign new."
 			                        });

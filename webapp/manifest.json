@@ -19,7 +19,7 @@
 			]
 		},
 		"applicationVersion": {
-			"version": "3.2.4"
+			"version": "4.0.0"
 		},
 		"dataSources": {
 			"mainService": {
@@ -61,7 +61,7 @@
 						},
 						"additionalParameters": "allowed"
 					},
-					"icon": "sap-icon://task"
+					"icon": "assets/img/favIcon.ico"
 				}
 			}
 		},
@@ -70,12 +70,12 @@
 	"sap.ui": {
 		"technology": "UI5",
 		"icons": {
-			"icon": "sap-icon://task",
-			"favIcon": "sap-icon://task",
-			"phone": "sap-icon://task",
-			"phone@2": "sap-icon://task",
-			"tablet": "sap-icon://task",
-			"tablet@2": "sap-icon://task"
+			"icon": "assets/img/favIcon.ico",
+			"favIcon": "assets/img/favIcon.ico",
+			"phone": "assets/img/favIcon.ico",
+			"phone@2": "assets/img/favIcon.ico",
+			"tablet": "assets/img/favIcon.ico",
+			"tablet@2": "assets/img/favIcon.ico"
 		},
 		"deviceTypes": {
 			"desktop": true,
@@ -102,7 +102,7 @@
 			"async": true
 		},
 		"dependencies": {
-			"minUI5Version": "1.60.0",
+			"minUI5Version": "1.70.0",
 			"libs": {
 				"sap.ui.core": {
 					"lazy": true
@@ -264,6 +264,21 @@
 					"target": [
 						"ganttDemandDetails"
 					]
+				},
+				{
+					"pattern": "Map",
+					"name": "map",
+					"target": [
+						"map",
+						"mapResourceTree"
+					]
+				},
+				{
+					"pattern": "Map/Detail/{guid}",
+					"name": "mapDemandDetails",
+					"target": [
+						"mapDemandDetails"
+					]
 				}
 			],
 			"targets": {
@@ -288,6 +303,7 @@
 				"resourceTree": {
 					"viewType": "XML",
 					"viewName": "ResourceTree",
+					"viewPath": "com.evorait.evoplan.view.demands",
 					"viewLevel": 3,
 					"controlId": "leftPanel",
 					"parent": "splitHorNavigation"
@@ -295,6 +311,7 @@
 				"demands": {
 					"viewType": "XML",
 					"viewName": "Demands",
+					"viewPath": "com.evorait.evoplan.view.demands",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
 					"parent": "splitHorNavigation"
@@ -302,6 +319,7 @@
 				"demandsGantt": {
 					"viewType": "XML",
 					"viewName": "GanttDemands",
+					"viewPath": "com.evorait.evoplan.view.gantt",
 					"viewLevel": 4,
 					"controlId": "bottomPanel",
 					"parent": "splitVerNavigation"
@@ -310,6 +328,7 @@
 					"viewType": "XML",
 					"viewName": "Gantt",
 					"viewId": "idGantt",
+					"viewPath": "com.evorait.evoplan.view.gantt",
 					"viewLevel": 4,
 					"controlId": "topPanel",
 					"parent": "splitVerNavigation"
@@ -317,6 +336,7 @@
 				"detail": {
 					"viewType": "XML",
 					"viewName": "Detail",
+					"viewPath": "com.evorait.evoplan.view.common",
 					"viewLevel": 4,
 					"controlId": "rightPanel",
 					"parent": "splitHorNavigation"
@@ -324,12 +344,14 @@
 				"assets": {
 					"viewName": "Assets",
 					"viewLevel": 3,
+					"viewPath": "com.evorait.evoplan.view.assets",
 					"controlId": "leftPanel",
 					"parent": "splitHorNavigation"
 				},
 				"assetsOrders": {
 					"viewType": "XML",
 					"viewName": "AssetsOrders",
+					"viewPath": "com.evorait.evoplan.view.assets",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
 					"parent": "splitHorNavigation"
@@ -337,6 +359,7 @@
 				"orderCreate": {
 					"viewType": "XML",
 					"viewName": "OrderCreate",
+					"viewPath": "com.evorait.evoplan.view.assets",
 					"viewLevel": 4,
 					"controlId": "rightPanel",
 					"parent": "splitHorNavigation"
@@ -358,6 +381,7 @@
 				"messageCockpit": {
 					"viewType": "XML",
 					"viewName": "MessageCockpit",
+					"viewPath": "com.evorait.evoplan.view.messageCockpit",
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",
 					"viewLevel": 4
@@ -365,6 +389,7 @@
 				"ganttDemandDetails": {
 					"viewType": "XML",
 					"viewName": "Detail",
+					"viewPath": "com.evorait.evoplan.view.common",
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",
 					"viewLevel": 4
@@ -372,6 +397,7 @@
 				"demandsFullscreen": {
 					"viewType": "XML",
 					"viewName": "GanttDemands",
+					"viewPath": "com.evorait.evoplan.view.gantt",
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",
 					"viewLevel": 4
@@ -379,10 +405,42 @@
 				"ganttFullscreen": {
 					"viewType": "XML",
 					"viewId": "idFullGantt",
+					"viewPath": "com.evorait.evoplan.view.gantt",
 					"viewName": "Gantt",
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",
 					"viewLevel": 4
+				},
+				"map": {
+					"viewType": "XML",
+					"viewName": "Map",
+					"viewPath": "com.evorait.evoplan.view.map",
+					"parent": "splitHorNavigation",
+					"controlId": "rightPanel",
+					"viewLevel": 3
+				},
+				"mapDemandDetails": {
+					"viewType": "XML",
+					"viewName": "Detail",
+					"viewPath": "com.evorait.evoplan.view.common",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 4
+				},
+				"ganttResourceTree": {
+					"viewType": "XML",
+					"viewName": "ResourceTree",
+					"parent": "splitHorNavigation",
+					"controlId": "leftPanel",
+					"viewLevel": 3
+				},
+				"mapResourceTree": {
+					"viewType": "XML",
+					"viewName": "MapResourceTree",
+					"viewPath": "com.evorait.evoplan.view.map",
+					"parent": "splitHorNavigation",
+					"controlId": "leftPanel",
+					"viewLevel": 3
 				}
 			}
 		}

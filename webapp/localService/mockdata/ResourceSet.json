@@ -1,265 +1,100 @@
 [{
 	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFDC5C')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFDC5C')",
+		"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE2297AA435A96')",
+		"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE2297AA435A96')",
 		"type": "com.evorait.evoplan.Resource"
 	},
-	"GroupDescription": "Emerald cluster",
-	"ObjectId": "0A51491BD5A01ED889D621FAE6CFDC5C",
+	"GroupDescription": "External Team",
+	"ObjectId": "0AA10FE57E901EE9BBCE2297AA435A96",
 	"ObjectType": "RES_GROUP",
 	"ResourceDescription": "",
-	"GroupUnitDescription": "EVORA_CLUSTR",
+	"GroupUnitDescription": "EVOPLAN_TEST",
 	"ResourceGuid": "",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFDC5C",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
 	"DateFrom": null,
-	"Description": "Emerald cluster",
+	"Description": "External Team",
 	"DateTo": null,
 	"TimeFrom": "PT00H00M00S",
 	"TimeTo": "PT00H00M00S",
 	"ResourceToAbsenceInfo": {
 		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFDC5C')/ResourceToAbsenceInfo"
+			"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE2297AA435A96')/ResourceToAbsenceInfo"
 		}
 	},
 	"ResourceToAssignments": {
 		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFDC5C')/ResourceToAssignments"
+			"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE2297AA435A96')/ResourceToAssignments"
 		}
 	},
 	"ResourceAvailability": {
 		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFDC5C')/ResourceAvailability"
+			"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE2297AA435A96')/ResourceAvailability"
 		}
 	}
 }, {
 	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF3C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF3C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
+		"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE2297AA437A96')",
+		"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE2297AA437A96')",
 		"type": "com.evorait.evoplan.Resource"
 	},
-	"GroupDescription": "Product cluster",
-	"ObjectId": "0A51491BD5A01ED889D621FAE6CF3C5C//0A51491BD5A01ED889D621FAE6CFFC5C",
-	"ObjectType": "RESOURCE",
-	"ResourceDescription": "Raghavendra Ghooli",
-	"GroupUnitDescription": "EVORA_CLUSTR",
-	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CF3C5C",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
-	"DateFrom": null,
-	"Description": "Raghavendra Ghooli",
-	"DateTo": null,
-	"TimeFrom": "PT00H00M00S",
-	"TimeTo": "PT00H00M00S",
-	"ResourceToAbsenceInfo": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF3C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceToAbsenceInfo"
-		}
-	},
-	"ResourceToAssignments": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF3C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceToAssignments"
-		}
-	},
-	"ResourceAvailability": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF3C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceAvailability"
-		}
-	}
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF5C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF5C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
-		"type": "com.evorait.evoplan.Resource"
-	},
-	"GroupDescription": "Product cluster",
-	"ObjectId": "0A51491BD5A01ED889D621FAE6CF5C5C//0A51491BD5A01ED889D621FAE6CFFC5C",
-	"ObjectType": "RESOURCE",
-	"ResourceDescription": "Matthias Heitmann",
-	"GroupUnitDescription": "EVORA_CLUSTR",
-	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CF5C5C",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
-	"DateFrom": null,
-	"Description": "Matthias Heitmann",
-	"DateTo": null,
-	"TimeFrom": "PT00H00M00S",
-	"TimeTo": "PT00H00M00S",
-	"ResourceToAbsenceInfo": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF5C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceToAbsenceInfo"
-		}
-	},
-	"ResourceToAssignments": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF5C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceToAssignments"
-		}
-	},
-	"ResourceAvailability": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF5C5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceAvailability"
-		}
-	}
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFBC5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFBC5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
-		"type": "com.evorait.evoplan.Resource"
-	},
-	"GroupDescription": "Product cluster",
-	"ObjectId": "0A51491BD5A01ED889D621FAE6CFBC5C//0A51491BD5A01ED889D621FAE6CFFC5C",
-	"ObjectType": "RESOURCE",
-	"ResourceDescription": "Rahul Inamdar",
-	"GroupUnitDescription": "EVORA_CLUSTR",
-	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CFBC5C",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
-	"DateFrom": null,
-	"Description": "Rahul Inamdar",
-	"DateTo": null,
-	"TimeFrom": "PT00H00M00S",
-	"TimeTo": "PT00H00M00S",
-	"ResourceToAbsenceInfo": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFBC5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceToAbsenceInfo"
-		}
-	},
-	"ResourceToAssignments": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFBC5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceToAssignments"
-		}
-	},
-	"ResourceAvailability": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFBC5C%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceAvailability"
-		}
-	}
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED89A9294141D2BD35A%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED89A9294141D2BD35A%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')",
-		"type": "com.evorait.evoplan.Resource"
-	},
-	"GroupDescription": "Product cluster",
-	"ObjectId": "0A51491BD5A01ED89A9294141D2BD35A//0A51491BD5A01ED889D621FAE6CFFC5C",
-	"ObjectType": "RESOURCE",
-	"ResourceDescription": "Chandrashekhar SV",
-	"GroupUnitDescription": "EVORA_CLUSTR",
-	"ResourceGuid": "0A51491BD5A01ED89A9294141D2BD35A",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
-	"DateFrom": null,
-	"Description": "Chandrashekhar SV",
-	"DateTo": null,
-	"TimeFrom": "PT00H00M00S",
-	"TimeTo": "PT00H00M00S",
-	"ResourceToAbsenceInfo": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED89A9294141D2BD35A%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceToAbsenceInfo"
-		}
-	},
-	"ResourceToAssignments": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED89A9294141D2BD35A%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceToAssignments"
-		}
-	},
-	"ResourceAvailability": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED89A9294141D2BD35A%2F%2F0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceAvailability"
-		}
-	}
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFFC5C')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFFC5C')",
-		"type": "com.evorait.evoplan.Resource"
-	},
-	"GroupDescription": "Product cluster",
-	"ObjectId": "0A51491BD5A01ED889D621FAE6CFFC5C",
+	"GroupDescription": "Team Test",
+	"ObjectId": "0AA10FE57E901EE9BBCE2297AA437A96",
 	"ObjectType": "RES_GROUP",
 	"ResourceDescription": "",
-	"GroupUnitDescription": "EVORA_CLUSTR",
+	"GroupUnitDescription": "EVOPLAN_TEST",
 	"ResourceGuid": "",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6CFFC5C",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA437A96",
 	"DateFrom": null,
-	"Description": "Product cluster",
+	"Description": "Team Test",
 	"DateTo": null,
 	"TimeFrom": "PT00H00M00S",
 	"TimeTo": "PT00H00M00S",
 	"ResourceToAbsenceInfo": {
 		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceToAbsenceInfo"
+			"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE2297AA437A96')/ResourceToAbsenceInfo"
 		}
 	},
 	"ResourceToAssignments": {
 		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceToAssignments"
+			"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE2297AA437A96')/ResourceToAssignments"
 		}
 	},
 	"ResourceAvailability": {
 		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CFFC5C')/ResourceAvailability"
+			"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE2297AA437A96')/ResourceAvailability"
 		}
 	}
 }, {
 	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF9C5C%2F%2F0A51491BD5A01ED889D621FAE6D01C5C')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF9C5C%2F%2F0A51491BD5A01ED889D621FAE6D01C5C')",
+		"id": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE7C317649FB0D')",
+		"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE7C317649FB0D')",
 		"type": "com.evorait.evoplan.Resource"
 	},
-	"GroupDescription": "Royal cluster",
-	"ObjectId": "0A51491BD5A01ED889D621FAE6CF9C5C//0A51491BD5A01ED889D621FAE6D01C5C",
-	"ObjectType": "RESOURCE",
-	"ResourceDescription": "Vivek Joshi",
-	"GroupUnitDescription": "EVORA_CLUSTR",
-	"ResourceGuid": "0A51491BD5A01ED889D621FAE6CF9C5C",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6D01C5C",
-	"DateFrom": null,
-	"Description": "Vivek Joshi",
-	"DateTo": null,
-	"TimeFrom": "PT00H00M00S",
-	"TimeTo": "PT00H00M00S",
-	"ResourceToAbsenceInfo": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF9C5C%2F%2F0A51491BD5A01ED889D621FAE6D01C5C')/ResourceToAbsenceInfo"
-		}
-	},
-	"ResourceToAssignments": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF9C5C%2F%2F0A51491BD5A01ED889D621FAE6D01C5C')/ResourceToAssignments"
-		}
-	},
-	"ResourceAvailability": {
-		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6CF9C5C%2F%2F0A51491BD5A01ED889D621FAE6D01C5C')/ResourceAvailability"
-		}
-	}
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6D01C5C')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6D01C5C')",
-		"type": "com.evorait.evoplan.Resource"
-	},
-	"GroupDescription": "Royal cluster",
-	"ObjectId": "0A51491BD5A01ED889D621FAE6D01C5C",
+	"GroupDescription": "Production Line (TEST)",
+	"ObjectId": "0AA10FE57E901EE9BBCE7C317649FB0D",
 	"ObjectType": "RES_GROUP",
 	"ResourceDescription": "",
-	"GroupUnitDescription": "EVORA_CLUSTR",
+	"GroupUnitDescription": "50007552",
 	"ResourceGuid": "",
-	"ResourceGroupGuid": "0A51491BD5A01ED889D621FAE6D01C5C",
+	"ResourceGroupGuid": "0AA10FE57E901EE9BBCE7C317649FB0D",
 	"DateFrom": null,
-	"Description": "Royal cluster",
+	"Description": "Production Line (TEST)",
 	"DateTo": null,
 	"TimeFrom": "PT00H00M00S",
 	"TimeTo": "PT00H00M00S",
 	"ResourceToAbsenceInfo": {
 		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6D01C5C')/ResourceToAbsenceInfo"
+			"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE7C317649FB0D')/ResourceToAbsenceInfo"
 		}
 	},
 	"ResourceToAssignments": {
 		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6D01C5C')/ResourceToAssignments"
+			"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE7C317649FB0D')/ResourceToAssignments"
 		}
 	},
 	"ResourceAvailability": {
 		"__deferred": {
-			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0A51491BD5A01ED889D621FAE6D01C5C')/ResourceAvailability"
+			"uri": "https://ed1cloud.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ResourceSet('0AA10FE57E901EE9BBCE7C317649FB0D')/ResourceAvailability"
 		}
 	}
 }]

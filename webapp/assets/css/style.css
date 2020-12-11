@@ -124,4 +124,9 @@ div.resourceGanttWithTable .sapGanttBackground .sapGanttBackgroundSVG{
     background: #ccc !important;
 }
 
+.sapUiIcon.resourceIcon:hover{
+	color:hsl(240, 100%, 50%);
+	cursor : pointer;
+}
+
 

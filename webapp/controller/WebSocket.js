@@ -2,8 +2,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/ui/core/ws/SapPcpWebSocket",
-	"sap/m/MessageToast"
-], function (JSONModel, Device, SapPcpWebSocket, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/base/Log"
+], function (JSONModel, Device, SapPcpWebSocket, MessageToast, Log) {
 	"use strict";
 
 	return {
@@ -23,11 +24,12 @@ sap.ui.define([
 			this.oWebSocket = new SapPcpWebSocket(sWebSocHost + "//" + host + "/sap/bc/apc/evora/ep_core_push_apc");
 			// this.oWebSocket = new SapPcpWebSocket("wss://websocketad74c0790.hana.ondemand.com/websocket/Endpoint");
 			this.oWebSocket.attachOpen(function (e) {
-				console.log("Websocket connection opened");
+				Log.info("Websocket connection opened");
+			
 			});
 
 			this.oWebSocket.attachClose(function (e) {
-				console.log("Websocket connection closed");
+				Log.info("Websocket connection closed");
 				setTimeout(function () {
 					this.getWsConnection(oComponent);
 				}.bind(this), 1000);
@@ -64,9 +66,6 @@ sap.ui.define([
 				return;
 			}
 			// Parse Message
-			var sMsg = oEvent.getParameter("data");
-
-
 			if (sCurrentRoute === "splitDemands" || sCurrentRoute === "ganttSplit" || sCurrentRoute === "splitDemandDetails" || sCurrentRoute === "splitGanttDetails") {
 				setTimeout(function () {
 					if(sActionPage === "ganttSplit" && sCurrentRoute === "splitDemands"){

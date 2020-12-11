@@ -1,0 +1,23 @@
+[{
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/NavigationLinksSet(ApplicationId='EVOORDER',LaunchMode='BSP')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/NavigationLinksSet(ApplicationId='EVOORDER',LaunchMode='BSP')",
+		"type": "com.evorait.evoplan.NavigationLinks"
+	},
+	"ApplicationName": "EvoOrder",
+	"ApplicationId": "EVOORDER",
+	"LaunchMode": "BSP",
+	"Value1": "https://ed1.evorait.net:50103/SAP/BC/UI5_UI5/EVOCU/EVOORDER/INDEX.HTML?SAP-CLIENT=800#/WORKORDER/\\place_h1\\",
+	"Value2": "TEST"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/NavigationLinksSet(ApplicationId='EVOORDER',LaunchMode='LAUNCHPAD')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/NavigationLinksSet(ApplicationId='EVOORDER',LaunchMode='LAUNCHPAD')",
+		"type": "com.evorait.evoplan.NavigationLinks"
+	},
+	"ApplicationName": "EvoOrder",
+	"ApplicationId": "EVOORDER",
+	"LaunchMode": "LAUNCHPAD",
+	"Value1": "evoorder2ui5\\\\_\\\\Display\\\\_\\\\WorkOrder",
+	"Value2": ""
+}]

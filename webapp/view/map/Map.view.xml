@@ -1,0 +1,78 @@
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:vbm="sap.ui.vbm" xmlns:vk="sap.ui.vk" xmlns:f="sap.f"
+	controllerName="com.evorait.evoplan.controller.map.Map" displayBlock="true" height="100%" xmlns:l="sap.ui.layout">
+	<Page id="MapPage" showFooter="true" showHeader="false">
+		<l:Splitter orientation="Vertical">
+			<NavContainer id="leftPanel" class="panelPage">
+				<f:DynamicPage id="idMapDynamicPage" headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true" showFooter="true"
+					toggleHeaderOnTitleClick="false" class="sapUiNoContentPadding tableContentPage">
+					<f:header>
+						<f:DynamicPageHeader pinnable="true">
+							<f:content>
+								<core:Fragment fragmentName="com.evorait.evoplan.view.map.fragments.SmartFilterMapDemands" type="XML"/>
+							</f:content>
+						</f:DynamicPageHeader>
+					</f:header>
+					<f:content>
+						<vk:MapContainer id="idMapContainer" autoAdjustHeight="true" settingsPressed="onClickMapDemandFilter" busy="{viewModel>/mapSettings/busy}">
+							<vk:listPanelStack>
+								<vk:ListPanelStack width="230px">
+									<vk:content>
+										<vk:ListPanel id="idMapLegendsList"
+											items="{ path: '/MapLegendSet', sorter: { path: 'CharactersticCode', group: true }, groupHeaderFactory: '.getGroupHeader'}"
+											headerText="Legend" expanded="false" selectionMode="SingleSelectMaster" selectionChange="onSelectMapLagend" headerIcon="sap-icon://legend"
+											expand="onExpandCollapseLegends">
+											<vk:items>
+												<vk:LegendItem color="{Colourcode}" title="{CharactersticValue}" tooltip="{CharactersticDescription}"/>
+											</vk:items>
+										</vk:ListPanel>
+									</vk:content>
+								</vk:ListPanelStack>
+							</vk:listPanelStack>
+							<vk:content>
+								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities">
+									<vk:content>
+										<vbm:GeoMap id="idGeoMap" lassoSelection="true" rectangularSelection="true" drop="onDrop" select="onSelectSpots"
+											initialZoom="{user>/MAP_INITIAL_ZOOM}" initialPosition="{user>/MAP_INITIAL_POSITION}">
+											<vbm:vos>
+												<vbm:Routes items="{viewModel>/mapSettings/routeData}">
+													<vbm:items>
+														<vbm:Route id="idMapRoute" position="{viewModel>sLong};{viewModel>sLat};0;{viewModel>dLong};{viewModel>dLat};0" color="rgb(117,148,34)"
+															colorBorder="rgb(255,255,255)" linewidth="3" routetype="Geodesic" click="onClickRoute" contextMenu="onContextMenuRoute"/>
+													</vbm:items>
+												</vbm:Routes>
+												<vbm:Spots customProperties="{= ['Status']}" 
+												items="{
+														path:'/DemandSet',
+														parameters:{
+															batchGroupId:'mapdemands'
+														}
+												}" 
+												select="onSelect" deselect="onDeselect">
+													<vbm:items>
+														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0)-->
+														<vbm:Spot selectColor="{user>/MAP_SELECTED_PIN_COLOUR}" contentColor="{MAP_MARKER_COLOUR}" hotScale="1.1;1.1;1.1"
+															tooltip="{DEMAND_KEY}" type="Inactive" select="{IS_SELECTED}"
+															scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="{user>/MAP_MARKER_ICON}" contentSize="25rem" changeable="true"
+															position="{LONGITUDE};{LATITUDE};0" contextMenu="onContextMenu">
+															<vbm:customData>
+																<core:CustomData key='Status' value='{Status}'/>
+															</vbm:customData>
+														</vbm:Spot>
+													</vbm:items>
+												</vbm:Spots>
+											</vbm:vos>
+										</vbm:GeoMap>
+									</vk:content>
+								</vk:ContainerContent>
+							</vk:content>
+						</vk:MapContainer>
+					</f:content>
+				</f:DynamicPage>
+				<layoutData>
+					<l:SplitterLayoutData size="{=${viewModel>/showDemands} === true?'92%':'61%'}"/>
+				</layoutData>
+			</NavContainer>
+			<core:Fragment fragmentName="com.evorait.evoplan.view.map.fragments.DemandsTable" type="XML"></core:Fragment>
+		</l:Splitter>
+	</Page>
+</mvc:View>
