@@ -75,7 +75,6 @@ sap.ui.define([
 				return;
 			}
 			if (sQuery && sQuery !== "") {
-				// aFilters.splice(3,1);
 				aFilters.push(new Filter("Description", FilterOperator.Contains, sQuery));
 			}
 
@@ -157,7 +156,6 @@ sap.ui.define([
 			// Search field should be empty
 			oSearchField.setValue("");
 			binding.filter(aFilters, "Application");
-
 		},
 
 		/**

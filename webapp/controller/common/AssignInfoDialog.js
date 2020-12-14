@@ -48,7 +48,6 @@ sap.ui.define([
 
 			if (sBindPath && sBindPath !== "") {
 				oResource = oView.getModel().getProperty(sBindPath);
-
 				oAssignment.AssignmentGuid = oResource.AssignmentGuid;
 				oAssignment.Description = oResource.Description;
 				sResourceGroupGuid = oResource.ResourceGroupGuid;
@@ -107,7 +106,6 @@ sap.ui.define([
 			oView.addDependent(oDialog);
 
 			this._getAssignedDemand(oAssignment.AssignmentGuid);
-			//oDialog.bindElement(sBindPath);
 
 			// open dialog
 			oDialog.open();
@@ -262,7 +260,8 @@ sap.ui.define([
 				events: {
 					change: function () {
 						var oElementBinding = oDialog.getElementBinding(),
-							oContext = oElementBinding.getBoundContext();
+							oContext = oElementBinding.getBoundContext(),
+							oDemandData;
 
 						// oDateToField = sap.ui.getCore().byId("idDateToAssignInf");
 
@@ -281,7 +280,8 @@ sap.ui.define([
 						
 						oModel.setProperty("/Effort", oContext.getProperty("Effort"));
 						oModel.setProperty("/EffortUnit", oContext.getProperty("EffortUnit"));
-						var oDemandData = oContext.getProperty("Demand");
+						
+						oDemandData = oContext.getProperty("Demand");
 						oModel.setProperty("/Description", oDemandData.DemandDesc);
 						oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
 						oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);

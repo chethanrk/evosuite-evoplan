@@ -11,7 +11,7 @@ sap.ui.define([
 ], function (Opa5, Press, EnterText, Common, AggregationFilled, PropertyStrictEquals, BindingPath, I18NText, Properties) {
 	"use strict";
 
-	var sViewName = "Demands",
+	var sViewName = "demands.Demands",
 		sTableId = "draggableList",
 		sFilter = "listReportFilter";
 
@@ -234,7 +234,7 @@ sap.ui.define([
 						controlType: "sap.ui.table.Row",
 						viewName: sViewName,
 						matchers: new BindingPath({
-							path: "/DemandSet('0AA10FE57E901EDAA3EB433C2AB300D3')"
+							path: "/DemandSet('0AA10FE57E901EDAA5B923B327196450')"
 						}),
 						success: function (aRows) {
 							var oContext = aRows[0].getBindingContext(),
@@ -255,7 +255,7 @@ sap.ui.define([
 						viewName: sViewName,
 						// check: allItemsInTheListContainTheSearchTerm,
 						matchers: new BindingPath({
-							path: "/DemandSet('0AA10FE57E901EDAA3EB433C2AB300D3')"
+							path: "/DemandSet('0AA10FE57E901EDAA5B923B327196450')"
 						}),
 						success: function (aRows) {
 							var oContext = aRows[0].getBindingContext(),
@@ -313,10 +313,10 @@ sap.ui.define([
 						matchers: function (oTable) {
 							// If there are less items in the list than the growingThreshold, only check for this number.
 							iExpectedNumberOfItems = aAllEntities.length;
-							return iExpectedNumberOfItems === 20;
+							return iExpectedNumberOfItems === 176;
 						},
 						success: function (oTable) {
-							Opa5.assert.strictEqual(20, iExpectedNumberOfItems, "The Demand Table has " +
+							Opa5.assert.strictEqual(176, iExpectedNumberOfItems, "The Demand Table has " +
 								iExpectedNumberOfItems + " entries");
 						},
 						errorMessage: "Table does not have all entries."

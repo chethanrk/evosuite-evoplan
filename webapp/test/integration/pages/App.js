@@ -156,7 +156,7 @@ sap.ui.define([
 						autoWait: true,
 						success: function (oButton) {
 							var oItems = oButton.getAggregation("menu").getAggregation("items");
-							Opa5.assert.equal(5, oItems.length, "I can see the Menu Items");
+							Opa5.assert.equal(6, oItems.length, "I can see the Menu Items");
 						},
 						errorMessage: "There is no Button Available"
 					});

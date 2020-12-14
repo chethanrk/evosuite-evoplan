@@ -22,13 +22,15 @@ sap.ui.define([
 			var oModel = this.getModel(),
 				targetObj = oModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
-				aPromises = [];
+				aPromises = [],
+				oDemandObj,
+				sDemandGuid;
 
 			this.clearMessageModel();
 
 			for (var i = 0; i < aItems.length; i++) {
-				var oDemandObj = oModel.getProperty(aItems[i]);
-				var sDemandGuid = oDemandObj? oDemandObj.Guid : aItems[i].split("'")[1],
+				oDemandObj = oModel.getProperty(aItems[i]);
+				sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i].split("'")[1],
 					oParams = {
 						DemandGuid: sDemandGuid,
 						ResourceGroupGuid: targetObj.ResourceGroupGuid,
@@ -92,7 +94,6 @@ sap.ui.define([
 				sDemandGuids = "",
 				aItems = aSourcePaths ? aSourcePaths : aGuids;
 			return new Promise(function (resolve, reject) {
-
 				for (var i = 0; i < aItems.length; i++) {
 					var sPath = aItems[i].sPath ? aItems[i].sPath : aItems[i];
 					var demandObj = oModel.getProperty(sPath);
@@ -107,7 +108,7 @@ sap.ui.define([
 					DemandMultiGuid: sDemandGuids,
 					ObjectId: targetObj.NodeId, //targetObj.ResourceGroupGuid,
 					StartTimestamp: oTargetDate,
-					EndTimestamp: oNewEndDate ? oNewEndDate : oTargetDate         
+					EndTimestamp: oNewEndDate ? oNewEndDate : oTargetDate
 				};
 				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData,
 					response) {

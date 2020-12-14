@@ -1,4 +1,3 @@
-
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History",
@@ -122,8 +121,8 @@ sap.ui.define([
 						var sMessage = oMessage.message;
 						this._showErrorMessage(sMessage, fnCallback);
 					} else {
-                        this.showMessageToast(oData.message);
-                    }
+						this.showMessageToast(oData.message);
+					}
 				} else {
 					this.showMessageToast(oData.message);
 				}
@@ -605,7 +604,6 @@ sap.ui.define([
 			// 	controller: oController
 			// });
 		}
-		
 
 	});
 
