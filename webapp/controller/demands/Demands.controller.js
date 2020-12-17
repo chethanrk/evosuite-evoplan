@@ -45,9 +45,9 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onAfterRendering: function (oEvent) {
-			var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle");
-			var noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]);
-			var viewModel = this.getModel("viewModel");
+			var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle"),
+				noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]),
+				viewModel = this.getModel("viewModel");
 			viewModel.setProperty("/subViewTitle", tableTitle);
 			viewModel.setProperty("/subTableNoDataText", noDataText);
 		},
@@ -126,15 +126,15 @@ sap.ui.define([
 		 * @private
 		 */
 		_configureDataTable: function (oDataTable) {
+			// Row Action template to navigate to Detail page
+			var onClickNavigation = this.onActionPress.bind(this),
+				openActionSheet = this.openActionSheet.bind(this);
+
 			oDataTable.setEnableBusyIndicator(true);
 			oDataTable.setSelectionMode("MultiToggle");
 			oDataTable.setEnableColumnReordering(false);
 			oDataTable.setEnableCellFilter(false);
 			oDataTable.setVisibleRowCountMode("Auto");
-
-			// Row Action template to navigate to Detail page
-			var onClickNavigation = this.onActionPress.bind(this);
-			var openActionSheet = this.openActionSheet.bind(this);
 
 			this._setRowActionTemplate(oDataTable, onClickNavigation, openActionSheet);
 
@@ -164,9 +164,8 @@ sap.ui.define([
 		 */
 		onDragStart: function (oEvent) {
 			var oDragSession = oEvent.getParameter("dragSession"),
-				oDraggedControl = oDragSession.getDragControl();
-
-			var aIndices = this._oDataTable.getSelectedIndices(),
+				oDraggedControl = oDragSession.getDragControl(),
+				aIndices = this._oDataTable.getSelectedIndices(),
 				oSelectedPaths, aPathsData;
 
 			oDragSession.setTextData("Hi I am dragging");
@@ -248,13 +247,14 @@ sap.ui.define([
 				oAnnotations = this.getModel().getServiceAnnotations(),
 				oFilterData = {},
 				bValueHelp = false,
-				bTypeDate = false;
+				bTypeDate = false,
+				aKeys, sKey, aValues, aRanges, aTexts;
 			if (!oStartupData) {
 				return;
 			}
-			var aKeys = Object.keys(oStartupData);
+			aKeys = Object.keys(oStartupData);
 			for (var i in aKeys) {
-				var sKey = aKeys[i];
+				sKey = aKeys[i];
 				oFilterData[aKeys[i]] = {
 					items: [],
 					ranges: [],
@@ -264,7 +264,7 @@ sap.ui.define([
 				bValueHelp = this._checkValueHelp(sKey, oAnnotations);
 				bTypeDate = this._checkType(sKey, aEntityTypes);
 				if (bValueHelp) {
-					var aValues = [];
+					aValues = [];
 					for (var j in oStartupData[sKey]) {
 						aValues.push({
 							key: oStartupData[sKey][j],
@@ -273,7 +273,7 @@ sap.ui.define([
 					}
 					oFilterData[aKeys[i]].items = aValues;
 				} else if (bTypeDate) {
-					var aRanges = [];
+					aRanges = [];
 					for (var k in oStartupData[sKey]) {
 						aRanges.push({
 							exclude: false,
@@ -285,7 +285,7 @@ sap.ui.define([
 					}
 					oFilterData[aKeys[i]].ranges = aRanges;
 				} else {
-					var aTexts = [];
+					aTexts = [];
 					for (var l = 0; l < oStartupData[sKey].length - 1; l++) {
 						aTexts.push({
 							exclude: false,
@@ -342,13 +342,18 @@ sap.ui.define([
 			}
 			return false;
 		},
+
+		/**
+		 * Open the Qualification dialog for Gantt demand
+		 * @param oEvent
+		 */
 		onDemandQualificationIconPress: function (oEvent) {
 			var oRow = oEvent.getSource().getParent(),
 				oContext = oRow.getBindingContext(),
 				sPath = oContext.getPath(),
 				oModel = oContext.getModel(),
-				oResourceNode = oModel.getProperty(sPath);
-			var sDemandGuid = oResourceNode.Guid;
+				oResourceNode = oModel.getProperty(sPath),
+				sDemandGuid = oResourceNode.Guid;
 			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
 
 		}

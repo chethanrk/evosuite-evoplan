@@ -19,7 +19,6 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		open: function (oView, aSelectedPath, mParameters) {
-
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
@@ -115,13 +114,13 @@ sap.ui.define([
 		onSaveUnAvail: function () {
 			var oResourceAvailModel = this._component.getModel("resourceAvail"),
 				oData = oResourceAvailModel.getData(),
-				eventBus = sap.ui.getCore().getEventBus();
-			var oParams = {
-				ResourceGuid: this._resource,
-				EndTimestamp: oData.dateTo,
-				StartTimestamp: oData.dateFrom,
-				AvailabilityType: oData.availType
-			};
+				eventBus = sap.ui.getCore().getEventBus(),
+				oParams = {
+					ResourceGuid: this._resource,
+					EndTimestamp: oData.dateTo,
+					StartTimestamp: oData.dateFrom,
+					AvailabilityType: oData.availType
+				};
 			this._oDialog.setBusy(true);
 			if (this._mParameters.bFromPlannCal) {
 				eventBus.publish("CreateUnAvailability", "refreshAbsence", oParams);

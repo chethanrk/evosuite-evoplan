@@ -21,8 +21,8 @@ sap.ui.define([
 
 		onInit: function () {
 			// Row Action template to navigate to Detail page
-			var onClickNavigation = this._onActionPress.bind(this);
-			var openActionSheet = this.openActionSheet.bind(this),
+			var onClickNavigation = this._onActionPress.bind(this),
+				openActionSheet = this.openActionSheet.bind(this),
 				oAppModel = this.getModel("appView");
 
 			this._mParameters = {
@@ -52,13 +52,13 @@ sap.ui.define([
 		 * On click on demand actions to navigate to demand detail page 
 		 */
 		_onActionPress: function (oEvent) {
-			var oRouter = this.getRouter();
-			var oRow = oEvent.getParameter("row");
-			var oContext = oRow.getBindingContext();
-			var sPath = oContext.getPath();
-			var oModel = oContext.getModel();
-			var oData = oModel.getProperty(sPath);
-			var oUserDetail = this.getModel("appView");
+			var oRouter = this.getRouter(),
+				oRow = oEvent.getParameter("row"),
+				oContext = oRow.getBindingContext(),
+				sPath = oContext.getPath(),
+				oModel = oContext.getModel(),
+				oData = oModel.getProperty(sPath),
+				oUserDetail = this.getModel("appView");
 
 			if (oUserDetail.getProperty("/currentRoute") === "splitDemands") {
 				oRouter.navTo("splitDemandDetails", {
@@ -76,9 +76,8 @@ sap.ui.define([
 		 */
 		onDragStart: function (oEvent) {
 			var oDragSession = oEvent.getParameter("dragSession"),
-				oDraggedControl = oDragSession.getDragControl();
-
-			var aIndices = this._oDataTable.getSelectedIndices(),
+				oDraggedControl = oDragSession.getDragControl(),
+				aIndices = this._oDataTable.getSelectedIndices(),
 				oSelectedPaths, aPathsData, aSelDemandGuid = [];
 
 			oDragSession.setTextData("Hi I am dragging");
@@ -103,18 +102,6 @@ sap.ui.define([
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 				oEvent.preventDefault();
 			}
-
-			/*var oDragSession = oEvent.getParameter("dragSession"),
-				oDraggedControl = oDragSession.getDragControl(),
-				oContext = oDraggedControl.getBindingContext(),
-				sPath = oContext.getPath(),
-				oDemand = oContext.getModel().getProperty(sPath);
-
-			localStorage.setItem("Evo-Dmnd-guid", sPath.split("'")[1]);
-			if (!this.isDemandAssignable(sPath)) {
-				this._showAssignErrorDialog([oDemand.DemandDesc]);
-				oEvent.preventDefault();
-			}*/
 		},
 		/**
 		 * On Drag end check for dropped control, If dropped control not found
@@ -216,15 +203,19 @@ sap.ui.define([
 		onClickSplit: function (oEvent) {
 			window.open("#Gantt/SplitDemands", "_blank");
 		},
+
+		/**
+		 * Open the Qualification dialog for Gantt demand
+		 * @param oEvent
+		 */
 		onDemandQualificationIconPress: function (oEvent) {
 			var oRow = oEvent.getSource().getParent(),
 				oContext = oRow.getBindingContext(),
 				sPath = oContext.getPath(),
 				oModel = oContext.getModel(),
-				oResourceNode = oModel.getProperty(sPath);
-			var sDemandGuid = oResourceNode.Guid;
+				oResourceNode = oModel.getProperty(sPath),
+				sDemandGuid = oResourceNode.Guid;
 			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
-
 		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);

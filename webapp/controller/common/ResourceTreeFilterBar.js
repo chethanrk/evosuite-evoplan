@@ -17,19 +17,12 @@ sap.ui.define([
 	return BaseController.extend("com.evorait.evoplan.controller.common.ResourceTreeFilterBar", {
 
 		formatter: formatter,
-
 		_oView: null,
-
 		_oFilterBar: null,
-
-		// _isInitalizedProm: null,
-
 		_oCustomFilterData: {
 			_CUSTOM: {}
 		},
-
 		_isOldVariant: false,
-
 		_aCustomFilters: {
 			search: {
 				origin: "Description",
@@ -53,7 +46,6 @@ sap.ui.define([
 				old: "dateRange2"
 			}
 		},
-
 		defaultDateRange: [],
 
 		/**
@@ -62,32 +54,32 @@ sap.ui.define([
 		 * @param sControlId
 		 */
 		init: function (oView, sControlId) {
+			var oLayout = oView.byId(sControlId);
 			this._sId = oView.getId();
 			this._oView = oView;
 			this._component = this._oView.getController().getOwnerComponent();
-			var oLayout = oView.byId(sControlId);
 			this._oDroppableTable = oView.byId("droppableTable");
 			this._oDataTable = this._oDroppableTable.getTable();
 			this._viewModel = this._component.getModel("viewModel");
 			//use global promise for getting when filterbar was fully initalized
 			// this._isInitalizedProm = new Promise(function (resolve, reject) {
-				// create fragment lazily
-				Fragment.load({
-					name: "com.evorait.evoplan.view.common.fragments.ResourceTreeFilterBar",
-					id: this._sId,
-					controller: this
-				}).then(function (content) {
-					this._oFilterBar =  this._oView.byId("resourceTreeFilterBar");
-					this._oVariantMangement = this._oFilterBar.getSmartVariant();
+			// create fragment lazily
+			Fragment.load({
+				name: "com.evorait.evoplan.view.common.fragments.ResourceTreeFilterBar",
+				id: this._sId,
+				controller: this
+			}).then(function (content) {
+				this._oFilterBar = this._oView.byId("resourceTreeFilterBar");
+				this._oVariantMangement = this._oFilterBar.getSmartVariant();
 
-					//Filterbar is now official initialized
-					this._oFilterBar.attachInitialized(function (oEvent) {
-						this.onInitialized(oEvent);
-						// resolve();
-					}.bind(this));
-					// connect filterbar to view (models, lifecycle)
-					oLayout.addContent(content);
+				//Filterbar is now official initialized
+				this._oFilterBar.attachInitialized(function (oEvent) {
+					this.onInitialized(oEvent);
+					// resolve();
 				}.bind(this));
+				// connect filterbar to view (models, lifecycle)
+				oLayout.addContent(content);
+			}.bind(this));
 			// }.bind(this));
 		},
 
@@ -111,8 +103,8 @@ sap.ui.define([
 		 * set date range based on selected NodeType key
 		 */
 		onInitialized: function (oEvent) {
-			var timeViewCtrl = this._oFilterBar.getControlByKey(this._aCustomFilters.viewType.origin);
-			var sVariantId = this._oVariantMangement.getCurrentVariantId();
+			var timeViewCtrl = this._oFilterBar.getControlByKey(this._aCustomFilters.viewType.origin),
+				sVariantId = this._oVariantMangement.getCurrentVariantId();
 			if (timeViewCtrl && sVariantId === "*standard*") {
 				this._setDateFilterControls(timeViewCtrl.getSelectedKey());
 			}
@@ -143,15 +135,15 @@ sap.ui.define([
 		 */
 		onBeforeVariantFetch: function (oEvent) {
 			// this.getInitalizedPromise().then(function () {
-				if (this._oVariantMangement.getSelectionKey() === "*standard*") {
-					this._setDateFilterControls(this._aCustomFilters.viewType.default);
-					this._updateCustomFilterData();
-					this._oFilterBar.setFilterData(this._oCustomFilterData);
-					this._triggerSearch();
-					return;
-				}
+			if (this._oVariantMangement.getSelectionKey() === "*standard*") {
+				this._setDateFilterControls(this._aCustomFilters.viewType.default);
 				this._updateCustomFilterData();
 				this._oFilterBar.setFilterData(this._oCustomFilterData);
+				this._triggerSearch();
+				return;
+			}
+			this._updateCustomFilterData();
+			this._oFilterBar.setFilterData(this._oCustomFilterData);
 			// }.bind(this));
 		},
 
@@ -235,7 +227,7 @@ sap.ui.define([
 			oCustomFieldData[this._aCustomFilters.startDate.origin] = aDateRange[0];
 			oCustomFieldData[this._aCustomFilters.endDate.origin] = aDateRange[1];
 			if (oCustomFieldData && oCustomFieldData.NodeType) {
-				this._viewModel.setProperty("/selectedHierarchyView",oCustomFieldData.NodeType);
+				this._viewModel.setProperty("/selectedHierarchyView", oCustomFieldData.NodeType);
 			}
 			this._setCustomFilterControls(oCustomFieldData);
 			this._updateCustomFilterData();
@@ -259,8 +251,8 @@ sap.ui.define([
 		 * @returns {Array}
 		 */
 		getAllCustomFilters: function () {
-			var aStandardFilter = this._oFilterBar.getFilters();
-			var aFilters = aStandardFilter[0] ? aStandardFilter[0].aFilters : [];
+			var aStandardFilter = this._oFilterBar.getFilters(),
+				aFilters = aStandardFilter[0] ? aStandardFilter[0].aFilters : [];
 
 			for (var key in this._oCustomFilterData._CUSTOM) {
 				if (key === this._aCustomFilters.search.origin) {
@@ -368,10 +360,13 @@ sap.ui.define([
 		 * @private
 		 */
 		_setCustomFilterControls: function (oData) {
+			var sFilterKey,
+				oCtrl,
+				sValue = "";
 			for (var key in this._aCustomFilters) {
-				var sFilterKey = this._aCustomFilters[key].origin,
-					oCtrl = this._oFilterBar.getControlByKey(sFilterKey),
-					sValue = "";
+				sFilterKey = this._aCustomFilters[key].origin;
+				oCtrl = this._oFilterBar.getControlByKey(sFilterKey);
+				sValue = "";
 
 				if (oData && oData.hasOwnProperty(sFilterKey)) {
 					sValue = oData[sFilterKey];
@@ -500,8 +495,8 @@ sap.ui.define([
 		 * @private
 		 */
 		_setDateFilterControls: function (sKey) {
-			var newDateRange = this._getDateRangeValues(null, sKey);
-			var oStartDate = this._oFilterBar.getControlByKey(this._aCustomFilters.startDate.origin),
+			var newDateRange = this._getDateRangeValues(null, sKey),
+				oStartDate = this._oFilterBar.getControlByKey(this._aCustomFilters.startDate.origin),
 				oEndDate = this._oFilterBar.getControlByKey(this._aCustomFilters.endDate.origin);
 			oStartDate.setValue(newDateRange[0]);
 			oEndDate.setValue(newDateRange[1]);
@@ -526,10 +521,12 @@ sap.ui.define([
 						sViewType = this._oFilterBar.getControlByKey(this._aCustomFilters.viewType.origin).getSelectedKey();
 					}
 					selectedTimeFormat = formatter.getResourceFormatByKey(sViewType);
-					if(this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin] && this._oCustomFilterData._CUSTOM[this._aCustomFilters.endDate.origin]){
-						return [this.formatter.date(this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin]), this.formatter.date(this._oCustomFilterData._CUSTOM[this._aCustomFilters.endDate.origin])];
-					}else{
-						return [this.formatter.date(selectedTimeFormat.getDateBegin()), this.formatter.date(selectedTimeFormat.getDateEnd())];	
+					if (this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin] && this._oCustomFilterData._CUSTOM[this._aCustomFilters
+							.endDate.origin]) {
+						return [this.formatter.date(this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin]), this.formatter.date(this._oCustomFilterData
+							._CUSTOM[this._aCustomFilters.endDate.origin])];
+					} else {
+						return [this.formatter.date(selectedTimeFormat.getDateBegin()), this.formatter.date(selectedTimeFormat.getDateEnd())];
 					}
 				}
 			} else if (sDateRangeType) {
@@ -548,18 +545,7 @@ sap.ui.define([
 			}
 			return this._getDateRangeValues(null, this._aCustomFilters.viewType.default);
 		}
-		// /**
-		//  * Check for valid date range 
-		//  */
-		// _validateDate : function(){
-		// 	var StartDate = sap.ui.getCore().byId("idStartDate").getValue();  
-		// 	var EndDate = sap.ui.getCore().byId("idEndDate").getValue();  
-		// 	if(new Date(StartDate).getTime() > new Date(EndDate).getTime()){
-		// 		this.showMessageToast(this._component.getModel("i18n").getResourceBundle().getText("ymsg.datesInvalid"));
-		// 		return false;
-		// 	}
-		// 	return true;
-		// }
+
 	});
 
 });

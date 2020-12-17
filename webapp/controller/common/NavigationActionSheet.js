@@ -47,6 +47,11 @@ sap.ui.define([
 		 */
 		onOpen: function (oDialog, oView, oParent) {
 			// open dialog
+			// var bIsOrder = this.selectedDemandData.DEMAND_ICON === 'sap-icon://eam-work-order' ? true : false,
+			// 	oNavLinksModel = oView.getModel("navLinks");
+			
+			// oNavLinksModel.setProperty("/bIsOrder",bIsOrder );
+			// oNavLinksModel.refresh();
 			oDialog.openBy(oParent);
 		},
 		/**
@@ -58,12 +63,7 @@ sap.ui.define([
 				sPath = oContext.getPath(),
 				oData = oModel.getProperty(sPath);
 
-			this.openEvoOrder(this.selectedDemandData.ORDERID, oData,oEvent.getSource().getModel("viewModel"));
+			this.openEvoOrder(this.selectedDemandData.ORDERID, oData, oEvent.getSource().getModel("viewModel"));
 		},
-
-		exit: function () {
-
-		}
-
 	});
 });

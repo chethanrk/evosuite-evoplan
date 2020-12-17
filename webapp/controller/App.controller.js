@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/formatter",
-    "com/evorait/evoplan/model/Constants"
+	"com/evorait/evoplan/model/Constants"
 ], function (AssignmentsController, JSONModel, Fragment, formatter, Constants) {
 	"use strict";
 
@@ -70,19 +70,19 @@ sap.ui.define([
 				oRouter = this.getOwnerComponent().getRouter(),
 				oAppViewModel = this.getOwnerComponent().getModel("appView"),
 				sCurrentTitle = oAppViewModel.getProperty("/pageTitle"),
-                sLaunchMode = this.getModel("viewModel").getProperty("/launchMode"),
-                sSemanticObject = null,
-                sRoute;
+				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode"),
+				sSemanticObject = null,
+				sRoute;
 
-            if (sap.ushell && sap.ushell.Container) {
-                var oUrlParser = sap.ushell.Container.getService("URLParsing");
-            }
-            if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
-                sSemanticObject = oUrlParser.getShellHash(window.location);
-                sRoute = "#"+sSemanticObject+"&/SplitPage/SplitDemands";
-            }else{
-                sRoute ="#SplitPage/SplitDemands";
-            }
+			if (sap.ushell && sap.ushell.Container) {
+				var oUrlParser = sap.ushell.Container.getService("URLParsing");
+			}
+			if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
+				sSemanticObject = oUrlParser.getShellHash(window.location);
+				sRoute = "#" + sSemanticObject + "&/SplitPage/SplitDemands";
+			} else {
+				sRoute = "#SplitPage/SplitDemands";
+			}
 
 			if (sCurrentTitle === sItemText) {
 				return;
@@ -167,9 +167,8 @@ sap.ui.define([
 		 */
 		_onAllRouteMatched: function (oEvent) {
 			var oAppViewModel = this.getOwnerComponent().getModel("appView"),
-				oParams = oEvent.getParameters();
-
-			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				oParams = oEvent.getParameters(),
+				oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
 				pageTitle = oResourceBundle.getText("xbut.pageDemands");
 
 			this.getModel("viewModel").setProperty("/ganttSettings/active", false);
@@ -231,15 +230,13 @@ sap.ui.define([
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (sRoute === "detail") {
 				/* No action require */
-			}else if (sRoute === "map") {
+			} else if (sRoute === "map") {
 				this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshMapView", {});
-			} 
-			else {
+			} else {
 				this._eventBus.publish("BaseController", "refreshTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshDemandTable", {});
 			}
-
 		},
 		/**
 		 * catch event from dialog for saving demand status change

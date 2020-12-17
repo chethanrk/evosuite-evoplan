@@ -93,7 +93,7 @@ sap.ui.define([
 
 			return new Date(dateStr + "T" + timeStr);
 		},
-		
+
 		/**
 		 * Identifies the Target Type
 		 * @public
@@ -106,7 +106,7 @@ sap.ui.define([
 			}
 			return false;
 		},
-		
+
 		/**
 		 * Identifies the Title Type
 		 * @public
@@ -120,7 +120,7 @@ sap.ui.define([
 			}
 			return "Auto";
 		},
-		
+
 		/**
 		 * Provide the resource icon based on resource Type
 		 * @public
@@ -143,7 +143,7 @@ sap.ui.define([
 			}
 			return "";
 		},
-		
+
 		/**
 		 * Provides resource Format
 		 * @public
@@ -153,7 +153,7 @@ sap.ui.define([
 		getResourceFormatByKey: function (sValue) {
 			return resourceFormats[sValue];
 		},
-		
+
 		/**
 		 * Identifies whether its Assignment or not
 		 * @public
@@ -221,7 +221,7 @@ sap.ui.define([
 				return oBundle.getText("xtit.available");
 			}
 		},
-		
+
 		/**
 		 * format the Message Box Criticality
 		 * @param sValue
@@ -572,12 +572,13 @@ sap.ui.define([
 		 * @returns
 		 */
 		formatQualificationIcon: function (sReqProfileID, bEnableQualification) {
-			if (sReqProfileID && sReqProfileID !== "00000000" && bEnableQualification)
-				{return true;}
-			else
-				{return false;}
+			if (sReqProfileID && sReqProfileID !== "00000000" && bEnableQualification) {
+				return true;
+			} else {
+				return false;
+			}
 		},
-		
+
 		/*
 		 * To Specify Qualification Fullfilled value in Yes/No base
 		 * @param bFulfilled 
@@ -590,7 +591,7 @@ sap.ui.define([
 				return "No";
 			}
 		},
-		
+
 		/*
 		 * To Specify Qualification Button visibilty 
 		 * @param bType Dialog type
@@ -606,12 +607,12 @@ sap.ui.define([
 		/**
 		 * Person number is only visible if its exists 
 		 */
-		 formartResourcePNo : function(sName, iNumber){
-		 	if(sName && iNumber !== 0){
-		 		return sName +" - "+ iNumber;
-		 	}
-		 	return "";
-		 }
+		formartResourcePNo: function (sName, iNumber) {
+			if (sName && iNumber !== 0) {
+				return sName + " - " + iNumber;
+			}
+			return "";
+		}
 
 	};
 });

@@ -53,7 +53,7 @@
 		"type": "com.evorait.evoplan.StatusTexts"
 	},
 	"UserStatusShortText": "REJ",
-	"UserStatusLongText": "ROUT"
+	"UserStatusLongText": "User Rejected to work on Deman"
 }, {
 	"__metadata": {
 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('ROUT')",
@@ -61,7 +61,7 @@
 		"type": "com.evorait.evoplan.StatusTexts"
 	},
 	"UserStatusShortText": "ROUT",
-	"UserStatusLongText": "Enroute"
+	"UserStatusLongText": "STRT"
 }, {
 	"__metadata": {
 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('STRT')",
@@ -110,4 +110,12 @@
 	},
 	"UserStatusShortText": "PASS",
 	"UserStatusLongText": "Partial Assigned"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('POOL')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/StatusTextsSet('POOL')",
+		"type": "com.evorait.evoplan.StatusTexts"
+	},
+	"UserStatusShortText": "POOL",
+	"UserStatusLongText": "Pool Assignment"
 }]

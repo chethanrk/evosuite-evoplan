@@ -4,7 +4,8 @@
 			templateShareable:false
 		}">
 		<buttons>
-			<Button text="{navLinks>ApplicationName}" press="onClickNavAction"/>
+			<Button text="{navLinks>ApplicationName}" press="onClickNavAction" />
+			<!--visible="{navLinks>/bIsOrder}"-->
 		</buttons>
 	</ActionSheet>
 </core:FragmentDefinition>

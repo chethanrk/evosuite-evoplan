@@ -20,7 +20,7 @@ sap.ui.define([
 		 * @param oView
 		 * @param sBindPath
 		 */
-		open: function (oView, oEvent,mParameters) {
+		open: function (oView, oEvent, mParameters) {
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
@@ -31,10 +31,10 @@ sap.ui.define([
 				}).then(function (oDialog) {
 					oView.getModel("appView").setProperty("/busy", false);
 					this._oDialog = oDialog;
-					this.onOpen(oDialog, oView, oEvent,mParameters);
+					this.onOpen(oDialog, oView, oEvent, mParameters);
 				}.bind(this));
 			} else {
-				this.onOpen(this._oDialog, oView, oEvent,mParameters);
+				this.onOpen(this._oDialog, oView, oEvent, mParameters);
 			}
 		},
 
@@ -43,7 +43,7 @@ sap.ui.define([
 		 * @param oView
 		 * @param oEvent
 		 */
-		onOpen: function (oDialog, oView, oEvent,mParameters) {
+		onOpen: function (oDialog, oView, oEvent, mParameters) {
 			var oViewFilterSettings = oView.getController().oFilterConfigsController || null;
 			oDialog.setModel(new JSONModel({
 				count: 0
@@ -121,12 +121,12 @@ sap.ui.define([
 		 * On Click on capacitive assignment link open's the assign info dialog
 		 */
 		onCapacitiveRowClick: function (oEvent) {
-			var oAssignment = oEvent.getParameter("listItem");
-			var oContext = oAssignment.getBindingContext();
-			var oModel = oContext.getModel();
-			var sPath = oContext.getPath();
-			var oAssignmentData = oModel.getProperty(sPath);
-			this._component.assignInfoDialog.open(this._oView, null, oAssignmentData,this._mParameters);
+			var oAssignment = oEvent.getParameter("listItem"),
+				oContext = oAssignment.getBindingContext(),
+				oModel = oContext.getModel(),
+				sPath = oContext.getPath(),
+				oAssignmentData = oModel.getProperty(sPath);
+			this._component.assignInfoDialog.open(this._oView, null, oAssignmentData, this._mParameters);
 		}
 
 	});

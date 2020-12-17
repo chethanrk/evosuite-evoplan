@@ -1,0 +1,21 @@
+[{
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/MapProviderSet('PTV')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/MapProviderSet('PTV')",
+		"type": "com.evorait.evoplan.MapProvider"
+	},
+	"name": "PTV",
+	"type": "",
+	"description": "PTV MAPS",
+	"tileX": 256,
+	"tileY": 256,
+	"minLOD": 1,
+	"maxLOD": 22,
+	"default": "X",
+	"copyright": " Copyright © 2014 PTV AG / TomTom or © 2014 PTV AG / HERE / AND",
+	"MapSource": {
+		"__deferred": {
+			"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/MapProviderSet('PTV')/MapSource"
+		}
+	}
+}]
