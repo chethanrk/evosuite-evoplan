@@ -1,1621 +1,1621 @@
-[{
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='AD01',ActivityTypeCode='104')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='AD01',ActivityTypeCode='104')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "AD01",
-	"ActivityTypeCode": "104",
-	"ActivityTypeDesc": "Modification"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='AD02',ActivityTypeCode='103')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='AD02',ActivityTypeCode='103')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "AD02",
-	"ActivityTypeCode": "103",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='AD03',ActivityTypeCode='102')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='AD03',ActivityTypeCode='102')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "AD03",
-	"ActivityTypeCode": "102",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='CS01',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='CS01',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "CS01",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='CS02',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='CS02',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "CS02",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DC01',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DC01',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "DC01",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DC01',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DC01',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "DC01",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DC01',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DC01',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "DC01",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DFS1',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DFS1',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "DFS1",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ETT1',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ETT1',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ETT1",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='EVO1',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='EVO1',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "EVO1",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='EVO2',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='EVO2',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "EVO2",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='EVO3',ActivityTypeCode='MAS')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='EVO3',ActivityTypeCode='MAS')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "EVO3",
-	"ActivityTypeCode": "MAS",
-	"ActivityTypeDesc": "Mass testing"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='MR01',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='MR01',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "MR01",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='MR01',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='MR01',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "MR01",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='MR01',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='MR01',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "MR01",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='101')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='101')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM01",
-	"ActivityTypeCode": "101",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='102')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='102')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM01",
-	"ActivityTypeCode": "102",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='103')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='103')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM01",
-	"ActivityTypeCode": "103",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='105')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='105')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM01",
-	"ActivityTypeCode": "105",
-	"ActivityTypeDesc": "New Build"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='106')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='106')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM01",
-	"ActivityTypeCode": "106",
-	"ActivityTypeDesc": "Modify"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='107')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='107')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM01",
-	"ActivityTypeCode": "107",
-	"ActivityTypeDesc": "Conversion"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='108')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='108')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM01",
-	"ActivityTypeCode": "108",
-	"ActivityTypeDesc": "Preventative Maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='109')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='109')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM01",
-	"ActivityTypeCode": "109",
-	"ActivityTypeDesc": "Safety"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='110')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='110')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM01",
-	"ActivityTypeCode": "110",
-	"ActivityTypeDesc": "Environmental Control"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='112')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='112')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM01",
-	"ActivityTypeCode": "112",
-	"ActivityTypeDesc": "Industrial Hygiene"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='201')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='201')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM01",
-	"ActivityTypeCode": "201",
-	"ActivityTypeDesc": "Warranty case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='202')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='202')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM01",
-	"ActivityTypeCode": "202",
-	"ActivityTypeDesc": "Insurance case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='300')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='300')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM01",
-	"ActivityTypeCode": "300",
-	"ActivityTypeDesc": "Shut down"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='ZM5')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='ZM5')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM01",
-	"ActivityTypeCode": "ZM5",
-	"ActivityTypeDesc": "Signaling maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM02',ActivityTypeCode='101')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM02',ActivityTypeCode='101')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM02",
-	"ActivityTypeCode": "101",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM02',ActivityTypeCode='102')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM02',ActivityTypeCode='102')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM02",
-	"ActivityTypeCode": "102",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM03',ActivityTypeCode='102')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM03',ActivityTypeCode='102')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM03",
-	"ActivityTypeCode": "102",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM03',ActivityTypeCode='103')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM03',ActivityTypeCode='103')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM03",
-	"ActivityTypeCode": "103",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM03',ActivityTypeCode='300')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM03',ActivityTypeCode='300')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM03",
-	"ActivityTypeCode": "300",
-	"ActivityTypeDesc": "Shut down"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM04',ActivityTypeCode='111')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM04',ActivityTypeCode='111')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM04",
-	"ActivityTypeCode": "111",
-	"ActivityTypeDesc": "Refurbishment"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM05',ActivityTypeCode='103')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM05',ActivityTypeCode='103')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM05",
-	"ActivityTypeCode": "103",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM06',ActivityTypeCode='102')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM06',ActivityTypeCode='102')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM06",
-	"ActivityTypeCode": "102",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM07',ActivityTypeCode='104')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM07',ActivityTypeCode='104')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM07",
-	"ActivityTypeCode": "104",
-	"ActivityTypeDesc": "Modification"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM08',ActivityTypeCode='101')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM08',ActivityTypeCode='101')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM08",
-	"ActivityTypeCode": "101",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM08',ActivityTypeCode='102')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM08',ActivityTypeCode='102')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM08",
-	"ActivityTypeCode": "102",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM08',ActivityTypeCode='103')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM08',ActivityTypeCode='103')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PM08",
-	"ActivityTypeCode": "103",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PMXX',ActivityTypeCode='101')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PMXX',ActivityTypeCode='101')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PMXX",
-	"ActivityTypeCode": "101",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PMXX',ActivityTypeCode='102')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PMXX',ActivityTypeCode='102')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PMXX",
-	"ActivityTypeCode": "102",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PMXX',ActivityTypeCode='103')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PMXX',ActivityTypeCode='103')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "PMXX",
-	"ActivityTypeCode": "103",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='RC01',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='RC01',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "RC01",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='RC01',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='RC01',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "RC01",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='RC01',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='RC01',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "RC01",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM01",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM01",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM01",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='005')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='005')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM01",
-	"ActivityTypeCode": "005",
-	"ActivityTypeDesc": "Service"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='010')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='010')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM01",
-	"ActivityTypeCode": "010",
-	"ActivityTypeDesc": "Warranty case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='011')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='011')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM01",
-	"ActivityTypeCode": "011",
-	"ActivityTypeDesc": "Insurance case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM02",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM02",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM02",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='005')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='005')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM02",
-	"ActivityTypeCode": "005",
-	"ActivityTypeDesc": "Service"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='010')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='010')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM02",
-	"ActivityTypeCode": "010",
-	"ActivityTypeDesc": "Warranty case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='011')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='011')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM02",
-	"ActivityTypeCode": "011",
-	"ActivityTypeDesc": "Insurance case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM03",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM03",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM03",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='005')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='005')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM03",
-	"ActivityTypeCode": "005",
-	"ActivityTypeDesc": "Service"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM09',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM09',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM09",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM09',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM09',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM09",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM09',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM09',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SM09",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP01',ActivityTypeCode='SP2')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP01',ActivityTypeCode='SP2')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP01",
-	"ActivityTypeCode": "SP2",
-	"ActivityTypeDesc": "Corrective maint.(rolling stk)"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP03',ActivityTypeCode='SP1')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP03',ActivityTypeCode='SP1')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP03",
-	"ActivityTypeCode": "SP1",
-	"ActivityTypeDesc": "Preventive maint.(rolling stk)"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='101')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='101')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP04",
-	"ActivityTypeCode": "101",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='102')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='102')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP04",
-	"ActivityTypeCode": "102",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='103')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='103')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP04",
-	"ActivityTypeCode": "103",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='105')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='105')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP04",
-	"ActivityTypeCode": "105",
-	"ActivityTypeDesc": "New Build"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='106')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='106')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP04",
-	"ActivityTypeCode": "106",
-	"ActivityTypeDesc": "Modify"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='107')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='107')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP04",
-	"ActivityTypeCode": "107",
-	"ActivityTypeDesc": "Conversion"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='108')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='108')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP04",
-	"ActivityTypeCode": "108",
-	"ActivityTypeDesc": "Preventative Maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='109')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='109')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP04",
-	"ActivityTypeCode": "109",
-	"ActivityTypeDesc": "Safety"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='110')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='110')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP04",
-	"ActivityTypeCode": "110",
-	"ActivityTypeDesc": "Environmental Control"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='112')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='112')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP04",
-	"ActivityTypeCode": "112",
-	"ActivityTypeDesc": "Industrial Hygiene"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='201')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='201')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP04",
-	"ActivityTypeCode": "201",
-	"ActivityTypeDesc": "Warranty case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='202')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='202')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP04",
-	"ActivityTypeCode": "202",
-	"ActivityTypeDesc": "Insurance case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='300')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='300')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "SP04",
-	"ActivityTypeCode": "300",
-	"ActivityTypeDesc": "Shut down"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='101')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='101')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "UGEN",
-	"ActivityTypeCode": "101",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='102')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='102')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "UGEN",
-	"ActivityTypeCode": "102",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='103')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='103')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "UGEN",
-	"ActivityTypeCode": "103",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='105')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='105')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "UGEN",
-	"ActivityTypeCode": "105",
-	"ActivityTypeDesc": "New Build"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='108')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='108')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "UGEN",
-	"ActivityTypeCode": "108",
-	"ActivityTypeDesc": "Preventative Maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='109')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='109')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "UGEN",
-	"ActivityTypeCode": "109",
-	"ActivityTypeDesc": "Safety"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZGRC',ActivityTypeCode='ZAP')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZGRC',ActivityTypeCode='ZAP')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZGRC",
-	"ActivityTypeCode": "ZAP",
-	"ActivityTypeDesc": "GRC Accounts Payable"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZGRC',ActivityTypeCode='ZIT')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZGRC',ActivityTypeCode='ZIT')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZGRC",
-	"ActivityTypeCode": "ZIT",
-	"ActivityTypeDesc": "GRC IT Audit"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZGRC',ActivityTypeCode='ZVE')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZGRC',ActivityTypeCode='ZVE')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZGRC",
-	"ActivityTypeCode": "ZVE",
-	"ActivityTypeDesc": "GRC Vendor Audit"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z10')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z10')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z10",
-	"ActivityTypeDesc": "IT Maintain"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z11')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z11')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z11",
-	"ActivityTypeDesc": "IT Maintain Warranty"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z12')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z12')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z12",
-	"ActivityTypeDesc": "IT Installation Equipment"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z13')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z13')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z13",
-	"ActivityTypeDesc": "IT DeinstallationEquipment"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z14')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z14')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z14",
-	"ActivityTypeDesc": "IT Move Equipment"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z20')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z20')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z20",
-	"ActivityTypeDesc": "Mechanical Maintain"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z30')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z30')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z30",
-	"ActivityTypeDesc": "Electrical Maintain"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z40')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z40')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z40",
-	"ActivityTypeDesc": "Preventative Maintain"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z41')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z41')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z41",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z50')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z50')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z50",
-	"ActivityTypeDesc": "House Servcie"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z60')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z60')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z60",
-	"ActivityTypeDesc": "Winter servcies"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z65')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z65')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z65",
-	"ActivityTypeDesc": "Cleaning Servcies"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z90')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z90')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z90",
-	"ActivityTypeDesc": "Building Modernization small"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z91')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z91')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z91",
-	"ActivityTypeDesc": "Building Modernization Project"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z95')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z95')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZI01",
-	"ActivityTypeCode": "Z95",
-	"ActivityTypeDesc": "Building Construction"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM1')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM1')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZIM1",
-	"ActivityTypeCode": "ZM1",
-	"ActivityTypeDesc": "Track regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM2')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM2')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZIM1",
-	"ActivityTypeCode": "ZM2",
-	"ActivityTypeDesc": "Tarck mayor maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM3')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM3')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZIM1",
-	"ActivityTypeCode": "ZM3",
-	"ActivityTypeDesc": "Track elements maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM4')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM4')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZIM1",
-	"ActivityTypeCode": "ZM4",
-	"ActivityTypeDesc": " Electricity maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM5')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM5')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZIM1",
-	"ActivityTypeCode": "ZM5",
-	"ActivityTypeDesc": "Signaling maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZM01",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZM01",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZM01",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='010')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='010')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZM01",
-	"ActivityTypeCode": "010",
-	"ActivityTypeDesc": "Warranty case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='105')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='105')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZM01",
-	"ActivityTypeCode": "105",
-	"ActivityTypeDesc": "New Build"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='106')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='106')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZM01",
-	"ActivityTypeCode": "106",
-	"ActivityTypeDesc": "Modify"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='107')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='107')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZM01",
-	"ActivityTypeCode": "107",
-	"ActivityTypeDesc": "Conversion"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZME1",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZME1",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZME1",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='005')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='005')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZME1",
-	"ActivityTypeCode": "005",
-	"ActivityTypeDesc": "Service"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='011')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='011')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZME1",
-	"ActivityTypeCode": "011",
-	"ActivityTypeDesc": "Insurance case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZME2",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZME2",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZME2",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='005')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='005')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZME2",
-	"ActivityTypeCode": "005",
-	"ActivityTypeDesc": "Service"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZMR1",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZMR1",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZMR1",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='005')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='005')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZMR1",
-	"ActivityTypeCode": "005",
-	"ActivityTypeDesc": "Service"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='010')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='010')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZMR1",
-	"ActivityTypeCode": "010",
-	"ActivityTypeDesc": "Warranty case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='011')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='011')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZMR1",
-	"ActivityTypeCode": "011",
-	"ActivityTypeDesc": "Insurance case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZMR2",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZMR2",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZMR2",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='005')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='005')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZMR2",
-	"ActivityTypeCode": "005",
-	"ActivityTypeDesc": "Service"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='010')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='010')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZMR2",
-	"ActivityTypeCode": "010",
-	"ActivityTypeDesc": "Warranty case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='011')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='011')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZMR2",
-	"ActivityTypeCode": "011",
-	"ActivityTypeDesc": "Insurance case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='006')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='006')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "006",
-	"ActivityTypeDesc": "Line Change Over"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='123')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='123')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "123",
-	"ActivityTypeDesc": "PROD. EQUIPMENT CLEAN UP"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='163')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='163')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "163",
-	"ActivityTypeDesc": "PASTE, EVAPS & VINEGAR ROSTER"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='168')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='168')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "168",
-	"ActivityTypeDesc": "TOMATO FLUME/RECIEVING AREA"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='316')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='316')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "316",
-	"ActivityTypeDesc": "MECH CANFILL / CAN LABEL ROST"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='317')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='317')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "317",
-	"ActivityTypeDesc": "IEE CANFILL / CAN LABEL ROST"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='321')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='321')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "321",
-	"ActivityTypeDesc": "GENERAL FILL ROSTER"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='333')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='333')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "333",
-	"ActivityTypeDesc": "D.SCHULTZ'S PERSONAL ROSTER"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='341')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='341')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "341",
-	"ActivityTypeDesc": "MAINT. PLANNING PROJECTS"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='345')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='345')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "345",
-	"ActivityTypeDesc": "BUILDING SERVICE"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='350')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='350')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "350",
-	"ActivityTypeDesc": "POWER HOUSE"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='362')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='362')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "362",
-	"ActivityTypeDesc": "CENTRAL STORES REPAIR ITEMS"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='375')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='375')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "375",
-	"ActivityTypeDesc": "COOK ROOM ROSTER"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='380')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='380')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "380",
-	"ActivityTypeDesc": "MECH ROSTER"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='385')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='385')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "385",
-	"ActivityTypeDesc": "MACHINE SHOP ROSTER"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='392')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='392')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "392",
-	"ActivityTypeDesc": "VEG. PREP. MAINTENANCE"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='395')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='395')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "395",
-	"ActivityTypeDesc": "CEREAL MAINT ROSTER"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='635')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='635')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "635",
-	"ActivityTypeDesc": "BATTERY ROOM"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='639')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='639')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "639",
-	"ActivityTypeDesc": "STORAGE"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='CON')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='CON')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "CON",
-	"ActivityTypeDesc": "CONTRACTOR"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='DFM')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='DFM')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "DFM",
-	"ActivityTypeDesc": "DAVE'S PERSONAL ROSTER"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='FAC')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='FAC')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "FAC",
-	"ActivityTypeDesc": "FACTORY RELATED WORK ORDERS"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='LTL')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='LTL')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "LTL",
-	"ActivityTypeDesc": "LOAN TOOL FOR CENTRAL STORES"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='PRO')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='PRO')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "PRO",
-	"ActivityTypeDesc": "PROJECT BASE WO ROSTER"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='SWO')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='SWO')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZPM1",
-	"ActivityTypeCode": "SWO",
-	"ActivityTypeDesc": "STANDING WORK ORDER ROSTER"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZREJ',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZREJ',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZREJ",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZSM1",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZSM1",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZSM1",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='005')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='005')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZSM1",
-	"ActivityTypeCode": "005",
-	"ActivityTypeDesc": "Service"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='010')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='010')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZSM1",
-	"ActivityTypeCode": "010",
-	"ActivityTypeDesc": "Warranty case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='011')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='011')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZSM1",
-	"ActivityTypeCode": "011",
-	"ActivityTypeDesc": "Insurance case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='001')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='001')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZSM2",
-	"ActivityTypeCode": "001",
-	"ActivityTypeDesc": "Inspection"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='002')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='002')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZSM2",
-	"ActivityTypeCode": "002",
-	"ActivityTypeDesc": "Regular maintenance"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='003')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='003')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZSM2",
-	"ActivityTypeCode": "003",
-	"ActivityTypeDesc": "Repair"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='005')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='005')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZSM2",
-	"ActivityTypeCode": "005",
-	"ActivityTypeDesc": "Service"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='010')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='010')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZSM2",
-	"ActivityTypeCode": "010",
-	"ActivityTypeDesc": "Warranty case"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='011')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='011')",
-		"type": "com.evorait.evoplan.ActivityType"
-	},
-	"OrderType": "ZSM2",
-	"ActivityTypeCode": "011",
-	"ActivityTypeDesc": "Insurance case"
-}]
+ [{
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='AD01',ActivityTypeCode='104')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='AD01',ActivityTypeCode='104')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "AD01",
+ 	"ActivityTypeCode": "104",
+ 	"ActivityTypeDesc": "Modification"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='AD02',ActivityTypeCode='103')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='AD02',ActivityTypeCode='103')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "AD02",
+ 	"ActivityTypeCode": "103",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='AD03',ActivityTypeCode='102')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='AD03',ActivityTypeCode='102')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "AD03",
+ 	"ActivityTypeCode": "102",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='CS01',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='CS01',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "CS01",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='CS02',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='CS02',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "CS02",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DC01',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DC01',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "DC01",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DC01',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DC01',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "DC01",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DC01',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DC01',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "DC01",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DFS1',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='DFS1',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "DFS1",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ETT1',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ETT1',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ETT1",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='EVO1',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='EVO1',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "EVO1",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='EVO2',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='EVO2',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "EVO2",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='EVO3',ActivityTypeCode='MAS')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='EVO3',ActivityTypeCode='MAS')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "EVO3",
+ 	"ActivityTypeCode": "MAS",
+ 	"ActivityTypeDesc": "Mass testing"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='MR01',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='MR01',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "MR01",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='MR01',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='MR01',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "MR01",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='MR01',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='MR01',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "MR01",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='101')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='101')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM01",
+ 	"ActivityTypeCode": "101",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='102')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='102')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM01",
+ 	"ActivityTypeCode": "102",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='103')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='103')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM01",
+ 	"ActivityTypeCode": "103",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='105')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='105')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM01",
+ 	"ActivityTypeCode": "105",
+ 	"ActivityTypeDesc": "New Build"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='106')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='106')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM01",
+ 	"ActivityTypeCode": "106",
+ 	"ActivityTypeDesc": "Modify"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='107')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='107')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM01",
+ 	"ActivityTypeCode": "107",
+ 	"ActivityTypeDesc": "Conversion"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='108')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='108')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM01",
+ 	"ActivityTypeCode": "108",
+ 	"ActivityTypeDesc": "Preventative Maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='109')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='109')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM01",
+ 	"ActivityTypeCode": "109",
+ 	"ActivityTypeDesc": "Safety"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='110')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='110')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM01",
+ 	"ActivityTypeCode": "110",
+ 	"ActivityTypeDesc": "Environmental Control"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='112')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='112')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM01",
+ 	"ActivityTypeCode": "112",
+ 	"ActivityTypeDesc": "Industrial Hygiene"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='201')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='201')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM01",
+ 	"ActivityTypeCode": "201",
+ 	"ActivityTypeDesc": "Warranty case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='202')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='202')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM01",
+ 	"ActivityTypeCode": "202",
+ 	"ActivityTypeDesc": "Insurance case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='300')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='300')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM01",
+ 	"ActivityTypeCode": "300",
+ 	"ActivityTypeDesc": "Shut down"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='ZM5')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM01',ActivityTypeCode='ZM5')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM01",
+ 	"ActivityTypeCode": "ZM5",
+ 	"ActivityTypeDesc": "Signaling maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM02',ActivityTypeCode='101')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM02',ActivityTypeCode='101')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM02",
+ 	"ActivityTypeCode": "101",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM02',ActivityTypeCode='102')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM02',ActivityTypeCode='102')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM02",
+ 	"ActivityTypeCode": "102",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM03',ActivityTypeCode='102')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM03',ActivityTypeCode='102')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM03",
+ 	"ActivityTypeCode": "102",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM03',ActivityTypeCode='103')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM03',ActivityTypeCode='103')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM03",
+ 	"ActivityTypeCode": "103",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM03',ActivityTypeCode='300')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM03',ActivityTypeCode='300')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM03",
+ 	"ActivityTypeCode": "300",
+ 	"ActivityTypeDesc": "Shut down"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM04',ActivityTypeCode='111')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM04',ActivityTypeCode='111')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM04",
+ 	"ActivityTypeCode": "111",
+ 	"ActivityTypeDesc": "Refurbishment"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM05',ActivityTypeCode='103')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM05',ActivityTypeCode='103')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM05",
+ 	"ActivityTypeCode": "103",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM06',ActivityTypeCode='102')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM06',ActivityTypeCode='102')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM06",
+ 	"ActivityTypeCode": "102",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM07',ActivityTypeCode='104')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM07',ActivityTypeCode='104')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM07",
+ 	"ActivityTypeCode": "104",
+ 	"ActivityTypeDesc": "Modification"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM08',ActivityTypeCode='101')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM08',ActivityTypeCode='101')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM08",
+ 	"ActivityTypeCode": "101",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM08',ActivityTypeCode='102')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM08',ActivityTypeCode='102')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM08",
+ 	"ActivityTypeCode": "102",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM08',ActivityTypeCode='103')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PM08',ActivityTypeCode='103')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PM08",
+ 	"ActivityTypeCode": "103",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PMXX',ActivityTypeCode='101')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PMXX',ActivityTypeCode='101')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PMXX",
+ 	"ActivityTypeCode": "101",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PMXX',ActivityTypeCode='102')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PMXX',ActivityTypeCode='102')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PMXX",
+ 	"ActivityTypeCode": "102",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PMXX',ActivityTypeCode='103')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='PMXX',ActivityTypeCode='103')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "PMXX",
+ 	"ActivityTypeCode": "103",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='RC01',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='RC01',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "RC01",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='RC01',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='RC01',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "RC01",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='RC01',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='RC01',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "RC01",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM01",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM01",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM01",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='005')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='005')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM01",
+ 	"ActivityTypeCode": "005",
+ 	"ActivityTypeDesc": "Service"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='010')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='010')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM01",
+ 	"ActivityTypeCode": "010",
+ 	"ActivityTypeDesc": "Warranty case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='011')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM01',ActivityTypeCode='011')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM01",
+ 	"ActivityTypeCode": "011",
+ 	"ActivityTypeDesc": "Insurance case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM02",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM02",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM02",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='005')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='005')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM02",
+ 	"ActivityTypeCode": "005",
+ 	"ActivityTypeDesc": "Service"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='010')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='010')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM02",
+ 	"ActivityTypeCode": "010",
+ 	"ActivityTypeDesc": "Warranty case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='011')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM02',ActivityTypeCode='011')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM02",
+ 	"ActivityTypeCode": "011",
+ 	"ActivityTypeDesc": "Insurance case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM03",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM03",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM03",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='005')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM03',ActivityTypeCode='005')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM03",
+ 	"ActivityTypeCode": "005",
+ 	"ActivityTypeDesc": "Service"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM09',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM09',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM09",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM09',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM09',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM09",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM09',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SM09',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SM09",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP01',ActivityTypeCode='SP2')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP01',ActivityTypeCode='SP2')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP01",
+ 	"ActivityTypeCode": "SP2",
+ 	"ActivityTypeDesc": "Corrective maint.(rolling stk)"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP03',ActivityTypeCode='SP1')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP03',ActivityTypeCode='SP1')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP03",
+ 	"ActivityTypeCode": "SP1",
+ 	"ActivityTypeDesc": "Preventive maint.(rolling stk)"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='101')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='101')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP04",
+ 	"ActivityTypeCode": "101",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='102')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='102')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP04",
+ 	"ActivityTypeCode": "102",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='103')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='103')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP04",
+ 	"ActivityTypeCode": "103",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='105')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='105')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP04",
+ 	"ActivityTypeCode": "105",
+ 	"ActivityTypeDesc": "New Build"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='106')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='106')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP04",
+ 	"ActivityTypeCode": "106",
+ 	"ActivityTypeDesc": "Modify"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='107')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='107')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP04",
+ 	"ActivityTypeCode": "107",
+ 	"ActivityTypeDesc": "Conversion"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='108')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='108')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP04",
+ 	"ActivityTypeCode": "108",
+ 	"ActivityTypeDesc": "Preventative Maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='109')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='109')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP04",
+ 	"ActivityTypeCode": "109",
+ 	"ActivityTypeDesc": "Safety"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='110')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='110')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP04",
+ 	"ActivityTypeCode": "110",
+ 	"ActivityTypeDesc": "Environmental Control"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='112')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='112')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP04",
+ 	"ActivityTypeCode": "112",
+ 	"ActivityTypeDesc": "Industrial Hygiene"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='201')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='201')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP04",
+ 	"ActivityTypeCode": "201",
+ 	"ActivityTypeDesc": "Warranty case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='202')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='202')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP04",
+ 	"ActivityTypeCode": "202",
+ 	"ActivityTypeDesc": "Insurance case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='300')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='SP04',ActivityTypeCode='300')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "SP04",
+ 	"ActivityTypeCode": "300",
+ 	"ActivityTypeDesc": "Shut down"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='101')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='101')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "UGEN",
+ 	"ActivityTypeCode": "101",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='102')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='102')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "UGEN",
+ 	"ActivityTypeCode": "102",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='103')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='103')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "UGEN",
+ 	"ActivityTypeCode": "103",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='105')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='105')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "UGEN",
+ 	"ActivityTypeCode": "105",
+ 	"ActivityTypeDesc": "New Build"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='108')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='108')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "UGEN",
+ 	"ActivityTypeCode": "108",
+ 	"ActivityTypeDesc": "Preventative Maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='109')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='UGEN',ActivityTypeCode='109')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "UGEN",
+ 	"ActivityTypeCode": "109",
+ 	"ActivityTypeDesc": "Safety"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZGRC',ActivityTypeCode='ZAP')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZGRC',ActivityTypeCode='ZAP')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZGRC",
+ 	"ActivityTypeCode": "ZAP",
+ 	"ActivityTypeDesc": "GRC Accounts Payable"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZGRC',ActivityTypeCode='ZIT')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZGRC',ActivityTypeCode='ZIT')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZGRC",
+ 	"ActivityTypeCode": "ZIT",
+ 	"ActivityTypeDesc": "GRC IT Audit"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZGRC',ActivityTypeCode='ZVE')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZGRC',ActivityTypeCode='ZVE')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZGRC",
+ 	"ActivityTypeCode": "ZVE",
+ 	"ActivityTypeDesc": "GRC Vendor Audit"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z10')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z10')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z10",
+ 	"ActivityTypeDesc": "IT Maintain"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z11')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z11')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z11",
+ 	"ActivityTypeDesc": "IT Maintain Warranty"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z12')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z12')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z12",
+ 	"ActivityTypeDesc": "IT Installation Equipment"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z13')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z13')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z13",
+ 	"ActivityTypeDesc": "IT DeinstallationEquipment"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z14')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z14')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z14",
+ 	"ActivityTypeDesc": "IT Move Equipment"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z20')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z20')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z20",
+ 	"ActivityTypeDesc": "Mechanical Maintain"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z30')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z30')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z30",
+ 	"ActivityTypeDesc": "Electrical Maintain"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z40')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z40')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z40",
+ 	"ActivityTypeDesc": "Preventative Maintain"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z41')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z41')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z41",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z50')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z50')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z50",
+ 	"ActivityTypeDesc": "House Servcie"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z60')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z60')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z60",
+ 	"ActivityTypeDesc": "Winter servcies"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z65')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z65')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z65",
+ 	"ActivityTypeDesc": "Cleaning Servcies"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z90')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z90')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z90",
+ 	"ActivityTypeDesc": "Building Modernization small"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z91')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z91')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z91",
+ 	"ActivityTypeDesc": "Building Modernization Project"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z95')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZI01',ActivityTypeCode='Z95')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZI01",
+ 	"ActivityTypeCode": "Z95",
+ 	"ActivityTypeDesc": "Building Construction"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM1')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM1')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZIM1",
+ 	"ActivityTypeCode": "ZM1",
+ 	"ActivityTypeDesc": "Track regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM2')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM2')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZIM1",
+ 	"ActivityTypeCode": "ZM2",
+ 	"ActivityTypeDesc": "Tarck mayor maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM3')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM3')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZIM1",
+ 	"ActivityTypeCode": "ZM3",
+ 	"ActivityTypeDesc": "Track elements maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM4')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM4')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZIM1",
+ 	"ActivityTypeCode": "ZM4",
+ 	"ActivityTypeDesc": " Electricity maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM5')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZIM1',ActivityTypeCode='ZM5')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZIM1",
+ 	"ActivityTypeCode": "ZM5",
+ 	"ActivityTypeDesc": "Signaling maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZM01",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZM01",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZM01",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='010')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='010')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZM01",
+ 	"ActivityTypeCode": "010",
+ 	"ActivityTypeDesc": "Warranty case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='105')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='105')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZM01",
+ 	"ActivityTypeCode": "105",
+ 	"ActivityTypeDesc": "New Build"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='106')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='106')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZM01",
+ 	"ActivityTypeCode": "106",
+ 	"ActivityTypeDesc": "Modify"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='107')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZM01',ActivityTypeCode='107')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZM01",
+ 	"ActivityTypeCode": "107",
+ 	"ActivityTypeDesc": "Conversion"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZME1",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZME1",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZME1",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='005')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='005')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZME1",
+ 	"ActivityTypeCode": "005",
+ 	"ActivityTypeDesc": "Service"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='011')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME1',ActivityTypeCode='011')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZME1",
+ 	"ActivityTypeCode": "011",
+ 	"ActivityTypeDesc": "Insurance case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZME2",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZME2",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZME2",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='005')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZME2',ActivityTypeCode='005')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZME2",
+ 	"ActivityTypeCode": "005",
+ 	"ActivityTypeDesc": "Service"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZMR1",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZMR1",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZMR1",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='005')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='005')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZMR1",
+ 	"ActivityTypeCode": "005",
+ 	"ActivityTypeDesc": "Service"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='010')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='010')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZMR1",
+ 	"ActivityTypeCode": "010",
+ 	"ActivityTypeDesc": "Warranty case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='011')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR1',ActivityTypeCode='011')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZMR1",
+ 	"ActivityTypeCode": "011",
+ 	"ActivityTypeDesc": "Insurance case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZMR2",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZMR2",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZMR2",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='005')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='005')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZMR2",
+ 	"ActivityTypeCode": "005",
+ 	"ActivityTypeDesc": "Service"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='010')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='010')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZMR2",
+ 	"ActivityTypeCode": "010",
+ 	"ActivityTypeDesc": "Warranty case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='011')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZMR2',ActivityTypeCode='011')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZMR2",
+ 	"ActivityTypeCode": "011",
+ 	"ActivityTypeDesc": "Insurance case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='006')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='006')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "006",
+ 	"ActivityTypeDesc": "Line Change Over"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='123')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='123')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "123",
+ 	"ActivityTypeDesc": "PROD. EQUIPMENT CLEAN UP"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='163')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='163')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "163",
+ 	"ActivityTypeDesc": "PASTE, EVAPS & VINEGAR ROSTER"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='168')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='168')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "168",
+ 	"ActivityTypeDesc": "TOMATO FLUME/RECIEVING AREA"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='316')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='316')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "316",
+ 	"ActivityTypeDesc": "MECH CANFILL / CAN LABEL ROST"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='317')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='317')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "317",
+ 	"ActivityTypeDesc": "IEE CANFILL / CAN LABEL ROST"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='321')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='321')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "321",
+ 	"ActivityTypeDesc": "GENERAL FILL ROSTER"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='333')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='333')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "333",
+ 	"ActivityTypeDesc": "D.SCHULTZ'S PERSONAL ROSTER"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='341')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='341')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "341",
+ 	"ActivityTypeDesc": "MAINT. PLANNING PROJECTS"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='345')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='345')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "345",
+ 	"ActivityTypeDesc": "BUILDING SERVICE"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='350')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='350')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "350",
+ 	"ActivityTypeDesc": "POWER HOUSE"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='362')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='362')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "362",
+ 	"ActivityTypeDesc": "CENTRAL STORES REPAIR ITEMS"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='375')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='375')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "375",
+ 	"ActivityTypeDesc": "COOK ROOM ROSTER"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='380')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='380')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "380",
+ 	"ActivityTypeDesc": "MECH ROSTER"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='385')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='385')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "385",
+ 	"ActivityTypeDesc": "MACHINE SHOP ROSTER"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='392')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='392')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "392",
+ 	"ActivityTypeDesc": "VEG. PREP. MAINTENANCE"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='395')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='395')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "395",
+ 	"ActivityTypeDesc": "CEREAL MAINT ROSTER"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='635')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='635')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "635",
+ 	"ActivityTypeDesc": "BATTERY ROOM"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='639')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='639')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "639",
+ 	"ActivityTypeDesc": "STORAGE"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='CON')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='CON')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "CON",
+ 	"ActivityTypeDesc": "CONTRACTOR"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='DFM')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='DFM')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "DFM",
+ 	"ActivityTypeDesc": "DAVE'S PERSONAL ROSTER"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='FAC')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='FAC')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "FAC",
+ 	"ActivityTypeDesc": "FACTORY RELATED WORK ORDERS"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='LTL')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='LTL')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "LTL",
+ 	"ActivityTypeDesc": "LOAN TOOL FOR CENTRAL STORES"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='PRO')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='PRO')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "PRO",
+ 	"ActivityTypeDesc": "PROJECT BASE WO ROSTER"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='SWO')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZPM1',ActivityTypeCode='SWO')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZPM1",
+ 	"ActivityTypeCode": "SWO",
+ 	"ActivityTypeDesc": "STANDING WORK ORDER ROSTER"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZREJ',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZREJ',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZREJ",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZSM1",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZSM1",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZSM1",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='005')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='005')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZSM1",
+ 	"ActivityTypeCode": "005",
+ 	"ActivityTypeDesc": "Service"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='010')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='010')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZSM1",
+ 	"ActivityTypeCode": "010",
+ 	"ActivityTypeDesc": "Warranty case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='011')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM1',ActivityTypeCode='011')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZSM1",
+ 	"ActivityTypeCode": "011",
+ 	"ActivityTypeDesc": "Insurance case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='001')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='001')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZSM2",
+ 	"ActivityTypeCode": "001",
+ 	"ActivityTypeDesc": "Inspection"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='002')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='002')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZSM2",
+ 	"ActivityTypeCode": "002",
+ 	"ActivityTypeDesc": "Regular maintenance"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='003')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='003')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZSM2",
+ 	"ActivityTypeCode": "003",
+ 	"ActivityTypeDesc": "Repair"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='005')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='005')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZSM2",
+ 	"ActivityTypeCode": "005",
+ 	"ActivityTypeDesc": "Service"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='010')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='010')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZSM2",
+ 	"ActivityTypeCode": "010",
+ 	"ActivityTypeDesc": "Warranty case"
+ }, {
+ 	"__metadata": {
+ 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='011')",
+ 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/ActivityTypeSet(OrderType='ZSM2',ActivityTypeCode='011')",
+ 		"type": "com.evorait.evoplan.ActivityType"
+ 	},
+ 	"OrderType": "ZSM2",
+ 	"ActivityTypeCode": "011",
+ 	"ActivityTypeDesc": "Insurance case"
+ }]

@@ -268,7 +268,6 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree: function () {
-			// this.pIsFilterBarInitalized.then(function () {
 			var oTreeTable = this._oDataTable,
 				oTreeBinding = oTreeTable.getBinding("rows");
 
@@ -279,7 +278,6 @@ sap.ui.define([
 				oTreeBinding.refresh();
 			}
 			this._bFirsrTime = false;
-			// }.bind(this));
 		},
 		/**
 		 * Resets the selected resource if selected
@@ -325,8 +323,8 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onCreateAbsence: function (oEvent) {
-			var oSelectedResource = this.selectedResources[0];
-			var oResData = this.getModel().getProperty(oSelectedResource);
+			var oSelectedResource = this.selectedResources[0],
+				oResData = this.getModel().getProperty(oSelectedResource);
 
 			if (oResData.NodeType === "RESOURCE" && oResData.ResourceGuid !== "" && oResData.ResourceGroupGuid !== "") {
 				this.getOwnerComponent().manageAvail.open(this.getView(), this.selectedResources, this._mParameters);
@@ -411,9 +409,7 @@ sap.ui.define([
         		
         	var sObjectId = oResourceNode.NodeId;
         	if(oResourceNode.NodeType !== "ASSIGNMENT"){
-        		this.getOwnerComponent().Qualifications.open(this.getView(), sObjectId);
-        	}else{
-        		//
+        		this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
         	}
         }
 	});

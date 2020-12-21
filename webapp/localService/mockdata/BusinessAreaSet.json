@@ -240,12 +240,28 @@
 	"BusinessAreaDesc": "Legal Services"
 }, {
 	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('NSWC')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('NSWC')",
+		"type": "com.evorait.evoplan.BusinessArea"
+	},
+	"BusinessAreaCode": "NSWC",
+	"BusinessAreaDesc": "North Sea Business"
+}, {
+	"__metadata": {
 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('RETL')",
 		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('RETL')",
 		"type": "com.evorait.evoplan.BusinessArea"
 	},
 	"BusinessAreaCode": "RETL",
 	"BusinessAreaDesc": "Retail"
+}, {
+	"__metadata": {
+		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('TTBA')",
+		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('TTBA')",
+		"type": "com.evorait.evoplan.BusinessArea"
+	},
+	"BusinessAreaCode": "TTBA",
+	"BusinessAreaDesc": "TT Business Area"
 }, {
 	"__metadata": {
 		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/BusinessAreaSet('WSLE')",

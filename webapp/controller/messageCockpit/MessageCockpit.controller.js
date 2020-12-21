@@ -77,7 +77,8 @@ sap.ui.define([
 			this._oMessagePopover.openBy(oEvent.getSource());
 		},
 		_refreshCounts: function (oEvent) {
-			var oModel = this.getModel();
+			var oModel = this.getModel(),
+			aDeferredGroups;
 
 			oModel.read("/MessageSet/$count", {
 				groupId: "counter",
@@ -98,14 +99,13 @@ sap.ui.define([
 				]
 			});
 
-			var aDeferredGroups = oModel.getDeferredGroups();
+			aDeferredGroups = oModel.getDeferredGroups();
 			aDeferredGroups = aDeferredGroups.concat(["counter"]);
 			oModel.setDeferredGroups(aDeferredGroups);
 
 			oModel.submitChanges({
 				groupId: "counter",
 				success: this._onSuccess.bind(this)
-					// error: this._onError.bind(this)
 			});
 
 		},

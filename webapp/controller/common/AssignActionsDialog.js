@@ -71,9 +71,10 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onBeforeRebind: function (oEvent) {
-			var mBindingParams = oEvent.getParameter("bindingParams");
+			var mBindingParams = oEvent.getParameter("bindingParams"),
+				oFilter;
 			mBindingParams.parameters.expand = "Demand";
-			var oFilter = new Filter(this._getResourceFilters(this._aSelectedResources), true);
+			oFilter = new Filter(this._getResourceFilters(this._aSelectedResources), true);
 			mBindingParams.filters.push(oFilter);
 		},
 		/**
@@ -100,8 +101,8 @@ sap.ui.define([
 				oDialog.setTitle(this._resourceBundle.getText("xtit.reAssignTitle"));
 			}
 			if (this.isFirstTime) {
-                sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable").rebindTable();
-            }
+				sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable").rebindTable();
+			}
 
 			this.isFirstTime = true;
 		},
@@ -114,12 +115,13 @@ sap.ui.define([
 		 */
 		onUnassign: function (oEvent) {
 			var oTable = this._oAssignMentTable,
-				aContexts = oTable.getSelectedContexts();
+				aContexts = oTable.getSelectedContexts(),
+				sMsg;
 
 			//check at least one demand selected
 			if (aContexts.length === 0) {
-				var msg = this._oView.getController().getResourceBundle().getText("ymsg.selectMinItem");
-				MessageToast.show(msg);
+				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.selectMinItem");
+				MessageToast.show(sMsg);
 				return;
 			}
 
@@ -137,12 +139,13 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onReassign: function (oEvent) {
-			var aContexts = this._oAssignMentTable.getSelectedContexts();
+			var aContexts = this._oAssignMentTable.getSelectedContexts(),
+				sMsg;
 
 			//check at least one demand selected
 			if (aContexts.length === 0) {
-				var msg = this._oView.getController().getResourceBundle().getText("ymsg.selectMinItem");
-				MessageToast.show(msg);
+				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.selectMinItem");
+				MessageToast.show(sMsg);
 				return;
 			}
 			this._eventBus.publish("AssignActionsDialog", "selectAssign", {
@@ -163,21 +166,25 @@ sap.ui.define([
 		 * @return {{bValidate: boolean, aDemands: Array}}
 		 */
 		validateDemands: function (aSelectedItems, bForReassign) {
+			var oItem,
+				oContext,
+				sPath,
+				oModel,
+				bFlag;
+
 			this._oAssignMentTable.removeSelections(); // reomoves the selected items
 
 			for (var i in aSelectedItems) {
-				var oItem = aSelectedItems[i],
-					oContext = oItem.getBindingContext(),
-					sPath = oContext.getPath(),
-					oModel = oContext.getModel(),
-					bFlag;
+				oItem = aSelectedItems[i];
+				oContext = oItem.getBindingContext();
+				sPath = oContext.getPath();
+				oModel = oContext.getModel();
 
 				if (bForReassign) {
-                    bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_UNASSIGN");
-                }
-				else {
-                    bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_REASSIGN");
-                }
+					bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_UNASSIGN");
+				} else {
+					bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_REASSIGN");
+				}
 
 				if (bFlag) {
 					this._oAssignMentTable.setSelectedItem(oItem);
@@ -195,12 +202,16 @@ sap.ui.define([
 		_getResourceFilters: function (aSelectedResources) {
 			var aResources = [],
 				oModel = this._oView.getModel(),
-				oViewFilterSettings = this._oView.getController().oFilterConfigsController || null;
-
-			var aFilters = [];
+				oViewFilterSettings = this._oView.getController().oFilterConfigsController || null,
+				aFilters = [],
+				obj,
+				dateRangeValues,
+				selectedTimeFormat,
+				sDateControl1,
+				sDateControl2;
 
 			for (var i = 0; i < aSelectedResources.length; i++) {
-				var obj = oModel.getProperty(aSelectedResources[i]);
+				obj = oModel.getProperty(aSelectedResources[i]);
 				if (obj.NodeType === "RESOURCE") {
 					if (obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
 						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
@@ -213,13 +224,13 @@ sap.ui.define([
 			}
 
 			if (oViewFilterSettings) {
-				var dateRangeValues = oViewFilterSettings.getDateRange(),
-					sDateControl1 = dateRangeValues[0],
-					sDateControl2 = dateRangeValues[1];
+				dateRangeValues = oViewFilterSettings.getDateRange();
+				sDateControl1 = dateRangeValues[0];
+				sDateControl2 = dateRangeValues[1];
 			} else {
-				var selectedTimeFormat = formatter.getResourceFormatByKey("TIMENONE");
-					sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin());
-					sDateControl2 = this.formatter.date(selectedTimeFormat.getDateEnd());
+				selectedTimeFormat = formatter.getResourceFormatByKey("TIMENONE");
+				sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin());
+				sDateControl2 = this.formatter.date(selectedTimeFormat.getDateEnd());
 			}
 
 			if (aResources.length > 0) {
@@ -227,7 +238,6 @@ sap.ui.define([
 					filters: aResources,
 					and: false
 				}));
-				// aFilters.push(new Filter([new Filter("DateTo", FilterOperator.GE, sDateControl1),new Filter("DateFrom", FilterOperator.LE, sDateControl2)],true));
 				aFilters.push(new Filter("DateTo", FilterOperator.GE, sDateControl1));
 				aFilters.push(new Filter("DateFrom", FilterOperator.LE, sDateControl2));
 			}

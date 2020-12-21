@@ -14,7 +14,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/CreateResourceUnAvailability",
 	"com/evorait/evoplan/controller/common/ManageResourceAvailability",
 	"com/evorait/evoplan/controller/common/NavigationActionSheet",
-	"com/evorait/evoplan/controller/qualifications/Qualifications",
+	"com/evorait/evoplan/controller/qualifications/ResourceQualifications",
 	"com/evorait/evoplan/controller/qualifications/QualificationCheck",
 	"com/evorait/evoplan/controller/qualifications/DemandQualifications",
     "sap/m/MessagePopover",
@@ -40,7 +40,7 @@ sap.ui.define([
 	CreateResourceUnAvailability,
 	ManageResourceAvailability,
 	NavigationActionSheet,
-	Qualifications,
+	ResourceQualifications,
 	QualificationCheck,
 	DemandQualifications,
     MessagePopover,
@@ -297,8 +297,8 @@ sap.ui.define([
 			this.NavigationActionSheet = new NavigationActionSheet();
 			this.NavigationActionSheet.init();
 			
-			this.Qualifications = new Qualifications();
-			this.Qualifications.init();
+			this.ResourceQualifications = new ResourceQualifications();
+			this.ResourceQualifications.init();
 			
 			this.QualificationCheck = new QualificationCheck();
 			this.QualificationCheck.init();

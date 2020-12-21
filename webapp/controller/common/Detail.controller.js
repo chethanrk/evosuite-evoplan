@@ -1,4 +1,3 @@
-
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"sap/ui/model/json/JSONModel",
@@ -158,9 +157,6 @@ sap.ui.define([
 				oElementBinding = oView.getElementBinding(),
 				oContext = oElementBinding.getBoundContext();
 
-			// refreshing the binding
-			// oElementBinding.refresh();
-
 			// No data for the binding
 			if (!oContext) {
 				this.getRouter().getTargets().display("notFound");
@@ -175,19 +171,16 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onRowClick: function (oEvent) {
-			var oAssignment = oEvent.getParameter("listItem");
-			var oContext = oAssignment.getBindingContext();
-			var oModel = oContext.getModel();
-			var sPath = oContext.getPath();
-			var oAssignmentData = oModel.getProperty(sPath);
+			var oAssignment = oEvent.getParameter("listItem"),
+				oContext = oAssignment.getBindingContext(),
+				oModel = oContext.getModel(),
+				sPath = oContext.getPath(),
+				oAssignmentData = oModel.getProperty(sPath);
 
-			// TODO
 			localStorage.setItem("Evo-Action-page", "DemandDetails");
-
 			this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAssignmentData, {
 				bFromDetail: true
 			});
-
 		},
 		/**
 		 * Opens the AssignDialog to assign the demand to resources
@@ -196,17 +189,16 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onClickAssign: function (oEvent) {
-			var oSource = oEvent.getSource();
-			var oContext = oSource.getBindingContext();
-			var oModel = oContext.getModel();
-			var sPath = oContext.getPath();
-			var oData = oModel.getProperty(sPath);
-			var oSelectedData = [{
-				sPath: sPath,
-				oData: oData
-			}];
+			var oSource = oEvent.getSource(),
+				oContext = oSource.getBindingContext(),
+				oModel = oContext.getModel(),
+				sPath = oContext.getPath(),
+				oData = oModel.getProperty(sPath),
+				oSelectedData = [{
+					sPath: sPath,
+					oData: oData
+				}];
 			if (oData.ALLOW_ASSIGN) {
-				// TODO
 				localStorage.setItem("Evo-Action-page", "DemandDetails");
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, {
 					bFromDetail: true
@@ -241,9 +233,6 @@ sap.ui.define([
 					bFromDetail: true
 				}
 			});
-
-			// this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedData);
-
 		},
 		/**
 		 * This method required when user directly open the demand overview page
@@ -259,7 +248,6 @@ sap.ui.define([
 		 * open's a action sheets with possible statuses. 
 		 */
 		onClickAction: function (oEvent) {
-			// TODO
 			localStorage.setItem("Evo-Action-page", "DemandDetails");
 			sap.ui.getCore().byId("idStatusActionSheet").openBy(oEvent.getSource());
 		},

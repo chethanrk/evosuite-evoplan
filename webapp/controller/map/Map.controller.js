@@ -18,16 +18,13 @@ sap.ui.define([
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
 		selectedDemands: [],
-		_bFirstTime: true,
 		_isDemandDraggable: false,
 		onInit: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oMapModel = this.getModel("mapConfig");
 			oGeoMap.setMapConfiguration(MapConfig.getMapConfiguration(oMapModel));
 			this._oEventBus = sap.ui.getCore().getEventBus();
-			this._oEventBus.subscribe("BaseController", "refreshRoute", this._refreshRoute, this);
 			this._oEventBus.subscribe("BaseController", "refreshMapView", this._refreshMapView, this);
-			this._oEventBus.subscribe("BaseController", "refreshMapDemandTable", this._refreshDemandTable, this);
 			this._oEventBus.subscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.subscribe("MapController", "setMapSelection", this._setMapSelection, this);
 
@@ -89,35 +86,7 @@ sap.ui.define([
 			this._oDraggableTable.rebindTable();
 		},
 		/**
-		 * If you remove this event selection part will work
-		 */
-
-		onSelectSpots: function (oEvent) {
-			// I dunno why its required
-		},
-		/**
-		 *
-		 */
-		onContextMenu: function (oEvent) {
-			// var oMenu = oEvent.getParameter("menu"),
-			// 	oSpot = oEvent.getSource(),
-			// 	oView = this.getView();
-
-			/*Fragment.load({
-					name: "com.evorait.evoplan.view.map.fragments.ActionSheet",
-					id: oView.getId(),
-					controller: this
-				}).then(function (items) {
-					for(var i in items){
-						oMenu.addItem(items[i]);
-					}
-					var eDock = Popup.Dock;
-                    oMenu.open(true, oSpot, eDock.BeginTop, eDock.endBottom, oSpot);
-				}.bind(this));*/
-		},
-		/**
 		 * Create filters for the selected demands
-		 *
 		 * @author Rahul
 		 * @return Filter
 		 */
@@ -136,14 +105,13 @@ sap.ui.define([
 		/**
 		 * Function will be called before the table refreshed. Before rebind pushing the selected filters
 		 * into the the smart table
-		 *
 		 * @author Rahul
 		 * @return
 		 */
 		onBeforeRebindTable: function (oEvent) {
 			var aFilters = this.byId("listReportFilter").getFilters(),
 				aDemandFilters = this.getSelectedDemandFilters();
-			if (aDemandFilters && aDemandFilters.aFilters) {
+			if (aDemandFilters && aDemandFilters.aFilters && aDemandFilters.aFilters.length) {
                 aFilters.push(aDemandFilters);
             }
 			//setTimeOut has been added to make rebindTable() work
@@ -174,6 +142,7 @@ sap.ui.define([
 		},
 		/**
 		 * On After variant load 
+		 * @author Rahul
 		 */
 		onInitialized: function (oEvent) {
 			var oSmartFilter = this.byId("listReportFilter"),
@@ -335,20 +304,6 @@ sap.ui.define([
 				this.onResetLegendSelection();
 			}
 			this._bLoaded = true;
-		},
-		/**
-		 * Refresh's the Map demand table
-		 * @param sChanel
-		 * @param sEvent event which is getting triggered
-		 * @param oData Data passed while publishing the event
-		 * @returns
-		 * @private
-		 */
-		_refreshDemandTable: function (sChanel, sEvent, oData) {
-			if (sEvent === "refreshMapDemandTable" && !this._bFirstTime) {
-				this.byId("draggableList").rebindTable();
-			}
-			this._bFirstTime = false;
 		},
 		/**
 		 * refresh the whole map container bindings
@@ -648,28 +603,14 @@ sap.ui.define([
 		 * @Author Pranav
 		 */
 		_mapDemandTableFilter: function (oFilters) {
-			// this._oDataTable.getBinding("rows").filter(oFilters, "Application");
-			// this._refreshDemandTable();
 			this.byId("draggableList").rebindTable();
 			this.getModel("viewModel").setProperty("/mapSettings/routeData", []);
 		},
-		/*Refresh Route Data
-		 * @Author Pranav
-		 */
-		_refreshRoute: function () {
-			var oViewModel = this.getModel("viewModel");
-			//Code has been commented to keep the status of Map sport as it is
-			//this._resetMapSelection();
-			//this.unCheckAllDemands();
-			this.byId("draggableList").rebindTable();
-			oViewModel.setProperty("/mapSettings/selectedDemands", []);
-		},
+
 		onExit: function () {
-			this._oEventBus.unsubscribe("BaseController", "refreshRoute", this._refreshRoute, this);
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
-			this._oEventBus.unsubscribe("BaseController", "refreshMapDemandTable", this._refreshDemandTable, this);
 		}
 
 	});

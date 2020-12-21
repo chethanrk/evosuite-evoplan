@@ -105,9 +105,10 @@ sap.ui.define([
 		validateStatusTransition: function (aSelectedPaths, sSelectedFunction) {
 			var aNonChangable = [],
 				aIndices = [],
-				bChangable = true;
+				bChangable = true,
+				oDemand;
 			for (var i in aSelectedPaths) {
-				var oDemand = aSelectedPaths[i].oData;
+				oDemand = aSelectedPaths[i].oData;
 				if (!oDemand["ALLOW_" + sSelectedFunction]) {
 					aNonChangable.push(oDemand.DemandDesc);
 					bChangable = false;
