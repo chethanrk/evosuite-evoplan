@@ -4,7 +4,7 @@
 			templateShareable:false
 		}">
 		<buttons>
-			<Button text="{navLinks>ApplicationName}" press="onClickNavAction" />
+			<Button text="{navLinks>ApplicationName}" visible="{navLinks>btnVisibility}" press="onClickNavAction" />
 			<!--visible="{navLinks>/bIsOrder}"-->
 		</buttons>
 	</ActionSheet>
