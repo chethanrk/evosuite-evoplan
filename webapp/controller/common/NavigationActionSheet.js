@@ -18,6 +18,7 @@ sap.ui.define([
 
 		open: function (oView, oParent, oSelectedItem) {
 			this.selectedDemandData = oSelectedItem;
+
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
@@ -46,13 +47,11 @@ sap.ui.define([
 		 * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
 		 */
 		onOpen: function (oDialog, oView, oParent) {
+			//Navigation Action Button Visibility Function
+			this.onNavLinkVisibilty(oView);
 			// open dialog
-			// var bIsOrder = this.selectedDemandData.DEMAND_ICON === 'sap-icon://eam-work-order' ? true : false,
-			// 	oNavLinksModel = oView.getModel("navLinks");
-			
-			// oNavLinksModel.setProperty("/bIsOrder",bIsOrder );
-			// oNavLinksModel.refresh();
 			oDialog.openBy(oParent);
+
 		},
 		/**
 		 *  on click of navigation items opens the respective application
@@ -64,6 +63,22 @@ sap.ui.define([
 				oData = oModel.getProperty(sPath);
 
 			this.openEvoOrder(this.selectedDemandData.ORDERID, oData, oEvent.getSource().getModel("viewModel"));
+		},
+
+		/*
+		 Navigation Action Sheet button dynamic visibilty
+			*/
+		onNavLinkVisibilty: function (oView) {
+			var sEnableField, 
+				oNavLinksData = oView.getModel("navLinks").getData();
+			for (var n = 0; n < oNavLinksData.length; n++) {
+				sEnableField = "ENABLE_ROUTE_" + oNavLinksData[n].ApplicationId;
+				oNavLinksData[n].btnVisibility = false;
+				if (this.selectedDemandData[sEnableField] === true) {
+					oNavLinksData[n].btnVisibility = true;
+				}
+			}
+			oView.getModel("navLinks").refresh(true);
 		},
 	});
 });
