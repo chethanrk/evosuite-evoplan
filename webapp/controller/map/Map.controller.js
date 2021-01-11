@@ -112,8 +112,8 @@ sap.ui.define([
 			var aFilters = this.byId("listReportFilter").getFilters(),
 				aDemandFilters = this.getSelectedDemandFilters();
 			if (aDemandFilters && aDemandFilters.aFilters && aDemandFilters.aFilters.length) {
-                aFilters.push(aDemandFilters);
-            }
+				aFilters.push(aDemandFilters);
+			}
 			//setTimeOut has been added to make rebindTable() work
 			setTimeout(function () {
 				this._oDataTable.getBinding("rows").filter(aFilters, "Application");
@@ -298,7 +298,7 @@ sap.ui.define([
 				this._resetMapSelection();
 				setTimeout(function () {
 					this._refreshMapBinding();
-				}.bind(this), 10);
+				}.bind(this), 50);
 
 				this._oDraggableTable.rebindTable();
 				this.onResetLegendSelection();
@@ -606,13 +606,69 @@ sap.ui.define([
 			this.byId("draggableList").rebindTable();
 			this.getModel("viewModel").setProperty("/mapSettings/routeData", []);
 		},
+		/**
+		 * To Handle Right click on Map Spots.
+		 * @author Rakesh
+		 */
+		onContextMenu: function (oEvent) {
+			var oSpot = oEvent.getSource(),
+				oMenu = oEvent.mParameters.menu;
 
+			this.selectedDemandPath = oSpot.getBindingContext().getPath();
+			oMenu = this.addSpotContextMenuItems(oMenu);
+			oSpot.openContextMenu(oMenu);
+		},
+		/**
+		 * To add Menu Items in Context Menu of seleceted Spot.
+		 */
+		addSpotContextMenuItems: function (oMenu) {
+			oMenu.addItem(new sap.ui.unified.MenuItem({
+				text: this.getResourceBundle().getText("xbut.changeStatus"),
+				icon: "sap-icon://flag",
+				select: this.onSelectChangeStatusSpotContextMenu.bind(this)
+			}));
+			oMenu.addItem(new sap.ui.unified.MenuItem({
+				text: this.getResourceBundle().getText("xbut.assign"),
+				icon: "sap-icon://activity-individual",
+				select: this.onSelectAssignSpotContextMenu.bind(this)
+			}));
+			return oMenu;
+		},
+		/**
+		 * handle Assignment operation through spot's Context Menu.
+		 */
+		onSelectAssignSpotContextMenu: function (oEvent) {
+			var oModel = this.getModel(),
+				sPath = this.selectedDemandPath,
+				oData = oModel.getProperty(sPath),
+				oSelectedData = [{
+					sPath: sPath,
+					oData: oData
+				}];
+			if (oData.ALLOW_ASSIGN) {
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, this._mParameters);
+			} else {
+				this._showAssignErrorDialog([oData.DemandDesc]);
+			}
+		},
+		/**
+		 * handle Assignment operation through spot's Context Menu.
+		 */
+		onSelectChangeStatusSpotContextMenu: function (oEvent) {
+			var oModel = this.getModel(),
+				sPath = this.selectedDemandPath,
+				oData = oModel.getProperty(sPath),
+				oSelectedData = [{
+					sPath: sPath,
+					oData: oData
+				}];
+			this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedData, this._mParameters);
+		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
 		}
-
 	});
 
 });
