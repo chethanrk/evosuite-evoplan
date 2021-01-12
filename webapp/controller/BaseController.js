@@ -566,21 +566,13 @@ sap.ui.define([
 				sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "dispatch";
 				sParameter = sAdditionInfo.split("\\\\_\\\\")[2];
 				sKey = oDemandObj[sAdditionInfo.split("\\\\_\\\\")[3]];
-			//	sKey = oDemandObj["ORDERID"];
 				if (sSemanticObject && sAction) {
-					// this.navToApp(sSemanticObject, sAction, sParameter, sOrderId);
 					this.navToApp(sSemanticObject, sAction, sParameter, sKey);
 				}
-				return;
 			} else {
-
 				sAdditionInfo = oAppInfo.Value1;
-
 				sKey = oDemandObj[sAdditionInfo.split("\\")[2]];
-
 				sUri = sAdditionInfo.split("\\")[0] + sKey;
-				//sUri = sAdditionInfo.replace("\\place_h1\\", sOrderId);
-
 				window.open(sUri, "_blank");
 			}
 		},

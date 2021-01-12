@@ -61,8 +61,6 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oData = oModel.getProperty(sPath);
-			//	oOrderValue =	this.selectedDemandData[oData.Value2];
-		//	this.selectedDemandData.ORDERID
 			this.openEvoOrder(this.selectedDemandData, oData, oEvent.getSource().getModel("viewModel"));
 		},
 
