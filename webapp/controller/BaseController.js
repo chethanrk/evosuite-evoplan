@@ -554,7 +554,6 @@ sap.ui.define([
 		/**
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
-		//	openEvoOrder
 		handleNavigationLinkAction: function (oDemandObj, oAppInfo, oViewModel) {
 			var sUri, sSemanticObject, sParameter, sKey,
 				sAction,
