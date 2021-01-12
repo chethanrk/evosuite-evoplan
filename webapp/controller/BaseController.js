@@ -554,7 +554,8 @@ sap.ui.define([
 		/**
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
-		openEvoOrder: function (oDemandObj, oAppInfo, oViewModel) {
+		//	openEvoOrder
+		handleNavigationLinkAction: function (oDemandObj, oAppInfo, oViewModel) {
 			var sUri, sSemanticObject, sParameter, sKey,
 				sAction,
 				sAdditionInfo,
@@ -576,18 +577,19 @@ sap.ui.define([
 				window.open(sUri, "_blank");
 			}
 		},
-		navToApp: function (sSemanticObject, sAction, sParameter, sOrderId) {
-			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
-			var sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
-				target: {
-					semanticObject: sSemanticObject,
-					action: sAction
-				}
-			}) || ""; // generate the Hash to display a Notification details app
+
+		navToApp: function (sSemanticObject, sAction, sParameter, sKey) {
+			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation"),
+				sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
+					target: {
+						semanticObject: sSemanticObject,
+						action: sAction
+					}
+				}) || ""; // generate the Hash to display a Notification details app
 
 			oCrossAppNavigator.toExternal({
 				target: {
-					shellHash: sHash + "&/" + sParameter + "/" + sOrderId
+					shellHash: sHash + "&/" + sParameter + "/" + sKey
 				}
 			});
 		},

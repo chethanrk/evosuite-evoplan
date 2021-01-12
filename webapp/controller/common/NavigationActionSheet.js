@@ -61,7 +61,8 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oData = oModel.getProperty(sPath);
-			this.openEvoOrder(this.selectedDemandData, oData, oEvent.getSource().getModel("viewModel"));
+				this.handleNavigationLinkAction(this.selectedDemandData, oData, oEvent.getSource().getModel("viewModel"));
+	//		this.openEvoOrder(this.selectedDemandData, oData, oEvent.getSource().getModel("viewModel"));
 		},
 
 		/*
