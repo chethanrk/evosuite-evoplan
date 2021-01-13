@@ -298,7 +298,7 @@ sap.ui.define([
 				this._resetMapSelection();
 				setTimeout(function () {
 					this._refreshMapBinding();
-				}.bind(this), 50);
+				}.bind(this), 10);
 
 				this._oDraggableTable.rebindTable();
 				this.onResetLegendSelection();
