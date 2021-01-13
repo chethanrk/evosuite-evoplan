@@ -554,8 +554,8 @@ sap.ui.define([
 		/**
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
-		openEvoOrder: function (sOrderId, oAppInfo, oViewModel) {
-			var sUri, sSemanticObject, sParameter,
+		handleNavigationLinkAction: function (oDemandObj, oAppInfo, oViewModel) {
+			var sUri, sSemanticObject, sParameter, sKey,
 				sAction,
 				sAdditionInfo,
 				sLaunchMode = oViewModel ? oViewModel.getProperty("/launchMode") : this.getModel("viewModel").getProperty("/launchMode");
@@ -565,28 +565,30 @@ sap.ui.define([
 				sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];
 				sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "dispatch";
 				sParameter = sAdditionInfo.split("\\\\_\\\\")[2];
+				sKey = oDemandObj[sAdditionInfo.split("\\\\_\\\\")[3]];
 				if (sSemanticObject && sAction) {
-					this.navToApp(sSemanticObject, sAction, sParameter, sOrderId);
+					this.navToApp(sSemanticObject, sAction, sParameter, sKey);
 				}
-				return;
 			} else {
 				sAdditionInfo = oAppInfo.Value1;
-				sUri = sAdditionInfo.replace("\\place_h1\\", sOrderId);
+				sKey = oDemandObj[sAdditionInfo.split("\\")[2]];
+				sUri = sAdditionInfo.split("\\")[0] + sKey;
 				window.open(sUri, "_blank");
 			}
 		},
-		navToApp: function (sSemanticObject, sAction, sParameter, sOrderId) {
-			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
-			var sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
-				target: {
-					semanticObject: sSemanticObject,
-					action: sAction
-				}
-			}) || ""; // generate the Hash to display a Notification details app
+
+		navToApp: function (sSemanticObject, sAction, sParameter, sKey) {
+			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation"),
+				sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
+					target: {
+						semanticObject: sSemanticObject,
+						action: sAction
+					}
+				}) || ""; // generate the Hash to display a Notification details app
 
 			oCrossAppNavigator.toExternal({
 				target: {
-					shellHash: sHash + "&/" + sParameter + "/" + sOrderId
+					shellHash: sHash + "&/" + sParameter + "/" + sKey
 				}
 			});
 		},
