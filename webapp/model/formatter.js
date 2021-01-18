@@ -612,7 +612,19 @@ sap.ui.define([
 				return sName + " - " + iNumber;
 			}
 			return "";
-		}
+		},
+		/* 
+		 Hiding Map Spots when Latitude and Longitude both are zero
+		 */
+		 	formatMapSpot: function (oLatitude, oLongitude) {
+			if (oLatitude && oLongitude) {
+				if(oLatitude === "0.000000000000" && oLongitude === "0.000000000000"){
+					return "";
+				}else{
+					return oLatitude + ";" + oLongitude + ";0";
+				}
+			}
+		},
 
 	};
 });
