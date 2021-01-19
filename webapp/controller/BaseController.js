@@ -555,7 +555,7 @@ sap.ui.define([
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
 		handleNavigationLinkAction: function (oDemandObj, oAppInfo, oViewModel) {
-			var sUri, sSemanticObject, sParameter, sKey,
+			var sUri, sSemanticObject, sParameter, sKey, oAppName,
 				sAction,
 				sAdditionInfo,
 				sLaunchMode = oViewModel ? oViewModel.getProperty("/launchMode") : this.getModel("viewModel").getProperty("/launchMode");
@@ -566,31 +566,37 @@ sap.ui.define([
 				sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "dispatch";
 				sParameter = sAdditionInfo.split("\\\\_\\\\")[2];
 				sKey = oDemandObj[sAdditionInfo.split("\\\\_\\\\")[3]];
+				oAppName = oAppInfo.ApplicationId;
 				if (sSemanticObject && sAction) {
-					this.navToApp(sSemanticObject, sAction, sParameter, sKey);
+					this.navToApp(sSemanticObject, sAction, sParameter, sKey, oAppName);
 				}
 			} else {
 				sAdditionInfo = oAppInfo.Value1;
 				sKey = oDemandObj[sAdditionInfo.split("\\")[2]];
-				sUri = sAdditionInfo.split("\\")[0] + sKey;
+				sUri = oAppInfo.ApplicationId === "EVOTIME" ? sAdditionInfo.split("\\")[0] + "&" + sAdditionInfo.split("\\")[3] + "=" + sKey :
+					sAdditionInfo.split("\\")[0] + sKey; //Url setup for EvoTime and Other apps
 				window.open(sUri, "_blank");
 			}
 		},
 
-		navToApp: function (sSemanticObject, sAction, sParameter, sKey) {
+		navToApp: function (sSemanticObject, sAction, sParameter, sKey, oAppName) {
 			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation"),
 				sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
 					target: {
 						semanticObject: sSemanticObject,
 						action: sAction
 					}
-				}) || ""; // generate the Hash to display a Notification details app
+				}) || "", // generate the Hash to display a Notification details app
+
+				//Setting ShellHash Parameters for EvoTime and Other apps
+				sShellHash = oAppName === "EVOTIME" ? sHash + "&" + sParameter + "=" + sKey : sHash + "&/" + sParameter + "/" + sKey;
 
 			oCrossAppNavigator.toExternal({
 				target: {
-					shellHash: sHash + "&/" + sParameter + "/" + sKey
+					shellHash: sShellHash // sHash + "&/" + sParameter + "/" + sKey
 				}
 			});
+
 		},
 		clearLocalStorage: function () {
 			localStorage.removeItem("Evo-Dmnd-pageRefresh");
