@@ -112,8 +112,8 @@ sap.ui.define([
 			var aFilters = this.byId("listReportFilter").getFilters(),
 				aDemandFilters = this.getSelectedDemandFilters();
 			if (aDemandFilters && aDemandFilters.aFilters && aDemandFilters.aFilters.length) {
-                aFilters.push(aDemandFilters);
-            }
+				aFilters.push(aDemandFilters);
+			}
 			//setTimeOut has been added to make rebindTable() work
 			setTimeout(function () {
 				this._oDataTable.getBinding("rows").filter(aFilters, "Application");
@@ -324,15 +324,27 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onChangeStatusButtonPress: function (oEvent) {
-			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
-
-			if (this._aSelectedRowsIdx.length > 0) {
-				// TODO comment
-				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData, this._mParameters);
+			var sParentId = oEvent.getSource().getParent().getId();
+			if (sParentId.includes("menu")) {
+				//Operation performed from Spot context Menu
+					var oModel = this.getModel(),
+				sPath = this.selectedDemandPath,
+				oData = oModel.getProperty(sPath),
+				oSelectedData = [{
+					sPath: sPath,
+					oData: oData
+				}];
+			this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedData, this._mParameters);
 			} else {
-				var msg = this.getResourceBundle().getText("ymsg.selectMinItem");
-				MessageToast.show(msg);
+				//Operation performed from Demands Toolbar
+				this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+				var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
+				if (this._aSelectedRowsIdx.length > 0) {
+					this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData, this._mParameters);
+				} else {
+					var msg = this.getResourceBundle().getText("ymsg.selectMinItem");
+					MessageToast.show(msg);
+				}
 			}
 		},
 		/**
@@ -366,18 +378,34 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onAssignButtonPress: function (oEvent) {
-			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			if (this._aSelectedRowsIdx.length > 100) {
-				this._aSelectedRowsIdx.length = 100;
-			}
-			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
-
-			if (oSelectedPaths.aPathsData.length > 0) {
-				// TODO comment
-				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
-			}
-			if (oSelectedPaths.aNonAssignable.length > 0) {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+			var sParentId = oEvent.getSource().getParent().getId();
+			if (sParentId.includes("menu")) {
+				//Operation performed from Spot context Menu
+				var oModel = this.getModel(),
+					sPath = this.selectedDemandPath,
+					oData = oModel.getProperty(sPath),
+					oSelectedData = [{
+						sPath: sPath,
+						oData: oData
+					}];
+				if (oData.ALLOW_ASSIGN) {
+					this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, this._mParameters);
+				} else {
+					this._showAssignErrorDialog([oData.DemandDesc]);
+				}
+			} else {
+				//Operation performed from Demands Toolbar
+				this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+				if (this._aSelectedRowsIdx.length > 100) {
+					this._aSelectedRowsIdx.length = 100;
+				}
+				var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+				if (oSelectedPaths.aPathsData.length > 0) {
+					this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
+				}
+				if (oSelectedPaths.aNonAssignable.length > 0) {
+					this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+				}
 			}
 		},
 		/**
@@ -606,13 +634,40 @@ sap.ui.define([
 			this.byId("draggableList").rebindTable();
 			this.getModel("viewModel").setProperty("/mapSettings/routeData", []);
 		},
+		/**
+		 * To Handle Right click on Map Spots.
+		 * @author Rakesh
+		 */
+		onContextMenu: function (oEvent) {
+			var oSpot = oEvent.getSource(),
+				oMenu = oEvent.mParameters.menu;
+
+			this.selectedDemandPath = oSpot.getBindingContext().getPath();
+			oMenu = this.addSpotContextMenuItems(oMenu);
+			oSpot.openContextMenu(oMenu);
+		},
+		/**
+		 * To add Menu Items in Context Menu of seleceted Spot.
+		 */
+		addSpotContextMenuItems: function (oMenu) {
+			oMenu.addItem(new sap.ui.unified.MenuItem({
+				text: this.getResourceBundle().getText("xbut.changeStatus"),
+				icon: "sap-icon://flag",
+				select: this.onChangeStatusButtonPress.bind(this)
+			}));
+			oMenu.addItem(new sap.ui.unified.MenuItem({
+				text: this.getResourceBundle().getText("xbut.assign"),
+				icon: "sap-icon://activity-individual",
+				select: this.onAssignButtonPress.bind(this)
+			}));
+			return oMenu;
+		},
 
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
 		}
-
 	});
 
 });
