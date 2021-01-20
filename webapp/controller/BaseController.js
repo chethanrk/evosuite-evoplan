@@ -555,7 +555,7 @@ sap.ui.define([
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
 		handleNavigationLinkAction: function (oDemandObj, oAppInfo, oViewModel) {
-			var sUri, sSemanticObject, sParameter, sKey, oAppName,
+			var sUri, sSemanticObject, sParameter, sKey, oKeyChar,
 				sAction,
 				sAdditionInfo,
 				sLaunchMode = oViewModel ? oViewModel.getProperty("/launchMode") : this.getModel("viewModel").getProperty("/launchMode");
@@ -565,21 +565,20 @@ sap.ui.define([
 				sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];
 				sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "dispatch";
 				sParameter = sAdditionInfo.split("\\\\_\\\\")[2];
-				sKey = oDemandObj[sAdditionInfo.split("\\\\_\\\\")[3]];
-				oAppName = oAppInfo.ApplicationId;
+				oKeyChar = sAdditionInfo.split("\\\\_\\\\")[3][0];
+				sKey = oKeyChar + oDemandObj[sAdditionInfo.split("\\\\_\\\\")[3].split(oKeyChar)[1]];
 				if (sSemanticObject && sAction) {
-					this.navToApp(sSemanticObject, sAction, sParameter, sKey, oAppName);
+					this.navToApp(sSemanticObject, sAction, sParameter, sKey);
 				}
 			} else {
 				sAdditionInfo = oAppInfo.Value1;
 				sKey = oDemandObj[sAdditionInfo.split("\\")[2]];
-				sUri = oAppInfo.ApplicationId === "EVOTIME" ? sAdditionInfo.split("\\")[0] + "&" + sAdditionInfo.split("\\")[3] + "=" + sKey :
-					sAdditionInfo.split("\\")[0] + sKey; //Url setup for EvoTime and Other apps
+				sUri = sAdditionInfo.split("\\")[0] + sKey;
 				window.open(sUri, "_blank");
 			}
 		},
 
-		navToApp: function (sSemanticObject, sAction, sParameter, sKey, oAppName) {
+		navToApp: function (sSemanticObject, sAction, sParameter, sKey) {
 			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation"),
 				sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
 					target: {
@@ -589,7 +588,7 @@ sap.ui.define([
 				}) || "", // generate the Hash to display a Notification details app
 
 				//Setting ShellHash Parameters for EvoTime and Other apps
-				sShellHash = oAppName === "EVOTIME" ? sHash + "&" + sParameter + "=" + sKey : sHash + "&/" + sParameter + "/" + sKey;
+				sShellHash = sHash + "&" + sParameter + sKey;
 
 			oCrossAppNavigator.toExternal({
 				target: {
