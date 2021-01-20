@@ -555,7 +555,7 @@ sap.ui.define([
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
 		handleNavigationLinkAction: function (oDemandObj, oAppInfo, oViewModel) {
-			var sUri, sSemanticObject, sParameter, sKey,
+			var sUri, sSemanticObject, sParameter, sKey, oKeyChar,
 				sAction,
 				sAdditionInfo,
 				sLaunchMode = oViewModel ? oViewModel.getProperty("/launchMode") : this.getModel("viewModel").getProperty("/launchMode");
@@ -565,7 +565,8 @@ sap.ui.define([
 				sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];
 				sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "dispatch";
 				sParameter = sAdditionInfo.split("\\\\_\\\\")[2];
-				sKey = oDemandObj[sAdditionInfo.split("\\\\_\\\\")[3]];
+				oKeyChar = sAdditionInfo.split("\\\\_\\\\")[3][0];
+				sKey = oKeyChar + oDemandObj[sAdditionInfo.split("\\\\_\\\\")[3].split(oKeyChar)[1]];
 				if (sSemanticObject && sAction) {
 					this.navToApp(sSemanticObject, sAction, sParameter, sKey);
 				}
@@ -584,13 +585,17 @@ sap.ui.define([
 						semanticObject: sSemanticObject,
 						action: sAction
 					}
-				}) || ""; // generate the Hash to display a Notification details app
+				}) || "", // generate the Hash to display a Notification details app
+
+				//Setting ShellHash Parameters for EvoTime and Other apps
+				sShellHash = sHash + "&" + sParameter + sKey;
 
 			oCrossAppNavigator.toExternal({
 				target: {
-					shellHash: sHash + "&/" + sParameter + "/" + sKey
+					shellHash: sShellHash // sHash + "&/" + sParameter + "/" + sKey
 				}
 			});
+
 		},
 		clearLocalStorage: function () {
 			localStorage.removeItem("Evo-Dmnd-pageRefresh");
