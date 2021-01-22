@@ -4,8 +4,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
-	 "sap/ui/core/Fragment"
-], function (BaseController, formatter, Filter, FilterOperator, JSONModel,Fragment) {
+	"sap/ui/core/Fragment"
+], function (BaseController, formatter, Filter, FilterOperator, JSONModel, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.PlanningCalendarDialog", {
@@ -22,7 +22,7 @@ sap.ui.define([
 			this._eventBus.subscribe("AssignInfoDialog", "refreshAssignment", this._refreshAppointment, this);
 			this._eventBus.subscribe("CreateUnAvailability", "refreshAbsence", this._refreshIntervalHeader, this);
 		},
-		
+
 		/**
 		 * open's the planning calendar dialog
 		 * get detail data from resource and resource group
@@ -30,30 +30,30 @@ sap.ui.define([
 		 * @param sBindPath
 		 * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
 		 */
-		 open: function (oView, aSelectedResources, mParameters,oStartDate) {
-            // create dialog lazily
-            if (!this._oDialog) {
-                Fragment.load({
-                    id: "PlanningCalender",
-                    name: "com.evorait.evoplan.view.common.fragments.ResourceCalendarDialog",
-                    controller: this
-                }).then(function (oDialog) {
-                    this._oDialog = oDialog;
-                    this.onOpen(oDialog, oView, aSelectedResources,mParameters,oStartDate);
-                }.bind(this));
-            }else {
-                this.onOpen(this._oDialog, oView, aSelectedResources,mParameters,oStartDate);
-            }
-        },
-        /**
+		open: function (oView, aSelectedResources, mParameters, oStartDate) {
+			// create dialog lazily
+			if (!this._oDialog) {
+				Fragment.load({
+					id: "PlanningCalender",
+					name: "com.evorait.evoplan.view.common.fragments.ResourceCalendarDialog",
+					controller: this
+				}).then(function (oDialog) {
+					this._oDialog = oDialog;
+					this.onOpen(oDialog, oView, aSelectedResources, mParameters, oStartDate);
+				}.bind(this));
+			} else {
+				this.onOpen(this._oDialog, oView, aSelectedResources, mParameters, oStartDate);
+			}
+		},
+		/**
 		 *
-         * @param oDialog
-         * @param oView
-         * @param aSelectedResources
-         * @param mParameters
-         * @param oStartDate
-         */
-		onOpen: function (oDialog,oView, aSelectedResources, mParameters, oStartDate) {
+		 * @param oDialog
+		 * @param oView
+		 * @param aSelectedResources
+		 * @param mParameters
+		 * @param oStartDate
+		 */
+		onOpen: function (oDialog, oView, aSelectedResources, mParameters, oStartDate) {
 			this._changedAssignments = {};
 			this._changedAbsences = {};
 			this._selectedView = undefined;
@@ -75,7 +75,10 @@ sap.ui.define([
 			// To enable or disable the save button
 			this.checkDirty();
 			this._enableCreateUABtn(false);
-			
+
+			//Flag to check Changes are done or not in Planning Calendar
+			this._oCancel = false;
+
 		},
 		/**
 		 * Method reads ResourceSet with Assignments
@@ -210,7 +213,7 @@ sap.ui.define([
 			}
 			this._oDialog.open();
 
-		    this._oView.getModel("appView").setProperty("/busy", false);
+			this._oView.getModel("appView").setProperty("/busy", false);
 			this._oPlanningCalendar.setBusy(false);
 		},
 
@@ -505,18 +508,17 @@ sap.ui.define([
 		_createData: function (data) {
 			var aResources = [],
 				oResourceMap = {},
-				oDataObject={},
-				oAsset= {};
+				oDataObject = {},
+				oAsset = {};
 			if (data.__batchResponses) {
 				// fetch respective data 
 				oDataObject = this._getRespectiveData(data);
-				
+
 				// To create resource map from object id.
 				oResourceMap = this._createResourceMap(data);
-				
+
 				// Get Asset data from batchresponse
 				oAsset = this._getAssetData(oDataObject);
-				
 
 				// Push assignment into respective resource
 				for (var j in oResourceMap) {
@@ -548,101 +550,101 @@ sap.ui.define([
 
 			}
 			aResources.sort(this._compareResources);
-			
+
 			if (oAsset.Assignments.length > 0) {
-					aResources.unshift(oAsset);
+				aResources.unshift(oAsset);
 			}
-				
+
 			return aResources;
 		},
 		/**
 		 * Fetch respective data from batch response because the batch responses might differ
 		 * based on cofiguration
 		 */
-		_getRespectiveData: function(data){
+		_getRespectiveData: function (data) {
 			var oDataObject = {
-				oAssignData:{},
-				oAbsenceData:{},
-				oAssetUNData:{}
+				oAssignData: {},
+				oAbsenceData: {},
+				oAssetUNData: {}
 			};
-				for (var l = 0; l < data.__batchResponses.length; l++) {
-					var oData = data.__batchResponses[l] ? data.__batchResponses[l].data : {};
-					// as 
-					if (oData.results.length > 0 && oData.results[0].__metadata.type === "com.evorait.evoplan.Assignment") {
-						oDataObject.oAssignData = oData;
-					} else if (oData.results.length > 0 && oData.results[0].__metadata.type === "com.evorait.evoplan.ResourceAvailability") {
-						oDataObject.oAbsenceData = oData;
-					} else if (oData.results.length > 0) {
-						oDataObject.oAssetUNData = oData;
-					}
-
+			for (var l = 0; l < data.__batchResponses.length; l++) {
+				var oData = data.__batchResponses[l] ? data.__batchResponses[l].data : {};
+				// as 
+				if (oData.results.length > 0 && oData.results[0].__metadata.type === "com.evorait.evoplan.Assignment") {
+					oDataObject.oAssignData = oData;
+				} else if (oData.results.length > 0 && oData.results[0].__metadata.type === "com.evorait.evoplan.ResourceAvailability") {
+					oDataObject.oAbsenceData = oData;
+				} else if (oData.results.length > 0) {
+					oDataObject.oAssetUNData = oData;
 				}
-				return oDataObject;
+
+			}
+			return oDataObject;
 		},
 		/**
 		 * Create the resource map based the assignemnt and availability data
 		 * 
 		 */
-		_createResourceMap : function(data){
-			var oResourceMap={},
+		_createResourceMap: function (data) {
+			var oResourceMap = {},
 				oModel = this._oView ? this._oView.getModel() : null,
 				oUserModel = this._component ? this._component.getModel("user") : null;
 			for (var c = 0; c < data.__batchResponses.length; c++) {
 
-					var oBatchData = data.__batchResponses[c] ? data.__batchResponses[c].data : {};
-					for (var i in oBatchData.results) {
-						var oFirstRecord = oBatchData.results[0];
-						if (oFirstRecord && oFirstRecord.__metadata && (oFirstRecord.__metadata.type === "com.evorait.evoplan.Assignment" ||
-								oFirstRecord.__metadata.type === "com.evorait.evoplan.ResourceAvailability")) {
-							oResourceMap[oBatchData.results[i].ObjectId] = {};
-							oResourceMap[oBatchData.results[i].ObjectId].Assignments = [];
-							oResourceMap[oBatchData.results[i].ObjectId].AbsenceInfo = [];
-						} else {
-							break;
-						}
+				var oBatchData = data.__batchResponses[c] ? data.__batchResponses[c].data : {};
+				for (var i in oBatchData.results) {
+					var oFirstRecord = oBatchData.results[0];
+					if (oFirstRecord && oFirstRecord.__metadata && (oFirstRecord.__metadata.type === "com.evorait.evoplan.Assignment" ||
+							oFirstRecord.__metadata.type === "com.evorait.evoplan.ResourceAvailability")) {
+						oResourceMap[oBatchData.results[i].ObjectId] = {};
+						oResourceMap[oBatchData.results[i].ObjectId].Assignments = [];
+						oResourceMap[oBatchData.results[i].ObjectId].AbsenceInfo = [];
+					} else {
+						break;
 					}
 				}
-				
-					// create selected resource in resource map
-				for (var a = 0; a < this.selectedResources.length; a++) {
-					var oResource = oModel.getProperty(this.selectedResources[a]),
-						sEntitySet = this.selectedResources[a].split("(")[0];
-					if (oResource.NodeType === "RESOURCE" || oResource.NodeType === "RES_GROUP" && oUserModel.getProperty("/POOL_FUNCTION_ENABLED")) {
-						oResource.ResourceDescription = oResource.Description;
-						oResource.ObjectType = oResource.NodeType;
-						oResource.GroupDescription = oModel.getProperty(sEntitySet + "('" + oResource.ResourceGroupGuid + "')").Description;
-						oResource.ResourceGuid = oResource.ResourceGuid;
-						oResource.ResourceGroupGuid = oResource.ResourceGroupGuid;
-						oResourceMap[oResource.NodeId] = oResource;
-						oResourceMap[oResource.NodeId].Assignments = [];
-						oResourceMap[oResource.NodeId].AbsenceInfo = [];
-					}
+			}
 
+			// create selected resource in resource map
+			for (var a = 0; a < this.selectedResources.length; a++) {
+				var oResource = oModel.getProperty(this.selectedResources[a]),
+					sEntitySet = this.selectedResources[a].split("(")[0];
+				if (oResource.NodeType === "RESOURCE" || oResource.NodeType === "RES_GROUP" && oUserModel.getProperty("/POOL_FUNCTION_ENABLED")) {
+					oResource.ResourceDescription = oResource.Description;
+					oResource.ObjectType = oResource.NodeType;
+					oResource.GroupDescription = oModel.getProperty(sEntitySet + "('" + oResource.ResourceGroupGuid + "')").Description;
+					oResource.ResourceGuid = oResource.ResourceGuid;
+					oResource.ResourceGroupGuid = oResource.ResourceGroupGuid;
+					oResourceMap[oResource.NodeId] = oResource;
+					oResourceMap[oResource.NodeId].Assignments = [];
+					oResourceMap[oResource.NodeId].AbsenceInfo = [];
 				}
-				return oResourceMap;
+
+			}
+			return oResourceMap;
 		},
 		/**
 		 * Get asset data from batch response 
 		 * 
 		 */
-		_getAssetData : function(oDataObject){
+		_getAssetData: function (oDataObject) {
 			var oAsset = {};
-				oAsset.Assignments = [];
-			
-				// Set asset data
-				for (var n in oDataObject.oAssetUNData.results) {
-					oAsset.ObjectType = "ASSET";
-					oAsset.GroupDescription = this._oResourceBundle.getText("xtit.assetUA");
-					oAsset.Assignments.push({
-						DateFrom: oDataObject.oAssetUNData.results[n].StartTimestamp,
-						DateTo: oDataObject.oAssetUNData.results[n].EndTimestamp,
-						Demand: {
-							DemandDesc: oDataObject.oAssetUNData.results[n].Description
-						},
-						type: "Type06",
-						color: oDataObject.oAssetUNData.results[n].AssetUnavailityColor
-					});
-				}
+			oAsset.Assignments = [];
+
+			// Set asset data
+			for (var n in oDataObject.oAssetUNData.results) {
+				oAsset.ObjectType = "ASSET";
+				oAsset.GroupDescription = this._oResourceBundle.getText("xtit.assetUA");
+				oAsset.Assignments.push({
+					DateFrom: oDataObject.oAssetUNData.results[n].StartTimestamp,
+					DateTo: oDataObject.oAssetUNData.results[n].EndTimestamp,
+					Demand: {
+						DemandDesc: oDataObject.oAssetUNData.results[n].Description
+					},
+					type: "Type06",
+					color: oDataObject.oAssetUNData.results[n].AssetUnavailityColor
+				});
+			}
 			return oAsset;
 		},
 		/**
@@ -674,8 +676,10 @@ sap.ui.define([
 					this));
 			} else {
 				this._oDialog.close();
-				if (this._mParameters.bFromGantt) {
-					this._eventBus.publish("BaseController", "refreshGanttChart", {});
+
+				if (this._oCancel) {
+					this._mParameters.bFromPlannCal = false;
+					this.afterUpdateOperations(this._mParameters);
 				}
 			}
 		},
@@ -716,6 +720,9 @@ sap.ui.define([
 				bFromPlannCal: true
 			};
 
+			//Setting it to true if any changes are saved
+			this._oCancel = true;
+
 			this._eventBus.publish("PlanningCalendarDialog", "saveAllAssignments", {
 				assignments: this._changedAssignments,
 				absences: this._changedAbsences,
@@ -724,6 +731,11 @@ sap.ui.define([
 			// Reset global values
 			this._changedAssignments = {};
 			this._changedAbsences = {};
+
+			//Refreshing Planning Calendar Events after Saving
+				this._eventBus.subscribe("AssignInfoDialog", "RefreshCalendar", this._setCalendarModel, this);
+			this._eventBus.subscribe("AssignInfoDialog", "refreshAssignment", this._refreshAppointment, this);
+			this._eventBus.subscribe("CreateUnAvailability", "refreshAbsence", this._refreshIntervalHeader, this);
 		},
 		/**
 		 * On selection on calendar row
@@ -753,7 +765,7 @@ sap.ui.define([
 		 */
 		checkDirty: function () {
 			if (Object.keys(this._changedAssignments).length > 0 && this._changedAssignments.constructor === Object || Object.keys(this._changedAbsences)
-					.length > 0 && this._changedAbsences.constructor === Object) {
+				.length > 0 && this._changedAbsences.constructor === Object) {
 				sap.ui.getCore().byId("PlanningCalender--idCreateSave").setEnabled(true);
 				return true;
 			} else {
