@@ -75,6 +75,10 @@ sap.ui.define([
 			// To enable or disable the save button
 			this.checkDirty();
 			this._enableCreateUABtn(false);
+			
+				//Flag to check Changes are done or not in Planning Calendar
+			this._oCancel = false;
+
 
 		},
 		/**
@@ -677,8 +681,9 @@ sap.ui.define([
 					this));
 			} else {
 				this._oDialog.close();
-				if (this._mParameters.bFromGantt) {
-					this._eventBus.publish("BaseController", "refreshGanttChart", {});
+				if (this._oCancel) {
+					this._mParameters.bFromPlannCal = false;
+					this.afterUpdateOperations(this._mParameters);
 				}
 			}
 		},
@@ -718,6 +723,9 @@ sap.ui.define([
 			} : {
 				bFromPlannCal: true
 			};
+			
+				//Setting it to true if any changes are saved
+			this._oCancel = true;
 
 			this._eventBus.publish("PlanningCalendarDialog", "saveAllAssignments", {
 				assignments: this._changedAssignments,
@@ -727,6 +735,11 @@ sap.ui.define([
 			// Reset global values
 			this._changedAssignments = {};
 			this._changedAbsences = {};
+			
+			//Refreshing Planning Calendar Events after Saving
+				this._eventBus.subscribe("AssignInfoDialog", "RefreshCalendar", this._setCalendarModel, this);
+			this._eventBus.subscribe("AssignInfoDialog", "refreshAssignment", this._refreshAppointment, this);
+			this._eventBus.subscribe("CreateUnAvailability", "refreshAbsence", this._refreshIntervalHeader, this);
 		},
 		/**
 		 * On selection on calendar row
