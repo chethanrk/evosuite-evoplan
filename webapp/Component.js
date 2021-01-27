@@ -17,7 +17,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/qualifications/ResourceQualifications",
 	"com/evorait/evoplan/controller/qualifications/QualificationCheck",
 	"com/evorait/evoplan/controller/qualifications/DemandQualifications",
-    "sap/m/MessagePopover",
+	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
 	"sap/m/Link",
 	"sap/ui/model/Filter",
@@ -43,7 +43,7 @@ sap.ui.define([
 	ResourceQualifications,
 	QualificationCheck,
 	DemandQualifications,
-    MessagePopover,
+	MessagePopover,
 	MessagePopoverItem,
 	Link,
 	Filter,
@@ -115,7 +115,8 @@ sap.ui.define([
 					selectedDemands: [],
 					routeData: [],
 					checkedDemands: []
-				}
+				},
+				DemandFilters: ""
 
 			});
 			this.setModel(oViewModel, "viewModel");
@@ -251,9 +252,9 @@ sap.ui.define([
 				if (jQuery(document.body).hasClass("sapUiSizeCozy") || jQuery(document.body).hasClass("sapUiSizeCompact")) {
 					this._sContentDensityClass = "";
 				} else if (Device.system.desktop && Device.support.touch) { // apply "compact" mode if touch is not supported
-                    // "cozy" in case of touch support; default for most sap.m controls, but needed for desktop-first controls like sap.ui.table.Table
-                    this._sContentDensityClass = "sapUiSizeCompact";
-                } else if (Device.support.touch) { // apply "compact" mode if touch is not supported
+					// "cozy" in case of touch support; default for most sap.m controls, but needed for desktop-first controls like sap.ui.table.Table
+					this._sContentDensityClass = "sapUiSizeCompact";
+				} else if (Device.support.touch) { // apply "compact" mode if touch is not supported
 					// "cozy" in case of touch support; default for most sap.m controls, but needed for desktop-first controls like sap.ui.table.Table
 					this._sContentDensityClass = "sapUiSizeCozy";
 				} else {
@@ -296,14 +297,14 @@ sap.ui.define([
 
 			this.NavigationActionSheet = new NavigationActionSheet();
 			this.NavigationActionSheet.init();
-			
+
 			this.ResourceQualifications = new ResourceQualifications();
 			this.ResourceQualifications.init();
-			
+
 			this.QualificationCheck = new QualificationCheck();
 			this.QualificationCheck.init();
-            
-            this.DemandQualifications = new DemandQualifications();
+
+			this.DemandQualifications = new DemandQualifications();
 			this.DemandQualifications.init();
 		},
 

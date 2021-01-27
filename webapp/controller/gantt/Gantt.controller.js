@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/gantt/misc/AxisTime",
 	"com/evorait/evoplan/model/Constants"
 ], function (AssignmentActionsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, Popup, Utility, CoordinateUtils,
-	AxisTime, Constants) {
+	AxisTime, Constants, Fragment) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.gantt.Gantt", {
@@ -69,7 +69,6 @@ sap.ui.define([
 			}
 			this._defaultGanttHorizon();
 			this._viewId = this.getView().getId();
-
 		},
 
 		/**
@@ -993,5 +992,6 @@ sap.ui.define([
 				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
 			}
 		}
+		
 	});
 });
