@@ -43,13 +43,20 @@ sap.ui.define([
 			this._oDataTable = this._oDraggableTable.getTable();
 			this.getRouter().getRoute("splitDemands").attachMatched(function () {
 				this._routeName = Constants.GANTT.SPLITDMD;
-				this.initializeGanttDemandFilter();
 			}.bind(this));
 			this.getRouter().getRoute("gantt").attachMatched(function () {
-				this.initializeGanttDemandFilter();
+				//Condition to avoid to call the initial method twice 
+				if (!this._bLoadingFirstTime) {
+					this.onGanttDemandFilterInitialized();
+				}
+				this._bLoadingFirstTime = false;
 			}.bind(this));
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
-
+			
+			//to initialize Gantt Demand Filter Dialog
+			this._oGanttDemandFilter = this.getView().byId("idGanttDemandFilterDialog");
+			this._oGanttDemandFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+			this._bLoadingFirstTime = true;//to avoid to call the initial method twice
 		},
 		/**
 		 * 
@@ -221,24 +228,7 @@ sap.ui.define([
 				sDemandGuid = oResourceNode.Guid;
 			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
 		},
-		/**
-		 * Initialize the Gantt Demands Filter 
-		 */
-		initializeGanttDemandFilter: function () {
-			if (!this._oGanttDemandFilter) {
-				Fragment.load({
-					name: "com.evorait.evoplan.view.gantt.fragments.GanttDemandFilter",
-					controller: this
-				}).then(function (oFilter) {
-					this._oGanttDemandFilter = oFilter;
-					this.getView().addDependent(this._oGanttDemandFilter);
-					this._oGanttDemandFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-				}.bind(this));
-			} else {
-				// if Gantt Demand filter is already initialize then applying the Filters from Demand View
-				this.onGanttDemandFilterInitialized();
-			}
-		},
+		
 		/**
 		 * Open the Gantt Demands Filter Dialog 
 		 */
@@ -246,24 +236,15 @@ sap.ui.define([
 			this._oGanttDemandFilter.open();
 		},
 		/**
-		 * Applying the Filters from Demand View to Gantt Demand Table
+		 * Initialize and Applying the Filters from Demand View to Gantt Demand Table
 		 */
-		onGanttDemandFilterInitialized: function () {
+		onGanttDemandFilterInitialized: function (oEvent) {
 			var oDemandFilter = this.getModel("viewModel").getProperty("/DemandFilters"),
-				oGanttFilter = sap.ui.getCore().byId("listReportFilter");
+				oGanttFilter = this.getView().byId("listReportFilter");
+			oGanttFilter.fireClear();
 			oGanttFilter.setFilterData(oDemandFilter);
-			setTimeout(function () {
-				this._oDataTable.getBinding("rows").filter(oGanttFilter.getFilters(), "Application");
-			}.bind(this), 15);
+		},
 
-		},
-		/**
-		 * Applying the Filters to Gantt Demand Table
-		 */
-		onGanttDemandFilterChange: function (oEvent) {
-			var oGanttFilters = oEvent.getSource().getFilters();
-			this._oDataTable.getBinding("rows").filter(oGanttFilters, "Application");
-		},
 		/**
 		 * Close the Gantt Demands Filter Dialog 
 		 */

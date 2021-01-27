@@ -14,7 +14,7 @@
 			<smartTable:customToolbar>
 				<OverflowToolbar>
 					<ToolbarSpacer/>
-					<Button id="idBtnGanttFilter" text="Filters" press="onPressGanttFilters"/>
+					<Button id="idBtnGanttFilter" text="{i18n>xbut.filters}" press="onPressGanttFilters" icon="sap-icon://filter"/>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandToolbarButtons" type="XML"/>
 				</OverflowToolbar>
 			</smartTable:customToolbar>
@@ -61,5 +61,8 @@
 				</table:dragDropConfig>
 			</table:Table>
 		</smartTable:SmartTable>
+		<dependents>
+			<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.GanttDemandFilter" type="XML"/>
+		</dependents>
 	</Page>
 </mvc:View>
