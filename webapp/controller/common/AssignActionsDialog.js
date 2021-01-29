@@ -100,8 +100,8 @@ sap.ui.define([
 				oDialog.setTitle(this._resourceBundle.getText("xtit.reAssignTitle"));
 			}
 			if (this.isFirstTime) {
-                sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable").rebindTable();
-            }
+				sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable").rebindTable();
+			}
 
 			this.isFirstTime = true;
 		},
@@ -173,11 +173,10 @@ sap.ui.define([
 					bFlag;
 
 				if (bForReassign) {
-                    bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_UNASSIGN");
-                }
-				else {
-                    bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_REASSIGN");
-                }
+					bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_UNASSIGN");
+				} else {
+					bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_REASSIGN");
+				}
 
 				if (bFlag) {
 					this._oAssignMentTable.setSelectedItem(oItem);
@@ -218,8 +217,15 @@ sap.ui.define([
 					sDateControl2 = dateRangeValues[1];
 			} else {
 				var selectedTimeFormat = formatter.getResourceFormatByKey("TIMENONE");
-					sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin());
-					sDateControl2 = this.formatter.date(selectedTimeFormat.getDateEnd());
+				sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin());
+				sDateControl2 = this.formatter.date(selectedTimeFormat.getDateEnd());
+			}
+
+			//Picking Date Range from Gantt and Gantt Split for Filtering
+			if (this._oView.getModel("appView").getData().currentRoute === "gantt" || this._oView.getModel("appView").getData().currentRoute ===
+				"ganttSplit") {
+				sDateControl1 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getDateValue()); 
+				sDateControl2 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getSecondDateValue()); 
 			}
 
 			if (aResources.length > 0) {
