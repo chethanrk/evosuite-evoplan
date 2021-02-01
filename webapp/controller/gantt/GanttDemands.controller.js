@@ -44,19 +44,11 @@ sap.ui.define([
 			this.getRouter().getRoute("splitDemands").attachMatched(function () {
 				this._routeName = Constants.GANTT.SPLITDMD;
 			}.bind(this));
-			this.getRouter().getRoute("gantt").attachMatched(function () {
-				//Condition to avoid to call the initial method twice 
-				if (!this._bLoadingFirstTime) {
-					this.onGanttDemandFilterInitialized();
-				}
-				this._bLoadingFirstTime = false;
-			}.bind(this));
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
-			
+
 			//to initialize Gantt Demand Filter Dialog
 			this._oGanttDemandFilter = this.getView().byId("idGanttDemandFilterDialog");
 			this._oGanttDemandFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-			this._bLoadingFirstTime = true;//to avoid to call the initial method twice
 		},
 		/**
 		 * 
@@ -228,21 +220,12 @@ sap.ui.define([
 				sDemandGuid = oResourceNode.Guid;
 			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
 		},
-		
+
 		/**
 		 * Open the Gantt Demands Filter Dialog 
 		 */
 		onPressGanttFilters: function () {
 			this._oGanttDemandFilter.open();
-		},
-		/**
-		 * Initialize and Applying the Filters from Demand View to Gantt Demand Table
-		 */
-		onGanttDemandFilterInitialized: function (oEvent) {
-			var oDemandFilter = this.getModel("viewModel").getProperty("/DemandFilters"),
-				oGanttFilter = this.getView().byId("listReportFilter");
-			oGanttFilter.fireClear();
-			oGanttFilter.setFilterData(oDemandFilter);
 		},
 
 		/**

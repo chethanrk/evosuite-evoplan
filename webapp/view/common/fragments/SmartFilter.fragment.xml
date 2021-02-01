@@ -15,8 +15,7 @@
             showRestoreButton="true"
             showRestoreOnFB="true"
             showClearOnFB="true"
-            initialized="onInitialized"
-            filterChange="onDemandFilterChange">
+            initialized="onInitialized" >
 
         <smartFilterBar:controlConfiguration>
             <smartFilterBar:ControlConfiguration

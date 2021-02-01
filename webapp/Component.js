@@ -115,9 +115,7 @@ sap.ui.define([
 					selectedDemands: [],
 					routeData: [],
 					checkedDemands: []
-				},
-				DemandFilters: ""
-
+				}
 			});
 			this.setModel(oViewModel, "viewModel");
 

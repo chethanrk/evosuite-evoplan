@@ -356,10 +356,6 @@ sap.ui.define([
 				sDemandGuid = oResourceNode.Guid;
 			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
 
-		},
-		onDemandFilterChange: function (oEvent) {
-			var aFilters = oEvent.getSource().getFilterData();
-			this.getModel("viewModel").setProperty("/DemandFilters", aFilters);
-		},
+		}
 	});
 });
