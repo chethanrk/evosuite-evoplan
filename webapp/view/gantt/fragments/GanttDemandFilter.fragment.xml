@@ -1,0 +1,23 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar">
+	<Dialog id="idGanttDemandFilterDialog" title="{i18n>xtit.ganttFilters}" draggable="true" contentWidth="80%">
+		<content>
+			<smartFilterBar:SmartFilterBar id="listReportFilter" entitySet="{viewModel>/subTableSet}" persistencyKey="{viewModel>/persistencyKeyTable}"
+				enableBasicSearch="false" useToolbar="true" liveMode="true" considerSelectionVariants="true" showClearButton="true" showRestoreButton="true"
+				showRestoreOnFB="true" showClearOnFB="true" filterChange="onGanttDemandFilterChange">
+				<smartFilterBar:controlConfiguration>
+					<smartFilterBar:ControlConfiguration key="Status" preventInitialDataFetchInValueHelpDialog="false"></smartFilterBar:ControlConfiguration>
+					<smartFilterBar:ControlConfiguration key="EffortUnit" preventInitialDataFetchInValueHelpDialog="false"></smartFilterBar:ControlConfiguration>
+					<smartFilterBar:ControlConfiguration key="DateFrom" visibleInAdvancedArea="false" conditionType="sap.ui.comp.config.condition.DateRangeType"></smartFilterBar:ControlConfiguration>
+					<smartFilterBar:ControlConfiguration key="DateTo" visibleInAdvancedArea="false" conditionType="sap.ui.comp.config.condition.DateRangeType"></smartFilterBar:ControlConfiguration>
+				</smartFilterBar:controlConfiguration>
+				<!-- layout data used to make the table growing but the filter bar fixed -->
+				<smartFilterBar:layoutData>
+					<FlexItemData shrinkFactor="0"/>
+				</smartFilterBar:layoutData>
+			</smartFilterBar:SmartFilterBar>
+		</content>
+		<buttons>
+			<Button text="{i18n>xbut.buttonClose}" press="onCloseGanttFilter"></Button>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

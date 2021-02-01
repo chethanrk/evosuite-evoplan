@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-	"com/evorait/evoplan/model/Constants"
+	"com/evorait/evoplan/model/Constants",
+	"sap/ui/core/Fragment"
 ], function (AssignmentsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, MessageToast, RowAction, RowActionItem,
-	Constants, WebSocket) {
+	Constants, Fragment) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.gantt.GanttDemands", {
@@ -43,9 +44,11 @@ sap.ui.define([
 			this.getRouter().getRoute("splitDemands").attachMatched(function () {
 				this._routeName = Constants.GANTT.SPLITDMD;
 			}.bind(this));
-
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
 
+			//to initialize Gantt Demand Filter Dialog
+			this._oGanttDemandFilter = this.getView().byId("idGanttDemandFilterDialog");
+			this._oGanttDemandFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 		},
 		/**
 		 * 
@@ -216,6 +219,20 @@ sap.ui.define([
 				oResourceNode = oModel.getProperty(sPath),
 				sDemandGuid = oResourceNode.Guid;
 			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
+		},
+
+		/**
+		 * Open the Gantt Demands Filter Dialog 
+		 */
+		onPressGanttFilters: function () {
+			this._oGanttDemandFilter.open();
+		},
+
+		/**
+		 * Close the Gantt Demands Filter Dialog 
+		 */
+		onCloseGanttFilter: function () {
+			this._oGanttDemandFilter.close();
 		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
