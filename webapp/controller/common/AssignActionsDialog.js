@@ -222,10 +222,9 @@ sap.ui.define([
 			}
 
 			//Picking Date Range from Gantt and Gantt Split for Filtering
-			if (this._oView.getModel("appView").getData().currentRoute === "gantt" || this._oView.getModel("appView").getData().currentRoute ===
-				"ganttSplit") {
-				sDateControl1 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getDateValue()); 
-				sDateControl2 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getSecondDateValue()); 
+			if (this._mParameters.bFromGantt) {
+				sDateControl1 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getDateValue());
+				sDateControl2 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getSecondDateValue());
 			}
 
 			if (aResources.length > 0) {
