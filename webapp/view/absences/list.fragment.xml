@@ -6,7 +6,7 @@
           title="Products"
           showHeader="false">
         <content>
-            <smartList:SmartList id="idResourceAvailList" entitySet="ResourceAvailabilitySet" header="{i18n>xtit.absences}"
+            <smartList:SmartList id="idResourceAvailList" entitySet="ResourceAvailabilitySet"
                                  showRowCount="true" enableAutoBinding="true"
                                  selectFields="Description,DateFrom,DateTo,ResourceDescription,Guid">
                 <smartList:listItemTemplate>
@@ -20,6 +20,8 @@
         <footer>
             <OverflowToolbar>
                 <ToolbarSpacer/>
+                <Button id="idCreateTimeAlloc" visible="{user>/ENABLE_ABSENCE_CREATE}" text="{i18n>xtit.createTimeAlloc}" type="Emphasized" enabled="true"
+                        press="onCreateTimeAlloc"/>
                 <Button id="idCreateAbsence" visible="{user>/ENABLE_ABSENCE_CREATE}" text="{i18n>xtit.createUnAvailability}" type="Emphasized" enabled="true"
                         press="onCreateUnAvail"/>
                 <Button id="idCreateCancel" text="{i18n>xbut.buttonClose}" press="onClose"/>
