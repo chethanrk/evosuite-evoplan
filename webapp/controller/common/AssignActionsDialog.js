@@ -232,6 +232,12 @@ sap.ui.define([
 				sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin());
 				sDateControl2 = this.formatter.date(selectedTimeFormat.getDateEnd());
 			}
+			
+			//Picking Date Range from Gantt and Gantt Split for Filtering
+			if (this._mParameters.bFromGantt) {
+				sDateControl1 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getDateValue());
+				sDateControl2 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getSecondDateValue());
+			}
 
 			if (aResources.length > 0) {
 				aFilters.push(new Filter({
