@@ -221,10 +221,10 @@ sap.ui.define([
 			}.bind(this));
 			
 			//lodating Avalability type for Time Allocation in Gantt
-			this._getTimeBlockerAvailability("L");
+			this._getAvailabilityGroup("L");
 			
 			//loading Availability type for Manage Absence in Gantt
-				this._getManageAbsenceAvailability("N");
+				this._getAvailabilityGroup("N");
 
 			// Not able load more than 100 associations
 			this.getModel().setSizeLimit(600);
@@ -446,33 +446,21 @@ sap.ui.define([
 		 * Get AvailabilityType for Time Allocation
 		 * @private
 		 */
-		_getTimeBlockerAvailability: function (sAvailabilityTypeGroup) {
+		_getAvailabilityGroup: function (sAvailabilityTypeGroup) {
 			this.getModel().read("/AvailabilityTypeSet", {
 				filters: [
 					new Filter("AvailabilityTypeGroup", FilterOperator.EQ, sAvailabilityTypeGroup)
 				],
 				success: function (oData, oResponse) {
 					if (oData && oData.results.length > 0) {
-						this.getModel("availabilityGroup").setProperty("/timeAllocation",oData.results);
-					}
-				}.bind(this),
-				error: function (oError) {
-					//Handle Error
-				}
-			});
-		},
-		/**
-		 * Get AvailabilityType for Time Allocation
-		 * @private
-		 */
-		_getManageAbsenceAvailability: function (sAvailabilityTypeGroup) {
-			this.getModel().read("/AvailabilityTypeSet", {
-				filters: [
-					new Filter("AvailabilityTypeGroup", FilterOperator.EQ, sAvailabilityTypeGroup)
-				],
-				success: function (oData, oResponse) {
-					if (oData && oData.results.length > 0) {
-						this.getModel("availabilityGroup").setProperty("/manageAbsence",oData.results);
+						if(sAvailabilityTypeGroup === "L")
+						{
+					    	this.getModel("availabilityGroup").setProperty("/timeAllocation",oData.results);
+						}
+						else
+						{
+								this.getModel("availabilityGroup").setProperty("/manageAbsence",oData.results);
+						}
 					}
 				}.bind(this),
 				error: function (oError) {

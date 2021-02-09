@@ -8,7 +8,7 @@
         <content>
             <smartList:SmartList id="idResourceAvailList" entitySet="ResourceAvailabilitySet"
                                  showRowCount="true" enableAutoBinding="true"
-                                 selectFields="Description,DateFrom,DateTo,ResourceDescription,Guid">
+                                 selectFields="Description,DateFrom,DateTo,ResourceDescription,Guid,BlockPercentage">
                 <smartList:listItemTemplate>
                     <StandardListItem title="{Description}" type="Active"
                                       description="{path : 'DateFrom', type : 'sap.ui.model.odata.type.DateTime'} -
