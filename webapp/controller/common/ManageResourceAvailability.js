@@ -401,8 +401,11 @@ sap.ui.define([
 		_callFunction: function (oData) {
 			this._oDialog.setBusy(true);
 			this._dataDirty = true;
-			this.executeFunctionImport.call(this._oView.getController(), this._oModel, oData, "ManageAbsence", "POST").then(this._refreshList.bind(
-				this));
+			 new Promise(function (resolve, reject) {
+					this.executeFunctionImport.call(this._oView.getController(), this._oModel, oData, "ManageAbsence", "POST").then(function (data) {
+					this._refreshList();
+				}.bind(this));
+			}.bind(this));
 		},
 		/**
 		 * Refresh's the List
