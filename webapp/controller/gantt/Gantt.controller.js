@@ -805,6 +805,24 @@ sap.ui.define([
 			});
 
 		},
+			/**
+		 * open the Time Allocation dialog for selected resource
+		 * @param oEvent
+		 */
+		onTimeAllocPress: function (oEvent) {
+			var oResourceBundle = this.getResourceBundle();
+			if (this.selectedResources.length === 0) {
+				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
+				return;
+			}
+			// to identify the action done on respective page
+			localStorage.setItem("Evo-Action-page", "ganttSplit");
+
+			this.getOwnerComponent().manageAvail.open(this.getView(), [this.selectedResources[0]], {
+				bFromGantt: true
+			},"timeAlloc");
+
+		},
 
 		/**
 		 * on click on today adjust the view of Gantt horizon.
@@ -850,8 +868,10 @@ sap.ui.define([
 			if (this.selectedResources.length === 1 && oData && oData.NodeType === "RESOURCE" && oData.ResourceGuid !== "" && oData.ResourceGroupGuid !==
 				"") {
 				this.byId("idButtonCreUA").setEnabled(true);
+					this.byId("idButtonTimeAlloc").setEnabled(true);
 			} else {
 				this.byId("idButtonCreUA").setEnabled(false);
+					this.byId("idButtonTimeAlloc").setEnabled(false);
 			}
 
 		},
@@ -909,6 +929,7 @@ sap.ui.define([
 			this.byId("idButtonreassign").setEnabled(false);
 			this.byId("idButtonunassign").setEnabled(false);
 			this.byId("idButtonCreUA").setEnabled(false);
+				this.byId("idButtonTimeAlloc").setEnabled(false);
 		},
 
 		/**
@@ -940,7 +961,7 @@ sap.ui.define([
 		 * @param sType
 		 * @return {string}
 		 */
-		getPattern: function (sType) {
+		getPattern: function (sType,sColour) {
 			if (sType === "N") {
 				return "url(#" + this._viewId + "--unavailability)";
 			} else if (sType === "A") {
@@ -949,7 +970,11 @@ sap.ui.define([
 				return "transparent";
 			} else if (sType === "T") {
 				return "url(#" + this._viewId + "--oncallorovertime)";
-			} else {
+			} 
+			 else if (sType === "L") {
+				return sColour;
+			} 
+			else {
 				return "transparent";
 			}
 

@@ -157,7 +157,10 @@ sap.ui.define([
 			this.setModel(oCalendarModel, "calendarModel");
 			// Resource groups model
 			this.setModel(new JSONModel([]), "resGroups");
-
+			
+			//Creating Model for Availability Group in Gantt
+			this.setModel(new JSONModel({timeAllocation: [],manageAbsence: []}), "availabilityGroup");
+			
 			// Message popover link
 			var oLink = new Link({
 				text: "{i18n>xtit.showMoreInfo}",
@@ -215,6 +218,12 @@ sap.ui.define([
 				// create the views based on the url/hash
 				this.getRouter().initialize();
 			}.bind(this));
+			
+			//lodating Avalability type for Time Allocation in Gantt
+			this._getAvailabilityGroup("L");
+			
+			//loading Availability type for Manage Absence in Gantt
+				this._getAvailabilityGroup("N");
 
 			// Not able load more than 100 associations
 			this.getModel().setSizeLimit(600);
@@ -431,6 +440,32 @@ sap.ui.define([
 					//Handle Error
 				}
 			});
-		}
+		},
+		/**
+		 * Get AvailabilityType for Time Allocation
+		 * @private
+		 */
+		_getAvailabilityGroup: function (sAvailabilityTypeGroup) {
+			this.getModel().read("/AvailabilityTypeSet", {
+				filters: [
+					new Filter("AvailabilityTypeGroup", FilterOperator.EQ, sAvailabilityTypeGroup)
+				],
+				success: function (oData, oResponse) {
+					if (oData && oData.results.length > 0) {
+						if(sAvailabilityTypeGroup === "L")
+						{
+					    	this.getModel("availabilityGroup").setProperty("/timeAllocation",oData.results);
+						}
+						else
+						{
+								this.getModel("availabilityGroup").setProperty("/manageAbsence",oData.results);
+						}
+					}
+				}.bind(this),
+				error: function (oError) {
+					//Handle Error
+				}
+			});
+		},
 	});
 });
