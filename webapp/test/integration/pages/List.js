@@ -91,6 +91,7 @@ sap.ui.define([
 						errorMessage: "Can't see the Demand table."
 					});
 				},
+
 				iSearchWithDemandDecriptionValue: function (sText) {
 					return this.waitFor({
 						id: createIdFor(sFilter, "DemandDesc"),
@@ -137,7 +138,6 @@ sap.ui.define([
 						position: iPosition,
 						success: function (oTableItem) {
 							var oBindingContext = oTableItem.getBindingContext();
-
 							// Don't remember objects just strings since IE will not allow accessing objects of destroyed frames
 							this.getContext().currentItem = {
 								bindingPath: oBindingContext.getPath(),
@@ -154,10 +154,102 @@ sap.ui.define([
 						actions: new Press(),
 						errorMessage: "Was not able see the Assign button or Assign button is enabled"
 					});
-				}
+				},
+				
+				// 	iSelectTableDragandDrop: function () {
+				// 	debugger;
+				// 	return this.waitFor({
+				// 		id: sTableId,
+				// 		viewName: sViewName,	
+				// 		autoWait: true,
+				// 		matchers: function (oTable) {	debugger;
+				// 			return !!oTable.$("trigger").length;
+				// 		},
+				// 		success: function (oTable) {
+				// 			debugger;
+				// 			oTable.$("trigger").trigger("drag");
+				// 		},
+				// 		errorMessage: "Demand Table does not support Drag and Drop"
+				// 	});
+				// },
+				
+					iSelectTableDragandDrop: function () {
+					return this.waitFor({	
+						controlType: "sap.ui.table.Row",
+						autoWait : true,
+						matchers: new BindingPath({
+							path: "/DemandSet('0AA10FE57E901EDAA5B923B327196450')"
+						}),
+						actions: new Drag(),
+							success : function(oDrag){
+								oDrag[0].$("trigger").trigger("drag");
+						},
+						
+						errorMessage: "Demand Table does not support Drag and Drop"
+					});
+				},
 
+	iSelectTableDrop: function () {
+					return this.waitFor({
+						id: sTableId,
+						viewName: sViewName,
+						autoWait : true,
+						matchers: new BindingPath({
+							path: "/DemandSet('0AA10FE57E901EDB8EF02F69E7721937')"
+						}),
+						success : function(oDrag){
+								oDrag[0].$("trigger").trigger("drop");
+						},
+			
+						errorMessage: "Demand Table does not support Drop"
+					});
+				},
+				
+				iShouldSeeDragAndDrop : function () {
+					return this.waitFor({
+						id: sTableId,
+						viewName: sViewName,
+					
+						matchers: new BindingPath({
+						 	path: "/DemandSet('0AA10FE57E901EDB8EF02F69E7721937')"
+						 }),
+					
+						actions : new Drag(),
+							autoWait : true,
+					
+						success : function(oDemandTable){
+						Opa5.assert.ok(true, "Demand Drag is working fine");
+				
+						},
+			
+						errorMessage: "Demand Table does not support Drop"
+					});
+				},
 			}),
 			assertions: jQuery.extend({
+				iFinishDragAndDrop : function(){
+					return this.waitFor({
+						id: sTableId,
+						viewName: sViewName,
+							autoWait : true,
+						success: function (oDrag) {
+							Opa5.assert.ok(true, "Demand Drag is working fine");
+						},
+						errorMessage: "Drag and Drop failed for Demand Table"
+					});
+				
+				},
+				iShouldDragAndDrop: function () {
+					return this.waitFor({
+						id: sTableId,
+						viewName: sViewName,
+					
+						success: function (oDrag) {
+							Opa5.assert.ok(true, "Demand Drag is working fine");
+						},
+						errorMessage: "Drag and Drop failed for Demand Table"
+					});
+				},
 				iShouldSeeTheTable: function () {
 					return this.waitFor({
 						id: sTableId,
@@ -240,7 +332,6 @@ sap.ui.define([
 							var oContext = aRows[0].getBindingContext(),
 								oModel = oContext.getModel(),
 								sPath = oContext.getPath();
-
 							var Description = oModel.getProperty(sPath + "/DemandDesc");
 
 							Opa5.assert.equal(Description, sDescription, "The table filtered with respective demand");
@@ -313,10 +404,10 @@ sap.ui.define([
 						matchers: function (oTable) {
 							// If there are less items in the list than the growingThreshold, only check for this number.
 							iExpectedNumberOfItems = aAllEntities.length;
-							return iExpectedNumberOfItems === 176;
+							return iExpectedNumberOfItems === 192;
 						},
 						success: function (oTable) {
-							Opa5.assert.strictEqual(176, iExpectedNumberOfItems, "The Demand Table has " +
+							Opa5.assert.strictEqual(192, iExpectedNumberOfItems, "The Demand Table has " +
 								iExpectedNumberOfItems + " entries");
 						},
 						errorMessage: "Table does not have all entries."
@@ -333,7 +424,7 @@ sap.ui.define([
 						}
 					});
 				}
-				
+
 			})
 		}
 	});

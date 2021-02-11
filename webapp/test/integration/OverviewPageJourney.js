@@ -1,30 +1,32 @@
 sap.ui.define([
 	"sap/ui/test/opaQunit"
-], function(opaTest) {
+], function (opaTest) {
 	"use strict";
 
 	QUnit.module("OverviewPage");
 
-	opaTest("Should See the Demands Table", function(Given, When, Then) {
+	opaTest("Should See the Demands Table", function (Given, When, Then) {
 		Given.iStartTheApp();
 
-
 		When.onTheListPage.iLookAtTheScreen();
-		
+
 		Then.onTheListPage.iShouldSeeTheTable();
 	});
+
 	opaTest("Should see the Demands table entries", function (Given, When, Then) {
 		// Arrangements
 		// Given.iStartTheAppWithDelay("",0);
-		
+
 		// Actions
 		When.onTheListPage.iLookAtTheScreen();
-		
-		Then.onTheListPage.theTableHasEntries();
-		
+
+		Then.onTheListPage.theTableHasEntries().and.iTeardownMyAppFrame();
+
 	});
+
+	//Today
 	opaTest("Should navigate to demand Overview page", function (Given, When, Then) {
-		// Given.iStartTheApp();
+		Given.iStartTheApp();
 
 		// Actions
 		When.onTheListPage.iLookAtTheScreen();
@@ -33,46 +35,25 @@ sap.ui.define([
 
 		// Assertions
 		Then.onOverviewPage.iShouldSeeTheRememberedObject().
-			and.theViewIsNotBusyAnymore();
+		and.theViewIsNotBusyAnymore().and.iTeardownMyAppFrame();
 	});
-	
-	opaTest("Should See the Demand Details", function (Given, When, Then) {
+
+	opaTest("Should see the Assignment Details", function (Given, When, Then) {
+		Given.iStartTheApp();
+
 		// Actions
-		When.onOverviewPage.iLookAtTheScreen();
+		When.onTheListPage.iLookAtTheScreen();
+		When.onTheListPage.iRememberTheItemAtPosition(0);
+		When.onTheBrowserPage.iChangeTheHashToTheRememberedItem();
 
 		// Assertions
-		Then.onOverviewPage
-			// .iShouldSeeTheAssignButton("i18n>xbut.assign").and
-			.iShouldSeeTheChangeStatusButton("i18n>xbut.changeStatus").
-			and.iShouldSeeTheCancelButton("i18n>xbut.buttonCancel").
-			and.iShouldSeeBreadcrumbsLink().
-			// and.iShouldSeeTheDemandTitleAs("Test order for EvoPlan integration").
-			and.iShouldSeeTheSections().and.iShouldSeeAssignmentTable();
-	});
-	opaTest("Should see the specific staus when I click on change status", function (Given, When, Then) {
-		// Actions
-		When.onOverviewPage.iLookAtTheScreen();
+		Then.onOverviewPage.iShouldSeeTheAssignmentObject();
 
-		// Assertions
-		Then.onOverviewPage.iShouldSeeTheChangeStatusButton("i18n>xbut.changeStatus");
-		
-		When.onOverviewPage.iClickOnTheChangeStatus();
-		
-			Then.onOverviewPage.iShouldSeeRespectiveStatus().and.iShouldSeeStatus("Complete");
-	});
-	opaTest("Should see the assignment update Dialog", function (Given, When, Then) {
-		// Actions
-		When.onOverviewPage.iLookAtTheScreen();
+		When.onOverviewPage.iHaveAssignmentTable().and.iPressAssignmentTable(); 
 
-		// Assertions
-		Then.onOverviewPage.iShouldSeeTheSections().and.iShouldSeeAssignmentTable();
-		
-		When.onOverviewPage.iClickOnTheAssignment();
-		Then.onOverviewPage.iShouldSeeAssignInfoDialog("xtit.assignInfoModalTitle");
-			When.onOverviewPage.iCloseAssignInfoDialog();
-			Then.onOverviewPage.iShouldSeeTheSections().and.iTeardownMyAppFrame();
-		// Then.onOverviewPage.iShouldSeeTheAssignmentUpdateDialog();
-		
+		Then.onOverviewPage.iAssignmentTablePopUpOpen().and.iTeardownMyAppFrame();
 	});
+
+
 
 });

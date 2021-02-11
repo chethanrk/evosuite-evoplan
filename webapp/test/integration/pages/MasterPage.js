@@ -12,7 +12,7 @@ sap.ui.define([
 	], function(Opa5, Press, EnterText, Common, PropertyStrictEquals, AggregationLengthEquals, BindingPath, Properties, I18NText, AggregationContainsPropertyEqual) {
 		"use strict";
 
-		var sViewName = "ResourceTree";
+		var sViewName = "demands.ResourceTree";
 
 		Opa5.createPageObjects({
 			onTheMasterPage : {

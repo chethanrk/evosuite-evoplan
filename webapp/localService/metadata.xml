@@ -49,10 +49,10 @@
 <Property Name="EndDate" Type="Edm.DateTime" Precision="7" sap:label="End date"/>
 <Property Name="EndTime" Type="Edm.Time" Precision="0" sap:label="To time"/>
 <Property Name="IS_AVAILABLE" Type="Edm.String" MaxLength="1" sap:label="Resource available?" sap:filterable="false" sap:is-extension-field="true"/>
-<Property Name="TOTAL_EFFORT" Type="Edm.Decimal" Precision="7" Scale="2" sap:label="Total Effort" sap:filterable="false" sap:is-extension-field="true"/>
+<Property Name="TOTAL_EFFORT" Type="Edm.Decimal" Precision="7" Scale="1" sap:label="Total Effort" sap:filterable="false" sap:is-extension-field="true"/>
 <Property Name="ACTUAL_WORKING_HOURS" Type="Edm.Decimal" Precision="6" Scale="2" sap:label="Actual Working Hours" sap:filterable="false" sap:is-extension-field="true"/>
 <Property Name="PLANNED_WORKING_HOURS" Type="Edm.Decimal" Precision="6" Scale="2" sap:label="Planned Working Hrs" sap:filterable="false" sap:is-extension-field="true"/>
-<Property Name="CAPACITIVE_EFFORT" Type="Edm.Decimal" Precision="7" Scale="2" sap:label="Total Effort" sap:filterable="false" sap:is-extension-field="true"/>
+<Property Name="CAPACITIVE_EFFORT" Type="Edm.Decimal" Precision="7" Scale="1" sap:label="Total Effort" sap:filterable="false" sap:is-extension-field="true"/>
 <Property Name="ASSIGNMENT_TYPE" Type="Edm.String" MaxLength="3" sap:label="Assignment Type" sap:filterable="false" sap:is-extension-field="true"/>
 <Property Name="ASSIGNMENT_STATUS" Type="Edm.String" MaxLength="4" sap:label="Status" sap:filterable="false" sap:is-extension-field="true"/>
 <Property Name="GANTT_ENABLED" Type="Edm.String" MaxLength="1" sap:label="Char01" sap:filterable="false" sap:is-extension-field="true"/>
@@ -77,7 +77,7 @@
 <Property Name="ResourceGroupGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Resource group GUID"/>
 <Property Name="ResourceGuid" Type="Edm.String" MaxLength="32" sap:label="Resource GUID"/>
 <Property Name="DemandGuid" Type="Edm.String" MaxLength="32" sap:label="Demand GUID"/>
-<Property Name="Effort" Type="Edm.Decimal" Precision="7" Scale="1" sap:unit="EffortUnit" sap:label="Effort"/>
+<Property Name="Effort" Type="Edm.Decimal" Precision="7" Scale="1" sap:unit="EffortUnit" sap:label="Work"/>
 <Property Name="EffortUnit" Type="Edm.String" MaxLength="3" sap:label="Effort unit" sap:semantics="unit-of-measure"/>
 <Property Name="PERSON_NUMBER" Type="Edm.String" MaxLength="8" sap:label="Personnel number" sap:is-extension-field="true"/>
 <Property Name="LASTNAME" Type="Edm.String" MaxLength="100" sap:label="Last Name" sap:is-extension-field="true"/>
@@ -88,6 +88,9 @@
 <Property Name="DEMAND_STATUS_COLOR" Type="Edm.String" MaxLength="7" sap:label="Demand Status Color" sap:is-extension-field="true"/>
 <Property Name="GROUP_DESCRIPTION" Type="Edm.String" MaxLength="40" sap:label="Resource group desc." sap:is-extension-field="true"/>
 <Property Name="RESOURCE_DESCRIPTION" Type="Edm.String" MaxLength="100" sap:label="Resource group desc" sap:is-extension-field="true"/>
+<Property Name="LONGITUDE" Type="Edm.Decimal" Precision="15" Scale="12" sap:label="Geo Loc. Longitude" sap:is-extension-field="true"/>
+<Property Name="LATITUDE" Type="Edm.Decimal" Precision="15" Scale="12" sap:label="Geo Loc. Latitude" sap:is-extension-field="true"/>
+<Property Name="ORDERID" Type="Edm.String" MaxLength="12" sap:label="Order ID" sap:is-extension-field="true"/>
 <NavigationProperty Name="Demand" Relationship="com.evorait.evoplan.AssignmentToDemand" FromRole="ToRole_AssignmentToDemand" ToRole="FromRole_AssignmentToDemand"/>
 <NavigationProperty Name="Resource" Relationship="com.evorait.evoplan.ResourceToAssignments" FromRole="ToRole_ResourceToAssignments" ToRole="FromRole_ResourceToAssignments"/>
 </EntityType>
@@ -155,6 +158,15 @@
 <Property Name="ENABLE_RES_ASGN_VALID_CHECK" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
 <Property Name="ENABLE_PUSH_DEMAND" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
 <Property Name="ENABLE_RES_ASGN_VALID_MESG_DEM" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+<Property Name="DEFAULT_ABSENCE_TYPE" Type="Edm.String" MaxLength="100" sap:label="Configuration value" sap:is-extension-field="true"/>
+<Property Name="MAP_INITIAL_ZOOM" Type="Edm.Byte" sap:label="Initial Zoom" sap:is-extension-field="true"/>
+<Property Name="MAP_INITIAL_POSITION" Type="Edm.String" MaxLength="100" sap:label="Configuration value" sap:is-extension-field="true"/>
+<Property Name="MAP_MARKER_ICON" Type="Edm.String" MaxLength="255" sap:label="Map Marker Icon" sap:is-extension-field="true"/>
+<Property Name="MAP_SELECTED_PIN_COLOUR" Type="Edm.String" MaxLength="40" sap:label="Field value" sap:is-extension-field="true"/>
+<Property Name="MAP_CLUSTER_DISTANCE" Type="Edm.Int64" sap:label="Cluster Distance" sap:is-extension-field="true"/>
+<Property Name="ENABLE_QUALIFICATION" Type="Edm.Boolean" sap:label="Enable Qualification" sap:is-extension-field="true"/>
+<Property Name="QUALIF_UI_CHECK_TYPE" Type="Edm.String" MaxLength="1" sap:label="Qualification Check" sap:is-extension-field="true"/>
+<Property Name="ENABLE_MAPS" Type="Edm.Boolean" sap:label="Enable Maps" sap:is-extension-field="true"/>
 </EntityType>
 <EntityType Name="DynamicTile" sap:content-version="1">
 <Key>
@@ -179,6 +191,8 @@
 <PropertyRef Name="Guid"/>
 </Key>
 <Property Name="AvailabilityTypeGroup" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Avail.Type Group"/>
+<Property Name="BlockPercentageColor" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Block Color"/>
+<Property Name="BlockPercentage" Type="Edm.Int32" Nullable="false" sap:label="Block Percentage"/>
 <Property Name="Counter" Type="Edm.Int32" Nullable="false" sap:label="Counter"/>
 <Property Name="DateTo" Type="Edm.DateTime" Precision="0" sap:label="End Date"/>
 <Property Name="GroupDescription" Type="Edm.String" Nullable="false" MaxLength="100" sap:label="Resource group desc"/>
@@ -198,14 +212,10 @@
 <Key>
 <PropertyRef Name="Guid"/>
 </Key>
-<Property Name="Effort" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="1" sap:unit="EffortUnit" sap:label="Effort"/>
-<Property Name="HeaderSStatus" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="Head System Status"/>
+<Property Name="Effort" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="1" sap:unit="EffortUnit" sap:label="Work"/>
 <Property Name="Guid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Demand GUID" sap:filterable="false"/>
-<Property Name="HeaderUStatus" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="Head User Status"/>
 <Property Name="EffortUnit" Type="Edm.String" MaxLength="3" sap:label="Effort unit" sap:semantics="unit-of-measure"/>
-<Property Name="OperSStatus" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="Oper System Status"/>
 <Property Name="ExtKey" Type="Edm.String" MaxLength="36" sap:label="External key" sap:filterable="false"/>
-<Property Name="OperUStatus" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="Oper User Status"/>
 <Property Name="Objnr" Type="Edm.String" MaxLength="22" sap:label="Object number"/>
 <Property Name="Source" Type="Edm.String" MaxLength="16" sap:label="Source of Object"/>
 <Property Name="DemandDesc" Type="Edm.String" MaxLength="40" sap:label="Demand description"/>
@@ -219,6 +229,8 @@
 <Property Name="DEMAND_ICON" Type="Edm.String" MaxLength="255" sap:label="UI Demand Icon" sap:is-extension-field="true"/>
 <Property Name="NUMBER_OF_ASSIGNMENTS" Type="Edm.Int16" sap:label="Assignment Count" sap:is-extension-field="true"/>
 <Property Name="LONG_TEXT" Type="Edm.String" sap:label="Long Text" sap:is-extension-field="true"/>
+<Property Name="QUALIFICATION_ICON" Type="Edm.String" MaxLength="255" sap:visible="true" sap:label="UI Qualif Icon" sap:is-extension-field="true"/>
+<Property Name="IS_SELECTED" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
 <Property Name="ADRNR" Type="Edm.String" MaxLength="10" sap:label="Address number" sap:is-extension-field="true"/>
 <Property Name="NAME1" Type="Edm.String" MaxLength="40" sap:label="Name" sap:is-extension-field="true"/>
 <Property Name="NAME2" Type="Edm.String" MaxLength="40" sap:label="Name 2" sap:is-extension-field="true"/>
@@ -236,10 +248,12 @@
 <Property Name="BUILDING" Type="Edm.String" MaxLength="20" sap:label="Building Code" sap:is-extension-field="true"/>
 <Property Name="FLOOR" Type="Edm.String" MaxLength="10" sap:label="Floor" sap:is-extension-field="true"/>
 <Property Name="LOCATION" Type="Edm.String" MaxLength="40" sap:label="Street 5" sap:is-extension-field="true"/>
-<Property Name="LATITUDE" Type="Edm.Decimal" Precision="15" Scale="0" sap:label="Geo Loc. Latitude" sap:is-extension-field="true"/>
+<Property Name="LATITUDE" Type="Edm.Decimal" Precision="15" Scale="12" sap:label="Geo Loc. Latitude" sap:is-extension-field="true"/>
 <Property Name="LONGITUDE" Type="Edm.Decimal" Precision="15" Scale="12" sap:label="Geo Loc. Longitude" sap:is-extension-field="true"/>
 <Property Name="GEO_SOURCE" Type="Edm.String" MaxLength="10" sap:label="Source of Geo loc." sap:is-extension-field="true"/>
 <Property Name="ALTITUDE" Type="Edm.Decimal" Precision="9" Scale="3" sap:label="Altitude" sap:is-extension-field="true"/>
+<Property Name="MAP_MARKER_COLOUR" Type="Edm.String" MaxLength="7" sap:label="Demand Status Color" sap:is-extension-field="true"/>
+<Property Name="DEMAND_KEY" Type="Edm.String" MaxLength="50" sap:label="External key" sap:is-extension-field="true"/>
 <Property Name="ALLOW_ASSIGN" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
 <Property Name="ALLOW_REASSIGN" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
 <Property Name="ALLOW_UNASSIGN" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
@@ -256,6 +270,10 @@
 <Property Name="ALLOW_CLOSED" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
 <Property Name="ALLOW_PASSIGN" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
 <Property Name="ALLOW_PUNASSIGN" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+<Property Name="ENABLE_ROUTE_EVOORDER" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+<Property Name="ENABLE_ROUTE_EVOEQUIP" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+<Property Name="ENABLE_ROUTE_EVONOTIFY" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
+<Property Name="ENABLE_ROUTE_EVOTIME" Type="Edm.Boolean" sap:label="TRUE" sap:is-extension-field="true"/>
 <Property Name="ORDERID" Type="Edm.String" MaxLength="12" sap:label="Order ID" sap:is-extension-field="true"/>
 <Property Name="ORDER_DESC" Type="Edm.String" MaxLength="100" sap:label="Order description" sap:is-extension-field="true"/>
 <Property Name="ORDER_TYPE" Type="Edm.String" MaxLength="4" sap:label="Order Type" sap:is-extension-field="true"/>
@@ -313,20 +331,24 @@
 <Property Name="OPR_WORKCENTER_ORGID" Type="Edm.String" MaxLength="12" sap:label="Resource group ID" sap:is-extension-field="true"/>
 <Property Name="OPR_WORKCENTER_ORGID_DESC" Type="Edm.String" MaxLength="100" sap:label="Resource group desc" sap:is-extension-field="true"/>
 <Property Name="REMAINING_WORK_TIME" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="REMAINING_WORK_TIME_UNIT" sap:label="Remaining Work Time" sap:is-extension-field="true"/>
-<Property Name="REMAINING_WORK_TIME_UNIT" Type="Edm.String" MaxLength="3" sap:label="Effort unit" sap:is-extension-field="true" sap:semantics="unit-of-measure"/>
+<Property Name="REMAINING_WORK_TIME_UNIT" Type="Edm.String" MaxLength="3" sap:label="Remaining Work Unit" sap:is-extension-field="true" sap:semantics="unit-of-measure"/>
+<Property Name="ACTUAL_WORK_TIME" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="ACTUAL_WORK_EFFORT" sap:label="Actual Work Time" sap:is-extension-field="true"/>
+<Property Name="ACTUAL_WORK_EFFORT" Type="Edm.String" MaxLength="3" sap:label="Actual Work Unit" sap:is-extension-field="true" sap:semantics="unit-of-measure"/>
 <Property Name="ACTUAL_FIN_DATE" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Act.finish date" sap:is-extension-field="true"/>
 <Property Name="ACTUAL_FIN_TIME" Type="Edm.Time" Precision="0" sap:label="Act.finish time" sap:is-extension-field="true"/>
 <Property Name="ACTUAL_START_DATE" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Act.start date" sap:is-extension-field="true"/>
 <Property Name="ACTUAL_START_TIME" Type="Edm.Time" Precision="0" sap:label="Act.start time" sap:is-extension-field="true"/>
+<Property Name="REQUIREMENT_PROFILE_GUID" Type="Edm.Guid" sap:label="Req Profile GUID" sap:is-extension-field="true"/>
+<Property Name="REQUIREMENT_PROFILE_ID" Type="Edm.String" MaxLength="8" sap:label="Req Profile ID" sap:is-extension-field="true"/>
 <Property Name="ASSET_GUID" Type="Edm.Guid" sap:label="Asset GUID" sap:is-extension-field="true"/>
 <Property Name="SYNC_STATUS" Type="Edm.String" MaxLength="1" sap:visible="True" sap:label="Message Type" sap:is-extension-field="true"/>
 <Property Name="NOTIFICATION_DESC" Type="Edm.String" MaxLength="40" sap:label="Notif Description" sap:is-extension-field="true"/>
 <Property Name="NOTIF_REPORTED_BY" Type="Edm.String" MaxLength="12" sap:label="Reported by" sap:is-extension-field="true"/>
 <Property Name="NOTIF_REQ_START_DATE" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Req. start date" sap:is-extension-field="true"/>
 <Property Name="NOTIF_REQ_START_TIME" Type="Edm.Time" Precision="0" sap:label="Req. start time" sap:is-extension-field="true"/>
-<Property Name="NOTIF_CODE_GROUP_PROBLEM" Type="Edm.String" MaxLength="8" sap:label="Code group" sap:is-extension-field="true"/>
+<Property Name="NOTIF_CODE_GROUP_PROBLEM" Type="Edm.String" MaxLength="8" sap:label="Problem Code group" sap:is-extension-field="true"/>
 <Property Name="NOTIF_DAMAGE_CODE" Type="Edm.String" MaxLength="4" sap:label="Damage Code" sap:is-extension-field="true"/>
-<Property Name="NOTIF_CODE_GROUP_OBJECT" Type="Edm.String" MaxLength="8" sap:label="Code group" sap:is-extension-field="true"/>
+<Property Name="NOTIF_CODE_GROUP_OBJECT" Type="Edm.String" MaxLength="8" sap:label="Object Code group" sap:is-extension-field="true"/>
 <Property Name="NOTIF_OBJECT_PARTS" Type="Edm.String" MaxLength="4" sap:label="ObjectPartCode" sap:is-extension-field="true"/>
 <Property Name="NOTIFICATION_PLANT" Type="Edm.String" MaxLength="4" sap:label="Notification Plant" sap:is-extension-field="true"/>
 <Property Name="NOTIFICATION_WORKCENTER" Type="Edm.String" MaxLength="8" sap:label="Notif Work center" sap:is-extension-field="true"/>
@@ -335,16 +357,22 @@
 <Property Name="NOTIFICATION_DATE" Type="Edm.DateTime" Precision="0" sap:label="Notification Date" sap:is-extension-field="true"/>
 <Property Name="NOTIFICATION_TIME" Type="Edm.Time" Precision="0" sap:label="Notification Time" sap:is-extension-field="true"/>
 <Property Name="NOTIF_BREAKDOWN_IND" Type="Edm.Boolean" sap:label="Breakdown Indicator" sap:is-extension-field="true"/>
+<Property Name="HEADER_S_STATUS" Type="Edm.String" MaxLength="255" sap:label="Head System Status" sap:is-extension-field="true"/>
+<Property Name="HEADER_U_STATUS" Type="Edm.String" MaxLength="255" sap:label="Head User Status" sap:is-extension-field="true"/>
+<Property Name="OPER_S_STATUS" Type="Edm.String" MaxLength="255" sap:label="Oper System Status" sap:is-extension-field="true"/>
+<Property Name="OPER_U_STATUS" Type="Edm.String" MaxLength="255" sap:label="Oper User Status" sap:is-extension-field="true"/>
 <Property Name="OBJECT_SOURCE_TYPE" Type="Edm.String" MaxLength="16" sap:label="Object Source Type" sap:is-extension-field="true"/>
 <Property Name="DEMAND_PLANT" Type="Edm.String" MaxLength="4" sap:label="Demand Plant" sap:is-extension-field="true"/>
 <Property Name="DEMAND_WORKCENTER" Type="Edm.String" MaxLength="8" sap:label="Demand Work center" sap:is-extension-field="true"/>
 <NavigationProperty Name="DemandToAssignment" Relationship="com.evorait.evoplan.DemandToAssignment" FromRole="FromRole_DemandToAssignment" ToRole="ToRole_DemandToAssignment"/>
+<NavigationProperty Name="DemandToQualification" Relationship="com.evorait.evoplan.DemandToQualification" FromRole="FromRole_DemandToQualification" ToRole="ToRole_DemandToQualification"/>
 </EntityType>
 <EntityType Name="Resource" sap:content-version="1">
 <Key>
 <PropertyRef Name="ObjectId"/>
 </Key>
 <Property Name="GroupDescription" Type="Edm.String" Nullable="false" MaxLength="100" sap:label="Resource group desc"/>
+<Property Name="Icon" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="UI Status Icon"/>
 <Property Name="ObjectId" Type="Edm.String" Nullable="false" MaxLength="132" sap:label="Node Id"/>
 <Property Name="ObjectType" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Object type"/>
 <Property Name="ResourceDescription" Type="Edm.String" Nullable="false" MaxLength="100" sap:label="Resource group desc"/>
@@ -359,13 +387,14 @@
 <NavigationProperty Name="ResourceToAbsenceInfo" Relationship="com.evorait.evoplan.ResourceToAbsenceInfo" FromRole="FromRole_ResourceToAbsenceInfo" ToRole="ToRole_ResourceToAbsenceInfo"/>
 <NavigationProperty Name="ResourceToAssignments" Relationship="com.evorait.evoplan.ResourceToAssignments" FromRole="FromRole_ResourceToAssignments" ToRole="ToRole_ResourceToAssignments"/>
 <NavigationProperty Name="ResourceAvailability" Relationship="com.evorait.evoplan.AbsenceInfoToResource" FromRole="FromRole_AbsenceInfoToResource" ToRole="ToRole_AbsenceInfoToResource"/>
+<NavigationProperty Name="ResourceToQualifications" Relationship="com.evorait.evoplan.ResourceToQualifications" FromRole="FromRole_ResourceToQualifications" ToRole="ToRole_ResourceToQualifications"/>
 </EntityType>
 <EntityType Name="EvoPlanOrder" sap:content-version="1">
 <Key>
 <PropertyRef Name="OrderId"/>
 </Key>
-<Property Name="ActivityType" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="MaintActivType" sap:value-list="standard"/>
 <Property Name="LongText" Type="Edm.String" Nullable="false" sap:label="Long Text"/>
+<Property Name="ActivityType" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="MaintActivType" sap:value-list="standard"/>
 <Property Name="AssetGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="GUID"/>
 <Property Name="OrderId" Type="Edm.String" Nullable="false" MaxLength="12" sap:label="Order"/>
 <Property Name="AssetDescription" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Tech Obj Desc"/>
@@ -464,10 +493,10 @@
 <Property Name="IsSelected" Type="Edm.Boolean" sap:label="TRUE"/>
 <Property Name="ChildCount" Type="Edm.Int32" Nullable="false" sap:hierarchy-node-descendant-count-for="NodeId" sap:label="Child Count"/>
 <Property Name="StatusIcon" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="UI Status Icon"/>
-<Property Name="TotalEffort" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2" sap:label="Total Effort"/>
+<Property Name="TotalEffort" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="1" sap:label="Total Effort"/>
 <Property Name="ActualWorkingHours" Type="Edm.Decimal" Nullable="false" Precision="6" Scale="2" sap:label="Actual Working Hours"/>
 <Property Name="PlannedWorkingHours" Type="Edm.Decimal" Nullable="false" Precision="6" Scale="2" sap:label="Planned Working Hrs"/>
-<Property Name="CapacitiveEffort" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="2" sap:label="Total Effort"/>
+<Property Name="CapacitiveEffort" Type="Edm.Decimal" Nullable="false" Precision="7" Scale="1" sap:label="Total Effort"/>
 <Property Name="ResourceIcon" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="UI Status Icon"/>
 <Property Name="IS_AVAILABLE" Type="Edm.String" MaxLength="1" sap:label="Resource available?" sap:is-extension-field="true"/>
 <Property Name="ASSIGNMENT_TYPE" Type="Edm.String" MaxLength="3" sap:label="Assignment Type" sap:is-extension-field="true"/>
@@ -480,8 +509,8 @@
 <Property Name="RES_ASGN_START_TIME" Type="Edm.Time" Precision="0" sap:label="From time" sap:is-extension-field="true"/>
 <Property Name="RES_ASGN_END_DATE" Type="Edm.DateTime" Precision="0" sap:label="End date" sap:is-extension-field="true"/>
 <Property Name="RES_ASGN_END_TIME" Type="Edm.Time" Precision="0" sap:label="To time" sap:is-extension-field="true"/>
-<NavigationProperty Name="ResourceAvailabilitySet" Relationship="com.evorait.evoplan.GanttResourceHierarchyToAvailability" FromRole="FromRole_GanttResourceHierarchyToAvailability" ToRole="ToRole_GanttResourceHierarchyToAvailability"/>
 <NavigationProperty Name="AssignmentSet" Relationship="com.evorait.evoplan.GanttResourceHierarchyToAssignment" FromRole="FromRole_GanttResourceHierarchyToAssignment" ToRole="ToRole_GanttResourceHierarchyToAssignment"/>
+<NavigationProperty Name="ResourceAvailabilitySet" Relationship="com.evorait.evoplan.GanttResourceHierarchyToAvailability" FromRole="FromRole_GanttResourceHierarchyToAvailability" ToRole="ToRole_GanttResourceHierarchyToAvailability"/>
 </EntityType>
 <EntityType Name="UnavailabilityCodes" sap:content-version="1">
 <Key>
@@ -494,8 +523,9 @@
 <Key>
 <PropertyRef Name="Unavailable"/>
 </Key>
-<Property Name="PastFail" Type="Edm.Boolean" Nullable="false" sap:label="TRUE"/>
 <Property Name="Unavailable" Type="Edm.Boolean" Nullable="false" sap:label="TRUE"/>
+<Property Name="Endtimestamp" Type="Edm.DateTime" Precision="0" sap:label="End Date"/>
+<Property Name="EndtimestampWithstretch" Type="Edm.DateTime" Precision="0" sap:label="End Date"/>
 </EntityType>
 <EntityType Name="AvailabilityType" sap:content-version="1">
 <Key>
@@ -505,6 +535,39 @@
 <Property Name="AvailabilityDesc" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Availability text"/>
 <Property Name="AvailabilityTypeGroup" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Avail.Type Group"/>
 <Property Name="IsAvailable" Type="Edm.Boolean" Nullable="false" sap:label="Is Available"/>
+</EntityType>
+<EntityType Name="MapProvider" sap:content-version="1">
+<Key>
+<PropertyRef Name="name"/>
+</Key>
+<Property Name="name" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Map Name"/>
+<Property Name="type" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Map Type"/>
+<Property Name="description" Type="Edm.String" Nullable="false" MaxLength="100" sap:label="Description"/>
+<Property Name="tileX" Type="Edm.Int16" Nullable="false" sap:label="Tile X"/>
+<Property Name="tileY" Type="Edm.Int16" Nullable="false" sap:label="Tile Y"/>
+<Property Name="minLOD" Type="Edm.Byte" Nullable="false" sap:label="Min LOD"/>
+<Property Name="maxLOD" Type="Edm.Byte" Nullable="false" sap:label="Max LOD"/>
+<Property Name="default" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Default"/>
+<Property Name="copyright" Type="Edm.String" Nullable="false" MaxLength="120" sap:label="Copyright"/>
+<NavigationProperty Name="MapSource" Relationship="com.evorait.evoplan.MapProviderToSource" FromRole="FromRole_MapProviderToSource" ToRole="ToRole_MapProviderToSource"/>
+</EntityType>
+<EntityType Name="MapSource" sap:content-version="1">
+<Key>
+<PropertyRef Name="ID"/>
+</Key>
+<Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="2"/>
+<Property Name="URL" Type="Edm.String" Nullable="false"/>
+</EntityType>
+<EntityType Name="MapLegend" sap:content-version="1">
+<Key>
+<PropertyRef Name="CharactersticCode"/>
+<PropertyRef Name="CharactersticValue"/>
+</Key>
+<Property Name="CharactersticCode" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="UI Struct Field Name"/>
+<Property Name="CharactersticValue" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Field value"/>
+<Property Name="CharactersticDescription" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="UI Struct Field Name"/>
+<Property Name="Colourcode" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Field value"/>
+<Property Name="Legendtype" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Field value"/>
 </EntityType>
 <EntityType Name="AssetHierarchy" sap:content-version="1">
 <Key>
@@ -654,6 +717,57 @@
 <Property Name="Value1" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="UI Hyperlink Value1"/>
 <Property Name="Value2" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="UI Hyperlink Value2"/>
 </EntityType>
+<EntityType Name="ResourceQualification" sap:content-version="1">
+<Key>
+<PropertyRef Name="Guid"/>
+</Key>
+<Property Name="Guid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Qualification GUID"/>
+<Property Name="QualificationId" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Qualification ID"/>
+<Property Name="QualificationDesc" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Qualification Desc"/>
+<Property Name="ExtKey" Type="Edm.String" Nullable="false" MaxLength="50" sap:label="External key"/>
+<Property Name="QualificationType" Type="Edm.String" Nullable="false" MaxLength="2" sap:label="Qualification Type"/>
+<Property Name="ClassId" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Class ID"/>
+<Property Name="GroupId" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Group ID"/>
+<Property Name="GroupIdText" Type="Edm.String" Nullable="false" MaxLength="100" sap:label="Description"/>
+<Property Name="GroupObjType" Type="Edm.String" Nullable="false" MaxLength="2" sap:label="Group Object Type"/>
+<Property Name="ScaleId" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Scale ID"/>
+<Property Name="ScaleText" Type="Edm.String" Nullable="false" MaxLength="100" sap:label="Description"/>
+<Property Name="Profcy" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Proficiency ID"/>
+<Property Name="ProficiencyDesc" Type="Edm.String" Nullable="false" MaxLength="100" sap:label="Proficiency Text"/>
+<Property Name="PersonName" Type="Edm.String" Nullable="false" MaxLength="100" sap:label="Person Name"/>
+<Property Name="ObjectId" Type="Edm.String" Nullable="false" MaxLength="132" sap:label="Node Id"/>
+<Property Name="ResourceGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Resource GUID"/>
+<Property Name="ResourceGroupGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Resource group GUID"/>
+<Property Name="ResourceGroupId" Type="Edm.String" Nullable="false" MaxLength="12" sap:label="Resource group ID"/>
+<Property Name="ResourceGroupDesc" Type="Edm.String" Nullable="false" MaxLength="100" sap:label="Resource group desc"/>
+<Property Name="PersonNumber" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Personnel number"/>
+<Property Name="PARENT_GUID" Type="Edm.Guid" sap:label="Parent Object GUID" sap:is-extension-field="true"/>
+</EntityType>
+<EntityType Name="DemandQualification" sap:content-version="1">
+<Key>
+<PropertyRef Name="QualificationGuid"/>
+</Key>
+<Property Name="QualificationGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Qualification GUID"/>
+<Property Name="QualificationId" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Qualification ID"/>
+<Property Name="QualificationDesc" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Qualification Desc"/>
+<Property Name="QualAssgnGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Qualif Asgn GUID"/>
+<Property Name="ObjectId" Type="Edm.String" Nullable="false" MaxLength="132" sap:label="Node Id"/>
+<Property Name="DemandGuid" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Demand GUID"/>
+<Property Name="ClassId" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Class ID"/>
+<Property Name="GroupId" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Group ID"/>
+<Property Name="ProficiencyId" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Proficiency ID"/>
+<Property Name="ProficiencyDesc" Type="Edm.String" Nullable="false" MaxLength="100" sap:label="Proficiency Text"/>
+<Property Name="RequirementProfileId" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Req Profile ID"/>
+<Property Name="ReqProfileDesc" Type="Edm.String" Nullable="false" MaxLength="100" sap:label="Description"/>
+</EntityType>
+<ComplexType Name="DemandResQualification">
+<Property Name="DemandGuid" Type="Edm.String" MaxLength="32" sap:label="Demand GUID"/>
+<Property Name="QualificationDesc" Type="Edm.String" MaxLength="40" sap:label="Description"/>
+<Property Name="OrderId" Type="Edm.String" MaxLength="12" sap:label="Order ID"/>
+<Property Name="DemandDesc" Type="Edm.String" MaxLength="100" sap:label="Demand description"/>
+<Property Name="OperationId" Type="Edm.String" MaxLength="4" sap:label="Operation"/>
+<Property Name="Fullfilled" Type="Edm.Boolean" sap:label="Fulfilled"/>
+</ComplexType>
 <Association Name="DemandToAssignment" sap:content-version="1">
 <End Type="com.evorait.evoplan.Demand" Multiplicity="1" Role="FromRole_DemandToAssignment"/>
 <End Type="com.evorait.evoplan.Assignment" Multiplicity="*" Role="ToRole_DemandToAssignment"/>
@@ -674,6 +788,18 @@
 <PropertyRef Name="Guid"/>
 </Principal>
 <Dependent Role="ToRole_AssignmentToDemand">
+<PropertyRef Name="DemandGuid"/>
+</Dependent>
+</ReferentialConstraint>
+</Association>
+<Association Name="DemandToQualification" sap:content-version="1">
+<End Type="com.evorait.evoplan.Demand" Multiplicity="1" Role="FromRole_DemandToQualification"/>
+<End Type="com.evorait.evoplan.DemandQualification" Multiplicity="*" Role="ToRole_DemandToQualification"/>
+<ReferentialConstraint>
+<Principal Role="FromRole_DemandToQualification">
+<PropertyRef Name="Guid"/>
+</Principal>
+<Dependent Role="ToRole_DemandToQualification">
 <PropertyRef Name="DemandGuid"/>
 </Dependent>
 </ReferentialConstraint>
@@ -701,6 +827,10 @@
 <PropertyRef Name="ObjectId"/>
 </Dependent>
 </ReferentialConstraint>
+</Association>
+<Association Name="MapProviderToSource" sap:content-version="1">
+<End Type="com.evorait.evoplan.MapProvider" Multiplicity="1" Role="FromRole_MapProviderToSource"/>
+<End Type="com.evorait.evoplan.MapSource" Multiplicity="*" Role="ToRole_MapProviderToSource"/>
 </Association>
 <Association Name="MessageToMessageInfos" sap:content-version="1">
 <End Type="com.evorait.evoplan.Message" Multiplicity="1" Role="FromRole_MessageToMessageInfos"/>
@@ -750,6 +880,18 @@
 </Dependent>
 </ReferentialConstraint>
 </Association>
+<Association Name="ResourceToQualifications" sap:content-version="1">
+<End Type="com.evorait.evoplan.Resource" Multiplicity="1" Role="FromRole_ResourceToQualifications"/>
+<End Type="com.evorait.evoplan.ResourceQualification" Multiplicity="*" Role="ToRole_ResourceToQualifications"/>
+<ReferentialConstraint>
+<Principal Role="FromRole_ResourceToQualifications">
+<PropertyRef Name="ObjectId"/>
+</Principal>
+<Dependent Role="ToRole_ResourceToQualifications">
+<PropertyRef Name="ObjectId"/>
+</Dependent>
+</ReferentialConstraint>
+</Association>
 <Association Name="ResourceToAbsenceInfo" sap:content-version="1">
 <End Type="com.evorait.evoplan.Resource" Multiplicity="1" Role="FromRole_ResourceToAbsenceInfo"/>
 <End Type="com.evorait.evoplan.ResourceAvailability" Multiplicity="*" Role="ToRole_ResourceToAbsenceInfo"/>
@@ -784,6 +926,9 @@
 <EntitySet Name="UnavailabilityCodesSet" EntityType="com.evorait.evoplan.UnavailabilityCodes" sap:content-version="1"/>
 <EntitySet Name="ResourceAvailabilityCheckSet" EntityType="com.evorait.evoplan.ResourceAvailabilityCheck" sap:content-version="1"/>
 <EntitySet Name="AvailabilityTypeSet" EntityType="com.evorait.evoplan.AvailabilityType" sap:content-version="1"/>
+<EntitySet Name="MapProviderSet" EntityType="com.evorait.evoplan.MapProvider" sap:content-version="1"/>
+<EntitySet Name="MapSourceSet" EntityType="com.evorait.evoplan.MapSource" sap:content-version="1"/>
+<EntitySet Name="MapLegendSet" EntityType="com.evorait.evoplan.MapLegend" sap:content-version="1"/>
 <EntitySet Name="AssetHierarchySet" EntityType="com.evorait.evoplan.AssetHierarchy" sap:content-version="1"/>
 <EntitySet Name="AssetSet" EntityType="com.evorait.evoplan.Asset" sap:content-version="1"/>
 <EntitySet Name="AssetUnavailabilitySet" EntityType="com.evorait.evoplan.AssetUnavailability" sap:content-version="1"/>
@@ -795,6 +940,12 @@
 <EntitySet Name="GanttLegendSet" EntityType="com.evorait.evoplan.GanttLegend" sap:content-version="1"/>
 <EntitySet Name="RefreshSharedMemoryAreasSet" EntityType="com.evorait.evoplan.RefreshSharedMemoryAreas" sap:content-version="1"/>
 <EntitySet Name="NavigationLinksSet" EntityType="com.evorait.evoplan.NavigationLinks" sap:content-version="1"/>
+<EntitySet Name="ResourceQualificationSet" EntityType="com.evorait.evoplan.ResourceQualification" sap:content-version="1"/>
+<EntitySet Name="DemandQualificationSet" EntityType="com.evorait.evoplan.DemandQualification" sap:content-version="1"/>
+<AssociationSet Name="DemandToQualificationSet" Association="com.evorait.evoplan.DemandToQualification" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+<End EntitySet="DemandSet" Role="FromRole_DemandToQualification"/>
+<End EntitySet="DemandQualificationSet" Role="ToRole_DemandToQualification"/>
+</AssociationSet>
 <AssociationSet Name="DemandToAssignmentSet" Association="com.evorait.evoplan.DemandToAssignment" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
 <End EntitySet="DemandSet" Role="FromRole_DemandToAssignment"/>
 <End EntitySet="AssignmentSet" Role="ToRole_DemandToAssignment"/>
@@ -807,6 +958,10 @@
 <End EntitySet="GanttResourceHierarchySet" Role="FromRole_GanttResourceHierarchyToAvailability"/>
 <End EntitySet="ResourceAvailabilitySet" Role="ToRole_GanttResourceHierarchyToAvailability"/>
 </AssociationSet>
+<AssociationSet Name="MapProviderToSourceSet" Association="com.evorait.evoplan.MapProviderToSource" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+<End EntitySet="MapProviderSet" Role="FromRole_MapProviderToSource"/>
+<End EntitySet="MapSourceSet" Role="ToRole_MapProviderToSource"/>
+</AssociationSet>
 <AssociationSet Name="ResourceToAbsenceInfoSet" Association="com.evorait.evoplan.ResourceToAbsenceInfo" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
 <End EntitySet="ResourceSet" Role="FromRole_ResourceToAbsenceInfo"/>
 <End EntitySet="ResourceAvailabilitySet" Role="ToRole_ResourceToAbsenceInfo"/>
@@ -814,6 +969,10 @@
 <AssociationSet Name="AbsenceInfoToResourceSet" Association="com.evorait.evoplan.AbsenceInfoToResource" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
 <End EntitySet="ResourceSet" Role="FromRole_AbsenceInfoToResource"/>
 <End EntitySet="ResourceAvailabilitySet" Role="ToRole_AbsenceInfoToResource"/>
+</AssociationSet>
+<AssociationSet Name="ResourceToQualificationsSet" Association="com.evorait.evoplan.ResourceToQualifications" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+<End EntitySet="ResourceSet" Role="FromRole_ResourceToQualifications"/>
+<End EntitySet="ResourceQualificationSet" Role="ToRole_ResourceToQualifications"/>
 </AssociationSet>
 <AssociationSet Name="ResourceToAssignments_AssocSet" Association="com.evorait.evoplan.ResourceToAssignments" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
 <End EntitySet="ResourceSet" Role="FromRole_ResourceToAssignments"/>
@@ -832,71 +991,79 @@
 <End EntitySet="MessageInfoSet" Role="ToRole_MessageToMessageInfos"/>
 </AssociationSet>
 <FunctionImport Name="CreateAssignment" ReturnType="com.evorait.evoplan.Assignment" EntitySet="AssignmentSet" m:HttpMethod="POST" sap:action-for="com.evorait.evoplan.Assignment">
+<Parameter Name="Stretched" Type="Edm.Boolean" Mode="In" Nullable="true"/>
 <Parameter Name="DemandGuid" Type="Edm.String" Mode="In"/>
 <Parameter Name="ResourceGroupGuid" Type="Edm.String" Mode="In"/>
 <Parameter Name="ResourceGuid" Type="Edm.String" Mode="In" Nullable="true"/>
+<Parameter Name="TimeTo" Type="Edm.Time" Mode="In" Precision="0" Nullable="true"/>
 <Parameter Name="DateFrom" Type="Edm.DateTime" Mode="In" Precision="0" Nullable="true"/>
 <Parameter Name="DateTo" Type="Edm.DateTime" Mode="In" Precision="0" Nullable="true"/>
 <Parameter Name="TimeFrom" Type="Edm.Time" Mode="In" Precision="0" Nullable="true"/>
-<Parameter Name="TimeTo" Type="Edm.Time" Mode="In" Precision="0" Nullable="true"/>
-<Parameter Name="Stretched" Type="Edm.Boolean" Mode="In" Nullable="true"/>
 </FunctionImport>
 <FunctionImport Name="UpdateAssignment" ReturnType="com.evorait.evoplan.Assignment" EntitySet="AssignmentSet" m:HttpMethod="POST" sap:action-for="com.evorait.evoplan.Assignment">
-<Parameter Name="ResourceGuid" Type="Edm.String" Mode="In" MaxLength="32"/>
-<Parameter Name="ResourceGroupGuid" Type="Edm.String" Mode="In" MaxLength="32"/>
-<Parameter Name="AssignmentGUID" Type="Edm.String" Mode="In" MaxLength="32"/>
-<Parameter Name="DateFrom" Type="Edm.DateTime" Mode="In" Precision="0"/>
-<Parameter Name="DateTo" Type="Edm.DateTime" Mode="In" Precision="0"/>
-<Parameter Name="TimeFrom" Type="Edm.Time" Mode="In" Precision="0"/>
-<Parameter Name="TimeTo" Type="Edm.Time" Mode="In" Precision="0"/>
-<Parameter Name="Effort" Type="Edm.Decimal" Mode="In" Precision="1" Scale="1"/>
 <Parameter Name="EffortUnit" Type="Edm.String" Mode="In" MaxLength="3"/>
+<Parameter Name="Effort" Type="Edm.Decimal" Mode="In" Precision="1" Scale="1"/>
+<Parameter Name="TimeTo" Type="Edm.Time" Mode="In" Precision="0"/>
+<Parameter Name="TimeFrom" Type="Edm.Time" Mode="In" Precision="0"/>
+<Parameter Name="DateTo" Type="Edm.DateTime" Mode="In" Precision="0"/>
+<Parameter Name="DateFrom" Type="Edm.DateTime" Mode="In" Precision="0"/>
+<Parameter Name="AssignmentGUID" Type="Edm.String" Mode="In" MaxLength="32"/>
+<Parameter Name="ResourceGroupGuid" Type="Edm.String" Mode="In" MaxLength="32"/>
+<Parameter Name="ResourceGuid" Type="Edm.String" Mode="In" MaxLength="32"/>
 </FunctionImport>
 <FunctionImport Name="DeleteAssignment" ReturnType="com.evorait.evoplan.Assignment" EntitySet="AssignmentSet" m:HttpMethod="POST" sap:action-for="com.evorait.evoplan.Assignment">
 <Parameter Name="AssignmentGUID" Type="Edm.String" Mode="In" MaxLength="32"/>
 </FunctionImport>
 <FunctionImport Name="ExecuteDemandFunction" ReturnType="com.evorait.evoplan.Demand" EntitySet="DemandSet" m:HttpMethod="POST" sap:action-for="com.evorait.evoplan.Demand">
-<Parameter Name="DemandGuid" Type="Edm.String" Mode="In"/>
 <Parameter Name="Function" Type="Edm.String" Mode="In"/>
+<Parameter Name="DemandGuid" Type="Edm.String" Mode="In"/>
 </FunctionImport>
 <FunctionImport Name="GetSystemInformation" ReturnType="com.evorait.evoplan.SystemInformation" EntitySet="SystemInformationSet" m:HttpMethod="GET" sap:action-for="com.evorait.evoplan.SystemInformation"/>
 <FunctionImport Name="UpdateAssetUnavailability" ReturnType="com.evorait.evoplan.AssetUnavailability" EntitySet="AssetUnavailabilitySet" m:HttpMethod="POST" sap:action-for="com.evorait.evoplan.AssetUnavailability">
-<Parameter Name="AssetUnavailityCode" Type="Edm.String" Mode="In"/>
-<Parameter Name="AssetUnavailabilityGuid" Type="Edm.String" Mode="In"/>
-<Parameter Name="AssetGuid" Type="Edm.String" Mode="In"/>
-<Parameter Name="StartTimestamp" Type="Edm.DateTime" Mode="In" Precision="0"/>
-<Parameter Name="EndTimestamp" Type="Edm.DateTime" Mode="In" Precision="0"/>
 <Parameter Name="DowntimeDesc" Type="Edm.String" Mode="In"/>
+<Parameter Name="EndTimestamp" Type="Edm.DateTime" Mode="In" Precision="0"/>
+<Parameter Name="StartTimestamp" Type="Edm.DateTime" Mode="In" Precision="0"/>
+<Parameter Name="AssetGuid" Type="Edm.String" Mode="In"/>
+<Parameter Name="AssetUnavailabilityGuid" Type="Edm.String" Mode="In"/>
+<Parameter Name="AssetUnavailityCode" Type="Edm.String" Mode="In"/>
 </FunctionImport>
 <FunctionImport Name="ManageAbsence" ReturnType="com.evorait.evoplan.ResourceAvailability" EntitySet="ResourceAvailabilitySet" m:HttpMethod="POST" sap:action-for="com.evorait.evoplan.ResourceAvailability">
-<Parameter Name="AvailabilityType" Type="Edm.String" Mode="In" Nullable="true"/>
-<Parameter Name="EndTimestamp" Type="Edm.DateTime" Mode="In" Precision="0" Nullable="true"/>
-<Parameter Name="ResourceGuid" Type="Edm.String" Mode="In"/>
-<Parameter Name="StartTimestamp" Type="Edm.DateTime" Mode="In" Precision="0" Nullable="true"/>
-<Parameter Name="Guid" Type="Edm.String" Mode="In" Nullable="true"/>
+<Parameter Name="BlockPercentage" Type="Edm.Decimal" Mode="In" Precision="31" Scale="0" Nullable="true"/>
 <Parameter Name="UserTimezone" Type="Edm.String" Mode="In" Nullable="true"/>
+<Parameter Name="Guid" Type="Edm.String" Mode="In" Nullable="true"/>
+<Parameter Name="StartTimestamp" Type="Edm.DateTime" Mode="In" Precision="0" Nullable="true"/>
+<Parameter Name="ResourceGuid" Type="Edm.String" Mode="In"/>
+<Parameter Name="EndTimestamp" Type="Edm.DateTime" Mode="In" Precision="0" Nullable="true"/>
+<Parameter Name="AvailabilityType" Type="Edm.String" Mode="In" Nullable="true"/>
 </FunctionImport>
-<FunctionImport Name="CreateAssetUnavailability" ReturnType="com.evorait.evoplan.AssetUnavailability" EntitySet="AssetUnavailabilitySet" m:HttpMethod="POST" sap:action-for="com.evorait.evoplan.AssetUnavailability">
-<Parameter Name="AssetUnavailityCode" Type="Edm.String" Mode="In"/>
+<FunctionImport Name="ValidateDemandQualification" ReturnType="Collection(com.evorait.evoplan.DemandResQualification)" m:HttpMethod="POST">
+<Parameter Name="AssignmentGUID" Type="Edm.String" Mode="In" Nullable="true"/>
 <Parameter Name="StartTimestamp" Type="Edm.DateTime" Mode="In" Precision="0"/>
 <Parameter Name="EndTimestamp" Type="Edm.DateTime" Mode="In" Precision="0"/>
-<Parameter Name="AssetGuid" Type="Edm.String" Mode="In"/>
+<Parameter Name="ObjectId" Type="Edm.String" Mode="In"/>
+<Parameter Name="DemandMultiGuid" Type="Edm.String" Mode="In"/>
+</FunctionImport>
+<FunctionImport Name="CreateAssetUnavailability" ReturnType="com.evorait.evoplan.AssetUnavailability" EntitySet="AssetUnavailabilitySet" m:HttpMethod="POST" sap:action-for="com.evorait.evoplan.AssetUnavailability">
 <Parameter Name="DowntimeDesc" Type="Edm.String" Mode="In"/>
+<Parameter Name="AssetGuid" Type="Edm.String" Mode="In"/>
+<Parameter Name="EndTimestamp" Type="Edm.DateTime" Mode="In" Precision="0"/>
+<Parameter Name="StartTimestamp" Type="Edm.DateTime" Mode="In" Precision="0"/>
+<Parameter Name="AssetUnavailityCode" Type="Edm.String" Mode="In"/>
 </FunctionImport>
 <FunctionImport Name="ReprocessFailedItems" ReturnType="com.evorait.evoplan.Message" EntitySet="MessageSet" m:HttpMethod="POST" sap:action-for="com.evorait.evoplan.Message">
 <Parameter Name="SyncGuid" Type="Edm.String" Mode="In"/>
 </FunctionImport>
 <FunctionImport Name="CreateAbsence" ReturnType="com.evorait.evoplan.ResourceAvailability" EntitySet="ResourceAvailabilitySet" m:HttpMethod="POST" sap:action-for="com.evorait.evoplan.ResourceAvailability">
-<Parameter Name="ResourceGuid" Type="Edm.String" Mode="In"/>
-<Parameter Name="EndTimestamp" Type="Edm.DateTime" Mode="In" Precision="0"/>
-<Parameter Name="StartTimestamp" Type="Edm.DateTime" Mode="In" Precision="0"/>
 <Parameter Name="AvailabilityType" Type="Edm.String" Mode="In"/>
+<Parameter Name="StartTimestamp" Type="Edm.DateTime" Mode="In" Precision="0"/>
+<Parameter Name="EndTimestamp" Type="Edm.DateTime" Mode="In" Precision="0"/>
+<Parameter Name="ResourceGuid" Type="Edm.String" Mode="In"/>
 </FunctionImport>
 <FunctionImport Name="ResourceAvailabilityCheck" ReturnType="com.evorait.evoplan.ResourceAvailabilityCheck" EntitySet="ResourceAvailabilityCheckSet" m:HttpMethod="GET" sap:action-for="com.evorait.evoplan.ResourceAvailabilityCheck">
-<Parameter Name="DemandGuid" Type="Edm.String" Mode="In"/>
-<Parameter Name="ResourceGuid" Type="Edm.String" Mode="In"/>
-<Parameter Name="StartTimestamp" Type="Edm.DateTime" Mode="In" Precision="0"/>
 <Parameter Name="EndTimestamp" Type="Edm.DateTime" Mode="In" Precision="0" Nullable="true"/>
+<Parameter Name="StartTimestamp" Type="Edm.DateTime" Mode="In" Precision="0"/>
+<Parameter Name="ResourceGuid" Type="Edm.String" Mode="In"/>
+<Parameter Name="DemandGuid" Type="Edm.String" Mode="In"/>
 </FunctionImport>
 <FunctionImport Name="RefreshSharedMemoryAreas" ReturnType="com.evorait.evoplan.RefreshSharedMemoryAreas" EntitySet="RefreshSharedMemoryAreasSet" m:HttpMethod="POST" sap:action-for="com.evorait.evoplan.RefreshSharedMemoryAreas"/>
 </EntityContainer>
@@ -975,14 +1142,12 @@
 <Annotation Term="com.sap.vocabularies.UI.v1.SelectionFields">
 <Collection>
 <PropertyPath>ORDERID</PropertyPath>
-<PropertyPath>Source</PropertyPath>
 <PropertyPath>Status</PropertyPath>
 <PropertyPath>DateFrom</PropertyPath>
 <PropertyPath>DateTo</PropertyPath>
 <PropertyPath>DemandDesc</PropertyPath>
 <PropertyPath>OPERATIONID</PropertyPath>
 <PropertyPath>REVISION_NO</PropertyPath>
-<PropertyPath>NOTIFICATION</PropertyPath>
 </Collection>
 </Annotation>
 </Annotations>
@@ -1150,9 +1315,36 @@
 </Record>
 </Annotation>
 </Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand">
+<Annotation Term="com.sap.vocabularies.UI.v1.PresentationVariant">
+<Record Type="com.sap.vocabularies.UI.v1.PresentationVariantType">
+<PropertyValue Property="RequestAtLeast">
+<Collection>
+<PropertyPath>ALLOW_UNASSIGN</PropertyPath>
+<PropertyPath>ALLOW_APPOINTMNT</PropertyPath>
+<PropertyPath>ALLOW_DISPATCHED</PropertyPath>
+<PropertyPath>ALLOW_ACKNOWLDGE</PropertyPath>
+<PropertyPath>ALLOW_REJECT</PropertyPath>
+<PropertyPath>ALLOW_INCOMPLETE</PropertyPath>
+<PropertyPath>ALLOW_CLOSED</PropertyPath>
+<PropertyPath>ALLOW_PUNASSIGN</PropertyPath>
+</Collection>
+</PropertyValue>
+</Record>
+</Annotation>
+</Annotations>
 <Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Assignment">
 <Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
 <Collection>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="ORDERID"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="DESCRIPTION"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="DEMAND_STATUS"/>
+</Record>
 <Record Type="com.sap.vocabularies.UI.v1.DataField">
 <PropertyValue Property="Value" Path="PERSON_NUMBER"/>
 </Record>
@@ -1653,6 +1845,114 @@
 </Annotations>
 <Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.UnavailabilityCodes/UnavailabilityCode">
 <Annotation Term="COMMON.Text" Path="UnavailabilityCodeDesc"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceQualification">
+<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
+<Collection>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="QualificationId"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="QualificationDesc"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="Profcy"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="ProficiencyDesc"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="ScaleId"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="ScaleText"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="GroupId"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="GroupIdText"/>
+</Record>
+</Collection>
+</Annotation>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceQualification/Guid">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceQualification/ResourceGroupDesc">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceQualification/PersonNumber">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceQualification/PersonName">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceQualification/ExtKey">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceQualification/QualificationType">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceQualification/ClassId">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceQualification/GroupObjType">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceQualification/ObjectId">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceQualification/ResourceGuid">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceQualification/ResourceGroupGuid">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceQualification/ResourceGroupId">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.DemandQualification">
+<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
+<Collection>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="RequirementProfileId"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="ReqProfileDesc"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="QualificationId"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="QualificationDesc"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="ProficiencyId"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="ProficiencyDesc"/>
+</Record>
+<Record Type="com.sap.vocabularies.UI.v1.DataField">
+<PropertyValue Property="Value" Path="GroupId"/>
+</Record>
+</Collection>
+</Annotation>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.DemandQualification/QualificationGuid">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.DemandQualification/ClassId">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.DemandQualification/QualAssgnGuid">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.DemandQualification/ObjectId">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+</Annotations>
+<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.DemandQualification/DemandGuid">
+<Annotation Term="COMMON.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
 </Annotations>
 <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="self" href="https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/$metadata"/>
 <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="latest-version" href="https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/$metadata"/>

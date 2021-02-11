@@ -45,16 +45,20 @@ sap.ui.define([
 
 		When.onTheListPage.iSearchWithDemandDecriptionValue(sDescriptionFalseCase);
 
-		Then.onTheListPage.iShouldSeeTheEmptyTable();//.and.iTeardownMyAppFrame();
+		Then.onTheListPage.iShouldSeeTheEmptyTable().and.iTeardownMyAppFrame();
 	});
+	
+	
 	opaTest("Should Enable the Buttons when I select demand", function (Given, When, Then) {
-		// Given.iStartTheApp();
+		Given.iStartTheApp();
 
 		When.onTheListPage.iSelectDemandFromDemandTable(1);
 
 		Then.onTheListPage.iShouldSeeTheAssignButtonAs(true)
 			.and.iShouldSeeTheChangeStatusButtonAs(true).and.iTeardownMyAppFrame();
 	});
+	
+
 
 	opaTest("Should Show up the error dialog", function (Given, When, Then) {
 		Given.iStartTheApp();
@@ -68,5 +72,49 @@ sap.ui.define([
 		When.onTheListPage.iClickonAssignButton();
 		Then.onTheListPage.iShouldSeeErrorDialog().and.iTeardownMyAppFrame();
 	});
+	
+	//Drag and Drop
+		// 		opaTest("Drag and Drop for the Demand Table", function (Given, When, Then) {
+	//  Given.iStartTheApp();
+
+	// //	When.onTheListPage.iSelectDemandFromDemandTable(1);
+		
+	// 	When.onTheListPage.iShouldSeeDragAndDrop();
+		
+	// 	Then.onTheListPage.iFinishDragAndDrop();
+		
+	// //	Then.onTheListPage.iShouldDragAndDrop().and.iTeardownMyAppFrame();
+
+	// 	// Then.onTheListPage.iShouldSeeTheAssignButtonAs(true)
+	// 	// 	.and.iShouldSeeTheChangeStatusButtonAs(true).and.iTeardownMyAppFrame();
+	// });
+	// 	opaTest("Drag and Drop for the Demand Table", function (Given, When, Then) {
+	// 	 Given.iStartTheApp();
+
+	// //	When.onTheListPage.iSelectDemandFromDemandTable(1);
+		
+	// 	When.onTheListPage.iSelectTableDragandDrop();
+		
+	// 	Then.onTheListPage.iShouldDragAndDrop().and.iTeardownMyAppFrame();
+
+	// 	// Then.onTheListPage.iShouldSeeTheAssignButtonAs(true)
+	// 	// 	.and.iShouldSeeTheChangeStatusButtonAs(true).and.iTeardownMyAppFrame();
+	// });
+	// 	opaTest("Drag and Drop for the Demand Table", function (Given, When, Then) {
+	// 	Given.iStartTheApp();
+	// 	When.onTheListPage.iLookAtTheScreen();
+		
+	// 	//	When.onTheListPage.iSelectDemandFromDemandTable(1);
+	// 	//	When.onTheListPage.iSelectDemandFromDemandTable(1);
+		
+	// 	When.onTheListPage.iSelectTableDragandDrop();//.and.iSelectTableDrop(); 
+		
+	// 	//.and.iShouldDragAndDrop().iTeardownMyAppFrame();
+
+	// 	Then.onTheListPage.iShouldDragAndDrop().and.iTeardownMyAppFrame();
+
+	// 	// Then.onTheListPage.iShouldSeeTheAssignButtonAs(true)
+	// 	// 	.and.iShouldSeeTheChangeStatusButtonAs(true).and.iTeardownMyAppFrame();
+	// });
 	
 });

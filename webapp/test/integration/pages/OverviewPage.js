@@ -10,7 +10,7 @@ sap.ui.define([
 ], function (Opa5, Press, EnterText, Common, I18NText, PropertyStrictEquals, AggregationFilled, Properties) {
 	"use strict";
 
-	var sViewName = "Detail";
+	var sViewName = "common.Detail";
 
 	Opa5.createPageObjects({
 		onOverviewPage: {
@@ -34,8 +34,11 @@ sap.ui.define([
 				},
 				iClickOnTheAssignment: function () {
 					return this.waitFor({
-						id: "assignMentsBlock",
+						//	id: "assignMentsBlock",
+						id: "idCapacitiveTable",
 						viewName: sViewName,
+						autoWait: true,
+						actions: new Press(),
 						success: function (oPage) {
 							var oTable = oPage.getAggregation("_views")[0].getAggregation("content")[0];
 							if (oTable) {
@@ -45,7 +48,7 @@ sap.ui.define([
 								});
 							}
 						},
-						actions: new Press(),
+
 						errorMessage: "Page doesn't have Assignment Table"
 					});
 				},
@@ -64,25 +67,105 @@ sap.ui.define([
 						},
 						errorMessage: "AssignInfo Dialog doesn't have Close Button"
 					});
-				}
-			},
-			assertions: {
-				iShouldSeeTheRememberedObject: function () {
+				},
+
+				iHaveAssignmentTable: function () {
 					return this.waitFor({
-						success: function () {
-							var sBindingPath = this.getContext().currentItem.bindingPath;
-							this.waitFor({
-								id: "ObjectPageLayout",
-								viewName: sViewName,
-								autoWait: true,
-								success: function (oPage) {
-									Opa5.assert.strictEqual(oPage.getBindingContext().getPath(), sBindingPath, "was on the remembered detail page");
-								},
-								errorMessage: "Remembered object " + sBindingPath + " is not shown"
-							});
-						}
+						id: "ObjectPageWrapper",
+						viewName: sViewName,
+						autoWait: true,
+						matchers: function (oPage) {
+							return oPage.getContent()[0].getSections()[3]; 
+						},
+						success: function (oSection) {
+							Opa5.assert.strictEqual(oSection.getSubSections()[0].getBlocks()[0].getId(),
+								"assignMentsBlock", "Assignment Table is visible");
+						},
+						errorMessage: "Was not able to see Assignment Table "
 					});
 				},
+				
+				iPressAssignmentTable: function () {
+					return this.waitFor({
+							id: "ObjectPageWrapper",
+						viewName: sViewName,
+						matchers: function (oPage) {
+							return oPage.getContent()[0].getSections()[3]; 
+						},
+						autoWait: true,
+						success: function (oSection) {
+							var oTable = oSection.getSubSections()[0].getBlocks()[0]._getSelectedViewContent().getContent()[0];
+							var oItem = oTable.getItems()[0];
+							if (oTable) {
+								oTable.fireItemPress({
+									listItem: oItem
+								});
+							}
+						},
+						errorMessage: "Assignment Event not Triggered  "
+					});
+				},
+			},
+			assertions: {
+
+				iAssignmentTablePopUpOpen: function () {
+					return this.waitFor({
+						controlType: "sap.m.Dialog",
+						viewName: sViewName,
+						matchers: function (oDialog) {
+							return oDialog; 
+						},
+						autoWait: true,
+						success: function (oDialog) {
+							if (oDialog[0].isOpen()) {
+								Opa5.assert.ok(true, "Assignment Dialog is opened");
+							}
+						},
+						errorMessage: "Assignment Dialog not found"
+					});
+				},
+				
+				iShouldSeeTheRememberedObject: function () {
+					return this.waitFor({
+						id: "ObjectPageWrapper",
+						viewName: sViewName,
+						autoWait: true,
+						success: function (oPage) {
+							var oSections = oPage.getContent()[0].getSections();
+							for (var s in oSections) {
+								if (oSections[s].getTitle() === "General") {
+									Opa5.assert.ok(true, oSections[s].getTitle() + " section is visible");
+								} else if (oSections[s].getTitle() === "Dates") {
+									Opa5.assert.ok(true, oSections[s].getTitle() + " section is visible");
+								} else if (oSections[s].getTitle() === "PM Details") {
+									Opa5.assert.ok(true, oSections[s].getTitle() + " section is visible");
+								} else if (oSections[s].getTitle() === "Qualifications") {
+									Opa5.assert.ok(true, oSections[s].getTitle() + " section is visible");
+								} else if (oSections[s].getTitle() === "Assignments") {
+									Opa5.assert.ok(true, oSections[s].getTitle() + " section is visible");
+								} else if (oSections[s].getTitle() === "Long Text") {
+									Opa5.assert.ok(true, oSections[s].getTitle() + " section is visible");
+								}
+							}
+						},
+						errorMessage: "Demand Overview Sections not found" 
+					});
+				},
+
+				iShouldSeeTheAssignmentObject: function () {
+					return this.waitFor({
+						id: "ObjectPageWrapper",
+						viewName: sViewName,
+						autoWait: true,
+						success: function (oPage) {
+							var oSections = oPage.getContent()[0].getSections();
+							Opa5.assert.ok(true, oSections[3].getTitle() + " section is visible");
+							Opa5.assert.ok(true, "Status : " + oPage.getContent()[0].getHeaderContent()[0].getContent()[0].getText());
+						},
+						errorMessage: "Assignment Section not found" 
+					});
+				},
+			
 				iShouldSeeRespectiveStatus: function () {
 					return this.waitFor({
 						id: "idStatusActionSheet",
@@ -112,7 +195,8 @@ sap.ui.define([
 				},
 				theViewIsNotBusyAnymore: function () {
 					return this.waitFor({
-						id: "ObjectPageLayout",
+						//	id: "ObjectPageLayout",
+						id: "ObjectPageWrapper",
 						viewName: sViewName,
 						matchers: function (oPage) {
 							return !oPage.getBusy();
@@ -136,14 +220,16 @@ sap.ui.define([
 				iShouldSeeTheChangeStatusButton: function (sText) {
 					return this.waitFor({
 						id: "idStatusHeaderAction",
+						//	id: "ObjectPageWrapper",
 						viewName: sViewName,
+						autoWait: true,
 						success: function (oButton) {
 							Opa5.assert.equal(oButton.getText(), "Change Status", "Change status Button Found .");
 						},
 						errorMessage: "Change status button not found"
 					});
 				},
-				iShouldSeeTheCancelButton:function (sText) {
+				iShouldSeeTheCancelButton: function (sText) {
 					return this.waitFor({
 						id: "idBtnCancel",
 						viewName: sViewName,
@@ -153,7 +239,7 @@ sap.ui.define([
 						errorMessage: "Cancel button not found"
 					});
 				},
-				iShouldSeeBreadcrumbsLink:function () {
+				iShouldSeeBreadcrumbsLink: function () {
 					return this.waitFor({
 						id: "idbreadcrumbLink",
 						viewName: sViewName,
@@ -179,7 +265,8 @@ sap.ui.define([
 				},
 				iShouldSeeTheSections: function () {
 					return this.waitFor({
-						id: "ObjectPageLayout",
+						//	id: "ObjectPageLayout",
+						id: "ObjectPageWrapper",
 						viewName: sViewName,
 						matchers: new AggregationFilled({
 							name: "sections"
@@ -192,9 +279,12 @@ sap.ui.define([
 				},
 				iShouldSeeAssignmentTable: function () {
 					return this.waitFor({
-						id: "assignMentsBlock",
+						//	id: "assignMentsBlock",
+						id: "idCapacitiveTable",
 						viewName: sViewName,
+						autoWait: true,
 						success: function (oPage) {
+
 							var oTable = oPage.getAggregation("_views")[0].getAggregation("content")[0];
 							if (oTable) {
 								Opa5.assert.ok(true, "The assianment table is found.");
