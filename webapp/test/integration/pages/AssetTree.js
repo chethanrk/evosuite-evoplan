@@ -4,7 +4,7 @@ sap.ui.define([
 	], function(Opa5, Press) {
 		"use strict";
 
-		var sViewName = "Assets";
+		var sViewName = "assets.Assets";
 
 		Opa5.createPageObjects({
 			onMyPageUnderTest: {
@@ -16,7 +16,8 @@ sap.ui.define([
 							actions: new Press(),
 							errorMessage: "Was not able to find the control with the id controlId"
 						});
-					}
+					},
+					
 				},
 				assertions: {
 					iShouldSeeAssetTree: function() {

@@ -12,6 +12,10 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Gantt");
+		var sDescription = "Test order for EvoPlan integration",
+		sStatusCode = "INIT",
+		sDescriptionFalseCase = "11122",
+		sOrderId =	"827645";
 
 	opaTest("Gant Menu Selection", function (Given, When, Then) {
         	Given.iStartTheApp();
@@ -30,6 +34,38 @@ sap.ui.define([
 			When.onGantt.iClickOnTheTodayButton();
 			Then.onGantt.iShouldSeeTheTodayButtonAs();
 	});
+	
+	
+	
+	
+	
+		opaTest("Demand Gantt Filter Option", function (Given, When, Then) {
+	//	 Given.iStartTheApp();
+
+		// Actions
+		When.onGantt.iLookAtTheScreen();
+		When.onGantt.iHaveDemandFilterButton().and.iGanttDemandFilterButtonIsClicked();
+
+		// Assertions
+		Then.onGantt.iGanttDemandFilterPopUpOpen();//.and.iTeardownMyAppFrame();
+	});
+
+		opaTest("Should filter entries based on the Status", function (Given, When, Then) {
+		// Given.iStartTheApp();
+
+		When.onGantt.iSearchWithGanttDemandStatusValue(sStatusCode);
+
+		Then.onGantt.iShouldSeeTheGanttDemandTableEntriesWithStatus(sStatusCode);//.and.iTeardownMyAppFrame();
+	});
+	
+		opaTest("Should filter entries based on the OrderId", function (Given, When, Then) {
+		// Given.iStartTheApp();
+
+		When.onGantt.iSearchWithGanttDemandOrderIdValue(sOrderId);
+
+		Then.onGantt.iShouldSeeTheGanttDemandTableEntriesWithOrderId(sOrderId);//.and.iTeardownMyAppFrame();
+	});
+
 
 		opaTest("Should navigate to demand Overview page", function (Given, When, Then) {
 		// Given.iStartTheApp();
@@ -42,16 +78,9 @@ sap.ui.define([
 		// Assertions
 		Then.onGantt.theViewIsNotBusyAnymore().and.iTeardownMyAppFrame();
 	});
-/*	opaTest("Gantt Demand Header Button Check: ", function (Given, When, Then) {
+	
+	
 
-			When.onGantt.iClickOnTheChangeStatusButton();
-			Then.onGantt.iShouldSeeTheChangeStatusButtonAs();
-	});
-		opaTest("Gantt Demand Header Button Check", function (Given, When, Then) {
-		
-			When.onGantt.iClickOnTheAssignButton();
-			Then.onGantt.iShouldSeeTheAssignuttonAs();
-	});*/
 	
 
 });

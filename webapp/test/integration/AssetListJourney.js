@@ -12,15 +12,20 @@ sap.ui.define([
 		// Actions
 		When.onTheAppPage.iLookAtTheScreen();
 
-		// Assertions
-		Then.onTheAppPage.iShouldSeeTheMenu();
+		// // Assertions
+		// Then.onTheAppPage.iShouldSeeTheMenu();
 
 
 	When.onTheAppPage.iClickOnTheMenu();
 		// Cleanup
 			When.onTheAppPage.iClickOnTheMenuItem();
 			
+			Then.onTheAppPage.iShouldSeeTheMenu().and.iTeardownMyAppFrame();
+			
 			// Then.onTheAppPage.iShouldSeeTheMenu();
 	});
+	
+		
+
 
 });

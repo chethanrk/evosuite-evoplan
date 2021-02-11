@@ -57,7 +57,7 @@ sap.ui.define([
 						},
 						errorMessage: "Can't see the Menu Button."
 					});
-				}
+				},
 
 			},
 

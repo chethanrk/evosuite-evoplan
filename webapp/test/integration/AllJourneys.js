@@ -29,13 +29,14 @@ sap.ui.require([
 	//"com/evorait/evoplan/test/integration/NotFoundJourney",
 
 	sap.ui.require([
-		// "com/evorait/evoplan/test/integration/BusyJourney", //App Loading
-		// "com/evorait/evoplan/test/integration/AppJourney", //App Header
-		// "com/evorait/evoplan/test/integration/MasterPageJourney",//Demand Page:Resource List
-		// "com/evorait/evoplan/test/integration/ListJourney", //Demand Page:Demand List
-		// "com/evorait/evoplan/test/integration/OverviewPageJourney",// Navigation to Detail Page from Demands
-		// "com/evorait/evoplan/test/integration/NavigationJourney",
-		//"com/evorait/evoplan/test/integration/GantJourney",
+		"com/evorait/evoplan/test/integration/BusyJourney", //App Loading
+		"com/evorait/evoplan/test/integration/AppJourney", //App Header
+		"com/evorait/evoplan/test/integration/MasterPageJourney", //Demand Page:Resource List
+		"com/evorait/evoplan/test/integration/ListJourney", //Demand Page:Demand List
+		"com/evorait/evoplan/test/integration/OverviewPageJourney", // Navigation to Detail Page from Demands
+		"com/evorait/evoplan/test/integration/NavigationJourney",
+		"com/evorait/evoplan/test/integration/AssetListJourney",
+		"com/evorait/evoplan/test/integration/GantJourney",
 		"com/evorait/evoplan/test/integration/MapJourney"
 	], function () {
 		QUnit.start();

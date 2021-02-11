@@ -1,100 +1,111 @@
-[{
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='COMP')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='COMP')",
-		"type": "com.evorait.evoplan.GanttLegend"
-	},
-	"CharactersticCode": "DEMAND_STATUS",
-	"CharactersticValue": "COMP",
-	"CharactersticDescription": "Work Completed",
-	"Colourcode": "#006400",
-	"Legendtype": "COLOUR"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='MOBI')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='MOBI')",
-		"type": "com.evorait.evoplan.GanttLegend"
-	},
-	"CharactersticCode": "DEMAND_STATUS",
-	"CharactersticValue": "MOBI",
-	"CharactersticDescription": "Demand transferred to Mobile",
-	"Colourcode": "#00BFFF",
-	"Legendtype": "COLOUR"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='ASGN')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='ASGN')",
-		"type": "com.evorait.evoplan.GanttLegend"
-	},
-	"CharactersticCode": "DEMAND_STATUS",
-	"CharactersticValue": "ASGN",
-	"CharactersticDescription": "Demand is assigned to resourcs",
-	"Colourcode": "#90EE90",
-	"Legendtype": "COLOUR"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='ZUGE')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='ZUGE')",
-		"type": "com.evorait.evoplan.GanttLegend"
-	},
-	"CharactersticCode": "DEMAND_STATUS",
-	"CharactersticValue": "ZUGE",
-	"CharactersticDescription": "",
-	"Colourcode": "#90EE90",
-	"Legendtype": "COLOUR"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='STRT')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='STRT')",
-		"type": "com.evorait.evoplan.GanttLegend"
-	},
-	"CharactersticCode": "DEMAND_STATUS",
-	"CharactersticValue": "STRT",
-	"CharactersticDescription": "Work Started on demand",
-	"Colourcode": "#E6E6FA",
-	"Legendtype": "COLOUR"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='ROUT')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='ROUT')",
-		"type": "com.evorait.evoplan.GanttLegend"
-	},
-	"CharactersticCode": "DEMAND_STATUS",
-	"CharactersticValue": "ROUT",
-	"CharactersticDescription": "Enroute",
-	"Colourcode": "#FFA500",
-	"Legendtype": "COLOUR"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='PASS')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='PASS')",
-		"type": "com.evorait.evoplan.GanttLegend"
-	},
-	"CharactersticCode": "DEMAND_STATUS",
-	"CharactersticValue": "PASS",
-	"CharactersticDescription": "Partial Assigned",
-	"Colourcode": "#FFFF00",
-	"Legendtype": "COLOUR"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='NONWORKINGTIME',CharactersticValue='ShiftOff')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='NONWORKINGTIME',CharactersticValue='ShiftOff')",
-		"type": "com.evorait.evoplan.GanttLegend"
-	},
-	"CharactersticCode": "NONWORKINGTIME",
-	"CharactersticValue": "ShiftOff",
-	"CharactersticDescription": "ShiftOff",
-	"Colourcode": "#ccc",
-	"Legendtype": "COLOUR"
-}, {
-	"__metadata": {
-		"id": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='NONWORKINGTIME',CharactersticValue='Unavailability')",
-		"uri": "https://ed1.evorait.net:50103/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='NONWORKINGTIME',CharactersticValue='Unavailability')",
-		"type": "com.evorait.evoplan.GanttLegend"
-	},
-	"CharactersticCode": "NONWORKINGTIME",
-	"CharactersticValue": "Unavailability",
-	"CharactersticDescription": "Unavailability",
-	"Colourcode": "unavailability",
-	"Legendtype": "PATTERN"
-}]
+ [{
+			"__metadata": {
+				"id": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='COMP')",
+				"uri": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='COMP')",
+				"type": "com.evorait.evoplan.GanttLegend"
+			},
+			"CharactersticCode": "DEMAND_STATUS",
+			"CharactersticValue": "COMP",
+			"CharactersticDescription": "Work Completed",
+			"Colourcode": "#006400",
+			"Legendtype": "COLOUR"
+		}, {
+			"__metadata": {
+				"id": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='MOBI')",
+				"uri": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='MOBI')",
+				"type": "com.evorait.evoplan.GanttLegend"
+			},
+			"CharactersticCode": "DEMAND_STATUS",
+			"CharactersticValue": "MOBI",
+			"CharactersticDescription": "Demand transferred to Mobile",
+			"Colourcode": "#00BFFF",
+			"Legendtype": "COLOUR"
+		}, {
+			"__metadata": {
+				"id": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='ASGN')",
+				"uri": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='ASGN')",
+				"type": "com.evorait.evoplan.GanttLegend"
+			},
+			"CharactersticCode": "DEMAND_STATUS",
+			"CharactersticValue": "ASGN",
+			"CharactersticDescription": "Demand is assigned to resourcs",
+			"Colourcode": "#90EE90",
+			"Legendtype": "COLOUR"
+		}, {
+			"__metadata": {
+				"id": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='ROUT')",
+				"uri": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='ROUT')",
+				"type": "com.evorait.evoplan.GanttLegend"
+			},
+			"CharactersticCode": "DEMAND_STATUS",
+			"CharactersticValue": "ROUT",
+			"CharactersticDescription": "Enroute",
+			"Colourcode": "#E6E6FA",
+			"Legendtype": "COLOUR"
+		}, {
+			"__metadata": {
+				"id": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='STRT')",
+				"uri": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='STRT')",
+				"type": "com.evorait.evoplan.GanttLegend"
+			},
+			"CharactersticCode": "DEMAND_STATUS",
+			"CharactersticValue": "STRT",
+			"CharactersticDescription": "Work Started on demand",
+			"Colourcode": "#FFA500",
+			"Legendtype": "COLOUR"
+		}, {
+			"__metadata": {
+				"id": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='POOL')",
+				"uri": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='POOL')",
+				"type": "com.evorait.evoplan.GanttLegend"
+			},
+			"CharactersticCode": "DEMAND_STATUS",
+			"CharactersticValue": "POOL",
+			"CharactersticDescription": "Pool Assignment",
+			"Colourcode": "#FFB133",
+			"Legendtype": "COLOUR"
+		}, {
+			"__metadata": {
+				"id": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='PASS')",
+				"uri": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='DEMAND_STATUS',CharactersticValue='PASS')",
+				"type": "com.evorait.evoplan.GanttLegend"
+			},
+			"CharactersticCode": "DEMAND_STATUS",
+			"CharactersticValue": "PASS",
+			"CharactersticDescription": "Partial Assigned",
+			"Colourcode": "#FFFF00",
+			"Legendtype": "COLOUR"
+		}, {
+			"__metadata": {
+				"id": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='NONWORKINGTIME',CharactersticValue='ShiftOff')",
+				"uri": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='NONWORKINGTIME',CharactersticValue='ShiftOff')",
+				"type": "com.evorait.evoplan.GanttLegend"
+			},
+			"CharactersticCode": "NONWORKINGTIME",
+			"CharactersticValue": "ShiftOff",
+			"CharactersticDescription": "Shiftoff",
+			"Colourcode": "#ccc",
+			"Legendtype": "COLOUR"
+		}, {
+			"__metadata": {
+				"id": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='NONWORKINGTIME',CharactersticValue='Unavailability')",
+				"uri": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='NONWORKINGTIME',CharactersticValue='Unavailability')",
+				"type": "com.evorait.evoplan.GanttLegend"
+			},
+			"CharactersticCode": "NONWORKINGTIME",
+			"CharactersticValue": "Unavailability",
+			"CharactersticDescription": "Unavailability",
+			"Colourcode": "unavailability",
+			"Legendtype": "PATTERN"
+		}, {
+			"__metadata": {
+				"id": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='ONCALL',CharactersticValue='Oncall')",
+				"uri": "https://evoplan2ui5-ad74c0790.dispatcher.hana.ondemand.com/sap/opu/odata/EVORA/EP_MAIN_SRV/GanttLegendSet(CharactersticCode='ONCALL',CharactersticValue='Oncall')",
+				"type": "com.evorait.evoplan.GanttLegend"
+			},
+			"CharactersticCode": "ONCALL",
+			"CharactersticValue": "Oncall",
+			"CharactersticDescription": "Oncall",
+			"Colourcode": "oncallorovertime",
+			"Legendtype": "PATTERN"
+		}]
