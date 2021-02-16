@@ -19,7 +19,7 @@ sap.ui.define([
 		 * init and get dialog view
 		 * @returns {sap.ui.core.Control|sap.ui.core.Control[]|*}
 		 */
-		open: function (oView, aSelectedPath, mParameters,sSource) {
+		open: function (oView, aSelectedPath, mParameters, sSource) {
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
@@ -30,10 +30,10 @@ sap.ui.define([
 				}).then(function (oDialog) {
 					oView.getModel("appView").setProperty("/busy", false);
 					this._oDialog = oDialog;
-					this.onOpen(oDialog, oView, aSelectedPath, mParameters,sSource);
+					this.onOpen(oDialog, oView, aSelectedPath, mParameters, sSource);
 				}.bind(this));
 			} else {
-				this.onOpen(this._oDialog, oView, aSelectedPath, mParameters,sSource);
+				this.onOpen(this._oDialog, oView, aSelectedPath, mParameters, sSource);
 			}
 		},
 
@@ -43,7 +43,7 @@ sap.ui.define([
 		 * @param oView
 		 * @param oEvent
 		 */
-		onOpen: function (oDialog, oView, aSelectedPath, mParameters,sSource) {
+		onOpen: function (oDialog, oView, aSelectedPath, mParameters, sSource) {
 			// var oDialog = this.getDialog(oView);
 			this._oView = oView;
 			this._component = oView.getController().getOwnerComponent();
@@ -69,33 +69,30 @@ sap.ui.define([
 
 			oDialog.setTitle(this._resourceName);
 			oDialog.addStyleClass(this._component.getContentDensityClass());
-			
+
 			// Header for Manage Absence / Create Time Allocation
 			var sHeaderAbsence = this._oView.getModel("i18n").getResourceBundle().getText("xtit.absences"),
-			    sHeaderTimeBloc = this._oView.getModel("i18n").getResourceBundle().getText("xtit.blockers");
-		
+				sHeaderTimeBloc = this._oView.getModel("i18n").getResourceBundle().getText("xtit.blockers");
+
 			// connect dialog to view (models, lifecycle)
 			oView.addDependent(oDialog);
 			oDialog.open();
-			
+
 			//Setting header & Enabling/Disabling Create button for manage Absence & Time Allocatio
-			if(this.sSource === "timeAlloc")
-			{
-			Fragment.byId(this._id, "idCreateTimeAlloc").setVisible(true);
-			Fragment.byId(this._id, "idCreateAbsence").setVisible(false);
-			Fragment.byId(this._id, "idUpdateTimeAllocation").setVisible(true);
-			Fragment.byId(this._id, "idUpdateMangAbs").setVisible(false);
-			//setting header
-			Fragment.byId(this._id, "idResourceAvailList").setHeader(sHeaderTimeBloc);
-			}
-			else
-			{
-			Fragment.byId(this._id, "idCreateTimeAlloc").setVisible(false);
-			Fragment.byId(this._id, "idCreateAbsence").setVisible(true);
-			Fragment.byId(this._id, "idUpdateMangAbs").setVisible(true);
-			Fragment.byId(this._id, "idUpdateTimeAllocation").setVisible(false);
-			//setting header
-			Fragment.byId(this._id, "idResourceAvailList").setHeader(sHeaderAbsence);
+			if (this.sSource === "timeAlloc") {
+				Fragment.byId(this._id, "idCreateTimeAlloc").setVisible(true);
+				Fragment.byId(this._id, "idCreateAbsence").setVisible(false);
+				Fragment.byId(this._id, "idUpdateTimeAllocation").setVisible(true);
+				Fragment.byId(this._id, "idUpdateMangAbs").setVisible(false);
+				//setting header
+				Fragment.byId(this._id, "idResourceAvailList").setHeader(sHeaderTimeBloc);
+			} else {
+				Fragment.byId(this._id, "idCreateTimeAlloc").setVisible(false);
+				Fragment.byId(this._id, "idCreateAbsence").setVisible(true);
+				Fragment.byId(this._id, "idUpdateMangAbs").setVisible(true);
+				Fragment.byId(this._id, "idUpdateTimeAllocation").setVisible(false);
+				//setting header
+				Fragment.byId(this._id, "idResourceAvailList").setHeader(sHeaderAbsence);
 			}
 		},
 		/**
@@ -154,26 +151,20 @@ sap.ui.define([
 			aPath.shift();
 			//Getting the Value for Blocked Time for Time Allocation
 			var sCurPageId = this._oApp.getCurrentPage().getId().slice(15);
-			if(this.sSource === "timeAlloc" && sCurPageId === "detail" && sProperty !== "DELETE")
-			{
+			if (this.sSource === "timeAlloc" && sCurPageId === "detail" && sProperty !== "DELETE") {
 				oData.BlockPercentage = Fragment.byId(this._id, "idUpdateTimeAllocSlider").getValue();
 				oData.AvailType = Fragment.byId(this._id, "idTimeAllocAvailType").getSelectedKey();
-			}
-			else if(this.sSource === "timeAlloc" && sCurPageId === "create" && sProperty !== "DELETE")
-			{
+			} else if (this.sSource === "timeAlloc" && sCurPageId === "create" && sProperty !== "DELETE") {
 				oData.BlockPercentage = Fragment.byId(this._id, "idTimeAllocSlider").getValue();
 				oData.AvailType = Fragment.byId(this._id, "idTimeAllocAvailType").getSelectedKey()
-			}
-			else
-			{
-			oData.BlockPercentage = 0;
+			} else {
+				oData.BlockPercentage = 0;
 			}
 			oChanges = this._oModel.hasPendingChanges() ? this._oModel.getPendingChanges()[aPath.join("")] : undefined;
 			if (oChanges && sProperty !== "DELETE") {
 				oData.DateFrom = oChanges.DateFrom ? oChanges.DateFrom : oData.DateFrom;
 				oData.DateTo = oChanges.DateTo ? oChanges.DateTo : oData.DateTo;
-				if(this.sSource !== "timeAlloc")
-				{
+				if (this.sSource !== "timeAlloc") {
 					oData.AvailType = Fragment.byId(this._id, "idManagAbsAvailType").getSelectedKey();
 				}
 				return oData;
@@ -205,23 +196,20 @@ sap.ui.define([
 
 			oList = Fragment.byId(this._id, "idResourceAvailList").getList();
 			oBinding = oList.getBinding("items");
-			if(this.sSource === "timeAlloc")
-			{
-			aFilters = [
-				new Filter("ResourceGuid", FilterOperator.EQ, this._resource),
-				new Filter("DateFrom", FilterOperator.LE, sDateControl2),
-				new Filter("DateTo", FilterOperator.GE, sDateControl1),
-				new Filter("AvailabilityTypeGroup", FilterOperator.EQ, "L")
-			];
-			}
-			else
-			{
+			if (this.sSource === "timeAlloc") {
 				aFilters = [
-				new Filter("ResourceGuid", FilterOperator.EQ, this._resource),
-				new Filter("DateFrom", FilterOperator.LE, sDateControl2),
-				new Filter("DateTo", FilterOperator.GE, sDateControl1),
-				new Filter("AvailabilityTypeGroup", FilterOperator.EQ, "N")
-			];
+					new Filter("ResourceGuid", FilterOperator.EQ, this._resource),
+					new Filter("DateFrom", FilterOperator.LE, sDateControl2),
+					new Filter("DateTo", FilterOperator.GE, sDateControl1),
+					new Filter("AvailabilityTypeGroup", FilterOperator.EQ, "L")
+				];
+			} else {
+				aFilters = [
+					new Filter("ResourceGuid", FilterOperator.EQ, this._resource),
+					new Filter("DateFrom", FilterOperator.LE, sDateControl2),
+					new Filter("DateTo", FilterOperator.GE, sDateControl1),
+					new Filter("AvailabilityTypeGroup", FilterOperator.EQ, "N")
+				];
 			}
 			oBinding.filter(new Filter({
 				filters: aFilters,
@@ -244,7 +232,7 @@ sap.ui.define([
 					oUpdateData.EndTimestamp = oChanges.DateTo;
 					oUpdateData.Guid = oChanges.Guid;
 					oUpdateData.BlockPercentage = oChanges.BlockPercentage;
-					if (this._checkMandaoryFields(oChanges,sProperty)) {
+					if (this._checkMandaoryFields(oChanges, sProperty)) {
 						this._callFunction(oUpdateData);
 					}
 				} else if (sProperty === "CREATE") {
@@ -252,14 +240,14 @@ sap.ui.define([
 					oUpdateData.EndTimestamp = oChanges.DateTo;
 					oUpdateData.AvailabilityType = oChanges.AvailType;
 					oUpdateData.BlockPercentage = oChanges.BlockPercentage;
-					if (this._checkMandaoryFields(oChanges,sProperty)) {
+					if (this._checkMandaoryFields(oChanges, sProperty)) {
 						this._callFunction(oUpdateData);
 					}
 				} else {
 					oUpdateData.Guid = oChanges.Guid;
 					this._deleteUnavailability(oUpdateData);
 				}
-				if (!this._checkMandaoryFields(oChanges,sProperty)) {
+				if (!this._checkMandaoryFields(oChanges, sProperty)) {
 					return;
 				}
 				this._resetChanges(oEvent, sProperty);
@@ -286,21 +274,18 @@ sap.ui.define([
 		/**
 		 * Checks madatory fields 
 		 */
-		_checkMandaoryFields: function (oChanges,sProperty) {
+		_checkMandaoryFields: function (oChanges, sProperty) {
 			var bCheck = false;
-			if(sProperty === "DELETE")
-			return;
+			if (sProperty === "DELETE")
+				return;
 			// Check necessary condition common for Manage Absence & Time Allocation
 			if (oChanges.DateFrom !== "" && oChanges.DateTo !== "" && oChanges.AvailType !== "") {
 				bCheck = true;
 			}
 			//Check for Time Allocation & Manage Absence validation
-			if(bCheck && (this.sSource === "timeAlloc" && oChanges.BlockPercentage  !== 0))
-			{
+			if (bCheck && (this.sSource === "timeAlloc" && oChanges.BlockPercentage !== 0)) {
 				return true;
-			}
-			else if(bCheck && this.sSource !== "timeAlloc")
-			{
+			} else if (bCheck && this.sSource !== "timeAlloc") {
 				return true
 			}
 			this.showMessageToast(this._resourceBundle.getText("formValidateErrorMsg"));
@@ -315,13 +300,16 @@ sap.ui.define([
 		_resetChanges: function (oEvent, sProperty) {
 			var oEventBus = sap.ui.getCore().getEventBus();
 			if (this._mParameters.bFromGantt) {
-				this._oModel.resetChanges();
+				//	this._oModel.resetChanges();
+			
 				//to reset "Manage absence" btn enable/disable
 				this._oView.getController().selectedResources = [];
-				this._oView.byId("idButtonreassign").setEnabled(false);
-				this._oView.byId("idButtonunassign").setEnabled(false);
-				this._oView.byId("idButtonCreUA").setEnabled(false);
-				 Fragment.byId(this._id, "idTimeAllocSlider").setValue(0);
+				// this._oView.byId("idButtonreassign").setEnabled(false);
+				// this._oView.byId("idButtonunassign").setEnabled(false);
+				// this._oView.byId("idButtonCreUA").setEnabled(false);
+				// this._oView.byId("idButtonTimeAlloc").setEnabled(false);
+
+				Fragment.byId(this._id, "idTimeAllocSlider").setValue(0);
 			} else if (this._mParameters.bFromHome) {
 				oEventBus.publish("ManageAbsences", "ClearSelection", {});
 			}
@@ -352,7 +340,7 @@ sap.ui.define([
 			Fragment.byId(this._id, "idMangAbsAllocation").setVisible(true);
 			Fragment.byId(this._id, "idTimeAllocation").setVisible(false);
 		},
-			/**
+		/**
 		 * Method triggered to create the unavailability
 		 * @param oEvent
 		 */
@@ -375,10 +363,9 @@ sap.ui.define([
 				this._oApp.to(this._id + "--create");
 			}.bind(this));
 			//Enabling/Disabling the form for Time Allocation & Manage Absence
-			if(this.sSource === "timeAlloc")
-			{
-			Fragment.byId(this._id, "idTimeAllocation").setVisible(true);
-			Fragment.byId(this._id, "idMangAbsAllocation").setVisible(false);
+			if (this.sSource === "timeAlloc") {
+				Fragment.byId(this._id, "idTimeAllocation").setVisible(true);
+				Fragment.byId(this._id, "idMangAbsAllocation").setVisible(false);
 			}
 		},
 		/**
@@ -401,8 +388,8 @@ sap.ui.define([
 		_callFunction: function (oData) {
 			this._oDialog.setBusy(true);
 			this._dataDirty = true;
-			 new Promise(function (resolve, reject) {
-					this.executeFunctionImport.call(this._oView.getController(), this._oModel, oData, "ManageAbsence", "POST").then(function (data) {
+			new Promise(function (resolve, reject) {
+				this.executeFunctionImport.call(this._oView.getController(), this._oModel, oData, "ManageAbsence", "POST").then(function (data) {
 					this._refreshList();
 				}.bind(this));
 			}.bind(this));
@@ -422,6 +409,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onClose: function (oEvent) {
+		//	this._oModel.resetChanges();
 			this._refreshTreeGantt(oEvent);
 		},
 		/**
