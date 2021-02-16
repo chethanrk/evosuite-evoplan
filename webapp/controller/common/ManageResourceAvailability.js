@@ -304,10 +304,10 @@ sap.ui.define([
 			
 				//to reset "Manage absence" btn enable/disable
 				this._oView.getController().selectedResources = [];
-				// this._oView.byId("idButtonreassign").setEnabled(false);
-				// this._oView.byId("idButtonunassign").setEnabled(false);
-				// this._oView.byId("idButtonCreUA").setEnabled(false);
-				// this._oView.byId("idButtonTimeAlloc").setEnabled(false);
+				this._oView.byId("idButtonreassign").setEnabled(false);
+				this._oView.byId("idButtonunassign").setEnabled(false);
+				this._oView.byId("idButtonCreUA").setEnabled(false);
+				this._oView.byId("idButtonTimeAlloc").setEnabled(false);
 
 				Fragment.byId(this._id, "idTimeAllocSlider").setValue(0);
 			} else if (this._mParameters.bFromHome) {
@@ -409,7 +409,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onClose: function (oEvent) {
-		//	this._oModel.resetChanges();
+			this._oModel.resetChanges();
 			this._refreshTreeGantt(oEvent);
 		},
 		/**

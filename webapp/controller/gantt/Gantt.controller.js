@@ -873,6 +873,11 @@ sap.ui.define([
 				this.byId("idButtonCreUA").setEnabled(false);
 					this.byId("idButtonTimeAlloc").setEnabled(false);
 			}
+			
+			if(oEvent.getSource().getSelected()){
+					this.byId("idButtonCreUA").setEnabled(true);
+					this.byId("idButtonTimeAlloc").setEnabled(true);
+			}
 
 		},
 
