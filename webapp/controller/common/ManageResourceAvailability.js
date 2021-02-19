@@ -156,9 +156,9 @@ sap.ui.define([
 				oData.AvailType = Fragment.byId(this._id, "idTimeAllocAvailType").getSelectedKey();
 			} else if (this.sSource === "timeAlloc" && sCurPageId === "create" && sProperty !== "DELETE") {
 				oData.BlockPercentage = Fragment.byId(this._id, "idTimeAllocSlider").getValue();
-				oData.AvailType = Fragment.byId(this._id, "idTimeAllocAvailType").getSelectedKey()
+				oData.AvailType = Fragment.byId(this._id, "idTimeAllocAvailType").getSelectedKey();
 			} else {
-				oData.BlockPercentage = 0;
+				//oData.BlockPercentage = 0;
 			}
 			oChanges = this._oModel.hasPendingChanges() ? this._oModel.getPendingChanges()[aPath.join("")] : undefined;
 			if (oChanges && sProperty !== "DELETE") {
@@ -231,7 +231,9 @@ sap.ui.define([
 					oUpdateData.StartTimestamp = oChanges.DateFrom;
 					oUpdateData.EndTimestamp = oChanges.DateTo;
 					oUpdateData.Guid = oChanges.Guid;
+					if (this.sSource === "timeAlloc"){
 					oUpdateData.BlockPercentage = oChanges.BlockPercentage;
+					}
 					if (this._checkMandaoryFields(oChanges, sProperty)) {
 						this._callFunction(oUpdateData);
 					}
@@ -239,7 +241,9 @@ sap.ui.define([
 					oUpdateData.StartTimestamp = oChanges.DateFrom;
 					oUpdateData.EndTimestamp = oChanges.DateTo;
 					oUpdateData.AvailabilityType = oChanges.AvailType;
+						if (this.sSource === "timeAlloc"){
 					oUpdateData.BlockPercentage = oChanges.BlockPercentage;
+						}
 					if (this._checkMandaoryFields(oChanges, sProperty)) {
 						this._callFunction(oUpdateData);
 					}
@@ -286,7 +290,7 @@ sap.ui.define([
 			if (bCheck && (this.sSource === "timeAlloc" && oChanges.BlockPercentage !== 0)) {
 				return true;
 			} else if (bCheck && this.sSource !== "timeAlloc") {
-				return true
+				return true;
 			}
 			this.showMessageToast(this._resourceBundle.getText("formValidateErrorMsg"));
 			return false;
