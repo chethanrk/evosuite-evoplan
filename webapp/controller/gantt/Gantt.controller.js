@@ -805,7 +805,7 @@ sap.ui.define([
 			});
 
 		},
-			/**
+		/**
 		 * open the Time Allocation dialog for selected resource
 		 * @param oEvent
 		 */
@@ -820,7 +820,7 @@ sap.ui.define([
 
 			this.getOwnerComponent().manageAvail.open(this.getView(), [this.selectedResources[0]], {
 				bFromGantt: true
-			},"timeAlloc");
+			}, "timeAlloc");
 
 		},
 
@@ -868,15 +868,15 @@ sap.ui.define([
 			if (this.selectedResources.length === 1 && oData && oData.NodeType === "RESOURCE" && oData.ResourceGuid !== "" && oData.ResourceGroupGuid !==
 				"") {
 				this.byId("idButtonCreUA").setEnabled(true);
-					this.byId("idButtonTimeAlloc").setEnabled(true);
+				this.byId("idButtonTimeAlloc").setEnabled(true);
 			} else {
 				this.byId("idButtonCreUA").setEnabled(false);
-					this.byId("idButtonTimeAlloc").setEnabled(false);
+				this.byId("idButtonTimeAlloc").setEnabled(false);
 			}
-			
-			if(oEvent.getSource().getSelected()){
-					this.byId("idButtonCreUA").setEnabled(true);
-					this.byId("idButtonTimeAlloc").setEnabled(true);
+
+			if (oEvent.getSource().getSelected()) {
+				this.byId("idButtonCreUA").setEnabled(true);
+				this.byId("idButtonTimeAlloc").setEnabled(true);
 			}
 
 		},
@@ -934,7 +934,7 @@ sap.ui.define([
 			this.byId("idButtonreassign").setEnabled(false);
 			this.byId("idButtonunassign").setEnabled(false);
 			this.byId("idButtonCreUA").setEnabled(false);
-				this.byId("idButtonTimeAlloc").setEnabled(false);
+			this.byId("idButtonTimeAlloc").setEnabled(false);
 		},
 
 		/**
@@ -966,7 +966,7 @@ sap.ui.define([
 		 * @param sType
 		 * @return {string}
 		 */
-		getPattern: function (sType,sColour) {
+		getPattern: function (sType, sColour) {
 			if (sType === "N") {
 				return "url(#" + this._viewId + "--unavailability)";
 			} else if (sType === "A") {
@@ -975,11 +975,9 @@ sap.ui.define([
 				return "transparent";
 			} else if (sType === "T") {
 				return "url(#" + this._viewId + "--oncallorovertime)";
-			} 
-			 else if (sType === "L") {
+			} else if (sType === "L") {
 				return sColour;
-			} 
-			else {
+			} else {
 				return "transparent";
 			}
 
@@ -1021,7 +1019,14 @@ sap.ui.define([
 			if (oResourceNode.NodeType !== "ASSIGNMENT") {
 				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
 			}
+		},
+
+		//Block Percentage and Description display on Gantt (Formatter)
+		getBlockPercentageText: function (oAvailabilityTypeGroup, oBlockPercentage, oDescription) {
+			if (oAvailabilityTypeGroup === "L" && oBlockPercentage !== 0) {
+				return oDescription + "-" + oBlockPercentage + "%";
+			}
 		}
-		
+
 	});
 });
