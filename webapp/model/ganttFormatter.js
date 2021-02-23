@@ -90,6 +90,13 @@ sap.ui.define([
             }
             var dateTimestamp = new Date(oDate).getTime();
             return new Date(dateTimestamp + oTime.ms);
-        }
+        },
+        
+        	//Block Percentage and Description display on Gantt (Formatter)
+		getBlockPercentageText: function (oAvailabilityTypeGroup, oBlockPercentage, oDescription) {
+			if (oAvailabilityTypeGroup === "L" && oBlockPercentage !== 0) {
+				return oDescription + "-" + oBlockPercentage + "%";
+			}
+		}
     };
 });
