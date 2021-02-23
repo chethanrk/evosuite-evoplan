@@ -7,7 +7,7 @@
 		fill="{parts: [ {path: 'AvailabilityTypeGroup'}, {path: 'BlockPercentageColor'} ], formatter:'.getPattern' }" fillOpacity="1" strokeOpacity="0" opacity="1"
 		stroke="transparent" strokeWidth="0"></gnt2:BaseRectangle>
 		<gnt2:BaseText
-				text="{parts: [ {path: 'AvailabilityTypeGroup'}, {path: 'BlockPercentage'}, {path: 'Description'} ], formatter:'.getBlockPercentageText' }"
+				text="{parts: [ {path: 'AvailabilityTypeGroup'}, {path: 'BlockPercentage'}, {path: 'Description'} ], formatter:'.ganttFormatter.getBlockPercentageText' }"
 				shapeId="{Guid}" countInBirdEye="false" time="{DateFrom}" endTime="{DateTo}" connectable="false" resizable="false" selectable="true"
 				draggable="false" tooltip="{Description}-{BlockPercentage}% " fill="#000000"></gnt2:BaseText>
 		</gnt2:shapes>	</gnt2:BaseGroup >
