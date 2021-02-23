@@ -95,7 +95,7 @@ sap.ui.define([
         	//Block Percentage and Description display on Gantt (Formatter)
 		getBlockPercentageText: function (oAvailabilityTypeGroup, oBlockPercentage, oDescription) {
 			if (oAvailabilityTypeGroup === "L" && oBlockPercentage !== 0) {
-				return oDescription + "-" + oBlockPercentage + "%";
+				return oDescription;// + "-" + oBlockPercentage + "%";
 			}
 		}
     };
