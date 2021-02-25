@@ -227,12 +227,19 @@ sap.ui.define([
 					ResourceGuid: this._resource
 				};
 			if (oChanges) {
+				var oSDate, oEDate;
 				if (sProperty === "SAVE") {
 					oUpdateData.StartTimestamp = oChanges.DateFrom;
 					oUpdateData.EndTimestamp = oChanges.DateTo;
 					oUpdateData.Guid = oChanges.Guid;
-					if (this.sSource === "timeAlloc"){
-					oUpdateData.BlockPercentage = oChanges.BlockPercentage;
+					if (this.sSource === "timeAlloc") {
+						oUpdateData.BlockPercentage = oChanges.BlockPercentage;
+						oSDate = oChanges.DateFrom;
+						oSDate.setHours(0, 0, 0);
+						oEDate = oChanges.DateTo;
+						oEDate.setHours(23, 59, 59);
+						oUpdateData.StartTimestamp = oChanges.DateFrom;
+						oUpdateData.EndTimestamp = oChanges.DateTo;
 					}
 					if (this._checkMandaoryFields(oChanges, sProperty)) {
 						this._callFunction(oUpdateData);
@@ -241,9 +248,15 @@ sap.ui.define([
 					oUpdateData.StartTimestamp = oChanges.DateFrom;
 					oUpdateData.EndTimestamp = oChanges.DateTo;
 					oUpdateData.AvailabilityType = oChanges.AvailType;
-						if (this.sSource === "timeAlloc"){
-					oUpdateData.BlockPercentage = oChanges.BlockPercentage;
-						}
+					if (this.sSource === "timeAlloc") {
+						oUpdateData.BlockPercentage = oChanges.BlockPercentage;
+						oSDate = oChanges.DateFrom;
+						oSDate.setHours(0, 0, 0);
+						oEDate = oChanges.DateTo;
+						oEDate.setHours(23, 59, 59);
+						oUpdateData.StartTimestamp = oChanges.DateFrom;
+						oUpdateData.EndTimestamp = oChanges.DateTo;
+					}
 					if (this._checkMandaoryFields(oChanges, sProperty)) {
 						this._callFunction(oUpdateData);
 					}
@@ -305,7 +318,7 @@ sap.ui.define([
 			var oEventBus = sap.ui.getCore().getEventBus();
 			if (this._mParameters.bFromGantt) {
 				//	this._oModel.resetChanges();
-			
+
 				//to reset "Manage absence" btn enable/disable
 				this._oView.getController().selectedResources = [];
 				this._oView.byId("idButtonreassign").setEnabled(false);
