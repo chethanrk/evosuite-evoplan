@@ -724,7 +724,10 @@ sap.ui.define([
 				oRowContext = oParams.shape.getBindingContext(),
 				oData = this.getModel().getProperty(oRowContext.getPath()),
 				oViewModel = this.getModel("viewModel"),
-				oModel = oRowContext.getModel();
+				oUserModel = this.getModel("user"),
+				oModel = oRowContext.getModel(),
+				oResourceBundle = this.getResourceBundle(),
+				iNewEffort = this.getTimeDifference(oParams.newTime[0],oParams.newTime[1]);
 
 			oViewModel.setProperty("/ganttSettings/busy", true);
 			// to identify the action done on respective page
@@ -735,11 +738,26 @@ sap.ui.define([
 					if (oAssignmentObj.AllowChange) {
 						oAssignmentObj.DateFrom = oParams.newTime[0];
 						oAssignmentObj.DateTo = oParams.newTime[1];
-
-						this._oAssignementModel.setData(oAssignmentObj);
-						this.updateAssignment(false, {
-							bFromGantt: true
-						});
+						if(oUserModel.getProperty("/ENABLE_RESIZE_EFFORT_CHECK") && iNewEffort < oAssignmentObj.Effort){
+							this._showConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function(data){
+								if(data === "YES"){
+									this._oAssignementModel.setData(oAssignmentObj);
+									this.updateAssignment(false, {
+										bFromGantt: true
+									});
+								}else{
+									oModel.resetChanges([oRowContext.getPath()]);
+									oViewModel.setProperty("/ganttSettings/busy", false);
+									return;
+								}
+							}.bind(this));
+							
+						}else{
+							this._oAssignementModel.setData(oAssignmentObj);
+							this.updateAssignment(false, {
+								bFromGantt: true
+							});
+						}
 					} else {
 						oModel.resetChanges([oRowContext.getPath()]);
 						oViewModel.setProperty("/ganttSettings/busy", false);
@@ -749,7 +767,18 @@ sap.ui.define([
 				}.bind(this));
 			}
 		},
-
+		/**
+		 * 
+		 * 
+		 * 
+		 */
+		getTimeDifference : function(oDateFrom, oDateTo){
+			var oTimeStampFrom = oDateFrom.getTime(),
+				oTimeStampTo = oDateTo.getTime(),
+				iDifference = oTimeStampTo - oTimeStampFrom,
+				iEffort = (((iDifference/1000)/60)/60);
+			return iEffort;
+		},
 		/**
 		 * double click on a shape
 		 * open assignment detail dialog
