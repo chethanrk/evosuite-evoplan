@@ -37,6 +37,7 @@ sap.ui.define([
 				bFromMap: true
 			};
 			this.oVBI = this.getView().byId("idGeoMap");
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 		},
 
 		//TODO comment
@@ -53,6 +54,7 @@ sap.ui.define([
 		 * @return Filter
 		 */
 		onSelect: function (oEvent) {
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 			var aSelected = oEvent.getParameter("selected"),
 				oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
@@ -72,6 +74,7 @@ sap.ui.define([
 		 * @return Filter
 		 */
 		onDeselect: function (oEvent) {
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 			var aDeSelected = oEvent.getParameter("deselected"),
 				oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
@@ -109,6 +112,7 @@ sap.ui.define([
 		 * @return
 		 */
 		onBeforeRebindTable: function (oEvent) {
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 			var aFilters = this.byId("listReportFilter").getFilters(),
 				aDemandFilters = this.getSelectedDemandFilters();
 			if (aDemandFilters && aDemandFilters.aFilters && aDemandFilters.aFilters.length) {
@@ -135,7 +139,9 @@ sap.ui.define([
 				var oSelectedDemands = this.getModel("viewModel").getProperty("/mapSettings/selectedDemands");
 				if (oSelectedDemands && oSelectedDemands.length) {
 					setTimeout(function () {
-						this._oDraggableTable.getTable().selectAll();
+						if (this._bDemandListScroll === false) {
+							this._oDraggableTable.getTable().selectAll();
+						}
 					}.bind(this), 10);
 				}
 			}.bind(this));
@@ -159,6 +165,7 @@ sap.ui.define([
 		 * @return
 		 */
 		onReset: function (oEvent) {
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 			var oViewModel = this.getModel("viewModel");
 			this._resetMapSelection();
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
@@ -172,6 +179,7 @@ sap.ui.define([
 		 * @return
 		 */
 		onClear: function () {
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 			var oViewModel = this.getModel("viewModel");
 			this._resetMapSelection();
 			this.onResetLegendSelection();
@@ -184,6 +192,7 @@ sap.ui.define([
 		 * @Author: Rahul
 		 */
 		_resetMapSelection: function () {
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 			var aDemandGuidEntity = [],
 				oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
@@ -200,6 +209,7 @@ sap.ui.define([
 		 * @Author: Rahul
 		 */
 		_setMapSelection: function () {
+				this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 			var oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
 			if (aSelectedDemands.length > 0) {
@@ -223,6 +233,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_deselectAll: function () {
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 			this._oDataTable.clearSelection();
 		},
 		/**
@@ -312,6 +323,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		_refreshMapBinding: function () {
+				this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 			// Code to refresh Map
 			this.setMapBusy(true);
 			var oGeoMap = this.getView().byId("idGeoMap"),
@@ -327,14 +339,14 @@ sap.ui.define([
 			var sParentId = oEvent.getSource().getParent().getId();
 			if (sParentId.includes("menu")) {
 				//Operation performed from Spot context Menu
-					var oModel = this.getModel(),
-				sPath = this.selectedDemandPath,
-				oData = oModel.getProperty(sPath),
-				oSelectedData = [{
-					sPath: sPath,
-					oData: oData
-				}];
-			this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedData, this._mParameters);
+				var oModel = this.getModel(),
+					sPath = this.selectedDemandPath,
+					oData = oModel.getProperty(sPath),
+					oSelectedData = [{
+						sPath: sPath,
+						oData: oData
+					}];
+				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedData, this._mParameters);
 			} else {
 				//Operation performed from Demands Toolbar
 				this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
@@ -352,6 +364,7 @@ sap.ui.define([
 		 * @since 3.0
 		 */
 		onRowSelectionChange: function (oEvent) {
+			this._bDemandListScroll = true; //Flag to identify Demand List row is selected and scrolled or not
 			var selected = this._oDataTable.getSelectedIndices();
 			if (selected.length > 0) {
 				this.byId("assignButton").setEnabled(true);
@@ -461,9 +474,10 @@ sap.ui.define([
 				oSelectedIndices = this._oDataTable.getSelectedIndices(),
 				oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
+				nSelectedDemandsLength = oSelectedIndices.length,
 				sPath;
 			if (oSelectedIndices.length > 100) {
-				oSelectedIndices.length = 100;
+				nSelectedDemandsLength = 100;
 			}
 			if (aSelectedDemands && aSelectedDemands.length) {
 				for (var i = 0; i < aSelectedDemands.length; i++) {
@@ -471,7 +485,7 @@ sap.ui.define([
 					oModel.setProperty(sPath + "/IS_SELECTED", true);
 				}
 			} else {
-				for (var j = 0; j < oSelectedIndices.length; j++) {
+				for (var j = 0; j < nSelectedDemandsLength; j++) {
 					sPath = this._oDataTable.getContextByIndex(oSelectedIndices[j]).getPath(); //oSelectedContexts[i].context.getPath();
 					if (!aSelectedDemands.includes(sPath)) {
 						aSelectedDemands.push(sPath);
@@ -662,6 +676,16 @@ sap.ui.define([
 			}));
 			return oMenu;
 		},
+		
+		/**
+		 * If you remove this, Demand table filter on changing map selection won't work
+		 */
+		onSelectSpots: function (oEvent) {
+			// Do Not remove this method, Demand table filter on changing map selection won't work
+				this._bDemandListScroll = false;
+		},
+
+
 
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
