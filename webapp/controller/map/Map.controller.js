@@ -37,7 +37,7 @@ sap.ui.define([
 				bFromMap: true
 			};
 			this.oVBI = this.getView().byId("idGeoMap");
-			this._oMapScroll = true;
+			this._bDemandListScroll = true; //Flag to identify Demand List is scrolled or not
 		},
 
 		//TODO comment
@@ -54,7 +54,7 @@ sap.ui.define([
 		 * @return Filter
 		 */
 		onSelect: function (oEvent) {
-			this._oMapScroll = true;
+			this._bDemandListScroll = true; //Flag to identify Demand List is scrolled or not
 			var aSelected = oEvent.getParameter("selected"),
 				oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
@@ -74,7 +74,7 @@ sap.ui.define([
 		 * @return Filter
 		 */
 		onDeselect: function (oEvent) {
-			this._oMapScroll = true;
+			this._bDemandListScroll = true; //Flag to identify Demand List is scrolled or not
 			var aDeSelected = oEvent.getParameter("deselected"),
 				oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
@@ -112,7 +112,7 @@ sap.ui.define([
 		 * @return
 		 */
 		onBeforeRebindTable: function (oEvent) {
-			this._oMapScroll = true;
+			this._bDemandListScroll = true; //Flag to identify Demand List is scrolled or not
 			var aFilters = this.byId("listReportFilter").getFilters(),
 				aDemandFilters = this.getSelectedDemandFilters();
 			if (aDemandFilters && aDemandFilters.aFilters && aDemandFilters.aFilters.length) {
@@ -139,7 +139,7 @@ sap.ui.define([
 				var oSelectedDemands = this.getModel("viewModel").getProperty("/mapSettings/selectedDemands");
 				if (oSelectedDemands && oSelectedDemands.length) {
 					setTimeout(function () {
-						if (this._oMapScroll === true) {
+						if (this._bDemandListScroll === true) {
 							this._oDraggableTable.getTable().selectAll();
 						}
 					}.bind(this), 10);
@@ -165,7 +165,7 @@ sap.ui.define([
 		 * @return
 		 */
 		onReset: function (oEvent) {
-			this._oMapScroll = true;
+			this._bDemandListScroll = true; //Flag to identify Demand List is scrolled or not
 			var oViewModel = this.getModel("viewModel");
 			this._resetMapSelection();
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
@@ -179,7 +179,7 @@ sap.ui.define([
 		 * @return
 		 */
 		onClear: function () {
-			this._oMapScroll = true;
+			this._bDemandListScroll = true; //Flag to identify Demand List is scrolled or not
 			var oViewModel = this.getModel("viewModel");
 			this._resetMapSelection();
 			this.onResetLegendSelection();
@@ -192,7 +192,7 @@ sap.ui.define([
 		 * @Author: Rahul
 		 */
 		_resetMapSelection: function () {
-				this._oMapScroll = true;
+			this._bDemandListScroll = true; //Flag to identify Demand List is scrolled or not
 			var aDemandGuidEntity = [],
 				oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
@@ -209,7 +209,7 @@ sap.ui.define([
 		 * @Author: Rahul
 		 */
 		_setMapSelection: function () {
-				this._oMapScroll = true;
+				this._bDemandListScroll = true; //Flag to identify Demand List is scrolled or not
 			var oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
 			if (aSelectedDemands.length > 0) {
@@ -233,7 +233,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_deselectAll: function () {
-				this._oMapScroll = true;
+			this._bDemandListScroll = true; //Flag to identify Demand List is scrolled or not
 			this._oDataTable.clearSelection();
 		},
 		/**
@@ -323,7 +323,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		_refreshMapBinding: function () {
-				this._oMapScroll = true;
+				this._bDemandListScroll = true; //Flag to identify Demand List is scrolled or not
 			// Code to refresh Map
 			this.setMapBusy(true);
 			var oGeoMap = this.getView().byId("idGeoMap"),
@@ -364,7 +364,7 @@ sap.ui.define([
 		 * @since 3.0
 		 */
 		onRowSelectionChange: function (oEvent) {
-			this._oMapScroll = false;
+			this._bDemandListScroll = false; //Flag to identify Demand List is scrolled or not
 			var selected = this._oDataTable.getSelectedIndices();
 			if (selected.length > 0) {
 				this.byId("assignButton").setEnabled(true);
@@ -474,10 +474,10 @@ sap.ui.define([
 				oSelectedIndices = this._oDataTable.getSelectedIndices(),
 				oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
-				oSelectedIndicesLength = oSelectedIndices.length,
+				nSelectedDemandsLength = oSelectedIndices.length,
 				sPath;
 			if (oSelectedIndices.length > 100) {
-				oSelectedIndicesLength = 100;
+				nSelectedDemandsLength = 100;
 			}
 			if (aSelectedDemands && aSelectedDemands.length) {
 				for (var i = 0; i < aSelectedDemands.length; i++) {
@@ -485,7 +485,7 @@ sap.ui.define([
 					oModel.setProperty(sPath + "/IS_SELECTED", true);
 				}
 			} else {
-				for (var j = 0; j < oSelectedIndicesLength; j++) {
+				for (var j = 0; j < nSelectedDemandsLength; j++) {
 					sPath = this._oDataTable.getContextByIndex(oSelectedIndices[j]).getPath(); //oSelectedContexts[i].context.getPath();
 					if (!aSelectedDemands.includes(sPath)) {
 						aSelectedDemands.push(sPath);
@@ -682,7 +682,7 @@ sap.ui.define([
 		 */
 		onSelectSpots: function (oEvent) {
 			// Do Not remove this method, Demand table filter on changing map selection won't work
-				this._oMapScroll = true;
+				this._bDemanListScroll = true;
 		},
 
 
