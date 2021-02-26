@@ -181,6 +181,7 @@ sap.ui.define([
 			} else if (oParams.config.pattern.startsWith("Gantt")) {
 				pageTitle = oResourceBundle.getText("xbut.pageGanttChart");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
+				this.getModel("viewModel").setProperty("/ganttSelectionPane", "25%");
 			} else if (oParams.config.pattern.startsWith("SplitPage")) {
 				pageTitle = oResourceBundle.getText("xbut.pageGanttChartSplit");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);

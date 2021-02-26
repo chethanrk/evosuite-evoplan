@@ -65,7 +65,7 @@
 									  shapeDoubleClick="onShapeDoubleClick"
 									  shapeContextMenu="onShapeContextMenu"
 									  showShapeTimeOnDrag="true"
-									  selectionPanelSize="25%"
+									  selectionPanelSize="{viewModel>/ganttSelectionPane}"
 									  nowLineInUTC="false">
 				<gnt2:table>
 					<table:TreeTable
