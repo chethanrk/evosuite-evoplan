@@ -216,6 +216,40 @@ sap.ui.define([
 				and: true
 			}));
 		},
+
+	/**
+		 * This Event is triggered when creating/updating the field values for Manage Absence and Time Allocation
+		 * @param sProperty - To identify whether its create or update
+		 * @param oChanges - Which holds Data 
+		 * @param  oUpdateData - Data to be passed to backend
+		 */
+		_ProceedToManageAbsenceService: function (sProperty, oChanges, oUpdateData) {
+
+			oUpdateData.StartTimestamp = oChanges.DateFrom;
+			oUpdateData.EndTimestamp = oChanges.DateTo;
+
+			if (this.sSource === "timeAlloc") {
+				var oStartDate, oEndDate;
+				oUpdateData.BlockPercentage = oChanges.BlockPercentage;
+				oStartDate = oChanges.DateFrom; 
+				oStartDate.setHours(0, 0, 0);//TimeStamp to be sent as T00:00:00 for Start Date only for TimeAllocation
+				oEndDate = oChanges.DateTo;
+				oEndDate.setHours(23, 59, 59);//TimeStamp to be sent as T23:59:59 for End Date only for TimeAllocation
+				oUpdateData.StartTimestamp = oChanges.DateFrom;
+				oUpdateData.EndTimestamp = oChanges.DateTo;
+			}
+
+			if (sProperty === "SAVE") {
+				oUpdateData.Guid = oChanges.Guid;
+			} else if (sProperty === "CREATE") {
+				oUpdateData.AvailabilityType = oChanges.AvailType;
+			}
+
+			if (this._checkMandaoryFields(oChanges, sProperty)) {
+				this._callFunction(oUpdateData);
+			}
+		},
+		
 		/**
 		 * This Event is triggered when creating/updating/deleting
 		 * @param oEvent
@@ -227,27 +261,10 @@ sap.ui.define([
 					ResourceGuid: this._resource
 				};
 			if (oChanges) {
-				if (sProperty === "SAVE") {
-					oUpdateData.StartTimestamp = oChanges.DateFrom;
-					oUpdateData.EndTimestamp = oChanges.DateTo;
-					oUpdateData.Guid = oChanges.Guid;
-					if (this.sSource === "timeAlloc"){
-					oUpdateData.BlockPercentage = oChanges.BlockPercentage;
-					}
-					if (this._checkMandaoryFields(oChanges, sProperty)) {
-						this._callFunction(oUpdateData);
-					}
-				} else if (sProperty === "CREATE") {
-					oUpdateData.StartTimestamp = oChanges.DateFrom;
-					oUpdateData.EndTimestamp = oChanges.DateTo;
-					oUpdateData.AvailabilityType = oChanges.AvailType;
-						if (this.sSource === "timeAlloc"){
-					oUpdateData.BlockPercentage = oChanges.BlockPercentage;
-						}
-					if (this._checkMandaoryFields(oChanges, sProperty)) {
-						this._callFunction(oUpdateData);
-					}
-				} else {
+				if (sProperty === "SAVE" || sProperty === "CREATE") {
+					this._ProceedToManageAbsenceService(sProperty, oChanges, oUpdateData);
+				}
+				else {
 					oUpdateData.Guid = oChanges.Guid;
 					this._deleteUnavailability(oUpdateData);
 				}
@@ -286,6 +303,14 @@ sap.ui.define([
 			if (oChanges.DateFrom !== "" && oChanges.DateTo !== "" && oChanges.AvailType !== "") {
 				bCheck = true;
 			}
+
+			//Checking End Date is greater than Start Date 
+			if (oChanges.DateTo < oChanges.DateFrom) {
+				bCheck = false;
+				this.showMessageToast(this._resourceBundle.getText("ymsg.datesInvalid"));
+				return false;
+			}
+
 			//Check for Time Allocation & Manage Absence validation
 			if (bCheck && (this.sSource === "timeAlloc" && oChanges.BlockPercentage !== 0)) {
 				return true;
@@ -305,7 +330,7 @@ sap.ui.define([
 			var oEventBus = sap.ui.getCore().getEventBus();
 			if (this._mParameters.bFromGantt) {
 				//	this._oModel.resetChanges();
-			
+
 				//to reset "Manage absence" btn enable/disable
 				this._oView.getController().selectedResources = [];
 				this._oView.byId("idButtonreassign").setEnabled(false);
