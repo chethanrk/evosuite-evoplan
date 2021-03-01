@@ -616,15 +616,29 @@ sap.ui.define([
 		/* 
 		 Hiding Map Spots when Latitude and Longitude both are zero
 		 */
-		 	formatMapSpot: function (oLatitude, oLongitude) {
+		formatMapSpot: function (oLatitude, oLongitude) {
 			if (oLatitude && oLongitude) {
-				if(oLatitude === "0.000000000000" && oLongitude === "0.000000000000"){
+				if (oLatitude === "0.000000000000" && oLongitude === "0.000000000000") {
 					return "";
-				}else{
+				} else {
 					return oLatitude + ";" + oLongitude + ";0";
 				}
 			}
 		},
+		formatHighlighter: function (sDes) {
+			if(sDes){
+				return sDes;
+			}
+			// switch (sDes) {
+			// case "Florian Hard":
+			// 	return "#ff6060";
+			// case "Olaf Hartmann":
+			// 	return "#6BDE6B";
+			// default:
+				return "";
+
+			// }
+		}
 
 	};
 });

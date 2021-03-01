@@ -23,6 +23,7 @@ sap.ui.define([
 				isLink = oControl.getProperty("isLink"),
 				titleText = oAssoTitle ? oAssoTitle.getText() : oControl.getText();
 			var oResourceIcon = oControl._icon;
+			var sHighlightColor = oControl.getHighlightColor();
 			// Setting icon to render which resource we are showing
 			oResourceIcon.setSrc(oControl.getIcon() !== "" ? oControl.getIcon() : "sap-icon://employee");
 
@@ -32,7 +33,12 @@ sap.ui.define([
 			oRm.addClass("sapMTitleStyle" + (oControl.getTitleStyle() || sap.ui.core.TitleLevel.Auto));
 			oRm.addClass("sapMTitleNoWrap");
 			oRm.addClass("sapUiSelectable");
+			oRm.addClass("TreeTitleBG");
 
+			if (sHighlightColor) {
+				oRm.addStyle("background-color", sHighlightColor + "!important");
+				oRm.addClass("TreeTitleBG");
+			}
 			var sWidth = oControl.getWidth();
 			if (!sWidth) {
 				oRm.addClass("sapMTitleMaxWidth");
@@ -65,7 +71,6 @@ sap.ui.define([
 			oRm.write(">");
 
 			oRm.renderControl(oResourceIcon);
-		
 
 			if (!oControl.getIsWorkTimeEnabled()) {
 				// Availability icon

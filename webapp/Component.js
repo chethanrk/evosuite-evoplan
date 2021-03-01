@@ -116,7 +116,10 @@ sap.ui.define([
 					selectedDemands: [],
 					routeData: [],
 					checkedDemands: []
-				}
+				},
+				resourceFilterforRightTechnician: false,
+				CheckRightTechnician:false
+
 			});
 			this.setModel(oViewModel, "viewModel");
 
