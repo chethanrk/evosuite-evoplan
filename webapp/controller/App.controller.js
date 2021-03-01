@@ -180,6 +180,7 @@ sap.ui.define([
 			} else if (oParams.config.pattern.startsWith("Gantt")) {
 				pageTitle = oResourceBundle.getText("xbut.pageGanttChart");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
+				this.getModel("viewModel").setProperty("/ganttSelectionPane", "25%");
 			} else if (oParams.config.pattern.startsWith("SplitPage")) {
 				pageTitle = oResourceBundle.getText("xbut.pageGanttChartSplit");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
@@ -306,7 +307,7 @@ sap.ui.define([
 		 */
 		onRefreshBuffer: function (oEvent) {
 			var oComponent = this.getOwnerComponent(),
-			oSelectedRoute = this.getView().byId("idHeaderMenu").getText(),
+				oSelectedRoute = this.getView().byId("idHeaderMenu").getText(),
 				oResourceBundleText = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 
 			this.executeFunctionImport(this.getModel(), {}, "RefreshSharedMemoryAreas", "POST").then(function () {
@@ -320,17 +321,19 @@ sap.ui.define([
 				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageAssetManager")) {
 					this._eventBus.publish("BaseController", "refreshAssetCal", {});
 					this._eventBus.publish("BaseController", "refreshAssets", {});
-				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageMessageCockpit")) {} else if (oSelectedRoute ===
-					oResourceBundleText.getText("xbut.pageGanttChartSplit")) {
+				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageMessageCockpit")) {
+				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageGanttChartSplit")) {
 					this._eventBus.publish("BaseController", "refreshDemandTable", {});
 					this._eventBus.publish("BaseController", "refreshTreeTable", {});
 				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageMap")) {
-					oComponent._getResourceGroups.call(oComponent);
+						oComponent._getResourceGroups.call(oComponent);
 					this._eventBus.publish("BaseController", "refreshMapView", {});
 					this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
 					this._eventBus.publish("BaseController", "refreshMapDemandTable", {});
 				}
-			}.bind(this), function (data) {}.bind(this)).catch(function (data) {}.bind(this));
+			}.bind(this), function (data) {
+			}.bind(this)).catch(function (data) {
+			}.bind(this));
 
 			// this.executeFunctionImport(this.getModel(), {}, "RefreshSharedMemoryAreas", "POST").then(function () {
 			// 	oComponent._getResourceGroups.call(oComponent);

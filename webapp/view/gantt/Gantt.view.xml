@@ -23,10 +23,21 @@
 					</gnt2:legendContainer>
 				</gnt2:ContainerToolbar>
 			</gnt2:toolbar>
-			<gnt2:GanttChartWithTable id="ganttResourceAssignments" ghostAlignment="Start" adhocLineLayer="Bottom" shapeSelectionMode="Single"
-				shapeSelectionSettings="{color:'red', strokeDasharray:'1,0'}" shapeDrop="onShapeDrop" shapeResize="onShapeResize"
-				shapeMouseEnter="onShapeMouseEnter" shapeMouseLeave="onShapeMouseLeave" shapeDoubleClick="onShapeDoubleClick"
-				shapeContextMenu="onShapeContextMenu" showShapeTimeOnDrag="true" selectionPanelSize="25%" nowLineInUTC="false">
+
+			<gnt2:GanttChartWithTable id="ganttResourceAssignments"
+									  ghostAlignment="Start"
+									  adhocLineLayer="Bottom"
+									  shapeSelectionMode = "Single"
+									  shapeSelectionSettings="{color:'red', strokeDasharray:'1,0'}"
+									  shapeDrop="onShapeDrop"
+									  shapeResize="onShapeResize"
+									  shapeMouseEnter="onShapeMouseEnter"
+									  shapeMouseLeave="onShapeMouseLeave"
+									  shapeDoubleClick="onShapeDoubleClick"
+									  shapeContextMenu="onShapeContextMenu"
+									  showShapeTimeOnDrag="true"
+									  selectionPanelSize="{viewModel>/ganttSelectionPane}"
+									  nowLineInUTC="false">
 				<gnt2:table>
 					<table:TreeTable id="ganttResourceTreeTable" class="resourceGanttTreeTable" selectionMode="Single" visibleRowCountMode="Auto" threshold="10"
 						enableColumnReordering="false" enableBusyIndicator="true" busyStateChanged="onBusyStateChanged" enableCellFilter="false"
