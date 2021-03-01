@@ -56,6 +56,10 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: false
+				},
+				highlightColor:{
+					type: "string",
+					group: "Misc"
 				}
 			},
 			events: {

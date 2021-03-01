@@ -1,92 +1,88 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:table="sap.ui.table" xmlns:l="sap.ui.layout" xmlns:dnd="sap.ui.core.dnd" 
-xmlns:controls="com.evorait.evoplan.ui.controls">
-    
-        <smartTable:SmartTable id="droppableTable" entitySet="{viewModel>/treeSet}" class="listTreeTable" tableType="TreeTable" fitContainer="true"
-				useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false" smartFilterId="resourceTreeFilterBar"
-				header="Hierarchy" showRowCount="false" beforeRebindTable="onBeforeRebindTable"
-				requestAtLeastFields="StatusIcon,IsSelected,NodeId,ResourceGroupGuid,NodeType,ResourceGuid,DemandGuid,ParentNodeId,AssignmentGuid,HierarchyLevel,DrillState,Description,AssignmentCount,Utilization,StartDate,StartTime,EndDate,EndTime,IS_AVAILABLE,TOTAL_EFFORT,ACTUAL_WORKING_HOURS,PLANNED_WORKING_HOURS,CAPACITIVE_EFFORT,ASSIGNMENT_TYPE,ResourceIcon,GANTT_ENABLED,RES_ASGN_START_DATE,RES_ASGN_START_TIME,RES_ASGN_END_DATE,RES_ASGN_END_TIME"
-				>
-				<smartTable:layoutData>
-					<FlexItemData growFactor="1"/>
-				</smartTable:layoutData>
-				<table:TreeTable toggleOpenState="onToggleOpenState">
-					<table:columns>
-						<table:Column label="{i18n>xtit.tableObject}" name="{i18n>xtit.tableObject}">
-							<table:customData>
-								<core:CustomData key="p13nData" value='\{"columnKey": "Description", "leadingProperty": "Description"}'/>
-							</table:customData>
-							<table:template>
-								<controls:CustomTitle text="{Description}" tooltip="{Description}"
-									titleStyle="{ path: 'NodeType', formatter: '.formatter.formatResourceTitle' }"
-									availabilityIcon="{ path: 'IS_AVAILABLE', formatter: '.formatter.getAvailabilityIcon' }"
-									iconColor="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconColor' }"
-									iconTooltip="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconTooltip' }"
-									icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'},{path: 'ResourceIcon'} ], formatter: '.formatter.getResourceIcon' }"
-									isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" 
-									press="onPressAssignmentLink"
-									resourceIconPress="onResourceIconPress"
-									enableQualification="{user>/ENABLE_QUALIFICATION}"
-									isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}"
-									showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
-									workTime="{path:'ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}">
-									<controls:customData>
-									<core:CustomData key="objectId" value="{NodeId}" writeToDom="true"></core:CustomData>
-									</controls:customData>
-								</controls:CustomTitle>
-							</table:template>
-						</table:Column>
-						<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="4.5rem" hAlign="End"
-							visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
-							<table:customData>
-								<core:CustomData key="p13nData" value='\{"columnKey": "TOTAL_EFFORT", "leadingProperty": "TOTAL_EFFORT"}'/>
-							</table:customData>
-							<table:template>
-								<Text text="{TOTAL_EFFORT}" wrapping="false"/>
-							</table:template>
-						</table:Column>
-						<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="15%" hAlign="End"
-							visible="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}">
-							<table:customData>
-								<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
-							</table:customData>
-							<table:template>
-								<ProgressIndicator percentValue="{path:'Utilization',formatter:'.formatter.formatProgress'}"
-									displayValue="{path:'Utilization', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}%" tooltip="{Utilization}"
-									showValue="true" state="{path:'Utilization',formatter:'.formatter.formatProgressState'}"
-									visible="{ path: 'NodeType', formatter: '.formatter.isResource' }"/>
-							</table:template>
-						</table:Column>
-						<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="3.5rem" hAlign="End"
-							visible="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}">
-							<table:customData>
-								<core:CustomData key="p13nData" value='\{"columnKey": "CAPACITIVE_EFFORT", "leadingProperty": "CAPACITIVE_EFFORT"}'/>
-							</table:customData>
-							<table:template>
-								<Link text="{CAPACITIVE_EFFORT}" visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }" press="openCapacitivePopup"/>
-							</table:template>
-						</table:Column>
-						<table:Column label="{i18n>xtit.tableAssignment}" name="{i18n>xtit.tableAssignment}" width="2.5rem" hAlign="End">
-							<table:customData>
-								<core:CustomData key="p13nData" value='\{"columnKey": "AssignmentCount", "leadingProperty": "AssignmentCount"}'/>
-							</table:customData>
-							<table:template>
-								<Text text="{AssignmentCount}" visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }" wrapping="false"/>
-							</table:template>
-						</table:Column>
-						<table:Column label="{i18n>xtit.tableCheckbox}" name="{i18n>xtit.tableCheckbox}" width="2.5rem" class="sapUiNoContentPadding">
-							<table:customData>
-								<core:CustomData key="p13nData" value='\{"columnKey": "NodeType", "leadingProperty": "NodeType"}'/>
-							</table:customData>
-							<table:template>
-								<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"
-									selected="{IsSelected}"/>
-							</table:template>
-						</table:Column>
-					</table:columns>
-					<table:dragDropConfig>
-						<dnd:DropInfo targetAggregation="rows" groupName="demandView" dropPosition="On" drop="onDropOnResource"/>
-					</table:dragDropConfig>
-				</table:TreeTable>
-			</smartTable:SmartTable>
-        
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:table="sap.ui.table"
+	xmlns:l="sap.ui.layout" xmlns:dnd="sap.ui.core.dnd" xmlns:controls="com.evorait.evoplan.ui.controls">
+	<smartTable:SmartTable id="droppableTable" entitySet="{viewModel>/treeSet}" class="listTreeTable" tableType="TreeTable" fitContainer="true"
+		useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false" smartFilterId="resourceTreeFilterBar"
+		header="Hierarchy" showRowCount="false" beforeRebindTable="onBeforeRebindTable"
+		requestAtLeastFields="StatusIcon,IsSelected,NodeId,ResourceGroupGuid,NodeType,ResourceGuid,DemandGuid,ParentNodeId,AssignmentGuid,HierarchyLevel,DrillState,Description,AssignmentCount,Utilization,StartDate,StartTime,EndDate,EndTime,IS_AVAILABLE,TOTAL_EFFORT,ACTUAL_WORKING_HOURS,PLANNED_WORKING_HOURS,CAPACITIVE_EFFORT,ASSIGNMENT_TYPE,ResourceIcon,GANTT_ENABLED,RES_ASGN_START_DATE,RES_ASGN_START_TIME,RES_ASGN_END_DATE,RES_ASGN_END_TIME,REQUIREMENT_PROFILE_ID,REQUIREMENT_PROFILE_COLOR">
+		<smartTable:layoutData>
+			<FlexItemData growFactor="1"/>
+		</smartTable:layoutData>
+		<table:TreeTable toggleOpenState="onToggleOpenState">
+			<table:columns >
+				<table:Column label="{i18n>xtit.tableObject}" name="{i18n>xtit.tableObject}">
+					<table:customData>
+						<core:CustomData key="p13nData" value='\{"columnKey": "Description", "leadingProperty": "Description"}'/>
+					</table:customData>
+					<table:template>
+						<controls:CustomTitle text="{Description}" tooltip="{Description}"
+							titleStyle="{ path: 'NodeType', formatter: '.formatter.formatResourceTitle' }"
+							availabilityIcon="{ path: 'IS_AVAILABLE', formatter: '.formatter.getAvailabilityIcon' }"
+							iconColor="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconColor' }"
+							iconTooltip="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconTooltip' }"
+							icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'},{path: 'ResourceIcon'} ], formatter: '.formatter.getResourceIcon' }"
+							isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink" resourceIconPress="onResourceIconPress"
+							enableQualification="{user>/ENABLE_QUALIFICATION}"
+							isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}"
+							showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
+							workTime="{path:'ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}"
+							highlightColor="{ path:'REQUIREMENT_PROFILE_COLOR', formatter:'.formatter.formatHighlighter'}">
+							<controls:customData>
+								<core:CustomData key="objectId" value="{NodeId}" writeToDom="true"></core:CustomData>
+							</controls:customData>
+						</controls:CustomTitle>
+					</table:template>
+				</table:Column>
+				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="4.5rem" hAlign="End"
+					visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'? true : false }">
+					<table:customData>
+						<core:CustomData key="p13nData" value='\{"columnKey": "TOTAL_EFFORT", "leadingProperty": "TOTAL_EFFORT"}'/>
+					</table:customData>
+					<table:template>
+						<Text text="{TOTAL_EFFORT}" wrapping="false"/>
+					</table:template>
+				</table:Column>
+				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="15%" hAlign="End"
+					visible="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}">
+					<table:customData>
+						<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
+					</table:customData>
+					<table:template>
+						<ProgressIndicator percentValue="{path:'Utilization',formatter:'.formatter.formatProgress'}"
+							displayValue="{path:'Utilization', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}%" tooltip="{Utilization}"
+							showValue="true" state="{path:'Utilization',formatter:'.formatter.formatProgressState'}"
+							visible="{ path: 'NodeType', formatter: '.formatter.isResource' }"/>
+					</table:template>
+				</table:Column>
+				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="3.5rem" hAlign="End"
+					visible="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}">
+					<table:customData>
+						<core:CustomData key="p13nData" value='\{"columnKey": "CAPACITIVE_EFFORT", "leadingProperty": "CAPACITIVE_EFFORT"}'/>
+					</table:customData>
+					<table:template>
+						<Link text="{CAPACITIVE_EFFORT}" visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }" press="openCapacitivePopup"/>
+					</table:template>
+				</table:Column>
+				<table:Column label="{i18n>xtit.tableAssignment}" name="{i18n>xtit.tableAssignment}" width="2.5rem" hAlign="End">
+					<table:customData>
+						<core:CustomData key="p13nData" value='\{"columnKey": "AssignmentCount", "leadingProperty": "AssignmentCount"}'/>
+					</table:customData>
+					<table:template>
+						<Text text="{AssignmentCount}" visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }" wrapping="false"/>
+					</table:template>
+				</table:Column>
+				<table:Column label="{i18n>xtit.tableCheckbox}" name="{i18n>xtit.tableCheckbox}" width="2.5rem" class="sapUiNoContentPadding">
+					<table:customData>
+						<core:CustomData key="p13nData" value='\{"columnKey": "NodeType", "leadingProperty": "NodeType"}'/>
+					</table:customData>
+					<table:template>
+						<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"
+							selected="{IsSelected}"/>
+					</table:template>
+				</table:Column>
+			</table:columns>
+			<table:dragDropConfig>
+				<dnd:DropInfo targetAggregation="rows" groupName="demandView" dropPosition="On" drop="onDropOnResource"/>
+			</table:dragDropConfig>
+		</table:TreeTable>
+	</smartTable:SmartTable>
 </core:FragmentDefinition>
