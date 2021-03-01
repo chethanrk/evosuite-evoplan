@@ -1,3 +1,8 @@
+.TreeTitleBG {
+    border-radius: 3px;
+    padding: 3px;
+}
+
 .panelPage {
     white-space: normal;
 }
@@ -16,7 +21,7 @@
     font-size: .9rem;
 }
 
-.treeTableFilterBar .sapUiCompFilterBarBasicArea > div:first-of-type {
+.treeTableFilterBar .sapUiCompFilterBarBasicArea>div:first-of-type {
     width: 100% !important;
 }
 
@@ -52,7 +57,7 @@
     padding-right: 0 !important;
 }
 
-.iconTabBarCustom .sapFDynamicPageHeader{
+.iconTabBarCustom .sapFDynamicPageHeader {
     padding: 0 !important;
 }
 
@@ -61,12 +66,12 @@
 }
 
 .sapUiTheme-sap_belize .tableContentPage .sapMPageHeader {
-    background-color: #eff4f9 !important;
+    /*background-color: #eff4f9 !important;*/
     box-shadow: inset 0 -0.0625rem #d1e0ee !important;
 }
 
 .sapUiTheme-sap_belize_plus .tableContentPage .sapMPageHeader {
-    background-color: #3f5161 !important;
+    /*background-color: #3f5161 !important;*/
     box-shadow: inset 0 -0.0625rem #4f667a !important;
 }
 
@@ -74,7 +79,7 @@
     display: none;
 }
 
-div.worktimeAvailability{
+div.worktimeAvailability {
     box-sizing: border-box;
     padding: 0 0.45rem;
     text-align: center;
@@ -84,7 +89,7 @@ div.worktimeAvailability{
     max-width: 100%;
 }
 
-div.worktimeAvailability > .workTimeAvailabilityText {
+div.worktimeAvailability>.workTimeAvailabilityText {
     font-size: 0.75rem;
     vertical-align: top;
     line-height: 1.125rem;
@@ -99,34 +104,34 @@ div.worktimeAvailability > .workTimeAvailabilityText {
     /*color: #ffffff;*/
 }
 
-.workTimeWithBorder{
-	border: #ccc 1px solid
-}
-.workTimeWithoutBorder{
-	border:#ccc 1px solid
+.workTimeWithBorder {
+    border: #ccc 1px solid
 }
 
-.workTimeTextWhite{
-	color:#ffffff;
+.workTimeWithoutBorder {
+    border: #ccc 1px solid
 }
 
-.workTimeTextBlack{
-	color:#000000;
+.workTimeTextWhite {
+    color: #ffffff;
 }
+
+.workTimeTextBlack {
+    color: #000000;
+}
+
 /* Gantt custom Css */
 
-.sapGanttChartSelection .sapGanttSelectedPath{
+.sapGanttChartSelection .sapGanttSelectedPath {
     stroke-width: 0 !important;
     stroke: transparent !important;
 }
 
-div.resourceGanttWithTable .sapGanttBackground .sapGanttBackgroundSVG{
+div.resourceGanttWithTable .sapGanttBackground .sapGanttBackgroundSVG {
     background: #ccc !important;
 }
 
-.sapUiIcon.resourceIcon:hover{
-	color:hsl(240, 100%, 50%);
-	cursor : pointer;
+.sapUiIcon.resourceIcon:hover {
+    color: hsl(240, 100%, 50%);
+    cursor: pointer;
 }
-
-

@@ -1,6 +1,6 @@
-<mvc:View controllerName="com.evorait.evoplan.controller.demands.ResourceTree" xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"
-	xmlns:f="sap.f" xmlns:table="sap.ui.table" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:controls="com.evorait.evoplan.ui.controls"
-	xmlns:l="sap.ui.layout" xmlns:dnd="sap.ui.core.dnd" displayBlock="true" height="100%">
+<mvc:View controllerName="com.evorait.evoplan.controller.demands.ResourceTree" xmlns:core="sap.ui.core" xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:table="sap.ui.table" xmlns:smartTable="sap.ui.comp.smarttable"
+	xmlns:controls="com.evorait.evoplan.ui.controls" xmlns:l="sap.ui.layout" xmlns:dnd="sap.ui.core.dnd" displayBlock="true" height="100%">
 	<f:DynamicPage id="idResourcePage" headerExpanded="true" preserveHeaderStateOnScroll="true" fitContent="true" showFooter="true"
 		class="sapUiNoContentPadding tableContentPage" toggleHeaderOnTitleClick="false">
 		<f:header>
@@ -10,6 +10,7 @@
 					<FlexBox id="idResToolbar" alignItems="Start" justifyContent="SpaceBetween">
 						<items>
 							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.TreeExpandCollapse" type="XML"/>
+							<CheckBox id="idAllowFilter" text="Qualification Status" selected="{viewModel>/CheckRightTechnician}"/>
 							<CheckBox id="idCapaCheck" text="{i18n>xtit.capacity}" selected="{viewModel>/capacityPlanning}"
 								enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }" select="onSelectCapacity" visible="{user>/CAPACITY_ENABLED}"/>
 						</items>
