@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/ui/table/Row",
 	"sap/m/MessageToast",
 	"sap/ui/table/RowAction",
-	"sap/ui/table/RowActionItem"
+	"sap/ui/table/RowActionItem",
+	"sap/ui/core/Fragment"
 ], function (BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, MessageToast,
-	RowAction, RowActionItem) {
+	RowAction, RowActionItem, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.demands.Demands", {
@@ -356,6 +357,68 @@ sap.ui.define([
 				sDemandGuid = oResourceNode.Guid;
 			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
 
-		}
+		},
+		
+		/**
+		 * Open's assignments list
+		 * 
+		 */
+		 onClickAssignCount: function(oEvent){
+		 	var oView = this.getView(),
+		 		oSource = oEvent.getSource(),
+		 		oContext = oSource.getBindingContext(),
+				oModel = oContext.getModel();
+		 	// create dialog lazily
+			if (!this._olistDialog) {
+				oView.getModel("appView").setProperty("/busy", true);
+				Fragment.load({
+					id: "AssignList",
+					name: "com.evorait.evoplan.view.demands.fragments.Assignments",
+					controller: this
+				}).then(function (oDialog) {
+					oView.getModel("appView").setProperty("/busy", false);
+					this._olistDialog = oDialog;
+					oView.addDependent(oDialog);
+					this._openPopOver(oSource, oDialog, oModel, oContext);
+				}.bind(this));
+			} else {
+				this._openPopOver(oSource, this._olistDialog, oModel, oContext);
+			}
+		 },
+		 
+		 _openPopOver: function(oSource, oDialog, oModel, oContext){
+		 	oDialog.bindElement({
+		 		path: oContext.getPath(),
+		 		parameters: {
+		 			"expand":"DemandToAssignment"
+		 		}
+		 	});
+		 	oDialog.openBy(oSource);
+		 	oDialog.getElementBinding().refresh();
+		 },
+		 /**
+		  * on Close on pop over
+		  */
+		  onCloseAssigmentsPopover: function(oEvent){
+		  	this._olistDialog.close();
+		  },
+		  /**
+		 * Opens the AssignInfo dialog to update the assignment
+		 * @Author Rahul
+		 * @return
+		 * @param oEvent
+		 */
+		onClickRow: function (oEvent) {
+			var oAssignment = oEvent.getParameter("listItem"),
+				oContext = oAssignment.getBindingContext(),
+				oModel = oContext.getModel(),
+				sPath = oContext.getPath(),
+				oAssignmentData = oModel.getProperty(sPath);
+
+			// localStorage.setItem("Evo-Action-page", "DemandDetails");
+			this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAssignmentData, {
+				bFromHome: true
+			});
+		},
 	});
 });
