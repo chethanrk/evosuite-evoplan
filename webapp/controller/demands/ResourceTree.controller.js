@@ -76,7 +76,6 @@ sap.ui.define([
 				if (Object.keys(this.mTreeState).length > 0) {
 					this._restoreTreeState();
 				}
-				this.doHighlightRows();
 			}
 		},
 
