@@ -58,7 +58,7 @@ sap.ui.define([
 			},
 			getDateEnd: function () {
 				var d = moment().endOf("month");
-				return d.add(2, "months").toDate();
+				return d.add(2, "months").endOf("month").toDate();
 			}
 		},
 		TIMEHOUR:{

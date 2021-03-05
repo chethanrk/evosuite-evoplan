@@ -47,21 +47,23 @@ sap.ui.define([
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
 			this._eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
-			
+			this._eventBus.subscribe("FindTechnician", "filterToFindRightResource", this.applyfilterToFindRightResource, this);
+
 			//route match function
-			var oRouter =  this.getOwnerComponent().getRouter();
-                oRouter.attachRouteMatched(this._routeMatched, this);
+			var oRouter = this.getOwnerComponent().getRouter();
+			oRouter.attachRouteMatched(this._routeMatched, this);
 
 		},
-		
-		_routeMatched: function(oEvent){
-            var oParameters = oEvent.getParameters(),
-               sRouteName = oParameters.name; // route name
-               if(sRouteName === "demands")
-               {
-               	 this._mParameters = {bFromHome:true};
-               }
-         },
+
+		_routeMatched: function (oEvent) {
+			var oParameters = oEvent.getParameters(),
+				sRouteName = oParameters.name; // route name
+			if (sRouteName === "demands") {
+				this._mParameters = {
+					bFromHome: true
+				};
+			}
+		},
 
 		/**
 		 * initial draggable after every refresh of table
@@ -133,7 +135,7 @@ sap.ui.define([
 			this.getOwnerComponent().getModel("appView").setProperty("/busy", true);
 			this.getOwnerComponent().planningCalendarDialog.open(this.getView(), this.selectedResources, {
 				bFromPlannCal: true,
-				bFromHome : true
+				bFromHome: true
 			}); // As we are opening the dialog when set model data
 		},
 
@@ -148,7 +150,7 @@ sap.ui.define([
 
 			if (oRowContext) {
 				this.assignmentPath = oRowContext.getPath();
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath,null,this._mParameters);
+				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
@@ -176,7 +178,9 @@ sap.ui.define([
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
-				oUserModel = this.getModel("user");
+				oUserModel = this.getModel("user"),
+				oFilterRightTechnician = this.getModel("viewModel").getProperty("/resourceFilterforRightTechnician"),
+				bCheckRightTechnician = this.getModel("viewModel").getProperty("/CheckRightTechnician");
 
 			if (!this.isLoaded) {
 				this.isLoaded = true;
@@ -187,8 +191,16 @@ sap.ui.define([
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			// setting filters in local model to access in assignTree dialog.
 			this.getModel("viewModel").setProperty("/resourceFilterView", aFilter);
+
 			oBinding.filters = [new Filter(aFilter, true)];
 
+			if (bCheckRightTechnician && oFilterRightTechnician) {
+				oBinding.filters.push(oFilterRightTechnician);
+			}
+			else{
+				this.getModel("viewModel").setProperty("/CheckRightTechnician",false);
+				this.getModel("viewModel").getProperty("/resourceFilterforRightTechnician",false);
+			}
 		},
 
 		/**
@@ -197,6 +209,7 @@ sap.ui.define([
 		onExit: function () {
 			this._eventBus.unsubscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
 			this._eventBus.unsubscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
+			this._eventBus.unsubscribe("FindTechnician", "filterToFindRightResource", this.applyfilterToFindRightResource, this);
 		},
 
 		/* =========================================================== */
@@ -317,7 +330,7 @@ sap.ui.define([
 		 */
 		openCapacitivePopup: function (oEvent) {
 			var oComponent = this.getOwnerComponent();
-			oComponent.capacitiveAssignments.open(this.getView(), oEvent,this._mParameters);
+			oComponent.capacitiveAssignments.open(this.getView(), oEvent, this._mParameters);
 		},
 		/**
 		 * on press, open the dialog to create an unavailability for selected resources
@@ -341,7 +354,7 @@ sap.ui.define([
 		onClickExpandCollapse: function (oEvent) {
 			var oButton = oEvent.getSource(),
 				oCustomData = oButton.getCustomData();
-            this.mTreeState = {};
+			this.mTreeState = {};
 			if (oCustomData[0].getValue() === "EXPAND" && this._oDataTable) {
 				this._oDataTable.expandToLevel(1);
 			} else {
@@ -398,20 +411,29 @@ sap.ui.define([
 				this.mTreeState = {};
 			}
 		},
-        onToggleOpenState:function(){
-            this.mTreeState = {};
-        },
-        onResourceIconPress : function(oEvent){
-        	var oRow = oEvent.getSource().getParent(),
-        		oContext = oRow.getBindingContext(),
-        		sPath = oContext.getPath(),
-        		oModel = oContext.getModel(),
-        		oResourceNode = oModel.getProperty(sPath);
-        		
-        	var sObjectId = oResourceNode.NodeId;
-        	if(oResourceNode.NodeType !== "ASSIGNMENT"){
-        		this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
-        	}
-        }
+		onToggleOpenState: function () {
+			this.mTreeState = {};
+		},
+		onResourceIconPress: function (oEvent) {
+			var oRow = oEvent.getSource().getParent(),
+				oContext = oRow.getBindingContext(),
+				sPath = oContext.getPath(),
+				oModel = oContext.getModel(),
+				oResourceNode = oModel.getProperty(sPath);
+
+			var sObjectId = oResourceNode.NodeId;
+			if (oResourceNode.NodeType !== "ASSIGNMENT") {
+				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
+			}
+		},
+		applyfilterToFindRightResource: function (sChannel, oEvent, oData) {
+			var oFilters = new Filter({
+				filters: oData.sRequirementProfileIds,
+				and: false
+			});
+			this.getModel("viewModel").setProperty("/resourceFilterforRightTechnician", oFilters);
+			this.getModel("viewModel").setProperty("/CheckRightTechnician", true);
+			this._oDroppableTable.rebindTable();
+		}
 	});
 });

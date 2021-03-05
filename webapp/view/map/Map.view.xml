@@ -49,11 +49,11 @@
 												}" 
 												select="onSelect" deselect="onDeselect">
 													<vbm:items>
-														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0)-->
+														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0) 	position="{LONGITUDE};{LATITUDE};0"-->
 														<vbm:Spot selectColor="{user>/MAP_SELECTED_PIN_COLOUR}" contentColor="{MAP_MARKER_COLOUR}" hotScale="1.1;1.1;1.1"
 															tooltip="{DEMAND_KEY}" type="Inactive" select="{IS_SELECTED}"
 															scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="{user>/MAP_MARKER_ICON}" contentSize="25rem" changeable="true"
-															position="{parts:[{path:'LONGITUDE'}, {path:'LATITUDE'} ], formatter:'.formatter.formatMapSpot'}"  contextMenu="onContextMenu">
+															position="{parts:[{path:'LONGITUDE'}, {path:'LATITUDE'} ], formatter:'.formatter.formatMapSpot'}" contextMenu="onContextMenu">
 															<vbm:customData>
 																<core:CustomData key='Status' value='{Status}'/>
 															</vbm:customData>

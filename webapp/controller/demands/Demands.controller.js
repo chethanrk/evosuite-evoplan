@@ -143,9 +143,11 @@ sap.ui.define([
 			oDataTable.attachRowSelectionChange(function () {
 				var selected = this._oDataTable.getSelectedIndices();
 				if (selected.length > 0) {
+					this.byId("idfindRightTechnicianButton").setEnabled(true);
 					this.byId("assignButton").setEnabled(true);
 					this.byId("changeStatusButton").setEnabled(true);
 				} else {
+					this.byId("idfindRightTechnicianButton").setEnabled(false);
 					this.byId("assignButton").setEnabled(false);
 					this.byId("changeStatusButton").setEnabled(false);
 				}
@@ -357,6 +359,34 @@ sap.ui.define([
 				sDemandGuid = oResourceNode.Guid;
 			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
 
+		},
+		onPressFindResource: function (oEvent) {
+			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+			if (this._aSelectedRowsIdx.length > 100) {
+				this._aSelectedRowsIdx.length = 100;
+			}
+			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true),
+				sRequirementProfileIds;
+
+			if (oSelectedPaths.aPathsData.length > 0) {
+				sRequirementProfileIds = this.getFormattedReqProfileId(oSelectedPaths.aPathsData);
+				this._eventBus.publish("FindTechnician", "filterToFindRightResource", {
+					sRequirementProfileIds: sRequirementProfileIds
+				});
+			}
+			if (oSelectedPaths.aNonAssignable.length > 0) {
+				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+			}
+		},
+		getFormattedReqProfileId: function (oData) {
+			var aRequirementProfileIds = [];
+			oData.forEach(function (entry) {
+				if (entry.oData.REQUIREMENT_PROFILE_ID) {
+					// aRequirementProfileIds.push(entry.oData.REQUIREMENT_PROFILE_ID);
+					aRequirementProfileIds.push(new Filter("REQUIREMENT_PROFILE_ID", FilterOperator.EQ, entry.oData.REQUIREMENT_PROFILE_ID));
+				}
+			});
+			return aRequirementProfileIds;
 		},
 		
 		/**

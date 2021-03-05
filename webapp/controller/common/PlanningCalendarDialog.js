@@ -681,6 +681,7 @@ sap.ui.define([
 					this));
 			} else {
 				this._oDialog.close();
+
 				if (this._oCancel) {
 					this._mParameters.bFromPlannCal = false;
 					this.afterUpdateOperations(this._mParameters);
@@ -725,6 +726,9 @@ sap.ui.define([
 			};
 			
 				//Setting it to true if any changes are saved
+			this._oCancel = true;
+
+			//Setting it to true if any changes are saved
 			this._oCancel = true;
 
 			this._eventBus.publish("PlanningCalendarDialog", "saveAllAssignments", {
