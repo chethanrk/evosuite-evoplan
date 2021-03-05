@@ -234,6 +234,14 @@ sap.ui.define([
 		onCloseGanttFilter: function () {
 			this._oGanttDemandFilter.close();
 		},
+		
+		/**
+		 * Open's assignments list
+		 * 
+		 */
+		 onClickAssignCount: function(oEvent){
+		 	this.getOwnerComponent().assignmentList.open(this.getView(), oEvent, this._mParameters);
+		 },
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
 		}

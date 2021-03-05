@@ -364,61 +364,7 @@ sap.ui.define([
 		 * 
 		 */
 		 onClickAssignCount: function(oEvent){
-		 	var oView = this.getView(),
-		 		oSource = oEvent.getSource(),
-		 		oContext = oSource.getBindingContext(),
-				oModel = oContext.getModel();
-		 	// create dialog lazily
-			if (!this._olistDialog) {
-				oView.getModel("appView").setProperty("/busy", true);
-				Fragment.load({
-					id: "AssignList",
-					name: "com.evorait.evoplan.view.demands.fragments.Assignments",
-					controller: this
-				}).then(function (oDialog) {
-					oView.getModel("appView").setProperty("/busy", false);
-					this._olistDialog = oDialog;
-					oView.addDependent(oDialog);
-					this._openPopOver(oSource, oDialog, oModel, oContext);
-				}.bind(this));
-			} else {
-				this._openPopOver(oSource, this._olistDialog, oModel, oContext);
-			}
-		 },
-		 
-		 _openPopOver: function(oSource, oDialog, oModel, oContext){
-		 	oDialog.bindElement({
-		 		path: oContext.getPath(),
-		 		parameters: {
-		 			"expand":"DemandToAssignment"
-		 		}
-		 	});
-		 	oDialog.openBy(oSource);
-		 	oDialog.getElementBinding().refresh();
-		 },
-		 /**
-		  * on Close on pop over
-		  */
-		  onCloseAssigmentsPopover: function(oEvent){
-		  	this._olistDialog.close();
-		  },
-		  /**
-		 * Opens the AssignInfo dialog to update the assignment
-		 * @Author Rahul
-		 * @return
-		 * @param oEvent
-		 */
-		onClickRow: function (oEvent) {
-			var oAssignment = oEvent.getParameter("listItem"),
-				oContext = oAssignment.getBindingContext(),
-				oModel = oContext.getModel(),
-				sPath = oContext.getPath(),
-				oAssignmentData = oModel.getProperty(sPath);
-
-			// localStorage.setItem("Evo-Action-page", "DemandDetails");
-			this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAssignmentData, {
-				bFromHome: true
-			});
-		},
+		 	this.getOwnerComponent().assignmentList.open(this.getView(), oEvent);
+		 }
 	});
 });

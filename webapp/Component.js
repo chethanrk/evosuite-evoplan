@@ -17,6 +17,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/qualifications/ResourceQualifications",
 	"com/evorait/evoplan/controller/qualifications/QualificationCheck",
 	"com/evorait/evoplan/controller/qualifications/DemandQualifications",
+	"com/evorait/evoplan/controller/common/AssignmentList",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
 	"sap/m/Link",
@@ -43,6 +44,7 @@ sap.ui.define([
 	ResourceQualifications,
 	QualificationCheck,
 	DemandQualifications,
+	AssignmentList,
 	MessagePopover,
 	MessagePopoverItem,
 	Link,
@@ -313,6 +315,9 @@ sap.ui.define([
 
 			this.DemandQualifications = new DemandQualifications();
 			this.DemandQualifications.init();
+			
+			this.assignmentList = new AssignmentList();
+			this.assignmentList.init();
 		},
 
 		/**
