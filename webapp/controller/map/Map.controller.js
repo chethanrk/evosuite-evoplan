@@ -685,7 +685,13 @@ sap.ui.define([
 				this._bDemandListScroll = false;
 		},
 
-
+/**
+		 * Open's assignments list
+		 * 
+		 */
+		 onClickAssignCount: function(oEvent){
+		 	this.getOwnerComponent().assignmentList.open(this.getView(), oEvent,this._mParameters);
+		 },
 
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);

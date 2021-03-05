@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/ui/table/Row",
 	"sap/m/MessageToast",
 	"sap/ui/table/RowAction",
-	"sap/ui/table/RowActionItem"
+	"sap/ui/table/RowActionItem",
+	"sap/ui/core/Fragment"
 ], function (BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, MessageToast,
-	RowAction, RowActionItem) {
+	RowAction, RowActionItem, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.demands.Demands", {
@@ -386,6 +387,14 @@ sap.ui.define([
 				}
 			});
 			return aRequirementProfileIds;
-		}
+		},
+		
+		/**
+		 * Open's assignments list
+		 * 
+		 */
+		 onClickAssignCount: function(oEvent){
+		 	this.getOwnerComponent().assignmentList.open(this.getView(), oEvent);
+		 }
 	});
 });
