@@ -360,12 +360,17 @@ sap.ui.define([
 			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
 
 		},
+		
+		/**
+		 * To Highlight Resources Based on Selected Demands
+		 * 
+		 */
 		onPressFindResource: function (oEvent) {
 			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
 			if (this._aSelectedRowsIdx.length > 100) {
 				this._aSelectedRowsIdx.length = 100;
 			}
-			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true),
+			var oSelectedPaths = this._getAllowedDemandsToCheckResource(this._oDataTable, this._aSelectedRowsIdx),
 				sRequirementProfileIds;
 
 			if (oSelectedPaths.aPathsData.length > 0) {
@@ -378,6 +383,11 @@ sap.ui.define([
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 			}
 		},
+		
+		/**
+		 * get Filters of Requirement Profile IDs of Selected Demands
+		 * 
+		 */
 		getFormattedReqProfileId: function (oData) {
 			var aRequirementProfileIds = [];
 			oData.forEach(function (entry) {
@@ -388,13 +398,45 @@ sap.ui.define([
 			});
 			return aRequirementProfileIds;
 		},
-		
+
 		/**
 		 * Open's assignments list
 		 * 
 		 */
-		 onClickAssignCount: function(oEvent){
-		 	this.getOwnerComponent().assignmentList.open(this.getView(), oEvent);
-		 }
+		onClickAssignCount: function (oEvent) {
+			this.getOwnerComponent().assignmentList.open(this.getView(), oEvent);
+		},
+		
+		/**
+		 * Validate Selected Demands Based on ALLOW_FINDRESOURCE Flag
+		 * 
+		 */
+		_getAllowedDemandsToCheckResource: function (oTable, aSelectedRowsIdx) {
+			var aPathsData = [],
+				aNonAssignableDemands = [],
+				oData, oContext, sPath;
+
+			for (var i = 0; i < aSelectedRowsIdx.length; i++) {
+				oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
+				sPath = oContext.getPath();
+				oData = this.getModel().getProperty(sPath);
+
+				//on check on oData property ALLOW_ASSIGN when flag was given
+				if (oData.ALLOW_FINDRESOURCE) {
+					aPathsData.push({
+						sPath: sPath,
+						oData: oData,
+						index: aSelectedRowsIdx[i]
+					});
+					oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
+				} else {
+					aNonAssignableDemands.push(oData.DemandDesc);
+				}
+			}
+			return {
+				aPathsData: aPathsData,
+				aNonAssignable: aNonAssignableDemands
+			};
+		}
 	});
 });
