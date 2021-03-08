@@ -314,7 +314,7 @@ sap.ui.define([
 				if (oSelectedRoute === oResourceBundleText.getText("xbut.pageDemands")) {
 					oComponent._getResourceGroups.call(oComponent);
 					this._eventBus.publish("BaseController", "refreshDemandTable", {});
-					this._eventBus.publish("BaseController", "refreshTreeTable", {});
+					this._eventBus.publish("BaseController", "refreshBufferTreeTable", {});
 				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageGanttChart")) {
 					this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 					this._eventBus.publish("BaseController", "refreshGanttChart", {});

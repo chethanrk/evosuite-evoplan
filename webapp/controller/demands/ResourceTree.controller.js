@@ -46,6 +46,7 @@ sap.ui.define([
 			//eventbus of assignemnt handling
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
+			this._eventBus.subscribe("BaseController", "refreshBufferTreeTable", this._triggerRefreshBufferTree, this);
 			this._eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
 			this._eventBus.subscribe("FindTechnician", "filterToFindRightResource", this.applyfilterToFindRightResource, this);
 
@@ -196,10 +197,9 @@ sap.ui.define([
 
 			if (bCheckRightTechnician && oFilterRightTechnician) {
 				oBinding.filters.push(oFilterRightTechnician);
-			}
-			else{
-				this.getModel("viewModel").setProperty("/CheckRightTechnician",false);
-				this.getModel("viewModel").getProperty("/resourceFilterforRightTechnician",false);
+			} else {
+				this.getModel("viewModel").setProperty("/CheckRightTechnician", false);
+				this.getModel("viewModel").getProperty("/resourceFilterforRightTechnician", false);
 			}
 		},
 
@@ -210,6 +210,7 @@ sap.ui.define([
 			this._eventBus.unsubscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
 			this._eventBus.unsubscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
 			this._eventBus.unsubscribe("FindTechnician", "filterToFindRightResource", this.applyfilterToFindRightResource, this);
+			this._eventBus.unsubscribe("BaseController", "refreshBufferTreeTable", this._triggerRefreshBufferTree, this);
 		},
 
 		/* =========================================================== */
@@ -292,6 +293,14 @@ sap.ui.define([
 				oTreeBinding.refresh();
 			}
 			this._bFirsrTime = false;
+		},
+
+		/**
+		 * Method will refresh the data of tree by refreshing Buffer button
+		 */
+		_triggerRefreshBufferTree: function () {
+			this.getModel("viewModel").setProperty("/CheckRightTechnician", false);
+			this._oDroppableTable.rebindTable();
 		},
 		/**
 		 * Resets the selected resource if selected
