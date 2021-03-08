@@ -415,7 +415,7 @@ sap.ui.define([
 			var aPathsData = [],
 				aNonAssignableDemands = [],
 				oData, oContext, sPath;
-
+			oTable.clearSelection();
 			for (var i = 0; i < aSelectedRowsIdx.length; i++) {
 				oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
 				sPath = oContext.getPath();
