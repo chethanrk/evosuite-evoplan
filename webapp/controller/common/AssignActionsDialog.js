@@ -15,6 +15,7 @@ sap.ui.define([
 		init: function () {
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog, this);
+			this._eventBus.subscribe("AssignTreeDialog", "updateSelection", this._deselectAssignments, this);
 		},
 		/*
 		 * open dialog
@@ -232,7 +233,7 @@ sap.ui.define([
 				sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin());
 				sDateControl2 = this.formatter.date(selectedTimeFormat.getDateEnd());
 			}
-			
+
 			//Picking Date Range from Gantt and Gantt Split for Filtering
 			if (this._mParameters.bFromGantt) {
 				sDateControl1 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getDateValue());
@@ -307,8 +308,24 @@ sap.ui.define([
 			this._oAssignMentTable.removeSelections();
 			this._oDialog.close();
 		},
+		/**
+		 * Deselect from assignments list items not allowed to check Find Technician
+		 */
+		_deselectAssignments: function (sChannel, oEvent, oData) {
+			var oSelectedContextPaths = [],
+				sAssignmentPath,
+				oItemsAssignmentList;
+			oItemsAssignmentList = this._oAssignMentTable.getItems();
+			for (var i = 0; i < oItemsAssignmentList.length; i++) {
+				sAssignmentPath = oItemsAssignmentList[i].getBindingContextPath();
+				if (oData.oDeselectAssignmentsContexts.includes(sAssignmentPath)) {
+					oItemsAssignmentList[i].setSelected(false);
+				}
+			}
+		},
 		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog, this);
+			this._eventBus.subscribe("AssignTreeDialog", "updateSelection", this._deselectAssignments, this);
 		}
 	});
 });

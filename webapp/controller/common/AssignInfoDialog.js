@@ -106,7 +106,7 @@ sap.ui.define([
 			oView.addDependent(oDialog);
 
 			this._getAssignedDemand(oAssignment.AssignmentGuid);
-
+			this._assignmentGuid = oAssignment.AssignmentGuid;
 			// open dialog
 			oDialog.open();
 		},
@@ -198,7 +198,8 @@ sap.ui.define([
 		onPressReAssign: function (oEvent) {
 			this._eventBus.publish("AssignInfoDialog", "selectAssign", {
 				oView: this._oView,
-				isReassign: this.reAssign
+				isReassign: this.reAssign,
+				aSelectedPaths: ["/AssignmentSet('" + this._assignmentGuid + "')"]
 			});
 		},
 

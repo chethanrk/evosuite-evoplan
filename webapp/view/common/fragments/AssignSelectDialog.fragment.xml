@@ -19,7 +19,8 @@
 								icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'}], formatter: '.formatter.getResourceIcon' }"
 								isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}"
 								showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
-								workTime="{path:'ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}"/>
+								workTime="{path:'ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}"
+								highlightColor="{ path:'REQUIREMENT_PROFILE_COLOR', formatter:'.formatter.formatHighlighter'}"/>
 						</table:template>
 					</table:Column>
 					<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="4.5rem" hAlign="End"

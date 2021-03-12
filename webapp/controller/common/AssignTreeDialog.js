@@ -54,10 +54,96 @@ sap.ui.define([
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 			// connect dialog to view (models, lifecycle)
 			oView.addDependent(oDialog);
+
+			//Find Technician Feature code starts here...
+			var oDemandsPaths, sMsg,
+				bCheckRightTechnician = this._oView.getModel("viewModel").getProperty("/CheckRightTechnician");
+
+			if (bCheckRightTechnician) {
+				oDemandsPaths = this._getAllowedDemandsToCheckResource(aSelectedPaths, isReassign, isBulkReAssign);
+				this._aSelectedPaths = oDemandsPaths.oAllowedSelectedPaths;
+				this._oFiltersRightTechnician = [this._getFormattedReqProfileId(this._aSelectedPaths, isReassign, isBulkReAssign)];
+			}
 			// open dialog
-			oDialog.open();
+			if (this._aSelectedPaths && this._aSelectedPaths.length) {
+				oDialog.open();
+			}
+
+			//Error Handling in case for Assignments not allowed for find Technician
+			if (oDemandsPaths && oDemandsPaths.oNotAllowedPaths && oDemandsPaths.oNotAllowedPaths.length) {
+				this._eventBus.publish("AssignTreeDialog", "updateSelection", {
+					oDeselectAssignmentsContexts: oDemandsPaths.oDeselectAssignmentsContexts
+				});
+
+				//Global Error Msg Popup shows Description of discarded assignments
+				sMsg = this._oView.getController().getResourceBundle().getText("assignmentNotPossible");
+				this._showAssignErrorDialog(oDemandsPaths.oNotAllowedPaths, null, sMsg);
+			}
 		},
 
+		/**
+		 * Validate Selected Demands Based on ALLOW_FINDRESOURCE Flag
+		 */
+		_getAllowedDemandsToCheckResource: function (aSelectedPaths, isReassign, isBulkReAssign) {
+			var oAllowedSelectedPaths = [],
+				oNotAllowedPaths = [],
+				oDeselectAssignmentsContexts = [],
+				sPath, oDemand;
+
+			for (var i = 0; i < aSelectedPaths.length; i++) {
+				if (isBulkReAssign) {
+					sPath = aSelectedPaths[i].getPath() + "/Demand";
+					oDemand = this._oView.getModel().getProperty(sPath);
+				} else if (isReassign) {
+					sPath = aSelectedPaths[i] + "/Demand";
+					oDemand = this._oView.getModel().getProperty(sPath);
+				} else {
+					oDemand = aSelectedPaths[i].oData;
+				}
+				//on check on oData property ALLOW_ASSIGN when flag was given
+				if (oDemand.ALLOW_FINDRESOURCE) {
+					oAllowedSelectedPaths.push(aSelectedPaths[i]);
+				} else {
+					oNotAllowedPaths.push(oDemand.DemandDesc);
+					oDeselectAssignmentsContexts.push(aSelectedPaths[i].getPath());
+				}
+			}
+			return {
+				oAllowedSelectedPaths: oAllowedSelectedPaths,
+				oNotAllowedPaths: oNotAllowedPaths,
+				oDeselectAssignmentsContexts: oDeselectAssignmentsContexts
+			};
+		},
+
+		/**
+		 * get Filters of Requirement Profile IDs of Selected Demands
+		 * 
+		 */
+		_getFormattedReqProfileId: function (aSelectedPaths, isReassign, isBulkReAssign) {
+			var aRequirementProfileIds = [],
+				sPath,
+				sRequirementProfileId;
+			aSelectedPaths.forEach(function (entry) {
+				if (isBulkReAssign) {
+					sPath = entry.getPath() + "/Demand/REQUIREMENT_PROFILE_ID";
+					sRequirementProfileId = this._oView.getModel().getProperty(sPath);
+				} else if (isReassign) {
+					sPath = entry + "/Demand/REQUIREMENT_PROFILE_ID";
+					sRequirementProfileId = this._oView.getModel().getProperty(sPath);
+				} else {
+					sRequirementProfileId = entry.oData.REQUIREMENT_PROFILE_ID;
+				}
+
+				if (sRequirementProfileId) {
+					// aRequirementProfileIds.push(entry.oData.REQUIREMENT_PROFILE_ID);
+					aRequirementProfileIds.push(new Filter("REQUIREMENT_PROFILE_ID", FilterOperator.EQ, sRequirementProfileId));
+				}
+			}.bind(this));
+			return new Filter({
+				filters: aRequirementProfileIds,
+				and: false
+			});
+		},
 		/**
 		 * search on resource tree
 		 * @param oEvent
@@ -77,7 +163,9 @@ sap.ui.define([
 			if (sQuery && sQuery !== "") {
 				aFilters.push(new Filter("Description", FilterOperator.Contains, sQuery));
 			}
-
+			if (this._oFiltersRightTechnician && this._oFiltersRightTechnician.length) {
+				aFilters = aFilters.concat(this._oFiltersRightTechnician);
+			}
 			var resourceFilter = new Filter({
 				filters: aFilters,
 				and: true
@@ -153,6 +241,10 @@ sap.ui.define([
 				oSearchField = sap.ui.getCore().byId("idSeachModalTree"),
 				binding = oTable.getBinding("rows"),
 				aFilters = this._oView.getModel("viewModel").getProperty("/resourceFilterView");
+
+			if (this._oFiltersRightTechnician && this._oFiltersRightTechnician.length) {
+				aFilters = aFilters.concat(this._oFiltersRightTechnician);
+			}
 			// Search field should be empty
 			oSearchField.setValue("");
 			binding.filter(aFilters, "Application");
@@ -162,6 +254,8 @@ sap.ui.define([
 		 * close dialog
 		 */
 		onCloseDialog: function () {
+			this._oFiltersRightTechnician = false;
+			this.refreshDialogTable()
 			this._oDialog.close();
 		},
 		/**
@@ -169,7 +263,7 @@ sap.ui.define([
 		 */
 		_triggerOpenDialog: function (sChanel, sEvent, oData) {
 			if (sChanel === "AssignInfoDialog" && sEvent === "selectAssign") {
-				this.open(oData.oView, oData.isReassign, oData.parameters);
+				this.open(oData.oView, oData.isReassign, oData.aSelectedPaths, oData.parameters);
 			} else if (sChanel === "AssignActionsDialog" && sEvent === "selectAssign") {
 				this.open(oData.oView, oData.isReassign, oData.aSelectedContexts, oData.isBulkReassign, oData.parameters);
 			}

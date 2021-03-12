@@ -10,7 +10,7 @@
 					<FlexBox id="idResToolbar" alignItems="Start" justifyContent="SpaceBetween">
 						<items>
 							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.TreeExpandCollapse" type="XML"/>
-							<CheckBox id="idAllowFilter" text="Qualification Status" selected="{viewModel>/CheckRightTechnician}"/>
+							<CheckBox id="idAllowFilter" text="Qualification Status" selected="{viewModel>/CheckRightTechnician}" visible="{user>/ENABLE_QUALIFICATION}"/>
 							<CheckBox id="idCapaCheck" text="{i18n>xtit.capacity}" selected="{viewModel>/capacityPlanning}"
 								enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }" select="onSelectCapacity" visible="{user>/CAPACITY_ENABLED}"/>
 						</items>
