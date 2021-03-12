@@ -112,7 +112,9 @@ sap.ui.define([
 			});
 			oBinding.attachDataReceived(function () {
 				oViewModel.setProperty("/ganttSettings/busy", false);
-			});
+				oViewModel.setProperty("/ganttSelectionPane", "25%");
+				this._ganttChart.setSelectionPanelSize("25%");
+			}.bind(this));
 		},
 
 		/**
