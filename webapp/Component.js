@@ -24,7 +24,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"com/evorait/evoplan/model/Constants",
-	"com/evorait/evoplan/controller/WebSocket"
+	"com/evorait/evoplan/controller/WebSocket",
+	"com/evorait/evoplan/controller/gantt/GanttResourceFilter"
 ], function (
 	UIComponent,
 	Device,
@@ -51,7 +52,8 @@ sap.ui.define([
 	Filter,
 	FilterOperator,
 	Constants,
-	WebSocket) {
+	WebSocket,
+	GanttResourceFilter) {
 
 	"use strict";
 
@@ -81,12 +83,14 @@ sap.ui.define([
 			this.setModel(models.createDeviceModel(), "device");
 			var oViewModel = new JSONModel({
 				treeSet: "ResourceHierarchySet",
+				ganttTreeSet: "GanttResourceHierarchySet",
 				subFilterEntity: "Demand",
 				subTableSet: "DemandSet",
 				tableBusyDelay: 0,
 				persistencyKeyTable: "evoPlan_ui",
 				persistencyKeyTree: "evoPlan_resource",
 				persistencyKeyDemandTable: "evoPlan_demands",
+				persistencyKeyGanttDemandFilter: "evoPlan_GanttResourceFilter",
 				counterResourceFilter: "",
 				showStatusChangeButton: false,
 				busy: true,
@@ -322,6 +326,8 @@ sap.ui.define([
 			
 			this.assignmentList = new AssignmentList();
 			this.assignmentList.init();
+			
+			this.GanttResourceFilter = new GanttResourceFilter();
 		},
 
 		/**
