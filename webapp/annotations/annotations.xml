@@ -16,6 +16,15 @@
 	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="evoplan2-ui5.annotations.annotations.com.evorait.evoplan">
+			<!--<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceHierarchy">-->
+			<!--	<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">-->
+			<!--		<Collection>-->
+			<!--			<Record Type="com.sap.vocabularies.UI.v1.DataField">-->
+			<!--				<PropertyValue Property="Value" Path="Description"/>-->
+			<!--			</Record>-->
+			<!--		</Collection>-->
+			<!--	</Annotation>-->
+			<!--</Annotations>-->
 			<Annotations Target="com.evorait.evoplan.Message">
 				<Annotation Term="UI.LineItem">
 					<Collection>
@@ -36,15 +45,6 @@
 						</Record>
 						<Record Type="UI.DataField">
 							<PropertyValue Property="Value" Path="ObjectType"/>
-						</Record>
-					</Collection>
-				</Annotation>
-			</Annotations>
-			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.ResourceHierarchy">
-				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
-					<Collection>
-						<Record Type="com.sap.vocabularies.UI.v1.DataField">
-							<PropertyValue Property="Value" Path="Description"/>
 						</Record>
 					</Collection>
 				</Annotation>
@@ -344,6 +344,114 @@
 							<PropertyValue Property="Label" String="{@i18n&gt;xbut.start}"/>
 						</Record>
 					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Resource/GroupDescription" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Resource/Icon" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Resource/ObjectId" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Resource/ObjectType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Resource/ResourceDescription" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Resource/GroupUnitDescription" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Resource/ResourceGuid" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Resource/ResourceGroupGuid" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Resource/DateFrom" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Resource/DateTo" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Resource/TimeFrom" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.Resource/TimeTo" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/AvailabilityTypeGroup" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/BlockPercentageColor" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/BlockPercentage" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/Counter" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/DateTo" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/GroupDescription" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/ResourceDescription" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/ResourceGroupGuid" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/Guid" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/NodeType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/DateFrom" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/ObjectId" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/ResourceGuid" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/AvailType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/Description" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations Target="com.evorait.evoplan.ResourceAvailability/IsAvailable" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl" EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.GanttResourceHierarchy">
+				<Annotation Term="com.sap.vocabularies.UI.v1.SelectionFields">
+					<Collection>
+						<PropertyPath>Description</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="Metadata.GanttResourceHierarchy/Description">
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="ResourceSet"/>
+						<PropertyValue Property="CollectionRoot" String=""/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="Description"/>
+									<PropertyValue Property="ValueListProperty" String="Description"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
 				</Annotation>
 			</Annotations>
 		</Schema>

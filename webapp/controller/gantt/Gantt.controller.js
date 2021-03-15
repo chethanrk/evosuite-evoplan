@@ -1051,6 +1051,12 @@ sap.ui.define([
 				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
 			}
 		},
+		/**
+		 * Open the Gantt Demands Filter Dialog 
+		 */
+		onPressGanttResourceFilters: function () {
+			this.getOwnerComponent().GanttResourceFilter.open(this.getView(), this._treeTable);
+		},
 
 	});
 });
