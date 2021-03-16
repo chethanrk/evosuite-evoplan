@@ -336,6 +336,9 @@ sap.ui.define([
 				this._oView.byId("idButtonunassign").setEnabled(false);
 				this._oView.byId("idButtonCreUA").setEnabled(false);
 				this._oView.byId("idButtonTimeAlloc").setEnabled(false);
+				if (this._mParameters.bFromMap) {
+					this._oView.byId("showRoute").setEnabled(false);
+				}
 
 				Fragment.byId(this._id, "idTimeAllocSlider").setValue(0);
 			} else if (this._mParameters.bFromHome) {
@@ -446,6 +449,9 @@ sap.ui.define([
 			this._oView.byId("idButtonunassign").setEnabled(false);
 			this._oView.byId("idButtonCreUA").setEnabled(false);
 			this._oView.byId("idButtonTimeAlloc").setEnabled(false);
+			if (this._mParameters.bFromMap) {
+				this._oView.byId("showRoute").setEnabled(false);
+			}
 		},
 		/**
 		 * If any absence are created/updated/deleted the resource tree/ gantt will refreshed
