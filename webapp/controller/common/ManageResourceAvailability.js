@@ -217,7 +217,7 @@ sap.ui.define([
 			}));
 		},
 
-	/**
+		/**
 		 * This Event is triggered when creating/updating the field values for Manage Absence and Time Allocation
 		 * @param sProperty - To identify whether its create or update
 		 * @param oChanges - Which holds Data 
@@ -231,10 +231,10 @@ sap.ui.define([
 			if (this.sSource === "timeAlloc") {
 				var oStartDate, oEndDate;
 				oUpdateData.BlockPercentage = oChanges.BlockPercentage;
-				oStartDate = oChanges.DateFrom; 
-				oStartDate.setHours(0, 0, 0);//TimeStamp to be sent as T00:00:00 for Start Date only for TimeAllocation
+				oStartDate = oChanges.DateFrom;
+				oStartDate.setHours(0, 0, 0); //TimeStamp to be sent as T00:00:00 for Start Date only for TimeAllocation
 				oEndDate = oChanges.DateTo;
-				oEndDate.setHours(23, 59, 59);//TimeStamp to be sent as T23:59:59 for End Date only for TimeAllocation
+				oEndDate.setHours(23, 59, 59); //TimeStamp to be sent as T23:59:59 for End Date only for TimeAllocation
 				oUpdateData.StartTimestamp = oChanges.DateFrom;
 				oUpdateData.EndTimestamp = oChanges.DateTo;
 			}
@@ -249,7 +249,7 @@ sap.ui.define([
 				this._callFunction(oUpdateData);
 			}
 		},
-		
+
 		/**
 		 * This Event is triggered when creating/updating/deleting
 		 * @param oEvent
@@ -263,8 +263,7 @@ sap.ui.define([
 			if (oChanges) {
 				if (sProperty === "SAVE" || sProperty === "CREATE") {
 					this._ProceedToManageAbsenceService(sProperty, oChanges, oUpdateData);
-				}
-				else {
+				} else {
 					oUpdateData.Guid = oChanges.Guid;
 					this._deleteUnavailability(oUpdateData);
 				}
@@ -337,6 +336,9 @@ sap.ui.define([
 				this._oView.byId("idButtonunassign").setEnabled(false);
 				this._oView.byId("idButtonCreUA").setEnabled(false);
 				this._oView.byId("idButtonTimeAlloc").setEnabled(false);
+				if (this._mParameters.bFromMap) {
+					this._oView.byId("showRoute").setEnabled(false);
+				}
 
 				Fragment.byId(this._id, "idTimeAllocSlider").setValue(0);
 			} else if (this._mParameters.bFromHome) {
@@ -440,6 +442,16 @@ sap.ui.define([
 		onClose: function (oEvent) {
 			this._oModel.resetChanges();
 			this._refreshTreeGantt(oEvent);
+
+			//to reset "Manage absence" btn enable/disable
+			this._oView.getController().selectedResources = [];
+			this._oView.byId("idButtonreassign").setEnabled(false);
+			this._oView.byId("idButtonunassign").setEnabled(false);
+			this._oView.byId("idButtonCreUA").setEnabled(false);
+			this._oView.byId("idButtonTimeAlloc").setEnabled(false);
+			if (this._mParameters.bFromMap) {
+				this._oView.byId("showRoute").setEnabled(false);
+			}
 		},
 		/**
 		 * If any absence are created/updated/deleted the resource tree/ gantt will refreshed
