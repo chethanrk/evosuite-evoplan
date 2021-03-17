@@ -1,14 +1,10 @@
 <core:FragmentDefinition xmlns="sap.ui.table" xmlns:core="sap.ui.core" xmlns:gnt2="sap.gantt.simple">
 	<!-- To visualize the unavailability of a resource shape -->
-	<gnt2:BaseGroup >
-		<gnt2:shapes>
-	<gnt2:BaseRectangle shapeId="{Guid}_{Counter}" countInBirdEye="false" time="{DateFrom}" endTime="{DateTo}" tooltip="{Description}"
-		connectable="false" resizable="false" selectable="true" draggable="false" height="25" showTitle="false"
+
+	<gnt2:BaseRectangle title="{Description}" shapeId="{Guid}_{Counter}" countInBirdEye="false" time="{DateFrom}" endTime="{DateTo}" tooltip="{Description}"
+		connectable="false" resizable="false" selectable="true" draggable="false" height="25" showTitle="{parts: [ {path: 'AvailabilityTypeGroup'}, {path: 'BlockPercentage'}], formatter:'.ganttFormatter.getBlockerTextVisible' }"
 		fill="{parts: [ {path: 'AvailabilityTypeGroup'}, {path: 'BlockPercentageColor'} ], formatter:'.getPattern' }" fillOpacity="1" strokeOpacity="0" opacity="1"
 		stroke="transparent" strokeWidth="0"></gnt2:BaseRectangle>
-		<gnt2:BaseText
-				text="{parts: [ {path: 'AvailabilityTypeGroup'}, {path: 'BlockPercentage'}, {path: 'Description'} ], formatter:'.ganttFormatter.getBlockPercentageText' }"
-				shapeId="{Guid}" countInBirdEye="false" time="{DateFrom}" endTime="{DateTo}" connectable="false" resizable="false" selectable="true"
-				draggable="false" tooltip="{Description}" fill="#000000"></gnt2:BaseText>
-		</gnt2:shapes>	</gnt2:BaseGroup >
+	
+	
 </core:FragmentDefinition>
