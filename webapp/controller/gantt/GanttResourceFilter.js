@@ -47,9 +47,11 @@ sap.ui.define([
 		 * @param Tree Table (To Apply filter)
 		 */
 		open: function (oView, oTreeTable) {
-			// create dialog lazily
 			this.onOpen(this._oDialog, oView);
 		},
+		/**
+		 * On Initialization of Gantt Filter
+		 */
 		onGanttFilterInitialized: function (oEvent) {
 			this.onGanttResourceFilterChange();
 		},
