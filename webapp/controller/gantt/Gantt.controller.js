@@ -69,6 +69,7 @@ sap.ui.define([
 			}
 			this._defaultGanttHorizon();
 			this._viewId = this.getView().getId();
+			this.getOwnerComponent().GanttResourceFilter.init(this.getView(), this._treeTable);
 		},
 
 		/**

@@ -14,6 +14,31 @@ sap.ui.define([
 		formatter: formatter,
 		_oView: null,
 		_oFilterBar: null,
+		_oDialog: null,
+		/**
+		 * Initialising the Gantt Resource Filter Dialog
+		 * @param Tree Table (To Apply filter)
+		 */
+		init: function (oView, oTreeTable) {
+			this._oView = oView;
+			this._treeTable = oTreeTable;
+			// create dialog lazily
+			Fragment.load({
+				name: "com.evorait.evoplan.view.gantt.fragments.GanttResourceFilter",
+				controller: this
+			}).then(function (oDialog) {
+				this._oFilterBar = sap.ui.getCore().byId("ganttResourceTreeFilterBar");
+				this._oVariantMangement = this._oFilterBar.getSmartVariant();
+				this._oFilterBar.attachClear(function (oEvent) {
+					this.onClear(oEvent);
+				}.bind(this));
+				this._oDialog = oDialog;
+				this._component = this._oView.getController().getOwnerComponent();
+				oDialog.addStyleClass(this._component.getContentDensityClass());
+				this._viewModel = this._component.getModel("viewModel");
+				this._oView.addDependent(oDialog);
+			}.bind(this));
+		},
 
 		/**
 		 * Sets the necessary value as global to this controller
@@ -22,31 +47,11 @@ sap.ui.define([
 		 * @param Tree Table (To Apply filter)
 		 */
 		open: function (oView, oTreeTable) {
-			this._oView = oView;
-			this._treeTable = oTreeTable;
 			// create dialog lazily
-			if (!this._oDialog) {
-				oView.getModel("appView").setProperty("/busy", true);
-				Fragment.load({
-					name: "com.evorait.evoplan.view.gantt.fragments.GanttResourceFilter",
-					controller: this
-				}).then(function (oDialog) {
-					this._oFilterBar = sap.ui.getCore().byId("ganttResourceTreeFilterBar");
-					this._oVariantMangement = this._oFilterBar.getSmartVariant();
-					this._oFilterBar.attachClear(function (oEvent) {
-						this.onClear(oEvent);
-					}.bind(this));
-					oView.getModel("appView").setProperty("/busy", false);
-					this._oDialog = oDialog;
-					this._component = this._oView.getController().getOwnerComponent();
-					oDialog.addStyleClass(this._component.getContentDensityClass());
-					this._viewModel = this._component.getModel("viewModel");
-					this._oView.addDependent(oDialog);
-					this.onOpen(oDialog, oView);
-				}.bind(this));
-			} else {
-				this.onOpen(this._oDialog, oView);
-			}
+			this.onOpen(this._oDialog, oView);
+		},
+		onGanttFilterInitialized: function (oEvent) {
+			this.onGanttResourceFilterChange();
 		},
 
 		/**
@@ -70,14 +75,25 @@ sap.ui.define([
 		 * Applying fiter to Tree on any change
 		 */
 		onGanttResourceFilterChange: function (oEvent) {
-			var oFilters = oEvent.getSource().getFilters();
+			var oFilters = this._oFilterBar.getFilters(),
+				sFilterCount = oFilters[0].aFilters.length;
 			this._treeTable.getBinding("rows").filter(oFilters, "Application");
+			this.setFilterCount(sFilterCount);
 		},
+
 		/**
 		 * Close the Filter Bar
 		 */
 		onCloseGanttResourceFilter: function () {
 			this._oDialog.close();
+		},
+		/**
+		 * Setting the Total count on filter button
+		 */
+		setFilterCount: function (sFilterCount) {
+			var oResourceBundle = this._oView.getModel("i18n").getResourceBundle(),
+				sFilterText = oResourceBundle.getText("xbut.filters");
+			this._oView.byId("idBtnGanttResourceFilter").setText(sFilterText + "(" + sFilterCount + ")");
 		},
 
 	});
