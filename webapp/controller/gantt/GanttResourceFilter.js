@@ -95,7 +95,11 @@ sap.ui.define([
 		setFilterCount: function (sFilterCount) {
 			var oResourceBundle = this._oView.getModel("i18n").getResourceBundle(),
 				sFilterText = oResourceBundle.getText("xbut.filters");
-			this._oView.byId("idBtnGanttResourceFilter").setText(sFilterText + "(" + sFilterCount + ")");
+			if (sFilterCount > 0) {
+				this._oView.byId("idBtnGanttResourceFilter").setText(sFilterText + "(" + sFilterCount + ")");
+			} else {
+				this._oView.byId("idBtnGanttResourceFilter").setText(sFilterText);
+			}
 		},
 
 	});
