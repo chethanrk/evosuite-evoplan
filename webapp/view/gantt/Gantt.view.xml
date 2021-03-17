@@ -48,7 +48,7 @@
 								<content>
 									<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.TreeExpandCollapse" type="XML"/>
 									<ToolbarSpacer/>
-									<Button id="idBtnGanttResourceFilter" text="{i18n>xbut.filters}" press="onPressGanttResourceFilters" icon="sap-icon://filter"/>
+									<Button id="idBtnGanttResourceFilter" press="onPressGanttResourceFilters" icon="sap-icon://filter"/>
 								</content>
 							</OverflowToolbar>
 						</table:extension>
