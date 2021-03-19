@@ -508,7 +508,7 @@ sap.ui.define([
 		 * @param start {object} timestamp
 		 * @param end {object} timestamp
 		 */
-		changeGanttHorizonViewAt: function (oModel, iZoomLevel) {
+		changeGanttHorizonViewAt: function (oModel, iZoomLevel, oAxisTimeStrategy) {
 			var oViewModel = oModel,
 				sStartDate, sEndDate;
 
@@ -521,6 +521,14 @@ sap.ui.define([
 			}
 			oViewModel.setProperty("/ganttSettings/visibleStartTime", sStartDate);
 			oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
+
+			//Setting VisibleHorizon for Gantt for supporting Patch Versions (1.71.35)
+			if (oAxisTimeStrategy) {
+				oAxisTimeStrategy.setVisibleHorizon(new sap.gantt.config.TimeHorizon({
+					startTime: sStartDate,
+					endTime: sEndDate
+				}));
+			}
 		},
 
 		_setRowActionTemplate: function (oDataTable, onClickNavigation, openActionSheet) {
