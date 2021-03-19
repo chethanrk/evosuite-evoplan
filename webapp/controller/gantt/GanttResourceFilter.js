@@ -78,7 +78,10 @@ sap.ui.define([
 		 */
 		onGanttResourceFilterChange: function (oEvent) {
 			var oFilters = this._oFilterBar.getFilters(),
+				sFilterCount = 0;
+			if (oFilters && oFilters.length) {
 				sFilterCount = oFilters[0].aFilters.length;
+			}
 			this._treeTable.getBinding("rows").filter(oFilters, "Application");
 			this.setFilterCount(sFilterCount);
 		},
