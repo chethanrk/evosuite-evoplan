@@ -335,7 +335,9 @@ sap.ui.define([
 				this._oView.byId("idButtonreassign").setEnabled(false);
 				this._oView.byId("idButtonunassign").setEnabled(false);
 				this._oView.byId("idButtonCreUA").setEnabled(false);
-				this._oView.byId("idButtonTimeAlloc").setEnabled(false);
+				if (this._mParameters.bFromGantt) {
+					this._oView.byId("idButtonTimeAlloc").setEnabled(false);
+				}
 				if (this._mParameters.bFromMap) {
 					this._oView.byId("showRoute").setEnabled(false);
 				}
@@ -448,7 +450,9 @@ sap.ui.define([
 			this._oView.byId("idButtonreassign").setEnabled(false);
 			this._oView.byId("idButtonunassign").setEnabled(false);
 			this._oView.byId("idButtonCreUA").setEnabled(false);
-			this._oView.byId("idButtonTimeAlloc").setEnabled(false);
+			if (this._mParameters.bFromGantt) {
+				this._oView.byId("idButtonTimeAlloc").setEnabled(false);
+			}
 			if (this._mParameters.bFromMap) {
 				this._oView.byId("showRoute").setEnabled(false);
 			}
