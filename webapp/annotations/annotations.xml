@@ -346,90 +346,6 @@
 					</Collection>
 				</Annotation>
 			</Annotations>
-			<Annotations Target="com.evorait.evoplan.Resource/GroupDescription" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.Resource/Icon" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.Resource/ObjectId" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.Resource/ObjectType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.Resource/ResourceDescription" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.Resource/GroupUnitDescription" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.Resource/ResourceGuid" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.Resource/ResourceGroupGuid" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.Resource/DateFrom" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.Resource/DateTo" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.Resource/TimeFrom" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.Resource/TimeTo" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/AvailabilityTypeGroup" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/BlockPercentageColor" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/BlockPercentage" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/Counter" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/DateTo" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/GroupDescription" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/ResourceDescription" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/ResourceGroupGuid" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/Guid" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/NodeType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/DateFrom" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/ObjectId" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/ResourceGuid" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/AvailType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/Description" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
-			<Annotations Target="com.evorait.evoplan.ResourceAvailability/IsAvailable" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="UI.HiddenFilter" Bool="true"/>
-			</Annotations>
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.GanttResourceHierarchy">
 				<Annotation Term="com.sap.vocabularies.UI.v1.SelectionFields">
 					<Collection>
@@ -438,6 +354,7 @@
 				</Annotation>
 			</Annotations>
 			<Annotations Target="Metadata.GanttResourceHierarchy/Description">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues" Bool="true"/>
 				<Annotation Term="Common.ValueList">
 					<Record Type="Common.ValueListType">
 						<PropertyValue Property="CollectionPath" String="ResourceSet"/>
