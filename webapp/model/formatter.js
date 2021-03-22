@@ -585,10 +585,11 @@ sap.ui.define([
 		 * @returns Yes/NO based on give Boolean value 
 		 */
 		getQualificationFulfilled: function (bFulfilled) {
+			var oBundle = this.getResourceBundle();
 			if (bFulfilled) {
-				return "Yes";
+				return oBundle.getText("xbut.yes");
 			} else {
-				return "No";
+				return oBundle.getText("xbut.no");
 			}
 		},
 
@@ -626,7 +627,7 @@ sap.ui.define([
 			}
 		},
 		formatHighlighter: function (sDes) {
-			if(sDes){
+			if (sDes) {
 				return sDes;
 			}
 			// switch (sDes) {
@@ -635,7 +636,7 @@ sap.ui.define([
 			// case "Olaf Hartmann":
 			// 	return "#6BDE6B";
 			// default:
-				return "";
+			return "";
 
 			// }
 		}
