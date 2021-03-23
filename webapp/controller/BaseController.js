@@ -563,7 +563,7 @@ sap.ui.define([
 		 *	Navigates to evoOrder detail page with static url. 
 		 */
 		handleNavigationLinkAction: function (oDemandObj, oAppInfo, oViewModel) {
-			var sUri, sSemanticObject, sParameter, sKey, oKeyChar,
+			var sUri, sSemanticObject, sParameter, sKey, oKeyChar, aPlaceholders,
 				sAction,
 				sAdditionInfo,
 				sLaunchMode = oViewModel ? oViewModel.getProperty("/launchMode") : this.getModel("viewModel").getProperty("/launchMode");
@@ -572,21 +572,50 @@ sap.ui.define([
 				sAdditionInfo = oAppInfo.Value1 || "";
 				sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];
 				sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "dispatch";
-				sParameter = sAdditionInfo.split("\\\\_\\\\")[2];
-				oKeyChar = sAdditionInfo.split("\\\\_\\\\")[3][0];
-				sKey = oKeyChar + oDemandObj[sAdditionInfo.split("\\\\_\\\\")[3].split(oKeyChar)[1]];
+				aPlaceholders = sAdditionInfo.split("\\\\_\\\\").splice(2);
+				sParameter = "";
+				for (var a = 0; a < aPlaceholders.length; a++) {
+					oKeyChar = aPlaceholders[a].charAt(0);
+					if (oKeyChar === "&") {
+						sParameter = sParameter + aPlaceholders[a].split("=")[0] + "=" + oDemandObj[aPlaceholders[a].split("=")[1]];
+					} else {
+						if (oKeyChar === aPlaceholders[a].charAt(aPlaceholders[a].length - 1)) {
+							sParameter = sParameter + aPlaceholders[a];
+						} else {
+							sParameter = sParameter + oDemandObj[aPlaceholders[a].split(oKeyChar)[1]] + oKeyChar;
+						}
+					}
+				}
+				if (oKeyChar === "&") {
+					sParameter = sParameter.slice(1);
+				} else {
+					sParameter = sParameter.slice(0, -1);
+				}
 				if (sSemanticObject && sAction) {
-					this.navToApp(sSemanticObject, sAction, sParameter, sKey);
+					this.navToApp(sSemanticObject, sAction, sParameter);
 				}
 			} else {
 				sAdditionInfo = oAppInfo.Value1;
-				sKey = oDemandObj[sAdditionInfo.split("\\")[2]];
-				sUri = sAdditionInfo.split("\\")[0] + sKey;
+				aPlaceholders = sAdditionInfo.split("\\").slice(2);
+				sUri = sAdditionInfo.split("\\")[0];
+				oKeyChar = sUri.charAt(sUri.length - 1);
+				for (var s = 0; s < aPlaceholders.length; s++) {
+					if (aPlaceholders[s].includes("/")) {
+						sKey = oDemandObj[aPlaceholders[s].split("/")[0]] + oKeyChar;
+						if (aPlaceholders[s].includes("&")) {
+							sKey = aPlaceholders[s].split(oKeyChar)[0] + oKeyChar + oDemandObj[aPlaceholders[s].split(oKeyChar)[1].split("/")[0]];
+							sUri = sUri.slice(0, -1);
+						}
+						sUri = sUri + sKey;
+					}
+				}
+				sUri = sUri.slice(0, -1);
 				window.open(sUri, "_blank");
 			}
 		},
+	
 
-		navToApp: function (sSemanticObject, sAction, sParameter, sKey) {
+		navToApp: function (sSemanticObject, sAction, sParameter) {
 			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation"),
 				sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
 					target: {
@@ -596,8 +625,9 @@ sap.ui.define([
 				}) || "", // generate the Hash to display a Notification details app
 
 				//Setting ShellHash Parameters for EvoTime and Other apps
-				sShellHash = sHash + "&" + sParameter + sKey;
-
+				//	sShellHash = sHash + "&" + sParameter + sKey;
+				sShellHash = sHash + "&" + sParameter; // + sKey;
+		
 			oCrossAppNavigator.toExternal({
 				target: {
 					shellHash: sShellHash // sHash + "&/" + sParameter + "/" + sKey
