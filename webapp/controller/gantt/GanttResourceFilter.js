@@ -78,10 +78,17 @@ sap.ui.define([
 		 */
 		onGanttResourceFilterChange: function (oEvent) {
 			var oFilters = this._oFilterBar.getFilters(),
+				sDateFrom = this.formatter.date(this._oView.byId("idDateRangeGantt2").getDateValue()),
+				sDateTo = this.formatter.date(this._oView.byId("idDateRangeGantt2").getSecondDateValue()),
+				aDateFilters = [
+					new Filter("StartDate", FilterOperator.LE, sDateTo),
+					new Filter("EndDate", FilterOperator.GE, sDateFrom)
+				],
 				sFilterCount = 0;
-			if (oFilters && oFilters.length) {
-				sFilterCount = oFilters[0].aFilters.length;
-			}
+				if (oFilters && oFilters.length) {
+					sFilterCount = oFilters[0].aFilters.length;
+				}
+			oFilters = oFilters.concat(aDateFilters);
 			this._treeTable.getBinding("rows").filter(oFilters, "Application");
 			this.setFilterCount(sFilterCount);
 		},
