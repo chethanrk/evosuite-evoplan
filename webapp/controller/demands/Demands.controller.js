@@ -146,11 +146,14 @@ sap.ui.define([
 					this.byId("idfindRightTechnicianButton").setEnabled(true);
 					this.byId("assignButton").setEnabled(true);
 					this.byId("changeStatusButton").setEnabled(true);
+					// this.doSetBusyResourceTree(true);
 				} else {
 					this.byId("idfindRightTechnicianButton").setEnabled(false);
 					this.byId("assignButton").setEnabled(false);
 					this.byId("changeStatusButton").setEnabled(false);
+					// this.doSetBusyResourceTree(false);
 				}
+				this.showWarningMsgResourceTree(true);
 			}, this);
 		},
 
@@ -360,7 +363,7 @@ sap.ui.define([
 			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
 
 		},
-		
+
 		/**
 		 * To Highlight Resources Based on Selected Demands
 		 * 
@@ -383,7 +386,7 @@ sap.ui.define([
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 			}
 		},
-		
+
 		/**
 		 * get Filters of Requirement Profile IDs of Selected Demands
 		 * 
@@ -406,7 +409,7 @@ sap.ui.define([
 		onClickAssignCount: function (oEvent) {
 			this.getOwnerComponent().assignmentList.open(this.getView(), oEvent);
 		},
-		
+
 		/**
 		 * Validate Selected Demands Based on ALLOW_FINDRESOURCE Flag
 		 * 
@@ -437,6 +440,13 @@ sap.ui.define([
 				aPathsData: aPathsData,
 				aNonAssignable: aNonAssignableDemands
 			};
+		},
+		onDemandFilterChange: function () {
+			var oViewModel = this.getModel("viewModel");
+			if (oViewModel.getProperty("/CheckRightTechnician")) {
+				oViewModel.setProperty("/CheckRightTechnician", false);
+				this._eventBus.publish("FindTechnician", "setBusyResourceTree");
+			}
 		}
 	});
 });

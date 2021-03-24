@@ -610,6 +610,12 @@ sap.ui.define([
 			// 	id: sId,
 			// 	controller: oController
 			// });
+		},
+		showWarningMsgResourceTree: function (bFlag) {
+			var oViewModel = this.getModel("viewModel");
+			if (oViewModel.getProperty("/CheckRightTechnician")) {
+				oViewModel.setProperty("/WarningMsgResourceTree", bFlag);
+			}
 		}
 
 	});
