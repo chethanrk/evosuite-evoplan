@@ -28,7 +28,7 @@
 						<ToolbarLayoutData shrinkable="true"/>
 					</layoutData>
 				</Button>
-				<Button id="assignedDemands" enabled="false" text="Show Assignments" tooltip="Show Assignments" 
+				<Button id="assignedDemands" enabled="false" text="{i18n>xtit.mapShowAssignments}" tooltip="Show Assignments" 
 						press="onShowAssignDemandPress" busyIndicatorDelay="0">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="true"/>
