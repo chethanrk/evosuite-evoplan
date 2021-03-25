@@ -27,6 +27,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.subscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.subscribe("MapController", "setMapSelection", this._setMapSelection, this);
+			this._oEventBus.subscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
 
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
@@ -93,12 +94,17 @@ sap.ui.define([
 		 * @author Rahul
 		 * @return Filter
 		 */
-		getSelectedDemandFilters: function () {
+		getSelectedDemandFilters: function (sParam) {
 			var aFilters = [],
 				oViewModel = this.getModel("viewModel"),
-				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
-			for (var i in aSelectedDemands) {
-				aFilters.push(new Filter("Guid", FilterOperator.EQ, aSelectedDemands[i].split("'")[1]));
+				aDemands;
+			if (sParam === "assignDemands") {
+				aDemands = oViewModel.getProperty("/mapSettings/assignedDemands");
+			} else {
+				aDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
+			}
+			for (var i in aDemands) {
+				aFilters.push(new Filter("Guid", FilterOperator.EQ, aDemands[i].split("'")[1]));
 			}
 			return new Filter({
 				filters: aFilters,
@@ -113,16 +119,31 @@ sap.ui.define([
 		 */
 		onBeforeRebindTable: function (oEvent) {
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
+
 			var aFilters = this.byId("listReportFilter").getFilters(),
 				aDemandFilters = this.getSelectedDemandFilters();
 			if (aDemandFilters && aDemandFilters.aFilters && aDemandFilters.aFilters.length) {
 				aFilters.push(aDemandFilters);
+			}
+			if (this._bShowAssignment) {
+				aFilters = [];
+				var	aAssignedDemands = this.getSelectedDemandFilters("assignDemands");
+				if (aAssignedDemands && aAssignedDemands.aFilters && aAssignedDemands.aFilters.length) {
+					aFilters.push(aAssignedDemands);
+				}
+				this._bShowAssignment = false;
+				this.applyFiltersToMap(aFilters);
 			}
 			//setTimeOut has been added to make rebindTable() work
 			setTimeout(function () {
 				this._oDataTable.getBinding("rows").filter(aFilters, "Application");
 			}.bind(this), 15);
 
+		},
+
+		_showAssignedDemands: function () {
+			this._bShowAssignment = true;
+			this._oDraggableTable.rebindTable();
 		},
 
 		onAfterRendering: function () {
@@ -185,6 +206,7 @@ sap.ui.define([
 			this.onResetLegendSelection();
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
 			oViewModel.setProperty("/mapSettings/routeData", []);
+			oViewModel.setProperty("/mapSettings/assignedDemands", []);
 			this._oDraggableTable.rebindTable();
 		},
 		/**
@@ -209,7 +231,7 @@ sap.ui.define([
 		 * @Author: Rahul
 		 */
 		_setMapSelection: function () {
-				this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 			var oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
 			if (aSelectedDemands.length > 0) {
@@ -323,7 +345,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		_refreshMapBinding: function () {
-				this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 			// Code to refresh Map
 			this.setMapBusy(true);
 			var oGeoMap = this.getView().byId("idGeoMap"),
@@ -676,27 +698,28 @@ sap.ui.define([
 			}));
 			return oMenu;
 		},
-		
+
 		/**
 		 * If you remove this, Demand table filter on changing map selection won't work
 		 */
 		onSelectSpots: function (oEvent) {
 			// Do Not remove this method, Demand table filter on changing map selection won't work
-				this._bDemandListScroll = false;
+			this._bDemandListScroll = false;
 		},
 
-/**
+		/**
 		 * Open's assignments list
 		 * 
 		 */
-		 onClickAssignCount: function(oEvent){
-		 	this.getOwnerComponent().assignmentList.open(this.getView(), oEvent,this._mParameters);
-		 },
+		onClickAssignCount: function (oEvent) {
+			this.getOwnerComponent().assignmentList.open(this.getView(), oEvent, this._mParameters);
+		},
 
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
+			this._oEventBus.unsubscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
 		}
 	});
 

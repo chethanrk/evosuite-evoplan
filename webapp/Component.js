@@ -121,7 +121,9 @@ sap.ui.define([
 					filters: [],
 					selectedDemands: [],
 					routeData: [],
-					checkedDemands: []
+					checkedDemands: [],
+					assignedDemands: [],
+					
 				},
 				resourceFilterforRightTechnician: false,
 				CheckRightTechnician:false,
