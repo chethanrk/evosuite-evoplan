@@ -255,7 +255,7 @@ sap.ui.define([
 		 */
 		onCloseDialog: function () {
 			this._oFiltersRightTechnician = false;
-			this.refreshDialogTable()
+			this.refreshDialogTable();
 			this._oDialog.close();
 		},
 		/**

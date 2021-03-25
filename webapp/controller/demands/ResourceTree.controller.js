@@ -9,6 +9,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/ResourceTreeFilterBar",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox"
+
 ], function (Device, JSONModel, Filter, FilterOperator,
 	FilterType, formatter, BaseController, ResourceTreeFilterBar,
 	MessageToast, MessageBox) {
@@ -39,21 +40,27 @@ sap.ui.define([
 			//this._oDroppableTable.setSmartFilterId("demand--resourceTreeFilterBar");
 			this._oDataTable = this._oDroppableTable.getTable();
 			this._configureDataTable(this._oDataTable);
+			this._oViewModel = this.getModel("viewModel");
 
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
-			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
+			this.oFilterConfigsController.init(this.getView(),
+				"resourceTreeFilterBarFragment");
 
 			//eventbus of assignemnt handling
 			this._eventBus = sap.ui.getCore().getEventBus();
-			this._eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
+			this._eventBus.subscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree,
+				this);
 			this._eventBus.subscribe("BaseController", "refreshBufferTreeTable", this._triggerRefreshBufferTree, this);
-			this._eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
-			this._eventBus.subscribe("FindTechnician", "filterToFindRightResource", this.applyfilterToFindRightResource, this);
+			this._eventBus
+				.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
+			this._eventBus.subscribe("FindTechnician",
+				"filterToFindRightResource", this.applyfilterToFindRightResource, this);
+			this._eventBus.subscribe("FindTechnician",
+				"setBusyResourceTree", this.onClickEnableFindTechnician, this);
 
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.attachRouteMatched(this._routeMatched, this);
-
 		},
 
 		_routeMatched: function (oEvent) {
@@ -180,8 +187,8 @@ sap.ui.define([
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
 				oUserModel = this.getModel("user"),
-				oFilterRightTechnician = this.getModel("viewModel").getProperty("/resourceFilterforRightTechnician"),
-				bCheckRightTechnician = this.getModel("viewModel").getProperty("/CheckRightTechnician");
+				oFilterRightTechnician = this._oViewModel.getProperty("/resourceFilterforRightTechnician"),
+				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician");
 
 			if (!this.isLoaded) {
 				this.isLoaded = true;
@@ -191,15 +198,15 @@ sap.ui.define([
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			// setting filters in local model to access in assignTree dialog.
-			this.getModel("viewModel").setProperty("/resourceFilterView", aFilter);
+			this._oViewModel.setProperty("/resourceFilterView", aFilter);
 
 			oBinding.filters = [new Filter(aFilter, true)];
 
 			if (bCheckRightTechnician && oFilterRightTechnician) {
 				oBinding.filters.push(oFilterRightTechnician);
 			} else {
-				this.getModel("viewModel").setProperty("/CheckRightTechnician", false);
-				this.getModel("viewModel").getProperty("/resourceFilterforRightTechnician", false);
+				this._oViewModel.setProperty("/CheckRightTechnician", false);
+				this._oViewModel.getProperty("/resourceFilterforRightTechnician", false);
 			}
 		},
 
@@ -210,6 +217,7 @@ sap.ui.define([
 			this._eventBus.unsubscribe("BaseController", "refreshTreeTable", this._triggerRefreshTree, this);
 			this._eventBus.unsubscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
 			this._eventBus.unsubscribe("FindTechnician", "filterToFindRightResource", this.applyfilterToFindRightResource, this);
+			this._eventBus.unsubscribe("FindTechnician", "resetResourceTree", this.onClickEnableFindTechnician, this);
 			this._eventBus.unsubscribe("BaseController", "refreshBufferTreeTable", this._triggerRefreshBufferTree, this);
 		},
 
@@ -264,7 +272,7 @@ sap.ui.define([
 				return;
 			}
 
-			aSources = this.getModel("viewModel").getProperty("/dragSession");
+			aSources = this._oViewModel.getProperty("/dragSession");
 
 			// If the Resource is Not/Partially available
 			if (this.isAvailable(sPath)) {
@@ -299,7 +307,7 @@ sap.ui.define([
 		 * Method will refresh the data of tree by refreshing Buffer button
 		 */
 		_triggerRefreshBufferTree: function () {
-			this.getModel("viewModel").setProperty("/CheckRightTechnician", false);
+			this._oViewModel.setProperty("/CheckRightTechnician", false);
 			this._oDroppableTable.rebindTable();
 		},
 		/**
@@ -423,6 +431,9 @@ sap.ui.define([
 		onToggleOpenState: function () {
 			this.mTreeState = {};
 		},
+		/**
+		 * handle resource Icon press to dispaly qualification of the resource 
+		 */
 		onResourceIconPress: function (oEvent) {
 			var oRow = oEvent.getSource().getParent(),
 				oContext = oRow.getBindingContext(),
@@ -435,14 +446,31 @@ sap.ui.define([
 				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
 			}
 		},
+		/**
+		 * handle 'Find Resource' button press to dispaly the qualified resources highlighted in resource tree 
+		 */
 		applyfilterToFindRightResource: function (sChannel, oEvent, oData) {
 			var oFilters = new Filter({
 				filters: oData.sRequirementProfileIds,
 				and: false
 			});
-			this.getModel("viewModel").setProperty("/resourceFilterforRightTechnician", oFilters);
-			this.getModel("viewModel").setProperty("/CheckRightTechnician", true);
+			this._oViewModel.setProperty("/resourceFilterforRightTechnician", oFilters);
+			this._oViewModel.setProperty("/CheckRightTechnician", true);
+			this.showWarningMsgResourceTree(false);
 			this._oDroppableTable.rebindTable();
+		},
+		/**
+		 * handle Switch On/Off Qualification Mode and resetting resource Tree
+		 */
+		onClickEnableFindTechnician: function () {
+			var bEnabled = this._oViewModel.getProperty("/CheckRightTechnician"),
+				sResourceFilterParams = this._oDroppableTable.getTable().getBinding().getFilterParams();
+			if (!bEnabled) {
+				this._oViewModel.setProperty("/WarningMsgResourceTree", false);
+				if (sResourceFilterParams.includes("REQUIREMENT_PROFILE_ID")) {
+					this._oDroppableTable.rebindTable();
+				}
+			}
 		}
 	});
 });

@@ -124,8 +124,8 @@ sap.ui.define([
 					checkedDemands: []
 				},
 				resourceFilterforRightTechnician: false,
-				CheckRightTechnician:false
-
+				CheckRightTechnician:false,
+				WarningMsgResourceTree:false
 			});
 			this.setModel(oViewModel, "viewModel");
 

@@ -10,11 +10,19 @@
 					<FlexBox id="idResToolbar" alignItems="Start" justifyContent="SpaceBetween">
 						<items>
 							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.TreeExpandCollapse" type="XML"/>
-							<CheckBox id="idAllowFilter" text="Qualification Status" selected="{viewModel>/CheckRightTechnician}" visible="{user>/ENABLE_QUALIFICATION}"/>
+							<!--<CheckBox id="idCheckRightTechnician" text="Qualification Status" selected="{viewModel>/CheckRightTechnician}"-->
+							<!--	visible="{user>/ENABLE_QUALIFICATION}" select="onClickEnableFindTechnician"/>-->
+							<HBox visible="{user>/ENABLE_QUALIFICATION}">
+								<Switch id="idCheckRightTechnician" customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}"
+									state="{viewModel>/CheckRightTechnician}" change="onClickEnableFindTechnician"></Switch>
+								<Text text="{i18n>xlab.qualification}" class="sapUiTinyMarginBegin sapUiTinyMarginTop"></Text>
+							</HBox>
 							<CheckBox id="idCapaCheck" text="{i18n>xtit.capacity}" selected="{viewModel>/capacityPlanning}"
 								enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }" select="onSelectCapacity" visible="{user>/CAPACITY_ENABLED}"/>
 						</items>
 					</FlexBox>
+					<MessageStrip class="custMsgStrip" text="{i18n>xmsg.resourceTreeRefresh}" type="Warning" showIcon="true" showCloseButton="true"
+						visible="{viewModel>/WarningMsgResourceTree}"/>
 				</f:content>
 			</f:DynamicPageHeader>
 		</f:header>
