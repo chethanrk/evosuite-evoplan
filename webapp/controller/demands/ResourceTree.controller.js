@@ -431,6 +431,9 @@ sap.ui.define([
 		onToggleOpenState: function () {
 			this.mTreeState = {};
 		},
+		/**
+		 * handle resource Icon press to dispaly qualification of the resource 
+		 */
 		onResourceIconPress: function (oEvent) {
 			var oRow = oEvent.getSource().getParent(),
 				oContext = oRow.getBindingContext(),
@@ -443,6 +446,9 @@ sap.ui.define([
 				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
 			}
 		},
+		/**
+		 * handle 'Find Resource' button press to dispaly the qualified resources highlighted in resource tree 
+		 */
 		applyfilterToFindRightResource: function (sChannel, oEvent, oData) {
 			var oFilters = new Filter({
 				filters: oData.sRequirementProfileIds,
@@ -453,6 +459,9 @@ sap.ui.define([
 			this.showWarningMsgResourceTree(false);
 			this._oDroppableTable.rebindTable();
 		},
+		/**
+		 * handle Switch On/Off Qualification Mode and resetting resource Tree
+		 */
 		onClickEnableFindTechnician: function () {
 			var bEnabled = this._oViewModel.getProperty("/CheckRightTechnician"),
 				sResourceFilterParams = this._oDroppableTable.getTable().getBinding().getFilterParams();
@@ -462,21 +471,6 @@ sap.ui.define([
 					this._oDroppableTable.rebindTable();
 				}
 			}
-		},
-		// ,
-		// setBusyResourceTree: function (sChannel, oEvent, oData) {
-		// 	var bEnabled = this._oViewModel.getProperty("/CheckRightTechnician");
-		// 	if (!bEnabled) {
-		// 		return;
-		// 	}
-		// 	if (oData.busy) {
-		// 		this._oDataTable.setBusy(true);
-		// 		this._oViewModel.setProperty("/WarningMsgResourceTree", true);
-		// 	} else {
-		// 		this._oViewModel.setProperty("/WarningMsgResourceTree", false);
-		// 		this._oViewModel.setProperty("/CheckRightTechnician", false);
-		// 		this._oDroppableTable.rebindTable();
-		// 	}
-		// }
+		}
 	});
 });

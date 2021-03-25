@@ -611,6 +611,10 @@ sap.ui.define([
 			// 	controller: oController
 			// });
 		},
+		
+		/**
+		 *	Handle visibility of warning msg displayed when demand selection changes in FInd Technician 
+		 */
 		showWarningMsgResourceTree: function (bFlag) {
 			var oViewModel = this.getModel("viewModel");
 			if (oViewModel.getProperty("/CheckRightTechnician")) {

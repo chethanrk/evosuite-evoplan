@@ -146,12 +146,10 @@ sap.ui.define([
 					this.byId("idfindRightTechnicianButton").setEnabled(true);
 					this.byId("assignButton").setEnabled(true);
 					this.byId("changeStatusButton").setEnabled(true);
-					// this.doSetBusyResourceTree(true);
 				} else {
 					this.byId("idfindRightTechnicianButton").setEnabled(false);
 					this.byId("assignButton").setEnabled(false);
 					this.byId("changeStatusButton").setEnabled(false);
-					// this.doSetBusyResourceTree(false);
 				}
 				this.showWarningMsgResourceTree(true);
 			}, this);
@@ -441,6 +439,10 @@ sap.ui.define([
 				aNonAssignable: aNonAssignableDemands
 			};
 		},
+		/**
+		 * Resetting resource tree when Demand Filter changed to clear highlighted resources 
+		 * 
+		 */
 		onDemandFilterChange: function () {
 			var oViewModel = this.getModel("viewModel");
 			if (oViewModel.getProperty("/CheckRightTechnician")) {
