@@ -8,7 +8,7 @@
 					<gnt2:content>
 						<DateRangeSelection id="idDateRangeGantt2" width="20%" dateValue="{user>/GANT_START_DATE}" secondDateValue="{user>/GANT_END_DATE}"
 							maxDate="{user>/GANT_END_DATE}" minDate="{user>/GANT_START_DATE}" change="onChangeDateRange" enabled="false"/>
-						<Button id="idButtonTimeAlloc" enabled="false" text="{i18n>xbut.timeallocation}" visible="{user>/MANAGE_ABSENCE_ENABLE}" press="onTimeAllocPress"/>
+						<Button id="idButtonTimeAlloc" enabled="false" text="{i18n>xbut.timeallocation}" visible="{user>/ENABLE_BLOCK_TIME}" press="onTimeAllocPress"/>
 						<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.ResourceActions" type="XML"/>
 						<Button id="idToday" text="{i18n>xtit.today}" press="onPressToday"/>
 					</gnt2:content>
