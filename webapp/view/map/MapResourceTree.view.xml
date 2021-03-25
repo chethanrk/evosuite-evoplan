@@ -28,6 +28,12 @@
 						<ToolbarLayoutData shrinkable="true"/>
 					</layoutData>
 				</Button>
+				<Button id="assignedDemands" enabled="false" text="Show Assignments" tooltip="Show Assignments" 
+						press="onShowAssignDemandPress" busyIndicatorDelay="0">
+					<layoutData>
+						<ToolbarLayoutData shrinkable="true"/>
+					</layoutData>
+				</Button>
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.ResourceActions" type="XML"/>
 				<ToolbarSpacer/>
 			   	<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.ResourcePlanningCalender" type="XML"/>
