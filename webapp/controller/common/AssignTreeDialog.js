@@ -71,12 +71,18 @@ sap.ui.define([
 
 			//Error Handling in case for Assignments not allowed for find Technician
 			if (oDemandsPaths && oDemandsPaths.oNotAllowedPaths && oDemandsPaths.oNotAllowedPaths.length) {
-				this._eventBus.publish("AssignTreeDialog", "updateSelection", {
-					oDeselectAssignmentsContexts: oDemandsPaths.oDeselectAssignmentsContexts
-				});
+				if (!this._reAssign && !this._bulkReAssign) {
+					this._eventBus.publish("AssignTreeDialog", "updateDemandTableSelection", {
+						oDeselectAssignmentsContexts: oDemandsPaths.oDeselectAssignmentsContexts
+					});
+				} else {
+					this._eventBus.publish("AssignTreeDialog", "updateSelection", {
+						oDeselectAssignmentsContexts: oDemandsPaths.oDeselectAssignmentsContexts
+					});
+				}
 
 				//Global Error Msg Popup shows Description of discarded assignments
-				sMsg = this._oView.getController().getResourceBundle().getText("assignmentNotPossible");
+				sMsg = this._oView.getController().getResourceBundle().getText("xmsg.findResourceNotAllowed");
 				this._showAssignErrorDialog(oDemandsPaths.oNotAllowedPaths, null, sMsg);
 			}
 		},
@@ -105,7 +111,7 @@ sap.ui.define([
 					oAllowedSelectedPaths.push(aSelectedPaths[i]);
 				} else {
 					oNotAllowedPaths.push(oDemand.DemandDesc);
-					oDeselectAssignmentsContexts.push(aSelectedPaths[i].getPath());
+					oDeselectAssignmentsContexts.push(aSelectedPaths[i].sPath);
 				}
 			}
 			return {
