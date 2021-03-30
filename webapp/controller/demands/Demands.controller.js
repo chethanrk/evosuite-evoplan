@@ -35,6 +35,7 @@ sap.ui.define([
 			this._aSelectedRowsIdx = [];
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
+			this._eventBus.subscribe("AssignTreeDialog", "updateDemandTableSelection", this._deselectDemands, this);
 		},
 
 		/* =========================================================== */
@@ -115,6 +116,7 @@ sap.ui.define([
 				this._infoDialog.destroy();
 			}
 			this._eventBus.unsubscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
+			this._eventBus.unsubscribe("AssignTreeDialog", "updateDemandTableSelection", this._deselectDemands, this);
 		},
 
 		/* =========================================================== */
@@ -372,7 +374,8 @@ sap.ui.define([
 				this._aSelectedRowsIdx.length = 100;
 			}
 			var oSelectedPaths = this._getAllowedDemandsToCheckResource(this._oDataTable, this._aSelectedRowsIdx),
-				sRequirementProfileIds;
+				sRequirementProfileIds,
+				sErrorMsg = this.getResourceBundle().getText("xmsg.findResourceNotAllowed");
 
 			if (oSelectedPaths.aPathsData.length > 0) {
 				sRequirementProfileIds = this.getFormattedReqProfileId(oSelectedPaths.aPathsData);
@@ -381,7 +384,7 @@ sap.ui.define([
 				});
 			}
 			if (oSelectedPaths.aNonAssignable.length > 0) {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, false, sErrorMsg);
 			}
 		},
 
@@ -449,6 +452,21 @@ sap.ui.define([
 				oViewModel.setProperty("/CheckRightTechnician", false);
 				this._eventBus.publish("FindTechnician", "setBusyResourceTree");
 			}
-		}
+		},
+		/**
+		 * Resetting Demand selection based on not allowed for find technician 
+		 * 
+		 */
+		_deselectDemands: function (sChannel, oEvent, oData) {
+			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
+				sDemandPath;
+			// oItemsAssignmentList = this._oAssignMentTable.getItems();
+			for (var i = 0; i < oSelectedIndices.length; i++) {
+				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
+				if (oData.oDeselectAssignmentsContexts.includes(sDemandPath)) {
+					this._oDataTable.removeSelectionInterval(oSelectedIndices[i],oSelectedIndices[i]);
+				}
+			}
+		},
 	});
 });
