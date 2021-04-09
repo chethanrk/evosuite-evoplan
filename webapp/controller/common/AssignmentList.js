@@ -72,7 +72,7 @@ sap.ui.define([
 				oAssignmentData = oModel.getProperty(sPath);
 
 			// localStorage.setItem("Evo-Action-page", "DemandDetails");
-			this._component.assignInfoDialog.open(this._oView, null, oAssignmentData, this._mParameters);
+			this._component.assignInfoDialog.open(this, this._oView, null, oAssignmentData, this._mParameters);
 		}
 	});
 });

@@ -178,7 +178,7 @@ sap.ui.define([
 				oAssignmentData = oModel.getProperty(sPath);
 
 			localStorage.setItem("Evo-Action-page", "DemandDetails");
-			this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAssignmentData, {
+			this.getOwnerComponent().assignInfoDialog.open(this, this.getView(), null, oAssignmentData, {
 				bFromDetail: true
 			});
 		},
