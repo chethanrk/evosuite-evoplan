@@ -141,7 +141,7 @@ sap.ui.define([
 		 */
 		onPressShowPlanningCal: function (oEvent) {
 			this.getOwnerComponent().getModel("appView").setProperty("/busy", true);
-			this.getOwnerComponent().planningCalendarDialog.open(this, this.getView(), this.selectedResources, {
+			this.getOwnerComponent().planningCalendarDialog.open(this.getView(), this.selectedResources, {
 				bFromPlannCal: true,
 				bFromHome: true
 			}); // As we are opening the dialog when set model data
@@ -158,7 +158,7 @@ sap.ui.define([
 
 			if (oRowContext) {
 				this.assignmentPath = oRowContext.getPath();
-				this.getOwnerComponent().assignInfoDialog.open(this, this.getView(), this.assignmentPath, null, this._mParameters);
+				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);

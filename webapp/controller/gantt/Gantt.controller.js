@@ -490,7 +490,7 @@ sap.ui.define([
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
 				// Change
-				this.getOwnerComponent().assignInfoDialog.open(this, this.getView(), null, null, mParameters, sPath);
+				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, mParameters, sPath);
 			} else {
 				if (sFunctionKey) {
 					this._oEventBus.publish("StatusSelectDialog", "changeStatusDemand", {
@@ -797,7 +797,7 @@ sap.ui.define([
 				// to identify the action done on respective page
 				localStorage.setItem("Evo-Action-page", "ganttSplit");
 				if (oContext) {
-					this.getOwnerComponent().planningCalendarDialog.open(this, this.getView(), [oRowContext.getPath()], {
+					this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], {
 						bFromGantt: true
 					}, oShape.getTime());
 				} else {

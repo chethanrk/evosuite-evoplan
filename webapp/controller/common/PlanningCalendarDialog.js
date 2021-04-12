@@ -30,10 +30,8 @@ sap.ui.define([
 		 * @param sBindPath
 		 * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
 		 */
-		open: function (oController, oView, aSelectedResources, mParameters, oStartDate) {
+		open: function (oView, aSelectedResources, mParameters, oStartDate) {
 			this.bSaveFlag = false; //Flag for checking effort validation after resizing
-			this._oController = oController;
-
 			// create dialog lazily
 			if (!this._oDialog) {
 				Fragment.load({
@@ -309,6 +307,7 @@ sap.ui.define([
 		 * @param {Object} oEvent
 		 */
 		_refreshAppointment: function (oEvent, sEvent, oData) {
+			this.bSaveFlag = false;
 			var oModel = this._component.getModel("calendarModel");
 			if (sEvent) {
 				this._refreshAssignment(oData);
@@ -345,7 +344,7 @@ sap.ui.define([
 					}, true);
 
 				if (oUserModel.getProperty("/ENABLE_RESIZE_EFFORT_CHECK") && Number(iNewEffort) < Number(oAssignmentData.Effort)) {
-					this._oController._showConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (data) {
+					this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (data) {
 						if (data === "YES") {
 							this.bSaveFlag = false;
 							sap.ui.getCore().byId("PlanningCalender--idCreateSave").setEnabled(true);

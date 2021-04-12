@@ -502,6 +502,27 @@ sap.ui.define([
 				);
 			});
 		},
+			/**
+		 * Shows the confirmation Box.
+		 * New Confirm box for Effort Validation
+		 *
+		 */
+		_showEffortConfirmMessageBox: function (message) {
+			var oController = this;
+			return new Promise(function (resolve, reject) {
+				MessageBox.confirm(
+					message, {
+						styleClass: oController._component.getContentDensityClass(),
+						icon: sap.m.MessageBox.Icon.CONFIRM,
+						title: oController._component.getModel("i18n").getResourceBundle().getText("xtit.confirm"),
+						actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+						onClose: function (oEvent) {
+							resolve(oEvent);
+						}
+					}
+				);
+			});
+		},
 		/**
 		 * Change view horizon time at specified timestamp
 		 * @param oModel {object} viewModel

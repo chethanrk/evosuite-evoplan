@@ -20,8 +20,7 @@ sap.ui.define([
 		 * @param oView
 		 * @param sBindPath
 		 */
-		open: function (oController, oView, sBindPath, oAssignmentData, mParameters, oAssignementPath) {
-			this._oController = oController;
+		open: function (oView, sBindPath, oAssignmentData, mParameters, oAssignementPath) {
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
@@ -138,7 +137,7 @@ sap.ui.define([
 				oResourceBundle = this._oView.getController().getResourceBundle();
 
 			if (Number(iNewEffort) < Number(sEffort)) {
-				this._oController._showConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
+				this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
 					if (oAction === "YES") {
 						this.onSaveAssignments();
 					} else {

@@ -126,7 +126,7 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oAssignmentData = oModel.getProperty(sPath);
-			this._component.assignInfoDialog.open(this, this._oView, null, oAssignmentData, this._mParameters);
+			this._component.assignInfoDialog.open(this._oView, null, oAssignmentData, this._mParameters);
 		}
 
 	});
