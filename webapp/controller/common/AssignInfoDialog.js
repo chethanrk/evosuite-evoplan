@@ -1,14 +1,14 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"com/evorait/evoplan/model/formatter",
-	 "sap/ui/core/Fragment"
-], function (BaseController, formatter,Fragment) {
+	"sap/ui/core/Fragment"
+], function (BaseController, formatter, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.AssignInfoDialog", {
-		
-		formatter:formatter,
-		
+
+		formatter: formatter,
+
 		init: function () {
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);
@@ -20,29 +20,29 @@ sap.ui.define([
 		 * @param oView
 		 * @param sBindPath
 		 */
-		  open: function (oView, sBindPath, oAssignmentData, mParameters, oAssignementPath) {
-            // create dialog lazily
-            if (!this._oDialog) {
-            	oView.getModel("appView").setProperty("/busy", true);
-                Fragment.load({
-                    id: "AssignInfoDialog",
-                    name: "com.evorait.evoplan.view.common.fragments.AssignInfoDialog",
-                    controller: this
-                }).then(function (oDialog) {
-                	oView.getModel("appView").setProperty("/busy", false);
-                    this._oDialog = oDialog;
-                    this.onOpen(oDialog,oView, sBindPath, oAssignmentData, mParameters, oAssignementPath);
-                }.bind(this));
-            }else {
-                this.onOpen(this._oDialog,oView, sBindPath, oAssignmentData, mParameters, oAssignementPath);
-            }
-        },
-        
-		onOpen: function (oDialog,oView, sBindPath, oAssignmentData, mParameters, oAssignementPath) {
-	
-			var	oAssignment = this.getDefaultAssignmentModelObject(),
+		open: function (oView, sBindPath, oAssignmentData, mParameters, oAssignementPath) {
+			// create dialog lazily
+			if (!this._oDialog) {
+				oView.getModel("appView").setProperty("/busy", true);
+				Fragment.load({
+					id: "AssignInfoDialog",
+					name: "com.evorait.evoplan.view.common.fragments.AssignInfoDialog",
+					controller: this
+				}).then(function (oDialog) {
+					oView.getModel("appView").setProperty("/busy", false);
+					this._oDialog = oDialog;
+					this.onOpen(oDialog, oView, sBindPath, oAssignmentData, mParameters, oAssignementPath);
+				}.bind(this));
+			} else {
+				this.onOpen(this._oDialog, oView, sBindPath, oAssignmentData, mParameters, oAssignementPath);
+			}
+		},
+
+		onOpen: function (oDialog, oView, sBindPath, oAssignmentData, mParameters, oAssignementPath) {
+
+			var oAssignment = this.getDefaultAssignmentModelObject(),
 				oResource,
-                oAssignData,
+				oAssignData,
 				sResourceGroupGuid,
 				sResourceGuid;
 
@@ -54,22 +54,22 @@ sap.ui.define([
 				sResourceGuid = oResource.ResourceGuid;
 				oAssignment.DemandGuid = oResource.DemandGuid;
 
-			} else if(oAssignementPath){
+			} else if (oAssignementPath) {
 				// From gantt
 				// When we have Assignment path <AssignmentSet(<key>)>
-                oAssignData = oView.getModel().getProperty(oAssignementPath);
+				oAssignData = oView.getModel().getProperty(oAssignementPath);
 
-                oAssignment.AssignmentGuid = oAssignData.Guid;
-                oAssignment.Description = oAssignData.Description;
-                oAssignment.DemandGuid = oAssignData.DemandGuid;
-                oAssignment.DemandStatus = oAssignData.Demand.Status;
-                oAssignment.DateFrom = oAssignData.DateFrom;
-                oAssignment.DateTo = oAssignData.DateTo;
-                oAssignment.ResourceGroupGuid = oAssignData.ResourceGroupGuid;
+				oAssignment.AssignmentGuid = oAssignData.Guid;
+				oAssignment.Description = oAssignData.Description;
+				oAssignment.DemandGuid = oAssignData.DemandGuid;
+				oAssignment.DemandStatus = oAssignData.Demand.Status;
+				oAssignment.DateFrom = oAssignData.DateFrom;
+				oAssignment.DateTo = oAssignData.DateTo;
+				oAssignment.ResourceGroupGuid = oAssignData.ResourceGroupGuid;
 				oAssignment.ResourceGroupDesc = oAssignData.GROUP_DESCRIPTION;
 				oAssignment.ResourceGuid = oAssignData.ResourceGuid;
 				oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
-			}else {
+			} else {
 				oAssignment.AssignmentGuid = oAssignmentData.Guid;
 				oAssignment.Description = oAssignmentData.Demand.DemandDesc;
 				oAssignment.DemandGuid = oAssignmentData.DemandGuid;
@@ -83,7 +83,9 @@ sap.ui.define([
 			}
 
 			this._oView = oView;
-			this._mParameters = mParameters  || {bFromHome:true};
+			this._mParameters = mParameters || {
+				bFromHome: true
+			};
 			this.oAssignmentModel = oView.getModel("assignment");
 			this.oAssignmentModel.setData(oAssignment);
 
@@ -122,11 +124,36 @@ sap.ui.define([
 				oModel.setProperty("/EffortUnit", sNewValue);
 			}
 		},
+
+		/**
+		 * Function to validate effort assignment save 
+		 * 
+		 */
+		onSaveDialog: function () {
+			var sDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
+				sDateTo = this.oAssignmentModel.getProperty("/DateTo"),
+				sEffort = this.oAssignmentModel.getProperty("/Effort"),
+				iNewEffort = this.getEffortTimeDifference(sDateFrom, sDateTo),
+				oResourceBundle = this._oView.getController().getResourceBundle();
+
+			if (Number(iNewEffort) < Number(sEffort)) {
+				this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
+					if (oAction === "YES") {
+						this.onSaveAssignments();
+					} else {
+					}
+				}.bind(this));
+
+			} else {
+				this.onSaveAssignments();
+			}
+		},
+		
 		/**
 		 * save form data
 		 * @param oEvent
 		 */
-		onSaveDialog: function (oEvent) {
+		onSaveAssignments: function (oEvent) {
 			var oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
 				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid");
@@ -135,11 +162,11 @@ sap.ui.define([
 				oDateTo = oDateTo.getTime();
 				// To Validate DateTo and DateFrom
 				if (oDateTo >= oDateFrom) {
-					if(this._mParameters && this._mParameters.bFromPlannCal){
+					if (this._mParameters && this._mParameters.bFromPlannCal) {
 						this._eventBus.publish("AssignInfoDialog", "refreshAssignment", {
-							reassign:this.reAssign
-						});						
-					}else{
+							reassign: this.reAssign
+						});
+					} else {
 						this._eventBus.publish("AssignInfoDialog", "updateAssignment", {
 							isReassign: this.reAssign,
 							parameters: this._mParameters
@@ -160,16 +187,16 @@ sap.ui.define([
 		 */
 		onDeleteAssignment: function (oEvent) {
 			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid");
-			if(this._mParameters && this._mParameters.bFromPlannCal){
-						this._eventBus.publish("AssignInfoDialog", "refreshAssignment", {
-							unassign:true
-						});						
-					}else{
-						this._eventBus.publish("AssignInfoDialog", "deleteAssignment", {
-							sId: sId,
-							parameters: this._mParameters
-						});
-					}
+			if (this._mParameters && this._mParameters.bFromPlannCal) {
+				this._eventBus.publish("AssignInfoDialog", "refreshAssignment", {
+					unassign: true
+				});
+			} else {
+				this._eventBus.publish("AssignInfoDialog", "deleteAssignment", {
+					sId: sId,
+					parameters: this._mParameters
+				});
+			}
 			this.onCloseDialog();
 		},
 
@@ -215,14 +242,14 @@ sap.ui.define([
 		/**
 		 * default structure of assignment JSOn model
 		 */
-		getDefaultAssignmentModelObject: function(){
+		getDefaultAssignmentModelObject: function () {
 			return {
-				AllowChange:false,
+				AllowChange: false,
 				AllowReassign: false,
 				AllowUnassign: false,
 				AssignmentGuid: "",
-				DateFrom:"",
-				DateTo:"",
+				DateFrom: "",
+				DateTo: "",
 				DemandGuid: "",
 				DemandStatus: "",
 				Description: "",
@@ -274,19 +301,19 @@ sap.ui.define([
 						// oDateToField.setMinDate(oContext.getProperty("DateFrom"));
 
 						oModel.setProperty("/showError", false);
-						if(oModel.getProperty("/DateFrom") === "" || oModel.getProperty("/DateTo") === ""){
+						if (oModel.getProperty("/DateFrom") === "" || oModel.getProperty("/DateTo") === "") {
 							oModel.setProperty("/DateFrom", oContext.getProperty("DateFrom"));
-							oModel.setProperty("/DateTo", oContext.getProperty("DateTo"));	
+							oModel.setProperty("/DateTo", oContext.getProperty("DateTo"));
 						}
-						
+
 						oModel.setProperty("/Effort", oContext.getProperty("Effort"));
 						oModel.setProperty("/EffortUnit", oContext.getProperty("EffortUnit"));
-						
+
 						oDemandData = oContext.getProperty("Demand");
 						oModel.setProperty("/Description", oDemandData.DemandDesc);
 						oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
 						oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
-                        oModel.setProperty("/AllowChange", oDemandData.ASGNMNT_CHANGE_ALLOWED);
+						oModel.setProperty("/AllowChange", oDemandData.ASGNMNT_CHANGE_ALLOWED);
 						oModel.setProperty("/OrderId", oDemandData.ORDERID);
 						oModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
 						oModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
@@ -409,22 +436,23 @@ sap.ui.define([
 				sDemandGuid = oAssignment.getProperty("/DemandGuid");
 
 			this.onCloseDialog();
-			if(this._mParameters.bFromGantt){
-                oRouter.navTo("ganttDemandDetails", {
-                    guid: sDemandGuid
-                });
-			}else if(this._mParameters.bFromGanttSplit){
-                oRouter.navTo("splitGanttDetails", {
-                    guid: sDemandGuid
-                });
-			}else{
+			if (this._mParameters.bFromGantt) {
+				oRouter.navTo("ganttDemandDetails", {
+					guid: sDemandGuid
+				});
+			} else if (this._mParameters.bFromGanttSplit) {
+				oRouter.navTo("splitGanttDetails", {
+					guid: sDemandGuid
+				});
+			} else {
 				oRouter.navTo("detail", {
-                    guid: sDemandGuid
-                });
+					guid: sDemandGuid
+				});
 			}
 
 		},
-		exit : function(){
+
+		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);
 		}
 	});

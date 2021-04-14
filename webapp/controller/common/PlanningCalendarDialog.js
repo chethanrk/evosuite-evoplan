@@ -31,6 +31,7 @@ sap.ui.define([
 		 * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
 		 */
 		open: function (oView, aSelectedResources, mParameters, oStartDate) {
+			this.bSaveFlag = false; //Flag for checking effort validation after resizing
 			// create dialog lazily
 			if (!this._oDialog) {
 				Fragment.load({
@@ -75,10 +76,9 @@ sap.ui.define([
 			// To enable or disable the save button
 			this.checkDirty();
 			this._enableCreateUABtn(false);
-			
-				//Flag to check Changes are done or not in Planning Calendar
-			this._oCancel = false;
 
+			//Flag to check Changes are done or not in Planning Calendar
+			this._oCancel = false;
 
 		},
 		/**
@@ -307,6 +307,7 @@ sap.ui.define([
 		 * @param {Object} oEvent
 		 */
 		_refreshAppointment: function (oEvent, sEvent, oData) {
+			this.bSaveFlag = false;
 			var oModel = this._component.getModel("calendarModel");
 			if (sEvent) {
 				this._refreshAssignment(oData);
@@ -321,6 +322,9 @@ sap.ui.define([
 					oRowContext = oRow.getBindingContext("calendarModel"),
 					sRowPath = oRowContext.getPath(),
 					oRowData = oModel.getProperty(sRowPath),
+					oUserModel = this._component.getModel("user"),
+					oResourceBundle = this._component.getModel("i18n").getResourceBundle(),
+					iNewEffort = this.getEffortTimeDifference(oStartDate, oEndDate),
 					oParams = jQuery.extend({}, {
 						DateFrom: oStartDate || 0,
 						TimeFrom: {
@@ -338,6 +342,19 @@ sap.ui.define([
 						ResourceGroupGuid: oRowData.ResourceGroupGuid,
 						ResourceGuid: oRowData.ResourceGuid
 					}, true);
+
+				if (oUserModel.getProperty("/ENABLE_RESIZE_EFFORT_CHECK") && Number(iNewEffort) < Number(oAssignmentData.Effort)) {
+					this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (data) {
+						if (data === "YES") {
+							this.bSaveFlag = false;
+							sap.ui.getCore().byId("PlanningCalender--idCreateSave").setEnabled(true);
+						} else {
+							this.bSaveFlag = true;
+							sap.ui.getCore().byId("PlanningCalender--idCreateSave").setEnabled(false);
+						}
+					}.bind(this));
+
+				}
 
 				if (oAppointment.getParent() !== oRow) {
 					this.onDropOnAnotherResource(oModel, oAppointmentContext, oParams, oRowContext);
@@ -724,8 +741,8 @@ sap.ui.define([
 			} : {
 				bFromPlannCal: true
 			};
-			
-				//Setting it to true if any changes are saved
+
+			//Setting it to true if any changes are saved
 			this._oCancel = true;
 
 			//Setting it to true if any changes are saved
@@ -739,9 +756,9 @@ sap.ui.define([
 			// Reset global values
 			this._changedAssignments = {};
 			this._changedAbsences = {};
-			
+
 			//Refreshing Planning Calendar Events after Saving
-				this._eventBus.subscribe("AssignInfoDialog", "RefreshCalendar", this._setCalendarModel, this);
+			this._eventBus.subscribe("AssignInfoDialog", "RefreshCalendar", this._setCalendarModel, this);
 			this._eventBus.subscribe("AssignInfoDialog", "refreshAssignment", this._refreshAppointment, this);
 			this._eventBus.subscribe("CreateUnAvailability", "refreshAbsence", this._refreshIntervalHeader, this);
 		},
@@ -775,6 +792,9 @@ sap.ui.define([
 			if (Object.keys(this._changedAssignments).length > 0 && this._changedAssignments.constructor === Object || Object.keys(this._changedAbsences)
 				.length > 0 && this._changedAbsences.constructor === Object) {
 				sap.ui.getCore().byId("PlanningCalender--idCreateSave").setEnabled(true);
+				if (this.bSaveFlag) {
+					return false;
+				}
 				return true;
 			} else {
 				sap.ui.getCore().byId("PlanningCalender--idCreateSave").setEnabled(false);
@@ -836,6 +856,7 @@ sap.ui.define([
 			}
 			return 0;
 		},
+
 		exit: function () {
 			this._eventBus.unsubscribe("AssignInfoDialog", "RefreshCalendar", this._setCalendarModel, this);
 			this._eventBus.unsubscribe("AssignInfoDialog", "refreshAssignment", this._refreshAppointment, this);
