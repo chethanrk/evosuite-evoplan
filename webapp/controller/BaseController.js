@@ -672,20 +672,7 @@ sap.ui.define([
 			// 	controller: oController
 			// });
 		},
-		
-			/**
-		 * Calculating effort time difference after assignment resizing 
-		 * 
-		 */
-		getEffortTimeDifference: function (oDateFrom, oDateTo) {
-			var oTimeStampFrom = oDateFrom.getTime(),
-				oTimeStampTo = oDateTo.getTime(),
-				iDifference = oTimeStampTo - oTimeStampFrom,
-				iEffort = (((iDifference / 1000) / 60) / 60);
-			return iEffort;
-		},
 
-		
 		/**
 		 * Calculating effort time difference after assignment resizing 
 		 * 
