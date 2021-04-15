@@ -12,7 +12,8 @@
 				<smartTable:customToolbar>
 					<OverflowToolbar>
 						<ToolbarSpacer/>
-						<HBox id="idCheckRightTechnician" visible="{user>/ENABLE_QUALIFICATION}" class="sapUiMediumMarginEnd">
+						<!--{user>/ENABLE_QUALIFICATION}-->
+						<HBox id="idCheckRightTechnician" visible="false" class="sapUiMediumMarginEnd">
 							<Switch customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}" state="{viewModel>/CheckRightTechnician}"
 								change="onClickEnableFindTechnician"></Switch>
 							<Text text="{i18n>xlab.qualification}" class="sapUiTinyMarginBegin sapUiTinyMarginTop"></Text>

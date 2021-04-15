@@ -100,7 +100,7 @@ sap.ui.define([
 				gantDragSession: null, // Drag session from Gantt View added as we are keeping dragged data in the model.
 				detailPageBreadCrum: "",
 				capacityPlanning: false,
-				splitterDivider: "30%",	
+				splitterDivider: "30%",
 				ganttSelectionPane: "25%",
 				selectedHierarchyView: "TIMENONE",
 				enableReprocess: false,
@@ -123,11 +123,18 @@ sap.ui.define([
 					routeData: [],
 					checkedDemands: [],
 					assignedDemands: [],
-					
+
 				},
 				resourceFilterforRightTechnician: false,
-				CheckRightTechnician:false,
-				WarningMsgResourceTree:false
+				CheckRightTechnician: false,
+				WarningMsgResourceTree: false,
+				resourceQualification: {
+					AssignBtnVisible: false,
+					AssignBtnEnable: false,
+					FindResourceBtnVisible: false,
+					FindResourceBtnEnable: false
+				}
+
 			});
 			this.setModel(oViewModel, "viewModel");
 
@@ -169,10 +176,13 @@ sap.ui.define([
 			this.setModel(oCalendarModel, "calendarModel");
 			// Resource groups model
 			this.setModel(new JSONModel([]), "resGroups");
-			
+
 			//Creating Model for Availability Group in Gantt
-			this.setModel(new JSONModel({timeAllocation: [],manageAbsence: []}), "availabilityGroup");
-			
+			this.setModel(new JSONModel({
+				timeAllocation: [],
+				manageAbsence: []
+			}), "availabilityGroup");
+
 			// Message popover link
 			var oLink = new Link({
 				text: "{i18n>xtit.showMoreInfo}",
@@ -230,12 +240,12 @@ sap.ui.define([
 				// create the views based on the url/hash
 				this.getRouter().initialize();
 			}.bind(this));
-			
+
 			//lodating Avalability type for Time Allocation in Gantt
 			this._getAvailabilityGroup("L");
-			
+
 			//loading Availability type for Manage Absence in Gantt
-				this._getAvailabilityGroup("N");
+			this._getAvailabilityGroup("N");
 
 			// Not able load more than 100 associations
 			this.getModel().setSizeLimit(600);
@@ -254,6 +264,7 @@ sap.ui.define([
 			this.assignTreeDialog.exit();
 			this.assignActionsDialog.exit();
 			this.planningCalendarDialog.exit();
+			this.ResourceQualifications.exit();
 			// call the base component's destroy function
 			UIComponent.prototype.destroy.apply(this, arguments);
 
@@ -325,10 +336,10 @@ sap.ui.define([
 
 			this.DemandQualifications = new DemandQualifications();
 			this.DemandQualifications.init();
-			
+
 			this.assignmentList = new AssignmentList();
 			this.assignmentList.init();
-			
+
 			this.GanttResourceFilter = new GanttResourceFilter();
 		},
 
@@ -469,13 +480,10 @@ sap.ui.define([
 				],
 				success: function (oData, oResponse) {
 					if (oData && oData.results.length > 0) {
-						if(sAvailabilityTypeGroup === "L")
-						{
-					    	this.getModel("availabilityGroup").setProperty("/timeAllocation",oData.results);
-						}
-						else
-						{
-								this.getModel("availabilityGroup").setProperty("/manageAbsence",oData.results);
+						if (sAvailabilityTypeGroup === "L") {
+							this.getModel("availabilityGroup").setProperty("/timeAllocation", oData.results);
+						} else {
+							this.getModel("availabilityGroup").setProperty("/manageAbsence", oData.results);
 						}
 					}
 				}.bind(this),

@@ -255,6 +255,9 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				eventBus.publish("BaseController", "refreshDemandTable", {});
 				eventBus.publish("BaseController", "refreshDemandOverview", {});
+				if (oParameter.bFromResourcQualification) {
+					eventBus.publish("ResourceQualificationDialog", "refreshQualificationDemandsTable", {});
+				}
 			} else if (oParameter.bFromAsset) {
 				eventBus.publish("BaseController", "refreshAssetCal", {});
 			} else if (oParameter.bFromPlannCal) {
@@ -613,7 +616,6 @@ sap.ui.define([
 				window.open(sUri, "_blank");
 			}
 		},
-	
 
 		navToApp: function (sSemanticObject, sAction, sParameter) {
 			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation"),
@@ -627,7 +629,7 @@ sap.ui.define([
 				//Setting ShellHash Parameters for EvoTime and Other apps
 				//	sShellHash = sHash + "&" + sParameter + sKey;
 				sShellHash = sHash + "&" + sParameter; // + sKey;
-		
+
 			oCrossAppNavigator.toExternal({
 				target: {
 					shellHash: sShellHash // sHash + "&/" + sParameter + "/" + sKey
@@ -649,7 +651,7 @@ sap.ui.define([
 			// 	controller: oController
 			// });
 		},
-		
+
 		/**
 		 *	Handle visibility of warning msg displayed when demand selection changes in FInd Technician 
 		 */
