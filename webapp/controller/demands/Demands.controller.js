@@ -208,6 +208,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerDemandFilter: function (sChanel, sEvent, oData) {
+			this.showWarningMsgResourceTree(false);
 			if (sEvent === "refreshDemandTable" && !this._bFirstTime) {
 				this._oDraggableTable.rebindTable();
 			}
@@ -464,7 +465,7 @@ sap.ui.define([
 			for (var i = 0; i < oSelectedIndices.length; i++) {
 				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
 				if (oData.oDeselectAssignmentsContexts.includes(sDemandPath)) {
-					this._oDataTable.removeSelectionInterval(oSelectedIndices[i],oSelectedIndices[i]);
+					this._oDataTable.removeSelectionInterval(oSelectedIndices[i], oSelectedIndices[i]);
 				}
 			}
 		},

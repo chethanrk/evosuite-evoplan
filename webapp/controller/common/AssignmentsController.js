@@ -124,7 +124,7 @@ sap.ui.define([
 		 * @Author Rakesh Sahu
 		 **/
 		checkQualificationAssignment: function (aSourcePaths, targetObj, oParams, mParameters) {
-			if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) { //if Global parameter set True then need to check Qualification
+			if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION") && !(mParameters && mParameters.bFromResourcQualification)) { //if Global parameter set True then need to check Qualification
 				var oModel = this.getModel(),
 					sDemandGuids = this.getFormattedDemandGuids(oModel, aSourcePaths), //getting formatted DemandGuids to be passed in Qualification Service
 					oQualificationParameters = this.getQualificationCheckParameters(sDemandGuids, targetObj.NodeId, oParams.DateFrom, oParams.DateTo); //getting Parameters to passed in check Qualification service call
@@ -482,7 +482,7 @@ sap.ui.define([
 				oParams.TimeFrom = vStartTime;
 			} else {
 				oParams.DateFrom = oTargetDate ? oTargetDate : new Date(); // When Start Date Null/In the Simple view today date will sent
-				oParams.TimeFrom = vStartTime;
+				oParams.TimeFrom = {};
 				oParams.TimeFrom.ms = oTargetDate ? oTargetDate.getTime() : vCurrentTime;
 			}
 
@@ -491,7 +491,7 @@ sap.ui.define([
 				oParams.TimeTo = vEndTime;
 			} else {
 				oParams.DateTo = oNewEndDate ? oNewEndDate : new Date(); // When Start Date Null/In the Simple view today date will sent
-				oParams.TimeTo = vEndTime;
+				oParams.TimeTo = {};
 				oParams.TimeTo.ms = oNewEndDate ? oNewEndDate.getTime() : vCurrentTime;
 			}
 			return oParams;
