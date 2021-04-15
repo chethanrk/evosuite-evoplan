@@ -84,9 +84,6 @@ sap.ui.define([
 
 			oDialog.bindElement({
 				path: "/" + sKey,
-				// parameters: {
-				// 	expand: "ResourceToQualifications"
-				// },
 				events: {
 					change: function () {
 						var oElementBinding = oDialog.getElementBinding();
@@ -108,8 +105,9 @@ sap.ui.define([
 		onTabSelectionChanged: function (oEvent) {
 			var sTabKey = oEvent.getParameter("selectedKey"),
 				oViewModel = this._oView.getModel("viewModel"),
-				oIconTabBar = this._oView.byId("idResourceQualificationIconTabBar");
-			if (sTabKey === "Demands") {
+				oIconTabBar = this._oView.byId("idResourceQualificationIconTabBar"),
+				sDemandTabName = this._oView.getModel("i18n").getResourceBundle().getText("xtit.itemListTitle");
+			if (sTabKey === sDemandTabName) {
 				oViewModel.setProperty("/resourceQualification/AssignBtnVisible", true);
 				// oViewModel.setProperty("/resourceQualification/FindResourceBtnVisible", true);
 				this._loadContentDemandTab();
