@@ -864,7 +864,7 @@ sap.ui.define([
 		 */
 		onChangeEndDateAfterResize: function (oAppointmentData) {
 			var sEndDate = oAppointmentData.DateTo;
-			if (sEndDate.getHours() === 0) {
+			if (sEndDate.getHours() === 0 && sEndDate.getMinutes() === 0 && sEndDate.getSeconds() === 0) {
 				var sMinusEndDate = sEndDate.setDate(sEndDate.getDate() - 1),
 					sFinalEndDate = new Date(sMinusEndDate);
 				return new Date(sFinalEndDate.setHours(23, 59, 59));
