@@ -92,18 +92,21 @@ sap.ui.define([
 			var oUnAssignBtn = sap.ui.getCore().byId("AssignActions--idButtonBulkUnAssign"),
 				oReAssignBtn = sap.ui.getCore().byId("AssignActions--idButtonBulkReAssign"),
 				oCheckRightTechnician = sap.ui.getCore().byId("AssignActions--idCheckRightTechnician"),
+				bEnableQualification = this._oView.getModel("user").getProperty("/ENABLE_QUALIFICATION"),
 				oDialog = this._oDialog;
 			this._oAssignMentTable = sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable").getTable();
 
 			if (this._isUnAssign) {
 				oUnAssignBtn.setVisible(true);
 				oReAssignBtn.setVisible(false);
-				oCheckRightTechnician.setProperty("visible",false);
+				oCheckRightTechnician.setVisible(false);
 				oDialog.setTitle(this._resourceBundle.getText("xtit.unAssignTitle"));
 			} else {
 				oUnAssignBtn.setVisible(false);
 				oReAssignBtn.setVisible(true);
-				oCheckRightTechnician.setProperty("visible",true);
+				if (bEnableQualification) {
+					oCheckRightTechnician.setVisible(true);
+				}
 				oDialog.setTitle(this._resourceBundle.getText("xtit.reAssignTitle"));
 			}
 			if (this.isFirstTime) {

@@ -1,39 +1,37 @@
-<core:FragmentDefinition xmlns:layout="sap.ui.layout" xmlns:m="sap.m" xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable"
-	height="100%" xmlns="sap.uxap">
-	<m:Dialog title="{i18n>xtit.resourceQualifications}" contentWidth="100%"  resizable="true">
-		<m:content>
+<core:FragmentDefinition xmlns:layout="sap.ui.layout" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable"
+	height="100%" xmlns:uxap="sap.uxap" xmlns:f="sap.f">
+	<Dialog title="{i18n>xtit.resourceQualifications}" contentWidth="100%" resizable="true" contentHeight="70%">
+		<content>
 			<!--<core:Fragment fragmentName="com.evorait.evoplan.view.qualifications.fragments.ObjectPage" type="XML"/>-->
-			<ObjectPageLayout id="ObjectPageLayout" 
-				editHeaderButtonPress="handleEditBtnPress">
-				<headerTitle>
-					<ObjectPageHeader class="sapUiNoContentPadding" isObjectIconAlwaysVisible="true" objectImageURI="{Icon}" objectImageShape="Circle" objectTitle="{GroupDescription}"
-						objectSubtitle="{ResourceDescription}" id="ObjectPageLayoutHeaderTitle"></ObjectPageHeader>
-				</headerTitle>
-				<sections>
-					<ObjectPageSection id="Idqualifications" title="{i18n>xtit.qualifications}">
-						<subSections>
-							<ObjectPageSubSection id="qualifications">
-								<blocks>
-									<smartTable:SmartTable id="QualificationTable" entitySet="ResourceQualificationSet" useExportToExcel="true" useVariantManagement="true"
-										useTablePersonalisation="true" header="{xtit.qualifications}" showRowCount="true" persistencyKey="com.evorait.evoplan.qualificationTable"
-										enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableBindingPath="ResourceToQualifications">
-										<!-- layout data used to make the table growing but the filter bar fixed -->
-										<smartTable:layoutData>
-											<m:FlexItemData growFactor="1" baseSize="0%"/>
-										</smartTable:layoutData>
-									</smartTable:SmartTable>
-								</blocks>
-							</ObjectPageSubSection>
-						</subSections>
-					</ObjectPageSection>
-				</sections>
-			</ObjectPageLayout>
-		</m:content>
-		<m:buttons>
-			<!--<Button text="{i18n>xbut.gotodemand}"
-                    type="Emphasized"
-                    press="onGotoDemand" />-->
-			<m:Button text="{i18n>xbut.buttonClose}" press="onCloseDialog"/>
-		</m:buttons>
-	</m:Dialog>
+			<uxap:ObjectPageLayout id="ObjectPageLayout" editHeaderButtonPress="handleEditBtnPress">
+				<uxap:headerTitle>
+					<uxap:ObjectPageHeader class="sapUiNoContentPadding" isObjectIconAlwaysVisible="true" objectImageURI="{Icon}" objectImageShape="Circle"
+						objectTitle="{GroupDescription}" objectSubtitle="{ResourceDescription}" id="ObjectPageLayoutHeaderTitle"></uxap:ObjectPageHeader>
+				</uxap:headerTitle>
+			</uxap:ObjectPageLayout>
+			<IconTabBar id="idResourceQualificationIconTabBar" class="sapUiResponsiveContentPadding" select="onTabSelectionChanged">
+				<items>
+					<IconTabFilter text="{i18n>xtit.qualifications}" key="{i18n>xtit.qualifications}">
+						<smartTable:SmartTable id="QualificationTable" entitySet="ResourceQualificationSet" useExportToExcel="true" useVariantManagement="true"
+							useTablePersonalisation="true" header="{xtit.qualifications}" showRowCount="true" persistencyKey="com.evorait.evoplan.qualificationTable"
+							enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableBindingPath="ResourceToQualifications">
+							<!--layout data used to make the table growing but the filter bar fixed-->
+							<smartTable:layoutData>
+								<FlexItemData growFactor="1" baseSize="0%"/>
+							</smartTable:layoutData>
+						</smartTable:SmartTable>
+					</IconTabFilter>
+					<!--Demands Tab -->
+					<IconTabFilter text="{i18n>xtit.itemListTitle}" key="{i18n>xtit.itemListTitle}"></IconTabFilter>
+				</items>
+			</IconTabBar>
+		</content>
+		<buttons>
+			<Button text="{i18n>xbut.assign}" visible="{viewModel>/resourceQualification/AssignBtnVisible}"
+				enabled="{viewModel>/resourceQualification/AssignBtnEnable}" press="onAssignButtonPress"/>
+			<Button text="{i18n>xbut.findResource}" visible="{viewModel>/resourceQualification/FindResourceBtnVisible}"
+				enabled="{viewModel>/resourceQualification/FindResourceBtnEnable}" press="onCloseDialog"/>
+			<Button text="{i18n>xbut.buttonClose}" press="onCloseDialog"/>
+		</buttons>
+	</Dialog>
 </core:FragmentDefinition>
