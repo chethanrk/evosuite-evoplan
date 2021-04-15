@@ -653,6 +653,18 @@ sap.ui.define([
 		},
 
 		/**
+		 * Calculating effort time difference after assignment resizing 
+		 * 
+		 */
+		getEffortTimeDifference: function (oDateFrom, oDateTo) {
+			var oTimeStampFrom = oDateFrom.getTime(),
+				oTimeStampTo = oDateTo.getTime(),
+				iDifference = oTimeStampTo - oTimeStampFrom,
+				iEffort = (((iDifference / 1000) / 60) / 60);
+			return iEffort;
+		},
+
+		/**
 		 *	Handle visibility of warning msg displayed when demand selection changes in FInd Technician 
 		 */
 		showWarningMsgResourceTree: function (bFlag) {
