@@ -6,7 +6,7 @@
 			<uxap:ObjectPageLayout id="ObjectPageLayout" editHeaderButtonPress="handleEditBtnPress">
 				<uxap:headerTitle>
 					<uxap:ObjectPageHeader class="sapUiNoContentPadding" isObjectIconAlwaysVisible="true" objectImageURI="{Icon}" objectImageShape="Circle"
-						objectTitle="{GroupDescription}" objectSubtitle="{ResourceDescription}" id="ObjectPageLayoutHeaderTitle"></uxap:ObjectPageHeader>
+						objectTitle="{ResourceDescription}" objectSubtitle="{GroupDescription}" id="ObjectPageLayoutHeaderTitle"></uxap:ObjectPageHeader>
 				</uxap:headerTitle>
 			</uxap:ObjectPageLayout>
 			<IconTabBar id="idResourceQualificationIconTabBar" class="sapUiResponsiveContentPadding" select="onTabSelectionChanged">
