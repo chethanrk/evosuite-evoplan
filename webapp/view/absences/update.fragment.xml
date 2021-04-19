@@ -29,7 +29,7 @@
         </VBox>
         
         <VBox id="idUpdateTimeAllocation" class="sapUiTinyMarginBeginEnd" visible="false">
-    		<Label class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop" text="Start Date"/>
+    		<Label class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop" text="{/#ResourceAvailability/DateFrom/@sap:label}"/>
 		<DatePicker
 			id="idUpdateFromDate"
 			width="95%"
@@ -38,7 +38,7 @@
 			placeholder="Enter Date"
 			change="handleChange"
 			class="sapUiSmallMarginBeginEnd"/>
-			<Label  class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="End Date"/>
+			<Label  class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/DateTo/@sap:label}"/>
 		<DatePicker
 			id="idUpdateToDate"
 			width="95%"
@@ -61,7 +61,7 @@
             </smartForm:Group>
         </smartForm:SmartForm>
         
-        <Label class="sapUiSmallMarginBeginEnd" text="Block Perecentage"/>
+        <Label class="sapUiSmallMarginBeginEnd" text="{/#ResourceAvailability/BlockPercentage/@sap:label}"/>
         <Slider id="idUpdateTimeAllocSlider" class="sapUiSmallMarginBeginEnd"  width="97%"
 				min="0" value="{BlockPercentage}" max="100"
 				showAdvancedTooltip="true"
