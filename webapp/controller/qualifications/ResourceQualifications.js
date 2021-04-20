@@ -1,8 +1,11 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"com/evorait/evoplan/model/formatter",
-	"sap/ui/core/Fragment"
-], function (BaseController, formatter, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+
+], function (BaseController, formatter, Fragment, Filter, FilterOperator) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.qualifications.ResourceQualifications", {
@@ -124,7 +127,7 @@ sap.ui.define([
 		_loadContentDemandTab: function () {
 			var oIconTabBar = this._oView.byId("idResourceQualificationIconTabBar");
 			if (!this._oDemandTab) {
-				this._oDemandTab = sap.ui.xmlfragment("com.evorait.evoplan.view.qualifications.fragments.ResourceQualificationDemandTab");
+				this._oDemandTab = sap.ui.xmlfragment("com.evorait.evoplan.view.qualifications.fragments.ResourceQualificationDemandTab", this);
 				this._oView.addDependent(this._oDemandTab);
 				this._configureDataTable(sap.ui.getCore().byId("idResourceQualificationDemandsTable").getTable());
 			}
@@ -192,6 +195,25 @@ sap.ui.define([
 		_refreshQualificationDemandsTable: function () {
 			sap.ui.getCore().byId("idResourceQualificationDemandsTable").rebindTable();
 		},
+		/**
+		 * Handling the qualification match filter before the Demand table refresh
+		 */
+		onBeforeRebindDemandsTable: function (oEvent) {
+			var oParams = oEvent.getParameters(),
+				oBinding = oParams.bindingParams,
+				oMatchType = sap.ui.getCore().byId("idButtonQualificationMatchType").getSelectedKey(),
+				aFilter;
+
+			if (oMatchType === "Full") {
+				oBinding.filters = [new Filter("RESOURCE_MATCH", FilterOperator.EQ, "F")];
+			} else if (oMatchType === "Partial") {
+				oBinding.filters = [new Filter("RESOURCE_MATCH", FilterOperator.EQ, "P")];
+			} else {
+				oBinding.filters = [];
+			}
+			// oBinding.filters = [new Filter(aFilter, true)];
+		},
+
 		/**
 		 * Close the Qualification Dialog
 		 * @param oEvent
