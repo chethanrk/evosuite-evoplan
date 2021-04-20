@@ -1,11 +1,38 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable">
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:table="sap.ui.table">
 	<smartTable:SmartTable id="idResourceQualificationDemandsTable" entitySet="DemandQualificationMatchSet" useExportToExcel="true"
 		useVariantManagement="true" useTablePersonalisation="true" showRowCount="true" persistencyKey="com.evorait.evoplan.demandsTable"
 		enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableBindingPath="ResourceToDemandQualificationMatch"
-		requestAtLeastFields="ALLOW_ASSIGN,ALLOW_FINDRESOURCE,Guid">
+		requestAtLeastFields="ALLOW_ASSIGN,ALLOW_FINDRESOURCE,Guid,REQUIREMENT_PROFILE_COLOR" beforeRebindTable="onBeforeRebindDemandsTable">
 		<!--layout data used to make the table growing but the filter bar fixed-->
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1" baseSize="0%"/>
 		</smartTable:layoutData>
+		<smartTable:customToolbar>
+			<OverflowToolbar>
+				<ToolbarSpacer/>
+				<Label text="{i18n>xlab.matched}" design="Bold"/>
+				<SegmentedButton id="idButtonQualificationMatchType" selectedKey="All" selectionChange="_refreshQualificationDemandsTable">
+					<items>
+						<SegmentedButtonItem text="{i18n>xbut.all}" key="All"/>
+						<SegmentedButtonItem text="{i18n>xbut.full}" key="Full"/>
+						<SegmentedButtonItem text="{i18n>xbut.partial}" key="Partial"/>
+					</items>
+				</SegmentedButton>
+			</OverflowToolbar>
+		</smartTable:customToolbar>
+		<table:Table visibleRowCount="5">
+			<table:columns>
+				<table:Column hAlign="Center" width="3rem"
+					visible="{= ${/#DemandQualificationMatch/REQUIREMENT_PROFILE_COLOR/@sap:visible} === 'false' ? false : true}">
+					<table:customData>
+						<core:CustomData value='\{"columnKey": "REQUIREMENT_PROFILE_COLOR", "leadingProperty": "REQUIREMENT_PROFILE_COLOR"}'/>
+					</table:customData>
+					<Label text="{/#DemandQualificationMatch/REQUIREMENT_PROFILE_COLOR/@sap:label}"/>
+					<table:template>
+						<core:Icon src="sap-icon://circle-task-2" color="{REQUIREMENT_PROFILE_COLOR}"></core:Icon>
+					</table:template>
+				</table:Column>
+			</table:columns>
+		</table:Table>
 	</smartTable:SmartTable>
 </core:FragmentDefinition>
