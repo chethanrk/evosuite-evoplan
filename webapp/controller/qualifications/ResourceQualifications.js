@@ -219,10 +219,20 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onCloseDialog: function (oEvent) {
-			this._oDialog.unbindElement();
+			this._resetDialoge();
 			this._oDialog.close();
 		},
-
+		/**
+		 * reset changes in Resource Qualification Dialog
+		 */
+		_resetDialoge: function () {
+			var oIconTabBar = this._oView.byId("idResourceQualificationIconTabBar"),
+				sTabKey = this._oView.getModel("i18n").getResourceBundle().getText("xtit.qualifications");
+			oIconTabBar.destroyContent();
+			oIconTabBar.setSelectedKey(sTabKey);
+			delete this._oDemandTab;
+			this._oDialog.unbindElement();
+		},
 		/**
 		 * exit of Qualification dialog
 		 */
