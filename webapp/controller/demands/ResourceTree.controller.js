@@ -8,11 +8,12 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"com/evorait/evoplan/controller/common/ResourceTreeFilterBar",
 	"sap/m/MessageToast",
-	"sap/m/MessageBox"
+	"sap/m/MessageBox",
+    "sap/ui/core/Fragment"
 
 ], function (Device, JSONModel, Filter, FilterOperator,
 	FilterType, formatter, BaseController, ResourceTreeFilterBar,
-	MessageToast, MessageBox) {
+	MessageToast, MessageBox, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.demands.ResourceTree", {
@@ -36,15 +37,20 @@ sap.ui.define([
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
 		 **/
 		onInit: function () {
-			this._oDroppableTable = this.byId("droppableTable");
-			//this._oDroppableTable.setSmartFilterId("demand--resourceTreeFilterBar");
-			this._oDataTable = this._oDroppableTable.getTable();
-			this._configureDataTable(this._oDataTable);
-			this._oViewModel = this.getModel("viewModel");
-
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
-			this.oFilterConfigsController.init(this.getView(),
-				"resourceTreeFilterBarFragment");
+            this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
+            this._oViewModel = this.getModel("viewModel");
+
+           Fragment.load({
+                name: "com.evorait.evoplan.view.common.fragments.ResourceTreeTable",
+                id: this.getView().getId(),
+                controller: this
+            }).then(function (content) {
+               this.getView().byId("idResourcePage").setContent(content);
+                this._oDroppableTable = this.byId("droppableTable");
+                this._oDataTable = this._oDroppableTable.getTable();
+                this._configureDataTable(this._oDataTable);
+            }.bind(this));
 
 			//eventbus of assignemnt handling
 			this._eventBus = sap.ui.getCore().getEventBus();
@@ -291,14 +297,16 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree: function () {
-			var oTreeTable = this._oDataTable,
-				oTreeBinding = oTreeTable.getBinding("rows");
-
-			//reset the changes
-			this.resetChanges();
-			if (oTreeBinding && !this._bFirsrTime) {
-				this.mTreeState = this._getTreeState();
-				oTreeBinding.refresh();
+			if (!this._bFirsrTime) {
+				var oTreeTable = this._oDataTable,
+					oTreeBinding = oTreeTable.getBinding("rows");
+	
+				//reset the changes
+				this.resetChanges();
+				if (oTreeBinding && !this._bFirsrTime) {
+					this.mTreeState = this._getTreeState();
+					oTreeBinding.refresh();
+				}
 			}
 			this._bFirsrTime = false;
 		},

@@ -33,6 +33,7 @@ sap.ui.define([
 			var openActionSheet = this.openActionSheet.bind(this);
 			this._oDraggableTable = this.byId("draggableList");
 			this._oDataTable = this._oDraggableTable.getTable();
+			this._smartFilter = this.byId("listReportFilter");
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
 			this._mParameters = {
 				bFromMap: true
@@ -457,7 +458,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onDemandFilterChange: function (oEvent) {
-			var aFilters = oEvent.getSource().getFilters();
+			var aFilters = this._smartFilter.getFilters();
 			this.getModel("viewModel").setProperty("/mapSettings/filters", aFilters);
 			this.setMapBusy(true);
 			this.onReset();
@@ -574,15 +575,28 @@ sap.ui.define([
 				oStatusFilter = this.byId("listReportFilter").getControlByKey("Status"),
 				aTokens = [],
 				oLegendList = this.byId("idMapLegendsList");
+				var values = [];
 			if (sValue !== "Selected") {
 				aTokens.push(new sap.m.Token({
 					text: sValue,
 					key: sValue
 				}));
+				values.push({
+                    text: sValue,
+                    key: sValue
+                });
 			} else {
 				oLegendList.setSelectedItem(oLegendList.getSelectedItem(), false);
 			}
-			oStatusFilter.setTokens(aTokens);
+			// oStatusFilter.setTokens(aTokens);
+			var	oFilterData ={};
+            oFilterData["Status"] = {
+                items: [],
+                ranges: [],
+                value: ""
+            };
+            oFilterData["Status"].items = values;
+            this._smartFilter.setFilterData(oFilterData);
 		},
 		/**
 		 * remove Selection in Map Lagend to filter the map and Demand Table.

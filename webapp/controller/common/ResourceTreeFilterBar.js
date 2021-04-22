@@ -58,8 +58,8 @@ sap.ui.define([
 			this._sId = oView.getId();
 			this._oView = oView;
 			this._component = this._oView.getController().getOwnerComponent();
-			this._oDroppableTable = oView.byId("droppableTable");
-			this._oDataTable = this._oDroppableTable.getTable();
+			// this._oDroppableTable = oView.byId("droppableTable");
+			// this._oDataTable = this._oDroppableTable.getTable();
 			this._viewModel = this._component.getModel("viewModel");
 			//use global promise for getting when filterbar was fully initalized
 			// this._isInitalizedProm = new Promise(function (resolve, reject) {

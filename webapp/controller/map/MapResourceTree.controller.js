@@ -38,13 +38,19 @@ sap.ui.define([
 			 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
 			 **/
 			onInit: function () {
-				this._oDroppableTable = this.byId("droppableTable");
-				//this._oDroppableTable.setSmartFilterId("map--resourceTreeFilterBar");
-				this._oDataTable = this._oDroppableTable.getTable();
-				this._configureDataTable(this._oDataTable);
+			this.oFilterConfigsController = new ResourceTreeFilterBar();
+            this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
 
-				this.oFilterConfigsController = new ResourceTreeFilterBar();
-				this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
+            Fragment.load({
+                name: "com.evorait.evoplan.view.common.fragments.ResourceTreeTable",
+                id: this.getView().getId(),
+                controller: this
+            }).then(function (content) {
+                this.getView().byId("idResourcePage").setContent(content);
+                this._oDroppableTable = this.byId("droppableTable");
+                this._oDataTable = this._oDroppableTable.getTable();
+                this._configureDataTable(this._oDataTable);
+            }.bind(this));
 
 				//eventbus of assignemnt handling
 				this._eventBus = sap.ui.getCore().getEventBus();
