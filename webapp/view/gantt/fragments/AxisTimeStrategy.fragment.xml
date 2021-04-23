@@ -4,7 +4,7 @@
         xmlns:axistime="sap.gantt.axistime"
         xmlns:config="sap.gantt.config">
 
-    <axistime:StepwiseZoomStrategy id="idAxisTime" zoomLevel="3">
+    <axistime:StepwiseZoomStrategy id="idAxisTime">
         <axistime:totalHorizon>
             <config:TimeHorizon
                     startTime="{user>/GANT_START_DATE}"
