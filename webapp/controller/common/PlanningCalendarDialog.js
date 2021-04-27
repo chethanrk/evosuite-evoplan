@@ -252,6 +252,7 @@ sap.ui.define([
 				sPath = oAppointmentContext.getPath(),
 				oAppointmentData = oModel.getProperty(sPath),
 				oRowData = oModel.getProperty(oRowPath);
+				oAppointmentData.DateTo = this.onChangeEndDateAfterResize(oAppointmentData);
 
 			this.oSelectedContext = oAppointmentContext;
 
@@ -342,6 +343,9 @@ sap.ui.define([
 						ResourceGroupGuid: oRowData.ResourceGroupGuid,
 						ResourceGuid: oRowData.ResourceGuid
 					}, true);
+					
+					oParams.DateTo = this.onChangeEndDateAfterResize(oParams);
+					oEndDate =	oParams.DateTo;
 
 				if (oUserModel.getProperty("/ENABLE_RESIZE_EFFORT_CHECK") && Number(iNewEffort) < Number(oAssignmentData.Effort)) {
 					this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (data) {
@@ -855,6 +859,20 @@ sap.ui.define([
 				return 1;
 			}
 			return 0;
+		},
+		
+			/**
+		 * For validating End Date onResize of Planning Calendar
+		 */
+		onChangeEndDateAfterResize: function (oAppointmentData) {
+			var sEndDate = oAppointmentData.DateTo;
+			if (sEndDate.getHours() === 0 && sEndDate.getMinutes() === 0 && sEndDate.getSeconds() === 0) {
+				var sMinusEndDate = sEndDate.setDate(sEndDate.getDate() - 1),
+					sFinalEndDate = new Date(sMinusEndDate);
+				return new Date(sFinalEndDate.setHours(23, 59, 59));
+			} else {
+				return sEndDate;
+			}
 		},
 	
 		exit: function () {
