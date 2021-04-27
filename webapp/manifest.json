@@ -231,6 +231,13 @@
 					]
 				},
 				{
+					"pattern": "NewGantt",
+					"name": "newgantt",
+					"target": [
+						"newgantt"
+					]
+				},
+				{
 					"pattern": "Gantt/Demand/{guid}",
 					"name": "ganttDemandDetails",
 					"target": [
@@ -441,6 +448,14 @@
 					"parent": "splitHorNavigation",
 					"controlId": "leftPanel",
 					"viewLevel": 3
+				},
+				"newgantt": {
+					"viewType": "XML",
+					"viewName": "newgantt",
+					"viewPath": "com.evorait.evoplan.view.gantt",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 4
 				}
 			}
 		}

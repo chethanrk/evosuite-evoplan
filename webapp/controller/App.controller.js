@@ -114,6 +114,9 @@ sap.ui.define([
 			case oResourceBundle.getText("xbut.pageMap"):
 				oRouter.navTo("map", {});
 				break;
+			case oResourceBundle.getText("xbut.pageNewGantt"):
+				oRouter.navTo("newgantt", {});
+				break;
 			default:
 				oRouter.navTo("demands", {});
 				oAppViewModel.setProperty("/pageTitle", oResourceBundle.getText("xbut.pageDemands"));
