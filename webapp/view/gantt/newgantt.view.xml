@@ -25,7 +25,12 @@
 					</gnt2:legendContainer>
 				</gnt2:ContainerToolbar>
 			</gnt2:toolbar>-->
-
+			<gnt2:toolbar>
+			<gnt2:ContainerToolbar showDisplayTypeButton="true" id="containerToolbar">
+				<CheckBox text="Alert" id="alert" enabled="true" select="onAlertClicked"/>
+			</gnt2:ContainerToolbar>
+		</gnt2:toolbar>
+<gnt2:ganttCharts>
 			<gnt2:GanttChartWithTable id="ganttResourceAssignments"
 									  ghostAlignment="Start"
 									  adhocLineLayer="Bottom"
@@ -41,7 +46,7 @@
 									  selectionPanelSize="{viewModel>/ganttSelectionPane}"
 									  nowLineInUTC="false">
 				<gnt2:table>
-					<table:TreeTable id="ganttResourceTreeTable" class="resourceGanttTreeTable" selectionMode="Single" visibleRowCountMode="Auto"
+					<table:TreeTable id="ganttResourceTreeTable"  selectionMode="Single" visibleRowCountMode="Auto"
 						enableColumnReordering="false" enableBusyIndicator="true" busyStateChanged="onBusyStateChanged" enableCellFilter="false"
 						columnHeaderVisible="false" selectionBehavior="RowOnly"
 						rows="{ path: '/ResourceHierarchySet', parameters: { operationMode: 'Server', numberOfExpandedLevels: 1, groupId: 'GanttTree' } }">
@@ -116,6 +121,7 @@
 					</def:SvgDefs>
 				</gnt2:svgDefs>-->
 			</gnt2:GanttChartWithTable>
+			</gnt2:ganttCharts>
 		</gnt2:GanttChartContainer>
 		</content>
 	</Page>
