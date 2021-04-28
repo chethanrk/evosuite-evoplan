@@ -14,7 +14,7 @@
 			<smartFilterBar:ControlConfiguration key="NodeType" label="{i18n>xtit.filterTitleView}" visibleInAdvancedArea="false" mandatory="mandatory"
 				width="100%" groupId="_BASIC" index="1">
 				<smartFilterBar:customControl>
-					<Select width="100%" customData:hasValue="true" change="onChangeTimeView" selectedKey="TIMENONE">
+					<Select id="idTimeView" width="100%" customData:hasValue="true" change="onChangeTimeView" selectedKey="TIMENONE">
 						<core:Item text="{i18n>xfld.viewFilterDaily}" key="TIMEDAY"/>
 						<core:Item text="{i18n>xfld.viewFilterWeek}" key="TIMEWEEK"/>
 						<core:Item text="{i18n>xfld.viewFilterMonth}" key="TIMEMONTH"/>
