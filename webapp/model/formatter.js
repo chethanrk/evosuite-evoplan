@@ -639,6 +639,20 @@ sap.ui.define([
 			return "";
 
 			// }
+		},
+		setIconforResourceAction: function (sNodeType) {
+			if (sNodeType === "RES_GROUP") {
+				return "sap-icon://edit";
+			} else {
+				return "sap-icon://delete";
+			}
+		},
+		setToolTipforResourceAction: function (sNodeType) {
+			if (sNodeType === "RES_GROUP") {
+				return "Edit Group";
+			} else {
+				return "Remove Resource";
+			}
 		}
 
 	};

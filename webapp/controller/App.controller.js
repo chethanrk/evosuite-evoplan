@@ -114,6 +114,9 @@ sap.ui.define([
 			case oResourceBundle.getText("xbut.pageMap"):
 				oRouter.navTo("map", {});
 				break;
+			case oResourceBundle.getText("xbut.ManageResources"):
+				oRouter.navTo("manageResources", {});
+				break;
 			default:
 				oRouter.navTo("demands", {});
 				oAppViewModel.setProperty("/pageTitle", oResourceBundle.getText("xbut.pageDemands"));
@@ -186,6 +189,8 @@ sap.ui.define([
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
 			} else if (oParams.config.pattern.startsWith("Map")) {
 				pageTitle = oResourceBundle.getText("xbut.pageMap");
+			} else if (oParams.config.pattern.startsWith("ManageResources")) {
+				pageTitle = oResourceBundle.getText("xbut.ManageResources");
 			}
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
 			oAppViewModel.setProperty("/currentRoute", oParams.name);
@@ -321,19 +326,19 @@ sap.ui.define([
 				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageAssetManager")) {
 					this._eventBus.publish("BaseController", "refreshAssetCal", {});
 					this._eventBus.publish("BaseController", "refreshAssets", {});
-				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageMessageCockpit")) {
-				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageGanttChartSplit")) {
+				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageMessageCockpit")) {} else if (oSelectedRoute ===
+					oResourceBundleText.getText("xbut.pageGanttChartSplit")) {
 					this._eventBus.publish("BaseController", "refreshDemandTable", {});
 					this._eventBus.publish("BaseController", "refreshTreeTable", {});
 				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageMap")) {
-						oComponent._getResourceGroups.call(oComponent);
+					oComponent._getResourceGroups.call(oComponent);
 					this._eventBus.publish("BaseController", "refreshMapView", {});
 					this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
 					this._eventBus.publish("BaseController", "refreshMapDemandTable", {});
+				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.ManageResources")) {
+					this._eventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
 				}
-			}.bind(this), function (data) {
-			}.bind(this)).catch(function (data) {
-			}.bind(this));
+			}.bind(this), function (data) {}.bind(this)).catch(function (data) {}.bind(this));
 
 			// this.executeFunctionImport(this.getModel(), {}, "RefreshSharedMemoryAreas", "POST").then(function () {
 			// 	oComponent._getResourceGroups.call(oComponent);
