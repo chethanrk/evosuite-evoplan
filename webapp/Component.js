@@ -172,6 +172,7 @@ sap.ui.define([
 
 			//Creating the global for planning calendar
 			var oCalendarModel = new JSONModel();
+			oCalendarModel.setSizeLimit(9999999999);
 			oCalendarModel.setData({});
 			this.setModel(oCalendarModel, "calendarModel");
 			// Resource groups model

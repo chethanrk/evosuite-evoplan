@@ -511,10 +511,15 @@ sap.ui.define([
 				if (i === iArg / 2) {
 					sToolTip = sToolTip + (arguments[iArg / 2 + i] ? arguments[i] + ":" + arguments[iArg / 2 + i] : "");
 				} else {
-					sToolTip = sToolTip + (arguments[iArg / 2 + i] ? arguments[i] + ":" + arguments[iArg / 2 + i] : "") + "\n";
+					if (arguments[i].indexOf("unit-of-measure") !== -1) {
+						sToolTip = sToolTip.substring(0, sToolTip.lastIndexOf("\n"));
+						sToolTip = sToolTip + " " + arguments[iArg / 2 + i] + "\n";
+					} else {
+						sToolTip = sToolTip + (arguments[iArg / 2 + i] ? arguments[i] + ":" + arguments[iArg / 2 + i] : "") + "\n";
+					}
 				}
 			}
-
+			return sToolTip;
 		},
 		/**
 		 * formatter formats the visibility of reassign button based on the two flags

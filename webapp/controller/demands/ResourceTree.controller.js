@@ -9,7 +9,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/ResourceTreeFilterBar",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
-    "sap/ui/core/Fragment"
+	"sap/ui/core/Fragment"
 
 ], function (Device, JSONModel, Filter, FilterOperator,
 	FilterType, formatter, BaseController, ResourceTreeFilterBar,
@@ -38,19 +38,19 @@ sap.ui.define([
 		 **/
 		onInit: function () {
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
-            this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
-            this._oViewModel = this.getModel("viewModel");
+			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
+			this._oViewModel = this.getModel("viewModel");
 
-           Fragment.load({
-                name: "com.evorait.evoplan.view.common.fragments.ResourceTreeTable",
-                id: this.getView().getId(),
-                controller: this
-            }).then(function (content) {
-               this.getView().byId("idResourcePage").setContent(content);
-                this._oDroppableTable = this.byId("droppableTable");
-                this._oDataTable = this._oDroppableTable.getTable();
-                this._configureDataTable(this._oDataTable);
-            }.bind(this));
+			Fragment.load({
+				name: "com.evorait.evoplan.view.common.fragments.ResourceTreeTable",
+				id: this.getView().getId(),
+				controller: this
+			}).then(function (content) {
+				this.getView().byId("idResourcePage").setContent(content);
+				this._oDroppableTable = this.byId("droppableTable");
+				this._oDataTable = this._oDroppableTable.getTable();
+				this._configureDataTable(this._oDataTable);
+			}.bind(this));
 
 			//eventbus of assignemnt handling
 			this._eventBus = sap.ui.getCore().getEventBus();
@@ -76,6 +76,15 @@ sap.ui.define([
 				this._mParameters = {
 					bFromHome: true
 				};
+				var sViewSelectedKey = this.getView().byId("idTimeView").getSelectedKey();
+				if (sViewSelectedKey === "TIMENONE") {
+					this.getView().getModel("viewModel").setProperty("/selectedHierarchyView", sViewSelectedKey);
+					this.getView().getModel("viewModel").setProperty("/capacityPlanning", false);
+				} else {
+					this.getView().getModel("viewModel").setProperty("/selectedHierarchyView", sViewSelectedKey);
+					this.getView().getModel("viewModel").setProperty("/capacityPlanning", true);
+				}
+
 			}
 		},
 
@@ -300,7 +309,7 @@ sap.ui.define([
 			if (!this._bFirsrTime) {
 				var oTreeTable = this._oDataTable,
 					oTreeBinding = oTreeTable.getBinding("rows");
-	
+
 				//reset the changes
 				this.resetChanges();
 				if (oTreeBinding && !this._bFirsrTime) {

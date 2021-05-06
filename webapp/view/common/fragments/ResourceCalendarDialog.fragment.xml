@@ -25,6 +25,8 @@
 												    {path:'/#Demand/OPERATION_DESC/@sap:label'},
 												    {path:'/#Demand/StatusDesc/@sap:label'},
 												    {path:'/#Demand/REMAINING_WORK_TIME/@sap:label'},
+												    {path:'/#Demand/Effort/@sap:label'},
+												    {path:'/#Demand/EffortUnit/@sap:semantics'},
 												    {path:'i18n>xtit.headerSysStatus'},
 												    {path:'i18n>xtit.headerUsrStatus'},
 													{path:'calendarModel>Demand/ORDERID'},
@@ -33,12 +35,14 @@
 													{path:'calendarModel>Demand/OPERATION_DESC'}, 
 													{path:'calendarModel>Demand/StatusDesc'}, 
 													{path:'calendarModel>Demand/REMAINING_WORK_TIME'},
+													{path:'calendarModel>Demand/Effort'},
+													{path:'calendarModel>Demand/EffortUnit'},
 													{path:'calendarModel>Demand/HeaderSStatus'},
 													{path:'calendarModel>Demand/HeaderUStatus'}
 												], 
 												formatter: '.formatter.formatAsnToolTip'
 											}"
-									icon="{calendarModel>Demand/STATUS_ICON}" text="{calendarModel>Demand/ORDERID}" type="{calendarModel>type}"
+									icon="{calendarModel>Demand/STATUS_ICON}" text="{calendarModel>Demand/ORDERID} - {calendarModel>Demand/OPERATIONID}" type="{calendarModel>type}"
 									color="{ parts:[ {path:'calendarModel>Demand/CRITICALITY'}, {path:'calendarModel>color'}], formatter:'.formatter.formatStatusIconColor' }"></unified:CalendarAppointment>
 							</appointments>
 							<intervalHeaders>
