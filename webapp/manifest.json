@@ -19,7 +19,7 @@
 			]
 		},
 		"applicationVersion": {
-			"version": "2103.0.1"
+			"version": "2106.0.0"
 		},
 		"dataSources": {
 			"mainService": {
@@ -228,6 +228,14 @@
 					"target": [
 						"demandsGantt",
 						"gantt"
+					]
+				},
+				{
+					"pattern": "NewGantt",
+					"name": "newgantt",
+					"target": [
+						"newgantt",
+						"demandsGantt"
 					]
 				},
 				{
@@ -441,6 +449,14 @@
 					"parent": "splitHorNavigation",
 					"controlId": "leftPanel",
 					"viewLevel": 3
+				},
+				"newgantt": {
+					"viewType": "XML",
+					"viewName": "newgantt",
+					"viewPath": "com.evorait.evoplan.view.gantt",
+					"controlId": "topPanel",
+					"parent": "splitVerNavigation",
+					"viewLevel": 4
 				}
 			}
 		}

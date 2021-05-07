@@ -10,7 +10,7 @@
                     startTime="{user>/GANT_START_DATE}"
                     endTime="{user>/GANT_END_DATE}"/>
         </axistime:totalHorizon>
-        <axistime:visibleHorizon>
+       <axistime:visibleHorizon>
             <config:TimeHorizon
                     startTime="{viewModel>/ganttSettings/visibleStartTime}"
                     endTime="{viewModel>/ganttSettings/visibleEndTime}"/>

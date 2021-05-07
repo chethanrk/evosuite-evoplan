@@ -6,12 +6,20 @@
 
     <table:Column sortProperty="NodeId" filterProperty="NodeId" label="{i18n>xtit.tableObject}" name="{i18n>xtit.tableObject}">
         <table:template>
-            <controls:CustomTitle text="{Description}" tooltip="{Description}"
-                                  titleStyle="{ path: 'NodeType', formatter: '.formatter.formatResourceTitle' }"
-                                  icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'},{path: 'ResourceIcon'} ], formatter: '.formatter.getResourceIcon' }"
-                                  isWorkTimeEnabled="false"
-                                  resourceIconPress="onResourceIconPress"
-                                  enableQualification="{user>/ENABLE_QUALIFICATION}"/>
-        </table:template>
+						<controls:CustomTitle text="{Description}" tooltip="{Description}"
+							titleStyle="{ path: 'NodeType', formatter: '.formatter.formatResourceTitle' }"
+							iconColor="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconColor' }"
+							iconTooltip="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconTooltip' }"
+							icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'},{path: 'ResourceIcon'} ], formatter: '.formatter.getResourceIcon' }"
+							isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink" resourceIconPress="onResourceIconPress"
+							enableQualification="{user>/ENABLE_QUALIFICATION}"
+							isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}"
+							showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
+							workTime="{path:'ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}">
+							<controls:customData>
+								<core:CustomData key="objectId" value="{NodeId}" writeToDom="true"></core:CustomData>
+							</controls:customData>
+						</controls:CustomTitle>
+					</table:template>
     </table:Column>
 </core:FragmentDefinition>

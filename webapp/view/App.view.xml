@@ -18,6 +18,7 @@
 										<MenuItem text="{i18n>xbut.pageGanttChart}" visible="{user>/ENABLE_GANTT}"/>
 										<MenuItem text="{i18n>xbut.pageGanttChartSplit}" visible="{user>/ENABLE_GANTT_SPLIT}"/>
 										<MenuItem text="{i18n>xbut.pageMap}" visible="{user>/ENABLE_MAPS}"/>
+										<MenuItem text="{i18n>xbut.pageNewGantt}" visible="{user>/ENABLE_GANTT}"/>
 									</items>
 								</Menu>
 							</menu>
