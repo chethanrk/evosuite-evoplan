@@ -640,19 +640,25 @@ sap.ui.define([
 
 			// }
 		},
-		setIconforResourceAction: function (sNodeType) {
+		setVisibilityDeleteButton: function (sNodeType) {
 			if (sNodeType === "RES_GROUP") {
-				return "sap-icon://edit";
+				return false;
 			} else {
-				return "sap-icon://delete";
+				return true;
 			}
 		},
-		setToolTipforResourceAction: function (sNodeType) {
-			if (sNodeType === "RES_GROUP") {
-				return "Edit Group";
+		setDateFormatResourceTree: function (oDate) {
+			if (oDate) {
+				var d = new Date(oDate);
+				var oDateFormat = DateFormat.getDateInstance({
+					pattern: "yyyy-MM-dd"
+				});
+				var dateString = oDateFormat.format(d);
+				return dateString;
 			} else {
-				return "Remove Resource";
+				return "";
 			}
+
 		}
 
 	};
