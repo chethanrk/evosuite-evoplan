@@ -281,6 +281,8 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshGanttChart", {});
 			} else if (oParameter.bFromDemandSplit) {
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			} else if (oParameter.bFromManageResource) {
+				eventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
 			}
 
 		},
@@ -505,7 +507,7 @@ sap.ui.define([
 				);
 			});
 		},
-			/**
+		/**
 		 * Shows the confirmation Box.
 		 * New Confirm box for Effort Validation
 		 *

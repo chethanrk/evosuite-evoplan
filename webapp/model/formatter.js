@@ -644,6 +644,26 @@ sap.ui.define([
 			return "";
 
 			// }
+		},
+		setVisibilityDeleteButton: function (sNodeType) {
+			if (sNodeType === "RES_GROUP") {
+				return false;
+			} else {
+				return true;
+			}
+		},
+		setDateFormatResourceTree: function (oDate) {
+			if (oDate) {
+				var d = new Date(oDate);
+				var oDateFormat = DateFormat.getDateInstance({
+					pattern: "yyyy-MM-dd"
+				});
+				var dateString = oDateFormat.format(d);
+				return dateString;
+			} else {
+				return "";
+			}
+
 		}
 
 	};

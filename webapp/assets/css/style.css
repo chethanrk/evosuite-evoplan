@@ -1,3 +1,7 @@
+.customSwitchTextFont .sapMSwtLabel {
+    font-size: .55rem !important;
+}
+
 .TreeTitleBG {
     border-radius: 3px;
     padding: 3px;
