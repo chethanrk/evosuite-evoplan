@@ -18,6 +18,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/qualifications/QualificationCheck",
 	"com/evorait/evoplan/controller/qualifications/DemandQualifications",
 	"com/evorait/evoplan/controller/common/AssignmentList",
+	"com/evorait/evoplan/controller/common/MaterialInfoDialog",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
 	"sap/m/Link",
@@ -46,6 +47,7 @@ sap.ui.define([
 	QualificationCheck,
 	DemandQualifications,
 	AssignmentList,
+	MaterialInfoDialog,
 	MessagePopover,
 	MessagePopoverItem,
 	Link,
@@ -340,6 +342,9 @@ sap.ui.define([
 
 			this.assignmentList = new AssignmentList();
 			this.assignmentList.init();
+			
+			this.materialInfoDialog = new MaterialInfoDialog();
+			this.materialInfoDialog.init();
 
 			this.GanttResourceFilter = new GanttResourceFilter();
 		},

@@ -1,0 +1,11 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:table="sap.ui.table" xmlns:core="sap.ui.core"
+	xmlns:dnd="sap.ui.core.dnd">
+	<Dialog title="{i18n>xtit.materialInfoDialogTitle}" contentWidth="50%" resizable="true" class="selectStatusDialog" beforeOpen="onBeforeOpen">
+		<content>
+			<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.MaterialTable" type="XML"/>
+		</content>
+		<buttons>
+			<Button text="{i18n>xbut.buttonClose}" press="onCloseDialog"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

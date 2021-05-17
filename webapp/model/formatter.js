@@ -259,6 +259,40 @@ sap.ui.define([
 			}
 		},
 		/**
+		 * Specifies the text fot Material Status
+		 * @param sValue
+		 * @returns Material Status on given Value
+		 */
+		formatMaterialStatus: function (sValue) {
+			var	oBundle = this.getResourceBundle();
+			if(sValue === "A")
+			{
+				return oBundle.getText("xtit.available");
+			}
+			else if(sValue === "P")
+			{
+				return oBundle.getText("xtit.partialAvailable");
+			}
+			else if(sValue === "N")
+			{
+				return oBundle.getText("xtit.notAvailable");
+			}
+		},
+		formatColourScheme: function (sValue) {
+			if(sValue === "A")
+			{
+				return 5;
+			}
+			else if(sValue === "P")
+			{
+				return 1;
+			}
+			else if(sValue === "N")
+			{
+				return 2;
+			}
+		},
+		/**
 		 * Configure the tree table with basic configuration
 		 * @Author Rahul
 		 * @since 2.1

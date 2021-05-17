@@ -168,6 +168,17 @@
 							</PropertyValue>
 							<Annotation Term="Org.OData.Core.V1.Description" String="QualificationTable"/>
 						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+							<PropertyValue Property="Label" String="{@i18n&gt;xtit.component}"/>
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Target" Path="@com.sap.vocabularies.UI.v1.FieldGroups#LongText"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+							<Annotation Term="Core.Description" String="MaterialInfoTable"/>
+						</Record>
 					</Collection>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="GeneralGroup1">
