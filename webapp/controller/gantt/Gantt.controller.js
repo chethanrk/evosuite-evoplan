@@ -69,7 +69,7 @@ sap.ui.define([
 			}
 			// dirty fix will be removed when evoplan completly moved to 1.84
 			if(parseFloat(sap.ui.getVersionInfo().version) === 1.71){
-                this._axisTime.setZoomLevel(3)
+                this._axisTime.setZoomLevel(3);
             }
 			this._defaultGanttHorizon();
 			this._viewId = this.getView().getId();
