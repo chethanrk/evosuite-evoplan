@@ -545,8 +545,6 @@ sap.ui.define([
 				sStartDate = moment().startOf("day").subtract(1, "day").toDate();
 				sEndDate = moment().endOf("day").add(1, "day").toDate();
 			}
-			oViewModel.setProperty("/ganttSettings/visibleStartTime", sStartDate);
-			oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
 
 			//Setting VisibleHorizon for Gantt for supporting Patch Versions (1.71.35)
 			if (oAxisTimeStrategy) {
@@ -554,6 +552,9 @@ sap.ui.define([
 					startTime: sStartDate,
 					endTime: sEndDate
 				}));
+			} else {
+				oViewModel.setProperty("/ganttSettings/visibleStartTime", sStartDate);
+				oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
 			}
 		},
 
