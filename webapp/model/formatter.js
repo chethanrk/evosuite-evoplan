@@ -259,6 +259,86 @@ sap.ui.define([
 			}
 		},
 		/**
+		 * Specifies the text fot Material Status
+		 * @param sValue
+		 * @returns Material Status on given Value
+		 */
+		formatMaterialStatus: function (sValue) {
+			var	oBundle = this.getResourceBundle();
+			if(sValue === "A")
+			{
+				return oBundle.getText("xtit.available");
+			}
+			else if(sValue === "P")
+			{
+				return oBundle.getText("xtit.partialAvailable");
+			}
+			else if(sValue === "N")
+			{
+				return oBundle.getText("xtit.notAvailable");
+			}
+			else
+			{
+				return "Pending";
+			}
+		},
+		formatMaterialStatusIcon: function (sValue) {
+			if(sValue === "A")
+			{
+				return "sap-icon://message-success";
+			}
+			else if(sValue === "P")
+			{
+				return "sap-icon://message-warning";
+			}
+			else if(sValue === "N")
+			{
+				return "sap-icon://message-error";
+			}
+			else
+			{
+				return "sap-icon://pending";
+			}
+		},
+		formatMaterialState: function (sValue) {
+			if(sValue === "A")
+			{
+				return "Success";
+			}
+			else if(sValue === "P")
+			{
+				return "Warning";
+			}
+			else if(sValue === "N")
+			{
+				return "Error";
+			}
+			else
+			{
+				return "Information";
+			}
+		},
+		formatMatStatusTooltip: function(sValue)
+		{
+				var	oBundle = this.getResourceBundle();
+			if(sValue === "A")
+			{
+				return oBundle.getText("xtit.available");
+			}
+			else if(sValue === "P")
+			{
+				return oBundle.getText("xtit.partialAvailable");
+			}
+			else if(sValue === "N")
+			{
+				return oBundle.getText("xtit.notAvailable");
+			}
+			else
+			{
+				return  oBundle.getText("xtit.refreshTooltip");
+			}
+		},
+		/**
 		 * Configure the tree table with basic configuration
 		 * @Author Rahul
 		 * @since 2.1
