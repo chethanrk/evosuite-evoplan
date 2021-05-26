@@ -318,6 +318,26 @@ sap.ui.define([
 				return "Information";
 			}
 		},
+		formatMatStatusTooltip: function(sValue)
+		{
+				var	oBundle = this.getResourceBundle();
+			if(sValue === "A")
+			{
+				return oBundle.getText("xtit.available");
+			}
+			else if(sValue === "P")
+			{
+				return oBundle.getText("xtit.partialAvailable");
+			}
+			else if(sValue === "N")
+			{
+				return oBundle.getText("xtit.notAvailable");
+			}
+			else
+			{
+				return  oBundle.getText("xtit.refreshTooltip");
+			}
+		},
 		/**
 		 * Configure the tree table with basic configuration
 		 * @Author Rahul
