@@ -277,19 +277,45 @@ sap.ui.define([
 			{
 				return oBundle.getText("xtit.notAvailable");
 			}
+			else
+			{
+				return "Pending";
+			}
 		},
-		formatColourScheme: function (sValue) {
+		formatMaterialStatusIcon: function (sValue) {
 			if(sValue === "A")
 			{
-				return 5;
+				return "sap-icon://message-success";
 			}
 			else if(sValue === "P")
 			{
-				return 1;
+				return "sap-icon://message-warning";
 			}
 			else if(sValue === "N")
 			{
-				return 2;
+				return "sap-icon://message-error";
+			}
+			else
+			{
+				return "sap-icon://pending";
+			}
+		},
+		formatMaterialState: function (sValue) {
+			if(sValue === "A")
+			{
+				return "Success";
+			}
+			else if(sValue === "P")
+			{
+				return "Warning";
+			}
+			else if(sValue === "N")
+			{
+				return "Error";
+			}
+			else
+			{
+				return "Information";
 			}
 		},
 		/**

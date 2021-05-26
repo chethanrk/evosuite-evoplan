@@ -1,5 +1,5 @@
 <mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:f="sap.f" xmlns:smartTable="sap.ui.comp.smarttable"
-	xmlns:semantic="sap.m.semantic" xmlns:dnd="sap.ui.core.dnd" xmlns:table="sap.ui.table"  xmlns:tnt="sap.tnt"
+	xmlns:semantic="sap.m.semantic" xmlns:dnd="sap.ui.core.dnd" xmlns:table="sap.ui.table" xmlns:tnt="sap.tnt"
 	controllerName="com.evorait.evoplan.controller.demands.Demands" displayBlock="true" height="100%">
 	<Page id="listPage" title="{i18n>xtit.itemListTitle}" showFooter="false" showHeader="false">
 		<f:DynamicPage headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true" showFooter="true" toggleHeaderOnTitleClick="false"
@@ -44,17 +44,16 @@
 									<core:Icon src="{DEMAND_ICON}" tooltip="{DemandDesc}"></core:Icon>
 								</table:template>
 							</table:Column>
-							<table:Column hAlign="Center" width="12rem">
+							<table:Column hAlign="Center" width="9rem">
 								<table:customData>
 									<core:CustomData key="p13nData" value='\{"columnKey": "DEMAND_ICON", "leadingProperty": "DEMAND_ICON"}'/>
 								</table:customData>
 								<Label text="{/#Demand/MATERIAL_STATUS/@sap:label}"/>
 								<table:template>
 									<HBox>
-									<tnt:InfoLabel class="sapUiTinyMargin"	displayOnly="true" colorScheme="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatColourScheme' }" text="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatus' }" />
-									<Button icon="sap-icon://synchronize" tooltip="{i18n>xtit.refreshTooltip}" press="onMaterialStatusPress"/>	
+										<ObjectStatus class="sapUiTinyMargin" text="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatus' }" icon="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatusIcon' }" state="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialState' }"/>
+										<Button icon="sap-icon://synchronize" type="Transparent" tooltip="{i18n>xtit.refreshTooltip}" press="onMaterialStatusPress"/>
 									</HBox>
-									
 								</table:template>
 							</table:Column>
 							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandQualificationColumn" type="XML"/>
@@ -78,7 +77,7 @@
 							<!--		<Link text="{NUMBER_OF_ASSIGNMENTS}" press="onClickAssignCount" />-->
 							<!--	</table:template>-->
 							<!--</table:Column>-->
-								<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.AssignmentCountColumn" type="XML"/>
+							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.AssignmentCountColumn" type="XML"/>
 							<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.OrderIdColumn" type="XML"/>-->
 						</table:columns>
 						<table:dragDropConfig>
