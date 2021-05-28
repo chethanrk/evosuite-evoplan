@@ -7,5 +7,18 @@
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1" baseSize="0%"/>
 		</smartTable:layoutData>
+			<table:Table >
+				<table:Column hAlign="Center" width="9rem">
+								<table:customData>
+									<core:CustomData key="p13nData" value='\{"columnKey": "Status", "leadingProperty": "Status"}'/>
+								</table:customData>
+								<Label text="{/#Demand/Status/@sap:label}"/>
+								<table:template>
+									<HBox>
+										<ObjectStatus class="sapUiTinyMargin" text="{ path:'Status', formatter:'.formatter.formatMaterialStatus' }" icon="{ path:'Status', formatter:'.formatter.formatMaterialStatusIcon' }" state="{ path:'Status', formatter:'.formatter.formatMaterialState' }"/>
+									</HBox>
+								</table:template>
+							</table:Column>
+				</table:Table>
 	</smartTable:SmartTable>
 </core:FragmentDefinition>

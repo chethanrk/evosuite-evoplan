@@ -264,7 +264,8 @@ sap.ui.define([
 		 * @returns Material Status on given Value
 		 */
 		formatMaterialStatus: function (sValue) {
-			var	oBundle = this.getResourceBundle();
+			var oView = this._oView ? this._oView: this.getView();
+			var	oBundle = oView.getModel("i18n").getResourceBundle();
 			if(sValue === "A")
 			{
 				return oBundle.getText("xtit.available");
