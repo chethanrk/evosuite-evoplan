@@ -52,7 +52,6 @@
 								<table:template>
 									<HBox>
 										<ObjectStatus class="sapUiTinyMargin" tooltip="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMatStatusTooltip' }" text="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatus' }" icon="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatusIcon' }" state="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialState' }"/>
-										<Button icon="sap-icon://synchronize" type="Transparent" tooltip="{i18n>xtit.refreshTooltip}" press="onMaterialStatusPress"/>
 									</HBox>
 								</table:template>
 							</table:Column>

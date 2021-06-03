@@ -149,11 +149,13 @@ sap.ui.define([
 					this.byId("assignButton").setEnabled(true);
 					this.byId("changeStatusButton").setEnabled(true);
 					this.byId("materialInfo").setEnabled(true);
+					this.byId("idOverallStatusButton").setEnabled(true);
 				} else {
 					this.byId("idfindRightTechnicianButton").setEnabled(false);
 					this.byId("assignButton").setEnabled(false);
 					this.byId("changeStatusButton").setEnabled(false);
 					this.byId("materialInfo").setEnabled(false);
+					this.byId("idOverallStatusButton").setEnabled(false);
 				}
 				this.showWarningMsgResourceTree(true);
 			}, this);
@@ -481,10 +483,14 @@ sap.ui.define([
 		 * 
 		 */
 		onMaterialStatusPress: function(oEvent) {
-			var sSelectedPath = oEvent.getSource().getParent().getParent().getBindingContext().sPath;
-				this.getOwnerComponent()._getData(sSelectedPath).then(function (result) {
+			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
+				sDemandPath;
+			for (var i = 0; i < oSelectedIndices.length; i++) {
+				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
+				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 
 			}.bind(this));
+			};
 		},
 		/**
 		 * Resetting Demand selection based on not allowed for find technician 
