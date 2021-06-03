@@ -17,7 +17,7 @@
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandToolbarButtons" type="XML"/>
 			</OverflowToolbar>
 		</smartTable:customToolbar>
-		<table:Table enableGrouping="false" visibleRowCountMode="Auto" enableColumnReordering="false"
+		<table:Table enableGrouping="false" visibleRowCountMode="Auto" enableColumnReordering="false" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}"
 			 enableCellFilter="false" rowSelectionChange="onRowSelectionChange"
 			minAutoRowCount="3">
 			<table:rowSettingsTemplate>
