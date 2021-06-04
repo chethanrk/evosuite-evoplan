@@ -266,15 +266,15 @@ sap.ui.define([
 		formatMaterialStatus: function (sValue) {
 			var oView = this._oView ? this._oView: this.getView();
 			var	oBundle = oView.getModel("i18n").getResourceBundle();
-			if(sValue === "A")
+			if(sValue === "1")
 			{
 				return oBundle.getText("xtit.available");
 			}
-			else if(sValue === "P")
+			else if(sValue === "2")
 			{
 				return oBundle.getText("xtit.partialAvailable");
 			}
-			else if(sValue === "N")
+			else if(sValue === "3")
 			{
 				return oBundle.getText("xtit.notAvailable");
 			}
@@ -284,15 +284,15 @@ sap.ui.define([
 			}
 		},
 		formatMaterialStatusIcon: function (sValue) {
-			if(sValue === "A")
+			if(sValue === "1")
 			{
 				return "sap-icon://message-success";
 			}
-			else if(sValue === "P")
+			else if(sValue === "2")
 			{
 				return "sap-icon://message-warning";
 			}
-			else if(sValue === "N")
+			else if(sValue === "3")
 			{
 				return "sap-icon://message-error";
 			}
@@ -302,15 +302,15 @@ sap.ui.define([
 			}
 		},
 		formatMaterialState: function (sValue) {
-			if(sValue === "A")
+			if(sValue === "1")
 			{
 				return "Success";
 			}
-			else if(sValue === "P")
+			else if(sValue === "2")
 			{
 				return "Warning";
 			}
-			else if(sValue === "N")
+			else if(sValue === "3")
 			{
 				return "Error";
 			}
@@ -322,15 +322,15 @@ sap.ui.define([
 		formatMatStatusTooltip: function(sValue)
 		{
 				var	oBundle = this.getResourceBundle();
-			if(sValue === "A")
+			if(sValue === "1")
 			{
 				return oBundle.getText("xtit.available");
 			}
-			else if(sValue === "P")
+			else if(sValue === "2")
 			{
 				return oBundle.getText("xtit.partialAvailable");
 			}
-			else if(sValue === "N")
+			else if(sValue === "3")
 			{
 				return oBundle.getText("xtit.notAvailable");
 			}
