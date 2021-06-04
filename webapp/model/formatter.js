@@ -658,7 +658,7 @@ sap.ui.define([
 				var oDateFormat = DateFormat.getDateInstance({
 					pattern: "yyyy-MM-dd"
 				});
-				var dateString = oDateFormat.format(d);
+				var dateString = oDateFormat.format(d,true);
 				return dateString;
 			} else {
 				return "";

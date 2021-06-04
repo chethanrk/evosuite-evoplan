@@ -139,7 +139,8 @@
 				"dataSource": "mainService",
 				"preload": true,
 				"settings": {
-					"defaultBindingMode": "TwoWay"
+					"defaultBindingMode": "TwoWay",
+					"defaultUpdateMethod": "PUT"
 				}
 			},
 			"@i18n": {
@@ -218,16 +219,14 @@
 						"demandsGantt",
 						"gantt"
 					]
-				},
-				{
+				}, {
 					"pattern": "NewGantt",
 					"name": "newgantt",
 					"target": [
 						"newgantt",
 						"demandsGantt"
 					]
-				},
-				{
+				}, {
 					"pattern": "Gantt/Demand/{guid}",
 					"name": "ganttDemandDetails",
 					"target": [
@@ -277,7 +276,7 @@
 						"manageResources"
 					]
 				}
-				
+
 			],
 			"targets": {
 				"splitHorNavigation": {

@@ -695,6 +695,21 @@ sap.ui.define([
 			if (oViewModel.getProperty("/CheckRightTechnician")) {
 				oViewModel.setProperty("/WarningMsgResourceTree", bFlag);
 			}
+		},
+		/**
+		 *	Display Response Message for OData call
+		 */
+		showResponseMessage: function (sMessage, sType) {
+			if (sType === 'S' || !sType) {
+				MessageBox.success(sMessage);
+			} else if (sType === 'E') {
+				MessageBox.error(sMessage);
+			} else if (sType === 'I') {
+				MessageBox.information(sMessage);
+			} else if (sType === 'W') {
+				MessageBox.warning(sMessage);
+			}
+
 		}
 
 	});

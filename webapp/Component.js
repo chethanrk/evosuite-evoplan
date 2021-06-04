@@ -133,6 +133,10 @@ sap.ui.define([
 					AssignBtnEnable: false,
 					FindResourceBtnVisible: false,
 					FindResourceBtnEnable: false
+				},
+				manageResourcesSettings: {
+					selectedRow: false,
+					isCopy:true
 				}
 
 			});

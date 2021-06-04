@@ -1,0 +1,25 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+	<ResponsivePopover id="myPopover" title="{=${NodeType} === 'RES_GROUP'?${i18n>xtit.editGroup}:${i18n>xtit.editResource}}" class="sapUiContentPadding" >
+		<beginButton>
+			<Button text="{i18n>xbut.buttonSave}" press="onPressPopoverSaveButton"/>
+		</beginButton>
+		<endButton>
+			<Button text="{i18n>xbut.buttonClose}" press="onPressPopoverCloseButton"/>
+		</endButton>
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<f:SimpleForm id="idFormEditGroupResource" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12"
+					adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1"
+					singleContainerFullSize="false">
+					<f:content>
+						<Label text="{i18n>xlab.groupDescription}" visible="{=${NodeType} === 'RES_GROUP'}"/>
+						<Input id="idGroupName" value="{Description}" visible="{=${NodeType} === 'RES_GROUP'}"/>
+						<Label text="{i18n>xlab.resourceDateRange}" visible="{=${NodeType} === 'RESOURCE'}"/>
+						<!--<DateRangeSelection id="idResourceDateRange" width="100%" displayFormat="yyyy/MM/dd" visible="{=${NodeType} === 'RESOURCE'}" dateValue="{path: 'Start', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'yyyy/MM/dd', strictParsing: true , UTC: true}" secondDateValue="{path: 'End', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'yyyy/MM/dd', strictParsing: true , UTC: true}"/>-->
+						<DateRangeSelection id="idResourceDateRange" width="100%" visible="{=${NodeType} === 'RESOURCE'}" dateValue="{Start}" secondDateValue="{End}"/>
+					</f:content>
+				</f:SimpleForm>
+			</VBox>
+		</content>
+	</ResponsivePopover>
+</core:FragmentDefinition>
