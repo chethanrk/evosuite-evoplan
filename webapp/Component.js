@@ -221,7 +221,9 @@ sap.ui.define([
 			var aPromises = [];
 			aPromises.push(this._getSystemInformation());
 			aPromises.push(this._getData("/NavigationLinksSet", [new Filter("LaunchMode", FilterOperator.EQ, this.getModel("viewModel").getProperty(
-				"/launchMode"))]));
+				"/launchMode")),
+				new Filter("LaunchMode", FilterOperator.EQ, "ITS")]));
+			
 			aPromises.push(this._getData("/MapProviderSet", [], {
 				$expand: "MapSource"
 			}));

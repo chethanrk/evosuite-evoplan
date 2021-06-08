@@ -61,7 +61,7 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oData = oModel.getProperty(sPath);
-				this.handleNavigationLinkAction(this.selectedDemandData, oData, oEvent.getSource().getModel("viewModel"));
+				this.handleNavigationLinkAction(this.selectedDemandData, oData, oEvent.getSource().getModel("viewModel"), oEvent.getSource().getModel("user"));
 		},
 
 		/*
