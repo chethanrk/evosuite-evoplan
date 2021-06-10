@@ -144,7 +144,8 @@ sap.ui.define([
 			//enable/disable buttons on footer when there is some/no selected rows
 			oDataTable.attachRowSelectionChange(function () {
 				var selected = this._oDataTable.getSelectedIndices();
-				if (selected.length > 0) {
+				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
+				if (selected.length > 0 && selected.length <= iMaxRowSelection) {
 					this.byId("idfindRightTechnicianButton").setEnabled(true);
 					this.byId("assignButton").setEnabled(true);
 					this.byId("changeStatusButton").setEnabled(true);
@@ -156,6 +157,11 @@ sap.ui.define([
 					this.byId("changeStatusButton").setEnabled(false);
 					this.byId("materialInfo").setEnabled(false);
 					this.byId("idOverallStatusButton").setEnabled(false);
+					//If the selected demands exceeds more than the maintained selected configuration value
+					if (iMaxRowSelection <= selected.length) {
+						var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection");
+						MessageToast.show(sMsg + " " + iMaxRowSelection);
+					}
 				}
 				this.showWarningMsgResourceTree(true);
 			}, this);
@@ -462,34 +468,32 @@ sap.ui.define([
 		 * On Material Info Button press event 
 		 * 
 		 */
-		onMaterialInfoButtonPress: function() {
+		onMaterialInfoButtonPress: function () {
 			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
 			if (this._aSelectedRowsIdx.length > 100) {
 				this._aSelectedRowsIdx.length = 100;
 			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
-            var iMaxSelcRow = this.getModel("user").getProperty("/MAX_DEMAND_SELECT_FOR_MAT_LIST");
+			var iMaxSelcRow = this.getModel("user").getProperty("/MAX_DEMAND_SELECT_FOR_MAT_LIST");
 			if (oSelectedPaths.aPathsData.length > 0 && iMaxSelcRow >= this._aSelectedRowsIdx.length) {
 				this.getOwnerComponent().materialInfoDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
-			}
-			else
-			{
-					var msg = this.getResourceBundle().getText("ymsg.selectMaxItemMaterialInfo");
-				MessageToast.show(msg+" "+iMaxSelcRow);
+			} else {
+				var msg = this.getResourceBundle().getText("ymsg.selectMaxItemMaterialInfo");
+				MessageToast.show(msg + " " + iMaxSelcRow);
 			}
 		},
 		/**
 		 * On Refresh Status Button press in Demand Table 
 		 * 
 		 */
-		onMaterialStatusPress: function(oEvent) {
+		onMaterialStatusPress: function (oEvent) {
 			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
 				sDemandPath;
 			for (var i = 0; i < oSelectedIndices.length; i++) {
 				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 
-			}.bind(this));
+				}.bind(this));
 			};
 		},
 		/**

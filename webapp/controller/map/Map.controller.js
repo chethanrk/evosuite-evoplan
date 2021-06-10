@@ -128,7 +128,7 @@ sap.ui.define([
 			}
 			if (this._bShowAssignment) {
 				aFilters = [];
-				var	aAssignedDemands = this.getSelectedDemandFilters("assignDemands");
+				var aAssignedDemands = this.getSelectedDemandFilters("assignDemands");
 				if (aAssignedDemands && aAssignedDemands.aFilters && aAssignedDemands.aFilters.length) {
 					aFilters.push(aAssignedDemands);
 				}
@@ -389,12 +389,18 @@ sap.ui.define([
 		onRowSelectionChange: function (oEvent) {
 			this._bDemandListScroll = true; //Flag to identify Demand List row is selected and scrolled or not
 			var selected = this._oDataTable.getSelectedIndices();
-			if (selected.length > 0) {
+			var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
+			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
 				this.byId("assignButton").setEnabled(true);
 				this.byId("changeStatusButton").setEnabled(true);
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
+				//If the selected demands exceeds more than the maintained selected configuration value
+				if (iMaxRowSelection <= selected.length) {
+					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection");
+					MessageToast.show(sMsg + " " + iMaxRowSelection);
+				}
 			}
 			// To make selection on map by selecting Demand from demand table
 			if (oEvent.getParameter("selectAll")) {
@@ -575,28 +581,28 @@ sap.ui.define([
 				oStatusFilter = this.byId("listReportFilter").getControlByKey("Status"),
 				aTokens = [],
 				oLegendList = this.byId("idMapLegendsList");
-				var values = [];
+			var values = [];
 			if (sValue !== "Selected") {
 				aTokens.push(new sap.m.Token({
 					text: sValue,
 					key: sValue
 				}));
 				values.push({
-                    text: sValue,
-                    key: sValue
-                });
+					text: sValue,
+					key: sValue
+				});
 			} else {
 				oLegendList.setSelectedItem(oLegendList.getSelectedItem(), false);
 			}
 			// oStatusFilter.setTokens(aTokens);
-			var	oFilterData ={};
-            oFilterData["Status"] = {
-                items: [],
-                ranges: [],
-                value: ""
-            };
-            oFilterData["Status"].items = values;
-            this._smartFilter.setFilterData(oFilterData);
+			var oFilterData = {};
+			oFilterData["Status"] = {
+				items: [],
+				ranges: [],
+				value: ""
+			};
+			oFilterData["Status"].items = values;
+			this._smartFilter.setFilterData(oFilterData);
 		},
 		/**
 		 * remove Selection in Map Lagend to filter the map and Demand Table.

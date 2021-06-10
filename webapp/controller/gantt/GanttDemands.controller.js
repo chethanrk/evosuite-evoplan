@@ -167,12 +167,18 @@ sap.ui.define([
 		 */
 		onRowSelectionChange: function () {
 			var selected = this._oDataTable.getSelectedIndices();
-			if (selected.length > 0) {
+			var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
+			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
 				this.byId("assignButton").setEnabled(true);
 				this.byId("changeStatusButton").setEnabled(true);
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
+				//If the selected demands exceeds more than the maintained selected configuration value
+				if (iMaxRowSelection <= selected.length) {
+					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection");
+					MessageToast.show(sMsg + " " + iMaxRowSelection);
+				}
 			}
 		},
 		/**
@@ -234,14 +240,14 @@ sap.ui.define([
 		onCloseGanttFilter: function () {
 			this._oGanttDemandFilter.close();
 		},
-		
+
 		/**
 		 * Open's assignments list
 		 * 
 		 */
-		 onClickAssignCount: function(oEvent){
-		 	this.getOwnerComponent().assignmentList.open(this.getView(), oEvent, this._mParameters);
-		 },
+		onClickAssignCount: function (oEvent) {
+			this.getOwnerComponent().assignmentList.open(this.getView(), oEvent, this._mParameters);
+		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
 		}
