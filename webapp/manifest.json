@@ -139,8 +139,7 @@
 				"dataSource": "mainService",
 				"preload": true,
 				"settings": {
-					"defaultBindingMode": "TwoWay",
-					"defaultUpdateMethod": "PUT"
+					"defaultBindingMode": "TwoWay"
 				}
 			},
 			"@i18n": {

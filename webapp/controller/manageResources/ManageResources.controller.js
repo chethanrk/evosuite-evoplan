@@ -118,6 +118,7 @@ sap.ui.define([
 
 			//Condition to check the Source Table whether it is from Evoplan Group or HR Resources 
 			if (sSourceControlId.includes("idDataTableHrResource")) {
+				// this._assignResourcesToGroup(oEvent, sTargetGroupNodeId);// Currently is in progress
 				sSourceItemPath = this.oHrResourceTable.getContextByIndex(nSourceItemIndex).getPath();
 				aSourceData = this._oModel.getProperty(sSourceItemPath);
 				aPayLoad = {
@@ -140,8 +141,60 @@ sap.ui.define([
 				aPayLoad.NodeId = sTargetGroupNodeId + "//" + aPayLoad.ResourceGuid;
 				aPayLoad.ParentNodeId = sTargetGroupNodeId;
 				aPayLoad.ResourceGroupGuid = sTargetGroupNodeId;
+				aPayLoad.End = this.getDefaultDate(true);
+				aPayLoad.Start = this.getDefaultDate();
 				this._handleCreateResource(oTargetItemPath, sSourceItemPath, aPayLoad);
 			}
+		},
+		/**
+		 * handle mass assignment of resources to Group ( THIS DEVELOPMENT IS IN PROGRESS)
+		 */
+		_assignResourcesToGroup: function (oEvent, sTargetGroupNodeId) {
+			var aSelectedIndices = this.oHrResourceTable.getSelectedIndices(),
+				sPath = this._oEvoplanResourceTable.getBinding().getPath(),
+				oStartDate = this.getDefaultDate(),
+				oEndDate = this.getDefaultDate(true),
+				aPayLoad = [],
+				aSourceData;
+
+			for (var i in aSelectedIndices) {
+				aSourceData = this.oHrResourceTable.getContextByIndex(aSelectedIndices[i]).getObject();
+
+				aPayLoad.push({
+					ChildCount: 0,
+					Description: aSourceData.Firstname + " " + aSourceData.Lastname,
+					Drillstate: "leaf",
+					End: oEndDate,
+					HierarchyLevel: 1,
+					NodeId: sTargetGroupNodeId + "//" + aSourceData.Guid,
+					NodeType: "RESOURCE",
+					ParentNodeId: sTargetGroupNodeId,
+					ResourceGroupGuid: sTargetGroupNodeId,
+					ResourceGuid: aSourceData.Guid,
+					Start: oStartDate
+				});
+				// this._handleCreateResource(oTargetItemPath, sSourceItemPath, aPayLoad, true);
+			}
+			for (i in aPayLoad) {
+				this.doCreateResource(this.getModel(), sPath, aPayLoad[i]) //.then(function (oResponse) {}.bind(this));
+			}
+
+			// this.doCreateResource(this.getModel(), sPath, aPayLoad) //.then(function (oResponse) {}.bind(this));
+			// aSourceData = this._oModel.getProperty(sSourceItemPath);
+			// aPayLoad = {
+			// 	ChildCount: 0,
+			// 	Description: aSourceData.Firstname + " " + aSourceData.Lastname,
+			// 	Drillstate: "leaf",
+			// 	End: this.getDefaultDate(true),
+			// 	HierarchyLevel: 1,
+			// 	NodeId: sTargetGroupNodeId + "//" + aSourceData.Guid,
+			// 	NodeType: "RESOURCE",
+			// 	ParentNodeId: sTargetGroupNodeId,
+			// 	ResourceGroupGuid: sTargetGroupNodeId,
+			// 	ResourceGuid: aSourceData.Guid,
+			// 	Start: this.getDefaultDate()
+			// };
+			// this._handleCreateResource(oTargetItemPath, sSourceItemPath, aPayLoad, true);
 		},
 		/**
 		 * While assigning HR resource to any Group,provid Default date Date range starting from current Date  
@@ -372,9 +425,6 @@ sap.ui.define([
 			} else {
 				this.mTreeState = {};
 			}
-		},
-		getPayload: function () {
-
 		},
 		onExit: function () {
 			this._oEventBus.unsubscribe("ManageResourcesController", "refreshManageResourcesView", this._refreshManageResourcesView, this);
