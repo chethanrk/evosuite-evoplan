@@ -40,18 +40,18 @@ sap.ui.define([
 		 * 
 		 */
 		doCreateResource: function (oModel, sPath, aPayload) {
-			// return new Promise(function (resolved, rejected) {
-			oModel.create(sPath, aPayload, {
-				method: "POST",
-				success: function (oData, oResponse) {
-					this.showMessage(oResponse);
-					// resolved(oResponse);
-				}.bind(this),
-				error: function (oError) {
-					// rejected(oError);
-				}
-			});
-			// }.bind(this));
+			return new Promise(function (resolved, rejected) {
+				oModel.create(sPath, aPayload, {
+					method: "POST",
+					success: function (oData, oResponse) {
+						this.showMessage(oResponse);
+						resolved(oResponse);
+					}.bind(this),
+					error: function (oError) {
+						rejected(oError);
+					}
+				});
+			}.bind(this));
 		},
 
 		/**
