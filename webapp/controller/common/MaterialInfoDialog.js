@@ -76,7 +76,6 @@ sap.ui.define([
 				oBinding = oParams.bindingParams,
 				aFilter = new Filter(this._getDemandFilters(this._aSelectedPaths), true);
 			oBinding.filters = [new Filter(aFilter, true)];
-
 		},
 		/**
 		 * Return resource filters on selected resources

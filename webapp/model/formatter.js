@@ -339,6 +339,10 @@ sap.ui.define([
 				return  oBundle.getText("xtit.refreshTooltip");
 			}
 		},
+		formatComponentExist: function(bComponentExist)
+		{
+			return bComponentExist;
+		},
 		/**
 		 * Configure the tree table with basic configuration
 		 * @Author Rahul

@@ -16,7 +16,7 @@
 				<smartTable:SmartTable id="draggableList" height="100%" width="100%" direction="Column" fitContainer="true" enableAutoBinding="true"
 					entitySet="{viewModel>/subTableSet}" smartFilterId="listReportFilter" showRowCount="true" header="{i18n>xtit.itemListTitle}"
 					useExportToExcel="true" useVariantManagement="true" persistencyKey="{viewModel>/persistencyKeyDemandTable}" useTablePersonalisation="true"
-					requestAtLeastFields="Guid,NUMBER_OF_ASSIGNMENTS,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,REQUIREMENT_PROFILE_ID,ENABLE_ROUTE_EVOORDER,ENABLE_ROUTE_EVOEQUIP,ENABLE_ROUTE_EVONOTIFY,ENABLE_ROUTE_EVOTIME,EQUIPMENT,NOTIFICATION,DemandDesc,ALLOW_FINDRESOURCE,ORDER_TYPE,ENABLE_ROUTE_GUI1,ENABLE_ROUTE_GUI2,ENABLE_ROUTE_EVOFLOC,FUNCTIONAL_LOC">
+					requestAtLeastFields="Guid,NUMBER_OF_ASSIGNMENTS,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,REQUIREMENT_PROFILE_ID,ENABLE_ROUTE_EVOORDER,ENABLE_ROUTE_EVOEQUIP,ENABLE_ROUTE_EVONOTIFY,ENABLE_ROUTE_EVOTIME,EQUIPMENT,NOTIFICATION,DemandDesc,ALLOW_FINDRESOURCE,ORDER_TYPE,ENABLE_ROUTE_GUI1,ENABLE_ROUTE_GUI2,ENABLE_ROUTE_EVOFLOC,FUNCTIONAL_LOC,COMPONENT_EXISTS">
 					<!-- layout data used to make the table growing but the filter bar fixed -->
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1"/>
@@ -51,7 +51,11 @@
 								<Label text="{/#Demand/MATERIAL_STATUS/@sap:label}"/>
 								<table:template>
 									<HBox>
-										<ObjectStatus class="sapUiTinyMargin" tooltip="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMatStatusTooltip' }" text="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatus' }" icon="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatusIcon' }" state="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialState' }"/>
+										<ObjectStatus class="sapUiTinyMargin" tooltip="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMatStatusTooltip' }"
+											text="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatus' }"
+											visible="{ path:'COMPONENT_EXISTS', formatter:'.formatter.formatComponentExist' }"
+											icon="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatusIcon' }"
+											state="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialState' }"/>
 									</HBox>
 								</table:template>
 							</table:Column>
