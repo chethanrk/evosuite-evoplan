@@ -145,8 +145,12 @@ sap.ui.define([
 			oDataTable.attachRowSelectionChange(function () {
 				var selected = this._oDataTable.getSelectedIndices(),
 				               sDemandPath,bComponentExist;
+<<<<<<< Upstream, based on origin/Development
                  var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 				if (selected.length > 0 && selected.length <= iMaxRowSelection) {
+=======
+				if (selected.length > 0) {
+>>>>>>> 5afa847 Material availability Check fixes
 					this.byId("idfindRightTechnicianButton").setEnabled(true);
 					this.byId("assignButton").setEnabled(true);
 					this.byId("changeStatusButton").setEnabled(true);
@@ -157,11 +161,14 @@ sap.ui.define([
 					this.byId("changeStatusButton").setEnabled(false);
 					this.byId("idOverallStatusButton").setEnabled(false);
 					this.byId("materialInfo").setEnabled(false);
+<<<<<<< Upstream, based on origin/Development
                     //If the selected demands exceeds more than the maintained selected configuration value
 					if (iMaxRowSelection <= selected.length) {
 						var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection");
 						MessageToast.show(sMsg + " " + iMaxRowSelection);
 					}
+=======
+>>>>>>> 5afa847 Material availability Check fixes
 				}
 				
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
