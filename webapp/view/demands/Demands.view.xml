@@ -17,7 +17,7 @@
 					entitySet="{viewModel>/subTableSet}" smartFilterId="listReportFilter" showRowCount="true" header="{i18n>xtit.itemListTitle}"
 					useExportToExcel="true" useVariantManagement="true" persistencyKey="{viewModel>/persistencyKeyDemandTable}" useTablePersonalisation="true"
 					requestAtLeastFields="Guid,NUMBER_OF_ASSIGNMENTS,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,REQUIREMENT_PROFILE_ID,ENABLE_ROUTE_EVOORDER,ENABLE_ROUTE_EVOEQUIP,ENABLE_ROUTE_EVONOTIFY,ENABLE_ROUTE_EVOTIME,EQUIPMENT,NOTIFICATION,DemandDesc,ALLOW_FINDRESOURCE,ORDER_TYPE,COMPONENT_EXISTS">
-					<!-- layout data used to make the table growing but the filter bar fixed -->
+					<!--- layout data used to make the table growing but the filter bar fixed --->
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1"/>
 					</smartTable:layoutData>
