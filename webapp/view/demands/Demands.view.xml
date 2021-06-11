@@ -51,9 +51,11 @@
 								<Label text="{/#Demand/MATERIAL_STATUS/@sap:label}"/>
 								<table:template>
 									<HBox>
-										<ObjectStatus class="sapUiTinyMargin" tooltip="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMatStatusTooltip' }" 
-										text="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatus' }" visible="{ path:'COMPONENT_EXISTS', formatter:'.formatter.formatComponentExist' }"
-										icon="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatusIcon' }" state="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialState' }"/>
+										<ObjectStatus class="sapUiTinyMargin" tooltip="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMatStatusTooltip' }"
+											text="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatus' }"
+											visible="{ path:'COMPONENT_EXISTS', formatter:'.formatter.formatComponentExist' }"
+											icon="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatusIcon' }"
+											state="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialState' }"/>
 									</HBox>
 								</table:template>
 							</table:Column>
