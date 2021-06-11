@@ -143,20 +143,38 @@ sap.ui.define([
 
 			//enable/disable buttons on footer when there is some/no selected rows
 			oDataTable.attachRowSelectionChange(function () {
-				var selected = this._oDataTable.getSelectedIndices();
+				var selected = this._oDataTable.getSelectedIndices(),
+				               sDemandPath,bComponentExist;
 				if (selected.length > 0) {
 					this.byId("idfindRightTechnicianButton").setEnabled(true);
 					this.byId("assignButton").setEnabled(true);
 					this.byId("changeStatusButton").setEnabled(true);
-					this.byId("materialInfo").setEnabled(true);
 					this.byId("idOverallStatusButton").setEnabled(true);
 				} else {
 					this.byId("idfindRightTechnicianButton").setEnabled(false);
 					this.byId("assignButton").setEnabled(false);
 					this.byId("changeStatusButton").setEnabled(false);
-					this.byId("materialInfo").setEnabled(false);
 					this.byId("idOverallStatusButton").setEnabled(false);
+					this.byId("materialInfo").setEnabled(false);
 				}
+				
+				//Enabling/Disabling the Material Status Button based on Component_Exit flag
+					for (var i = 0; i < selected.length; i++) {
+						sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
+						bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
+						if(bComponentExist)
+						{
+							this.byId("materialInfo").setEnabled(true);
+							break;
+						}
+						else
+						{
+							this.byId("materialInfo").setEnabled(false);
+						}
+				
+			};
+				
+				
 				this.showWarningMsgResourceTree(true);
 			}, this);
 		},
@@ -484,11 +502,13 @@ sap.ui.define([
 		 */
 		onMaterialStatusPress: function(oEvent) {
 			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
+			    oViewModel = this.getModel("appView"),
 				sDemandPath;
+				oViewModel.setProperty("/busy", true);
 			for (var i = 0; i < oSelectedIndices.length; i++) {
 				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
-
+					oViewModel.setProperty("/busy", false);
 			}.bind(this));
 			};
 		},

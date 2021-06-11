@@ -1,4 +1,26 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable" xmlns="sap.m"
-	controllerName="com.evorait.evoplan.block.sections.DemandComponentBlock">
-	<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.MaterialTable" type="XML"/>
+	controllerName="com.evorait.evoplan.block.sections.DemandComponentBlock" xmlns:table="sap.ui.table">
+	<smartTable:SmartTable id="materialInfoTable" entitySet="DemandComponentSet" useExportToExcel="true" useVariantManagement="true"
+		useTablePersonalisation="true" header="{i18n>xtit.materialInfoDialogTitle}"
+		initiallyVisibleFields="Orderid,Matnr,Operationid,Posnr,Matnr,Maktx,Status,STATUS_DESC" showRowCount="true" beforeRebindTable="onBeforeRebindTable"
+		enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableBindingPath="DemandToComponents" tableType="ResponsiveTable">
+		<!-- layout data used to make the table growing but the filter bar fixed -->
+		<smartTable:layoutData>
+			<FlexItemData growFactor="1" baseSize="0%"/>
+		</smartTable:layoutData>
+		<table:Table >
+			<table:Column hAlign="Center" width="9rem">
+				<table:customData>
+					<core:CustomData key="p13nData" value='\{"columnKey": "Status", "leadingProperty": "Status"}'/>
+				</table:customData>
+				<Label text="{/#Demand/Status/@sap:label}"/>
+				<table:template>
+					<HBox>
+						<ObjectStatus class="sapUiTinyMargin" text="{ parts: [ 'Status', 'STATUS_DESC'], formatter: '.formatMaterialStatus' }"
+							icon="{ path:'Status', formatter:'.formatMaterialStatusIcon' }" state="{ path:'Status', formatter:'.formatMaterialState' }"/>
+					</HBox>
+				</table:template>
+			</table:Column>
+		</table:Table>
+	</smartTable:SmartTable>
 </mvc:View>

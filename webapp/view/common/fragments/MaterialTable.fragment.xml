@@ -1,24 +1,30 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:table="sap.ui.table" xmlns:core="sap.ui.core"
 	xmlns:dnd="sap.ui.core.dnd">
 	<smartTable:SmartTable id="materialInfoTable" entitySet="DemandComponentSet" useExportToExcel="true" useVariantManagement="true"
-		useTablePersonalisation="true" header="{i18n>xtit.materialInfoDialogTitle}" initiallyVisibleFields="Orderid,Matnr,Operationid,Posnr,Matnr,Maktx" showRowCount="true" beforeRebindTable="onBeforeRebindTable"  enableAutoBinding="true" class="sapUiResponsiveContentPadding"
-		 tableBindingPath="DemandToComponents">
+		useTablePersonalisation="true" header="{i18n>xtit.materialInfoDialogTitle}" showRowCount="true" beforeRebindTable="onBeforeRebindTable"
+		enableAutoBinding="true" class="sapUiResponsiveContentPadding" initiallyVisibleFields="Orderid,Matnr,Operationid,Posnr,Matnr,Maktx,Status" tableBindingPath="DemandToComponents" tableType="ResponsiveTable">
 		<!-- layout data used to make the table growing but the filter bar fixed -->
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1" baseSize="0%"/>
 		</smartTable:layoutData>
-			<table:Table >
-				<table:Column hAlign="Center" width="9rem">
-								<table:customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "Status", "leadingProperty": "Status"}'/>
-								</table:customData>
-								<Label text="{/#Demand/Status/@sap:label}"/>
-								<table:template>
-									<HBox>
-										<ObjectStatus class="sapUiTinyMargin" text="{ path:'Status', formatter:'.formatter.formatMaterialStatus' }" icon="{ path:'Status', formatter:'.formatter.formatMaterialStatusIcon' }" state="{ path:'Status', formatter:'.formatter.formatMaterialState' }"/>
-									</HBox>
-								</table:template>
-							</table:Column>
-				</table:Table>
+		<Table>
+			<columns>
+				<Column>
+					 <customData>
+	          <core:CustomData key="p13nData" value='\{"columnKey": "Status", "leadingProperty": "Status", "columnIndex": 0}'/>
+	</customData>
+					<Label text="{/#Demand/Status/@sap:label}"/>
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<ObjectStatus class="sapUiTinyMargin" 
+										text="{ path:'Status', formatter:'.formatter.formatMaterialStatus' }"
+										icon="{ path:'Status', formatter:'.formatter.formatMaterialStatusIcon' }" state="{ path:'Status', formatter:'.formatter.formatMaterialState' }"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
 	</smartTable:SmartTable>
 </core:FragmentDefinition>

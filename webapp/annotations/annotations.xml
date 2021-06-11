@@ -58,7 +58,7 @@
 				</Annotation>
 					<Annotation Term="UI.DataPoint" Qualifier="MATSTATUS">
 					<Record Type="com.sap.vocabularies.UI.v1.DataPointType">
-						<PropertyValue Property="Value" Path="MATERIAL_STATUS"/>
+						<PropertyValue Property="Value" Path="MATERIAL_STATUS_DESC"/>
 						<PropertyValue Property="Title" String="{@i18n&gt;xtit.materialStatus}"/>
 					</Record>
 				</Annotation>
