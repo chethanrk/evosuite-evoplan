@@ -3,7 +3,7 @@
 	<smartTable:SmartTable id="draggableList" height="100%" width="100%" direction="Column" fitContainer="true" enableAutoBinding="true"
 		entitySet="{viewModel>/subTableSet}" showRowCount="true" header="{i18n>xtit.itemListTitle}"
 		useExportToExcel="true" useVariantManagement="false" beforeRebindTable="onBeforeRebindTable" persistencyKey="{viewModel>/persistencyKeyDemandTable}" useTablePersonalisation="true"
-		requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,MAP_MARKER_COLOUR,ENABLE_ROUTE_EVOORDER,ENABLE_ROUTE_EVOEQUIP,ENABLE_ROUTE_EVONOTIFY,ENABLE_ROUTE_EVOTIME,EQUIPMENT,ORDER_TYPE,ENABLE_ROUTE_GUI1,ENABLE_ROUTE_GUI2,ENABLE_ROUTE_EVOFLOC,FUNCTIONAL_LOC" customData:p13nDialogSettings='{filter:{visible:false},sort:{visible:false}}'>
+		requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,MAP_MARKER_COLOUR,ENABLE_ROUTE_EVOORDER,ENABLE_ROUTE_EVOEQUIP,ENABLE_ROUTE_EVONOTIFY,ENABLE_ROUTE_EVOTIME,EQUIPMENT,ORDER_TYPE,ENABLE_ROUTE_GUI1,ENABLE_ROUTE_GUI2,ENABLE_ROUTE_EVOFLOC,FUNCTIONAL_LOC,COMPONENT_EXISTS" customData:p13nDialogSettings='{filter:{visible:false},sort:{visible:false}}'>
 		<!-- layout data used to make the table growing but the filter bar fixed -->
 		<!--smartFilterId="listReportFilter"-->
 		<smartTable:layoutData>
@@ -42,6 +42,21 @@
 						<core:Icon src="{DEMAND_ICON}" tooltip="{DemandDesc}"></core:Icon>
 					</table:template>
 				</table:Column>
+				<table:Column hAlign="Center" width="9rem">
+								<table:customData>
+									<core:CustomData key="p13nData" value='\{"columnKey": "Status", "leadingProperty": "Status"}'/>
+								</table:customData>
+								<Label text="{/#Demand/MATERIAL_STATUS/@sap:label}"/>
+								<table:template>
+									<HBox>
+										<ObjectStatus class="sapUiTinyMargin" tooltip="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMatStatusTooltip' }"
+											text="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatus' }"
+											visible="{ path:'COMPONENT_EXISTS', formatter:'.formatter.formatComponentExist' }"
+											icon="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialStatusIcon' }"
+											state="{ path:'MATERIAL_STATUS', formatter:'.formatter.formatMaterialState' }"/>
+									</HBox>
+								</table:template>
+							</table:Column>
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandQualificationColumn" type="XML"/>
 				<table:Column hAlign="Center" width="3rem" visible="{user>/EMP_ENABLED}">
 					<table:customData>

@@ -1,7 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-	<Button id="idOverallStatusButton" icon="sap-icon://synchronize" enabled="false" text="{i18n>xtit.materialStatus}" tooltip="{i18n>xtit.refreshTooltip}" visible="{viewModel>/ENABLE_MATERIAL_CHECK}" press="onMaterialStatusPress"/>
+	<Button id="idOverallStatusButton" icon="sap-icon://synchronize" enabled="false" text="{i18n>xtit.materialStatus}" tooltip="{i18n>xtit.refreshTooltip}" visible="{viewModel>/ENABLE_MATERIAL_AVAILABILITY}" press="onMaterialStatusPress"/>
 	<Button id="materialInfo" text="{i18n>xtit.materialInfoButton}" tooltip="{i18n>xbut.changeStatus}" icon="sap-icon://message-information"
-		press="onMaterialInfoButtonPress" enabled="false" visible="{viewModel>/ENABLE_MATERIAL_CHECK}">
+		press="onMaterialInfoButtonPress" enabled="false" visible="{viewModel>/ENABLE_MATERIAL_AVAILABILITY}">
 		<layoutData>
 			<ToolbarLayoutData shrinkable="true"/>
 		</layoutData>
