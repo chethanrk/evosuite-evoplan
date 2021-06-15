@@ -42,7 +42,7 @@
 						<core:Icon src="{DEMAND_ICON}" tooltip="{DemandDesc}"></core:Icon>
 					</table:template>
 				</table:Column>
-				<table:Column hAlign="Center" width="9rem">
+				<table:Column hAlign="Center" width="9rem" visible="{user>/ENABLE_MATERIAL_AVAILABILITY}">
 								<table:customData>
 									<core:CustomData key="p13nData" value='\{"columnKey": "Status", "leadingProperty": "Status"}'/>
 								</table:customData>
