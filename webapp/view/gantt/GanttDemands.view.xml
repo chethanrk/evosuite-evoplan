@@ -44,7 +44,7 @@
 					</table:Column>
 					<table:Column hAlign="Center" width="9rem" visible="{user>/ENABLE_MATERIAL_AVAILABILITY}">
 								<table:customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "Status", "leadingProperty": "Status"}'/>
+									<core:CustomData key="p13nData" value='\{"columnKey": "MATERIAL_STATUS", "leadingProperty": "MATERIAL_STATUS"}'/>
 								</table:customData>
 								<Label text="{/#Demand/MATERIAL_STATUS/@sap:label}"/>
 								<table:template>
