@@ -264,83 +264,53 @@ sap.ui.define([
 		 * @returns Material Status on given Value
 		 */
 		formatMaterialStatus: function (sValue) {
-			var oView = this._oView ? this._oView: this.getView();
-			var	oBundle = oView.getModel("i18n").getResourceBundle();
-			if(sValue === "1")
-			{
+			var oView = this._oView ? this._oView : this.getView();
+			var oBundle = oView.getModel("i18n").getResourceBundle();
+			if (sValue === "1") {
 				return oBundle.getText("xtit.available");
-			}
-			else if(sValue === "2")
-			{
+			} else if (sValue === "2") {
 				return oBundle.getText("xtit.partialAvailable");
-			}
-			else if(sValue === "3")
-			{
+			} else if (sValue === "3") {
 				return oBundle.getText("xtit.notAvailable");
-			}
-			else
-			{
+			} else {
 				return "Pending";
 			}
 		},
 		formatMaterialStatusIcon: function (sValue) {
-			if(sValue === "1")
-			{
+			if (sValue === "1") {
 				return "sap-icon://message-success";
-			}
-			else if(sValue === "2")
-			{
+			} else if (sValue === "2") {
 				return "sap-icon://message-warning";
-			}
-			else if(sValue === "3")
-			{
+			} else if (sValue === "3") {
 				return "sap-icon://message-error";
-			}
-			else
-			{
+			} else {
 				return "sap-icon://pending";
 			}
 		},
 		formatMaterialState: function (sValue) {
-			if(sValue === "1")
-			{
+			if (sValue === "1") {
 				return "Success";
-			}
-			else if(sValue === "2")
-			{
+			} else if (sValue === "2") {
 				return "Warning";
-			}
-			else if(sValue === "3")
-			{
+			} else if (sValue === "3") {
 				return "Error";
-			}
-			else
-			{
+			} else {
 				return "Information";
 			}
 		},
-		formatMatStatusTooltip: function(sValue)
-		{
-				var	oBundle = this.getResourceBundle();
-			if(sValue === "1")
-			{
+		formatMatStatusTooltip: function (sValue) {
+			var oBundle = this.getResourceBundle();
+			if (sValue === "1") {
 				return oBundle.getText("xtit.available");
-			}
-			else if(sValue === "2")
-			{
+			} else if (sValue === "2") {
 				return oBundle.getText("xtit.partialAvailable");
-			}
-			else if(sValue === "3")
-			{
+			} else if (sValue === "3") {
 				return oBundle.getText("xtit.notAvailable");
-			}
-			else
-			{
-				return  oBundle.getText("xtit.refreshTooltip");
+			} else {
+				return oBundle.getText("xtit.refreshTooltip");
 			}
 		},
-		formatComponentExist: function(bComponentExist)
-		{
+		formatComponentExist: function (bComponentExist) {
 			return bComponentExist;
 		},
 		/**
@@ -743,12 +713,53 @@ sap.ui.define([
 				var oDateFormat = DateFormat.getDateInstance({
 					pattern: "yyyy-MM-dd"
 				});
-				var dateString = oDateFormat.format(d,true);
+				var dateString = oDateFormat.format(d, true);
 				return dateString;
 			} else {
 				return "";
 			}
 
+		},
+
+		/**
+		 * Resource Management: set visibility for Proceed Button to delete from Assignment Dialog
+		 */
+		setVisibilityProceedToDeleteBtn: function (aData) {
+			for (var i in aData) {
+				if (!aData[i].AllowUnassign) {
+					return false;
+				}
+			}
+			return true;
+		},
+
+		/**
+		 * Resource Management: set visibility for Proceed Button to delete from Assignment Dialog
+		 */
+		setHeaderMsgAssignmentDialog: function (aData) {
+			if (aData && aData.length) {
+				var sResourceName = aData[0].ResourceDescription;
+				for (var i in aData) {
+					if (!aData[i].AllowUnassign) {
+						return sResourceName + this._oResourceBundle.getText("ymsg.resourceNotRemovable"); //Unassignable
+					}
+				}
+				return sResourceName + this._oResourceBundle.getText("ymsg.resourceRemovable");; //not Unassignable
+			}
+			return "";
+
+		},
+		setManageResourceSwitchEnabled: function(sAction){
+			if(sAction ==="ALL"){
+				return true;
+			}
+			return false;
+		},
+		setManageResourceSwitchState: function(sAction){
+			if(sAction ==="MOVE"){
+				return false;
+			}
+			return true;
 		}
 
 	};

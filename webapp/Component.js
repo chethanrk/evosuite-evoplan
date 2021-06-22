@@ -138,7 +138,9 @@ sap.ui.define([
 				},
 				manageResourcesSettings: {
 					selectedRow: false,
-					isCopy:true
+					isCopy:true,
+					Assignments:{},
+					removedIndices:[]
 				}
 
 			});

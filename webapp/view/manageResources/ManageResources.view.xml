@@ -1,107 +1,128 @@
 <mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:vbm="sap.ui.vbm" xmlns:vk="sap.ui.vk" xmlns:f="sap.f"
 	controllerName="com.evorait.evoplan.controller.manageResources.ManageResources" displayBlock="true" height="100%" xmlns:l="sap.ui.layout"
 	xmlns:table="sap.ui.table" xmlns:dnd="sap.ui.core.dnd" xmlns:smartTable="sap.ui.comp.smarttable"
-	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-	<Page id="idManageResources" showFooter="true" showHeader="false" class="sapUiContentPadding">
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar">
+	<Page id="idManageResources" showFooter="true" showHeader="false">
 		<content>
 			<HBox >
-				<smartTable:SmartTable id="idTableEvoplanResources" class="sapUiSmallMarginEnd" entitySet="ResourceManagementSet" tableType="TreeTable"
-					fitContainer="true" useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false"
-					header="{i18n>xtit.evoplanResourceTable}" showRowCount="false" enableAutoBinding="true" beforeRebindTable="onBeforeRebindTable"
-					requestAtLeastFields="NodeId,ParentNodeId,ResourceGroupGuid,ResourceGuid,Start,End,Description,NodeType">
-					<smartTable:layoutData>
-						<FlexItemData growFactor="1"/>
-					</smartTable:layoutData>
-					<smartTable:customToolbar>
-						<OverflowToolbar>
-							<ToolbarSpacer/>
-							<Switch class="customSwitchTextFont" id="idCheckRightTechnician" customTextOn="{i18n>xlab.switchCopy}"
-								customTextOff="{i18n>xlab.switchMove}" state="{viewModel>/manageResourcesSettings/isCopy}"></Switch>
-						</OverflowToolbar>
-					</smartTable:customToolbar>
-					<table:TreeTable id="idDataTableEvoplanGroup" selectionMode="None" visibleRowCountMode="Auto" minAutoRowCount="14">
-						<table:columns>
-							<table:Column>
-								<table:customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "Description", "leadingProperty": "Description"}'/>
-								</table:customData>
-								<Label text="{i18n>xlab.groupResourceDescription}"></Label>
-								<table:template>
-									<Text text="{Description}"/>
-								</table:template>
-							</table:Column>
-							<table:Column width="10rem">
-								<table:customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "Start", "leadingProperty": "Start"}'/>
-								</table:customData>
-								<Label text="{i18n>xlab.startDate}"></Label>
-								<table:template>
-									<Text text="{path:'Start',formatter:'.formatter.setDateFormatResourceTree'}"/>
-								</table:template>
-							</table:Column>
-							<table:Column width="10rem">
-								<table:customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "End", "leadingProperty": "End"}'/>
-								</table:customData>
-								<Label text="{i18n>xlab.endDate}"></Label>
-								<table:template>
-									<Text text="{path:'End',formatter:'.formatter.setDateFormatResourceTree'}"/>
-								</table:template>
-							</table:Column>
-						</table:columns>
-						<table:dragDropConfig>
-							<dnd:DropInfo groupName="moveToEvoplanGroups" targetAggregation="rows" drop="onDropIntoEvoplanGroups"/>
-							<dnd:DragDropInfo sourceAggregation="rows" targetAggregation="rows" dropPosition="On" dragStart="onStartDragEvoplanGroups"
-								drop="onDropIntoEvoplanGroups"/>
-						</table:dragDropConfig>
-					</table:TreeTable>
-				</smartTable:SmartTable>
-				<!--Evoplan Resources Table Ends Here-->
-				<!--HR Resources Table Starts Here-->
-				<smartTable:SmartTable id="idTableHrResources" entitySet="ResourceMasterSet" useExportToExcel="false" useVariantManagement="true"
-					useTablePersonalisation="true" header="{i18n>xtit.hrResourceTable}" showRowCount="true" enableAutoBinding="true"
-					class="sapUiSmallMarginBegin" requestAtLeastFields="Guid"
-					customData:p13nDialogSettings='{filter:{visible:true},sort:{visible:false},columns:{visible:false}}'>
-					<!--initiallyVisibleFields="Firstname,Lastname"-->
-					<!--layout data used to make the table growing but the filter bar fixed-->
-					<smartTable:layoutData>
-						<FlexItemData growFactor="1"/>
-					</smartTable:layoutData>
-					<table:Table id="idDataTableHrResource" selectionMode="None" visibleRowCountMode="Auto" minAutoRowCount="14" enableCellFilter="true">
-						<table:columns>
-							<table:Column filterProperty="Firstname">
-								<table:customData >
-									<core:CustomData key="p13nData" value='\{"columnKey": "Firstname", "leadingProperty": "Firstname"}'/>
-								</table:customData>
-								<Label text="{/#ResourceMaster/Firstname/@sap:label}"></Label>
-								<table:template>
-									<Text text="{Firstname}"/>
-								</table:template>
-							</table:Column>
-							<table:Column filterProperty="Lastname">
-								<table:customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "Lastname", "leadingProperty": "Lastname"}'/>
-								</table:customData>
-								<Label text="{/#ResourceMaster/Lastname/@sap:label}"></Label>
-								<table:template>
-									<Text text="{Lastname}"/>
-								</table:template>
-							</table:Column>
-							<table:Column filterProperty="Pernr">
-								<table:customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "Pernr", "leadingProperty": "Pernr"}'/>
-								</table:customData>
-								<Label text="{/#ResourceMaster/Pernr/@sap:label}"></Label>
-								<table:template>
-									<Text text="{Pernr}"/>
-								</table:template>
-							</table:Column>
-						</table:columns>
-						<table:dragDropConfig>
-							<dnd:DragInfo groupName="moveToEvoplanGroups" sourceAggregation="rows" dragStart="onStartDragHrResources"/>
-						</table:dragDropConfig>
-					</table:Table>
-				</smartTable:SmartTable>
+				<VBox fitContainer="true">
+					<smartFilterBar:SmartFilterBar class="sapUiTinyMarginEnd" id="idSmartFilterEvoPlanGroups" entitySet="ResourceManagementSet"
+						persistencyKey="SmartFilter_EvoPlan_Groups" showGoButton="false" showRestoreButton="true" showRestoreOnFB="true" liveMode="true">
+						<!-- layout data used to make the table growing but the filter bar fixed -->
+						<smartFilterBar:layoutData>
+							<FlexItemData shrinkFactor="0"/>
+						</smartFilterBar:layoutData>
+					</smartFilterBar:SmartFilterBar>
+					<smartTable:SmartTable id="idTableEvoplanResources" class="sapUiTinyMarginEnd" entitySet="ResourceManagementSet" tableType="TreeTable"
+						fitContainer="true" useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false"
+						smartFilterId="idSmartFilterEvoPlanGroups" header="{i18n>xtit.evoplanResourceTable}" showRowCount="false" enableAutoBinding="true"
+						beforeRebindTable="onBeforeRebindTable"
+						requestAtLeastFields="NodeId,ParentNodeId,ResourceGroupGuid,ResourceGuid,Start,End,Description,NodeType">
+						<smartTable:layoutData>
+							<FlexItemData growFactor="0"/>
+						</smartTable:layoutData>
+						<smartTable:customToolbar>
+							<OverflowToolbar>
+								<ToolbarSpacer/>
+								<Switch class="customSwitchTextFont" id="idSwitchResourceAction" customTextOn="{i18n>xlab.switchCopy}"
+									customTextOff="{i18n>xlab.switchMove}" state="{path:'user>/RESOURCE_MANAGEMENT_ACTION',formatter:'.formatter.setManageResourceSwitchState'}"
+									enabled="{path:'user>/RESOURCE_MANAGEMENT_ACTION',formatter:'.formatter.setManageResourceSwitchEnabled'}"></Switch>
+							</OverflowToolbar>
+						</smartTable:customToolbar>
+						<table:TreeTable id="idDataTableEvoplanGroup" selectionMode="None">
+							<table:columns>
+								<table:Column>
+									<table:customData>
+										<core:CustomData key="p13nData" value='\{"columnKey": "Description", "leadingProperty": "Description"}'/>
+									</table:customData>
+									<!--<Label text="{i18n>xlab.groupResourceDescription}"></Label>-->
+									<Label text="{/#ResourceManagement/Description/@sap:label}"></Label>
+									<table:template>
+										<Text text="{Description}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="10rem">
+									<table:customData>
+										<core:CustomData key="p13nData" value='\{"columnKey": "Start", "leadingProperty": "Start"}'/>
+									</table:customData>
+									<Label text="{/#ResourceManagement/Start/@sap:label}"></Label>
+									<table:template>
+										<Text text="{path:'Start',formatter:'.formatter.setDateFormatResourceTree'}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="10rem">
+									<table:customData>
+										<core:CustomData key="p13nData" value='\{"columnKey": "End", "leadingProperty": "End"}'/>
+									</table:customData>
+									<Label text="{/#ResourceManagement/End/@sap:label}"></Label>
+									<table:template>
+										<Text text="{path:'End',formatter:'.formatter.setDateFormatResourceTree'}"/>
+									</table:template>
+								</table:Column>
+							</table:columns>
+							<table:dragDropConfig>
+								<dnd:DropInfo groupName="moveToEvoplanGroups" targetAggregation="rows" drop="onDropIntoEvoplanGroups"/>
+								<dnd:DragDropInfo sourceAggregation="rows" targetAggregation="rows" dropPosition="On" dragStart="onStartDragEvoplanGroups"
+									drop="onDropIntoEvoplanGroups"/>
+							</table:dragDropConfig>
+						</table:TreeTable>
+					</smartTable:SmartTable>
+				</VBox>
+				<VBox fitContainer="true">
+					<!--Evoplan Resources Table Ends Here-->
+					<!--HR Resources Table Starts Here-->
+					<smartFilterBar:SmartFilterBar class="sapUiTinyMarginBegin" id="idSmartFilterResources" entitySet="ResourceMasterSet"
+						persistencyKey="SmartFilter_Resources" showGoButton="false" showRestoreButton="true" showRestoreOnFB="true" liveMode="true">
+						<!-- layout data used to make the table growing but the filter bar fixed -->
+						<smartFilterBar:layoutData>
+							<FlexItemData shrinkFactor="0"/>
+						</smartFilterBar:layoutData>
+					</smartFilterBar:SmartFilterBar>
+					<smartTable:SmartTable id="idTableHrResources" entitySet="ResourceMasterSet" useExportToExcel="false" useVariantManagement="true"
+						useTablePersonalisation="true" header="{i18n>xtit.hrResourceTable}" showRowCount="true" enableAutoBinding="true"
+						class="sapUiTinyMarginBegin" requestAtLeastFields="Guid" smartFilterId="idSmartFilterResources"
+						customData:p13nDialogSettings='{filter:{visible:true},sort:{visible:false},columns:{visible:false}}'>
+						<!--initiallyVisibleFields="Firstname,Lastname"-->
+						<!--layout data used to make the table growing but the filter bar fixed-->
+						<smartTable:layoutData>
+							<FlexItemData growFactor="0"/>
+						</smartTable:layoutData>
+						<table:Table id="idDataTableHrResource" selectionMode="None" enableCellFilter="true" threshold="30">
+							<table:columns>
+								<table:Column filterProperty="Firstname">
+									<table:customData >
+										<core:CustomData key="p13nData" value='\{"columnKey": "Firstname", "leadingProperty": "Firstname"}'/>
+									</table:customData>
+									<Label text="{/#ResourceMaster/Firstname/@sap:label}"></Label>
+									<table:template>
+										<Text text="{Firstname}"/>
+									</table:template>
+								</table:Column>
+								<table:Column filterProperty="Lastname">
+									<table:customData>
+										<core:CustomData key="p13nData" value='\{"columnKey": "Lastname", "leadingProperty": "Lastname"}'/>
+									</table:customData>
+									<Label text="{/#ResourceMaster/Lastname/@sap:label}"></Label>
+									<table:template>
+										<Text text="{Lastname}"/>
+									</table:template>
+								</table:Column>
+								<table:Column filterProperty="Pernr">
+									<table:customData>
+										<core:CustomData key="p13nData" value='\{"columnKey": "Pernr", "leadingProperty": "Pernr"}'/>
+									</table:customData>
+									<Label text="{/#ResourceMaster/Pernr/@sap:label}"></Label>
+									<table:template>
+										<Text text="{Pernr}"/>
+									</table:template>
+								</table:Column>
+							</table:columns>
+							<table:dragDropConfig>
+								<dnd:DragInfo groupName="moveToEvoplanGroups" sourceAggregation="rows" dragStart="onStartDragHrResources"/>
+							</table:dragDropConfig>
+						</table:Table>
+					</smartTable:SmartTable>
+				</VBox>
 				<!--HR Resources Table Ends Here-->
 			</HBox>
 		</content>

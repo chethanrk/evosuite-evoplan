@@ -284,6 +284,9 @@ sap.ui.define([
 			} else if (oParameter.bFromManageResource) {
 				eventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
 			}
+			else if (oParameter.bFromManageResourceRemoveAssignments) {
+				eventBus.publish("ManageResourcesActionsController", "refreshAssignmentDialog", {});
+			}
 
 		},
 		/**
