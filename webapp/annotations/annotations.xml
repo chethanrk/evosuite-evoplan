@@ -56,7 +56,7 @@
 						<PropertyValue Property="Title" String="{@i18n&gt;xtit.sourceOfObject}"/>
 					</Record>
 				</Annotation>
-					<Annotation Term="UI.DataPoint" Qualifier="MATSTATUS">
+				<Annotation Term="UI.DataPoint" Qualifier="MATSTATUS">
 					<Record Type="com.sap.vocabularies.UI.v1.DataPointType">
 						<PropertyValue Property="Value" Path="MATERIAL_STATUS_DESC"/>
 						<PropertyValue Property="Title" String="{@i18n&gt;xtit.materialStatus}"/>
@@ -401,6 +401,24 @@
 							</Collection>
 						</PropertyValue>
 					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="Metadata.ResourceManagement">
+				<Annotation Term="UI.SelectionFields">
+					<Collection>
+						<PropertyPath>Description</PropertyPath>
+						<PropertyPath>Start</PropertyPath>
+						<PropertyPath>End</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="Metadata.ResourceMaster">
+				<Annotation Term="UI.SelectionFields">
+					<Collection>
+						<PropertyPath>Firstname</PropertyPath>
+						<PropertyPath>Lastname</PropertyPath>
+						<PropertyPath>Pernr</PropertyPath>
+					</Collection>
 				</Annotation>
 			</Annotations>
 		</Schema>

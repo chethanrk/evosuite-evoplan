@@ -11,7 +11,7 @@ sap.ui.define([
 ], function (ManageResourceActionsController, formatter, Filter, FilterOperator, Fragment,
 	MessageToast, RowAction, RowActionItem, MessageBox) {
 	"use strict";
-
+	var sAssignmentsPath = "/manageResourcesSettings/Assignments";
 	return ManageResourceActionsController.extend("com.evorait.evoplan.controller.manageResources.ManageResources", {
 		formatter: formatter,
 
@@ -26,6 +26,7 @@ sap.ui.define([
 					bFromManageResource: true
 				};
 			}.bind(this));
+			this.onInitResourceActionController();
 		},
 		/**
 		 * bind resource tree table only when filterbar was initalized
@@ -43,10 +44,15 @@ sap.ui.define([
 			oBinding.parameters.numberOfExpandedLevels = 0; //oUserModel.getProperty("/RESOURCE_TREE_EXPAND") ? 1 : 0;
 
 		},
+		/**
+		 * Defining and initianlizing required Global parameters after rendering the page
+		 * @param 
+		 */
 		onAfterRendering: function () {
 			this._setRowActionTemplate();
 			this._oModel = this.getModel();
 			this._oViewModel = this.getView().getModel("viewModel");
+			this._oAppViewModel = this.getView().getModel("appView");
 			this._oResourceBundle = this.getResourceBundle();
 			this._oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				pattern: "yyyy-MM-ddTHH:mm:ss"
@@ -95,7 +101,6 @@ sap.ui.define([
 				MessageToast.show("Group Can't be Dragged!");
 				oEvent.preventDefault();
 			}
-
 		},
 		/**
 		 * Dragging from Evoplan Resources Table
@@ -201,8 +206,9 @@ sap.ui.define([
 		 */
 		getDefaultDate: function (bEndDate) {
 			if (bEndDate) {
-				var oCurrentDate = new Date(),
-					oEndData = oCurrentDate.setDate(oCurrentDate.getDate() + 30);
+				// var oCurrentDate = new Date(),
+				// 	oEndData = oCurrentDate.setDate(oCurrentDate.getDate() + 30);
+				var oEndData = this.getModel("user").getProperty("/RES_MGMT_END_DATE");
 				return this._oDateFormat.format(new Date(oEndData));
 			}
 			return this._oDateFormat.format(new Date());
@@ -212,7 +218,7 @@ sap.ui.define([
 		 */
 		_handleCreateResource: function (sPath, sSourceItemPath, aPayload, bIsFromHr) {
 			var sEntitySetName = sPath.split("(")[0],
-				isCopy = this._oViewModel.getProperty("/manageResourcesSettings/isCopy");
+				isCopy = this.getView().byId("idSwitchResourceAction").getState();
 
 			this.mTreeState = this._getTreeState();
 			if (isCopy || bIsFromHr) {
@@ -236,6 +242,7 @@ sap.ui.define([
 		_refreshManageResourcesView: function () {
 			var oEvoplanTable = this.getView().byId("idTableEvoplanResources");
 			var oHrResourcesTable = this.getView().byId("idTableHrResources");
+			this.mTreeState = this._getTreeState();
 			oEvoplanTable.rebindTable();
 			oHrResourcesTable.rebindTable();
 		},
@@ -244,13 +251,37 @@ sap.ui.define([
 		 * Handle Delete Resource on press of "Delete" Action button from Tree table.
 		 */
 		_onPressDeleteButton: function (oEvent) {
-			var sPath = oEvent.getSource().getBindingContext().getPath();
+			var oContext = oEvent.getSource().getBindingContext(),
+				sPath = oContext.getPath(),
+				sNodeId = oContext.getProperty("NodeId"),
+				oStart = oContext.getProperty("Start"),
+				oEnd = oContext.getProperty("End"),
+				aParameters = {
+					ObjectId: sNodeId,
+					StartTimestamp: oStart,
+					EndTimestamp: oEnd
+				}
+
 			this.mTreeState = this._getTreeState();
+
 			this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.warningDeleteResource")).then(function (value) {
 				if (value === "YES") {
-					this.doDeleteResource(this._oModel, sPath).then(function (oResponse) {
-						this.showResponseMessage(oResponse.headers.message, oResponse.headers.message_type);
+					this._oAppViewModel.setProperty("/busy", true);
+					this.executeFunctionImport(this._oModel, aParameters, "ValidateResourceMgmtAssignment", "POST").then(function (oData,
+						response) {
+						this._oAppViewModel.setProperty("/busy", false);
+						if (oData.results && oData.results.length) {
+							this._oViewModel.setProperty(sAssignmentsPath, oData.results);
+							this.showResourceAssignments(oContext);
+
+						} else {
+							this.doDeleteResource(this._oModel, sPath).then(function (oResponse) {
+								// this.showResponseMessage(oResponse.headers.message, oResponse.headers.message_type);
+							}.bind(this));
+						}
+
 					}.bind(this));
+
 				}
 			}.bind(this));
 		},
@@ -426,8 +457,13 @@ sap.ui.define([
 				this.mTreeState = {};
 			}
 		},
+		/**
+		 * destroy contents on Exit
+		 * @param 
+		 */
 		onExit: function () {
 			this._oEventBus.unsubscribe("ManageResourcesController", "refreshManageResourcesView", this._refreshManageResourcesView, this);
+			this.onExitResourceActionController();
 		}
 	});
 
