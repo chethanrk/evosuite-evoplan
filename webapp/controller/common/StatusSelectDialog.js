@@ -86,9 +86,11 @@ sap.ui.define([
 						this.onCloseDialog();
 						return;
 					} else {
-						this._oView.byId("draggableList").getTable().clearSelection();
-						for (var j in oData.aIndices) {
-							this._oView.byId("draggableList").getTable().addSelectionInterval(oData.aIndices[j], oData.aIndices[j]);
+						if (this._oView.byId("draggableList")) {
+							this._oView.byId("draggableList").getTable().clearSelection();
+							for (var j in oData.aIndices) {
+								this._oView.byId("draggableList").getTable().addSelectionInterval(oData.aIndices[j], oData.aIndices[j]);
+							}
 						}
 						this.onCloseDialog();
 						this._showAssignErrorDialog.call(this._oView.getController(), oData.aNonChangable, true);

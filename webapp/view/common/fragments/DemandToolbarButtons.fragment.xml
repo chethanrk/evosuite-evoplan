@@ -7,7 +7,7 @@
 		</layoutData>
 	</Button>
 	<Button id="changeStatusButton" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}" icon="sap-icon://flag"
-		press="onChangeStatusButtonPress" enabled="false" visible="{viewModel>/showStatusChangeButton}">
+		press="onChangeStatusButtonPress" enabled="false" visible="{= ${viewModel>/showStatusChangeButton} &amp;&amp; ${user>/ENABLE_CHANGE_STATUS}}" >
 		<layoutData>
 			<ToolbarLayoutData shrinkable="true"/>
 		</layoutData>
