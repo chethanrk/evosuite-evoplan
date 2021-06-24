@@ -12,6 +12,10 @@
 						<smartFilterBar:layoutData>
 							<FlexItemData shrinkFactor="0"/>
 						</smartFilterBar:layoutData>
+						<smartFilterBar:controlConfiguration>
+							<smartFilterBar:ControlConfiguration key="Start" visibleInAdvancedArea="false" conditionType="sap.ui.comp.config.condition.DateRangeType"></smartFilterBar:ControlConfiguration>
+							<smartFilterBar:ControlConfiguration key="End" visibleInAdvancedArea="false" conditionType="sap.ui.comp.config.condition.DateRangeType"></smartFilterBar:ControlConfiguration>
+						</smartFilterBar:controlConfiguration>
 					</smartFilterBar:SmartFilterBar>
 					<smartTable:SmartTable id="idTableEvoplanResources" class="sapUiTinyMarginEnd" entitySet="ResourceManagementSet" tableType="TreeTable"
 						fitContainer="true" useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false"
