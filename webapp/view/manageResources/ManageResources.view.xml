@@ -28,6 +28,13 @@
 						<smartTable:customToolbar>
 							<OverflowToolbar>
 								<ToolbarSpacer/>
+								<SegmentedButton id="resourceMngFilter" selectionChange="onResourceMngFilterSelectionChange">
+									<items>
+										<SegmentedButtonItem text="All" key="all"/>
+										<SegmentedButtonItem text="Past" key="past"/>
+										<SegmentedButtonItem text="Future" key ="future"/>
+									</items>
+								</SegmentedButton>
 								<Switch class="customSwitchTextFont" id="idSwitchResourceAction" customTextOn="{i18n>xlab.switchCopy}"
 									customTextOff="{i18n>xlab.switchMove}" state="{path:'user>/RESOURCE_MANAGEMENT_ACTION',formatter:'.formatter.setManageResourceSwitchState'}"
 									enabled="{path:'user>/RESOURCE_MANAGEMENT_ACTION',formatter:'.formatter.setManageResourceSwitchEnabled'}"></Switch>

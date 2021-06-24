@@ -192,11 +192,13 @@ sap.ui.define([
 						if(bComponentExist)
 						{
 							this.byId("materialInfo").setEnabled(true);
+							this.byId("idOverallStatusButton").setEnabled(true);
 							break;
 						}
 						else
 						{
 							this.byId("materialInfo").setEnabled(false);
+							this.byId("idOverallStatusButton").setEnabled(false);
 						}
 					}
 		},
