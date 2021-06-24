@@ -8,7 +8,7 @@
 				<headerToolbar>
 					<Toolbar>
 						<core:Icon src="sap-icon://employee" class="size1 sapUiTinyMarginEnd" color="#031E48"></core:Icon>
-						<Text text="{path:'viewModel>/manageResourcesSettings/Assignments',formatter:'.formatter.setHeaderMsgAssignmentDialog'}"/>
+						<Text text="{path:'viewModel>/manageResourcesSettings',formatter:'.formatter.setHeaderMsgAssignmentDialog'}"/>
 					</Toolbar>
 				</headerToolbar>
 				<columns>
@@ -35,7 +35,7 @@
 		</content>
 		<buttons>
 			<Button id="idUnassignBtn" text="{i18n>xbut.buttonUnassign}" press="onPressUnassign" enabled="false"/>
-			<Button text="{i18n>xbut.buttonProceed}" press="onPressProceedToDelete"
+			<Button text="{i18n>xbut.buttonProceed}" press="onPressProceedBtn"
 				visible="{path:'viewModel>/manageResourcesSettings/Assignments',formatter:'.formatter.setVisibilityProceedToDeleteBtn'}"/>
 			<Button text="{i18n>xbut.buttonCancel}" press="onCloseAssignmentDialog"/>
 			<!--visible="{path:'user>/QUALIF_UI_CHECK_TYPE',formatter:'.formatter.getQualificationBtnVisibilty'}"-->

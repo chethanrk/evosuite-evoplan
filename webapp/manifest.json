@@ -442,7 +442,7 @@
 					"viewType": "XML",
 					"viewName": "ManageResources",
 					"viewPath": "com.evorait.evoplan.view.manageResources",
-					"viewLevel": 3,
+					"viewLevel": 1,
 					"parent": "fullNavigation",
 					"controlId": "fullPanel"
 				},
