@@ -279,14 +279,6 @@ sap.ui.define([
 					bFromDetail: true
 				});	
 				
-			// if (oData.ALLOW_ASSIGN) {
-			// 	localStorage.setItem("Evo-Action-page", "DemandDetails");
-			// 	this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, {
-			// 		bFromDetail: true
-			// 	});
-			// } else {
-			// 	this._showAssignErrorDialog([oData.DemandDesc]);
-			// }
 		},
 
 		/**
