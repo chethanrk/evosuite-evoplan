@@ -5,7 +5,8 @@ sap.ui.define([
 	"sap/ui/core/Fragment"
 ], function (BaseController, MessageBox, MessageToast, Fragment) {
 	var sAssignmentsPath = "/manageResourcesSettings/Assignments",
-		sRemovedIndicesPath = "/manageResourcesSettings/removedIndices";
+		sRemovedIndicesPath = "/manageResourcesSettings/removedIndices",
+		sOperationTypePath = "/manageResourcesSettings/operationType";
 	return BaseController.extend("com.evorait.evoplan.controller.manageResources.ManageResourceActionsController", {
 
 		onInitResourceActionController: function () {
@@ -48,18 +49,18 @@ sap.ui.define([
 		 * 
 		 */
 		doCreateResource: function (oModel, sPath, aPayload) {
-			return new Promise(function (resolved, rejected) {
-				oModel.create(sPath, aPayload, {
-					method: "POST",
-					success: function (oData, oResponse) {
-						this.showMessage(oResponse);
-						resolved(oResponse);
-					}.bind(this),
-					error: function (oError) {
-						rejected(oError);
-					}
-				});
-			}.bind(this));
+			// return new Promise(function (resolved, rejected) {
+			oModel.create(sPath, aPayload, {
+				method: "POST",
+				success: function (oData, oResponse) {
+					this.showMessage(oResponse);
+					// resolved(oResponse);
+				}.bind(this),
+				error: function (oError) {
+					// rejected(oError);
+				}
+			});
+			// }.bind(this));
 		},
 
 		/**
@@ -103,6 +104,7 @@ sap.ui.define([
 				}.bind(this));
 			}
 			this._oAssignmentsDialog.then(function (oAssignmentsDialog) {
+				this._oViewModel.refresh(true);
 				oAssignmentsDialog.open();
 			}.bind(this));
 		},
@@ -144,10 +146,10 @@ sap.ui.define([
 			oSelectedContexts = oEvent.getSource().getSelectedContexts()
 			if (oSelectedContexts && oSelectedContexts.length) {
 				oUnassignBtn.setEnabled(true);
-			}else{
+			} else {
 				oUnassignBtn.setEnabled(false);
 			}
-			
+
 		},
 		/**
 		 * unassign the assignments in Assignment Dialog
@@ -195,7 +197,7 @@ sap.ui.define([
 			}
 			this._oViewModel.setProperty(sAssignmentsPath, aNewAssignmentData);
 			if (!aNewAssignmentData.length) {
-				this.onPressProceedToDelete();
+				this.onPressProceedBtn();
 			}
 			this._oViewModel.refresh(true);
 			this.getView().byId("idResourceAssignmentsTable").setSelectedContextPaths([]);
@@ -206,11 +208,22 @@ sap.ui.define([
 		 * Preceed to delete if Resource can be deleted in Assignment Dialog
 		 * @param 
 		 */
-		onPressProceedToDelete: function () {
+		onPressProceedBtn: function () {
 			this.onCloseAssignmentDialog();
-			this.doDeleteResource(this._oModel, this._oSelectedResourceContext.getPath()).then(function () {
-				this._oEventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
-			}.bind(this));
+			var sOperationType = this._oViewModel.getProperty(sOperationTypePath),
+				sPath = this._oSelectedResourceContext.getPath(),
+				sEntitySetName = sPath.split("(")[0];
+
+			if (sOperationType === "moveResource") {
+				this.doDeleteResource(this._oModel, sPath, true).then(function (oResponse) {
+					this.doCreateResource(this._oModel, sEntitySetName, this._aPayLoad);
+					// this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
+				}.bind(this));
+			} else if (sOperationType === "deleteResource") {
+				this.doDeleteResource(this._oModel, sPath).then(function () {
+					this._oEventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
+				}.bind(this));
+			}
 		},
 		/**
 		 * destroy contents on Exit

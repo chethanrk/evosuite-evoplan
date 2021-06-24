@@ -4,11 +4,11 @@
 	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar">
 	<Page id="idManageResources" showFooter="true" showHeader="false">
 		<content>
-			<HBox >
-				<VBox fitContainer="true">
+			<HBox fitContainer="true">
+				<VBox>
 					<smartFilterBar:SmartFilterBar class="sapUiTinyMarginEnd" id="idSmartFilterEvoPlanGroups" entitySet="ResourceManagementSet"
 						persistencyKey="SmartFilter_EvoPlan_Groups" showGoButton="false" showRestoreButton="true" showRestoreOnFB="true" liveMode="true">
-						<!-- layout data used to make the table growing but the filter bar fixed -->
+						<!--layout data used to make the table growing but the filter bar fixed -->
 						<smartFilterBar:layoutData>
 							<FlexItemData shrinkFactor="0"/>
 						</smartFilterBar:layoutData>
@@ -18,12 +18,12 @@
 						</smartFilterBar:controlConfiguration>
 					</smartFilterBar:SmartFilterBar>
 					<smartTable:SmartTable id="idTableEvoplanResources" class="sapUiTinyMarginEnd" entitySet="ResourceManagementSet" tableType="TreeTable"
-						fitContainer="true" useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false"
+						fitContainer="true" height="100%" useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false"
 						smartFilterId="idSmartFilterEvoPlanGroups" header="{i18n>xtit.evoplanResourceTable}" showRowCount="false" enableAutoBinding="true"
 						beforeRebindTable="onBeforeRebindTable"
-						requestAtLeastFields="NodeId,ParentNodeId,ResourceGroupGuid,ResourceGuid,Start,End,Description,NodeType">
+						requestAtLeastFields="NodeId,ParentNodeId,ResourceGroupGuid,ResourceGuid,Start,End,Description,NodeType,AssignmentCount">
 						<smartTable:layoutData>
-							<FlexItemData growFactor="0"/>
+							<FlexItemData growFactor="1"/>
 						</smartTable:layoutData>
 						<smartTable:customToolbar>
 							<OverflowToolbar>
@@ -33,7 +33,8 @@
 									enabled="{path:'user>/RESOURCE_MANAGEMENT_ACTION',formatter:'.formatter.setManageResourceSwitchEnabled'}"></Switch>
 							</OverflowToolbar>
 						</smartTable:customToolbar>
-						<table:TreeTable id="idDataTableEvoplanGroup" selectionMode="None">
+						<table:TreeTable id="idDataTableEvoplanGroup" selectionMode="None" visibleRowCountMode="Auto">
+							<!--visibleRowCountMode="Auto"-->
 							<table:columns>
 								<table:Column>
 									<table:customData>
@@ -65,33 +66,34 @@
 								</table:Column>
 							</table:columns>
 							<table:dragDropConfig>
-								<dnd:DropInfo groupName="moveToEvoplanGroups" targetAggregation="rows" drop="onDropIntoEvoplanGroups"/>
+								<dnd:DropInfo groupName="moveToEvoplanGroups" targetAggregation="rows" drop="assignResourcesToGroup"/>
 								<dnd:DragDropInfo sourceAggregation="rows" targetAggregation="rows" dropPosition="On" dragStart="onStartDragEvoplanGroups"
 									drop="onDropIntoEvoplanGroups"/>
 							</table:dragDropConfig>
 						</table:TreeTable>
 					</smartTable:SmartTable>
 				</VBox>
-				<VBox fitContainer="true">
+				<VBox >
 					<!--Evoplan Resources Table Ends Here-->
 					<!--HR Resources Table Starts Here-->
 					<smartFilterBar:SmartFilterBar class="sapUiTinyMarginBegin" id="idSmartFilterResources" entitySet="ResourceMasterSet"
 						persistencyKey="SmartFilter_Resources" showGoButton="false" showRestoreButton="true" showRestoreOnFB="true" liveMode="true">
-						<!-- layout data used to make the table growing but the filter bar fixed -->
+						<!--layout data used to make the table growing but the filter bar fixed -->
 						<smartFilterBar:layoutData>
 							<FlexItemData shrinkFactor="0"/>
 						</smartFilterBar:layoutData>
 					</smartFilterBar:SmartFilterBar>
 					<smartTable:SmartTable id="idTableHrResources" entitySet="ResourceMasterSet" useExportToExcel="false" useVariantManagement="true"
-						useTablePersonalisation="true" header="{i18n>xtit.hrResourceTable}" showRowCount="true" enableAutoBinding="true"
-						class="sapUiTinyMarginBegin" requestAtLeastFields="Guid" smartFilterId="idSmartFilterResources"
+						fitContainer="true" height="100%" useTablePersonalisation="true" header="{i18n>xtit.hrResourceTable}" showRowCount="true"
+						enableAutoBinding="true" class="sapUiTinyMarginBegin" requestAtLeastFields="Guid" smartFilterId="idSmartFilterResources"
 						customData:p13nDialogSettings='{filter:{visible:true},sort:{visible:false},columns:{visible:false}}'>
 						<!--initiallyVisibleFields="Firstname,Lastname"-->
 						<!--layout data used to make the table growing but the filter bar fixed-->
 						<smartTable:layoutData>
-							<FlexItemData growFactor="0"/>
+							<FlexItemData growFactor="1"/>
 						</smartTable:layoutData>
-						<table:Table id="idDataTableHrResource" selectionMode="None" enableCellFilter="true" threshold="30">
+						<table:Table id="idDataTableHrResource" selectionMode="MultiToggle" enableCellFilter="true" threshold="30" visibleRowCountMode="Auto">
+							<!--visibleRowCountMode="Auto"-->
 							<table:columns>
 								<table:Column filterProperty="Firstname">
 									<table:customData >
@@ -122,7 +124,7 @@
 								</table:Column>
 							</table:columns>
 							<table:dragDropConfig>
-								<dnd:DragInfo groupName="moveToEvoplanGroups" sourceAggregation="rows" dragStart="onStartDragHrResources"/>
+								<dnd:DragInfo groupName="moveToEvoplanGroups" sourceAggregation="rows" dragStart="onStartDragResources"/>
 							</table:dragDropConfig>
 						</table:Table>
 					</smartTable:SmartTable>

@@ -138,9 +138,9 @@ sap.ui.define([
 				},
 				manageResourcesSettings: {
 					selectedRow: false,
-					isCopy:true,
-					Assignments:{},
-					removedIndices:[]
+					operationType: "",
+					Assignments: {},
+					removedIndices: []
 				}
 
 			});
@@ -227,9 +227,10 @@ sap.ui.define([
 			var aPromises = [];
 			aPromises.push(this._getSystemInformation());
 			aPromises.push(this._getData("/NavigationLinksSet", [new Filter("LaunchMode", FilterOperator.EQ, this.getModel("viewModel").getProperty(
-				"/launchMode")),
-				new Filter("LaunchMode", FilterOperator.EQ, "ITS")]));
-			
+					"/launchMode")),
+				new Filter("LaunchMode", FilterOperator.EQ, "ITS")
+			]));
+
 			aPromises.push(this._getData("/MapProviderSet", [], {
 				$expand: "MapSource"
 			}));
@@ -350,7 +351,7 @@ sap.ui.define([
 
 			this.assignmentList = new AssignmentList();
 			this.assignmentList.init();
-			
+
 			this.materialInfoDialog = new MaterialInfoDialog();
 			this.materialInfoDialog.init();
 

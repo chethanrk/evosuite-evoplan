@@ -736,27 +736,39 @@ sap.ui.define([
 		/**
 		 * Resource Management: set visibility for Proceed Button to delete from Assignment Dialog
 		 */
-		setHeaderMsgAssignmentDialog: function (aData) {
+		setHeaderMsgAssignmentDialog: function (aManageResourceData) {
+			var sOperation = aManageResourceData.operationType,
+				sMsgTypeText = "",
+				aData = aManageResourceData.Assignments;
+			switch (sOperation) {
+			case "deleteResource":
+				sMsgTypeText = "Removable";
+				break;
+			case "moveResource":
+				sMsgTypeText = "Movable";
+				break;
+			}
+
 			if (aData && aData.length) {
 				var sResourceName = aData[0].ResourceDescription;
 				for (var i in aData) {
 					if (!aData[i].AllowUnassign) {
-						return sResourceName + this._oResourceBundle.getText("ymsg.resourceNotRemovable"); //Unassignable
+						return sResourceName + this._oResourceBundle.getText("ymsg.resourceNot" + sMsgTypeText); //Unassignable
 					}
 				}
-				return sResourceName + this._oResourceBundle.getText("ymsg.resourceRemovable");; //not Unassignable
+				return sResourceName + this._oResourceBundle.getText("ymsg.resource" + sMsgTypeText); //not Unassignable
 			}
 			return "";
 
 		},
-		setManageResourceSwitchEnabled: function(sAction){
-			if(sAction ==="ALL"){
+		setManageResourceSwitchEnabled: function (sAction) {
+			if (sAction === "ALL") {
 				return true;
 			}
 			return false;
 		},
-		setManageResourceSwitchState: function(sAction){
-			if(sAction ==="MOVE"){
+		setManageResourceSwitchState: function (sAction) {
+			if (sAction === "MOVE") {
 				return false;
 			}
 			return true;

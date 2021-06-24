@@ -11,10 +11,11 @@ sap.ui.define([
 ], function (ManageResourceActionsController, formatter, Filter, FilterOperator, Fragment,
 	MessageToast, RowAction, RowActionItem, MessageBox) {
 	"use strict";
-	var sAssignmentsPath = "/manageResourcesSettings/Assignments";
+	var sAssignmentsPath = "/manageResourcesSettings/Assignments",
+		sOperationTypePath = "/manageResourcesSettings/operationType";
 	return ManageResourceActionsController.extend("com.evorait.evoplan.controller.manageResources.ManageResources", {
 		formatter: formatter,
-
+		_bFirsrTime: true,
 		onInit: function () {
 			this._oEvoplanResourceTable = this.getView().byId("idTableEvoplanResources").getTable();
 			this._oEvoplanResourceTable.attachBusyStateChanged(this.onBusyStateChanged, this);
@@ -22,6 +23,7 @@ sap.ui.define([
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			this._oEventBus.subscribe("ManageResourcesController", "refreshManageResourcesView", this._refreshManageResourcesView, this);
 			this.getRouter().getRoute("manageResources").attachPatternMatched(function () {
+				this._triggerRefreshEvoPlanGroupTree();
 				this._mParameters = {
 					bFromManageResource: true
 				};
@@ -57,6 +59,15 @@ sap.ui.define([
 			this._oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				pattern: "yyyy-MM-ddTHH:mm:ss"
 			});
+		},
+		/**
+		 * Method will refresh the data of tree by restoring its state
+		 */
+		_triggerRefreshEvoPlanGroupTree: function () {
+			if (!this._bFirsrTime) {
+				this._refreshManageResourcesView();
+			}
+			this._bFirsrTime = false;
 		},
 
 		/**
@@ -108,63 +119,57 @@ sap.ui.define([
 		onDropIntoEvoplanGroups: function (oEvent) {
 			//Dragged data(Source) variables
 			var oSourceItem = oEvent.getParameter("draggedControl"),
-				nSourceItemIndex = oSourceItem.getIndex(),
 				sSourceControlId = oSourceItem.getParent().getId(),
-				sSourceItemPath,
-				aSourceData,
+				sSourceItemPath = oSourceItem.getBindingContext().getPath(),
 				aPayLoad;
 
 			//Dropped position(target) variables
-			var oTargetItem = oEvent.getParameter("droppedControl"),
-				oTargetItemContext = this._oEvoplanResourceTable.getContextByIndex(oTargetItem.getIndex()),
+			var oTargetItemContext = oEvent.getParameter("droppedControl").getBindingContext(),
 				oTargetItemData = oTargetItemContext.getObject(),
 				oTargetItemPath = oTargetItemContext.getPath(),
 				sTargetGroupNodeId = oTargetItemData.ParentNodeId ? oTargetItemData.ParentNodeId : oTargetItemData.NodeId;
 
-			//Condition to check the Source Table whether it is from Evoplan Group or HR Resources 
-			if (sSourceControlId.includes("idDataTableHrResource")) {
-				// this._assignResourcesToGroup(oEvent, sTargetGroupNodeId);// Currently is in progress
-				sSourceItemPath = this.oHrResourceTable.getContextByIndex(nSourceItemIndex).getPath();
-				aSourceData = this._oModel.getProperty(sSourceItemPath);
-				aPayLoad = {
-					ChildCount: 0,
-					Description: aSourceData.Firstname + " " + aSourceData.Lastname,
-					Drillstate: "leaf",
-					End: this.getDefaultDate(true),
-					HierarchyLevel: 1,
-					NodeId: sTargetGroupNodeId + "//" + aSourceData.Guid,
-					NodeType: "RESOURCE",
-					ParentNodeId: sTargetGroupNodeId,
-					ResourceGroupGuid: sTargetGroupNodeId,
-					ResourceGuid: aSourceData.Guid,
-					Start: this.getDefaultDate()
-				};
-				this._handleCreateResource(oTargetItemPath, sSourceItemPath, aPayLoad, true);
-			} else {
-				sSourceItemPath = this._oEvoplanResourceTable.getContextByIndex(nSourceItemIndex).getPath();
-				aPayLoad = this._oModel.getProperty(sSourceItemPath);
-				aPayLoad.NodeId = sTargetGroupNodeId + "//" + aPayLoad.ResourceGuid;
-				aPayLoad.ParentNodeId = sTargetGroupNodeId;
-				aPayLoad.ResourceGroupGuid = sTargetGroupNodeId;
-				aPayLoad.End = this.getDefaultDate(true);
-				aPayLoad.Start = this.getDefaultDate();
-				this._handleCreateResource(oTargetItemPath, sSourceItemPath, aPayLoad);
-			}
+			this._oSelectedNodeContext = oSourceItem.getBindingContext();
+			aPayLoad = this.getPayload(this._oSelectedNodeContext.getObject(), sTargetGroupNodeId);
+			this._aPayLoad = aPayLoad;
+			this._handleCreateResource(oTargetItemPath, sSourceItemPath, aPayLoad);
+		},
+
+		/**
+		 * Preparing payload for Copy / Move Resource
+		 */
+		getPayload: function (oSelectedNode, sTargetGroupNodeId) {
+			return {
+				AssignmentCount: oSelectedNode.AssignmentCount,
+				ChildCount: oSelectedNode.ChildCount,
+				Description: oSelectedNode.Description,
+				Drillstate: oSelectedNode.Drillstate,
+				End: this.getDefaultDate(true),
+				HierarchyLevel: 1,
+				NodeId: sTargetGroupNodeId + "//" + oSelectedNode.ResourceGuid,
+				NodeType: "RESOURCE",
+				ParentNodeId: sTargetGroupNodeId,
+				ResourceGroupGuid: sTargetGroupNodeId,
+				ResourceGuid: oSelectedNode.ResourceGuid,
+				Start: this.getDefaultDate()
+			};
 		},
 		/**
 		 * handle mass assignment of resources to Group ( THIS DEVELOPMENT IS IN PROGRESS)
 		 */
-		_assignResourcesToGroup: function (oEvent, sTargetGroupNodeId) {
-			var aSelectedIndices = this.oHrResourceTable.getSelectedIndices(),
+		assignResourcesToGroup: function (oEvent) {
+			var oTargetObject = oEvent.getParameter("droppedControl").getBindingContext().getObject(),
+				sTargetGroupNodeId = oTargetObject.ParentNodeId ? oTargetObject.ParentNodeId : oTargetObject.NodeId,
+				aSelectedIndices = this.oHrResourceTable.getSelectedIndices(),
 				sPath = this._oEvoplanResourceTable.getBinding().getPath(),
 				oStartDate = this.getDefaultDate(),
 				oEndDate = this.getDefaultDate(true),
 				aPayLoad = [],
 				aSourceData;
 
+			this.mTreeState = this._getTreeState();
 			for (var i in aSelectedIndices) {
 				aSourceData = this.oHrResourceTable.getContextByIndex(aSelectedIndices[i]).getObject();
-
 				aPayLoad.push({
 					ChildCount: 0,
 					Description: aSourceData.Firstname + " " + aSourceData.Lastname,
@@ -178,36 +183,16 @@ sap.ui.define([
 					ResourceGuid: aSourceData.Guid,
 					Start: oStartDate
 				});
-				// this._handleCreateResource(oTargetItemPath, sSourceItemPath, aPayLoad, true);
 			}
 			for (i in aPayLoad) {
 				this.doCreateResource(this.getModel(), sPath, aPayLoad[i]) //.then(function (oResponse) {}.bind(this));
 			}
-
-			// this.doCreateResource(this.getModel(), sPath, aPayLoad) //.then(function (oResponse) {}.bind(this));
-			// aSourceData = this._oModel.getProperty(sSourceItemPath);
-			// aPayLoad = {
-			// 	ChildCount: 0,
-			// 	Description: aSourceData.Firstname + " " + aSourceData.Lastname,
-			// 	Drillstate: "leaf",
-			// 	End: this.getDefaultDate(true),
-			// 	HierarchyLevel: 1,
-			// 	NodeId: sTargetGroupNodeId + "//" + aSourceData.Guid,
-			// 	NodeType: "RESOURCE",
-			// 	ParentNodeId: sTargetGroupNodeId,
-			// 	ResourceGroupGuid: sTargetGroupNodeId,
-			// 	ResourceGuid: aSourceData.Guid,
-			// 	Start: this.getDefaultDate()
-			// };
-			// this._handleCreateResource(oTargetItemPath, sSourceItemPath, aPayLoad, true);
 		},
 		/**
 		 * While assigning HR resource to any Group,provid Default date Date range starting from current Date  
 		 */
 		getDefaultDate: function (bEndDate) {
 			if (bEndDate) {
-				// var oCurrentDate = new Date(),
-				// 	oEndData = oCurrentDate.setDate(oCurrentDate.getDate() + 30);
 				var oEndData = this.getModel("user").getProperty("/RES_MGMT_END_DATE");
 				return this._oDateFormat.format(new Date(oEndData));
 			}
@@ -216,24 +201,50 @@ sap.ui.define([
 		/**
 		 * Copy/Move to the Evoplan Group 
 		 */
-		_handleCreateResource: function (sPath, sSourceItemPath, aPayload, bIsFromHr) {
+		_handleCreateResource: function (sPath, sSourceItemPath, aPayload) {
 			var sEntitySetName = sPath.split("(")[0],
 				isCopy = this.getView().byId("idSwitchResourceAction").getState();
 
 			this.mTreeState = this._getTreeState();
-			if (isCopy || bIsFromHr) {
-				this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
-			} else {
+			if (isCopy) {
+				this.doCreateResource(this.getModel(), sEntitySetName, aPayload);
+				// this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
+			} else if (!aPayload.AssignmentCount) {
 				this.doDeleteResource(this._oModel, sSourceItemPath, true).then(function (oResponse) {
-					this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
+					this.doCreateResource(this.getModel(), sEntitySetName, aPayload);
+					// this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
 				}.bind(this));
+			} else {
+				this._callAssignmentsPopUp("moveResource");
 			}
 		},
+
 		/**
-		 * Dragging from HR Resources Table
+		 * Show Assignment dialog before Move / Delete / Update Resource 
 		 */
-		onStartDragHrResources: function (oEvent) {
-			// MessageToast.show("Drag Started from HR Resources Table");
+		_callAssignmentsPopUp: function (sOperationType) {
+			var aParameters = {
+				ObjectId: this._oSelectedNodeContext.getProperty("NodeId")
+			}
+			this._oAppViewModel.setProperty("/busy", true);
+			this._oViewModel.setProperty(sOperationTypePath, sOperationType);
+			this.executeFunctionImport(this._oModel, aParameters, "ValidateResourceMgmtAssignment", "POST").then(function (oData,
+				response) {
+				this._oAppViewModel.setProperty("/busy", false);
+				if (oData.results && oData.results.length) {
+					this._oViewModel.setProperty(sAssignmentsPath, oData.results);
+					this.showResourceAssignments(this._oSelectedNodeContext);
+				}
+			}.bind(this));
+		},
+		/**
+		 * Dragging from Resources Table
+		 */
+		onStartDragResources: function (oEvent) {
+			var oSelectedIndices = this.oHrResourceTable.getSelectedIndices();
+			if (!oSelectedIndices.length) {
+				this.oHrResourceTable.setSelectedIndex(oEvent.getParameter("target").getIndex());
+			}
 		},
 
 		/**
@@ -253,35 +264,17 @@ sap.ui.define([
 		_onPressDeleteButton: function (oEvent) {
 			var oContext = oEvent.getSource().getBindingContext(),
 				sPath = oContext.getPath(),
-				sNodeId = oContext.getProperty("NodeId"),
-				oStart = oContext.getProperty("Start"),
-				oEnd = oContext.getProperty("End"),
-				aParameters = {
-					ObjectId: sNodeId,
-					StartTimestamp: oStart,
-					EndTimestamp: oEnd
-				}
+				nAssignmentCount = oContext.getProperty("AssignmentCount");
 
+			this._oSelectedNodeContext = oContext;
 			this.mTreeState = this._getTreeState();
-
 			this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.warningDeleteResource")).then(function (value) {
 				if (value === "YES") {
-					this._oAppViewModel.setProperty("/busy", true);
-					this.executeFunctionImport(this._oModel, aParameters, "ValidateResourceMgmtAssignment", "POST").then(function (oData,
-						response) {
-						this._oAppViewModel.setProperty("/busy", false);
-						if (oData.results && oData.results.length) {
-							this._oViewModel.setProperty(sAssignmentsPath, oData.results);
-							this.showResourceAssignments(oContext);
-
-						} else {
-							this.doDeleteResource(this._oModel, sPath).then(function (oResponse) {
-								// this.showResponseMessage(oResponse.headers.message, oResponse.headers.message_type);
-							}.bind(this));
-						}
-
-					}.bind(this));
-
+					if (nAssignmentCount) {
+						this._callAssignmentsPopUp("deleteResource");
+					} else {
+						this.doDeleteResource(this._oModel, sPath).then(function (oResponse) {}.bind(this));
+					}
 				}
 			}.bind(this));
 		},
@@ -339,7 +332,8 @@ sap.ui.define([
 		isDataChanged: function (oSelectedRow, oUpdatedRow) {
 			if (oSelectedRow.NodeType === "RES_GROUP" && oUpdatedRow.Description !== oSelectedRow.Description) {
 				return true;
-			} else if (oSelectedRow.NodeType === "RESOURCE" && (oUpdatedRow.Start.toString() !== oSelectedRow.Start.toString() || oUpdatedRow.End
+			} else if (oSelectedRow.NodeType === "RESOURCE" && (oUpdatedRow.Start.toString() !== oSelectedRow.Start.toString() || oUpdatedRow
+					.End
 					.toString() !== oSelectedRow.End.toString())) {
 				return true;
 			} else {
