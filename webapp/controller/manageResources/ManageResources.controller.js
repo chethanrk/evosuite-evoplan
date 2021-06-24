@@ -35,7 +35,17 @@ sap.ui.define([
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
-				oUserModel = this.getModel("user");
+				oUserModel = this.getModel("user"),
+				oMatchType = this.byId("resourceMngFilter").getSelectedKey(),
+				aFilter;
+				
+				if (oMatchType === "past") {
+				oBinding.filters = [new Filter("End", FilterOperator.LT, new Date())];
+			} else if (oMatchType === "future") {
+				oBinding.filters = [new Filter("Start", FilterOperator.GE, new Date().setHours(0,0,0))];
+			} else {
+				oBinding.filters = [];
+			}
 
 			if (!this.isLoaded) {
 				this.isLoaded = true;
@@ -456,6 +466,11 @@ sap.ui.define([
 			} else {
 				this.mTreeState = {};
 			}
+		},
+		onResourceMngFilterSelectionChange: function(oEvent)
+		{
+			var oEvoplanTable = this.getView().byId("idTableEvoplanResources");
+			oEvoplanTable.rebindTable();
 		},
 		/**
 		 * destroy contents on Exit
