@@ -36,6 +36,7 @@ sap.ui.define([
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 			this._eventBus.subscribe("AssignTreeDialog", "updateDemandTableSelection", this._deselectDemands, this);
+		//	this.getModel("user").getData().ENABLE_STATUS_CHANGE_POPUP = 2;
 		},
 
 		/* =========================================================== */

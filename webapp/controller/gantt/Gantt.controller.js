@@ -68,9 +68,9 @@ sap.ui.define([
 				this._ganttChart.addStyleClass("resourceGanttWithTable");
 			}
 			// dirty fix will be removed when evoplan completly moved to 1.84
-			if(parseFloat(sap.ui.getVersionInfo().version) === 1.71){
-                this._axisTime.setZoomLevel(3);
-            }
+			if (parseFloat(sap.ui.getVersionInfo().version) === 1.71) {
+				this._axisTime.setZoomLevel(3);
+			}
 			this._defaultGanttHorizon();
 			this._viewId = this.getView().getId();
 			this.getOwnerComponent().GanttResourceFilter.init(this.getView(), this._treeTable);
@@ -495,6 +495,16 @@ sap.ui.define([
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
 				// Change
 				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, mParameters, sPath);
+			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonExecuteFunction")) {
+				// Set Function
+				var oDemandPath = oModel.getProperty(sPath).Demand.__ref;
+				this.onGetAssignmentDemand(oDemandPath).then(function (oDemandData) {
+					var oSelectedDemandPath = [{
+						sPath: "/" + oDemandPath,
+						oData: oDemandData
+					}];
+					this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedDemandPath, mParameters);
+				}.bind(this));
 			} else {
 				if (sFunctionKey) {
 					this._oEventBus.publish("StatusSelectDialog", "changeStatusDemand", {
@@ -734,7 +744,7 @@ sap.ui.define([
 				oUserModel = this.getModel("user"),
 				oModel = oRowContext.getModel(),
 				oResourceBundle = this.getResourceBundle(),
-				iNewEffort = this.getTimeDifference(oParams.newTime[0],oParams.newTime[1]);
+				iNewEffort = this.getTimeDifference(oParams.newTime[0], oParams.newTime[1]);
 
 			oViewModel.setProperty("/ganttSettings/busy", true);
 			// to identify the action done on respective page
@@ -745,21 +755,21 @@ sap.ui.define([
 					if (oAssignmentObj.AllowChange) {
 						oAssignmentObj.DateFrom = oParams.newTime[0];
 						oAssignmentObj.DateTo = oParams.newTime[1];
-						if(oUserModel.getProperty("/ENABLE_RESIZE_EFFORT_CHECK") && iNewEffort < oAssignmentObj.Effort){
-							this._showConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function(data){
-								if(data === "YES"){
+						if (oUserModel.getProperty("/ENABLE_RESIZE_EFFORT_CHECK") && iNewEffort < oAssignmentObj.Effort) {
+							this._showConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (data) {
+								if (data === "YES") {
 									this._oAssignementModel.setData(oAssignmentObj);
 									this.updateAssignment(false, {
 										bFromGantt: true
 									});
-								}else{
+								} else {
 									oModel.resetChanges([oRowContext.getPath()]);
 									oViewModel.setProperty("/ganttSettings/busy", false);
 									return;
 								}
 							}.bind(this));
-							
-						}else{
+
+						} else {
 							this._oAssignementModel.setData(oAssignmentObj);
 							this.updateAssignment(false, {
 								bFromGantt: true
@@ -779,11 +789,11 @@ sap.ui.define([
 		 * 
 		 * 
 		 */
-		getTimeDifference : function(oDateFrom, oDateTo){
+		getTimeDifference: function (oDateFrom, oDateTo) {
 			var oTimeStampFrom = oDateFrom.getTime(),
 				oTimeStampTo = oDateTo.getTime(),
 				iDifference = oTimeStampTo - oTimeStampFrom,
-				iEffort = (((iDifference/1000)/60)/60);
+				iEffort = (((iDifference / 1000) / 60) / 60);
 			return iEffort;
 		},
 		/**
@@ -1057,6 +1067,24 @@ sap.ui.define([
 		onPressGanttResourceFilters: function () {
 			this.getOwnerComponent().GanttResourceFilter.open(this.getView(), this._treeTable);
 		},
+		/**
+		 * To fetch Demand data on Gantt Context Menu Set Function
+		 */
+		onGetAssignmentDemand: function (sPath) {
+			return new Promise(function (oResolve, oReject) {
+				this.byId("container").setBusy(true);
+				this.getModel().read("/" + sPath, {
+					success: function (oData) {
+						this.byId("container").setBusy(false);
+						oResolve(oData);
+					}.bind(this),
+					error: function (oError) {
+						this.byId("container").setBusy(false);
+						oReject(oError);
+					}
+				});
+			}.bind(this));
+		}
 
 	});
 });

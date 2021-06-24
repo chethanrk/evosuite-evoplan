@@ -251,8 +251,42 @@ sap.ui.define([
 			localStorage.setItem("Evo-Action-page", "DemandDetails");
 			sap.ui.getCore().byId("idStatusActionSheet").openBy(oEvent.getSource());
 		},
-		getVisible: function (a, b, c) {
-			return a && !b && c !== "COMP";
+		getVisible: function (a, b, c, d) {
+		//	d = d === 2 || d === 3;
+			return a && !b && c !== "COMP" && d;
+		},
+		
+		getSetFunction: function (a, b, c, d) {
+			return a && !b && c !== "COMP" && d;// === 1;
+		},
+			/**
+		 * Opens the StatusDialog to set status for demand 
+		 * @Author Chethan
+		 * @return
+		 * @param oEvent
+		 */
+		onClickSetFunction: function (oEvent) {
+			var oSource = oEvent.getSource(),
+				oContext = oSource.getBindingContext(),
+				oModel = oContext.getModel(),
+				sPath = oContext.getPath(),
+				oData = oModel.getProperty(sPath),
+				oSelectedData = [{
+					sPath: sPath,
+					oData: oData
+				}];
+			this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedData, {
+					bFromDetail: true
+				});	
+				
+			// if (oData.ALLOW_ASSIGN) {
+			// 	localStorage.setItem("Evo-Action-page", "DemandDetails");
+			// 	this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, {
+			// 		bFromDetail: true
+			// 	});
+			// } else {
+			// 	this._showAssignErrorDialog([oData.DemandDesc]);
+			// }
 		},
 
 		/**

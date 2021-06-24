@@ -7,7 +7,8 @@
 		</layoutData>
 	</Button>
 	<Button id="changeStatusButton" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}" icon="sap-icon://flag"
-		press="onChangeStatusButtonPress" enabled="false" visible="{viewModel>/showStatusChangeButton}">
+		press="onChangeStatusButtonPress" enabled="false" visible="{= ${viewModel>/showStatusChangeButton} &amp;&amp; ${user>/ENABLE_CHANGE_STATUS}}" >
+		<!--{= ${user>/ENABLE_STATUS_CHANGE_POPUP} === 1 || ${user>/ENABLE_STATUS_CHANGE_POPUP} === 3 }{viewModel>/showStatusChangeButton} 	visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'user>/ENABLE_STATUS_CHANGE_POPUP'}], formatter: '.formatter.getEnableChangeStatus' }"-->
 		<layoutData>
 			<ToolbarLayoutData shrinkable="true"/>
 		</layoutData>
