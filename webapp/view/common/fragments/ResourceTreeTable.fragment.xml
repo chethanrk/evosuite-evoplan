@@ -47,10 +47,11 @@
 						<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
 					</table:customData>
 					<table:template>
-						<ProgressIndicator percentValue="{path:'Utilization',formatter:'.formatter.formatProgress'}"
-							displayValue="{path:'Utilization', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}%" tooltip="{Utilization}"
-							showValue="true" state="{path:'Utilization',formatter:'.formatter.formatProgressState'}"
-							visible="{ path: 'NodeType', formatter: '.formatter.isResource' }"/>
+							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.UtilizationColumn" type="XML"/>
+						<!--<ProgressIndicator percentValue="{path:'Utilization',formatter:'.formatter.formatProgress'}"-->
+						<!--	displayValue="{path:'Utilization', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}%" tooltip="{Utilization}"-->
+						<!--	showValue="true" state="{path:'Utilization',formatter:'.formatter.formatProgressState'}"-->
+						<!--	visible="{ path: 'NodeType', formatter: '.formatter.isResource' }"/>-->
 					</table:template>
 				</table:Column>
 				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="3.5rem" hAlign="End"

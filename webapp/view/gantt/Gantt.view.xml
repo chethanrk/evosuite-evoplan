@@ -72,12 +72,12 @@
 							<dnd:DropInfo targetAggregation="rows" dropPosition="On" drop="onDropOnResource"/>
 						</table:dragDropConfig>
 						<table:columns>
-							<table:Column width="3rem">
+							<table:Column width="20%">
 								<table:customData>
 									<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
 								</table:customData>
 								<table:template>
-									<Text text='{Utilization}'/>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.UtilizationColumn" type="XML"/>
 								</table:template>
 							</table:Column>
 							<table:Column label="{i18n>xtit.tableCheckbox}" name="{i18n>xtit.tableCheckbox}" width="2.5rem" class="sapUiNoContentPadding">
