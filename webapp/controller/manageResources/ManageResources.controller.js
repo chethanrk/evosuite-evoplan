@@ -40,11 +40,11 @@ sap.ui.define([
 				oUserModel = this.getModel("user"),
 				oMatchType = this.byId("resourceMngFilter").getSelectedKey(),
 				aFilter;
-				
-				if (oMatchType === "past") {
+
+			if (oMatchType === "past") {
 				oBinding.filters = [new Filter("End", FilterOperator.LT, new Date())];
 			} else if (oMatchType === "future") {
-				oBinding.filters = [new Filter("Start", FilterOperator.GE, new Date().setHours(0,0,0))];
+				oBinding.filters = [new Filter("Start", FilterOperator.GE, new Date().setHours(0, 0, 0))];
 			} else {
 				oBinding.filters = [];
 			}
@@ -197,6 +197,12 @@ sap.ui.define([
 			for (i in aPayLoad) {
 				this.doCreateResource(this.getModel(), sPath, aPayLoad[i]) //.then(function (oResponse) {}.bind(this));
 			}
+			// remove Selections after Create
+			var oSelectedRowIndices = JSON.parse(JSON.stringify(aSelectedIndices))
+			for (i in oSelectedRowIndices) {
+				this.oHrResourceTable.removeSelectionInterval(oSelectedRowIndices[i], aSelectedIndices[i]);
+			}
+
 		},
 		/**
 		 * While assigning HR resource to any Group,provid Default date Date range starting from current Date  
@@ -236,6 +242,11 @@ sap.ui.define([
 			var aParameters = {
 				ObjectId: this._oSelectedNodeContext.getProperty("NodeId")
 			}
+			if (sOperationType === "updateResource") {
+				aParameters.StartTimestamp = this._aPayLoad.Start;
+				aParameters.EndTimestamp = this._aPayLoad.End;
+
+			}
 			this._oAppViewModel.setProperty("/busy", true);
 			this._oViewModel.setProperty(sOperationTypePath, sOperationType);
 			this.executeFunctionImport(this._oModel, aParameters, "ValidateResourceMgmtAssignment", "POST").then(function (oData,
@@ -244,6 +255,10 @@ sap.ui.define([
 				if (oData.results && oData.results.length) {
 					this._oViewModel.setProperty(sAssignmentsPath, oData.results);
 					this.showResourceAssignments(this._oSelectedNodeContext);
+				} else if (sOperationType === "updateResource") {
+					this._aPayLoad.Start = this._oDateFormat.format(new Date(new Date(this._aPayLoad.Start).setHours(0, 0, 0)));
+					this._aPayLoad.End = this._oDateFormat.format(new Date(new Date(this._aPayLoad.End).setHours(23, 59, 59)));
+					this.proceedToUpdate(this._oSelectedNodeContext.getPath(), this._aPayLoad);
 				}
 			}.bind(this));
 		},
@@ -327,10 +342,12 @@ sap.ui.define([
 				}).then(function (oEditFormPopover) {
 					oView.addDependent(oEditFormPopover);
 					oEditFormPopover.setModel(this._oViewModel);
+					this.oResourceDateRange = this.getView().byId("idResourceDateRange");
 					return oEditFormPopover;
 				}.bind(this));
 			}
 			this._oEditFormPopover.then(function (oEditFormPopover) {
+				this.oResourceDateRange.setValueState("None");
 				oEditFormPopover.bindElement(sPath);
 				oEditFormPopover.openBy(oButton);
 			}.bind(this));
@@ -350,46 +367,58 @@ sap.ui.define([
 				return false;
 			}
 		},
+		handleDateChange: function (oEvent) {
+			var bValidDateRange = oEvent.getParameter("valid");
+			if (bValidDateRange) {
+				this.oResourceDateRange.setValueState("None");
+			} else {
+				this.oResourceDateRange.setValueState("Error");
+				MessageToast.show(this._oResourceBundle.getText("ymsg.invalidDateRange"));
+			}
+		},
 		/**
 		 * Handle Update Group/Resource on press of "Save" button from Edit Popover.
 		 */
 		onPressPopoverSaveButton: function () {
-			var oUpdatedRow = this._oViewModel.getProperty("/manageResourcesSettings/selectedRow"),
+			var oUpdatedJSONData = this._oViewModel.getProperty("/manageResourcesSettings/selectedRow"),
+				oUpdatedRow = JSON.parse(JSON.stringify(oUpdatedJSONData)),
+				// var oUpdatedRow = this._oViewModel.getProperty("/manageResourcesSettings/selectedRow"),
 				oSelectedRow = this._oSelectedContext.getObject(),
-				oSelectedPath = this._oSelectedContext.getPath(),
+				sSelectedPath = this._oSelectedContext.getPath(),
 				sNodeType = oSelectedRow.NodeType;
 
+			oUpdatedRow.Start = oUpdatedJSONData.Start;
+			oUpdatedRow.End = oUpdatedJSONData.End;
+			if (sNodeType === "RESOURCE" && this.oResourceDateRange.getValueState() !== "None") {
+				MessageToast.show(this._oResourceBundle.getText("ymsg.invalidDateRange"));
+				return;
+			}
+			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				pattern: "yyyy-MM-dd"
+			});
 			oSelectedRow = this.convertDateToUTC(oSelectedRow, true)
 			if (this.isDataChanged(oSelectedRow, oUpdatedRow)) {
 				if (sNodeType === "RESOURCE") {
-					oUpdatedRow.Start = this._oDateFormat.format(oUpdatedRow.Start);
-					oUpdatedRow.End = this._oDateFormat.format(oUpdatedRow.End);
+					if (oSelectedRow.AssignmentCount) {
+						this._oSelectedNodeContext = this._oSelectedContext;
+						this._aPayLoad = oUpdatedRow;
+						this.onPressPopoverCloseButton();
+						oUpdatedRow.Start = oDateFormat.format(oUpdatedRow.Start);
+						oUpdatedRow.End = oDateFormat.format(oUpdatedRow.End);
+						this._callAssignmentsPopUp("updateResource");
+					} else {
+						oUpdatedRow.Start = this._oDateFormat.format(oUpdatedRow.Start);
+						oUpdatedRow.End = this._oDateFormat.format(oUpdatedRow.End);
+						this.proceedToUpdate(sSelectedPath, oUpdatedRow);
+					}
+				} else {
+					this.proceedToUpdate(sSelectedPath, oUpdatedRow);
 				}
-				this.doUpdateResource(this._oModel, oSelectedPath, oUpdatedRow).then(function (oResponse) {
-					this._updateContext(oUpdatedRow);
-				}.bind(this));
 
 			} else {
 				MessageToast.show(this._oResourceBundle.getText("ymsg.noChange"));
 			}
 			this.onPressPopoverCloseButton();
-		},
-		/**
-		 * Applying updated changes without refreshing the table.
-		 */
-		_updateContext: function (oUpdatedRow) {
-			var sNodeType = this._oSelectedContext.getProperty("NodeType"),
-				sPath = this._oSelectedContext.getPath(),
-				oRow = this._oModel.getProperty(sPath);
-			if (sNodeType === "RES_GROUP") {
-				oRow.Description = oUpdatedRow.Description;
-			} else {
-				this.getOwnerComponent()._getData(sPath).then(function (result) {
-					oRow.Start = result.Start;
-					oRow.End = result.End;
-				}.bind(this));
-			}
-			this.getOwnerComponent()._getData(sPath.split("(")[0]).then(function (result) {}.bind(this));
 		},
 		/**
 		 * Close Edit Popover.
@@ -461,8 +490,7 @@ sap.ui.define([
 				this.mTreeState = {};
 			}
 		},
-		onResourceMngFilterSelectionChange: function(oEvent)
-		{
+		onResourceMngFilterSelectionChange: function (oEvent) {
 			var oEvoplanTable = this.getView().byId("idTableEvoplanResources");
 			oEvoplanTable.rebindTable();
 		},
