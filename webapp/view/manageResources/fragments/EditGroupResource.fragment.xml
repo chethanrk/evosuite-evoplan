@@ -16,7 +16,7 @@
 						<Input id="idGroupName" value="{Description}" visible="{=${NodeType} === 'RES_GROUP'}"/>
 						<Label text="{i18n>xlab.resourceDateRange}" visible="{=${NodeType} === 'RESOURCE'}"/>
 						<!--<DateRangeSelection id="idResourceDateRange" width="100%" displayFormat="yyyy/MM/dd" visible="{=${NodeType} === 'RESOURCE'}" dateValue="{path: 'Start', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'yyyy/MM/dd', strictParsing: true , UTC: true}" secondDateValue="{path: 'End', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'yyyy/MM/dd', strictParsing: true , UTC: true}"/>-->
-						<DateRangeSelection id="idResourceDateRange" width="100%" visible="{=${NodeType} === 'RESOURCE'}" dateValue="{Start}" secondDateValue="{End}"/>
+						<DateRangeSelection id="idResourceDateRange" width="100%" visible="{=${NodeType} === 'RESOURCE'}" dateValue="{Start}" secondDateValue="{End}" change="handleDateChange"/>
 					</f:content>
 				</f:SimpleForm>
 			</VBox>

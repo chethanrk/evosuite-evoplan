@@ -747,6 +747,9 @@ sap.ui.define([
 			case "moveResource":
 				sMsgTypeText = "Movable";
 				break;
+			case "updateResource":
+				sMsgTypeText = "Update";
+				break;	
 			}
 
 			if (aData && aData.length) {

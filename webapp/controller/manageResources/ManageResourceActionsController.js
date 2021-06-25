@@ -223,7 +223,39 @@ sap.ui.define([
 				this.doDeleteResource(this._oModel, sPath).then(function () {
 					this._oEventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
 				}.bind(this));
+			} else if (sOperationType === "updateResource") {
+				this._aPayLoad.Start = this._oDateFormat.format(new Date(new Date(this._aPayLoad.Start).setHours(0, 0, 0)));
+				this._aPayLoad.End = this._oDateFormat.format(new Date(new Date(this._aPayLoad.End).setHours(23, 59, 59)));
+				this.proceedToUpdate(this._oSelectedNodeContext.getPath(), this._aPayLoad);
 			}
+		},
+		/**
+		 * Final Update Call after completing all validations
+		 * @param 
+		 */
+		proceedToUpdate: function (sSelectedPath, oUpdatedRow) {
+			this.doUpdateResource(this._oModel, sSelectedPath, oUpdatedRow).then(function (oResponse) {
+				this._updateContext(oUpdatedRow);
+			}.bind(this));
+		},
+
+		/**
+		 * Applying updated changes without refreshing the table.
+		 */
+		_updateContext: function (oUpdatedRow) {
+			var sNodeType = this._oSelectedContext.getProperty("NodeType"),
+				sPath = this._oSelectedContext.getPath(),
+				oRow = this._oModel.getProperty(sPath);
+			if (sNodeType === "RES_GROUP") {
+				oRow.Description = oUpdatedRow.Description;
+			} else {
+				this.getOwnerComponent()._getData(sPath).then(function (result) {
+					oRow.Start = result.Start;
+					oRow.End = result.End;
+					oRow.AssignmentCount = result.AssignmentCount;
+				}.bind(this));
+			}
+			this.getOwnerComponent()._getData(sPath.split("(")[0]).then(function (result) {}.bind(this));
 		},
 		/**
 		 * destroy contents on Exit
