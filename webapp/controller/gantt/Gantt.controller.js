@@ -495,7 +495,7 @@ sap.ui.define([
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
 				// Change
 				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, mParameters, sPath);
-			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonExecuteFunction")) {
+			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonExecuteFunction") && !oSelectedItem.getSubmenu()) {
 				// Set Function
 				var oDemandPath = oModel.getProperty(sPath).Demand.__ref;
 				this.onGetAssignmentDemand(oDemandPath).then(function (oDemandData) {
