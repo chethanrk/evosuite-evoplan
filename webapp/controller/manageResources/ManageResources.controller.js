@@ -39,14 +39,23 @@ sap.ui.define([
 				oBinding = oParams.bindingParams,
 				oUserModel = this.getModel("user"),
 				oMatchType = this.byId("resourceMngFilter").getSelectedKey(),
-				aFilter;
+				aFilter,
+				sCurrentDate = this._oDateFormatDateOnly.format(new Date());
+			new Filter({
+				filters: [new Filter("End", FilterOperator.LT, new Date())],
+				and: false
+			})
 
 			if (oMatchType === "past") {
-				oBinding.filters = [new Filter("End", FilterOperator.LT, new Date())];
+				oBinding.filters.push(new Filter({
+					filters: [new Filter("End", FilterOperator.LT, sCurrentDate)],
+					and: false
+				}));
 			} else if (oMatchType === "future") {
-				oBinding.filters = [new Filter("Start", FilterOperator.GE, new Date().setHours(0, 0, 0))];
-			} else {
-				oBinding.filters = [];
+				oBinding.filters.push(new Filter({
+					filters: [new Filter("End", FilterOperator.GE, sCurrentDate)],
+					and: false
+				}));
 			}
 
 			if (!this.isLoaded) {
@@ -68,6 +77,9 @@ sap.ui.define([
 			this._oResourceBundle = this.getResourceBundle();
 			this._oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				pattern: "yyyy-MM-ddTHH:mm:ss"
+			});
+			this._oDateFormatDateOnly = sap.ui.core.format.DateFormat.getDateInstance({
+				pattern: "yyyy-MM-dd"
 			});
 		},
 		/**
@@ -119,7 +131,7 @@ sap.ui.define([
 				oDraggedItemContext = this._oEvoplanResourceTable.getContextByIndex(nDraggedItemIndex),
 				sNodeType = oDraggedItemContext.getProperty("NodeType");
 			if (sNodeType === "RES_GROUP") {
-				MessageToast.show("Group Can't be Dragged!");
+				MessageToast.show(this._oResourceBundle.getText("ymsg.errGroupDrag"));
 				oEvent.preventDefault();
 			}
 		},
@@ -198,11 +210,7 @@ sap.ui.define([
 				this.doCreateResource(this.getModel(), sPath, aPayLoad[i]) //.then(function (oResponse) {}.bind(this));
 			}
 			// remove Selections after Create
-			var oSelectedRowIndices = JSON.parse(JSON.stringify(aSelectedIndices))
-			for (i in oSelectedRowIndices) {
-				this.oHrResourceTable.removeSelectionInterval(oSelectedRowIndices[i], aSelectedIndices[i]);
-			}
-
+			this.oHrResourceTable.clearSelection();
 		},
 		/**
 		 * While assigning HR resource to any Group,provid Default date Date range starting from current Date  

@@ -30,9 +30,9 @@
 								<ToolbarSpacer/>
 								<SegmentedButton id="resourceMngFilter" selectionChange="onResourceMngFilterSelectionChange">
 									<items>
-										<SegmentedButtonItem text="All" key="all"/>
-										<SegmentedButtonItem text="Past" key="past"/>
-										<SegmentedButtonItem text="Future" key ="future"/>
+										<SegmentedButtonItem text="{i18n>xbut.all}" key="all"/>
+										<SegmentedButtonItem text="{i18n>xbut.past}" key="past"/>
+										<SegmentedButtonItem text="{i18n>xbut.future}" key ="future"/>
 									</items>
 								</SegmentedButton>
 								<Switch class="customSwitchTextFont" id="idSwitchResourceAction" customTextOn="{i18n>xlab.switchCopy}"

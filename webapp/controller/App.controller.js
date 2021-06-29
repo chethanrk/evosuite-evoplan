@@ -114,7 +114,7 @@ sap.ui.define([
 			case oResourceBundle.getText("xbut.pageMap"):
 				oRouter.navTo("map", {});
 				break;
-			case oResourceBundle.getText("xbut.ManageResources"):
+			case oResourceBundle.getText("xbut.manageResources"):
 				oRouter.navTo("manageResources", {});
 				break;
             case oResourceBundle.getText("xbut.pageNewGantt"):
@@ -193,7 +193,7 @@ sap.ui.define([
 			} else if (oParams.config.pattern.startsWith("Map")) {
 				pageTitle = oResourceBundle.getText("xbut.pageMap");
 			} else if (oParams.config.pattern.startsWith("ManageResources")) {
-				pageTitle = oResourceBundle.getText("xbut.ManageResources");
+				pageTitle = oResourceBundle.getText("xbut.manageResources");
 			}
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
 			oAppViewModel.setProperty("/currentRoute", oParams.name);
@@ -338,7 +338,7 @@ sap.ui.define([
 					this._eventBus.publish("BaseController", "refreshMapView", {});
 					this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
 					this._eventBus.publish("BaseController", "refreshMapDemandTable", {});
-				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.ManageResources")) {
+				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.manageResources")) {
 					this._eventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
 				}
 			}.bind(this), function (data) {}.bind(this)).catch(function (data) {}.bind(this));
