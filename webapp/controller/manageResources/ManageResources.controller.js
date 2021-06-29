@@ -131,7 +131,7 @@ sap.ui.define([
 				oDraggedItemContext = this._oEvoplanResourceTable.getContextByIndex(nDraggedItemIndex),
 				sNodeType = oDraggedItemContext.getProperty("NodeType");
 			if (sNodeType === "RES_GROUP") {
-				MessageToast.show("Group Can't be Dragged!");
+				MessageToast.show(this._oResourceBundle.getText("ymsg.errGroupDrag"));
 				oEvent.preventDefault();
 			}
 		},
