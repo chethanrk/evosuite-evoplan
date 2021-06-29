@@ -7,6 +7,7 @@
 			<smartFilterBar:ControlConfiguration key="EffortUnit" preventInitialDataFetchInValueHelpDialog="false"></smartFilterBar:ControlConfiguration>
 			<smartFilterBar:ControlConfiguration key="DateFrom" visibleInAdvancedArea="false" conditionType="sap.ui.comp.config.condition.DateRangeType"></smartFilterBar:ControlConfiguration>
 			<smartFilterBar:ControlConfiguration key="DateTo" visibleInAdvancedArea="false" conditionType="sap.ui.comp.config.condition.DateRangeType"></smartFilterBar:ControlConfiguration>
+			<smartFilterBar:ControlConfiguration key="MATERIAL_STATUS"  preventInitialDataFetchInValueHelpDialog="false"></smartFilterBar:ControlConfiguration>
 			<smartFilterBar:ControlConfiguration key="START_DATE" visibleInAdvancedArea="false"
 				conditionType="sap.ui.comp.config.condition.DateRangeType"></smartFilterBar:ControlConfiguration>
 			<smartFilterBar:ControlConfiguration key="END_DATE" visibleInAdvancedArea="false" conditionType="sap.ui.comp.config.condition.DateRangeType"></smartFilterBar:ControlConfiguration>
