@@ -109,7 +109,8 @@ sap.ui.define([
 		onAfterRendering: function () {
 			var oTable = this.getView().byId("ganttResourceTreeTable"),
 				oBinding = oTable.getBinding("rows"),
-				oViewModel = this.getModel("viewModel");
+				oViewModel = this.getModel("viewModel"),
+				iSelectionPane = oViewModel.getProperty("/ganttSelectionPane");
 
 			// To show busy indicator when filter getting applied.
 			oBinding.attachDataRequested(function () {
@@ -117,8 +118,8 @@ sap.ui.define([
 			});
 			oBinding.attachDataReceived(function () {
 				oViewModel.setProperty("/ganttSettings/busy", false);
-				oViewModel.setProperty("/ganttSelectionPane", "25%");
-				this._ganttChart.setSelectionPanelSize("25%");
+				oViewModel.setProperty("/ganttSelectionPane", iSelectionPane);
+				this._ganttChart.setSelectionPanelSize(iSelectionPane);
 			}.bind(this));
 		},
 
