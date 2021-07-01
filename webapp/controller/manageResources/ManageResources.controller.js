@@ -53,7 +53,7 @@ sap.ui.define([
 				}));
 			} else if (oMatchType === "future") {
 				oBinding.filters.push(new Filter({
-					filters: [new Filter("End", FilterOperator.GE, sCurrentDate)],
+					filters: [new Filter("Start", FilterOperator.GE, sCurrentDate)],
 					and: false
 				}));
 			}
@@ -401,9 +401,6 @@ sap.ui.define([
 				MessageToast.show(this._oResourceBundle.getText("ymsg.invalidDateRange"));
 				return;
 			}
-			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-				pattern: "yyyy-MM-dd"
-			});
 			oSelectedRow = this.convertDateToUTC(oSelectedRow, true)
 			if (this.isDataChanged(oSelectedRow, oUpdatedRow)) {
 				if (sNodeType === "RESOURCE") {
@@ -411,8 +408,8 @@ sap.ui.define([
 						this._oSelectedNodeContext = this._oSelectedContext;
 						this._aPayLoad = oUpdatedRow;
 						this.onPressPopoverCloseButton();
-						oUpdatedRow.Start = oDateFormat.format(oUpdatedRow.Start);
-						oUpdatedRow.End = oDateFormat.format(oUpdatedRow.End);
+						oUpdatedRow.Start = this._oDateFormat.format(new Date(oUpdatedRow.Start.setHours(0, 0, 0)));
+						oUpdatedRow.End = this._oDateFormat.format(new Date(oUpdatedRow.End.setHours(23, 59, 59)));
 						this._callAssignmentsPopUp("updateResource");
 					} else {
 						oUpdatedRow.Start = this._oDateFormat.format(oUpdatedRow.Start);

@@ -739,7 +739,8 @@ sap.ui.define([
 		setHeaderMsgAssignmentDialog: function (aManageResourceData) {
 			var sOperation = aManageResourceData.operationType,
 				sMsgTypeText = "",
-				aData = aManageResourceData.Assignments;
+				aData = aManageResourceData.Assignments,
+				sResourceName = this._oSelectedNodeContext.getProperty("Description");;
 			switch (sOperation) {
 			case "deleteResource":
 				sMsgTypeText = "Removable";
@@ -753,7 +754,7 @@ sap.ui.define([
 			}
 
 			if (aData && aData.length) {
-				var sResourceName = aData[0].ResourceDescription;
+			
 				for (var i in aData) {
 					if (!aData[i].AllowUnassign) {
 						return sResourceName + this._oResourceBundle.getText("ymsg.resourceNot" + sMsgTypeText); //Unassignable
@@ -761,7 +762,7 @@ sap.ui.define([
 				}
 				return sResourceName + this._oResourceBundle.getText("ymsg.resource" + sMsgTypeText); //not Unassignable
 			}
-			return "";
+			return sResourceName + this._oResourceBundle.getText("ymsg.resource" + sMsgTypeText);
 
 		},
 		setManageResourceSwitchEnabled: function (sAction) {

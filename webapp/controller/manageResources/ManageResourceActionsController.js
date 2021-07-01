@@ -188,7 +188,8 @@ sap.ui.define([
 		_refreshAssignmentDialog: function () {
 			var aRemovedIndices = this._oViewModel.getProperty(sRemovedIndicesPath),
 				aAssignmentData = this._oViewModel.getProperty(sAssignmentsPath),
-				aNewAssignmentData = [];
+				aNewAssignmentData = [],
+				sOperationType = this._oViewModel.getProperty(sOperationTypePath);
 
 			for (var i in aAssignmentData) {
 				if (!aRemovedIndices.includes(i.toString())) {
@@ -196,8 +197,14 @@ sap.ui.define([
 				}
 			}
 			this._oViewModel.setProperty(sAssignmentsPath, aNewAssignmentData);
-			if (!aNewAssignmentData.length) {
-				this.onPressProceedBtn();
+			// commenting this code to separate the Proceed functionality from unassgin button
+			if (!aNewAssignmentData.length && sOperationType === "updateResource" && this._bIsUpdateProceed) {
+				// MessageToast.show("Update");
+				this._aPayLoad.Start = this._oDateFormat.format(new Date(new Date(this._aPayLoad.Start).setHours(0, 0, 0)));
+				this._aPayLoad.End = this._oDateFormat.format(new Date(new Date(this._aPayLoad.End).setHours(23, 59, 59)));
+				this.proceedToUpdate(this._oSelectedNodeContext.getPath(), this._aPayLoad);
+				this._bIsUpdateProceed = false;
+
 			}
 			this._oViewModel.refresh(true);
 			this.getView().byId("idResourceAssignmentsTable").setSelectedContextPaths([]);
@@ -224,9 +231,16 @@ sap.ui.define([
 					this._oEventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
 				}.bind(this));
 			} else if (sOperationType === "updateResource") {
-				this._aPayLoad.Start = this._oDateFormat.format(new Date(new Date(this._aPayLoad.Start).setHours(0, 0, 0)));
-				this._aPayLoad.End = this._oDateFormat.format(new Date(new Date(this._aPayLoad.End).setHours(23, 59, 59)));
-				this.proceedToUpdate(this._oSelectedNodeContext.getPath(), this._aPayLoad);
+				this.getView().byId("idResourceAssignmentsTable").selectAll()
+				var aContextPaths = this.getView().byId("idResourceAssignmentsTable").getSelectedContextPaths();
+				if (aContextPaths.length) {
+					this._bIsUpdateProceed = true;
+					this.onPressUnassign();
+				} else {
+					this._aPayLoad.Start = this._oDateFormat.format(new Date(new Date(this._aPayLoad.Start).setHours(0, 0, 0)));
+					this._aPayLoad.End = this._oDateFormat.format(new Date(new Date(this._aPayLoad.End).setHours(23, 59, 59)));
+					this.proceedToUpdate(this._oSelectedNodeContext.getPath(), this._aPayLoad);
+				}
 			}
 		},
 		/**
