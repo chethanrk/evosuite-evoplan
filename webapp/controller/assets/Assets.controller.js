@@ -50,8 +50,8 @@ sap.ui.define([
 		 * @memberOf com.evorait.evoplan.view.Assets
 		 */
 		onAfterRendering: function () {
-			var oDataTable = this.byId("idAssetTree");
-			oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+			// var oDataTable = this.byId("idAssetTree");
+			// oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
 		},
 
 		/**
@@ -93,7 +93,7 @@ sap.ui.define([
 			oAssetTree.setEnableCellFilter(false);
 			oAssetTree.setEnableColumnReordering(false);
 			oAssetTree.setEditable(false);
-			oAssetTree.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
+			oAssetTree.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
 		},
 		/**
 		 * Clears selected entries
@@ -140,9 +140,12 @@ sap.ui.define([
 				oAssetTree = this.byId("idAssetTree"),
 				aAllFilters = [],
 				oBinding = oAssetTree.getBinding();
-
-			aAllFilters.push(new Filter("Description", FilterOperator.Contains, sValue));
-			oBinding.filter(aAllFilters, "Application");
+			if(sValue !== ""){
+				aAllFilters.push(new Filter("Description", FilterOperator.Contains, sValue));
+				oBinding.filter(aAllFilters, "Application");
+			}else{
+				oBinding.filter(aAllFilters, "Application");
+			}
 		},
 		/**
 		 * On Select of any asset that asset is added to global array of controller
