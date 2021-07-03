@@ -30,6 +30,7 @@ sap.ui.define([
 			}.bind(this));
 			this.onInitResourceActionController();
 		},
+		
 		/**
 		 * bind resource tree table only when filterbar was initalized
 		 * @param oEvent
@@ -45,7 +46,7 @@ sap.ui.define([
 				filters: [new Filter("End", FilterOperator.LT, new Date())],
 				and: false
 			})
-
+			
 			if (oMatchType === "past") {
 				oBinding.filters.push(new Filter({
 					filters: [new Filter("End", FilterOperator.LT, sCurrentDate)],
@@ -60,6 +61,8 @@ sap.ui.define([
 
 			if (!this.isLoaded) {
 				this.isLoaded = true;
+			}else{
+				this.mTreeState = this._getTreeState();
 			}
 			// Bug fix for some time tree getting collapsed
 			oBinding.parameters.numberOfExpandedLevels = 0; //oUserModel.getProperty("/RESOURCE_TREE_EXPAND") ? 1 : 0;
@@ -463,6 +466,8 @@ sap.ui.define([
 			if (parameters.busy === false) {
 				if (this.mTreeState && Object.keys(this.mTreeState).length > 0) {
 					this._restoreTreeState();
+				}else{
+					
 				}
 			}
 		},
