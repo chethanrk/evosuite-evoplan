@@ -205,6 +205,8 @@ sap.ui.define([
 				this.proceedToUpdate(this._oSelectedNodeContext.getPath(), this._aPayLoad);
 				this._bIsUpdateProceed = false;
 
+			} else if (!aNewAssignmentData.length) {
+				this._updateContext(this._oSelectedResourceContext.getObject());
 			}
 			this._oViewModel.refresh(true);
 			this.getView().byId("idResourceAssignmentsTable").setSelectedContextPaths([]);
@@ -257,8 +259,9 @@ sap.ui.define([
 		 * Applying updated changes without refreshing the table.
 		 */
 		_updateContext: function (oUpdatedRow) {
-			var sNodeType = this._oSelectedContext.getProperty("NodeType"),
-				sPath = this._oSelectedContext.getPath(),
+			var sNodeType = this._oSelectedContext ? this._oSelectedContext.getProperty("NodeType") : this._oSelectedResourceContext.getProperty(
+					"NodeType"),
+				sPath = this._oSelectedContext ? this._oSelectedContext.getPath() : this._oSelectedResourceContext.getPath(),
 				oRow = this._oModel.getProperty(sPath);
 			if (sNodeType === "RES_GROUP") {
 				oRow.Description = oUpdatedRow.Description;

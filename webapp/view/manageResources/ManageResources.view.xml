@@ -20,7 +20,7 @@
 					<smartTable:SmartTable id="idTableEvoplanResources" class="sapUiTinyMarginEnd" entitySet="ResourceManagementSet" tableType="TreeTable"
 						fitContainer="true" height="100%" useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false"
 						smartFilterId="idSmartFilterEvoPlanGroups" header="{i18n>xtit.evoplanResourceTable}" showRowCount="false" enableAutoBinding="true"
-						beforeRebindTable="onBeforeRebindTable"
+						beforeRebindTable="onBeforeRebindTable" 
 						requestAtLeastFields="NodeId,ParentNodeId,ResourceGroupGuid,ResourceGuid,Start,End,Description,NodeType,AssignmentCount">
 						<smartTable:layoutData>
 							<FlexItemData growFactor="1"/>
@@ -32,7 +32,7 @@
 									<items>
 										<SegmentedButtonItem text="{i18n>xbut.all}" key="all"/>
 										<SegmentedButtonItem text="{i18n>xbut.past}" key="past"/>
-										<SegmentedButtonItem text="{i18n>xbut.future}" key ="future"/>
+										<SegmentedButtonItem text="{i18n>xbut.future}" key="future"/>
 									</items>
 								</SegmentedButton>
 								<Switch class="customSwitchTextFont" id="idSwitchResourceAction" customTextOn="{i18n>xlab.switchCopy}"
