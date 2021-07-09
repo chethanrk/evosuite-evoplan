@@ -27,6 +27,7 @@
 						</smartTable:layoutData>
 						<smartTable:customToolbar>
 							<OverflowToolbar>
+								<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.TreeExpandCollapse" type="XML"/>
 								<ToolbarSpacer/>
 								<SegmentedButton id="resourceMngFilter" selectionChange="onResourceMngFilterSelectionChange">
 									<items>

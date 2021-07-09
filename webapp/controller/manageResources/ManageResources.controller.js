@@ -86,6 +86,21 @@ sap.ui.define([
 			});
 		},
 		/**
+		 * On click on expand the tree nodes gets expand to level 1
+		 * On click on collapse all the tree nodes will be collapsed to root.
+		 * @param oEvent
+		 */
+		onClickExpandCollapse: function (oEvent) {
+			var oButton = oEvent.getSource(),
+				oCustomData = oButton.getCustomData();
+			this.mTreeState = {};
+			if (oCustomData[0].getValue() === "EXPAND" && this._oEvoplanResourceTable) {
+				this._oEvoplanResourceTable.expandToLevel(1);
+			} else {
+				this._oEvoplanResourceTable.collapseAll();
+			}
+		},
+		/**
 		 * Method will refresh the data of tree by restoring its state
 		 */
 		_triggerRefreshEvoPlanGroupTree: function () {
