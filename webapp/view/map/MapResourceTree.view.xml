@@ -10,8 +10,11 @@
 					<FlexBox id="idResToolbar" alignItems="Start" justifyContent="SpaceBetween">
 						<items>
 							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.TreeExpandCollapse" type="XML"/>
-							<CheckBox id="idCapaCheck" text="{i18n>xtit.capacity}" selected="{viewModel>/capacityPlanning}"
-								enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }" select="onSelectCapacity" visible="{user>/CAPACITY_ENABLED}"/>
+							<HBox visible="{user>/CAPACITY_ENABLED}" >
+								<Switch id="idCapaCheck" customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}"
+									state="{viewModel>/capacityPlanning}" change="onSelectCapacity" enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }"></Switch>
+								<Text text="{i18n>xtit.capacity}" class="sapUiTinyMarginBegin sapUiTinyMarginTop"></Text>
+							</HBox>
 						</items>
 					</FlexBox>
 				</f:content>
