@@ -308,6 +308,10 @@ sap.ui.define([
 
 						oModel.setProperty("/Effort", oContext.getProperty("Effort"));
 						oModel.setProperty("/EffortUnit", oContext.getProperty("EffortUnit"));
+						
+						//Fetching Resource Start and End Date from AssignmentSet for validating on save
+						oModel.setProperty("/RES_ASGN_START_DATE", oContext.getProperty("RES_ASGN_START_DATE"));
+						oModel.setProperty("/RES_ASGN_END_DATE", oContext.getProperty("RES_ASGN_END_DATE"));
 
 						oDemandData = oContext.getProperty("Demand");
 						oModel.setProperty("/Description", oDemandData.DemandDesc);
@@ -450,6 +454,35 @@ sap.ui.define([
 				});
 			}
 
+		},
+		/**
+		 * On Change of Assignment Dates
+		 * Validating Start and End Date falls within Resource Start and End Date
+		 * 
+		 */
+		onAssignmentDateChange : function(){
+			var bValidDateFrom, bValidDateTo,
+				sResStartDate = this.oAssignmentModel.getProperty("/RES_ASGN_START_DATE"),
+				sResEndDate = this.oAssignmentModel.getProperty("/RES_ASGN_END_DATE"),
+				sDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
+				sDateTo = this.oAssignmentModel.getProperty("/DateTo");
+
+			//Checking DateFrom falls within Resource Start and End Date
+			bValidDateFrom = sDateFrom <= sResEndDate && sDateFrom >= sResStartDate;
+			//Checking DateTo falls within Resource Start and End Date
+			bValidDateTo = sDateTo <= sResEndDate && sDateTo >= sResStartDate;
+		
+			//If DateFrom and DateTo doesn't fall within Resource Start and End Date
+			if (!bValidDateFrom || !bValidDateTo) {
+				this._showEffortConfirmMessageBox(this._oView.getController().getResourceBundle().getText("ymsg.targetValidity")).then(function (
+					oAction) {
+					if (oAction === "YES") {
+						this.oAssignmentModel.setProperty("/DateFrom", this.oAssignmentModel.getProperty("/RES_ASGN_START_DATE"));
+						this.oAssignmentModel.setProperty("/DateTo", this.oAssignmentModel.getProperty("/RES_ASGN_END_DATE"));
+					} else {
+					}
+				}.bind(this));
+			}
 		},
 
 		exit: function () {
