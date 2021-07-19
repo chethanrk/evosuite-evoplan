@@ -20,8 +20,6 @@ sap.ui.define([
 		 * 
 		 */
 		doDeleteResource: function (oModel, sPath, bIsMoved) {
-			// MessageToast.show("Delete Operation");
-
 			// var oResourceBundle = this.getResourceBundle();
 			return new Promise(function (resolved, rejected) {
 				oModel.remove(sPath, {

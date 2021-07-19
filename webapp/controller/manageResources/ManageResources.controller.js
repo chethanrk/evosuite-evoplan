@@ -151,6 +151,8 @@ sap.ui.define([
 			if (sNodeType === "RES_GROUP") {
 				MessageToast.show(this._oResourceBundle.getText("ymsg.errGroupDrag"));
 				oEvent.preventDefault();
+			}else{
+				this._oViewModel.setProperty("/manageResourcesSettings/draggedItemContext", oDraggedItemContext);
 			}
 		},
 		/**
@@ -158,9 +160,8 @@ sap.ui.define([
 		 */
 		onDropIntoEvoplanGroups: function (oEvent) {
 			//Dragged data(Source) variables
-			var oSourceItem = oEvent.getParameter("draggedControl"),
-				sSourceControlId = oSourceItem.getParent().getId(),
-				sSourceItemPath = oSourceItem.getBindingContext().getPath(),
+			var oSourceItemContext = this._oViewModel.getProperty("/manageResourcesSettings/draggedItemContext"),
+				sSourceItemPath = oSourceItemContext.getPath(),
 				aPayLoad;
 
 			//Dropped position(target) variables
@@ -169,7 +170,7 @@ sap.ui.define([
 				oTargetItemPath = oTargetItemContext.getPath(),
 				sTargetGroupNodeId = oTargetItemData.ParentNodeId ? oTargetItemData.ParentNodeId : oTargetItemData.NodeId;
 
-			this._oSelectedNodeContext = oSourceItem.getBindingContext();
+			this._oSelectedNodeContext = oSourceItemContext;
 			aPayLoad = this.getPayload(this._oSelectedNodeContext.getObject(), sTargetGroupNodeId);
 			this._aPayLoad = aPayLoad;
 			this._handleCreateResource(oTargetItemPath, sSourceItemPath, aPayLoad);
