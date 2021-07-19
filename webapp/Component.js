@@ -141,7 +141,8 @@ sap.ui.define([
 					selectedRow: false,
 					operationType: "",
 					Assignments: {},
-					removedIndices: []
+					removedIndices: [],
+					draggedItemContext:[]
 				}
 
 			});
@@ -414,7 +415,7 @@ sap.ui.define([
 				aMessages.push(item);
 			}
 			this.getModel("MessageModel").setData(aMessages);
-			oMessageModel.setData([]);
+			sap.ui.getCore().getMessageManager().removeAllMessages();
 		},
 		/**
 		 * Calls the GetSystemInformation 
