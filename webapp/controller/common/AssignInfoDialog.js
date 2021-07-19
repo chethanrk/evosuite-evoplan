@@ -235,6 +235,7 @@ sap.ui.define([
 		 */
 		onCloseDialog: function () {
 			this._oDialog.close();
+			this._oDialog.unbindElement();
 			this.reAssign = false; // setting to default on close of Dialog
 			// this.oAssignmentModel.setData({});// Commented to have data in Qualification Match Dialog Methods:by Rakesh Sahu
 		},
@@ -287,8 +288,9 @@ sap.ui.define([
 				},
 				events: {
 					change: function () {
-						var oElementBinding = oDialog.getElementBinding(),
-							oContext = oElementBinding.getBoundContext(),
+						var oElementBinding = oDialog.getElementBinding();
+						oElementBinding.refresh();
+						var	oContext = oElementBinding.getBoundContext(),
 							oDemandData;
 
 						// oDateToField = sap.ui.getCore().byId("idDateToAssignInf");
