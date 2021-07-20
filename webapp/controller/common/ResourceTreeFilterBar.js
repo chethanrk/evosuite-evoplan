@@ -61,6 +61,7 @@ sap.ui.define([
 			// this._oDroppableTable = oView.byId("droppableTable");
 			// this._oDataTable = this._oDroppableTable.getTable();
 			this._viewModel = this._component.getModel("viewModel");
+			this._userModel = this._component.getModel("user");
 			//use global promise for getting when filterbar was fully initalized
 			// this._isInitalizedProm = new Promise(function (resolve, reject) {
 			// create fragment lazily
@@ -513,7 +514,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_getDateRangeValues: function (oData, sDateRangeType) {
-			var selectedTimeFormat;
+			var selectedTimeFormat,configStartDate,configStartEnd;
 			if (oData) {
 				if (oData.hasOwnProperty(this._aCustomFilters.startDate.origin) || oData.hasOwnProperty(this._aCustomFilters.endDate.origin)) {
 					var sViewType = oData[this._aCustomFilters.viewType.origin];
@@ -531,7 +532,16 @@ sap.ui.define([
 				}
 			} else if (sDateRangeType) {
 				selectedTimeFormat = formatter.getResourceFormatByKey(sDateRangeType);
+				configStartDate = this._userModel.getProperty(selectedTimeFormat.configStartDate);
+				configStartEnd = this._userModel.getProperty(selectedTimeFormat.configStartEnd)
+				if(configStartDate && configStartEnd)
+				{
+					return [this.formatter.date(configStartDate), this.formatter.date(configStartEnd)];
+				}
+				else
+				{
 				return [this.formatter.date(selectedTimeFormat.getDateBegin()), this.formatter.date(selectedTimeFormat.getDateEnd())];
+				}
 			} else if (this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin]) {
 				return [
 					this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin],
