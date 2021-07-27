@@ -20,9 +20,9 @@ sap.ui.define([
 		 * 
 		 */
 		doDeleteResource: function (oModel, sPath, bIsMoved) {
-			// var oResourceBundle = this.getResourceBundle();
 			return new Promise(function (resolved, rejected) {
 				oModel.remove(sPath, {
+					groupId: "Delete_Resource",
 					method: "DELETE",
 					success: function (oData, oResponse) {
 						var sSeverity = JSON.parse(oResponse.headers["sap-message"]).severity;
@@ -47,18 +47,19 @@ sap.ui.define([
 		 * 
 		 */
 		doCreateResource: function (oModel, sPath, aPayload) {
-			// return new Promise(function (resolved, rejected) {
-			oModel.create(sPath, aPayload, {
-				method: "POST",
-				success: function (oData, oResponse) {
-					this.showMessage(oResponse);
-					// resolved(oResponse);
-				}.bind(this),
-				error: function (oError) {
-					// rejected(oError);
-				}
-			});
-			// }.bind(this));
+			return new Promise(function (resolved, rejected) {
+				oModel.create(sPath, aPayload, {
+					groupId: "Create_Resource",
+					method: "POST",
+					success: function (oData, oResponse) {
+						this.showMessage(oResponse);
+						resolved(oResponse);
+					}.bind(this),
+					error: function (oError) {
+						rejected(oError);
+					}
+				});
+			}.bind(this));
 		},
 
 		/**
@@ -71,6 +72,7 @@ sap.ui.define([
 		doUpdateResource: function (oModel, sPath, aPayload) {
 			return new Promise(function (resolved, rejected) {
 				oModel.update(sPath, aPayload, {
+					groupId: "Update_Resource",
 					method: "PUT",
 					success: function (oData, oResponse) {
 						this.showMessage(oResponse);
@@ -223,8 +225,7 @@ sap.ui.define([
 
 			if (sOperationType === "moveResource") {
 				this.doDeleteResource(this._oModel, sPath, true).then(function (oResponse) {
-					this.doCreateResource(this._oModel, sEntitySetName, this._aPayLoad);
-					// this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
+					this.doCreateResource(this._oModel, sEntitySetName, this._aPayLoad).then(function (oResponse) {}.bind(this));
 				}.bind(this));
 			} else if (sOperationType === "deleteResource") {
 				this.doDeleteResource(this._oModel, sPath).then(function () {

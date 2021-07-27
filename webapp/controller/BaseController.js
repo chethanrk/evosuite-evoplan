@@ -402,6 +402,7 @@ sap.ui.define([
 		 */
 		clearMessageModel: function () {
 			sap.ui.getCore().getMessageManager().removeAllMessages();
+			this.getModel("MessageModel").setData([]);
 		},
 		/**
 		 * Method checks the availability of resources

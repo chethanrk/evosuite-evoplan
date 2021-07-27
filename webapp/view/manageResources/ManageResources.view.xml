@@ -5,7 +5,7 @@
 	<Page id="idManageResources" showFooter="true" showHeader="false">
 		<content>
 			<HBox fitContainer="true">
-				<VBox>
+				<VBox width="50%">
 					<smartFilterBar:SmartFilterBar class="sapUiTinyMarginEnd" id="idSmartFilterEvoPlanGroups" entitySet="ResourceManagementSet"
 						persistencyKey="SmartFilter_EvoPlan_Groups" showGoButton="false" showRestoreButton="true" showRestoreOnFB="true" liveMode="true">
 						<!--layout data used to make the table growing but the filter bar fixed -->
@@ -20,7 +20,7 @@
 					<smartTable:SmartTable id="idTableEvoplanResources" class="sapUiTinyMarginEnd" entitySet="ResourceManagementSet" tableType="TreeTable"
 						fitContainer="true" height="100%" useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false"
 						smartFilterId="idSmartFilterEvoPlanGroups" header="{i18n>xtit.evoplanResourceTable}" showRowCount="false" enableAutoBinding="true"
-						beforeRebindTable="onBeforeRebindTable" 
+						beforeRebindTable="onBeforeRebindTable"
 						requestAtLeastFields="NodeId,ParentNodeId,ResourceGroupGuid,ResourceGuid,Start,End,Description,NodeType,AssignmentCount">
 						<smartTable:layoutData>
 							<FlexItemData growFactor="1"/>
@@ -81,7 +81,7 @@
 						</table:TreeTable>
 					</smartTable:SmartTable>
 				</VBox>
-				<VBox >
+				<VBox width="50%">
 					<!--Evoplan Resources Table Ends Here-->
 					<!--HR Resources Table Starts Here-->
 					<smartFilterBar:SmartFilterBar class="sapUiTinyMarginBegin" id="idSmartFilterResources" entitySet="ResourceMasterSet"

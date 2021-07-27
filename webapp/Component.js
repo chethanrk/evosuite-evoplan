@@ -142,7 +142,7 @@ sap.ui.define([
 					operationType: "",
 					Assignments: {},
 					removedIndices: [],
-					draggedItemContext:[]
+					draggedItemContext: []
 				}
 
 			});
@@ -370,7 +370,7 @@ sap.ui.define([
 		 * @public
 		 */
 		createMessages: function () {
-			var aMessages = [];
+			var aMessages = JSON.parse(JSON.stringify(this.getModel("MessageModel").getData()));
 			var iCountError = 0,
 				iCountWarning = 0,
 				iCountSuccess = 0,
@@ -381,7 +381,6 @@ sap.ui.define([
 			var oResourceBundle = this.getModel("i18n").getResourceBundle();
 
 			if (oData.length === 0) {
-				oMessageModel.setData([]);
 				return;
 			}
 
@@ -412,10 +411,12 @@ sap.ui.define([
 				item.subtitle = oData[i].message;
 				item.counter = iCounter;
 
-				aMessages.push(item);
+				if (!JSON.stringify(aMessages).includes(JSON.stringify(item))) {
+					aMessages.push(item);
+				}
+
 			}
 			this.getModel("MessageModel").setData(aMessages);
-			sap.ui.getCore().getMessageManager().removeAllMessages();
 		},
 		/**
 		 * Calls the GetSystemInformation 
