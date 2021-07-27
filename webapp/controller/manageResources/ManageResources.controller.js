@@ -30,10 +30,6 @@ sap.ui.define([
 			}.bind(this));
 			this.onInitResourceActionController();
 		},
-		onAfterRebindTable: function () {
-			this.mTreeState = this._getTreeState();
-		},
-
 		/**
 		 * bind resource tree table only when filterbar was initalized
 		 * @param oEvent
@@ -97,13 +93,10 @@ sap.ui.define([
 		onClickExpandCollapse: function (oEvent) {
 			var oButton = oEvent.getSource(),
 				oCustomData = oButton.getCustomData();
-			// //this.mTreeState = this._getTreeState();
 			if (oCustomData[0].getValue() === "EXPAND" && this._oEvoplanResourceTable) {
 				this._oEvoplanResourceTable.expandToLevel(1);
-				this.mTreeState = this._getTreeState();
 			} else {
 				this._oEvoplanResourceTable.collapseAll();
-				this.mTreeState = this._getTreeState();
 			}
 		},
 		/**
@@ -215,7 +208,6 @@ sap.ui.define([
 				aSourceData;
 			this.mTreeState = this._getTreeState();
 			this.clearMessageModel();
-			// this._oEvoplanResourceTable.collapseAll();
 			for (var i in aSelectedIndices) {
 				aSourceData = this.oHrResourceTable.getContextByIndex(aSelectedIndices[i]).getObject();
 				aPayLoad.push({
@@ -312,7 +304,6 @@ sap.ui.define([
 		_refreshManageResourcesView: function () {
 			var oEvoplanTable = this.getView().byId("idTableEvoplanResources");
 			var oHrResourcesTable = this.getView().byId("idTableHrResources");
-			//this.mTreeState = this._getTreeState();
 			oEvoplanTable.rebindTable();
 			oHrResourcesTable.rebindTable();
 		},

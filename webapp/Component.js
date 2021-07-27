@@ -83,8 +83,6 @@ sap.ui.define([
 
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
-			// this.setModel(new sap.ui.getCore().getMessageManager().getMessageModel(), "MessageModel2");
-			// this.getModel("MessageModel2").setSizeLimit(10000);
 			var oViewModel = new JSONModel({
 				treeSet: "ResourceHierarchySet",
 				ganttTreeSet: "GanttResourceHierarchySet",
