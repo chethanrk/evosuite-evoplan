@@ -30,7 +30,10 @@ sap.ui.define([
 			}.bind(this));
 			this.onInitResourceActionController();
 		},
-		
+		onAfterRebindTable: function () {
+			this.mTreeState = this._getTreeState();
+		},
+
 		/**
 		 * bind resource tree table only when filterbar was initalized
 		 * @param oEvent
@@ -46,7 +49,7 @@ sap.ui.define([
 				filters: [new Filter("End", FilterOperator.LT, new Date())],
 				and: false
 			})
-			
+
 			if (oMatchType === "past") {
 				oBinding.filters.push(new Filter({
 					filters: [new Filter("End", FilterOperator.LT, sCurrentDate)],
@@ -61,11 +64,11 @@ sap.ui.define([
 
 			if (!this.isLoaded) {
 				this.isLoaded = true;
-			}else{
+			} else {
 				this.mTreeState = this._getTreeState();
 			}
 			// Bug fix for some time tree getting collapsed
-			oBinding.parameters.numberOfExpandedLevels = 0; //oUserModel.getProperty("/RESOURCE_TREE_EXPAND") ? 1 : 0;
+			// oBinding.parameters.numberOfExpandedLevels = 1; //oUserModel.getProperty("/RESOURCE_TREE_EXPAND") ? 1 : 0;
 
 		},
 		/**
@@ -84,6 +87,7 @@ sap.ui.define([
 			this._oDateFormatDateOnly = sap.ui.core.format.DateFormat.getDateInstance({
 				pattern: "yyyy-MM-dd"
 			});
+
 		},
 		/**
 		 * On click on expand the tree nodes gets expand to level 1
@@ -93,11 +97,13 @@ sap.ui.define([
 		onClickExpandCollapse: function (oEvent) {
 			var oButton = oEvent.getSource(),
 				oCustomData = oButton.getCustomData();
-			this.mTreeState = {};
+			// //this.mTreeState = this._getTreeState();
 			if (oCustomData[0].getValue() === "EXPAND" && this._oEvoplanResourceTable) {
 				this._oEvoplanResourceTable.expandToLevel(1);
+				this.mTreeState = this._getTreeState();
 			} else {
 				this._oEvoplanResourceTable.collapseAll();
+				this.mTreeState = this._getTreeState();
 			}
 		},
 		/**
@@ -151,7 +157,7 @@ sap.ui.define([
 			if (sNodeType === "RES_GROUP") {
 				MessageToast.show(this._oResourceBundle.getText("ymsg.errGroupDrag"));
 				oEvent.preventDefault();
-			}else{
+			} else {
 				this._oViewModel.setProperty("/manageResourcesSettings/draggedItemContext", oDraggedItemContext);
 			}
 		},
@@ -207,8 +213,9 @@ sap.ui.define([
 				oEndDate = this.getDefaultDate(true),
 				aPayLoad = [],
 				aSourceData;
-
 			this.mTreeState = this._getTreeState();
+			this.clearMessageModel();
+			// this._oEvoplanResourceTable.collapseAll();
 			for (var i in aSelectedIndices) {
 				aSourceData = this.oHrResourceTable.getContextByIndex(aSelectedIndices[i]).getObject();
 				aPayLoad.push({
@@ -226,7 +233,7 @@ sap.ui.define([
 				});
 			}
 			for (i in aPayLoad) {
-				this.doCreateResource(this.getModel(), sPath, aPayLoad[i]) //.then(function (oResponse) {}.bind(this));
+				this.doCreateResource(this.getModel(), sPath, aPayLoad[i]).then(function (oResponse) {}.bind(this));
 			}
 			// remove Selections after Create
 			this.oHrResourceTable.clearSelection();
@@ -247,14 +254,14 @@ sap.ui.define([
 		_handleCreateResource: function (sPath, sSourceItemPath, aPayload) {
 			var sEntitySetName = sPath.split("(")[0],
 				isCopy = this.getView().byId("idSwitchResourceAction").getState();
-
+			this.clearMessageModel();
 			this.mTreeState = this._getTreeState();
 			if (isCopy) {
-				this.doCreateResource(this.getModel(), sEntitySetName, aPayload);
+				this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
 				// this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
 			} else if (!aPayload.AssignmentCount) {
 				this.doDeleteResource(this._oModel, sSourceItemPath, true).then(function (oResponse) {
-					this.doCreateResource(this.getModel(), sEntitySetName, aPayload);
+					this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
 					// this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
 				}.bind(this));
 			} else {
@@ -305,7 +312,7 @@ sap.ui.define([
 		_refreshManageResourcesView: function () {
 			var oEvoplanTable = this.getView().byId("idTableEvoplanResources");
 			var oHrResourcesTable = this.getView().byId("idTableHrResources");
-			this.mTreeState = this._getTreeState();
+			//this.mTreeState = this._getTreeState();
 			oEvoplanTable.rebindTable();
 			oHrResourcesTable.rebindTable();
 		},
@@ -319,9 +326,10 @@ sap.ui.define([
 				nAssignmentCount = oContext.getProperty("AssignmentCount");
 
 			this._oSelectedNodeContext = oContext;
-			this.mTreeState = this._getTreeState();
 			this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.warningDeleteResource")).then(function (value) {
 				if (value === "YES") {
+					this.clearMessageModel();
+					this.mTreeState = this._getTreeState();
 					if (nAssignmentCount) {
 						this._callAssignmentsPopUp("deleteResource");
 					} else {
@@ -413,7 +421,7 @@ sap.ui.define([
 				oSelectedRow = this._oSelectedContext.getObject(),
 				sSelectedPath = this._oSelectedContext.getPath(),
 				sNodeType = oSelectedRow.NodeType;
-
+			this.clearMessageModel();
 			oUpdatedRow.Start = oUpdatedJSONData.Start;
 			oUpdatedRow.End = oUpdatedJSONData.End;
 			if (sNodeType === "RESOURCE" && this.oResourceDateRange.getValueState() !== "None") {
@@ -482,8 +490,6 @@ sap.ui.define([
 			if (parameters.busy === false) {
 				if (this.mTreeState && Object.keys(this.mTreeState).length > 0) {
 					this._restoreTreeState();
-				}else{
-					
 				}
 			}
 		},
@@ -511,9 +517,9 @@ sap.ui.define([
 			if (expandIdx.length > 0) {
 				this._oEvoplanResourceTable.expand(expandIdx);
 			} else if (collapseIdx.length > 0) {
-				this._oEvoplanResourceTable.collapse(collapseIdx);
+				// this._oEvoplanResourceTable.collapse(collapseIdx);
 			} else {
-				this.mTreeState = {};
+				// //this.mTreeState = this._getTreeState();= {};
 			}
 		},
 		onResourceMngFilterSelectionChange: function (oEvent) {
