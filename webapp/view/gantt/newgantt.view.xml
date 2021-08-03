@@ -39,10 +39,12 @@
 									  selectionPanelSize="{viewModel>/ganttSelectionPane}"
 									  nowLineInUTC="false">
 				<gnt2:table>
-					<table:TreeTable id="ganttResourceTreeTable"  selectionMode="Single" visibleRowCountMode="Auto"
+					<table:TreeTable id="ganttResourceTreeTable" class="resourceGanttTreeTable" selectionMode="Single" visibleRowCountMode="Auto"
 					 enableBusyIndicator="true" busyStateChanged="onBusyStateChanged" rowHeight="24"
 						 selectionBehavior="RowOnly"
-						rows="{ path: '/ResourceHierarchySet', parameters: { operationMode: 'Server', numberOfExpandedLevels: 1, groupId: 'GanttTree' } }">
+						rows="{ path: '/GanttHierarchySet', parameters: { operationMode: 'Server', numberOfExpandedLevels: 1, expand: 'ResourceAvailabilitySet',
+					  groupId: 'GanttTree' } }">
+							<!--expand: 'ResourceAvailabilitySet',-->
 						<table:extension>
 							<OverflowToolbar>
 								<content>
@@ -53,11 +55,11 @@
 							</OverflowToolbar>
 						</table:extension>
 						<table:rowSettingsTemplate>
-							<gnt2:GanttRowSettings rowId="{NodeId}">
+							<gnt2:GanttRowSettings rowId="{NodeId}" shapes3="{ path:'ResourceAvailabilitySet', templateShareable:true }">
 								<gnt2:shapes2>
 								<gnt2:BaseRectangle title="{Description}"
 															shapeId="{NodeId}"
-															time="{StartDate}" endTime="{EndDate}"
+															time="{ResAsgnDateFrom}" endTime="{ResAsgnDateTo}"
 															tooltip="{NodeId}"
 															fill="#0092D1"
 															resizable="true"
@@ -70,6 +72,9 @@
 								<gnt2:shapes1>
 									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.BackGroundShape" type="XML"/>
 								</gnt2:shapes1>
+									<gnt2:shapes3>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.UnAvailabilityShape" type="XML"/>
+								</gnt2:shapes3>
 								<!--<gnt2:shapes2>
 									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.UnAvailabilityShape" type="XML"/>
 								</gnt2:shapes2>

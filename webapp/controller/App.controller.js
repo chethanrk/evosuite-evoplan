@@ -194,6 +194,8 @@ sap.ui.define([
 				pageTitle = oResourceBundle.getText("xbut.pageMap");
 			} else if (oParams.config.pattern.startsWith("ManageResources")) {
 				pageTitle = oResourceBundle.getText("xbut.manageResources");
+			}else if (oParams.config.pattern.startsWith("NewGantt")) {
+				pageTitle = oResourceBundle.getText("xbut.pageNewGantt");
 			}
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
 			oAppViewModel.setProperty("/currentRoute", oParams.name);
@@ -340,6 +342,9 @@ sap.ui.define([
 					this._eventBus.publish("BaseController", "refreshMapDemandTable", {});
 				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.manageResources")) {
 					this._eventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
+				}else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageNewGantt")) {
+					this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+					this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				}
 			}.bind(this), function (data) {}.bind(this)).catch(function (data) {}.bind(this));
 

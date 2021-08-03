@@ -26,7 +26,8 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"com/evorait/evoplan/model/Constants",
 	"com/evorait/evoplan/controller/WebSocket",
-	"com/evorait/evoplan/controller/gantt/GanttResourceFilter"
+	"com/evorait/evoplan/controller/gantt/GanttResourceFilter",
+	"com/evorait/evoplan/controller/gantt/GanttActions"
 ], function (
 	UIComponent,
 	Device,
@@ -55,7 +56,8 @@ sap.ui.define([
 	FilterOperator,
 	Constants,
 	WebSocket,
-	GanttResourceFilter) {
+	GanttResourceFilter,
+	GanttActions) {
 
 	"use strict";
 
@@ -125,8 +127,7 @@ sap.ui.define([
 					selectedDemands: [],
 					routeData: [],
 					checkedDemands: [],
-					assignedDemands: [],
-
+					assignedDemands: []
 				},
 				resourceFilterforRightTechnician: false,
 				CheckRightTechnician: false,
@@ -358,6 +359,8 @@ sap.ui.define([
 			this.materialInfoDialog.init();
 
 			this.GanttResourceFilter = new GanttResourceFilter();
+			
+			this.GanttActions = new GanttActions();
 		},
 
 		/**

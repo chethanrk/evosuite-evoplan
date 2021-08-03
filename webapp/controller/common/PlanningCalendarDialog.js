@@ -161,7 +161,7 @@ sap.ui.define([
 					aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
 				}
 			}
-			if (this._mParameters.bFromGantt) {
+			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
 				// if we decide to keep different date range for demand view and gantt view
 				sDateControl1 = oUserModel.getProperty("/GANT_START_DATE");
 				sDateControl2 = oUserModel.getProperty("/GANT_END_DATE");
@@ -206,7 +206,7 @@ sap.ui.define([
 			this._oCalendarModel.setData({
 				resources: this._createData(data)
 			});
-			if (this._mParameters.bFromGantt) {
+			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
 				this._oCalendarModel.setProperty("/viewKey", "TIMEHOUR");
 				this._oCalendarModel.setProperty("/startDate", this._startDate || new Date());
 			} else {
