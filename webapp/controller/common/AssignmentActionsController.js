@@ -81,6 +81,57 @@ sap.ui.define([
 			}, "DeleteAssignment", "POST");
 		},
 		/**
+		 * update assignment 
+		 * @param {String} sPath
+		 */
+		_updateAssignment: function (isReassign, oData, mParameters) {
+			var sDisplayMessage,
+				oResource;
+
+			// if (isReassign && !oData.AllowReassign) {
+			// 	sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
+			// 	this._showAssignErrorDialog([oData.Description], null, sDisplayMessage);
+			// 	return;
+			// }
+			
+			return	this.executeFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
+			// var oParams = {
+			// 	DateFrom: oData.DateFrom || 0,
+			// 	TimeFrom: {
+			// 		__edmtype: "Edm.Time",
+			// 		ms: oData.DateFrom.getTime()
+			// 	},
+			// 	DateTo: oData.DateTo || 0,
+			// 	TimeTo: {
+			// 		__edmtype: "Edm.Time",
+			// 		ms: oData.DateTo.getTime()
+			// 	},
+			// 	AssignmentGUID: sAssignmentGUID,
+			// 	EffortUnit: oData.EffortUnit,
+			// 	Effort: oData.Effort,
+			// 	ResourceGroupGuid: oData.ResourceGroupGuid,
+			// 	ResourceGuid: oData.ResourceGuid
+			// };
+
+			// if (isReassign && oData.NewAssignPath) {
+			// 	oResource = this.getModel().getProperty(oData.NewAssignPath);
+			// 	oParams.ResourceGroupGuid = oResource.ResourceGroupGuid;
+			// 	oParams.ResourceGuid = oResource.ResourceGuid;
+			// }
+			this.clearMessageModel();
+			if (isReassign && !this.isAssignable({
+					sPath: oData.NewAssignPath
+				})) {
+				return;
+			}
+			if (isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)) {
+				this.showMessageToProceed(null, null, null, null, true, oParams, mParameters);
+			} else {
+				// Proceed to check the Qualification for UpdateAssignment
+				// this.checkQualificationUpdate(oData, oParams, mParameters);
+			}
+		},
+		/**
 		 * proceed to Service call after validation
 		 * 
 		 * @param {Object} aSourcePaths

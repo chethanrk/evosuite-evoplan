@@ -248,7 +248,8 @@ sap.ui.define([
 				bFromGantt: false,
 				bFromGanttSplit: false,
 				bFromDemandSplit: false,
-				bFromMap: false
+				bFromMap: false,
+				bFromNewGantt: false
 			};
 
 			if (oParameter.bFromHome) {
@@ -286,7 +287,10 @@ sap.ui.define([
 			}
 			else if (oParameter.bFromManageResourceRemoveAssignments) {
 				eventBus.publish("ManageResourcesActionsController", "refreshAssignmentDialog", {});
-			}
+			}else if (oParameter.bFromNewGantt) {
+				eventBus.publish("BaseController", "refreshGanttChart", {});
+				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			} 
 
 		},
 		/**

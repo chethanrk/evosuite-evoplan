@@ -10,15 +10,31 @@ sap.ui.define([
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
-	
-			/**
+
+		_oView: null,
+
+		_oModel: null,
+		
+		_oComponent : null,
+		
+		_oAssignementModel : null,
+
+		init: function (oView, oModel, oComponent, _oAssignementModel) {
+			this._oView = oView;
+			this._oModel = oModel;
+				this._oComponent = oComponent;
+			this._oAssignementModel = _oAssignementModel;
+		},
+
+		/**
 		 * get prepared assignment object for reassign, update requests
 		 * @param oData
 		 * @returns {*|{DemandGuid, Description, Effort, OperationNumber, AllowUnassign, ResourceGuid, NewAssignId, OrderId, isNewAssignment, SubOperationNumber, AllowReassign, NewAssignPath, showError, AllowChange, DateFrom, ResourceGroupGuid, AssignmentGuid, NewAssignDesc, DemandStatus, EffortUnit, DateTo}}
 		 * @private
 		 */
 		_getAssignmentModelObject: function (oData) {
-			var oDefaultObject = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject(),
+		//	var oDefaultObject = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject(),
+			var oDefaultObject = 	this._oComponent.assignInfoDialog.getDefaultAssignmentModelObject(),
 				sPath;
 
 			oDefaultObject.AssignmentGuid = oData.Guid;
@@ -29,10 +45,10 @@ sap.ui.define([
 				}
 			}
 			if (!oData.Demand.Status) {
-				sPath = this.getModel().createKey("DemandSet", {
+				sPath = this._oModel.createKey("DemandSet", {
 					Guid: oData.DemandGuid
 				});
-				oData.Demand = this.getModel().getProperty("/" + sPath);
+				oData.Demand = this._oModel.getProperty("/" + sPath);
 			}
 			if (oData.Demand) {
 				oDefaultObject.AllowChange = oData.Demand.ASGNMNT_CHANGE_ALLOWED;
@@ -61,14 +77,14 @@ sap.ui.define([
 		 * 
 		 * 
 		 */
-		getTimeDifference : function(oDateFrom, oDateTo){
+		getTimeDifference: function (oDateFrom, oDateTo) {
 			var oTimeStampFrom = oDateFrom.getTime(),
 				oTimeStampTo = oDateTo.getTime(),
 				iDifference = oTimeStampTo - oTimeStampFrom,
-				iEffort = (((iDifference/1000)/60)/60);
+				iEffort = (((iDifference / 1000) / 60) / 60);
 			return iEffort;
 		},
-			/**
+		/**
 		 * Promise for fetching details about asignment demand
 		 * coming from backend or alsready loaded data
 		 * @param sAssignmentGuid
@@ -78,13 +94,15 @@ sap.ui.define([
 		_updateAssignmentModel: function (sAssignmentGuid, isReassign) {
 			return new Promise(function (resolve, reject) {
 				var obj,
-					sPath = this.getModel().createKey("AssignmentSet", {
+					//	sPath = this.getModel().createKey("AssignmentSet", {
+					sPath = this._oModel.createKey("AssignmentSet", {
 						Guid: sAssignmentGuid
 					}),
-					oAssignmentData = this.getModel().getProperty("/" + sPath);
+					oAssignmentData = this._oModel.getProperty("/" + sPath);
 				// Demnad data or assignment data will be missing some time
 				if (!oAssignmentData || !oAssignmentData.Demand || !oAssignmentData.Demand.Guid) {
-					this.getModel().read("/" + sPath, {
+					//	this.getModel().read("/" + sPath, {
+					this._oModel.read("/" + sPath, {
 						urlParameters: {
 							$expand: "Demand"
 						},
@@ -115,5 +133,5 @@ sap.ui.define([
 			return oParsedUid.shapeDataName;
 		}
 	});
-	
+
 });
