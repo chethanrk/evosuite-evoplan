@@ -204,7 +204,10 @@ sap.ui.define([
 				oDraggedControl = oDragSession.getDragControl(),
 				aIndices = this._oDataTable.getSelectedIndices(),
 				oSelectedPaths, aPathsData;
-
+		
+			//Restricting selected demand list as per the global config select all property 
+			aIndices = aIndices.slice(0, this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL"));
+			
 			oDragSession.setTextData("Hi I am dragging");
 			//get all selected rows when checkboxes in table selected
 			if (aIndices.length > 0) {
