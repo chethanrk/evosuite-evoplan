@@ -50,6 +50,8 @@
 								<content>
 									<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.TreeExpandCollapse" type="XML"/>
 									<ToolbarSpacer/>
+										<Switch id="idShowutiliz" customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}"
+									state="{viewModel>/showUtilization}" change="onClickShowUtilization"></Switch>
 									<Button id="idBtnGanttResourceFilter" press="onPressGanttResourceFilters" icon="sap-icon://filter"/>
 								</content>
 							</OverflowToolbar>
@@ -90,6 +92,14 @@
 						</table:dragDropConfig>
 						<table:columns>
 							<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.ResourceTreeColumns" type="XML"/>
+							<table:Column width="20%" visible="{viewModel>/showUtilization}">
+								<table:customData>
+									<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
+								</table:customData>
+								<table:template>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.UtilizationColumn" type="XML"/>
+								</table:template>
+							</table:Column>
 							<table:Column label="{i18n>xtit.tableCheckbox}" name="{i18n>xtit.tableCheckbox}" width="2.5rem" class="sapUiNoContentPadding">
 								<table:customData>
 									<core:CustomData key="p13nData" value='\{"columnKey": "NodeType", "leadingProperty": "NodeType"}'/>

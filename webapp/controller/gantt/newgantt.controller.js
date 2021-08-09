@@ -4,8 +4,10 @@ sap.ui.define([
 	"com/evorait/evoplan/model/ganttFormatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/core/Popup"
-], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, Popup) {
+	"sap/ui/core/Popup",
+		"sap/gantt/simple/CoordinateUtils",
+		"com/evorait/evoplan/model/Constants"
+], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, Popup, CoordinateUtils, Constants) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.newgantt", {
@@ -39,13 +41,17 @@ sap.ui.define([
 			this._axisTime = this.getView().byId("idAxisTime");
 			this._userData = this.getModel("user").getData();
 
-			this.getRouter().getRoute("gantt").attachPatternMatched(function () {
+			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				//this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
 					bFromNewGantt: true
 				};
 			}.bind(this));
-
+			
+			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
+				this._ganttChart.addStyleClass("resourceGanttWithTable");
+			}
+			
 			// dirty fix will be removed when evoplan completly moved to 1.84
 			if (parseFloat(sap.ui.getVersionInfo().version) === 1.71) {
 				this._axisTime.setZoomLevel(3);
@@ -765,6 +771,16 @@ sap.ui.define([
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
 				// Change
 				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, mParameters, sPath);
+			}else if (sButtonText === this.getResourceBundle().getText("xbut.buttonExecuteFunction") && !oSelectedItem.getSubmenu()) {
+				// Set Function
+				var oDemandPath = oModel.getProperty(sPath).Demand.__ref;
+				this.onGetAssignmentDemand(oDemandPath).then(function (oDemandData) {
+					var oSelectedDemandPath = [{
+						sPath: "/" + oDemandPath,
+						oData: oDemandData
+					}];
+					this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedDemandPath, mParameters);
+				}.bind(this));
 			} else {
 				if (sFunctionKey) {
 					this._oEventBus.publish("StatusSelectDialog", "changeStatusDemand", {
@@ -830,6 +846,24 @@ sap.ui.define([
 		},
 
 		/**
+		 * on press link of assignment in Gantt tree row
+		 * get parent row path and bind this path to the dialog or showing assignment information
+		 * @param oEvent
+		 */
+		onPressAssignmentLink: function (oEvent) {
+			var oSource = oEvent.getSource(),
+				oRowContext = oSource.getParent().getBindingContext();
+
+			if (oRowContext) {
+				this.assignmentPath = oRowContext.getPath();
+				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
+			} else {
+				var msg = this.getResourceBundle().getText("notFoundContext");
+				this.showMessageToast(msg);
+			}
+		},
+
+		/**
 		 * Similar to onAfterRendering, but this hook is invoked before the controller's View is re-rendered
 		 * (NOT before the first rendering! onInit() is used for that one!).
 		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
@@ -843,10 +877,55 @@ sap.ui.define([
 		 * This hook is the same one that SAPUI5 controls get after being rendered.
 		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
 		 */
-		//	onAfterRendering: function() {
-		//
-		//	},
+		onAfterRendering: function () {
+			var oTable = this.getView().byId("ganttResourceTreeTable"),
+				oBinding = oTable.getBinding("rows"),
+				oViewModel = this.getModel("viewModel"),
+				iSelectionPane = oViewModel.getProperty("/ganttSelectionPane");
 
+			// To show busy indicator when filter getting applied.
+			oBinding.attachDataRequested(function () {
+				oViewModel.setProperty("/ganttSettings/busy", true);
+			});
+			oBinding.attachDataReceived(function () {
+				oViewModel.setProperty("/ganttSettings/busy", false);
+				oViewModel.setProperty("/ganttSelectionPane", iSelectionPane);
+				this._ganttChart.setSelectionPanelSize(iSelectionPane);
+			}.bind(this));
+		},
+			/**
+		 * On click on expand the tree nodes gets expand to level 1
+		 * On click on collapse all the tree nodes will be collapsed to root.
+		 * @param oEvent
+		 */
+		onClickExpandCollapse: function (oEvent) {
+			var oButton = oEvent.getSource(),
+				oCustomData = oButton.getCustomData();
+
+			if (oCustomData[0].getValue() === "EXPAND" && this._treeTable) {
+				this._treeTable.expandToLevel(1);
+			} else {
+				this._treeTable.collapseAll();
+			}
+		},
+	/**
+		 * To fetch Demand data on Gantt Context Menu Set Function
+		 */
+		onGetAssignmentDemand: function (sPath) {
+			return new Promise(function (oResolve, oReject) {
+				this.byId("container").setBusy(true);
+				this.getModel().read("/" + sPath, {
+					success: function (oData) {
+						this.byId("container").setBusy(false);
+						oResolve(oData);
+					}.bind(this),
+					error: function (oError) {
+						this.byId("container").setBusy(false);
+						oReject(oError);
+					}
+				});
+			}.bind(this));
+		}
 		/**
 		 * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
 		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt

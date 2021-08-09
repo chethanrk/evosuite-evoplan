@@ -185,7 +185,7 @@ sap.ui.define([
 				sDateControl2,
 				oUserModel = this._component.getModel("user");
 
-			if (this._mParameters.bFromGantt) {
+			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
 				// if we decide to keep different date range for demand view and gantt view
 				sDateControl1 = oUserModel.getProperty("/GANT_START_DATE");
 				sDateControl2 = oUserModel.getProperty("/GANT_END_DATE");
@@ -327,7 +327,7 @@ sap.ui.define([
 		 */
 		_resetChanges: function (oEvent, sProperty) {
 			var oEventBus = sap.ui.getCore().getEventBus();
-			if (this._mParameters.bFromGantt) {
+			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
 				//	this._oModel.resetChanges();
 
 				//to reset "Manage absence" btn enable/disable
@@ -335,7 +335,7 @@ sap.ui.define([
 				this._oView.byId("idButtonreassign").setEnabled(false);
 				this._oView.byId("idButtonunassign").setEnabled(false);
 				this._oView.byId("idButtonCreUA").setEnabled(false);
-				if (this._mParameters.bFromGantt) {
+				if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
 					this._oView.byId("idButtonTimeAlloc").setEnabled(false);
 				}
 				if (this._mParameters.bFromMap) {
@@ -450,7 +450,7 @@ sap.ui.define([
 			this._oView.byId("idButtonreassign").setEnabled(false);
 			this._oView.byId("idButtonunassign").setEnabled(false);
 			this._oView.byId("idButtonCreUA").setEnabled(false);
-			if (this._mParameters.bFromGantt) {
+			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
 				this._oView.byId("idButtonTimeAlloc").setEnabled(false);
 			}
 			if (this._mParameters.bFromMap) {
