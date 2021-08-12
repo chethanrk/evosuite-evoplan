@@ -5,8 +5,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/Popup",
-		"sap/gantt/simple/CoordinateUtils",
-		"com/evorait/evoplan/model/Constants"
+	"sap/gantt/simple/CoordinateUtils",
+	"com/evorait/evoplan/model/Constants"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, Popup, CoordinateUtils, Constants) {
 	"use strict";
 
@@ -47,11 +47,11 @@ sap.ui.define([
 					bFromNewGantt: true
 				};
 			}.bind(this));
-			
+
 			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
 				this._ganttChart.addStyleClass("resourceGanttWithTable");
 			}
-			
+
 			// dirty fix will be removed when evoplan completly moved to 1.84
 			if (parseFloat(sap.ui.getVersionInfo().version) === 1.71) {
 				this._axisTime.setZoomLevel(3);
@@ -148,11 +148,15 @@ sap.ui.define([
 		 * @private
 		 */
 		_getDefaultFilters: function (mParameters) {
-			var oDateFrom, oDateTo, oUserModel = this.getModel("user"),
+			var oDateFrom, oDateTo, //oUserModel = this.getModel("user"),
 				aFilters = [];
 
-			oDateFrom = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE");
-			oDateTo = mParameters ? mParameters.dateTo : oUserModel.getProperty("/GANT_END_DATE");
+			//oDateFrom = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE");
+			//oDateTo = mParameters ? mParameters.dateTo : oUserModel.getProperty("/GANT_END_DATE");
+
+			//Fetching Dates from the DateRange Control
+			oDateFrom = this.getView().byId("idDateRangeGantt2").getDateValue();
+			oDateTo = this.getView().byId("idDateRangeGantt2").getSecondDateValue();
 
 			aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oDateTo)));
 			aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oDateFrom)));
@@ -163,8 +167,10 @@ sap.ui.define([
 		 * @private
 		 */
 		_defaultGanttHorizon: function () {
-			var oViewModel = this.getModel("viewModel");
-			this.changeGanttHorizonViewAt(oViewModel);
+			this._ganttChart.setAxisTimeStrategy(this._createGanttHorizon(this._axisTime.getZoomLevel(), {
+				StartDate: this.getModel("user").getProperty("/GANT_START_DATE"),
+				EndDate: this.getModel("user").getProperty("/GANT_END_DATE")
+			}));
 		},
 		/**
 		 * On Drop on the resource tree rows or on the Gantt chart
@@ -528,7 +534,12 @@ sap.ui.define([
 		 * on click on today adjust the view of Gantt horizon.
 		 */
 		onPressToday: function (oEvent) {
-			this.changeGanttHorizonViewAt(this.getModel("viewModel"), this._axisTime.getZoomLevel(), this._axisTime);
+			//	this.changeGanttHorizonViewAt(this.getModel("viewModel"), this._axisTime.getZoomLevel(), this._axisTime);
+			this._ganttChart.setAxisTimeStrategy(this._createGanttHorizon(this._axisTime.getZoomLevel(), {
+				StartDate: this.getView().byId("idDateRangeGantt2").getDateValue(),
+				EndDate: this.getView().byId("idDateRangeGantt2").getSecondDateValue()
+			}));
+
 		},
 
 		/**
@@ -771,7 +782,7 @@ sap.ui.define([
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
 				// Change
 				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, mParameters, sPath);
-			}else if (sButtonText === this.getResourceBundle().getText("xbut.buttonExecuteFunction") && !oSelectedItem.getSubmenu()) {
+			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonExecuteFunction") && !oSelectedItem.getSubmenu()) {
 				// Set Function
 				var oDemandPath = oModel.getProperty(sPath).Demand.__ref;
 				this.onGetAssignmentDemand(oDemandPath).then(function (oDemandData) {
@@ -893,7 +904,7 @@ sap.ui.define([
 				this._ganttChart.setSelectionPanelSize(iSelectionPane);
 			}.bind(this));
 		},
-			/**
+		/**
 		 * On click on expand the tree nodes gets expand to level 1
 		 * On click on collapse all the tree nodes will be collapsed to root.
 		 * @param oEvent
@@ -908,7 +919,7 @@ sap.ui.define([
 				this._treeTable.collapseAll();
 			}
 		},
-	/**
+		/**
 		 * To fetch Demand data on Gantt Context Menu Set Function
 		 */
 		onGetAssignmentDemand: function (sPath) {
@@ -925,7 +936,18 @@ sap.ui.define([
 					}
 				});
 			}.bind(this));
-		}
+		},
+		/**
+		 * Adjusting Gantt Horizon as per the selected DateRange
+		 * @Author Chethan RK
+		 */
+		onChangeDateRange: function () {
+			this._setDefaultTreeDateRange();
+			this._ganttChart.setAxisTimeStrategy(this._createGanttHorizon(this._axisTime.getZoomLevel(), {
+				StartDate: this.getView().byId("idDateRangeGantt2").getDateValue(),
+				EndDate: this.getView().byId("idDateRangeGantt2").getSecondDateValue()
+			}));
+		},
 		/**
 		 * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
 		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
