@@ -185,10 +185,14 @@ sap.ui.define([
 				sDateControl2,
 				oUserModel = this._component.getModel("user");
 
-			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
+			if (this._mParameters.bFromGantt) {
 				// if we decide to keep different date range for demand view and gantt view
 				sDateControl1 = oUserModel.getProperty("/GANT_START_DATE");
 				sDateControl2 = oUserModel.getProperty("/GANT_END_DATE");
+			} else if (this._mParameters.bFromNewGantt) {
+				// For New Gantt fetching the Dates from DateRange Selection
+				sDateControl1 = this._oView.byId("idDateRangeGantt2").getDateValue();
+				sDateControl2 = this._oView.byId("idDateRangeGantt2").getSecondDateValue();
 			} else {
 				sDateControl1 = oViewFilterSettings.getDateRange()[0];
 				sDateControl2 = oViewFilterSettings.getDateRange()[1];
