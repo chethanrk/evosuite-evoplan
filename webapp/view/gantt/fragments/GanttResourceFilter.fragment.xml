@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
 	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-	<Dialog id="idGanttDemandFilterDialog" title="{i18n>xtit.ganttFilters}" draggable="true">
+	<Dialog id="idGanttDemandFilterDialog" title="{i18n>xtit.ganttFilters}" draggable="true" afterClose="onAfterClose">
 		<content>
 			<smartFilterBar:SmartFilterBar id="ganttResourceTreeFilterBar" class="treeTableFilterBar"
 				persistencyKey="{viewModel>/persistencyKeyGanttDemandFilter}" considerSelectionVariants="true" entitySet="{viewModel>/ganttTreeSet}"
