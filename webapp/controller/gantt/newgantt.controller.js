@@ -310,10 +310,11 @@ sap.ui.define([
 			// to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page", "ganttSplit");
 
-			if (oParams.shape && oParams.shape.sParentAggregationName === "shapes2") {
-				//	if (oParams.shape && oParams.shape.sParentAggregationName === "shapes3") {
+		//	if (oParams.shape && oParams.shape.sParentAggregationName === "shapes2") {
+				if (oParams.shape && oParams.shape.sParentAggregationName === "shapes3") {
 				//	this._updateAssignmentModel(oData.Guid).then(function (oAssignmentObj) {
-				this.getOwnerComponent().GanttActions._updateAssignmentModel(oData.AssignmentGuid).then(function (oAssignmentObj) {
+			//	this.getOwnerComponent().GanttActions._updateAssignmentModel(oData.AssignmentGuid).then(function (oAssignmentObj) {
+				this.getOwnerComponent().GanttActions._updateAssignmentModel(oData.Guid).then(function (oAssignmentObj) {
 					if (oAssignmentObj.AllowChange) {
 						oAssignmentObj.DateFrom = oParams.newTime[0];
 						oAssignmentObj.DateTo = oParams.newTime[1];
@@ -343,13 +344,13 @@ sap.ui.define([
 				sCurrentRoute = oAppView.getProperty("/currentRoute"),
 				oModel, sPath, sAssignGuid, sStatus;
 
-			if (oShape && oShape.sParentAggregationName === "shapes2") {
-				//	if (oShape && oShape.sParentAggregationName === "shapes3") {
+		//	if (oShape && oShape.sParentAggregationName === "shapes2") {
+					if (oShape && oShape.sParentAggregationName === "shapes3") {
 				this._selectedShapeContext = oShape.getBindingContext();
 				oModel = this._selectedShapeContext.getModel();
 				sPath = this._selectedShapeContext.getPath();
-				//	sAssignGuid = oModel.getProperty(sPath).Guid;
-				sAssignGuid = oModel.getProperty(sPath).AssignmentGuid;
+				sAssignGuid = oModel.getProperty(sPath).Guid;
+			//	sAssignGuid = oModel.getProperty(sPath).AssignmentGuid;
 				sStatus = oModel.getProperty(sPath).DEMAND_STATUS;
 				if (!this._menu || sCurrentRoute !== this._firstVisit) {
 					this._menu = sap.ui.xmlfragment(
@@ -413,7 +414,8 @@ sap.ui.define([
 					break;
 				}
 			}
-			if (oShape && oShape.sParentAggregationName === "shapes2") {
+		//	if (oShape && oShape.sParentAggregationName === "shapes2") {
+					if (oShape && oShape.sParentAggregationName === "shapes3") {
 				// to identify the action done on respective page
 				localStorage.setItem("Evo-Action-page", "ganttSplit");
 				if (oContext) {
