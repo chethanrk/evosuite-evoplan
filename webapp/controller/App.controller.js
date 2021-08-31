@@ -94,31 +94,60 @@ sap.ui.define([
 				oRouter.navTo("demands", {});
 				break;
 			case oResourceBundle.getText("xbut.pageAssetManager"):
-				oRouter.navTo("assetManager", {
+				if(this._routeValidation("ASSET_PLANNING_ENABLED")){
+					oRouter.navTo("assetManager", {
 					assets: "NA"
-				});
+					});
+					break;
+				}
+				oRouter.navTo("empty", {});
 				break;
+				
 			case oResourceBundle.getText("xbut.pageWeeklyPlanner"):
 				//oRouter.navTo("TestFull", {});
 				break;
 			case oResourceBundle.getText("xbut.pageMessageCockpit"):
-				oRouter.navTo("messageCockpit", {});
+				if(this._routeValidation("EMP_ENABLED")){
+					oRouter.navTo("messageCockpit", {});
+					break;
+				}
+				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.pageGanttChart"):
-				oRouter.navTo("gantt", {});
+				if(this._routeValidation("ENABLE_GANTT")){
+					oRouter.navTo("gantt", {});
+					break;
+				}
+				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.pageGanttChartSplit"):
-				oRouter.navTo("ganttSplit", {});
-				window.open(sRoute, "_blank");
+				if(this._routeValidation("ENABLE_GANTT")){
+					oRouter.navTo("ganttSplit", {});
+					window.open(sRoute, "_blank");
+					break;
+				}
+				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.pageMap"):
-				oRouter.navTo("map", {});
+				if(this._routeValidation("ENABLE_MAPS")){
+					oRouter.navTo("map", {});
+					break;
+				}
+				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.manageResources"):
-				oRouter.navTo("manageResources", {});
+				if(this._routeValidation("ENABLE_MANAGERESOURCE")){
+					oRouter.navTo("manageResources", {});
+					break;
+				}
+				oRouter.navTo("empty", {});
 				break;
             case oResourceBundle.getText("xbut.pageNewGantt"):
-				oRouter.navTo("newgantt", {});
+				if(this._routeValidation("ENABLE_GANTT")){
+					oRouter.navTo("newgantt", {});
+					break;
+				}
+				oRouter.navTo("empty", {});
 				break;
 			default:
 				oRouter.navTo("demands", {});
@@ -367,6 +396,10 @@ sap.ui.define([
 			// }.bind(this)).catch(function (data) {
 			// 	//
 			// }.bind(this));
+		},
+		_routeValidation : function(parameter){
+				var oUserModel = this.getModel("user");
+				return oUserModel.getProperty("/"+parameter);
 		},
 
 		/**

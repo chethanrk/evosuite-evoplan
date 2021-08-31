@@ -194,6 +194,12 @@ sap.ui.define([
 				timeAllocation: [],
 				manageAbsence: []
 			}), "availabilityGroup");
+			
+
+			this.setModel(models.createHelperModel({
+				navLinks: {}
+			}), "templateProperties");
+
 
 			// Message popover link
 			var oLink = new Link({
@@ -265,6 +271,33 @@ sap.ui.define([
 			// Not able load more than 100 associations
 			this.getModel().setSizeLimit(600);
 
+			this._setApp2AppLinks();
+
+		},
+
+		/**
+		 * read app2app navigation links from backend
+		 */
+		_setApp2AppLinks: function () {
+			if (sap.ushell && sap.ushell.Container) {
+				this.getModel("viewModel").setProperty("/launchMode", Constants.LAUNCH_MODE.FIORI);
+			}
+			var oFilter = new Filter("LaunchMode", FilterOperator.EQ, this.getModel("viewModel").getProperty("/launchMode")),
+				mProps = {};
+
+			this.oTemplatePropsProm = new Promise(function (resolve) {
+				this._getData("/NavigationLinksSet", [oFilter])
+					.then(function (data) {
+						data.results.forEach(function (oItem) {
+							if (oItem.Value1 && Constants.APPLICATION[oItem.ApplicationId]) {
+								oItem.Property = oItem.Value2 || Constants.PROPERTY[oItem.ApplicationId];
+								mProps[oItem.Property] = oItem;
+							}
+						}.bind(this));
+						this.getModel("templateProperties").setProperty("/navLinks/", mProps);
+						resolve(mProps);
+					}.bind(this));
+			}.bind(this));
 		},
 
 		/**
