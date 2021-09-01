@@ -103,7 +103,7 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				oData = oModel.getProperty(sPath);
 
-			oRouter.navTo("detail", {
+			oRouter.navTo("DemandDetail", {
 				guid: oData.Guid
 			});
 		},
