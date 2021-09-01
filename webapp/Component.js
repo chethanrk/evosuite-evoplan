@@ -290,8 +290,10 @@ sap.ui.define([
 					.then(function (data) {
 						data.results.forEach(function (oItem) {
 							if (oItem.Value1 && Constants.APPLICATION[oItem.ApplicationId]) {
-								oItem.Property = oItem.Value2 || Constants.PROPERTY[oItem.ApplicationId];
-								mProps[oItem.Property] = oItem;
+								if(Constants.PROPERTY || oItem.Value2 !== ""){
+									oItem.Property = oItem.Value2 || Constants.PROPERTY[oItem.ApplicationId];
+									mProps[oItem.Property] = oItem;
+								}
 							}
 						}.bind(this));
 						this.getModel("templateProperties").setProperty("/navLinks/", mProps);
