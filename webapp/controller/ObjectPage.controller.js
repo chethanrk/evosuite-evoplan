@@ -27,14 +27,15 @@ sap.ui.define([
 
 					var sRouteName = oEvent.getParameter("name"),
 						oArgs = oEvent.getParameter("arguments"),
-						sViewName = null;
+						sViewName = null,
+						mParams = "";
 
 					this.getOwnerComponent().oTemplatePropsProm.then(function () {
 						//create Demand detail view
 						if (sRouteName === "DemandDetail") {
 							//Demand detail view
 							sViewName = "com.evorait.evoplan.view.templates.DemandDetails#DemandDetailTabs";
-							var mParams = {
+							mParams = {
 								Guid: window.decodeURIComponent(oArgs.guid)
 							};
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageDemands"));
@@ -44,8 +45,8 @@ sap.ui.define([
 						else if (sRouteName === "object") {
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageDemands"));
 						} else if (sRouteName === "ganttDemandDetails") {
-								sViewName = "com.evorait.evoplan.view.templates.DemandDetails#DemandDetailTabs";
-							var mParams = {
+							sViewName = "com.evorait.evoplan.view.templates.DemandDetails#DemandDetailTabs";
+							mParams = {
 								Guid: window.decodeURIComponent(oArgs.guid)
 							};
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageGanttChart"));
@@ -53,7 +54,7 @@ sap.ui.define([
 						} else if (sRouteName === "splitDemandDetails" || sRouteName === "splitGanttDetails") {
 							//Demand detail view
 							sViewName = "com.evorait.evoplan.view.templates.DemandDetails#DemandDetailTabs";
-							var mParams = {
+							mParams = {
 								Guid: window.decodeURIComponent(oArgs.guid)
 							};
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageGanttChartSplit"));
@@ -61,7 +62,7 @@ sap.ui.define([
 						} else if (sRouteName === "mapDemandDetails") {
 							//Demand detail view
 							sViewName = "com.evorait.evoplan.view.templates.DemandDetails#DemandDetailTabs";
-							var mParams = {
+							mParams = {
 								Guid: window.decodeURIComponent(oArgs.guid)
 							};
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageMap"));
@@ -73,7 +74,7 @@ sap.ui.define([
 				}.bind(this));
 			}
 		},
-		
+
 		/**
 		 * Object after rendering
 		 */
