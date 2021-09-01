@@ -1,0 +1,49 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout"
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
+		<template:alias name=".evoAH" value="com.evorait.evoplan.model.AnnotationHelper">
+			<template:with path="templateProperties>/" var="tempProps">
+				<template:repeat list="{headerDetails>}">
+					<template:with path="headerDetails>Facets" var="headerFacets">
+						<template:repeat list="{headerFacets>}">
+							<template:with path="headerFacets>Target" helper=".AH.resolvePath" var="target">
+								<template:with path="target>Data" var="data">
+									<layout:VerticalLayout>
+										<template:repeat list="{data>}">
+											<HBox class="sapUiTinyMarginTopBottom" width="100%">
+												<template:if test="{= ${data>Core.LongDescription} || ${data>Org.OData.Core.V1.LongDescription} }">
+													<template:then>
+														<ObjectStatus title="{= '{= ${' + ${path : 'data>Value/Path'} + '/##com.sap.vocabularies.Common.v1.Label/String} }' }"
+															text="{path:'data>Core.LongDescription',formatter:'.AH.format'}{path:'data>Org.OData.Core.V1.LongDescription',formatter:'.AH.format'} {= '{= ${' + ${path:'data>Value/Path'} + '}.length > 0 ? \'(\' + ${' + ${path:'data>Value/Path'} + '} + \')\': \'\'}'}"
+															active="{:= ${data>Value/Path} in ${tempProps>/navLinks} }"
+															state="{:= '{parts: [{path: \''+ ${data>Criticality/Path} +'\'},{value:\''+ ${parts: [{path:'data>Value/Path'}, {path:'tempProps>/navLinks'}], formatter: 'com.evorait.evoplan.model.AnnotationHelper.isInNavLinks'} +'\', model:\'viewModel\'}], formatter: \'.formatter.formatStatusState\'}' }"
+															press="onPressObjectStatus">
+															<customData>
+																<core:CustomData key="url" value="{data>Value/Path}"/>
+															</customData>
+														</ObjectStatus>
+													</template:then>
+													<template:else>
+														<ObjectStatus title="{= '{= ${' + ${path : 'data>Value/Path'} + '/##com.sap.vocabularies.Common.v1.Label/String} }' }"
+															text="{path:'data>Value',formatter:'.AH.format'}" active="{:= ${data>Value/Path} in ${tempProps>/navLinks} }"
+															state="{:= '{parts: [{path: \''+ ${data>Criticality/Path} +'\'},{value:\''+ ${parts: [{path:'data>Value/Path'}, {path:'tempProps>/navLinks'}], formatter: 'com.evorait.evoplan.model.AnnotationHelper.isInNavLinks'} +'\', model:\'viewModel\'}], formatter: \'.formatter.formatStatusState\'}' }"
+															press="onPressObjectStatus">
+															<customData>
+																<core:CustomData key="url" value="{data>Value/Path}"/>
+															</customData>
+														</ObjectStatus>
+													</template:else>
+												</template:if>
+											</HBox>
+										</template:repeat>
+									</layout:VerticalLayout>
+								</template:with>
+							</template:with>
+						</template:repeat>
+					</template:with>
+				</template:repeat>
+			</template:with>
+		</template:alias>
+	</template:alias>
+</core:FragmentDefinition>

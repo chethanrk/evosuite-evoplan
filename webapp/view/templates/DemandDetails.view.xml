@@ -1,0 +1,85 @@
+<mvc:View controllerName="com.evorait.evoplan.controller.DemandDetails" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:uxap="sap.uxap" xmlns:layout="sap.ui.layout" xmlns:smartField="sap.ui.comp.smartfield" xmlns:blocks="com.evorait.evoplan.block"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
+		<uxap:ObjectPageLayout id="demandDetailPage" enableLazyLoading="false" isChildPage="true" showFooter="false" busy="{viewModel>/busy}"
+			busyIndicatorDelay="{viewModel>/delay}">
+			<uxap:headerTitle>
+				<uxap:ObjectPageHeader class="sapUiNoContentPadding" objectImageURI="{STATUS_ICON}" objectImageShape="Circle" objectTitle="{DemandDesc}"
+					objectSubtitle="{ExtKey}" objectImageAlt="{i18n>xfld.demandName}" id="ObjectPageLayoutHeaderTitle">
+					<uxap:actions>
+						<uxap:ObjectPageHeaderActionButton id="idAssignHeaderAction" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" type="Emphasized"
+							hideIcon="false" hideText="false" press="onClickAssign" visible="{ALLOW_ASSIGN}">
+							<uxap:dependents>
+								<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.ActionSheetTemplate" type="XML"/>
+							</uxap:dependents>
+						</uxap:ObjectPageHeaderActionButton>
+						<uxap:ObjectPageHeaderActionButton id="idSetFunctionHeaderAction" text="{i18n>xbut.buttonExecuteFunction}"
+							tooltip="{i18n>xbut.buttonExecuteFunction}" type="Emphasized" hideIcon="false" hideText="false" press="onClickSetFunction"
+							visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_SET_FUNCTION'}], formatter: '.getSetFunction' }">
+							<!--<uxap:dependents>-->
+							<!--	<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.ActionSheetTemplate" type="XML"/>-->
+							<!--</uxap:dependents>-->
+						</uxap:ObjectPageHeaderActionButton>
+						<uxap:ObjectPageHeaderActionButton id="idStatusHeaderAction" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
+							visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_CHANGE_STATUS'}], formatter: '.getVisible' }"
+							hideIcon="false" hideText="false" press="onClickAction"/>
+						<Button text="{i18n>xbut.buttonBack}" tooltip="{i18n>xbut.buttonBack}" type="Default" press="navBack"/>
+					</uxap:actions>
+					<uxap:breadcrumbs>
+						<Breadcrumbs currentLocationText="{i18n>xtit.demandDetail}">
+							<Link text="{viewModel>/detailPageBreadCrum}" press="navBack"/>
+						</Breadcrumbs>
+					</uxap:breadcrumbs>
+				</uxap:ObjectPageHeader>
+			</uxap:headerTitle>
+			<uxap:headerContent>
+				<template:with path="meta>com.sap.vocabularies.UI.v1.HeaderFacets#DemandDetailHeader" helper=".AH.resolvePath" var="headerDetails">
+					<core:Fragment fragmentName="com.evorait.evoplan.view.templates.ObjectHeadTemplate" type="XML"/>
+				</template:with>
+			</uxap:headerContent>
+			<uxap:sections>
+				<template:with path="meta>com.sap.vocabularies.UI.v1.Facets#DemandDetailTabs" helper=".AH.resolvePath" var="contentTabs">
+					<template:repeat list="{contentTabs>}">
+						<template:if test="{:= (${contentTabs>Org.OData.Core.V1.Description/String} === 'Form')}">
+							<template:then>
+								<uxap:ObjectPageSection title="{path:'contentTabs>com.sap.vocabularies.Common.v1.Label',formatter:'.AH.format'}">
+									<uxap:subSections>
+										<uxap:ObjectPageSubSection>
+											<uxap:blocks>
+												<template:with path="contentTabs>Facets" var="facets">
+													<core:Fragment fragmentName="com.evorait.evoplan.view.templates.SmartFormTemplate" type="XML"/>
+												</template:with>
+											</uxap:blocks>
+										</uxap:ObjectPageSubSection>
+									</uxap:subSections>
+								</uxap:ObjectPageSection>
+							</template:then>
+							<template:elseif test="{:= (${contentTabs>Org.OData.Core.V1.Description/String} === 'Table')}">
+								<uxap:ObjectPageSection title="{path:'contentTabs>com.sap.vocabularies.Common.v1.Label',formatter:'.AH.format'}">
+									<uxap:subSections>
+										<uxap:ObjectPageSubSection>
+											<uxap:blocks>
+												<template:if test="{:= (${contentTabs>Org.OData.Core.V1.LongDescription/String} === 'AssignmentTab')}">
+													<template:then>
+														<blocks:sections.AssignmentBlock onRowClick="onRowClick"/>
+													</template:then>
+													<template:elseif test="{:= (${contentTabs>Org.OData.Core.V1.LongDescription/String} === 'QualificationsTab')}">
+														<blocks:sections.DemandQualificationBlock/>
+													</template:elseif>
+													<template:elseif test="{:= (${contentTabs>Org.OData.Core.V1.LongDescription/String} === 'ComponentDetailsTab')}">
+														<blocks:sections.DemandComponentBlock/>
+													</template:elseif>
+												</template:if>
+											</uxap:blocks>
+										</uxap:ObjectPageSubSection>
+									</uxap:subSections>
+								</uxap:ObjectPageSection>
+							</template:elseif>
+						</template:if>
+					</template:repeat>
+				</template:with>
+			</uxap:sections>
+		</uxap:ObjectPageLayout>
+	</template:alias>
+</mvc:View>

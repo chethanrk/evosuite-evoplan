@@ -1,0 +1,75 @@
+<mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1" displayBlock="true" height="100%">
+	<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
+		<template:alias name=".evoAH" value="com.evorait.evoplan.model.AnnotationHelper">
+			<template:with path="templateProperties>/" var="tempProps">
+				<template:with path="tempProps>/annotationPath" helper="com.evorait.evoplan.model.AnnotationHelper.resolveObjectContentPath"
+					var="contentTabs">
+					<template:if test="{:= ${parts:[{path:'contentTabs>'},{path:'tempProps>/'}], formatter:'.evoAH.isSplittedView'} }">
+						<template:then>
+							<layout:ResponsiveSplitter defaultPane="default">
+								<layout:PaneContainer>
+									<template:repeat list="{contentTabs>}">
+										<template:if test="{:= ${contentTabs>Core.Description/String} === 'Tree' || ${contentTabs>Org.OData.Core.V1.Description/String} === 'Tree'}">
+											<template:then>
+												<layout:SplitPane requiredParentWidth="200">
+													<Page fieldGroupIds="pageSelectionTable" showHeader="false" showFooter="false">
+														<template:repeat list="{tempProps>/tempData/splittedViewTableConfigs}" var="tableDetails">
+															<template:if
+																test="{:= ${tableDetails>tabName} === ${contentTabs>Core.Description/String} || ${tableDetails>tabName} === ${contentTabs>Org.OData.Core.V1.Description/String} }">
+																<core:Fragment fragmentName="com.evorait.evoplan.view.templates.SmartTableTemplate" type="XML"/>
+															</template:if>
+														</template:repeat>
+														<layoutData>
+															<layout:SplitterLayoutData size="30%" minSize="200px"/>
+														</layoutData>
+													</Page>
+												</layout:SplitPane>
+											</template:then>
+											<template:elseif
+												test="{:= ${contentTabs>Core.Description/String} === 'Table' || ${contentTabs>Org.OData.Core.V1.Description/String} === 'Table'}">
+												<layout:SplitPane requiredParentWidth="200">
+													<Page fieldGroupIds="pageSelectionTable" showHeader="true" showFooter="false">
+														<headerContent>
+															<SearchField fieldGroupIds="searchFieldSelectionTable" width="90%" class="sapUiMediumMarginBeginEnd"
+																search="onSearchSplittedViewSelectionTable"/>
+														</headerContent>
+														<template:repeat list="{tempProps>/tempData/splittedViewTableConfigs}" var="tableDetails">
+															<template:if
+																test="{:= ${tableDetails>tabName} === ${contentTabs>Core.Description/String} || ${tableDetails>tabName} === ${contentTabs>Org.OData.Core.V1.Description/String} }">
+																<!--Todo implement selection tabs for all items list and selected items list-->
+																<core:Fragment fragmentName="com.evorait.evoplan.view.templates.SelectionListTabs" type="XML"/>
+															</template:if>
+														</template:repeat>
+														<layoutData>
+															<layout:SplitterLayoutData size="auto"/>
+														</layoutData>
+													</Page>
+												</layout:SplitPane>
+											</template:elseif>
+										</template:if>
+									</template:repeat>
+								</layout:PaneContainer>
+							</layout:ResponsiveSplitter>
+						</template:then>
+						<template:else>
+							<template:repeat list="{contentTabs>}">
+								<template:with path="contentTabs>Facets" var="facets">
+									<template:if
+										test="{:= ${contentTabs>Core.Description/String} === 'Wizard' || ${contentTabs>Org.OData.Core.V1.Description/String} === 'Wizard'}">
+										<template:then>
+											<core:Fragment fragmentName="com.evorait.evoplan.view.templates.WizardForm" type="XML"/>
+										</template:then>
+										<template:else>
+											<core:Fragment fragmentName="com.evorait.evoplan.view.templates.SmartFormTemplate" type="XML"/>
+										</template:else>
+									</template:if>
+								</template:with>
+							</template:repeat>
+						</template:else>
+					</template:if>
+				</template:with>
+			</template:with>
+		</template:alias>
+	</template:alias>
+</mvc:View>
