@@ -15,7 +15,7 @@ sap.ui.define([
 		onInit: function () {
 			this.oViewModel = this.getModel("viewModel");
 			this.oRouter = this.getRouter();
-			var oResourceBundle = this.getResourceBundle();
+			this.oResourceBundle = this.getResourceBundle();
 			this.onRouteMapping();
 
 		},
@@ -37,20 +37,20 @@ sap.ui.define([
 							var mParams = {
 								Guid: window.decodeURIComponent(oArgs.guid)
 							};
-							this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageDemands"));
+							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageDemands"));
 							this._onRouteMatched(oEvent, sViewName, "DemandSet", mParams);
 						}
 						// setting the bread crum value xtit.itemListTitle
 						if (sRouteName === "object") {
-							this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageDemands"));
+							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageDemands"));
 						} else if (sRouteName === "ganttDemandDetails") {
-							this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageGanttChart"));
+							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageGanttChart"));
 						} else if (sRouteName === "splitDemandDetails" || sRouteName === "splitGanttDetails") {
-							this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageGanttChartSplit"));
+							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageGanttChartSplit"));
 						} else if (sRouteName === "mapDemandDetails") {
-							this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageMap"));
+							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageMap"));
 						} else {
-							this.getModel("viewModel").setProperty("/detailPageBreadCrum", oResourceBundle.getText("xbut.pageAssetManager"));
+							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageAssetManager"));
 						}
 					}.bind(this));
 				}.bind(this));

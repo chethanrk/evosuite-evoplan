@@ -16,7 +16,8 @@ sap.ui.define([
 		 */
 		onInit: function () {
 			this.oViewModel = this.getModel("viewModel");
-			
+
+			this._eventBus = sap.ui.getCore().getEventBus();
 			//event registration for refreshing the context in case any change in the view
 			this._eventBus.subscribe("BaseController", "refreshDemandOverview", this._triggerRefreshDemand, this);
 
