@@ -451,7 +451,7 @@ sap.ui.define([
 					guid: sDemandGuid
 				});
 			} else {
-				oRouter.navTo("detail", {
+				oRouter.navTo("DemandDetail", {
 					guid: sDemandGuid
 				});
 			}
