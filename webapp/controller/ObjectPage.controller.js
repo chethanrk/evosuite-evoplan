@@ -41,7 +41,7 @@ sap.ui.define([
 							this._onRouteMatched(oEvent, sViewName, "DemandSet", mParams);
 						}
 						// setting the bread crum value xtit.itemListTitle
-						if (sRouteName === "object") {
+						else if (sRouteName === "object") {
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageDemands"));
 						} else if (sRouteName === "ganttDemandDetails") {
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageGanttChart"));
