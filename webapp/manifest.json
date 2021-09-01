@@ -178,11 +178,11 @@
 						"resourceTree"
 					]
 				}, {
-					"pattern": "Demand/{guid}",
-					"name": "detail",
+					"pattern":  "Demand/{guid}",
+					"name": "DemandDetail",
 					"target": [
 						"resourceTree",
-						"detail"
+						"DemandDetail"
 					]
 				}, {
 					"pattern": "AssetPlanning/{assets}/:withChildren:",
@@ -453,6 +453,14 @@
 					"controlId": "topPanel",
 					"parent": "splitVerNavigation",
 					"viewLevel": 4
+				},
+				"DemandDetail": {
+					"viewType": "XML",
+					"viewName": "ObjectPage",
+					"viewPath": "com.evorait.evoplan.view",
+					"viewLevel": 2,
+					"controlId": "rightPanel",
+					"parent": "splitHorNavigation"
 				}
 			}
 		}

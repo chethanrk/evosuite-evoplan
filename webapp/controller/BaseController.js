@@ -284,12 +284,13 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (oParameter.bFromManageResource) {
 				eventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
-			} else if (oParameter.bFromManageResourceRemoveAssignments) {
+			}
+			else if (oParameter.bFromManageResourceRemoveAssignments) {
 				eventBus.publish("ManageResourcesActionsController", "refreshAssignmentDialog", {});
-			} else if (oParameter.bFromNewGantt) {
+			}else if (oParameter.bFromNewGantt) {
 				eventBus.publish("BaseController", "refreshGanttChart", {});
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			}
+			} 
 
 		},
 		/**
@@ -613,7 +614,7 @@ sap.ui.define([
 				sUri = sServicePath + sUri;
 				window.open(sUri, "_blank");
 			} else {
-				//Logic for Navigation in Fiori Launchpad
+				 //Logic for Navigation in Fiori Launchpad
 				if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
 					sAdditionInfo = oAppInfo.Value1 || "";
 					sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];

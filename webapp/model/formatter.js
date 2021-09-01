@@ -1,8 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/format/DateFormat",
-	"com/evorait/evoplan/model/utilities"
-], function (DateFormat, utilities) {
+	"com/evorait/evoplan/model/utilities",
+	"com/evorait/evoplan/model/Constants"
+], function (DateFormat, utilities, Constants) {
 	"use strict";
+
+	var mCriticallyStates = Constants.CRITICALLYSTATES;
 
 	var resourceFormats = utilities.getResourceFormats(),
 		resourceAvailability = utilities.getResourceAvailability();
@@ -777,5 +780,15 @@ sap.ui.define([
 			}
 			return true;
 		},
+
+		formatStatusState: function (sValue, isInNavLinks) {
+			if (mCriticallyStates.hasOwnProperty(sValue)) {
+				return mCriticallyStates[sValue].state;
+			} else if (isInNavLinks === "true") {
+				return mCriticallyStates["info"].state;
+			} else {
+				return mCriticallyStates["0"].state;
+			}
+		}
 	};
 });
