@@ -32,7 +32,7 @@
 								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities">
 									<vk:content>
 										<vbm:GeoMap id="idGeoMap" lassoSelection="true" rectangularSelection="true" drop="onDrop" select="onSelectSpots"
-											initialZoom="{user>/MAP_INITIAL_ZOOM}" initialPosition="{user>/MAP_INITIAL_POSITION}">
+											initialZoom="{user>/DEFAULT_MAP_INITIAL_ZOOM}" initialPosition="{user>/DEFAULT_MAP_INITIAL_POSITION}">
 											<vbm:vos>
 												<vbm:Routes items="{viewModel>/mapSettings/routeData}">
 													<vbm:items>
@@ -50,9 +50,9 @@
 												select="onSelect" deselect="onDeselect">
 													<vbm:items>
 														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0) 	position="{LONGITUDE};{LATITUDE};0"-->
-														<vbm:Spot selectColor="{user>/MAP_SELECTED_PIN_COLOUR}" contentColor="{MAP_MARKER_COLOUR}" hotScale="1.1;1.1;1.1"
+														<vbm:Spot selectColor="{user>/DEFAULT_MAP_SELECTED_PIN_COLOR}" contentColor="{MAP_MARKER_COLOUR}" hotScale="1.1;1.1;1.1"
 															tooltip="{DEMAND_KEY}" type="Inactive" select="{IS_SELECTED}"
-															scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="{user>/MAP_MARKER_ICON}" contentSize="25rem" changeable="true"
+															scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="{user>/DEFAULT_MAP_MARKER_ICON}" contentSize="25rem" changeable="true"
 															position="{parts:[{path:'LONGITUDE'}, {path:'LATITUDE'} ], formatter:'.formatter.formatMapSpot'}" contextMenu="onContextMenu">
 															<vbm:customData>
 																<core:CustomData key='Status' value='{Status}'/>

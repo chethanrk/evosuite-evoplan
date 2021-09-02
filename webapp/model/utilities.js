@@ -36,8 +36,8 @@ sap.ui.define([
 			getDateEnd: function () {
 				return moment().endOf("isoWeek").toDate();
 			},
-			configStartDate:"/DAILYVIEW_STARTDATE",
-			configStartEnd:"/DAILYVIEW_ENDDATE"
+			configStartDate:"/DEFAULT_DAILYVIEW_STARTDATE",
+			configStartEnd:"/DEFAULT_DAILYVIEW_ENDDATE"
 		},
 		TIMEWEEK: {
 			title: "H5",
@@ -49,8 +49,8 @@ sap.ui.define([
 			getDateEnd: function () {
 				return moment().endOf("month").toDate();
 			},
-			configStartDate:"/WEEKLYVIEW_STARTDATE",
-			configStartEnd:"/WEEKLYVIEW_ENDDATE"
+			configStartDate:"/DEFAULT_WEEKLYVIEW_STARTDATE",
+			configStartEnd:"/DEFAULT_WEEKLYVIEW_ENDDATE"
 		},
 		TIMEMONTH: {
 			title: "H5",
@@ -64,8 +64,8 @@ sap.ui.define([
 				var d = moment().endOf("month");
 				return d.add(2, "months").endOf("month").toDate();
 			},
-			configStartDate:"/MONTHLYVIEW_STARTDATE",
-			configStartEnd:"/MONTHLYVIEW_ENDDATE"
+			configStartDate:"/DEFAULT_MONTHLYVIEW_STARTDATE",
+			configStartEnd:"/DEFAULT_MONTHLYVIEW_ENDDATE"
 		},
 		TIMEHOUR:{
 			calendarView: "Hour"
@@ -82,8 +82,8 @@ sap.ui.define([
 				var d = moment().endOf("year");
 				return d.add(20, "years").toDate();
 			},
-			configStartDate:"/SIMPLEVIEW_STARTDATE",
-			configStartEnd:"/SIMPLEVIEW_ENDDATE"
+			configStartDate:"/DEFAULT_SIMPLEVIEW_STARTDATE",
+			configStartEnd:"/DEFAULT_SIMPLEVIEW_ENDDATE"
 		},
 		ASSET : {
             icon: "sap-icon://functional-location"

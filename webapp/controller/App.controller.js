@@ -94,7 +94,7 @@ sap.ui.define([
 				oRouter.navTo("demands", {});
 				break;
 			case oResourceBundle.getText("xbut.pageAssetManager"):
-				if(this._routeValidation("ASSET_PLANNING_ENABLED")){
+				if(this._routeValidation("ENABLE_ASSET_PLANNING")){
 					oRouter.navTo("assetManager", {
 					assets: "NA"
 					});

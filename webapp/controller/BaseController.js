@@ -459,7 +459,7 @@ sap.ui.define([
 		 */
 		isAssignable: function (mParameters) {
 			var oModel = this.getModel("user"),
-				sPoolFunction = oModel.getProperty("/POOL_FUNCTION_ENABLED"),
+				sPoolFunction = oModel.getProperty("/ENABLE_POOL_FUNCTION"),
 				oResource = mParameters.data,
 				oResourceBundle = this.getResourceBundle();
 			if (oResource === undefined) {

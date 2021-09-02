@@ -17,7 +17,7 @@
 									state="{viewModel>/CheckRightTechnician}" change="onClickEnableFindTechnician"></Switch>
 								<Text text="{i18n>xlab.qualification}" class="sapUiTinyMarginBegin sapUiTinyMarginTop"></Text>
 							</HBox>
-								<HBox visible="{user>/CAPACITY_ENABLED}" >
+								<HBox visible="{user>/ENABLE_CAPACITY}" >
 								<Switch id="idCapaCheck" customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}"
 									state="{viewModel>/capacityPlanning}" change="onSelectCapacity" enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }"></Switch>
 								<Text text="{i18n>xtit.capacity}" class="sapUiTinyMarginBegin sapUiTinyMarginTop"></Text>

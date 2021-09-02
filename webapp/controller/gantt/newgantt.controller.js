@@ -151,8 +151,8 @@ sap.ui.define([
 			var oDateFrom, oDateTo, //oUserModel = this.getModel("user"),
 				aFilters = [];
 
-			//oDateFrom = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE");
-			//oDateTo = mParameters ? mParameters.dateTo : oUserModel.getProperty("/GANT_END_DATE");
+			//oDateFrom = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/DEFAULT_GANT_START_DATE");
+			//oDateTo = mParameters ? mParameters.dateTo : oUserModel.getProperty("/DEFAULT_GANT_END_DATE");
 
 			//Fetching Dates from the DateRange Control
 			oDateFrom = this.getView().byId("idDateRangeGantt2").getDateValue();
@@ -168,8 +168,8 @@ sap.ui.define([
 		 */
 		_defaultGanttHorizon: function () {
 			this._ganttChart.setAxisTimeStrategy(this._createGanttHorizon(this._axisTime.getZoomLevel(), {
-				StartDate: this.getModel("user").getProperty("/GANT_START_DATE"),
-				EndDate: this.getModel("user").getProperty("/GANT_END_DATE")
+				StartDate: this.getModel("user").getProperty("/DEFAULT_GANT_START_DATE"),
+				EndDate: this.getModel("user").getProperty("/DEFAULT_GANT_END_DATE")
 			}));
 		},
 		/**
@@ -711,7 +711,7 @@ sap.ui.define([
 			if (sType === "N") {
 				return "url(#" + this._viewId + "--unavailability)";
 			} else if (sType === "A") {
-				return "#90EE90";
+				return "#FFF";
 			} else if (sType === "O") {
 				return "transparent";
 			} else if (sType === "T") {
@@ -751,8 +751,8 @@ sap.ui.define([
 
 				oModel = this._selectedShapeContext.getModel(),
 				sPath = this._selectedShapeContext.getPath(),
-				//	sAssignGuid = oModel.getProperty(sPath).Guid,
-				sAssignGuid = oModel.getProperty(sPath).AssignmentGuid,
+				sAssignGuid = oModel.getProperty(sPath).Guid,
+			//	sAssignGuid = oModel.getProperty(sPath).AssignmentGuid,
 				sPath = "/AssignmentSet('" + sAssignGuid + "')",
 				oSelectedData = [{
 					oData: {
@@ -828,7 +828,8 @@ sap.ui.define([
 				for (var i = 0; i < oData.aSourcePaths.length; i++) {
 					sourceData = this.getModel().getProperty(oData.aSourcePaths[i]);
 					//	this._updateAssignmentModel(sourceData.Guid).then(function (oAssignmentObj) {
-					this.getOwnerComponent().GanttActions._updateAssignmentModel(sourceData.AssignmentGuid).then(function (oAssignmentObj) {
+				//	this.getOwnerComponent().GanttActions._updateAssignmentModel(sourceData.AssignmentGuid).then(function (oAssignmentObj) {
+					this.getOwnerComponent().GanttActions._updateAssignmentModel(sourceData.Guid).then(function (oAssignmentObj) {
 						if (oAssignmentObj.AllowReassign) {
 							oAssignmentObj.NewAssignPath = oData.sAssignPath;
 							this._oAssignementModel.setData(oAssignmentObj);

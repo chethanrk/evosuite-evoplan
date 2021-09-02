@@ -99,7 +99,7 @@ sap.ui.define([
 			}
 
 			this._oPlanningCalendar.setBusy(true);
-			if (oUserModel.getProperty("/ASSET_PLANNING_ENABLED") && oUserModel.getProperty("/ASSETUNAVL_PLANNING_CALENDAR")) {
+			if (oUserModel.getProperty("/ENABLE_ASSET_PLANNING") && oUserModel.getProperty("/ENABLE_ASSETUNAVL_PL_CALENDAR")) {
 				oModel.read("/AssetPlanningDataSet", {
 					groupId: "calendarBatch",
 					filters: this._generateResourceFiltersFor("ASSETUA")
@@ -163,8 +163,8 @@ sap.ui.define([
 			}
 			if (this._mParameters.bFromGantt) {
 				// if we decide to keep different date range for demand view and gantt view
-				sDateControl1 = oUserModel.getProperty("/GANT_START_DATE");
-				sDateControl2 = oUserModel.getProperty("/GANT_END_DATE");
+				sDateControl1 = oUserModel.getProperty("/DEFAULT_GANT_START_DATE");
+				sDateControl2 = oUserModel.getProperty("/DEFAULT_GANT_END_DATE");
 			}  else if (this._mParameters.bFromNewGantt) {
 				// For New Gantt fetching the Dates from DateRange Selection
 				sDateControl1 = this._oView.byId("idDateRangeGantt2").getDateValue();
@@ -643,7 +643,7 @@ sap.ui.define([
 			for (var a = 0; a < this.selectedResources.length; a++) {
 				oResource = oModel.getProperty(this.selectedResources[a]);
 				sEntitySet = this.selectedResources[a].split("(")[0];
-				if (oResource.NodeType === "RESOURCE" || oResource.NodeType === "RES_GROUP" && oUserModel.getProperty("/POOL_FUNCTION_ENABLED")) {
+				if (oResource.NodeType === "RESOURCE" || oResource.NodeType === "RES_GROUP" && oUserModel.getProperty("/ENABLE_POOL_FUNCTION")) {
 					oResource.ResourceDescription = oResource.Description;
 					oResource.ObjectType = oResource.NodeType;
 					oResource.GroupDescription = oModel.getProperty(sEntitySet + "('" + oResource.ResourceGroupGuid + "')").Description;
