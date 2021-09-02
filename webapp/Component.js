@@ -173,7 +173,7 @@ sap.ui.define([
 			this._getFunctionSetCount();
 
 			this.setModel(models.createUserModel({
-				ASSET_PLANNING_ENABLED: false
+				ENABLE_ASSET_PLANNING: false
 			}), "user");
 
 			//Creating the Global message model from MessageManager

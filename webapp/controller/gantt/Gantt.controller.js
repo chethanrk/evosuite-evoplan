@@ -154,8 +154,8 @@ sap.ui.define([
 			var oDateFrom, oDateTo, oUserModel = this.getModel("user"),
 				aFilters = [];
 
-			oDateFrom = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE");
-			oDateTo = mParameters ? mParameters.dateTo : oUserModel.getProperty("/GANT_END_DATE");
+			oDateFrom = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/DEFAULT_GANT_START_DATE");
+			oDateTo = mParameters ? mParameters.dateTo : oUserModel.getProperty("/DEFAULT_GANT_END_DATE");
 
 			aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oDateTo)));
 			aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oDateFrom)));
@@ -405,8 +405,8 @@ sap.ui.define([
 		_setTotalHorizon: function (mParameters) {
 			var oTotalHorizon = this._axisTime.getAggregation("totalHorizon"),
 				oUserModel = this.getModel("user"),
-				sStartDate = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE"),
-				sEndDate = mParameters ? mParameters.dateTo : oUserModel.getProperty("/GANT_END_DATE");
+				sStartDate = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/DEFAULT_GANT_START_DATE"),
+				sEndDate = mParameters ? mParameters.dateTo : oUserModel.getProperty("/DEFAULT_GANT_END_DATE");
 
 			oTotalHorizon.setStartTime(formatter.date(sStartDate));
 			oTotalHorizon.setEndTime(formatter.date(sEndDate));

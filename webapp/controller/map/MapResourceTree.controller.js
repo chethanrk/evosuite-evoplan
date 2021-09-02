@@ -215,7 +215,7 @@ sap.ui.define([
 				this.isLoaded = true;
 			}
 			// Bug fix for some time tree getting collapsed
-			oBinding.parameters.numberOfExpandedLevels = oUserModel.getProperty("/RESOURCE_TREE_EXPAND") ? 1 : 0;
+			oBinding.parameters.numberOfExpandedLevels = oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND") ? 1 : 0;
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			// setting filters in local model to access in assignTree dialog.

@@ -279,7 +279,7 @@ sap.ui.define([
 				this._aSelectedRowsIdx.length = 100;
 			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
-			var iMaxSelcRow = this.getModel("user").getProperty("/MAX_DEMAND_SELECT_FOR_MAT_LIST");
+			var iMaxSelcRow = this.getModel("user").getProperty("/DEFAULT_MAX_DEM_SEL_MAT_LIST");
 			if (oSelectedPaths.aPathsData.length > 0 && iMaxSelcRow >= this._aSelectedRowsIdx.length) {
 				this.getOwnerComponent().materialInfoDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
 			} else {

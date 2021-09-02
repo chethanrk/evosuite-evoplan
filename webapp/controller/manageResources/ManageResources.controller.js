@@ -64,7 +64,7 @@ sap.ui.define([
 				this.mTreeState = this._getTreeState();
 			}
 			// Bug fix for some time tree getting collapsed
-			// oBinding.parameters.numberOfExpandedLevels = 1; //oUserModel.getProperty("/RESOURCE_TREE_EXPAND") ? 1 : 0;
+			// oBinding.parameters.numberOfExpandedLevels = 1; //oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND") ? 1 : 0;
 
 		},
 		/**
@@ -235,7 +235,7 @@ sap.ui.define([
 		 */
 		getDefaultDate: function (bEndDate) {
 			if (bEndDate) {
-				var oEndData = this.getModel("user").getProperty("/RES_MGMT_END_DATE");
+				var oEndData = this.getModel("user").getProperty("/DEFAULT_RES_MGMT_END_DATE");
 				return this._oDateFormat.format(new Date(oEndData));
 			}
 			return this._oDateFormat.format(new Date());
