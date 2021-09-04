@@ -25,9 +25,6 @@ sap.ui.define([
 		constructor: function (oComponent) {
 			this.setOwnerComponent(oComponent);
 			TemplateRenderController.apply(this, arguments);
-
-			var eventBus = sap.ui.getCore().getEventBus();
-			eventBus.subscribe("DialogTemplateRendererevoplan", "savingConfirmed", this._savingConfirmed, this);
 		},
 
 		/**
@@ -43,14 +40,6 @@ sap.ui.define([
 
 			//set annotation path and other parameters
 			this.setTemplateProperties(mParams);
-			var mDialogParams = {
-				draggable: false,
-				resizable: false,
-				verticalScrolling: true,
-				horizontalScrolling: true,
-				stretch: false
-			}
-			oView.getModel("viewModel").setProperty("/dialog", mDialogParams);
 
 			this._loadDialog();
 		},
@@ -58,25 +47,32 @@ sap.ui.define([
 		/**
 		 * load dialog fragment
 		 * or get bacl already loaded dialog fragment
+		 * @param oEvent
 		 */
-		onPressClose: function () {
-			this._oContext = this._oDialog.getBindingContext();
-			this._oModel.resetChanges();
-
-			if (this._oContext) {
-				var oData = this._oContext.getObject();
-				if ((oData && !oData.ObjectKey) || this._oContext.bCreated === true) {
-					this._oModel.deleteCreatedEntry(this._oContext);
-				}
+		onPressClose: function (oEvent) {
+			if (this._isNew) {
+				this._oModel.deleteCreatedEntry(this._oContext);
 			}
+			this._oModel.resetChanges();
 			this._oDialog.close();
 		},
 
 		/**
 		 * Save SmartForm
+		 * @param oEvent
 		 */
 		onPressSave: function (oEvent) {
-			this._saveDialogChanges();
+			var oContentView = this._oDialog.getContent()[0],
+				oViewController = oContentView.getController(),
+				aForms = oViewController.getAllSmartForms(oContentView.getControlsByFieldGroupId("smartFormTemplate"));
+
+			if (aForms.length > 0 && oViewController.validateForm) {
+				var mErrors = oViewController.validateForm(aForms);
+				//if form is valid save created entry
+				oViewController.saveChanges(mErrors, this._saveSuccessFn.bind(this), this._saveErrorFn.bind(this), this._oDialog);
+			} else {
+				//todo show message
+			}
 		},
 
 		onExit: function () {
@@ -88,32 +84,6 @@ sap.ui.define([
 		/* =========================================================== */
 		/* internal methods                                              */
 		/* =========================================================== */
-
-		/**
-		 * trigger saving for this dialog
-		 * @param mParams
-		 */
-		_saveDialogChanges: function (mParams) {
-			var oContentView = this._oDialog.getContent()[0],
-				oViewController = oContentView.getController(),
-				aForms = oViewController.getAllSmartForms(oContentView.getControlsByFieldGroupId("smartFormTemplate")),
-				oSelectionList = oContentView.getControlsByFieldGroupId("pageSelectionTable");
-
-			if (aForms.length > 0 && oViewController.validateForm) {
-				var mErrors = oViewController.validateForm(aForms);
-				if (mParams) {
-					//special cases when there is a confirm dialog between
-					for (let key in mParams) {
-						mErrors[key] = mParams[key];
-					}
-				}
-				//if form is valid save created entry
-				oViewController.saveChanges(mErrors, this._saveSuccessFn.bind(this), this._saveErrorFn.bind(this), this._oDialog);
-			} else if (oSelectionList.length > 0) {
-				//if form is valid save created entry
-				oViewController.saveSelectedEntries(this._saveSuccessFn.bind(this), this._saveErrorFn.bind(this), this._oDialog);
-			}
-		},
 
 		/*
 		 * init dialog with right fragment name
@@ -160,14 +130,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * show confirm dialog in special cases
-		 * @params mParams
-		 */
-		_savingConfirmed: function (sChannel, sEvent, oData) {
-			this._saveDialogChanges(oData.mParams);
-		},
-
-		/**
 		 * What should happen after binding changed
 		 */
 		_afterBindSuccess: function () {
@@ -180,10 +142,21 @@ sap.ui.define([
 		 * @param oResponse
 		 */
 		_saveSuccessFn: function (oResponse) {
-			var oContentView = this._oDialog.getContent()[0],
-				oViewController = oContentView.getController();
-			oViewController.saveSuccessRebindTable(this._oSmartTable, oResponse);
 			this._oDialog.close();
+			var responseCode = oResponse.__batchResponses[0].__changeResponses;
+			if (responseCode) {
+				if (responseCode[0].statusCode === "200" || responseCode[0].statusCode === "201" || responseCode[0].statusCode === "204") {
+					var msg = this._oResourceBundle.getText("msg.saveSuccess");
+					this.showMessageToast(msg);
+					setTimeout(function () {
+						if (this._oSmartTable) {
+							this._oSmartTable.rebindTable();
+						}
+					}.bind(this), 1500);
+				} else {
+					//Todo show error message
+				}
+			}
 		},
 
 		/**
@@ -192,9 +165,7 @@ sap.ui.define([
 		 * @param oError
 		 */
 		_saveErrorFn: function (oError) {
-			//just rebind SmartTable
-			//there are issue in Material return/confirm when error happened then item is removed from table
-			this._oSmartTable.rebindTable();
+
 		}
 
 	});

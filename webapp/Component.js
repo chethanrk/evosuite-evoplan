@@ -27,7 +27,8 @@ sap.ui.define([
 	"com/evorait/evoplan/model/Constants",
 	"com/evorait/evoplan/controller/WebSocket",
 	"com/evorait/evoplan/controller/gantt/GanttResourceFilter",
-	"com/evorait/evoplan/controller/gantt/GanttActions"
+	"com/evorait/evoplan/controller/gantt/GanttActions",
+	"com/evorait/evoplan/controller/DialogTemplateRenderController",
 ], function (
 	UIComponent,
 	Device,
@@ -57,7 +58,7 @@ sap.ui.define([
 	Constants,
 	WebSocket,
 	GanttResourceFilter,
-	GanttActions) {
+	GanttActions, DialogTemplateRenderController) {
 
 	"use strict";
 
@@ -144,7 +145,8 @@ sap.ui.define([
 					Assignments: {},
 					removedIndices: [],
 					draggedItemContext: []
-				}
+				},
+				densityClass: this.getContentDensityClass()
 
 			});
 			this.setModel(oViewModel, "viewModel");
@@ -200,6 +202,7 @@ sap.ui.define([
 				navLinks: {}
 			}), "templateProperties");
 
+			this.DialogTemplateRenderer = new DialogTemplateRenderController(this);
 
 			// Message popover link
 			var oLink = new Link({

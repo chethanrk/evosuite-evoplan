@@ -59,7 +59,7 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 
 			var oModel = oAnnotationPathContext.getModel();
 			var oMetaModel = oModel.getProperty("/metaModel");
-			var oEntitySet = oMetaModel.getODataEntitySet(oData.entitySet ? oData.entitySet : oModel.getProperty("/entitySet"));
+			var oEntitySet = oMetaModel.getODataEntitySet(oData.entitySet ? oData.entitySet : oModel.getProperty("/tempData/entitySet"));
 			var oEntityType = oMetaModel.getODataEntityType(oEntitySet.entityType);
 			return oMetaModel.createBindingContext(oEntityType.$path + "/" + oData[sPathPropertyName]);
 		};

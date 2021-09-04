@@ -173,7 +173,17 @@ sap.ui.define([
 
 			if (oRowContext) {
 				this.assignmentPath = oRowContext.getPath();
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
+				//this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
+				var mParams = {
+					viewName: "com.evorait.evoplan.view.templates.SmartFormWrapper#AssignmentDialog",
+					annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
+					entitySet: "AssignmentSet",
+					controllerName: "AssignInfo",
+					title: "xtit.assignInfoModalTitle",
+					type: "add",
+					smartTable: null
+				};
+				this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
