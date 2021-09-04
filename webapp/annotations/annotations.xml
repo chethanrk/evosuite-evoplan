@@ -666,7 +666,7 @@
 				</Annotation>
 				<Annotation Term="UI.FieldGroup" Qualifier="AssignmentDialog1">
 					<Record Type="UI.FieldGroupType">
-						<PropertyValue Property="Label" String="AssignmentDialog1"/>
+						<PropertyValue Property="com.sap.vocabularies.Common.v1.Label" String="AssignmentDialog1"/>
 						<PropertyValue Property="Data">
 							<Collection>
 								<Record Type="UI.DataField">
@@ -690,7 +690,7 @@
 				</Annotation>
 				<Annotation Term="UI.FieldGroup" Qualifier="AssignmentDialog2">
 					<Record Type="UI.FieldGroupType">
-						<PropertyValue Property="Label" String="AssignmentDialog2"/>
+						<PropertyValue Property="com.sap.vocabularies.Common.v1.Label" String="AssignmentDialog2"/>
 						<PropertyValue Property="Data">
 							<Collection>
 								<Record Type="UI.DataField">
