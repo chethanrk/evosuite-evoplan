@@ -11,7 +11,7 @@ sap.ui.define([
 
 		init: function () {
 			this._eventBus = sap.ui.getCore().getEventBus();
-			this._eventBus.subscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);
+			//this._eventBus.subscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);
 		},
 
 		/**
@@ -432,31 +432,7 @@ sap.ui.define([
 			}
 			return newAssignDesc;
 		},
-		/**
-		 * On press navigates to demand detail page of linked demand. 
-		 * 
-		 */
-		onGotoDemand: function (oEvent) {
-			var oRouter = this._component.getRouter(),
-				oAssignment = this.oAssignmentModel,
-				sDemandGuid = oAssignment.getProperty("/DemandGuid");
-
-			this.onCloseDialog();
-			if (this._mParameters.bFromGantt) {
-				oRouter.navTo("ganttDemandDetails", {
-					guid: sDemandGuid
-				});
-			} else if (this._mParameters.bFromGanttSplit) {
-				oRouter.navTo("splitGanttDetails", {
-					guid: sDemandGuid
-				});
-			} else {
-				oRouter.navTo("DemandDetail", {
-					guid: sDemandGuid
-				});
-			}
-
-		},
+		
 		/**
 		 * On Change of Assignment Dates
 		 * Validating Start and End Date falls within Resource Start and End Date

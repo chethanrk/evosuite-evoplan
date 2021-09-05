@@ -49,6 +49,23 @@ sap.ui.define([], function () {
 				color: "#00ff00",
 				state: "Success"
 			}
+		},
+		ORIGIN: {
+			HOME: "Home",
+			RESOURCE_TREE: "ResourceTree",
+			DEMAND_DETAILS: "DemandDetails",
+			GANTT_DEMAND:"GanttDemand",
+			GANTTSPLIT:"GantSplit",
+			PLANNING_CALENDER:"PlanningCalender",
+			RESOURCE_QUALIFICATION: "ResourcQualification",
+			ASSET: "Asset",
+			DETAIL: "Detail",
+			GANTT: "Gantt",
+			MAP: "Map",
+			DEMAND_SPLIT: "DemandSplit",
+			MANAGE_RESOURCE:"ManageResource",
+			MANAGERESOURCE_REMOVEASSIGNMENTS:"ManageResourceRemoveAssignments",
+			NEWGANTT:"NewGantt"
 		}
 	};
 

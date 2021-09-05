@@ -9,11 +9,11 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/ResourceTreeFilterBar",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
-	"sap/ui/core/Fragment"
-
+	"sap/ui/core/Fragment",
+	"com/evorait/evoplan/model/Constants"
 ], function (Device, JSONModel, Filter, FilterOperator,
 	FilterType, formatter, BaseController, ResourceTreeFilterBar,
-	MessageToast, MessageBox, Fragment) {
+	MessageToast, MessageBox, Fragment, Constants) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.demands.ResourceTree", {
@@ -174,6 +174,7 @@ sap.ui.define([
 			if (oRowContext) {
 				this.assignmentPath = oRowContext.getPath();
 				//this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
+				
 				var mParams = {
 					viewName: "com.evorait.evoplan.view.templates.SmartFormWrapper#AssignmentDialog",
 					annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
@@ -181,9 +182,12 @@ sap.ui.define([
 					controllerName: "AssignInfo",
 					title: "xtit.assignInfoModalTitle",
 					type: "add",
-					smartTable: null
+					smartTable: null,
+					parentContext: oRowContext,
+					origin: Constants.ORIGIN.RESOURCE_TREE                                                  
 				};
 				this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams);
+
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
@@ -195,7 +199,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onPressReassign: function (oEvent) {
-			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false, this._mParameters);
+			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true, this._mParameters);
 		},
 		/**
 		 * Open's Dialog containing assignments to unassign

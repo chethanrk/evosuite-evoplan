@@ -1,7 +1,8 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/TemplateRenderController",
-	"sap/ui/core/Fragment"
-], function (TemplateRenderController, Fragment) {
+	"sap/ui/core/Fragment",
+	"com/evorait/evoplan/model/Constants"
+], function (TemplateRenderController, Fragment, Constants) {
 	"use strict";
 
 	return TemplateRenderController.extend("com.evorait.evoplan.controller.DialogTemplateRenderController", {
@@ -32,11 +33,13 @@ sap.ui.define([
 		 * and render annotation based SmartForm inside dialog content
 		 */
 		open: function (oView, mParams) {
+			this._eventBus = sap.ui.getCore().getEventBus();
 			this._oView = oView;
 			this._oModel = oView.getModel();
 			this._oResourceBundle = oView.getController().getOwnerComponent().getModel("i18n").getResourceBundle();
 			this._mParams = mParams;
 			this._oSmartTable = mParams.smartTable;
+			this._component = this._oView.getController().getOwnerComponent();
 
 			//set annotation path and other parameters
 			this.setTemplateProperties(mParams);
@@ -50,10 +53,8 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onPressClose: function (oEvent) {
-			if (this._isNew) {
-				this._oModel.deleteCreatedEntry(this._oContext);
-			}
 			this._oModel.resetChanges();
+			this._oDialog.unbindElement();
 			this._oDialog.close();
 		},
 
@@ -72,6 +73,107 @@ sap.ui.define([
 				oViewController.saveChanges(mErrors, this._saveSuccessFn.bind(this), this._saveErrorFn.bind(this), this._oDialog);
 			} else {
 				//todo show message
+			}
+		},
+
+		/**
+		 * On press navigates to demand detail page of linked demand. 
+		 * 
+		 */
+		onGotoDemand: function (oEvent) {
+			var oRouter = this._component.getRouter(),
+				oAssignment = oEvent.getSource().getParent().getBindingContext().getObject(),
+				sDemandGuid = oAssignment.DemandGuid;
+
+			this._oDialog.close();
+			if (this._mParams.origin === Constants.ORIGIN.GANTT_DEMAND) {
+				oRouter.navTo("ganttDemandDetails", {
+					guid: sDemandGuid
+				});
+			} else if (this._mParams.origin === Constants.ORIGIN.GANTTSPLIT) {
+				oRouter.navTo("splitGanttDetails", {
+					guid: sDemandGuid
+				});
+			} else {
+				oRouter.navTo("DemandDetail", {
+					guid: sDemandGuid
+				});
+			}
+
+		},
+
+		/** 
+		 * On unassign assignment of assignment the unassign function import will be called
+		 * @param oEvent
+		 */
+		onDeleteAssignment: function (oEvent) {
+			var oAssignment = oEvent.getSource().getParent().getBindingContext().getObject(),
+				sId = oAssignment.AssignmentGuid;
+			if (this._mParams.origin === Constants.ORIGIN.PLANNING_CALENDER) {
+				this._eventBus.publish("AssignInfoDialog", "refreshAssignment", {
+					unassign: true
+				});
+			} else {
+				this._eventBus.publish("AssignInfoDialog", "deleteAssignment", {
+					sId: sId,
+					parameters: this._mParams
+				});
+			}
+			this.onPressClose();
+		},
+
+		/**
+		 * Function to validate effort assignment save 
+		 * 
+		 */
+		onSaveDialog: function (oEvent) {
+			var oAssignment = oEvent.getSource().getParent().getBindingContext().getObject(),
+				sDateFrom = oAssignment.DateFrom,
+				sDateTo = oAssignment.DateTo,
+				sEffort = oAssignment.Effort,
+				iNewEffort = this.getEffortTimeDifference(sDateFrom, sDateTo),
+				oResourceBundle = this._oView.getController().getResourceBundle();
+			this.sAssignmentPath = oEvent.getSource().getParent().getBindingContext().getPath();
+
+			if (Number(iNewEffort) < Number(sEffort)) {
+				this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
+					if (oAction === "YES") {
+						this.onSaveAssignments(sDateFrom, sDateTo);
+					}
+				}.bind(this));
+
+			} else {
+				this.onSaveAssignments(sDateFrom, sDateTo);
+			}
+		},
+
+		/**
+		 * save form data
+		 * @param oEvent
+		 */
+		onSaveAssignments: function (oDateFrom, oDateTo) {
+			var sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid");
+			if (oDateTo !== undefined && oDateFrom !== undefined) {
+				oDateFrom = oDateFrom.getTime();
+				oDateTo = oDateTo.getTime();
+				// To Validate DateTo and DateFrom
+				if (oDateTo >= oDateFrom) {
+					if (this._mParams.origin === Constants.ORIGIN.PLANNING_CALENDER) {
+						this._eventBus.publish("AssignInfoDialog", "refreshAssignment", {
+							reassign: this.reAssign
+						});
+					} else {
+						this._eventBus.publish("AssignInfoDialog", "updateAssignment", {
+							isReassign: this.reAssign,
+							parameters: this._mParams
+						});
+					}
+					this.onPressClose();
+				} else {
+					this.showMessageToast(sMsg);
+				}
+			} else {
+				this.showMessageToast(sMsg);
 			}
 		},
 

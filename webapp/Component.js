@@ -196,7 +196,6 @@ sap.ui.define([
 				timeAllocation: [],
 				manageAbsence: []
 			}), "availabilityGroup");
-			
 
 			this.setModel(models.createHelperModel({
 				navLinks: {}
@@ -293,7 +292,7 @@ sap.ui.define([
 					.then(function (data) {
 						data.results.forEach(function (oItem) {
 							if (oItem.Value1 && Constants.APPLICATION[oItem.ApplicationId]) {
-								if(Constants.PROPERTY || oItem.Value2 !== ""){
+								if (Constants.PROPERTY || oItem.Value2 !== "") {
 									oItem.Property = oItem.Value2 || Constants.PROPERTY[oItem.ApplicationId];
 									mProps[oItem.Property] = oItem;
 								}
@@ -397,7 +396,7 @@ sap.ui.define([
 			this.materialInfoDialog.init();
 
 			this.GanttResourceFilter = new GanttResourceFilter();
-			
+
 			this.GanttActions = new GanttActions();
 		},
 
@@ -551,5 +550,26 @@ sap.ui.define([
 				}
 			});
 		},
+
+		/**
+		 *  Read call given entityset and filters
+		 */
+		readData: function (sUri, aFilters, sExpandParameter) {
+			return new Promise(function (resolve, reject) {
+				this.getModel().read(sUri, {
+					filters: aFilters,
+					urlParameters: {
+						"$expand": sExpandParameter
+					},
+					success: function (oData, oResponse) {
+						resolve(oData);
+					}.bind(this),
+					error: function (oError) {
+						//Handle Error
+						reject(oError);
+					}.bind(this)
+				});
+			}.bind(this));
+		}
 	});
 });

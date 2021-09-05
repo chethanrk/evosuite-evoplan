@@ -670,7 +670,7 @@
 						<PropertyValue Property="Data">
 							<Collection>
 								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="DemandGuid"/>
+									<PropertyValue Property="Value" Path="Description"/>
 								</Record>
 								<Record Type="UI.DataField">
 									<PropertyValue Property="Value" Path="RESOURCE_DESCRIPTION"/>
@@ -701,6 +701,9 @@
 								</Record>
 								<Record Type="UI.DataField">
 									<PropertyValue Property="Value" Path="Effort"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="DEMAND_STATUS"/>
 								</Record>
 								<Record Type="UI.DataField">
 									<PropertyValue Property="Value" Path="EffortUnit"/>
