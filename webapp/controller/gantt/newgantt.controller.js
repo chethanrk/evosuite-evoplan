@@ -6,12 +6,9 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/Popup",
 	"sap/m/MessageToast",
-<<<<<<< Upstream, based on origin/refactoring_development
 	"sap/ui/core/Fragment",
-	"sap/gantt/simple/CoordinateUtils",
-=======
-	"sap/ui/core/Fragment""sap/gantt/simple/CoordinateUtils",
->>>>>>> 4a409b8 New Gantt changes, shape resize and reassign code is commented and keeping the helper methods 
+    "sap/gantt/simple/CoordinateUtils",
+    "sap/gantt/simple/CoordinateUtils",
 	"com/evorait/evoplan/model/Constants"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, Popup, MessageToast, Fragment, CoordinateUtils, Constants) {
 	"use strict";
@@ -980,15 +977,11 @@ sap.ui.define([
 			}).then(function (content) {
 				this._AssignmentDetailsDialog = content;
 			}.bind(this));*/
-<<<<<<< Upstream, based on origin/refactoring_development
             
             var oTable = this.getView().byId("ganttResourceTreeTable"),
 				oBinding = oTable.getBinding("rows"),
 				oViewModel = this.getModel("viewModel"),
 				iSelectionPane = oViewModel.getProperty("/ganttSelectionPane");
-=======
-		},
->>>>>>> 4a409b8 New Gantt changes, shape resize and reassign code is commented and keeping the helper methods 
 
 			// To show busy indicator when filter getting applied.
 			oBinding.attachDataRequested(function () {
@@ -1063,9 +1056,6 @@ sap.ui.define([
 				EndDate: this.getView().byId("idDateRangeGantt2").getSecondDateValue()
 			}));
 		},
-<<<<<<< Upstream, based on origin/refactoring_development
-        
-=======
 		/**
 		 * selection of any shape for showing assignment details (Currently in progress).
 		 * @param data
@@ -1084,7 +1074,6 @@ sap.ui.define([
 			// 	sAssignmentPath = "/AssignmentSet('" + sAssignmentGuid + "')";
 			// this._AssignmentDetailsDialog.openBy(oEvent.getParameters().shape);	
 		},
->>>>>>> 4a409b8 New Gantt changes, shape resize and reassign code is commented and keeping the helper methods 
 		onCloseAssignmentDetailsDialog: function () {
 				this._AssignmentDetailsDialog.close();
 			}
