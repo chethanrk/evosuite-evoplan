@@ -51,6 +51,7 @@ sap.ui.define([
 				oModel.create(sPath, aPayload, {
 					groupId: "Create_Resource",
 					method: "POST",
+					refreshAfterChange: false,
 					success: function (oData, oResponse) {
 						this.showMessage(oResponse);
 						resolved(oResponse);

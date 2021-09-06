@@ -287,8 +287,9 @@ sap.ui.define([
 			} else if (oParameter.bFromManageResourceRemoveAssignments) {
 				eventBus.publish("ManageResourcesActionsController", "refreshAssignmentDialog", {});
 			} else if (oParameter.bFromNewGantt) {
-				eventBus.publish("BaseController", "refreshGanttChart", {});
-				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				// eventBus.publish("BaseController", "refreshGanttChart", {});
+				// eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				sap.m.MessageToast("Refresh after Service call");
 			}
 
 		},
