@@ -172,21 +172,24 @@ sap.ui.define([
 				oRowContext = oSource.getParent().getBindingContext();
 
 			if (oRowContext) {
-				this.assignmentPath = oRowContext.getPath();
-				//this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
+				this.assignmentPath = "/AssignmentSet('"+oRowContext.getObject().AssignmentGuid+"')";
+				// this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
 				
 				var mParams = {
-					viewName: "com.evorait.evoplan.view.templates.SmartFormWrapper#AssignmentDialog",
+					viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#AssignmentDialog",
 					annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
 					entitySet: "AssignmentSet",
 					controllerName: "AssignInfo",
 					title: "xtit.assignInfoModalTitle",
 					type: "add",
 					smartTable: null,
+					sPath: this.assignmentPath,
+					sDeepPath: "Demand",
 					parentContext: oRowContext,
-					origin: Constants.ORIGIN.RESOURCE_TREE                                                  
+					origin: Constants.ORIGIN.RESOURCE_TREE,
+					
 				};
-				this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams);
+				this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams, "com.evorait.evoplan.controller.common.AssignInfoDialog");
 
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");

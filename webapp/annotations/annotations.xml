@@ -656,9 +656,7 @@
 									<Record Type="UI.ReferenceFacet">
 										<PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#AssignmentDialog1"/>
 									</Record>
-									<Record Type="UI.ReferenceFacet">
-										<PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#AssignmentDialog2"/>
-									</Record>
+									
 								</Collection>
 							</PropertyValue>
 						</Record>
@@ -670,48 +668,25 @@
 						<PropertyValue Property="Data">
 							<Collection>
 								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="Description"/>
+									<PropertyValue Property="Value" Path="Demand/ORDERID"/>
 								</Record>
-								<Record Type="UI.DataField">
+								<!--<Record Type="UI.DataField">
 									<PropertyValue Property="Value" Path="RESOURCE_DESCRIPTION"/>
 								</Record>
 								<Record Type="UI.DataField">
 									<PropertyValue Property="Value" Path="GROUP_DESCRIPTION"/>
-								</Record>
-								<Record Type="UI.DataField">
+								</Record>-->
+								<!--<Record Type="UI.DataField">
 									<PropertyValue Property="Value" Path="ORDERID"/>
-								</Record>
+								</Record>-->
 								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="NOTIFICATION"/>
+									<PropertyValue Property="Value" Path="Demand/NOTIFICATION"/>
 								</Record>
 							</Collection>
 						</PropertyValue>
 					</Record>
 				</Annotation>
-				<Annotation Term="UI.FieldGroup" Qualifier="AssignmentDialog2">
-					<Record Type="UI.FieldGroupType">
-						<PropertyValue Property="com.sap.vocabularies.Common.v1.Label" String="AssignmentDialog2"/>
-						<PropertyValue Property="Data">
-							<Collection>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="DateFrom"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="DateTo"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="Effort"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="DEMAND_STATUS"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="EffortUnit"/>
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
+			
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

@@ -45,6 +45,7 @@ sap.ui.define([
 				oAssignData,
 				sResourceGroupGuid,
 				sResourceGuid;
+				this._oDialog = oDialog;
 
 			if (sBindPath && sBindPath !== "") {
 				oResource = oView.getModel().getProperty(sBindPath);
@@ -107,7 +108,7 @@ sap.ui.define([
 			// connect dialog to view (models, lifecycle)
 			oView.addDependent(oDialog);
 
-			this._getAssignedDemand(oAssignment.AssignmentGuid);
+			this._getAssignedDemand(oAssignementPath);
 			this._assignmentGuid = oAssignment.AssignmentGuid;
 			// open dialog
 			oDialog.open();
@@ -276,8 +277,8 @@ sap.ui.define([
 		 * @param sId
 		 * @private
 		 */
-		_getAssignedDemand: function (sId) {
-			var sPath = "/AssignmentSet('" + sId + "')",
+		_getAssignedDemand: function (sBindPath) {
+			var sPath = sBindPath,
 				oDialog = this._oDialog,
 				oModel = this.oAssignmentModel;
 

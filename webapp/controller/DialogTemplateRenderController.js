@@ -32,7 +32,7 @@ sap.ui.define([
 		 * open dialog 
 		 * and render annotation based SmartForm inside dialog content
 		 */
-		open: function (oView, mParams) {
+		open: function (oView, mParams, sDialogController) {
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._oView = oView;
 			this._oModel = oView.getModel();
@@ -44,7 +44,7 @@ sap.ui.define([
 			//set annotation path and other parameters
 			this.setTemplateProperties(mParams);
 
-			this._loadDialog();
+			this._loadDialog(sDialogController);
 		},
 
 		/**
@@ -107,16 +107,15 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onDeleteAssignment: function (oEvent) {
-			var oAssignment = oEvent.getSource().getParent().getBindingContext().getObject(),
-				sId = oAssignment.AssignmentGuid;
-			if (this._mParams.origin === Constants.ORIGIN.PLANNING_CALENDER) {
+			var sId = this._component.getModel("assignment").getProperty("/AssignmentGuid");
+			if (this._mParameters && this._mParameters.bFromPlannCal) {
 				this._eventBus.publish("AssignInfoDialog", "refreshAssignment", {
 					unassign: true
 				});
 			} else {
 				this._eventBus.publish("AssignInfoDialog", "deleteAssignment", {
 					sId: sId,
-					parameters: this._mParams
+					parameters: this._mParameters
 				});
 			}
 			this.onPressClose();
@@ -193,7 +192,7 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Control|sap.ui.core.Control[]}
 		 * @private
 		 */
-		_loadDialog: function () {
+		_loadDialog: function (sDialogController) {
 			if (!this._oDialog) {
 				Fragment.load({
 					name: "com.evorait.evoplan.view.fragments.FormDialog",
@@ -225,7 +224,7 @@ sap.ui.define([
 			this._oModel.metadataLoaded().then(function () {
 				//get template and create views
 				this._mParams.oView = this._oView;
-				this.insertTemplateFragment(sPath, this._mParams.viewName, "FormDialogWrapper", this._afterBindSuccess.bind(this), this._mParams);
+				this.insertTemplateFragment(sPath, this._mParams.viewName, "FormDialogWrapper", this._afterBindSuccess.bind(this,sPath), this._mParams);
 			}.bind(this));
 
 			this._oDialog.open();
@@ -234,8 +233,9 @@ sap.ui.define([
 		/**
 		 * What should happen after binding changed
 		 */
-		_afterBindSuccess: function () {
+		_afterBindSuccess: function (sPath) {
 			this._oDialog.setBusy(false);
+			this._component.assignInfoDialog.onOpen(this._oDialog, this._oView, null, null, null, sPath);
 		},
 
 		/**
