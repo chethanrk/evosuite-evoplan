@@ -123,4 +123,5 @@
 			</gnt2:GanttChartContainer>
 		</content>
 	</Page>
+		
 </mvc:View>
