@@ -32,13 +32,16 @@
 									  shapeDrop="onShapeDrop"
 									  shapeResize="onShapeResize"
 									  shapeMouseEnter="onShapeMouseEnter"
+									  shapeSelectionChange="onShapeSelection"
 									  shapeMouseLeave="onShapeMouseLeave"
 									  shapeDoubleClick="onShapeDoubleClick"
 									  shapeContextMenu="onShapeContextMenu"
+									  
 									  showShapeTimeOnDrag="true"
 									  selectionPanelSize="{viewModel>/ganttSelectionPane}"
 									  nowLineInUTC="false">
 				<gnt2:table>
+					<!--shapeSelectionChange="onShapeSelection"-->
 					<table:TreeTable id="ganttResourceTreeTable" class="resourceGanttTreeTable" selectionMode="Single" visibleRowCountMode="Auto"
 					 enableBusyIndicator="true" busyStateChanged="onBusyStateChanged" rowHeight="24"
 						 selectionBehavior="RowOnly"

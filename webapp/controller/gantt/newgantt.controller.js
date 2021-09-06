@@ -1,11 +1,13 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/AssignmentActionsController",
+	"com/evorait/evoplan/controller/gantt/GanttActions",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/ganttFormatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/core/Popup"
-], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, Popup) {
+	"sap/ui/core/Popup",
+	"sap/m/MessageToast",
+	"sap/ui/core/Fragment"
+], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, Popup, MessageToast, Fragment) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.newgantt", {
@@ -55,7 +57,7 @@ sap.ui.define([
 
 			this._viewId = this.getView().getId();
 			this.getOwnerComponent().GanttResourceFilter.init(this.getView(), this._treeTable);
-			this.getOwnerComponent().GanttActions.init(this.getView(), this.getModel(), this.getOwnerComponent(), this.getModel("assignment"));
+			this.init(this.getView(), this.getModel(), this.getOwnerComponent(), this.getModel("assignment"));
 		},
 
 		onBusyStateChanged: function (oEvent) {
@@ -221,8 +223,12 @@ sap.ui.define([
 				msg = this.getResourceBundle().getText("msg.ganttShapeDropError"),
 				oModel = this.getModel(),
 				targetContext,
+				sTargetPath,
 				targetData,
-				draggedShape;
+				draggedShape,
+				oUserModel = this.getModel("user"),
+				bEnableStretch = oUserModel.getProperty("/ENABLE_ASSIGNMENT_STRETCH"),
+				bEnableQualification = oUserModel.getProperty("/ENABLE_QUALIFICATION");
 
 			if (!oParams.targetRow && !oParams.targetShape) {
 				this.showMessageToast(msg);
@@ -233,6 +239,7 @@ sap.ui.define([
 
 			targetContext = oParams.targetRow ? oParams.targetRow.getBindingContext() : oParams.targetShape.getParent().getParent().getBindingContext();
 			targetData = targetContext ? targetContext.getObject() : null;
+			sTargetPath = targetContext ? targetContext.getPath() : null;
 			draggedShape = oParams.draggedShapeDates;
 			// If you drop in empty gantt area where there is no data
 			if (!targetData) {
@@ -271,10 +278,28 @@ sap.ui.define([
 						oAssignmentObj.DateFrom = oParams.newDateTime;
 						oAssignmentObj.DateTo = newEndDate.toDate();
 						oAssignmentObj.NewAssignPath = targetContext.getPath();
-						this._oAssignementModel.setData(oAssignmentObj);
-						this.updateAssignment(isReassign, {
-							bFromGantt: true
-						});
+
+						// updating the context for Update(Currently in progress)
+
+						// if (bEnableStretch && bEnableQualification) {
+						// 	this.checkUpdateAssignmentForStretch(oAssignmentObj, sourcePath, sTargetPath, oAssignmentObj,
+						// 		null,
+						// 		this._checkResourceQualification.bind(
+						// 			this));
+						// } else if (bEnableStretch && !bEnableQualification) {
+						// 	// this.checkUpdateAssignmentForStretch(oData, sSourcePath, sTargetPath, oAssignmentObj.DateFrom);
+						// } else if (bEnableQualification) {
+						// 	// this._checkResourceQualification(aSources, oTarget, oTargetDate, null, aGuids);
+						// } else {
+						// 	// this.ProceedToUpdateAssignment(sTargetPath, oAssignmentObj.DateFrom, oAssignmentObj.DateTo);
+						// }
+						// oAssignmentObj.DateFrom = oParams.newDateTime;
+						// oAssignmentObj.DateTo = newEndDate.toDate();
+						// oAssignmentObj.NewAssignPath = targetContext.getPath();
+						// this._oAssignementModel.setData(oAssignmentObj);
+						// this.updateAssignment(isReassign, {
+						// 	bFromGantt: true
+						// });
 					}
 				}.bind(this));
 			}.bind(this));
@@ -286,12 +311,19 @@ sap.ui.define([
 		onShapeResize: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oRowContext = oParams.shape.getBindingContext(),
-				oData = this.getModel().getProperty(oRowContext.getPath()),
+				oData = this.getModel().getProperty(oRowContext.getPath()), // Resource Data
 				oViewModel = this.getModel("viewModel"),
 				oUserModel = this.getModel("user"),
 				oModel = oRowContext.getModel(),
 				oResourceBundle = this.getResourceBundle(),
-				iNewEffort = this.getOwnerComponent().GanttActions.getTimeDifference(oParams.newTime[0], oParams.newTime[1]);
+				iNewEffort = this.getTimeDifference(oParams.newTime[0], oParams.newTime[1]),
+				bEnableStretch = oUserModel.getProperty("/ENABLE_ASSIGNMENT_STRETCH"),
+				bEnableQualification = oUserModel.getProperty("/ENABLE_QUALIFICATION"),
+				sSourcePath = oModel.createKey("AssignmentSet", {
+					Guid: oData.AssignmentGuid
+				}),
+				sTargetPath = oRowContext.getPath();
+
 			//		iNewEffort = this.getTimeDifference(oParams.newTime[0],oParams.newTime[1]);
 
 			oViewModel.setProperty("/ganttSettings/busy", true);
@@ -301,10 +333,25 @@ sap.ui.define([
 			if (oParams.shape && oParams.shape.sParentAggregationName === "shapes2") {
 				//	if (oParams.shape && oParams.shape.sParentAggregationName === "shapes3") {
 				//	this._updateAssignmentModel(oData.Guid).then(function (oAssignmentObj) {
-				this.getOwnerComponent().GanttActions._updateAssignmentModel(oData.AssignmentGuid).then(function (oAssignmentObj) {
+				this._updateAssignmentModel(oData.AssignmentGuid).then(function (oAssignmentObj) {
 					if (oAssignmentObj.AllowChange) {
 						oAssignmentObj.DateFrom = oParams.newTime[0];
 						oAssignmentObj.DateTo = oParams.newTime[1];
+
+						// updating the context for Update(Currently in progress)
+
+						// if (bEnableStretch && bEnableQualification) {
+						// 	this.checkUpdateAssignmentForStretch(oData, sSourcePath, sTargetPath, oAssignmentObj, null,
+						// 		this._checkResourceQualification.bind(
+						// 			this));
+						// } else if (bEnableStretch && !bEnableQualification) {
+						// 	this.checkUpdateAssignmentForStretch(oData, sSourcePath, sTargetPath, oAssignmentObj.DateFrom);
+						// } else if (bEnableQualification) {
+						// 	// this._checkResourceQualification(aSources, oTarget, oTargetDate, null, aGuids);
+						// } else {
+						// 	this.ProceedToUpdateAssignment(sTargetPath, oAssignmentObj.DateFrom, oAssignmentObj.DateTo);
+						// }
+
 						oModel.setProperty(oRowContext.getPath() + "/ResAsgnDateFrom", oAssignmentObj.DateFrom);
 						oModel.setProperty(oRowContext.getPath() + "/ResAsgnDateTo", oAssignmentObj.DateTo);
 						oViewModel.setProperty("/ganttSettings/busy", false);
@@ -349,7 +396,7 @@ sap.ui.define([
 				}
 				if (sStatus !== "COMP") {
 					//	this._updateAssignmentModel(sAssignGuid).then(function (data) {
-					this.getOwnerComponent().GanttActions._updateAssignmentModel(sAssignGuid).then(function (data) {
+					this._updateAssignmentModel(sAssignGuid).then(function (data) {
 						oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign", data.AllowUnassign);
 						oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign", data.AllowReassign);
 						oViewModel.setProperty("/ganttSettings/shapeOpearation/change", data.AllowChange);
@@ -660,25 +707,54 @@ sap.ui.define([
 		 * @param {Object} oTarget Resource Path
 		 * @private
 		 */
-		_checkResourceQualification: function (aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids, mParameters) {
-			var oTargetObject = this.getModel().getProperty(oTarget);
-			this.checkQualification(aSourcePaths, oTargetObject, oTargetDate, oNewEndDate, aGuids).then(function (data) {
+		// _checkResourceQualification: function (aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids, mParameters) {
+		_checkResourceQualification: function (aSourcePaths, oTarget, oTargetObject, aGuids, mParameters) {
+			// var oTargetObject = this.getModel().getProperty(oTarget);
+			this.checkQualification(aSourcePaths, oTargetObject, oTargetObject.DateFrom, oTargetObject.DateTo, aGuids).then(function (data) {
 				if (data.result.results && data.result.results.length) {
 					this.getModel("viewModel").setProperty("/QualificationMatchList", {
 						TargetObject: oTargetObject,
 						QualificationData: data.result.results,
 						SourcePaths: aSourcePaths,
 						mParameter: mParameters,
-						targetDate: oTargetDate,
-						newEndDate: oNewEndDate,
+						targetDate: oTargetObject.DateFrom,
+						newEndDate: oTargetObject.DateTo,
 						aGuids: aGuids
 					});
 					this.getOwnerComponent().QualificationCheck.open(this, this.getView(), mParameters);
+				} else if (mParameters.bUpdate) {
+					//Proceeding to final call for update operation (Currently in progress)
+
+					// MessageToast.show("Final Call for Update");
+					// this._oModel.setProperty(oTarget + "/ResAsgnDateFrom", oTargetObject.DateFrom);
+					// this._oModel.setProperty(oTarget + "/ResAsgnDateTo", oTargetObject.DateTo);
+					// this.ProceedToUpdateAssignment(oTarget, oTargetObject);
 				} else {
-					Promise.all(this.assignedDemands(aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids))
+					Promise.all(this.assignedDemands(aSourcePaths, oTarget, oTargetObject.DateFrom, oTargetObject.DateTo, aGuids))
 						.then(this._refreshAreas.bind(this)).catch(function (error) {}.bind(this));
 				}
 			}.bind(this));
+		},
+		ProceedToUpdateAssignment: function (sTargetPath, oTargetObject) {
+			var oData = this._oModel.getProperty("/AssignmentSet('" + this._oModel.getProperty(sTargetPath + "/AssignmentGuid") + "')");
+			var oParams = {
+				DateFrom: sTargetPath.DateFrom || 0,
+				TimeFrom: {
+					__edmtype: "Edm.Time",
+					ms: sTargetPath.DateFrom.getTime()
+				},
+				DateTo: sTargetPath.DateTo || 0,
+				TimeTo: {
+					__edmtype: "Edm.Time",
+					ms: sTargetPath.DateTo.getTime()
+				},
+				AssignmentGUID: oData.Guid,
+				EffortUnit: oData.EffortUnit,
+				Effort: oData.Effort,
+				ResourceGroupGuid: oData.ResourceGroupGuid,
+				ResourceGuid: oData.ResourceGuid
+			};
+			this._updateAssignment(this._oModel, false, oParams, this._mParameters);
 		},
 		/**
 		 * Formatter for the color fill
@@ -799,7 +875,7 @@ sap.ui.define([
 				for (var i = 0; i < oData.aSourcePaths.length; i++) {
 					sourceData = this.getModel().getProperty(oData.aSourcePaths[i]);
 					//	this._updateAssignmentModel(sourceData.Guid).then(function (oAssignmentObj) {
-					this.getOwnerComponent().GanttActions._updateAssignmentModel(sourceData.AssignmentGuid).then(function (oAssignmentObj) {
+					this._updateAssignmentModel(sourceData.AssignmentGuid).then(function (oAssignmentObj) {
 						if (oAssignmentObj.AllowReassign) {
 							oAssignmentObj.NewAssignPath = oData.sAssignPath;
 							this._oAssignementModel.setData(oAssignmentObj);
@@ -843,17 +919,47 @@ sap.ui.define([
 		 * This hook is the same one that SAPUI5 controls get after being rendered.
 		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
 		 */
-		//	onAfterRendering: function() {
-		//
-		//	},
+		onAfterRendering: function () {
+			this._oModel = this.getModel();
+
+			//Initializing the dialog for assignment Details
+			/*Fragment.load({
+				name: "com.evorait.evoplan.view.gantt.fragments.AssignmentDetails",
+				id: this.getView().getId(),
+				controller: this
+			}).then(function (content) {
+				this._AssignmentDetailsDialog = content;
+			}.bind(this));*/
+		},
 
 		/**
-		 * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
-		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
+		 * selection of any shape for showing assignment details (Currently in progress).
+		 * @param data
 		 */
-		//	onExit: function() {
-		//
-		//	}
+		onShapeSelection: function (oEvent) {
+			// var oShapes = oEvent.getParameter("ShapeUids");
+		},
+
+		/**
+		 * Mouse hover on any shape for showing assignment details (Currently in progress).
+		 * @param data
+		 */
+		onShapeMouseEnter: function (oEvent) {
+			// var oContext = oEvent.getParameters().shape.getBindingContext(),
+			// 	sAssignmentGuid = oEvent.getParameters().shape.getBindingContext().getProperty("AssignmentGuid"),
+			// 	sAssignmentPath = "/AssignmentSet('" + sAssignmentGuid + "')";
+			// this._AssignmentDetailsDialog.openBy(oEvent.getParameters().shape);	
+		},
+		onCloseAssignmentDetailsDialog: function () {
+				this._AssignmentDetailsDialog.close();
+			}
+			/**
+			 * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
+			 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
+			 */
+			//	onExit: function() {
+			//
+			//	}
 
 	});
 
