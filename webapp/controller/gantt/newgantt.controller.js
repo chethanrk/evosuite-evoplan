@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/core/Fragment",
 	"sap/gantt/simple/CoordinateUtils",
-	"sap/gantt/simple/CoordinateUtils",
 	"com/evorait/evoplan/model/Constants"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, Popup, MessageToast, Fragment, CoordinateUtils, Constants) {
 	"use strict";
