@@ -84,7 +84,7 @@ sap.ui.define([
 		 * update assignment 
 		 * @param {String} sPath
 		 */
-		_updateAssignment: function (isReassign, oData, mParameters) {
+		_updateAssignment: function (oModel, isReassign, oParams, mParameters) {
 			var sDisplayMessage,
 				oResource;
 
@@ -93,8 +93,11 @@ sap.ui.define([
 			// 	this._showAssignErrorDialog([oData.Description], null, sDisplayMessage);
 			// 	return;
 			// }
-			
-			return	this.executeFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
+
+			this.executeFunctionImport(oModel, oParams, "UpdateAssignment", "POST", mParameters, true).then(function (oData,oResponse) {
+				
+			}.bind(this));
+			return;
 			// var oParams = {
 			// 	DateFrom: oData.DateFrom || 0,
 			// 	TimeFrom: {

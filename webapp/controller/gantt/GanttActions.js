@@ -1,12 +1,13 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/BaseController",
+	"com/evorait/evoplan/controller/common/AssignmentActionsController",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/Token",
 	"sap/m/Tokenizer",
-	"sap/ui/core/Fragment"
-], function (BaseController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/m/MessageToast"
+], function (BaseController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageToast) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
@@ -14,15 +15,15 @@ sap.ui.define([
 		_oView: null,
 
 		_oModel: null,
-		
-		_oComponent : null,
-		
-		_oAssignementModel : null,
+
+		_oComponent: null,
+
+		_oAssignementModel: null,
 
 		init: function (oView, oModel, oComponent, _oAssignementModel) {
 			this._oView = oView;
 			this._oModel = oModel;
-				this._oComponent = oComponent;
+			this._oComponent = oComponent;
 			this._oAssignementModel = _oAssignementModel;
 		},
 
@@ -33,8 +34,8 @@ sap.ui.define([
 		 * @private
 		 */
 		_getAssignmentModelObject: function (oData) {
-		//	var oDefaultObject = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject(),
-			var oDefaultObject = 	this._oComponent.assignInfoDialog.getDefaultAssignmentModelObject(),
+			//	var oDefaultObject = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject(),
+			var oDefaultObject = this._oComponent.assignInfoDialog.getDefaultAssignmentModelObject(),
 				sPath;
 
 			oDefaultObject.AssignmentGuid = oData.Guid;
@@ -121,6 +122,86 @@ sap.ui.define([
 					resolve(obj);
 				}
 			}.bind(this));
+		},
+		/**
+		 * Check Strech in case of assignment Update
+		 * Proceed to assignment with Stretch, check if Date Time is not valid
+		 * @param {Object} aSources Demand paths
+		 * @param {Object} oTarget Resource Path
+		 * @private
+		 */
+		checkUpdateAssignmentForStretch: function (oResourceData, aSources, oTarget, oTargetObject, aGuids, fnCheckValidation) {
+			var oViewModel = this.getModel("viewModel"),
+				oResourceModel = this.getResourceBundle();
+			if (oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && oResourceData.ResourceGuid &&
+					oResourceData.ResourceGuid !== "")) {
+
+				this._checkAvailability(aSources, oTarget, oTargetObject.DateFrom, aGuids).then(function (availabilityData) {
+					if (availabilityData.PastFail) {
+						oViewModel.setProperty("/ganttSettings/busy", false);
+						return;
+					}
+					if (!availabilityData.Unavailable) {
+						if (fnCheckValidation) {
+							fnCheckValidation.call(this, aSources, oTarget, oTargetObject.DateFrom, availabilityData.Endtimestamp, aGuids, {
+								bUpdate: true
+							});
+							// MessageToast.show("Check Qualification Available");
+						} else {
+							//Updtae call
+						}
+					} else {
+						this._showConfirmMessageBox(oResourceModel.getText("ymsg.extendMsg")).then(function (value) {
+							if (value === "NO" && fnCheckValidation) {
+								// fnCheckValidation.call(this, aSources, oTarget, oTargetDate, availabilityData.EndtimestampWithstretch, aGuids, this._mParameters);
+								MessageToast.show("Check Qualification");
+							} else if (value === "YES" && fnCheckValidation) {
+								// fnCheckValidation.call(this, aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids, this._mParameters);
+								MessageToast.show("Check Qualification");
+							} else if (value === "YES") {
+								MessageToast.show("Update Call");
+								// Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids))
+								// 	.then(this._refreshAreas.bind(this)).catch(function (error) {});
+							} else {
+								MessageToast.show("Update Call");
+								// Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, availabilityData.EndtimestampWithstretch, aGuids))
+								// 	.then(this._refreshAreas.bind(this)).catch(function (error) {});
+							}
+						}.bind(this));
+					}
+				}.bind(this));
+			} else {
+				MessageToast.show("Check Qualification Else");
+				fnCheckValidation.call(this, this.getDemandPathFromAssignment(aSources), oTarget, oTargetObject, aGuids, {
+					bUpdate: true
+				});
+			}
+		},
+		/**
+		 *
+		 * @param aSources
+		 * @param oTarget
+		 * @param oTargetDate
+		 * Checking Availability
+		 * @private
+		 */
+		_checkAvailability: function (aSources, oTarget, oTargetDate, aGuids) {
+			var oModel = this.getModel(),
+				sGuid = aSources ? oModel.getProperty(aSources[0] + "/Guid") : aGuids[0].split("'")[1];
+			return new Promise(function (resolve, reject) {
+				this.executeFunctionImport(oModel, {
+					ResourceGuid: oModel.getProperty(oTarget + "/ResourceGuid"),
+					StartTimestamp: oTargetDate || new Date(),
+					DemandGuid: sGuid
+				}, "ResourceAvailabilityCheck", "GET").then(function (data) {
+					resolve(data);
+				});
+			}.bind(this));
+		},
+		getDemandPathFromAssignment: function (sAssignmentPath) {
+			return this.oView.getModel().createKey("DemandSet", {
+				Guid: this.oView.getModel().getProperty("/" + sAssignmentPath + "/Demand/Guid")
+			});
 		},
 		/**
 		 * get shape binding path
