@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Popup",
 	"sap/m/MessageToast",
 	"sap/ui/core/Fragment",
-    "sap/gantt/simple/CoordinateUtils",
-    "sap/gantt/simple/CoordinateUtils",
+	"sap/gantt/simple/CoordinateUtils",
 	"com/evorait/evoplan/model/Constants"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, Popup, MessageToast, Fragment, CoordinateUtils, Constants) {
 	"use strict";
@@ -44,7 +43,7 @@ sap.ui.define([
 			this._axisTime = this.getView().byId("idAxisTime");
 			this._userData = this.getModel("user").getData();
 
-			this.getRouter().getRoute("gantt").attachPatternMatched(function () {
+			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				//this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
 					bFromNewGantt: true
@@ -343,10 +342,10 @@ sap.ui.define([
 			// to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page", "ganttSplit");
 
-			if (oParams.shape && oParams.shape.sParentAggregationName === "shapes2") {
-				//	if (oParams.shape && oParams.shape.sParentAggregationName === "shapes3") {
+			// if (oParams.shape && oParams.shape.sParentAggregationName === "shapes2") {
+			if (oParams.shape && oParams.shape.sParentAggregationName === "shapes3") {
 				//	this._updateAssignmentModel(oData.Guid).then(function (oAssignmentObj) {
-				this._updateAssignmentModel(oData.AssignmentGuid).then(function (oAssignmentObj) {
+				this._updateAssignmentModel(oData.Guid).then(function (oAssignmentObj) {
 					if (oAssignmentObj.AllowChange) {
 						oAssignmentObj.DateFrom = oParams.newTime[0];
 						oAssignmentObj.DateTo = oParams.newTime[1];
@@ -391,13 +390,13 @@ sap.ui.define([
 				sCurrentRoute = oAppView.getProperty("/currentRoute"),
 				oModel, sPath, sAssignGuid, sStatus;
 
-			if (oShape && oShape.sParentAggregationName === "shapes2") {
-				//	if (oShape && oShape.sParentAggregationName === "shapes3") {
+			// if (oShape && oShape.sParentAggregationName === "shapes2") {
+			if (oShape && oShape.sParentAggregationName === "shapes3") {
 				this._selectedShapeContext = oShape.getBindingContext();
 				oModel = this._selectedShapeContext.getModel();
 				sPath = this._selectedShapeContext.getPath();
-				//	sAssignGuid = oModel.getProperty(sPath).Guid;
-				sAssignGuid = oModel.getProperty(sPath).AssignmentGuid;
+				sAssignGuid = oModel.getProperty(sPath).Guid;
+				// sAssignGuid = oModel.getProperty(sPath).AssignmentGuid;
 				sStatus = oModel.getProperty(sPath).DEMAND_STATUS;
 				if (!this._menu || sCurrentRoute !== this._firstVisit) {
 					this._menu = sap.ui.xmlfragment(
@@ -451,23 +450,13 @@ sap.ui.define([
 				oContext = oParams.shape.getBindingContext(),
 				oRowContext = oParams.rowSettings.getParent().getBindingContext(),
 				oShape = oParams.shape,
-				oRowContextPath = oRowContext.getPath().split("/")[1],
-				sMsg, oResourcePath;
-
-			var oNodes = this._treeTable.getBinding().getNodes();
-			for (var n = 0; n < oNodes.length; n++) {
-				if (oNodes[n].key === oRowContextPath) {
-					oResourcePath = oNodes[n].originalParent.context.getPath();
-					break;
-				}
-			}
-		//	if (oShape && oShape.sParentAggregationName === "shapes2") {
-					if (oShape && oShape.sParentAggregationName === "shapes3") {
+				sMsg;
+			if (oShape && oShape.sParentAggregationName === "shapes3") {
 				// to identify the action done on respective page
 				localStorage.setItem("Evo-Action-page", "ganttSplit");
 				if (oContext) {
-					this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oResourcePath], {
-						bFromNewGantt: true
+					this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], {
+						bFromGantt: true
 					}, oShape.getTime());
 				} else {
 					sMsg = this.getResourceBundle().getText("notFoundContext");
@@ -828,7 +817,7 @@ sap.ui.define([
 				oModel = this._selectedShapeContext.getModel(),
 				sPath = this._selectedShapeContext.getPath(),
 				sAssignGuid = oModel.getProperty(sPath).Guid,
-			//	sAssignGuid = oModel.getProperty(sPath).AssignmentGuid,
+				//	sAssignGuid = oModel.getProperty(sPath).AssignmentGuid,
 				sPath = "/AssignmentSet('" + sAssignGuid + "')",
 				oSelectedData = [{
 					oData: {
@@ -903,8 +892,8 @@ sap.ui.define([
 			if (sEvent === "ganttShapeReassignment") {
 				for (var i = 0; i < oData.aSourcePaths.length; i++) {
 					sourceData = this.getModel().getProperty(oData.aSourcePaths[i]);
-					//	this._updateAssignmentModel(sourceData.Guid).then(function (oAssignmentObj) {
-					this._updateAssignmentModel(sourceData.AssignmentGuid).then(function (oAssignmentObj) {
+					this._updateAssignmentModel(sourceData.Guid).then(function (oAssignmentObj) {
+						// this._updateAssignmentModel(sourceData.AssignmentGuid).then(function (oAssignmentObj) {
 						if (oAssignmentObj.AllowReassign) {
 							oAssignmentObj.NewAssignPath = oData.sAssignPath;
 							this._oAssignementModel.setData(oAssignmentObj);
@@ -977,8 +966,8 @@ sap.ui.define([
 			}).then(function (content) {
 				this._AssignmentDetailsDialog = content;
 			}.bind(this));*/
-            
-            var oTable = this.getView().byId("ganttResourceTreeTable"),
+
+			var oTable = this.getView().byId("ganttResourceTreeTable"),
 				oBinding = oTable.getBinding("rows"),
 				oViewModel = this.getModel("viewModel"),
 				iSelectionPane = oViewModel.getProperty("/ganttSelectionPane");
@@ -1012,7 +1001,7 @@ sap.ui.define([
 			// 	sAssignmentPath = "/AssignmentSet('" + sAssignmentGuid + "')";
 			// this._AssignmentDetailsDialog.openBy(oEvent.getParameters().shape);	
 		},
-        /**
+		/**
 		 * On click on expand the tree nodes gets expand to level 1
 		 * On click on collapse all the tree nodes will be collapsed to root.
 		 * @param oEvent

@@ -212,6 +212,62 @@ sap.ui.define([
 		_getShapeBindingContextPath: function (sShapeUid) {
 			var oParsedUid = Utility.parseUid(sShapeUid);
 			return oParsedUid.shapeDataName;
+		},
+		/**
+		 * Creating Gantt Horizon for New Gant Layout
+		 * @param iZoomLevel - Gantt Axis ZoomLevel
+		 * @param oTotalHorizonDates {object} Dates
+		 * @Author Chethan RK
+		 */
+		_createGanttHorizon: function (iZoomLevel, oTotalHorizonDates) {
+
+			var oVisibleHorizonDates = this._getVisibleHorizon(iZoomLevel, oTotalHorizonDates);
+
+			return new sap.gantt.axistime.StepwiseZoomStrategy({
+				zoomLevel: 3,
+				visibleHorizon: new sap.gantt.config.TimeHorizon({
+					startTime: oVisibleHorizonDates.StartDate,
+					endTime: oVisibleHorizonDates.EndDate
+				}),
+				totalHorizon: new sap.gantt.config.TimeHorizon({
+					startTime: oTotalHorizonDates.StartDate,
+					endTime: oTotalHorizonDates.EndDate
+				})
+			});
+
+		},
+		/**
+		 * Adjusting Visible Horizon for New Gant Layout
+		 * @param iZoomLevel - Gantt Axis ZoomLevel
+		 * @param oTotalHorizonDates {object} Dates
+		 * @Author Chethan RK
+		 */
+		_getVisibleHorizon: function (iZoomLevel, oTotalHorizonDates) {
+			var sStartDate,
+				sEndDate,
+				sMidDate,
+				sCurrentDate = new Date();
+
+			//Checking if Current Date is included within the selected DateRange 
+			if (sCurrentDate <= oTotalHorizonDates.EndDate && sCurrentDate >= oTotalHorizonDates.StartDate) {
+				if (iZoomLevel >= 8) {
+					sStartDate = moment().startOf("hour").toDate();
+					sEndDate = moment().endOf("hour").add(1, "hour").toDate();
+				} else {
+					sStartDate = moment().startOf("day").subtract(1, "day").toDate();
+					sEndDate = moment().endOf("day").add(1, "day").toDate();
+				}
+			} else {
+				//If Selected DateRange is beyond Current Date, then the VisibleHorizon Dates are picked as Mid Date of the selected DateRange
+				sMidDate = new Date((oTotalHorizonDates.StartDate.getTime() + oTotalHorizonDates.EndDate.getTime()) / 2);
+				sStartDate = new Date(sMidDate.setDate(sMidDate.getDate() - 2));
+				sEndDate = new Date(sMidDate.setDate(sMidDate.getDate() + 3));
+			}
+
+			return {
+				StartDate: sStartDate,
+				EndDate: sEndDate
+			};
 		}
 	});
 

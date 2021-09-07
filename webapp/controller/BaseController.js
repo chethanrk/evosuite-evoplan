@@ -733,8 +733,7 @@ sap.ui.define([
 				MessageBox.warning(sMessage);
 			}
 
-		}
-
+		},
 	});
 
 });
