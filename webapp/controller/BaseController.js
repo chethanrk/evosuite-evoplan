@@ -240,60 +240,57 @@ sap.ui.define([
 		afterUpdateOperations: function (mParameters) {
 			var eventBus = sap.ui.getCore().getEventBus();
 
-			var oParameter = mParameters.origin || Constants.ORIGIN.HOME;
-			// {
-			// 	bFromHome: true,
-			// 	bFromAseet: false,
-			// 	bFromPlannCal: false,
-			// 	bFromDetail: false,
-			// 	bFromGantt: false,
-			// 	bFromGanttSplit: false,
-			// 	bFromDemandSplit: false,
-			// 	bFromMap: false,
-			// 	bFromNewGantt: false
-			// };
+			var oParameter = mParameters || {
+				bFromHome: true,
+				bFromAseet: false,
+				bFromPlannCal: false,
+				bFromDetail: false,
+				bFromGantt: false,
+				bFromGanttSplit: false,
+				bFromDemandSplit: false,
+				bFromMap: false,
+				bFromNewGantt: false
+			};
 
-			if (oParameter === Constants.ORIGIN.HOME || oParameter === Constants.ORIGIN.RESOURCE_TREE) {
+			if (oParameter.bFromHome) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				eventBus.publish("BaseController", "refreshDemandTable", {});
 				eventBus.publish("BaseController", "refreshDemandOverview", {});
-				if (oParameter === Constants.ORIGIN.RESOURCE_QUALIFICATION) {
+				if (oParameter.bFromResourcQualification) {
 					eventBus.publish("ResourceQualificationDialog", "refreshQualificationDemandsTable", {});
 				}
-			} else if (oParameter === Constants.ORIGIN.ASSET) {
+			} else if (oParameter.bFromAsset) {
 				eventBus.publish("BaseController", "refreshAssetCal", {});
-			} else if (oParameter === Constants.ORIGIN.PLANNING_CALENDER) {
+			} else if (oParameter.bFromPlannCal) {
 				eventBus.publish("AssignInfoDialog", "RefreshCalendar", {});
 				// eventBus.publish("BaseController", "refreshTreeTable", {});
 				// eventBus.publish("BaseController", "refreshDemandTable", {});
 				// eventBus.publish("BaseController", "refreshDemandOverview", {});
-			} else if (oParameter === Constants.ORIGIN.DETAIL) {
+			} else if (oParameter.bFromDetail) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				eventBus.publish("BaseController", "refreshDemandOverview", {});
 				eventBus.publish("BaseController", "refreshDemandTable", {});
-			} else if (oParameter === Constants.ORIGIN.GANTT) {
+			} else if (oParameter.bFromGantt) {
 				eventBus.publish("BaseController", "refreshGanttChart", {});
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			} else if (oParameter === Constants.ORIGIN.MAP) {
+			} else if (oParameter.bFromMap) {
 				// eventBus.publish("BaseController", "resetMapSelection", {});
 				eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				eventBus.publish("BaseController", "refreshMapView", {});
 				// eventBus.publish("BaseController", "refreshMapDemandTable", {});
-			} else if (oParameter === Constants.ORIGIN.GANTTSPLIT) {
+			} else if (oParameter.bFromGanttSplit) {
 				eventBus.publish("BaseController", "refreshGanttChart", {});
-			} else if (oParameter === Constants.ORIGIN.DEMAND_SPLIT) {
+			} else if (oParameter.bFromDemandSplit) {
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			} else if (oParameter === Constants.ORIGIN.MANAGE_RESOURCE) {
+			} else if (oParameter.bFromManageResource) {
 				eventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
 			}
-			else if (oParameter === Constants.ORIGIN.MANAGERESOURCE_REMOVEASSIGNMENTS) {
+			else if (oParameter.bFromManageResourceRemoveAssignments) {
 				eventBus.publish("ManageResourcesActionsController", "refreshAssignmentDialog", {});
-			}else if (oParameter === Constants.ORIGIN.NEWGANTT) {
+			}else if (oParameter.bFromNewGantt) {
 				eventBus.publish("BaseController", "refreshGanttChart", {});
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			} 
-
-		},
+			} },
 		/**
 		 * device orientation with fallback of window resize
 		 * important for drag and drop functionality

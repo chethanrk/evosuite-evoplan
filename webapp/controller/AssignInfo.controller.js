@@ -1,196 +1,80 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/DialogFormController",
+	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/models",
 	"sap/m/MessageStrip",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"com/evorait/evoplan/model/Constants"
-], function (DialogFormController, formatter, models, MessageStrip, Filter, FilterOperator, Constants) {
+], function (BaseController, formatter, models, MessageStrip, Filter, FilterOperator, Constants) {
 	"use strict";
 
-	return DialogFormController.extend("com.evorait.evoplan.controller.AssignInfo", {
-
-		_type: {
-			add: false,
-			edit: false
-		},
-
-		/* =========================================================== */
-		/* lifecycle methods                                           */
-		/* =========================================================== */
-
-		/* =========================================================== */
-		/* Events                                                      */
-		/* =========================================================== */
+	return BaseController.extend("com.evorait.evoplan.controller.AssignInfo", {
 
 		/**
-		 * @param oEvent
-		 */
-		onChangeSmartField: function (oEvent) {
-			var oSource = oEvent.getSource(),
-				sFieldName = oSource.getName();
-			var oContext = this.getView().getBindingContext();
-			if (oEvent.getSource().getValueState() === "None" && this._type.add) {
-				this._checkForDefaultProperties(oContext, this._selectedEntitySet, sFieldName);
-			}
-		},
-
-		/* =========================================================== */
-		/* internal methods                                            */
-		/* =========================================================== */
-
-		/**
-		 * Binding has changed in TemplateRenderController
-		 * Set new controller context and path
-		 * and load plant and new operation number when required
-		 * @param sChannel
+		 * get detail information and display from new assigned path
+		 * @param sChanel
 		 * @param sEvent
 		 * @param oData
+		 * @private
 		 */
-		_changedBinding: function (sChannel, sEvent, oData) {
-			if (sChannel === "TemplateRendererEvoplan" && sEvent === "changedBinding") {
-				DialogFormController.prototype._changedBinding.apply(this, arguments);
-
-				if (oData && oData.viewNameId === this._sViewNameId) {
-					sap.ui.getCore().getEventBus().subscribe("AssignTreeDialog", "selectedAssignment", this.updateAssignedDetails, this);
-					this._oView = this.getView();
-					this._getDefaultGlobalParameters();
-					if (!this._oContext) {
-						return;
-					}
-					this._mParams.sAssignmentPath = this._sPath;                         
-					this._oDialog.setContentWidth("100%");
-					//Parent context
-					if (!this._oParentContext) {
-						this._oParentContext = this._mParams.parentContext;
-					}
-					this._setDefaultAssignmentProperties();
-				}
-			}
-		},
-
-		_setDefaultAssignmentProperties: function () {
-			var oResource = this._oParentContext.getObject(),
-				oModel = this.getModel();
-			if (this._mParams.origin === Constants.ORIGIN.RESOURCE_TREE) {
-				oModel.setProperty(this._sPath + "/Guid", oResource.AssignmentGuid);
-				oModel.setProperty(this._sPath + "/Description", oResource.Description);
-				oModel.setProperty(this._sPath + "/ResourceGroupGuid", oResource.ResourceGroupGuid);
-				oModel.setProperty(this._sPath + "/ResourceGuid", oResource.ResourceGuid);
-				oModel.setProperty(this._sPath + "/DemandGuid", oResource.DemandGuid);
-				this._mParams.AssignmentGuid = oResource.AssignmentGuid;
-			}
-			this._getDemandData(oResource.AssignmentGuid, oModel, this._sPath, this._setAssignmentDemandDetails.bind(this));
-		},
-
-		_setAssignmentDemandDetails: function (oAssignmentData) {
-			this.getModel().setProperty(this._sPath + "/Guid", oAssignmentData.AssignmentGuid);
-			this.getModel().setProperty(this._sPath + "/Description", oAssignmentData.Demand.DemandDesc);
-			this.getModel().setProperty(this._sPath + "/RESOURCE_DESCRIPTION", oAssignmentData.RESOURCE_DESCRIPTION);
-			this.getModel().setProperty(this._sPath + "/GROUP_DESCRIPTION", oAssignmentData.GROUP_DESCRIPTION);
-			this.getModel().setProperty(this._sPath + "/ORDERID", oAssignmentData.ORDERID);
-			this.getModel().setProperty(this._sPath + "/DateFrom", oAssignmentData.DateFrom);
-			this.getModel().setProperty(this._sPath + "/DateTo", oAssignmentData.DateTo);
-			this.getModel().setProperty(this._sPath + "/Effort", oAssignmentData.Effort);
-			this.getModel().setProperty(this._sPath + "/EffortUnit", oAssignmentData.EffortUnit);
-
-			//Fetching Resource Start and End Date from AssignmentSet for validating on save
-			this.getModel().setProperty(this._sPath + "/RES_ASGN_START_DATE", oAssignmentData.RES_ASGN_START_DATE);
-			this.getModel().setProperty(this._sPath + "/RES_ASGN_END_DATE", oAssignmentData.RES_ASGN_END_DATE);
-
-			this.getModel().setProperty(this._sPath + "/DEMAND_STATUS", oAssignmentData.Demand.Status);
-			this.getModel().setProperty(this._sPath + "/NOTIFICATION", oAssignmentData.Demand.NOTIFICATION);
-
-			///to-do add ALLOW_REASSIGN to Assignment entity
-			this.getModel().setProperty(this._sPath + "/ALLOW_REASSIGN", oAssignmentData.Demand.ALLOW_REASSIGN);
-			this.getModel().setProperty(this._sPath + "/ALLOW_CHANGE", oAssignmentData.Demand.ASGNMNT_CHANGE_ALLOWED);
-			this.getModel().setProperty(this._sPath + "/ALLOW_UNASSIGN", oAssignmentData.Demand.ALLOW_UNASSIGN);
-			this.getModel().setProperty(this._sPath + "/OperationNumber", oAssignmentData.Demand.OPERATIONID);
-			this.getModel().setProperty(this._sPath + "/SubOperationNumber", oAssignmentData.Demand.SUBOPERATIONID);
-
-			if (oAssignmentData.Demand.ALLOW_REASSIGN && oAssignmentData.Demand.ASGNMNT_CHANGE_ALLOWED) {
-				this._setReassignControls(oAssignmentData.Demand);
-			}
-		},
-
-		_setReassignControls: function (oDemandData) {
-			var oReassignModel = models.createHelperModel({
-				allowReassign: oDemandData.ALLOW_REASSIGN,
-				allowChange: oDemandData.ASGNMNT_CHANGE_ALLOWED,
-				isReassignEnabled: false,
-				NewAssignPath: "",
-				NewAssignId: "",
-				NewAssignDesc: ""
-			});
-			this.getView().setModel(oReassignModel, "reassignModelHelper");
-			var aFormGroups = this.getAllSmartFormGroups(this._aSmartForms);
-			if (aFormGroups[1] && !this.isCustomControlsSet) {
-				var aGroupElements = aFormGroups[1].getGroupElements();
-				if (aGroupElements[4]) {
-					//add checkbox
-					var oCheckBox1 = new sap.m.CheckBox({
-						selected: "{path: 'reassignModelHelper>/isReassignEnabled'}",
-						select: this.enableReasignButton.bind(this)
-					});
-					this._addNewGroupElement(aFormGroups[1], oCheckBox1, "xfld.newAssign", 100);
-					//add button
-					var oButton2 = new sap.m.Button({
-						text: this.getResourceBundle().getText("xbut.selectResource"),
-						press: this.onPressReAssign.bind(this),
-						enabled: "{path: 'reassignModelHelper>/isReassignEnabled'}",
-						width: "50%"
-					});
-					this._addNewGroupElement(aFormGroups[1], oButton2, "", 100);
-					//add selected resource details
-					var oText3 = new sap.m.Text({
-						id: "idNewAssignment",
-						text: "{path: 'reassignModelHelper>/NewAssignDesc'}",
-						visible: "{path: 'reassignModelHelper>/isReassignEnabled'}"
-					});
-					this._addNewGroupElement(aFormGroups[1], oText3, "xfld.newAssignment", 100);
-					this.isCustomControlsSet = true;
-				}
-			} else {
-				this.getView().getModel("reassignModelHelper").refresh();
-			}
-		},
-
-		enableReasignButton: function (oEvent) {
-			this.reAssign = oEvent.mParameters.selected;
-			this.getModel("reassignModelHelper").setProperty("/isReassignEnabled", oEvent.mParameters.selected);
-		},
-
-		onPressReAssign: function () {
-			sap.ui.getCore().getEventBus().publish("AssignInfoDialog", "selectAssign", {
-				oView: this._oView,
-				isReassign: this.reAssign,
-				aSelectedPaths: ["/AssignmentSet('" + this._assignmentGuid + "')"]
-			});
-		},
-
-		updateAssignedDetails: function (sChanel, sEvent, oData) {
-			this.getModel("reassignModelHelper").setProperty("/NewAssignDesc", "newText");
+		_showNewAssignment: function (sChanel, sEvent, oData) {
+			var oAssignmentModel = this.getView().getController().getOwnerComponent().getModel("assignment"),
+				oModel = this.getView().getModel();
 			if (sEvent === "selectedAssignment") {
-				var oNewAssign = this._oView.getModel().getProperty(oData.sPath),
+				var oNewAssign = oModel.getProperty(oData.sPath),
 					newAssignDesc = this._getParentsDescription(oNewAssign);
 
-				this.getModel("reassignModelHelper").setProperty("/NewAssignPath", oData.sPath);
-				this.getModel("reassignModelHelper").setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
-				this.getModel("reassignModelHelper").setProperty("/NewAssignDesc", newAssignDesc);
+				oAssignmentModel.setProperty("/NewAssignPath", oData.sPath);
+				oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
+				oAssignmentModel.setProperty("/NewAssignDesc", newAssignDesc);
 
 				//when new assignment is time range
 				if (oNewAssign.StartDate && oNewAssign.NodeType.indexOf("TIME") >= 0) {
 					var start = formatter.mergeDateTime(oNewAssign.StartDate, oNewAssign.StartTime),
 						end = formatter.mergeDateTime(oNewAssign.EndDate, oNewAssign.EndTime);
 
-					this.getModel("reassignModelHelper").setProperty("/DateFrom", start);
-					this.getModel("reassignModelHelper").setProperty("/DateTo", end);
+					oAssignmentModel.setProperty("/DateFrom", start);
+					oAssignmentModel.setProperty("/DateTo", end);
 				}
-				this._mParams.reassignModelHelper = this.getModel("reassignModelHelper").getData();
 			}
 		},
 
+		/**
+		 * get assignment resource details
+		 * @param resId
+		 * @private
+		 */
+		_getAssignResource: function (resId) {
+			var oData = this._getResourceInfo(resId);
+			return {
+				ResourceGuid: oData ? oData.ResourceGuid : "",
+				ResourceDesc: oData ? oData.Description : ""
+			};
+		},
+
+		/**
+		 * get assignment resource group details
+		 * @param groupId
+		 * @private
+		 */
+		_getAssignResourceGroup: function (groupId) {
+			var oData = this._getResourceInfo(groupId);
+			return {
+				ResourceGroupGuid: oData ? groupId : "",
+				ResourceGroupDesc: oData ? oData.Description : ""
+			};
+		},
+
+		/**
+		 * get resouce info based on id
+		 * @param sId
+		 * @private
+		 */
+		_getResourceInfo: function (sId) {
+			var sPath = "/ResourceHierarchySet('" + sId + "')";
+			return this._oView.getModel().getProperty(sPath);
+		},
 		/**
 		 * get all parents description for display in dialog new assigned field
 		 * @param oNewAssign
@@ -223,28 +107,80 @@ sap.ui.define([
 		},
 
 		/**
-		 * get assignment resource group details
-		 * @param groupId
-		 * @private
+		 * On Change of Assignment Dates
+		 * Validating Start and End Date falls within Resource Start and End Date
+		 * 
 		 */
-		_getAssignResourceGroup: function (groupId) {
-			var oData = this._getResourceInfo(groupId);
-			return {
-				ResourceGroupGuid: oData ? groupId : "",
-				ResourceGroupDesc: oData ? oData.Description : ""
-			};
+		onAssignmentDateChange: function () {
+			var bValidDateFrom, bValidDateTo,
+				oAssignmentModel = this.getView().getController().getOwnerComponent().getModel("assignment"),
+				sResStartDate = oAssignmentModel.getProperty("/RES_ASGN_START_DATE"),
+				sResEndDate = oAssignmentModel.getProperty("/RES_ASGN_END_DATE"),
+				sDateFrom = oAssignmentModel.getProperty("/DateFrom"),
+				sDateTo = oAssignmentModel.getProperty("/DateTo");
+
+			//Checking DateFrom falls within Resource Start and End Date
+			bValidDateFrom = sDateFrom <= sResEndDate && sDateFrom >= sResStartDate;
+			//Checking DateTo falls within Resource Start and End Date
+			bValidDateTo = sDateTo <= sResEndDate && sDateTo >= sResStartDate;
+
+			//If DateFrom and DateTo doesn't fall within Resource Start and End Date
+			if (!bValidDateFrom || !bValidDateTo) {
+				this._showEffortConfirmMessageBox(this._oView.getController().getResourceBundle().getText("ymsg.targetValidity")).then(function (
+					oAction) {
+					if (oAction === "YES") {
+						oAssignmentModel.setProperty("/DateFrom", this.oAssignmentModel.getProperty("/RES_ASGN_START_DATE"));
+						oAssignmentModel.setProperty("/DateTo", this.oAssignmentModel.getProperty("/RES_ASGN_END_DATE"));
+					} else {}
+				}.bind(this));
+			}
 		},
 
 		/**
-		 * get resouce info based on id
-		 * @param sId
-		 * @private
+		 * method to change Assignment
+		 * @param oEvent
 		 */
-		_getResourceInfo: function (sId) {
-			var sPath = "/ResourceHierarchySet('" + sId + "')";
-			return this._oView.getModel().getProperty(sPath);
+		onChangeAssignType: function (oEvent) {
+			var oParams = oEvent.getParameters(),
+				reassignBtn = this.byId("reassignDialogButton"),
+				oAssignmentModel = this.getView().getController().getOwnerComponent().getModel("assignment");
+
+			this.reAssign = oParams.selected;
+			reassignBtn.setEnabled(this.reAssign);
+
+			if (!this.reAssign) {
+				oAssignmentModel.setProperty("/NewAssignPath", null);
+				oAssignmentModel.setProperty("/NewAssignId", null);
+				oAssignmentModel.setProperty("/NewAssignDesc", null);
+			}
 		},
 
+		/**
+		 * trigger event for open select assign tree table dialog
+		 * @param oEvent
+		 */
+		onPressReAssign: function (oEvent) {
+			var sAssignmentGuid = oEvent.getSource().getBindingContext().getObject().Guid,
+				oEventBus = sap.ui.getCore().getEventBus();
+			oEventBus.publish("AssignInfoDialog", "selectAssign", {
+				oView: this.getView(),
+				isReassign: this.reAssign,
+				aSelectedPaths: ["/AssignmentSet('" + sAssignmentGuid + "')"]
+			});
+		},
+
+		/**
+		 * Method get triggers when user selects any perticular unit from value help
+		 * and outputs the same in input
+		 * @param oEvent Select oEvent
+		 */
+		onChangeUnit: function (oEvent) {
+			var sNewValue = oEvent.getParameter("newValue"),
+				oModel = this.getView().getModel("assignment");
+			if (sNewValue && sNewValue !== "") {
+				oModel.setProperty("/EffortUnit", sNewValue);
+			}
+		},
 		/**
 		 * Method to get list of assigned Demands
 		 * @param sId

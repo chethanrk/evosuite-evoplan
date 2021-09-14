@@ -186,17 +186,22 @@ sap.ui.define([
 					sPath: this.assignmentPath,
 					sDeepPath: "Demand",
 					parentContext: oRowContext,
-					origin: Constants.ORIGIN.RESOURCE_TREE,
+					oDialogController:this.getOwnerComponent().assignInfoDialog,
+					refreshParameters:this._mParameters
 					
 				};
-				this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams, "com.evorait.evoplan.controller.common.AssignInfoDialog");
+				this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams, this._afterDialogLoad.bind(this));
 
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
 			}
 		},
-
+		_afterDialogLoad: function(oDialog, oView, sPath, sEvent, data, mParams){
+			if(sEvent === "dataReceived"){
+				this.getOwnerComponent().assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
+			}
+		},
 		/**
 		 * Open's Dialog containing assignments to reassign
 		 * @param oEvent

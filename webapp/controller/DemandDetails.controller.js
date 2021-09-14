@@ -132,9 +132,30 @@ sap.ui.define([
 				oAssignmentData = oModel.getProperty(sPath);
 
 			localStorage.setItem("Evo-Action-page", "DemandDetails");
-			this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, oAssignmentData, {
-				bFromDetail: true
-			});
+				var mParams = {
+					viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#AssignmentDialog",
+					annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
+					entitySet: "AssignmentSet",
+					controllerName: "AssignInfo",
+					title: "xtit.assignInfoModalTitle",
+					type: "add",
+					smartTable: null,
+					sPath: sPath,
+					sDeepPath: "Demand",
+					oDialogController:this.getOwnerComponent().assignInfoDialog,
+					refreshParameters:{
+						bFromDetail: true
+					}
+					
+				};
+				this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams, this._afterDialogLoad.bind(this));
+			
+		},
+		_afterDialogLoad: function(oDialog, oView, sPath, sEvent, data, mParams){
+			
+			if(sEvent === "dataReceived"){
+				this.getOwnerComponent().assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
+			}
 		},
 		
 		/**

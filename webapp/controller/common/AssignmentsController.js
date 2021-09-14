@@ -153,7 +153,6 @@ sap.ui.define([
 		 * @Author Rakesh Sahu
 		 **/
 		checkQualificationUpdate: function (oAssignmentData, oParams, mParameters) {
-			oAssignmentData = oAssignmentData || this.getModel().getProperty(mParameters.sAssignmentPath);
 			if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
 				//need to check Qualification
 				var oQualificationParameters,
@@ -257,12 +256,12 @@ sap.ui.define([
 		 * @param {String} sPath
 		 */
 		updateAssignment: function (isReassign, mParameters) {
-			var oData = this.getModel().getProperty(mParameters.sAssignmentPath),
-				sAssignmentGUID = oData.AssignmentGuid || mParameters.AssignmentGuid,
+			var oData = this.getModel("assignment").getData(),
+				sAssignmentGUID = oData.AssignmentGuid,
 				sDisplayMessage,
 				oResource;
 
-			if (isReassign && !oData.ALLOW_REASSIGN) {
+			if (isReassign && !oData.AllowReassign) {
 				sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
 				this._showAssignErrorDialog([oData.Description], null, sDisplayMessage);
 				return;
@@ -286,18 +285,18 @@ sap.ui.define([
 				ResourceGuid: oData.ResourceGuid
 			};
 
-			if (oData.ALLOW_REASSIGN) {
-				oResource = this.getModel().getProperty(mParameters.reassignModelHelper.NewAssignPath);
+			if (isReassign && oData.NewAssignPath) {
+				oResource = this.getModel().getProperty(oData.NewAssignPath);
 				oParams.ResourceGroupGuid = oResource.ResourceGroupGuid;
 				oParams.ResourceGuid = oResource.ResourceGuid;
 			}
 			this.clearMessageModel();
 			if (isReassign && !this.isAssignable({
-					sPath: mParameters.reassignModelHelper.NewAssignPath
+					sPath: oData.NewAssignPath
 				})) {
 				return;
 			}
-			if (isReassign && oData.NewAssignPath && !this.isAvailable(mParameters.reassignModelHelper.NewAssignPath)) {
+			if (isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)) {
 				this.showMessageToProceed(null, null, null, null, true, oParams, mParameters);
 			} else {
 				// Proceed to check the Qualification for UpdateAssignment

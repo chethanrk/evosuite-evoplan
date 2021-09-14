@@ -254,20 +254,47 @@ sap.ui.define([
 				oRowPath = oRowContext.getPath(),
 				oModel = oRowContext.getModel(),
 				sPath = oAppointmentContext.getPath(),
-				oAppointmentData = oModel.getProperty(sPath),
 				oRowData = oModel.getProperty(oRowPath);
-			oAppointmentData.DateTo = this.onChangeEndDateAfterResize(oAppointmentData);
+			
 
 			this.oSelectedContext = oAppointmentContext;
-
+			this.oAppointmentData = oModel.getProperty(sPath);
+			this.oAppointmentData.DateTo = this.onChangeEndDateAfterResize(this.oAppointmentData);
+			
 			if (oRowData.ObjectType === "ASSET") {
 				return;
 			}
-			this._component.assignInfoDialog.open(this._oView, null, oAppointmentData, {
+			
+			var mParams = {
+					viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#AssignmentDialog",
+					annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
+					entitySet: "AssignmentSet",
+					controllerName: "AssignInfo",
+					title: "xtit.assignInfoModalTitle",
+					type: "add",
+					smartTable: null,
+					sPath: "/AssignmentSet('"+this.oAppointmentData.Guid+"')",
+					sDeepPath: "Demand",
+					oDialogController:this._component.assignInfoDialog,
+					refreshParameters:{
+						bFromPlannCal: true
+					}
+					
+				};
+				this._component.DialogTemplateRenderer.open(this._oView, mParams, this._afterDialogLoad.bind(this));
+			
+		},
+		_afterDialogLoad: function(oDialog, oView, sPath, sEvent, data, mParams){
+			if(sEvent === "change"){
+				this._component.assignInfoDialog.onOpen(oDialog, oView, null, this.oAppointmentData, mParams.refreshParameters, null, data);
+			}
+			
+		},
+			/*this._component.assignInfoDialog.open(this._oView, null, oAppointmentData, {
 				bFromPlannCal: true
 			});
 
-		},
+		},*/
 		/**
 		 * @since 2.1.4
 		 * On drag assigments the method will be triggered.
