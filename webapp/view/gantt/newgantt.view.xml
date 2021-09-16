@@ -7,8 +7,8 @@
 				<gnt2:toolbar showDisplayTypeButton="true">
 					<gnt2:ContainerToolbar design="Auto" showBirdEyeButton="false" showLegendButton="true" class="gantt_toolbar">
 						<gnt2:content>
-							<DateRangeSelection id="idDateRangeGantt2" width="20%" dateValue="{user>/DEFAULT_GANT_START_DATE}" secondDateValue="{user>/DEFAULT_GANT_END_DATE}"
-								change="onChangeDateRange" enabled="true"/>
+							<DateRangeSelection id="idDateRangeGantt2" width="20%" dateValue="{user>/DEFAULT_GANT_START_DATE}"
+								secondDateValue="{user>/DEFAULT_GANT_END_DATE}" change="onChangeDateRange" enabled="true"/>
 							<Button id="idButtonTimeAlloc" enabled="false" text="{i18n>xbut.timeallocation}" visible="{user>/ENABLE_BLOCK_TIME}"
 								press="onTimeAllocPress"/>
 							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.ResourceActions" type="XML"/>
@@ -52,17 +52,17 @@
 										shapes2="{ path:'ResourceAvailabilitySet', templateShareable:true }">
 										<!--<gnt2:shapes2>-->
 										<!--<gnt2:BaseRectangle title="{Description}"-->
-										<!--							shapeId="{NodeId}"-->
-										<!--							time="{ResAsgnDateFrom}" endTime="{ResAsgnDateTo}"-->
-										<!--							tooltip="{NodeId}"-->
-										<!--							fill="#0092D1"-->
-										<!--							resizable="true"-->
-										<!--							draggable="true"-->
-										<!--							selectable="true"-->
-										<!--							hoverable="true"-->
-										<!--							connectable="true"-->
-										<!--						/>-->
-										<!--	</gnt2:shapes2>-->
+										<!--                                                                                              shapeId="{NodeId}"-->
+										<!--                                                                                              time="{ResAsgnDateFrom}" endTime="{ResAsgnDateTo}"-->
+										<!--                                                                                              tooltip="{NodeId}"-->
+										<!--                                                                                              fill="#0092D1"-->
+										<!--                                                                                              resizable="true"-->
+										<!--                                                                                              draggable="true"-->
+										<!--                                                                                              selectable="true"-->
+										<!--                                                                                              hoverable="true"-->
+										<!--                                                                                              connectable="true"-->
+										<!--                                                                                />-->
+										<!--        </gnt2:shapes2>-->
 										<gnt2:shapes1>
 											<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.BackGroundShape" type="XML"/>
 										</gnt2:shapes1>
@@ -73,11 +73,11 @@
 											<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.AssignmentShape" type="XML"/>
 										</gnt2:shapes3>
 										<!--<gnt2:shapes2>
-									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.UnAvailabilityShape" type="XML"/>
-								</gnt2:shapes2>
-								<gnt2:shapes3>
-									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.AssignmentShape" type="XML"/>
-								</gnt2:shapes3>-->
+                                                                                                                                 <core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.UnAvailabilityShape" type="XML"/>
+                                                                                                                   </gnt2:shapes2>
+                                                                                                                   <gnt2:shapes3>
+                                                                                                                                 <core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.AssignmentShape" type="XML"/>
+                                                                                                                   </gnt2:shapes3>-->
 									</gnt2:GanttRowSettings>
 								</table:rowSettingsTemplate>
 								<table:dragDropConfig>

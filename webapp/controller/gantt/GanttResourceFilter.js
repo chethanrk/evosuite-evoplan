@@ -25,9 +25,10 @@ sap.ui.define([
 			// create dialog lazily
 			Fragment.load({
 				name: "com.evorait.evoplan.view.gantt.fragments.GanttResourceFilter",
+				id:	this._oView.getId(),
 				controller: this
 			}).then(function (oDialog) {
-				this._oFilterBar = sap.ui.getCore().byId("ganttResourceTreeFilterBar");
+				this._oFilterBar = this._oView.byId("ganttResourceTreeFilterBar");
 				this._oVariantMangement = this._oFilterBar.getSmartVariant();
 				this._oFilterBar.attachClear(function (oEvent) {
 					this.onClear(oEvent);
@@ -62,7 +63,7 @@ sap.ui.define([
 		 * @param oView
 		 */
 		onOpen: function (oDialog, oView) {
-			oDialog.open();
+			this._oDialog.open();
 		},
 
 		/**
