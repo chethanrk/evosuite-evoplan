@@ -92,7 +92,7 @@ sap.ui.define([
 		 * Will prevent too much loading time 
 		 * in template controller onAfterrendering is still called after navigations also when content is already in page
 		 */
-		insertTemplateFragment: function (sPath, sViewName, sContainerId, callbackFn, mParams) {
+		insertTemplateFragment: function (sPath, sViewName, sContainerId, callbackFn, mParams, callbackfn2) {
 			var oView = this.getView(),
 				sControllerName = null;
 
@@ -121,7 +121,7 @@ sap.ui.define([
 					//when template was already in use then just integrate in viewContainer and bind new path
 					//will improve performance
 					oViewContainer.insertContent(this.mTemplates[sViewName]);
-					this.bindView(this.mTemplates[sViewName], sPath, callbackFn);
+					this.bindView(this.mTemplates[sViewName], sPath, mParams, callbackFn, callbackfn2);
 				} else {
 					//load template view ansync and interpret annotations based on metadata model
 					//and bind view path and save interpreted template global for reload
@@ -132,7 +132,7 @@ sap.ui.define([
 						var setTemplateAndBind = function (oTemplateView) {
 							this.mTemplates[sViewName] = oTemplateView;
 							oViewContainer.insertContent(oTemplateView);
-							this.bindView(oTemplateView, sPath, callbackFn);
+							this.bindView(oTemplateView, sPath, mParams, callbackFn, callbackfn2);
 						}.bind(this);
 
 						if (sControllerName) {
@@ -148,7 +148,7 @@ sap.ui.define([
 					}.bind(this));
 				}
 			} else {
-				this.bindView(aContent[0], sPath, callbackFn);
+				this.bindView(aContent[0], sPath, mParams, callbackFn, callbackfn2);
 			}
 		},
 
@@ -209,9 +209,10 @@ sap.ui.define([
 		 * @param sPath
 		 * @param callbackFn
 		 */
-		bindView: function (oView, sPath, callbackFn) {
+		bindView: function (oView, sPath, mParams, callbackFn, callbackfn2) {
 			var sViewName = this._joinTemplateViewNameId(oView.getId(), oView.getViewName()),
-				eventBus = sap.ui.getCore().getEventBus();
+				eventBus = sap.ui.getCore().getEventBus(),
+				parameters = null;
 
 			if (!sPath) {
 				eventBus.publish("TemplateRendererEvoplan", "changedBinding", {
@@ -222,21 +223,34 @@ sap.ui.define([
 				}
 				return;
 			}
-
+			if (mParams && mParams.sDeepPath) {
+				parameters = {
+					expand: mParams.sDeepPath
+				};
+			}
 			oView.unbindElement();
 			oView.bindElement({
 				path: sPath,
+				parameters: parameters,
 				events: {
-					change: function () {
+					change: function (oEvent) {
 						eventBus.publish("TemplateRendererEvoplan", "changedBinding", {
 							viewNameId: sViewName
 						});
+						oEvent.getSource().refresh();
 						if (callbackFn) {
 							callbackFn();
 						}
+						if(callbackfn2){
+							callbackfn2("change", null, mParams);
+						}
 					},
 					dataRequested: function () {},
-					dataReceived: function () {}
+					dataReceived: function (data) {
+						if(callbackfn2){
+							callbackfn2("dataReceived", data.getParameters().data, mParams);
+						}
+					}
 				}
 			});
 		},
@@ -266,57 +280,6 @@ sap.ui.define([
 				return sViewName + "#" + sViewId;
 			}
 			return sViewName;
-		},
-
-		/**
-		 * Get template page or fragment for generic pages or dialogs by annotations
-		 * Only create new view from template when wrapper content is empty
-		 * Will prevent too much loading time 
-		 * in template controller onAfterrendering is still called after navigations also when content is already in page
-		 */
-			insertTemplateFragmentOld: function (sPath, oView, sContainerId, callbackFn, mParams, that) {
-			var oController = oView.getControllerName(),
-				oViewContainer = oView.byId(sContainerId) || sap.ui.getCore().byId(sContainerId),
-				oModel = oView.getModel(),
-				sViewName = oView.getViewName().split(".").pop(),
-				aContent = oViewContainer.getContent();
-			if (aContent.length === 0 && sPath) {
-				//load template view ansync and interpret annotations based on metadata model
-				//and bind view path and save interpreted template global for reload
-				var oMetaModel = oModel.getMetaModel();
-				oMetaModel.loaded().then(function () {
-					//setting up the templates for the Sections
-					this.generateForms(oModel, oMetaModel, sPath, sViewName, oController, oViewContainer, that);
-				}.bind(this));
-			}
-		},
-
-		/**
-		 * create view and set owner component for routing
-		 * and calls for getOwnerComponent() in nested views and blocks
-		 * @param oMetaModel
-		 * @param sPath
-		 * @param sViewName
-		 */
-		generateForms: function (oModel, oMetaModel, sPath, oView, oController, oViewContainer, that) {
-			var oFragment = XMLTemplateProcessor.loadTemplate("com.evorait.evoplan.ui.templates.DetailPage", "fragment");
-			oMetaModel.loaded().then(function () {
-				XMLPreprocessor.process(oFragment, {
-					caller: "XML-Fragment-templating"
-				}, {
-					bindingContexts: {
-						meta: oMetaModel.getMetaContext(sPath)
-					},
-					models: {
-						meta: oMetaModel
-					}
-				}).then(function (oProcessedFragment) {
-					var oContent = sap.ui.xmlfragment({
-						fragmentContent: oProcessedFragment
-					}, that);
-					oViewContainer.addContent(oContent);
-				});
-			});
 		}
 	});
 });

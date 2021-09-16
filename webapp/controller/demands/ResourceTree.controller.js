@@ -9,11 +9,11 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/ResourceTreeFilterBar",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
-	"sap/ui/core/Fragment"
-
+	"sap/ui/core/Fragment",
+	"com/evorait/evoplan/model/Constants"
 ], function (Device, JSONModel, Filter, FilterOperator,
 	FilterType, formatter, BaseController, ResourceTreeFilterBar,
-	MessageToast, MessageBox, Fragment) {
+	MessageToast, MessageBox, Fragment, Constants) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.demands.ResourceTree", {
@@ -172,20 +172,42 @@ sap.ui.define([
 				oRowContext = oSource.getParent().getBindingContext();
 
 			if (oRowContext) {
-				this.assignmentPath = oRowContext.getPath();
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
+				this.assignmentPath = "/AssignmentSet('"+oRowContext.getObject().AssignmentGuid+"')";
+				// this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
+				
+				var mParams = {
+					viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#AssignmentDialog",
+					annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
+					entitySet: "AssignmentSet",
+					controllerName: "AssignInfo",
+					title: "xtit.assignInfoModalTitle",
+					type: "add",
+					smartTable: null,
+					sPath: this.assignmentPath,
+					sDeepPath: "Demand",
+					parentContext: oRowContext,
+					oDialogController:this.getOwnerComponent().assignInfoDialog,
+					refreshParameters:this._mParameters
+					
+				};
+				this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams, this._afterDialogLoad.bind(this));
+
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
 			}
 		},
-
+		_afterDialogLoad: function(oDialog, oView, sPath, sEvent, data, mParams){
+			if(sEvent === "dataReceived"){
+				this.getOwnerComponent().assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
+			}
+		},
 		/**
 		 * Open's Dialog containing assignments to reassign
 		 * @param oEvent
 		 */
 		onPressReassign: function (oEvent) {
-			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false, this._mParameters);
+			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true, this._mParameters);
 		},
 		/**
 		 * Open's Dialog containing assignments to unassign

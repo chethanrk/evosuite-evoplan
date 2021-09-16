@@ -284,15 +284,13 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (oParameter.bFromManageResource) {
 				eventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
-			} else if (oParameter.bFromManageResourceRemoveAssignments) {
-				eventBus.publish("ManageResourcesActionsController", "refreshAssignmentDialog", {});
-			} else if (oParameter.bFromNewGantt) {
-				// eventBus.publish("BaseController", "refreshGanttChart", {});
-				// eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-				sap.m.MessageToast("Refresh after Service call");
 			}
-
-		},
+			else if (oParameter.bFromManageResourceRemoveAssignments) {
+				eventBus.publish("ManageResourcesActionsController", "refreshAssignmentDialog", {});
+			}else if (oParameter.bFromNewGantt) {
+				eventBus.publish("BaseController", "refreshGanttChart", {});
+				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			} },
 		/**
 		 * device orientation with fallback of window resize
 		 * important for drag and drop functionality

@@ -38,13 +38,14 @@ sap.ui.define([
 			}
 		},
 
-		onOpen: function (oDialog, oView, sBindPath, oAssignmentData, mParameters, oAssignementPath) {
+		onOpen: function (oDialog, oView, sBindPath, oAssignmentData, mParameters, oAssignementPath, data) {
 
 			var oAssignment = this.getDefaultAssignmentModelObject(),
 				oResource,
 				oAssignData,
 				sResourceGroupGuid,
 				sResourceGuid;
+				this._oDialog = oDialog;
 
 			if (sBindPath && sBindPath !== "") {
 				oResource = oView.getModel().getProperty(sBindPath);
@@ -106,8 +107,10 @@ sap.ui.define([
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 			// connect dialog to view (models, lifecycle)
 			oView.addDependent(oDialog);
-
-			this._getAssignedDemand(oAssignment.AssignmentGuid);
+			if(!data){
+				data = oAssignmentData;
+			}
+			this._getAssignedDemand(oAssignementPath, data);
 			this._assignmentGuid = oAssignment.AssignmentGuid;
 			// open dialog
 			oDialog.open();
@@ -276,12 +279,12 @@ sap.ui.define([
 		 * @param sId
 		 * @private
 		 */
-		_getAssignedDemand: function (sId) {
-			var sPath = "/AssignmentSet('" + sId + "')",
+		_getAssignedDemand: function (sBindPath, data) {
+			var sPath = sBindPath,
 				oDialog = this._oDialog,
 				oModel = this.oAssignmentModel;
 
-			oDialog.bindElement({
+			/*oDialog.bindElement({
 				path: sPath,
 				parameters: {
 					expand: "Demand"
@@ -298,24 +301,24 @@ sap.ui.define([
 						if (!oContext) {
 							oModel.setProperty("/showError", true);
 							return;
-						}
+						}*/
 						//Setting min date to DateTo to restrict selection of invalid dates
 						// oDateToField.setMinDate(oContext.getProperty("DateFrom"));
 
 						oModel.setProperty("/showError", false);
 						if (oModel.getProperty("/DateFrom") === "" || oModel.getProperty("/DateTo") === "") {
-							oModel.setProperty("/DateFrom", oContext.getProperty("DateFrom"));
-							oModel.setProperty("/DateTo", oContext.getProperty("DateTo"));
+							oModel.setProperty("/DateFrom", data.DateFrom);
+							oModel.setProperty("/DateTo", data.DateTo);
 						}
 
-						oModel.setProperty("/Effort", oContext.getProperty("Effort"));
-						oModel.setProperty("/EffortUnit", oContext.getProperty("EffortUnit"));
+						oModel.setProperty("/Effort", data.Effort);
+						oModel.setProperty("/EffortUnit", data.EffortUnit);
 						
 						//Fetching Resource Start and End Date from AssignmentSet for validating on save
-						oModel.setProperty("/RES_ASGN_START_DATE", oContext.getProperty("RES_ASGN_START_DATE"));
-						oModel.setProperty("/RES_ASGN_END_DATE", oContext.getProperty("RES_ASGN_END_DATE"));
+						oModel.setProperty("/RES_ASGN_START_DATE", data.RES_ASGN_START_DATE);
+						oModel.setProperty("/RES_ASGN_END_DATE", data.RES_ASGN_END_DATE);
 
-						oDemandData = oContext.getProperty("Demand");
+						var oDemandData = data.Demand;
 						oModel.setProperty("/Description", oDemandData.DemandDesc);
 						oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
 						oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
@@ -327,7 +330,7 @@ sap.ui.define([
 						oModel.setProperty("/DemandGuid", oDemandData.Guid);
 						oModel.setProperty("/Notification", oDemandData.NOTIFICATION);
 						oModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
-					},
+					/*},
 					dataRequested: function () {
 						oDialog.setBusy(true);
 					},
@@ -335,7 +338,7 @@ sap.ui.define([
 						oDialog.setBusy(false);
 					}
 				}
-			});
+			});*/
 
 		},
 
@@ -457,6 +460,7 @@ sap.ui.define([
 			}
 
 		},
+		
 		/**
 		 * On Change of Assignment Dates
 		 * Validating Start and End Date falls within Resource Start and End Date
