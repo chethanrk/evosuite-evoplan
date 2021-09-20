@@ -61,7 +61,7 @@ sap.ui.define([
 			//	d = d === 2 || d === 3;
 			return a && !b && c !== "COMP" && d;
 		},
-		
+
 		/**
 		 * Opens the AssignDialog to assign the demand to resources
 		 * @Author Rahul
@@ -109,15 +109,16 @@ sap.ui.define([
 			});
 
 		},
-		
+
 		/**
 		 * open's a action sheets with possible statuses. 
 		 */
 		onClickAction: function (oEvent) {
 			localStorage.setItem("Evo-Action-page", "DemandDetails");
-			sap.ui.getCore().byId("idStatusActionSheet").openBy(oEvent.getSource());
+			// sap.ui.getCore().byId("idStatusActionSheet").openBy(oEvent.getSource());
+			this.getView().byId("idStatusActionSheet").openBy(oEvent.getSource());
 		},
-		
+
 		/**
 		 * Opens the AssignInfo dialog to update the assignment
 		 * @Author Rahul
@@ -132,32 +133,32 @@ sap.ui.define([
 				oAssignmentData = oModel.getProperty(sPath);
 
 			localStorage.setItem("Evo-Action-page", "DemandDetails");
-				var mParams = {
-					viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#AssignmentDialog",
-					annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
-					entitySet: "AssignmentSet",
-					controllerName: "AssignInfo",
-					title: "xtit.assignInfoModalTitle",
-					type: "add",
-					smartTable: null,
-					sPath: sPath,
-					sDeepPath: "Demand",
-					oDialogController:this.getOwnerComponent().assignInfoDialog,
-					refreshParameters:{
-						bFromDetail: true
-					}
-					
-				};
-				this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams, this._afterDialogLoad.bind(this));
-			
+			var mParams = {
+				viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#AssignmentDialog",
+				annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
+				entitySet: "AssignmentSet",
+				controllerName: "AssignInfo",
+				title: "xtit.assignInfoModalTitle",
+				type: "add",
+				smartTable: null,
+				sPath: sPath,
+				sDeepPath: "Demand",
+				oDialogController: this.getOwnerComponent().assignInfoDialog,
+				refreshParameters: {
+					bFromDetail: true
+				}
+
+			};
+			this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams, this._afterDialogLoad.bind(this));
+
 		},
-		_afterDialogLoad: function(oDialog, oView, sPath, sEvent, data, mParams){
-			
-			if(sEvent === "dataReceived"){
+		_afterDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
+
+			if (sEvent === "dataReceived") {
 				this.getOwnerComponent().assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
 			}
 		},
-		
+
 		/**
 		 * Opens the StatusDialog to change status
 		 * @Author Rahul
@@ -185,7 +186,7 @@ sap.ui.define([
 				}
 			});
 		},
-		
+
 		/**
 		 * This method required when user directly open the demand overview page
 		 * and change status or assignment actions are performed
@@ -196,15 +197,15 @@ sap.ui.define([
 		_triggerRefreshDemand: function () {
 			this.getView().getElementBinding().refresh();
 		},
-		
+
 		getVisible: function (a, b, c, d) {
-		//	d = d === 2 || d === 3;
+			//	d = d === 2 || d === 3;
 			return a && !b && c !== "COMP" && d;
 		},
-		
+
 		getSetFunction: function (a, b, c, d) {
-			return a && !b && c !== "COMP" && d;// === 1;
+			return a && !b && c !== "COMP" && d; // === 1;
 		},
-		
+
 	});
 });
