@@ -163,7 +163,6 @@ sap.ui.define([
 		},
 		/**
 		 * On Drop on the resource tree rows or on the Gantt chart
-		 * call the function import to create the assignment
 		 * @param {object} oEvent
 		 * @Author Rahul
 		 * @since 3.0
@@ -174,6 +173,28 @@ sap.ui.define([
 				oDroppedControl = oEvent.getParameter("droppedControl"),
 				oBrowserEvent = oEvent.getParameter("browserEvent"),
 				oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
+				oDropContext = oDroppedControl.getBindingContext(),
+				sOperationStartDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_START_DATE"),
+				sOperationEndDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_END_DATE");
+
+			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !== null) {
+				this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(), {
+					bFromGantt: true
+				}, oDropContext.getPath(), oDraggedControl, oDroppedControl, oBrowserEvent);
+			} else {
+				this.onProceedToGanttDropOnResource(oDraggedControl, oDroppedControl, oBrowserEvent);
+			}
+		},
+		/**
+		 *On Drop on the resource tree rows or on the Gantt chart after validating with Operation Times
+		 * call the function import to create the assignment
+		 * @param {Object} oDraggedControl Dragged paths
+		 * @param {Object} oDroppedControl Dropped Path
+		 * @param {Object} oBrowserEvent Browser events
+		 * @private
+		 */
+		onProceedToGanttDropOnResource: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
+			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext(),
 				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
 				sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : slocStor.split(","),

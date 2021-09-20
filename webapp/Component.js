@@ -29,6 +29,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttResourceFilter",
 	"com/evorait/evoplan/controller/gantt/GanttActions",
 	"com/evorait/evoplan/controller/DialogTemplateRenderController",
+		"com/evorait/evoplan/controller/common/OperationTimeCheck"
 ], function (
 	UIComponent,
 	Device,
@@ -58,7 +59,8 @@ sap.ui.define([
 	Constants,
 	WebSocket,
 	GanttResourceFilter,
-	GanttActions, DialogTemplateRenderController) {
+	GanttActions, DialogTemplateRenderController,
+	OperationTimeCheck) {
 
 	"use strict";
 
@@ -398,6 +400,9 @@ sap.ui.define([
 			this.GanttResourceFilter = new GanttResourceFilter();
 
 			this.GanttActions = new GanttActions();
+			
+			this.OperationTimeCheck = new OperationTimeCheck();
+			this.OperationTimeCheck.init();
 		},
 
 		/**

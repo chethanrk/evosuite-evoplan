@@ -22,6 +22,7 @@ sap.ui.define([
 			var oModel = this.getModel(),
 				targetObj = oModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
+				aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
 				aPromises = [],
 				oDemandObj,
 				sDemandGuid;
@@ -63,6 +64,12 @@ sap.ui.define([
 						oParams.TimeTo = targetObj.EndTime;
 					}
 				}
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && this._mParameters.bFromGantt && aGanttDemandDragged.IsSelected) {
+					oParams.DateFrom = aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE;
+					oParams.TimeFrom.ms = aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME.ms;
+					oParams.DateTo = aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE;
+					oParams.TimeTo.ms = aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME.ms;
+				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}
 			return aPromises;
@@ -94,8 +101,8 @@ sap.ui.define([
 			// 	return;
 			// }
 
-			this.executeFunctionImport(oModel, oParams, "UpdateAssignment", "POST", mParameters, true).then(function (oData,oResponse) {
-				
+			this.executeFunctionImport(oModel, oParams, "UpdateAssignment", "POST", mParameters, true).then(function (oData, oResponse) {
+
 			}.bind(this));
 			return;
 			// var oParams = {
