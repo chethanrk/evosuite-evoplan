@@ -390,10 +390,14 @@ sap.ui.define([
 		 * @return {boolean}
 		 */
 		isResource: function (sValue) {
-			if (sValue !== "RES_GROUP" && sValue !== "ASSIGNMENT") {
+			if (this.getModel("user").getProperty("/ENABLE_CUMULATIVE_CAPACITY")) {
 				return true;
+			} else {
+				if (sValue !== "RES_GROUP" && sValue !== "ASSIGNMENT") {
+					return true;
+				}
+				return false;
 			}
-			return false;
 		},
 		/**
 		 * Format percentage value of progress bar based the utilization value
@@ -753,11 +757,11 @@ sap.ui.define([
 				break;
 			case "updateResource":
 				sMsgTypeText = "Update";
-				break;	
+				break;
 			}
 
 			if (aData && aData.length) {
-			
+
 				for (var i in aData) {
 					if (!aData[i].AllowUnassign) {
 						return sResourceName + this._oResourceBundle.getText("ymsg.resourceNot" + sMsgTypeText); //Unassignable
