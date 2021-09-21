@@ -172,9 +172,9 @@ sap.ui.define([
 				oRowContext = oSource.getParent().getBindingContext();
 
 			if (oRowContext) {
-				this.assignmentPath = "/AssignmentSet('"+oRowContext.getObject().AssignmentGuid+"')";
+				this.assignmentPath = "/AssignmentSet('" + oRowContext.getObject().AssignmentGuid + "')";
 				// this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
-				
+
 				var mParams = {
 					viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#AssignmentDialog",
 					annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
@@ -186,9 +186,9 @@ sap.ui.define([
 					sPath: this.assignmentPath,
 					sDeepPath: "Demand",
 					parentContext: oRowContext,
-					oDialogController:this.getOwnerComponent().assignInfoDialog,
-					refreshParameters:this._mParameters
-					
+					oDialogController: this.getOwnerComponent().assignInfoDialog,
+					refreshParameters: this._mParameters
+
 				};
 				this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams, this._afterDialogLoad.bind(this));
 
@@ -197,8 +197,8 @@ sap.ui.define([
 				this.showMessageToast(msg);
 			}
 		},
-		_afterDialogLoad: function(oDialog, oView, sPath, sEvent, data, mParams){
-			if(sEvent === "dataReceived"){
+		_afterDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
+			if (sEvent === "dataReceived") {
 				this.getOwnerComponent().assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
 			}
 		},
@@ -296,7 +296,8 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
-				aSources = [];
+				aSources = [],
+				iOperationTimesLen;
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -310,15 +311,20 @@ sap.ui.define([
 			}
 
 			aSources = this._oViewModel.getProperty("/dragSession");
+			iOperationTimesLen = this.onShowOperationTimes(aSources);
 
-			// If the Resource is Not/Partially available
-			if (this.isAvailable(sPath)) {
-				this.assignedDemands(aSources, sPath);
+			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length) {
+				this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(),  this._mParameters, sPath);
 			} else {
-				this.showMessageToProceed(aSources, sPath);
+				// If the Resource is Not/Partially available
+				if (this.isAvailable(sPath)) {
+					this.assignedDemands(aSources, sPath);
+				} else {
+					this.showMessageToProceed(aSources, sPath);
+				}
 			}
-
 		},
+	
 		/**
 		 * Method will refresh the data of tree by restoring its state
 		 *

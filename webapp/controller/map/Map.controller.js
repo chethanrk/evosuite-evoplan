@@ -308,6 +308,7 @@ sap.ui.define([
 			}
 			// keeping the data in drag session
 			this.getModel("viewModel").setProperty("/mapDragSession", aPathsData);
+			this.getModel("viewModel").setProperty("/dragSession", aPathsData);
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 				oEvent.preventDefault();
@@ -389,7 +390,7 @@ sap.ui.define([
 		onRowSelectionChange: function (oEvent) {
 			this._bDemandListScroll = true; //Flag to identify Demand List row is selected and scrolled or not
 			var selected = this._oDataTable.getSelectedIndices(),
-			               sDemandPath,bComponentExist;
+				sDemandPath, bComponentExist;
 			var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
 				this.byId("assignButton").setEnabled(true);
@@ -416,23 +417,20 @@ sap.ui.define([
 					this.updateMapDemandSelection(oEvent);
 				}
 			}
-			
+
 			//Enabling/Disabling the Material Status Button based on Component_Exit flag
-					for (var i = 0; i < selected.length; i++) {
-						sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
-						bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
-						if(bComponentExist)
-						{
-							this.byId("materialInfo").setEnabled(true);
-							this.byId("idOverallStatusButton").setEnabled(true);
-							break;
-						}
-						else
-						{
-							this.byId("materialInfo").setEnabled(false);
-							this.byId("idOverallStatusButton").setEnabled(false);
-						}
-					}
+			for (var i = 0; i < selected.length; i++) {
+				sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
+				bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
+				if (bComponentExist) {
+					this.byId("materialInfo").setEnabled(true);
+					this.byId("idOverallStatusButton").setEnabled(true);
+					break;
+				} else {
+					this.byId("materialInfo").setEnabled(false);
+					this.byId("idOverallStatusButton").setEnabled(false);
+				}
+			}
 		},
 
 		/**
@@ -755,7 +753,7 @@ sap.ui.define([
 		onClickAssignCount: function (oEvent) {
 			this.getOwnerComponent().assignmentList.open(this.getView(), oEvent, this._mParameters);
 		},
-		
+
 		/**
 		 * On Material Info Button press event 
 		 * 
@@ -780,14 +778,14 @@ sap.ui.define([
 		 */
 		onMaterialStatusPress: function (oEvent) {
 			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
-			    oViewModel = this.getModel("appView"),
+				oViewModel = this.getModel("appView"),
 				sDemandPath;
-				oViewModel.setProperty("/busy", true);
+			oViewModel.setProperty("/busy", true);
 			for (var i = 0; i < oSelectedIndices.length; i++) {
 				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 					oViewModel.setProperty("/busy", false);
-			}.bind(this));
+				}.bind(this));
 			};
 		},
 

@@ -233,7 +233,8 @@ sap.ui.define([
 			var oModel = this.getModel(),
 				bIsLast = null,
 				aItems = aSourcePaths && aSourcePaths.length ? aSourcePaths : aGuids,
-				oContext, sPath, demandObj;
+				aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
+				oContext, sPath, demandObj, aOperationTimeParams;
 			this.clearMessageModel();
 			for (var i = 0; i < aItems.length; i++) {
 				oContext = aItems[i];
@@ -243,6 +244,27 @@ sap.ui.define([
 				oParams.DemandGuid = demandObj ? demandObj.Guid : sPath.split("'")[1];
 				oParams.ResourceGroupGuid = targetObj.ResourceGroupGuid;
 				oParams.ResourceGuid = targetObj.ResourceGuid;
+
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION")) {
+					if (oContext.IsSelected) {
+						oParams.DateFrom = oContext.oData.FIXED_ASSGN_START_DATE;
+						oParams.TimeFrom.ms = oContext.oData.FIXED_ASSGN_START_TIME.ms;
+						oParams.DateTo = oContext.oData.FIXED_ASSGN_END_DATE;
+						oParams.TimeTo.ms = oContext.oData.FIXED_ASSGN_END_TIME.ms;
+					} else {
+						aOperationTimeParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
+						oParams.DateFrom = aOperationTimeParams.DateFrom;
+						oParams.TimeFrom.ms = aOperationTimeParams.TimeFrom.ms;
+						oParams.DateTo = aOperationTimeParams.DateTo;
+						oParams.TimeTo.ms = aOperationTimeParams.TimeTo.ms;
+					}
+					if (mParameters && mParameters.bFromGantt && aGanttDemandDragged.IsSelected) {
+						oParams.DateFrom = aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE;
+						oParams.TimeFrom.ms = aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME.ms;
+						oParams.DateTo = aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE;
+						oParams.TimeTo.ms = aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME.ms;
+					}
+				}
 
 				if (parseInt(i, 10) === aItems.length - 1) {
 					bIsLast = true;
@@ -495,6 +517,20 @@ sap.ui.define([
 				oParams.TimeTo.ms = oNewEndDate ? oNewEndDate.getTime() : vCurrentTime;
 			}
 			return oParams;
-		}
+		},
+
+		onShowOperationTimes: function (aSources) {
+			aSources = this.getModel("viewModel").getProperty("/dragSession");
+			var aOperationTimes = [];
+			for (var f in aSources) {
+				aSources[f].IsDisplayed = true;
+				if (aSources[f].oData.FIXED_ASSGN_END_DATE === null && aSources[f].oData.FIXED_ASSGN_START_DATE === null) {
+					aSources[f].IsDisplayed = false;
+					aOperationTimes.push(aSources[f]);
+				}
+			}
+			this.getModel("viewModel").refresh(true);
+			return aOperationTimes.length;
+		},
 	});
 });
