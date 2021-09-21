@@ -134,7 +134,7 @@ sap.ui.define([
 
 			localStorage.setItem("Evo-Action-page", "DemandDetails");
 			var mParams = {
-				viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#AssignmentDialog",
+				viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#DemandAssignmentDialog",
 				annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
 				entitySet: "AssignmentSet",
 				controllerName: "AssignInfo",

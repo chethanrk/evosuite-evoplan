@@ -176,7 +176,7 @@ sap.ui.define([
 				// this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
 
 				var mParams = {
-					viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#AssignmentDialog",
+					viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#ResourceAssignmentDialog",
 					annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
 					entitySet: "AssignmentSet",
 					controllerName: "AssignInfo",
