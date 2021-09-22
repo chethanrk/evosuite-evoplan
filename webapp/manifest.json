@@ -198,6 +198,13 @@
 						"assets",
 						"orderCreate"
 					]
+				},{
+					"pattern": "AssetPlanning",
+					"name": "CreateOrder",
+					"target": [
+						"assets",
+						"CreateOrder"
+					]
 				}, {
 					"pattern": "AssetPlanning/{asset}/Demand/{guid}",
 					"name": "assetDemandDetail",
@@ -455,6 +462,14 @@
 					"viewLevel": 4
 				},
 				"DemandDetail": {
+					"viewType": "XML",
+					"viewName": "ObjectPage",
+					"viewPath": "com.evorait.evoplan.view",
+					"viewLevel": 2,
+					"controlId": "rightPanel",
+					"parent": "splitHorNavigation"
+				},	
+				"CreateOrder": {
 					"viewType": "XML",
 					"viewName": "ObjectPage",
 					"viewPath": "com.evorait.evoplan.view",

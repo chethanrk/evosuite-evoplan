@@ -17,21 +17,18 @@ sap.ui.define([
 			this.oRouter = this.getRouter();
 			this.oResourceBundle = this.getResourceBundle();
 			this.onRouteMapping();
-
 		},
 
 		onRouteMapping: function () {
 			if (!this.oViewModel.getProperty("/bObjectPageRouteMatchAttached")) {
 				this.oRouter.attachRouteMatched(function (oEvent) {
 					this.oViewModel.setProperty("/bObjectPageRouteMatchAttached", true);
-
 					var sRouteName = oEvent.getParameter("name"),
 						oArgs = oEvent.getParameter("arguments"),
 						sViewName = null,
 						mParams = "";
-
 					this.getOwnerComponent().oTemplatePropsProm.then(function () {
-						//create Demand detail view
+					//create Demand detail view
 						if (sRouteName === "DemandDetail") {
 							//Demand detail view
 							sViewName = "com.evorait.evoplan.view.templates.DemandDetails#DemandDetailTabs";
@@ -40,6 +37,11 @@ sap.ui.define([
 							};
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageDemands"));
 							this._onRouteMatched(oEvent, sViewName, "DemandSet", mParams);
+						}
+						else	if (sRouteName === "CreateOrder") {
+							//Create Order view
+							sViewName = "com.evorait.evoplan.view.templates.CreateOrder#Create";
+							this._onRouteMatched(oEvent, sViewName, "EvoPlanOrderSet");
 						}
 						// setting the bread crum value xtit.itemListTitle
 						else if (sRouteName === "object") {

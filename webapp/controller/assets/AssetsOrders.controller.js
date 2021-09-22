@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/Fragment"
-], function (Controller, formatter, History, JSONModel, Filter, FilterOperator,Fragment) {
+], function (Controller, formatter, History, JSONModel, Filter, FilterOperator, Fragment) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.assets.AssetsOrders", {
@@ -94,11 +94,11 @@ sap.ui.define([
 		 * @memberOf com.evorait.evoplan.view.AssetsOrders
 		 */
 		onExit: function () {
-			if (this._infoDialog){
+			if (this._infoDialog) {
 				this._infoDialog.destroy();
 			}
 			this._eventBus.unsubscribe("BaseController", "refreshAssetCal", this._triggerAssetFilter, this);
-			
+
 			this._selectedAsset = undefined;
 			this._aSelectedDemands = [];
 		},
@@ -142,13 +142,15 @@ sap.ui.define([
 				type: this._selectedAsset.TechnicalObjectType,
 				assetFloc: this._selectedAsset.TechnicalObject,
 				assetDesc: this._selectedAsset.Description,
-				businessArea : this._selectedAsset.BusinessArea
+				businessArea: this._selectedAsset.BusinessArea
 			};
 			this.getModel("viewModel").setProperty("/createOrderDefaults", oOrderDetails);
 
-			oRouter.navTo("orderCreate", {
-				asset: this._selectedAsset.AssetGuid
-			});
+			// oRouter.navTo("orderCreate", {
+			// 	asset: this._selectedAsset.AssetGuid
+			// });
+
+			oRouter.navTo("CreateOrder", {});
 		},
 
 		/**
@@ -175,7 +177,7 @@ sap.ui.define([
 				this.byId("assignButton").setEnabled(false);
 				if (oData.AssetPlandatatype === "A" && oUserModel && oUserModel.getProperty("/ENABLE_CHANGE_ASSET_TIME_ALLOC")) {
 					this._openTimeAllocUpdate(oData);
-				} else if(oData.AssetPlandatatype === "D"){
+				} else if (oData.AssetPlandatatype === "D") {
 					oRouter.navTo("assetDemandDetail", {
 						guid: oData.Guid,
 						asset: oData.AssetGuid
@@ -201,11 +203,10 @@ sap.ui.define([
 					this._aSelectedDemands.push(oSelectedDemand);
 				}
 				if (this._aSelectedDemands.length > 0) {
-                    this.byId("assignButton").setEnabled(true);
-                }
-				else {
-                    this.byId("assignButton").setEnabled(false);
-                }
+					this.byId("assignButton").setEnabled(true);
+				} else {
+					this.byId("assignButton").setEnabled(false);
+				}
 			} else {
 				oSelectedDemand.setSelected(false);
 				this.showMessageToast(oResourceBundle.getText("ymsg.notDemand"));
@@ -240,20 +241,19 @@ sap.ui.define([
 			// create popover
 			if (!this._infoDialog) {
 				this.getOwnerComponent().getModel("appView").setProperty("/busy", true);
-                Fragment.load({
-                    name: "com.evorait.evoplan.view.assets.fragments.CreateTimeAllocation",
-                    controller: this
-                }).then(function (oDialog) {
-                	this.getOwnerComponent().getModel("appView").setProperty("/busy", false);
-                    this._infoDialog = oDialog;
-                    this.open(oDialog);
-                }.bind(this));
-            }else {
-                this.open(this._infoDialog);
-            }
+				Fragment.load({
+					name: "com.evorait.evoplan.view.assets.fragments.CreateTimeAllocation",
+					controller: this
+				}).then(function (oDialog) {
+					this.getOwnerComponent().getModel("appView").setProperty("/busy", false);
+					this._infoDialog = oDialog;
+					this.open(oDialog);
+				}.bind(this));
+			} else {
+				this.open(this._infoDialog);
+			}
 		},
-		open: function(oDialog)
-		{
+		open: function (oDialog) {
 			var oView = this.getView();
 			oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 			oView.addDependent(oDialog);
@@ -287,21 +287,21 @@ sap.ui.define([
 		 */
 		onSaveTimeAlloc: function (oEvent) {
 			var oSelectedAsset = this._selectedAsset,
-			 oResourceBundle = this.getResourceBundle(),
-			 oFromDate = sap.ui.getCore().byId("idTimeAllocSD"),
-			 oToDate = sap.ui.getCore().byId("idTimeAllocED"),
-			 sDescription = sap.ui.getCore().byId("idTimeAllocDesc"),
-			 oTimeAllocModel = this.getModel("timeAlloc"),
-			 oTimeAllocData = oTimeAllocModel ? oTimeAllocModel.getData() : null;
-			 
-			if(!oTimeAllocData){
+				oResourceBundle = this.getResourceBundle(),
+				oFromDate = sap.ui.getCore().byId("idTimeAllocSD"),
+				oToDate = sap.ui.getCore().byId("idTimeAllocED"),
+				sDescription = sap.ui.getCore().byId("idTimeAllocDesc"),
+				oTimeAllocModel = this.getModel("timeAlloc"),
+				oTimeAllocData = oTimeAllocModel ? oTimeAllocModel.getData() : null;
+
+			if (!oTimeAllocData) {
 				return;
 			}
-			
+
 			if (!this._validateFields(oTimeAllocData.dateFrom, oTimeAllocData.dateTo, oTimeAllocData.desc, oFromDate, oToDate, sDescription)) {
 				return;
 			}
-			
+
 			if (oTimeAllocData.dateFrom && oTimeAllocData.dateTo && oTimeAllocData.desc.trim()) {
 				if (oTimeAllocData.dateFrom.getTime() > oTimeAllocData.dateTo.getTime()) {
 					this.showMessageToast(oResourceBundle.getText("ymsg.datesInvalid"));
@@ -313,15 +313,18 @@ sap.ui.define([
 					EndTimestamp: oTimeAllocData.dateTo,
 					DowntimeDesc: oTimeAllocData.desc.trim(),
 					AssetUnavailabilityGuid: oTimeAllocData.guid,
-					AssetUnavailityCode:oTimeAllocData.priority
+					AssetUnavailityCode: oTimeAllocData.priority
 				};
 				this.clearMessageModel();
 				if (oTimeAllocData.guid && oTimeAllocData.guid !== "") {
-                    this.callFunctionImport(oParams, "UpdateAssetUnavailability", "POST", {bFromAsset: true}, true);
-                }
-				else {
-                    this.callFunctionImport(oParams, "CreateAssetUnavailability", "POST", {bFromAsset: true}, true);
-                }
+					this.callFunctionImport(oParams, "UpdateAssetUnavailability", "POST", {
+						bFromAsset: true
+					}, true);
+				} else {
+					this.callFunctionImport(oParams, "CreateAssetUnavailability", "POST", {
+						bFromAsset: true
+					}, true);
+				}
 			} else {
 				return;
 			}
@@ -506,7 +509,7 @@ sap.ui.define([
 			this.getModel("viewModel").setProperty("/assetsFilter", aFilters);
 			return aFilters;
 		},
-		
+
 		/** 
 		 * Methods generates the filter based on assetplanning datat type from selected checkboxes
 		 * 
@@ -540,7 +543,9 @@ sap.ui.define([
 			var oSelectedPaths = this._getSelectedRowPaths(null, null, null, this._aSelectedDemands);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
-				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData,false,{bFromAsset:true});
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, {
+					bFromAsset: true
+				});
 			}
 			if (oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
