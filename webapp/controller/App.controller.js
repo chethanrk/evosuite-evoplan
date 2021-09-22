@@ -107,7 +107,7 @@ sap.ui.define([
 				//oRouter.navTo("TestFull", {});
 				break;
 			case oResourceBundle.getText("xbut.pageMessageCockpit"):
-				if(this._routeValidation("EMP_ENABLED")){
+				if(this._routeValidation("ENABLE_EMP")){
 					oRouter.navTo("messageCockpit", {});
 					break;
 				}
