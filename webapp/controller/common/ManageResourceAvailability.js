@@ -102,11 +102,15 @@ sap.ui.define([
 		onClickItem: function (oEvent) {
 			var oSelectedItem = oEvent.getParameter("listItem"),
 				oContext = oSelectedItem.getBindingContext(),
+				oSelectedAbsence = oContext.getObject(),
 				sPath = oContext.getPath(),
 				oDetail = Fragment.byId(this._id, "detail");
-			oDetail.bindElement(sPath);
-
-			this._oApp.to(this._id + "--detail");
+				oDetail.bindElement(sPath);
+			if (oSelectedAbsence.DISABLE_ABSENCE_EDIT) {
+				this.showMessageToast(this._resourceBundle.getText("ymsg.updateHRAbsence"));
+			} else {
+				this._oApp.to(this._id + "--detail");
+			}
 		},
 		/**
 		 * On back check for data dirty
@@ -478,5 +482,22 @@ sap.ui.define([
 			this._oDialog.setBusy(false);
 			this._oDialog.close();
 		},
+		/**
+		 *	After DataRecieved, HR Absences item delete mode icon will be hidden
+		 *  @Author Chethan RK
+		 *	@private
+		 */
+		onRemoveDeleteMode: function () {
+			if (this._oView.getModel("user").getProperty("/ENABLE_ABSENCE_DELETE")) {
+				var aItems = this._oList.getItems();
+				for (var d in aItems) {
+					if (aItems[d].getBindingContext().getObject().DISABLE_ABSENCE_DELETE) {
+						aItems[d].getDeleteControl().setVisible(false);
+					}
+				}
+			} else {
+				this._oList.setMode("None");
+			}
+		}
 	});
 });
