@@ -78,7 +78,7 @@ sap.ui.define([
 			if (sPath) {
 				return sPath;
 			}
-			if (mParams) {
+			if (mParams && !mParams.isNew) {
 				return "/" + oModel.createKey(sEntitySet, mParams);
 			} else {
 				var oContext = oModel.createEntry("/" + sEntitySet);
@@ -237,7 +237,7 @@ sap.ui.define([
 						eventBus.publish("TemplateRendererEvoplan", "changedBinding", {
 							viewNameId: sViewName
 						});
-						oEvent.getSource().refresh();
+						//oEvent.getSource().refresh();
 						if (callbackFn) {
 							callbackFn();
 						}

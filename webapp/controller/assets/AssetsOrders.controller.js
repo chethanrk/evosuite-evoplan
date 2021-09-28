@@ -146,11 +146,9 @@ sap.ui.define([
 			};
 			this.getModel("viewModel").setProperty("/createOrderDefaults", oOrderDetails);
 
-			// oRouter.navTo("orderCreate", {
-			// 	asset: this._selectedAsset.AssetGuid
-			// });
-
-			oRouter.navTo("CreateOrder", {});
+			oRouter.navTo("CreateOrder", {
+				asset: this._selectedAsset.AssetGuid
+			});
 		},
 
 		/**

@@ -2,24 +2,25 @@
 	xmlns:uxap="sap.uxap" xmlns:layout="sap.ui.layout" xmlns:smartField="sap.ui.comp.smartfield" xmlns:blocks="com.evorait.evoplan.block"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
-		<uxap:ObjectPageLayout id="idCreatOrder" enableLazyLoading="false" isChildPage="true" showFooter="false" busy="{viewModel>/busy}"
-			busyIndicatorDelay="{viewModel>/delay}">
-		<uxap:headerContent></uxap:headerContent>
-		<uxap:headerTitle>
-			<uxap:ObjectPageHeader objectImageURI="sap-icon://create" objectTitle="{AssetDescription}" objectImageShape="Circle"
-				isObjectIconAlwaysVisible="false" isObjectTitleAlwaysVisible="false" isObjectSubtitleAlwaysVisible="false" isActionAreaAlwaysVisible="true">
-				<uxap:actions>
-					<Button text="{i18n>xbut.buttonSave}" tooltip="{i18n>xbut.buttonSave}" type="Emphasized" press="onSaveOrder"/>
-					<Button text="{i18n>xbut.buttonCancel}" tooltip="{i18n>xbut.buttonCancel}" type="Default" press="onBack"/>
-				</uxap:actions>
-				<uxap:breadcrumbs>
-					<Breadcrumbs currentLocationText="{i18n>xbut.createOrder}">
-						<Link text="{i18n>xtit.assetOrders}" press="onBack"/>
-					</Breadcrumbs>
-				</uxap:breadcrumbs>
-			</uxap:ObjectPageHeader>
-		</uxap:headerTitle>
-		
+		<uxap:ObjectPageLayout id="idCreatOrder" showTitleInHeaderContent="true" showAnchorBar="false" showFooter="true" isChildPage="true"
+			busy="{viewModel>/busy}" subSectionLayout="TitleOnTop" enableLazyLoading="false" busyIndicatorDelay="{viewModel>/delay}">
+			<uxap:headerContent></uxap:headerContent>
+			<uxap:headerTitle>
+				<uxap:ObjectPageHeader objectImageURI="sap-icon://create" objectTitle="{AssetDescription}" objectImageShape="Circle"
+					isObjectIconAlwaysVisible="false" isObjectTitleAlwaysVisible="false" isObjectSubtitleAlwaysVisible="false" isActionAreaAlwaysVisible="true">
+					<uxap:actions>
+						<uxap:ObjectPageHeaderActionButton icon="sap-icon://save" type="Emphasized" text="{i18n>xbut.buttonSave}" hideText="false"
+							tooltip="{i18n>xbut.buttonSave}" press="onSaveOrder"/>
+						<uxap:ObjectPageHeaderActionButton icon="sap-icon://cancel" type="Default" text="{i18n>xbut.buttonCancel}" hideText="false"
+							tooltip="{i18n>xbut.buttonCancel}" press="onBack"/>
+					</uxap:actions>
+					<uxap:breadcrumbs>
+						<Breadcrumbs currentLocationText="{i18n>xbut.createOrder}">
+							<Link text="{i18n>xtit.assetOrders}" press="onBack"/>
+						</Breadcrumbs>
+					</uxap:breadcrumbs>
+				</uxap:ObjectPageHeader>
+			</uxap:headerTitle>
 			<uxap:sections>
 				<template:with path="meta>com.sap.vocabularies.UI.v1.Facets#createForm" helper=".AH.resolvePath" var="contentTabs">
 					<template:repeat list="{contentTabs>}">
@@ -37,11 +38,17 @@
 									</uxap:subSections>
 								</uxap:ObjectPageSection>
 							</template:then>
-								</template:if>
+						</template:if>
 					</template:repeat>
 				</template:with>
 			</uxap:sections>
+			<uxap:footer>
+				<OverflowToolbar>
+					<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
+						type="Emphasized" press="onMessagePopoverPress"></Button>
+					<ToolbarSpacer/>
+				</OverflowToolbar>
+			</uxap:footer>
 		</uxap:ObjectPageLayout>
-
 	</template:alias>
 </mvc:View>

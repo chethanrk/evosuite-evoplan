@@ -41,7 +41,11 @@ sap.ui.define([
 						else	if (sRouteName === "CreateOrder") {
 							//Create Order view
 							sViewName = "com.evorait.evoplan.view.templates.CreateOrder#Create";
-							this._onRouteMatched(oEvent, sViewName, "EvoPlanOrderSet");
+							mParams = {
+								AssetGuid: window.decodeURIComponent(oArgs.asset),
+								isNew: true
+							};
+							this._onRouteMatched(oEvent, sViewName, "EvoPlanOrderSet", mParams);
 						}
 						// setting the bread crum value xtit.itemListTitle
 						else if (sRouteName === "object") {

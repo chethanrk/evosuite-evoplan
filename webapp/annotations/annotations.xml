@@ -207,7 +207,7 @@
 				<!--</Annotation>-->
 				<!--<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="GeneralGroup2">-->
 				<!--	<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">-->
-						<!--<PropertyValue Property="Label" String="General"/>-->
+				<!--<PropertyValue Property="Label" String="General"/>-->
 				<!--		<PropertyValue Property="Data">-->
 				<!--			<Collection>-->
 				<!--				<Record Type="com.sap.vocabularies.UI.v1.DataField">-->
@@ -222,7 +222,7 @@
 				<!--</Annotation>-->
 				<!--<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="DatesGroup1">-->
 				<!--	<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">-->
-						<!--<PropertyValue Property="Label" String="Date"/>-->
+				<!--<PropertyValue Property="Label" String="Date"/>-->
 				<!--		<PropertyValue Property="Data">-->
 				<!--			<Collection>-->
 				<!--				<Record Type="com.sap.vocabularies.UI.v1.DataField">-->
@@ -240,7 +240,7 @@
 				<!--</Annotation>-->
 				<!--<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroups" Qualifier="DatesGroup2">-->
 				<!--	<Record Type="com.sap.vocabularies.UI.v1.FieldGroupType">-->
-						<!--<PropertyValue Property="Label" String="Date"/>-->
+				<!--<PropertyValue Property="Label" String="Date"/>-->
 				<!--		<PropertyValue Property="Data">-->
 				<!--			<Collection>-->
 				<!--				<Record Type="com.sap.vocabularies.UI.v1.DataField">-->
@@ -656,7 +656,6 @@
 									<Record Type="UI.ReferenceFacet">
 										<PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#AssignmentDialog1"/>
 									</Record>
-									
 								</Collection>
 							</PropertyValue>
 						</Record>
@@ -686,8 +685,7 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
-			
-			</Annotations>	
+			</Annotations>
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.EvoPlanOrder">
 				<Annotation Term="UI.Facets" Qualifier="createForm">
 					<Collection>
@@ -700,9 +698,12 @@
 									<Record Type="UI.ReferenceFacet">
 										<PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#createForm2"/>
 									</Record>
+									<Record Type="UI.ReferenceFacet">
+										<PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#longText"/>
+									</Record>
 								</Collection>
 							</PropertyValue>
-							<PropertyValue Property="Label" String="{@i18n&gt;tit.general}"/>
+							<PropertyValue Property="com.sap.vocabularies.Common.v1.Label" String="General"/>
 							<Annotation Term="Core.Description" String="Form"/>
 						</Record>
 					</Collection>
@@ -726,9 +727,6 @@
 								</Record>
 								<Record Type="UI.DataField">
 									<PropertyValue Property="Value" Path="REVISION_NO"/>
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="LongText"/>
 								</Record>
 							</Collection>
 						</PropertyValue>
@@ -758,6 +756,23 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
+				<Annotation Term="UI.FieldGroup" Qualifier="longText">
+					<Record Type="UI.FieldGroupType">
+						<PropertyValue Property="Label" String="Long Text"/>
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="LongText"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="com.sap.vocabularies.Common.v1.Label" String="Description"/>
+						<Annotation Term="Org.OData.Core.V1.Description" String="longText"/>
+					</Record>
+				</Annotation>
+				<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.EvoPlanOrder/LongText">
+					<Annotation Term="com.sap.vocabularies.UI.v1.MultiLineText"/>
+				</Annotations>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

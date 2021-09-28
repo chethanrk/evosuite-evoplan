@@ -185,6 +185,13 @@
 						"DemandDetail"
 					]
 				}, {
+					"pattern": "AssetPlanning/{asset}/CreateOrder/New",
+					"name": "CreateOrder",
+					"target": [
+						"assets",
+						"CreateOrder"
+					]
+				}, {
 					"pattern": "AssetPlanning/{assets}/:withChildren:",
 					"name": "assetManager",
 					"target": [
@@ -197,13 +204,6 @@
 					"target": [
 						"assets",
 						"orderCreate"
-					]
-				},{
-					"pattern": "AssetPlanning",
-					"name": "CreateOrder",
-					"target": [
-						"assets",
-						"CreateOrder"
 					]
 				}, {
 					"pattern": "AssetPlanning/{asset}/Demand/{guid}",

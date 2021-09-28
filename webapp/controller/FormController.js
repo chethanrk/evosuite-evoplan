@@ -13,10 +13,10 @@ sap.ui.define([
 		onInit: function () {
 			this.oViewModel = this.getModel("viewModel");
 
-			//Bind the message model to the view and register it
-			if (this.getOwnerComponent) {
-				this.getOwnerComponent().registerViewToMessageManager(this.getView());
-			}
+			// //Bind the message model to the view and register it
+			// if (this.getOwnerComponent) {
+			// 	this.getOwnerComponent().registerViewToMessageManager(this.getView());
+			// }
 		},
 
 		/**
