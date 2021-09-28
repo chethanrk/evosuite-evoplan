@@ -61,6 +61,8 @@ sap.ui.define([
 			if (mParameters && mParameters.bFromGantt) {
 				this._component.getModel("viewModel").setProperty("/ganttSettings/busy", false);
 			}
+
+			this.onOperationTimesRowDisable();
 		},
 
 		/**
@@ -93,7 +95,30 @@ sap.ui.define([
 				this.oThis.assignedDemands(aAsgnDateCheckList, this._sPath, null);
 			}
 			this.onCloseDialog();
-		}
+		},
+		/**
+		 * Disabling items with no Operation Times in table
+		 */
+		onOperationTimesRowDisable: function () {
+			var oTable = sap.ui.getCore().byId("idAsgnDateCheckTable"),
+				oHeader = oTable.$().find('thead'),
+				oSelectAll = oHeader.find('.sapMCb');
+			oSelectAll.remove();
+			oTable.getItems().forEach(function (oEvent) {
+				var bIsDisplayed = oEvent.getBindingContext("viewModel").getObject().IsDisplayed,
+					oCheckBox = oEvent.$().find('.sapMCb'),
+					oSelectedRow = sap.ui.getCore().byId(oCheckBox.attr('id'));
+				if (bIsDisplayed) {
+					oSelectedRow.setEnabled(true);
+						oEvent.getBindingContext("viewModel").getObject().IsSelected = true;
+				} else {
+					oSelectedRow.setEnabled(false);
+					oEvent.getBindingContext("viewModel").getObject().IsSelected = false;
+				}
+			});
+			
+		//	this.onAssignmentDateCheckSelectAll();
+		},
 
 	});
 });
