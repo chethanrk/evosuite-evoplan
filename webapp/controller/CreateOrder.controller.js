@@ -1,7 +1,8 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/FormController",
-	"sap/ui/core/Component"
-], function (FormController, Component) {
+	"sap/ui/core/Component",
+	"sap/ui/core/routing/History"
+], function (FormController, Component, History) {
 	"use strict";
 
 	return FormController.extend("com.evorait.evoplan.controller.CreateOrder", {
@@ -150,8 +151,108 @@ sap.ui.define([
 					}
 				}.bind(this));
 			}
-		}
+		},
+		 /** 
+         * Navigation back. If any changes in entity are present confirmation box will shown
+         */
+        onBack: function () {
+            var oModel = this.getModel(),
+                bChanges = oModel.hasPendingChanges(),
+                oRequestBundle = this.getResourceBundle();
 
+            if (!bChanges) {
+                this.navBack();
+            } else {
+                this.showConfirmMessageBox(oRequestBundle.getText("ymsg.confirmMsg"), this.onClose.bind(this));
+            }
+
+        },
+        /**
+         * Method gets called when user closed the confirmation pop up.
+         * Based on the user action the data gets saved or reverted.
+         *
+         * @Athour Rahul
+         * @version 2.1
+         */
+        onClose: function (oEvent) {
+            var oContext = this.getView().getBindingContext();
+            if (oEvent === "YES") {
+                this.getModel().deleteCreatedEntry(oContext);
+                this.navBack();
+            }
+        },
+        /**
+         * Navigation back
+         */
+        navBack: function () {
+            var sPreviousHash = History.getInstance().getPreviousHash();
+            if (sPreviousHash !== undefined) {
+                history.go(-1);
+            } else {
+                this.getRouter().navTo("assetManager", {
+                    assets: "NA"
+                }, true);
+            }
+        },
+	/**
+		 * On press save button
+		 */
+		onSaveOrder: function () {
+			if (this.aSmartForms.length > 0) {
+				var mErrors = this.validateForm(this.aSmartForms);
+				//if form is valid save created entry
+				this.saveChanges(mErrors, this._saveCreateSuccessFn.bind(this));
+			}
+		},/**
+		 * success callback after creating order
+		 * @param oResponse
+		 */
+		_saveCreateSuccessFn: function (oResponse) {
+			var sKey = null,
+				oChangeData = this.getBatchChangeResponse(oResponse);
+
+			if (oChangeData) {
+				sKey = oChangeData.ObjectKey;
+
+				if (this.isStandalonePage) {
+					var msg = this.getResourceBundle().getText("msg.orderCreateSuccess", sKey);
+					this.showSuccessMessage(msg);
+				} else if (sKey && sKey !== "" && this.sOrderType && this.sOrderType !== null) {
+					// this.oViewModel.setProperty("/newCreatedOrder", true);
+					// this.getRouter().navTo("OrderDetail", {
+					// 	ObjectKey: sKey,
+					// 	OrderType: this.sOrderType
+					// });
+				} else {
+					var msg = this.getResourceBundle().getText("msg.saveSuccess");
+					this.showSuccessMessage(msg);
+					this.navBack();
+				}
+			}
+		},
+
+		
+		 /**
+         * Method gets called on save order.
+         * Checks the form for the constraints and submits the form
+         *
+         * @param oEvent
+         */
+      /*  onSaveOrder: function (oEvent) {
+            var oOrderBlock = this.byId("idorderCreateB").getAggregation("_views")[0],
+                oForm = oOrderBlock.byId("idOrderCreForm"),
+                aErrorFields = oForm.check();
+            if (aErrorFields.length === 0) {
+                this.clearMessageModel();
+                this.getModel("appView").setProperty("/busy", true);
+                this.getModel().submitChanges({
+                    success: this.onSuccessCreate.bind(this),
+                    error: this.onErrorCreate.bind(this)
+                });
+            } else {
+                this.showMessageToast(this.getResourceBundle().getText("formValidateErrorMsg"));
+            }
+        },*/
 	});
 
 });

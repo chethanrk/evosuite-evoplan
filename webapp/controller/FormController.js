@@ -240,11 +240,11 @@ sap.ui.define([
 		 */
 		saveChanges: function (mParams, oSuccessCallback, oErrorCallback, oCtrl) {
 			if (mParams.state === "success") {
-				this._setBusyWhileSaving(oCtrl, true);
+			//	this._setBusyWhileSaving(oCtrl, true);
 
 				this.getModel().submitChanges({
 					success: function (oResponse) {
-						this._setBusyWhileSaving(oCtrl, false);
+					//	this._setBusyWhileSaving(oCtrl, false);
 						if (oResponse.__batchResponses && oResponse.__batchResponses[0].response && oResponse.__batchResponses[0].response.statusCode ===
 							"400") {
 							if (oErrorCallback) {
