@@ -37,14 +37,14 @@ sap.ui.define([
 							};
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageDemands"));
 							this._onRouteMatched(oEvent, sViewName, "DemandSet", mParams);
-						}
-						else	if (sRouteName === "CreateOrder") {
+						} else if (sRouteName === "CreateOrder") {
 							//Create Order view
 							sViewName = "com.evorait.evoplan.view.templates.CreateOrder#Create";
 							mParams = {
 								AssetGuid: window.decodeURIComponent(oArgs.asset),
 								isNew: true
 							};
+							this.getModel("viewModel").setProperty("/CreateOrderAssetGuid", mParams.AssetGuid);
 							this._onRouteMatched(oEvent, sViewName, "EvoPlanOrderSet", mParams);
 						}
 						// setting the bread crum value xtit.itemListTitle

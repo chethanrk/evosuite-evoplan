@@ -136,13 +136,13 @@ sap.ui.define([
 			var oRouter = this.getRouter();
 			// The URI parameters gets passed as navigation parameter
 			var oOrderDetails = {
-				asset: this._selectedAsset.AssetGuid,
-				wc: this._selectedAsset.MainWorkCenter,
-				plant: this._selectedAsset.Plant,
-				type: this._selectedAsset.TechnicalObjectType,
-				assetFloc: this._selectedAsset.TechnicalObject,
-				assetDesc: this._selectedAsset.Description,
-				businessArea: this._selectedAsset.BusinessArea
+				AssetGuid: this._selectedAsset.AssetGuid,
+				MainWorkCenter: this._selectedAsset.MainWorkCenter,
+				Plant: this._selectedAsset.Plant,
+				TechnicalObjectType: this._selectedAsset.TechnicalObjectType,
+				TechnicalObject: this._selectedAsset.TechnicalObject,
+				Description: this._selectedAsset.Description,
+				BusinessArea: this._selectedAsset.BusinessArea
 			};
 			this.getModel("viewModel").setProperty("/createOrderDefaults", oOrderDetails);
 

@@ -1,8 +1,10 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/FormController",
 	"sap/ui/core/Component",
-	"sap/ui/core/routing/History"
-], function (FormController, Component, History) {
+	"sap/ui/core/routing/History",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function (FormController, Component, History, Filter, FilterOperator) {
 	"use strict";
 
 	return FormController.extend("com.evorait.evoplan.controller.CreateOrder", {
@@ -69,7 +71,8 @@ sap.ui.define([
 
 				if (oData.viewNameId === _sViewNameId) {
 					this._checkForUrlParameters();
-					this.setDefaultValues();
+					var data = this.getModel("viewModel").getProperty("/createOrderDefaults");
+					this.setDefaultValues(data);
 				}
 			}
 		},
@@ -85,26 +88,36 @@ sap.ui.define([
 		},
 
 		/*
-        * function to set default values from asset
-        */
-		setDefaultValues: function () {
-			var oSelectedAsset = this.getModel("viewModel").getProperty("/createOrderDefaults"),
+		 * function to set default values from asset
+		 */
+		setDefaultValues: function (oData) {
+			var oSelectedAsset = oData,
 				sPath = this.getView().getBindingContext().getPath();
 			if (oSelectedAsset) {
-				this.getModel().setProperty(sPath + "/AssetGuid", oSelectedAsset.asset);
-				this.getModel().setProperty(sPath + "/TechnicalObject", oSelectedAsset.assetFloc);
-				this.getModel().setProperty(sPath + "/Plant", oSelectedAsset.plant);
-				this.getModel().setProperty(sPath + "/MainWorkCenter", oSelectedAsset.wc);
-				this.getModel().setProperty(sPath + "/AssetDescription", oSelectedAsset.assetDesc);
-				this.getModel().setProperty(sPath + "/TechnicalObjectType", oSelectedAsset.type);
-				this.getModel().setProperty(sPath + "/BusinessArea", oSelectedAsset.businessArea);
+				this.getModel().setProperty(sPath + "/AssetGuid", oSelectedAsset.AssetGuid);
+				this.getModel().setProperty(sPath + "/TechnicalObject", oSelectedAsset.TechnicalObject);
+				this.getModel().setProperty(sPath + "/Plant", oSelectedAsset.Plant);
+				this.getModel().setProperty(sPath + "/MainWorkCenter", oSelectedAsset.MainWorkCenter);
+				this.getModel().setProperty(sPath + "/AssetDescription", oSelectedAsset.Description);
+				this.getModel().setProperty(sPath + "/TechnicalObjectType", oSelectedAsset.TechnicalObjectType);
+				this.getModel().setProperty(sPath + "/BusinessArea", oSelectedAsset.BusinessArea);
 				this.getModel().setProperty(sPath + "/StartTimestamp", new Date());
 				this.getModel().setProperty(sPath + "/EndTimestamp", new Date());
 				this.getModel().setProperty(sPath + "/OrderType", this.getModel("user").getProperty("/DEFAULT_ORDER_TYPE"));
 			} else {
-				this.getRouter().navTo("assetManager", {
-					assets: "NA"
-				});
+				var sAssetGuid = this.getModel("viewModel").getProperty("/CreateOrderAssetGuid");
+				if (sAssetGuid !== "") {
+					//
+					var oFilter = new Filter("AssetGuid", FilterOperator.EQ, sAssetGuid);
+					this.getOwnerComponent()._getData("/AssetSet", [oFilter])
+						.then(function (data) {
+							this.setDefaultValues(data.results[0]);
+						}.bind(this));
+				} else {
+					this.getRouter().navTo("assetManager", {
+						assets: "NA"
+					});
+				}
 			}
 		},
 
