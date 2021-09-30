@@ -13,40 +13,29 @@ sap.ui.define([
 		 * @memberOf com.evorait.evoplan.view.Order
 		 */
 		onInit: function () {
-			// this.oViewModel = this.getModel("viewModel");
-			// var oRouter = this.getRouter();
-			// //route for page create new order
-			// oRouter.getRoute("CreateOrder").attachPatternMatched(this._onObjectMatched, this);
-			// oRouter.getRoute("CreateOrder").attachMatched(function (oEvent) {
-			// 	this._initializeView(oEvent);
-			// }, this);
-
 			FormController.prototype.onInit.apply(this, arguments);
+			this.oViewModel = this.getModel("viewModel");
+			var oRouter = this.getRouter();
+			//route for page create new order
+			oRouter.getRoute("CreateOrder").attachMatched(function (oEvent) {
+				this._onObjectMatched();
+			}, this);
+
 			var eventBus = sap.ui.getCore().getEventBus();
 			//Binnding has changed in TemplateRenderController.js
-			//eventBus.subscribe("TemplateRendererEvoPlan", "changedBinding", this._changedBinding, this);
+			eventBus.subscribe("TemplateRendererEvoPlan", "changedBinding", this._changedBinding, this);
 
 			var iOriginalBusyDelay,
 				oViewModel = this.getOwnerComponent().getModel("viewModel");
+			iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
 			this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
 			this.getView().addDependent(this._oMessagePopover);
-			this.getRouter().getRoute("CreateOrder").attachPatternMatched(this._onObjectMatched, this);
-			// Store original busy indicator delay, so it can be restored later on
-			iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
+
 			this.getOwnerComponent().getModel().metadataLoaded().then(function () {
 				// Restore original busy indicator delay for the object view
 				oViewModel.setProperty("/delay", iOriginalBusyDelay);
 			});
 		},
-
-		/**
-		 * Similar to onAfterRendering, but this hook is invoked before the controller's View is re-rendered
-		 * (NOT before the first rendering! onInit() is used for that one!).
-		 * @memberOf com.evorait.evoplan.view.Order
-		 */
-		//	onBeforeRendering: function() {
-		//
-		//	},
 
 		/**
 		 * life cycle event after view rendering
@@ -59,9 +48,11 @@ sap.ui.define([
 		 * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
 		 * @memberOf com.evorait.evoplan.view.Order
 		 */
-		//	onExit: function() {
-		//
-		//	}
+		onExit: function () {
+			this.getView().unbindElement();
+			var eventBus = sap.ui.getCore().getEventBus();
+			eventBus.unsubscribe("TemplateRendererEvoPlan", "changedBinding", this._changedBinding, this);
+		},
 
 		/**
 		 * Binding has changed in TemplateRenderController
@@ -78,22 +69,24 @@ sap.ui.define([
 
 				if (oData.viewNameId === _sViewNameId) {
 					this._checkForUrlParameters();
+					this.setDefaultValues();
 				}
 			}
 		},
 
 		/**
-		 * 
+		 * function called when route is matched
 		 */
 		_onObjectMatched: function (oEvent) {
 			this.aSmartForms = this.getAllSmartForms(this.getView().getControlsByFieldGroupId("smartFormTemplate"));
 			this.setFormsEditable(this.aSmartForms, true);
 			this.oViewModel.setProperty("/editMode", true);
 			this.oViewModel.setProperty("/isNew", true);
-			this._checkForUrlParameters();
-			this.setDefaultValues();
 		},
 
+		/*
+        * function to set default values from asset
+        */
 		setDefaultValues: function () {
 			var oSelectedAsset = this.getModel("viewModel").getProperty("/createOrderDefaults"),
 				sPath = this.getView().getBindingContext().getPath();
@@ -140,119 +133,123 @@ sap.ui.define([
 						var urlValue = this.getOwnerComponent().getLinkParameterByName(key);
 						var oProperty = oMetaModel.getODataProperty(oEntityType, key);
 						if (oProperty !== null) {
-							if (urlValue && urlValue !== Constants.STANDALONE_PAGES.NEW.param) {
-								//check if key is creatable true and url param value is not bigger then maxLength of property
-								if ((!oProperty.hasOwnProperty("sap:creatable") || oProperty["sap:creatable"] === "true") &&
-									(urlValue.length <= parseInt(oProperty["maxLength"]))) {
-									oModel.setProperty(sPath + "/" + key, urlValue);
-								}
+							//check if key is creatable true and url param value is not bigger then maxLength of property
+							if ((!oProperty.hasOwnProperty("sap:creatable") || oProperty["sap:creatable"] === "true") &&
+								(urlValue.length <= parseInt(oProperty["maxLength"]))) {
+								oModel.setProperty(sPath + "/" + key, urlValue);
 							}
+
 						}
 					}
 				}.bind(this));
 			}
 		},
-		 /** 
-         * Navigation back. If any changes in entity are present confirmation box will shown
-         */
-        onBack: function () {
-            var oModel = this.getModel(),
-                bChanges = oModel.hasPendingChanges(),
-                oRequestBundle = this.getResourceBundle();
+		/** 
+		 * Navigation back. If any changes in entity are present confirmation box will shown
+		 */
+		onBack: function () {
+			var oModel = this.getModel(),
+				bChanges = oModel.hasPendingChanges(),
+				oRequestBundle = this.getResourceBundle();
 
-            if (!bChanges) {
-                this.navBack();
-            } else {
-                this.showConfirmMessageBox(oRequestBundle.getText("ymsg.confirmMsg"), this.onClose.bind(this));
-            }
+			if (!bChanges) {
+				this.navBack();
+			} else {
+				this.showConfirmMessageBox(oRequestBundle.getText("ymsg.confirmMsg"), this.onClose.bind(this));
+			}
 
-        },
-        /**
-         * Method gets called when user closed the confirmation pop up.
-         * Based on the user action the data gets saved or reverted.
-         *
-         * @Athour Rahul
-         * @version 2.1
-         */
-        onClose: function (oEvent) {
-            var oContext = this.getView().getBindingContext();
-            if (oEvent === "YES") {
-                this.getModel().deleteCreatedEntry(oContext);
-                this.navBack();
-            }
-        },
-        /**
-         * Navigation back
-         */
-        navBack: function () {
-            var sPreviousHash = History.getInstance().getPreviousHash();
-            if (sPreviousHash !== undefined) {
-                history.go(-1);
-            } else {
-                this.getRouter().navTo("assetManager", {
-                    assets: "NA"
-                }, true);
-            }
-        },
-	/**
+		},
+		/**
+		 * Method gets called when user closed the confirmation pop up.
+		 * Based on the user action the data gets saved or reverted.
+		 *
+		 * @Athour Rahul
+		 * @version 2.1
+		 */
+		onClose: function (oEvent) {
+			var oContext = this.getView().getBindingContext();
+			if (oEvent === "YES") {
+				this.getModel().deleteCreatedEntry(oContext);
+				this.navBack();
+			}
+		},
+		/**
+		 * Navigation back
+		 */
+		navBack: function () {
+			var sPreviousHash = History.getInstance().getPreviousHash();
+			if (sPreviousHash !== undefined) {
+				history.go(-1);
+			} else {
+				this.getRouter().navTo("assetManager", {
+					assets: "NA"
+				}, true);
+			}
+		},
+		/**
 		 * On press save button
 		 */
 		onSaveOrder: function () {
 			if (this.aSmartForms.length > 0) {
 				var mErrors = this.validateForm(this.aSmartForms);
 				//if form is valid save created entry
-				this.saveChanges(mErrors, this._saveCreateSuccessFn.bind(this));
+				if (mErrors.state === "success") {
+					this.getModel("appView").setProperty("/busy", true);
+					this.getModel().submitChanges({
+						success: this.onSuccessCreate.bind(this),
+						error: this.onErrorCreate.bind(this)
+					});
+				}
 			}
-		},/**
+		},
+		/**
 		 * success callback after creating order
 		 * @param oResponse
 		 */
-		_saveCreateSuccessFn: function (oResponse) {
-			var sKey = null,
-				oChangeData = this.getBatchChangeResponse(oResponse);
-
-			if (oChangeData) {
-				sKey = oChangeData.ObjectKey;
-
-				if (this.isStandalonePage) {
-					var msg = this.getResourceBundle().getText("msg.orderCreateSuccess", sKey);
-					this.showSuccessMessage(msg);
-				} else if (sKey && sKey !== "" && this.sOrderType && this.sOrderType !== null) {
-					// this.oViewModel.setProperty("/newCreatedOrder", true);
-					// this.getRouter().navTo("OrderDetail", {
-					// 	ObjectKey: sKey,
-					// 	OrderType: this.sOrderType
-					// });
+		onSuccessCreate: function (data, response) {
+			var oContext = this.getView().getBindingContext();
+			var oResponse;
+			this.getModel("appView").setProperty("/busy", false);
+			if (data && data.__batchResponses) {
+				for (var i in data.__batchResponses) {
+					if (data.__batchResponses[i].response) {
+						if (!data.__batchResponses[i].response.statusCode.startsWith("2")) {
+							this.getModel().deleteCreatedEntry(oContext);
+							return;
+						}
+					} else {
+						for (var j in data.__batchResponses[i].__changeResponses) {
+							// sOrderId = data.__batchResponses[j].__changeResponses[0].data.OrderId;
+							if (data.__batchResponses[j].__changeResponses) {
+								oResponse = data.__batchResponses[j].__changeResponses[0];
+							}
+						}
+					}
+				}
+				if (this.showMessage(oResponse, function () {
+						this.getModel().deleteCreatedEntry(oContext);
+						this.navBack();
+					}.bind(this))) {
+					this.getModel().resetChanges();
 				} else {
-					var msg = this.getResourceBundle().getText("msg.saveSuccess");
-					this.showSuccessMessage(msg);
 					this.navBack();
 				}
 			}
 		},
-
-		
-		 /**
-         * Method gets called on save order.
-         * Checks the form for the constraints and submits the form
-         *
-         * @param oEvent
-         */
-      /*  onSaveOrder: function (oEvent) {
-            var oOrderBlock = this.byId("idorderCreateB").getAggregation("_views")[0],
-                oForm = oOrderBlock.byId("idOrderCreForm"),
-                aErrorFields = oForm.check();
-            if (aErrorFields.length === 0) {
-                this.clearMessageModel();
-                this.getModel("appView").setProperty("/busy", true);
-                this.getModel().submitChanges({
-                    success: this.onSuccessCreate.bind(this),
-                    error: this.onErrorCreate.bind(this)
-                });
-            } else {
-                this.showMessageToast(this.getResourceBundle().getText("formValidateErrorMsg"));
-            }
-        },*/
+		/**
+		 * Error handler of Create order call
+		 * @Author Rahul
+		 * @version 2.1
+		 * @since 2.1
+		 */
+		onErrorCreate: function (data, response) {
+			var oContext = this.getView().getBindingContext();
+			this.getModel("appView").setProperty("/busy", false);
+			if (oContext) {
+				this.getModel().deleteCreatedEntry(oContext);
+				this.navBack();
+			}
+		}
 	});
 
 });
