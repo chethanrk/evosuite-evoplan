@@ -215,7 +215,7 @@ sap.ui.define([
 				parameters = null;
 
 			if (!sPath) {
-				eventBus.publish("TemplateRendererEvoplan", "changedBinding", {
+				eventBus.publish("TemplateRendererEvoPlan", "changedBinding", {
 					viewNameId: sViewName
 				});
 				if (callbackFn) {
@@ -234,7 +234,7 @@ sap.ui.define([
 				parameters: parameters,
 				events: {
 					change: function (oEvent) {
-						eventBus.publish("TemplateRendererEvoplan", "changedBinding", {
+						eventBus.publish("TemplateRendererEvoPlan", "changedBinding", {
 							viewNameId: sViewName
 						});
 						//oEvent.getSource().refresh();
