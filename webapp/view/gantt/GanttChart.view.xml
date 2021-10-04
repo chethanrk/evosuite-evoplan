@@ -1,0 +1,117 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:gnt2="sap.gantt.simple" xmlns:def="sap.gantt.def"
+	xmlns:pattern="sap.gantt.def.pattern" xmlns:table="sap.ui.table" xmlns:dnd="sap.ui.core.dnd"
+	controllerName="com.evorait.evoplan.controller.gantt.GanttChart" xmlns:html="http://www.w3.org/1999/xhtml">
+	<Page showFooter="false" showHeader="false">
+		<content>
+			<gnt2:GanttChartContainer id="container" busy="{viewModel>/ganttSettings/busy}">
+				<gnt2:toolbar showDisplayTypeButton="true">
+					<gnt2:ContainerToolbar design="Auto" showBirdEyeButton="false" showLegendButton="true" class="gantt_toolbar">
+						<gnt2:content>
+							<DateRangeSelection id="idDateRangeGantt2" width="20%" dateValue="{user>/DEFAULT_GANT_START_DATE}"
+								secondDateValue="{user>/DEFAULT_GANT_END_DATE}" change="onChangeDateRange" enabled="true"/>
+							<Button id="idButtonTimeAlloc" enabled="false" text="{i18n>xbut.timeallocation}" visible="{user>/ENABLE_BLOCK_TIME}"
+								press="onTimeAllocPress"/>
+							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.ResourceActions" type="XML"/>
+							<Button id="idToday" text="{i18n>xtit.today}" press="onPressToday"/>
+						</gnt2:content>
+						<gnt2:legendContainer>
+							<gnt2:LegendContainer width="230px" height="250px">
+								<gnt2:ListLegend title="{i18n>xtit.colorCodes}" items="{/GanttLegendSet}">
+									<gnt2:ListLegendItem>
+										<gnt2:BaseRectangle shapeId="{CharactersticCode}" fill="{parts:[{path:'Colourcode'}, {path:'Legendtype'} ], formatter:'.formatLegend'}"
+											title="{CharactersticDescription}" showTitle="false"/>
+									</gnt2:ListLegendItem>
+								</gnt2:ListLegend>
+							</gnt2:LegendContainer>
+						</gnt2:legendContainer>
+					</gnt2:ContainerToolbar>
+				</gnt2:toolbar>
+				<gnt2:ganttCharts>
+					<gnt2:GanttChartWithTable id="ganttResourceAssignments"
+									  ghostAlignment="Start"
+									  adhocLineLayer="Bottom"
+									  shapeSelectionMode = "Single"
+									  shapeSelectionSettings="{color:'red', strokeDasharray:'1,0'}"
+									  shapeDrop="onShapeDrop"
+									  shapeResize="onShapeResize"
+									  shapeMouseEnter="onShapeMouseEnter"
+									  shapeMouseLeave="onShapeMouseLeave"
+									  shapeDoubleClick="onShapeDoubleClick"
+									  shapeContextMenu="onShapeContextMenu"
+									  showShapeTimeOnDrag="true"
+									  selectionPanelSize="{viewModel>/ganttSelectionPane}"
+									  nowLineInUTC="false">
+						<gnt2:table>
+							<table:TreeTable id="ganttResourceTreeTable" class="resourceGanttTreeTable" selectionMode="Single" visibleRowCountMode="Auto" threshold="10"
+								enableColumnReordering="false" enableBusyIndicator="true" busyStateChanged="onBusyStateChanged" enableCellFilter="false"
+								columnHeaderVisible="false" selectionBehavior="RowOnly" rowHeight="25"
+								rows="{ path: 'ganttModel>/data', parameters: { arrayNames: ['children'], numberOfExpandedLevels: 1, groupId: 'GanttTree' } }">
+								<table:extension>
+									<OverflowToolbar>
+										<content>
+											<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.TreeExpandCollapse" type="XML"/>
+											<ToolbarSpacer/>
+											<Switch id="idShowutiliz" customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}" state="{viewModel>/showUtilization}"
+												change="onClickShowUtilization"></Switch>
+											<Button id="idBtnGanttResourceFilter" press="onPressGanttResourceFilters" icon="sap-icon://filter"/>
+										</content>
+									</OverflowToolbar>
+								</table:extension>
+								<table:rowSettingsTemplate>
+									<gnt2:GanttRowSettings rowId="{ganttModel>NodeId}_{ganttModel>ObjectId}" shapes3="{ path:'ganttModel>AssignmentSet/results', templateShareable:true }"
+										shapes2="{ path:'ganttModel>ResourceAvailabilitySet/results', templateShareable:true }">
+										<gnt2:shapes1>
+											<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.BackGroundShape" type="XML"/>
+										</gnt2:shapes1>
+										<gnt2:shapes2>
+											<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.UnAvailabilityShape" type="XML"/>
+										</gnt2:shapes2>
+										<gnt2:shapes3>
+											<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.AssignmentShape" type="XML"/>
+										</gnt2:shapes3>
+									</gnt2:GanttRowSettings>
+								</table:rowSettingsTemplate>
+								<table:dragDropConfig>
+									<dnd:DropInfo targetAggregation="rows" dropPosition="On" drop="onDropOnResource"/>
+								</table:dragDropConfig>
+								<table:columns>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.ResourceTreeColumns" type="XML"/>
+									<!--<table:Column width="20%" visible="{viewModel>/showUtilization}">
+										<table:customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
+										</table:customData>
+										<table:template>
+											<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.UtilizationColumn" type="XML"/>
+										</table:template>
+									</table:Column>
+									<table:Column label="{i18n>xtit.tableCheckbox}" name="{i18n>xtit.tableCheckbox}" width="2.5rem" class="sapUiNoContentPadding">
+										<table:customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "NodeType", "leadingProperty": "NodeType"}'/>
+										</table:customData>
+										<table:template>
+											<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"
+												selected="{IsSelected}"/>
+										</table:template>
+									</table:Column>-->
+								</table:columns>
+							</table:TreeTable>
+						</gnt2:table>
+						<gnt2:axisTimeStrategy>
+							<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.AxisTimeStrategy" type="XML"/>
+						</gnt2:axisTimeStrategy>
+						<gnt2:svgDefs>
+							<def:SvgDefs>
+								<def:defs>
+									<pattern:SlashPattern id="unavailability" backgroundColor="white" stroke="#ccc"></pattern:SlashPattern>
+								</def:defs>
+								<def:defs>
+									<pattern:SlashPattern id="oncallorovertime" backgroundColor="white" stroke="#FFA500"></pattern:SlashPattern>
+								</def:defs>
+							</def:SvgDefs>
+						</gnt2:svgDefs>
+					</gnt2:GanttChartWithTable>
+				</gnt2:ganttCharts>
+			</gnt2:GanttChartContainer>
+		</content>
+	</Page>
+</mvc:View>
