@@ -138,7 +138,10 @@ sap.ui.define([
 				sEffort = this.oAssignmentModel.getProperty("/Effort"),
 				iNewEffort = this.getEffortTimeDifference(sDateFrom, sDateTo),
 				oResourceBundle = this._oView.getController().getResourceBundle();
-
+			//Replacing comma in DE language with dot if any
+			this.oAssignmentModel.setProperty("/Effort",sEffort.replace(',','.'));
+			sEffort = this.oAssignmentModel.getProperty("/Effort");
+			
 			if (Number(iNewEffort) < Number(sEffort)) {
 				this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
 					if (oAction === "YES") {
