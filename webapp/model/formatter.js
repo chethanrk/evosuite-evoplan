@@ -390,7 +390,14 @@ sap.ui.define([
 		 * @return {boolean}
 		 */
 		isResource: function (sValue) {
-			if (this.getModel("user").getProperty("/ENABLE_CUMULATIVE_CAPACITY")) {
+			var oComponent = this._component,
+				oUser;
+			if (oComponent) {
+				oUser = oComponent.getModel("user");
+			} else {
+				oUser = this.getModel("user");
+			}
+			if (oUser && oUser.getProperty("/ENABLE_CUMULATIVE_CAPACITY")) {
 				return true;
 			} else {
 				if (sValue !== "RES_GROUP" && sValue !== "ASSIGNMENT") {
@@ -398,6 +405,7 @@ sap.ui.define([
 				}
 				return false;
 			}
+			return false;
 		},
 		/**
 		 * Format percentage value of progress bar based the utilization value

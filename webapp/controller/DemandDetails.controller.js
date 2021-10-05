@@ -1,10 +1,10 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/BaseController",
+	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"sap/ui/core/Component"
-], function (FormController, Component) {
+], function (AssignmentsController, Component) {
 	"use strict";
 
-	return FormController.extend("com.evorait.evoplan.controller.DemandDetails", {
+	return AssignmentsController.extend("com.evorait.evoplan.controller.DemandDetails", {
 
 		oViewModel: null,
 		/* =========================================================== */
@@ -130,28 +130,15 @@ sap.ui.define([
 				oContext = oAssignment.getBindingContext(),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
-				oAssignmentData = oModel.getProperty(sPath);
-
-			localStorage.setItem("Evo-Action-page", "DemandDetails");
-			var mParams = {
-				viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#DemandAssignmentDialog",
-				annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
-				entitySet: "AssignmentSet",
-				controllerName: "AssignInfo",
-				title: "xtit.assignInfoModalTitle",
-				type: "add",
-				smartTable: null,
-				sPath: sPath,
-				sDeepPath: "Demand",
-				oDialogController: this.getOwnerComponent().assignInfoDialog,
-				refreshParameters: {
+				oAssignmentData = oModel.getProperty(sPath),
+				mParameters = {
 					bFromDetail: true
-				}
-
-			};
-			this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams, this._afterDialogLoad.bind(this));
-
+				},
+				oDemandContext = this.getView().getBindingContext().getObject();
+			localStorage.setItem("Evo-Action-page", "DemandDetails");
+			this.openAssignInfoDialog(sPath, oContext, mParameters, oDemandContext);
 		},
+        
 		_afterDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
 
 			if (sEvent === "dataReceived") {

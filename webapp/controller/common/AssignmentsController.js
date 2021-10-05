@@ -534,24 +534,29 @@ sap.ui.define([
 			return aOperationTimes.length;
 		},
 
-		openAssignInfoDialog: function (sPath) {
-			var mParams = {
-				$expand: "Demand"
-			};
-			this.getOwnerComponent()._getData(sPath, null, mParams)
-				.then(function (data) {
-					var sObjectSourceType = data.Demand.OBJECT_SOURCE_TYPE,
-						qualifier;
-					if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
-						qualifier = Constants.ANNOTATION_CONSTANTS.NOTIFICATION_QUALIFIER
-					} else {
-						qualifier = Constants.ANNOTATION_CONSTANTS.ORDER_QUALIFIER
-					}
-					this.openDialog(qualifier);
-				}.bind(this));
+		openAssignInfoDialog: function (sPath, oContext, mParameters, oDemandContext) {
+			if (!oDemandContext) {
+				var mParams = {
+					$expand: "Demand"
+				};
+				this.getOwnerComponent()._getData(sPath, null, mParams)
+					.then(function (data) {
+						var sObjectSourceType = data.Demand.OBJECT_SOURCE_TYPE;
+						this.openDialog(sPath, oContext, mParameters, sObjectSourceType);
+					}.bind(this));
+			} else {
+				var sObjectSourceType = oDemandContext.OBJECT_SOURCE_TYPE;
+				this.openDialog(sPath, oContext, mParameters, sObjectSourceType);
+			}
 		},
 
-		openDialog: function (sQualifier) {
+		openDialog: function (sPath, oContext, mParameters, sObjectSourceType) {
+			var sQualifier;
+			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
+				sQualifier = Constants.ANNOTATION_CONSTANTS.NOTIFICATION_QUALIFIER;
+			} else {
+				sQualifier = Constants.ANNOTATION_CONSTANTS.ORDER_QUALIFIER;
+			}
 			var mParams = {
 				viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#" + sQualifier,
 				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
@@ -560,11 +565,11 @@ sap.ui.define([
 				title: "xtit.assignInfoModalTitle",
 				type: "add",
 				smartTable: null,
-				sPath: this.assignmentPath,
+				sPath: sPath,
 				sDeepPath: "Demand",
-				parentContext: this.assignmentRowContext,
+				parentContext: oContext,
 				oDialogController: this.getOwnerComponent().assignInfoDialog,
-				refreshParameters: this._mParameters
+				refreshParameters: mParameters
 			};
 			this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams, this._afterDialogLoad.bind(this));
 		},
