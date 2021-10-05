@@ -313,7 +313,7 @@ sap.ui.define([
 			aSources = this._oViewModel.getProperty("/dragSession");
 			iOperationTimesLen = this.onShowOperationTimes(aSources);
 
-			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length) {
+			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && this._oViewModel.getProperty("/selectedHierarchyView") === "TIMENONE") {
 				this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(),  this._mParameters, sPath);
 			} else {
 				// If the Resource is Not/Partially available

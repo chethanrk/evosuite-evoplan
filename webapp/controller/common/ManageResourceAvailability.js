@@ -106,7 +106,7 @@ sap.ui.define([
 				sPath = oContext.getPath(),
 				oDetail = Fragment.byId(this._id, "detail");
 				oDetail.bindElement(sPath);
-			if (oSelectedAbsence.DISABLE_ABSENCE_EDIT) {
+			if (oSelectedAbsence.UI_DISABLE_ABSENCE_EDIT) {
 				this.showMessageToast(this._resourceBundle.getText("ymsg.updateHRAbsence"));
 			} else {
 				this._oApp.to(this._id + "--detail");
@@ -491,7 +491,7 @@ sap.ui.define([
 			if (this._oView.getModel("user").getProperty("/ENABLE_ABSENCE_DELETE")) {
 				var aItems = this._oList.getItems();
 				for (var d in aItems) {
-					if (aItems[d].getBindingContext().getObject().DISABLE_ABSENCE_DELETE) {
+					if (aItems[d].getBindingContext().getObject().UI_DISABLE_ABSENCE_DELETE) {
 						aItems[d].getDeleteControl().setVisible(false);
 					}
 				}
