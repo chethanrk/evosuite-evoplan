@@ -29,7 +29,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttResourceFilter",
 	"com/evorait/evoplan/controller/gantt/GanttActions",
 	"com/evorait/evoplan/controller/DialogTemplateRenderController",
-		"com/evorait/evoplan/controller/common/OperationTimeCheck"
+		"com/evorait/evoplan/controller/common/OperationTimeCheck",
 ], function (
 	UIComponent,
 	Device,
