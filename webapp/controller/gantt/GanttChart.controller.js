@@ -69,36 +69,6 @@ sap.ui.define([
 			}
 
 			this._viewId = this.getView().getId();
-			this.init(this.getView(), this.getModel(), this.getOwnerComponent(), this.getModel("assignment"));
-		},
-
-		/**
-		 * load tree data from a certain hierarchy level
-		 * resolve returns increased level by step 1
-		 * @params iLevel
-		 */
-		_loadTreeData: function (iLevel) {
-			return new Promise(function (resolve) {
-				var sEntitySet = "/GanttResourceHierarchySet",
-					aFilters = [],
-					mParams = {
-						"$expand": "AssignmentSet,ResourceAvailabilitySet"
-					},
-					oUserData = this.getModel("user").getData();
-
-				aFilters.push(new Filter("HierarchyLevel", FilterOperator.EQ, iLevel));
-				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
-				aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-				//is also very fast with expands
-				this.getOwnerComponent().readData(sEntitySet, aFilters, mParams).then(function (oResult) {
-					if (iLevel > 0) {
-						this._addChildrenToParent(iLevel, oResult.results);
-					} else {
-						this.oGanttModel.setProperty("/data/children", oResult.results);
-					}
-					resolve(iLevel + 1);
-				}.bind(this));
-			}.bind(this));
 		},
 
 		/* =========================================================== */
@@ -238,7 +208,6 @@ sap.ui.define([
 		 * @Author Chethan RK
 		 */
 		onChangeDateRange: function (oEvent) {
-			// this._setDefaultTreeDateRange();
 			this._ganttChart.setAxisTimeStrategy(this._createGanttHorizon(this._axisTime.getZoomLevel(), {
 				StartDate: this.getView().byId("idDateRangeGantt2").getDateValue(),
 				EndDate: this.getView().byId("idDateRangeGantt2").getSecondDateValue()
@@ -351,6 +320,34 @@ sap.ui.define([
 				oViewModel.setProperty("/ganttSettings/visibleStartTime", sStartDate);
 				oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
 			}
+		},
+		/**
+		 * load tree data from a certain hierarchy level
+		 * resolve returns increased level by step 1
+		 * @params iLevel
+		 */
+		_loadTreeData: function (iLevel) {
+			return new Promise(function (resolve) {
+				var sEntitySet = "/GanttResourceHierarchySet",
+					aFilters = [],
+					mParams = {
+						"$expand": "AssignmentSet,ResourceAvailabilitySet"
+					},
+					oUserData = this.getModel("user").getData();
+
+				aFilters.push(new Filter("HierarchyLevel", FilterOperator.EQ, iLevel));
+				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+				aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+				//is also very fast with expands
+				this.getOwnerComponent().readData(sEntitySet, aFilters, mParams).then(function (oResult) {
+					if (iLevel > 0) {
+						this._addChildrenToParent(iLevel, oResult.results);
+					} else {
+						this.oGanttModel.setProperty("/data/children", oResult.results);
+					}
+					resolve(iLevel + 1);
+				}.bind(this));
+			}.bind(this));
 		},
 		/**
 		 * Load the tree data and process the data to create assignments as child nodes

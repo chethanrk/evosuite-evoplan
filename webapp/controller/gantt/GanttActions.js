@@ -12,207 +12,131 @@ sap.ui.define([
 
 	return BaseController.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
 
-		_oView: null,
-
-		_oModel: null,
-
-		_oComponent: null,
-
-		_oAssignementModel: null,
-
-		init: function (oView, oModel, oComponent, _oAssignementModel) {
-			this._oView = oView;
-			this._oModel = oModel;
-			this._oComponent = oComponent;
-			this._oAssignementModel = _oAssignementModel;
-		},
-
 		/**
-		 * get prepared assignment object for reassign, update requests
-		 * @param oData
-		 * @returns {*|{DemandGuid, Description, Effort, OperationNumber, AllowUnassign, ResourceGuid, NewAssignId, OrderId, isNewAssignment, SubOperationNumber, AllowReassign, NewAssignPath, showError, AllowChange, DateFrom, ResourceGroupGuid, AssignmentGuid, NewAssignDesc, DemandStatus, EffortUnit, DateTo}}
-		 * @private
-		 */
-		_getAssignmentModelObject: function (oData) {
-			//	var oDefaultObject = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject(),
-			var oDefaultObject = this._oComponent.assignInfoDialog.getDefaultAssignmentModelObject(),
-				sPath;
-
-			oDefaultObject.AssignmentGuid = oData.Guid;
-
-			for (var key in oDefaultObject) {
-				if (oData.hasOwnProperty(key)) {
-					oDefaultObject[key] = oData[key];
-				}
-			}
-			if (!oData.Demand.Status) {
-				sPath = this._oModel.createKey("DemandSet", {
-					Guid: oData.DemandGuid
-				});
-				oData.Demand = this._oModel.getProperty("/" + sPath);
-			}
-			if (oData.Demand) {
-				oDefaultObject.AllowChange = oData.Demand.ASGNMNT_CHANGE_ALLOWED;
-				oDefaultObject.AllowReassign = oData.Demand.ALLOW_REASSIGN;
-				oDefaultObject.AllowUnassign = oData.Demand.ALLOW_UNASSIGN;
-				oDefaultObject.OrderId = oData.Demand.ORDERID;
-				oDefaultObject.OperationNumber = oData.Demand.OPERATIONID;
-				oDefaultObject.SubOperationNumber = oData.Demand.SUBOPERATIONID;
-				oDefaultObject.DemandStatus = oData.Demand.Status;
-				oDefaultObject.AllowAppoint = oData.Demand.ALLOW_APPOINTMNT;
-				oDefaultObject.AlloDispatch = oData.Demand.ALLOW_DISPATCHED;
-				oDefaultObject.AllowDemMobile = oData.Demand.ALLOW_DEM_MOBILE;
-				oDefaultObject.AllowAcknowledge = oData.Demand.ALLOW_ACKNOWLDGE;
-				oDefaultObject.AllowReject = oData.Demand.ALLOW_REJECT;
-				oDefaultObject.AllowEnroute = oData.Demand.ALLOW_ENROUTE;
-				oDefaultObject.AllowStarted = oData.Demand.ALLOW_STARTED;
-				oDefaultObject.AllowHold = oData.Demand.ALLOW_ONHOLD;
-				oDefaultObject.AllowComplete = oData.Demand.ALLOW_COMPLETE;
-				oDefaultObject.AllowIncomplete = oData.Demand.ALLOW_INCOMPLETE;
-				oDefaultObject.AllowClosed = oData.Demand.ALLOW_CLOSED;
-			}
-			return oDefaultObject;
-		},
-		/**
+		 * save assignment after drop
+		 * Calls the function import of create assignment the returns the promise.
 		 * 
-		 * 
-		 * 
+		 * @param {Object} aSourcePaths
+		 * @param {String} sTargetPath
+		 * @return {Promise}
 		 */
-		getTimeDifference: function (oDateFrom, oDateTo) {
-			var oTimeStampFrom = oDateFrom.getTime(),
-				oTimeStampTo = oDateTo.getTime(),
-				iDifference = oTimeStampTo - oTimeStampFrom,
-				iEffort = (((iDifference / 1000) / 60) / 60);
-			return iEffort;
-		},
-		/**
-		 * Promise for fetching details about asignment demand
-		 * coming from backend or alsready loaded data
-		 * @param sAssignmentGuid
-		 * @param isReassign
-		 * @private
-		 */
-		_updateAssignmentModel: function (sAssignmentGuid, isReassign) {
-			return new Promise(function (resolve, reject) {
-				var obj,
-					//	sPath = this.getModel().createKey("AssignmentSet", {
-					sPath = this._oModel.createKey("AssignmentSet", {
-						Guid: sAssignmentGuid
-					}),
-					oAssignmentData = this._oModel.getProperty("/" + sPath);
-				// Demnad data or assignment data will be missing some time
-				if (!oAssignmentData || !oAssignmentData.Demand || !oAssignmentData.Demand.Guid) {
-					//	this.getModel().read("/" + sPath, {
-					this._oModel.read("/" + sPath, {
-						urlParameters: {
-							$expand: "Demand"
-						},
-						success: function (result) {
-							obj = this._getAssignmentModelObject(result);
-							this._oAssignementModel.setData(obj);
-							resolve(obj);
-						}.bind(this),
-						error: function (error) {
-							reject(error);
-						}
-					});
-				} else {
-					obj = this._getAssignmentModelObject(oAssignmentData);
-					this._oAssignementModel.setData(obj);
-					resolve(obj);
-				}
-			}.bind(this));
-		},
-		/**
-		 * Check Strech in case of assignment Update
-		 * Proceed to assignment with Stretch, check if Date Time is not valid
-		 * @param {Object} aSources Demand paths
-		 * @param {Object} oTarget Resource Path
-		 * @private
-		 */
-		checkUpdateAssignmentForStretch: function (oResourceData, aSources, oTarget, oTargetObject, aGuids, fnCheckValidation) {
-			var oViewModel = this.getModel("viewModel"),
-				oResourceModel = this.getResourceBundle();
-			if (oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && oResourceData.ResourceGuid &&
-					oResourceData.ResourceGuid !== "")) {
-
-				this._checkAvailability(aSources, oTarget, oTargetObject.DateFrom, aGuids).then(function (availabilityData) {
-					if (availabilityData.PastFail) {
-						oViewModel.setProperty("/ganttSettings/busy", false);
-						return;
-					}
-					if (!availabilityData.Unavailable) {
-						if (fnCheckValidation) {
-							fnCheckValidation.call(this, aSources, oTarget, oTargetObject.DateFrom, availabilityData.Endtimestamp, aGuids, {
-								bUpdate: true
-							});
-							// MessageToast.show("Check Qualification Available");
-						} else {
-							//Updtae call
-						}
-					} else {
-						this._showConfirmMessageBox(oResourceModel.getText("ymsg.extendMsg")).then(function (value) {
-							if (value === "NO" && fnCheckValidation) {
-								// fnCheckValidation.call(this, aSources, oTarget, oTargetDate, availabilityData.EndtimestampWithstretch, aGuids, this._mParameters);
-								MessageToast.show("Check Qualification");
-							} else if (value === "YES" && fnCheckValidation) {
-								// fnCheckValidation.call(this, aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids, this._mParameters);
-								MessageToast.show("Check Qualification");
-							} else if (value === "YES") {
-								MessageToast.show("Update Call");
-								// Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, availabilityData.Endtimestamp, aGuids))
-								// 	.then(this._refreshAreas.bind(this)).catch(function (error) {});
-							} else {
-								MessageToast.show("Update Call");
-								// Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, availabilityData.EndtimestampWithstretch, aGuids))
-								// 	.then(this._refreshAreas.bind(this)).catch(function (error) {});
-							}
-						}.bind(this));
-					}
-				}.bind(this));
-			} else {
-				MessageToast.show("Check Qualification Else");
-				fnCheckValidation.call(this, this.getDemandPathFromAssignment(aSources), oTarget, oTargetObject, aGuids, {
-					bUpdate: true
-				});
-			}
-		},
-		/**
-		 *
-		 * @param aSources
-		 * @param oTarget
-		 * @param oTargetDate
-		 * Checking Availability
-		 * @private
-		 */
-		_checkAvailability: function (aSources, oTarget, oTargetDate, aGuids) {
+		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, oNewEndDate, aGuids) {
 			var oModel = this.getModel(),
-				sGuid = aSources ? oModel.getProperty(aSources[0] + "/Guid") : aGuids[0].split("'")[1];
-			return new Promise(function (resolve, reject) {
-				this.executeFunctionImport(oModel, {
-					ResourceGuid: oModel.getProperty(oTarget + "/ResourceGuid"),
-					StartTimestamp: oTargetDate || new Date(),
-					DemandGuid: sGuid
-				}, "ResourceAvailabilityCheck", "GET").then(function (data) {
-					resolve(data);
-				});
-			}.bind(this));
-		},
-		getDemandPathFromAssignment: function (sAssignmentPath) {
-			return this.oView.getModel().createKey("DemandSet", {
-				Guid: this.oView.getModel().getProperty("/" + sAssignmentPath + "/Demand/Guid")
-			});
+				targetObj = oModel.getProperty(sTargetPath),
+				aItems = aSourcePaths ? aSourcePaths : aGuids,
+				aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
+				aPromises = [],
+				oDemandObj,
+				sDemandGuid;
+
+			this.clearMessageModel();
+
+			for (var i = 0; i < aItems.length; i++) {
+				oDemandObj = oModel.getProperty(aItems[i]);
+				sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i].split("'")[1],
+					oParams = {
+						DemandGuid: sDemandGuid,
+						ResourceGroupGuid: targetObj.ResourceGroupGuid,
+						ResourceGuid: targetObj.ResourceGuid
+					};
+				// When we drop on the Gantt chart directly
+				if (oTargetDate) {
+					oParams.DateFrom = oTargetDate;
+					oParams.TimeFrom = {
+						ms: oTargetDate.getTime(),
+						__edmType: "Edm.Time"
+					};
+					oParams.DateTo = oNewEndDate || oTargetDate;
+					oParams.TimeTo = targetObj.EndTime;
+				} else {
+					// When we drop it on resource tree rows
+					if (targetObj.StartDate) {
+						oParams.DateFrom = targetObj.StartDate;
+						oParams.TimeFrom = targetObj.StartTime;
+					} else {
+						oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
+						oParams.TimeFrom = targetObj.StartTime;
+					}
+
+					if (targetObj.EndDate) {
+						oParams.DateTo = targetObj.EndDate;
+						oParams.TimeTo = targetObj.EndTime;
+					} else {
+						oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
+						oParams.TimeTo = targetObj.EndTime;
+					}
+				}
+				// not required for this release
+				// if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && this._mParameters.bFromGantt && aGanttDemandDragged.IsSelected) {
+				// 	oParams.DateFrom = aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE;
+				// 	oParams.TimeFrom.ms = aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME.ms;
+				// 	oParams.DateTo = aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE;
+				// 	oParams.TimeTo.ms = aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME.ms;
+				// }
+				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
+			}
+			return aPromises;
 		},
 		/**
-		 * get shape binding path
-		 * from dragged data object
-		 * @param sShapeUid
-		 * @private
+		 * Deletes the assignment
+		 *
+		 * @since 3.0
+		 * @param oModel Odata model
+		 * @param sAssignmentGuid
+		 * @return {Promise}
 		 */
-		_getShapeBindingContextPath: function (sShapeUid) {
-			var oParsedUid = Utility.parseUid(sShapeUid);
-			return oParsedUid.shapeDataName;
+		deleteAssignment: function (oModel, sAssignmentGuid) {
+			return this.executeFunctionImport(oModel, {
+				AssignmentGUID: sAssignmentGuid
+			}, "DeleteAssignment", "POST");
 		},
+		/**
+		 * update assignment 
+		 * @param {String} sPath
+		 */
+		_updateAssignment: function (oModel, oParams, mParameters) {
+			return this.executeFunctionImport(oModel, oParams, "UpdateAssignment", "POST", mParameters, true);
+		},
+		/**
+		 * proceed to Service call after validation
+		 * 
+		 * @param {Object} aSourcePaths
+		 * @param {String} targetObj
+		 * @param {Object} oParams
+		 * @param {Object} mParameters
+		 **/
+		checkQualification: function (aSourcePaths, targetObj, oTargetDate, oNewEndDate, aGuids) {
+			var oQualificationParameters,
+				oModel = this.getModel(),
+				sDemandGuids = "",
+				aItems = aSourcePaths ? aSourcePaths : aGuids;
+			return new Promise(function (resolve, reject) {
+				for (var i = 0; i < aItems.length; i++) {
+					var sPath = aItems[i].sPath ? aItems[i].sPath : aItems[i];
+					var demandObj = oModel.getProperty(sPath);
+					var sDemandGuid = demandObj ? demandObj.Guid : sPath.split("'")[1];
+					if (sDemandGuids === "") {
+						sDemandGuids = sDemandGuid;
+					} else {
+						sDemandGuids = sDemandGuids + "//" + sDemandGuid;
+					}
+				}
+				oQualificationParameters = {
+					DemandMultiGuid: sDemandGuids,
+					ObjectId: targetObj.NodeId, //targetObj.ResourceGroupGuid,
+					StartTimestamp: oTargetDate,
+					EndTimestamp: oNewEndDate ? oNewEndDate : oTargetDate
+				};
+				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData,
+					response) {
+					resolve({
+						params: oQualificationParameters,
+						result: oData
+					});
+				});
+			}.bind(this));
+		}
+	
 		/**
 		 * Creating Gantt Horizon for New Gant Layout
 		 * @param iZoomLevel - Gantt Axis ZoomLevel
