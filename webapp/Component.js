@@ -29,7 +29,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttResourceFilter",
 	"com/evorait/evoplan/controller/gantt/GanttActions",
 	"com/evorait/evoplan/controller/DialogTemplateRenderController",
-		"com/evorait/evoplan/controller/common/OperationTimeCheck"
+		"com/evorait/evoplan/controller/common/OperationTimeCheck",
+		"com/evorait/evoplan/model/formatter",
 ], function (
 	UIComponent,
 	Device,
@@ -60,7 +61,7 @@ sap.ui.define([
 	WebSocket,
 	GanttResourceFilter,
 	GanttActions, DialogTemplateRenderController,
-	OperationTimeCheck) {
+	OperationTimeCheck,formatter) {
 
 	"use strict";
 
@@ -276,6 +277,8 @@ sap.ui.define([
 			this.getModel().setSizeLimit(600);
 
 			this._setApp2AppLinks();
+			
+			formatter.setLocalNumberFormat(this.getModel("i18n").getResourceBundle().getText("numberFormat"));
 
 		},
 

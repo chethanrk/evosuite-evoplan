@@ -181,6 +181,11 @@ sap.ui.define([
 				oModel.setProperty("/EffortUnit", sNewValue);
 			}
 		},
+		onEffortChange: function (oEvent) {
+			var sEffort = oEvent.getSource().getValue();
+			this.getModel("assignment").setProperty("/Effort",sEffort.replace(',','.'))
+			
+		},
 		/**
 		 * Method to get list of assigned Demands
 		 * @param sId
