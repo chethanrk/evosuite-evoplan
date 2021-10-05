@@ -1,7 +1,8 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/BaseController",
-	"sap/m/MessageBox"
-], function (BaseController, MessageBox) {
+	"sap/m/MessageBox",
+	"com/evorait/evoplan/model/Constants"
+], function (BaseController, MessageBox, Constants) {
 	return BaseController.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
 		/**
 		 * save assignment after drop
@@ -532,5 +533,48 @@ sap.ui.define([
 			this.getModel("viewModel").refresh(true);
 			return aOperationTimes.length;
 		},
+
+		openAssignInfoDialog: function (sPath) {
+			var mParams = {
+				$expand: "Demand"
+			};
+			this.getOwnerComponent()._getData(sPath, null, mParams)
+				.then(function (data) {
+					var sObjectSourceType = data.Demand.OBJECT_SOURCE_TYPE,
+						qualifier;
+					if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
+						qualifier = Constants.ANNOTATION_CONSTANTS.NOTIFICATION_QUALIFIER
+					} else {
+						qualifier = Constants.ANNOTATION_CONSTANTS.ORDER_QUALIFIER
+					}
+					this.openDialog(qualifier);
+				}.bind(this));
+		},
+
+		openDialog: function (sQualifier) {
+			var mParams = {
+				viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#" + sQualifier,
+				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
+				entitySet: "AssignmentSet",
+				controllerName: "AssignInfo",
+				title: "xtit.assignInfoModalTitle",
+				type: "add",
+				smartTable: null,
+				sPath: this.assignmentPath,
+				sDeepPath: "Demand",
+				parentContext: this.assignmentRowContext,
+				oDialogController: this.getOwnerComponent().assignInfoDialog,
+				refreshParameters: this._mParameters
+			};
+			this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams, this._afterDialogLoad.bind(this));
+		},
+		
+		_afterDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
+			if (sEvent === "dataReceived") {
+				this.getOwnerComponent().assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
+			}
+		},
+		
+
 	});
 });

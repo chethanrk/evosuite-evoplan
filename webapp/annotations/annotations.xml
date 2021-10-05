@@ -648,7 +648,7 @@
 				</Annotation>
 			</Annotations>
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Assignment">
-				<Annotation Term="UI.Facets" Qualifier="ResourceAssignmentDialog">
+				<Annotation Term="UI.Facets" Qualifier="NotificationAssignmentDialog">
 					<Collection>
 						<Record Type="UI.CollectionFacet">
 							<PropertyValue Property="Facets">
@@ -685,7 +685,7 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
-				<Annotation Term="UI.Facets" Qualifier="DemandAssignmentDialog">
+				<Annotation Term="UI.Facets" Qualifier="OrderAssignmentDialog">
 					<Collection>
 						<Record Type="UI.CollectionFacet">
 							<PropertyValue Property="Facets">
