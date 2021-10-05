@@ -135,7 +135,7 @@ sap.ui.define([
 					});
 				});
 			}.bind(this));
-		}
+		},
 	
 		/**
 		 * Creating Gantt Horizon for New Gant Layout
