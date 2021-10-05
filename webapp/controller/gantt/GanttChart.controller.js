@@ -1,3 +1,4 @@
+/* globals _ */
 sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttActions",
 	"com/evorait/evoplan/model/formatter",
@@ -23,8 +24,8 @@ sap.ui.define([
 		oGanttOriginDataModel: null,
 
 		mRequestTypes: {
-			create: "create",
 			update: "update",
+			reassign: "reassign",
 			unassign: "unassign"
 		},
 
@@ -34,7 +35,8 @@ sap.ui.define([
 		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
 		 */
 		onInit: function () {
-			this._oAssignementModel = this.getModel("assignment");
+			this.oViewModel = this.getModel("viewModel");
+			this.oUserModel = this.getModel("user");
 
 			//set on first load required filters
 			this._treeTable = this.getView().byId("ganttResourceTreeTable");
@@ -90,63 +92,52 @@ sap.ui.define([
 				oDraggedShape = oParams.draggedShapeDates;
 
 			for (var key in oDraggedShape) {
-				var sSourcePath = Utility.parseUid(key).shapeDataName,
-					oSourceData = this.oGanttModel.getProperty(sSourcePath);
-				//var oOriginData = JSON.parse(JSON.stringify(oSourceData));
-
-				if (oTargetData.NodeType === "ASSIGNMENT") {
-					this._setShapeStartEndDate(sSourcePath, oDraggedShape[key], oParams.newDateTime);
-				}
-				if (oTargetData.ResourceGuid !== oSourceData.ResourceGuid) {
-					//Todo set new parent
-					//this._setShapeParent(sSourcePath, oTargetData.ResourceGuid);
-				}
-				this._updatePendingChanges(sSourcePath, this.mRequestTypes.update);
-				this._sendAssignSaveRequest();
+				var sSourcePath = Utility.parseUid(key).shapeDataName;
+				this._validateShapeData(key, sSourcePath, oTargetData, oDraggedShape, oParams);
 			}
 		},
-
 		/**
-		 * when assignment shape is pressed then get row index and expand this resource
+		 * when shape was resized
 		 * @param oEvent
 		 */
-		onShapePress: function (oEvent) {
-			var oParams = oEvent.getParameters();
-			if (!oParams.shape) {
-				return;
-			}
-			var oContext = oParams.shape.getBindingContext("ganttModel"),
-				oRowCtrl = oParams.rowSettings.getParent(),
-				oContextData = oContext ? oContext.getObject() : null,
-				oRowContext = oRowCtrl.getBindingContext("ganttModel"),
-				oRowData = oRowContext ? oRowContext.getObject() : null,
-				iRowIdx = oRowCtrl.getIndex();
+		onShapeResize: function (oEvent) {
+			var oParams = oEvent.getParameters(),
+				oRowContext = oParams.shape.getBindingContext("ganttModel"),
+				oData = oRowContext.getObject(),
+				iDifference = moment(oParams.newTime[1]).diff(moment(oParams.newTime[0])),
+				iNewEffort = ((iDifference / 1000) / 60) / 60,
+				bEnableResizeEffortCheck = this.oUserModel.getProperty("/ENABLE_RESIZE_EFFORT_CHECK"),
+				sPath = oRowContext.getPath(),
+				oShape = oParams.shape;
 
-			if (oRowData && oContextData) {
-				if (oRowData.NodeType === "RESOURCE" && oRowData.ResourceGuid === oContextData.ResourceGuid) {
-					this._treeTable.setSelectedIndex(iRowIdx);
-					if (this._treeTable.isExpanded(iRowIdx)) {
-						//this._treeTable.collapse(iRowIdx);
-					} else {
-						this._treeTable.expand(iRowIdx);
-					}
-				}
-			}
-		},
+			// to identify the action done on respective page
+			localStorage.setItem("Evo-Action-page", "ganttSplit");
 
-		/**
-		 * Will scroll to assignment Date in gantt chart
-		 * @param oEvent
-		 */
-		onPressAssignmentLink: function (oEvent) {
-			var oSource = oEvent.getSource(),
-				oRowCtrl = oSource.getParent(),
-				oContext = oSource.getBindingContext("ganttModel");
+			if (oShape && oShape.sParentAggregationName === "shapes3") {
+				this._showBusyForShape(oShape, true);
+				this._getRelatedDemandData(oData).then(function (oResult) {
+						this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
+						if (!oResult.Demand.ASGNMNT_CHANGE_ALLOWED) {
+							this._showBusyForShape(oShape, false);
+							return;
+						}
+						this.oGanttModel.setProperty(sPath + "/DateFrom", oParams.newTime[0]);
+						this.oGanttModel.setProperty(sPath + "/DateTo", oParams.newTime[1]);
 
-			if (oContext) {
-				var oContextData = oContext.getObject();
-				this._treeTable.setSelectedIndex(oRowCtrl.getIndex());
-				this._changeGanttHorizonViewAt(this.getModel("viewModel"), this._axisTime.getZoomLevel(), this._axisTime, oContextData.DateFrom);
+						//resized effort needs validated
+						if (bEnableResizeEffortCheck && iNewEffort < oData.Effort) {
+							this._showConfirmMessageBox(this.getResourceBundle().getText("xtit.effortvalidate")).then(function (data) {
+								if (data === sap.m.MessageBox.Action.YES) {
+									this._validateAndSendChangedData(oShape, sPath, this.mRequestTypes.update);
+								}
+							}.bind(this));
+						} else {
+							this._validateAndSendChangedData(oParams.shape, sPath, this.mRequestTypes.update);
+						}
+					}.bind(this),
+					function (oError) {
+						this._showBusyForShape(oShape, false);
+					}.bind(this));
 			}
 		},
 
@@ -221,6 +212,23 @@ sap.ui.define([
 		/* =========================================================== */
 
 		/**
+		 * validate droped data if there can really created for this date and resource
+		 */
+		_validateShapeData: function (sKey, sSourcePath, oTargetData, oDraggedShape, oParams) {
+			var oSourceData = this.oGanttModel.getProperty(sSourcePath);
+
+			if (oTargetData.NodeType === "ASSIGNMENT") {
+				this._setShapeStartEndDate(sSourcePath, oDraggedShape[sKey], oParams.newDateTime);
+			}
+			if (oTargetData.ResourceGuid !== oSourceData.ResourceGuid) {
+				//Todo set new parent
+				//this._setShapeParent(sSourcePath, oTargetData.ResourceGuid);
+			}
+			//this._updatePendingChanges(sSourcePath, this.mRequestTypes.update);
+			//this._setNewAssignmentData(oData, oRowContext.getPath());
+		},
+
+		/**
 		 * sets new start and end date for assignment
 		 * @param sPath
 		 * @param mParams
@@ -234,16 +242,36 @@ sap.ui.define([
 
 			this.oGanttModel.setProperty(sPath + "/DateFrom", mParams.time);
 			this.oGanttModel.setProperty(sPath + "/DateTo", newEndDate.toDate());
+		},
 
-			console.log(this.oGanttModel.getProperty(sPath + "/DateTo"));
-			console.log(this.oGanttOriginDataModel.getProperty(sPath + "/DateTo"));
+		/**
+		 * Resets a changed data by model path
+		 * Or when bResetAll then all changes are resetted
+		 * @param sPath
+		 * @param bResetAll
+		 */
+		_resetChanges: function (sPath, bResetAll) {
+			var oPendingChanges = this.oGanttModel.getProperty("/pendingChanges");
 
+			if (oPendingChanges[sPath]) {
+				var oOriginData = this.oGanttOriginDataModel.getProperty(sPath);
+				this.oGanttModel.setProperty(sPath, _.cloneDeep(oOriginData));
+				delete oPendingChanges[sPath];
+
+			} else if (bResetAll) {
+				for (var key in oPendingChanges) {
+					this.oGanttModel.setProperty(key, _.cloneDeep(this.oGanttOriginDataModel.getProperty(key)));
+				}
+				this.oGanttModel.setProperty("/pendingChanges", {});
+			}
 		},
 
 		/**
 		 * set changed values in another object with object path
+		 * check every property value if it not same as original data
+		 * and set it in a different object in ganttModel /pendingChanges
 		 * @param sPath Json model path
-		 * @param sType
+		 * @param sType from this._mRequestTypes
 		 */
 		_updatePendingChanges: function (sPath, sType) {
 			var oData = this.oGanttModel.getProperty(sPath),
@@ -259,7 +287,7 @@ sap.ui.define([
 					isDelete: sType === this.mRequestTypes.unassign
 				};
 			}
-
+			//check every property value if it not same as original data
 			for (var key in oData) {
 				if (oOriginData[key] !== oData[key] && !oData[key].hasOwnProperty("__deferred")) {
 					//date needs special validation
@@ -274,20 +302,113 @@ sap.ui.define([
 					}
 				}
 			}
+			return oPendingChanges;
 		},
 
 		/**
-		 * send batch request to backend for save changes
+		 * validate assignment changes
+		 * and save it to backend
+		 * @param {String} sPath ganttModel item path
+		 * @param {String} sType from this._mRequestTypes
+		 * @return {Promise} 
 		 */
-		_sendAssignSaveRequest: function () {
-			var oPendingChanges = this.oGanttModel.getProperty("/pendingChanges");
+		_validateAndSendChangedData: function (oShape, sPath, sType) {
+			return new Promise(function (resolve, reject) {
+				var oPendingChanges = this._updatePendingChanges(sPath, sType),
+					oData = this.oGanttModel.getProperty(sPath);
 
-			for (var path in oPendingChanges) {
-				var metadata = oPendingChanges[path]["__metadata"];
-				if (metadata) {
-					var aAssignPath = metadata.id.split("/");
+				if (!this._validateChangedData(oPendingChanges[sPath], oData, sType)) {
+					return reject();
 				}
-			}
+				this.clearMessageModel();
+				var oParams = this._getAssignFnImportObj(oData);
+
+				//has new parent?
+				if (this.mRequestTypes.reassign === sType && oPendingChanges[sPath].ResourceGuid) {
+					oParams.ResourceGroupGuid = oPendingChanges[sPath].ResourceGroupGuid;
+					oParams.ResourceGuid = oPendingChanges[sPath].ResourceGuid;
+				}
+				//save assignment data
+				return this._updateAssignment(this.getModel(), oParams).then(
+					function (oResData) {
+						this._showBusyForShape(oShape, false);
+						if (oResData) {
+							this.oGanttModel.setProperty(sPath, oResData);
+							this.oGanttOriginDataModel.setProperty(sPath, oResData);
+							var oChanges = this.oGanttModel.getProperty("/pendingChanges");
+							delete oPendingChanges[sPath];
+							this.oGanttModel.setProperty("/pendingChanges", oChanges);
+						}
+						return resolve(oResData);
+					}.bind(this),
+					function (oError) {
+						this._showBusyForShape(oShape, false);
+						return reject(oError);
+					});
+			}.bind(this));
+		},
+
+		/**
+		 * checks if changes of this assignment allowed to save
+		 * when its re-assignment is parent available and allowed to assign
+		 * @param {Object} oChanges only changed data
+		 * @param {Object} oData whole assignment data
+		 * @param {String} sType from this._mRequestTypes
+		 */
+		_validateChangedData: function (oChanges, oData, sType) {
+			return new Promise(function (resolve, reject) {
+				var sDisplayMessage = "";
+				//is re-assign allowed
+				if (this.mRequestTypes.reassign === sType && !oData.Demand.ALLOW_REASSIGN) {
+					sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
+					this._showAssignErrorDialog([oData.Description], null, sDisplayMessage);
+					return reject();
+				}
+				//has it a new parent
+				if (this.mRequestTypes.reassign === sType && oChanges.ResourceGuid) {
+					//Todo check if to new parent is allowed
+					if (!this.isAssignable({
+							sPath: oChanges.NewAssignPath
+						})) {
+						return reject();
+					}
+					//is parent not available then show warning and ask if they want proceed
+					if (!this.isAvailable(oData.NewAssignPath)) {
+						return this.showMessageToProceed().then(function () {
+							//Todo yes proceed please
+
+							return resolve();
+						}, reject);
+					}
+				}
+				//todo check qualification
+				return resolve();
+			}.bind(this));
+		},
+
+		/**
+		 * prepare object for function import call
+		 * @param oData
+		 * @return Object
+		 */
+		_getAssignFnImportObj: function (oData) {
+			return {
+				DateFrom: oData.DateFrom || 0,
+				TimeFrom: {
+					__edmtype: "Edm.Time",
+					ms: oData.DateFrom.getTime()
+				},
+				DateTo: oData.DateTo || 0,
+				TimeTo: {
+					__edmtype: "Edm.Time",
+					ms: oData.DateTo.getTime()
+				},
+				AssignmentGUID: oData.Guid,
+				EffortUnit: oData.EffortUnit,
+				Effort: oData.Effort,
+				ResourceGroupGuid: oData.ResourceGroupGuid,
+				ResourceGuid: oData.ResourceGuid
+			};
 		},
 
 		/**
@@ -297,9 +418,8 @@ sap.ui.define([
 		 * @param oAxisTimeStrategy {object} control
 		 * @param oDate {object} date
 		 */
-		_changeGanttHorizonViewAt: function (oModel, iZoomLevel, oAxisTimeStrategy, oDate) {
-			var oViewModel = oModel,
-				sStartDate, sEndDate,
+		_changeGanttHorizonViewAt: function (iZoomLevel, oAxisTimeStrategy, oDate) {
+			var sStartDate, sEndDate,
 				date = oDate ? moment(oDate) : moment();
 
 			if (iZoomLevel >= 8) {
@@ -317,8 +437,8 @@ sap.ui.define([
 					endTime: sEndDate
 				}));
 			} else {
-				oViewModel.setProperty("/ganttSettings/visibleStartTime", sStartDate);
-				oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
+				this.oViewModel.setProperty("/ganttSettings/visibleStartTime", sStartDate);
+				this.oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
 			}
 		},
 		/**
@@ -361,10 +481,8 @@ sap.ui.define([
 				.then(function () {
 					this._treeTable.expandToLevel(1);
 					this._treeTable.setBusy(false);
-					this._changeGanttHorizonViewAt(this.getModel("viewModel"), this._axisTime.getZoomLevel(), this._axisTime);
+					this._changeGanttHorizonViewAt(this._axisTime.getZoomLevel(), this._axisTime);
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
-
-					console.log(this.oGanttModel.getProperty("/data"));
 				}.bind(this));
 		},
 		/**
@@ -379,7 +497,7 @@ sap.ui.define([
 				oResData.forEach(function (oResItem) {
 					if (oItem.NodeId === oResItem.ParentNodeId) {
 						//add assignments as children in tree for expanding
-						if (oResItem.AssignmentSet && oResItem.AssignmentSet.results.length > 0) {
+						/*if (oResItem.AssignmentSet && oResItem.AssignmentSet.results.length > 0) {
 							oResItem.children = oResItem.AssignmentSet.results;
 							oResItem.children.forEach(function (oAssignItem, idx) {
 								oResItem.AssignmentSet.results[idx].NodeType = "ASSIGNMENT";
@@ -389,7 +507,7 @@ sap.ui.define([
 									results: [clonedObj]
 								};
 							});
-						}
+						}*/
 						oItem.children.push(oResItem);
 					}
 				});
