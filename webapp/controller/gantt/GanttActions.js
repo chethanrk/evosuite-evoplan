@@ -26,14 +26,13 @@ sap.ui.define([
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
 				aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
 				aPromises = [],
-				oDemandObj,
-				sDemandGuid;
+				oDemandObj;
 
 			this.clearMessageModel();
 
 			for (var i = 0; i < aItems.length; i++) {
 				oDemandObj = oModel.getProperty(aItems[i]);
-				sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i].split("'")[1],
+				var sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i].split("'")[1],
 					oParams = {
 						DemandGuid: sDemandGuid,
 						ResourceGroupGuid: targetObj.ResourceGroupGuid,
@@ -97,6 +96,42 @@ sap.ui.define([
 		_updateAssignment: function (oModel, oParams, mParameters) {
 			return this.executeFunctionImport(oModel, oParams, "UpdateAssignment", "POST", mParameters, true);
 		},
+
+		/**
+		 * show simple confirm dialog
+		 * when action was pressed (custom or proceed action) then promise resolve is returned
+		 * @param {String} sAction
+		 * @param {String} sMsg
+		 * return {Promise}
+		 */
+		showMessageToProceed: function (sAction, sMsg) {
+			return new Promise(function (resolve, reject) {
+				var oResourceBundle = this.getResourceBundle(),
+					oComponent = this.getOwnerComponent();
+				sAction = sAction || oResourceBundle.getText("xbut.proceed");
+				sMsg = sMsg || oResourceBundle.getText("ymsg.availability");
+
+				sap.m.MessageBox.warning(
+					sMsg, {
+						actions: [sAction, sap.m.MessageBox.Action.CANCEL],
+						styleClass: oComponent.getContentDensityClass(),
+						onClose: function (sValue) {
+							return sValue === sAction ? resolve() : reject();
+						}
+					}
+				);
+			});
+		},
+
+		_showBusyForShape: function (oShape, isBusy) {
+			//oShape.setSelectable(!isBusy);
+			if (isBusy) {
+				oShape.setOpacity(0.5);
+			} else {
+				oShape.setOpacity(1);
+			}
+		},
+
 		/**
 		 * proceed to Service call after validation
 		 * 
@@ -136,7 +171,7 @@ sap.ui.define([
 				});
 			}.bind(this));
 		},
-	
+
 		/**
 		 * Creating Gantt Horizon for New Gant Layout
 		 * @param iZoomLevel - Gantt Axis ZoomLevel
@@ -192,6 +227,36 @@ sap.ui.define([
 				StartDate: sStartDate,
 				EndDate: sEndDate
 			};
+		},
+
+		/**
+		 * Promise for fetching details about assignment demand
+		 * coming from backend or alsready loaded data
+		 * @param oData
+		 * @private
+		 */
+		_getRelatedDemandData: function (oData) {
+			return new Promise(function (resolve, reject) {
+				if (oData.Demand && oData.Demand.Guid) {
+					resolve(oData);
+				} else {
+					var sPath = this.getModel().createKey("AssignmentSet", {
+							Guid: oData.Guid
+						}),
+						oAssignData = this.getModel().getProperty("/" + sPath);
+					if (oAssignData.Demand && oAssignData.Demand.Guid) {
+						resolve(oAssignData);
+					} else {
+						this.getModel().read("/" + sPath, {
+							urlParameters: {
+								$expand: "Demand"
+							},
+							success: resolve,
+							error: reject
+						});
+					}
+				}
+			}.bind(this));
 		}
 	});
 
