@@ -391,7 +391,11 @@ sap.ui.define([
 		 */
 		isResource: function (sValue) {
 			if (this.getModel("user").getProperty("/ENABLE_CUMULATIVE_CAPACITY")) {
-				return true;
+				if (sValue === "ASSIGNMENT") {
+					return false;
+				} else {
+					return true;
+				}
 			} else {
 				if (sValue !== "RES_GROUP" && sValue !== "ASSIGNMENT") {
 					return true;
@@ -796,16 +800,18 @@ sap.ui.define([
 		},
 
 		onDisplayOperationTimes: function (oDate, oTimes) {
-			if(oDate){
-			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern : "dd MMM yyyy" }),
-			oOperationTime = new Date(oTimes.ms),
-				oOperationTimeMS = oOperationTime.getTime(),
-				oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
-					pattern: "HH:mm:ss"
-				}),
-				sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
-				sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS + sTZOffsetMs));
-				
+			if (oDate) {
+				var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+						pattern: "dd MMM yyyy"
+					}),
+					oOperationTime = new Date(oTimes.ms),
+					oOperationTimeMS = oOperationTime.getTime(),
+					oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+						pattern: "HH:mm:ss"
+					}),
+					sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
+					sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS + sTZOffsetMs));
+
 				return oDateFormat.format(oDate) + ", " + sOperationTimes;
 			}
 		}
