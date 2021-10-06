@@ -534,23 +534,29 @@ sap.ui.define([
 			return aOperationTimes.length;
 		},
 
-		openAssignInfoDialog: function (sPath, oContext, mParameters, oDemandContext) {
+		openAssignInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext) {
 			if (!oDemandContext) {
 				var mParams = {
 					$expand: "Demand"
 				};
-				this.getOwnerComponent()._getData(sPath, null, mParams)
+				if(this.getOwnerComponent()){
+					this.oComponent = this.getOwnerComponent();
+				}
+				else{
+					this.oComponent = oView.getController().getOwnerComponent();
+				}
+				this.oComponent._getData(sPath, null, mParams)
 					.then(function (data) {
 						var sObjectSourceType = data.Demand.OBJECT_SOURCE_TYPE;
-						this.openDialog(sPath, oContext, mParameters, sObjectSourceType);
+						this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 					}.bind(this));
 			} else {
 				var sObjectSourceType = oDemandContext.OBJECT_SOURCE_TYPE;
-				this.openDialog(sPath, oContext, mParameters, sObjectSourceType);
+				this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 			}
 		},
 
-		openDialog: function (sPath, oContext, mParameters, sObjectSourceType) {
+		openDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType) {
 			var sQualifier;
 			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.NOTIFICATION_QUALIFIER;
@@ -568,15 +574,15 @@ sap.ui.define([
 				sPath: sPath,
 				sDeepPath: "Demand",
 				parentContext: oContext,
-				oDialogController: this.getOwnerComponent().assignInfoDialog,
+				oDialogController: this.oComponent.assignInfoDialog,
 				refreshParameters: mParameters
 			};
-			this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams, this._afterDialogLoad.bind(this));
+			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterDialogLoad.bind(this));
 		},
 		
 		_afterDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
 			if (sEvent === "dataReceived") {
-				this.getOwnerComponent().assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
+				this.oComponent.assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
 			}
 		},
 		

@@ -136,14 +136,7 @@ sap.ui.define([
 				},
 				oDemandContext = this.getView().getBindingContext().getObject();
 			localStorage.setItem("Evo-Action-page", "DemandDetails");
-			this.openAssignInfoDialog(sPath, oContext, mParameters, oDemandContext);
-		},
-        
-		_afterDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
-
-			if (sEvent === "dataReceived") {
-				this.getOwnerComponent().assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
-			}
+			this.openAssignInfoDialog(this.getView(), sPath, oContext, mParameters, oDemandContext);
 		},
 
 		/**

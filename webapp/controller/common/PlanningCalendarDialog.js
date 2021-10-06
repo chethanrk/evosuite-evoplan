@@ -165,7 +165,7 @@ sap.ui.define([
 				// if we decide to keep different date range for demand view and gantt view
 				sDateControl1 = oUserModel.getProperty("/DEFAULT_GANT_START_DATE");
 				sDateControl2 = oUserModel.getProperty("/DEFAULT_GANT_END_DATE");
-			}  else if (this._mParameters.bFromNewGantt) {
+			} else if (this._mParameters.bFromNewGantt) {
 				// For New Gantt fetching the Dates from DateRange Selection
 				sDateControl1 = this._oView.byId("idDateRangeGantt2").getDateValue();
 				sDateControl2 = this._oView.byId("idDateRangeGantt2").getSecondDateValue();
@@ -242,6 +242,7 @@ sap.ui.define([
 			}
 			return sCalendarView;
 		},
+
 		/**
 		 * show assignment info dialog on clicked on calendar entry
 		 * @param oEvent
@@ -255,42 +256,49 @@ sap.ui.define([
 				oModel = oRowContext.getModel(),
 				sPath = oAppointmentContext.getPath(),
 				oRowData = oModel.getProperty(oRowPath);
-			
 
 			this.oSelectedContext = oAppointmentContext;
 			this.oAppointmentData = oModel.getProperty(sPath);
 			this.oAppointmentData.DateTo = this.onChangeEndDateAfterResize(this.oAppointmentData);
-			
+
 			if (oRowData.ObjectType === "ASSET") {
 				return;
 			}
-			
-			var mParams = {
-					viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#AssignmentDialog",
-					annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
-					entitySet: "AssignmentSet",
-					controllerName: "AssignInfo",
-					title: "xtit.assignInfoModalTitle",
-					type: "add",
-					smartTable: null,
-					sPath: "/AssignmentSet('"+this.oAppointmentData.Guid+"')",
-					sDeepPath: "Demand",
-					oDialogController:this._component.assignInfoDialog,
-					refreshParameters:{
-						bFromPlannCal: true
-					}
-					
+			var oContext = oAppointmentContext,
+				oModel = oContext.getModel(),
+				sPath = "/AssignmentSet('" + this.oAppointmentData.Guid + "')",
+				oAssignmentData = this.oAppointmentData,
+				mParameters = {
+					bFromPlannCal: true
 				};
-				this._component.DialogTemplateRenderer.open(this._oView, mParams, this._afterDialogLoad.bind(this));
-			
+			this.openAssignInfoDialog(this._oView, sPath, oContext, mParameters);
+
+			// var mParams = {
+			// 	viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#AssignmentDialog",
+			// 	annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
+			// 	entitySet: "AssignmentSet",
+			// 	controllerName: "AssignInfo",
+			// 	title: "xtit.assignInfoModalTitle",
+			// 	type: "add",
+			// 	smartTable: null,
+			// 	sPath: "/AssignmentSet('" + this.oAppointmentData.Guid + "')",
+			// 	sDeepPath: "Demand",
+			// 	oDialogController: this._component.assignInfoDialog,
+			// 	refreshParameters: {
+			// 		bFromPlannCal: true
+			// 	}
+
+			// };
+			// this._component.DialogTemplateRenderer.open(this._oView, mParams, this._afterDialogLoad.bind(this));
+
 		},
-		_afterDialogLoad: function(oDialog, oView, sPath, sEvent, data, mParams){
-			if(sEvent === "change"){
+		_afterDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
+			if (sEvent === "change") {
 				this._component.assignInfoDialog.onOpen(oDialog, oView, null, this.oAppointmentData, mParams.refreshParameters, null, data);
 			}
-			
+
 		},
-			/*this._component.assignInfoDialog.open(this._oView, null, oAppointmentData, {
+		/*this._component.assignInfoDialog.open(this._oView, null, oAppointmentData, {
 				bFromPlannCal: true
 			});
 
