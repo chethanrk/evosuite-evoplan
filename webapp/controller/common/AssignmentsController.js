@@ -233,7 +233,8 @@ sap.ui.define([
 			var oModel = this.getModel(),
 				bIsLast = null,
 				aItems = aSourcePaths && aSourcePaths.length ? aSourcePaths : aGuids,
-				aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
+				aGanttDragSession = this.getModel("viewModel").getData().dragSession,
+				aGanttDemandDragged = aGanttDragSession ? aGanttDragSession[0] : null,
 				oContext, sPath, demandObj, aOperationTimeParams;
 			this.clearMessageModel();
 			for (var i = 0; i < aItems.length; i++) {
