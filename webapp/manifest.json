@@ -153,6 +153,8 @@
 			}],
 			"js": [{
 				"uri": "assets/js/promise-polyfills"
+			},{
+				"uri": "assets/js/lodash.js"
 			}]
 		},
 		"routing": {
@@ -455,7 +457,7 @@
 				},
 				"newgantt": {
 					"viewType": "XML",
-					"viewName": "newgantt",
+					"viewName": "GanttChart",
 					"viewPath": "com.evorait.evoplan.view.gantt",
 					"controlId": "topPanel",
 					"parent": "splitVerNavigation",

@@ -29,7 +29,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttResourceFilter",
 	"com/evorait/evoplan/controller/gantt/GanttActions",
 	"com/evorait/evoplan/controller/DialogTemplateRenderController",
-		"com/evorait/evoplan/controller/common/OperationTimeCheck"
+		"com/evorait/evoplan/controller/common/OperationTimeCheck",
 ], function (
 	UIComponent,
 	Device,
@@ -202,6 +202,18 @@ sap.ui.define([
 			this.setModel(models.createHelperModel({
 				navLinks: {}
 			}), "templateProperties");
+			
+			this.setModel(models.createHelperModel({
+				data: {
+					children: []
+				},
+				pendingChanges:{}
+			}, true), "ganttModel");
+			this.setModel(models.createHelperModel({
+				data: {
+					children: []
+				}
+			}, false), "ganttOriginalData");
 
 			this.DialogTemplateRenderer = new DialogTemplateRenderController(this);
 
@@ -559,13 +571,11 @@ sap.ui.define([
 		/**
 		 *  Read call given entityset and filters
 		 */
-		readData: function (sUri, aFilters, sExpandParameter) {
+		readData: function (sUri, aFilters, mUrlParams) {
 			return new Promise(function (resolve, reject) {
 				this.getModel().read(sUri, {
 					filters: aFilters,
-					urlParameters: {
-						"$expand": sExpandParameter
-					},
+					urlParameters: mUrlParams || {},
 					success: function (oData, oResponse) {
 						resolve(oData);
 					}.bind(this),

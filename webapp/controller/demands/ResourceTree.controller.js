@@ -176,7 +176,7 @@ sap.ui.define([
 				// this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
 
 				var mParams = {
-					viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#AssignmentDialog",
+					viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#ResourceAssignmentDialog",
 					annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
 					entitySet: "AssignmentSet",
 					controllerName: "AssignInfo",
@@ -207,7 +207,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onPressReassign: function (oEvent) {
-			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true, this._mParameters);
+			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false, this._mParameters);
 		},
 		/**
 		 * Open's Dialog containing assignments to unassign
@@ -313,8 +313,9 @@ sap.ui.define([
 			aSources = this._oViewModel.getProperty("/dragSession");
 			iOperationTimesLen = this.onShowOperationTimes(aSources);
 
-			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length) {
-				this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(),  this._mParameters, sPath);
+			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+				"RESOURCE") {
+				this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(), this._mParameters, sPath);
 			} else {
 				// If the Resource is Not/Partially available
 				if (this.isAvailable(sPath)) {
@@ -324,7 +325,7 @@ sap.ui.define([
 				}
 			}
 		},
-	
+
 		/**
 		 * Method will refresh the data of tree by restoring its state
 		 *

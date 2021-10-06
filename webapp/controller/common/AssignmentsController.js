@@ -233,7 +233,8 @@ sap.ui.define([
 			var oModel = this.getModel(),
 				bIsLast = null,
 				aItems = aSourcePaths && aSourcePaths.length ? aSourcePaths : aGuids,
-				aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
+				aGanttDragSession = this.getModel("viewModel").getData().dragSession,
+				aGanttDemandDragged = aGanttDragSession ? aGanttDragSession[0] : null,
 				oContext, sPath, demandObj, aOperationTimeParams;
 			this.clearMessageModel();
 			for (var i = 0; i < aItems.length; i++) {
@@ -524,8 +525,10 @@ sap.ui.define([
 			var aOperationTimes = [];
 			for (var f in aSources) {
 				aSources[f].IsDisplayed = true;
+				aSources[f].IsSelected = true;
 				if (aSources[f].oData.FIXED_ASSGN_END_DATE === null && aSources[f].oData.FIXED_ASSGN_START_DATE === null) {
 					aSources[f].IsDisplayed = false;
+					aSources[f].IsSelected = false;
 					aOperationTimes.push(aSources[f]);
 				}
 			}

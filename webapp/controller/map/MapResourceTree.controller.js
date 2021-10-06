@@ -288,7 +288,7 @@ sap.ui.define([
 			aSources = this.getModel("viewModel").getProperty("/mapDragSession");
 			iOperationTimesLen = this.onShowOperationTimes(aSources);
 
-			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length) {
+			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType === "RESOURCE") {
 				this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(), this._mParameters, sPath);
 			} else {
 				eventBus.publish("BaseController", "resetMapSelection", {});

@@ -4,15 +4,15 @@
         xmlns:gnt2="sap.gantt.simple">
 	<!-- Assignment shape -->
             <gnt2:BaseRectangle
-                    shapeId="{ganttModel>ObjectId}"
+                    shapeId="{Guid}"
                     countInBirdEye="true"
-                    time="{ganttModel>DateFrom}"
+                    time="{DateFrom}"
                     height="20"
-                    endTime="{ganttModel>DateTo}"
-                    title="{ganttModel>Description}"
+                    endTime="{DateTo}"
+                    title="{Description}"
                     showTitle="true"
-                    tooltip="{ganttModel>Description} - {ganttModel>DEMAND_STATUS}"
-                    fill="{ganttModel>DEMAND_STATUS_COLOR}"
+                    tooltip="{Description} - {DEMAND_STATUS}"
+                    fill="{DEMAND_STATUS_COLOR}"
                     stroke="#7088ac"
                     strokeWidth="1"
                     resizable="{user>/ENABLE_RESIZE}"

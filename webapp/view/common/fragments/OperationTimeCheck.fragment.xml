@@ -27,13 +27,15 @@
 					</Column>
 				</columns>
 				<items>
-					<ColumnListItem selected="{viewModel>IsSelected}" visible="{viewModel>IsDisplayed}">
+					<ColumnListItem selected="{viewModel>IsSelected}" >
 						<cells>
 							<Text text="{viewModel>oData/ORDERID}"/>
 							<Text text="{viewModel>oData/OPERATIONID}"/>
 							<Text text="{viewModel>oData/SUBOPERATIONID}"/>
-							<Text text="{path:'viewModel>oData/FIXED_ASSGN_START_DATE', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium'}}"/>
-							<Text text="{path:'viewModel>oData/FIXED_ASSGN_END_DATE', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium'}}"/>
+							<Text text="{parts:[ {path:'viewModel>oData/FIXED_ASSGN_START_DATE'}, {path:'viewModel>oData/FIXED_ASSGN_START_TIME'} ], formatter:'.formatter.onDisplayOperationTimes'}"/>
+							<Text text="{parts:[ {path:'viewModel>oData/FIXED_ASSGN_END_DATE'}, {path:'viewModel>oData/FIXED_ASSGN_END_TIME'} ], formatter:'.formatter.onDisplayOperationTimes'}"/>
+							<!--<Text text="{path:'viewModel>oData/FIXED_ASSGN_START_DATE', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium'}}"/>-->
+							<!--<Text text="{path:'viewModel>oData/FIXED_ASSGN_END_DATE', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium'}}"/>-->
 						</cells>
 					</ColumnListItem>
 				</items>
