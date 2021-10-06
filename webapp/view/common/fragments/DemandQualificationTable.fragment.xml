@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:table="sap.ui.table" xmlns:core="sap.ui.core"
 	xmlns:dnd="sap.ui.core.dnd">
-	<smartTable:SmartTable id="DemandQualificationTable" visible="{user>/ENABLE_QUALIFICATION}" entitySet="DemandQualificationSet" useExportToExcel="true" useVariantManagement="true"
+	<smartTable:SmartTable visible="{user>/ENABLE_QUALIFICATION}" entitySet="DemandQualificationSet" useExportToExcel="true" useVariantManagement="true"
 		useTablePersonalisation="true" header="{xtit.qualifications}" showRowCount="true" persistencyKey="com.evorait.evoplan.qualificationTable"
 		enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableBindingPath="DemandToQualification">
 		<!-- layout data used to make the table growing but the filter bar fixed -->
