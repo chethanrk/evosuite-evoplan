@@ -41,7 +41,7 @@
 						<core:Icon src="{DEMAND_ICON}" tooltip="{DemandDesc}"></core:Icon>
 					</table:template>
 				</table:Column>
-				<table:Column hAlign="Center" width="3rem" visible="{user>/EMP_ENABLED}">
+				<table:Column hAlign="Center" width="3rem" visible="{user>/ENABLE_EMP}">
 					<table:customData>
 						<core:CustomData key="p13nData" value='\{"columnKey": "SYNC_STATUS", "leadingProperty": "SYNC_STATUS"}'/>
 					</table:customData>

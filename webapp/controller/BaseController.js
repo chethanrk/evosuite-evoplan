@@ -287,10 +287,11 @@ sap.ui.define([
 			}
 			else if (oParameter.bFromManageResourceRemoveAssignments) {
 				eventBus.publish("ManageResourcesActionsController", "refreshAssignmentDialog", {});
-			}else if (oParameter.bFromNewGantt) {
+			} else if (oParameter.bFromNewGantt) {
 				eventBus.publish("BaseController", "refreshGanttChart", {});
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			} },
+			}
+		},
 		/**
 		 * device orientation with fallback of window resize
 		 * important for drag and drop functionality

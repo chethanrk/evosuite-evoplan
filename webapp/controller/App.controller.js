@@ -107,7 +107,7 @@ sap.ui.define([
 				//oRouter.navTo("TestFull", {});
 				break;
 			case oResourceBundle.getText("xbut.pageMessageCockpit"):
-				if(this._routeValidation("EMP_ENABLED")){
+				if(this._routeValidation("ENABLE_EMP")){
 					oRouter.navTo("messageCockpit", {});
 					break;
 				}
@@ -265,8 +265,8 @@ sap.ui.define([
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else	if (sRoute === "newgantt") {
-				this._eventBus.publish("BaseController", "refreshGanttChart", {});
-				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				//this._eventBus.publish("BaseController", "refreshGanttChart", {});
+				//this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (sRoute === "ganttSplit") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 			} else if (sRoute === "splitDemands") {

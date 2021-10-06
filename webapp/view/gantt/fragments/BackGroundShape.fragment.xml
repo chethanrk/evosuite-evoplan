@@ -4,7 +4,7 @@
         xmlns:gnt2="sap.gantt.simple">
 	<!-- Background transparent shape (Workaround for the drop on the gantt) -->
             <gnt2:BaseRectangle
-					shapeId="{NodeId}"
+					shapeId="{ganttModel>NodeId}"
 					scheme="hiddenBackground"
 					countInBirdEye="false"
 					time="{user>/DEFAULT_GANT_START_DATE}"

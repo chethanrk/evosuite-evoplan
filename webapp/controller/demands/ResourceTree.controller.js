@@ -291,8 +291,9 @@ sap.ui.define([
 			aSources = this._oViewModel.getProperty("/dragSession");
 			iOperationTimesLen = this.onShowOperationTimes(aSources);
 
-			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length) {
-				this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(),  this._mParameters, sPath);
+			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+				"RESOURCE") {
+				this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(), this._mParameters, sPath);
 			} else {
 				// If the Resource is Not/Partially available
 				if (this.isAvailable(sPath)) {
@@ -302,7 +303,7 @@ sap.ui.define([
 				}
 			}
 		},
-	
+
 		/**
 		 * Method will refresh the data of tree by restoring its state
 		 *

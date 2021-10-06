@@ -525,8 +525,10 @@ sap.ui.define([
 			var aOperationTimes = [];
 			for (var f in aSources) {
 				aSources[f].IsDisplayed = true;
+				aSources[f].IsSelected = true;
 				if (aSources[f].oData.FIXED_ASSGN_END_DATE === null && aSources[f].oData.FIXED_ASSGN_START_DATE === null) {
 					aSources[f].IsDisplayed = false;
+					aSources[f].IsSelected = false;
 					aOperationTimes.push(aSources[f]);
 				}
 			}
