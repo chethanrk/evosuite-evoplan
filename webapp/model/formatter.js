@@ -804,16 +804,18 @@ sap.ui.define([
 		},
 
 		onDisplayOperationTimes: function (oDate, oTimes) {
-			if(oDate){
-			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern : "dd MMM yyyy" }),
-			oOperationTime = new Date(oTimes.ms),
-				oOperationTimeMS = oOperationTime.getTime(),
-				oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
-					pattern: "HH:mm:ss"
-				}),
-				sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
-				sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS + sTZOffsetMs));
-				
+			if (oDate) {
+				var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+						pattern: "dd MMM yyyy"
+					}),
+					oOperationTime = new Date(oTimes.ms),
+					oOperationTimeMS = oOperationTime.getTime(),
+					oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+						pattern: "HH:mm:ss"
+					}),
+					sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
+					sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS + sTZOffsetMs));
+
 				return oDateFormat.format(oDate) + ", " + sOperationTimes;
 			}
 		}
