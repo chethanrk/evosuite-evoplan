@@ -1,5 +1,5 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/AssignmentActionsController",
+	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",

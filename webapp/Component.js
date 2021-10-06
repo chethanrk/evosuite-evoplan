@@ -410,8 +410,6 @@ sap.ui.define([
 			this.materialInfoDialog.init();
 
 			this.GanttResourceFilter = new GanttResourceFilter();
-
-			this.GanttActions = new GanttActions();
 			
 			this.OperationTimeCheck = new OperationTimeCheck();
 			this.OperationTimeCheck.init();

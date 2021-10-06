@@ -25,7 +25,7 @@ sap.ui.define([
 			// create dialog lazily
 			Fragment.load({
 				name: "com.evorait.evoplan.view.gantt.fragments.GanttResourceFilter",
-				id:	this._oView.getId(),
+				id: this._oView.getId(),
 				controller: this
 			}).then(function (oDialog) {
 				this._oFilterBar = this._oView.byId("ganttResourceTreeFilterBar");
@@ -81,15 +81,15 @@ sap.ui.define([
 			var oFilters = this._oFilterBar.getFilters(),
 				sDateFrom = this.formatter.date(this._oView.byId("idDateRangeGantt2").getDateValue()),
 				sDateTo = this.formatter.date(this._oView.byId("idDateRangeGantt2").getSecondDateValue()),
-				aDateFilters = [
-					new Filter("StartDate", FilterOperator.LE, sDateTo),
-					new Filter("EndDate", FilterOperator.GE, sDateFrom)
-				],
+				// aDateFilters = [
+				// 	new Filter("StartDate", FilterOperator.LE, sDateTo),
+				// 	new Filter("EndDate", FilterOperator.GE, sDateFrom)
+				// ],
 				sFilterCount = 0;
-				if (oFilters && oFilters.length) {
-					sFilterCount = oFilters[0].aFilters.length;
-				}
-			oFilters = oFilters.concat(aDateFilters);
+			if (oFilters && oFilters.length) {
+				sFilterCount = oFilters[0].aFilters.length;
+			}
+			// oFilters = oFilters.concat(aDateFilters);
 			this._treeTable.getBinding("rows").filter(oFilters, "Application");
 			this.setFilterCount(sFilterCount);
 		},
@@ -111,12 +111,6 @@ sap.ui.define([
 			} else {
 				this._oView.byId("idBtnGanttResourceFilter").setText(sFilterText);
 			}
-		},
-			/**
-		 * Destroying Duplicate ID's
-		 */
-		onAfterClose : function(){
-				this._oDialog.destroy();
 		}
 
 	});
