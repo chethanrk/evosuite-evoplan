@@ -78,7 +78,7 @@ sap.ui.define([
 			if (sPath) {
 				return sPath;
 			}
-			if (mParams) {
+			if (mParams && !mParams.isNew) {
 				return "/" + oModel.createKey(sEntitySet, mParams);
 			} else {
 				var oContext = oModel.createEntry("/" + sEntitySet);
@@ -215,7 +215,7 @@ sap.ui.define([
 				parameters = null;
 
 			if (!sPath) {
-				eventBus.publish("TemplateRendererEvoplan", "changedBinding", {
+				eventBus.publish("TemplateRendererEvoPlan", "changedBinding", {
 					viewNameId: sViewName
 				});
 				if (callbackFn) {
@@ -234,10 +234,10 @@ sap.ui.define([
 				parameters: parameters,
 				events: {
 					change: function (oEvent) {
-						eventBus.publish("TemplateRendererEvoplan", "changedBinding", {
+						eventBus.publish("TemplateRendererEvoPlan", "changedBinding", {
 							viewNameId: sViewName
 						});
-						oEvent.getSource().refresh();
+						//oEvent.getSource().refresh();
 						if (callbackFn) {
 							callbackFn();
 						}
