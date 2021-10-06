@@ -538,7 +538,48 @@ sap.ui.define([
 			}
 			recurse(aChildren, 0);
 			return aChildren;
+		},
+		/**
+		 * Adding associations to gantt hierarchy
+		 * 
+		 */
+		_addAssociations: function(){
+			var aFilters = [],
+				oUserData = this.getModel("user").getData(),
+				aPromises = [];
+
+				aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+				aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+				this.getModel().setUseBatch(false);
+				this.getOwnerComponent().readData("/AssignmentSet", aFilters).then();
+				this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters).then();
+				
+				Promise.all(aPromises).then(function(data){
+					console.log(data);
+					this._addAssignemets(data[0].results);
+					this.getModel().setUseBatch(true);
+				}.bind(this));
+		},
+		_addAssignemets: function(aAssignments) {
+			var aGanttData = this.oGanttModel.getProperty("/data/children");
+			for(let i =0; i < aGanttData.length; i++){
+				var aResources = aGanttData[i].children;
+				for(let j =0; j < aResources.length; j++){
+					var oResource = aResources[j];
+					oResource.AssignmentSet.results=[];
+					for(var k in aAssignments){
+						if(oResource.NodeId === aAssignments[k].ObjectId){
+							oResource.AssignmentSet.results.push(aAssignments[k]); 
+						}
+					}
+				}
+			}
+			this.oGanttModel.refresh();
+		},
+		_addAvailabilities: function(aAvailabilities) {
+			
 		}
+
 
 	});
 
