@@ -70,7 +70,17 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onAssignmentDateCheckSelectAll: function (oEvent) {
-			sap.ui.getCore().byId("idAsgnDateCheckTable").selectAll();
+			//	sap.ui.getCore().byId("idAsgnDateCheckTable").selectAll();
+			var oTable = sap.ui.getCore().byId("idAsgnDateCheckTable"),
+				oViewModel = oTable.getModel("viewModel"),
+				aOperationTimesList = oViewModel.getProperty("/dragSession");
+				
+				for(var p in aOperationTimesList){
+					if(aOperationTimesList[p].IsDisplayed){
+						aOperationTimesList[p].IsSelected = true;
+					}
+				}
+				oViewModel.refresh(true);
 		},
 
 		/**
@@ -110,14 +120,14 @@ sap.ui.define([
 					oSelectedRow = sap.ui.getCore().byId(oCheckBox.attr('id'));
 				if (bIsDisplayed) {
 					oSelectedRow.setEnabled(true);
-						oEvent.getBindingContext("viewModel").getObject().IsSelected = true;
+					oEvent.getBindingContext("viewModel").getObject().IsSelected = true;
 				} else {
 					oSelectedRow.setEnabled(false);
 					oEvent.getBindingContext("viewModel").getObject().IsSelected = false;
 				}
 			});
-			
-		//	this.onAssignmentDateCheckSelectAll();
+
+			//	this.onAssignmentDateCheckSelectAll();
 		},
 
 	});

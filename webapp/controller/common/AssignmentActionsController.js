@@ -6,8 +6,9 @@
  */
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentsController",
-	"sap/m/MessageBox"
-], function (AssignmentsController, MessageBox) {
+	"sap/m/MessageBox",
+	"com/evorait/evoplan/model/formatter"
+], function (AssignmentsController, MessageBox, formatter) {
 	return AssignmentsController.extend("com.evorait.evoplan.controller.common.AssignmentActionsController", {
 
 		/**
@@ -65,9 +66,11 @@ sap.ui.define([
 					}
 				}
 				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && this._mParameters.bFromGantt && aGanttDemandDragged.IsSelected) {
-					oParams.DateFrom = aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE;
+					//	oParams.DateFrom = aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE;
+					oParams.DateFrom = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME);
 					oParams.TimeFrom.ms = aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME.ms;
-					oParams.DateTo = aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE;
+					oParams.DateTo = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME);
+					//	oParams.DateTo = aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE;
 					oParams.TimeTo.ms = aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME.ms;
 				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
