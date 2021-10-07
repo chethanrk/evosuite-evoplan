@@ -390,7 +390,8 @@ sap.ui.define([
 		 * @return {boolean}
 		 */
 		isResource: function (sValue) {
-			if (this.getModel("user").getProperty("/ENABLE_CUMULATIVE_CAPACITY")) {
+			var oModel = this._oView ? this._oView.getModel("user") : this.getModel("user");
+			if (oModel.getProperty("/ENABLE_CUMULATIVE_CAPACITY")) {
 				if (sValue === "ASSIGNMENT") {
 					return false;
 				} else {
