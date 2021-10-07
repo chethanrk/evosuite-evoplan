@@ -1,0 +1,19 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+	<Dialog id="idGanttDemandFilterDialog" title="{i18n>xtit.ganttFilters}" draggable="true">
+		<content>
+			<smartFilterBar:SmartFilterBar id="ganttResourceTreeFilterBar" class="treeTableFilterBar"
+				persistencyKey="{viewModel>/persistencyKeyGanttDemandFilter}" considerSelectionVariants="true" entitySet="{viewModel>/ganttTreeSet}"
+				enableBasicSearch="false" liveMode="true" showGoOnFB="true" filterBarExpanded="true" beforeVariantFetch="onBeforeVariantFetch"
+				afterVariantLoad="onAfterVariantLoad" initialized="onGanttFilterInitialized" filterContainerWidth="10rem" filterChange="onGanttResourceFilterChange" containerQuery="true"
+				showRestoreButton="true" showRestoreOnFB="true" showClearButton="true" showClearOnFB="true" showFilterConfiguration="false">
+				<smartFilterBar:layoutData>
+					<FlexItemData shrinkFactor="0"/>
+				</smartFilterBar:layoutData>
+			</smartFilterBar:SmartFilterBar>
+		</content>
+		<buttons>
+			<Button text="{i18n>xbut.buttonClose}" press="onCloseGanttResourceFilter"></Button>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>
