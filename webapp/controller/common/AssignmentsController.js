@@ -537,16 +537,15 @@ sap.ui.define([
 		},
 
 		openAssignInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext) {
+			if (this.getOwnerComponent()) {
+				this.oComponent = this.getOwnerComponent();
+			} else {
+				this.oComponent = oView.getController().getOwnerComponent();
+			}
 			if (!oDemandContext) {
 				var mParams = {
 					$expand: "Demand"
 				};
-				if(this.getOwnerComponent()){
-					this.oComponent = this.getOwnerComponent();
-				}
-				else{
-					this.oComponent = oView.getController().getOwnerComponent();
-				}
 				this.oComponent._getData(sPath, null, mParams)
 					.then(function (data) {
 						var sObjectSourceType = data.Demand.OBJECT_SOURCE_TYPE;
@@ -581,13 +580,12 @@ sap.ui.define([
 			};
 			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterDialogLoad.bind(this));
 		},
-		
+
 		_afterDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
 			if (sEvent === "dataReceived") {
 				this.oComponent.assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
 			}
 		},
-		
 
 	});
 });
