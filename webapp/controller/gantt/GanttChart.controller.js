@@ -82,18 +82,39 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onShapeDrop: function (oEvent) {
-			var oParams = oEvent.getParameters();
+			var oParams = oEvent.getParameters(),
+				msg = this.getResourceBundle().getText("msg.ganttShapeDropError");
 			if (!oParams.targetRow && !oParams.targetShape) {
+				this.showMessageToast(msg);
 				return;
 			}
+			// to identify the action done on respective page
+			localStorage.setItem("Evo-Action-page", "ganttSplit");
 
 			var oTargetContext = oParams.targetRow ? oParams.targetRow.getBindingContext("ganttModel") : oParams.targetShape.getParent().getParent()
 				.getBindingContext("ganttModel"),
 				oTargetData = oTargetContext ? oTargetContext.getObject() : null,
 				oDraggedShape = oParams.draggedShapeDates;
 
+			// If you drop in empty gantt area where there is no data OR assign is not allowed
+			if (!oTargetData || !this.isAssignable({
+					data: oTargetData
+				})) {
+				return;
+			}
+
 			for (var key in oDraggedShape) {
-				var sSourcePath = Utility.parseUid(key).shapeDataName;
+				var sSourcePath = Utility.parseUid(key).shapeDataName,
+					oSourceData = this.getModel().getProperty(sSourcePath),
+					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
+
+				console.log(sSourcePath);
+				this._getRelatedDemandData(oSourceData).then(function (oResult) {
+					//this.oGanttModel.setProperty(oTargetContext.getPath() + "/Demand", oResult.Demand);
+
+					console.log(oTargetContext.getPath());
+				});
+
 				this._validateShapeData(key, sSourcePath, oTargetData, oDraggedShape, oParams);
 			}
 		},
