@@ -60,17 +60,17 @@
 							<gnt2:GanttRowSettings rowId="{NodeId}" shapes3="{ path:'AssignmentSet', templateShareable:true }"
 								shapes2="{ path:'ResourceAvailabilitySet', templateShareable:true }">
 								<gnt2:shapes1>
-									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.BackGroundShape" type="XML"/>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.gantt_fragments.BackGroundShape" type="XML"/>
 								</gnt2:shapes1>
 								<gnt2:shapes2>
-									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.UnAvailabilityShape" type="XML"/>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.gantt_fragments.UnAvailabilityShape" type="XML"/>
 								</gnt2:shapes2>
 								<gnt2:shapes3>
-									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.AssignmentShape" type="XML"/>
+									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.gantt_fragments.AssignmentShape" type="XML"/>
 								</gnt2:shapes3>
 							</gnt2:GanttRowSettings>
 						</table:rowSettingsTemplate>
-						<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.ResourceTreeColumns" type="XML"/>
+						<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.gantt_fragments.ResourceTreeColumns" type="XML"/>
 						<table:dragDropConfig>
 							<dnd:DropInfo targetAggregation="rows" dropPosition="On" drop="onDropOnResource"/>
 						</table:dragDropConfig>

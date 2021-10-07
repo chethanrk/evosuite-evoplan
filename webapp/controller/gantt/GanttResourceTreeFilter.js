@@ -9,7 +9,7 @@ sap.ui.define([
 ], function (BaseController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.gantt.GanttResourceFilter", {
+	return BaseController.extend("com.evorait.evoplan.controller.gantt.GanttResourceTreeFilter", {
 
 		formatter: formatter,
 		_oView: null,
@@ -24,11 +24,10 @@ sap.ui.define([
 			this._treeTable = oTreeTable;
 			// create dialog lazily
 			Fragment.load({
-				name: "com.evorait.evoplan.view.gantt.fragments.GanttResourceFilter",
-				id: this._oView.getId(),
+				name: "com.evorait.evoplan.view.gantt.gantt_fragments.GanttResourceTreeFilter",
 				controller: this
 			}).then(function (oDialog) {
-				this._oFilterBar = this._oView.byId("ganttResourceTreeFilterBar");
+				this._oFilterBar = sap.ui.getCore().byId("ganttResourceTreeFilterBar");
 				this._oVariantMangement = this._oFilterBar.getSmartVariant();
 				this._oFilterBar.attachClear(function (oEvent) {
 					this.onClear(oEvent);
@@ -63,7 +62,7 @@ sap.ui.define([
 		 * @param oView
 		 */
 		onOpen: function (oDialog, oView) {
-			this._oDialog.open();
+			oDialog.open();
 		},
 
 		/**
@@ -81,15 +80,15 @@ sap.ui.define([
 			var oFilters = this._oFilterBar.getFilters(),
 				sDateFrom = this.formatter.date(this._oView.byId("idDateRangeGantt2").getDateValue()),
 				sDateTo = this.formatter.date(this._oView.byId("idDateRangeGantt2").getSecondDateValue()),
-				// aDateFilters = [
-				// 	new Filter("StartDate", FilterOperator.LE, sDateTo),
-				// 	new Filter("EndDate", FilterOperator.GE, sDateFrom)
-				// ],
+				aDateFilters = [
+					new Filter("StartDate", FilterOperator.LE, sDateTo),
+					new Filter("EndDate", FilterOperator.GE, sDateFrom)
+				],
 				sFilterCount = 0;
-			if (oFilters && oFilters.length) {
-				sFilterCount = oFilters[0].aFilters.length;
-			}
-			// oFilters = oFilters.concat(aDateFilters);
+				if (oFilters && oFilters.length) {
+					sFilterCount = oFilters[0].aFilters.length;
+				}
+			oFilters = oFilters.concat(aDateFilters);
 			this._treeTable.getBinding("rows").filter(oFilters, "Application");
 			this.setFilterCount(sFilterCount);
 		},
@@ -111,7 +110,7 @@ sap.ui.define([
 			} else {
 				this._oView.byId("idBtnGanttResourceFilter").setText(sFilterText);
 			}
-		}
+		},
 
 	});
 

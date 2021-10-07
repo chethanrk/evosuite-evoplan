@@ -3,7 +3,7 @@
 	<m:Dialog title="{i18n>xtit.demandQualifications}" contentWidth="100%"  resizable="true">
 		<m:content>
 			<!--<core:Fragment fragmentName="com.evorait.evoplan.view.qualifications.fragments.ObjectPage" type="XML"/>-->
-			<ObjectPageLayout id="ObjectPageLayout" 
+			<ObjectPageLayout 
 				editHeaderButtonPress="handleEditBtnPress">
 				<sections>
 					<ObjectPageSection id="Idqualifications" title="{i18n>xtit.qualifications}">

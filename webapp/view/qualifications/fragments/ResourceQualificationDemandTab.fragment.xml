@@ -2,7 +2,7 @@
 	<smartTable:SmartTable id="idResourceQualificationDemandsTable" entitySet="DemandQualificationMatchSet" useExportToExcel="true"
 		useVariantManagement="true" useTablePersonalisation="true" showRowCount="true" persistencyKey="com.evorait.evoplan.demandsTable"
 		enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableBindingPath="ResourceToDemandQualificationMatch"
-		requestAtLeastFields="ALLOW_ASSIGN,ALLOW_FINDRESOURCE,Guid,REQUIREMENT_PROFILE_COLOR" beforeRebindTable="onBeforeRebindDemandsTable">
+		requestAtLeastFields="ALLOW_ASSIGN,ALLOW_FINDRESOURCE,Guid,REQUIREMENT_PROFILE_COLOR,REQUIREMENT_PROFILE_ID" beforeRebindTable="onBeforeRebindDemandsTable">
 		<!--layout data used to make the table growing but the filter bar fixed-->
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1" baseSize="0%"/>
@@ -30,6 +30,27 @@
 					<Label text="{/#DemandQualificationMatch/REQUIREMENT_PROFILE_COLOR/@sap:label}"/>
 					<table:template>
 						<core:Icon src="sap-icon://circle-task-2" color="{REQUIREMENT_PROFILE_COLOR}"></core:Icon>
+					</table:template>
+				</table:Column>
+				<table:Column visible="{= ${/#DemandQualificationMatch/QUALIFICATION_ICON/@sap:visible} === 'false' ? false : true}" hAlign="Center"
+					width="3rem">
+					<table:customData>
+						<core:CustomData key="p13nData" value='\{"columnKey": "QUALIFICATION_ICON", "leadingProperty": "QUALIFICATION_ICON"}'/>
+					</table:customData>
+					<Label text="{/#DemandQualificationMatch/QUALIFICATION_ICON/@sap:label}"/>
+					<table:template>
+						<core:Icon src="{QUALIFICATION_ICON}" color="{ path:'CRITICALITY', formatter:'.formatter.formatSyncIconColor' }"
+							visible="{ parts:['REQUIREMENT_PROFILE_ID','user>/ENABLE_QUALIFICATION'], formatter:'.formatter.formatQualificationIcon' }"
+							press="onDemandQualificationIconPress"></core:Icon>
+					</table:template>
+				</table:Column>
+				<table:Column hAlign="Center" width="3rem" visible="{= ${/#DemandQualificationMatch/STATUS_ICON/@sap:visible} === 'false' ? false : true}">
+					<table:customData>
+						<core:CustomData key="p13nData" value='\{"columnKey": "STATUS_ICON", "leadingProperty": "STATUS_ICON"}'/>
+					</table:customData>
+					<Label text="{/#DemandQualificationMatch/STATUS_ICON/@sap:label}"/>
+					<table:template>
+						<core:Icon src="{STATUS_ICON}" color="{ path:'CRITICALITY', formatter:'.formatter.formatStatusIconColor' }" tooltip="{StatusDesc}"></core:Icon>
 					</table:template>
 				</table:Column>
 			</table:columns>
