@@ -71,12 +71,20 @@ sap.ui.define([
 			}
 
 			this._viewId = this.getView().getId();
+			this.getOwnerComponent().GanttResourceFilter.init(this.getView(), this._treeTable);
 		},
 
 		/* =========================================================== */
 		/* event methods                                               */
 		/* =========================================================== */
-
+		
+		/**
+		 * Open's the Gantt Chart Filter Dialog 
+		 * 
+		 */
+		onPressGanttResourceFilters: function () {
+			this.getOwnerComponent().GanttResourceFilter.open(this.getView(), this._treeTable);
+		},
 		/**
 		 * @param oEvent
 		 */
