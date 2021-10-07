@@ -72,6 +72,9 @@ sap.ui.define([
 				if (oData.viewNameId === _sViewNameId) {
 					this._checkForUrlParameters();
 					var data = this.getModel("viewModel").getProperty("/createOrderDefaults");
+					if (!this.sPath) {
+						this.sPath = this.getView().getBindingContext().getPath();
+					}
 					this.setDefaultValues(data);
 				}
 			}
@@ -92,7 +95,7 @@ sap.ui.define([
 		 */
 		setDefaultValues: function (oData) {
 			var oSelectedAsset = oData,
-				sPath = this.getView().getBindingContext().getPath();
+				sPath = this.sPath;
 			if (oSelectedAsset) {
 				this.getModel().setProperty(sPath + "/AssetGuid", oSelectedAsset.AssetGuid);
 				this.getModel().setProperty(sPath + "/TechnicalObject", oSelectedAsset.TechnicalObject);
