@@ -1,16 +1,15 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"com/evorait/evoplan/model/formatter",
-	 "sap/ui/core/Fragment"
-], function (BaseController, formatter,Fragment) {
+	"sap/ui/core/Fragment"
+], function (BaseController, formatter, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.AssignInfoDialog", {
-		
-		formatter:formatter,
-		
-		init: function () {
-		},
+
+		formatter: formatter,
+
+		init: function () {},
 
 		/**
 		 * open dialog
@@ -18,14 +17,14 @@ sap.ui.define([
 		 * @param oView
 		 * @param sBindPath
 		 */
-		  open: function (oView, oEvent, mParameters) {
-            	var oSource = oEvent.getSource(),
-		 		oContext = oSource.getBindingContext(),
+		open: function (oView, oEvent, mParameters) {
+			var oSource = oEvent.getSource(),
+				oContext = oSource.getBindingContext(),
 				oModel = oContext.getModel();
-		 	// create dialog lazily
-		 	this._mParameters = mParameters;
-		 	this._component = oView.getController().getOwnerComponent();
-		 	this._oView = oView;
+			// create dialog lazily
+			this._mParameters = mParameters;
+			this._component = oView.getController().getOwnerComponent();
+			this._oView = oView;
 			if (!this._olistDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
 				Fragment.load({
@@ -41,24 +40,24 @@ sap.ui.define([
 			} else {
 				this._openPopOver(oSource, this._olistDialog, oModel, oContext);
 			}
-        },
-         _openPopOver: function(oSource, oDialog, oModel, oContext){
-		 	oDialog.bindElement({
-		 		path: oContext.getPath(),
-		 		parameters: {
-		 			"expand":"DemandToAssignment"
-		 		}
-		 	});
-		 	oDialog.openBy(oSource);
-		 	oDialog.getElementBinding().refresh();
-		 },
-		 /**
-		  * on Close on pop over
-		  */
-		  onCloseAssigmentsPopover: function(oEvent){
-		  	this._olistDialog.close();
-		  },
-		  /**
+		},
+		_openPopOver: function (oSource, oDialog, oModel, oContext) {
+			oDialog.bindElement({
+				path: oContext.getPath(),
+				parameters: {
+					"expand": "DemandToAssignment"
+				}
+			});
+			oDialog.openBy(oSource);
+			oDialog.getElementBinding().refresh();
+		},
+		/**
+		 * on Close on pop over
+		 */
+		onCloseAssigmentsPopover: function (oEvent) {
+			this._olistDialog.close();
+		},
+		/**
 		 * Opens the AssignInfo dialog to update the assignment
 		 * @Author Rahul
 		 * @return
@@ -69,10 +68,11 @@ sap.ui.define([
 				oContext = oAssignment.getBindingContext(),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
-				oAssignmentData = oModel.getProperty(sPath);
-
-			// localStorage.setItem("Evo-Action-page", "DemandDetails");
-			this._component.assignInfoDialog.open(this._oView, null, oAssignmentData, this._mParameters);
+				oAssignmentData = oModel.getProperty(sPath),
+				mParameters = {
+					bFromDetail: true
+				};
+			this.openAssignInfoDialog(this._oView, sPath, oAssignmentData, mParameters);
 		}
 	});
 });
