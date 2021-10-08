@@ -1,8 +1,9 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/BaseController",
 	"sap/m/MessageBox",
+	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants"
-], function (BaseController, MessageBox, Constants) {
+], function (BaseController, MessageBox, formatter, Constants) {
 	return BaseController.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
 		/**
 		 * save assignment after drop
@@ -249,9 +250,11 @@ sap.ui.define([
 
 				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION")) {
 					if (oContext.IsSelected) {
-						oParams.DateFrom = oContext.oData.FIXED_ASSGN_START_DATE;
+						//	oParams.DateFrom = oContext.oData.FIXED_ASSGN_START_DATE;
+						oParams.DateFrom = formatter.mergeDateTime(oContext.oData.FIXED_ASSGN_START_DATE, oContext.oData.FIXED_ASSGN_START_TIME);
 						oParams.TimeFrom.ms = oContext.oData.FIXED_ASSGN_START_TIME.ms;
-						oParams.DateTo = oContext.oData.FIXED_ASSGN_END_DATE;
+						//	oParams.DateTo = oContext.oData.FIXED_ASSGN_END_DATE;
+						oParams.DateTo = formatter.mergeDateTime(oContext.oData.FIXED_ASSGN_END_DATE, oContext.oData.FIXED_ASSGN_END_TIME);
 						oParams.TimeTo.ms = oContext.oData.FIXED_ASSGN_END_TIME.ms;
 					} else {
 						aOperationTimeParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
@@ -261,9 +264,11 @@ sap.ui.define([
 						oParams.TimeTo.ms = aOperationTimeParams.TimeTo.ms;
 					}
 					if (mParameters && mParameters.bFromGantt && aGanttDemandDragged.IsSelected) {
-						oParams.DateFrom = aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE;
+						//	oParams.DateFrom = aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE;
+						oParams.DateFrom = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME);
 						oParams.TimeFrom.ms = aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME.ms;
-						oParams.DateTo = aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE;
+						//	oParams.DateTo = aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE;
+						oParams.DateTo = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME);
 						oParams.TimeTo.ms = aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME.ms;
 					}
 				}
