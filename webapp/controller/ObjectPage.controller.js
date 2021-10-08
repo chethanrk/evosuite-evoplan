@@ -28,7 +28,7 @@ sap.ui.define([
 						sViewName = null,
 						mParams = "";
 					this.getOwnerComponent().oTemplatePropsProm.then(function () {
-					//create Demand detail view
+						//create Demand detail view
 						if (sRouteName === "DemandDetail") {
 							//Demand detail view
 							sViewName = "com.evorait.evoplan.view.templates.DemandDetails#DemandDetailTabs";
@@ -56,6 +56,14 @@ sap.ui.define([
 								Guid: window.decodeURIComponent(oArgs.guid)
 							};
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageGanttChart"));
+							this._onRouteMatched(oEvent, sViewName, "DemandSet", mParams);
+						} else if (sRouteName === "assetDemandDetail") {
+							sViewName = "com.evorait.evoplan.view.templates.DemandDetails#DemandDetailTabs";
+							mParams = {
+								Guid: window.decodeURIComponent(oArgs.guid),
+								AssetId: window.decodeURIComponent(oArgs.asset)
+							};
+							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageAssetManager"));
 							this._onRouteMatched(oEvent, sViewName, "DemandSet", mParams);
 						} else if (sRouteName === "splitDemandDetails" || sRouteName === "splitGanttDetails") {
 							//Demand detail view
