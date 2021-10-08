@@ -203,8 +203,8 @@ sap.ui.define([
 				StartDate: this.getView().byId("idDateRangeGantt2").getDateValue(),
 				EndDate: this.getView().byId("idDateRangeGantt2").getSecondDateValue()
 			}));
-			this.getModel("user").setProperty("/GANT_START_DATE", oEvent.getParameter("from"));
-			this.getModel("user").setProperty("/GANT_END_DATE", oEvent.getParameter("to"));
+			this.getModel("user").setProperty("/DEFAULT_GANT_START_DATE", oEvent.getParameter("from"));
+			this.getModel("user").setProperty("/DEFAULT_GANT_END_DATE", oEvent.getParameter("to"));
 			this._loadGanttData();
 		},
 		/* =========================================================== */
@@ -459,7 +459,7 @@ sap.ui.define([
 				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 				aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
 				//is also very fast with expands
-				this.getOwnerComponent().readData(sEntitySet, aFilters, mParams).then(function (oResult) {
+				this.getOwnerComponent().readData(sEntitySet, aFilters).then(function (oResult) {
 					if (iLevel > 0) {
 						this._addChildrenToParent(iLevel, oResult.results);
 					} else {
@@ -480,9 +480,10 @@ sap.ui.define([
 				.then(this._loadTreeData.bind(this))
 				.then(function () {
 					this._treeTable.expandToLevel(1);
-					this._treeTable.setBusy(false);
+					// this._treeTable.setBusy(false);
 					this._changeGanttHorizonViewAt(this._axisTime.getZoomLevel(), this._axisTime);
-					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
+					// this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
+					this._addAssociations.bind(this)();
 				}.bind(this));
 		},
 		/**
@@ -541,45 +542,72 @@ sap.ui.define([
 		},
 		/**
 		 * Adding associations to gantt hierarchy
-		 * 
+		 * @Author Rahul
 		 */
-		_addAssociations: function(){
+		_addAssociations: function () {
 			var aFilters = [],
 				oUserData = this.getModel("user").getData(),
 				aPromises = [];
 
-				aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
-				aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-				this.getModel().setUseBatch(false);
-				this.getOwnerComponent().readData("/AssignmentSet", aFilters).then();
-				this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters).then();
-				
-				Promise.all(aPromises).then(function(data){
-					console.log(data);
-					this._addAssignemets(data[0].results);
-					this.getModel().setUseBatch(true);
-				}.bind(this));
+			aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+			aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+			this.getModel().setUseBatch(false);
+			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
+			aPromises.push(this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters));
+
+			Promise.all(aPromises).then(function (data) {
+				console.log(data);
+				this._addAssignemets(data[0].results);
+				this._addAvailabilities(data[1].results);
+				this.getModel().setUseBatch(true);
+				this._treeTable.setBusy(false);
+				this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
+			}.bind(this));
 		},
-		_addAssignemets: function(aAssignments) {
+		/**
+		 * Adding assignemnts into Gantt data in Gantt Model 
+		 * @Author Rahul
+		 */
+		_addAssignemets: function (aAssignments) {
 			var aGanttData = this.oGanttModel.getProperty("/data/children");
-			for(let i =0; i < aGanttData.length; i++){
+			for (let i = 0; i < aGanttData.length; i++) {
 				var aResources = aGanttData[i].children;
-				for(let j =0; j < aResources.length; j++){
+				for (let j = 0; j < aResources.length; j++) {
 					var oResource = aResources[j];
-					oResource.AssignmentSet.results=[];
-					for(var k in aAssignments){
-						if(oResource.NodeId === aAssignments[k].ObjectId){
-							oResource.AssignmentSet.results.push(aAssignments[k]); 
+					oResource.AssignmentSet.results = [];
+					for (var k in aAssignments) {
+						if (oResource.NodeId === aAssignments[k].ObjectId) {
+							// aAssignments[k].NodeType = "ASSIGNMENT";
+							// aAssignments[k].AssignmentSet = {};
+							// aAssignments[k].AssignmentSet.results = [aAssignments[k]];
+							oResource.AssignmentSet.results.push(aAssignments[k]);
+						}
+					}
+					// oResource.children = _.cloneDeep(oResource.AssignmentSet.results);
+				}
+			}
+			this.oGanttModel.refresh();
+		},
+		/**
+		 * Adding avaialbilities into Gantt data in Gantt Model 
+		 * @Author Rahul
+		 */
+		_addAvailabilities: function (aAvailabilities) {
+			var aGanttData = this.oGanttModel.getProperty("/data/children");
+			for (let i = 0; i < aGanttData.length; i++) {
+				var aResources = aGanttData[i].children;
+				for (let j = 0; j < aResources.length; j++) {
+					var oResource = aResources[j];
+					oResource.ResourceAvailabilitySet.results = [];
+					for (var k in aAvailabilities) {
+						if (oResource.NodeId === aAvailabilities[k].ObjectId) {
+							oResource.ResourceAvailabilitySet.results.push(aAvailabilities[k]);
 						}
 					}
 				}
 			}
 			this.oGanttModel.refresh();
-		},
-		_addAvailabilities: function(aAvailabilities) {
-			
 		}
-
 
 	});
 
