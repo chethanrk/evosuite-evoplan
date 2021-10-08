@@ -72,9 +72,7 @@ sap.ui.define([
 				if (oData.viewNameId === _sViewNameId) {
 					this._checkForUrlParameters();
 					var data = this.getModel("viewModel").getProperty("/createOrderDefaults");
-					if (!this.sPath) {
-						this.sPath = this.getView().getBindingContext().getPath();
-					}
+					this.sPath = this.getView().getBindingContext().getPath();
 					this.setDefaultValues(data);
 				}
 			}
