@@ -531,8 +531,8 @@ sap.ui.define([
 		 *Method for checking Enabling Operation Times Demands
 		 */
 		onShowOperationTimes: function () {
-			var aSources = this.getModel("viewModel").getProperty("/dragSession");
-			var aOperationTimes = [];
+			var aSources = this.getModel("viewModel").getProperty("/dragSession")
+			aOperationTimes = [];
 			for (var f in aSources) {
 				aSources[f].IsDisplayed = true;
 				aSources[f].IsSelected = true;
@@ -545,6 +545,7 @@ sap.ui.define([
 			this.getModel("viewModel").refresh(true);
 			return aOperationTimes.length;
 		},
+
 		/*
 		 *Method for checking Vendor Assignment Field
 		 */
@@ -613,7 +614,7 @@ sap.ui.define([
 			}
 		},
 
-		openAssignInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext) {
+openAssignInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext) {
 			if (this.getOwnerComponent()) {
 				this.oComponent = this.getOwnerComponent();
 			} else {
@@ -663,6 +664,8 @@ sap.ui.define([
 				this.oComponent.assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
 			}
 		},
+
+		
 
 	});
 });
