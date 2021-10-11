@@ -59,6 +59,7 @@
 									</HBox>
 								</table:template>
 							</table:Column>
+							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.LongTextColumn" type="XML"/>
 							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandQualificationColumn" type="XML"/>
 							<table:Column hAlign="Center" width="3rem" visible="{user>/ENABLE_EMP}">
 								<table:customData>
