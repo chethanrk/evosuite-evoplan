@@ -207,7 +207,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onPressReassign: function (oEvent) {
-			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true, this._mParameters);
+			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false, this._mParameters);
 		},
 		/**
 		 * Open's Dialog containing assignments to unassign

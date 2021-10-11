@@ -1,0 +1,22 @@
+<core:FragmentDefinition
+        xmlns="sap.ui.table"
+        xmlns:core="sap.ui.core"
+        xmlns:gnt2="sap.gantt.simple">
+	<!-- Assignment shape -->
+            <gnt2:BaseRectangle
+                    shapeId="{Guid}"
+                    countInBirdEye="true"
+                    time="{DateFrom}"
+                    height="20"
+                    endTime="{DateTo}"
+                    title="{Description}"
+                    showTitle="true"
+                    tooltip="{Description} - {DEMAND_STATUS}"
+                    fill="{DEMAND_STATUS_COLOR}"
+                    stroke="#7088ac"
+                    strokeWidth="1"
+                    resizable="{user>/ENABLE_RESIZE}"
+                    selectable="true"
+                    draggable= "{user>/ENABLE_DRAG_DROP}">
+            </gnt2:BaseRectangle>
+</core:FragmentDefinition>

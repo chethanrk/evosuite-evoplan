@@ -382,21 +382,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Open the Qualification dialog for Gantt demand
-		 * @param oEvent
-		 */
-		onDemandQualificationIconPress: function (oEvent) {
-			var oRow = oEvent.getSource().getParent(),
-				oContext = oRow.getBindingContext(),
-				sPath = oContext.getPath(),
-				oModel = oContext.getModel(),
-				oResourceNode = oModel.getProperty(sPath),
-				sDemandGuid = oResourceNode.Guid;
-			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
-
-		},
-
-		/**
 		 * To Highlight Resources Based on Selected Demands
 		 * 
 		 */
