@@ -545,24 +545,6 @@ sap.ui.define([
 			this.getModel("viewModel").refresh(true);
 			return aOperationTimes.length;
 		},
-		/*
-		 *Method for checking Vendor Assignment Field
-		 */
-		onAllowVendorAssignment: function () {
-			var aSources = this.getModel("viewModel").getProperty("/dragSession"),
-				aAllowVendorAssignment = [];
-			for (var v in aSources) {
-				if (!aSources[v].oData.ALLOW_ASSIGNMENT_DIALOG) {
-					aAllowVendorAssignment.push(aSources[v]);
-				} else {
-					aSources[v].oData.CostElement = "";
-					aSources[v].oData.Estimate = "";
-					aSources[v].oData.Currency = "";
-				}
-			}
-			this.getModel("viewModel").refresh(true);
-			return aAllowVendorAssignment.length;
-		},
 
 		openAssignInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext) {
 			if (this.getOwnerComponent()) {
@@ -613,6 +595,25 @@ sap.ui.define([
 			if (sEvent === "dataReceived") {
 				this.oComponent.assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
 			}
+		},
+
+		/*
+		 *Method for checking Vendor Assignment Field
+		 */
+		onAllowVendorAssignment: function () {
+			var aSources = this.getModel("viewModel").getProperty("/dragSession"),
+				aAllowVendorAssignment = [];
+			for (var v in aSources) {
+				if (!aSources[v].oData.ALLOW_ASSIGNMENT_DIALOG) {
+					aAllowVendorAssignment.push(aSources[v]);
+				} else {
+					aSources[v].oData.CostElement = "";
+					aSources[v].oData.Estimate = "";
+					aSources[v].oData.Currency = "";
+				}
+			}
+			this.getModel("viewModel").refresh(true);
+			return aAllowVendorAssignment.length;
 		},
 
 	});
