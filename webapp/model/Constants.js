@@ -63,9 +63,14 @@ sap.ui.define([], function () {
 			GANTT: "Gantt",
 			MAP: "Map",
 			DEMAND_SPLIT: "DemandSplit",
-			MANAGE_RESOURCE:"ManageResource",
-			MANAGERESOURCE_REMOVEASSIGNMENTS:"ManageResourceRemoveAssignments",
-			NEWGANTT:"NewGantt"
+			MANAGE_RESOURCE: "ManageResource",
+			MANAGERESOURCE_REMOVEASSIGNMENTS: "ManageResourceRemoveAssignments",
+			NEWGANTT: "NewGantt"
+		},
+		ANNOTATION_CONSTANTS: {
+			NOTIFICATION_OBJECTSOURCETYPE: "DEM_PMNO",
+			NOTIFICATION_QUALIFIER: "NotificationAssignmentDialog",
+			ORDER_QUALIFIER: "OrderAssignmentDialog"
 		}
 	};
 

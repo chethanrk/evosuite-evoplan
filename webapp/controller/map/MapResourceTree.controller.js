@@ -180,8 +180,8 @@ sap.ui.define([
 				oRowContext = oSource.getParent().getBindingContext();
 
 			if (oRowContext) {
-				this.assignmentPath = oRowContext.getPath();
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
+				this.assignmentPath = "/AssignmentSet('" + oRowContext.getObject().AssignmentGuid + "')";
+				this.openAssignInfoDialog(this.getView(), this.assignmentPath, oRowContext);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
@@ -209,13 +209,16 @@ sap.ui.define([
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
-				oUserModel = this.getModel("user");
+				oUserModel = this.getModel("user"),
+				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels;
 
 			if (!this.isLoaded) {
 				this.isLoaded = true;
 			}
 			// Bug fix for some time tree getting collapsed
-			oBinding.parameters.numberOfExpandedLevels = oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND") ? 1 : 0;
+			if (oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND")) {
+				oBinding.parameters.numberOfExpandedLevels = nTreeExpandLevel ? nTreeExpandLevel : 1;
+			}
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			// setting filters in local model to access in assignTree dialog.
@@ -288,7 +291,8 @@ sap.ui.define([
 			aSources = this.getModel("viewModel").getProperty("/mapDragSession");
 			iOperationTimesLen = this.onShowOperationTimes(aSources);
 
-			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType === "RESOURCE") {
+			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+				"RESOURCE") {
 				this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(), this._mParameters, sPath);
 			} else {
 				eventBus.publish("BaseController", "resetMapSelection", {});

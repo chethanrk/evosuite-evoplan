@@ -163,7 +163,7 @@ sap.ui.define([
 			var sAssignmentGuid = oEvent.getSource().getBindingContext().getObject().Guid,
 				oEventBus = sap.ui.getCore().getEventBus();
 			oEventBus.publish("AssignInfoDialog", "selectAssign", {
-				oView: this.getView(),
+				oView: this.getView().getParent().getParent(),
 				isReassign: this.reAssign,
 				aSelectedPaths: ["/AssignmentSet('" + sAssignmentGuid + "')"]
 			});

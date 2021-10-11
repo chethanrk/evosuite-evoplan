@@ -73,7 +73,7 @@ sap.ui.define([
 			}
 			this._defaultGanttHorizon();
 			this._viewId = this.getView().getId();
-			this.getOwnerComponent().GanttResourceFilter.init(this.getView(), this._treeTable);
+			this.getOwnerComponent().GanttResourceTreeFilter.init(this.getView(), this._treeTable);
 		},
 
 		/**
@@ -516,7 +516,7 @@ sap.ui.define([
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
 				// Change
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, mParameters, sPath);
+				this.openAssignInfoDialog(this.getView(), sPath, this._selectedShapeContext);
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonExecuteFunction") && !oSelectedItem.getSubmenu()) {
 				// Set Function
 				var oDemandPath = oModel.getProperty(sPath).Demand.__ref;
@@ -1087,7 +1087,7 @@ sap.ui.define([
 		 * Open the Gantt Demands Filter Dialog 
 		 */
 		onPressGanttResourceFilters: function () {
-			this.getOwnerComponent().GanttResourceFilter.open(this.getView(), this._treeTable);
+			this.getOwnerComponent().GanttResourceTreeFilter.open(this.getView(), this._treeTable);
 		},
 		/**
 		 * To fetch Demand data on Gantt Context Menu Set Function

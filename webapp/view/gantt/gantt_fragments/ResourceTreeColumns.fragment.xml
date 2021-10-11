@@ -13,7 +13,6 @@
 							icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'},{path: 'ResourceIcon'} ], formatter: '.formatter.getResourceIcon' }"
 							isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink" resourceIconPress="onResourceIconPress"
 							enableQualification="{user>/ENABLE_QUALIFICATION}"
-							isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}"
 							showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
 							workTime="{path:'ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}">
 							<controls:customData>

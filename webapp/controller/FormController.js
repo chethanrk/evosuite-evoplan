@@ -13,10 +13,10 @@ sap.ui.define([
 		onInit: function () {
 			this.oViewModel = this.getModel("viewModel");
 
-			//Bind the message model to the view and register it
-			if (this.getOwnerComponent) {
-				this.getOwnerComponent().registerViewToMessageManager(this.getView());
-			}
+			// //Bind the message model to the view and register it
+			// if (this.getOwnerComponent) {
+			// 	this.getOwnerComponent().registerViewToMessageManager(this.getView());
+			// }
 		},
 
 		/**
@@ -240,11 +240,11 @@ sap.ui.define([
 		 */
 		saveChanges: function (mParams, oSuccessCallback, oErrorCallback, oCtrl) {
 			if (mParams.state === "success") {
-				this._setBusyWhileSaving(oCtrl, true);
+			//	this._setBusyWhileSaving(oCtrl, true);
 
 				this.getModel().submitChanges({
 					success: function (oResponse) {
-						this._setBusyWhileSaving(oCtrl, false);
+					//	this._setBusyWhileSaving(oCtrl, false);
 						if (oResponse.__batchResponses && oResponse.__batchResponses[0].response && oResponse.__batchResponses[0].response.statusCode ===
 							"400") {
 							if (oErrorCallback) {

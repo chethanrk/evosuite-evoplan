@@ -493,6 +493,8 @@ sap.ui.define([
 				for (var d in aItems) {
 					if (aItems[d].getBindingContext().getObject().UI_DISABLE_ABSENCE_DELETE) {
 						aItems[d].getDeleteControl().setVisible(false);
+					}else{
+							aItems[d].getDeleteControl().setVisible(true);
 					}
 				}
 			} else {

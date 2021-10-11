@@ -17,19 +17,16 @@ sap.ui.define([
 			this.oRouter = this.getRouter();
 			this.oResourceBundle = this.getResourceBundle();
 			this.onRouteMapping();
-
 		},
 
 		onRouteMapping: function () {
 			if (!this.oViewModel.getProperty("/bObjectPageRouteMatchAttached")) {
 				this.oRouter.attachRouteMatched(function (oEvent) {
 					this.oViewModel.setProperty("/bObjectPageRouteMatchAttached", true);
-
 					var sRouteName = oEvent.getParameter("name"),
 						oArgs = oEvent.getParameter("arguments"),
 						sViewName = null,
 						mParams = "";
-
 					this.getOwnerComponent().oTemplatePropsProm.then(function () {
 						//create Demand detail view
 						if (sRouteName === "DemandDetail") {
@@ -40,6 +37,15 @@ sap.ui.define([
 							};
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageDemands"));
 							this._onRouteMatched(oEvent, sViewName, "DemandSet", mParams);
+						} else if (sRouteName === "CreateOrder") {
+							//Create Order view
+							sViewName = "com.evorait.evoplan.view.templates.CreateOrder#Create";
+							mParams = {
+								AssetGuid: window.decodeURIComponent(oArgs.asset),
+								isNew: true
+							};
+							this.getModel("viewModel").setProperty("/CreateOrderAssetGuid", mParams.AssetGuid);
+							this._onRouteMatched(oEvent, sViewName, "EvoPlanOrderSet", mParams);
 						}
 						// setting the bread crum value xtit.itemListTitle
 						else if (sRouteName === "object") {
@@ -50,6 +56,14 @@ sap.ui.define([
 								Guid: window.decodeURIComponent(oArgs.guid)
 							};
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageGanttChart"));
+							this._onRouteMatched(oEvent, sViewName, "DemandSet", mParams);
+						} else if (sRouteName === "assetDemandDetail") {
+							sViewName = "com.evorait.evoplan.view.templates.DemandDetails#DemandDetailTabs";
+							mParams = {
+								Guid: window.decodeURIComponent(oArgs.guid),
+								AssetId: window.decodeURIComponent(oArgs.asset)
+							};
+							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageAssetManager"));
 							this._onRouteMatched(oEvent, sViewName, "DemandSet", mParams);
 						} else if (sRouteName === "splitDemandDetails" || sRouteName === "splitGanttDetails") {
 							//Demand detail view
