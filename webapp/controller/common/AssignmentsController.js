@@ -249,12 +249,10 @@ sap.ui.define([
 
 				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION")) {
 					if (oContext.IsSelected) {
-						//	oParams.DateFrom = oContext.oData.FIXED_ASSGN_START_DATE;
 						oParams.DateFrom = formatter.mergeDateTime(oContext.oData.FIXED_ASSGN_START_DATE, oContext.oData.FIXED_ASSGN_START_TIME);
-						oParams.TimeFrom.ms = oContext.oData.FIXED_ASSGN_START_TIME.ms;
-						//	oParams.DateTo = oContext.oData.FIXED_ASSGN_END_DATE;
+						oParams.TimeFrom.ms = oParams.DateFrom.getTime();
 						oParams.DateTo = formatter.mergeDateTime(oContext.oData.FIXED_ASSGN_END_DATE, oContext.oData.FIXED_ASSGN_END_TIME);
-						oParams.TimeTo.ms = oContext.oData.FIXED_ASSGN_END_TIME.ms;
+						oParams.TimeTo.ms = oParams.DateTo.getTime();
 					} else {
 						aOperationTimeParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
 						oParams.DateFrom = aOperationTimeParams.DateFrom;
@@ -263,13 +261,17 @@ sap.ui.define([
 						oParams.TimeTo.ms = aOperationTimeParams.TimeTo.ms;
 					}
 					if (mParameters && mParameters.bFromGantt && aGanttDemandDragged.IsSelected) {
-						//	oParams.DateFrom = aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE;
 						oParams.DateFrom = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME);
-						oParams.TimeFrom.ms = aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME.ms;
-						//	oParams.DateTo = aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE;
+						oParams.TimeFrom.ms = oParams.DateFrom.getTime();
 						oParams.DateTo = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME);
-						oParams.TimeTo.ms = aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME.ms;
+						oParams.TimeTo.ms = oParams.DateTo.getTime();
 					}
+				}
+				//Cost Element, Estimate and Currency fields update for Vendor Assignment
+				if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && targetObj.ISEXTERNAL && oContext.oData.ALLOW_ASSIGNMENT_DIALOG) {
+					oParams.CostElement = oContext.oData.CostElement;
+					oParams.Estimate = oContext.oData.Estimate;
+					oParams.Currency = oContext.oData.Currency;
 				}
 
 				if (parseInt(i, 10) === aItems.length - 1) {
@@ -524,10 +526,12 @@ sap.ui.define([
 			}
 			return oParams;
 		},
-
-		onShowOperationTimes: function (aSources) {
-			aSources = this.getModel("viewModel").getProperty("/dragSession");
-			var aOperationTimes = [];
+		/*
+		 *Method for checking Enabling Operation Times Demands
+		 */
+		onShowOperationTimes: function () {
+			var aSources = this.getModel("viewModel").getProperty("/dragSession"),
+				aOperationTimes = [];
 			for (var f in aSources) {
 				aSources[f].IsDisplayed = true;
 				aSources[f].IsSelected = true;
@@ -540,5 +544,25 @@ sap.ui.define([
 			this.getModel("viewModel").refresh(true);
 			return aOperationTimes.length;
 		},
+
+		/*
+		 *Method for checking Vendor Assignment Field
+		 */
+		onAllowVendorAssignment: function () {
+			var aSources = this.getModel("viewModel").getProperty("/dragSession"),
+				aAllowVendorAssignment = [];
+			for (var v in aSources) {
+				if (!aSources[v].oData.ALLOW_ASSIGNMENT_DIALOG) {
+					aAllowVendorAssignment.push(aSources[v]);
+				} else {
+					aSources[v].oData.CostElement = "";
+					aSources[v].oData.Estimate = "";
+					aSources[v].oData.Currency = "";
+				}
+			}
+			this.getModel("viewModel").refresh(true);
+			return aAllowVendorAssignment.length;
+		},
+
 	});
 });

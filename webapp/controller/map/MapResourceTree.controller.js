@@ -272,6 +272,7 @@ sap.ui.define([
 				oTargetData = oModel.getProperty(sPath),
 				aSources = [],
 				iOperationTimesLen,
+				iVendorAssignmentLen,
 				eventBus = sap.ui.getCore().getEventBus();
 
 			//don't drop on assignments
@@ -286,20 +287,27 @@ sap.ui.define([
 			}
 
 			aSources = this.getModel("viewModel").getProperty("/mapDragSession");
-			iOperationTimesLen = this.onShowOperationTimes(aSources);
+			iOperationTimesLen = this.onShowOperationTimes();
+			iVendorAssignmentLen = this.onAllowVendorAssignment();
 
-			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType === "RESOURCE") {
-				this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(), this._mParameters, sPath);
+			//Checking Vendor Assignment for External Resources
+			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
+				iVendorAssignmentLen) {
+				this.getOwnerComponent().VendorAssignment.open(this, this.getView(), sPath, this._mParameters);
 			} else {
-				eventBus.publish("BaseController", "resetMapSelection", {});
-				// If the Resource is Not/Partially available
-				if (this.isAvailable(sPath)) {
-					this.assignedDemands(aSources, sPath, this._mParameters);
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+					"RESOURCE") {
+					this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(), this._mParameters, sPath);
 				} else {
-					this.showMessageToProceed(aSources, sPath, null, null, null, null, this._mParameters);
+					eventBus.publish("BaseController", "resetMapSelection", {});
+					// If the Resource is Not/Partially available
+					if (this.isAvailable(sPath)) {
+						this.assignedDemands(aSources, sPath, this._mParameters);
+					} else {
+						this.showMessageToProceed(aSources, sPath, null, null, null, null, this._mParameters);
+					}
 				}
 			}
-
 		},
 		/**
 		 * Method will refresh the data of tree by restoring its state
