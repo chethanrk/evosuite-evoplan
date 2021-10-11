@@ -57,7 +57,7 @@ sap.ui.define([
 				if (this.oGanttModel.getProperty("/data/children").length === 0) {
 					this._loadGanttData();
 				} else {
-					//Todo refresh assignments & availabilities
+						this._addAssociations.bind(this)();
 				}
 			}.bind(this));
 
@@ -459,7 +459,7 @@ sap.ui.define([
 				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 				aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
 				//is also very fast with expands
-				this.getOwnerComponent().readData(sEntitySet, aFilters).then(function (oResult) {
+				this.getOwnerComponent().readData(sEntitySet, aFilters, mParams).then(function (oResult) {
 					if (iLevel > 0) {
 						this._addChildrenToParent(iLevel, oResult.results);
 					} else {
@@ -480,10 +480,10 @@ sap.ui.define([
 				.then(this._loadTreeData.bind(this))
 				.then(function () {
 					this._treeTable.expandToLevel(1);
-					// this._treeTable.setBusy(false);
+					this._treeTable.setBusy(false);
 					this._changeGanttHorizonViewAt(this._axisTime.getZoomLevel(), this._axisTime);
-					// this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
-					this._addAssociations.bind(this)();
+					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
+					// this._addAssociations.bind(this)();
 				}.bind(this));
 		},
 		/**
@@ -554,7 +554,7 @@ sap.ui.define([
 			this.getModel().setUseBatch(false);
 			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
 			aPromises.push(this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters));
-
+			this._treeTable.setBusy(true);
 			Promise.all(aPromises).then(function (data) {
 				console.log(data);
 				this._addAssignemets(data[0].results);
