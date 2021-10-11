@@ -179,7 +179,7 @@ sap.ui.define([
 				this.showMessageToast(msg);
 			}
 		},
-		
+
 		/**
 		 * Open's Dialog containing assignments to reassign
 		 * @param oEvent
@@ -203,13 +203,16 @@ sap.ui.define([
 				oBinding = oParams.bindingParams,
 				oUserModel = this.getModel("user"),
 				oFilterRightTechnician = this._oViewModel.getProperty("/resourceFilterforRightTechnician"),
-				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician");
+				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician"),
+				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels;
 
 			if (!this.isLoaded) {
 				this.isLoaded = true;
 			}
 			// Bug fix for some time tree getting collapsed
-			oBinding.parameters.numberOfExpandedLevels = oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND") ? 1 : 0;
+			if (oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND")) {
+				oBinding.parameters.numberOfExpandedLevels = nTreeExpandLevel ? nTreeExpandLevel : 1;
+			}
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			// setting filters in local model to access in assignTree dialog.

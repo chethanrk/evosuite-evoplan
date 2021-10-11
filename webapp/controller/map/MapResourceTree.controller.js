@@ -209,13 +209,16 @@ sap.ui.define([
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
-				oUserModel = this.getModel("user");
+				oUserModel = this.getModel("user"),
+				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels;
 
 			if (!this.isLoaded) {
 				this.isLoaded = true;
 			}
 			// Bug fix for some time tree getting collapsed
-			oBinding.parameters.numberOfExpandedLevels = oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND") ? 1 : 0;
+			if (oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND")) {
+				oBinding.parameters.numberOfExpandedLevels = nTreeExpandLevel ? nTreeExpandLevel : 1;
+			}
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			// setting filters in local model to access in assignTree dialog.
