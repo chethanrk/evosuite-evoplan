@@ -237,17 +237,17 @@ sap.ui.define([
 						eventBus.publish("TemplateRendererEvoPlan", "changedBinding", {
 							viewNameId: sViewName
 						});
-						//oEvent.getSource().refresh();
 						if (callbackFn) {
 							callbackFn();
 						}
-						if(callbackfn2){
+						if (callbackfn2) {
+							oEvent.getSource().refresh();
 							callbackfn2("change", null, mParams);
 						}
 					},
 					dataRequested: function () {},
 					dataReceived: function (data) {
-						if(callbackfn2){
+						if (callbackfn2) {
 							callbackfn2("dataReceived", data.getParameters().data, mParams);
 						}
 					}

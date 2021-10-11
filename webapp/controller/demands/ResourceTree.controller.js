@@ -168,40 +168,18 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onPressAssignmentLink: function (oEvent) {
-			var oSource = oEvent.getSource(),
-				oRowContext = oSource.getParent().getBindingContext();
+			var oSource = oEvent.getSource();
+			this.assignmentRowContext = oSource.getParent().getBindingContext()
 
-			if (oRowContext) {
-				this.assignmentPath = "/AssignmentSet('" + oRowContext.getObject().AssignmentGuid + "')";
-				// this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
-
-				var mParams = {
-					viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#ResourceAssignmentDialog",
-					annotationPath: "com.sap.vocabularies.UI.v1.Facets#AssignmentDialog",
-					entitySet: "AssignmentSet",
-					controllerName: "AssignInfo",
-					title: "xtit.assignInfoModalTitle",
-					type: "add",
-					smartTable: null,
-					sPath: this.assignmentPath,
-					sDeepPath: "Demand",
-					parentContext: oRowContext,
-					oDialogController: this.getOwnerComponent().assignInfoDialog,
-					refreshParameters: this._mParameters
-
-				};
-				this.getOwnerComponent().DialogTemplateRenderer.open(this.getView(), mParams, this._afterDialogLoad.bind(this));
-
+			if (this.assignmentRowContext) {
+				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
+				this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
 			}
 		},
-		_afterDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
-			if (sEvent === "dataReceived") {
-				this.getOwnerComponent().assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
-			}
-		},
+		
 		/**
 		 * Open's Dialog containing assignments to reassign
 		 * @param oEvent

@@ -1,8 +1,9 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/BaseController",
 	"sap/m/MessageBox",
-	"com/evorait/evoplan/model/formatter"
-], function (BaseController, MessageBox, formatter) {
+	"com/evorait/evoplan/model/formatter",
+	"com/evorait/evoplan/model/Constants"
+], function (BaseController, MessageBox, formatter, Constants) {
 	return BaseController.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
 		/**
 		 * save assignment after drop
@@ -540,5 +541,57 @@ sap.ui.define([
 			this.getModel("viewModel").refresh(true);
 			return aOperationTimes.length;
 		},
+
+		openAssignInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext) {
+			if (this.getOwnerComponent()) {
+				this.oComponent = this.getOwnerComponent();
+			} else {
+				this.oComponent = oView.getController().getOwnerComponent();
+			}
+			if (!oDemandContext) {
+				var mParams = {
+					$expand: "Demand"
+				};
+				this.oComponent._getData(sPath, null, mParams)
+					.then(function (data) {
+						var sObjectSourceType = data.Demand.OBJECT_SOURCE_TYPE;
+						this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+					}.bind(this));
+			} else {
+				var sObjectSourceType = oDemandContext.OBJECT_SOURCE_TYPE;
+				this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+			}
+		},
+
+		openDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType) {
+			var sQualifier;
+			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
+				sQualifier = Constants.ANNOTATION_CONSTANTS.NOTIFICATION_QUALIFIER;
+			} else {
+				sQualifier = Constants.ANNOTATION_CONSTANTS.ORDER_QUALIFIER;
+			}
+			var mParams = {
+				viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#" + sQualifier,
+				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
+				entitySet: "AssignmentSet",
+				controllerName: "AssignInfo",
+				title: "xtit.assignInfoModalTitle",
+				type: "add",
+				smartTable: null,
+				sPath: sPath,
+				sDeepPath: "Demand",
+				parentContext: oContext,
+				oDialogController: this.oComponent.assignInfoDialog,
+				refreshParameters: mParameters
+			};
+			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterDialogLoad.bind(this));
+		},
+
+		_afterDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
+			if (sEvent === "dataReceived") {
+				this.oComponent.assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
+			}
+		},
+
 	});
 });

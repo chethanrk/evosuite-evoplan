@@ -180,8 +180,8 @@ sap.ui.define([
 				oRowContext = oSource.getParent().getBindingContext();
 
 			if (oRowContext) {
-				this.assignmentPath = oRowContext.getPath();
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
+				this.assignmentPath = "/AssignmentSet('" + oRowContext.getObject().AssignmentGuid + "')";
+				this.openAssignInfoDialog(this.getView(), this.assignmentPath, oRowContext);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
@@ -288,7 +288,8 @@ sap.ui.define([
 			aSources = this.getModel("viewModel").getProperty("/mapDragSession");
 			iOperationTimesLen = this.onShowOperationTimes(aSources);
 
-			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType === "RESOURCE") {
+			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+				"RESOURCE") {
 				this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(), this._mParameters, sPath);
 			} else {
 				eventBus.publish("BaseController", "resetMapSelection", {});
