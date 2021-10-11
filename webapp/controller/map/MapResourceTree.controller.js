@@ -292,7 +292,7 @@ sap.ui.define([
 			aSources = this.getModel("viewModel").getProperty("/mapDragSession");
 			iOperationTimesLen = this.onShowOperationTimes();
 			iVendorAssignmentLen = this.onAllowVendorAssignment();
-
+			
 			//Checking Vendor Assignment for External Resources
 			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
 				iVendorAssignmentLen) {
