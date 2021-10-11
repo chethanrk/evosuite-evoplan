@@ -303,6 +303,8 @@ sap.ui.define([
 						this._oAssignMentTable.removeSelections();
 						this._bSelectAll = true;
 					}
+				} else if (!oEvent.getParameter("selected")) {
+					this._bSelectAll = true;
 				} else {
 					this._oAssignMentTable.removeSelections();
 					this._bSelectAll = true;
