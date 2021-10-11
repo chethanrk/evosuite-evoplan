@@ -18,9 +18,7 @@ sap.ui.define([
                 oViewModel = this.getOwnerComponent().getModel("viewModel");
             this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
             this.getView().addDependent(this._oMessagePopover);
-
             this.getRouter().getRoute("orderCreate").attachPatternMatched(this._onObjectMatched, this);
-
             // Store original busy indicator delay, so it can be restored later on
             iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
             this.getOwnerComponent().getModel().metadataLoaded().then(function () {
@@ -105,7 +103,7 @@ sap.ui.define([
          * @private
          */
         _onObjectMatched: function (oEvent) {
-            var oArguments = oEvent.getParameter("arguments"),
+           var oArguments = oEvent.getParameter("arguments"),
             	oSelectedAsset = this.getModel("viewModel").getProperty("/createOrderDefaults"),
                 sAsset = oArguments.asset,
                 sFloc = oSelectedAsset ? oSelectedAsset.assetFloc : "",
@@ -116,7 +114,7 @@ sap.ui.define([
                 sBusinessarea = oSelectedAsset ? oSelectedAsset.businessArea:"",
                 OrderType = this.getModel("user").getProperty("/DEFAULT_ORDER_TYPE");
             this.getModel().metadataLoaded().then(function () {
-                if(sFloc && sFloc !== ""){
+               if(sFloc && sFloc !== ""){
                     var oContext = this.getModel().createEntry("/EvoPlanOrderSet", {
                         properties: {
                             TechnicalObject: sFloc,

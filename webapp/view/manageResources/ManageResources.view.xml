@@ -93,8 +93,7 @@
 					</smartFilterBar:SmartFilterBar>
 					<smartTable:SmartTable id="idTableHrResources" entitySet="ResourceMasterSet" useExportToExcel="false" useVariantManagement="true"
 						fitContainer="true" height="100%" useTablePersonalisation="true" header="{i18n>xtit.hrResourceTable}" showRowCount="true"
-						enableAutoBinding="true" class="sapUiTinyMarginBegin" requestAtLeastFields="Guid" smartFilterId="idSmartFilterResources"
-						customData:p13nDialogSettings='{filter:{visible:true},sort:{visible:false},columns:{visible:false}}'>
+						enableAutoBinding="true" class="sapUiTinyMarginBegin" requestAtLeastFields="Guid" smartFilterId="idSmartFilterResources">
 						<!--initiallyVisibleFields="Firstname,Lastname"-->
 						<!--layout data used to make the table growing but the filter bar fixed-->
 						<smartTable:layoutData>
@@ -103,7 +102,7 @@
 						<table:Table id="idDataTableHrResource" selectionMode="MultiToggle" enableCellFilter="true" threshold="30" visibleRowCountMode="Auto">
 							<!--visibleRowCountMode="Auto"-->
 							<table:columns>
-								<table:Column filterProperty="Firstname">
+								<table:Column filterProperty="Firstname" sortProperty="Firstname">
 									<table:customData >
 										<core:CustomData key="p13nData" value='\{"columnKey": "Firstname", "leadingProperty": "Firstname"}'/>
 									</table:customData>
@@ -112,7 +111,7 @@
 										<Text text="{Firstname}"/>
 									</table:template>
 								</table:Column>
-								<table:Column filterProperty="Lastname">
+								<table:Column filterProperty="Lastname" sortProperty="Lastname">
 									<table:customData>
 										<core:CustomData key="p13nData" value='\{"columnKey": "Lastname", "leadingProperty": "Lastname"}'/>
 									</table:customData>
@@ -121,7 +120,7 @@
 										<Text text="{Lastname}"/>
 									</table:template>
 								</table:Column>
-								<table:Column filterProperty="Pernr">
+								<table:Column filterProperty="Pernr" sortProperty="Pernr">
 									<table:customData>
 										<core:CustomData key="p13nData" value='\{"columnKey": "Pernr", "leadingProperty": "Pernr"}'/>
 									</table:customData>

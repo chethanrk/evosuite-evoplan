@@ -30,6 +30,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttActions",
 	"com/evorait/evoplan/controller/DialogTemplateRenderController",
 		"com/evorait/evoplan/controller/common/OperationTimeCheck",
+			"com/evorait/evoplan/controller/gantt/GanttResourceTreeFilter"
 ], function (
 	UIComponent,
 	Device,
@@ -60,7 +61,8 @@ sap.ui.define([
 	WebSocket,
 	GanttResourceFilter,
 	GanttActions, DialogTemplateRenderController,
-	OperationTimeCheck) {
+	OperationTimeCheck,
+	GanttResourceTreeFilter) {
 
 	"use strict";
 
@@ -410,11 +412,12 @@ sap.ui.define([
 			this.materialInfoDialog.init();
 
 			this.GanttResourceFilter = new GanttResourceFilter();
-
-			this.GanttActions = new GanttActions();
+			
+				this.GanttResourceTreeFilter = new GanttResourceTreeFilter();
 			
 			this.OperationTimeCheck = new OperationTimeCheck();
 			this.OperationTimeCheck.init();
+			
 		},
 
 		/**
@@ -585,6 +588,27 @@ sap.ui.define([
 					}.bind(this)
 				});
 			}.bind(this));
+		},
+
+		/**
+		 * get url GET parameter by key name
+		 */
+		getLinkParameterByName: function (sKey) {
+			var oComponentData = this.getComponentData();
+			//Fiori Launchpad startup parameters
+			if (oComponentData) {
+				var oStartupParams = oComponentData.startupParameters;
+				if (oStartupParams[sKey] && (oStartupParams[sKey].length > 0)) {
+					return oStartupParams[sKey][0];
+				}
+			} else {
+				var queryString = window.location.search,
+					urlParams = new URLSearchParams(queryString);
+				if (urlParams.has(sKey)) {
+					return urlParams.get(sKey);
+				}
+			}
+			return false;
 		}
 	});
 });
