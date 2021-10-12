@@ -1,0 +1,62 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:smartField="sap.ui.comp.smartfield"
+	xmlns:f="sap.f" xmlns:table="sap.ui.table">
+	<Dialog title="{@i18n>xtit.VendorAssignment}" contentWidth="80%" class="assignInfoDialog" contentHeight="auto">
+		<content>
+			<Table id="idVendorAssignmentTable" class="sapUiSmallMarginBegin sapUiMediumMarginBottom sapUiSmallMarginRight" width="96%" inset="false"
+				mode="MultiSelect" items="{ path: 'viewModel>/dragSession' }">
+				<!--<headerToolbar>-->
+				<!--	<Toolbar>-->
+				<!--		<Text text="{i18n>xmsg.operationTimeCheck}"/>-->
+				<!--	</Toolbar>-->
+				<!--</headerToolbar>-->
+				<columns>
+					<Column>
+						<Label text="{@i18n>xlbl.lblOrderNumber}" design="Bold"/>
+					</Column>
+					<Column >
+						<Label text="{@i18n>xlbl.lblOperation}" design="Bold"/>
+					</Column>
+					<Column>
+						<Label text="{@i18n>xlbl.lblSubOperation}" design="Bold"/>
+					</Column>
+					<Column width="20%">
+						<Label text="{@i18n>xlbl.lblCostElement}" design="Bold"/>
+					</Column>
+					<Column>
+						<Label text="{@i18n>xlbl.lblEstimate}" design="Bold"/>
+					</Column>
+					<Column width="20%">
+						<Label text="{@i18n>xlbl.lblCurrency}" design="Bold"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem selected="">
+						<cells>
+							<Text text="{viewModel>oData/ORDERID}"/>
+							<Text text="{viewModel>oData/OPERATIONID}"/>
+							<Text text="{viewModel>oData/SUBOPERATIONID}"/>
+							<ComboBox enabled="{viewModel>oData/ALLOW_ASSIGNMENT_DIALOG}" items="{path:'oCostElementModel>/', templateShareable:true}" showSecondaryValues="true"
+								selectionChange="onCostElementChange" value="{viewModel>oData/CostElement}">
+								<items>
+									<core:ListItem text="{oCostElementModel>CostElement}" additionalText="{oCostElementModel>Text}"></core:ListItem>
+								</items>
+							</ComboBox>
+							<Input type="Number" enabled="{viewModel>oData/ALLOW_ASSIGNMENT_DIALOG}" value="{viewModel>oData/Estimate}" change="onEstimateChange"></Input>
+							<ComboBox enabled="{viewModel>oData/ALLOW_ASSIGNMENT_DIALOG}" items="{path:'oCurrencyModel>/', templateShareable:true}" showSecondaryValues="true"
+								value="{viewModel>oData/Currency}" selectionChange="onCurrencyChange">
+								<items>
+									<core:ListItem text="{oCurrencyModel>Currency}" additionalText="{oCurrencyModel>CurrencyText}"></core:ListItem>
+								</items>
+							</ComboBox>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+		<buttons>
+			<Button text="{i18n>xbut.buttonSelectAll}" press="onVendorAssignmentSelectAll" visible="false"/>
+			<Button text="{i18n>xbut.buttonCancel}" press="onCloseDialog"/>
+			<Button text="{i18n>xbut.buttonProceed}" press="onVendorAssignmentProceed"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>
