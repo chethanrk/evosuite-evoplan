@@ -463,6 +463,7 @@ sap.ui.define([
 		 */
 		handleCalendarSelect: function (oEvent) {
 			var oSelectedDate = oEvent.getSource().getSelectedDates()[0].getStartDate();
+				this.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", true);
 			this._getSelectedRoute(oSelectedDate);
 		},
 		/**
@@ -496,6 +497,13 @@ sap.ui.define([
 		 */
 		onCloseDialog: function (oEvent) {
 			this._oPopover.close();
+		},
+		/**
+		 * method called after close the date range fragment used for route creation to remove flag
+		 * @Author: Rakesh
+		 */
+		removeRouteDataFlag: function (oEvent) {
+			this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false)
 		},
 		/**
 		 * method for getting selected route for selected date

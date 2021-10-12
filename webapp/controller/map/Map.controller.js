@@ -161,7 +161,7 @@ sap.ui.define([
 				var oSelectedDemands = this.getModel("viewModel").getProperty("/mapSettings/selectedDemands");
 				if (oSelectedDemands && oSelectedDemands.length) {
 					setTimeout(function () {
-						if (this._bDemandListScroll === false) {
+						if (this._bDemandListScroll === false && !this.oView.getModel("viewModel").getProperty("/mapSettings/bRouteDateSelected")) {
 							this._oDraggableTable.getTable().selectAll();
 						}
 					}.bind(this), 10);
