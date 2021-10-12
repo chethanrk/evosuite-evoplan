@@ -127,8 +127,10 @@ sap.ui.define([
 			//oShape.setSelectable(!isBusy);
 			if (isBusy) {
 				oShape.setOpacity(0.5);
+				oShape.setStrokeOpacity(0.5);
 			} else {
 				oShape.setOpacity(1);
+				oShape.setStrokeOpacity(0.5);
 			}
 		},
 
@@ -235,16 +237,16 @@ sap.ui.define([
 		 * @param oData
 		 * @private
 		 */
-		_getRelatedDemandData: function (oData) {
+		_getRelatedDemandData: function (oData, bInvalidate) {
 			return new Promise(function (resolve, reject) {
-				if (oData.Demand && oData.Demand.Guid) {
+				if (oData.Demand && oData.Demand.Guid && !bInvalidate) {
 					resolve(oData);
 				} else {
 					var sPath = this.getModel().createKey("AssignmentSet", {
 							Guid: oData.Guid
 						}),
 						oAssignData = this.getModel().getProperty("/" + sPath);
-					if (oAssignData.Demand && oAssignData.Demand.Guid) {
+					if (oAssignData.Demand && oAssignData.Demand.Guid && !bInvalidate) {
 						resolve(oAssignData);
 					} else {
 						this.getModel().read("/" + sPath, {

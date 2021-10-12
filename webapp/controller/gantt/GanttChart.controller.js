@@ -25,6 +25,7 @@ sap.ui.define([
 
 		mRequestTypes: {
 			update: "update",
+			resize: "resize",
 			reassign: "reassign",
 			unassign: "unassign"
 		},
@@ -89,62 +90,69 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onShapeDrop: function (oEvent) {
-			var oParams = oEvent.getParameters();
+			var oParams = oEvent.getParameters(),
+				msg = this.getResourceBundle().getText("msg.ganttShapeDropError");
 			if (!oParams.targetRow && !oParams.targetShape) {
+				this.showMessageToast(msg);
 				return;
 			}
+			// to identify the action done on respective page
+			localStorage.setItem("Evo-Action-page", "ganttSplit");
 
 			var oTargetContext = oParams.targetRow ? oParams.targetRow.getBindingContext("ganttModel") : oParams.targetShape.getParent().getParent()
 				.getBindingContext("ganttModel"),
 				oTargetData = oTargetContext ? oTargetContext.getObject() : null,
 				oDraggedShape = oParams.draggedShapeDates;
 
+			// If you drop in empty gantt area where there is no data OR assign is not allowed
+			if (!oTargetData || !this.isAssignable({
+					data: oTargetData
+				})) {
+				return;
+			}
+
 			for (var key in oDraggedShape) {
-				var sSourcePath = Utility.parseUid(key).shapeDataName;
+				var sSourcePath = Utility.parseUid(key).shapeDataName,
+					oSourceData = this.getModel().getProperty(sSourcePath),
+					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
+
+				console.log(sSourcePath);
+				this._getRelatedDemandData(oSourceData).then(function (oResult) {
+					//this.oGanttModel.setProperty(oTargetContext.getPath() + "/Demand", oResult.Demand);
+
+					console.log(oTargetContext.getPath());
+				});
+
 				this._validateShapeData(key, sSourcePath, oTargetData, oDraggedShape, oParams);
 			}
 		},
 		/**
-		 * when shape was resized
+		 * when shape was resized 
+		 * validate shape new dates and if change is allowed
 		 * @param oEvent
 		 */
 		onShapeResize: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oRowContext = oParams.shape.getBindingContext("ganttModel"),
 				oData = oRowContext.getObject(),
-				iDifference = moment(oParams.newTime[1]).diff(moment(oParams.newTime[0])),
-				iNewEffort = ((iDifference / 1000) / 60) / 60,
-				bEnableResizeEffortCheck = this.oUserModel.getProperty("/ENABLE_RESIZE_EFFORT_CHECK"),
 				sPath = oRowContext.getPath(),
 				oShape = oParams.shape;
 
 			// to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page", "ganttSplit");
+			this.oGanttModel.setProperty(sPath + "/DateFrom", oParams.newTime[0]);
+			this.oGanttModel.setProperty(sPath + "/DateTo", oParams.newTime[1]);
 
 			if (oShape && oShape.sParentAggregationName === "shapes3") {
 				this._showBusyForShape(oShape, true);
-				this._getRelatedDemandData(oData).then(function (oResult) {
+				this._getRelatedDemandData(oData).then(
+					function (oResult) {
 						this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
-						if (!oResult.Demand.ASGNMNT_CHANGE_ALLOWED) {
-							this._showBusyForShape(oShape, false);
-							return;
-						}
-						this.oGanttModel.setProperty(sPath + "/DateFrom", oParams.newTime[0]);
-						this.oGanttModel.setProperty(sPath + "/DateTo", oParams.newTime[1]);
-
-						//resized effort needs validated
-						if (bEnableResizeEffortCheck && iNewEffort < oData.Effort) {
-							this._showConfirmMessageBox(this.getResourceBundle().getText("xtit.effortvalidate")).then(function (data) {
-								if (data === sap.m.MessageBox.Action.YES) {
-									this._validateAndSendChangedData(oShape, sPath, this.mRequestTypes.update);
-								}
-							}.bind(this));
-						} else {
-							this._validateAndSendChangedData(oParams.shape, sPath, this.mRequestTypes.update);
-						}
+						this._validateAndSendChangedData(oParams.shape, sPath, this.mRequestTypes.resize);
 					}.bind(this),
 					function (oError) {
 						this._showBusyForShape(oShape, false);
+						this._resetChanges(sPath);
 					}.bind(this));
 			}
 		},
@@ -326,7 +334,8 @@ sap.ui.define([
 					oData = this.oGanttModel.getProperty(sPath);
 
 				if (!this._validateChangedData(oPendingChanges[sPath], oData, sType)) {
-					return reject();
+					this._resetChanges(sPath);
+					reject();
 				}
 				this.clearMessageModel();
 				var oParams = this._getAssignFnImportObj(oData);
@@ -337,21 +346,19 @@ sap.ui.define([
 					oParams.ResourceGuid = oPendingChanges[sPath].ResourceGuid;
 				}
 				//save assignment data
-				return this._updateAssignment(this.getModel(), oParams).then(
+				this._updateAssignment(this.getModel(), oParams).then(
 					function (oResData) {
 						this._showBusyForShape(oShape, false);
 						if (oResData) {
-							this.oGanttModel.setProperty(sPath, oResData);
 							this.oGanttOriginDataModel.setProperty(sPath, oResData);
-							var oChanges = this.oGanttModel.getProperty("/pendingChanges");
-							delete oPendingChanges[sPath];
-							this.oGanttModel.setProperty("/pendingChanges", oChanges);
+							this._resetChanges(sPath);
 						}
-						return resolve(oResData);
+						resolve(oResData);
 					}.bind(this),
 					function (oError) {
 						this._showBusyForShape(oShape, false);
-						return reject(oError);
+						this._resetChanges(sPath);
+						reject(oError);
 					});
 			}.bind(this));
 		},
@@ -366,11 +373,16 @@ sap.ui.define([
 		_validateChangedData: function (oChanges, oData, sType) {
 			return new Promise(function (resolve, reject) {
 				var sDisplayMessage = "";
+				//when shape was resized
+				if (sType === this.mRequestTypes.resize) {
+					this._validateShapeOnResize(oData).then(null, reject);
+				}
+
 				//is re-assign allowed
 				if (this.mRequestTypes.reassign === sType && !oData.Demand.ALLOW_REASSIGN) {
 					sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
 					this._showAssignErrorDialog([oData.Description], null, sDisplayMessage);
-					return reject();
+					reject();
 				}
 				//has it a new parent
 				if (this.mRequestTypes.reassign === sType && oChanges.ResourceGuid) {
@@ -378,19 +390,48 @@ sap.ui.define([
 					if (!this.isAssignable({
 							sPath: oChanges.NewAssignPath
 						})) {
-						return reject();
+						reject();
 					}
 					//is parent not available then show warning and ask if they want proceed
 					if (!this.isAvailable(oData.NewAssignPath)) {
-						return this.showMessageToProceed().then(function () {
+						this.showMessageToProceed().then(function () {
 							//Todo yes proceed please
 
-							return resolve();
+							resolve();
 						}, reject);
 					}
 				}
 				//todo check qualification
 				return resolve();
+			}.bind(this));
+		},
+
+		/**
+		 * validate shape data on resize
+		 * @param {Object} oShape
+		 * @param {String} sPath
+		 * @return Promise
+		 */
+		_validateShapeOnResize: function (oData) {
+			return new Promise(function (resolve, reject) {
+				var iDifference = moment(oData.DateTo).diff(moment(oData.DateFrom)),
+					iNewEffort = ((iDifference / 1000) / 60) / 60,
+					bEnableResizeEffortCheck = this.oUserModel.getProperty("/ENABLE_RESIZE_EFFORT_CHECK");
+				if (!oData.Demand.ASGNMNT_CHANGE_ALLOWED) {
+					reject();
+				}
+				//resized effort needs validated
+				if (bEnableResizeEffortCheck && iNewEffort < oData.Effort) {
+					this._showConfirmMessageBox(this.getResourceBundle().getText("xtit.effortvalidate")).then(function (data) {
+						if (data === sap.m.MessageBox.Action.YES) {
+							resolve();
+						} else {
+							reject();
+						}
+					}.bind(this));
+				} else {
+					resolve();
+				}
 			}.bind(this));
 		},
 
