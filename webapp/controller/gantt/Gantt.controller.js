@@ -526,7 +526,7 @@ sap.ui.define([
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
 				// Change
-				this.openAssignInfoDialog(this.getView(), sPath, this._selectedShapeContext);
+				this.openAssignInfoDialog(this.getView(), sPath, this._selectedShapeContext,mParameters);
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonExecuteFunction") && !oSelectedItem.getSubmenu()) {
 				// Set Function
 				var oDemandPath = oModel.getProperty(sPath).Demand.__ref;
