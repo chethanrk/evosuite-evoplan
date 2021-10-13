@@ -22,7 +22,8 @@ sap.ui.define([
 		 */
 		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, oNewEndDate, aGuids) {
 			var oModel = this.getModel(),
-				targetObj = oModel.getProperty(sTargetPath),
+				oGanttModel = this.getModel("ganttModel"),
+				targetObj = oGanttModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
 				aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
 				aPromises = [],

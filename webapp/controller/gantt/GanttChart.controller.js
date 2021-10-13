@@ -87,6 +87,80 @@ sap.ui.define([
 			this.getOwnerComponent().GanttResourceFilter.open(this.getView(), this._treeTable);
 		},
 		/**
+		 * On demand drop on gantt chart or resource
+		 * 
+		 */
+		 onDemandDrop: function (oEvent) {
+		 	var oDraggedControl = oEvent.getParameter("draggedControl"),
+				oDroppedControl = oEvent.getParameter("droppedControl"),
+				oBrowserEvent = oEvent.getParameter("browserEvent"),
+				oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
+				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
+				oDropObject = oDropContext.getObject(),
+				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
+				sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : slocStor.split(","),
+				oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
+				oViewModel = this.getModel("viewModel"),
+				oResourceData = this.getModel("ganttModel").getProperty(oDropContext.getPath()),
+				oSvgPoint;
+				
+					//Null check for
+			if ((!oDragContext || !sDragPath) && !oDropContext) {
+				return;
+			}
+			
+			// Check the resource assignable or not
+			// TODO Resource needs to be validated if resource is assignable or not
+			
+				// to identify the action done on respective page
+			localStorage.setItem("Evo-Action-page", "ganttSplit");
+			
+			if (oBrowserEvent.target.tagName === "rect" && oDragContext) {  // When we drop on gantt chart in the same view
+				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
+				this._validateDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
+				
+			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) {  // When we drop on gantt chart from split window
+				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
+				this._validateDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), sDragPath);
+				
+			} else if (oDragContext) {  // When we drop on the resource 
+				this._validateDemands(oResourceData, sDragPath, oDropContext.getPath(), null);
+				
+			} else {  // When we drop on the resource from split window
+				this._validateDemands(oResourceData, null, oDropContext.getPath(), null, sDragPath);
+				
+			}
+				
+				
+		 },
+		 /**
+		 * Calls the respective function import to create assignments
+		 * @param {Object} oResourceData - Resource data on which demand is dropped
+		 * @param {Object} aSources - Dragged Demand paths
+		 * @param {Object} oTarget Dropped Resource Path
+		 * @param {Object} oTargetDate - Target date and time when the demand is dropped
+		 * @param {Object} aGuids Array of guids in case of split window 
+		 * @private
+		 */
+		_validateDemands: function (oResourceData, aSources, oTarget, oTargetDate, aGuids) {
+			var oUserData = this.getModel("user").getData();
+
+			if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && oUserData.ENABLE_QUALIFICATION) {
+				// TODO Valiate Stretch and qualifications
+				Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, null, aGuids))
+					.then(function(data){
+						console.log(data);
+						// TODO Push the new assignment into both the model
+					}).catch(function (error) {});
+			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && !oUserData.ENABLE_QUALIFICATION) {
+				// TODO Validate the Stretch
+			} else if (oUserData.ENABLE_QUALIFICATION) {
+				// TODO Validate the qualifications
+			} else {
+				// TODO No validation is required the demand can assigned directly
+			}
+		},
+		/**
 		 * @param oEvent
 		 */
 		onShapeDrop: function (oEvent) {
