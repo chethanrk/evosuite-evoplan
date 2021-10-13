@@ -181,7 +181,7 @@ sap.ui.define([
 
 			if (oRowContext) {
 				this.assignmentPath = "/AssignmentSet('" + oRowContext.getObject().AssignmentGuid + "')";
-				this.openAssignInfoDialog(this.getView(), this.assignmentPath, oRowContext);
+				this.openAssignInfoDialog(this.getView(), this.assignmentPath, oRowContext,this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
