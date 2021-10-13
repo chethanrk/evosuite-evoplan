@@ -133,33 +133,6 @@ sap.ui.define([
 				
 				
 		 },
-		 /**
-		 * Calls the respective function import to create assignments
-		 * @param {Object} oResourceData - Resource data on which demand is dropped
-		 * @param {Object} aSources - Dragged Demand paths
-		 * @param {Object} oTarget Dropped Resource Path
-		 * @param {Object} oTargetDate - Target date and time when the demand is dropped
-		 * @param {Object} aGuids Array of guids in case of split window 
-		 * @private
-		 */
-		_validateDemands: function (oResourceData, aSources, oTarget, oTargetDate, aGuids) {
-			var oUserData = this.getModel("user").getData();
-
-			if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && oUserData.ENABLE_QUALIFICATION) {
-				// TODO Valiate Stretch and qualifications
-				Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, null, aGuids))
-					.then(function(data){
-						console.log(data);
-						// TODO Push the new assignment into both the model
-					}).catch(function (error) {});
-			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && !oUserData.ENABLE_QUALIFICATION) {
-				// TODO Validate the Stretch
-			} else if (oUserData.ENABLE_QUALIFICATION) {
-				// TODO Validate the qualifications
-			} else {
-				// TODO No validation is required the demand can assigned directly
-			}
-		},
 		/**
 		 * @param oEvent
 		 */
@@ -507,6 +480,33 @@ sap.ui.define([
 					resolve();
 				}
 			}.bind(this));
+		},
+		 /**
+		 * Calls the respective function import to create assignments
+		 * @param {Object} oResourceData - Resource data on which demand is dropped
+		 * @param {Object} aSources - Dragged Demand paths
+		 * @param {Object} oTarget Dropped Resource Path
+		 * @param {Object} oTargetDate - Target date and time when the demand is dropped
+		 * @param {Object} aGuids Array of guids in case of split window 
+		 * @private
+		 */
+		_validateDemands: function (oResourceData, aSources, oTarget, oTargetDate, aGuids) {
+			var oUserData = this.getModel("user").getData();
+
+			if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && oUserData.ENABLE_QUALIFICATION) {
+				// TODO Valiate Stretch and qualifications
+				Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, null, aGuids))
+					.then(function(data){
+						console.log(data);
+						// TODO Push the new assignment into both the model
+					}).catch(function (error) {});
+			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && !oUserData.ENABLE_QUALIFICATION) {
+				// TODO Validate the Stretch
+			} else if (oUserData.ENABLE_QUALIFICATION) {
+				// TODO Validate the qualifications
+			} else {
+				// TODO No validation is required the demand can assigned directly
+			}
 		},
 
 		/**

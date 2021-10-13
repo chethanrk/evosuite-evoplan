@@ -25,7 +25,7 @@ sap.ui.define([
 				oGanttModel = this.getModel("ganttModel"),
 				targetObj = oGanttModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
-				aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
+				// aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
 				aPromises = [],
 				oDemandObj;
 
@@ -171,6 +171,27 @@ sap.ui.define([
 						params: oQualificationParameters,
 						result: oData
 					});
+				});
+			}.bind(this));
+		},
+		/**
+		 *
+		 * @param aSources - Demands as sources
+		 * @param oTarget - Resource as target
+		 * @param oTargetDate - date and time on which demand is dropped
+		 * Checking Availability of resource to stretch the assignment end date.
+		 * @private
+		 */
+		_checkAvailability: function (aSources, oTarget, oTargetDate, aGuids) {
+			var oModel = this.getModel(),
+				sGuid = aSources ? oModel.getProperty(aSources[0] + "/Guid") : aGuids[0].split("'")[1];
+			return new Promise(function (resolve, reject) {
+				this.executeFunctionImport(oModel, {
+					ResourceGuid: oModel.getProperty(oTarget + "/ResourceGuid"),
+					StartTimestamp: oTargetDate || new Date(),
+					DemandGuid: sGuid
+				}, "ResourceAvailabilityCheck", "GET").then(function (data) {
+					resolve(data);
 				});
 			}.bind(this));
 		},
