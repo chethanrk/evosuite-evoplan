@@ -148,14 +148,19 @@
 			}
 		},
 		"resources": {
-			"css": [{
-				"uri": "assets/css/style.css"
-			}],
-			"js": [{
-				"uri": "assets/js/promise-polyfills"
-			},{
-				"uri": "assets/js/lodash.js"
-			}]
+			"css": [
+				{
+					"uri": "assets/css/style.css"
+				}
+			],
+			"js": [
+				{
+					"uri": "assets/js/promise-polyfills"
+				},
+				{
+					"uri": "assets/js/lodash.js"
+				}
+			]
 		},
 		"routing": {
 			"config": {
@@ -172,119 +177,135 @@
 				},
 				"async": true
 			},
-			"routes": [{
+			"routes": [
+				{
 					"pattern": "",
 					"name": "demands",
 					"target": [
 						"demands",
 						"resourceTree"
 					]
-				}, {
-					"pattern":  "Demand/{guid}",
+				},
+				{
+					"pattern": "Demand/{guid}",
 					"name": "DemandDetail",
 					"target": [
 						"resourceTree",
 						"DemandDetail"
 					]
-				}, {
+				},
+				{
 					"pattern": "AssetPlanning/{asset}/CreateOrder/New",
 					"name": "CreateOrder",
 					"target": [
 						"assets",
 						"CreateOrder"
 					]
-				}, {
+				},
+				{
 					"pattern": "AssetPlanning/{assets}/:withChildren:",
 					"name": "assetManager",
 					"target": [
 						"assets",
 						"assetsOrders"
 					]
-				}, {
+				},
+				{
 					"pattern": "AssetPlanning/{asset}/OrderCreate/new",
 					"name": "orderCreate",
 					"target": [
 						"assets",
 						"orderCreate"
 					]
-				}, {
+				},
+				{
 					"pattern": "AssetPlanning/{asset}/Demand/{guid}",
 					"name": "assetDemandDetail",
 					"target": [
 						"assets",
 						"detail"
 					]
-				}, {
+				},
+				{
 					"pattern": "MessageCockpit",
 					"name": "messageCockpit",
 					"target": [
 						"messageCockpit"
 					]
-				}, {
+				},
+				{
 					"pattern": "Gantt",
 					"name": "gantt",
 					"target": [
 						"demandsGantt",
 						"gantt"
 					]
-				}, {
+				},
+				{
 					"pattern": "NewGantt",
 					"name": "newgantt",
 					"target": [
 						"newgantt",
 						"demandsGantt"
 					]
-				}, {
+				},
+				{
 					"pattern": "Gantt/Demand/{guid}",
 					"name": "ganttDemandDetails",
 					"target": [
 						"ganttDemandDetails"
 					]
-				}, {
+				},
+				{
 					"pattern": "SplitPage/SplitDemands",
 					"name": "splitDemands",
 					"target": [
 						"demandsFullscreen"
 					]
-				}, {
+				},
+				{
 					"pattern": "SplitPage/SplitGantt",
 					"name": "ganttSplit",
 					"target": [
 						"ganttFullscreen"
 					]
-				}, {
+				},
+				{
 					"pattern": "SplitPage/Demand/{guid}",
 					"name": "splitDemandDetails",
 					"target": [
 						"ganttDemandDetails"
 					]
-				}, {
+				},
+				{
 					"pattern": "SplitPage/Gantt/{guid}",
 					"name": "splitGanttDetails",
 					"target": [
 						"ganttDemandDetails"
 					]
-				}, {
+				},
+				{
 					"pattern": "Map",
 					"name": "map",
 					"target": [
 						"map",
 						"mapResourceTree"
 					]
-				}, {
+				},
+				{
 					"pattern": "Map/Detail/{guid}",
 					"name": "mapDemandDetails",
 					"target": [
 						"mapDemandDetails"
 					]
-				}, {
+				},
+				{
 					"pattern": "ManageResources",
 					"name": "manageResources",
 					"target": [
 						"manageResources"
 					]
 				}
-
 			],
 			"targets": {
 				"splitHorNavigation": {
@@ -470,7 +491,7 @@
 					"viewLevel": 2,
 					"controlId": "rightPanel",
 					"parent": "splitHorNavigation"
-				},	
+				},
 				"CreateOrder": {
 					"viewType": "XML",
 					"viewName": "ObjectPage",
