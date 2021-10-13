@@ -609,7 +609,7 @@ sap.ui.define([
 				} else {
 					aSources[v].oData.CostElement = "";
 					aSources[v].oData.Estimate = "";
-					aSources[v].oData.Currency = "";
+					aSources[v].oData.Currency = this.getModel("user").getProperty("/DEFAULT_CURRENCY");
 				}
 			}
 			this.getModel("viewModel").refresh(true);
