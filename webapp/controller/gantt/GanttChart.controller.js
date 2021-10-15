@@ -183,17 +183,17 @@ sap.ui.define([
 				var sSourcePath = Utility.parseUid(key).shapeDataName,
 					sTargetPath = oTargetContext.getPath(),
 					oSourceData = this.getModel("ganttModel").getProperty(sSourcePath),
-					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update,
-					shapeUid = key;
+					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
+
 				//set new time and resource data to gantt model, setting also new pathes
 				this._setShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
 				if (sRequestType === this.mRequestTypes.reassign) {
 					setTimeout(function () {
-						shapeUid = this._trackedShapeMouseEnter.lastTracked;
+						var shapeUid = this._trackedShapeMouseEnter.lastTracked;
 						this._updateDraggedShape(shapeUid, oSourceData, oSourceData.sPath, sRequestType);
 					}.bind(this), 1500);
 				} else {
-					this._updateDraggedShape(shapeUid, oSourceData, oSourceData.sPath, sRequestType);
+					this._updateDraggedShape(key, oSourceData, oSourceData.sPath, sRequestType);
 				}
 			}
 		},
