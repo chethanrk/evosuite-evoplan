@@ -125,25 +125,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * with UI5 version 1.88 showAnimation on shape directly will work
-		 * @param {Object} shape view
-		 * @param {Boolean} isBusy
-		 */
-		_showBusyForShape: function (oShape, isBusy) {
-			if (!oShape) {
-				return;
-			}
-			//oShape.setSelectable(!isBusy);
-			if (isBusy) {
-				oShape.setOpacity(0.5);
-				oShape.setStrokeOpacity(0.5);
-			} else {
-				oShape.setOpacity(1);
-				oShape.setStrokeOpacity(0.5);
-			}
-		},
-
-		/**
 		 * proceed to Service call after validation
 		 * 
 		 * @param {Object} aSourcePaths

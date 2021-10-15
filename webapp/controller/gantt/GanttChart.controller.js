@@ -44,6 +44,7 @@ sap.ui.define([
 			this._ganttChart = this.getView().byId("ganttResourceAssignments");
 			this._axisTime = this.getView().byId("idAxisTime");
 			this._userData = this.getModel("user").getData();
+			this._trackedShapeMouseEnter = {};
 
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				//this._routeName = Constants.GANTT.NAME;
@@ -132,6 +133,22 @@ sap.ui.define([
 			}
 
 		},
+
+		/**
+		 * track what shape mouse was entered
+		 * will help for setting busy state on dragged shape while backend request is running
+		 * @param oEvent
+		 */
+		onShapeMouseEnter: function (oEvent) {
+			var oParams = oEvent.getParameters(),
+				oShape = oParams.shape,
+				sShapeUid = oShape.getShapeUid();
+			if (oShape.sParentAggregationName === "shapes3" && !this._trackedShapeMouseEnter[sShapeUid]) {
+				this._trackedShapeMouseEnter[sShapeUid] = oShape;
+				this._trackedShapeMouseEnter.lastTracked = sShapeUid;
+			}
+		},
+
 		/**
 		 * When a shape is dragged inside Gantt
 		 * and dropped to same row or another resource row
@@ -139,20 +156,18 @@ sap.ui.define([
 		 */
 		onShapeDrop: function (oEvent) {
 			var oParams = oEvent.getParameters(),
-				msg = this.getResourceBundle().getText("msg.ganttShapeDropError");
+				msg = this.getResourceBundle().getText("msg.ganttShapeDropError"),
+				oTargetContext = oParams.targetRow ? oParams.targetRow.getBindingContext("ganttModel") : null;
 
-			if (!oParams.targetRow && !oParams.targetShape) {
+			if (!oTargetContext && !oParams.targetShape) {
 				this.showMessageToast(msg);
 				return;
 			}
-			// to identify the action done on respective page
-			localStorage.setItem("Evo-Action-page", "ganttSplit");
+			if (!oTargetContext) {
+				oTargetContext = oParams.targetShape.getParent().getParent().getBindingContext("ganttModel");
+			}
 			//get target data
-			var oTargetContext = oParams.targetRow ? oParams.targetRow.getBindingContext("ganttModel") : oParams.targetShape.getParent().getParent()
-				.getBindingContext("ganttModel"),
-				oTargetData = oTargetContext ? oTargetContext.getObject() : null,
-				oDraggedShapeDates = oParams.draggedShapeDates;
-
+			var oTargetData = oTargetContext ? oTargetContext.getObject() : null;
 			// If you drop in empty gantt area where there is no data OR assign is not allowed
 			if (!oTargetData || !this.isAssignable({
 					data: oTargetData
@@ -160,24 +175,29 @@ sap.ui.define([
 				this.showMessageToast(msg);
 				return;
 			}
+			// to identify the action done on respective page
+			localStorage.setItem("Evo-Action-page", "ganttSplit");
+
 			//could be multiple shape pathes
-			for (var key in oDraggedShapeDates) {
+			for (var key in oParams.draggedShapeDates) {
 				var sSourcePath = Utility.parseUid(key).shapeDataName,
 					sTargetPath = oTargetContext.getPath(),
 					oSourceData = this.getModel("ganttModel").getProperty(sSourcePath),
-					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
-
+					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update,
+					shapeUid = key;
 				//set new time and resource data to gantt model, setting also new pathes
-				this._setShapeDropData(sSourcePath, sTargetPath, oDraggedShapeDates[key], oParams);
-				//get demand details to this assignment
-				this._getRelatedDemandData(oSourceData).then(function (oResult) {
-					this.oGanttModel.setProperty(oSourceData.sPath + "/Demand", oResult.Demand);
-					return this._validateAndSendChangedData(oSourceData.sPath, sRequestType); //validate and save data
-				}.bind(this), function (oError) {
-					this._resetChanges(oSourceData.sPath);
-				}.bind(this));
+				this._setShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
+				if (sRequestType === this.mRequestTypes.reassign) {
+					setTimeout(function () {
+						shapeUid = this._trackedShapeMouseEnter.lastTracked;
+						this._updateDraggedShape(shapeUid, oSourceData, oSourceData.sPath, sRequestType);
+					}.bind(this), 1500);
+				} else {
+					this._updateDraggedShape(shapeUid, oSourceData, oSourceData.sPath, sRequestType);
+				}
 			}
 		},
+
 		/**
 		 * when shape was resized 
 		 * validate shape new dates and if change is allowed
@@ -196,18 +216,7 @@ sap.ui.define([
 			this.oGanttModel.setProperty(sPath + "/DateTo", oParams.newTime[1]);
 
 			if (oShape && oShape.sParentAggregationName === "shapes3") {
-				this._showBusyForShape(oShape, true);
-				this._getRelatedDemandData(oData).then(
-					function (oResult) {
-						this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
-						this._validateAndSendChangedData(sPath, this.mRequestTypes.resize).then(function () {
-							this._showBusyForShape(oShape, false);
-						}.bind(this));
-					}.bind(this),
-					function (oError) {
-						this._showBusyForShape(oShape, false);
-						this._resetChanges(sPath);
-					}.bind(this));
+				this._updateDraggedShape(oShape, oData, sPath, this.mRequestTypes.resize);
 			}
 		},
 
@@ -315,11 +324,60 @@ sap.ui.define([
 				for (var i = 0; i < aSourceAssignments.length; i++) {
 					if (aSourceAssignments[i].ObjectId === oSourceData.ObjectId) {
 						aSourceAssignments.splice(i, 1);
+						this.oGanttModel.setProperty(sSourceParentPath + "/AssignmentSet/results", aSourceAssignments);
 						aTargetAssignments.push(oSourceData);
 						oSourceData.sPath = sTargetPath + "/AssignmentSet/results/" + (aTargetAssignments.length - 1);
+						this.oGanttModel.setProperty(sTargetPath + "/AssignmentSet/results", aTargetAssignments);
 						break;
 					}
 				}
+			}
+		},
+
+		/**
+		 * when shape was dragged or resized to another place
+		 * update assignment
+		 * @param {String/Object} sShapeId - Could be shape UId as string or shape control
+		 * @param {Object} oData
+		 * @param {String} sPath
+		 * @param {String} sRequestType
+		 */
+		_updateDraggedShape: function (sShapeId, oData, sPath, sRequestType) {
+			this._showBusyForShape(sShapeId, true);
+			//get demand details to this assignment
+			this._getRelatedDemandData(oData).then(function (oResult) {
+				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
+				return this._validateAndSendChangedData(sShapeId, sPath, sRequestType); //validate and save data
+			}.bind(this), function (oError) {
+				this._resetChanges(sPath);
+				this._showBusyForShape(sShapeId, false);
+			}.bind(this));
+		},
+
+		/**
+		 * with UI5 version 1.88 showAnimation on shape directly will work
+		 * Shape needs blocked while request is working
+		 * @param {Object} shape view
+		 * @param {Boolean} isBusy
+		 */
+		_showBusyForShape: function (oShape, isBusy) {
+			if (!oShape) {
+				return;
+			}
+			if (typeof oShape === "string") {
+				oShape = this._trackedShapeMouseEnter[oShape];
+				if (!oShape) {
+					return;
+				}
+			}
+			oShape.setSelected(!isBusy);
+			oShape.setSelectable(!isBusy);
+			if (isBusy) {
+				oShape.setOpacity(0.5);
+				oShape.setStrokeOpacity(0.5);
+			} else {
+				oShape.setOpacity(1);
+				oShape.setStrokeOpacity(0.5);
 			}
 		},
 
@@ -405,7 +463,7 @@ sap.ui.define([
 		 * @param {String} sType from this._mRequestTypes
 		 * @return {Promise} 
 		 */
-		_validateAndSendChangedData: function (sPath, sType) {
+		_validateAndSendChangedData: function (oShape, sPath, sType) {
 			return new Promise(function (resolve, reject) {
 				var oPendingChanges = this._updatePendingChanges(sPath, sType),
 					oData = this.oGanttModel.getProperty(sPath);
@@ -432,10 +490,12 @@ sap.ui.define([
 							this.oGanttOriginDataModel.setProperty(sPath, oResData);
 							this._resetChanges(sPath);
 						}
+						this._showBusyForShape(oShape, false);
 						resolve(oResData);
 					}.bind(this),
 					function (oError) {
 						this._resetChanges(sPath);
+						this._showBusyForShape(oShape, false);
 						reject(oError);
 					}.bind(this));
 			}.bind(this));
