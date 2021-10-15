@@ -58,7 +58,7 @@ sap.ui.define([
 				if (this.oGanttModel.getProperty("/data/children").length === 0) {
 					this._loadGanttData();
 				} else {
-						this._addAssociations.bind(this)();
+					this._addAssociations.bind(this)();
 				}
 			}.bind(this));
 
@@ -78,7 +78,7 @@ sap.ui.define([
 		/* =========================================================== */
 		/* event methods                                               */
 		/* =========================================================== */
-		
+
 		/**
 		 * Open's the Gantt Chart Filter Dialog 
 		 * 
@@ -90,8 +90,8 @@ sap.ui.define([
 		 * On demand drop on gantt chart or resource
 		 * 
 		 */
-		 onDemandDrop: function (oEvent) {
-		 	var oDraggedControl = oEvent.getParameter("draggedControl"),
+		onDemandDrop: function (oEvent) {
+			var oDraggedControl = oEvent.getParameter("draggedControl"),
 				oDroppedControl = oEvent.getParameter("droppedControl"),
 				oBrowserEvent = oEvent.getParameter("browserEvent"),
 				oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
@@ -103,74 +103,79 @@ sap.ui.define([
 				oViewModel = this.getModel("viewModel"),
 				oResourceData = this.getModel("ganttModel").getProperty(oDropContext.getPath()),
 				oSvgPoint;
-				
-					//Null check for
+
+			//Null check for
 			if ((!oDragContext || !sDragPath) && !oDropContext) {
 				return;
 			}
-			
+
 			// Check the resource assignable or not
 			// TODO Resource needs to be validated if resource is assignable or not
-			
-				// to identify the action done on respective page
+
+			// to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page", "ganttSplit");
-			
-			if (oBrowserEvent.target.tagName === "rect" && oDragContext) {  // When we drop on gantt chart in the same view
+
+			if (oBrowserEvent.target.tagName === "rect" && oDragContext) { // When we drop on gantt chart in the same view
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				this._validateDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
-				
-			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) {  // When we drop on gantt chart from split window
+
+			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) { // When we drop on gantt chart from split window
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				this._validateDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), sDragPath);
-				
-			} else if (oDragContext) {  // When we drop on the resource 
+
+			} else if (oDragContext) { // When we drop on the resource 
 				this._validateDemands(oResourceData, sDragPath, oDropContext.getPath(), null);
-				
-			} else {  // When we drop on the resource from split window
+
+			} else { // When we drop on the resource from split window
 				this._validateDemands(oResourceData, null, oDropContext.getPath(), null, sDragPath);
-				
+
 			}
-				
-				
-		 },
+
+		},
 		/**
+		 * When a shape is dragged inside Gantt
+		 * and dropped to same row or another resource row
 		 * @param oEvent
 		 */
 		onShapeDrop: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				msg = this.getResourceBundle().getText("msg.ganttShapeDropError");
+
 			if (!oParams.targetRow && !oParams.targetShape) {
 				this.showMessageToast(msg);
 				return;
 			}
 			// to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page", "ganttSplit");
-
+			//get target data
 			var oTargetContext = oParams.targetRow ? oParams.targetRow.getBindingContext("ganttModel") : oParams.targetShape.getParent().getParent()
 				.getBindingContext("ganttModel"),
 				oTargetData = oTargetContext ? oTargetContext.getObject() : null,
-				oDraggedShape = oParams.draggedShapeDates;
+				oDraggedShapeDates = oParams.draggedShapeDates;
 
 			// If you drop in empty gantt area where there is no data OR assign is not allowed
 			if (!oTargetData || !this.isAssignable({
 					data: oTargetData
 				})) {
+				this.showMessageToast(msg);
 				return;
 			}
-
-			for (var key in oDraggedShape) {
+			//could be multiple shape pathes
+			for (var key in oDraggedShapeDates) {
 				var sSourcePath = Utility.parseUid(key).shapeDataName,
-					oSourceData = this.getModel().getProperty(sSourcePath),
+					sTargetPath = oTargetContext.getPath(),
+					oSourceData = this.getModel("ganttModel").getProperty(sSourcePath),
 					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
 
-				console.log(sSourcePath);
+				//set new time and resource data to gantt model, setting also new pathes
+				this._setShapeDropData(sSourcePath, sTargetPath, oDraggedShapeDates[key], oParams);
+				//get demand details to this assignment
 				this._getRelatedDemandData(oSourceData).then(function (oResult) {
-					//this.oGanttModel.setProperty(oTargetContext.getPath() + "/Demand", oResult.Demand);
-
-					console.log(oTargetContext.getPath());
-				});
-
-				this._validateShapeData(key, sSourcePath, oTargetData, oDraggedShape, oParams);
+					this.oGanttModel.setProperty(oSourceData.sPath + "/Demand", oResult.Demand);
+					return this._validateAndSendChangedData(oSourceData.sPath, sRequestType); //validate and save data
+				}.bind(this), function (oError) {
+					this._resetChanges(oSourceData.sPath);
+				}.bind(this));
 			}
 		},
 		/**
@@ -195,7 +200,9 @@ sap.ui.define([
 				this._getRelatedDemandData(oData).then(
 					function (oResult) {
 						this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
-						this._validateAndSendChangedData(oParams.shape, sPath, this.mRequestTypes.resize);
+						this._validateAndSendChangedData(sPath, this.mRequestTypes.resize).then(function () {
+							this._showBusyForShape(oShape, false);
+						}.bind(this));
 					}.bind(this),
 					function (oError) {
 						this._showBusyForShape(oShape, false);
@@ -275,36 +282,45 @@ sap.ui.define([
 		/* =========================================================== */
 
 		/**
-		 * validate droped data if there can really created for this date and resource
+		 * set onShapeDrop data to new target
+		 * @param {String} sSourcePath - source oGanttModel path
+		 * @param {Object} oTargetPath - target oGanttModel path
+		 * @param {Object} oDraggedShapeData - data from one dragged shape
+		 * @param {Object} oParams - onShapeDrop parameters
 		 */
-		_validateShapeData: function (sKey, sSourcePath, oTargetData, oDraggedShape, oParams) {
-			var oSourceData = this.oGanttModel.getProperty(sSourcePath);
+		_setShapeDropData: function (sSourcePath, sTargetPath, oDraggedShapeData, oParams) {
+			var oSourceData = this.oGanttModel.getProperty(sSourcePath),
+				oTargetData = this.oGanttModel.getProperty(sTargetPath);
 
-			if (oTargetData.NodeType === "ASSIGNMENT") {
-				this._setShapeStartEndDate(sSourcePath, oDraggedShape[sKey], oParams.newDateTime);
-			}
-			if (oTargetData.ResourceGuid !== oSourceData.ResourceGuid) {
-				//Todo set new parent
-				//this._setShapeParent(sSourcePath, oTargetData.ResourceGuid);
-			}
-			//this._updatePendingChanges(sSourcePath, this.mRequestTypes.update);
-			//this._setNewAssignmentData(oData, oRowContext.getPath());
-		},
-
-		/**
-		 * sets new start and end date for assignment
-		 * @param sPath
-		 * @param mParams
-		 * @param newDateTime
-		 */
-		_setShapeStartEndDate: function (sPath, mParams, newDateTime) {
-			var oSourceStartDate = moment(mParams.time),
-				oSourceEndDate = moment(mParams.endTime),
+			var oSourceStartDate = moment(oDraggedShapeData.time),
+				oSourceEndDate = moment(oDraggedShapeData.endTime),
 				duration = oSourceEndDate.diff(oSourceStartDate, "seconds"),
-				newEndDate = moment(newDateTime).add(duration, "seconds");
+				newEndDate = moment(oParams.newDateTime).add(duration, "seconds");
 
-			this.oGanttModel.setProperty(sPath + "/DateFrom", mParams.time);
-			this.oGanttModel.setProperty(sPath + "/DateTo", newEndDate.toDate());
+			oSourceData.DateFrom = oParams.newDateTime;
+			oSourceData.DateTo = newEndDate.toDate();
+			oSourceData.sSourcePath = sSourcePath;
+			oSourceData.sPath = sSourcePath;
+
+			if (oTargetData.ResourceGuid !== oSourceData.ResourceGuid) {
+				var sSourceParentPath = sSourcePath.split("/AssignmentSet/results/")[0];
+				oSourceData.ResourceGuid = oTargetData.ResourceGuid;
+				oSourceData.ResourceGroupGuid = oTargetData.ResourceGroupGuid;
+				oSourceData.NewAssignPath = sTargetPath;
+				oSourceData.OldAssignPath = sSourceParentPath;
+
+				//move assignment to new parent in Gantt view
+				var aTargetAssignments = this.oGanttModel.getProperty(sTargetPath + "/AssignmentSet/results"),
+					aSourceAssignments = this.oGanttModel.getProperty(sSourceParentPath + "/AssignmentSet/results");
+				for (var i = 0; i < aSourceAssignments.length; i++) {
+					if (aSourceAssignments[i].ObjectId === oSourceData.ObjectId) {
+						aSourceAssignments.splice(i, 1);
+						aTargetAssignments.push(oSourceData);
+						oSourceData.sPath = sTargetPath + "/AssignmentSet/results/" + (aTargetAssignments.length - 1);
+						break;
+					}
+				}
+			}
 		},
 
 		/**
@@ -315,18 +331,34 @@ sap.ui.define([
 		 */
 		_resetChanges: function (sPath, bResetAll) {
 			var oPendingChanges = this.oGanttModel.getProperty("/pendingChanges");
-
 			if (oPendingChanges[sPath]) {
-				var oOriginData = this.oGanttOriginDataModel.getProperty(sPath);
-				this.oGanttModel.setProperty(sPath, _.cloneDeep(oOriginData));
+				if (!this._resetNewPathChanges(oPendingChanges[sPath])) {
+					var oOriginData = this.oGanttOriginDataModel.getProperty(sPath);
+					this.oGanttModel.setProperty(sPath, _.cloneDeep(oOriginData));
+				}
 				delete oPendingChanges[sPath];
 
 			} else if (bResetAll) {
 				for (var key in oPendingChanges) {
-					this.oGanttModel.setProperty(key, _.cloneDeep(this.oGanttOriginDataModel.getProperty(key)));
+					if (!this._resetNewPathChanges(oPendingChanges[sPath])) {
+						this.oGanttModel.setProperty(key, _.cloneDeep(this.oGanttOriginDataModel.getProperty(key)));
+					}
 				}
 				this.oGanttModel.setProperty("/pendingChanges", {});
 			}
+		},
+
+		/**
+		 * resets data when there was a path changes of shapes
+		 * @param {Object} oPendings - GanttModel path /pendingChanges
+		 */
+		_resetNewPathChanges: function (oPendings) {
+			if (oPendings.NewAssignPath) {
+				this.oGanttModel.setProperty(oPendings.NewAssignPath, _.cloneDeep(this.oGanttOriginDataModel.getProperty(oPendings.NewAssignPath)));
+				this.oGanttModel.setProperty(oPendings.OldAssignPath, _.cloneDeep(this.oGanttOriginDataModel.getProperty(oPendings.OldAssignPath)));
+				return true;
+			}
+			return false;
 		},
 
 		/**
@@ -341,18 +373,16 @@ sap.ui.define([
 				oOriginData = this.oGanttOriginDataModel.getProperty(sPath),
 				oPendingChanges = this.oGanttModel.getProperty("/pendingChanges"),
 				oUpdateObj = oPendingChanges[sPath];
-
 			//is thre already some changed data for this path?
 			if (!oUpdateObj) {
-				oPendingChanges[sPath] = {
-					isCreate: sType === this.mRequestTypes.create,
-					isUpdate: sType === this.mRequestTypes.update,
-					isDelete: sType === this.mRequestTypes.unassign
-				};
+				oPendingChanges[sPath] = {};
+			}
+			if (!oOriginData) {
+				oOriginData = this.oGanttOriginDataModel.getProperty(oData.sSourcePath);
 			}
 			//check every property value if it not same as original data
 			for (var key in oData) {
-				if (oOriginData[key] !== oData[key] && !oData[key].hasOwnProperty("__deferred")) {
+				if (oOriginData[key] !== oData[key] && !oData[key].hasOwnProperty("__deferred") && !oData[key].hasOwnProperty("Demand")) {
 					//date needs special validation
 					if (oData[key] instanceof Date) {
 						var d1 = new Date(oOriginData[key]),
@@ -375,7 +405,7 @@ sap.ui.define([
 		 * @param {String} sType from this._mRequestTypes
 		 * @return {Promise} 
 		 */
-		_validateAndSendChangedData: function (oShape, sPath, sType) {
+		_validateAndSendChangedData: function (sPath, sType) {
 			return new Promise(function (resolve, reject) {
 				var oPendingChanges = this._updatePendingChanges(sPath, sType),
 					oData = this.oGanttModel.getProperty(sPath);
@@ -389,24 +419,25 @@ sap.ui.define([
 
 				//has new parent?
 				if (this.mRequestTypes.reassign === sType && oPendingChanges[sPath].ResourceGuid) {
-					oParams.ResourceGroupGuid = oPendingChanges[sPath].ResourceGroupGuid;
-					oParams.ResourceGuid = oPendingChanges[sPath].ResourceGuid;
+					oParams.ResourceGroupGuid = oData.ResourceGroupGuid;
+					oParams.ResourceGuid = oData.ResourceGuid;
 				}
 				//save assignment data
 				this._updateAssignment(this.getModel(), oParams).then(
 					function (oResData) {
-						this._showBusyForShape(oShape, false);
 						if (oResData) {
+							if (this.mRequestTypes.reassign) {
+								this.oGanttOriginDataModel.setProperty(oData.sSourcePath, null);
+							}
 							this.oGanttOriginDataModel.setProperty(sPath, oResData);
 							this._resetChanges(sPath);
 						}
 						resolve(oResData);
 					}.bind(this),
 					function (oError) {
-						this._showBusyForShape(oShape, false);
 						this._resetChanges(sPath);
 						reject(oError);
-					});
+					}.bind(this));
 			}.bind(this));
 		},
 
@@ -433,17 +464,16 @@ sap.ui.define([
 				}
 				//has it a new parent
 				if (this.mRequestTypes.reassign === sType && oChanges.ResourceGuid) {
-					//Todo check if to new parent is allowed
+					var oNewParent = this.oGanttModel.getProperty(oChanges.NewAssignPath);
 					if (!this.isAssignable({
-							sPath: oChanges.NewAssignPath
+							data: oNewParent
 						})) {
 						reject();
 					}
 					//is parent not available then show warning and ask if they want proceed
-					if (!this.isAvailable(oData.NewAssignPath)) {
+					if (!this.isAvailable(null, oNewParent)) {
 						this.showMessageToProceed().then(function () {
-							//Todo yes proceed please
-
+							//yes proceed please
 							resolve();
 						}, reject);
 					}
@@ -481,7 +511,7 @@ sap.ui.define([
 				}
 			}.bind(this));
 		},
-		 /**
+		/**
 		 * Calls the respective function import to create assignments
 		 * @param {Object} oResourceData - Resource data on which demand is dropped
 		 * @param {Object} aSources - Dragged Demand paths
@@ -496,7 +526,7 @@ sap.ui.define([
 			if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && oUserData.ENABLE_QUALIFICATION) {
 				// TODO Valiate Stretch and qualifications
 				Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, null, aGuids))
-					.then(function(data){
+					.then(function (data) {
 						console.log(data);
 						// TODO Push the new assignment into both the model
 					}).catch(function (error) {});
