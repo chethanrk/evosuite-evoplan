@@ -126,11 +126,13 @@ sap.ui.define([
 						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateCostElement") + " " + iCount);
 						bValidationCheck = false;
 						break;
-					} else if (aVendorAssignmentList[a].oData.CostElement === "" && aVendorAssignmentList[a].oData.Currency !== "") {
-						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateCostElement") + " " + iCount);
-						bValidationCheck = false;
-						break;
-					} else if (aVendorAssignmentList[a].oData.CostElement !== "" && aVendorAssignmentList[a].oData.Estimate === "") {
+					} 
+					// else if (aVendorAssignmentList[a].oData.CostElement === "" && aVendorAssignmentList[a].oData.Currency !== "") {
+					// 	sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateCostElement") + " " + iCount);
+					// 	bValidationCheck = false;
+					// 	break;
+					// } 
+					else if (aVendorAssignmentList[a].oData.CostElement !== "" && aVendorAssignmentList[a].oData.Estimate === "") {
 						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateEstimate") + " " + iCount);
 						bValidationCheck = false;
 						break;
