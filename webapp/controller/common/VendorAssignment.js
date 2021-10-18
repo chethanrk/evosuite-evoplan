@@ -59,9 +59,6 @@ sap.ui.define([
 			// open dialog
 			oDialog.open();
 			this.onVendorAssignmentSelectAll();
-			if (mParameters && mParameters.bFromGantt) {
-				this._component.getModel("viewModel").setProperty("/ganttSettings/busy", false);
-			}
 		},
 
 		/**
@@ -112,7 +109,7 @@ sap.ui.define([
 				this.onCloseDialog();
 			}
 		},
-	/**
+		/**
 		 * Method to validate mandatory fields for the selected Vendor Assignment
 		 * @param aVendorAssignmentList
 		 */

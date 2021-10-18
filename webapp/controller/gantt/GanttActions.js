@@ -12,6 +12,8 @@ sap.ui.define([
 
 	return BaseController.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
 
+		_trackedShapeMouseEnter: {},
+
 		/**
 		 * save assignment after drop
 		 * Calls the function import of create assignment the returns the promise.
@@ -125,23 +127,29 @@ sap.ui.define([
 		},
 
 		/**
-		 * proceed to Service call after validation
+		 * Validation of demand for resource qualification
 		 * 
-		 * @param {Object} aSourcePaths
-		 * @param {String} targetObj
-		 * @param {Object} oParams
-		 * @param {Object} mParameters
+		 * @param {Array} aSourcePaths - collection of demand pathes
+		 * @param {String} targetObj - target resource for node ID
+		 * @param {Object} oTargetDate - new start date 
+		 * @param {Object} oNewEndDate - new end date
+		 * @param {Array} aGuids - collection of IDs from Demands
 		 **/
-		checkQualification: function (aSourcePaths, targetObj, oTargetDate, oNewEndDate, aGuids) {
+		checkQualification: function (aSourcePaths, oTargetObj, oTargetDate, oNewEndDate, aGuids) {
 			var oQualificationParameters,
 				oModel = this.getModel(),
 				sDemandGuids = "",
 				aItems = aSourcePaths ? aSourcePaths : aGuids;
 			return new Promise(function (resolve, reject) {
+				//collect all demand Guids for function import
 				for (var i = 0; i < aItems.length; i++) {
 					var sPath = aItems[i].sPath ? aItems[i].sPath : aItems[i];
-					var demandObj = oModel.getProperty(sPath);
-					var sDemandGuid = demandObj ? demandObj.Guid : sPath.split("'")[1];
+					if (sPath.indexOf("'") >= 0) {
+						sPath = sPath.split("'")[1];
+					}
+
+					var oDemandObj = oModel.getProperty(sPath);
+					var sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i];
 					if (sDemandGuids === "") {
 						sDemandGuids = sDemandGuid;
 					} else {
@@ -150,19 +158,47 @@ sap.ui.define([
 				}
 				oQualificationParameters = {
 					DemandMultiGuid: sDemandGuids,
-					ObjectId: targetObj.NodeId, //targetObj.ResourceGroupGuid,
+					ObjectId: oTargetObj.NodeId, //targetObj.ResourceGroupGuid,
 					StartTimestamp: oTargetDate,
 					EndTimestamp: oNewEndDate ? oNewEndDate : oTargetDate
 				};
-				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData,
-					response) {
-					resolve({
-						params: oQualificationParameters,
-						result: oData
-					});
-				});
+				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(
+					function (oData, response) {
+						resolve({
+							params: oQualificationParameters,
+							result: oData
+						});
+					}, reject);
 			}.bind(this));
 		},
+
+		/**
+		 * with UI5 version 1.88 showAnimation on shape directly will work
+		 * Shape needs blocked while request is working
+		 * @param {Object} shape view
+		 * @param {Boolean} isBusy
+		 */
+		_showBusyForShape: function (oShape, isBusy) {
+			if (!oShape) {
+				return;
+			}
+			if (typeof oShape === "string") {
+				oShape = this._trackedShapeMouseEnter[oShape];
+				if (!oShape) {
+					return;
+				}
+			}
+			oShape.setSelected(!isBusy);
+			oShape.setSelectable(!isBusy);
+			if (isBusy) {
+				oShape.setOpacity(0.5);
+				oShape.setStrokeOpacity(0.5);
+			} else {
+				oShape.setOpacity(1);
+				oShape.setStrokeOpacity(0.5);
+			}
+		},
+
 		/**
 		 *
 		 * @param aSources - Demands as sources
