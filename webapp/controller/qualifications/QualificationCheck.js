@@ -20,8 +20,11 @@ sap.ui.define([
 		 * @param oView
 		 * @param mParameters
 		 */
-		open: function (that, oView, mParameters) {
+		open: function (that, oView, mParameters, successCallbackFn, errorCallbackFn) {
 			this.oView = oView;
+			this.fnSuccessCallback = successCallbackFn;
+			this.fnErrorCallback = errorCallbackFn;
+
 			if (!this._oDialog) {
 				that.getModel("appView").setProperty("/busy", true);
 				Fragment.load({
@@ -53,9 +56,6 @@ sap.ui.define([
 			this.oView.addDependent(oDialog);
 			// open dialog
 			oDialog.open();
-			if (mParameters && mParameters.bFromGantt) {
-				this._component.getModel("viewModel").setProperty("/ganttSettings/busy", false);
-			}
 		},
 
 		/**
@@ -71,7 +71,9 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onCloseDialog: function (oEvent) {
-			this._component.getModel("viewModel").setProperty("/ganttSettings/busy", false);
+			if (this.fnErrorCallback) {
+				this.fnErrorCallback();
+			}
 			this._oDialog.close();
 		},
 
@@ -120,6 +122,10 @@ sap.ui.define([
 				this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, true);
 				break;
 			default: //Case for update Assignment from Gantt 
+				if (this.fnSuccessCallback) {
+					this.fnSuccessCallback();
+					break;
+				}
 				if (!oParams) {
 					oParams = this.setDateTimeParams([], targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime, oTargetDate,
 						oNewEndDate);

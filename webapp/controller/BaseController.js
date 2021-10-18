@@ -411,10 +411,10 @@ sap.ui.define([
 		 * @param sTargetPath : Resource path on which assignment needs to be created
 		 * @return {boolean} return true is available
 		 */
-		isAvailable: function (sTargetPath) {
-			var oModel = this.getModel(),
-				oTargetObj = oModel.getProperty(sTargetPath);
-
+		isAvailable: function (sTargetPath, oTargetObj) {
+			if (sTargetPath) {
+				oTargetObj = this.getModel().getProperty(sTargetPath);
+			}
 			// If the Resource is Not/Partially available
 			if (oTargetObj.IS_AVAILABLE !== "A") {
 				return false;
@@ -745,7 +745,7 @@ sap.ui.define([
 				sDemandGuid = oResourceNode.Guid,
 				oComponent = this._oView ? this._oView.getController().getOwnerComponent() : this.getOwnerComponent(),
 				oView = this._oView ? this._oView : this.getView();
-				
+
 			oComponent.DemandQualifications.open(oView, sDemandGuid);
 
 		},
