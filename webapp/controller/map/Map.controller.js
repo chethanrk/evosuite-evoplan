@@ -450,7 +450,7 @@ sap.ui.define([
 						oData: oData
 					}];
 				if (oData.ALLOW_ASSIGN) {
-					this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, this._mParameters);
+					this.getOwnerComponent().assignTreeDialog.open(this, this.getView(), false, oSelectedData, false, this._mParameters);
 				} else {
 					this._showAssignErrorDialog([oData.DemandDesc]);
 				}
@@ -462,7 +462,7 @@ sap.ui.define([
 				}
 				var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 				if (oSelectedPaths.aPathsData.length > 0) {
-					this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
+					this.getOwnerComponent().assignTreeDialog.open(this, this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
 				}
 				if (oSelectedPaths.aNonAssignable.length > 0) {
 					this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);

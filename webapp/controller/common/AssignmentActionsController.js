@@ -33,12 +33,12 @@ sap.ui.define([
 
 			for (var i = 0; i < aItems.length; i++) {
 				oDemandObj = oModel.getProperty(aItems[i]);
-				sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i].split("'")[1],
-					oParams = {
-						DemandGuid: sDemandGuid,
-						ResourceGroupGuid: targetObj.ResourceGroupGuid,
-						ResourceGuid: targetObj.ResourceGuid
-					};
+				sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i].split("'")[1];
+				oParams = {
+					DemandGuid: sDemandGuid,
+					ResourceGroupGuid: targetObj.ResourceGroupGuid,
+					ResourceGuid: targetObj.ResourceGuid
+				};
 				// When we drop on the Gantt chart directly
 				if (oTargetDate) {
 					oParams.DateFrom = oTargetDate;

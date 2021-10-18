@@ -59,9 +59,6 @@ sap.ui.define([
 			// open dialog
 			oDialog.open();
 			this.onVendorAssignmentSelectAll();
-			if (mParameters && mParameters.bFromGantt) {
-				this._component.getModel("viewModel").setProperty("/ganttSettings/busy", false);
-			}
 		},
 
 		/**
@@ -112,7 +109,7 @@ sap.ui.define([
 				this.onCloseDialog();
 			}
 		},
-	/**
+		/**
 		 * Method to validate mandatory fields for the selected Vendor Assignment
 		 * @param aVendorAssignmentList
 		 */
@@ -126,11 +123,13 @@ sap.ui.define([
 						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateCostElement") + " " + iCount);
 						bValidationCheck = false;
 						break;
-					} else if (aVendorAssignmentList[a].oData.CostElement === "" && aVendorAssignmentList[a].oData.Currency !== "") {
-						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateCostElement") + " " + iCount);
-						bValidationCheck = false;
-						break;
-					} else if (aVendorAssignmentList[a].oData.CostElement !== "" && aVendorAssignmentList[a].oData.Estimate === "") {
+					} 
+					// else if (aVendorAssignmentList[a].oData.CostElement === "" && aVendorAssignmentList[a].oData.Currency !== "") {
+					// 	sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateCostElement") + " " + iCount);
+					// 	bValidationCheck = false;
+					// 	break;
+					// } 
+					else if (aVendorAssignmentList[a].oData.CostElement !== "" && aVendorAssignmentList[a].oData.Estimate === "") {
 						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateEstimate") + " " + iCount);
 						bValidationCheck = false;
 						break;

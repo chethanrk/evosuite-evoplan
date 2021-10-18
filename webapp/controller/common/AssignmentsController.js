@@ -531,8 +531,8 @@ sap.ui.define([
 		 *Method for checking Enabling Operation Times Demands
 		 */
 		onShowOperationTimes: function () {
-			var aSources = this.getModel("viewModel").getProperty("/dragSession")
-			aOperationTimes = [];
+			var aSources = this.getModel("viewModel").getProperty("/dragSession"),
+				aOperationTimes = [];
 			for (var f in aSources) {
 				aSources[f].IsDisplayed = true;
 				aSources[f].IsSelected = true;

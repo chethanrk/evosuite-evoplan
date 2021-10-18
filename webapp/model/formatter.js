@@ -398,7 +398,11 @@ sap.ui.define([
 				oUser = this.getModel("user");
 			}
 			if (oUser && oUser.getProperty("/ENABLE_CUMULATIVE_CAPACITY")) {
-				return true;
+				if (sValue !== "ASSIGNMENT") {
+					return true;
+				} else {
+					return false;
+				}
 			} else {
 				if (sValue !== "RES_GROUP" && sValue !== "ASSIGNMENT") {
 					return true;
