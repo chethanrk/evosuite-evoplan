@@ -589,9 +589,16 @@ sap.ui.define([
 					.then(function (data) {
 						console.log(data);
 						// TODO Push the new assignment into both the model
+						var aAssignments = this.oGanttModel.getProperty(oTarget).AssignmentSet.results;
+						aAssignments.push(data[0]);
+						this.oGanttModel.setProperty(oTarget+"/AssignmentSet/results", aAssignments);
+						this.oGanttOriginDataModel.setProperty(oTarget+"/AssignmentSet/results", aAssignments);
+						oGanttModel.refresh();
 					}).catch(function (error) {});
 			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && !oUserData.ENABLE_QUALIFICATION) {
 				// TODO Validate the Stretch
+					this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids);
+				
 			} else if (oUserData.ENABLE_QUALIFICATION) {
 				// TODO Validate the qualifications
 			} else {
