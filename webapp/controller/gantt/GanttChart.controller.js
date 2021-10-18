@@ -19,6 +19,7 @@ sap.ui.define([
 
 		formatter: formatter,
 		ganttFormatter: ganttFormatter,
+		selectedResources: [],
 
 		oGanttModel: null,
 		oGanttOriginDataModel: null,
@@ -222,6 +223,140 @@ sap.ui.define([
 			this.getModel("user").setProperty("/DEFAULT_GANT_START_DATE", oEvent.getParameter("from"));
 			this.getModel("user").setProperty("/DEFAULT_GANT_END_DATE", oEvent.getParameter("to"));
 			this._loadGanttData();
+		},
+		/**
+		 * Opens the resource qualification dialog 
+		 */
+		onResourceIconPress: function (oEvent) {
+			var oRow = oEvent.getSource().getParent(),
+				oContext = oRow.getBindingContext(),
+				sPath = oContext.getPath(),
+				oModel = oContext.getModel(),
+				oResourceNode = oModel.getProperty(sPath),
+				sObjectId = oResourceNode.NodeId;
+
+			if (oResourceNode.NodeType !== "ASSIGNMENT") {
+				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
+			}
+		},
+		/**
+		 * Open's Dialog containing assignments to reassign
+		 * @param oEvent
+		 */
+		onPressReassign: function (oEvent) {
+			// to identify the action done on respective page
+			localStorage.setItem("Evo-Action-page", "ganttSplit");
+			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false, this._mParameters);
+		},
+		/**
+		 * Open's Dialog containing assignments to unassign
+		 * @param oEvent
+		 */
+		onPressUnassign: function (oEvent) {
+			// to identify the action done on respective page
+			localStorage.setItem("Evo-Action-page", "ganttSplit");
+			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true, this._mParameters);
+		},
+		
+		/**
+		 * On click on expand the tree nodes gets expand to level 1
+		 * On click on collapse all the tree nodes will be collapsed to root.
+		 * @param oEvent
+		 */
+		onClickExpandCollapse: function (oEvent) {
+			var oButton = oEvent.getSource(),
+				oCustomData = oButton.getCustomData();
+
+			if (oCustomData[0].getValue() === "EXPAND" && this._treeTable) {
+				this._treeTable.expandToLevel(1);
+			} else {
+				this._treeTable.collapseAll();
+			}
+		},
+		
+		/**
+		 * open the create unavailability dialog for selected resource
+		 * @param oEvent
+		 */
+		onCreateAbsence: function (oEvent) {
+			var oResourceBundle = this.getResourceBundle();
+			if (this.selectedResources.length === 0) {
+				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
+				return;
+			}
+			// to identify the action done on respective page
+			localStorage.setItem("Evo-Action-page", "ganttSplit");
+
+			this.getOwnerComponent().manageAvail.open(this.getView(), [this.selectedResources[0]], this._mParameters);
+
+		},
+		/**
+		 * open the Time Allocation dialog for selected resource
+		 * @param oEvent
+		 */
+		onTimeAllocPress: function (oEvent) {
+			var oResourceBundle = this.getResourceBundle();
+			if (this.selectedResources.length === 0) {
+				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
+				return;
+			}
+			// to identify the action done on respective page
+			localStorage.setItem("Evo-Action-page", "ganttSplit");
+
+			this.getOwnerComponent().manageAvail.open(this.getView(), [this.selectedResources[0]], this._mParameters, "timeAlloc");
+
+		},
+
+		/**
+		 * on click on today adjust the view of Gantt horizon.
+		 */
+		onPressToday: function (oEvent) {
+			this.changeGanttHorizonViewAt(this.getModel("viewModel"), this._axisTime.getZoomLevel(), this._axisTime);
+		},
+
+		/**
+		 * When user select a resource by selecting checkbox enable/disables the
+		 * appropriate buttons in the footer.
+		 * @param oEvent
+		 * @Author Pranav
+		 */
+
+		onChangeSelectResource: function (oEvent) {
+			var oSource = oEvent.getSource(),
+				parent = oSource.getParent(),
+				sPath = parent.getBindingContext("ganttModel").getPath(),
+				oParams = oEvent.getParameters();
+
+			//Sets the property IsSelected manually
+			this.getModel().setProperty(sPath + "/IsSelected", oParams.selected);
+
+			if (oParams.selected) {
+				this.selectedResources.push(sPath);
+
+			} else if (this.selectedResources.indexOf(sPath) >= 0) {
+				//removing the path from this.selectedResources when user unselect the checkbox
+				this.selectedResources.splice(this.selectedResources.indexOf(sPath), 1);
+			}
+
+			if (this.selectedResources.length > 0) {
+				this.byId("idButtonreassign").setEnabled(true);
+				this.byId("idButtonunassign").setEnabled(true);
+
+			} else {
+				this.byId("idButtonreassign").setEnabled(false);
+				this.byId("idButtonunassign").setEnabled(false);
+			}
+			var oData = this.getModel("ganttModel").getProperty(this.selectedResources[0]);
+
+			if (this.selectedResources.length === 1 && oData && oData.NodeType === "RESOURCE" && oData.ResourceGuid !== "" && oData.ResourceGroupGuid !==
+				"") {
+				this.byId("idButtonCreUA").setEnabled(true);
+				this.byId("idButtonTimeAlloc").setEnabled(true);
+			} else {
+				this.byId("idButtonCreUA").setEnabled(false);
+				this.byId("idButtonTimeAlloc").setEnabled(false);
+			}
+
 		},
 		/* =========================================================== */
 		/* intern methods                                              */

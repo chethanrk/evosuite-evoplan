@@ -67,7 +67,7 @@
 								</table:dragDropConfig>
 								<table:columns>
 									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.ResourceTreeColumns" type="XML"/>
-									<!--<table:Column width="20%" visible="{viewModel>/showUtilization}">
+									<table:Column width="20%" visible="{viewModel>/showUtilization}">
 										<table:customData>
 											<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
 										</table:customData>
@@ -80,10 +80,10 @@
 											<core:CustomData key="p13nData" value='\{"columnKey": "NodeType", "leadingProperty": "NodeType"}'/>
 										</table:customData>
 										<table:template>
-											<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"
-												selected="{IsSelected}"/>
+											<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'ganttModel>NodeType', formatter: '.formatter.isMainResource' }"
+												selected="{ganttModel>IsSelected}"/>
 										</table:template>
-									</table:Column>-->
+									</table:Column>
 								</table:columns>
 							</table:TreeTable>
 						</gnt2:table>

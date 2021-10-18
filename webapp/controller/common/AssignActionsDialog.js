@@ -219,6 +219,9 @@ sap.ui.define([
 				sDateControl1,
 				sDateControl2;
 
+			if(this._mParameters.bFromNewGantt){
+				oModel = this._oView.getModel("ganttModel");
+			}
 			for (var i = 0; i < aSelectedResources.length; i++) {
 				obj = oModel.getProperty(aSelectedResources[i]);
 				if (obj.NodeType === "RESOURCE") {
