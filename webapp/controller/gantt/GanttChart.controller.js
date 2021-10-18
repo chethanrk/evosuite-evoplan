@@ -44,7 +44,6 @@ sap.ui.define([
 			this._ganttChart = this.getView().byId("ganttResourceAssignments");
 			this._axisTime = this.getView().byId("idAxisTime");
 			this._userData = this.getModel("user").getData();
-			this._trackedShapeMouseEnter = {};
 
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				//this._routeName = Constants.GANTT.NAME;
@@ -135,21 +134,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * track what shape mouse was entered
-		 * will help for setting busy state on dragged shape while backend request is running
-		 * @param oEvent
-		 */
-		onShapeMouseEnter: function (oEvent) {
-			var oParams = oEvent.getParameters(),
-				oShape = oParams.shape,
-				sShapeUid = oShape.getShapeUid();
-			if (oShape.sParentAggregationName === "shapes3" && !this._trackedShapeMouseEnter[sShapeUid]) {
-				this._trackedShapeMouseEnter[sShapeUid] = oShape;
-				this._trackedShapeMouseEnter.lastTracked = sShapeUid;
-			}
-		},
-
-		/**
 		 * When a shape is dragged inside Gantt
 		 * and dropped to same row or another resource row
 		 * @param oEvent
@@ -187,14 +171,7 @@ sap.ui.define([
 
 				//set new time and resource data to gantt model, setting also new pathes
 				var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
-				if (sRequestType === this.mRequestTypes.reassign) {
-					setTimeout(function () {
-						var shapeUid = this._trackedShapeMouseEnter.lastTracked;
-						this._updateDraggedShape(shapeUid, sNewPath, sRequestType);
-					}.bind(this), 1000);
-				} else {
-					this._updateDraggedShape(key, sNewPath, sRequestType);
-				}
+				this._updateDraggedShape(key, sNewPath, sRequestType);
 			}
 		},
 
@@ -338,19 +315,19 @@ sap.ui.define([
 		 * @param {String} sRequestType
 		 */
 		_updateDraggedShape: function (oShape, sPath, sRequestType) {
-			this._showBusyForShape(oShape, true);
+			this.oGanttModel.setProperty(sPath + "/busy", true);
 			var oData = this.oGanttModel.getProperty(sPath);
 			//get demand details to this assignment
 			this._getRelatedDemandData(oData).then(function (oResult) {
 				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
 				this._validateAndSendChangedData(oShape, sPath, sRequestType).then(null, function () {
 					//on reject validation or user don't want proceed
+					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
-					this._showBusyForShape(oShape, false);
 				}.bind(this));
 			}.bind(this), function (oError) {
+				this.oGanttModel.setProperty(sPath + "/busy", false);
 				this._resetChanges(sPath);
-				this._showBusyForShape(oShape, false);
 			}.bind(this));
 		},
 
@@ -500,12 +477,12 @@ sap.ui.define([
 							this.oGanttOriginDataModel.setProperty(sPath, oResData);
 							this._resetChanges(sPath);
 						}
-						this._showBusyForShape(oShape, false);
+						this.oGanttModel.setProperty(sPath + "/busy", false);
 						resolve(oResData);
 					}.bind(this),
 					function (oError) {
+						this.oGanttModel.setProperty(sPath + "/busy", false);
 						this._resetChanges(sPath);
-						this._showBusyForShape(oShape, false);
 						reject(oError);
 					}.bind(this));
 			}.bind(this));

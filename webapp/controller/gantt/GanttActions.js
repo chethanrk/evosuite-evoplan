@@ -14,6 +14,10 @@ sap.ui.define([
 
 		_trackedShapeMouseEnter: {},
 
+		isBusyShape: function (bAllowProperty, bIsBusy) {
+			return bAllowProperty && !bIsBusy;
+		},
+
 		/**
 		 * save assignment after drop
 		 * Calls the function import of create assignment the returns the promise.
@@ -170,33 +174,6 @@ sap.ui.define([
 						});
 					}, reject);
 			}.bind(this));
-		},
-
-		/**
-		 * with UI5 version 1.88 showAnimation on shape directly will work
-		 * Shape needs blocked while request is working
-		 * @param {Object} shape view
-		 * @param {Boolean} isBusy
-		 */
-		_showBusyForShape: function (oShape, isBusy) {
-			if (!oShape) {
-				return;
-			}
-			if (typeof oShape === "string") {
-				oShape = this._trackedShapeMouseEnter[oShape];
-				if (!oShape) {
-					return;
-				}
-			}
-			oShape.setSelected(!isBusy);
-			oShape.setSelectable(!isBusy);
-			if (isBusy) {
-				oShape.setOpacity(0.5);
-				oShape.setStrokeOpacity(0.5);
-			} else {
-				oShape.setOpacity(1);
-				oShape.setStrokeOpacity(0.5);
-			}
 		},
 
 		/**
