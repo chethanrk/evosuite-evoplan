@@ -12,8 +12,6 @@ sap.ui.define([
 
 	return BaseController.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
 
-		_trackedShapeMouseEnter: {},
-
 		isBusyShape: function (bAllowProperty, bIsBusy) {
 			return bAllowProperty && !bIsBusy;
 		},

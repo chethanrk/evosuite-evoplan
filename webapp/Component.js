@@ -224,9 +224,7 @@ sap.ui.define([
 				data: {
 					children: []
 				},
-				pendingChanges: {},
-				busy: false,
-				busyIds: []
+				pendingChanges: {}
 			}, true), "ganttModel");
 			this.setModel(models.createHelperModel({
 				data: {
