@@ -463,7 +463,7 @@ sap.ui.define([
 				sStatus = oModel.getProperty(sPath).DEMAND_STATUS;
 				if (!this._menu || sCurrentRoute !== this._firstVisit) {
 					this._menu = sap.ui.xmlfragment(
-						"com.evorait.evoplan.view.gantt.fragments.ShapeContextMenu",
+						"com.evorait.evoplan.view.gantt.fragments._oldShapeContextMenu",
 						this, sCurrentRoute
 					);
 					this.getView().addDependent(this._menu);
@@ -471,9 +471,9 @@ sap.ui.define([
 				}
 				if (sStatus !== "COMP") {
 					this._updateAssignmentModel(sAssignGuid).then(function (data) {
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign", data.AllowUnassign);
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign", data.AllowReassign);
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/change", data.AllowChange);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/unassign", data.AllowUnassign);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/reassign", data.AllowReassign);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/change", data.AllowChange);
 						oViewModel.setProperty("/ganttSettings/shapeData", data);
 						var eDock = Popup.Dock;
 						this._menu.open(true, oShape, eDock.BeginTop, eDock.endBottom, oShape);
@@ -526,7 +526,7 @@ sap.ui.define([
 				this.getOwnerComponent().assignTreeDialog.open(this, this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
 				// Change
-				this.openAssignInfoDialog(this.getView(), sPath, this._selectedShapeContext,mParameters);
+				this.openAssignInfoDialog(this.getView(), sPath, this._selectedShapeContext, mParameters);
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonExecuteFunction") && !oSelectedItem.getSubmenu()) {
 				// Set Function
 				var oDemandPath = oModel.getProperty(sPath).Demand.__ref;

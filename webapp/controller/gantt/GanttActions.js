@@ -1,3 +1,4 @@
+/* globals _ */
 sap.ui.define([
 	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/model/formatter",
@@ -203,9 +204,7 @@ sap.ui.define([
 		 * @Author Chethan RK
 		 */
 		_createGanttHorizon: function (iZoomLevel, oTotalHorizonDates) {
-
 			var oVisibleHorizonDates = this._getVisibleHorizon(iZoomLevel, oTotalHorizonDates);
-
 			return new sap.gantt.axistime.StepwiseZoomStrategy({
 				zoomLevel: 3,
 				visibleHorizon: new sap.gantt.config.TimeHorizon({
@@ -254,6 +253,48 @@ sap.ui.define([
 		},
 
 		/**
+		 * Resets a changed data by model path
+		 * Or when bResetAll then all changes are resetted
+		 * @param sPath
+		 * @param bResetAll
+		 */
+		_resetChanges: function (sPath, bResetAll) {
+			var oGanttModel = this.getModel("ganttModel"),
+				oGanttOriginDataModel = this.getModel("ganttOriginalData");
+
+			var oPendingChanges = oGanttModel.getProperty("/pendingChanges");
+			if (oPendingChanges[sPath]) {
+				if (!this._resetNewPathChanges(oPendingChanges[sPath])) {
+					var oOriginData = oGanttOriginDataModel.getProperty(sPath);
+					oGanttModel.setProperty(sPath, _.cloneDeep(oOriginData));
+				}
+				delete oPendingChanges[sPath];
+			} else if (bResetAll) {
+				for (var key in oPendingChanges) {
+					if (!this._resetNewPathChanges(oPendingChanges[sPath], oGanttModel, oGanttOriginDataModel)) {
+						oGanttModel.setProperty(key, _.cloneDeep(oGanttOriginDataModel.getProperty(key)));
+					}
+				}
+				oGanttModel.setProperty("/pendingChanges", {});
+			}
+		},
+
+		/**
+		 * resets data when there was a path changes of shapes
+		 * @param {Object} oPendings - GanttModel path /pendingChanges
+		 * @param {Object} oGanttModel
+		 * @param {Object} oGanttOriginDataModel
+		 */
+		_resetNewPathChanges: function (oPendings, oGanttModel, oGanttOriginDataModel) {
+			if (oPendings.NewAssignPath) {
+				oGanttModel.setProperty(oPendings.NewAssignPath, _.cloneDeep(oGanttOriginDataModel.getProperty(oPendings.NewAssignPath)));
+				oGanttModel.setProperty(oPendings.OldAssignPath, _.cloneDeep(oGanttOriginDataModel.getProperty(oPendings.OldAssignPath)));
+				return true;
+			}
+			return false;
+		},
+
+		/**
 		 * Promise for fetching details about assignment demand
 		 * coming from backend or alsready loaded data
 		 * @param oData
@@ -279,6 +320,28 @@ sap.ui.define([
 							error: reject
 						});
 					}
+				}
+			}.bind(this));
+		},
+
+		/**
+		 * Unassign assignment with delete confirmation dialog. 
+		 */
+		_deleteAssignment: function (oModel, sAssignGuid, sPath) {
+			var oGanttModel = this.getModel("ganttModel");
+			this._showConfirmMessageBox.call(this, this.getResourceBundle().getText("ymsg.confirmDel")).then(function (data) {
+				oGanttModel.setProperty(sPath + "/busy", true);
+				if (data === "YES") {
+					this.deleteAssignment(oModel, sAssignGuid).then(function () {
+							oGanttModel.setProperty(sPath + "/busy", false);
+							this.getModel("ganttModel").setProperty(sPath, null);
+							this.getModel("ganttOriginalData").setProperty(sPath, null);
+						}.bind(this),
+						function () {
+							oGanttModel.setProperty(sPath + "/busy", false);
+						});
+				} else {
+					oGanttModel.setProperty(sPath + "/busy", false);
 				}
 			}.bind(this));
 		}

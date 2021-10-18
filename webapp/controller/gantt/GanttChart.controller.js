@@ -198,40 +198,72 @@ sap.ui.define([
 		},
 
 		/**
-		 * Formatter for the color fill
-		 * Based on the group type the fill the color will be rendered.
-		 * A -> White
-		 * N -> Pattern
-		 * @param sType
-		 * @return {string}
+		 * right click on shape will show context menu with possible actions
+		 * @param oEvent
 		 */
-		getPattern: function (sType, sColour) {
-			if (sType === "N") {
-				return "url(#" + this._viewId + "--unavailability)";
-			} else if (sType === "A") {
-				return "#FFF";
-			} else if (sType === "O") {
-				return "transparent";
-			} else if (sType === "T") {
-				return "url(#" + this._viewId + "--oncallorovertime)";
-			} else if (sType === "L") {
-				return sColour;
-			} else {
-				return "transparent";
-			}
+		onShapeContextMenu: function (oEvent) {
+			var oParams = oEvent.getParameters(),
+				oShape = oParams.shape,
+				oContext = oShape.getBindingContext("ganttModel");
 
+			if (oShape && oShape.sParentAggregationName === "shapes3") {
+				if (!this._oContextMenu) {
+					Fragment.load({
+						name: "com.evorait.evoplan.view.gantt.fragments.ShapeContextMenu",
+						controller: this
+					}).then(function (oDialog) {
+						this._oContextMenu = oDialog;
+						this.getView().addDependent(this._oContextMenu);
+						this._openContextMenu(oShape, oContext);
+					}.bind(this));
+				} else {
+					this._openContextMenu(oShape, oContext);
+				}
+			}
 		},
+
 		/**
-		 * Format legend colors to differentiate between pattern and colors
-		 * @param sCode
-		 * @param sType
-		 * @return {*}
+		 * on context menu item press
+		 * read custom data from button
 		 */
-		formatLegend: function (sCode, sType) {
-			if (sType === "COLOUR") {
-				return sCode;
-			} else {
-				return "url(#" + this._viewId + "--" + sCode + ")";
+		handleMenuItemPress: function (oEvent) {
+			var oParams = oEvent.getParameters(),
+				oSelectedItem = oParams.item,
+				sPath = oEvent.getSource().data("Path"),
+				sFunctionKey = oSelectedItem.data("Function"),
+				oData = this.oGanttModel.getProperty(sPath),
+				oAppModel = this.getModel("appView"),
+				mParameters = {
+					bFromGantt: true
+				};
+			//still needed?
+			if (oAppModel.getProperty("/currentRoute") === "ganttSplit") {
+				mParameters = {
+					bFromGanttSplit: true
+				};
+			}
+			localStorage.setItem("Evo-Action-page", "ganttSplit");
+
+			if (sFunctionKey) {
+				//user status update
+				this._oEventBus.publish("StatusSelectDialog", "changeStatusDemand", {
+					selectedPaths: [{
+						oData: {
+							Guid: oData.Demand.DemandGuid
+						}
+					}],
+					functionKey: sFunctionKey,
+					parameters: mParameters
+				});
+
+			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonChange")) {
+				//Todo show dialog with assignment details
+			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonUnassign")) {
+				this._deleteAssignment(this.getModel(), oData.Guid, sPath); //unassign
+			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonReassign")) {
+				//Todo reassign
+				//oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
+				this.getOwnerComponent().assignTreeDialog.open(this, this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
 			}
 		},
 
@@ -307,6 +339,24 @@ sap.ui.define([
 		},
 
 		/**
+		 * open context menu of shape
+		 * @param {Object} oShape - shape control
+		 * @param {Object} oContext - context bound to shape
+		 */
+		_openContextMenu: function (oShape, oContext) {
+			var oData = oContext.getObject();
+			if (oData.DEMAND_STATUS !== "COMP") {
+				this._getRelatedDemandData(oData).then(function (oResult) {
+					oData.sPath = oContext.getPath();
+					this.oGanttModel.setProperty(oData.sPath + "/Demand", oResult.Demand);
+					this.oViewModel.setProperty("/ganttSettings/shapeData", oData);
+					var eDock = Popup.Dock;
+					this._oContextMenu.open(true, oShape, eDock.BeginTop, eDock.endBottom, oShape);
+				}.bind(this));
+			}
+		},
+
+		/**
 		 * when shape was dragged or resized to another place
 		 * update assignment
 		 * @param {String/Object} oShape - Could be shape UId as string or shape control
@@ -329,44 +379,6 @@ sap.ui.define([
 				this.oGanttModel.setProperty(sPath + "/busy", false);
 				this._resetChanges(sPath);
 			}.bind(this));
-		},
-
-		/**
-		 * Resets a changed data by model path
-		 * Or when bResetAll then all changes are resetted
-		 * @param sPath
-		 * @param bResetAll
-		 */
-		_resetChanges: function (sPath, bResetAll) {
-			var oPendingChanges = this.oGanttModel.getProperty("/pendingChanges");
-			if (oPendingChanges[sPath]) {
-				if (!this._resetNewPathChanges(oPendingChanges[sPath])) {
-					var oOriginData = this.oGanttOriginDataModel.getProperty(sPath);
-					this.oGanttModel.setProperty(sPath, _.cloneDeep(oOriginData));
-				}
-				delete oPendingChanges[sPath];
-
-			} else if (bResetAll) {
-				for (var key in oPendingChanges) {
-					if (!this._resetNewPathChanges(oPendingChanges[sPath])) {
-						this.oGanttModel.setProperty(key, _.cloneDeep(this.oGanttOriginDataModel.getProperty(key)));
-					}
-				}
-				this.oGanttModel.setProperty("/pendingChanges", {});
-			}
-		},
-
-		/**
-		 * resets data when there was a path changes of shapes
-		 * @param {Object} oPendings - GanttModel path /pendingChanges
-		 */
-		_resetNewPathChanges: function (oPendings) {
-			if (oPendings.NewAssignPath) {
-				this.oGanttModel.setProperty(oPendings.NewAssignPath, _.cloneDeep(this.oGanttOriginDataModel.getProperty(oPendings.NewAssignPath)));
-				this.oGanttModel.setProperty(oPendings.OldAssignPath, _.cloneDeep(this.oGanttOriginDataModel.getProperty(oPendings.OldAssignPath)));
-				return true;
-			}
-			return false;
 		},
 
 		/**
