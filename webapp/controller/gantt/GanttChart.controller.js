@@ -38,15 +38,17 @@ sap.ui.define([
 		onInit: function () {
 			this.oViewModel = this.getModel("viewModel");
 			this.oUserModel = this.getModel("user");
-
+			this._oEventBus = sap.ui.getCore().getEventBus();
 			//set on first load required filters
 			this._treeTable = this.getView().byId("ganttResourceTreeTable");
 			this._ganttChart = this.getView().byId("ganttResourceAssignments");
 			this._axisTime = this.getView().byId("idAxisTime");
 			this._userData = this.getModel("user").getData();
 
+			this._oEventBus.subscribe("BaseController", "refreshAssignments", this._callAssignments, this);
+			
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
-				//this._routeName = Constants.GANTT.NAME;
+				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
 					bFromNewGantt: true
 				};
@@ -61,6 +63,13 @@ sap.ui.define([
 					this._addAssociations.bind(this)();
 				}
 			}.bind(this));
+			
+			// this.getRouter().getRoute("ganttSplit").attachPatternMatched(function () {
+			// 	this._routeName = Constants.GANTT.SPLIT;
+			// 	this._mParameters = {
+			// 		bFromGanttSplit: true
+			// 	};
+			// }.bind(this));
 
 			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
 				this._ganttChart.addStyleClass("resourceGanttWithTable");
@@ -554,6 +563,37 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
+		/**
+		 * Proceed to Qualification Check for Demand Assignment/Reassignment/Update, before Service call (Call Function Import) 
+		 * @param {Object} aSourcePaths Demand paths
+		 * @param {Object} oTarget Resource Path
+		 * @param {Object} oTargetDate Target date of assignment
+		 * @param {Object} oNewEndDate new end date from streach validation
+		 * @param {Object} aGuids Array of demand paths in case of split window
+		 * @param {Object} mParameters parameters for function import
+		 * @private
+		 */
+		_checkResourceQualification: function (aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids, mParameters) {
+			return new Promise(function (resolve, reject) {
+				var oTargetObject = this.getModel("ganttModel").getProperty(oTarget);
+				this.checkQualification(aSourcePaths, oTargetObject, oTargetDate, oNewEndDate, aGuids).then(function (data) {
+					if (data.result.results && data.result.results.length) {
+						this.getModel("viewModel").setProperty("/QualificationMatchList", {
+							TargetObject: oTargetObject,
+							QualificationData: data.result.results,
+							SourcePaths: aSourcePaths,
+							mParameter: mParameters,
+							targetDate: oTargetDate,
+							newEndDate: oNewEndDate,
+							aGuids: aGuids
+						});
+						this.getOwnerComponent().QualificationCheck.open(this, this.getView(), {}, resolve, reject);
+					} else {
+						resolve();
+					}
+				}.bind(this));
+			}.bind(this));
+		},
 
 		/**
 		 * validate shape data on resize
@@ -591,29 +631,140 @@ sap.ui.define([
 		_validateDemands: function (oResourceData, aSources, oTarget, oTargetDate, aGuids) {
 			var oUserData = this.getModel("user").getData();
 
+			var sDummyPath = this._createDummyAssignment(oTarget, oTargetDate);
+			this.oGanttModel.setProperty(sDummyPath + "/busy", true);
+
 			if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && oUserData.ENABLE_QUALIFICATION) {
-				// TODO Valiate Stretch and qualifications
+
+				this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids).then(function (oEndDate) {
+					this._checkResourceQualification(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(function (data) {
+						Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids))
+							.then(function (data) {
+								this._addCreatedAssignment(data[0], oTarget, sDummyPath);
+							}.bind(this)).catch(function (error) {});
+					}.bind(this));
+				}.bind(this));
+
+			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && !oUserData.ENABLE_QUALIFICATION) {
+
+				this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids).then(function (oEndDate) {
+					Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids))
+						.then(function (data) {
+							this._addCreatedAssignment(data[0], oTarget, sDummyPath);
+						}.bind(this)).catch(function (error) {});
+				}.bind(this));
+
+			} else if (oUserData.ENABLE_QUALIFICATION) {
+
+				this._checkResourceQualification(aSources, oTarget, oTargetDate, null, aGuids).then(function (data) {
+					console.log(data);
+					Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, null, aGuids))
+						.then(function (data) {
+							this._addCreatedAssignment(data[0], oTarget, sDummyPath);
+						}.bind(this)).catch(function (error) {});
+				}.bind(this));
+
+			} else {
 				Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, null, aGuids))
 					.then(function (data) {
-						console.log(data);
-						// TODO Push the new assignment into both the model
-						var aAssignments = this.oGanttModel.getProperty(oTarget).AssignmentSet.results;
-						aAssignments.push(data[0]);
-						this.oGanttModel.setProperty(oTarget+"/AssignmentSet/results", aAssignments);
-						this.oGanttOriginDataModel.setProperty(oTarget+"/AssignmentSet/results", aAssignments);
-						oGanttModel.refresh();
-					}).catch(function (error) {});
-			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && !oUserData.ENABLE_QUALIFICATION) {
-				// TODO Validate the Stretch
-					this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids);
-				
-			} else if (oUserData.ENABLE_QUALIFICATION) {
-				// TODO Validate the qualifications
-			} else {
-				// TODO No validation is required the demand can assigned directly
+						this._addCreatedAssignment(data[0], oTarget, sDummyPath);
+					}.bind(this)).catch(function (error) {});
 			}
 		},
+		/**
+		 * Proceed to assignment with Stretch, check if Date Time is not valid
+		 * @param {Object} aSources Demand paths
+		 * @param {Object} oTarget Resource Path
+		 * @private
+		 */
+		_checkAssignmentForStretch: function (oResourceData, aSources, oTarget, oTargetDate, aGuids, fnCheckValidation) {
+			var oViewModel = this.getModel("viewModel"),
+				oResourceModel = this.getResourceBundle();
+			return new Promise(function (resolve, reject) {
+				if (oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && oResourceData.ResourceGuid &&
+						oResourceData.ResourceGuid !== "")) {
 
+					this._checkAvailability(aSources, oTarget, oTargetDate, aGuids).then(function (availabilityData) {
+						if (!availabilityData.Unavailable) {
+							resolve(availabilityData.Endtimestamp);
+						} else {
+							this._showConfirmMessageBox(oResourceModel.getText("ymsg.extendMsg")).then(function (value) {
+								if (value === "YES") {
+									resolve(availabilityData.Endtimestamp);
+								} else {
+									resolve(availabilityData.EndtimestampWithstretch);
+								}
+							}.bind(this));
+						}
+					}.bind(this));
+				} else {
+					resolve();
+				}
+			}.bind(this));
+
+		},
+		/**
+		 * Creating dummy assignment
+		 * @param {Object} sTargetPath Target path for the resource
+		 * @param {Object} oTargetDate Target date on which demand is dropped
+		 */
+		_createDummyAssignment: function (sTargetPath, oTargetDate) {
+			var oAssignment = {
+				AssignmentType: "",
+				DEMAND_STATUS: "ASGN",
+				DEMAND_STATUS_COLOR: "#90EE90",
+				DEMAND_STATUS_ICON: "sap-icon://employee-pane",
+				DateFrom: moment(oTargetDate).toDate(),
+				DateTo: moment(oTargetDate).add(5, "hour").toDate(),
+				DemandGuid: "0AA10FE57E901EDC89EAB37B4CB92EB0",
+				Description: "Loading. . .",
+				Effort: "24.0",
+				EffortUnit: "H",
+				FIRSTNAME: "Ian",
+				GROUP_DESCRIPTION: "Production Line (TEST)",
+				Guid: "thisisdummyguidassignment",
+				LASTNAME: "Robb",
+				LATITUDE: "50.110942871000",
+				LONGITUDE: "8.673195901300",
+				NODE_TYPE: "RESOURCE",
+				NOTIFICATION: "",
+				NOTIFICATION_DESC: "",
+				OPERATIONID: "0010",
+				ORDERID: "830821",
+				ObjectId: "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+				PERSON_NUMBER: "01000000",
+				RESOURCE_DESCRIPTION: "Ian Robb",
+				ResourceGroupGuid: "0AA10FE57E901EE9BBCE7C317649FB0D",
+				ResourceGuid: "0AA10FE57E901EE9BBCE7C31764A1B0D",
+				SUBOPERATIONID: "0000"
+			};
+			var aAssignments = this.oGanttModel.getProperty(sTargetPath).AssignmentSet.results;
+			aAssignments.push(oAssignment);
+
+			var sPath = sTargetPath + "/AssignmentSet/results/" + (aAssignments.length - 1);
+			this.oGanttModel.setProperty(sTargetPath + "/AssignmentSet/results", aAssignments);
+
+			this.oGanttModel.refresh();
+			return sPath;
+		},
+		/**
+		 * Add created assignment into the both the model after success creation of assignment
+		 * @param data {Object} Response from function import
+		 * @param sTargetPath {string} target path of resource
+		 */
+		_addCreatedAssignment: function (data, sTargetPath, sDummyPath) {
+			if (data.Guid === "") {
+				this.oGanttModel.setProperty(sDummyPath, null);
+				return;
+			}
+			this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+			this.oGanttModel.setProperty(sDummyPath, data);
+			this.oGanttOriginDataModel.setProperty(sDummyPath, data);
+			if (this._routeName !== Constants.GANTT.SPLIT) {
+				this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			}
+			this.oGanttModel.refresh();
+		},
 		/**
 		 * Change view horizon time at specified timestamp
 		 * @param oModel {object} viewModel
@@ -761,6 +912,48 @@ sap.ui.define([
 			Promise.all(aPromises).then(function (data) {
 				console.log(data);
 				this._addAssignemets(data[0].results);
+				this._addAvailabilities(data[1].results);
+				this.getModel().setUseBatch(true);
+				this._treeTable.setBusy(false);
+				this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
+			}.bind(this));
+		},
+		/**
+		 * Getting assignments and adding into the gantt hierarchy
+		 * @Author Rahul
+		 */
+		_callAssignments: function () {
+			var aFilters = [],
+				oUserData = this.getModel("user").getData(),
+				aPromises = [];
+
+			aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+			aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+			this.getModel().setUseBatch(false);
+			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
+			this._treeTable.setBusy(true);
+			Promise.all(aPromises).then(function (data) {
+				this._addAssignemets(data[0].results);
+				this.getModel().setUseBatch(true);
+				this._treeTable.setBusy(false);
+				this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
+			}.bind(this));
+		},
+		/**
+		 * Getting availabilities and adding into the gantt hierarchy
+		 * @Author Rahul
+		 */
+		_callAvailabilities: function () {
+			var aFilters = [],
+				oUserData = this.getModel("user").getData(),
+				aPromises = [];
+
+			aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+			aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+			this.getModel().setUseBatch(false);
+			aPromises.push(this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters));
+			this._treeTable.setBusy(true);
+			Promise.all(aPromises).then(function (data) {
 				this._addAvailabilities(data[1].results);
 				this.getModel().setUseBatch(true);
 				this._treeTable.setBusy(false);
