@@ -135,7 +135,7 @@ sap.ui.define([
 					routeData: [],
 					checkedDemands: [],
 					assignedDemands: [],
-					bRouteDateSelected:false
+					bRouteDateSelected: false
 				},
 				resourceFilterforRightTechnician: false,
 				CheckRightTechnician: false,
@@ -197,7 +197,7 @@ sap.ui.define([
 			this.setModel(oCalendarModel, "calendarModel");
 			// Resource groups model
 			this.setModel(new JSONModel([]), "resGroups");
-			
+
 			//Cost Element Model for Vendor Assignment
 			var oCostElementModel = new JSONModel();
 			oCostElementModel.setSizeLimit(9999999999);
@@ -276,7 +276,7 @@ sap.ui.define([
 			aPromises.push(this._getData("/MapProviderSet", [], {
 				$expand: "MapSource"
 			}));
-			
+
 			//Fetching Cost Element F4 for Vendor Assignment
 			aPromises.push(this._getData("/ShCostelementSet", [], {}));
 

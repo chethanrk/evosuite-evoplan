@@ -1,5 +1,5 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/BaseController",
+	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -12,6 +12,10 @@ sap.ui.define([
 
 	return BaseController.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
 
+		isBusyShape: function (bAllowProperty, bIsBusy) {
+			return bAllowProperty && !bIsBusy;
+		},
+
 		/**
 		 * save assignment after drop
 		 * Calls the function import of create assignment the returns the promise.
@@ -22,9 +26,10 @@ sap.ui.define([
 		 */
 		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, oNewEndDate, aGuids) {
 			var oModel = this.getModel(),
-				targetObj = oModel.getProperty(sTargetPath),
+				oGanttModel = this.getModel("ganttModel"),
+				targetObj = oGanttModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
-				aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
+				// aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
 				aPromises = [],
 				oDemandObj;
 
@@ -123,35 +128,30 @@ sap.ui.define([
 			});
 		},
 
-		_showBusyForShape: function (oShape, isBusy) {
-			//oShape.setSelectable(!isBusy);
-			if (isBusy) {
-				oShape.setOpacity(0.5);
-				oShape.setStrokeOpacity(0.5);
-			} else {
-				oShape.setOpacity(1);
-				oShape.setStrokeOpacity(0.5);
-			}
-		},
-
 		/**
-		 * proceed to Service call after validation
+		 * Validation of demand for resource qualification
 		 * 
-		 * @param {Object} aSourcePaths
-		 * @param {String} targetObj
-		 * @param {Object} oParams
-		 * @param {Object} mParameters
+		 * @param {Array} aSourcePaths - collection of demand pathes
+		 * @param {String} targetObj - target resource for node ID
+		 * @param {Object} oTargetDate - new start date 
+		 * @param {Object} oNewEndDate - new end date
+		 * @param {Array} aGuids - collection of IDs from Demands
 		 **/
-		checkQualification: function (aSourcePaths, targetObj, oTargetDate, oNewEndDate, aGuids) {
+		checkQualification: function (aSourcePaths, oTargetObj, oTargetDate, oNewEndDate, aGuids) {
 			var oQualificationParameters,
 				oModel = this.getModel(),
 				sDemandGuids = "",
 				aItems = aSourcePaths ? aSourcePaths : aGuids;
 			return new Promise(function (resolve, reject) {
+				//collect all demand Guids for function import
 				for (var i = 0; i < aItems.length; i++) {
 					var sPath = aItems[i].sPath ? aItems[i].sPath : aItems[i];
-					var demandObj = oModel.getProperty(sPath);
-					var sDemandGuid = demandObj ? demandObj.Guid : sPath.split("'")[1];
+					if (sPath.indexOf("'") >= 0 && !aSourcePaths) {
+						sPath = sPath.split("'")[1];
+					}
+
+					var oDemandObj = oModel.getProperty(sPath);
+					var sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i];
 					if (sDemandGuids === "") {
 						sDemandGuids = sDemandGuid;
 					} else {
@@ -160,16 +160,39 @@ sap.ui.define([
 				}
 				oQualificationParameters = {
 					DemandMultiGuid: sDemandGuids,
-					ObjectId: targetObj.NodeId, //targetObj.ResourceGroupGuid,
+					ObjectId: oTargetObj.NodeId, //targetObj.ResourceGroupGuid,
 					StartTimestamp: oTargetDate,
 					EndTimestamp: oNewEndDate ? oNewEndDate : oTargetDate
 				};
-				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData,
-					response) {
-					resolve({
-						params: oQualificationParameters,
-						result: oData
-					});
+				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(
+					function (oData, response) {
+						resolve({
+							params: oQualificationParameters,
+							result: oData
+						});
+					}, reject);
+			}.bind(this));
+		},
+
+		/**
+		 *
+		 * @param aSources - Demands as sources
+		 * @param oTarget - Resource as target
+		 * @param oTargetDate - date and time on which demand is dropped
+		 * Checking Availability of resource to stretch the assignment end date.
+		 * @private
+		 */
+		_checkAvailability: function (aSources, oTarget, oTargetDate, aGuids) {
+			var oModel = this.getModel(),
+				oGanttModel = this.getModel("ganttModel"),
+				sGuid = aSources ? oModel.getProperty(aSources[0] + "/Guid") : aGuids[0].split("'")[1];
+			return new Promise(function (resolve, reject) {
+				this.executeFunctionImport(oModel, {
+					ResourceGuid: oGanttModel.getProperty(oTarget + "/ResourceGuid"),
+					StartTimestamp: oTargetDate || new Date(),
+					DemandGuid: sGuid
+				}, "ResourceAvailabilityCheck", "GET").then(function (data) {
+					resolve(data);
 				});
 			}.bind(this));
 		},

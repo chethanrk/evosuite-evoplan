@@ -58,10 +58,6 @@ sap.ui.define([
 			this.oView.addDependent(oDialog);
 			// open dialog
 			oDialog.open();
-			if (mParameters && mParameters.bFromGantt) {
-				this._component.getModel("viewModel").setProperty("/ganttSettings/busy", false);
-			}
-
 			this.onOperationTimesRowDisable();
 		},
 
@@ -74,13 +70,13 @@ sap.ui.define([
 			var oTable = sap.ui.getCore().byId("idAsgnDateCheckTable"),
 				oViewModel = oTable.getModel("viewModel"),
 				aOperationTimesList = oViewModel.getProperty("/dragSession");
-				
-				for(var p in aOperationTimesList){
-					if(aOperationTimesList[p].IsDisplayed){
-						aOperationTimesList[p].IsSelected = true;
-					}
+
+			for (var p in aOperationTimesList) {
+				if (aOperationTimesList[p].IsDisplayed) {
+					aOperationTimesList[p].IsSelected = true;
 				}
-				oViewModel.refresh(true);
+			}
+			oViewModel.refresh(true);
 		},
 
 		/**

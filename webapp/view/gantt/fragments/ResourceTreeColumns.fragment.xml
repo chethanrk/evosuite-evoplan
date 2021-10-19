@@ -11,9 +11,6 @@
 				isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}"
 				showWorkTime="{path: 'ganttModel>NodeType', formatter: '.formatter.isResource'}"
 				workTime="{path:'ganttModel>ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}">
-				<controls:customData>
-					<core:CustomData key="objectId" value="{ganttModel>NodeId}" writeToDom="false"></core:CustomData>
-				</controls:customData>
 			</controls:CustomTitle>
 		</table:template>
 	</table:Column>

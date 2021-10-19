@@ -28,8 +28,8 @@
 				</gnt2:toolbar>
 				<gnt2:ganttCharts>
 					<gnt2:GanttChartWithTable id="ganttResourceAssignments" ghostAlignment="Start" adhocLineLayer="Bottom" shapeSelectionMode="Single"
-						shapeSelectionSettings="{color:'red', strokeDasharray:'1,0'}" shapeDrop="onShapeDrop" shapeResize="onShapeResize"
-						shapeMouseEnter="onShapeMouseEnter" shapeMouseLeave="onShapeMouseLeave" shapeDoubleClick="onShapeDoubleClick"
+						shapeSelectionSettings="{color:'red', strokeDasharray:'1,0'}" dragStart="onShapeDragStart" shapeDrop="onShapeDrop"
+						shapeResize="onShapeResize" shapeMouseEnter="onShapeMouseEnter" shapeMouseLeave="onShapeMouseLeave" shapeDoubleClick="onShapeDoubleClick"
 						shapeContextMenu="onShapeContextMenu" showShapeTimeOnDrag="true" selectionPanelSize="{viewModel>/ganttSelectionPane}" nowLineInUTC="false">
 						<gnt2:table>
 							<table:TreeTable id="ganttResourceTreeTable" class="resourceGanttTreeTable" selectionMode="Single" visibleRowCountMode="Auto" threshold="10"
@@ -63,11 +63,11 @@
 									</gnt2:GanttRowSettings>
 								</table:rowSettingsTemplate>
 								<table:dragDropConfig>
-									<dnd:DropInfo targetAggregation="rows" dropPosition="On" drop="onDropOnResource"/>
+									<dnd:DropInfo targetAggregation="rows" dropPosition="On" drop="onDemandDrop"/>
 								</table:dragDropConfig>
 								<table:columns>
 									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.ResourceTreeColumns" type="XML"/>
-									<table:Column width="20%" visible="{viewModel>/showUtilization}">
+									<table:Column width="5rem" visible="{viewModel>/showUtilization}">
 										<table:customData>
 											<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
 										</table:customData>
