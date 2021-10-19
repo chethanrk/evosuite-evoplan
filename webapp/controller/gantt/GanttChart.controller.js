@@ -45,6 +45,10 @@ sap.ui.define([
 			this._axisTime = this.getView().byId("idAxisTime");
 			this._userData = this.getModel("user").getData();
 
+			this._oEventBus = sap.ui.getCore().getEventBus();
+			this._oEventBus.subscribe("BaseController", "refreshGanttChart", this._refreshGanttChart, this);
+			//this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
+
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				//this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
@@ -75,6 +79,12 @@ sap.ui.define([
 			this.getOwnerComponent().GanttResourceFilter.init(this.getView(), this._treeTable);
 		},
 
+		/**
+		 * on page exit
+		 */
+		onExit: function () {
+			this._oEventBus.unsubscribe("BaseController", "refreshGanttChart", this._refreshGanttChart, this);
+		},
 		/* =========================================================== */
 		/* event methods                                               */
 		/* =========================================================== */
@@ -193,7 +203,7 @@ sap.ui.define([
 			this.oGanttModel.setProperty(sPath + "/OldAssignPath", sPath.split("/AssignmentSet/results/")[0]);
 
 			if (oShape && oShape.sParentAggregationName === "shapes3") {
-				this._updateDraggedShape(oShape, sPath, this.mRequestTypes.resize);
+				this._updateDraggedShape(sPath, this.mRequestTypes.resize);
 			}
 		},
 
@@ -233,37 +243,44 @@ sap.ui.define([
 				sFunctionKey = oSelectedItem.data("Function"),
 				oData = this.oGanttModel.getProperty(sPath),
 				oAppModel = this.getModel("appView"),
+				sDataModelPath = this._getAssignmentDataModelPath(oData.Guid),
 				mParameters = {
-					bFromGantt: true
+					bFromGantt: true,
+					sSourcePath: sPath,
+					bCustomBusy: true
 				};
 			//still needed?
 			if (oAppModel.getProperty("/currentRoute") === "ganttSplit") {
 				mParameters = {
+					bFromGantt: false,
 					bFromGanttSplit: true
 				};
 			}
 			localStorage.setItem("Evo-Action-page", "ganttSplit");
+			this.oGanttModel.setProperty(sPath + "/busy", true);
+			//get demand details to assignment
 
 			if (sFunctionKey) {
 				//user status update
 				this._oEventBus.publish("StatusSelectDialog", "changeStatusDemand", {
 					selectedPaths: [{
 						oData: {
-							Guid: oData.Demand.DemandGuid
+							Guid: oData.DemandGuid
 						}
 					}],
 					functionKey: sFunctionKey,
 					parameters: mParameters
 				});
-
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonChange")) {
-				//Todo show dialog with assignment details
+				//change assignment
+				this.openAssignInfoDialog(this.getView(), sDataModelPath, null, mParameters, null);
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonUnassign")) {
-				this._deleteAssignment(this.getModel(), oData.Guid, sPath); //unassign
+				//unassign
+				this._deleteAssignment(this.getModel(), oData.Guid, sPath);
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonReassign")) {
 				//Todo reassign
 				//oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
-				this.getOwnerComponent().assignTreeDialog.open(this, this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, mParameters, "ganttShapeReassignment");
 			}
 		},
 
@@ -298,6 +315,40 @@ sap.ui.define([
 		/* =========================================================== */
 		/* intern methods                                              */
 		/* =========================================================== */
+
+		/**
+		 * fetch event when callFunctionImport happened in BaseController
+		 * @param {String} sChannel
+		 * @param {String} sEvent
+		 * @param {Object} oData - oData{mParams, oSourceData, oResultData}
+		 */
+		_refreshGanttChart: function (sChannel, sEvent, oData) {
+			if (sChannel === "BaseController" && sEvent === "refreshGanttChart") {
+				console.log(oData);
+				if (oData.mParams.bContainsError) {
+					return; //when there was an error in function import
+				}
+				//update ganttModels with results from function import
+				if (oData.mParams.sSourcePath) {
+					this.oGanttModel.setProperty(oData.mParams.sSourcePath + "/busy", false);
+					if (!oData.oResultData.Guid) {
+						//after unassign
+						this.oGanttOriginDataModel.setProperty(oData.mParams.sSourcePath, null);
+						this.oGanttModel.setProperty(oData.mParams.sSourcePath, null);
+					} else {
+						//after update
+						var oOriginData = this.oGanttOriginDataModel.getProperty(oData.mParams.sSourcePath);
+						for (var key in oData.oResultData) {
+							if (oOriginData.hasOwnProperty(key) && oData.oResultData[key] !== "__deferred") {
+								oOriginData[key] = oData.oResultData[key];
+							}
+						}
+						this.oGanttOriginDataModel.setProperty(oData.mParams.sSourcePath, oOriginData);
+						this.oGanttModel.setProperty(oData.mParams.sSourcePath, _.cloneDeep(oOriginData));
+					}
+				}
+			}
+		},
 
 		/**
 		 * set onShapeDrop data to new target
@@ -359,18 +410,16 @@ sap.ui.define([
 		/**
 		 * when shape was dragged or resized to another place
 		 * update assignment
-		 * @param {String/Object} oShape - Could be shape UId as string or shape control
-		 * @param {Object} oData
 		 * @param {String} sPath
 		 * @param {String} sRequestType
 		 */
-		_updateDraggedShape: function (oShape, sPath, sRequestType) {
+		_updateDraggedShape: function (sPath, sRequestType) {
 			this.oGanttModel.setProperty(sPath + "/busy", true);
 			var oData = this.oGanttModel.getProperty(sPath);
 			//get demand details to this assignment
 			this._getRelatedDemandData(oData).then(function (oResult) {
 				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
-				this._validateAndSendChangedData(oShape, sPath, sRequestType).then(null, function () {
+				this._validateAndSendChangedData(sPath, sRequestType).then(null, function () {
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
@@ -425,7 +474,7 @@ sap.ui.define([
 		 * @param {String} sType from this._mRequestTypes
 		 * @return {Promise} 
 		 */
-		_validateAndSendChangedData: function (oShape, sPath, sType) {
+		_validateAndSendChangedData: function (sPath, sType) {
 			return new Promise(function (resolve, reject) {
 				var oPendingChanges = this._updatePendingChanges(sPath, sType),
 					oData = this.oGanttModel.getProperty(sPath);
@@ -437,23 +486,22 @@ sap.ui.define([
 				//when user wants proceed check qualification
 				if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
 					this._checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
-						this._proceedWithUpdateAssignment(oShape, sPath, sType, oPendingChanges, oData).then(resolve, reject);
+						this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
 					}.bind(this), reject);
 				} else {
-					this._proceedWithUpdateAssignment(oShape, sPath, sType, oPendingChanges, oData).then(resolve, reject);
+					this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
 				}
 			}.bind(this));
 		},
 
 		/**
-		 * 
-		 * @param {Object} oShape
+		 * After qualification check make update of assignment
 		 * @param {Object} sPath
 		 * @param {Object} sType
 		 * @param {Object} oPendingChanges
 		 * @param {Object} oData
 		 */
-		_proceedWithUpdateAssignment: function (oShape, sPath, sType, oPendingChanges, oData) {
+		_proceedWithUpdateAssignment: function (sPath, sType, oPendingChanges, oData) {
 			return new Promise(function (resolve, reject) {
 				this.clearMessageModel();
 				var oParams = {
@@ -569,7 +617,6 @@ sap.ui.define([
 
 		/**
 		 * validate shape data on resize
-		 * @param {Object} oShape
 		 * @param {String} sPath
 		 * @return Promise
 		 */

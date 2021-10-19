@@ -1,6 +1,6 @@
 /* globals _ */
 sap.ui.define([
-	"com/evorait/evoplan/controller/BaseController",
+	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -8,13 +8,26 @@ sap.ui.define([
 	"sap/m/Tokenizer",
 	"sap/ui/core/Fragment",
 	"sap/m/MessageToast"
-], function (BaseController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageToast) {
+], function (AssignmentsController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageToast) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
+	return AssignmentsController.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
 
+		/**
+		 * formatter for for Gantt view
+		 */
 		isBusyShape: function (bAllowProperty, bIsBusy) {
 			return bAllowProperty && !bIsBusy;
+		},
+
+		/**
+		 * get full path off assignment 
+		 * @param {String} Guid
+		 */
+		_getAssignmentDataModelPath: function (Guid) {
+			return "/" + this.getModel().createKey("AssignmentSet", {
+				Guid: Guid
+			});
 		},
 
 		/**

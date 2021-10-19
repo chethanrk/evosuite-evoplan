@@ -45,7 +45,7 @@ sap.ui.define([
 				oAssignData,
 				sResourceGroupGuid,
 				sResourceGuid;
-				this._oDialog = oDialog;
+			this._oDialog = oDialog;
 
 			if (sBindPath && sBindPath !== "") {
 				oResource = oView.getModel().getProperty(sBindPath);
@@ -107,7 +107,7 @@ sap.ui.define([
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 			// connect dialog to view (models, lifecycle)
 			oView.addDependent(oDialog);
-			if(!data){
+			if (!data) {
 				data = oAssignmentData;
 			}
 			this._getAssignedDemand(oAssignementPath, data);
@@ -139,14 +139,13 @@ sap.ui.define([
 				iNewEffort = this.getEffortTimeDifference(sDateFrom, sDateTo),
 				oResourceBundle = this._oView.getController().getResourceBundle();
 			//Replacing comma in DE language with dot if any
-			this.oAssignmentModel.setProperty("/Effort",sEffort.replace(',','.'));
+			this.oAssignmentModel.setProperty("/Effort", sEffort.replace(",", "."));
 			sEffort = this.oAssignmentModel.getProperty("/Effort");
-			
+
 			if (Number(iNewEffort) < Number(sEffort)) {
 				this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
 					if (oAction === "YES") {
 						this.onSaveAssignments();
-					} else {
 					}
 				}.bind(this));
 
@@ -154,7 +153,7 @@ sap.ui.define([
 				this.onSaveAssignments();
 			}
 		},
-		
+
 		/**
 		 * save form data
 		 * @param oEvent
@@ -305,35 +304,35 @@ sap.ui.define([
 							oModel.setProperty("/showError", true);
 							return;
 						}*/
-						//Setting min date to DateTo to restrict selection of invalid dates
-						// oDateToField.setMinDate(oContext.getProperty("DateFrom"));
+			//Setting min date to DateTo to restrict selection of invalid dates
+			// oDateToField.setMinDate(oContext.getProperty("DateFrom"));
 
-						oModel.setProperty("/showError", false);
-						if (oModel.getProperty("/DateFrom") === "" || oModel.getProperty("/DateTo") === "") {
-							oModel.setProperty("/DateFrom", data.DateFrom);
-							oModel.setProperty("/DateTo", data.DateTo);
-						}
+			oModel.setProperty("/showError", false);
+			if (oModel.getProperty("/DateFrom") === "" || oModel.getProperty("/DateTo") === "") {
+				oModel.setProperty("/DateFrom", data.DateFrom);
+				oModel.setProperty("/DateTo", data.DateTo);
+			}
 
-						oModel.setProperty("/Effort", data.Effort);
-						oModel.setProperty("/EffortUnit", data.EffortUnit);
-						
-						//Fetching Resource Start and End Date from AssignmentSet for validating on save
-						oModel.setProperty("/RES_ASGN_START_DATE", data.RES_ASGN_START_DATE);
-						oModel.setProperty("/RES_ASGN_END_DATE", data.RES_ASGN_END_DATE);
+			oModel.setProperty("/Effort", data.Effort);
+			oModel.setProperty("/EffortUnit", data.EffortUnit);
 
-						var oDemandData = data.Demand;
-						oModel.setProperty("/Description", oDemandData.DemandDesc);
-						oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
-						oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
-						oModel.setProperty("/AllowChange", oDemandData.ASGNMNT_CHANGE_ALLOWED);
-						oModel.setProperty("/OrderId", oDemandData.ORDERID);
-						oModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
-						oModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
-						oModel.setProperty("/DemandStatus", oDemandData.Status);
-						oModel.setProperty("/DemandGuid", oDemandData.Guid);
-						oModel.setProperty("/Notification", oDemandData.NOTIFICATION);
-						oModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
-					/*},
+			//Fetching Resource Start and End Date from AssignmentSet for validating on save
+			oModel.setProperty("/RES_ASGN_START_DATE", data.RES_ASGN_START_DATE);
+			oModel.setProperty("/RES_ASGN_END_DATE", data.RES_ASGN_END_DATE);
+
+			var oDemandData = data.Demand;
+			oModel.setProperty("/Description", oDemandData.DemandDesc);
+			oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
+			oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
+			oModel.setProperty("/AllowChange", oDemandData.ASGNMNT_CHANGE_ALLOWED);
+			oModel.setProperty("/OrderId", oDemandData.ORDERID);
+			oModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
+			oModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
+			oModel.setProperty("/DemandStatus", oDemandData.Status);
+			oModel.setProperty("/DemandGuid", oDemandData.Guid);
+			oModel.setProperty("/Notification", oDemandData.NOTIFICATION);
+			oModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
+			/*},
 					dataRequested: function () {
 						oDialog.setBusy(true);
 					},
@@ -463,13 +462,13 @@ sap.ui.define([
 			}
 
 		},
-		
+
 		/**
 		 * On Change of Assignment Dates
 		 * Validating Start and End Date falls within Resource Start and End Date
 		 * 
 		 */
-		onAssignmentDateChange : function(){
+		onAssignmentDateChange: function () {
 			var bValidDateFrom, bValidDateTo,
 				sResStartDate = this.oAssignmentModel.getProperty("/RES_ASGN_START_DATE"),
 				sResEndDate = this.oAssignmentModel.getProperty("/RES_ASGN_END_DATE"),
@@ -480,7 +479,7 @@ sap.ui.define([
 			bValidDateFrom = sDateFrom <= sResEndDate && sDateFrom >= sResStartDate;
 			//Checking DateTo falls within Resource Start and End Date
 			bValidDateTo = sDateTo <= sResEndDate && sDateTo >= sResStartDate;
-		
+
 			//If DateFrom and DateTo doesn't fall within Resource Start and End Date
 			if (!bValidDateFrom || !bValidDateTo) {
 				this._showEffortConfirmMessageBox(this._oView.getController().getResourceBundle().getText("ymsg.targetValidity")).then(function (
@@ -488,8 +487,7 @@ sap.ui.define([
 					if (oAction === "YES") {
 						this.oAssignmentModel.setProperty("/DateFrom", this.oAssignmentModel.getProperty("/RES_ASGN_START_DATE"));
 						this.oAssignmentModel.setProperty("/DateTo", this.oAssignmentModel.getProperty("/RES_ASGN_END_DATE"));
-					} else {
-					}
+					} else {}
 				}.bind(this));
 			}
 		},
