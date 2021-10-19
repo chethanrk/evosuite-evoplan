@@ -113,6 +113,10 @@ sap.ui.define([
 			//based on the opertion different method calls
 			switch (sSourceMethod) {
 			case "assignedDemands":
+				if (this.fnSuccessCallback) {
+					this.fnSuccessCallback();
+					break;
+				}
 				this.proceedToServiceCallAssignDemands(aSelectedSourcePaths, targetObj, mParameters, oParams);
 				break;
 			case "bulkReAssignment":
