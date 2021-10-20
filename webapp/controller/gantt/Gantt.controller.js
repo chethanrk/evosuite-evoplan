@@ -580,7 +580,6 @@ sap.ui.define([
 						} else {
 							this.getModel().resetChanges(oData.aSourcePaths);
 						}
-
 					}.bind(this));
 				}
 			}
