@@ -252,7 +252,6 @@ sap.ui.define([
 				oData = this.oGanttModel.getProperty(sPath),
 				oAppModel = this.getModel("appView"),
 				sDataModelPath = this._getAssignmentDataModelPath(oData.Guid),
-				callbackEvent = "ganttShapeReassignment",
 				mParameters = {
 					bFromNewGantt: true,
 					sSourcePath: sPath,
@@ -1093,62 +1092,24 @@ sap.ui.define([
 		_refreshAssignments: function (sChannel, sEvent, oData) {
 			if (sChannel === "BaseController" && sEvent === "refreshAssignments") {
 				//update ganttModels with results from function import
-				if (oData.mParams && oData.mParams.sSourcePath) {
-					this.oGanttModel.setProperty(oData.mParams.sSourcePath + "/busy", false);
-					if (oData.mParams.bContainsError) {
-						return; //when there was an error in function import
-					}
-					//when only single assignment was changed
-					this._refreshSingleAssignment(oData);
+				var aFilters = [],
+					oUserData = this.getModel("user").getData(),
+					aPromises = [];
 
-				} else { //when bulk change happened
-					var aFilters = [],
-						oUserData = this.getModel("user").getData(),
-						aPromises = [];
-
-					aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
-					aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-					this.getModel().setUseBatch(false);
-					aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
-					this._treeTable.setBusy(true);
-					Promise.all(aPromises).then(function (data) {
-						this._addAssignemets(data[0].results);
-						this.getModel().setUseBatch(true);
-						this._treeTable.setBusy(false);
-						this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
-					}.bind(this));
-				}
+				aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+				aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+				this.getModel().setUseBatch(false);
+				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
+				this._treeTable.setBusy(true);
+				Promise.all(aPromises).then(function (data) {
+					this._addAssignemets(data[0].results);
+					this.getModel().setUseBatch(true);
+					this._treeTable.setBusy(false);
+					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
+				}.bind(this));
 			}
 		},
 
-		/**
-		 * refresh only single assignment with data from function import result
-		 * @param {Object} oData 
-		 */
-		_refreshSingleAssignment: function (oData) {
-			if (!oData.oResultData.Guid) {
-				//after unassign
-				this.oGanttOriginDataModel.setProperty(oData.mParams.sSourcePath, null);
-				this.oGanttModel.setProperty(oData.mParams.sSourcePath, null);
-			} else {
-				//after update
-				var oOriginData = this.oGanttOriginDataModel.getProperty(oData.mParams.sSourcePath);
-				if (oData.oResultData.ResourceGuid && oOriginData.ResourceGuid === oData.oResultData.ResourceGuid) {
-					//when single data was changed
-					for (var key in oData.oResultData) {
-						if (oOriginData.hasOwnProperty(key) && oData.oResultData[key] !== "__deferred") {
-							oOriginData[key] = oData.oResultData[key];
-						}
-					}
-					this.oGanttOriginDataModel.setProperty(oData.mParams.sSourcePath, oOriginData);
-					this.oGanttModel.setProperty(oData.mParams.sSourcePath, _.cloneDeep(oOriginData));
-
-				} else {
-					//when its reassignment refresh whole tree assignments
-					this._refreshAssignments("BaseController", "refreshAssignments", {});
-				}
-			}
-		},
 		/**
 		 * fetch event when callFunctionImport happened in BaseController
 		 * @param {String} sChannel
@@ -1164,7 +1125,7 @@ sap.ui.define([
 				aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 				aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
 				aFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, oData.resource));
-				this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters).then(function(data){
+				this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters).then(function (data) {
 					this.oGanttModel.setProperty(sSelectedResourcePath + "/ResourceAvailabilitySet/results", data.results);
 					this.oGanttOriginDataModel.setProperty(sSelectedResourcePath + "/ResourceAvailabilitySet/results", data.results);
 					this.oGanttModel.refresh();
@@ -1220,8 +1181,8 @@ sap.ui.define([
 		 * Resets the selected resource if selected and disable the action buttons
 		 */
 		_resetSelections: function () {
-			for(var i in this.selectedResources){
-				this.oGanttModel.setProperty(this.selectedResources[i] + "/IsSelected" , false);
+			for (var i in this.selectedResources) {
+				this.oGanttModel.setProperty(this.selectedResources[i] + "/IsSelected", false);
 			}
 			this.selectedResources = [];
 		},
