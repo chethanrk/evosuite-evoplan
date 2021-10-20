@@ -6,83 +6,54 @@ sap.ui.define(["sap/uxap/BlockBase"], function (BlockBase) {
 				onRowClick: {}
 			}
 		},
-			/**
+		/**
 		 * Specifies the text fot Material Status
 		 * @param sValue
 		 * @returns Material Status on given Value
 		 */
-		formatMaterialStatus: function (sStatus,sStatusDesc) {
-			if(sStatus === "1")
-			{
+		formatMaterialStatus: function (sStatus, sStatusDesc) {
+			if (sStatus === "1") {
 				return sStatusDesc;
-			}
-			else if(sStatus === "2")
-			{
+			} else if (sStatus === "2") {
 				return sStatusDesc;
-			}
-			else if(sStatus === "3")
-			{
+			} else if (sStatus === "3") {
 				return sStatusDesc;
-			}
-			else
-			{
+			} else {
 				return sStatusDesc;
 			}
 		},
 		formatMaterialStatusIcon: function (sValue) {
-			if(sValue === "1")
-			{
+			if (sValue === "1") {
 				return "sap-icon://message-success";
-			}
-			else if(sValue === "2")
-			{
+			} else if (sValue === "2") {
 				return "sap-icon://message-warning";
-			}
-			else if(sValue === "3")
-			{
+			} else if (sValue === "3") {
 				return "sap-icon://message-error";
-			}
-			else
-			{
+			} else {
 				return "sap-icon://pending";
 			}
 		},
 		formatMaterialState: function (sValue) {
-			if(sValue === "1")
-			{
+			if (sValue === "1") {
 				return "Success";
-			}
-			else if(sValue === "2")
-			{
+			} else if (sValue === "2") {
 				return "Warning";
-			}
-			else if(sValue === "3")
-			{
+			} else if (sValue === "3") {
 				return "Error";
-			}
-			else
-			{
+			} else {
 				return "Information";
 			}
 		},
-		formatMatStatusTooltip: function(sStatus,sStatusDesc)
-		{
-				var	oBundle = this.getResourceBundle();
-			if(sValue === "1")
-			{
+		formatMatStatusTooltip: function (sStatus, sStatusDesc) {
+			var oBundle = this.getResourceBundle();
+			if (sStatus === "1") {
 				return oBundle.getText("xtit.available");
-			}
-			else if(sValue === "2")
-			{
+			} else if (sStatus === "2") {
 				return oBundle.getText("xtit.partialAvailable");
-			}
-			else if(sValue === "3")
-			{
+			} else if (sStatus === "3") {
 				return oBundle.getText("xtit.notAvailable");
-			}
-			else
-			{
-				return  oBundle.getText("xtit.refreshTooltip");
+			} else {
+				return oBundle.getText("xtit.refreshTooltip");
 			}
 		},
 	});

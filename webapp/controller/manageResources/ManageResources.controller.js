@@ -460,7 +460,7 @@ sap.ui.define([
 				MessageToast.show(this._oResourceBundle.getText("ymsg.invalidDateRange"));
 				return;
 			}
-			oSelectedRow = this.convertDateToUTC(oSelectedRow, true)
+			oSelectedRow = this.convertDateToUTC(oSelectedRow, true);
 			if (this.isDataChanged(oSelectedRow, oUpdatedRow)) {
 				if (sNodeType === "RESOURCE") {
 					if (oSelectedRow.AssignmentCount) {

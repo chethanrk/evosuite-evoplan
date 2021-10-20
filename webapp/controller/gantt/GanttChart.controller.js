@@ -46,8 +46,8 @@ sap.ui.define([
 			this._axisTime = this.getView().byId("idAxisTime");
 			this._userData = this.getModel("user").getData();
 
-			this._oEventBus.subscribe("BaseController", "refreshAssignments", this._callAssignments, this);
-			
+			this._oEventBus.subscribe("BaseController", "refreshAssignments", this._refreshAssignments, this);
+
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
@@ -64,11 +64,11 @@ sap.ui.define([
 					this._addAssociations.bind(this)();
 				}
 			}.bind(this));
-			
+
 			// this.getRouter().getRoute("ganttSplit").attachPatternMatched(function () {
 			// 	this._routeName = Constants.GANTT.SPLIT;
 			// 	this._mParameters = {
-			// 		bFromGanttSplit: true
+			// 		bFromNewGanttSplit: true
 			// 	};
 			// }.bind(this));
 
@@ -85,6 +85,12 @@ sap.ui.define([
 			this.getOwnerComponent().GanttResourceFilter.init(this.getView(), this._treeTable);
 		},
 
+		/**
+		 * on page exit
+		 */
+		onExit: function () {
+			this._oEventBus.unsubscribe("BaseController", "refreshAssignments", this._refreshAssignments, this);
+		},
 		/* =========================================================== */
 		/* event methods                                               */
 		/* =========================================================== */
@@ -203,45 +209,85 @@ sap.ui.define([
 			this.oGanttModel.setProperty(sPath + "/OldAssignPath", sPath.split("/AssignmentSet/results/")[0]);
 
 			if (oShape && oShape.sParentAggregationName === "shapes3") {
-				this._updateDraggedShape(oShape, sPath, this.mRequestTypes.resize);
+				this._updateDraggedShape(sPath, this.mRequestTypes.resize);
 			}
 		},
 
 		/**
-		 * Formatter for the color fill
-		 * Based on the group type the fill the color will be rendered.
-		 * A -> White
-		 * N -> Pattern
-		 * @param sType
-		 * @return {string}
+		 * right click on shape will show context menu with possible actions
+		 * @param oEvent
 		 */
-		getPattern: function (sType, sColour) {
-			if (sType === "N") {
-				return "url(#" + this._viewId + "--unavailability)";
-			} else if (sType === "A") {
-				return "#FFF";
-			} else if (sType === "O") {
-				return "transparent";
-			} else if (sType === "T") {
-				return "url(#" + this._viewId + "--oncallorovertime)";
-			} else if (sType === "L") {
-				return sColour;
-			} else {
-				return "transparent";
-			}
+		onShapeContextMenu: function (oEvent) {
+			var oParams = oEvent.getParameters(),
+				oShape = oParams.shape,
+				oContext = oShape.getBindingContext("ganttModel");
 
+			if (oShape && oShape.sParentAggregationName === "shapes3") {
+				if (!this._oContextMenu) {
+					Fragment.load({
+						name: "com.evorait.evoplan.view.gantt.fragments.ShapeContextMenu",
+						controller: this
+					}).then(function (oDialog) {
+						this._oContextMenu = oDialog;
+						this.getView().addDependent(this._oContextMenu);
+						this._openContextMenu(oShape, oContext);
+					}.bind(this));
+				} else {
+					this._openContextMenu(oShape, oContext);
+				}
+			}
 		},
+
 		/**
-		 * Format legend colors to differentiate between pattern and colors
-		 * @param sCode
-		 * @param sType
-		 * @return {*}
+		 * on context menu item press
+		 * read custom data from button
 		 */
-		formatLegend: function (sCode, sType) {
-			if (sType === "COLOUR") {
-				return sCode;
-			} else {
-				return "url(#" + this._viewId + "--" + sCode + ")";
+		handleMenuItemPress: function (oEvent) {
+			var oParams = oEvent.getParameters(),
+				oSelectedItem = oParams.item,
+				sPath = oEvent.getSource().data("Path"),
+				sFunctionKey = oSelectedItem.data("Function"),
+				oData = this.oGanttModel.getProperty(sPath),
+				oAppModel = this.getModel("appView"),
+				sDataModelPath = this._getAssignmentDataModelPath(oData.Guid),
+				mParameters = {
+					bFromNewGantt: true,
+					sSourcePath: sPath,
+					bCustomBusy: true
+				};
+			//still needed?
+			if (oAppModel.getProperty("/currentRoute") === "ganttSplit") {
+				mParameters = {
+					bFromNewGantt: false,
+					bFromNewGanttSplit: true
+				};
+			}
+			localStorage.setItem("Evo-Action-page", "ganttSplit");
+			this.oGanttModel.setProperty(sPath + "/busy", true);
+			//get demand details to assignment
+
+			if (sFunctionKey) {
+				//user status update
+				this._oEventBus.publish("StatusSelectDialog", "changeStatusDemand", {
+					selectedPaths: [{
+						oData: {
+							Guid: oData.DemandGuid
+						}
+					}],
+					functionKey: sFunctionKey,
+					parameters: mParameters
+				});
+			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonChange")) {
+				//change assignment
+				this.openAssignInfoDialog(this.getView(), sDataModelPath, null, mParameters, null);
+			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonUnassign")) {
+				//unassign
+				this._deleteAssignment(this.getModel(), oData.Guid, sPath);
+			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonReassign")) {
+				//Todo reassign
+				//oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters,
+					"ganttShapeReassignment");
 			}
 		},
 
@@ -306,23 +352,7 @@ sap.ui.define([
 			localStorage.setItem("Evo-Action-page", "ganttSplit");
 			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true, this._mParameters);
 		},
-		
-		/**
-		 * On click on expand the tree nodes gets expand to level 1
-		 * On click on collapse all the tree nodes will be collapsed to root.
-		 * @param oEvent
-		 */
-		onClickExpandCollapse: function (oEvent) {
-			var oButton = oEvent.getSource(),
-				oCustomData = oButton.getCustomData();
 
-			if (oCustomData[0].getValue() === "EXPAND" && this._treeTable) {
-				this._treeTable.expandToLevel(1);
-			} else {
-				this._treeTable.collapseAll();
-			}
-		},
-		
 		/**
 		 * open the create unavailability dialog for selected resource
 		 * @param oEvent
@@ -451,20 +481,36 @@ sap.ui.define([
 		},
 
 		/**
+		 * open context menu of shape
+		 * @param {Object} oShape - shape control
+		 * @param {Object} oContext - context bound to shape
+		 */
+		_openContextMenu: function (oShape, oContext) {
+			var oData = oContext.getObject();
+			if (oData.DEMAND_STATUS !== "COMP") {
+				this._getRelatedDemandData(oData).then(function (oResult) {
+					oData.sPath = oContext.getPath();
+					this.oGanttModel.setProperty(oData.sPath + "/Demand", oResult.Demand);
+					this.oViewModel.setProperty("/ganttSettings/shapeData", oData);
+					var eDock = Popup.Dock;
+					this._oContextMenu.open(true, oShape, eDock.BeginTop, eDock.endBottom, oShape);
+				}.bind(this));
+			}
+		},
+
+		/**
 		 * when shape was dragged or resized to another place
 		 * update assignment
-		 * @param {String/Object} oShape - Could be shape UId as string or shape control
-		 * @param {Object} oData
 		 * @param {String} sPath
 		 * @param {String} sRequestType
 		 */
-		_updateDraggedShape: function (oShape, sPath, sRequestType) {
+		_updateDraggedShape: function (sPath, sRequestType) {
 			this.oGanttModel.setProperty(sPath + "/busy", true);
 			var oData = this.oGanttModel.getProperty(sPath);
 			//get demand details to this assignment
 			this._getRelatedDemandData(oData).then(function (oResult) {
 				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
-				this._validateAndSendChangedData(oShape, sPath, sRequestType).then(null, function () {
+				this._validateAndSendChangedData(sPath, sRequestType).then(null, function () {
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
@@ -473,44 +519,6 @@ sap.ui.define([
 				this.oGanttModel.setProperty(sPath + "/busy", false);
 				this._resetChanges(sPath);
 			}.bind(this));
-		},
-
-		/**
-		 * Resets a changed data by model path
-		 * Or when bResetAll then all changes are resetted
-		 * @param sPath
-		 * @param bResetAll
-		 */
-		_resetChanges: function (sPath, bResetAll) {
-			var oPendingChanges = this.oGanttModel.getProperty("/pendingChanges");
-			if (oPendingChanges[sPath]) {
-				if (!this._resetNewPathChanges(oPendingChanges[sPath])) {
-					var oOriginData = this.oGanttOriginDataModel.getProperty(sPath);
-					this.oGanttModel.setProperty(sPath, _.cloneDeep(oOriginData));
-				}
-				delete oPendingChanges[sPath];
-
-			} else if (bResetAll) {
-				for (var key in oPendingChanges) {
-					if (!this._resetNewPathChanges(oPendingChanges[sPath])) {
-						this.oGanttModel.setProperty(key, _.cloneDeep(this.oGanttOriginDataModel.getProperty(key)));
-					}
-				}
-				this.oGanttModel.setProperty("/pendingChanges", {});
-			}
-		},
-
-		/**
-		 * resets data when there was a path changes of shapes
-		 * @param {Object} oPendings - GanttModel path /pendingChanges
-		 */
-		_resetNewPathChanges: function (oPendings) {
-			if (oPendings.NewAssignPath) {
-				this.oGanttModel.setProperty(oPendings.NewAssignPath, _.cloneDeep(this.oGanttOriginDataModel.getProperty(oPendings.NewAssignPath)));
-				this.oGanttModel.setProperty(oPendings.OldAssignPath, _.cloneDeep(this.oGanttOriginDataModel.getProperty(oPendings.OldAssignPath)));
-				return true;
-			}
-			return false;
 		},
 
 		/**
@@ -557,7 +565,7 @@ sap.ui.define([
 		 * @param {String} sType from this._mRequestTypes
 		 * @return {Promise} 
 		 */
-		_validateAndSendChangedData: function (oShape, sPath, sType) {
+		_validateAndSendChangedData: function (sPath, sType) {
 			return new Promise(function (resolve, reject) {
 				var oPendingChanges = this._updatePendingChanges(sPath, sType),
 					oData = this.oGanttModel.getProperty(sPath);
@@ -569,23 +577,22 @@ sap.ui.define([
 				//when user wants proceed check qualification
 				if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
 					this._checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
-						this._proceedWithUpdateAssignment(oShape, sPath, sType, oPendingChanges, oData).then(resolve, reject);
+						this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
 					}.bind(this), reject);
 				} else {
-					this._proceedWithUpdateAssignment(oShape, sPath, sType, oPendingChanges, oData).then(resolve, reject);
+					this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
 				}
 			}.bind(this));
 		},
 
 		/**
-		 * 
-		 * @param {Object} oShape
+		 * After qualification check make update of assignment
 		 * @param {Object} sPath
 		 * @param {Object} sType
 		 * @param {Object} oPendingChanges
 		 * @param {Object} oData
 		 */
-		_proceedWithUpdateAssignment: function (oShape, sPath, sType, oPendingChanges, oData) {
+		_proceedWithUpdateAssignment: function (sPath, sType, oPendingChanges, oData) {
 			return new Promise(function (resolve, reject) {
 				this.clearMessageModel();
 				var oParams = {
@@ -732,7 +739,6 @@ sap.ui.define([
 
 		/**
 		 * validate shape data on resize
-		 * @param {Object} oShape
 		 * @param {String} sPath
 		 * @return Promise
 		 */
@@ -792,7 +798,6 @@ sap.ui.define([
 			} else if (oUserData.ENABLE_QUALIFICATION) {
 
 				this._checkResourceQualification(aSources, oTarget, oTargetDate, null, aGuids).then(function (data) {
-					console.log(data);
 					Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, null, aGuids))
 						.then(function (data) {
 							this._addCreatedAssignment(data[0], oTarget, sDummyPath);
@@ -813,8 +818,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_checkAssignmentForStretch: function (oResourceData, aSources, oTarget, oTargetDate, aGuids, fnCheckValidation) {
-			var oViewModel = this.getModel("viewModel"),
-				oResourceModel = this.getResourceBundle();
+			var oResourceModel = this.getResourceBundle();
 			return new Promise(function (resolve, reject) {
 				if (oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && oResourceData.ResourceGuid &&
 						oResourceData.ResourceGuid !== "")) {
@@ -1045,7 +1049,6 @@ sap.ui.define([
 			aPromises.push(this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters));
 			this._treeTable.setBusy(true);
 			Promise.all(aPromises).then(function (data) {
-				console.log(data);
 				this._addAssignemets(data[0].results);
 				this._addAvailabilities(data[1].results);
 				this.getModel().setUseBatch(true);
@@ -1053,27 +1056,74 @@ sap.ui.define([
 				this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
 			}.bind(this));
 		},
+
 		/**
-		 * Getting assignments and adding into the gantt hierarchy
+		 * fetch event when callFunctionImport happened in BaseController
+		 * @param {String} sChannel
+		 * @param {String} sEvent
+		 * @param {Object} oData - oData{mParams, oSourceData, oResultData}
 		 * @Author Rahul
 		 */
-		_callAssignments: function () {
-			var aFilters = [],
-				oUserData = this.getModel("user").getData(),
-				aPromises = [];
+		_refreshAssignments: function (sChannel, sEvent, oData) {
+			if (sChannel === "BaseController" && sEvent === "refreshAssignments") {
+				//update ganttModels with results from function import
+				if (oData.mParams && oData.mParams.sSourcePath) {
+					this.oGanttModel.setProperty(oData.mParams.sSourcePath + "/busy", false);
+					if (oData.mParams.bContainsError) {
+						return; //when there was an error in function import
+					}
+					//when only single assignment was changed
+					this._refreshSingleAssignment(oData);
 
-			aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
-			aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-			this.getModel().setUseBatch(false);
-			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
-			this._treeTable.setBusy(true);
-			Promise.all(aPromises).then(function (data) {
-				this._addAssignemets(data[0].results);
-				this.getModel().setUseBatch(true);
-				this._treeTable.setBusy(false);
-				this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
-			}.bind(this));
+				} else { //when bulk change happened
+					var aFilters = [],
+						oUserData = this.getModel("user").getData(),
+						aPromises = [];
+
+					aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+					aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+					this.getModel().setUseBatch(false);
+					aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
+					this._treeTable.setBusy(true);
+					Promise.all(aPromises).then(function (data) {
+						this._addAssignemets(data[0].results);
+						this.getModel().setUseBatch(true);
+						this._treeTable.setBusy(false);
+						this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
+					}.bind(this));
+				}
+			}
 		},
+
+		/**
+		 * refresh only single assignment with data from function import result
+		 * @param {Object} oData 
+		 */
+		_refreshSingleAssignment: function (oData) {
+			if (!oData.oResultData.Guid) {
+				//after unassign
+				this.oGanttOriginDataModel.setProperty(oData.mParams.sSourcePath, null);
+				this.oGanttModel.setProperty(oData.mParams.sSourcePath, null);
+			} else {
+				//after update
+				var oOriginData = this.oGanttOriginDataModel.getProperty(oData.mParams.sSourcePath);
+				if (oData.oResultData.ResourceGuid && oOriginData.ResourceGuid === oData.oResultData.ResourceGuid) {
+					//when single data was changed
+					for (var key in oData.oResultData) {
+						if (oOriginData.hasOwnProperty(key) && oData.oResultData[key] !== "__deferred") {
+							oOriginData[key] = oData.oResultData[key];
+						}
+					}
+					this.oGanttOriginDataModel.setProperty(oData.mParams.sSourcePath, oOriginData);
+					this.oGanttModel.setProperty(oData.mParams.sSourcePath, _.cloneDeep(oOriginData));
+
+				} else {
+					//when its reassignment refresh whole tree assignments
+					this._refreshAssignments("BaseController", "refreshAssignments", {});
+				}
+			}
+		},
+
 		/**
 		 * Getting availabilities and adding into the gantt hierarchy
 		 * @Author Rahul

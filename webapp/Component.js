@@ -120,8 +120,7 @@ sap.ui.define([
 				DefaultDemandStatus: "",
 				ganttSettings: {
 					active: false,
-					busy: false,
-					shapeOpearation: {
+					shapeOperation: {
 						unassign: false,
 						reassign: false,
 						change: false
