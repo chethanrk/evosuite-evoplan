@@ -248,7 +248,7 @@ sap.ui.define([
 				oParams.ResourceGroupGuid = targetObj.ResourceGroupGuid;
 				oParams.ResourceGuid = targetObj.ResourceGuid;
 
-				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION")) {
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && targetObj.NodeType === "RESOURCE") {
 					if (oContext.IsSelected) {
 						oParams.DateFrom = formatter.mergeDateTime(oContext.oData.FIXED_ASSGN_START_DATE, oContext.oData.FIXED_ASSGN_START_TIME);
 						oParams.TimeFrom.ms = oParams.DateFrom.getTime();
