@@ -81,8 +81,8 @@
 											<core:CustomData key="p13nData" value='\{"columnKey": "NodeType", "leadingProperty": "NodeType"}'/>
 										</table:customData>
 										<table:template>
-											<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"
-												selected="{IsSelected}"/>
+											<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'ganttModel>NodeType', formatter: '.formatter.isMainResource' }"
+												selected="{ganttModel>IsSelected}"/>
 										</table:template>
 									</table:Column>
 								</table:columns>

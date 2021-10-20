@@ -18,8 +18,7 @@ sap.ui.define([
 			this._eventBus.subscribe("AssignActionsDialog", "selectAssign", this._triggerOpenDialog, this);
 		},
 
-		open: function (that, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent) {
-			this.that = that;
+		open: function (oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent) {
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);

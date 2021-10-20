@@ -523,7 +523,7 @@ sap.ui.define([
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonReassign")) {
 				//show reassign dialog
 				//oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
-				this.getOwnerComponent().assignTreeDialog.open(this, this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
 				// Change
 				this.openAssignInfoDialog(this.getView(), sPath, this._selectedShapeContext, mParameters);

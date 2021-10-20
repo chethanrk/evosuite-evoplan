@@ -160,7 +160,7 @@ sap.ui.define([
 				//collect all demand Guids for function import
 				for (var i = 0; i < aItems.length; i++) {
 					var sPath = aItems[i].sPath ? aItems[i].sPath : aItems[i];
-					if (sPath.indexOf("'") >= 0) {
+					if (sPath.indexOf("'") >= 0 && !aSourcePaths) {
 						sPath = sPath.split("'")[1];
 					}
 
@@ -198,10 +198,11 @@ sap.ui.define([
 		 */
 		_checkAvailability: function (aSources, oTarget, oTargetDate, aGuids) {
 			var oModel = this.getModel(),
+				oGanttModel = this.getModel("ganttModel"),
 				sGuid = aSources ? oModel.getProperty(aSources[0] + "/Guid") : aGuids[0].split("'")[1];
 			return new Promise(function (resolve, reject) {
 				this.executeFunctionImport(oModel, {
-					ResourceGuid: oModel.getProperty(oTarget + "/ResourceGuid"),
+					ResourceGuid: oGanttModel.getProperty(oTarget + "/ResourceGuid"),
 					StartTimestamp: oTargetDate || new Date(),
 					DemandGuid: sGuid
 				}, "ResourceAvailabilityCheck", "GET").then(function (data) {
