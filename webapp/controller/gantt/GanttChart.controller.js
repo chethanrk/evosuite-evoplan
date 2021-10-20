@@ -187,7 +187,7 @@ sap.ui.define([
 
 				//set new time and resource data to gantt model, setting also new pathes
 				var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
-				this._updateDraggedShape(key, sNewPath, sRequestType);
+				this._updateDraggedShape(sNewPath, sRequestType);
 			}
 		},
 
@@ -507,6 +507,8 @@ sap.ui.define([
 		_updateDraggedShape: function (sPath, sRequestType) {
 			this.oGanttModel.setProperty(sPath + "/busy", true);
 			var oData = this.oGanttModel.getProperty(sPath);
+			console.log(sPath);
+			console.log(oData);
 			//get demand details to this assignment
 			this._getRelatedDemandData(oData).then(function (oResult) {
 				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
