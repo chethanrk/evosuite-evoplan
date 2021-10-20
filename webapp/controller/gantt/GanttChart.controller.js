@@ -47,6 +47,7 @@ sap.ui.define([
 			this._userData = this.getModel("user").getData();
 
 			this._oEventBus.subscribe("BaseController", "refreshAssignments", this._refreshAssignments, this);
+			this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
 
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
@@ -187,7 +188,7 @@ sap.ui.define([
 
 				//set new time and resource data to gantt model, setting also new pathes
 				var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
-				this._updateDraggedShape(key, sNewPath, sRequestType);
+				this._updateDraggedShape(sNewPath, sRequestType);
 			}
 		},
 
@@ -250,6 +251,7 @@ sap.ui.define([
 				oData = this.oGanttModel.getProperty(sPath),
 				oAppModel = this.getModel("appView"),
 				sDataModelPath = this._getAssignmentDataModelPath(oData.Guid),
+				callbackEvent = "ganttShapeReassignment",
 				mParameters = {
 					bFromNewGantt: true,
 					sSourcePath: sPath,
@@ -286,8 +288,7 @@ sap.ui.define([
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonReassign")) {
 				//Todo reassign
 				//oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
-				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters,
-					"ganttShapeReassignment");
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters, callbackEvent);
 			}
 		},
 
@@ -478,6 +479,29 @@ sap.ui.define([
 				this.oGanttModel.setProperty(sTargetPath + "/AssignmentSet/results", aTargetAssignments);
 			}
 			return oSourceData.sPath;
+		},
+
+		/**
+		 * reassign a demand to a new resource by context menu
+		 * @private
+		 */
+		_reassignShape: function (sChannel, sEvent, oData) {
+			if (sChannel === "AssignTreeDialog" && sEvent === "ganttShapeReassignment") {
+				for (var i = 0; i < oData.aSourcePaths.length; i++) {
+					var sourceData = this.getModel().getProperty(oData.aSourcePaths[i]);
+					this._updateAssignmentModel(sourceData.Guid).then(function (oAssignmentObj) {
+						if (oAssignmentObj.AllowReassign) {
+							oAssignmentObj.NewAssignPath = oData.sAssignPath;
+							this._oAssignementModel.setData(oAssignmentObj);
+							this.updateAssignment(true, {
+								bFromNewGantt: true
+							});
+						} else {
+							this.getModel().resetChanges(oData.aSourcePaths);
+						}
+					}.bind(this));
+				}
+			}
 		},
 
 		/**
@@ -1067,60 +1091,21 @@ sap.ui.define([
 		_refreshAssignments: function (sChannel, sEvent, oData) {
 			if (sChannel === "BaseController" && sEvent === "refreshAssignments") {
 				//update ganttModels with results from function import
-				if (oData.mParams && oData.mParams.sSourcePath) {
-					this.oGanttModel.setProperty(oData.mParams.sSourcePath + "/busy", false);
-					if (oData.mParams.bContainsError) {
-						return; //when there was an error in function import
-					}
-					//when only single assignment was changed
-					this._refreshSingleAssignment(oData);
+				var aFilters = [],
+					oUserData = this.getModel("user").getData(),
+					aPromises = [];
 
-				} else { //when bulk change happened
-					var aFilters = [],
-						oUserData = this.getModel("user").getData(),
-						aPromises = [];
-
-					aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
-					aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-					this.getModel().setUseBatch(false);
-					aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
-					this._treeTable.setBusy(true);
-					Promise.all(aPromises).then(function (data) {
-						this._addAssignemets(data[0].results);
-						this.getModel().setUseBatch(true);
-						this._treeTable.setBusy(false);
-						this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
-					}.bind(this));
-				}
-			}
-		},
-
-		/**
-		 * refresh only single assignment with data from function import result
-		 * @param {Object} oData 
-		 */
-		_refreshSingleAssignment: function (oData) {
-			if (!oData.oResultData.Guid) {
-				//after unassign
-				this.oGanttOriginDataModel.setProperty(oData.mParams.sSourcePath, null);
-				this.oGanttModel.setProperty(oData.mParams.sSourcePath, null);
-			} else {
-				//after update
-				var oOriginData = this.oGanttOriginDataModel.getProperty(oData.mParams.sSourcePath);
-				if (oData.oResultData.ResourceGuid && oOriginData.ResourceGuid === oData.oResultData.ResourceGuid) {
-					//when single data was changed
-					for (var key in oData.oResultData) {
-						if (oOriginData.hasOwnProperty(key) && oData.oResultData[key] !== "__deferred") {
-							oOriginData[key] = oData.oResultData[key];
-						}
-					}
-					this.oGanttOriginDataModel.setProperty(oData.mParams.sSourcePath, oOriginData);
-					this.oGanttModel.setProperty(oData.mParams.sSourcePath, _.cloneDeep(oOriginData));
-
-				} else {
-					//when its reassignment refresh whole tree assignments
-					this._refreshAssignments("BaseController", "refreshAssignments", {});
-				}
+				aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+				aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+				this.getModel().setUseBatch(false);
+				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
+				this._treeTable.setBusy(true);
+				Promise.all(aPromises).then(function (data) {
+					this._addAssignemets(data[0].results);
+					this.getModel().setUseBatch(true);
+					this._treeTable.setBusy(false);
+					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
+				}.bind(this));
 			}
 		},
 

@@ -162,6 +162,9 @@ sap.ui.define([
 			var oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
 				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid");
+
+			this.reAssign = !!this.oAssignmentModel.getProperty("/NewAssignPath");
+
 			if (oDateTo !== undefined && oDateFrom !== undefined) {
 				oDateFrom = oDateFrom.getTime();
 				oDateTo = oDateTo.getTime();
@@ -251,6 +254,7 @@ sap.ui.define([
 		 */
 		onCloseDialog: function () {
 			this._closeDialog();
+			//when from new gantt shape busy state needs removed
 			if (this._mParameters.bCustomBusy && (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit)) {
 				this._oView.getModel("ganttModel").setProperty(this._mParameters.sSourcePath + "/busy", false);
 			}
