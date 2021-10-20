@@ -68,7 +68,7 @@ sap.ui.define([
 			// this.getRouter().getRoute("ganttSplit").attachPatternMatched(function () {
 			// 	this._routeName = Constants.GANTT.SPLIT;
 			// 	this._mParameters = {
-			// 		bFromGanttSplit: true
+			// 		bFromNewGanttSplit: true
 			// 	};
 			// }.bind(this));
 
@@ -259,7 +259,7 @@ sap.ui.define([
 			if (oAppModel.getProperty("/currentRoute") === "ganttSplit") {
 				mParameters = {
 					bFromNewGantt: false,
-					bFromGanttSplit: true
+					bFromNewGanttSplit: true
 				};
 			}
 			localStorage.setItem("Evo-Action-page", "ganttSplit");

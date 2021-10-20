@@ -298,6 +298,8 @@ sap.ui.define([
 			} else if (oParameter.bFromNewGantt) {
 				eventBus.publish("BaseController", "refreshAssignments", oData);
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			} else if (oParameter.bFromNewGanttSplit) {
+				eventBus.publish("BaseController", "refreshAssignments", oData);
 			}
 		},
 		/**
