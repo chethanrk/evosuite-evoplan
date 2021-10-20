@@ -220,7 +220,7 @@ sap.ui.define([
 				}];
 			if (oData.ALLOW_ASSIGN) {
 				localStorage.setItem("Evo-Action-page", "DemandDetails");
-				this.getOwnerComponent().assignTreeDialog.open(this, this.getView(), false, oSelectedData, false, {
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, {
 					bFromDetail: true
 				});
 			} else {
