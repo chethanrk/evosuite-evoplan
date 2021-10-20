@@ -177,7 +177,7 @@ sap.ui.define([
 							parameters: this._mParameters
 						});
 					}
-					this.onCloseDialog();
+					this._closeDialog();
 				} else {
 					this.showMessageToast(sMsg);
 				}
@@ -202,7 +202,7 @@ sap.ui.define([
 					parameters: this._mParameters
 				});
 			}
-			this.onCloseDialog();
+			this._closeDialog();
 		},
 
 		/**
@@ -236,13 +236,24 @@ sap.ui.define([
 		},
 
 		/**
-		 * close dialog
+		 * when dialog closed inside controller
 		 */
-		onCloseDialog: function () {
+		_closeDialog: function () {
 			this._oDialog.close();
 			this._oDialog.unbindElement();
 			this.reAssign = false; // setting to default on close of Dialog
 			// this.oAssignmentModel.setData({});// Commented to have data in Qualification Match Dialog Methods:by Rakesh Sahu
+		},
+
+		/**
+		 * close dialog
+		 * Cancel progress
+		 */
+		onCloseDialog: function () {
+			this._closeDialog();
+			if (this._mParameters.bCustomBusy && (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit)) {
+				this._oView.getModel("ganttModel").setProperty(this._mParameters.sSourcePath + "/busy", false);
+			}
 		},
 
 		/**
@@ -447,7 +458,7 @@ sap.ui.define([
 				sDemandGuid = oAssignment.getProperty("/DemandGuid");
 
 			this.onCloseDialog();
-			if (this._mParameters.bFromGantt) {
+			if (this._mParameters.bFromGantt && this._mParameters.bFromNewGantt) {
 				oRouter.navTo("ganttDemandDetails", {
 					guid: sDemandGuid
 				});

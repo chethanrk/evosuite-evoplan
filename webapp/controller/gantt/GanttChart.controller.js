@@ -286,7 +286,8 @@ sap.ui.define([
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonReassign")) {
 				//Todo reassign
 				//oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
-				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, mParameters, "ganttShapeReassignment");
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters,
+					"ganttShapeReassignment");
 			}
 		},
 
@@ -1066,12 +1067,14 @@ sap.ui.define([
 		_refreshAssignments: function (sChannel, sEvent, oData) {
 			if (sChannel === "BaseController" && sEvent === "refreshAssignments") {
 				//update ganttModels with results from function import
-				if (oData.mParams.sSourcePath) {
-					//when only single assignment was changed
+				if (oData.mParams && oData.mParams.sSourcePath) {
+					this.oGanttModel.setProperty(oData.mParams.sSourcePath + "/busy", false);
 					if (oData.mParams.bContainsError) {
 						return; //when there was an error in function import
 					}
+					//when only single assignment was changed
 					this._refreshSingleAssignment(oData);
+
 				} else { //when bulk change happened
 					var aFilters = [],
 						oUserData = this.getModel("user").getData(),
@@ -1097,7 +1100,6 @@ sap.ui.define([
 		 * @param {Object} oData 
 		 */
 		_refreshSingleAssignment: function (oData) {
-			this.oGanttModel.setProperty(oData.mParams.sSourcePath + "/busy", false);
 			if (!oData.oResultData.Guid) {
 				//after unassign
 				this.oGanttOriginDataModel.setProperty(oData.mParams.sSourcePath, null);
@@ -1105,13 +1107,20 @@ sap.ui.define([
 			} else {
 				//after update
 				var oOriginData = this.oGanttOriginDataModel.getProperty(oData.mParams.sSourcePath);
-				for (var key in oData.oResultData) {
-					if (oOriginData.hasOwnProperty(key) && oData.oResultData[key] !== "__deferred") {
-						oOriginData[key] = oData.oResultData[key];
+				if (oData.oResultData.ResourceGuid && oOriginData.ResourceGuid === oData.oResultData.ResourceGuid) {
+					//when single data was changed
+					for (var key in oData.oResultData) {
+						if (oOriginData.hasOwnProperty(key) && oData.oResultData[key] !== "__deferred") {
+							oOriginData[key] = oData.oResultData[key];
+						}
 					}
+					this.oGanttOriginDataModel.setProperty(oData.mParams.sSourcePath, oOriginData);
+					this.oGanttModel.setProperty(oData.mParams.sSourcePath, _.cloneDeep(oOriginData));
+
+				} else {
+					//when its reassignment refresh whole tree assignments
+					this._refreshAssignments("BaseController", "refreshAssignments", {});
 				}
-				this.oGanttOriginDataModel.setProperty(oData.mParams.sSourcePath, oOriginData);
-				this.oGanttModel.setProperty(oData.mParams.sSourcePath, _.cloneDeep(oOriginData));
 			}
 		},
 
