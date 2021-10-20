@@ -74,6 +74,11 @@ sap.ui.define([
 			if (this.fnErrorCallback) {
 				this.fnErrorCallback();
 			}
+			var mParams = this.oView.getModel("viewModel").getProperty("/QualificationMatchList/mParameter");
+			//when from new gantt shape busy state needs removed
+			if (mParams && mParams.bCustomBusy && (mParams.bFromNewGantt || mParams.bFromNewGanttSplit)) {
+				this.oView.getModel("ganttModel").setProperty(mParams.sSourcePath + "/busy", false);
+			}
 			this._oDialog.close();
 		},
 

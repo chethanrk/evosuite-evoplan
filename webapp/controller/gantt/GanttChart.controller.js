@@ -49,7 +49,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("BaseController", "refreshAssignments", this._refreshAssignments, this);
 			this._oEventBus.subscribe("BaseController", "refreshAvailabilities", this._refreshAvailabilities, this);
 			this._oEventBus.subscribe("BaseController", "resetSelections", this._resetSelections, this);
-
+			this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
@@ -189,7 +189,7 @@ sap.ui.define([
 
 				//set new time and resource data to gantt model, setting also new pathes
 				var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
-				this._updateDraggedShape(key, sNewPath, sRequestType);
+				this._updateDraggedShape(sNewPath, sRequestType);
 			}
 		},
 
@@ -252,6 +252,7 @@ sap.ui.define([
 				oData = this.oGanttModel.getProperty(sPath),
 				oAppModel = this.getModel("appView"),
 				sDataModelPath = this._getAssignmentDataModelPath(oData.Guid),
+				callbackEvent = "ganttShapeReassignment",
 				mParameters = {
 					bFromNewGantt: true,
 					sSourcePath: sPath,
@@ -480,6 +481,29 @@ sap.ui.define([
 				this.oGanttModel.setProperty(sTargetPath + "/AssignmentSet/results", aTargetAssignments);
 			}
 			return oSourceData.sPath;
+		},
+
+		/**
+		 * reassign a demand to a new resource by context menu
+		 * @private
+		 */
+		_reassignShape: function (sChannel, sEvent, oData) {
+			if (sChannel === "AssignTreeDialog" && sEvent === "ganttShapeReassignment") {
+				for (var i = 0; i < oData.aSourcePaths.length; i++) {
+					var sourceData = this.getModel().getProperty(oData.aSourcePaths[i]);
+					this._updateAssignmentModel(sourceData.Guid).then(function (oAssignmentObj) {
+						if (oAssignmentObj.AllowReassign) {
+							oAssignmentObj.NewAssignPath = oData.sAssignPath;
+							this._oAssignementModel.setData(oAssignmentObj);
+							this.updateAssignment(true, {
+								bFromNewGantt: true
+							});
+						} else {
+							this.getModel().resetChanges(oData.aSourcePaths);
+						}
+					}.bind(this));
+				}
+			}
 		},
 
 		/**

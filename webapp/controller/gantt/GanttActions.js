@@ -278,7 +278,7 @@ sap.ui.define([
 
 			var oPendingChanges = oGanttModel.getProperty("/pendingChanges");
 			if (oPendingChanges[sPath]) {
-				if (!this._resetNewPathChanges(oPendingChanges[sPath])) {
+				if (!this._resetNewPathChanges(oPendingChanges[sPath], oGanttModel, oGanttOriginDataModel)) {
 					var oOriginData = oGanttOriginDataModel.getProperty(sPath);
 					oGanttModel.setProperty(sPath, _.cloneDeep(oOriginData));
 				}

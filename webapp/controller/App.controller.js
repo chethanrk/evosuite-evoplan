@@ -94,34 +94,34 @@ sap.ui.define([
 				oRouter.navTo("demands", {});
 				break;
 			case oResourceBundle.getText("xbut.pageAssetManager"):
-				if(this._routeValidation("ENABLE_ASSET_PLANNING")){
+				if (this._routeValidation("ENABLE_ASSET_PLANNING")) {
 					oRouter.navTo("assetManager", {
-					assets: "NA"
+						assets: "NA"
 					});
 					break;
 				}
 				oRouter.navTo("empty", {});
 				break;
-				
+
 			case oResourceBundle.getText("xbut.pageWeeklyPlanner"):
 				//oRouter.navTo("TestFull", {});
 				break;
 			case oResourceBundle.getText("xbut.pageMessageCockpit"):
-				if(this._routeValidation("ENABLE_EMP")){
+				if (this._routeValidation("ENABLE_EMP")) {
 					oRouter.navTo("messageCockpit", {});
 					break;
 				}
 				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.pageGanttChart"):
-				if(this._routeValidation("ENABLE_GANTT")){
+				if (this._routeValidation("ENABLE_GANTT")) {
 					oRouter.navTo("gantt", {});
 					break;
 				}
 				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.pageGanttChartSplit"):
-				if(this._routeValidation("ENABLE_GANTT")){
+				if (this._routeValidation("ENABLE_GANTT")) {
 					oRouter.navTo("ganttSplit", {});
 					window.open(sRoute, "_blank");
 					break;
@@ -129,21 +129,21 @@ sap.ui.define([
 				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.pageMap"):
-				if(this._routeValidation("ENABLE_MAPS")){
+				if (this._routeValidation("ENABLE_MAPS")) {
 					oRouter.navTo("map", {});
 					break;
 				}
 				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.manageResources"):
-				if(this._routeValidation("ENABLE_MANAGERESOURCE")){
+				if (this._routeValidation("ENABLE_MANAGERESOURCE")) {
 					oRouter.navTo("manageResources", {});
 					break;
 				}
 				oRouter.navTo("empty", {});
 				break;
-            case oResourceBundle.getText("xbut.pageNewGantt"):
-				if(this._routeValidation("ENABLE_GANTT")){
+			case oResourceBundle.getText("xbut.pageNewGantt"):
+				if (this._routeValidation("ENABLE_GANTT")) {
 					oRouter.navTo("newgantt", {});
 					break;
 				}
@@ -223,7 +223,7 @@ sap.ui.define([
 				pageTitle = oResourceBundle.getText("xbut.pageMap");
 			} else if (oParams.config.pattern.startsWith("ManageResources")) {
 				pageTitle = oResourceBundle.getText("xbut.manageResources");
-			}else if (oParams.config.pattern.startsWith("NewGantt")) {
+			} else if (oParams.config.pattern.startsWith("NewGantt")) {
 				pageTitle = oResourceBundle.getText("xbut.pageNewGantt");
 			}
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
@@ -264,7 +264,7 @@ sap.ui.define([
 			if (sRoute === "gantt") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			} else	if (sRoute === "newgantt") {
+			} else if (sRoute === "newgantt") {
 				//this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				//this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (sRoute === "ganttSplit") {
@@ -374,7 +374,7 @@ sap.ui.define([
 					this._eventBus.publish("BaseController", "refreshMapDemandTable", {});
 				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.manageResources")) {
 					this._eventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
-				}else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageNewGantt")) {
+				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageNewGantt")) {
 					this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 					this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				}
@@ -397,9 +397,9 @@ sap.ui.define([
 			// 	//
 			// }.bind(this));
 		},
-		_routeValidation : function(parameter){
-				var oUserModel = this.getModel("user");
-				return oUserModel.getProperty("/"+parameter);
+		_routeValidation: function (parameter) {
+			var oUserModel = this.getModel("user");
+			return oUserModel.getProperty("/" + parameter);
 		},
 
 		/**
