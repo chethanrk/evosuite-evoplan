@@ -137,7 +137,7 @@ sap.ui.define([
 			if (oSelectedPaths.aPathsData.length > 0) {
 				// TODO comment
 				localStorage.setItem("Evo-Action-page", "splitDemands");
-				this.getOwnerComponent().assignTreeDialog.open(this, this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
 			}
 			if (oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);

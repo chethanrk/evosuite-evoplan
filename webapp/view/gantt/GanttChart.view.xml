@@ -18,8 +18,9 @@
 							<gnt2:LegendContainer width="230px" height="250px">
 								<gnt2:ListLegend title="{i18n>xtit.colorCodes}" items="{/GanttLegendSet}">
 									<gnt2:ListLegendItem>
-										<gnt2:BaseRectangle shapeId="{CharactersticCode}" fill="{parts:[{path:'Colourcode'}, {path:'Legendtype'} ], formatter:'.formatLegend'}"
-											title="{CharactersticDescription}" showTitle="false"/>
+										<gnt2:BaseRectangle shapeId="{CharactersticCode}"
+											fill="{parts:[{path:'Colourcode'}, {path:'Legendtype'} ], formatter:'.ganttFormatter.formatLegend'}" title="{CharactersticDescription}"
+											showTitle="false"/>
 									</gnt2:ListLegendItem>
 								</gnt2:ListLegend>
 							</gnt2:LegendContainer>
@@ -80,8 +81,8 @@
 											<core:CustomData key="p13nData" value='\{"columnKey": "NodeType", "leadingProperty": "NodeType"}'/>
 										</table:customData>
 										<table:template>
-											<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"
-												selected="{IsSelected}"/>
+											<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'ganttModel>NodeType', formatter: '.formatter.isMainResource' }"
+												selected="{ganttModel>IsSelected}"/>
 										</table:template>
 									</table:Column>
 								</table:columns>

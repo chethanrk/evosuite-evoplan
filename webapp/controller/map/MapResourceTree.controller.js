@@ -181,7 +181,7 @@ sap.ui.define([
 
 			if (oRowContext) {
 				this.assignmentPath = "/AssignmentSet('" + oRowContext.getObject().AssignmentGuid + "')";
-				this.openAssignInfoDialog(this.getView(), this.assignmentPath, oRowContext,this._mParameters);
+				this.openAssignInfoDialog(this.getView(), this.assignmentPath, oRowContext, this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
@@ -292,7 +292,7 @@ sap.ui.define([
 			aSources = this.getModel("viewModel").getProperty("/mapDragSession");
 			iOperationTimesLen = this.onShowOperationTimes();
 			iVendorAssignmentLen = this.onAllowVendorAssignment();
-			
+
 			//Checking Vendor Assignment for External Resources
 			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
 				iVendorAssignmentLen) {
@@ -463,7 +463,7 @@ sap.ui.define([
 		 */
 		handleCalendarSelect: function (oEvent) {
 			var oSelectedDate = oEvent.getSource().getSelectedDates()[0].getStartDate();
-				this.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", true);
+			this.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", true);
 			this._getSelectedRoute(oSelectedDate);
 		},
 		/**
@@ -503,7 +503,7 @@ sap.ui.define([
 		 * @Author: Rakesh
 		 */
 		removeRouteDataFlag: function (oEvent) {
-			this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false)
+			this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false);
 		},
 		/**
 		 * method for getting selected route for selected date

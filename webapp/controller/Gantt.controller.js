@@ -373,9 +373,9 @@ sap.ui.define([
 				}
 				if (sStatus !== "COMP") {
 					this._updateAssignmentModel(sAssignGuid).then(function (data) {
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign", data.AllowUnassign);
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign", data.AllowReassign);
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/change", data.AllowChange);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/unassign", data.AllowUnassign);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/reassign", data.AllowReassign);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/change", data.AllowChange);
 						oViewModel.setProperty("/ganttSettings/shapeData", data);
 						var eDock = Popup.Dock;
 						this._menu.open(true, oShape, eDock.BeginTop, eDock.endBottom, oShape);
@@ -425,7 +425,7 @@ sap.ui.define([
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonReassign")) {
 				//show reassign dialog
 				//oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
-				this.getOwnerComponent().assignTreeDialog.open(this, this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
 				// Change
 				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, mParameters, sPath);

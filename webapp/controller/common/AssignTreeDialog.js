@@ -18,8 +18,7 @@ sap.ui.define([
 			this._eventBus.subscribe("AssignActionsDialog", "selectAssign", this._triggerOpenDialog, this);
 		},
 
-		open: function (that, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent) {
-			this.that = that;
+		open: function (oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent) {
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
@@ -202,7 +201,7 @@ sap.ui.define([
 						aSourcePaths: this._aSelectedPaths,
 						parameters: this._mParameters
 					});
-					this.onCloseDialog();
+					this._closeDialog();
 					return;
 				}
 				// In case of bulk reassign
@@ -212,7 +211,7 @@ sap.ui.define([
 						aContexts: this._aSelectedPaths,
 						parameters: this._mParameters
 					});
-					this.onCloseDialog();
+					this._closeDialog();
 					this._eventBus.publish("AssignTreeDialog", "closeActionDialog", {});
 					return;
 				}
@@ -221,7 +220,7 @@ sap.ui.define([
 					this._eventBus.publish("AssignTreeDialog", "selectedAssignment", {
 						sPath: this._assignPath
 					});
-					this.onCloseDialog();
+					this._closeDialog();
 					return;
 				}
 				if (this._aSelectedPaths) {
@@ -231,7 +230,7 @@ sap.ui.define([
 						parameters: this._mParameters
 					});
 
-					this.onCloseDialog();
+					this._closeDialog();
 					return;
 				}
 			}
@@ -258,12 +257,24 @@ sap.ui.define([
 		},
 
 		/**
-		 * close dialog
+		 * when dialog closed inside controller
 		 */
-		onCloseDialog: function () {
+		_closeDialog: function () {
 			this._oFiltersRightTechnician = false;
 			this.refreshDialogTable();
 			this._oDialog.close();
+		},
+
+		/**
+		 * close dialog from XML view
+		 * Cancel progress
+		 */
+		onCloseDialog: function () {
+			this._closeDialog();
+			//when from new gantt shape busy state needs removed
+			if (this._mParameters.bCustomBusy && (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit)) {
+				this._oView.getModel("ganttModel").setProperty(this._mParameters.sSourcePath + "/busy", false);
+			}
 		},
 		/**
 		 * Open's dialog as per event channel to list the resources to reassign 

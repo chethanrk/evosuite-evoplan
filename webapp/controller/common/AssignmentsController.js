@@ -248,7 +248,7 @@ sap.ui.define([
 				oParams.ResourceGroupGuid = targetObj.ResourceGroupGuid;
 				oParams.ResourceGuid = targetObj.ResourceGuid;
 
-				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION")) {
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && targetObj.NodeType === "RESOURCE") {
 					if (oContext.IsSelected) {
 						oParams.DateFrom = formatter.mergeDateTime(oContext.oData.FIXED_ASSGN_START_DATE, oContext.oData.FIXED_ASSGN_START_TIME);
 						oParams.TimeFrom.ms = oParams.DateFrom.getTime();
@@ -295,6 +295,10 @@ sap.ui.define([
 			if (isReassign && !oData.AllowReassign) {
 				sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
 				this._showAssignErrorDialog([oData.Description], null, sDisplayMessage);
+				//when from new gantt shape busy state needs removed
+				if (mParameters.bCustomBusy && (mParameters.bFromNewGantt || mParameters.bFromNewGanttSplit)) {
+					this._oView.getModel("ganttModel").setProperty(mParameters.sSourcePath + "/busy", false);
+				}
 				return;
 			}
 
@@ -493,6 +497,11 @@ sap.ui.define([
 						} else if (sValue === sAction && bUpdate) {
 							//Proceed to check the Qualification for UpdateAssignment
 							this.checkQualificationUpdate(this.getModel("assignment").getData(), oParams, mParameters);
+						} else if (sValue === sap.m.MessageBox.Action.CANCEL) {
+							//when from new gantt shape busy state needs removed
+							if (mParameters.bCustomBusy && (mParameters.bFromNewGantt || mParameters.bFromNewGanttSplit)) {
+								this.getModel("ganttModel").setProperty(mParameters.sSourcePath + "/busy", false);
+							}
 						}
 					}.bind(this)
 				}
