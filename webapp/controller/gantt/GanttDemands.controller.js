@@ -44,6 +44,12 @@ sap.ui.define([
 			this.getRouter().getRoute("splitDemands").attachMatched(function () {
 				this._routeName = Constants.GANTT.SPLITDMD;
 			}.bind(this));
+			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
+				this._routeName = "newgantt";
+				this._mParameters = {
+					bFromNewGantt: true
+				};
+			}.bind(this));
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
 
 			//to initialize Gantt Demand Filter Dialog
