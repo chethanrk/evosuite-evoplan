@@ -178,16 +178,16 @@ sap.ui.define([
 				bAllowVendorAssignment = this.getModel().getProperty(oDragContext + "/ALLOW_ASSIGNMENT_DIALOG"),
 				sOperationStartDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_START_DATE"),
 				sOperationEndDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_END_DATE");
-			this.onShowOperationTimes();
-			this.onAllowVendorAssignment();
+			this.onShowOperationTimes(this.getModel("viewModel"));
+			this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
 			//Checking Vendor Assignment for External Resources
 			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
-				this.getOwnerComponent().VendorAssignment.open(this, this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
+				this.getOwnerComponent().VendorAssignment.open(this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
 					oDroppedControl, oBrowserEvent);
 			} else {
 				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !==
 					null) {
-					this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(), {
+					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), {
 						bFromGantt: true
 					}, oDropContext.getPath(), oDraggedControl, oDroppedControl, oBrowserEvent);
 				} else {

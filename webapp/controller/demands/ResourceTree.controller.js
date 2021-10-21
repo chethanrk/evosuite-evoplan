@@ -293,17 +293,17 @@ sap.ui.define([
 			}
 
 			aSources = this._oViewModel.getProperty("/dragSession");
-			iOperationTimesLen = this.onShowOperationTimes();
-			iVendorAssignmentLen = this.onAllowVendorAssignment();
+			iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
+			iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
 			
 			//Checking Vendor Assignment for External Resources
 			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
 				iVendorAssignmentLen) {
-				this.getOwnerComponent().VendorAssignment.open(this, this.getView(), sPath, this._mParameters);
+				this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
 			} else {
 				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
 					"RESOURCE") {
-					this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(), this._mParameters, sPath);
+					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), this._mParameters, sPath);
 				} else {
 					// If the Resource is Not/Partially available
 					if (this.isAvailable(sPath)) {
