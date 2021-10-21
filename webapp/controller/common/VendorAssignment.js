@@ -91,7 +91,7 @@ sap.ui.define([
 						this._component.OperationTimeCheck.open(this.getView(), this._mParameters, this._sPath, this.oDraggedControl,
 							this.oDroppedControl, this.oBrowserEvent);
 					} else {
-						this._component.assignTreeDialog.onSaveDialog();
+						this._component.assignTreeDialog.onProceedSaveDialog();
 					}
 				} else {
 					if (this._mParameters.bFromGantt) {

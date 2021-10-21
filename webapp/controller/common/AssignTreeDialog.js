@@ -184,23 +184,26 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onSelectionChange: function (oEvent) {
-			// var oContext = oEvent.getParameter("rowContext");
-			// this._assignPath = oContext.sPath;
-			var oContext = oEvent.getParameter("rowContext"),
-				oTargetObj = oContext.getObject(),
+			var oContext = oEvent.getParameter("rowContext");
+			this._assignPath = oContext.sPath;
+		},
+
+		onSaveDialog: function () {
+			var oTargetObj = this._oView.getModel().getProperty(this._assignPath),
 				aSources = this._oView.getModel("viewModel").getProperty("/dragSession"),
 				iOperationTimesLen = this.onShowOperationTimes(this._oView.getModel("viewModel")),
 				iVendorAssignmentLen = this.onAllowVendorAssignment(this._oView.getModel("viewModel"), this._oView.getModel("user"));
-			this._assignPath = oContext.sPath;
 			
 			//Checking Vendor Assignment for External Resources
 			if (this._oView.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetObj.ISEXTERNAL && aSources.length !==
 				iVendorAssignmentLen) {
 				this._component.VendorAssignment.open(this._oView, this._assignPath, null);
-			} 
+			}
 			//Checking Operation Times
 			else if (this._oView.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length) {
 				this._component.OperationTimeCheck.open(this._oView, null, this._assignPath);
+			}else{
+				this.onProceedSaveDialog();
 			}
 		},
 
@@ -209,7 +212,7 @@ sap.ui.define([
 		 * or if set reassign save path in help model
 		 * @param oEvent
 		 */
-		onSaveDialog: function (oEvent) {
+		onProceedSaveDialog: function (oEvent) {
 			if (this._assignPath) {
 				if (this._callbackEvent) {
 					this._eventBus.publish("AssignTreeDialog", this._callbackEvent, {

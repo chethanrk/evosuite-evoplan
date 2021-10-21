@@ -94,7 +94,7 @@ sap.ui.define([
 				oViewModel = oTable.getModel("viewModel"),
 				aAsgnDateCheckList = oViewModel.getProperty("/dragSession");
 			if (!this._mParameters) {
-				this._component.assignTreeDialog.onSaveDialog();
+				this._component.assignTreeDialog.onProceedSaveDialog();
 			} else {
 				if (this._mParameters.bFromGantt) {
 					this._oController.onProceedToGanttDropOnResource(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
