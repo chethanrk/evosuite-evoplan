@@ -36,8 +36,6 @@ sap.ui.define([
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 			this._eventBus.subscribe("AssignTreeDialog", "updateDemandTableSelection", this._deselectDemands, this);
-					//	this.getModel("user").getData().ENABLE_EXTERNAL_ASSIGN_DIALOG = false;
-			this.getModel("user").getData().ENABLE_ASGN_DATE_VALIDATION = false;
 		},
 
 		/* =========================================================== */
