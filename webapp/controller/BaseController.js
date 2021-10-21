@@ -182,7 +182,7 @@ sap.ui.define([
 				oViewModel = this.getModel("appView"),
 				oResourceBundle = this.getResourceBundle();
 
-			if (!mParameters.bCustomBusy) {
+			if (mParameters && !mParameters.bCustomBusy) {
 				oViewModel.setProperty("/busy", true);
 			}
 
@@ -194,7 +194,9 @@ sap.ui.define([
 					//Handle Success
 					if (bIsLast) {
 						oViewModel.setProperty("/busy", false);
-						mParameters.bContainsError = this.showMessage(oResponse);
+						if (mParameters) {
+							mParameters.bContainsError = this.showMessage(oResponse);
+						}
 						this.afterUpdateOperations(mParameters, oParams, oData);
 					}
 				}.bind(this),

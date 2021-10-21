@@ -79,6 +79,10 @@ sap.ui.define([
 					oData: oData
 				}];
 			if (oData.ALLOW_ASSIGN) {
+				this.getModel("viewModel").setProperty("/dragSession", oSelectedData);
+				this.onShowOperationTimes(this.getModel("viewModel"));
+				this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
+				
 				localStorage.setItem("Evo-Action-page", "DemandDetails");
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, {
 					bFromDetail: true

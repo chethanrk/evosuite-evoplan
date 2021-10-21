@@ -184,8 +184,24 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onSelectionChange: function (oEvent) {
-			var oContext = oEvent.getParameter("rowContext");
+			// var oContext = oEvent.getParameter("rowContext");
+			// this._assignPath = oContext.sPath;
+			var oContext = oEvent.getParameter("rowContext"),
+				oTargetObj = oContext.getObject(),
+				aSources = this._oView.getModel("viewModel").getProperty("/dragSession"),
+				iOperationTimesLen = this.onShowOperationTimes(this._oView.getModel("viewModel")),
+				iVendorAssignmentLen = this.onAllowVendorAssignment(this._oView.getModel("viewModel"), this._oView.getModel("user"));
 			this._assignPath = oContext.sPath;
+			
+			//Checking Vendor Assignment for External Resources
+			if (this._oView.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetObj.ISEXTERNAL && aSources.length !==
+				iVendorAssignmentLen) {
+				this._component.VendorAssignment.open(this._oView, this._assignPath, null);
+			} 
+			//Checking Operation Times
+			else if (this._oView.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length) {
+				this._component.OperationTimeCheck.open(this._oView, null, this._assignPath);
+			}
 		},
 
 		/**

@@ -36,6 +36,8 @@ sap.ui.define([
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 			this._eventBus.subscribe("AssignTreeDialog", "updateDemandTableSelection", this._deselectDemands, this);
+					//	this.getModel("user").getData().ENABLE_EXTERNAL_ASSIGN_DIALOG = false;
+			this.getModel("user").getData().ENABLE_ASGN_DATE_VALIDATION = false;
 		},
 
 		/* =========================================================== */
@@ -65,6 +67,7 @@ sap.ui.define([
 				this._aSelectedRowsIdx.length = 100;
 			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
@@ -144,10 +147,10 @@ sap.ui.define([
 			//enable/disable buttons on footer when there is some/no selected rows
 			oDataTable.attachRowSelectionChange(function () {
 				var selected = this._oDataTable.getSelectedIndices(),
-				               sDemandPath,bComponentExist;
-                 var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
+					sDemandPath, bComponentExist;
+				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 				if (selected.length > 0 && selected.length <= iMaxRowSelection) {
-	
+
 					this.byId("idfindRightTechnicianButton").setEnabled(true);
 					this.byId("assignButton").setEnabled(true);
 					this.byId("changeStatusButton").setEnabled(true);
@@ -158,32 +161,28 @@ sap.ui.define([
 					this.byId("changeStatusButton").setEnabled(false);
 					this.byId("idOverallStatusButton").setEnabled(false);
 					this.byId("materialInfo").setEnabled(false);
-                    //If the selected demands exceeds more than the maintained selected configuration value
+					//If the selected demands exceeds more than the maintained selected configuration value
 					if (iMaxRowSelection <= selected.length) {
 						var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection");
 						MessageToast.show(sMsg + " " + iMaxRowSelection);
 					}
 				}
-				
+
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
-					for (var i = 0; i < selected.length; i++) {
-						sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
-						bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
-						if(bComponentExist)
-						{
-							this.byId("materialInfo").setEnabled(true);
-							this.byId("idOverallStatusButton").setEnabled(true);
-							break;
-						}
-						else
-						{
-							this.byId("materialInfo").setEnabled(false);
-							this.byId("idOverallStatusButton").setEnabled(false);
-						}
-				
-			}
-				
-				
+				for (var i = 0; i < selected.length; i++) {
+					sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
+					bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
+					if (bComponentExist) {
+						this.byId("materialInfo").setEnabled(true);
+						this.byId("idOverallStatusButton").setEnabled(true);
+						break;
+					} else {
+						this.byId("materialInfo").setEnabled(false);
+						this.byId("idOverallStatusButton").setEnabled(false);
+					}
+
+				}
+
 				this.showWarningMsgResourceTree(true);
 			}, this);
 		},
@@ -494,14 +493,14 @@ sap.ui.define([
 		 */
 		onMaterialStatusPress: function (oEvent) {
 			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
-			    oViewModel = this.getModel("appView"),
+				oViewModel = this.getModel("appView"),
 				sDemandPath;
-				oViewModel.setProperty("/busy", true);
+			oViewModel.setProperty("/busy", true);
 			for (var i = 0; i < oSelectedIndices.length; i++) {
 				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 					oViewModel.setProperty("/busy", false);
-			}.bind(this));
+				}.bind(this));
 			}
 		},
 		/**

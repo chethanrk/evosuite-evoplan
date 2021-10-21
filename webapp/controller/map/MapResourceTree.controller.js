@@ -290,17 +290,17 @@ sap.ui.define([
 			}
 
 			aSources = this.getModel("viewModel").getProperty("/mapDragSession");
-			iOperationTimesLen = this.onShowOperationTimes();
-			iVendorAssignmentLen = this.onAllowVendorAssignment();
+			iOperationTimesLen = this.onShowOperationTimes(this.getModel("viewModel"));
+			iVendorAssignmentLen = this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
 
 			//Checking Vendor Assignment for External Resources
 			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
 				iVendorAssignmentLen) {
-				this.getOwnerComponent().VendorAssignment.open(this, this.getView(), sPath, this._mParameters);
+				this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
 			} else {
 				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
 					"RESOURCE") {
-					this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(), this._mParameters, sPath);
+					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), this._mParameters, sPath);
 				} else {
 					eventBus.publish("BaseController", "resetMapSelection", {});
 					// If the Resource is Not/Partially available

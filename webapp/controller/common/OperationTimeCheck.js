@@ -20,25 +20,24 @@ sap.ui.define([
 		 * @param oView
 		 * @param mParameters
 		 */
-		open: function (that, oView, mParameters, sPath, oDraggedControl, oDroppedControl, oBrowserEvent) {
-			this.oThis = that;
+		open: function (oView, mParameters, sPath, oDraggedControl, oDroppedControl, oBrowserEvent) {
 			this.oView = oView;
 			this._sPath = sPath;
 			this.oDraggedControl = oDraggedControl;
 			this.oDroppedControl = oDroppedControl;
 			this.oBrowserEvent = oBrowserEvent;
 			if (!this._oDialog) {
-				that.getModel("appView").setProperty("/busy", true);
+				this.oView.getModel("appView").setProperty("/busy", true);
 				Fragment.load({
 					name: "com.evorait.evoplan.view.common.fragments.OperationTimeCheck",
 					controller: this
 				}).then(function (oDialog) {
-					that.getModel("appView").setProperty("/busy", false);
+					this.oView.getModel("appView").setProperty("/busy", false);
 					this._oDialog = oDialog;
-					this.onOpen(that, oDialog, mParameters);
+					this.onOpen(oDialog, mParameters);
 				}.bind(this));
 			} else {
-				this.onOpen(that, this._oDialog, mParameters);
+				this.onOpen(this._oDialog, mParameters);
 			}
 		},
 
@@ -48,11 +47,10 @@ sap.ui.define([
 		 * @param oDialog
 		 * @param mParameters
 		 */
-		onOpen: function (that, oDialog, mParameters) {
-			this._mParameters = mParameters || {
-				bFromHome: true
-			};
-			this._component = that.getOwnerComponent();
+		onOpen: function (oDialog, mParameters) {
+			this._mParameters = mParameters;
+			this._oController = this.oView.getController();
+			this._component = this._oController.getOwnerComponent();
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 			// connect dialog to view (models, lifecycle)
 			this.oView.addDependent(oDialog);
@@ -95,10 +93,14 @@ sap.ui.define([
 			var oTable = sap.ui.getCore().byId("idAsgnDateCheckTable"),
 				oViewModel = oTable.getModel("viewModel"),
 				aAsgnDateCheckList = oViewModel.getProperty("/dragSession");
-			if (this._mParameters.bFromGantt) {
-				this.oThis.onProceedToGanttDropOnResource(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
+			if (!this._mParameters) {
+				this._component.assignTreeDialog.onSaveDialog();
 			} else {
-				this.oThis.assignedDemands(aAsgnDateCheckList, this._sPath, null);
+				if (this._mParameters.bFromGantt) {
+					this._oController.onProceedToGanttDropOnResource(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
+				} else {
+					this._oController.assignedDemands(aAsgnDateCheckList, this._sPath, null);
+				}
 			}
 			this.onCloseDialog();
 		},
