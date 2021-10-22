@@ -94,6 +94,9 @@ sap.ui.define([
 		 */
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshAssignments", this._refreshAssignments, this);
+			this._oEventBus.unsubscribe("BaseController", "refreshAvailabilities", this._refreshAvailabilities, this);
+			this._oEventBus.unsubscribe("BaseController", "resetSelections", this._resetSelections, this);
+			this._oEventBus.unsubscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
 		},
 		/* =========================================================== */
 		/* event methods                                               */
