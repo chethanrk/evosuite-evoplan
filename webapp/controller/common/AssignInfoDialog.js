@@ -142,6 +142,11 @@ sap.ui.define([
 			this.oAssignmentModel.setProperty("/Effort", sEffort.replace(",", "."));
 			sEffort = this.oAssignmentModel.getProperty("/Effort");
 
+			if (this.oAssignmentModel.getProperty("/NewAssignPath") !== null) {
+				this.oAssignmentModel.getData().ResourceGuid = this._oView.getModel().getProperty(this.oAssignmentModel.getProperty(
+					"/NewAssignPath") + "/ResourceGuid");
+			}
+
 			if (Number(iNewEffort) < Number(sEffort)) {
 				this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
 					if (oAction === "YES") {

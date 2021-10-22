@@ -254,10 +254,6 @@ sap.ui.define([
 					return;
 				}
 			}
-
-			//show error message
-			var msg = this._oView.getResourceBundle().getText("notFoundContext");
-			this.showMessageToast(msg);
 		},
 		/**
 		 * Refresh the table before opening the dialog
