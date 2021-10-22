@@ -490,17 +490,8 @@ sap.ui.define([
 			if (sChannel === "AssignTreeDialog" && sEvent === "ganttShapeReassignment") {
 				for (var i = 0; i < oData.aSourcePaths.length; i++) {
 					var sourceData = this.getModel().getProperty(oData.aSourcePaths[i]);
-					this._updateAssignmentModel(sourceData.Guid).then(function (oAssignmentObj) {
-						if (oAssignmentObj.AllowReassign) {
-							oAssignmentObj.NewAssignPath = oData.sAssignPath;
-							this._oAssignementModel.setData(oAssignmentObj);
-							this.updateAssignment(true, {
-								bFromNewGantt: true
-							});
-						} else {
-							this.getModel().resetChanges(oData.aSourcePaths);
-						}
-					}.bind(this));
+					console.log(oData);
+					//this._updateDraggedShape(sNewPath, this.mRequestTypes.resize);
 				}
 			}
 		},
@@ -712,22 +703,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				var sTargetPath = oData.NewAssignPath ? oData.NewAssignPath : oChanges.OldAssignPath;
 				var oTargetData = this.oGanttModel.getProperty(sTargetPath);
-
-				this.checkQualification(null, oTargetData, oData.DateFrom, oData.DateTo, [oData.Demand.Guid]).then(function (data) {
-					if (data.result.results && data.result.results.length) {
-						this.getModel("viewModel").setProperty("/QualificationMatchList", {
-							TargetObject: oTargetData,
-							QualificationData: data.result.results,
-							SourcePaths: sPath,
-							targetDate: oData.DateFrom,
-							newEndDate: oData.DateTo,
-							aGuids: [oData.Demand.Guid]
-						});
-						this.getOwnerComponent().QualificationCheck.open(this, this.getView(), {}, resolve, reject);
-					} else {
-						resolve();
-					}
-				}.bind(this));
+				this._sendCheckQualification(null, oTargetData, oData.DateFrom, oData.DateTo, [oData.Demand.Guid], null).then(resolve, reject);
 			}.bind(this));
 		},
 		/**
@@ -743,6 +719,21 @@ sap.ui.define([
 		_checkResourceQualification: function (aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids, mParameters) {
 			return new Promise(function (resolve, reject) {
 				var oTargetObject = this.getModel("ganttModel").getProperty(oTarget);
+				this._sendCheckQualification(aSourcePaths, oTargetObject, oTargetDate, oNewEndDate, aGuids, mParameters).then(resolve, reject);
+			}.bind(this));
+		},
+
+		/**
+		 * Proceed to Qualification Check for Demand Assignment/Reassignment/Update, before Service call (Call Function Import) 
+		 * @param {Object} aSourcePaths Demand paths
+		 * @param {Object} oTargetObject Resource Path
+		 * @param {Object} oTargetDate Target date of assignment
+		 * @param {Object} oNewEndDate new end date from streach validation
+		 * @param {Object} aGuids Array of demand paths in case of split window
+		 * @param {Object} mParameters parameters for function import
+		 */
+		_sendCheckQualification: function (aSourcePaths, oTargetObject, oTargetDate, oNewEndDate, aGuids, mParameters) {
+			return new Promise(function (resolve, reject) {
 				this.checkQualification(aSourcePaths, oTargetObject, oTargetDate, oNewEndDate, aGuids).then(function (data) {
 					if (data.result.results && data.result.results.length) {
 						this.getModel("viewModel").setProperty("/QualificationMatchList", {
@@ -1185,7 +1176,7 @@ sap.ui.define([
 				this.oGanttModel.setProperty(this.selectedResources[i] + "/IsSelected", false);
 			}
 			this.selectedResources = [];
-		},
+		}
 
 	});
 
