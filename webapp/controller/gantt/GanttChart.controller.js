@@ -85,6 +85,8 @@ sap.ui.define([
 
 			this._viewId = this.getView().getId();
 			this.getOwnerComponent().GanttResourceFilter.init(this.getView(), this._treeTable);
+			//initialize context menu
+			this._initContextMenu();
 		},
 
 		/**
@@ -225,18 +227,8 @@ sap.ui.define([
 				oContext = oShape.getBindingContext("ganttModel");
 
 			if (oShape && oShape.sParentAggregationName === "shapes3") {
-				if (!this._oContextMenu) {
-					Fragment.load({
-						name: "com.evorait.evoplan.view.gantt.fragments.ShapeContextMenu",
-						controller: this
-					}).then(function (oDialog) {
-						this._oContextMenu = oDialog;
-						this.getView().addDependent(this._oContextMenu);
-						this._openContextMenu(oShape, oContext);
-					}.bind(this));
-				} else {
-					this._openContextMenu(oShape, oContext);
-				}
+				this._initContextMenu();
+				this._openContextMenu(oShape, oContext);
 			}
 		},
 
@@ -286,9 +278,9 @@ sap.ui.define([
 				//unassign
 				this._deleteAssignment(this.getModel(), oData.Guid, sPath);
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonReassign")) {
-				//Todo reassign
-				//oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
-				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters, callbackEvent);
+				//reassign
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters,
+					"ganttShapeReassignment");
 			}
 		},
 
@@ -443,6 +435,21 @@ sap.ui.define([
 		/* =========================================================== */
 
 		/**
+		 * initialize context menu first time
+		 */
+		_initContextMenu: function () {
+			if (!this._oContextMenu) {
+				Fragment.load({
+					name: "com.evorait.evoplan.view.gantt.fragments.ShapeContextMenu",
+					controller: this
+				}).then(function (oDialog) {
+					this._oContextMenu = oDialog;
+					this.getView().addDependent(this._oContextMenu);
+				}.bind(this));
+			}
+		},
+
+		/**
 		 * set onShapeDrop data to new target
 		 * @param {String} sSourcePath - source oGanttModel path
 		 * @param {Object} oTargetPath - target oGanttModel path
@@ -453,13 +460,14 @@ sap.ui.define([
 			var oSourceData = this.oGanttModel.getProperty(sSourcePath),
 				oTargetData = this.oGanttModel.getProperty(sTargetPath);
 
-			var oSourceStartDate = moment(oDraggedShapeData.time),
-				oSourceEndDate = moment(oDraggedShapeData.endTime),
-				duration = oSourceEndDate.diff(oSourceStartDate, "seconds"),
-				newEndDate = moment(oParams.newDateTime).add(duration, "seconds");
-
-			oSourceData.DateFrom = oParams.newDateTime;
-			oSourceData.DateTo = newEndDate.toDate();
+			if (oDraggedShapeData) {
+				var oSourceStartDate = moment(oDraggedShapeData.time),
+					oSourceEndDate = moment(oDraggedShapeData.endTime),
+					duration = oSourceEndDate.diff(oSourceStartDate, "seconds"),
+					newEndDate = moment(oParams.newDateTime).add(duration, "seconds");
+				oSourceData.DateFrom = oParams.newDateTime;
+				oSourceData.DateTo = newEndDate.toDate();
+			}
 			oSourceData.sSourcePath = sSourcePath;
 			oSourceData.sPath = sSourcePath;
 			oSourceData.OldAssignPath = sSourcePath.split("/AssignmentSet/results/")[0];
@@ -483,16 +491,47 @@ sap.ui.define([
 
 		/**
 		 * reassign a demand to a new resource by context menu
+		 * @param {String} sChannel
+		 * @param {String} sEvent
+		 * @param {Object} oData
 		 * @private
 		 */
 		_reassignShape: function (sChannel, sEvent, oData) {
 			if (sChannel === "AssignTreeDialog" && sEvent === "ganttShapeReassignment") {
 				for (var i = 0; i < oData.aSourcePaths.length; i++) {
-					var sourceData = this.getModel().getProperty(oData.aSourcePaths[i]);
-					console.log(oData);
-					//this._updateDraggedShape(sNewPath, this.mRequestTypes.resize);
+					var oTargetData = this.getModel().getProperty(oData.sAssignPath),
+						sGanttPath = oData.parameters.sSourcePath,
+						sTargetPath = this._getGanttModelPathByProperty("NodeId", oTargetData.NodeId, null);
+					if (sTargetPath) {
+						var sNewPath = this._setNewShapeDropData(sGanttPath, sTargetPath, null, {});
+						this._updateDraggedShape(sNewPath, this.mRequestTypes.resize);
+					}
 				}
 			}
+		},
+
+		/**
+		 * Recursive method for children check of gantt model
+		 * get path from gantt model by a special property, could be NodeId or ResourceGroup 
+		 * @param {String} sProperty - property name
+		 * @param {String} sValue - property value
+		 * @param {String} sPath - recursive path for children check
+		 */
+		_getGanttModelPathByProperty: function (sProperty, sValue, sPath) {
+			sPath = sPath || "/data/children";
+			var aChildren = this.oGanttModel.getProperty(sPath);
+			for (var i = 0; i < aChildren.length; i++) {
+				if (aChildren[i][sProperty] === sValue) {
+					sPath += "/" + i;
+					return sPath;
+				} else if (aChildren[i].children && aChildren[i].children.length > 0) {
+					var sNewPath = this._getGanttModelPathByProperty(sProperty, sValue, sPath + "/" + i + "/children");
+					if (sNewPath) {
+						return sNewPath;
+					}
+				}
+			}
+			return null;
 		},
 
 		/**
@@ -673,7 +712,7 @@ sap.ui.define([
 				if (this.mRequestTypes.reassign === sType && !oData.Demand.ALLOW_REASSIGN) {
 					sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
 					this._showAssignErrorDialog([oData.Description], null, sDisplayMessage);
-					return reject();
+					return reject(sDisplayMessage);
 				}
 				//has it a new parent
 				if (this.mRequestTypes.reassign === sType && oChanges.ResourceGuid) {
@@ -681,7 +720,7 @@ sap.ui.define([
 					if (!this.isAssignable({
 							data: oNewParent
 						})) {
-						return reject();
+						return reject("Parent not assignable");
 					}
 					//is parent not available then show warning and ask if they want proceed
 					if (!this.isAvailable(null, oNewParent)) {
@@ -803,9 +842,9 @@ sap.ui.define([
 						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 					}.bind(this));
 				}.bind(this), function () {
-						this.oGanttModel.setProperty(sDummyPath, null);
-						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-					}.bind(this));
+					this.oGanttModel.setProperty(sDummyPath, null);
+					this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+				}.bind(this));
 
 			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && !oUserData.ENABLE_QUALIFICATION) {
 
@@ -814,9 +853,9 @@ sap.ui.define([
 						.then(function (data) {
 							this._addCreatedAssignment(data[0], oTarget, sDummyPath);
 						}.bind(this), function () {
-						this.oGanttModel.setProperty(sDummyPath, null);
-						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-					}.bind(this));
+							this.oGanttModel.setProperty(sDummyPath, null);
+							this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+						}.bind(this));
 				}.bind(this));
 
 			} else if (oUserData.ENABLE_QUALIFICATION) {
@@ -826,9 +865,9 @@ sap.ui.define([
 						.then(function (data) {
 							this._addCreatedAssignment(data[0], oTarget, sDummyPath);
 						}.bind(this), function () {
-						this.oGanttModel.setProperty(sDummyPath, null);
-						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-					}.bind(this));
+							this.oGanttModel.setProperty(sDummyPath, null);
+							this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+						}.bind(this));
 				}.bind(this));
 
 			} else {
@@ -862,7 +901,7 @@ sap.ui.define([
 								}
 							}.bind(this));
 						}
-					}.bind(this),function(){
+					}.bind(this), function () {
 						reject();
 					});
 				} else {

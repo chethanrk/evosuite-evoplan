@@ -191,18 +191,19 @@ sap.ui.define([
 		onSaveDialog: function () {
 			var oTargetObj = this._oView.getModel().getProperty(this._assignPath),
 				aSources = this._oView.getModel("viewModel").getProperty("/dragSession"),
+				oUserModel = this._oView.getModel("user"),
 				iOperationTimesLen = this.onShowOperationTimes(this._oView.getModel("viewModel")),
-				iVendorAssignmentLen = this.onAllowVendorAssignment(this._oView.getModel("viewModel"), this._oView.getModel("user"));
-			
+				iVendorAssignmentLen = this.onAllowVendorAssignment(this._oView.getModel("viewModel"), oUserModel);
+
 			//Checking Vendor Assignment for External Resources
-			if (this._oView.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetObj.ISEXTERNAL && aSources.length !==
-				iVendorAssignmentLen) {
-				this._component.VendorAssignment.open(this._oView, this._assignPath, null);
-			}
-			//Checking Operation Times
-			else if (this._oView.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length) {
-				this._component.OperationTimeCheck.open(this._oView, null, this._assignPath);
-			}else{
+			if (aSources) {
+				if (oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetObj.ISEXTERNAL && aSources.length !== iVendorAssignmentLen) {
+					this._component.VendorAssignment.open(this._oView, this._assignPath, null);
+				} else if (oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length) {
+					//Checking Operation Times
+					this._component.OperationTimeCheck.open(this._oView, null, this._assignPath);
+				}
+			} else {
 				this.onProceedSaveDialog();
 			}
 		},
