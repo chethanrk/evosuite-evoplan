@@ -332,7 +332,7 @@ sap.ui.define([
 				this.resetChanges();
 				if (oTreeBinding && !this._bFirsrTime) {
 					this.mTreeState = this._getTreeState();
-					oTreeBinding.refresh();
+					this._oDroppableTable.rebindTable();//oTreeBinding.refresh();
 				}
 			}
 			this._bFirsrTime = false;
