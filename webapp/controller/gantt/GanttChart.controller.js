@@ -288,8 +288,7 @@ sap.ui.define([
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonReassign")) {
 				//Todo reassign
 				//oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent
-				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters,
-					"ganttShapeReassignment");
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters, callbackEvent);
 			}
 		},
 
@@ -799,8 +798,14 @@ sap.ui.define([
 							.then(function (data) {
 								this._addCreatedAssignment(data[0], oTarget, sDummyPath);
 							}.bind(this)).catch(function (error) {});
+					}.bind(this), function () {
+						this.oGanttModel.setProperty(sDummyPath, null);
+						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 					}.bind(this));
-				}.bind(this));
+				}.bind(this), function () {
+						this.oGanttModel.setProperty(sDummyPath, null);
+						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+					}.bind(this));
 
 			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && !oUserData.ENABLE_QUALIFICATION) {
 
@@ -808,7 +813,10 @@ sap.ui.define([
 					Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids))
 						.then(function (data) {
 							this._addCreatedAssignment(data[0], oTarget, sDummyPath);
-						}.bind(this)).catch(function (error) {});
+						}.bind(this), function () {
+						this.oGanttModel.setProperty(sDummyPath, null);
+						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+					}.bind(this));
 				}.bind(this));
 
 			} else if (oUserData.ENABLE_QUALIFICATION) {
@@ -817,14 +825,17 @@ sap.ui.define([
 					Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, null, aGuids))
 						.then(function (data) {
 							this._addCreatedAssignment(data[0], oTarget, sDummyPath);
-						}.bind(this)).catch(function (error) {});
+						}.bind(this), function () {
+						this.oGanttModel.setProperty(sDummyPath, null);
+						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+					}.bind(this));
 				}.bind(this));
 
 			} else {
 				Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, null, aGuids))
 					.then(function (data) {
 						this._addCreatedAssignment(data[0], oTarget, sDummyPath);
-					}.bind(this)).catch(function (error) {});
+					}.bind(this));
 			}
 		},
 		/**
@@ -851,7 +862,9 @@ sap.ui.define([
 								}
 							}.bind(this));
 						}
-					}.bind(this));
+					}.bind(this),function(){
+						reject();
+					});
 				} else {
 					resolve();
 				}

@@ -47,7 +47,7 @@
 						<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
 					</table:customData>
 					<table:template>
-							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.UtilizationColumn" type="XML"/>
+							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.UtilizationTreeColumn" type="XML"/>
 					</table:template>
 				</table:Column>
 				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="3.5rem" hAlign="End"

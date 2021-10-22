@@ -269,10 +269,16 @@ sap.ui.define([
 					}
 				}
 				//Cost Element, Estimate and Currency fields update for Vendor Assignment
-				if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && targetObj.ISEXTERNAL && oContext.oData.ALLOW_ASSIGNMENT_DIALOG) {
-					oParams.CostElement = oContext.oData.CostElement;
-					oParams.Estimate = oContext.oData.Estimate;
-					oParams.Currency = oContext.oData.Currency;
+				if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && targetObj.ISEXTERNAL) {
+					if (oContext.oData.ALLOW_ASSIGNMENT_DIALOG) {
+						oParams.CostElement = oContext.oData.CostElement;
+						oParams.Estimate = oContext.oData.Estimate;
+						oParams.Currency = oContext.oData.Currency;
+					} else {
+						oParams.CostElement = "";
+						oParams.Estimate = "";
+						oParams.Currency = "";
+					}
 				}
 
 				if (parseInt(i, 10) === aItems.length - 1) {
@@ -539,8 +545,8 @@ sap.ui.define([
 		/*
 		 *Method for checking Enabling Operation Times Demands
 		 */
-		onShowOperationTimes: function () {
-			var aSources = this.getModel("viewModel").getProperty("/dragSession"),
+		onShowOperationTimes: function (oViewModel) {
+			var aSources = oViewModel.getProperty("/dragSession"),
 				aOperationTimes = [];
 			for (var f in aSources) {
 				aSources[f].IsDisplayed = true;
@@ -551,7 +557,7 @@ sap.ui.define([
 					aOperationTimes.push(aSources[f]);
 				}
 			}
-			this.getModel("viewModel").refresh(true);
+			oViewModel.refresh(true);
 			return aOperationTimes.length;
 		},
 
@@ -609,19 +615,22 @@ sap.ui.define([
 		/*
 		 *Method for checking Vendor Assignment Field
 		 */
-		onAllowVendorAssignment: function () {
-			var aSources = this.getModel("viewModel").getProperty("/dragSession"),
+		onAllowVendorAssignment: function (oViewModel, oUserModel) {
+			var aSources = oViewModel.getProperty("/dragSession"),
 				aAllowVendorAssignment = [];
 			for (var v in aSources) {
 				if (!aSources[v].oData.ALLOW_ASSIGNMENT_DIALOG) {
+					aSources[v].oData.CostElement = "";
+					aSources[v].oData.Estimate = "";
+					aSources[v].oData.Currency = "";
 					aAllowVendorAssignment.push(aSources[v]);
 				} else {
 					aSources[v].oData.CostElement = "";
 					aSources[v].oData.Estimate = "";
-					aSources[v].oData.Currency = this.getModel("user").getProperty("/DEFAULT_CURRENCY");
+					aSources[v].oData.Currency = oUserModel.getProperty("/DEFAULT_CURRENCY");
 				}
 			}
-			this.getModel("viewModel").refresh(true);
+			oViewModel.refresh(true);
 			return aAllowVendorAssignment.length;
 		},
 

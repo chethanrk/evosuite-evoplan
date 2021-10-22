@@ -188,12 +188,31 @@ sap.ui.define([
 			this._assignPath = oContext.sPath;
 		},
 
+		onSaveDialog: function () {
+			var oTargetObj = this._oView.getModel().getProperty(this._assignPath),
+				aSources = this._oView.getModel("viewModel").getProperty("/dragSession"),
+				iOperationTimesLen = this.onShowOperationTimes(this._oView.getModel("viewModel")),
+				iVendorAssignmentLen = this.onAllowVendorAssignment(this._oView.getModel("viewModel"), this._oView.getModel("user"));
+			
+			//Checking Vendor Assignment for External Resources
+			if (this._oView.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetObj.ISEXTERNAL && aSources.length !==
+				iVendorAssignmentLen) {
+				this._component.VendorAssignment.open(this._oView, this._assignPath, null);
+			}
+			//Checking Operation Times
+			else if (this._oView.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length) {
+				this._component.OperationTimeCheck.open(this._oView, null, this._assignPath);
+			}else{
+				this.onProceedSaveDialog();
+			}
+		},
+
 		/**
 		 * save form data when demand selected from Demand table
 		 * or if set reassign save path in help model
 		 * @param oEvent
 		 */
-		onSaveDialog: function (oEvent) {
+		onProceedSaveDialog: function (oEvent) {
 			if (this._assignPath) {
 				if (this._callbackEvent) {
 					this._eventBus.publish("AssignTreeDialog", this._callbackEvent, {
