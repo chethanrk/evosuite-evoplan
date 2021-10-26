@@ -121,8 +121,16 @@ sap.ui.define([
 				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.pageGanttChartSplit"):
-				if (this._routeValidation("ENABLE_GANTT")) {
+				if (this._routeValidation("ENABLE_GANTT_JSON")) {
 					oRouter.navTo("ganttSplit", {});
+					window.open(sRoute, "_blank");
+					break;
+				}
+				oRouter.navTo("empty", {});
+				break;
+			case oResourceBundle.getText("xbut.pageNewGanttChartSplit"):
+				if (this._routeValidation("ENABLE_GANTT_JSON")) {
+					oRouter.navTo("newGanttSplit", {});
 					window.open(sRoute, "_blank");
 					break;
 				}
@@ -143,7 +151,7 @@ sap.ui.define([
 				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.pageNewGantt"):
-				if (this._routeValidation("ENABLE_GANTT")) {
+				if (this._routeValidation("ENABLE_GANTT_JSON")) {
 					oRouter.navTo("newgantt", {});
 					break;
 				}

@@ -66,16 +66,16 @@ sap.ui.define([
 				return;
 			}
 			// Parse Message
-			if (sCurrentRoute === "splitDemands" || sCurrentRoute === "ganttSplit" || sCurrentRoute === "splitDemandDetails" || sCurrentRoute === "splitGanttDetails") {
+			if (sCurrentRoute === "splitDemands" || sCurrentRoute === "ganttSplit" || sCurrentRoute === "newGanttSplit" || sCurrentRoute === "splitDemandDetails" || sCurrentRoute === "splitGanttDetails") {
 				setTimeout(function () {
-					if(sActionPage === "ganttSplit" && sCurrentRoute === "splitDemands"){
+					if(sActionPage === "ganttSplit" ||  sCurrentRoute === "splitDemands"){
                         	//MessageToast.show(sMsg);
 							eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 					} else if(sActionPage === "ganttSplit" && sCurrentRoute === "splitDemandDetails"){
 						// refresh demand detail page
                         //MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandOverview", {});
-					}else if(sActionPage === "splitDemands" && sCurrentRoute === "ganttSplit"){
+					}else if(sActionPage === "splitDemands" && (sCurrentRoute === "ganttSplit" || sCurrentRoute === "newGanttSplit")){
                         //MessageToast.show(sMsg);
 							eventBus.publish("BaseController", "refreshGanttChart", {});
 					}else if(sActionPage === "splitDemands" && sCurrentRoute === "splitGanttDetails"){
@@ -85,7 +85,7 @@ sap.ui.define([
 					}else if(sActionPage === "DemandDetails" && sCurrentRoute === "splitDemands"){
                         //MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-					}else if(sActionPage === "DemandDetails" && sCurrentRoute === "ganttSplit"){
+					}else if(sActionPage === "DemandDetails" && (sCurrentRoute === "ganttSplit" || sCurrentRoute === "newGanttSplit")){
                         //MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshGanttChart", {});
 					}else if(sActionPage === "DemandDetails" && (sCurrentRoute === "splitDemandDetails" || sCurrentRoute === "splitGanttDetails")){

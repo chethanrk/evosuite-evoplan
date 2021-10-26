@@ -271,6 +271,13 @@
 					]
 				},
 				{
+					"pattern": "SplitPage/SplitGanttChart",
+					"name": "newGanttSplit",
+					"target": [
+						"newGanttFullscreen"
+					]
+				},
+				{
 					"pattern": "SplitPage/Demand/{guid}",
 					"name": "splitDemandDetails",
 					"target": [
@@ -433,6 +440,15 @@
 					"viewId": "idFullGantt",
 					"viewPath": "com.evorait.evoplan.view.gantt",
 					"viewName": "Gantt",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 4
+				},
+				"newGanttFullscreen": {
+					"viewType": "XML",
+					"viewId": "idFullGantt",
+					"viewPath": "com.evorait.evoplan.view.gantt",
+					"viewName": "GanttChart",
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",
 					"viewLevel": 4
