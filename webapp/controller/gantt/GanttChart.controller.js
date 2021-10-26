@@ -55,24 +55,16 @@ sap.ui.define([
 				this._mParameters = {
 					bFromNewGantt: true
 				};
-				this.oGanttModel = this.getView().getModel("ganttModel");
-				this.oGanttOriginDataModel = this.getView().getModel("ganttOriginalData");
-
-				this.oGanttModel.setSizeLimit(999999999);
-				this.oGanttOriginDataModel.setSizeLimit(999999999);
-				if (this.oGanttModel.getProperty("/data/children").length === 0) {
-					this._loadGanttData();
-				} else {
-					this._addAssociations.bind(this)();
-				}
+				this.initializeGantt();
 			}.bind(this));
 
-			// this.getRouter().getRoute("ganttSplit").attachPatternMatched(function () {
-			// 	this._routeName = Constants.GANTT.SPLIT;
-			// 	this._mParameters = {
-			// 		bFromNewGanttSplit: true
-			// 	};
-			// }.bind(this));
+			this.getRouter().getRoute("newGanttSplit").attachPatternMatched(function () {
+				this._routeName = Constants.GANTT.SPLIT;
+				this._mParameters = {
+					bFromNewGanttSplit: true
+				};
+				this.initializeGantt();
+			}.bind(this));
 
 			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
 				this._ganttChart.addStyleClass("resourceGanttWithTable");
@@ -88,7 +80,23 @@ sap.ui.define([
 			//initialize context menu
 			this._initContextMenu();
 		},
+		/**
+		 * Initialize the fetch of data for Gantt chart
+		 * 
+		 */
+		initializeGantt : function () {
+				
+				this.oGanttModel = this.getView().getModel("ganttModel");
+				this.oGanttOriginDataModel = this.getView().getModel("ganttOriginalData");
 
+				this.oGanttModel.setSizeLimit(999999999);
+				this.oGanttOriginDataModel.setSizeLimit(999999999);
+				if (this.oGanttModel.getProperty("/data/children").length === 0) {
+					this._loadGanttData();
+				} else {
+					this._addAssociations.bind(this)();
+				}
+		},
 		/**
 		 * on page exit
 		 */
