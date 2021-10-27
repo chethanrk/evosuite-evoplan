@@ -33,7 +33,8 @@ sap.ui.define([
 							//Demand detail view
 							sViewName = "com.evorait.evoplan.view.templates.DemandDetails#DemandDetailTabs";
 							mParams = {
-								Guid: window.decodeURIComponent(oArgs.guid)
+								Guid: window.decodeURIComponent(oArgs.guid),
+								sDeepPath:"DemandToQualification,DemandToComponents,DemandToAssignment"
 							};
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageDemands"));
 							this._onRouteMatched(oEvent, sViewName, "DemandSet", mParams);
@@ -110,7 +111,7 @@ sap.ui.define([
 			this.getModel().metadataLoaded().then(function () {
 				var sPath = this.getEntityPath(sEntitySet, mParams);
 				//get template and create views
-				this.insertTemplateFragment(sPath, sViewName, "ObjectPageWrapper", this._afterBindSuccess.bind(this));
+				this.insertTemplateFragment(sPath, sViewName, "ObjectPageWrapper", this._afterBindSuccess.bind(this),mParams);
 			}.bind(this));
 		},
 		/**

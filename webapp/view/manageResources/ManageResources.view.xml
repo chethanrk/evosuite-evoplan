@@ -49,7 +49,7 @@
 										<core:CustomData key="p13nData" value='\{"columnKey": "Description", "leadingProperty": "Description"}'/>
 									</table:customData>
 									<!--<Label text="{i18n>xlab.groupResourceDescription}"></Label>-->
-									<Label text="{/#ResourceManagement/Description/@sap:label}"></Label>
+									<Label text="{/ResourceManagementSet/Description/##com.sap.vocabularies.Common.v1.Label/String}"></Label>
 									<table:template>
 										<Text text="{Description}"/>
 									</table:template>
@@ -58,7 +58,7 @@
 									<table:customData>
 										<core:CustomData key="p13nData" value='\{"columnKey": "Start", "leadingProperty": "Start"}'/>
 									</table:customData>
-									<Label text="{/#ResourceManagement/Start/@sap:label}"></Label>
+									<Label text="{/ResourceManagementSet/Start/##com.sap.vocabularies.Common.v1.Label/String}"></Label>
 									<table:template>
 										<Text text="{path:'Start',formatter:'.formatter.setDateFormatResourceTree'}"/>
 									</table:template>
@@ -67,7 +67,7 @@
 									<table:customData>
 										<core:CustomData key="p13nData" value='\{"columnKey": "End", "leadingProperty": "End"}'/>
 									</table:customData>
-									<Label text="{/#ResourceManagement/End/@sap:label}"></Label>
+									<Label text="{/ResourceManagementSet/End/##com.sap.vocabularies.Common.v1.Label/String}"></Label>
 									<table:template>
 										<Text text="{path:'End',formatter:'.formatter.setDateFormatResourceTree'}"/>
 									</table:template>

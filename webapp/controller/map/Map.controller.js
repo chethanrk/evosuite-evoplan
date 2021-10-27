@@ -161,7 +161,7 @@ sap.ui.define([
 				var oSelectedDemands = this.getModel("viewModel").getProperty("/mapSettings/selectedDemands");
 				if (oSelectedDemands && oSelectedDemands.length) {
 					setTimeout(function () {
-						if (this._bDemandListScroll === false) {
+						if (this._bDemandListScroll === false && !this.oView.getModel("viewModel").getProperty("/mapSettings/bRouteDateSelected")) {
 							this._oDraggableTable.getTable().selectAll();
 						}
 					}.bind(this), 10);
@@ -461,6 +461,7 @@ sap.ui.define([
 					this._aSelectedRowsIdx.length = 100;
 				}
 				var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+				this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
 				if (oSelectedPaths.aPathsData.length > 0) {
 					this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
 				}

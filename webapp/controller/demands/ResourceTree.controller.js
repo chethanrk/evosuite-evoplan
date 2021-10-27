@@ -278,7 +278,8 @@ sap.ui.define([
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
 				aSources = [],
-				iOperationTimesLen;
+				iOperationTimesLen,
+				iVendorAssignmentLen;
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -292,17 +293,24 @@ sap.ui.define([
 			}
 
 			aSources = this._oViewModel.getProperty("/dragSession");
-			iOperationTimesLen = this.onShowOperationTimes(aSources);
-
-			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
-				"RESOURCE") {
-				this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(), this._mParameters, sPath);
+			iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
+			iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
+			
+			//Checking Vendor Assignment for External Resources
+			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
+				iVendorAssignmentLen) {
+				this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
 			} else {
-				// If the Resource is Not/Partially available
-				if (this.isAvailable(sPath)) {
-					this.assignedDemands(aSources, sPath);
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+					"RESOURCE") {
+					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), this._mParameters, sPath);
 				} else {
-					this.showMessageToProceed(aSources, sPath);
+					// If the Resource is Not/Partially available
+					if (this.isAvailable(sPath)) {
+						this.assignedDemands(aSources, sPath);
+					} else {
+						this.showMessageToProceed(aSources, sPath);
+					}
 				}
 			}
 		},
@@ -324,7 +332,7 @@ sap.ui.define([
 				this.resetChanges();
 				if (oTreeBinding && !this._bFirsrTime) {
 					this.mTreeState = this._getTreeState();
-					oTreeBinding.refresh();
+					this._oDroppableTable.rebindTable();//oTreeBinding.refresh();
 				}
 			}
 			this._bFirsrTime = false;

@@ -44,6 +44,12 @@ sap.ui.define([
 			this.getRouter().getRoute("splitDemands").attachMatched(function () {
 				this._routeName = Constants.GANTT.SPLITDMD;
 			}.bind(this));
+			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
+				this._routeName = "newgantt";
+				this._mParameters = {
+					bFromNewGantt: true
+				};
+			}.bind(this));
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
 
 			//to initialize Gantt Demand Filter Dialog
@@ -133,6 +139,7 @@ sap.ui.define([
 				this._aSelectedRowsIdx.length = 100;
 			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
 				// TODO comment

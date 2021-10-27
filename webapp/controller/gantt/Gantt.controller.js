@@ -174,15 +174,25 @@ sap.ui.define([
 				oBrowserEvent = oEvent.getParameter("browserEvent"),
 				oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext(),
+				oDropObject = oDropContext.getObject(),
+				bAllowVendorAssignment = this.getModel().getProperty(oDragContext + "/ALLOW_ASSIGNMENT_DIALOG"),
 				sOperationStartDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_START_DATE"),
 				sOperationEndDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_END_DATE");
-
-			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !== null) {
-				this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(), {
-					bFromGantt: true
-				}, oDropContext.getPath(), oDraggedControl, oDroppedControl, oBrowserEvent);
+			this.onShowOperationTimes(this.getModel("viewModel"));
+			this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
+			//Checking Vendor Assignment for External Resources
+			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
+				this.getOwnerComponent().VendorAssignment.open(this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
+					oDroppedControl, oBrowserEvent);
 			} else {
-				this.onProceedToGanttDropOnResource(oDraggedControl, oDroppedControl, oBrowserEvent);
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !==
+					null) {
+					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), {
+						bFromGantt: true
+					}, oDropContext.getPath(), oDraggedControl, oDroppedControl, oBrowserEvent);
+				} else {
+					this.onProceedToGanttDropOnResource(oDraggedControl, oDroppedControl, oBrowserEvent);
+				}
 			}
 		},
 		/**
@@ -453,7 +463,7 @@ sap.ui.define([
 				sStatus = oModel.getProperty(sPath).DEMAND_STATUS;
 				if (!this._menu || sCurrentRoute !== this._firstVisit) {
 					this._menu = sap.ui.xmlfragment(
-						"com.evorait.evoplan.view.gantt.fragments.ShapeContextMenu",
+						"com.evorait.evoplan.view.gantt.fragments._oldShapeContextMenu",
 						this, sCurrentRoute
 					);
 					this.getView().addDependent(this._menu);
@@ -461,9 +471,9 @@ sap.ui.define([
 				}
 				if (sStatus !== "COMP") {
 					this._updateAssignmentModel(sAssignGuid).then(function (data) {
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign", data.AllowUnassign);
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign", data.AllowReassign);
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/change", data.AllowChange);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/unassign", data.AllowUnassign);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/reassign", data.AllowReassign);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/change", data.AllowChange);
 						oViewModel.setProperty("/ganttSettings/shapeData", data);
 						var eDock = Popup.Dock;
 						this._menu.open(true, oShape, eDock.BeginTop, eDock.endBottom, oShape);
@@ -516,7 +526,7 @@ sap.ui.define([
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
 				// Change
-				this.openAssignInfoDialog(this.getView(), sPath, this._selectedShapeContext);
+				this.openAssignInfoDialog(this.getView(), sPath, this._selectedShapeContext, mParameters);
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonExecuteFunction") && !oSelectedItem.getSubmenu()) {
 				// Set Function
 				var oDemandPath = oModel.getProperty(sPath).Demand.__ref;
@@ -570,7 +580,6 @@ sap.ui.define([
 						} else {
 							this.getModel().resetChanges(oData.aSourcePaths);
 						}
-
 					}.bind(this));
 				}
 			}

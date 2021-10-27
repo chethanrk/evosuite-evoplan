@@ -26,18 +26,19 @@ sap.ui.define([
 				aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
 				aPromises = [],
 				oDemandObj,
-				sDemandGuid;
+				sDemandGuid,
+				oParams;
 
 			this.clearMessageModel();
 
 			for (var i = 0; i < aItems.length; i++) {
 				oDemandObj = oModel.getProperty(aItems[i]);
-				sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i].split("'")[1],
-					oParams = {
-						DemandGuid: sDemandGuid,
-						ResourceGroupGuid: targetObj.ResourceGroupGuid,
-						ResourceGuid: targetObj.ResourceGuid
-					};
+				sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i].split("'")[1];
+				oParams = {
+					DemandGuid: sDemandGuid,
+					ResourceGroupGuid: targetObj.ResourceGroupGuid,
+					ResourceGuid: targetObj.ResourceGuid
+				};
 				// When we drop on the Gantt chart directly
 				if (oTargetDate) {
 					oParams.DateFrom = oTargetDate;
@@ -66,12 +67,16 @@ sap.ui.define([
 					}
 				}
 				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && this._mParameters.bFromGantt && aGanttDemandDragged.IsSelected) {
-					//	oParams.DateFrom = aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE;
 					oParams.DateFrom = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME);
-					oParams.TimeFrom.ms = aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME.ms;
+					oParams.TimeFrom.ms = oParams.DateFrom.getTime();
 					oParams.DateTo = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME);
-					//	oParams.DateTo = aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE;
-					oParams.TimeTo.ms = aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME.ms;
+					oParams.TimeTo.ms = oParams.DateTo.getTime();
+				}
+				//Cost Element, Estimate and Currency fields update for Vendor Assignment
+				if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && targetObj.ISEXTERNAL && aGanttDemandDragged.oData.ALLOW_ASSIGNMENT_DIALOG) {
+					oParams.CostElement = aGanttDemandDragged.oData.CostElement;
+					oParams.Estimate = aGanttDemandDragged.oData.Estimate;
+					oParams.Currency = aGanttDemandDragged.oData.Currency;
 				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}

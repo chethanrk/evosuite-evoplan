@@ -181,7 +181,7 @@ sap.ui.define([
 
 			if (oRowContext) {
 				this.assignmentPath = "/AssignmentSet('" + oRowContext.getObject().AssignmentGuid + "')";
-				this.openAssignInfoDialog(this.getView(), this.assignmentPath, oRowContext);
+				this.openAssignInfoDialog(this.getView(), this.assignmentPath, oRowContext, this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
@@ -275,6 +275,7 @@ sap.ui.define([
 				oTargetData = oModel.getProperty(sPath),
 				aSources = [],
 				iOperationTimesLen,
+				iVendorAssignmentLen,
 				eventBus = sap.ui.getCore().getEventBus();
 
 			//don't drop on assignments
@@ -289,21 +290,27 @@ sap.ui.define([
 			}
 
 			aSources = this.getModel("viewModel").getProperty("/mapDragSession");
-			iOperationTimesLen = this.onShowOperationTimes(aSources);
+			iOperationTimesLen = this.onShowOperationTimes(this.getModel("viewModel"));
+			iVendorAssignmentLen = this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
 
-			if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
-				"RESOURCE") {
-				this.getOwnerComponent().OperationTimeCheck.open(this, this.getView(), this._mParameters, sPath);
+			//Checking Vendor Assignment for External Resources
+			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
+				iVendorAssignmentLen) {
+				this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
 			} else {
-				eventBus.publish("BaseController", "resetMapSelection", {});
-				// If the Resource is Not/Partially available
-				if (this.isAvailable(sPath)) {
-					this.assignedDemands(aSources, sPath, this._mParameters);
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+					"RESOURCE") {
+					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), this._mParameters, sPath);
 				} else {
-					this.showMessageToProceed(aSources, sPath, null, null, null, null, this._mParameters);
+					eventBus.publish("BaseController", "resetMapSelection", {});
+					// If the Resource is Not/Partially available
+					if (this.isAvailable(sPath)) {
+						this.assignedDemands(aSources, sPath, this._mParameters);
+					} else {
+						this.showMessageToProceed(aSources, sPath, null, null, null, null, this._mParameters);
+					}
 				}
 			}
-
 		},
 		/**
 		 * Method will refresh the data of tree by restoring its state
@@ -322,7 +329,7 @@ sap.ui.define([
 			this.resetChanges();
 			if (oTreeBinding && !this._bFirsrTime) {
 				this.mTreeState = this._getTreeState();
-				oTreeBinding.refresh();
+				this._oDroppableTable.rebindTable();//oTreeBinding.refresh();
 			}
 			this._bFirsrTime = false;
 			// }.bind(this));
@@ -456,6 +463,7 @@ sap.ui.define([
 		 */
 		handleCalendarSelect: function (oEvent) {
 			var oSelectedDate = oEvent.getSource().getSelectedDates()[0].getStartDate();
+			this.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", true);
 			this._getSelectedRoute(oSelectedDate);
 		},
 		/**
@@ -489,6 +497,13 @@ sap.ui.define([
 		 */
 		onCloseDialog: function (oEvent) {
 			this._oPopover.close();
+		},
+		/**
+		 * method called after close the date range fragment used for route creation to remove flag
+		 * @Author: Rakesh
+		 */
+		removeRouteDataFlag: function (oEvent) {
+			this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false);
 		},
 		/**
 		 * method for getting selected route for selected date

@@ -219,6 +219,9 @@ sap.ui.define([
 				sDateControl1,
 				sDateControl2;
 
+			if(this._mParameters.bFromNewGantt){
+				oModel = this._oView.getModel("ganttModel");
+			}
 			for (var i = 0; i < aSelectedResources.length; i++) {
 				obj = oModel.getProperty(aSelectedResources[i]);
 				if (obj.NodeType === "RESOURCE") {
@@ -303,6 +306,8 @@ sap.ui.define([
 						this._oAssignMentTable.removeSelections();
 						this._bSelectAll = true;
 					}
+				} else if (!oEvent.getParameter("selected")) {
+					this._bSelectAll = true;
 				} else {
 					this._oAssignMentTable.removeSelections();
 					this._bSelectAll = true;

@@ -131,7 +131,7 @@ sap.ui.define([
 					if (oAction === "YES") {
 						oAssignmentModel.setProperty("/DateFrom", this.oAssignmentModel.getProperty("/RES_ASGN_START_DATE"));
 						oAssignmentModel.setProperty("/DateTo", this.oAssignmentModel.getProperty("/RES_ASGN_END_DATE"));
-					} else {}
+					}
 				}.bind(this));
 			}
 		},

@@ -96,7 +96,7 @@ sap.ui.define([
 			var oView = this.getView(),
 				sControllerName = null;
 
-			if (mParams) {
+			if (mParams.controllerName) {
 				oView = mParams.oView;
 				sControllerName = mParams.controllerName;
 			}

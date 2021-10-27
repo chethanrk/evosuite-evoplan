@@ -373,9 +373,9 @@ sap.ui.define([
 				}
 				if (sStatus !== "COMP") {
 					this._updateAssignmentModel(sAssignGuid).then(function (data) {
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign", data.AllowUnassign);
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign", data.AllowReassign);
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/change", data.AllowChange);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/unassign", data.AllowUnassign);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/reassign", data.AllowReassign);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/change", data.AllowChange);
 						oViewModel.setProperty("/ganttSettings/shapeData", data);
 						var eDock = Popup.Dock;
 						this._menu.open(true, oShape, eDock.BeginTop, eDock.endBottom, oShape);

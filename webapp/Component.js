@@ -29,8 +29,9 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttResourceFilter",
 	"com/evorait/evoplan/controller/gantt/GanttActions",
 	"com/evorait/evoplan/controller/DialogTemplateRenderController",
-		"com/evorait/evoplan/controller/common/OperationTimeCheck",
-			"com/evorait/evoplan/controller/gantt/GanttResourceTreeFilter",
+	"com/evorait/evoplan/controller/common/OperationTimeCheck",
+	"com/evorait/evoplan/controller/gantt/GanttResourceTreeFilter",
+	"com/evorait/evoplan/controller/common/VendorAssignment",
 	"com/evorait/evoplan/controller/common/LongTextPopover"
 ], function (
 	UIComponent,
@@ -64,6 +65,7 @@ sap.ui.define([
 	GanttActions, DialogTemplateRenderController,
 	OperationTimeCheck,
 	GanttResourceTreeFilter,
+	VendorAssignment,
 	LongTextPopover) {
 
 	"use strict";
@@ -120,8 +122,7 @@ sap.ui.define([
 				DefaultDemandStatus: "",
 				ganttSettings: {
 					active: false,
-					busy: false,
-					shapeOpearation: {
+					shapeOperation: {
 						unassign: false,
 						reassign: false,
 						change: false
@@ -134,7 +135,8 @@ sap.ui.define([
 					selectedDemands: [],
 					routeData: [],
 					checkedDemands: [],
-					assignedDemands: []
+					assignedDemands: [],
+					bRouteDateSelected: false
 				},
 				resourceFilterforRightTechnician: false,
 				CheckRightTechnician: false,
@@ -197,6 +199,18 @@ sap.ui.define([
 			// Resource groups model
 			this.setModel(new JSONModel([]), "resGroups");
 
+			//Cost Element Model for Vendor Assignment
+			var oCostElementModel = new JSONModel();
+			oCostElementModel.setSizeLimit(9999999999);
+			oCostElementModel.setData({});
+			this.setModel(oCostElementModel, "oCostElementModel");
+
+			//Currency Model for Vendor Assignment
+			var oCurrencyModel = new JSONModel();
+			oCurrencyModel.setSizeLimit(9999999999);
+			oCurrencyModel.setData({});
+			this.setModel(oCurrencyModel, "oCurrencyModel");
+
 			//Creating Model for Availability Group in Gantt
 			this.setModel(new JSONModel({
 				timeAllocation: [],
@@ -206,12 +220,12 @@ sap.ui.define([
 			this.setModel(models.createHelperModel({
 				navLinks: {}
 			}), "templateProperties");
-			
+
 			this.setModel(models.createHelperModel({
 				data: {
 					children: []
 				},
-				pendingChanges:{}
+				pendingChanges: {}
 			}, true), "ganttModel");
 			this.setModel(models.createHelperModel({
 				data: {
@@ -263,6 +277,13 @@ sap.ui.define([
 			aPromises.push(this._getData("/MapProviderSet", [], {
 				$expand: "MapSource"
 			}));
+
+			//Fetching Cost Element F4 for Vendor Assignment
+			aPromises.push(this._getData("/ShCostelementSet", [], {}));
+
+			//Fetching Currency F4 for Vendor Assignment
+			aPromises.push(this._getData("/ShCurrencySet", [], {}));
+
 			//sets user model - model has to be intantiated before any view is loaded
 			Promise.all(aPromises).then(function (data) {
 				this.getModel("user").setData(data[0]);
@@ -272,7 +293,12 @@ sap.ui.define([
 				if (data[2].results.length > 0) {
 					this.getModel("mapConfig").setData(data[2].results[0]);
 				}
-
+				if (data[3].results.length > 0) {
+					this.getModel("oCostElementModel").setData(data[3].results);
+				}
+				if (data[4].results.length > 0) {
+					this.getModel("oCurrencyModel").setData(data[4].results);
+				}
 				// Initialize websocket
 				if (data[0].ENABLE_PUSH_DEMAND) {
 					WebSocket.init(this);
@@ -414,15 +440,18 @@ sap.ui.define([
 			this.materialInfoDialog.init();
 
 			this.GanttResourceFilter = new GanttResourceFilter();
-			
-				this.GanttResourceTreeFilter = new GanttResourceTreeFilter();
-			
+
+			this.GanttResourceTreeFilter = new GanttResourceTreeFilter();
+
 			this.OperationTimeCheck = new OperationTimeCheck();
 			this.OperationTimeCheck.init();
+
+			this.VendorAssignment = new VendorAssignment();
+			this.VendorAssignment.init();
 			
 			this.longTextPopover = new LongTextPopover();
 			this.longTextPopover.init();
-			
+
 		},
 
 		/**

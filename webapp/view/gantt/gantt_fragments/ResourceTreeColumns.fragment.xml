@@ -15,9 +15,6 @@
 							enableQualification="{user>/ENABLE_QUALIFICATION}"
 							showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
 							workTime="{path:'ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}">
-							<controls:customData>
-								<core:CustomData key="objectId" value="{NodeId}" writeToDom="true"></core:CustomData>
-							</controls:customData>
 						</controls:CustomTitle>
 					</table:template>
     </table:Column>

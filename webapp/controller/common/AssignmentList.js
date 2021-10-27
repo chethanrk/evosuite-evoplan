@@ -68,11 +68,14 @@ sap.ui.define([
 				oContext = oAssignment.getBindingContext(),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
-				oAssignmentData = oModel.getProperty(sPath),
-				mParameters = {
-					bFromDetail: true
-				};
-			this.openAssignInfoDialog(this._oView, sPath, oAssignmentData, mParameters);
-		}
+				oAssignmentData = oModel.getProperty(sPath);
+			this.openAssignInfoDialog(this._oView, sPath, oAssignmentData, this._mParameters);
+		},
+		/**
+		 * unbind after closing
+		 */
+		onAfterCloseAssigments: function(oEvent){
+			this._olistDialog.unbindElement();
+		},
 	});
 });
