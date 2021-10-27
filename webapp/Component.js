@@ -30,7 +30,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttActions",
 	"com/evorait/evoplan/controller/DialogTemplateRenderController",
 		"com/evorait/evoplan/controller/common/OperationTimeCheck",
-			"com/evorait/evoplan/controller/gantt/GanttResourceTreeFilter"
+			"com/evorait/evoplan/controller/gantt/GanttResourceTreeFilter",
+	"com/evorait/evoplan/controller/common/LongTextPopover"
 ], function (
 	UIComponent,
 	Device,
@@ -62,7 +63,8 @@ sap.ui.define([
 	GanttResourceFilter,
 	GanttActions, DialogTemplateRenderController,
 	OperationTimeCheck,
-	GanttResourceTreeFilter) {
+	GanttResourceTreeFilter,
+	LongTextPopover) {
 
 	"use strict";
 
@@ -417,6 +419,9 @@ sap.ui.define([
 			
 			this.OperationTimeCheck = new OperationTimeCheck();
 			this.OperationTimeCheck.init();
+			
+			this.longTextPopover = new LongTextPopover();
+			this.longTextPopover.init();
 			
 		},
 

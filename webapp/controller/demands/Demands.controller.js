@@ -525,7 +525,7 @@ sap.ui.define([
 		 * 
 		 */
 		onClickLongText: function (oEvent) {
-			
+			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
 		}
 	});
 });
