@@ -84,18 +84,18 @@ sap.ui.define([
 		 * Initialize the fetch of data for Gantt chart
 		 * 
 		 */
-		initializeGantt : function () {
-				
-				this.oGanttModel = this.getView().getModel("ganttModel");
-				this.oGanttOriginDataModel = this.getView().getModel("ganttOriginalData");
+		initializeGantt: function () {
 
-				this.oGanttModel.setSizeLimit(999999999);
-				this.oGanttOriginDataModel.setSizeLimit(999999999);
-				if (this.oGanttModel.getProperty("/data/children").length === 0) {
-					this._loadGanttData();
-				} else {
-					this._addAssociations.bind(this)();
-				}
+			this.oGanttModel = this.getView().getModel("ganttModel");
+			this.oGanttOriginDataModel = this.getView().getModel("ganttOriginalData");
+
+			this.oGanttModel.setSizeLimit(999999999);
+			this.oGanttOriginDataModel.setSizeLimit(999999999);
+			if (this.oGanttModel.getProperty("/data/children").length === 0) {
+				this._loadGanttData();
+			} else {
+				this._addAssociations.bind(this)();
+			}
 		},
 		/**
 		 * on page exit
@@ -127,11 +127,9 @@ sap.ui.define([
 				oBrowserEvent = oEvent.getParameter("browserEvent"),
 				oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
-				oDropObject = oDropContext.getObject(),
 				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
 				sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : slocStor.split(","),
 				oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
-				oViewModel = this.getModel("viewModel"),
 				oResourceData = this.getModel("ganttModel").getProperty(oDropContext.getPath()),
 				oSvgPoint;
 
@@ -148,17 +146,17 @@ sap.ui.define([
 
 			if (oBrowserEvent.target.tagName === "rect" && oDragContext) { // When we drop on gantt chart in the same view
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
-				this._validateDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
+				this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
 
 			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) { // When we drop on gantt chart from split window
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
-				this._validateDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), sDragPath);
+				this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), sDragPath);
 
 			} else if (oDragContext) { // When we drop on the resource 
-				this._validateDemands(oResourceData, sDragPath, oDropContext.getPath(), null);
+				this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), null);
 
 			} else { // When we drop on the resource from split window
-				this._validateDemands(oResourceData, null, oDropContext.getPath(), null, sDragPath);
+				this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), null, sDragPath);
 
 			}
 
@@ -659,7 +657,6 @@ sap.ui.define([
 		 */
 		_proceedWithUpdateAssignment: function (sPath, sType, oPendingChanges, oData) {
 			return new Promise(function (resolve, reject) {
-				this.clearMessageModel();
 				var oParams = {
 					DateFrom: oData.DateFrom || 0,
 					TimeFrom: {
@@ -690,7 +687,7 @@ sap.ui.define([
 							if (this.mRequestTypes.reassign) {
 								this.oGanttOriginDataModel.setProperty(oData.sSourcePath, null);
 							}
-							this.oGanttOriginDataModel.setProperty(sPath, oResData);
+							this.oGanttOriginDataModel.setProperty(sPath, _.cloneDeep(oResData));
 							this._resetChanges(sPath);
 						}
 						this.oGanttModel.setProperty(sPath + "/busy", false);
@@ -834,7 +831,7 @@ sap.ui.define([
 		 * @param {Object} aGuids Array of guids in case of split window 
 		 * @private
 		 */
-		_validateDemands: function (oResourceData, aSources, oTarget, oTargetDate, aGuids) {
+		_validateAndAssignDemands: function (oResourceData, aSources, oTarget, oTargetDate, aGuids) {
 			var oUserData = this.getModel("user").getData();
 
 			var sDummyPath = this._createDummyAssignment(oTarget, oTargetDate);
@@ -844,10 +841,7 @@ sap.ui.define([
 
 				this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids).then(function (oEndDate) {
 					this._checkResourceQualification(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(function (data) {
-						Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids))
-							.then(function (data) {
-								this._addCreatedAssignment(data[0], oTarget, sDummyPath);
-							}.bind(this)).catch(function (error) {});
+						this._assignDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath);
 					}.bind(this), function () {
 						this.oGanttModel.setProperty(sDummyPath, null);
 						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
@@ -858,36 +852,45 @@ sap.ui.define([
 				}.bind(this));
 
 			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && !oUserData.ENABLE_QUALIFICATION) {
-
 				this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids).then(function (oEndDate) {
-					Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids))
-						.then(function (data) {
-							this._addCreatedAssignment(data[0], oTarget, sDummyPath);
-						}.bind(this), function () {
-							this.oGanttModel.setProperty(sDummyPath, null);
-							this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-						}.bind(this));
+					this._assignDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath);
 				}.bind(this));
 
 			} else if (oUserData.ENABLE_QUALIFICATION) {
-
 				this._checkResourceQualification(aSources, oTarget, oTargetDate, null, aGuids).then(function (data) {
-					Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, null, aGuids))
-						.then(function (data) {
-							this._addCreatedAssignment(data[0], oTarget, sDummyPath);
-						}.bind(this), function () {
-							this.oGanttModel.setProperty(sDummyPath, null);
-							this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-						}.bind(this));
+					this._assignDemands(aSources, oTarget, oTargetDate, null, aGuids, sDummyPath);
 				}.bind(this));
 
 			} else {
-				Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, null, aGuids))
-					.then(function (data) {
-						this._addCreatedAssignment(data[0], oTarget, sDummyPath);
-					}.bind(this));
+				this._assignDemands(aSources, oTarget, oTargetDate, null, aGuids, sDummyPath);
 			}
 		},
+
+		/**
+		 * Send assignment request to backend for all new assignments
+		 * After assignment was created dummy placeholder assignment is replaced with real data 
+		 * and busy state of dummy assignment is removed
+		 * @param {Array} aSources
+		 * @param {Object} oTarget
+		 * @param {Date} oTargetDate
+		 * @param {Date} oEndDate
+		 * @param {Array} aGuids
+		 * @param {String} sDummyPath
+		 */
+		_assignDemands: function (aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath) {
+			Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids))
+				.then(function (aResults) {
+					if (aResults.length > 0) {
+						this._addCreatedAssignment(aResults[0], oTarget, sDummyPath);
+					}
+				}.bind(this), function () {
+					if (sDummyPath) {
+						this.oGanttModel.setProperty(sDummyPath, null);
+						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+					}
+				}.bind(this));
+		},
+
 		/**
 		 * Proceed to assignment with Stretch, check if Date Time is not valid
 		 * @param {Object} aSources Demand paths
@@ -977,7 +980,7 @@ sap.ui.define([
 			}
 			this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 			this.oGanttModel.setProperty(sDummyPath, data);
-			this.oGanttOriginDataModel.setProperty(sDummyPath, data);
+			this.oGanttOriginDataModel.setProperty(sDummyPath, _.cloneDeep(data));
 			if (this._routeName !== Constants.GANTT.SPLIT) {
 				this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
@@ -1181,7 +1184,7 @@ sap.ui.define([
 				aFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, oData.resource));
 				this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters).then(function (data) {
 					this.oGanttModel.setProperty(sSelectedResourcePath + "/ResourceAvailabilitySet/results", data.results);
-					this.oGanttOriginDataModel.setProperty(sSelectedResourcePath + "/ResourceAvailabilitySet/results", data.results);
+					this.oGanttOriginDataModel.setProperty(sSelectedResourcePath + "/ResourceAvailabilitySet/results", _.cloneDeep(data.results));
 					this.oGanttModel.refresh();
 					this._resetSelections();
 				}.bind(this));
