@@ -95,6 +95,7 @@ sap.ui.define([
 			}.bind(this)).then(function(oData) {
 				var msg = this._component.getModel("i18n").getResourceBundle().getText("xmsg.saveSuccess");
 				this.showMessageToast(msg);
+				this._oLongTextPopover.close();
 			}.bind(this)).catch(function(oError) {
 				var msg = this._component.getModel("i18n").getResourceBundle().getText("errorMessage");
 				this.showMessageToast(msg);
