@@ -31,7 +31,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/DialogTemplateRenderController",
 	"com/evorait/evoplan/controller/common/OperationTimeCheck",
 	"com/evorait/evoplan/controller/gantt/GanttResourceTreeFilter",
-	"com/evorait/evoplan/controller/common/VendorAssignment"
+	"com/evorait/evoplan/controller/common/VendorAssignment",
+	"com/evorait/evoplan/controller/common/LongTextPopover"
 ], function (
 	UIComponent,
 	Device,
@@ -64,7 +65,8 @@ sap.ui.define([
 	GanttActions, DialogTemplateRenderController,
 	OperationTimeCheck,
 	GanttResourceTreeFilter,
-	VendorAssignment) {
+	VendorAssignment,
+	LongTextPopover) {
 
 	"use strict";
 
@@ -446,6 +448,9 @@ sap.ui.define([
 
 			this.VendorAssignment = new VendorAssignment();
 			this.VendorAssignment.init();
+			
+			this.longTextPopover = new LongTextPopover();
+			this.longTextPopover.init();
 
 		},
 
