@@ -47,7 +47,6 @@ sap.ui.define([
 			this._loadDialog(this._mParams.oDialogController, onDataReceived);
 		},
 
-
 		onExit: function () {
 			TemplateRenderController.prototype.onExit.apply(this, arguments);
 			this._oDialog.destroy(true);
@@ -86,7 +85,7 @@ sap.ui.define([
 		 */
 		_setFragmentViewBinding: function (onDataReceived) {
 			var sPath = this.getEntityPath(this._mParams.entitySet, this._mParams.pathParams, this._oView, this._mParams.sPath);
-
+			this._oDialog.setBusyIndicatorDelay(0);
 			this._oDialog.setBusy(true);
 			// this._oDialog.unbindElement();
 			// this._oDialog.bindElement(sPath);
@@ -96,7 +95,8 @@ sap.ui.define([
 			this._oModel.metadataLoaded().then(function () {
 				//get template and create views
 				this._mParams.oView = this._oView;
-				this.insertTemplateFragment(sPath, this._mParams.viewName, "FormDialogWrapper", this._afterBindSuccess.bind(this,sPath), this._mParams, onDataReceived.bind(this, this._oDialog, this._oView, sPath));
+				this.insertTemplateFragment(sPath, this._mParams.viewName, "FormDialogWrapper", this._afterBindSuccess.bind(this, sPath), this._mParams,
+					onDataReceived.bind(this, this._oDialog, this._oView, sPath));
 			}.bind(this));
 
 			this._oDialog.open();
