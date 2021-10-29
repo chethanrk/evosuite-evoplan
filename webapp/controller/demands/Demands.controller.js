@@ -519,7 +519,7 @@ sap.ui.define([
 		
 		/**
 		 * Opens long text view/edit popover
-		 * 
+		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
 		 */
 		onClickLongText: function (oEvent) {
 			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);

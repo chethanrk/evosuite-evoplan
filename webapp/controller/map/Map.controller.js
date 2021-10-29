@@ -789,13 +789,21 @@ sap.ui.define([
 				}.bind(this));
 			};
 		},
+		
+		/**
+		 * Opens long text view/edit popover
+		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
+		 */
+		onClickLongText: function (oEvent) {
+			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
+		},
 
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
-		}
+		},
 	});
 
 });

@@ -64,9 +64,6 @@ sap.ui.define([
 		 * on popover close
 		 */
 		onCloseLongTextPopover: function (oEvent) {
-			var oModel = oEvent.getSource().getBindingContext().getModel();
-			
-			oModel.resetChanges();
 			this._oLongTextPopover.close();
 		},
 		
@@ -74,7 +71,8 @@ sap.ui.define([
 		 * Handles the popover 'afterClose' event
 		 */
 		onAfterCloseLongText: function(oEvent) {
-			this.onCloseLongTextPopover(oEvent);
+			var oModel = oEvent.getSource().getBindingContext().getModel();
+			oModel.resetChanges();
 		},
 		
 		/**
