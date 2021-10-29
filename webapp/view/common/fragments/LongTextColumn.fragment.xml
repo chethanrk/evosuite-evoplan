@@ -5,7 +5,7 @@
 		</table:customData>
 		<Label text="{/#Demand/LONG_TEXT/@sap:label}"/>
 		<table:template>
-			<Button icon="sap-icon://detail-view" type="Transparent" press="onClickLongText"/>
+			<Button icon="{LONG_TEXT_ICON}" type="Transparent" visible="{= ${LONG_TEXT_ICON} ? true : false}" press="onClickLongText"/>
 		</table:template>
 	</table:Column>
 </core:FragmentDefinition>
