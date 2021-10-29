@@ -15,6 +15,7 @@ sap.ui.define([
 		_oView: null,
 		_oFilterBar: null,
 		_oDialog: null,
+		_resourceMaster: null,
 		/**
 		 * Initialising the Gantt Resource Filter Dialog
 		 * @param Tree Table (To Apply filter)
@@ -71,7 +72,7 @@ sap.ui.define([
 		 * @returns {null}
 		 */
 		onClear: function (oEvent) {
-			this._oFilterBar.getControlByKey("ResourceGroupGuid").setSelectedItems([]);
+			// this._oFilterBar.getControlByKey("ResourceGroupGuid").setSelectedItems([]);
 		},
 
 		/**
@@ -79,21 +80,52 @@ sap.ui.define([
 		 */
 		onGanttResourceFilterChange: function (oEvent) {
 			var oFilters = this._oFilterBar.getFilters(),
-				sDateFrom = this.formatter.date(this._oView.byId("idDateRangeGantt2").getDateValue()),
-				sDateTo = this.formatter.date(this._oView.byId("idDateRangeGantt2").getSecondDateValue()),
-				// aDateFilters = [
-				// 	new Filter("StartDate", FilterOperator.LE, sDateTo),
-				// 	new Filter("EndDate", FilterOperator.GE, sDateFrom)
-				// ],
-				sFilterCount = 0;
-			if (oFilters && oFilters.length) {
-				sFilterCount = oFilters[0].aFilters.length;
+				sFilterCount = 0,
+				aResGroups = [],
+				aResources = [],
+				aAllResources = [],
+				aFilters = [],
+				oFilter,
+				oFinalFilter;
+			if (oFilters.length > 0 && oFilters[0].aFilters.length) {
+				var aAppliedFilters = oFilters[0].aFilters;
+				for (var k in aAppliedFilters) {
+					aAllResources.push(aAppliedFilters[k].oValue1);
+				}
 			}
-			// oFilters = oFilters.concat(aDateFilters);
-			this._treeTable.getBinding("rows").filter(oFilters, "Application");
-			this.setFilterCount(sFilterCount);
-		},
 
+			this._getResources().then(function (data) {
+				for (var j in aAllResources) {
+					for (var i in data.results) {
+						if (aAllResources[j] === data.results[i].Description && data.results[i].ObjectType === "RES_GROUP") {
+							aResGroups.push(data.results[i].ResourceGroupGuid);
+						} else if (aAllResources[j] === data.results[i].Description) {
+							aResources.push(data.results[i].ObjectId);
+						}
+					}
+				}
+				if (aResGroups.length > 0) {
+					for (var m in aResGroups) {
+						aFilters.push(new Filter("ResourceGroupGuid", FilterOperator.EQ, aResGroups[m]));
+					}
+					oFilter = new Filter(aFilters, false);
+				}
+				if (aResources.length > 0) {
+					for (var n in aResources) {
+						aFilters.push(new Filter("NodeId", FilterOperator.EQ, aResources[n]));
+					}
+					oFilter = new Filter(aFilters, false);
+				}
+				if (aFilters && aFilters.length) {
+					sFilterCount = aFilters.length;
+				}
+				oFinalFilter = oFilter ? [oFilter] : [];
+				this._treeTable.getBinding("rows").filter(oFinalFilter, "Application");
+				this.setFilterCount(sFilterCount);
+			}.bind(this));
+
+		},
+		
 		/**
 		 * Close the Filter Bar
 		 */
@@ -111,6 +143,22 @@ sap.ui.define([
 			} else {
 				this._oView.byId("idBtnGanttResourceFilter").setText(sFilterText);
 			}
+		},
+		/**
+		 * Get All the resources
+		 * */
+		_getResources : function (){
+			return new Promise(function(resolve, reject){
+				if(!this._resourceMaster){
+				this._component.readData("/ResourceSet").then(function (data) {
+					this._resourceMaster = data;
+					resolve(this._resourceMaster);
+				}.bind(this));
+				}else{
+					resolve(this._resourceMaster);
+				}
+			}.bind(this));
+				
 		}
 
 	});

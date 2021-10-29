@@ -39,14 +39,13 @@ sap.ui.define([
 		},
 
 		onOpen: function (oDialog, oView, sBindPath, oAssignmentData, mParameters, oAssignementPath, data) {
-
 			var oAssignment = this.getDefaultAssignmentModelObject(),
 				oResource,
 				oAssignData,
 				sResourceGroupGuid,
 				sResourceGuid;
 			this._oDialog = oDialog;
-
+			this.oAssignmentModel = oView.getModel("assignment");
 			if (sBindPath && sBindPath !== "") {
 				oResource = oView.getModel().getProperty(sBindPath);
 				oAssignment.AssignmentGuid = oResource.AssignmentGuid;
@@ -87,7 +86,6 @@ sap.ui.define([
 			this._mParameters = mParameters || {
 				bFromHome: true
 			};
-			this.oAssignmentModel = oView.getModel("assignment");
 			this.oAssignmentModel.setData(oAssignment);
 
 			//Set the ResourceGroupGuid 
@@ -249,6 +247,7 @@ sap.ui.define([
 		_closeDialog: function () {
 			this._oDialog.close();
 			this._oDialog.unbindElement();
+			this.oAssignmentModel.setProperty("/AllowUnassign", false);
 			this.reAssign = false; // setting to default on close of Dialog
 			// this.oAssignmentModel.setData({});// Commented to have data in Qualification Match Dialog Methods:by Rakesh Sahu
 		},
