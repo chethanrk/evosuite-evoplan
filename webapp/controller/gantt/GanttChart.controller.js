@@ -77,8 +77,6 @@ sap.ui.define([
 
 			this._viewId = this.getView().getId();
 			this.getOwnerComponent().GanttResourceFilter.init(this.getView(), this._treeTable);
-			//initialize context menu
-			this._initContextMenu();
 		},
 		/**
 		 * Initialize the fetch of data for Gantt chart
@@ -117,9 +115,46 @@ sap.ui.define([
 		onPressGanttResourceFilters: function () {
 			this.getOwnerComponent().GanttResourceFilter.open(this.getView(), this._treeTable);
 		},
+
+		/**
+		 * Event when visble horizont was changed
+		 * @param oEvent
+		 */
+		onVisibleHorizonUpdate: function (oEvent) {
+			var mParams = oEvent.getParameters(),
+				sStartTime = mParams.currentVisibleHorizon.getStartTime();
+
+			//sometimes Gantt view gets new rendered when opening context menu of shape
+			//then visible horizon jumps to the very beginning of time
+			//with this workaround tries setting it back to pressed shaped in view
+			//when you got better solution then please change it
+			//@author Michaela Schlage
+			if (this._oContextMenu && this._oContextMenu.getPopup().isOpen()) {
+				var oDate = this.oGanttModel.getProperty("/settings/startTime"),
+					oNewStartDate = _.clone(oDate),
+					bGanttViewJumped = false;
+
+				if (typeof mParams.type === "undefined" && typeof oDate === "string" && sStartTime !== oDate) {
+					bGanttViewJumped = true;
+					oNewStartDate = moment(oDate.slice(0, 8) + "T" + oDate.slice(8)).toDate();
+				}
+				if (this._bFirstTimeContextMenuOpen || bGanttViewJumped) {
+					this._bFirstTimeContextMenuOpen = false;
+					setTimeout(function () {
+						this._changeGanttHorizonViewAt(this._axisTime.getZoomLevel(), this._axisTime, oNewStartDate);
+					}.bind(this), 0);
+				}
+			} else {
+				this.oGanttModel.setProperty("/settings", {
+					startTime: mParams.currentVisibleHorizon.getStartTime(),
+					endTime: mParams.currentVisibleHorizon.getEndTime()
+				});
+			}
+		},
+
 		/**
 		 * On demand drop on gantt chart or resource
-		 * 
+		 * @param oEvent
 		 */
 		onDemandDrop: function (oEvent) {
 			var oDraggedControl = oEvent.getParameter("draggedControl"),
@@ -236,8 +271,19 @@ sap.ui.define([
 				oContext = oShape.getBindingContext("ganttModel");
 
 			if (oShape && oShape.sParentAggregationName === "shapes3") {
-				this._initContextMenu();
-				this._openContextMenu(oShape, oContext);
+				if (!this._oContextMenu) {
+					Fragment.load({
+						name: "com.evorait.evoplan.view.gantt.fragments.ShapeContextMenu",
+						controller: this
+					}).then(function (oDialog) {
+						this._oContextMenu = oDialog;
+						this.getView().addDependent(this._oContextMenu);
+						this._openContextMenu(oShape, oContext);
+						this._bFirstTimeContextMenuOpen = true;
+					}.bind(this));
+				} else {
+					this._openContextMenu(oShape, oContext);
+				}
 			}
 		},
 
@@ -444,21 +490,6 @@ sap.ui.define([
 		/* =========================================================== */
 
 		/**
-		 * initialize context menu first time
-		 */
-		_initContextMenu: function () {
-			if (!this._oContextMenu) {
-				Fragment.load({
-					name: "com.evorait.evoplan.view.gantt.fragments.ShapeContextMenu",
-					controller: this
-				}).then(function (oDialog) {
-					this._oContextMenu = oDialog;
-					this.getView().addDependent(this._oContextMenu);
-				}.bind(this));
-			}
-		},
-
-		/**
 		 * set onShapeDrop data to new target
 		 * @param {String} sSourcePath - source oGanttModel path
 		 * @param {Object} oTargetPath - target oGanttModel path
@@ -555,8 +586,7 @@ sap.ui.define([
 					oData.sPath = oContext.getPath();
 					this.oGanttModel.setProperty(oData.sPath + "/Demand", oResult.Demand);
 					this.oViewModel.setProperty("/ganttSettings/shapeData", oData);
-					var eDock = Popup.Dock;
-					this._oContextMenu.open(true, oShape, eDock.BeginTop, eDock.endBottom, oShape);
+					this._oContextMenu.open(true, oShape, Popup.Dock.BeginTop, Popup.Dock.endBottom, oShape);
 				}.bind(this));
 			}
 		},
@@ -1004,6 +1034,11 @@ sap.ui.define([
 				sStartDate = date.startOf("day").subtract(1, "day").toDate();
 				sEndDate = date.endOf("day").add(1, "day").toDate();
 			}
+
+			this.oGanttModel.setProperty("/settings", {
+				startTime: sStartDate,
+				endTime: sEndDate
+			});
 
 			//Setting VisibleHorizon for Gantt for supporting Patch Versions (1.71.35)
 			if (oAxisTimeStrategy) {
