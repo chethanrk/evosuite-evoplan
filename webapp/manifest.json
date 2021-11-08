@@ -19,11 +19,7 @@
 			]
 		},
 		"applicationVersion": {
-<<<<<<< HEAD
 			"version": "2110.0.0"
-=======
-			"version": "2106.0.2"
->>>>>>> refs/remotes/origin/Development
 		},
 		"dataSources": {
 			"mainService": {
