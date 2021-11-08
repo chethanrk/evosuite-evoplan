@@ -1,0 +1,42 @@
+<mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form" xmlns:l="sap.ui.layout"
+	xmlns:smartField="sap.ui.comp.smartfield" xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
+		<HBox width="100%">
+			<template:with path="templateProperties>/annotationPath" helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="paths">
+				<template:with path="paths>" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="collectionFacets">
+					<template:repeat list="{path:'collectionFacets>'}">
+						<template:with path="collectionFacets>Facets" var="facets">
+							<core:Fragment fragmentName="com.evorait.evoplan.view.templates.SmartFormTemplate" type="XML"/>
+						</template:with>
+					</template:repeat>
+				</template:with>
+			</template:with>
+			<form:SimpleForm visible="{= !${viewModel>/showError}}" id="assignmentInfoForm" editable="true" layout="ResponsiveGridLayout"
+				labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" emptySpanXL="2" emptySpanL="2" emptySpanM="2" emptySpanS="0" columnsXL="2"
+				columnsL="2" columnsM="1" singleContainerFullSize="false">
+				<form:content>
+					<Label text="{/#Assignment/DateFrom/@sap:label}"/>
+					<DateTimePicker name="DateFrom"
+						value="{path:'assignment>/DateFrom', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true} }"
+						editable="{assignment>/AllowChange}" change="onAssignmentDateChange"/>
+					<Label text="{/#Assignment/DateTo/@sap:label}"/>
+					<DateTimePicker id="idDateToAssignInf" name="DateTo"
+						value="{path:'assignment>/DateTo', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true} }"
+						editable="{assignment>/AllowChange}" change="onAssignmentDateChange"/>
+					<Label text="{/#Assignment/Effort/@sap:label}"/>
+					<Input type="Text" name="Effort" value="{assignment>/Effort}" editable="{assignment>/AllowChange}"/>
+					<Label text="{/#Assignment/EffortUnit/@sap:label}"/>
+					<Text text="{assignment>/EffortUnit}"/>
+					<Label text="{i18n>xfld.newAssign}" visible="{assignment>/AllowReassign}"/>
+					<CheckBox
+						visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleReassign' }"
+						enabled="{assignment>/AllowReassign}" select="onChangeAssignType" selected="{assignment>/isNewAssignment}"/>
+					<Button id="reassignDialogButton" text="{i18n>xbut.selectResource}" press="onPressReAssign" enabled="{assignment>/isNewAssignment}"
+						visible="{assignment>/AllowReassign}"/>
+					<Label text="{i18n>xfld.newAssignment}" visible="{assignment>/isNewAssignment}"/>
+					<Text text="{assignment>/NewAssignDesc}" visible="{assignment>/isNewAssignment}"/>
+				</form:content>
+			</form:SimpleForm>
+		</HBox>
+	</template:alias>
+</mvc:View>

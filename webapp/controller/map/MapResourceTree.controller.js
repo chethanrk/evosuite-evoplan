@@ -180,8 +180,8 @@ sap.ui.define([
 				oRowContext = oSource.getParent().getBindingContext();
 
 			if (oRowContext) {
-				this.assignmentPath = oRowContext.getPath();
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
+				this.assignmentPath = "/AssignmentSet('" + oRowContext.getObject().AssignmentGuid + "')";
+				this.openAssignInfoDialog(this.getView(), this.assignmentPath, oRowContext, this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
@@ -209,13 +209,16 @@ sap.ui.define([
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
-				oUserModel = this.getModel("user");
+				oUserModel = this.getModel("user"),
+				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels;
 
 			if (!this.isLoaded) {
 				this.isLoaded = true;
 			}
 			// Bug fix for some time tree getting collapsed
-			oBinding.parameters.numberOfExpandedLevels = oUserModel.getProperty("/RESOURCE_TREE_EXPAND") ? 1 : 0;
+			if (oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND")) {
+				oBinding.parameters.numberOfExpandedLevels = nTreeExpandLevel ? nTreeExpandLevel : 1;
+			}
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			// setting filters in local model to access in assignTree dialog.
@@ -271,6 +274,8 @@ sap.ui.define([
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
 				aSources = [],
+				iOperationTimesLen,
+				iVendorAssignmentLen,
 				eventBus = sap.ui.getCore().getEventBus();
 
 			//don't drop on assignments
@@ -285,14 +290,27 @@ sap.ui.define([
 			}
 
 			aSources = this.getModel("viewModel").getProperty("/mapDragSession");
-			eventBus.publish("BaseController", "resetMapSelection", {});
-			// If the Resource is Not/Partially available
-			if (this.isAvailable(sPath)) {
-				this.assignedDemands(aSources, sPath, this._mParameters);
-			} else {
-				this.showMessageToProceed(aSources, sPath, null, null, null, null, this._mParameters);
-			}
+			iOperationTimesLen = this.onShowOperationTimes(this.getModel("viewModel"));
+			iVendorAssignmentLen = this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
 
+			//Checking Vendor Assignment for External Resources
+			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
+				iVendorAssignmentLen) {
+				this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
+			} else {
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+					"RESOURCE") {
+					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), this._mParameters, sPath);
+				} else {
+					eventBus.publish("BaseController", "resetMapSelection", {});
+					// If the Resource is Not/Partially available
+					if (this.isAvailable(sPath)) {
+						this.assignedDemands(aSources, sPath, this._mParameters);
+					} else {
+						this.showMessageToProceed(aSources, sPath, null, null, null, null, this._mParameters);
+					}
+				}
+			}
 		},
 		/**
 		 * Method will refresh the data of tree by restoring its state
@@ -311,7 +329,7 @@ sap.ui.define([
 			this.resetChanges();
 			if (oTreeBinding && !this._bFirsrTime) {
 				this.mTreeState = this._getTreeState();
-				oTreeBinding.refresh();
+				this._oDroppableTable.rebindTable();//oTreeBinding.refresh();
 			}
 			this._bFirsrTime = false;
 			// }.bind(this));
@@ -445,6 +463,7 @@ sap.ui.define([
 		 */
 		handleCalendarSelect: function (oEvent) {
 			var oSelectedDate = oEvent.getSource().getSelectedDates()[0].getStartDate();
+			this.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", true);
 			this._getSelectedRoute(oSelectedDate);
 		},
 		/**
@@ -478,6 +497,13 @@ sap.ui.define([
 		 */
 		onCloseDialog: function (oEvent) {
 			this._oPopover.close();
+		},
+		/**
+		 * method called after close the date range fragment used for route creation to remove flag
+		 * @Author: Rakesh
+		 */
+		removeRouteDataFlag: function (oEvent) {
+			this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false);
 		},
 		/**
 		 * method for getting selected route for selected date

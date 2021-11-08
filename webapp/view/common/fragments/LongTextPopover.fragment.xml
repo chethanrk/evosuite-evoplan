@@ -1,0 +1,15 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable" xmlns="sap.m">
+	<ResponsivePopover title="{/#Demand/LONG_TEXT/@sap:label}" class="sapUiPopupWithPadding" placement="Auto"
+		contentWidth="auto" contentHeight="auto" beforeOpen="onBeforeOpenLongText" afterClose="onAfterCloseLongText">
+		<beginButton>
+			<Button text="{i18n>xbut.buttonSave}" press="onSaveLongText"/>
+		</beginButton>
+		<endButton>
+			<Button text="{i18n>xbut.buttonClose}" press="onCloseLongTextPopover"/>
+		</endButton>
+		<content>
+			<TextArea cols="40" rows="7" value="{ path:'DemandToDemandLongText/LongText' }">
+			</TextArea>
+		</content>
+	</ResponsivePopover>
+</core:FragmentDefinition>

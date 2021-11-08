@@ -188,12 +188,43 @@ sap.ui.define([
 			this._assignPath = oContext.sPath;
 		},
 
+		onSaveDialog: function () {
+			if (this._assignPath) {
+				if (!this._reAssign) {
+					var oTargetObj = this._oView.getModel().getProperty(this._assignPath),
+						aSources = this._oView.getModel("viewModel").getProperty("/dragSession"),
+						oUserModel = this._oView.getModel("user"),
+						iOperationTimesLen = this.onShowOperationTimes(this._oView.getModel("viewModel")),
+						iVendorAssignmentLen = this.onAllowVendorAssignment(this._oView.getModel("viewModel"), oUserModel);
+
+					//Checking Vendor Assignment for External Resources
+					if (aSources) {
+						if (oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetObj.ISEXTERNAL && aSources.length !==
+							iVendorAssignmentLen) {
+							this._component.VendorAssignment.open(this._oView, this._assignPath, null);
+						} else if (oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length) {
+							//Checking Operation Times
+							this._component.OperationTimeCheck.open(this._oView, null, this._assignPath);
+						} else {
+						this.onProceedSaveDialog();
+					}
+					}
+				}else {
+					this.onProceedSaveDialog();
+				}
+			} else {
+				//show error message
+				var msg = this._oView.getModel("i18n").getResourceBundle().getText("notFoundContext");
+				this.showMessageToast(msg);
+			}
+		},
+
 		/**
 		 * save form data when demand selected from Demand table
 		 * or if set reassign save path in help model
 		 * @param oEvent
 		 */
-		onSaveDialog: function (oEvent) {
+		onProceedSaveDialog: function (oEvent) {
 			if (this._assignPath) {
 				if (this._callbackEvent) {
 					this._eventBus.publish("AssignTreeDialog", this._callbackEvent, {
@@ -201,7 +232,7 @@ sap.ui.define([
 						aSourcePaths: this._aSelectedPaths,
 						parameters: this._mParameters
 					});
-					this.onCloseDialog();
+					this._closeDialog();
 					return;
 				}
 				// In case of bulk reassign
@@ -211,7 +242,7 @@ sap.ui.define([
 						aContexts: this._aSelectedPaths,
 						parameters: this._mParameters
 					});
-					this.onCloseDialog();
+					this._closeDialog();
 					this._eventBus.publish("AssignTreeDialog", "closeActionDialog", {});
 					return;
 				}
@@ -220,7 +251,7 @@ sap.ui.define([
 					this._eventBus.publish("AssignTreeDialog", "selectedAssignment", {
 						sPath: this._assignPath
 					});
-					this.onCloseDialog();
+					this._closeDialog();
 					return;
 				}
 				if (this._aSelectedPaths) {
@@ -230,14 +261,10 @@ sap.ui.define([
 						parameters: this._mParameters
 					});
 
-					this.onCloseDialog();
+					this._closeDialog();
 					return;
 				}
 			}
-
-			//show error message
-			var msg = this._oView.getResourceBundle().getText("notFoundContext");
-			this.showMessageToast(msg);
 		},
 		/**
 		 * Refresh the table before opening the dialog
@@ -257,12 +284,24 @@ sap.ui.define([
 		},
 
 		/**
-		 * close dialog
+		 * when dialog closed inside controller
 		 */
-		onCloseDialog: function () {
+		_closeDialog: function () {
 			this._oFiltersRightTechnician = false;
 			this.refreshDialogTable();
 			this._oDialog.close();
+		},
+
+		/**
+		 * close dialog from XML view
+		 * Cancel progress
+		 */
+		onCloseDialog: function () {
+			this._closeDialog();
+			//when from new gantt shape busy state needs removed
+			if (this._mParameters.bCustomBusy && (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit)) {
+				this._oView.getModel("ganttModel").setProperty(this._mParameters.sSourcePath + "/busy", false);
+			}
 		},
 		/**
 		 * Open's dialog as per event channel to list the resources to reassign 

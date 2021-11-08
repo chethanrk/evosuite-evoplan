@@ -1,0 +1,6 @@
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns:layout="sap.ui.layout"
+	controllerName="com.evorait.evoplan.controller.ObjectPage">
+	<Page id="ObjectPageWrapper" class="sapUiNoContentPadding" showHeader="false" showFooter="false" showSubHeader="false" showNavButton="false">
+		<content></content>
+	</Page>
+</mvc:View>

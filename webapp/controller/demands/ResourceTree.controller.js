@@ -9,11 +9,11 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/ResourceTreeFilterBar",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
-	"sap/ui/core/Fragment"
-
+	"sap/ui/core/Fragment",
+	"com/evorait/evoplan/model/Constants"
 ], function (Device, JSONModel, Filter, FilterOperator,
 	FilterType, formatter, BaseController, ResourceTreeFilterBar,
-	MessageToast, MessageBox, Fragment) {
+	MessageToast, MessageBox, Fragment, Constants) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.demands.ResourceTree", {
@@ -168,12 +168,12 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onPressAssignmentLink: function (oEvent) {
-			var oSource = oEvent.getSource(),
-				oRowContext = oSource.getParent().getBindingContext();
+			var oSource = oEvent.getSource();
+			this.assignmentRowContext = oSource.getParent().getBindingContext()
 
-			if (oRowContext) {
-				this.assignmentPath = oRowContext.getPath();
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), this.assignmentPath, null, this._mParameters);
+			if (this.assignmentRowContext) {
+				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
+				this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
@@ -203,13 +203,16 @@ sap.ui.define([
 				oBinding = oParams.bindingParams,
 				oUserModel = this.getModel("user"),
 				oFilterRightTechnician = this._oViewModel.getProperty("/resourceFilterforRightTechnician"),
-				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician");
+				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician"),
+				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels;
 
 			if (!this.isLoaded) {
 				this.isLoaded = true;
 			}
 			// Bug fix for some time tree getting collapsed
-			oBinding.parameters.numberOfExpandedLevels = oUserModel.getProperty("/RESOURCE_TREE_EXPAND") ? 1 : 0;
+			if (oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND")) {
+				oBinding.parameters.numberOfExpandedLevels = nTreeExpandLevel ? nTreeExpandLevel : 1;
+			}
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			// setting filters in local model to access in assignTree dialog.
@@ -274,7 +277,9 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
-				aSources = [];
+				aSources = [],
+				iOperationTimesLen,
+				iVendorAssignmentLen;
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -288,15 +293,28 @@ sap.ui.define([
 			}
 
 			aSources = this._oViewModel.getProperty("/dragSession");
-
-			// If the Resource is Not/Partially available
-			if (this.isAvailable(sPath)) {
-				this.assignedDemands(aSources, sPath);
+			iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
+			iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
+			
+			//Checking Vendor Assignment for External Resources
+			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
+				iVendorAssignmentLen) {
+				this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
 			} else {
-				this.showMessageToProceed(aSources, sPath);
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+					"RESOURCE") {
+					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), this._mParameters, sPath);
+				} else {
+					// If the Resource is Not/Partially available
+					if (this.isAvailable(sPath)) {
+						this.assignedDemands(aSources, sPath);
+					} else {
+						this.showMessageToProceed(aSources, sPath);
+					}
+				}
 			}
-
 		},
+
 		/**
 		 * Method will refresh the data of tree by restoring its state
 		 *
@@ -314,7 +332,7 @@ sap.ui.define([
 				this.resetChanges();
 				if (oTreeBinding && !this._bFirsrTime) {
 					this.mTreeState = this._getTreeState();
-					oTreeBinding.refresh();
+					this._oDroppableTable.rebindTable();//oTreeBinding.refresh();
 				}
 			}
 			this._bFirsrTime = false;

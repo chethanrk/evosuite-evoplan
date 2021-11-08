@@ -141,3 +141,22 @@ div.resourceGanttWithTable .sapGanttBackground .sapGanttBackgroundSVG {
     color: hsl(240, 100%, 50%);
     cursor: pointer;
 }
+
+.smartFormTemplate .sapMInputBase.sapMTextArea {
+    min-width: 100%;
+
+}
+
+.smartFormTemplate .sapMInputBase.sapMTextArea .sapMInputBaseContentWrapper {
+    min-height: 5rem;
+}
+
+.smartFormTemplate .sapUiRespGridSpanL12.sapUiRespGridSpanM12.sapUiRespGridSpanS12.sapUiRespGridSpanXL12 .sapUiFormElementLbl {
+    float: none;
+    display: none;
+}
+
+.smartFormTemplate .sapUiRespGridSpanL12.sapUiRespGridSpanM12.sapUiRespGridSpanS12.sapUiRespGridSpanXL12 div[class*="sapUiRespGridSpan"] {
+    float: none;
+    width: 100%;
+}

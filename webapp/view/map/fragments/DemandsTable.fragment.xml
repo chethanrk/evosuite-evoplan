@@ -3,7 +3,7 @@
 	<smartTable:SmartTable id="draggableList" height="100%" width="100%" direction="Column" fitContainer="true" enableAutoBinding="true"
 		entitySet="{viewModel>/subTableSet}" showRowCount="true" header="{i18n>xtit.itemListTitle}"
 		useExportToExcel="true" useVariantManagement="false" beforeRebindTable="onBeforeRebindTable" persistencyKey="{viewModel>/persistencyKeyDemandTable}" useTablePersonalisation="true"
-		requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,MAP_MARKER_COLOUR,ENABLE_ROUTE_EVOORDER,ENABLE_ROUTE_EVOEQUIP,ENABLE_ROUTE_EVONOTIFY,ENABLE_ROUTE_EVOTIME,EQUIPMENT,ORDER_TYPE,ENABLE_ROUTE_GUI1,ENABLE_ROUTE_GUI2,ENABLE_ROUTE_EVOFLOC,FUNCTIONAL_LOC,COMPONENT_EXISTS" customData:p13nDialogSettings='{filter:{visible:false},sort:{visible:false}}'>
+		requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,MAP_MARKER_COLOUR,ENABLE_ROUTE_EVOORDER,ENABLE_ROUTE_EVOEQUIP,ENABLE_ROUTE_EVONOTIFY,ENABLE_ROUTE_EVOTIME,EQUIPMENT,ORDER_TYPE,ENABLE_ROUTE_GUI1,ENABLE_ROUTE_GUI2,ENABLE_ROUTE_EVOFLOC,FUNCTIONAL_LOC,COMPONENT_EXISTS,FIXED_ASSGN_START_DATE,FIXED_ASSGN_START_TIME,FIXED_ASSGN_END_DATE,FIXED_ASSGN_END_TIME,ALLOW_ASSIGNMENT_DIALOG,LONG_TEXT_ICON" customData:p13nDialogSettings='{filter:{visible:false},sort:{visible:false}}'>
 		<!-- layout data used to make the table growing but the filter bar fixed -->
 		<!--smartFilterId="listReportFilter"-->
 		<smartTable:layoutData>
@@ -57,8 +57,9 @@
 									</HBox>
 								</table:template>
 							</table:Column>
+				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.LongTextColumn" type="XML"/>
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandQualificationColumn" type="XML"/>
-				<table:Column hAlign="Center" width="3rem" visible="{user>/EMP_ENABLED}">
+				<table:Column hAlign="Center" width="3rem" visible="{user>/ENABLE_EMP}">
 					<table:customData>
 						<core:CustomData key="p13nData" value='\{"columnKey": "SYNC_STATUS", "leadingProperty": "SYNC_STATUS"}'/>
 					</table:customData>
@@ -69,6 +70,15 @@
 							tooltip="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncTooltip' }"></core:Icon>
 					</table:template>
 				</table:Column>
+				<table:Column hAlign="Center" width="4rem">
+								<table:customData>
+									<core:CustomData key="p13nData" value='\{"columnKey": "ACTUAL_WORK_TIME", "leadingProperty": "ACTUAL_WORK_TIME"}'/>
+								</table:customData>
+								<Label text="{/#Demand/ACTUAL_WORK_TIME/@sap:label}"/>
+								<table:template>
+									<Text text="{path:'ACTUAL_WORK_TIME', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 3 }}"/>
+								</table:template>
+							</table:Column>
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.AssignmentCountColumn" type="XML"/>
 				<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.OrderIdColumn" type="XML"/>-->
 			</table:columns>

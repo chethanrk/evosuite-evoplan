@@ -1,8 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/format/DateFormat",
-	"com/evorait/evoplan/model/utilities"
-], function (DateFormat, utilities) {
+	"com/evorait/evoplan/model/utilities",
+	"com/evorait/evoplan/model/Constants"
+], function (DateFormat, utilities, Constants) {
 	"use strict";
+
+	var mCriticallyStates = Constants.CRITICALLYSTATES;
 
 	var resourceFormats = utilities.getResourceFormats(),
 		resourceAvailability = utilities.getResourceAvailability();
@@ -387,8 +390,24 @@ sap.ui.define([
 		 * @return {boolean}
 		 */
 		isResource: function (sValue) {
-			if (sValue !== "RES_GROUP" && sValue !== "ASSIGNMENT") {
-				return true;
+			var oComponent = this._component,
+				oUser;
+			if (oComponent) {
+				oUser = oComponent.getModel("user");
+			} else {
+				oUser = this.getModel("user");
+			}
+			if (oUser && oUser.getProperty("/ENABLE_CUMULATIVE_CAPACITY")) {
+				if (sValue !== "ASSIGNMENT") {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				if (sValue !== "RES_GROUP" && sValue !== "ASSIGNMENT") {
+					return true;
+				}
+				return false;
 			}
 			return false;
 		},
@@ -750,11 +769,11 @@ sap.ui.define([
 				break;
 			case "updateResource":
 				sMsgTypeText = "Update";
-				break;	
+				break;
 			}
 
 			if (aData && aData.length) {
-			
+
 				for (var i in aData) {
 					if (!aData[i].AllowUnassign) {
 						return sResourceName + this._oResourceBundle.getText("ymsg.resourceNot" + sMsgTypeText); //Unassignable
@@ -777,5 +796,32 @@ sap.ui.define([
 			}
 			return true;
 		},
+
+		formatStatusState: function (sValue, isInNavLinks) {
+			if (mCriticallyStates.hasOwnProperty(sValue)) {
+				return mCriticallyStates[sValue].state;
+			} else if (isInNavLinks === "true") {
+				return mCriticallyStates["info"].state;
+			} else {
+				return mCriticallyStates["0"].state;
+			}
+		},
+
+		onDisplayOperationTimes: function (oDate, oTimes) {
+			if (oDate) {
+				var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+						pattern: "dd MMM yyyy"
+					}),
+					oOperationTime = new Date(oTimes.ms),
+					oOperationTimeMS = oOperationTime.getTime(),
+					oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+						pattern: "HH:mm:ss"
+					}),
+					sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
+					sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS + sTZOffsetMs));
+
+				return oDateFormat.format(oDate) + ", " + sOperationTimes;
+			}
+		}
 	};
 });

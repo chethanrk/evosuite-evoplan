@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:smartField="sap.ui.comp.smartfield"
 	xmlns:f="sap.f" xmlns:table="sap.ui.table">
-	<Dialog title="{=${user>/QUALIF_UI_CHECK_TYPE} === 'W'? ${@i18n>warningTitle}:${@i18n>errorTitle}}" contentWidth="50%"
+	<Dialog title="{=${user>/DEFAULT_QUALIF_UI_CHECK_TYPE} === 'W'? ${@i18n>warningTitle}:${@i18n>errorTitle}}" contentWidth="50%"
 		class="assignInfoDialog" contentHeight="auto">
 		<content>
 			<Table id="idQualificationMatchTable" class="sapUiSmallMarginBegin sapUiMediumMarginBottom sapUiSmallMarginRight" width="96%" inset="false"
@@ -36,10 +36,10 @@
 		</content>
 		<buttons>
 			<Button text="{i18n>xbut.buttonSelectAll}" press="onSelectAll"
-				visible="{path:'user>/QUALIF_UI_CHECK_TYPE',formatter:'.formatter.getQualificationBtnVisibilty'}"/>
+				visible="{path:'user>/DEFAULT_QUALIF_UI_CHECK_TYPE',formatter:'.formatter.getQualificationBtnVisibilty'}"/>
 			<Button text="{i18n>xbut.buttonCancel}" press="onCloseDialog"/>
 			<Button text="{i18n>xbut.buttonProceed}" press="onProceed"
-				visible="{path:'user>/QUALIF_UI_CHECK_TYPE',formatter:'.formatter.getQualificationBtnVisibilty'}"/>
+				visible="{path:'user>/DEFAULT_QUALIF_UI_CHECK_TYPE',formatter:'.formatter.getQualificationBtnVisibilty'}"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

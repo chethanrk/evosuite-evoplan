@@ -219,6 +219,9 @@ sap.ui.define([
 				sDateControl1,
 				sDateControl2;
 
+			if(this._mParameters.bFromNewGantt){
+				oModel = this._oView.getModel("ganttModel");
+			}
 			for (var i = 0; i < aSelectedResources.length; i++) {
 				obj = oModel.getProperty(aSelectedResources[i]);
 				if (obj.NodeType === "RESOURCE") {
@@ -243,7 +246,7 @@ sap.ui.define([
 			}
 
 			//Picking Date Range from Gantt and Gantt Split for Filtering
-			if (this._mParameters.bFromGantt) {
+			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
 				sDateControl1 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getDateValue());
 				sDateControl2 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getSecondDateValue());
 			}
@@ -303,6 +306,8 @@ sap.ui.define([
 						this._oAssignMentTable.removeSelections();
 						this._bSelectAll = true;
 					}
+				} else if (!oEvent.getParameter("selected")) {
+					this._bSelectAll = true;
 				} else {
 					this._oAssignMentTable.removeSelections();
 					this._bSelectAll = true;
