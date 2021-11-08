@@ -53,7 +53,13 @@ sap.ui.define([
 			var oModel = new JSONModel(mapConfig);
 			oModel.setDefaultBindingMode("TwoWay");
 			return oModel;
-		}
+		},
+
+		createHelperModel: function (obj) {
+			var oModel = new JSONModel(obj);
+			oModel.setDefaultBindingMode("OneWay");
+			return oModel;
+		},
 	};
 
 });

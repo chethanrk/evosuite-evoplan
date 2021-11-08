@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-	"sap/m/MessageBox",
+	"sap/m/MessageBox"
 ], function (ManageResourceActionsController, formatter, Filter, FilterOperator, Fragment,
 	MessageToast, RowAction, RowActionItem, MessageBox) {
 	"use strict";
@@ -64,7 +64,7 @@ sap.ui.define([
 				this.mTreeState = this._getTreeState();
 			}
 			// Bug fix for some time tree getting collapsed
-			// oBinding.parameters.numberOfExpandedLevels = 1; //oUserModel.getProperty("/RESOURCE_TREE_EXPAND") ? 1 : 0;
+			// oBinding.parameters.numberOfExpandedLevels = 1; //oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND") ? 1 : 0;
 
 		},
 		/**
@@ -205,7 +205,8 @@ sap.ui.define([
 				oStartDate = this.getDefaultDate(),
 				oEndDate = this.getDefaultDate(true),
 				aPayLoad = [],
-				aSourceData;
+				aSourceData,
+				oModel = this.getModel();
 			this.mTreeState = this._getTreeState();
 			this.clearMessageModel();
 			for (var i in aSelectedIndices) {
@@ -225,7 +226,47 @@ sap.ui.define([
 				});
 			}
 			for (i in aPayLoad) {
-				this.doCreateResource(this.getModel(), sPath, aPayLoad[i]).then(function (oResponse) {}.bind(this));
+				this.doCreateResource(this.getModel(), sPath, aPayLoad[i]).then(function (oResponse) {});
+				// var sEntryPath = "/ResourceManagementSet('" + aPayLoad[i].NodeId + "')";
+				// var sEntryPath = "/ResourceManagementSet";
+				// this._oEvoplanResourceTable.getBinding().createEntry(sEntryPath, {
+				// 	properties: aPayLoad[i]
+				// });
+
+				// var sEntryPath = "/ResourceManagementSet",
+				// 	// oEntryContext = new sap.ui.model.Context(oModel, sEntryPath);
+				// var oEntryContext = this.getModel().createEntry(sEntryPath, {
+				// 		// context: oEntryContext,
+				// properties: aPayLoad[i]
+				// 			// ,
+				// 			// success: function (oData, oRes) {
+				// 			// 	aletrt("Suc");
+				// 			// },
+				// 			// error: function (oErr) {
+				// 			// 	aletrt("Err");
+				// 			// }
+				// });
+				// this._oEvoplanResourceTable.refreshRows();
+
+				// this._oEvoplanResourceTable.invalidate();
+
+				// this._oEvoplanResourceTable.rerender();
+
+				// oModel.refresh();
+
+				// this._oEvoplanResourceTable.refreshAggregation("rows", sap.ui.model.ChangeReason.Add);
+
+				// this.getModel().createBindingContext(sEntryPath, oEntryContext );
+
+				// this._oEvoplanResourceTable.setBindingContext(oEntryContext);
+
+				// oModel.submitChanges();
+
+				// }.bind(this));
+
+				// this._oEvoplanResourceTable.getRows()
+				// var oNewRow = new sap.ui.table.Row("idABC", oEntryContext.getObject());
+				// var oNewRow = new sap.ui.table.Row("idABC", oEntryContext.getObject());
 			}
 			// remove Selections after Create
 			this.oHrResourceTable.clearSelection();
@@ -235,7 +276,7 @@ sap.ui.define([
 		 */
 		getDefaultDate: function (bEndDate) {
 			if (bEndDate) {
-				var oEndData = this.getModel("user").getProperty("/RES_MGMT_END_DATE");
+				var oEndData = this.getModel("user").getProperty("/DEFAULT_RES_MGMT_END_DATE");
 				return this._oDateFormat.format(new Date(oEndData));
 			}
 			return this._oDateFormat.format(new Date());
@@ -419,7 +460,7 @@ sap.ui.define([
 				MessageToast.show(this._oResourceBundle.getText("ymsg.invalidDateRange"));
 				return;
 			}
-			oSelectedRow = this.convertDateToUTC(oSelectedRow, true)
+			oSelectedRow = this.convertDateToUTC(oSelectedRow, true);
 			if (this.isDataChanged(oSelectedRow, oUpdatedRow)) {
 				if (sNodeType === "RESOURCE") {
 					if (oSelectedRow.AssignmentCount) {

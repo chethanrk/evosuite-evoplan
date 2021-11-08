@@ -94,31 +94,68 @@ sap.ui.define([
 				oRouter.navTo("demands", {});
 				break;
 			case oResourceBundle.getText("xbut.pageAssetManager"):
-				oRouter.navTo("assetManager", {
-					assets: "NA"
-				});
+				if (this._routeValidation("ENABLE_ASSET_PLANNING")) {
+					oRouter.navTo("assetManager", {
+						assets: "NA"
+					});
+					break;
+				}
+				oRouter.navTo("empty", {});
 				break;
+
 			case oResourceBundle.getText("xbut.pageWeeklyPlanner"):
 				//oRouter.navTo("TestFull", {});
 				break;
 			case oResourceBundle.getText("xbut.pageMessageCockpit"):
-				oRouter.navTo("messageCockpit", {});
+				if (this._routeValidation("ENABLE_EMP")) {
+					oRouter.navTo("messageCockpit", {});
+					break;
+				}
+				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.pageGanttChart"):
-				oRouter.navTo("gantt", {});
+				if (this._routeValidation("ENABLE_GANTT")) {
+					oRouter.navTo("gantt", {});
+					break;
+				}
+				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.pageGanttChartSplit"):
-				oRouter.navTo("ganttSplit", {});
-				window.open(sRoute, "_blank");
+				if (this._routeValidation("ENABLE_GANTT_JSON")) {
+					oRouter.navTo("ganttSplit", {});
+					window.open(sRoute, "_blank");
+					break;
+				}
+				oRouter.navTo("empty", {});
+				break;
+			case oResourceBundle.getText("xbut.pageNewGanttChartSplit"):
+				if (this._routeValidation("ENABLE_GANTT_JSON")) {
+					oRouter.navTo("newGanttSplit", {});
+					window.open(sRoute, "_blank");
+					break;
+				}
+				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.pageMap"):
-				oRouter.navTo("map", {});
+				if (this._routeValidation("ENABLE_MAPS")) {
+					oRouter.navTo("map", {});
+					break;
+				}
+				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.manageResources"):
-				oRouter.navTo("manageResources", {});
+				if (this._routeValidation("ENABLE_MANAGERESOURCE")) {
+					oRouter.navTo("manageResources", {});
+					break;
+				}
+				oRouter.navTo("empty", {});
 				break;
-            case oResourceBundle.getText("xbut.pageNewGantt"):
-				oRouter.navTo("newgantt", {});
+			case oResourceBundle.getText("xbut.pageNewGantt"):
+				if (this._routeValidation("ENABLE_GANTT_JSON")) {
+					oRouter.navTo("newgantt", {});
+					break;
+				}
+				oRouter.navTo("empty", {});
 				break;
 			default:
 				oRouter.navTo("demands", {});
@@ -194,6 +231,8 @@ sap.ui.define([
 				pageTitle = oResourceBundle.getText("xbut.pageMap");
 			} else if (oParams.config.pattern.startsWith("ManageResources")) {
 				pageTitle = oResourceBundle.getText("xbut.manageResources");
+			} else if (oParams.config.pattern.startsWith("NewGantt")) {
+				pageTitle = oResourceBundle.getText("xbut.pageNewGantt");
 			}
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
 			oAppViewModel.setProperty("/currentRoute", oParams.name);
@@ -232,6 +271,9 @@ sap.ui.define([
 		_onObjectMatched: function (sRoute) {
 			if (sRoute === "gantt") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
+				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			} else if (sRoute === "newgantt") {
+				//this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (sRoute === "ganttSplit") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
@@ -340,6 +382,9 @@ sap.ui.define([
 					this._eventBus.publish("BaseController", "refreshMapDemandTable", {});
 				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.manageResources")) {
 					this._eventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
+				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageNewGantt")) {
+					this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+					this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				}
 			}.bind(this), function (data) {}.bind(this)).catch(function (data) {}.bind(this));
 
@@ -359,6 +404,10 @@ sap.ui.define([
 			// }.bind(this)).catch(function (data) {
 			// 	//
 			// }.bind(this));
+		},
+		_routeValidation: function (parameter) {
+			var oUserModel = this.getModel("user");
+			return oUserModel.getProperty("/" + parameter);
 		},
 
 		/**

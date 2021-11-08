@@ -73,7 +73,7 @@ sap.ui.define([
 			}
 			this._defaultGanttHorizon();
 			this._viewId = this.getView().getId();
-			this.getOwnerComponent().GanttResourceFilter.init(this.getView(), this._treeTable);
+			this.getOwnerComponent().GanttResourceTreeFilter.init(this.getView(), this._treeTable);
 		},
 
 		/**
@@ -154,8 +154,8 @@ sap.ui.define([
 			var oDateFrom, oDateTo, oUserModel = this.getModel("user"),
 				aFilters = [];
 
-			oDateFrom = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE");
-			oDateTo = mParameters ? mParameters.dateTo : oUserModel.getProperty("/GANT_END_DATE");
+			oDateFrom = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/DEFAULT_GANT_START_DATE");
+			oDateTo = mParameters ? mParameters.dateTo : oUserModel.getProperty("/DEFAULT_GANT_END_DATE");
 
 			aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oDateTo)));
 			aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oDateFrom)));
@@ -163,7 +163,6 @@ sap.ui.define([
 		},
 		/**
 		 * On Drop on the resource tree rows or on the Gantt chart
-		 * call the function import to create the assignment
 		 * @param {object} oEvent
 		 * @Author Rahul
 		 * @since 3.0
@@ -174,6 +173,38 @@ sap.ui.define([
 				oDroppedControl = oEvent.getParameter("droppedControl"),
 				oBrowserEvent = oEvent.getParameter("browserEvent"),
 				oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
+				oDropContext = oDroppedControl.getBindingContext(),
+				oDropObject = oDropContext.getObject(),
+				bAllowVendorAssignment = this.getModel().getProperty(oDragContext + "/ALLOW_ASSIGNMENT_DIALOG"),
+				sOperationStartDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_START_DATE"),
+				sOperationEndDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_END_DATE");
+			this.onShowOperationTimes(this.getModel("viewModel"));
+			this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
+			//Checking Vendor Assignment for External Resources
+			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
+				this.getOwnerComponent().VendorAssignment.open(this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
+					oDroppedControl, oBrowserEvent);
+			} else {
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !==
+					null) {
+					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), {
+						bFromGantt: true
+					}, oDropContext.getPath(), oDraggedControl, oDroppedControl, oBrowserEvent);
+				} else {
+					this.onProceedToGanttDropOnResource(oDraggedControl, oDroppedControl, oBrowserEvent);
+				}
+			}
+		},
+		/**
+		 *On Drop on the resource tree rows or on the Gantt chart after validating with Operation Times
+		 * call the function import to create the assignment
+		 * @param {Object} oDraggedControl Dragged paths
+		 * @param {Object} oDroppedControl Dropped Path
+		 * @param {Object} oBrowserEvent Browser events
+		 * @private
+		 */
+		onProceedToGanttDropOnResource: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
+			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext(),
 				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
 				sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : slocStor.split(","),
@@ -405,8 +436,8 @@ sap.ui.define([
 		_setTotalHorizon: function (mParameters) {
 			var oTotalHorizon = this._axisTime.getAggregation("totalHorizon"),
 				oUserModel = this.getModel("user"),
-				sStartDate = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/GANT_START_DATE"),
-				sEndDate = mParameters ? mParameters.dateTo : oUserModel.getProperty("/GANT_END_DATE");
+				sStartDate = mParameters ? mParameters.dateFrom : oUserModel.getProperty("/DEFAULT_GANT_START_DATE"),
+				sEndDate = mParameters ? mParameters.dateTo : oUserModel.getProperty("/DEFAULT_GANT_END_DATE");
 
 			oTotalHorizon.setStartTime(formatter.date(sStartDate));
 			oTotalHorizon.setEndTime(formatter.date(sEndDate));
@@ -432,7 +463,7 @@ sap.ui.define([
 				sStatus = oModel.getProperty(sPath).DEMAND_STATUS;
 				if (!this._menu || sCurrentRoute !== this._firstVisit) {
 					this._menu = sap.ui.xmlfragment(
-						"com.evorait.evoplan.view.gantt.fragments.ShapeContextMenu",
+						"com.evorait.evoplan.view.gantt.fragments._oldShapeContextMenu",
 						this, sCurrentRoute
 					);
 					this.getView().addDependent(this._menu);
@@ -440,9 +471,9 @@ sap.ui.define([
 				}
 				if (sStatus !== "COMP") {
 					this._updateAssignmentModel(sAssignGuid).then(function (data) {
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/unassign", data.AllowUnassign);
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/reassign", data.AllowReassign);
-						oViewModel.setProperty("/ganttSettings/shapeOpearation/change", data.AllowChange);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/unassign", data.AllowUnassign);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/reassign", data.AllowReassign);
+						oViewModel.setProperty("/ganttSettings/shapeOperation/change", data.AllowChange);
 						oViewModel.setProperty("/ganttSettings/shapeData", data);
 						var eDock = Popup.Dock;
 						this._menu.open(true, oShape, eDock.BeginTop, eDock.endBottom, oShape);
@@ -495,7 +526,7 @@ sap.ui.define([
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sPath], false, null, "ganttShapeReassignment");
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonChange")) {
 				// Change
-				this.getOwnerComponent().assignInfoDialog.open(this.getView(), null, null, mParameters, sPath);
+				this.openAssignInfoDialog(this.getView(), sPath, this._selectedShapeContext, mParameters);
 			} else if (sButtonText === this.getResourceBundle().getText("xbut.buttonExecuteFunction") && !oSelectedItem.getSubmenu()) {
 				// Set Function
 				var oDemandPath = oModel.getProperty(sPath).Demand.__ref;
@@ -549,7 +580,6 @@ sap.ui.define([
 						} else {
 							this.getModel().resetChanges(oData.aSourcePaths);
 						}
-
 					}.bind(this));
 				}
 			}
@@ -1066,7 +1096,7 @@ sap.ui.define([
 		 * Open the Gantt Demands Filter Dialog 
 		 */
 		onPressGanttResourceFilters: function () {
-			this.getOwnerComponent().GanttResourceFilter.open(this.getView(), this._treeTable);
+			this.getOwnerComponent().GanttResourceTreeFilter.open(this.getView(), this._treeTable);
 		},
 		/**
 		 * To fetch Demand data on Gantt Context Menu Set Function

@@ -37,8 +37,8 @@
 									</items>
 								</SegmentedButton>
 								<Switch class="customSwitchTextFont" id="idSwitchResourceAction" customTextOn="{i18n>xlab.switchCopy}"
-									customTextOff="{i18n>xlab.switchMove}" state="{path:'user>/RESOURCE_MANAGEMENT_ACTION',formatter:'.formatter.setManageResourceSwitchState'}"
-									enabled="{path:'user>/RESOURCE_MANAGEMENT_ACTION',formatter:'.formatter.setManageResourceSwitchEnabled'}"></Switch>
+									customTextOff="{i18n>xlab.switchMove}" state="{path:'user>/DEFAULT_RES_MANAGEMENT_ACTION',formatter:'.formatter.setManageResourceSwitchState'}"
+									enabled="{path:'user>/DEFAULT_RES_MANAGEMENT_ACTION',formatter:'.formatter.setManageResourceSwitchEnabled'}"></Switch>
 							</OverflowToolbar>
 						</smartTable:customToolbar>
 						<table:TreeTable id="idDataTableEvoplanGroup" selectionMode="None" visibleRowCountMode="Auto">
@@ -49,7 +49,7 @@
 										<core:CustomData key="p13nData" value='\{"columnKey": "Description", "leadingProperty": "Description"}'/>
 									</table:customData>
 									<!--<Label text="{i18n>xlab.groupResourceDescription}"></Label>-->
-									<Label text="{/#ResourceManagement/Description/@sap:label}"></Label>
+									<Label text="{/ResourceManagementSet/Description/##com.sap.vocabularies.Common.v1.Label/String}"></Label>
 									<table:template>
 										<Text text="{Description}"/>
 									</table:template>
@@ -58,7 +58,7 @@
 									<table:customData>
 										<core:CustomData key="p13nData" value='\{"columnKey": "Start", "leadingProperty": "Start"}'/>
 									</table:customData>
-									<Label text="{/#ResourceManagement/Start/@sap:label}"></Label>
+									<Label text="{/ResourceManagementSet/Start/##com.sap.vocabularies.Common.v1.Label/String}"></Label>
 									<table:template>
 										<Text text="{path:'Start',formatter:'.formatter.setDateFormatResourceTree'}"/>
 									</table:template>
@@ -67,7 +67,7 @@
 									<table:customData>
 										<core:CustomData key="p13nData" value='\{"columnKey": "End", "leadingProperty": "End"}'/>
 									</table:customData>
-									<Label text="{/#ResourceManagement/End/@sap:label}"></Label>
+									<Label text="{/ResourceManagementSet/End/##com.sap.vocabularies.Common.v1.Label/String}"></Label>
 									<table:template>
 										<Text text="{path:'End',formatter:'.formatter.setDateFormatResourceTree'}"/>
 									</table:template>
@@ -93,8 +93,7 @@
 					</smartFilterBar:SmartFilterBar>
 					<smartTable:SmartTable id="idTableHrResources" entitySet="ResourceMasterSet" useExportToExcel="false" useVariantManagement="true"
 						fitContainer="true" height="100%" useTablePersonalisation="true" header="{i18n>xtit.hrResourceTable}" showRowCount="true"
-						enableAutoBinding="true" class="sapUiTinyMarginBegin" requestAtLeastFields="Guid" smartFilterId="idSmartFilterResources"
-						customData:p13nDialogSettings='{filter:{visible:true},sort:{visible:false},columns:{visible:false}}'>
+						enableAutoBinding="true" class="sapUiTinyMarginBegin" requestAtLeastFields="Guid" smartFilterId="idSmartFilterResources">
 						<!--initiallyVisibleFields="Firstname,Lastname"-->
 						<!--layout data used to make the table growing but the filter bar fixed-->
 						<smartTable:layoutData>
@@ -103,7 +102,7 @@
 						<table:Table id="idDataTableHrResource" selectionMode="MultiToggle" enableCellFilter="true" threshold="30" visibleRowCountMode="Auto">
 							<!--visibleRowCountMode="Auto"-->
 							<table:columns>
-								<table:Column filterProperty="Firstname">
+								<table:Column filterProperty="Firstname" sortProperty="Firstname">
 									<table:customData >
 										<core:CustomData key="p13nData" value='\{"columnKey": "Firstname", "leadingProperty": "Firstname"}'/>
 									</table:customData>
@@ -112,7 +111,7 @@
 										<Text text="{Firstname}"/>
 									</table:template>
 								</table:Column>
-								<table:Column filterProperty="Lastname">
+								<table:Column filterProperty="Lastname" sortProperty="Lastname">
 									<table:customData>
 										<core:CustomData key="p13nData" value='\{"columnKey": "Lastname", "leadingProperty": "Lastname"}'/>
 									</table:customData>
@@ -121,7 +120,7 @@
 										<Text text="{Lastname}"/>
 									</table:template>
 								</table:Column>
-								<table:Column filterProperty="Pernr">
+								<table:Column filterProperty="Pernr" sortProperty="Pernr">
 									<table:customData>
 										<core:CustomData key="p13nData" value='\{"columnKey": "Pernr", "leadingProperty": "Pernr"}'/>
 									</table:customData>

@@ -1,0 +1,21 @@
+<core:FragmentDefinition
+        xmlns:table="sap.ui.table"
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:controls="com.evorait.evoplan.ui.controls">
+
+    <table:Column sortProperty="NodeId" filterProperty="NodeId" label="{i18n>xtit.tableObject}" name="{i18n>xtit.tableObject}">
+        <table:template>
+						<controls:CustomTitle text="{Description}" tooltip="{Description}"
+							titleStyle="{ path: 'NodeType', formatter: '.formatter.formatResourceTitle' }"
+							iconColor="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconColor' }"
+							iconTooltip="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconTooltip' }"
+							icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'},{path: 'ResourceIcon'} ], formatter: '.formatter.getResourceIcon' }"
+							isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink" resourceIconPress="onResourceIconPress"
+							enableQualification="{user>/ENABLE_QUALIFICATION}"
+							showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
+							workTime="{path:'ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}">
+						</controls:CustomTitle>
+					</table:template>
+    </table:Column>
+</core:FragmentDefinition>

@@ -44,6 +44,12 @@ sap.ui.define([
 			this.getRouter().getRoute("splitDemands").attachMatched(function () {
 				this._routeName = Constants.GANTT.SPLITDMD;
 			}.bind(this));
+			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
+				this._routeName = "newgantt";
+				this._mParameters = {
+					bFromNewGantt: true
+				};
+			}.bind(this));
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
 
 			//to initialize Gantt Demand Filter Dialog
@@ -99,6 +105,7 @@ sap.ui.define([
 			});
 
 			this.getModel("viewModel").setProperty("/gantDragSession", aSelDemandGuid);
+			this.getModel("viewModel").setProperty("/dragSession", aPathsData);
 			localStorage.setItem("Evo-Dmnd-guid", aSelDemandGuid);
 
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
@@ -132,6 +139,7 @@ sap.ui.define([
 				this._aSelectedRowsIdx.length = 100;
 			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
 				// TODO comment
@@ -169,7 +177,7 @@ sap.ui.define([
 			var selected = this._oDataTable.getSelectedIndices();
 			var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 			var selected = this._oDataTable.getSelectedIndices(),
-				               sDemandPath,bComponentExist;
+				sDemandPath, bComponentExist;
 			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
 				this.byId("assignButton").setEnabled(true);
 				this.byId("changeStatusButton").setEnabled(true);
@@ -178,29 +186,26 @@ sap.ui.define([
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
 				this.byId("idOverallStatusButton").setEnabled(false);
-					this.byId("materialInfo").setEnabled(false);
+				this.byId("materialInfo").setEnabled(false);
 				//If the selected demands exceeds more than the maintained selected configuration value
 				if (iMaxRowSelection <= selected.length) {
 					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection");
 					MessageToast.show(sMsg + " " + iMaxRowSelection);
 				}
 			}
-				//Enabling/Disabling the Material Status Button based on Component_Exit flag
-					for (var i = 0; i < selected.length; i++) {
-						sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
-						bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
-						if(bComponentExist)
-						{
-							this.byId("materialInfo").setEnabled(true);
-							this.byId("idOverallStatusButton").setEnabled(true);
-							break;
-						}
-						else
-						{
-							this.byId("materialInfo").setEnabled(false);
-							this.byId("idOverallStatusButton").setEnabled(false);
-						}
-					}
+			//Enabling/Disabling the Material Status Button based on Component_Exit flag
+			for (var i = 0; i < selected.length; i++) {
+				sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
+				bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
+				if (bComponentExist) {
+					this.byId("materialInfo").setEnabled(true);
+					this.byId("idOverallStatusButton").setEnabled(true);
+					break;
+				} else {
+					this.byId("materialInfo").setEnabled(false);
+					this.byId("idOverallStatusButton").setEnabled(false);
+				}
+			}
 		},
 		/**
 		 * Refresh the demand table 
@@ -279,7 +284,7 @@ sap.ui.define([
 				this._aSelectedRowsIdx.length = 100;
 			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
-			var iMaxSelcRow = this.getModel("user").getProperty("/MAX_DEMAND_SELECT_FOR_MAT_LIST");
+			var iMaxSelcRow = this.getModel("user").getProperty("/DEFAULT_MAX_DEM_SEL_MAT_LIST");
 			if (oSelectedPaths.aPathsData.length > 0 && iMaxSelcRow >= this._aSelectedRowsIdx.length) {
 				this.getOwnerComponent().materialInfoDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
 			} else {
@@ -293,17 +298,25 @@ sap.ui.define([
 		 */
 		onMaterialStatusPress: function (oEvent) {
 			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
-			    oViewModel = this.getModel("appView"),
+				oViewModel = this.getModel("appView"),
 				sDemandPath;
-				oViewModel.setProperty("/busy", true);
+			oViewModel.setProperty("/busy", true);
 			for (var i = 0; i < oSelectedIndices.length; i++) {
 				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 					oViewModel.setProperty("/busy", false);
-			}.bind(this));
+				}.bind(this));
 			};
 		},
 		
+		/**
+		 * Opens long text view/edit popover
+		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
+		 */
+		onClickLongText: function (oEvent) {
+			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
+		},
+
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
 		}

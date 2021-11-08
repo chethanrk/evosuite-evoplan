@@ -161,7 +161,7 @@ sap.ui.define([
 				var oSelectedDemands = this.getModel("viewModel").getProperty("/mapSettings/selectedDemands");
 				if (oSelectedDemands && oSelectedDemands.length) {
 					setTimeout(function () {
-						if (this._bDemandListScroll === false) {
+						if (this._bDemandListScroll === false && !this.oView.getModel("viewModel").getProperty("/mapSettings/bRouteDateSelected")) {
 							this._oDraggableTable.getTable().selectAll();
 						}
 					}.bind(this), 10);
@@ -308,6 +308,7 @@ sap.ui.define([
 			}
 			// keeping the data in drag session
 			this.getModel("viewModel").setProperty("/mapDragSession", aPathsData);
+			this.getModel("viewModel").setProperty("/dragSession", aPathsData);
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 				oEvent.preventDefault();
@@ -389,7 +390,7 @@ sap.ui.define([
 		onRowSelectionChange: function (oEvent) {
 			this._bDemandListScroll = true; //Flag to identify Demand List row is selected and scrolled or not
 			var selected = this._oDataTable.getSelectedIndices(),
-			               sDemandPath,bComponentExist;
+				sDemandPath, bComponentExist;
 			var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
 				this.byId("assignButton").setEnabled(true);
@@ -416,23 +417,20 @@ sap.ui.define([
 					this.updateMapDemandSelection(oEvent);
 				}
 			}
-			
+
 			//Enabling/Disabling the Material Status Button based on Component_Exit flag
-					for (var i = 0; i < selected.length; i++) {
-						sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
-						bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
-						if(bComponentExist)
-						{
-							this.byId("materialInfo").setEnabled(true);
-							this.byId("idOverallStatusButton").setEnabled(true);
-							break;
-						}
-						else
-						{
-							this.byId("materialInfo").setEnabled(false);
-							this.byId("idOverallStatusButton").setEnabled(false);
-						}
-					}
+			for (var i = 0; i < selected.length; i++) {
+				sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
+				bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
+				if (bComponentExist) {
+					this.byId("materialInfo").setEnabled(true);
+					this.byId("idOverallStatusButton").setEnabled(true);
+					break;
+				} else {
+					this.byId("materialInfo").setEnabled(false);
+					this.byId("idOverallStatusButton").setEnabled(false);
+				}
+			}
 		},
 
 		/**
@@ -463,6 +461,7 @@ sap.ui.define([
 					this._aSelectedRowsIdx.length = 100;
 				}
 				var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+				this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
 				if (oSelectedPaths.aPathsData.length > 0) {
 					this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
 				}
@@ -677,7 +676,7 @@ sap.ui.define([
 					this.oCurrentClustering = new sap.ui.vbm.ClusterDistance({
 						rule: "Status=INIT",
 						distance: {
-							path: "user>/MAP_CLUSTER_DISTANCE",
+							path: "user>/DEFAULT_MAP_CLUSTER_DISTANCE",
 							formatter: function (value) {
 								return parseInt(value);
 							}
@@ -755,7 +754,7 @@ sap.ui.define([
 		onClickAssignCount: function (oEvent) {
 			this.getOwnerComponent().assignmentList.open(this.getView(), oEvent, this._mParameters);
 		},
-		
+
 		/**
 		 * On Material Info Button press event 
 		 * 
@@ -766,7 +765,7 @@ sap.ui.define([
 				this._aSelectedRowsIdx.length = 100;
 			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
-			var iMaxSelcRow = this.getModel("user").getProperty("/MAX_DEMAND_SELECT_FOR_MAT_LIST");
+			var iMaxSelcRow = this.getModel("user").getProperty("/DEFAULT_MAX_DEM_SEL_MAT_LIST");
 			if (oSelectedPaths.aPathsData.length > 0 && iMaxSelcRow >= this._aSelectedRowsIdx.length) {
 				this.getOwnerComponent().materialInfoDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
 			} else {
@@ -780,15 +779,23 @@ sap.ui.define([
 		 */
 		onMaterialStatusPress: function (oEvent) {
 			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
-			    oViewModel = this.getModel("appView"),
+				oViewModel = this.getModel("appView"),
 				sDemandPath;
-				oViewModel.setProperty("/busy", true);
+			oViewModel.setProperty("/busy", true);
 			for (var i = 0; i < oSelectedIndices.length; i++) {
 				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 					oViewModel.setProperty("/busy", false);
-			}.bind(this));
+				}.bind(this));
 			};
+		},
+		
+		/**
+		 * Opens long text view/edit popover
+		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
+		 */
+		onClickLongText: function (oEvent) {
+			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
 		},
 
 		onExit: function () {
@@ -796,7 +803,7 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
-		}
+		},
 	});
 
 });

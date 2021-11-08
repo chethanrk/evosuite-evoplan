@@ -99,7 +99,7 @@ sap.ui.define([
 			}
 
 			this._oPlanningCalendar.setBusy(true);
-			if (oUserModel.getProperty("/ASSET_PLANNING_ENABLED") && oUserModel.getProperty("/ASSETUNAVL_PLANNING_CALENDAR")) {
+			if (oUserModel.getProperty("/ENABLE_ASSET_PLANNING") && oUserModel.getProperty("/ENABLE_ASSETUNAVL_PL_CALENDAR")) {
 				oModel.read("/AssetPlanningDataSet", {
 					groupId: "calendarBatch",
 					filters: this._generateResourceFiltersFor("ASSETUA")
@@ -163,8 +163,12 @@ sap.ui.define([
 			}
 			if (this._mParameters.bFromGantt) {
 				// if we decide to keep different date range for demand view and gantt view
-				sDateControl1 = oUserModel.getProperty("/GANT_START_DATE");
-				sDateControl2 = oUserModel.getProperty("/GANT_END_DATE");
+				sDateControl1 = oUserModel.getProperty("/DEFAULT_GANT_START_DATE");
+				sDateControl2 = oUserModel.getProperty("/DEFAULT_GANT_END_DATE");
+			} else if (this._mParameters.bFromNewGantt) {
+				// For New Gantt fetching the Dates from DateRange Selection
+				sDateControl1 = this._oView.byId("idDateRangeGantt2").getDateValue();
+				sDateControl2 = this._oView.byId("idDateRangeGantt2").getSecondDateValue();
 			} else {
 				sDateControl1 = oViewFilterSettings.getDateRange()[0];
 				sDateControl2 = oViewFilterSettings.getDateRange()[1];
@@ -206,7 +210,7 @@ sap.ui.define([
 			this._oCalendarModel.setData({
 				resources: this._createData(data)
 			});
-			if (this._mParameters.bFromGantt) {
+			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
 				this._oCalendarModel.setProperty("/viewKey", "TIMEHOUR");
 				this._oCalendarModel.setProperty("/startDate", this._startDate || new Date());
 			} else {
@@ -238,6 +242,7 @@ sap.ui.define([
 			}
 			return sCalendarView;
 		},
+
 		/**
 		 * show assignment info dialog on clicked on calendar entry
 		 * @param oEvent
@@ -250,20 +255,25 @@ sap.ui.define([
 				oRowPath = oRowContext.getPath(),
 				oModel = oRowContext.getModel(),
 				sPath = oAppointmentContext.getPath(),
-				oAppointmentData = oModel.getProperty(sPath),
 				oRowData = oModel.getProperty(oRowPath);
-			oAppointmentData.DateTo = this.onChangeEndDateAfterResize(oAppointmentData);
 
 			this.oSelectedContext = oAppointmentContext;
+			this.oAppointmentData = oModel.getProperty(sPath);
+			this.oAppointmentData.DateTo = this.onChangeEndDateAfterResize(this.oAppointmentData);
 
 			if (oRowData.ObjectType === "ASSET") {
 				return;
 			}
-			this._component.assignInfoDialog.open(this._oView, null, oAppointmentData, {
-				bFromPlannCal: true
-			});
-
+			var oContext = oAppointmentContext,
+				oModel = oContext.getModel(),
+				sPath = "/AssignmentSet('" + this.oAppointmentData.Guid + "')",
+				oAssignmentData = this.oAppointmentData,
+				mParameters = {
+					bFromPlannCal: true
+				};
+			this.openAssignInfoDialog(this._oView, sPath, oContext, mParameters);
 		},
+		
 		/**
 		 * @since 2.1.4
 		 * On drag assigments the method will be triggered.
@@ -639,7 +649,7 @@ sap.ui.define([
 			for (var a = 0; a < this.selectedResources.length; a++) {
 				oResource = oModel.getProperty(this.selectedResources[a]);
 				sEntitySet = this.selectedResources[a].split("(")[0];
-				if (oResource.NodeType === "RESOURCE" || oResource.NodeType === "RES_GROUP" && oUserModel.getProperty("/POOL_FUNCTION_ENABLED")) {
+				if (oResource.NodeType === "RESOURCE" || oResource.NodeType === "RES_GROUP" && oUserModel.getProperty("/ENABLE_POOL_FUNCTION")) {
 					oResource.ResourceDescription = oResource.Description;
 					oResource.ObjectType = oResource.NodeType;
 					oResource.GroupDescription = oModel.getProperty(sEntitySet + "('" + oResource.ResourceGroupGuid + "')").Description;

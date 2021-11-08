@@ -49,6 +49,7 @@ sap.ui.define([
 			this._component = oView.getController().getOwnerComponent();
 			this._oModel = this._component.getModel();
 			this._calendarModel = this._component.getModel("calendarModel");
+			this._ganttModel = this._component.getModel("ganttModel");
 			this._mParameters = mParameters || {
 				bFromHome: true
 			};
@@ -61,10 +62,13 @@ sap.ui.define([
 			this._oList = Fragment.byId(this._id, "idResourceAvailList").getList();
 			if (this._mParameters.bFromPlannCal) {
 				this._resource = this._calendarModel.getProperty(aSelectedPath[0]).ResourceGuid;
+			} else if (this._mParameters.bFromNewGantt) {
+				this._resource = this._ganttModel.getProperty(aSelectedPath[0] + "/ResourceGuid");
+				this._resourceName = this._ganttModel.getProperty(aSelectedPath[0] + "/Description");
+
 			} else {
 				this._resource = this._oModel.getProperty(aSelectedPath[0] + "/ResourceGuid");
 				this._resourceName = this._oModel.getProperty(aSelectedPath[0] + "/Description");
-
 			}
 
 			oDialog.setTitle(this._resourceName);
@@ -102,11 +106,15 @@ sap.ui.define([
 		onClickItem: function (oEvent) {
 			var oSelectedItem = oEvent.getParameter("listItem"),
 				oContext = oSelectedItem.getBindingContext(),
+				oSelectedAbsence = oContext.getObject(),
 				sPath = oContext.getPath(),
 				oDetail = Fragment.byId(this._id, "detail");
 			oDetail.bindElement(sPath);
-
-			this._oApp.to(this._id + "--detail");
+			if (oSelectedAbsence.UI_DISABLE_ABSENCE_EDIT) {
+				this.showMessageToast(this._resourceBundle.getText("ymsg.updateHRAbsence"));
+			} else {
+				this._oApp.to(this._id + "--detail");
+			}
 		},
 		/**
 		 * On back check for data dirty
@@ -187,8 +195,12 @@ sap.ui.define([
 
 			if (this._mParameters.bFromGantt) {
 				// if we decide to keep different date range for demand view and gantt view
-				sDateControl1 = oUserModel.getProperty("/GANT_START_DATE");
-				sDateControl2 = oUserModel.getProperty("/GANT_END_DATE");
+				sDateControl1 = oUserModel.getProperty("/DEFAULT_GANT_START_DATE");
+				sDateControl2 = oUserModel.getProperty("/DEFAULT_GANT_END_DATE");
+			} else if (this._mParameters.bFromNewGantt) {
+				// For New Gantt fetching the Dates from DateRange Selection
+				sDateControl1 = this._oView.byId("idDateRangeGantt2").getDateValue();
+				sDateControl2 = this._oView.byId("idDateRangeGantt2").getSecondDateValue();
 			} else {
 				sDateControl1 = oViewFilterSettings.getDateRange()[0];
 				sDateControl2 = oViewFilterSettings.getDateRange()[1];
@@ -327,15 +339,15 @@ sap.ui.define([
 		 */
 		_resetChanges: function (oEvent, sProperty) {
 			var oEventBus = sap.ui.getCore().getEventBus();
-			if (this._mParameters.bFromGantt) {
+			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
 				//	this._oModel.resetChanges();
 
 				//to reset "Manage absence" btn enable/disable
-				this._oView.getController().selectedResources = [];
+				// this._oView.getController().selectedResources = [];
 				this._oView.byId("idButtonreassign").setEnabled(false);
 				this._oView.byId("idButtonunassign").setEnabled(false);
 				this._oView.byId("idButtonCreUA").setEnabled(false);
-				if (this._mParameters.bFromGantt) {
+				if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
 					this._oView.byId("idButtonTimeAlloc").setEnabled(false);
 				}
 				if (this._mParameters.bFromMap) {
@@ -446,12 +458,14 @@ sap.ui.define([
 			this._refreshTreeGantt(oEvent);
 
 			//to reset "Manage absence" btn enable/disable
-			this._oView.getController().selectedResources = [];
+			// this._oView.getController().selectedResources = [];
 			this._oView.byId("idButtonreassign").setEnabled(false);
 			this._oView.byId("idButtonunassign").setEnabled(false);
 			this._oView.byId("idButtonCreUA").setEnabled(false);
-			if (this._mParameters.bFromGantt) {
+			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
 				this._oView.byId("idButtonTimeAlloc").setEnabled(false);
+			}else{
+				this._oView.getController().selectedResources = [];
 			}
 			if (this._mParameters.bFromMap) {
 				this._oView.byId("showRoute").setEnabled(false);
@@ -469,10 +483,35 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshGanttChart", {});
 			} else if (this._dataDirty && this._mParameters.bFromHome) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});
+			} else if (this._dataDirty && this._mParameters.bFromNewGantt) {
+				eventBus.publish("BaseController", "refreshAvailabilities", {
+					resource: this._resource
+				});
+			}else if(this._mParameters.bFromNewGantt && !this._dataDirty){
+				eventBus.publish("BaseController", "resetSelections", {});
 			}
 			this._dataDirty = false;
 			this._oDialog.setBusy(false);
 			this._oDialog.close();
 		},
+		/**
+		 *	After DataRecieved, HR Absences item delete mode icon will be hidden
+		 *  @Author Chethan RK
+		 *	@private
+		 */
+		onRemoveDeleteMode: function () {
+			if (this._oView.getModel("user").getProperty("/ENABLE_ABSENCE_DELETE")) {
+				var aItems = this._oList.getItems();
+				for (var d in aItems) {
+					if (aItems[d].getBindingContext().getObject().UI_DISABLE_ABSENCE_DELETE) {
+						aItems[d].getDeleteControl().setVisible(false);
+					} else {
+						aItems[d].getDeleteControl().setVisible(true);
+					}
+				}
+			} else {
+				this._oList.setMode("None");
+			}
+		}
 	});
 });

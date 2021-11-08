@@ -121,7 +121,13 @@ sap.ui.define([
 			oRm.addClass("sapUiTinyMarginBegin");
 			if (oAvailabilityIcon) {
 				oRm.writeAttributeEscaped("data-sap-ui-icon-content", oAvailabilityIcon.content);
-				oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
+				if (oIconInfo && oIconInfo.fontFamily) {
+					oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
+				} else if (oAvailabilityIcon.fontFamily) {
+					oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oAvailabilityIcon.fontFamily) + "'");
+				} else {
+					oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML("SAP-icons") + "'");
+				}
 				oRm.writeAttributeEscaped("title", oControl.getIconTooltip());
 				oRm.addStyle("color", oControl.getIconColor());
 			}

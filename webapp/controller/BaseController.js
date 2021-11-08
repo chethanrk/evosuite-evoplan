@@ -134,6 +134,7 @@ sap.ui.define([
 						jQuery.sap.log.error("Failed to parse the message header");
 					}
 					if (oData && oData.error) {
+						bContainsError = true;
 						this._showErrorMessage(oData.error.message.value, fnCallback);
 					}
 				}
@@ -181,7 +182,10 @@ sap.ui.define([
 				oViewModel = this.getModel("appView"),
 				oResourceBundle = this.getResourceBundle();
 
-			oViewModel.setProperty("/busy", true);
+			if (mParameters && !mParameters.bCustomBusy) {
+				oViewModel.setProperty("/busy", true);
+			}
+
 			oModel.callFunction("/" + sFuncName, {
 				method: sMethod || "POST",
 				urlParameters: oParams,
@@ -190,8 +194,10 @@ sap.ui.define([
 					//Handle Success
 					if (bIsLast) {
 						oViewModel.setProperty("/busy", false);
-						this.showMessage(oResponse);
-						this.afterUpdateOperations(mParameters);
+						if (mParameters) {
+							mParameters.bContainsError = this.showMessage(oResponse);
+						}
+						this.afterUpdateOperations(mParameters, oParams, oData);
 					}
 				}.bind(this),
 				error: function (oError) {
@@ -220,8 +226,8 @@ sap.ui.define([
 					urlParameters: oParams,
 					refreshAfterChange: false,
 					success: function (oData, oResponse) {
-						this.showMessage(oResponse);
-						resolve(oData, oResponse);
+						var bContainsError = this.showMessage(oResponse);
+						resolve(oData, oResponse, bContainsError);
 					}.bind(this),
 					error: function (oError) {
 						//Handle Error
@@ -237,7 +243,7 @@ sap.ui.define([
 		 * Method check the parameter and refreshes the required part of screen 
 		 * @param {Object} mParameters contains flag which will be passed from where it is get called.
 		 */
-		afterUpdateOperations: function (mParameters) {
+		afterUpdateOperations: function (mParameters, oSourceData, oResultData) {
 			var eventBus = sap.ui.getCore().getEventBus();
 
 			var oParameter = mParameters || {
@@ -248,7 +254,13 @@ sap.ui.define([
 				bFromGantt: false,
 				bFromGanttSplit: false,
 				bFromDemandSplit: false,
-				bFromMap: false
+				bFromMap: false,
+				bFromNewGantt: false
+			};
+			var oData = {
+				mParams: oParameter,
+				oSourceData: oSourceData,
+				oResultData: oResultData
 			};
 
 			if (oParameter.bFromHome) {
@@ -270,7 +282,7 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshDemandOverview", {});
 				eventBus.publish("BaseController", "refreshDemandTable", {});
 			} else if (oParameter.bFromGantt) {
-				eventBus.publish("BaseController", "refreshGanttChart", {});
+				eventBus.publish("BaseController", "refreshGanttChart", oData);
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (oParameter.bFromMap) {
 				// eventBus.publish("BaseController", "resetMapSelection", {});
@@ -278,16 +290,19 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshMapView", {});
 				// eventBus.publish("BaseController", "refreshMapDemandTable", {});
 			} else if (oParameter.bFromGanttSplit) {
-				eventBus.publish("BaseController", "refreshGanttChart", {});
+				eventBus.publish("BaseController", "refreshGanttChart", oData);
 			} else if (oParameter.bFromDemandSplit) {
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (oParameter.bFromManageResource) {
 				eventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
-			}
-			else if (oParameter.bFromManageResourceRemoveAssignments) {
+			} else if (oParameter.bFromManageResourceRemoveAssignments) {
 				eventBus.publish("ManageResourcesActionsController", "refreshAssignmentDialog", {});
+			} else if (oParameter.bFromNewGantt) {
+				eventBus.publish("BaseController", "refreshAssignments", oData);
+				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			} else if (oParameter.bFromNewGanttSplit) {
+				eventBus.publish("BaseController", "refreshAssignments", oData);
 			}
-
 		},
 		/**
 		 * device orientation with fallback of window resize
@@ -409,10 +424,10 @@ sap.ui.define([
 		 * @param sTargetPath : Resource path on which assignment needs to be created
 		 * @return {boolean} return true is available
 		 */
-		isAvailable: function (sTargetPath) {
-			var oModel = this.getModel(),
-				oTargetObj = oModel.getProperty(sTargetPath);
-
+		isAvailable: function (sTargetPath, oTargetObj) {
+			if (sTargetPath) {
+				oTargetObj = this.getModel().getProperty(sTargetPath);
+			}
 			// If the Resource is Not/Partially available
 			if (oTargetObj.IS_AVAILABLE !== "A") {
 				return false;
@@ -455,7 +470,7 @@ sap.ui.define([
 		 */
 		isAssignable: function (mParameters) {
 			var oModel = this.getModel("user"),
-				sPoolFunction = oModel.getProperty("/POOL_FUNCTION_ENABLED"),
+				sPoolFunction = oModel.getProperty("/ENABLE_POOL_FUNCTION"),
 				oResource = mParameters.data,
 				oResourceBundle = this.getResourceBundle();
 			if (oResource === undefined) {
@@ -610,7 +625,7 @@ sap.ui.define([
 				sUri = sServicePath + sUri;
 				window.open(sUri, "_blank");
 			} else {
-				 //Logic for Navigation in Fiori Launchpad
+				//Logic for Navigation in Fiori Launchpad
 				if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
 					sAdditionInfo = oAppInfo.Value1 || "";
 					sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];
@@ -729,8 +744,24 @@ sap.ui.define([
 				MessageBox.warning(sMessage);
 			}
 
-		}
+		},
+		/**
+		 * Open the Qualification dialog for Gantt demand
+		 * @param oEvent
+		 */
+		onDemandQualificationIconPress: function (oEvent) {
+			var oRow = oEvent.getSource().getParent(),
+				oContext = oRow.getBindingContext(),
+				sPath = oContext.getPath(),
+				oModel = oContext.getModel(),
+				oResourceNode = oModel.getProperty(sPath),
+				sDemandGuid = oResourceNode.Guid,
+				oComponent = this._oView ? this._oView.getController().getOwnerComponent() : this.getOwnerComponent(),
+				oView = this._oView ? this._oView : this.getView();
 
+			oComponent.DemandQualifications.open(oView, sDemandGuid);
+
+		},
 	});
 
 });

@@ -1,7 +1,9 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/BaseController",
-	"sap/m/MessageBox"
-], function (BaseController, MessageBox) {
+	"sap/m/MessageBox",
+	"com/evorait/evoplan/model/formatter",
+	"com/evorait/evoplan/model/Constants"
+], function (BaseController, MessageBox, formatter, Constants) {
 	return BaseController.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
 		/**
 		 * save assignment after drop
@@ -233,7 +235,9 @@ sap.ui.define([
 			var oModel = this.getModel(),
 				bIsLast = null,
 				aItems = aSourcePaths && aSourcePaths.length ? aSourcePaths : aGuids,
-				oContext, sPath, demandObj;
+				aGanttDragSession = this.getModel("viewModel").getData().dragSession,
+				aGanttDemandDragged = aGanttDragSession ? aGanttDragSession[0] : null,
+				oContext, sPath, demandObj, aOperationTimeParams;
 			this.clearMessageModel();
 			for (var i = 0; i < aItems.length; i++) {
 				oContext = aItems[i];
@@ -243,6 +247,39 @@ sap.ui.define([
 				oParams.DemandGuid = demandObj ? demandObj.Guid : sPath.split("'")[1];
 				oParams.ResourceGroupGuid = targetObj.ResourceGroupGuid;
 				oParams.ResourceGuid = targetObj.ResourceGuid;
+
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && targetObj.NodeType === "RESOURCE") {
+					if (oContext.IsSelected) {
+						oParams.DateFrom = formatter.mergeDateTime(oContext.oData.FIXED_ASSGN_START_DATE, oContext.oData.FIXED_ASSGN_START_TIME);
+						oParams.TimeFrom.ms = oParams.DateFrom.getTime();
+						oParams.DateTo = formatter.mergeDateTime(oContext.oData.FIXED_ASSGN_END_DATE, oContext.oData.FIXED_ASSGN_END_TIME);
+						oParams.TimeTo.ms = oParams.DateTo.getTime();
+					} else {
+						aOperationTimeParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
+						oParams.DateFrom = aOperationTimeParams.DateFrom;
+						oParams.TimeFrom.ms = aOperationTimeParams.TimeFrom.ms;
+						oParams.DateTo = aOperationTimeParams.DateTo;
+						oParams.TimeTo.ms = aOperationTimeParams.TimeTo.ms;
+					}
+					if (mParameters && mParameters.bFromGantt && aGanttDemandDragged.IsSelected) {
+						oParams.DateFrom = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME);
+						oParams.TimeFrom.ms = oParams.DateFrom.getTime();
+						oParams.DateTo = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME);
+						oParams.TimeTo.ms = oParams.DateTo.getTime();
+					}
+				}
+				//Cost Element, Estimate and Currency fields update for Vendor Assignment
+				if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && targetObj.ISEXTERNAL) {
+					if (oContext.oData.ALLOW_ASSIGNMENT_DIALOG) {
+						oParams.CostElement = oContext.oData.CostElement;
+						oParams.Estimate = oContext.oData.Estimate;
+						oParams.Currency = oContext.oData.Currency;
+					} else {
+						oParams.CostElement = "";
+						oParams.Estimate = "";
+						oParams.Currency = "";
+					}
+				}
 
 				if (parseInt(i, 10) === aItems.length - 1) {
 					bIsLast = true;
@@ -264,6 +301,10 @@ sap.ui.define([
 			if (isReassign && !oData.AllowReassign) {
 				sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
 				this._showAssignErrorDialog([oData.Description], null, sDisplayMessage);
+				//when from new gantt shape busy state needs removed
+				if (mParameters.bCustomBusy && (mParameters.bFromNewGantt || mParameters.bFromNewGanttSplit)) {
+					this._oView.getModel("ganttModel").setProperty(mParameters.sSourcePath + "/busy", false);
+				}
 				return;
 			}
 
@@ -462,6 +503,11 @@ sap.ui.define([
 						} else if (sValue === sAction && bUpdate) {
 							//Proceed to check the Qualification for UpdateAssignment
 							this.checkQualificationUpdate(this.getModel("assignment").getData(), oParams, mParameters);
+						} else if (sValue === sap.m.MessageBox.Action.CANCEL) {
+							//when from new gantt shape busy state needs removed
+							if (mParameters.bCustomBusy && (mParameters.bFromNewGantt || mParameters.bFromNewGanttSplit)) {
+								this.getModel("ganttModel").setProperty(mParameters.sSourcePath + "/busy", false);
+							}
 						}
 					}.bind(this)
 				}
@@ -495,6 +541,98 @@ sap.ui.define([
 				oParams.TimeTo.ms = oNewEndDate ? oNewEndDate.getTime() : vCurrentTime;
 			}
 			return oParams;
-		}
+		},
+		/*
+		 *Method for checking Enabling Operation Times Demands
+		 */
+		onShowOperationTimes: function (oViewModel) {
+			var aSources = oViewModel.getProperty("/dragSession"),
+				aOperationTimes = [];
+			for (var f in aSources) {
+				aSources[f].IsDisplayed = true;
+				aSources[f].IsSelected = true;
+				if (aSources[f].oData.FIXED_ASSGN_END_DATE === null && aSources[f].oData.FIXED_ASSGN_START_DATE === null) {
+					aSources[f].IsDisplayed = false;
+					aSources[f].IsSelected = false;
+					aOperationTimes.push(aSources[f]);
+				}
+			}
+			oViewModel.refresh(true);
+			return aOperationTimes.length;
+		},
+
+		openAssignInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext) {
+			if (this.getOwnerComponent()) {
+				this.oComponent = this.getOwnerComponent();
+			} else {
+				this.oComponent = oView.getController().getOwnerComponent();
+			}
+			if (!oDemandContext) {
+				var mParams = {
+					$expand: "Demand"
+				};
+				this.oComponent._getData(sPath, null, mParams)
+					.then(function (data) {
+						var sObjectSourceType = data.Demand.OBJECT_SOURCE_TYPE;
+						this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+					}.bind(this));
+			} else {
+				var sObjectSourceType = oDemandContext.OBJECT_SOURCE_TYPE;
+				this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+			}
+		},
+
+		openDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType) {
+			var sQualifier;
+			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
+				sQualifier = Constants.ANNOTATION_CONSTANTS.NOTIFICATION_QUALIFIER;
+			} else {
+				sQualifier = Constants.ANNOTATION_CONSTANTS.ORDER_QUALIFIER;
+			}
+			var mParams = {
+				viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#" + sQualifier,
+				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
+				entitySet: "AssignmentSet",
+				controllerName: "AssignInfo",
+				title: "xtit.assignInfoModalTitle",
+				type: "add",
+				smartTable: null,
+				sPath: sPath,
+				sDeepPath: "Demand",
+				parentContext: oContext,
+				oDialogController: this.oComponent.assignInfoDialog,
+				refreshParameters: mParameters
+			};
+			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterDialogLoad.bind(this));
+		},
+
+		_afterDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
+			if (sEvent === "dataReceived") {
+				this.oComponent.assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
+			}
+		},
+
+		/*
+		 *Method for checking Vendor Assignment Field
+		 */
+		onAllowVendorAssignment: function (oViewModel, oUserModel) {
+			var aSources = oViewModel.getProperty("/dragSession"),
+				aAllowVendorAssignment = [];
+			for (var v in aSources) {
+				if (!aSources[v].oData.ALLOW_ASSIGNMENT_DIALOG) {
+					aSources[v].oData.CostElement = "";
+					aSources[v].oData.Estimate = "";
+					aSources[v].oData.Currency = "";
+					aAllowVendorAssignment.push(aSources[v]);
+				} else {
+					aSources[v].oData.CostElement = "";
+					aSources[v].oData.Estimate = "";
+					aSources[v].oData.Currency = oUserModel.getProperty("/DEFAULT_CURRENCY");
+				}
+			}
+			oViewModel.refresh(true);
+			return aAllowVendorAssignment.length;
+		},
+
 	});
 });

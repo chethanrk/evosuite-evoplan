@@ -10,7 +10,7 @@
 					<FlexBox id="idResToolbar" alignItems="Start" justifyContent="SpaceBetween">
 						<items>
 							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.TreeExpandCollapse" type="XML"/>
-							<HBox visible="{user>/CAPACITY_ENABLED}" >
+							<HBox visible="{user>/ENABLE_CAPACITY}" >
 								<Switch id="idCapaCheck" customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}"
 									state="{viewModel>/capacityPlanning}" change="onSelectCapacity" enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }"></Switch>
 								<Text text="{i18n>xtit.capacity}" class="sapUiTinyMarginBegin sapUiTinyMarginTop"></Text>
@@ -25,7 +25,7 @@
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
-				<Button id="showRoute" enabled="false" visible="{user>/MANAGE_ABSENCE_ENABLE}" text="Route" tooltip="Route" 
+				<Button id="showRoute" enabled="false" visible="{user>/ENABLE_MANAGE_ABSENCE}" text="Route" tooltip="Route" 
 						press="onRoutePress" busyIndicatorDelay="0">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="true"/>

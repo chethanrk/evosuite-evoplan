@@ -65,6 +65,7 @@ sap.ui.define([
 				this._aSelectedRowsIdx.length = 100;
 			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
@@ -103,7 +104,7 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				oData = oModel.getProperty(sPath);
 
-			oRouter.navTo("detail", {
+			oRouter.navTo("DemandDetail", {
 				guid: oData.Guid
 			});
 		},
@@ -144,10 +145,10 @@ sap.ui.define([
 			//enable/disable buttons on footer when there is some/no selected rows
 			oDataTable.attachRowSelectionChange(function () {
 				var selected = this._oDataTable.getSelectedIndices(),
-				               sDemandPath,bComponentExist;
-                 var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
+					sDemandPath, bComponentExist;
+				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 				if (selected.length > 0 && selected.length <= iMaxRowSelection) {
-	
+
 					this.byId("idfindRightTechnicianButton").setEnabled(true);
 					this.byId("assignButton").setEnabled(true);
 					this.byId("changeStatusButton").setEnabled(true);
@@ -158,32 +159,28 @@ sap.ui.define([
 					this.byId("changeStatusButton").setEnabled(false);
 					this.byId("idOverallStatusButton").setEnabled(false);
 					this.byId("materialInfo").setEnabled(false);
-                    //If the selected demands exceeds more than the maintained selected configuration value
+					//If the selected demands exceeds more than the maintained selected configuration value
 					if (iMaxRowSelection <= selected.length) {
 						var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection");
 						MessageToast.show(sMsg + " " + iMaxRowSelection);
 					}
 				}
-				
+
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
-					for (var i = 0; i < selected.length; i++) {
-						sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
-						bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
-						if(bComponentExist)
-						{
-							this.byId("materialInfo").setEnabled(true);
-							this.byId("idOverallStatusButton").setEnabled(true);
-							break;
-						}
-						else
-						{
-							this.byId("materialInfo").setEnabled(false);
-							this.byId("idOverallStatusButton").setEnabled(false);
-						}
-				
-			}
-				
-				
+				for (var i = 0; i < selected.length; i++) {
+					sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
+					bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
+					if (bComponentExist) {
+						this.byId("materialInfo").setEnabled(true);
+						this.byId("idOverallStatusButton").setEnabled(true);
+						break;
+					} else {
+						this.byId("materialInfo").setEnabled(false);
+						this.byId("idOverallStatusButton").setEnabled(false);
+					}
+
+				}
+
 				this.showWarningMsgResourceTree(true);
 			}, this);
 		},
@@ -204,10 +201,10 @@ sap.ui.define([
 				oDraggedControl = oDragSession.getDragControl(),
 				aIndices = this._oDataTable.getSelectedIndices(),
 				oSelectedPaths, aPathsData;
-		
+
 			//Restricting selected demand list as per the global config select all property 
 			aIndices = aIndices.slice(0, this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL"));
-			
+
 			oDragSession.setTextData("Hi I am dragging");
 			//get all selected rows when checkboxes in table selected
 			if (aIndices.length > 0) {
@@ -385,21 +382,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Open the Qualification dialog for Gantt demand
-		 * @param oEvent
-		 */
-		onDemandQualificationIconPress: function (oEvent) {
-			var oRow = oEvent.getSource().getParent(),
-				oContext = oRow.getBindingContext(),
-				sPath = oContext.getPath(),
-				oModel = oContext.getModel(),
-				oResourceNode = oModel.getProperty(sPath),
-				sDemandGuid = oResourceNode.Guid;
-			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
-
-		},
-
-		/**
 		 * To Highlight Resources Based on Selected Demands
 		 * 
 		 */
@@ -498,7 +480,7 @@ sap.ui.define([
 				this._aSelectedRowsIdx.length = 100;
 			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
-			var iMaxSelcRow = this.getModel("user").getProperty("/MAX_DEMAND_SELECT_FOR_MAT_LIST");
+			var iMaxSelcRow = this.getModel("user").getProperty("/DEFAULT_MAX_DEM_SEL_MAT_LIST");
 			if (oSelectedPaths.aPathsData.length > 0 && iMaxSelcRow >= this._aSelectedRowsIdx.length) {
 				this.getOwnerComponent().materialInfoDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
 			} else {
@@ -512,15 +494,15 @@ sap.ui.define([
 		 */
 		onMaterialStatusPress: function (oEvent) {
 			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
-			    oViewModel = this.getModel("appView"),
+				oViewModel = this.getModel("appView"),
 				sDemandPath;
-				oViewModel.setProperty("/busy", true);
+			oViewModel.setProperty("/busy", true);
 			for (var i = 0; i < oSelectedIndices.length; i++) {
 				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 					oViewModel.setProperty("/busy", false);
-			}.bind(this));
-			};
+				}.bind(this));
+			}
 		},
 		/**
 		 * Resetting Demand selection based on not allowed for find technician 
@@ -537,5 +519,13 @@ sap.ui.define([
 				}
 			}
 		},
+
+		/**
+		 * Opens long text view/edit popover
+		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
+		 */
+		onClickLongText: function (oEvent) {
+			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
+		}
 	});
 });

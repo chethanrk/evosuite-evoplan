@@ -1,0 +1,11 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:table="sap.ui.table">
+	<table:Column hAlign="Center" width="3.1rem" visible="{= ${/#Demand/LONG_TEXT/@sap:visible} === 'false' ? false : true}">
+		<table:customData>
+			<core:CustomData key="p13nData" value='\{"columnKey": "LONG_TEXT", "leadingProperty": "LONG_TEXT"}'/>
+		</table:customData>
+		<Label text="{/#Demand/LONG_TEXT/@sap:label}"/>
+		<table:template>
+			<Button icon="{LONG_TEXT_ICON}" type="Transparent" visible="{= ${LONG_TEXT_ICON} ? true : false}" press="onClickLongText"/>
+		</table:template>
+	</table:Column>
+</core:FragmentDefinition>
