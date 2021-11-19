@@ -149,6 +149,10 @@ sap.ui.define([
 				sDateControl2,
 				oUserModel = this._component.getModel("user");
 
+			if (this._mParameters.bFromNewGantt) {
+				oModel = this._oView.getModel("ganttModel");
+			}
+
 			for (var i = 0; i < this.selectedResources.length; i++) {
 				var obj = oModel.getProperty(this.selectedResources[i]);
 				if (obj.NodeType === "RESOURCE") {
@@ -273,7 +277,7 @@ sap.ui.define([
 				};
 			this.openAssignInfoDialog(this._oView, sPath, oContext, mParameters);
 		},
-		
+
 		/**
 		 * @since 2.1.4
 		 * On drag assigments the method will be triggered.
@@ -630,6 +634,10 @@ sap.ui.define([
 				oBatchData,
 				oResource,
 				sEntitySet;
+
+			if (this._mParameters.bFromNewGantt) {
+				oModel = this._oView.getModel("ganttModel");
+			}
 			for (var c = 0; c < data.__batchResponses.length; c++) {
 				oBatchData = data.__batchResponses[c] ? data.__batchResponses[c].data : {};
 				for (var i in oBatchData.results) {
@@ -652,7 +660,11 @@ sap.ui.define([
 				if (oResource.NodeType === "RESOURCE" || oResource.NodeType === "RES_GROUP" && oUserModel.getProperty("/ENABLE_POOL_FUNCTION")) {
 					oResource.ResourceDescription = oResource.Description;
 					oResource.ObjectType = oResource.NodeType;
-					oResource.GroupDescription = oModel.getProperty(sEntitySet + "('" + oResource.ResourceGroupGuid + "')").Description;
+					if (this._mParameters.bFromNewGantt) {
+						oResource.GroupDescription = "";
+					} else {
+						oResource.GroupDescription = oModel.getProperty(sEntitySet + "('" + oResource.ResourceGroupGuid + "')").Description;
+					}
 					oResource.ResourceGuid = oResource.ResourceGuid;
 					oResource.ResourceGroupGuid = oResource.ResourceGroupGuid;
 					oResourceMap[oResource.NodeId] = oResource;

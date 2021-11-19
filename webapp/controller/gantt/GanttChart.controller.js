@@ -115,7 +115,32 @@ sap.ui.define([
 		onPressGanttResourceFilters: function () {
 			this.getOwnerComponent().GanttResourceFilter.open(this.getView(), this._treeTable);
 		},
-
+		
+		/**
+		 * double click on a shape
+		 * open assignment detail dialog
+		 * @param oEvent
+		 */
+		onShapeDoubleClick: function (oEvent) {
+			var oParams = oEvent.getParameters(),
+				oContext = oParams.shape.getBindingContext("ganttModel"),
+				oRowContext = oParams.rowSettings.getParent().getBindingContext("ganttModel"),
+				oShape = oParams.shape,
+				sMsg;
+			if (oShape && oShape.sParentAggregationName === "shapes3") {
+				// to identify the action done on respective page
+				localStorage.setItem("Evo-Action-page", "ganttSplit");
+				if (oContext) {
+					this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], {
+						bFromNewGantt: true
+					}, oShape.getTime());
+				} else {
+					sMsg = this.getResourceBundle().getText("notFoundContext");
+					this.showMessageToast(sMsg);
+				}
+			}
+		},
+		
 		/**
 		 * Event when visble horizont was changed
 		 * @param oEvent
@@ -372,7 +397,7 @@ sap.ui.define([
 		 */
 		onResourceIconPress: function (oEvent) {
 			var oRow = oEvent.getSource().getParent(),
-				oContext = oRow.getBindingContext(),
+				oContext = oRow.getBindingContext("ganttModel"),
 				sPath = oContext.getPath(),
 				oModel = oContext.getModel(),
 				oResourceNode = oModel.getProperty(sPath),
