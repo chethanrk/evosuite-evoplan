@@ -452,6 +452,18 @@ sap.ui.define([
 		},
 		/**
 		 *
+		 * @param isCapacity
+		 * @param sSelectedView
+		 * @returns
+		 */
+		formatGanttProgressBarVisibility: function (isCapacity, sSelectedView) {
+			if (isCapacity === true && sSelectedView !== "TIMENONE") {
+				return false;
+			}
+			return false;
+		},
+		/**
+		 *
 		 * @param sNodeType
 		 * @param sSelectedView
 		 * @returns
