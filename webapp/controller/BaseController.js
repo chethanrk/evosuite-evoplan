@@ -634,7 +634,7 @@ sap.ui.define([
 					sParameter = "";
 					for (var a = 0; a < aPlaceholders.length; a++) {
 						oKeyChar = aPlaceholders[a].charAt(0);
-						if (oKeyChar === "&") {
+						if (oKeyChar === "?") {
 							sParameter = sParameter + aPlaceholders[a].split("=")[0] + "=" + oDemandObj[aPlaceholders[a].split("=")[1]];
 						} else {
 							if (oKeyChar === aPlaceholders[a].charAt(aPlaceholders[a].length - 1)) {
@@ -644,10 +644,10 @@ sap.ui.define([
 							}
 						}
 					}
-					if (oKeyChar === "&") {
-						sParameter = sParameter.slice(1);
+					if (oKeyChar === "?") {
+						sParameter = "?" +  sParameter.slice(1);
 					} else {
-						sParameter = sParameter.slice(0, -1);
+						sParameter = "&" + sParameter.slice(0, -1);
 					}
 					if (sSemanticObject && sAction) {
 						this.navToApp(sSemanticObject, sAction, sParameter);
@@ -684,8 +684,7 @@ sap.ui.define([
 				}) || "", // generate the Hash to display a Notification details app
 
 				//Setting ShellHash Parameters for EvoTime and Other apps
-				//	sShellHash = sHash + "&" + sParameter + sKey;
-				sShellHash = sHash + "&" + sParameter; // + sKey;
+				sShellHash = sHash + sParameter; // + sKey;
 
 			oCrossAppNavigator.toExternal({
 				target: {
