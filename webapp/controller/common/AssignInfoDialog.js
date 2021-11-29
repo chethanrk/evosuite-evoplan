@@ -137,7 +137,7 @@ sap.ui.define([
 				iNewEffort = this.getEffortTimeDifference(sDateFrom, sDateTo),
 				oResourceBundle = this._oView.getController().getResourceBundle();
 			//Replacing comma in DE language with dot if any
-			this.oAssignmentModel.setProperty("/Effort", sEffort.replace(",", "."));
+			this.oAssignmentModel.setProperty("/Effort", sEffort.toString().replace(",", "."));
 			sEffort = this.oAssignmentModel.getProperty("/Effort");
 
 			if (this.oAssignmentModel.getProperty("/NewAssignPath") !== null) {
