@@ -19,7 +19,7 @@
 		</smartTable:customToolbar>
 		<table:Table enableGrouping="false" visibleRowCountMode="Auto" enableColumnReordering="false" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}"
 			 enableCellFilter="false" rowSelectionChange="onRowSelectionChange"
-			minAutoRowCount="3">
+			minAutoRowCount="3"  cellClick="onCopyDemandCellData">
 			<table:rowSettingsTemplate>
 				<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
 			</table:rowSettingsTemplate>
