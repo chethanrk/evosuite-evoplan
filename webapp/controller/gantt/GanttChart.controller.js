@@ -50,6 +50,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("BaseController", "refreshAvailabilities", this._refreshAvailabilities, this);
 			this._oEventBus.subscribe("BaseController", "resetSelections", this._resetSelections, this);
 			this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
+			this._oEventBus.subscribe("BaseController", "refreshCapacity", this._refreshCapacity, this);
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
@@ -103,6 +104,7 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("BaseController", "refreshAvailabilities", this._refreshAvailabilities, this);
 			this._oEventBus.unsubscribe("BaseController", "resetSelections", this._resetSelections, this);
 			this._oEventBus.unsubscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
+			this._oEventBus.unsubscribe("BaseController", "refreshCapacity", this._refreshCapacity, this);
 		},
 		/* =========================================================== */
 		/* event methods                                               */
@@ -260,7 +262,7 @@ sap.ui.define([
 
 				//set new time and resource data to gantt model, setting also new pathes
 				var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
-				this._updateDraggedShape(sNewPath, sRequestType);
+				this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
 			}
 		},
 
@@ -356,7 +358,7 @@ sap.ui.define([
 				this.openAssignInfoDialog(this.getView(), sDataModelPath, null, mParameters, null);
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonUnassign")) {
 				//unassign
-				this._deleteAssignment(this.getModel(), oData.Guid, sPath);
+				this._deleteAssignment(this.getModel(), oData.Guid, sPath, this._oEventBus);
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonReassign")) {
 				//reassign
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters,
@@ -622,13 +624,23 @@ sap.ui.define([
 		 * @param {String} sPath
 		 * @param {String} sRequestType
 		 */
-		_updateDraggedShape: function (sPath, sRequestType) {
+		_updateDraggedShape: function (sPath, sRequestType, sSourcePath) {
 			this.oGanttModel.setProperty(sPath + "/busy", true);
 			var oData = this.oGanttModel.getProperty(sPath);
 			//get demand details to this assignment
 			this._getRelatedDemandData(oData).then(function (oResult) {
 				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
-				this._validateAndSendChangedData(sPath, sRequestType).then(null, function () {
+				this._validateAndSendChangedData(sPath, sRequestType).then(function () {
+					// these events
+					this._oEventBus.publish("BaseController", "refreshCapacity", {
+						sTargetPath: sPath.split("/AssignmentSet/results/")[0]
+					});
+					if (sSourcePath) {
+						this._oEventBus.publish("BaseController", "refreshCapacity", {
+							sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
+						});
+					}
+				}.bind(this), function () {
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
@@ -1040,6 +1052,9 @@ sap.ui.define([
 				this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
 			this.oGanttModel.refresh();
+			this._oEventBus.publish("BaseController", "refreshCapacity", {
+				sTargetPath: sTargetPath
+			});
 		},
 		/**
 		 * Change view horizon time at specified timestamp
@@ -1302,6 +1317,48 @@ sap.ui.define([
 				this.oGanttModel.setProperty(this.selectedResources[i] + "/IsSelected", false);
 			}
 			this.selectedResources = [];
+		},
+		/**
+		 *  refreshes the utilization in gantt chart table
+		 */
+		_refreshCapacity: function (sChannel, sEvent, oData) {
+			var aSelectedResourcePath = this.selectedResources;
+
+			if (oData.sTargetPath) {
+				this._refreshCaacities([oData.sTargetPath]);
+			} else {
+				this._refreshCaacities(aSelectedResourcePath);
+			}
+		},
+		/**
+		 * refreshes the utilization in gantt chart table by calling GanttResourceHierarchySet
+		 * */
+		_refreshCaacities: function (aSelectedResourcePath) {
+			var aFilters = [],
+				oUserData = this.getModel("user").getData(),
+				oTargetData;
+
+			for (var i in aSelectedResourcePath) {
+				aFilters = [];
+				oTargetData = this.oGanttModel.getProperty(aSelectedResourcePath[i]);
+				aFilters.push(new Filter("HierarchyLevel", FilterOperator.LE, 1));
+				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+				aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+				aFilters.push(new Filter("NodeId", FilterOperator.EQ, oTargetData.NodeId));
+
+				this._updateCapacity(aFilters, aSelectedResourcePath[i]);
+			}
+
+		},
+		/**
+		 * refreshes the utilization in gantt chart table by calling GanttResourceHierarchySet
+		 * */
+		_updateCapacity: function (aFilters, sPath) {
+			this.getOwnerComponent().readData("/GanttResourceHierarchySet", aFilters).then(function (data) {
+					this.oGanttModel.setProperty(sPath + "/Utilization", data.results[0].Utilization);
+					this.oGanttOriginDataModel.setProperty(sPath + "/Utilization", data.results[0].Utilization);
+					this.oGanttModel.refresh();
+				}.bind(this));
 		}
 
 	});

@@ -341,7 +341,7 @@ sap.ui.define([
 		/**
 		 * Unassign assignment with delete confirmation dialog. 
 		 */
-		_deleteAssignment: function (oModel, sAssignGuid, sPath) {
+		_deleteAssignment: function (oModel, sAssignGuid, sPath, oEventBus) {
 			var oGanttModel = this.getModel("ganttModel");
 			this._showConfirmMessageBox.call(this, this.getResourceBundle().getText("ymsg.confirmDel")).then(function (data) {
 				oGanttModel.setProperty(sPath + "/busy", true);
@@ -350,6 +350,9 @@ sap.ui.define([
 							oGanttModel.setProperty(sPath + "/busy", false);
 							this.getModel("ganttModel").setProperty(sPath, null);
 							this.getModel("ganttOriginalData").setProperty(sPath, null);
+							oEventBus.publish("BaseController", "refreshCapacity", {
+								sTargetPath: sPath.split("/AssignmentSet/results/")[0]
+							});
 						}.bind(this),
 						function () {
 							oGanttModel.setProperty(sPath + "/busy", false);
