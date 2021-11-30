@@ -300,9 +300,12 @@ sap.ui.define([
 			} else if (oParameter.bFromNewGantt) {
 				eventBus.publish("BaseController", "refreshAssignments", oData);
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				eventBus.publish("BaseController", "refreshCapacity", {});
 			} else if (oParameter.bFromNewGanttSplit) {
 				eventBus.publish("BaseController", "refreshAssignments", oData);
+				eventBus.publish("BaseController", "refreshCapacity", {});
 			}
+			
 		},
 		/**
 		 * device orientation with fallback of window resize
