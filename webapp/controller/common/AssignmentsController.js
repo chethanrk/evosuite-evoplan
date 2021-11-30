@@ -633,25 +633,6 @@ sap.ui.define([
 			oViewModel.refresh(true);
 			return aAllowVendorAssignment.length;
 		},
-	/**
-		 * Copying Cell Data onClick of Cell in Demand Table
-		 * @param oEvent
-		 * @Author Chethan RK
-		 */
-		onCopyDemandCellData: function (oEvent) {
-			var oParams = oEvent.getParameters(),
-				oColumnId = oParams.columnId,
-				oRowContext = oParams.rowBindingContext,
-				sPath = oRowContext.getPath(),
-				sColumnName = oColumnId.split("-"),
-				sColumnValue = sColumnName[sColumnName.length - 1],
-				sCopiedData = this.getModel().getProperty(sPath + "/" + sColumnValue);
 
-			if (window.clipboardData) { // Internet Explorer
-				window.clipboardData.setData("Text", sCopiedData);
-			} else {
-				navigator.clipboard.writeText(sCopiedData);
-			}
-		}
 	});
 });
