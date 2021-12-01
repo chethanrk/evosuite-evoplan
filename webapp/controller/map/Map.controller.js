@@ -797,7 +797,7 @@ sap.ui.define([
 		onClickLongText: function (oEvent) {
 			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
 		},
-
+		
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);

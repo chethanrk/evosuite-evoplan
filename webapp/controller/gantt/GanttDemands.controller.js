@@ -316,7 +316,7 @@ sap.ui.define([
 		onClickLongText: function (oEvent) {
 			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
 		},
-
+		
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
 		}
