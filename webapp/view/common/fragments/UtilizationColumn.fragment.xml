@@ -2,5 +2,6 @@
 	<ProgressIndicator percentValue="{path:'ganttModel>Utilization',formatter:'.formatter.formatProgress'}"
 							displayValue="{path:'ganttModel>Utilization', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}%" tooltip="{ganttModel>Utilization}"
 							showValue="true" state="{path:'ganttModel>Utilization',formatter:'.formatter.formatProgressState'}"
-							visible="{ path: 'ganttModel>NodeType', formatter: '.formatter.isResource' }"/>
+							visible="{ path: 'ganttModel>NodeType', formatter: '.formatter.isResource' }"
+							busy="{ganttModel>busy}"/>
 </core:FragmentDefinition>

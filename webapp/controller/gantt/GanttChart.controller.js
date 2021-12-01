@@ -117,7 +117,7 @@ sap.ui.define([
 		onPressGanttResourceFilters: function () {
 			this.getOwnerComponent().GanttResourceFilter.open(this.getView(), this._treeTable);
 		},
-		
+
 		/**
 		 * double click on a shape
 		 * open assignment detail dialog
@@ -142,7 +142,7 @@ sap.ui.define([
 				}
 			}
 		},
-		
+
 		/**
 		 * Event when visble horizont was changed
 		 * @param oEvent
@@ -1354,11 +1354,16 @@ sap.ui.define([
 		 * refreshes the utilization in gantt chart table by calling GanttResourceHierarchySet
 		 * */
 		_updateCapacity: function (aFilters, sPath) {
-			this.getOwnerComponent().readData("/GanttResourceHierarchySet", aFilters).then(function (data) {
+			// var oViewModel = this.getModel("viewModel");
+			// if (oViewModel.getProperty("/showUtilization")) {
+				this.oGanttModel.setProperty(sPath + "/busy", true);
+				this.getOwnerComponent().readData("/GanttResourceHierarchySet", aFilters).then(function (data) {
 					this.oGanttModel.setProperty(sPath + "/Utilization", data.results[0].Utilization);
 					this.oGanttOriginDataModel.setProperty(sPath + "/Utilization", data.results[0].Utilization);
+					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this.oGanttModel.refresh();
 				}.bind(this));
+			// }
 		}
 
 	});
