@@ -219,45 +219,56 @@ sap.ui.define([
 				sDateControl1,
 				sDateControl2;
 
-			if(this._mParameters.bFromNewGantt){
+			if (this._mParameters.bFromNewGantt) {
 				oModel = this._oView.getModel("ganttModel");
 			}
-			for (var i = 0; i < aSelectedResources.length; i++) {
-				obj = oModel.getProperty(aSelectedResources[i]);
-				if (obj.NodeType === "RESOURCE") {
-					if (obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
-						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
-					} else {
-						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid + "//X"));
-					}
-				} else if (obj.NodeType === "RES_GROUP") {
-					aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
+			//For UnAssigning from Demand View
+			if (this._oView.getModel("user").getProperty("/ENABLE_DEMAND_UNASSIGN") && aSelectedResources.aUnAssignDemands) {
+				for (var u in aSelectedResources.aUnAssignDemands) {
+					aResources.push(new Filter("DemandGuid", FilterOperator.EQ, aSelectedResources.aUnAssignDemands[u].oData.Guid));
 				}
-			}
-
-			if (oViewFilterSettings) {
-				dateRangeValues = oViewFilterSettings.getDateRange();
-				sDateControl1 = dateRangeValues[0];
-				sDateControl2 = dateRangeValues[1];
-			} else {
-				selectedTimeFormat = formatter.getResourceFormatByKey("TIMENONE");
-				sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin());
-				sDateControl2 = this.formatter.date(selectedTimeFormat.getDateEnd());
-			}
-
-			//Picking Date Range from Gantt and Gantt Split for Filtering
-			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
-				sDateControl1 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getDateValue());
-				sDateControl2 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getSecondDateValue());
-			}
-
-			if (aResources.length > 0) {
 				aFilters.push(new Filter({
 					filters: aResources,
 					and: false
 				}));
-				aFilters.push(new Filter("DateTo", FilterOperator.GE, sDateControl1));
-				aFilters.push(new Filter("DateFrom", FilterOperator.LE, sDateControl2));
+			} else {
+				for (var i = 0; i < aSelectedResources.length; i++) {
+					obj = oModel.getProperty(aSelectedResources[i]);
+					if (obj.NodeType === "RESOURCE") {
+						if (obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
+							aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
+						} else {
+							aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid + "//X"));
+						}
+					} else if (obj.NodeType === "RES_GROUP") {
+						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
+					}
+				}
+
+				if (oViewFilterSettings) {
+					dateRangeValues = oViewFilterSettings.getDateRange();
+					sDateControl1 = dateRangeValues[0];
+					sDateControl2 = dateRangeValues[1];
+				} else {
+					selectedTimeFormat = formatter.getResourceFormatByKey("TIMENONE");
+					sDateControl1 = this.formatter.date(selectedTimeFormat.getDateBegin());
+					sDateControl2 = this.formatter.date(selectedTimeFormat.getDateEnd());
+				}
+
+				//Picking Date Range from Gantt and Gantt Split for Filtering
+				if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
+					sDateControl1 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getDateValue());
+					sDateControl2 = this.formatter.date(this._oView.byId("idDateRangeGantt2").getSecondDateValue());
+				}
+
+				if (aResources.length > 0) {
+					aFilters.push(new Filter({
+						filters: aResources,
+						and: false
+					}));
+					aFilters.push(new Filter("DateTo", FilterOperator.GE, sDateControl1));
+					aFilters.push(new Filter("DateFrom", FilterOperator.LE, sDateControl2));
+				}
 			}
 			return aFilters;
 		},
@@ -337,6 +348,13 @@ sap.ui.define([
 				}
 			}
 		},
+		
+		onDataBind: function () {
+			if (this._oView.getModel("user").getProperty("/ENABLE_DEMAND_UNASSIGN") && this._aSelectedResources.aUnAssignDemands) {
+				this._oAssignMentTable.selectAll();
+			}
+		},
+		
 		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog, this);
 			this._eventBus.subscribe("AssignTreeDialog", "updateSelection", this._deselectAssignments, this);

@@ -18,4 +18,9 @@
 			<ToolbarLayoutData shrinkable="true"/>
 		</layoutData>
 	</Button>
+	<Button id="idUnassignButton" text="{i18n>xbut.buttonUnassign}" tooltip="{i18n>xbut.buttonUnassign}" press="onPressUnassignDemand" enabled="false" visible="{user>/ENABLE_DEMAND_UNASSIGN}">
+					<layoutData>
+						 <ToolbarLayoutData shrinkable="true"/>
+					</layoutData>
+			</Button>
 </core:FragmentDefinition>
