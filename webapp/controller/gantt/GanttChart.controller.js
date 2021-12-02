@@ -1325,15 +1325,15 @@ sap.ui.define([
 			var aSelectedResourcePath = this.selectedResources;
 
 			if (oData.sTargetPath) {
-				this._refreshCapacities([oData.sTargetPath]);
+				this._refreshCaacities([oData.sTargetPath]);
 			} else {
-				this._refreshCapacities(aSelectedResourcePath);
+				this._refreshCaacities(aSelectedResourcePath);
 			}
 		},
 		/**
 		 * refreshes the utilization in gantt chart table by calling GanttResourceHierarchySet
 		 * */
-		_refreshCapacities: function (aSelectedResourcePath) {
+		_refreshCaacities: function (aSelectedResourcePath) {
 			var aFilters = [],
 				oUserData = this.getModel("user").getData(),
 				oTargetData;
