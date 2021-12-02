@@ -273,7 +273,6 @@ sap.ui.define([
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (sRoute === "newgantt") {
-				//this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (sRoute === "ganttSplit") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
@@ -384,26 +383,9 @@ sap.ui.define([
 					this._eventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
 				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageNewGantt")) {
 					this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-					this._eventBus.publish("BaseController", "refreshGanttChart", {});
+					this._eventBus.publish("BaseController", "refreshFullGantt", {});
 				}
 			}.bind(this), function (data) {}.bind(this)).catch(function (data) {}.bind(this));
-
-			// this.executeFunctionImport(this.getModel(), {}, "RefreshSharedMemoryAreas", "POST").then(function () {
-			// 	oComponent._getResourceGroups.call(oComponent);
-			// 	this._eventBus.publish("BaseController", "refreshDemandTable", {});
-			// 	this._eventBus.publish("BaseController", "refreshTreeTable", {});
-			// 	this._eventBus.publish("BaseController", "refreshAssetCal", {});
-			// 	this._eventBus.publish("BaseController", "refreshAssets", {});
-			// 	this._eventBus.publish("BaseController", "refreshGanttChart", {});
-			// 	this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			// 	this._eventBus.publish("BaseController", "refreshMapView", {});
-			// 	this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
-			// 	this._eventBus.publish("BaseController", "refreshMapDemandTable", {});
-			// }.bind(this), function (data) {
-			// 	//
-			// }.bind(this)).catch(function (data) {
-			// 	//
-			// }.bind(this));
 		},
 		_routeValidation: function (parameter) {
 			var oUserModel = this.getModel("user");

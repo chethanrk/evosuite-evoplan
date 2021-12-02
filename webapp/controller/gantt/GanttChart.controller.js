@@ -51,6 +51,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("BaseController", "resetSelections", this._resetSelections, this);
 			this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
 			this._oEventBus.subscribe("BaseController", "refreshCapacity", this._refreshCapacity, this);
+			this._oEventBus.subscribe("BaseController", "refreshFullGantt", this._loadGanttData, this);
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
@@ -117,7 +118,7 @@ sap.ui.define([
 		onPressGanttResourceFilters: function () {
 			this.getOwnerComponent().GanttResourceFilter.open(this.getView(), this._treeTable);
 		},
-		
+
 		/**
 		 * double click on a shape
 		 * open assignment detail dialog
@@ -142,7 +143,7 @@ sap.ui.define([
 				}
 			}
 		},
-		
+
 		/**
 		 * Event when visble horizont was changed
 		 * @param oEvent
@@ -1326,8 +1327,10 @@ sap.ui.define([
 
 			if (oData.sTargetPath) {
 				this._refreshCaacities([oData.sTargetPath]);
-			} else {
+			} else if(aSelectedResourcePath.length > 0){
 				this._refreshCaacities(aSelectedResourcePath);
+			}else{
+				this._loadGanttData();
 			}
 		},
 		/**
@@ -1354,11 +1357,16 @@ sap.ui.define([
 		 * refreshes the utilization in gantt chart table by calling GanttResourceHierarchySet
 		 * */
 		_updateCapacity: function (aFilters, sPath) {
-			this.getOwnerComponent().readData("/GanttResourceHierarchySet", aFilters).then(function (data) {
+			// var oViewModel = this.getModel("viewModel");
+			// if (oViewModel.getProperty("/showUtilization")) {
+				this.oGanttModel.setProperty(sPath + "/busy", true);
+				this.getOwnerComponent().readData("/GanttResourceHierarchySet", aFilters).then(function (data) {
 					this.oGanttModel.setProperty(sPath + "/Utilization", data.results[0].Utilization);
 					this.oGanttOriginDataModel.setProperty(sPath + "/Utilization", data.results[0].Utilization);
+					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this.oGanttModel.refresh();
 				}.bind(this));
+			// }
 		}
 
 	});
