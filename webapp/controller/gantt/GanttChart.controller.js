@@ -51,6 +51,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("BaseController", "resetSelections", this._resetSelections, this);
 			this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
 			this._oEventBus.subscribe("BaseController", "refreshCapacity", this._refreshCapacity, this);
+			this._oEventBus.subscribe("BaseController", "refreshFullGantt", this._loadGanttData, this);
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
@@ -1326,8 +1327,10 @@ sap.ui.define([
 
 			if (oData.sTargetPath) {
 				this._refreshCaacities([oData.sTargetPath]);
-			} else {
+			} else if(aSelectedResourcePath.length > 0){
 				this._refreshCaacities(aSelectedResourcePath);
+			}else{
+				this._loadGanttData();
 			}
 		},
 		/**
