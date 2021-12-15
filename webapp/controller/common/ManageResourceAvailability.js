@@ -162,9 +162,11 @@ sap.ui.define([
 			if (this.sSource === "timeAlloc" && sCurPageId === "detail" && sProperty !== "DELETE") {
 				oData.BlockPercentage = Fragment.byId(this._id, "idUpdateTimeAllocSlider").getValue();
 				oData.AvailType = Fragment.byId(this._id, "idTimeAllocAvailType").getSelectedKey();
+				oData.Description = Fragment.byId(this._id, "idUpdateDescription").getValue();
 			} else if (this.sSource === "timeAlloc" && sCurPageId === "create" && sProperty !== "DELETE") {
 				oData.BlockPercentage = Fragment.byId(this._id, "idTimeAllocSlider").getValue();
 				oData.AvailType = Fragment.byId(this._id, "idTimeAllocAvailType").getSelectedKey();
+				oData.Description = Fragment.byId(this._id, "idCreateDescription").getValue();
 			} else {
 				//oData.BlockPercentage = 0;
 			}
@@ -249,6 +251,7 @@ sap.ui.define([
 				oEndDate.setHours(23, 59, 59); //TimeStamp to be sent as T23:59:59 for End Date only for TimeAllocation
 				oUpdateData.StartTimestamp = oChanges.DateFrom;
 				oUpdateData.EndTimestamp = oChanges.DateTo;
+				oUpdateData.Description = oChanges.Description;
 			}
 
 			if (sProperty === "SAVE") {
@@ -355,6 +358,7 @@ sap.ui.define([
 				}
 
 				Fragment.byId(this._id, "idTimeAllocSlider").setValue(0);
+				Fragment.byId(this._id, "idCreateDescription").setValue("");
 			} else if (this._mParameters.bFromHome) {
 				oEventBus.publish("ManageAbsences", "ClearSelection", {});
 			}
