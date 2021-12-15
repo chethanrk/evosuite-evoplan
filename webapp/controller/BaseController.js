@@ -300,9 +300,12 @@ sap.ui.define([
 			} else if (oParameter.bFromNewGantt) {
 				eventBus.publish("BaseController", "refreshAssignments", oData);
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				eventBus.publish("BaseController", "refreshCapacity", {});
 			} else if (oParameter.bFromNewGanttSplit) {
 				eventBus.publish("BaseController", "refreshAssignments", oData);
+				eventBus.publish("BaseController", "refreshCapacity", {});
 			}
+
 		},
 		/**
 		 * device orientation with fallback of window resize
@@ -320,6 +323,7 @@ sap.ui.define([
 		_getSelectedRowPaths: function (oTable, aSelectedRowsIdx, checkAssignAllowed, aDemands) {
 			var aPathsData = [],
 				aNonAssignableDemands = [],
+				aUnAssignableDemands = [],
 				oData, oContext, sPath;
 
 			if (checkAssignAllowed) {
@@ -330,6 +334,15 @@ sap.ui.define([
 					oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
 					sPath = oContext.getPath();
 					oData = this.getModel().getProperty(sPath);
+					
+					//on Check on oData property ALLOW_UNASSIGN for mass unassign from Demand View
+					if (this.getModel("user").getProperty("/ENABLE_DEMAND_UNASSIGN") && oData.ALLOW_UNASSIGN) {
+						aUnAssignableDemands.push({
+							sPath: sPath,
+							oData: oData,
+							index: aSelectedRowsIdx[i]
+						});
+					}
 
 					//on check on oData property ALLOW_ASSIGN when flag was given
 					if (checkAssignAllowed) {
@@ -371,7 +384,8 @@ sap.ui.define([
 			}
 			return {
 				aPathsData: aPathsData,
-				aNonAssignable: aNonAssignableDemands
+				aNonAssignable: aNonAssignableDemands,
+				aUnAssignDemands : aUnAssignableDemands
 			};
 		},
 
@@ -645,7 +659,7 @@ sap.ui.define([
 						}
 					}
 					if (oKeyChar === "?") {
-						sParameter = "?" +  sParameter.slice(1);
+						sParameter = "?" + sParameter.slice(1);
 					} else {
 						sParameter = "&" + sParameter.slice(0, -1);
 					}
@@ -761,6 +775,26 @@ sap.ui.define([
 			oComponent.DemandQualifications.open(oView, sDemandGuid);
 
 		},
+		/**
+		 * Copying Cell Data onClick of Cell in Demand Table
+		 * @param oEvent
+		 * @Author Chethan RK
+		 */
+		onCopyDemandCellData: function (oEvent) {
+			var oParams = oEvent.getParameters(),
+				oColumnId = oParams.columnId,
+				oRowContext = oParams.rowBindingContext,
+				sPath = oRowContext.getPath(),
+				sColumnName = oColumnId.split("-"),
+				sColumnValue = sColumnName[sColumnName.length - 1],
+				sCopiedData = this.getModel().getProperty(sPath + "/" + sColumnValue);
+
+			if (window.clipboardData) { // Internet Explorer
+				window.clipboardData.setData("Text", sCopiedData);
+			} else {
+				navigator.clipboard.writeText(sCopiedData);
+			}
+		}
 	});
 
 });

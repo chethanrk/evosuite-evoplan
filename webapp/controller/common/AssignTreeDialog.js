@@ -206,10 +206,12 @@ sap.ui.define([
 							//Checking Operation Times
 							this._component.OperationTimeCheck.open(this._oView, null, this._assignPath);
 						} else {
+							this.onProceedSaveDialog();
+						}
+					}else{
 						this.onProceedSaveDialog();
 					}
-					}
-				}else {
+				} else {
 					this.onProceedSaveDialog();
 				}
 			} else {
