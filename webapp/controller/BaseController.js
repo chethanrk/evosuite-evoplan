@@ -762,6 +762,41 @@ sap.ui.define([
 			oComponent.DemandQualifications.open(oView, sDemandGuid);
 
 		},
+		/**
+		 * Handle the Edit Mode toggle for Demand Table
+		 * @param oEvent
+		 */
+		onEditToggledDemandTable: function (oEvent) {
+			var bEditableMode = oEvent.getParameter("editable"),
+				oModel = this.getModel();
+
+			if (!bEditableMode && oModel.hasPendingChanges()) {
+				this._showConfirmMessageBox("Are you sure! you want to save the changes?").then(function (resolve) {
+					if (sap.m.MessageBox.Action.YES === resolve) {
+						return new Promise(function (resolve, reject) {
+							oModel.submitChanges({
+								success: function (oData) {
+									resolve(oData);
+								},
+								error: function (oError) {
+									reject(oError);
+								}
+							});
+						}.bind(this)).then(function (oData) {
+							var msg = this.getResourceBundle().getText("xmsg.saveSuccess");
+							// this.showMessageToast(msg);
+							oModel.resetChanges();
+						}.bind(this)).catch(function (oError) {
+							var msg = this.getResourceBundle().getText("errorMessage");
+							// this.showMessageToast(msg);
+							oModel.resetChanges();
+						}.bind(this));
+					} else {
+						oModel.resetChanges();
+					}
+				}.bind(this));
+			}
+		}
 	});
 
 });

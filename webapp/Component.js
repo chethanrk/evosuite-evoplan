@@ -154,7 +154,8 @@ sap.ui.define([
 					removedIndices: [],
 					draggedItemContext: []
 				},
-				densityClass: this.getContentDensityClass()
+				densityClass: this.getContentDensityClass(),
+				isOpetationLongTextPressed:false
 
 			});
 			this.setModel(oViewModel, "viewModel");

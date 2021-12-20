@@ -50,6 +50,7 @@ sap.ui.define([
 			var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle"),
 				noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]),
 				viewModel = this.getModel("viewModel");
+			this._viewModel = viewModel;
 			viewModel.setProperty("/subViewTitle", tableTitle);
 			viewModel.setProperty("/subTableNoDataText", noDataText);
 		},
@@ -525,6 +526,11 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
 		 */
 		onClickLongText: function (oEvent) {
+			this._viewModel.setProperty("/isOpetationLongTextPressed", false);
+			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
+		},
+		onClickOprationLongText: function (oEvent) {
+			this._viewModel.setProperty("/isOpetationLongTextPressed", true);
 			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
 		}
 	});
