@@ -182,11 +182,13 @@ sap.ui.define([
 				this.byId("assignButton").setEnabled(true);
 				this.byId("changeStatusButton").setEnabled(true);
 				this.byId("idOverallStatusButton").setEnabled(true);
+				this.byId("idUnassignButton").setEnabled(true);
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
 				this.byId("idOverallStatusButton").setEnabled(false);
 				this.byId("materialInfo").setEnabled(false);
+				this.byId("idUnassignButton").setEnabled(false);
 				//If the selected demands exceeds more than the maintained selected configuration value
 				if (iMaxRowSelection <= selected.length) {
 					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection");
@@ -316,7 +318,20 @@ sap.ui.define([
 		onClickLongText: function (oEvent) {
 			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
 		},
-
+		
+		/**
+		 * on press unassign button in Demand Table header
+		 */
+		onPressUnassignDemand: function () {
+			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+			if (oSelectedPaths.aUnAssignDemands.length > 0) {
+				this.getOwnerComponent().assignActionsDialog.open(this.getView(), oSelectedPaths, true, this._mParameters);
+			} else {
+				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+			}
+		},
+		
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
 		}

@@ -61,7 +61,7 @@ sap.ui.define([
 			// this._oDroppableTable = oView.byId("droppableTable");
 			// this._oDataTable = this._oDroppableTable.getTable();
 			this._viewModel = this._component.getModel("viewModel");
-			this._userModel = this._component.getModel("user");
+			this._userModel = this._component.getModel("user"); 
 			//use global promise for getting when filterbar was fully initalized
 			// this._isInitalizedProm = new Promise(function (resolve, reject) {
 			// create fragment lazily

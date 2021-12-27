@@ -149,17 +149,18 @@ sap.ui.define([
 					sDemandPath, bComponentExist;
 				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 				if (selected.length > 0 && selected.length <= iMaxRowSelection) {
-
 					this.byId("idfindRightTechnicianButton").setEnabled(true);
 					this.byId("assignButton").setEnabled(true);
 					this.byId("changeStatusButton").setEnabled(true);
 					this.byId("idOverallStatusButton").setEnabled(true);
+					this.byId("idUnassignButton").setEnabled(true);
 				} else {
 					this.byId("idfindRightTechnicianButton").setEnabled(false);
 					this.byId("assignButton").setEnabled(false);
 					this.byId("changeStatusButton").setEnabled(false);
 					this.byId("idOverallStatusButton").setEnabled(false);
 					this.byId("materialInfo").setEnabled(false);
+					this.byId("idUnassignButton").setEnabled(false);
 					//If the selected demands exceeds more than the maintained selected configuration value
 					if (iMaxRowSelection <= selected.length) {
 						var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection");
@@ -532,6 +533,21 @@ sap.ui.define([
 		onClickOprationLongText: function (oEvent) {
 			this._viewModel.setProperty("/isOpetationLongTextPressed", true);
 			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
+		},
+		/**
+		 * on press unassign button in footer
+		 */
+		onPressUnassignDemand: function () {
+			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+			if (oSelectedPaths.aUnAssignDemands.length > 0) {
+				this.getOwnerComponent().assignActionsDialog.open(this.getView(), oSelectedPaths, true, {
+					bFromHome: true
+				});
+			} else {
+				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+			}
 		}
+
 	});
 });
