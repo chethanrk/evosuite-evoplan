@@ -2,14 +2,14 @@
 	<ResponsivePopover title="{= ${viewModel>/isOpetationLongTextPressed}? ${/#Demand/OPER_LONG_TEXT/@sap:label} : ${/#Demand/LONG_TEXT/@sap:label}}" class="sapUiPopupWithPadding" placement="Auto" contentWidth="auto"
 		contentHeight="auto" beforeOpen="onBeforeOpenLongText" afterClose="onAfterCloseLongText">
 		<beginButton>
-			<Button text="{i18n>xbut.buttonSave}" press="onSaveLongText"/>
+			<Button text="{i18n>xbut.buttonSave}" press="onSaveLongText" enabled="{user>/ENABLE_LONG_TEXT_EDIT}"/>
 		</beginButton>
 		<endButton>
 			<Button text="{i18n>xbut.buttonClose}" press="onCloseLongTextPopover"/>
 		</endButton>
 		<content>
-			<TextArea visible="{= ${viewModel>/isOpetationLongTextPressed}? false : true}" cols="40" rows="7" value="{ path:'DemandToDemandLongText/LongText' }"></TextArea>
-			<TextArea visible="{= ${viewModel>/isOpetationLongTextPressed}? true : false}" cols="40" rows="7" value="{ path:'DemandToDemandOperLongText/OperLongText' }"></TextArea>
+			<TextArea enabled="{user>/ENABLE_LONG_TEXT_EDIT}" visible="{= ${viewModel>/isOpetationLongTextPressed}? false : true}" cols="40" rows="7" value="{ path:'DemandToDemandLongText/LongText' }"></TextArea>
+			<TextArea enabled="{user>/ENABLE_LONG_TEXT_EDIT}" visible="{= ${viewModel>/isOpetationLongTextPressed}? true : false}" cols="40" rows="7" value="{ path:'DemandToDemandOperLongText/OperLongText' }"></TextArea>
 		</content>
 	</ResponsivePopover>
 </core:FragmentDefinition>
