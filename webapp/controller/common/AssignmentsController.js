@@ -237,12 +237,15 @@ sap.ui.define([
 				aItems = aSourcePaths && aSourcePaths.length ? aSourcePaths : aGuids,
 				aGanttDragSession = this.getModel("viewModel").getData().dragSession,
 				aGanttDemandDragged = aGanttDragSession ? aGanttDragSession[0] : null,
-				oContext, sPath, demandObj, aOperationTimeParams;
+				oContext, sPath, demandObj, aOperationTimeParams,
+				aAllParameters = [],
+				bContinue;
 			this.clearMessageModel();
 			for (var i = 0; i < aItems.length; i++) {
 				oContext = aItems[i];
 				sPath = oContext.sPath ? oContext.sPath : oContext;
-				demandObj = oModel.getProperty(sPath);
+				demandObj = oModel.getProperty(sPath),
+					bContinue = true;
 
 				oParams.DemandGuid = demandObj ? demandObj.Guid : sPath.split("'")[1];
 				oParams.ResourceGroupGuid = targetObj.ResourceGroupGuid;
@@ -267,6 +270,21 @@ sap.ui.define([
 						oParams.DateTo = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME);
 						oParams.TimeTo.ms = oParams.DateTo.getTime();
 					}
+					if (demandObj && demandObj.FIXED_APPOINTMENT) {
+						if (new Date() > demandObj.FIXED_APPOINTMENT_START_DATE || new Date() > demandObj.FIXED_APPOINTMENT_LAST_DATE) {
+							this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.fixedAppointmentValidity")).then(function (value) {
+								if (value === "YES") {
+									oParams.DateFrom = formatter.mergeDateTime(demandObj.FIXED_APPOINTMENT_START_DATE, demandObj.FIXED_APPOINTMENT_START_TIME);
+									oParams.TimeFrom.ms = oParams.DateFrom.getTime();
+									oParams.DateTo = formatter.mergeDateTime(demandObj.FIXED_APPOINTMENT_END_DATE, demandObj.FIXED_APPOINTMENT_END_TIME);
+									oParams.TimeTo.ms = oParams.DateTo.getTime();
+								}
+								if (value === "NO") {
+									bContinue = false;
+								}
+							}.bind(this));
+						}
+					}
 				}
 				//Cost Element, Estimate and Currency fields update for Vendor Assignment
 				if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && targetObj.ISEXTERNAL) {
@@ -280,11 +298,16 @@ sap.ui.define([
 						oParams.Currency = "";
 					}
 				}
+				if (bContinue) {
+					aAllParameters.push(oParams);
+				}
 
-				if (parseInt(i, 10) === aItems.length - 1) {
+			}
+			for (var i = 0; i < aAllParameters.length; i++) {
+				if (parseInt(i, 10) === aAllParameters.length) {
 					bIsLast = true;
 				}
-				this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
+				this.callFunctionImport(aAllParameters[i], "CreateAssignment", "POST", mParameters, bIsLast);
 			}
 		},
 
