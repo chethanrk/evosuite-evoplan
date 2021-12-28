@@ -21,11 +21,19 @@
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1"/>
 					</smartTable:layoutData>
+					<smartTable:customToolbar>
+					<OverflowToolbar>
+						<core:ExtensionPoint name="TableExtP|Demands|DemandsSet|CustomToolbar|Left"/>
+						<ToolbarSpacer/>
+						<core:ExtensionPoint name="TableExtP|Demands|DemandsSet|CustomToolbar|Right"/>
+					</OverflowToolbar>
+				</smartTable:customToolbar>
 					<table:Table columnResize="onColumnResize" minAutoRowCount="5" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}" cellClick="onCopyDemandCellData">
 						<table:rowSettingsTemplate>
 							<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
 						</table:rowSettingsTemplate>
 						<table:columns>
+							<core:ExtensionPoint name="TableExtP|Demands|DemandsSet|CustomColumn"/>
 							<table:Column hAlign="Center" width="3rem" visible="{= ${/#Demand/STATUS_ICON/@sap:visible} === 'false' ? false : true}">
 								<table:customData>
 									<core:CustomData key="p13nData" value='\{"columnKey": "STATUS_ICON", "leadingProperty": "STATUS_ICON"}'/>
@@ -94,7 +102,9 @@
 							<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.OrderIdColumn" type="XML"/>-->
 						</table:columns>
 						<table:dragDropConfig>
-							<dnd:DragInfo sourceAggregation="rows" groupName="demandView" dragStart="onDragStart" dragEnd="onDragEnd"/>
+							<core:ExtensionPoint name="TableExtP|Demands|DemandsSet|DragDropConfig">
+								<dnd:DragInfo sourceAggregation="rows" groupName="demandView" dragStart="onDragStart" dragEnd="onDragEnd"/>
+							</core:ExtensionPoint>
 						</table:dragDropConfig>
 					</table:Table>
 				</smartTable:SmartTable>
@@ -104,10 +114,14 @@
 					<Button id="idfindRightTechnicianButton" text="{i18n>xbut.findResource}" tooltip="{i18n>xbut.findResource}" icon="sap-icon://survey"
 						press="onPressFindResource" enabled="false" visible="{user>/ENABLE_QUALIFICATION}">
 						<layoutData>
-							<ToolbarLayoutData shrinkable="true"/>
+							<core:ExtensionPoint name="PageExtP|Demands|DemandSet|Footer|Layout">
+								<ToolbarLayoutData shrinkable="true"/>
+							</core:ExtensionPoint>
 						</layoutData>
 					</Button>
+					<core:ExtensionPoint name="PageExtP|Demands|DemandSet|Footer|Left"/>
 					<ToolbarSpacer/>
+					<core:ExtensionPoint name="PageExtP|Demands|DemandSet|Footer|Right"/>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandToolbarButtons" type="XML"/>
 				</OverflowToolbar>
 			</f:footer>
