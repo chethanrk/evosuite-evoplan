@@ -65,7 +65,9 @@
 						<core:CustomData key="Function" value="STARTED"/>
 					</u:customData>
 				</u:MenuItem>
+				<core:ExtensionPoint name="PageExtP|GanttChart|GanttHeircrchySet|ContextMenu|ChangeStatus|SubItem"/>
 			</u:Menu>
 		</u:MenuItem>
+		<core:ExtensionPoint name="PageExtP|GanttChart|GanttHeircrchySet|ContextMenu|MenuItem"/>
 	</u:Menu>
 </core:FragmentDefinition>

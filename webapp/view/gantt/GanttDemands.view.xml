@@ -13,9 +13,11 @@
 			</smartTable:layoutData>
 			<smartTable:customToolbar>
 				<OverflowToolbar>
+					<core:ExtensionPoint name="PageExtP|GanttDemands|DemandSet|TableToolbar|Left"/>
 					<ToolbarSpacer/>
 					<Button id="idBtnGanttFilter" text="{i18n>xbut.filters}" press="onPressGanttFilters" icon="sap-icon://filter"/>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandToolbarButtons" type="XML"/>
+					<core:ExtensionPoint name="PageExtP|GanttDemands|DemandSet|TableToolbar|Right"/>
 				</OverflowToolbar>
 			</smartTable:customToolbar>
 			<table:Table enableGrouping="true" visibleRowCountMode="Auto" enableColumnReordering="false" enableCellFilter="true"
@@ -71,6 +73,7 @@
 						</table:template>
 					</table:Column>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.AssignmentCountColumn" type="XML"/>
+					<core:ExtensionPoint name="PageExtP|GanttDemands|DemandSet|Table|CustomColoumn"/>
 					<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.OrderIdColumn" type="XML"/>-->
 				</table:columns>
 				<table:dragDropConfig>

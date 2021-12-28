@@ -13,6 +13,7 @@
 								press="onTimeAllocPress"/>
 							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.ResourceActions" type="XML"/>
 							<Button id="idToday" text="{i18n>xtit.today}" press="onPressToday"/>
+							<core:ExtensionPoint name="PageExtP|GanttChart|GanttHeircrchySet|GanttToolbar|After"/>
 						</gnt2:content>
 						<gnt2:legendContainer>
 							<gnt2:LegendContainer width="230px" height="250px">
@@ -41,10 +42,12 @@
 									<OverflowToolbar>
 										<content>
 											<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.TreeExpandCollapse" type="XML"/>
+											<core:ExtensionPoint name="PageExtP|GanttChart|GanttHeircrchySet|TableHeader|Left"/>
 											<ToolbarSpacer/>
 											<Switch id="idShowutiliz" customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}" state="{viewModel>/showUtilization}"
 												change="onClickShowUtilization"></Switch>
 											<Button id="idBtnGanttResourceFilter" press="onPressGanttResourceFilters" icon="sap-icon://filter"/>
+											<core:ExtensionPoint name="PageExtP|GanttChart|GanttHeircrchySet|TableHeader|Right"/>
 										</content>
 									</OverflowToolbar>
 								</table:extension>
@@ -76,6 +79,7 @@
 											<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.UtilizationColumn" type="XML"/>
 										</table:template>
 									</table:Column>
+									<core:ExtensionPoint name="PageExtP|GanttChart|GanttHeircrchySet|Table|CustomColumn"/>
 									<table:Column label="{i18n>xtit.tableCheckbox}" name="{i18n>xtit.tableCheckbox}" width="2.5rem" class="sapUiNoContentPadding">
 										<table:customData>
 											<core:CustomData key="p13nData" value='\{"columnKey": "NodeType", "leadingProperty": "NodeType"}'/>
@@ -85,6 +89,7 @@
 												selected="{ganttModel>IsSelected}"/>
 										</table:template>
 									</table:Column>
+									
 								</table:columns>
 							</table:TreeTable>
 						</gnt2:table>
@@ -99,6 +104,7 @@
 								<def:defs>
 									<pattern:SlashPattern id="oncallorovertime" backgroundColor="white" stroke="#FFA500"></pattern:SlashPattern>
 								</def:defs>
+								<core:ExtensionPoint name="PageExtP|GanttChart|GanttHeircrchySet|GanttPattern"/>
 							</def:SvgDefs>
 						</gnt2:svgDefs>
 					</gnt2:GanttChartWithTable>
