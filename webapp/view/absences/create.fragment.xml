@@ -1,93 +1,61 @@
-<core:FragmentDefinition
-        xmlns:core="sap.ui.core"
-        xmlns="sap.m"
-        xmlns:smartForm="sap.ui.comp.smartform"
-        xmlns:smartField="sap.ui.comp.smartfield">
-    <Page id="create"
-          showHeader="false">
-    	<VBox id="idMangAbsAllocation" class="sapUiSmallMarginBeginEnd" visible="false">
-        <smartForm:SmartForm id="idCreateFormAvail"
-                             editTogglable="false" editable="true">
-            <smartForm:layout>
-                <smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
-            </smartForm:layout>
-            <smartForm:Group>
-                <smartForm:GroupElement >
-                    <smartField:SmartField value="{DateFrom}" />
-                </smartForm:GroupElement>
-                <smartForm:GroupElement >
-                    <smartField:SmartField value="{DateTo}" />
-                </smartForm:GroupElement>
-            </smartForm:Group>
-        </smartForm:SmartForm>
-        <Label  class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop" text="{/#ResourceAvailability/Description/@sap:label}"/>
-        <Select id="idManagAbsAvailType" class="sapUiSmallMarginBeginEnd" width = "95%"
-					items="{
-						path: 'availabilityGroup>/manageAbsence',
-						sorter: { path: 'AvailabilityTypeCode' }
-					}">
-					<core:Item key="{availabilityGroup>AvailabilityTypeCode}" text="{availabilityGroup>AvailabilityDesc}" />
-				</Select>
-        </VBox>
-        
-        
-    	<VBox id="idTimeAllocation" class="sapUiTinyMarginBeginEnd" visible="false">
-    		<Label class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop" text="{/#ResourceAvailability/DateFrom/@sap:label}"/>
-		<DatePicker
-			id="idFromDate"
-			width="95%"
-			dateValue="{DateFrom}"
-			placeholder="Enter Date"
-			change="handleChange"
-			class="sapUiSmallMarginBeginEnd"/>
-			<Label  class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/DateTo/@sap:label}"/>
-		<DatePicker
-			id="idToDate"
-			width="95%"
-			dateValue="{DateTo}"
-			placeholder="Enter Date"
-			change="handleChange"
-			class="sapUiSmallMarginBeginEnd"/>
-			 <smartForm:SmartForm id="idCreateTimeCreateFormAvail"
-                             editTogglable="false" editable="true">
-        	
-            <smartForm:layout>
-                <smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
-            </smartForm:layout>
-            <smartForm:Group>
-                <smartForm:GroupElement>
-					<smartField:SmartField id="idAvailablHour" value="{AVAILABLE_HOURS}" />
-				</smartForm:GroupElement>
-				<smartForm:GroupElement>
-					<smartField:SmartField id="idBlockdHour" value="{BLOCKED_HOURS}" />
-				</smartForm:GroupElement>
-            </smartForm:Group>
-        </smartForm:SmartForm>
-			
-			<Label  class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/Description/@sap:label}"/>
-        <Select id="idTimeAllocAvailType" class="sapUiSmallMarginBeginEnd" width = "95%"
-					items="{
-						path: 'availabilityGroup>/timeAllocation',
-						sorter: { path: 'AvailabilityTypeCode' }
-					}">
-					<core:Item key="{availabilityGroup>AvailabilityTypeCode}" text="{availabilityGroup>AvailabilityDesc}" />
-				</Select>
-        
-        <Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/BlockPercentage/@sap:label}"/>
-        <Slider id="idTimeAllocSlider" class="sapUiSmallMarginBeginEnd" change="onSliderChange"  width="97%"
-				min="0" max="100"
-				showAdvancedTooltip="true"
-				showHandleTooltip="false"/>
-        </VBox>
-        <footer>
-            <OverflowToolbar>
-                <Button id="idCreateBack" text="{i18n>xbut.buttonBack}" press="onNavBack"/>
-                <ToolbarSpacer/>
-                <Button id="idCreateSaveAvail" visible="{user>/ENABLE_ABSENCE_CREATE}" text="{i18n>xbut.buttonSave}" type="Emphasized" enabled="true"
-                        press=".onAction($event,'CREATE')"></Button>
-            </OverflowToolbar>
-        </footer>
-    </Page>
-    
-
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:smartForm="sap.ui.comp.smartform"
+	xmlns:smartField="sap.ui.comp.smartfield">
+	<Page id="create" showHeader="false">
+		<VBox id="idMangAbsAllocation" class="sapUiSmallMarginBeginEnd" visible="false">
+			<smartForm:SmartForm id="idCreateFormAvail" editTogglable="false" editable="true">
+				<smartForm:layout>
+					<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
+				</smartForm:layout>
+				<smartForm:Group>
+					<smartForm:GroupElement >
+						<smartField:SmartField value="{DateFrom}"/>
+					</smartForm:GroupElement>
+					<smartForm:GroupElement >
+						<smartField:SmartField value="{DateTo}"/>
+					</smartForm:GroupElement>
+				</smartForm:Group>
+			</smartForm:SmartForm>
+			<Label class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop" text="{/#ResourceAvailability/Description/@sap:label}"/>
+			<Select id="idManagAbsAvailType" class="sapUiSmallMarginBeginEnd" width="95%"
+				items="{ path: 'availabilityGroup>/manageAbsence', sorter: { path: 'AvailabilityTypeCode' } }">
+				<core:Item key="{availabilityGroup>AvailabilityTypeCode}" text="{availabilityGroup>AvailabilityDesc}"/>
+			</Select>
+		</VBox>
+		<VBox id="idTimeAllocation" class="sapUiTinyMarginBeginEnd" visible="false">
+			<Label class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop" text="{/#ResourceAvailability/DateFrom/@sap:label}"/>
+			<DatePicker id="idFromDate" width="95%" dateValue="{DateFrom}" placeholder="Enter Date" change="handleChange"
+				class="sapUiSmallMarginBeginEnd"/>
+			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/DateTo/@sap:label}"/>
+			<DatePicker id="idToDate" width="95%" dateValue="{DateTo}" placeholder="Enter Date" change="handleChange" class="sapUiSmallMarginBeginEnd"/>
+			<smartForm:SmartForm id="idCreateTimeCreateFormAvail" editTogglable="false" editable="true">
+				<smartForm:layout>
+					<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
+				</smartForm:layout>
+				<smartForm:Group>
+					<smartForm:GroupElement>
+						<smartField:SmartField id="idAvailablHour" value="{AVAILABLE_HOURS}"/>
+					</smartForm:GroupElement>
+					<smartForm:GroupElement>
+						<smartField:SmartField id="idBlockdHour" value="{BLOCKED_HOURS}"/>
+					</smartForm:GroupElement>
+				</smartForm:Group>
+			</smartForm:SmartForm>
+			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/Description/@sap:label}"/>
+			<Select id="idTimeAllocAvailType" class="sapUiSmallMarginBeginEnd" width="95%"
+				items="{ path: 'availabilityGroup>/timeAllocation', sorter: { path: 'AvailabilityTypeCode' } }">
+				<core:Item key="{availabilityGroup>AvailabilityTypeCode}" text="{availabilityGroup>AvailabilityDesc}"/>
+			</Select>
+			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/BlockPercentage/@sap:label}"/>
+			<Slider id="idTimeAllocSlider" class="sapUiSmallMarginBeginEnd" change="onSliderChange" width="97%" min="0" max="100"
+				showAdvancedTooltip="true" showHandleTooltip="false"/>
+		</VBox>
+		<footer>
+			<OverflowToolbar>
+				<Button id="idCreateBack" text="{i18n>xbut.buttonBack}" press="onNavBack"/>
+				<ToolbarSpacer/>
+				<Button id="idCreateSaveAvail" visible="{user>/ENABLE_ABSENCE_CREATE}" text="{i18n>xbut.buttonSave}" type="Emphasized" enabled="true"
+					press=".onAction($event,'CREATE')"></Button>
+			</OverflowToolbar>
+		</footer>
+	</Page>
 </core:FragmentDefinition>
