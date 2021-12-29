@@ -36,7 +36,7 @@
 			editable="{user>/ENABLE_ABSENCE_CHANGE}"
 			dateValue="{DateFrom}"
 			placeholder="Enter Date"
-			change="handleChange"
+			change="handleUpdateChange"
 			class="sapUiSmallMarginBeginEnd"/>
 			<Label  class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/DateTo/@sap:label}"/>
 		<DatePicker
@@ -45,7 +45,7 @@
 			editable="{user>/ENABLE_ABSENCE_CHANGE}"
 			dateValue="{DateTo}"
 			placeholder="Enter Date"
-			change="handleChange"
+			change="handleUpdateChange"
 			class="sapUiSmallMarginBeginEnd"/>
         <smartForm:SmartForm id="idUpdateTimeCreateFormAvail"
                              editTogglable="false" editable="true">
@@ -58,16 +58,21 @@
                     <smartField:SmartField value="{Description}" editable="false" contextEditable="false">
                     </smartField:SmartField>
                 </smartForm:GroupElement>
+                <smartForm:GroupElement>
+					<smartField:SmartField  id="idUpdateAvailablHour" value="{AVAILABLE_HOURS}" />
+				</smartForm:GroupElement>
+				<smartForm:GroupElement>
+					<smartField:SmartField  id="idUpdateBlockdHour" value="{BLOCKED_HOURS}" />
+				</smartForm:GroupElement>
             </smartForm:Group>
         </smartForm:SmartForm>
         
         <Label class="sapUiSmallMarginBeginEnd" text="{/#ResourceAvailability/BlockPercentage/@sap:label}"/>
-        <Slider id="idUpdateTimeAllocSlider" class="sapUiSmallMarginBeginEnd"  width="97%"
+        <Slider id="idUpdateTimeAllocSlider" class="sapUiSmallMarginBeginEnd" change="onUpdateSliderChange"  width="97%"
 				min="0" value="{BlockPercentage}" max="100"
 				showAdvancedTooltip="true"
 				showHandleTooltip="false"/>
         </VBox>
-        
         <footer>
             <OverflowToolbar>
                 <Button id="idBack" text="{i18n>xbut.buttonBack}" press="onNavBack"/>

@@ -13,6 +13,7 @@ sap.ui.define([
 		formatter: formatter,
 
 		_dataDirty: false,
+		_isUpdate: false,
 
 		init: function () {},
 		/**
@@ -73,6 +74,8 @@ sap.ui.define([
 
 			oDialog.setTitle(this._resourceName);
 			oDialog.addStyleClass(this._component.getContentDensityClass());
+			
+			
 
 			// Header for Manage Absence / Create Time Allocation
 			var sHeaderAbsence = this._oView.getModel("i18n").getResourceBundle().getText("xtit.absences"),
@@ -109,7 +112,9 @@ sap.ui.define([
 				oSelectedAbsence = oContext.getObject(),
 				sPath = oContext.getPath(),
 				oDetail = Fragment.byId(this._id, "detail");
+				this._isUpdate= true;
 			oDetail.bindElement(sPath);
+		//	this.handleUpdateChange();
 			if (oSelectedAbsence.UI_DISABLE_ABSENCE_EDIT) {
 				this.showMessageToast(this._resourceBundle.getText("ymsg.updateHRAbsence"));
 			} else {
@@ -132,6 +137,7 @@ sap.ui.define([
 					} else {
 						this._resetChanges(oEvent);
 						this._oApp.back();
+						this._isUpdate= false;
 					}
 				}.bind(this));
 			}
@@ -412,6 +418,13 @@ sap.ui.define([
 				Fragment.byId(this._id, "idTimeAllocation").setVisible(true);
 				Fragment.byId(this._id, "idMangAbsAllocation").setVisible(false);
 			}
+			var oData = {
+					ResourceGuid : this._resource,
+			StartTimestamp : new Date(),
+			EndTimestamp : new Date()
+			};
+		
+			this._callFunctionGetResourceAvailability(oData);
 		},
 		/**
 		 * Deletes the absences 
@@ -436,6 +449,33 @@ sap.ui.define([
 			new Promise(function (resolve, reject) {
 				this.executeFunctionImport.call(this._oView.getController(), this._oModel, oData, "ManageAbsence", "POST").then(function (data) {
 					this._refreshList();
+				}.bind(this));
+			}.bind(this));
+		},
+		/**
+		 * Calls the respective function import
+		 * @param oData
+		 * @private
+		 */
+		_callFunctionGetResourceAvailability: function (oData) {
+			this._oDialog.setBusy(true);
+			this._dataDirty = true;
+			new Promise(function (resolve, reject) {
+				this.executeFunctionImport.call(this._oView.getController(),this._oModel, oData, "GetResourceAvailability", "GET").then(function (data) {
+					Fragment.byId(this._id, "idAvailablHour").setValue(data.AVAILABLE_HOURS);
+					Fragment.byId(this._id, "idBlockdHour").setValue(data.BLOCKED_HOURS);
+					Fragment.byId(this._id, "idTimeAllocSlider").setValue(data.BlockPercentage);
+				Fragment.byId(this._id, "idUpdateAvailablHour").setValue(data.AVAILABLE_HOURS);
+					//Fragment.byId(this._id, "idUpdateBlockdHour").setValue(data.BLOCKED_HOURS);
+				//	Fragment.byId(this._id, "idUpdateTimeAllocSlider").setValue(data.BlockPercentage);
+					this.AVAILABLE_HOURS = data.AVAILABLE_HOURS;
+					this.BLOCKED_HOURS = data.BLOCKED_HOURS;
+					if(this._isUpdate)
+					{
+					this._updateBlockdHour();
+					}
+					this._oDialog.setBusy(false);
+						
 				}.bind(this));
 			}.bind(this));
 		},
@@ -511,6 +551,68 @@ sap.ui.define([
 				}
 			} else {
 				this._oList.setMode("None");
+			}
+		},
+		onSliderChange: function(oEvent) {
+			var iUpdatedBlockPer = oEvent.getParameters().value,
+			 iActualAvailHour = this.AVAILABLE_HOURS,
+			 iUpdatedAvailableHour;
+			if(iUpdatedBlockPer)
+			{
+			  iUpdatedAvailableHour = iActualAvailHour*(100-iUpdatedBlockPer)*0.01;
+			 Fragment.byId(this._id, "idBlockdHour").setValue(iActualAvailHour - iUpdatedAvailableHour);
+			}
+			else
+			{
+			//	Fragment.byId(this._id, "idAvailablHour").setValue(this.AVAILABLE_HOURS);
+			 Fragment.byId(this._id, "idBlockdHour").setValue(this.BLOCKED_HOURS);
+			}
+		},
+		onUpdateSliderChange: function(oEvent)
+		{
+			var iUpdatedBlockPer = oEvent.getParameters().value,
+			  iActualAvailHour = Fragment.byId(this._id, "idUpdateAvailablHour").getValue(),
+			  iUpdatedAvailableHour;
+			if(iUpdatedBlockPer)
+			{
+			  iUpdatedAvailableHour = iActualAvailHour*(100-iUpdatedBlockPer)*0.01;
+			 //Fragment.byId(this._id, "idUpdateAvailablHour").setValue(iUpdatedAvailableHour);
+			 Fragment.byId(this._id, "idUpdateBlockdHour").setValue(iActualAvailHour - iUpdatedAvailableHour);
+			}
+			else
+			{
+				Fragment.byId(this._id, "idAvailablHour").setValue(this.AVAILABLE_HOURS);
+			 Fragment.byId(this._id, "idBlockdHour").setValue(0);
+			}
+		},
+		handleChange:function(oEvent)
+		{
+			var oData = {
+					ResourceGuid : this._resource,
+			StartTimestamp : Fragment.byId(this._id, "idFromDate").getDateValue(),
+			EndTimestamp : Fragment.byId(this._id, "idToDate").getDateValue()
+			};
+		
+			this._callFunctionGetResourceAvailability(oData);
+		},
+		handleUpdateChange:function(oEvent)
+		{
+			var oData = {
+					ResourceGuid : this._resource,
+			StartTimestamp : Fragment.byId(this._id, "idUpdateFromDate").getDateValue(),
+			EndTimestamp : Fragment.byId(this._id, "idUpdateToDate").getDateValue()
+			};
+		   		this._callFunctionGetResourceAvailability(oData);
+		},
+		_updateBlockdHour: function()
+		{
+			var iUpdateBlockPercentag = Fragment.byId(this._id, "idUpdateTimeAllocSlider").getValue(),
+			    iUpdateActualAvailHour = this.AVAILABLE_HOURS,
+			    iUpdateBlockHr;
+			if(iUpdateBlockPercentag)
+			{
+			  iUpdateBlockHr = iUpdateActualAvailHour - (iUpdateBlockPercentag*iUpdateActualAvailHour)*0.01;
+			 Fragment.byId(this._id, "idUpdateBlockdHour").setValue(iUpdateBlockHr);
 			}
 		}
 	});

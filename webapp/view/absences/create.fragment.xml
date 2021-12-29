@@ -48,6 +48,21 @@
 			placeholder="Enter Date"
 			change="handleChange"
 			class="sapUiSmallMarginBeginEnd"/>
+			 <smartForm:SmartForm id="idCreateTimeCreateFormAvail"
+                             editTogglable="false" editable="true">
+        	
+            <smartForm:layout>
+                <smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
+            </smartForm:layout>
+            <smartForm:Group>
+                <smartForm:GroupElement>
+					<smartField:SmartField id="idAvailablHour" value="{AVAILABLE_HOURS}" />
+				</smartForm:GroupElement>
+				<smartForm:GroupElement>
+					<smartField:SmartField id="idBlockdHour" value="{BLOCKED_HOURS}" />
+				</smartForm:GroupElement>
+            </smartForm:Group>
+        </smartForm:SmartForm>
 			
 			<Label  class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/Description/@sap:label}"/>
         <Select id="idTimeAllocAvailType" class="sapUiSmallMarginBeginEnd" width = "95%"
@@ -59,7 +74,7 @@
 				</Select>
         
         <Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/BlockPercentage/@sap:label}"/>
-        <Slider id="idTimeAllocSlider" class="sapUiSmallMarginBeginEnd"  width="97%"
+        <Slider id="idTimeAllocSlider" class="sapUiSmallMarginBeginEnd" change="onSliderChange"  width="97%"
 				min="0" max="100"
 				showAdvancedTooltip="true"
 				showHandleTooltip="false"/>
