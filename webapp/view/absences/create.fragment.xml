@@ -46,8 +46,11 @@
 				<core:Item key="{availabilityGroup>AvailabilityTypeCode}" text="{availabilityGroup>AvailabilityDesc}"/>
 			</Select>
 			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/BlockPercentage/@sap:label}"/>
-			<Slider id="idTimeAllocSlider" class="sapUiSmallMarginBeginEnd" change="onSliderChange" width="97%" min="0" max="100"
-				showAdvancedTooltip="true" showHandleTooltip="false"/>
+			<Slider id="idTimeAllocSlider" class="sapUiSmallMarginBeginEnd" width="97%" min="0" max="100" showAdvancedTooltip="true" change="onSliderChange"
+				showHandleTooltip="false"/>
+			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}"
+				text="{/ResourceAvailabilitySet/AVAILABILITY_DESCR/##com.sap.vocabularies.Common.v1.Label/String}"/>
+			<Input id="idCreateDescription" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}" class="sapUiSmallMarginBeginEnd" width="95%" maxLength="100"/>
 		</VBox>
 		<footer>
 			<OverflowToolbar>

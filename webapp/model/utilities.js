@@ -36,8 +36,8 @@ sap.ui.define([
 			getDateEnd: function () {
 				return moment().endOf("isoWeek").toDate();
 			},
-			configStartDate:"/DEFAULT_DAILYVIEW_STARTDATE",
-			configStartEnd:"/DEFAULT_DAILYVIEW_ENDDATE"
+			configStartDate: "/DEFAULT_DAILYVIEW_STARTDATE",
+			configStartEnd: "/DEFAULT_DAILYVIEW_ENDDATE"
 		},
 		TIMEWEEK: {
 			title: "H5",
@@ -49,8 +49,8 @@ sap.ui.define([
 			getDateEnd: function () {
 				return moment().endOf("month").toDate();
 			},
-			configStartDate:"/DEFAULT_WEEKLYVIEW_STARTDATE",
-			configStartEnd:"/DEFAULT_WEEKLYVIEW_ENDDATE"
+			configStartDate: "/DEFAULT_WEEKLYVIEW_STARTDATE",
+			configStartEnd: "/DEFAULT_WEEKLYVIEW_ENDDATE"
 		},
 		TIMEMONTH: {
 			title: "H5",
@@ -64,10 +64,34 @@ sap.ui.define([
 				var d = moment().endOf("month");
 				return d.add(2, "months").endOf("month").toDate();
 			},
-			configStartDate:"/DEFAULT_MONTHLYVIEW_STARTDATE",
-			configStartEnd:"/DEFAULT_MONTHLYVIEW_ENDDATE"
+			configStartDate: "/DEFAULT_MONTHLYVIEW_STARTDATE",
+			configStartEnd: "/DEFAULT_MONTHLYVIEW_ENDDATE"
 		},
-		TIMEHOUR:{
+		TIMEQUART: {
+			title: "H5",
+			icon: "sap-icon://appointment",
+			getDateBegin: function () {
+				return moment().startOf("quarter").toDate();
+			},
+			getDateEnd: function () {
+				return moment().endOf("quarter").toDate();
+			},
+			configStartDate: "/DEFAULT_QUARTERVIEW_STARTDATE",
+			configStartEnd: "/DEFAULT_QUARTERVIEW_ENDDATE"
+		},
+		TIMEYEAR: {
+			title: "H5",
+			icon: "sap-icon://check-availability",
+			getDateBegin: function () {
+				return moment().startOf("year").toDate();
+			},
+			getDateEnd: function () {
+				return moment().endOf("year").toDate();
+			},
+			configStartDate: "/DEFAULT_YEARLYVIEW_STARTDATE",
+			configStartEnd: "/DEFAULT_YEARLYVIEW_ENDDATE"
+		},
+		TIMEHOUR: {
 			calendarView: "Hour"
 		},
 		ASSIGNMENT: {
@@ -82,11 +106,11 @@ sap.ui.define([
 				var d = moment().endOf("year");
 				return d.add(20, "years").toDate();
 			},
-			configStartDate:"/DEFAULT_SIMPLEVIEW_STARTDATE",
-			configStartEnd:"/DEFAULT_SIMPLEVIEW_ENDDATE"
+			configStartDate: "/DEFAULT_SIMPLEVIEW_STARTDATE",
+			configStartEnd: "/DEFAULT_SIMPLEVIEW_ENDDATE"
 		},
-		ASSET : {
-            icon: "sap-icon://functional-location"
+		ASSET: {
+			icon: "sap-icon://functional-location"
 		}
 	};
 
