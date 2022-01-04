@@ -94,14 +94,18 @@ sap.ui.define([
 						this._component.assignTreeDialog.onProceedSaveDialog();
 					}
 				} else {
-					if (this._mParameters.bFromGantt) {
+					if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
 						if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && aVendorAssignmentList[0].oData.FIXED_ASSGN_START_DATE !==
 							null && aVendorAssignmentList[0].oData.FIXED_ASSGN_END_DATE !==
 							null) {
 							this._component.OperationTimeCheck.open(this.oView, this._mParameters, this._sPath, this.oDraggedControl,
 								this.oDroppedControl, this.oBrowserEvent);
 						} else {
-							this._oController.onProceedToGanttDropOnResource(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
+							if (this._mParameters.bFromNewGantt) {
+								this._oController.onProceedNewGanttDemandDrop(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
+							} else {
+								this._oController.onProceedToGanttDropOnResource(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
+							}
 						}
 					} else {
 						//	iOperationTimesLen = this.onShowOperationTimes();
@@ -131,7 +135,7 @@ sap.ui.define([
 						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateCostElement") + " " + iCount);
 						bValidationCheck = false;
 						break;
-					} else	if (aVendorAssignmentList[a].oData.CostElement !== "" && Number(aVendorAssignmentList[a].oData.Estimate) === 0) {
+					} else if (aVendorAssignmentList[a].oData.CostElement !== "" && Number(aVendorAssignmentList[a].oData.Estimate) === 0) {
 						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateEstimate") + " " + iCount);
 						bValidationCheck = false;
 						break;

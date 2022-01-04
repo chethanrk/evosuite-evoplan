@@ -190,6 +190,40 @@ sap.ui.define([
 				oBrowserEvent = oEvent.getParameter("browserEvent"),
 				oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
+				oDropObject = oDropContext.getObject(),
+				bAllowVendorAssignment = this.getModel().getProperty(oDragContext + "/ALLOW_ASSIGNMENT_DIALOG"),
+				sOperationStartDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_START_DATE"),
+				sOperationEndDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_END_DATE"),
+				aPSDemandsNetworkAssignment = this._showNetworkAssignments(this.getModel("viewModel"));
+			this.onShowOperationTimes(this.getModel("viewModel"));
+			this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
+
+			//Checking PS Demands for Network Assignment 
+			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+				this.getOwnerComponent().NetworkAssignment.open(this.getView(), oDropObject, aPSDemandsNetworkAssignment, this._mParameters,
+					oDraggedControl,
+					oDroppedControl, oBrowserEvent);
+			}
+			//Checking Vendor Assignment for External Resources
+			else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
+				this.getOwnerComponent().VendorAssignment.open(this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
+					oDroppedControl, oBrowserEvent);
+			} else {
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !==
+					null) {
+					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), {
+						bFromNewGantt: true
+					}, oDropContext.getPath(), oDraggedControl, oDroppedControl, oBrowserEvent);
+				} else {
+					this.onProceedNewGanttDemandDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
+				}
+			}
+
+		},
+
+		onProceedNewGanttDemandDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
+			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
+				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
 				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
 				sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : slocStor.split(","),
 				oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
@@ -222,9 +256,8 @@ sap.ui.define([
 				this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), null, sDragPath);
 
 			}
-
 		},
-
+	
 		/**
 		 * When a shape is dragged inside Gantt
 		 * and dropped to same row or another resource row
@@ -1327,9 +1360,9 @@ sap.ui.define([
 
 			if (oData.sTargetPath) {
 				this._refreshCaacities([oData.sTargetPath]);
-			} else if(aSelectedResourcePath.length > 0){
+			} else if (aSelectedResourcePath.length > 0) {
 				this._refreshCaacities(aSelectedResourcePath);
-			}else{
+			} else {
 				this._loadGanttData();
 			}
 		},
@@ -1359,13 +1392,13 @@ sap.ui.define([
 		_updateCapacity: function (aFilters, sPath) {
 			// var oViewModel = this.getModel("viewModel");
 			// if (oViewModel.getProperty("/showUtilization")) {
-				this.oGanttModel.setProperty(sPath + "/busy", true);
-				this.getOwnerComponent().readData("/GanttResourceHierarchySet", aFilters).then(function (data) {
-					this.oGanttModel.setProperty(sPath + "/Utilization", data.results[0].Utilization);
-					this.oGanttOriginDataModel.setProperty(sPath + "/Utilization", data.results[0].Utilization);
-					this.oGanttModel.setProperty(sPath + "/busy", false);
-					this.oGanttModel.refresh();
-				}.bind(this));
+			this.oGanttModel.setProperty(sPath + "/busy", true);
+			this.getOwnerComponent().readData("/GanttResourceHierarchySet", aFilters).then(function (data) {
+				this.oGanttModel.setProperty(sPath + "/Utilization", data.results[0].Utilization);
+				this.oGanttOriginDataModel.setProperty(sPath + "/Utilization", data.results[0].Utilization);
+				this.oGanttModel.setProperty(sPath + "/busy", false);
+				this.oGanttModel.refresh();
+			}.bind(this));
 			// }
 		}
 

@@ -177,11 +177,18 @@ sap.ui.define([
 				oDropObject = oDropContext.getObject(),
 				bAllowVendorAssignment = this.getModel().getProperty(oDragContext + "/ALLOW_ASSIGNMENT_DIALOG"),
 				sOperationStartDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_START_DATE"),
-				sOperationEndDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_END_DATE");
+				sOperationEndDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_END_DATE"),
+				aPSDemandsNetworkAssignment = this._showNetworkAssignments(this.getModel("viewModel"));
 			this.onShowOperationTimes(this.getModel("viewModel"));
 			this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
+		
+			//Checking PS Demands for Network Assignment 
+			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+				this.getOwnerComponent().NetworkAssignment.open(this.getView(), oDropContext.getPath(), aPSDemandsNetworkAssignment, this._mParameters,
+					oDraggedControl, oDroppedControl, oBrowserEvent);
+			}
 			//Checking Vendor Assignment for External Resources
-			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
+			else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
 				this.getOwnerComponent().VendorAssignment.open(this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
 					oDroppedControl, oBrowserEvent);
 			} else {

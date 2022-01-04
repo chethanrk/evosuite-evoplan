@@ -169,7 +169,7 @@ sap.ui.define([
 		 */
 		onPressAssignmentLink: function (oEvent) {
 			var oSource = oEvent.getSource();
-			this.assignmentRowContext = oSource.getParent().getBindingContext()
+			this.assignmentRowContext = oSource.getParent().getBindingContext();
 
 			if (this.assignmentRowContext) {
 				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
@@ -279,7 +279,8 @@ sap.ui.define([
 				oTargetData = oModel.getProperty(sPath),
 				aSources = [],
 				iOperationTimesLen,
-				iVendorAssignmentLen;
+				iVendorAssignmentLen,
+				aPSDemandsNetworkAssignment;
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -295,9 +296,14 @@ sap.ui.define([
 			aSources = this._oViewModel.getProperty("/dragSession");
 			iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
 			iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
+			aPSDemandsNetworkAssignment = this._showNetworkAssignments(this._oViewModel);
 			
+			//Checking PS Demands for Network Assignment 
+			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+				this.getOwnerComponent().NetworkAssignment.open(this.getView(), sPath, aPSDemandsNetworkAssignment, this._mParameters);
+			}
 			//Checking Vendor Assignment for External Resources
-			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
+			else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
 				iVendorAssignmentLen) {
 				this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
 			} else {
