@@ -197,11 +197,6 @@ sap.ui.define([
 				aPSDemandsNetworkAssignment = this._showNetworkAssignments(this.getModel("viewModel"));
 			this.onShowOperationTimes(this.getModel("viewModel"));
 			this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
-			// slocStor = localStorage.getItem("Evo-Dmnd-guid"),
-			// sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : slocStor.split(","),
-			// oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
-			// oResourceData = this.getModel("ganttModel").getProperty(oDropContext.getPath()),
-			// oSvgPoint;
 
 			//Checking PS Demands for Network Assignment 
 			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
@@ -262,47 +257,7 @@ sap.ui.define([
 
 			}
 		},
-		/*	onDemandDrop: function (oEvent) {
-				var oDraggedControl = oEvent.getParameter("draggedControl"),
-					oDroppedControl = oEvent.getParameter("droppedControl"),
-					oBrowserEvent = oEvent.getParameter("browserEvent"),
-					oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
-					oDropContext = oDroppedControl.getBindingContext("ganttModel"),
-					slocStor = localStorage.getItem("Evo-Dmnd-guid"),
-					sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : slocStor.split(","),
-					oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
-					oResourceData = this.getModel("ganttModel").getProperty(oDropContext.getPath()),
-					oSvgPoint;
-
-				//Null check for
-				if ((!oDragContext || !sDragPath) && !oDropContext) {
-					return;
-				}
-
-				// Check the resource assignable or not
-				// TODO Resource needs to be validated if resource is assignable or not
-
-				// to identify the action done on respective page
-				localStorage.setItem("Evo-Action-page", "ganttSplit");
-
-				if (oBrowserEvent.target.tagName === "rect" && oDragContext) { // When we drop on gantt chart in the same view
-					oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
-					this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
-
-				} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) { // When we drop on gantt chart from split window
-					oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
-					this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), sDragPath);
-
-				} else if (oDragContext) { // When we drop on the resource 
-					this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), null);
-
-				} else { // When we drop on the resource from split window
-					this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), null, sDragPath);
-
-				}
-
-			},*/
-
+	
 		/**
 		 * When a shape is dragged inside Gantt
 		 * and dropped to same row or another resource row
