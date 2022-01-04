@@ -32,7 +32,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/OperationTimeCheck",
 	"com/evorait/evoplan/controller/gantt/GanttResourceTreeFilter",
 	"com/evorait/evoplan/controller/common/VendorAssignment",
-	"com/evorait/evoplan/controller/common/LongTextPopover"
+	"com/evorait/evoplan/controller/common/LongTextPopover",
+	"com/evorait/evoplan/controller/common/NetworkAssignment"
 ], function (
 	UIComponent,
 	Device,
@@ -66,7 +67,8 @@ sap.ui.define([
 	OperationTimeCheck,
 	GanttResourceTreeFilter,
 	VendorAssignment,
-	LongTextPopover) {
+	LongTextPopover,
+	NetworkAssignment) {
 
 	"use strict";
 
@@ -453,6 +455,9 @@ sap.ui.define([
 			
 			this.longTextPopover = new LongTextPopover();
 			this.longTextPopover.init();
+			
+			this.NetworkAssignment = new NetworkAssignment();
+			this.NetworkAssignment.init();
 
 		},
 

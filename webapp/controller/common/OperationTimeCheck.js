@@ -98,6 +98,8 @@ sap.ui.define([
 			} else {
 				if (this._mParameters.bFromGantt) {
 					this._oController.onProceedToGanttDropOnResource(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
+				}else  if (this._mParameters.bFromNewGantt){
+					this._oController.onProceedNewGanttDemandDrop(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
 				} else {
 					this._oController.assignedDemands(aAsgnDateCheckList, this._sPath, null);
 				}

@@ -43,7 +43,7 @@ sap.ui.define([
 				oGanttModel = this.getModel("ganttModel"),
 				targetObj = oGanttModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
-				// aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
+				aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
 				aPromises = [],
 				oDemandObj;
 
@@ -84,13 +84,24 @@ sap.ui.define([
 						oParams.TimeTo = targetObj.EndTime;
 					}
 				}
-				// not required for this release
-				// if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && this._mParameters.bFromGantt && aGanttDemandDragged.IsSelected) {
-				// 	oParams.DateFrom = aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE;
-				// 	oParams.TimeFrom.ms = aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME.ms;
-				// 	oParams.DateTo = aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE;
-				// 	oParams.TimeTo.ms = aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME.ms;
-				// }
+				
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && this._mParameters.bFromNewGantt && aGanttDemandDragged.IsSelected) {
+					oParams.DateFrom = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME);
+					oParams.TimeFrom.ms = oParams.DateFrom.getTime();
+					oParams.DateTo = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME);
+					oParams.TimeTo.ms = oParams.DateTo.getTime();
+				}
+				//Cost Element, Estimate and Currency fields update for Vendor Assignment
+				if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && targetObj.ISEXTERNAL && aGanttDemandDragged.oData.ALLOW_ASSIGNMENT_DIALOG) {
+					oParams.CostElement = aGanttDemandDragged.oData.CostElement;
+					oParams.Estimate = aGanttDemandDragged.oData.Estimate;
+					oParams.Currency = aGanttDemandDragged.oData.Currency;
+				}
+				//Effort and Effort Unit fields update for PS Demands Network Assignment
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && this._mParameters.bFromNewGantt && aGanttDemandDragged.oData.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+					oParams.Effort = aGanttDemandDragged.oData.Duration;
+					oParams.EffortUnit = aGanttDemandDragged.oData.DurationUnit;
+				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}
 			return aPromises;

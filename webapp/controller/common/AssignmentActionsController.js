@@ -78,6 +78,11 @@ sap.ui.define([
 					oParams.Estimate = aGanttDemandDragged.oData.Estimate;
 					oParams.Currency = aGanttDemandDragged.oData.Currency;
 				}
+				//Effort and Effort Unit fields update for PS Demands Network Assignment
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && this._mParameters.bFromGantt && aGanttDemandDragged.oData.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+					oParams.Effort = aGanttDemandDragged.oData.Duration;
+					oParams.EffortUnit = aGanttDemandDragged.oData.DurationUnit;
+				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}
 			return aPromises;
