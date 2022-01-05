@@ -397,7 +397,8 @@ sap.ui.define([
 		 */
 		onCreateTimeAlloc: function (oEvent) {
 			var oUserModel = this._component.getModel("user"),
-				sAvailType = oUserModel.getProperty("/DEFAULT_ABSENCE_TYPE").split(";");
+				sAvailType = oUserModel.getProperty("/DEFAULT_ABSENCE_TYPE").split(";"),
+				oEndDate = new Date();
 			this._oModel.metadataLoaded().then(function () {
 				var oContext = this._oModel.createEntry("/ResourceAvailabilitySet", {
 					properties: {
@@ -421,7 +422,7 @@ sap.ui.define([
 			var oData = {
 				ResourceGuid: this._resource,
 				StartTimestamp: new Date(),
-				EndTimestamp: new Date()
+				EndTimestamp: oEndDate.setHours(23, 59, 59)
 			};
 
 			this._callFunctionGetResourceAvailability(oData);
