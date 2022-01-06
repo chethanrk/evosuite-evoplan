@@ -580,19 +580,21 @@ sap.ui.define([
 			}
 		},
 		handleChange: function (oEvent) {
+		var oEndDate = Fragment.byId(this._id, "idToDate").getDateValue();
 			var oData = {
 				ResourceGuid: this._resource,
 				StartTimestamp: Fragment.byId(this._id, "idFromDate").getDateValue(),
-				EndTimestamp: Fragment.byId(this._id, "idToDate").getDateValue()
+				EndTimestamp: oEndDate.setHours(23, 59, 59)
 			};
 
 			this._callFunctionGetResourceAvailability(oData);
 		},
 		handleUpdateChange: function (oEvent) {
+			var oEndDate = Fragment.byId(this._id, "idUpdateToDate").getDateValue();
 			var oData = {
 				ResourceGuid: this._resource,
 				StartTimestamp: Fragment.byId(this._id, "idUpdateFromDate").getDateValue(),
-				EndTimestamp: Fragment.byId(this._id, "idUpdateToDate").getDateValue()
+				EndTimestamp: oEndDate.setHours(23, 59, 59)
 			};
 			this._callFunctionGetResourceAvailability(oData);
 		},
