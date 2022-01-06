@@ -126,7 +126,7 @@ sap.ui.define([
 
 			//If DateFrom and DateTo doesn't fall within Resource Start and End Date
 			if (!bValidDateFrom || !bValidDateTo) {
-				this._showEffortConfirmMessageBox(this._oView.getController().getResourceBundle().getText("ymsg.targetValidity")).then(function (
+				this._showEffortConfirmMessageBox(this.getView().getController().getResourceBundle().getText("ymsg.targetValidity")).then(function (
 					oAction) {
 					if (oAction === "YES") {
 						oAssignmentModel.setProperty("/DateFrom", this.oAssignmentModel.getProperty("/RES_ASGN_START_DATE"));
@@ -204,7 +204,7 @@ sap.ui.define([
 			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && oObject.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
 				var sNewValue = oEvent.getParameter("newValue").replace(/[^0-9a-zA-Z. ]/g, ''),
 					sEffort = oObject.Effort,
-					sRemainingDuration = oObject.DEMAND_REMAINING_DUR;
+					sRemainingDuration = oObject.REMAINING_DURATION;
 				if (Number(sEffort) + Number(sRemainingDuration) < Number(sNewValue)) {
 					sap.m.MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.invalidChangeDuration"));
 				}
