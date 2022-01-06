@@ -60,7 +60,7 @@ sap.ui.define([
 				oAssignData = oView.getModel().getProperty(oAssignementPath);
 
 				oAssignment.AssignmentGuid = oAssignData.Guid;
-				oAssignment.Description = oAssignData.Description;
+				oAssignment.DemandDesc = oAssignData.DemandDesc;
 				oAssignment.DemandGuid = oAssignData.DemandGuid;
 				oAssignment.DemandStatus = oAssignData.Demand.Status;
 				oAssignment.DateFrom = oAssignData.DateFrom;
@@ -72,12 +72,12 @@ sap.ui.define([
 
 				if (oView.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT")) {
 					oAssignment.OldEffort = oAssignData.Effort;
-					oAssignment.DEMAND_REMAINING_DUR = oAssignData.DEMAND_REMAINING_DUR;
+					oAssignment.REMAINING_DURATION = oAssignData.REMAINING_DURATION;
 					oAssignment.OBJECT_SOURCE_TYPE = oAssignData.OBJECT_SOURCE_TYPE;
 				}
 			} else {
 				oAssignment.AssignmentGuid = oAssignmentData.Guid;
-				oAssignment.Description = oAssignmentData.Demand.DemandDesc;
+				oAssignment.DemandDesc = oAssignmentData.Demand.DemandDesc;
 				oAssignment.DemandGuid = oAssignmentData.DemandGuid;
 				oAssignment.DemandStatus = oAssignmentData.Demand.Status;
 				oAssignment.DateFrom = oAssignmentData.DateFrom;
@@ -526,7 +526,7 @@ sap.ui.define([
 			var sOldEffort = this.oAssignmentModel.getProperty("/OldEffort"),
 				sEffort = this.oAssignmentModel.getProperty("/Effort"),
 				sObjectSourceType = this.oAssignmentModel.getProperty("/OBJECT_SOURCE_TYPE"),
-				sRemainingDuration = this.oAssignmentModel.getProperty("/DEMAND_REMAINING_DUR"),
+				sRemainingDuration = this.oAssignmentModel.getProperty("/REMAINING_DURATION"),
 				bValidEffort = true;
 			if (this._oView.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && sObjectSourceType === "DEM_PSNW") {
 				if (Number(sOldEffort) + Number(sRemainingDuration) < Number(sEffort)) {
