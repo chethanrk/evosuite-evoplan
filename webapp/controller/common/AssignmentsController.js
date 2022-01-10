@@ -292,14 +292,13 @@ sap.ui.define([
 					if (oContext.oData.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
 						oParams.Effort = oContext.oData.Duration;
 						oParams.EffortUnit = oContext.oData.DurationUnit;
-					}
-					else {
+					} else {
 						oParams.Effort = "0";
 						oParams.EffortUnit = "";
 					}
 				}
-                
-                //Condition added and Method is modified for fixed Appointments			// since Release/2201
+
+				//Condition added and Method is modified for fixed Appointments			// since Release/2201
 				if (demandObj && demandObj.FIXED_APPOINTMENT) {
 					if (oParams.DateFrom > demandObj.FIXED_APPOINTMENT_START_DATE || oParams.DateFrom > demandObj.FIXED_APPOINTMENT_LAST_DATE) {
 						this.aFixedAppointmentPayload.push(oParams);
@@ -344,7 +343,8 @@ sap.ui.define([
 				sDisplayMessage,
 				oResource,
 				oDemandObj = this.getModel().getProperty("/DemandSet('" + oData.DemandGuid + "')"),
-				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE");
+				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
+				bShowFixedAppointmentDialog;
 
 			if (isReassign && !oData.AllowReassign) {
 				sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
@@ -387,12 +387,14 @@ sap.ui.define([
 			}
 
 			//Condition added and Method is modified for fixed Appointments			// since Release/2201
-			if (oDemandObj.FIXED_APPOINTMENT) {
-				if ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) || oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE) {
-					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
-					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], mParameters, "reAssign", isReassign);
-				}
+
+			bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
+				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
+				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE)
+				
+			if (bShowFixedAppointmentDialog) {
+				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
+				this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], mParameters, "reAssign", isReassign);
 			} else {
 				if (isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)) {
 					this.showMessageToProceed(null, null, null, null, true, oParams, mParameters);
