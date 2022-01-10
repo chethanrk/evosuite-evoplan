@@ -204,9 +204,11 @@ sap.ui.define([
 			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && oObject.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
 				var sNewValue = oEvent.getParameter("newValue").replace(/[^0-9a-zA-Z. ]/g, ''),
 					sEffort = oObject.Effort,
-					sRemainingDuration = oObject.REMAINING_DURATION;
+					sRemainingDuration = oObject.REMAINING_DURATION,
+					sEffortUnit = oObject.EffortUnit,
+					sTotalEffort = Number(sEffort) + Number(sRemainingDuration);
 				if (Number(sEffort) + Number(sRemainingDuration) < Number(sNewValue)) {
-					sap.m.MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.invalidChangeDuration"));
+					sap.m.MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.invalidAssgnDuration") + sTotalEffort + " " + sEffortUnit);
 				}
 			}
 		}

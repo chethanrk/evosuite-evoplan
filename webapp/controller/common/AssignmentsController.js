@@ -680,7 +680,9 @@ sap.ui.define([
 
 		openDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType) {
 			var sQualifier;
-			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
+			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NETWORK_OBJECTSOURCETYPE) {
+				sQualifier = Constants.ANNOTATION_CONSTANTS.NETWORK_QUALIFIER;
+			}else if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.NOTIFICATION_QUALIFIER;
 			} else {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.ORDER_QUALIFIER;
