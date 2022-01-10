@@ -295,7 +295,7 @@ sap.ui.define([
 			aSources = this._oViewModel.getProperty("/dragSession");
 			iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
 			iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
-			
+
 			//Checking Vendor Assignment for External Resources
 			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
 				iVendorAssignmentLen) {
@@ -307,7 +307,7 @@ sap.ui.define([
 				} else {
 					// If the Resource is Not/Partially available
 					if (this.isAvailable(sPath)) {
-						this.assignedDemands(aSources, sPath);
+						this.assignedDemands(aSources, sPath, this._mParameters);
 					} else {
 						this.showMessageToProceed(aSources, sPath);
 					}
@@ -332,7 +332,7 @@ sap.ui.define([
 				this.resetChanges();
 				if (oTreeBinding && !this._bFirsrTime) {
 					this.mTreeState = this._getTreeState();
-					this._oDroppableTable.rebindTable();//oTreeBinding.refresh();
+					this._oDroppableTable.rebindTable(); //oTreeBinding.refresh();
 				}
 			}
 			this._bFirsrTime = false;

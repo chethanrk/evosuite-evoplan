@@ -19,6 +19,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/qualifications/DemandQualifications",
 	"com/evorait/evoplan/controller/common/AssignmentList",
 	"com/evorait/evoplan/controller/common/MaterialInfoDialog",
+	"com/evorait/evoplan/controller/common/FixedAppointmentsList",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
 	"sap/m/Link",
@@ -54,6 +55,7 @@ sap.ui.define([
 	DemandQualifications,
 	AssignmentList,
 	MaterialInfoDialog,
+	FixedAppointmentsList,
 	MessagePopover,
 	MessagePopoverItem,
 	Link,
@@ -155,8 +157,9 @@ sap.ui.define([
 					draggedItemContext: []
 				},
 				densityClass: this.getContentDensityClass(),
-				isOpetationLongTextPressed:false,
-				oResponseMessages:[]
+				isOpetationLongTextPressed: false,
+				oResponseMessages: [],
+				aFixedAppointmentsList: {}
 
 			});
 			this.setModel(oViewModel, "viewModel");
@@ -441,6 +444,8 @@ sap.ui.define([
 			this.materialInfoDialog = new MaterialInfoDialog();
 			this.materialInfoDialog.init();
 
+			this.FixedAppointmentsList = new FixedAppointmentsList();
+
 			this.GanttResourceFilter = new GanttResourceFilter();
 
 			this.GanttResourceTreeFilter = new GanttResourceTreeFilter();
@@ -450,7 +455,7 @@ sap.ui.define([
 
 			this.VendorAssignment = new VendorAssignment();
 			this.VendorAssignment.init();
-			
+
 			this.longTextPopover = new LongTextPopover();
 			this.longTextPopover.init();
 
