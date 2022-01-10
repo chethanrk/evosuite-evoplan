@@ -27,6 +27,8 @@
 					</smartForm:layoutData>
 					<template:with path="target>Data" var="data">
 						<template:repeat list="{data>}">
+							<core:ExtensionPoint
+										name="{:= ${parts: [{path: 'facets>'},{path:'data>Value'},{path:'tempProps>annotationPath'},{value:'Before', model:'tempProps'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getFieldExtPoint'}}"/>
 							<smartForm:GroupElement>
 								<template:if test="{:= ${data>Value/Path} in ${templateProperties>/navLinks} }">
 									<template:then>
@@ -52,6 +54,9 @@
 									</template:else>
 								</template:if>
 							</smartForm:GroupElement>
+							<core:ExtensionPoint
+										name="{:= ${parts: [{path: 'facets>'},{path:'data>Value'},{path:'tempProps>annotationPath'},{value:'After', model:'tempProps'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getFieldExtPoint'}}"/>
+									
 						</template:repeat>
 					</template:with>
 				</smartForm:Group>

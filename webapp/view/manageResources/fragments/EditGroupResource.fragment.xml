@@ -12,11 +12,13 @@
 					adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1"
 					singleContainerFullSize="false">
 					<f:content>
+						<core:ExtensionPoint name="FormExtP|ManageResources|Resources|CustomeContent"/>
 						<Label text="{i18n>xlab.groupDescription}" visible="{=${NodeType} === 'RES_GROUP'}"/>
 						<Input id="idGroupName" value="{Description}" visible="{=${NodeType} === 'RES_GROUP'}"/>
 						<Label text="{i18n>xlab.resourceDateRange}" visible="{=${NodeType} === 'RESOURCE'}"/>
 						<!--<DateRangeSelection id="idResourceDateRange" width="100%" displayFormat="yyyy/MM/dd" visible="{=${NodeType} === 'RESOURCE'}" dateValue="{path: 'Start', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'yyyy/MM/dd', strictParsing: true , UTC: true}" secondDateValue="{path: 'End', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'yyyy/MM/dd', strictParsing: true , UTC: true}"/>-->
 						<DateRangeSelection id="idResourceDateRange" width="100%" visible="{=${NodeType} === 'RESOURCE'}" dateValue="{Start}" secondDateValue="{End}" change="handleDateChange"/>
+						</core:ExtensionPoint>
 					</f:content>
 				</f:SimpleForm>
 			</VBox>

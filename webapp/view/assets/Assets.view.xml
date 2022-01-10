@@ -6,7 +6,9 @@
 		<f:header>
 			<f:DynamicPageHeader pinnable="true">
 				<f:content>
+					<core:ExtensionPoint name="PageExtP|Asset|AssetHierarchySet|Header">
 					<SearchField id="searchFieldAsset" search="onSearchAsset" showRefreshButton="{= !${device>/support/touch} }" width="100%"></SearchField>
+					</core:ExtensionPoint>
 				</f:content>
 			</f:DynamicPageHeader>
 		</f:header>
@@ -32,11 +34,13 @@
 							<core:Icon src="sap-icon://drill-down" hoverColor="#418ac7" tooltip="{i18n>xtit.showWithChild}" press="onShowWithChildren"/>
 						</table:template>
 					</table:Column>
+					<core:ExtensionPoint name="TableExtP|Asset|AssetHierarchySet|CustomColumn"/>
 				</table:columns>
 			</table:TreeTable>
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
+				<core:ExtensionPoint name="TableExtP|Asset|AssetHierarchySet|Footer|Left"/>
 				<ToolbarSpacer/>
 				<Button id="idButtonShoWD" text="{i18n>xbut.showDemands}" tooltip="{i18n>xbut.showDemands}" press="onShowDemands" enabled="false">
 					<layoutData>
@@ -48,6 +52,7 @@
 						<ToolbarLayoutData shrinkable="true"/>
 					</layoutData>
 				</Button>
+				<core:ExtensionPoint name="TableExtP|Asset|AssetHierarchySet|Footer|Right"/>
 			</OverflowToolbar>
 		</f:footer>
 	</f:DynamicPage>

@@ -187,6 +187,36 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 			}
 			return null;
 		};
+		
+		var getFieldExtPoint = function (oTarget, oField, oAnnoPath, sAddString) {
+			var sExtPointName = "FormExtP";
+			if (oAnnoPath.path) {
+				sExtPointName += "|" + oAnnoPath.path.split("#")[1];
+			}
+			if (oTarget.Target) {
+				var sTargetPath = oTarget.Target.AnnotationPath.split("#");
+				sExtPointName += "|" + sTargetPath[1];
+			}
+			if (oField.Path) {
+				sExtPointName += "|" + oField.Path;
+			}
+			sExtPointName = sAddString ? sExtPointName + "|" + sAddString : sExtPointName;
+			return sExtPointName;
+		};
+		
+		var getExtPoint = function (sTabName, sEntitySet, sDesc, sLongText, sAddString) {
+			var sExtPointName = "TableExtP";
+
+			if (sTabName) {
+				sExtPointName += "|" + sTabName;
+			}
+			var sEntitySetName = getEntitySet(sEntitySet, sDesc, sLongText);
+			if (sEntitySetName) {
+				sExtPointName += "|" + sEntitySetName;
+			}
+			sExtPointName = sAddString ? sExtPointName + "|" + sAddString : sExtPointName;
+			return sExtPointName;
+		};
 
 		return {
 			resolveModelPath: resolveModelPath,
@@ -197,7 +227,9 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 			getSectionsTableParam: getSectionsTableParam,
 			getAnnotationByPath: getAnnotationByPath,
 			getDefaultTableSorter: getDefaultTableSorter,
-			isInNavLinks: isInNavLinks
+			isInNavLinks: isInNavLinks,
+			getFieldExtPoint: getFieldExtPoint,
+			getExtPoint: getExtPoint
 		};
 
 	},

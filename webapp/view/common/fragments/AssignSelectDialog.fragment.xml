@@ -4,6 +4,7 @@
 		<content>
 			<Toolbar>
 				<SearchField id="idSeachModalTree" search="onSearchModal" showRefreshButton="{= !${device>/support/touch} }" width="100%"/>
+				<core:ExtensionPoint name="DialogExtP|AssignSelectDialog|ResourceHierarchySet|Toolbar|CustomItem" />
 			</Toolbar>
 			<table:TreeTable id="assignModalTable" selectionMode="Single" enableColumnReordering="false" columnHeaderVisible="false"
 				visibleRowCount="10" visibleRowCountMode="Auto" class="listTreeTable sapUiSizeCondensed" rowSelectionChange="onSelectionChange"
@@ -43,14 +44,19 @@
 							<Text text="{AssignmentCount}" visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }" wrapping="false"/>
 						</table:template>
 					</table:Column>
+					<core:ExtensionPoint name="TableExtP|AssignSelectDialog|ResourceHierarchySet|TreeTable|CustomColumn" />
 				</table:columns>
 			</table:TreeTable>
 		</content>
 		<beginButton>
+			<core:ExtensionPoint name="DialogExtP|AssignSelectDialog|ResourceHierarchySet|BeginButton">
 			<Button text="{i18n>xbut.buttonCancel}" press="onCloseDialog"/>
+			</core:ExtensionPoint>
 		</beginButton>
 		<endButton>
+			<core:ExtensionPoint name="DialogExtP|AssignSelectDialog|ResourceHierarchySet|EndButton">
 			<Button text="{i18n>xbut.buttonOK}" type="Emphasized" press="onSaveDialog"/>
+			</core:ExtensionPoint>
 		</endButton>
 	</Dialog>
 </core:FragmentDefinition>

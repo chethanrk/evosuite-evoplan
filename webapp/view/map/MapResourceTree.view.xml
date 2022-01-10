@@ -17,6 +17,7 @@
 							</HBox>
 						</items>
 					</FlexBox>
+						<core:ExtensionPoint name="PageExtP|Map|ResourceHierarchySet|Header|Actions"/>
 				</f:content>
 			</f:DynamicPageHeader>
 		</f:header>
@@ -25,6 +26,7 @@
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
+				<core:ExtensionPoint name="PageExtP|Map|ResourceHierarchySet|Footer|Actions|Left"/>
 				<Button id="showRoute" enabled="false" visible="{user>/ENABLE_MANAGE_ABSENCE}" text="Route" tooltip="Route" 
 						press="onRoutePress" busyIndicatorDelay="0">
 					<layoutData>
@@ -40,6 +42,7 @@
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.ResourceActions" type="XML"/>
 				<ToolbarSpacer/>
 			   	<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.ResourcePlanningCalender" type="XML"/>
+			   	<core:ExtensionPoint name="PageExtP|Map|ResourceHierarchySet|Footer|Actions|Right"/>
 			</OverflowToolbar>
 		</f:footer>
 	</f:DynamicPage>

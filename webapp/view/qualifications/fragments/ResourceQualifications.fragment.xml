@@ -1,37 +1,45 @@
 <core:FragmentDefinition xmlns:layout="sap.ui.layout" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable"
 	height="100%" xmlns:uxap="sap.uxap" xmlns:f="sap.f">
-	<Dialog title="{i18n>xtit.resourceQualifications}" contentWidth="100%" resizable="true" >
+	<Dialog title="{i18n>xtit.resourceQualifications}" contentWidth="100%" resizable="true">
 		<content>
 			<!--<core:Fragment fragmentName="com.evorait.evoplan.view.qualifications.fragments.ObjectPage" type="XML"/>-->
 			<uxap:ObjectPageLayout id="ObjectPageLayout" editHeaderButtonPress="handleEditBtnPress">
 				<uxap:headerTitle>
-					<uxap:ObjectPageHeader class="sapUiNoContentPadding" isObjectIconAlwaysVisible="true" objectImageURI="{Icon}" objectImageShape="Circle"
-						objectTitle="{ResourceDescription}" objectSubtitle="{GroupDescription}" id="ObjectPageLayoutHeaderTitle"></uxap:ObjectPageHeader>
+					<core:ExtensionPoint name="ObjectLayoutExtP|Qualification|ResourceQualification|CustomHeader">
+						<uxap:ObjectPageHeader class="sapUiNoContentPadding" isObjectIconAlwaysVisible="true" objectImageURI="{Icon}" objectImageShape="Circle"
+							objectTitle="{ResourceDescription}" objectSubtitle="{GroupDescription}" id="ObjectPageLayoutHeaderTitle"></uxap:ObjectPageHeader>
+					</core:ExtensionPoint>
 				</uxap:headerTitle>
 			</uxap:ObjectPageLayout>
-			<IconTabBar id="idResourceQualificationIconTabBar" class="sapUiResponsiveContentPadding" select="onTabSelectionChanged" expanded="true" expandable="false">
+			<IconTabBar id="idResourceQualificationIconTabBar" class="sapUiResponsiveContentPadding" select="onTabSelectionChanged" expanded="true"
+				expandable="false">
 				<items>
-					<IconTabFilter text="{i18n>xtit.qualifications}" key="{i18n>xtit.qualifications}">
-						<smartTable:SmartTable id="QualificationTable" entitySet="ResourceQualificationSet" useExportToExcel="true" useVariantManagement="true"
-							useTablePersonalisation="true" header="{xtit.qualifications}" showRowCount="true" persistencyKey="com.evorait.evoplan.qualificationTable"
-							enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableBindingPath="ResourceToQualifications">
-							<!--layout data used to make the table growing but the filter bar fixed-->
-							<smartTable:layoutData>
-								<FlexItemData growFactor="1" baseSize="0%"/>
-							</smartTable:layoutData>
-						</smartTable:SmartTable>
-					</IconTabFilter>
-					<!--Demands Tab -->
-					<IconTabFilter text="{i18n>xtit.itemListTitle}" key="{i18n>xtit.itemListTitle}"></IconTabFilter>
+					<core:ExtensionPoint name="IconTabExtP|Qualification|ResourceQualification|Items">
+						<IconTabFilter text="{i18n>xtit.qualifications}" key="{i18n>xtit.qualifications}">
+							<smartTable:SmartTable id="QualificationTable" entitySet="ResourceQualificationSet" useExportToExcel="true" useVariantManagement="true"
+								useTablePersonalisation="true" header="{xtit.qualifications}" showRowCount="true" persistencyKey="com.evorait.evoplan.qualificationTable"
+								enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableBindingPath="ResourceToQualifications">
+								<!--layout data used to make the table growing but the filter bar fixed-->
+								<smartTable:layoutData>
+									<FlexItemData growFactor="1" baseSize="0%"/>
+								</smartTable:layoutData>
+							</smartTable:SmartTable>
+						</IconTabFilter>
+						<!--Demands Tab -->
+						<IconTabFilter text="{i18n>xtit.itemListTitle}" key="{i18n>xtit.itemListTitle}"></IconTabFilter>
+						<core:ExtensionPoint name="IconTabExtP|Qualification|ResourceQualification|CustomItem"/>
+					</core:ExtensionPoint>
 				</items>
 			</IconTabBar>
 		</content>
 		<buttons>
+			<core:ExtensionPoint name="DialogExtP|Qualification|ResourceQualification|Actions|Left"/>
 			<Button text="{i18n>xbut.assign}" visible="{viewModel>/resourceQualification/AssignBtnVisible}"
 				enabled="{viewModel>/resourceQualification/AssignBtnEnable}" press="onAssignButtonPress"/>
 			<Button text="{i18n>xbut.findResource}" visible="{viewModel>/resourceQualification/FindResourceBtnVisible}"
 				enabled="{viewModel>/resourceQualification/FindResourceBtnEnable}" press="onCloseDialog"/>
 			<Button text="{i18n>xbut.buttonClose}" press="onCloseDialog"/>
+			<core:ExtensionPoint name="DialogExtP|Qualification|ResourceQualification|Action|Right"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

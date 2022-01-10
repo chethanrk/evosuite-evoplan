@@ -9,6 +9,7 @@
 		</smartTable:layoutData>
 		<smartTable:customToolbar>
 			<OverflowToolbar>
+				<core:ExtensionPoint name="TableExtP|Qualification|ResourceQualification|Toolbar|Left"/>
 				<ToolbarSpacer/>
 				<Label text="{i18n>xlab.matched}" design="Bold"/>
 				<SegmentedButton id="idButtonQualificationMatchType" selectedKey="All" selectionChange="_refreshQualificationDemandsTable">
@@ -18,6 +19,7 @@
 						<SegmentedButtonItem text="{i18n>xbut.partial}" key="Partial"/>
 					</items>
 				</SegmentedButton>
+				<core:ExtensionPoint name="TableExtP|Qualification|ResourceQualification|Toolbar|Right"/>
 			</OverflowToolbar>
 		</smartTable:customToolbar>
 		<table:Table visibleRowCount="5">
@@ -53,6 +55,7 @@
 						<core:Icon src="{STATUS_ICON}" color="{ path:'CRITICALITY', formatter:'.formatter.formatStatusIconColor' }" tooltip="{StatusDesc}"></core:Icon>
 					</table:template>
 				</table:Column>
+				<core:ExtensionPoint name="TableExtP|Qualification|ResourceQualification|CustomColumn"/>
 			</table:columns>
 		</table:Table>
 	</smartTable:SmartTable>

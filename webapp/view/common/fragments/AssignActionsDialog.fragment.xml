@@ -11,6 +11,7 @@
 				</smartTable:layoutData>
 				<smartTable:customToolbar>
 					<OverflowToolbar>
+						<core:ExtensionPoint name="TableExtP|AssignActionDialog|AssignmentSet|Toolbar|Left"/>
 						<ToolbarSpacer/>
 						<!--{user>/ENABLE_QUALIFICATION}-->
 						<HBox id="idCheckRightTechnician" visible="false" class="sapUiMediumMarginEnd">
@@ -18,15 +19,22 @@
 								change="onClickEnableFindTechnician"></Switch>
 							<Text text="{i18n>xlab.qualification}" class="sapUiTinyMarginBegin sapUiTinyMarginTop"></Text>
 						</HBox>
+						<core:ExtensionPoint name="TableExtP|AssignActionDialog|AssignmentSet|Toolbar|Right"/>
 					</OverflowToolbar>
 				</smartTable:customToolbar>
-				<Table mode="MultiSelect" growing="true" selectionChange="onSelectionChange"></Table>
+				<Table mode="MultiSelect" growing="true" selectionChange="onSelectionChange">
+						<table:columns>
+								<core:ExtensionPoint name="TableExtP|AssignActionDialog|AssignmentSet|CustomColumn"/>
+						</table:columns>
+				</Table>
 			</smartTable:SmartTable>
 		</content>
 		<buttons>
+			<core:ExtensionPoint name="DialogExtP|AssignActionDialog|AssignmentSet|DialogActions|Left"/>
 			<Button id="idCloseDialog" text="{i18n>xbut.buttonClose}" press="onCloseDialog"/>
 			<Button id="idButtonBulkUnAssign" text="{i18n>xbut.buttonUnassign}" type="Emphasized" press="onUnassign"/>
 			<Button id="idButtonBulkReAssign" text="{i18n>xfld.newAssign}" type="Emphasized" press="onReassign"/>
+			<core:ExtensionPoint name="DialogExtP|AssignActionDialog|AssignmentSet|DialogActions|Right"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

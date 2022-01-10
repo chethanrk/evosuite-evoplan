@@ -8,8 +8,10 @@
 				items="{ path: 'viewModel>/QualificationMatchList/QualificationData', sorter: { path: 'DemandDesc' ,group:true} }">
 				<headerToolbar>
 					<Toolbar>
+						<core:ExtensionPoint name="TableExtP|Qualification|QualificationCheck|Toolbar|left"/>
 						<core:Icon src="sap-icon://employee" class="size1 sapUiTinyMarginEnd" color="#031E48"></core:Icon>
 						<Text text="{viewModel>/QualificationMatchList/TargetObject/Description} {i18n>xmsg.textHeaderMsg}"/>
+						<core:ExtensionPoint name="TableExtP|Qualification|QualificationCheck|Toolbar|Right"/>
 					</Toolbar>
 				</headerToolbar>
 				<columns>
@@ -22,6 +24,7 @@
 					<Column>
 						<Label text="{@i18n>xlbl.lblFulfilled}" design="Bold"/>
 					</Column>
+					<core:ExtensionPoint name="TableExtP|Qualification|QualificationCheck|CustomColumn"/>
 				</columns>
 				<items>
 					<ColumnListItem selected="{viewModel>IsSelected}">
@@ -29,17 +32,20 @@
 							<Text text="{viewModel>OperationId}/ {viewModel>OrderId}"/>
 							<Text text="{viewModel>QualificationDesc}"/>
 							<Text text="{path:'viewModel>Fullfilled',formatter:'.formatter.getQualificationFulfilled'}"/>
+							<core:ExtensionPoint name="TableExtP|Qualification|QualificationCheck|CustomCell"/>
 						</cells>
 					</ColumnListItem>
 				</items>
 			</Table>
 		</content>
 		<buttons>
+			<core:ExtensionPoint name="DialogExtP|Qualification|QualificationCheck|CustomAction|left"/>
 			<Button text="{i18n>xbut.buttonSelectAll}" press="onSelectAll"
 				visible="{path:'user>/DEFAULT_QUALIF_UI_CHECK_TYPE',formatter:'.formatter.getQualificationBtnVisibilty'}"/>
 			<Button text="{i18n>xbut.buttonCancel}" press="onCloseDialog"/>
 			<Button text="{i18n>xbut.buttonProceed}" press="onProceed"
 				visible="{path:'user>/DEFAULT_QUALIF_UI_CHECK_TYPE',formatter:'.formatter.getQualificationBtnVisibilty'}"/>
+				<core:ExtensionPoint name="DialogExtP|Qualification|QualificationCheck|CustomAction|Right"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

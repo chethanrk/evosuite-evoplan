@@ -8,7 +8,9 @@
 					<f:header>
 						<f:DynamicPageHeader pinnable="true">
 							<f:content>
+								<core:ExtensionPoint name="PageExtP|Map|DemandSet|Header|FilterBar|Before"/>
 								<core:Fragment fragmentName="com.evorait.evoplan.view.map.fragments.SmartFilterMapDemands" type="XML"/>
+								<core:ExtensionPoint name="PageExtP|Map|DemandSet|Header|FilterBar|After"/>
 							</f:content>
 						</f:DynamicPageHeader>
 					</f:header>
@@ -22,7 +24,9 @@
 											headerText="Legend" expanded="false" selectionMode="SingleSelectMaster" selectionChange="onSelectMapLagend" headerIcon="sap-icon://legend"
 											expand="onExpandCollapseLegends">
 											<vk:items>
-												<vk:LegendItem color="{Colourcode}" title="{CharactersticValue}" tooltip="{CharactersticDescription}"/>
+												<core:ExtensionPoint name="MapContainerExtP|Map|Legends|LegendSet|items">
+													<vk:LegendItem color="{Colourcode}" title="{CharactersticValue}" tooltip="{CharactersticDescription}"/>
+												</core:ExtensionPoint>
 											</vk:items>
 										</vk:ListPanel>
 									</vk:content>
@@ -36,28 +40,26 @@
 											<vbm:vos>
 												<vbm:Routes items="{viewModel>/mapSettings/routeData}">
 													<vbm:items>
-														<vbm:Route id="idMapRoute" position="{viewModel>sLong};{viewModel>sLat};0;{viewModel>dLong};{viewModel>dLat};0" color="rgb(117,148,34)"
-															colorBorder="rgb(255,255,255)" linewidth="3" routetype="Geodesic" click="onClickRoute" contextMenu="onContextMenuRoute"/>
+														<core:ExtensionPoint name="GeoMapExtP|Map|Routes|RouteData|items">
+															<vbm:Route id="idMapRoute" position="{viewModel>sLong};{viewModel>sLat};0;{viewModel>dLong};{viewModel>dLat};0" color="rgb(117,148,34)"
+																colorBorder="rgb(255,255,255)" linewidth="3" routetype="Geodesic" click="onClickRoute" contextMenu="onContextMenuRoute"/>
+														</core:ExtensionPoint>
 													</vbm:items>
 												</vbm:Routes>
-												<vbm:Spots customProperties="{= ['Status']}" 
-												items="{
-														path:'/DemandSet',
-														parameters:{
-															batchGroupId:'mapdemands'
-														}
-												}" 
-												select="onSelect" deselect="onDeselect">
+												<vbm:Spots customProperties="{= ['Status']}" items="{ path:'/DemandSet', parameters:{ batchGroupId:'mapdemands' } }" select="onSelect"
+													deselect="onDeselect">
 													<vbm:items>
-														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0) 	position="{LONGITUDE};{LATITUDE};0"-->
-														<vbm:Spot selectColor="{user>/DEFAULT_MAP_SELECTED_PIN_COLOR}" contentColor="{MAP_MARKER_COLOUR}" hotScale="1.1;1.1;1.1"
-															tooltip="{DEMAND_KEY}" type="Inactive" select="{IS_SELECTED}"
-															scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="{user>/DEFAULT_MAP_MARKER_ICON}" contentSize="25rem" changeable="true"
-															position="{parts:[{path:'LONGITUDE'}, {path:'LATITUDE'} ], formatter:'.formatter.formatMapSpot'}" contextMenu="onContextMenu">
-															<vbm:customData>
-																<core:CustomData key='Status' value='{Status}'/>
-															</vbm:customData>
-														</vbm:Spot>
+														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0) position="{LONGITUDE};{LATITUDE};0"-->
+														<core:ExtensionPoint name="GeoMapExtP|Map|Spots|DemandSet|items">
+															<vbm:Spot selectColor="{user>/DEFAULT_MAP_SELECTED_PIN_COLOR}" contentColor="{MAP_MARKER_COLOUR}" hotScale="1.1;1.1;1.1"
+																tooltip="{DEMAND_KEY}" type="Inactive" select="{IS_SELECTED}" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}"
+																icon="{user>/DEFAULT_MAP_MARKER_ICON}" contentSize="25rem" changeable="true"
+																position="{parts:[{path:'LONGITUDE'}, {path:'LATITUDE'} ], formatter:'.formatter.formatMapSpot'}" contextMenu="onContextMenu">
+																<vbm:customData>
+																	<core:CustomData key='Status' value='{Status}'/>
+																</vbm:customData>
+															</vbm:Spot>
+														</core:ExtensionPoint>
 													</vbm:items>
 												</vbm:Spots>
 											</vbm:vos>

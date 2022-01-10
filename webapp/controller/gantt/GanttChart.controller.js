@@ -41,8 +41,8 @@ sap.ui.define([
 			this.oUserModel = this.getModel("user");
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			//set on first load required filters
-			this._treeTable = this.getView().byId("ganttResourceTreeTable");
-			this._ganttChart = this.getView().byId("ganttResourceAssignments");
+			this._treeTable = this.getView().byId("idGanttResourceTreeTable");
+			this._ganttChart = this.getView().byId("idGanttResourceAssignments");
 			this._axisTime = this.getView().byId("idAxisTime");
 			this._userData = this.getModel("user").getData();
 
