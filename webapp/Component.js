@@ -595,7 +595,7 @@ sap.ui.define([
 		_getAvailabilityGroup: function (sAvailabilityTypeGroup) {
 			this.getModel().read("/SHAvailabilityTypeSet", {
 				filters: [
-					new Filter("AvailabilityTypeGroup", FilterOperator.EQ, sAvailabilityTypeGroup)
+					new Filter("AVAILABILITY_TYPE_GROUP", FilterOperator.EQ, sAvailabilityTypeGroup)
 				],
 				success: function (oData, oResponse) {
 					if (oData && oData.results.length > 0) {
