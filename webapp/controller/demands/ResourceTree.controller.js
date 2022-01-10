@@ -313,7 +313,7 @@ sap.ui.define([
 				} else {
 					// If the Resource is Not/Partially available
 					if (this.isAvailable(sPath)) {
-						this.assignedDemands(aSources, sPath);
+						this.assignedDemands(aSources, sPath, this._mParameters);
 					} else {
 						this.showMessageToProceed(aSources, sPath);
 					}
@@ -338,7 +338,7 @@ sap.ui.define([
 				this.resetChanges();
 				if (oTreeBinding && !this._bFirsrTime) {
 					this.mTreeState = this._getTreeState();
-					this._oDroppableTable.rebindTable();//oTreeBinding.refresh();
+					this._oDroppableTable.rebindTable(); //oTreeBinding.refresh();
 				}
 			}
 			this._bFirsrTime = false;
