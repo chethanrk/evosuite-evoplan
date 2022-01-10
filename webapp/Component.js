@@ -593,7 +593,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_getAvailabilityGroup: function (sAvailabilityTypeGroup) {
-			this.getModel().read("/AvailabilityTypeSet", {
+			this.getModel().read("/SHAvailabilityTypeSet", {
 				filters: [
 					new Filter("AvailabilityTypeGroup", FilterOperator.EQ, sAvailabilityTypeGroup)
 				],
