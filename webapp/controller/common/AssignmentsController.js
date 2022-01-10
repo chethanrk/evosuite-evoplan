@@ -287,8 +287,19 @@ sap.ui.define([
 						oParams.Currency = "";
 					}
 				}
-
-				//Condition added and Method is modified for fixed Appointments			// since Release/2201
+				//Effort and Effort Unit fields update for PS Demands Network Assignment
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT")) {
+					if (oContext.oData.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+						oParams.Effort = oContext.oData.Duration;
+						oParams.EffortUnit = oContext.oData.DurationUnit;
+					}
+					else {
+						oParams.Effort = "0";
+						oParams.EffortUnit = "";
+					}
+				}
+                
+                //Condition added and Method is modified for fixed Appointments			// since Release/2201
 				if (demandObj && demandObj.FIXED_APPOINTMENT) {
 					if (oParams.DateFrom > demandObj.FIXED_APPOINTMENT_START_DATE || oParams.DateFrom > demandObj.FIXED_APPOINTMENT_LAST_DATE) {
 						this.aFixedAppointmentPayload.push(oParams);
@@ -715,6 +726,23 @@ sap.ui.define([
 			}
 			oViewModel.refresh(true);
 			return aAllowVendorAssignment.length;
+		},
+		/*
+		 *Method to check PS Demands for Network Assignment
+		 *@param oViewModel 
+		 */
+		_showNetworkAssignments: function (oViewModel) {
+			var aSources = oViewModel.getProperty("/dragSession"),
+				aAllowNetworkAssignment = [];
+			for (var n in aSources) {
+				if (aSources[n].oData.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+					aSources[n].oData.Duration = "";
+					aSources[n].oData.DurationUnit = "";
+					aAllowNetworkAssignment.push(aSources[n]);
+				}
+			}
+			oViewModel.refresh(true);
+			return aAllowNetworkAssignment;
 		},
 
 	});

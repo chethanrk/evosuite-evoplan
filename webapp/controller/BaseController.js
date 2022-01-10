@@ -338,7 +338,7 @@ sap.ui.define([
 					oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
 					sPath = oContext.getPath();
 					oData = this.getModel().getProperty(sPath);
-					
+
 					//on Check on oData property ALLOW_UNASSIGN for mass unassign from Demand View
 					if (this.getModel("user").getProperty("/ENABLE_DEMAND_UNASSIGN") && oData.ALLOW_UNASSIGN) {
 						aUnAssignableDemands.push({
@@ -389,7 +389,7 @@ sap.ui.define([
 			return {
 				aPathsData: aPathsData,
 				aNonAssignable: aNonAssignableDemands,
-				aUnAssignDemands : aUnAssignableDemands
+				aUnAssignDemands: aUnAssignableDemands
 			};
 		},
 
@@ -550,13 +550,17 @@ sap.ui.define([
 		 *
 		 */
 		_showEffortConfirmMessageBox: function (message) {
-			var oController = this;
+			var oController = this,
+				oComponent = oController._component;
+			if (!oComponent) {
+				oComponent = this.getOwnerComponent();
+			}
 			return new Promise(function (resolve, reject) {
 				MessageBox.confirm(
 					message, {
-						styleClass: oController._component.getContentDensityClass(),
+						styleClass: oComponent.getContentDensityClass(),
 						icon: sap.m.MessageBox.Icon.CONFIRM,
-						title: oController._component.getModel("i18n").getResourceBundle().getText("xtit.confirm"),
+						title: oComponent.getModel("i18n").getResourceBundle().getText("xtit.confirm"),
 						actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
 						onClose: function (oEvent) {
 							resolve(oEvent);
@@ -855,7 +859,7 @@ sap.ui.define([
 			this.showResponseMessagePopup();
 			this.getModel().resetChanges();
 		},
-		
+
 		/**
 		 * Display the response Message on Edit of Demand Table
 		 */
@@ -874,7 +878,7 @@ sap.ui.define([
 				this.oResponseMessagePopup.open();
 			}
 		},
-		
+
 		/**
 		 * On close the response Message Pop up
 		 */
