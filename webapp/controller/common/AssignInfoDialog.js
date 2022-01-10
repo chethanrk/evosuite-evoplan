@@ -527,10 +527,12 @@ sap.ui.define([
 				sEffort = this.oAssignmentModel.getProperty("/Effort"),
 				sObjectSourceType = this.oAssignmentModel.getProperty("/OBJECT_SOURCE_TYPE"),
 				sRemainingDuration = this.oAssignmentModel.getProperty("/REMAINING_DURATION"),
+				sEffortUnit = this.oAssignmentModel.getProperty("/EffortUnit"),
+				sTotalEffort = Number(sOldEffort) + Number(sRemainingDuration),
 				bValidEffort = true;
 			if (this._oView.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && sObjectSourceType === "DEM_PSNW") {
 				if (Number(sOldEffort) + Number(sRemainingDuration) < Number(sEffort)) {
-					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidChangeDuration"));
+					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration") + sTotalEffort + " " + sEffortUnit);
 					bValidEffort = false;
 				}
 			}
