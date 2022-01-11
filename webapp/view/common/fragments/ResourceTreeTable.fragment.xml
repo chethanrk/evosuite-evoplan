@@ -7,7 +7,7 @@
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1"/>
 		</smartTable:layoutData>
-		<table:TreeTable toggleOpenState="onToggleOpenState">
+		<table:TreeTable toggleOpenState="onToggleOpenState"  rowHeight="33">
 			<table:columns >
 				<table:Column label="{i18n>xtit.tableObject}" name="{i18n>xtit.tableObject}">
 					<table:customData>
