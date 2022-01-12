@@ -79,6 +79,8 @@ sap.ui.define([
 
 			this._viewId = this.getView().getId();
 			this.getOwnerComponent().GanttResourceFilter.init(this.getView(), this._treeTable);
+			
+			this.bGanttHorizonChange = false; //Flag to identify Gantt Horizon Date Change
 		},
 		/**
 		 * Initialize the fetch of data for Gantt chart
@@ -420,10 +422,11 @@ sap.ui.define([
 		 * @Author Chethan RK
 		 */
 		onChangeDateRange: function (oEvent) {
-			this._ganttChart.setAxisTimeStrategy(this._createGanttHorizon(this._axisTime.getZoomLevel(), {
+			this.bGanttHorizonChange = true; //Setting Gantt Horizon Flag as true when Dates are changed
+			this._createGanttHorizon(this._axisTime, this._axisTime.getZoomLevel(), {
 				StartDate: this.getView().byId("idDateRangeGantt2").getDateValue(),
 				EndDate: this.getView().byId("idDateRangeGantt2").getSecondDateValue()
-			}));
+			});
 			this.getModel("user").setProperty("/DEFAULT_GANT_START_DATE", oEvent.getParameter("from"));
 			this.getModel("user").setProperty("/DEFAULT_GANT_END_DATE", oEvent.getParameter("to"));
 			this._loadGanttData();
@@ -1115,7 +1118,7 @@ sap.ui.define([
 			});
 
 			//Setting VisibleHorizon for Gantt for supporting Patch Versions (1.71.35)
-			if (oAxisTimeStrategy) {
+			if (oAxisTimeStrategy && !this.bGanttHorizonChange) {
 				oAxisTimeStrategy.setVisibleHorizon(new sap.gantt.config.TimeHorizon({
 					startTime: sStartDate,
 					endTime: sEndDate
@@ -1124,6 +1127,7 @@ sap.ui.define([
 				this.oViewModel.setProperty("/ganttSettings/visibleStartTime", sStartDate);
 				this.oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
 			}
+			this.bGanttHorizonChange = false; // Resetting/Clearing Gantt Horizon Flag
 		},
 		/**
 		 * load tree data from a certain hierarchy level

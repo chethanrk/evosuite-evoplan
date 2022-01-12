@@ -228,20 +228,18 @@ sap.ui.define([
 		 * @param oTotalHorizonDates {object} Dates
 		 * @Author Chethan RK
 		 */
-		_createGanttHorizon: function (iZoomLevel, oTotalHorizonDates) {
+		_createGanttHorizon: function (oAxisTimeStrategy, iZoomLevel, oTotalHorizonDates) {
 			var oVisibleHorizonDates = this._getVisibleHorizon(iZoomLevel, oTotalHorizonDates);
-			return new sap.gantt.axistime.StepwiseZoomStrategy({
-				zoomLevel: 3,
-				visibleHorizon: new sap.gantt.config.TimeHorizon({
-					startTime: oVisibleHorizonDates.StartDate,
-					endTime: oVisibleHorizonDates.EndDate
-				}),
-				totalHorizon: new sap.gantt.config.TimeHorizon({
-					startTime: oTotalHorizonDates.StartDate,
-					endTime: oTotalHorizonDates.EndDate
-				})
-			});
-
+			//Setting Total Horizon for Gantt
+			oAxisTimeStrategy.setTotalHorizon(new sap.gantt.config.TimeHorizon({
+				startTime: oTotalHorizonDates.StartDate,
+				endTime: oTotalHorizonDates.EndDate
+			}));
+			//Setting Visible Horizon for Gantt
+			oAxisTimeStrategy.setVisibleHorizon(new sap.gantt.config.TimeHorizon({
+				startTime: oVisibleHorizonDates.StartDate,
+				endTime: oVisibleHorizonDates.EndDate
+			}));
 		},
 		/**
 		 * Adjusting Visible Horizon for New Gant Layout
