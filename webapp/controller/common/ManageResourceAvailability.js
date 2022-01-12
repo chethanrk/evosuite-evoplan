@@ -115,6 +115,7 @@ sap.ui.define([
 				this.showMessageToast(this._resourceBundle.getText("ymsg.updateHRAbsence"));
 			} else {
 				this._oApp.to(this._id + "--detail");
+				this._isUpdate = true;
 			}
 		},
 		/**
