@@ -42,8 +42,8 @@
 			</smartForm:SmartForm>
 			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/Description/@sap:label}"/>
 			<Select id="idTimeAllocAvailType" class="sapUiSmallMarginBeginEnd" width="95%"
-				items="{ path: 'availabilityGroup>/timeAllocation', sorter: { path: 'AvailabilityTypeCode' } }">
-				<core:Item key="{availabilityGroup>AvailabilityTypeCode}" text="{availabilityGroup>AvailabilityDesc}"/>
+				items="{ path: 'availabilityGroup>/timeAllocation', sorter: { path: 'AVAILABILITY_TYPE' } }">
+				<core:Item key="{availabilityGroup>AVAILABILITY_TYPE}" text="{availabilityGroup>AVAILABILITY_DESC}"/>
 			</Select>
 			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/BlockPercentage/@sap:label}"/>
 			<Slider id="idTimeAllocSlider" class="sapUiSmallMarginBeginEnd" width="97%" min="0" max="100" showAdvancedTooltip="true" change="onSliderChange"
