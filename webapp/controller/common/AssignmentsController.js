@@ -231,7 +231,7 @@ sap.ui.define([
 		 * @param {Object} mParameters
 		 * @param {Object} oParams
 		 */
-		proceedToServiceCallAssignDemands: function (aSourcePaths, targetObj, mParameters, oParams, aGuids) {
+		proceedToServiceCallAssignDemands: function (aSourcePaths, targetObj, mParameters, oDateParams, aGuids) {
 			var oModel = this.getModel(),
 				bIsLast = null,
 				aItems = aSourcePaths && aSourcePaths.length ? aSourcePaths : aGuids,
@@ -240,11 +240,17 @@ sap.ui.define([
 				oContext, sPath, demandObj, aOperationTimeParams,
 				aAllParameters = [],
 				bContinue,
-				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE");
+				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
+				oParams;
 			this.aFixedAppointmentPayload = [];
 			this.aFixedAppointmentDemands = [];
 			this.clearMessageModel();
 			for (var i = 0; i < aItems.length; i++) {
+				oParams = {};
+				oParams.DateFrom = oDateParams.DateFrom;
+				oParams.TimeFrom = oDateParams.TimeFrom;
+				oParams.DateTo = oDateParams.DateTo;
+				oParams.TimeTo = oDateParams.TimeTo;
 				oContext = aItems[i];
 				sPath = oContext.sPath ? oContext.sPath : oContext;
 				demandObj = oModel.getProperty(sPath),
@@ -391,7 +397,7 @@ sap.ui.define([
 			bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
 				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
 				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE)
-				
+
 			if (bShowFixedAppointmentDialog) {
 				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
 				this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], mParameters, "reAssign", isReassign);
