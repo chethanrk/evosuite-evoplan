@@ -36,7 +36,7 @@
 						<smartField:SmartField id="idAvailablHour" value="{AVAILABLE_HOURS}"/>
 					</smartForm:GroupElement>
 					<smartForm:GroupElement>
-						<smartField:SmartField id="idBlockdHour" value="{BLOCKED_HOURS}"/>
+						<smartField:SmartField id="idBlockdHour" value="{BLOCKED_HOURS}"/> 
 					</smartForm:GroupElement>
 				</smartForm:Group>
 			</smartForm:SmartForm>
@@ -51,7 +51,7 @@
 			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}"
 				text="{/ResourceAvailabilitySet/AVAILABILITY_DESCR/##com.sap.vocabularies.Common.v1.Label/String}"/>
 			<Input id="idCreateDescription" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}" class="sapUiSmallMarginBeginEnd" width="95%" maxLength="100"/>
-		</VBox>
+		</VBox> 
 		<footer>
 			<OverflowToolbar>
 				<Button id="idCreateBack" text="{i18n>xbut.buttonBack}" press="onNavBack"/>
