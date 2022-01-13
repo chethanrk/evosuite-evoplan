@@ -10,10 +10,12 @@
 		</smartTable:layoutData>
 		<smartTable:customToolbar>
 			<OverflowToolbar>
+				<core:ExtensionPoint name="TableExtP|Fragments|DemandSet|DemandTable|Toolbar|Left" />
 				<ToolbarSpacer/>
 				<ToggleButton icon="{=${viewModel>/showDemands} === true?'sap-icon://show':'sap-icon://hide'}" enabled="true"
 					pressed="{viewModel>/showDemands}"/>
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandToolbarButtons" type="XML"/>
+				<core:ExtensionPoint name="TableExtP|Fragments|DemandSet|DemandTable|Toolbar|Right" />
 			</OverflowToolbar>
 		</smartTable:customToolbar>
 		<table:Table enableGrouping="true" visibleRowCountMode="Auto" enableColumnReordering="false"
@@ -53,6 +55,7 @@
 					</table:template>
 				</table:Column>
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.AssignmentCountColumn" type="XML"/>
+				<core:ExtensionPoint name="TableExtP|Fragments|DemandSet|DemandTable|CustomColumn" />
 				<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.OrderIdColumn" type="XML"/>-->
 			</table:columns>
 			<table:dragDropConfig>

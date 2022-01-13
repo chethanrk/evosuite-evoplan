@@ -7,6 +7,9 @@
 				<headerToolbar>
 					<Toolbar>
 						<Text text="{i18n>xmsg.operationTimeCheck}"/>
+						<core:ExtensionPoint name="TableExtP|OperationTimeCheck|DraggedDemands|Toolbar|Left" ></core:ExtensionPoint>
+						<ToolbarSpacer/>
+						<core:ExtensionPoint name="TableExtP|OperationTimeCheck|DraggedDemands|Toolbar|Right" ></core:ExtensionPoint>
 					</Toolbar>
 				</headerToolbar>
 				<columns>
@@ -25,6 +28,7 @@
 					<Column>
 						<Label text="{@i18n>xlbl.lblEndTimeStmp}" design="Bold"/>
 					</Column>
+					<core:ExtensionPoint name="TableExtP|OperationTimeCheck|DraggedDemands|CustomColumn" ></core:ExtensionPoint>
 				</columns>
 				<items>
 					<ColumnListItem selected="{viewModel>IsSelected}" >
@@ -34,6 +38,7 @@
 							<Text text="{viewModel>oData/SUBOPERATIONID}"/>
 							<Text text="{parts:[ {path:'viewModel>oData/FIXED_ASSGN_START_DATE'}, {path:'viewModel>oData/FIXED_ASSGN_START_TIME'} ], formatter:'.formatter.onDisplayOperationTimes'}"/>
 							<Text text="{parts:[ {path:'viewModel>oData/FIXED_ASSGN_END_DATE'}, {path:'viewModel>oData/FIXED_ASSGN_END_TIME'} ], formatter:'.formatter.onDisplayOperationTimes'}"/>
+							<core:ExtensionPoint name="TableExtP|OperationTimeCheck|DraggedDemands|CustomCell" ></core:ExtensionPoint>
 							<!--<Text text="{path:'viewModel>oData/FIXED_ASSGN_START_DATE', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium'}}"/>-->
 							<!--<Text text="{path:'viewModel>oData/FIXED_ASSGN_END_DATE', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium'}}"/>-->
 						</cells>
@@ -42,9 +47,11 @@
 			</Table>
 		</content>
 		<buttons>
+			<core:ExtensionPoint name="DialogExtP|OperationTimeCheck|DraggedDemands|buttons|Left" ></core:ExtensionPoint>
 			<Button text="{i18n>xbut.buttonSelectAll}" press="onAssignmentDateCheckSelectAll"/>
 			<Button text="{i18n>xbut.buttonCancel}" press="onCloseDialog"/>
 			<Button text="{i18n>xbut.buttonProceed}" press="onAssignmentDateCheckProceed"/>
+			<core:ExtensionPoint name="DialogExtP|OperationTimeCheck|DraggedDemands|buttons|Right" ></core:ExtensionPoint>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>
