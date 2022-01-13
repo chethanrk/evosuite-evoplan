@@ -81,7 +81,7 @@ sap.ui.define([
 		},
 		TIMEYEAR: {
 			title: "H5",
-			icon: "sap-icon://check-availability",
+			icon: "sap-icon://appointment",
 			getDateBegin: function () {
 				return moment().startOf("year").toDate();
 			},

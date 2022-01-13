@@ -834,6 +834,54 @@ sap.ui.define([
 
 				return oDateFormat.format(oDate) + ", " + sOperationTimes;
 			}
+		},
+
+		/**
+		 * Inlin Edit Demands: Response Messages: to set the Icon for the message
+		 */
+		responseMessageStatusIcon: function (sStatus) {
+			if (sStatus === "success" || sStatus === "info") {
+				return "sap-icon://message-success";
+			} else if (sStatus === "error" || sStatus === "warning") {
+				return "sap-icon://message-error";
+			} else {
+				return "";
+			}
+			// else if () {
+			// return "sap-icon://message-warning";
+			// } 
+		},
+		
+		/**
+		 * Inlin Edit Demands: Response Messages: to set the Icon Color for the message
+		 */
+		responseMessageStatusIconColor: function (sStatus) {
+			if (sStatus === "success" || sStatus === "info") {
+				return "#008000";
+			} else if (sStatus === "error" || sStatus === "warning") {
+				return "#FF0000";
+			} else {
+				return "#0854a0";
+			}
+			// else if (sStatus === "warning") {
+			// 	return "#FFBF00";
+			// }
+		},
+		
+		/**
+		 * Inlin Edit Demands: Response Messages: to set the Text for the message
+		 */
+		responseMessageStatusText: function (sStatus) {
+			if (sStatus) {
+				if (sStatus === "info") {
+					return "Success";
+				}
+				if (sStatus === "warning") {
+					return "Error";
+				}
+				return sStatus.substr(0, 1).toUpperCase() + sStatus.substr(1, sStatus.length)
+			}
+			return "";
 		}
 	};
 });

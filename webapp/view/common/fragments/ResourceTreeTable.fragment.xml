@@ -7,7 +7,7 @@
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1"/>
 		</smartTable:layoutData>
-		<table:TreeTable toggleOpenState="onToggleOpenState">
+		<table:TreeTable toggleOpenState="onToggleOpenState"  rowHeight="33">
 			<table:columns >
 				<table:Column label="{i18n>xtit.tableObject}" name="{i18n>xtit.tableObject}">
 					<table:customData>
@@ -38,7 +38,7 @@
 						<core:CustomData key="p13nData" value='\{"columnKey": "TOTAL_EFFORT", "leadingProperty": "TOTAL_EFFORT"}'/>
 					</table:customData>
 					<table:template>
-						<Text text="{TOTAL_EFFORT}" wrapping="false"/>
+						<Text text="{path:'TOTAL_EFFORT', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}" wrapping="false"/>
 					</table:template>
 				</table:Column>
 				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="15%" hAlign="End"

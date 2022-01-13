@@ -22,10 +22,10 @@
 		<VBox id="idUpdateTimeAllocation" class="sapUiTinyMarginBeginEnd" visible="false">
 			<Label class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop" text="{/#ResourceAvailability/DateFrom/@sap:label}"/>
 			<DatePicker id="idUpdateFromDate" width="95%" editable="{user>/ENABLE_ABSENCE_CHANGE}" dateValue="{DateFrom}" placeholder="Enter Date"
-				change="handleChange" class="sapUiSmallMarginBeginEnd"/>
+				change="handleUpdateChange" class="sapUiSmallMarginBeginEnd"/>
 			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/DateTo/@sap:label}"/>
 			<DatePicker id="idUpdateToDate" width="95%" editable="{user>/ENABLE_ABSENCE_CHANGE}" dateValue="{DateTo}" placeholder="Enter Date"
-				change="handleChange" class="sapUiSmallMarginBeginEnd"/>
+				change="handleUpdateChange" class="sapUiSmallMarginBeginEnd"/>
 			<smartForm:SmartForm id="idUpdateTimeCreateFormAvail" editTogglable="false" editable="true">
 				<smartForm:layout>
 					<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
@@ -34,10 +34,16 @@
 					<smartForm:GroupElement>
 						<smartField:SmartField value="{Description}" editable="false" contextEditable="false"></smartField:SmartField>
 					</smartForm:GroupElement>
+					<smartForm:GroupElement>
+						<smartField:SmartField id="idUpdateAvailablHour" value="{AVAILABLE_HOURS}"/>
+					</smartForm:GroupElement>
+					<smartForm:GroupElement>
+						<smartField:SmartField id="idUpdateBlockdHour" value="{BLOCKED_HOURS}"/>
+					</smartForm:GroupElement>
 				</smartForm:Group>
 			</smartForm:SmartForm>
 			<Label class="sapUiSmallMarginBeginEnd" text="{/#ResourceAvailability/BlockPercentage/@sap:label}"/>
-			<Slider id="idUpdateTimeAllocSlider" class="sapUiSmallMarginBeginEnd" width="97%" min="0" value="{BlockPercentage}" max="100"
+			<Slider id="idUpdateTimeAllocSlider" class="sapUiSmallMarginBeginEnd" width="97%" min="0" value="{BlockPercentage}" max="100" change="onUpdateSliderChange"
 				showAdvancedTooltip="true" showHandleTooltip="false"/>
 			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}"
 				text="{/ResourceAvailabilitySet/AVAILABILITY_DESCR/##com.sap.vocabularies.Common.v1.Label/String}"/>
