@@ -23,9 +23,9 @@
 					</OverflowToolbar>
 				</smartTable:customToolbar>
 				<Table mode="MultiSelect" growing="true" selectionChange="onSelectionChange">
-						<table:columns>
+						<columns>
 								<core:ExtensionPoint name="TableExtP|AssignActionDialog|AssignmentSet|CustomColumn"/>
-						</table:columns>
+						</columns>
 				</Table>
 			</smartTable:SmartTable>
 		</content>
