@@ -52,6 +52,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
 			this._oEventBus.subscribe("BaseController", "refreshCapacity", this._refreshCapacity, this);
 			this._oEventBus.subscribe("BaseController", "refreshFullGantt", this._loadGanttData, this);
+			this._oEventBus.subscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
@@ -108,6 +109,7 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("BaseController", "resetSelections", this._resetSelections, this);
 			this._oEventBus.unsubscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
 			this._oEventBus.unsubscribe("BaseController", "refreshCapacity", this._refreshCapacity, this);
+			this._oEventBus.unsubscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
 		},
 		/* =========================================================== */
 		/* event methods                                               */
@@ -230,7 +232,11 @@ sap.ui.define([
 				sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : slocStor.split(","),
 				oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
 				oResourceData = this.getModel("ganttModel").getProperty(oDropContext.getPath()),
-				oSvgPoint;
+				oSvgPoint,
+				oDemandObj = oDragContext ? oDragContext.getObject() : undefined,
+				bShowFixedAppointmentDialog,
+				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
+				oParams = {};
 
 			//Null check for
 			if ((!oDragContext || !sDragPath) && !oDropContext) {
@@ -245,21 +251,59 @@ sap.ui.define([
 
 			if (oBrowserEvent.target.tagName === "rect" && oDragContext) { // When we drop on gantt chart in the same view
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
-				this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
+				//Condition added and Method is modified for fixed Appointments			// since Release/2201
+				oParams.DateFrom = oAxisTime.viewToTime(oSvgPoint.x);
+				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
+					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
+					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
+
+				if (bShowFixedAppointmentDialog) {
+					oParams.oResourceData = oResourceData;
+					oParams.sDragPath = sDragPath;
+					oParams.oTarget = oDropContext.getPath();
+
+					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
+					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "Gantt");
+				} else {
+					this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
+				}
 
 			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) { // When we drop on gantt chart from split window
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), sDragPath);
 
 			} else if (oDragContext) { // When we drop on the resource 
-				this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), null);
+				oParams.DateFrom = new Date(new Date().setHours(0));
+				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
+					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
+					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
+
+				if (bShowFixedAppointmentDialog) {
+					oParams.oResourceData = oResourceData;
+					oParams.sDragPath = sDragPath;
+					oParams.oTarget = oDropContext.getPath();
+
+					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
+					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "Gantt");
+				} else {
+					this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), new Date());
+					// this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
+				}
 
 			} else { // When we drop on the resource from split window
 				this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), null, sDragPath);
 
 			}
 		},
-	
+
+		/**
+		 * Preceed to assignment via Fixed assignment Dialog Event bus call
+		 * @param 
+		 */
+		_proceedToAssign: function (sChannel, oEvent, oData) {
+			this._validateAndAssignDemands(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate);
+		},
+
 		/**
 		 * When a shape is dragged inside Gantt
 		 * and dropped to same row or another resource row

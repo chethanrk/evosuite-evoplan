@@ -7,10 +7,10 @@ sap.ui.define([
 	"sap/ui/core/Fragment"
 ], function (BaseController, models, formatter, Filter, FilterOperator, Fragment) {
 	"use strict";
-		/**
-		 * Created for Fixed Appointment Feature 
-		 * available since Release/2201
-		 */
+	/**
+	 * Created for Fixed Appointment Feature 
+	 * available since Release/2201
+	 */
 	return BaseController.extend("com.evorait.evoplan.controller.common.MaterialInfoDialog", {
 
 		formatter: formatter,
@@ -36,6 +36,7 @@ sap.ui.define([
 					oView.addDependent(oDialog);
 					this._component = oView.getController().getOwnerComponent();
 					oDialog.addStyleClass(this._component.getContentDensityClass());
+					this._oEventBus = sap.ui.getCore().getEventBus();
 					this.onOpen(oDialog, oView, aFixedAppointmentPayload, aAllParameters, mParameters, sSource, isReassign);
 				}.bind(this));
 			} else {
@@ -69,6 +70,20 @@ sap.ui.define([
 				oAssignment,
 				demandObj,
 				bIsLast = false;
+
+			if (this.sSource === "Gantt" || this.sSource === "OldGantt") {
+				var sChannel = this.sSource === "Gantt" ? "GanttFixedAssignments" : "OldGanttFixedAssignments";
+
+				this._oEventBus.publish(sChannel, "assignDemand", {
+					oResourceData: this._aFixedAppointmentPayload.oResourceData,
+					sDragPath: this._aFixedAppointmentPayload.sDragPath,
+					oTarget: this._aFixedAppointmentPayload.oTarget,
+					oTargetDate: aFixedAppointments[0].IsSelected ? aFixedAppointments[0].FIXED_APPOINTMENT_START_DATE : this._aFixedAppointmentPayload
+						.DateFrom
+				});
+				this._FixedAppointmentsDialog.close();
+				return;
+			}
 
 			for (var i in aFixedAppointments) {
 				demandObj = aFixedAppointments[i];
