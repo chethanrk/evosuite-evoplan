@@ -41,14 +41,14 @@
 							<ComboBox enabled="{viewModel>oData/ALLOW_ASSIGNMENT_DIALOG}" items="{path:'oCostElementModel>/', templateShareable:true}" showSecondaryValues="true"
 								selectionChange="onCostElementChange" value="{viewModel>oData/CostElement}">
 								<items>
-									<core:ListItem text="{oCostElementModel>CostElement}" additionalText="{oCostElementModel>Text}"></core:ListItem>
+									<core:ListItem text="{oCostElementModel>KSTAR}" additionalText="{oCostElementModel>MCTXT}"></core:ListItem>
 								</items>
 							</ComboBox>
 							<Input type="Number" enabled="{viewModel>oData/ALLOW_ASSIGNMENT_DIALOG}" value="{viewModel>oData/Estimate}" change="onEstimateChange"></Input>
 							<ComboBox enabled="{viewModel>oData/ALLOW_ASSIGNMENT_DIALOG}" items="{path:'oCurrencyModel>/', templateShareable:true}" showSecondaryValues="true"
 								value="{viewModel>oData/Currency}" selectionChange="onCurrencyChange">
 								<items>
-									<core:ListItem text="{oCurrencyModel>Currency}" additionalText="{oCurrencyModel>CurrencyText}"></core:ListItem>
+									<core:ListItem text="{oCurrencyModel>WAERS}" additionalText="{oCurrencyModel>KTEXT}"></core:ListItem>
 								</items>
 							</ComboBox>
 							<core:ExtensionPoint name="TableExtP|VendorAssignment|DraggedDemands|CustomCell" />
