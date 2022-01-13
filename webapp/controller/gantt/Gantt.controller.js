@@ -44,6 +44,7 @@ sap.ui.define([
 
 			this._oEventBus.subscribe("BaseController", "refreshGanttChart", this._refreshGanttChart, this);
 			this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
+			this._oEventBus.subscribe("OldGanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
 
 			//set on first load required filters
 			this._treeTable = this.getView().byId("ganttResourceTreeTable");
@@ -83,6 +84,7 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("BaseController", "refreshGanttChart", this._refreshGanttChart, this);
 			this._oEventBus.unsubscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
 			this._oEventBus.unsubscribe("BaseController", "refreshTreeTable", this._refreshGanttChart, this);
+			this._oEventBus.unsubscribe("OldGanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
 		},
 
 		/**
@@ -181,7 +183,7 @@ sap.ui.define([
 				aPSDemandsNetworkAssignment = this._showNetworkAssignments(this.getModel("viewModel"));
 			this.onShowOperationTimes(this.getModel("viewModel"));
 			this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
-		
+
 			//Checking PS Demands for Network Assignment 
 			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
 				this.getOwnerComponent().NetworkAssignment.open(this.getView(), oDropContext.getPath(), aPSDemandsNetworkAssignment, this._mParameters,
@@ -218,14 +220,18 @@ sap.ui.define([
 				oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
 				oViewModel = this.getModel("viewModel"),
 				oResourceData = this.getModel().getProperty(oDropContext.getPath()),
-				oSvgPoint;
+				oSvgPoint,
+				oDemandObj = oDragContext ? oDragContext.getObject() : undefined,
+				bShowFixedAppointmentDialog,
+				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
+				oParams = {};
 
 			//Null check for
 			if ((!oDragContext || !sDragPath) && !oDropContext) {
 				return;
 			}
 
-			oViewModel.setProperty("/ganttSettings/busy", true);
+			// oViewModel.setProperty("/ganttSettings/busy", true);
 			// Check the resource assignable or not
 			if (!this.isAssignable({
 					data: oResourceData
@@ -238,16 +244,58 @@ sap.ui.define([
 			if (oBrowserEvent.target.tagName === "rect" && oDragContext) {
 				// When we drop on gantt chart
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
-				// oAxisTime.viewToTime(<oSvgPoint>) will give the time stamp for dropped location
-				this._assignDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
+				//Condition added and Method is modified for fixed Appointments			// since Release/2201
+				oParams.DateFrom = oAxisTime.viewToTime(oSvgPoint.x);
+				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
+					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
+					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
+
+				if (bShowFixedAppointmentDialog) {
+					oViewModel.setProperty("/ganttSettings/busy", false);
+					oParams.oResourceData = oResourceData;
+					oParams.sDragPath = sDragPath;
+					oParams.oTarget = oDropContext.getPath();
+
+					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
+					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "OldGantt");
+				} else {
+					// oAxisTime.viewToTime(<oSvgPoint>) will give the time stamp for dropped location
+					this._assignDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
+
+				}
 			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) {
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				this._assignDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), false, sDragPath);
 			} else if (oDragContext) {
-				this._assignDemands(oResourceData, sDragPath, oDropContext.getPath(), null, true);
+				oParams.DateFrom = new Date(new Date().setHours(0));
+				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
+					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
+					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
+
+				if (bShowFixedAppointmentDialog) {
+					oViewModel.setProperty("/ganttSettings/busy", false);
+					oParams.oResourceData = oResourceData;
+					oParams.sDragPath = sDragPath;
+					oParams.oTarget = oDropContext.getPath();
+
+					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
+					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "OldGantt");
+				} else {
+					this._assignDemands(oResourceData, sDragPath, oDropContext.getPath(), new Date(), true);
+					// this._assignDemands(oResourceData, sDragPath, oDropContext.getPath(), null, true);
+				}
 			} else {
 				this._assignDemands(oResourceData, null, oDropContext.getPath(), null, true, sDragPath);
 			}
+		},
+		/**
+		 * Preceed to assignment via Fixed assignment Dialog Event bus call
+		 * @param 
+		 */
+		_proceedToAssign: function (sChannel, oEvent, oData) {
+			var oViewModel = this.getModel("viewModel");
+			oViewModel.setProperty("/ganttSettings/busy", true);
+			this._assignDemands(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate);
 		},
 		/**
 		 * Calls the respective function import to create assignments
