@@ -42,7 +42,7 @@
 				<gnt2:table>
 					<table:TreeTable id="idGanttResourceTreeTable" class="resourceGanttTreeTable" selectionMode="Single" visibleRowCountMode="Auto" threshold="10"
 						enableColumnReordering="false" enableBusyIndicator="true" busyStateChanged="onBusyStateChanged" enableCellFilter="false"
-						columnHeaderVisible="false" selectionBehavior="RowOnly" rowHeight="25"
+						columnHeaderVisible="false" selectionBehavior="RowOnly" rowHeight="33"
 						rows="{ path: '/GanttResourceHierarchySet', parameters: { operationMode: 'Server', numberOfExpandedLevels: 1, expand: 'AssignmentSet,ResourceAvailabilitySet', groupId: 'GanttTree' } }">
 						<table:extension>
 							<OverflowToolbar>
