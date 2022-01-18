@@ -2,18 +2,18 @@
 	<ResponsivePopover title="{i18n>xtit.assignments}" class="sapUiPopupWithPadding" placement="Auto"
 		contentWidth="50%" beforeOpen="onBeforeOpenAssigments" afterClose="onAfterCloseAssigments">
 		<beginButton>
-			<core:ExtemsionPoint name="PopoverExtP|Assignments|AssignmentSet|AssignmentListTable|BeginButton" />
+			<core:ExtensionPoint name="PopoverExtP|Assignments|AssignmentSet|AssignmentListTable|BeginButton" />
 		</beginButton>
 		<endButton>
-			<core:ExtemsionPoint name="PopoverExtP|Assignments|AssignmentSet|AssignmentListTable|EndButton">
+			<core:ExtensionPoint name="PopoverExtP|Assignments|AssignmentSet|AssignmentListTable|EndButton">
 			<Button text="{i18n>xbut.buttonClose}" press="onCloseAssigmentsPopover"/>
-			</core:ExtemsionPoint>
+			</core:ExtensionPoint>
 		</endButton>
 		<content>
 			<Table id="idAssignmentTable" class="sapUiNoContentPadding" items="{ path: 'DemandToAssignment', templateShareable: true }"
 				itemPress="onClickRow">
 				<headerToolbar>
-					<core:ExtemsionPoint name="TableExtP|Assignments|AssignmentSet|AssignmentListTable|CustomHeaderToolbar" />
+					<core:ExtensionPoint name="TableExtP|Assignments|AssignmentSet|AssignmentListTable|CustomHeaderToolbar" />
 				</headerToolbar>
 				<columns>
 					<Column>
@@ -31,7 +31,7 @@
 					<Column minScreenWidth="Tablet" demandPopin="true">
 						<Text text="{/#Demand/DateTo/@sap:label}"/>
 					</Column>
-					<core:ExtemsionPoint name="TableExtP|Assignments|AssignmentSet|AssignmentListTable|CustomColumn" />
+					<core:ExtensionPoint name="TableExtP|Assignments|AssignmentSet|AssignmentListTable|CustomColumn" />
 				</columns>
 				<items>
 					<ColumnListItem type="Active">
@@ -41,7 +41,7 @@
 							<Text text="{ path:'PERSON_NUMBER' }"/>
 							<Text text="{ path:'DateFrom', type:'sap.ui.model.odata.type.DateTimeOffset' }"/>
 							<Text text="{ path:'DateTo', type:'sap.ui.model.odata.type.DateTimeOffset' }"/>
-							<core:ExtemsionPoint name="TableExtP|Assignments|AssignmentSet|AssignmentListTable|CustomCell" />
+							<core:ExtensionPoint name="TableExtP|Assignments|AssignmentSet|AssignmentListTable|CustomCell" />
 						</cells>
 					</ColumnListItem>
 				</items>

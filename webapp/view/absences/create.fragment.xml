@@ -18,8 +18,8 @@
 			</smartForm:SmartForm>
 			<Label class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop" text="{/#ResourceAvailability/Description/@sap:label}"/>
 			<Select id="idManagAbsAvailType" class="sapUiSmallMarginBeginEnd" width="95%"
-				items="{ path: 'availabilityGroup>/manageAbsence', sorter: { path: 'AvailabilityTypeCode' } }">
-				<core:Item key="{availabilityGroup>AvailabilityTypeCode}" text="{availabilityGroup>AvailabilityDesc}"/>
+				items="{ path: 'availabilityGroup>/manageAbsence', sorter: { path: 'AVAILABILITY_TYPE' } }">
+				<core:Item key="{availabilityGroup>AVAILABILITY_TYPE}" text="{availabilityGroup>AVAILABILITY_DESC}"/>
 			</Select>
 		</VBox>
 		<VBox id="idTimeAllocation" class="sapUiTinyMarginBeginEnd" visible="false">

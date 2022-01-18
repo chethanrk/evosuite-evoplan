@@ -47,8 +47,8 @@ sap.ui.define([
 			this._oEventBus.subscribe("OldGanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
 
 			//set on first load required filters
-			this._treeTable = this.getView().byId("ganttResourceTreeTable");
-			this._ganttChart = this.getView().byId("ganttResourceAssignments");
+			this._treeTable = this.getView().byId("idGanttResourceTreeTable");
+			this._ganttChart = this.getView().byId("idGanttResourceAssignments");
 			this._axisTime = this.getView().byId("idAxisTime");
 			this._userData = this.getModel("user").getData();
 
@@ -109,7 +109,7 @@ sap.ui.define([
 		 * @public
 		 */
 		onAfterRendering: function () {
-			var oTable = this.getView().byId("ganttResourceTreeTable"),
+			var oTable = this.getView().byId("idGanttResourceTreeTable"),
 				oBinding = oTable.getBinding("rows"),
 				oViewModel = this.getModel("viewModel"),
 				iSelectionPane = oViewModel.getProperty("/ganttSelectionPane");
@@ -135,7 +135,7 @@ sap.ui.define([
 		 */
 		_setDefaultTreeDateRange: function (mParameters) {
 			var aFilters = this._getDefaultFilters(mParameters);
-			var binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
+			var binding = this.getView().byId("idGanttResourceTreeTable").getBinding("rows");
 			binding.filter(aFilters, "Application");
 		},
 		/**
@@ -399,7 +399,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		_refreshGanttChart: function (oEvent) {
-			var oTreeTable = this.getView().byId("ganttResourceTreeTable"),
+			var oTreeTable = this.getView().byId("idGanttResourceTreeTable"),
 				oTreeBinding = oTreeTable.getBinding("rows");
 			//reset the changes
 			this.resetChanges();
@@ -914,7 +914,7 @@ sap.ui.define([
 			var sQuery = oEvent.getParameter("query"),
 				oFilter = new Filter("Description", FilterOperator.Contains, sQuery),
 				aFilters = this._getDefaultFilters(),
-				binding = this.getView().byId("ganttResourceTreeTable").getBinding("rows");
+				binding = this.getView().byId("idGanttResourceTreeTable").getBinding("rows");
 
 			aFilters.push(oFilter);
 			binding.filter(aFilters, "Application");
