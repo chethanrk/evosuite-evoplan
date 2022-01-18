@@ -164,6 +164,9 @@ sap.ui.define([
 						if (this._bDemandListScroll === false && !this.oView.getModel("viewModel").getProperty("/mapSettings/bRouteDateSelected")) {
 							this._oDraggableTable.getTable().selectAll();
 						}
+						if (!this.getOwnerComponent().Map_Route_calendor_Popover.isOpen()) {
+							this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false);
+						}
 					}.bind(this), 10);
 				}
 			}.bind(this));
@@ -791,7 +794,7 @@ sap.ui.define([
 				}.bind(this));
 			};
 		},
-		
+
 		/**
 		 * Opens long text view/edit popover
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
@@ -811,7 +814,7 @@ sap.ui.define([
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 			}
 		},
-		
+
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
