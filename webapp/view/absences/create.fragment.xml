@@ -13,6 +13,7 @@
 					<smartForm:GroupElement >
 						<smartField:SmartField value="{DateTo}"/>
 					</smartForm:GroupElement>
+					<core:ExtensionPoint name="FromExtP|ManageResources|ManageAbsence|ResourceAvailabilitySet|Create|GroupElement" />
 				</smartForm:Group>
 			</smartForm:SmartForm>
 			<Label class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop" text="{/#ResourceAvailability/Description/@sap:label}"/>
@@ -38,6 +39,7 @@
 					<smartForm:GroupElement>
 						<smartField:SmartField id="idBlockdHour" value="{BLOCKED_HOURS}"/> 
 					</smartForm:GroupElement>
+					<core:ExtensionPoint name="FromExtP|ManageResources|TimeAllocation|ResourceAvailabilitySet|Create|GroupElement" />
 				</smartForm:Group>
 			</smartForm:SmartForm>
 			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/Description/@sap:label}"/>
@@ -51,13 +53,16 @@
 			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}"
 				text="{/ResourceAvailabilitySet/AVAILABILITY_DESCR/##com.sap.vocabularies.Common.v1.Label/String}"/>
 			<Input id="idCreateDescription" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}" class="sapUiSmallMarginBeginEnd" width="95%" maxLength="100"/>
+			<core:ExtensionPoint name="FromExtP|ManageResources|TimeAllocation|ResourceAvailabilitySet|Create|CustomElements" />
 		</VBox> 
 		<footer>
+			<core:ExtensionPoint name="PageExtP|ManageResources|ResourceAvailabilitySet|Create|Footer|Left" />
 			<OverflowToolbar>
 				<Button id="idCreateBack" text="{i18n>xbut.buttonBack}" press="onNavBack"/>
 				<ToolbarSpacer/>
 				<Button id="idCreateSaveAvail" visible="{user>/ENABLE_ABSENCE_CREATE}" text="{i18n>xbut.buttonSave}" type="Emphasized" enabled="true"
 					press=".onAction($event,'CREATE')"></Button>
+				<core:ExtensionPoint name="PageExtP|ManageResources|ResourceAvailabilitySet|Create|Footer|Left" />
 			</OverflowToolbar>
 		</footer>
 	</Page>
