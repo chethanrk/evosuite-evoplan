@@ -3,10 +3,10 @@
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" controllerName="com.evorait.evoplan.controller.demands.Demands"
 	displayBlock="true" height="100%">
 	<Page id="listPage" title="{i18n>xtit.itemListTitle}" showFooter="false" showHeader="false">
-		<f:DynamicPage headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true" showFooter="true" toggleHeaderOnTitleClick="false"
+		<f:DynamicPage id="idDemandsViewDynamicPage" headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true" showFooter="true" toggleHeaderOnTitleClick="false"
 			class="sapUiNoContentPadding tableContentPage">
 			<f:header>
-				<f:DynamicPageHeader pinnable="true">
+				<f:DynamicPageHeader id="idDemandsViewDemandsHeader" pinnable="true">
 					<f:content>
 						<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.SmartFilter" type="XML"/>
 					</f:content>
@@ -30,7 +30,7 @@
 						<core:ExtensionPoint name="TableExtP|Demands|DemandsSet|CustomToolbar|Right"/>
 					</OverflowToolbar>
 				</smartTable:customToolbar>
-					<table:Table columnResize="onColumnResize" minAutoRowCount="5" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}" cellClick="onCopyDemandCellData">
+					<table:Table id="idDemandsPageInnerTable" columnResize="onColumnResize" minAutoRowCount="5" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}" cellClick="onCopyDemandCellData">
 						<table:rowSettingsTemplate>
 							<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
 						</table:rowSettingsTemplate>
@@ -112,13 +112,11 @@
 				</smartTable:SmartTable>
 			</f:content>
 			<f:footer>
-				<OverflowToolbar>
+				<OverflowToolbar id="idDemandsPageDemandsFooterToolbar">
 					<Button id="idfindRightTechnicianButton" text="{i18n>xbut.findResource}" tooltip="{i18n>xbut.findResource}" icon="sap-icon://survey"
 						press="onPressFindResource" enabled="false" visible="{user>/ENABLE_QUALIFICATION}">
 						<layoutData>
-							<core:ExtensionPoint name="PageExtP|Demands|DemandSet|Footer|Layout">
-								<ToolbarLayoutData shrinkable="true"/>
-							</core:ExtensionPoint>
+							<ToolbarLayoutData shrinkable="true"/>
 						</layoutData>
 					</Button>
 					<core:ExtensionPoint name="PageExtP|Demands|DemandSet|Footer|Left"/>
