@@ -231,18 +231,30 @@ sap.ui.define([
 		 * @param {Object} mParameters
 		 * @param {Object} oParams
 		 */
-		proceedToServiceCallAssignDemands: function (aSourcePaths, targetObj, mParameters, oParams, aGuids) {
+		proceedToServiceCallAssignDemands: function (aSourcePaths, targetObj, mParameters, oDateParams, aGuids) {
 			var oModel = this.getModel(),
 				bIsLast = null,
 				aItems = aSourcePaths && aSourcePaths.length ? aSourcePaths : aGuids,
 				aGanttDragSession = this.getModel("viewModel").getData().dragSession,
 				aGanttDemandDragged = aGanttDragSession ? aGanttDragSession[0] : null,
-				oContext, sPath, demandObj, aOperationTimeParams;
+				oContext, sPath, demandObj, aOperationTimeParams,
+				aAllParameters = [],
+				bContinue,
+				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
+				oParams;
+			this.aFixedAppointmentPayload = [];
+			this.aFixedAppointmentDemands = [];
 			this.clearMessageModel();
 			for (var i = 0; i < aItems.length; i++) {
+				oParams = {};
+				oParams.DateFrom = oDateParams.DateFrom;
+				oParams.TimeFrom = oDateParams.TimeFrom;
+				oParams.DateTo = oDateParams.DateTo;
+				oParams.TimeTo = oDateParams.TimeTo;
 				oContext = aItems[i];
 				sPath = oContext.sPath ? oContext.sPath : oContext;
-				demandObj = oModel.getProperty(sPath);
+				demandObj = oModel.getProperty(sPath),
+					bContinue = true;
 
 				oParams.DemandGuid = demandObj ? demandObj.Guid : sPath.split("'")[1];
 				oParams.ResourceGroupGuid = targetObj.ResourceGroupGuid;
@@ -267,6 +279,7 @@ sap.ui.define([
 						oParams.DateTo = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME);
 						oParams.TimeTo.ms = oParams.DateTo.getTime();
 					}
+
 				}
 				//Cost Element, Estimate and Currency fields update for Vendor Assignment
 				if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && targetObj.ISEXTERNAL) {
@@ -280,12 +293,50 @@ sap.ui.define([
 						oParams.Currency = "";
 					}
 				}
-
-				if (parseInt(i, 10) === aItems.length - 1) {
-					bIsLast = true;
+				//Effort and Effort Unit fields update for PS Demands Network Assignment
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT")) {
+					if (oContext.oData.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+						oParams.Effort = oContext.oData.Duration;
+						oParams.EffortUnit = oContext.oData.DurationUnit;
+					} else {
+						oParams.Effort = "0";
+						oParams.EffortUnit = "";
+					}
 				}
-				this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
+
+				//Condition added and Method is modified for fixed Appointments			// since Release/2201
+				if (demandObj && demandObj.FIXED_APPOINTMENT) {
+					if (oParams.DateFrom > demandObj.FIXED_APPOINTMENT_START_DATE || oParams.DateFrom > demandObj.FIXED_APPOINTMENT_LAST_DATE) {
+						this.aFixedAppointmentPayload.push(oParams);
+						this.aFixedAppointmentDemands.push(demandObj);
+						bContinue = false;
+					} else if (oParams.DateFrom < demandObj.FIXED_APPOINTMENT_START_DATE) {
+						if (bShowFutureFixedAssignments) {
+							this.aFixedAppointmentPayload.push(oParams);
+							this.aFixedAppointmentDemands.push(demandObj);
+							bContinue = false;
+						}
+					}
+				}
+
+				if (bContinue) {
+					aAllParameters.push(oParams);
+				}
+
 			}
+			//Condition added and Method is modified for fixed Appointments			// since Release/2201
+			if (this.aFixedAppointmentPayload && this.aFixedAppointmentPayload.length) {
+				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", this.aFixedAppointmentDemands);
+				this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), this.aFixedAppointmentPayload, aAllParameters, mParameters);
+			} else {
+				for (var i = 0; i < aAllParameters.length; i++) {
+					if (parseInt(i, 10) === aAllParameters.length - 1) {
+						bIsLast = true;
+					}
+					this.callFunctionImport(aAllParameters[i], "CreateAssignment", "POST", mParameters, bIsLast);
+				}
+			}
+
 		},
 
 		/**
@@ -296,7 +347,10 @@ sap.ui.define([
 			var oData = this.getModel("assignment").getData(),
 				sAssignmentGUID = oData.AssignmentGuid,
 				sDisplayMessage,
-				oResource;
+				oResource,
+				oDemandObj = this.getModel().getProperty("/DemandSet('" + oData.DemandGuid + "')"),
+				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
+				bShowFixedAppointmentDialog;
 
 			if (isReassign && !oData.AllowReassign) {
 				sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
@@ -337,11 +391,23 @@ sap.ui.define([
 				})) {
 				return;
 			}
-			if (isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)) {
-				this.showMessageToProceed(null, null, null, null, true, oParams, mParameters);
+
+			//Condition added and Method is modified for fixed Appointments			// since Release/2201
+
+			bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
+				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
+				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE)
+
+			if (bShowFixedAppointmentDialog) {
+				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
+				this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], mParameters, "reAssign", isReassign);
 			} else {
-				// Proceed to check the Qualification for UpdateAssignment
-				this.checkQualificationUpdate(oData, oParams, mParameters);
+				if (isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)) {
+					this.showMessageToProceed(null, null, null, null, true, oParams, mParameters);
+				} else {
+					// Proceed to check the Qualification for UpdateAssignment
+					this.checkQualificationUpdate(oData, oParams, mParameters);
+				}
 			}
 		},
 		/**
@@ -361,13 +427,18 @@ sap.ui.define([
 			var oModel = this.getModel(),
 				oResource = oModel.getProperty(sAssignPath),
 				bIsLast = null,
-				sPath, oAssignment, oParams;
+				sPath, oAssignment, oParams, oDemandObj, bContinue = true,
+				aAllParameters = [],
+				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE");
 			// Clears the Message model
 			this.clearMessageModel();
+			this.aFixedAppointmentPayload = [];
+			this.aFixedAppointmentDemands = [];
 
 			for (var i in aContexts) {
 				sPath = aContexts[i].sPath;
 				oAssignment = oModel.getProperty(sPath);
+				bContinue = true;
 				oParams = {
 					AssignmentGUID: oAssignment.Guid,
 					EffortUnit: oAssignment.EffortUnit,
@@ -376,12 +447,43 @@ sap.ui.define([
 					ResourceGuid: oResource.ResourceGuid
 				};
 				oParams = this.setDateTimeParams(oParams, oResource.StartDate, oResource.StartTime, oResource.EndDate, oResource.EndTime);
-				if (parseInt(i, 10) === aContexts.length - 1) {
-					bIsLast = true;
+				oDemandObj = this.getModel().getProperty("/DemandSet('" + oAssignment.DemandGuid + "')");
+
+				//Condition added and Method is modified for fixed Appointments			// since Release/2201
+				if (oDemandObj && oDemandObj.FIXED_APPOINTMENT) {
+					if ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) || oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
+						oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE) {
+						this.aFixedAppointmentPayload.push(oParams);
+						this.aFixedAppointmentDemands.push(oDemandObj);
+						bContinue = false;
+					}
 				}
-				// call function import
-				this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, bIsLast);
+				if (bContinue) {
+					aAllParameters.push(oParams);
+				}
+
 			}
+
+			//Condition added and Method is modified for fixed Appointments			// since Release/2201
+			if (this.aFixedAppointmentPayload && this.aFixedAppointmentPayload.length) {
+				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", this.aFixedAppointmentDemands);
+				this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), this.aFixedAppointmentPayload, aAllParameters, mParameters,
+					"bulkReAssignment");
+			} else {
+				for (var i = 0; i < aAllParameters.length; i++) {
+					if (parseInt(i, 10) === aAllParameters.length - 1) {
+						bIsLast = true;
+					}
+					this.callFunctionImport(aAllParameters, "UpdateAssignment", "POST", mParameters, bIsLast)
+				}
+			}
+
+			// if (parseInt(i, 10) === aContexts.length - 1) {
+			// 	bIsLast = true;
+			// }
+			// // call function import
+			// this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, bIsLast);
+
 		},
 		/**
 		 * delete assignments in bulk
@@ -584,7 +686,9 @@ sap.ui.define([
 
 		openDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType) {
 			var sQualifier;
-			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
+			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NETWORK_OBJECTSOURCETYPE) {
+				sQualifier = Constants.ANNOTATION_CONSTANTS.NETWORK_QUALIFIER;
+			}else if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.NOTIFICATION_QUALIFIER;
 			} else {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.ORDER_QUALIFIER;
@@ -632,6 +736,23 @@ sap.ui.define([
 			}
 			oViewModel.refresh(true);
 			return aAllowVendorAssignment.length;
+		},
+		/*
+		 *Method to check PS Demands for Network Assignment
+		 *@param oViewModel 
+		 */
+		_showNetworkAssignments: function (oViewModel) {
+			var aSources = oViewModel.getProperty("/dragSession"),
+				aAllowNetworkAssignment = [];
+			for (var n in aSources) {
+				if (aSources[n].oData.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+					aSources[n].oData.Duration = "";
+					aSources[n].oData.DurationUnit = "";
+					aAllowNetworkAssignment.push(aSources[n]);
+				}
+			}
+			oViewModel.refresh(true);
+			return aAllowNetworkAssignment;
 		},
 
 	});

@@ -217,6 +217,9 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 			sExtPointName = sAddString ? sExtPointName + "|" + sAddString : sExtPointName;
 			return sExtPointName;
 		};
+		var getEntitySet = function (sEntitySet, sDesc, sLongText) {
+			return sEntitySet || sDesc || sLongText;
+		};
 
 		return {
 			resolveModelPath: resolveModelPath,
@@ -229,7 +232,8 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 			getDefaultTableSorter: getDefaultTableSorter,
 			isInNavLinks: isInNavLinks,
 			getFieldExtPoint: getFieldExtPoint,
-			getExtPoint: getExtPoint
+			getExtPoint: getExtPoint,
+			getEntitySet: getEntitySet
 		};
 
 	},

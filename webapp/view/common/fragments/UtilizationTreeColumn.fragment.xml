@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:table="sap.ui.table">
-	<ProgressIndicator percentValue="{path:'Utilization',formatter:'.formatter.formatProgress'}"
+	<ProgressIndicator percentValue="{path:'Utilization',formatter:'.formatter.formatProgress'}" class="sapUiNoMarginTop sapUiNoMarginBottom"
 							displayValue="{path:'Utilization', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}%" tooltip="{Utilization}"
 							showValue="true" state="{path:'Utilization',formatter:'.formatter.formatProgressState'}"
 							visible="{ path: 'NodeType', formatter: '.formatter.isResource' }"

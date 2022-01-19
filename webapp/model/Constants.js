@@ -70,7 +70,9 @@ sap.ui.define([], function () {
 		ANNOTATION_CONSTANTS: {
 			NOTIFICATION_OBJECTSOURCETYPE: "DEM_PMNO",
 			NOTIFICATION_QUALIFIER: "NotificationAssignmentDialog",
-			ORDER_QUALIFIER: "OrderAssignmentDialog"
+			ORDER_QUALIFIER: "OrderAssignmentDialog",
+			NETWORK_OBJECTSOURCETYPE: "DEM_PSNW",
+			NETWORK_QUALIFIER: "NetworkAssignmentDialog"
 		}
 	};
 

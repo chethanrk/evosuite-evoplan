@@ -4,11 +4,13 @@
 		<content>
 			<Table id="idVendorAssignmentTable" class="sapUiSmallMarginBegin sapUiMediumMarginBottom sapUiSmallMarginRight" width="96%" inset="false"
 				mode="MultiSelect" items="{ path: 'viewModel>/dragSession' }">
-				<!--<headerToolbar>-->
-				<!--	<Toolbar>-->
-				<!--		<Text text="{i18n>xmsg.operationTimeCheck}"/>-->
-				<!--	</Toolbar>-->
-				<!--</headerToolbar>-->
+				<headerToolbar>
+				<Toolbar>
+						<core:ExtensionPoint name="TableExtP|VendorAssignment|DraggedDemands|Toolbar|Left" />
+						<ToolbarSpacer />
+						<core:ExtensionPoint name="TableExtP|VendorAssignment|DraggedDemands|Toolbar|Right" />
+				</Toolbar>
+				</headerToolbar>
 				<columns>
 					<Column>
 						<Label text="{@i18n>xlbl.lblOrderNumber}" design="Bold"/>
@@ -28,6 +30,7 @@
 					<Column width="20%">
 						<Label text="{@i18n>xlbl.lblCurrency}" design="Bold"/>
 					</Column>
+					<core:ExtensionPoint name="TableExtP|VendorAssignment|DraggedDemands|CustomColumn" />
 				</columns>
 				<items>
 					<ColumnListItem selected="">
@@ -48,15 +51,18 @@
 									<core:ListItem text="{oCurrencyModel>Currency}" additionalText="{oCurrencyModel>CurrencyText}"></core:ListItem>
 								</items>
 							</ComboBox>
+							<core:ExtensionPoint name="TableExtP|VendorAssignment|DraggedDemands|CustomCell" />
 						</cells>
 					</ColumnListItem>
 				</items>
 			</Table>
 		</content>
 		<buttons>
+			<core:ExtensionPoint name="DialogExtP|VendorAssignment|DraggedDemands|Actions|Left" />
 			<Button text="{i18n>xbut.buttonSelectAll}" press="onVendorAssignmentSelectAll" visible="false"/>
 			<Button text="{i18n>xbut.buttonCancel}" press="onCloseDialog"/>
 			<Button text="{i18n>xbut.buttonProceed}" press="onVendorAssignmentProceed"/>
+			<core:ExtensionPoint name="DialogExtP|VendorAssignment|DraggedDemands|Actions|Right" />
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

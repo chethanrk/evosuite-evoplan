@@ -22,11 +22,14 @@
 					<Text text="{user>/Systemid}"></Text>
 					<Label text="{/#SystemInformation/Client/@sap:label}"></Label>
 					<Text text="{user>/Client}"></Text>
+					<core:ExtensionPoint name="FormExtP|Informationopver|SystemInformation|CustomFields" />
 				</form:content>
 			</form:SimpleForm>
 		</content>
 		<buttons>
+			<core:ExtensionPoint name="PopoverExtP|Informationopver|SystemInformation|CustomActions|Left" />
 			<Button text="{i18n>xbut.buttonClose}" press="onCloseDialog"/>
+			<core:ExtensionPoint name="PopoverExtP|Informationopver|SystemInformation|CustomActions|Right" />
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

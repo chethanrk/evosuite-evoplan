@@ -4,7 +4,9 @@
 			templateShareable:false
 		}">
 		<buttons>
+			<core:ExtensionPoint name="ActionSheetExtP|CrosAppNavlinks|NavLinks|Buttons">
 			<Button text="{navLinks>ApplicationName}" visible="{navLinks>btnVisibility}" press="onClickNavAction" />
+			</core:ExtensionPoint>
 			<!--visible="{navLinks>/bIsOrder}"-->
 		</buttons>
 	</ActionSheet>

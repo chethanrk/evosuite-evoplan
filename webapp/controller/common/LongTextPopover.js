@@ -42,16 +42,17 @@ sap.ui.define([
 			}
 		},
 		_openPopOver: function (oSource, oPopover, oModel, oContext) {
+			var bIsOperationLongText = this._oView.getModel("viewModel").getProperty("/isOpetationLongTextPressed"),
+				sExpandParameter = {};
+			sExpandParameter.expand = bIsOperationLongText ? "DemandToDemandOperLongText" : "DemandToDemandLongText";
 			oPopover.bindElement({
 				path: oContext.getPath(),
-				parameters: {
-					"expand": "DemandToDemandLongText"
-				},
+				parameters: sExpandParameter,
 				events: {
-					dataRequested: function(oEvent){
+					dataRequested: function (oEvent) {
 						oPopover.setBusy(true);
 					},
-					dataReceived: function(oEvent){
+					dataReceived: function (oEvent) {
 						oPopover.setBusy(false);
 					}
 				}
@@ -59,42 +60,42 @@ sap.ui.define([
 			oPopover.openBy(oSource);
 			oPopover.getElementBinding().refresh();
 		},
-		
+
 		/**
 		 * on popover close
 		 */
 		onCloseLongTextPopover: function (oEvent) {
 			this._oLongTextPopover.close();
 		},
-		
+
 		/**
 		 * Handles the popover 'afterClose' event
 		 */
-		onAfterCloseLongText: function(oEvent) {
+		onAfterCloseLongText: function (oEvent) {
 			var oModel = oEvent.getSource().getBindingContext().getModel();
 			oModel.resetChanges();
 		},
-		
+
 		/**
 		 * On Save button 'press' handler
 		 * Calls function import to post the long text data to a backend
 		 */
-		onSaveLongText: function(oEvent) {
+		onSaveLongText: function (oEvent) {
 			var oModel = oEvent.getSource().getBindingContext().getModel();
-			return new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
 				oModel.submitChanges({
-					success: function(oData) {
+					success: function (oData) {
 						resolve(oData);
 					},
-					error: function(oError) {
+					error: function (oError) {
 						reject(oError);
 					}
 				});
-			}.bind(this)).then(function(oData) {
+			}.bind(this)).then(function (oData) {
 				var msg = this._component.getModel("i18n").getResourceBundle().getText("xmsg.saveSuccess");
 				this.showMessageToast(msg);
 				this._oLongTextPopover.close();
-			}.bind(this)).catch(function(oError) {
+			}.bind(this)).catch(function (oError) {
 				var msg = this._component.getModel("i18n").getResourceBundle().getText("errorMessage");
 				this.showMessageToast(msg);
 			}.bind(this));
