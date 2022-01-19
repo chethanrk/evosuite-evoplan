@@ -31,6 +31,7 @@
 										count="{messageCounter>/I}" 
 										text="{i18n>xbut.inprocess}" 
 										key="inprocess"/>
+										<core:ExtensionPoint name="IconTabExtP|MessageCockpit|MessageSet|IconTab" />
 									
 								</items>
 							</IconTabBar>
@@ -63,6 +64,7 @@
 					<smartTable:customToolbar>
 							<OverflowToolbar>
 								<content>
+									<core:ExtensionPoint name="TableExtP|MessageCockpit|MessageSet|Toolbar|Left" />
 									<ToolbarSpacer/>
 									<Label text="{i18n>xtit.lastChanged} : " />
 									<Text text="{
@@ -70,6 +72,7 @@
 													type: 'sap.ui.model.odata.type.DateTime'
 												}" />
 									<Button id="idSyncButton" icon="sap-icon://synchronize" tooltip="{i18n>xtit.reprocess}" enabled="{viewModel>/enableReprocess}" visible="{user>/ENABLE_REPROCESS}" press="onClickReprocess"/>
+									<core:ExtensionPoint name="TableExtP|MessageCockpit|MessageSet|Toolbar|Right" />
 								</content>
 							</OverflowToolbar>
 					</smartTable:customToolbar>
@@ -86,9 +89,11 @@
 				</f:content>
 				<f:footer>
 					<OverflowToolbar>
+						<core:ExtensionPoint name="TableExtP|MessageCockpit|MessageSet|Footer|Left" />
 						<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
 								type="Emphasized" press="onMessagePopoverPress"/>
 						<ToolbarSpacer/>
+						<core:ExtensionPoint name="TableExtP|MessageCockpit|MessageSet|Footer|Right" />
 					</OverflowToolbar>
 				</f:footer>
 			</f:DynamicPage>

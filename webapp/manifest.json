@@ -1,7 +1,7 @@
 {
 	"_version": "1.12.0",
 	"sap.app": {
-		"id": "com.evorait.evoplanExtend",
+		"id": "com.evorait.evoplan",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
 		"title": "{{appTitle}}",
@@ -19,7 +19,7 @@
 			]
 		},
 		"applicationVersion": {
-			"version": "2110.0.5"
+			"version": "2201.0.0"
 		},
 		"dataSources": {
 			"mainService": {

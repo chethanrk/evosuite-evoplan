@@ -54,9 +54,7 @@ sap.ui.define([
 		 * @param mParameters
 		 */
 		onOpen: function (oDialog, mParameters) {
-			this._mParameters = mParameters || {
-				bFromHome: true
-			};
+			this._mParameters = mParameters;
 			this._oController = this._oView.getController();
 			this._component = this._oController.getOwnerComponent();
 			oDialog.addStyleClass(this._component.getContentDensityClass());
@@ -167,9 +165,9 @@ sap.ui.define([
 					iOperationTimesLen = this.onShowOperationTimes(this._oView.getModel("viewModel")),
 					iVendorAssignmentLen = this.onAllowVendorAssignment(this._oView.getModel("viewModel"), this._oView.getModel("user"));
 				this._oDialog.close();
-				if (this._mParameters.bFromNewGantt) {
+				if (this._mParameters && this._mParameters.bFromNewGantt) {
 					oTargetData = this._sPath;
-				}else{
+				} else {
 					oTargetData = this._oView.getModel().getProperty(this._sPath);
 				}
 				if (this._oView.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
@@ -180,12 +178,16 @@ sap.ui.define([
 					"RESOURCE") {
 					this._component.OperationTimeCheck.open(this._oView, this._mParameters, this._sPath);
 				} else {
-					if (this._mParameters.bFromGantt) {
-						this._oController.onProceedToGanttDropOnResource(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
-					} else if (this._mParameters.bFromNewGantt) {
-						this._oController.onProceedNewGanttDemandDrop(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
+					if (!this._mParameters) {
+						this._component.assignTreeDialog.onProceedSaveDialog();
 					} else {
-						this._oController.assignedDemands(aSources, this._sPath, this._mParameter);
+						if (this._mParameters.bFromGantt) {
+							this._oController.onProceedToGanttDropOnResource(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
+						} else if (this._mParameters.bFromNewGantt) {
+							this._oController.onProceedNewGanttDemandDrop(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
+						} else {
+							this._oController.assignedDemands(aSources, this._sPath, this._mParameter);
+						}
 					}
 				}
 			}

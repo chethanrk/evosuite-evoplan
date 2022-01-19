@@ -490,6 +490,7 @@ sap.ui.define([
 					this.getView().addDependent(this._oPopover);
 					oPopover.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					this._oPopover.openBy(oButton);
+					this.getOwnerComponent().Map_Route_calendor_Popover = this._oPopover;
 					this.byId("DRSMap").removeAllSelectedDates();
 				}.bind(this));
 			} else {
@@ -509,7 +510,7 @@ sap.ui.define([
 		 * @Author: Rakesh
 		 */
 		removeRouteDataFlag: function (oEvent) {
-			this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false);
+			// this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false);
 		},
 		/**
 		 * method for getting selected route for selected date

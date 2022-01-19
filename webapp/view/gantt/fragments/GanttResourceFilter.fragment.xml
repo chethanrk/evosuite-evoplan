@@ -10,6 +10,9 @@
 				<smartFilterBar:layoutData>
 					<FlexItemData shrinkFactor="0"/>
 				</smartFilterBar:layoutData>
+					<smartFilterBar:controlConfiguration>
+			<core:ExtensionPoint name="FilterExtP|GanttChart|GanttHeircrchySet|ResourceFilterDialog|ControlConfiguration"/>
+				</smartFilterBar:controlConfiguration>
 			</smartFilterBar:SmartFilterBar>
 		</content>
 		<buttons>
