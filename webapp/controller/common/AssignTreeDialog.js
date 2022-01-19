@@ -195,11 +195,15 @@ sap.ui.define([
 						aSources = this._oView.getModel("viewModel").getProperty("/dragSession"),
 						oUserModel = this._oView.getModel("user"),
 						iOperationTimesLen = this.onShowOperationTimes(this._oView.getModel("viewModel")),
-						iVendorAssignmentLen = this.onAllowVendorAssignment(this._oView.getModel("viewModel"), oUserModel);
+						iVendorAssignmentLen = this.onAllowVendorAssignment(this._oView.getModel("viewModel"), oUserModel),
+						aPSDemandsNetworkAssignment = this._showNetworkAssignments(this._oView.getModel("viewModel"));
 
-					//Checking Vendor Assignment for External Resources
 					if (aSources) {
-						if (oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetObj.ISEXTERNAL && aSources.length !==
+						//Checking PS Demands for Network Assignment 
+						if (oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+							this._component.NetworkAssignment.open(this._oView, this._assignPath, aPSDemandsNetworkAssignment, null);
+						} //Checking Vendor Assignment for External Resources
+						else if (oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetObj.ISEXTERNAL && aSources.length !==
 							iVendorAssignmentLen) {
 							this._component.VendorAssignment.open(this._oView, this._assignPath, null);
 						} else if (oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length) {
@@ -208,7 +212,7 @@ sap.ui.define([
 						} else {
 							this.onProceedSaveDialog();
 						}
-					}else{
+					} else {
 						this.onProceedSaveDialog();
 					}
 				} else {
