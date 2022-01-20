@@ -490,7 +490,6 @@ sap.ui.define([
 					this.getView().addDependent(this._oPopover);
 					oPopover.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					this._oPopover.openBy(oButton);
-					this.getOwnerComponent().Map_Route_calendor_Popover = this._oPopover;
 					this.byId("DRSMap").removeAllSelectedDates();
 				}.bind(this));
 			} else {

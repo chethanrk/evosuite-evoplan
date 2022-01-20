@@ -68,6 +68,7 @@ sap.ui.define([
 			}
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 			oViewModel.setProperty("/mapSettings/routeData", []);
+			oViewModel.setProperty("/mapSettings/bRouteDateSelected", false);
 			this._oDraggableTable.rebindTable();
 		},
 		/**
@@ -87,6 +88,7 @@ sap.ui.define([
 				aSelectedDemands.splice(aSelectedDemands.indexOf(sPath), 1);
 			}
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
+			oViewModel.setProperty("/mapSettings/bRouteDateSelected", false);
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			this._oDraggableTable.rebindTable();
 		},
@@ -163,9 +165,6 @@ sap.ui.define([
 					setTimeout(function () {
 						if (this._bDemandListScroll === false && !this.oView.getModel("viewModel").getProperty("/mapSettings/bRouteDateSelected")) {
 							this._oDraggableTable.getTable().selectAll();
-						}
-						if (!this.getOwnerComponent().Map_Route_calendor_Popover.isOpen()) {
-							this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false);
 						}
 					}.bind(this), 10);
 				}
