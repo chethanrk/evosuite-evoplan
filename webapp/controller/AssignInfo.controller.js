@@ -130,8 +130,8 @@ sap.ui.define([
 				this._showEffortConfirmMessageBox(this.getView().getController().getResourceBundle().getText("ymsg.targetValidity")).then(function (
 					oAction) {
 					if (oAction === "YES") {
-						oAssignmentModel.setProperty("/DateFrom", this.oAssignmentModel.getProperty("/RES_ASGN_START_DATE"));
-						oAssignmentModel.setProperty("/DateTo", this.oAssignmentModel.getProperty("/RES_ASGN_END_DATE"));
+						oAssignmentModel.setProperty("/DateFrom", oAssignmentModel.getProperty("/RES_ASGN_START_DATE"));
+						oAssignmentModel.setProperty("/DateTo", oAssignmentModel.getProperty("/RES_ASGN_END_DATE"));
 					}
 				}.bind(this));
 			}
