@@ -536,9 +536,9 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				MessageBox.confirm(
 					message, {
-						styleClass: oController._component.getContentDensityClass(),
+						styleClass: oController.getOwnerComponent().getContentDensityClass(),
 						icon: sap.m.MessageBox.Icon.CONFIRM,
-						title: oController._component.getModel("i18n").getResourceBundle().getText("xtit.confirm"),
+						title: oController.getModel("i18n").getResourceBundle().getText("xtit.confirm"),
 						actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
 						onClose: function (oEvent) {
 							resolve(oEvent);

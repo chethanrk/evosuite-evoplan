@@ -117,7 +117,8 @@ sap.ui.define([
 				sResStartDate = oAssignmentModel.getProperty("/RES_ASGN_START_DATE"),
 				sResEndDate = oAssignmentModel.getProperty("/RES_ASGN_END_DATE"),
 				sDateFrom = oAssignmentModel.getProperty("/DateFrom"),
-				sDateTo = oAssignmentModel.getProperty("/DateTo");
+				sDateTo = oAssignmentModel.getProperty("/DateTo"),
+				bIsResource = oAssignmentModel.getProperty("/ResourceGuid");
 
 			//Checking DateFrom falls within Resource Start and End Date
 			bValidDateFrom = sDateFrom <= sResEndDate && sDateFrom >= sResStartDate;
@@ -125,12 +126,12 @@ sap.ui.define([
 			bValidDateTo = sDateTo <= sResEndDate && sDateTo >= sResStartDate;
 
 			//If DateFrom and DateTo doesn't fall within Resource Start and End Date
-			if (!bValidDateFrom || !bValidDateTo) {
-				this._showEffortConfirmMessageBox(this._oView.getController().getResourceBundle().getText("ymsg.targetValidity")).then(function (
+			if (bIsResource && (!bValidDateFrom || !bValidDateTo)) {
+				this._showEffortConfirmMessageBox(this.getView().getController().getResourceBundle().getText("ymsg.targetValidity")).then(function (
 					oAction) {
 					if (oAction === "YES") {
-						oAssignmentModel.setProperty("/DateFrom", this.oAssignmentModel.getProperty("/RES_ASGN_START_DATE"));
-						oAssignmentModel.setProperty("/DateTo", this.oAssignmentModel.getProperty("/RES_ASGN_END_DATE"));
+						oAssignmentModel.setProperty("/DateFrom", oAssignmentModel.getProperty("/RES_ASGN_START_DATE"));
+						oAssignmentModel.setProperty("/DateTo", oAssignmentModel.getProperty("/RES_ASGN_END_DATE"));
 					}
 				}.bind(this));
 			}
