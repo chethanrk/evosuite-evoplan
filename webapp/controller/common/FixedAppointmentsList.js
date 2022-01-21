@@ -134,6 +134,7 @@ sap.ui.define([
 						bIsLast);
 				}
 			}
+			sap.ui.getCore().byId("idFixedAppointmentsList").removeSelections();
 			this._FixedAppointmentsDialog.close();
 		}
 	});

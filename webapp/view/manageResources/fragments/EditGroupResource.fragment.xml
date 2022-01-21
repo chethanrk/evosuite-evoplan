@@ -12,7 +12,7 @@
 					adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1"
 					singleContainerFullSize="false">
 					<f:content>
-						<core:ExtensionPoint name="FormExtP|ManageResources|Resources|CustomeContent"/>
+						<core:ExtensionPoint name="FormExtP|ManageResources|Resources|CustomeContent">
 						<Label text="{i18n>xlab.groupDescription}" visible="{=${NodeType} === 'RES_GROUP'}"/>
 						<Input id="idGroupName" value="{Description}" visible="{=${NodeType} === 'RES_GROUP'}"/>
 						<Label text="{i18n>xlab.resourceDateRange}" visible="{=${NodeType} === 'RESOURCE'}"/>
