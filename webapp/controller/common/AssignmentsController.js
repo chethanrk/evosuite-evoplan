@@ -474,7 +474,7 @@ sap.ui.define([
 					if (parseInt(i, 10) === aAllParameters.length - 1) {
 						bIsLast = true;
 					}
-					this.callFunctionImport(aAllParameters, "UpdateAssignment", "POST", mParameters, bIsLast)
+					this.callFunctionImport(aAllParameters[i], "UpdateAssignment", "POST", mParameters, bIsLast)
 				}
 			}
 
