@@ -483,7 +483,8 @@ sap.ui.define([
 				oResourceNode = oModel.getProperty(sPath);
 
 			var sObjectId = oResourceNode.NodeId;
-			if (oResourceNode.NodeType !== "ASSIGNMENT") {
+			//Opening Resource Qualification only on Resource Node Icon
+			if (oResourceNode.NodeType === "RESOURCE") { 
 				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
 			}
 		},

@@ -117,7 +117,7 @@ sap.ui.define([
 			this._getAssignedDemand(oAssignementPath, data);
 			this._assignmentGuid = oAssignment.AssignmentGuid;
 			// open dialog
-			oDialog.open();
+			//oDialog.open();
 		},
 		/**
 		 * Method get triggers when user selects any perticular unit from value help

@@ -110,6 +110,7 @@ sap.ui.define([
 				oSelectedAbsence = oContext.getObject(),
 				sPath = oContext.getPath(),
 				oDetail = Fragment.byId(this._id, "detail");
+				oDetail.unbindElement();
 			oDetail.bindElement(sPath);
 			if (oSelectedAbsence.UI_DISABLE_ABSENCE_EDIT) {
 				this.showMessageToast(this._resourceBundle.getText("ymsg.updateHRAbsence"));

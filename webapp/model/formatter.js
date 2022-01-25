@@ -711,7 +711,7 @@ sap.ui.define([
 		formatMapSpot: function (oLatitude, oLongitude) {
 			if (oLatitude && oLongitude) {
 				if (oLatitude === "0.000000000000" && oLongitude === "0.000000000000") {
-					return "";
+					return "0;0;0"; //return "";
 				} else {
 					return oLatitude + ";" + oLongitude + ";0";
 				}
