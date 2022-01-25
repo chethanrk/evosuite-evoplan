@@ -40,6 +40,7 @@
 			<uxap:headerContent>
 				<template:with path="meta>com.sap.vocabularies.UI.v1.HeaderFacets#DemandDetailHeader" helper=".AH.resolvePath" var="headerDetails">
 					<core:Fragment fragmentName="com.evorait.evoplan.view.templates.ObjectHeadTemplate" type="XML"/>
+					<core:ExtensionPoint name="PageExtP|DemandDetail|DemandSet|Head"/>
 				</template:with>
 			</uxap:headerContent>
 			<uxap:sections>
@@ -60,7 +61,7 @@
 								</uxap:ObjectPageSection>
 							</template:then>
 							<template:elseif test="{:= (${contentTabs>Org.OData.Core.V1.Description/String} === 'Table')}">
-								<core:ExtensionPoint name="SectionExtP|DemandDetail|{:= ${contentTabs>Core.LongDescription/String} }|Before" />
+								<core:ExtensionPoint name="SectionExtP|DemandDetail|{:= ${contentTabs>Org.OData.Core.V1.LongDescription/String} }|Before" />
 								<uxap:ObjectPageSection title="{path:'contentTabs>com.sap.vocabularies.Common.v1.Label',formatter:'.AH.format'}">
 									<uxap:subSections>
 										<uxap:ObjectPageSubSection>
@@ -80,7 +81,7 @@
 										</uxap:ObjectPageSubSection>
 									</uxap:subSections>
 								</uxap:ObjectPageSection>
-								<core:ExtensionPoint name="SectionExtP|DemandDetail|{:= ${contentTabs>Core.LongDescription/String} }|After" />
+								<core:ExtensionPoint name="SectionExtP|DemandDetail|{:= ${contentTabs>Org.OData.Core.V1.LongDescription/String} }|After" />
 							</template:elseif>
 						</template:if>
 					</template:repeat>

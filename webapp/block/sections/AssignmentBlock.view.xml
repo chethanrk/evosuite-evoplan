@@ -34,12 +34,25 @@
 	<smartTable:SmartTable id="idAssignmentTable" entitySet="AssignmentSet" useExportToExcel="true" useVariantManagement="true"
 		useTablePersonalisation="true" header="{xtit.qualifications}" showRowCount="true" persistencyKey="com.evorait.evoplan.qualificationTable"
 		enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="ResponsiveTable" tableBindingPath="DemandToAssignment">
-		<Table itemPress="onClickRow">
-			<ColumnListItem type="Active"/>
-		</Table>
 		<!--layout data used to make the table growing but the filter bar fixed-->
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1" baseSize="0%"/>
 		</smartTable:layoutData>
+		<smartTable:customToolbar>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<core:ExtensionPoint name="TableExtP|DemandDetail|AssignmentSet|CustomToolbar"/>
+			</Toolbar>
+		</smartTable:customToolbar>
+		<Table itemPress="onClickRow">
+			<columns>
+				<core:ExtensionPoint name="TableExtP|DemandDetail|AssignmentSet|CustomColumn"/>
+			</columns>
+			<ColumnListItem type="Active">
+				<cells>
+					<core:ExtensionPoint name="TableExtP|DemandDetail|AssignmentSet|CustomCell"/>
+				</cells>
+			</ColumnListItem>	
+		</Table>
 	</smartTable:SmartTable>
 </mvc:View>
