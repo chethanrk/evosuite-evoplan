@@ -7,5 +7,21 @@
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1" baseSize="0%"/>
 		</smartTable:layoutData>
+		<smartTable:customToolbar>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<core:ExtensionPoint name="TableExtP|DemandDetail|DemandQualificationSet|CustomToolbar"/>
+			</Toolbar>
+		</smartTable:customToolbar>
+		<Table>
+			<columns>
+				<core:ExtensionPoint name="TableExtP|DemandDetail|DemandQualificationSet|CustomColumn"/>
+			</columns>
+			<ColumnListItem>
+				<cells>
+					<core:ExtensionPoint name="TableExtP|DemandDetail|DemandQualificationSet|CustomCell"/>
+				</cells>
+			</ColumnListItem>
+		</Table>
 	</smartTable:SmartTable>
 </core:FragmentDefinition>

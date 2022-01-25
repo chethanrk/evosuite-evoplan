@@ -40,6 +40,7 @@
 			<uxap:headerContent>
 				<template:with path="meta>com.sap.vocabularies.UI.v1.HeaderFacets#DemandDetailHeader" helper=".AH.resolvePath" var="headerDetails">
 					<core:Fragment fragmentName="com.evorait.evoplan.view.templates.ObjectHeadTemplate" type="XML"/>
+					<core:ExtensionPoint name="PageExtP|DemandDetail|DemandSet|Head"/>
 				</template:with>
 			</uxap:headerContent>
 			<uxap:sections>
