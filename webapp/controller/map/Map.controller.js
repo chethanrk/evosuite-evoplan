@@ -791,7 +791,7 @@ sap.ui.define([
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 					oViewModel.setProperty("/busy", false);
 				}.bind(this));
-			};
+			}
 		},
 
 		/**
@@ -799,6 +799,11 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
 		 */
 		onClickLongText: function (oEvent) {
+			this.getModel("viewModel").setProperty("/isOpetationLongTextPressed", false);
+			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
+		},
+		onClickOprationLongText: function (oEvent) {
+			this.getModel("viewModel").setProperty("/isOpetationLongTextPressed", true);
 			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
 		},
 		/**

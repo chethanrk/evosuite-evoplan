@@ -25,6 +25,7 @@ sap.ui.define([
 			this._mParameters = mParameters;
 			this._component = oView.getController().getOwnerComponent();
 			this._oView = oView;
+			this._oContext = oContext;
 			if (!this._oLongTextPopover) {
 				oView.getModel("appView").setProperty("/busy", true);
 				Fragment.load({
@@ -74,6 +75,7 @@ sap.ui.define([
 		onAfterCloseLongText: function (oEvent) {
 			var oModel = oEvent.getSource().getBindingContext().getModel();
 			oModel.resetChanges();
+			this._refreshRowContext(oModel);
 		},
 
 		/**
@@ -99,6 +101,16 @@ sap.ui.define([
 				var msg = this._component.getModel("i18n").getResourceBundle().getText("errorMessage");
 				this.showMessageToast(msg);
 			}.bind(this));
-		}
+		},
+		/**
+		 * Updating Demand row after saving Long Text
+		 * @params oModel
+		 */
+		_refreshRowContext: function (oModel) {
+			var oRowContext = oModel.getProperty(this._oContext.getPath());
+			this._component._getData(this._oContext.getPath()).then(function (oResult) {
+				oRowContext = oResult;
+			}.bind(this));
+		},
 	});
 });
