@@ -43,7 +43,7 @@
 			<Button text="{i18n>xbut.buttonProceed}" press="onPressProceedBtn"
 				visible="{path:'viewModel>/manageResourcesSettings/Assignments',formatter:'.formatter.setVisibilityProceedToDeleteBtn'}"/>
 			<Button text="{i18n>xbut.buttonCancel}" press="onCloseAssignmentDialog"/>
-			<core:ExtensionPoint name="DialogExtP|ManageResources|ResourceAssignments|CustomCell"/>
+			<core:ExtensionPoint name="DialogExtP|ManageResources|ResourceAssignments|CustomAction"/>
 			<!--visible="{path:'user>/DEFAULT_QUALIF_UI_CHECK_TYPE',formatter:'.formatter.getQualificationBtnVisibilty'}"-->
 		</buttons>
 	</Dialog>
