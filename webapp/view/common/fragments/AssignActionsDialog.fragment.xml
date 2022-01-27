@@ -26,6 +26,11 @@
 						<columns>
 								<core:ExtensionPoint name="TableExtP|AssignActionDialog|AssignmentSet|CustomColumn"/>
 						</columns>
+						<ColumnListItem>
+							<cells>
+								<core:ExtensionPoint name="TableExtP|AssignActionDialog|AssignmentSet|CustomCell"/>
+							</cells>
+						</ColumnListItem>
 				</Table>
 			</smartTable:SmartTable>
 		</content>
