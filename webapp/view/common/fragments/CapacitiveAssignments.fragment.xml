@@ -51,7 +51,7 @@
                 <items>
                     <ColumnListItem type="Active">
                         <cells>
-                            <Text text="{Description}"/>
+                            <Text text="{DemandDesc}"/>
                             <Text text="{Effort}" />
                              <Text text="{Demand/ORDERID}"/>
                             <Text text="{Demand/OPERATIONID}" />
