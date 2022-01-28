@@ -75,7 +75,7 @@
 							<dnd:DropInfo targetAggregation="rows" dropPosition="On" drop="onDropOnResource"/>
 						</table:dragDropConfig>
 						<table:columns>
-							<table:Column width="20%" visible="{viewModel>/showUtilization}">
+							<table:Column width="23%" visible="{viewModel>/showUtilization}">
 								<table:customData>
 									<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
 								</table:customData>
