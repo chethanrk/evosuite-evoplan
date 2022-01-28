@@ -478,7 +478,7 @@ sap.ui.define([
 						this.BLOCKED_HOURS = data.BLOCKED_HOURS;
 						if (this._isUpdate) {
 							this._updateBlockdHour();
-							Fragment.byId(this._id, "idUpdateTimeAllocSlider").setValue(ata.BlockPercentage);
+							Fragment.byId(this._id, "idUpdateTimeAllocSlider").setValue(data.BlockPercentage);
 						}
 						this._oDialog.setBusy(false);
 
