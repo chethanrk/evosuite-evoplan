@@ -272,9 +272,6 @@ sap.ui.define([
 			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) { // When we drop on gantt chart from split window
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				oParams.DateFrom = oAxisTime.viewToTime(oSvgPoint.x);
-
-				oDemandObj.FIXED_APPOINTMENT = true;
-				oDemandObj.FIXED_APPOINTMENT_START_DATE = new Date("12/29/2021");
 				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
 					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
 					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
