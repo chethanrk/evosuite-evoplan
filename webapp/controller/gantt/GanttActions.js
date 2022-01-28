@@ -43,9 +43,17 @@ sap.ui.define([
 				oGanttModel = this.getModel("ganttModel"),
 				targetObj = oGanttModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
-				aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
+				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
+				aDragSession = this.getModel("viewModel").getData().dragSession,
+				aGanttDemandDragged = aDragSession && aDragSession.length ? aDragSession[0] : "fromGanttSplit",
 				aPromises = [],
 				oDemandObj;
+			if (aGanttDemandDragged === "fromGanttSplit") {
+				aGanttDemandDragged = {};
+				aGanttDemandDragged.sPath = slocStor.split(",")[0];
+				aGanttDemandDragged.oData = this.getModel().getProperty(aGanttDemandDragged.sPath);
+
+			}
 
 			this.clearMessageModel();
 
@@ -84,7 +92,7 @@ sap.ui.define([
 						oParams.TimeTo = targetObj.EndTime;
 					}
 				}
-				
+
 				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && this._mParameters.bFromNewGantt && aGanttDemandDragged.IsSelected) {
 					oParams.DateFrom = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME);
 					oParams.TimeFrom.ms = oParams.DateFrom.getTime();
@@ -98,7 +106,8 @@ sap.ui.define([
 					oParams.Currency = aGanttDemandDragged.oData.Currency;
 				}
 				//Effort and Effort Unit fields update for PS Demands Network Assignment
-				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && this._mParameters.bFromNewGantt && aGanttDemandDragged.oData.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && this._mParameters.bFromNewGantt && aGanttDemandDragged.oData
+					.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
 					oParams.Effort = aGanttDemandDragged.oData.Duration;
 					oParams.EffortUnit = aGanttDemandDragged.oData.DurationUnit;
 				}

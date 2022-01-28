@@ -221,7 +221,8 @@ sap.ui.define([
 				oViewModel = this.getModel("viewModel"),
 				oResourceData = this.getModel().getProperty(oDropContext.getPath()),
 				oSvgPoint,
-				oDemandObj = oDragContext ? oDragContext.getObject() : undefined,
+				sPath = sDragPath ? sDragPath[0] : undefined,
+				oDemandObj = oDragContext ? oDragContext.getObject() : this.getModel().getProperty(sPath),
 				bShowFixedAppointmentDialog,
 				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
 				oParams = {};
@@ -265,7 +266,23 @@ sap.ui.define([
 				}
 			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) {
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
-				this._assignDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), false, sDragPath);
+				//Condition added and Method is modified for fixed Appointments			// since Release/2201
+				oParams.DateFrom = oAxisTime.viewToTime(oSvgPoint.x);
+				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
+					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
+					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
+
+				if (bShowFixedAppointmentDialog) {
+					oViewModel.setProperty("/ganttSettings/busy", false);
+					oParams.oResourceData = oResourceData;
+					oParams.sDragPath = sDragPath;
+					oParams.oTarget = oDropContext.getPath();
+
+					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
+					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "OldGantt-Split");
+				} else {
+					this._assignDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), false, sDragPath);
+				}
 			} else if (oDragContext) {
 				oParams.DateFrom = new Date(new Date().setHours(0));
 				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
@@ -285,7 +302,22 @@ sap.ui.define([
 					// this._assignDemands(oResourceData, sDragPath, oDropContext.getPath(), null, true);
 				}
 			} else {
-				this._assignDemands(oResourceData, null, oDropContext.getPath(), null, true, sDragPath);
+				oParams.DateFrom = new Date(new Date().setHours(0));
+				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
+					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
+					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
+
+				if (bShowFixedAppointmentDialog) {
+					oViewModel.setProperty("/ganttSettings/busy", false);
+					oParams.oResourceData = oResourceData;
+					oParams.sDragPath = sDragPath;
+					oParams.oTarget = oDropContext.getPath();
+
+					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
+					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "OldGantt-Split");
+				} else {
+					this._assignDemands(oResourceData, null, oDropContext.getPath(), null, true, sDragPath);
+				}
 			}
 		},
 		/**
@@ -295,7 +327,13 @@ sap.ui.define([
 		_proceedToAssign: function (sChannel, oEvent, oData) {
 			var oViewModel = this.getModel("viewModel");
 			oViewModel.setProperty("/ganttSettings/busy", true);
-			this._assignDemands(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate);
+
+			if (oData.sDragPath) {
+				this._assignDemands(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate);
+			} else {
+				this._assignDemands(oData.oResourceData, null, oData.oTarget, oData.oTargetDate, oData.aGuids);
+			}
+
 		},
 		/**
 		 * Calls the respective function import to create assignments
