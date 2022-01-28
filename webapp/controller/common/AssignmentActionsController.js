@@ -23,11 +23,20 @@ sap.ui.define([
 			var oModel = this.getModel(),
 				targetObj = oModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
-				aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
+				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
+				aDragSession = this.getModel("viewModel").getData().dragSession,
+				aGanttDemandDragged = aDragSession && aDragSession.length ? aDragSession[0] : "fromGanttSplit",
 				aPromises = [],
 				oDemandObj,
 				sDemandGuid,
 				oParams;
+				
+				if (aGanttDemandDragged === "fromGanttSplit") {
+				aGanttDemandDragged = {};
+				aGanttDemandDragged.sPath = slocStor.split(",")[0];
+				aGanttDemandDragged.oData = this.getModel().getProperty(aGanttDemandDragged.sPath);
+
+			}
 
 			this.clearMessageModel();
 

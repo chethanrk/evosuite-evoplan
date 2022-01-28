@@ -85,6 +85,21 @@ sap.ui.define([
 				return;
 			}
 
+			if (this.sSource === "Gantt-Split" || this.sSource === "OldGantt-Split") {
+				var sChannel = this.sSource === "Gantt-Split" ? "GanttFixedAssignments" : "OldGanttFixedAssignments";
+
+				this._oEventBus.publish(sChannel, "assignDemand", {
+					oResourceData: this._aFixedAppointmentPayload.oResourceData,
+					sDragPath: null,
+					oTarget: this._aFixedAppointmentPayload.oTarget,
+					oTargetDate: aFixedAppointments[0].IsSelected ? aFixedAppointments[0].FIXED_APPOINTMENT_START_DATE : this._aFixedAppointmentPayload
+						.DateFrom,
+					aGuids: this._aFixedAppointmentPayload.sDragPath
+				});
+				this._FixedAppointmentsDialog.close();
+				return;
+			}
+
 			for (var i in aFixedAppointments) {
 				demandObj = aFixedAppointments[i];
 				oAssignment = this.sSource === "reAssign" ? this._aFixedAppointmentPayload : this._aFixedAppointmentPayload[i];
