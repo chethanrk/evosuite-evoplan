@@ -71,7 +71,7 @@
 								</table:dragDropConfig>
 								<table:columns>
 									<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.ResourceTreeColumns" type="XML"/>
-									<table:Column width="5rem" visible="{viewModel>/showUtilization}">
+									<table:Column width="6rem" visible="{viewModel>/showUtilization}">
 										<table:customData>
 											<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
 										</table:customData>
