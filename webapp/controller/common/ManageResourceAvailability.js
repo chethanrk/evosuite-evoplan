@@ -600,6 +600,7 @@ sap.ui.define([
 				StartTimestamp: Fragment.byId(this._id, "idUpdateFromDate").getDateValue(),
 				EndTimestamp: oEndDate.setHours(23, 59, 59)
 			};
+			Fragment.byId(this._id, "idUpdateTimeAllocSlider").setValue(0);
 			this._callFunctionGetResourceAvailability(oData);
 		},
 		_updateBlockdHour: function () {
