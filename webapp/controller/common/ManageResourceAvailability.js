@@ -606,9 +606,13 @@ sap.ui.define([
 			var iUpdateBlockPercentag = Fragment.byId(this._id, "idUpdateTimeAllocSlider").getValue(),
 				iUpdateActualAvailHour = this.AVAILABLE_HOURS,
 				iUpdateBlockHr;
-			if (iUpdateBlockPercentag) {
+			if (iUpdateBlockPercentag >= 1) {
 				iUpdateBlockHr = iUpdateActualAvailHour - (iUpdateBlockPercentag * iUpdateActualAvailHour) * 0.01;
 				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(iUpdateBlockHr);
+			}
+			else
+			{
+				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(this.BLOCKED_HOURS);
 			}
 		}
 	});
