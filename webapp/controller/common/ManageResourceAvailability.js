@@ -109,11 +109,30 @@ sap.ui.define([
 				oContext = oSelectedItem.getBindingContext(),
 				oSelectedAbsence = oContext.getObject(),
 				sPath = oContext.getPath(),
+				bCheck = true,
 				oDetail = Fragment.byId(this._id, "detail");
-				//oDetail.unbindElement();
+			this._selectedPath = sPath;
+			oDetail.unbindElement();
+			this._oDialog.setBusy(true);
 			oDetail.bindElement(sPath);
-			var oElementBinding = oDetail.getElementBinding();
+			this._updateAvailBlockHour(sPath);
+			/*	oDetail.bindElement({
+				path: sPath,
+				events: {
+					change: function () {
+						if(bCheck)
+						{
+						var oElementBinding = oDetail.getElementBinding();
 						oElementBinding.refresh();
+						bCheck=false;
+						}
+					}.bind(this),
+					 dataReceived: function(rData){
+        		Fragment.byId(this._id, "idUpdateBlockdHour").setValue(rData.mParameters.data.BLOCKED_HOURS);
+                Fragment.byId(this._id, "idUpdateAvailablHour").setValue(rData.mParameters.data.AVAILABLE_HOURS);
+                this._oDialog.setBusy(false);
+    			}.bind(this)
+				}});*/
 			if (oSelectedAbsence.UI_DISABLE_ABSENCE_EDIT) {
 				this.showMessageToast(this._resourceBundle.getText("ymsg.updateHRAbsence"));
 			} else {
@@ -347,6 +366,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_resetChanges: function (oEvent, sProperty) {
+			Fragment.byId(this._id, "detail").unbindElement();
 			var oEventBus = sap.ui.getCore().getEventBus();
 			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
 				//	this._oModel.resetChanges();
@@ -472,6 +492,7 @@ sap.ui.define([
 						Fragment.byId(this._id, "idBlockdHour").setValue(data.BLOCKED_HOURS);
 						Fragment.byId(this._id, "idTimeAllocSlider").setValue(data.BlockPercentage);
 						Fragment.byId(this._id, "idUpdateAvailablHour").setValue(data.AVAILABLE_HOURS);
+						//	this._oModel.setProperty(this._selectedPath+"/AVAILABLE_HOURS",data.AVAILABLE_HOURS);
 						//Fragment.byId(this._id, "idUpdateBlockdHour").setValue(data.BLOCKED_HOURS);
 						//	Fragment.byId(this._id, "idUpdateTimeAllocSlider").setValue(data.BlockPercentage);
 						this.AVAILABLE_HOURS = data.AVAILABLE_HOURS;
@@ -480,7 +501,6 @@ sap.ui.define([
 							this._updateBlockdHour();
 						}
 						this._oDialog.setBusy(false);
-
 					}.bind(this));
 			}.bind(this));
 		},
@@ -532,7 +552,7 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshAvailabilities", {
 					resource: this._resource
 				});
-			}else if(this._mParameters.bFromNewGantt && !this._dataDirty){
+			} else if (this._mParameters.bFromNewGantt && !this._dataDirty) {
 				eventBus.publish("BaseController", "resetSelections", {});
 			}
 			this._dataDirty = false;
@@ -566,7 +586,6 @@ sap.ui.define([
 				iUpdatedAvailableHour = iActualAvailHour * (100 - iUpdatedBlockPer) * 0.01;
 				Fragment.byId(this._id, "idBlockdHour").setValue(iActualAvailHour - iUpdatedAvailableHour);
 			} else {
-				//	Fragment.byId(this._id, "idAvailablHour").setValue(this.AVAILABLE_HOURS);
 				Fragment.byId(this._id, "idBlockdHour").setValue(this.BLOCKED_HOURS);
 			}
 		},
@@ -576,15 +595,14 @@ sap.ui.define([
 				iUpdatedAvailableHour;
 			if (iUpdatedBlockPer) {
 				iUpdatedAvailableHour = iActualAvailHour * (100 - iUpdatedBlockPer) * 0.01;
-				//Fragment.byId(this._id, "idUpdateAvailablHour").setValue(iUpdatedAvailableHour);
 				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(iActualAvailHour - iUpdatedAvailableHour);
 			} else {
-				Fragment.byId(this._id, "idAvailablHour").setValue(this.AVAILABLE_HOURS);
-				Fragment.byId(this._id, "idBlockdHour").setValue(0);
+				Fragment.byId(this._id, "idUpdateAvailablHour").setValue(this.AVAILABLE_HOURS);
+				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(0);
 			}
 		},
 		handleChange: function (oEvent) {
-		var oEndDate = Fragment.byId(this._id, "idToDate").getDateValue();
+			var oEndDate = Fragment.byId(this._id, "idToDate").getDateValue();
 			var oData = {
 				ResourceGuid: this._resource,
 				StartTimestamp: Fragment.byId(this._id, "idFromDate").getDateValue(),
@@ -608,16 +626,25 @@ sap.ui.define([
 				iUpdateBlockHr;
 			if (iUpdateBlockPercentag == 0) {
 				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(0);
-			}
-			else if(iUpdateBlockPercentag == 100)
-			{
-					Fragment.byId(this._id, "idUpdateBlockdHour").setValue(this.AVAILABLE_HOURS);
-			}
-			else
-			{
+			} else if (iUpdateBlockPercentag == 100) {
+				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(this.AVAILABLE_HOURS);
+			} else {
 				iUpdateBlockHr = iUpdateActualAvailHour - (iUpdateBlockPercentag * iUpdateActualAvailHour) * 0.01;
 				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(iUpdateBlockHr);
 			}
+		},
+		_updateAvailBlockHour: function (sPath) {
+			this._oModel.read(sPath, {
+				method: "GET",
+				success: function (rData) {
+					Fragment.byId(this._id, "idUpdateBlockdHour").setValue(rData.BLOCKED_HOURS);
+                Fragment.byId(this._id, "idUpdateAvailablHour").setValue(rData.AVAILABLE_HOURS);
+                this._oDialog.setBusy(false);
+				}.bind(this),
+				error: function () {
+						this._oDialog.setBusy(false);
+				}.bind(this)
+			});
 		}
 	});
 });
