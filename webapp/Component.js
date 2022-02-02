@@ -161,7 +161,8 @@ sap.ui.define([
 				densityClass: this.getContentDensityClass(),
 				isOpetationLongTextPressed: false,
 				oResponseMessages: [],
-				aFixedAppointmentsList: {}
+				aFixedAppointmentsList: {},
+				bDemandEditMode: false
 
 			});
 			this.setModel(oViewModel, "viewModel");
@@ -460,7 +461,7 @@ sap.ui.define([
 
 			this.longTextPopover = new LongTextPopover();
 			this.longTextPopover.init();
-			
+
 			this.NetworkAssignment = new NetworkAssignment();
 			this.NetworkAssignment.init();
 

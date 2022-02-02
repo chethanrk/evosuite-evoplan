@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/formatter",
-	"com/evorait/evoplan/model/Constants"
-], function (AssignmentsController, JSONModel, Fragment, formatter, Constants) {
+	"com/evorait/evoplan/model/Constants",
+	"sap/m/MessageBox"
+], function (AssignmentsController, JSONModel, Fragment, formatter, Constants, MessageBox) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.App", {
@@ -64,13 +65,47 @@ sap.ui.define([
 		 * @param oEvent Button press event
 		 */
 		onSelectMenuButton: function (oEvent) {
-			var oItem = oEvent.getParameter("item"),
-				sItemText = oItem.getText(),
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				oViewModel = this.getModel("viewModel"),
+				oModel = this.getModel(),
+				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
+
+			this.oItem = oEvent.getParameter("item");
+
+			if (bDemandEditMode && oModel.hasPendingChanges()) {
+				this.showDemandEditModeWarningMessage().then(function (bResponse) {
+					var sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
+						sSave = oResourceBundle.getText("xbut.buttonSave");
+
+					if (bResponse === sDiscard) {
+						oModel.resetChanges();
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this.handleMenuButtonPress(null, this.oItem);
+					} else
+					if (bResponse === sSave) {
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this.submitDemandTableChanges();
+					}
+				}.bind(this));
+
+			} else {
+				if (bDemandEditMode) {
+					oViewModel.setProperty("/bDemandEditMode", false);
+				}
+				this.handleMenuButtonPress(oEvent);
+			}
+
+		},
+
+		handleMenuButtonPress: function (oEvent, oItem) {
+			oItem = oItem ? oItem : oEvent.getParameter("item");
+			var sItemText = oItem.getText(),
 				oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
 				oRouter = this.getOwnerComponent().getRouter(),
 				oAppViewModel = this.getOwnerComponent().getModel("appView"),
 				sCurrentTitle = oAppViewModel.getProperty("/pageTitle"),
-				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode"),
+				oViewModel = this.getModel("viewModel"),
+				sLaunchMode = oViewModel.getProperty("/launchMode"),
 				sSemanticObject = null,
 				sRoute;
 
@@ -163,6 +198,7 @@ sap.ui.define([
 				oAppViewModel.setProperty("/busy", false);
 				break;
 			}
+
 		},
 
 		/**

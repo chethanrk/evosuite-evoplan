@@ -94,12 +94,51 @@ sap.ui.define([
 			}
 		},
 		/**
-		 * on click on navigate acion navigate to overview page
+		 * check for unsaved data in Demand table
+		 * on click on navigate acion navigate to Demand Detail Page
+		 * modified method since 2201, by Rakesh Sahu
 		 * @param oEvent
 		 */
 		onActionPress: function (oEvent) {
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				oViewModel = this.getModel("viewModel"),
+				oModel = this.getModel(),
+				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
+
+			this.oRow = oEvent.getParameter("row");
+
+			if (bDemandEditMode && oModel.hasPendingChanges()) {
+				this.showDemandEditModeWarningMessage().then(function (bResponse) {
+					var sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
+						sSave = oResourceBundle.getText("xbut.buttonSave");
+
+					if (bResponse === sDiscard) {
+						oModel.resetChanges();
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this._navToDetail(null, this.oRow);
+					} else
+					if (bResponse === sSave) {
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this.submitDemandTableChanges();
+					}
+				}.bind(this));
+
+			} else {
+				if (bDemandEditMode) {
+					oViewModel.setProperty("/bDemandEditMode", false);
+				}
+				this._navToDetail(oEvent);
+			}
+		},
+		/**
+		 * navigation to demand detail page
+		 * added method since 2201, by Rakesh Sahu
+		 * @param oEvent
+		 * @param oRow
+		 */
+		_navToDetail: function (oEvent, oRow) {
 			var oRouter = this.getRouter(),
-				oRow = oEvent.getParameter("row"),
+				oRow = oRow ? oRow : oEvent.getParameter("row"),
 				oContext = oRow.getBindingContext(),
 				sPath = oContext.getPath(),
 				oModel = oContext.getModel(),
