@@ -4,7 +4,7 @@
 			<smartTable:SmartTable id="idDemandAssignmentTable" height="100%" width="100%" direction="Column" tableType="ResponsiveTable"
 				enableAutoBinding="true" entitySet="AssignmentSet" header="{i18n>xtit.itemListTitle}" showRowCount="true" useTablePersonalisation="true"
 				useExportToExcel="false" beforeRebindTable="onBeforeRebind" initiallyVisibleFields="Effort,DateFrom,DateTo,PERSON_NUMBER,FIRSTNAME,LASTNAME"
-				requestAtLeastFields="Guid,DemandGuid,Demand" dataReceived="onDataBind">
+				requestAtLeastFields="Guid,DemandGuid,Demand" dataReceived="onDataBind" demandPopin="true">
 				<!-- layout data used to make the table growing but the filter bar fixed -->
 				<smartTable:layoutData>
 					<FlexItemData growFactor="1"/>
