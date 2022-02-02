@@ -3,9 +3,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/formatter",
-	"com/evorait/evoplan/model/Constants",
-	"sap/m/MessageBox"
-], function (AssignmentsController, JSONModel, Fragment, formatter, Constants, MessageBox) {
+	"com/evorait/evoplan/model/Constants"
+
+], function (AssignmentsController, JSONModel, Fragment, formatter, Constants) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.App", {

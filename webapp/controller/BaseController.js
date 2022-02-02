@@ -808,7 +808,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onEditToggledDemandTable: function (oEvent) {
-			var bEditableMode = oEvent ? oEvent.getParameter("editable") : false,
+			var bEditableMode = oEvent.getParameter("editable"),
 				oModel = this.getModel();
 
 			if (!bEditableMode && oModel.hasPendingChanges()) {
