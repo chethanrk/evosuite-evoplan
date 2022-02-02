@@ -6,7 +6,7 @@
 				items="{ path: 'viewModel>/oResponseMessages' }">
 				<columns>
 					<Column width="10rem">
-						<Label text="{i18n>Status}" design="Bold"/>
+						<Label text="{i18n>xlab.Status}" design="Bold"/>
 					</Column>
 					<Column >
 						<Label text="{i18n>xlab.Desc}" design="Bold"/>
