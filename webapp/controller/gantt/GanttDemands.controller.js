@@ -57,12 +57,51 @@ sap.ui.define([
 			this._oGanttDemandFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 		},
 		/**
-		 * 
-		 * On click on demand actions to navigate to demand detail page 
+		 * check for unsaved data in Demand table
+		 * on click on navigate acion navigate to Demand Detail Page
+		 * modified method since 2201, by Rakesh Sahu
+		 * @param oEvent
 		 */
 		_onActionPress: function (oEvent) {
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				oViewModel = this.getModel("viewModel"),
+				oModel = this.getModel(),
+				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
+
+			this.oRow = oEvent.getParameter("row");
+
+			if (bDemandEditMode && oModel.hasPendingChanges()) {
+				this.showDemandEditModeWarningMessage().then(function (bResponse) {
+					var sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
+						sSave = oResourceBundle.getText("xbut.buttonSave");
+
+					if (bResponse === sDiscard) {
+						oModel.resetChanges();
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this._navToDetail(null, this.oRow);
+					} else
+					if (bResponse === sSave) {
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this.submitDemandTableChanges();
+					}
+				}.bind(this));
+
+			} else {
+				if (bDemandEditMode) {
+					oViewModel.setProperty("/bDemandEditMode", false);
+				}
+				this._navToDetail(oEvent);
+			}
+		},
+		/**
+		 * navigation to demand detail page
+		 * added method since 2201, by Rakesh Sahu
+		 * @param oEvent
+		 * @param oRow
+		 */
+		_navToDetail: function (oEvent, oRow) {
+			oRow = oRow ? oRow : oEvent.getParameter("row");
 			var oRouter = this.getRouter(),
-				oRow = oEvent.getParameter("row"),
 				oContext = oRow.getBindingContext(),
 				sPath = oContext.getPath(),
 				oModel = oContext.getModel(),
@@ -310,7 +349,7 @@ sap.ui.define([
 				}.bind(this));
 			}
 		},
-		
+
 		/**
 		 * Opens long text view/edit popover
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
@@ -323,7 +362,7 @@ sap.ui.define([
 			this.getModel("viewModel").setProperty("/isOpetationLongTextPressed", true);
 			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
 		},
-		
+
 		/**
 		 * on press unassign button in Demand Table header
 		 */
@@ -336,7 +375,7 @@ sap.ui.define([
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 			}
 		},
-		
+
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
 		}

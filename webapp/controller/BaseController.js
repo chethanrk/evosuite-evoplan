@@ -814,25 +814,27 @@ sap.ui.define([
 			if (!bEditableMode && oModel.hasPendingChanges()) {
 				this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.saveDemandChanges")).then(function (resolve) {
 					if (sap.m.MessageBox.Action.YES === resolve) {
-						return new Promise(function (resolve, reject) {
-							oModel.submitChanges({
-								success: function (oData, oResponse) {
-									resolve(oData, oResponse);
-								},
-								error: function (oError) {
-									reject(oError);
-								}
-							});
-						}.bind(this)).then(this.handelResponsesToShowMessages.bind(this)).catch(function (oError) {
-							var msg = this.getResourceBundle().getText("errorMessage");
-							// this.showMessageToast(msg);
-							oModel.resetChanges();
-						}.bind(this));
+						this.submitDemandTableChanges();
 					} else {
 						oModel.resetChanges();
 					}
 				}.bind(this));
 			}
+		},
+		submitDemandTableChanges: function () {
+			var oModel = this.getModel();
+			return new Promise(function (resolve, reject) {
+				oModel.submitChanges({
+					success: function (oData, oResponse) {
+						resolve(oData, oResponse);
+					},
+					error: function (oError) {
+						reject(oError);
+					}
+				});
+			}.bind(this)).then(this.handelResponsesToShowMessages.bind(this)).catch(function (oError) {
+				oModel.resetChanges();
+			}.bind(this));
 		},
 
 		/**
@@ -885,6 +887,31 @@ sap.ui.define([
 		onCloseResponseMessagePopup: function () {
 			this.oResponseMessagePopup.close();
 			this.getModel("viewModel").setProperty("/oResponseMessages", []);
+		},
+
+		/**
+		 * to show warning msg while navigating to other page while demand table is in edit mode
+		 * since 2201, by Rakesh Sahu
+		 * @param oEvent
+		 */
+		showDemandEditModeWarningMessage: function () {
+			var oResourceBundle = this.getResourceBundle(),
+				sMessage = oResourceBundle.getText("ymsg.navigationWarning"),
+				sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
+				sSave = oResourceBundle.getText("xbut.buttonSave"),
+				sCancel = oResourceBundle.getText("xbut.buttonCancel");
+
+			return new Promise(function (resolve, reject) {
+				MessageBox.warning(sMessage, {
+					actions: [sDiscard, sCancel, sSave],
+					styleClass: this.getOwnerComponent().getContentDensityClass(),
+					onClose: function (sAction) {
+						// sap.m.MessageToast.show("Action selected: " + sAction);
+						resolve(sAction);
+						// MessageToast.show("Action selected: " + sAction);
+					}
+				});
+			}.bind(this));
 		}
 	});
 
