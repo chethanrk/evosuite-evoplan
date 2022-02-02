@@ -78,16 +78,19 @@ sap.ui.define([
 		_bindPopover: function (oDialog, oEvent) {
 			var oTable = oDialog.getContent()[0],
 				oBinding = oTable.getBinding("items"),
-				oRow = oEvent.getSource().getParent(),
-				oContext = oRow.getBindingContext(),
-				oNodeData = oContext.getModel().getProperty(oContext.getPath());
+				oSource = oEvent.getSource();
+			if (oSource) {
+				var oRow = oEvent.getSource().getParent(),
+					oContext = oRow.getBindingContext(),
+					oNodeData = oContext.getModel().getProperty(oContext.getPath());
 
-			// To show busy indicator when filter getting applied
-			oBinding.attachDataReceived(function (e) {
-				var aResults = e.getParameter("data").results;
-				oDialog.getModel("local").setProperty("/count", aResults.length);
-			});
-			this._filterAssignments(oBinding, oNodeData);
+				// To show busy indicator when filter getting applied
+				oBinding.attachDataReceived(function (e) {
+					var aResults = e.getParameter("data").results;
+					oDialog.getModel("local").setProperty("/count", aResults.length);
+				});
+				this._filterAssignments(oBinding, oNodeData);
+			}
 		},
 		/**
 		 *
@@ -126,7 +129,8 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oAssignmentData = oModel.getProperty(sPath);
-			this._component.assignInfoDialog.open(this._oView, null, oAssignmentData, this._mParameters);
+			//	Calling AssignInfo Dialog Template
+			this.openAssignInfoDialog(this._oView, sPath, oContext);
 		}
 
 	});
