@@ -260,9 +260,15 @@ sap.ui.define([
 				pageTitle = oResourceBundle.getText("xbut.pageGanttChart");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
 				this.getModel("viewModel").setProperty("/ganttSelectionPane", "25%");
+				if (oAppViewModel.getProperty("/currentRoute") === "newgantt" && oParams.name !== "gantt") {
+					pageTitle = oResourceBundle.getText("xbut.pageNewGantt");
+				}
 			} else if (oParams.config.pattern.startsWith("SplitPage")) {
 				pageTitle = oResourceBundle.getText("xbut.pageGanttChartSplit");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
+				if (oParams.name === "newGanttSplit") {
+					pageTitle = oResourceBundle.getText("xbut.pageNewGanttChartSplit");
+				}
 			} else if (oParams.config.pattern.startsWith("Map")) {
 				pageTitle = oResourceBundle.getText("xbut.pageMap");
 			} else if (oParams.config.pattern.startsWith("ManageResources")) {
