@@ -371,6 +371,7 @@ sap.ui.define([
 							oEventBus.publish("BaseController", "refreshCapacity", {
 								sTargetPath: sPath.split("/AssignmentSet/results/")[0]
 							});
+							oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 						}.bind(this),
 						function () {
 							oGanttModel.setProperty(sPath + "/busy", false);
