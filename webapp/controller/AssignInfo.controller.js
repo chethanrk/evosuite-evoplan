@@ -208,7 +208,9 @@ sap.ui.define([
 					sRemainingDuration = oObject.REMAINING_DURATION,
 					sEffortUnit = oObject.EffortUnit,
 					sTotalEffort = Number(sEffort) + Number(sRemainingDuration);
-				if (Number(sEffort) + Number(sRemainingDuration) < Number(sNewValue)) {
+				if (oSource.getValue().includes("-")) {
+					sap.m.MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.negativeDuration"));
+				} else if (Number(sEffort) + Number(sRemainingDuration) < Number(sNewValue)) {
 					sap.m.MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.invalidAssgnDuration") + sTotalEffort +
 						" " + sEffortUnit);
 				}

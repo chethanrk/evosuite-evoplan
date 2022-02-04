@@ -109,7 +109,9 @@ sap.ui.define([
 				sDurationHrs = oSource.getValue(),
 				oContext = oSource.getBindingContext(),
 				sRemainingHrs = oContext.getObject().REMAINING_DURATION;
-			if (Number(sDurationHrs) > Number(sRemainingHrs)) {
+			if (sDurationHrs.includes("-")) {
+				sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.negativeDuration"));
+			} else if (Number(sDurationHrs) > Number(sRemainingHrs)) {
 				sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidChangeDuration"));
 			}
 		},
@@ -131,7 +133,11 @@ sap.ui.define([
 				// 	bValid = false;
 				// 	break;
 				// } else 
-				if (Number(oItem.DURATION) > Number(oItem.REMAINING_DURATION)) {
+				if (oItem.DURATION.includes("-")) {
+					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.negativeLineItemDuration") + iCount);
+					bValid = false;
+					break;
+				} else if (Number(oItem.DURATION) > Number(oItem.REMAINING_DURATION)) {
 					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidDuration") + iCount);
 					bValid = false;
 					break;
