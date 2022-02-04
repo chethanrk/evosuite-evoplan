@@ -200,6 +200,7 @@ sap.ui.define([
 		 */
 		onPSDemandEffortValidation: function (oEvent) {
 			var oSource = oEvent.getSource(),
+				sValue = oSource.getValue(),
 				oContext = oSource.getBindingContext(),
 				oObject = oContext.getObject();
 			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && oObject.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
@@ -208,8 +209,8 @@ sap.ui.define([
 					sRemainingDuration = oObject.REMAINING_DURATION,
 					sEffortUnit = oObject.EffortUnit,
 					sTotalEffort = Number(sEffort) + Number(sRemainingDuration);
-				if (oSource.getValue().includes("-")) {
-					sap.m.MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.negativeDuration"));
+				if (sValue.includes("-") || Number(sValue) <= 0) {
+					sap.m.MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.validEffort"));
 				} else if (Number(sEffort) + Number(sRemainingDuration) < Number(sNewValue)) {
 					sap.m.MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.invalidAssgnDuration") + sTotalEffort +
 						" " + sEffortUnit);

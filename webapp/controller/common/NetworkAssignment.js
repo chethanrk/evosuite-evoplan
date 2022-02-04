@@ -108,11 +108,15 @@ sap.ui.define([
 			var oSource = oEvent.getSource(),
 				sDurationHrs = oSource.getValue(),
 				oContext = oSource.getBindingContext(),
-				sRemainingHrs = oContext.getObject().REMAINING_DURATION;
-			if (sDurationHrs.includes("-")) {
-				sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.negativeDuration"));
+				sRemainingHrs = oContext.getObject().REMAINING_DURATION,
+				oResourceBundle = this._oView.getController().getResourceBundle();
+			if (sDurationHrs.includes("-") || Number(sDurationHrs) <= 0) {
+				var msg = oResourceBundle.getText("ymsg.negativeLineItemDuration") + oContext.getObject().ORDERID +
+					" " + oResourceBundle.getText("ymsg.negativeDuration") + oContext.getObject().OPERATIONID;
+				sap.m.MessageToast.show(msg);
+				//sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.negativeDuration"));
 			} else if (Number(sDurationHrs) > Number(sRemainingHrs)) {
-				sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidChangeDuration"));
+				sap.m.MessageToast.show(oResourceBundle.getText("ymsg.invalidChangeDuration"));
 			}
 		},
 
@@ -123,22 +127,21 @@ sap.ui.define([
 			var oTable = sap.ui.getCore().byId("idNetworkDemandTable").getTable(),
 				aItems = oTable.getItems(),
 				bValid = true,
+				oResourceBundle = this._oView.getController().getResourceBundle(),
 				iCount;
 			for (var i in aItems) {
 				var oContext = aItems[i].getBindingContext(),
 					oItem = oContext.getObject();
 				iCount = Number(i) + 1;
-				// if (oItem.DURATION.trim() === "") {
-				// 	sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.validateDuration") + iCount);
-				// 	bValid = false;
-				// 	break;
-				// } else 
-				if (oItem.DURATION.includes("-")) {
-					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.negativeLineItemDuration") + iCount);
+
+				if (oItem.DURATION.includes("-") || Number(oItem.DURATION) <= 0) {
+					var msg = oResourceBundle.getText("ymsg.negativeLineItemDuration") + oItem.ORDERID + " " + oResourceBundle.getText(
+						"ymsg.negativeDuration") + oItem.OPERATIONID;
+					sap.m.MessageToast.show(msg);
 					bValid = false;
 					break;
 				} else if (Number(oItem.DURATION) > Number(oItem.REMAINING_DURATION)) {
-					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidDuration") + iCount);
+					sap.m.MessageToast.show(oResourceBundle.getText("ymsg.invalidDuration") + iCount);
 					bValid = false;
 					break;
 				}

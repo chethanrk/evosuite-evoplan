@@ -531,8 +531,8 @@ sap.ui.define([
 				sTotalEffort = Number(sOldEffort) + Number(sRemainingDuration),
 				bValidEffort = true;
 			if (this._oView.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && sObjectSourceType === "DEM_PSNW") {
-				if (sEffort.toString().includes("-")) {
-					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.negativeDuration"));
+				if (sEffort.toString().includes("-") || Number(sEffort) <= 0) {
+					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.validEffort"));
 					bValidEffort = false;
 				} else if (Number(sOldEffort) + Number(sRemainingDuration) < Number(sEffort)) {
 					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration") + sTotalEffort + " " +
