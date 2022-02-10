@@ -379,6 +379,9 @@ sap.ui.define([
 				if (parseInt(i, 10) === aContexts.length - 1) {
 					bIsLast = true;
 				}
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && oResource.NodeType === "RESOURCE") {
+					oParams = this.onReAssignParams(oAssignment, oParams);
+				}
 				// call function import
 				this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, bIsLast);
 			}
@@ -633,6 +636,21 @@ sap.ui.define([
 			oViewModel.refresh(true);
 			return aAllowVendorAssignment.length;
 		},
+		
+		onReAssignParams : function(oAssignment, oParams){
+				var aReAssignDragSession = this.getModel("viewModel").getData().dragSession;
+			for (var a in aReAssignDragSession) {
+				if (oAssignment.DemandGuid === aReAssignDragSession[a].oData.Guid) {
+					if (aReAssignDragSession[a].IsSelected) {
+						oParams.DateFrom = formatter.mergeDateTime(aReAssignDragSession[a].oData.FIXED_ASSGN_START_DATE, aReAssignDragSession[a].oData.FIXED_ASSGN_START_TIME);
+						oParams.TimeFrom.ms = oParams.DateFrom.getTime();
+						oParams.DateTo = formatter.mergeDateTime(aReAssignDragSession[a].oData.FIXED_ASSGN_END_DATE, aReAssignDragSession[a].oData.FIXED_ASSGN_END_TIME);
+						oParams.TimeTo.ms = oParams.DateTo.getTime();
+					}
+				}
+			}
+			return oParams;
+		}
 
 	});
 });

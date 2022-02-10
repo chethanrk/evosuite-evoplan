@@ -151,6 +151,10 @@ sap.ui.define([
 			var aContexts = this._oAssignMentTable.getSelectedContexts(),
 				sMsg;
 
+			if (this._oView.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION")) {
+				this.getOperationDemands(aContexts);
+			}
+
 			//check at least one demand selected
 			if (aContexts.length === 0) {
 				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.selectMinItem");
@@ -219,7 +223,7 @@ sap.ui.define([
 				sDateControl1,
 				sDateControl2;
 
-			if(this._mParameters.bFromNewGantt){
+			if (this._mParameters.bFromNewGantt) {
 				oModel = this._oView.getModel("ganttModel");
 			}
 			for (var i = 0; i < aSelectedResources.length; i++) {
@@ -337,6 +341,37 @@ sap.ui.define([
 				}
 			}
 		},
+		
+		getOperationDemands: function (aContexts) {
+			var aPathsData = [];
+			for (var c in aContexts) {
+				var sPath = "/" + aContexts[c].getObject().Demand.__ref;
+				this.getAssignDemands(sPath).then(function (data) {
+					var oDemandObj = {
+						index: c,
+						oData: data,
+						sPath: sPath
+					};
+					aPathsData.push(oDemandObj);
+				}.bind(this));
+			}
+			this._oView.getModel("viewModel").setProperty("/dragSession", aPathsData);
+		},
+
+		getAssignDemands: function (sUri) {
+			return new Promise(function (resolve, reject) {
+				this._oView.getModel().read(sUri, {
+					success: function (oData, oResponse) {
+						resolve(oData);
+					},
+					error: function (oError) {
+						//Handle Error
+						reject(oError);
+					}
+				});
+			}.bind(this));
+		},
+		
 		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog, this);
 			this._eventBus.subscribe("AssignTreeDialog", "updateSelection", this._deselectAssignments, this);
