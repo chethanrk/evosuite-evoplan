@@ -396,7 +396,7 @@ sap.ui.define([
 
 			bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
 				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE)
+				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
 
 			if (bShowFixedAppointmentDialog) {
 				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
@@ -423,6 +423,7 @@ sap.ui.define([
 			// Proceed to check the Qualification for Bulk Re-Assignment
 			this.checkQualificationBulkReassignment(sAssignPath, aContexts, mParameters);
 		},
+
 		bulkReAssignmentFinalCall: function (sAssignPath, aContexts, mParameters) {
 			var oModel = this.getModel(),
 				oResource = oModel.getProperty(sAssignPath),
@@ -449,6 +450,19 @@ sap.ui.define([
 				oParams = this.setDateTimeParams(oParams, oResource.StartDate, oResource.StartTime, oResource.EndDate, oResource.EndTime);
 				oDemandObj = this.getModel().getProperty("/DemandSet('" + oAssignment.DemandGuid + "')");
 
+				//Conditon for PS Demand Network Assignments Update
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && oDemandObj.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+					oParams = this.onReAssignParams(oAssignment, oParams, true);
+				}
+				//Conditon for Vendor Assignments Update
+				if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oResource.ISEXTERNAL && oDemandObj.ALLOW_ASSIGNMENT_DIALOG) {
+					oParams = this.onReAssignParams(oAssignment, oParams, null, true);
+				}
+				//Conditon for OperationTimes Assignments Update
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && oResource.NodeType === "RESOURCE") {
+					oParams = this.onReAssignParams(oAssignment, oParams);
+				}
+
 				//Condition added and Method is modified for fixed Appointments			// since Release/2201
 				if (oDemandObj && oDemandObj.FIXED_APPOINTMENT) {
 					if ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) || oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
@@ -474,7 +488,7 @@ sap.ui.define([
 					if (parseInt(i, 10) === aAllParameters.length - 1) {
 						bIsLast = true;
 					}
-					this.callFunctionImport(aAllParameters[i], "UpdateAssignment", "POST", mParameters, bIsLast)
+					this.callFunctionImport(aAllParameters[i], "UpdateAssignment", "POST", mParameters, bIsLast);
 				}
 			}
 
@@ -688,7 +702,7 @@ sap.ui.define([
 			var sQualifier;
 			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NETWORK_OBJECTSOURCETYPE) {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.NETWORK_QUALIFIER;
-			}else if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
+			} else if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.NOTIFICATION_QUALIFIER;
 			} else {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.ORDER_QUALIFIER;
@@ -755,5 +769,28 @@ sap.ui.define([
 			return aAllowNetworkAssignment;
 		},
 
+		onReAssignParams: function (oAssignment, oParams, bNetworkCheck, bVendorCheck) {
+			var aReAssignDragSession = this.getModel("viewModel").getData().dragSession;
+			for (var a in aReAssignDragSession) {
+				if (oAssignment.DemandGuid === aReAssignDragSession[a].oData.Guid) {
+					if (aReAssignDragSession[a].IsSelected) {
+						oParams.DateFrom = formatter.mergeDateTime(aReAssignDragSession[a].oData.FIXED_ASSGN_START_DATE, aReAssignDragSession[a].oData.FIXED_ASSGN_START_TIME);
+						oParams.TimeFrom.ms = oParams.DateFrom.getTime();
+						oParams.DateTo = formatter.mergeDateTime(aReAssignDragSession[a].oData.FIXED_ASSGN_END_DATE, aReAssignDragSession[a].oData.FIXED_ASSGN_END_TIME);
+						oParams.TimeTo.ms = oParams.DateTo.getTime();
+					}
+					if (bNetworkCheck) {
+						oParams.EffortUnit = aReAssignDragSession[a].oData.DurationUnit;
+						oParams.Effort = aReAssignDragSession[a].oData.Duration;
+					}
+					if (bVendorCheck) {
+						oParams.CostElement = aReAssignDragSession[a].oData.CostElement;
+						oParams.Estimate = aReAssignDragSession[a].oData.Estimate;
+						oParams.Currency = aReAssignDragSession[a].oData.Currency;
+					}
+				}
+			}
+			return oParams;
+		}
 	});
 });

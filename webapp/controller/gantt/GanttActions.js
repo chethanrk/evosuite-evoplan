@@ -46,6 +46,7 @@ sap.ui.define([
 				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
 				aDragSession = this.getModel("viewModel").getData().dragSession,
 				aGanttDemandDragged = aDragSession && aDragSession.length ? aDragSession[0] : "fromGanttSplit",
+				aFixedAppointments = this.getModel("viewModel").getProperty("/aFixedAppointmentsList")[0],
 				aPromises = [],
 				oDemandObj;
 			if (aGanttDemandDragged === "fromGanttSplit") {
@@ -110,6 +111,15 @@ sap.ui.define([
 					.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
 					oParams.Effort = aGanttDemandDragged.oData.Duration;
 					oParams.EffortUnit = aGanttDemandDragged.oData.DurationUnit;
+				}
+				//Fixed Appointments for Gantt
+				if (aFixedAppointments && aFixedAppointments.IsSelected) {
+					oParams.DateFrom = oDemandObj.FIXED_APPOINTMENT_START_DATE;
+					oParams.TimeFrom = {};
+					oParams.TimeFrom.ms = oParams.DateFrom.getTime();
+					oParams.DateTo = oDemandObj.FIXED_APPOINTMENT_END_DATE;
+					oParams.TimeTo = {};
+					oParams.TimeTo.ms = oParams.DateTo.getTime();
 				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}
