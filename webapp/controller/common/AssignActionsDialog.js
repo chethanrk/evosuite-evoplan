@@ -150,7 +150,8 @@ sap.ui.define([
 		onReassign: function (oEvent) {
 			var aContexts = this._oAssignMentTable.getSelectedContexts(),
 				sMsg;
-
+				this.getOperationDemands(aContexts);
+	
 			//check at least one demand selected
 			if (aContexts.length === 0) {
 				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.selectMinItem");
@@ -348,13 +349,42 @@ sap.ui.define([
 				}
 			}
 		},
-		
+
 		onDataBind: function () {
 			if (this._oView.getModel("user").getProperty("/ENABLE_DEMAND_UNASSIGN") && this._aSelectedResources.aUnAssignDemands) {
 				this._oAssignMentTable.selectAll();
 			}
 		},
-		
+
+		getOperationDemands: function (aContexts) {
+			var aPathsData = [];
+			for (var c in aContexts) {
+				var sPath = "/" + aContexts[c].getObject().Demand.__ref;
+				this.getAssignDemands(sPath).then(function (data) {
+					var oDemandObj = {
+						index: c,
+						oData: data,
+						sPath: sPath
+					};
+					aPathsData.push(oDemandObj);
+				}.bind(this));
+			}
+			this._oView.getModel("viewModel").setProperty("/dragSession", aPathsData);
+		},
+
+		getAssignDemands: function (sUri) {
+			return new Promise(function (resolve, reject) {
+				this._oView.getModel().read(sUri, {
+					success: function (oData, oResponse) {
+						resolve(oData);
+					},
+					error: function (oError) {
+						reject(oError);
+					}
+				});
+			}.bind(this));
+
+		},
 		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog, this);
 			this._eventBus.subscribe("AssignTreeDialog", "updateSelection", this._deselectAssignments, this);
