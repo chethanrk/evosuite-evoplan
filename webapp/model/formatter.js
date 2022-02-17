@@ -827,10 +827,9 @@ sap.ui.define([
 					oOperationTime = new Date(oTimes.ms),
 					oOperationTimeMS = oOperationTime.getTime(),
 					oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
-						pattern: "HH:mm:ss"
+						pattern: "hh:mm:ss a"
 					}),
-					sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
-					sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS + sTZOffsetMs));
+					sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS)); //removed offset bcz of time mismatch : RAKESH SAHU.
 
 				return oDateFormat.format(oDate) + ", " + sOperationTimes;
 			}
@@ -851,7 +850,7 @@ sap.ui.define([
 			// return "sap-icon://message-warning";
 			// } 
 		},
-		
+
 		/**
 		 * Inlin Edit Demands: Response Messages: to set the Icon Color for the message
 		 */
@@ -867,7 +866,7 @@ sap.ui.define([
 			// 	return "#FFBF00";
 			// }
 		},
-		
+
 		/**
 		 * Inlin Edit Demands: Response Messages: to set the Text for the message
 		 */
