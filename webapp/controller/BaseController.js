@@ -532,13 +532,17 @@ sap.ui.define([
 		 *
 		 */
 		_showEffortConfirmMessageBox: function (message) {
-			var oController = this;
+			var oController = this,
+				oComponent = oController._component;
+			if (!oComponent) {
+				oComponent = this.getOwnerComponent();
+			}
 			return new Promise(function (resolve, reject) {
 				MessageBox.confirm(
 					message, {
-						styleClass: oController.getOwnerComponent().getContentDensityClass(),
+						styleClass: oComponent.getContentDensityClass(),
 						icon: sap.m.MessageBox.Icon.CONFIRM,
-						title: oController.getModel("i18n").getResourceBundle().getText("xtit.confirm"),
+						title: oComponent.getModel("i18n").getResourceBundle().getText("xtit.confirm"),
 						actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
 						onClose: function (oEvent) {
 							resolve(oEvent);
@@ -645,7 +649,7 @@ sap.ui.define([
 						}
 					}
 					if (oKeyChar === "?") {
-						sParameter = "?" +  sParameter.slice(1);
+						sParameter = "?" + sParameter.slice(1);
 					} else {
 						sParameter = "&" + sParameter.slice(0, -1);
 					}

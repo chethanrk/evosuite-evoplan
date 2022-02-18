@@ -611,6 +611,10 @@ sap.ui.define([
 
 		_afterDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
 			if (sEvent === "dataReceived") {
+				//Fetching Context Data for PlanningCalendar 
+				if (this._mParameters && this._mParameters.bFromPlannCal) {
+					data = mParams.parentContext.getObject();
+				}
 				this.oComponent.assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
 			}
 		},
@@ -636,9 +640,9 @@ sap.ui.define([
 			oViewModel.refresh(true);
 			return aAllowVendorAssignment.length;
 		},
-		
-		onReAssignParams : function(oAssignment, oParams){
-				var aReAssignDragSession = this.getModel("viewModel").getData().dragSession;
+
+		onReAssignParams: function (oAssignment, oParams) {
+			var aReAssignDragSession = this.getModel("viewModel").getData().dragSession;
 			for (var a in aReAssignDragSession) {
 				if (oAssignment.DemandGuid === aReAssignDragSession[a].oData.Guid) {
 					if (aReAssignDragSession[a].IsSelected) {
