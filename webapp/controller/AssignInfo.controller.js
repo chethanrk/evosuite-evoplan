@@ -163,6 +163,7 @@ sap.ui.define([
 		onPressReAssign: function (oEvent) {
 			var sAssignmentGuid = oEvent.getSource().getBindingContext().getObject().Guid,
 				oEventBus = sap.ui.getCore().getEventBus();
+			this.reAssign = true; // EVOSUITE2-2224:Sagar
 			oEventBus.publish("AssignInfoDialog", "selectAssign", {
 				oView: this.getView().getParent().getParent(),
 				isReassign: this.reAssign,

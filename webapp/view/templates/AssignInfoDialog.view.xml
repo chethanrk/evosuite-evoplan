@@ -30,12 +30,13 @@
 					<Label text="{i18n>xfld.newAssign}" visible="{assignment>/AllowReassign}"/>
 					<core:ExtensionPoint name="SimpleFormExtP|AssignInfo|AssignmentSet|UpdateAssignmentForm|CustomFields" />
 					<CheckBox
-						visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleReassign' }"
+						visible="false"
 						enabled="{assignment>/AllowReassign}" select="onChangeAssignType" selected="{assignment>/isNewAssignment}"/>
-					<Button id="reassignDialogButton" text="{i18n>xbut.selectResource}" press="onPressReAssign" enabled="{assignment>/isNewAssignment}"
-						visible="{assignment>/AllowReassign}"/>
-					<Label text="{i18n>xfld.newAssignment}" visible="{assignment>/isNewAssignment}"/>
-					<Text text="{assignment>/NewAssignDesc}" visible="{assignment>/isNewAssignment}"/>
+					<!--visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleReassign' }"-->
+					<Button id="reassignDialogButton" text="{i18n>xbut.selectResource}" press="onPressReAssign" enabled="{assignment>/AllowReassign}"
+						visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleReassign' }"/>
+					<Label text="{i18n>xfld.newAssignment}" visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleReassign' }"/>
+					<Text text="{assignment>/NewAssignDesc}" visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleReassign' }"/>
 				</form:content>
 			</form:SimpleForm>
 		</HBox>
