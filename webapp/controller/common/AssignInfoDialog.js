@@ -92,6 +92,10 @@ sap.ui.define([
 			this._mParameters = mParameters || {
 				bFromHome: true
 			};
+			if(this._mParameters.bFromPlannCal) {
+				oAssignment.DateFrom = data.DateFrom;
+				oAssignment.DateTo = data.DateTo; 
+			}
 			this.oAssignmentModel.setData(oAssignment);
 
 			//Set the ResourceGroupGuid 

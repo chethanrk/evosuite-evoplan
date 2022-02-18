@@ -726,6 +726,10 @@ sap.ui.define([
 
 		_afterDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
 			if (sEvent === "dataReceived") {
+				//Fetching Context Data for PlanningCalendar 
+				if (this._mParameters && this._mParameters.bFromPlannCal) {
+					data = mParams.parentContext.getObject();
+				}
 				this.oComponent.assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
 			}
 		},
