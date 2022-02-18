@@ -2,26 +2,36 @@
 	xmlns:dnd="sap.ui.core.dnd">
 	<smartTable:SmartTable id="materialInfoTable" entitySet="DemandComponentSet" useExportToExcel="true" useVariantManagement="true"
 		useTablePersonalisation="true" header="{i18n>xtit.materialInfoDialogTitle}" showRowCount="true" beforeRebindTable="onBeforeRebindTable"
-		enableAutoBinding="true" class="sapUiResponsiveContentPadding" initiallyVisibleFields="Orderid,Matnr,Operationid,Posnr,Matnr,Maktx,Status" tableBindingPath="DemandToComponents" tableType="ResponsiveTable">
+		enableAutoBinding="true" class="sapUiResponsiveContentPadding" initiallyVisibleFields="Orderid,Matnr,Operationid,Posnr,Matnr,Maktx,Status"
+		tableBindingPath="DemandToComponents" tableType="ResponsiveTable">
 		<!-- layout data used to make the table growing but the filter bar fixed -->
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1" baseSize="0%"/>
 		</smartTable:layoutData>
+		<smartTable:customToolbar>
+			<OverflowToolbar>
+				<core:ExtensionPoint name="TableExtP|MaterialTable|DemandComponentSet|oolbar|Left"/>
+				<ToolbarSpacer/>
+				<core:ExtensionPoint name="TableExtP|MaterialTable|DemandComponentSet|Toolbar|Right"/>
+			</OverflowToolbar>
+		</smartTable:customToolbar>
 		<Table>
 			<columns>
 				<Column>
-					 <customData>
-	          <core:CustomData key="p13nData" value='\{"columnKey": "Status", "leadingProperty": "Status", "columnIndex": 0}'/>
-	</customData>
+					<customData>
+						<core:CustomData key="p13nData" value='\{"columnKey": "Status", "leadingProperty": "Status", "columnIndex": 0}'/>
+					</customData>
 					<Label text="{/#Demand/Status/@sap:label}"/>
 				</Column>
+				<core:ExtensionPoint name="TableExtP|MaterialTable|DemandComponentSet|CustomColumn"/>
 			</columns>
 			<items>
 				<ColumnListItem>
 					<cells>
-						<ObjectStatus class="sapUiTinyMargin" 
-										text="{ path:'Status', formatter:'.formatter.formatMaterialStatus' }"
-										icon="{ path:'Status', formatter:'.formatter.formatMaterialStatusIcon' }" state="{ path:'Status', formatter:'.formatter.formatMaterialState' }"/>
+						<ObjectStatus class="sapUiTinyMargin" text="{ path:'Status', formatter:'.formatter.formatMaterialStatus' }"
+							icon="{ path:'Status', formatter:'.formatter.formatMaterialStatusIcon' }"
+							state="{ path:'Status', formatter:'.formatter.formatMaterialState' }"/>
+						<core:ExtensionPoint name="TableExtP|MaterialTable|DemandComponentSet|CustomCell"/>
 					</cells>
 				</ColumnListItem>
 			</items>

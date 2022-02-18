@@ -1,4 +1,4 @@
-<mvc:View controllerName="com.evorait.evoplan.controller.App" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+<mvc:View controllerName="com.evorait.evoplan.controller.App" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core"
 	displayBlock="true" busy="{appView>/busy}" busyIndicatorDelay="{appView>/delay}">
 	<App id="idAppControl" busy="{appView>/busy}" busyIndicatorDelay="{appView>/delay}">
 		<Page>
@@ -6,6 +6,7 @@
 				<Bar>
 					<contentLeft>
 						<Image src="{path: '', formatter: '.formatter.getLogoImageLink' }" densityAware="false" height="85%" alt="EvoPlan" id="imageLogo"/>
+						<core:ExtensionPoint name="PageExtP|App|Header|Left"/>
 					</contentLeft>
 					<contentMiddle>
 						<MenuButton id="idHeaderMenu" text="{appView>/pageTitle}">
@@ -25,12 +26,14 @@
 								</Menu>
 							</menu>
 						</MenuButton>
+						<core:ExtensionPoint name="PageExtP|App|Header|Middle"/>
 					</contentMiddle>
 					<contentRight>
 						<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
 								type="Emphasized" press="onMessagePopoverPress"/>
 						<Button id="idButtonRefresh" icon="sap-icon://refresh" tooltip="{i18n>xtit.infoRefresh}" press="onRefreshBuffer"/>
 						<Button id="idButtonAboutDialog" icon="sap-icon://sys-help" tooltip="{i18n>xtit.infoDialogTitle}" press="onIconPress"/>
+						<core:ExtensionPoint name="PageExtP|App|Header|Right"/>
 					</contentRight>
 				</Bar>
 			</customHeader>

@@ -43,9 +43,18 @@ sap.ui.define([
 				oGanttModel = this.getModel("ganttModel"),
 				targetObj = oGanttModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
-				// aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
+				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
+				aDragSession = this.getModel("viewModel").getData().dragSession,
+				aGanttDemandDragged = aDragSession && aDragSession.length ? aDragSession[0] : "fromGanttSplit",
+				aFixedAppointments = this.getModel("viewModel").getProperty("/aFixedAppointmentsList")[0],
 				aPromises = [],
 				oDemandObj;
+			if (aGanttDemandDragged === "fromGanttSplit") {
+				aGanttDemandDragged = {};
+				aGanttDemandDragged.sPath = slocStor.split(",")[0];
+				aGanttDemandDragged.oData = this.getModel().getProperty(aGanttDemandDragged.sPath);
+
+			}
 
 			this.clearMessageModel();
 
@@ -84,13 +93,34 @@ sap.ui.define([
 						oParams.TimeTo = targetObj.EndTime;
 					}
 				}
-				// not required for this release
-				// if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && this._mParameters.bFromGantt && aGanttDemandDragged.IsSelected) {
-				// 	oParams.DateFrom = aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE;
-				// 	oParams.TimeFrom.ms = aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME.ms;
-				// 	oParams.DateTo = aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE;
-				// 	oParams.TimeTo.ms = aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME.ms;
-				// }
+
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && this._mParameters.bFromNewGantt && aGanttDemandDragged.IsSelected) {
+					oParams.DateFrom = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME);
+					oParams.TimeFrom.ms = oParams.DateFrom.getTime();
+					oParams.DateTo = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME);
+					oParams.TimeTo.ms = oParams.DateTo.getTime();
+				}
+				//Cost Element, Estimate and Currency fields update for Vendor Assignment
+				if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && targetObj.ISEXTERNAL && aGanttDemandDragged.oData.ALLOW_ASSIGNMENT_DIALOG) {
+					oParams.CostElement = aGanttDemandDragged.oData.CostElement;
+					oParams.Estimate = aGanttDemandDragged.oData.Estimate;
+					oParams.Currency = aGanttDemandDragged.oData.Currency;
+				}
+				//Effort and Effort Unit fields update for PS Demands Network Assignment
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && this._mParameters.bFromNewGantt && aGanttDemandDragged.oData
+					.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+					oParams.Effort = aGanttDemandDragged.oData.Duration;
+					oParams.EffortUnit = aGanttDemandDragged.oData.DurationUnit;
+				}
+				//Fixed Appointments for Gantt
+				if (aFixedAppointments && aFixedAppointments.IsSelected) {
+					oParams.DateFrom = oDemandObj.FIXED_APPOINTMENT_START_DATE;
+					oParams.TimeFrom = {};
+					oParams.TimeFrom.ms = oDemandObj.FIXED_APPOINTMENT_START_TIME.ms;
+					oParams.DateTo = oDemandObj.FIXED_APPOINTMENT_END_DATE;
+					oParams.TimeTo = {};
+					oParams.TimeTo.ms = oDemandObj.FIXED_APPOINTMENT_END_TIME.ms;
+				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}
 			return aPromises;
@@ -217,20 +247,18 @@ sap.ui.define([
 		 * @param oTotalHorizonDates {object} Dates
 		 * @Author Chethan RK
 		 */
-		_createGanttHorizon: function (iZoomLevel, oTotalHorizonDates) {
+		_createGanttHorizon: function (oAxisTimeStrategy, iZoomLevel, oTotalHorizonDates) {
 			var oVisibleHorizonDates = this._getVisibleHorizon(iZoomLevel, oTotalHorizonDates);
-			return new sap.gantt.axistime.StepwiseZoomStrategy({
-				zoomLevel: 3,
-				visibleHorizon: new sap.gantt.config.TimeHorizon({
-					startTime: oVisibleHorizonDates.StartDate,
-					endTime: oVisibleHorizonDates.EndDate
-				}),
-				totalHorizon: new sap.gantt.config.TimeHorizon({
-					startTime: oTotalHorizonDates.StartDate,
-					endTime: oTotalHorizonDates.EndDate
-				})
-			});
-
+			//Setting Total Horizon for Gantt
+			oAxisTimeStrategy.setTotalHorizon(new sap.gantt.config.TimeHorizon({
+				startTime: oTotalHorizonDates.StartDate,
+				endTime: oTotalHorizonDates.EndDate
+			}));
+			//Setting Visible Horizon for Gantt
+			oAxisTimeStrategy.setVisibleHorizon(new sap.gantt.config.TimeHorizon({
+				startTime: oVisibleHorizonDates.StartDate,
+				endTime: oVisibleHorizonDates.EndDate
+			}));
 		},
 		/**
 		 * Adjusting Visible Horizon for New Gant Layout
@@ -341,7 +369,7 @@ sap.ui.define([
 		/**
 		 * Unassign assignment with delete confirmation dialog. 
 		 */
-		_deleteAssignment: function (oModel, sAssignGuid, sPath) {
+		_deleteAssignment: function (oModel, sAssignGuid, sPath, oEventBus) {
 			var oGanttModel = this.getModel("ganttModel");
 			this._showConfirmMessageBox.call(this, this.getResourceBundle().getText("ymsg.confirmDel")).then(function (data) {
 				oGanttModel.setProperty(sPath + "/busy", true);
@@ -350,6 +378,10 @@ sap.ui.define([
 							oGanttModel.setProperty(sPath + "/busy", false);
 							this.getModel("ganttModel").setProperty(sPath, null);
 							this.getModel("ganttOriginalData").setProperty(sPath, null);
+							oEventBus.publish("BaseController", "refreshCapacity", {
+								sTargetPath: sPath.split("/AssignmentSet/results/")[0]
+							});
+							oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 						}.bind(this),
 						function () {
 							oGanttModel.setProperty(sPath + "/busy", false);

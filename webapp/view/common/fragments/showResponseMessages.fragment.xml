@@ -1,0 +1,33 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:smartField="sap.ui.comp.smartfield"
+	xmlns:f="sap.f" xmlns:table="sap.ui.table">
+	<Dialog title="{i18n>xtit.messages}" contentWidth="50%" class="assignInfoDialog" contentHeight="auto">
+		<content>
+			<Table class="sapUiSmallMarginBegin sapUiMediumMarginBottom sapUiSmallMarginRight" width="96%" inset="false"
+				items="{ path: 'viewModel>/oResponseMessages' }">
+				<columns>
+					<Column width="10rem">
+						<Label text="{i18n>xlab.Status}" design="Bold"/>
+					</Column>
+					<Column >
+						<Label text="{i18n>xlab.Desc}" design="Bold"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem >
+						<cells>
+							<HBox>
+								<core:Icon class="sapUiSmallMarginEnd" src="{path:'viewModel>severity', formatter:'.formatter.responseMessageStatusIcon'}"
+									color="{path:'viewModel>severity', formatter:'.formatter.responseMessageStatusIconColor'}" tooltip="{StatusDesc}"></core:Icon>
+								<Text text="{path:'viewModel>severity', formatter:'.formatter.responseMessageStatusText'}"/>
+							</HBox>
+							<Text text="{viewModel>message}" wrapping="true"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+		<buttons>
+			<Button text="{i18n>xbut.buttonClose}" press="onCloseResponseMessagePopup"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

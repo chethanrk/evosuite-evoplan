@@ -10,10 +10,14 @@
 				<smartFilterBar:layoutData>
 					<FlexItemData shrinkFactor="0"/>
 				</smartFilterBar:layoutData>
+					<smartFilterBar:controlConfiguration>
+			<core:ExtensionPoint name="FilterExtP|GanttChart|GanttHeircrchySet|ResourceFilterDialog|ControlConfiguration"/>
+				</smartFilterBar:controlConfiguration>
 			</smartFilterBar:SmartFilterBar>
 		</content>
 		<buttons>
 			<Button text="{i18n>xbut.buttonClose}" press="onCloseGanttResourceFilter"></Button>
+			<core:ExtensionPoint name="DialogExtP|GanttChart|GanttHeircrchySet|ResourceFilterDialog|CustomAction"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

@@ -6,6 +6,7 @@
 			<f:DynamicPageHeader pinnable="true">
 				<f:content>
 					<OverflowToolbar design="Transparent" class="sapUiNoContentPadding">
+						<core:ExtensionPoint name="PageExtP|Asset|AssetPlanningDataSet|Header|Left"/>
 						<DateRangeSelection width="30%" id="idDateRange" class="sapUiNoContentPadding" change="onChangeDateRange"/>
 						<ToolbarSpacer/>
 						<CheckBox text="{i18n>xtit.orders}" selected="true" select="onSelectType">
@@ -22,6 +23,7 @@
 							type="Emphasized"/>
 						<Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" visible="{user>/ENABLE_CREATE_ASSET_TIME_ALLOC}" tooltip="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc" enabled="false"
 							type="Emphasized"/>
+						<core:ExtensionPoint name="PageExtP|Asset|AssetPlanningDataSet|Header|Right"/>
 					</OverflowToolbar>
 				</f:content>
 			</f:DynamicPageHeader>
@@ -57,6 +59,7 @@
 			<OverflowToolbar>
 				<!--<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"-->
 				<!--	type="Emphasized" press="onMessagePopoverPress"></Button>-->
+				<core:ExtensionPoint name="PageExtP|Asset|AssetPlanningDataSet|Footer|Left"/>
 				<ToolbarSpacer/>
 				<Button id="assignButton" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" icon="sap-icon://activity-individual"
 					press="onAssignButtonPress" enabled="false">
@@ -64,6 +67,7 @@
 						<ToolbarLayoutData shrinkable="true"/>
 					</layoutData>
 				</Button>
+				<core:ExtensionPoint name="PageExtP|Asset|AssetPlanningDataSet|Footer|Right"/>
 			</OverflowToolbar>
 		</f:footer>
 	</f:DynamicPage>

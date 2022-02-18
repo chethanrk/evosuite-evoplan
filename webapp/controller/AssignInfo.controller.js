@@ -193,6 +193,29 @@ sap.ui.define([
 				.then(function (data) {
 					callbackFn(data.results[0]);
 				}.bind(this));
+		},
+		/**
+		 * Method to validate Duration logic for PS Demands Network Assignment
+		 * @param oEvent
+		 */
+		onPSDemandEffortValidation: function (oEvent) {
+			var oSource = oEvent.getSource(),
+				sValue = oSource.getValue(),
+				oContext = oSource.getBindingContext(),
+				oObject = oContext.getObject();
+			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && oObject.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+				var sNewValue = oEvent.getParameter("newValue").replace(/[^0-9a-zA-Z. ]/g, ''),
+					sEffort = oObject.Effort,
+					sRemainingDuration = oObject.REMAINING_DURATION,
+					sEffortUnit = oObject.EffortUnit,
+					sTotalEffort = Number(sEffort) + Number(sRemainingDuration);
+				if (sValue.includes("-") || Number(sValue) <= 0) {
+					sap.m.MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.validEffort"));
+				} else if (Number(sEffort) + Number(sRemainingDuration) < Number(sNewValue)) {
+					sap.m.MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.invalidAssgnDuration") + sTotalEffort +
+						" " + sEffortUnit);
+				}
+			}
 		}
 	});
 });

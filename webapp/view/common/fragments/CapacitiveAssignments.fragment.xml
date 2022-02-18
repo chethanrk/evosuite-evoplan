@@ -6,8 +6,13 @@
             class="sapUiPopupWithPadding"
             placement="Auto"
             contentWidth="39%">
+    	<beginButton>
+    		<core:ExtensionPoint name="PopoverExtP|CapacitiveAssignments|AssignmentSet|Popover|BeginButton" />
+    	</beginButton>
         <endButton>
+        	<core:ExtensionPoint name="PopoverExtP|CapacitiveAssignments|AssignmentSet|Popover|EndButton">
             <Button text="{i18n>xbut.buttonClose}" press="handleCloseButton" />
+            </core:ExtensionPoint>
         </endButton>
         <content>
             <Table id="idCapacitiveTable"
@@ -40,15 +45,17 @@
                         <Text text="{/#Demand/OPERATIONID/@sap:label}" />
                     </Column>
 
+    		<core:ExtensionPoint name="TableExtP|CapacitiveAssignments|AssignmentSet|Table|CustomColumn" />
 
                 </columns>
                 <items>
                     <ColumnListItem type="Active">
                         <cells>
-                            <Text text="{Description}"/>
+                            <Text text="{DemandDesc}"/>
                             <Text text="{Effort}" />
                              <Text text="{Demand/ORDERID}"/>
                             <Text text="{Demand/OPERATIONID}" />
+                            <core:ExtensionPoint name="TableExtP|CapacitiveAssignments|AssignmentSet|Table|CustomCell" />
                         </cells>
                     </ColumnListItem>
                 </items>

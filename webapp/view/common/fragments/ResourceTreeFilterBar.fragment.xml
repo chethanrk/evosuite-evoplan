@@ -15,10 +15,12 @@
 				width="100%" groupId="_BASIC" index="1">
 				<smartFilterBar:customControl>
 					<Select id="idTimeView" width="100%" customData:hasValue="true" change="onChangeTimeView" selectedKey="TIMENONE">
+						<core:Item text="{i18n>xfld.viewFilterNone}" key="TIMENONE"/>
 						<core:Item text="{i18n>xfld.viewFilterDaily}" key="TIMEDAY"/>
 						<core:Item text="{i18n>xfld.viewFilterWeek}" key="TIMEWEEK"/>
 						<core:Item text="{i18n>xfld.viewFilterMonth}" key="TIMEMONTH"/>
-						<core:Item text="{i18n>xfld.viewFilterNone}" key="TIMENONE"/>
+						<core:Item text="{i18n>xfld.viewFilterQuarterly}" key="TIMEQUART"/>
+						<core:Item text="{i18n>xfld.viewFilterYearly}" key="TIMEYEAR"/>
 					</Select>
 				</smartFilterBar:customControl>
 			</smartFilterBar:ControlConfiguration>

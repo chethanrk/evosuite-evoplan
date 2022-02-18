@@ -24,10 +24,11 @@
 						value="{path:'assignment>/DateTo', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true} }"
 						editable="{assignment>/AllowChange}" change="onAssignmentDateChange"/>
 					<Label text="{/#Assignment/Effort/@sap:label}"/>
-					<Input type="Text" name="Effort" value="{assignment>/Effort}" editable="{assignment>/AllowChange}"/>
+					<Input type="Text" name="Effort" value="{path:'assignment>/Effort', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 2 }}" editable="{assignment>/AllowChange}" change="onPSDemandEffortValidation"/>
 					<Label text="{/#Assignment/EffortUnit/@sap:label}"/>
 					<Text text="{assignment>/EffortUnit}"/>
 					<Label text="{i18n>xfld.newAssign}" visible="{assignment>/AllowReassign}"/>
+					<core:ExtensionPoint name="SimpleFormExtP|AssignInfo|AssignmentSet|UpdateAssignmentForm|CustomFields" />
 					<CheckBox
 						visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleReassign' }"
 						enabled="{assignment>/AllowReassign}" select="onChangeAssignType" selected="{assignment>/isNewAssignment}"/>

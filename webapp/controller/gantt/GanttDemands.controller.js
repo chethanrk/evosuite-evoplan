@@ -57,12 +57,51 @@ sap.ui.define([
 			this._oGanttDemandFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 		},
 		/**
-		 * 
-		 * On click on demand actions to navigate to demand detail page 
+		 * check for unsaved data in Demand table
+		 * on click on navigate acion navigate to Demand Detail Page
+		 * modified method since 2201, by Rakesh Sahu
+		 * @param oEvent
 		 */
 		_onActionPress: function (oEvent) {
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				oViewModel = this.getModel("viewModel"),
+				oModel = this.getModel(),
+				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
+
+			this.oRow = oEvent.getParameter("row");
+
+			if (bDemandEditMode && oModel.hasPendingChanges()) {
+				this.showDemandEditModeWarningMessage().then(function (bResponse) {
+					var sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
+						sSave = oResourceBundle.getText("xbut.buttonSave");
+
+					if (bResponse === sDiscard) {
+						oModel.resetChanges();
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this._navToDetail(null, this.oRow);
+					} else
+					if (bResponse === sSave) {
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this.submitDemandTableChanges();
+					}
+				}.bind(this));
+
+			} else {
+				if (bDemandEditMode) {
+					oViewModel.setProperty("/bDemandEditMode", false);
+				}
+				this._navToDetail(oEvent);
+			}
+		},
+		/**
+		 * navigation to demand detail page
+		 * added method since 2201, by Rakesh Sahu
+		 * @param oEvent
+		 * @param oRow
+		 */
+		_navToDetail: function (oEvent, oRow) {
+			oRow = oRow ? oRow : oEvent.getParameter("row");
 			var oRouter = this.getRouter(),
-				oRow = oEvent.getParameter("row"),
 				oContext = oRow.getBindingContext(),
 				sPath = oContext.getPath(),
 				oModel = oContext.getModel(),
@@ -182,11 +221,13 @@ sap.ui.define([
 				this.byId("assignButton").setEnabled(true);
 				this.byId("changeStatusButton").setEnabled(true);
 				this.byId("idOverallStatusButton").setEnabled(true);
+				this.byId("idUnassignButton").setEnabled(true);
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
 				this.byId("idOverallStatusButton").setEnabled(false);
 				this.byId("materialInfo").setEnabled(false);
+				this.byId("idUnassignButton").setEnabled(false);
 				//If the selected demands exceeds more than the maintained selected configuration value
 				if (iMaxRowSelection <= selected.length) {
 					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection");
@@ -306,15 +347,33 @@ sap.ui.define([
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 					oViewModel.setProperty("/busy", false);
 				}.bind(this));
-			};
+			}
 		},
-		
+
 		/**
 		 * Opens long text view/edit popover
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
 		 */
 		onClickLongText: function (oEvent) {
+			this.getModel("viewModel").setProperty("/isOpetationLongTextPressed", false);
 			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
+		},
+		onClickOprationLongText: function (oEvent) {
+			this.getModel("viewModel").setProperty("/isOpetationLongTextPressed", true);
+			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
+		},
+
+		/**
+		 * on press unassign button in Demand Table header
+		 */
+		onPressUnassignDemand: function () {
+			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+			if (oSelectedPaths.aUnAssignDemands.length > 0) {
+				this.getOwnerComponent().assignActionsDialog.open(this.getView(), oSelectedPaths, true, this._mParameters);
+			} else {
+				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+			}
 		},
 
 		onExit: function () {

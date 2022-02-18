@@ -22,6 +22,7 @@
 					<smartFilterBar:ControlConfiguration key="NOTIFICATION_DATE" visibleInAdvancedArea="false" conditionType="sap.ui.comp.config.condition.DateRangeType"></smartFilterBar:ControlConfiguration>
 					<smartFilterBar:ControlConfiguration key="FIXED_ASSGN_START_DATE" visibleInAdvancedArea="false" conditionType="sap.ui.comp.config.condition.DateRangeType"></smartFilterBar:ControlConfiguration>
 					<smartFilterBar:ControlConfiguration key="FIXED_ASSGN_END_DATE" visibleInAdvancedArea="false" conditionType="sap.ui.comp.config.condition.DateRangeType"></smartFilterBar:ControlConfiguration>
+			<core:ExtensionPoint name="FilterExtP|GanttChart|DemandSet|DemandFilterDialog|ControlConfiguration"/>
 				</smartFilterBar:controlConfiguration>
 				<!-- layout data used to make the table growing but the filter bar fixed -->
 				<smartFilterBar:layoutData>
@@ -31,6 +32,7 @@
 		</content>
 		<buttons>
 			<Button text="{i18n>xbut.buttonClose}" press="onCloseGanttFilter"></Button>
+			<core:ExtensionPoint name="DialogExtP|GanttChart|DemandSet|DemandFilterDialog|CustomAction"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

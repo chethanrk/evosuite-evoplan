@@ -25,7 +25,7 @@
 				</gnt2:ContainerToolbar>
 			</gnt2:toolbar>
 
-			<gnt2:GanttChartWithTable id="ganttResourceAssignments"
+			<gnt2:GanttChartWithTable id="idGanttResourceAssignments"
 									  ghostAlignment="Start"
 									  adhocLineLayer="Bottom"
 									  shapeSelectionMode = "Single"
@@ -40,9 +40,9 @@
 									  selectionPanelSize="{viewModel>/ganttSelectionPane}"
 									  nowLineInUTC="false">
 				<gnt2:table>
-					<table:TreeTable id="ganttResourceTreeTable" class="resourceGanttTreeTable" selectionMode="Single" visibleRowCountMode="Auto" threshold="10"
+					<table:TreeTable id="idGanttResourceTreeTable" class="resourceGanttTreeTable" selectionMode="Single" visibleRowCountMode="Auto" threshold="10"
 						enableColumnReordering="false" enableBusyIndicator="true" busyStateChanged="onBusyStateChanged" enableCellFilter="false"
-						columnHeaderVisible="false" selectionBehavior="RowOnly" rowHeight="25"
+						columnHeaderVisible="false" selectionBehavior="RowOnly" rowHeight="33"
 						rows="{ path: '/GanttResourceHierarchySet', parameters: { operationMode: 'Server', numberOfExpandedLevels: 1, expand: 'AssignmentSet,ResourceAvailabilitySet', groupId: 'GanttTree' } }">
 						<table:extension>
 							<OverflowToolbar>
@@ -75,7 +75,7 @@
 							<dnd:DropInfo targetAggregation="rows" dropPosition="On" drop="onDropOnResource"/>
 						</table:dragDropConfig>
 						<table:columns>
-							<table:Column width="20%" visible="{viewModel>/showUtilization}">
+							<table:Column width="23%" visible="{viewModel>/showUtilization}">
 								<table:customData>
 									<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
 								</table:customData>

@@ -4,13 +4,14 @@
 			<smartTable:SmartTable id="idDemandAssignmentTable" height="100%" width="100%" direction="Column" tableType="ResponsiveTable"
 				enableAutoBinding="true" entitySet="AssignmentSet" header="{i18n>xtit.itemListTitle}" showRowCount="true" useTablePersonalisation="true"
 				useExportToExcel="false" beforeRebindTable="onBeforeRebind" initiallyVisibleFields="Effort,DateFrom,DateTo,PERSON_NUMBER,FIRSTNAME,LASTNAME"
-				requestAtLeastFields="Guid,DemandGuid,Demand">
+				requestAtLeastFields="Guid,DemandGuid,Demand" dataReceived="onDataBind" demandPopin="true">
 				<!-- layout data used to make the table growing but the filter bar fixed -->
 				<smartTable:layoutData>
 					<FlexItemData growFactor="1"/>
 				</smartTable:layoutData>
 				<smartTable:customToolbar>
 					<OverflowToolbar>
+						<core:ExtensionPoint name="TableExtP|AssignActionDialog|AssignmentSet|Toolbar|Left"/>
 						<ToolbarSpacer/>
 						<!--{user>/ENABLE_QUALIFICATION}-->
 						<HBox id="idCheckRightTechnician" visible="false" class="sapUiMediumMarginEnd">
@@ -18,15 +19,27 @@
 								change="onClickEnableFindTechnician"></Switch>
 							<Text text="{i18n>xlab.qualification}" class="sapUiTinyMarginBegin sapUiTinyMarginTop"></Text>
 						</HBox>
+						<core:ExtensionPoint name="TableExtP|AssignActionDialog|AssignmentSet|Toolbar|Right"/>
 					</OverflowToolbar>
 				</smartTable:customToolbar>
-				<Table mode="MultiSelect" growing="true" selectionChange="onSelectionChange"></Table>
+				<Table mode="MultiSelect" growing="true" selectionChange="onSelectionChange">
+						<columns>
+								<core:ExtensionPoint name="TableExtP|AssignActionDialog|AssignmentSet|CustomColumn"/>
+						</columns>
+						<ColumnListItem>
+							<cells>
+								<core:ExtensionPoint name="TableExtP|AssignActionDialog|AssignmentSet|CustomCell"/>
+							</cells>
+						</ColumnListItem>
+				</Table>
 			</smartTable:SmartTable>
 		</content>
 		<buttons>
+			<core:ExtensionPoint name="DialogExtP|AssignActionDialog|AssignmentSet|DialogActions|Left"/>
 			<Button id="idCloseDialog" text="{i18n>xbut.buttonClose}" press="onCloseDialog"/>
 			<Button id="idButtonBulkUnAssign" text="{i18n>xbut.buttonUnassign}" type="Emphasized" press="onUnassign"/>
 			<Button id="idButtonBulkReAssign" text="{i18n>xfld.newAssign}" type="Emphasized" press="onReassign"/>
+			<core:ExtensionPoint name="DialogExtP|AssignActionDialog|AssignmentSet|DialogActions|Right"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

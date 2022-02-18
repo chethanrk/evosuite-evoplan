@@ -19,8 +19,10 @@
         </content>
 
         <buttons>
+        	<core:ExtensionPoint name="DialogExtP|SelectStatus|DemandFunctionsSet|Actoins|Left" />
             <Button text="{i18n>xbut.buttonClose}" press="onCloseDialog" />
             <Button text="{i18n>xbut.buttonSave}" type="Emphasized" press="onSaveDialog" />
+            <core:ExtensionPoint name="DialogExtP|SelectStatus|DraggedDemands|Actions|Right" />
         </buttons>
     </Dialog>
 

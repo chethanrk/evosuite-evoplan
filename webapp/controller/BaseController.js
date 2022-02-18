@@ -10,9 +10,10 @@ sap.ui.define([
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-	"com/evorait/evoplan/model/formatter"
+	"com/evorait/evoplan/model/formatter",
+	"sap/ui/core/Fragment"
 ], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText, Constants,
-	RowAction, RowActionItem, formatter) {
+	RowAction, RowActionItem, formatter, Fragment) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.BaseController", {
@@ -111,7 +112,8 @@ sap.ui.define([
 				if (oData && oData.details.length > 0) {
 					var oMessage, bContainsError;
 					for (var i in oData.details) {
-						if (oData.details[i].severity === "error") {
+						if (oData.details[i].severity === "error" && oData.details[i].message !== "No XML messages are generated") {
+							//hardcoded the error message for temporary use as it is blocking the msg toasts
 							bContainsError = true;
 							oMessage = oData.details[i];
 							break;
@@ -123,6 +125,7 @@ sap.ui.define([
 					} else {
 						this.showMessageToast(oData.message);
 					}
+
 				} else {
 					this.showMessageToast(oData.message);
 				}
@@ -194,9 +197,10 @@ sap.ui.define([
 					//Handle Success
 					if (bIsLast) {
 						oViewModel.setProperty("/busy", false);
-						if (mParameters) {
-							mParameters.bContainsError = this.showMessage(oResponse);
-						}
+						// if (mParameters) {
+						// 	mParameters.bContainsError = 
+						// }
+						this.showMessage(oResponse);
 						this.afterUpdateOperations(mParameters, oParams, oData);
 					}
 				}.bind(this),
@@ -300,9 +304,12 @@ sap.ui.define([
 			} else if (oParameter.bFromNewGantt) {
 				eventBus.publish("BaseController", "refreshAssignments", oData);
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				eventBus.publish("BaseController", "refreshCapacity", {});
 			} else if (oParameter.bFromNewGanttSplit) {
 				eventBus.publish("BaseController", "refreshAssignments", oData);
+				eventBus.publish("BaseController", "refreshCapacity", {});
 			}
+
 		},
 		/**
 		 * device orientation with fallback of window resize
@@ -320,6 +327,7 @@ sap.ui.define([
 		_getSelectedRowPaths: function (oTable, aSelectedRowsIdx, checkAssignAllowed, aDemands) {
 			var aPathsData = [],
 				aNonAssignableDemands = [],
+				aUnAssignableDemands = [],
 				oData, oContext, sPath;
 
 			if (checkAssignAllowed) {
@@ -330,6 +338,15 @@ sap.ui.define([
 					oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
 					sPath = oContext.getPath();
 					oData = this.getModel().getProperty(sPath);
+
+					//on Check on oData property ALLOW_UNASSIGN for mass unassign from Demand View
+					if (this.getModel("user").getProperty("/ENABLE_DEMAND_UNASSIGN") && oData.ALLOW_UNASSIGN) {
+						aUnAssignableDemands.push({
+							sPath: sPath,
+							oData: oData,
+							index: aSelectedRowsIdx[i]
+						});
+					}
 
 					//on check on oData property ALLOW_ASSIGN when flag was given
 					if (checkAssignAllowed) {
@@ -371,7 +388,8 @@ sap.ui.define([
 			}
 			return {
 				aPathsData: aPathsData,
-				aNonAssignable: aNonAssignableDemands
+				aNonAssignable: aNonAssignableDemands,
+				aUnAssignDemands: aUnAssignableDemands
 			};
 		},
 
@@ -765,6 +783,136 @@ sap.ui.define([
 			oComponent.DemandQualifications.open(oView, sDemandGuid);
 
 		},
+		/**
+		 * Copying Cell Data onClick of Cell in Demand Table
+		 * @param oEvent
+		 * @Author Chethan RK
+		 */
+		onCopyDemandCellData: function (oEvent) {
+			var oParams = oEvent.getParameters(),
+				oColumnId = oParams.columnId,
+				oRowContext = oParams.rowBindingContext,
+				sPath = oRowContext.getPath(),
+				sColumnName = oColumnId.split("-"),
+				sColumnValue = sColumnName[sColumnName.length - 1],
+				sCopiedData = this.getModel().getProperty(sPath + "/" + sColumnValue);
+
+			if (window.clipboardData) { // Internet Explorer
+				window.clipboardData.setData("Text", sCopiedData);
+			} else {
+				navigator.clipboard.writeText(sCopiedData);
+			}
+		},
+		/**
+		 * Handle the Edit Mode toggle for Demand Table
+		 * @param oEvent
+		 */
+		onEditToggledDemandTable: function (oEvent) {
+			var bEditableMode = oEvent.getParameter("editable"),
+				oModel = this.getModel();
+
+			if (!bEditableMode && oModel.hasPendingChanges()) {
+				this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.saveDemandChanges")).then(function (resolve) {
+					if (sap.m.MessageBox.Action.YES === resolve) {
+						this.submitDemandTableChanges();
+					} else {
+						oModel.resetChanges();
+					}
+				}.bind(this));
+			}
+		},
+		submitDemandTableChanges: function () {
+			var oModel = this.getModel();
+			return new Promise(function (resolve, reject) {
+				oModel.submitChanges({
+					success: function (oData, oResponse) {
+						resolve(oData, oResponse);
+					},
+					error: function (oError) {
+						reject(oError);
+					}
+				});
+			}.bind(this)).then(this.handelResponsesToShowMessages.bind(this)).catch(function (oError) {
+				oModel.resetChanges();
+			}.bind(this));
+		},
+
+		/**
+		 * Handle the response Message on Edit of Demand Table
+		 * @param oData
+		 */
+		handelResponsesToShowMessages: function (oData, oResponse) {
+			var oResponses = oData.__batchResponses[0].__changeResponses,
+				oMessages = [],
+				oDetails;
+			for (var i in oResponses) {
+				oDetails = JSON.parse(oResponses[i].headers["sap-message"]).details;
+				if (oDetails && oDetails.length) {
+					for (var j in oDetails) {
+						if (!JSON.stringify(oMessages).includes(JSON.stringify(oDetails[j].message))) {
+							oMessages.push(oDetails[j]);
+						}
+					}
+				} else {
+					oMessages.push(JSON.parse(oResponses[i].headers["sap-message"]));
+				}
+			}
+			this.getModel("viewModel").setProperty("/oResponseMessages", oMessages);
+			this.showResponseMessagePopup();
+			this.getModel().resetChanges();
+		},
+
+		/**
+		 * Display the response Message on Edit of Demand Table
+		 */
+		showResponseMessagePopup: function () {
+			if (!this.oResponseMessagePopup) {
+				Fragment.load({
+					id: "idResponseMessagePopup",
+					name: "com.evorait.evoplan.view.common.fragments.showResponseMessages",
+					controller: this
+				}).then(function (oDialog) {
+					this.getView().addDependent(oDialog);
+					this.oResponseMessagePopup = oDialog;
+					this.oResponseMessagePopup.open();
+				}.bind(this));
+			} else {
+				this.oResponseMessagePopup.open();
+			}
+		},
+
+		/**
+		 * On close the response Message Pop up
+		 */
+		onCloseResponseMessagePopup: function () {
+			this.oResponseMessagePopup.close();
+			this.getModel("viewModel").setProperty("/oResponseMessages", []);
+		},
+
+		/**
+		 * to show warning msg while navigating to other page while demand table is in edit mode
+		 * since 2201, by Rakesh Sahu
+		 * @param oEvent
+		 */
+		showDemandEditModeWarningMessage: function () {
+			var oResourceBundle = this.getResourceBundle(),
+				sMessage = oResourceBundle.getText("ymsg.navigationWarning"),
+				sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
+				sSave = oResourceBundle.getText("xbut.buttonSave"),
+				sCancel = oResourceBundle.getText("xbut.buttonCancel");
+
+			return new Promise(function (resolve, reject) {
+				MessageBox.warning(sMessage, {
+					actions: [sDiscard, sCancel, sSave],
+					styleClass: this.getOwnerComponent().getContentDensityClass(),
+					onClose: function (sAction) {
+						// sap.m.MessageToast.show("Action selected: " + sAction);
+						resolve(sAction);
+						// MessageToast.show("Action selected: " + sAction);
+					}
+				});
+			}.bind(this));
+		}
 	});
 
 });

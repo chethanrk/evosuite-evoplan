@@ -1,25 +1,28 @@
 <mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:dnd="sap.ui.core.dnd"
-	xmlns:core="sap.ui.core" xmlns:table="sap.ui.table" controllerName="com.evorait.evoplan.controller.gantt.GanttDemands" displayBlock="true"
+	xmlns:core="sap.ui.core" xmlns:table="sap.ui.table" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" controllerName="com.evorait.evoplan.controller.gantt.GanttDemands" displayBlock="true"
 	height="100%">
 	<Page id="listPage" title="{i18n>xtit.itemListTitle}" showFooter="false" showHeader="false">
 		<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandsTable" type="XML"/>-->
 		<smartTable:SmartTable id="draggableList" height="100%" width="100%" direction="Column" fitContainer="true" enableAutoBinding="true"
 			entitySet="{viewModel>/subTableSet}" smartFilterId="listReportFilter" showRowCount="true" header="{i18n>xtit.itemListTitle}"
+			editTogglable="{user>/ENABLE_DEMAND_EDIT}" editable="{viewModel>/bDemandEditMode}" app:useSmartField="true" editToggled="onEditToggledDemandTable"
 			useExportToExcel="true" useVariantManagement="true" persistencyKey="{viewModel>/persistencyKeyDemandTable}" useTablePersonalisation="true"
-			requestAtLeastFields="Guid,ASGNMNT_CHANGE_ALLOWED,ALLOW_REASSIGN,ALLOW_UNASSIGN,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,DEMAND_ICON,REQUIREMENT_PROFILE_ID,ENABLE_ROUTE_EVOORDER,ENABLE_ROUTE_EVOEQUIP,ENABLE_ROUTE_EVONOTIFY,ENABLE_ROUTE_EVOTIME,EQUIPMENT,NOTIFICATION,ORDER_TYPE,ENABLE_ROUTE_GUI1,ENABLE_ROUTE_GUI2,ENABLE_ROUTE_EVOFLOC,FUNCTIONAL_LOC,COMPONENT_EXISTS,FIXED_ASSGN_START_DATE,FIXED_ASSGN_START_TIME,FIXED_ASSGN_END_DATE,FIXED_ASSGN_END_TIME,ALLOW_ASSIGNMENT_DIALOG,LONG_TEXT_ICON">
+			requestAtLeastFields="ORDERID,DemandDesc,Guid,ASGNMNT_CHANGE_ALLOWED,ALLOW_REASSIGN,ALLOW_UNASSIGN,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,DEMAND_ICON,REQUIREMENT_PROFILE_ID,ENABLE_ROUTE_EVOORDER,ENABLE_ROUTE_EVOEQUIP,ENABLE_ROUTE_EVONOTIFY,ENABLE_ROUTE_EVOTIME,EQUIPMENT,NOTIFICATION,ORDER_TYPE,ENABLE_ROUTE_GUI1,ENABLE_ROUTE_GUI2,ENABLE_ROUTE_EVOFLOC,FUNCTIONAL_LOC,COMPONENT_EXISTS,FIXED_ASSGN_START_DATE,FIXED_ASSGN_START_TIME,FIXED_ASSGN_END_DATE,FIXED_ASSGN_END_TIME,ALLOW_ASSIGNMENT_DIALOG,LONG_TEXT_ICON,OBJECT_SOURCE_TYPE,FIXED_APPOINTMENT_ICON_COLOR,FIXED_APPOINTMENT,FIXED_APPOINTMENT_START_DATE,FIXED_APPOINTMENT_START_TIME,FIXED_APPOINTMENT_END_DATE,FIXED_APPOINTMENT_END_TIME">
 			<!-- layout data used to make the table growing but the filter bar fixed -->
 			<smartTable:layoutData>
 				<FlexItemData growFactor="1"/>
 			</smartTable:layoutData>
 			<smartTable:customToolbar>
 				<OverflowToolbar>
+					<core:ExtensionPoint name="TableExtP|GanttDemands|DemandSet|TableToolbar|Left"/>
 					<ToolbarSpacer/>
 					<Button id="idBtnGanttFilter" text="{i18n>xbut.filters}" press="onPressGanttFilters" icon="sap-icon://filter"/>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandToolbarButtons" type="XML"/>
+					<core:ExtensionPoint name="TableExtP|GanttDemands|DemandSet|TableToolbar|Right"/>
 				</OverflowToolbar>
 			</smartTable:customToolbar>
 			<table:Table enableGrouping="true" visibleRowCountMode="Auto" enableColumnReordering="false" enableCellFilter="true"
-				rowSelectionChange="onRowSelectionChange" minAutoRowCount="3" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}">
+				rowSelectionChange="onRowSelectionChange" minAutoRowCount="3" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}"  cellClick="onCopyDemandCellData">
 				<table:rowSettingsTemplate>
 					<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
 				</table:rowSettingsTemplate>
@@ -30,7 +33,7 @@
 						</table:customData>
 						<Label text="{/#Demand/STATUS_ICON/@sap:label}"/>
 						<table:template>
-							<core:Icon src="{STATUS_ICON}" color="{ path:'CRITICALITY', formatter:'.formatter.formatStatusIconColor' }" tooltip="{StatusDesc}"></core:Icon>
+							<core:Icon src="{STATUS_ICON}" color="{ parts:['CRITICALITY','FIXED_APPOINTMENT_ICON_COLOR'], formatter:'.formatter.formatStatusIconColor' }" tooltip="{StatusDesc}"></core:Icon>
 						</table:template>
 					</table:Column>
 					<table:Column hAlign="Center" width="3rem">
@@ -71,6 +74,7 @@
 						</table:template>
 					</table:Column>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.AssignmentCountColumn" type="XML"/>
+					<core:ExtensionPoint name="TableExtP|GanttDemands|DemandSet|Table|CustomColoumn"/>
 					<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.OrderIdColumn" type="XML"/>-->
 				</table:columns>
 				<table:dragDropConfig>

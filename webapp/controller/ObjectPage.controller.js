@@ -58,6 +58,9 @@ sap.ui.define([
 								sDeepPath: "DemandToQualification,DemandToComponents,DemandToAssignment"
 							};
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageGanttChart"));
+							if (this.getModel("appView").getProperty("/pageTitle") === this.oResourceBundle.getText("xbut.pageNewGantt")) {
+								this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageNewGantt"));
+							}
 							this._onRouteMatched(oEvent, sViewName, "DemandSet", mParams, this.callBackFn2);
 						} else if (sRouteName === "assetDemandDetail") {
 							sViewName = "com.evorait.evoplan.view.templates.DemandDetails#DemandDetailTabs";

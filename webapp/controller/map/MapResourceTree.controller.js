@@ -276,7 +276,8 @@ sap.ui.define([
 				aSources = [],
 				iOperationTimesLen,
 				iVendorAssignmentLen,
-				eventBus = sap.ui.getCore().getEventBus();
+				eventBus = sap.ui.getCore().getEventBus(),
+				aPSDemandsNetworkAssignment;
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -292,9 +293,14 @@ sap.ui.define([
 			aSources = this.getModel("viewModel").getProperty("/mapDragSession");
 			iOperationTimesLen = this.onShowOperationTimes(this.getModel("viewModel"));
 			iVendorAssignmentLen = this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
-
+			aPSDemandsNetworkAssignment = this._showNetworkAssignments(this.getModel("viewModel"));
+			
+			//Checking PS Demands for Network Assignment 
+			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+				this.getOwnerComponent().NetworkAssignment.open(this.getView(), sPath, aPSDemandsNetworkAssignment, this._mParameters);
+			}
 			//Checking Vendor Assignment for External Resources
-			if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
+			else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
 				iVendorAssignmentLen) {
 				this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
 			} else {
@@ -503,7 +509,7 @@ sap.ui.define([
 		 * @Author: Rakesh
 		 */
 		removeRouteDataFlag: function (oEvent) {
-			this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false);
+			// this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false);
 		},
 		/**
 		 * method for getting selected route for selected date

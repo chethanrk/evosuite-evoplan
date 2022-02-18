@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants"
+
 ], function (AssignmentsController, JSONModel, Fragment, formatter, Constants) {
 	"use strict";
 
@@ -64,13 +65,47 @@ sap.ui.define([
 		 * @param oEvent Button press event
 		 */
 		onSelectMenuButton: function (oEvent) {
-			var oItem = oEvent.getParameter("item"),
-				sItemText = oItem.getText(),
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				oViewModel = this.getModel("viewModel"),
+				oModel = this.getModel(),
+				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
+
+			this.oItem = oEvent.getParameter("item");
+
+			if (bDemandEditMode && oModel.hasPendingChanges()) {
+				this.showDemandEditModeWarningMessage().then(function (bResponse) {
+					var sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
+						sSave = oResourceBundle.getText("xbut.buttonSave");
+
+					if (bResponse === sDiscard) {
+						oModel.resetChanges();
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this.handleMenuButtonPress(null, this.oItem);
+					} else
+					if (bResponse === sSave) {
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this.submitDemandTableChanges();
+					}
+				}.bind(this));
+
+			} else {
+				if (bDemandEditMode) {
+					oViewModel.setProperty("/bDemandEditMode", false);
+				}
+				this.handleMenuButtonPress(oEvent);
+			}
+
+		},
+
+		handleMenuButtonPress: function (oEvent, oItem) {
+			oItem = oItem ? oItem : oEvent.getParameter("item");
+			var sItemText = oItem.getText(),
 				oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
 				oRouter = this.getOwnerComponent().getRouter(),
 				oAppViewModel = this.getOwnerComponent().getModel("appView"),
 				sCurrentTitle = oAppViewModel.getProperty("/pageTitle"),
-				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode"),
+				oViewModel = this.getModel("viewModel"),
+				sLaunchMode = oViewModel.getProperty("/launchMode"),
 				sSemanticObject = null,
 				sRoute;
 
@@ -163,6 +198,7 @@ sap.ui.define([
 				oAppViewModel.setProperty("/busy", false);
 				break;
 			}
+
 		},
 
 		/**
@@ -224,9 +260,15 @@ sap.ui.define([
 				pageTitle = oResourceBundle.getText("xbut.pageGanttChart");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
 				this.getModel("viewModel").setProperty("/ganttSelectionPane", "25%");
+				if (oAppViewModel.getProperty("/currentRoute") === "newgantt" && oParams.name !== "gantt") {
+					pageTitle = oResourceBundle.getText("xbut.pageNewGantt");
+				}
 			} else if (oParams.config.pattern.startsWith("SplitPage")) {
 				pageTitle = oResourceBundle.getText("xbut.pageGanttChartSplit");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
+				if (oParams.name === "newGanttSplit") {
+					pageTitle = oResourceBundle.getText("xbut.pageNewGanttChartSplit");
+				}
 			} else if (oParams.config.pattern.startsWith("Map")) {
 				pageTitle = oResourceBundle.getText("xbut.pageMap");
 			} else if (oParams.config.pattern.startsWith("ManageResources")) {
@@ -273,7 +315,6 @@ sap.ui.define([
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (sRoute === "newgantt") {
-				//this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (sRoute === "ganttSplit") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
@@ -384,26 +425,9 @@ sap.ui.define([
 					this._eventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
 				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageNewGantt")) {
 					this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-					this._eventBus.publish("BaseController", "refreshGanttChart", {});
+					this._eventBus.publish("BaseController", "refreshFullGantt", {});
 				}
 			}.bind(this), function (data) {}.bind(this)).catch(function (data) {}.bind(this));
-
-			// this.executeFunctionImport(this.getModel(), {}, "RefreshSharedMemoryAreas", "POST").then(function () {
-			// 	oComponent._getResourceGroups.call(oComponent);
-			// 	this._eventBus.publish("BaseController", "refreshDemandTable", {});
-			// 	this._eventBus.publish("BaseController", "refreshTreeTable", {});
-			// 	this._eventBus.publish("BaseController", "refreshAssetCal", {});
-			// 	this._eventBus.publish("BaseController", "refreshAssets", {});
-			// 	this._eventBus.publish("BaseController", "refreshGanttChart", {});
-			// 	this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			// 	this._eventBus.publish("BaseController", "refreshMapView", {});
-			// 	this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
-			// 	this._eventBus.publish("BaseController", "refreshMapDemandTable", {});
-			// }.bind(this), function (data) {
-			// 	//
-			// }.bind(this)).catch(function (data) {
-			// 	//
-			// }.bind(this));
 		},
 		_routeValidation: function (parameter) {
 			var oUserModel = this.getModel("user");

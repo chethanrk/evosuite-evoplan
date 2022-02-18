@@ -4,11 +4,13 @@
 		<content>
 			<Table id="idVendorAssignmentTable" class="sapUiSmallMarginBegin sapUiMediumMarginBottom sapUiSmallMarginRight" width="96%" inset="false"
 				mode="MultiSelect" items="{ path: 'viewModel>/dragSession' }">
-				<!--<headerToolbar>-->
-				<!--	<Toolbar>-->
-				<!--		<Text text="{i18n>xmsg.operationTimeCheck}"/>-->
-				<!--	</Toolbar>-->
-				<!--</headerToolbar>-->
+				<headerToolbar>
+				<Toolbar>
+						<core:ExtensionPoint name="TableExtP|VendorAssignment|DraggedDemands|Toolbar|Left" />
+						<ToolbarSpacer />
+						<core:ExtensionPoint name="TableExtP|VendorAssignment|DraggedDemands|Toolbar|Right" />
+				</Toolbar>
+				</headerToolbar>
 				<columns>
 					<Column>
 						<Label text="{@i18n>xlbl.lblOrderNumber}" design="Bold"/>
@@ -28,6 +30,7 @@
 					<Column width="20%">
 						<Label text="{@i18n>xlbl.lblCurrency}" design="Bold"/>
 					</Column>
+					<core:ExtensionPoint name="TableExtP|VendorAssignment|DraggedDemands|CustomColumn" />
 				</columns>
 				<items>
 					<ColumnListItem selected="">
@@ -38,25 +41,28 @@
 							<ComboBox enabled="{viewModel>oData/ALLOW_ASSIGNMENT_DIALOG}" items="{path:'oCostElementModel>/', templateShareable:true}" showSecondaryValues="true"
 								selectionChange="onCostElementChange" value="{viewModel>oData/CostElement}">
 								<items>
-									<core:ListItem text="{oCostElementModel>CostElement}" additionalText="{oCostElementModel>Text}"></core:ListItem>
+									<core:ListItem text="{oCostElementModel>KSTAR}" additionalText="{oCostElementModel>MCTXT}"></core:ListItem>
 								</items>
 							</ComboBox>
 							<Input type="Number" enabled="{viewModel>oData/ALLOW_ASSIGNMENT_DIALOG}" value="{viewModel>oData/Estimate}" change="onEstimateChange"></Input>
 							<ComboBox enabled="{viewModel>oData/ALLOW_ASSIGNMENT_DIALOG}" items="{path:'oCurrencyModel>/', templateShareable:true}" showSecondaryValues="true"
 								value="{viewModel>oData/Currency}" selectionChange="onCurrencyChange">
 								<items>
-									<core:ListItem text="{oCurrencyModel>Currency}" additionalText="{oCurrencyModel>CurrencyText}"></core:ListItem>
+									<core:ListItem text="{oCurrencyModel>WAERS}" additionalText="{oCurrencyModel>KTEXT}"></core:ListItem>
 								</items>
 							</ComboBox>
+							<core:ExtensionPoint name="TableExtP|VendorAssignment|DraggedDemands|CustomCell" />
 						</cells>
 					</ColumnListItem>
 				</items>
 			</Table>
 		</content>
 		<buttons>
+			<core:ExtensionPoint name="DialogExtP|VendorAssignment|DraggedDemands|Actions|Left" />
 			<Button text="{i18n>xbut.buttonSelectAll}" press="onVendorAssignmentSelectAll" visible="false"/>
 			<Button text="{i18n>xbut.buttonCancel}" press="onCloseDialog"/>
 			<Button text="{i18n>xbut.buttonProceed}" press="onVendorAssignmentProceed"/>
+			<core:ExtensionPoint name="DialogExtP|VendorAssignment|DraggedDemands|Actions|Right" />
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

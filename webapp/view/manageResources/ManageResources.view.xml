@@ -15,6 +15,7 @@
 						<smartFilterBar:controlConfiguration>
 							<smartFilterBar:ControlConfiguration key="Start" visibleInAdvancedArea="false" conditionType="sap.ui.comp.config.condition.DateRangeType"></smartFilterBar:ControlConfiguration>
 							<smartFilterBar:ControlConfiguration key="End" visibleInAdvancedArea="false" conditionType="sap.ui.comp.config.condition.DateRangeType"></smartFilterBar:ControlConfiguration>
+							<core:ExtensionPoint name="FilterExtP|ManageResources|ResourceManagementSet|Resources|ControlConfiguration"/>
 						</smartFilterBar:controlConfiguration>
 					</smartFilterBar:SmartFilterBar>
 					<smartTable:SmartTable id="idTableEvoplanResources" class="sapUiTinyMarginEnd" entitySet="ResourceManagementSet" tableType="TreeTable"
@@ -27,6 +28,7 @@
 						</smartTable:layoutData>
 						<smartTable:customToolbar>
 							<OverflowToolbar>
+								<core:ExtensionPoint name="TableExtP|ManageResources|ResourceManagementSet|Resources|Toolbar|Left"/>
 								<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.TreeExpandCollapse" type="XML"/>
 								<ToolbarSpacer/>
 								<SegmentedButton id="resourceMngFilter" selectionChange="onResourceMngFilterSelectionChange">
@@ -39,6 +41,7 @@
 								<Switch class="customSwitchTextFont" id="idSwitchResourceAction" customTextOn="{i18n>xlab.switchCopy}"
 									customTextOff="{i18n>xlab.switchMove}" state="{path:'user>/DEFAULT_RES_MANAGEMENT_ACTION',formatter:'.formatter.setManageResourceSwitchState'}"
 									enabled="{path:'user>/DEFAULT_RES_MANAGEMENT_ACTION',formatter:'.formatter.setManageResourceSwitchEnabled'}"></Switch>
+								<core:ExtensionPoint name="TableExtP|ManageResources|ResourceManagementSet|Resources|Toolbar|Right"/>
 							</OverflowToolbar>
 						</smartTable:customToolbar>
 						<table:TreeTable id="idDataTableEvoplanGroup" selectionMode="None" visibleRowCountMode="Auto">
@@ -72,6 +75,7 @@
 										<Text text="{path:'End',formatter:'.formatter.setDateFormatResourceTree'}"/>
 									</table:template>
 								</table:Column>
+								<core:ExtensionPoint name="TableExtP|ManageResources|ResourceManagementSet|Resources|CustomColumn"/>
 							</table:columns>
 							<table:dragDropConfig>
 								<dnd:DropInfo groupName="moveToEvoplanGroups" targetAggregation="rows" drop="assignResourcesToGroup"/>
@@ -90,6 +94,9 @@
 						<smartFilterBar:layoutData>
 							<FlexItemData shrinkFactor="0"/>
 						</smartFilterBar:layoutData>
+						<smartFilterBar:controlConfiguration>
+							<core:ExtensionPoint name="FilterExtP|ManageResources|ResourceMasterSet|Resources|ControlConfiguration"/>
+						</smartFilterBar:controlConfiguration>
 					</smartFilterBar:SmartFilterBar>
 					<smartTable:SmartTable id="idTableHrResources" entitySet="ResourceMasterSet" useExportToExcel="false" useVariantManagement="true"
 						fitContainer="true" height="100%" useTablePersonalisation="true" header="{i18n>xtit.hrResourceTable}" showRowCount="true"
@@ -99,6 +106,13 @@
 						<smartTable:layoutData>
 							<FlexItemData growFactor="1"/>
 						</smartTable:layoutData>
+							<smartTable:customToolbar>
+							<OverflowToolbar>
+								<core:ExtensionPoint name="TableExtP|ManageResources|ResourceMasterSet|Resources|Toolbar|Left"/>
+								<ToolbarSpacer/>
+								<core:ExtensionPoint name="TableExtP|ManageResources|ResourceMasterSet|Resources|Toolbar|Right"/>
+							</OverflowToolbar>
+						</smartTable:customToolbar>
 						<table:Table id="idDataTableHrResource" selectionMode="MultiToggle" enableCellFilter="true" threshold="30" visibleRowCountMode="Auto">
 							<!--visibleRowCountMode="Auto"-->
 							<table:columns>
@@ -129,6 +143,7 @@
 										<Text text="{Pernr}"/>
 									</table:template>
 								</table:Column>
+								<core:ExtensionPoint name="TableExtP|ManageResources|ResourceMasterSet|Resources|CustomColumn"/>
 							</table:columns>
 							<table:dragDropConfig>
 								<dnd:DragInfo groupName="moveToEvoplanGroups" sourceAggregation="rows" dragStart="onStartDragResources"/>

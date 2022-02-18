@@ -2,6 +2,7 @@
 	<ResponsivePopover title="Date Range" class="sapUiPopupWithPadding" placement="HorizontalPreferredRight" afterClose="removeRouteDataFlag">
 		<endButton>
 			<Button text="Close" type="Emphasized" press="onCloseDialog"/>
+			<core:ExtensionPoint name="PopoverExtP|Map|RouteDatePopover|CustomAction"/>
 		</endButton>
 		<content>
 			<u:Calendar id="DRSMap" select="handleCalendarSelect" weekNumberSelect="handleWeekNumberSelect"/>

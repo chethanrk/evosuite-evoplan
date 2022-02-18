@@ -19,6 +19,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/qualifications/DemandQualifications",
 	"com/evorait/evoplan/controller/common/AssignmentList",
 	"com/evorait/evoplan/controller/common/MaterialInfoDialog",
+	"com/evorait/evoplan/controller/common/FixedAppointmentsList",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
 	"sap/m/Link",
@@ -32,7 +33,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/OperationTimeCheck",
 	"com/evorait/evoplan/controller/gantt/GanttResourceTreeFilter",
 	"com/evorait/evoplan/controller/common/VendorAssignment",
-	"com/evorait/evoplan/controller/common/LongTextPopover"
+	"com/evorait/evoplan/controller/common/LongTextPopover",
+	"com/evorait/evoplan/controller/common/NetworkAssignment"
 ], function (
 	UIComponent,
 	Device,
@@ -54,6 +56,7 @@ sap.ui.define([
 	DemandQualifications,
 	AssignmentList,
 	MaterialInfoDialog,
+	FixedAppointmentsList,
 	MessagePopover,
 	MessagePopoverItem,
 	Link,
@@ -66,7 +69,8 @@ sap.ui.define([
 	OperationTimeCheck,
 	GanttResourceTreeFilter,
 	VendorAssignment,
-	LongTextPopover) {
+	LongTextPopover,
+	NetworkAssignment) {
 
 	"use strict";
 
@@ -154,7 +158,11 @@ sap.ui.define([
 					removedIndices: [],
 					draggedItemContext: []
 				},
-				densityClass: this.getContentDensityClass()
+				densityClass: this.getContentDensityClass(),
+				isOpetationLongTextPressed: false,
+				oResponseMessages: [],
+				aFixedAppointmentsList: {},
+				bDemandEditMode: false
 
 			});
 			this.setModel(oViewModel, "viewModel");
@@ -439,6 +447,8 @@ sap.ui.define([
 			this.materialInfoDialog = new MaterialInfoDialog();
 			this.materialInfoDialog.init();
 
+			this.FixedAppointmentsList = new FixedAppointmentsList();
+
 			this.GanttResourceFilter = new GanttResourceFilter();
 
 			this.GanttResourceTreeFilter = new GanttResourceTreeFilter();
@@ -448,9 +458,12 @@ sap.ui.define([
 
 			this.VendorAssignment = new VendorAssignment();
 			this.VendorAssignment.init();
-			
+
 			this.longTextPopover = new LongTextPopover();
 			this.longTextPopover.init();
+
+			this.NetworkAssignment = new NetworkAssignment();
+			this.NetworkAssignment.init();
 
 		},
 
@@ -586,9 +599,9 @@ sap.ui.define([
 		 * @private
 		 */
 		_getAvailabilityGroup: function (sAvailabilityTypeGroup) {
-			this.getModel().read("/AvailabilityTypeSet", {
+			this.getModel().read("/SHAvailabilityTypeSet", {
 				filters: [
-					new Filter("AvailabilityTypeGroup", FilterOperator.EQ, sAvailabilityTypeGroup)
+					new Filter("AVAILABILITY_TYPE_GROUP", FilterOperator.EQ, sAvailabilityTypeGroup)
 				],
 				success: function (oData, oResponse) {
 					if (oData && oData.results.length > 0) {

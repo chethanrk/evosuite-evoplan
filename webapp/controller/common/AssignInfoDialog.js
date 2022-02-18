@@ -60,7 +60,7 @@ sap.ui.define([
 				oAssignData = oView.getModel().getProperty(oAssignementPath);
 
 				oAssignment.AssignmentGuid = oAssignData.Guid;
-				oAssignment.Description = oAssignData.Description;
+				oAssignment.DemandDesc = oAssignData.DemandDesc;
 				oAssignment.DemandGuid = oAssignData.DemandGuid;
 				oAssignment.DemandStatus = oAssignData.Demand.Status;
 				oAssignment.DateFrom = oAssignData.DateFrom;
@@ -69,9 +69,15 @@ sap.ui.define([
 				oAssignment.ResourceGroupDesc = oAssignData.GROUP_DESCRIPTION;
 				oAssignment.ResourceGuid = oAssignData.ResourceGuid;
 				oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
+
+				if (oView.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT")) {
+					oAssignment.OldEffort = oAssignData.Effort;
+					oAssignment.REMAINING_DURATION = oAssignData.REMAINING_DURATION;
+					oAssignment.OBJECT_SOURCE_TYPE = oAssignData.OBJECT_SOURCE_TYPE;
+				}
 			} else {
 				oAssignment.AssignmentGuid = oAssignmentData.Guid;
-				oAssignment.Description = oAssignmentData.Demand.DemandDesc;
+				oAssignment.DemandDesc = oAssignmentData.Demand.DemandDesc;
 				oAssignment.DemandGuid = oAssignmentData.DemandGuid;
 				oAssignment.DemandStatus = oAssignmentData.Demand.Status;
 				oAssignment.DateFrom = oAssignmentData.DateFrom;
@@ -115,7 +121,7 @@ sap.ui.define([
 			this._getAssignedDemand(oAssignementPath, data);
 			this._assignmentGuid = oAssignment.AssignmentGuid;
 			// open dialog
-			oDialog.open();
+			//oDialog.open();
 		},
 		/**
 		 * Method get triggers when user selects any perticular unit from value help
@@ -139,25 +145,27 @@ sap.ui.define([
 				sDateTo = this.oAssignmentModel.getProperty("/DateTo"),
 				sEffort = this.oAssignmentModel.getProperty("/Effort"),
 				iNewEffort = this.getEffortTimeDifference(sDateFrom, sDateTo),
-				oResourceBundle = this._oView.getController().getResourceBundle();
+				oResourceBundle = this._oView.getController().getResourceBundle(),
+				bValidEffort = this.onValidateEffort();
 			//Replacing comma in DE language with dot if any
-			this.oAssignmentModel.setProperty("/Effort", sEffort.replace(",", "."));
+			this.oAssignmentModel.setProperty("/Effort", sEffort.toString().replace(",", "."));
 			sEffort = this.oAssignmentModel.getProperty("/Effort");
+			if (bValidEffort) {
+				if (this.oAssignmentModel.getProperty("/NewAssignPath") !== null) {
+					this.oAssignmentModel.getData().ResourceGuid = this._oView.getModel().getProperty(this.oAssignmentModel.getProperty(
+						"/NewAssignPath") + "/ResourceGuid");
+				}
 
-			if (this.oAssignmentModel.getProperty("/NewAssignPath") !== null) {
-				this.oAssignmentModel.getData().ResourceGuid = this._oView.getModel().getProperty(this.oAssignmentModel.getProperty(
-					"/NewAssignPath") + "/ResourceGuid");
-			}
+				if (Number(iNewEffort) < Number(sEffort)) {
+					this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
+						if (oAction === "YES") {
+							this.onSaveAssignments();
+						}
+					}.bind(this));
 
-			if (Number(iNewEffort) < Number(sEffort)) {
-				this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
-					if (oAction === "YES") {
-						this.onSaveAssignments();
-					}
-				}.bind(this));
-
-			} else {
-				this.onSaveAssignments();
+				} else {
+					this.onSaveAssignments();
+				}
 			}
 		},
 
@@ -513,6 +521,30 @@ sap.ui.define([
 					} else {}
 				}.bind(this));
 			}
+		},
+
+		/**
+		 * Validating Effort for PS Demands onSave 
+		 */
+		onValidateEffort: function () {
+			var sOldEffort = this.oAssignmentModel.getProperty("/OldEffort"),
+				sEffort = this.oAssignmentModel.getProperty("/Effort"),
+				sObjectSourceType = this.oAssignmentModel.getProperty("/OBJECT_SOURCE_TYPE"),
+				sRemainingDuration = this.oAssignmentModel.getProperty("/REMAINING_DURATION"),
+				sEffortUnit = this.oAssignmentModel.getProperty("/EffortUnit"),
+				sTotalEffort = Number(sOldEffort) + Number(sRemainingDuration),
+				bValidEffort = true;
+			if (this._oView.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && sObjectSourceType === "DEM_PSNW") {
+				if (sEffort.toString().includes("-") || Number(sEffort) <= 0) {
+					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.validEffort"));
+					bValidEffort = false;
+				} else if (Number(sOldEffort) + Number(sRemainingDuration) < Number(sEffort)) {
+					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration") + sTotalEffort + " " +
+						sEffortUnit);
+					bValidEffort = false;
+				}
+			}
+			return bValidEffort;
 		},
 
 		exit: function () {

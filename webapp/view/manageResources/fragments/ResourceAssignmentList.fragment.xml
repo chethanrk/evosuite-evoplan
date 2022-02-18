@@ -7,8 +7,11 @@
 				<!--items="{ path: 'viewModel>/manageResourcesSettings/Assignments', sorter: { path: 'DemandDesc' ,group:true} }"-->
 				<headerToolbar>
 					<Toolbar>
+						<core:ExtensionPoint name="TableExtP|ManageResources|ResourceAssignments|Toolbar|Left"/>
 						<core:Icon src="sap-icon://employee" class="size1 sapUiTinyMarginEnd" color="#031E48"></core:Icon>
 						<Text text="{path:'viewModel>/manageResourcesSettings',formatter:'.formatter.setHeaderMsgAssignmentDialog'}"/>
+						<ToolbarSpacer/>
+						<core:ExtensionPoint name="TableExtP|ManageResources|ResourceAssignments|Toolbar|Right"/>
 					</Toolbar>
 				</headerToolbar>
 				<columns>
@@ -21,6 +24,7 @@
 					<Column>
 						<Label text="{/#Demand/Status/@sap:label}" design="Bold"/>
 					</Column>
+					<core:ExtensionPoint name="TableExtP|ManageResources|ResourceAssignments|CustomColumn"/>
 				</columns>
 				<items>
 					<ColumnListItem selected="{viewModel>IsSelected}">
@@ -28,6 +32,7 @@
 							<Text text="{viewModel>Orderid}"/>
 							<Text text="{viewModel>Description}"/>
 							<Text text="{viewModel>DemandStatus}"/>
+							<core:ExtensionPoint name="TableExtP|ManageResources|ResourceAssignments|CustomCell"/>
 						</cells>
 					</ColumnListItem>
 				</items>
@@ -38,6 +43,7 @@
 			<Button text="{i18n>xbut.buttonProceed}" press="onPressProceedBtn"
 				visible="{path:'viewModel>/manageResourcesSettings/Assignments',formatter:'.formatter.setVisibilityProceedToDeleteBtn'}"/>
 			<Button text="{i18n>xbut.buttonCancel}" press="onCloseAssignmentDialog"/>
+			<core:ExtensionPoint name="DialogExtP|ManageResources|ResourceAssignments|CustomAction"/>
 			<!--visible="{path:'user>/DEFAULT_QUALIF_UI_CHECK_TYPE',formatter:'.formatter.getQualificationBtnVisibilty'}"-->
 		</buttons>
 	</Dialog>

@@ -33,8 +33,8 @@
                 <form:content>
 
                     <core:Title text="" />
-                    <Label text="{/#Assignment/Description/@sap:label}" />
-                    <Text text="{assignment>/Description}"/>
+                    <Label text="{/#Assignment/DemandDesc/@sap:label}" />
+                    <Text text="{assignment>/DemandDesc}"/>
                     <Label text="{i18n>xfld.ResourceName}" />
                     <Text text="{assignment>/ResourceDesc}"/>
                     <Label text="{i18n>xfld.ResourceGroupName}" />

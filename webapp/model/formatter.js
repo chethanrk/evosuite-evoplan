@@ -711,7 +711,7 @@ sap.ui.define([
 		formatMapSpot: function (oLatitude, oLongitude) {
 			if (oLatitude && oLongitude) {
 				if (oLatitude === "0.000000000000" && oLongitude === "0.000000000000") {
-					return "";
+					return "0;0;0"; //return "";
 				} else {
 					return oLatitude + ";" + oLongitude + ";0";
 				}
@@ -827,13 +827,60 @@ sap.ui.define([
 					oOperationTime = new Date(oTimes.ms),
 					oOperationTimeMS = oOperationTime.getTime(),
 					oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
-						pattern: "HH:mm:ss"
+						pattern: "hh:mm:ss a"
 					}),
-					sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
-					sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS + sTZOffsetMs));
+					sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS)); //removed offset bcz of time mismatch : RAKESH SAHU.
 
 				return oDateFormat.format(oDate) + ", " + sOperationTimes;
 			}
+		},
+
+		/**
+		 * Inlin Edit Demands: Response Messages: to set the Icon for the message
+		 */
+		responseMessageStatusIcon: function (sStatus) {
+			if (sStatus === "success" || sStatus === "info") {
+				return "sap-icon://message-success";
+			} else if (sStatus === "error" || sStatus === "warning") {
+				return "sap-icon://message-error";
+			} else {
+				return "";
+			}
+			// else if () {
+			// return "sap-icon://message-warning";
+			// } 
+		},
+
+		/**
+		 * Inlin Edit Demands: Response Messages: to set the Icon Color for the message
+		 */
+		responseMessageStatusIconColor: function (sStatus) {
+			if (sStatus === "success" || sStatus === "info") {
+				return "#008000";
+			} else if (sStatus === "error" || sStatus === "warning") {
+				return "#FF0000";
+			} else {
+				return "#0854a0";
+			}
+			// else if (sStatus === "warning") {
+			// 	return "#FFBF00";
+			// }
+		},
+
+		/**
+		 * Inlin Edit Demands: Response Messages: to set the Text for the message
+		 */
+		responseMessageStatusText: function (sStatus) {
+			if (sStatus) {
+				if (sStatus === "info") {
+					return "Success";
+				}
+				if (sStatus === "warning") {
+					return "Error";
+				}
+				return sStatus.substr(0, 1).toUpperCase() + sStatus.substr(1, sStatus.length)
+			}
+			return "";
 		}
 	};
 });

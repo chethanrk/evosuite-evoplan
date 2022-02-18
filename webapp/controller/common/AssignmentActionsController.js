@@ -23,11 +23,20 @@ sap.ui.define([
 			var oModel = this.getModel(),
 				targetObj = oModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
-				aGanttDemandDragged = this.getModel("viewModel").getData().dragSession[0],
+				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
+				aDragSession = this.getModel("viewModel").getData().dragSession,
+				aGanttDemandDragged = aDragSession && aDragSession.length ? aDragSession[0] : "fromGanttSplit",
 				aPromises = [],
 				oDemandObj,
 				sDemandGuid,
 				oParams;
+				
+				if (aGanttDemandDragged === "fromGanttSplit") {
+				aGanttDemandDragged = {};
+				aGanttDemandDragged.sPath = slocStor.split(",")[0];
+				aGanttDemandDragged.oData = this.getModel().getProperty(aGanttDemandDragged.sPath);
+
+			}
 
 			this.clearMessageModel();
 
@@ -77,6 +86,11 @@ sap.ui.define([
 					oParams.CostElement = aGanttDemandDragged.oData.CostElement;
 					oParams.Estimate = aGanttDemandDragged.oData.Estimate;
 					oParams.Currency = aGanttDemandDragged.oData.Currency;
+				}
+				//Effort and Effort Unit fields update for PS Demands Network Assignment
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && this._mParameters.bFromGantt && aGanttDemandDragged.oData.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+					oParams.Effort = aGanttDemandDragged.oData.Duration;
+					oParams.EffortUnit = aGanttDemandDragged.oData.DurationUnit;
 				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}
