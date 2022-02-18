@@ -14,14 +14,14 @@
 								<Menu itemSelected="onSelectMenuButton">
 									<items>
 										<MenuItem text="{i18n>xbut.pageDemands}"/>
-										<MenuItem text="{i18n>xbut.pageAssetManager}" visible="{user>/ENABLE_ASSET_PLANNING}"/>
-										<MenuItem text="{i18n>xbut.pageMessageCockpit}" visible="{user>/ENABLE_EMP}"/>
+										<MenuItem text="{i18n>xbut.pageNewGantt}" visible="{user>/ENABLE_GANTT_JSON}"/>
 										<MenuItem text="{i18n>xbut.pageGanttChart}" visible="{user>/ENABLE_GANTT}"/>
-										<MenuItem text="{i18n>xbut.pageGanttChartSplit}" visible="{user>/ENABLE_GANTT_SPLIT}"/>
 										<MenuItem text="{i18n>xbut.pageNewGanttChartSplit}" visible="{user>/ENABLE_GANTT_JSON}"/>
+										<MenuItem text="{i18n>xbut.pageGanttChartSplit}" visible="{user>/ENABLE_GANTT_SPLIT}"/>
+										<MenuItem text="{i18n>xbut.pageAssetManager}" visible="{user>/ENABLE_ASSET_PLANNING}"/>
 										<MenuItem text="{i18n>xbut.pageMap}" visible="{user>/ENABLE_MAPS}"/>
-                                        <MenuItem text="{i18n>xbut.pageNewGantt}" visible="{user>/ENABLE_GANTT_JSON}"/>
 										<MenuItem text="{i18n>xbut.manageResources}" visible="{user>/ENABLE_MANAGERESOURCE}"/>
+										<MenuItem text="{i18n>xbut.pageMessageCockpit}" visible="{user>/ENABLE_EMP}"/>
 									</items>
 								</Menu>
 							</menu>
@@ -30,7 +30,7 @@
 					</contentMiddle>
 					<contentRight>
 						<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
-								type="Emphasized" press="onMessagePopoverPress"/>
+							type="Emphasized" press="onMessagePopoverPress"/>
 						<Button id="idButtonRefresh" icon="sap-icon://refresh" tooltip="{i18n>xtit.infoRefresh}" press="onRefreshBuffer"/>
 						<Button id="idButtonAboutDialog" icon="sap-icon://sys-help" tooltip="{i18n>xtit.infoDialogTitle}" press="onIconPress"/>
 						<core:ExtensionPoint name="PageExtP|App|Header|Right"/>
