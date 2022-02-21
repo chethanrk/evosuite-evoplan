@@ -829,9 +829,7 @@ sap.ui.define([
 					oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
 						pattern: "hh:mm:ss a"
 					}),
-					sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
-					sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS));
-				// sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS + sTZOffsetMs));
+					sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS)); //removed offset bcz of time mismatch : RAKESH SAHU.
 
 				return oDateFormat.format(oDate) + ", " + sOperationTimes;
 			}
