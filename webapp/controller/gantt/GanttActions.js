@@ -43,7 +43,7 @@ sap.ui.define([
 				oGanttModel = this.getModel("ganttModel"),
 				targetObj = oGanttModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
-				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
+				slocStor = JSON.parse(localStorage.getItem("Evo-Dmnd-guid")),
 				aDragSession = this.getModel("viewModel").getData().dragSession,
 				aGanttDemandDragged = aDragSession && aDragSession.length ? aDragSession[0] : "fromGanttSplit",
 				aFixedAppointments = this.getModel("viewModel").getProperty("/aFixedAppointmentsList")[0],
@@ -51,9 +51,8 @@ sap.ui.define([
 				oDemandObj;
 			if (aGanttDemandDragged === "fromGanttSplit") {
 				aGanttDemandDragged = {};
-				aGanttDemandDragged.sPath = slocStor.split(",")[0];
-				aGanttDemandDragged.oData = this.getModel().getProperty(aGanttDemandDragged.sPath);
-
+				aGanttDemandDragged.sPath = slocStor[0].sPath;
+				aGanttDemandDragged.oData = slocStor[0].oDemandObject;
 			}
 
 			this.clearMessageModel();

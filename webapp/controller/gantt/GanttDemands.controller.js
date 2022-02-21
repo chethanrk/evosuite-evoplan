@@ -126,7 +126,8 @@ sap.ui.define([
 			var oDragSession = oEvent.getParameter("dragSession"),
 				oDraggedControl = oDragSession.getDragControl(),
 				aIndices = this._oDataTable.getSelectedIndices(),
-				oSelectedPaths, aPathsData, aSelDemandGuid = [];
+				oSelectedPaths, aPathsData, aSelDemandGuid = [],
+				aSelectedDemandObject = [];
 
 			oDragSession.setTextData("Hi I am dragging");
 			//get all selected rows when checkboxes in table selected
@@ -141,11 +142,15 @@ sap.ui.define([
 
 			aPathsData.forEach(function (item) {
 				aSelDemandGuid.push(item.sPath);
+				aSelectedDemandObject.push({
+					sPath: item.sPath,
+					oDemandObject: item.oData
+				});
 			});
 
 			this.getModel("viewModel").setProperty("/gantDragSession", aSelDemandGuid);
 			this.getModel("viewModel").setProperty("/dragSession", aPathsData);
-			localStorage.setItem("Evo-Dmnd-guid", aSelDemandGuid);
+			localStorage.setItem("Evo-Dmnd-guid", JSON.stringify(aSelectedDemandObject));
 
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);

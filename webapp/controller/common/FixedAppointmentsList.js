@@ -106,10 +106,12 @@ sap.ui.define([
 				if (demandObj.IsSelected) {
 					oAssignment.DateFrom = demandObj.FIXED_APPOINTMENT_START_DATE;
 					oAssignment.TimeFrom = {};
-					oAssignment.TimeFrom.ms = oAssignment.DateFrom.getTime();
+					// oAssignment.TimeFrom.ms = oAssignment.DateFrom.getTime();
+					oAssignment.TimeFrom.ms = demandObj.FIXED_APPOINTMENT_START_TIME.ms;
 					oAssignment.DateTo = demandObj.FIXED_APPOINTMENT_END_DATE;
 					oAssignment.TimeTo = {};
-					oAssignment.TimeTo.ms = oAssignment.DateTo.getTime();
+					// oAssignment.TimeTo.ms = oAssignment.DateTo.getTime();
+					oAssignment.TimeTo.ms = demandObj.FIXED_APPOINTMENT_END_TIME.ms;
 				}
 				this._aAllParameters.push(oAssignment);
 			}
