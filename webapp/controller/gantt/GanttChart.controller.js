@@ -10,9 +10,10 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/gantt/simple/CoordinateUtils",
 	"com/evorait/evoplan/model/Constants",
-	"sap/gantt/misc/Utility"
+	"sap/gantt/misc/Utility",
+	"sap/gantt/def/pattern/SlashPattern"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, Popup, MessageToast, Fragment, CoordinateUtils, Constants,
-	Utility) {
+	Utility, SlashPattern) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttChart", {
@@ -230,7 +231,7 @@ sap.ui.define([
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
 				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
 				sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : slocStor.split(","),
-				oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
+				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
 				oResourceData = this.getModel("ganttModel").getProperty(oDropContext.getPath()),
 				oSvgPoint,
 				sPath = sDragPath ? sDragPath[0] : undefined,
@@ -626,6 +627,23 @@ sap.ui.define([
 			}
 
 		},
+
+		/**
+		 * get Conditional shape for unavailabilities
+		 * and set color pattern for some unavailabilities
+		 * @param sType
+		 * @param sColor
+		 */
+		getAvalablitiyConditionalShape: function (sType, sColor) {
+			this._setAvailabilitiesPatterns(sType, sColor);
+
+			if (sType === "L") {
+				return 1;
+			} else {
+				return 0;
+			}
+		},
+
 		/* =========================================================== */
 		/* intern methods                                              */
 		/* =========================================================== */
@@ -1405,7 +1423,7 @@ sap.ui.define([
 			this.oGanttModel.refresh();
 		},
 		/**
-		 * Adding avaialbilities into Gantt data in Gantt Model 
+		 * Adding availabilities into Gantt data in Gantt Model 
 		 * @Author Rahul
 		 */
 		_addAvailabilities: function (aAvailabilities) {
@@ -1481,6 +1499,27 @@ sap.ui.define([
 				this.oGanttModel.refresh();
 			}.bind(this));
 			// }
+		},
+
+		/**
+		 * Set color pattern for some unavailabilities
+		 * @param sType
+		 * @param sColor
+		 */
+		_setAvailabilitiesPatterns: function (sType, sColor) {
+			var sPatternName = this._viewId + "--availability-" + sType;
+			if (!this._oSVGDef) {
+				this._oSVGDef = this.getView().byId("idGanttChartSvgDefs");
+				this._aAvailabilitySVGDef = [];
+			}
+			if (this._aAvailabilitySVGDef.indexOf(sPatternName) < 0) {
+				var oCtrl = new SlashPattern(sPatternName, {
+					backgroundColor: "white",
+					stroke: "#CCC" //sColor
+				});
+				this._oSVGDef.insertDef(oCtrl);
+				this._aAvailabilitySVGDef.push(sPatternName);
+			}
 		}
 
 	});
