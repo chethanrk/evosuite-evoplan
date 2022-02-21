@@ -40,25 +40,28 @@ sap.ui.define([
 		 */
 		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, oNewEndDate, aGuids) {
 			var oModel = this.getModel(),
+				oViewModel = this.getModel("viewModel"),
 				oGanttModel = this.getModel("ganttModel"),
 				targetObj = oGanttModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
-				slocStor = JSON.parse(localStorage.getItem("Evo-Dmnd-guid")),
-				aDragSession = this.getModel("viewModel").getData().dragSession,
+				aDragSession = oViewModel.getData().dragSession,
 				aGanttDemandDragged = aDragSession && aDragSession.length ? aDragSession[0] : "fromGanttSplit",
-				aFixedAppointments = this.getModel("viewModel").getProperty("/aFixedAppointmentsList")[0],
+				aFixedAppointments = oViewModel.getProperty("/aFixedAppointmentsList")[0],
 				aPromises = [],
 				oDemandObj;
 			if (aGanttDemandDragged === "fromGanttSplit") {
 				aGanttDemandDragged = {};
-				aGanttDemandDragged.sPath = slocStor[0].sPath;
-				aGanttDemandDragged.oData = slocStor[0].oDemandObject;
+				aGanttDemandDragged.bFromGanttSplit = true;
+				aGanttDemandDragged.sPath = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData/sPath");
+				aGanttDemandDragged.oData = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData/oData");
+				aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE);
+				aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE);
 			}
 
 			this.clearMessageModel();
 
 			for (var i = 0; i < aItems.length; i++) {
-				oDemandObj = oModel.getProperty(aItems[i]);
+				oDemandObj = aGanttDemandDragged.bFromGanttSplit ? aGanttDemandDragged.oData : oModel.getProperty(aItems[i]);
 				var sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i].split("'")[1],
 					oParams = {
 						DemandGuid: sDemandGuid,
