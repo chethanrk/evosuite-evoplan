@@ -130,7 +130,8 @@ sap.ui.define([
 						unassign: false,
 						reassign: false,
 						change: false
-					}
+					},
+					aGanttSplitDemandData: false
 				},
 				showDemands: true,
 				mapSettings: {
