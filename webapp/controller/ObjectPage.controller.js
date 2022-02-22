@@ -78,7 +78,7 @@ sap.ui.define([
 								Guid: window.decodeURIComponent(oArgs.guid),
 								sDeepPath: "DemandToQualification,DemandToComponents,DemandToAssignment"
 							};
-							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageGanttChartSplit"));
+							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageNewGanttChartSplit"));
 							this._onRouteMatched(oEvent, sViewName, "DemandSet", mParams, this.callBackFn2s);
 						} else if (sRouteName === "mapDemandDetails") {
 							//Demand detail view
