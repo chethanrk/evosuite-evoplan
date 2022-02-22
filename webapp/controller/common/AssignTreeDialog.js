@@ -304,6 +304,10 @@ sap.ui.define([
 		 */
 		onCloseDialog: function () {
 			this._closeDialog();
+			//setting null on dialog close:Sagar
+			this._oView.getModel("assignment").setProperty("/NewAssignPath", null);
+			this._oView.getModel("assignment").setProperty("/NewAssignId", null);
+			this._oView.getModel("assignment").setProperty("/NewAssignDesc", null);
 			//when from new gantt shape busy state needs removed
 			if (this._mParameters.bCustomBusy && (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit)) {
 				this._oView.getModel("ganttModel").setProperty(this._mParameters.sSourcePath + "/busy", false);
