@@ -71,6 +71,7 @@ sap.ui.define([
 					bFromMap: true
 				};
 				var sViewSelectedKey = this.getView().byId("idTimeView").getSelectedKey();
+				this.getView().getModel("viewModel").setProperty("/remainingWork", false);
 				if (sViewSelectedKey === "TIMENONE") {
 					this.getView().getModel("viewModel").setProperty("/selectedHierarchyView", sViewSelectedKey);
 					this.getView().getModel("viewModel").setProperty("/capacityPlanning", false);
