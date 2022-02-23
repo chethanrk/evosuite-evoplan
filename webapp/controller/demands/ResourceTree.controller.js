@@ -374,12 +374,15 @@ sap.ui.define([
 		 */
 		onSelectCapacity: function (oEvent) {
 			var bSelect = oEvent.getParameter("selected"),
+				bState = oEvent.getParameter("state"),
 				oViewModel = this.getModel("viewModel");
-
 			if (bSelect) {
 				oViewModel.setProperty("/splitterDivider", "39%");
 			} else {
 				oViewModel.setProperty("/splitterDivider", "31%");
+			}
+			if(!bState){
+				oViewModel.setProperty("/remainingWork",bState);
 			}
 		},
 		/**
