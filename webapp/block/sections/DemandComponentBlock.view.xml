@@ -27,8 +27,8 @@
 			<items>
 				<ColumnListItem>
 					<cells>
-						<ObjectStatus class="sapUiTinyMargin" text="{ parts: [ 'Status', 'STATUS_DESC'], formatter: '.formatMaterialStatus' }"
-							icon="{ path:'Status', formatter:'.formatMaterialStatusIcon' }" state="{ path:'Status', formatter:'.formatMaterialState' }"/>
+						<ObjectStatus class="sapUiTinyMargin" text="{MATERIAL_STATUS_DESC}"
+							icon="{MATERIAL_STATUS_ICON}" state="{MATERIAL_STATUS_STATE}"/>
 						<core:ExtensionPoint name="TableExtP|DemandDetail|DemandComponentSet|CustomCell"/>
 					</cells>
 				</ColumnListItem>
