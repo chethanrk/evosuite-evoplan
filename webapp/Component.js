@@ -117,6 +117,7 @@ sap.ui.define([
 				gantDragSession: null, // Drag session from Gantt View added as we are keeping dragged data in the model.
 				detailPageBreadCrum: "",
 				capacityPlanning: false,
+				remainingWork:false,
 				splitterDivider: "30%",
 				ganttSelectionPane: "28%",
 				showUtilization: false,

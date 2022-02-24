@@ -450,6 +450,18 @@ sap.ui.define([
 			}
 			return false;
 		},
+		formatCapacityProgressBarVisibility:function(isCapacity, isRemainingWork, sSelectedView){
+			if (isCapacity === true && isRemainingWork !== true && sSelectedView !== "TIMENONE") {
+				return true;
+			}
+			return false;
+		},
+		formatRemainingWorkProgressBarVisibility:function(isCapacity,isRemainingWork,sSelectedView){
+			if (isCapacity === true && isRemainingWork === true && sSelectedView !== "TIMENONE") {
+				return true;
+			}
+			return false;
+		},
 		/**
 		 *
 		 * @param isCapacity
@@ -474,6 +486,14 @@ sap.ui.define([
 			}
 			return false;
 		},
+	
+		formatRemainingWorkVisibility:function(userCapacity,userRemainingWork,isCapacity,sSelectedView){
+		 	if(userCapacity && userRemainingWork && isCapacity && sSelectedView !== "TIMENONE"){
+		 		return true;
+		 	}
+		 	return false;
+		 },
+		
 		/**
 		 *
 		 * @param sNodeType
