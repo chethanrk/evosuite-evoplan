@@ -59,6 +59,7 @@ sap.ui.define([
 			this._id = "ManageAbsense";
 			this._dataDirty = false;
 			this._oApp = Fragment.byId(this._id, "navCon");
+			this._oApp.backToTop();
 			this._oSmartList = Fragment.byId(this._id, "idResourceAvailList");
 			this._oList = Fragment.byId(this._id, "idResourceAvailList").getList();
 			if (this._mParameters.bFromPlannCal) {
