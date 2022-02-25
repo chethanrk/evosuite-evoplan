@@ -30,6 +30,7 @@ sap.ui.define([
 					controller: this
 				}).then(function (oDialog) {
 					oView.getModel("appView").setProperty("/busy", false);
+					oDialog.setEscapeHandler(this.onEscapeDialog.bind(this));
 					this._oDialog = oDialog;
 					this.onOpen(oDialog, oView, aSelectedPath, mParameters, sSource);
 				}.bind(this));
@@ -646,6 +647,11 @@ sap.ui.define([
 						this._oDialog.setBusy(false);
 				}.bind(this)
 			});
+		},
+		onEscapeDialog:function(escapeHandler){
+			this._resetChanges();
+			escapeHandler.resolve();
+			
 		}
 	});
 });
