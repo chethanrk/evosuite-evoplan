@@ -194,6 +194,13 @@ sap.ui.define([
 			}
 			return "";
 		},
+		
+		getDemandState:function(sValue){
+			if(sValue){
+				return sValue;
+			}	
+			return "None";
+		},
 		/**
 		 * @Author Rahul
 		 * format the icon acording availability
