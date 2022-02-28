@@ -67,7 +67,7 @@
 											text="{MATERIAL_STATUS_DESC}"
 											visible="{ path:'COMPONENT_EXISTS', formatter:'.formatter.formatComponentExist' }"
 											icon="{MATERIAL_STATUS_ICON}"
-											state="{MATERIAL_STATUS_STATE}"/>
+											state="{path:'MATERIAL_STATUS_STATE',formatter:'.formatter.getDemandState'}"/>
 									</HBox>
 								</table:template>
 							</table:Column>

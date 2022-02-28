@@ -195,6 +195,17 @@ sap.ui.define([
 			return "";
 		},
 		/**
+		 * @Author Sagar
+		 * format the Object Status state acording to Material_Status
+		 * @param sValue
+		 */
+		getDemandState:function(sValue){
+			if(sValue){
+				return sValue;
+			}	
+			return "None";
+		},
+		/**
 		 * @Author Rahul
 		 * format the icon acording availability
 		 * @param sValue
