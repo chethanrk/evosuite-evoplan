@@ -2,8 +2,7 @@
 	xmlns:l="sap.ui.layout" xmlns:dnd="sap.ui.core.dnd" xmlns:controls="com.evorait.evoplan.ui.controls">
 	<smartTable:SmartTable id="droppableTable" entitySet="{viewModel>/treeSet}" class="listTreeTable" tableType="TreeTable" fitContainer="true"
 		useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false" smartFilterId="resourceTreeFilterBar"
-		header="Hierarchy" showRowCount="false" beforeRebindTable="onBeforeRebindTable" enableAutoBinding="true"
-		requestAtLeastFields="StatusIcon,IsSelected,NodeId,ResourceGroupGuid,NodeType,ResourceGuid,DemandGuid,ParentNodeId,AssignmentGuid,HierarchyLevel,DrillState,Description,AssignmentCount,Utilization,StartDate,StartTime,EndDate,EndTime,IS_AVAILABLE,TOTAL_EFFORT,ACTUAL_WORKING_HOURS,PLANNED_WORKING_HOURS,CAPACITIVE_EFFORT,ASSIGNMENT_TYPE,ResourceIcon,GANTT_ENABLED,RES_ASGN_START_DATE,RES_ASGN_START_TIME,RES_ASGN_END_DATE,RES_ASGN_END_TIME,REQUIREMENT_PROFILE_ID,REQUIREMENT_PROFILE_COLOR,ISEXTERNAL,REMAIN_WORK_UTILIZATION,REMAINING_WORK_HOURS">
+		header="Hierarchy" showRowCount="false" beforeRebindTable="onBeforeRebindTable" enableAutoBinding="true">
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1"/>
 		</smartTable:layoutData>
