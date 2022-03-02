@@ -89,7 +89,6 @@ sap.ui.define([
 		 * 
 		 */
 		initializeGantt: function () {
-
 			this.oGanttModel = this.getView().getModel("ganttModel");
 			this.oGanttOriginDataModel = this.getView().getModel("ganttOriginalData");
 
@@ -100,6 +99,13 @@ sap.ui.define([
 			} else {
 				this._addAssociations.bind(this)();
 			}
+
+			//set background color of Gantt
+			setTimeout(function () {
+				var oBgControl = this._ganttChart.$()[0].querySelector(".sapGanttBackground .sapGanttBackgroundSVG");
+				oBgControl.style.backgroundColor = this.oUserModel.getProperty("/DEFAULT_GANTT_BG_COLOR");
+			}.bind(this), 2000);
+
 		},
 		/**
 		 * on page exit
@@ -635,8 +641,7 @@ sap.ui.define([
 		 * @param sColor
 		 */
 		getAvalablitiyConditionalShape: function (sType, sColor) {
-			this._setAvailabilitiesPatterns(sType, sColor);
-
+			//this._setAvailabilitiesPatterns(sType, sColor);
 			if (sType === "L") {
 				return 1;
 			} else {

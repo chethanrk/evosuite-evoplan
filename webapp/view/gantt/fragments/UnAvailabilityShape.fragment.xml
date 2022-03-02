@@ -14,7 +14,9 @@
 				selectable="true" draggable="false" height="9" yBias="-9"
 				showTitle="{parts: [{path: 'ganttModel>AvailabilityTypeGroup'}, {path: 'ganttModel>BlockPercentage'}], formatter:'.ganttFormatter.getBlockerTextVisible' }"
 				fill="{parts: [{path: 'ganttModel>AvailabilityTypeGroup'}, {path: 'ganttModel>BlockPercentageColor'}], formatter:'.ganttFormatter.getPattern' }"
-				fillOpacity="0.7" strokeOpacity="0" opacity="1" stroke="transparent" strokeWidth="0" rx="4" ry="4"/>
+				fillOpacity="0.6" strokeOpacity="1" opacity="1" strokeWidth="1"
+				stroke="{parts: ['ganttModel>BlockPercentageColor',{value:'-20', model:'ganttModel'}], formatter: '.ganttFormatter.shadeColor'}" rx="4"
+				ry="4"/>
 		</gnt2:shapes>
 	</gnt2:BaseConditionalShape>
 </core:FragmentDefinition>
