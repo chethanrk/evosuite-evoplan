@@ -376,7 +376,7 @@ sap.ui.define([
 						}
 						this._getAssignedDemand(this.assignmentPath, data);
 						this.updateAssignment(true, mParameter);
-					}.bind(this))
+					}.bind(this));
 			} else {
 
 				aSources = this._oViewModel.getProperty("/dragSession");
@@ -470,6 +470,15 @@ sap.ui.define([
 			}
 			if (!bState) {
 				oViewModel.setProperty("/remainingWork", bState);
+			}
+		},
+		onSelectRemainingWork: function (oEvent) {
+			var bState = oEvent.getParameter("state"),
+				oViewModel = this.getModel("viewModel");
+			if (bState) {
+				oViewModel.setProperty("/splitterDivider", "50%");
+			} else {
+				oViewModel.setProperty("/splitterDivider", "31%");
 			}
 		},
 		/**
