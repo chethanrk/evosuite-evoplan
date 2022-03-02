@@ -267,6 +267,52 @@ sap.ui.define([
 		_triggerFilterSearch: function () {
 			this._oDroppableTable.rebindTable();
 		},
+		onDragStart: function (oEvent) {
+			var oDragSession = oEvent.getParameter("dragSession"),
+				oDraggedControl = oDragSession.getDragControl(),
+				oContext = this._oDataTable.getContextByIndex(oDraggedControl.getIndex()),
+				oObject = oContext.getObject(),
+				vAssignGuid = oObject.AssignmentGuid,
+				vDemandGuid = oObject.DemandGuid;
+
+			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
+			this._oViewModel.setProperty("/isReassign", true);
+			if (oObject.NodeType !== "ASSIGNMENT") {
+				// this._showAssignErrorDialog();
+				oEvent.preventDefault();
+			}
+
+		},
+		_getAssignedDemand: function (sBindPath, data) {
+			var sPath = sBindPath,
+				oModel = this.oAssignmentModel;
+
+			oModel.setProperty("/showError", false);
+			if (oModel.getProperty("/DateFrom") === "" || oModel.getProperty("/DateTo") === "") {
+				oModel.setProperty("/DateFrom", data.DateFrom);
+				oModel.setProperty("/DateTo", data.DateTo);
+			}
+
+			oModel.setProperty("/Effort", data.Effort);
+			oModel.setProperty("/EffortUnit", data.EffortUnit);
+
+			//Fetching Resource Start and End Date from AssignmentSet for validating on save
+			oModel.setProperty("/RES_ASGN_START_DATE", data.RES_ASGN_START_DATE);
+			oModel.setProperty("/RES_ASGN_END_DATE", data.RES_ASGN_END_DATE);
+
+			var oDemandData = data.Demand;
+			oModel.setProperty("/Description", oDemandData.DemandDesc);
+			oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
+			oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
+			oModel.setProperty("/AllowChange", oDemandData.ASGNMNT_CHANGE_ALLOWED);
+			oModel.setProperty("/OrderId", oDemandData.ORDERID);
+			oModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
+			oModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
+			oModel.setProperty("/DemandStatus", oDemandData.Status);
+			oModel.setProperty("/DemandGuid", oDemandData.Guid);
+			oModel.setProperty("/Notification", oDemandData.NOTIFICATION);
+			oModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
+		},
 
 		/**
 		 * on drop on resource, triggers create assignment for dragged demands
@@ -293,29 +339,70 @@ sap.ui.define([
 				return;
 			}
 
-			aSources = this._oViewModel.getProperty("/dragSession");
-			iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
-			iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
-			aPSDemandsNetworkAssignment = this._showNetworkAssignments(this._oViewModel);
-			
-			//Checking PS Demands for Network Assignment 
-			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
-				this.getOwnerComponent().NetworkAssignment.open(this.getView(), sPath, aPSDemandsNetworkAssignment, this._mParameters);
-			}
-			//Checking Vendor Assignment for External Resources
-			else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
-				iVendorAssignmentLen) {
-				this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
+			if (this._oViewModel.getProperty("/isReassign")) {
+				var mParams = {
+					$expand: "Demand"
+				};
+				this.getOwnerComponent()._getData(this.assignmentPath, null, mParams)
+					.then(function (data) {
+						this.oAssignmentModel = this.getView().getModel("assignment");
+						var oAssignment = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject();
+						var oAssignData = this.getView().getModel().getProperty(this.assignmentPath);
+						var mParameter = {
+							bFromHome: true
+						};
+						oAssignment.AssignmentGuid = oAssignData.Guid;
+						oAssignment.DemandDesc = oAssignData.DemandDesc;
+						oAssignment.DemandGuid = oAssignData.DemandGuid;
+						oAssignment.DemandStatus = oAssignData.Demand.Status;
+						oAssignment.DateFrom = oAssignData.DateFrom;
+						oAssignment.DateTo = oAssignData.DateTo;
+						oAssignment.ResourceGroupGuid = oAssignData.ResourceGroupGuid;
+						oAssignment.ResourceGroupDesc = oAssignData.GROUP_DESCRIPTION;
+						oAssignment.ResourceGuid = oAssignData.ResourceGuid;
+						oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
+						if (this.getView().getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT")) {
+							oAssignment.OldEffort = oAssignData.Effort;
+							oAssignment.REMAINING_DURATION = oAssignData.REMAINING_DURATION;
+							oAssignment.OBJECT_SOURCE_TYPE = oAssignData.OBJECT_SOURCE_TYPE;
+						}
+						this.oAssignmentModel.setData(oAssignment);
+						var oNewAssign = this.getView().getModel().getProperty(sPath);
+						this.oAssignmentModel.setProperty("/NewAssignPath", sPath);
+						this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
+						if (this.oAssignmentModel.getProperty("/NewAssignPath") !== null) {
+							this.oAssignmentModel.getData().ResourceGuid = this.getView().getModel().getProperty(this.oAssignmentModel.getProperty(
+								"/NewAssignPath") + "/ResourceGuid");
+						}
+						this._getAssignedDemand(this.assignmentPath, data);
+						this.updateAssignment(true, mParameter);
+					}.bind(this))
 			} else {
-				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
-					"RESOURCE") {
-					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), this._mParameters, sPath);
+
+				aSources = this._oViewModel.getProperty("/dragSession");
+				iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
+				iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
+				aPSDemandsNetworkAssignment = this._showNetworkAssignments(this._oViewModel);
+
+				//Checking PS Demands for Network Assignment 
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+					this.getOwnerComponent().NetworkAssignment.open(this.getView(), sPath, aPSDemandsNetworkAssignment, this._mParameters);
+				}
+				//Checking Vendor Assignment for External Resources
+				else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
+					iVendorAssignmentLen) {
+					this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
 				} else {
-					// If the Resource is Not/Partially available
-					if (this.isAvailable(sPath)) {
-						this.assignedDemands(aSources, sPath, this._mParameters);
+					if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+						"RESOURCE") {
+						this.getOwnerComponent().OperationTimeCheck.open(this.getView(), this._mParameters, sPath);
 					} else {
-						this.showMessageToProceed(aSources, sPath);
+						// If the Resource is Not/Partially available
+						if (this.isAvailable(sPath)) {
+							this.assignedDemands(aSources, sPath, this._mParameters);
+						} else {
+							this.showMessageToProceed(aSources, sPath);
+						}
 					}
 				}
 			}
@@ -381,8 +468,8 @@ sap.ui.define([
 			} else {
 				oViewModel.setProperty("/splitterDivider", "31%");
 			}
-			if(!bState){
-				oViewModel.setProperty("/remainingWork",bState);
+			if (!bState) {
+				oViewModel.setProperty("/remainingWork", bState);
 			}
 		},
 		/**
@@ -487,7 +574,7 @@ sap.ui.define([
 
 			var sObjectId = oResourceNode.NodeId;
 			//Opening Resource Qualification only on Resource Node Icon
-			if (oResourceNode.NodeType === "RESOURCE") { 
+			if (oResourceNode.NodeType === "RESOURCE") {
 				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
 			}
 		},

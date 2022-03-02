@@ -242,6 +242,7 @@ sap.ui.define([
 				oDraggedControl = oDragSession.getDragControl(),
 				aIndices = this._oDataTable.getSelectedIndices(),
 				oSelectedPaths, aPathsData;
+			this.getModel("viewModel").setProperty("/isReassign", false);
 
 			//Restricting selected demand list as per the global config select all property 
 			aIndices = aIndices.slice(0, this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL"));
