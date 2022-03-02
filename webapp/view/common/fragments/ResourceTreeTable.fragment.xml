@@ -32,12 +32,21 @@
 					</table:template>
 				</table:Column>
 				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="4.5rem" hAlign="End"
-					visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true'  &amp;&amp; !${viewModel>/remainingWork} ? true : false }">
+					visible="{= ${/#ResourceHierarchy/Utilization/@sap:visible} === 'true' ? true : false }">
 					<table:customData>
 						<core:CustomData key="p13nData" value='\{"columnKey": "TOTAL_EFFORT", "leadingProperty": "TOTAL_EFFORT"}'/>
 					</table:customData>
 					<table:template>
 						<Text text="{path:'TOTAL_EFFORT', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}" wrapping="false"/>
+					</table:template>
+				</table:Column>
+				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="15%" hAlign="End"
+					visible="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatCapacityProgressBarVisibility'}">
+					<table:customData>
+						<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
+					</table:customData>
+					<table:template>
+							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.UtilizationTreeColumn" type="XML"/>
 					</table:template>
 				</table:Column>
 				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="4.5rem" hAlign="End"
@@ -56,15 +65,6 @@
 					</table:customData>
 					<table:template>
 						<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.RemainingUtilizationTreeColumn" type="XML"/>
-					</table:template>
-				</table:Column>
-				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="15%" hAlign="End"
-					visible="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/remainingWork'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatCapacityProgressBarVisibility'}">
-					<table:customData>
-						<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
-					</table:customData>
-					<table:template>
-							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.UtilizationTreeColumn" type="XML"/>
 					</table:template>
 				</table:Column>
 				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="5rem" hAlign="End"

@@ -471,8 +471,8 @@ sap.ui.define([
 			}
 			return false;
 		},
-		formatCapacityProgressBarVisibility:function(isCapacity, isRemainingWork, sSelectedView){
-			if (isCapacity === true && isRemainingWork !== true && sSelectedView !== "TIMENONE") {
+		formatCapacityProgressBarVisibility:function(isCapacity, sSelectedView){
+			if (isCapacity === true && sSelectedView !== "TIMENONE") {
 				return true;
 			}
 			return false;

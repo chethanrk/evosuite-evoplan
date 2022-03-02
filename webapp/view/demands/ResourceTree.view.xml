@@ -27,7 +27,7 @@
 								</HBox>
 								<HBox visible="{ parts:[{path:'user>/ENABLE_CAPACITY'},{path:'user>/ENABLE_REMAINING_WORK'},{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatRemainingWorkVisibility'}" >
 									<Switch id="idRemWorkCheck" customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}"
-									state="{viewModel>/remainingWork}"></Switch>
+									state="{viewModel>/remainingWork}" change="onSelectRemainingWork"></Switch>
 									<Text text="{i18n>xtit.remainingWork}" class="sapUiTinyMarginBegin sapUiTinyMarginTop"></Text>
 								</HBox>
 							</VBox>
