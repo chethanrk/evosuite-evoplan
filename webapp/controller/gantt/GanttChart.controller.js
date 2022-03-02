@@ -101,10 +101,11 @@ sap.ui.define([
 			}
 
 			//set background color of Gantt
+			//could not found a good render event of Gantt
 			setTimeout(function () {
 				var oBgControl = this._ganttChart.$()[0].querySelector(".sapGanttBackground .sapGanttBackgroundSVG");
 				oBgControl.style.backgroundColor = this.oUserModel.getProperty("/DEFAULT_GANTT_BG_COLOR");
-			}.bind(this), 2000);
+			}.bind(this), 2500);
 
 		},
 		/**
