@@ -283,9 +283,8 @@ sap.ui.define([
 			}
 
 		},
-		_getAssignedDemand: function (sBindPath, data) {
-			var sPath = sBindPath,
-				oModel = this.oAssignmentModel;
+		_getAssignedDemand: function (data) {
+			var oModel = this.oAssignmentModel;
 
 			oModel.setProperty("/showError", false);
 			if (oModel.getProperty("/DateFrom") === "" || oModel.getProperty("/DateTo") === "") {
@@ -312,6 +311,56 @@ sap.ui.define([
 			oModel.setProperty("/DemandGuid", oDemandData.Guid);
 			oModel.setProperty("/Notification", oDemandData.NOTIFICATION);
 			oModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
+		},
+
+		checkAssigmentIsReassignable: function (mParameters) {
+			var oAssignmentData = mParameters.assignment,
+				oResourceData = mParameters.resource,
+				oDemandData = oAssignmentData.Demand,
+				oResourceBundle = this.getResourceBundle();
+			if (oAssignmentData.ResourceGuid === oResourceData.ResourceGuid && !oDemandData.ASGNMNT_CHANGE_ALLOWED) { // validation for change
+				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotangeable"));
+				return false;
+			} else if (!oDemandData.ASGNMNT_CHANGE_ALLOWED || !oDemandData.ALLOW_REASSIGN) { // validation for reassign
+				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotreassignable"));
+				return false;
+			}
+			return true;
+		},
+
+		_getAssignmentDetail: function (oAssignData, oResourcePath) {
+			this.oAssignmentModel = this.getView().getModel("assignment");
+			var oAssignment = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject();
+			oAssignment.AssignmentGuid = oAssignData.Guid;
+			oAssignment.DemandDesc = oAssignData.DemandDesc;
+			oAssignment.DemandGuid = oAssignData.DemandGuid;
+			oAssignment.DemandStatus = oAssignData.Demand.Status;
+			oAssignment.DateFrom = oAssignData.DateFrom;
+			oAssignment.DateTo = oAssignData.DateTo;
+			oAssignment.ResourceGroupGuid = oAssignData.ResourceGroupGuid;
+			oAssignment.ResourceGroupDesc = oAssignData.GROUP_DESCRIPTION;
+			oAssignment.ResourceGuid = oAssignData.ResourceGuid;
+			oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
+			if (this.getView().getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT")) {
+				oAssignment.OldEffort = oAssignData.Effort;
+				oAssignment.REMAINING_DURATION = oAssignData.REMAINING_DURATION;
+				oAssignment.OBJECT_SOURCE_TYPE = oAssignData.OBJECT_SOURCE_TYPE;
+			}
+			this.oAssignmentModel.setData(oAssignment);
+
+			var oNewAssign = this.getView().getModel().getProperty(oResourcePath);
+			this.oAssignmentModel.setProperty("/NewAssignPath", oResourcePath);
+			this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
+			if (oNewAssign.StartDate) {
+				this.oAssignmentModel.setProperty("/DateFrom", oNewAssign.StartDate);
+			}
+			if (oNewAssign.EndDate) {
+				this.oAssignmentModel.setProperty("/DateTo", oNewAssign.EndDate);
+			}
+			if (this.oAssignmentModel.getProperty("/NewAssignPath") !== null) {
+				this.oAssignmentModel.getData().ResourceGuid = this.getView().getModel().getProperty(this.oAssignmentModel.getProperty(
+					"/NewAssignPath") + "/ResourceGuid");
+			}
 		},
 
 		/**
@@ -344,44 +393,18 @@ sap.ui.define([
 					$expand: "Demand"
 				};
 				this.getOwnerComponent()._getData(this.assignmentPath, null, mParams)
-					.then(function (data) {
-						this.oAssignmentModel = this.getView().getModel("assignment");
-						var oAssignment = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject();
-						var oAssignData = this.getView().getModel().getProperty(this.assignmentPath);
+					.then(function (oAssignData) {
+						if (!this.checkAssigmentIsReassignable({
+								assignment: oAssignData,
+								resource: oTargetData
+							})) {
+							return false;
+						}
 						var mParameter = {
 							bFromHome: true
 						};
-						oAssignment.AssignmentGuid = oAssignData.Guid;
-						oAssignment.DemandDesc = oAssignData.DemandDesc;
-						oAssignment.DemandGuid = oAssignData.DemandGuid;
-						oAssignment.DemandStatus = oAssignData.Demand.Status;
-						oAssignment.DateFrom = oAssignData.DateFrom;
-						oAssignment.DateTo = oAssignData.DateTo;
-						oAssignment.ResourceGroupGuid = oAssignData.ResourceGroupGuid;
-						oAssignment.ResourceGroupDesc = oAssignData.GROUP_DESCRIPTION;
-						oAssignment.ResourceGuid = oAssignData.ResourceGuid;
-						oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
-						if (this.getView().getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT")) {
-							oAssignment.OldEffort = oAssignData.Effort;
-							oAssignment.REMAINING_DURATION = oAssignData.REMAINING_DURATION;
-							oAssignment.OBJECT_SOURCE_TYPE = oAssignData.OBJECT_SOURCE_TYPE;
-						}
-						this.oAssignmentModel.setData(oAssignment);
-
-						var oNewAssign = this.getView().getModel().getProperty(sPath);
-						this.oAssignmentModel.setProperty("/NewAssignPath", sPath);
-						this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
-						if(oTargetData.StartDate){
-							this.oAssignmentModel.setProperty("/DateFrom", oTargetData.StartDate);
-						}
-						if(oTargetData.EndDate){
-							this.oAssignmentModel.setProperty("/DateTo", oTargetData.EndDate);	
-						}
-						if (this.oAssignmentModel.getProperty("/NewAssignPath") !== null) {
-							this.oAssignmentModel.getData().ResourceGuid = this.getView().getModel().getProperty(this.oAssignmentModel.getProperty(
-								"/NewAssignPath") + "/ResourceGuid");
-						}
-						this._getAssignedDemand(this.assignmentPath, data);
+						this._getAssignmentDetail(oAssignData, sPath);
+						this._getAssignedDemand(oAssignData);
 						this.updateAssignment(true, mParameter);
 					}.bind(this));
 			} else {
