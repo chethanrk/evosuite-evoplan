@@ -367,9 +367,16 @@ sap.ui.define([
 							oAssignment.OBJECT_SOURCE_TYPE = oAssignData.OBJECT_SOURCE_TYPE;
 						}
 						this.oAssignmentModel.setData(oAssignment);
+
 						var oNewAssign = this.getView().getModel().getProperty(sPath);
 						this.oAssignmentModel.setProperty("/NewAssignPath", sPath);
 						this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
+						if(oTargetData.StartDate){
+							this.oAssignmentModel.setProperty("/DateFrom", oTargetData.StartDate);
+						}
+						if(oTargetData.EndDate){
+							this.oAssignmentModel.setProperty("/DateTo", oTargetData.EndDate);	
+						}
 						if (this.oAssignmentModel.getProperty("/NewAssignPath") !== null) {
 							this.oAssignmentModel.getData().ResourceGuid = this.getView().getModel().getProperty(this.oAssignmentModel.getProperty(
 								"/NewAssignPath") + "/ResourceGuid");
