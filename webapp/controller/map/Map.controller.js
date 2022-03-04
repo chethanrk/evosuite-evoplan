@@ -335,6 +335,7 @@ sap.ui.define([
 
 			var aIndices = this._oDataTable.getSelectedIndices(),
 				oSelectedPaths, aPathsData;
+			this.getModel("viewModel").setProperty("/isReassign", false);
 
 			oDragSession.setTextData("Hi I am dragging");
 			this._isDemandDraggable = true;
