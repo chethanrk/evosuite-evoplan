@@ -1,0 +1,9 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<ActionSheet showCancelButton="true" placement="Bottom" buttons="{path:'/DemandFunctionsSet', templateShareable:true }" 
+	afterClose="onAfterClose">
+		<buttons>
+			<Button text="{Description}" visible="{path :'Function', formatter:'.formatter.showAssignmentStatusButtons'}"
+			press="onChangeAssignmentStatus"></Button>
+		</buttons>
+	</ActionSheet>
+</core:FragmentDefinition>

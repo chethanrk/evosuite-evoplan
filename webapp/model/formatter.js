@@ -199,10 +199,10 @@ sap.ui.define([
 		 * format the Object Status state acording to Material_Status
 		 * @param sValue
 		 */
-		getDemandState:function(sValue){
-			if(sValue){
+		getDemandState: function (sValue) {
+			if (sValue) {
 				return sValue;
-			}	
+			}
 			return "None";
 		},
 		/**
@@ -461,13 +461,13 @@ sap.ui.define([
 			}
 			return false;
 		},
-		formatCapacityProgressBarVisibility:function(isCapacity, isRemainingWork, sSelectedView){
+		formatCapacityProgressBarVisibility: function (isCapacity, isRemainingWork, sSelectedView) {
 			if (isCapacity === true && isRemainingWork !== true && sSelectedView !== "TIMENONE") {
 				return true;
 			}
 			return false;
 		},
-		formatRemainingWorkProgressBarVisibility:function(isCapacity,isRemainingWork,sSelectedView){
+		formatRemainingWorkProgressBarVisibility: function (isCapacity, isRemainingWork, sSelectedView) {
 			if (isCapacity === true && isRemainingWork === true && sSelectedView !== "TIMENONE") {
 				return true;
 			}
@@ -497,14 +497,14 @@ sap.ui.define([
 			}
 			return false;
 		},
-	
-		formatRemainingWorkVisibility:function(userCapacity,userRemainingWork,isCapacity,sSelectedView){
-		 	if(userCapacity && userRemainingWork && isCapacity && sSelectedView !== "TIMENONE"){
-		 		return true;
-		 	}
-		 	return false;
-		 },
-		
+
+		formatRemainingWorkVisibility: function (userCapacity, userRemainingWork, isCapacity, sSelectedView) {
+			if (userCapacity && userRemainingWork && isCapacity && sSelectedView !== "TIMENONE") {
+				return true;
+			}
+			return false;
+		},
+
 		/**
 		 *
 		 * @param sNodeType
@@ -802,7 +802,7 @@ sap.ui.define([
 			var sOperation = aManageResourceData.operationType,
 				sMsgTypeText = "",
 				aData = aManageResourceData.Assignments,
-				sResourceName = this._oSelectedNodeContext.getProperty("Description");;
+				sResourceName = this._oSelectedNodeContext.getProperty("Description");
 			switch (sOperation) {
 			case "deleteResource":
 				sMsgTypeText = "Removable";
@@ -909,9 +909,37 @@ sap.ui.define([
 				if (sStatus === "warning") {
 					return "Error";
 				}
-				return sStatus.substr(0, 1).toUpperCase() + sStatus.substr(1, sStatus.length)
+				return sStatus.substr(0, 1).toUpperCase() + sStatus.substr(1, sStatus.length);
 			}
 			return "";
+		},
+		/**
+		 * Visibility of Change Status Button in Demand Footer
+		 * @Author Chethan
+		 * @since 2205
+		 * @param bDemandStatus
+		 * @param bAssignmentStatus
+		 * @returns boolean
+		 */
+		setVisibilityChangeStatusButton: function (bDemandStatus, bAssignmentStatus) {
+			if (bDemandStatus && !bAssignmentStatus) {
+				return true;
+			}
+			return false;
+		},
+
+		/**
+		 * Visibility of Assignment Status Button's in Assignment Status Popover based on Allow Fields 
+		 * @Author Chethan
+		 * @since 2205
+		 * @param sFunction
+		 * @returns boolean
+		 */
+		showAssignmentStatusButtons: function (sFunction) {
+			if (!this._oAssignmentTable && !this.aSelectedAssignments[0].oData["ALLOW_" + sFunction]) {
+				return false;
+			}
+			return true;
 		}
 	};
 });

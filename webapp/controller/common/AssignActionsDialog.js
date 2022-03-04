@@ -109,6 +109,13 @@ sap.ui.define([
 				}
 				oDialog.setTitle(this._resourceBundle.getText("xtit.reAssignTitle"));
 			}
+			//Hiding UnAssign and Assign New buttons when it's Change Assignment Status   #since 2205
+			if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGNMENT_STATUS") && this._oView.getModel("viewModel").getProperty(
+					"/Show_Assignment_Status_Button")) {
+				oUnAssignBtn.setVisible(false);
+				oReAssignBtn.setVisible(false);
+				oDialog.setTitle(this._resourceBundle.getText("xbut.ChngAssgnStatus"));
+			}
 			if (this.isFirstTime) {
 				sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable").rebindTable();
 			}
@@ -150,8 +157,8 @@ sap.ui.define([
 		onReassign: function (oEvent) {
 			var aContexts = this._oAssignMentTable.getSelectedContexts(),
 				sMsg;
-				this.getOperationDemands(aContexts);
-	
+			this.getOperationDemands(aContexts);
+
 			//check at least one demand selected
 			if (aContexts.length === 0) {
 				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.selectMinItem");
@@ -223,8 +230,18 @@ sap.ui.define([
 			if (this._mParameters.bFromNewGantt) {
 				oModel = this._oView.getModel("ganttModel");
 			}
+			//For Assignment Status Change
+			if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGNMENT_STATUS") && aSelectedResources.aAssignmentDemands) {
+				for (var a in aSelectedResources.aAssignmentDemands) {
+					aResources.push(new Filter("DemandGuid", FilterOperator.EQ, aSelectedResources.aAssignmentDemands[a].oData.Guid));
+				}
+				aFilters.push(new Filter({
+					filters: aResources,
+					and: false
+				}));
+			}
 			//For UnAssigning from Demand View
-			if (this._oView.getModel("user").getProperty("/ENABLE_DEMAND_UNASSIGN") && aSelectedResources.aUnAssignDemands) {
+			else if (this._oView.getModel("user").getProperty("/ENABLE_DEMAND_UNASSIGN") && aSelectedResources.aUnAssignDemands) {
 				for (var u in aSelectedResources.aUnAssignDemands) {
 					aResources.push(new Filter("DemandGuid", FilterOperator.EQ, aSelectedResources.aUnAssignDemands[u].oData.Guid));
 				}
@@ -325,6 +342,18 @@ sap.ui.define([
 					this._bSelectAll = true;
 				}
 			}
+
+			//Enabling Change Assignment Status Button   #since 2205
+			if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGNMENT_STATUS") && this._oView.getModel("viewModel").getProperty(
+					"/Show_Assignment_Status_Button")) {
+				var oSource = oEvent.getSource(),
+					aSelectedItems = oSource.getSelectedItems(),
+					bEnableAssignmentStatusButton = true;
+				if (aSelectedItems.length === 0) {
+					bEnableAssignmentStatusButton = false;
+				}
+				this._oView.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", bEnableAssignmentStatusButton);
+			}
 		},
 		/**
 		 * close dialog
@@ -333,6 +362,11 @@ sap.ui.define([
 			this._oAssignMentTable.removeSelections();
 			this._oView.getModel("viewModel").setProperty("/CheckRightTechnician", this._bCheckRightTechnician);
 			this._oDialog.close();
+			if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGNMENT_STATUS") && this._oView.getModel("viewModel").getProperty(
+					"/Show_Assignment_Status_Button")) {
+				this._oView.getModel("viewModel").setProperty("/Show_Assignment_Status_Button", false);
+				//	this._oView.getModel("viewModel").setProperty("/Show_Assignment_Status_Button", false );
+			}
 		},
 		/**
 		 * Deselect from assignments list items not allowed to check Find Technician
@@ -351,7 +385,8 @@ sap.ui.define([
 		},
 
 		onDataBind: function () {
-			if (this._oView.getModel("user").getProperty("/ENABLE_DEMAND_UNASSIGN") && this._aSelectedResources.aUnAssignDemands) {
+			if (this._oView.getModel("user").getProperty("/ENABLE_DEMAND_UNASSIGN") && this._aSelectedResources.aUnAssignDemands && !this._oView
+				.getModel("viewModel").getProperty("/Show_Assignment_Status_Button")) {
 				this._oAssignMentTable.selectAll();
 			}
 		},
@@ -385,6 +420,19 @@ sap.ui.define([
 			}.bind(this));
 
 		},
+		/**
+		 * Opening Assignment Status Change PopOver
+		 * @param oEvent
+		 * Since 2205
+		 * @Author Chethan RK
+		 */
+		openAssignmentStatus: function (oEvent) {
+			var oSource = oEvent.getSource(),
+				aSelectedAssignments = this._oAssignMentTable.getSelectedItems(),
+				aAssignmentStatus = this._getAssignmentStatus(aSelectedAssignments);
+			this._component.AssignmentStatus.open(this._oView, oSource, aAssignmentStatus, this._mParameters, this._oAssignMentTable);
+		},
+
 		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog, this);
 			this._eventBus.subscribe("AssignTreeDialog", "updateSelection", this._deselectAssignments, this);
