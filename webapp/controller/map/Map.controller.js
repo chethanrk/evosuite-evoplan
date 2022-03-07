@@ -868,13 +868,11 @@ sap.ui.define([
 		 */
 		onAssignmentStatusButtonPress: function () {
 			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			var aSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+			var aSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx);
 			if (aSelectedPaths.aAssignmentDemands.length > 0) {
 				this.getModel("viewModel").setProperty("/Show_Assignment_Status_Button", true);
 				this.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
-				this.getOwnerComponent().assignActionsDialog.open(this.getView(), aSelectedPaths, true, {
-					bFromHome: true
-				});
+				this.getOwnerComponent().assignActionsDialog.open(this.getView(), aSelectedPaths, true, this._mParameters);
 			} else {
 				sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.noAssignments"));
 			}

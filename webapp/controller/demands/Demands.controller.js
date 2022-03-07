@@ -597,7 +597,7 @@ sap.ui.define([
 		 */
 		onAssignmentStatusButtonPress: function () {
 			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			var aSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+			var aSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx);
 			if (aSelectedPaths.aAssignmentDemands.length > 0) {
 				this._viewModel.setProperty("/Show_Assignment_Status_Button", true);
 				this._viewModel.setProperty("/Disable_Assignment_Status_Button", false);

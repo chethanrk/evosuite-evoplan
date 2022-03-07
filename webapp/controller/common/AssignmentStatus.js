@@ -55,7 +55,6 @@ sap.ui.define([
 		 * @param oSource
 		 */
 		onOpen: function (oSource) {
-			this._bDirty = false;
 			this._oView.getModel().resetChanges();
 			// open popover
 			this._oDialog.openBy(oSource);
@@ -106,16 +105,24 @@ sap.ui.define([
 		 * @since 2205
 		 */
 		_proceedToAssignmentStatusServiceCall: function (aAssignmentStatus, sFunctionKey) {
-			var oParams;
+			var oParams, bLast,
+				iAssignmentsLen = aAssignmentStatus.length - 1;
 			for (var i in aAssignmentStatus) {
+				bLast = false;
 				oParams = {
 					Function: sFunctionKey,
 					AssignmentGUID: aAssignmentStatus[i].oData.Guid
 				};
+				if (parseInt(i) === iAssignmentsLen) {
+					bLast = true;
+				}
 				this.executeFunctionImport.call(this._oView.getController(), this._oModel, oParams, "ExecuteAssignmentFunction", "POST").then(
-					function (data) {}.bind(this));
+					function (data) {
+						if (bLast) {
+							this._refreshAll();
+						}
+					}.bind(this));
 			}
-			this._bDirty = true;
 		},
 
 		/**
@@ -146,28 +153,26 @@ sap.ui.define([
 		},
 
 		/**
-		 * Refreshing views after Assignment Status onClose of Assignment Status Popover
+		 * Refreshing views after Assignment Status 
 		 * @Author Chethan RK
 		 * @since 2205
 		 */
-		onAfterClose: function () {
-			if (this._bDirty) {
-				if (!this._mParameters) {
+		_refreshAll: function () {
+			if (!this._mParameters) {
+				this._eventBus.publish("BaseController", "refreshDemandTable", {});
+				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				this._eventBus.publish("BaseController", "refreshMapView", {});
+			} else {
+				if (this._mParameters.bFromHome) {
 					this._eventBus.publish("BaseController", "refreshDemandTable", {});
+				} else if (this._mParameters.bFromNewGantt || this._mParameters.bFromGantt) {
 					this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				} else if (this._mParameters.bFromMap) {
 					this._eventBus.publish("BaseController", "refreshMapView", {});
-				} else {
-					if (this._mParameters.bFromHome) {
-						this._eventBus.publish("BaseController", "refreshDemandTable", {});
-					} else if (this._mParameters.bFromNewGantt) {
-						this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-					} else if (this._mParameters.bFromMap) {
-						this._eventBus.publish("BaseController", "refreshMapView", {});
-					}
 				}
-				if (this._oAssignmentTable) {
-					this._oAssignmentTable.removeSelections();
-				}
+			}
+			if (this._oAssignmentTable) {
+				this._oAssignmentTable.removeSelections();
 			}
 		}
 	});

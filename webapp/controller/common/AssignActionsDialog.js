@@ -311,38 +311,6 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onSelectionChange: function (oEvent) {
-			if (oEvent.getParameter("selected") && !oEvent.getParameter("selectAll")) {
-				var oListItem = oEvent.getParameter("listItem"),
-					oContext = oListItem.getBindingContext(),
-					sPath = oContext.getPath(),
-					oModel = oContext.getModel(),
-					bFlag = false;
-
-				if (!this._isUnAssign) {
-					bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_REASSIGN");
-				} else {
-					bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_UNASSIGN");
-				}
-				oListItem.setSelected(bFlag);
-			} else {
-				if (oEvent.getParameter("selectAll")) {
-					//_bSelectAll is used for toggling between select all & diselect all
-					if (this._bSelectAll) {
-						var aListItems = oEvent.getSource().getItems();
-						this.validateDemands(aListItems, this._isUnAssign);
-						this._bSelectAll = false;
-					} else {
-						this._oAssignMentTable.removeSelections();
-						this._bSelectAll = true;
-					}
-				} else if (!oEvent.getParameter("selected")) {
-					this._bSelectAll = true;
-				} else {
-					this._oAssignMentTable.removeSelections();
-					this._bSelectAll = true;
-				}
-			}
-
 			//Enabling Change Assignment Status Button   #since 2205
 			if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGNMENT_STATUS") && this._oView.getModel("viewModel").getProperty(
 					"/Show_Assignment_Status_Button")) {
@@ -353,6 +321,38 @@ sap.ui.define([
 					bEnableAssignmentStatusButton = false;
 				}
 				this._oView.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", bEnableAssignmentStatusButton);
+			} else {
+				if (oEvent.getParameter("selected") && !oEvent.getParameter("selectAll")) {
+					var oListItem = oEvent.getParameter("listItem"),
+						oContext = oListItem.getBindingContext(),
+						sPath = oContext.getPath(),
+						oModel = oContext.getModel(),
+						bFlag = false;
+
+					if (!this._isUnAssign) {
+						bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_REASSIGN");
+					} else {
+						bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_UNASSIGN");
+					}
+					oListItem.setSelected(bFlag);
+				} else {
+					if (oEvent.getParameter("selectAll")) {
+						//_bSelectAll is used for toggling between select all & diselect all
+						if (this._bSelectAll) {
+							var aListItems = oEvent.getSource().getItems();
+							this.validateDemands(aListItems, this._isUnAssign);
+							this._bSelectAll = false;
+						} else {
+							this._oAssignMentTable.removeSelections();
+							this._bSelectAll = true;
+						}
+					} else if (!oEvent.getParameter("selected")) {
+						this._bSelectAll = true;
+					} else {
+						this._oAssignMentTable.removeSelections();
+						this._bSelectAll = true;
+					}
+				}
 			}
 		},
 		/**
