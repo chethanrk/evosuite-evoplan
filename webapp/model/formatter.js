@@ -450,6 +450,16 @@ sap.ui.define([
 			}
 		},
 		/**
+		 * Format state of progress bar based on REMAIN_WORK_UTIL_COLOR
+		 * @param sValue
+		 */
+		formatRemainingWorkProgressState:function(sValue){
+			if(sValue){
+				return sValue;
+			}
+			return "None";
+		},
+		/**
 		 *
 		 * @param isCapacity
 		 * @param sSelectedView
@@ -461,8 +471,8 @@ sap.ui.define([
 			}
 			return false;
 		},
-		formatCapacityProgressBarVisibility: function (isCapacity, isRemainingWork, sSelectedView) {
-			if (isCapacity === true && isRemainingWork !== true && sSelectedView !== "TIMENONE") {
+		formatCapacityProgressBarVisibility:function(isCapacity, sSelectedView){
+			if (isCapacity === true && sSelectedView !== "TIMENONE") {
 				return true;
 			}
 			return false;

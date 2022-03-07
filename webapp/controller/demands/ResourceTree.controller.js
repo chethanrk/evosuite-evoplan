@@ -297,7 +297,7 @@ sap.ui.define([
 			iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
 			iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
 			aPSDemandsNetworkAssignment = this._showNetworkAssignments(this._oViewModel);
-			
+
 			//Checking PS Demands for Network Assignment 
 			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
 				this.getOwnerComponent().NetworkAssignment.open(this.getView(), sPath, aPSDemandsNetworkAssignment, this._mParameters);
@@ -381,8 +381,17 @@ sap.ui.define([
 			} else {
 				oViewModel.setProperty("/splitterDivider", "31%");
 			}
-			if(!bState){
-				oViewModel.setProperty("/remainingWork",bState);
+			if (!bState) {
+				oViewModel.setProperty("/remainingWork", bState);
+			}
+		},
+		onSelectRemainingWork: function (oEvent) {
+			var bState = oEvent.getParameter("state"),
+				oViewModel = this.getModel("viewModel");
+			if (bState) {
+				oViewModel.setProperty("/splitterDivider", "50%");
+			} else {
+				oViewModel.setProperty("/splitterDivider", "31%");
 			}
 		},
 		/**
@@ -487,7 +496,7 @@ sap.ui.define([
 
 			var sObjectId = oResourceNode.NodeId;
 			//Opening Resource Qualification only on Resource Node Icon
-			if (oResourceNode.NodeType === "RESOURCE") { 
+			if (oResourceNode.NodeType === "RESOURCE") {
 				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
 			}
 		},
