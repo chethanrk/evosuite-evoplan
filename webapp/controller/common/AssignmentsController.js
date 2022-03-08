@@ -808,7 +808,7 @@ sap.ui.define([
 				oDemandData = oAssignmentData.Demand,
 				oResourceBundle = this.getResourceBundle();
 			if (oAssignmentData.ResourceGroupGuid === oResourceData.ResourceGroupGuid && oAssignmentData.ResourceGuid === oResourceData.ResourceGuid && !oDemandData.ASGNMNT_CHANGE_ALLOWED) { // validation for change
-				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotangeable"));
+				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotchangeable"));
 				return false;
 			} else if (!oDemandData.ASGNMNT_CHANGE_ALLOWED || !oDemandData.ALLOW_REASSIGN) { // validation for reassign
 				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotreassignable"));
