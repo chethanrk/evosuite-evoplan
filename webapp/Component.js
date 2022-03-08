@@ -120,6 +120,9 @@ sap.ui.define([
 				detailPageBreadCrum: "",
 				capacityPlanning: false,
 				remainingWork:false,
+				dragDropSetting:{
+					isReassign:false
+				},
 				splitterDivider: "30%",
 				ganttSelectionPane: "28%",
 				showUtilization: false,

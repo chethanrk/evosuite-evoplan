@@ -267,6 +267,24 @@ sap.ui.define([
 		_triggerFilterSearch: function () {
 			this._oDroppableTable.rebindTable();
 		},
+		
+		/**
+		 * On drag of assignment, get Assignment data to Assignment model
+		 * @author Sagar since 2205 
+		 */
+		onDragStart: function (oEvent) {
+			var oDragSession = oEvent.getParameter("dragSession"),
+				oDraggedControl = oDragSession.getDragControl(),
+				oContext = this._oDataTable.getContextByIndex(oDraggedControl.getIndex()),
+				oObject = oContext.getObject(),
+				vAssignGuid = oObject.AssignmentGuid;
+
+			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
+			this._oViewModel.setProperty("/dragDropSetting/isReassign", true);
+			if (oObject.NodeType !== "ASSIGNMENT") {
+				oEvent.preventDefault();
+			}
+		},
 
 		/**
 		 * on drop on resource, triggers create assignment for dragged demands
@@ -280,7 +298,8 @@ sap.ui.define([
 				aSources = [],
 				iOperationTimesLen,
 				iVendorAssignmentLen,
-				aPSDemandsNetworkAssignment;
+				aPSDemandsNetworkAssignment,
+				mParams,mParameter;
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -293,29 +312,50 @@ sap.ui.define([
 				return;
 			}
 
-			aSources = this._oViewModel.getProperty("/dragSession");
-			iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
-			iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
-			aPSDemandsNetworkAssignment = this._showNetworkAssignments(this._oViewModel);
-
-			//Checking PS Demands for Network Assignment 
-			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
-				this.getOwnerComponent().NetworkAssignment.open(this.getView(), sPath, aPSDemandsNetworkAssignment, this._mParameters);
-			}
-			//Checking Vendor Assignment for External Resources
-			else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
-				iVendorAssignmentLen) {
-				this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
+			if (this._oViewModel.getProperty("/dragDropSetting/isReassign")) {
+				mParams = {
+					$expand: "Demand"
+				};
+				this.getOwnerComponent()._getData(this.assignmentPath, null, mParams)
+					.then(function (oAssignData) {
+						if (!this.checkAssigmentIsReassignable({
+								assignment: oAssignData,
+								resource: oTargetData
+							})) {
+							return false;
+						}
+						mParameter = {
+							bFromHome: true
+						};
+						this._setAssignmentDetail(oAssignData, sPath);
+						this.updateAssignment(true, mParameter);
+					}.bind(this));
 			} else {
-				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
-					"RESOURCE") {
-					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), this._mParameters, sPath);
+
+				aSources = this._oViewModel.getProperty("/dragSession");
+				iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
+				iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
+				aPSDemandsNetworkAssignment = this._showNetworkAssignments(this._oViewModel);
+
+				//Checking PS Demands for Network Assignment 
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+					this.getOwnerComponent().NetworkAssignment.open(this.getView(), sPath, aPSDemandsNetworkAssignment, this._mParameters);
+				}
+				//Checking Vendor Assignment for External Resources
+				else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
+					iVendorAssignmentLen) {
+					this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
 				} else {
-					// If the Resource is Not/Partially available
-					if (this.isAvailable(sPath)) {
-						this.assignedDemands(aSources, sPath, this._mParameters);
+					if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+						"RESOURCE") {
+						this.getOwnerComponent().OperationTimeCheck.open(this.getView(), this._mParameters, sPath);
 					} else {
-						this.showMessageToProceed(aSources, sPath);
+						// If the Resource is Not/Partially available
+						if (this.isAvailable(sPath)) {
+							this.assignedDemands(aSources, sPath, this._mParameters);
+						} else {
+							this.showMessageToProceed(aSources, sPath);
+						}
 					}
 				}
 			}
