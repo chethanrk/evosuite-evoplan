@@ -34,7 +34,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttResourceTreeFilter",
 	"com/evorait/evoplan/controller/common/VendorAssignment",
 	"com/evorait/evoplan/controller/common/LongTextPopover",
-	"com/evorait/evoplan/controller/common/NetworkAssignment"
+	"com/evorait/evoplan/controller/common/NetworkAssignment",
+	"com/evorait/evoplan/controller/common/AssignmentStatus"
 ], function (
 	UIComponent,
 	Device,
@@ -70,7 +71,8 @@ sap.ui.define([
 	GanttResourceTreeFilter,
 	VendorAssignment,
 	LongTextPopover,
-	NetworkAssignment) {
+	NetworkAssignment,
+	AssignmentStatus) {
 
 	"use strict";
 
@@ -466,6 +468,9 @@ sap.ui.define([
 
 			this.NetworkAssignment = new NetworkAssignment();
 			this.NetworkAssignment.init();
+			
+			this.AssignmentStatus = new AssignmentStatus();
+			this.AssignmentStatus.init();
 
 		},
 

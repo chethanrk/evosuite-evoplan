@@ -57,9 +57,9 @@ sap.ui.define([
 			return a && !b && c !== "COMP" && d; // === 1;
 		},
 
-		getVisible: function (a, b, c, d) {
+		getVisible: function (a, b, c, d, e) {
 			//	d = d === 2 || d === 3;
-			return a && !b && c !== "COMP" && d;
+			return a && !b && c !== "COMP" && d && !e;
 		},
 
 		/**
@@ -180,16 +180,7 @@ sap.ui.define([
 		 */
 		_triggerRefreshDemand: function () {
 			this.getView().getElementBinding().refresh();
-		},
-
-		getVisible: function (a, b, c, d) {
-			//	d = d === 2 || d === 3;
-			return a && !b && c !== "COMP" && d;
-		},
-
-		getSetFunction: function (a, b, c, d) {
-			return a && !b && c !== "COMP" && d; // === 1;
-		},
+		}
 
 	});
 });

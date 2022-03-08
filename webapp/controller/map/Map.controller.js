@@ -194,6 +194,7 @@ sap.ui.define([
 			this._resetMapSelection();
 			oViewModel.setProperty("/mapSettings/selectedDemands", []);
 			oViewModel.setProperty("/mapSettings/routeData", []);
+			oViewModel.setProperty("/Disable_Assignment_Status_Button", false);
 			this.onResetLegendSelection();
 		},
 		/**
@@ -436,11 +437,13 @@ sap.ui.define([
 			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
 				this.byId("assignButton").setEnabled(true);
 				this.byId("changeStatusButton").setEnabled(true);
+				this.byId("idAssignmentStatusButton").setEnabled(true);
 				this.byId("idOverallStatusButton").setEnabled(true);
 				this.byId("idUnassignButton").setEnabled(true);
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
+				this.byId("idAssignmentStatusButton").setEnabled(false);
 				this.byId("materialInfo").setEnabled(false);
 				this.byId("idOverallStatusButton").setEnabled(false);
 				this.byId("idUnassignButton").setEnabled(false);
@@ -855,6 +858,23 @@ sap.ui.define([
 				this.getOwnerComponent().assignActionsDialog.open(this.getView(), oSelectedPaths, true, this._mParameters);
 			} else {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+			}
+		},
+
+		/**
+		 * On Press of Change Assignment Status Button
+		 * Since 2205
+		 * @Author Chethan RK
+		 */
+		onAssignmentStatusButtonPress: function () {
+			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+			var aSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx);
+			if (aSelectedPaths.aAssignmentDemands.length > 0) {
+				this.getModel("viewModel").setProperty("/Show_Assignment_Status_Button", true);
+				this.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
+				this.getOwnerComponent().assignActionsDialog.open(this.getView(), aSelectedPaths, true, this._mParameters);
+			} else {
+				sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.noAssignments"));
 			}
 		},
 
