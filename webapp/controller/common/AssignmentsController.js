@@ -798,14 +798,16 @@ sap.ui.define([
 		},
 		
 		/**
-		 * check whether Assignment is changeable or reassignable
+		 * Check whether Assignment is changeable or reassignable
+		 * @author Sagar since 2205
+		 * @param mParameters - Object having dragged assignment data and dropped resource
 		 */
 		checkAssigmentIsReassignable: function (mParameters) {
 			var oAssignmentData = mParameters.assignment,
 				oResourceData = mParameters.resource,
 				oDemandData = oAssignmentData.Demand,
 				oResourceBundle = this.getResourceBundle();
-			if (oAssignmentData.ResourceGuid === oResourceData.ResourceGuid && !oDemandData.ASGNMNT_CHANGE_ALLOWED) { // validation for change
+			if (oAssignmentData.ResourceGroupGuid === oResourceData.ResourceGroupGuid && oAssignmentData.ResourceGuid === oResourceData.ResourceGuid && !oDemandData.ASGNMNT_CHANGE_ALLOWED) { // validation for change
 				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotangeable"));
 				return false;
 			} else if (!oDemandData.ASGNMNT_CHANGE_ALLOWED || !oDemandData.ALLOW_REASSIGN) { // validation for reassign
@@ -816,11 +818,15 @@ sap.ui.define([
 		},
 
 		/**
-		 * setting dragged assignment to Assignment Model
+		 * Setting dragged assignment to Assignment Model
+		 * @author Sagar since 2205
+		 * @param oAssignment - Dragged assignment data
+		 * @param oResourcePath - Dropped resource
 		 */
 		_setAssignmentDetail: function (oAssignData, oResourcePath) {
-			var oAssignmentModel = this.getView().getModel("assignment");
-			var oAssignment = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject();
+			var oAssignmentModel = this.getView().getModel("assignment"),
+				oAssignment = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject(),
+				oNewAssign,oDemandData;
 			oAssignment.AssignmentGuid = oAssignData.Guid;
 			oAssignment.DemandDesc = oAssignData.DemandDesc;
 			oAssignment.DemandGuid = oAssignData.DemandGuid;
@@ -838,7 +844,7 @@ sap.ui.define([
 			}
 			oAssignmentModel.setData(oAssignment);
 
-			var oNewAssign = this.getView().getModel().getProperty(oResourcePath);
+			oNewAssign = this.getView().getModel().getProperty(oResourcePath);
 			oAssignmentModel.setProperty("/NewAssignPath", oResourcePath);
 			oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
 			if (oNewAssign.StartDate) {
@@ -863,7 +869,7 @@ sap.ui.define([
 			//Fetching Resource Start and End Date from AssignmentSet for validating on save
 			oAssignmentModel.setProperty("/RES_ASGN_START_DATE", oAssignData.RES_ASGN_START_DATE);
 			oAssignmentModel.setProperty("/RES_ASGN_END_DATE", oAssignData.RES_ASGN_END_DATE);
-			var oDemandData = oAssignData.Demand;
+			oDemandData = oAssignData.Demand;
 			oAssignmentModel.setProperty("/Description", oDemandData.DemandDesc);
 			oAssignmentModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
 			oAssignmentModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);

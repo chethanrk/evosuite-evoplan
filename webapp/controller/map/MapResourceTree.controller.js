@@ -265,20 +265,19 @@ sap.ui.define([
 			this._oDroppableTable.rebindTable();
 		},
 		/**
-		 * on drag of assignment, triggers set Assignment data to Assignment model
+		 * On drag of assignment, get Assignment data to Assignment model
+		 * @author Sagar since 2205		 * 
 		 */
 		onDragStart: function (oEvent) {
 			var oDragSession = oEvent.getParameter("dragSession"),
 				oDraggedControl = oDragSession.getDragControl(),
 				oContext = this._oDataTable.getContextByIndex(oDraggedControl.getIndex()),
 				oObject = oContext.getObject(),
-				vAssignGuid = oObject.AssignmentGuid,
-				vDemandGuid = oObject.DemandGuid;
+				vAssignGuid = oObject.AssignmentGuid;
 
 			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
-			this.getModel("viewModel").setProperty("/isReassign", true);
+			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", true);
 			if (oObject.NodeType !== "ASSIGNMENT") {
-				// this._showAssignErrorDialog();
 				oEvent.preventDefault();
 			}
 		},
@@ -309,7 +308,7 @@ sap.ui.define([
 				return;
 			}
 
-			if (this.getModel("viewModel").getProperty("/isReassign")) {
+			if (this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")) {
 				var mParams = {
 					$expand: "Demand"
 				};
