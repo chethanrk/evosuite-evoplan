@@ -655,7 +655,9 @@ sap.ui.define([
 				sParameter = sAdditionInfo.split("\\")[sAdditionInfo.split("\\").length - 1];
 				oKeyChar = oDemandObj[sParameter];
 				sUri = sUri + oKeyChar;
-				sUri = sServicePath + sUri;
+				if (sAdditionInfo.substring(0, 5) !== "https") {
+					sUri = sServicePath + sUri;
+				}
 				window.open(sUri, "_blank");
 			} else {
 				//Logic for Navigation in Fiori Launchpad
@@ -701,7 +703,9 @@ sap.ui.define([
 						}
 					}
 					sUri = sUri.slice(0, -1);
-					sUri = sServicePath + sUri;
+					if (sAdditionInfo.substring(0, 5) !== "https") {
+						sUri = sServicePath + sUri;
+					}
 					window.open(sUri, "_blank");
 				}
 			}
@@ -924,7 +928,7 @@ sap.ui.define([
 				});
 			}.bind(this));
 		},
-		
+
 		/**
 		 * Fetching selected Assignments Path and Context for Assignment Status Change
 		 * @param [aSelectedAssignments]
