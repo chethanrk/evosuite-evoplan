@@ -11,9 +11,10 @@ sap.ui.define([
 	"sap/gantt/simple/CoordinateUtils",
 	"com/evorait/evoplan/model/Constants",
 	"sap/gantt/misc/Utility",
-	"sap/gantt/def/pattern/SlashPattern"
+	"sap/gantt/def/pattern/SlashPattern",
+	"sap/gantt/def/pattern/BackSlashPattern"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, Popup, MessageToast, Fragment, CoordinateUtils, Constants,
-	Utility, SlashPattern) {
+	Utility, SlashPattern, BackSlashPattern) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttChart", {
@@ -99,14 +100,6 @@ sap.ui.define([
 			} else {
 				this._addAssociations.bind(this)();
 			}
-
-			//set background color of Gantt
-			//could not found a good render event of Gantt
-			setTimeout(function () {
-				var oBgControl = this._ganttChart.$()[0].querySelector(".sapGanttBackground .sapGanttBackgroundSVG");
-				oBgControl.style.backgroundColor = this.oUserModel.getProperty("/DEFAULT_GANTT_BG_COLOR");
-			}.bind(this), 2500);
-
 		},
 		/**
 		 * on page exit
@@ -638,12 +631,14 @@ sap.ui.define([
 		/**
 		 * get Conditional shape for unavailabilities
 		 * and set color pattern for some unavailabilities
+		 * @param sTypeGroup
 		 * @param sType
 		 * @param sColor
+		 * @param sPattern
 		 */
-		getAvalablitiyConditionalShape: function (sType, sColor) {
-			//this._setAvailabilitiesPatterns(sType, sColor);
-			if (sType === "L") {
+		getAvalablitiyConditionalShape: function (sTypeGroup, sType, sColor, sPattern) {
+			this._setAvailabilitiesPatterns(sTypeGroup, sType, sColor, sPattern);
+			if (sTypeGroup === "L") {
 				return 1;
 			} else {
 				return 0;
@@ -1273,6 +1268,13 @@ sap.ui.define([
 					this._changeGanttHorizonViewAt(this._axisTime.getZoomLevel(), this._axisTime);
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
 					// this._addAssociations.bind(this)();
+
+					//set background color of Gantt
+					//could not found a good render event of Gantt
+					setTimeout(function () {
+						var oBgControl = this._ganttChart.$()[0].querySelector(".sapGanttBackground .sapGanttBackgroundSVG");
+						oBgControl.style.backgroundColor = this.oUserModel.getProperty("/DEFAULT_GANTT_BG_COLOR");
+					}.bind(this), 2000);
 				}.bind(this));
 		},
 		/**
@@ -1509,22 +1511,41 @@ sap.ui.define([
 
 		/**
 		 * Set color pattern for some unavailabilities
+		 * @param sTypeGroup
 		 * @param sType
 		 * @param sColor
+		 * @param sPattern
 		 */
-		_setAvailabilitiesPatterns: function (sType, sColor) {
-			var sPatternName = this._viewId + "--availability-" + sType;
-			if (!this._oSVGDef) {
-				this._oSVGDef = this.getView().byId("idGanttChartSvgDefs");
-				this._aAvailabilitySVGDef = [];
-			}
-			if (this._aAvailabilitySVGDef.indexOf(sPatternName) < 0) {
-				var oCtrl = new SlashPattern(sPatternName, {
-					backgroundColor: "white",
-					stroke: "#CCC" //sColor
-				});
-				this._oSVGDef.insertDef(oCtrl);
-				this._aAvailabilitySVGDef.push(sPatternName);
+		_setAvailabilitiesPatterns: function (sTypeGroup, sType, sColor, sPattern) {
+			if (sPattern) {
+				var sPatternName = this._viewId + "--availability-" + sTypeGroup + "-" + sType,
+					oCtrl = null;
+				//get SVGDev control in view
+				if (!this._oSVGDef) {
+					this._oSVGDef = this.getView().byId("idGanttChartSvgDefs");
+					this._aAvailabilitySVGDef = [];
+				}
+
+				//when pattern control was not yet created
+				if (this._aAvailabilitySVGDef.indexOf(sPatternName) < 0) {
+					//create SlashPattern
+					if (sPattern === "SlashPattern") {
+						oCtrl = new SlashPattern(sPatternName, {
+							backgroundColor: "white",
+							stroke: sColor || "#eee"
+						});
+						this._oSVGDef.insertDef(oCtrl);
+						this._aAvailabilitySVGDef.push(sPatternName);
+					}
+					if (sPattern === "BackslashPattern") {
+						oCtrl = new BackSlashPattern(sPatternName, {
+							backgroundColor: "white",
+							stroke: sColor || "#eee"
+						});
+						this._oSVGDef.insertDef(oCtrl);
+						this._aAvailabilitySVGDef.push(sPatternName);
+					}
+				}
 			}
 		}
 

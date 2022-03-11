@@ -67,19 +67,21 @@ sap.ui.define([
 		/**
 		 * Formatter for the color fill
 		 * Based on the group type the fill the color will be rendered.
-		 * A -> White
-		 * N -> Pattern
+		 * A -> Available = White
+		 * N & T -> Availability = Pattern
+		 * L -> Blocker
+		 * 
 		 * @param sType
 		 * @return {string}
 		 */
-		getPattern: function (sType, sColour) {
-			if (sType === "N" || sType === "T") {
-				return "url(#" + this._viewId + "--availability-" + sType + ")";
-			} else if (sType === "A") {
+		getPattern: function (sTypeGroup, sType, sColour, sPattern) {
+			if (sPattern) {
+				return "url(#" + this._viewId + "--availability-" + sTypeGroup + "-" + sType + ")";
+			} else if (sTypeGroup === "A") {
 				return "#FFF";
-			} else if (sType === "O") {
+			} else if (sTypeGroup === "O") {
 				return "transparent";
-			} else if (sType === "L") {
+			} else if (sTypeGroup === "L") {
 				return sColour;
 			} else {
 				return "transparent";
