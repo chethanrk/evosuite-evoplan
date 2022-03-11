@@ -453,8 +453,8 @@ sap.ui.define([
 		 * Format state of progress bar based on REMAIN_WORK_UTIL_COLOR
 		 * @param sValue
 		 */
-		formatRemainingWorkProgressState:function(sValue){
-			if(sValue){
+		formatRemainingWorkProgressState: function (sValue) {
+			if (sValue) {
 				return sValue;
 			}
 			return "None";
@@ -471,7 +471,7 @@ sap.ui.define([
 			}
 			return false;
 		},
-		formatCapacityProgressBarVisibility:function(isCapacity, sSelectedView){
+		formatCapacityProgressBarVisibility: function (isCapacity, sSelectedView) {
 			if (isCapacity === true && sSelectedView !== "TIMENONE") {
 				return true;
 			}
@@ -861,18 +861,36 @@ sap.ui.define([
 		},
 
 		onDisplayOperationTimes: function (oDate, oTimes) {
-			if (oDate) {
-				var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-						pattern: "dd MMM yyyy"
-					}),
-					oOperationTime = new Date(oTimes.ms),
-					oOperationTimeMS = oOperationTime.getTime(),
-					oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
-						pattern: "hh:mm:ss a"
-					}),
-					sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS)); //removed offset bcz of time mismatch : RAKESH SAHU.
+			// var oOperationTime = new Date(oTimes.ms);
+			// oDate.setHours(oOperationTime.getHours());
+			// oDate.setMinutes(oOperationTime.getMinutes());
+			// oDate.setSeconds(oOperationTime.getSeconds());
+			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				pattern: "dd MMM yyyy hh:mm:ss a"
+			});
 
-				return oDateFormat.format(oDate) + ", " + sOperationTimes;
+			// return oDateFormat.format(oDate);
+
+			// return oDate + " " + oTimes;
+			if (oDate) {
+				// var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				// 		pattern: "dd MMM yyyy"
+				// 	}),
+				var sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
+					oOperationTime = new Date(oTimes.ms + sTZOffsetMs);
+
+				oDate.setHours(oOperationTime.getHours());
+				oDate.setMinutes(oOperationTime.getMinutes());
+				oDate.setSeconds(oOperationTime.getSeconds());
+
+				// oOperationTimeMS = oOperationTime.getTime(),
+				// oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+				// 	pattern: "hh:mm:ss a"
+				// }),
+				// sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS)); //removed offset bcz of time mismatch : RAKESH SAHU.
+				return oDateFormat.format(new Date(oDate.getTime() - sTZOffsetMs));
+				// return oDateFormat.format(new Date(oDate.getTime()));
+				// return oDateFormat.format(oDate) + ", " + sOperationTimes;
 			}
 		},
 

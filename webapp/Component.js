@@ -35,7 +35,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/VendorAssignment",
 	"com/evorait/evoplan/controller/common/LongTextPopover",
 	"com/evorait/evoplan/controller/common/NetworkAssignment",
-	"com/evorait/evoplan/controller/common/AssignmentStatus"
+	"com/evorait/evoplan/controller/common/AssignmentStatus",
+	"com/evorait/evoplan/controller/gantt/GanttAssignmentPopOver"
 ], function (
 	UIComponent,
 	Device,
@@ -72,7 +73,8 @@ sap.ui.define([
 	VendorAssignment,
 	LongTextPopover,
 	NetworkAssignment,
-	AssignmentStatus) {
+	AssignmentStatus,
+	GanttAssignmentPopOver) {
 
 	"use strict";
 
@@ -137,7 +139,8 @@ sap.ui.define([
 						reassign: false,
 						change: false
 					},
-					aGanttSplitDemandData: false
+					aGanttSplitDemandData: false,
+					GanttPopOverData:{}
 				},
 				showDemands: true,
 				mapSettings: {
@@ -474,6 +477,9 @@ sap.ui.define([
 			
 			this.AssignmentStatus = new AssignmentStatus();
 			this.AssignmentStatus.init();
+			
+			this.GanttAssignmentPopOver = new GanttAssignmentPopOver();
+			this.GanttAssignmentPopOver.init();
 
 		},
 

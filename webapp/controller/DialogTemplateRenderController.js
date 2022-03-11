@@ -44,7 +44,11 @@ sap.ui.define([
 			//set annotation path and other parameters
 			this.setTemplateProperties(mParams);
 
-			this._loadDialog(this._mParams.oDialogController, onDataReceived);
+			if (mParams.isResponsivePopOver) {
+				this._loadPopOver(this._mParams.oDialogController, onDataReceived);
+			} else {
+				this._loadDialog(this._mParams.oDialogController, onDataReceived);
+			}
 		},
 
 		onExit: function () {
@@ -72,10 +76,32 @@ sap.ui.define([
 				}).then(function (oFragment) {
 					this._oDialog = oFragment;
 					this._oDialog.addStyleClass(this._oView.getModel("viewModel").getProperty("/densityClass"));
-					this._setFragmentViewBinding(onDataReceived);
+					this._setFragmentViewBinding(this._oDialog, onDataReceived);
 				}.bind(this));
 			} else {
-				this._setFragmentViewBinding(onDataReceived);
+				this._setFragmentViewBinding(this._oDialog, onDataReceived);
+			}
+		},
+
+		/*
+		 * init dialog with right fragment name
+		 * and set context to the view
+		 * @returns {sap.ui.core.Control|sap.ui.core.Control[]}
+		 * @private
+		 */
+		_loadPopOver: function (sDialogController, onDataReceived) {
+			if (!this._ResponsivePopOver) {
+				Fragment.load({
+					name: "com.evorait.evoplan.view.fragments.ResponsivePopOver",
+					controller: sDialogController || this,
+					type: "XML"
+				}).then(function (oFragment) {
+					this._ResponsivePopOver = oFragment;
+					this._ResponsivePopOver.addStyleClass(this._oView.getModel("viewModel").getProperty("/densityClass"));
+					this._setFragmentViewBinding(this._ResponsivePopOver, onDataReceived);
+				}.bind(this));
+			} else {
+				this._setFragmentViewBinding(this._ResponsivePopOver, onDataReceived);
 			}
 		},
 
@@ -83,30 +109,40 @@ sap.ui.define([
 		 * load new template and set inside dialog
 		 * Bind dialog view to generated path
 		 */
-		_setFragmentViewBinding: function (onDataReceived) {
-			var sPath = this.getEntityPath(this._mParams.entitySet, this._mParams.pathParams, this._oView, this._mParams.sPath);
-			this._oDialog.setBusyIndicatorDelay(0);
-			this._oDialog.setBusy(true);
-			// this._oDialog.unbindElement();
-			// this._oDialog.bindElement(sPath);
-			this._oDialog.setTitle(this._oResourceBundle.getText(this._mParams.title));
-			this._oView.addDependent(this._oDialog);
+		_setFragmentViewBinding: function (oFragment, onDataReceived) {
+			var sPath = this.getEntityPath(this._mParams.entitySet, this._mParams.pathParams, this._oView, this._mParams.sPath),
+				sContainerId;
+			oFragment.setBusyIndicatorDelay(0);
+			oFragment.setBusy(true);
+
+			if (this._mParams.isResponsivePopOver) {
+				sContainerId = "ResponsivePopOverWrapper";
+			} else {
+				sContainerId = "FormDialogWrapper";
+				oFragment.setTitle(this._oResourceBundle.getText(this._mParams.title));
+			}
+			this._oView.addDependent(oFragment);
 
 			this._oModel.metadataLoaded().then(function () {
 				//get template and create views
 				this._mParams.oView = this._oView;
-				this.insertTemplateFragment(sPath, this._mParams.viewName, "FormDialogWrapper", this._afterBindSuccess.bind(this, sPath), this._mParams,
-					onDataReceived.bind(this, this._oDialog, this._oView, sPath));
+				this.insertTemplateFragment(sPath, this._mParams.viewName, sContainerId, this._afterBindSuccess.bind(this, sPath), this._mParams,
+					onDataReceived.bind(this, oFragment, this._oView, sPath));
 			}.bind(this));
 
-			this._oDialog.open();
+			this._mParams.isResponsivePopOver ? oFragment.openBy(this._mParams.ResponsivePopOverSource) : oFragment.open();
 		},
 
 		/**
 		 * What should happen after binding changed
 		 */
 		_afterBindSuccess: function (sPath, data, mParams) {
-			this._oDialog.setBusy(false);
+			if (this._oDialog) {
+				this._oDialog.setBusy(false);
+			}
+			if (this._ResponsivePopOver) {
+				this._ResponsivePopOver.setBusy(false);
+			}
 		},
 
 		/**
@@ -139,6 +175,9 @@ sap.ui.define([
 		 */
 		_saveErrorFn: function (oError) {
 
+		},
+		closeResponsivePopOver: function () {
+			this._ResponsivePopOver ? this._ResponsivePopOver.close() : "";
 		}
 
 	});
