@@ -84,7 +84,7 @@ sap.ui.define([
 		},
 
 		/*
-		 * init dialog with right fragment name
+		 * init popover with right fragment name
 		 * and set context to the view
 		 * @returns {sap.ui.core.Control|sap.ui.core.Control[]}
 		 * @private
@@ -106,7 +106,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * load new template and set inside dialog
+		 * load new template and set inside dialog/Popover
 		 * Bind dialog view to generated path
 		 */
 		_setFragmentViewBinding: function (oFragment, onDataReceived) {

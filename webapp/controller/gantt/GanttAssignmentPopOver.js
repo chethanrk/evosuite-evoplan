@@ -13,10 +13,12 @@ sap.ui.define([
 		init: function () {},
 
 		/**
-		 * open dialog
-		 * get detail data from resource and resource group
+		 * open Gantt Assignment Popover
+		 * trigger the Dialog rendorer for Responsive popover
 		 * @param oView
-		 * @param sBindPath
+		 * @param oSource
+		 * @param oShapeContext
+		 * since 2205
 		 */
 		open: function (oView, oSource, oShapeContext, mParameters) {
 			var sQualifier = Constants.ANNOTATION_CONSTANTS.GANTT_POP_OVER_QUALIFIER,
@@ -51,11 +53,21 @@ sap.ui.define([
 			this._component.DialogTemplateRenderer.open(this._oView, mParams, this._openPopOver.bind(this));
 		},
 
+		/**
+		 * event triggered after opening the Responsive Popover
+		 * setting the Title and Status
+		 * @param oDialog
+		 * @param oView
+		 */
 		_openPopOver: function (oDialog, oView, sPath, sEvent, data, mParams) {
 			this._setPopOverData(this._oShapeContext.getObject());
-			// oDialog.openBy(this._oSource);
 		},
 
+		/**
+		 * Setting up the Title and Status for responsive popover
+		 * @param oDialog
+		 * @param oView
+		 */
 		_setPopOverData: function (oData) {
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
 					pattern: "dd MMM, hh:mm a",
@@ -63,29 +75,8 @@ sap.ui.define([
 				}),
 				aDetails = {
 					title: oDateFormat.format([this._oShapeContext.getProperty("DateFrom"), this._oShapeContext.getProperty("DateTo")]),
-					status: oData.DEMAND_STATUS,
-					data: []
+					status: oData.DEMAND_STATUS
 				};
-			// aDetails.data.push({
-			// 	icon: "sap-icon://employee-pane",
-			// 	label: "Demand",
-			// 	text: oData.DemandDesc
-			// });
-			// aDetails.data.push({
-			// 	icon: "sap-icon://time-entry-request",
-			// 	label: "Effort",
-			// 	text: oData.Effort + " " + oData.EffortUnit
-			// });
-			// aDetails.data.push({
-			// 	icon: "sap-icon://employee",
-			// 	label: "Resource",
-			// 	text: oData.RESOURCE_DESCRIPTION
-			// });
-			// aDetails.data.push({
-			// 	icon: "sap-icon://account",
-			// 	label: "Demand",
-			// 	text: oData.GROUP_DESCRIPTION
-			// });
 			this._oView.getModel("viewModel").setProperty("/ganttSettings/GanttPopOverData", aDetails);
 
 		},

@@ -861,36 +861,19 @@ sap.ui.define([
 		},
 
 		onDisplayOperationTimes: function (oDate, oTimes) {
-			// var oOperationTime = new Date(oTimes.ms);
-			// oDate.setHours(oOperationTime.getHours());
-			// oDate.setMinutes(oOperationTime.getMinutes());
-			// oDate.setSeconds(oOperationTime.getSeconds());
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				pattern: "dd MMM yyyy hh:mm:ss a"
 			});
 
-			// return oDateFormat.format(oDate);
-
-			// return oDate + " " + oTimes;
 			if (oDate) {
-				// var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-				// 		pattern: "dd MMM yyyy"
-				// 	}),
 				var sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
 					oOperationTime = new Date(oTimes.ms + sTZOffsetMs);
-
+				
 				oDate.setHours(oOperationTime.getHours());
 				oDate.setMinutes(oOperationTime.getMinutes());
 				oDate.setSeconds(oOperationTime.getSeconds());
-
-				// oOperationTimeMS = oOperationTime.getTime(),
-				// oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
-				// 	pattern: "hh:mm:ss a"
-				// }),
-				// sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS)); //removed offset bcz of time mismatch : RAKESH SAHU.
+				
 				return oDateFormat.format(new Date(oDate.getTime() - sTZOffsetMs));
-				// return oDateFormat.format(new Date(oDate.getTime()));
-				// return oDateFormat.format(oDate) + ", " + sOperationTimes;
 			}
 		},
 
@@ -905,9 +888,6 @@ sap.ui.define([
 			} else {
 				return "";
 			}
-			// else if () {
-			// return "sap-icon://message-warning";
-			// } 
 		},
 
 		/**
@@ -921,9 +901,6 @@ sap.ui.define([
 			} else {
 				return "#0854a0";
 			}
-			// else if (sStatus === "warning") {
-			// 	return "#FFBF00";
-			// }
 		},
 
 		/**
