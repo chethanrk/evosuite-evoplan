@@ -219,6 +219,12 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 		var getEntitySet = function (sEntitySet, sDesc, sLongText) {
 			return sEntitySet || sDesc || sLongText;
 		};
+		
+		/**
+		 * get icon base on the property 
+		 * gantt assignment Popover
+		 * since 2205
+		 */
 		var getIconGanttAssignment = function (sProperty) {
 			sProperty = sProperty ? sProperty.Path : undefined;
 
@@ -235,7 +241,12 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 				return "sap-icon://busy";
 			}
 		};
-
+		
+		/**
+		 * get Label from the property 
+		 * gantt assignment Popover
+		 * since 2205
+		 */
 		var getLabel = function (oInterface) {
 			return oInterface ? "{" + oInterface.Path + "/##com.sap.vocabularies.Common.v1.Label/String}" : undefined;
 		};

@@ -176,6 +176,10 @@ sap.ui.define([
 		_saveErrorFn: function (oError) {
 
 		},
+		
+		/**
+		 * Close Gantt Assignment Responsive Popover
+		 */
 		closeResponsivePopOver: function () {
 			this._ResponsivePopOver ? this._ResponsivePopOver.close() : "";
 		}
