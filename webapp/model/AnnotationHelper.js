@@ -237,7 +237,6 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 		};
 
 		var getLabel = function (oInterface) {
-			// return oInterface ? "{/#Assignment/" + oInterface.Path + "/@sap:label}" : undefined;
 			return oInterface ? "{" + oInterface.Path + "/##com.sap.vocabularies.Common.v1.Label/String}" : undefined;
 		};
 
