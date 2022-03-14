@@ -645,6 +645,24 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Format legend colors to differentiate between pattern and colors
+		 * and set color pattern for some unavailabilities who was not part of availabilities
+		 * @param sType
+		 * @param sCharCode
+		 * @param sCharValue
+		 * @param sColor
+		 * @return {*}
+		 */
+		formatLegend: function (sType, sCharCode, sCharValue, sColor) {
+			this._setAvailabilitiesPatterns(sCharCode, sCharValue, sColor, sType);
+			if (sType === "COLOUR") {
+				return sColor;
+			} else {
+				return "url(#" + this._viewId + "--availability-" + sCharCode + "-" + sCharValue + ")";
+			}
+		},
+
 		/* =========================================================== */
 		/* intern methods                                              */
 		/* =========================================================== */

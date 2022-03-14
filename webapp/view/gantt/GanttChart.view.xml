@@ -20,9 +20,10 @@
 							<gnt2:LegendContainer width="230px" height="250px">
 								<gnt2:ListLegend title="{i18n>xtit.colorCodes}" items="{/GanttLegendSet}">
 									<gnt2:ListLegendItem>
-										<gnt2:BaseRectangle shapeId="{CharactersticCode}"
-											fill="{parts:[{path:'Colourcode'}, {path:'Legendtype'} ], formatter:'.ganttFormatter.formatLegend'}" title="{CharactersticDescription}"
-											showTitle="false"/>
+										<gnt2:BaseRectangle
+											shapeId="{parts:[{path:'CharactersticCode'},{path:'CharactersticValue'},{path:'Legendtype'},{path:'Colourcode'}], formatter:'.ganttFormatter.getLegendShapeId'}"
+											fill="{parts:[{path:'Legendtype'},{path:'CharactersticCode'},{path:'CharactersticValue'},{path:'Colourcode'}], formatter:'.formatLegend'}"
+											title="{CharactersticDescription}" showTitle="false"/>
 									</gnt2:ListLegendItem>
 								</gnt2:ListLegend>
 							</gnt2:LegendContainer>

@@ -87,18 +87,16 @@ sap.ui.define([
 				return "transparent";
 			}
 		},
+
 		/**
-		 * Format legend colors to differentiate between pattern and colors
-		 * @param sCode
+		 * set Legend shape ID
+		 * @param sTypeGroup
 		 * @param sType
-		 * @return {*}
+		 * @param sColor
+		 * @param sPattern
 		 */
-		formatLegend: function (sCode, sType) {
-			if (sType === "COLOUR") {
-				return sCode;
-			} else {
-				return "url(#" + this._viewId + "--" + sCode + ")";
-			}
+		getLegendShapeId: function (sCharCode, sCharValue) {
+			return sCharCode + "_" + sCharValue;
 		},
 
 		formatAvailType: function (sType) {
