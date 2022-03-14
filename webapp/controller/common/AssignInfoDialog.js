@@ -92,6 +92,10 @@ sap.ui.define([
 			this._mParameters = mParameters || {
 				bFromHome: true
 			};
+			if(this._mParameters.bFromPlannCal) {
+				oAssignment.DateFrom = data.DateFrom;
+				oAssignment.DateTo = data.DateTo; 
+			}
 			this.oAssignmentModel.setData(oAssignment);
 
 			//Set the ResourceGroupGuid 
@@ -518,7 +522,7 @@ sap.ui.define([
 				}.bind(this));
 			}
 		},
-		
+
 		/**
 		 * Validating Effort for PS Demands onSave 
 		 */
@@ -531,8 +535,12 @@ sap.ui.define([
 				sTotalEffort = Number(sOldEffort) + Number(sRemainingDuration),
 				bValidEffort = true;
 			if (this._oView.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && sObjectSourceType === "DEM_PSNW") {
-				if (Number(sOldEffort) + Number(sRemainingDuration) < Number(sEffort)) {
-					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration") + sTotalEffort + " " + sEffortUnit);
+				if (sEffort.toString().includes("-") || Number(sEffort) <= 0) {
+					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.validEffort"));
+					bValidEffort = false;
+				} else if (Number(sOldEffort) + Number(sRemainingDuration) < Number(sEffort)) {
+					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration") + sTotalEffort + " " +
+						sEffortUnit);
 					bValidEffort = false;
 				}
 			}

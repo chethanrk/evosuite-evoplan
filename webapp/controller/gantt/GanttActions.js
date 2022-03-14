@@ -40,25 +40,28 @@ sap.ui.define([
 		 */
 		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, oNewEndDate, aGuids) {
 			var oModel = this.getModel(),
+				oViewModel = this.getModel("viewModel"),
 				oGanttModel = this.getModel("ganttModel"),
 				targetObj = oGanttModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
-				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
-				aDragSession = this.getModel("viewModel").getData().dragSession,
+				aDragSession = oViewModel.getData().dragSession,
 				aGanttDemandDragged = aDragSession && aDragSession.length ? aDragSession[0] : "fromGanttSplit",
+				aFixedAppointments = oViewModel.getProperty("/aFixedAppointmentsList")[0],
 				aPromises = [],
 				oDemandObj;
 			if (aGanttDemandDragged === "fromGanttSplit") {
 				aGanttDemandDragged = {};
-				aGanttDemandDragged.sPath = slocStor.split(",")[0];
-				aGanttDemandDragged.oData = this.getModel().getProperty(aGanttDemandDragged.sPath);
-
+				aGanttDemandDragged.bFromGanttSplit = true;
+				aGanttDemandDragged.sPath = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData/sPath");
+				aGanttDemandDragged.oData = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData/oData");
+				aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE);
+				aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE);
 			}
 
 			this.clearMessageModel();
 
 			for (var i = 0; i < aItems.length; i++) {
-				oDemandObj = oModel.getProperty(aItems[i]);
+				oDemandObj = aGanttDemandDragged.bFromGanttSplit ? aGanttDemandDragged.oData : oModel.getProperty(aItems[i]);
 				var sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i].split("'")[1],
 					oParams = {
 						DemandGuid: sDemandGuid,
@@ -110,6 +113,15 @@ sap.ui.define([
 					.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
 					oParams.Effort = aGanttDemandDragged.oData.Duration;
 					oParams.EffortUnit = aGanttDemandDragged.oData.DurationUnit;
+				}
+				//Fixed Appointments for Gantt
+				if (aFixedAppointments && aFixedAppointments.IsSelected) {
+					oParams.DateFrom = oDemandObj.FIXED_APPOINTMENT_START_DATE;
+					oParams.TimeFrom = {};
+					oParams.TimeFrom.ms = oDemandObj.FIXED_APPOINTMENT_START_TIME.ms;
+					oParams.DateTo = oDemandObj.FIXED_APPOINTMENT_END_DATE;
+					oParams.TimeTo = {};
+					oParams.TimeTo.ms = oDemandObj.FIXED_APPOINTMENT_END_TIME.ms;
 				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}

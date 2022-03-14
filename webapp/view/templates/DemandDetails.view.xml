@@ -23,7 +23,7 @@
 							<!--</uxap:dependents>-->
 						</uxap:ObjectPageHeaderActionButton>
 						<uxap:ObjectPageHeaderActionButton id="idStatusHeaderAction" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
-							visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_CHANGE_STATUS'}], formatter: '.getVisible' }"
+							visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_CHANGE_STATUS'},{path :'user>/ENABLE_ASSIGNMENT_STATUS'}], formatter: '.getVisible' }"
 							hideIcon="false" hideText="false" press="onClickAction"/>
 						<Button text="{i18n>xbut.buttonBack}" tooltip="{i18n>xbut.buttonBack}" type="Default" press="navBack"/>
 						<core:ExtensionPoint name="PageExt|DemandDetail|DemandSet|ObjectPageHeaderActionButton|After" />

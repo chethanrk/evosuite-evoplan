@@ -328,6 +328,7 @@ sap.ui.define([
 			var aPathsData = [],
 				aNonAssignableDemands = [],
 				aUnAssignableDemands = [],
+				aAssignmentWithDemands = [],
 				oData, oContext, sPath;
 
 			if (checkAssignAllowed) {
@@ -342,6 +343,15 @@ sap.ui.define([
 					//on Check on oData property ALLOW_UNASSIGN for mass unassign from Demand View
 					if (this.getModel("user").getProperty("/ENABLE_DEMAND_UNASSIGN") && oData.ALLOW_UNASSIGN) {
 						aUnAssignableDemands.push({
+							sPath: sPath,
+							oData: oData,
+							index: aSelectedRowsIdx[i]
+						});
+					}
+
+					//Checking if Assignments are present or/not for selected Demands for mass Assignment Status Change #since 2205
+					if (this.getModel("user").getProperty("/ENABLE_ASSIGNMENT_STATUS") && oData.NUMBER_OF_ASSIGNMENTS > 0) {
+						aAssignmentWithDemands.push({
 							sPath: sPath,
 							oData: oData,
 							index: aSelectedRowsIdx[i]
@@ -389,7 +399,8 @@ sap.ui.define([
 			return {
 				aPathsData: aPathsData,
 				aNonAssignable: aNonAssignableDemands,
-				aUnAssignDemands: aUnAssignableDemands
+				aUnAssignDemands: aUnAssignableDemands,
+				aAssignmentDemands: aAssignmentWithDemands
 			};
 		},
 
@@ -912,6 +923,25 @@ sap.ui.define([
 					}
 				});
 			}.bind(this));
+		},
+		
+		/**
+		 * Fetching selected Assignments Path and Context for Assignment Status Change
+		 * @param [aSelectedAssignments]
+		 * @returns []
+		 * Since 2205
+		 * @Author Chethan RK
+		 */
+		_getAssignmentStatus: function (aSelectedAssignments) {
+			var aAssignmentStatus = [];
+			for (var a in aSelectedAssignments) {
+				var oAssignmentStautus = {
+					sPath: aSelectedAssignments[a].getBindingContext().getPath(),
+					oData: aSelectedAssignments[a].getBindingContext().getObject()
+				};
+				aAssignmentStatus.push(oAssignmentStautus);
+			}
+			return aAssignmentStatus;
 		}
 	});
 

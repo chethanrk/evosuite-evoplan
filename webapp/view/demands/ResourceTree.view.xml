@@ -19,11 +19,18 @@
 								<Text text="{i18n>xlab.qualification}" class="sapUiTinyMarginBegin sapUiTinyMarginTop"></Text>
 							</HBox>
 							<core:ExtensionPoint name="PageExtP|ResourceTree|ResourceHierarchySet|Header|Actions|Mid"/>
-							<HBox visible="{user>/ENABLE_CAPACITY}" >
-								<Switch id="idCapaCheck" customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}"
-									state="{viewModel>/capacityPlanning}" change="onSelectCapacity" enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }"></Switch>
-								<Text text="{i18n>xtit.capacity}" class="sapUiTinyMarginBegin sapUiTinyMarginTop"></Text>
-							</HBox>
+							<VBox>
+								<HBox visible="{user>/ENABLE_CAPACITY}" >
+									<Switch id="idCapaCheck" customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}"
+										state="{viewModel>/capacityPlanning}" change="onSelectCapacity" enabled="{= ${viewModel>/selectedHierarchyView} !== 'TIMENONE'? true : false }"></Switch>
+									<Text text="{i18n>xtit.capacity}" class="sapUiTinyMarginBegin sapUiTinyMarginTop"></Text>
+								</HBox>
+								<HBox visible="{ parts:[{path:'user>/ENABLE_CAPACITY'},{path:'user>/ENABLE_REMAINING_WORK'},{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatRemainingWorkVisibility'}" >
+									<Switch id="idRemWorkCheck" customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}"
+									state="{viewModel>/remainingWork}" change="onSelectRemainingWork"></Switch>
+									<Text text="{i18n>xtit.remainingWork}" class="sapUiTinyMarginBegin sapUiTinyMarginTop"></Text>
+								</HBox>
+							</VBox>
 							<core:ExtensionPoint name="PageExtP|ResourceTree|ResourceHierarchySet|Header|Actions|Right"/>
 						</items>
 					</FlexBox>

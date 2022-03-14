@@ -264,7 +264,7 @@ sap.ui.define([
 					pageTitle = oResourceBundle.getText("xbut.pageNewGantt");
 				}
 			} else if (oParams.config.pattern.startsWith("SplitPage")) {
-				pageTitle = oResourceBundle.getText("xbut.pageGanttChartSplit");
+				pageTitle = oResourceBundle.getText("xbut.pageNewGanttChartSplit");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
 				if (oParams.name === "newGanttSplit") {
 					pageTitle = oResourceBundle.getText("xbut.pageNewGanttChartSplit");

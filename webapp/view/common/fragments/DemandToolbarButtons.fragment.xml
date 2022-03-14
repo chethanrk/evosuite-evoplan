@@ -1,13 +1,21 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-	<Button id="idOverallStatusButton" icon="sap-icon://synchronize" enabled="false" text="{i18n>xtit.materialStatus}" tooltip="{i18n>xtit.refreshTooltip}" visible="{user>/ENABLE_MATERIAL_AVAILABILITY}" press="onMaterialStatusPress"/>
+	<Button id="idOverallStatusButton" icon="sap-icon://synchronize" enabled="false" text="{i18n>xtit.materialStatus}"
+		tooltip="{i18n>xtit.refreshTooltip}" visible="{user>/ENABLE_MATERIAL_AVAILABILITY}" press="onMaterialStatusPress"/>
 	<Button id="materialInfo" text="{i18n>xtit.materialInfoButton}" tooltip="{i18n>xbut.changeStatus}" icon="sap-icon://message-information"
 		press="onMaterialInfoButtonPress" enabled="false" visible="{user>/ENABLE_MATERIAL_AVAILABILITY}">
 		<layoutData>
 			<ToolbarLayoutData shrinkable="true"/>
 		</layoutData>
 	</Button>
+		<Button id="idAssignmentStatusButton" text="{i18n>xbut.ChngAssgnStatus}" tooltip="{i18n>xbut.ChngAssgnStatus}"
+		icon="sap-icon://order-status" visible="{user>/ENABLE_ASSIGNMENT_STATUS}" enabled="false" press="onAssignmentStatusButtonPress">
+		<layoutData>
+			<ToolbarLayoutData shrinkable="true"/>
+		</layoutData>
+	</Button>
 	<Button id="changeStatusButton" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}" icon="sap-icon://flag"
-		press="onChangeStatusButtonPress" enabled="false" visible="{viewModel>/showStatusChangeButton}" >
+		press="onChangeStatusButtonPress" enabled="false"
+		visible="{parts:[{path: 'viewModel>/showStatusChangeButton'},{path: 'user>/ENABLE_ASSIGNMENT_STATUS'}], formatter: '.formatter.setVisibilityChangeStatusButton'}">
 		<layoutData>
 			<ToolbarLayoutData shrinkable="true"/>
 		</layoutData>
@@ -18,9 +26,10 @@
 			<ToolbarLayoutData shrinkable="true"/>
 		</layoutData>
 	</Button>
-	<Button id="idUnassignButton" text="{i18n>xbut.buttonUnassign}" tooltip="{i18n>xbut.buttonUnassign}" press="onPressUnassignDemand" enabled="false" visible="{user>/ENABLE_DEMAND_UNASSIGN}">
-					<layoutData>
-						 <ToolbarLayoutData shrinkable="true"/>
-					</layoutData>
-			</Button>
+	<Button id="idUnassignButton" text="{i18n>xbut.buttonUnassign}" tooltip="{i18n>xbut.buttonUnassign}" press="onPressUnassignDemand"
+		enabled="false" visible="{user>/ENABLE_DEMAND_UNASSIGN}">
+		<layoutData>
+			<ToolbarLayoutData shrinkable="true"/>
+		</layoutData>
+	</Button>
 </core:FragmentDefinition>

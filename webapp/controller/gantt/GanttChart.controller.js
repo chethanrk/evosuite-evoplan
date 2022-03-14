@@ -229,20 +229,27 @@ sap.ui.define([
 		onProceedNewGanttDemandDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
 			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
-				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
-				sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : slocStor.split(","),
+				slocStor = JSON.parse(localStorage.getItem("Evo-Dmnd-guid")),
+				sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : [slocStor[0].sPath],
 				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
 				oResourceData = this.getModel("ganttModel").getProperty(oDropContext.getPath()),
 				oSvgPoint,
 				sPath = sDragPath ? sDragPath[0] : undefined,
-				oDemandObj = oDragContext ? oDragContext.getObject() : this.getModel().getProperty(sPath),
+				oDemandObj = oDragContext ? oDragContext.getObject() : undefined,
+				// oDemandObj = oDragContext ? oDragContext.getObject() : slocStor[0].oDemandObject,
 				bShowFixedAppointmentDialog,
 				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
 				oParams = {};
+			this.getModel("viewModel").setProperty("/aFixedAppointmentsList", []);
 
 			//Null check for
 			if ((!oDragContext || !sDragPath) && !oDropContext) {
 				return;
+			}
+
+			//retreive the demand object, passed from Gantt split in local storage
+			if (!oDemandObj) {
+				oDemandObj = this.convertDateToObjects(slocStor[0]);
 			}
 
 			// Check the resource assignable or not
@@ -251,21 +258,17 @@ sap.ui.define([
 			// to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page", "ganttSplit");
 
+			oParams.oResourceData = oResourceData;
+			oParams.sDragPath = sDragPath;
+			oParams.oTarget = oDropContext.getPath();
+
 			if (oBrowserEvent.target.tagName === "rect" && oDragContext) { // When we drop on gantt chart in the same view
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				//Condition added and Method is modified for fixed Appointments			// since Release/2201
 				oParams.DateFrom = oAxisTime.viewToTime(oSvgPoint.x);
-				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
-
+				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
 				if (bShowFixedAppointmentDialog) {
-					oParams.oResourceData = oResourceData;
-					oParams.sDragPath = sDragPath;
-					oParams.oTarget = oDropContext.getPath();
-
-					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
-					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "Gantt");
+					this.openFixedAppointmentDialog(oDemandObj, oParams, "Gantt");
 				} else {
 					this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
 				}
@@ -273,52 +276,27 @@ sap.ui.define([
 			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) { // When we drop on gantt chart from split window
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				oParams.DateFrom = oAxisTime.viewToTime(oSvgPoint.x);
-				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
-
+				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
 				if (bShowFixedAppointmentDialog) {
-					oParams.oResourceData = oResourceData;
-					oParams.sDragPath = sDragPath;
-					oParams.oTarget = oDropContext.getPath();
-
-					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
-					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "Gantt-Split");
+					this.openFixedAppointmentDialog(oDemandObj, oParams, "Gantt-Split");
 				} else {
 					this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), sDragPath);
 				}
 
 			} else if (oDragContext) { // When we drop on the resource 
 				oParams.DateFrom = new Date(new Date().setHours(0));
-				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
-
+				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
 				if (bShowFixedAppointmentDialog) {
-					oParams.oResourceData = oResourceData;
-					oParams.sDragPath = sDragPath;
-					oParams.oTarget = oDropContext.getPath();
-
-					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
-					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "Gantt");
+					this.openFixedAppointmentDialog(oDemandObj, oParams, "Gantt");
 				} else {
 					this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), new Date());
-					// this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
 				}
 
 			} else { // When we drop on the resource from split window
 				oParams.DateFrom = new Date(new Date().setHours(0));
-				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
-
+				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
 				if (bShowFixedAppointmentDialog) {
-					oParams.oResourceData = oResourceData;
-					oParams.sDragPath = sDragPath;
-					oParams.oTarget = oDropContext.getPath();
-
-					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
-					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "Gantt-Split");
+					this.openFixedAppointmentDialog(oDemandObj, oParams, "Gantt-Split");
 				} else {
 					this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), new Date(), sDragPath);
 				}
@@ -1051,12 +1029,17 @@ sap.ui.define([
 		 */
 		_validateAndAssignDemands: function (oResourceData, aSources, oTarget, oTargetDate, aGuids) {
 			var oUserData = this.getModel("user").getData();
-
 			var sDummyPath = this._createDummyAssignment(oTarget, oTargetDate);
 			this.oGanttModel.setProperty(sDummyPath + "/busy", true);
+			var aFixedAppointments = this.getModel("viewModel").getProperty("/aFixedAppointmentsList")[0];
 
-			if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && oUserData.ENABLE_QUALIFICATION) {
-
+			//Condition for checking Fixed Appointments Qualification check
+			if (oUserData.ENABLE_QUALIFICATION && aFixedAppointments && aFixedAppointments.IsSelected) {
+				this._checkResourceQualification(aSources, oTarget, oTargetDate, aFixedAppointments.FIXED_ASSGN_END_DATE, aGuids).then(function (
+					data) {
+					this._assignDemands(aSources, oTarget, oTargetDate, aFixedAppointments.FIXED_ASSGN_END_DATE, aGuids, sDummyPath);
+				}.bind(this));
+			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && oUserData.ENABLE_QUALIFICATION) {
 				this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids).then(function (oEndDate) {
 					this._checkResourceQualification(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(function (data) {
 						this._assignDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath);
@@ -1526,8 +1509,41 @@ sap.ui.define([
 			}.bind(this));
 			// }
 		},
+		/**
+		 * check if Fixed appointment dialog to display or not
+		 **/
+		checkFixedAppointPopupToDisplay: function (bShowFutureFixedAssignments, oStartDate, oDemandObj) {
+			return oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oStartDate < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
+				oStartDate > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
+				oStartDate > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
+		},
+		/**
+		 * Converting date into objects from String passed from Gantt Split
+		 * */
+		openFixedAppointmentDialog: function (oDemandObj, oParams, sSource) {
+			this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
+			this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, sSource);
+		},
 
 		/**
+		 * Converting date into objects from String passed from Gantt Split
+		 **/
+		convertDateToObjects: function (aDemandData) {
+			var oDemandObj = aDemandData.oDemandObject;
+			oDemandObj.FIXED_APPOINTMENT_START_DATE = new Date(oDemandObj.FIXED_APPOINTMENT_START_DATE);
+			oDemandObj.FIXED_APPOINTMENT_END_DATE = new Date(oDemandObj.FIXED_APPOINTMENT_END_DATE);
+			oDemandObj.FIXED_ASSGN_START_DATE = new Date(oDemandObj.FIXED_ASSGN_START_DATE);
+			oDemandObj.FIXED_ASSGN_END_DATE = new Date(oDemandObj.FIXED_ASSGN_END_DATE);
+
+			this.oViewModel.setProperty("/ganttSettings/aGanttSplitDemandData", {
+				sPath: aDemandData.sPath,
+				oData: oDemandObj
+			});
+
+			return oDemandObj;
+		},
+        
+        /**
 		 * Set color pattern for some unavailabilities
 		 * @param sTypeGroup
 		 * @param sType

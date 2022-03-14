@@ -195,6 +195,17 @@ sap.ui.define([
 			return "";
 		},
 		/**
+		 * @Author Sagar
+		 * format the Object Status state acording to Material_Status
+		 * @param sValue
+		 */
+		getDemandState: function (sValue) {
+			if (sValue) {
+				return sValue;
+			}
+			return "None";
+		},
+		/**
 		 * @Author Rahul
 		 * format the icon acording availability
 		 * @param sValue
@@ -439,6 +450,16 @@ sap.ui.define([
 			}
 		},
 		/**
+		 * Format state of progress bar based on REMAIN_WORK_UTIL_COLOR
+		 * @param sValue
+		 */
+		formatRemainingWorkProgressState:function(sValue){
+			if(sValue){
+				return sValue;
+			}
+			return "None";
+		},
+		/**
 		 *
 		 * @param isCapacity
 		 * @param sSelectedView
@@ -446,6 +467,18 @@ sap.ui.define([
 		 */
 		formatProgressBarVisibility: function (isCapacity, sSelectedView) {
 			if (isCapacity === true && sSelectedView !== "TIMENONE") {
+				return true;
+			}
+			return false;
+		},
+		formatCapacityProgressBarVisibility:function(isCapacity, sSelectedView){
+			if (isCapacity === true && sSelectedView !== "TIMENONE") {
+				return true;
+			}
+			return false;
+		},
+		formatRemainingWorkProgressBarVisibility: function (isCapacity, isRemainingWork, sSelectedView) {
+			if (isCapacity === true && isRemainingWork === true && sSelectedView !== "TIMENONE") {
 				return true;
 			}
 			return false;
@@ -474,6 +507,14 @@ sap.ui.define([
 			}
 			return false;
 		},
+
+		formatRemainingWorkVisibility: function (userCapacity, userRemainingWork, isCapacity, sSelectedView) {
+			if (userCapacity && userRemainingWork && isCapacity && sSelectedView !== "TIMENONE") {
+				return true;
+			}
+			return false;
+		},
+
 		/**
 		 *
 		 * @param sNodeType
@@ -771,7 +812,7 @@ sap.ui.define([
 			var sOperation = aManageResourceData.operationType,
 				sMsgTypeText = "",
 				aData = aManageResourceData.Assignments,
-				sResourceName = this._oSelectedNodeContext.getProperty("Description");;
+				sResourceName = this._oSelectedNodeContext.getProperty("Description");
 			switch (sOperation) {
 			case "deleteResource":
 				sMsgTypeText = "Removable";
@@ -827,10 +868,9 @@ sap.ui.define([
 					oOperationTime = new Date(oTimes.ms),
 					oOperationTimeMS = oOperationTime.getTime(),
 					oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
-						pattern: "HH:mm:ss"
+						pattern: "hh:mm:ss a"
 					}),
-					sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
-					sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS + sTZOffsetMs));
+					sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS)); //removed offset bcz of time mismatch : RAKESH SAHU.
 
 				return oDateFormat.format(oDate) + ", " + sOperationTimes;
 			}
@@ -851,7 +891,7 @@ sap.ui.define([
 			// return "sap-icon://message-warning";
 			// } 
 		},
-		
+
 		/**
 		 * Inlin Edit Demands: Response Messages: to set the Icon Color for the message
 		 */
@@ -867,7 +907,7 @@ sap.ui.define([
 			// 	return "#FFBF00";
 			// }
 		},
-		
+
 		/**
 		 * Inlin Edit Demands: Response Messages: to set the Text for the message
 		 */
@@ -879,9 +919,37 @@ sap.ui.define([
 				if (sStatus === "warning") {
 					return "Error";
 				}
-				return sStatus.substr(0, 1).toUpperCase() + sStatus.substr(1, sStatus.length)
+				return sStatus.substr(0, 1).toUpperCase() + sStatus.substr(1, sStatus.length);
 			}
 			return "";
+		},
+		/**
+		 * Visibility of Change Status Button in Demand Footer
+		 * @Author Chethan
+		 * @since 2205
+		 * @param bDemandStatus
+		 * @param bAssignmentStatus
+		 * @returns boolean
+		 */
+		setVisibilityChangeStatusButton: function (bDemandStatus, bAssignmentStatus) {
+			if (bDemandStatus && !bAssignmentStatus) {
+				return true;
+			}
+			return false;
+		},
+
+		/**
+		 * Visibility of Assignment Status Button's in Assignment Status Popover based on Allow Fields 
+		 * @Author Chethan
+		 * @since 2205
+		 * @param sFunction
+		 * @returns boolean
+		 */
+		showAssignmentStatusButtons: function (sFunction) {
+			if (!this._oAssignmentTable && !this.aSelectedAssignments[0].oData["ALLOW_" + sFunction]) {
+				return false;
+			}
+			return true;
 		}
 	};
 });

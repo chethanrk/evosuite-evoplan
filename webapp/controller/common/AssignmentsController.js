@@ -396,7 +396,7 @@ sap.ui.define([
 
 			bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
 				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE)
+				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
 
 			if (bShowFixedAppointmentDialog) {
 				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
@@ -423,6 +423,7 @@ sap.ui.define([
 			// Proceed to check the Qualification for Bulk Re-Assignment
 			this.checkQualificationBulkReassignment(sAssignPath, aContexts, mParameters);
 		},
+
 		bulkReAssignmentFinalCall: function (sAssignPath, aContexts, mParameters) {
 			var oModel = this.getModel(),
 				oResource = oModel.getProperty(sAssignPath),
@@ -449,6 +450,19 @@ sap.ui.define([
 				oParams = this.setDateTimeParams(oParams, oResource.StartDate, oResource.StartTime, oResource.EndDate, oResource.EndTime);
 				oDemandObj = this.getModel().getProperty("/DemandSet('" + oAssignment.DemandGuid + "')");
 
+				//Conditon for PS Demand Network Assignments Update
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && oDemandObj.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+					oParams = this.onReAssignParams(oAssignment, oParams, true);
+				}
+				//Conditon for Vendor Assignments Update
+				if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oResource.ISEXTERNAL && oDemandObj.ALLOW_ASSIGNMENT_DIALOG) {
+					oParams = this.onReAssignParams(oAssignment, oParams, null, true);
+				}
+				//Conditon for OperationTimes Assignments Update
+				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && oResource.NodeType === "RESOURCE") {
+					oParams = this.onReAssignParams(oAssignment, oParams);
+				}
+
 				//Condition added and Method is modified for fixed Appointments			// since Release/2201
 				if (oDemandObj && oDemandObj.FIXED_APPOINTMENT) {
 					if ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) || oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
@@ -474,7 +488,7 @@ sap.ui.define([
 					if (parseInt(i, 10) === aAllParameters.length - 1) {
 						bIsLast = true;
 					}
-					this.callFunctionImport(aAllParameters[i], "UpdateAssignment", "POST", mParameters, bIsLast)
+					this.callFunctionImport(aAllParameters[i], "UpdateAssignment", "POST", mParameters, bIsLast);
 				}
 			}
 
@@ -688,7 +702,7 @@ sap.ui.define([
 			var sQualifier;
 			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NETWORK_OBJECTSOURCETYPE) {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.NETWORK_QUALIFIER;
-			}else if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
+			} else if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.NOTIFICATION_QUALIFIER;
 			} else {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.ORDER_QUALIFIER;
@@ -712,6 +726,10 @@ sap.ui.define([
 
 		_afterDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
 			if (sEvent === "dataReceived") {
+				//Fetching Context Data for PlanningCalendar 
+				if (this._mParameters && this._mParameters.bFromPlannCal) {
+					data = mParams.parentContext.getObject();
+				}
 				this.oComponent.assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
 			}
 		},
@@ -755,5 +773,114 @@ sap.ui.define([
 			return aAllowNetworkAssignment;
 		},
 
+		onReAssignParams: function (oAssignment, oParams, bNetworkCheck, bVendorCheck) {
+			var aReAssignDragSession = this.getModel("viewModel").getData().dragSession;
+			for (var a in aReAssignDragSession) {
+				if (oAssignment.DemandGuid === aReAssignDragSession[a].oData.Guid) {
+					if (aReAssignDragSession[a].IsSelected) {
+						oParams.DateFrom = formatter.mergeDateTime(aReAssignDragSession[a].oData.FIXED_ASSGN_START_DATE, aReAssignDragSession[a].oData.FIXED_ASSGN_START_TIME);
+						oParams.TimeFrom.ms = oParams.DateFrom.getTime();
+						oParams.DateTo = formatter.mergeDateTime(aReAssignDragSession[a].oData.FIXED_ASSGN_END_DATE, aReAssignDragSession[a].oData.FIXED_ASSGN_END_TIME);
+						oParams.TimeTo.ms = oParams.DateTo.getTime();
+					}
+					if (bNetworkCheck) {
+						oParams.EffortUnit = aReAssignDragSession[a].oData.DurationUnit;
+						oParams.Effort = aReAssignDragSession[a].oData.Duration;
+					}
+					if (bVendorCheck) {
+						oParams.CostElement = aReAssignDragSession[a].oData.CostElement;
+						oParams.Estimate = aReAssignDragSession[a].oData.Estimate;
+						oParams.Currency = aReAssignDragSession[a].oData.Currency;
+					}
+				}
+			}
+			return oParams;
+		},
+		
+		/**
+		 * Check whether Assignment is changeable or reassignable
+		 * @author Sagar since 2205
+		 * @param mParameters - Object having dragged assignment data and dropped resource
+		 */
+		checkAssigmentIsReassignable: function (mParameters) {
+			var oAssignmentData = mParameters.assignment,
+				oResourceData = mParameters.resource,
+				oDemandData = oAssignmentData.Demand,
+				oResourceBundle = this.getResourceBundle();
+			if (oAssignmentData.ResourceGroupGuid === oResourceData.ResourceGroupGuid && oAssignmentData.ResourceGuid === oResourceData.ResourceGuid && !oDemandData.ASGNMNT_CHANGE_ALLOWED) { // validation for change
+				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotchangeable"));
+				return false;
+			} else if (!oDemandData.ASGNMNT_CHANGE_ALLOWED || !oDemandData.ALLOW_REASSIGN) { // validation for reassign
+				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotreassignable"));
+				return false;
+			}
+			return true;
+		},
+
+		/**
+		 * Setting dragged assignment to Assignment Model
+		 * @author Sagar since 2205
+		 * @param oAssignment - Dragged assignment data
+		 * @param oResourcePath - Dropped resource
+		 */
+		_setAssignmentDetail: function (oAssignData, oResourcePath) {
+			var oAssignmentModel = this.getView().getModel("assignment"),
+				oAssignment = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject(),
+				oNewAssign,oDemandData;
+			oAssignment.AssignmentGuid = oAssignData.Guid;
+			oAssignment.DemandDesc = oAssignData.DemandDesc;
+			oAssignment.DemandGuid = oAssignData.DemandGuid;
+			oAssignment.DemandStatus = oAssignData.Demand.Status;
+			oAssignment.DateFrom = oAssignData.DateFrom;
+			oAssignment.DateTo = oAssignData.DateTo;
+			oAssignment.ResourceGroupGuid = oAssignData.ResourceGroupGuid;
+			oAssignment.ResourceGroupDesc = oAssignData.GROUP_DESCRIPTION;
+			oAssignment.ResourceGuid = oAssignData.ResourceGuid;
+			oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
+			if (this.getView().getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT")) {
+				oAssignment.OldEffort = oAssignData.Effort;
+				oAssignment.REMAINING_DURATION = oAssignData.REMAINING_DURATION;
+				oAssignment.OBJECT_SOURCE_TYPE = oAssignData.OBJECT_SOURCE_TYPE;
+			}
+			oAssignmentModel.setData(oAssignment);
+
+			oNewAssign = this.getView().getModel().getProperty(oResourcePath);
+			oAssignmentModel.setProperty("/NewAssignPath", oResourcePath);
+			oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
+			if (oNewAssign.StartDate) {
+				oAssignmentModel.setProperty("/DateFrom", oNewAssign.StartDate);
+			}
+			if (oNewAssign.EndDate) {
+				oAssignmentModel.setProperty("/DateTo", oNewAssign.EndDate);
+			}
+			if (oAssignmentModel.getProperty("/NewAssignPath") !== null) {
+				oAssignmentModel.getData().ResourceGuid = this.getView().getModel().getProperty(oAssignmentModel.getProperty(
+					"/NewAssignPath") + "/ResourceGuid");
+			}
+			
+			oAssignmentModel.setProperty("/showError", false);
+			if (oAssignmentModel.getProperty("/DateFrom") === "" || oAssignmentModel.getProperty("/DateTo") === "") {
+				oAssignmentModel.setProperty("/DateFrom", oNewAssign.DateFrom);
+				oAssignmentModel.setProperty("/DateTo", oNewAssign.DateTo);
+			}
+			oAssignmentModel.setProperty("/Effort", oAssignData.Effort);
+			oAssignmentModel.setProperty("/EffortUnit", oAssignData.EffortUnit);
+
+			//Fetching Resource Start and End Date from AssignmentSet for validating on save
+			oAssignmentModel.setProperty("/RES_ASGN_START_DATE", oAssignData.RES_ASGN_START_DATE);
+			oAssignmentModel.setProperty("/RES_ASGN_END_DATE", oAssignData.RES_ASGN_END_DATE);
+			oDemandData = oAssignData.Demand;
+			oAssignmentModel.setProperty("/Description", oDemandData.DemandDesc);
+			oAssignmentModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
+			oAssignmentModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
+			oAssignmentModel.setProperty("/AllowChange", oDemandData.ASGNMNT_CHANGE_ALLOWED);
+			oAssignmentModel.setProperty("/OrderId", oDemandData.ORDERID);
+			oAssignmentModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
+			oAssignmentModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
+			oAssignmentModel.setProperty("/DemandStatus", oDemandData.Status);
+			oAssignmentModel.setProperty("/DemandGuid", oDemandData.Guid);
+			oAssignmentModel.setProperty("/Notification", oDemandData.NOTIFICATION);
+			oAssignmentModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
+		}
 	});
 });
