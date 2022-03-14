@@ -100,12 +100,6 @@
 						</gnt2:axisTimeStrategy>
 						<gnt2:svgDefs>
 							<def:SvgDefs id="idGanttChartSvgDefs">
-								<!--<def:defs>
-									<pattern:SlashPattern id="unavailability" backgroundColor="white" stroke="#CCCCCC"></pattern:SlashPattern>
-								</def:defs>
-								<def:defs>
-									<pattern:SlashPattern id="oncallorovertime" backgroundColor="white" stroke="#FFA500"></pattern:SlashPattern>
-								</def:defs>-->
 								<core:ExtensionPoint name="GanttExtP|GanttChart|GanttHeircrchySet|GanttPattern"/>
 							</def:SvgDefs>
 						</gnt2:svgDefs>
