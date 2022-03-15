@@ -848,10 +848,24 @@ sap.ui.define([
 			oAssignmentModel.setProperty("/NewAssignPath", oResourcePath);
 			oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
 			if (oNewAssign.StartDate) {
-				oAssignmentModel.setProperty("/DateFrom", oNewAssign.StartDate);
+				if(oAssignmentModel.getProperty("/DateFrom")){
+					oAssignmentModel.getProperty("/DateFrom").setDate(oNewAssign.StartDate.getDate());
+					oAssignmentModel.getProperty("/DateFrom").setMonth(oNewAssign.StartDate.getMonth());
+					oAssignmentModel.getProperty("/DateFrom").setFullYear(oNewAssign.StartDate.getFullYear());
+				}else{
+					oAssignmentModel.setProperty("/DateFrom", oNewAssign.StartDate);
+				}
+				
 			}
 			if (oNewAssign.EndDate) {
-				oAssignmentModel.setProperty("/DateTo", oNewAssign.EndDate);
+				if(oAssignmentModel.getProperty("/DateFrom")){
+					oAssignmentModel.getProperty("/DateTo").setDate(oNewAssign.EndDate.getDate());
+					oAssignmentModel.getProperty("/DateTo").setMonth(oNewAssign.EndDate.getMonth());
+					oAssignmentModel.getProperty("/DateTo").setFullYear(oNewAssign.EndDate.getFullYear());
+				}else{
+					oAssignmentModel.setProperty("/DateTo", oNewAssign.EndDate);
+				}
+				
 			}
 			if (oAssignmentModel.getProperty("/NewAssignPath") !== null) {
 				oAssignmentModel.getData().ResourceGuid = this.getView().getModel().getProperty(oAssignmentModel.getProperty(
