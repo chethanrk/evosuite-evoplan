@@ -826,7 +826,7 @@ sap.ui.define([
 		_setAssignmentDetail: function (oAssignData, oResourcePath) {
 			var oAssignmentModel = this.getView().getModel("assignment"),
 				oAssignment = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject(),
-				oNewAssign,oDemandData;
+				oNewAssign,oDemandData,startDate,endDate;
 			oAssignment.AssignmentGuid = oAssignData.Guid;
 			oAssignment.DemandDesc = oAssignData.DemandDesc;
 			oAssignment.DemandGuid = oAssignData.DemandGuid;
@@ -849,9 +849,10 @@ sap.ui.define([
 			oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
 			if (oNewAssign.StartDate) {
 				if(oAssignmentModel.getProperty("/DateFrom")){
-					oAssignmentModel.getProperty("/DateFrom").setDate(oNewAssign.StartDate.getDate());
-					oAssignmentModel.getProperty("/DateFrom").setMonth(oNewAssign.StartDate.getMonth());
-					oAssignmentModel.getProperty("/DateFrom").setFullYear(oNewAssign.StartDate.getFullYear());
+					startDate = moment(oNewAssign.StartDate);
+					oAssignmentModel.getProperty("/DateFrom").setDate(startDate.get('date'));
+					oAssignmentModel.getProperty("/DateFrom").setMonth(startDate.get('month'));
+					oAssignmentModel.getProperty("/DateFrom").setFullYear(startDate.get('year'));
 				}else{
 					oAssignmentModel.setProperty("/DateFrom", oNewAssign.StartDate);
 				}
@@ -859,9 +860,10 @@ sap.ui.define([
 			}
 			if (oNewAssign.EndDate) {
 				if(oAssignmentModel.getProperty("/DateFrom")){
-					oAssignmentModel.getProperty("/DateTo").setDate(oNewAssign.EndDate.getDate());
-					oAssignmentModel.getProperty("/DateTo").setMonth(oNewAssign.EndDate.getMonth());
-					oAssignmentModel.getProperty("/DateTo").setFullYear(oNewAssign.EndDate.getFullYear());
+					endDate = moment(oNewAssign.EndDate);
+					oAssignmentModel.getProperty("/DateTo").setDate(endDate.get('date'));
+					oAssignmentModel.getProperty("/DateTo").setMonth(endDate.get('month'));
+					oAssignmentModel.getProperty("/DateTo").setFullYear(endDate.get('year'));
 				}else{
 					oAssignmentModel.setProperty("/DateTo", oNewAssign.EndDate);
 				}
