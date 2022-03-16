@@ -3,9 +3,10 @@
 	controllerName="com.evorait.evoplan.controller.gantt.GanttChart" xmlns:html="http://www.w3.org/1999/xhtml">
 	<Page id="idPageGanttChart" showFooter="false" showHeader="false">
 		<content>
-			<gnt2:GanttChartContainer id="container" busy="{viewModel>/ganttSettings/busy}">
+			<gnt2:GanttChartContainer id="idPageGanttChartContainer" busy="{viewModel>/ganttSettings/busy}">
 				<gnt2:toolbar showDisplayTypeButton="true">
-					<gnt2:ContainerToolbar design="Auto" showBirdEyeButton="false" showLegendButton="true" class="gantt_toolbar">
+					<gnt2:ContainerToolbar id="idGanttChartContainerToolbar" design="Auto" showBirdEyeButton="false" showLegendButton="true"
+						class="gantt_toolbar">
 						<gnt2:content>
 							<DateRangeSelection id="idDateRangeGantt2" width="20%" dateValue="{user>/DEFAULT_GANT_START_DATE}"
 								secondDateValue="{user>/DEFAULT_GANT_END_DATE}" change="onChangeDateRange" enabled="true"/>
@@ -19,9 +20,10 @@
 							<gnt2:LegendContainer width="230px" height="250px">
 								<gnt2:ListLegend title="{i18n>xtit.colorCodes}" items="{/GanttLegendSet}">
 									<gnt2:ListLegendItem>
-										<gnt2:BaseRectangle shapeId="{CharactersticCode}"
-											fill="{parts:[{path:'Colourcode'}, {path:'Legendtype'} ], formatter:'.ganttFormatter.formatLegend'}" title="{CharactersticDescription}"
-											showTitle="false"/>
+										<gnt2:BaseRectangle
+											shapeId="{parts:[{path:'CharactersticCode'},{path:'CharactersticValue'},{path:'Legendtype'},{path:'Colourcode'}], formatter:'.ganttFormatter.getLegendShapeId'}"
+											fill="{parts:[{path:'Legendtype'},{path:'CharactersticCode'},{path:'CharactersticValue'},{path:'Colourcode'}], formatter:'.formatLegend'}"
+											title="{CharactersticDescription}" showTitle="false"/>
 									</gnt2:ListLegendItem>
 								</gnt2:ListLegend>
 							</gnt2:LegendContainer>
@@ -30,12 +32,13 @@
 				</gnt2:toolbar>
 				<gnt2:ganttCharts>
 					<gnt2:GanttChartWithTable id="idGanttResourceAssignments" ghostAlignment="Start" adhocLineLayer="Bottom" shapeSelectionMode="Single"
-						shapeSelectionSettings="{color:'red', strokeDasharray:'1,0'}" dragStart="onShapeDragStart" shapeDrop="onShapeDrop"
+						shapeSelectionSettings="{color: '#808080', strokeWidth: 1, strokeDasharray: '5,2'}" dragStart="onShapeDragStart" shapeDrop="onShapeDrop"
 						shapeResize="onShapeResize" shapeMouseEnter="onShapeMouseEnter" shapeMouseLeave="onShapeMouseLeave" shapeDoubleClick="onShapeDoubleClick"
-						shapeContextMenu="onShapeContextMenu" showShapeTimeOnDrag="true" selectionPanelSize="{viewModel>/ganttSelectionPane}" nowLineInUTC="false" visibleHorizonUpdate="onVisibleHorizonUpdate">
+						shapeContextMenu="onShapeContextMenu" showShapeTimeOnDrag="true" selectionPanelSize="{viewModel>/ganttSelectionPane}" nowLineInUTC="false"
+						visibleHorizonUpdate="onVisibleHorizonUpdate">
 						<gnt2:table>
-							<table:TreeTable id="idGanttResourceTreeTable" class="resourceGanttTreeTable" selectionMode="Single" visibleRowCountMode="Auto" threshold="10"
-								enableColumnReordering="false" enableBusyIndicator="true" busyStateChanged="onBusyStateChanged" enableCellFilter="false"
+							<table:TreeTable id="idGanttResourceTreeTable" class="resourceGanttTreeTable" selectionMode="Single" visibleRowCountMode="Auto"
+								threshold="10" enableColumnReordering="false" enableBusyIndicator="true" busyStateChanged="onBusyStateChanged" enableCellFilter="false"
 								columnHeaderVisible="false" selectionBehavior="RowOnly" rowHeight="25"
 								rows="{ path: 'ganttModel>/data', parameters: { arrayNames: ['children'], numberOfExpandedLevels: 1, groupId: 'GanttTree' } }">
 								<table:extension>
@@ -89,7 +92,6 @@
 												selected="{ganttModel>IsSelected}"/>
 										</table:template>
 									</table:Column>
-									
 								</table:columns>
 							</table:TreeTable>
 						</gnt2:table>
@@ -97,13 +99,7 @@
 							<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.AxisTimeStrategy" type="XML"/>
 						</gnt2:axisTimeStrategy>
 						<gnt2:svgDefs>
-							<def:SvgDefs>
-								<def:defs>
-									<pattern:SlashPattern id="unavailability" backgroundColor="white" stroke="#ccc"></pattern:SlashPattern>
-								</def:defs>
-								<def:defs>
-									<pattern:SlashPattern id="oncallorovertime" backgroundColor="white" stroke="#FFA500"></pattern:SlashPattern>
-								</def:defs>
+							<def:SvgDefs id="idGanttChartSvgDefs">
 								<core:ExtensionPoint name="GanttExtP|GanttChart|GanttHeircrchySet|GanttPattern"/>
 							</def:SvgDefs>
 						</gnt2:svgDefs>

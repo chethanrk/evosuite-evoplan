@@ -10,9 +10,11 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/gantt/simple/CoordinateUtils",
 	"com/evorait/evoplan/model/Constants",
-	"sap/gantt/misc/Utility"
+	"sap/gantt/misc/Utility",
+	"sap/gantt/def/pattern/SlashPattern",
+	"sap/gantt/def/pattern/BackSlashPattern"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, Popup, MessageToast, Fragment, CoordinateUtils, Constants,
-	Utility) {
+	Utility, SlashPattern, BackSlashPattern) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttChart", {
@@ -88,7 +90,6 @@ sap.ui.define([
 		 * 
 		 */
 		initializeGantt: function () {
-
 			this.oGanttModel = this.getView().getModel("ganttModel");
 			this.oGanttOriginDataModel = this.getView().getModel("ganttOriginalData");
 
@@ -230,7 +231,7 @@ sap.ui.define([
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
 				slocStor = JSON.parse(localStorage.getItem("Evo-Dmnd-guid")),
 				sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : [slocStor[0].sPath],
-				oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
+				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
 				oResourceData = this.getModel("ganttModel").getProperty(oDropContext.getPath()),
 				oSvgPoint,
 				sPath = sDragPath ? sDragPath[0] : undefined,
@@ -604,6 +605,42 @@ sap.ui.define([
 			}
 
 		},
+
+		/**
+		 * get Conditional shape for unavailabilities
+		 * and set color pattern for some unavailabilities
+		 * @param sTypeGroup
+		 * @param sType
+		 * @param sColor
+		 * @param sPattern
+		 */
+		getAvalablitiyConditionalShape: function (sTypeGroup, sType, sColor, sPattern) {
+			this._setAvailabilitiesPatterns(sTypeGroup, sType, sColor, sPattern);
+			if (sTypeGroup === "L") {
+				return 1;
+			} else {
+				return 0;
+			}
+		},
+
+		/**
+		 * Format legend colors to differentiate between pattern and colors
+		 * and set color pattern for some unavailabilities who was not part of availabilities
+		 * @param sType
+		 * @param sCharCode
+		 * @param sCharValue
+		 * @param sColor
+		 * @return {*}
+		 */
+		formatLegend: function (sType, sCharCode, sCharValue, sColor) {
+			this._setAvailabilitiesPatterns(sCharCode, sCharValue, sColor, sType);
+			if (sType === "COLOUR") {
+				return sColor;
+			} else {
+				return "url(#" + this._viewId + "--availability-" + sCharCode + "-" + sCharValue + ")";
+			}
+		},
+
 		/* =========================================================== */
 		/* intern methods                                              */
 		/* =========================================================== */
@@ -1232,6 +1269,13 @@ sap.ui.define([
 					this._changeGanttHorizonViewAt(this._axisTime.getZoomLevel(), this._axisTime);
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
 					// this._addAssociations.bind(this)();
+
+					//set background color of Gantt
+					//could not found a good render event of Gantt
+					setTimeout(function () {
+						var oBgControl = this._ganttChart.$()[0].querySelector(".sapGanttBackground .sapGanttBackgroundSVG");
+						oBgControl.style.backgroundColor = this.oUserModel.getProperty("/DEFAULT_GANTT_BG_COLOR");
+					}.bind(this), 2000);
 				}.bind(this));
 		},
 		/**
@@ -1388,7 +1432,7 @@ sap.ui.define([
 			this.oGanttModel.refresh();
 		},
 		/**
-		 * Adding avaialbilities into Gantt data in Gantt Model 
+		 * Adding availabilities into Gantt data in Gantt Model 
 		 * @Author Rahul
 		 */
 		_addAvailabilities: function (aAvailabilities) {
@@ -1497,6 +1541,46 @@ sap.ui.define([
 			});
 
 			return oDemandObj;
+		},
+        
+        /**
+		 * Set color pattern for some unavailabilities
+		 * @param sTypeGroup
+		 * @param sType
+		 * @param sColor
+		 * @param sPattern
+		 */
+		_setAvailabilitiesPatterns: function (sTypeGroup, sType, sColor, sPattern) {
+			if (sPattern) {
+				var sPatternName = this._viewId + "--availability-" + sTypeGroup + "-" + sType,
+					oCtrl = null;
+				//get SVGDev control in view
+				if (!this._oSVGDef) {
+					this._oSVGDef = this.getView().byId("idGanttChartSvgDefs");
+					this._aAvailabilitySVGDef = [];
+				}
+
+				//when pattern control was not yet created
+				if (this._aAvailabilitySVGDef.indexOf(sPatternName) < 0) {
+					//create SlashPattern
+					if (sPattern === "SlashPattern") {
+						oCtrl = new SlashPattern(sPatternName, {
+							backgroundColor: "white",
+							stroke: sColor || "#eee"
+						});
+						this._oSVGDef.insertDef(oCtrl);
+						this._aAvailabilitySVGDef.push(sPatternName);
+					}
+					if (sPattern === "BackslashPattern") {
+						oCtrl = new BackSlashPattern(sPatternName, {
+							backgroundColor: "white",
+							stroke: sColor || "#eee"
+						});
+						this._oSVGDef.insertDef(oCtrl);
+						this._aAvailabilitySVGDef.push(sPatternName);
+					}
+				}
+			}
 		}
 
 	});
