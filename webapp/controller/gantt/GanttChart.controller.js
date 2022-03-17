@@ -1499,6 +1499,47 @@ sap.ui.define([
 
 			return oDemandObj;
 		},
+		
+		/**
+		 * Set color pattern for some unavailabilities
+		 * @param sTypeGroup
+		 * @param sType
+		 * @param sColor
+		 * @param sPattern
+		 */
+		_setAvailabilitiesPatterns: function (sTypeGroup, sType, sColor, sPattern) {
+			if (sPattern) {
+				var sPatternName = this._viewId + "--availability-" + sTypeGroup + "-" + sType,
+					oCtrl = null;
+				//get SVGDev control in view
+				if (!this._oSVGDef) {
+					this._oSVGDef = this.getView().byId("idGanttChartSvgDefs");
+					this._aAvailabilitySVGDef = [];
+				}
+
+				//when pattern control was not yet created
+				if (this._aAvailabilitySVGDef.indexOf(sPatternName) < 0) {
+					//create SlashPattern
+					if (sPattern === "SlashPattern") {
+						oCtrl = new SlashPattern(sPatternName, {
+							backgroundColor: "white",
+							stroke: sColor || "#eee"
+						});
+						this._oSVGDef.insertDef(oCtrl);
+						this._aAvailabilitySVGDef.push(sPatternName);
+					}
+					if (sPattern === "BackslashPattern") {
+						oCtrl = new BackSlashPattern(sPatternName, {
+							backgroundColor: "white",
+							stroke: sColor || "#eee"
+						});
+						this._oSVGDef.insertDef(oCtrl);
+						this._aAvailabilitySVGDef.push(sPatternName);
+					}
+				}
+			}
+		},
+		
 		/**
 		 * handle Mouse hover event to show Assignments popup 
 		 * since 2205
