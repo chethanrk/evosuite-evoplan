@@ -107,6 +107,7 @@ sap.ui.define([
 		_proceedToAssignmentStatusServiceCall: function (aAssignmentStatus, sFunctionKey) {
 			var oParams, bLast,
 				iAssignmentsLen = aAssignmentStatus.length - 1;
+				this._oView.getModel("appView").setProperty("/busy", true);
 			for (var i in aAssignmentStatus) {
 				bLast = false;
 				oParams = {
@@ -119,6 +120,7 @@ sap.ui.define([
 				this.executeFunctionImport.call(this._oView.getController(), this._oModel, oParams, "ExecuteAssignmentFunction", "POST").then(
 					function (data) {
 						if (bLast) {
+							this._oView.getModel("appView").setProperty("/busy", false);
 							this._refreshAll();
 						}
 					}.bind(this));
@@ -173,6 +175,7 @@ sap.ui.define([
 			}
 			if (this._oAssignmentTable) {
 				this._oAssignmentTable.removeSelections();
+				this._oView.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
 			}
 		}
 	});

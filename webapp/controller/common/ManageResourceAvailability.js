@@ -649,8 +649,7 @@ sap.ui.define([
 			});
 		},
 		onEscapeDialog:function(escapeHandler){
-			this._resetChanges();
-			escapeHandler.resolve();
+			Fragment.byId(this._id, "idCreateCancel").firePress();
 			
 		}
 	});
