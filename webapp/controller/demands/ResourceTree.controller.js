@@ -267,7 +267,7 @@ sap.ui.define([
 		_triggerFilterSearch: function () {
 			this._oDroppableTable.rebindTable();
 		},
-		
+
 		/**
 		 * On drag of assignment, get Assignment data to Assignment model
 		 * @author Sagar since 2205 
@@ -278,12 +278,13 @@ sap.ui.define([
 				oContext = this._oDataTable.getContextByIndex(oDraggedControl.getIndex()),
 				oObject = oContext.getObject(),
 				vAssignGuid = oObject.AssignmentGuid;
-
-			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
-			this._oViewModel.setProperty("/dragDropSetting/isReassign", true);
 			if (oObject.NodeType !== "ASSIGNMENT") {
 				oEvent.preventDefault();
 			}
+			this.sDemandPath = "/DemandSet('" + oObject.DemandGuid + "')";
+			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
+			this._oViewModel.setProperty("/dragDropSetting/isReassign", true);
+			
 		},
 
 		/**
@@ -295,11 +296,12 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
+				oUserModel = this.getView().getModel("user"),
 				aSources = [],
 				iOperationTimesLen,
 				iVendorAssignmentLen,
 				aPSDemandsNetworkAssignment,
-				mParams,mParameter;
+				mParams, mParameter;
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -316,19 +318,58 @@ sap.ui.define([
 				mParams = {
 					$expand: "Demand"
 				};
-				this.getOwnerComponent()._getData(this.assignmentPath, null, mParams)
-					.then(function (oAssignData) {
-						if (!this.checkAssigmentIsReassignable({
-								assignment: oAssignData,
-								resource: oTargetData
-							})) {
-							return false;
-						}
-						mParameter = {
-							bFromHome: true
-						};
-						this._setAssignmentDetail(oAssignData, sPath);
-						this.updateAssignment(true, mParameter);
+				new Promise(function (resolve, reject) {
+						this.getOwnerComponent()._getData(this.sDemandPath)
+							.then(function (oData) {
+								this._oViewModel.setProperty("/dragSession", [{
+									index: 0,
+									oData: oData,
+									sPath: this.sDemandPath
+								}]);
+								aSources = this._oViewModel.getProperty("/dragSession");
+								iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
+								iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
+								aPSDemandsNetworkAssignment = this._showNetworkAssignments(this._oViewModel);
+								resolve();
+							}.bind(this));
+					}.bind(this))
+					.then(function () {
+						this.getOwnerComponent()._getData(this.assignmentPath, null, mParams)
+							.then(function (oAssignData) {
+								if (!this.checkAssigmentIsReassignable({
+										assignment: oAssignData,
+										resource: oTargetData
+									})) {
+									return false;
+								}
+								mParameter = {
+									bFromHome: true
+								};
+								this.getOwnerComponent().assignTreeDialog._assignPath = sPath;
+								this.getOwnerComponent().assignTreeDialog._aSelectedPaths = [this.getOwnerComponent().getModel().createBindingContext(this.assignmentPath)];
+								this.getOwnerComponent().assignTreeDialog._bulkReAssign = true;
+								this.getOwnerComponent().assignTreeDialog._mParameters = mParameter;
+								if (aSources) {
+									//Checking PS Demands for Network Assignment 
+									if (oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+										this.getOwnerComponent().NetworkAssignment.open(this.getView(), sPath, aPSDemandsNetworkAssignment, null);
+									} //Checking Vendor Assignment for External Resources
+									else if (oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
+										iVendorAssignmentLen) {
+										this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, null);
+									} else if (oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+										"RESOURCE") {
+										//Checking Operation Times
+										this.getOwnerComponent().OperationTimeCheck.open(this.getView(), null, sPath);
+									} else {
+										this._setAssignmentDetail(oAssignData, sPath);
+										this.updateAssignment(true, mParameter);
+									}
+								} else {
+									this._setAssignmentDetail(oAssignData, sPath);
+									this.updateAssignment(true, mParameter);
+								}
+							}.bind(this));
 					}.bind(this));
 			} else {
 
@@ -382,6 +423,9 @@ sap.ui.define([
 				}
 			}
 			this._bFirsrTime = false;
+			this._oViewModel.setProperty("/dragDropSetting/isReassign", false);
+			
+			
 		},
 
 		/**

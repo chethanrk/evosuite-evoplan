@@ -447,7 +447,15 @@ sap.ui.define([
 					ResourceGroupGuid: oResource.ResourceGroupGuid,
 					ResourceGuid: oResource.ResourceGuid
 				};
-				oParams = this.setDateTimeParams(oParams, oResource.StartDate, oResource.StartTime, oResource.EndDate, oResource.EndTime);
+				if(this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")){
+					if(oResource.NodeType === "RESOURCE"){
+						oParams = this.setDateTimeParams(oParams, oAssignment.DateFrom, {ms:oAssignment.DateFrom.getTime()}, oAssignment.DateTo, {ms:oAssignment.DateTo.getTime()});
+					}else{
+						oParams = this.setDateTimeParams(oParams, oResource.StartDate, {ms:oAssignment.DateFrom.getTime()}, oResource.EndDate, {ms:oAssignment.DateTo.getTime()});
+					}
+				}else{
+					oParams = this.setDateTimeParams(oParams, oResource.StartDate, oResource.StartTime, oResource.EndDate, oResource.EndTime);
+				}
 				oDemandObj = this.getModel().getProperty("/DemandSet('" + oAssignment.DemandGuid + "')");
 
 				//Conditon for PS Demand Network Assignments Update
