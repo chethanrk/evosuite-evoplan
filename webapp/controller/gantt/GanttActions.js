@@ -187,6 +187,7 @@ sap.ui.define([
 			var oQualificationParameters,
 				oModel = this.getModel(),
 				sDemandGuids = "",
+				sObjectId,
 				aItems = aSourcePaths ? aSourcePaths : aGuids;
 			return new Promise(function (resolve, reject) {
 				//collect all demand Guids for function import
@@ -204,9 +205,13 @@ sap.ui.define([
 						sDemandGuids = sDemandGuids + "//" + sDemandGuid;
 					}
 				}
+				sObjectId = oTargetObj.NodeId;
+				if (oTargetObj.NodeType === "ASSIGNMENT") {
+					sObjectId = oTargetObj.ObjectId;
+				}
 				oQualificationParameters = {
 					DemandMultiGuid: sDemandGuids,
-					ObjectId: oTargetObj.NodeId, //targetObj.ResourceGroupGuid,
+					ObjectId: sObjectId, //oTargetObj.NodeId, //targetObj.ResourceGroupGuid,
 					StartTimestamp: oTargetDate,
 					EndTimestamp: oNewEndDate ? oNewEndDate : oTargetDate
 				};
@@ -380,6 +385,7 @@ sap.ui.define([
 							oGanttModel.setProperty(sPath + "/busy", false);
 							this.getModel("ganttModel").setProperty(sPath, null);
 							this.getModel("ganttOriginalData").setProperty(sPath, null);
+							this._deleteChildAssignment(sAssignGuid, sPath);
 							oEventBus.publish("BaseController", "refreshCapacity", {
 								sTargetPath: sPath.split("/AssignmentSet/results/")[0]
 							});
@@ -392,7 +398,120 @@ sap.ui.define([
 					oGanttModel.setProperty(sPath + "/busy", false);
 				}
 			}.bind(this));
-		}
+		},
+
+		/**
+		 * Unassign assignment with delete confirmation dialog and removing the child assignment node from GanttModel
+		 * @param sAssignGuid
+		 * @param sPath
+		 * @private
+		 */
+		_deleteChildAssignment: function (sAssignGuid, sPath) {
+			var oGanttModel = this.getModel("ganttModel"),
+				oGanttOriginalModel = this.getModel("ganttOriginalData"),
+				aAssignmentData, sChildPath;
+			if (sPath.length > 60) {
+				sChildPath = sPath.substring(0, 27);
+				sChildPath = sChildPath + "/AssignmentSet/results/";
+				aAssignmentData = oGanttModel.getProperty(sChildPath);
+				for (var a in aAssignmentData) {
+					if (sAssignGuid === aAssignmentData[a].Guid) {
+						aAssignmentData.splice(a, 1);
+						break;
+					}
+				}
+				var oOriginData = oGanttModel.getProperty(sChildPath);
+				oGanttOriginalModel.setProperty(sChildPath, _.cloneDeep(oOriginData));
+			}
+			oGanttModel.refresh(true);
+			oGanttOriginalModel.refresh(true);
+		},
+
+		/**
+		 * Resets a changed data by model path on both Parent and Child Nodes
+		 * @param sPath
+		 * @since 2205
+		 */
+		_resetParentChildNodes: function (sPath, oOriginData) {
+			var oGanttModel = this.getModel("ganttModel"),
+				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
+				oTargetObj = oGanttModel.getProperty(sPath),
+				sChildPath, aChildrenData, sNewPath, sAssignmentPath, aAssignmentData;
+			//Condition when we Change at Assignment Nodes
+			if (sPath.length > 60) {
+				sAssignmentPath = sPath.substring(0, 27);
+				sAssignmentPath = sAssignmentPath + "/AssignmentSet/results";
+				aAssignmentData = oGanttModel.getProperty(sAssignmentPath);
+				for (var a in aAssignmentData) {
+					if (oTargetObj.Guid === aAssignmentData[a].Guid) {
+						sNewPath = sAssignmentPath + "/" + a;
+						oGanttModel.setProperty(sNewPath, oTargetObj);
+						oGanttModel.setProperty(sNewPath + "/AssignmentSet", {
+							results: [oTargetObj]
+						});
+						oGanttModel.setProperty(sNewPath + "/DemandDesc", oTargetObj.DemandDesc);
+						oGanttModel.setProperty(sNewPath + "/NodeType", "ASSIGNMENT");
+						oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
+						oGanttOriginDataModel.setProperty(sNewPath + "/AssignmentSet", _.cloneDeep(oGanttModel.getProperty(sNewPath + "/AssignmentSet")));
+						break;
+					}
+				}
+			} else {
+				sChildPath = sPath.split("/AssignmentSet/results/")[0];
+				aChildrenData = oGanttModel.getProperty(sChildPath + "/children");
+				for (var c in aChildrenData) {
+					if (oTargetObj.Guid === aChildrenData[c].Guid) {
+						sNewPath = sChildPath + "/children/" + c;
+						oGanttModel.setProperty(sNewPath + "/AssignmentSet", {
+							results: [oTargetObj]
+						});
+						oGanttModel.setProperty(sNewPath + "/DemandDesc", oTargetObj.DemandDesc);
+						oGanttModel.setProperty(sNewPath + "/NodeType", "ASSIGNMENT");
+						oGanttOriginDataModel.setProperty(sNewPath + "/AssignmentSet", _.cloneDeep(oGanttModel.getProperty(sNewPath + "/AssignmentSet")));
+						break;
+					}
+				}
+			}
+			oGanttOriginDataModel.refresh(true);
+			oGanttModel.refresh(true);
+		},
+		/**
+		 * Creating a new Assignment node and shape after assignmnet creation
+		 * @param aData
+		 * @param sTargetPath
+		 * @param sDummyPath
+		 * @since 2205
+		 */
+		_appendChildAssignment: function (aData, sTargetPath, sDummyPath) {
+			var oGanttModel = this.getModel("ganttModel"),
+				oGanttOriginalModel = this.getModel("ganttOriginalData"),
+				aAssignmentData = oGanttModel.getProperty(sTargetPath + "/AssignmentSet/results"),
+				aChildData,
+				iChildLength, sAssignmentGuid, sNewPath, aCloneChildData, aCloneChildAssignmentData;
+			if (!oGanttModel.getProperty(sTargetPath + "/children")) {
+				oGanttModel.setProperty(sTargetPath + "/children", [aData]);
+			}
+			aChildData = oGanttModel.getProperty(sTargetPath + "/children");
+			iChildLength = aChildData.length - 1;
+
+			var xPath = sTargetPath + "/children/" + iChildLength;
+			sAssignmentGuid = oGanttModel.getProperty(xPath + "/Guid");
+			for (var a in aAssignmentData) {
+				if (sAssignmentGuid === aAssignmentData[a].Guid) {
+					sNewPath = xPath + "/AssignmentSet";
+					oGanttModel.setProperty(sNewPath, {
+						results: [aData]
+					});
+					oGanttModel.setProperty(xPath + "/NodeType", "ASSIGNMENT");
+				}
+			}
+			aCloneChildData = oGanttModel.getProperty(xPath);
+			oGanttOriginalModel.setProperty(xPath, _.cloneDeep(aCloneChildData));
+			aCloneChildAssignmentData = oGanttModel.getProperty(sNewPath);
+			oGanttOriginalModel.setProperty(sNewPath, _.cloneDeep(aCloneChildAssignmentData));
+			oGanttModel.refresh(true);
+			oGanttOriginalModel.refresh(true);
+		},
 	});
 
 });
