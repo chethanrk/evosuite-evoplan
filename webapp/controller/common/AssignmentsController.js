@@ -916,6 +916,14 @@ sap.ui.define([
 			oAssignmentModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
 		},
 
+		/**
+		 * Setting dragged assignment to Assignment Model
+		 * @author Sagar since 2205
+		 * @param sAssignmentPath - Dragged assignment path
+		 * @param oResourcePath - Dropped resource
+		 * @param oView - calling View
+		 * @param mParameter
+		 */
 		_reassignmentOnDrop: function (sAssignmentPath, sResourcePath, oView, mParameter) {
 			var oViewModel = this.getModel("viewModel"),
 				oModel = this.getModel(),
