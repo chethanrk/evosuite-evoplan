@@ -917,7 +917,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Setting dragged assignment to Assignment Model
+		 * Method for validation and reassignment of assignment while dragging and dropping with in Resource tree
 		 * @author Sagar since 2205
 		 * @param sAssignmentPath - Dragged assignment path
 		 * @param oResourcePath - Dropped resource
