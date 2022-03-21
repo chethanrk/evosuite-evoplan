@@ -447,13 +447,21 @@ sap.ui.define([
 					ResourceGroupGuid: oResource.ResourceGroupGuid,
 					ResourceGuid: oResource.ResourceGuid
 				};
-				if(this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")){
-					if(oResource.NodeType === "RESOURCE"){
-						oParams = this.setDateTimeParams(oParams, oAssignment.DateFrom, {ms:oAssignment.DateFrom.getTime()}, oAssignment.DateTo, {ms:oAssignment.DateTo.getTime()});
-					}else{
-						oParams = this.setDateTimeParams(oParams, oResource.StartDate, {ms:oAssignment.DateFrom.getTime()}, oResource.EndDate, {ms:oAssignment.DateTo.getTime()});
+				if (this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")) {
+					if (oResource.NodeType === "RESOURCE") {
+						oParams = this.setDateTimeParams(oParams, oAssignment.DateFrom, {
+							ms: oAssignment.DateFrom.getTime()
+						}, oAssignment.DateTo, {
+							ms: oAssignment.DateTo.getTime()
+						});
+					} else {
+						oParams = this.setDateTimeParams(oParams, oResource.StartDate, {
+							ms: oAssignment.DateFrom.getTime()
+						}, oResource.EndDate, {
+							ms: oAssignment.DateTo.getTime()
+						});
 					}
-				}else{
+				} else {
 					oParams = this.setDateTimeParams(oParams, oResource.StartDate, oResource.StartTime, oResource.EndDate, oResource.EndTime);
 				}
 				oDemandObj = this.getModel().getProperty("/DemandSet('" + oAssignment.DemandGuid + "')");
@@ -804,7 +812,7 @@ sap.ui.define([
 			}
 			return oParams;
 		},
-		
+
 		/**
 		 * Check whether Assignment is changeable or reassignable
 		 * @author Sagar since 2205
@@ -815,7 +823,8 @@ sap.ui.define([
 				oResourceData = mParameters.resource,
 				oDemandData = oAssignmentData.Demand,
 				oResourceBundle = this.getResourceBundle();
-			if (oAssignmentData.ResourceGroupGuid === oResourceData.ResourceGroupGuid && oAssignmentData.ResourceGuid === oResourceData.ResourceGuid && !oDemandData.ASGNMNT_CHANGE_ALLOWED) { // validation for change
+			if (oAssignmentData.ResourceGroupGuid === oResourceData.ResourceGroupGuid && oAssignmentData.ResourceGuid === oResourceData.ResourceGuid &&
+				!oDemandData.ASGNMNT_CHANGE_ALLOWED) { // validation for change
 				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotchangeable"));
 				return false;
 			} else if (!oDemandData.ASGNMNT_CHANGE_ALLOWED || !oDemandData.ALLOW_REASSIGN) { // validation for reassign
@@ -832,9 +841,9 @@ sap.ui.define([
 		 * @param oResourcePath - Dropped resource
 		 */
 		_setAssignmentDetail: function (oAssignData, oResourcePath) {
-			var oAssignmentModel = this.getView().getModel("assignment"),
+			var oAssignmentModel = this.getModel("assignment"),
 				oAssignment = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject(),
-				oNewAssign,oDemandData,startDate,endDate;
+				oNewAssign, oDemandData, startDate, endDate;
 			oAssignment.AssignmentGuid = oAssignData.Guid;
 			oAssignment.DemandDesc = oAssignData.DemandDesc;
 			oAssignment.DemandGuid = oAssignData.DemandGuid;
@@ -845,43 +854,43 @@ sap.ui.define([
 			oAssignment.ResourceGroupDesc = oAssignData.GROUP_DESCRIPTION;
 			oAssignment.ResourceGuid = oAssignData.ResourceGuid;
 			oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
-			if (this.getView().getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT")) {
+			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT")) {
 				oAssignment.OldEffort = oAssignData.Effort;
 				oAssignment.REMAINING_DURATION = oAssignData.REMAINING_DURATION;
 				oAssignment.OBJECT_SOURCE_TYPE = oAssignData.OBJECT_SOURCE_TYPE;
 			}
 			oAssignmentModel.setData(oAssignment);
 
-			oNewAssign = this.getView().getModel().getProperty(oResourcePath);
+			oNewAssign = this.getModel().getProperty(oResourcePath);
 			oAssignmentModel.setProperty("/NewAssignPath", oResourcePath);
 			oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
 			if (oNewAssign.StartDate) {
-				if(oAssignmentModel.getProperty("/DateFrom")){
+				if (oAssignmentModel.getProperty("/DateFrom")) {
 					startDate = moment(oNewAssign.StartDate);
 					oAssignmentModel.getProperty("/DateFrom").setDate(startDate.get('date'));
 					oAssignmentModel.getProperty("/DateFrom").setMonth(startDate.get('month'));
 					oAssignmentModel.getProperty("/DateFrom").setFullYear(startDate.get('year'));
-				}else{
+				} else {
 					oAssignmentModel.setProperty("/DateFrom", oNewAssign.StartDate);
 				}
-				
+
 			}
 			if (oNewAssign.EndDate) {
-				if(oAssignmentModel.getProperty("/DateFrom")){
+				if (oAssignmentModel.getProperty("/DateFrom")) {
 					endDate = moment(oNewAssign.EndDate);
 					oAssignmentModel.getProperty("/DateTo").setDate(endDate.get('date'));
 					oAssignmentModel.getProperty("/DateTo").setMonth(endDate.get('month'));
 					oAssignmentModel.getProperty("/DateTo").setFullYear(endDate.get('year'));
-				}else{
+				} else {
 					oAssignmentModel.setProperty("/DateTo", oNewAssign.EndDate);
 				}
-				
+
 			}
 			if (oAssignmentModel.getProperty("/NewAssignPath") !== null) {
 				oAssignmentModel.getData().ResourceGuid = this.getView().getModel().getProperty(oAssignmentModel.getProperty(
 					"/NewAssignPath") + "/ResourceGuid");
 			}
-			
+
 			oAssignmentModel.setProperty("/showError", false);
 			if (oAssignmentModel.getProperty("/DateFrom") === "" || oAssignmentModel.getProperty("/DateTo") === "") {
 				oAssignmentModel.setProperty("/DateFrom", oNewAssign.DateFrom);
@@ -905,6 +914,56 @@ sap.ui.define([
 			oAssignmentModel.setProperty("/DemandGuid", oDemandData.Guid);
 			oAssignmentModel.setProperty("/Notification", oDemandData.NOTIFICATION);
 			oAssignmentModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
+		},
+
+		_reassignmentOnDrop: function (sAssignmentPath, sResourcePath, oView, mParameter) {
+			var oViewModel = this.getModel("viewModel"),
+				oModel = this.getModel(),
+				oUserModel = this.getModel("user"),
+				mParams,
+				aSources = oViewModel.getProperty("/dragSession"),
+				iOperationTimesLen = this.onShowOperationTimes(oViewModel),
+				iVendorAssignmentLen = this.onAllowVendorAssignment(oViewModel, oUserModel),
+				aPSDemandsNetworkAssignment = this._showNetworkAssignments(oViewModel),
+				oTargetData = oModel.getProperty(sResourcePath);
+
+			mParams = {
+				$expand: "Demand"
+			};
+			this.getOwnerComponent()._getData(sAssignmentPath, null, mParams)
+				.then(function (oAssignData) {
+					if (!this.checkAssigmentIsReassignable({
+							assignment: oAssignData,
+							resource: oTargetData
+						})) {
+						return false;
+					}
+					this.getOwnerComponent().assignTreeDialog._assignPath = sResourcePath;
+					this.getOwnerComponent().assignTreeDialog._aSelectedPaths = [this.getOwnerComponent().getModel().createBindingContext(
+						sAssignmentPath)];
+					this.getOwnerComponent().assignTreeDialog._bulkReAssign = true;
+					this.getOwnerComponent().assignTreeDialog._mParameters = mParameter;
+					if (aSources) {
+						//Checking PS Demands for Network Assignment 
+						if (oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+							this.getOwnerComponent().NetworkAssignment.open(this.getView(), sResourcePath, aPSDemandsNetworkAssignment, null);
+						} //Checking Vendor Assignment for External Resources
+						else if (oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
+							iVendorAssignmentLen) {
+							this.getOwnerComponent().VendorAssignment.open(this.getView(), sResourcePath, null);
+						} else if (oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+							"RESOURCE") {
+							//Checking Operation Times
+							this.getOwnerComponent().OperationTimeCheck.open(this.getView(), null, sResourcePath);
+						} else {
+							this._setAssignmentDetail(oAssignData, sResourcePath);
+							this.updateAssignment(true, mParameter);
+						}
+					} else {
+						this._setAssignmentDetail(oAssignData, sResourcePath);
+						this.updateAssignment(true, mParameter);
+					}
+				}.bind(this));
 		}
 	});
 });

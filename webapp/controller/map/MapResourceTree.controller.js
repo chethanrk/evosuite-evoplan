@@ -292,12 +292,13 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
-				oUserModel = this.getView().getModel("user"),
+				oViewModel = this.getView().getModel("viewModel"),
 				aSources = [],
 				iOperationTimesLen,
 				iVendorAssignmentLen,
 				eventBus = sap.ui.getCore().getEventBus(),
-				aPSDemandsNetworkAssignment,mParams, mParameter;
+				aPSDemandsNetworkAssignment, mParams, mParameter,
+				oView = this.getView();
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -311,61 +312,17 @@ sap.ui.define([
 			}
 
 			if (this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")) {
-				var mParams = {
-					$expand: "Demand"
+				mParameter = {
+					bFromMap: true
 				};
-				new Promise(function (resolve, reject) {
-						this.getOwnerComponent()._getData(this.sDemandPath)
-							.then(function (oData) {
-								this.getModel("viewModel").setProperty("/dragSession", [{
-									index: 0,
-									oData: oData,
-									sPath: this.sDemandPath
-								}]);
-								aSources = this.getModel("viewModel").getProperty("/dragSession");
-								iOperationTimesLen = this.onShowOperationTimes(this.getModel("viewModel"));
-								iVendorAssignmentLen = this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
-								aPSDemandsNetworkAssignment = this._showNetworkAssignments(this.getModel("viewModel"));
-								resolve();
-							}.bind(this));
-					}.bind(this))
-					.then(function () {
-						this.getOwnerComponent()._getData(this.assignmentPath, null, mParams)
-							.then(function (oAssignData) {
-								if (!this.checkAssigmentIsReassignable({
-										assignment: oAssignData,
-										resource: oTargetData
-									})) {
-									return false;
-								}
-								mParameter = {
-									bFromMap: true
-								};
-								this.getOwnerComponent().assignTreeDialog._assignPath = sPath;
-								this.getOwnerComponent().assignTreeDialog._aSelectedPaths = [this.getOwnerComponent().getModel().createBindingContext(this.assignmentPath)];
-								this.getOwnerComponent().assignTreeDialog._bulkReAssign = true;
-								this.getOwnerComponent().assignTreeDialog._mParameters = mParameter;
-								if (aSources) {
-									//Checking PS Demands for Network Assignment 
-									if (oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
-										this.getOwnerComponent().NetworkAssignment.open(this.getView(), sPath, aPSDemandsNetworkAssignment, null);
-									} //Checking Vendor Assignment for External Resources
-									else if (oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
-										iVendorAssignmentLen) {
-										this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, null);
-									} else if (oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
-										"RESOURCE") {
-										//Checking Operation Times
-										this.getOwnerComponent().OperationTimeCheck.open(this.getView(), null, sPath);
-									} else {
-										this._setAssignmentDetail(oAssignData, sPath);
-										this.updateAssignment(true, mParameter);
-									}
-								} else {
-									this._setAssignmentDetail(oAssignData, sPath);
-									this.updateAssignment(true, mParameter);
-								}
-							}.bind(this));
+				this.getOwnerComponent()._getData(this.sDemandPath)
+					.then(function (oData) {
+						oViewModel.setProperty("/dragSession", [{
+							index: 0,
+							oData: oData,
+							sPath: this.sDemandPath
+						}]);
+						this._reassignmentOnDrop(this.assignmentPath, sPath, oView, mParameter);
 					}.bind(this));
 			} else {
 
