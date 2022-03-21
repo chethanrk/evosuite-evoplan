@@ -826,7 +826,7 @@ sap.ui.define([
 		_setAssignmentDetail: function (oAssignData, oResourcePath) {
 			var oAssignmentModel = this.getView().getModel("assignment"),
 				oAssignment = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject(),
-				oNewAssign,oDemandData;
+				oNewAssign,oDemandData,startDate,endDate;
 			oAssignment.AssignmentGuid = oAssignData.Guid;
 			oAssignment.DemandDesc = oAssignData.DemandDesc;
 			oAssignment.DemandGuid = oAssignData.DemandGuid;
@@ -848,10 +848,26 @@ sap.ui.define([
 			oAssignmentModel.setProperty("/NewAssignPath", oResourcePath);
 			oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
 			if (oNewAssign.StartDate) {
-				oAssignmentModel.setProperty("/DateFrom", oNewAssign.StartDate);
+				if(oAssignmentModel.getProperty("/DateFrom")){
+					startDate = moment(oNewAssign.StartDate);
+					oAssignmentModel.getProperty("/DateFrom").setDate(startDate.get('date'));
+					oAssignmentModel.getProperty("/DateFrom").setMonth(startDate.get('month'));
+					oAssignmentModel.getProperty("/DateFrom").setFullYear(startDate.get('year'));
+				}else{
+					oAssignmentModel.setProperty("/DateFrom", oNewAssign.StartDate);
+				}
+				
 			}
 			if (oNewAssign.EndDate) {
-				oAssignmentModel.setProperty("/DateTo", oNewAssign.EndDate);
+				if(oAssignmentModel.getProperty("/DateFrom")){
+					endDate = moment(oNewAssign.EndDate);
+					oAssignmentModel.getProperty("/DateTo").setDate(endDate.get('date'));
+					oAssignmentModel.getProperty("/DateTo").setMonth(endDate.get('month'));
+					oAssignmentModel.getProperty("/DateTo").setFullYear(endDate.get('year'));
+				}else{
+					oAssignmentModel.setProperty("/DateTo", oNewAssign.EndDate);
+				}
+				
 			}
 			if (oAssignmentModel.getProperty("/NewAssignPath") !== null) {
 				oAssignmentModel.getData().ResourceGuid = this.getView().getModel().getProperty(oAssignmentModel.getProperty(
