@@ -739,6 +739,7 @@ sap.ui.define([
 		 */
 		_openContextMenu: function (oShape, oContext) {
 			var oData = oContext.getObject();
+			this.getOwnerComponent().GanttAssignmentPopOver.onCloseAssigmentsPopover();
 			if (oData.DEMAND_STATUS !== "COMP") {
 				this._getRelatedDemandData(oData).then(function (oResult) {
 					oData.sPath = oContext.getPath();
@@ -1548,7 +1549,7 @@ sap.ui.define([
 
 			return oDemandObj;
 		},
-
+		
 		/**
 		 * Set color pattern for some unavailabilities
 		 * @param sTypeGroup
@@ -1588,7 +1589,29 @@ sap.ui.define([
 				}
 			}
 		},
+		
 		/**
+		 * handle Mouse hover event to show Assignments popup 
+		 * since 2205
+		 */
+		onShapeMouseEnter: function (oEvent) {
+			var oShapeContext = oEvent.getParameter("shape").getBindingContext("ganttModel"),
+				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId();
+			if (!(this._oContextMenu && this._oContextMenu.getPopup().isOpen())) {
+				this.getOwnerComponent().GanttAssignmentPopOver.open(this.getView(), sap.ui.getCore().byId(sToolbarId + "-settingsButton"),
+					oShapeContext);
+			}
+		},
+        
+		/**
+		 * handle Mouse hover event to show Assignments popup 
+		 * since 2205
+		 */
+		onShapeMouseLeave: function (oEvent) {
+			this.getOwnerComponent().GanttAssignmentPopOver.onCloseAssigmentsPopover();
+		},
+        
+        /**
 		 * on press link of assignment in resource tree row
 		 * get parent row path and bind this path to the dialog or showing assignment information
 		 * @param oEvent

@@ -399,6 +399,7 @@ sap.ui.define([
 				}
 			}.bind(this));
 		},
+        ,
 
 		/**
 		 * Unassign assignment with delete confirmation dialog and removing the child assignment node from GanttModel
@@ -512,6 +513,7 @@ sap.ui.define([
 			oGanttModel.refresh(true);
 			oGanttOriginalModel.refresh(true);
 		},
+		
 	});
 
 });
