@@ -399,7 +399,6 @@ sap.ui.define([
 				}
 			}.bind(this));
 		},
-        ,
 
 		/**
 		 * Unassign assignment with delete confirmation dialog and removing the child assignment node from GanttModel
@@ -487,10 +486,17 @@ sap.ui.define([
 			var oGanttModel = this.getModel("ganttModel"),
 				oGanttOriginalModel = this.getModel("ganttOriginalData"),
 				aAssignmentData = oGanttModel.getProperty(sTargetPath + "/AssignmentSet/results"),
-				aChildData,
+				aChildData, iChildAsgnLen, aChildAsgnData,
 				iChildLength, sAssignmentGuid, sNewPath, aCloneChildData, aCloneChildAssignmentData;
 			if (!oGanttModel.getProperty(sTargetPath + "/children")) {
 				oGanttModel.setProperty(sTargetPath + "/children", [aData]);
+			}else {
+				aChildAsgnData = oGanttModel.getProperty(sTargetPath + "/children");
+				aChildAsgnData.push(aData);
+				iChildAsgnLen = aChildAsgnData.length;
+				if (aChildAsgnData[iChildAsgnLen - 1].Guid === aChildAsgnData[iChildAsgnLen - 2].Guid) {
+					aChildAsgnData.splice(iChildAsgnLen - 1, 1);
+				}
 			}
 			aChildData = oGanttModel.getProperty(sTargetPath + "/children");
 			iChildLength = aChildData.length - 1;
