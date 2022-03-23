@@ -289,6 +289,7 @@ sap.ui.define([
 				this._oDraggableTable.rebindTable();
 			}
 			this._bFirstTime = false;
+			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", false);
 		},
 
 		/**
