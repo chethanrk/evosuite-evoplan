@@ -203,27 +203,29 @@ sap.ui.define([
 			this.onShowOperationTimes(this.getModel("viewModel"));
 			this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
 
-			//Checking PS Demands for Network Assignment 
-			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
-				this.getOwnerComponent().NetworkAssignment.open(this.getView(), oDropObject, aPSDemandsNetworkAssignment, this._mParameters,
-					oDraggedControl,
-					oDroppedControl, oBrowserEvent);
-			}
-			//Checking Vendor Assignment for External Resources
-			else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
-				this.getOwnerComponent().VendorAssignment.open(this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
-					oDroppedControl, oBrowserEvent);
-			} else {
-				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !==
-					null) {
-					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), {
-						bFromNewGantt: true
-					}, oDropContext.getPath(), oDraggedControl, oDroppedControl, oBrowserEvent);
+			//Allowing Demand Drop only on Non-Assignmnet Nodes   @Since 2205
+			if (oDropObject.NodeType !== "ASSIGNMENT") {
+				//Checking PS Demands for Network Assignment 
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+					this.getOwnerComponent().NetworkAssignment.open(this.getView(), oDropObject, aPSDemandsNetworkAssignment, this._mParameters,
+						oDraggedControl,
+						oDroppedControl, oBrowserEvent);
+				}
+				//Checking Vendor Assignment for External Resources
+				else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
+					this.getOwnerComponent().VendorAssignment.open(this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
+						oDroppedControl, oBrowserEvent);
 				} else {
-					this.onProceedNewGanttDemandDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
+					if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !==
+						null) {
+						this.getOwnerComponent().OperationTimeCheck.open(this.getView(), {
+							bFromNewGantt: true
+						}, oDropContext.getPath(), oDraggedControl, oDroppedControl, oBrowserEvent);
+					} else {
+						this.onProceedNewGanttDemandDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
+					}
 				}
 			}
-
 		},
 
 		onProceedNewGanttDemandDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
@@ -770,14 +772,17 @@ sap.ui.define([
 							sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
 						});
 					}
+					this._resetParentChildNodes(sPath);
 				}.bind(this), function () {
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
+					this._resetParentChildNodes(sPath);
 				}.bind(this));
 			}.bind(this), function (oError) {
 				this.oGanttModel.setProperty(sPath + "/busy", false);
 				this._resetChanges(sPath);
+				this._resetParentChildNodes(sPath);
 			}.bind(this));
 		},
 
@@ -1187,6 +1192,7 @@ sap.ui.define([
 				this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
 			this.oGanttModel.refresh();
+			this._appendChildAssignment(data, sTargetPath, sDummyPath);
 			this._oEventBus.publish("BaseController", "refreshCapacity", {
 				sTargetPath: sTargetPath
 			});
@@ -1291,7 +1297,7 @@ sap.ui.define([
 				oResData.forEach(function (oResItem) {
 					if (oItem.NodeId === oResItem.ParentNodeId) {
 						//add assignments as children in tree for expanding
-						/*if (oResItem.AssignmentSet && oResItem.AssignmentSet.results.length > 0) {
+						if (oResItem.AssignmentSet && oResItem.AssignmentSet.results.length > 0) {
 							oResItem.children = oResItem.AssignmentSet.results;
 							oResItem.children.forEach(function (oAssignItem, idx) {
 								oResItem.AssignmentSet.results[idx].NodeType = "ASSIGNMENT";
@@ -1301,7 +1307,7 @@ sap.ui.define([
 									results: [clonedObj]
 								};
 							});
-						}*/
+						}
 						oItem.children.push(oResItem);
 					}
 				});
@@ -1596,13 +1602,32 @@ sap.ui.define([
 					oShapeContext);
 			}
 		},
+        
 		/**
 		 * handle Mouse hover event to show Assignments popup 
 		 * since 2205
 		 */
 		onShapeMouseLeave: function (oEvent) {
 			this.getOwnerComponent().GanttAssignmentPopOver.onCloseAssigmentsPopover();
-		}
+		},
+        
+        /**
+		 * on press link of assignment in resource tree row
+		 * get parent row path and bind this path to the dialog or showing assignment information
+		 * @param oEvent
+		 * @since 2205
+		 */
+		onPressAssignmentLink: function (oEvent) {
+			var oSource = oEvent.getSource();
+			this.assignmentRowContext = oSource.getParent().getBindingContext("ganttModel");
+			if (this.assignmentRowContext) {
+				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().Guid + "')";
+				this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext);
+			} else {
+				var msg = this.getResourceBundle().getText("notFoundContext");
+				this.showMessageToast(msg);
+			}
+		},
 
 	});
 

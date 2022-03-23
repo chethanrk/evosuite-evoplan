@@ -945,6 +945,20 @@ sap.ui.define([
 				return false;
 			}
 			return true;
+		},
+		
+		/**
+		 * Displaying Assignment Description in Resource Tree Title for Child Nodes
+		 * @since 2205
+		 * @param sNodeType
+		 * @returns sDescription
+		 * @returns sDemandDesc
+		 */
+		formatGanttResourceTitle: function (sNodeType, sDescription, sDemandDesc) {
+			if (sNodeType === "ASSIGNMENT") {
+				return sDemandDesc;
+			}
+			return sDescription;
 		}
 	};
 });
