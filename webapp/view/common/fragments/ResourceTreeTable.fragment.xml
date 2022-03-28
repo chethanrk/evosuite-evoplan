@@ -84,6 +84,18 @@
 						<Text text="{AssignmentCount}" visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }" wrapping="false"/>
 					</table:template>
 				</table:Column>
+				
+				<!-- TODO: use the toggle button in the same column, as checkbox? -->
+				<!-- TODO: change label, name -->
+				<table:Column label="ROUTE" name="ROUTE" width="2.5rem" class="sapUiNoContentPadding">
+					<table:template>
+						<!-- TODO: define rule for thte ToggleButton visibility -->
+						<ToggleButton press="onShowRoutePress">
+						</ToggleButton>
+					</table:template>
+				</table:Column>
+				
+				
 				<table:Column label="{i18n>xtit.tableCheckbox}" name="{i18n>xtit.tableCheckbox}" width="2.5rem" class="sapUiNoContentPadding">
 					<table:customData>
 						<core:CustomData key="p13nData" value='\{"columnKey": "NodeType", "leadingProperty": "NodeType"}'/>
