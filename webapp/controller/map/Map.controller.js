@@ -1,3 +1,4 @@
+/* globals axios */
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/NavigationActionSheet",
 	"sap/ui/model/json/JSONModel",
@@ -11,17 +12,18 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/core/Popup",
 	"sap/m/GroupHeaderListItem"
-], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, Fragment, Dialog, Button, MessageToast,
-
-	Popup, GroupHeaderListItem) {
+], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, 
+	Fragment, Dialog, Button, MessageToast, Popup, GroupHeaderListItem, GeoJsonLayer) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
 		selectedDemands: [],
 		_isDemandDraggable: false,
+		_oGeoMap: null,
 		onInit: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oMapModel = this.getModel("mapConfig");
+			this._oGeoMap = oGeoMap;
 			oGeoMap.setMapConfiguration(MapConfig.getMapConfiguration(oMapModel));
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			this._oEventBus.subscribe("BaseController", "refreshMapView", this._refreshMapView, this);
@@ -40,6 +42,8 @@ sap.ui.define([
 			};
 			this.oVBI = this.getView().byId("idGeoMap");
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
+			
+			this.getModel("viewModel").setProperty("/mapSettings/GeoJsonLayersData", {});
 		},
 
 		//TODO comment
@@ -884,7 +888,7 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
-		},
+		}
 	});
 
 });
