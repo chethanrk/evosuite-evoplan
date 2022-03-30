@@ -1,0 +1,31 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:unified="sap.ui.unified">
+	<Dialog id="idMapSingleDayPlanner" class="sapUiTinyMargin" stretch="true" draggable="false" resizable="true">
+		<customHeader>
+			<Bar>
+				<contentLeft></contentLeft>
+				<contentMiddle>
+					<Title text="Single Day Planning"/>
+				</contentMiddle>
+				<contentRight>
+					<Button icon="sap-icon://decline" press="onPressClose"/>
+				</contentRight>
+			</Bar>
+		</customHeader>
+		<content>
+			<SinglePlanningCalendar id="idSinglePlanningCalendar" title="Planning for {mapSinglePlanning>/parentData/Description}"
+				startDate="{path: 'mapSinglePlanning>/startDate'}" appointments="{path: 'mapSinglePlanning>/appointments'}" enableAppointmentsCreate="false"
+				enableAppointmentsDragAndDrop="true" enableAppointmentsResize="false" stickyMode="All">
+				<actions>
+					<Button type="Emphasized" text="Save" icon="sap-icon://save" press="onPressSaveAppointments" tooltip="Save changes"/>
+					<Button text="Reset" icon="sap-icon://cancel" press="onPressCancelAppointments" tooltip="Reset changes"/>
+				</actions>
+				<appointments>
+					<unified:CalendarAppointment key="{mapSinglePlanning>Guid}" title="{mapSinglePlanning>DemandDesc}"
+						text="Effort: {mapSinglePlanning>Effort} {mapSinglePlanning>EffortUnit}" type="None" color="{mapSinglePlanning>DEMAND_STATUS_COLOR}"
+						icon="{mapSinglePlanning>DEMAND_STATUS_ICON}" startDate="{mapSinglePlanning>DateFrom}" endDate="{mapSinglePlanning>DateTo}"></unified:CalendarAppointment>
+				</appointments>
+			</SinglePlanningCalendar>
+		</content>
+		<buttons></buttons>
+	</Dialog>
+</core:FragmentDefinition>

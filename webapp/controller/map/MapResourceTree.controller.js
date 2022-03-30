@@ -12,10 +12,11 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/ui/core/Fragment",
-	"sap/base/Log"
+	"sap/base/Log",
+	"com/evorait/evoplan/controller/map/SingleDayPlanner"
 ], function (Device, JSONModel, Filter, FilterOperator,
 	FilterType, formatter, BaseController, ResourceTreeFilterBar,
-	MessageToast, MessageBox, Fragment, Log) {
+	MessageToast, MessageBox, Fragment, Log, SingleDayPlanner) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.map.MapResourceTree", {
@@ -35,9 +36,9 @@ sap.ui.define([
 		_bFirsrTime: true,
 
 		aMapDemandGuid: [],
-		
+
 		_oMapProvider: null,
-		
+
 		_pMapProviderLoaded: null,
 
 		/**
@@ -47,6 +48,8 @@ sap.ui.define([
 		onInit: function () {
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
 			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
+
+			this.oSingleDayPlanner = new SingleDayPlanner(this);
 
 			Fragment.load({
 				name: "com.evorait.evoplan.view.common.fragments.ResourceTreeTable",
@@ -67,11 +70,11 @@ sap.ui.define([
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.attachRouteMatched(this._routeMatched, this);
-			
+
 			// dependency injection for MapProvider
 			var sProviderModuleName = "com/evorait/evoplan/controller/map/PTVProvider"; // TODO: get the provider module name from backend customizing
-			this._pMapProviderLoaded = new Promise(function(resolve, reject) {
-				sap.ui.require([sProviderModuleName], function(cMapProvider) {
+			this._pMapProviderLoaded = new Promise(function (resolve, reject) {
+				sap.ui.require([sProviderModuleName], function (cMapProvider) {
 					this._oMapProvider = new cMapProvider();
 					resolve();
 				}.bind(this));
@@ -673,14 +676,22 @@ sap.ui.define([
 		onResourceIconPress: function (oEvent) {
 			var oRow = oEvent.getSource().getParent(),
 				oContext = oRow.getBindingContext(),
-				sPath = oContext.getPath(),
-				oModel = oContext.getModel(),
-				oResourceNode = oModel.getProperty(sPath);
+				sPath = oContext.getPath();
 
-			var sObjectId = oResourceNode.NodeId;
-			if (oResourceNode.NodeType !== "ASSIGNMENT") {
-				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
+			if (oContext) {
+				var oNodeData = oContext.getObject();
+				if (oNodeData.NodeType === "RESOURCE" || oNodeData.NodeType === "RES_GROUP") {
+					this.getOwnerComponent().ResourceQualifications.open(this.getView(), oNodeData.NodeId);
+
+				} else if (oNodeData.NodeType === "TIMEDAY") {
+					//get resource details
+					var sParentPath = this.getModel("viewModel").getProperty("/treeSet") + "('" + oNodeData.ParentNodeId + "')";
+					var oParentData = this.getModel().getProperty("/" + encodeURIComponent(sParentPath));
+					//open Day single planning calendar
+					this.oSingleDayPlanner.open(sPath, oNodeData, oNodeData.NodeType, oParentData);
+				}
 			}
+
 		},
 		/**
 		 * Method for show assigned demands in Map for selected Date in Resorce Tree Filter Bar
@@ -691,7 +702,6 @@ sap.ui.define([
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
 				aAssignedDemands = oViewModel.getProperty("/mapSettings/assignedDemands"),
 				oFilter,
-				oSelectedDate,
 				eventBus = this._eventBus;
 			if (aSelectedDemands.length > 0 || aAssignedDemands.length > 0) {
 				this._eventBus.publish("BaseController", "refreshMapView", {});
@@ -716,52 +726,52 @@ sap.ui.define([
 
 			}.bind(this));
 		},
-		
+
 		/**
 		 * Handle `press` event on 'Show Route' button
 		 * 
 		 */
-		onShowRoutePress: function(oEvent) {	
-			
+		onShowRoutePress: function (oEvent) {
+
 			var oViewModel = this.getModel("viewModel");
 			var sResourcePath = oEvent.getSource().getBindingContext().getPath();
 			var aGeoJsonLayersData = [];
-			
+
 			// dummy resource object
 			var oResource = {
 				LATITUDE: "50.12238710985573",
 				LONGITUDE: "8.645741372495838"
-				
+
 			}; // TODO: use the current Resource object instead of the dummy one
-			
+
 			// dummy date frame object
 			var oDateFrame = {
 				startDate: new Date("2022-03-24"),
 				endDate: new Date("2022-03-24")
 			};
-			
+
 			var aFilters = this._getResourceFilters([sResourcePath], null, oDateFrame); // TODO: set the date frame based on current view (daily, weekly, etc)
-			
+
 			oViewModel.setProperty("/mapSettings/busy", true);
-			
+
 			var pDataLoaded = this.getOwnerComponent().readData("/AssignmentSet", [aFilters]);
 			var pMapProviderAndDataLoaded = Promise.all([this._pMapProviderLoaded, pDataLoaded]);
-			
+
 			pMapProviderAndDataLoaded.then(function (aPromiseAllResults) {
-				var aAssignments = aPromiseAllResults[1].results;
-				
-				return this._oMapProvider.calculateRoute(oResource, aAssignments);
-			}.bind(this)).then(function(oResponse) {
-				oViewModel.setProperty("/mapSettings/busy", false);
-				var oData = JSON.parse(oResponse.data.polyline.geoJSON);
-				aGeoJsonLayersData.push(oData);
-				oViewModel.setProperty("/mapSettings/GeoJsonLayersData", aGeoJsonLayersData);
-				this._eventBus.publish("MapController", "displayRoute", {});
-			}.bind(this))
-			.catch(function(oError) {
-				oViewModel.setProperty("/mapSettings/busy", false);
-				Log.error(oError);
-			}.bind(this));
+					var aAssignments = aPromiseAllResults[1].results;
+
+					return this._oMapProvider.calculateRoute(oResource, aAssignments);
+				}.bind(this)).then(function (oResponse) {
+					oViewModel.setProperty("/mapSettings/busy", false);
+					var oData = JSON.parse(oResponse.data.polyline.geoJSON);
+					aGeoJsonLayersData.push(oData);
+					oViewModel.setProperty("/mapSettings/GeoJsonLayersData", aGeoJsonLayersData);
+					this._eventBus.publish("MapController", "displayRoute", {});
+				}.bind(this))
+				.catch(function (oError) {
+					oViewModel.setProperty("/mapSettings/busy", false);
+					Log.error(oError);
+				}.bind(this));
 		}
 	});
 });
