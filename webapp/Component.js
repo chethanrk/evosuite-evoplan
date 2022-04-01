@@ -121,9 +121,9 @@ sap.ui.define([
 				gantDragSession: null, // Drag session from Gantt View added as we are keeping dragged data in the model.
 				detailPageBreadCrum: "",
 				capacityPlanning: false,
-				remainingWork:false,
-				dragDropSetting:{
-					isReassign:false
+				remainingWork: false,
+				dragDropSetting: {
+					isReassign: false
 				},
 				splitterDivider: "30%",
 				ganttSelectionPane: "28%",
@@ -140,7 +140,7 @@ sap.ui.define([
 						change: false
 					},
 					aGanttSplitDemandData: false,
-					GanttPopOverData:{}
+					GanttPopOverData: {}
 				},
 				showDemands: true,
 				mapSettings: {
@@ -474,10 +474,10 @@ sap.ui.define([
 
 			this.NetworkAssignment = new NetworkAssignment();
 			this.NetworkAssignment.init();
-			
+
 			this.AssignmentStatus = new AssignmentStatus();
 			this.AssignmentStatus.init();
-			
+
 			this.GanttAssignmentPopOver = new GanttAssignmentPopOver();
 			this.GanttAssignmentPopOver.init();
 
