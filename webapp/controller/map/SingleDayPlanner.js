@@ -65,6 +65,7 @@ sap.ui.define([
 			this._setCalenderViews(sNodeType);
 			this.oSinglePlanningModel.setProperty("/startDate", oTreeData.StartDate);
 			this.oSinglePlanningModel.setProperty("/parentData", oParentData);
+			this.oPlanningDate = oTreeData.StartDate;
 
 			if (oTreeData.ChildCount > 0) {
 				//load assignments for this day, resource and resource group
@@ -88,8 +89,8 @@ sap.ui.define([
 		 * @param {object} oEvent - startDate is changed while navigating in the SinglePlanningCalendar
 		 */
 		onChangeStartDate: function (oEvent) {
-			var sNewStartDate = oEvent.getParameter("date");
-			this._loadAssignmentsForDay(sNewStartDate);
+			this.oPlanningDate = oEvent.getParameter("date");
+			this._loadAssignmentsForDay(this.oPlanningDate);
 		},
 
 		/**
@@ -106,29 +107,41 @@ sap.ui.define([
 			if (oContext) {
 				var oData = oContext.getObject();
 				if (oData.type === "APPOINTMENT") {
-					oAppointment.setStartDate(oEvent.getParameter("startDate"));
-					oAppointment.setEndDate(oEvent.getParameter("endDate"));
-					this._setNewTravelTimes(oContext.getPath());
-					this.oSinglePlanningModel.setProperty("/hasChanges", true);
+					if (!oData.Demand.ASGNMNT_CHANGE_ALLOWED) {
+						this.oParentController.showMessageToast(this.oResourceBundle.getText("ymsg.notAllowedChangeAssign"));
+					} else {
+						oAppointment.setStartDate(oEvent.getParameter("startDate"));
+						oAppointment.setEndDate(oEvent.getParameter("endDate"));
+						this._setNewTravelTimes(oContext.getPath());
+						this.oSinglePlanningModel.setProperty("/hasChanges", true);
+					}
 				}
 			}
 		},
 
 		/**
-		 * Todo save new start,end dates for assignments
-		 * save travel times
+		 * Save new start,end dates for assignments
+		 * Todo save travel times
 		 * @param {object} oEvent
 		 */
 		onPressSaveAppointments: function (oEvent) {
-			var aAppointments = this.oSinglePlanningModel.getProperty("/appointments");
+			var aAppointments = this.oSinglePlanningModel.getProperty("/appointments"),
+				oModel = this.oParentController.getModel();
 
 			if (this.oSinglePlanningModel.getProperty("/hasChanges")) {
 				//check all changes for appointments
 				aAppointments.forEach(function (oItem, idx) {
 					if (oItem.type === "APPOINTMENT") {
 						var originData = this.oOriginalData[idx];
-						if (originData.Guid === oItem.Guid && originData.DateFrom.getTime() !== oItem.DateFrom.getTime()) {
-							//todo save new start and end date
+						if (originData.Guid === oItem.Guid && originData.DateTo.getTime() !== oItem.DateTo.getTime()) {
+							oModel.setProperty(oItem.sModelPath + "/DateTo", oItem.DateTo);
+							oModel.setProperty(oItem.sModelPath + "/DateFrom", oItem.DateFrom);
+							//save changed assignment
+							this.oSinglePlanner.setBusy(true);
+							this._updateAssignment(oModel, oItem.sModelPath).then(function (oResData) {
+								this.oSinglePlanner.setBusy(false);
+								this._loadAssignmentsForDay(this.oPlanningDate);
+							}.bind(this));
 						}
 					}
 				}.bind(this));
@@ -188,6 +201,33 @@ sap.ui.define([
 		},
 
 		/**
+		 * Update changed data from assignment
+		 * @param {object} oModel - oData Model
+		 * @param {string} sPath - path of assignment
+		 */
+		_updateAssignment: function (oModel, sPath) {
+			var oData = oModel.getProperty(sPath),
+				oParams = {
+					DateFrom: oData.DateFrom || 0,
+					TimeFrom: {
+						__edmtype: "Edm.Time",
+						ms: oData.DateFrom.getTime()
+					},
+					DateTo: oData.DateTo || 0,
+					TimeTo: {
+						__edmtype: "Edm.Time",
+						ms: oData.DateTo.getTime()
+					},
+					AssignmentGUID: oData.Guid,
+					EffortUnit: oData.EffortUnit,
+					Effort: oData.Effort,
+					ResourceGroupGuid: oData.ResourceGroupGuid,
+					ResourceGuid: oData.ResourceGuid
+				};
+			return this.oParentController.executeFunctionImport(oModel, oParams, "UpdateAssignment", "POST", null, true);
+		},
+
+		/**
 		 * Load assignments of a special resource and resource group for a special date
 		 * @param {obejct} oDate - date for what day assignments should be loaded
 		 */
@@ -200,8 +240,12 @@ sap.ui.define([
 				this.oSinglePlanningModel.setProperty("/hasChanges", false);
 				this.oSinglePlanner.setBusy(true);
 
+				var mParams = {
+					"$expand": "Demand"
+				};
+
 				var oFilter = new Filter(this.oParentController._getResourceFilters([this.sSelectedPath], oDate), true);
-				this.oParentController.getOwnerComponent()._getData(sEntitySetPath, [oFilter]).then(function (oResults) {
+				this.oParentController.getOwnerComponent()._getData(sEntitySetPath, [oFilter], mParams).then(function (oResults) {
 					if (oResults.results.length > 0) {
 						oResults.results.forEach(function (oItem) {
 							oItem.sModelPath = sEntitySetPath + "('" + oItem.Guid + "')";
