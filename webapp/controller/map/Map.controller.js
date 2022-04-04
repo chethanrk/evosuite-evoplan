@@ -15,7 +15,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/TemplateRenderController"
 ], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, Fragment, Dialog, Button, MessageToast,
 
-	Popup, GroupHeaderListItem, TemplateRenderController) {
+	Popup, GroupHeaderListItem, TemplateRenderController, GeoJsonLayer) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
