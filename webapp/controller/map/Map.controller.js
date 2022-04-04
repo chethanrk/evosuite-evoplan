@@ -6,16 +6,16 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"com/evorait/evoplan/controller/map/MapConfig",
+	"com/evorait/evoplan/controller/map/PinPopover",
 	"sap/ui/core/Fragment",
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/MessageToast",
-	"sap/ui/core/Popup",
 	"sap/m/GroupHeaderListItem",
 	"com/evorait/evoplan/controller/TemplateRenderController"
-], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, Fragment, Dialog, Button, MessageToast,
-
-	Popup, GroupHeaderListItem, TemplateRenderController, GeoJsonLayer) {
+], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover, Fragment, Dialog, Button,
+	MessageToast,
+	GroupHeaderListItem, TemplateRenderController) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
@@ -44,8 +44,9 @@ sap.ui.define([
 			};
 			this.oVBI = this.getView().byId("idGeoMap");
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
-			
+
 			this.getModel("viewModel").setProperty("/mapSettings/GeoJsonLayersData", {});
+			this.oPinPopover = new PinPopover(this);
 		},
 
 		//TODO comment
@@ -768,7 +769,10 @@ sap.ui.define([
 		 * To Handle Right click on Map Spots.
 		 * @param {object} oEvent - Right click event on Spot 
 		 */
-		 onContextMenu: function (oEvent) {
+		onContextMenu: function (oEvent) {
+			var oSpot = oEvent.getSource();
+			//this.oPinPopover.open(oSpot);
+
 			var oSpot = oEvent.getSource(),
 				oView = this.getView(),
 				oSpotPosition = oSpot.mClickPos,
@@ -959,7 +963,7 @@ sap.ui.define([
 		 * demand pin popover - plan button click event
 		 * @param {object} oEvent - Plan button click event
 		 **/
-		 onPlanContextMenu: function (oEvent) {
+		onPlanContextMenu: function (oEvent) {
 			var oModel = this.getModel(),
 				sPath = this.selectedDemandPath,
 				oData = oModel.getProperty(sPath),
@@ -1036,13 +1040,13 @@ sap.ui.define([
 
 			this._oContextMenuPopover.setBusy(false);
 		},
-		
+
 		/**
 		 * event from the context menu popover button click
 		 * @param {object} oEvent - show route button click event
-		**/
-		onShowRoute: function(oEvent) {
-			
+		 **/
+		onShowRoute: function (oEvent) {
+
 		}
 	});
 
