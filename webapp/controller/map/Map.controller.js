@@ -949,6 +949,96 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
 		},
+
+		/**
+		 * demand pin popover - plan button click event
+		 * @param {object} oEvent - Plan button click event
+		 **/
+		 onPlanContextMenu: function (oEvent) {
+			var oModel = this.getModel(),
+				sPath = this.selectedDemandPath,
+				oData = oModel.getProperty(sPath),
+				// check if assigned
+				bAlreadyAssigned = oData.NUMBER_OF_ASSIGNMENTS > 0,
+				sStatus = oData.Status;
+			if (bAlreadyAssigned && sStatus !== "CLSD") {
+				this.planForAssignedDemands(oModel, sPath);
+			} else {
+				this.planForUnAssignedDemands();
+			}
+		},
+
+		/**
+		 * plan for already assigned demands
+		 * @param
+		 * @param
+		 * @param
+		 **/
+		planForAssignedDemands: function (oModel, sPath) {
+			var oData = oModel.getProperty(sPath);
+			if (oData.ALLOW_ASSIGN) {
+				this._oContextMenuPopover.setBusy(true);
+				// when already assigned to resources, open "Assign New" dialog
+				// first fetch the assignment information of the Demand
+				oModel.read(sPath, {
+					urlParameters: {
+						$expand: "DemandToAssignment"
+					},
+					success: this.onDemandToAssignmentFetchSuccess.bind(this) // open the assign new dialog after resource data fetch
+				});
+			} else {
+				this._showAssignErrorDialog([oData.DemandDesc]);
+			}
+		},
+
+		/**
+		 * plan for un-assigned demands
+		 * @param
+		 **/
+		planForUnAssignedDemands: function () {
+			// when not assigned to any resource filter the demand in Demand view
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
+			var aSelected = [this._selectedDemands],
+				oViewModel = this.getModel("viewModel"),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
+				oContext;
+			for (var i in aSelected) {
+				oContext = aSelected[i].getBindingContext();
+				aSelectedDemands.push(oContext.getPath());
+			}
+			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
+			oViewModel.setProperty("/mapSettings/routeData", []);
+			oViewModel.setProperty("/mapSettings/bRouteDateSelected", false);
+			this._oDraggableTable.rebindTable();
+		},
+
+		/**
+		 * opens the assign new dialog, before opening creates the context
+		 * @param {object} oData - assignment data of the selected Demand pin
+		 * 
+		 **/
+		onDemandToAssignmentFetchSuccess: function (oData) {
+			var oModel = this.getModel(),
+				sDemandGuid = oData.Guid;
+
+			this.selectedPinsAssignment = "/DemandSet('" + sDemandGuid + "')/DemandToAssignment";
+			var sAssignmentPath = "/" + oModel.getProperty(this.selectedPinsAssignment);
+
+			this.getOwnerComponent().assignActionsDialog.open(this.getView(), [sAssignmentPath], false, {
+				bFromHome: false,
+				bFromSpotContextMenu: true
+			});
+
+			this._oContextMenuPopover.setBusy(false);
+		},
+		
+		/**
+		 * event from the context menu popover button click
+		 * @param {object} oEvent - show route button click event
+		**/
+		onShowRoute: function(oEvent) {
+			
+		}
 	});
 
 });
