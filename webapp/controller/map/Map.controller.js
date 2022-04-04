@@ -10,10 +10,11 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/MessageToast",
 	"sap/ui/core/Popup",
-	"sap/m/GroupHeaderListItem"
+	"sap/m/GroupHeaderListItem",
+	"com/evorait/evoplan/controller/TemplateRenderController"
 ], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, Fragment, Dialog, Button, MessageToast,
 
-	Popup, GroupHeaderListItem) {
+	Popup, GroupHeaderListItem, TemplateRenderController) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
@@ -757,33 +758,96 @@ sap.ui.define([
 			this.byId("draggableList").rebindTable();
 			this.getModel("viewModel").setProperty("/mapSettings/routeData", []);
 		},
+
 		/**
 		 * To Handle Right click on Map Spots.
-		 * @author Rakesh
+		 * @param {object} oEvent - Right click event on Spot 
 		 */
-		onContextMenu: function (oEvent) {
+		 onContextMenu: function (oEvent) {
 			var oSpot = oEvent.getSource(),
-				oMenu = oEvent.mParameters.menu;
+				oView = this.getView(),
+				oSpotPosition = oSpot.mClickPos,
+				oHiddenDiv = this.hiddenDivPoistion(oSpotPosition);
 
 			this.selectedDemandPath = oSpot.getBindingContext().getPath();
-			oMenu = this.addSpotContextMenuItems(oMenu);
-			oSpot.openContextMenu(oMenu);
+			this._selectedDemands = oEvent.getSource();
+
+			//var sQualifier = "MapDemandPin"; // fetch from CONSTANT.js
+			var sQualifier = "MapDemandPin";
+			var mParams = {
+				viewName: "com.evorait.evoplan.view.templates.SpotContextMenu#" + sQualifier,
+				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
+				entitySet: "DemandSet",
+				controllerName: "SpotContextMenu",
+				smartTable: null,
+				sPath: this.selectedDemandPath,
+				hiddenDiv: oHiddenDiv,
+				oView: oView
+			};
+
+			if (!this._oContextMenuPopover) {
+				Fragment.load({
+					name: "com.evorait.evoplan.view.common.fragments.SpotContextMenu",
+					controller: this
+				}).then(function (oMenu) {
+					this._oContextMenuPopover = oMenu;
+					oView.addDependent(this._oContextMenuPopover);
+					this._setFragmentViewBinding(mParams);
+				}.bind(this));
+			} else {
+				this._setFragmentViewBinding(mParams);
+			}
+
 		},
+
 		/**
-		 * To add Menu Items in Context Menu of seleceted Spot.
+		 * creates the smartForm from template and 
+		 * inserts in the popover container
+		 * @param {object} mParams - required properties for template rendering
+		 **/
+		_setFragmentViewBinding: function (mParams) {
+			var oModel = this.getModel();
+			var oTemplateRenderController = new TemplateRenderController();
+
+			oTemplateRenderController.setOwnerComponent(this.getOwnerComponent());
+			oTemplateRenderController.setTemplateProperties(mParams);
+
+			oModel.getMetaModel().loaded().then(function () {
+				oTemplateRenderController.insertTemplateFragment(mParams.sPath, mParams.viewName, "spotContainer", this._afterBindSuccess.bind(
+					this, mParams.hiddenDiv), mParams);
+			}.bind(this));
+		},
+
+		/**
+		 * after the template rendering is successful 
+		 * open the popover by the Spot/Hidden div
+		 * @param {object} - oHiddenDiv - hidden div object 
+		 **/
+		_afterBindSuccess: function (oHiddenDiv) {
+			this._oContextMenuPopover.openBy(oHiddenDiv);
+		},
+
+		/**
+		 * creates and returns a hidden div at the same position 
+		 * as the Spot on the Canvas rightclicked by user
+		 * the div is added as a child to the GeoMapContainer with absolute positioning,
+		 * then style top and left values are provided 
+		 * from the click position returned by the spot contextmenu event
+		 * @param {object} oSpotPosition - x and y values of clicked position on the geo map
+		 * @ returns the div element
 		 */
-		addSpotContextMenuItems: function (oMenu) {
-			oMenu.addItem(new sap.ui.unified.MenuItem({
-				text: this.getResourceBundle().getText("xbut.changeStatus"),
-				icon: "sap-icon://flag",
-				select: this.onChangeStatusButtonPress.bind(this)
-			}));
-			oMenu.addItem(new sap.ui.unified.MenuItem({
-				text: this.getResourceBundle().getText("xbut.assign"),
-				icon: "sap-icon://activity-individual",
-				select: this.onAssignButtonPress.bind(this)
-			}));
-			return oMenu;
+		hiddenDivPoistion: function (oSpotPosition) {
+			var div = document.createElement("div");
+			div.style.position = "absolute";
+			div.style.top = oSpotPosition[1] + "px";
+			div.style.left = (parseInt(oSpotPosition[0]) + 10) + "px";
+			// add as a child to the GeoMap 
+			// this get by id
+			var oGeoMapContainer = this.getView().byId("idMapContainer");
+			var oGeoMapContainerDOM = oGeoMapContainer.getDomRef();
+			//var oGeoMapContainer = document.getElementsByClassName("sapUiVkContainerBase sapUiVkMapContainer")[0];
+			oGeoMapContainerDOM.appendChild(div);
+			return div;
 		},
 
 		/**
