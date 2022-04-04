@@ -1,3 +1,5 @@
+/* globals axios */
+/* globals _ */
 sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
@@ -9,10 +11,11 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/ResourceTreeFilterBar",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"sap/base/Log"
 ], function (Device, JSONModel, Filter, FilterOperator,
 	FilterType, formatter, BaseController, ResourceTreeFilterBar,
-	MessageToast, MessageBox, Fragment) {
+	MessageToast, MessageBox, Fragment, Log) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.map.MapResourceTree", {
@@ -32,6 +35,10 @@ sap.ui.define([
 		_bFirsrTime: true,
 
 		aMapDemandGuid: [],
+		
+		_oMapProvider: null,
+		
+		_pMapProviderLoaded: null,
 
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
@@ -60,6 +67,15 @@ sap.ui.define([
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.attachRouteMatched(this._routeMatched, this);
+			
+			// dependency injection for MapProvider
+			var sProviderModuleName = "com/evorait/evoplan/controller/map/PTVProvider"; // TODO: get the provider module name from backend customizing
+			this._pMapProviderLoaded = new Promise(function(resolve, reject) {
+				sap.ui.require([sProviderModuleName], function(cMapProvider) {
+					this._oMapProvider = new cMapProvider();
+					resolve();
+				}.bind(this));
+			}.bind(this));
 
 		},
 
@@ -579,7 +595,7 @@ sap.ui.define([
 		 * @return aResourceFilters Filters
 		 * @Author: Pranav
 		 */
-		_getResourceFilters: function (aSelectedResources, oSelectedDate) {
+		_getResourceFilters: function (aSelectedResources, oSelectedDate, oDateFrame) {
 			var aResources = [],
 				oModel = this.getView().getModel();
 			var aFilters = [];
@@ -594,6 +610,8 @@ sap.ui.define([
 					}
 				} else if (obj.NodeType === "RES_GROUP") {
 					aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
+				} else if (obj.NodeType === "TIMEDAY") { // TODO: add proper data (particular day for daily view, week for weekly, etc)
+					aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
 				}
 			}
 
@@ -605,6 +623,9 @@ sap.ui.define([
 				if (oSelectedDate) {
 					aFilters.push(new Filter("DateTo", FilterOperator.GE, oSelectedDate));
 					aFilters.push(new Filter("DateFrom", FilterOperator.LE, oSelectedDate.setHours(23, 59, 59, 999)));
+				} else if (oDateFrame) {
+					aFilters.push(new Filter("DateTo", FilterOperator.GE, oDateFrame.startDate));
+					aFilters.push(new Filter("DateFrom", FilterOperator.LE, oDateFrame.endDate.setHours(23, 59, 59, 999)));
 				} else {
 					aFilters.push(new Filter("DateTo", FilterOperator.GE, this.byId("resourceTreeFilterBar").getControlByKey("StartDate").getDateValue()));
 					aFilters.push(new Filter("DateFrom", FilterOperator.LE, this.byId("resourceTreeFilterBar").getControlByKey("EndDate").getDateValue()));
@@ -693,6 +714,53 @@ sap.ui.define([
 				oViewModel.setProperty("/mapSettings/assignedDemands", aAssignedDemands);
 				eventBus.publish("MapController", "showAssignedDemands", {});
 
+			}.bind(this));
+		},
+		
+		/**
+		 * Handle `press` event on 'Show Route' button
+		 * 
+		 */
+		onShowRoutePress: function(oEvent) {	
+			
+			var oViewModel = this.getModel("viewModel");
+			var sResourcePath = oEvent.getSource().getBindingContext().getPath();
+			var aGeoJsonLayersData = [];
+			
+			// dummy resource object
+			var oResource = {
+				LATITUDE: "50.12238710985573",
+				LONGITUDE: "8.645741372495838"
+				
+			}; // TODO: use the current Resource object instead of the dummy one
+			
+			// dummy date frame object
+			var oDateFrame = {
+				startDate: new Date("2022-03-24"),
+				endDate: new Date("2022-03-24")
+			};
+			
+			var aFilters = this._getResourceFilters([sResourcePath], null, oDateFrame); // TODO: set the date frame based on current view (daily, weekly, etc)
+			
+			oViewModel.setProperty("/mapSettings/busy", true);
+			
+			var pDataLoaded = this.getOwnerComponent().readData("/AssignmentSet", [aFilters]);
+			var pMapProviderAndDataLoaded = Promise.all([this._pMapProviderLoaded, pDataLoaded]);
+			
+			pMapProviderAndDataLoaded.then(function (aPromiseAllResults) {
+				var aAssignments = aPromiseAllResults[1].results;
+				
+				return this._oMapProvider.calculateRoute(oResource, aAssignments);
+			}.bind(this)).then(function(oResponse) {
+				oViewModel.setProperty("/mapSettings/busy", false);
+				var oData = JSON.parse(oResponse.data.polyline.geoJSON);
+				aGeoJsonLayersData.push(oData);
+				oViewModel.setProperty("/mapSettings/GeoJsonLayersData", aGeoJsonLayersData);
+				this._eventBus.publish("MapController", "displayRoute", {});
+			}.bind(this))
+			.catch(function(oError) {
+				oViewModel.setProperty("/mapSettings/busy", false);
+				Log.error(oError);
 			}.bind(this));
 		}
 	});

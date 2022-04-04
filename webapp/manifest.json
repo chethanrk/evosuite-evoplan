@@ -159,6 +159,9 @@
 				},
 				{
 					"uri": "assets/js/lodash.js"
+				},
+				{
+					"uri": "assets/js/axios.min.js"
 				}
 			]
 		},

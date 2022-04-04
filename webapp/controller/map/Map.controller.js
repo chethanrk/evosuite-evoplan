@@ -1,3 +1,4 @@
+/* globals axios */
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/NavigationActionSheet",
 	"sap/ui/model/json/JSONModel",
@@ -20,9 +21,11 @@ sap.ui.define([
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
 		selectedDemands: [],
 		_isDemandDraggable: false,
+		_oGeoMap: null,
 		onInit: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oMapModel = this.getModel("mapConfig");
+			this._oGeoMap = oGeoMap;
 			oGeoMap.setMapConfiguration(MapConfig.getMapConfiguration(oMapModel));
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			this._oEventBus.subscribe("BaseController", "refreshMapView", this._refreshMapView, this);
@@ -41,6 +44,8 @@ sap.ui.define([
 			};
 			this.oVBI = this.getView().byId("idGeoMap");
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
+			
+			this.getModel("viewModel").setProperty("/mapSettings/GeoJsonLayersData", {});
 		},
 
 		//TODO comment
