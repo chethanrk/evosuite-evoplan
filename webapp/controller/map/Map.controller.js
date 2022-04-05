@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"com/evorait/evoplan/controller/TemplateRenderController"
 ], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover, Fragment, Dialog, Button,
-	MessageToast,
-	GroupHeaderListItem, TemplateRenderController) {
+	MessageToast, GroupHeaderListItem, TemplateRenderController) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
@@ -46,6 +45,8 @@ sap.ui.define([
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 
 			this.getModel("viewModel").setProperty("/mapSettings/GeoJsonLayersData", {});
+
+			//initialize PinPopover controller
 			this.oPinPopover = new PinPopover(this);
 		},
 
