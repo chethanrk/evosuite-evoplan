@@ -10,10 +10,9 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/MessageToast",
-	"sap/ui/core/Popup",
 	"sap/m/GroupHeaderListItem"
-], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, 
-	Fragment, Dialog, Button, MessageToast, Popup, GroupHeaderListItem, GeoJsonLayer) {
+], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig,
+	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
@@ -42,7 +41,7 @@ sap.ui.define([
 			};
 			this.oVBI = this.getView().byId("idGeoMap");
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
-			
+
 			this.getModel("viewModel").setProperty("/mapSettings/GeoJsonLayersData", {});
 		},
 

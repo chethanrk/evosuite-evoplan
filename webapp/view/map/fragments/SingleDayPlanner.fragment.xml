@@ -13,7 +13,7 @@
 		</customHeader>
 		<content>
 			<SinglePlanningCalendar id="idSinglePlanningCalendar" title="{i18n>xtit.planningFor} {mapSinglePlanning>/parentData/Description}"
-				startDate="{path: 'mapSinglePlanning>/startDate'}" fullDay="false" startHour="8" endHour="20"
+				startDate="{path: 'mapSinglePlanning>/startDate'}" fullDay="true" startHour="8" endHour="20"
 				appointments="{path: 'mapSinglePlanning>/appointments'}" enableAppointmentsCreate="false" enableAppointmentsDragAndDrop="true"
 				enableAppointmentsResize="false" startDateChange="onChangeStartDate" headerDateSelect="onChangeStartDate"
 				appointmentDrop="onDropAppointment" stickyMode="All">

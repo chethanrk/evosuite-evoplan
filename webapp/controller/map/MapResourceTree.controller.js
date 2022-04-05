@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/base/Log",
 	"com/evorait/evoplan/controller/map/SingleDayPlanner"
-], function (Device, JSONModel, Filter, FilterOperator,
-	FilterType, formatter, BaseController, ResourceTreeFilterBar,
+], function (Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController, ResourceTreeFilterBar,
 	MessageToast, MessageBox, Fragment, Log, SingleDayPlanner) {
 	"use strict";
 
