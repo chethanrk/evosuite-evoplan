@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/OverrideExecution",
 	"sap/base/Log",
 	"sap/ui/core/Fragment",
+	"com/evorait/evoplan/model/Constants",
 	"com/evorait/evoplan/controller/TemplateRenderController"
-], function (Controller, OverrideExecution, Log, Fragment, TemplateRenderController) {
+], function (Controller, OverrideExecution, Log, Fragment, Constants, TemplateRenderController) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.map.PinPopover", {
@@ -12,11 +13,14 @@ sap.ui.define([
 		metadata: {
 			// extension can declare the public methods
 			// in general methods that start with "_" are private
+			// default is public: true, final: false, overrideExecution: OverrideExecution.Instead
 			methods: {
 				open: {
 					public: true,
 					final: true
-				}
+				},
+				onPlanContextMenu: {}, //default
+				onShowRoute: {} // default
 			}
 		},
 
@@ -32,7 +36,7 @@ sap.ui.define([
 		/* =========================================================== */
 
 		/**
-		 * opens popover 
+		 * opens context menu popover - right click on Pin
 		 * @param {object} oSPot - spot control inside map
 		 * @param {string} sType - type of pin (Demand|Resource) 
 		 */
@@ -43,18 +47,16 @@ sap.ui.define([
 			this.selectedDemandPath = oSpot.getBindingContext().getPath();
 			this._selectedDemands = oSpot;
 
-			//var sQualifier = "MapDemandPin"; // fetch from CONSTANT.js
-			var sQualifier = bIsDemand ? "MapDemandPin" : "MapResourcePin";
-			var mParams = {
-				viewName: "com.evorait.evoplan.view.templates.SpotContextMenu#" + sQualifier,
-				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
-				entitySet: bIsDemand ? "DemandSet" : "ResourceSet",
-				controllerName: "SpotContextMenu",
-				smartTable: null,
-				sPath: this.selectedDemandPath,
-				hiddenDiv: this._gethiddenDivPosition(oSpotPosition),
-				oView: this.oView
-			};
+			var sQualifier = bIsDemand ? Constants.ANNOTATION_CONSTANTS.MAP_DEMAND_PIN : "MapResourcePin",
+				mParams = {
+					viewName: "com.evorait.evoplan.view.templates.SpotContextMenu#" + sQualifier,
+					annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
+					entitySet: bIsDemand ? "DemandSet" : "ResourceSet",
+					smartTable: null,
+					sPath: this.selectedDemandPath,
+					hiddenDiv: this._gethiddenDivPosition(oSpotPosition),
+					oView: this.oView
+				};
 
 			if (!this.oPopover) {
 				Fragment.load({
@@ -75,16 +77,16 @@ sap.ui.define([
 		 * @param {object} oEvent - Plan button click event
 		 **/
 		onPlanContextMenu: function (oEvent) {
-			var oModel = this.getView().getModel(),
+			var oModel = this.oView.getModel(),
 				sPath = this.selectedDemandPath,
 				oData = oModel.getProperty(sPath),
 				// check if assigned
 				bAlreadyAssigned = oData.NUMBER_OF_ASSIGNMENTS > 0,
 				sStatus = oData.Status;
 			if (bAlreadyAssigned && sStatus !== "CLSD") {
-				this.planForAssignedDemands(oModel, sPath);
+				this._planForAssignedDemands(oModel, sPath);
 			} else {
-				this.planForUnAssignedDemands();
+				this._planForUnAssignedDemands();
 			}
 		},
 
@@ -128,7 +130,7 @@ sap.ui.define([
 		 * @param {object} mParams - required properties for template rendering
 		 **/
 		_setFragmentViewBinding: function (mParams) {
-			var oModel = this.getView().getModel();
+			var oModel = this.oView.getModel();
 			var oTemplateRenderController = new TemplateRenderController();
 
 			oTemplateRenderController.setOwnerComponent(this.getOwnerComponent());
@@ -154,7 +156,7 @@ sap.ui.define([
 		 * @param {object} oModel - main model 
 		 * @param {string} sPath - context path of the Demand/Resource
 		 **/
-		planForAssignedDemands: function (oModel, sPath) {
+		_planForAssignedDemands: function (oModel, sPath) {
 			var oData = oModel.getProperty(sPath);
 			if (oData.ALLOW_ASSIGN) {
 				this.oPopover.setBusy(true);
@@ -164,7 +166,7 @@ sap.ui.define([
 					urlParameters: {
 						$expand: "DemandToAssignment"
 					},
-					success: this.onDemandToAssignmentFetchSuccess.bind(this) // open the assign new dialog after resource data fetch
+					success: this._onDemandToAssignmentFetchSuccess.bind(this) // open the assign new dialog after resource data fetch
 				});
 			} else {
 				this.oController._showAssignErrorDialog([oData.DemandDesc]);
@@ -175,7 +177,7 @@ sap.ui.define([
 		 * plan for un-assigned demands
 		 * @param
 		 **/
-		planForUnAssignedDemands: function () {
+		_planForUnAssignedDemands: function () {
 			// when not assigned to any resource filter the demand in Demand view
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 			var aSelected = [this._selectedDemands],
@@ -197,8 +199,8 @@ sap.ui.define([
 		 * @param {object} oData - assignment data of the selected Demand pin
 		 * 
 		 **/
-		onDemandToAssignmentFetchSuccess: function (oData) {
-			var oModel = this.getView().getModel(),
+		_onDemandToAssignmentFetchSuccess: function (oData) {
+			var oModel = this.oView.getModel(),
 				sDemandGuid = oData.Guid;
 
 			this.selectedPinsAssignment = "/DemandSet('" + sDemandGuid + "')/DemandToAssignment";
