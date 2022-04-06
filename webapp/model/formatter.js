@@ -864,16 +864,16 @@ sap.ui.define([
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				pattern: "dd MMM yyyy hh:mm:ss a"
 			});
-
 			if (oDate) {
+				oDate = new Date(oDate);
 				var sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
 					oOperationTime = new Date(oTimes.ms + sTZOffsetMs);
-				
+
 				oDate.setHours(oOperationTime.getHours());
 				oDate.setMinutes(oOperationTime.getMinutes());
 				oDate.setSeconds(oOperationTime.getSeconds());
-				
-				return oDateFormat.format(new Date(oDate.getTime() - sTZOffsetMs));
+
+				return oDateFormat.format(oDate);
 			}
 		},
 
@@ -946,7 +946,7 @@ sap.ui.define([
 			}
 			return true;
 		},
-		
+
 		/**
 		 * Displaying Assignment Description in Resource Tree Title for Child Nodes
 		 * @since 2205

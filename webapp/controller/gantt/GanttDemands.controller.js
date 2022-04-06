@@ -55,6 +55,7 @@ sap.ui.define([
 			//to initialize Gantt Demand Filter Dialog
 			this._oGanttDemandFilter = this.getView().byId("idGanttDemandFilterDialog");
 			this._oGanttDemandFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+			this._aSelectedIndices = [];
 		},
 		/**
 		 * check for unsaved data in Demand table
@@ -107,7 +108,7 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				oData = oModel.getProperty(sPath),
 				oUserDetail = this.getModel("appView");
-				this.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
+			this.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
 			if (oUserDetail.getProperty("/currentRoute") === "splitDemands") {
 				oRouter.navTo("splitDemandDetails", {
 					guid: oData.Guid
@@ -132,7 +133,7 @@ sap.ui.define([
 			oDragSession.setTextData("Hi I am dragging");
 			//get all selected rows when checkboxes in table selected
 			if (aIndices.length > 0) {
-				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, [aIndices[0]], true);
+				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedIndices, true);
 				aPathsData = oSelectedPaths.aPathsData;
 			} else {
 				//table tr single dragged element
@@ -151,6 +152,7 @@ sap.ui.define([
 			this.getModel("viewModel").setProperty("/gantDragSession", aSelDemandGuid);
 			this.getModel("viewModel").setProperty("/dragSession", aPathsData);
 			localStorage.setItem("Evo-Dmnd-guid", JSON.stringify(aSelectedDemandObject));
+			localStorage.setItem("Evo-aPathsData", JSON.stringify(aPathsData));
 
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
@@ -217,10 +219,11 @@ sap.ui.define([
 		 * enable/disable buttons on footer when there is some/no selected rows
 		 * @since 3.0
 		 */
-		onRowSelectionChange: function () {
-			var selected = this._oDataTable.getSelectedIndices();
-			var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
+		onRowSelectionChange: function (oEvent) {
 			var selected = this._oDataTable.getSelectedIndices(),
+				iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL"),
+				selected = this._oDataTable.getSelectedIndices(),
+				index = oEvent.getParameter("rowIndex"),
 				sDemandPath, bComponentExist;
 			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
 				this.byId("assignButton").setEnabled(true);
@@ -252,6 +255,19 @@ sap.ui.define([
 				} else {
 					this.byId("materialInfo").setEnabled(false);
 					this.byId("idOverallStatusButton").setEnabled(false);
+				}
+			}
+
+			// To get sequence of selection 
+			if (oEvent.getParameter("selectAll")) {
+				this._aSelectedIndices = []
+			} else if (oEvent.getParameter("rowIndex") === -1) {
+				this._aSelectedIndices = [];
+			} else {
+				if (!this._aSelectedIndices.includes(index)) {
+					this._aSelectedIndices.push(index)
+				} else {
+					this._aSelectedIndices.splice(this._aSelectedIndices.indexOf(index), 1);
 				}
 			}
 		},
