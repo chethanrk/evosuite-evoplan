@@ -100,7 +100,9 @@ sap.ui.define([
 			} else {
 				this._addAssociations.bind(this)();
 			}
+			this._setGanttBgColor();
 		},
+
 		/**
 		 * on page exit
 		 */
@@ -646,6 +648,21 @@ sap.ui.define([
 		/* =========================================================== */
 		/* intern methods                                              */
 		/* =========================================================== */
+
+		/**
+		 * set background color of Gantt by dynamic adding style sheet rule
+		 * https://developer.mozilla.org/en-US/docs/Web/API/CSSRuleList
+		 */
+		_setGanttBgColor: function () {
+			var styleEl = document.createElement('style');
+			// Append <style> element to <head>
+			document.head.appendChild(styleEl);
+			// Grab style element's sheet
+			var styleSheet = styleEl.sheet,
+				bgColor = this.oUserModel.getProperty("/DEFAULT_GANTT_BG_COLOR");
+			styleSheet.insertRule(".resourceGanttWithTable .sapGanttBackground .sapGanttBackgroundSVG {background: " + bgColor +
+				" !important}", 0);
+		},
 
 		/**
 		 * set onShapeDrop data to new target
@@ -1276,13 +1293,6 @@ sap.ui.define([
 					this._changeGanttHorizonViewAt(this._axisTime.getZoomLevel(), this._axisTime);
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
 					// this._addAssociations.bind(this)();
-
-					//set background color of Gantt
-					//could not found a good render event of Gantt
-					setTimeout(function () {
-						var oBgControl = this._ganttChart.$()[0].querySelector(".sapGanttBackground .sapGanttBackgroundSVG");
-						oBgControl.style.backgroundColor = this.oUserModel.getProperty("/DEFAULT_GANTT_BG_COLOR");
-					}.bind(this), 2000);
 				}.bind(this));
 		},
 		/**
@@ -1549,7 +1559,7 @@ sap.ui.define([
 
 			return oDemandObj;
 		},
-		
+
 		/**
 		 * Set color pattern for some unavailabilities
 		 * @param sTypeGroup
@@ -1589,7 +1599,7 @@ sap.ui.define([
 				}
 			}
 		},
-		
+
 		/**
 		 * handle Mouse hover event to show Assignments popup 
 		 * since 2205
@@ -1602,7 +1612,7 @@ sap.ui.define([
 					oShapeContext);
 			}
 		},
-        
+
 		/**
 		 * handle Mouse hover event to show Assignments popup 
 		 * since 2205
@@ -1610,8 +1620,8 @@ sap.ui.define([
 		onShapeMouseLeave: function (oEvent) {
 			this.getOwnerComponent().GanttAssignmentPopOver.onCloseAssigmentsPopover();
 		},
-        
-        /**
+
+		/**
 		 * on press link of assignment in resource tree row
 		 * get parent row path and bind this path to the dialog or showing assignment information
 		 * @param oEvent
