@@ -29,7 +29,64 @@ sap.ui.define([
 				Guid: Guid
 			});
 		},
+		/**
+		 * multi assignments of demands
+		 * Preceed to assignment 
+		 * @param oResourceData
+		 * @param aSource
+		 * @param oTarget
+		 * @param oTargetDate
+		 * @param aFixedAppointmentObjects
+		 */
+		AssignMultipleDemands: function (oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects) {
+			var oModel = this.getModel(),
+				aPromises = [],
+				oDemandObj,
+				oParams;
 
+			// creating function import calls for fixed appointments
+			for (var i in aFixedAppointmentObjects) {
+				oParams = {
+					DemandGuid: aFixedAppointmentObjects[i].Guid,
+					ResourceGroupGuid: oResourceData.ResourceGroupGuid,
+					ResourceGuid: oResourceData.ResourceGuid,
+					DateFrom: aFixedAppointmentObjects[i].FIXED_APPOINTMENT_START_DATE,
+					TimeFrom: {},
+					DateTo: aFixedAppointmentObjects[i].FIXED_APPOINTMENT_END_DATE,
+					TimeTo: {}
+				};
+				oParams.TimeFrom.ms = oParams.DateFrom ? oParams.DateFrom.getTime() : 0;
+				oParams.TimeTo.ms = oParams.DateTo ? oParams.DateTo.getTime() : 0;
+				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
+			}
+
+			oParams = {
+				DemandGuid: "",
+				ResourceGroupGuid: oResourceData.ResourceGroupGuid,
+				ResourceGuid: oResourceData.ResourceGuid,
+				DateFrom: oTargetDate,
+				TimeFrom: {
+					ms: oTargetDate ? oTargetDate.getTime() : 0
+				}
+			};
+			// creating function import calls for multi assignment for non-fixed appointments
+			for (var i in aSources) {
+				oDemandObj = oModel.getProperty(aSources[i]);
+
+				if (this._mParameters.bFromNewGanttSplit) {
+					oDemandObj = this._getDemandObjectSplitPage(aSources[i]);
+				}
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && oDemandObj.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+					oParams.DemandGuid = oParams.DemandGuid + "," + oDemandObj.Guid + "//" + oDemandObj.Duration;
+				} else {
+					oParams.DemandGuid = oParams.DemandGuid + "," + oDemandObj.Guid + "//" + oDemandObj.DURATION;
+				}
+			}
+			oParams.DemandGuid = oParams.DemandGuid.substr(1);
+			aPromises.push(this.executeFunctionImport(this.getModel(), oParams, "CreateAssignment", "POST"));
+
+			return aPromises;
+		},
 		/**
 		 * save assignment after drop
 		 * Calls the function import of create assignment the returns the promise.
@@ -490,7 +547,7 @@ sap.ui.define([
 				iChildLength, sAssignmentGuid, sNewPath, aCloneChildData, aCloneChildAssignmentData;
 			if (!oGanttModel.getProperty(sTargetPath + "/children")) {
 				oGanttModel.setProperty(sTargetPath + "/children", [aData]);
-			}else {
+			} else {
 				aChildAsgnData = oGanttModel.getProperty(sTargetPath + "/children");
 				aChildAsgnData.push(aData);
 				iChildAsgnLen = aChildAsgnData.length;
@@ -519,7 +576,20 @@ sap.ui.define([
 			oGanttModel.refresh(true);
 			oGanttOriginalModel.refresh(true);
 		},
-		
+		/**
+		 * getting Demand objects form local model coming from gantt split
+		 * @param sPath
+		 * @since 2205
+		 */
+		_getDemandObjectSplitPage: function (sPath) {
+			var aDragSessionData = this.getModel("viewModel").getProperty("/dragSession");
+			for (var i = 0; i < aDragSessionData.length; i++) {
+				if (aDragSessionData[i].sPath === sPath) {
+					return aDragSessionData[i].oData;
+				}
+			}
+		}
+
 	});
 
 });
