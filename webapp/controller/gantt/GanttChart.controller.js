@@ -1116,7 +1116,7 @@ sap.ui.define([
 			Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids))
 				.then(function (aResults) {
 					if (aResults.length > 0) {
-						this._addCreatedAssignment(aResults[0], oTarget, sDummyPath);
+						this._addCreatedAssignment(aResults, oTarget, sDummyPath);
 					}
 				}.bind(this), function () {
 					if (sDummyPath) {
@@ -1572,9 +1572,9 @@ sap.ui.define([
 		/**
 		 * Converting date into objects from String passed from Gantt Split
 		 * */
-		openFixedAppointmentDialog: function (oDemandObj, oParams, sSource) {
-			this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
-			this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, sSource);
+		openFixedAppointmentDialog: function (oParams, sSource) {
+			this.getModel("viewModel").setProperty("/aFixedAppointmentsList", this.aFixedAppointmentDemands);
+			this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), [], oParams, this._mParameters, sSource);
 		},
 
 		/**
@@ -1696,6 +1696,8 @@ sap.ui.define([
 					if (aResults.length > 0) {
 						this._addCreatedAssignment(aResults, oTarget, sDummyPath);
 					}
+					this._oEventBus.publish("BaseController", "refreshAssignments", aResults);
+					this._oEventBus.publish("BaseController", "refreshCapacity", {});
 				}.bind(this), function () {
 					if (sDummyPath) {
 						this.oGanttModel.setProperty(sDummyPath, null);

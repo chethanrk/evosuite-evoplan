@@ -103,16 +103,31 @@ sap.ui.define([
 			}
 
 			if (this.sSource === "Gantt-Split" || this.sSource === "OldGantt-Split") {
-				var sChannel = this.sSource === "Gantt-Split" ? "GanttFixedAssignments" : "OldGanttFixedAssignments";
+				var sChannel = this.sSource === "Gantt-Split" ? "GanttFixedAssignments" : "OldGanttFixedAssignments",
+					oParams = {
+						oResourceData: this._aAllParameters.oResourceData,
+						sDragPath: this._aAllParameters.sDragPath,
+						oTarget: this._aAllParameters.oTarget,
+						oTargetDate: ""
+					},
+					sPath;
 
-				this._oEventBus.publish(sChannel, "assignDemand", {
-					oResourceData: this._aFixedAppointmentPayload.oResourceData,
-					sDragPath: null,
-					oTarget: this._aFixedAppointmentPayload.oTarget,
-					oTargetDate: aFixedAppointments[0].IsSelected ? aFixedAppointments[0].FIXED_APPOINTMENT_START_DATE : this._aFixedAppointmentPayload
-						.DateFrom,
-					aGuids: this._aFixedAppointmentPayload.sDragPath
-				});
+				if (this._aAllParameters.sDragPath.length > 1) {
+					for (var i in aFixedAppointments) {
+						demandObj = aFixedAppointments[i];
+						sPath = "/DemandSet('" + aFixedAppointments[0].Guid + "')"
+						if (demandObj.IsSelected) {
+							this._aFixedAppointmentPayload.push(demandObj);
+							this._aAllParameters.sDragPath.splice(this._aAllParameters.sDragPath.indexOf(sPath), 1);
+						}
+					}
+					oParams.oTargetDate = this._aAllParameters.DateFrom;
+					oParams.aFixedAppointmentObjects = this._aFixedAppointmentPayload;
+				} else {
+					oParams.oTargetDate = aFixedAppointments[0].IsSelected ? aFixedAppointments[0].FIXED_APPOINTMENT_START_DATE : this._aAllParameters
+						.DateFrom;
+				}
+				this._oEventBus.publish(sChannel, "assignDemand", oParams);
 				this._FixedAppointmentsDialog.close();
 				return;
 			}
