@@ -20,7 +20,8 @@ sap.ui.define([
 					final: true
 				},
 				onPlanContextMenu: {}, //default
-				onShowRoute: {} // default
+				onShowRoute: {}, // default
+				onShowAssignments: {} // default
 			}
 		},
 
@@ -91,10 +92,18 @@ sap.ui.define([
 		},
 
 		/**
-		 * event from the context menu popover button click
+		 * event for Show Route button in Demand popover context menu
 		 * @param {object} oEvent - show route button click event
 		 **/
 		onShowRoute: function (oEvent) {
+
+		},
+
+		/**
+		 * event for the Show Assignments button in Resource popover context menu
+		 * @param {object} oEvent - show route button click event
+		 **/
+		onShowAssignments: function (oEvent) {
 
 		},
 
