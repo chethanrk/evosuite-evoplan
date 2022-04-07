@@ -152,7 +152,7 @@ sap.ui.define([
 			} else {
 				this._showConfirmMessageBox.call(this._oView.getController(), this._resourceBundle.getText("ymsg.confirmMsg")).then(function (data) {
 					if (data === "NO") {
-						this.onSaveAvail(oEvent);
+						//do nothing, keep on the same page.
 					} else {
 						this._resetChanges(oEvent);
 						this._oApp.back();
@@ -582,6 +582,12 @@ sap.ui.define([
 			var iUpdatedBlockPer = oEvent.getParameters().value,
 				iActualAvailHour = this.AVAILABLE_HOURS,
 				iUpdatedAvailableHour;
+			
+			//replacing comma with dot as this property is getting used in calculations 	
+			if (iActualAvailHour.includes(",")) {
+				iActualAvailHour.replace(",", ".");
+			}
+			
 			if (iUpdatedBlockPer) {
 				iUpdatedAvailableHour = iActualAvailHour * (100 - iUpdatedBlockPer) * 0.01;
 				Fragment.byId(this._id, "idBlockdHour").setValue(iActualAvailHour - iUpdatedAvailableHour);
@@ -593,6 +599,11 @@ sap.ui.define([
 			var iUpdatedBlockPer = oEvent.getParameters().value,
 				iActualAvailHour = Fragment.byId(this._id, "idUpdateAvailablHour").getValue(),
 				iUpdatedAvailableHour;
+			
+			//replacing comma with dot as this property is getting used in calculations
+			if (iActualAvailHour.includes(",")) {
+				iActualAvailHour.replace(",", ".");
+			}
 			if (iUpdatedBlockPer) {
 				iUpdatedAvailableHour = iActualAvailHour * (100 - iUpdatedBlockPer) * 0.01;
 				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(iActualAvailHour - iUpdatedAvailableHour);
@@ -624,6 +635,11 @@ sap.ui.define([
 			var iUpdateBlockPercentag = Fragment.byId(this._id, "idUpdateTimeAllocSlider").getValue(),
 				iUpdateActualAvailHour = this.AVAILABLE_HOURS,
 				iUpdateBlockHr;
+			
+			//replacing comma with dot as this property is getting used in calculations
+			if (iUpdateActualAvailHour.includes(",")) {
+				iUpdateActualAvailHour.replace(",", ".");
+			}
 			if (iUpdateBlockPercentag == 0) {
 				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(0);
 			} else if (iUpdateBlockPercentag == 100) {
@@ -638,11 +654,11 @@ sap.ui.define([
 				method: "GET",
 				success: function (rData) {
 					Fragment.byId(this._id, "idUpdateBlockdHour").setValue(rData.BLOCKED_HOURS);
-                Fragment.byId(this._id, "idUpdateAvailablHour").setValue(rData.AVAILABLE_HOURS);
-                this._oDialog.setBusy(false);
+					Fragment.byId(this._id, "idUpdateAvailablHour").setValue(rData.AVAILABLE_HOURS);
+					this._oDialog.setBusy(false);
 				}.bind(this),
 				error: function () {
-						this._oDialog.setBusy(false);
+					this._oDialog.setBusy(false);
 				}.bind(this)
 			});
 		}
