@@ -175,10 +175,10 @@ sap.ui.define([
 				if (aFixedAppointments && aFixedAppointments.IsSelected) {
 					oParams.DateFrom = oDemandObj.FIXED_APPOINTMENT_START_DATE;
 					oParams.TimeFrom = {};
-					oParams.TimeFrom.ms = oDemandObj.FIXED_APPOINTMENT_START_TIME.ms;
+					oParams.TimeFrom.ms = oDemandObj.FIXED_APPOINTMENT_START_DATE ? oDemandObj.FIXED_APPOINTMENT_START_DATE.getTime() : 0;
 					oParams.DateTo = oDemandObj.FIXED_APPOINTMENT_END_DATE;
 					oParams.TimeTo = {};
-					oParams.TimeTo.ms = oDemandObj.FIXED_APPOINTMENT_END_TIME.ms;
+					oParams.TimeTo.ms = oDemandObj.FIXED_APPOINTMENT_END_DATE ? oDemandObj.FIXED_APPOINTMENT_END_DATE.getTime() : 0;
 				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}
