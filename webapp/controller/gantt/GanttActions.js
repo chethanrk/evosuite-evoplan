@@ -173,6 +173,8 @@ sap.ui.define([
 				}
 				//Fixed Appointments for Gantt
 				if (aFixedAppointments && aFixedAppointments.IsSelected) {
+					oDemandObj.FIXED_APPOINTMENT_START_DATE = this.setCustomDateTime(oDemandObj.FIXED_APPOINTMENT_START_DATE, oDemandObj.FIXED_APPOINTMENT_START_TIME);
+					oDemandObj.FIXED_APPOINTMENT_END_DATE = this.setCustomDateTime(oDemandObj.FIXED_APPOINTMENT_END_DATE, oDemandObj.FIXED_APPOINTMENT_END_TIME);
 					oParams.DateFrom = oDemandObj.FIXED_APPOINTMENT_START_DATE;
 					oParams.TimeFrom = {};
 					oParams.TimeFrom.ms = oDemandObj.FIXED_APPOINTMENT_START_DATE ? oDemandObj.FIXED_APPOINTMENT_START_DATE.getTime() : 0;

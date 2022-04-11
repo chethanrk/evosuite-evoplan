@@ -136,6 +136,8 @@ sap.ui.define([
 				demandObj = aFixedAppointments[i];
 				oAssignment = this.sSource === "reAssign" ? this._aFixedAppointmentPayload : this._aFixedAppointmentPayload[i];
 				if (demandObj.IsSelected) {
+					demandObj.FIXED_APPOINTMENT_START_DATE = this.setCustomDateTime(demandObj.FIXED_APPOINTMENT_START_DATE, demandObj.FIXED_APPOINTMENT_START_TIME);
+					demandObj.FIXED_APPOINTMENT_END_DATE = this.setCustomDateTime(demandObj.FIXED_APPOINTMENT_END_DATE, demandObj.FIXED_APPOINTMENT_END_TIME);
 					oAssignment.DateFrom = demandObj.FIXED_APPOINTMENT_START_DATE;
 					oAssignment.TimeFrom = {};
 					oAssignment.TimeFrom.ms = demandObj.FIXED_APPOINTMENT_START_DATE ? demandObj.FIXED_APPOINTMENT_START_DATE.getTime() : 0;
