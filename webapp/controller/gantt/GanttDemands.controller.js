@@ -1,5 +1,5 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/AssignmentsController",
+	"com/evorait/evoplan/controller/gantt/GanttActions",
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/ganttFormatter",
@@ -22,7 +22,7 @@ sap.ui.define([
 
 		onInit: function () {
 			// Row Action template to navigate to Detail page
-			var onClickNavigation = this._onActionPress.bind(this),
+			var onClickNavigation = this.onActionPress.bind(this),
 				openActionSheet = this.openActionSheet.bind(this),
 				oAppModel = this.getModel("appView");
 
@@ -57,68 +57,7 @@ sap.ui.define([
 			this._oGanttDemandFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 			this._aSelectedIndices = [];
 		},
-		/**
-		 * check for unsaved data in Demand table
-		 * on click on navigate acion navigate to Demand Detail Page
-		 * modified method since 2201, by Rakesh Sahu
-		 * @param oEvent
-		 */
-		_onActionPress: function (oEvent) {
-			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
-				oViewModel = this.getModel("viewModel"),
-				oModel = this.getModel(),
-				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
-
-			this.oRow = oEvent.getParameter("row");
-
-			if (bDemandEditMode && oModel.hasPendingChanges()) {
-				this.showDemandEditModeWarningMessage().then(function (bResponse) {
-					var sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
-						sSave = oResourceBundle.getText("xbut.buttonSave");
-
-					if (bResponse === sDiscard) {
-						oModel.resetChanges();
-						oViewModel.setProperty("/bDemandEditMode", false);
-						this._navToDetail(null, this.oRow);
-					} else
-					if (bResponse === sSave) {
-						oViewModel.setProperty("/bDemandEditMode", false);
-						this.submitDemandTableChanges();
-					}
-				}.bind(this));
-
-			} else {
-				if (bDemandEditMode) {
-					oViewModel.setProperty("/bDemandEditMode", false);
-				}
-				this._navToDetail(oEvent);
-			}
-		},
-		/**
-		 * navigation to demand detail page
-		 * added method since 2201, by Rakesh Sahu
-		 * @param oEvent
-		 * @param oRow
-		 */
-		_navToDetail: function (oEvent, oRow) {
-			oRow = oRow ? oRow : oEvent.getParameter("row");
-			var oRouter = this.getRouter(),
-				oContext = oRow.getBindingContext(),
-				sPath = oContext.getPath(),
-				oModel = oContext.getModel(),
-				oData = oModel.getProperty(sPath),
-				oUserDetail = this.getModel("appView");
-			this.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
-			if (oUserDetail.getProperty("/currentRoute") === "splitDemands") {
-				oRouter.navTo("splitDemandDetails", {
-					guid: oData.Guid
-				});
-			} else {
-				oRouter.navTo("ganttDemandDetails", {
-					guid: oData.Guid
-				});
-			}
-		},
+		
 		/** 
 		 * On Drag start restrict demand having status other init
 		 * @param oEvent
@@ -260,7 +199,7 @@ sap.ui.define([
 
 			// To get sequence of selection 
 			if (oEvent.getParameter("selectAll")) {
-				this._aSelectedIndices = []
+				this._aSelectedIndices = oEvent.getParameter("rowIndices");
 			} else if (oEvent.getParameter("rowIndex") === -1) {
 				this._aSelectedIndices = [];
 			} else {

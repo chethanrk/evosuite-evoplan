@@ -1657,7 +1657,7 @@ sap.ui.define([
 		 * since 2205
 		 */
 		onShapeMouseLeave: function (oEvent) {
-			this.getOwnerComponent().GanttAssignmentPopOver.onCloseAssigmentsPopover();
+			// this.getOwnerComponent().GanttAssignmentPopOver.onCloseAssigmentsPopover(); // commenting code to prevent closing of popover while mouse cursor out
 		},
 
 		/**

@@ -1,8 +1,12 @@
 <mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form" xmlns:l="sap.ui.layout"
 	xmlns:smartField="sap.ui.comp.smartfield" xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
 	xmlns:tnt="sap.tnt">
-	<tnt:InfoLabel class="sapUiSmallMarginBegin sapUiTinyMarginTop" text="{viewModel>/ganttSettings/GanttPopOverData/status}"
-		renderMode="Narrow" colorScheme="1"/>
+	<Toolbar>
+		<tnt:InfoLabel class="sapUiSmallMarginBegin sapUiTinyMarginTop" text="{viewModel>/ganttSettings/GanttPopOverData/status}"
+			renderMode="Narrow" colorScheme="1"/>
+		<ToolbarSpacer/>
+		<Link class="sapUiTinyMarginTop" text="Go to Details" press="onActionPress"/>
+	</Toolbar>
 	<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
 		<template:with path="templateProperties>/annotationPath" helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="paths">
 			<template:with path="paths>" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="collectionFacets">
