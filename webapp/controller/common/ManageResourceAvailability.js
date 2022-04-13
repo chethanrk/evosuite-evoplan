@@ -582,12 +582,12 @@ sap.ui.define([
 			var iUpdatedBlockPer = oEvent.getParameters().value,
 				iActualAvailHour = this.AVAILABLE_HOURS,
 				iUpdatedAvailableHour;
-			
+
 			//replacing comma with dot as this property is getting used in calculations 	
 			if (iActualAvailHour.includes(",")) {
-				iActualAvailHour.replace(",", ".");
+				iActualAvailHour = iActualAvailHour.replace(",", ".");
 			}
-			
+
 			if (iUpdatedBlockPer) {
 				iUpdatedAvailableHour = iActualAvailHour * (100 - iUpdatedBlockPer) * 0.01;
 				Fragment.byId(this._id, "idBlockdHour").setValue(iActualAvailHour - iUpdatedAvailableHour);
@@ -599,10 +599,10 @@ sap.ui.define([
 			var iUpdatedBlockPer = oEvent.getParameters().value,
 				iActualAvailHour = Fragment.byId(this._id, "idUpdateAvailablHour").getValue(),
 				iUpdatedAvailableHour;
-			
+
 			//replacing comma with dot as this property is getting used in calculations
 			if (iActualAvailHour.includes(",")) {
-				iActualAvailHour.replace(",", ".");
+				iActualAvailHour = iActualAvailHour.replace(",", ".");
 			}
 			if (iUpdatedBlockPer) {
 				iUpdatedAvailableHour = iActualAvailHour * (100 - iUpdatedBlockPer) * 0.01;
@@ -635,10 +635,10 @@ sap.ui.define([
 			var iUpdateBlockPercentag = Fragment.byId(this._id, "idUpdateTimeAllocSlider").getValue(),
 				iUpdateActualAvailHour = this.AVAILABLE_HOURS,
 				iUpdateBlockHr;
-			
+
 			//replacing comma with dot as this property is getting used in calculations
 			if (iUpdateActualAvailHour.includes(",")) {
-				iUpdateActualAvailHour.replace(",", ".");
+				iUpdateActualAvailHour = iUpdateActualAvailHour.replace(",", ".");
 			}
 			if (iUpdateBlockPercentag == 0) {
 				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(0);
