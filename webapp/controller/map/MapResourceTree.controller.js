@@ -46,7 +46,10 @@ sap.ui.define([
 		 **/
 		onInit: function () {
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
-			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
+			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment")
+				.then(function(result) {
+					this.oFilterConfigsController.bindViewFilterItemsToEntity("/ShMapViewModeSet");
+				}.bind(this));
 
 			Fragment.load({
 				name: "com.evorait.evoplan.view.common.fragments.ResourceTreeTable",

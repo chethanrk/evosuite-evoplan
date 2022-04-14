@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/m/Token",
 	"sap/m/Tokenizer",
-	"sap/ui/core/Fragment"
-], function (BaseController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/ui/core/Item"
+], function (BaseController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, Item) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.ResourceTreeFilterBar", {
@@ -65,7 +66,7 @@ sap.ui.define([
 			//use global promise for getting when filterbar was fully initalized
 			// this._isInitalizedProm = new Promise(function (resolve, reject) {
 			// create fragment lazily
-			Fragment.load({
+			return Fragment.load({
 				name: "com.evorait.evoplan.view.common.fragments.ResourceTreeFilterBar",
 				id: this._sId,
 				controller: this
@@ -81,7 +82,6 @@ sap.ui.define([
 				// connect filterbar to view (models, lifecycle)
 				oLayout.addContent(content);
 			}.bind(this));
-			// }.bind(this));
 		},
 
 		getInitalizedPromise: function () {
@@ -304,6 +304,29 @@ sap.ui.define([
 				return oCtrl.getSelectedKey();
 			}
 		},
+		
+		/**
+		 * Bind the 'View' select control to provided entity set
+		 * @param {string} sEntitySetPath - Path to entity set that should be bound to the 'View' select
+		 * 
+		 */
+		bindViewFilterItemsToEntity: function(sEntitySetPath) {
+			var oViewSelect = this._oView.byId("idTimeView");
+			var oItemTemplate = new Item ({
+				key: "{MODE}",
+				text: "{TEXT}"
+			});
+			
+			oViewSelect.bindItems({
+				path: sEntitySetPath,
+				template: oItemTemplate
+			});
+			
+		},
+		
+		/* =========================================================== */
+		/* internal methods                                            */
+		/* =========================================================== */
 
 		/**
 		 * get all custom controls in SmartFilterBar and save field values
