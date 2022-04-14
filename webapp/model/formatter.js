@@ -959,6 +959,28 @@ sap.ui.define([
 				return sDemandDesc;
 			}
 			return sDescription;
+		},
+		/*
+		* Customizing remaining work label
+		* @since 2205
+		* Author Bhumika
+		* @param sText
+		* @returns Label string
+		*/
+		RemainingWorkLabel: function (sText) {
+			var oComponent = this._component,
+				oBundle;
+			if (oComponent) {
+				oBundle = oComponent.getModel("i18n").getResourceBundle();
+			} else {
+				oBundle = this.getResourceBundle();
+			}
+			if (sText) {			// Remaning Work
+				return oBundle.getText("xtit.remainingWork");
+			}
+			else {					// Progress
+				return oBundle.getText("xtit.progress");
+			}
 		}
 	};
 });
