@@ -219,7 +219,7 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 		var getEntitySet = function (sEntitySet, sDesc, sLongText) {
 			return sEntitySet || sDesc || sLongText;
 		};
-		
+
 		/**
 		 * get icon base on the property 
 		 * gantt assignment Popover
@@ -229,6 +229,10 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 			sProperty = sProperty ? sProperty.Path : undefined;
 
 			switch (sProperty) {
+			case "ORDERID":
+				return "sap-icon://eam-work-order";
+			case "NOTIFICATION":
+				return "sap-icon://message-information";
 			case "DemandDesc":
 				return "sap-icon://employee-pane";
 			case "Effort":
@@ -241,7 +245,7 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 				return "sap-icon://busy";
 			}
 		};
-		
+
 		/**
 		 * get Label from the property 
 		 * gantt assignment Popover

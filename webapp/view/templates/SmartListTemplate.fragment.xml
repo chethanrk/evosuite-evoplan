@@ -13,7 +13,21 @@
 									color="#6a6d70" class="sapUiSmallMarginBegin sapUiTinyMarginTop"/>
 								<VBox class="sapUiSmallMarginBegin sapUiTinyMarginTopBottom">
 									<Label text="{path:'data>Value',formatter:'com.evorait.evoplan.model.AnnotationHelper.getLabel'}:"/>
-									<Text text="{path:'data>Value',formatter:'.AH.simplePath'} {path:'data>Org.OData.Measures.V1.Unit',formatter:'.AH.simplePath'}"/>
+									<template:if test="{:= (${path:'data>Value',formatter:'com.evorait.evoplan.model.AnnotationHelper.getPathName'} === 'ORDERID')}">
+										<template:then>
+											<Link class="sapUiTinyMarginTop"
+												text="{path:'data>Value',formatter:'.AH.simplePath'} {path:'data>Org.OData.Measures.V1.Unit',formatter:'.AH.simplePath'}"
+												press="onPressOrderNumber"/>
+										</template:then>
+										<template:elseif test="{:= (${path:'data>Value',formatter:'com.evorait.evoplan.model.AnnotationHelper.getPathName'} === 'NOTIFICATION')}">
+											<Link class="sapUiTinyMarginTop"
+												text="{path:'data>Value',formatter:'.AH.simplePath'} {path:'data>Org.OData.Measures.V1.Unit',formatter:'.AH.simplePath'}"
+												press="onPressNotficationNumber"/>
+										</template:elseif>
+										<template:else>
+											<Text text="{path:'data>Value',formatter:'.AH.simplePath'} {path:'data>Org.OData.Measures.V1.Unit',formatter:'.AH.simplePath'}"/>
+										</template:else>
+									</template:if>
 								</VBox>
 							</HBox>
 						</CustomListItem>
