@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
-	"sap/m/MessageBox",
+	"sap/m/MessageBox"
 ], function (Controller, OverrideExecution, Log, Fragment, models, Filter, FilterOperator, deepClone, deepEqual, MessageBox) {
 	"use strict";
 
@@ -121,7 +121,7 @@ sap.ui.define([
 		 * Close single planning calendar dialog
 		 * When there are some unsaved changes user has to decide between:
 		 * Yes - Save changes for last visible date and close dialog
-		 * Review - Review changes for last visible date
+		 * Abort - Review changes for last visible date
 		 * No - Reset last changes and close dialog 
 		 * 
 		 * @param {object} oEvent - button close press in dialog
@@ -155,7 +155,7 @@ sap.ui.define([
 		 * When there are some unsaved changes ask user if he wants save last changes
 		 * Choices: 
 		 * Yes - Save changes for last visible date and show new date appointments
-		 * Review - Review changes for last visible date
+		 * Abort - Review changes for last visible date
 		 * No - Reset last changes and show new date appointments 
 		 * 
 		 * @param {object} oEvent - startDate is changed while navigating in the SinglePlanningCalendar
@@ -220,28 +220,6 @@ sap.ui.define([
 			this._saveChangedAssignments(function () {
 				this._loadAssignmentsForDay(this.oPlanningDate);
 			}.bind(this));
-
-			/*var aAppointments = this.oSinglePlanningModel.getProperty("/appointments"),
-				oModel = this.oParentController.getModel();
-
-			if (this.oSinglePlanningModel.getProperty("/hasChanges")) {
-				//check all changes for appointments
-				aAppointments.forEach(function (oItem, idx) {
-					if (oItem.type === this.mTypes.APPOINTMENT) {
-						var originData = this.oOriginalData[idx];
-						if (originData.Guid === oItem.Guid && originData.DateTo.getTime() !== oItem.DateTo.getTime()) {
-							oModel.setProperty(oItem.sModelPath + "/DateTo", oItem.DateTo);
-							oModel.setProperty(oItem.sModelPath + "/DateFrom", oItem.DateFrom);
-							//save changed assignment
-							this.oSinglePlanner.setBusy(true);
-							this._updateAssignment(oModel, oItem.sModelPath).then(function (oResData) {
-								this.oSinglePlanner.setBusy(false);
-								this._loadAssignmentsForDay(this.oPlanningDate);
-							}.bind(this));
-						}
-					}
-				}.bind(this));
-			}*/
 		},
 
 		/**
