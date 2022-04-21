@@ -569,6 +569,7 @@ sap.ui.define([
 						results: [aData]
 					});
 					oGanttModel.setProperty(xPath + "/NodeType", "ASSIGNMENT");
+					oGanttModel.setProperty(sNewPath + "/results/0" + "/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION + "//" + aData.ResourceGuid);
 				}
 			}
 			aCloneChildData = oGanttModel.getProperty(xPath);
@@ -711,7 +712,54 @@ sap.ui.define([
 					return aNavData[i];
 				}
 			}
-		}
+		},
+
+		/**
+		 * Fetching Relationships and appending the data for the selected assignment path
+		 * @param sPath
+		 * @param oData
+		 * since 2205
+		 */
+		_showRelationships: function (sPath, oData) {
+			var sMSg, oGanttModel = this.getModel("ganttModel"),
+				oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				aFilters = [
+					new Filter("DemandGuid", FilterOperator.EQ, oData.DemandGuid),
+					new Filter("DateFrom", FilterOperator.EQ, this.getView().byId("idDateRangeGantt2").getDateValue()),
+					new Filter("DateTo", FilterOperator.EQ, this.getView().byId("idDateRangeGantt2").getSecondDateValue())
+				];
+			this.getModel("appView").setProperty("/busy", true);
+			this._getRelationships(aFilters).then(function (aData, oResponse) {
+				this.getModel("appView").setProperty("/busy", false);
+				if (aData.results.length === 0) {
+					sMSg = oResourceBundle.getText("ymsg.noRelationships") + oData.ORDERID + " " + oResourceBundle.getText(
+						"ymsg.noRelationshipOperation") + oData.OPERATIONID + " " + oResourceBundle.getText("ymsg.noRelationshipText");
+					sap.m.MessageToast.show(sMSg);
+				}
+				this.showMessage(oResponse);
+				oGanttModel.setProperty(sPath + "/RelationshipSet", aData);
+				oGanttModel.refresh(true);
+			}.bind(this));
+		},
+
+		/*
+		 * Fetching Relationships for selected Assignments
+		 * @param aFilters
+		 * since 2205
+		 */
+		_getRelationships: function (aFilters) {
+			return new Promise(function (resolve, reject) {
+				this.getModel().read("/RelationshipSet", {
+					filters: aFilters,
+					success: function (aData, oResponse) {
+						resolve(aData, oResponse);
+					},
+					error: function (oError) {
+						reject(oError);
+					}
+				});
+			}.bind(this));
+		},
 
 	});
 

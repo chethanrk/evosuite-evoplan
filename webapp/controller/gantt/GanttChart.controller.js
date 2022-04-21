@@ -474,6 +474,11 @@ sap.ui.define([
 				//reassign
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters,
 					"ganttShapeReassignment");
+			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.showRelationships")) {
+				//Show Relationships
+				if (sPath.length > 60) {
+					this._showRelationships(sPath, oData);
+				}
 			}
 		},
 
@@ -1229,6 +1234,7 @@ sap.ui.define([
 
 				}
 				this.oGanttOriginDataModel.setProperty(sDummyPath, _.cloneDeep(data[i]));
+				this._appendChildAssignment(data[i], sTargetPath, sDummyPath);
 				this.oGanttModel.refresh();
 
 			}
@@ -1236,7 +1242,7 @@ sap.ui.define([
 				this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
 			this.oGanttModel.refresh();
-			this._appendChildAssignment(data, sTargetPath, sDummyPath);
+			//this._appendChildAssignment(data, sTargetPath, sDummyPath);
 			this._oEventBus.publish("BaseController", "refreshCapacity", {
 				sTargetPath: sTargetPath
 			});
@@ -1340,6 +1346,8 @@ sap.ui.define([
 								oResItem.AssignmentSet.results[idx].NodeType = "ASSIGNMENT";
 								oResItem.AssignmentSet.results[idx].ResourceAvailabilitySet = oResItem.ResourceAvailabilitySet;
 								var clonedObj = _.cloneDeep(oResItem.AssignmentSet.results[idx]);
+								//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
+								clonedObj.OBJECT_ID_RELATION = clonedObj.OBJECT_ID_RELATION + "//" + clonedObj.ResourceGuid;
 								oResItem.children[idx].AssignmentSet = {
 									results: [clonedObj]
 								};
@@ -1724,7 +1732,7 @@ sap.ui.define([
 				}.bind(this));
 			} else {
 				aPaths_gantt.forEach(function (sPath) {
-					oDemandObjects.push(this.getModel().getProperty(sPath))
+					oDemandObjects.push(this.getModel().getProperty(sPath));
 				}.bind(this));
 			}
 			return oDemandObjects;
