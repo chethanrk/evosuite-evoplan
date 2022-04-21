@@ -580,6 +580,7 @@ sap.ui.define([
 				aAssignments = oData.assignments,
 				aAbsences = oData.absences,
 				bIsLast = null;
+			this.clearMessageModel();
 			for (var i in aAssignments) {
 				bIsLast = null;
 				if (aAssignments[aAssignmentKeys[aAssignmentKeys.length - 1]] === aAssignments[i]) {
