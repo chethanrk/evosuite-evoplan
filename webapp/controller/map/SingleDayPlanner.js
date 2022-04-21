@@ -239,6 +239,10 @@ sap.ui.define([
 		 */
 		onPressCalculateRoute: function (oEvent) {
 			var aAssignments = this._getOnlyAppointmentsByKeyValue("type", this.mTypes.APPOINTMENT);
+			if (aAssignments.length > 0) {
+				var sResourceLong = aAssignments[0].Resource.LONGITUDE,
+					sResourceLat = aAssignments[0].Resource.LATITUDE;
+			}
 		},
 
 		/**
@@ -247,6 +251,10 @@ sap.ui.define([
 		 */
 		onPressOptimizeRoute: function (oEvent) {
 			var aAssignments = this._getOnlyAppointmentsByKeyValue("type", this.mTypes.APPOINTMENT);
+			if (aAssignments.length > 0) {
+				var sResourceLong = aAssignments[0].Resource.LONGITUDE,
+					sResourceLat = aAssignments[0].Resource.LATITUDE;
+			}
 		},
 
 		/* =========================================================== */
@@ -318,6 +326,7 @@ sap.ui.define([
 		/**
 		 * set new start and end travel times for a dragged appointment
 		 * @param {string} sPath - appointment path inside json model
+		 * Todo calculate travel times again
 		 */
 		_setNewTravelTimes: function (sPath) {
 			var aAppointments = this.oSinglePlanningModel.getProperty("/appointments"),
@@ -328,7 +337,7 @@ sap.ui.define([
 					if (oItem.type === this.mTypes.TRAVEL_BEFORE) {
 						//todo calculate route again with new sequence
 						oItem.DateTo = oAppData.DateFrom;
-						oItem.DateFrom = moment(oAppData.DateFrom).subtract(oAppData.startTravelTime, "minutes").toDate();
+						oItem.DateFrom = moment(oAppData.DateFrom).subtract(oAppData.TRAVEL_TIME, "minutes").toDate();
 					} else if (oItem.type === this.mTypes.TRAVEL_AFTER) {
 						//todo calculate route again with new sequence
 						oItem.DateFrom = oAppData.DateTo;
@@ -352,9 +361,11 @@ sap.ui.define([
 				aAppointments.forEach(function (oItem, idx) {
 					if (oItem.type === this.mTypes.APPOINTMENT) {
 						var originData = this.oOriginalData[idx];
-						if (originData.Guid === oItem.Guid && originData.DateTo.getTime() !== oItem.DateTo.getTime()) {
+						if (originData.Guid === oItem.Guid &&
+							(originData.DateTo.getTime() !== oItem.DateTo.getTime() || oItem.TRAVEL_TIME !== originData.TRAVEL_TIME)) {
 							oModel.setProperty(oItem.sModelPath + "/DateTo", oItem.DateTo);
 							oModel.setProperty(oItem.sModelPath + "/DateFrom", oItem.DateFrom);
+							oModel.setProperty(oItem.sModelPath + "/TRAVEL_TIME", oItem.TRAVEL_TIME);
 							//save changed assignment
 							this.oSinglePlanner.setBusy(true);
 							this._updateAssignment(oModel, oItem.sModelPath).then(function (oResData) {
@@ -388,6 +399,7 @@ sap.ui.define([
 						ms: oData.DateTo.getTime()
 					},
 					AssignmentGUID: oData.Guid,
+					TravelTime: oData.TRAVEL_TIME,
 					EffortUnit: oData.EffortUnit,
 					Effort: oData.Effort,
 					ResourceGroupGuid: oData.ResourceGroupGuid,
@@ -410,7 +422,7 @@ sap.ui.define([
 				this.oSinglePlanner.setBusy(true);
 
 				var mParams = {
-					"$expand": "Demand"
+					"$expand": "Demand,Resource"
 				};
 
 				var oFilter = new Filter(this.oParentController._getResourceFilters([this.sSelectedPath], oDate), true);
@@ -425,18 +437,18 @@ sap.ui.define([
 							oItem.type = this.mTypes.APPOINTMENT;
 
 							//todo get travel times from backend assignment
-							oItem.startTravelTime = 30;
+							//oItem.TRAVEL_TIME = 30;
 							if (idx === oResults.results.length - 1) {
-								oItem.endTravelTime = 30;
+								oItem.endTravelTime = 45;
 							}
 
-							if (oItem.startTravelTime) {
+							if (oItem.TRAVEL_TIME) {
 								oTravelItem = deepClone(oItem);
 								oTravelItem.title = this.oResourceBundle.getText("xlab.appointTravel");
-								oTravelItem.text = oItem.startTravelTime + " " + this.oResourceBundle.getText("xlab.minutes");
+								oTravelItem.text = oItem.TRAVEL_TIME + " " + this.oResourceBundle.getText("xlab.minutes");
 								oTravelItem.color = "#CCC";
 								oTravelItem.icon = "sap-icon://travel-itinerary";
-								oTravelItem.DateFrom = moment(oItem.DateFrom).subtract(oItem.startTravelTime, "minutes").toDate();
+								oTravelItem.DateFrom = moment(oItem.DateFrom).subtract(oItem.TRAVEL_TIME, "minutes").toDate();
 								oTravelItem.DateTo = oItem.DateFrom;
 								oTravelItem.Guid = oItem.Guid + "_before";
 								oTravelItem.type = this.mTypes.TRAVEL_BEFORE;
@@ -446,7 +458,7 @@ sap.ui.define([
 							if (oItem.endTravelTime) {
 								oTravelItem = deepClone(oItem);
 								oTravelItem.title = this.oResourceBundle.getText("xlab.appointTravel");
-								oTravelItem.text = oItem.startTravelTime + " " + this.oResourceBundle.getText("xlab.minutes");
+								oTravelItem.text = oItem.TRAVEL_TIME + " " + this.oResourceBundle.getText("xlab.minutes");
 								oTravelItem.color = "#CCC";
 								oTravelItem.icon = "sap-icon://travel-itinerary";
 								oTravelItem.DateFrom = oItem.DateTo;
