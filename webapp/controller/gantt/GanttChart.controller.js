@@ -357,19 +357,23 @@ sap.ui.define([
 				this.showMessageToast(msg);
 				return;
 			}
-			// to identify the action done on respective page
-			localStorage.setItem("Evo-Action-page", "ganttSplit");
 
-			//could be multiple shape pathes
-			for (var key in oParams.draggedShapeDates) {
-				var sSourcePath = Utility.parseUid(key).shapeDataName,
-					sTargetPath = oTargetContext.getPath(),
-					oSourceData = this.getModel("ganttModel").getProperty(sSourcePath),
-					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
+			//Allowing Assignment Shape Drop Only on Resource Nodes
+			if (oTargetContext.getObject().NodeType === "RESOURCE") {
+				// to identify the action done on respective page
+				localStorage.setItem("Evo-Action-page", "ganttSplit");
 
-				//set new time and resource data to gantt model, setting also new pathes
-				var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
-				this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+				//could be multiple shape pathes
+				for (var key in oParams.draggedShapeDates) {
+					var sSourcePath = Utility.parseUid(key).shapeDataName,
+						sTargetPath = oTargetContext.getPath(),
+						oSourceData = this.getModel("ganttModel").getProperty(sSourcePath),
+						sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
+
+					//set new time and resource data to gantt model, setting also new pathes
+					var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
+					this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+				}
 			}
 		},
 
