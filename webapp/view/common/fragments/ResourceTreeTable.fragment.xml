@@ -85,8 +85,6 @@
 					</table:template>
 				</table:Column>
 				
-				<!-- TODO: use the toggle button in the same column, as checkbox? -->
-				
 				<table:Column visible="{viewModel>/resourceTreeShowRouteColumn}" id="idResourceColumnShowRoot" label="ROUTE" name="ROUTE" width="3rem">
 					<table:template>
 						<ToggleButton visible="{ path: 'NodeType', formatter: '.formatter.formatDisplayRouteVisibility' }" press="onShowRoutePress"
@@ -103,9 +101,6 @@
 						<HBox>
 							<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"
 								selected="{IsSelected}"/>
-								<!-- TODO: change label, name -->
-							<!--<ToggleButton visible="{ path: 'NodeType', formatter: '.formatter.formatDisplayRouteVisibility' }" press="onShowRoutePress"-->
-							<!--	icon="{user>/DEFAULT_MAP_SHOW_ROUTE_ICON}" tooltip="{i18n>xtit.showRoute}"/>-->
 						</HBox>
 					</table:template>
 				</table:Column>

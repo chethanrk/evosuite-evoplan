@@ -26,16 +26,11 @@ sap.ui.define([
 		_sRouteCalculationUrl: "",
 		
 		constructor: function(oComponent, oMapModel) {
-			// TODO think about a more clean solution, how to fill the data
 			MapProvider.prototype.constructor.call(this, oComponent, oMapModel);
 			
 			var oServiceData = oMapModel.getData().MapServiceLinks.results[0];
 			this._sRouteCalculationUrl = this.sServiceUrl + ROUTE_SERVICE_PATH + CALCULATE_ROUTE_PATH;
-			// this._sRouteCalculationUrl = "https://xserver2-europe-eu-test.cloud.ptvgroup.com/services/rs/XRoute/calculateRoute";
-			
-			// TODO use the username provided by backend when it's available
 			this._sAuthToken = btoa(oServiceData.Username + ":" + oServiceData.Password);
-			// this._sAuthToken = btoa("xtok" + ":" + "7ce25155-dcb9-42fc-8496-46264e2c1e59");
 		},
 		
 		createPayloadForRouteRequest: function(aPointsToVisit, bIncludePolyline) {

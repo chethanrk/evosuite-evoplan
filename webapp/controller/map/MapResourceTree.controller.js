@@ -609,6 +609,7 @@ sap.ui.define([
 
 			for (var i = 0; i < aSelectedResources.length; i++) {
 				var obj = oModel.getProperty(aSelectedResources[i]);
+				var sCurrentHierarchyViewType = this.getView().getModel("viewModel").getProperty("/selectedHierarchyView");
 				if (obj.NodeType === "RESOURCE") {
 					if (obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
 						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
@@ -617,7 +618,7 @@ sap.ui.define([
 					}
 				} else if (obj.NodeType === "RES_GROUP") {
 					aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
-				} else if (obj.NodeType === "TIMEDAY") { // TODO: add proper data (particular day for daily view, week for weekly, etc)
+				} else if (obj.NodeType === sCurrentHierarchyViewType) {
 					aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
 				}
 			}
@@ -746,7 +747,7 @@ sap.ui.define([
 			var sResourceHierachyPath = oResourceHierachyContext.getPath();
 			var aGeoJsonLayersData = [];
 			
-			var aResourceFilters = this._getResourceFilters([sResourceHierachyPath]); // TODO: set the date frame based on current view (daily, weekly, etc)
+			var aResourceFilters = this._getResourceFilters([sResourceHierachyPath]);
 			var aAssignmentFilter = this._getDateFrameFilters(oResourceHierachyObject);
 			oViewModel.setProperty("/mapSettings/busy", true);
 			

@@ -149,7 +149,7 @@ sap.ui.define([
 					assignedDemands: [],
 					bRouteDateSelected: false
 				},
-				resourceTreeShowRouteColumn: "false", 
+				resourceTreeShowRouteColumn: false, 
 				resourceFilterforRightTechnician: false,
 				CheckRightTechnician: false,
 				WarningMsgResourceTree: false,
