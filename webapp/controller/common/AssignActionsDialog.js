@@ -359,13 +359,15 @@ sap.ui.define([
 		 * close dialog
 		 */
 		onCloseDialog: function () {
-			this._oAssignMentTable.removeSelections();
-			this._oView.getModel("viewModel").setProperty("/CheckRightTechnician", this._bCheckRightTechnician);
-			this._oDialog.close();
-			if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGNMENT_STATUS") && this._oView.getModel("viewModel").getProperty(
-					"/Show_Assignment_Status_Button")) {
-				this._oView.getModel("viewModel").setProperty("/Show_Assignment_Status_Button", false);
-				//	this._oView.getModel("viewModel").setProperty("/Show_Assignment_Status_Button", false );
+			if (this._oDialog) {
+				this._oAssignMentTable.removeSelections();
+				this._oView.getModel("viewModel").setProperty("/CheckRightTechnician", this._bCheckRightTechnician);
+				this._oDialog.close();
+				if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGNMENT_STATUS") && this._oView.getModel("viewModel").getProperty(
+						"/Show_Assignment_Status_Button")) {
+					this._oView.getModel("viewModel").setProperty("/Show_Assignment_Status_Button", false);
+					//	this._oView.getModel("viewModel").setProperty("/Show_Assignment_Status_Button", false );
+				}
 			}
 		},
 		/**

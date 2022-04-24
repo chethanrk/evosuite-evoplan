@@ -655,7 +655,9 @@ sap.ui.define([
 				sParameter = sAdditionInfo.split("\\")[sAdditionInfo.split("\\").length - 1];
 				oKeyChar = oDemandObj[sParameter];
 				sUri = sUri + oKeyChar;
-				sUri = sServicePath + sUri;
+				if (sAdditionInfo.substring(0, 5) !== "https") {
+					sUri = sServicePath + sUri;
+				}
 				window.open(sUri, "_blank");
 			} else {
 				//Logic for Navigation in Fiori Launchpad
@@ -701,7 +703,9 @@ sap.ui.define([
 						}
 					}
 					sUri = sUri.slice(0, -1);
-					sUri = sServicePath + sUri;
+					if (sAdditionInfo.substring(0, 5) !== "https") {
+						sUri = sServicePath + sUri;
+					}
 					window.open(sUri, "_blank");
 				}
 			}
@@ -924,7 +928,7 @@ sap.ui.define([
 				});
 			}.bind(this));
 		},
-		
+
 		/**
 		 * Fetching selected Assignments Path and Context for Assignment Status Change
 		 * @param [aSelectedAssignments]
@@ -942,6 +946,26 @@ sap.ui.define([
 				aAssignmentStatus.push(oAssignmentStautus);
 			}
 			return aAssignmentStatus;
+		},
+		
+		/**
+		 * Setting time to date for fixed appointment operation
+		 * @param oDate
+		 * @param oTimes
+		 * @returns oDate 
+		 * Since 2205
+		 * @Author Rakesh Sahu
+		 */
+		setCustomDateTime: function (oDate, oTimes) {
+			if (oDate) {
+				oDate = new Date(oDate);
+				var sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
+					oOperationTime = new Date(oTimes.ms + sTZOffsetMs);
+				oDate.setHours(oOperationTime.getHours());
+				oDate.setMinutes(oOperationTime.getMinutes());
+				oDate.setSeconds(oOperationTime.getSeconds());
+				return oDate;
+			}
 		}
 	});
 

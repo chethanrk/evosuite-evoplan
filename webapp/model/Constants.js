@@ -75,7 +75,8 @@ sap.ui.define([], function () {
 			NOTIFICATION_QUALIFIER: "NotificationAssignmentDialog",
 			ORDER_QUALIFIER: "OrderAssignmentDialog",
 			NETWORK_OBJECTSOURCETYPE: "DEM_PSNW",
-			NETWORK_QUALIFIER: "NetworkAssignmentDialog"
+			NETWORK_QUALIFIER: "NetworkAssignmentDialog",
+			GANTT_POP_OVER_QUALIFIER:"GanttAssignmentPopOver"
 		}
 	};
 

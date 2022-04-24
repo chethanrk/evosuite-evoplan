@@ -297,11 +297,12 @@ sap.ui.define([
 				oObject = oContext.getObject(),
 				vAssignGuid = oObject.AssignmentGuid;
 
-			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
-			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", true);
 			if (oObject.NodeType !== "ASSIGNMENT") {
 				oEvent.preventDefault();
 			}
+			this.sDemandPath = "/DemandSet('" + oObject.DemandGuid + "')";
+			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
+			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", true);
 		},
 
 		/**
@@ -313,11 +314,13 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
+				oViewModel = this.getView().getModel("viewModel"),
 				aSources = [],
 				iOperationTimesLen,
 				iVendorAssignmentLen,
 				eventBus = sap.ui.getCore().getEventBus(),
-				aPSDemandsNetworkAssignment;
+				aPSDemandsNetworkAssignment, mParams, mParameter,
+				oView = this.getView();
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -331,22 +334,17 @@ sap.ui.define([
 			}
 
 			if (this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")) {
-				var mParams = {
-					$expand: "Demand"
+				mParameter = {
+					bFromMap: true
 				};
-				this.getOwnerComponent()._getData(this.assignmentPath, null, mParams)
-					.then(function (oAssignData) {
-						if (!this.checkAssigmentIsReassignable({
-								assignment: oAssignData,
-								resource: oTargetData
-							})) {
-							return false;
-						}
-						var mParameter = {
-							bFromMap: true
-						};
-						this._setAssignmentDetail(oAssignData, sPath);
-						this.updateAssignment(true, mParameter);
+				this.getOwnerComponent()._getData(this.sDemandPath)
+					.then(function (oData) {
+						oViewModel.setProperty("/dragSession", [{
+							index: 0,
+							oData: oData,
+							sPath: this.sDemandPath
+						}]);
+						this._reassignmentOnDrop(this.assignmentPath, sPath, oView, mParameter);
 					}.bind(this));
 			} else {
 
@@ -399,6 +397,7 @@ sap.ui.define([
 				this._oDroppableTable.rebindTable(); //oTreeBinding.refresh();
 			}
 			this._bFirsrTime = false;
+			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", false);
 			// }.bind(this));
 		},
 		/**

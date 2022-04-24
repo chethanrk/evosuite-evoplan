@@ -77,7 +77,6 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 			//var oMetaContext = oMetaModel.createBindingContext(oEntityType.$path + "/" + sAnnotationPath);
 			//return oMetaContext;
 
-
 			return _createBindingContext(oAnnotationPathContext, "path");
 		};
 
@@ -187,7 +186,7 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 			}
 			return null;
 		};
-		
+
 		var getFieldExtPoint = function (oTarget, oField, oAnnoPath, sAddString) {
 			var sExtPointName = "FormExtP";
 			if (oAnnoPath.path) {
@@ -203,7 +202,7 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 			sExtPointName = sAddString ? sExtPointName + "|" + sAddString : sExtPointName;
 			return sExtPointName;
 		};
-		
+
 		var getExtPoint = function (sTabName, sEntitySet, sDesc, sLongText, sAddString) {
 			var sExtPointName = "TableExtP";
 
@@ -221,6 +220,41 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 			return sEntitySet || sDesc || sLongText;
 		};
 
+		/**
+		 * get icon base on the property 
+		 * gantt assignment Popover
+		 * since 2205
+		 */
+		var getIconGanttAssignment = function (sProperty) {
+			sProperty = sProperty ? sProperty.Path : undefined;
+
+			switch (sProperty) {
+			case "ORDERID":
+				return "sap-icon://eam-work-order";
+			case "NOTIFICATION":
+				return "sap-icon://message-information";
+			case "DemandDesc":
+				return "sap-icon://employee-pane";
+			case "Effort":
+				return "sap-icon://time-entry-request";
+			case "RESOURCE_DESCRIPTION":
+				return "sap-icon://employee";
+			case "GROUP_DESCRIPTION":
+				return "sap-icon://time-entry-request";
+			default:
+				return "sap-icon://busy";
+			}
+		};
+
+		/**
+		 * get Label from the property 
+		 * gantt assignment Popover
+		 * since 2205
+		 */
+		var getLabel = function (oInterface) {
+			return oInterface ? "{" + oInterface.Path + "/##com.sap.vocabularies.Common.v1.Label/String}" : undefined;
+		};
+
 		return {
 			resolveModelPath: resolveModelPath,
 			resolveObjectHeaderPath: resolveObjectHeaderPath,
@@ -233,7 +267,9 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 			isInNavLinks: isInNavLinks,
 			getFieldExtPoint: getFieldExtPoint,
 			getExtPoint: getExtPoint,
-			getEntitySet: getEntitySet
+			getEntitySet: getEntitySet,
+			getIconGanttAssignment: getIconGanttAssignment,
+			getLabel: getLabel
 		};
 
 	},

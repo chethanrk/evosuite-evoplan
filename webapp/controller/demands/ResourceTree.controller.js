@@ -267,7 +267,7 @@ sap.ui.define([
 		_triggerFilterSearch: function () {
 			this._oDroppableTable.rebindTable();
 		},
-		
+
 		/**
 		 * On drag of assignment, get Assignment data to Assignment model
 		 * @author Sagar since 2205 
@@ -278,12 +278,13 @@ sap.ui.define([
 				oContext = this._oDataTable.getContextByIndex(oDraggedControl.getIndex()),
 				oObject = oContext.getObject(),
 				vAssignGuid = oObject.AssignmentGuid;
-
-			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
-			this._oViewModel.setProperty("/dragDropSetting/isReassign", true);
 			if (oObject.NodeType !== "ASSIGNMENT") {
 				oEvent.preventDefault();
 			}
+			this.sDemandPath = "/DemandSet('" + oObject.DemandGuid + "')";
+			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
+			this._oViewModel.setProperty("/dragDropSetting/isReassign", true);
+
 		},
 
 		/**
@@ -295,11 +296,13 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
+				oViewModel = this.getView().getModel("viewModel"),
 				aSources = [],
 				iOperationTimesLen,
 				iVendorAssignmentLen,
 				aPSDemandsNetworkAssignment,
-				mParams,mParameter;
+				mParams, mParameter,
+				oView = this.getView();
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -313,23 +316,20 @@ sap.ui.define([
 			}
 
 			if (this._oViewModel.getProperty("/dragDropSetting/isReassign")) {
-				mParams = {
-					$expand: "Demand"
+				mParameter = {
+					bFromHome: true
 				};
-				this.getOwnerComponent()._getData(this.assignmentPath, null, mParams)
-					.then(function (oAssignData) {
-						if (!this.checkAssigmentIsReassignable({
-								assignment: oAssignData,
-								resource: oTargetData
-							})) {
-							return false;
-						}
-						mParameter = {
-							bFromHome: true
-						};
-						this._setAssignmentDetail(oAssignData, sPath);
-						this.updateAssignment(true, mParameter);
+				this.getOwnerComponent()._getData(this.sDemandPath)
+					.then(function (oData) {
+						oViewModel.setProperty("/dragSession", [{
+							index: 0,
+							oData: oData,
+							sPath: this.sDemandPath
+						}]);
+						this._reassignmentOnDrop(this.assignmentPath, sPath, oView, mParameter);
 					}.bind(this));
+				
+
 			} else {
 
 				aSources = this._oViewModel.getProperty("/dragSession");
@@ -382,6 +382,8 @@ sap.ui.define([
 				}
 			}
 			this._bFirsrTime = false;
+			this._oViewModel.setProperty("/dragDropSetting/isReassign", false);
+
 		},
 
 		/**

@@ -174,25 +174,27 @@ sap.ui.define([
 					iOperationTimesLen = this.onShowOperationTimes(this._oView.getModel("viewModel")),
 					iVendorAssignmentLen = this.onAllowVendorAssignment(this._oView.getModel("viewModel"), this._oView.getModel("user"));
 				this._oDialog.close();
-				if (this._mParameters && this._mParameters.bFromNewGantt) {
+				if (this._mParameters && (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit)) {
 					oTargetData = this._sPath;
 				} else {
 					oTargetData = this._oView.getModel().getProperty(this._sPath);
 				}
 				if (this._oView.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
 					iVendorAssignmentLen) {
-					this._component.VendorAssignment.open(this._oView, this._sPath, this._mParameters);
+					this._component.VendorAssignment.open(this._oView, this._sPath, this._mParameters, this.oDraggedControl, this.oDroppedControl,
+						this.oBrowserEvent);
 				} else if (this._oView.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length &&
 					oTargetData.NodeType ===
 					"RESOURCE") {
-					this._component.OperationTimeCheck.open(this._oView, this._mParameters, this._sPath);
+					this._component.OperationTimeCheck.open(this._oView, this._mParameters, this._sPath, this.oDraggedControl, this.oDroppedControl,
+						this.oBrowserEvent);
 				} else {
 					if (!this._mParameters) {
 						this._component.assignTreeDialog.onProceedSaveDialog();
 					} else {
 						if (this._mParameters.bFromGantt) {
 							this._oController.onProceedToGanttDropOnResource(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
-						} else if (this._mParameters.bFromNewGantt) {
+						} else if (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
 							this._oController.onProceedNewGanttDemandDrop(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
 						} else {
 							this._oController.assignedDemands(aSources, this._sPath, this._mParameter);
