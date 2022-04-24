@@ -7,7 +7,7 @@ sap.ui.define([
 	
 	/**
 	 * @class Provides interface for communication with a Map Provider. 
-	 * All the particular provider-related implementations (e.g. PTVProvider) should use the class as a parent and provide the same interface.
+	 * All the particular provider-related implementations (e.g. PTV) should use the class as a parent and provide the same interface.
 	 * @abstract
 	 * 
 	 */
@@ -18,9 +18,14 @@ sap.ui.define([
 			// in general methods that start with "_" are private
 			methods: {}
 		},
-
-		_sTileSourceUrl: "",
-		_sRouteCalculationUrl: "",
+		
+		sServiceUrl: "",
+		oComponent: null,
+		
+		constructor: function(oComponent, oMapModel) {
+			this.oComponent = oComponent;
+			this.sServiceUrl = oMapModel.getData().MapServiceLinks.results[0].Link;
+		},
 		
 		/**
 		 * 
@@ -28,6 +33,10 @@ sap.ui.define([
 		 */
 		calculateRoute: function() {
 			Log.error("The 'calculateRoute' method is not implemented!" );
+		},
+		
+		calculateTravelTime: function(oStartPoint, oEndPoint) {
+			Log.error("The 'calculateTravelTime' method is not implemented!" );
 		}
 	});
 });

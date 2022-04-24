@@ -63,7 +63,6 @@
 													</vbm:items>
 												</vbm:Spots>
 											</vbm:vos>
-											<!-- TODO: fetch the color and line width settings from backend customizing -->
 											<vbm:geoJsonLayers>
 												<vbm:GeoJsonLayer data="{viewModel>/mapSettings/GeoJsonLayersData}" defaultBorderColor="rgb(255, 0, 0)" defaultFillColor="rgb(255, 0, 0)" defaultLineWidth="50">
 												</vbm:GeoJsonLayer>

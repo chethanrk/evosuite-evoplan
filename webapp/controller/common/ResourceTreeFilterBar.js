@@ -190,6 +190,7 @@ sap.ui.define([
 			oViewModel.setProperty("/selectedHierarchyView", oItem.getKey());
 			this._setDateFilterControls(oItem.getKey());
 			this._updateCustomFilterData();
+			oViewModel.setProperty("/mapSettings/GeoJsonLayersData", []); // reset current displayed routes on map
 		},
 
 		/**
