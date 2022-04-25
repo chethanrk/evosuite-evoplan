@@ -761,6 +761,24 @@ sap.ui.define([
 			}.bind(this));
 		},
 
+		/*
+		 * Fetching Assignment Status for selected Assignments
+		 * @param sUri
+		 * since 2205
+		 */
+		_getAssignmentStatus: function (sUri) {
+			return new Promise(function (resolve, reject) {
+				this.getModel().read(sUri, {
+					success: function (oData, oResponse) {
+						resolve(oData);
+					},
+					error: function (oError) {
+						reject(oError);
+					}
+				});
+			}.bind(this));
+
+		},
 	});
 
 });

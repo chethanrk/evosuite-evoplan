@@ -434,6 +434,7 @@ sap.ui.define([
 				oSelectedItem = oParams.item,
 				sPath = oEvent.getSource().data("Path"),
 				sFunctionKey = oSelectedItem.data("Function"),
+				sAsgnStsFnctnKey = oSelectedItem.data("StatusFunction"),
 				oData = this.oGanttModel.getProperty(sPath),
 				oAppModel = this.getModel("appView"),
 				sDataModelPath = this._getAssignmentDataModelPath(oData.Guid),
@@ -479,6 +480,9 @@ sap.ui.define([
 				if (sPath.length > 60) {
 					this._showRelationships(sPath, oData);
 				}
+			} else if (sAsgnStsFnctnKey) {
+				//Changing Assignment Status
+				this._onContextMenuAssignmentStatusChange(sPath, oData, sAsgnStsFnctnKey);
 			}
 		},
 
@@ -775,13 +779,19 @@ sap.ui.define([
 		 * @param {Object} oContext - context bound to shape
 		 */
 		_openContextMenu: function (oShape, oContext) {
-			var oData = oContext.getObject();
+			var oData = oContext.getObject(),
+				sPath = oContext.getPath(),
+				bEnableRelationships = false;
+			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGN_GANTT") && sPath.length > 60) {
+				bEnableRelationships = true;
+			}
 			this.getOwnerComponent().GanttAssignmentPopOver.onCloseAssigmentsPopover();
 			if (oData.DEMAND_STATUS !== "COMP") {
 				this._getRelatedDemandData(oData).then(function (oResult) {
 					oData.sPath = oContext.getPath();
 					this.oGanttModel.setProperty(oData.sPath + "/Demand", oResult.Demand);
 					this.oViewModel.setProperty("/ganttSettings/shapeData", oData);
+					this.oViewModel.setProperty("/ganttSettings/Enable_Relationships", bEnableRelationships);
 					this._oContextMenu.open(true, oShape, Popup.Dock.BeginTop, Popup.Dock.endBottom, oShape);
 				}.bind(this));
 			}
@@ -1749,6 +1759,34 @@ sap.ui.define([
 				aPaths.push(slocStor[i].sPath);
 			}
 			return aPaths;
+		},
+
+		/**
+		 * OnSelection of Assignment Status Change
+		 * @param sPath
+		 * @param oData
+		 * @param sAsgnStsFnctnKey
+		 * since 2205
+		 */
+		_onContextMenuAssignmentStatusChange: function (sPath, oData, sAsgnStsFnctnKey) {
+			var sUri = "/AssignmentSet('" + oData.Guid + "')";
+			this._getAssignmentStatus(sUri).then(function (data) {
+				if (data["ALLOW_" + sAsgnStsFnctnKey]) {
+					this.getModel("appView").setProperty("/busy", true);
+					var oParams = {
+						Function: sAsgnStsFnctnKey,
+						AssignmentGUID: oData.Guid
+					};
+					this.executeFunctionImport(this.getModel(), oParams, "ExecuteAssignmentFunction", "POST").then(
+						function (aData) {
+							this.getModel("appView").setProperty("/busy", false);
+							this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+						}.bind(this));
+				} else {
+					sap.m.MessageBox.error(this.getModel("i18n").getResourceBundle().getText("assignmentNotPossible"));
+				}
+			}.bind(this));
+			this.oGanttModel.refresh(true);
 		}
 	});
 
