@@ -1,0 +1,25 @@
+<mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
+		<template:with path="templateProperties>/annotationPath" helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="paths">
+			<template:with path="paths>" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="collectionFacets">
+				<template:repeat list="{path:'collectionFacets>'}">
+					<template:with path="collectionFacets>Facets" var="facets">
+						<List showSeparators="None" mode="None">
+							<template:repeat list="{path:'facets>'}" var="facets">
+								<template:with path="facets>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
+									<template:with path="target>Data" var="data">
+										<template:repeat list="{data>}">
+											<DisplayListItem label="{path:'data>Value',formatter:'com.evorait.evoplan.model.AnnotationHelper.getLabel'}:"
+												value="{path:'data>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+										</template:repeat>
+									</template:with>
+								</template:with>
+							</template:repeat>
+						</List>
+					</template:with>
+				</template:repeat>
+			</template:with>
+		</template:with>
+	</template:alias>
+</mvc:View>

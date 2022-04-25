@@ -6,14 +6,15 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"com/evorait/evoplan/controller/map/MapConfig",
+	"com/evorait/evoplan/controller/map/PinPopover",
 	"sap/ui/core/Fragment",
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/MessageToast",
-	"sap/ui/core/Popup",
-	"sap/m/GroupHeaderListItem"
-], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, 
-	Fragment, Dialog, Button, MessageToast, Popup, GroupHeaderListItem, GeoJsonLayer) {
+	"sap/m/GroupHeaderListItem",
+	"com/evorait/evoplan/controller/TemplateRenderController"
+], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover, Fragment, Dialog, Button,
+	MessageToast, GroupHeaderListItem, TemplateRenderController) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
@@ -43,8 +44,11 @@ sap.ui.define([
 			};
 			this.oVBI = this.getView().byId("idGeoMap");
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
-			
+
 			this.getModel("viewModel").setProperty("/mapSettings/GeoJsonLayersData", {});
+
+			//initialize PinPopover controller
+			this.oPinPopover = new PinPopover(this);
 		},
 
 		//TODO comment
@@ -762,33 +766,14 @@ sap.ui.define([
 			this.byId("draggableList").rebindTable();
 			this.getModel("viewModel").setProperty("/mapSettings/routeData", []);
 		},
+
 		/**
 		 * To Handle Right click on Map Spots.
-		 * @author Rakesh
+		 * @param {object} oEvent - Right click event on Spot 
 		 */
 		onContextMenu: function (oEvent) {
-			var oSpot = oEvent.getSource(),
-				oMenu = oEvent.mParameters.menu;
-
-			this.selectedDemandPath = oSpot.getBindingContext().getPath();
-			oMenu = this.addSpotContextMenuItems(oMenu);
-			oSpot.openContextMenu(oMenu);
-		},
-		/**
-		 * To add Menu Items in Context Menu of seleceted Spot.
-		 */
-		addSpotContextMenuItems: function (oMenu) {
-			oMenu.addItem(new sap.ui.unified.MenuItem({
-				text: this.getResourceBundle().getText("xbut.changeStatus"),
-				icon: "sap-icon://flag",
-				select: this.onChangeStatusButtonPress.bind(this)
-			}));
-			oMenu.addItem(new sap.ui.unified.MenuItem({
-				text: this.getResourceBundle().getText("xbut.assign"),
-				icon: "sap-icon://activity-individual",
-				select: this.onAssignButtonPress.bind(this)
-			}));
-			return oMenu;
+			var oSpot = oEvent.getSource();
+			this.oPinPopover.open(oSpot, "Demand");
 		},
 
 		/**
