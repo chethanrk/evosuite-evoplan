@@ -65,7 +65,7 @@ sap.ui.define([
 		 * @abstract
 		 * @param {Waypoint} oStartPoint - Point to calculate a route **from**.
 		 * @param {Waypoint} oEndPoint - Point to calculate a route **to**.
-		 * @return {Promise<RouteSimpleResponse>} Promise object represents the response from Map Provider service.
+		 * @return {Promise<number>} Promise object represents travel time in minutes.
 		 */
 		calculateTravelTime: function(oStartPoint, oEndPoint) {
 			Log.error("The 'calculateTravelTime' method is not implemented!" );
@@ -86,16 +86,18 @@ sap.ui.define([
 		
 		/**
 		 * @typedef {Object} RouteSimpleResponse
-		 * @property {number} distance - distance to be covered within the route
-		 * @property {number} travelTime - time to travel in seconds
+		 * @property {Object} data - all the data returned by map provider
+		 * @property {number} data.distance - distance to be covered within the route
+		 * @property {number} data.travelTime - time to travel in seconds
 		 */
 		
 		/**
 		 * @typedef {Object} RouteResponse
-		 * @property {number} distance - distance to be covered within the route
-		 * @property {number} travelTime - time to travel in seconds
-		 * @property {Object} polyline - Wrapper object around a set of coordinates representing the route
-		 * @property {string} polyline.geoJSON - string containing object in format of GeoJSON. See the specification: https://geojson.org/
+		 * @property {Object} data - all the data returned by map provider
+		 * @property {number} data.distance - distance to be covered within the route
+		 * @property {number} data.travelTime - time to travel in seconds
+		 * @property {Object} data.polyline - Wrapper object around a set of coordinates representing the route
+		 * @property {string} data.polyline.geoJSON - string containing object in format of GeoJSON. See the specification: https://geojson.org/
 		 * The object represents the route itself; it contains the whole set of the needed coordinates to build a route.
 		 */
 		

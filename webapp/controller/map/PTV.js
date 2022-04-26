@@ -66,7 +66,9 @@ sap.ui.define([
 		 */
 		calculateTravelTime: function(oStartPoint, oEndPoint) {
 			var oRequestBody = this._createPayloadForRouteRequest([oStartPoint, oEndPoint], false);
-			return this._sendPOSTRequestToPTV(this._sRouteCalculationUrl, oRequestBody);
+			return this._sendPOSTRequestToPTV(this._sRouteCalculationUrl, oRequestBody).then(function(oRouteResponse) {
+					return oRouteResponse.data.travelTime / 60; // return the travel time in minutes
+				}.bind(this));
 		},
 		
 		/* =========================================================== */
