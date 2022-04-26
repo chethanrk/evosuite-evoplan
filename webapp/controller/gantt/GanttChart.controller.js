@@ -820,6 +820,9 @@ sap.ui.define([
 						});
 					}
 					this._resetParentChildNodes(sPath);
+					if (sRequestType === "reassign") {
+						this._resetParentNodeData(sSourcePath);
+					}
 				}.bind(this), function () {
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);

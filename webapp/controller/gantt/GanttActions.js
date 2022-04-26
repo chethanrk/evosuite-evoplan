@@ -777,7 +777,28 @@ sap.ui.define([
 					}
 				});
 			}.bind(this));
-
+		},
+		
+		/**
+		 * Resetting parent assignments after reassigning to other resources 
+		 * @param sSourcePath
+		 * @since 2205
+		 */
+		_resetParentNodeData: function (sSourcePath) {
+			var oGanttModel = this.getModel("ganttModel"),
+				oGanttOriginDataModel = this.getModel("ganttOriginalData");
+			if (sSourcePath) {
+				var sParentPath = sSourcePath.substring(0, 27),
+					sNewPath = sParentPath + "/AssignmentSet/results",
+					sParentSplitPath = sSourcePath.split("/AssignmentSet")[0],
+					sSplitPath = sParentSplitPath.split("/"),
+					index = sSplitPath[sSplitPath.length - 1],
+					aParentAssgnData = oGanttModel.getProperty(sNewPath);
+				aParentAssgnData.splice(index, 1);
+				oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
+			}
+			oGanttOriginDataModel.refresh(true);
+			oGanttModel.refresh(true);
 		},
 	});
 
