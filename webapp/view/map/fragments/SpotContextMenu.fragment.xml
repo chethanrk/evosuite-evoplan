@@ -20,9 +20,9 @@
 				<Button icon="sap-icon://appointment" text="{i18n>xbut.plan}" type="Emphasized" press="onPlanContextMenu" class="sapUiTinyMargin"
 					visible="{= ${user>/ENABLE_MAP_PLAN} &amp;&amp; ${viewModel>/mapSettings/spotContextMenuType} === 'Demand' }"/>
 				<!--Show assignments button visible only in Resource context menu	-->
-				<Button icon="sap-icon://activity-individual" text="{i18n>xbut.showAssignments}" type="Emphasized" press="onShowAssignments"
-					class="sapUiTinyMargin" visible="{= ${viewModel>/mapSettings/spotContextMenuType} === 'Resource' }"/>
-				<!--visible="{= ${user>/ENABLE_MAP_SHOW_ASSIGNMENTS} &amp;&amp; ${viewModel>/mapSettings/spotContextMenuType} === 'Resource' }"/>-->
+				<Button icon="sap-icon://activity-individual" text="{i18n>xbut.showAssignments}" type="Emphasized"
+					class="sapUiTinyMargin" press="onShowAssignments"
+					visible="{= ${user>/ENABLE_MAP_SHOW_ASSIGNMENTS} &amp;&amp; ${viewModel>/mapSettings/spotContextMenuType} === 'Resource' }"/>
 			</VBox>
 		</footer>
 	</Popover>

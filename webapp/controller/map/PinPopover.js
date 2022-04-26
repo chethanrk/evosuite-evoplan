@@ -117,6 +117,10 @@ sap.ui.define([
 			var oResourceFilter = this._formResourceFilterForGantt(sPath, sSelectedResorce);
 			this.oView.getModel("viewModel").setProperty("/ganttResourceFiltersFromPin", [oResourceFilter]);
 
+			// setBusy true and close the dialog
+			this.oPopover.close();
+			this.oController.setMapBusy(true);
+			
 			// then navigate to the gantt view
 			this.oRouter.navTo("newgantt");
 
