@@ -57,7 +57,8 @@
 								<table:rowSettingsTemplate>
 									<gnt2:GanttRowSettings rowId="{ganttModel>NodeId}_{ganttModel>ObjectId}"
 										shapes3="{ path:'ganttModel>AssignmentSet/results', templateShareable:true }"
-										shapes2="{ path:'ganttModel>ResourceAvailabilitySet/results', templateShareable:true }">
+										shapes2="{ path:'ganttModel>ResourceAvailabilitySet/results', templateShareable:true }"
+										relationships="{path:'ganttModel>AssignmentSet/results/0/RelationshipSet/results', templateShareable: 'true'}">
 										<gnt2:shapes1>
 											<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.BackGroundShape" type="XML"/>
 										</gnt2:shapes1>
@@ -67,6 +68,9 @@
 										<gnt2:shapes3>
 											<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.AssignmentShape" type="XML"/>
 										</gnt2:shapes3>
+										<gnt2:relationships>
+											<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.Relationships" type="XML"/>
+										</gnt2:relationships>
 									</gnt2:GanttRowSettings>
 								</table:rowSettingsTemplate>
 								<table:dragDropConfig>

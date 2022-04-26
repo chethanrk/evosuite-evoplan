@@ -31,6 +31,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.subscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.subscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
+			this._oEventBus.subscribe("MapController", "displayRoute", this._zoomToPoint, this);
 
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
@@ -873,6 +874,11 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
+		},
+		
+		_zoomToPoint: function(sEventChannel, sEventName, oPoint) {
+			this._oGeoMap.setCenterPosition(oPoint.LONGITUDE + ";" + oPoint.LATITUDE);
+			this._oGeoMap.setZoomlevel(13);
 		}
 	});
 

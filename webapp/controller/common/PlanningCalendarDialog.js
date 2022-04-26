@@ -221,8 +221,10 @@ sap.ui.define([
 				this._oCalendarModel.setProperty("/viewKey", this._selectedView ? this.formatter.formatViewKey(this._selectedView) : this.getSelectedView());
 				this._oCalendarModel.setProperty("/startDate", new Date());
 			}
-			this._oDialog.open();
-
+			// Dialog was re-opening after close due to pending batch requests completing at a later time
+			if (!this._oCancel) {
+				this._oDialog.open();
+			}
 			this._oView.getModel("appView").setProperty("/busy", false);
 			this._oPlanningCalendar.setBusy(false);
 		},

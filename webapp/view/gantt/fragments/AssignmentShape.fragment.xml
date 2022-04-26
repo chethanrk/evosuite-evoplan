@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="sap.ui.table" xmlns:core="sap.ui.core" xmlns:gnt2="sap.gantt.simple">
 	<!-- Assignment shape -->
-	<gnt2:BaseRectangle shapeId="{ganttModel>ObjectId}" countInBirdEye="true" hoverable="true" time="{ganttModel>DateFrom}" height="19"
+	<gnt2:BaseRectangle shapeId="{ganttModel>OBJECT_ID_RELATION}" countInBirdEye="true" hoverable="true" time="{ganttModel>DateFrom}" height="19"
 		endTime="{ganttModel>DateTo}" title="{ganttModel>DemandDesc}" showTitle="true" tooltip="{ganttModel>DemandDesc} - {ganttModel>STATUS}"
 		fill="{ganttModel>DEMAND_STATUS_COLOR}"
 		stroke="{parts: ['ganttModel>DEMAND_STATUS_COLOR',{value:'-20', model:'ganttModel'}], formatter: '.ganttFormatter.shadeColor'}"

@@ -152,6 +152,7 @@ sap.ui.define([
 					assignedDemands: [],
 					bRouteDateSelected: false
 				},
+				resourceTreeShowRouteColumn: false, 
 				resourceFilterforRightTechnician: false,
 				CheckRightTechnician: false,
 				WarningMsgResourceTree: false,
@@ -293,7 +294,7 @@ sap.ui.define([
 			]));
 
 			aPromises.push(this._getData("/MapProviderSet", [], {
-				$expand: "MapSource"
+				$expand: ["MapSource", "MapServiceLinks"],
 			}));
 
 			//Fetching Cost Element F4 for Vendor Assignment

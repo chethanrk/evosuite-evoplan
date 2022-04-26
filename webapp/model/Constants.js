@@ -20,6 +20,9 @@ sap.ui.define([], function () {
 			SPLIT:"GanttSplit",
 			SPLITDMD:"splitDemands"
 		},
+		MAP: {
+			JS_PROVIDERS_PATH: "com/evorait/evoplan/controller/map/"
+		},
 		CRITICALLYSTATES: {
 			"info": {
 				color: "#5E696E",

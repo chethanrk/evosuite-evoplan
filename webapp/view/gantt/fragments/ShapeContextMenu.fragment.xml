@@ -7,6 +7,7 @@
 		<u:MenuItem text="{i18n>xbut.buttonUnassign}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_UNASSIGN}"/>
 		<u:MenuItem text="{i18n>xbut.buttonReassign}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_REASSIGN}"/>
 		<u:MenuItem text="{i18n>xbut.buttonExecuteFunction}" visible="{user>/ENABLE_SET_FUNCTION}"/>
+		<u:MenuItem text="{i18n>xbut.showRelationships}" visible="{user>/ENABLE_NETWORK_ASSIGN_GANTT}"/>
 		<u:MenuItem text="{i18n>xbut.changeStatus}"
 			visible="{= ${viewModel>/ganttSettings/shapeData/DEMAND_STATUS} &amp;&amp; ${user>/ENABLE_CHANGE_STATUS}}">
 			<u:Menu itemSelect="handleStatusItemPress">
