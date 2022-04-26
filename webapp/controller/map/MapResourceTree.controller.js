@@ -675,14 +675,16 @@ sap.ui.define([
 		onResourceIconPress: function (oEvent) {
 			var oRow = oEvent.getSource().getParent(),
 				oContext = oRow.getBindingContext(),
-				sPath = oContext.getPath();
+				sPath = oContext.getPath(),
+				oUserModel = this.getModel("user");
 
 			if (oContext) {
 				var oNodeData = oContext.getObject();
 				if (oNodeData.NodeType === "RESOURCE" || oNodeData.NodeType === "RES_GROUP") {
 					this.getOwnerComponent().ResourceQualifications.open(this.getView(), oNodeData.NodeId);
 
-				} else if (oNodeData.NodeType === "TIMEDAY") {
+				} else if (oNodeData.NodeType === "TIMEDAY" && oUserModel.getProperty("/ENABLE_MAP_ROUTE_DAILY") ||
+					oNodeData.NodeType === "TIMEWEEK" && oUserModel.getProperty("/ENABLE_MAP_ROUTE_WEEKLY")) {
 					//get resource details
 					var sParentPath = this.getModel("viewModel").getProperty("/treeSet") + "('" + oNodeData.ParentNodeId + "')";
 					var oParentData = this.getModel().getProperty("/" + encodeURIComponent(sParentPath));
