@@ -447,11 +447,6 @@ sap.ui.define([
 							oItem.icon = oItem.DEMAND_STATUS_ICON;
 							oItem.type = this.mTypes.APPOINTMENT;
 
-							console.log(oItem.TRAVEL_BACK_TIME);
-							if (idx === oResults.results.length - 1) {
-								oItem.TRAVEL_BACK_TIME = 45;
-							}
-
 							if (parseInt(oItem.TRAVEL_TIME)) {
 								oTravelItem = deepClone(oItem);
 								oTravelItem.title = this.oResourceBundle.getText("xlab.appointTravel");
