@@ -5,7 +5,7 @@
 			<smartFilterBar:SmartFilterBar id="ganttResourceTreeFilterBar" class="treeTableFilterBar"
 				persistencyKey="{viewModel>/persistencyKeyGanttDemandFilter}" considerSelectionVariants="true" entitySet="{viewModel>/ganttTreeSet}"
 				enableBasicSearch="false" liveMode="true" showGoOnFB="true" filterBarExpanded="true" beforeVariantFetch="onBeforeVariantFetch"
-				afterVariantLoad="onAfterVariantLoad" initialized="onGanttFilterInitialized" filterContainerWidth="10rem" filterChange="onGanttResourceFilterChange" containerQuery="true"
+				afterVariantLoad="onAfterVariantLoad" initialise="onBeforeInitialise" initialized="onGanttFilterInitialized" filterContainerWidth="10rem" filterChange="onGanttResourceFilterChange" containerQuery="true"
 				showRestoreButton="true" showRestoreOnFB="true" showClearButton="true" showClearOnFB="true" showFilterConfiguration="false">
 				<smartFilterBar:layoutData>
 					<FlexItemData shrinkFactor="0"/>
