@@ -36,10 +36,6 @@ sap.ui.define([
 
 		aMapDemandGuid: [],
 
-		_oMapProvider: null,
-
-		_pMapProviderLoaded: null,
-
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -72,16 +68,6 @@ sap.ui.define([
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.attachRouteMatched(this._routeMatched, this);
-
-			// dependency injection for MapProvider
-			var oMapConfigModel = this.getModel("mapConfig");
-			var sProviderJSModuleName = Constants.MAP.JS_PROVIDERS_PATH + oMapConfigModel.getProperty("/name");
-			this._pMapProviderLoaded = new Promise(function(resolve, reject) {
-				sap.ui.require([sProviderJSModuleName], function(cMapProvider) {
-					this._oMapProvider = new cMapProvider(this.getOwnerComponent(), oMapConfigModel);
-					resolve();
-				}.bind(this));
-			}.bind(this));
 
 		},
 
@@ -763,14 +749,14 @@ sap.ui.define([
 			
 			var pAssignmentsLoaded = this.getOwnerComponent().readData("/AssignmentSet", [aAssignmentFilter]);
 			var pResourceLoaded = this.getOwnerComponent().readData("/ResourceSet", [aResourceFilters]);
-			var pMapProviderAndDataLoaded = Promise.all([this._pMapProviderLoaded, pAssignmentsLoaded, pResourceLoaded]);
+			var pMapProviderAndDataLoaded = Promise.all([this.getOwnerComponent()._pMapProviderLoaded, pAssignmentsLoaded, pResourceLoaded]);
 			
 			// aPromiseAllResults items are processed in the same sequence as proper promises are put to Promise.all method
 			pMapProviderAndDataLoaded.then(function (aPromiseAllResults) {
 				var aAssignments = aPromiseAllResults[1].results;
 				oResource = aPromiseAllResults[2].results[0];
 				
-				return this._oMapProvider.calculateRoute(oResource, aAssignments);
+				return this.getOwnerComponent().MapProvider.calculateRoute(oResource, aAssignments);
 			}.bind(this)).then(function(oResponse) {
 				oViewModel.setProperty("/mapSettings/busy", false);
 				var oData = JSON.parse(oResponse.data.polyline.geoJSON);

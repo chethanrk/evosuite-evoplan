@@ -88,6 +88,10 @@ sap.ui.define([
 		},
 
 		_appId: "evoplan",
+		
+		MapProvider: null,
+
+		_pMapProviderLoaded: null,
 
 		/**
 		 * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
@@ -311,6 +315,7 @@ sap.ui.define([
 				}
 				if (data[2].results.length > 0) {
 					this.getModel("mapConfig").setData(data[2].results[0]);
+					this.initializeMapProvider();
 				}
 				if (data[3].results.length > 0) {
 					this.getModel("oCostElementModel").setData(data[3].results);
@@ -673,6 +678,22 @@ sap.ui.define([
 				}
 			}
 			return false;
+		},
+		
+		/**
+		 * Instatiate and initialize map provider object. 
+		 * Type of the instance depends on configuration provided by backend: oMapConfigModel.getProperty("/name")
+		 */
+		initializeMapProvider: function() {
+			// dependency injection for MapProvider
+			var oMapConfigModel = this.getModel("mapConfig");
+			var sProviderJSModuleName = Constants.MAP.JS_PROVIDERS_PATH + oMapConfigModel.getProperty("/name");
+			this._pMapProviderLoaded = new Promise(function(resolve, reject) {
+				sap.ui.require([sProviderJSModuleName], function(cMapProvider) {
+					this.MapProvider = new cMapProvider(this, oMapConfigModel);
+					resolve();
+				}.bind(this));
+			}.bind(this));
 		}
 	});
 });
