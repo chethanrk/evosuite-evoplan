@@ -85,13 +85,10 @@
 					</table:template>
 				</table:Column>
 				
-				<!-- TODO: use the toggle button in the same column, as checkbox? -->
-				<!-- TODO: change label, name -->
-				<table:Column label="ROUTE" name="ROUTE" width="2.5rem" class="sapUiNoContentPadding">
+				<table:Column visible="{viewModel>/resourceTreeShowRouteColumn}" id="idResourceColumnShowRoot" label="ROUTE" name="ROUTE" width="3rem">
 					<table:template>
-						<!-- TODO: define rule for thte ToggleButton visibility -->
-						<ToggleButton press="onShowRoutePress">
-						</ToggleButton>
+						<ToggleButton visible="{ path: 'NodeType', formatter: '.formatter.formatDisplayRouteVisibility' }" press="onShowRoutePress"
+							icon="{user>/DEFAULT_MAP_SHOW_ROUTE_ICON}" tooltip="{i18n>xtit.showRoute}"/>
 					</table:template>
 				</table:Column>
 				
@@ -101,8 +98,10 @@
 						<core:CustomData key="p13nData" value='\{"columnKey": "NodeType", "leadingProperty": "NodeType"}'/>
 					</table:customData>
 					<table:template>
-						<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"
-							selected="{IsSelected}"/>
+						<HBox>
+							<CheckBox enabled="true" select="onChangeSelectResource" visible="{ path: 'NodeType', formatter: '.formatter.isMainResource' }"
+								selected="{IsSelected}"/>
+						</HBox>
 					</table:template>
 				</table:Column>
 			</table:columns>

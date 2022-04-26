@@ -29,7 +29,64 @@ sap.ui.define([
 				Guid: Guid
 			});
 		},
+		/**
+		 * multi assignments of demands
+		 * Preceed to assignment 
+		 * @param oResourceData
+		 * @param aSource
+		 * @param oTarget
+		 * @param oTargetDate
+		 * @param aFixedAppointmentObjects
+		 */
+		AssignMultipleDemands: function (oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects) {
+			var oModel = this.getModel(),
+				aPromises = [],
+				oDemandObj,
+				oParams;
 
+			// creating function import calls for fixed appointments
+			for (var i in aFixedAppointmentObjects) {
+				oParams = {
+					DemandGuid: aFixedAppointmentObjects[i].Guid,
+					ResourceGroupGuid: oResourceData.ResourceGroupGuid,
+					ResourceGuid: oResourceData.ResourceGuid,
+					DateFrom: aFixedAppointmentObjects[i].FIXED_APPOINTMENT_START_DATE,
+					TimeFrom: {},
+					DateTo: aFixedAppointmentObjects[i].FIXED_APPOINTMENT_END_DATE,
+					TimeTo: {}
+				};
+				oParams.TimeFrom.ms = oParams.DateFrom ? oParams.DateFrom.getTime() : 0;
+				oParams.TimeTo.ms = oParams.DateTo ? oParams.DateTo.getTime() : 0;
+				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
+			}
+
+			oParams = {
+				DemandGuid: "",
+				ResourceGroupGuid: oResourceData.ResourceGroupGuid,
+				ResourceGuid: oResourceData.ResourceGuid,
+				DateFrom: oTargetDate,
+				TimeFrom: {
+					ms: oTargetDate ? oTargetDate.getTime() : 0
+				}
+			};
+			// creating function import calls for multi assignment for non-fixed appointments
+			for (var i in aSources) {
+				oDemandObj = oModel.getProperty(aSources[i]);
+
+				if (this._mParameters.bFromNewGanttSplit) {
+					oDemandObj = this._getDemandObjectSplitPage(aSources[i]);
+				}
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && oDemandObj.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+					oParams.DemandGuid = oParams.DemandGuid + "," + oDemandObj.Guid + "//" + oDemandObj.Duration;
+				} else {
+					oParams.DemandGuid = oParams.DemandGuid + "," + oDemandObj.Guid + "//" + oDemandObj.DURATION;
+				}
+			}
+			oParams.DemandGuid = oParams.DemandGuid.substr(1);
+			aPromises.push(this.executeFunctionImport(this.getModel(), oParams, "CreateAssignment", "POST"));
+
+			return aPromises;
+		},
 		/**
 		 * save assignment after drop
 		 * Calls the function import of create assignment the returns the promise.
@@ -116,12 +173,14 @@ sap.ui.define([
 				}
 				//Fixed Appointments for Gantt
 				if (aFixedAppointments && aFixedAppointments.IsSelected) {
+					oDemandObj.FIXED_APPOINTMENT_START_DATE = this.setCustomDateTime(oDemandObj.FIXED_APPOINTMENT_START_DATE, oDemandObj.FIXED_APPOINTMENT_START_TIME);
+					oDemandObj.FIXED_APPOINTMENT_END_DATE = this.setCustomDateTime(oDemandObj.FIXED_APPOINTMENT_END_DATE, oDemandObj.FIXED_APPOINTMENT_END_TIME);
 					oParams.DateFrom = oDemandObj.FIXED_APPOINTMENT_START_DATE;
 					oParams.TimeFrom = {};
-					oParams.TimeFrom.ms = oDemandObj.FIXED_APPOINTMENT_START_TIME.ms;
+					oParams.TimeFrom.ms = oDemandObj.FIXED_APPOINTMENT_START_DATE ? oDemandObj.FIXED_APPOINTMENT_START_DATE.getTime() : 0;
 					oParams.DateTo = oDemandObj.FIXED_APPOINTMENT_END_DATE;
 					oParams.TimeTo = {};
-					oParams.TimeTo.ms = oDemandObj.FIXED_APPOINTMENT_END_TIME.ms;
+					oParams.TimeTo.ms = oDemandObj.FIXED_APPOINTMENT_END_DATE ? oDemandObj.FIXED_APPOINTMENT_END_DATE.getTime() : 0;
 				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}
@@ -490,7 +549,7 @@ sap.ui.define([
 				iChildLength, sAssignmentGuid, sNewPath, aCloneChildData, aCloneChildAssignmentData;
 			if (!oGanttModel.getProperty(sTargetPath + "/children")) {
 				oGanttModel.setProperty(sTargetPath + "/children", [aData]);
-			}else {
+			} else {
 				aChildAsgnData = oGanttModel.getProperty(sTargetPath + "/children");
 				aChildAsgnData.push(aData);
 				iChildAsgnLen = aChildAsgnData.length;
@@ -510,6 +569,7 @@ sap.ui.define([
 						results: [aData]
 					});
 					oGanttModel.setProperty(xPath + "/NodeType", "ASSIGNMENT");
+					oGanttModel.setProperty(sNewPath + "/results/0" + "/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION + "//" + aData.ResourceGuid);
 				}
 			}
 			aCloneChildData = oGanttModel.getProperty(xPath);
@@ -519,7 +579,188 @@ sap.ui.define([
 			oGanttModel.refresh(true);
 			oGanttOriginalModel.refresh(true);
 		},
-		
+		/**
+		 * getting Demand objects form local model coming from gantt split
+		 * @param sPath
+		 * @since 2205
+		 */
+		_getDemandObjectSplitPage: function (sPath) {
+			var aDragSessionData = this.getModel("viewModel").getProperty("/dragSession");
+			for (var i = 0; i < aDragSessionData.length; i++) {
+				if (aDragSessionData[i].sPath === sPath) {
+					return aDragSessionData[i].oData;
+				}
+			}
+		},
+
+		/**
+		 * check for unsaved data in Demand table
+		 * on click on navigate acion navigate to Demand Detail Page
+		 * modified method since 2201, by Rakesh Sahu
+		 * @param oEvent
+		 */
+		onActionPress: function (oEvent) {
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				oViewModel = this.getModel("viewModel"),
+				oModel = this.getModel(),
+				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
+
+			this.oRow = oEvent.getParameter("row");
+
+			if (bDemandEditMode && oModel.hasPendingChanges()) {
+				this.showDemandEditModeWarningMessage().then(function (bResponse) {
+					var sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
+						sSave = oResourceBundle.getText("xbut.buttonSave");
+
+					if (bResponse === sDiscard) {
+						oModel.resetChanges();
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this._navToDetail(null, this.oRow);
+					} else
+					if (bResponse === sSave) {
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this.submitDemandTableChanges();
+					}
+				}.bind(this));
+
+			} else {
+				if (bDemandEditMode) {
+					oViewModel.setProperty("/bDemandEditMode", false);
+				}
+				this._navToDetail(oEvent);
+			}
+		},
+
+		/**
+		 * navigation to demand detail page
+		 * added method since 2201, by Rakesh Sahu
+		 * @param oEvent
+		 * @param oRow
+		 */
+		_navToDetail: function (oEvent, oRow) {
+			var oRouter = this.getRouter();
+			if (oEvent.getSource().getId().includes("link")) {
+				oRouter.navTo("ganttDemandDetails", {
+					guid: oEvent.getSource().getBindingContext().getProperty("DemandGuid")
+				});
+
+			} else {
+				oRow = oRow ? oRow : oEvent.getParameter("row");
+				var oContext = oRow.getBindingContext(),
+					sPath = oContext.getPath(),
+					oModel = oContext.getModel(),
+					oData = oModel.getProperty(sPath),
+					oUserDetail = this.getModel("appView");
+				this.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
+				if (oUserDetail.getProperty("/currentRoute") === "splitDemands") {
+					oRouter.navTo("splitDemandDetails", {
+						guid: oData.Guid
+					});
+				} else {
+					oRouter.navTo("ganttDemandDetails", {
+						guid: oData.Guid
+					});
+				}
+			}
+		},
+
+		/**
+		 * handle Order id link press event in Gantt Popover
+		 * added method since 2205, by Rakesh Sahu
+		 * @param oEvent
+		 */
+		onPressOrderNumber: function (oEvent) {
+			this.sAppName = 'EvoOrder';
+			this.handleGanttPopoverNavigation(oEvent);
+		},
+
+		/**
+		 * handle Notification Number link press event in Gantt Popover
+		 * added method since 2205, by Rakesh Sahu
+		 * @param oEvent
+		 */
+		onPressNotficationNumber: function (oEvent) {
+			this.sAppName = 'EvoNotify';
+			this.handleGanttPopoverNavigation(oEvent);
+		},
+
+		/**
+		 * handle navigation from Gantt Popover to EvoOrder/EvoNotify
+		 * added method since 2205, by Rakesh Sahu
+		 * @param oEvent
+		 */
+		handleGanttPopoverNavigation: function (oEvent) {
+			this.oSource = oEvent.getSource();
+			var sDemandGuid = this.oSource.getBindingContext().getProperty("DemandGuid"),
+				sDemandPath = "/DemandSet('" + sDemandGuid + "')";
+
+			this.getOwnerComponent().readData(sDemandPath).then(function (oDemandData) {
+				var oAppInfo = this.getAppInfo(this.oSource.getModel("navLinks").getData(), this.sAppName);
+				this.handleNavigationLinkAction(oDemandData, oAppInfo, this.oSource.getModel("viewModel"), this.oSource.getModel(
+					"user"));
+			}.bind(this));
+		},
+
+		/**
+		 * get appInfo to navigate from Gantt Popover to EvoOrder/EvoNotify
+		 * added method since 2205, by Rakesh Sahu
+		 * @param oEvent
+		 */
+		getAppInfo: function (aNavData, AppName) {
+			for (var i in aNavData) {
+				if (aNavData[i].ApplicationName === AppName) {
+					return aNavData[i];
+				}
+			}
+		},
+
+		/**
+		 * Fetching Relationships and appending the data for the selected assignment path
+		 * @param sPath
+		 * @param oData
+		 * since 2205
+		 */
+		_showRelationships: function (sPath, oData) {
+			var sMSg, oGanttModel = this.getModel("ganttModel"),
+				oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				aFilters = [
+					new Filter("DemandGuid", FilterOperator.EQ, oData.DemandGuid),
+					new Filter("DateFrom", FilterOperator.EQ, this.getView().byId("idDateRangeGantt2").getDateValue()),
+					new Filter("DateTo", FilterOperator.EQ, this.getView().byId("idDateRangeGantt2").getSecondDateValue())
+				];
+			this.getModel("appView").setProperty("/busy", true);
+			this._getRelationships(aFilters).then(function (aData, oResponse) {
+				this.getModel("appView").setProperty("/busy", false);
+				if (aData.results.length === 0) {
+					sMSg = oResourceBundle.getText("ymsg.noRelationships") + oData.ORDERID + " " + oResourceBundle.getText(
+						"ymsg.noRelationshipOperation") + oData.OPERATIONID + " " + oResourceBundle.getText("ymsg.noRelationshipText");
+					sap.m.MessageToast.show(sMSg);
+				}
+				this.showMessage(oResponse);
+				oGanttModel.setProperty(sPath + "/RelationshipSet", aData);
+				oGanttModel.refresh(true);
+			}.bind(this));
+		},
+
+		/*
+		 * Fetching Relationships for selected Assignments
+		 * @param aFilters
+		 * since 2205
+		 */
+		_getRelationships: function (aFilters) {
+			return new Promise(function (resolve, reject) {
+				this.getModel().read("/RelationshipSet", {
+					filters: aFilters,
+					success: function (aData, oResponse) {
+						resolve(aData, oResponse);
+					},
+					error: function (oError) {
+						reject(oError);
+					}
+				});
+			}.bind(this));
+		},
+
 	});
 
 });

@@ -864,16 +864,16 @@ sap.ui.define([
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				pattern: "dd MMM yyyy hh:mm:ss a"
 			});
-
 			if (oDate) {
+				oDate = new Date(oDate);
 				var sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
 					oOperationTime = new Date(oTimes.ms + sTZOffsetMs);
-				
+
 				oDate.setHours(oOperationTime.getHours());
 				oDate.setMinutes(oOperationTime.getMinutes());
 				oDate.setSeconds(oOperationTime.getSeconds());
-				
-				return oDateFormat.format(new Date(oDate.getTime() - sTZOffsetMs));
+
+				return oDateFormat.format(oDate);
 			}
 		},
 
@@ -946,7 +946,7 @@ sap.ui.define([
 			}
 			return true;
 		},
-		
+
 		/**
 		 * Displaying Assignment Description in Resource Tree Title for Child Nodes
 		 * @since 2205
@@ -959,6 +959,62 @@ sap.ui.define([
 				return sDemandDesc;
 			}
 			return sDescription;
+		},
+		/*
+		* Customizing remaining work label
+		* @since 2205
+		* Author Bhumika
+		* @param sText
+		* @returns Label string
+		*/
+		RemainingWorkLabel: function (sText) {
+			var oComponent = this._component,
+				oBundle;
+			if (oComponent) {
+				oBundle = oComponent.getModel("i18n").getResourceBundle();
+			} else {
+				oBundle = this.getResourceBundle();
+			}
+			if (sText) {			// Remaning Work
+				return oBundle.getText("xtit.remainingWork");
+			}
+			else {					// Progress
+				return oBundle.getText("xtit.progress");
+			}
+		},
+		
+		/**
+		 * Visibility of toggle button for displying a route for resource
+		 * @Author Valerii
+		 * @since 2205
+		 * @param sNodeType
+		 * @returns boolean
+		 */
+		formatDisplayRouteVisibility: function(sNodeType) {
+			var oComponent = this._component,
+				oUserModel,
+				oViewModel;
+				
+			var oGlobalPropertiesMapping = {
+				TIMEDAY: "/ENABLE_MAP_ROUTE_DAILY",
+				TIMEWEEK: "/ENABLE_MAP_ROUTE_WEEKLY"
+			};
+			
+			if (oComponent) {
+				oUserModel = oComponent.getModel("user");
+				oViewModel = oComponent.getModel("viewModel");
+			} else {
+				oUserModel = this.getModel("user");
+				oViewModel = this.getModel("viewModel");
+			}
+			
+			var bGlobalVisibility = oUserModel.getProperty(oGlobalPropertiesMapping[sNodeType]);
+			
+			if(bGlobalVisibility && sNodeType === oViewModel.getProperty("/selectedHierarchyView")) {
+				return true;
+			}
+			
+			return false;
 		}
 	};
 });

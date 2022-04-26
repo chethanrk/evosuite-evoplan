@@ -946,6 +946,26 @@ sap.ui.define([
 				aAssignmentStatus.push(oAssignmentStautus);
 			}
 			return aAssignmentStatus;
+		},
+		
+		/**
+		 * Setting time to date for fixed appointment operation
+		 * @param oDate
+		 * @param oTimes
+		 * @returns oDate 
+		 * Since 2205
+		 * @Author Rakesh Sahu
+		 */
+		setCustomDateTime: function (oDate, oTimes) {
+			if (oDate) {
+				oDate = new Date(oDate);
+				var sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
+					oOperationTime = new Date(oTimes.ms + sTZOffsetMs);
+				oDate.setHours(oOperationTime.getHours());
+				oDate.setMinutes(oOperationTime.getMinutes());
+				oDate.setSeconds(oOperationTime.getSeconds());
+				return oDate;
+			}
 		}
 	});
 
