@@ -783,8 +783,8 @@ sap.ui.define([
 		 */
 		_getDateFrameFilters: function(oResourceHierarchy) {
 			var aFilters = [];
-			oResourceHierarchy.StartDate.setHours(0, 0, 0, 0);
-			oResourceHierarchy.EndDate.setHours(23, 59, 59, 999);
+			oResourceHierarchy.StartDate.setUTCHours(0, 0, 0);
+			oResourceHierarchy.EndDate.setUTCHours(23, 59, 59);
 			aFilters.push(new Filter("DateFrom", FilterOperator.GE, oResourceHierarchy.StartDate));
 			aFilters.push(new Filter("DateTo", FilterOperator.LE, oResourceHierarchy.EndDate));
 			return aFilters;
