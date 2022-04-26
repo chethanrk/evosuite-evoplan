@@ -253,8 +253,8 @@ sap.ui.define([
 				oParams.TimeTo = oDateParams.TimeTo;
 				oContext = aItems[i];
 				sPath = oContext.sPath ? oContext.sPath : oContext;
-				demandObj = oModel.getProperty(sPath),
-					bContinue = true;
+				demandObj = oModel.getProperty(sPath);
+				bContinue = true;
 
 				oParams.DemandGuid = demandObj ? demandObj.Guid : sPath.split("'")[1];
 				oParams.ResourceGroupGuid = targetObj.ResourceGroupGuid;
@@ -580,6 +580,7 @@ sap.ui.define([
 				aAssignments = oData.assignments,
 				aAbsences = oData.absences,
 				bIsLast = null;
+			this.clearMessageModel();
 			for (var i in aAssignments) {
 				bIsLast = null;
 				if (aAssignments[aAssignmentKeys[aAssignmentKeys.length - 1]] === aAssignments[i]) {
@@ -680,6 +681,11 @@ sap.ui.define([
 		onShowOperationTimes: function (oViewModel) {
 			var aSources = oViewModel.getProperty("/dragSession"),
 				aOperationTimes = [];
+
+			//condition added to getData from gantt split : since 2205	
+			if (!aSources) {
+				aSources = JSON.parse(localStorage.getItem("Evo-aPathsData"));
+			}
 			for (var f in aSources) {
 				aSources[f].IsDisplayed = true;
 				aSources[f].IsSelected = true;
@@ -778,6 +784,11 @@ sap.ui.define([
 		_showNetworkAssignments: function (oViewModel) {
 			var aSources = oViewModel.getProperty("/dragSession"),
 				aAllowNetworkAssignment = [];
+
+			//condition added to getData from gantt split : since 2205	
+			if (!aSources) {
+				aSources = JSON.parse(localStorage.getItem("Evo-aPathsData"));
+			}
 			for (var n in aSources) {
 				if (aSources[n].oData.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
 					aSources[n].oData.Duration = "";
@@ -785,6 +796,7 @@ sap.ui.define([
 					aAllowNetworkAssignment.push(aSources[n]);
 				}
 			}
+			oViewModel.setProperty("/dragSession", aSources);
 			oViewModel.refresh(true);
 			return aAllowNetworkAssignment;
 		},

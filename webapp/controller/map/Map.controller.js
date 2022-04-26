@@ -6,12 +6,13 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"com/evorait/evoplan/controller/map/MapConfig",
+	"com/evorait/evoplan/controller/map/PinPopover",
 	"sap/ui/core/Fragment",
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/MessageToast",
 	"sap/m/GroupHeaderListItem"
-], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig,
+], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
 	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem) {
 	"use strict";
 
@@ -29,6 +30,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.subscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.subscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
+			this._oEventBus.subscribe("MapController", "displayRoute", this._zoomToPoint, this);
 
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
@@ -43,6 +45,9 @@ sap.ui.define([
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 
 			this.getModel("viewModel").setProperty("/mapSettings/GeoJsonLayersData", {});
+
+			//initialize PinPopover controller
+			this.oPinPopover = new PinPopover(this);
 		},
 
 		//TODO comment
@@ -760,33 +765,14 @@ sap.ui.define([
 			this.byId("draggableList").rebindTable();
 			this.getModel("viewModel").setProperty("/mapSettings/routeData", []);
 		},
+
 		/**
 		 * To Handle Right click on Map Spots.
-		 * @author Rakesh
+		 * @param {object} oEvent - Right click event on Spot 
 		 */
 		onContextMenu: function (oEvent) {
-			var oSpot = oEvent.getSource(),
-				oMenu = oEvent.mParameters.menu;
-
-			this.selectedDemandPath = oSpot.getBindingContext().getPath();
-			oMenu = this.addSpotContextMenuItems(oMenu);
-			oSpot.openContextMenu(oMenu);
-		},
-		/**
-		 * To add Menu Items in Context Menu of seleceted Spot.
-		 */
-		addSpotContextMenuItems: function (oMenu) {
-			oMenu.addItem(new sap.ui.unified.MenuItem({
-				text: this.getResourceBundle().getText("xbut.changeStatus"),
-				icon: "sap-icon://flag",
-				select: this.onChangeStatusButtonPress.bind(this)
-			}));
-			oMenu.addItem(new sap.ui.unified.MenuItem({
-				text: this.getResourceBundle().getText("xbut.assign"),
-				icon: "sap-icon://activity-individual",
-				select: this.onAssignButtonPress.bind(this)
-			}));
-			return oMenu;
+			var oSpot = oEvent.getSource();
+			this.oPinPopover.open(oSpot, "Demand");
 		},
 
 		/**
@@ -887,6 +873,11 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
+		},
+		
+		_zoomToPoint: function(sEventChannel, sEventName, oPoint) {
+			this._oGeoMap.setCenterPosition(oPoint.LONGITUDE + ";" + oPoint.LATITUDE);
+			this._oGeoMap.setZoomlevel(13);
 		}
 	});
 

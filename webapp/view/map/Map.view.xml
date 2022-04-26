@@ -51,22 +51,36 @@
 													<vbm:items>
 														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0) position="{LONGITUDE};{LATITUDE};0"-->
 														<core:ExtensionPoint name="GeoMapExtP|Map|Spots|DemandSet|items">
-															<vbm:Spot selectColor="{user>/DEFAULT_MAP_SELECTED_PIN_COLOR}" contentColor="{MAP_MARKER_COLOUR}" hotScale="1.1;1.1;1.1"
+															<vbm:Spot selectColor="{user>/DEFAULT_DEMAND_MAP_SEL_PIN_CLR}" contentColor="{MAP_MARKER_COLOUR}" hotScale="1.1;1.1;1.1"
 																tooltip="{DEMAND_KEY}" type="Inactive" select="{IS_SELECTED}" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}"
-																icon="{user>/DEFAULT_MAP_MARKER_ICON}" contentSize="25rem" changeable="true"
+																icon="{user>/DEFAULT_DEMAND_MAP_MARKER_ICON}" contentSize="25rem" changeable="true"
 																position="{parts:[{path:'LONGITUDE'}, {path:'LATITUDE'} ], formatter:'.formatter.formatMapSpot'}" contextMenu="onContextMenu">
 																<vbm:customData>
-																	<core:CustomData key='Status' value='{Status}'/>
+																	<core:CustomData key="Status" value="{Status}"/>
+																	<core:CustomData key="Type" value="Demand"/>
+																</vbm:customData>
+															</vbm:Spot>
+														</core:ExtensionPoint>
+													</vbm:items>
+												</vbm:Spots>
+												<vbm:Spots items="{ path:'/ResourceSet', parameters:{ batchGroupId:'mapdemands' } }" select="onSelect" deselect="onDeselect">
+													<vbm:items>
+														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0) position="{LONGITUDE};{LATITUDE};0"-->
+														<core:ExtensionPoint name="GeoMapExtP|Map|Spots|ResourceSet|items">
+															<vbm:Spot selectColor="{user>/DEFAULT_RES_MAP_SEL_PIN_CLR}" contentColor="{user>/DEFAULT_RES_MAP_SEL_PIN_CLR}" hotScale="1.1;1.1;1.1"
+																tooltip="{ResourceDescription}" type="Inactive" icon="{user>/DEFAULT_RES_MAP_MARKER_ICON}" contentSize="17rem" changeable="false"
+																position="{parts:[{path:'LONGITUDE'}, {path:'LATITUDE'} ], formatter:'.formatter.formatMapSpot'}" contextMenu="onContextMenu">
+																<vbm:customData>
+																	<core:CustomData key="Type" value="Resource"/>
 																</vbm:customData>
 															</vbm:Spot>
 														</core:ExtensionPoint>
 													</vbm:items>
 												</vbm:Spots>
 											</vbm:vos>
-											<!-- TODO: fetch the color and line width settings from backend customizing -->
 											<vbm:geoJsonLayers>
-												<vbm:GeoJsonLayer data="{viewModel>/mapSettings/GeoJsonLayersData}" defaultBorderColor="rgb(255, 0, 0)" defaultFillColor="rgb(255, 0, 0)" defaultLineWidth="50">
-												</vbm:GeoJsonLayer>
+												<vbm:GeoJsonLayer data="{viewModel>/mapSettings/GeoJsonLayersData}" defaultBorderColor="rgb(255, 0, 0)" defaultFillColor="rgb(255, 0, 0)"
+													defaultLineWidth="50"></vbm:GeoJsonLayer>
 											</vbm:geoJsonLayers>
 										</vbm:GeoMap>
 									</vk:content>
