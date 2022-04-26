@@ -217,7 +217,6 @@ sap.ui.define([
 
 		/**
 		 * Save new start,end dates for assignments
-		 * Todo save travel times
 		 * @param {object} oEvent
 		 */
 		onPressSaveAppointments: function (oEvent) {
@@ -432,11 +431,11 @@ sap.ui.define([
 				this.oSinglePlanner.setBusy(true);
 
 				var mParams = {
-					"$expand": "Demand"
+					"$expand": "Demand,Resource"
 				};
 
 				var oFilter = new Filter(this.oParentController._getResourceFilters([this.sSelectedPath], oDate), true);
-				this.oParentController.getOwnerComponent()._getData(sEntitySetPath, [oFilter], mParams).then(function (oResults) {
+				this.oParentController.getOwnerComponent().readData(sEntitySetPath, [oFilter], mParams).then(function (oResults) {
 					console.log(oResults.results);
 					if (oResults.results.length > 0) {
 						oResults.results.forEach(function (oItem, idx) {
