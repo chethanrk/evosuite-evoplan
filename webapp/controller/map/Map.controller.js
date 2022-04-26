@@ -772,8 +772,10 @@ sap.ui.define([
 		 * @param {object} oEvent - Right click event on Spot 
 		 */
 		onContextMenu: function (oEvent) {
-			var oSpot = oEvent.getSource();
-			this.oPinPopover.open(oSpot, "Demand");
+			var oSpot = oEvent.getSource(),
+				sType = oSpot.data("Type");
+			this.getModel("viewModel").setProperty("/mapSettings/spotContextMenuType", sType);
+			this.oPinPopover.open(oSpot, sType);
 		},
 
 		/**
