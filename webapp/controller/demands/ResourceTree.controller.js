@@ -96,7 +96,7 @@ sap.ui.define([
 		onBusyStateChanged: function (oEvent) {
 			var parameters = oEvent.getParameters();
 			if (parameters.busy === false) {
-				if (Object.keys(this.mTreeState).length > 0) {
+				if (Object.keys(this.mTreeState).length > 0 && this._oDataTable.getBinding().getNodes().length > 0) {
 					this._restoreTreeState();
 				}
 			}
