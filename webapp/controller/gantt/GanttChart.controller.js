@@ -279,6 +279,7 @@ sap.ui.define([
 				}
 
 			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) { // When we drop on gantt chart from split window
+				// this.getModel("viewModel").setProperty("/dragSession/bFromGanttSplit", true);
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				oParams.DateFrom = oAxisTime.viewToTime(oSvgPoint.x);
 				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
@@ -1584,15 +1585,17 @@ sap.ui.define([
 		convertDateToObjects: function (aDemandData) {
 			var oDemandObjects = [];
 			aDemandData.forEach(function (oItem) {
-				oItem.oDemandObj.FIXED_APPOINTMENT_START_DATE = new Date(oItem.oDemandObj.FIXED_APPOINTMENT_START_DATE);
-				oItem.oDemandObj.FIXED_APPOINTMENT_END_DATE = new Date(oItem.oDemandObj.FIXED_APPOINTMENT_END_DATE);
-				oItem.oDemandObj.FIXED_ASSGN_START_DATE = new Date(oItem.oDemandObj.FIXED_ASSGN_START_DATE);
-				oItem.oDemandObj.FIXED_ASSGN_END_DATE = new Date(oItem.oDemandObj.FIXED_ASSGN_END_DATE);
+				oItem.FIXED_APPOINTMENT_START_DATE = new Date(oItem.FIXED_APPOINTMENT_START_DATE);
+				oItem.FIXED_APPOINTMENT_END_DATE = new Date(oItem.FIXED_APPOINTMENT_END_DATE);
+				oItem.FIXED_ASSGN_START_DATE = new Date(oItem.FIXED_ASSGN_START_DATE);
+				oItem.FIXED_ASSGN_END_DATE = new Date(oItem.FIXED_ASSGN_END_DATE);
 
-				oDemandObjects.push({
-					sPath: oItem.sPath,
-					oData: oItem.oDemandObj
-				});
+				// oDemandObjects.push({
+				// 	sPath: oItem.sPath,
+				// 	oData: oItem.oDemandObj
+				// });
+				oDemandObjects.push(oItem);
+
 			}.bind(this));
 
 			this.oViewModel.setProperty("/ganttSettings/aGanttSplitDemandData", oDemandObjects);
@@ -1645,8 +1648,10 @@ sap.ui.define([
 		 */
 		onShapeMouseEnter: function (oEvent) {
 			var oShapeContext = oEvent.getParameter("shape").getBindingContext("ganttModel"),
-				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId();
-			if (!(this._oContextMenu && this._oContextMenu.getPopup().isOpen())) {
+				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId(),
+				bIsDummy = this.oGanttModel.getProperty(oShapeContext.getPath() + "/Guid") === "thisisdummyguidassignment";
+				
+			if (!bIsDummy && !(this._oContextMenu && this._oContextMenu.getPopup().isOpen())) {
 				this.getOwnerComponent().GanttAssignmentPopOver.open(this.getView(), sap.ui.getCore().byId(sToolbarId + "-settingsButton"),
 					oShapeContext);
 			}
@@ -1718,6 +1723,7 @@ sap.ui.define([
 				oDemands_ganttSplit.forEach(function (oItem) {
 					oDemandObjects.push(oItem.oDemandObject);
 				}.bind(this));
+				oDemandObjects = this.convertDateToObjects(oDemandObjects);
 			} else {
 				aPaths_gantt.forEach(function (sPath) {
 					oDemandObjects.push(this.getModel().getProperty(sPath))
