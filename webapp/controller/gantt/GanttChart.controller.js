@@ -809,7 +809,7 @@ sap.ui.define([
 			//get demand details to this assignment
 			this._getRelatedDemandData(oData).then(function (oResult) {
 				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
-				this._validateAndSendChangedData(sPath, sRequestType).then(function () {
+				this._validateAndSendChangedData(sPath, sRequestType).then(function (aData) {
 					// these events
 					this._oEventBus.publish("BaseController", "refreshCapacity", {
 						sTargetPath: sPath.split("/AssignmentSet/results/")[0]
@@ -821,7 +821,7 @@ sap.ui.define([
 					}
 					this._resetParentChildNodes(sPath);
 					if (sRequestType === "reassign") {
-						this._resetParentNodeData(sSourcePath);
+						this._resetParentNodeData(sPath, sSourcePath, aData);
 					}
 				}.bind(this), function () {
 					//on reject validation or user don't want proceed
