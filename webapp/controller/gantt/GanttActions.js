@@ -777,7 +777,38 @@ sap.ui.define([
 					}
 				});
 			}.bind(this));
+		},
 
+		/**
+		 * Resetting parent assignments after reassigning to other resources 
+		 * @param sSourcePath
+		 * @since 2205
+		 */
+		_resetParentNodeData: function (sPath, sSourcePath, aData) {
+			var oGanttModel = this.getModel("ganttModel"),
+				oGanttOriginDataModel = this.getModel("ganttOriginalData");
+			if (sSourcePath) {
+				var sParentPath = sSourcePath.substring(0, 27),
+					sNewPath = sParentPath + "/AssignmentSet/results",
+					sParentSplitPath = sSourcePath.split("/AssignmentSet")[0],
+					sSplitPath = sParentSplitPath.split("/"),
+					index = sSplitPath[sSplitPath.length - 1],
+					sChildPath = sPath.split("/AssignmentSet/results")[0],
+					aParentAssgnData = oGanttModel.getProperty(sNewPath);
+				aParentAssgnData.splice(index, 1);
+				oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
+				if (!oGanttModel.getProperty(sChildPath + "/children")) {
+					oGanttModel.setProperty(sChildPath + "/children", [aData]);
+					oGanttModel.setProperty(sChildPath + "/children/0/NodeType", "ASSIGNMENT");
+					oGanttModel.setProperty(sChildPath + "/children/0/AssignmentSet", {
+						results: [aData]
+					});
+					oGanttModel.setProperty(sChildPath + "/children/0/AssignmentSet/results/0/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION +
+						"//" + aData.ResourceGuid);
+				}
+			}
+			oGanttOriginDataModel.refresh(true);
+			oGanttModel.refresh(true);
 		},
 	});
 
