@@ -106,11 +106,11 @@ sap.ui.define([
 				aFixedAppointments = oViewModel.getProperty("/aFixedAppointmentsList")[0],
 				aPromises = [],
 				oDemandObj;
-			if (aGanttDemandDragged === "fromGanttSplit") {
+			if (aGanttDemandDragged === "fromGanttSplit" || !oModel.getProperty(aItems[0])) {
 				aGanttDemandDragged = {};
 				aGanttDemandDragged.bFromGanttSplit = true;
-				aGanttDemandDragged.sPath = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData/sPath");
-				aGanttDemandDragged.oData = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData/oData");
+				// aGanttDemandDragged.sPath = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData/sPath");
+				aGanttDemandDragged.oData = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData")[0];
 				aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE);
 				aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE);
 			}

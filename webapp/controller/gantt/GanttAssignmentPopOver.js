@@ -84,7 +84,9 @@ sap.ui.define([
 		 * on Close on pop over
 		 */
 		onCloseAssigmentsPopover: function (oEvent) {
-			this._component.DialogTemplateRenderer.closeResponsivePopOver();
+			if (this._component) {
+				this._component.DialogTemplateRenderer.closeResponsivePopOver();
+			}
 		}
 
 	});
