@@ -11,10 +11,9 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/MessageToast",
-	"sap/m/GroupHeaderListItem",
-	"com/evorait/evoplan/controller/TemplateRenderController"
-], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover, Fragment, Dialog, Button,
-	MessageToast, GroupHeaderListItem, TemplateRenderController) {
+	"sap/m/GroupHeaderListItem"
+], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
+	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {

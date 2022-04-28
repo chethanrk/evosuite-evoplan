@@ -12,11 +12,10 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/ui/core/Fragment",
-	"sap/base/Log",
-	"com/evorait/evoplan/model/Constants",
-], function (Device, JSONModel, Filter, FilterOperator,
-	FilterType, formatter, BaseController, ResourceTreeFilterBar,
-	MessageToast, MessageBox, Fragment, Log, Constants) {
+	"sap/base/Log","com/evorait/evoplan/model/Constants",
+	"com/evorait/evoplan/controller/map/SingleDayPlanner"
+], function (Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController, ResourceTreeFilterBar,
+	MessageToast, MessageBox, Fragment, Log, Constants, SingleDayPlanner) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.map.MapResourceTree", {
@@ -36,10 +35,6 @@ sap.ui.define([
 		_bFirsrTime: true,
 
 		aMapDemandGuid: [],
-		
-		_oMapProvider: null,
-		
-		_pMapProviderLoaded: null,
 
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
@@ -51,6 +46,8 @@ sap.ui.define([
 				.then(function(result) {
 					this.oFilterConfigsController.bindViewFilterItemsToEntity("/ShMapViewModeSet");
 				}.bind(this));
+
+			this.oSingleDayPlanner = new SingleDayPlanner(this);
 
 			Fragment.load({
 				name: "com.evorait.evoplan.view.common.fragments.ResourceTreeTable",
@@ -71,16 +68,6 @@ sap.ui.define([
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.attachRouteMatched(this._routeMatched, this);
-			
-			// dependency injection for MapProvider
-			var oMapConfigModel = this.getModel("mapConfig");
-			var sProviderJSModuleName = Constants.MAP.JS_PROVIDERS_PATH + oMapConfigModel.getProperty("/name");
-			this._pMapProviderLoaded = new Promise(function(resolve, reject) {
-				sap.ui.require([sProviderJSModuleName], function(cMapProvider) {
-					this._oMapProvider = new cMapProvider(this.getOwnerComponent(), oMapConfigModel);
-					resolve();
-				}.bind(this));
-			}.bind(this));
 
 		},
 
@@ -678,13 +665,23 @@ sap.ui.define([
 			var oRow = oEvent.getSource().getParent(),
 				oContext = oRow.getBindingContext(),
 				sPath = oContext.getPath(),
-				oModel = oContext.getModel(),
-				oResourceNode = oModel.getProperty(sPath);
+				oUserModel = this.getModel("user");
 
-			var sObjectId = oResourceNode.NodeId;
-			if (oResourceNode.NodeType !== "ASSIGNMENT") {
-				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
+			if (oContext) {
+				var oNodeData = oContext.getObject();
+				if (oNodeData.NodeType === "RESOURCE" || oNodeData.NodeType === "RES_GROUP") {
+					this.getOwnerComponent().ResourceQualifications.open(this.getView(), oNodeData.NodeId);
+
+				} else if (oNodeData.NodeType === "TIMEDAY" && oUserModel.getProperty("/ENABLE_MAP_ROUTE_DAILY") ||
+					oNodeData.NodeType === "TIMEWEEK" && oUserModel.getProperty("/ENABLE_MAP_ROUTE_WEEKLY")) {
+					//get resource details
+					var sParentPath = this.getModel("viewModel").getProperty("/treeSet") + "('" + oNodeData.ParentNodeId + "')";
+					var oParentData = this.getModel().getProperty("/" + encodeURIComponent(sParentPath));
+					//open Day single planning calendar
+					this.oSingleDayPlanner.open(sPath, oNodeData, oNodeData.NodeType, oParentData);
+				}
 			}
+
 		},
 		/**
 		 * Method for show assigned demands in Map for selected Date in Resorce Tree Filter Bar
@@ -695,7 +692,6 @@ sap.ui.define([
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
 				aAssignedDemands = oViewModel.getProperty("/mapSettings/assignedDemands"),
 				oFilter,
-				oSelectedDate,
 				eventBus = this._eventBus;
 			if (aSelectedDemands.length > 0 || aAssignedDemands.length > 0) {
 				this._eventBus.publish("BaseController", "refreshMapView", {});
@@ -720,12 +716,13 @@ sap.ui.define([
 
 			}.bind(this));
 		},
-		
+
 		/**
 		 * Handle `press` event on 'Show Route' button
 		 * Perform request to a map provider, display received route coordinates on map
 		 * @param oEvent {sap.ui.base.Event} - the `press` event
 		 */
+
 		onShowRoutePress: function(oEvent) {
 			var oShowRouteButton = oEvent.getSource();
 			var oResourceHierachyContext = oShowRouteButton.getBindingContext();
@@ -747,29 +744,28 @@ sap.ui.define([
 			var aGeoJsonLayersData = [];
 			
 			var aResourceFilters = this._getResourceFilters([sResourceHierachyPath]);
-			var aAssignmentFilter = this._getDateFrameFilters(oResourceHierachyObject);
+			var aAssignmentFilter = this._getAssignmentsFiltersWithinDateFrame(oResourceHierachyObject);
 			oViewModel.setProperty("/mapSettings/busy", true);
 			
 			var pAssignmentsLoaded = this.getOwnerComponent().readData("/AssignmentSet", [aAssignmentFilter]);
 			var pResourceLoaded = this.getOwnerComponent().readData("/ResourceSet", [aResourceFilters]);
-			var pMapProviderAndDataLoaded = Promise.all([this._pMapProviderLoaded, pAssignmentsLoaded, pResourceLoaded]);
+			var pMapProviderAndDataLoaded = Promise.all([this.getOwnerComponent()._pMapProviderLoaded, pAssignmentsLoaded, pResourceLoaded]);
 			
 			// aPromiseAllResults items are processed in the same sequence as proper promises are put to Promise.all method
 			pMapProviderAndDataLoaded.then(function (aPromiseAllResults) {
 				var aAssignments = aPromiseAllResults[1].results;
 				oResource = aPromiseAllResults[2].results[0];
 				
-				return this._oMapProvider.calculateRoute(oResource, aAssignments);
+				return this.getOwnerComponent().MapProvider.calculateRoute(oResource, aAssignments);
 			}.bind(this)).then(function(oResponse) {
-				oViewModel.setProperty("/mapSettings/busy", false);
 				var oData = JSON.parse(oResponse.data.polyline.geoJSON);
 				
 				// set id for a geojson object to be able to remove the object when the 'show route' toggle button is unpressed
 				oData.id = oResourceHierachyContext.getObject().NodeId;
 				aGeoJsonLayersData.push(oData);
 				oViewModel.setProperty("/mapSettings/GeoJsonLayersData", aGeoJsonLayersData);
-				
 				this._eventBus.publish("MapController", "displayRoute", oResource);
+				oViewModel.setProperty("/mapSettings/busy", false);
 			}.bind(this))
 			.catch(function(oError) {
 				oViewModel.setProperty("/mapSettings/busy", false);
@@ -784,12 +780,13 @@ sap.ui.define([
 		 * @param {object} oResourceHierarchy - ResourceHierarchy instance. It supposed that the object represents daily or weekly node.
 		 * @return {sap.ui.model.Filter[]} - array of Date filters
 		 */
-		_getDateFrameFilters: function(oResourceHierarchy) {
+		_getAssignmentsFiltersWithinDateFrame: function(oResourceHierarchy) {
 			var aFilters = [];
-			oResourceHierarchy.StartDate.setHours(0, 0, 0, 0);
-			oResourceHierarchy.EndDate.setHours(23, 59, 59, 999);
+			oResourceHierarchy.StartDate.setUTCHours(0, 0, 0);
+			oResourceHierarchy.EndDate.setUTCHours(23, 59, 59);
 			aFilters.push(new Filter("DateFrom", FilterOperator.GE, oResourceHierarchy.StartDate));
 			aFilters.push(new Filter("DateTo", FilterOperator.LE, oResourceHierarchy.EndDate));
+			aFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, oResourceHierarchy.ResourceGuid));
 			return aFilters;
 		}
 	});
