@@ -21,6 +21,12 @@ sap.ui.define([
 	 * @class Provides set of methods to communicate to PTV xServer v2 (xserver2-europe-eu-test.cloud.ptvgroup.com - test server).
 	 * The class contain only explanatory comments for its methods. 
 	 * For detailed interface description check the com.evorait.evoplan.controller.map.MapProvider class.
+	 * 
+	 * Note:
+	 * In the current implementation logic that is regarding data integration 
+	 * (e.g. property names for input parameters, like TRAVEL_TIME or TRAVEL_BACK_TIME) is mixed with communication to PTV.
+	 * In future, if needed, the logic could be extracted to a separate layer between the PTV.js and controller that uses the PTV.js 
+	 * 
 	 * @property {string} _sAuthToken - Authorisation token to pass as a header in requests to PTV 
 	 * @property {string} _sRouteCalculationUrl - Url for the `calculateRoute` operation
 	 * @property {string} _sCreateDistanceMatrixUrl - Url for the `createDistanceMatrix` operation
@@ -83,7 +89,9 @@ sap.ui.define([
 		},
 		
 		/**
-		 * TODO: jsdoc
+		 * Makes request to calculate a route travel time for each leg between waypoints (Assignments)
+		 * See the resultFields.legs property of the RouteRequest type:
+		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Content/API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.LegResultFields
 		 */
 		calculateTravelTimeForMultipleAssignments: function(oResource, aAssignments) {
 			var aWaypoints = _.cloneDeep(aAssignments);
@@ -96,8 +104,8 @@ sap.ui.define([
 		},
 		
 		/**
-		 * TODO: jsdoc
-		 * @return {}
+		 * @return {Assignment[]} a new array that includes provided assignments with updated TRAVEL_TIME and TRAVEL_BACK_TIME properties.
+		 * The properties updated according to results returned by PTV `calculateRoute` function.
 		 */
 		updateAssignmentsWithTravelTime: function(oResource, aAssignments) {
 			return this.calculateTravelTimeForMultipleAssignments(oResource, aAssignments).then(function(oPTVResponse) {
@@ -357,6 +365,10 @@ sap.ui.define([
 		 * @property {string} MapServiceLinks.results[i].Username - Username to access the PTV services. As a rule, for PTV the property should be 'xtok'.
 		 * @property {string} MapServiceLinks.results[i].Password - Token to access PTV services.
 		 */
-		
+		 
+		 /**
+		 * @typedef {Object} Assignment
+		 * The type includes many properties, see the `com.evorait.evoplan.Assignment` in EvoPlan metadata
+		 */
 	});
 });

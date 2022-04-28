@@ -77,7 +77,7 @@ sap.ui.define([
 		 * @abstract
 		 * @param {Waypoint} oResource -A Resource object that defines home address.
 		 * @param {Waypoint[]} aAssignments - Array of assignments to be visited.
-		 * @return {Promise<RouteResponse>} Promise object represents response from PTV. // TODO: extend documentation for type RouteResponse
+		 * @return {Promise<RouteResponseWithLegs>} Promise object represents response from PTV.
 		 */
 		calculateTravelTimeForMultipleAssignments: function(oResource, aAssignments) {
 			Log.error("The 'calculateTravelTimeForMultipleAssignments' method is not implemented!" );
@@ -88,7 +88,7 @@ sap.ui.define([
 		 * @abstract
 		 * @param {Waypoint} oResource - A Resource object that defines home address.
 		 * @param {Waypoint} aAssignments - Array of assignments to be visited.
-		 * @return {Promise<Assignment[]>} Promise object represents array of updated Assignments. // TODO: document the `Assignment` type
+		 * @return {Promise<Assignment[]>} Promise object represents array of updated Assignments.
 		 */
 		updateAssignmentsWithTravelTime: function(oResource, aAssignments) {
 			Log.error("The 'updateAssignmentsWithTravelTime' method is not implemented!" );
@@ -134,6 +134,15 @@ sap.ui.define([
 		 * @property {string} data.polyline.geoJSON - string containing object in format of GeoJSON. See the specification: https://geojson.org/
 		 * The object represents the route itself; it contains the whole set of the needed coordinates to build a route.
 		 */
+		 
+		 /**
+		 * @typedef {Object} RouteResponseWithLegs
+		 * @property {Object} data - all the data returned by map provider
+		 * @property {number} data.distance - distance to be covered within the route
+		 * @property {number} data.travelTime - time to travel in seconds
+		 * @property {Leg[]} legs - array of legs to be covered within the route
+		 * The object represents the route itself; it contains the whole set of the needed coordinates to build a route.
+		 */
 		
 		/**
 		 * Object structure for the oMapModel provided to constructor of the class. 
@@ -152,6 +161,17 @@ sap.ui.define([
 		 * @property {string} TRAVEL_TIME - Travel time to the point
 		 * @property {string} TRAVEL_BACK_TIME - Travel time from the point till Resource location. 
 		 * Is not zero in case the point is the last one in route sequence.
+		 */
+		 
+		 /**
+		 * @typedef {Object} Assignment
+		 * The type includes many properties, see the `com.evorait.evoplan.Assignment` in EvoPlan metadata
+		 */
+		 
+		 /**
+		 * @typedef {Object} Leg
+		 * @property {string} distance - distance to be covered within the leg
+		 * @property {string} travelTime - time to travel in seconds
 		 */
 	});
 });
