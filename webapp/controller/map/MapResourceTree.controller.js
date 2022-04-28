@@ -744,7 +744,7 @@ sap.ui.define([
 			var aGeoJsonLayersData = [];
 			
 			var aResourceFilters = this._getResourceFilters([sResourceHierachyPath]);
-			var aAssignmentFilter = this._getDateFrameFilters(oResourceHierachyObject);
+			var aAssignmentFilter = this._getAssignmentsFiltersWithinDateFrame(oResourceHierachyObject);
 			oViewModel.setProperty("/mapSettings/busy", true);
 			
 			var pAssignmentsLoaded = this.getOwnerComponent().readData("/AssignmentSet", [aAssignmentFilter]);
@@ -758,15 +758,14 @@ sap.ui.define([
 				
 				return this.getOwnerComponent().MapProvider.calculateRoute(oResource, aAssignments);
 			}.bind(this)).then(function(oResponse) {
-				oViewModel.setProperty("/mapSettings/busy", false);
 				var oData = JSON.parse(oResponse.data.polyline.geoJSON);
 				
 				// set id for a geojson object to be able to remove the object when the 'show route' toggle button is unpressed
 				oData.id = oResourceHierachyContext.getObject().NodeId;
 				aGeoJsonLayersData.push(oData);
 				oViewModel.setProperty("/mapSettings/GeoJsonLayersData", aGeoJsonLayersData);
-				
 				this._eventBus.publish("MapController", "displayRoute", oResource);
+				oViewModel.setProperty("/mapSettings/busy", false);
 			}.bind(this))
 			.catch(function(oError) {
 				oViewModel.setProperty("/mapSettings/busy", false);
@@ -781,12 +780,13 @@ sap.ui.define([
 		 * @param {object} oResourceHierarchy - ResourceHierarchy instance. It supposed that the object represents daily or weekly node.
 		 * @return {sap.ui.model.Filter[]} - array of Date filters
 		 */
-		_getDateFrameFilters: function(oResourceHierarchy) {
+		_getAssignmentsFiltersWithinDateFrame: function(oResourceHierarchy) {
 			var aFilters = [];
 			oResourceHierarchy.StartDate.setUTCHours(0, 0, 0);
 			oResourceHierarchy.EndDate.setUTCHours(23, 59, 59);
 			aFilters.push(new Filter("DateFrom", FilterOperator.GE, oResourceHierarchy.StartDate));
 			aFilters.push(new Filter("DateTo", FilterOperator.LE, oResourceHierarchy.EndDate));
+			aFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, oResourceHierarchy.ResourceGuid));
 			return aFilters;
 		}
 	});

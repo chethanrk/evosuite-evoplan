@@ -53,7 +53,7 @@ sap.ui.define([
 		 * Calculates a route based on a resource-home address and a list of assignments to visit.
 		 * @abstract
 		 * @param {Waypoint} oResource - A Resource object that defines home address.
-		 * @param {Waypoint[]} aAssignments - Arroy of assignments to be visited.
+		 * @param {Waypoint[]} aAssignments - Array of assignments to be visited.
 		 * @return {Promise<RouteResponse>} - Promise object represents the response from Map Provider service.
 		 */
 		calculateRoute: function(oResource, aAssignments) {
@@ -61,15 +61,49 @@ sap.ui.define([
 		},
 		
 		/**
-		 * Calculates travel time between two waypoints
+		 * Calculates travel time between **two** waypoints
 		 * @abstract
 		 * @param {Waypoint} oStartPoint - Point to calculate a route **from**.
 		 * @param {Waypoint} oEndPoint - Point to calculate a route **to**.
 		 * @return {Promise<number>} Promise object represents travel time in minutes.
 		 */
-		calculateTravelTime: function(oStartPoint, oEndPoint) {
+		calculateSingleTravelTime: function(oStartPoint, oEndPoint) {
 			Log.error("The 'calculateTravelTime' method is not implemented!" );
-		}
+		},
+		
+		/**
+		 * Calculates travel times for each leg between resource and it's assignments.
+		 * Doesn't change assignments sequence.
+		 * @abstract
+		 * @param {Waypoint} oResource -A Resource object that defines home address.
+		 * @param {Waypoint[]} aAssignments - Array of assignments to be visited.
+		 * @return {Promise<RouteResponse>} Promise object represents response from PTV. // TODO: extend documentation for type RouteResponse
+		 */
+		calculateTravelTimeForMultipleAssignments: function(oResource, aAssignments) {
+			Log.error("The 'calculateTravelTimeForMultipleAssignments' method is not implemented!" );
+		},
+		
+		/**
+		 * Updates Assignment list with travel timeas according to sequence provided in parameters.
+		 * @abstract
+		 * @param {Waypoint} oResource - A Resource object that defines home address.
+		 * @param {Waypoint} aAssignments - Array of assignments to be visited.
+		 * @return {Promise<Assignment[]>} Promise object represents array of updated Assignments. // TODO: document the `Assignment` type
+		 */
+		updateAssignmentsWithTravelTime: function(oResource, aAssignments) {
+			Log.error("The 'updateAssignmentsWithTravelTime' method is not implemented!" );
+		},
+		
+		/**
+		 * Optimizes a route to reduce distance and travel time. Returned route may have different sequence of points to visit.
+		 * @abstract
+		 * @param {Waypoint} oResource - A Resource object that defines home address.
+		 * @param {Waypoint[]} aAssignments - Arroy of assignments to be visited.
+		 * @return {Promise<RouteResponse>} - Promise object represents the response from Map Provider service.
+		 */
+		optimizeRoute: function(oResource, aAssignments) {
+			Log.error("The 'optimizeRoute' method is not implemented!" );
+		},
 		
 		/* ============================================================================== */
 		/* Data types                                                                     */
@@ -108,6 +142,16 @@ sap.ui.define([
 		 * @property {Object} MapServiceLinks
 		 * @property {Object[]} MapServiceLinks.results
 		 * @property {string} MapServiceLinks.results[i].Link - Base URL for the Map Provider
+		 */
+		 
+		 /**
+		 * Waypoint with travel time. Usually it's an Assignment.
+		 * @typedef {Object} WaypointWithTravelTime
+		 * @property {string} LONGITUDE - Longitude value at geographic coordinate system
+		 * @property {string} LATITUDE - Latitude value at geographic coordinate system
+		 * @property {string} TRAVEL_TIME - Travel time to the point
+		 * @property {string} TRAVEL_BACK_TIME - Travel time from the point till Resource location. 
+		 * Is not zero in case the point is the last one in route sequence.
 		 */
 	});
 });
