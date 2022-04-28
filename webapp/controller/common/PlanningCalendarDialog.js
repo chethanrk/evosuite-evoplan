@@ -760,6 +760,10 @@ sap.ui.define([
 			if (oSelected.length > 0) {
 				oSelected[0].setSelected(false);
 			}
+			// Gantt model to be set busy-free after planning calendar closing
+			if (this._mParameters.bCustomBusy && (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit)) {
+				this._oView.getModel("ganttModel").setProperty(this._mParameters.sSourcePath + "/busy", false);
+			}
 		},
 		/**
 		 * Triggers assignments save
