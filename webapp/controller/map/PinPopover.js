@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/Constants",
-	"com/evorait/evoplan/controller/TemplateRenderController"
-], function (Controller, OverrideExecution, Log, Fragment, Constants, TemplateRenderController) {
+	"com/evorait/evoplan/controller/TemplateRenderController",
+	"com/evorait/evoplan/controller/common/ResourceTreeFilterBar"
+], function (Controller, OverrideExecution, Log, Fragment, Constants, TemplateRenderController, ResourceTreeFilterBar) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.map.PinPopover", {
@@ -20,7 +21,8 @@ sap.ui.define([
 					final: true
 				},
 				onPlanContextMenu: {}, //default
-				onShowRoute: {} // default
+				onShowRoute: {}, // default
+				onShowAssignments: {} // default
 			}
 		},
 
@@ -29,6 +31,7 @@ sap.ui.define([
 			this.oView = oController.getView();
 			this.oResourceBundle = oController.getResourceBundle();
 			this.oModel = oController.getView().getModel();
+			this.oRouter = oController.getRouter();
 		},
 
 		/* =========================================================== */
@@ -91,11 +94,40 @@ sap.ui.define([
 		},
 
 		/**
-		 * event from the context menu popover button click
+		 * event for Show Route button in Demand popover context menu
 		 * @param {object} oEvent - show route button click event
 		 **/
 		onShowRoute: function (oEvent) {
 
+		},
+
+		/**
+		 * event for the Show Assignments button in Resource popover context menu
+		 * @param {object} oEvent - show route button click event
+		 **/
+		onShowAssignments: function (oEvent) {
+			// from the pop-up find the resource details which needs to be passed to the filter bar in gantt
+			var oModel = this.oView.getModel(),
+				oSelectedResourceContext = oModel.getProperty(this.selectedDemandPath),
+
+				sPath = "Description",
+				sSelectedResorce = oSelectedResourceContext.Description;
+
+			// form the filterBar setFilterData JSON format
+			var oResourceFilter = this._formResourceFilterForGantt(sPath, sSelectedResorce);
+			this.oView.getModel("viewModel").setProperty("/ganttResourceFiltersFromPin", [oResourceFilter]);
+
+			// setBusy true and close the dialog
+			this.oPopover.close();
+			this.oController.setMapBusy(true);
+			
+			// then navigate to the gantt view
+			this.oRouter.navTo("newgantt");
+
+			// same for date range - save it in the model and apply it after the Gantt is initialised
+			var ResourceTreeFilterBarController = new ResourceTreeFilterBar(),
+				aDateRange = ResourceTreeFilterBarController.getDateRange();
+			this.oView.getModel("viewModel").setProperty("/ganttDateRangeFromMap", aDateRange);
 		},
 
 		/* =========================================================== */
@@ -212,6 +244,24 @@ sap.ui.define([
 			});
 
 			this.oPopover.setBusy(false);
+		},
+
+		/**
+		 * forms the JSON data with Description property for filterbar.setFilterData
+		 * @param {string} sPath - property for which the filter data is needed, Description in this case
+		 * @param {string} sValue1 - value of the property - name of the resource to be filtered in this case
+		 * @return {object} filterBar JSON Data format
+		 */
+		_formResourceFilterForGantt: function (sPath, sValue1) {
+			var oJSONDataResourceFilter = {};
+			oJSONDataResourceFilter[sPath] = {
+				items: [{
+					key: sValue1,
+					text: sValue1
+				}]
+			};
+
+			return oJSONDataResourceFilter;
 		}
 	});
 });

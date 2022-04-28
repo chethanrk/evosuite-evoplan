@@ -101,6 +101,11 @@ sap.ui.define([
 				this._addAssociations.bind(this)();
 			}
 			this._setGanttBgColor();
+
+			// when navigating from Maps to Gantt 
+			// onShowAssignments button click from the Resource Pin popover
+			// apply the selected resource filter in the gantt view
+			this.handleNavigationFromMap();
 		},
 
 		/**
@@ -1749,6 +1754,22 @@ sap.ui.define([
 				aPaths.push(slocStor[i].sPath);
 			}
 			return aPaths;
+		},
+
+		/**
+		 * when navigating from Maps to Gantt 
+		 * onShowAssignments button click from the Resource Pin popover
+		 * apply the selected resource filter in the gantt view
+		 * also apply the date range from Map resource tree filterbar
+		 */
+		handleNavigationFromMap: function () {
+			// apply the resource filter
+			this.getOwnerComponent().GanttResourceFilter.applyNavigationFilters();
+
+			// set the date range from Maps
+			var aNavigationDateRange = this.oViewModel.getProperty("/ganttDateRangeFromMap");
+			this.getView().byId("idDateRangeGantt2").setDateValue(new Date(aNavigationDateRange[0]));
+			this.getView().byId("idDateRangeGantt2").setSecondDateValue(new Date(aNavigationDateRange[1]));
 		}
 	});
 

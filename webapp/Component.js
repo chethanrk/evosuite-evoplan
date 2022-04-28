@@ -177,7 +177,9 @@ sap.ui.define([
 				isOpetationLongTextPressed: false,
 				oResponseMessages: [],
 				aFixedAppointmentsList: {},
-				bDemandEditMode: false
+				bDemandEditMode: false,
+				ganttResourceFiltersFromPin: [],
+				ganttDateRangeFromMap: []
 
 			});
 			this.setModel(oViewModel, "viewModel");
