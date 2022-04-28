@@ -102,7 +102,6 @@ sap.ui.define([
 		updateAssignmentsWithTravelTime: function(oResource, aAssignments) {
 			return this.calculateTravelTimeForMultipleAssignments(oResource, aAssignments).then(function(oPTVResponse) {
 				var aUpdatedAssignments = _.cloneDeep(aAssignments);
-				debugger;
 				if(oPTVResponse.data.legs) {
 					aUpdatedAssignments.forEach(function(oAssignment, index) {
 						var sCalculatedTime =  (oPTVResponse.data.legs[index].travelTime / 60).toFixed(2).toString();
@@ -240,7 +239,6 @@ sap.ui.define([
 		 */
 		_planTours: function(oResource, aAssignments, sMatrixId) {
 			var oRequestBody = this._createPayloadForPlanToursRequest(oResource, aAssignments, sMatrixId);
-			debugger;
 			return this._sendPOSTRequestToPTV(this._sPlanToursUrl, oRequestBody);
 		},
 		
@@ -332,7 +330,6 @@ sap.ui.define([
 			}).catch(function(oError) {
 				var sErrorMessage = oError.response.data.message ? 
 					oError.response.data.message : this.oComponent.getModel("i18n").getResourceBundle().getText("errorMessage");
-					debugger;
 				MessageBox.error(sErrorMessage);
 			}.bind(this));
 		}
