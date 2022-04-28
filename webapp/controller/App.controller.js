@@ -164,7 +164,7 @@ sap.ui.define([
 				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.pageNewGanttChartSplit"):
-				if (this._routeValidation("ENABLE_GANTT_JSON")) {
+				if (this._routeValidation("ENABLE_GANTT_SPLIT_JSON")) {
 					oRouter.navTo("newGanttSplit", {});
 					window.open(sRoute, "_blank");
 					break;
