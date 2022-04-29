@@ -810,6 +810,32 @@ sap.ui.define([
 			oGanttOriginDataModel.refresh(true);
 			oGanttModel.refresh(true);
 		},
+
+		/**
+		 * Updating Assignment Status for Assignmnets after changing
+		 * @param sPath
+		 * @param sAsgnStsFnctnKey
+		 * @since 2205
+		 */
+		_updateAssignmentStatus: function (sPath, sAsgnStsFnctnKey) {
+			var oGanttModel = this.getModel("ganttModel"),
+				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
+				sParentPath, sChildPath, sChildSplitPath, index;
+			if (sPath.length > 60) {
+				sParentPath = sPath.split("/AssignmentSet/results/")[0];
+				oGanttModel.setProperty(sParentPath + "/STATUS", sAsgnStsFnctnKey);
+			} else {
+				sChildPath = sPath.substring(0, 27);
+				sChildSplitPath = sPath.split("/");
+				index = sChildSplitPath[sChildSplitPath.length - 1];
+				sChildPath = sChildPath + "/children/" + index;
+				oGanttModel.setProperty(sChildPath + "/STATUS", sAsgnStsFnctnKey);
+				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/STATUS", sAsgnStsFnctnKey);
+			}
+			oGanttModel.setProperty(sPath + "/STATUS", sAsgnStsFnctnKey);
+			oGanttOriginDataModel.refresh(true);
+			oGanttModel.refresh(true);
+		},
 	});
 
 });

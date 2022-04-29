@@ -107,7 +107,7 @@ sap.ui.define([
 		_proceedToAssignmentStatusServiceCall: function (aAssignmentStatus, sFunctionKey) {
 			var oParams, bLast,
 				iAssignmentsLen = aAssignmentStatus.length - 1;
-				this._oView.getModel("appView").setProperty("/busy", true);
+			this._oView.getModel("appView").setProperty("/busy", true);
 			for (var i in aAssignmentStatus) {
 				bLast = false;
 				oParams = {
@@ -168,10 +168,12 @@ sap.ui.define([
 				if (this._mParameters.bFromHome) {
 					this._eventBus.publish("BaseController", "refreshDemandTable", {});
 				} else if (this._mParameters.bFromNewGantt || this._mParameters.bFromGantt) {
+					this._eventBus.publish("BaseController", "refreshFullGantt", this._loadGanttData, this);
 					this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 				} else if (this._mParameters.bFromMap) {
 					this._eventBus.publish("BaseController", "refreshMapView", {});
-				}else if (this._mParameters.bFromDetail) {
+				} else if (this._mParameters.bFromDetail) {
+					this._eventBus.publish("BaseController", "refreshFullGantt", this._loadGanttData, this);
 					this._eventBus.publish("BaseController", "refreshDemandOverview", {});
 				}
 			}
