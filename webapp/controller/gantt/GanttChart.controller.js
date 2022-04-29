@@ -128,27 +128,14 @@ sap.ui.define([
 
 		/**
 		 * double click on a shape
-		 * open assignment detail dialog
+		 * open assignment detail popover
 		 * @param oEvent
 		 */
 		onShapeDoubleClick: function (oEvent) {
-			var oParams = oEvent.getParameters(),
-				oContext = oParams.shape.getBindingContext("ganttModel"),
-				oRowContext = oParams.rowSettings.getParent().getBindingContext("ganttModel"),
-				oShape = oParams.shape,
-				sMsg;
-			if (oShape && oShape.sParentAggregationName === "shapes3") {
-				// to identify the action done on respective page
-				localStorage.setItem("Evo-Action-page", "ganttSplit");
-				if (oContext) {
-					this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], {
-						bFromNewGantt: true
-					}, oShape.getTime());
-				} else {
-					sMsg = this.getResourceBundle().getText("notFoundContext");
-					this.showMessageToast(sMsg);
-				}
-			}
+			var oShapeContext = oEvent.getParameter("shape").getBindingContext("ganttModel"),
+				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId();
+			this.getOwnerComponent().GanttAssignmentPopOver.open(this.getView(), sap.ui.getCore().byId(sToolbarId + "-settingsButton"),
+				oShapeContext);
 		},
 
 		/**
@@ -443,7 +430,10 @@ sap.ui.define([
 					bFromNewGantt: true,
 					sSourcePath: sPath,
 					bCustomBusy: true
-				};
+				},
+				oShape = oEvent.getSource().getPopup()._oPosition.of,
+				oContext = oShape.getBindingContext("ganttModel"),
+				oRowContext = oShape.getParent().getParent().getBindingContext("ganttModel");
 			//still needed?
 			if (oAppModel.getProperty("/currentRoute") === "ganttSplit") {
 				mParameters = {
@@ -484,6 +474,15 @@ sap.ui.define([
 			} else if (sAsgnStsFnctnKey) {
 				//Changing Assignment Status
 				this._onContextMenuAssignmentStatusChange(sPath, oData, sAsgnStsFnctnKey);
+			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.showPlanningCal")) {
+				// Open Planning Calendar
+				var sMsg;
+				if (oContext) {
+					this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], mParameters, oShape.getTime());
+				} else {
+					sMsg = this.getResourceBundle().getText("notFoundContext");
+					this.showMessageToast(sMsg);
+				}
 			}
 		},
 
@@ -786,7 +785,6 @@ sap.ui.define([
 			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGN_GANTT") && sPath.length > 60) {
 				bEnableRelationships = true;
 			}
-			this.getOwnerComponent().GanttAssignmentPopOver.onCloseAssigmentsPopover();
 			if (oData.DEMAND_STATUS !== "COMP") {
 				this._getRelatedDemandData(oData).then(function (oResult) {
 					oData.sPath = oContext.getPath();
@@ -1665,29 +1663,6 @@ sap.ui.define([
 					}
 				}
 			}
-		},
-
-		/**
-		 * handle Mouse hover event to show Assignments popup 
-		 * since 2205
-		 */
-		onShapeMouseEnter: function (oEvent) {
-			var oShapeContext = oEvent.getParameter("shape").getBindingContext("ganttModel"),
-				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId(),
-				bIsDummy = this.oGanttModel.getProperty(oShapeContext.getPath() + "/Guid") === "thisisdummyguidassignment";
-				
-			if (!bIsDummy && !(this._oContextMenu && this._oContextMenu.getPopup().isOpen())) {
-				this.getOwnerComponent().GanttAssignmentPopOver.open(this.getView(), sap.ui.getCore().byId(sToolbarId + "-settingsButton"),
-					oShapeContext);
-			}
-		},
-
-		/**
-		 * handle Mouse hover event to show Assignments popup 
-		 * since 2205
-		 */
-		onShapeMouseLeave: function (oEvent) {
-			// this.getOwnerComponent().GanttAssignmentPopOver.onCloseAssigmentsPopover(); // commenting code to prevent closing of popover while mouse cursor out
 		},
 
 		/**
