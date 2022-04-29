@@ -1765,6 +1765,7 @@ sap.ui.define([
 						function (aData) {
 							this.getModel("appView").setProperty("/busy", false);
 							this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+							this._updateAssignmentStatus(sPath, sAsgnStsFnctnKey);
 						}.bind(this));
 				} else {
 					sap.m.MessageBox.error(this.getModel("i18n").getResourceBundle().getText("assignmentNotPossible"));
