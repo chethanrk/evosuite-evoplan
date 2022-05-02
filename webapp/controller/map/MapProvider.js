@@ -53,7 +53,7 @@ sap.ui.define([
 		 * Calculates a route based on a resource-home address and a list of assignments to visit.
 		 * @abstract
 		 * @param {Waypoint} oResource - A Resource object that defines home address.
-		 * @param {Waypoint[]} aAssignments - Arroy of assignments to be visited.
+		 * @param {Waypoint[]} aAssignments - Array of assignments to be visited.
 		 * @return {Promise<RouteResponse>} - Promise object represents the response from Map Provider service.
 		 */
 		calculateRoute: function(oResource, aAssignments) {
@@ -61,15 +61,49 @@ sap.ui.define([
 		},
 		
 		/**
-		 * Calculates travel time between two waypoints
+		 * Calculates travel time between **two** waypoints
 		 * @abstract
 		 * @param {Waypoint} oStartPoint - Point to calculate a route **from**.
 		 * @param {Waypoint} oEndPoint - Point to calculate a route **to**.
-		 * @return {Promise<RouteSimpleResponse>} Promise object represents the response from Map Provider service.
+		 * @return {Promise<number>} Promise object represents travel time in minutes.
 		 */
-		calculateTravelTime: function(oStartPoint, oEndPoint) {
+		calculateSingleTravelTime: function(oStartPoint, oEndPoint) {
 			Log.error("The 'calculateTravelTime' method is not implemented!" );
-		}
+		},
+		
+		/**
+		 * Calculates travel times for each leg between resource and it's assignments.
+		 * Doesn't change assignments sequence.
+		 * @abstract
+		 * @param {Waypoint} oResource -A Resource object that defines home address.
+		 * @param {Waypoint[]} aAssignments - Array of assignments to be visited.
+		 * @return {Promise<RouteResponseWithLegs>} Promise object represents response from PTV.
+		 */
+		calculateTravelTimeForMultipleAssignments: function(oResource, aAssignments) {
+			Log.error("The 'calculateTravelTimeForMultipleAssignments' method is not implemented!" );
+		},
+		
+		/**
+		 * Updates Assignment list with travel timeas according to sequence provided in parameters.
+		 * @abstract
+		 * @param {Waypoint} oResource - A Resource object that defines home address.
+		 * @param {Waypoint} aAssignments - Array of assignments to be visited.
+		 * @return {Promise<Assignment[]>} Promise object represents array of updated Assignments.
+		 */
+		updateAssignmentsWithTravelTime: function(oResource, aAssignments) {
+			Log.error("The 'updateAssignmentsWithTravelTime' method is not implemented!" );
+		},
+		
+		/**
+		 * Optimizes a route to reduce distance and travel time. Returned route may have different sequence of points to visit.
+		 * @abstract
+		 * @param {Waypoint} oResource - A Resource object that defines home address.
+		 * @param {Waypoint[]} aAssignments - Arroy of assignments to be visited.
+		 * @return {Promise<RouteResponse>} - Promise object represents the response from Map Provider service.
+		 */
+		optimizeRoute: function(oResource, aAssignments) {
+			Log.error("The 'optimizeRoute' method is not implemented!" );
+		},
 		
 		/* ============================================================================== */
 		/* Data types                                                                     */
@@ -86,16 +120,27 @@ sap.ui.define([
 		
 		/**
 		 * @typedef {Object} RouteSimpleResponse
-		 * @property {number} distance - distance to be covered within the route
-		 * @property {number} travelTime - time to travel in seconds
+		 * @property {Object} data - all the data returned by map provider
+		 * @property {number} data.distance - distance to be covered within the route
+		 * @property {number} data.travelTime - time to travel in seconds
 		 */
 		
 		/**
 		 * @typedef {Object} RouteResponse
-		 * @property {number} distance - distance to be covered within the route
-		 * @property {number} travelTime - time to travel in seconds
-		 * @property {Object} polyline - Wrapper object around a set of coordinates representing the route
-		 * @property {string} polyline.geoJSON - string containing object in format of GeoJSON. See the specification: https://geojson.org/
+		 * @property {Object} data - all the data returned by map provider
+		 * @property {number} data.distance - distance to be covered within the route
+		 * @property {number} data.travelTime - time to travel in seconds
+		 * @property {Object} data.polyline - Wrapper object around a set of coordinates representing the route
+		 * @property {string} data.polyline.geoJSON - string containing object in format of GeoJSON. See the specification: https://geojson.org/
+		 * The object represents the route itself; it contains the whole set of the needed coordinates to build a route.
+		 */
+		 
+		 /**
+		 * @typedef {Object} RouteResponseWithLegs
+		 * @property {Object} data - all the data returned by map provider
+		 * @property {number} data.distance - distance to be covered within the route
+		 * @property {number} data.travelTime - time to travel in seconds
+		 * @property {Leg[]} legs - array of legs to be covered within the route
 		 * The object represents the route itself; it contains the whole set of the needed coordinates to build a route.
 		 */
 		
@@ -106,6 +151,27 @@ sap.ui.define([
 		 * @property {Object} MapServiceLinks
 		 * @property {Object[]} MapServiceLinks.results
 		 * @property {string} MapServiceLinks.results[i].Link - Base URL for the Map Provider
+		 */
+		 
+		 /**
+		 * Waypoint with travel time. Usually it's an Assignment.
+		 * @typedef {Object} WaypointWithTravelTime
+		 * @property {string} LONGITUDE - Longitude value at geographic coordinate system
+		 * @property {string} LATITUDE - Latitude value at geographic coordinate system
+		 * @property {string} TRAVEL_TIME - Travel time to the point
+		 * @property {string} TRAVEL_BACK_TIME - Travel time from the point till Resource location. 
+		 * Is not zero in case the point is the last one in route sequence.
+		 */
+		 
+		 /**
+		 * @typedef {Object} Assignment
+		 * The type includes many properties, see the `com.evorait.evoplan.Assignment` in EvoPlan metadata
+		 */
+		 
+		 /**
+		 * @typedef {Object} Leg
+		 * @property {string} distance - distance to be covered within the leg
+		 * @property {string} travelTime - time to travel in seconds
 		 */
 	});
 });
