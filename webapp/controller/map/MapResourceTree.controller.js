@@ -67,6 +67,8 @@ sap.ui.define([
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshMapTreeTable", this._triggerRefreshTree, this);
 			this._eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
+			
+			this._eventBus.subscribe("Map", "onShowRoutePressPopover", this.onShowRoutePressPopover, this);
 
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
@@ -721,6 +723,10 @@ sap.ui.define([
 			}.bind(this));
 		},
 		
+		onShowRoutePressPopover: function(sChannel, sEventId, oEvent) {
+			this.onShowRoutePress(oEvent);
+		},
+		
 		/**
 		 * Handle `press` event on 'Show Route' button
 		 * Perform request to a map provider, display received route coordinates on map
@@ -734,7 +740,7 @@ sap.ui.define([
 			// oResource is declared here to closure the variable
 			var oResource;
 			
-			if(!oShowRouteButton.getPressed()) {
+			if (oShowRouteButton.getPressed && !oShowRouteButton.getPressed()) {
 				var aCurrentDisplayedRoutes = oViewModel.getProperty("/mapSettings/GeoJsonLayersData");
 				var aRoutesDisplay = aCurrentDisplayedRoutes.filter(function(oRoute) {
 					return oRoute.id !== oResourceHierachyObject.NodeId;
