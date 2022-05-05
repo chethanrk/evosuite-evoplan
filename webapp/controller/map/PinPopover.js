@@ -3,10 +3,11 @@ sap.ui.define([
 	"sap/ui/core/mvc/OverrideExecution",
 	"sap/base/Log",
 	"sap/ui/core/Fragment",
+	"sap/m/DatePicker",
 	"com/evorait/evoplan/model/Constants",
 	"com/evorait/evoplan/controller/TemplateRenderController",
 	"com/evorait/evoplan/controller/common/ResourceTreeFilterBar"
-], function (Controller, OverrideExecution, Log, Fragment, Constants, TemplateRenderController, ResourceTreeFilterBar) {
+], function (Controller, OverrideExecution, Log, Fragment, DatePicker, Constants, TemplateRenderController, ResourceTreeFilterBar) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.map.PinPopover", {
@@ -49,6 +50,7 @@ sap.ui.define([
 
 			this.selectedDemandPath = oSpot.getBindingContext().getPath();
 			this._selectedDemands = oSpot;
+			this.pinType = sType;
 
 			var sQualifier = bIsDemand ? Constants.ANNOTATION_CONSTANTS.MAP_DEMAND_PIN : "MapResourcePin",
 				mParams = {
@@ -58,7 +60,8 @@ sap.ui.define([
 					smartTable: null,
 					sPath: this.selectedDemandPath,
 					hiddenDiv: this._gethiddenDivPosition(oSpotPosition),
-					oView: this.oView
+					oView: this.oView,
+					bCallBackInChange: true // used in TemplateRenderController - decide to call callbackfn in change event
 				};
 
 			if (!this.oPopover) {
@@ -94,11 +97,41 @@ sap.ui.define([
 		},
 
 		/**
-		 * event for Show Route button in Demand popover context menu
+		 * event for Show Route button in Demand and Resource popover context menu
 		 * @param {object} oEvent - show route button click event
 		 **/
 		onShowRoute: function (oEvent) {
+			var oModel = this.oController.getModel();
+			this._eventBus = sap.ui.getCore().getEventBus();
 
+			// check if ShowRoutes from demand or resource popover
+			if (this.pinType === "Demand") { //if demand
+				// for demand pin show route if the demand is assigned to a resource for that day
+				// var oAssignedResource = this._fetchAssignmentOfDemand(oModel, this.selectedDemandPath);
+				// form the bindingcontext and set to oEvent
+
+			} else { //if resource
+				// for resource pin show route for that resource for a specific day
+				// use date picker to select a date for the resource
+				var fOnDateSelect = function (oDateSelect) {
+					// get the date and close popover
+					if (oDateSelect.getParameter("valid")) {
+						var oDateSelected = new Date(oDateSelect.getParameter("value"));
+						this.oPopover.close();
+						// form ReourceHierarchySet path from the ResourceSet path
+						var sResourceHierarchySetPath = this.selectedDemandPath.replace("ResourceSet", "ResourceHierarchySet");
+						oEvent.getSource().setBindingContext(oModel.getContext(sResourceHierarchySetPath));
+						// Set the Start Date and End Date of the ResourceHierarchy
+						var oResourceHierarchySetData = oModel.getProperty(sResourceHierarchySetPath);
+						oResourceHierarchySetData.StartDate = oDateSelected;
+						oResourceHierarchySetData.EndDate = oDateSelected;
+
+						this._eventBus.publish("Map", "onShowRoutePressPopover", oEvent);
+					}
+				};
+
+				this._openDatePickerDialog(fOnDateSelect.bind(this), oEvent.getSource());
+			}
 		},
 
 		/**
@@ -186,7 +219,7 @@ sap.ui.define([
 		/**
 		 * plan for already assigned demands
 		 * @param {object} oModel - main model 
-		 * @param {string} sPath - context path of the Demand/Resource
+		 * @param {string} sPath - context path of the Demand
 		 **/
 		_planForAssignedDemands: function (oModel, sPath) {
 			var oData = oModel.getProperty(sPath);
@@ -262,6 +295,26 @@ sap.ui.define([
 			};
 
 			return oJSONDataResourceFilter;
+		},
+
+		/**
+		 * Datepicker for show routes in resource popover
+		 * select the date for which the route will be shown for a resource
+		 * 
+		 * @param {function} fCallback - call back funtion executed after date selection
+		 * @param {object} oOpenByButton - dom element by which the datepicker is opened
+		 */
+		_openDatePickerDialog: function (fCallback, oOpenByButton) {
+			if (!this.oDatePicker) {
+				this.oDatePicker = new DatePicker("ResourcePopoverDatePicker", {
+					change: function (oEvent) {
+						var oDateSelected = oEvent;
+						return fCallback(oDateSelected);
+					}
+				});
+			}
+			this.oDatePicker.openBy(oOpenByButton.getDomRef());
 		}
+
 	});
 });
