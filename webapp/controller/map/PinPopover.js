@@ -3,10 +3,11 @@ sap.ui.define([
 	"sap/ui/core/mvc/OverrideExecution",
 	"sap/base/Log",
 	"sap/ui/core/Fragment",
+	"sap/m/DatePicker",
 	"com/evorait/evoplan/model/Constants",
 	"com/evorait/evoplan/controller/TemplateRenderController",
 	"com/evorait/evoplan/controller/common/ResourceTreeFilterBar"
-], function (Controller, OverrideExecution, Log, Fragment, Constants, TemplateRenderController, ResourceTreeFilterBar) {
+], function (Controller, OverrideExecution, Log, Fragment, DatePicker, Constants, TemplateRenderController, ResourceTreeFilterBar) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.map.PinPopover", {
@@ -305,7 +306,7 @@ sap.ui.define([
 		 */
 		_openDatePickerDialog: function (fCallback, oOpenByButton) {
 			if (!this.oDatePicker) {
-				this.oDatePicker = new sap.m.DatePicker("ResourcePopoverDatePicker", {
+				this.oDatePicker = new DatePicker("ResourcePopoverDatePicker", {
 					change: function (oEvent) {
 						var oDateSelected = oEvent;
 						return fCallback(oDateSelected);
