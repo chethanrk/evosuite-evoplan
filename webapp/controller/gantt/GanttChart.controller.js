@@ -423,6 +423,7 @@ sap.ui.define([
 				sPath = oEvent.getSource().data("Path"),
 				sFunctionKey = oSelectedItem.data("Function"),
 				sAsgnStsFnctnKey = oSelectedItem.data("StatusFunction"),
+				sRelationshipKey = oSelectedItem.data("RELATIONSHIP"),
 				oData = this.oGanttModel.getProperty(sPath),
 				oAppModel = this.getModel("appView"),
 				sDataModelPath = this._getAssignmentDataModelPath(oData.Guid),
@@ -466,10 +467,12 @@ sap.ui.define([
 				//reassign
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters,
 					"ganttShapeReassignment");
-			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.showRelationships")) {
+			} else if (sRelationshipKey) {
 				//Show Relationships
-				if (sPath.length > 60) {
+				if (sRelationshipKey === "SHOW") {
 					this._showRelationships(sPath, oData);
+				} else { //Hide Relationships
+					this._hideRelationships(sPath);
 				}
 			} else if (sAsgnStsFnctnKey) {
 				//Changing Assignment Status
@@ -804,7 +807,8 @@ sap.ui.define([
 		 */
 		_updateDraggedShape: function (sPath, sRequestType, sSourcePath) {
 			this.oGanttModel.setProperty(sPath + "/busy", true);
-			var oData = this.oGanttModel.getProperty(sPath);
+			var oData = this.oGanttModel.getProperty(sPath),
+			oOriginalData =this.oGanttModel.getProperty(sPath);
 			//get demand details to this assignment
 			this._getRelatedDemandData(oData).then(function (oResult) {
 				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
@@ -818,7 +822,7 @@ sap.ui.define([
 							sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
 						});
 					}
-					this._resetParentChildNodes(sPath);
+					this._resetParentChildNodes(sPath, oOriginalData);
 					if (sRequestType === "reassign") {
 						this._resetParentNodeData(sPath, sSourcePath, aData);
 					}
