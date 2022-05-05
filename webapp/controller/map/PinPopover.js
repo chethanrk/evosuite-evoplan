@@ -106,25 +106,23 @@ sap.ui.define([
 
 			// check if ShowRoutes from demand or resource popover
 			if (this.pinType === "Demand") { //if demand
-				// for demand pin show route if the demand is assigned to a resource for that day
-				// var oAssignedResource = this._fetchAssignmentOfDemand(oModel, this.selectedDemandPath);
-				// form the bindingcontext and set to oEvent
+				// for demand pin show route if the demand has an assignment
+				this._showRouteForDemand();
 
 			} else { //if resource
 				// for resource pin show route for that resource for a specific day
 				// use date picker to select a date for the resource
-				var fOnDateSelect = function (oDateSelect) {
+				var fOnDateSelect = function (oSelectedDate) {
 					// get the date and close popover
-					if (oDateSelect.getParameter("valid")) {
-						var oDateSelected = new Date(oDateSelect.getParameter("value"));
+					if (oSelectedDate) {
 						this.oPopover.close();
 						// form ReourceHierarchySet path from the ResourceSet path
 						var sResourceHierarchySetPath = this.selectedDemandPath.replace("ResourceSet", "ResourceHierarchySet");
 						oEvent.getSource().setBindingContext(oModel.getContext(sResourceHierarchySetPath));
 						// Set the Start Date and End Date of the ResourceHierarchy
 						var oResourceHierarchySetData = oModel.getProperty(sResourceHierarchySetPath);
-						oResourceHierarchySetData.StartDate = oDateSelected;
-						oResourceHierarchySetData.EndDate = oDateSelected;
+						oResourceHierarchySetData.StartDate = oSelectedDate;
+						oResourceHierarchySetData.EndDate = oSelectedDate;
 
 						this._eventBus.publish("Map", "onShowRoutePressPopover", oEvent);
 					}
@@ -153,7 +151,7 @@ sap.ui.define([
 			// setBusy true and close the dialog
 			this.oPopover.close();
 			this.oController.setMapBusy(true);
-			
+
 			// then navigate to the gantt view
 			this.oRouter.navTo("newgantt");
 
@@ -307,13 +305,99 @@ sap.ui.define([
 		_openDatePickerDialog: function (fCallback, oOpenByButton) {
 			if (!this.oDatePicker) {
 				this.oDatePicker = new DatePicker("ResourcePopoverDatePicker", {
+					hideInput: true,
 					change: function (oEvent) {
-						var oDateSelected = oEvent;
-						return fCallback(oDateSelected);
+						if (oEvent.getParameter("valid")) {
+							var oDateSelected = new Date(oEvent.getParameter("value") + "Z");
+							return fCallback(oDateSelected);
+						}
 					}
 				});
 			}
 			this.oDatePicker.openBy(oOpenByButton.getDomRef());
+		},
+
+		/**
+		 * For a demand fetch its assignments
+		 * @param {object} oModel - main model
+		 * @param {string} sPath - demand path 
+		 * @returns {object} oAssignmentData - assignments of the demand
+		 */
+		_fetchAssignmentOfDemand: function (oModel, sPath) {
+
+			var oPromise = new Promise(function (fResolve, fReject) {
+				oModel.read(sPath, {
+					urlParameters: {
+						$expand: "DemandToAssignment"
+					},
+					success: function (oAssignmentData) {
+						//fCheckResourceHierarchyData(oData, fResolve);
+						fResolve(oAssignmentData);
+					}
+				});
+			});
+
+			return oPromise;
+		},
+
+		/**
+		 * Calculates and shows route from the Demand pin popover 
+		 * for the demands assignment to a resource
+		 * 
+		 * fetches the assignment of Demands, then the resource information of the assignments
+		 * calcualtes route using Resource and Assignments information
+		 */
+		_showRouteForDemand: function () {
+
+			var oModel = this.oController.getModel(),
+				oViewModel = this.oController.getModel("viewModel"),
+				oResource, aAssignments = [],
+
+				sDemandPath = this.selectedDemandPath,
+				aGeoJsonLayersData = [],
+				aResourceFilters = [];
+
+			this._eventBus = sap.ui.getCore().getEventBus();
+
+			oViewModel.setProperty("/mapSettings/busy", true);
+
+			var pAssignmentsLoaded = this._fetchAssignmentOfDemand(oModel, sDemandPath);
+			var pMapProviderAndDataLoaded = Promise.all([this.getOwnerComponent()._pMapProviderLoaded, pAssignmentsLoaded]);
+
+			// aPromiseAllResults items are processed in the same sequence as proper promises are put to Promise.all method
+			pMapProviderAndDataLoaded.then(function (aPromiseAllResults) {
+					var oAssignmentData = aPromiseAllResults[1];
+					aAssignments = oAssignmentData.DemandToAssignment && oAssignmentData.DemandToAssignment.results;
+					if (aAssignments.length && aAssignments.length > 0) {
+						aResourceFilters.push(new sap.ui.model.Filter("ObjectId", "EQ", aAssignments[0].ObjectId));
+						return this.getOwnerComponent().readData("/ResourceSet", [aResourceFilters]);
+					} else {
+						this.oPopover.close();
+						sap.m.MessageToast.show(this.oController.getResourceBundle().getText("ymsg.noAssignmentsOfDemand"));
+
+					}
+				}.bind(this)).then(function (oResourceData) {
+					oResource = oResourceData.results && oResourceData.results.length > 0 && oResourceData.results[0];
+					if (oResource) {
+						return this.getOwnerComponent().MapProvider.calculateRoute(oResource, aAssignments);
+					} else {
+						this.oPopover.close();
+						sap.m.MessageToast.show(this.oController.getResourceBundle().getText("ymsg.noResourceOfAssignment"));
+					}
+				}.bind(this)).then(function (oResponse) {
+					var oData = JSON.parse(oResponse.data.polyline.geoJSON);
+
+					this.oPopover.close();
+					aGeoJsonLayersData.push(oData);
+					oViewModel.setProperty("/mapSettings/GeoJsonLayersData", aGeoJsonLayersData);
+					this._eventBus.publish("MapController", "displayRoute", oResource);
+					oViewModel.setProperty("/mapSettings/busy", false);
+				}.bind(this))
+				.catch(function (oError) {
+					oViewModel.setProperty("/mapSettings/busy", false);
+					Log.error(oError);
+				}.bind(this));
+
 		}
 
 	});
