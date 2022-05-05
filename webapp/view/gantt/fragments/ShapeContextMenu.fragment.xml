@@ -7,9 +7,23 @@
 		<u:MenuItem text="{i18n>xbut.buttonUnassign}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_UNASSIGN}"/>
 		<u:MenuItem text="{i18n>xbut.buttonReassign}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_REASSIGN}"/>
 		<u:MenuItem text="{i18n>xbut.buttonExecuteFunction}" visible="{user>/ENABLE_SET_FUNCTION}"/>
-		<u:MenuItem text="{i18n>xbut.showRelationships}" visible="{= ${viewModel>/ganttSettings/Enable_Relationships} &amp;&amp; ${user>/ENABLE_NETWORK_ASSIGN_GANTT}}"/>
+		<u:MenuItem text="{i18n>xbut.showRelationships}"
+			visible="{= ${viewModel>/ganttSettings/Enable_Relationships} &amp;&amp; ${user>/ENABLE_NETWORK_ASSIGN_GANTT}}">
+			<u:Menu itemSelect="handleStatusItemPress">
+				<u:MenuItem text="{i18n>xbut.show}">
+					<u:customData>
+						<core:CustomData key="RELATIONSHIP" value="SHOW"/>
+					</u:customData>
+				</u:MenuItem>
+				<u:MenuItem text="{i18n>xbut.hide}">
+					<u:customData>
+						<core:CustomData key="RELATIONSHIP" value="HIDE"/>
+					</u:customData>
+				</u:MenuItem>
+			</u:Menu>
+		</u:MenuItem>
 		<u:MenuItem text="{i18n>xbut.showPlanningCal}" visible="{user>/ENABLE_PLANNING_CALENDAR}"/>
-			<u:MenuItem text="{i18n>xbut.ChngAssgnStatus}" visible="{user>/ENABLE_ASSIGNMENT_STATUS}">
+		<u:MenuItem text="{i18n>xbut.ChngAssgnStatus}" visible="{user>/ENABLE_ASSIGNMENT_STATUS}">
 			<u:Menu items="{path:'/DemandFunctionsSet', templateShareable:true }">
 				<u:MenuItem text="{Description}">
 					<u:customData>
