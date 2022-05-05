@@ -74,9 +74,13 @@ sap.ui.define([
 			this.oParentController = oController;
 			this.oResourceBundle = oController.getResourceBundle();
 			this.oModel = oController.getView().getModel();
+			this.oUserModel = oController.getModel("user");
 			this.oSinglePlanningModel = models.createHelperModel({
 				hasChanges: false,
-				appointments: []
+				appointments: [],
+				legendShown: false,
+				legendItems: [],
+				legendAppointmentItems: []
 			});
 			this.oSinglePlanningModel.setDefaultBindingMode("TwoWay");
 			oController.getOwnerComponent().setModel(this.oSinglePlanningModel, "mapSinglePlanning");
@@ -89,6 +93,8 @@ sap.ui.define([
 					this.oPlannerDialog = content;
 					oController.getView().addDependent(this.oPlannerDialog);
 					this.oPlannerDialog.addStyleClass(this.oParentController.getOwnerComponent().getContentDensityClass());
+					//get legend for assignments and unavailabilies from Gantt Chart
+					this._loadLegendData();
 				}.bind(this));
 			}
 		},
@@ -101,7 +107,6 @@ sap.ui.define([
 		 * open single planning calendar dialog
 		 */
 		open: function (sPath, oTreeData, sNodeType, oParentData) {
-			this.oUserModel = this.oParentController.getModel("user");
 			this.oSinglePlanner = sap.ui.getCore().byId("idSinglePlanningCalendar");
 			this.oSelectedData = oTreeData;
 			this.sSelectedPath = sPath;
@@ -113,12 +118,21 @@ sap.ui.define([
 			this.oSinglePlanningModel.setProperty("/endHour", parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_ENDHR")) || 24);
 			this.oPlanningDate = oTreeData.StartDate;
 
+			//load all unavailabilities and blockers for this day
+			this._loadAvailabilitiesForDay(oTreeData.StartDate);
+
 			if (oTreeData.ChildCount > 0) {
 				//load assignments for this day, resource and resource group
 				this._loadAssignmentsForDay(oTreeData.StartDate);
 			}
-			console.log(this.oUserModel.getData());
 			this.oPlannerDialog.open();
+		},
+
+		/**
+		 * show full day or only working hour day
+		 */
+		toggleFullDay: function () {
+			this.oSinglePlanner.setFullDay(!this.oSinglePlanner.getFullDay());
 		},
 
 		/**
@@ -284,6 +298,7 @@ sap.ui.define([
 		_setNewDateAndLoad: function (oDate) {
 			this.oPlanningDate = oDate;
 			this._loadAssignmentsForDay(this.oPlanningDate);
+			this._loadAvailabilitiesForDay(this.oPlanningDate);
 		},
 
 		/**
@@ -415,6 +430,48 @@ sap.ui.define([
 					ResourceGuid: oData.ResourceGuid
 				};
 			return this.oParentController.executeFunctionImport(oModel, oParams, "UpdateAssignment", "POST", null, true);
+		},
+
+		/**
+		 * get legend colors and description from Gantt Chart legend set
+		 */
+		_loadLegendData: function () {
+			var aLegendAppointmentItems = this.oSinglePlanningModel.getProperty("/legendAppointmentItems"),
+				aLegendItems = this.oSinglePlanningModel.getProperty("/legendItems");
+
+			//add travel time legend to appointments
+			aLegendAppointmentItems.push({
+				CharactersticDescription: this.oResourceBundle.getText("xlab.appointTravel"),
+				Colourcode: this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_COLOR")
+			});
+
+			this.oParentController.getOwnerComponent().readData("/GanttLegendSet", []).then(function (oResults) {
+				oResults.results.forEach(function (oItem) {
+					if (oItem.CharactersticCode === "STATUS") {
+						//is legend for assignment
+						aLegendAppointmentItems.push(oItem);
+					} else {
+						aLegendItems.push(oItem);
+					}
+				}.bind(this));
+			}.bind(this));
+		},
+
+		_loadAvailabilitiesForDay: function (oDate) {
+			var sEntitySetPath = "/ResourceAvailabilitySet",
+				aFilters = [];
+
+			console.log(this.oSelectedData);
+
+			aFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, this.oSelectedData.ResourceGuid));
+			aFilters.push(new Filter("DateTo", FilterOperator.LE, moment(oDate).endOf("day").format("YYYY-MM-DDTHH:mm:ss")));
+			aFilters.push(new Filter("DateFrom", FilterOperator.GE, moment(oDate).startOf("day").format("YYYY-MM-DDTHH:mm:ss")));
+			var oFilter = new Filter(aFilters, true);
+			console.log(oFilter);
+			this.oParentController.getOwnerComponent().readData(sEntitySetPath, [oFilter]).then(function (oResults) {
+				console.log(oResults);
+			});
+
 		},
 
 		/**
