@@ -886,7 +886,15 @@ sap.ui.define([
 			}
 
 			oNewAssign = this.getModel().getProperty(oResourcePath);
-			oAssignment = this.setDateTimeParams(oAssignment, oNewAssign.StartDate, oNewAssign.StartTime, oNewAssign.EndDate, oNewAssign.EndTime)
+			if (oNewAssign.NodeType !== "RESOURCE") {
+				oAssignment = this.setDateTimeParams(oAssignment, oNewAssign.StartDate, oNewAssign.StartTime, oNewAssign.EndDate, oNewAssign.EndTime)
+			} else {
+				oAssignment = this.setDateTimeParams(oAssignment, oAssignment.DateFrom, {
+					ms: oAssignment.DateFrom.getTime()
+				}, oAssignment.DateTo, {
+					ms: oAssignment.DateTo.getTime()
+				});
+			}
 			oAssignmentModel.setData(oAssignment);
 
 			oAssignmentModel.setProperty("/NewAssignPath", oResourcePath);
