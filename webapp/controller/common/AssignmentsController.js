@@ -361,37 +361,24 @@ sap.ui.define([
 				}
 				return;
 			}
-			if (isReassign) {
-				oParams = {
-					DateFrom: oData.DateFrom || 0,
-					TimeFrom: oData.TimeFrom || 0,
-					DateTo: oData.DateTo || 0,
-					TimeTo: oData.TimeTo || 0,
-					AssignmentGUID: sAssignmentGUID,
-					EffortUnit: oData.EffortUnit,
-					Effort: oData.Effort,
-					ResourceGroupGuid: oData.ResourceGroupGuid,
-					ResourceGuid: oData.ResourceGuid
-				};
-			} else {
-				oParams = {
-					DateFrom: oData.DateFrom || 0,
-					TimeFrom: {
-						__edmtype: "Edm.Time",
-						ms: oData.DateFrom.getTime()
-					},
-					DateTo: oData.DateTo || 0,
-					TimeTo: {
-						__edmtype: "Edm.Time",
-						ms: oData.DateTo.getTime()
-					},
-					AssignmentGUID: sAssignmentGUID,
-					EffortUnit: oData.EffortUnit,
-					Effort: oData.Effort,
-					ResourceGroupGuid: oData.ResourceGroupGuid,
-					ResourceGuid: oData.ResourceGuid
-				};
-			}
+
+			oParams = {
+				DateFrom: oData.DateFrom || 0,
+				TimeFrom: oData.TimeFrom || {
+					__edmtype: "Edm.Time",
+					ms: oData.DateFrom.getTime()
+				},
+				DateTo: oData.DateTo || 0,
+				TimeTo: oData.TimeTo || {
+					__edmtype: "Edm.Time",
+					ms: oData.DateTo.getTime()
+				},
+				AssignmentGUID: sAssignmentGUID,
+				EffortUnit: oData.EffortUnit,
+				Effort: oData.Effort,
+				ResourceGroupGuid: oData.ResourceGroupGuid,
+				ResourceGuid: oData.ResourceGuid
+			};
 
 			if (isReassign && oData.NewAssignPath) {
 				oResource = this.getModel().getProperty(oData.NewAssignPath);
