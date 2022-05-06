@@ -350,7 +350,7 @@ sap.ui.define([
 				oResource,
 				oDemandObj = this.getModel().getProperty("/DemandSet('" + oData.DemandGuid + "')"),
 				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
-				bShowFixedAppointmentDialog;
+				bShowFixedAppointmentDialog, oParams;
 
 			if (isReassign && !oData.AllowReassign) {
 				sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
@@ -362,14 +362,14 @@ sap.ui.define([
 				return;
 			}
 
-			var oParams = {
+			oParams = {
 				DateFrom: oData.DateFrom || 0,
-				TimeFrom: {
+				TimeFrom: oData.TimeFrom || {
 					__edmtype: "Edm.Time",
 					ms: oData.DateFrom.getTime()
 				},
 				DateTo: oData.DateTo || 0,
-				TimeTo: {
+				TimeTo: oData.TimeTo || {
 					__edmtype: "Edm.Time",
 					ms: oData.DateTo.getTime()
 				},
@@ -871,33 +871,22 @@ sap.ui.define([
 				oAssignment.REMAINING_DURATION = oAssignData.REMAINING_DURATION;
 				oAssignment.OBJECT_SOURCE_TYPE = oAssignData.OBJECT_SOURCE_TYPE;
 			}
-			oAssignmentModel.setData(oAssignment);
 
 			oNewAssign = this.getModel().getProperty(oResourcePath);
+			if (oNewAssign.NodeType !== "RESOURCE") {
+				oAssignment = this.setDateTimeParams(oAssignment, oNewAssign.StartDate, oNewAssign.StartTime, oNewAssign.EndDate, oNewAssign.EndTime)
+			} else {
+				oAssignment = this.setDateTimeParams(oAssignment, oAssignment.DateFrom, {
+					ms: oAssignment.DateFrom.getTime()
+				}, oAssignment.DateTo, {
+					ms: oAssignment.DateTo.getTime()
+				});
+			}
+			oAssignmentModel.setData(oAssignment);
+
 			oAssignmentModel.setProperty("/NewAssignPath", oResourcePath);
 			oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
-			if (oNewAssign.StartDate) {
-				if (oAssignmentModel.getProperty("/DateFrom")) {
-					startDate = moment(oNewAssign.StartDate);
-					oAssignmentModel.getProperty("/DateFrom").setDate(startDate.get('date'));
-					oAssignmentModel.getProperty("/DateFrom").setMonth(startDate.get('month'));
-					oAssignmentModel.getProperty("/DateFrom").setFullYear(startDate.get('year'));
-				} else {
-					oAssignmentModel.setProperty("/DateFrom", oNewAssign.StartDate);
-				}
 
-			}
-			if (oNewAssign.EndDate) {
-				if (oAssignmentModel.getProperty("/DateFrom")) {
-					endDate = moment(oNewAssign.EndDate);
-					oAssignmentModel.getProperty("/DateTo").setDate(endDate.get('date'));
-					oAssignmentModel.getProperty("/DateTo").setMonth(endDate.get('month'));
-					oAssignmentModel.getProperty("/DateTo").setFullYear(endDate.get('year'));
-				} else {
-					oAssignmentModel.setProperty("/DateTo", oNewAssign.EndDate);
-				}
-
-			}
 			if (oAssignmentModel.getProperty("/NewAssignPath") !== null) {
 				oAssignmentModel.getData().ResourceGuid = this.getView().getModel().getProperty(oAssignmentModel.getProperty(
 					"/NewAssignPath") + "/ResourceGuid");
