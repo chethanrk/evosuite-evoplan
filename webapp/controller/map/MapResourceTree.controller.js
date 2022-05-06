@@ -783,7 +783,7 @@ sap.ui.define([
 			.catch(function(oError) {
 				oViewModel.setProperty("/mapSettings/busy", false);
 				Log.error(oError);
-				oShowRouteButton.setPressed(false);
+				oShowRouteButton.setPressed && oShowRouteButton.setPressed(false);
 			}.bind(this));
 		},
 		
