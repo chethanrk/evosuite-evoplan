@@ -308,8 +308,8 @@ sap.ui.define([
 		 * @param 
 		 */
 		_proceedToAssign: function (sChannel, oEvent, oData) {
-			if (oData.sDragPath) {
-				if (oData.sDragPath.length > 1 || (oData.sDragPath.length > 0 && oData.aFixedAppointmentObjects && oData.aFixedAppointmentObjects.length)) {
+			if (oData.sDragPath || oData.aFixedAppointmentObjects ) {
+				if (oData.sDragPath.length > 1 || (oData.aFixedAppointmentObjects && oData.aFixedAppointmentObjects.length > 1)) {
 					this._handleMultipleAssignment(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate, oData.aFixedAppointmentObjects);
 				} else {
 					this._validateAndAssignDemands(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate);
