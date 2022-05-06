@@ -50,9 +50,9 @@ sap.ui.define([
 					DemandGuid: aFixedAppointmentObjects[i].Guid,
 					ResourceGroupGuid: oResourceData.ResourceGroupGuid,
 					ResourceGuid: oResourceData.ResourceGuid,
-					DateFrom: aFixedAppointmentObjects[i].FIXED_APPOINTMENT_START_DATE,
+					DateFrom: this.setCustomDateTime(aFixedAppointmentObjects[i].FIXED_APPOINTMENT_START_DATE, aFixedAppointmentObjects[i].FIXED_APPOINTMENT_START_TIME),
 					TimeFrom: {},
-					DateTo: aFixedAppointmentObjects[i].FIXED_APPOINTMENT_END_DATE,
+					DateTo: this.setCustomDateTime(aFixedAppointmentObjects[i].FIXED_APPOINTMENT_END_DATE, aFixedAppointmentObjects[i].FIXED_APPOINTMENT_END_TIME),
 					TimeTo: {}
 				};
 				oParams.TimeFrom.ms = oParams.DateFrom ? oParams.DateFrom.getTime() : 0;
@@ -82,8 +82,10 @@ sap.ui.define([
 					oParams.DemandGuid = oParams.DemandGuid + "," + oDemandObj.Guid + "//" + oDemandObj.DURATION;
 				}
 			}
-			oParams.DemandGuid = oParams.DemandGuid.substr(1);
-			aPromises.push(this.executeFunctionImport(this.getModel(), oParams, "CreateAssignment", "POST"));
+			if (oParams.DemandGuid) {
+				oParams.DemandGuid = oParams.DemandGuid.substr(1);
+				aPromises.push(this.executeFunctionImport(this.getModel(), oParams, "CreateAssignment", "POST"));
+			}
 
 			return aPromises;
 		},
@@ -862,7 +864,7 @@ sap.ui.define([
 			oGanttOriginDataModel.refresh(true);
 			oGanttModel.refresh(true);
 		},
-		
+
 		/**
 		 * Resetting Assignment Shape Data when the data is unsaved 
 		 * @param sPath
