@@ -59,7 +59,8 @@ sap.ui.define([
 		mTypes: {
 			APPOINTMENT: "ASSIGNMENT",
 			TRAVEL_BEFORE: "TravelBefore",
-			TRAVEL_AFTER: "TravelAfter"
+			TRAVEL_AFTER: "TravelAfter",
+			BLOCKER: "Blocker"
 		},
 
 		oSinglePlanningModel: null,
@@ -116,6 +117,7 @@ sap.ui.define([
 			this.oSinglePlanningModel.setProperty("/parentData", oParentData);
 			this.oSinglePlanningModel.setProperty("/startHour", parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_STARTHR")) || 0);
 			this.oSinglePlanningModel.setProperty("/endHour", parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_ENDHR")) || 24);
+			this.oSinglePlanningModel.setProperty("/appointments", []);
 			this.oPlanningDate = oTreeData.StartDate;
 
 			//load all unavailabilities and blockers for this day
@@ -217,7 +219,7 @@ sap.ui.define([
 			if (oContext) {
 				var oData = oContext.getObject();
 				if (oData.type === this.mTypes.APPOINTMENT) {
-					if (!oData.Demand.ASGNMNT_CHANGE_ALLOWED) {
+					if (!oData.Demand.ASGNMNT_CHANGE_ALLOWED || oData.FIXED_APPOINTMENT) {
 						this.oParentController.showMessageToast(this.oResourceBundle.getText("ymsg.notAllowedChangeAssign"));
 					} else {
 						oAppointment.setStartDate(oEvent.getParameter("startDate"));
@@ -225,6 +227,8 @@ sap.ui.define([
 						this._setNewTravelTimes(oContext.getPath());
 						this.oSinglePlanningModel.setProperty("/hasChanges", true);
 					}
+				} else if (oData.type === this.mTypes.BLOCKER) {
+					this.oParentController.showMessageToast(this.oResourceBundle.getText("ymsg.notAllowedChangeUnavailable"));
 				}
 			}
 		},
@@ -297,6 +301,7 @@ sap.ui.define([
 		 */
 		_setNewDateAndLoad: function (oDate) {
 			this.oPlanningDate = oDate;
+			this.oSinglePlanningModel.setProperty("/appointments", []);
 			this._loadAssignmentsForDay(this.oPlanningDate);
 			this._loadAvailabilitiesForDay(this.oPlanningDate);
 		},
@@ -332,12 +337,18 @@ sap.ui.define([
 		 * @param {string} sType
 		 */
 		_setCalenderViews: function (sType) {
-			if (sType === "TIMEDAY") {
-				var oDayView = new sap.m.SinglePlanningCalendarDayView({
+			if (sType === "TIMEDAY" && !this._oDayView) {
+				this._oDayView = new sap.m.SinglePlanningCalendarDayView({
 					title: "Day",
 					key: sType
 				});
-				this.oSinglePlanner.addView(oDayView);
+				this.oSinglePlanner.addView(this._oDayView);
+			} else if (sType === "TIMEWEEK" && !this._oWeekView) {
+				this._oWeekView = new sap.m.SinglePlanningCalendarDayView({
+					title: "Week",
+					key: sType
+				});
+				this.oSinglePlanner.addView(this._oWeekView);
 			}
 		},
 
@@ -457,21 +468,48 @@ sap.ui.define([
 			}.bind(this));
 		},
 
+		/**
+		 * load all availble times, blockers, trainings etc.
+		 * When its available worktime set startHour and endHour
+		 * Other types will be added as appointments
+		 * 
+		 * @param oDate - date for availabilitites
+		 */
 		_loadAvailabilitiesForDay: function (oDate) {
 			var sEntitySetPath = "/ResourceAvailabilitySet",
-				aFilters = [];
-
-			console.log(this.oSelectedData);
+				aFilters = [],
+				aAppointments = this.oSinglePlanningModel.getProperty("/appointments"),
+				appoints = [];
 
 			aFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, this.oSelectedData.ResourceGuid));
-			aFilters.push(new Filter("DateTo", FilterOperator.LE, moment(oDate).endOf("day").format("YYYY-MM-DDTHH:mm:ss")));
-			aFilters.push(new Filter("DateFrom", FilterOperator.GE, moment(oDate).startOf("day").format("YYYY-MM-DDTHH:mm:ss")));
+			aFilters.push(new Filter("DateFrom", FilterOperator.EQ, moment(oDate).startOf("day").format("YYYY-MM-DDTHH:mm:ss")));
+			aFilters.push(new Filter("DateTo", FilterOperator.EQ, moment(oDate).endOf("day").format("YYYY-MM-DDTHH:mm:ss")));
 			var oFilter = new Filter(aFilters, true);
-			console.log(oFilter);
-			this.oParentController.getOwnerComponent().readData(sEntitySetPath, [oFilter]).then(function (oResults) {
-				console.log(oResults);
-			});
 
+			this.oParentController.getOwnerComponent().readData(sEntitySetPath, [oFilter]).then(function (oResults) {
+				if (oResults.results.length > 0) {
+					oResults.results.forEach(function (oItem) {
+						//available work time
+						if (oItem.AvailabilityTypeGroup === "A") {
+							this.oSinglePlanningModel.setProperty("/startHour", moment(oItem.DateFrom).hour());
+							this.oSinglePlanningModel.setProperty("/endHour", moment(oItem.DateTo).hour());
+						} else {
+							//show all other types as own appointmen
+							appoints.push({
+								sModelPath: sEntitySetPath + "('" + oItem.Guid + "')",
+								title: oItem.Description,
+								text: moment(oItem.DateFrom).format("HH:mm") + " - " + moment(oItem.DateTo).format("HH:mm"),
+								color: oItem.BlockPercentageColor || oItem.GANTT_UNAVAILABILITY_COLOR,
+								icon: null,
+								type: this.mTypes.BLOCKER,
+								DateFrom: oItem.DateFrom,
+								DateTo: oItem.DateTo
+							});
+						}
+					}.bind(this));
+					this.oSinglePlanningModel.setProperty("/appointments", aAppointments.concat(appoints));
+				}
+			}.bind(this));
 		},
 
 		/**
@@ -481,7 +519,8 @@ sap.ui.define([
 		_loadAssignmentsForDay: function (oDate) {
 			var sEntitySetPath = "/AssignmentSet",
 				sTravelAppointments = [],
-				oTravelItem = null;
+				oTravelItem = null,
+				aAppointments = this.oSinglePlanningModel.getProperty("/appointments");
 
 			if (this.oParentController._getResourceFilters) {
 				this.oSinglePlanningModel.setProperty("/hasChanges", false);
@@ -493,7 +532,6 @@ sap.ui.define([
 
 				var oFilter = new Filter(this.oParentController._getResourceFilters([this.sSelectedPath], oDate), true);
 				this.oParentController.getOwnerComponent().readData(sEntitySetPath, [oFilter], mParams).then(function (oResults) {
-					console.log(oResults.results);
 					if (oResults.results.length > 0) {
 						oResults.results.forEach(function (oItem, idx) {
 							oItem.sModelPath = sEntitySetPath + "('" + oItem.Guid + "')";
@@ -532,7 +570,7 @@ sap.ui.define([
 					}
 					var appoints = oResults.results.concat(sTravelAppointments);
 					this.oOriginalData = deepClone(appoints);
-					this.oSinglePlanningModel.setProperty("/appointments", appoints);
+					this.oSinglePlanningModel.setProperty("/appointments", aAppointments.concat(appoints));
 					this.oSinglePlanner.setBusy(false);
 				}.bind(this));
 			}
