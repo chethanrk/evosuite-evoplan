@@ -749,7 +749,7 @@ sap.ui.define([
 		 * since 2205
 		 */
 		_showRelationships: function (sPath, oData) {
-			var sMSg, oGanttModel = this.getModel("ganttModel"),
+			var sMsg, oGanttModel = this.getModel("ganttModel"),
 				oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
 				aFilters = [
 					new Filter("DemandGuid", FilterOperator.EQ, oData.DemandGuid),
@@ -760,9 +760,8 @@ sap.ui.define([
 			this._getRelationships(aFilters).then(function (aData, oResponse) {
 				this.getModel("appView").setProperty("/busy", false);
 				if (aData.results.length === 0) {
-					sMSg = oResourceBundle.getText("ymsg.noRelationships") + oData.ORDERID + " " + oResourceBundle.getText(
-						"ymsg.noRelationshipOperation") + oData.OPERATIONID + " " + oResourceBundle.getText("ymsg.noRelationshipText");
-					sap.m.MessageToast.show(sMSg);
+					sMsg = oResourceBundle.getText("ymsg.noRelationships", [oData.ORDERID, oData.OPERATIONID]);
+					sap.m.MessageToast.show(sMsg);
 				}
 				this.showMessage(oResponse);
 				oGanttModel.setProperty(sPath + "/RelationshipSet", aData);
