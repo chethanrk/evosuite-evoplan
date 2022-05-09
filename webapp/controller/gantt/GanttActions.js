@@ -844,22 +844,30 @@ sap.ui.define([
 		 * @param sAsgnStsFnctnKey
 		 * @since 2205
 		 */
-		_updateAssignmentStatus: function (sPath, sAsgnStsFnctnKey) {
+		_updateAssignmentStatus: function (sPath, sAsgnStsFnctnKey, aData) {
 			var oGanttModel = this.getModel("ganttModel"),
 				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
 				sParentPath, sChildPath, sChildSplitPath, index;
 			if (sPath.length > 60) {
 				sParentPath = sPath.split("/AssignmentSet/results/")[0];
 				oGanttModel.setProperty(sParentPath + "/STATUS", sAsgnStsFnctnKey);
+				oGanttModel.setProperty(sParentPath + "/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
+				oGanttModel.setProperty(sParentPath + "/DEMAND_STATUS", aData.DEMAND_STATUS);
 			} else {
 				sChildPath = sPath.substring(0, 27);
 				sChildSplitPath = sPath.split("/");
 				index = sChildSplitPath[sChildSplitPath.length - 1];
 				sChildPath = sChildPath + "/children/" + index;
 				oGanttModel.setProperty(sChildPath + "/STATUS", sAsgnStsFnctnKey);
+				oGanttModel.setProperty(sChildPath + "/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
+				oGanttModel.setProperty(sChildPath + "/DEMAND_STATUS", aData.DEMAND_STATUS);
 				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/STATUS", sAsgnStsFnctnKey);
+				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
+				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/DEMAND_STATUS", aData.DEMAND_STATUS);
 			}
 			oGanttModel.setProperty(sPath + "/STATUS", sAsgnStsFnctnKey);
+			oGanttModel.setProperty(sPath + "/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
+			oGanttModel.setProperty(sPath + "/DEMAND_STATUS", aData.DEMAND_STATUS);
 			oGanttOriginDataModel.refresh(true);
 			oGanttModel.refresh(true);
 		},
