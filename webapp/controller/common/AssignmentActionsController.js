@@ -94,7 +94,7 @@ sap.ui.define([
 				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}
-			return aPromises;
+				return aPromises;
 		},
 		/**
 		 * Deletes the assignment
