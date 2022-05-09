@@ -239,6 +239,9 @@ sap.ui.define([
 						eventBus.publish("TemplateRendererEvoPlan", "changedBinding", {
 							viewNameId: sViewName
 						});
+						if (callbackFn && mParams.bCallBackInChange) {
+							callbackFn();
+						}
 						if (callbackfn2) {
 							oEvent.getSource().refresh();
 							callbackfn2("change", null, mParams);

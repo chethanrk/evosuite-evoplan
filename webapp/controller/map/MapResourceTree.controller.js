@@ -64,6 +64,8 @@ sap.ui.define([
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshMapTreeTable", this._triggerRefreshTree, this);
 			this._eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
+			
+			this._eventBus.subscribe("Map", "onShowRoutePressPopover", this.onShowRoutePressPopover, this);
 
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
@@ -718,6 +720,17 @@ sap.ui.define([
 		},
 
 		/**
+		 * Event Bus method to call onShowRoutePress from other controllers
+		 * 
+		 * @param {string} sChannel event bus channel
+		 * @param {string} sEventId event bus id
+		 * @param {object} oEvent oEvent object
+		 */
+		onShowRoutePressPopover: function(sChannel, sEventId, oEvent) {
+			this.onShowRoutePress(oEvent);
+		},
+		
+		/**
 		 * Handle `press` event on 'Show Route' button
 		 * Perform request to a map provider, display received route coordinates on map
 		 * @param oEvent {sap.ui.base.Event} - the `press` event
@@ -731,7 +744,7 @@ sap.ui.define([
 			// oResource is declared here to closure the variable
 			var oResource;
 			
-			if(!oShowRouteButton.getPressed()) {
+			if (oShowRouteButton.getPressed && !oShowRouteButton.getPressed()) {
 				var aCurrentDisplayedRoutes = oViewModel.getProperty("/mapSettings/GeoJsonLayersData");
 				var aRoutesDisplay = aCurrentDisplayedRoutes.filter(function(oRoute) {
 					return oRoute.id !== oResourceHierachyObject.NodeId;
@@ -770,7 +783,7 @@ sap.ui.define([
 			.catch(function(oError) {
 				oViewModel.setProperty("/mapSettings/busy", false);
 				Log.error(oError);
-				oShowRouteButton.setPressed(false);
+				oShowRouteButton.setPressed && oShowRouteButton.setPressed(false);
 			}.bind(this));
 		},
 		
