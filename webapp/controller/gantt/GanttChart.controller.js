@@ -1442,11 +1442,11 @@ sap.ui.define([
 				aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
 				this.getModel().setUseBatch(false);
 				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
-				this._treeTable.setBusy(true);
+				this.getModel("appView").setProperty("/busy",true);
 				Promise.all(aPromises).then(function (data) {
 					this._addAssignemets(data[0].results);
 					this.getModel().setUseBatch(true);
-					this._treeTable.setBusy(false);
+					this.getModel("appView").setProperty("/busy",false);
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
 				}.bind(this));
 			}
