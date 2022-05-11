@@ -19,7 +19,7 @@ sap.ui.define([
 		 * @param {String} sTargetPath
 		 * @return {Promise}
 		 */
-		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, oNewEndDate, aGuids) {
+		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, oNewEndDate, aGuids, bFromMap) {
 			var oModel = this.getModel(),
 				targetObj = oModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
@@ -31,7 +31,7 @@ sap.ui.define([
 				sDemandGuid,
 				oParams;
 				
-				if (aGanttDemandDragged === "fromGanttSplit") {
+				if (aGanttDemandDragged === "fromGanttSplit" && !bFromMap) {
 				aGanttDemandDragged = {};
 				aGanttDemandDragged.sPath = slocStor.split(",")[0];
 				aGanttDemandDragged.oData = this.getModel().getProperty(aGanttDemandDragged.sPath);
@@ -56,7 +56,10 @@ sap.ui.define([
 						__edmType: "Edm.Time"
 					};
 					oParams.DateTo = oNewEndDate || oTargetDate;
-					oParams.TimeTo = targetObj.EndTime;
+					oParams.TimeTo = targetObj.EndTime || {
+						ms: oTargetDate.getTime(),
+						__edmType: "Edm.Time"
+					};
 				} else {
 					// When we drop it on resource tree rows
 					if (targetObj.StartDate) {

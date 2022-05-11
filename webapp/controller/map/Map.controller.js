@@ -1,6 +1,6 @@
 /* globals axios */
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/NavigationActionSheet",
+	"com/evorait/evoplan/controller/map/MapUtilities",
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
@@ -13,11 +13,11 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/unified/Calendar"
-], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
+], function (MapUtilities, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
 	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar) {
 	"use strict";
 
-	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
+	return MapUtilities.extend("com.evorait.evoplan.controller.map.Map", {
 		selectedDemands: [],
 		_isDemandDraggable: false,
 		_oGeoMap: null,
@@ -125,13 +125,32 @@ sap.ui.define([
 				if (!aSelectedDemands.includes(sPath)) {
 					aSelectedDemands.push(sPath);
 				}
+			} else {
+				aSelectedDemands.push(sPath);
 			}
+			this._selectedResource = oEvent.getSource();
 			this.aDraggedDemands = aSelectedDemands;
-			this._openCalendar(oEvent.getSource());
+			this._openCalendar();
 
-			// this._assignDemands(this._checkDemands());
-			// this._openSinglePlanner();
+		},
+		/**
+		 * @author Rahul
+		 * */
+		onCloseCalDialog: function (oEvent) {
+			oEvent.getSource().getParent().close();
+		},
+		/**
+		 * @author Rahul
+		 * */
+		onSelectDate: function (oEvent) {
+			debugger;
+			var oCalendar = oEvent.getSource(),
+				oSelectedDate = oCalendar.getSelectedDates(),
+				aAssignableDemands = this._checkDemands(),
+				aAssignedAssignments = this._assignDemands(aAssignableDemands, this._selectedResource.getBindingContext().getPath(), oSelectedDate[
+					0].getStartDate());
 
+			this._openSinglePlanner(aAssignedAssignments, oSelectedDate[0].getStartDate());
 		},
 		/**
 		 * Create filters for the selected demands
@@ -920,30 +939,29 @@ sap.ui.define([
 		_checkDemands: function () {
 			var aSelectedDemands = this.aDraggedDemands,
 				oModel = this.getModel(),
-				aAssignableDemands = [],
-				aReassignableDemands = [];
+				aAssignableDemands = [];
 
 			for (var i in aSelectedDemands) {
 				var oDemandObject = oModel.getProperty(aSelectedDemands[i]);
 				if (oDemandObject.ALLOW_ASSIGN) {
-					aAssignableDemands.push(oDemandObject);
-				} else if (oDemandObject.ALLOW_REASSIGN) {
-					aReassignableDemands.push(oDemandObject);
+					aAssignableDemands.push(aSelectedDemands[i]);
 				}
 			}
 
 			return {
 				aAssignableDemands: aAssignableDemands,
-				aReassignableDemands: aReassignableDemands
 			};
 
 		},
 		/**
 		 * Assign demands 
 		 * */
-		_assignDemands: function (oDemandObject, oResource) {
-			var aAssignableDemands = oDemandObject.aAssignableDemands,
-				aReassignableDemands = oDemandObject.aReassignableDemands;
+		_assignDemands: function (oDemandObject, oResource, oTargetDate) {
+			var aAssignableDemands = oDemandObject.aAssignableDemands;
+
+			Promise.all(this.assignedDemands(aAssignableDemands, oResource, oTargetDate, null, null, true)).then((values) => {
+				debugger;
+			});
 
 		},
 		/**
@@ -957,24 +975,19 @@ sap.ui.define([
 			var oView = this.getView();
 			if (!this.oPopover) {
 				Fragment.load({
-					name: "com.evorait.evoplan.view.map.fragments.RouteDateFilter",
+					name: "com.evorait.evoplan.view.map.fragments.CalendarDialog",
 					controller: this,
-					id: "idSelectDateAsgn"
+					id: "idSelectDate"
 				}).then(function (popover) {
 					this.oPopover = popover;
 					oView.addDependent(this.oPopover);
-					setTimeout(function () {
-						this.oPopover.openBy(oResource);
-					}.bind(this), 500);
+					this.oPopover.open();
 				}.bind(this));
 			} else {
-				setTimeout(function () {
-					this.oPopover.openBy(oResource);
-				}.bind(this), 500);
+				this.oPopover.open();
 
 			}
 		}
-
 	});
 
 });
