@@ -241,10 +241,16 @@ sap.ui.define([
 		 * @param {object} oEvent
 		 */
 		onPressCalculateRoute: function (oEvent) {
+			var oStartDate = this.oSinglePlanningModel.getProperty("/startDate");
 			var aAssignments = this._getOnlyAppointmentsByKeyValue("type", this.mTypes.APPOINTMENT);
 			if (aAssignments.length > 0) {
-				var sResourceLong = aAssignments[0].Resource.LONGITUDE,
-					sResourceLat = aAssignments[0].Resource.LATITUDE;
+				this.oParentController.getOwnerComponent().MapProvider.calculateTravelTimeAndDatesForDay(
+					aAssignments[0].Resource, aAssignments, oStartDate)
+					.then(function(aUpdatedAssignments) {
+						// TODO dibrovv: update appointments for the Single Planner
+						this._setAssignmentsData(aUpdatedAssignments);
+						this.oSinglePlanningModel.setProperty("/hasChanges", true);
+					}.bind(this));
 			}
 		},
 
@@ -436,49 +442,65 @@ sap.ui.define([
 
 				var oFilter = new Filter(this.oParentController._getResourceFilters([this.sSelectedPath], oDate), true);
 				this.oParentController.getOwnerComponent().readData(sEntitySetPath, [oFilter], mParams).then(function (oResults) {
-					console.log(oResults.results);
-					if (oResults.results.length > 0) {
-						oResults.results.forEach(function (oItem, idx) {
-							oItem.sModelPath = sEntitySetPath + "('" + oItem.Guid + "')";
-							oItem.title = oItem.DemandDesc;
-							oItem.text = "Effort: " + oItem.Effort + " " + oItem.EffortUnit;
-							oItem.color = oItem.DEMAND_STATUS_COLOR;
-							oItem.icon = oItem.DEMAND_STATUS_ICON;
-							oItem.type = this.mTypes.APPOINTMENT;
-
-							if (parseInt(oItem.TRAVEL_TIME)) {
-								oTravelItem = deepClone(oItem);
-								oTravelItem.title = this.oResourceBundle.getText("xlab.appointTravel");
-								oTravelItem.text = oItem.TRAVEL_TIME + " " + this.oResourceBundle.getText("xlab.minutes");
-								oTravelItem.color = this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_COLOR");
-								oTravelItem.icon = this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_ICON");
-								oTravelItem.DateFrom = moment(oItem.DateFrom).subtract(oItem.TRAVEL_TIME, "minutes").toDate();
-								oTravelItem.DateTo = oItem.DateFrom;
-								oTravelItem.Guid = oItem.Guid + "_before";
-								oTravelItem.type = this.mTypes.TRAVEL_BEFORE;
-								sTravelAppointments.push(oTravelItem);
-							}
-
-							if (parseInt(oItem.TRAVEL_BACK_TIME)) {
-								oTravelItem = deepClone(oItem);
-								oTravelItem.title = this.oResourceBundle.getText("xlab.appointTravelBack");
-								oTravelItem.text = oItem.TRAVEL_TIME + " " + this.oResourceBundle.getText("xlab.minutes");
-								oTravelItem.color = this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_COLOR");
-								oTravelItem.icon = this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_ICON");
-								oTravelItem.DateFrom = oItem.DateTo;
-								oTravelItem.DateTo = moment(oItem.DateTo).add(oItem.TRAVEL_BACK_TIME, "minutes").toDate();
-								oTravelItem.Guid = oItem.Guid + "_after";
-								oTravelItem.type = this.mTypes.TRAVEL_AFTER;
-								sTravelAppointments.push(oTravelItem);
-							}
-						}.bind(this));
-					}
-					var appoints = oResults.results.concat(sTravelAppointments);
-					this.oOriginalData = deepClone(appoints);
-					this.oSinglePlanningModel.setProperty("/appointments", appoints);
-					this.oSinglePlanner.setBusy(false);
+					this.oOriginalData = deepClone(this._setAssignmentsData(oResults.results)); // set current assignments and save it to this.oOriginalData
 				}.bind(this));
 			}
+		},
+		
+		// TODO dibrovv: docs
+		_setAssignmentsData: function(aAssignments) {
+			var sEntitySetPath = "/AssignmentSet",
+				sTravelAppointments = [],
+				oTravelItem = null;
+				
+			this.oSinglePlanner.setBusy(true);
+
+			if (aAssignments.length && aAssignments.length > 0) {
+				aAssignments.forEach(function (oAssignment, idx) {
+					oAssignment.sModelPath = sEntitySetPath + "('" + oAssignment.Guid + "')";
+					oAssignment.title = oAssignment.DemandDesc;
+					oAssignment.text = "Effort: " + oAssignment.Effort + " " + oAssignment.EffortUnit;
+					oAssignment.color = oAssignment.DEMAND_STATUS_COLOR;
+					oAssignment.icon = oAssignment.DEMAND_STATUS_ICON;
+					oAssignment.type = this.mTypes.APPOINTMENT;
+
+					if (parseInt(oAssignment.TRAVEL_TIME)) {
+						oTravelItem = deepClone(oAssignment);
+						oTravelItem.title = this.oResourceBundle.getText("xlab.appointTravel");
+						oTravelItem.text = oAssignment.TRAVEL_TIME + " " + this.oResourceBundle.getText("xlab.minutes");
+						oTravelItem.color = this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_COLOR");
+						oTravelItem.icon = this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_ICON");
+						oTravelItem.DateFrom = moment(oAssignment.DateFrom).subtract(oAssignment.TRAVEL_TIME, "minutes").toDate();
+						oTravelItem.DateTo = oAssignment.DateFrom;
+						oTravelItem.Guid = oAssignment.Guid + "_before";
+						oTravelItem.type = this.mTypes.TRAVEL_BEFORE;
+						sTravelAppointments.push(oTravelItem);
+					}
+
+					if (parseInt(oAssignment.TRAVEL_BACK_TIME)) {
+						oTravelItem = deepClone(oAssignment);
+						oTravelItem.title = this.oResourceBundle.getText("xlab.appointTravelBack");
+						oTravelItem.text = oAssignment.TRAVEL_TIME + " " + this.oResourceBundle.getText("xlab.minutes");
+						oTravelItem.color = this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_COLOR");
+						oTravelItem.icon = this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_ICON");
+						oTravelItem.DateFrom = oAssignment.DateTo;
+						oTravelItem.DateTo = moment(oAssignment.DateTo).add(oAssignment.TRAVEL_BACK_TIME, "minutes").toDate();
+						oTravelItem.Guid = oAssignment.Guid + "_after";
+						oTravelItem.type = this.mTypes.TRAVEL_AFTER;
+						sTravelAppointments.push(oTravelItem);
+					}
+				}.bind(this));
+			}
+			var appoints = aAssignments.concat(sTravelAppointments);
+			this.oSinglePlanningModel.setProperty("/appointments", appoints);
+			this.oSinglePlanner.setBusy(false);
+			
+			return appoints;
+			
+			// TODO dibrovv: do I need to save the new data to the default model? (for unsubmitted changes)
+			// need to check, whether the further actions (after calculation or optimization) could depend on default model
+			// e.g. drag-n-drop
+			
 		}
 	});
 });
