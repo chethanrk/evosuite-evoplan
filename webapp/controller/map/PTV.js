@@ -16,7 +16,7 @@ sap.ui.define([
 	var PLAN_TOURS_PATH = "/planTours";
 	
 	/**
-	 * TODO: actualize docs according to new props
+	 * TODO dibrovv: actualize docs according to new props
 	 * 
 	 * @class Provides set of methods to communicate to PTV xServer v2 (xserver2-europe-eu-test.cloud.ptvgroup.com - test server).
 	 * The class contain only explanatory comments for its methods. 
@@ -43,6 +43,8 @@ sap.ui.define([
 		_sRouteCalculationUrl: "",
 		_sCreateDistanceMatrixUrl: "",
 		_sPlanToursUrl: "",
+		_sDefaultResourceStartHour: "",
+		oUserModel: null,
 		
 		/**
 		 * Creates a new instance of the PTV map provider. 
@@ -60,6 +62,8 @@ sap.ui.define([
 			this._sCreateDistanceMatrixUrl = this.sServiceUrl + DIMA_SERVICE_PATH + CREATE_DISTANCE_MATRIX_PATH;
 			this._sPlanToursUrl = this.sServiceUrl + TOUR_SERVICE_PATH + PLAN_TOURS_PATH;
 			this._sAuthToken = btoa(oServiceData.Username + ":" + oServiceData.Password);
+			this.oUserModel = this.oComponent.getModel("user");
+			this._sDefaultResourceStartHour = parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_STARTHR")) || 8;
 		},
 		
 		/**
@@ -71,7 +75,7 @@ sap.ui.define([
 			// add the recource coordinates at the beginning and to the end of route
 			aAssignments.unshift(oResource);
 			aAssignments.push(oResource);
-			var oRequestBody = this._createPayloadForRouteRequest(aAssignments, true);
+			var oRequestBody = this._createPayloadForRouteRequest(aAssignments, true); // todo dibrovv: add date
 			
 			return this._sendPOSTRequestToPTV(this._sRouteCalculationUrl, oRequestBody);
 		},
@@ -82,7 +86,7 @@ sap.ui.define([
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.XRoute.calculateRoute
 		 */
 		calculateSingleTravelTime: function(oStartPoint, oEndPoint) {
-			var oRequestBody = this._createPayloadForRouteRequest([oStartPoint, oEndPoint], false);
+			var oRequestBody = this._createPayloadForRouteRequest([oStartPoint, oEndPoint], false, null); // default date will be used
 			return this._sendPOSTRequestToPTV(this._sRouteCalculationUrl, oRequestBody).then(function(oRouteResponse) {
 					return oRouteResponse.data.travelTime / 60; // return the travel time in minutes
 				}.bind(this));
@@ -93,50 +97,82 @@ sap.ui.define([
 		 * See the resultFields.legs property of the RouteRequest type:
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Content/API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.LegResultFields
 		 */
-		calculateTravelTimeForMultipleAssignments: function(oResource, aAssignments) {
+		calculateTravelTimeForMultipleAssignments: function(oResource, aAssignments, oDateForRoute) {
 			var aWaypoints = _.cloneDeep(aAssignments);
 			// add the recource coordinates at the beginning and to the end of route
 			aWaypoints.unshift(oResource);
 			aWaypoints.push(oResource);
-			var oRequestBody = this._createPayloadForRouteRequest(aWaypoints, false, true);
+			// create payload with option to request information for legs
+			var oRequestBody = this._createPayloadForRouteRequest(aWaypoints, false, oDateForRoute);
 			
 			return this._sendPOSTRequestToPTV(this._sRouteCalculationUrl, oRequestBody);
 		},
 		
 		/**
 		 * @return {Assignment[]} a new array that includes provided assignments with updated TRAVEL_TIME and TRAVEL_BACK_TIME properties.
+		 * // todo dibrovv: update docs in mapprovider
 		 * The properties updated according to results returned by PTV `calculateRoute` function.
 		 */
-		updateAssignmentsWithTravelTime: function(oResource, aAssignments) {
-			return this.calculateTravelTimeForMultipleAssignments(oResource, aAssignments).then(function(oPTVResponse) {
+		updateAssignmentsWithTravelTime: function(oResource, aAssignments, oDateForRoute) {
+			return this.calculateTravelTimeForMultipleAssignments(oResource, aAssignments, oDateForRoute).then(function(oPTVResponse) {
 				var aUpdatedAssignments = _.cloneDeep(aAssignments);
+				var nOverallEffort = 0;
 				if(oPTVResponse.data.legs) {
-					aUpdatedAssignments.forEach(function(oAssignment, index) {
-						var sCalculatedTime =  (oPTVResponse.data.legs[index].travelTime / 60).toFixed(2).toString();
+					aUpdatedAssignments.forEach(function(oAssignment, index, aAssgns) {
+						var sCalculatedTime;
+						if(aAssgns[index-1]) {
+							var nCurrentEffortInSec = parseInt(aAssgns[index-1].Effort) * 3600;
+							nOverallEffort += nCurrentEffortInSec;
+							sCalculatedTime = ((oPTVResponse.data.legs[index].travelTime - nCurrentEffortInSec) / 60).toFixed(2).toString();
+						} else {
+							sCalculatedTime = (oPTVResponse.data.legs[index].travelTime / 60).toFixed(2).toString();
+						}
 						oAssignment.TRAVEL_TIME = sCalculatedTime;
 					});
 				}
-				// TODO assign TRAVEL_BACK_TIME for thte last assignment
 				var nLastLegIndex = oPTVResponse.data.legs.length - 1;
 				var nLastAssignmentIndex = aUpdatedAssignments.length - 1;
 				
 				//assign TRAVEL_BACK_TIME for the last assignment
-				var sTravelHomeTime =  (oPTVResponse.data.legs[nLastLegIndex].travelTime / 60).toFixed(2).toString();
+				var sTravelHomeTime = ((oPTVResponse.data.legs[nLastLegIndex].travelTime - nOverallEffort - 
+					aUpdatedAssignments[nLastAssignmentIndex].Effort * 3600) / 60).toFixed(2).toString();
 				aUpdatedAssignments[nLastAssignmentIndex].TRAVEL_BACK_TIME = sTravelHomeTime;
+				debugger;
 				return aUpdatedAssignments;
-			});
+			}.bind(this));
+		},
+		
+		
+		// TODO dibrovv: jsdoc; for mapprovider as well
+		calculateTravelTimeAndDatesForDay: function(oResource, aAssignments, oDateForRoute) {
+			return this.updateAssignmentsWithTravelTime(oResource, aAssignments).then(function(aAssignmentsWithTravelTime) {
+				var aUpdatedAssignments = [];
+				aAssignmentsWithTravelTime.reduce(function(prev, next) {
+					var oStartDateToWrap = prev ? prev.DateTo : moment(next.DateFrom.setHours(this._sDefaultResourceStartHour, 0)).toDate();
+					var oAssignmentStartDate = moment(oStartDateToWrap).add(next.TRAVEL_TIME, 'minutes');
+					var oAssignmentEndDate = oAssignmentStartDate.clone();
+					oAssignmentEndDate.add(parseInt(next.Effort), 'hours');
+					
+					next.DateFrom = oAssignmentStartDate.toDate();
+					next.DateTo = oAssignmentEndDate.toDate();
+					aUpdatedAssignments.push(next);
+					return next;
+				}.bind(this), null);
+				
+				return aUpdatedAssignments;
+			}.bind(this));
 		},
 		
 		/**
 		 * Optimizes a route to reduce distance and travel time. Returned route may have different sequence of points to visit.
-		 * TODO: add comments regarding the distance matrix
+		 * TODO dibrovv: add comments regarding the distance matrix
 		 * Corresponding documentation:
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#TechnicalConcepts/Routing/DSC_Distance_Matrices.htm
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#UseCases/Routing/UC_Accessing_DistanceMatrixContents.htm
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xdima.html#com.ptvgroup.xserver.xdima.XDima.createDistanceMatrix
 		 */
 		optimizeRoute: function(oResource, aAssignments) {
-			// TODO: implement call to the xTour service
+			// TODO dibrovv: implement call to the xTour service
 			
 			return this._createDistanceMatrix(oResource, aAssignments).then(function(sMatrixId) {
 				return this._planTours(oResource, aAssignments, sMatrixId);
@@ -155,20 +191,33 @@ sap.ui.define([
 		 * Polyline is set of coordinates representing a route.
 		 * @return {Object} - Payload for a reoute request
 		 */
-		_createPayloadForRouteRequest: function(aPointsToVisit, bIncludePolyline, bIncludeLegs) {
+		_createPayloadForRouteRequest: function(aPointsToVisit, bIncludePolyline, oDateForRoute) {
 			var oPointTemplate = {
-				"$type": "OffRoadWaypoint",
-				"location": {
-				   "offRoadCoordinate": {
-					   "x": "",
-					   "y": ""
+				$type: "OffRoadWaypoint",
+				location: {
+				   offRoadCoordinate: {
+					   x: "",
+					   y: ""
 				   }
+				},
+				tourStopOptions: {
+					serviceTime: 0
 				}
 			};
 			var aPoints = aPointsToVisit.reduce(function(prev, next) {
 				var oPoint = _.cloneDeep(oPointTemplate);
 				oPoint.location.offRoadCoordinate.x = next.LONGITUDE;
 				oPoint.location.offRoadCoordinate.y = next.LATITUDE;
+				
+				if(next.Effort && parseInt(next.Effort) !== 0) {
+					oPoint.tourStopOptions.serviceTime = parseInt(next.Effort) * 3600;
+				}
+				if(next.FIXED_APPOINTMENT) {
+					oPoint.tourStopOptions.openingIntervals = {
+						start: next.DateFrom,
+						end: next.DateTo
+					}
+				}
 				prev.push(oPoint);
 				return prev;
 			}, []);
@@ -176,36 +225,56 @@ sap.ui.define([
 			var oPayload = {};
 			oPayload.waypoints = aPoints;
 			
-			// Defiend the `car` profile as it's not supposed to use trucks to deliver cargos.
-			// Only service is supposed.
+			// Defined the `car` profile as it's not supposed to use trucks to deliver cargos.
 			oPayload.storedProfile = "car";
 			
-			if(bIncludePolyline) {
-				oPayload.resultFields = {
-					polyline: true
-				};
-				oPayload.geometryOptions = {
-			        "responseGeometryTypes": ["GEOJSON"]
-			    };
+			oPayload.resultFields = {
+				eventTypes: ["WAYPOINT_EVENT"],
+				legs: {
+					enabled: true
+				},
+				tourReport: true
+			};
+			
+			// `PTV_SpeedPatterns` is a standard predefined PTV profile. See the docs:
+			// https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#TechnicalConcepts/FeatureLayer/PTV_SpeedPatterns.htm
+			oPayload.requestProfile = {
+				featureLayerProfile: {
+					themes: [{
+						enabled: true,
+						id: "PTV_SpeedPatterns"
+					}]
+				}
+			};
+			
+			var oStartRouteDate;
+			if(oDateForRoute) {
+				oStartRouteDate = oDateForRoute;
+			} else {
+				oStartRouteDate = _.cloneDeep(aPointsToVisit[1].DateFrom);
 			}
 			
-			if(bIncludeLegs && oPayload.resultFields) {
-				oPayload.resultFields.legs = {
-					enabled: true
-				};
-			} else if(bIncludeLegs) {
-				oPayload.resultFields = {
-					legs: {
-						enabled: true
-					}
-				};
+			oStartRouteDate.setHours(this._sDefaultResourceStartHour);
+			oPayload.routeOptions = {
+				timeConsideration: {
+					$type: "ExactTimeConsiderationAtStart",
+					referenceTime: oStartRouteDate
+				},
+				routingType: "HIGH_PERFORMANCE_ROUTING_WITH_FALLBACK_CONVENTIONAL"
+			};
+			
+			if(bIncludePolyline) {
+				oPayload.resultFields.polyline = true;
+				oPayload.geometryOptions = {
+			        responseGeometryTypes: ["GEOJSON"]
+			    };
 			}
 			
 			return oPayload;
 		},
 		
 		/**
-		 * TODO: docs
+		 * TODO dibrovv: docs
 		 */
 		_createDistanceMatrix: function(oStartPoint, aPointsToVisit) {
 			var oRequestBody = this._createPayloadForDistanceMatrixRequest([oStartPoint].concat(aPointsToVisit));
@@ -215,14 +284,14 @@ sap.ui.define([
 		},
 		
 		/**
-		 * TODO: docs
+		 * TODO dibrovv: docs
 		 */
 		_createPayloadForDistanceMatrixRequest: function(aWaypoints) {
 			var oPointTemplate = {
-				"$type": "OffRoadRouteLocation",
-				"offRoadCoordinate": {
-					"x": "",
-					"y": ""
+				$type: "OffRoadRouteLocation",
+				offRoadCoordinate: {
+					x: "",
+					y: ""
 				}
 			};
 			
@@ -242,7 +311,7 @@ sap.ui.define([
 		},
 		
 		/**
-		 * TODO: docs
+		 * TODO dibrovv: docs
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.PlanToursRequest
 		 */
 		_planTours: function(oResource, aAssignments, sMatrixId) {
@@ -251,26 +320,26 @@ sap.ui.define([
 		},
 		
 		/**
-		 * TODO: docs
+		 * TODO dibrovv: docs
 		 */
 		_createPayloadForPlanToursRequest: function(oResource, aAssignments, sMatrixId) {
 			var oLocationTemplate = {
-				"$type": "CustomerSite",
-				"id": "",
-				"routeLocation": {
-					"$type": "OffRoadRouteLocation",
-					"offRoadCoordinate": {
-						"x": "",
-						"y": ""
+				$type: "CustomerSite",
+				id: "",
+				routeLocation: {
+					$type: "OffRoadRouteLocation",
+					offRoadCoordinate: {
+						x: "",
+						y: ""
 					}
 				}
 			};
 			
 			var oOrderTemplate = {
-				"$type": "VisitOrder",
-				"id": "",
-				"locationId": "",
-				"serviceTime": ""
+				$type: "VisitOrder",
+				id: "",
+				locationId: "",
+				serviceTime: ""
 			};
 			
 			var aXTourLocations = [];
@@ -333,7 +402,7 @@ sap.ui.define([
 		_sendPOSTRequestToPTV: function(sUrl, oRequestBody) {
 			return axios.post(sUrl, oRequestBody, {
 				headers: {
-					"Authorization": "Basic " + this._sAuthToken
+					Authorization: "Basic " + this._sAuthToken
 				}
 			}).catch(function(oError) {
 				var sErrorMessage = oError.response.data.message ? 
