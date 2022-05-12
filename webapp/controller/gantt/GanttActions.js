@@ -761,6 +761,45 @@ sap.ui.define([
 			}.bind(this));
 		},
 
+		/*
+		 * Handle press of Calculate travel time Button in gantt toolbar
+		 * @param oEvent
+		 * since 2205
+		 */
+		onCalculateRoutePress: function (oEvent) {
+			var oButton = oEvent.getSource(),
+				oView = this.getView(),
+				oStarDate = this.getModel("user").getProperty("/DEFAULT_GANT_START_DATE"),
+				oEndDate = this.getModel("user").getProperty("/DEFAULT_GANT_END_DATE");
+
+			if (!this._oCalendarPopover) {
+				Fragment.load({
+					name: "com.evorait.evoplan.view.map.fragments.RouteDateFilter",
+					id: oView.getId(),
+					controller: this
+				}).then(function (oPopover) {
+					this._oCalendarPopover = oPopover;
+					this.getView().addDependent(this._oCalendarPopover);
+					this._oCalendarPopover.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+					this.getView().byId("DRSMap").setMinDate(oStarDate);
+					this.getView().byId("DRSMap").setMaxDate(oEndDate);
+					this._oCalendarPopover.openBy(oButton);
+				}.bind(this));
+			} else {
+				this.getView().byId("DRSMap").setMinDate(oStarDate);
+				this.getView().byId("DRSMap").setMaxDate(oEndDate);
+				this._oCalendarPopover.openBy(oButton);
+			}
+		},
+		/*
+		 * Closing the calendar popover for route calculation
+		 * @param oEvent
+		 * since 2205
+		 */
+		onCloseDialog: function (oEvent) {
+			this._oCalendarPopover.close();
+		}
+
 	});
 
 });
