@@ -65,7 +65,7 @@ sap.ui.define([
 		},
 
 		onProceed: function () {
-			var oViewModel = this._oView.getModel('viewModel'),
+			var oViewModel = this._oView.getModel("viewModel"),
 				aFixedAppointments = oViewModel.getProperty("/aFixedAppointmentsList"),
 				oAssignment,
 				demandObj,
@@ -84,7 +84,7 @@ sap.ui.define([
 				if (this._aAllParameters.sDragPath.length > 1) {
 					for (var i in aFixedAppointments) {
 						demandObj = aFixedAppointments[i];
-						sPath = "/DemandSet('" + aFixedAppointments[0].Guid + "')"
+						sPath = "/DemandSet('" + aFixedAppointments[i].Guid + "')";
 						if (demandObj.IsSelected) {
 							this._aFixedAppointmentPayload.push(demandObj);
 							this._aAllParameters.sDragPath.splice(this._aAllParameters.sDragPath.indexOf(sPath), 1);
@@ -116,7 +116,7 @@ sap.ui.define([
 				if (this._aAllParameters.sDragPath.length > 1) {
 					for (var i in aFixedAppointments) {
 						demandObj = aFixedAppointments[i];
-						sPath = "/DemandSet('" + aFixedAppointments[0].Guid + "')"
+						sPath = "/DemandSet('" + aFixedAppointments[i].Guid + "')";
 						if (demandObj.IsSelected) {
 							this._aFixedAppointmentPayload.push(demandObj);
 							this._aAllParameters.sDragPath.splice(this._aAllParameters.sDragPath.indexOf(sPath), 1);

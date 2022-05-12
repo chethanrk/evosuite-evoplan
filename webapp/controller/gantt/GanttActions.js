@@ -84,7 +84,7 @@ sap.ui.define([
 			}
 			if (oParams.DemandGuid) {
 				oParams.DemandGuid = oParams.DemandGuid.substr(1);
-				aPromises.push(this.executeFunctionImport(this.getModel(), oParams, "CreateAssignment", "POST"));
+				aPromises.push(this.executeFunctionImport(this.getModel(), oParams, "CreateMultiAssignment", "POST"));
 			}
 
 			return aPromises;
@@ -916,6 +916,27 @@ sap.ui.define([
 			oGanttModel.refresh(true);
 			oGanttOriginDataModel.refresh(true);
 		},
+		
+		/**
+		 * Combining Multiple Assignment Creation Response to a single array
+		 * @param [aResults]
+		 * @return [aCreatedAssignments]
+		 * @since 2205
+		 */
+		_getCreatedAssignments: function (aResults) {
+			var aCreatedAssignments = [];
+			for (var a in aResults) {
+				var oCreatedAssignment = aResults[a].results;
+				if (!oCreatedAssignment) {
+					aCreatedAssignments.push(aResults[a]);
+				} else {
+					for (var a1 in oCreatedAssignment) {
+						aCreatedAssignments.push(oCreatedAssignment[a1]);
+					}
+				}
+			}
+			return aCreatedAssignments;
+		}
 	});
 
 });
