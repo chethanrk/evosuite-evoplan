@@ -744,10 +744,10 @@ sap.ui.define([
 			var aGeoJsonLayersData = [];
 			
 			var aResourceFilters = this._getResourceFilters([sResourceHierachyPath]);
-			var aAssignmentFilter = this._getAssignmentsFiltersWithinDateFrame(oResourceHierachyObject);
+			var aAssignmentFilters = this._getAssignmentsFiltersWithinDateFrame(oResourceHierachyObject);
 			oViewModel.setProperty("/mapSettings/busy", true);
 			
-			var pAssignmentsLoaded = this.getOwnerComponent().readData("/AssignmentSet", [aAssignmentFilter]);
+			var pAssignmentsLoaded = this.getOwnerComponent().readData("/AssignmentSet", aAssignmentFilters);
 			var pResourceLoaded = this.getOwnerComponent().readData("/ResourceSet", [aResourceFilters]);
 			var pMapProviderAndDataLoaded = Promise.all([this.getOwnerComponent()._pMapProviderLoaded, pAssignmentsLoaded, pResourceLoaded]);
 			

@@ -198,18 +198,32 @@ sap.ui.define([
 		 */
 		onDropAppointment: function (oEvent) {
 			var oAppointment = oEvent.getParameter("appointment"),
-				oContext = oAppointment.getBindingContext("mapSinglePlanning");
+				oContext = oAppointment.getBindingContext("mapSinglePlanning"),
+				oResource = null;
 
 			if (oContext) {
+				this.oSinglePlanner.setBusy(true);
 				var oData = oContext.getObject();
 				if (oData.type === this.mTypes.APPOINTMENT) {
 					if (!oData.Demand.ASGNMNT_CHANGE_ALLOWED) {
 						this.oParentController.showMessageToast(this.oResourceBundle.getText("ymsg.notAllowedChangeAssign"));
 					} else {
+						
 						oAppointment.setStartDate(oEvent.getParameter("startDate"));
 						oAppointment.setEndDate(oEvent.getParameter("endDate"));
-						this._setNewTravelTimes(oContext.getPath());
-						this.oSinglePlanningModel.setProperty("/hasChanges", true);
+						
+						var aAssignments = this._getOnlyAppointmentsByKeyValue("type", this.mTypes.APPOINTMENT)
+							.sort(function(a,b) {
+								return a.DateFrom - b.DateFrom;
+							});
+						oResource = aAssignments[0].Resource;
+						
+						this.oParentController.getOwnerComponent().MapProvider.updateAssignmentsWithTravelTime(oResource, aAssignments)
+							.then(function(aUpdatedAssignments) {
+								this._setAssignmentsData(aUpdatedAssignments);
+								this.oSinglePlanningModel.setProperty("/hasChanges", true);
+								this.oSinglePlanner.setBusy(false);
+						}.bind(this));
 					}
 				}
 			}
@@ -330,30 +344,6 @@ sap.ui.define([
 				});
 				this.oSinglePlanner.addView(oDayView);
 			}
-		},
-
-		/**
-		 * set new start and end travel times for a dragged appointment
-		 * @param {string} sPath - appointment path inside json model
-		 * Todo calculate travel times again
-		 */
-		_setNewTravelTimes: function (sPath) {
-			var aAppointments = this.oSinglePlanningModel.getProperty("/appointments"),
-				oAppData = this.oSinglePlanningModel.getProperty(sPath);
-
-			aAppointments.forEach(function (oItem) {
-				if (oItem.sModelPath === oAppData.sModelPath) {
-					if (oItem.type === this.mTypes.TRAVEL_BEFORE) {
-						//todo calculate route again with new sequence
-						oItem.DateTo = oAppData.DateFrom;
-						oItem.DateFrom = moment(oAppData.DateFrom).subtract(oAppData.TRAVEL_TIME, "minutes").toDate();
-					} else if (oItem.type === this.mTypes.TRAVEL_AFTER) {
-						//todo calculate route again with new sequence
-						oItem.DateFrom = oAppData.DateTo;
-						oItem.DateTo = moment(oAppData.DateTo).add(oAppData.TRAVEL_BACK_TIME, "minutes").toDate();
-					}
-				}
-			}.bind(this));
 		},
 
 		/**
@@ -493,6 +483,7 @@ sap.ui.define([
 			}
 			var appoints = aAssignments.concat(sTravelAppointments);
 			this.oSinglePlanningModel.setProperty("/appointments", appoints);
+			this.oSinglePlanner.rerender(); // to prevent buggy display of appointments
 			this.oSinglePlanner.setBusy(false);
 			
 			return appoints;

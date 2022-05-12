@@ -123,19 +123,21 @@ sap.ui.define([
 						if(aAssgns[index-1]) {
 							var nCurrentEffortInSec = parseInt(aAssgns[index-1].Effort) * 3600;
 							nOverallEffort += nCurrentEffortInSec;
-							sCalculatedTime = ((oPTVResponse.data.legs[index].travelTime - nCurrentEffortInSec) / 60).toFixed(2).toString();
+							sCalculatedTime = Math.ceil((oPTVResponse.data.legs[index].travelTime - nCurrentEffortInSec) / 60).toString();
 						} else {
-							sCalculatedTime = (oPTVResponse.data.legs[index].travelTime / 60).toFixed(2).toString();
+							sCalculatedTime = Math.ceil(oPTVResponse.data.legs[index].travelTime / 60).toString();
 						}
 						oAssignment.TRAVEL_TIME = sCalculatedTime;
+						// set TRAVEL_BACK_TIME to zero to make sure that only one assignment has non-zero TRAVEL_BACK_TIME
+						oAssignment.TRAVEL_BACK_TIME = 0;
 					});
 				}
 				var nLastLegIndex = oPTVResponse.data.legs.length - 1;
 				var nLastAssignmentIndex = aUpdatedAssignments.length - 1;
 				
 				//assign TRAVEL_BACK_TIME for the last assignment
-				var sTravelHomeTime = ((oPTVResponse.data.legs[nLastLegIndex].travelTime - nOverallEffort - 
-					aUpdatedAssignments[nLastAssignmentIndex].Effort * 3600) / 60).toFixed(2).toString();
+				var sTravelHomeTime = Math.ceil((oPTVResponse.data.legs[nLastLegIndex].travelTime - nOverallEffort - 
+					aUpdatedAssignments[nLastAssignmentIndex].Effort * 3600) / 60).toString();
 				aUpdatedAssignments[nLastAssignmentIndex].TRAVEL_BACK_TIME = sTravelHomeTime;
 				debugger;
 				return aUpdatedAssignments;
