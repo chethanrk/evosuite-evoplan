@@ -1915,7 +1915,7 @@ sap.ui.define([
 								oAssignment = {
 									DateFrom: oStartDate,
 									DateTo: oEndDate,
-									Description: "Travel",
+									Description: "Travel Time",
 									Effort: (this.aData[i].TRAVEL_BACK_TIME / 60).toFixed(1),
 									TRAVEL_TIME: parseFloat(this.aData[i].TRAVEL_BACK_TIME).toFixed(2)
 								};

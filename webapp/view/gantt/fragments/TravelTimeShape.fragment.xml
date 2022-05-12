@@ -1,16 +1,6 @@
 <core:FragmentDefinition xmlns="sap.ui.table" xmlns:core="sap.ui.core" xmlns:gnt2="sap.gantt.simple">
-	<!-- Travel Time shape -->
-	<!--<gnt2:BaseTriangle time="{DateFrom}" endTime="{DateTo}" width="auto" height="20" fill="@sapUiChartPaletteQualitativeHue3" selectable="false"-->
-	<!--selectedFill="@sapUiAccent2" tooltip="{Description}{Effort}"/>-->
-	<!--<BaseChevron time="{DateFrom}" endTime="{DateTo}" fill="@sapUiChartPaletteQualitativeHue1" tooltip="{Description}{Effort} Hours"/>-->
-	<gnt2:BaseRectangle time="{ganttModel>DateFrom}" height="15" endTime="{ganttModel>DateTo}" title="{ganttModel>Description} - {ganttModel>Effort} Hours" showTitle="true"
-		tooltip="{ganttModel>Description} - {ganttModel>Effort} Hours" fill="#00ACEE"
-		stroke="{parts: ['#00ACEE',{value:'-20', model:'ganttModel'}], formatter: '.ganttFormatter.shadeColor'}" strokeWidth="1" yBias="-1"
-		resizable="false" selectable="true" strokeOpacity="1" opacity="1" rx="4" ry="4" draggable="false"/>
-		
-		<!--stroke="{parts: ['ganttModel>DEMAND_STATUS_COLOR',{value:'-20', model:'ganttModel'}], formatter: '.ganttFormatter.shadeColor'}"-->
-		<!--strokeWidth="1" yBias="-1" resizable="{parts: ['user>/ENABLE_RESIZE', 'ganttModel>busy'], formatter: '.isBusyShape'}"-->
-		<!--selectable="{= ${ganttModel>busy} ? false : true}" strokeOpacity="{= ${ganttModel>busy} ? 0.5 : 1}"-->
-		<!--opacity="{= ${ganttModel>busy} ? 0.5 : 1}" rx="4" ry="4"-->
-		<!--draggable="{parts: ['user>/ENABLE_DRAG_DROP', 'ganttModel>busy'], formatter: '.isBusyShape'}"-->
+	<gnt2:BaseRectangle time="{ganttModel>DateFrom}" height="15" endTime="{ganttModel>DateTo}"
+		title="{ganttModel>Description} - {ganttModel>Effort} Hours" showTitle="true" tooltip="{ganttModel>Description} - {ganttModel>Effort} Hours"
+		fill="#00ACEE" stroke="{parts: ['#00ACEE',{value:'-20', model:'ganttModel'}], formatter: '.ganttFormatter.shadeColor'}" strokeWidth="1"
+		yBias="-1" resizable="false" selectable="true" strokeOpacity="1" opacity="1" rx="4" ry="4" draggable="false"/>
 </core:FragmentDefinition>
