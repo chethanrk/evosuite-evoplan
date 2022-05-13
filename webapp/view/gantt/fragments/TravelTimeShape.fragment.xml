@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="sap.ui.table" xmlns:core="sap.ui.core" xmlns:gnt2="sap.gantt.simple">
 	<gnt2:BaseRectangle time="{ganttModel>DateFrom}" height="15" endTime="{ganttModel>DateTo}"
 		title="{ganttModel>Description} - {ganttModel>Effort} Hours" showTitle="true" tooltip="{ganttModel>Description} - {ganttModel>Effort} Hours"
-		fill="#00ACEE" stroke="{parts: ['#00ACEE',{value:'-20', model:'ganttModel'}], formatter: '.ganttFormatter.shadeColor'}" strokeWidth="1"
+		fill="{user>/DEFAULT_TRAVEL_TIME_COLOR}" stroke="{parts: ['user>/DEFAULT_TRAVEL_TIME_COLOR',{value:'-20', model:'ganttModel'}], formatter: '.ganttFormatter.shadeColor'}" strokeWidth="1"
 		yBias="-1" resizable="false" selectable="true" strokeOpacity="1" opacity="1" rx="4" ry="4" draggable="false"/>
 </core:FragmentDefinition>

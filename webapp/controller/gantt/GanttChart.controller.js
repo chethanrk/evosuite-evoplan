@@ -1820,140 +1820,172 @@ sap.ui.define([
 		 */
 		handleCalendarSelect: function (oEvent) {
 			var oSelectedDate = oEvent.getSource().getSelectedDates()[0].getStartDate(),
-				oUserModel = this.getModel("user"),
-				aFilters = [],
 				oFilter,
 				sMsg;
 			this.oResource = this.getModel("ganttModel").getProperty(this.selectedResources[0]);
 			this.oSelectedDate = oSelectedDate;
 
 			//preparing filters to get the Assignment of selected date
-			aFilters.push(new Filter("ObjectId", FilterOperator.EQ, this.oResource.ResourceGuid + "//" + this.oResource.ResourceGroupGuid));
-			aFilters.push(new Filter("DateTo", FilterOperator.GE, oSelectedDate));
-			aFilters.push(new Filter("DateFrom", FilterOperator.LE, oSelectedDate.setHours(23, 59, 59, 999)));
-			oFilter = new Filter(aFilters, true);
+			oFilter = this._getFiltersToReadAssignments(this.oResource, this.oSelectedDate);
 
 			//Reading oData to get the Assignment of selected date
 			this.getOwnerComponent()._getData("/AssignmentSet", [oFilter]).then(function (result) {
 				this.aData = result.results;
 				if (this.aData.length === 0) {
+					// in case of no assignments, showing messageToast
 					sMsg = this.getResourceBundle().getText("ymsg.noAssignmentsOnDate");
 					this.showMessageToast(sMsg);
-					return;
+				} else {
+					// if there are assignments, then proceed to calculate the travel time
+					this._getTravelTimeFromPTV();
 				}
-
-				this.aAssignmetsWithTravelTime = [];
-				this.aTravelTimes = [];
-
-				//Sending the assignments and resource to PTV to calculte the travel time between each
-				this.getOwnerComponent().MapProvider.updateAssignmentsWithTravelTime(this.oResource, this.aData).then(
-					function (results) {
-						var oTempDate,
-							oStartDate,
-							oEndDate,
-							oAssignment;
-						this.aData = results;
-
-						oTempDate = this.oSelectedDate;
-
-						//Setting the gantt char Visible horizon to see selected date assignments
-						if (this._axisTime) {
-							oTempDate = new Date(oTempDate.setDate(oTempDate.getDate() - 2));
-							this._axisTime.setVisibleHorizon(new sap.gantt.config.TimeHorizon({
-								startTime: new Date(oTempDate.setHours(0, 0, 0)),
-								endTime: new Date(oTempDate.setHours(23, 59, 59, 999))
-							}));
-						} else {
-							this.onVisibleHorizonUpdate(null, new Date(oTempDate.setHours(0, 0, 0)), new Date(oTempDate.setHours(23, 59, 59, 999)));
-						}
-
-						//Route Creation in Map (changing the date and time of assignments according to travel)
-						for (var i = 0; i < this.aData.length; i++) {
-
-							if (i === 0) {
-								// Setting the Travel time for First Assignment
-								oTempDate = new Date(this.aData[i].DateFrom.toString());
-								oStartDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() - this.aData[i].TRAVEL_TIME - 1));
-								oEndDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[i].TRAVEL_TIME) - 1));
-							} else {
-								// Setting the Travel time for other than First Assignment
-								oTempDate = new Date(this.aData[i -
-									1].DateTo.toString());
-								oStartDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
-								oEndDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[i].TRAVEL_TIME)));
-							}
-							
-							//creating object for shape to show Travel Time in Gantt Chart
-							oAssignment = {
-								DateFrom: oStartDate,
-								DateTo: oEndDate,
-								Description: "Travel Time",
-								Effort: (this.aData[i].TRAVEL_TIME / 60).toFixed(1),
-								TRAVEL_TIME: parseFloat(this.aData[i].TRAVEL_TIME).toFixed(2)
-							};
-							
-							//condition to check whether travel is 0 then no need to create travel time object 
-							if (this.aData[i].TRAVEL_TIME != 0) {
-								this.aTravelTimes.push(oAssignment);
-							}
-							if (i) {
-								//Setting new Start/End Date/Time to the assignments based on travel time
-								oTempDate = this.aData[i].TRAVEL_TIME != 0 ? new Date(oAssignment.DateTo.toString()) : new Date(this.aData[i -
-									1].DateTo.toString());
-								this.aData[i].DateFrom = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
-								this.aData[i].DateTo = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[i].Effort) *
-									60))
-							}
-							//pushing the updated assignments to show into the gantt
-							this.aAssignmetsWithTravelTime.push(this.aData[i])
-
-							//creating object for shape to show Travel back Time in Gantt Chart. This is travel time from last assignment to home
-							if (i === this.aData.length - 1) {
-								oTempDate = new Date(this.aData[i].DateTo.toString());
-								oStartDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
-								oEndDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[i].TRAVEL_BACK_TIME) - 1));
-								oAssignment = {
-									DateFrom: oStartDate,
-									DateTo: oEndDate,
-									Description: "Travel Time",
-									Effort: (this.aData[i].TRAVEL_BACK_TIME / 60).toFixed(1),
-									TRAVEL_TIME: parseFloat(this.aData[i].TRAVEL_BACK_TIME).toFixed(2)
-								};
-								this.aTravelTimes.push(oAssignment)
-							}
-
-						}
-						
-						//adding updated assignments
-						this.oResource.AssignmentSet = {
-							results: this.aAssignmetsWithTravelTime
-						};
-						//adding Travel time object to show in gantt
-						this.oResource.TravelTimes = {
-							results: this.aTravelTimes
-						};
-						this.getModel("ganttModel").refresh();
-						
-						//method call to save the updated assignments into the backend
-						this.updateAssignments(this.aAssignmetsWithTravelTime);
-
-					}.bind(this));
-
-				// this.aAssignmetsWithTravelTime = [];
-
 			}.bind(this));
 
 		},
-		
+		/**
+		 * creating filter object to read assignments of selected date 
+		 * @param oResource
+		 * @param oSelectedDate
+		 * since 2205
+		 */
+		_getFiltersToReadAssignments: function (oResource, oSelectedDate) {
+			var aFilters = [];
+			aFilters.push(new Filter("ObjectId", FilterOperator.EQ, oResource.ResourceGuid + "//" + oResource.ResourceGroupGuid));
+			aFilters.push(new Filter("DateTo", FilterOperator.GE, oSelectedDate));
+			aFilters.push(new Filter("DateFrom", FilterOperator.LE, oSelectedDate.setHours(23, 59, 59, 999)));
+			return new Filter(aFilters, true);
+		},
+		/**
+		 * Reading assignments with travel time from PTV
+		 * since 2205
+		 */
+		_getTravelTimeFromPTV: function () {
+			this.aAssignmetsWithTravelTime = [];
+			this.aTravelTimes = [];
+
+			//Sending the assignments and resource to PTV to calculte the travel time between each
+			this.getOwnerComponent().MapProvider.updateAssignmentsWithTravelTime(this.oResource, this.aData).then(this._setTravelTimeToGantt.bind(
+				this))
+		},
+		/**
+		 * setting Travel Time object to Gantt and updating new date time for assignments based on travel Time
+		 * since 2205
+		 */
+		_setTravelTimeToGantt: function (results) {
+			var oTempDate,
+				oStartDate,
+				oEndDate,
+				oAssignment;
+			this.aData = results;
+
+			//Setting the gantt char Visible horizon to see selected date assignments
+			this._setGanttVisibleHorizon(this.oSelectedDate);
+
+			//Route Creation in Map (changing the date and time of assignments according to travel)
+			for (var i = 0; i < this.aData.length; i++) {
+				//creating object for shape to show Travel Time in Gantt Chart
+				oAssignment = this._getTravelTimeObject(i);
+
+				//condition to check whether travel is 0 then no need to create travel time object 
+				if (this.aData[i].TRAVEL_TIME != 0) {
+					this.aTravelTimes.push(oAssignment);
+				}
+				if (i) {
+					//Setting new Start/End Date/Time to the assignments based on travel time
+					oTempDate = this.aData[i].TRAVEL_TIME != 0 ? new Date(oAssignment.DateTo.toString()) : new Date(this.aData[i -
+						1].DateTo.toString());
+					this.aData[i].DateFrom = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
+					this.aData[i].DateTo = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[i].Effort) *
+						60))
+				}
+				//pushing the updated assignments to show into the gantt
+				this.aAssignmetsWithTravelTime.push(this.aData[i])
+
+				//creating object for shape to show Travel back Time in Gantt Chart. This is travel time from last assignment to home
+				if (i === this.aData.length - 1) {
+					oAssignment = this._getTravelTimeObject(i, true);
+					this.aTravelTimes.push(oAssignment)
+				}
+			}
+
+			//adding updated assignments
+			this.oResource.AssignmentSet = {
+				results: this.aAssignmetsWithTravelTime
+			};
+			//adding Travel time object to show in gantt
+			this.oResource.TravelTimes = {
+				results: this.aTravelTimes
+			};
+			this.getModel("ganttModel").refresh();
+
+			//method call to save the updated assignments into the backend
+			this.updateAssignments(this.aAssignmetsWithTravelTime);
+
+		},
+		/**
+		 * Setting the gantt char Visible horizon to see selected date assignments
+		 * @param ODate
+		 * since 2205
+		 */
+		_setGanttVisibleHorizon: function (oDate) {
+			if (this._axisTime) {
+				oDate = new Date(oDate.setDate(oDate.getDate() - 2));
+				this._axisTime.setVisibleHorizon(new sap.gantt.config.TimeHorizon({
+					startTime: new Date(oDate.setHours(0, 0, 0)),
+					endTime: new Date(oDate.setHours(23, 59, 59, 999))
+				}));
+			} else {
+				this.onVisibleHorizonUpdate(null, new Date(oDate.setHours(0, 0, 0)), new Date(oDate.setHours(23, 59, 59, 999)));
+			}
+		},
+
+		/**
+		 * Create object for Travel time between the assignments to show in Gantt
+		 * @param nIndex
+		 * since 2205
+		 */
+		_getTravelTimeObject: function (nIndex, bIsTravelBackTime) {
+			var oTempDate,
+				oStartDate,
+				oEndDate,
+				nEffort = bIsTravelBackTime ? (this.aData[nIndex].TRAVEL_BACK_TIME / 60).toFixed(1) : (this.aData[nIndex].TRAVEL_TIME / 60).toFixed(
+					1),
+				nTravelTime = bIsTravelBackTime ? parseFloat(this.aData[nIndex].TRAVEL_BACK_TIME).toFixed(2) : parseFloat(this.aData[nIndex].TRAVEL_TIME)
+				.toFixed(2);
+			if (nIndex === 0) {
+				// Setting the Travel time for First Assignment
+				oTempDate = new Date(this.aData[nIndex].DateFrom.toString());
+				oStartDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() - this.aData[nIndex].TRAVEL_TIME - 1));
+				oEndDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[nIndex].TRAVEL_TIME) - 1));
+			} else if (bIsTravelBackTime) {
+				oTempDate = new Date(this.aData[nIndex].DateTo.toString());
+				oStartDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
+				oEndDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[nIndex].TRAVEL_BACK_TIME) - 1));
+			} else {
+				// Setting the Travel time for other than First Assignment
+				oTempDate = new Date(this.aData[nIndex -
+					1].DateTo.toString());
+				oStartDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
+				oEndDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[nIndex].TRAVEL_TIME)));
+			}
+			return {
+				DateFrom: oStartDate,
+				DateTo: oEndDate,
+				Description: "Travel Time",
+				Effort: nEffort,
+				TRAVEL_TIME: nTravelTime
+			};
+		},
+
 		/**
 		 * Method to save the updated assignments to backend after calculating the route
-		 * @param oEvent
+		 * @param aAssignments
 		 * since 2205
 		 */
 		updateAssignments: function (aAssignments) {
 			var oParams = {},
 				bIsLast = false;
-			
+
 			//flags to prevent refresh after saving the updated assignments into the backend	
 			this.bDoNotRefreshTree = true;
 			this.bDoNotRefreshCapacity = true;
