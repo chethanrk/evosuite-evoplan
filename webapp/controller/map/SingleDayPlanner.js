@@ -64,7 +64,7 @@ sap.ui.define([
 
 		oSinglePlanningModel: null,
 
-		oOriginalData: {},
+		aOriginalData: [],
 
 		/**
 		 * when new single planner is initialized then fragment of dialog are loaded
@@ -212,10 +212,7 @@ sap.ui.define([
 						oAppointment.setStartDate(oEvent.getParameter("startDate"));
 						oAppointment.setEndDate(oEvent.getParameter("endDate"));
 						
-						var aAssignments = this._getOnlyAppointmentsByKeyValue("type", this.mTypes.APPOINTMENT)
-							.sort(function(a,b) {
-								return a.DateFrom - b.DateFrom;
-							});
+						var aAssignments = this._getOnlyAppointmentsByKeyValue("type", this.mTypes.APPOINTMENT);
 						oResource = aAssignments[0].Resource;
 						
 						this.oParentController.getOwnerComponent().MapProvider.updateAssignmentsWithTravelTime(oResource, aAssignments)
@@ -244,7 +241,7 @@ sap.ui.define([
 		 * @param {object} oEvent
 		 */
 		onPressCancelAppointments: function (oEvent) {
-			this.oSinglePlanningModel.setProperty("/appointments", this.oOriginalData);
+			this.oSinglePlanningModel.setProperty("/appointments", this.aOriginalData);
 			this.oSinglePlanningModel.setProperty("/hasChanges", false);
 		},
 
@@ -357,11 +354,12 @@ sap.ui.define([
 
 			if (this.oSinglePlanningModel.getProperty("/hasChanges")) {
 				//check all changes for appointments
-				aAppointments.forEach(function (oItem, idx) {
+				aAppointments.forEach(function (oItem) {
 					if (oItem.type === this.mTypes.APPOINTMENT) {
-						var originData = this.oOriginalData[idx];
-						if (originData.Guid === oItem.Guid &&
-							(originData.DateTo.getTime() !== oItem.DateTo.getTime() ||
+						var originData = _.find(this.aOriginalData, function(origObj) {
+							return origObj.Guid === oItem.Guid;
+						});
+						if (originData && (originData.DateTo.getTime() !== oItem.DateTo.getTime() ||
 								oItem.TRAVEL_TIME !== originData.TRAVEL_TIME ||
 								oItem.TRAVEL_BACK_TIME !== originData.TRAVEL_BACK_TIME)) {
 
@@ -432,7 +430,7 @@ sap.ui.define([
 
 				var oFilter = new Filter(this.oParentController._getResourceFilters([this.sSelectedPath], oDate), true);
 				this.oParentController.getOwnerComponent().readData(sEntitySetPath, [oFilter], mParams).then(function (oResults) {
-					this.oOriginalData = deepClone(this._setAssignmentsData(oResults.results)); // set current assignments and save it to this.oOriginalData
+					this.aOriginalData = deepClone(this._setAssignmentsData(oResults.results)); // set current assignments and save it to this.aOriginalData
 				}.bind(this));
 			}
 		},

@@ -5,6 +5,7 @@ sap.ui.define([
 ], function (Controller, OverrideExecution, Log) {
 	"use strict";
 	
+	// TODO dibrovv: update interface and docs according to current implementation
 	/**
 	 * @class Provides interface for communication with a Map Provider. 
 	 * All the particular provider-related implementations (e.g. PTV) should use the class as a parent and provide the same interface.
@@ -23,7 +24,7 @@ sap.ui.define([
 				constructor: {
 					
 				},
-				calculateRoute: {
+				getRoutePolyline: {
 					
 				},
 				calculateTravelTime: {
@@ -50,14 +51,14 @@ sap.ui.define([
 		},
 		
 		/**
-		 * Calculates a route based on a resource-home address and a list of assignments to visit.
+		 * Calculates a route polyline based on a resource-home address and a list of assignments to visit.
 		 * @abstract
 		 * @param {Waypoint} oResource - A Resource object that defines home address.
 		 * @param {Waypoint[]} aAssignments - Array of assignments to be visited.
 		 * @return {Promise<RouteResponse>} - Promise object represents the response from Map Provider service.
 		 */
-		calculateRoute: function(oResource, aAssignments) {
-			Log.error("The 'calculateRoute' method is not implemented!" );
+		getRoutePolyline: function(oResource, aAssignments) {
+			Log.error("The 'getRoutePolyline' method is not implemented!" );
 		},
 		
 		/**

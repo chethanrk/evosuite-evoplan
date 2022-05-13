@@ -71,13 +71,8 @@ sap.ui.define([
 		 * Corresponding documentation:
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.XRoute.calculateRoute
 		 */
-		calculateRoute: function(oResource, aAssignments) {
-			// add the recource coordinates at the beginning and to the end of route
-			aAssignments.unshift(oResource);
-			aAssignments.push(oResource);
-			var oRequestBody = this._createPayloadForRouteRequest(aAssignments, true); // todo dibrovv: add date
-			
-			return this._sendPOSTRequestToPTV(this._sRouteCalculationUrl, oRequestBody);
+		getRoutePolyline: function(oResource, aAssignments) {
+			return this._calculateRoute(oResource, aAssignments, null, true);
 		},
 		
 		/**
@@ -98,14 +93,7 @@ sap.ui.define([
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Content/API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.LegResultFields
 		 */
 		calculateTravelTimeForMultipleAssignments: function(oResource, aAssignments, oDateForRoute) {
-			var aWaypoints = _.cloneDeep(aAssignments);
-			// add the recource coordinates at the beginning and to the end of route
-			aWaypoints.unshift(oResource);
-			aWaypoints.push(oResource);
-			// create payload with option to request information for legs
-			var oRequestBody = this._createPayloadForRouteRequest(aWaypoints, false, oDateForRoute);
-			
-			return this._sendPOSTRequestToPTV(this._sRouteCalculationUrl, oRequestBody);
+			return this._calculateRoute(oResource, aAssignments, oDateForRoute, false);
 		},
 		
 		/**
@@ -116,6 +104,10 @@ sap.ui.define([
 		updateAssignmentsWithTravelTime: function(oResource, aAssignments, oDateForRoute) {
 			return this.calculateTravelTimeForMultipleAssignments(oResource, aAssignments, oDateForRoute).then(function(oPTVResponse) {
 				var aUpdatedAssignments = _.cloneDeep(aAssignments);
+				// sort to get the same sequence, as was used in _calculateRoute
+				aUpdatedAssignments.sort(function(a,b) {
+					return a.DateFrom - b.DateFrom;
+				});
 				var nOverallEffort = 0;
 				if(oPTVResponse.data.legs) {
 					aUpdatedAssignments.forEach(function(oAssignment, index, aAssgns) {
@@ -139,7 +131,6 @@ sap.ui.define([
 				var sTravelHomeTime = Math.ceil((oPTVResponse.data.legs[nLastLegIndex].travelTime - nOverallEffort - 
 					aUpdatedAssignments[nLastAssignmentIndex].Effort * 3600) / 60).toString();
 				aUpdatedAssignments[nLastAssignmentIndex].TRAVEL_BACK_TIME = sTravelHomeTime;
-				debugger;
 				return aUpdatedAssignments;
 			}.bind(this));
 		},
@@ -184,6 +175,27 @@ sap.ui.define([
 		/* =========================================================== */
 		/* internal methods                                            */
 		/* =========================================================== */
+		
+		
+		/**
+		 * Common method to call the `calculateRoute` operation of XRoute service
+		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.XRoute.calculateRoute
+		 */
+		_calculateRoute: function(oResource, aAssignments, oDateForRoute, bDisplayPolyline) {
+			var aWaypoints = _.cloneDeep(aAssignments);
+			// sort assignments according to sequence defined within date frame
+			// it's needed, as the sequence could be broken after fetching the assignments from backend
+			aWaypoints.sort(function(a,b) {
+				return a.DateFrom - b.DateFrom;
+			});
+			// add the recource coordinates at the beginning and to the end of route
+			aWaypoints.unshift(oResource);
+			aWaypoints.push(oResource);
+			// create payload with option to request information for legs
+			var oRequestBody = this._createPayloadForRouteRequest(aWaypoints, bDisplayPolyline, oDateForRoute);
+			
+			return this._sendPOSTRequestToPTV(this._sRouteCalculationUrl, oRequestBody);
+		},
 		
 		/**
 		 * Creates payload according to RouteRequest type:
@@ -440,6 +452,14 @@ sap.ui.define([
 		 /**
 		 * @typedef {Object} Assignment
 		 * The type includes many properties, see the `com.evorait.evoplan.Assignment` in EvoPlan metadata
+		 */
+		 
+		 /**
+		  * potential refactoring:
+		  * 1) Redefine return value from methods so that in Promise would be wrappen single value instead of whole object from PTV.
+		  * That requres refactoring in all modules that uses the PTV.js
+		  * 2) Integrate layer describing structure of provided objects (in order to get rid of properties names inside the module, like 
+		  * 'TRAVEL_TIME', 'DateFrom', 'Effort', etc). So that the module could work with different data structures.
 		 */
 	});
 });

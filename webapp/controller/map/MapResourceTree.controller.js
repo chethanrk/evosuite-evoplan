@@ -756,7 +756,7 @@ sap.ui.define([
 				var aAssignments = aPromiseAllResults[1].results;
 				oResource = aPromiseAllResults[2].results[0];
 				
-				return this.getOwnerComponent().MapProvider.calculateRoute(oResource, aAssignments);
+				return this.getOwnerComponent().MapProvider.getRoutePolyline(oResource, aAssignments);
 			}.bind(this)).then(function(oResponse) {
 				var oData = JSON.parse(oResponse.data.polyline.geoJSON);
 				
