@@ -201,7 +201,7 @@ sap.ui.define([
 				});
 			}
 
-			// //resetting buttons due to Resource selection is resetted.
+			//resetting buttons due to Resource selection is resetted.
 			if (!(this.selectedResources && this.selectedResources.length)) {
 				this.byId("idButtonreassign").setEnabled(false);
 				this.byId("idButtonunassign").setEnabled(false);
@@ -209,7 +209,6 @@ sap.ui.define([
 				this.byId("idButtonTimeAlloc").setEnabled(false);
 				this.byId("idCalculateRoute").setEnabled(false);
 			}
-			// this.selectedResources = [];
 		},
 
 		/**
@@ -1860,9 +1859,6 @@ sap.ui.define([
 		 * since 2205
 		 */
 		_getTravelTimeFromPTV: function () {
-			this.aAssignmetsWithTravelTime = [];
-			this.aTravelTimes = [];
-
 			//Sending the assignments and resource to PTV to calculte the travel time between each
 			this.getOwnerComponent().MapProvider.updateAssignmentsWithTravelTime(this.oResource, this.aData).then(this._setTravelTimeToGantt.bind(
 				this))
@@ -1873,10 +1869,11 @@ sap.ui.define([
 		 */
 		_setTravelTimeToGantt: function (results) {
 			var oTempDate,
-				oStartDate,
-				oEndDate,
 				oAssignment;
+
 			this.aData = results;
+			this.aAssignmetsWithTravelTime = [];
+			this.aTravelTimes = [];
 
 			//Setting the gantt char Visible horizon to see selected date assignments
 			this._setGanttVisibleHorizon(this.oSelectedDate);
@@ -1890,8 +1887,9 @@ sap.ui.define([
 				if (this.aData[i].TRAVEL_TIME != 0) {
 					this.aTravelTimes.push(oAssignment);
 				}
+
+				//Setting new Start/End Date/Time to the assignments based on travel time
 				if (i) {
-					//Setting new Start/End Date/Time to the assignments based on travel time
 					oTempDate = this.aData[i].TRAVEL_TIME != 0 ? new Date(oAssignment.DateTo.toString()) : new Date(this.aData[i -
 						1].DateTo.toString());
 					this.aData[i].DateFrom = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
