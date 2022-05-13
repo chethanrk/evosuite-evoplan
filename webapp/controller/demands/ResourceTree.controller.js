@@ -206,7 +206,7 @@ sap.ui.define([
 			if (!this.isLoaded) {
 				this.isLoaded = true;
 			}
-			
+
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			// setting filters in local model to access in assignTree dialog.
 			this._oViewModel.setProperty("/resourceFilterView", aFilter);
@@ -217,7 +217,7 @@ sap.ui.define([
 				oBinding.filters.push(oFilterRightTechnician);
 			} else {
 				this._oViewModel.setProperty("/CheckRightTechnician", false);
-				this._oViewModel.getProperty("/resourceFilterforRightTechnician", false);
+				this._oViewModel.setProperty("/resourceFilterforRightTechnician", false);
 			}
 		},
 
@@ -321,7 +321,6 @@ sap.ui.define([
 						}]);
 						this._reassignmentOnDrop(this.assignmentPath, sPath, oView, mParameter);
 					}.bind(this));
-				
 
 			} else {
 
