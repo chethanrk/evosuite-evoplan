@@ -246,8 +246,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Todo calculate route for appointments
-		 * and show travel times
+		 * 
+		 * TODO dibrovv: show travel times
 		 * 
 		 * @param {object} oEvent
 		 */
@@ -258,7 +258,6 @@ sap.ui.define([
 				this.oParentController.getOwnerComponent().MapProvider.calculateTravelTimeAndDatesForDay(
 					aAssignments[0].Resource, aAssignments, oStartDate)
 					.then(function(aUpdatedAssignments) {
-						// TODO dibrovv: update appointments for the Single Planner
 						this._setAssignmentsData(aUpdatedAssignments);
 						this.oSinglePlanningModel.setProperty("/hasChanges", true);
 					}.bind(this));
@@ -274,6 +273,14 @@ sap.ui.define([
 			if (aAssignments.length > 0) {
 				var sResourceLong = aAssignments[0].Resource.LONGITUDE,
 					sResourceLat = aAssignments[0].Resource.LATITUDE;
+			}
+			if (aAssignments.length > 0) {
+				this.oParentController.getOwnerComponent().MapProvider.optimizeRoute(
+					aAssignments[0].Resource, aAssignments)
+					.then(function(aUpdatedAssignments) {
+						this._setAssignmentsData(aUpdatedAssignments);
+						this.oSinglePlanningModel.setProperty("/hasChanges", true);
+					}.bind(this));
 			}
 		},
 
@@ -430,7 +437,7 @@ sap.ui.define([
 
 				var oFilter = new Filter(this.oParentController._getResourceFilters([this.sSelectedPath], oDate), true);
 				this.oParentController.getOwnerComponent().readData(sEntitySetPath, [oFilter], mParams).then(function (oResults) {
-					this.aOriginalData = deepClone(this._setAssignmentsData(oResults.results)); // set current assignments and save it to this.aOriginalData
+					this.aOriginalData = _.cloneDeep(this._setAssignmentsData(oResults.results)); // set current assignments and save it to this.aOriginalData
 				}.bind(this));
 			}
 		},
@@ -453,7 +460,7 @@ sap.ui.define([
 					oAssignment.type = this.mTypes.APPOINTMENT;
 
 					if (parseInt(oAssignment.TRAVEL_TIME)) {
-						oTravelItem = deepClone(oAssignment);
+						oTravelItem = _.cloneDeep(oAssignment);
 						oTravelItem.title = this.oResourceBundle.getText("xlab.appointTravel");
 						oTravelItem.text = oAssignment.TRAVEL_TIME + " " + this.oResourceBundle.getText("xlab.minutes");
 						oTravelItem.color = this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_COLOR");
@@ -466,7 +473,7 @@ sap.ui.define([
 					}
 
 					if (parseInt(oAssignment.TRAVEL_BACK_TIME)) {
-						oTravelItem = deepClone(oAssignment);
+						oTravelItem = _.cloneDeep(oAssignment);
 						oTravelItem.title = this.oResourceBundle.getText("xlab.appointTravelBack");
 						oTravelItem.text = oAssignment.TRAVEL_TIME + " " + this.oResourceBundle.getText("xlab.minutes");
 						oTravelItem.color = this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_COLOR");

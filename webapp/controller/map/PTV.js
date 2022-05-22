@@ -194,6 +194,7 @@ sap.ui.define([
 								}
 							}
 						});
+					}
 						
 					return aUpdatedAssignments;
 				}.bind(this));
