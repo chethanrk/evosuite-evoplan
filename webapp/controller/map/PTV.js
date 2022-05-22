@@ -165,10 +165,38 @@ sap.ui.define([
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xdima.html#com.ptvgroup.xserver.xdima.XDima.createDistanceMatrix
 		 */
 		optimizeRoute: function(oResource, aAssignments) {
-			// TODO dibrovv: implement call to the xTour service
-			
-			return this._createDistanceMatrix(oResource, aAssignments).then(function(sMatrixId) {
-				return this._planTours(oResource, aAssignments, sMatrixId);
+			var oDate = aAssignments[0].DateFrom;
+			return this._createDistanceMatrix(oResource, aAssignments, oDate).then(function(sMatrixId) {
+				// TODO dibrovv: implement assignments update like for updateAssignmentsWithTravelTime
+				return this._planTours(oResource, aAssignments, sMatrixId, oDate).then(function(oTourResponse) {
+					
+					var aUpdatedAssignments = _.cloneDeep(aAssignments);
+					var nOverallEffort = 0;
+					if(oTourResponse.data.tourReports && oTourResponse.data.tourReports.length === 1) {
+						var aTourEvents = oTourResponse.data.tourReports[0].tourEvents;
+					
+						aTourEvents.forEach(function(oTourEvent, nEventIndex) {
+							if(oTourEvent.eventTypes[0] === "SERVICE") {
+								var nAssIndex = _.findIndex(aUpdatedAssignments, function(oAssignment) {
+									return oTourEvent.orderId === oAssignment.Guid; // the orderId was defined as Guid value in moment of making the request
+								});
+								aUpdatedAssignments[nAssIndex].TRAVEL_BACK_TIME = 0;
+								aUpdatedAssignments[nAssIndex].TRAVEL_TIME = Math.ceil(aTourEvents[nEventIndex - 1].duration / 60).toString();
+								
+								var oStartDate = moment(aTourEvents[nEventIndex].startTime);
+								aUpdatedAssignments[nAssIndex].DateFrom = oStartDate.toDate();
+								var oEndDate = oStartDate.clone();
+								oEndDate.add(aUpdatedAssignments[nAssIndex].Effort, 'hours');
+								aUpdatedAssignments[nAssIndex].DateTo = oEndDate.toDate();
+								
+								if(aTourEvents[nEventIndex + 2].eventTypes[0] === "TRIP_END") {
+									aUpdatedAssignments[nAssIndex].TRAVEL_BACK_TIME = Math.ceil(aTourEvents[nEventIndex + 1].duration / 60).toString();
+								}
+							}
+						});
+						
+					return aUpdatedAssignments;
+				}.bind(this));
 			}.bind(this));
 		},
 		
@@ -226,11 +254,17 @@ sap.ui.define([
 				if(next.Effort && parseInt(next.Effort) !== 0) {
 					oPoint.tourStopOptions.serviceTime = parseInt(next.Effort) * 3600;
 				}
+				
+				// TODO dibrovv: test with FIXED_APPOINTMENT
+				// whether it makes sense to change to StartDurationInterval type with duration set to 0
 				if(next.FIXED_APPOINTMENT) {
-					oPoint.tourStopOptions.openingIntervals = {
+					oPoint.tourStopOptions.openingIntervals = [];
+					var oInterval = {
+						$type: "StartEndInterval",
 						start: next.DateFrom,
 						end: next.DateTo
 					}
+					oPoint.tourStopOptions.openingIntervals.push(oInterval);
 				}
 				prev.push(oPoint);
 				return prev;
@@ -290,8 +324,8 @@ sap.ui.define([
 		/**
 		 * TODO dibrovv: docs
 		 */
-		_createDistanceMatrix: function(oStartPoint, aPointsToVisit) {
-			var oRequestBody = this._createPayloadForDistanceMatrixRequest([oStartPoint].concat(aPointsToVisit));
+		_createDistanceMatrix: function(oStartPoint, aPointsToVisit, oDate) {
+			var oRequestBody = this._createPayloadForDistanceMatrixRequest([oStartPoint].concat(aPointsToVisit), oDate);
 			return this._sendPOSTRequestToPTV(this._sCreateDistanceMatrixUrl, oRequestBody).then(function(oCreateMatrixResponse) {
 					return oCreateMatrixResponse.data.summary.id;
 				}.bind(this));
@@ -300,7 +334,7 @@ sap.ui.define([
 		/**
 		 * TODO dibrovv: docs
 		 */
-		_createPayloadForDistanceMatrixRequest: function(aWaypoints) {
+		_createPayloadForDistanceMatrixRequest: function(aWaypoints, oDate) {
 			var oPointTemplate = {
 				$type: "OffRoadRouteLocation",
 				offRoadCoordinate: {
@@ -321,6 +355,32 @@ sap.ui.define([
 			oPayload.startLocations = aPreparedPoints;
 			oPayload.storedProfile = "car";
 			
+			oPayload.requestProfile = {
+				featureLayerProfile: {
+					themes: [{
+						enabled: true,
+						id: "PTV_SpeedPatterns"
+					}]
+				}
+			};
+			
+			var oStartDate = _.cloneDeep(oDate);
+			var oEndDate = _.cloneDeep(oDate);
+			oStartDate.setHours(this._sDefaultResourceStartHour, 0, 0);
+			oEndDate.setHours(23, 59, 0);
+    		
+			oPayload.distanceMatrixOptions = {
+				routingType: "HIGH_PERFORMANCE_ROUTING_WITH_FALLBACK_CONVENTIONAL",
+				timeConsideration: {
+					$type: "MultipleTravelTimesConsideration",
+					horizon: {
+						$type: "StartEndInterval",
+						start: oStartDate,
+						end: oEndDate
+					}
+				}
+			};
+			
 			return oPayload;
 		},
 		
@@ -328,15 +388,15 @@ sap.ui.define([
 		 * TODO dibrovv: docs
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.PlanToursRequest
 		 */
-		_planTours: function(oResource, aAssignments, sMatrixId) {
-			var oRequestBody = this._createPayloadForPlanToursRequest(oResource, aAssignments, sMatrixId);
+		_planTours: function(oResource, aAssignments, sMatrixId, oDate) {
+			var oRequestBody = this._createPayloadForPlanToursRequest(oResource, aAssignments, sMatrixId, oDate);
 			return this._sendPOSTRequestToPTV(this._sPlanToursUrl, oRequestBody);
 		},
 		
 		/**
 		 * TODO dibrovv: docs
 		 */
-		_createPayloadForPlanToursRequest: function(oResource, aAssignments, sMatrixId) {
+		_createPayloadForPlanToursRequest: function(oResource, aAssignments, sMatrixId, oDate) {
 			var oLocationTemplate = {
 				$type: "CustomerSite",
 				id: "",
@@ -361,13 +421,26 @@ sap.ui.define([
 			
 			aAssignments.forEach(function(oAssignment) {
 				var oLocation = _.cloneDeep(oLocationTemplate);
-				oLocation.id = oAssignment.ObjectId;
+				oLocation.id = oAssignment.Guid + "_location";
 				oLocation.routeLocation.offRoadCoordinate.x = oAssignment.LONGITUDE;
 				oLocation.routeLocation.offRoadCoordinate.y = oAssignment.LATITUDE;
+				
+				// TODO dibrovv: test with FIXED_APPOINTMENT
+				// whether it makes sense to change to StartDurationInterval type with duration set to 0
+				if(oAssignment.FIXED_APPOINTMENT) {
+					oLocation.openingIntervals = [];
+					var oInterval = {
+						$type: "StartEndInterval",
+						start: aAssignments.DateFrom,
+						end: aAssignments.DateTo
+					}
+					oLocation.openingIntervals.push(oInterval);
+				}
+				
 				aXTourLocations.push(oLocation);
 				
 				var oOrder = _.cloneDeep(oOrderTemplate);
-				oOrder.id = oAssignment.ObjectId;
+				oOrder.id = oAssignment.Guid;
 				oOrder.locationId = oLocation.id;
 				oOrder.serviceTime = parseFloat(oAssignment.Effort) * 3600;
 				aXTourOrders.push(oOrder);
@@ -378,26 +451,45 @@ sap.ui.define([
 			oResourceLocation.id = "ResourceHomeLocation";
 			oResourceLocation.routeLocation.offRoadCoordinate.x = oResource.LONGITUDE;
 			oResourceLocation.routeLocation.offRoadCoordinate.y = oResource.LATITUDE;
+			
 			aXTourLocations.push(oResourceLocation);
 			
 			var oPayload = {};
 			oPayload.locations = aXTourLocations;
 			oPayload.orders = aXTourOrders;
+			
+			var oStartDate = _.cloneDeep(oDate);
+			var oEndDate = _.cloneDeep(oDate);
+			oStartDate.setHours(this._sDefaultResourceStartHour, 0, 0);
+			oEndDate.setHours(23, 59, 0);
+			
+			// use oStartDate for `start` as well as for `end` in the tourStartInterval property to restrict start tour time
 			oPayload.fleet = {
 				vehicles: [{
 					ids: ["vehicle1"],
 					startLocationId: "ResourceHomeLocation",
-					endLocationId: "ResourceHomeLocation"
+					endLocationId: "ResourceHomeLocation",
+					tourStartInterval: {
+						start: oStartDate,
+						end: oStartDate
+					}
 				}]
 			};
 			oPayload.distanceMode = {
 				$type: "ExistingDistanceMatrix",
 				id: sMatrixId
 			};
+			
 			oPayload.planToursOptions = {
 				restrictions: {
 					singleTripPerTour: true,
 					singleDepotPerTour: true
+				},
+				calculationMode: "STANDARD",
+				planningHorizon: {
+					$type: "StartEndInterval",
+					start: oStartDate,
+					end: oEndDate
 				}
 			};
 			
