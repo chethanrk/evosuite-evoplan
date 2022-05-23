@@ -324,6 +324,9 @@ sap.ui.define([
 				}
 
 			}
+			//set first dragged index to the view model for further usage
+			this.getModel("viewModel").setProperty("/iFirstDraggedIndex", aGanttDemandDragged ? aGanttDemandDragged.index : -1);
+
 			//Condition added and Method is modified for fixed Appointments			// since Release/2201
 			if (this.aFixedAppointmentPayload && this.aFixedAppointmentPayload.length) {
 				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", this.aFixedAppointmentDemands);

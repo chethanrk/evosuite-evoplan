@@ -205,11 +205,13 @@ sap.ui.define([
 					}
 				}.bind(this),
 				error: function (oError) {
+					//set first dragged index to set initial
+					this.getModel("viewModel").setProperty("/iFirstDraggedIndex", -1);
 					//Handle Error
 					MessageToast.show(oResourceBundle.getText("errorMessage"), {
 						duration: 5000
 					});
-				}
+				}.bind(this)
 			});
 		},
 		/**
@@ -947,7 +949,7 @@ sap.ui.define([
 			}
 			return aAssignmentStatus;
 		},
-		
+
 		/**
 		 * Setting time to date for fixed appointment operation
 		 * @param oDate
