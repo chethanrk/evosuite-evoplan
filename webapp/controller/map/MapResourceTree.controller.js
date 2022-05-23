@@ -757,10 +757,10 @@ sap.ui.define([
 			var aGeoJsonLayersData = [];
 			
 			var aResourceFilters = this._getResourceFilters([sResourceHierachyPath]);
-			var aAssignmentFilter = this._getAssignmentsFiltersWithinDateFrame(oResourceHierachyObject);
+			var aAssignmentFilters = this._getAssignmentsFiltersWithinDateFrame(oResourceHierachyObject);
 			oViewModel.setProperty("/mapSettings/busy", true);
 			
-			var pAssignmentsLoaded = this.getOwnerComponent().readData("/AssignmentSet", [aAssignmentFilter]);
+			var pAssignmentsLoaded = this.getOwnerComponent().readData("/AssignmentSet", aAssignmentFilters);
 			var pResourceLoaded = this.getOwnerComponent().readData("/ResourceSet", [aResourceFilters]);
 			var pMapProviderAndDataLoaded = Promise.all([this.getOwnerComponent()._pMapProviderLoaded, pAssignmentsLoaded, pResourceLoaded]);
 			
@@ -769,7 +769,7 @@ sap.ui.define([
 				var aAssignments = aPromiseAllResults[1].results;
 				oResource = aPromiseAllResults[2].results[0];
 				
-				return this.getOwnerComponent().MapProvider.calculateRoute(oResource, aAssignments);
+				return this.getOwnerComponent().MapProvider.getRoutePolyline(oResource, aAssignments);
 			}.bind(this)).then(function(oResponse) {
 				var oData = JSON.parse(oResponse.data.polyline.geoJSON);
 				
