@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/MessageToast",
 	"sap/m/GroupHeaderListItem",
-	"sap/ui/unified/Calendar"
+	"sap/ui/unified/Calendar",
+	"com/evorait/evoplan/controller/map/SingleDayPlanner"
 ], function (MapUtilities, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
-	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar) {
+	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, SingleDayPlanner) {
 	"use strict";
 
 	return MapUtilities.extend("com.evorait.evoplan.controller.map.Map", {
@@ -49,6 +50,7 @@ sap.ui.define([
 
 			//initialize PinPopover controller
 			this.oPinPopover = new PinPopover(this);
+			this.oSingleDayPlanner = new SingleDayPlanner(this);
 		},
 
 		//TODO comment
@@ -148,7 +150,7 @@ sap.ui.define([
 				oSelectedDate = oCalendar.getSelectedDates(),
 				aAssignableDemands = this._checkDemands(),
 				aAssignedAssignments = this._assignDemands(aAssignableDemands, this._selectedResource.getBindingContext().getPath(), oSelectedDate[
-					0].getStartDate());
+					0].getStartDate(),oCalendar);
 
 			this._openSinglePlanner(aAssignedAssignments, oSelectedDate[0].getStartDate());
 		},
@@ -956,12 +958,17 @@ sap.ui.define([
 		/**
 		 * Assign demands 
 		 * */
-		_assignDemands: function (oDemandObject, oResource, oTargetDate) {
+		_assignDemands: function (oDemandObject, oResource, oTargetDate,oCalendar) {
 			var aAssignableDemands = oDemandObject.aAssignableDemands;
-
-			Promise.all(this.assignedDemands(aAssignableDemands, oResource, oTargetDate, null, null, true)).then((values) => {
-				debugger;
-			});
+			oCalendar.setBusy(true);
+			Promise.all(this.assignedDemands(aAssignableDemands, oResource, oTargetDate, null, null, true)).then(function(responses){
+				oCalendar.setBusy(false);
+				this.getModel("viewModel").setProperty("/mapSettings/aAssignedAsignmentsForPlanning",responses);
+				this._refreshMapView();
+				this._oEventBus.publish("BaseController", "refreshMapTreeTable", {});
+				this.oCalendarPopover.close();
+				this.oSingleDayPlanner.open(oResource, {StartDate: oTargetDate,ChildCount:aAssignableDemands.length}, "TIMEDAY");
+			}.bind(this));
 
 		},
 		/**
@@ -973,18 +980,18 @@ sap.ui.define([
 
 		_openCalendar: function (oResource) {
 			var oView = this.getView();
-			if (!this.oPopover) {
+			if (!this.oCalendarPopover) {
 				Fragment.load({
 					name: "com.evorait.evoplan.view.map.fragments.CalendarDialog",
 					controller: this,
 					id: "idSelectDate"
 				}).then(function (popover) {
-					this.oPopover = popover;
-					oView.addDependent(this.oPopover);
-					this.oPopover.open();
+					this.oCalendarPopover = popover;
+					oView.addDependent(this.oCalendarPopover);
+					this.oCalendarPopover.open();
 				}.bind(this));
 			} else {
-				this.oPopover.open();
+				this.oCalendarPopover.open();
 
 			}
 		}

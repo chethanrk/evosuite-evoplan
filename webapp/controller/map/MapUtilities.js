@@ -35,6 +35,49 @@ sap.ui.define([
 			var oGeoMapContainerDOM = oGeoMapContainer.getDomRef();
 			oGeoMapContainerDOM.appendChild(div);
 			return div;
+		},
+		/**
+		 * Return resource filters on selected resources
+		 * @param aSelectedResources {Array} Selected Resources
+		 * @return aResourceFilters Filters
+		 * @Author: Pranav
+		 */
+		_getResourceFilters: function (aSelectedResources, oSelectedDate) {
+			var aResources = [],
+				oModel = this.getView().getModel();
+			var aFilters = [];
+
+			for (var i = 0; i < aSelectedResources.length; i++) {
+				var obj = oModel.getProperty(aSelectedResources[i]);
+				var sCurrentHierarchyViewType = this.getView().getModel("viewModel").getProperty("/selectedHierarchyView");
+				if (obj.NodeType === "RESOURCE") {
+					if (obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
+						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
+					} else {
+						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid + "//X"));
+					}
+				} else if (obj.NodeType === "RES_GROUP") {
+					aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
+				} else if (obj.NodeType === sCurrentHierarchyViewType) {
+					aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
+				}
+			}
+
+			if (aResources.length > 0) {
+				aFilters.push(new Filter({
+					filters: aResources,
+					and: false
+				}));
+				if (oSelectedDate) {
+					aFilters.push(new Filter("DateTo", FilterOperator.GE, oSelectedDate));
+					aFilters.push(new Filter("DateFrom", FilterOperator.LE, oSelectedDate.setHours(23, 59, 59, 999)));
+				} else {
+					aFilters.push(new Filter("DateTo", FilterOperator.GE, this.byId("resourceTreeFilterBar").getControlByKey("StartDate").getDateValue()));
+					aFilters.push(new Filter("DateFrom", FilterOperator.LE, this.byId("resourceTreeFilterBar").getControlByKey("EndDate").getDateValue()));
+				}
+
+			}
+			return aFilters;
 		}
 	});
 });

@@ -154,7 +154,8 @@ sap.ui.define([
 					routeData: [],
 					checkedDemands: [],
 					assignedDemands: [],
-					bRouteDateSelected: false
+					bRouteDateSelected: false,
+					aAssignedAsignmentsForPlanning:[]
 				},
 				resourceTreeShowRouteColumn: false, 
 				resourceFilterforRightTechnician: false,
