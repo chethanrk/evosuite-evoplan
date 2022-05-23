@@ -308,12 +308,8 @@ sap.ui.define([
 		 * @param 
 		 */
 		_proceedToAssign: function (sChannel, oEvent, oData) {
-			if (oData.sDragPath || oData.aFixedAppointmentObjects ) {
-				if (oData.sDragPath.length > 1 || (oData.aFixedAppointmentObjects && oData.aFixedAppointmentObjects.length > 1)) {
-					this._handleMultipleAssignment(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate, oData.aFixedAppointmentObjects);
-				} else {
-					this._validateAndAssignDemands(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate);
-				}
+			if (oData.sDragPath || oData.aFixedAppointmentObjects) {
+				this._handleMultipleAssignment(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate, oData.aFixedAppointmentObjects);
 			} else {
 				this._validateAndAssignDemands(oData.oResourceData, null, oData.oTarget, oData.oTargetDate, oData.aGuids);
 			}
@@ -808,7 +804,7 @@ sap.ui.define([
 		_updateDraggedShape: function (sPath, sRequestType, sSourcePath) {
 			this.oGanttModel.setProperty(sPath + "/busy", true);
 			var oData = this.oGanttModel.getProperty(sPath),
-			oOriginalData =this.oGanttModel.getProperty(sPath);
+				oOriginalData = this.oGanttModel.getProperty(sPath);
 			//get demand details to this assignment
 			this._getRelatedDemandData(oData).then(function (oResult) {
 				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
@@ -1442,11 +1438,11 @@ sap.ui.define([
 				aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
 				this.getModel().setUseBatch(false);
 				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
-				this._treeTable.setBusy(true);
+				this.getModel("appView").setProperty("/busy", true);
 				Promise.all(aPromises).then(function (data) {
 					this._addAssignemets(data[0].results);
 					this.getModel().setUseBatch(true);
-					this._treeTable.setBusy(false);
+					this.getModel("appView").setProperty("/busy", false);
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
 				}.bind(this));
 			}
@@ -1702,17 +1698,24 @@ sap.ui.define([
 
 			Promise.all(this.AssignMultipleDemands(oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects))
 				.then(function (aResults, oResponse) {
-					if (aResults.length > 0) {
-						this._addCreatedAssignment(aResults, oTarget, sDummyPath);
-					}
-					this._oEventBus.publish("BaseController", "refreshAssignments", aResults);
-					this._oEventBus.publish("BaseController", "refreshCapacity", {});
-				}.bind(this), function () {
-					if (sDummyPath) {
-						this.oGanttModel.setProperty(sDummyPath, null);
-						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-					}
-				}.bind(this));
+						if (aResults.length > 0) {
+							var aCreatedAssignments = this._getCreatedAssignments(aResults);
+							if (aCreatedAssignments.length > 0) {
+								this._addCreatedAssignment(aCreatedAssignments, oTarget, sDummyPath);
+							} else {
+								this.oGanttModel.setProperty(sDummyPath, null);
+								this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+							}
+						}
+						//	this._oEventBus.publish("BaseController", "refreshAssignments", aResults);
+						//	this._oEventBus.publish("BaseController", "refreshCapacity", {});
+					}.bind(this),
+					function () {
+						if (sDummyPath) {
+							this.oGanttModel.setProperty(sDummyPath, null);
+							this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+						}
+					}.bind(this));
 		},
 		/**
 		 * getting demand Objects form paths
@@ -1769,7 +1772,7 @@ sap.ui.define([
 						function (aData) {
 							this.getModel("appView").setProperty("/busy", false);
 							this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
-							this._updateAssignmentStatus(sPath, sAsgnStsFnctnKey);
+							this._updateAssignmentStatus(sPath, sAsgnStsFnctnKey, aData);
 						}.bind(this));
 				} else {
 					sap.m.MessageBox.error(this.getModel("i18n").getResourceBundle().getText("assignmentNotPossible"));

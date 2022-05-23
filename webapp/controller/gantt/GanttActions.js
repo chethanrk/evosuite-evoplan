@@ -84,7 +84,7 @@ sap.ui.define([
 			}
 			if (oParams.DemandGuid) {
 				oParams.DemandGuid = oParams.DemandGuid.substr(1);
-				aPromises.push(this.executeFunctionImport(this.getModel(), oParams, "CreateAssignment", "POST"));
+				aPromises.push(this.executeFunctionImport(this.getModel(), oParams, "CreateMultiAssignment", "POST"));
 			}
 
 			return aPromises;
@@ -749,7 +749,7 @@ sap.ui.define([
 		 * since 2205
 		 */
 		_showRelationships: function (sPath, oData) {
-			var sMSg, oGanttModel = this.getModel("ganttModel"),
+			var sMsg, oGanttModel = this.getModel("ganttModel"),
 				oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
 				aFilters = [
 					new Filter("DemandGuid", FilterOperator.EQ, oData.DemandGuid),
@@ -760,9 +760,8 @@ sap.ui.define([
 			this._getRelationships(aFilters).then(function (aData, oResponse) {
 				this.getModel("appView").setProperty("/busy", false);
 				if (aData.results.length === 0) {
-					sMSg = oResourceBundle.getText("ymsg.noRelationships") + oData.ORDERID + " " + oResourceBundle.getText(
-						"ymsg.noRelationshipOperation") + oData.OPERATIONID + " " + oResourceBundle.getText("ymsg.noRelationshipText");
-					sap.m.MessageToast.show(sMSg);
+					sMsg = oResourceBundle.getText("ymsg.noRelationships", [oData.ORDERID, oData.OPERATIONID]);
+					sap.m.MessageToast.show(sMsg);
 				}
 				this.showMessage(oResponse);
 				oGanttModel.setProperty(sPath + "/RelationshipSet", aData);
@@ -845,22 +844,30 @@ sap.ui.define([
 		 * @param sAsgnStsFnctnKey
 		 * @since 2205
 		 */
-		_updateAssignmentStatus: function (sPath, sAsgnStsFnctnKey) {
+		_updateAssignmentStatus: function (sPath, sAsgnStsFnctnKey, aData) {
 			var oGanttModel = this.getModel("ganttModel"),
 				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
 				sParentPath, sChildPath, sChildSplitPath, index;
 			if (sPath.length > 60) {
 				sParentPath = sPath.split("/AssignmentSet/results/")[0];
 				oGanttModel.setProperty(sParentPath + "/STATUS", sAsgnStsFnctnKey);
+				oGanttModel.setProperty(sParentPath + "/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
+				oGanttModel.setProperty(sParentPath + "/DEMAND_STATUS", aData.DEMAND_STATUS);
 			} else {
 				sChildPath = sPath.substring(0, 27);
 				sChildSplitPath = sPath.split("/");
 				index = sChildSplitPath[sChildSplitPath.length - 1];
 				sChildPath = sChildPath + "/children/" + index;
 				oGanttModel.setProperty(sChildPath + "/STATUS", sAsgnStsFnctnKey);
+				oGanttModel.setProperty(sChildPath + "/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
+				oGanttModel.setProperty(sChildPath + "/DEMAND_STATUS", aData.DEMAND_STATUS);
 				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/STATUS", sAsgnStsFnctnKey);
+				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
+				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/DEMAND_STATUS", aData.DEMAND_STATUS);
 			}
 			oGanttModel.setProperty(sPath + "/STATUS", sAsgnStsFnctnKey);
+			oGanttModel.setProperty(sPath + "/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
+			oGanttModel.setProperty(sPath + "/DEMAND_STATUS", aData.DEMAND_STATUS);
 			oGanttOriginDataModel.refresh(true);
 			oGanttModel.refresh(true);
 		},
@@ -909,6 +916,27 @@ sap.ui.define([
 			oGanttModel.refresh(true);
 			oGanttOriginDataModel.refresh(true);
 		},
+		
+		/**
+		 * Combining Multiple Assignment Creation Response to a single array
+		 * @param [aResults]
+		 * @return [aCreatedAssignments]
+		 * @since 2205
+		 */
+		_getCreatedAssignments: function (aResults) {
+			var aCreatedAssignments = [];
+			for (var a in aResults) {
+				var oCreatedAssignment = aResults[a].results;
+				if (!oCreatedAssignment) {
+					aCreatedAssignments.push(aResults[a]);
+				} else {
+					for (var a1 in oCreatedAssignment) {
+						aCreatedAssignments.push(oCreatedAssignment[a1]);
+					}
+				}
+			}
+			return aCreatedAssignments;
+		}
 	});
 
 });
