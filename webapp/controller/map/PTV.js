@@ -108,13 +108,11 @@ sap.ui.define([
 				aUpdatedAssignments.sort(function(a,b) {
 					return a.DateFrom - b.DateFrom;
 				});
-				var nOverallEffort = 0;
 				if(oPTVResponse.data.legs) {
 					aUpdatedAssignments.forEach(function(oAssignment, index, aAssgns) {
 						var sCalculatedTime;
 						if(aAssgns[index-1]) {
-							var nCurrentEffortInSec = parseInt(aAssgns[index-1].Effort) * 3600;
-							nOverallEffort += nCurrentEffortInSec;
+							var nCurrentEffortInSec = parseFloat(aAssgns[index-1].Effort) * 3600;
 							sCalculatedTime = Math.ceil((oPTVResponse.data.legs[index].travelTime - nCurrentEffortInSec) / 60).toString();
 						} else {
 							sCalculatedTime = Math.ceil(oPTVResponse.data.legs[index].travelTime / 60).toString();
@@ -128,7 +126,7 @@ sap.ui.define([
 				var nLastAssignmentIndex = aUpdatedAssignments.length - 1;
 				
 				//assign TRAVEL_BACK_TIME for the last assignment
-				var sTravelHomeTime = Math.ceil((oPTVResponse.data.legs[nLastLegIndex].travelTime - nOverallEffort - 
+				var sTravelHomeTime = Math.ceil((oPTVResponse.data.legs[nLastLegIndex].travelTime - 
 					aUpdatedAssignments[nLastAssignmentIndex].Effort * 3600) / 60).toString();
 				aUpdatedAssignments[nLastAssignmentIndex].TRAVEL_BACK_TIME = sTravelHomeTime;
 				return aUpdatedAssignments;
@@ -144,7 +142,7 @@ sap.ui.define([
 					var oStartDateToWrap = prev ? prev.DateTo : moment(next.DateFrom.setHours(this._sDefaultResourceStartHour, 0)).toDate();
 					var oAssignmentStartDate = moment(oStartDateToWrap).add(next.TRAVEL_TIME, 'minutes');
 					var oAssignmentEndDate = oAssignmentStartDate.clone();
-					oAssignmentEndDate.add(parseInt(next.Effort), 'hours');
+					oAssignmentEndDate.add(parseFloat(next.Effort), 'hours');
 					
 					next.DateFrom = oAssignmentStartDate.toDate();
 					next.DateTo = oAssignmentEndDate.toDate();
@@ -167,7 +165,6 @@ sap.ui.define([
 		optimizeRoute: function(oResource, aAssignments) {
 			var oDate = aAssignments[0].DateFrom;
 			return this._createDistanceMatrix(oResource, aAssignments, oDate).then(function(sMatrixId) {
-				// TODO dibrovv: implement assignments update like for updateAssignmentsWithTravelTime
 				return this._planTours(oResource, aAssignments, sMatrixId, oDate).then(function(oTourResponse) {
 					
 					var aUpdatedAssignments = _.cloneDeep(aAssignments);
@@ -252,11 +249,11 @@ sap.ui.define([
 				oPoint.location.offRoadCoordinate.x = next.LONGITUDE;
 				oPoint.location.offRoadCoordinate.y = next.LATITUDE;
 				
-				if(next.Effort && parseInt(next.Effort) !== 0) {
-					oPoint.tourStopOptions.serviceTime = parseInt(next.Effort) * 3600;
+				if(next.Effort && parseFloat(next.Effort) !== 0) {
+					oPoint.tourStopOptions.serviceTime = parseFloat(next.Effort) * 3600;
 				}
 				
-				// TODO dibrovv: test with FIXED_APPOINTMENT
+				// TODO: test with FIXED_APPOINTMENT
 				// whether it makes sense to change to StartDurationInterval type with duration set to 0
 				if(next.FIXED_APPOINTMENT) {
 					oPoint.tourStopOptions.openingIntervals = [];
@@ -426,7 +423,7 @@ sap.ui.define([
 				oLocation.routeLocation.offRoadCoordinate.x = oAssignment.LONGITUDE;
 				oLocation.routeLocation.offRoadCoordinate.y = oAssignment.LATITUDE;
 				
-				// TODO dibrovv: test with FIXED_APPOINTMENT
+				// TODO: test with FIXED_APPOINTMENT
 				// whether it makes sense to change to StartDurationInterval type with duration set to 0
 				if(oAssignment.FIXED_APPOINTMENT) {
 					oLocation.openingIntervals = [];
