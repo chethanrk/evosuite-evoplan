@@ -36,7 +36,8 @@
 								<vk:ContainerContent title="Geographic Map" icon="sap-icon://activities">
 									<vk:content>
 										<vbm:GeoMap id="idGeoMap" lassoSelection="true" rectangularSelection="true" drop="onDrop" select="onSelectSpots"
-											initialZoom="{user>/DEFAULT_MAP_INITIAL_ZOOM}" initialPosition="{user>/DEFAULT_MAP_INITIAL_POSITION}">
+											initialZoom="{user>/DEFAULT_MAP_INITIAL_ZOOM}" initialPosition="{user>/DEFAULT_MAP_INITIAL_POSITION}"
+											geoJsonLayers="{path: 'viewModel>/GeoJsonLayersData', templateShareable: false}">
 											<vbm:vos>
 												<vbm:Routes items="{viewModel>/mapSettings/routeData}">
 													<vbm:items>
@@ -79,7 +80,7 @@
 												</vbm:Spots>
 											</vbm:vos>
 											<vbm:geoJsonLayers>
-												<vbm:GeoJsonLayer data="{viewModel>/mapSettings/GeoJsonLayersData}" defaultBorderColor="rgb(255, 0, 0)" defaultFillColor="rgb(255, 0, 0)"
+												<vbm:GeoJsonLayer data="{viewModel>data}" defaultBorderColor="{viewModel>color}" defaultFillColor="{viewModel>color}"
 													defaultLineWidth="50"></vbm:GeoJsonLayer>
 											</vbm:geoJsonLayers>
 										</vbm:GeoMap>

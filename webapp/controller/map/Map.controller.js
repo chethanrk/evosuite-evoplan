@@ -44,7 +44,7 @@ sap.ui.define([
 			this.oVBI = this.getView().byId("idGeoMap");
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 
-			this.getModel("viewModel").setProperty("/mapSettings/GeoJsonLayersData", {});
+			this.getModel("viewModel").setProperty("/GeoJsonLayersData", []);
 
 			//initialize PinPopover controller
 			this.oPinPopover = new PinPopover(this);

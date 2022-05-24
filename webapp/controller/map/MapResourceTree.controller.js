@@ -744,17 +744,18 @@ sap.ui.define([
 			// oResource is declared here to closure the variable
 			var oResource;
 			
+			// hide corresponding route in case the button was pressed before
 			if (oShowRouteButton.getPressed && !oShowRouteButton.getPressed()) {
-				var aCurrentDisplayedRoutes = oViewModel.getProperty("/mapSettings/GeoJsonLayersData");
+				var aCurrentDisplayedRoutes = oViewModel.getProperty("/GeoJsonLayersData");
 				var aRoutesDisplay = aCurrentDisplayedRoutes.filter(function(oRoute) {
 					return oRoute.id !== oResourceHierachyObject.NodeId;
 				});
-				oViewModel.setProperty("/mapSettings/GeoJsonLayersData", aRoutesDisplay);
+				oViewModel.setProperty("/GeoJsonLayersData", aRoutesDisplay);
 				return;
 			}
 			
 			var sResourceHierachyPath = oResourceHierachyContext.getPath();
-			var aGeoJsonLayersData = [];
+			var aGeoJsonLayersData = oViewModel.getProperty("/GeoJsonLayersData");
 			
 			var aResourceFilters = this._getResourceFilters([sResourceHierachyPath]);
 			var aAssignmentFilters = this._getAssignmentsFiltersWithinDateFrame(oResourceHierachyObject);
@@ -771,12 +772,23 @@ sap.ui.define([
 				
 				return this.getOwnerComponent().MapProvider.getRoutePolyline(oResource, aAssignments);
 			}.bind(this)).then(function(oResponse) {
+				var oLayer = {};
 				var oData = JSON.parse(oResponse.data.polyline.geoJSON);
 				
+				// the following property assigned with an array as it works ONLY with an array 
+				// despite according to documentation it can be a GeoJSON object
+				oLayer.data = [oData];
+				
+				oLayer.color = "#" + Math.floor(Math.random()*16777215).toString(16); // generate random color
+				
 				// set id for a geojson object to be able to remove the object when the 'show route' toggle button is unpressed
-				oData.id = oResourceHierachyContext.getObject().NodeId;
-				aGeoJsonLayersData.push(oData);
-				oViewModel.setProperty("/mapSettings/GeoJsonLayersData", aGeoJsonLayersData);
+				oLayer.id = oResourceHierachyContext.getObject().NodeId;
+				
+				// we don't need to set property `/GeoJsonLayersData` explicitly 
+				// as variable `aGeoJsonLayersData` stores reference to the same object
+				// so it's enough to just push data to the `aGeoJsonLayersData` array
+				aGeoJsonLayersData.push(oLayer);
+				
 				this._eventBus.publish("MapController", "displayRoute", oResource);
 				oViewModel.setProperty("/mapSettings/busy", false);
 			}.bind(this))
@@ -797,8 +809,8 @@ sap.ui.define([
 			var aFilters = [];
 			oResourceHierarchy.StartDate.setUTCHours(0, 0, 0);
 			oResourceHierarchy.EndDate.setUTCHours(23, 59, 59);
-			aFilters.push(new Filter("DateFrom", FilterOperator.GE, oResourceHierarchy.StartDate));
-			aFilters.push(new Filter("DateTo", FilterOperator.LE, oResourceHierarchy.EndDate));
+			aFilters.push(new Filter("DateFrom", FilterOperator.GE, this.formatter.formatFilterDate(oResourceHierarchy.StartDate)));
+			aFilters.push(new Filter("DateTo", FilterOperator.LE, this.formatter.formatFilterDate(oResourceHierarchy.EndDate)));
 			aFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, oResourceHierarchy.ResourceGuid));
 			return aFilters;
 		}
