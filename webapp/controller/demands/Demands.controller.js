@@ -36,6 +36,8 @@ sap.ui.define([
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 			this._eventBus.subscribe("AssignTreeDialog", "updateDemandTableSelection", this._deselectDemands, this);
+			//toAdd busystete change event to the table
+			this._oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
 		},
 
 		/* =========================================================== */
@@ -131,6 +133,23 @@ sap.ui.define([
 				this._navToDetail(oEvent);
 			}
 		},
+
+		/**
+		 * Busy State changed event
+		 * To handle scroll for the particular selected index
+		 */
+		onBusyStateChanged: function (oEvent) {
+			var parameters = oEvent.getParameters();
+			if (parameters.busy === false) {
+				var aDraggedIndex = this.getModel("viewModel").getProperty("/iFirstDraggedIndex");
+				if (aDraggedIndex && aDraggedIndex !== -1) {
+					this._oDataTable.setFirstVisibleRow(aDraggedIndex);
+					//set first dragged index to set initial
+					this.getModel("viewModel").setProperty("/iFirstDraggedIndex", -1);
+				}
+			}
+		},
+
 		/**
 		 * navigation to demand detail page
 		 * added method since 2201, by Rakesh Sahu
@@ -144,7 +163,7 @@ sap.ui.define([
 				sPath = oContext.getPath(),
 				oModel = oContext.getModel(),
 				oData = oModel.getProperty(sPath);
-				this.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
+			this.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
 			oRouter.navTo("DemandDetail", {
 				guid: oData.Guid
 			});

@@ -172,7 +172,8 @@ sap.ui.define([
 				isOpetationLongTextPressed: false,
 				oResponseMessages: [],
 				aFixedAppointmentsList: {},
-				bDemandEditMode: false
+				bDemandEditMode: false,
+				iFirstDraggedIndex: -1
 
 			});
 			this.setModel(oViewModel, "viewModel");
@@ -474,10 +475,10 @@ sap.ui.define([
 
 			this.NetworkAssignment = new NetworkAssignment();
 			this.NetworkAssignment.init();
-			
+
 			this.AssignmentStatus = new AssignmentStatus();
 			this.AssignmentStatus.init();
-			
+
 			this.GanttAssignmentPopOver = new GanttAssignmentPopOver();
 			this.GanttAssignmentPopOver.init();
 
