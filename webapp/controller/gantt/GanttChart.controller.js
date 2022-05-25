@@ -161,9 +161,9 @@ sap.ui.define([
 					oNewStartDate = moment(oDate.slice(0, 8) + "T" + oDate.slice(8)).toDate();
 				}
 				if (this._bFirstTimeContextMenuOpen || bGanttViewJumped) {
-					this._bFirstTimeContextMenuOpen = false;
 					setTimeout(function () {
 						this._changeGanttHorizonViewAt(this._axisTime.getZoomLevel(), this._axisTime, oNewStartDate);
+						this._bFirstTimeContextMenuOpen = false;
 					}.bind(this), 0);
 				}
 			} else {
@@ -1277,7 +1277,13 @@ sap.ui.define([
 				sStartDate = date.startOf("day").subtract(1, "day").toDate();
 				sEndDate = date.endOf("day").add(1, "day").toDate();
 			}
-
+			
+			//Setting Existing Visible Horizon Dates On ContextMenu Opening For First Time To Avoid Jumping @since 2205
+			if (this._bFirstTimeContextMenuOpen) {
+				sStartDate = this.oGanttModel.getProperty("/settings/startTime");
+				sEndDate = this.oGanttModel.getProperty("/settings/endTime");
+			}
+			
 			this.oGanttModel.setProperty("/settings", {
 				startTime: sStartDate,
 				endTime: sEndDate
