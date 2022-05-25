@@ -16,20 +16,16 @@ sap.ui.define([
 	var PLAN_TOURS_PATH = "/planTours";
 	
 	/**
-	 * TODO dibrovv: actualize docs according to new props
-	 * 
 	 * @class Provides set of methods to communicate to PTV xServer v2 (xserver2-europe-eu-test.cloud.ptvgroup.com - test server).
 	 * The class contain only explanatory comments for its methods. 
 	 * For detailed interface description check the com.evorait.evoplan.controller.map.MapProvider class.
 	 * 
-	 * Note:
-	 * In the current implementation logic that is regarding data integration 
-	 * (e.g. property names for input parameters, like TRAVEL_TIME or TRAVEL_BACK_TIME) is mixed with communication to PTV.
-	 * In future, if needed, the logic could be extracted to a separate layer between the PTV.js and controller that uses the PTV.js 
-	 * 
 	 * @property {string} _sAuthToken - Authorisation token to pass as a header in requests to PTV 
 	 * @property {string} _sRouteCalculationUrl - Url for the `calculateRoute` operation
 	 * @property {string} _sCreateDistanceMatrixUrl - Url for the `createDistanceMatrix` operation
+	 * @property {string} _sPlanToursUrl - Url for the `planTours` operation
+	 * @property {string} _sDefaultResourceStartHour - Number representing starting working hour (e.g. 8)
+	 * @property {sap.ui.model.json.JSONModel} oUserModel - User model containing system parameters for a user
 	 */
 	return MapProvider.extend("com.evorait.evoplan.controller.map.PTV", {
 
@@ -97,8 +93,7 @@ sap.ui.define([
 		},
 		
 		/**
-		 * @return {Assignment[]} a new array that includes provided assignments with updated TRAVEL_TIME and TRAVEL_BACK_TIME properties.
-		 * // todo dibrovv: update docs in mapprovider
+		 * @return {{Promise<Assignment[]>} a new array that includes provided assignments with updated TRAVEL_TIME and TRAVEL_BACK_TIME properties.
 		 * The properties updated according to results returned by PTV `calculateRoute` function.
 		 */
 		updateAssignmentsWithTravelTime: function(oResource, aAssignments, oDateForRoute) {
@@ -134,7 +129,10 @@ sap.ui.define([
 		},
 		
 		
-		// TODO dibrovv: jsdoc; for mapprovider as well
+		/**
+		 * @return {{Promise<Assignment[]>} a new array that includes provided assignments with updated TRAVEL_TIME, TRAVEL_BACK_TIME, DateFrom, DateTo properties.
+		 * The properties updated according to results returned by PTV `calculateRoute` function.
+		 */
 		calculateTravelTimeAndDatesForDay: function(oResource, aAssignments, oDateForRoute) {
 			return this.updateAssignmentsWithTravelTime(oResource, aAssignments).then(function(aAssignmentsWithTravelTime) {
 				var aUpdatedAssignments = [];
@@ -156,11 +154,16 @@ sap.ui.define([
 		
 		/**
 		 * Optimizes a route to reduce distance and travel time. Returned route may have different sequence of points to visit.
-		 * TODO dibrovv: add comments regarding the distance matrix
+		 * To perform a route optimization PTV need to build so named 'Distance Matrix' at first. Based on the matrix, the route optimisation performed then.
+		 * 
 		 * Corresponding documentation:
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#TechnicalConcepts/Routing/DSC_Distance_Matrices.htm
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#UseCases/Routing/UC_Accessing_DistanceMatrixContents.htm
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xdima.html#com.ptvgroup.xserver.xdima.XDima.createDistanceMatrix
+		 * 
+		 * All the needed properties for request to PTV are maintained in methods `_createPayloadForPlanToursRequest` and `_createPayloadForDistanceMatrixRequest`
+		 * Please see the PTV API documentation to find out, what affect the properties:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#Welcome/Home.htm
 		 */
 		optimizeRoute: function(oResource, aAssignments) {
 			var oDate = aAssignments[0].DateFrom;
@@ -231,8 +234,9 @@ sap.ui.define([
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Content/API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.RouteRequest
 		 * @param {Waypoint[]} aPointsToVisit - Array of Waypoint to be visisted.
 		 * @param {boolean} bIncludePolyline - Flag to indicate, whether the polyline should be requested.
+		 * @param {Date} oDateForRoute - Date for which the route calculation should be performed
 		 * Polyline is set of coordinates representing a route.
-		 * @return {Object} - Payload for a reoute request
+		 * @return {Object} - Payload for a route request
 		 */
 		_createPayloadForRouteRequest: function(aPointsToVisit, bIncludePolyline, oDateForRoute) {
 			var oPointTemplate = {
@@ -323,7 +327,11 @@ sap.ui.define([
 		},
 		
 		/**
-		 * TODO dibrovv: docs
+		 * Make a request to create distance matrix for route optimization.
+		 * @param {Waypoint} oStartPoint - Starting point of the route
+		 * @param {Waypoint[]} aPointsToVisit - Array of Waypoint to be visisted.
+		 * @param {Date} oDateForRoute - Date for which the route optimization should be performed
+		 * @return {Promise<string>} Promise representing id of the distance matrix. The matrix itself stored in PTV service after its creation.
 		 */
 		_createDistanceMatrix: function(oStartPoint, aPointsToVisit, oDate) {
 			var oRequestBody = this._createPayloadForDistanceMatrixRequest([oStartPoint].concat(aPointsToVisit), oDate);
@@ -333,7 +341,11 @@ sap.ui.define([
 		},
 		
 		/**
-		 * TODO dibrovv: docs
+		 * Creates payload according to CreateDistanceMatrix type:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xdima.html#com.ptvgroup.xserver.xdima.CreateDistanceMatrixRequest
+		 * @param {Waypoint[]} aPointsToVisit - Array of Waypoint to be visisted.
+		 * @param {Date} oDateForRoute - Date for which the route optimization should be performed
+		 * @return {Object} - Payload for a distance matrix request
 		 */
 		_createPayloadForDistanceMatrixRequest: function(aWaypoints, oDate) {
 			var oPointTemplate = {
@@ -384,9 +396,9 @@ sap.ui.define([
 			
 			return oPayload;
 		},
-		
-		/**
-		 * TODO dibrovv: docs
+		 
+		 /**
+		 * Common method to call the `planTours` operation of XTour service
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.PlanToursRequest
 		 */
 		_planTours: function(oResource, aAssignments, sMatrixId, oDate) {
@@ -395,7 +407,13 @@ sap.ui.define([
 		},
 		
 		/**
-		 * TODO dibrovv: docs
+		 * Creates payload according to PlanToursRequest type:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.PlanToursRequest
+		 * @param {Waypoint} oResource - starting point for the route
+		 * @param {Waypoint[]} aAssignments - Array of Waypoint to be visisted.
+		 * @param {string} sMatrixId - Id of the corresponding distance matrix, returned by `_createDistanceMatrix`.
+		 * @param {Date} oDateForRoute - Date for which the route calculation should be performed
+		 * @return {Object} - Payload for a planTours request
 		 */
 		_createPayloadForPlanToursRequest: function(oResource, aAssignments, sMatrixId, oDate) {
 			var oLocationTemplate = {

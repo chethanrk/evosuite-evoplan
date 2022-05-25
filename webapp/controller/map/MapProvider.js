@@ -85,13 +85,26 @@ sap.ui.define([
 		},
 		
 		/**
-		 * Updates Assignment list with travel timeas according to sequence provided in parameters.
+		 * Updates Assignment list with travel times according to sequence provided in parameters.
 		 * @abstract
 		 * @param {Waypoint} oResource - A Resource object that defines home address.
 		 * @param {Waypoint} aAssignments - Array of assignments to be visited.
-		 * @return {Promise<Assignment[]>} Promise object represents array of updated Assignments.
+		 * @param {Date} oDateForRoute - Date for which the route calculation should be performed
+		 * @return {Promise<Assignment[]>} Promise object represents sorted by date array of updated Assignments.
 		 */
-		updateAssignmentsWithTravelTime: function(oResource, aAssignments) {
+		updateAssignmentsWithTravelTime: function(oResource, aAssignments, oDateForRoute) {
+			Log.error("The 'updateAssignmentsWithTravelTime' method is not implemented!" );
+		},
+		
+		/**
+		 * Updates Assignment list with travel times AND DateFrom, DateTo according to sequence provided in parameters.
+		 * @abstract
+		 * @param {Waypoint} oResource - A Resource object that defines home address.
+		 * @param {Waypoint} aAssignments - Array of assignments to be visited.
+		 * @param {Date} oDateForRoute - Date for which the route calculation should be performed
+		 * @return {Promise<Assignment[]>} Promise object represents sorted by date array of updated Assignments.
+		 */
+		calculateTravelTimeAndDatesForDay: function(oResource, aAssignments, oDateForRoute) {
 			Log.error("The 'updateAssignmentsWithTravelTime' method is not implemented!" );
 		},
 		
@@ -100,7 +113,8 @@ sap.ui.define([
 		 * @abstract
 		 * @param {Waypoint} oResource - A Resource object that defines home address.
 		 * @param {Waypoint[]} aAssignments - Arroy of assignments to be visited.
-		 * @return {Promise<RouteResponse>} - Promise object represents the response from Map Provider service.
+		 * @return {Promise<RouteResponse>} - Promise object represents sorted by date array of updated assignments.
+		 * The assignments have update DateFrom, DateTo, TRAVEL_TIME, TRAVEL_BACK_TIME
 		 */
 		optimizeRoute: function(oResource, aAssignments) {
 			Log.error("The 'optimizeRoute' method is not implemented!" );
