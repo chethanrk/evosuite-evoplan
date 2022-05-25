@@ -739,6 +739,7 @@ sap.ui.define([
 		_hideRelationships: function (sPath) {
 			var oGanttModel = this.getModel("ganttModel");
 			oGanttModel.setProperty(sPath + "/RelationshipSet/results", []);
+			oGanttModel.setProperty(sPath + "/busy", false);
 			oGanttModel.refresh(true);
 		},
 
@@ -765,6 +766,7 @@ sap.ui.define([
 				}
 				this.showMessage(oResponse);
 				oGanttModel.setProperty(sPath + "/RelationshipSet", aData);
+				oGanttModel.setProperty(sPath + "/busy", false);
 				oGanttModel.refresh(true);
 			}.bind(this));
 		},
@@ -916,7 +918,7 @@ sap.ui.define([
 			oGanttModel.refresh(true);
 			oGanttOriginDataModel.refresh(true);
 		},
-		
+
 		/**
 		 * Combining Multiple Assignment Creation Response to a single array
 		 * @param [aResults]

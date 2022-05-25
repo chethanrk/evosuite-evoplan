@@ -1778,6 +1778,7 @@ sap.ui.define([
 					sap.m.MessageBox.error(this.getModel("i18n").getResourceBundle().getText("assignmentNotPossible"));
 				}
 			}.bind(this));
+			this.oGanttModel.setProperty(sPath + "/busy", false);
 			this.oGanttModel.refresh(true);
 		}
 	});
