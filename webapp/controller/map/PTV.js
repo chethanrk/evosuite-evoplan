@@ -192,7 +192,10 @@ sap.ui.define([
 							}
 						});
 					}
-						
+					// sort the assignments to make the further processing simpler
+					aUpdatedAssignments.sort(function(a,b) {
+						return a.DateFrom - b.DateFrom;
+					});
 					return aUpdatedAssignments;
 				}.bind(this));
 			}.bind(this));

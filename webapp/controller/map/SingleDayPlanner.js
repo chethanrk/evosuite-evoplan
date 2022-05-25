@@ -545,7 +545,11 @@ sap.ui.define([
 			}
 		},
 		
-		// TODO dibrovv: docs
+		/**
+		 * Create an appointments array and set it to local model according to provided assignments and its travel times.
+		 * @param {com.evorait.evoplan.Assignment[]} aAssignments - array of assignments to be set to single planner
+		 * @return {Object[]} array of appointments including assignments as well as travel appointments
+		 */
 		_setAssignmentsData: function(aAssignments) {
 			var sEntitySetPath = "/AssignmentSet",
 				sTravelAppointments = [],
@@ -580,7 +584,7 @@ sap.ui.define([
 					if (parseInt(oAssignment.TRAVEL_BACK_TIME)) {
 						oTravelItem = _.cloneDeep(oAssignment);
 						oTravelItem.title = this.oResourceBundle.getText("xlab.appointTravelBack");
-						oTravelItem.text = oAssignment.TRAVEL_TIME + " " + this.oResourceBundle.getText("xlab.minutes");
+						oTravelItem.text = oAssignment.TRAVEL_BACK_TIME + " " + this.oResourceBundle.getText("xlab.minutes");
 						oTravelItem.color = this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_COLOR");
 						oTravelItem.icon = this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_ICON");
 						oTravelItem.DateFrom = oAssignment.DateTo;
