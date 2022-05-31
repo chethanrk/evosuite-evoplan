@@ -29,6 +29,13 @@
 						<core:ExtensionPoint name="PageExtP|App|Header|Middle"/>
 					</contentMiddle>
 					<contentRight>
+						<!--Links to EvoOrderRelate and EvoResource will work only in BSP mode for now,
+						Change the visible property when configuring links for FLPD -->
+						<Button text="{i18n>xtit.evoOrderRelate}"
+							visible="{:= ${user>/ENABLE_EVOORDERRELATE_BUTTON} &amp;&amp; ${viewModel>/launchMode} === Constants.LAUNCH_MODE.BSP}"
+							press="linkToOtherApp"/>
+						<Button text="{i18n>xtit.evoResource}"
+							visible="{:= ${user>/ENABLE_EVORESOURCE_BUTTON} &amp;&amp; ${viewModel>/launchMode} === Constants.LAUNCH_MODE.BSP}" press="linkToOtherApp"/>
 						<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
 							type="Emphasized" press="onMessagePopoverPress"/>
 						<Button id="idButtonRefresh" icon="sap-icon://refresh" tooltip="{i18n>xtit.infoRefresh}" press="onRefreshBuffer"/>
