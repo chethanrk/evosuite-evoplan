@@ -10,9 +10,11 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/gantt/simple/CoordinateUtils",
 	"com/evorait/evoplan/model/Constants",
-	"sap/gantt/misc/Utility"
+	"sap/gantt/misc/Utility",
+	"sap/gantt/def/pattern/SlashPattern",
+	"sap/gantt/def/pattern/BackSlashPattern"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, Popup, MessageToast, Fragment, CoordinateUtils, Constants,
-	Utility) {
+	Utility, SlashPattern, BackSlashPattern) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttChart", {
@@ -88,7 +90,6 @@ sap.ui.define([
 		 * 
 		 */
 		initializeGantt: function () {
-
 			this.oGanttModel = this.getView().getModel("ganttModel");
 			this.oGanttOriginDataModel = this.getView().getModel("ganttOriginalData");
 
@@ -99,7 +100,9 @@ sap.ui.define([
 			} else {
 				this._addAssociations.bind(this)();
 			}
+			this._setGanttBgColor();
 		},
+
 		/**
 		 * on page exit
 		 */
@@ -125,27 +128,14 @@ sap.ui.define([
 
 		/**
 		 * double click on a shape
-		 * open assignment detail dialog
+		 * open assignment detail popover
 		 * @param oEvent
 		 */
 		onShapeDoubleClick: function (oEvent) {
-			var oParams = oEvent.getParameters(),
-				oContext = oParams.shape.getBindingContext("ganttModel"),
-				oRowContext = oParams.rowSettings.getParent().getBindingContext("ganttModel"),
-				oShape = oParams.shape,
-				sMsg;
-			if (oShape && oShape.sParentAggregationName === "shapes3") {
-				// to identify the action done on respective page
-				localStorage.setItem("Evo-Action-page", "ganttSplit");
-				if (oContext) {
-					this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], {
-						bFromNewGantt: true
-					}, oShape.getTime());
-				} else {
-					sMsg = this.getResourceBundle().getText("notFoundContext");
-					this.showMessageToast(sMsg);
-				}
-			}
+			var oShapeContext = oEvent.getParameter("shape").getBindingContext("ganttModel"),
+				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId();
+			this.getOwnerComponent().GanttAssignmentPopOver.open(this.getView(), sap.ui.getCore().byId(sToolbarId + "-settingsButton"),
+				oShapeContext);
 		},
 
 		/**
@@ -169,11 +159,14 @@ sap.ui.define([
 				if (typeof mParams.type === "undefined" && typeof oDate === "string" && sStartTime !== oDate) {
 					bGanttViewJumped = true;
 					oNewStartDate = moment(oDate.slice(0, 8) + "T" + oDate.slice(8)).toDate();
+				}else {
+					oNewStartDate = sap.gantt.misc.Format.abapTimestampToDate(oNewStartDate);
 				}
+
 				if (this._bFirstTimeContextMenuOpen || bGanttViewJumped) {
-					this._bFirstTimeContextMenuOpen = false;
 					setTimeout(function () {
 						this._changeGanttHorizonViewAt(this._axisTime.getZoomLevel(), this._axisTime, oNewStartDate);
+						this._bFirstTimeContextMenuOpen = false;
 					}.bind(this), 0);
 				}
 			} else {
@@ -202,47 +195,54 @@ sap.ui.define([
 			this.onShowOperationTimes(this.getModel("viewModel"));
 			this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
 
-			//Checking PS Demands for Network Assignment 
-			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
-				this.getOwnerComponent().NetworkAssignment.open(this.getView(), oDropObject, aPSDemandsNetworkAssignment, this._mParameters,
-					oDraggedControl,
-					oDroppedControl, oBrowserEvent);
-			}
-			//Checking Vendor Assignment for External Resources
-			else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
-				this.getOwnerComponent().VendorAssignment.open(this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
-					oDroppedControl, oBrowserEvent);
-			} else {
-				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !==
-					null) {
-					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), {
-						bFromNewGantt: true
-					}, oDropContext.getPath(), oDraggedControl, oDroppedControl, oBrowserEvent);
+			//Allowing Demand Drop only on Non-Assignmnet Nodes   @Since 2205
+			if (oDropObject.NodeType !== "ASSIGNMENT") {
+				//Checking PS Demands for Network Assignment 
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+					this.getOwnerComponent().NetworkAssignment.open(this.getView(), oDropObject, aPSDemandsNetworkAssignment, this._mParameters,
+						oDraggedControl,
+						oDroppedControl, oBrowserEvent);
+				}
+				//Checking Vendor Assignment for External Resources
+				else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
+					this.getOwnerComponent().VendorAssignment.open(this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
+						oDroppedControl, oBrowserEvent);
 				} else {
-					this.onProceedNewGanttDemandDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
+					if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !==
+						null) {
+						this.getOwnerComponent().OperationTimeCheck.open(this.getView(), {
+							bFromNewGantt: true
+						}, oDropContext.getPath(), oDraggedControl, oDroppedControl, oBrowserEvent);
+					} else {
+						this.onProceedNewGanttDemandDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
+					}
 				}
 			}
-
 		},
 
 		onProceedNewGanttDemandDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
 			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
-				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
-				sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : slocStor.split(","),
-				oAxisTime = this.byId("container").getAggregation("ganttCharts")[0].getAxisTime(),
+				slocStor = JSON.parse(localStorage.getItem("Evo-Dmnd-guid")),
+				sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : this._getDragPaths(slocStor),
+				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
 				oResourceData = this.getModel("ganttModel").getProperty(oDropContext.getPath()),
 				oSvgPoint,
 				sPath = sDragPath ? sDragPath[0] : undefined,
-				oDemandObj = oDragContext ? oDragContext.getObject() : this.getModel().getProperty(sPath),
+				oDemandObj = this._getDemandObjectsByPath(this.getModel("viewModel").getProperty("/gantDragSession"), slocStor),
 				bShowFixedAppointmentDialog,
 				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
 				oParams = {};
-				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", []);
+			this.getModel("viewModel").setProperty("/aFixedAppointmentsList", []);
 
 			//Null check for
 			if ((!oDragContext || !sDragPath) && !oDropContext) {
 				return;
+			}
+
+			//retreive the demand object, passed from Gantt split in local storage
+			if (!oDemandObj) {
+				oDemandObj = this.convertDateToObjects(slocStor[0]);
 			}
 
 			// Check the resource assignable or not
@@ -251,74 +251,54 @@ sap.ui.define([
 			// to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page", "ganttSplit");
 
+			oParams.oResourceData = oResourceData;
+			oParams.sDragPath = sDragPath;
+			oParams.oTarget = oDropContext.getPath();
+
 			if (oBrowserEvent.target.tagName === "rect" && oDragContext) { // When we drop on gantt chart in the same view
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				//Condition added and Method is modified for fixed Appointments			// since Release/2201
 				oParams.DateFrom = oAxisTime.viewToTime(oSvgPoint.x);
-				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
-
+				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
 				if (bShowFixedAppointmentDialog) {
-					oParams.oResourceData = oResourceData;
-					oParams.sDragPath = sDragPath;
-					oParams.oTarget = oDropContext.getPath();
-
-					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
-					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "Gantt");
+					this.openFixedAppointmentDialog(oParams, "Gantt");
+				} else if (sDragPath && sDragPath.length > 1) {
+					this._handleMultipleAssignment(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), []);
 				} else {
 					this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
 				}
 
 			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) { // When we drop on gantt chart from split window
+				// this.getModel("viewModel").setProperty("/dragSession/bFromGanttSplit", true);
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				oParams.DateFrom = oAxisTime.viewToTime(oSvgPoint.x);
-				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
-
+				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
 				if (bShowFixedAppointmentDialog) {
-					oParams.oResourceData = oResourceData;
-					oParams.sDragPath = sDragPath;
-					oParams.oTarget = oDropContext.getPath();
-
-					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
-					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "Gantt-Split");
+					this.openFixedAppointmentDialog(oParams, "Gantt-Split");
+				} else if (sDragPath && sDragPath.length > 1) {
+					this._handleMultipleAssignment(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), []);
 				} else {
 					this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), sDragPath);
 				}
 
 			} else if (oDragContext) { // When we drop on the resource 
 				oParams.DateFrom = new Date(new Date().setHours(0));
-				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
-
+				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
 				if (bShowFixedAppointmentDialog) {
-					oParams.oResourceData = oResourceData;
-					oParams.sDragPath = sDragPath;
-					oParams.oTarget = oDropContext.getPath();
-
-					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
-					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "Gantt");
+					this.openFixedAppointmentDialog(oParams, "Gantt");
+				} else if (sDragPath && sDragPath.length > 1) {
+					this._handleMultipleAssignment(oResourceData, sDragPath, oDropContext.getPath(), new Date(), []);
 				} else {
 					this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), new Date());
-					// this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
 				}
 
 			} else { // When we drop on the resource from split window
 				oParams.DateFrom = new Date(new Date().setHours(0));
-				bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-					oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
-
+				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
 				if (bShowFixedAppointmentDialog) {
-					oParams.oResourceData = oResourceData;
-					oParams.sDragPath = sDragPath;
-					oParams.oTarget = oDropContext.getPath();
-
-					this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
-					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "Gantt-Split");
+					this.openFixedAppointmentDialog(oParams, "Gantt-Split");
+				} else if (sDragPath && sDragPath.length > 1) {
+					this._handleMultipleAssignment(oResourceData, sDragPath, oDropContext.getPath(), new Date(), []);
 				} else {
 					this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), new Date(), sDragPath);
 				}
@@ -331,8 +311,8 @@ sap.ui.define([
 		 * @param 
 		 */
 		_proceedToAssign: function (sChannel, oEvent, oData) {
-			if (oData.sDragPath) {
-				this._validateAndAssignDemands(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate);
+			if (oData.sDragPath || oData.aFixedAppointmentObjects) {
+				this._handleMultipleAssignment(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate, oData.aFixedAppointmentObjects);
 			} else {
 				this._validateAndAssignDemands(oData.oResourceData, null, oData.oTarget, oData.oTargetDate, oData.aGuids);
 			}
@@ -364,19 +344,23 @@ sap.ui.define([
 				this.showMessageToast(msg);
 				return;
 			}
-			// to identify the action done on respective page
-			localStorage.setItem("Evo-Action-page", "ganttSplit");
 
-			//could be multiple shape pathes
-			for (var key in oParams.draggedShapeDates) {
-				var sSourcePath = Utility.parseUid(key).shapeDataName,
-					sTargetPath = oTargetContext.getPath(),
-					oSourceData = this.getModel("ganttModel").getProperty(sSourcePath),
-					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
+			//Allowing Assignment Shape Drop Only on Resource Nodes
+			if (oTargetContext.getObject().NodeType === "RESOURCE") {
+				// to identify the action done on respective page
+				localStorage.setItem("Evo-Action-page", "ganttSplit");
 
-				//set new time and resource data to gantt model, setting also new pathes
-				var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
-				this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+				//could be multiple shape pathes
+				for (var key in oParams.draggedShapeDates) {
+					var sSourcePath = Utility.parseUid(key).shapeDataName,
+						sTargetPath = oTargetContext.getPath(),
+						oSourceData = this.getModel("ganttModel").getProperty(sSourcePath),
+						sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
+
+					//set new time and resource data to gantt model, setting also new pathes
+					var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
+					this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+				}
 			}
 		},
 
@@ -437,6 +421,8 @@ sap.ui.define([
 				oSelectedItem = oParams.item,
 				sPath = oEvent.getSource().data("Path"),
 				sFunctionKey = oSelectedItem.data("Function"),
+				sAsgnStsFnctnKey = oSelectedItem.data("StatusFunction"),
+				sRelationshipKey = oSelectedItem.data("RELATIONSHIP"),
 				oData = this.oGanttModel.getProperty(sPath),
 				oAppModel = this.getModel("appView"),
 				sDataModelPath = this._getAssignmentDataModelPath(oData.Guid),
@@ -444,7 +430,10 @@ sap.ui.define([
 					bFromNewGantt: true,
 					sSourcePath: sPath,
 					bCustomBusy: true
-				};
+				},
+				oShape = oEvent.getSource().getPopup()._oPosition.of,
+				oContext = oShape.getBindingContext("ganttModel"),
+				oRowContext = oShape.getParent().getParent().getBindingContext("ganttModel");
 			//still needed?
 			if (oAppModel.getProperty("/currentRoute") === "ganttSplit") {
 				mParameters = {
@@ -477,6 +466,25 @@ sap.ui.define([
 				//reassign
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters,
 					"ganttShapeReassignment");
+			} else if (sRelationshipKey) {
+				//Show Relationships
+				if (sRelationshipKey === "SHOW") {
+					this._showRelationships(sPath, oData);
+				} else { //Hide Relationships
+					this._hideRelationships(sPath);
+				}
+			} else if (sAsgnStsFnctnKey) {
+				//Changing Assignment Status
+				this._onContextMenuAssignmentStatusChange(sPath, oData, sAsgnStsFnctnKey);
+			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.showPlanningCal")) {
+				// Open Planning Calendar
+				var sMsg;
+				if (oContext) {
+					this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], mParameters, oShape.getTime());
+				} else {
+					sMsg = this.getResourceBundle().getText("notFoundContext");
+					this.showMessageToast(sMsg);
+				}
 			}
 		},
 
@@ -627,9 +635,60 @@ sap.ui.define([
 			}
 
 		},
+
+		/**
+		 * get Conditional shape for unavailabilities
+		 * and set color pattern for some unavailabilities
+		 * @param sTypeGroup
+		 * @param sType
+		 * @param sColor
+		 * @param sPattern
+		 */
+		getAvalablitiyConditionalShape: function (sTypeGroup, sType, sColor, sPattern) {
+			this._setAvailabilitiesPatterns(sTypeGroup, sType, sColor, sPattern);
+			if (sTypeGroup === "L") {
+				return 1;
+			} else {
+				return 0;
+			}
+		},
+
+		/**
+		 * Format legend colors to differentiate between pattern and colors
+		 * and set color pattern for some unavailabilities who was not part of availabilities
+		 * @param sType
+		 * @param sCharCode
+		 * @param sCharValue
+		 * @param sColor
+		 * @return {*}
+		 */
+		formatLegend: function (sType, sCharCode, sCharValue, sColor) {
+			this._setAvailabilitiesPatterns(sCharCode, sCharValue, sColor, sType);
+			if (sType === "COLOUR") {
+				return sColor;
+			} else {
+				return "url(#" + this._viewId + "--availability-" + sCharCode + "-" + sCharValue + ")";
+			}
+		},
+
 		/* =========================================================== */
 		/* intern methods                                              */
 		/* =========================================================== */
+
+		/**
+		 * set background color of Gantt by dynamic adding style sheet rule
+		 * https://developer.mozilla.org/en-US/docs/Web/API/CSSRuleList
+		 */
+		_setGanttBgColor: function () {
+			var styleEl = document.createElement('style');
+			// Append <style> element to <head>
+			document.head.appendChild(styleEl);
+			// Grab style element's sheet
+			var styleSheet = styleEl.sheet,
+				bgColor = this.oUserModel.getProperty("/DEFAULT_GANTT_BG_COLOR");
+			styleSheet.insertRule(".resourceGanttWithTable .sapGanttBackground .sapGanttBackgroundSVG {background: " + bgColor +
+				" !important}", 0);
+		},
 
 		/**
 		 * set onShapeDrop data to new target
@@ -722,12 +781,18 @@ sap.ui.define([
 		 * @param {Object} oContext - context bound to shape
 		 */
 		_openContextMenu: function (oShape, oContext) {
-			var oData = oContext.getObject();
+			var oData = oContext.getObject(),
+				sPath = oContext.getPath(),
+				bEnableRelationships = false;
+			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGN_GANTT") && sPath.length > 60) {
+				bEnableRelationships = true;
+			}
 			if (oData.DEMAND_STATUS !== "COMP") {
 				this._getRelatedDemandData(oData).then(function (oResult) {
 					oData.sPath = oContext.getPath();
 					this.oGanttModel.setProperty(oData.sPath + "/Demand", oResult.Demand);
 					this.oViewModel.setProperty("/ganttSettings/shapeData", oData);
+					this.oViewModel.setProperty("/ganttSettings/Enable_Relationships", bEnableRelationships);
 					this._oContextMenu.open(true, oShape, Popup.Dock.BeginTop, Popup.Dock.endBottom, oShape);
 				}.bind(this));
 			}
@@ -741,11 +806,12 @@ sap.ui.define([
 		 */
 		_updateDraggedShape: function (sPath, sRequestType, sSourcePath) {
 			this.oGanttModel.setProperty(sPath + "/busy", true);
-			var oData = this.oGanttModel.getProperty(sPath);
+			var oData = this.oGanttModel.getProperty(sPath),
+				oOriginalData = this.oGanttModel.getProperty(sPath);
 			//get demand details to this assignment
 			this._getRelatedDemandData(oData).then(function (oResult) {
 				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
-				this._validateAndSendChangedData(sPath, sRequestType).then(function () {
+				this._validateAndSendChangedData(sPath, sRequestType).then(function (aData) {
 					// these events
 					this._oEventBus.publish("BaseController", "refreshCapacity", {
 						sTargetPath: sPath.split("/AssignmentSet/results/")[0]
@@ -755,14 +821,20 @@ sap.ui.define([
 							sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
 						});
 					}
+					this._resetParentChildNodes(sPath, oOriginalData);
+					if (sRequestType === "reassign") {
+						this._resetParentNodeData(sPath, sSourcePath, aData);
+					}
 				}.bind(this), function () {
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
+					this._resetParentChildNodes(sPath);
 				}.bind(this));
 			}.bind(this), function (oError) {
 				this.oGanttModel.setProperty(sPath + "/busy", false);
 				this._resetChanges(sPath);
+				this._resetParentChildNodes(sPath);
 			}.bind(this));
 		},
 
@@ -1018,9 +1090,9 @@ sap.ui.define([
 			var sDummyPath = this._createDummyAssignment(oTarget, oTargetDate);
 			this.oGanttModel.setProperty(sDummyPath + "/busy", true);
 			var aFixedAppointments = this.getModel("viewModel").getProperty("/aFixedAppointmentsList")[0];
-		
+
 			//Condition for checking Fixed Appointments Qualification check
-			if (oUserData.ENABLE_QUALIFICATION && aFixedAppointments && aFixedAppointments.IsSelected) { 
+			if (oUserData.ENABLE_QUALIFICATION && aFixedAppointments && aFixedAppointments.IsSelected) {
 				this._checkResourceQualification(aSources, oTarget, oTargetDate, aFixedAppointments.FIXED_ASSGN_END_DATE, aGuids).then(function (
 					data) {
 					this._assignDemands(aSources, oTarget, oTargetDate, aFixedAppointments.FIXED_ASSGN_END_DATE, aGuids, sDummyPath);
@@ -1068,7 +1140,7 @@ sap.ui.define([
 			Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids))
 				.then(function (aResults) {
 					if (aResults.length > 0) {
-						this._addCreatedAssignment(aResults[0], oTarget, sDummyPath);
+						this._addCreatedAssignment(aResults, oTarget, sDummyPath);
 					}
 				}.bind(this), function () {
 					if (sDummyPath) {
@@ -1161,17 +1233,31 @@ sap.ui.define([
 		 * @param sTargetPath {string} target path of resource
 		 */
 		_addCreatedAssignment: function (data, sTargetPath, sDummyPath) {
-			if (data.Guid === "") {
-				this.oGanttModel.setProperty(sDummyPath, null);
-				return;
+			var aAssignments = this.oGanttModel.getProperty(sTargetPath).AssignmentSet.results;
+			for (var i = 0; i < data.length; i++) {
+				if (data[i].Guid === "") {
+					this.oGanttModel.setProperty(sDummyPath, null);
+					return;
+				}
+				if (i > 0) {
+					aAssignments.push(data[i]);
+					sDummyPath = sTargetPath + "/AssignmentSet/results/" + (aAssignments.length - 1);
+					this.oGanttModel.setProperty(sTargetPath + "/AssignmentSet/results", aAssignments);
+				} else {
+					this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+					this.oGanttModel.setProperty(sDummyPath, data[i]);
+
+				}
+				this.oGanttOriginDataModel.setProperty(sDummyPath, _.cloneDeep(data[i]));
+				this._appendChildAssignment(data[i], sTargetPath, sDummyPath);
+				this.oGanttModel.refresh();
+
 			}
-			this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-			this.oGanttModel.setProperty(sDummyPath, data);
-			this.oGanttOriginDataModel.setProperty(sDummyPath, _.cloneDeep(data));
 			if (this._routeName !== Constants.GANTT.SPLIT) {
 				this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
 			this.oGanttModel.refresh();
+			//this._appendChildAssignment(data, sTargetPath, sDummyPath);
 			this._oEventBus.publish("BaseController", "refreshCapacity", {
 				sTargetPath: sTargetPath
 			});
@@ -1194,7 +1280,13 @@ sap.ui.define([
 				sStartDate = date.startOf("day").subtract(1, "day").toDate();
 				sEndDate = date.endOf("day").add(1, "day").toDate();
 			}
-
+			
+			//Setting Existing Visible Horizon Dates On ContextMenu Opening For First Time To Avoid Jumping @since 2205
+			if (this._bFirstTimeContextMenuOpen) {
+				sStartDate = this.oGanttModel.getProperty("/settings/startTime");
+				sEndDate = this.oGanttModel.getProperty("/settings/endTime");
+			}
+			
 			this.oGanttModel.setProperty("/settings", {
 				startTime: sStartDate,
 				endTime: sEndDate
@@ -1269,17 +1361,19 @@ sap.ui.define([
 				oResData.forEach(function (oResItem) {
 					if (oItem.NodeId === oResItem.ParentNodeId) {
 						//add assignments as children in tree for expanding
-						/*if (oResItem.AssignmentSet && oResItem.AssignmentSet.results.length > 0) {
+						if (oResItem.AssignmentSet && oResItem.AssignmentSet.results.length > 0) {
 							oResItem.children = oResItem.AssignmentSet.results;
 							oResItem.children.forEach(function (oAssignItem, idx) {
 								oResItem.AssignmentSet.results[idx].NodeType = "ASSIGNMENT";
 								oResItem.AssignmentSet.results[idx].ResourceAvailabilitySet = oResItem.ResourceAvailabilitySet;
 								var clonedObj = _.cloneDeep(oResItem.AssignmentSet.results[idx]);
+								//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
+								clonedObj.OBJECT_ID_RELATION = clonedObj.OBJECT_ID_RELATION + "//" + clonedObj.ResourceGuid;
 								oResItem.children[idx].AssignmentSet = {
 									results: [clonedObj]
 								};
 							});
-						}*/
+						}
 						oItem.children.push(oResItem);
 					}
 				});
@@ -1353,11 +1447,11 @@ sap.ui.define([
 				aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
 				this.getModel().setUseBatch(false);
 				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
-				this._treeTable.setBusy(true);
+				this.getModel("appView").setProperty("/busy", true);
 				Promise.all(aPromises).then(function (data) {
 					this._addAssignemets(data[0].results);
 					this.getModel().setUseBatch(true);
-					this._treeTable.setBusy(false);
+					this.getModel("appView").setProperty("/busy", false);
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
 				}.bind(this));
 			}
@@ -1411,7 +1505,7 @@ sap.ui.define([
 			this.oGanttModel.refresh();
 		},
 		/**
-		 * Adding avaialbilities into Gantt data in Gantt Model 
+		 * Adding availabilities into Gantt data in Gantt Model 
 		 * @Author Rahul
 		 */
 		_addAvailabilities: function (aAvailabilities) {
@@ -1487,8 +1581,215 @@ sap.ui.define([
 				this.oGanttModel.refresh();
 			}.bind(this));
 			// }
-		}
+		},
+		/**
+		 * check if Fixed appointment dialog to display or not
+		 * @param bShowFutureFixedAssignments
+		 * @param oStartDate
+		 * @param oDemandObj
+		 **/
+		checkFixedAppointPopupToDisplay: function (bShowFutureFixedAssignments, oStartDate, oDemandObj) {
+			var isFixedAppointment = false;
+			this.aFixedAppointmentDemands = [];
+			oDemandObj.forEach(function (oItem) {
+				isFixedAppointment = oItem.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oStartDate < oItem.FIXED_APPOINTMENT_START_DATE) ||
+					oStartDate > oItem.FIXED_APPOINTMENT_START_DATE ||
+					oStartDate > oItem.FIXED_APPOINTMENT_LAST_DATE);
+				if (isFixedAppointment) {
+					this.aFixedAppointmentDemands.push(oItem);
+				}
+			}.bind(this));
 
+			return this.aFixedAppointmentDemands.length;
+		},
+		/**
+		 * Converting date into objects from String passed from Gantt Split
+		 * */
+		openFixedAppointmentDialog: function (oParams, sSource) {
+			this.getModel("viewModel").setProperty("/aFixedAppointmentsList", this.aFixedAppointmentDemands);
+			this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), [], oParams, this._mParameters, sSource);
+		},
+
+		/**
+		 * Converting date into objects from String passed from Gantt Split
+		 * @param aDemandData
+		 **/
+		convertDateToObjects: function (aDemandData) {
+			var oDemandObjects = [];
+			aDemandData.forEach(function (oItem) {
+				oItem.FIXED_APPOINTMENT_START_DATE = new Date(oItem.FIXED_APPOINTMENT_START_DATE);
+				oItem.FIXED_APPOINTMENT_END_DATE = new Date(oItem.FIXED_APPOINTMENT_END_DATE);
+				oItem.FIXED_ASSGN_START_DATE = new Date(oItem.FIXED_ASSGN_START_DATE);
+				oItem.FIXED_ASSGN_END_DATE = new Date(oItem.FIXED_ASSGN_END_DATE);
+
+				// oDemandObjects.push({
+				// 	sPath: oItem.sPath,
+				// 	oData: oItem.oDemandObj
+				// });
+				oDemandObjects.push(oItem);
+
+			}.bind(this));
+
+			this.oViewModel.setProperty("/ganttSettings/aGanttSplitDemandData", oDemandObjects);
+			return oDemandObjects;
+		},
+
+		/**
+		 * Set color pattern for some unavailabilities
+		 * @param sTypeGroup
+		 * @param sType
+		 * @param sColor
+		 * @param sPattern
+		 */
+		_setAvailabilitiesPatterns: function (sTypeGroup, sType, sColor, sPattern) {
+			if (sPattern) {
+				var sPatternName = this._viewId + "--availability-" + sTypeGroup + "-" + sType,
+					oCtrl = null;
+				//get SVGDev control in view
+				if (!this._oSVGDef) {
+					this._oSVGDef = this.getView().byId("idGanttChartSvgDefs");
+					this._aAvailabilitySVGDef = [];
+				}
+
+				//when pattern control was not yet created
+				if (this._aAvailabilitySVGDef.indexOf(sPatternName) < 0) {
+					//create SlashPattern
+					if (sPattern === "SlashPattern") {
+						oCtrl = new SlashPattern(sPatternName, {
+							backgroundColor: "white",
+							stroke: sColor || "#eee"
+						});
+						this._oSVGDef.insertDef(oCtrl);
+						this._aAvailabilitySVGDef.push(sPatternName);
+					}
+					if (sPattern === "BackslashPattern") {
+						oCtrl = new BackSlashPattern(sPatternName, {
+							backgroundColor: "white",
+							stroke: sColor || "#eee"
+						});
+						this._oSVGDef.insertDef(oCtrl);
+						this._aAvailabilitySVGDef.push(sPatternName);
+					}
+				}
+			}
+		},
+
+		/**
+		 * on press link of assignment in resource tree row
+		 * get parent row path and bind this path to the dialog or showing assignment information
+		 * @param oEvent
+		 * @since 2205
+		 */
+		onPressAssignmentLink: function (oEvent) {
+			var oSource = oEvent.getSource();
+			this.assignmentRowContext = oSource.getParent().getBindingContext("ganttModel");
+			if (this.assignmentRowContext) {
+				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().Guid + "')";
+				this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext);
+			} else {
+				var msg = this.getResourceBundle().getText("notFoundContext");
+				this.showMessageToast(msg);
+			}
+		},
+		/**
+		 * multi assignments of demands via Fixed assignment Dialog Event bus call
+		 * handle demand assignment for Gantt Json model 
+		 * @param oResourceData
+		 * @param aSource
+		 * @param oTarget
+		 * @param oTargetDate
+		 * @param aFixedAppointmentObjects
+		 * since 2205
+		 */
+		_handleMultipleAssignment: function (oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects) {
+			var sDummyPath = this._createDummyAssignment(oTarget, oTargetDate);
+			this.oGanttModel.setProperty(sDummyPath + "/busy", true);
+
+			Promise.all(this.AssignMultipleDemands(oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects))
+				.then(function (aResults, oResponse) {
+						if (aResults.length > 0) {
+							var aCreatedAssignments = this._getCreatedAssignments(aResults);
+							if (aCreatedAssignments.length > 0) {
+								this._addCreatedAssignment(aCreatedAssignments, oTarget, sDummyPath);
+							} else {
+								this.oGanttModel.setProperty(sDummyPath, null);
+								this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+							}
+						}
+						//	this._oEventBus.publish("BaseController", "refreshAssignments", aResults);
+						//	this._oEventBus.publish("BaseController", "refreshCapacity", {});
+					}.bind(this),
+					function () {
+						if (sDummyPath) {
+							this.oGanttModel.setProperty(sDummyPath, null);
+							this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+						}
+					}.bind(this));
+		},
+		/**
+		 * getting demand Objects form paths
+		 * handle demand assignment for Gantt Json model 
+		 * @param aPaths_gantt
+		 * @param oDemands_ganttSplit
+		 * since 2205
+		 */
+		_getDemandObjectsByPath: function (aPaths_gantt, oDemands_ganttSplit) {
+			var oDemandObjects = [];
+			if (this._mParameters.bFromNewGanttSplit) {
+				oDemands_ganttSplit.forEach(function (oItem) {
+					oDemandObjects.push(oItem.oDemandObject);
+				}.bind(this));
+				oDemandObjects = this.convertDateToObjects(oDemandObjects);
+			} else {
+				aPaths_gantt.forEach(function (sPath) {
+					oDemandObjects.push(this.getModel().getProperty(sPath));
+				}.bind(this));
+			}
+			return oDemandObjects;
+		},
+		/**
+		 * getting dragged paths from localstorage from Gantt Split
+		 * handle demand assignment for Gantt Json model 
+		 * @param slocStor
+		 * since 2205
+		 */
+		_getDragPaths: function (slocStor) {
+			var aPaths = [];
+			for (var i in slocStor) {
+				aPaths.push(slocStor[i].sPath);
+			}
+			return aPaths;
+		},
+
+		/**
+		 * OnSelection of Assignment Status Change
+		 * @param sPath
+		 * @param oData
+		 * @param sAsgnStsFnctnKey
+		 * since 2205
+		 */
+		_onContextMenuAssignmentStatusChange: function (sPath, oData, sAsgnStsFnctnKey) {
+			var sUri = "/AssignmentSet('" + oData.Guid + "')";
+			this._getAssignmentStatus(sUri).then(function (data) {
+				if (data["ALLOW_" + sAsgnStsFnctnKey]) {
+					this.getModel("appView").setProperty("/busy", true);
+					var oParams = {
+						Function: sAsgnStsFnctnKey,
+						AssignmentGUID: oData.Guid
+					};
+					this.executeFunctionImport(this.getModel(), oParams, "ExecuteAssignmentFunction", "POST").then(
+						function (aData) {
+							this.getModel("appView").setProperty("/busy", false);
+							this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+							this._updateAssignmentStatus(sPath, sAsgnStsFnctnKey, aData);
+						}.bind(this));
+				} else {
+					sap.m.MessageBox.error(this.getModel("i18n").getResourceBundle().getText("assignmentNotPossible"));
+				}
+			}.bind(this));
+			this.oGanttModel.setProperty(sPath + "/busy", false);
+			this.oGanttModel.refresh(true);
+		}
 	});
 
 });

@@ -206,7 +206,8 @@ sap.ui.define([
 						else if (oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetObj.ISEXTERNAL && aSources.length !==
 							iVendorAssignmentLen) {
 							this._component.VendorAssignment.open(this._oView, this._assignPath, null);
-						} else if (oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetObj.NodeType === "RESOURCE") {
+						} else if (oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetObj.NodeType ===
+							"RESOURCE") {
 							//Checking Operation Times
 							this._component.OperationTimeCheck.open(this._oView, null, this._assignPath);
 						} else {
@@ -293,9 +294,11 @@ sap.ui.define([
 		 * when dialog closed inside controller
 		 */
 		_closeDialog: function () {
-			this._oFiltersRightTechnician = false;
-			this.refreshDialogTable();
-			this._oDialog.close();
+			if (this._oDialog) {
+				this._oFiltersRightTechnician = false;
+				this.refreshDialogTable();
+				this._oDialog.close();
+			}
 		},
 
 		/**
@@ -304,6 +307,10 @@ sap.ui.define([
 		 */
 		onCloseDialog: function () {
 			this._closeDialog();
+			//setting null on dialog close:Sagar
+			this._oView.getModel("assignment").setProperty("/NewAssignPath", null);
+			this._oView.getModel("assignment").setProperty("/NewAssignId", null);
+			this._oView.getModel("assignment").setProperty("/NewAssignDesc", null);
 			//when from new gantt shape busy state needs removed
 			if (this._mParameters.bCustomBusy && (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit)) {
 				this._oView.getModel("ganttModel").setProperty(this._mParameters.sSourcePath + "/busy", false);

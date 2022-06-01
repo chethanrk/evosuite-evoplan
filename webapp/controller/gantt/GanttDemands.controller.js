@@ -1,5 +1,5 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/AssignmentsController",
+	"com/evorait/evoplan/controller/gantt/GanttActions",
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/ganttFormatter",
@@ -22,7 +22,7 @@ sap.ui.define([
 
 		onInit: function () {
 			// Row Action template to navigate to Detail page
-			var onClickNavigation = this._onActionPress.bind(this),
+			var onClickNavigation = this.onActionPress.bind(this),
 				openActionSheet = this.openActionSheet.bind(this),
 				oAppModel = this.getModel("appView");
 
@@ -55,69 +55,9 @@ sap.ui.define([
 			//to initialize Gantt Demand Filter Dialog
 			this._oGanttDemandFilter = this.getView().byId("idGanttDemandFilterDialog");
 			this._oGanttDemandFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+			this._aSelectedIndices = [];
 		},
-		/**
-		 * check for unsaved data in Demand table
-		 * on click on navigate acion navigate to Demand Detail Page
-		 * modified method since 2201, by Rakesh Sahu
-		 * @param oEvent
-		 */
-		_onActionPress: function (oEvent) {
-			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
-				oViewModel = this.getModel("viewModel"),
-				oModel = this.getModel(),
-				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
-
-			this.oRow = oEvent.getParameter("row");
-
-			if (bDemandEditMode && oModel.hasPendingChanges()) {
-				this.showDemandEditModeWarningMessage().then(function (bResponse) {
-					var sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
-						sSave = oResourceBundle.getText("xbut.buttonSave");
-
-					if (bResponse === sDiscard) {
-						oModel.resetChanges();
-						oViewModel.setProperty("/bDemandEditMode", false);
-						this._navToDetail(null, this.oRow);
-					} else
-					if (bResponse === sSave) {
-						oViewModel.setProperty("/bDemandEditMode", false);
-						this.submitDemandTableChanges();
-					}
-				}.bind(this));
-
-			} else {
-				if (bDemandEditMode) {
-					oViewModel.setProperty("/bDemandEditMode", false);
-				}
-				this._navToDetail(oEvent);
-			}
-		},
-		/**
-		 * navigation to demand detail page
-		 * added method since 2201, by Rakesh Sahu
-		 * @param oEvent
-		 * @param oRow
-		 */
-		_navToDetail: function (oEvent, oRow) {
-			oRow = oRow ? oRow : oEvent.getParameter("row");
-			var oRouter = this.getRouter(),
-				oContext = oRow.getBindingContext(),
-				sPath = oContext.getPath(),
-				oModel = oContext.getModel(),
-				oData = oModel.getProperty(sPath),
-				oUserDetail = this.getModel("appView");
-
-			if (oUserDetail.getProperty("/currentRoute") === "splitDemands") {
-				oRouter.navTo("splitDemandDetails", {
-					guid: oData.Guid
-				});
-			} else {
-				oRouter.navTo("ganttDemandDetails", {
-					guid: oData.Guid
-				});
-			}
-		},
+		
 		/** 
 		 * On Drag start restrict demand having status other init
 		 * @param oEvent
@@ -126,12 +66,13 @@ sap.ui.define([
 			var oDragSession = oEvent.getParameter("dragSession"),
 				oDraggedControl = oDragSession.getDragControl(),
 				aIndices = this._oDataTable.getSelectedIndices(),
-				oSelectedPaths, aPathsData, aSelDemandGuid = [];
+				oSelectedPaths, aPathsData, aSelDemandGuid = [],
+				aSelectedDemandObject = [];
 
 			oDragSession.setTextData("Hi I am dragging");
 			//get all selected rows when checkboxes in table selected
 			if (aIndices.length > 0) {
-				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, [aIndices[0]], true);
+				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedIndices, true);
 				aPathsData = oSelectedPaths.aPathsData;
 			} else {
 				//table tr single dragged element
@@ -141,11 +82,16 @@ sap.ui.define([
 
 			aPathsData.forEach(function (item) {
 				aSelDemandGuid.push(item.sPath);
+				aSelectedDemandObject.push({
+					sPath: item.sPath,
+					oDemandObject: item.oData
+				});
 			});
 
 			this.getModel("viewModel").setProperty("/gantDragSession", aSelDemandGuid);
 			this.getModel("viewModel").setProperty("/dragSession", aPathsData);
-			localStorage.setItem("Evo-Dmnd-guid", aSelDemandGuid);
+			localStorage.setItem("Evo-Dmnd-guid", JSON.stringify(aSelectedDemandObject));
+			localStorage.setItem("Evo-aPathsData", JSON.stringify(aPathsData));
 
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
@@ -212,19 +158,22 @@ sap.ui.define([
 		 * enable/disable buttons on footer when there is some/no selected rows
 		 * @since 3.0
 		 */
-		onRowSelectionChange: function () {
-			var selected = this._oDataTable.getSelectedIndices();
-			var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
+		onRowSelectionChange: function (oEvent) {
 			var selected = this._oDataTable.getSelectedIndices(),
+				iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL"),
+				selected = this._oDataTable.getSelectedIndices(),
+				index = oEvent.getParameter("rowIndex"),
 				sDemandPath, bComponentExist;
 			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
 				this.byId("assignButton").setEnabled(true);
 				this.byId("changeStatusButton").setEnabled(true);
+				this.byId("idAssignmentStatusButton").setEnabled(true);
 				this.byId("idOverallStatusButton").setEnabled(true);
 				this.byId("idUnassignButton").setEnabled(true);
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
+				this.byId("idAssignmentStatusButton").setEnabled(false);
 				this.byId("idOverallStatusButton").setEnabled(false);
 				this.byId("materialInfo").setEnabled(false);
 				this.byId("idUnassignButton").setEnabled(false);
@@ -245,6 +194,19 @@ sap.ui.define([
 				} else {
 					this.byId("materialInfo").setEnabled(false);
 					this.byId("idOverallStatusButton").setEnabled(false);
+				}
+			}
+
+			// To get sequence of selection 
+			if (oEvent.getParameter("selectAll")) {
+				this._aSelectedIndices = oEvent.getParameter("rowIndices");
+			} else if (oEvent.getParameter("rowIndex") === -1) {
+				this._aSelectedIndices = [];
+			} else {
+				if (!this._aSelectedIndices.includes(index)) {
+					this._aSelectedIndices.push(index)
+				} else {
+					this._aSelectedIndices.splice(this._aSelectedIndices.indexOf(index), 1);
 				}
 			}
 		},
@@ -373,6 +335,23 @@ sap.ui.define([
 				this.getOwnerComponent().assignActionsDialog.open(this.getView(), oSelectedPaths, true, this._mParameters);
 			} else {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+			}
+		},
+
+		/**
+		 * On Press of Change Assignment Status Button
+		 * Since 2205
+		 * @Author Chethan RK
+		 */
+		onAssignmentStatusButtonPress: function () {
+			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+			var aSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx);
+			if (aSelectedPaths.aAssignmentDemands.length > 0) {
+				this.getModel("viewModel").setProperty("/Show_Assignment_Status_Button", true);
+				this.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
+				this.getOwnerComponent().assignActionsDialog.open(this.getView(), aSelectedPaths, true, this._mParameters);
+			} else {
+				sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.noAssignments"));
 			}
 		},
 

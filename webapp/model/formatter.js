@@ -195,6 +195,17 @@ sap.ui.define([
 			return "";
 		},
 		/**
+		 * @Author Sagar
+		 * format the Object Status state acording to Material_Status
+		 * @param sValue
+		 */
+		getDemandState: function (sValue) {
+			if (sValue) {
+				return sValue;
+			}
+			return "None";
+		},
+		/**
 		 * @Author Rahul
 		 * format the icon acording availability
 		 * @param sValue
@@ -439,6 +450,16 @@ sap.ui.define([
 			}
 		},
 		/**
+		 * Format state of progress bar based on REMAIN_WORK_UTIL_COLOR
+		 * @param sValue
+		 */
+		formatRemainingWorkProgressState: function (sValue) {
+			if (sValue) {
+				return sValue;
+			}
+			return "None";
+		},
+		/**
 		 *
 		 * @param isCapacity
 		 * @param sSelectedView
@@ -446,6 +467,18 @@ sap.ui.define([
 		 */
 		formatProgressBarVisibility: function (isCapacity, sSelectedView) {
 			if (isCapacity === true && sSelectedView !== "TIMENONE") {
+				return true;
+			}
+			return false;
+		},
+		formatCapacityProgressBarVisibility: function (isCapacity, sSelectedView) {
+			if (isCapacity === true && sSelectedView !== "TIMENONE") {
+				return true;
+			}
+			return false;
+		},
+		formatRemainingWorkProgressBarVisibility: function (isCapacity, isRemainingWork, sSelectedView) {
+			if (isCapacity === true && isRemainingWork === true && sSelectedView !== "TIMENONE") {
 				return true;
 			}
 			return false;
@@ -474,6 +507,14 @@ sap.ui.define([
 			}
 			return false;
 		},
+
+		formatRemainingWorkVisibility: function (userCapacity, userRemainingWork, isCapacity, sSelectedView) {
+			if (userCapacity && userRemainingWork && isCapacity && sSelectedView !== "TIMENONE") {
+				return true;
+			}
+			return false;
+		},
+
 		/**
 		 *
 		 * @param sNodeType
@@ -771,7 +812,7 @@ sap.ui.define([
 			var sOperation = aManageResourceData.operationType,
 				sMsgTypeText = "",
 				aData = aManageResourceData.Assignments,
-				sResourceName = this._oSelectedNodeContext.getProperty("Description");;
+				sResourceName = this._oSelectedNodeContext.getProperty("Description");
 			switch (sOperation) {
 			case "deleteResource":
 				sMsgTypeText = "Removable";
@@ -820,18 +861,19 @@ sap.ui.define([
 		},
 
 		onDisplayOperationTimes: function (oDate, oTimes) {
+			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				pattern: "dd MMM yyyy hh:mm:ss a"
+			});
 			if (oDate) {
-				var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-						pattern: "dd MMM yyyy"
-					}),
-					oOperationTime = new Date(oTimes.ms),
-					oOperationTimeMS = oOperationTime.getTime(),
-					oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
-						pattern: "hh:mm:ss a"
-					}),
-					sOperationTimes = oTimeFormat.format(new Date(oOperationTimeMS)); //removed offset bcz of time mismatch : RAKESH SAHU.
+				oDate = new Date(oDate);
+				var sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
+					oOperationTime = new Date(oTimes.ms + sTZOffsetMs);
 
-				return oDateFormat.format(oDate) + ", " + sOperationTimes;
+				oDate.setHours(oOperationTime.getHours());
+				oDate.setMinutes(oOperationTime.getMinutes());
+				oDate.setSeconds(oOperationTime.getSeconds());
+
+				return oDateFormat.format(oDate);
 			}
 		},
 
@@ -846,9 +888,6 @@ sap.ui.define([
 			} else {
 				return "";
 			}
-			// else if () {
-			// return "sap-icon://message-warning";
-			// } 
 		},
 
 		/**
@@ -862,9 +901,6 @@ sap.ui.define([
 			} else {
 				return "#0854a0";
 			}
-			// else if (sStatus === "warning") {
-			// 	return "#FFBF00";
-			// }
 		},
 
 		/**
@@ -878,9 +914,73 @@ sap.ui.define([
 				if (sStatus === "warning") {
 					return "Error";
 				}
-				return sStatus.substr(0, 1).toUpperCase() + sStatus.substr(1, sStatus.length)
+				return sStatus.substr(0, 1).toUpperCase() + sStatus.substr(1, sStatus.length);
 			}
 			return "";
+		},
+		/**
+		 * Visibility of Change Status Button in Demand Footer
+		 * @Author Chethan
+		 * @since 2205
+		 * @param bDemandStatus
+		 * @param bAssignmentStatus
+		 * @returns boolean
+		 */
+		setVisibilityChangeStatusButton: function (bDemandStatus, bAssignmentStatus) {
+			if (bDemandStatus && !bAssignmentStatus) {
+				return true;
+			}
+			return false;
+		},
+
+		/**
+		 * Visibility of Assignment Status Button's in Assignment Status Popover based on Allow Fields 
+		 * @Author Chethan
+		 * @since 2205
+		 * @param sFunction
+		 * @returns boolean
+		 */
+		showAssignmentStatusButtons: function (sFunction) {
+			if (!this._oAssignmentTable && !this.aSelectedAssignments[0].oData["ALLOW_" + sFunction]) {
+				return false;
+			}
+			return true;
+		},
+
+		/**
+		 * Displaying Assignment Description in Resource Tree Title for Child Nodes
+		 * @since 2205
+		 * @param sNodeType
+		 * @returns sDescription
+		 * @returns sDemandDesc
+		 */
+		formatGanttResourceTitle: function (sNodeType, sDescription, sDemandDesc) {
+			if (sNodeType === "ASSIGNMENT") {
+				return sDemandDesc;
+			}
+			return sDescription;
+		},
+		/*
+		* Customizing remaining work label
+		* @since 2205
+		* Author Bhumika
+		* @param sText
+		* @returns Label string
+		*/
+		RemainingWorkLabel: function (sText) {
+			var oComponent = this._component,
+				oBundle;
+			if (oComponent) {
+				oBundle = oComponent.getModel("i18n").getResourceBundle();
+			} else {
+				oBundle = this.getResourceBundle();
+			}
+			if (sText) {			// Remaning Work
+				return oBundle.getText("xtit.remainingWork");
+			}
+			else {					// Progress
+				return oBundle.getText("xtit.progress");
+			}
 		}
 	};
 });

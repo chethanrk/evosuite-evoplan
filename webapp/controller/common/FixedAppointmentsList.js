@@ -65,37 +65,73 @@ sap.ui.define([
 		},
 
 		onProceed: function () {
-			var oViewModel = this._oView.getModel('viewModel'),
+			var oViewModel = this._oView.getModel("viewModel"),
 				aFixedAppointments = oViewModel.getProperty("/aFixedAppointmentsList"),
 				oAssignment,
 				demandObj,
 				bIsLast = false;
 
 			if (this.sSource === "Gantt" || this.sSource === "OldGantt") {
-				var sChannel = this.sSource === "Gantt" ? "GanttFixedAssignments" : "OldGanttFixedAssignments";
+				var sChannel = this.sSource === "Gantt" ? "GanttFixedAssignments" : "OldGanttFixedAssignments",
+					oParams = {
+						oResourceData: this._aAllParameters.oResourceData,
+						sDragPath: this._aAllParameters.sDragPath,
+						oTarget: this._aAllParameters.oTarget,
+						oTargetDate: "",
+						aGuids: this._aAllParameters.sDragPath
+					},
+					sPath;
 
-				this._oEventBus.publish(sChannel, "assignDemand", {
-					oResourceData: this._aFixedAppointmentPayload.oResourceData,
-					sDragPath: this._aFixedAppointmentPayload.sDragPath,
-					oTarget: this._aFixedAppointmentPayload.oTarget,
-					oTargetDate: aFixedAppointments[0].IsSelected ? aFixedAppointments[0].FIXED_APPOINTMENT_START_DATE : this._aFixedAppointmentPayload
-						.DateFrom
-				});
+				if (this._aAllParameters.sDragPath.length > 1) {
+					for (var i in aFixedAppointments) {
+						demandObj = aFixedAppointments[i];
+						sPath = "/DemandSet('" + aFixedAppointments[i].Guid + "')";
+						if (demandObj.IsSelected) {
+							this._aFixedAppointmentPayload.push(demandObj);
+							this._aAllParameters.sDragPath.splice(this._aAllParameters.sDragPath.indexOf(sPath), 1);
+						}
+					}
+					oParams.oTargetDate = this._aAllParameters.DateFrom;
+					oParams.aFixedAppointmentObjects = this._aFixedAppointmentPayload;
+				} else {
+					oParams.oTargetDate = aFixedAppointments[0].IsSelected ? aFixedAppointments[0].FIXED_APPOINTMENT_START_DATE : this._aAllParameters
+						.DateFrom;
+					oParams.sDragPath = null;
+				}
+
+				this._oEventBus.publish(sChannel, "assignDemand", oParams);
 				this._FixedAppointmentsDialog.close();
 				return;
 			}
 
 			if (this.sSource === "Gantt-Split" || this.sSource === "OldGantt-Split") {
-				var sChannel = this.sSource === "Gantt-Split" ? "GanttFixedAssignments" : "OldGanttFixedAssignments";
+				var sChannel = this.sSource === "Gantt-Split" ? "GanttFixedAssignments" : "OldGanttFixedAssignments",
+					oParams = {
+						oResourceData: this._aAllParameters.oResourceData,
+						sDragPath: this._aAllParameters.sDragPath,
+						oTarget: this._aAllParameters.oTarget,
+						oTargetDate: "",
+						aGuids: this._aAllParameters.sDragPath
+					},
+					sPath;
 
-				this._oEventBus.publish(sChannel, "assignDemand", {
-					oResourceData: this._aFixedAppointmentPayload.oResourceData,
-					sDragPath: null,
-					oTarget: this._aFixedAppointmentPayload.oTarget,
-					oTargetDate: aFixedAppointments[0].IsSelected ? aFixedAppointments[0].FIXED_APPOINTMENT_START_DATE : this._aFixedAppointmentPayload
-						.DateFrom,
-					aGuids: this._aFixedAppointmentPayload.sDragPath
-				});
+				if (this._aAllParameters.sDragPath.length > 1) {
+					for (var i in aFixedAppointments) {
+						demandObj = aFixedAppointments[i];
+						sPath = "/DemandSet('" + aFixedAppointments[i].Guid + "')";
+						if (demandObj.IsSelected) {
+							this._aFixedAppointmentPayload.push(demandObj);
+							this._aAllParameters.sDragPath.splice(this._aAllParameters.sDragPath.indexOf(sPath), 1);
+						}
+					}
+					oParams.oTargetDate = this._aAllParameters.DateFrom;
+					oParams.aFixedAppointmentObjects = this._aFixedAppointmentPayload;
+				} else {
+					oParams.oTargetDate = aFixedAppointments[0].IsSelected ? aFixedAppointments[0].FIXED_APPOINTMENT_START_DATE : this._aAllParameters
+						.DateFrom;
+					oParams.sDragPath = null;
+				}
+				this._oEventBus.publish(sChannel, "assignDemand", oParams);
 				this._FixedAppointmentsDialog.close();
 				return;
 			}
@@ -104,12 +140,14 @@ sap.ui.define([
 				demandObj = aFixedAppointments[i];
 				oAssignment = this.sSource === "reAssign" ? this._aFixedAppointmentPayload : this._aFixedAppointmentPayload[i];
 				if (demandObj.IsSelected) {
+					demandObj.FIXED_APPOINTMENT_START_DATE = this.setCustomDateTime(demandObj.FIXED_APPOINTMENT_START_DATE, demandObj.FIXED_APPOINTMENT_START_TIME);
+					demandObj.FIXED_APPOINTMENT_END_DATE = this.setCustomDateTime(demandObj.FIXED_APPOINTMENT_END_DATE, demandObj.FIXED_APPOINTMENT_END_TIME);
 					oAssignment.DateFrom = demandObj.FIXED_APPOINTMENT_START_DATE;
 					oAssignment.TimeFrom = {};
-					oAssignment.TimeFrom.ms = demandObj.FIXED_APPOINTMENT_START_TIME.ms;
+					oAssignment.TimeFrom.ms = demandObj.FIXED_APPOINTMENT_START_DATE ? demandObj.FIXED_APPOINTMENT_START_DATE.getTime() : 0;
 					oAssignment.DateTo = demandObj.FIXED_APPOINTMENT_END_DATE;
 					oAssignment.TimeTo = {};
-					oAssignment.TimeTo.ms = demandObj.FIXED_APPOINTMENT_END_TIME.ms;
+					oAssignment.TimeTo.ms = demandObj.FIXED_APPOINTMENT_END_DATE ? demandObj.FIXED_APPOINTMENT_END_DATE.getTime() : 0;
 				}
 				this._aAllParameters.push(oAssignment);
 			}

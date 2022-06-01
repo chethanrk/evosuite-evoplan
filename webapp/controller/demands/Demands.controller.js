@@ -36,6 +36,8 @@ sap.ui.define([
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 			this._eventBus.subscribe("AssignTreeDialog", "updateDemandTableSelection", this._deselectDemands, this);
+			//toAdd busystete change event to the table
+			this._oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
 		},
 
 		/* =========================================================== */
@@ -53,6 +55,7 @@ sap.ui.define([
 			this._viewModel = viewModel;
 			viewModel.setProperty("/subViewTitle", tableTitle);
 			viewModel.setProperty("/subTableNoDataText", noDataText);
+			viewModel.setProperty("/Show_Assignment_Status_Button", false);
 		},
 
 		/**
@@ -130,6 +133,23 @@ sap.ui.define([
 				this._navToDetail(oEvent);
 			}
 		},
+
+		/**
+		 * Busy State changed event
+		 * To handle scroll for the particular selected index
+		 */
+		onBusyStateChanged: function (oEvent) {
+			var parameters = oEvent.getParameters();
+			if (parameters.busy === false) {
+				var aDraggedIndex = this.getModel("viewModel").getProperty("/iFirstDraggedIndex");
+				if (aDraggedIndex && aDraggedIndex !== -1) {
+					this._oDataTable.setFirstVisibleRow(aDraggedIndex);
+					//set first dragged index to set initial
+					this.getModel("viewModel").setProperty("/iFirstDraggedIndex", -1);
+				}
+			}
+		},
+
 		/**
 		 * navigation to demand detail page
 		 * added method since 2201, by Rakesh Sahu
@@ -143,7 +163,7 @@ sap.ui.define([
 				sPath = oContext.getPath(),
 				oModel = oContext.getModel(),
 				oData = oModel.getProperty(sPath);
-
+			this.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
 			oRouter.navTo("DemandDetail", {
 				guid: oData.Guid
 			});
@@ -191,12 +211,14 @@ sap.ui.define([
 					this.byId("idfindRightTechnicianButton").setEnabled(true);
 					this.byId("assignButton").setEnabled(true);
 					this.byId("changeStatusButton").setEnabled(true);
+					this.byId("idAssignmentStatusButton").setEnabled(true);
 					this.byId("idOverallStatusButton").setEnabled(true);
 					this.byId("idUnassignButton").setEnabled(true);
 				} else {
 					this.byId("idfindRightTechnicianButton").setEnabled(false);
 					this.byId("assignButton").setEnabled(false);
 					this.byId("changeStatusButton").setEnabled(false);
+					this.byId("idAssignmentStatusButton").setEnabled(false);
 					this.byId("idOverallStatusButton").setEnabled(false);
 					this.byId("materialInfo").setEnabled(false);
 					this.byId("idUnassignButton").setEnabled(false);
@@ -242,6 +264,7 @@ sap.ui.define([
 				oDraggedControl = oDragSession.getDragControl(),
 				aIndices = this._oDataTable.getSelectedIndices(),
 				oSelectedPaths, aPathsData;
+			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", false);
 
 			//Restricting selected demand list as per the global config select all property 
 			aIndices = aIndices.slice(0, this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL"));
@@ -285,6 +308,7 @@ sap.ui.define([
 				this._oDraggableTable.rebindTable();
 			}
 			this._bFirstTime = false;
+			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", false);
 		},
 
 		/**
@@ -585,6 +609,24 @@ sap.ui.define([
 				});
 			} else {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+			}
+		},
+		/**
+		 * On Press of Change Assignment Status Button
+		 * Since 2205
+		 * @Author Chethan RK
+		 */
+		onAssignmentStatusButtonPress: function () {
+			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+			var aSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx);
+			if (aSelectedPaths.aAssignmentDemands.length > 0) {
+				this._viewModel.setProperty("/Show_Assignment_Status_Button", true);
+				this._viewModel.setProperty("/Disable_Assignment_Status_Button", false);
+				this.getOwnerComponent().assignActionsDialog.open(this.getView(), aSelectedPaths, true, {
+					bFromHome: true
+				});
+			} else {
+				sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.noAssignments"));
 			}
 		}
 

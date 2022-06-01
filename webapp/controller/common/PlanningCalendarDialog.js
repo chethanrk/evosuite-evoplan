@@ -221,8 +221,10 @@ sap.ui.define([
 				this._oCalendarModel.setProperty("/viewKey", this._selectedView ? this.formatter.formatViewKey(this._selectedView) : this.getSelectedView());
 				this._oCalendarModel.setProperty("/startDate", new Date());
 			}
-			this._oDialog.open();
-
+			// Dialog was re-opening after close due to pending batch requests completing at a later time
+			if (!this._oCancel) {
+				this._oDialog.open();
+			}
 			this._oView.getModel("appView").setProperty("/busy", false);
 			this._oPlanningCalendar.setBusy(false);
 		},
@@ -757,6 +759,10 @@ sap.ui.define([
 			var oSelected = this._oPlanningCalendar.getSelectedRows();
 			if (oSelected.length > 0) {
 				oSelected[0].setSelected(false);
+			}
+			// Gantt model to be set busy-free after planning calendar closing
+			if (this._mParameters.bCustomBusy && (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit)) {
+				this._oView.getModel("ganttModel").setProperty(this._mParameters.sSourcePath + "/busy", false);
 			}
 		},
 		/**

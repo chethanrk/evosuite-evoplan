@@ -205,11 +205,13 @@ sap.ui.define([
 					}
 				}.bind(this),
 				error: function (oError) {
+					//set first dragged index to set initial
+					this.getModel("viewModel").setProperty("/iFirstDraggedIndex", -1);
 					//Handle Error
 					MessageToast.show(oResourceBundle.getText("errorMessage"), {
 						duration: 5000
 					});
-				}
+				}.bind(this)
 			});
 		},
 		/**
@@ -328,6 +330,7 @@ sap.ui.define([
 			var aPathsData = [],
 				aNonAssignableDemands = [],
 				aUnAssignableDemands = [],
+				aAssignmentWithDemands = [],
 				oData, oContext, sPath;
 
 			if (checkAssignAllowed) {
@@ -342,6 +345,15 @@ sap.ui.define([
 					//on Check on oData property ALLOW_UNASSIGN for mass unassign from Demand View
 					if (this.getModel("user").getProperty("/ENABLE_DEMAND_UNASSIGN") && oData.ALLOW_UNASSIGN) {
 						aUnAssignableDemands.push({
+							sPath: sPath,
+							oData: oData,
+							index: aSelectedRowsIdx[i]
+						});
+					}
+
+					//Checking if Assignments are present or/not for selected Demands for mass Assignment Status Change #since 2205
+					if (this.getModel("user").getProperty("/ENABLE_ASSIGNMENT_STATUS") && oData.NUMBER_OF_ASSIGNMENTS > 0) {
+						aAssignmentWithDemands.push({
 							sPath: sPath,
 							oData: oData,
 							index: aSelectedRowsIdx[i]
@@ -389,7 +401,8 @@ sap.ui.define([
 			return {
 				aPathsData: aPathsData,
 				aNonAssignable: aNonAssignableDemands,
-				aUnAssignDemands: aUnAssignableDemands
+				aUnAssignDemands: aUnAssignableDemands,
+				aAssignmentDemands: aAssignmentWithDemands
 			};
 		},
 
@@ -644,7 +657,9 @@ sap.ui.define([
 				sParameter = sAdditionInfo.split("\\")[sAdditionInfo.split("\\").length - 1];
 				oKeyChar = oDemandObj[sParameter];
 				sUri = sUri + oKeyChar;
-				sUri = sServicePath + sUri;
+				if (sAdditionInfo.substring(0, 5) !== "https") {
+					sUri = sServicePath + sUri;
+				}
 				window.open(sUri, "_blank");
 			} else {
 				//Logic for Navigation in Fiori Launchpad
@@ -690,7 +705,9 @@ sap.ui.define([
 						}
 					}
 					sUri = sUri.slice(0, -1);
-					sUri = sServicePath + sUri;
+					if (sAdditionInfo.substring(0, 5) !== "https") {
+						sUri = sServicePath + sUri;
+					}
 					window.open(sUri, "_blank");
 				}
 			}
@@ -912,6 +929,45 @@ sap.ui.define([
 					}
 				});
 			}.bind(this));
+		},
+
+		/**
+		 * Fetching selected Assignments Path and Context for Assignment Status Change
+		 * @param [aSelectedAssignments]
+		 * @returns []
+		 * Since 2205
+		 * @Author Chethan RK
+		 */
+		_getAssignmentStatus: function (aSelectedAssignments) {
+			var aAssignmentStatus = [];
+			for (var a in aSelectedAssignments) {
+				var oAssignmentStautus = {
+					sPath: aSelectedAssignments[a].getBindingContext().getPath(),
+					oData: aSelectedAssignments[a].getBindingContext().getObject()
+				};
+				aAssignmentStatus.push(oAssignmentStautus);
+			}
+			return aAssignmentStatus;
+		},
+
+		/**
+		 * Setting time to date for fixed appointment operation
+		 * @param oDate
+		 * @param oTimes
+		 * @returns oDate 
+		 * Since 2205
+		 * @Author Rakesh Sahu
+		 */
+		setCustomDateTime: function (oDate, oTimes) {
+			if (oDate) {
+				oDate = new Date(oDate);
+				var sTZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
+					oOperationTime = new Date(oTimes.ms + sTZOffsetMs);
+				oDate.setHours(oOperationTime.getHours());
+				oDate.setMinutes(oOperationTime.getMinutes());
+				oDate.setSeconds(oOperationTime.getSeconds());
+				return oDate;
+			}
 		}
 	});
 

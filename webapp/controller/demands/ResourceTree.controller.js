@@ -82,7 +82,6 @@ sap.ui.define([
 					this.getView().getModel("viewModel").setProperty("/capacityPlanning", false);
 				} else {
 					this.getView().getModel("viewModel").setProperty("/selectedHierarchyView", sViewSelectedKey);
-					this.getView().getModel("viewModel").setProperty("/capacityPlanning", true);
 				}
 
 			}
@@ -96,7 +95,7 @@ sap.ui.define([
 		onBusyStateChanged: function (oEvent) {
 			var parameters = oEvent.getParameters();
 			if (parameters.busy === false) {
-				if (Object.keys(this.mTreeState).length > 0) {
+				if (Object.keys(this.mTreeState).length > 0 && this._oDataTable.getBinding().getNodes().length > 0) {
 					this._restoreTreeState();
 				}
 			}
@@ -201,17 +200,11 @@ sap.ui.define([
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
-				oUserModel = this.getModel("user"),
 				oFilterRightTechnician = this._oViewModel.getProperty("/resourceFilterforRightTechnician"),
-				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician"),
-				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels;
+				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician");
 
 			if (!this.isLoaded) {
 				this.isLoaded = true;
-			}
-			// Bug fix for some time tree getting collapsed
-			if (oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND")) {
-				oBinding.parameters.numberOfExpandedLevels = nTreeExpandLevel ? nTreeExpandLevel : 1;
 			}
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
@@ -224,7 +217,7 @@ sap.ui.define([
 				oBinding.filters.push(oFilterRightTechnician);
 			} else {
 				this._oViewModel.setProperty("/CheckRightTechnician", false);
-				this._oViewModel.getProperty("/resourceFilterforRightTechnician", false);
+				this._oViewModel.setProperty("/resourceFilterforRightTechnician", false);
 			}
 		},
 
@@ -269,6 +262,25 @@ sap.ui.define([
 		},
 
 		/**
+		 * On drag of assignment, get Assignment data to Assignment model
+		 * @author Sagar since 2205 
+		 */
+		onDragStart: function (oEvent) {
+			var oDragSession = oEvent.getParameter("dragSession"),
+				oDraggedControl = oDragSession.getDragControl(),
+				oContext = this._oDataTable.getContextByIndex(oDraggedControl.getIndex()),
+				oObject = oContext.getObject(),
+				vAssignGuid = oObject.AssignmentGuid;
+			if (oObject.NodeType !== "ASSIGNMENT") {
+				oEvent.preventDefault();
+			}
+			this.sDemandPath = "/DemandSet('" + oObject.DemandGuid + "')";
+			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
+			this._oViewModel.setProperty("/dragDropSetting/isReassign", true);
+
+		},
+
+		/**
 		 * on drop on resource, triggers create assignment for dragged demands
 		 */
 		onDropOnResource: function (oEvent) {
@@ -277,10 +289,13 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
+				oViewModel = this.getView().getModel("viewModel"),
 				aSources = [],
 				iOperationTimesLen,
 				iVendorAssignmentLen,
-				aPSDemandsNetworkAssignment;
+				aPSDemandsNetworkAssignment,
+				mParams, mParameter,
+				oView = this.getView();
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -293,29 +308,46 @@ sap.ui.define([
 				return;
 			}
 
-			aSources = this._oViewModel.getProperty("/dragSession");
-			iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
-			iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
-			aPSDemandsNetworkAssignment = this._showNetworkAssignments(this._oViewModel);
-			
-			//Checking PS Demands for Network Assignment 
-			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
-				this.getOwnerComponent().NetworkAssignment.open(this.getView(), sPath, aPSDemandsNetworkAssignment, this._mParameters);
-			}
-			//Checking Vendor Assignment for External Resources
-			else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
-				iVendorAssignmentLen) {
-				this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
+			if (this._oViewModel.getProperty("/dragDropSetting/isReassign")) {
+				mParameter = {
+					bFromHome: true
+				};
+				this.getOwnerComponent()._getData(this.sDemandPath)
+					.then(function (oData) {
+						oViewModel.setProperty("/dragSession", [{
+							index: 0,
+							oData: oData,
+							sPath: this.sDemandPath
+						}]);
+						this._reassignmentOnDrop(this.assignmentPath, sPath, oView, mParameter);
+					}.bind(this));
+
 			} else {
-				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
-					"RESOURCE") {
-					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), this._mParameters, sPath);
+
+				aSources = this._oViewModel.getProperty("/dragSession");
+				iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
+				iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
+				aPSDemandsNetworkAssignment = this._showNetworkAssignments(this._oViewModel);
+
+				//Checking PS Demands for Network Assignment 
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+					this.getOwnerComponent().NetworkAssignment.open(this.getView(), sPath, aPSDemandsNetworkAssignment, this._mParameters);
+				}
+				//Checking Vendor Assignment for External Resources
+				else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
+					iVendorAssignmentLen) {
+					this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
 				} else {
-					// If the Resource is Not/Partially available
-					if (this.isAvailable(sPath)) {
-						this.assignedDemands(aSources, sPath, this._mParameters);
+					if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+						"RESOURCE") {
+						this.getOwnerComponent().OperationTimeCheck.open(this.getView(), this._mParameters, sPath);
 					} else {
-						this.showMessageToProceed(aSources, sPath);
+						// If the Resource is Not/Partially available
+						if (this.isAvailable(sPath)) {
+							this.assignedDemands(aSources, sPath, this._mParameters);
+						} else {
+							this.showMessageToProceed(aSources, sPath);
+						}
 					}
 				}
 			}
@@ -342,6 +374,8 @@ sap.ui.define([
 				}
 			}
 			this._bFirsrTime = false;
+			this._oViewModel.setProperty("/dragDropSetting/isReassign", false);
+
 		},
 
 		/**
@@ -374,10 +408,22 @@ sap.ui.define([
 		 */
 		onSelectCapacity: function (oEvent) {
 			var bSelect = oEvent.getParameter("selected"),
+				bState = oEvent.getParameter("state"),
 				oViewModel = this.getModel("viewModel");
-
 			if (bSelect) {
 				oViewModel.setProperty("/splitterDivider", "39%");
+			} else {
+				oViewModel.setProperty("/splitterDivider", "31%");
+			}
+			if (!bState) {
+				oViewModel.setProperty("/remainingWork", bState);
+			}
+		},
+		onSelectRemainingWork: function (oEvent) {
+			var bState = oEvent.getParameter("state"),
+				oViewModel = this.getModel("viewModel");
+			if (bState) {
+				oViewModel.setProperty("/splitterDivider", "50%");
 			} else {
 				oViewModel.setProperty("/splitterDivider", "31%");
 			}
@@ -484,7 +530,7 @@ sap.ui.define([
 
 			var sObjectId = oResourceNode.NodeId;
 			//Opening Resource Qualification only on Resource Node Icon
-			if (oResourceNode.NodeType === "RESOURCE") { 
+			if (oResourceNode.NodeType === "RESOURCE") {
 				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
 			}
 		},

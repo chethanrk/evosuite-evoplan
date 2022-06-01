@@ -134,7 +134,7 @@ div.worktimeAvailability>.workTimeAvailabilityText {
 }
 
 div.resourceGanttWithTable .sapGanttBackground .sapGanttBackgroundSVG {
-    background: #ccc !important;
+    /*background: #f2f2f2 !important;*/
 }
 
 .sapUiIcon.resourceIcon:hover {

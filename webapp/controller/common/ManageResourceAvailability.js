@@ -30,6 +30,7 @@ sap.ui.define([
 					controller: this
 				}).then(function (oDialog) {
 					oView.getModel("appView").setProperty("/busy", false);
+					oDialog.setEscapeHandler(this.onEscapeDialog.bind(this));
 					this._oDialog = oDialog;
 					this.onOpen(oDialog, oView, aSelectedPath, mParameters, sSource);
 				}.bind(this));
@@ -59,6 +60,7 @@ sap.ui.define([
 			this._id = "ManageAbsense";
 			this._dataDirty = false;
 			this._oApp = Fragment.byId(this._id, "navCon");
+			this._oApp.backToTop();
 			this._oSmartList = Fragment.byId(this._id, "idResourceAvailList");
 			this._oList = Fragment.byId(this._id, "idResourceAvailList").getList();
 			if (this._mParameters.bFromPlannCal) {
@@ -587,7 +589,6 @@ sap.ui.define([
 			if (iActualAvailHour.includes(",")) {
 				iActualAvailHour = iActualAvailHour.replace(",", ".");
 			}
-
 			if (iUpdatedBlockPer) {
 				iUpdatedAvailableHour = iActualAvailHour * (100 - iUpdatedBlockPer) * 0.01;
 				Fragment.byId(this._id, "idBlockdHour").setValue(iActualAvailHour - iUpdatedAvailableHour);
@@ -600,7 +601,7 @@ sap.ui.define([
 				iActualAvailHour = Fragment.byId(this._id, "idUpdateAvailablHour").getValue(),
 				iUpdatedAvailableHour;
 
-			//replacing comma with dot as this property is getting used in calculations
+			//replacing comma with dot as this property is getting used in calculations 	
 			if (iActualAvailHour.includes(",")) {
 				iActualAvailHour = iActualAvailHour.replace(",", ".");
 			}
@@ -661,6 +662,10 @@ sap.ui.define([
 					this._oDialog.setBusy(false);
 				}.bind(this)
 			});
+		},
+		onEscapeDialog: function (escapeHandler) {
+			Fragment.byId(this._id, "idCreateCancel").firePress();
+
 		}
 	});
 });

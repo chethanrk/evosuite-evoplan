@@ -1,36 +1,5 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable" xmlns="sap.m"
 	controllerName="com.evorait.evoplan.block.sections.AssignmentBlockController">
-	<!--<Table id="idAssignmentTable" class="sapUiNoContentPadding" items="{ path: 'DemandToAssignment', templateShareable: true }"-->
-	<!--	itemPress="onClickRow">-->
-	<!--	<columns>-->
-	<!--		<Column>-->
-	<!--			<Text text="{i18n>xfld.ResourceName}"/>-->
-	<!--		</Column>-->
-	<!--		<Column minScreenWidth="Tablet" demandPopin="true" width="4em">-->
-	<!--			<Text text="{/#Demand/Effort/@sap:label}"/>-->
-	<!--		</Column>-->
-	<!--		<Column minScreenWidth="Tablet" demandPopin="true">-->
-	<!--			<Text text="{/#Demand/PERSON_NUMBER/@sap:label}"/>-->
-	<!--		</Column>-->
-	<!--		<Column minScreenWidth="Tablet" demandPopin="true">-->
-	<!--			<Text text="{/#Demand/DateFrom/@sap:label}"/>-->
-	<!--		</Column>-->
-	<!--		<Column minScreenWidth="Tablet" demandPopin="true">-->
-	<!--			<Text text="{/#Demand/DateTo/@sap:label}"/>-->
-	<!--		</Column>-->
-	<!--	</columns>-->
-	<!--	<items>-->
-	<!--		<ColumnListItem type="Active">-->
-	<!--			<cells>-->
-	<!--				<ObjectIdentifier title="{GROUP_DESCRIPTION}" text="{RESOURCE_DESCRIPTION}"/>-->
-	<!--				<Text text="{Effort} {EffortUnit}"/>-->
-	<!--				<Text text="{ path:'PERSON_NUMBER' }"/>-->
-	<!--				<Text text="{ path:'DateFrom', type:'sap.ui.model.odata.type.DateTimeOffset' }"/>-->
-	<!--				<Text text="{ path:'DateTo', type:'sap.ui.model.odata.type.DateTimeOffset' }"/>-->
-	<!--			</cells>-->
-	<!--		</ColumnListItem>-->
-	<!--	</items>-->
-	<!--</Table>-->
 	<smartTable:SmartTable id="idAssignmentTable" entitySet="AssignmentSet" useExportToExcel="true" useVariantManagement="true"
 		useTablePersonalisation="true" header="{xtit.qualifications}" showRowCount="true" persistencyKey="com.evorait.evoplan.qualificationTable"
 		enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="ResponsiveTable" tableBindingPath="DemandToAssignment">
@@ -41,10 +10,12 @@
 		<smartTable:customToolbar>
 			<Toolbar>
 				<ToolbarSpacer/>
+				<Button icon="sap-icon://order-status" tooltip="{i18n>xbut.ChngAssgnStatus}" visible="{user>/ENABLE_ASSIGNMENT_STATUS}"
+					enabled="{viewModel>/Disable_Assignment_Status_Button}" press="openAssignmentStatus"></Button>
 				<core:ExtensionPoint name="TableExtP|DemandDetail|AssignmentSet|CustomToolbar"/>
 			</Toolbar>
 		</smartTable:customToolbar>
-		<Table itemPress="onClickRow">
+		<Table itemPress="onClickRow" mode="MultiSelect" selectionChange="handleSelectionChange">
 			<columns>
 				<core:ExtensionPoint name="TableExtP|DemandDetail|AssignmentSet|CustomColumn"/>
 			</columns>
@@ -52,7 +23,7 @@
 				<cells>
 					<core:ExtensionPoint name="TableExtP|DemandDetail|AssignmentSet|CustomCell"/>
 				</cells>
-			</ColumnListItem>	
+			</ColumnListItem>
 		</Table>
 	</smartTable:SmartTable>
 </mvc:View>

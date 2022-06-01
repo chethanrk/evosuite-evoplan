@@ -29,7 +29,66 @@ sap.ui.define([
 				Guid: Guid
 			});
 		},
+		/**
+		 * multi assignments of demands
+		 * Preceed to assignment 
+		 * @param oResourceData
+		 * @param aSource
+		 * @param oTarget
+		 * @param oTargetDate
+		 * @param aFixedAppointmentObjects
+		 */
+		AssignMultipleDemands: function (oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects) {
+			var oModel = this.getModel(),
+				aPromises = [],
+				oDemandObj,
+				oParams;
 
+			// creating function import calls for fixed appointments
+			for (var i in aFixedAppointmentObjects) {
+				oParams = {
+					DemandGuid: aFixedAppointmentObjects[i].Guid,
+					ResourceGroupGuid: oResourceData.ResourceGroupGuid,
+					ResourceGuid: oResourceData.ResourceGuid,
+					DateFrom: this.setCustomDateTime(aFixedAppointmentObjects[i].FIXED_APPOINTMENT_START_DATE, aFixedAppointmentObjects[i].FIXED_APPOINTMENT_START_TIME),
+					TimeFrom: {},
+					DateTo: this.setCustomDateTime(aFixedAppointmentObjects[i].FIXED_APPOINTMENT_END_DATE, aFixedAppointmentObjects[i].FIXED_APPOINTMENT_END_TIME),
+					TimeTo: {}
+				};
+				oParams.TimeFrom.ms = oParams.DateFrom ? oParams.DateFrom.getTime() : 0;
+				oParams.TimeTo.ms = oParams.DateTo ? oParams.DateTo.getTime() : 0;
+				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
+			}
+
+			oParams = {
+				DemandGuid: "",
+				ResourceGroupGuid: oResourceData.ResourceGroupGuid,
+				ResourceGuid: oResourceData.ResourceGuid,
+				DateFrom: oTargetDate,
+				TimeFrom: {
+					ms: oTargetDate ? oTargetDate.getTime() : 0
+				}
+			};
+			// creating function import calls for multi assignment for non-fixed appointments
+			for (var i in aSources) {
+				oDemandObj = oModel.getProperty(aSources[i]);
+
+				if (this._mParameters.bFromNewGanttSplit) {
+					oDemandObj = this._getDemandObjectSplitPage(aSources[i]);
+				}
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && oDemandObj.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+					oParams.DemandGuid = oParams.DemandGuid + "," + oDemandObj.Guid + "//" + oDemandObj.Duration;
+				} else {
+					oParams.DemandGuid = oParams.DemandGuid + "," + oDemandObj.Guid + "//" + oDemandObj.DURATION;
+				}
+			}
+			if (oParams.DemandGuid) {
+				oParams.DemandGuid = oParams.DemandGuid.substr(1);
+				aPromises.push(this.executeFunctionImport(this.getModel(), oParams, "CreateMultiAssignment", "POST"));
+			}
+
+			return aPromises;
+		},
 		/**
 		 * save assignment after drop
 		 * Calls the function import of create assignment the returns the promise.
@@ -40,26 +99,28 @@ sap.ui.define([
 		 */
 		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, oNewEndDate, aGuids) {
 			var oModel = this.getModel(),
+				oViewModel = this.getModel("viewModel"),
 				oGanttModel = this.getModel("ganttModel"),
 				targetObj = oGanttModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
-				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
-				aDragSession = this.getModel("viewModel").getData().dragSession,
+				aDragSession = oViewModel.getData().dragSession,
 				aGanttDemandDragged = aDragSession && aDragSession.length ? aDragSession[0] : "fromGanttSplit",
-				aFixedAppointments = this.getModel("viewModel").getProperty("/aFixedAppointmentsList")[0],
+				aFixedAppointments = oViewModel.getProperty("/aFixedAppointmentsList")[0],
 				aPromises = [],
 				oDemandObj;
-			if (aGanttDemandDragged === "fromGanttSplit") {
+			if (aGanttDemandDragged === "fromGanttSplit" || !oModel.getProperty(aItems[0])) {
 				aGanttDemandDragged = {};
-				aGanttDemandDragged.sPath = slocStor.split(",")[0];
-				aGanttDemandDragged.oData = this.getModel().getProperty(aGanttDemandDragged.sPath);
-
+				aGanttDemandDragged.bFromGanttSplit = true;
+				// aGanttDemandDragged.sPath = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData/sPath");
+				aGanttDemandDragged.oData = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData")[0];
+				aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE);
+				aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE);
 			}
 
 			this.clearMessageModel();
 
 			for (var i = 0; i < aItems.length; i++) {
-				oDemandObj = oModel.getProperty(aItems[i]);
+				oDemandObj = aGanttDemandDragged.bFromGanttSplit ? aGanttDemandDragged.oData : oModel.getProperty(aItems[i]);
 				var sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i].split("'")[1],
 					oParams = {
 						DemandGuid: sDemandGuid,
@@ -114,12 +175,14 @@ sap.ui.define([
 				}
 				//Fixed Appointments for Gantt
 				if (aFixedAppointments && aFixedAppointments.IsSelected) {
+					oDemandObj.FIXED_APPOINTMENT_START_DATE = this.setCustomDateTime(oDemandObj.FIXED_APPOINTMENT_START_DATE, oDemandObj.FIXED_APPOINTMENT_START_TIME);
+					oDemandObj.FIXED_APPOINTMENT_END_DATE = this.setCustomDateTime(oDemandObj.FIXED_APPOINTMENT_END_DATE, oDemandObj.FIXED_APPOINTMENT_END_TIME);
 					oParams.DateFrom = oDemandObj.FIXED_APPOINTMENT_START_DATE;
 					oParams.TimeFrom = {};
-					oParams.TimeFrom.ms = oDemandObj.FIXED_APPOINTMENT_START_TIME.ms;
+					oParams.TimeFrom.ms = oDemandObj.FIXED_APPOINTMENT_START_DATE ? oDemandObj.FIXED_APPOINTMENT_START_DATE.getTime() : 0;
 					oParams.DateTo = oDemandObj.FIXED_APPOINTMENT_END_DATE;
 					oParams.TimeTo = {};
-					oParams.TimeTo.ms = oDemandObj.FIXED_APPOINTMENT_END_TIME.ms;
+					oParams.TimeTo.ms = oDemandObj.FIXED_APPOINTMENT_END_DATE ? oDemandObj.FIXED_APPOINTMENT_END_DATE.getTime() : 0;
 				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}
@@ -185,6 +248,7 @@ sap.ui.define([
 			var oQualificationParameters,
 				oModel = this.getModel(),
 				sDemandGuids = "",
+				sObjectId,
 				aItems = aSourcePaths ? aSourcePaths : aGuids;
 			return new Promise(function (resolve, reject) {
 				//collect all demand Guids for function import
@@ -202,9 +266,13 @@ sap.ui.define([
 						sDemandGuids = sDemandGuids + "//" + sDemandGuid;
 					}
 				}
+				sObjectId = oTargetObj.NodeId;
+				if (oTargetObj.NodeType === "ASSIGNMENT") {
+					sObjectId = oTargetObj.ObjectId;
+				}
 				oQualificationParameters = {
 					DemandMultiGuid: sDemandGuids,
-					ObjectId: oTargetObj.NodeId, //targetObj.ResourceGroupGuid,
+					ObjectId: sObjectId, //oTargetObj.NodeId, //targetObj.ResourceGroupGuid,
 					StartTimestamp: oTargetDate,
 					EndTimestamp: oNewEndDate ? oNewEndDate : oTargetDate
 				};
@@ -378,6 +446,7 @@ sap.ui.define([
 							oGanttModel.setProperty(sPath + "/busy", false);
 							this.getModel("ganttModel").setProperty(sPath, null);
 							this.getModel("ganttOriginalData").setProperty(sPath, null);
+							this._deleteChildAssignment(sAssignGuid, sPath);
 							oEventBus.publish("BaseController", "refreshCapacity", {
 								sTargetPath: sPath.split("/AssignmentSet/results/")[0]
 							});
@@ -390,6 +459,485 @@ sap.ui.define([
 					oGanttModel.setProperty(sPath + "/busy", false);
 				}
 			}.bind(this));
+		},
+
+		/**
+		 * Unassign assignment with delete confirmation dialog and removing the child assignment node from GanttModel
+		 * @param sAssignGuid
+		 * @param sPath
+		 * @private
+		 */
+		_deleteChildAssignment: function (sAssignGuid, sPath) {
+			var oGanttModel = this.getModel("ganttModel"),
+				oGanttOriginalModel = this.getModel("ganttOriginalData"),
+				aAssignmentData, sChildPath;
+			if (sPath.length > 60) {
+				sChildPath = sPath.substring(0, 27);
+				sChildPath = sChildPath + "/AssignmentSet/results/";
+				aAssignmentData = oGanttModel.getProperty(sChildPath);
+				for (var a in aAssignmentData) {
+					if (sAssignGuid === aAssignmentData[a].Guid) {
+						aAssignmentData.splice(a, 1);
+						break;
+					}
+				}
+				var oOriginData = oGanttModel.getProperty(sChildPath);
+				oGanttOriginalModel.setProperty(sChildPath, _.cloneDeep(oOriginData));
+			}
+			oGanttModel.refresh(true);
+			oGanttOriginalModel.refresh(true);
+		},
+
+		/**
+		 * Resets a changed data by model path on both Parent and Child Nodes
+		 * @param sPath
+		 * @param oOriginalData
+		 * @since 2205
+		 */
+		_resetParentChildNodes: function (sPath, oOriginalData) {
+			var oGanttModel = this.getModel("ganttModel"),
+				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
+				oTargetObj = oGanttModel.getProperty(sPath),
+				sChildPath, aChildrenData, sNewPath, sAssignmentPath, aAssignmentData, aChildNodeData, sObjectIDRelation, sObjectID;
+			if (oTargetObj.Guid === "") {
+				this._resetUnSavedNodeData(sPath, oOriginalData);
+			} else {
+				//Condition when we Change at Assignment Nodes
+				if (sPath.length > 60) {
+					sAssignmentPath = sPath.substring(0, 27);
+					sAssignmentPath = sAssignmentPath + "/AssignmentSet/results";
+					aAssignmentData = oGanttModel.getProperty(sAssignmentPath);
+					sObjectIDRelation = oTargetObj.OBJECT_ID_RELATION + "//" + oTargetObj.ResourceGuid;
+					oTargetObj.OBJECT_ID_RELATION = sObjectIDRelation;
+					for (var a in aAssignmentData) {
+						if (oTargetObj.Guid === aAssignmentData[a].Guid) {
+							sNewPath = sAssignmentPath + "/" + a;
+							sObjectID = oTargetObj.Guid + "//" + oTargetObj.ResourceGuid + "//" + oTargetObj.ResourceGroupGuid;
+							aChildNodeData = Object.assign({}, oTargetObj, {
+								OBJECT_ID_RELATION: sObjectID
+							});
+							oGanttModel.setProperty(sNewPath, aChildNodeData);
+							oGanttModel.setProperty(sNewPath + "/AssignmentSet", {
+								results: [oTargetObj]
+							});
+							oGanttModel.setProperty(sNewPath + "/DemandDesc", oTargetObj.DemandDesc);
+							oGanttModel.setProperty(sNewPath + "/NodeType", "ASSIGNMENT");
+							oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
+							oGanttOriginDataModel.setProperty(sNewPath + "/AssignmentSet", _.cloneDeep(oGanttModel.getProperty(sNewPath + "/AssignmentSet")));
+							break;
+						}
+					}
+				} else {
+					sChildPath = sPath.split("/AssignmentSet/results/")[0];
+					aChildrenData = oGanttModel.getProperty(sChildPath + "/children");
+					for (var c in aChildrenData) {
+						if (oTargetObj.Guid === aChildrenData[c].Guid) {
+							sNewPath = sChildPath + "/children/" + c;
+							sObjectIDRelation = oTargetObj.OBJECT_ID_RELATION + "//" + oTargetObj.ResourceGuid;
+							aChildNodeData = Object.assign({}, oTargetObj, {
+								OBJECT_ID_RELATION: sObjectIDRelation
+							});
+							oGanttModel.setProperty(sNewPath + "/AssignmentSet", {
+								results: [aChildNodeData]
+							});
+							oGanttModel.setProperty(sNewPath + "/DemandDesc", oTargetObj.DemandDesc);
+							oGanttModel.setProperty(sNewPath + "/NodeType", "ASSIGNMENT");
+							oGanttOriginDataModel.setProperty(sNewPath + "/AssignmentSet", _.cloneDeep(oGanttModel.getProperty(sNewPath + "/AssignmentSet")));
+							break;
+						}
+					}
+				}
+				oGanttOriginDataModel.refresh(true);
+				oGanttModel.refresh(true);
+			}
+		},
+		/**
+		 * Creating a new Assignment node and shape after assignmnet creation
+		 * @param aData
+		 * @param sTargetPath
+		 * @param sDummyPath
+		 * @since 2205
+		 */
+		_appendChildAssignment: function (aData, sTargetPath, sDummyPath) {
+			var oGanttModel = this.getModel("ganttModel"),
+				oGanttOriginalModel = this.getModel("ganttOriginalData"),
+				aAssignmentData = oGanttModel.getProperty(sTargetPath + "/AssignmentSet/results"),
+				aChildData, iChildAsgnLen, aChildAsgnData,
+				iChildLength, sAssignmentGuid, sNewPath, aCloneChildData, aCloneChildAssignmentData;
+			if (!oGanttModel.getProperty(sTargetPath + "/children")) {
+				oGanttModel.setProperty(sTargetPath + "/children", [aData]);
+			} else {
+				aChildAsgnData = oGanttModel.getProperty(sTargetPath + "/children");
+				aChildAsgnData.push(aData);
+				iChildAsgnLen = aChildAsgnData.length;
+				if (aChildAsgnData[iChildAsgnLen - 1].Guid === aChildAsgnData[iChildAsgnLen - 2].Guid) {
+					aChildAsgnData.splice(iChildAsgnLen - 1, 1);
+				}
+			}
+			aChildData = oGanttModel.getProperty(sTargetPath + "/children");
+			iChildLength = aChildData.length - 1;
+
+			var xPath = sTargetPath + "/children/" + iChildLength;
+			sAssignmentGuid = oGanttModel.getProperty(xPath + "/Guid");
+			for (var a in aAssignmentData) {
+				if (sAssignmentGuid === aAssignmentData[a].Guid) {
+					sNewPath = xPath + "/AssignmentSet";
+					oGanttModel.setProperty(sNewPath, {
+						results: [aData]
+					});
+					oGanttModel.setProperty(xPath + "/NodeType", "ASSIGNMENT");
+					oGanttModel.setProperty(sNewPath + "/results/0" + "/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION + "//" + aData.ResourceGuid);
+				}
+			}
+			aCloneChildData = oGanttModel.getProperty(xPath);
+			oGanttOriginalModel.setProperty(xPath, _.cloneDeep(aCloneChildData));
+			aCloneChildAssignmentData = oGanttModel.getProperty(sNewPath);
+			oGanttOriginalModel.setProperty(sNewPath, _.cloneDeep(aCloneChildAssignmentData));
+			oGanttModel.refresh(true);
+			oGanttOriginalModel.refresh(true);
+		},
+		/**
+		 * getting Demand objects form local model coming from gantt split
+		 * @param sPath
+		 * @since 2205
+		 */
+		_getDemandObjectSplitPage: function (sPath) {
+			var aDragSessionData = this.getModel("viewModel").getProperty("/dragSession");
+			for (var i = 0; i < aDragSessionData.length; i++) {
+				if (aDragSessionData[i].sPath === sPath) {
+					return aDragSessionData[i].oData;
+				}
+			}
+		},
+
+		/**
+		 * check for unsaved data in Demand table
+		 * on click on navigate acion navigate to Demand Detail Page
+		 * modified method since 2201, by Rakesh Sahu
+		 * @param oEvent
+		 */
+		onActionPress: function (oEvent) {
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				oViewModel = this.getModel("viewModel"),
+				oModel = this.getModel(),
+				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
+
+			this.oRow = oEvent.getParameter("row");
+
+			if (bDemandEditMode && oModel.hasPendingChanges()) {
+				this.showDemandEditModeWarningMessage().then(function (bResponse) {
+					var sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
+						sSave = oResourceBundle.getText("xbut.buttonSave");
+
+					if (bResponse === sDiscard) {
+						oModel.resetChanges();
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this._navToDetail(null, this.oRow);
+					} else
+					if (bResponse === sSave) {
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this.submitDemandTableChanges();
+					}
+				}.bind(this));
+
+			} else {
+				if (bDemandEditMode) {
+					oViewModel.setProperty("/bDemandEditMode", false);
+				}
+				this._navToDetail(oEvent);
+			}
+		},
+
+		/**
+		 * navigation to demand detail page
+		 * added method since 2201, by Rakesh Sahu
+		 * @param oEvent
+		 * @param oRow
+		 */
+		_navToDetail: function (oEvent, oRow) {
+			var oRouter = this.getRouter();
+			if (oEvent.getSource().getId().includes("link")) {
+				oRouter.navTo("ganttDemandDetails", {
+					guid: oEvent.getSource().getBindingContext().getProperty("DemandGuid")
+				});
+
+			} else {
+				oRow = oRow ? oRow : oEvent.getParameter("row");
+				var oContext = oRow.getBindingContext(),
+					sPath = oContext.getPath(),
+					oModel = oContext.getModel(),
+					oData = oModel.getProperty(sPath),
+					oUserDetail = this.getModel("appView");
+				this.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
+				if (oUserDetail.getProperty("/currentRoute") === "splitDemands") {
+					oRouter.navTo("splitDemandDetails", {
+						guid: oData.Guid
+					});
+				} else {
+					oRouter.navTo("ganttDemandDetails", {
+						guid: oData.Guid
+					});
+				}
+			}
+		},
+
+		/**
+		 * handle Order id link press event in Gantt Popover
+		 * added method since 2205, by Rakesh Sahu
+		 * @param oEvent
+		 */
+		onPressOrderNumber: function (oEvent) {
+			this.sAppName = 'EvoOrder';
+			this.handleGanttPopoverNavigation(oEvent);
+		},
+
+		/**
+		 * handle Notification Number link press event in Gantt Popover
+		 * added method since 2205, by Rakesh Sahu
+		 * @param oEvent
+		 */
+		onPressNotficationNumber: function (oEvent) {
+			this.sAppName = 'EvoNotify';
+			this.handleGanttPopoverNavigation(oEvent);
+		},
+
+		/**
+		 * handle navigation from Gantt Popover to EvoOrder/EvoNotify
+		 * added method since 2205, by Rakesh Sahu
+		 * @param oEvent
+		 */
+		handleGanttPopoverNavigation: function (oEvent) {
+			this.oSource = oEvent.getSource();
+			var sDemandGuid = this.oSource.getBindingContext().getProperty("DemandGuid"),
+				sDemandPath = "/DemandSet('" + sDemandGuid + "')";
+
+			this.getOwnerComponent().readData(sDemandPath).then(function (oDemandData) {
+				var oAppInfo = this.getAppInfo(this.oSource.getModel("navLinks").getData(), this.sAppName);
+				this.handleNavigationLinkAction(oDemandData, oAppInfo, this.oSource.getModel("viewModel"), this.oSource.getModel(
+					"user"));
+			}.bind(this));
+		},
+
+		/**
+		 * get appInfo to navigate from Gantt Popover to EvoOrder/EvoNotify
+		 * added method since 2205, by Rakesh Sahu
+		 * @param oEvent
+		 */
+		getAppInfo: function (aNavData, AppName) {
+			for (var i in aNavData) {
+				if (aNavData[i].ApplicationName === AppName) {
+					return aNavData[i];
+				}
+			}
+		},
+
+		/**
+		 * Hiding Relationships for the selected assignment path
+		 * @param sPath
+		 * since 2205
+		 */
+		_hideRelationships: function (sPath) {
+			var oGanttModel = this.getModel("ganttModel");
+			oGanttModel.setProperty(sPath + "/RelationshipSet/results", []);
+			oGanttModel.setProperty(sPath + "/busy", false);
+			oGanttModel.refresh(true);
+		},
+
+		/**
+		 * Fetching Relationships and appending the data for the selected assignment path
+		 * @param sPath
+		 * @param oData
+		 * since 2205
+		 */
+		_showRelationships: function (sPath, oData) {
+			var sMsg, oGanttModel = this.getModel("ganttModel"),
+				oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				aFilters = [
+					new Filter("DemandGuid", FilterOperator.EQ, oData.DemandGuid),
+					new Filter("DateFrom", FilterOperator.EQ, this.getView().byId("idDateRangeGantt2").getDateValue()),
+					new Filter("DateTo", FilterOperator.EQ, this.getView().byId("idDateRangeGantt2").getSecondDateValue())
+				];
+			this.getModel("appView").setProperty("/busy", true);
+			this._getRelationships(aFilters).then(function (aData, oResponse) {
+				this.getModel("appView").setProperty("/busy", false);
+				if (aData.results.length === 0) {
+					sMsg = oResourceBundle.getText("ymsg.noRelationships", [oData.ORDERID, oData.OPERATIONID]);
+					sap.m.MessageToast.show(sMsg);
+				}
+				this.showMessage(oResponse);
+				oGanttModel.setProperty(sPath + "/RelationshipSet", aData);
+				oGanttModel.setProperty(sPath + "/busy", false);
+				oGanttModel.refresh(true);
+			}.bind(this));
+		},
+
+		/*
+		 * Fetching Relationships for selected Assignments
+		 * @param aFilters
+		 * since 2205
+		 */
+		_getRelationships: function (aFilters) {
+			return new Promise(function (resolve, reject) {
+				this.getModel().read("/RelationshipSet", {
+					filters: aFilters,
+					success: function (aData, oResponse) {
+						resolve(aData, oResponse);
+					},
+					error: function (oError) {
+						reject(oError);
+					}
+				});
+			}.bind(this));
+		},
+
+		/*
+		 * Fetching Assignment Status for selected Assignments
+		 * @param sUri
+		 * since 2205
+		 */
+		_getAssignmentStatus: function (sUri) {
+			return new Promise(function (resolve, reject) {
+				this.getModel().read(sUri, {
+					success: function (oData, oResponse) {
+						resolve(oData);
+					},
+					error: function (oError) {
+						reject(oError);
+					}
+				});
+			}.bind(this));
+		},
+
+		/**
+		 * Resetting parent assignments after reassigning to other resources 
+		 * @param sSourcePath
+		 * @since 2205
+		 */
+		_resetParentNodeData: function (sPath, sSourcePath, aData) {
+			var oGanttModel = this.getModel("ganttModel"),
+				oGanttOriginDataModel = this.getModel("ganttOriginalData");
+			if (sSourcePath) {
+				var sParentPath = sSourcePath.substring(0, 27),
+					sNewPath = sParentPath + "/AssignmentSet/results",
+					sParentSplitPath = sSourcePath.split("/AssignmentSet")[0],
+					sSplitPath = sParentSplitPath.split("/"),
+					index = sSplitPath[sSplitPath.length - 1],
+					sChildPath = sPath.split("/AssignmentSet/results")[0],
+					aParentAssgnData = oGanttModel.getProperty(sNewPath);
+				aParentAssgnData.splice(index, 1);
+				oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
+				if (!oGanttModel.getProperty(sChildPath + "/children")) {
+					oGanttModel.setProperty(sChildPath + "/children", [aData]);
+					oGanttModel.setProperty(sChildPath + "/children/0/NodeType", "ASSIGNMENT");
+					oGanttModel.setProperty(sChildPath + "/children/0/AssignmentSet", {
+						results: [aData]
+					});
+					oGanttModel.setProperty(sChildPath + "/children/0/AssignmentSet/results/0/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION +
+						"//" + aData.ResourceGuid);
+				}
+			}
+			oGanttOriginDataModel.refresh(true);
+			oGanttModel.refresh(true);
+		},
+
+		/**
+		 * Updating Assignment Status for Assignmnets after changing
+		 * @param sPath
+		 * @param sAsgnStsFnctnKey
+		 * @since 2205
+		 */
+		_updateAssignmentStatus: function (sPath, sAsgnStsFnctnKey, aData) {
+			var oGanttModel = this.getModel("ganttModel"),
+				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
+				sParentPath, sChildPath, sChildSplitPath, index;
+			if (sPath.length > 60) {
+				sParentPath = sPath.split("/AssignmentSet/results/")[0];
+				oGanttModel.setProperty(sParentPath + "/STATUS", sAsgnStsFnctnKey);
+				oGanttModel.setProperty(sParentPath + "/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
+				oGanttModel.setProperty(sParentPath + "/DEMAND_STATUS", aData.DEMAND_STATUS);
+			} else {
+				sChildPath = sPath.substring(0, 27);
+				sChildSplitPath = sPath.split("/");
+				index = sChildSplitPath[sChildSplitPath.length - 1];
+				sChildPath = sChildPath + "/children/" + index;
+				oGanttModel.setProperty(sChildPath + "/STATUS", sAsgnStsFnctnKey);
+				oGanttModel.setProperty(sChildPath + "/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
+				oGanttModel.setProperty(sChildPath + "/DEMAND_STATUS", aData.DEMAND_STATUS);
+				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/STATUS", sAsgnStsFnctnKey);
+				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
+				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/DEMAND_STATUS", aData.DEMAND_STATUS);
+			}
+			oGanttModel.setProperty(sPath + "/STATUS", sAsgnStsFnctnKey);
+			oGanttModel.setProperty(sPath + "/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
+			oGanttModel.setProperty(sPath + "/DEMAND_STATUS", aData.DEMAND_STATUS);
+			oGanttOriginDataModel.refresh(true);
+			oGanttModel.refresh(true);
+		},
+
+		/**
+		 * Resetting Assignment Shape Data when the data is unsaved 
+		 * @param sPath
+		 * @param oOriginalData
+		 * @since 2205
+		 */
+		_resetUnSavedNodeData: function (sPath, oOriginalData) {
+			var oGanttModel = this.getModel("ganttModel"),
+				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
+				oTargetObj, sChildPath, sSplitChildPath, sObjectIDRelation, iIndex, aChildNodeData, aChildData, sNewPath;
+
+			//Condition when we Change at Assignment Nodes
+			if (sPath.length > 60) {
+				sChildPath = sPath.substring(0, 27);
+				sSplitChildPath = sPath.split("/AssignmentSet")[0];
+				iIndex = sSplitChildPath[sSplitChildPath.length - 1];
+				sNewPath = sChildPath + "/AssignmentSet/results/" + iIndex;
+				aChildData = oGanttModel.getProperty(sNewPath);
+				sObjectIDRelation = aChildData.OBJECT_ID_RELATION + "//" + aChildData.ResourceGuid; //+ "//" + aD1.ResourceGroupGuid;
+				aChildNodeData = Object.assign({}, aChildData, {
+					OBJECT_ID_RELATION: sObjectIDRelation
+				});
+				oGanttModel.setProperty(sPath, aChildNodeData);
+				oGanttModel.setProperty(sNewPath, aChildData);
+				oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
+			} else {
+				oTargetObj = oOriginalData.AssignmentSet.results[0];
+				iIndex = sPath[sPath.length - 1];
+				sNewPath = sPath.split("/AssignmentSet")[0];
+				sNewPath = sNewPath + "/children/" + iIndex;
+				oGanttModel.setProperty(sNewPath, oTargetObj);
+				oGanttModel.setProperty(sNewPath + "/AssignmentSet", {
+					results: [oTargetObj]
+				});
+				sObjectIDRelation = oOriginalData.Guid + "//" + oOriginalData.ResourceGuid + "//" + oOriginalData.ResourceGroupGuid;
+				aChildNodeData = Object.assign({}, oTargetObj, {
+					OBJECT_ID_RELATION: sObjectIDRelation
+				});
+				oGanttModel.setProperty(sPath, aChildNodeData);
+				oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
+			}
+			oGanttModel.refresh(true);
+			oGanttOriginDataModel.refresh(true);
+		},
+
+		/**
+		 * Combining Multiple Assignment Creation Response to a single array
+		 * @param [aResults]
+		 * @return [aCreatedAssignments]
+		 * @since 2205
+		 */
+		_getCreatedAssignments: function (aResults) {
+			var aCreatedAssignments = [];
+			for (var a in aResults) {
+				var oCreatedAssignment = aResults[a].results;
+				if (!oCreatedAssignment) {
+					aCreatedAssignments.push(aResults[a]);
+				} else {
+					for (var a1 in oCreatedAssignment) {
+						aCreatedAssignments.push(oCreatedAssignment[a1]);
+					}
+				}
+			}
+			return aCreatedAssignments;
 		}
 	});
 

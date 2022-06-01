@@ -163,6 +163,7 @@ sap.ui.define([
 		onPressReAssign: function (oEvent) {
 			var sAssignmentGuid = oEvent.getSource().getBindingContext().getObject().Guid,
 				oEventBus = sap.ui.getCore().getEventBus();
+			this.reAssign = true; // EVOSUITE2-2224:Sagar
 			oEventBus.publish("AssignInfoDialog", "selectAssign", {
 				oView: this.getView().getParent().getParent(),
 				isReassign: this.reAssign,
@@ -216,6 +217,23 @@ sap.ui.define([
 						" " + sEffortUnit);
 				}
 			}
+		},
+		/**
+		 * Opening Assignment Status Change PopOver
+		 * @param oEvent
+		 * Since 2205
+		 * @Author Chethan RK
+		 */
+		openAssignmentStatus: function (oEvent) {
+			var oSource = oEvent.getSource(),
+				oContext = oSource.getBindingContext(),
+				sPath = oContext.getPath(),
+				oModel = oContext.getModel(),
+				aSelectedAssignments = [{
+					sPath: sPath,
+					oData: oModel.getProperty(sPath)
+				}];
+			this.getOwnerComponent().AssignmentStatus.open(this.getView(), oSource, aSelectedAssignments);
 		}
 	});
 });

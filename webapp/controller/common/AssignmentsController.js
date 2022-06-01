@@ -253,8 +253,8 @@ sap.ui.define([
 				oParams.TimeTo = oDateParams.TimeTo;
 				oContext = aItems[i];
 				sPath = oContext.sPath ? oContext.sPath : oContext;
-				demandObj = oModel.getProperty(sPath),
-					bContinue = true;
+				demandObj = oModel.getProperty(sPath);
+				bContinue = true;
 
 				oParams.DemandGuid = demandObj ? demandObj.Guid : sPath.split("'")[1];
 				oParams.ResourceGroupGuid = targetObj.ResourceGroupGuid;
@@ -324,6 +324,9 @@ sap.ui.define([
 				}
 
 			}
+			//set first dragged index to the view model for further usage
+			this.getModel("viewModel").setProperty("/iFirstDraggedIndex", aGanttDemandDragged ? aGanttDemandDragged.index : -1);
+
 			//Condition added and Method is modified for fixed Appointments			// since Release/2201
 			if (this.aFixedAppointmentPayload && this.aFixedAppointmentPayload.length) {
 				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", this.aFixedAppointmentDemands);
@@ -350,7 +353,7 @@ sap.ui.define([
 				oResource,
 				oDemandObj = this.getModel().getProperty("/DemandSet('" + oData.DemandGuid + "')"),
 				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
-				bShowFixedAppointmentDialog;
+				bShowFixedAppointmentDialog, oParams;
 
 			if (isReassign && !oData.AllowReassign) {
 				sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
@@ -362,14 +365,14 @@ sap.ui.define([
 				return;
 			}
 
-			var oParams = {
+			oParams = {
 				DateFrom: oData.DateFrom || 0,
-				TimeFrom: {
+				TimeFrom: oData.TimeFrom || {
 					__edmtype: "Edm.Time",
 					ms: oData.DateFrom.getTime()
 				},
 				DateTo: oData.DateTo || 0,
-				TimeTo: {
+				TimeTo: oData.TimeTo || {
 					__edmtype: "Edm.Time",
 					ms: oData.DateTo.getTime()
 				},
@@ -447,7 +450,23 @@ sap.ui.define([
 					ResourceGroupGuid: oResource.ResourceGroupGuid,
 					ResourceGuid: oResource.ResourceGuid
 				};
-				oParams = this.setDateTimeParams(oParams, oResource.StartDate, oResource.StartTime, oResource.EndDate, oResource.EndTime);
+				if (this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")) {
+					if (oResource.NodeType === "RESOURCE") {
+						oParams = this.setDateTimeParams(oParams, oAssignment.DateFrom, {
+							ms: oAssignment.DateFrom.getTime()
+						}, oAssignment.DateTo, {
+							ms: oAssignment.DateTo.getTime()
+						});
+					} else {
+						oParams = this.setDateTimeParams(oParams, oResource.StartDate, {
+							ms: oAssignment.DateFrom.getTime()
+						}, oResource.EndDate, {
+							ms: oAssignment.DateTo.getTime()
+						});
+					}
+				} else {
+					oParams = this.setDateTimeParams(oParams, oResource.StartDate, oResource.StartTime, oResource.EndDate, oResource.EndTime);
+				}
 				oDemandObj = this.getModel().getProperty("/DemandSet('" + oAssignment.DemandGuid + "')");
 
 				//Conditon for PS Demand Network Assignments Update
@@ -564,6 +583,7 @@ sap.ui.define([
 				aAssignments = oData.assignments,
 				aAbsences = oData.absences,
 				bIsLast = null;
+			this.clearMessageModel();
 			for (var i in aAssignments) {
 				bIsLast = null;
 				if (aAssignments[aAssignmentKeys[aAssignmentKeys.length - 1]] === aAssignments[i]) {
@@ -664,6 +684,11 @@ sap.ui.define([
 		onShowOperationTimes: function (oViewModel) {
 			var aSources = oViewModel.getProperty("/dragSession"),
 				aOperationTimes = [];
+
+			//condition added to getData from gantt split : since 2205	
+			if (!aSources) {
+				aSources = JSON.parse(localStorage.getItem("Evo-aPathsData"));
+			}
 			for (var f in aSources) {
 				aSources[f].IsDisplayed = true;
 				aSources[f].IsSelected = true;
@@ -762,6 +787,11 @@ sap.ui.define([
 		_showNetworkAssignments: function (oViewModel) {
 			var aSources = oViewModel.getProperty("/dragSession"),
 				aAllowNetworkAssignment = [];
+
+			//condition added to getData from gantt split : since 2205	
+			if (!aSources) {
+				aSources = JSON.parse(localStorage.getItem("Evo-aPathsData"));
+			}
 			for (var n in aSources) {
 				if (aSources[n].oData.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
 					aSources[n].oData.Duration = "";
@@ -769,6 +799,7 @@ sap.ui.define([
 					aAllowNetworkAssignment.push(aSources[n]);
 				}
 			}
+			oViewModel.setProperty("/dragSession", aSources);
 			oViewModel.refresh(true);
 			return aAllowNetworkAssignment;
 		},
@@ -795,6 +826,156 @@ sap.ui.define([
 				}
 			}
 			return oParams;
+		},
+
+		/**
+		 * Check whether Assignment is changeable or reassignable
+		 * @author Sagar since 2205
+		 * @param mParameters - Object having dragged assignment data and dropped resource
+		 */
+		checkAssigmentIsReassignable: function (mParameters) {
+			var oAssignmentData = mParameters.assignment,
+				oResourceData = mParameters.resource,
+				oDemandData = oAssignmentData.Demand,
+				oResourceBundle = this.getResourceBundle();
+			if (oAssignmentData.ResourceGroupGuid === oResourceData.ResourceGroupGuid && oAssignmentData.ResourceGuid === oResourceData.ResourceGuid &&
+				!oDemandData.ASGNMNT_CHANGE_ALLOWED) { // validation for change
+				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotchangeable"));
+				return false;
+			} else if (!oDemandData.ASGNMNT_CHANGE_ALLOWED || !oDemandData.ALLOW_REASSIGN) { // validation for reassign
+				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotreassignable"));
+				return false;
+			}
+			return true;
+		},
+
+		/**
+		 * Setting dragged assignment to Assignment Model
+		 * @author Sagar since 2205
+		 * @param oAssignment - Dragged assignment data
+		 * @param oResourcePath - Dropped resource
+		 */
+		_setAssignmentDetail: function (oAssignData, oResourcePath) {
+			var oAssignmentModel = this.getModel("assignment"),
+				oAssignment = this.getOwnerComponent().assignInfoDialog.getDefaultAssignmentModelObject(),
+				oNewAssign, oDemandData, startDate, endDate;
+			oAssignment.AssignmentGuid = oAssignData.Guid;
+			oAssignment.DemandDesc = oAssignData.DemandDesc;
+			oAssignment.DemandGuid = oAssignData.DemandGuid;
+			oAssignment.DemandStatus = oAssignData.Demand.Status;
+			oAssignment.DateFrom = oAssignData.DateFrom;
+			oAssignment.DateTo = oAssignData.DateTo;
+			oAssignment.ResourceGroupGuid = oAssignData.ResourceGroupGuid;
+			oAssignment.ResourceGroupDesc = oAssignData.GROUP_DESCRIPTION;
+			oAssignment.ResourceGuid = oAssignData.ResourceGuid;
+			oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
+			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT")) {
+				oAssignment.OldEffort = oAssignData.Effort;
+				oAssignment.REMAINING_DURATION = oAssignData.REMAINING_DURATION;
+				oAssignment.OBJECT_SOURCE_TYPE = oAssignData.OBJECT_SOURCE_TYPE;
+			}
+
+			oNewAssign = this.getModel().getProperty(oResourcePath);
+			if (oNewAssign.NodeType !== "RESOURCE") {
+				oAssignment = this.setDateTimeParams(oAssignment, oNewAssign.StartDate, oNewAssign.StartTime, oNewAssign.EndDate, oNewAssign.EndTime)
+			} else {
+				oAssignment = this.setDateTimeParams(oAssignment, oAssignment.DateFrom, {
+					ms: oAssignment.DateFrom.getTime()
+				}, oAssignment.DateTo, {
+					ms: oAssignment.DateTo.getTime()
+				});
+			}
+			oAssignmentModel.setData(oAssignment);
+
+			oAssignmentModel.setProperty("/NewAssignPath", oResourcePath);
+			oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
+
+			if (oAssignmentModel.getProperty("/NewAssignPath") !== null) {
+				oAssignmentModel.getData().ResourceGuid = this.getView().getModel().getProperty(oAssignmentModel.getProperty(
+					"/NewAssignPath") + "/ResourceGuid");
+			}
+
+			oAssignmentModel.setProperty("/showError", false);
+			if (oAssignmentModel.getProperty("/DateFrom") === "" || oAssignmentModel.getProperty("/DateTo") === "") {
+				oAssignmentModel.setProperty("/DateFrom", oNewAssign.DateFrom);
+				oAssignmentModel.setProperty("/DateTo", oNewAssign.DateTo);
+			}
+			oAssignmentModel.setProperty("/Effort", oAssignData.Effort);
+			oAssignmentModel.setProperty("/EffortUnit", oAssignData.EffortUnit);
+
+			//Fetching Resource Start and End Date from AssignmentSet for validating on save
+			oAssignmentModel.setProperty("/RES_ASGN_START_DATE", oAssignData.RES_ASGN_START_DATE);
+			oAssignmentModel.setProperty("/RES_ASGN_END_DATE", oAssignData.RES_ASGN_END_DATE);
+			oDemandData = oAssignData.Demand;
+			oAssignmentModel.setProperty("/Description", oDemandData.DemandDesc);
+			oAssignmentModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
+			oAssignmentModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
+			oAssignmentModel.setProperty("/AllowChange", oDemandData.ASGNMNT_CHANGE_ALLOWED);
+			oAssignmentModel.setProperty("/OrderId", oDemandData.ORDERID);
+			oAssignmentModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
+			oAssignmentModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
+			oAssignmentModel.setProperty("/DemandStatus", oDemandData.Status);
+			oAssignmentModel.setProperty("/DemandGuid", oDemandData.Guid);
+			oAssignmentModel.setProperty("/Notification", oDemandData.NOTIFICATION);
+			oAssignmentModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
+		},
+
+		/**
+		 * Method for validation and reassignment of assignment while dragging and dropping with in Resource tree
+		 * @author Sagar since 2205
+		 * @param sAssignmentPath - Dragged assignment path
+		 * @param oResourcePath - Dropped resource
+		 * @param oView - calling View
+		 * @param mParameter
+		 */
+		_reassignmentOnDrop: function (sAssignmentPath, sResourcePath, oView, mParameter) {
+			var oViewModel = this.getModel("viewModel"),
+				oModel = this.getModel(),
+				oUserModel = this.getModel("user"),
+				mParams,
+				aSources = oViewModel.getProperty("/dragSession"),
+				iOperationTimesLen = this.onShowOperationTimes(oViewModel),
+				iVendorAssignmentLen = this.onAllowVendorAssignment(oViewModel, oUserModel),
+				aPSDemandsNetworkAssignment = this._showNetworkAssignments(oViewModel),
+				oTargetData = oModel.getProperty(sResourcePath);
+
+			mParams = {
+				$expand: "Demand"
+			};
+			this.getOwnerComponent()._getData(sAssignmentPath, null, mParams)
+				.then(function (oAssignData) {
+					if (!this.checkAssigmentIsReassignable({
+							assignment: oAssignData,
+							resource: oTargetData
+						})) {
+						return false;
+					}
+					this.getOwnerComponent().assignTreeDialog._assignPath = sResourcePath;
+					this.getOwnerComponent().assignTreeDialog._aSelectedPaths = [this.getOwnerComponent().getModel().createBindingContext(
+						sAssignmentPath)];
+					this.getOwnerComponent().assignTreeDialog._bulkReAssign = true;
+					this.getOwnerComponent().assignTreeDialog._mParameters = mParameter;
+					if (aSources) {
+						//Checking PS Demands for Network Assignment 
+						if (oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+							this.getOwnerComponent().NetworkAssignment.open(this.getView(), sResourcePath, aPSDemandsNetworkAssignment, null);
+						} //Checking Vendor Assignment for External Resources
+						else if (oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
+							iVendorAssignmentLen) {
+							this.getOwnerComponent().VendorAssignment.open(this.getView(), sResourcePath, null);
+						} else if (oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+							"RESOURCE") {
+							//Checking Operation Times
+							this.getOwnerComponent().OperationTimeCheck.open(this.getView(), null, sResourcePath);
+						} else {
+							this._setAssignmentDetail(oAssignData, sResourcePath);
+							this.updateAssignment(true, mParameter);
+						}
+					} else {
+						this._setAssignmentDetail(oAssignData, sResourcePath);
+						this.updateAssignment(true, mParameter);
+					}
+				}.bind(this));
 		}
 	});
 });

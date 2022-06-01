@@ -34,7 +34,9 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttResourceTreeFilter",
 	"com/evorait/evoplan/controller/common/VendorAssignment",
 	"com/evorait/evoplan/controller/common/LongTextPopover",
-	"com/evorait/evoplan/controller/common/NetworkAssignment"
+	"com/evorait/evoplan/controller/common/NetworkAssignment",
+	"com/evorait/evoplan/controller/common/AssignmentStatus",
+	"com/evorait/evoplan/controller/gantt/GanttAssignmentPopOver"
 ], function (
 	UIComponent,
 	Device,
@@ -70,7 +72,9 @@ sap.ui.define([
 	GanttResourceTreeFilter,
 	VendorAssignment,
 	LongTextPopover,
-	NetworkAssignment) {
+	NetworkAssignment,
+	AssignmentStatus,
+	GanttAssignmentPopOver) {
 
 	"use strict";
 
@@ -117,6 +121,10 @@ sap.ui.define([
 				gantDragSession: null, // Drag session from Gantt View added as we are keeping dragged data in the model.
 				detailPageBreadCrum: "",
 				capacityPlanning: false,
+				remainingWork:false,
+				dragDropSetting:{
+					isReassign:false
+				},
 				splitterDivider: "30%",
 				ganttSelectionPane: "28%",
 				showUtilization: false,
@@ -130,7 +138,9 @@ sap.ui.define([
 						unassign: false,
 						reassign: false,
 						change: false
-					}
+					},
+					aGanttSplitDemandData: false,
+					GanttPopOverData:{}
 				},
 				showDemands: true,
 				mapSettings: {
@@ -162,7 +172,8 @@ sap.ui.define([
 				isOpetationLongTextPressed: false,
 				oResponseMessages: [],
 				aFixedAppointmentsList: {},
-				bDemandEditMode: false
+				bDemandEditMode: false,
+				iFirstDraggedIndex: -1
 
 			});
 			this.setModel(oViewModel, "viewModel");
@@ -464,6 +475,12 @@ sap.ui.define([
 
 			this.NetworkAssignment = new NetworkAssignment();
 			this.NetworkAssignment.init();
+
+			this.AssignmentStatus = new AssignmentStatus();
+			this.AssignmentStatus.init();
+
+			this.GanttAssignmentPopOver = new GanttAssignmentPopOver();
+			this.GanttAssignmentPopOver.init();
 
 		},
 

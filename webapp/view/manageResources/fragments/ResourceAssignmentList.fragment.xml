@@ -30,8 +30,8 @@
 					<ColumnListItem selected="{viewModel>IsSelected}">
 						<cells>
 							<Text text="{viewModel>Orderid}"/>
-							<Text text="{viewModel>Description}"/>
-							<Text text="{viewModel>DemandStatus}"/>
+							<Text text="{viewModel>DemandDesc}"/>
+							<Text text="{viewModel>Status}"/>
 							<core:ExtensionPoint name="TableExtP|ManageResources|ResourceAssignments|CustomCell"/>
 						</cells>
 					</ColumnListItem>

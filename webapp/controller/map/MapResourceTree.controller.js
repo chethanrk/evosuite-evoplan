@@ -71,12 +71,12 @@ sap.ui.define([
 					bFromMap: true
 				};
 				var sViewSelectedKey = this.getView().byId("idTimeView").getSelectedKey();
+				this.getView().getModel("viewModel").setProperty("/remainingWork", false);
 				if (sViewSelectedKey === "TIMENONE") {
 					this.getView().getModel("viewModel").setProperty("/selectedHierarchyView", sViewSelectedKey);
 					this.getView().getModel("viewModel").setProperty("/capacityPlanning", false);
 				} else {
 					this.getView().getModel("viewModel").setProperty("/selectedHierarchyView", sViewSelectedKey);
-					this.getView().getModel("viewModel").setProperty("/capacityPlanning", true);
 				}
 			}
 
@@ -263,6 +263,24 @@ sap.ui.define([
 		_triggerFilterSearch: function () {
 			this._oDroppableTable.rebindTable();
 		},
+		/**
+		 * On drag of assignment, get Assignment data to Assignment model
+		 * @author Sagar since 2205		 * 
+		 */
+		onDragStart: function (oEvent) {
+			var oDragSession = oEvent.getParameter("dragSession"),
+				oDraggedControl = oDragSession.getDragControl(),
+				oContext = this._oDataTable.getContextByIndex(oDraggedControl.getIndex()),
+				oObject = oContext.getObject(),
+				vAssignGuid = oObject.AssignmentGuid;
+
+			if (oObject.NodeType !== "ASSIGNMENT") {
+				oEvent.preventDefault();
+			}
+			this.sDemandPath = "/DemandSet('" + oObject.DemandGuid + "')";
+			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
+			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", true);
+		},
 
 		/**
 		 * on drop on resource, triggers create assignment for dragged demands
@@ -273,11 +291,13 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
+				oViewModel = this.getView().getModel("viewModel"),
 				aSources = [],
 				iOperationTimesLen,
 				iVendorAssignmentLen,
 				eventBus = sap.ui.getCore().getEventBus(),
-				aPSDemandsNetworkAssignment;
+				aPSDemandsNetworkAssignment, mParams, mParameter,
+				oView = this.getView();
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -290,30 +310,46 @@ sap.ui.define([
 				return;
 			}
 
-			aSources = this.getModel("viewModel").getProperty("/mapDragSession");
-			iOperationTimesLen = this.onShowOperationTimes(this.getModel("viewModel"));
-			iVendorAssignmentLen = this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
-			aPSDemandsNetworkAssignment = this._showNetworkAssignments(this.getModel("viewModel"));
-			
-			//Checking PS Demands for Network Assignment 
-			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
-				this.getOwnerComponent().NetworkAssignment.open(this.getView(), sPath, aPSDemandsNetworkAssignment, this._mParameters);
-			}
-			//Checking Vendor Assignment for External Resources
-			else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
-				iVendorAssignmentLen) {
-				this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
+			if (this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")) {
+				mParameter = {
+					bFromMap: true
+				};
+				this.getOwnerComponent()._getData(this.sDemandPath)
+					.then(function (oData) {
+						oViewModel.setProperty("/dragSession", [{
+							index: 0,
+							oData: oData,
+							sPath: this.sDemandPath
+						}]);
+						this._reassignmentOnDrop(this.assignmentPath, sPath, oView, mParameter);
+					}.bind(this));
 			} else {
-				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
-					"RESOURCE") {
-					this.getOwnerComponent().OperationTimeCheck.open(this.getView(), this._mParameters, sPath);
+
+				aSources = this.getModel("viewModel").getProperty("/mapDragSession");
+				iOperationTimesLen = this.onShowOperationTimes(this.getModel("viewModel"));
+				iVendorAssignmentLen = this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
+				aPSDemandsNetworkAssignment = this._showNetworkAssignments(this.getModel("viewModel"));
+
+				//Checking PS Demands for Network Assignment 
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+					this.getOwnerComponent().NetworkAssignment.open(this.getView(), sPath, aPSDemandsNetworkAssignment, this._mParameters);
+				}
+				//Checking Vendor Assignment for External Resources
+				else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
+					iVendorAssignmentLen) {
+					this.getOwnerComponent().VendorAssignment.open(this.getView(), sPath, this._mParameters);
 				} else {
-					eventBus.publish("BaseController", "resetMapSelection", {});
-					// If the Resource is Not/Partially available
-					if (this.isAvailable(sPath)) {
-						this.assignedDemands(aSources, sPath, this._mParameters);
+					if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
+						"RESOURCE") {
+						this.getOwnerComponent().OperationTimeCheck.open(this.getView(), this._mParameters, sPath);
 					} else {
-						this.showMessageToProceed(aSources, sPath, null, null, null, null, this._mParameters);
+						eventBus.publish("BaseController", "resetMapSelection", {});
+						// If the Resource is Not/Partially available
+						if (this.isAvailable(sPath)) {
+							this.assignedDemands(aSources, sPath, this._mParameters);
+						} else {
+							this.showMessageToProceed(aSources, sPath, null, null, null, null, this._mParameters);
+						}
 					}
 				}
 			}
@@ -335,9 +371,10 @@ sap.ui.define([
 			this.resetChanges();
 			if (oTreeBinding && !this._bFirsrTime) {
 				this.mTreeState = this._getTreeState();
-				this._oDroppableTable.rebindTable();//oTreeBinding.refresh();
+				this._oDroppableTable.rebindTable(); //oTreeBinding.refresh();
 			}
 			this._bFirsrTime = false;
+			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", false);
 			// }.bind(this));
 		},
 		/**
