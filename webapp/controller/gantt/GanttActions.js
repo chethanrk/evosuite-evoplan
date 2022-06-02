@@ -499,6 +499,7 @@ sap.ui.define([
 				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
 				oTargetObj = oGanttModel.getProperty(sPath),
 				sChildPath, aChildrenData, sNewPath, sAssignmentPath, aAssignmentData, aChildNodeData, sObjectIDRelation, sObjectID;
+			oGanttModel.setProperty(sPath + "/ResourceAvailabilitySet", oOriginalData.ResourceAvailabilitySet);
 			if (oTargetObj.Guid === "") {
 				this._resetUnSavedNodeData(sPath, oOriginalData);
 			} else {
@@ -563,7 +564,7 @@ sap.ui.define([
 				oGanttOriginalModel = this.getModel("ganttOriginalData"),
 				aAssignmentData = oGanttModel.getProperty(sTargetPath + "/AssignmentSet/results"),
 				aChildData, iChildAsgnLen, aChildAsgnData,
-				iChildLength, sAssignmentGuid, sNewPath, aCloneChildData, aCloneChildAssignmentData;
+				iChildLength, sAssignmentGuid, sNewPath, aCloneChildData, aCloneChildAssignmentData, aResourceAvailabilities;
 			if (!oGanttModel.getProperty(sTargetPath + "/children")) {
 				oGanttModel.setProperty(sTargetPath + "/children", [aData]);
 			} else {
@@ -576,7 +577,7 @@ sap.ui.define([
 			}
 			aChildData = oGanttModel.getProperty(sTargetPath + "/children");
 			iChildLength = aChildData.length - 1;
-
+			aResourceAvailabilities = oGanttModel.getProperty(sTargetPath + "/ResourceAvailabilitySet");
 			var xPath = sTargetPath + "/children/" + iChildLength;
 			sAssignmentGuid = oGanttModel.getProperty(xPath + "/Guid");
 			for (var a in aAssignmentData) {
@@ -586,6 +587,7 @@ sap.ui.define([
 						results: [aData]
 					});
 					oGanttModel.setProperty(xPath + "/NodeType", "ASSIGNMENT");
+					oGanttModel.setProperty(xPath + "/ResourceAvailabilitySet", aResourceAvailabilities);
 					oGanttModel.setProperty(sNewPath + "/results/0" + "/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION + "//" + aData.ResourceGuid);
 				}
 			}
