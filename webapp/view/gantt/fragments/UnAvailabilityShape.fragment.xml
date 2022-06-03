@@ -7,7 +7,7 @@
 				time="{ganttModel>DateFrom}" endTime="{ganttModel>DateTo}" tooltip="{ganttModel>Description}" connectable="false" resizable="false"
 				selectable="true" draggable="false" height="25" yBias="-1" showTitle="false"
 				fill="{parts: [{path: 'ganttModel>AvailabilityTypeGroup'}, {path: 'ganttModel>AvailType'}, {path: 'ganttModel>GANTT_UNAVAILABILITY_COLOR'}, {path: 'ganttModel>GANTT_PATTERN_VALUE'}], formatter:'.ganttFormatter.getPattern' }"
-				fillOpacity="1" strokeOpacity="0" opacity="1" stroke="transparent" strokeWidth="0"/>
+				fillOpacity="1" strokeOpacity="0" opacity="0.6" stroke="transparent" strokeWidth="0"/>
 			<gnt2:BaseRectangle title="{ganttModel>Description}" shapeId="{ganttModel>Guid}_{ganttModel>Counter}" countInBirdEye="false"
 				time="{ganttModel>DateFrom}" endTime="{ganttModel>DateTo}" tooltip="{ganttModel>Description}" connectable="false" resizable="false"
 				selectable="true" draggable="false" height="9" yBias="-9"
