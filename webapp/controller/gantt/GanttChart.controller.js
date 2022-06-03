@@ -208,6 +208,8 @@ sap.ui.define([
 				this.byId("idButtonCreUA").setEnabled(false);
 				this.byId("idButtonTimeAlloc").setEnabled(false);
 				this.byId("idCalculateRoute").setEnabled(false);
+				this.byId("idOptimizeRoute").setEnabled(false);
+
 			}
 		},
 
@@ -541,6 +543,7 @@ sap.ui.define([
 			this.byId("idButtonCreUA").setEnabled(false);
 			this.byId("idButtonTimeAlloc").setEnabled(false);
 			this.byId("idCalculateRoute").setEnabled(false);
+			this.byId("idOptimizeRoute").setEnabled(false);
 			this._loadGanttData();
 		},
 		/**
@@ -656,10 +659,12 @@ sap.ui.define([
 				this.byId("idButtonCreUA").setEnabled(true);
 				this.byId("idButtonTimeAlloc").setEnabled(true);
 				this.byId("idCalculateRoute").setEnabled(true);
+				this.byId("idOptimizeRoute").setEnabled(true);
 			} else {
 				this.byId("idButtonCreUA").setEnabled(false);
 				this.byId("idButtonTimeAlloc").setEnabled(false);
 				this.byId("idCalculateRoute").setEnabled(false);
+				this.byId("idOptimizeRoute").setEnabled(false);
 			}
 
 		},
@@ -1835,6 +1840,9 @@ sap.ui.define([
 					sMsg = this.getResourceBundle().getText("ymsg.noAssignmentsOnDate");
 					this.showMessageToast(sMsg);
 				} else {
+					this.aData.sort(function (a, b) {
+						return a.DateFrom - b.DateFrom;
+					});
 					// if there are assignments, then proceed to calculate the travel time
 					this._getTravelTimeFromPTV();
 				}
@@ -1859,9 +1867,16 @@ sap.ui.define([
 		 * since 2205
 		 */
 		_getTravelTimeFromPTV: function () {
-			//Sending the assignments and resource to PTV to calculte the travel time between each
-			this.getOwnerComponent().MapProvider.updateAssignmentsWithTravelTime(this.oResource, this.aData).then(this._setTravelTimeToGantt.bind(
-				this))
+			if (this.routeOperation === "Calculate") {
+				//Sending the assignments and resource to PTV to calculte the travel time between Assignments
+				this.getOwnerComponent().MapProvider.updateAssignmentsWithTravelTime(this.oResource, this.aData).then(this._setTravelTimeToGantt.bind(
+					this));
+			} else {
+				//Sending the assignments and resource to PTV to get Optimized travel time between assignments
+				this.getOwnerComponent().MapProvider.optimizeRoute(this.oResource, this.aData).then(this._setTravelTimeToGantt.bind(
+					this));
+			}
+
 		},
 		/**
 		 * setting Travel Time object to Gantt and updating new date time for assignments based on travel Time
@@ -1917,7 +1932,7 @@ sap.ui.define([
 			this.getModel("ganttModel").refresh();
 
 			//method call to save the updated assignments into the backend
-			this.updateAssignments(this.aAssignmetsWithTravelTime);
+			// this.updateAssignments(this.aAssignmetsWithTravelTime);
 
 		},
 		/**
