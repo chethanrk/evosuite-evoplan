@@ -1903,21 +1903,23 @@ sap.ui.define([
 					this.aTravelTimes.push(oAssignment);
 				}
 
-				//Setting new Start/End Date/Time to the assignments based on travel time
-				if (i) {
-					oTempDate = this.aData[i].TRAVEL_TIME != 0 ? new Date(oAssignment.DateTo.toString()) : new Date(this.aData[i -
-						1].DateTo.toString());
-					this.aData[i].DateFrom = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
-					this.aData[i].DateTo = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[i].Effort) *
-						60))
-				}
+				//Commenting the Time calculation for Assigments 
+				// //Setting new Start/End Date/Time to the assignments based on travel time
+				// if (i) {
+				// 	oTempDate = this.aData[i].TRAVEL_TIME != 0 ? new Date(oAssignment.DateTo.toString()) : new Date(this.aData[i -
+				// 		1].DateTo.toString());
+				// 	this.aData[i].DateFrom = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
+				// 	this.aData[i].DateTo = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[i].Effort) *
+				// 		60));
+				// }
+
 				//pushing the updated assignments to show into the gantt
-				this.aAssignmetsWithTravelTime.push(this.aData[i])
+				this.aAssignmetsWithTravelTime.push(this.aData[i]);
 
 				//creating object for shape to show Travel back Time in Gantt Chart. This is travel time from last assignment to home
 				if (i === this.aData.length - 1) {
 					oAssignment = this._getTravelTimeObject(i, true);
-					this.aTravelTimes.push(oAssignment)
+					this.aTravelTimes.push(oAssignment);
 				}
 			}
 
@@ -1931,8 +1933,8 @@ sap.ui.define([
 			};
 			this.getModel("ganttModel").refresh();
 
-			//method call to save the updated assignments into the backend
-			// this.updateAssignments(this.aAssignmetsWithTravelTime);
+			// method call to save the updated assignments into the backend
+			this.updateAssignments(this.aAssignmetsWithTravelTime);
 
 		},
 		/**
