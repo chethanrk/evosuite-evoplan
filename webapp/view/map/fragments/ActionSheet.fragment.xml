@@ -1,4 +1,4 @@
-<Dialog title="Select Resources" xmlns="sap.m" xmlns:core="sap.ui.core" id="idMapResources" class="sapUiTinyMargin" draggable="false"
+<Dialog title="{i18n>xtit.selectResource}" xmlns="sap.m" xmlns:core="sap.ui.core" id="idMapResources" class="sapUiTinyMargin" draggable="false"
 	resizable="true">
 	<SelectList items="{viewModel>/mapSettings/droppedResources}" itemPress = "onResourceSelect" >
 		<core:ListItem key="{viewModel>ObjectId}" text="{viewModel>Description}"/>

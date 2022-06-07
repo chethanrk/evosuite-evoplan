@@ -136,6 +136,11 @@ sap.ui.define([
 			
 
 		},
+		/**
+		 * Check for multiple resources residing in same location
+		 * 
+		 * @Author Rahul
+		 */
 		_checkForMultipleResources: function (oResource) {
 			var aFilters = [],
 				oViewModel = this.getModel("viewModel");
@@ -159,7 +164,6 @@ sap.ui.define([
 				} else if (this.oResourceSheet && response.results.length > 1){
 					this.oResourceSheet.open();
 				}else {
-					this._selectedResource = response.results[0];
 					this._openCalendar();
 				}
 			}.bind(this));
@@ -185,7 +189,8 @@ sap.ui.define([
 			var oCalendar = oEvent.getSource(),
 				oSelectedDate = oCalendar.getSelectedDates(),
 				aAssignableDemands = this._checkDemands(),
-				aAssignedAssignments = this._assignDemands(aAssignableDemands, this._selectedResource.getBindingContext("viewModel").getPath(), oSelectedDate[
+				sPath = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel").getPath() : this._selectedResource.getBindingContext().getPath(),
+				aAssignedAssignments = this._assignDemands(aAssignableDemands, sPath, oSelectedDate[
 					0].getStartDate(), oCalendar);
 
 		},
