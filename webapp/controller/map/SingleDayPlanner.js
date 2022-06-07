@@ -125,7 +125,7 @@ sap.ui.define([
 
 			if (oTreeData.ChildCount > 0) {
 				//load assignments for this day, resource and resource group
-				this._loadAssignmentsForDay(oTreeData.StartDate);
+				this._loadAssignmentsForDay(oTreeData);
 			}
 			this.oPlannerDialog.open();
 		},
@@ -242,6 +242,7 @@ sap.ui.define([
 				} else if (oData.type === this.mTypes.BLOCKER) {
 					this.oParentController.showMessageToast(this.oResourceBundle.getText("ymsg.notAllowedChangeUnavailable"));
 				}
+				this.oSinglePlanner.setBusy(false);
 			}
 		},
 
@@ -251,7 +252,7 @@ sap.ui.define([
 		 */
 		onPressSaveAppointments: function (oEvent) {
 			this._saveChangedAssignments(function () {
-				this._loadAssignmentsForDay(this.oPlanningDate);
+				this._loadAssignmentsForDay(this.oSelectedData); // TODO: _loadAssignmentsForDay called multiple times after saving. Find out, what's wrong.
 			}.bind(this));
 		},
 
@@ -272,8 +273,8 @@ sap.ui.define([
 			var oStartDate = this.oSinglePlanningModel.getProperty("/startDate");
 			var aAssignments = this._getOnlyAppointmentsByKeyValue("type", this.mTypes.APPOINTMENT);
 			if (aAssignments.length > 0) {
-				this.oSinglePlanner.setBusy(true); 
-				this.oParentController.getOwnerComponent().MapProvider.calculateTravelTimeAndDatesForDay(
+				this.oSinglePlanner.setBusy(true);
+				this.oParentController.getOwnerComponent().MapProvider.calculateRoute(
 					aAssignments[0].Resource, aAssignments, oStartDate)
 					.then(function(aUpdatedAssignments) {
 						this._setAssignmentsData(aUpdatedAssignments);
@@ -333,7 +334,7 @@ sap.ui.define([
 		_setNewDateAndLoad: function (oDate) {
 			this.oPlanningDate = oDate;
 			this.oSinglePlanningModel.setProperty("/appointments", []);
-			this._loadAssignmentsForDay(this.oPlanningDate);
+			this._loadAssignmentsForDay(this.oSelectedData);
 			this._loadAvailabilitiesForDay(this.oPlanningDate);
 		},
 
@@ -524,13 +525,10 @@ sap.ui.define([
 		 * Load assignments of a special resource and resource group for a special date
 		 * @param {obejct} oDate - date for what day assignments should be loaded
 		 */
-		_loadAssignmentsForDay: function (oDate) {
-			var sEntitySetPath = "/AssignmentSet",
-				sTravelAppointments = [],
-				oTravelItem = null,
-				aAppointments = this.oSinglePlanningModel.getProperty("/appointments");
-
-			if (this.oParentController._getResourceFilters) {
+		_loadAssignmentsForDay: function (oResourseHierachyData) {
+			var sEntitySetPath = "/AssignmentSet";
+			
+			if (this.oParentController._getAssignmentsFiltersWithinDateFrame) {
 				this.oSinglePlanningModel.setProperty("/hasChanges", false);
 				this.oSinglePlanner.setBusy(true);
 
@@ -538,7 +536,7 @@ sap.ui.define([
 					"$expand": "Demand,Resource"
 				};
 
-				var oFilter = new Filter(this.oParentController._getResourceFilters([this.sSelectedPath], oDate), true);
+				var oFilter = new Filter(this.oParentController._getAssignmentsFiltersWithinDateFrame(oResourseHierachyData), true);
 				this.oParentController.getOwnerComponent().readData(sEntitySetPath, [oFilter], mParams).then(function (oResults) {
 					this.aOriginalData = _.cloneDeep(this._setAssignmentsData(oResults.results)); // set current assignments and save it to this.aOriginalData
 				}.bind(this));
