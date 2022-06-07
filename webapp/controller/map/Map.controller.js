@@ -189,9 +189,10 @@ sap.ui.define([
 			var oCalendar = oEvent.getSource(),
 				oSelectedDate = oCalendar.getSelectedDates(),
 				aAssignableDemands = this._checkDemands(),
-				sPath = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel").getPath() : this._selectedResource.getBindingContext().getPath(),
-				aAssignedAssignments = this._assignDemands(aAssignableDemands, sPath, oSelectedDate[
-					0].getStartDate(), oCalendar);
+				oResourceContext = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel") : 
+					this._selectedResource.getBindingContext(),
+				aAssignedAssignments = this._assignDemands(aAssignableDemands, oResourceContext, oSelectedDate[0]
+					.getStartDate(), oCalendar);
 
 		},
 		/**
@@ -1004,18 +1005,20 @@ sap.ui.define([
 		 * @Author Rahul
 		 * 
 		 */
-		_assignDemands: function (oDemandObject, oResource, oTargetDate, oCalendar) {
+		_assignDemands: function (oDemandObject, oResourceContext, oTargetDate, oCalendar) {
 			var aAssignableDemands = oDemandObject.aAssignableDemands;
 			oCalendar.setBusy(true);
-			Promise.all(this.assignedDemands(aAssignableDemands, oResource, oTargetDate, null, null, true)).then(function (responses) {
+			var sResourcePath = oResourceContext.getPath();
+			Promise.all(this.assignedDemands(aAssignableDemands, sResourcePath, oTargetDate, null, null, true)).then(function (responses) {
 				oCalendar.setBusy(false);
 				this.getModel("viewModel").setProperty("/mapSettings/aAssignedAsignmentsForPlanning", responses);
 				this._refreshMapView();
 				this._oEventBus.publish("BaseController", "refreshMapTreeTable", {});
 				this.oCalendarPopover.close();
-				this.oSingleDayPlanner.open(oResource, {
+				this.oSingleDayPlanner.open(sResourcePath, {
 					StartDate: oTargetDate,
-					ChildCount: aAssignableDemands.length
+					ChildCount: aAssignableDemands.length,
+					ResourceGuid: oResourceContext.getObject().ResourceGuid
 				}, "TIMEDAY", null, true);
 			}.bind(this));
 

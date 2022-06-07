@@ -85,7 +85,7 @@ sap.ui.define([
 				legendAppointmentItems: []
 			});
 			this.oSinglePlanningModel.setDefaultBindingMode("TwoWay");
-			oController.getOwnerComponent().setModel(this.oSinglePlanningModel, "mapSinglePlanning");
+			this._oView.setModel(this.oSinglePlanningModel, "mapSinglePlanning");
 
 			if (!this.oPlannerDialog) {
 				Fragment.load({
@@ -627,11 +627,6 @@ sap.ui.define([
 			this.oSinglePlanner.setBusy(false);
 
 			return appoints;
-
-			// TODO dibrovv: do I need to save the new data to the default model? (for unsubmitted changes)
-			// need to check, whether the further actions (after calculation or optimization) could depend on default model
-			// e.g. drag-n-drop
-
 		},
 		/**
 		 * Un assigning the dragged demand when user discards the planing in single planner

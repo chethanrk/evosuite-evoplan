@@ -346,6 +346,8 @@ sap.ui.define([
 		 * 
 		 * fetches the assignment of Demands, then the resource information of the assignments
 		 * calcualtes route using Resource and Assignments information
+		 * 
+		 * TODO: potentially the method could be extracted to a separate module along with `onShowRoutePress` from MapResourceTree.controller.js
 		 */
 		_showRouteForDemand: function () {
 
@@ -379,20 +381,28 @@ sap.ui.define([
 				}.bind(this)).then(function (oResourceData) {
 					oResource = oResourceData.results && oResourceData.results.length > 0 && oResourceData.results[0];
 					if (oResource) {
-						return this.getOwnerComponent().MapProvider.calculateRoute(oResource, aAssignments);
+						return this.getOwnerComponent().MapProvider.getRoutePolyline(oResource, aAssignments);
 					} else {
 						this.oPopover.close();
 						sap.m.MessageToast.show(this.oController.getResourceBundle().getText("ymsg.noResourceOfAssignment"));
 					}
 				}.bind(this)).then(function (oResponse) {
+					var oLayer = {};
 					var oData = JSON.parse(oResponse.data.polyline.geoJSON);
-
-					this.oPopover.close();
-					aGeoJsonLayersData.push(oData);
-					oViewModel.setProperty("/mapSettings/GeoJsonLayersData", aGeoJsonLayersData);
+					
+					// the following property assigned with an array as it works ONLY with an array 
+					// despite according to documentation it can be a GeoJSON object
+					oLayer.data = [oData];
+					oLayer.color = "#" + Math.floor(Math.random()*16777215).toString(16); // generate random color
+					oLayer.id = oResource.ObjectId;
+					
+					aGeoJsonLayersData.push(oLayer);
+					
 					this._eventBus.publish("MapController", "displayRoute", oResource);
+					oViewModel.setProperty("/GeoJsonLayersData", aGeoJsonLayersData);
 					oViewModel.setProperty("/mapSettings/busy", false);
-				}.bind(this))
+				}
+				.bind(this))
 				.catch(function (oError) {
 					oViewModel.setProperty("/mapSettings/busy", false);
 					Log.error(oError);
