@@ -32,6 +32,9 @@ sap.ui.define([
 				sDemandGuid,
 				oParams;
 				
+				if(bFromMap && !oViewModel.getProperty(sTargetPath)){
+					targetObj = oModel.getProperty(sTargetPath);
+				}
 				if (aGanttDemandDragged === "fromGanttSplit" && !bFromMap) {
 				aGanttDemandDragged = {};
 				aGanttDemandDragged.sPath = slocStor.split(",")[0];
