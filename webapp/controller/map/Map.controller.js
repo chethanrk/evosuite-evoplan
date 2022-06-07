@@ -1,6 +1,6 @@
 /* globals axios */
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/NavigationActionSheet",
+	"com/evorait/evoplan/controller/map/MapUtilities",
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
@@ -11,12 +11,15 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/MessageToast",
-	"sap/m/GroupHeaderListItem"
-], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
-	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem) {
+	"sap/m/GroupHeaderListItem",
+	"sap/ui/unified/Calendar",
+	"com/evorait/evoplan/controller/map/SingleDayPlanner",
+	"com/evorait/evoplan/controller/map/PinPopover"
+], function (MapUtilities, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
+	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, SingleDayPlanner) {
 	"use strict";
 
-	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
+	return MapUtilities.extend("com.evorait.evoplan.controller.map.Map", {
 		selectedDemands: [],
 		_isDemandDraggable: false,
 		_oGeoMap: null,
@@ -48,6 +51,7 @@ sap.ui.define([
 
 			//initialize PinPopover controller
 			this.oPinPopover = new PinPopover(this);
+			this.oSingleDayPlanner = new SingleDayPlanner(this);
 		},
 
 		//TODO comment
@@ -101,6 +105,91 @@ sap.ui.define([
 			this._oDraggableTable.rebindTable();
 		},
 		/**
+		 * When Demands are dropped on resource pins
+		 * Check Assignable demands
+		 * open the date picker to select the day.
+		 * If demand status is other than INIT then check for unassinable Demand
+		 * If demand can be reasignable then reassign the demand to the resource on which it dropped.
+		 * Open the single planner with assigned assignments for that day
+		 * 
+		 * @Author Rahul
+		 * 
+		 */
+
+		onDrop: function (oEvent) {
+			var oViewModel = this.getModel("viewModel"),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
+				oDragSource = oEvent.getParameter("oDragSource"),
+				oContext = oDragSource.getBindingContext(),
+				sPath = oContext.getPath();
+
+			if (aSelectedDemands.length > 0) {
+				if (!aSelectedDemands.includes(sPath)) {
+					aSelectedDemands.push(sPath);
+				}
+			} else {
+				aSelectedDemands.push(sPath);
+			}
+			this._selectedResource = oEvent.getSource();
+			this.aDraggedDemands = aSelectedDemands;
+			this._checkForMultipleResources(oEvent.getSource().getBindingContext().getObject());
+			
+
+		},
+		_checkForMultipleResources: function (oResource) {
+			var aFilters = [],
+				oViewModel = this.getModel("viewModel");
+			var oView = this.getView();
+
+			aFilters.push(new Filter("LONGITUDE", FilterOperator.EQ, oResource.LONGITUDE));
+			aFilters.push(new Filter("LATITUDE", FilterOperator.EQ, oResource.LATITUDE));
+			this.setMapBusy(true);
+			this.getOwnerComponent().readData("/ResourceSet", aFilters).then(function (response) {
+				this.setMapBusy(false);
+				oViewModel.setProperty("/mapSettings/droppedResources", response.results);
+				if (!this.oResourceSheet && response.results.length > 1) {
+					Fragment.load({
+						name: "com.evorait.evoplan.view.map.fragments.ActionSheet",
+						controller: this
+					}).then(function (popover) {
+						this.oResourceSheet = popover;
+						oView.addDependent(this.oResourceSheet);
+						this.oResourceSheet.open();
+					}.bind(this));
+				} else if (this.oResourceSheet && response.results.length > 1){
+					this.oResourceSheet.open();
+				}else {
+					this._selectedResource = response.results[0];
+					this._openCalendar();
+				}
+			}.bind(this));
+
+		},
+		
+		onResourceSelect : function (oEvent) {
+			this._selectedResource = oEvent.getParameter("item");
+			this._openCalendar();
+			oEvent.getSource().getParent().close();
+		},
+		
+		/**
+		 * @author Rahul
+		 * */
+		onCloseCalDialog: function (oEvent) {
+			oEvent.getSource().getParent().close();
+		},
+		/**
+		 * @author Rahul
+		 * */
+		onSelectDate: function (oEvent) {
+			var oCalendar = oEvent.getSource(),
+				oSelectedDate = oCalendar.getSelectedDates(),
+				aAssignableDemands = this._checkDemands(),
+				aAssignedAssignments = this._assignDemands(aAssignableDemands, this._selectedResource.getBindingContext("viewModel").getPath(), oSelectedDate[
+					0].getStartDate(), oCalendar);
+
+		},
+		/**
 		 * Create filters for the selected demands
 		 * @author Rahul
 		 * @return Filter
@@ -149,6 +238,9 @@ sap.ui.define([
 			setTimeout(function () {
 				this._oDataTable.getBinding("rows").filter(aFilters, "Application");
 			}.bind(this), 15);
+			// if(aFilters.length){
+			// 	oEvent.getParameter("bindingParams").filters.push(aFilters);
+			// }
 
 		},
 
@@ -876,10 +968,75 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
 		},
-		
-		_zoomToPoint: function(sEventChannel, sEventName, oPoint) {
+
+		_zoomToPoint: function (sEventChannel, sEventName, oPoint) {
 			this._oGeoMap.setCenterPosition(oPoint.LONGITUDE + ";" + oPoint.LATITUDE);
 			this._oGeoMap.setZoomlevel(13);
+		},
+		/**
+		 * Checks the Demands for correct status in order assign or reAssign
+		 * */
+		_checkDemands: function () {
+			var aSelectedDemands = this.aDraggedDemands,
+				oModel = this.getModel(),
+				aAssignableDemands = [];
+
+			for (var i in aSelectedDemands) {
+				var oDemandObject = oModel.getProperty(aSelectedDemands[i]);
+				if (oDemandObject.ALLOW_ASSIGN) {
+					aAssignableDemands.push(aSelectedDemands[i]);
+				}
+			}
+			return {
+				aAssignableDemands: aAssignableDemands
+			};
+
+		},
+		/**
+		 * Assign dragged demand to the resource on which it is dropped for selected date
+		 * And open the single planner for that day
+		 * 
+		 * @Author Rahul
+		 * 
+		 */
+		_assignDemands: function (oDemandObject, oResource, oTargetDate, oCalendar) {
+			var aAssignableDemands = oDemandObject.aAssignableDemands;
+			oCalendar.setBusy(true);
+			Promise.all(this.assignedDemands(aAssignableDemands, oResource, oTargetDate, null, null, true)).then(function (responses) {
+				oCalendar.setBusy(false);
+				this.getModel("viewModel").setProperty("/mapSettings/aAssignedAsignmentsForPlanning", responses);
+				this._refreshMapView();
+				this._oEventBus.publish("BaseController", "refreshMapTreeTable", {});
+				this.oCalendarPopover.close();
+				this.oSingleDayPlanner.open(oResource, {
+					StartDate: oTargetDate,
+					ChildCount: aAssignableDemands.length
+				}, "TIMEDAY", null, true);
+			}.bind(this));
+
+		},
+
+		/**
+		 * Open the current calendar to select the date
+		 * 
+		 * @Author Rahul
+		 * */
+		_openCalendar: function (oResource) {
+			var oView = this.getView();
+			if (!this.oCalendarPopover) {
+				Fragment.load({
+					name: "com.evorait.evoplan.view.map.fragments.CalendarDialog",
+					controller: this,
+					id: "idSelectDate"
+				}).then(function (popover) {
+					this.oCalendarPopover = popover;
+					oView.addDependent(this.oCalendarPopover);
+					this.oCalendarPopover.open();
+				}.bind(this));
+			} else {
+				this.oCalendarPopover.open();
+
+			}
 		}
 	});
 

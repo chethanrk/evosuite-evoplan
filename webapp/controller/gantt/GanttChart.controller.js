@@ -821,7 +821,7 @@ sap.ui.define([
 					oData.sPath = oContext.getPath();
 					this.oGanttModel.setProperty(oData.sPath + "/Demand", oResult.Demand);
 					this.oViewModel.setProperty("/ganttSettings/shapeData", oData);
-					this._oContextMenu.open(true, oShape, Popup.Dock.BeginTop, Popup.Dock.endBottom, oShape);
+					this._oContextMenu.open(true, oShape, Popup.Dock.BeginTop, Popup.Dock.EndBottom, oShape);
 				}.bind(this));
 			}
 		},
