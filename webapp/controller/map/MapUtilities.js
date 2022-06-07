@@ -44,13 +44,13 @@ sap.ui.define([
 		 */
 		_getResourceFilters: function (aSelectedResources, oSelectedDate) {
 			var aResources = [],
-				oModel = this.getView().getModel();
+				oModel = this.getView().getModel("viewModel");
 			var aFilters = [];
 
 			for (var i = 0; i < aSelectedResources.length; i++) {
 				var obj = oModel.getProperty(aSelectedResources[i]);
 				var sCurrentHierarchyViewType = this.getView().getModel("viewModel").getProperty("/selectedHierarchyView");
-				if (obj.NodeType === "RESOURCE") {
+				if (obj.NodeType === "RESOURCE" || obj.ObjectType === "RESOURCE") {
 					if (obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
 						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
 					} else {

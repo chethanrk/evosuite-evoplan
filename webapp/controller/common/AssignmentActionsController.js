@@ -21,7 +21,8 @@ sap.ui.define([
 		 */
 		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, oNewEndDate, aGuids, bFromMap) {
 			var oModel = this.getModel(),
-				targetObj = oModel.getProperty(sTargetPath),
+				oViewModel = this.getModel("viewModel"),
+				targetObj = bFromMap ? oViewModel.getProperty(sTargetPath) : oModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
 				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
 				aDragSession = this.getModel("viewModel").getData().dragSession,
