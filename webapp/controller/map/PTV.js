@@ -29,6 +29,7 @@ sap.ui.define([
 	 */
 	return MapProvider.extend("com.evorait.evoplan.controller.map.PTV", {
 
+		// TODO: define metadata
 		metadata: {
 			// extension can declare the public methods
 			// in general methods that start with "_" are private
@@ -135,29 +136,34 @@ sap.ui.define([
 			return this.calculateTravelTimeForMultipleAssignments(oResource, aAssignments, oDateForRoute).then(function(oResponse) {
 				var aAssignmentsWithTravelTime = this._updateAssignmentsWithTravelTime(aAssignments, oResponse);
 				
+				// TODO: write DateFrom according to results from PTV
+					
+				// TODO: do not update violated appointments
 				
-				var aUpdatedAssignments = [];
-				aAssignmentsWithTravelTime.reduce(function(prev, next) {
-					var oStartDateToWrap = prev ? prev.DateTo : moment(next.DateFrom.setHours(this._sDefaultResourceStartHour, 0)).toDate();
-					var oAssignmentStartDate = moment(oStartDateToWrap).add(next.TRAVEL_TIME, 'minutes');
-					var oAssignmentEndDate = oAssignmentStartDate.clone();
-					oAssignmentEndDate.add(parseFloat(next.Effort), 'hours');
-					
-					// TODO: write DateFrom according to results from PTV
-					
-					// TODO: do not update violated appointments
-					
-					// TODO: do not update FIXED_APPOINTMENTS
-					
-					// TODO: display not planned assignments - ymsg.notPlannedAssignments
-					
-					next.DateFrom = oAssignmentStartDate.toDate();
-					next.DateTo = oAssignmentEndDate.toDate();
-					aUpdatedAssignments.push(next);
-					return next;
-				}.bind(this), null);
+				// TODO: do not update FIXED_APPOINTMENTS
 				
-				return aUpdatedAssignments;
+				// TODO: display not planned assignments - ymsg.notPlannedAssignments
+				
+				
+				
+				if(oResponse.data.events && oResponse.data.events.length) {
+					var aTourEvents = oResponse.data.events;
+					var nEventIndex = 0;
+					
+					aAssignmentsWithTravelTime.forEach(function(oAssignment, ) {
+						nEventIndex = this._getNextServiceEventIndex(aTourEvents, nEventIndex);
+						var oServiceEvent = aTourEvents[nEventIndex]
+						
+						var oStartDate = moment(oServiceEvent.startsAt);
+						oAssignment.DateFrom = oStartDate.toDate();
+						
+						var oEndDate = oStartDate.clone();
+						oEndDate.add(oAssignment.Effort, 'hours');
+						oAssignment.DateTo = oEndDate.toDate();
+						nEventIndex++;
+					}.bind(this));
+				}
+				return aAssignmentsWithTravelTime;
 				
 				
 			}.bind(this));
@@ -572,6 +578,23 @@ sap.ui.define([
 			}
 			// in case there were no corresponding driving event throw an error
 			var sErrorMessage = this.oComponent.getModel("i18n").getResourceBundle().getText("noDrivingEvent");
+			throw new Error(sErrorMessage);
+		},
+		
+		/**
+		 * TODO: docs
+		 * Works ONLY with RouteResponse:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.RouteResponse
+		 */
+		_getNextServiceEventIndex: function(aEvents, nCurrentIndex) {
+			var nServiceEventIndex = nCurrentIndex;
+			for(nServiceEventIndex; nServiceEventIndex < aEvents.length; nServiceEventIndex++) {
+				if(aEvents[nServiceEventIndex].tourEventTypes[0] === "SERVICE") {
+					return nServiceEventIndex;
+				}
+			}
+			// in case there were no corresponding service event throw an error
+			var sErrorMessage = this.oComponent.getModel("i18n").getResourceBundle().getText("errorMessage"); // TODO: add text for the no service event error
 			throw new Error(sErrorMessage);
 		},
 		
