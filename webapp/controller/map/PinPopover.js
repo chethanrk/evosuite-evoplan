@@ -229,7 +229,10 @@ sap.ui.define([
 					urlParameters: {
 						$expand: "DemandToAssignment"
 					},
-					success: this._onDemandToAssignmentFetchSuccess.bind(this) // open the assign new dialog after resource data fetch
+					success: this._onDemandToAssignmentFetchSuccess.bind(this), // open the assign new dialog after resource data fetch
+					error: function(oError) {
+						this.oPopover.setBusy(false);
+					}.bind(this)
 				});
 			} else {
 				this.oController._showAssignErrorDialog([oData.DemandDesc]);
@@ -267,9 +270,13 @@ sap.ui.define([
 				sDemandGuid = oData.Guid;
 
 			this.selectedPinsAssignment = "/DemandSet('" + sDemandGuid + "')/DemandToAssignment";
-			var sAssignmentPath = "/" + oModel.getProperty(this.selectedPinsAssignment);
+			var aAssignmentsPaths = oModel.getProperty(this.selectedPinsAssignment);
+			
+			var aAssignmentsPathsWithSlashes = aAssignmentsPaths.map(function(sAssignment) {
+				return "/" + sAssignment;
+			});
 
-			this.getOwnerComponent().assignActionsDialog.open(this.getView(), [sAssignmentPath], false, {
+			this.getOwnerComponent().assignActionsDialog.open(this.getView(), aAssignmentsPathsWithSlashes, false, {
 				bFromHome: false,
 				bFromSpotContextMenu: true
 			});
