@@ -31,15 +31,6 @@
 					<Column minScreenWidth="Tablet" demandPopin="true">
 						<Text text="{/#Demand/DateTo/@sap:label}"/>
 					</Column>
-						<Column minScreenWidth="Tablet" demandPopin="true">
-						<Text text="{/#Demand/PERSON_NUMBER/@sap:label}"/>
-					</Column>
-					<Column minScreenWidth="Tablet" demandPopin="true">
-						<Text text="{/#Demand/DateFrom/@sap:label}"/>
-					</Column>
-					<Column minScreenWidth="Tablet" demandPopin="true">
-						<Text text="{/#Demand/DateTo/@sap:label}"/>
-					</Column>
 					<core:ExtensionPoint name="TableExtP|Assignments|AssignmentSet|AssignmentListTable|CustomColumn" />
 				</columns>
 				<items>
@@ -49,9 +40,6 @@
 							<Text text="{Effort} {EffortUnit}"/>
 							<Text text="{ path:'PERSON_NUMBER' }"/>
 							<Text text="{ path:'DateFrom', type:'sap.ui.model.odata.type.DateTimeOffset' }"/>
-							<Text text="{ path:'DateTo', type:'sap.ui.model.odata.type.DateTimeOffset' }"/>
-							<Text text="{ path:'DateTo', type:'sap.ui.model.odata.type.DateTimeOffset' }"/>
-							<Text text="{ path:'DateTo', type:'sap.ui.model.odata.type.DateTimeOffset' }"/>
 							<Text text="{ path:'DateTo', type:'sap.ui.model.odata.type.DateTimeOffset' }"/>
 							<core:ExtensionPoint name="TableExtP|Assignments|AssignmentSet|AssignmentListTable|CustomCell" />
 						</cells>
