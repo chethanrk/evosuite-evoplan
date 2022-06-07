@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"com/evorait/evoplan/controller/common/AssignmentActionsController",
 	"sap/ui/core/mvc/OverrideExecution",
 	"sap/base/Log",
 	"sap/ui/core/Fragment",
@@ -75,6 +75,7 @@ sap.ui.define([
 			this.oParentController = oController;
 			this.oResourceBundle = oController.getResourceBundle();
 			this.oModel = oController.getView().getModel();
+			this._oView = oController.getView();
 			this.oUserModel = oController.getModel("user");
 			this.oSinglePlanningModel = models.createHelperModel({
 				hasChanges: false,
@@ -89,7 +90,8 @@ sap.ui.define([
 			if (!this.oPlannerDialog) {
 				Fragment.load({
 					name: "com.evorait.evoplan.view.map.fragments.SingleDayPlanner",
-					controller: this
+					controller: this,
+					id: this._oView.getId()
 				}).then(function (content) {
 					this.oPlannerDialog = content;
 					oController.getView().addDependent(this.oPlannerDialog);
@@ -107,10 +109,11 @@ sap.ui.define([
 		/**
 		 * open single planning calendar dialog
 		 */
-		open: function (sPath, oTreeData, sNodeType, oParentData) {
-			this.oSinglePlanner = sap.ui.getCore().byId("idSinglePlanningCalendar");
+		open: function (sPath, oTreeData, sNodeType, oParentData, bFromMap) {
+			this.oSinglePlanner = this._oView.byId("idSinglePlanningCalendar");
 			this.oSelectedData = oTreeData;
 			this.sSelectedPath = sPath;
+			this._bFromMap = bFromMap;
 			//set view for this calendar base on NodeType
 			this._setCalenderViews(sNodeType);
 			this.oSinglePlanningModel.setProperty("/startDate", oTreeData.StartDate);
@@ -147,7 +150,8 @@ sap.ui.define([
 		 * @param {object} oEvent - button close press in dialog
 		 */
 		onPressClose: function (oEvent) {
-			var sMsg = this.oResourceBundle.getText("ymsg.saveDayChangesConfirm", [moment(this.oPlanningDate).format("DD MMM YYYY")]);
+			var sMsg = this.oResourceBundle.getText("ymsg.saveDayChangesConfirm", [moment(this.oPlanningDate).format("DD MMM YYYY")]),
+				sDiscardMsg = this.oResourceBundle.getText("ymsg.discardAssignmentsConfirm");
 			//check if there was changes for appointments before loading new
 			if (this.oSinglePlanningModel.getProperty("/hasChanges")) {
 				var reviewFn = function () {
@@ -162,9 +166,31 @@ sap.ui.define([
 				};
 				var noFn = function () {
 					//don't save and just close dialog
-					this.oPlannerDialog.close();
+					this._unAssignDraggedDemands(sDiscardMsg);
 				};
 				this._showConfirmMessage(sMsg, yesFn.bind(this), reviewFn.bind(this), noFn.bind(this));
+			} else {
+				this._unAssignDraggedDemands(sDiscardMsg);
+			}
+		},
+
+		_unAssignDraggedDemands: function (sDiscardMsg) {
+			if (!this._bFromMap) {
+				this.oPlannerDialog.close();
+				return;
+			}
+			if (this.oUserModel.getProperty("/ENABLE_DISCARD_ASGN_CHECK")) {
+				this.showConfirmMessageBox.call(this.oParentController, sDiscardMsg, function (sAction) {
+					if (sAction === "YES") {
+						this._unAssignAssigments();
+					} else {
+						this.oPlannerDialog.close();
+						var oEventBus = sap.ui.getCore().getEventBus();
+						oEventBus.publish("BaseController", "refreshMapView", {});
+						oEventBus.publish("BaseController", "resetMapSelection", {});
+						oEventBus.publish("BaseController", "refreshMapTreeTable", {});
+					}
+				}.bind(this));
 			} else {
 				this.oPlannerDialog.close();
 			}
@@ -223,15 +249,15 @@ sap.ui.define([
 					if (!oData.Demand.ASGNMNT_CHANGE_ALLOWED || oData.FIXED_APPOINTMENT) {
 						this.oParentController.showMessageToast(this.oResourceBundle.getText("ymsg.notAllowedChangeAssign"));
 					} else {
-						
+
 						oAppointment.setStartDate(oEvent.getParameter("startDate"));
 						oAppointment.setEndDate(oEvent.getParameter("endDate"));
-						
+
 						var aAssignments = this._getOnlyAppointmentsByKeyValue("type", this.mTypes.APPOINTMENT);
 						oResource = aAssignments[0].Resource;
-						
+
 						this.oParentController.getOwnerComponent().MapProvider.updateAssignmentsWithTravelTime(oResource, aAssignments)
-							.then(function(aUpdatedAssignments) {
+							.then(function (aUpdatedAssignments) {
 								this._setAssignmentsData(aUpdatedAssignments);
 								this.oSinglePlanningModel.setProperty("/hasChanges", true);
 								this.oSinglePlanner.setBusy(false);
@@ -298,8 +324,8 @@ sap.ui.define([
 			if (aAssignments.length > 0) {
 				this.oSinglePlanner.setBusy(true);
 				this.oParentController.getOwnerComponent().MapProvider.optimizeRoute(
-					aAssignments[0].Resource, aAssignments)
-					.then(function(aUpdatedAssignments) {
+						aAssignments[0].Resource, aAssignments)
+					.then(function (aUpdatedAssignments) {
 						this._setAssignmentsData(aUpdatedAssignments);
 						this.oSinglePlanningModel.setProperty("/hasChanges", true);
 						this.oSinglePlanner.setBusy(false);
@@ -397,7 +423,7 @@ sap.ui.define([
 				//check all changes for appointments
 				aAppointments.forEach(function (oItem) {
 					if (oItem.type === this.mTypes.APPOINTMENT) {
-						var originData = _.find(this.aOriginalData, function(origObj) {
+						var originData = _.find(this.aOriginalData, function (origObj) {
 							return origObj.Guid === oItem.Guid;
 						});
 						if (originData && (originData.DateTo.getTime() !== oItem.DateTo.getTime() ||
@@ -599,8 +625,33 @@ sap.ui.define([
 			this.oSinglePlanningModel.setProperty("/overallTravelTime", nOverallTravelTime);
 			this.oSinglePlanner.rerender(); // to prevent buggy display of appointments
 			this.oSinglePlanner.setBusy(false);
-			
+
 			return appoints;
+
+			// TODO dibrovv: do I need to save the new data to the default model? (for unsubmitted changes)
+			// need to check, whether the further actions (after calculation or optimization) could depend on default model
+			// e.g. drag-n-drop
+
+		},
+		/**
+		 * Un assigning the dragged demand when user discards the planing in single planner
+		 * 
+		 * @Author Rahul
+		 * 
+		 */
+		_unAssignAssigments: function () {
+			var aAssignments = this.oParentController.getModel("viewModel").getProperty("/mapSettings/aAssignedAsignmentsForPlanning"),
+				aPromises = [];
+			for (var i in aAssignments) {
+				aPromises.push(this.deleteAssignment.call(this.oParentController, this.oParentController.getModel(), aAssignments[i].Guid));
+			}
+			Promise.all(aPromises).then(function () {
+				this.oPlannerDialog.close();
+				var oEventBus = sap.ui.getCore().getEventBus();
+				oEventBus.publish("BaseController", "refreshMapView", {});
+				oEventBus.publish("BaseController", "resetMapSelection", {});
+				oEventBus.publish("BaseController", "refreshMapTreeTable", {});
+			}.bind(this));
 		}
 	});
 });
