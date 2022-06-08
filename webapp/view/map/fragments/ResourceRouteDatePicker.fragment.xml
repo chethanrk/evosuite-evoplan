@@ -1,0 +1,5 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:u="sap.ui.unified">
+	<Popover placement="Auto">
+		<u:Calendar id="idShowRouteDatePicker" select="handleRouteDateSelect"/>
+	</Popover>
+</core:FragmentDefinition>
