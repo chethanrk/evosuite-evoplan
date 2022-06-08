@@ -303,34 +303,18 @@ sap.ui.define([
 		 * @param {object} oOpenByButton - dom element by which the datepicker is opened
 		 */
 		_openDatePickerDialog: function (fCallback, oOpenByButton) {
-			this.fDatePickerCallback = fCallback;
-			if (!this.oDatePickerPopover) {
-				this.oDatePickerPopover = Fragment.load({
-					name: "com.evorait.evoplan.view.map.fragments.ResourceRouteDatePicker",
-					controller: this
-				}).then(function (oPopover) {
-					this.oView.addDependent(oPopover);
-					oPopover._fCallback = fCallback;
-					return oPopover;
-				}.bind(this));
+			if (!this.oDatePicker) {
+				this.oDatePicker = new DatePicker("ResourcePopoverDatePicker", {
+					hideInput: true,
+					change: function (oEvent) {
+						if (oEvent.getParameter("valid")) {
+							var oDateSelected = new Date(oEvent.getParameter("value") + "Z");
+							return fCallback(oDateSelected);
+						}
+					}
+				});
 			}
-			this.oDatePickerPopover.then(function (oPopover) {
-				oPopover.openBy(oOpenByButton);
-			});
-		},
-
-		/**
-		 * Date select event of the sap.ui.unified Datepicker
-		 * Also calls the callback function of showRoutes for the resource pin with selected date
-		 * 
-		 * @param {object} oEvent - source and parameters of date select event
-		 */
-		handleRouteDateSelect: function (oEvent) {
-			var oDateSelected = oEvent.getSource().getSelectedDates() && oEvent.getSource().getSelectedDates()[0];
-			oDateSelected = oDateSelected.getProperty('startDate');
-			// with "Z" we are making the dateString local as the UTC conversion happends at oData level
-			var oAdjustedTime = new Date(oDateSelected.toLocaleDateString() + "Z");
-			this.fDatePickerCallback(oAdjustedTime);
+			this.oDatePicker.openBy(oOpenByButton.getDomRef());
 		},
 
 		/**
