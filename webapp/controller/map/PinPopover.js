@@ -310,7 +310,6 @@ sap.ui.define([
 					controller: this
 				}).then(function (oPopover) {
 					this.oView.addDependent(oPopover);
-					oPopover._fCallback = fCallback;
 					return oPopover;
 				}.bind(this));
 			}
@@ -328,7 +327,7 @@ sap.ui.define([
 		handleRouteDateSelect: function (oEvent) {
 			var oDateSelected = oEvent.getSource().getSelectedDates() && oEvent.getSource().getSelectedDates()[0];
 			oDateSelected = oDateSelected.getProperty('startDate');
-			// with "Z" we are making the dateString local as the UTC conversion happends at oData level
+			// with "Z" we are making the dateString local, since the UTC conversion is done by the model
 			var oAdjustedTime = new Date(oDateSelected.toLocaleDateString() + "Z");
 			this.fDatePickerCallback(oAdjustedTime);
 		},
