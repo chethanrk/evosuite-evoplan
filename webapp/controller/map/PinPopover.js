@@ -327,7 +327,7 @@ sap.ui.define([
 		handleRouteDateSelect: function (oEvent) {
 			var oDateSelected = oEvent.getSource().getSelectedDates() && oEvent.getSource().getSelectedDates()[0];
 			oDateSelected = oDateSelected.getProperty('startDate');
-			// with "Z" we are making the dateString local, since the UTC conversion is done by the model
+			// Z is the zone designator for the zero hour offset (UTC)
 			var oAdjustedTime = new Date(oDateSelected.toLocaleDateString() + "Z");
 			this.fDatePickerCallback(oAdjustedTime);
 		},
