@@ -16,6 +16,8 @@
 							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.ResourceActions" type="XML"/>
 							<Button id="idCalculateRoute" enabled="false" visible="{user>/ENABLE_MANAGE_ABSENCE}" text="Calculate Route" tooltip="Calculate Route"
 								press="onCalculateRoutePress" busyIndicatorDelay="0"/>
+							<Button id="idOptimizeRoute" enabled="false" text="Optimize Route" tooltip="Optimize Route"
+								press="onCalculateRoutePress" busyIndicatorDelay="0"/>	
 							<Button id="idToday" text="{i18n>xtit.today}" press="onPressToday"/>
 							<core:ExtensionPoint name="GanttExtP|GanttChart|GanttHeircrchySet|GanttToolbar|After"/>
 						</gnt2:content>
