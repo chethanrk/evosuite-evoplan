@@ -770,8 +770,10 @@ sap.ui.define([
 			var oButton = oEvent.getSource(),
 				oView = this.getView(),
 				oStarDate = this.getModel("user").getProperty("/DEFAULT_GANT_START_DATE"),
-				oEndDate = this.getModel("user").getProperty("/DEFAULT_GANT_END_DATE");
+				oEndDate = this.getModel("user").getProperty("/DEFAULT_GANT_END_DATE"),
+				sSourceId = oEvent.getSource().getId();
 
+			this.routeOperation = sSourceId.includes("Optimize") ? "Optimize" : "Calculate";
 			if (!this._oCalendarPopover) {
 				Fragment.load({
 					name: "com.evorait.evoplan.view.map.fragments.RouteDateFilter",
