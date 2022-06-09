@@ -175,15 +175,22 @@ sap.ui.define([
 		 * @ returns the div element
 		 */
 		_gethiddenDivPosition: function (oSpotPosition) {
-			var div = document.createElement("div");
-			div.style.position = "absolute";
-			div.style.top = oSpotPosition[1] + "px";
-			div.style.left = (parseInt(oSpotPosition[0]) + 10) + "px";
-			// add as a child to the GeoMap 
-			// this get by id
-			var oGeoMapContainer = this.oView.byId("idMapContainer");
-			var oGeoMapContainerDOM = oGeoMapContainer.getDomRef();
-			oGeoMapContainerDOM.appendChild(div);
+			var div = document.getElementById("idDivRightClick");
+			//Condition check if div is availabel then change only the position 
+			if (div) {
+				div.style.top = oSpotPosition[1] + "px";
+				div.style.left = (parseInt(oSpotPosition[0]) + 10) + "px";
+			} else {
+				// Creating new div in case div is getting created first time
+				div = document.createElement("div");
+				div.id = "idDivRightClick";
+				div.style.position = "absolute";
+				div.style.top = oSpotPosition[1] + "px";
+				div.style.left = (parseInt(oSpotPosition[0]) + 10) + "px";
+				var oGeoMapContainer = this.oView.byId("idMapContainer");
+				var oGeoMapContainerDOM = oGeoMapContainer.getDomRef();
+				oGeoMapContainerDOM.appendChild(div);
+			}
 			return div;
 		},
 
