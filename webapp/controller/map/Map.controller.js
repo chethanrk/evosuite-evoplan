@@ -130,6 +130,7 @@ sap.ui.define([
 			} else {
 				aSelectedDemands.push(sPath);
 			}
+			oViewModel.setProperty("/mapSettings/bIsSignlePlnAsgnSaved", false);
 			this._selectedResource = oEvent.getSource();
 			this.aDraggedDemands = aSelectedDemands;
 			this._checkForMultipleResources(oEvent.getSource().getBindingContext().getObject());
