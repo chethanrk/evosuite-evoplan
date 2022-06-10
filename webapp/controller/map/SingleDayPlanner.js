@@ -241,7 +241,6 @@ sap.ui.define([
 		 * Move appointment to another time
 		 * and set also their travel times new
 		 * 
-		 * Todo new route calculation
 		 * @param {object} oEvent - 
 		 */
 		onDropAppointment: function (oEvent) {
@@ -268,7 +267,9 @@ sap.ui.define([
 								this._setAssignmentsData(aUpdatedAssignments);
 								this.oSinglePlanningModel.setProperty("/hasChanges", true);
 								this.oSinglePlanner.setBusy(false);
-							}.bind(this));
+						}.bind(this)).catch(function(oError) {
+							this.oSinglePlanner.setBusy(false);
+						}.bind(this));
 					}
 				} else if (oData.type === this.mTypes.BLOCKER) {
 					this.oParentController.showMessageToast(this.oResourceBundle.getText("ymsg.notAllowedChangeUnavailable"));
@@ -300,25 +301,26 @@ sap.ui.define([
 
 		/**
 		 * 
-		 * TODO dibrovv: show travel times
-		 * 
 		 * @param {object} oEvent
 		 */
 		onPressCalculateRoute: function (oEvent) {
 			var oStartDate = this.oSinglePlanningModel.getProperty("/startDate");
 			var aAssignments = this._getOnlyAppointmentsByKeyValue("type", this.mTypes.APPOINTMENT);
 			if (aAssignments.length > 0) {
+				this.oSinglePlanner.setBusy(true); 
 				this.oParentController.getOwnerComponent().MapProvider.calculateTravelTimeAndDatesForDay(
 						aAssignments[0].Resource, aAssignments, oStartDate)
 					.then(function (aUpdatedAssignments) {
 						this._setAssignmentsData(aUpdatedAssignments);
 						this.oSinglePlanningModel.setProperty("/hasChanges", true);
+						this.oSinglePlanner.setBusy(false);
+					}.bind(this)).catch(function(oError) {
+						this.oSinglePlanner.setBusy(false);
 					}.bind(this));
 			}
 		},
 
 		/**
-		 * Todo optimize route for given appointments
 		 * @param {object} oEvent - 
 		 */
 		onPressOptimizeRoute: function (oEvent) {
@@ -328,11 +330,16 @@ sap.ui.define([
 					sResourceLat = aAssignments[0].Resource.LATITUDE;
 			}
 			if (aAssignments.length > 0) {
+				this.oSinglePlanner.setBusy(true);
 				this.oParentController.getOwnerComponent().MapProvider.optimizeRoute(
 						aAssignments[0].Resource, aAssignments)
 					.then(function (aUpdatedAssignments) {
 						this._setAssignmentsData(aUpdatedAssignments);
 						this.oSinglePlanningModel.setProperty("/hasChanges", true);
+						this.oSinglePlanner.setBusy(false);
+						this.oParentController.showMessageToast(this.oResourceBundle.getText("ymsg.routeOptimized"));
+					}.bind(this)).catch(function(oError) {
+						this.oSinglePlanner.setBusy(false);
 					}.bind(this));
 			}
 		},
@@ -577,8 +584,9 @@ sap.ui.define([
 		_setAssignmentsData: function (aAssignments) {
 			var sEntitySetPath = "/AssignmentSet",
 				sTravelAppointments = [],
-				oTravelItem = null;
-
+				oTravelItem = null,
+				nOverallTravelTime = 0;
+				
 			this.oSinglePlanner.setBusy(true);
 
 			if (aAssignments.length && aAssignments.length > 0) {
@@ -601,6 +609,7 @@ sap.ui.define([
 						oTravelItem.Guid = oAssignment.Guid + "_before";
 						oTravelItem.type = this.mTypes.TRAVEL_BEFORE;
 						sTravelAppointments.push(oTravelItem);
+						nOverallTravelTime += parseFloat(oAssignment.TRAVEL_TIME);
 					}
 
 					if (parseInt(oAssignment.TRAVEL_BACK_TIME)) {
@@ -614,12 +623,14 @@ sap.ui.define([
 						oTravelItem.Guid = oAssignment.Guid + "_after";
 						oTravelItem.type = this.mTypes.TRAVEL_AFTER;
 						sTravelAppointments.push(oTravelItem);
+						nOverallTravelTime += parseFloat(oAssignment.TRAVEL_BACK_TIME);
 					}
 				}.bind(this));
 			}
 			var appoints = aAssignments.concat(sTravelAppointments);
 			this.oSinglePlanningModel.setProperty("/appointments", appoints);
 			// var aAssignments = this._getDraggedAssignments();
+            this.oSinglePlanningModel.setProperty("/overallTravelTime", nOverallTravelTime);
 			this.oSinglePlanner.rerender(); // to prevent buggy display of appointments
 			this.oSinglePlanner.setBusy(false);
 

@@ -303,18 +303,33 @@ sap.ui.define([
 		 * @param {object} oOpenByButton - dom element by which the datepicker is opened
 		 */
 		_openDatePickerDialog: function (fCallback, oOpenByButton) {
-			if (!this.oDatePicker) {
-				this.oDatePicker = new DatePicker("ResourcePopoverDatePicker", {
-					hideInput: true,
-					change: function (oEvent) {
-						if (oEvent.getParameter("valid")) {
-							var oDateSelected = new Date(oEvent.getParameter("value") + "Z");
-							return fCallback(oDateSelected);
-						}
-					}
-				});
+			this.fDatePickerCallback = fCallback;
+			if (!this.oDatePickerPopover) {
+				this.oDatePickerPopover = Fragment.load({
+					name: "com.evorait.evoplan.view.map.fragments.ResourceRouteDatePicker",
+					controller: this
+				}).then(function (oPopover) {
+					this.oView.addDependent(oPopover);
+					return oPopover;
+				}.bind(this));
 			}
-			this.oDatePicker.openBy(oOpenByButton.getDomRef());
+			this.oDatePickerPopover.then(function (oPopover) {
+				oPopover.openBy(oOpenByButton);
+			});
+		},
+
+		/**
+		 * Date select event of the sap.ui.unified Datepicker
+		 * Also calls the callback function of showRoutes for the resource pin with selected date
+		 * 
+		 * @param {object} oEvent - source and parameters of date select event
+		 */
+		handleRouteDateSelect: function (oEvent) {
+			var oDateSelected = oEvent.getSource().getSelectedDates() && oEvent.getSource().getSelectedDates()[0];
+			oDateSelected = oDateSelected.getProperty('startDate');
+			// Z is the zone designator for the zero hour offset (UTC)
+			var oAdjustedTime = new Date(oDateSelected.toLocaleDateString() + "Z");
+			this.fDatePickerCallback(oAdjustedTime);
 		},
 
 		/**
