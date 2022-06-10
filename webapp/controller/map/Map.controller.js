@@ -130,6 +130,7 @@ sap.ui.define([
 			} else {
 				aSelectedDemands.push(sPath);
 			}
+			oViewModel.setProperty("/mapSettings/bIsSignlePlnAsgnSaved", false);
 			this._selectedResource = oEvent.getSource();
 			this.aDraggedDemands = aSelectedDemands;
 			this._checkForMultipleResources(oEvent.getSource().getBindingContext().getObject());
@@ -190,8 +191,9 @@ sap.ui.define([
 				oSelectedDate = oCalendar.getSelectedDates(),
 				aAssignableDemands = this._checkDemands(),
 				sPath = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel").getPath() : this._selectedResource.getBindingContext().getPath(),
+				sDescription = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel").getProperty(sPath+"/Description") : this._selectedResource.getBindingContext().getProperty(sPath+"/Description"),
 				aAssignedAssignments = this._assignDemands(aAssignableDemands, sPath, oSelectedDate[
-					0].getStartDate(), oCalendar);
+					0].getStartDate(), oCalendar, sDescription);
 
 		},
 		/**
@@ -1004,7 +1006,7 @@ sap.ui.define([
 		 * @Author Rahul
 		 * 
 		 */
-		_assignDemands: function (oDemandObject, oResource, oTargetDate, oCalendar) {
+		_assignDemands: function (oDemandObject, oResource, oTargetDate, oCalendar, sDescription) {
 			var aAssignableDemands = oDemandObject.aAssignableDemands;
 			oCalendar.setBusy(true);
 			Promise.all(this.assignedDemands(aAssignableDemands, oResource, oTargetDate, null, null, true)).then(function (responses) {
@@ -1016,7 +1018,7 @@ sap.ui.define([
 				this.oSingleDayPlanner.open(oResource, {
 					StartDate: oTargetDate,
 					ChildCount: aAssignableDemands.length
-				}, "TIMEDAY", null, true);
+				}, "TIMEDAY", {Description:sDescription}, true);
 			}.bind(this));
 
 		},
