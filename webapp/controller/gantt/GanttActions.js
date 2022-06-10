@@ -419,7 +419,7 @@ sap.ui.define([
 							Guid: oData.Guid
 						}),
 						oAssignData = this.getModel().getProperty("/" + sPath);
-					if (oAssignData.Demand && oAssignData.Demand.Guid && !bInvalidate) {
+					if (oAssignData && oAssignData.Demand && oAssignData.Demand.Guid && !bInvalidate) {
 						resolve(oAssignData);
 					} else {
 						this.getModel().read("/" + sPath, {
@@ -580,6 +580,7 @@ sap.ui.define([
 			aResourceAvailabilities = oGanttModel.getProperty(sTargetPath + "/ResourceAvailabilitySet");
 			var xPath = sTargetPath + "/children/" + iChildLength;
 			sAssignmentGuid = oGanttModel.getProperty(xPath + "/Guid");
+			oGanttModel.setProperty(xPath + "/DemandDesc", aData.DEMAND_DESC);
 			for (var a in aAssignmentData) {
 				if (sAssignmentGuid === aAssignmentData[a].Guid) {
 					sNewPath = xPath + "/AssignmentSet";
