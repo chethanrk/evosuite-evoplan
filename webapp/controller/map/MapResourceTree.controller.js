@@ -12,10 +12,9 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/ui/core/Fragment",
-	"sap/base/Log","com/evorait/evoplan/model/Constants",
-	"com/evorait/evoplan/controller/map/SingleDayPlanner"
+	"sap/base/Log","com/evorait/evoplan/model/Constants"
 ], function (Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController, ResourceTreeFilterBar,
-	MessageToast, MessageBox, Fragment, Log, Constants, SingleDayPlanner) {
+	MessageToast, MessageBox, Fragment, Log, Constants) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.map.MapResourceTree", {
@@ -46,8 +45,6 @@ sap.ui.define([
 				.then(function(result) {
 					this.oFilterConfigsController.bindViewFilterItemsToEntity("/ShMapViewModeSet");
 				}.bind(this));
-
-			this.oSingleDayPlanner = new SingleDayPlanner(this);
 
 			Fragment.load({
 				name: "com.evorait.evoplan.view.common.fragments.ResourceTreeTable",
@@ -680,7 +677,7 @@ sap.ui.define([
 					var sParentPath = this.getModel("viewModel").getProperty("/treeSet") + "('" + oNodeData.ParentNodeId + "')";
 					var oParentData = this.getModel().getProperty("/" + encodeURIComponent(sParentPath));
 					//open Day single planning calendar
-					this.oSingleDayPlanner.open(sPath, oNodeData, oNodeData.NodeType, oParentData);
+					this.getOwnerComponent().singleDayPlanner.open(this.getView(), sPath, oNodeData, oNodeData.NodeType, oParentData);
 				}
 			}
 
@@ -758,7 +755,7 @@ sap.ui.define([
 			var aGeoJsonLayersData = oViewModel.getProperty("/GeoJsonLayersData");
 			
 			var aResourceFilters = this._getResourceFilters([sResourceHierachyPath]);
-			var aAssignmentFilters = this._getAssignmentsFiltersWithinDateFrame(oResourceHierachyObject);
+			var aAssignmentFilters = this.getAssignmentsFiltersWithinDateFrame(oResourceHierachyObject);
 			oViewModel.setProperty("/mapSettings/busy", true);
 			
 			var pAssignmentsLoaded = this.getOwnerComponent().readData("/AssignmentSet", aAssignmentFilters);
@@ -805,7 +802,7 @@ sap.ui.define([
 		 * @param {object} oResourceHierarchy - ResourceHierarchy instance. It supposed that the object represents daily or weekly node.
 		 * @return {sap.ui.model.Filter[]} - array of filters
 		 */
-		_getAssignmentsFiltersWithinDateFrame: function(oResourceHierarchy) {
+		getAssignmentsFiltersWithinDateFrame: function(oResourceHierarchy) {
 			
 			//TODO: update filters after backend delivered time filters
 			var aFilters = [];

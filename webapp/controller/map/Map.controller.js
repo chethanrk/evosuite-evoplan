@@ -12,11 +12,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/MessageToast",
 	"sap/m/GroupHeaderListItem",
-	"sap/ui/unified/Calendar",
-	"com/evorait/evoplan/controller/map/SingleDayPlanner",
-	"com/evorait/evoplan/controller/map/PinPopover"
+	"sap/ui/unified/Calendar"
 ], function (MapUtilities, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
-	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, SingleDayPlanner) {
+	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar) {
 	"use strict";
 
 	return MapUtilities.extend("com.evorait.evoplan.controller.map.Map", {
@@ -51,7 +49,6 @@ sap.ui.define([
 
 			//initialize PinPopover controller
 			this.oPinPopover = new PinPopover(this);
-			this.oSingleDayPlanner = new SingleDayPlanner(this);
 		},
 
 		//TODO comment
@@ -1015,7 +1012,7 @@ sap.ui.define([
 				this._refreshMapView();
 				this._oEventBus.publish("BaseController", "refreshMapTreeTable", {});
 				this.oCalendarPopover.close();
-				this.oSingleDayPlanner.open(sResourcePath, {
+				this.getOwnerComponent().singleDayPlanner.open(this.getView(), sResourcePath, {
 					StartDate: oTargetDate,
 					ChildCount: aAssignableDemands.length,
 					ResourceGuid: oResourceContext.getObject().ResourceGuid

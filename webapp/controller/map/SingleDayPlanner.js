@@ -66,40 +66,9 @@ sap.ui.define([
 		oSinglePlanningModel: null,
 
 		aOriginalData: [],
-
-		/**
-		 * when new single planner is initialized then fragment of dialog are loaded
-		 * create new json model for Single planning calendar
-		 */
-		constructor: function (oController) {
-			this.oParentController = oController;
-			this.oResourceBundle = oController.getResourceBundle();
-			this.oModel = oController.getView().getModel();
-			this._oView = oController.getView();
-			this.oUserModel = oController.getModel("user");
-			this.oSinglePlanningModel = models.createHelperModel({
-				hasChanges: false,
-				appointments: [],
-				legendShown: false,
-				legendItems: [],
-				legendAppointmentItems: []
-			});
-			this.oSinglePlanningModel.setDefaultBindingMode("TwoWay");
-			this._oView.setModel(this.oSinglePlanningModel, "mapSinglePlanning");
-
-			if (!this.oPlannerDialog) {
-				Fragment.load({
-					name: "com.evorait.evoplan.view.map.fragments.SingleDayPlanner",
-					controller: this,
-					id: this._oView.getId()
-				}).then(function (content) {
-					this.oPlannerDialog = content;
-					oController.getView().addDependent(this.oPlannerDialog);
-					this.oPlannerDialog.addStyleClass(this.oParentController.getOwnerComponent().getContentDensityClass());
-					//get legend for assignments and unavailabilies from Gantt Chart
-					this._loadLegendData();
-				}.bind(this));
-			}
+		
+		init: function() {
+			
 		},
 
 		/* =========================================================== */
@@ -109,11 +78,47 @@ sap.ui.define([
 		/**
 		 * open single planning calendar dialog
 		 */
-		open: function (sPath, oTreeData, sNodeType, oParentData, bFromMap) {
-			this.oSinglePlanner = this._oView.byId("idSinglePlanningCalendar");
+		 
+		 open: function (oView, sPath, oTreeData, sNodeType, oParentData, bFromMap) {
+			// create dialog lazily
+			if (!this.oPlannerDialog) {
+				oView.getModel("appView").setProperty("/busy", true);
+				Fragment.load({
+					name: "com.evorait.evoplan.view.map.fragments.SingleDayPlanner",
+					controller: this
+				}).then(function (content) {
+					this.oPlannerDialog = content;
+					// get legend for assignments and unavailabilies from Gantt Chart
+					oView.getModel("appView").setProperty("/busy", false);
+					this.onOpen(oView, sPath, oTreeData, sNodeType, oParentData, bFromMap);
+				}.bind(this));
+			} else {
+				this.onOpen(oView, sPath, oTreeData, sNodeType, oParentData, bFromMap);
+			}
+		},
+		 
+		onOpen: function (oView, sPath, oTreeData, sNodeType, oParentData, bFromMap) {
+			this.oParentController = oView.getController();
+			
+			oView.addDependent(this.oPlannerDialog);
+			this.oPlannerDialog.addStyleClass(this.oParentController.getOwnerComponent().getContentDensityClass());
+			
+			this.oResourceBundle = this.oParentController.getResourceBundle();
+			this.oSinglePlanner = sap.ui.getCore().byId("idSinglePlanningCalendar");
 			this.oSelectedData = oTreeData;
 			this.sSelectedPath = sPath;
 			this._bFromMap = bFromMap;
+			this.oUserModel = this.oParentController.getModel("user");
+			
+			this.oSinglePlanningModel = models.createHelperModel({
+				hasChanges: false,
+				appointments: [],
+				legendShown: false,
+				legendItems: [],
+				legendAppointmentItems: []
+			});
+			this.oSinglePlanningModel.setDefaultBindingMode("TwoWay");
+			oView.setModel(this.oSinglePlanningModel, "mapSinglePlanning");
 			//set view for this calendar base on NodeType
 			this._setCalenderViews(sNodeType);
 			this.oSinglePlanningModel.setProperty("/startDate", oTreeData.StartDate);
@@ -130,6 +135,7 @@ sap.ui.define([
 				//load assignments for this day, resource and resource group
 				this._loadAssignmentsForDay(oTreeData);
 			}
+			this._loadLegendData();
 			this.oPlannerDialog.open();
 		},
 
@@ -557,7 +563,7 @@ sap.ui.define([
 		_loadAssignmentsForDay: function (oResourseHierachyData) {
 			var sEntitySetPath = "/AssignmentSet";
 			
-			if (this.oParentController._getAssignmentsFiltersWithinDateFrame) {
+			if (this.oParentController.getAssignmentsFiltersWithinDateFrame) {
 				this.oSinglePlanningModel.setProperty("/hasChanges", false);
 				this.oSinglePlanner.setBusy(true);
 
@@ -565,7 +571,7 @@ sap.ui.define([
 					"$expand": "Demand,Resource"
 				};
 
-				var oFilter = new Filter(this.oParentController._getAssignmentsFiltersWithinDateFrame(oResourseHierachyData), true);
+				var oFilter = new Filter(this.oParentController.getAssignmentsFiltersWithinDateFrame(oResourseHierachyData), true);
 				this.oParentController.getOwnerComponent().readData(sEntitySetPath, [oFilter], mParams).then(function (oResults) {
 					this.aOriginalData = _.cloneDeep(this._setAssignmentsData(oResults.results)); // set current assignments and save it to this.aOriginalData
 				}.bind(this));
