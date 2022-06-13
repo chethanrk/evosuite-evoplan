@@ -82,7 +82,6 @@ sap.ui.define([
 					this.getView().getModel("viewModel").setProperty("/capacityPlanning", false);
 				} else {
 					this.getView().getModel("viewModel").setProperty("/selectedHierarchyView", sViewSelectedKey);
-					this.getView().getModel("viewModel").setProperty("/capacityPlanning", true);
 				}
 				this.getModel("viewModel").setProperty("/resourceTreeShowRouteColumn", false);
 			}
@@ -96,7 +95,7 @@ sap.ui.define([
 		onBusyStateChanged: function (oEvent) {
 			var parameters = oEvent.getParameters();
 			if (parameters.busy === false) {
-				if (Object.keys(this.mTreeState).length > 0) {
+				if (Object.keys(this.mTreeState).length > 0 && this._oDataTable.getBinding().getNodes().length > 0) {
 					this._restoreTreeState();
 				}
 			}
@@ -201,17 +200,11 @@ sap.ui.define([
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
-				oUserModel = this.getModel("user"),
 				oFilterRightTechnician = this._oViewModel.getProperty("/resourceFilterforRightTechnician"),
-				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician"),
-				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels;
+				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician");
 
 			if (!this.isLoaded) {
 				this.isLoaded = true;
-			}
-			// Bug fix for some time tree getting collapsed
-			if (oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND")) {
-				oBinding.parameters.numberOfExpandedLevels = nTreeExpandLevel ? nTreeExpandLevel : 1;
 			}
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
@@ -224,7 +217,7 @@ sap.ui.define([
 				oBinding.filters.push(oFilterRightTechnician);
 			} else {
 				this._oViewModel.setProperty("/CheckRightTechnician", false);
-				this._oViewModel.getProperty("/resourceFilterforRightTechnician", false);
+				this._oViewModel.setProperty("/resourceFilterforRightTechnician", false);
 			}
 		},
 
@@ -328,7 +321,6 @@ sap.ui.define([
 						}]);
 						this._reassignmentOnDrop(this.assignmentPath, sPath, oView, mParameter);
 					}.bind(this));
-				
 
 			} else {
 

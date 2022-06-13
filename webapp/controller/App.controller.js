@@ -164,7 +164,7 @@ sap.ui.define([
 				oRouter.navTo("empty", {});
 				break;
 			case oResourceBundle.getText("xbut.pageNewGanttChartSplit"):
-				if (this._routeValidation("ENABLE_GANTT_JSON")) {
+				if (this._routeValidation("ENABLE_GANTT_SPLIT_JSON")) {
 					oRouter.navTo("newGanttSplit", {});
 					window.open(sRoute, "_blank");
 					break;
@@ -446,6 +446,30 @@ sap.ui.define([
 			this._eventBus.unsubscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
 			this._eventBus.unsubscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
 			this._eventBus.unsubscribe("PlanningCalendarDialog", "saveAllAssignments", this._triggerSaveAllAssignments, this);
+		},
+
+		/**
+		 * Since 2205
+		 * Links to navigate to EvoOrderRelate and EvoResource app
+		 * @param oEvent
+		 */
+		linkToOtherApp: function (oEvent) {
+			var sUri,
+				sText = oEvent.getSource().getText(),
+				oResourceBundleText = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode"),
+				sServicePath = "https://" + this.getModel("user").getProperty("/ServerPath");
+
+			if (sText === oResourceBundleText.getText("xtit.evoOrderRelate")) {
+				sUri = sServicePath + this.getModel("user").getProperty("/DEFAULT_EVOORDERRELATE_URL");
+			} else if (sText === oResourceBundleText.getText("xtit.evoResource")) {
+				sUri = sServicePath + this.getModel("user").getProperty("/DEFAULT_EVORESOURCE_URL");
+			}
+
+			//Logic for Navigation in BSP application
+			if (sLaunchMode === Constants.LAUNCH_MODE.BSP) {
+				window.open(sUri, "_blank");
+			}
 		}
 	});
 

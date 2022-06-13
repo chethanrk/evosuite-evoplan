@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:table="sap.ui.table">
-	<table:Column hAlign="Center" width="3rem" visible="{= ${/#Demand/NUMBER_OF_ASSIGNMENTS/@sap:visible} === 'false' ? false : true}">
+	<table:Column hAlign="Center" width="3rem" visible="{:= ${/#Demand/NUMBER_OF_ASSIGNMENTS/@sap:visible} === 'false' ? false : true}">
 		<table:customData>
 			<core:CustomData key="p13nData" value='\{"columnKey": "NUMBER_OF_ASSIGNMENTS", "leadingProperty": "NUMBER_OF_ASSIGNMENTS"}'/>
 		</table:customData>

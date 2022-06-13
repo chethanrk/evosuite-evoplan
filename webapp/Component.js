@@ -184,8 +184,8 @@ sap.ui.define([
 				aFixedAppointmentsList: {},
 				bDemandEditMode: false,
 				ganttResourceFiltersFromPin: [],
-				ganttDateRangeFromMap: []
-
+				ganttDateRangeFromMap: [],
+				iFirstDraggedIndex: -1
 			});
 			this.setModel(oViewModel, "viewModel");
 

@@ -135,27 +135,14 @@ sap.ui.define([
 
 		/**
 		 * double click on a shape
-		 * open assignment detail dialog
+		 * open assignment detail popover
 		 * @param oEvent
 		 */
 		onShapeDoubleClick: function (oEvent) {
-			var oParams = oEvent.getParameters(),
-				oContext = oParams.shape.getBindingContext("ganttModel"),
-				oRowContext = oParams.rowSettings.getParent().getBindingContext("ganttModel"),
-				oShape = oParams.shape,
-				sMsg;
-			if (oShape && oShape.sParentAggregationName === "shapes3") {
-				// to identify the action done on respective page
-				localStorage.setItem("Evo-Action-page", "ganttSplit");
-				if (oContext) {
-					this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], {
-						bFromNewGantt: true
-					}, oShape.getTime());
-				} else {
-					sMsg = this.getResourceBundle().getText("notFoundContext");
-					this.showMessageToast(sMsg);
-				}
-			}
+			var oShapeContext = oEvent.getParameter("shape").getBindingContext("ganttModel"),
+				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId();
+			this.getOwnerComponent().GanttAssignmentPopOver.open(this.getView(), sap.ui.getCore().byId(sToolbarId + "-settingsButton"),
+				oShapeContext);
 		},
 
 		/**
@@ -187,11 +174,14 @@ sap.ui.define([
 				if (typeof mParams.type === "undefined" && typeof oDate === "string" && sStartTime !== oDate) {
 					bGanttViewJumped = true;
 					oNewStartDate = moment(oDate.slice(0, 8) + "T" + oDate.slice(8)).toDate();
+				}else {
+					oNewStartDate = sap.gantt.misc.Format.abapTimestampToDate(oNewStartDate);
 				}
+
 				if (this._bFirstTimeContextMenuOpen || bGanttViewJumped) {
-					this._bFirstTimeContextMenuOpen = false;
 					setTimeout(function () {
 						this._changeGanttHorizonViewAt(this._axisTime.getZoomLevel(), this._axisTime, oNewStartDate);
+						this._bFirstTimeContextMenuOpen = false;
 					}.bind(this), 0);
 				}
 			} else {
@@ -305,6 +295,7 @@ sap.ui.define([
 				}
 
 			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) { // When we drop on gantt chart from split window
+				// this.getModel("viewModel").setProperty("/dragSession/bFromGanttSplit", true);
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				oParams.DateFrom = oAxisTime.viewToTime(oSvgPoint.x);
 				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
@@ -346,12 +337,8 @@ sap.ui.define([
 		 * @param 
 		 */
 		_proceedToAssign: function (sChannel, oEvent, oData) {
-			if (oData.sDragPath) {
-				if (oData.sDragPath.length > 1 || (oData.sDragPath.length > 0 && oData.aFixedAppointmentObjects && oData.aFixedAppointmentObjects.length)) {
-					this._handleMultipleAssignment(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate, oData.aFixedAppointmentObjects);
-				} else {
-					this._validateAndAssignDemands(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate);
-				}
+			if (oData.sDragPath || oData.aFixedAppointmentObjects) {
+				this._handleMultipleAssignment(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate, oData.aFixedAppointmentObjects);
 			} else {
 				this._validateAndAssignDemands(oData.oResourceData, null, oData.oTarget, oData.oTargetDate, oData.aGuids);
 			}
@@ -460,6 +447,8 @@ sap.ui.define([
 				oSelectedItem = oParams.item,
 				sPath = oEvent.getSource().data("Path"),
 				sFunctionKey = oSelectedItem.data("Function"),
+				sAsgnStsFnctnKey = oSelectedItem.data("StatusFunction"),
+				sRelationshipKey = oSelectedItem.data("RELATIONSHIP"),
 				oData = this.oGanttModel.getProperty(sPath),
 				oAppModel = this.getModel("appView"),
 				sDataModelPath = this._getAssignmentDataModelPath(oData.Guid),
@@ -467,7 +456,10 @@ sap.ui.define([
 					bFromNewGantt: true,
 					sSourcePath: sPath,
 					bCustomBusy: true
-				};
+				},
+				oShape = oEvent.getSource().getPopup()._oPosition.of,
+				oContext = oShape.getBindingContext("ganttModel"),
+				oRowContext = oShape.getParent().getParent().getBindingContext("ganttModel");
 			//still needed?
 			if (oAppModel.getProperty("/currentRoute") === "ganttSplit") {
 				mParameters = {
@@ -500,10 +492,24 @@ sap.ui.define([
 				//reassign
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters,
 					"ganttShapeReassignment");
-			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.showRelationships")) {
+			} else if (sRelationshipKey) {
 				//Show Relationships
-				if (sPath.length > 60) {
+				if (sRelationshipKey === "SHOW") {
 					this._showRelationships(sPath, oData);
+				} else { //Hide Relationships
+					this._hideRelationships(sPath);
+				}
+			} else if (sAsgnStsFnctnKey) {
+				//Changing Assignment Status
+				this._onContextMenuAssignmentStatusChange(sPath, oData, sAsgnStsFnctnKey);
+			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.showPlanningCal")) {
+				// Open Planning Calendar
+				var sMsg;
+				if (oContext) {
+					this.getOwnerComponent().planningCalendarDialog.open(this.getView(), [oRowContext.getPath()], mParameters, oShape.getTime());
+				} else {
+					sMsg = this.getResourceBundle().getText("notFoundContext");
+					this.showMessageToast(sMsg);
 				}
 			}
 		},
@@ -814,13 +820,18 @@ sap.ui.define([
 		 * @param {Object} oContext - context bound to shape
 		 */
 		_openContextMenu: function (oShape, oContext) {
-			var oData = oContext.getObject();
-			this.getOwnerComponent().GanttAssignmentPopOver.onCloseAssigmentsPopover();
+			var oData = oContext.getObject(),
+				sPath = oContext.getPath(),
+				bEnableRelationships = false;
+			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGN_GANTT") && sPath.length > 60) {
+				bEnableRelationships = true;
+			}
 			if (oData.DEMAND_STATUS !== "COMP") {
 				this._getRelatedDemandData(oData).then(function (oResult) {
 					oData.sPath = oContext.getPath();
 					this.oGanttModel.setProperty(oData.sPath + "/Demand", oResult.Demand);
 					this.oViewModel.setProperty("/ganttSettings/shapeData", oData);
+					this.oViewModel.setProperty("/ganttSettings/Enable_Relationships", bEnableRelationships);
 					this._oContextMenu.open(true, oShape, Popup.Dock.BeginTop, Popup.Dock.EndBottom, oShape);
 				}.bind(this));
 			}
@@ -834,11 +845,12 @@ sap.ui.define([
 		 */
 		_updateDraggedShape: function (sPath, sRequestType, sSourcePath) {
 			this.oGanttModel.setProperty(sPath + "/busy", true);
-			var oData = this.oGanttModel.getProperty(sPath);
+			var oData = this.oGanttModel.getProperty(sPath),
+				oOriginalData = this.oGanttModel.getProperty(sPath);
 			//get demand details to this assignment
 			this._getRelatedDemandData(oData).then(function (oResult) {
 				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
-				this._validateAndSendChangedData(sPath, sRequestType).then(function () {
+				this._validateAndSendChangedData(sPath, sRequestType).then(function (aData) {
 					// these events
 					this._oEventBus.publish("BaseController", "refreshCapacity", {
 						sTargetPath: sPath.split("/AssignmentSet/results/")[0]
@@ -848,7 +860,10 @@ sap.ui.define([
 							sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
 						});
 					}
-					this._resetParentChildNodes(sPath);
+					this._resetParentChildNodes(sPath, oOriginalData);
+					if (sRequestType === "reassign") {
+						this._resetParentNodeData(sPath, sSourcePath, aData);
+					}
 				}.bind(this), function () {
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
@@ -1304,7 +1319,13 @@ sap.ui.define([
 				sStartDate = date.startOf("day").subtract(1, "day").toDate();
 				sEndDate = date.endOf("day").add(1, "day").toDate();
 			}
-
+			
+			//Setting Existing Visible Horizon Dates On ContextMenu Opening For First Time To Avoid Jumping @since 2205
+			if (this._bFirstTimeContextMenuOpen) {
+				sStartDate = this.oGanttModel.getProperty("/settings/startTime");
+				sEndDate = this.oGanttModel.getProperty("/settings/endTime");
+			}
+			
 			this.oGanttModel.setProperty("/settings", {
 				startTime: sStartDate,
 				endTime: sEndDate
@@ -1470,11 +1491,11 @@ sap.ui.define([
 				aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
 				this.getModel().setUseBatch(false);
 				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
-				this._treeTable.setBusy(true);
+				this.getModel("appView").setProperty("/busy", true);
 				Promise.all(aPromises).then(function (data) {
 					this._addAssignemets(data[0].results);
 					this.getModel().setUseBatch(true);
-					this._treeTable.setBusy(false);
+					this.getModel("appView").setProperty("/busy", false);
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
 				}.bind(this));
 			}
@@ -1645,15 +1666,17 @@ sap.ui.define([
 		convertDateToObjects: function (aDemandData) {
 			var oDemandObjects = [];
 			aDemandData.forEach(function (oItem) {
-				oItem.oDemandObj.FIXED_APPOINTMENT_START_DATE = new Date(oItem.oDemandObj.FIXED_APPOINTMENT_START_DATE);
-				oItem.oDemandObj.FIXED_APPOINTMENT_END_DATE = new Date(oItem.oDemandObj.FIXED_APPOINTMENT_END_DATE);
-				oItem.oDemandObj.FIXED_ASSGN_START_DATE = new Date(oItem.oDemandObj.FIXED_ASSGN_START_DATE);
-				oItem.oDemandObj.FIXED_ASSGN_END_DATE = new Date(oItem.oDemandObj.FIXED_ASSGN_END_DATE);
+				oItem.FIXED_APPOINTMENT_START_DATE = new Date(oItem.FIXED_APPOINTMENT_START_DATE);
+				oItem.FIXED_APPOINTMENT_END_DATE = new Date(oItem.FIXED_APPOINTMENT_END_DATE);
+				oItem.FIXED_ASSGN_START_DATE = new Date(oItem.FIXED_ASSGN_START_DATE);
+				oItem.FIXED_ASSGN_END_DATE = new Date(oItem.FIXED_ASSGN_END_DATE);
 
-				oDemandObjects.push({
-					sPath: oItem.sPath,
-					oData: oItem.oDemandObj
-				});
+				// oDemandObjects.push({
+				// 	sPath: oItem.sPath,
+				// 	oData: oItem.oDemandObj
+				// });
+				oDemandObjects.push(oItem);
+
 			}.bind(this));
 
 			this.oViewModel.setProperty("/ganttSettings/aGanttSplitDemandData", oDemandObjects);
@@ -1699,8 +1722,8 @@ sap.ui.define([
 				}
 			}
 		},
-
-		/**
+        
+        /**
 		 * handle Mouse hover event to show Assignments popup 
 		 * since 2205
 		 */
@@ -1755,17 +1778,24 @@ sap.ui.define([
 
 			Promise.all(this.AssignMultipleDemands(oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects))
 				.then(function (aResults, oResponse) {
-					if (aResults.length > 0) {
-						this._addCreatedAssignment(aResults, oTarget, sDummyPath);
-					}
-					this._oEventBus.publish("BaseController", "refreshAssignments", aResults);
-					this._oEventBus.publish("BaseController", "refreshCapacity", {});
-				}.bind(this), function () {
-					if (sDummyPath) {
-						this.oGanttModel.setProperty(sDummyPath, null);
-						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-					}
-				}.bind(this));
+						if (aResults.length > 0) {
+							var aCreatedAssignments = this._getCreatedAssignments(aResults);
+							if (aCreatedAssignments.length > 0) {
+								this._addCreatedAssignment(aCreatedAssignments, oTarget, sDummyPath);
+							} else {
+								this.oGanttModel.setProperty(sDummyPath, null);
+								this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+							}
+						}
+						//	this._oEventBus.publish("BaseController", "refreshAssignments", aResults);
+						//	this._oEventBus.publish("BaseController", "refreshCapacity", {});
+					}.bind(this),
+					function () {
+						if (sDummyPath) {
+							this.oGanttModel.setProperty(sDummyPath, null);
+							this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+						}
+					}.bind(this));
 		},
 		/**
 		 * getting demand Objects form paths
@@ -1780,6 +1810,7 @@ sap.ui.define([
 				oDemands_ganttSplit.forEach(function (oItem) {
 					oDemandObjects.push(oItem.oDemandObject);
 				}.bind(this));
+				oDemandObjects = this.convertDateToObjects(oDemandObjects);
 			} else {
 				aPaths_gantt.forEach(function (sPath) {
 					oDemandObjects.push(this.getModel().getProperty(sPath));
@@ -1802,6 +1833,36 @@ sap.ui.define([
 		},
 
 		/**
+		 * OnSelection of Assignment Status Change
+		 * @param sPath
+		 * @param oData
+		 * @param sAsgnStsFnctnKey
+		 * since 2205
+		 */
+		_onContextMenuAssignmentStatusChange: function (sPath, oData, sAsgnStsFnctnKey) {
+			var sUri = "/AssignmentSet('" + oData.Guid + "')";
+			this._getAssignmentStatus(sUri).then(function (data) {
+				if (data["ALLOW_" + sAsgnStsFnctnKey]) {
+					this.getModel("appView").setProperty("/busy", true);
+					var oParams = {
+						Function: sAsgnStsFnctnKey,
+						AssignmentGUID: oData.Guid
+					};
+					this.executeFunctionImport(this.getModel(), oParams, "ExecuteAssignmentFunction", "POST").then(
+						function (aData) {
+							this.getModel("appView").setProperty("/busy", false);
+							this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+							this._updateAssignmentStatus(sPath, sAsgnStsFnctnKey, aData);
+						}.bind(this));
+				} else {
+					sap.m.MessageBox.error(this.getModel("i18n").getResourceBundle().getText("assignmentNotPossible"));
+				}
+			}.bind(this));
+			this.oGanttModel.setProperty(sPath + "/busy", false);
+			this.oGanttModel.refresh(true);
+		},
+        
+        /**
 		 * when navigating from Maps to Gantt 
 		 * onShowAssignments button click from the Resource Pin popover
 		 * apply the selected resource filter in the gantt view

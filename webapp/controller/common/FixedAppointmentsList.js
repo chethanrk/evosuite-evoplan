@@ -65,7 +65,7 @@ sap.ui.define([
 		},
 
 		onProceed: function () {
-			var oViewModel = this._oView.getModel('viewModel'),
+			var oViewModel = this._oView.getModel("viewModel"),
 				aFixedAppointments = oViewModel.getProperty("/aFixedAppointmentsList"),
 				oAssignment,
 				demandObj,
@@ -77,14 +77,15 @@ sap.ui.define([
 						oResourceData: this._aAllParameters.oResourceData,
 						sDragPath: this._aAllParameters.sDragPath,
 						oTarget: this._aAllParameters.oTarget,
-						oTargetDate: ""
+						oTargetDate: "",
+						aGuids: this._aAllParameters.sDragPath
 					},
 					sPath;
 
 				if (this._aAllParameters.sDragPath.length > 1) {
 					for (var i in aFixedAppointments) {
 						demandObj = aFixedAppointments[i];
-						sPath = "/DemandSet('" + aFixedAppointments[0].Guid + "')"
+						sPath = "/DemandSet('" + aFixedAppointments[i].Guid + "')";
 						if (demandObj.IsSelected) {
 							this._aFixedAppointmentPayload.push(demandObj);
 							this._aAllParameters.sDragPath.splice(this._aAllParameters.sDragPath.indexOf(sPath), 1);
@@ -95,6 +96,7 @@ sap.ui.define([
 				} else {
 					oParams.oTargetDate = aFixedAppointments[0].IsSelected ? aFixedAppointments[0].FIXED_APPOINTMENT_START_DATE : this._aAllParameters
 						.DateFrom;
+					oParams.sDragPath = null;
 				}
 
 				this._oEventBus.publish(sChannel, "assignDemand", oParams);
@@ -108,14 +110,15 @@ sap.ui.define([
 						oResourceData: this._aAllParameters.oResourceData,
 						sDragPath: this._aAllParameters.sDragPath,
 						oTarget: this._aAllParameters.oTarget,
-						oTargetDate: ""
+						oTargetDate: "",
+						aGuids: this._aAllParameters.sDragPath
 					},
 					sPath;
 
 				if (this._aAllParameters.sDragPath.length > 1) {
 					for (var i in aFixedAppointments) {
 						demandObj = aFixedAppointments[i];
-						sPath = "/DemandSet('" + aFixedAppointments[0].Guid + "')"
+						sPath = "/DemandSet('" + aFixedAppointments[i].Guid + "')";
 						if (demandObj.IsSelected) {
 							this._aFixedAppointmentPayload.push(demandObj);
 							this._aAllParameters.sDragPath.splice(this._aAllParameters.sDragPath.indexOf(sPath), 1);
@@ -126,6 +129,7 @@ sap.ui.define([
 				} else {
 					oParams.oTargetDate = aFixedAppointments[0].IsSelected ? aFixedAppointments[0].FIXED_APPOINTMENT_START_DATE : this._aAllParameters
 						.DateFrom;
+					oParams.sDragPath = null;
 				}
 				this._oEventBus.publish(sChannel, "assignDemand", oParams);
 				this._FixedAppointmentsDialog.close();

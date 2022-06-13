@@ -86,7 +86,6 @@ sap.ui.define([
 					this.getView().getModel("viewModel").setProperty("/capacityPlanning", false);
 				} else {
 					this.getView().getModel("viewModel").setProperty("/selectedHierarchyView", sViewSelectedKey);
-					this.getView().getModel("viewModel").setProperty("/capacityPlanning", true);
 				}
 				this.getModel("viewModel").setProperty("/resourceTreeShowRouteColumn", true);
 			}

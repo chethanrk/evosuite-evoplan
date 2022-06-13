@@ -40,7 +40,7 @@
 						shapeSelectionMode="Single" shapeSelectionSettings="{color: '#808080', strokeWidth: 1, strokeDasharray: '5,2'}" dragStart="onShapeDragStart"
 						shapeDrop="onShapeDrop" shapeResize="onShapeResize" shapeMouseEnter="onShapeMouseEnter" shapeMouseLeave="onShapeMouseLeave"
 						shapeDoubleClick="onShapeDoubleClick" shapeContextMenu="onShapeContextMenu" showShapeTimeOnDrag="true"
-						selectionPanelSize="{viewModel>/ganttSelectionPane}" nowLineInUTC="false" >
+						selectionPanelSize="{viewModel>/ganttSelectionPane}" nowLineInUTC="false" visibleHorizonUpdate="onVisibleHorizonUpdate">
 						<gnt2:table>
 							<table:TreeTable id="idGanttResourceTreeTable" class="resourceGanttTreeTable" selectionMode="Single" visibleRowCountMode="Auto"
 								threshold="10" enableColumnReordering="false" enableBusyIndicator="true" busyStateChanged="onBusyStateChanged" enableCellFilter="false"

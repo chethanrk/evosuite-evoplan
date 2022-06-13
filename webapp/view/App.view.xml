@@ -16,7 +16,7 @@
 										<MenuItem text="{i18n>xbut.pageDemands}"/>
 										<MenuItem text="{i18n>xbut.pageNewGantt}" visible="{user>/ENABLE_GANTT_JSON}"/>
 										<MenuItem text="{i18n>xbut.pageGanttChart}" visible="{user>/ENABLE_GANTT}"/>
-										<MenuItem text="{i18n>xbut.pageNewGanttChartSplit}" visible="{user>/ENABLE_GANTT_JSON}"/>
+										<MenuItem text="{i18n>xbut.pageNewGanttChartSplit}" visible="{user>/ENABLE_GANTT_SPLIT_JSON}"/>
 										<MenuItem text="{i18n>xbut.pageGanttChartSplit}" visible="{user>/ENABLE_GANTT_SPLIT}"/>
 										<MenuItem text="{i18n>xbut.pageAssetManager}" visible="{user>/ENABLE_ASSET_PLANNING}"/>
 										<MenuItem text="{i18n>xbut.pageMap}" visible="{user>/ENABLE_MAPS}"/>
@@ -29,6 +29,13 @@
 						<core:ExtensionPoint name="PageExtP|App|Header|Middle"/>
 					</contentMiddle>
 					<contentRight>
+						<!--Links to EvoOrderRelate and EvoResource will work only in BSP mode for now,
+						Change the visible property when configuring links for FLPD -->
+						<Button text="{i18n>xtit.evoOrderRelate}"
+							visible="{:= ${user>/ENABLE_EVOORDERRELATE_BUTTON} &amp;&amp; ${viewModel>/launchMode} === Constants.LAUNCH_MODE.BSP}"
+							press="linkToOtherApp"/>
+						<Button text="{i18n>xtit.evoResource}"
+							visible="{:= ${user>/ENABLE_EVORESOURCE_BUTTON} &amp;&amp; ${viewModel>/launchMode} === Constants.LAUNCH_MODE.BSP}" press="linkToOtherApp"/>
 						<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"
 							type="Emphasized" press="onMessagePopoverPress"/>
 						<Button id="idButtonRefresh" icon="sap-icon://refresh" tooltip="{i18n>xtit.infoRefresh}" press="onRefreshBuffer"/>

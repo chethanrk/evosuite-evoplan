@@ -154,7 +154,7 @@ sap.ui.define([
 			} else {
 				this._showConfirmMessageBox.call(this._oView.getController(), this._resourceBundle.getText("ymsg.confirmMsg")).then(function (data) {
 					if (data === "NO") {
-						this.onSaveAvail(oEvent);
+						//do nothing, keep on the same page.
 					} else {
 						this._resetChanges(oEvent);
 						this._oApp.back();
