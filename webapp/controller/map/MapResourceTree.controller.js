@@ -13,9 +13,9 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/core/Fragment",
 	"sap/base/Log","com/evorait/evoplan/model/Constants",
-	"com/evorait/evoplan/controller/map/SingleDayPlanner"
+	"com/evorait/evoplan/controller/map/MapUtilities",
 ], function (Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController, ResourceTreeFilterBar,
-	MessageToast, MessageBox, Fragment, Log, Constants, SingleDayPlanner) {
+	MessageToast, MessageBox, Fragment, Log, Constants, MapUtilities) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.map.MapResourceTree", {
@@ -47,8 +47,6 @@ sap.ui.define([
 					this.oFilterConfigsController.bindViewFilterItemsToEntity("/ShMapViewModeSet");
 				}.bind(this));
 
-			this.oSingleDayPlanner = new SingleDayPlanner(this);
-
 			Fragment.load({
 				name: "com.evorait.evoplan.view.common.fragments.ResourceTreeTable",
 				id: this.getView().getId(),
@@ -70,7 +68,8 @@ sap.ui.define([
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.attachRouteMatched(this._routeMatched, this);
-
+			
+			this.oMapUtilities = new MapUtilities();
 		},
 
 		_routeMatched: function (oEvent) {
@@ -680,7 +679,7 @@ sap.ui.define([
 					var sParentPath = this.getModel("viewModel").getProperty("/treeSet") + "('" + oNodeData.ParentNodeId + "')";
 					var oParentData = this.getModel().getProperty("/" + encodeURIComponent(sParentPath));
 					//open Day single planning calendar
-					this.oSingleDayPlanner.open(sPath, oNodeData, oNodeData.NodeType, oParentData);
+					this.getOwnerComponent().singleDayPlanner.open(this.getView(), sPath, oNodeData, oNodeData.NodeType, oParentData);
 				}
 			}
 
@@ -744,20 +743,21 @@ sap.ui.define([
 			// oResource is declared here to closure the variable
 			var oResource;
 			
+			// hide corresponding route in case the button was pressed before
 			if (oShowRouteButton.getPressed && !oShowRouteButton.getPressed()) {
-				var aCurrentDisplayedRoutes = oViewModel.getProperty("/mapSettings/GeoJsonLayersData");
+				var aCurrentDisplayedRoutes = oViewModel.getProperty("/GeoJsonLayersData");
 				var aRoutesDisplay = aCurrentDisplayedRoutes.filter(function(oRoute) {
 					return oRoute.id !== oResourceHierachyObject.NodeId;
 				});
-				oViewModel.setProperty("/mapSettings/GeoJsonLayersData", aRoutesDisplay);
+				oViewModel.setProperty("/GeoJsonLayersData", aRoutesDisplay);
 				return;
 			}
 			
 			var sResourceHierachyPath = oResourceHierachyContext.getPath();
-			var aGeoJsonLayersData = [];
+			var aGeoJsonLayersData = oViewModel.getProperty("/GeoJsonLayersData");
 			
 			var aResourceFilters = this._getResourceFilters([sResourceHierachyPath]);
-			var aAssignmentFilters = this._getAssignmentsFiltersWithinDateFrame(oResourceHierachyObject);
+			var aAssignmentFilters = this.oMapUtilities.getAssignmentsFiltersWithinDateFrame(oResourceHierachyObject);
 			oViewModel.setProperty("/mapSettings/busy", true);
 			
 			var pAssignmentsLoaded = this.getOwnerComponent().readData("/AssignmentSet", aAssignmentFilters);
@@ -771,12 +771,23 @@ sap.ui.define([
 				
 				return this.getOwnerComponent().MapProvider.getRoutePolyline(oResource, aAssignments);
 			}.bind(this)).then(function(oResponse) {
+				var oLayer = {};
 				var oData = JSON.parse(oResponse.data.polyline.geoJSON);
 				
+				// the following property assigned with an array as it works ONLY with an array 
+				// despite according to documentation it can be a GeoJSON object
+				oLayer.data = [oData];
+				
+				oLayer.color = "#" + Math.floor(Math.random()*16777215).toString(16); // generate random color
+				
 				// set id for a geojson object to be able to remove the object when the 'show route' toggle button is unpressed
-				oData.id = oResourceHierachyContext.getObject().NodeId;
-				aGeoJsonLayersData.push(oData);
-				oViewModel.setProperty("/mapSettings/GeoJsonLayersData", aGeoJsonLayersData);
+				oLayer.id = oResourceHierachyContext.getObject().NodeId;
+				
+				// we don't need to set property `/GeoJsonLayersData` explicitly 
+				// as variable `aGeoJsonLayersData` stores reference to the same object
+				// so it's enough to just push data to the `aGeoJsonLayersData` array
+				aGeoJsonLayersData.push(oLayer);
+				
 				this._eventBus.publish("MapController", "displayRoute", oResource);
 				oViewModel.setProperty("/mapSettings/busy", false);
 			}.bind(this))
@@ -785,22 +796,6 @@ sap.ui.define([
 				Log.error(oError);
 				oShowRouteButton.setPressed && oShowRouteButton.setPressed(false);
 			}.bind(this));
-		},
-		
-		/**
-		 * Get Date filters from a ResourceHierarchy instance.
-		 * The method returns filters from 0:00 of StartDate till 23:59 of EndDate
-		 * @param {object} oResourceHierarchy - ResourceHierarchy instance. It supposed that the object represents daily or weekly node.
-		 * @return {sap.ui.model.Filter[]} - array of Date filters
-		 */
-		_getAssignmentsFiltersWithinDateFrame: function(oResourceHierarchy) {
-			var aFilters = [];
-			oResourceHierarchy.StartDate.setUTCHours(0, 0, 0);
-			oResourceHierarchy.EndDate.setUTCHours(23, 59, 59);
-			aFilters.push(new Filter("DateFrom", FilterOperator.GE, oResourceHierarchy.StartDate));
-			aFilters.push(new Filter("DateTo", FilterOperator.LE, oResourceHierarchy.EndDate));
-			aFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, oResourceHierarchy.ResourceGuid));
-			return aFilters;
 		}
 	});
 });

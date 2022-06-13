@@ -1869,7 +1869,7 @@ sap.ui.define([
 		_getTravelTimeFromPTV: function () {
 			if (this.routeOperation === "Calculate") {
 				//Sending the assignments and resource to PTV to calculte the travel time between Assignments
-				this.getOwnerComponent().MapProvider.updateAssignmentsWithTravelTime(this.oResource, this.aData).then(this._setTravelTimeToGantt.bind(
+				this.getOwnerComponent().MapProvider.calculateRoute(this.oResource, this.aData).then(this._setTravelTimeToGantt.bind(
 					this));
 			} else {
 				//Sending the assignments and resource to PTV to get Optimized travel time between assignments
@@ -1902,16 +1902,6 @@ sap.ui.define([
 				if (this.aData[i].TRAVEL_TIME != 0) {
 					this.aTravelTimes.push(oAssignment);
 				}
-
-				//Commenting the Time calculation for Assigments 
-				// //Setting new Start/End Date/Time to the assignments based on travel time
-				// if (i) {
-				// 	oTempDate = this.aData[i].TRAVEL_TIME != 0 ? new Date(oAssignment.DateTo.toString()) : new Date(this.aData[i -
-				// 		1].DateTo.toString());
-				// 	this.aData[i].DateFrom = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
-				// 	this.aData[i].DateTo = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[i].Effort) *
-				// 		60));
-				// }
 
 				//pushing the updated assignments to show into the gantt
 				this.aAssignmetsWithTravelTime.push(this.aData[i]);

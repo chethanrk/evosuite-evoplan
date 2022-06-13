@@ -36,7 +36,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/LongTextPopover",
 	"com/evorait/evoplan/controller/common/NetworkAssignment",
 	"com/evorait/evoplan/controller/common/AssignmentStatus",
-	"com/evorait/evoplan/controller/gantt/GanttAssignmentPopOver"
+	"com/evorait/evoplan/controller/gantt/GanttAssignmentPopOver",
+	"com/evorait/evoplan/controller/map/SingleDayPlanner"
 ], function (
 	UIComponent,
 	Device,
@@ -74,7 +75,8 @@ sap.ui.define([
 	LongTextPopover,
 	NetworkAssignment,
 	AssignmentStatus,
-	GanttAssignmentPopOver) {
+	GanttAssignmentPopOver,
+	SingleDayPlanner) {
 
 	"use strict";
 
@@ -260,6 +262,16 @@ sap.ui.define([
 					children: []
 				}
 			}, false), "ganttOriginalData");
+			
+			var oSinglePlanningModel = models.createHelperModel({
+				hasChanges: false,
+				appointments: [],
+				legendShown: false,
+				legendItems: [],
+				legendAppointmentItems: []
+			});
+			oSinglePlanningModel.setDefaultBindingMode("TwoWay");
+			this.setModel(oSinglePlanningModel, "mapSinglePlanning");
 
 			this.DialogTemplateRenderer = new DialogTemplateRenderController(this);
 
@@ -491,6 +503,9 @@ sap.ui.define([
 
 			this.GanttAssignmentPopOver = new GanttAssignmentPopOver();
 			this.GanttAssignmentPopOver.init();
+			
+			this.singleDayPlanner = new SingleDayPlanner();
+			this.singleDayPlanner.init();
 
 		},
 

@@ -66,40 +66,9 @@ sap.ui.define([
 		oSinglePlanningModel: null,
 
 		aOriginalData: [],
-
-		/**
-		 * when new single planner is initialized then fragment of dialog are loaded
-		 * create new json model for Single planning calendar
-		 */
-		constructor: function (oController) {
-			this.oParentController = oController;
-			this.oResourceBundle = oController.getResourceBundle();
-			this.oModel = oController.getView().getModel();
-			this._oView = oController.getView();
-			this.oUserModel = oController.getModel("user");
-			this.oSinglePlanningModel = models.createHelperModel({
-				hasChanges: false,
-				appointments: [],
-				legendShown: false,
-				legendItems: [],
-				legendAppointmentItems: []
-			});
-			this.oSinglePlanningModel.setDefaultBindingMode("TwoWay");
-			oController.getOwnerComponent().setModel(this.oSinglePlanningModel, "mapSinglePlanning");
-
-			if (!this.oPlannerDialog) {
-				Fragment.load({
-					name: "com.evorait.evoplan.view.map.fragments.SingleDayPlanner",
-					controller: this,
-					id: this._oView.getId()
-				}).then(function (content) {
-					this.oPlannerDialog = content;
-					oController.getView().addDependent(this.oPlannerDialog);
-					this.oPlannerDialog.addStyleClass(this.oParentController.getOwnerComponent().getContentDensityClass());
-					//get legend for assignments and unavailabilies from Gantt Chart
-					this._loadLegendData();
-				}.bind(this));
-			}
+		
+		init: function() {
+			
 		},
 
 		/* =========================================================== */
@@ -109,11 +78,40 @@ sap.ui.define([
 		/**
 		 * open single planning calendar dialog
 		 */
-		open: function (sPath, oTreeData, sNodeType, oParentData, bFromMap) {
-			this.oSinglePlanner = this._oView.byId("idSinglePlanningCalendar");
+		 
+		 open: function (oView, sPath, oTreeData, sNodeType, oParentData, bFromMap) {
+			// create dialog lazily
+			if (!this.oPlannerDialog) {
+				oView.getModel("appView").setProperty("/busy", true);
+				Fragment.load({
+					name: "com.evorait.evoplan.view.map.fragments.SingleDayPlanner",
+					controller: this
+				}).then(function (content) {
+					this.oPlannerDialog = content;
+					// get legend for assignments and unavailabilies from Gantt Chart
+					oView.getModel("appView").setProperty("/busy", false);
+					this.onOpen(oView, sPath, oTreeData, sNodeType, oParentData, bFromMap);
+				}.bind(this));
+			} else {
+				this.onOpen(oView, sPath, oTreeData, sNodeType, oParentData, bFromMap);
+			}
+		},
+		 
+		onOpen: function (oView, sPath, oTreeData, sNodeType, oParentData, bFromMap) {
+			this.oParentController = oView.getController();
+			
+			oView.addDependent(this.oPlannerDialog);
+			this.oPlannerDialog.addStyleClass(this.oParentController.getOwnerComponent().getContentDensityClass());
+			
+			this.oResourceBundle = this.oParentController.getResourceBundle();
+			this.oSinglePlanner = sap.ui.getCore().byId("idSinglePlanningCalendar");
 			this.oSelectedData = oTreeData;
 			this.sSelectedPath = sPath;
 			this._bFromMap = bFromMap;
+			this.oUserModel = this.oParentController.getModel("user");
+			
+			this.oSinglePlanningModel = oView.getController().getOwnerComponent().getModel("mapSinglePlanning");
+			
 			//set view for this calendar base on NodeType
 			this._setCalenderViews(sNodeType);
 			this.oSinglePlanningModel.setProperty("/startDate", oTreeData.StartDate);
@@ -128,8 +126,9 @@ sap.ui.define([
 
 			if (oTreeData.ChildCount > 0) {
 				//load assignments for this day, resource and resource group
-				this._loadAssignmentsForDay(oTreeData.StartDate);
+				this._loadAssignmentsForDay(oTreeData);
 			}
+			this._loadLegendData();
 			this.oPlannerDialog.open();
 		},
 
@@ -262,18 +261,20 @@ sap.ui.define([
 						var aAssignments = this._getOnlyAppointmentsByKeyValue("type", this.mTypes.APPOINTMENT);
 						oResource = aAssignments[0].Resource;
 
-						this.oParentController.getOwnerComponent().MapProvider.updateAssignmentsWithTravelTime(oResource, aAssignments)
+						this.oParentController.getOwnerComponent().MapProvider.calculateRoute(oResource, aAssignments)
 							.then(function (aUpdatedAssignments) {
 								this._setAssignmentsData(aUpdatedAssignments);
 								this.oSinglePlanningModel.setProperty("/hasChanges", true);
 								this.oSinglePlanner.setBusy(false);
 						}.bind(this)).catch(function(oError) {
+							Log.error(oError.message);
 							this.oSinglePlanner.setBusy(false);
 						}.bind(this));
 					}
 				} else if (oData.type === this.mTypes.BLOCKER) {
 					this.oParentController.showMessageToast(this.oResourceBundle.getText("ymsg.notAllowedChangeUnavailable"));
 				}
+				this.oSinglePlanner.setBusy(false);
 			}
 		},
 
@@ -285,7 +286,7 @@ sap.ui.define([
 			var oViewModel = this.oParentController.getModel("viewModel");
 			this._saveChangedAssignments(function () {
 				oViewModel.setProperty("/mapSettings/bIsSignlePlnAsgnSaved", true);
-				this._loadAssignmentsForDay(this.oPlanningDate);
+				this._loadAssignmentsForDay(this.oPlanningDate); // TODO: _loadAssignmentsForDay called multiple times after saving. Find out, what's wrong.
 				
 			}.bind(this));
 		},
@@ -307,14 +308,15 @@ sap.ui.define([
 			var oStartDate = this.oSinglePlanningModel.getProperty("/startDate");
 			var aAssignments = this._getOnlyAppointmentsByKeyValue("type", this.mTypes.APPOINTMENT);
 			if (aAssignments.length > 0) {
-				this.oSinglePlanner.setBusy(true); 
-				this.oParentController.getOwnerComponent().MapProvider.calculateTravelTimeAndDatesForDay(
-						aAssignments[0].Resource, aAssignments, oStartDate)
-					.then(function (aUpdatedAssignments) {
+				this.oSinglePlanner.setBusy(true);
+				this.oParentController.getOwnerComponent().MapProvider.calculateRoute(
+					aAssignments[0].Resource, aAssignments, oStartDate)
+					.then(function(aUpdatedAssignments) {
 						this._setAssignmentsData(aUpdatedAssignments);
 						this.oSinglePlanningModel.setProperty("/hasChanges", true);
 						this.oSinglePlanner.setBusy(false);
 					}.bind(this)).catch(function(oError) {
+						Log.error(oError.message);
 						this.oSinglePlanner.setBusy(false);
 					}.bind(this));
 			}
@@ -339,6 +341,7 @@ sap.ui.define([
 						this.oSinglePlanner.setBusy(false);
 						this.oParentController.showMessageToast(this.oResourceBundle.getText("ymsg.routeOptimized"));
 					}.bind(this)).catch(function(oError) {
+						Log.error(oError.message);
 						this.oSinglePlanner.setBusy(false);
 					}.bind(this));
 			}
@@ -368,7 +371,7 @@ sap.ui.define([
 		_setNewDateAndLoad: function (oDate) {
 			this.oPlanningDate = oDate;
 			this.oSinglePlanningModel.setProperty("/appointments", []);
-			this._loadAssignmentsForDay(this.oPlanningDate);
+			this._loadAssignmentsForDay(this.oSelectedData);
 			this._loadAvailabilitiesForDay(this.oPlanningDate);
 		},
 
@@ -559,13 +562,10 @@ sap.ui.define([
 		 * Load assignments of a special resource and resource group for a special date
 		 * @param {obejct} oDate - date for what day assignments should be loaded
 		 */
-		_loadAssignmentsForDay: function (oDate) {
-			var sEntitySetPath = "/AssignmentSet",
-				sTravelAppointments = [],
-				oTravelItem = null,
-				aAppointments = this.oSinglePlanningModel.getProperty("/appointments");
-
-			if (this.oParentController._getResourceFilters) {
+		_loadAssignmentsForDay: function (oResourseHierachyData) {
+			var sEntitySetPath = "/AssignmentSet";
+			
+			if (this.oParentController.oMapUtilities.getAssignmentsFiltersWithinDateFrame) {
 				this.oSinglePlanningModel.setProperty("/hasChanges", false);
 				this.oSinglePlanner.setBusy(true);
 
@@ -573,15 +573,19 @@ sap.ui.define([
 					"$expand": "Demand,Resource"
 				};
 
-				var oFilter = new Filter(this.oParentController._getResourceFilters([this.sSelectedPath], oDate), true);
+				var oFilter = new Filter(this.oParentController.oMapUtilities.getAssignmentsFiltersWithinDateFrame(oResourseHierachyData), true);
 				this.oParentController.getOwnerComponent().readData(sEntitySetPath, [oFilter], mParams).then(function (oResults) {
 					this.aOriginalData = _.cloneDeep(this._setAssignmentsData(oResults.results)); // set current assignments and save it to this.aOriginalData
 				}.bind(this));
 			}
 		},
-
-		// TODO dibrovv: docs
-		_setAssignmentsData: function (aAssignments) {
+		
+		/**
+		 * Create an appointments array and set it to local model according to provided assignments and its travel times.
+		 * @param {com.evorait.evoplan.Assignment[]} aAssignments - array of assignments to be set to single planner
+		 * @return {Object[]} array of appointments including assignments as well as travel appointments
+		 */
+		_setAssignmentsData: function(aAssignments) {
 			var sEntitySetPath = "/AssignmentSet",
 				sTravelAppointments = [],
 				oTravelItem = null,
@@ -615,7 +619,7 @@ sap.ui.define([
 					if (parseInt(oAssignment.TRAVEL_BACK_TIME)) {
 						oTravelItem = _.cloneDeep(oAssignment);
 						oTravelItem.title = this.oResourceBundle.getText("xlab.appointTravelBack");
-						oTravelItem.text = oAssignment.TRAVEL_TIME + " " + this.oResourceBundle.getText("xlab.minutes");
+						oTravelItem.text = oAssignment.TRAVEL_BACK_TIME + " " + this.oResourceBundle.getText("xlab.minutes");
 						oTravelItem.color = this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_COLOR");
 						oTravelItem.icon = this.oUserModel.getProperty("/DEFAULT_TRAVEL_TIME_ICON");
 						oTravelItem.DateFrom = oAssignment.DateTo;
@@ -629,17 +633,11 @@ sap.ui.define([
 			}
 			var appoints = aAssignments.concat(sTravelAppointments);
 			this.oSinglePlanningModel.setProperty("/appointments", appoints);
-			// var aAssignments = this._getDraggedAssignments();
-            this.oSinglePlanningModel.setProperty("/overallTravelTime", nOverallTravelTime);
+			this.oSinglePlanningModel.setProperty("/overallTravelTime", nOverallTravelTime);
 			this.oSinglePlanner.rerender(); // to prevent buggy display of appointments
 			this.oSinglePlanner.setBusy(false);
 
 			return appoints;
-
-			// TODO dibrovv: do I need to save the new data to the default model? (for unsubmitted changes)
-			// need to check, whether the further actions (after calculation or optimization) could depend on default model
-			// e.g. drag-n-drop
-
 		},
 		/**
 		 * Un assigning the dragged demand when user discards the planing in single planner

@@ -16,27 +16,54 @@ sap.ui.define([
 	var PLAN_TOURS_PATH = "/planTours";
 
 	/**
-	 * TODO dibrovv: actualize docs according to new props
-	 * 
 	 * @class Provides set of methods to communicate to PTV xServer v2 (xserver2-europe-eu-test.cloud.ptvgroup.com - test server).
 	 * The class contain only explanatory comments for its methods. 
 	 * For detailed interface description check the com.evorait.evoplan.controller.map.MapProvider class.
 	 * 
-	 * Note:
-	 * In the current implementation logic that is regarding data integration 
-	 * (e.g. property names for input parameters, like TRAVEL_TIME or TRAVEL_BACK_TIME) is mixed with communication to PTV.
-	 * In future, if needed, the logic could be extracted to a separate layer between the PTV.js and controller that uses the PTV.js 
-	 * 
 	 * @property {string} _sAuthToken - Authorisation token to pass as a header in requests to PTV 
 	 * @property {string} _sRouteCalculationUrl - Url for the `calculateRoute` operation
 	 * @property {string} _sCreateDistanceMatrixUrl - Url for the `createDistanceMatrix` operation
+	 * @property {string} _sPlanToursUrl - Url for the `planTours` operation
+	 * @property {string} _sDefaultResourceStartHour - Number representing starting working hour (e.g. 8)
+	 * @property {sap.ui.model.json.JSONModel} oUserModel - User model containing system parameters for a user
 	 */
 	return MapProvider.extend("com.evorait.evoplan.controller.map.PTV", {
 
 		metadata: {
 			// extension can declare the public methods
 			// in general methods that start with "_" are private
-			methods: {}
+			methods: {
+				getRoutePolyline: {
+					"public": true,
+					"final": false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				calculateSingleTravelTime: {
+					"public": true,
+					"final": false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				calculateTravelTimeForMultipleAssignments: {
+					"public": true,
+					"final": false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				updateAssignmentsWithTravelTime: {
+					"public": true,
+					"final": false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				calculateRoute: {
+					"public": true,
+					"final": false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				optimizeRoute: {
+					"public": true,
+					"final": false,
+					overrideExecution: OverrideExecution.Instead
+				},
+			}
 		},
 
 		_sAuthToken: "",
@@ -97,74 +124,68 @@ sap.ui.define([
 		},
 
 		/**
-		 * @return {Assignment[]} a new array that includes provided assignments with updated TRAVEL_TIME and TRAVEL_BACK_TIME properties.
-		 * // todo dibrovv: update docs in mapprovider
+		 * @return {{Promise<Assignment[]>} a new array that includes provided assignments with updated TRAVEL_TIME and TRAVEL_BACK_TIME properties.
 		 * The properties updated according to results returned by PTV `calculateRoute` function.
 		 */
-		updateAssignmentsWithTravelTime: function (oResource, aAssignments, oDateForRoute) {
-			return this.calculateTravelTimeForMultipleAssignments(oResource, aAssignments, oDateForRoute).then(function (oPTVResponse) {
-				var aUpdatedAssignments = _.cloneDeep(aAssignments);
-				// sort to get the same sequence, as was used in _calculateRoute
-				aUpdatedAssignments.sort(function (a, b) {
-					return a.DateFrom - b.DateFrom;
-				});
-				if (oPTVResponse.data.legs) {
-					aUpdatedAssignments.forEach(function (oAssignment, index, aAssgns) {
-						var sCalculatedTime;
-						if (aAssgns[index - 1]) {
-							var nCurrentEffortInSec = parseFloat(aAssgns[index - 1].Effort) * 3600;
-							sCalculatedTime = Math.ceil((oPTVResponse.data.legs[index].travelTime - nCurrentEffortInSec) / 60).toString();
-						} else {
-							sCalculatedTime = Math.ceil(oPTVResponse.data.legs[index].travelTime / 60).toString();
-						}
-						oAssignment.TRAVEL_TIME = sCalculatedTime;
-						// set TRAVEL_BACK_TIME to zero to make sure that only one assignment has non-zero TRAVEL_BACK_TIME
-						oAssignment.TRAVEL_BACK_TIME = 0;
-					});
-				}
-				var nLastLegIndex = oPTVResponse.data.legs.length - 1;
-				var nLastAssignmentIndex = aUpdatedAssignments.length - 1;
-
-				//assign TRAVEL_BACK_TIME for the last assignment
-				var sTravelHomeTime = Math.ceil((oPTVResponse.data.legs[nLastLegIndex].travelTime -
-					aUpdatedAssignments[nLastAssignmentIndex].Effort * 3600) / 60).toString();
-				aUpdatedAssignments[nLastAssignmentIndex].TRAVEL_BACK_TIME = sTravelHomeTime;
-				return aUpdatedAssignments;
-			}.bind(this));
-		},
-
-		// TODO dibrovv: jsdoc; for mapprovider as well
-		calculateTravelTimeAndDatesForDay: function (oResource, aAssignments, oDateForRoute) {
-			return this.updateAssignmentsWithTravelTime(oResource, aAssignments).then(function (aAssignmentsWithTravelTime) {
-				var aUpdatedAssignments = [];
-				aAssignmentsWithTravelTime.reduce(function (prev, next) {
-					var oStartDateToWrap = prev ? prev.DateTo : moment(next.DateFrom.setHours(this._sDefaultResourceStartHour, 0)).toDate();
-					var oAssignmentStartDate = moment(oStartDateToWrap).add(next.TRAVEL_TIME, 'minutes');
-					var oAssignmentEndDate = oAssignmentStartDate.clone();
-					oAssignmentEndDate.add(parseFloat(next.Effort), 'hours');
-
-					next.DateFrom = oAssignmentStartDate.toDate();
-					next.DateTo = oAssignmentEndDate.toDate();
-					aUpdatedAssignments.push(next);
-					return next;
-				}.bind(this), null);
-
-				return aUpdatedAssignments;
+		updateAssignmentsWithTravelTime: function(oResource, aAssignments, oDateForRoute) {
+			return this.calculateTravelTimeForMultipleAssignments(oResource, aAssignments, oDateForRoute).then(function(oResponse) {
+				return this._updateAssignmentsWithTravelTime(aAssignments, oResponse);
 			}.bind(this));
 		},
 
 		/**
+		 * TODO: docs
+		 */
+		calculateRoute: function(oResource, aAssignments, oDateForRoute) {
+			return this.calculateTravelTimeForMultipleAssignments(oResource, aAssignments, oDateForRoute).then(function(oResponse) {
+				if(!this._isCalculatedRouteValid(oResponse)) {
+					return aAssignments;
+				}
+				var aAssignmentsWithTravelTime = this._updateAssignmentsWithTravelTime(aAssignments, oResponse);
+				if(oResponse.data.events && oResponse.data.events.length) {
+					var aTourEvents = oResponse.data.events;
+					var nEventIndex = 1; // start with 1 because the aTourEvents[0] is corresponding to the resource home location
+					
+					aAssignmentsWithTravelTime.forEach(function(oAssignment) {
+						if(oAssignment.FIXED_APPOINTMENT) {
+							return;
+						}
+						nEventIndex = this._getServiceEventIndexForAssignment(oAssignment, aTourEvents);
+						var oServiceEvent = aTourEvents[nEventIndex]
+						
+						var oStartDate = moment(oServiceEvent.startsAt);
+						oAssignment.DateFrom = oStartDate.toDate();
+						
+						var oEndDate = oStartDate.clone();
+						oEndDate.add(oAssignment.Effort, 'hours');
+						oAssignment.DateTo = oEndDate.toDate();
+					}.bind(this));
+				}
+				return aAssignmentsWithTravelTime;
+				
+				
+			}.bind(this));
+		},
+		
+		/**
 		 * Optimizes a route to reduce distance and travel time. Returned route may have different sequence of points to visit.
-		 * TODO dibrovv: add comments regarding the distance matrix
+		 * To perform a route optimization PTV need to build so named 'Distance Matrix' at first. Based on the matrix, the route optimisation performed then.
+		 * 
 		 * Corresponding documentation:
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#TechnicalConcepts/Routing/DSC_Distance_Matrices.htm
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#UseCases/Routing/UC_Accessing_DistanceMatrixContents.htm
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xdima.html#com.ptvgroup.xserver.xdima.XDima.createDistanceMatrix
+		 * 
+		 * All the needed properties for request to PTV are maintained in methods `_createPayloadForPlanToursRequest` and `_createPayloadForDistanceMatrixRequest`
+		 * Please see the PTV API documentation to find out, what affect the properties:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#Welcome/Home.htm
 		 */
 		optimizeRoute: function (oResource, aAssignments) {
 			var oDate = aAssignments[0].DateFrom;
 			return this._createDistanceMatrix(oResource, aAssignments, oDate).then(function (sMatrixId) {
 				return this._planTours(oResource, aAssignments, sMatrixId, oDate).then(function (oTourResponse) {
+					
+					this._isOptimizedRouteValid(oTourResponse, aAssignments); // don't interrupt current function execution to show, what's plannable
 
 					var aUpdatedAssignments = _.cloneDeep(aAssignments);
 					var nOverallEffort = 0;
@@ -176,22 +197,28 @@ sap.ui.define([
 								var nAssIndex = _.findIndex(aUpdatedAssignments, function (oAssignment) {
 									return oTourEvent.orderId === oAssignment.Guid; // the orderId was defined as Guid value in moment of making the request
 								});
+								
 								aUpdatedAssignments[nAssIndex].TRAVEL_BACK_TIME = 0;
-								aUpdatedAssignments[nAssIndex].TRAVEL_TIME = Math.ceil(aTourEvents[nEventIndex - 1].duration / 60).toString();
-
-								var oStartDate = moment(aTourEvents[nEventIndex].startTime);
-								aUpdatedAssignments[nAssIndex].DateFrom = oStartDate.toDate();
-								var oEndDate = oStartDate.clone();
-								oEndDate.add(aUpdatedAssignments[nAssIndex].Effort, 'hours');
-								aUpdatedAssignments[nAssIndex].DateTo = oEndDate.toDate();
+								var nTravelTime = Math.ceil(this._getPreviousDrivingEvent(aTourEvents, nEventIndex).duration / 60);
+								
+								aUpdatedAssignments[nAssIndex].TRAVEL_TIME = nTravelTime.toString();
+								
+								if(!aUpdatedAssignments[nAssIndex].FIXED_APPOINTMENT) {
+									var oStartDate = moment(aTourEvents[nEventIndex].startTime);
+									aUpdatedAssignments[nAssIndex].DateFrom = oStartDate.toDate();
+									var oEndDate = oStartDate.clone();
+									oEndDate.add(aUpdatedAssignments[nAssIndex].Effort, 'hours');
+									aUpdatedAssignments[nAssIndex].DateTo = oEndDate.toDate();
+								}
 
 								if (aTourEvents[nEventIndex + 2].eventTypes[0] === "TRIP_END") {
 									aUpdatedAssignments[nAssIndex].TRAVEL_BACK_TIME = Math.ceil(aTourEvents[nEventIndex + 1].duration / 60).toString();
 								}
 							}
-						});
+						}.bind(this));
 					}
-					aUpdatedAssignments.sort(function (a, b) {
+					// sort the assignments to make the further processing simpler
+					aUpdatedAssignments.sort(function(a,b) {
 						return a.DateFrom - b.DateFrom;
 					});
 					return aUpdatedAssignments;
@@ -228,8 +255,9 @@ sap.ui.define([
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Content/API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.RouteRequest
 		 * @param {Waypoint[]} aPointsToVisit - Array of Waypoint to be visisted.
 		 * @param {boolean} bIncludePolyline - Flag to indicate, whether the polyline should be requested.
+		 * @param {Date} oDateForRoute - Date for which the route calculation should be performed
 		 * Polyline is set of coordinates representing a route.
-		 * @return {Object} - Payload for a reoute request
+		 * @return {Object} - Payload for a route request
 		 */
 		_createPayloadForRouteRequest: function (aPointsToVisit, bIncludePolyline, oDateForRoute) {
 			var oPointTemplate = {
@@ -253,14 +281,12 @@ sap.ui.define([
 					oPoint.tourStopOptions.serviceTime = parseFloat(next.Effort) * 3600;
 				}
 
-				// TODO: test with FIXED_APPOINTMENT
-				// whether it makes sense to change to StartDurationInterval type with duration set to 0
 				if (next.FIXED_APPOINTMENT) {
 					oPoint.tourStopOptions.openingIntervals = [];
 					var oInterval = {
-						$type: "StartEndInterval",
+						$type: "StartDurationInterval",
 						start: next.DateFrom,
-						end: next.DateTo
+						duration: 1
 					}
 					oPoint.tourStopOptions.openingIntervals.push(oInterval);
 				}
@@ -275,7 +301,7 @@ sap.ui.define([
 			oPayload.storedProfile = "car";
 
 			oPayload.resultFields = {
-				eventTypes: ["WAYPOINT_EVENT"],
+				eventTypes: ["TOUR_EVENT"],
 				legs: {
 					enabled: true
 				},
@@ -300,7 +326,7 @@ sap.ui.define([
 				oStartRouteDate = _.cloneDeep(aPointsToVisit[1].DateFrom);
 			}
 
-			oStartRouteDate.setHours(this._sDefaultResourceStartHour);
+			oStartRouteDate.setHours(this._sDefaultResourceStartHour, 0, 0, 0);
 			oPayload.routeOptions = {
 				timeConsideration: {
 					$type: "ExactTimeConsiderationAtStart",
@@ -320,7 +346,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * TODO dibrovv: docs
+		 * Make a request to create distance matrix for route optimization.
+		 * @param {Waypoint} oStartPoint - Starting point of the route
+		 * @param {Waypoint[]} aPointsToVisit - Array of Waypoint to be visisted.
+		 * @param {Date} oDateForRoute - Date for which the route optimization should be performed
+		 * @return {Promise<string>} Promise representing id of the distance matrix. The matrix itself stored in PTV service after its creation.
 		 */
 		_createDistanceMatrix: function (oStartPoint, aPointsToVisit, oDate) {
 			var oRequestBody = this._createPayloadForDistanceMatrixRequest([oStartPoint].concat(aPointsToVisit), oDate);
@@ -330,7 +360,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * TODO dibrovv: docs
+		 * Creates payload according to CreateDistanceMatrix type:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xdima.html#com.ptvgroup.xserver.xdima.CreateDistanceMatrixRequest
+		 * @param {Waypoint[]} aPointsToVisit - Array of Waypoint to be visisted.
+		 * @param {Date} oDateForRoute - Date for which the route optimization should be performed
+		 * @return {Object} - Payload for a distance matrix request
 		 */
 		_createPayloadForDistanceMatrixRequest: function (aWaypoints, oDate) {
 			var oPointTemplate = {
@@ -381,9 +415,9 @@ sap.ui.define([
 
 			return oPayload;
 		},
-
-		/**
-		 * TODO dibrovv: docs
+		 
+		 /**
+		 * Common method to call the `planTours` operation of XTour service
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.PlanToursRequest
 		 */
 		_planTours: function (oResource, aAssignments, sMatrixId, oDate) {
@@ -392,7 +426,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * TODO dibrovv: docs
+		 * Creates payload according to PlanToursRequest type:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.PlanToursRequest
+		 * @param {Waypoint} oResource - starting point for the route
+		 * @param {Waypoint[]} aAssignments - Array of Waypoint to be visisted.
+		 * @param {string} sMatrixId - Id of the corresponding distance matrix, returned by `_createDistanceMatrix`.
+		 * @param {Date} oDateForRoute - Date for which the route calculation should be performed
+		 * @return {Object} - Payload for a planTours request
 		 */
 		_createPayloadForPlanToursRequest: function (oResource, aAssignments, sMatrixId, oDate) {
 			var oLocationTemplate = {
@@ -422,15 +462,13 @@ sap.ui.define([
 				oLocation.id = oAssignment.Guid + "_location";
 				oLocation.routeLocation.offRoadCoordinate.x = oAssignment.LONGITUDE;
 				oLocation.routeLocation.offRoadCoordinate.y = oAssignment.LATITUDE;
-
-				// TODO: test with FIXED_APPOINTMENT
-				// whether it makes sense to change to StartDurationInterval type with duration set to 0
-				if (oAssignment.FIXED_APPOINTMENT) {
+				
+				if(oAssignment.FIXED_APPOINTMENT) {
 					oLocation.openingIntervals = [];
 					var oInterval = {
-						$type: "StartEndInterval",
-						start: aAssignments.DateFrom,
-						end: aAssignments.DateTo
+						$type: "StartDurationInterval",
+						start: oAssignment.DateFrom,
+						duration: 1
 					}
 					oLocation.openingIntervals.push(oInterval);
 				}
@@ -512,8 +550,152 @@ sap.ui.define([
 					oError.response.data.message : this.oComponent.getModel("i18n").getResourceBundle().getText("errorMessage");
 				MessageBox.error(sErrorMessage);
 			}.bind(this));
+		},
+		
+		/**
+		 * Searches for a corresponding driving event in an array of Tour events
+		 * @param {TourEvent[]} aEvents - array of returned from PTV Tour events. See the documentation:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.TourEvent
+		 * @param {Number} nCurrentIndex - index of the service event, for which driving event should be found.
+		 * @return {TourEvent} the corresponding driving event.
+		 * @throws {Error} in case the driving event wasn't found.
+		 */
+		_getPreviousDrivingEvent: function(aEvents, nCurrentIndex) {
+			var nDrivingEventIndex = nCurrentIndex;
+			for(nDrivingEventIndex; nDrivingEventIndex >= 0; nDrivingEventIndex--) {
+				if(aEvents[nDrivingEventIndex].eventTypes[0] === "DRIVING") {
+					return aEvents[nDrivingEventIndex];
+				}
+			}
+			// in case there were no corresponding driving event throw an error
+			var sErrorMessage = this.oComponent.getModel("i18n").getResourceBundle().getText("noDrivingEvent");
+			throw new Error(sErrorMessage);
+		},
+		
+		/**
+		 * TODO: docs
+		 * Works ONLY with RouteResponse:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.RouteResponse
+		 */
+		_getTravelTimeForAssignment: function(oAssignment, oLeg, aEvents, bTravelHome) {
+			var nCorrespondingEventIndex = this._getServiceEventIndexForAssignment(oAssignment, aEvents);
+			var nCostsTime = 0;
+			var nCalculatedTime = 0;
+			
+			if(bTravelHome) {
+				nCostsTime += aEvents[nCorrespondingEventIndex].travelTimeFromStart;
+				nCostsTime += aEvents[nCorrespondingEventIndex].duration;
+				nCalculatedTime = aEvents[nCorrespondingEventIndex + 1].travelTimeFromStart - nCostsTime;
+			} else {
+				var nEventIndex = nCorrespondingEventIndex -1; // to get previous event
+				
+				for(nEventIndex; nEventIndex >= 0; nEventIndex--) {
+					if(aEvents[nEventIndex].tourEventTypes[0] === "SERVICE") {
+						nCostsTime += aEvents[nEventIndex].duration;
+						nCostsTime += aEvents[nEventIndex].travelTimeFromStart;
+						break;
+					} else if(aEvents[nEventIndex].tourEventTypes[0] !== "SERVICE") {
+						nCostsTime += aEvents[nEventIndex].duration;
+					}
+				}
+				nCalculatedTime = aEvents[nCorrespondingEventIndex].travelTimeFromStart - nCostsTime;
+			}
+			
+			return Math.ceil(nCalculatedTime / 60);
+		},
+		
+		/**
+		 * TODO: docs
+		 * Works ONLY with RouteResponse:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.RouteResponse
+		 */
+		_getServiceEventIndexForAssignment: function(oAssignment, aEvents) {
+			return _.findIndex(aEvents, function(event) {
+				return event.coordinate.y.toFixed(6) === parseFloat(oAssignment.LATITUDE).toFixed(6) &&
+					event.coordinate.x.toFixed(6) === parseFloat(oAssignment.LONGITUDE).toFixed(6) &&
+					event.tourEventTypes[0] === "SERVICE";
+			});
+		},
+		
+		// TODO: docs
+		_updateAssignmentsWithTravelTime: function(aAssignments, oPTVResponse) {
+			var aUpdatedAssignments = _.cloneDeep(aAssignments);
+			// sort to get the same sequence, as was used in _calculateRoute
+			aUpdatedAssignments.sort(function(a,b) {
+				return a.DateFrom - b.DateFrom;
+			});
+			if(oPTVResponse.data.legs && oPTVResponse.data.events && oPTVResponse.data.events.length) {
+				var aTourEvents = oPTVResponse.data.events;
+				var aLegs = oPTVResponse.data.legs;
+				
+				// process first item in a different way, as PTV returns data in a such structure
+				// aUpdatedAssignments[0].TRAVEL_TIME = Math.ceil(aLegs[0].travelTime / 60);
+				// aUpdatedAssignments[0].TRAVEL_BACK_TIME = 0;
+				
+				for(var nAssIndex = 0; nAssIndex < aUpdatedAssignments.length; nAssIndex++) { // skip the last assignment
+					
+					var nTravelTime = this._getTravelTimeForAssignment(aUpdatedAssignments[nAssIndex], aLegs[nAssIndex], aTourEvents);
+					aUpdatedAssignments[nAssIndex].TRAVEL_TIME = nTravelTime;
+					// set TRAVEL_BACK_TIME to zero to make sure that only one assignment has non-zero TRAVEL_BACK_TIME
+					aUpdatedAssignments[nAssIndex].TRAVEL_BACK_TIME = 0;
+					
+				}
+			}
+			var nLastLegIndex = oPTVResponse.data.legs.length - 1;
+			var nLastAssignmentIndex = aUpdatedAssignments.length - 1;
+			
+			//assign TRAVEL_BACK_TIME for the last assignment
+			// var sTravelHomeTime = Math.ceil((oPTVResponse.data.legs[nLastLegIndex].travelTime - 
+			// 	aUpdatedAssignments[nLastAssignmentIndex].Effort * 3600) / 60).toString();
+			
+			var nTravelHomeTime = this._getTravelTimeForAssignment(aUpdatedAssignments[nLastAssignmentIndex], aLegs[nLastLegIndex], aTourEvents, true);
+			aUpdatedAssignments[nLastAssignmentIndex].TRAVEL_BACK_TIME = nTravelHomeTime;
+			return aUpdatedAssignments;
+		},
+		
+		// TODO: docs
+		_isCalculatedRouteValid: function(oResponse) {
+			var oRouteStart = new Date(oResponse.data.tourReport.startTime);
+			var oRouteEnd = new Date(oResponse.data.tourReport.endTime);
+			var bValid = true;
+			var sErrorMessage;
+			if(oRouteStart.getDay() !== oRouteEnd.getDay()) {
+				sErrorMessage = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.tooMuchPlanned");
+				MessageBox.error(sErrorMessage);
+				bValid = false;
+			}
+			
+			oResponse.data.events.forEach(function(oEvent) {
+				if(oEvent.tourViolations && oEvent.tourViolations.type === "OPENING_INTERVAL") {
+					sErrorMessage = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.fixedAppointmentNotReachable");
+					MessageBox.error(sErrorMessage);
+					bValid = false;
+				}
+			})
+			
+			return bValid;
+		},
+		
+		// TODO: docs
+		_isOptimizedRouteValid: function(oResponse, aAssignments) {
+			var bValid = true;
+			var aNotPlannedAssignments = [];
+			if(oResponse.data.orderIdsNotPlanned) {
+				oResponse.data.orderIdsNotPlanned.forEach(function(sAssGuid) {
+					var oNotPlannedAssignment = _.find(aAssignments, function(oAssignment) {
+						return sAssGuid = oAssignment.Guid;
+					});
+					aNotPlannedAssignments.push(oNotPlannedAssignment.ORDERID);
+				});
+				var sErrorMessage = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.notPlannedAssignments");
+				MessageBox.error(sErrorMessage + " " + aNotPlannedAssignments);
+				bValid = false;
+			}
+			
+			return bValid;
 		}
-
+		
+		
 		/* ============================================================================== */
 		/* Data types                                                                     */
 		/* ------------------------------------------------------------------------------ */

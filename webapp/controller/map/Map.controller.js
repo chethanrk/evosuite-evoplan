@@ -1,6 +1,6 @@
 /* globals axios */
 sap.ui.define([
-	"com/evorait/evoplan/controller/map/MapUtilities",
+	"com/evorait/evoplan/controller/common/AssignmentActionsController",
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
@@ -13,13 +13,12 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/unified/Calendar",
-	"com/evorait/evoplan/controller/map/SingleDayPlanner",
-	"com/evorait/evoplan/controller/map/PinPopover"
-], function (MapUtilities, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
-	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, SingleDayPlanner) {
+	"com/evorait/evoplan/controller/map/MapUtilities",
+], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
+	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, MapUtilities) {
 	"use strict";
 
-	return MapUtilities.extend("com.evorait.evoplan.controller.map.Map", {
+	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
 		selectedDemands: [],
 		_isDemandDraggable: false,
 		_oGeoMap: null,
@@ -47,11 +46,12 @@ sap.ui.define([
 			this.oVBI = this.getView().byId("idGeoMap");
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 
-			this.getModel("viewModel").setProperty("/mapSettings/GeoJsonLayersData", {});
+			this.getModel("viewModel").setProperty("/GeoJsonLayersData", []);
 
 			//initialize PinPopover controller
 			this.oPinPopover = new PinPopover(this);
-			this.oSingleDayPlanner = new SingleDayPlanner(this);
+			
+			this.oMapUtilities = new MapUtilities();
 		},
 
 		//TODO comment
@@ -190,9 +190,10 @@ sap.ui.define([
 			var oCalendar = oEvent.getSource(),
 				oSelectedDate = oCalendar.getSelectedDates(),
 				aAssignableDemands = this._checkDemands(),
-				sPath = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel").getPath() : this._selectedResource.getBindingContext().getPath(),
+				oResourceContext = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel") : this._selectedResource.getBindingContext(),
+				sPath = oResourceContext.getPath(),
 				sDescription = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel").getProperty(sPath+"/Description") : this._selectedResource.getBindingContext().getProperty(sPath+"/Description"),
-				aAssignedAssignments = this._assignDemands(aAssignableDemands, sPath, oSelectedDate[
+				aAssignedAssignments = this._assignDemands(aAssignableDemands, oResourceContext, oSelectedDate[
 					0].getStartDate(), oCalendar, sDescription);
 
 		},
@@ -1006,18 +1007,20 @@ sap.ui.define([
 		 * @Author Rahul
 		 * 
 		 */
-		_assignDemands: function (oDemandObject, oResource, oTargetDate, oCalendar, sDescription) {
+		_assignDemands: function (oDemandObject, oResourceContext, oTargetDate, oCalendar, sDescription) {
 			var aAssignableDemands = oDemandObject.aAssignableDemands;
 			oCalendar.setBusy(true);
-			Promise.all(this.assignedDemands(aAssignableDemands, oResource, oTargetDate, null, null, true)).then(function (responses) {
+			var sResourcePath = oResourceContext.getPath();
+			Promise.all(this.assignedDemands(aAssignableDemands, sResourcePath, oTargetDate, null, null, true)).then(function (responses) {
 				oCalendar.setBusy(false);
 				this.getModel("viewModel").setProperty("/mapSettings/aAssignedAsignmentsForPlanning", responses);
 				this._refreshMapView();
 				this._oEventBus.publish("BaseController", "refreshMapTreeTable", {});
 				this.oCalendarPopover.close();
-				this.oSingleDayPlanner.open(oResource, {
+				this.getOwnerComponent().singleDayPlanner.open(this.getView(), sResourcePath, {
 					StartDate: oTargetDate,
-					ChildCount: aAssignableDemands.length
+					ChildCount: aAssignableDemands.length,
+                    ResourceGuid: oResourceContext.getObject().ResourceGuid
 				}, "TIMEDAY", {Description:sDescription}, true);
 			}.bind(this));
 
