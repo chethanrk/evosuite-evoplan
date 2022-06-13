@@ -179,13 +179,19 @@ sap.ui.define([
 				this._unAssignDraggedDemands(sDiscardMsg);
 			}
 		},
-
+		/**
+		 * Unassign dragged demands when user dont want to plan them
+		 * 
+		 * @Author Rahul
+		 * 
+		 */
 		_unAssignDraggedDemands: function (sDiscardMsg) {
+			var oViewModel = this.oParentController.getModel("viewModel");
 			if (!this._bFromMap) {
 				this.oPlannerDialog.close();
 				return;
 			}
-			if (this.oUserModel.getProperty("/ENABLE_DISCARD_ASGN_CHECK")) {
+			if (this.oUserModel.getProperty("/ENABLE_DISCARD_ASGN_CHECK") && !oViewModel.getProperty("/mapSettings/bIsSignlePlnAsgnSaved")) {
 				this.showConfirmMessageBox.call(this.oParentController, sDiscardMsg, function (sAction) {
 					if (sAction === "YES") {
 						this._unAssignAssigments();
@@ -284,8 +290,11 @@ sap.ui.define([
 		 * @param {object} oEvent
 		 */
 		onPressSaveAppointments: function (oEvent) {
+			var oViewModel = this.oParentController.getModel("viewModel");
 			this._saveChangedAssignments(function () {
-				this._loadAssignmentsForDay(this.oSelectedData); // TODO: _loadAssignmentsForDay called multiple times after saving. Find out, what's wrong.
+				oViewModel.setProperty("/mapSettings/bIsSignlePlnAsgnSaved", true);
+				this._loadAssignmentsForDay(this.oPlanningDate); // TODO: _loadAssignmentsForDay called multiple times after saving. Find out, what's wrong.
+				
 			}.bind(this));
 		},
 

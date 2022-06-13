@@ -127,6 +127,7 @@ sap.ui.define([
 			} else {
 				aSelectedDemands.push(sPath);
 			}
+			oViewModel.setProperty("/mapSettings/bIsSignlePlnAsgnSaved", false);
 			this._selectedResource = oEvent.getSource();
 			this.aDraggedDemands = aSelectedDemands;
 			this._checkForMultipleResources(oEvent.getSource().getBindingContext().getObject());
@@ -186,10 +187,11 @@ sap.ui.define([
 			var oCalendar = oEvent.getSource(),
 				oSelectedDate = oCalendar.getSelectedDates(),
 				aAssignableDemands = this._checkDemands(),
-				oResourceContext = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel") : 
-					this._selectedResource.getBindingContext(),
-				aAssignedAssignments = this._assignDemands(aAssignableDemands, oResourceContext, oSelectedDate[0]
-					.getStartDate(), oCalendar);
+				oResourceContext = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel") : this._selectedResource.getBindingContext(),
+				sPath = oResourceContext.getPath(),
+				sDescription = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel").getProperty(sPath+"/Description") : this._selectedResource.getBindingContext().getProperty(sPath+"/Description"),
+				aAssignedAssignments = this._assignDemands(aAssignableDemands, oResourceContext, oSelectedDate[
+					0].getStartDate(), oCalendar, sDescription);
 
 		},
 		/**
@@ -1002,7 +1004,7 @@ sap.ui.define([
 		 * @Author Rahul
 		 * 
 		 */
-		_assignDemands: function (oDemandObject, oResourceContext, oTargetDate, oCalendar) {
+		_assignDemands: function (oDemandObject, oResourceContext, oTargetDate, oCalendar, sDescription) {
 			var aAssignableDemands = oDemandObject.aAssignableDemands;
 			oCalendar.setBusy(true);
 			var sResourcePath = oResourceContext.getPath();
@@ -1015,8 +1017,8 @@ sap.ui.define([
 				this.getOwnerComponent().singleDayPlanner.open(this.getView(), sResourcePath, {
 					StartDate: oTargetDate,
 					ChildCount: aAssignableDemands.length,
-					ResourceGuid: oResourceContext.getObject().ResourceGuid
-				}, "TIMEDAY", null, true);
+                    ResourceGuid: oResourceContext.getObject().ResourceGuid
+				}, "TIMEDAY", {Description:sDescription}, true);
 			}.bind(this));
 
 		},

@@ -2005,14 +2005,15 @@ sap.ui.define([
 						ms: aAssignments[i].DateTo.getTime()
 					},
 					AssignmentGUID: aAssignments[i].Guid,
-					EffortUnit: aAssignments[0].EffortUnit,
-					Effort: aAssignments[0].Effort,
-					ResourceGroupGuid: aAssignments[0].ResourceGroupGuid,
-					ResourceGuid: aAssignments[0].ResourceGuid,
-					TravelTime: aAssignments[0].TRAVEL_TIME
-				}
+					EffortUnit: aAssignments[i].EffortUnit,
+					Effort: aAssignments[i].Effort,
+					ResourceGroupGuid: aAssignments[i].ResourceGroupGuid,
+					ResourceGuid: aAssignments[i].ResourceGuid,
+					TravelTime: aAssignments[i].TRAVEL_TIME
+				};
 				if (i === aAssignments.length - 1) {
 					bIsLast = true;
+					oParams.TravelBackTime = aAssignments[i].TRAVEL_BACK_TIME;
 				}
 				this.callFunctionImport(oParams, "UpdateAssignment", "POST", this._mParameters, bIsLast);
 			}

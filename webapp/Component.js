@@ -158,7 +158,8 @@ sap.ui.define([
 					assignedDemands: [],
 					bRouteDateSelected: false,
 					aAssignedAsignmentsForPlanning:[],
-					droppedResources: []
+					droppedResources: [],
+					bIsSignlePlnAsgnSaved: false
 				},
 				resourceTreeShowRouteColumn: false, 
 				resourceFilterforRightTechnician: false,
