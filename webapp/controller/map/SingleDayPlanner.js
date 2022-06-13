@@ -256,12 +256,13 @@ sap.ui.define([
 						var aAssignments = this._getOnlyAppointmentsByKeyValue("type", this.mTypes.APPOINTMENT);
 						oResource = aAssignments[0].Resource;
 
-						this.oParentController.getOwnerComponent().MapProvider.updateAssignmentsWithTravelTime(oResource, aAssignments)
+						this.oParentController.getOwnerComponent().MapProvider.calculateRoute(oResource, aAssignments)
 							.then(function (aUpdatedAssignments) {
 								this._setAssignmentsData(aUpdatedAssignments);
 								this.oSinglePlanningModel.setProperty("/hasChanges", true);
 								this.oSinglePlanner.setBusy(false);
 						}.bind(this)).catch(function(oError) {
+							Log.error(oError.message);
 							this.oSinglePlanner.setBusy(false);
 						}.bind(this));
 					}
@@ -307,6 +308,7 @@ sap.ui.define([
 						this.oSinglePlanningModel.setProperty("/hasChanges", true);
 						this.oSinglePlanner.setBusy(false);
 					}.bind(this)).catch(function(oError) {
+						Log.error(oError.message);
 						this.oSinglePlanner.setBusy(false);
 					}.bind(this));
 			}
@@ -331,6 +333,7 @@ sap.ui.define([
 						this.oSinglePlanner.setBusy(false);
 						this.oParentController.showMessageToast(this.oResourceBundle.getText("ymsg.routeOptimized"));
 					}.bind(this)).catch(function(oError) {
+						Log.error(oError.message);
 						this.oSinglePlanner.setBusy(false);
 					}.bind(this));
 			}

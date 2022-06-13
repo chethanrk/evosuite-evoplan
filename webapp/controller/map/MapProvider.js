@@ -5,7 +5,6 @@ sap.ui.define([
 ], function (Controller, OverrideExecution, Log) {
 	"use strict";
 	
-	// TODO dibrovv: update interface and docs according to current implementation
 	/**
 	 * @class Provides interface for communication with a Map Provider. 
 	 * All the particular provider-related implementations (e.g. PTV) should use the class as a parent and provide the same interface.
@@ -18,19 +17,8 @@ sap.ui.define([
 	return Controller.extend("com.evorait.evoplan.controller.map.MapProvider", {
 
 		metadata: {
-			// extension can declare the public methods
-			// in general methods that start with "_" are private
-			methods: {
-				constructor: {
-					
-				},
-				getRoutePolyline: {
-					
-				},
-				calculateTravelTime: {
-					
-				}
-			}
+			// The class is abstract.
+			// In order to change behavior please extend its implementation class (e.g. PTV.js).
 		},
 		
 		sServiceUrl: "",
@@ -95,17 +83,17 @@ sap.ui.define([
 		updateAssignmentsWithTravelTime: function(oResource, aAssignments, oDateForRoute) {
 			Log.error("The 'updateAssignmentsWithTravelTime' method is not implemented!" );
 		},
-		
 		/**
-		 * Updates Assignment list with travel times AND DateFrom, DateTo according to sequence provided in parameters.
+		 * Calcualtes travel times for Assignments, updates all the corresponding properties.
+		 * Doesn't change assignments sequence.
 		 * @abstract
 		 * @param {Waypoint} oResource - A Resource object that defines home address.
-		 * @param {Waypoint} aAssignments - Array of assignments to be visited.
-		 * @param {Date} oDateForRoute - Date for which the route calculation should be performed
-		 * @return {Promise<Assignment[]>} Promise object represents sorted by date array of updated Assignments.
+		 * @param {Waypoint[]} aAssignments - Arroy of assignments to be visited.
+		 * @return {Promise<RouteResponse>} - Promise object represents sorted by date array of updated assignments.
+		 * The assignments have updated DateFrom, DateTo, TRAVEL_TIME, TRAVEL_BACK_TIME
 		 */
-		calculateTravelTimeAndDatesForDay: function(oResource, aAssignments, oDateForRoute) {
-			Log.error("The 'updateAssignmentsWithTravelTime' method is not implemented!" );
+		calculateRoute: function(oResource, aAssignments) {
+			Log.error("The 'optimizeRoute' method is not implemented!" );
 		},
 		
 		/**
@@ -114,7 +102,7 @@ sap.ui.define([
 		 * @param {Waypoint} oResource - A Resource object that defines home address.
 		 * @param {Waypoint[]} aAssignments - Arroy of assignments to be visited.
 		 * @return {Promise<RouteResponse>} - Promise object represents sorted by date array of updated assignments.
-		 * The assignments have update DateFrom, DateTo, TRAVEL_TIME, TRAVEL_BACK_TIME
+		 * The assignments have updated DateFrom, DateTo, TRAVEL_TIME, TRAVEL_BACK_TIME
 		 */
 		optimizeRoute: function(oResource, aAssignments) {
 			Log.error("The 'optimizeRoute' method is not implemented!" );

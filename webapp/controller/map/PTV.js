@@ -29,11 +29,41 @@ sap.ui.define([
 	 */
 	return MapProvider.extend("com.evorait.evoplan.controller.map.PTV", {
 
-		// TODO: define metadata
 		metadata: {
 			// extension can declare the public methods
 			// in general methods that start with "_" are private
-			methods: {}
+			methods: {
+				getRoutePolyline: {
+					"public": true,
+					"final": false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				calculateSingleTravelTime: {
+					"public": true,
+					"final": false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				calculateTravelTimeForMultipleAssignments: {
+					"public": true,
+					"final": false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				updateAssignmentsWithTravelTime: {
+					"public": true,
+					"final": false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				calculateRoute: {
+					"public": true,
+					"final": false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				optimizeRoute: {
+					"public": true,
+					"final": false,
+					overrideExecution: OverrideExecution.Instead
+				},
+			}
 		},
 
 		_sAuthToken: "",
@@ -102,56 +132,25 @@ sap.ui.define([
 				return this._updateAssignmentsWithTravelTime(aAssignments, oResponse);
 			}.bind(this));
 		},
-		
-		
-		/**
-		 * @return {{Promise<Assignment[]>} a new array that includes provided assignments with updated TRAVEL_TIME, TRAVEL_BACK_TIME, DateFrom, DateTo properties.
-		 * The properties updated according to results returned by PTV `calculateRoute` function.
-		 */
-		calculateTravelTimeAndDatesForDay: function(oResource, aAssignments, oDateForRoute) {
-			return this.updateAssignmentsWithTravelTime(oResource, aAssignments).then(function(aAssignmentsWithTravelTime) {
-				var aUpdatedAssignments = [];
-				aAssignmentsWithTravelTime.reduce(function (prev, next) {
-					var oStartDateToWrap = prev ? prev.DateTo : moment(next.DateFrom.setHours(this._sDefaultResourceStartHour, 0)).toDate();
-					var oAssignmentStartDate = moment(oStartDateToWrap).add(next.TRAVEL_TIME, 'minutes');
-					var oAssignmentEndDate = oAssignmentStartDate.clone();
-					oAssignmentEndDate.add(parseFloat(next.Effort), 'hours');
-					
-					// TODO: check, if it's possible to extract common callback for the method, as well, as for calculateRoute
-					
-					next.DateFrom = oAssignmentStartDate.toDate();
-					next.DateTo = oAssignmentEndDate.toDate();
-					aUpdatedAssignments.push(next);
-					return next;
-				}.bind(this), null);
-
-				return aUpdatedAssignments;
-			}.bind(this));
-		},
 
 		/**
 		 * TODO: docs
 		 */
 		calculateRoute: function(oResource, aAssignments, oDateForRoute) {
 			return this.calculateTravelTimeForMultipleAssignments(oResource, aAssignments, oDateForRoute).then(function(oResponse) {
+				if(!this._isCalculatedRouteValid(oResponse)) {
+					return aAssignments;
+				}
 				var aAssignmentsWithTravelTime = this._updateAssignmentsWithTravelTime(aAssignments, oResponse);
-				
-				// TODO: write DateFrom according to results from PTV
-					
-				// TODO: do not update violated appointments
-				
-				// TODO: do not update FIXED_APPOINTMENTS
-				
-				// TODO: display not planned assignments - ymsg.notPlannedAssignments
-				
-				
-				
 				if(oResponse.data.events && oResponse.data.events.length) {
 					var aTourEvents = oResponse.data.events;
-					var nEventIndex = 0;
+					var nEventIndex = 1; // start with 1 because the aTourEvents[0] is corresponding to the resource home location
 					
-					aAssignmentsWithTravelTime.forEach(function(oAssignment, ) {
-						nEventIndex = this._getNextServiceEventIndex(aTourEvents, nEventIndex);
+					aAssignmentsWithTravelTime.forEach(function(oAssignment) {
+						if(oAssignment.FIXED_APPOINTMENT) {
+							return;
+						}
+						nEventIndex = this._getServiceEventIndexForAssignment(oAssignment, aTourEvents);
 						var oServiceEvent = aTourEvents[nEventIndex]
 						
 						var oStartDate = moment(oServiceEvent.startsAt);
@@ -160,7 +159,6 @@ sap.ui.define([
 						var oEndDate = oStartDate.clone();
 						oEndDate.add(oAssignment.Effort, 'hours');
 						oAssignment.DateTo = oEndDate.toDate();
-						nEventIndex++;
 					}.bind(this));
 				}
 				return aAssignmentsWithTravelTime;
@@ -186,6 +184,8 @@ sap.ui.define([
 			var oDate = aAssignments[0].DateFrom;
 			return this._createDistanceMatrix(oResource, aAssignments, oDate).then(function (sMatrixId) {
 				return this._planTours(oResource, aAssignments, sMatrixId, oDate).then(function (oTourResponse) {
+					
+					this._isOptimizedRouteValid(oTourResponse, aAssignments); // don't interrupt current function execution to show, what's plannable
 
 					var aUpdatedAssignments = _.cloneDeep(aAssignments);
 					var nOverallEffort = 0;
@@ -203,11 +203,13 @@ sap.ui.define([
 								
 								aUpdatedAssignments[nAssIndex].TRAVEL_TIME = nTravelTime.toString();
 								
-								var oStartDate = moment(aTourEvents[nEventIndex].startTime);
-								aUpdatedAssignments[nAssIndex].DateFrom = oStartDate.toDate();
-								var oEndDate = oStartDate.clone();
-								oEndDate.add(aUpdatedAssignments[nAssIndex].Effort, 'hours');
-								aUpdatedAssignments[nAssIndex].DateTo = oEndDate.toDate();
+								if(!aUpdatedAssignments[nAssIndex].FIXED_APPOINTMENT) {
+									var oStartDate = moment(aTourEvents[nEventIndex].startTime);
+									aUpdatedAssignments[nAssIndex].DateFrom = oStartDate.toDate();
+									var oEndDate = oStartDate.clone();
+									oEndDate.add(aUpdatedAssignments[nAssIndex].Effort, 'hours');
+									aUpdatedAssignments[nAssIndex].DateTo = oEndDate.toDate();
+								}
 
 								if (aTourEvents[nEventIndex + 2].eventTypes[0] === "TRIP_END") {
 									aUpdatedAssignments[nAssIndex].TRAVEL_BACK_TIME = Math.ceil(aTourEvents[nEventIndex + 1].duration / 60).toString();
@@ -279,8 +281,6 @@ sap.ui.define([
 					oPoint.tourStopOptions.serviceTime = parseFloat(next.Effort) * 3600;
 				}
 
-				// TODO: test with FIXED_APPOINTMENT
-				// whether it makes sense to change to StartDurationInterval type with duration set to 0
 				if (next.FIXED_APPOINTMENT) {
 					oPoint.tourStopOptions.openingIntervals = [];
 					var oInterval = {
@@ -326,7 +326,7 @@ sap.ui.define([
 				oStartRouteDate = _.cloneDeep(aPointsToVisit[1].DateFrom);
 			}
 
-			oStartRouteDate.setHours(this._sDefaultResourceStartHour);
+			oStartRouteDate.setHours(this._sDefaultResourceStartHour, 0, 0, 0);
 			oPayload.routeOptions = {
 				timeConsideration: {
 					$type: "ExactTimeConsiderationAtStart",
@@ -552,13 +552,6 @@ sap.ui.define([
 			}.bind(this));
 		},
 		
-		// TODO: docs
-		_checkIfRouteIsValid: function() {
-			// TODO: if the route is in time range - i18n text ymsg.tooMuchPlanned
-			// TODO: if there are no violated waypoints
-			// TODO: consider FIXED_APPOINTMENT
-		},
-		
 		/**
 		 * Searches for a corresponding driving event in an array of Tour events
 		 * @param {TourEvent[]} aEvents - array of returned from PTV Tour events. See the documentation:
@@ -584,16 +577,44 @@ sap.ui.define([
 		 * Works ONLY with RouteResponse:
 		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.RouteResponse
 		 */
-		_getNextServiceEventIndex: function(aEvents, nCurrentIndex) {
-			var nServiceEventIndex = nCurrentIndex;
-			for(nServiceEventIndex; nServiceEventIndex < aEvents.length; nServiceEventIndex++) {
-				if(aEvents[nServiceEventIndex].tourEventTypes[0] === "SERVICE") {
-					return nServiceEventIndex;
+		_getTravelTimeForAssignment: function(oAssignment, oLeg, aEvents, bTravelHome) {
+			var nCorrespondingEventIndex = this._getServiceEventIndexForAssignment(oAssignment, aEvents);
+			var nCostsTime = 0;
+			var nCalculatedTime = 0;
+			
+			if(bTravelHome) {
+				nCostsTime += aEvents[nCorrespondingEventIndex].travelTimeFromStart;
+				nCostsTime += aEvents[nCorrespondingEventIndex].duration;
+				nCalculatedTime = aEvents[nCorrespondingEventIndex + 1].travelTimeFromStart - nCostsTime;
+			} else {
+				var nEventIndex = nCorrespondingEventIndex -1; // to get previous event
+				
+				for(nEventIndex; nEventIndex >= 0; nEventIndex--) {
+					if(aEvents[nEventIndex].tourEventTypes[0] === "SERVICE") {
+						nCostsTime += aEvents[nEventIndex].duration;
+						nCostsTime += aEvents[nEventIndex].travelTimeFromStart;
+						break;
+					} else if(aEvents[nEventIndex].tourEventTypes[0] !== "SERVICE") {
+						nCostsTime += aEvents[nEventIndex].duration;
+					}
 				}
+				nCalculatedTime = aEvents[nCorrespondingEventIndex].travelTimeFromStart - nCostsTime;
 			}
-			// in case there were no corresponding service event throw an error
-			var sErrorMessage = this.oComponent.getModel("i18n").getResourceBundle().getText("errorMessage"); // TODO: add text for the no service event error
-			throw new Error(sErrorMessage);
+			
+			return Math.ceil(nCalculatedTime / 60);
+		},
+		
+		/**
+		 * TODO: docs
+		 * Works ONLY with RouteResponse:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.RouteResponse
+		 */
+		_getServiceEventIndexForAssignment: function(oAssignment, aEvents) {
+			return _.findIndex(aEvents, function(event) {
+				return event.coordinate.y.toFixed(6) === parseFloat(oAssignment.LATITUDE).toFixed(6) &&
+					event.coordinate.x.toFixed(6) === parseFloat(oAssignment.LONGITUDE).toFixed(6) &&
+					event.tourEventTypes[0] === "SERVICE";
+			});
 		},
 		
 		// TODO: docs
@@ -603,30 +624,78 @@ sap.ui.define([
 			aUpdatedAssignments.sort(function(a,b) {
 				return a.DateFrom - b.DateFrom;
 			});
-			if(oPTVResponse.data.legs) {
-				aUpdatedAssignments.forEach(function(oAssignment, index, aAssgns) {
-					var sCalculatedTime;
-					if(aAssgns[index-1]) {
-						var nCurrentEffortInSec = parseFloat(aAssgns[index-1].Effort) * 3600;
-						sCalculatedTime = Math.ceil((oPTVResponse.data.legs[index].travelTime - nCurrentEffortInSec) / 60).toString();
-					} else {
-						sCalculatedTime = Math.ceil(oPTVResponse.data.legs[index].travelTime / 60).toString();
-					}
-					oAssignment.TRAVEL_TIME = sCalculatedTime;
+			if(oPTVResponse.data.legs && oPTVResponse.data.events && oPTVResponse.data.events.length) {
+				var aTourEvents = oPTVResponse.data.events;
+				var aLegs = oPTVResponse.data.legs;
+				
+				// process first item in a different way, as PTV returns data in a such structure
+				// aUpdatedAssignments[0].TRAVEL_TIME = Math.ceil(aLegs[0].travelTime / 60);
+				// aUpdatedAssignments[0].TRAVEL_BACK_TIME = 0;
+				
+				for(var nAssIndex = 0; nAssIndex < aUpdatedAssignments.length; nAssIndex++) { // skip the last assignment
+					
+					var nTravelTime = this._getTravelTimeForAssignment(aUpdatedAssignments[nAssIndex], aLegs[nAssIndex], aTourEvents);
+					aUpdatedAssignments[nAssIndex].TRAVEL_TIME = nTravelTime;
 					// set TRAVEL_BACK_TIME to zero to make sure that only one assignment has non-zero TRAVEL_BACK_TIME
-					oAssignment.TRAVEL_BACK_TIME = 0;
-				});
+					aUpdatedAssignments[nAssIndex].TRAVEL_BACK_TIME = 0;
+					
+				}
 			}
 			var nLastLegIndex = oPTVResponse.data.legs.length - 1;
 			var nLastAssignmentIndex = aUpdatedAssignments.length - 1;
 			
 			//assign TRAVEL_BACK_TIME for the last assignment
-			var sTravelHomeTime = Math.ceil((oPTVResponse.data.legs[nLastLegIndex].travelTime - 
-				aUpdatedAssignments[nLastAssignmentIndex].Effort * 3600) / 60).toString();
-			aUpdatedAssignments[nLastAssignmentIndex].TRAVEL_BACK_TIME = sTravelHomeTime;
+			// var sTravelHomeTime = Math.ceil((oPTVResponse.data.legs[nLastLegIndex].travelTime - 
+			// 	aUpdatedAssignments[nLastAssignmentIndex].Effort * 3600) / 60).toString();
+			
+			var nTravelHomeTime = this._getTravelTimeForAssignment(aUpdatedAssignments[nLastAssignmentIndex], aLegs[nLastLegIndex], aTourEvents, true);
+			aUpdatedAssignments[nLastAssignmentIndex].TRAVEL_BACK_TIME = nTravelHomeTime;
 			return aUpdatedAssignments;
+		},
+		
+		// TODO: docs
+		_isCalculatedRouteValid: function(oResponse) {
+			var oRouteStart = new Date(oResponse.data.tourReport.startTime);
+			var oRouteEnd = new Date(oResponse.data.tourReport.endTime);
+			var bValid = true;
+			var sErrorMessage;
+			if(oRouteStart.getDay() !== oRouteEnd.getDay()) {
+				sErrorMessage = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.tooMuchPlanned");
+				MessageBox.error(sErrorMessage);
+				bValid = false;
+			}
+			
+			oResponse.data.events.forEach(function(oEvent) {
+				if(oEvent.tourViolations && oEvent.tourViolations.type === "OPENING_INTERVAL") {
+					sErrorMessage = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.fixedAppointmentNotReachable");
+					MessageBox.error(sErrorMessage);
+					bValid = false;
+				}
+			})
+			
+			return bValid;
+		},
+		
+		// TODO: docs
+		_isOptimizedRouteValid: function(oResponse, aAssignments) {
+			var bValid = true;
+			var aNotPlannedAssignments = [];
+			if(oResponse.data.orderIdsNotPlanned) {
+				oResponse.data.orderIdsNotPlanned.forEach(function(sAssGuid) {
+					var oNotPlannedAssignment = _.find(aAssignments, function(oAssignment) {
+						return sAssGuid = oAssignment.Guid;
+					});
+					aNotPlannedAssignments.push(oNotPlannedAssignment.ORDERID);
+				});
+				var sErrorMessage = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.notPlannedAssignments");
+				MessageBox.error(sErrorMessage + " " + aNotPlannedAssignments);
+				bValid = false;
+			}
+			
+			return bValid;
 		}
-
+		
+		
 		/* ============================================================================== */
 		/* Data types                                                                     */
 		/* ------------------------------------------------------------------------------ */
