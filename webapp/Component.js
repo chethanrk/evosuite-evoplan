@@ -262,6 +262,16 @@ sap.ui.define([
 					children: []
 				}
 			}, false), "ganttOriginalData");
+			
+			var oSinglePlanningModel = models.createHelperModel({
+				hasChanges: false,
+				appointments: [],
+				legendShown: false,
+				legendItems: [],
+				legendAppointmentItems: []
+			});
+			oSinglePlanningModel.setDefaultBindingMode("TwoWay");
+			this.setModel(oSinglePlanningModel, "mapSinglePlanning");
 
 			this.DialogTemplateRenderer = new DialogTemplateRenderController(this);
 

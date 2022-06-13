@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/ui/core/Fragment",
-	"sap/base/Log","com/evorait/evoplan/model/Constants"
+	"sap/base/Log","com/evorait/evoplan/model/Constants",
+	"com/evorait/evoplan/controller/map/MapUtilities",
 ], function (Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController, ResourceTreeFilterBar,
-	MessageToast, MessageBox, Fragment, Log, Constants) {
+	MessageToast, MessageBox, Fragment, Log, Constants, MapUtilities) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.map.MapResourceTree", {
@@ -67,7 +68,8 @@ sap.ui.define([
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.attachRouteMatched(this._routeMatched, this);
-
+			
+			this.oMapUtilities = new MapUtilities();
 		},
 
 		_routeMatched: function (oEvent) {
@@ -755,7 +757,7 @@ sap.ui.define([
 			var aGeoJsonLayersData = oViewModel.getProperty("/GeoJsonLayersData");
 			
 			var aResourceFilters = this._getResourceFilters([sResourceHierachyPath]);
-			var aAssignmentFilters = this.getAssignmentsFiltersWithinDateFrame(oResourceHierachyObject);
+			var aAssignmentFilters = this.oMapUtilities.getAssignmentsFiltersWithinDateFrame(oResourceHierachyObject);
 			oViewModel.setProperty("/mapSettings/busy", true);
 			
 			var pAssignmentsLoaded = this.getOwnerComponent().readData("/AssignmentSet", aAssignmentFilters);

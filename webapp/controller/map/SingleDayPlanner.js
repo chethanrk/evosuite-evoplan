@@ -110,15 +110,8 @@ sap.ui.define([
 			this._bFromMap = bFromMap;
 			this.oUserModel = this.oParentController.getModel("user");
 			
-			this.oSinglePlanningModel = models.createHelperModel({
-				hasChanges: false,
-				appointments: [],
-				legendShown: false,
-				legendItems: [],
-				legendAppointmentItems: []
-			});
-			this.oSinglePlanningModel.setDefaultBindingMode("TwoWay");
-			oView.setModel(this.oSinglePlanningModel, "mapSinglePlanning");
+			this.oSinglePlanningModel = oView.getController().getOwnerComponent().getModel("mapSinglePlanning");
+			
 			//set view for this calendar base on NodeType
 			this._setCalenderViews(sNodeType);
 			this.oSinglePlanningModel.setProperty("/startDate", oTreeData.StartDate);
@@ -572,7 +565,7 @@ sap.ui.define([
 		_loadAssignmentsForDay: function (oResourseHierachyData) {
 			var sEntitySetPath = "/AssignmentSet";
 			
-			if (this.oParentController.getAssignmentsFiltersWithinDateFrame) {
+			if (this.oParentController.oMapUtilities.getAssignmentsFiltersWithinDateFrame) {
 				this.oSinglePlanningModel.setProperty("/hasChanges", false);
 				this.oSinglePlanner.setBusy(true);
 
@@ -580,7 +573,7 @@ sap.ui.define([
 					"$expand": "Demand,Resource"
 				};
 
-				var oFilter = new Filter(this.oParentController.getAssignmentsFiltersWithinDateFrame(oResourseHierachyData), true);
+				var oFilter = new Filter(this.oParentController.oMapUtilities.getAssignmentsFiltersWithinDateFrame(oResourseHierachyData), true);
 				this.oParentController.getOwnerComponent().readData(sEntitySetPath, [oFilter], mParams).then(function (oResults) {
 					this.aOriginalData = _.cloneDeep(this._setAssignmentsData(oResults.results)); // set current assignments and save it to this.aOriginalData
 				}.bind(this));

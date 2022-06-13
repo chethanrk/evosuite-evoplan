@@ -1,6 +1,6 @@
 /* globals axios */
 sap.ui.define([
-	"com/evorait/evoplan/controller/map/MapUtilities",
+	"com/evorait/evoplan/controller/common/AssignmentActionsController",
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
@@ -12,12 +12,13 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/MessageToast",
 	"sap/m/GroupHeaderListItem",
-	"sap/ui/unified/Calendar"
-], function (MapUtilities, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
-	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar) {
+	"sap/ui/unified/Calendar",
+	"com/evorait/evoplan/controller/map/MapUtilities",
+], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
+	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, MapUtilities) {
 	"use strict";
 
-	return MapUtilities.extend("com.evorait.evoplan.controller.map.Map", {
+	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
 		selectedDemands: [],
 		_isDemandDraggable: false,
 		_oGeoMap: null,
@@ -49,6 +50,8 @@ sap.ui.define([
 
 			//initialize PinPopover controller
 			this.oPinPopover = new PinPopover(this);
+			
+			this.oMapUtilities = new MapUtilities();
 		},
 
 		//TODO comment

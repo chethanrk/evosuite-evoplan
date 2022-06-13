@@ -79,6 +79,27 @@ sap.ui.define([
 
 			}
 			return aFilters;
+		},
+		
+		/**
+		 * Get Date filters from a ResourceHierarchy instance.
+		 * The method returns filters from 0:00 of StartDate till 23:59 of EndDate
+		 * @param {object} oResourceHierarchy - ResourceHierarchy instance. It supposed that the object represents daily or weekly node.
+		 * @return {sap.ui.model.Filter[]} - array of filters
+		 */
+		getAssignmentsFiltersWithinDateFrame: function(oResourceHierarchy) {
+			
+			//TODO: update filters after backend delivered time filters
+			var aFilters = [];
+			var oStartDate = _.cloneDeep(oResourceHierarchy.StartDate);
+			oStartDate.setHours(0, 0, 0, 0);
+			oStartDate = moment(oStartDate).add(oResourceHierarchy.StartTime).toDate();
+			var oEndDate = moment(oResourceHierarchy.EndDate).add(oResourceHierarchy.EndTime).toDate();
+			
+			aFilters.push(new Filter("DateFrom", FilterOperator.GE, oStartDate));
+			aFilters.push(new Filter("DateTo", FilterOperator.LE, oEndDate));
+			aFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, oResourceHierarchy.ResourceGuid));
+			return aFilters;
 		}
 	});
 });
