@@ -580,7 +580,7 @@ sap.ui.define([
 			aResourceAvailabilities = oGanttModel.getProperty(sTargetPath + "/ResourceAvailabilitySet");
 			var xPath = sTargetPath + "/children/" + iChildLength;
 			sAssignmentGuid = oGanttModel.getProperty(xPath + "/Guid");
-			oGanttModel.setProperty(xPath + "/DemandDesc", aData.DEMAND_DESC);
+			oGanttModel.setProperty(xPath + "/DemandDesc", aData.DemandDesc);
 			for (var a in aAssignmentData) {
 				if (sAssignmentGuid === aAssignmentData[a].Guid) {
 					sNewPath = xPath + "/AssignmentSet";
