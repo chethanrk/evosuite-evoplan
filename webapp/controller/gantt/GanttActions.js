@@ -581,7 +581,7 @@ sap.ui.define([
 			aResourceAvailabilities = oGanttModel.getProperty(sTargetPath + "/ResourceAvailabilitySet");
 			var xPath = sTargetPath + "/children/" + iChildLength;
 			sAssignmentGuid = oGanttModel.getProperty(xPath + "/Guid");
-			oGanttModel.setProperty(xPath + "/DemandDesc", aData.DEMAND_DESC);
+			oGanttModel.setProperty(xPath + "/DemandDesc", aData.DemandDesc);
 			oGanttModel.setProperty(xPath + "/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION);
 			sObjectIdRelation = aData.OBJECT_ID_RELATION + "//" + aData.ResourceGuid;
 			aChildNodeData = Object.assign({}, aData, {
