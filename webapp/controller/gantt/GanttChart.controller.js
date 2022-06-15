@@ -13,10 +13,11 @@ sap.ui.define([
 	"com/evorait/evoplan/model/Constants",
 	"sap/gantt/misc/Utility",
 	"sap/gantt/def/pattern/SlashPattern",
-	"sap/gantt/def/pattern/BackSlashPattern"
+	"sap/gantt/def/pattern/BackSlashPattern",
+	"com/evorait/evoplan/controller/map/MapUtilities",
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, FilterType, Popup, MessageToast, Fragment, CoordinateUtils,
 	Constants,
-	Utility, SlashPattern, BackSlashPattern) {
+	Utility, SlashPattern, BackSlashPattern, MapUtilities) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttChart", {
@@ -86,6 +87,8 @@ sap.ui.define([
 			this.getOwnerComponent().GanttResourceFilter.init(this.getView(), this._treeTable);
 
 			this.bGanttHorizonChange = false; //Flag to identify Gantt Horizon Date Change
+			
+			this.oMapUtilities = new MapUtilities();
 		},
 		/**
 		 * Initialize the fetch of data for Gantt chart
@@ -1891,7 +1894,7 @@ sap.ui.define([
 			this.oSelectedDate = oSelectedDate;
 
 			//preparing filters to get the Assignment of selected date
-			oFilter = this._getFiltersToReadAssignments(this.oResource, this.oSelectedDate);
+			oFilter = this.oMapUtilities.getAssignmentsFiltersWithinDateFrame(this.oResource, this.oSelectedDate);
 
 			//Reading oData to get the Assignment of selected date
 			this.getOwnerComponent()._getData("/AssignmentSet", [oFilter]).then(function (result) {
