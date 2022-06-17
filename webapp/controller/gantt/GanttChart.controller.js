@@ -2073,7 +2073,9 @@ sap.ui.define([
 					Effort: aAssignments[i].Effort,
 					ResourceGroupGuid: aAssignments[i].ResourceGroupGuid,
 					ResourceGuid: aAssignments[i].ResourceGuid,
-					TravelTime: aAssignments[i].TRAVEL_TIME
+					TravelTime: aAssignments[i].TRAVEL_TIME,
+					Distance: aAssignments[i].DISTANCE,
+					DistanceBack: aAssignments[i].DISTANCE_BACK
 				};
 				if (i === aAssignments.length - 1) {
 					bIsLast = true;

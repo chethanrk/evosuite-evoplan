@@ -286,7 +286,7 @@ sap.ui.define([
 			var oViewModel = this.oParentController.getModel("viewModel");
 			this._saveChangedAssignments(function () {
 				oViewModel.setProperty("/mapSettings/bIsSignlePlnAsgnSaved", true);
-				this._loadAssignmentsForDay(this.oPlanningDate); // TODO: _loadAssignmentsForDay called multiple times after saving. Find out, what's wrong.
+				this._loadAssignmentsForDay(this.oSelectedData); // TODO: _loadAssignmentsForDay called multiple times after saving. Find out, what's wrong.
 				
 			}.bind(this));
 		},
@@ -445,6 +445,9 @@ sap.ui.define([
 							oModel.setProperty(oItem.sModelPath + "/DateFrom", oItem.DateFrom);
 							oModel.setProperty(oItem.sModelPath + "/TRAVEL_TIME", oItem.TRAVEL_TIME);
 							oModel.setProperty(oItem.sModelPath + "/TRAVEL_BACK_TIME", oItem.TRAVEL_BACK_TIME);
+							// TODO: write real distance values to the properties
+							oModel.setProperty(oItem.sModelPath + "/DISTANCE", oItem.DISTANCE);
+							oModel.setProperty(oItem.sModelPath + "/DISTANCE_BACK", oItem.DISTANCE_BACK);
 
 							//save changed assignment
 							this.oSinglePlanner.setBusy(true);
@@ -481,6 +484,8 @@ sap.ui.define([
 					AssignmentGUID: oData.Guid,
 					TravelTime: oData.TRAVEL_TIME,
 					TravelBackTime: oData.TRAVEL_BACK_TIME,
+					Distance: oData.DISTANCE,
+					DistanceBack: oData.DISTANCE_BACK,
 					EffortUnit: oData.EffortUnit,
 					Effort: oData.Effort,
 					ResourceGroupGuid: oData.ResourceGroupGuid,
