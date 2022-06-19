@@ -191,6 +191,7 @@ sap.ui.define([
 					var nOverallEffort = 0;
 					if (oTourResponse.data.tourReports && oTourResponse.data.tourReports.length === 1) {
 						var aTourEvents = oTourResponse.data.tourReports[0].tourEvents;
+						var aLegs = oTourResponse.data.tourReports[0].legReports;
 
 						aTourEvents.forEach(function (oTourEvent, nEventIndex) {
 							if (oTourEvent.eventTypes[0] === "SERVICE") {
@@ -199,7 +200,8 @@ sap.ui.define([
 								});
 								
 								aUpdatedAssignments[nAssIndex].TRAVEL_BACK_TIME = 0;
-								var nTravelTime = Math.ceil(this._getPreviousDrivingEvent(aTourEvents, nEventIndex).duration / 60);
+								var oCorrespondingDrivingEventIndex = this._getPreviousDrivingEventIndex(aTourEvents, nEventIndex);
+								var nTravelTime = Math.ceil(aTourEvents[oCorrespondingDrivingEventIndex].duration / 60);
 								
 								aUpdatedAssignments[nAssIndex].TRAVEL_TIME = nTravelTime.toString();
 								
@@ -210,9 +212,14 @@ sap.ui.define([
 									oEndDate.add(aUpdatedAssignments[nAssIndex].Effort, 'hours');
 									aUpdatedAssignments[nAssIndex].DateTo = oEndDate.toDate();
 								}
+								
+								var oLeg = this._getCorrespondingLeg(oCorrespondingDrivingEventIndex, aLegs);
+								aUpdatedAssignments[nAssIndex].DISTANCE = (oLeg.distance / 1000).toFixed(1);
 
 								if (aTourEvents[nEventIndex + 2].eventTypes[0] === "TRIP_END") {
 									aUpdatedAssignments[nAssIndex].TRAVEL_BACK_TIME = Math.ceil(aTourEvents[nEventIndex + 1].duration / 60).toString();
+									oLeg = this._getCorrespondingLeg(nEventIndex + 1, aLegs);
+									aUpdatedAssignments[nAssIndex].DISTANCE_BACK = (oLeg.distance / 1000).toFixed(1);
 								}
 							}
 						}.bind(this));
@@ -531,6 +538,17 @@ sap.ui.define([
 
 			return oPayload;
 		},
+		
+		/**
+		 * TODO: docs
+		 * Works ONLY with TourResponse:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Content/API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.ToursResponse
+		 */
+		_getCorrespondingLeg: function(nEventId, aLegs) {
+			return _.find(aLegs, function(oLeg) {
+				return nEventId === oLeg.startTourEventIndex;
+			})
+		},
 
 		/**
 		 * Sends a POST request to PTV. In case of error returned from service, displays the message within sap.m.MessageBox
@@ -560,11 +578,11 @@ sap.ui.define([
 		 * @return {TourEvent} the corresponding driving event.
 		 * @throws {Error} in case the driving event wasn't found.
 		 */
-		_getPreviousDrivingEvent: function(aEvents, nCurrentIndex) {
+		_getPreviousDrivingEventIndex: function(aEvents, nCurrentIndex) {
 			var nDrivingEventIndex = nCurrentIndex;
 			for(nDrivingEventIndex; nDrivingEventIndex >= 0; nDrivingEventIndex--) {
 				if(aEvents[nDrivingEventIndex].eventTypes[0] === "DRIVING") {
-					return aEvents[nDrivingEventIndex];
+					return nDrivingEventIndex;
 				}
 			}
 			// in case there were no corresponding driving event throw an error
