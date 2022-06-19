@@ -577,15 +577,18 @@ sap.ui.define([
 		 * Works ONLY with RouteResponse:
 		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.RouteResponse
 		 */
-		_getTravelTimeForAssignment: function(oAssignment, oLeg, aEvents, bTravelHome) {
+		_getTravelTimeAndDistanceForAssignment: function(oAssignment, aEvents, bTravelHome) {
 			var nCorrespondingEventIndex = this._getServiceEventIndexForAssignment(oAssignment, aEvents);
 			var nCostsTime = 0;
 			var nCalculatedTime = 0;
+			var nCalculatedDistance = 0;
+			var nPreviosDistanceFromStart = 0;
 			
 			if(bTravelHome) {
 				nCostsTime += aEvents[nCorrespondingEventIndex].travelTimeFromStart;
 				nCostsTime += aEvents[nCorrespondingEventIndex].duration;
 				nCalculatedTime = aEvents[nCorrespondingEventIndex + 1].travelTimeFromStart - nCostsTime;
+				nCalculatedDistance = aEvents[nCorrespondingEventIndex + 1].distanceFromStart - aEvents[nCorrespondingEventIndex].distanceFromStart;
 			} else {
 				var nEventIndex = nCorrespondingEventIndex -1; // to get previous event
 				
@@ -593,15 +596,20 @@ sap.ui.define([
 					if(aEvents[nEventIndex].tourEventTypes[0] === "SERVICE") {
 						nCostsTime += aEvents[nEventIndex].duration;
 						nCostsTime += aEvents[nEventIndex].travelTimeFromStart;
+						nPreviosDistanceFromStart = aEvents[nEventIndex].distanceFromStart;
 						break;
 					} else if(aEvents[nEventIndex].tourEventTypes[0] !== "SERVICE") {
 						nCostsTime += aEvents[nEventIndex].duration;
 					}
 				}
 				nCalculatedTime = aEvents[nCorrespondingEventIndex].travelTimeFromStart - nCostsTime;
+				nCalculatedDistance = aEvents[nCorrespondingEventIndex].distanceFromStart - nPreviosDistanceFromStart;
 			}
 			
-			return Math.ceil(nCalculatedTime / 60);
+			var nResultTime = Math.ceil(nCalculatedTime / 60);
+			var nResultDistance = (nCalculatedDistance / 1000).toFixed(1);
+			
+			return {time: nResultTime, distance: nResultDistance};
 		},
 		
 		/**
@@ -628,14 +636,12 @@ sap.ui.define([
 				var aTourEvents = oPTVResponse.data.events;
 				var aLegs = oPTVResponse.data.legs;
 				
-				// process first item in a different way, as PTV returns data in a such structure
-				// aUpdatedAssignments[0].TRAVEL_TIME = Math.ceil(aLegs[0].travelTime / 60);
-				// aUpdatedAssignments[0].TRAVEL_BACK_TIME = 0;
-				
 				for(var nAssIndex = 0; nAssIndex < aUpdatedAssignments.length; nAssIndex++) { // skip the last assignment
+					var oCalculated = this._getTravelTimeAndDistanceForAssignment(aUpdatedAssignments[nAssIndex], aTourEvents);
+					// var nTravelTime = oCalculated.time;
 					
-					var nTravelTime = this._getTravelTimeForAssignment(aUpdatedAssignments[nAssIndex], aLegs[nAssIndex], aTourEvents);
-					aUpdatedAssignments[nAssIndex].TRAVEL_TIME = nTravelTime;
+					aUpdatedAssignments[nAssIndex].TRAVEL_TIME = oCalculated.time;
+					aUpdatedAssignments[nAssIndex].DISTANCE = oCalculated.distance;
 					// set TRAVEL_BACK_TIME to zero to make sure that only one assignment has non-zero TRAVEL_BACK_TIME
 					aUpdatedAssignments[nAssIndex].TRAVEL_BACK_TIME = 0;
 					
@@ -648,8 +654,10 @@ sap.ui.define([
 			// var sTravelHomeTime = Math.ceil((oPTVResponse.data.legs[nLastLegIndex].travelTime - 
 			// 	aUpdatedAssignments[nLastAssignmentIndex].Effort * 3600) / 60).toString();
 			
-			var nTravelHomeTime = this._getTravelTimeForAssignment(aUpdatedAssignments[nLastAssignmentIndex], aLegs[nLastLegIndex], aTourEvents, true);
-			aUpdatedAssignments[nLastAssignmentIndex].TRAVEL_BACK_TIME = nTravelHomeTime;
+			var oCalculatedHome = this._getTravelTimeAndDistanceForAssignment(aUpdatedAssignments[nLastAssignmentIndex], aTourEvents, true);
+			var nTravelHomeTime = oCalculatedHome.time;
+			aUpdatedAssignments[nLastAssignmentIndex].TRAVEL_BACK_TIME = oCalculatedHome.time;
+			aUpdatedAssignments[nLastAssignmentIndex].DISTANCE_BACK = oCalculatedHome.distance;
 			return aUpdatedAssignments;
 		},
 		
