@@ -387,7 +387,7 @@ sap.ui.define([
 				oResource, aDemandAssignments = [],
 
 				sDemandPath = this.selectedDemandPath,
-				aGeoJsonLayersData = [],
+				aGeoJsonLayersData = oViewModel.getProperty("/GeoJsonLayersData"),
 				aResourceFilters = [],
 				oSelectedDate;
 
@@ -440,7 +440,6 @@ sap.ui.define([
 					aGeoJsonLayersData.push(oLayer);
 					
 					this._eventBus.publish("MapController", "displayRoute", oResource);
-					oViewModel.setProperty("/GeoJsonLayersData", aGeoJsonLayersData);
 					oViewModel.setProperty("/mapSettings/busy", false);
 				}
 				.bind(this))

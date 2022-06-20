@@ -22,6 +22,7 @@ sap.ui.define([
 		selectedDemands: [],
 		_isDemandDraggable: false,
 		_oGeoMap: null,
+		_mapContextActionSheet: null,
 		onInit: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oMapModel = this.getModel("mapConfig");
@@ -321,6 +322,31 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/assignedDemands", []);
 			this._oDraggableTable.rebindTable();
 		},
+		
+		/**
+		 * Clear displayed routes on Map
+		 * @param {sap.ui.base.Event} oEvent - `press` event
+		 */
+		onClearRoutes: function(oEvent) {
+			this._oEventBus.publish("Map", "clearRoutes", {});
+		},
+		
+		/**
+		 * Display ActionSheet on right-click on Map
+		 * @param {sap.ui.base.Event} oEvent - `contextMenu` event
+		 */
+		onContextMenuMap: function(oEvent) {
+			var oSourcePosition = [oEvent.mParameters.clientX, oEvent.mParameters.clientY];
+			var oDivOnThePosition = this.oMapUtilities._gethiddenDivPosition(oSourcePosition, this.getView());
+
+			if (!this._mapContextActionSheet) {
+				this._mapContextActionSheet = sap.ui.xmlfragment("com.evorait.evoplan.view.map.fragments.MapContextActionSheet", this);
+				this.getView().addDependent(this._mapContextActionSheet);
+			}
+
+			this._mapContextActionSheet.openBy(oDivOnThePosition);
+		},
+		
 		/**
 		 * Reset the map selection in the Model
 		 * @Author: Rahul

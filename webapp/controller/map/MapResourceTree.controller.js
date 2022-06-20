@@ -64,6 +64,7 @@ sap.ui.define([
 			this._eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
 			
 			this._eventBus.subscribe("Map", "onShowRoutePressPopover", this.onShowRoutePressPopover, this);
+			this._eventBus.subscribe("Map", "clearRoutes", this.onClearRoutes, this);
 
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
@@ -243,6 +244,8 @@ sap.ui.define([
 		onExit: function () {
 			this._eventBus.unsubscribe("BaseController", "refreshMapTreeTable", this._triggerRefreshTree, this);
 			this._eventBus.unsubscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
+			this._eventBus.unsubscribe("Map", "clearRoutes", this.onClearRoutes, this);
+			this._eventBus.unsubscribe("Map", "onShowRoutePressPopover", this.onShowRoutePressPopover, this);
 		},
 
 		/* =========================================================== */
@@ -746,7 +749,7 @@ sap.ui.define([
 			if (oShowRouteButton.getPressed && !oShowRouteButton.getPressed()) {
 				var aCurrentDisplayedRoutes = oViewModel.getProperty("/GeoJsonLayersData");
 				var aRoutesDisplay = aCurrentDisplayedRoutes.filter(function(oRoute) {
-					return oRoute.id !== oResourceHierachyObject.NodeId;
+					return oRoute.path !== oResourceHierachyContext.getPath();
 				});
 				oViewModel.setProperty("/GeoJsonLayersData", aRoutesDisplay);
 				return;
@@ -780,7 +783,7 @@ sap.ui.define([
 				oLayer.color = "#" + Math.floor(Math.random()*16777215).toString(16); // generate random color
 				
 				// set id for a geojson object to be able to remove the object when the 'show route' toggle button is unpressed
-				oLayer.id = oResourceHierachyContext.getObject().NodeId;
+				oLayer.path = oResourceHierachyContext.getPath();
 				
 				// we don't need to set property `/GeoJsonLayersData` explicitly 
 				// as variable `aGeoJsonLayersData` stores reference to the same object
@@ -793,8 +796,25 @@ sap.ui.define([
 			.catch(function(oError) {
 				oViewModel.setProperty("/mapSettings/busy", false);
 				Log.error(oError);
-				oShowRouteButton.setPressed && oShowRouteButton.setPressed(false);
+				if(oShowRouteButton.setPressed && typeof oShowRouteButton.setPressed === "function") {
+					oShowRouteButton.setPressed(false);
+				}
 			}.bind(this));
+		},
+		
+		/**
+		 * Handle `clearRoutes` event in the `Map` channel
+		 * Cleares data related to displayed routes
+		 */
+		onClearRoutes: function() {
+			var oViewModel = this.getModel("viewModel");
+			var aCurrentDisplayedRoutes = oViewModel.getProperty("/GeoJsonLayersData");
+			aCurrentDisplayedRoutes.forEach(function(oRoute) {
+				if(this.getModel().getProperty(oRoute.path)) {
+					this.getModel().setProperty(oRoute.path + "/IsRouteDisplayed", false);
+				}
+			}.bind(this))
+			this.getModel("viewModel").setProperty("/GeoJsonLayersData", []);
 		}
 	});
 });

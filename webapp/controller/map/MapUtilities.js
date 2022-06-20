@@ -15,6 +15,7 @@ sap.ui.define([
 		init: function () {
 			// alert("Nav Action Initiated..");
 		},
+		
 		/**
 		 * creates and returns a hidden div at the same position 
 		 * as the Spot on the Canvas rightclicked by user
@@ -24,18 +25,26 @@ sap.ui.define([
 		 * @param {object} oSpotPosition - x and y values of clicked position on the geo map
 		 * @ returns the div element
 		 */
-		_gethiddenDivPosition: function (oSpotPosition) {
-			var div = document.createElement("div");
-			div.style.position = "absolute";
-			div.style.top = oSpotPosition[1] + "px";
-			div.style.left = (parseInt(oSpotPosition[0]) + 10) + "px";
-			// add as a child to the GeoMap 
-			// this get by id
-			var oGeoMapContainer = this.oView.byId("idMapContainer");
-			var oGeoMapContainerDOM = oGeoMapContainer.getDomRef();
-			oGeoMapContainerDOM.appendChild(div);
+		_gethiddenDivPosition: function (oSpotPosition, oView) {
+			var div = document.getElementById("idDivRightClick");
+			//Condition check if div is availabel then change only the position 
+			if (div) {
+				div.style.top = oSpotPosition[1] + "px";
+				div.style.left = (parseInt(oSpotPosition[0]) + 10) + "px";
+			} else {
+				// Creating new div in case div is getting created first time
+				div = document.createElement("div");
+				div.id = "idDivRightClick";
+				div.style.position = "absolute";
+				div.style.top = oSpotPosition[1] + "px";
+				div.style.left = (parseInt(oSpotPosition[0]) + 10) + "px";
+				var oGeoMapContainer = oView.byId("idMapContainer");
+				var oGeoMapContainerDOM = oGeoMapContainer.getDomRef();
+				oGeoMapContainerDOM.appendChild(div);
+			}
 			return div;
 		},
+		
 		/**
 		 * Return resource filters on selected resources
 		 * @param aSelectedResources {Array} Selected Resources
