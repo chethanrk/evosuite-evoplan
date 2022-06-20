@@ -88,7 +88,7 @@
 				<table:Column visible="{viewModel>/resourceTreeShowRouteColumn}" id="idResourceColumnShowRoot" label="ROUTE" name="ROUTE" width="3rem">
 					<table:template>
 						<ToggleButton visible="{ path: 'NodeType', formatter: '.formatter.formatDisplayRouteVisibility' }" press="onShowRoutePress"
-							icon="{user>/DEFAULT_MAP_SHOW_ROUTE_ICON}" tooltip="{i18n>xtit.showRoute}"/>
+							icon="{user>/DEFAULT_MAP_SHOW_ROUTE_ICON}" tooltip="{i18n>xtit.showRoute}" pressed="{IsRouteDisplayed}"/>
 					</table:template>
 				</table:Column>
 				
