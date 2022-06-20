@@ -85,20 +85,46 @@ sap.ui.define([
 		 * Get Date filters from a ResourceHierarchy instance.
 		 * The method returns filters from 0:00 of StartDate till 23:59 of EndDate
 		 * @param {object} oResourceHierarchy - ResourceHierarchy instance. It supposed that the object represents daily or weekly node.
+		 * @param {Date} [oSelectedDate] - date to get assignments for. If not specified, StartDate and EndDate of oResourceHierarchy are used.
 		 * @return {sap.ui.model.Filter[]} - array of filters
 		 */
-		getAssignmentsFiltersWithinDateFrame: function(oResourceHierarchy) {
+		getAssignmentsFiltersWithinDateFrame: function(oResourceHierarchy, oSelectedDate) {
 			
-			//TODO: update filters after backend delivered time filters
+			var fnGetMsSinceMidnight = function(oDate) {
+				return oDate.getUTCHours() * 3600000 + oDate.getUTCMinutes() * 60000 + oDate.getUTCSeconds() * 1000 + oDate.getUTCMilliseconds();
+			};
+			
 			var aFilters = [];
-			var oStartDate = _.cloneDeep(oResourceHierarchy.StartDate);
-			oStartDate.setHours(0, 0, 0, 0);
-			oStartDate = moment(oStartDate).add(oResourceHierarchy.StartTime).toDate();
-			var oEndDate = moment(oResourceHierarchy.EndDate).add(oResourceHierarchy.EndTime).toDate();
+			var oDateFrom,
+				oDateTo;
 			
-			aFilters.push(new Filter("DateFrom", FilterOperator.GE, oStartDate));
-			aFilters.push(new Filter("DateTo", FilterOperator.LE, oEndDate));
-			aFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, oResourceHierarchy.ResourceGuid));
+			if(oSelectedDate) {
+				oDateFrom = _.cloneDeep(oSelectedDate);
+				oDateTo = _.cloneDeep(oSelectedDate);
+			} else {
+				oDateFrom = _.cloneDeep(oResourceHierarchy.StartDate);
+				oDateTo = _.cloneDeep(oResourceHierarchy.EndDate);
+			}
+			
+			oDateFrom.setHours(0, 0, 0, 0);
+			oDateTo.setHours(23, 59, 59, 999);
+			
+			var oTimeFrom = {
+				__edmtype: "Edm.Time",
+				ms: fnGetMsSinceMidnight(oDateFrom)
+			};
+			var oTimeTo = {
+				__edmtype: "Edm.Time",
+				ms: fnGetMsSinceMidnight(oDateTo)
+			};
+			
+			aFilters.push(new Filter("DateFrom", FilterOperator.GE, oDateFrom));
+			aFilters.push(new Filter("DateTo", FilterOperator.LE, oDateTo));
+			aFilters.push(new Filter("TimeFrom", FilterOperator.GE, oTimeFrom));
+			aFilters.push(new Filter("TimeTo", FilterOperator.LE, oTimeTo));
+			aFilters.push(new Filter("ObjectId", FilterOperator.EQ, oResourceHierarchy.ResourceGuid + "//" + oResourceHierarchy.ResourceGroupGuid));
+			// aFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, oResourceHierarchy.ResourceGuid));
+			
 			return aFilters;
 		}
 	});

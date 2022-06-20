@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/core/Fragment",
 	"sap/base/Log","com/evorait/evoplan/model/Constants",
-	"com/evorait/evoplan/controller/map/MapUtilities",
+	"com/evorait/evoplan/controller/map/MapUtilities"
 ], function (Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController, ResourceTreeFilterBar,
 	MessageToast, MessageBox, Fragment, Log, Constants, MapUtilities) {
 	"use strict";
