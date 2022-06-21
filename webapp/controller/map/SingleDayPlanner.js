@@ -129,6 +129,7 @@ sap.ui.define([
 				this._loadAssignmentsForDay(oTreeData);
 			}
 			this._loadLegendData();
+			this.oSinglePlanningModel.setProperty("/overallTravelTime", 0);
 			this.oPlannerDialog.open();
 		},
 
