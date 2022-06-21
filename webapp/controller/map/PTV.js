@@ -53,11 +53,6 @@ sap.ui.define([
 					final: false,
 					overrideExecution: OverrideExecution.Instead
 				},
-				updateAssignmentsWithTravelTime: {
-					public: true,
-					final: false,
-					overrideExecution: OverrideExecution.Instead
-				},
 				calculateRoute: {
 					public: true,
 					final: false,
@@ -67,7 +62,7 @@ sap.ui.define([
 					public: true,
 					final: false,
 					overrideExecution: OverrideExecution.Instead
-				},
+				}
 			}
 		},
 
@@ -131,40 +126,38 @@ sap.ui.define([
 		},
 
 		/**
-		 * @return {{Promise<Assignment[]>} a new array that includes provided assignments with updated TRAVEL_TIME and TRAVEL_BACK_TIME properties.
+		 * @return {{Promise<Assignment[]>} a new array that includes provided assignments with the following updated properties: 
+		 * - TRAVEL_TIME 
+		 * - TRAVEL_BACK_TIME
+		 * - DateFrom
+		 * - DateTo
+		 * - DISTANCE
+		 * - DISTANCE_BACK
 		 * The properties updated according to results returned by PTV `calculateRoute` function.
-		 */
-		updateAssignmentsWithTravelTime: function(oResource, aAssignments, oDateForRoute) {
-			return this.calculateTravelTimeForMultipleAssignments(oResource, aAssignments, oDateForRoute).then(function(oResponse) {
-				return this._updateAssignmentsWithTravelTime(aAssignments, oResponse);
-			}.bind(this));
-		},
-
-		/**
-		 * TODO: docs
 		 */
 		calculateRoute: function(oResource, aAssignments, oDateForRoute) {
 			return this.calculateTravelTimeForMultipleAssignments(oResource, aAssignments, oDateForRoute).then(function(oResponse) {
 				if(!this._isCalculatedRouteValid(oResponse)) {
 					return aAssignments;
 				}
-				var aAssignmentsWithTravelTime = this._updateAssignmentsWithTravelTime(aAssignments, oResponse);
+				var aAssignmentsWithTravelTime = this._updateAssignmentsWithTravelTimeAndDistance(aAssignments, oResponse);
 				if(oResponse.data.events && oResponse.data.events.length) {
 					var aTourEvents = oResponse.data.events;
 					var nEventIndex = 1; // start with 1 because the aTourEvents[0] is corresponding to the resource home location
 					
+					// update DateFrom and DateTo for assignments
 					aAssignmentsWithTravelTime.forEach(function(oAssignment) {
 						if(oAssignment.FIXED_APPOINTMENT) {
 							return;
 						}
 						nEventIndex = this._getServiceEventIndexForAssignment(oAssignment, aTourEvents);
-						var oServiceEvent = aTourEvents[nEventIndex]
+						var oServiceEvent = aTourEvents[nEventIndex];
 						
 						var oStartDate = moment(oServiceEvent.startsAt);
 						oAssignment.DateFrom = oStartDate.toDate();
 						
 						var oEndDate = oStartDate.clone();
-						oEndDate.add(oAssignment.Effort, 'hours');
+						oEndDate.add(oAssignment.Effort, "hours");
 						oAssignment.DateTo = oEndDate.toDate();
 					}.bind(this));
 				}
@@ -195,7 +188,6 @@ sap.ui.define([
 					this._isOptimizedRouteValid(oTourResponse, aAssignments); // don't interrupt current function execution to show, what's plannable
 
 					var aUpdatedAssignments = _.cloneDeep(aAssignments);
-					var nOverallEffort = 0;
 					if (oTourResponse.data.tourReports && oTourResponse.data.tourReports.length === 1) {
 						var aTourEvents = oTourResponse.data.tourReports[0].tourEvents;
 						var aLegs = oTourResponse.data.tourReports[0].legReports;
@@ -216,7 +208,7 @@ sap.ui.define([
 									var oStartDate = moment(aTourEvents[nEventIndex].startTime);
 									aUpdatedAssignments[nAssIndex].DateFrom = oStartDate.toDate();
 									var oEndDate = oStartDate.clone();
-									oEndDate.add(aUpdatedAssignments[nAssIndex].Effort, 'hours');
+									oEndDate.add(aUpdatedAssignments[nAssIndex].Effort, "hours");
 									aUpdatedAssignments[nAssIndex].DateTo = oEndDate.toDate();
 								}
 								
@@ -301,7 +293,7 @@ sap.ui.define([
 						$type: "StartDurationInterval",
 						start: next.DateFrom,
 						duration: 1
-					}
+					};
 					oPoint.tourStopOptions.openingIntervals.push(oInterval);
 				}
 				prev.push(oPoint);
@@ -483,7 +475,7 @@ sap.ui.define([
 						$type: "StartDurationInterval",
 						start: oAssignment.DateFrom,
 						duration: 1
-					}
+					};
 					oLocation.openingIntervals.push(oInterval);
 				}
 
@@ -547,20 +539,24 @@ sap.ui.define([
 		},
 		
 		/**
-		 * TODO: docs
+		 * Return corresponding leg for a needed driving event.
 		 * Works ONLY with TourResponse:
 		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Content/API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.ToursResponse
+		 * @param {number} nEventId - sequence number of the needed driving event (in the returned by PTV events array)
+		 * @param {LegReport[]} aLegs - array or returned by PTV Legs. See the documentation for the data type:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.LegReport
+		 * @return {LegReport} Corresponding leg.
 		 */
 		_getCorrespondingLeg: function(nEventId, aLegs) {
 			return _.find(aLegs, function(oLeg) {
 				return nEventId === oLeg.startTourEventIndex;
-			})
+			});
 		},
 
 		/**
-		 * Sends a POST request to PTV. In case of error returned from service, displays the message within sap.m.MessageBox
-		 * @param {string} sUrl - Url to send the request to
-		 * @param {Object} oRequestBody - The request body
+		 * Sends a POST request to PTV. In case of error returned from service, displays the message within sap.m.MessageBox.
+		 * @param {string} sUrl - Url to send the request to.
+		 * @param {Object} oRequestBody - The request body.
 		 * @return @return {Promise<Object>} Promise object represents the response from Map Provider service.
 		 * Documentation for the PTV ResponseBase type:
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/service.html#com.ptvgroup.xserver.service.ResponseBase
@@ -578,11 +574,13 @@ sap.ui.define([
 		},
 		
 		/**
-		 * Searches for a corresponding driving event in an array of Tour events
-		 * @param {TourEvent[]} aEvents - array of returned from PTV Tour events. See the documentation:
+		 * Searches for a corresponding driving event in an array of Tour events.
+		 * Works ONLY with TourResponse:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Content/API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.ToursResponse
+		 * @param {com.ptvgroup.xserver.xtour.TourEvent[]} aEvents - array of returned from PTV Tour events. See the documentation:
 		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.TourEvent
 		 * @param {Number} nCurrentIndex - index of the service event, for which driving event should be found.
-		 * @return {TourEvent} the corresponding driving event.
+		 * @return {com.ptvgroup.xserver.xtour.TourEvent} the corresponding driving event.
 		 * @throws {Error} in case the driving event wasn't found.
 		 */
 		_getPreviousDrivingEventIndex: function(aEvents, nCurrentIndex) {
@@ -598,9 +596,14 @@ sap.ui.define([
 		},
 		
 		/**
-		 * TODO: docs
+		 * Calculate travel time and distance for a particular assignment instance based on provided by PTV response.
 		 * Works ONLY with RouteResponse:
 		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.RouteResponse
+		 * @param {com.evorait.evoplan.Assignment} oAssignment - Assignment object for which the calculation should be done.
+		 * @param {com.ptvgroup.xserver.xroute.TourEvent[]} aEvents - Array of returned by PTV events. See the data type documentation:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.TourEvent
+		 * @param {boolean} - if travel time and distance should be calculated for a way home (after the last assignment).
+		 * @return {TimeDistance} js object containing calculated time and distance.
 		 */
 		_getTravelTimeAndDistanceForAssignment: function(oAssignment, aEvents, bTravelHome) {
 			var nCorrespondingEventIndex = this._getServiceEventIndexForAssignment(oAssignment, aEvents);
@@ -638,9 +641,13 @@ sap.ui.define([
 		},
 		
 		/**
-		 * TODO: docs
+		 * Get index of the corresponding service event.
 		 * Works ONLY with RouteResponse:
 		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.RouteResponse
+		 * @param {com.evorait.evoplan.Assignment} oAssignment - Assignment object, for which the service event should be found.
+		 * @param {com.ptvgroup.xserver.xroute.TourEvent[]} aEvents - Array of returned by PTV events. See the data type documentation:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.TourEvent
+		 * @return {number} - index of the corresponding service event.
 		 */
 		_getServiceEventIndexForAssignment: function(oAssignment, aEvents) {
 			return _.findIndex(aEvents, function(event) {
@@ -650,8 +657,15 @@ sap.ui.define([
 			});
 		},
 		
-		// TODO: docs
-		_updateAssignmentsWithTravelTime: function(aAssignments, oPTVResponse) {
+		/**
+		 * Update provided Assignments with travel time and distance returned from PTV.
+		 * Used in the route calculation.
+		 * @param {com.evorait.evoplan.Assignment[]} aAssignments - array of assignments to update.
+		 * @param {com.ptvgroup.xserver.xroute.RouteResponse} oPTVResponse - response from PTV for calculateRoute operation. See the data type documentation:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.RouteResponse
+		 * @return {com.evorait.evoplan.Assignment[]} array of updated assignments.
+		 */
+		_updateAssignmentsWithTravelTimeAndDistance: function(aAssignments, oPTVResponse) {
 			var aUpdatedAssignments = _.cloneDeep(aAssignments);
 			// sort to get the same sequence, as was used in _calculateRoute
 			aUpdatedAssignments.sort(function(a,b) {
@@ -659,7 +673,6 @@ sap.ui.define([
 			});
 			if(oPTVResponse.data.legs && oPTVResponse.data.events && oPTVResponse.data.events.length) {
 				var aTourEvents = oPTVResponse.data.events;
-				var aLegs = oPTVResponse.data.legs;
 				
 				for(var nAssIndex = 0; nAssIndex < aUpdatedAssignments.length; nAssIndex++) { // skip the last assignment
 					var oCalculated = this._getTravelTimeAndDistanceForAssignment(aUpdatedAssignments[nAssIndex], aTourEvents);
@@ -672,21 +685,22 @@ sap.ui.define([
 					
 				}
 			}
-			var nLastLegIndex = oPTVResponse.data.legs.length - 1;
 			var nLastAssignmentIndex = aUpdatedAssignments.length - 1;
 			
-			//assign TRAVEL_BACK_TIME for the last assignment
-			// var sTravelHomeTime = Math.ceil((oPTVResponse.data.legs[nLastLegIndex].travelTime - 
-			// 	aUpdatedAssignments[nLastAssignmentIndex].Effort * 3600) / 60).toString();
-			
+			// assign time and distance for travelling home
 			var oCalculatedHome = this._getTravelTimeAndDistanceForAssignment(aUpdatedAssignments[nLastAssignmentIndex], aTourEvents, true);
-			var nTravelHomeTime = oCalculatedHome.time;
 			aUpdatedAssignments[nLastAssignmentIndex].TRAVEL_BACK_TIME = oCalculatedHome.time;
 			aUpdatedAssignments[nLastAssignmentIndex].DISTANCE_BACK = oCalculatedHome.distance;
 			return aUpdatedAssignments;
 		},
 		
-		// TODO: docs
+		/**
+		 * Check if the calculated route is within working hours and if all the fixed appointments have been met.
+		 * Used in the route calculation.
+		 * @param {com.ptvgroup.xserver.xroute.RouteResponse} oPTVResponse - response from PTV for calculateRoute operation. See the data type documentation:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xroute.html#com.ptvgroup.xserver.xroute.RouteResponse
+		 * @return {boolean} if the route is valid.
+		 */
 		_isCalculatedRouteValid: function(oResponse) {
 			var oWorkingDayEnd = new Date(oResponse.data.tourReport.startTime);
 			var oRouteEnd = new Date(oResponse.data.tourReport.endTime);
@@ -705,19 +719,25 @@ sap.ui.define([
 					MessageBox.error(sErrorMessage);
 					bValid = false;
 				}
-			})
+			});
 			
 			return bValid;
 		},
 		
-		// TODO: docs
+		/**
+		 * Check if the optimized route is within working hours and if all the fixed appointments have been met.
+		 * Used in the route optimization.
+		 * @param {com.ptvgroup.xserver.xtour.ToursResponse} oPTVResponse - response from PTV for planTours operation. See the data type documentation:
+		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.ToursResponse
+		 * @return {boolean} if the route is valid.
+		 */
 		_isOptimizedRouteValid: function(oResponse, aAssignments) {
 			var bValid = true;
 			var aNotPlannedAssignments = [];
 			if(oResponse.data.orderIdsNotPlanned) {
 				oResponse.data.orderIdsNotPlanned.forEach(function(sAssGuid) {
 					var oNotPlannedAssignment = _.find(aAssignments, function(oAssignment) {
-						return sAssGuid = oAssignment.Guid;
+						return sAssGuid === oAssignment.Guid;
 					});
 					aNotPlannedAssignments.push(oNotPlannedAssignment.ORDERID);
 				});
@@ -757,6 +777,12 @@ sap.ui.define([
 		/**
 		 * @typedef {Object} Assignment
 		 * The type includes many properties, see the `com.evorait.evoplan.Assignment` in EvoPlan metadata
+		 */
+		 
+		 /**
+		 * @typedef {Object} TimeDistance
+		 * @property {number} time - Travel time
+		 * @property {number} distance - Travel distance
 		 */
 
 		/**

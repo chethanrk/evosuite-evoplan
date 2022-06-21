@@ -73,17 +73,6 @@ sap.ui.define([
 		},
 		
 		/**
-		 * Updates Assignment list with travel times according to sequence provided in parameters.
-		 * @abstract
-		 * @param {Waypoint} oResource - A Resource object that defines home address.
-		 * @param {Waypoint} aAssignments - Array of assignments to be visited.
-		 * @param {Date} oDateForRoute - Date for which the route calculation should be performed
-		 * @return {Promise<Assignment[]>} Promise object represents sorted by date array of updated Assignments.
-		 */
-		updateAssignmentsWithTravelTime: function(oResource, aAssignments, oDateForRoute) {
-			Log.error("The 'updateAssignmentsWithTravelTime' method is not implemented!" );
-		},
-		/**
 		 * Calcualtes travel times for Assignments, updates all the corresponding properties.
 		 * Doesn't change assignments sequence.
 		 * @abstract

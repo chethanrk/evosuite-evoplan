@@ -451,7 +451,6 @@ sap.ui.define([
 							oModel.setProperty(oItem.sModelPath + "/DateFrom", oItem.DateFrom);
 							oModel.setProperty(oItem.sModelPath + "/TRAVEL_TIME", oItem.TRAVEL_TIME);
 							oModel.setProperty(oItem.sModelPath + "/TRAVEL_BACK_TIME", oItem.TRAVEL_BACK_TIME);
-							// TODO: write real distance values to the properties
 							oModel.setProperty(oItem.sModelPath + "/DISTANCE", oItem.DISTANCE);
 							oModel.setProperty(oItem.sModelPath + "/DISTANCE_BACK", oItem.DISTANCE_BACK);
 
