@@ -21,37 +21,42 @@ sap.ui.define([
 				open: {
 					public: true,
 					final: false,
-					overrideExecution: OverrideExecution.After
+					overrideExecution: OverrideExecution.Instead
+				},
+				onOpen: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
 				},
 				onPressClose: {
 					public: true,
 					final: false,
-					overrideExecution: OverrideExecution.Before
+					overrideExecution: OverrideExecution.Instead
 				},
 				onChangeStartDate: {
 					public: true,
 					final: false,
-					overrideExecution: OverrideExecution.After
+					overrideExecution: OverrideExecution.Instead
 				},
 				onDropAppointment: {
 					public: true,
 					final: false,
-					overrideExecution: OverrideExecution.Before
+					overrideExecution: OverrideExecution.Instead
 				},
 				onPressSaveAppointments: {
 					public: true,
 					final: false,
-					overrideExecution: OverrideExecution.Before
+					overrideExecution: OverrideExecution.Instead
 				},
 				onPressCalculateRoute: {
 					public: true,
 					final: false,
-					overrideExecution: OverrideExecution.After
+					overrideExecution: OverrideExecution.Instead
 				},
 				onPressOptimizeRoute: {
 					public: true,
 					final: false,
-					overrideExecution: OverrideExecution.After
+					overrideExecution: OverrideExecution.Instead
 				}
 			}
 		},

@@ -34,38 +34,38 @@ sap.ui.define([
 			// in general methods that start with "_" are private
 			methods: {
 				constructor: {
-					"public": true,
-					"final": false,
+					public: true,
+					final: false,
 					overrideExecution: OverrideExecution.Instead	
 				},
 				getRoutePolyline: {
-					"public": true,
-					"final": false,
+					public: true,
+					final: false,
 					overrideExecution: OverrideExecution.Instead
 				},
 				calculateSingleTravelTime: {
-					"public": true,
-					"final": false,
+					public: true,
+					final: false,
 					overrideExecution: OverrideExecution.Instead
 				},
 				calculateTravelTimeForMultipleAssignments: {
-					"public": true,
-					"final": false,
+					public: true,
+					final: false,
 					overrideExecution: OverrideExecution.Instead
 				},
 				updateAssignmentsWithTravelTime: {
-					"public": true,
-					"final": false,
+					public: true,
+					final: false,
 					overrideExecution: OverrideExecution.Instead
 				},
 				calculateRoute: {
-					"public": true,
-					"final": false,
+					public: true,
+					final: false,
 					overrideExecution: OverrideExecution.Instead
 				},
 				optimizeRoute: {
-					"public": true,
-					"final": false,
+					public: true,
+					final: false,
 					overrideExecution: OverrideExecution.Instead
 				},
 			}

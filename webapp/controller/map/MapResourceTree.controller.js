@@ -13,12 +13,141 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/core/Fragment",
 	"sap/base/Log","com/evorait/evoplan/model/Constants",
-	"com/evorait/evoplan/controller/map/MapUtilities"
+	"com/evorait/evoplan/controller/map/MapUtilities",
+	"sap/ui/core/mvc/OverrideExecution",
 ], function (Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController, ResourceTreeFilterBar,
-	MessageToast, MessageBox, Fragment, Log, Constants, MapUtilities) {
+	MessageToast, MessageBox, Fragment, Log, Constants, MapUtilities, OverrideExecution) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.map.MapResourceTree", {
+		
+		metadata: {
+			// extension can declare the public methods
+			// in general methods that start with "_" are private
+			// lyfecycle methods are not mentioned in methods list. They always have dafault properties
+			methods: {
+				onBusyStateChanged: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onChangeSelectResource: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onPressShowPlanningCal: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onPressAssignmentLink: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onPressReassign: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onPressUnassign: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onBeforeRebindTable: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onDragStart: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onDropOnResource: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				resetChanges: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onSelectCapacity: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				openCapacitivePopup: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onCreateAbsence: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onClickExpandCollapse: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onToggleOpenState: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				handleCalendarSelect: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onRoutePress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onCloseDialog: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				removeRouteDataFlag: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onResourceIconPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onShowAssignDemandPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onShowRoutePressPopover: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onShowRoutePress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onClearRoutes: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				}
+			}
+		},
 
 		formatter: formatter,
 
@@ -71,26 +200,6 @@ sap.ui.define([
 			oRouter.attachRouteMatched(this._routeMatched, this);
 			
 			this.oMapUtilities = new MapUtilities();
-		},
-
-		_routeMatched: function (oEvent) {
-			var oParameters = oEvent.getParameters(),
-				sRouteName = oParameters.name; // route name
-			if (sRouteName === "map") {
-				this._mParameters = {
-					bFromMap: true
-				};
-				var sViewSelectedKey = this.getView().byId("idTimeView").getSelectedKey();
-				this.getView().getModel("viewModel").setProperty("/remainingWork", false);
-				if (sViewSelectedKey === "TIMENONE") {
-					this.getView().getModel("viewModel").setProperty("/selectedHierarchyView", sViewSelectedKey);
-					this.getView().getModel("viewModel").setProperty("/capacityPlanning", false);
-				} else {
-					this.getView().getModel("viewModel").setProperty("/selectedHierarchyView", sViewSelectedKey);
-				}
-				this.getModel("viewModel").setProperty("/resourceTreeShowRouteColumn", true);
-			}
-
 		},
 
 		/**
@@ -151,21 +260,6 @@ sap.ui.define([
 				this.byId("assignedDemands").setEnabled(true);
 			} else {
 				this.byId("assignedDemands").setEnabled(false);
-			}
-		},
-		_selectionResourceTree: function (oParams, oNewNode) {
-			// Disable the Manage absence button when more than one resources are selected
-			// Disble the button for the selection on Group and Pool Node.
-			var oSelectedData = this.getModel().getProperty(this.selectedResources[0]);
-			if (oParams.selected && oNewNode.NodeType === "RESOURCE" && oNewNode.ResourceGuid !== "" && oNewNode.ResourceGroupGuid !== "") {
-				this.byId("idButtonCreUA").setEnabled(true);
-				this.byId("showRoute").setEnabled(true);
-			} else if (oSelectedData.NodeType === "RESOURCE" && oSelectedData.ResourceGuid !== "" && oSelectedData.ResourceGroupGuid !== "") {
-				this.byId("idButtonCreUA").setEnabled(true);
-				this.byId("showRoute").setEnabled(true);
-			} else {
-				this.byId("idButtonCreUA").setEnabled(false);
-				this.byId("showRoute").setEnabled(false);
 			}
 		},
 
@@ -247,35 +341,7 @@ sap.ui.define([
 			this._eventBus.unsubscribe("Map", "clearRoutes", this.onClearRoutes, this);
 			this._eventBus.unsubscribe("Map", "onShowRoutePressPopover", this.onShowRoutePressPopover, this);
 		},
-
-		/* =========================================================== */
-		/* internal methods                                            */
-		/* =========================================================== */
-
-		/**
-		 * configure tree table
-		 * @param oDataTable
-		 * @private
-		 */
-		_configureDataTable: function (oDataTable) {
-			oDataTable.setEnableBusyIndicator(true);
-			oDataTable.setSelectionMode("None");
-			oDataTable.setColumnHeaderVisible(false);
-			oDataTable.setEnableCellFilter(false);
-			oDataTable.setEnableColumnReordering(false);
-			oDataTable.setEditable(false);
-			oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
-			oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
-
-		},
-
-		/**
-		 * triggers request with all setted filters
-		 * @private
-		 */
-		_triggerFilterSearch: function () {
-			this._oDroppableTable.rebindTable();
-		},
+		
 		/**
 		 * On drag of assignment, get Assignment data to Assignment model
 		 * @author Sagar since 2205		 * 
@@ -367,29 +433,7 @@ sap.ui.define([
 				}
 			}
 		},
-		/**
-		 * Method will refresh the data of tree by restoring its state
-		 *
-		 * @Author Rahul
-		 * @version 2.0.4
-		 * @return
-		 * @private
-		 */
-		_triggerRefreshTree: function () {
-			// this.pIsFilterBarInitalized.then(function () {
-			var oTreeTable = this._oDataTable,
-				oTreeBinding = oTreeTable.getBinding("rows");
-
-			//reset the changes
-			this.resetChanges();
-			if (oTreeBinding && !this._bFirsrTime) {
-				this.mTreeState = this._getTreeState();
-				this._oDroppableTable.rebindTable(); //oTreeBinding.refresh();
-			}
-			this._bFirsrTime = false;
-			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", false);
-			// }.bind(this));
-		},
+		
 		/**
 		 * Resets the selected resource if selected
 		 */
@@ -409,6 +453,7 @@ sap.ui.define([
 			this.byId("showRoute").setEnabled(false);
 			this.byId("assignedDemands").setEnabled(false);
 		},
+		
 		/**
 		 * On select of capacitive checkbox the adjusting splitter length
 		 * @param oEvent checkbox event
@@ -423,6 +468,7 @@ sap.ui.define([
 				oViewModel.setProperty("/splitterDivider", "31%");
 			}
 		},
+		
 		/**
 		 * Open's popover containing capacitive assignments
 		 * @param oEvent
@@ -431,6 +477,7 @@ sap.ui.define([
 			var oComponent = this.getOwnerComponent();
 			oComponent.capacitiveAssignments.open(this.getView(), oEvent, this._mParameters);
 		},
+		
 		/**
 		 * on press, open the dialog to create an unavailability for selected resources
 		 * @param oEvent
@@ -445,6 +492,7 @@ sap.ui.define([
 				this.showMessageToast(this.getResourceBundle().getText("ymsg.selectResoure"));
 			}
 		},
+		
 		/**
 		 * On click on expand the tree nodes gets expand to level 1
 		 * On click on collapse all the tree nodes will be collapsed to root.
@@ -460,59 +508,11 @@ sap.ui.define([
 				this._oDataTable.collapseAll();
 			}
 		},
-
-		/**
-		 * map the current tree state with expand and collapse on each level
-		 * before tree is doing a new GET request
-		 * @private
-		 */
-		_getTreeState: function () {
-			var oBindings = this._oDataTable.getBinding(),
-				aNodes = oBindings.getNodes(),
-				oCollection = {};
-
-			for (var i = 0; i < aNodes.length; i++) {
-				oCollection[aNodes[i].key] = {
-					path: aNodes[i].key,
-					level: aNodes[i].level,
-					nodeState: aNodes[i].nodeState
-				};
-			}
-			return oCollection;
-		},
-
-		/**
-		 * After Resource tree GET request restore the expand/collapse state
-		 * from before refresh
-		 * @private
-		 */
-		_restoreTreeState: function () {
-			var oBindings = this._oDataTable.getBinding(),
-				aNodes = oBindings.getNodes(),
-				expandIdx = [],
-				collapseIdx = [];
-
-			for (var j = 0; j < aNodes.length; j++) {
-				if (this.mTreeState[aNodes[j].key] && !aNodes[j].nodeState.isLeaf) {
-					if (!aNodes[j].nodeState.expanded && this.mTreeState[aNodes[j].key].nodeState.expanded) {
-						expandIdx.push(j);
-						delete this.mTreeState[aNodes[j].key];
-					} else if (!aNodes[j].nodeState.collapsed && this.mTreeState[aNodes[j].key].nodeState.collapsed) {
-						collapseIdx.push(j);
-					}
-				}
-			}
-			if (expandIdx.length > 0) {
-				this._oDataTable.expand(expandIdx);
-			} else if (collapseIdx.length > 0) {
-				this._oDataTable.collapse(collapseIdx);
-			} else {
-				this.mTreeState = {};
-			}
-		},
+		
 		onToggleOpenState: function () {
 			this.mTreeState = {};
 		},
+		
 		/**
 		 * method called on selection of date
 		 * @Author: Pranav
@@ -522,6 +522,7 @@ sap.ui.define([
 			this.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", true);
 			this._getSelectedRoute(oSelectedDate);
 		},
+		
 		/**
 		 * method called to open the Route Date Selection Popover
 		 * @Author: Pranav
@@ -547,6 +548,7 @@ sap.ui.define([
 				this.byId("DRSMap").removeAllSelectedDates();
 			}
 		},
+		
 		/**
 		 * method called to close the date range fragment used for route creation
 		 * @Author: Pranav
@@ -554,6 +556,7 @@ sap.ui.define([
 		onCloseDialog: function (oEvent) {
 			this._oPopover.close();
 		},
+		
 		/**
 		 * method called after close the date range fragment used for route creation to remove flag
 		 * @Author: Rakesh
@@ -561,105 +564,7 @@ sap.ui.define([
 		removeRouteDataFlag: function (oEvent) {
 			// this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false);
 		},
-		/**
-		 * method for getting selected route for selected date
-		 * @Author: Pranav
-		 */
-		_getSelectedRoute: function (oSelectedDate) {
-			//Refresh the Map
-			var oViewModel = this.getModel("viewModel"),
-				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
-			if (aSelectedDemands.length > 0) {
-				this._eventBus.publish("BaseController", "refreshMapView", {});
-				oViewModel.setProperty("/mapSettings/routeData", []);
-				oViewModel.setProperty("/mapSettings/selectedDemands", []);
-			}
-			//Filter Logic for Map
-			var oFilter = new Filter(this._getResourceFilters(this.selectedResources, oSelectedDate), true);
-			oViewModel.setProperty("/mapSettings/busy", true);
-			this.getOwnerComponent()._getData("/AssignmentSet", [oFilter]).then(function (result) {
-
-				var aData = result.results;
-				//Route Creation in Map
-				this._routeCreationMap(aData);
-
-			}.bind(this));
-		},
-		/**
-		 * Return resource filters on selected resources
-		 * @param aSelectedResources {Array} Selected Resources
-		 * @return aResourceFilters Filters
-		 * @Author: Pranav
-		 */
-		_getResourceFilters: function (aSelectedResources, oSelectedDate) {
-			var aResources = [],
-				oModel = this.getView().getModel();
-			var aFilters = [];
-
-			for (var i = 0; i < aSelectedResources.length; i++) {
-				var obj = oModel.getProperty(aSelectedResources[i]);
-				var sCurrentHierarchyViewType = this.getView().getModel("viewModel").getProperty("/selectedHierarchyView");
-				if (obj.NodeType === "RESOURCE") {
-					if (obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
-						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
-					} else {
-						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid + "//X"));
-					}
-				} else if (obj.NodeType === "RES_GROUP") {
-					aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
-				} else if (obj.NodeType === sCurrentHierarchyViewType) {
-					aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
-				}
-			}
-
-			if (aResources.length > 0) {
-				aFilters.push(new Filter({
-					filters: aResources,
-					and: false
-				}));
-				if (oSelectedDate) {
-					aFilters.push(new Filter("DateTo", FilterOperator.GE, oSelectedDate));
-					aFilters.push(new Filter("DateFrom", FilterOperator.LE, oSelectedDate.setHours(23, 59, 59, 999)));
-				} else {
-					aFilters.push(new Filter("DateTo", FilterOperator.GE, this.byId("resourceTreeFilterBar").getControlByKey("StartDate").getDateValue()));
-					aFilters.push(new Filter("DateFrom", FilterOperator.LE, this.byId("resourceTreeFilterBar").getControlByKey("EndDate").getDateValue()));
-				}
-
-			}
-			return aFilters;
-		},
-		/**
-		 * Method for route creation in Map for selected Date
-		 * @Author: Pranav
-		 */
-		_routeCreationMap: function (aData) {
-			var aMapLocations = [];
-			var oViewModel = this.getModel("viewModel"),
-				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
-			aData.forEach(function (entry) {
-				var sSelectedDemandPath = "/DemandSet('" + entry.DemandGuid + "')";
-				aSelectedDemands.push(sSelectedDemandPath);
-			});
-			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
-
-			for (var index = 0; index < aData.length - 1 && aData.length > 1; index++) {
-				var data = {
-					sLong: aData[index].LONGITUDE,
-					sLat: aData[index].LATITUDE,
-					dLong: aData[index + 1].LONGITUDE,
-					dLat: aData[index + 1].LATITUDE
-				};
-				aMapLocations.push(data);
-				this.getModel().setProperty("/DemandSet('" + aData[index].DemandGuid + "')/IS_SELECTED", true);
-			}
-			if (aData.length === 1) {
-				this.getModel().setProperty("/DemandSet('" + aData[0].DemandGuid + "')/IS_SELECTED", true);
-			} else if (aData.length > 1) {
-				this.getModel().setProperty("/DemandSet('" + aData[aData.length - 1].DemandGuid + "')/IS_SELECTED", true);
-			}
-			oViewModel.setProperty("/mapSettings/routeData", aMapLocations);
-			oViewModel.setProperty("/mapSettings/busy", false);
-		},
+		
 		/**
 		 * Opens the resource qualification dialog 
 		 * @Author Rahul
@@ -684,8 +589,8 @@ sap.ui.define([
 					this.getOwnerComponent().singleDayPlanner.open(this.getView(), sPath, oNodeData, oNodeData.NodeType, oParentData);
 				}
 			}
-
 		},
+		
 		/**
 		 * Method for show assigned demands in Map for selected Date in Resorce Tree Filter Bar
 		 * @Author: Pranav
@@ -815,6 +720,245 @@ sap.ui.define([
 				}
 			}.bind(this))
 			this.getModel("viewModel").setProperty("/GeoJsonLayersData", []);
+		},
+
+		/* =========================================================== */
+		/* internal methods                                            */
+		/* =========================================================== */
+		
+		_routeMatched: function (oEvent) {
+			var oParameters = oEvent.getParameters(),
+				sRouteName = oParameters.name; // route name
+			if (sRouteName === "map") {
+				this._mParameters = {
+					bFromMap: true
+				};
+				var sViewSelectedKey = this.getView().byId("idTimeView").getSelectedKey();
+				this.getView().getModel("viewModel").setProperty("/remainingWork", false);
+				if (sViewSelectedKey === "TIMENONE") {
+					this.getView().getModel("viewModel").setProperty("/selectedHierarchyView", sViewSelectedKey);
+					this.getView().getModel("viewModel").setProperty("/capacityPlanning", false);
+				} else {
+					this.getView().getModel("viewModel").setProperty("/selectedHierarchyView", sViewSelectedKey);
+				}
+				this.getModel("viewModel").setProperty("/resourceTreeShowRouteColumn", true);
+			}
+
+		},
+		
+		_selectionResourceTree: function (oParams, oNewNode) {
+			// Disable the Manage absence button when more than one resources are selected
+			// Disble the button for the selection on Group and Pool Node.
+			var oSelectedData = this.getModel().getProperty(this.selectedResources[0]);
+			if (oParams.selected && oNewNode.NodeType === "RESOURCE" && oNewNode.ResourceGuid !== "" && oNewNode.ResourceGroupGuid !== "") {
+				this.byId("idButtonCreUA").setEnabled(true);
+				this.byId("showRoute").setEnabled(true);
+			} else if (oSelectedData.NodeType === "RESOURCE" && oSelectedData.ResourceGuid !== "" && oSelectedData.ResourceGroupGuid !== "") {
+				this.byId("idButtonCreUA").setEnabled(true);
+				this.byId("showRoute").setEnabled(true);
+			} else {
+				this.byId("idButtonCreUA").setEnabled(false);
+				this.byId("showRoute").setEnabled(false);
+			}
+		},
+
+		/**
+		 * configure tree table
+		 * @param oDataTable
+		 * @private
+		 */
+		_configureDataTable: function (oDataTable) {
+			oDataTable.setEnableBusyIndicator(true);
+			oDataTable.setSelectionMode("None");
+			oDataTable.setColumnHeaderVisible(false);
+			oDataTable.setEnableCellFilter(false);
+			oDataTable.setEnableColumnReordering(false);
+			oDataTable.setEditable(false);
+			oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+			oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
+
+		},
+
+		/**
+		 * triggers request with all setted filters
+		 * @private
+		 */
+		_triggerFilterSearch: function () {
+			this._oDroppableTable.rebindTable();
+		},
+		
+		/**
+		 * Method will refresh the data of tree by restoring its state
+		 *
+		 * @Author Rahul
+		 * @version 2.0.4
+		 * @return
+		 * @private
+		 */
+		_triggerRefreshTree: function () {
+			// this.pIsFilterBarInitalized.then(function () {
+			var oTreeTable = this._oDataTable,
+				oTreeBinding = oTreeTable.getBinding("rows");
+
+			//reset the changes
+			this.resetChanges();
+			if (oTreeBinding && !this._bFirsrTime) {
+				this.mTreeState = this._getTreeState();
+				this._oDroppableTable.rebindTable(); //oTreeBinding.refresh();
+			}
+			this._bFirsrTime = false;
+			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", false);
+			// }.bind(this));
+		},
+
+		/**
+		 * map the current tree state with expand and collapse on each level
+		 * before tree is doing a new GET request
+		 * @private
+		 */
+		_getTreeState: function () {
+			var oBindings = this._oDataTable.getBinding(),
+				aNodes = oBindings.getNodes(),
+				oCollection = {};
+
+			for (var i = 0; i < aNodes.length; i++) {
+				oCollection[aNodes[i].key] = {
+					path: aNodes[i].key,
+					level: aNodes[i].level,
+					nodeState: aNodes[i].nodeState
+				};
+			}
+			return oCollection;
+		},
+
+		/**
+		 * After Resource tree GET request restore the expand/collapse state
+		 * from before refresh
+		 * @private
+		 */
+		_restoreTreeState: function () {
+			var oBindings = this._oDataTable.getBinding(),
+				aNodes = oBindings.getNodes(),
+				expandIdx = [],
+				collapseIdx = [];
+
+			for (var j = 0; j < aNodes.length; j++) {
+				if (this.mTreeState[aNodes[j].key] && !aNodes[j].nodeState.isLeaf) {
+					if (!aNodes[j].nodeState.expanded && this.mTreeState[aNodes[j].key].nodeState.expanded) {
+						expandIdx.push(j);
+						delete this.mTreeState[aNodes[j].key];
+					} else if (!aNodes[j].nodeState.collapsed && this.mTreeState[aNodes[j].key].nodeState.collapsed) {
+						collapseIdx.push(j);
+					}
+				}
+			}
+			if (expandIdx.length > 0) {
+				this._oDataTable.expand(expandIdx);
+			} else if (collapseIdx.length > 0) {
+				this._oDataTable.collapse(collapseIdx);
+			} else {
+				this.mTreeState = {};
+			}
+		},
+		
+		/**
+		 * method for getting selected route for selected date
+		 * @Author: Pranav
+		 */
+		_getSelectedRoute: function (oSelectedDate) {
+			//Refresh the Map
+			var oViewModel = this.getModel("viewModel"),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
+			if (aSelectedDemands.length > 0) {
+				this._eventBus.publish("BaseController", "refreshMapView", {});
+				oViewModel.setProperty("/mapSettings/routeData", []);
+				oViewModel.setProperty("/mapSettings/selectedDemands", []);
+			}
+			//Filter Logic for Map
+			var oFilter = new Filter(this._getResourceFilters(this.selectedResources, oSelectedDate), true);
+			oViewModel.setProperty("/mapSettings/busy", true);
+			this.getOwnerComponent()._getData("/AssignmentSet", [oFilter]).then(function (result) {
+
+				var aData = result.results;
+				//Route Creation in Map
+				this._routeCreationMap(aData);
+
+			}.bind(this));
+		},
+		/**
+		 * Return resource filters on selected resources
+		 * @param aSelectedResources {Array} Selected Resources
+		 * @return aResourceFilters Filters
+		 * @Author: Pranav
+		 */
+		_getResourceFilters: function (aSelectedResources, oSelectedDate) {
+			var aResources = [],
+				oModel = this.getView().getModel();
+			var aFilters = [];
+
+			for (var i = 0; i < aSelectedResources.length; i++) {
+				var obj = oModel.getProperty(aSelectedResources[i]);
+				var sCurrentHierarchyViewType = this.getView().getModel("viewModel").getProperty("/selectedHierarchyView");
+				if (obj.NodeType === "RESOURCE") {
+					if (obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
+						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
+					} else {
+						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid + "//X"));
+					}
+				} else if (obj.NodeType === "RES_GROUP") {
+					aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
+				} else if (obj.NodeType === sCurrentHierarchyViewType) {
+					aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
+				}
+			}
+
+			if (aResources.length > 0) {
+				aFilters.push(new Filter({
+					filters: aResources,
+					and: false
+				}));
+				if (oSelectedDate) {
+					aFilters.push(new Filter("DateTo", FilterOperator.GE, oSelectedDate));
+					aFilters.push(new Filter("DateFrom", FilterOperator.LE, oSelectedDate.setHours(23, 59, 59, 999)));
+				} else {
+					aFilters.push(new Filter("DateTo", FilterOperator.GE, this.byId("resourceTreeFilterBar").getControlByKey("StartDate").getDateValue()));
+					aFilters.push(new Filter("DateFrom", FilterOperator.LE, this.byId("resourceTreeFilterBar").getControlByKey("EndDate").getDateValue()));
+				}
+
+			}
+			return aFilters;
+		},
+		/**
+		 * Method for route creation in Map for selected Date
+		 * @Author: Pranav
+		 */
+		_routeCreationMap: function (aData) {
+			var aMapLocations = [];
+			var oViewModel = this.getModel("viewModel"),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
+			aData.forEach(function (entry) {
+				var sSelectedDemandPath = "/DemandSet('" + entry.DemandGuid + "')";
+				aSelectedDemands.push(sSelectedDemandPath);
+			});
+			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
+
+			for (var index = 0; index < aData.length - 1 && aData.length > 1; index++) {
+				var data = {
+					sLong: aData[index].LONGITUDE,
+					sLat: aData[index].LATITUDE,
+					dLong: aData[index + 1].LONGITUDE,
+					dLat: aData[index + 1].LATITUDE
+				};
+				aMapLocations.push(data);
+				this.getModel().setProperty("/DemandSet('" + aData[index].DemandGuid + "')/IS_SELECTED", true);
+			}
+			if (aData.length === 1) {
+				this.getModel().setProperty("/DemandSet('" + aData[0].DemandGuid + "')/IS_SELECTED", true);
+			} else if (aData.length > 1) {
+				this.getModel().setProperty("/DemandSet('" + aData[aData.length - 1].DemandGuid + "')/IS_SELECTED", true);
+			}
+			oViewModel.setProperty("/mapSettings/routeData", aMapLocations);
+			oViewModel.setProperty("/mapSettings/busy", false);
 		}
 	});
 });
