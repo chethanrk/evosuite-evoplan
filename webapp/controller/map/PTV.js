@@ -33,6 +33,11 @@ sap.ui.define([
 			// extension can declare the public methods
 			// in general methods that start with "_" are private
 			methods: {
+				constructor: {
+					"public": true,
+					"final": false,
+					overrideExecution: OverrideExecution.Instead	
+				},
 				getRoutePolyline: {
 					"public": true,
 					"final": false,
@@ -71,6 +76,7 @@ sap.ui.define([
 		_sCreateDistanceMatrixUrl: "",
 		_sPlanToursUrl: "",
 		_sDefaultResourceStartHour: "",
+		_sDefaultResourceEndHour: "",
 		oUserModel: null,
 
 		/**
@@ -90,7 +96,8 @@ sap.ui.define([
 			this._sPlanToursUrl = this.sServiceUrl + TOUR_SERVICE_PATH + PLAN_TOURS_PATH;
 			this._sAuthToken = btoa(oServiceData.Username + ":" + oServiceData.Password);
 			this.oUserModel = this.oComponent.getModel("user");
-			this._sDefaultResourceStartHour = parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_STARTHR")) || 8;
+			this._sDefaultResourceStartHour = parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_STARTHR")) || 0;
+			this._sDefaultResourceEndHour = parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_ENDHR")) || 24;
 		},
 
 		/**
@@ -504,7 +511,7 @@ sap.ui.define([
 			var oStartDate = _.cloneDeep(oDate);
 			var oEndDate = _.cloneDeep(oDate);
 			oStartDate.setHours(this._sDefaultResourceStartHour, 0, 0);
-			oEndDate.setHours(23, 59, 0);
+			oEndDate.setHours(this._sDefaultResourceEndHour - 1, 59, 59, 999);
 
 			// use oStartDate for `start` as well as for `end` in the tourStartInterval property to restrict start tour time
 			oPayload.fleet = {
@@ -681,11 +688,12 @@ sap.ui.define([
 		
 		// TODO: docs
 		_isCalculatedRouteValid: function(oResponse) {
-			var oRouteStart = new Date(oResponse.data.tourReport.startTime);
+			var oWorkingDayEnd = new Date(oResponse.data.tourReport.startTime);
 			var oRouteEnd = new Date(oResponse.data.tourReport.endTime);
+			oWorkingDayEnd.setHours(this._sDefaultResourceEndHour - 1, 59, 59, 999);
 			var bValid = true;
 			var sErrorMessage;
-			if(oRouteStart.getDay() !== oRouteEnd.getDay()) {
+			if(oRouteEnd > oWorkingDayEnd) {
 				sErrorMessage = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.tooMuchPlanned");
 				MessageBox.error(sErrorMessage);
 				bValid = false;
