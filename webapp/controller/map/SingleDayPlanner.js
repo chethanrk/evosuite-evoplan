@@ -21,37 +21,42 @@ sap.ui.define([
 				open: {
 					public: true,
 					final: false,
-					overrideExecution: OverrideExecution.After
+					overrideExecution: OverrideExecution.Instead
+				},
+				onOpen: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
 				},
 				onPressClose: {
 					public: true,
 					final: false,
-					overrideExecution: OverrideExecution.Before
+					overrideExecution: OverrideExecution.Instead
 				},
 				onChangeStartDate: {
 					public: true,
 					final: false,
-					overrideExecution: OverrideExecution.After
+					overrideExecution: OverrideExecution.Instead
 				},
 				onDropAppointment: {
 					public: true,
 					final: false,
-					overrideExecution: OverrideExecution.Before
+					overrideExecution: OverrideExecution.Instead
 				},
 				onPressSaveAppointments: {
 					public: true,
 					final: false,
-					overrideExecution: OverrideExecution.Before
+					overrideExecution: OverrideExecution.Instead
 				},
 				onPressCalculateRoute: {
 					public: true,
 					final: false,
-					overrideExecution: OverrideExecution.After
+					overrideExecution: OverrideExecution.Instead
 				},
 				onPressOptimizeRoute: {
 					public: true,
 					final: false,
-					overrideExecution: OverrideExecution.After
+					overrideExecution: OverrideExecution.Instead
 				}
 			}
 		},
@@ -129,6 +134,7 @@ sap.ui.define([
 				this._loadAssignmentsForDay(oTreeData);
 			}
 			this._loadLegendData();
+			this.oSinglePlanningModel.setProperty("/overallTravelTime", 0);
 			this.oPlannerDialog.open();
 		},
 
@@ -445,7 +451,6 @@ sap.ui.define([
 							oModel.setProperty(oItem.sModelPath + "/DateFrom", oItem.DateFrom);
 							oModel.setProperty(oItem.sModelPath + "/TRAVEL_TIME", oItem.TRAVEL_TIME);
 							oModel.setProperty(oItem.sModelPath + "/TRAVEL_BACK_TIME", oItem.TRAVEL_BACK_TIME);
-							// TODO: write real distance values to the properties
 							oModel.setProperty(oItem.sModelPath + "/DISTANCE", oItem.DISTANCE);
 							oModel.setProperty(oItem.sModelPath + "/DISTANCE_BACK", oItem.DISTANCE_BACK);
 

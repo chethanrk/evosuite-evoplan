@@ -16,15 +16,37 @@ sap.ui.define([
 		metadata: {
 			// extension can declare the public methods
 			// in general methods that start with "_" are private
-			// default is public: true, final: false, overrideExecution: OverrideExecution.Instead
 			methods: {
+				constructor: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
 				open: {
 					public: true,
-					final: true
+					final: false,
+					overrideExecution: OverrideExecution.Instead
 				},
-				onPlanContextMenu: {}, //default
-				onShowRoute: {}, // default
-				onShowAssignments: {} // default
+				onPlanContextMenu: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onShowRoute: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onShowAssignments: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				handleRouteDateSelect: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				}
 			}
 		},
 
@@ -61,7 +83,7 @@ sap.ui.define([
 					entitySet: bIsDemand ? "DemandSet" : "ResourceSet",
 					smartTable: null,
 					sPath: this.selectedDemandPath,
-					hiddenDiv: this._gethiddenDivPosition(oSpotPosition),
+					hiddenDiv: this.oMapUtilities.gethiddenDivPosition(oSpotPosition, this.oView),
 					oView: this.oView,
 					bCallBackInChange: true // used in TemplateRenderController - decide to call callbackfn in change event
 				};
@@ -162,39 +184,24 @@ sap.ui.define([
 				aDateRange = ResourceTreeFilterBarController.getDateRange();
 			this.oView.getModel("viewModel").setProperty("/ganttDateRangeFromMap", aDateRange);
 		},
+		
+		/**
+		 * Date select event of the sap.ui.unified Datepicker
+		 * Also calls the callback function of showRoutes for the resource pin with selected date
+		 * 
+		 * @param {object} oEvent - source and parameters of date select event
+		 */
+		handleRouteDateSelect: function (oEvent) {
+			var oDateSelected = oEvent.getSource().getSelectedDates() && oEvent.getSource().getSelectedDates()[0];
+			oDateSelected = oDateSelected.getProperty('startDate');
+			// Z is the zone designator for the zero hour offset (UTC)
+			var oAdjustedTime = new Date(oDateSelected.toLocaleDateString() + "Z");
+			this.fDatePickerCallback(oAdjustedTime);
+		},
 
 		/* =========================================================== */
 		/* Internal methods                                            */
 		/* =========================================================== */
-
-		/**
-		 * creates and returns a hidden div at the same position 
-		 * as the Spot on the Canvas rightclicked by user
-		 * the div is added as a child to the GeoMapContainer with absolute positioning,
-		 * then style top and left values are provided 
-		 * from the click position returned by the spot contextmenu event
-		 * @param {object} oSpotPosition - x and y values of clicked position on the geo map
-		 * @ returns the div element
-		 */
-		_gethiddenDivPosition: function (oSpotPosition) {
-			var div = document.getElementById("idDivRightClick");
-			//Condition check if div is availabel then change only the position 
-			if (div) {
-				div.style.top = oSpotPosition[1] + "px";
-				div.style.left = (parseInt(oSpotPosition[0]) + 10) + "px";
-			} else {
-				// Creating new div in case div is getting created first time
-				div = document.createElement("div");
-				div.id = "idDivRightClick";
-				div.style.position = "absolute";
-				div.style.top = oSpotPosition[1] + "px";
-				div.style.left = (parseInt(oSpotPosition[0]) + 10) + "px";
-				var oGeoMapContainer = this.oView.byId("idMapContainer");
-				var oGeoMapContainerDOM = oGeoMapContainer.getDomRef();
-				oGeoMapContainerDOM.appendChild(div);
-			}
-			return div;
-		},
 
 		/**
 		 * creates the smartForm from template and 
@@ -335,20 +342,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Date select event of the sap.ui.unified Datepicker
-		 * Also calls the callback function of showRoutes for the resource pin with selected date
-		 * 
-		 * @param {object} oEvent - source and parameters of date select event
-		 */
-		handleRouteDateSelect: function (oEvent) {
-			var oDateSelected = oEvent.getSource().getSelectedDates() && oEvent.getSource().getSelectedDates()[0];
-			oDateSelected = oDateSelected.getProperty('startDate');
-			// Z is the zone designator for the zero hour offset (UTC)
-			var oAdjustedTime = new Date(oDateSelected.toLocaleDateString() + "Z");
-			this.fDatePickerCallback(oAdjustedTime);
-		},
-
-		/**
 		 * For a demand fetch its assignments
 		 * @param {object} oModel - main model
 		 * @param {string} sPath - demand path 
@@ -387,7 +380,7 @@ sap.ui.define([
 				oResource, aDemandAssignments = [],
 
 				sDemandPath = this.selectedDemandPath,
-				aGeoJsonLayersData = [],
+				aGeoJsonLayersData = oViewModel.getProperty("/GeoJsonLayersData"),
 				aResourceFilters = [],
 				oSelectedDate;
 
@@ -440,7 +433,6 @@ sap.ui.define([
 					aGeoJsonLayersData.push(oLayer);
 					
 					this._eventBus.publish("MapController", "displayRoute", oResource);
-					oViewModel.setProperty("/GeoJsonLayersData", aGeoJsonLayersData);
 					oViewModel.setProperty("/mapSettings/busy", false);
 				}
 				.bind(this))
