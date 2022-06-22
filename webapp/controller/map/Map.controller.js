@@ -123,25 +123,23 @@ sap.ui.define([
 		onBeforeRebindTable: function (oEvent) {
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 
-			var aFilters = this.byId("listReportFilter").getFilters(),
+			var aFilters,
 				aDemandFilters = this.getSelectedDemandFilters();
 			if (aDemandFilters && aDemandFilters.aFilters && aDemandFilters.aFilters.length) {
-				aFilters.push(aDemandFilters);
+				aFilters = aDemandFilters;
 			}
 			if (this._bShowAssignment) {
-				aFilters = [];
 				var aAssignedDemands = this.getSelectedDemandFilters("assignDemands");
 				if (aAssignedDemands && aAssignedDemands.aFilters && aAssignedDemands.aFilters.length) {
-					aFilters.push(aAssignedDemands);
+					aFilters = aAssignedDemands;
 				}
 				this._bShowAssignment = false;
-				this.applyFiltersToMap(aFilters);
+				this.applyFiltersToMap([aFilters]);
 			}
-			//setTimeOut has been added to make rebindTable() work
-			setTimeout(function () {
-				this._oDataTable.getBinding("rows").filter(aFilters, "Application");
-			}.bind(this), 15);
 
+			if (aFilters) {
+				oEvent.getParameter("bindingParams").filters.push(aFilters);
+			}
 		},
 
 		_showAssignedDemands: function () {
@@ -177,8 +175,8 @@ sap.ui.define([
 		onInitialized: function (oEvent) {
 			var oSmartFilter = this.byId("listReportFilter"),
 				aFilter = oSmartFilter.getFilters(),
-				sVariant = oSmartFilter.getSmartVariant().getCurrentVariantId();
-			if (sVariant !== "*standard*") {
+				sVariant = oSmartFilter.getSmartVariant().getCurrentVariantId(); //returns empty string when standard variant is selected
+			if (sVariant !== "") {
 				this.applyFiltersToMap(aFilter);
 			}
 		},
