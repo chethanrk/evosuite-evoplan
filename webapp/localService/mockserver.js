@@ -10,17 +10,19 @@ sap.ui.define([
 	var oMockServer,
 		_sAppModulePath = "com/evorait/evoplan/",
 		_sLocalPath = "localService/",
-		_sJsonFilesModulePath = _sAppModulePath + _sLocalPath + "mockdata";
+		_sJsonFilesPath = _sAppModulePath + _sLocalPath + "mockdata";
 
 	return {
+
 		/**
-		 * Initializes the mock server.
+		 * Initializes the mock server asynchronously.
 		 * You can configure the delay with the URL parameter "serverDelay".
 		 * The local mock data in this folder is returned instead of the real data for testing.
-		 * @public
+		 * @protected
+		 * @param {object} [oOptionsParameter] init parameters for the mockserver
+		 * @returns{Promise} a promise that is resolved when the mock server has been started
 		 */
-
-		init: function () {
+		init: function (oOptionsParameter) {
 			var oOptions = oOptionsParameter || {};
 
 			return new Promise(function (fnResolve, fnReject) {
@@ -51,7 +53,7 @@ sap.ui.define([
 					// configure mock server with the given options or a default delay of 0.5s
 					MockServer.config({
 						autoRespond: true,
-						autoRespondAfter: (oOptions.delay || oUriParameters.get("serverDelay") || 500)
+						autoRespondAfter: oOptions.delay || oUriParameters.get("serverDelay") || 500
 					});
 
 					// simulate all requests using mock data
@@ -68,7 +70,7 @@ sap.ui.define([
 							Log.debug("Incoming request for GetSystemInformation");
 							jQuery.ajax({
 								url: sJsonFilesUrl + "/GetSystemInformation.json",
-								dataType: 'json',
+								dataType: "json",
 								async: false,
 								success: function (oResponse) {
 									oXhr.respondJSON(200, {}, JSON.stringify(oResponse.data));
@@ -85,7 +87,7 @@ sap.ui.define([
 					        Log.debug("Incoming request for AssetPlanningDataSet");
 					        jQuery.ajax({
 								url: sJsonFilesUrl+"/AssetPlanningDataSet.json",
-								dataType: 'json',
+								dataType: "json",
 								async: false,
 								success: function (oResponse) {
 									oXhr.respondJSON(200, {}, JSON.stringify(oResponse.data));
@@ -103,7 +105,7 @@ sap.ui.define([
 
 							jQuery.ajax({
 								url: sJsonFilesUrl + "/Assignment.json",
-								dataType: 'json',
+								dataType: "json",
 								async: false,
 								success: function (oResponse) {
 									var header = {
