@@ -555,10 +555,11 @@ sap.ui.define([
 				sAssignGuid = oModel.getProperty(sPath).Guid;
 				sStatus = oModel.getProperty(sPath).DEMAND_STATUS;
 				if (!this._menu || sCurrentRoute !== this._firstVisit) {
-					this._menu = sap.ui.xmlfragment(
-						"com.evorait.evoplan.view.gantt.fragments._oldShapeContextMenu",
-						this, sCurrentRoute
-					);
+
+					var sFragmentPath = "com.evorait.evoplan.view.gantt.fragments._oldShapeContextMenu";
+					this.loadFragment(sFragmentPath, this, sCurrentRoute).then(function (oFragment) {
+						this._menu = oFragment;
+					}.bind(this));
 					this.getView().addDependent(this._menu);
 					this._firstVisit = sCurrentRoute;
 				}
