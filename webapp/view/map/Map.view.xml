@@ -37,7 +37,7 @@
 									<vk:content>
 										<vbm:GeoMap id="idGeoMap" lassoSelection="true" rectangularSelection="true" drop="onDrop" select="onSelectSpots"
 											initialZoom="{user>/DEFAULT_MAP_INITIAL_ZOOM}" initialPosition="{user>/DEFAULT_MAP_INITIAL_POSITION}"
-											geoJsonLayers="{path: 'viewModel>/GeoJsonLayersData', templateShareable: false}">
+											geoJsonLayers="{path: 'viewModel>/GeoJsonLayersData', templateShareable: false}" contextMenu="onContextMenuMap">
 											<vbm:vos>
 												<vbm:Routes items="{viewModel>/mapSettings/routeData}">
 													<vbm:items>

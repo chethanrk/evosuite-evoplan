@@ -40,7 +40,7 @@
 						<appointments>
 							<unified:CalendarAppointment key="{mapSinglePlanning>Guid}" title="{mapSinglePlanning>title}" text="{mapSinglePlanning>text}" type="None"
 								color="{mapSinglePlanning>color}" icon="{mapSinglePlanning>icon}" startDate="{mapSinglePlanning>DateFrom}"
-								endDate="{mapSinglePlanning>DateTo}"/>
+								endDate="{mapSinglePlanning>DateTo}" tooltip="{mapSinglePlanning>text}"/>
 						</appointments>
 					</SinglePlanningCalendar>
 				</l:mainContent>

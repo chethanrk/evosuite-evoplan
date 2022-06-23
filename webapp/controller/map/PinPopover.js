@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/m/DatePicker",
 	"com/evorait/evoplan/model/Constants",
 	"com/evorait/evoplan/controller/TemplateRenderController",
-	"com/evorait/evoplan/controller/common/ResourceTreeFilterBar"
-], function (Controller, OverrideExecution, Log, Fragment, DatePicker, Constants, TemplateRenderController, ResourceTreeFilterBar) {
+	"com/evorait/evoplan/controller/common/ResourceTreeFilterBar",
+	"com/evorait/evoplan/controller/map/MapUtilities"
+], function (Controller, OverrideExecution, Log, Fragment, DatePicker, Constants, TemplateRenderController, ResourceTreeFilterBar, MapUtilities) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.map.PinPopover", {
@@ -15,15 +16,37 @@ sap.ui.define([
 		metadata: {
 			// extension can declare the public methods
 			// in general methods that start with "_" are private
-			// default is public: true, final: false, overrideExecution: OverrideExecution.Instead
 			methods: {
+				constructor: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
 				open: {
 					public: true,
-					final: true
+					final: false,
+					overrideExecution: OverrideExecution.Instead
 				},
-				onPlanContextMenu: {}, //default
-				onShowRoute: {}, // default
-				onShowAssignments: {} // default
+				onPlanContextMenu: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onShowRoute: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onShowAssignments: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				handleRouteDateSelect: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				}
 			}
 		},
 
@@ -33,6 +56,7 @@ sap.ui.define([
 			this.oResourceBundle = oController.getResourceBundle();
 			this.oModel = oController.getView().getModel();
 			this.oRouter = oController.getRouter();
+			this.oMapUtilities = new MapUtilities(); 
 		},
 
 		/* =========================================================== */
@@ -59,7 +83,7 @@ sap.ui.define([
 					entitySet: bIsDemand ? "DemandSet" : "ResourceSet",
 					smartTable: null,
 					sPath: this.selectedDemandPath,
-					hiddenDiv: this._gethiddenDivPosition(oSpotPosition),
+					hiddenDiv: this.oMapUtilities.gethiddenDivPosition(oSpotPosition, this.oView),
 					oView: this.oView,
 					bCallBackInChange: true // used in TemplateRenderController - decide to call callbackfn in change event
 				};
@@ -160,39 +184,24 @@ sap.ui.define([
 				aDateRange = ResourceTreeFilterBarController.getDateRange();
 			this.oView.getModel("viewModel").setProperty("/ganttDateRangeFromMap", aDateRange);
 		},
+		
+		/**
+		 * Date select event of the sap.ui.unified Datepicker
+		 * Also calls the callback function of showRoutes for the resource pin with selected date
+		 * 
+		 * @param {object} oEvent - source and parameters of date select event
+		 */
+		handleRouteDateSelect: function (oEvent) {
+			var oDateSelected = oEvent.getSource().getSelectedDates() && oEvent.getSource().getSelectedDates()[0];
+			oDateSelected = oDateSelected.getProperty('startDate');
+			// Z is the zone designator for the zero hour offset (UTC)
+			var oAdjustedTime = new Date(oDateSelected.toLocaleDateString() + "Z");
+			this.fDatePickerCallback(oAdjustedTime);
+		},
 
 		/* =========================================================== */
 		/* Internal methods                                            */
 		/* =========================================================== */
-
-		/**
-		 * creates and returns a hidden div at the same position 
-		 * as the Spot on the Canvas rightclicked by user
-		 * the div is added as a child to the GeoMapContainer with absolute positioning,
-		 * then style top and left values are provided 
-		 * from the click position returned by the spot contextmenu event
-		 * @param {object} oSpotPosition - x and y values of clicked position on the geo map
-		 * @ returns the div element
-		 */
-		_gethiddenDivPosition: function (oSpotPosition) {
-			var div = document.getElementById("idDivRightClick");
-			//Condition check if div is availabel then change only the position 
-			if (div) {
-				div.style.top = oSpotPosition[1] + "px";
-				div.style.left = (parseInt(oSpotPosition[0]) + 10) + "px";
-			} else {
-				// Creating new div in case div is getting created first time
-				div = document.createElement("div");
-				div.id = "idDivRightClick";
-				div.style.position = "absolute";
-				div.style.top = oSpotPosition[1] + "px";
-				div.style.left = (parseInt(oSpotPosition[0]) + 10) + "px";
-				var oGeoMapContainer = this.oView.byId("idMapContainer");
-				var oGeoMapContainerDOM = oGeoMapContainer.getDomRef();
-				oGeoMapContainerDOM.appendChild(div);
-			}
-			return div;
-		},
 
 		/**
 		 * creates the smartForm from template and 
@@ -333,20 +342,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Date select event of the sap.ui.unified Datepicker
-		 * Also calls the callback function of showRoutes for the resource pin with selected date
-		 * 
-		 * @param {object} oEvent - source and parameters of date select event
-		 */
-		handleRouteDateSelect: function (oEvent) {
-			var oDateSelected = oEvent.getSource().getSelectedDates() && oEvent.getSource().getSelectedDates()[0];
-			oDateSelected = oDateSelected.getProperty('startDate');
-			// Z is the zone designator for the zero hour offset (UTC)
-			var oAdjustedTime = new Date(oDateSelected.toLocaleDateString() + "Z");
-			this.fDatePickerCallback(oAdjustedTime);
-		},
-
-		/**
 		 * For a demand fetch its assignments
 		 * @param {object} oModel - main model
 		 * @param {string} sPath - demand path 
@@ -382,11 +377,12 @@ sap.ui.define([
 
 			var oModel = this.oController.getModel(),
 				oViewModel = this.oController.getModel("viewModel"),
-				oResource, aAssignments = [],
+				oResource, aDemandAssignments = [],
 
 				sDemandPath = this.selectedDemandPath,
-				aGeoJsonLayersData = [],
-				aResourceFilters = [];
+				aGeoJsonLayersData = oViewModel.getProperty("/GeoJsonLayersData"),
+				aResourceFilters = [],
+				oSelectedDate;
 
 			this._eventBus = sap.ui.getCore().getEventBus();
 
@@ -398,22 +394,31 @@ sap.ui.define([
 			// aPromiseAllResults items are processed in the same sequence as proper promises are put to Promise.all method
 			pMapProviderAndDataLoaded.then(function (aPromiseAllResults) {
 					var oAssignmentData = aPromiseAllResults[1];
-					aAssignments = oAssignmentData.DemandToAssignment && oAssignmentData.DemandToAssignment.results;
-					if (aAssignments.length && aAssignments.length > 0) {
-						aResourceFilters.push(new sap.ui.model.Filter("ObjectId", "EQ", aAssignments[0].ObjectId));
+					aDemandAssignments = oAssignmentData.DemandToAssignment && oAssignmentData.DemandToAssignment.results;
+					
+					if (aDemandAssignments.length && aDemandAssignments.length > 0) {
+						aResourceFilters.push(new sap.ui.model.Filter("ObjectId", "EQ", aDemandAssignments[0].ObjectId));
+						oSelectedDate = aDemandAssignments[0].DateFrom;
 						return this.getOwnerComponent().readData("/ResourceSet", [aResourceFilters]);
 					} else {
 						this.oPopover.close();
 						sap.m.MessageToast.show(this.oController.getResourceBundle().getText("ymsg.noAssignmentsOfDemand"));
-
 					}
 				}.bind(this)).then(function (oResourceData) {
 					oResource = oResourceData.results && oResourceData.results.length > 0 && oResourceData.results[0];
 					if (oResource) {
-						return this.getOwnerComponent().MapProvider.getRoutePolyline(oResource, aAssignments);
+						var aAssignmentFilters = this.oMapUtilities.getAssignmentsFiltersWithinDateFrame(oResource, oSelectedDate);
+						return this.getOwnerComponent().readData("/AssignmentSet", [aAssignmentFilters]);
 					} else {
 						this.oPopover.close();
 						sap.m.MessageToast.show(this.oController.getResourceBundle().getText("ymsg.noResourceOfAssignment"));
+					}
+				}.bind(this)).then(function (aAssignments) {
+					if (aAssignments.results && aAssignments.results.length && aAssignments.results.length > 0) {
+						return this.getOwnerComponent().MapProvider.getRoutePolyline(oResource, aAssignments.results);
+					} else {
+						this.oPopover.close();
+						sap.m.MessageToast.show(this.oController.getResourceBundle().getText("ymsg.noAssignmentsOfDemand"));
 					}
 				}.bind(this)).then(function (oResponse) {
 					var oLayer = {};
@@ -428,7 +433,6 @@ sap.ui.define([
 					aGeoJsonLayersData.push(oLayer);
 					
 					this._eventBus.publish("MapController", "displayRoute", oResource);
-					oViewModel.setProperty("/GeoJsonLayersData", aGeoJsonLayersData);
 					oViewModel.setProperty("/mapSettings/busy", false);
 				}
 				.bind(this))
