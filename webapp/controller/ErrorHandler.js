@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/m/MessageBox",
-	"sap/m/MessageToast"
-], function (UI5Object, MessageBox, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/base/util/JSTokenizer"
+], function (UI5Object, MessageBox, MessageToast, JSTokenizer) {
 	"use strict";
 
 	return UI5Object.extend("com.evorait.evoplan.controller.ErrorHandler", {
@@ -79,7 +80,7 @@ sap.ui.define([
 			if (sDetails.responseText) {
 				var parsedJSError = null;
 				try {
-					parsedJSError = jQuery.sap.parseJS(sDetails.responseText);
+					parsedJSError = JSTokenizer.parseJS(sDetails.responseText);
 				} catch (err) {
 					return sDetails;
 				}

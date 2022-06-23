@@ -11,9 +11,10 @@ sap.ui.define([
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
 	"com/evorait/evoplan/model/formatter",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"sap/base/Log"
 ], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText, Constants,
-	RowAction, RowActionItem, formatter, Fragment) {
+	RowAction, RowActionItem, formatter, Fragment, Log) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.BaseController", {
@@ -107,7 +108,7 @@ sap.ui.define([
 				try {
 					oData = JSON.parse(oResponse.headers["sap-message"]);
 				} catch (ex) {
-					jQuery.sap.log.error("Failed to parse the message header");
+					Log.error("Failed to parse the message header");
 				}
 				if (oData && oData.details.length > 0) {
 					var oMessage, bContainsError;
@@ -134,7 +135,7 @@ sap.ui.define([
 					try {
 						oData = JSON.parse(oResponse.responseText);
 					} catch (ex) {
-						jQuery.sap.log.error("Failed to parse the message header");
+						Log.error("Failed to parse the message header");
 					}
 					if (oData && oData.error) {
 						bContainsError = true;
