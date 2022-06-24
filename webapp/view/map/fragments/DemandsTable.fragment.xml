@@ -1,28 +1,28 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:table="sap.ui.table" xmlns:core="sap.ui.core"
 	xmlns:dnd="sap.ui.core.dnd" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<smartTable:SmartTable id="draggableList" height="100%" width="100%" direction="Column" fitContainer="true" enableAutoBinding="true"
-		entitySet="{viewModel>/subTableSet}" showRowCount="true" header="{i18n>xtit.itemListTitle}"
-		editTogglable="{user>/ENABLE_DEMAND_EDIT}" editable="{viewModel>/bDemandEditMode}" customData:useSmartField="true" editToggled="onEditToggledDemandTable"
-		useExportToExcel="true" useVariantManagement="false" beforeRebindTable="onBeforeRebindTable" persistencyKey="{viewModel>/persistencyKeyDemandTable}" useTablePersonalisation="true"
-		requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_UNASSIGN,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,MAP_MARKER_COLOUR,ENABLE_ROUTE_EVOORDER,ENABLE_ROUTE_EVOEQUIP,ENABLE_ROUTE_EVONOTIFY,ENABLE_ROUTE_EVOTIME,EQUIPMENT,ORDER_TYPE,ENABLE_ROUTE_GUI1,ENABLE_ROUTE_GUI2,ENABLE_ROUTE_EVOFLOC,FUNCTIONAL_LOC,COMPONENT_EXISTS,FIXED_ASSGN_START_DATE,FIXED_ASSGN_START_TIME,FIXED_ASSGN_END_DATE,FIXED_ASSGN_END_TIME,ALLOW_ASSIGNMENT_DIALOG,LONG_TEXT_ICON,OBJECT_SOURCE_TYPE,FIXED_APPOINTMENT_ICON_COLOR,FIXED_APPOINTMENT,FIXED_APPOINTMENT_START_DATE,FIXED_APPOINTMENT_START_TIME,FIXED_APPOINTMENT_END_DATE,FIXED_APPOINTMENT_END_TIME,MATERIAL_STATUS_ICON,MATERIAL_STATUS_DESC,MATERIAL_STATUS_STATE" customData:p13nDialogSettings='{filter:{visible:false},sort:{visible:false}}'>
+		entitySet="{viewModel>/subTableSet}" showRowCount="true" header="{i18n>xtit.itemListTitle}" editTogglable="{user>/ENABLE_DEMAND_EDIT}"
+		editable="{viewModel>/bDemandEditMode}" customData:useSmartField="true" editToggled="onEditToggledDemandTable" useExportToExcel="true"
+		useVariantManagement="false" beforeRebindTable="onBeforeRebindTable" persistencyKey="{viewModel>/persistencyKeyDemandTable}"
+		useTablePersonalisation="true" smartFilterId="listReportFilter"
+		requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_UNASSIGN,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,MAP_MARKER_COLOUR,ENABLE_ROUTE_EVOORDER,ENABLE_ROUTE_EVOEQUIP,ENABLE_ROUTE_EVONOTIFY,ENABLE_ROUTE_EVOTIME,EQUIPMENT,ORDER_TYPE,ENABLE_ROUTE_GUI1,ENABLE_ROUTE_GUI2,ENABLE_ROUTE_EVOFLOC,FUNCTIONAL_LOC,COMPONENT_EXISTS,FIXED_ASSGN_START_DATE,FIXED_ASSGN_START_TIME,FIXED_ASSGN_END_DATE,FIXED_ASSGN_END_TIME,ALLOW_ASSIGNMENT_DIALOG,LONG_TEXT_ICON,OBJECT_SOURCE_TYPE,FIXED_APPOINTMENT_ICON_COLOR,FIXED_APPOINTMENT,FIXED_APPOINTMENT_START_DATE,FIXED_APPOINTMENT_START_TIME,FIXED_APPOINTMENT_END_DATE,FIXED_APPOINTMENT_END_TIME,MATERIAL_STATUS_ICON,MATERIAL_STATUS_DESC,MATERIAL_STATUS_STATE"
+		customData:p13nDialogSettings='{filter:{visible:false},sort:{visible:false}}'>
 		<!-- layout data used to make the table growing but the filter bar fixed -->
-		<!--smartFilterId="listReportFilter"-->
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1"/>
 		</smartTable:layoutData>
 		<smartTable:customToolbar>
 			<OverflowToolbar>
-					<core:ExtensionPoint name="TableExtP|Map|DemandSet|TableToolbar|Left"/>
+				<core:ExtensionPoint name="TableExtP|Map|DemandSet|TableToolbar|Left"/>
 				<ToolbarSpacer/>
 				<ToggleButton icon="{=${viewModel>/showDemands} === true?'sap-icon://show':'sap-icon://hide'}" enabled="true"
 					pressed="{viewModel>/showDemands}"/>
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandToolbarButtons" type="XML"/>
-					<core:ExtensionPoint name="TableExtP|Map|DemandSet|TableToolbar|Right"/>
+				<core:ExtensionPoint name="TableExtP|Map|DemandSet|TableToolbar|Right"/>
 			</OverflowToolbar>
 		</smartTable:customToolbar>
 		<table:Table enableGrouping="false" visibleRowCountMode="Auto" enableColumnReordering="false" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}"
-			 enableCellFilter="false" rowSelectionChange="onRowSelectionChange"
-			minAutoRowCount="3"  cellClick="onCopyDemandCellData">
+			enableCellFilter="false" rowSelectionChange="onRowSelectionChange" minAutoRowCount="3" cellClick="onCopyDemandCellData">
 			<table:rowSettingsTemplate>
 				<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
 			</table:rowSettingsTemplate>
@@ -33,7 +33,8 @@
 					</table:customData>
 					<Label text="{/#Demand/STATUS_ICON/@sap:label}"/>
 					<table:template>
-						<core:Icon src="{STATUS_ICON}" color="{ parts:['CRITICALITY','FIXED_APPOINTMENT_ICON_COLOR'], formatter:'.formatter.formatStatusIconColor' }" tooltip="{StatusDesc}"></core:Icon>
+						<core:Icon src="{STATUS_ICON}"
+							color="{ parts:['CRITICALITY','FIXED_APPOINTMENT_ICON_COLOR'], formatter:'.formatter.formatStatusIconColor' }" tooltip="{StatusDesc}"></core:Icon>
 					</table:template>
 				</table:Column>
 				<table:Column hAlign="Center" width="3rem">
@@ -46,20 +47,18 @@
 					</table:template>
 				</table:Column>
 				<table:Column hAlign="Center" width="9rem" visible="{user>/ENABLE_MATERIAL_AVAILABILITY}">
-								<table:customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "MATERIAL_STATUS", "leadingProperty": "MATERIAL_STATUS"}'/>
-								</table:customData>
-								<Label text="{/#Demand/MATERIAL_STATUS/@sap:label}"/>
-								<table:template>
-									<HBox>
-											<ObjectStatus class="sapUiTinyMargin" tooltip="{MATERIAL_STATUS_DESC}"
-											text="{MATERIAL_STATUS_DESC}"
-											visible="{ path:'COMPONENT_EXISTS', formatter:'.formatter.formatComponentExist' }"
-											icon="{MATERIAL_STATUS_ICON}"
-											state="{path:'MATERIAL_STATUS_STATE',formatter:'.formatter.getDemandState'}"/>
-									</HBox>
-								</table:template>
-							</table:Column>
+					<table:customData>
+						<core:CustomData key="p13nData" value='\{"columnKey": "MATERIAL_STATUS", "leadingProperty": "MATERIAL_STATUS"}'/>
+					</table:customData>
+					<Label text="{/#Demand/MATERIAL_STATUS/@sap:label}"/>
+					<table:template>
+						<HBox>
+							<ObjectStatus class="sapUiTinyMargin" tooltip="{MATERIAL_STATUS_DESC}" text="{MATERIAL_STATUS_DESC}"
+								visible="{ path:'COMPONENT_EXISTS', formatter:'.formatter.formatComponentExist' }" icon="{MATERIAL_STATUS_ICON}"
+								state="{path:'MATERIAL_STATUS_STATE',formatter:'.formatter.getDemandState'}"/>
+						</HBox>
+					</table:template>
+				</table:Column>
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.LongTextColumn" type="XML"/>
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandQualificationColumn" type="XML"/>
 				<table:Column hAlign="Center" width="3rem" visible="{user>/ENABLE_EMP}">
@@ -83,7 +82,7 @@
 				<!--				</table:template>-->
 				<!--			</table:Column>-->
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.AssignmentCountColumn" type="XML"/>
-					<core:ExtensionPoint name="TableExtP|Map|DemandSet|Table|CustomColoumn"/>
+				<core:ExtensionPoint name="TableExtP|Map|DemandSet|Table|CustomColoumn"/>
 				<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.OrderIdColumn" type="XML"/>-->
 			</table:columns>
 			<table:dragDropConfig>
