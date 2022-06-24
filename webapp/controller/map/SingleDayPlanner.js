@@ -1,3 +1,4 @@
+/* globals _ */
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentActionsController",
 	"sap/ui/core/mvc/OverrideExecution",
@@ -72,6 +73,8 @@ sap.ui.define([
 
 		aOriginalData: [],
 		
+		aUnavailabilities: [],
+		
 		init: function() {
 			
 		},
@@ -135,6 +138,7 @@ sap.ui.define([
 			}
 			this._loadLegendData();
 			this.oSinglePlanningModel.setProperty("/overallTravelTime", 0);
+			this.aUnavailabilities = [];
 			this.oPlannerDialog.open();
 		},
 
@@ -302,7 +306,7 @@ sap.ui.define([
 		 * @param {object} oEvent
 		 */
 		onPressCancelAppointments: function (oEvent) {
-			this.oSinglePlanningModel.setProperty("/appointments", this.aOriginalData);
+			this.oSinglePlanningModel.setProperty("/appointments", this.aOriginalData.concat(this.aUnavailabilities));
 			this.oSinglePlanningModel.setProperty("/hasChanges", false);
 		},
 
@@ -333,14 +337,11 @@ sap.ui.define([
 		 */
 		onPressOptimizeRoute: function (oEvent) {
 			var aAssignments = this._getOnlyAppointmentsByKeyValue("type", this.mTypes.APPOINTMENT);
-			if (aAssignments.length > 0) {
-				var sResourceLong = aAssignments[0].Resource.LONGITUDE,
-					sResourceLat = aAssignments[0].Resource.LATITUDE;
-			}
+			
 			if (aAssignments.length > 0) {
 				this.oSinglePlanner.setBusy(true);
 				this.oParentController.getOwnerComponent().MapProvider.optimizeRoute(
-						aAssignments[0].Resource, aAssignments)
+						aAssignments[0].Resource, aAssignments, this.aUnavailabilities)
 					.then(function (aUpdatedAssignments) {
 						this._setAssignmentsData(aUpdatedAssignments);
 						this.oSinglePlanningModel.setProperty("/hasChanges", true);
@@ -528,6 +529,9 @@ sap.ui.define([
 		 * load all availble times, blockers, trainings etc.
 		 * When its available worktime set startHour and endHour
 		 * Other types will be added as appointments
+		 * The method doesn't change models property '/appointments', it just stores unavailabilities in this.aUnavailabilities.
+		 * To display the unavailabilities, this.aUnavailabilities should be concatenated when '/appointments' property is set.
+		 * E.g. in method `_setAssignmentsData`.
 		 * 
 		 * @param oDate - date for availabilitites
 		 */
@@ -551,7 +555,7 @@ sap.ui.define([
 							this.oSinglePlanningModel.setProperty("/endHour", moment(oItem.DateTo).hour());
 						} else {
 							//show all other types as own appointmen
-							appoints.push({
+							var oUnavailability = {
 								sModelPath: sEntitySetPath + "('" + oItem.Guid + "')",
 								title: oItem.Description,
 								text: moment(oItem.DateFrom).format("HH:mm") + " - " + moment(oItem.DateTo).format("HH:mm"),
@@ -560,10 +564,11 @@ sap.ui.define([
 								type: this.mTypes.BLOCKER,
 								DateFrom: oItem.DateFrom,
 								DateTo: oItem.DateTo
-							});
+							};
+							appoints.push(oUnavailability);
+							this.aUnavailabilities.push(oUnavailability);
 						}
 					}.bind(this));
-					this.oSinglePlanningModel.setProperty("/appointments", aAppointments.concat(appoints));
 				}
 			}.bind(this));
 		},
@@ -642,7 +647,7 @@ sap.ui.define([
 				}.bind(this));
 			}
 			var appoints = aAssignments.concat(sTravelAppointments);
-			this.oSinglePlanningModel.setProperty("/appointments", appoints);
+			this.oSinglePlanningModel.setProperty("/appointments", appoints.concat(this.aUnavailabilities));
 			this.oSinglePlanningModel.setProperty("/overallTravelTime", nOverallTravelTime);
 			this.oSinglePlanner.rerender(); // to prevent buggy display of appointments
 			this.oSinglePlanner.setBusy(false);

@@ -90,10 +90,11 @@ sap.ui.define([
 		 * @abstract
 		 * @param {Waypoint} oResource - A Resource object that defines home address.
 		 * @param {Waypoint[]} aAssignments - Arroy of assignments to be visited.
+		 * @param {TimePeriod[]} aBreaks - Arroy of breaks to be considered.
 		 * @return {Promise<RouteResponse>} - Promise object represents sorted by date array of updated assignments.
 		 * The assignments have updated DateFrom, DateTo, TRAVEL_TIME, TRAVEL_BACK_TIME
 		 */
-		optimizeRoute: function(oResource, aAssignments) {
+		optimizeRoute: function(oResource, aAssignments, aBreaks) {
 			Log.error("The 'optimizeRoute' method is not implemented!" );
 		},
 		
@@ -164,6 +165,12 @@ sap.ui.define([
 		 * @typedef {Object} Leg
 		 * @property {string} distance - distance to be covered within the leg
 		 * @property {string} travelTime - time to travel in seconds
+		 */
+		 
+		 /**
+		 * @typedef {Object} TimePeriod
+		 * @property {string} DateFrom - Date object reflecting start of the period.
+		 * @property {string} DateTo - Date object reflecting end of the period.
 		 */
 	});
 });
