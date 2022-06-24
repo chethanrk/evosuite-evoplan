@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/unified/Calendar",
 	"com/evorait/evoplan/controller/map/MapUtilities",
-	"sap/ui/core/mvc/OverrideExecution",
+	"sap/ui/core/mvc/OverrideExecution"
 ], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
 	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, MapUtilities, OverrideExecution) {
 	"use strict";
@@ -386,10 +386,13 @@ sap.ui.define([
 				aAssignableDemands = this._checkDemands(),
 				oResourceContext = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel") : this._selectedResource.getBindingContext(),
 				sPath = oResourceContext.getPath(),
-				sDescription = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel").getProperty(sPath+"/Description") : this._selectedResource.getBindingContext().getProperty(sPath+"/Description"),
-				aAssignedAssignments = this._assignDemands(aAssignableDemands, oResourceContext, oSelectedDate[
+				oResourceBundle = this.getResourceBundle(),
+				sDescription = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel").getProperty(sPath+"/Description") : this._selectedResource.getBindingContext().getProperty(sPath+"/Description");
+				if(aAssignableDemands.aUnAssignableDemands.length > 0){
+					MessageToast.show(oResourceBundle.getText("ymsg.unasignableDemands"));
+				}
+				this._assignDemands(aAssignableDemands, oResourceContext, oSelectedDate[
 					0].getStartDate(), oCalendar, sDescription);
-
 		},
 		/**
 		 * Create filters for the selected demands
@@ -859,12 +862,12 @@ sap.ui.define([
 			}
 			// oStatusFilter.setTokens(aTokens);
 			var oFilterData = {};
-			oFilterData["Status"] = {
+			oFilterData.Status = {
 				items: [],
 				ranges: [],
 				value: ""
 			};
-			oFilterData["Status"].items = values;
+			oFilterData.Status.items = values;
 			this._smartFilter.setFilterData(oFilterData);
 		},
 		/**
@@ -1005,7 +1008,7 @@ sap.ui.define([
 				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 					oViewModel.setProperty("/busy", false);
-				}.bind(this));
+				});
 			}
 		},
 
@@ -1249,16 +1252,20 @@ sap.ui.define([
 		_checkDemands: function () {
 			var aSelectedDemands = this.aDraggedDemands,
 				oModel = this.getModel(),
-				aAssignableDemands = [];
+				aAssignableDemands = [],
+				aUnAssignableDemands = [];
 
 			for (var i in aSelectedDemands) {
 				var oDemandObject = oModel.getProperty(aSelectedDemands[i]);
 				if (oDemandObject.ALLOW_ASSIGN) {
 					aAssignableDemands.push(aSelectedDemands[i]);
+				}else{
+					aUnAssignableDemands.push(oDemandObject);
 				}
 			}
 			return {
-				aAssignableDemands: aAssignableDemands
+				aAssignableDemands: aAssignableDemands,
+				aUnAssignableDemands:aUnAssignableDemands
 			};
 
 		},
@@ -1273,21 +1280,21 @@ sap.ui.define([
 			var aAssignableDemands = oDemandObject.aAssignableDemands;
 			oCalendar.setBusy(true);
 			var sResourcePath = oResourceContext.getPath();
-			Promise.all(this.assignedDemands(aAssignableDemands, sResourcePath, oTargetDate, null, null, true)).then(function (responses) {
+			Promise.all(this.assignedDemands(aAssignableDemands, sResourcePath, this._getDate(oTargetDate), null, null, true)).then(function (responses) {
 				oCalendar.setBusy(false);
 				this.getModel("viewModel").setProperty("/mapSettings/aAssignedAsignmentsForPlanning", responses);
-				this._refreshMapView();
-				this._oEventBus.publish("BaseController", "refreshMapTreeTable", {});
+				// this._refreshMapView();
+				// this._oEventBus.publish("BaseController", "refreshMapTreeTable", {});
 				this.oCalendarPopover.close();
 				this.getOwnerComponent().singleDayPlanner.open(this.getView(), sResourcePath, {
 					StartDate: oTargetDate,
+					EndDate: oTargetDate,
 					ChildCount: aAssignableDemands.length,
-                    ResourceGuid: oResourceContext.getObject().ResourceGuid
+                    ResourceGuid: oResourceContext.getObject().ResourceGuid,
+                    ResourceGroupGuid: oResourceContext.getObject().ResourceGroupGuid
 				}, "TIMEDAY", {Description:sDescription}, true);
 			}.bind(this));
-
 		},
-
 		/**
 		 * Open the current calendar to select the date
 		 * 
@@ -1309,6 +1316,17 @@ sap.ui.define([
 				this.oCalendarPopover.open();
 
 			}
+		},
+		/**
+		 *  Get date with timezone offset
+		 * 
+		 */
+		 _getDate: function(date) {
+		 	var iYear = date.getFullYear(),
+		 		iMonth = date.getMonth().toString().length === 1 ? "0"+(date.getMonth()+1) : date.getMonth()+1,
+		 		iDate=  date.getDate().toString().length === 1 ? "0"+date.getDate() : date.getDate();
+		 	
+    		 return new Date(iYear+"-"+iMonth+"-"+iDate);
 		}
 	});
 
