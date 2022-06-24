@@ -1725,28 +1725,6 @@ sap.ui.define([
 				}
 			}
 		},
-        
-        /**
-		 * handle Mouse hover event to show Assignments popup 
-		 * since 2205
-		 */
-		onShapeMouseEnter: function (oEvent) {
-			var oShapeContext = oEvent.getParameter("shape").getBindingContext("ganttModel"),
-				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId(),
-				bIsDummy = this.oGanttModel.getProperty(oShapeContext.getPath() + "/Guid").includes("thisisdummyguidassignment");
-			if (!bIsDummy && !(this._oContextMenu && this._oContextMenu.getPopup().isOpen())) {
-				this.getOwnerComponent().GanttAssignmentPopOver.open(this.getView(), sap.ui.getCore().byId(sToolbarId + "-settingsButton"),
-					oShapeContext);
-			}
-		},
-
-		/**
-		 * handle Mouse hover event to show Assignments popup 
-		 * since 2205
-		 */
-		onShapeMouseLeave: function (oEvent) {
-			// this.getOwnerComponent().GanttAssignmentPopOver.onCloseAssigmentsPopover(); // commenting code to prevent closing of popover while mouse cursor out
-		},
 
 		/**
 		 * on press link of assignment in resource tree row
