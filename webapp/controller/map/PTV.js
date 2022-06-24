@@ -14,6 +14,8 @@ sap.ui.define([
 	var CREATE_DISTANCE_MATRIX_PATH = "/createDistanceMatrix";
 	var TOUR_SERVICE_PATH = "/XTour";
 	var PLAN_TOURS_PATH = "/planTours";
+	var VEHICLE_ID = "EvoPlanVehicle";
+	var DRIVER_ID = "EvoPlanDriver";
 
 	/**
 	 * @class Provides set of methods to communicate to PTV xServer v2 (xserver2-europe-eu-test.cloud.ptvgroup.com - test server).
@@ -25,6 +27,7 @@ sap.ui.define([
 	 * @property {string} _sCreateDistanceMatrixUrl - Url for the `createDistanceMatrix` operation
 	 * @property {string} _sPlanToursUrl - Url for the `planTours` operation
 	 * @property {string} _sDefaultResourceStartHour - Number representing starting working hour (e.g. 8)
+	 * @property {string} _sDefaultResourceEndtHour - Number representing ending working hour (e.g. 17)
 	 * @property {sap.ui.model.json.JSONModel} oUserModel - User model containing system parameters for a user
 	 */
 	return MapProvider.extend("com.evorait.evoplan.controller.map.PTV", {
@@ -180,10 +183,10 @@ sap.ui.define([
 		 * Please see the PTV API documentation to find out, what affect the properties:
 		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#Welcome/Home.htm
 		 */
-		optimizeRoute: function (oResource, aAssignments) {
+		optimizeRoute: function (oResource, aAssignments, aBreaks) {
 			var oDate = aAssignments[0].DateFrom;
 			return this._createDistanceMatrix(oResource, aAssignments, oDate).then(function (sMatrixId) {
-				return this._planTours(oResource, aAssignments, sMatrixId, oDate).then(function (oTourResponse) {
+				return this._planTours(oResource, aAssignments, sMatrixId, oDate, aBreaks).then(function (oTourResponse) {
 					
 					this._isOptimizedRouteValid(oTourResponse, aAssignments); // don't interrupt current function execution to show, what's plannable
 
@@ -199,8 +202,9 @@ sap.ui.define([
 								});
 								
 								aUpdatedAssignments[nAssIndex].TRAVEL_BACK_TIME = 0;
-								var oCorrespondingDrivingEventIndex = this._getPreviousDrivingEventIndex(aTourEvents, nEventIndex);
-								var nTravelTime = Math.ceil(aTourEvents[oCorrespondingDrivingEventIndex].duration / 60);
+								
+								var oCorrespondingDriving = this._getCorrespondingDriving(aTourEvents, nEventIndex);
+								var nTravelTime = Math.ceil(oCorrespondingDriving.travelTime / 60);
 								
 								aUpdatedAssignments[nAssIndex].TRAVEL_TIME = nTravelTime.toString();
 								
@@ -212,7 +216,7 @@ sap.ui.define([
 									aUpdatedAssignments[nAssIndex].DateTo = oEndDate.toDate();
 								}
 								
-								var oLeg = this._getCorrespondingLeg(oCorrespondingDrivingEventIndex, aLegs);
+								var oLeg = this._getCorrespondingLeg(oCorrespondingDriving.index, aLegs);
 								aUpdatedAssignments[nAssIndex].DISTANCE = (oLeg.distance / 1000).toFixed(1);
 
 								if (aTourEvents[nEventIndex + 2].eventTypes[0] === "TRIP_END") {
@@ -426,8 +430,8 @@ sap.ui.define([
 		 * Common method to call the `planTours` operation of XTour service
 		 * https://xserver2-europe-eu-test.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.PlanToursRequest
 		 */
-		_planTours: function (oResource, aAssignments, sMatrixId, oDate) {
-			var oRequestBody = this._createPayloadForPlanToursRequest(oResource, aAssignments, sMatrixId, oDate);
+		_planTours: function (oResource, aAssignments, sMatrixId, oDate, aBreaks) {
+			var oRequestBody = this._createPayloadForPlanToursRequest(oResource, aAssignments, sMatrixId, oDate, aBreaks);
 			return this._sendPOSTRequestToPTV(this._sPlanToursUrl, oRequestBody);
 		},
 
@@ -438,9 +442,10 @@ sap.ui.define([
 		 * @param {Waypoint[]} aAssignments - Array of Waypoint to be visisted.
 		 * @param {string} sMatrixId - Id of the corresponding distance matrix, returned by `_createDistanceMatrix`.
 		 * @param {Date} oDateForRoute - Date for which the route calculation should be performed
+		 * @param {TimePeriod[]} aBreaks - Arroy of breaks to be considered.
 		 * @return {Object} - Payload for a planTours request
 		 */
-		_createPayloadForPlanToursRequest: function (oResource, aAssignments, sMatrixId, oDate) {
+		_createPayloadForPlanToursRequest: function (oResource, aAssignments, sMatrixId, oDate, aBreaks) {
 			var oLocationTemplate = {
 				$type: "CustomerSite",
 				id: "",
@@ -508,7 +513,7 @@ sap.ui.define([
 			// use oStartDate for `start` as well as for `end` in the tourStartInterval property to restrict start tour time
 			oPayload.fleet = {
 				vehicles: [{
-					ids: ["vehicle1"],
+					ids: [VEHICLE_ID],
 					startLocationId: "ResourceHomeLocation",
 					endLocationId: "ResourceHomeLocation",
 					tourStartInterval: {
@@ -534,6 +539,29 @@ sap.ui.define([
 					end: oEndDate
 				}
 			};
+			
+			if(aBreaks) {
+				oPayload.fleet.drivers = [];
+				var oDriver = {
+					id: DRIVER_ID,
+					vehicleId: VEHICLE_ID,
+					breakIntervals: []
+				};
+				aBreaks.forEach(function(oBreak) {
+					
+					var nBreakTime = Math.floor((oBreak.DateTo.getTime() - oBreak.DateFrom.getTime()) / 1000);
+					var oBreakInterval = {
+						breakTime: nBreakTime,
+						interval: {
+							$type: "StartEndInterval",
+							start: oBreak.DateFrom,
+							end: oBreak.DateTo
+						}
+					};
+					oDriver.breakIntervals.push(oBreakInterval);
+				});
+				oPayload.fleet.drivers.push(oDriver);
+			}
 
 			return oPayload;
 		},
@@ -580,19 +608,30 @@ sap.ui.define([
 		 * @param {com.ptvgroup.xserver.xtour.TourEvent[]} aEvents - array of returned from PTV Tour events. See the documentation:
 		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xtour.html#com.ptvgroup.xserver.xtour.TourEvent
 		 * @param {Number} nCurrentIndex - index of the service event, for which driving event should be found.
-		 * @return {com.ptvgroup.xserver.xtour.TourEvent} the corresponding driving event.
+		 * @return {Driving} - js Object containing index of corresponding driving event and travel time.
 		 * @throws {Error} in case the driving event wasn't found.
 		 */
-		_getPreviousDrivingEventIndex: function(aEvents, nCurrentIndex) {
-			var nDrivingEventIndex = nCurrentIndex;
-			for(nDrivingEventIndex; nDrivingEventIndex >= 0; nDrivingEventIndex--) {
-				if(aEvents[nDrivingEventIndex].eventTypes[0] === "DRIVING") {
-					return nDrivingEventIndex;
+		_getCorrespondingDriving: function(aEvents, nCurrentIndex) {
+			var nDrivingEventIndex;
+			var nTravelTime = 0;
+			for(var nEventIndex = nCurrentIndex - 1; nEventIndex >= 0; nEventIndex--) {
+				if(aEvents[nEventIndex].eventTypes[0] === "DRIVING") {
+					nTravelTime += aEvents[nEventIndex].duration;
+					nDrivingEventIndex = nEventIndex;
+				} else if(aEvents[nEventIndex].eventTypes[0] === "SERVICE" || aEvents[nEventIndex].eventTypes[0] === "TRIP_START") {
+					break;
 				}
 			}
-			// in case there were no corresponding driving event throw an error
-			var sErrorMessage = this.oComponent.getModel("i18n").getResourceBundle().getText("noDrivingEvent");
-			throw new Error(sErrorMessage);
+			if(!nDrivingEventIndex) {
+				// in case there were no corresponding driving event throw an error
+				var sErrorMessage = this.oComponent.getModel("i18n").getResourceBundle().getText("noDrivingEvent");
+				throw new Error(sErrorMessage);
+			}
+			
+			return {
+				index: nDrivingEventIndex,
+				travelTime: nTravelTime
+			};
 		},
 		
 		/**
@@ -783,6 +822,15 @@ sap.ui.define([
 		 * @typedef {Object} TimeDistance
 		 * @property {number} time - Travel time
 		 * @property {number} distance - Travel distance
+		 */
+		 
+		 /**
+		 * @typedef {Object} Driving
+		 * @property {number} travelTime - Travel time
+		 * @property {number} index - Index of the corresponding driving event.
+		 * The corresponding driving can be divided into multiple driving events due to break. 
+		 * In case there are multiple driving events for the Driving between two Assignments,
+		 * returned index reflects to the very first driving event because exactly the first one corresponds to LegReport.
 		 */
 
 		/**
