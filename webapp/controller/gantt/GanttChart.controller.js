@@ -1488,7 +1488,7 @@ sap.ui.define([
 			var aGanttData = this.oGanttModel.getProperty("/data/children");
 			for (let i = 0; i < aGanttData.length; i++) {
 				var aResources = aGanttData[i].children;
-				for (let j = 0; j < aResources.length; j++) {
+				for (let j = 0; aResources && j < aResources.length; j++) {
 					var oResource = aResources[j];
 					oResource.AssignmentSet.results = [];
 					for (var k in aAssignments) {
