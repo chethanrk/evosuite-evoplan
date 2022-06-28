@@ -202,7 +202,6 @@ sap.ui.define([
 				this.loadFragment(sFragmentPath, this).then(function (oFragment) {
 					this._oDialog = oFragment;
 					this.getView().addDependent(this._oDialog);
-
 					this._oDialog.bindElement(sPath);
 					if (this._oDialog.getElementBinding()) {
 						this._oDialog.getElementBinding().refresh();

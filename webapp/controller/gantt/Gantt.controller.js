@@ -555,13 +555,12 @@ sap.ui.define([
 				sAssignGuid = oModel.getProperty(sPath).Guid;
 				sStatus = oModel.getProperty(sPath).DEMAND_STATUS;
 				if (!this._menu || sCurrentRoute !== this._firstVisit) {
-
 					var sFragmentPath = "com.evorait.evoplan.view.gantt.fragments._oldShapeContextMenu";
 					this.loadFragment(sFragmentPath, this, sCurrentRoute).then(function (oFragment) {
 						this._menu = oFragment;
+						this.getView().addDependent(this._menu);
+						this._firstVisit = sCurrentRoute;
 					}.bind(this));
-					this.getView().addDependent(this._menu);
-					this._firstVisit = sCurrentRoute;
 				}
 				if (sStatus !== "COMP") {
 					this._updateAssignmentModel(sAssignGuid).then(function (data) {
