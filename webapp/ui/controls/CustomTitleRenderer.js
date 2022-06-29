@@ -6,9 +6,10 @@
 sap.ui.define([
 		"sap/ui/core/Renderer",
 		"sap/ui/core/Icon",
-		"sap/ui/core/IconPool"
+		"sap/ui/core/IconPool",
+		"sap/base/security/encodeXML"
 	],
-	function (Renderer, Icon, IconPool) {
+	function (Renderer, Icon, IconPool, encodeXML) {
 		"use strict";
 
 		var CustomTitleRenderer = {};
@@ -122,11 +123,11 @@ sap.ui.define([
 			if (oAvailabilityIcon) {
 				oRm.writeAttributeEscaped("data-sap-ui-icon-content", oAvailabilityIcon.content);
 				if (oIconInfo && oIconInfo.fontFamily) {
-					oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
+					oRm.addStyle("font-family", "'" + encodeXML(oIconInfo.fontFamily) + "'");
 				} else if (oAvailabilityIcon.fontFamily) {
-					oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oAvailabilityIcon.fontFamily) + "'");
+					oRm.addStyle("font-family", "'" + encodeXML(oAvailabilityIcon.fontFamily) + "'");
 				} else {
-					oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML("SAP-icons") + "'");
+					oRm.addStyle("font-family", "'" + encodeXML("SAP-icons") + "'");
 				}
 				oRm.writeAttributeEscaped("title", oControl.getIconTooltip());
 				oRm.addStyle("color", oControl.getIconColor());

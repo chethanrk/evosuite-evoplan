@@ -10,15 +10,16 @@
 				request.onload =  function() {
 					if (request.status >= 200 && request.status < 400) {
 						// Success!
-						var resp = request.responseText;
-						document.getElementById('integrationTests').innerHTML=resp
+						document.getElementById('integrationTests').innerHTML= encodeURIComponent(request.responseText);
 					} else {
 						//failed
-						console.log("No unit test/opa tests maintained")
-						}};
+						console.log("No unit test/opa tests maintained");
+					}
+				};
 				
 				request.onerror = function() {
-					console.log("Request error: No unit test/opa tests available")};
+					console.log("Request error: No unit test/opa tests available");
+				};
 					
 				request.send();
 			</script>

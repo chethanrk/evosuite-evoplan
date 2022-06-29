@@ -3,29 +3,28 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/ws/SapPcpWebSocket",
 	"sap/m/MessageToast",
-	"sap/base/Log"
-], function (JSONModel, Device, SapPcpWebSocket, MessageToast, Log) {
+	"sap/base/Log",
+	"com/evorait/evoplan/model/utilities"
+], function (JSONModel, Device, SapPcpWebSocket, MessageToast, Log, Utilities) {
 	"use strict";
 
 	return {
 		getWsConnection: function (oComponent) {
-			var location = window.location,
-				host = location.host,
+			var host = Utilities.sanitizeUrl(window.location.host),
 				sWebSocHost;
 			this._component = oComponent;
-			if (location.protocol === "https:") {
+			if (Utilities.sanitizeUrl(window.location.protocol) === "https:") {
 				sWebSocHost = "wss:";
 			} else {
 				sWebSocHost = "ws:";
 			}
-			if(host.search("hana.ondemand.com") !== -1){
+			if (host.search("hana.ondemand.com") !== -1) {
 				return;
 			}
 			this.oWebSocket = new SapPcpWebSocket(sWebSocHost + "//" + host + "/sap/bc/apc/evora/ep_core_push_apc");
 			// this.oWebSocket = new SapPcpWebSocket("wss://websocketad74c0790.hana.ondemand.com/websocket/Endpoint");
 			this.oWebSocket.attachOpen(function (e) {
 				Log.info("Websocket connection opened");
-			
 			});
 
 			this.oWebSocket.attachClose(function (e) {
@@ -66,38 +65,39 @@ sap.ui.define([
 				return;
 			}
 			// Parse Message
-			if (sCurrentRoute === "splitDemands" || sCurrentRoute === "ganttSplit" || sCurrentRoute === "newGanttSplit" || sCurrentRoute === "splitDemandDetails" || sCurrentRoute === "splitGanttDetails") {
+			if (sCurrentRoute === "splitDemands" || sCurrentRoute === "ganttSplit" || sCurrentRoute === "newGanttSplit" || sCurrentRoute ===
+				"splitDemandDetails" || sCurrentRoute === "splitGanttDetails") {
 				setTimeout(function () {
-					if(sActionPage === "ganttSplit" ||  sCurrentRoute === "splitDemands"){
-                        	//MessageToast.show(sMsg);
-							eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-					} else if(sActionPage === "ganttSplit" && sCurrentRoute === "splitDemandDetails"){
-						// refresh demand detail page
-                        //MessageToast.show(sMsg);
-						eventBus.publish("BaseController", "refreshDemandOverview", {});
-					}else if(sActionPage === "splitDemands" && (sCurrentRoute === "ganttSplit" || sCurrentRoute === "newGanttSplit")){
-                        //MessageToast.show(sMsg);
-							eventBus.publish("BaseController", "refreshGanttChart", {});
-					}else if(sActionPage === "splitDemands" && sCurrentRoute === "splitGanttDetails"){
-						// refresh demand detail page
-                        //MessageToast.show(sMsg);
-						eventBus.publish("BaseController", "refreshDemandOverview", {});
-					}else if(sActionPage === "DemandDetails" && sCurrentRoute === "splitDemands"){
-                        //MessageToast.show(sMsg);
+					if (sActionPage === "ganttSplit" || sCurrentRoute === "splitDemands") {
+						//MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-					}else if(sActionPage === "DemandDetails" && (sCurrentRoute === "ganttSplit" || sCurrentRoute === "newGanttSplit")){
-                        //MessageToast.show(sMsg);
+					} else if (sActionPage === "ganttSplit" && sCurrentRoute === "splitDemandDetails") {
+						// refresh demand detail page
+						//MessageToast.show(sMsg);
+						eventBus.publish("BaseController", "refreshDemandOverview", {});
+					} else if (sActionPage === "splitDemands" && (sCurrentRoute === "ganttSplit" || sCurrentRoute === "newGanttSplit")) {
+						//MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshGanttChart", {});
-					}else if(sActionPage === "DemandDetails" && (sCurrentRoute === "splitDemandDetails" || sCurrentRoute === "splitGanttDetails")){
-                        //MessageToast.show(sMsg);
+					} else if (sActionPage === "splitDemands" && sCurrentRoute === "splitGanttDetails") {
+						// refresh demand detail page
+						//MessageToast.show(sMsg);
+						eventBus.publish("BaseController", "refreshDemandOverview", {});
+					} else if (sActionPage === "DemandDetails" && sCurrentRoute === "splitDemands") {
+						//MessageToast.show(sMsg);
+						eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+					} else if (sActionPage === "DemandDetails" && (sCurrentRoute === "ganttSplit" || sCurrentRoute === "newGanttSplit")) {
+						//MessageToast.show(sMsg);
+						eventBus.publish("BaseController", "refreshGanttChart", {});
+					} else if (sActionPage === "DemandDetails" && (sCurrentRoute === "splitDemandDetails" || sCurrentRoute === "splitGanttDetails")) {
+						//MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandOverview", {});
 					}
-					
+
 					this.clearLocalStorage();
 				}.bind(this), 2000);
 			}
 		},
-		clearLocalStorage: function(){
+		clearLocalStorage: function () {
 			localStorage.removeItem("Evo-Dmnd-pageRefresh");
 			localStorage.removeItem("Evo-Dmnd-guid");
 			localStorage.removeItem("Evo-Action-page");

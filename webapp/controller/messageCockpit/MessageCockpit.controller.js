@@ -20,7 +20,7 @@ sap.ui.define([
 			this.getRouter().getRoute("messageCockpit").attachPatternMatched(this._refreshCounts, this);
 			var oDataTable = this.getView().byId("idProcessTable").getTable();
 			oDataTable.setVisibleRowCountMode("Auto");
-			this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
+			this._oMessagePopover = this.getOwnerComponent()._oMessagePopover;
 			var oTemplate = oDataTable.getRowActionTemplate();
 			if (oTemplate) {
 				oTemplate.destroy();
@@ -78,7 +78,7 @@ sap.ui.define([
 		},
 		_refreshCounts: function (oEvent) {
 			var oModel = this.getModel(),
-			aDeferredGroups;
+				aDeferredGroups;
 
 			oModel.read("/MessageSet/$count", {
 				groupId: "counter",
@@ -198,14 +198,23 @@ sap.ui.define([
 
 			if (!this._oDialog) {
 				// create dialog via fragment factory
-				this._oDialog = sap.ui.xmlfragment("com.evorait.evoplan.view.messageCockpit.fragments.MessageInfos", this);
+				var sFragmentPath = "com.evorait.evoplan.view.messageCockpit.fragments.MessageInfos";
+				this.loadFragment(sFragmentPath, this).then(function (oFragment) {
+					this._oDialog = oFragment;
+					this.getView().addDependent(this._oDialog);
+					this._oDialog.bindElement(sPath);
+					if (this._oDialog.getElementBinding()) {
+						this._oDialog.getElementBinding().refresh();
+					}
+					this._oDialog.openBy(oSource.getParent());
+				}.bind(this));
+			} else {
+				this._oDialog.bindElement(sPath);
+				if (this._oDialog.getElementBinding()) {
+					this._oDialog.getElementBinding().refresh();
+				}
+				this._oDialog.openBy(oSource.getParent());
 			}
-			this._oDialog.bindElement(sPath);
-			if (this._oDialog.getElementBinding()) {
-				this._oDialog.getElementBinding().refresh();
-			}
-			this.getView().addDependent(this._oDialog);
-			this._oDialog.openBy(oSource.getParent());
 		},
 
 		/** 
