@@ -109,15 +109,15 @@ sap.ui.define([
 						aFilters.push(new Filter("ResourceGroupGuid", FilterOperator.EQ, aResGroups[m]));
 					}
 					oFilter = new Filter(aFilters, false);
+					sFilterCount = aFilters.length;
 				}
 				if (aResources.length > 0) {
 					for (var n in aResources) {
 						aFilters.push(new Filter("NodeId", FilterOperator.EQ, aResources[n]));
+						aFilters.push(new Filter("ObjectId", FilterOperator.EQ, aResources[n]));
 					}
 					oFilter = new Filter(aFilters, false);
-				}
-				if (aFilters && aFilters.length) {
-					sFilterCount = aFilters.length;
+					sFilterCount = aFilters.length / 2;
 				}
 				oFinalFilter = oFilter ? [oFilter] : [];
 				this._treeTable.getBinding("rows").filter(oFinalFilter, "Application");
@@ -125,7 +125,7 @@ sap.ui.define([
 			}.bind(this));
 
 		},
-		
+
 		/**
 		 * Close the Filter Bar
 		 */
@@ -147,18 +147,18 @@ sap.ui.define([
 		/**
 		 * Get All the resources
 		 * */
-		_getResources : function (){
-			return new Promise(function(resolve, reject){
-				if(!this._resourceMaster){
-				this._component.readData("/ResourceSet").then(function (data) {
-					this._resourceMaster = data;
-					resolve(this._resourceMaster);
-				}.bind(this));
-				}else{
+		_getResources: function () {
+			return new Promise(function (resolve, reject) {
+				if (!this._resourceMaster) {
+					this._component.readData("/ResourceSet").then(function (data) {
+						this._resourceMaster = data;
+						resolve(this._resourceMaster);
+					}.bind(this));
+				} else {
 					resolve(this._resourceMaster);
 				}
 			}.bind(this));
-				
+
 		}
 
 	});
