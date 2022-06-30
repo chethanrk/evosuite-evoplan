@@ -87,7 +87,7 @@ sap.ui.define([
 			this.getOwnerComponent().GanttResourceFilter.init(this.getView(), this._treeTable);
 
 			this.bGanttHorizonChange = false; //Flag to identify Gantt Horizon Date Change
-			
+
 			this.oMapUtilities = new MapUtilities();
 		},
 		/**
@@ -111,6 +111,22 @@ sap.ui.define([
 			// onShowAssignments button click from the Resource Pin popover
 			// apply the selected resource filter in the gantt view
 			this.handleNavigationFromMap();
+
+			this._resetSelections();
+			//resetting buttons due to Resource selection is resetted.	
+			this.resetToolbarButtons();
+		},
+		/**
+		 * to reset buttons when navigate from Map or reset the selection of resources
+		 */
+		resetToolbarButtons: function () {
+			this.selectedResources = [];
+			this.byId("idButtonreassign").setEnabled(false);
+			this.byId("idButtonunassign").setEnabled(false);
+			this.byId("idButtonCreUA").setEnabled(false);
+			this.byId("idButtonTimeAlloc").setEnabled(false);
+			this.byId("idCalculateRoute").setEnabled(false);
+			this.byId("idOptimizeRoute").setEnabled(false);
 		},
 
 		/**
@@ -177,7 +193,7 @@ sap.ui.define([
 				if (typeof mParams.type === "undefined" && typeof oDate === "string" && sStartTime !== oDate) {
 					bGanttViewJumped = true;
 					oNewStartDate = moment(oDate.slice(0, 8) + "T" + oDate.slice(8)).toDate();
-				}else {
+				} else {
 					oNewStartDate = sap.gantt.misc.Format.abapTimestampToDate(oNewStartDate);
 				}
 
@@ -196,13 +212,7 @@ sap.ui.define([
 
 			//resetting buttons due to Resource selection is resetted.
 			if (!(this.selectedResources && this.selectedResources.length)) {
-				this.byId("idButtonreassign").setEnabled(false);
-				this.byId("idButtonunassign").setEnabled(false);
-				this.byId("idButtonCreUA").setEnabled(false);
-				this.byId("idButtonTimeAlloc").setEnabled(false);
-				this.byId("idCalculateRoute").setEnabled(false);
-				this.byId("idOptimizeRoute").setEnabled(false);
-
+				this.resetToolbarButtons();
 			}
 		},
 
@@ -546,13 +556,7 @@ sap.ui.define([
 				this.getModel("user").setProperty("/DEFAULT_GANT_START_DATE", oEvent.getParameter("from"));
 				this.getModel("user").setProperty("/DEFAULT_GANT_END_DATE", oEvent.getParameter("to"));
 			}
-			this.selectedResources = [];
-			this.byId("idButtonreassign").setEnabled(false);
-			this.byId("idButtonunassign").setEnabled(false);
-			this.byId("idButtonCreUA").setEnabled(false);
-			this.byId("idButtonTimeAlloc").setEnabled(false);
-			this.byId("idCalculateRoute").setEnabled(false);
-			this.byId("idOptimizeRoute").setEnabled(false);
+			this.resetToolbarButtons();
 			this._loadGanttData();
 		},
 		/**
@@ -1322,13 +1326,13 @@ sap.ui.define([
 				sStartDate = date.startOf("day").subtract(1, "day").toDate();
 				sEndDate = date.endOf("day").add(1, "day").toDate();
 			}
-			
+
 			//Setting Existing Visible Horizon Dates On ContextMenu Opening For First Time To Avoid Jumping @since 2205
 			if (this._bFirstTimeContextMenuOpen) {
 				sStartDate = this.oGanttModel.getProperty("/settings/startTime");
 				sEndDate = this.oGanttModel.getProperty("/settings/endTime");
 			}
-			
+
 			this.oGanttModel.setProperty("/settings", {
 				startTime: sStartDate,
 				endTime: sEndDate
@@ -1842,8 +1846,8 @@ sap.ui.define([
 			this.oGanttModel.setProperty(sPath + "/busy", false);
 			this.oGanttModel.refresh(true);
 		},
-        
-        /**
+
+		/**
 		 * when navigating from Maps to Gantt 
 		 * onShowAssignments button click from the Resource Pin popover
 		 * apply the selected resource filter in the gantt view
@@ -1909,6 +1913,7 @@ sap.ui.define([
 		 * since 2205
 		 */
 		_getTravelTimeFromPTV: function () {
+			this.getModel("appView").setProperty("/busy", true);
 			if (this.routeOperation === "Calculate") {
 				//Sending the assignments and resource to PTV to calculte the travel time between Assignments
 				this.getOwnerComponent().MapProvider.calculateRoute(this.oResource, this.aData).then(this._setTravelTimeToGantt.bind(
@@ -1999,15 +2004,15 @@ sap.ui.define([
 					1),
 				nTravelTime = bIsTravelBackTime ? parseFloat(this.aData[nIndex].TRAVEL_BACK_TIME).toFixed(2) : parseFloat(this.aData[nIndex].TRAVEL_TIME)
 				.toFixed(2);
-			if (nIndex === 0) {
+			if (bIsTravelBackTime) {
+				oTempDate = new Date(this.aData[nIndex].DateTo.toString());
+				oStartDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
+				oEndDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[nIndex].TRAVEL_BACK_TIME) - 1));
+			} else if (nIndex === 0) {
 				// Setting the Travel time for First Assignment
 				oTempDate = new Date(this.aData[nIndex].DateFrom.toString());
 				oStartDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() - this.aData[nIndex].TRAVEL_TIME - 1));
 				oEndDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[nIndex].TRAVEL_TIME) - 1));
-			} else if (bIsTravelBackTime) {
-				oTempDate = new Date(this.aData[nIndex].DateTo.toString());
-				oStartDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
-				oEndDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[nIndex].TRAVEL_BACK_TIME) - 1));
 			} else {
 				// Setting the Travel time for other than First Assignment
 				oTempDate = new Date(this.aData[nIndex -
