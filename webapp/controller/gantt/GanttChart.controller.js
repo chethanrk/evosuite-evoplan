@@ -1394,6 +1394,7 @@ sap.ui.define([
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
 					// this._addAssociations.bind(this)();
 				}.bind(this));
+			this.resetToolbarButtons();
 		},
 		/**
 		 * when data was loaded then children needs added to right parent node
