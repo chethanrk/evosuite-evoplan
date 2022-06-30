@@ -20,7 +20,7 @@ sap.ui.define([
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
-		
+
 		metadata: {
 			// extension can declare the public methods
 			// in general methods that start with "_" are private
@@ -243,12 +243,12 @@ sap.ui.define([
 				}
 			}
 		},
-		
+
 		selectedDemands: [],
 		_isDemandDraggable: false,
 		_oGeoMap: null,
 		_mapContextActionSheet: null,
-		
+
 		onInit: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oMapModel = this.getModel("mapConfig");
@@ -277,7 +277,7 @@ sap.ui.define([
 
 			//initialize PinPopover controller
 			this.oPinPopover = new PinPopover(this);
-			
+
 			this.oMapUtilities = new MapUtilities();
 		},
 
@@ -361,16 +361,15 @@ sap.ui.define([
 			this._selectedResource = oEvent.getSource();
 			this.aDraggedDemands = aSelectedDemands;
 			this._checkForMultipleResources(oEvent.getSource().getBindingContext().getObject());
-			
 
 		},
-		
-		onResourceSelect : function (oEvent) {
+
+		onResourceSelect: function (oEvent) {
 			this._selectedResource = oEvent.getParameter("item");
 			this._openCalendar();
 			oEvent.getSource().getParent().close();
 		},
-		
+
 		/**
 		 * @author Rahul
 		 * */
@@ -384,15 +383,26 @@ sap.ui.define([
 			var oCalendar = oEvent.getSource(),
 				oSelectedDate = oCalendar.getSelectedDates(),
 				aAssignableDemands = this._checkDemands(),
-				oResourceContext = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel") : this._selectedResource.getBindingContext(),
+				oResourceContext = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel") :
+				this._selectedResource.getBindingContext(),
 				sPath = oResourceContext.getPath(),
 				oResourceBundle = this.getResourceBundle(),
-				sDescription = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel").getProperty(sPath+"/Description") : this._selectedResource.getBindingContext().getProperty(sPath+"/Description");
-				if(aAssignableDemands.aUnAssignableDemands.length > 0){
-					MessageToast.show(oResourceBundle.getText("ymsg.unasignableDemands"));
-				}
+				sDescription = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel").getProperty(
+					sPath + "/Description") : this._selectedResource.getBindingContext().getProperty(sPath + "/Description");
+			if (aAssignableDemands.aUnAssignableDemands.length > 0) {
+				//increased the msg appearance time to 6 seconds
+				MessageToast.show(oResourceBundle.getText("ymsg.unasignableDemands"), {
+					duration: 6000
+				});
+			}
+			// added condition, in case there no assignable demands then planning calendar would not open, date picker calendar would be closed
+			if (aAssignableDemands.aAssignableDemands && aAssignableDemands.aAssignableDemands.length) {
 				this._assignDemands(aAssignableDemands, oResourceContext, oSelectedDate[
 					0].getStartDate(), oCalendar, sDescription);
+			} else {
+				this.oCalendarPopover.close();
+			}
+
 		},
 		/**
 		 * Create filters for the selected demands
@@ -508,20 +518,20 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/assignedDemands", []);
 			this._oDraggableTable.rebindTable();
 		},
-		
+
 		/**
 		 * Clear displayed routes on Map
 		 * @param {sap.ui.base.Event} oEvent - `press` event
 		 */
-		onClearRoutes: function(oEvent) {
+		onClearRoutes: function (oEvent) {
 			this._oEventBus.publish("Map", "clearRoutes", {});
 		},
-		
+
 		/**
 		 * Display ActionSheet on right-click on Map
 		 * @param {sap.ui.base.Event} oEvent - `contextMenu` event
 		 */
-		onContextMenuMap: function(oEvent) {
+		onContextMenuMap: function (oEvent) {
 			var oSourcePosition = [oEvent.mParameters.clientX, oEvent.mParameters.clientY];
 			var oDivOnThePosition = this.oMapUtilities.gethiddenDivPosition(oSourcePosition, this.getView());
 
@@ -532,7 +542,7 @@ sap.ui.define([
 
 			this._mapContextActionSheet.openBy(oDivOnThePosition);
 		},
-		
+
 		/**
 		 * Enable/Disable busy indicator in map
 		 * @Author Rakesh Sahu
@@ -591,7 +601,7 @@ sap.ui.define([
 		onDragEnd: function (oEvent) {
 			this._deselectAll();
 		},
-		
+
 		/**
 		 * open change status dialog
 		 * @param oEvent
@@ -1055,11 +1065,11 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
 		},
-		
+
 		/* =========================================================== */
 		/* internal methods                                            */
 		/* =========================================================== */
-		
+
 		/**
 		 * Check for multiple resources residing in same location
 		 * 
@@ -1085,20 +1095,20 @@ sap.ui.define([
 						oView.addDependent(this.oResourceSheet);
 						this.oResourceSheet.open();
 					}.bind(this));
-				} else if (this.oResourceSheet && response.results.length > 1){
+				} else if (this.oResourceSheet && response.results.length > 1) {
 					this.oResourceSheet.open();
-				}else {
+				} else {
 					this._openCalendar();
 				}
 			}.bind(this));
 
 		},
-		
+
 		_showAssignedDemands: function () {
 			this._bShowAssignment = true;
 			this._oDraggableTable.rebindTable();
 		},
-		
+
 		/**
 		 * Reset the map selection in the Model
 		 * @Author: Rahul
@@ -1130,7 +1140,7 @@ sap.ui.define([
 				}.bind(this));
 			}
 		},
-		
+
 		/**
 		 * deselect all checkboxes in table
 		 * @private
@@ -1194,7 +1204,7 @@ sap.ui.define([
 				guid: oData.Guid
 			});
 		},
-		
+
 		/**
 		 *  refresh the whole map view including map and demand table
 		 */
@@ -1228,7 +1238,7 @@ sap.ui.define([
 			this._resetMapSelection();
 			oBinding.refresh();
 		},
-		
+
 		/* Demand Table Filter
 		 * @Author Pranav
 		 */
@@ -1254,13 +1264,13 @@ sap.ui.define([
 				var oDemandObject = oModel.getProperty(aSelectedDemands[i]);
 				if (oDemandObject.ALLOW_ASSIGN) {
 					aAssignableDemands.push(aSelectedDemands[i]);
-				}else{
+				} else {
 					aUnAssignableDemands.push(oDemandObject);
 				}
 			}
 			return {
 				aAssignableDemands: aAssignableDemands,
-				aUnAssignableDemands:aUnAssignableDemands
+				aUnAssignableDemands: aUnAssignableDemands
 			};
 
 		},
@@ -1275,7 +1285,8 @@ sap.ui.define([
 			var aAssignableDemands = oDemandObject.aAssignableDemands;
 			oCalendar.setBusy(true);
 			var sResourcePath = oResourceContext.getPath();
-			Promise.all(this.assignedDemands(aAssignableDemands, sResourcePath, this._getDate(oTargetDate), null, null, true)).then(function (responses) {
+			Promise.all(this.assignedDemands(aAssignableDemands, sResourcePath, this._getDate(oTargetDate), null, null, true)).then(function (
+				responses) {
 				oCalendar.setBusy(false);
 				this.getModel("viewModel").setProperty("/mapSettings/aAssignedAsignmentsForPlanning", responses);
 				// this._refreshMapView();
@@ -1285,9 +1296,11 @@ sap.ui.define([
 					StartDate: oTargetDate,
 					EndDate: oTargetDate,
 					ChildCount: aAssignableDemands.length,
-                    ResourceGuid: oResourceContext.getObject().ResourceGuid,
-                    ResourceGroupGuid: oResourceContext.getObject().ResourceGroupGuid
-				}, "TIMEDAY", {Description:sDescription}, true);
+					ResourceGuid: oResourceContext.getObject().ResourceGuid,
+					ResourceGroupGuid: oResourceContext.getObject().ResourceGroupGuid
+				}, "TIMEDAY", {
+					Description: sDescription
+				}, true);
 			}.bind(this));
 		},
 		/**
@@ -1316,12 +1329,12 @@ sap.ui.define([
 		 *  Get date with timezone offset
 		 * 
 		 */
-		 _getDate: function(date) {
-		 	var iYear = date.getFullYear(),
-		 		iMonth = date.getMonth().toString().length === 1 ? "0"+(date.getMonth()+1) : date.getMonth()+1,
-		 		iDate=  date.getDate().toString().length === 1 ? "0"+date.getDate() : date.getDate();
-		 	
-    		 return new Date(iYear+"-"+iMonth+"-"+iDate);
+		_getDate: function (date) {
+			var iYear = date.getFullYear(),
+				iMonth = date.getMonth().toString().length === 1 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1,
+				iDate = date.getDate().toString().length === 1 ? "0" + date.getDate() : date.getDate();
+
+			return new Date(iYear + "-" + iMonth + "-" + iDate);
 		}
 	});
 
