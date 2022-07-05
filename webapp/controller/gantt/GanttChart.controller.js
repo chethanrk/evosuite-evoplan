@@ -1860,8 +1860,10 @@ sap.ui.define([
 
 			// set the date range from Maps
 			var aNavigationDateRange = this.oViewModel.getProperty("/ganttDateRangeFromMap");
-			this.getView().byId("idDateRangeGantt2").setDateValue(new Date(aNavigationDateRange[0]));
-			this.getView().byId("idDateRangeGantt2").setSecondDateValue(new Date(aNavigationDateRange[1]));
+			if (aNavigationDateRange.length) {
+				this.getView().byId("idDateRangeGantt2").setDateValue(new Date(aNavigationDateRange[0]));
+				this.getView().byId("idDateRangeGantt2").setSecondDateValue(new Date(aNavigationDateRange[1]));
+			}
 		},
 
 		/**

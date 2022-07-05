@@ -670,7 +670,7 @@ sap.ui.define([
 
 			if (vEndDate) {
 				oParams.DateTo = oNewEndDate ? oNewEndDate : vEndDate;
-				oParams.TimeTo = vEndTime;
+				oParams.TimeTo = vStartTime.ms === 0 ? vStartTime : vEndTime;
 			} else {
 				oParams.DateTo = oNewEndDate ? oNewEndDate : new Date(); // When Start Date Null/In the Simple view today date will sent
 				oParams.TimeTo = {};

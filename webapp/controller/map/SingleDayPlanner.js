@@ -132,10 +132,11 @@ sap.ui.define([
 			//load all unavailabilities and blockers for this day
 			this._loadAvailabilitiesForDay(oTreeData.StartDate);
 
-			if (oTreeData.ChildCount > 0) {
+			// Commenting the condition due to displaying the break time in case of no assignment as well : By Rakesh Sahu
+			// if (oTreeData.ChildCount > 0) {
 				//load assignments for this day, resource and resource group
 				this._loadAssignmentsForDay(oTreeData);
-			}
+			// }
 			this._loadLegendData();
 			this.oSinglePlanningModel.setProperty("/overallTravelTime", 0);
 			this.aUnavailabilities = [];
