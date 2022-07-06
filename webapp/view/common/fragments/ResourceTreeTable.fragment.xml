@@ -24,7 +24,8 @@
 							isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}"
 							showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
 							workTime="{path:'ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}"
-							highlightColor="{ path:'REQUIREMENT_PROFILE_COLOR', formatter:'.formatter.formatHighlighter'}">
+							highlightColor="{ path:'REQUIREMENT_PROFILE_COLOR', formatter:'.formatter.formatHighlighter'}"
+							isPlannerIconVisible="{ parts:[{path: 'NodeType'}, {path:'viewModel>/resourceTreeShowRouteColumn'}], formatter: '.formatter.decidePlannerIconVisiblity' }">
 							<!--<controls:customData>
 								<core:CustomData key="objectId" value="{NodeId}" writeToDom="true"></core:CustomData>
 							</controls:customData>-->

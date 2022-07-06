@@ -60,6 +60,16 @@ sap.ui.define([
 				highlightColor:{
 					type: "string",
 					group: "Misc"
+				},
+				plannerIcon: {
+					type: "sap.ui.core.URI",
+					group: "Appearance",
+					defaultValue: "sap-icon://create-entry-time"
+				},
+				isPlannerIconVisible: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
 				}
 			},
 			events: {

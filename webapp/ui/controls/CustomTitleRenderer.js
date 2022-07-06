@@ -12,10 +12,12 @@ sap.ui.define([
 		"use strict";
 
 		var CustomTitleRenderer = {};
+		var oi18nModel;
 		CustomTitleRenderer.render = function (oRm, oControl) {
 
 			var oIconInfo = IconPool.getIconInfo(oControl.getIcon());
 			var oAvailabilityIcon = IconPool.getIconInfo(oControl.getAvailabilityIcon());
+			var oPlannerIcon = IconPool.getIconInfo(oControl.getPlannerIcon());   
 			var oAssoTitle = oControl._getTitle(),
 				sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oControl.getLevel()) || sap.ui.core.TitleLevel.Auto,
 				bAutoLevel = sLevel === sap.ui.core.TitleLevel.Auto,
@@ -24,6 +26,7 @@ sap.ui.define([
 				titleText = oAssoTitle ? oAssoTitle.getText() : oControl.getText();
 			var oResourceIcon = oControl._icon;
 			var sHighlightColor = oControl.getHighlightColor();
+			oi18nModel = oControl.getModel('i18n');
 			// Setting icon to render which resource we are showing
 			oResourceIcon.setSrc(oControl.getIcon() !== "" ? oControl.getIcon() : "sap-icon://employee");
 
@@ -98,6 +101,11 @@ sap.ui.define([
 			oRm.write(">");
 			oRm.writeEscaped(titleText);
 			oRm.write("</span>");
+			
+			// render planner icon after the title
+			if (oControl.getIsPlannerIconVisible()) {
+				this.renderPlannerIcon(oRm, oIconInfo, oPlannerIcon);
+			}
 
 			//when link mode is set
 			if (isLink) {
@@ -166,6 +174,35 @@ sap.ui.define([
 			oRm.writeStyles();
 			oRm.write(">" + oControl.getWorkTime() + "</span>");
 			oRm.write("</div>");
+		};
+		
+		/**
+		 * Create the HTML Content for Planner Icon
+		 *
+		 * @param oRm Render manager
+		 * @parma oIconInfo - icon info
+		 * @param oPlannerIcon - icon
+		 * @param oControl Custom title
+		 * @private
+		 */
+		CustomTitleRenderer.renderPlannerIcon = function (oRm, oIconInfo, oPlannerIcon) {
+			oRm.write("<span");
+			oRm.addClass("sapUiIcon");
+			oRm.addClass("sapUiTinyMarginBegin");
+			if (oPlannerIcon) {
+				oRm.writeAttributeEscaped("data-sap-ui-icon-content", oPlannerIcon.content);
+				if (oIconInfo && oIconInfo.fontFamily) {
+					oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
+				} else if (oPlannerIcon.fontFamily) {
+					oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oPlannerIcon.fontFamily) + "'");
+				} else {
+					oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML("SAP-icons") + "'");
+				}
+				oRm.writeAttributeEscaped("title", oi18nModel.getProperty("xtit.single_day_planner"));
+			}
+			oRm.writeClasses();
+			oRm.writeStyles();
+			oRm.write("></span>");
 		};
 
 		return CustomTitleRenderer;
