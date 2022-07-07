@@ -1485,15 +1485,22 @@ sap.ui.define([
 		 */
 		_refreshAssignments: function (sChannel, sEvent, oData) {
 			if (sChannel === "BaseController" && sEvent === "refreshAssignments") {
-				//update ganttModels with results from function import
-				if (this.bDoNotRefreshTree) {
-					this.bDoNotRefreshTree = false;
-					return;
-				}
-
 				var aFilters = [],
 					oUserData = this.getModel("user").getData(),
 					aPromises = [];
+				//update ganttModels with results from function import
+				if (this.bDoNotRefreshTree) {
+					aFilters.push(new Filter("ObjectId", FilterOperator.EQ, this.oResource.ResourceGuid + "//" + this.oResource.ResourceGroupGuid));
+					aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+					aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+					this.getModel("appView").setProperty("/busy", true);
+					this.getOwnerComponent()._getData("/AssignmentSet", [aFilters]).then(function (result) {
+						this.updateResourceAfterRouting(result);
+						this.getModel("appView").setProperty("/busy", false);
+					}.bind(this));
+					this.bDoNotRefreshTree = false;
+					return;
+				}
 
 				aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 				aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
@@ -1505,8 +1512,31 @@ sap.ui.define([
 					this.getModel().setUseBatch(true);
 					this.getModel("appView").setProperty("/busy", false);
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
+					this.oGanttOriginDataModel.refresh();
 				}.bind(this));
 			}
+		},
+		/**
+		 * resetting the assignment and children node after route calculation/optimization
+		 * @param {Object} result
+		 * @Author Rakesh Sahu
+		 */
+		updateResourceAfterRouting: function (result) {
+			this.oResource.AssignmentSet = result;
+			if (this.oResource.AssignmentSet && this.oResource.AssignmentSet.results.length > 0) {
+				this.oResource.children = this.oResource.AssignmentSet.results;
+				this.oResource.children.forEach(function (oAssignItem, idx) {
+					this.oResource.AssignmentSet.results[idx].NodeType = "ASSIGNMENT";
+					this.oResource.AssignmentSet.results[idx].ResourceAvailabilitySet = this.oResource.ResourceAvailabilitySet;
+					var clonedObj = _.cloneDeep(this.oResource.AssignmentSet.results[idx]);
+					//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
+					clonedObj.OBJECT_ID_RELATION = clonedObj.OBJECT_ID_RELATION + "//" + clonedObj.ResourceGuid;
+					this.oResource.children[idx].AssignmentSet = {
+						results: [clonedObj]
+					};
+				}.bind(this));
+			}
+			this._setGanttVisibleHorizon(new Date(this.oSelectedDate));
 		},
 
 		/**
@@ -1540,7 +1570,7 @@ sap.ui.define([
 			var aGanttData = this.oGanttModel.getProperty("/data/children");
 			for (let i = 0; i < aGanttData.length; i++) {
 				var aResources = aGanttData[i].children;
-				for (let j = 0; j < aResources.length; j++) {
+				for (let j = 0; aResources && j < aResources.length; j++) {
 					var oResource = aResources[j];
 					oResource.AssignmentSet.results = [];
 					for (var k in aAssignments) {
@@ -1860,8 +1890,10 @@ sap.ui.define([
 
 			// set the date range from Maps
 			var aNavigationDateRange = this.oViewModel.getProperty("/ganttDateRangeFromMap");
-			this.getView().byId("idDateRangeGantt2").setDateValue(new Date(aNavigationDateRange[0]));
-			this.getView().byId("idDateRangeGantt2").setSecondDateValue(new Date(aNavigationDateRange[1]));
+			if (aNavigationDateRange.length) {
+				this.getView().byId("idDateRangeGantt2").setDateValue(new Date(aNavigationDateRange[0]));
+				this.getView().byId("idDateRangeGantt2").setSecondDateValue(new Date(aNavigationDateRange[1]));
+			}
 		},
 
 		/**
@@ -1938,8 +1970,10 @@ sap.ui.define([
 			this.aAssignmetsWithTravelTime = [];
 			this.aTravelTimes = [];
 
+			// this.getModel("appView").setProperty("/busy", false);
+
 			//Setting the gantt char Visible horizon to see selected date assignments
-			this._setGanttVisibleHorizon(this.oSelectedDate);
+			this._setGanttVisibleHorizon(new Date(this.oSelectedDate));
 
 			//Route Creation in Map (changing the date and time of assignments according to travel)
 			for (var i = 0; i < this.aData.length; i++) {

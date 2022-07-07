@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/ui/core/Fragment",
-	"sap/base/Log","com/evorait/evoplan/model/Constants",
+	"sap/base/Log", "com/evorait/evoplan/model/Constants",
 	"com/evorait/evoplan/controller/map/MapUtilities",
 	"sap/ui/core/mvc/OverrideExecution",
 ], function (Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController, ResourceTreeFilterBar,
@@ -20,7 +20,7 @@ sap.ui.define([
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.map.MapResourceTree", {
-		
+
 		metadata: {
 			// extension can declare the public methods
 			// in general methods that start with "_" are private
@@ -172,7 +172,7 @@ sap.ui.define([
 		onInit: function () {
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
 			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment")
-				.then(function(result) {
+				.then(function (result) {
 					this.oFilterConfigsController.bindViewFilterItemsToEntity("/ShMapViewModeSet");
 				}.bind(this));
 
@@ -191,14 +191,14 @@ sap.ui.define([
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshMapTreeTable", this._triggerRefreshTree, this);
 			this._eventBus.subscribe("ManageAbsences", "ClearSelection", this.resetChanges, this);
-			
+
 			this._eventBus.subscribe("Map", "onShowRoutePressPopover", this.onShowRoutePressPopover, this);
 			this._eventBus.subscribe("Map", "clearRoutes", this.onClearRoutes, this);
 
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.attachRouteMatched(this._routeMatched, this);
-			
+
 			this.oMapUtilities = new MapUtilities();
 		},
 
@@ -341,7 +341,7 @@ sap.ui.define([
 			this._eventBus.unsubscribe("Map", "clearRoutes", this.onClearRoutes, this);
 			this._eventBus.unsubscribe("Map", "onShowRoutePressPopover", this.onShowRoutePressPopover, this);
 		},
-		
+
 		/**
 		 * On drag of assignment, get Assignment data to Assignment model
 		 * @author Sagar since 2205		 * 
@@ -433,7 +433,7 @@ sap.ui.define([
 				}
 			}
 		},
-		
+
 		/**
 		 * Resets the selected resource if selected
 		 */
@@ -453,7 +453,7 @@ sap.ui.define([
 			this.byId("showRoute").setEnabled(false);
 			this.byId("assignedDemands").setEnabled(false);
 		},
-		
+
 		/**
 		 * On select of capacitive checkbox the adjusting splitter length
 		 * @param oEvent checkbox event
@@ -468,7 +468,7 @@ sap.ui.define([
 				oViewModel.setProperty("/splitterDivider", "31%");
 			}
 		},
-		
+
 		/**
 		 * Open's popover containing capacitive assignments
 		 * @param oEvent
@@ -477,7 +477,7 @@ sap.ui.define([
 			var oComponent = this.getOwnerComponent();
 			oComponent.capacitiveAssignments.open(this.getView(), oEvent, this._mParameters);
 		},
-		
+
 		/**
 		 * on press, open the dialog to create an unavailability for selected resources
 		 * @param oEvent
@@ -492,7 +492,7 @@ sap.ui.define([
 				this.showMessageToast(this.getResourceBundle().getText("ymsg.selectResoure"));
 			}
 		},
-		
+
 		/**
 		 * On click on expand the tree nodes gets expand to level 1
 		 * On click on collapse all the tree nodes will be collapsed to root.
@@ -508,11 +508,11 @@ sap.ui.define([
 				this._oDataTable.collapseAll();
 			}
 		},
-		
+
 		onToggleOpenState: function () {
 			this.mTreeState = {};
 		},
-		
+
 		/**
 		 * method called on selection of date
 		 * @Author: Pranav
@@ -522,7 +522,7 @@ sap.ui.define([
 			this.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", true);
 			this._getSelectedRoute(oSelectedDate);
 		},
-		
+
 		/**
 		 * method called to open the Route Date Selection Popover
 		 * @Author: Pranav
@@ -548,7 +548,7 @@ sap.ui.define([
 				this.byId("DRSMap").removeAllSelectedDates();
 			}
 		},
-		
+
 		/**
 		 * method called to close the date range fragment used for route creation
 		 * @Author: Pranav
@@ -556,7 +556,7 @@ sap.ui.define([
 		onCloseDialog: function (oEvent) {
 			this._oPopover.close();
 		},
-		
+
 		/**
 		 * method called after close the date range fragment used for route creation to remove flag
 		 * @Author: Rakesh
@@ -564,7 +564,7 @@ sap.ui.define([
 		removeRouteDataFlag: function (oEvent) {
 			// this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false);
 		},
-		
+
 		/**
 		 * Opens the resource qualification dialog 
 		 * @Author Rahul
@@ -604,7 +604,7 @@ sap.ui.define([
 				}
 			}
 		},
-		
+
 		/**
 		 * Method for show assigned demands in Map for selected Date in Resorce Tree Filter Bar
 		 * @Author: Pranav
@@ -646,90 +646,96 @@ sap.ui.define([
 		 * @param {string} sEventId event bus id
 		 * @param {object} oEvent oEvent object
 		 */
-		onShowRoutePressPopover: function(sChannel, sEventId, oEvent) {
+		onShowRoutePressPopover: function (sChannel, sEventId, oEvent) {
 			this.onShowRoutePress(oEvent);
 		},
-		
+
 		/**
 		 * Handle `press` event on 'Show Route' button
 		 * Perform request to a map provider, display received route coordinates on map
 		 * @param oEvent {sap.ui.base.Event} - the `press` event
 		 */
 
-		onShowRoutePress: function(oEvent) {
+		onShowRoutePress: function (oEvent) {
 			var oShowRouteButton = oEvent.getSource();
 			var oResourceHierachyContext = oShowRouteButton.getBindingContext();
 			var oResourceHierachyObject = oResourceHierachyContext.getObject();
 			var oViewModel = this.getModel("viewModel");
 			// oResource is declared here to closure the variable
 			var oResource;
-			
+
 			// hide corresponding route in case the button was pressed before
 			if (oShowRouteButton.getPressed && !oShowRouteButton.getPressed()) {
 				var aCurrentDisplayedRoutes = oViewModel.getProperty("/GeoJsonLayersData");
-				var aRoutesDisplay = aCurrentDisplayedRoutes.filter(function(oRoute) {
+				var aRoutesDisplay = aCurrentDisplayedRoutes.filter(function (oRoute) {
 					return oRoute.path !== oResourceHierachyContext.getPath();
 				});
 				oViewModel.setProperty("/GeoJsonLayersData", aRoutesDisplay);
 				return;
 			}
-			
+
 			var sResourceHierachyPath = oResourceHierachyContext.getPath();
 			var aGeoJsonLayersData = oViewModel.getProperty("/GeoJsonLayersData");
-			
+
 			var aResourceFilters = this._getResourceFilters([sResourceHierachyPath]);
 			var aAssignmentFilters = this.oMapUtilities.getAssignmentsFiltersWithinDateFrame(oResourceHierachyObject);
 			oViewModel.setProperty("/mapSettings/busy", true);
-			
+
 			var pAssignmentsLoaded = this.getOwnerComponent().readData("/AssignmentSet", aAssignmentFilters);
 			var pResourceLoaded = this.getOwnerComponent().readData("/ResourceSet", [aResourceFilters]);
 			var pMapProviderAndDataLoaded = Promise.all([this.getOwnerComponent()._pMapProviderLoaded, pAssignmentsLoaded, pResourceLoaded]);
-			
+
 			// aPromiseAllResults items are processed in the same sequence as proper promises are put to Promise.all method
 			pMapProviderAndDataLoaded.then(function (aPromiseAllResults) {
-				var aAssignments = aPromiseAllResults[1].results;
-				oResource = aPromiseAllResults[2].results[0];
-				
-				return this.getOwnerComponent().MapProvider.getRoutePolyline(oResource, aAssignments);
-			}.bind(this)).then(function(oResponse) {
-				var oLayer = {};
-				var oData = JSON.parse(oResponse.data.polyline.geoJSON);
-				
-				// the following property assigned with an array as it works ONLY with an array 
-				// despite according to documentation it can be a GeoJSON object
-				oLayer.data = [oData];
-				
-				oLayer.color = "#" + Math.floor(Math.random()*16777215).toString(16); // generate random color
-				
-				// set id for a geojson object to be able to remove the object when the 'show route' toggle button is unpressed
-				oLayer.path = oResourceHierachyContext.getPath();
-				
-				// we don't need to set property `/GeoJsonLayersData` explicitly 
-				// as variable `aGeoJsonLayersData` stores reference to the same object
-				// so it's enough to just push data to the `aGeoJsonLayersData` array
-				aGeoJsonLayersData.push(oLayer);
-				
-				this._eventBus.publish("MapController", "displayRoute", oResource);
-				oViewModel.setProperty("/mapSettings/busy", false);
-			}.bind(this))
-			.catch(function(oError) {
-				oViewModel.setProperty("/mapSettings/busy", false);
-				Log.error(oError);
-				if(oShowRouteButton.setPressed && typeof oShowRouteButton.setPressed === "function") {
-					oShowRouteButton.setPressed(false);
-				}
-			}.bind(this));
+					var aAssignments = aPromiseAllResults[1].results;
+					if (aAssignments.length === 0) {
+						// in case of no assignments, showing messageToast
+						var msg = this.getResourceBundle().getText("ymsg.noAssignmentsOnDate");
+						this.showMessageToast(msg);
+					}
+
+					oResource = aPromiseAllResults[2].results[0];
+
+					return this.getOwnerComponent().MapProvider.getRoutePolyline(oResource, aAssignments);
+				}.bind(this)).then(function (oResponse) {
+					var oLayer = {};
+					var oData = JSON.parse(oResponse.data.polyline.geoJSON);
+
+					// the following property assigned with an array as it works ONLY with an array 
+					// despite according to documentation it can be a GeoJSON object
+					oLayer.data = [oData];
+
+					oLayer.color = "#" + Math.floor(Math.random() * 16777215).toString(16); // generate random color
+
+					// set id for a geojson object to be able to remove the object when the 'show route' toggle button is unpressed
+					oLayer.path = oResourceHierachyContext.getPath();
+
+					// we don't need to set property `/GeoJsonLayersData` explicitly 
+					// as variable `aGeoJsonLayersData` stores reference to the same object
+					// so it's enough to just push data to the `aGeoJsonLayersData` array
+					aGeoJsonLayersData.push(oLayer);
+
+					this._eventBus.publish("MapController", "displayRoute", oResource);
+					oViewModel.setProperty("/mapSettings/busy", false);
+				}.bind(this))
+				.catch(function (oError) {
+					oViewModel.setProperty("/mapSettings/busy", false);
+					Log.error(oError);
+					if (oShowRouteButton.setPressed && typeof oShowRouteButton.setPressed === "function") {
+						oShowRouteButton.setPressed(false);
+					}
+				}.bind(this));
 		},
-		
+
 		/**
 		 * Handle `clearRoutes` event in the `Map` channel
 		 * Cleares data related to displayed routes
 		 */
-		onClearRoutes: function() {
+		onClearRoutes: function () {
 			var oViewModel = this.getModel("viewModel");
 			var aCurrentDisplayedRoutes = oViewModel.getProperty("/GeoJsonLayersData");
-			aCurrentDisplayedRoutes.forEach(function(oRoute) {
-				if(this.getModel().getProperty(oRoute.path)) {
+			aCurrentDisplayedRoutes.forEach(function (oRoute) {
+				if (this.getModel().getProperty(oRoute.path)) {
 					this.getModel().setProperty(oRoute.path + "/IsRouteDisplayed", false);
 				}
 			}.bind(this))
@@ -739,7 +745,7 @@ sap.ui.define([
 		/* =========================================================== */
 		/* internal methods                                            */
 		/* =========================================================== */
-		
+
 		_routeMatched: function (oEvent) {
 			var oParameters = oEvent.getParameters(),
 				sRouteName = oParameters.name; // route name
@@ -759,7 +765,7 @@ sap.ui.define([
 			}
 
 		},
-		
+
 		_selectionResourceTree: function (oParams, oNewNode) {
 			// Disable the Manage absence button when more than one resources are selected
 			// Disble the button for the selection on Group and Pool Node.
@@ -800,7 +806,7 @@ sap.ui.define([
 		_triggerFilterSearch: function () {
 			this._oDroppableTable.rebindTable();
 		},
-		
+
 		/**
 		 * Method will refresh the data of tree by restoring its state
 		 *
@@ -874,7 +880,7 @@ sap.ui.define([
 				this.mTreeState = {};
 			}
 		},
-		
+
 		/**
 		 * method for getting selected route for selected date
 		 * @Author: Pranav
