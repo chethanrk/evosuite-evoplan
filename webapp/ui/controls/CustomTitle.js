@@ -81,9 +81,13 @@ sap.ui.define([
 				},
 				resourceIconPress: {
 					allowPreventDefault: true
+				},
+				plannerIconPress: {
+					allowPreventDefault: true
 				}
 			}
 		},
+		
 		init: function () {
 			this._icon = new Icon({
 				tooltip:"{i18n>xtit.clicktosee}",
@@ -93,7 +97,18 @@ sap.ui.define([
 					}
 				}.bind(this)
 			});
+			
+			this._plannerIcon = new Icon({
+				tooltip:"{i18n>xtit.single_day_planner}",
+				press:function(oEvent){
+					if(this.getEnableQualification()){
+						this.firePlannerIconPress(oEvent);
+					}
+				}.bind(this)
+			});
+			this._plannerIcon.addStyleClass("sapUiTinyMarginBegin");
 		},
+		
 		onAfterRendering: function () {
 			if (sap.ui.core.Control.prototype.onAfterRendering) {
 				sap.ui.core.Control.prototype.onAfterRendering.apply(this, arguments);
