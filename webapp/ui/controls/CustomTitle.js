@@ -99,7 +99,6 @@ sap.ui.define([
 			});
 			
 			this._plannerIcon = new Icon({
-				tooltip:"{i18n>xtit.single_day_planner}",
 				press:function(oEvent){
 					if(this.getEnableQualification()){
 						this.firePlannerIconPress(oEvent);

@@ -24,8 +24,12 @@ sap.ui.define([
 				titleText = oAssoTitle ? oAssoTitle.getText() : oControl.getText();
 			var oResourceIcon = oControl._icon;
 			var sHighlightColor = oControl.getHighlightColor();
+
+			var oi18nModel = oControl.getModel("i18n"),
+				sPlannerIconTooltip = oi18nModel.getProperty("xtit.singlePlanningCalendar");
 			var oPlannerIcon = oControl._plannerIcon;
 			oPlannerIcon.setSrc("sap-icon://create-entry-time");
+			oPlannerIcon.setTooltip(sPlannerIconTooltip);
 			
 			// Setting icon to render which resource we are showing
 			oResourceIcon.setSrc(oControl.getIcon() !== "" ? oControl.getIcon() : "sap-icon://employee");
