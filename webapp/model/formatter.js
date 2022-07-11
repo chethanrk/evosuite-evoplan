@@ -1015,6 +1015,18 @@ sap.ui.define([
 			}
 			
 			return false;
+		},
+		
+		/**
+		 * decides the visibility of the planner icon
+		 * currently visible only in daily view, for the date nodes and only in map resource tree
+		 * @param {sNodeType}
+		 * @param {sViewType}
+		 */
+		decidePlannerIconVisiblity: function(sNodeType, bIsMapResourceTree) {
+			if (bIsMapResourceTree && sNodeType === "TIMEDAY") {
+				return true;
+			}
 		}
 	};
 });

@@ -161,7 +161,7 @@ sap.ui.define([
 					droppedResources: [],
 					bIsSignlePlnAsgnSaved: false
 				},
-				resourceTreeShowRouteColumn: false, 
+				resourceTreeShowRouteColumn: false,
 				resourceFilterforRightTechnician: false,
 				CheckRightTechnician: false,
 				WarningMsgResourceTree: false,
