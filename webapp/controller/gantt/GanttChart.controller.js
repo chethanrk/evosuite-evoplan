@@ -33,6 +33,8 @@ sap.ui.define([
 			unassign: "unassign"
 		},
 
+		bGanttFirstTime: true,
+
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -159,7 +161,7 @@ sap.ui.define([
 				if (typeof mParams.type === "undefined" && typeof oDate === "string" && sStartTime !== oDate) {
 					bGanttViewJumped = true;
 					oNewStartDate = moment(oDate.slice(0, 8) + "T" + oDate.slice(8)).toDate();
-				}else {
+				} else {
 					oNewStartDate = sap.gantt.misc.Format.abapTimestampToDate(oNewStartDate);
 				}
 
@@ -1280,13 +1282,13 @@ sap.ui.define([
 				sStartDate = date.startOf("day").subtract(1, "day").toDate();
 				sEndDate = date.endOf("day").add(1, "day").toDate();
 			}
-			
+
 			//Setting Existing Visible Horizon Dates On ContextMenu Opening For First Time To Avoid Jumping @since 2205
-			if (this._bFirstTimeContextMenuOpen) {
+			if (this._bFirstTimeContextMenuOpen || !this.bGanttFirstTime) {
 				sStartDate = this.oGanttModel.getProperty("/settings/startTime");
 				sEndDate = this.oGanttModel.getProperty("/settings/endTime");
 			}
-			
+
 			this.oGanttModel.setProperty("/settings", {
 				startTime: sStartDate,
 				endTime: sEndDate
@@ -1303,6 +1305,7 @@ sap.ui.define([
 				this.oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
 			}
 			this.bGanttHorizonChange = false; // Resetting/Clearing Gantt Horizon Flag
+			this.bGanttFirstTime = false;
 		},
 		/**
 		 * load tree data from a certain hierarchy level
