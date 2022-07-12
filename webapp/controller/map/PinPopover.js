@@ -237,7 +237,7 @@ sap.ui.define([
 		 **/
 		_planForAssignedDemands: function (oModel, sPath) {
 			var oData = oModel.getProperty(sPath);
-			if (oData.ALLOW_ASSIGN) {
+			if (oData.ALLOW_REASSIGN) {
 				this.oPopover.setBusy(true);
 				// when already assigned to resources, open "Assign New" dialog
 				// first fetch the assignment information of the Demand
