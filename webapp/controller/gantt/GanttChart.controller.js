@@ -1685,7 +1685,7 @@ sap.ui.define([
 			this.assignmentRowContext = oSource.getParent().getBindingContext("ganttModel");
 			if (this.assignmentRowContext) {
 				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().Guid + "')";
-				this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext);
+				this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
