@@ -552,8 +552,13 @@ sap.ui.define([
 					oResults.results.forEach(function (oItem) {
 						//available work time
 						if (oItem.AvailabilityTypeGroup === "A") {
-							this.oSinglePlanningModel.setProperty("/startHour", moment(oItem.DateFrom).hour());
-							this.oSinglePlanningModel.setProperty("/endHour", moment(oItem.DateTo).hour());
+							// Uncomment the two lines below after full integration with ResourceAvailabilitySet.
+							// That means, all the route calculations and calendar settings regarding start and end hours should be 
+							// synchronised with data received from ResourceAvailabilitySet. At the moment the values are set from
+							// global parameters.
+							
+							// this.oSinglePlanningModel.setProperty("/startHour", moment(oItem.DateFrom).hour());
+							// this.oSinglePlanningModel.setProperty("/endHour", moment(oItem.DateTo).hour());
 						} else {
 							//show all other types as own appointmen
 							var oUnavailability = {
