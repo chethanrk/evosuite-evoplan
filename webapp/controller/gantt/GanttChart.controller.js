@@ -1488,6 +1488,7 @@ sap.ui.define([
 			var aGanttData = this.oGanttModel.getProperty("/data/children");
 			for (let i = 0; i < aGanttData.length; i++) {
 				var aResources = aGanttData[i].children;
+				if(aResources){
 				for (let j = 0; j < aResources.length; j++) {
 					var oResource = aResources[j];
 					oResource.AssignmentSet.results = [];
@@ -1500,6 +1501,7 @@ sap.ui.define([
 						}
 					}
 					// oResource.children = _.cloneDeep(oResource.AssignmentSet.results);
+				}
 				}
 			}
 			this.oGanttModel.refresh();
