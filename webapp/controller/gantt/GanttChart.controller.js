@@ -1953,10 +1953,36 @@ sap.ui.define([
 					this));
 			} else {
 				//Sending the assignments and resource to PTV to get Optimized travel time between assignments
-				this.getOwnerComponent().MapProvider.optimizeRoute(this.oResource, this.aData).then(this._setTravelTimeToGantt.bind(
+				this.getOwnerComponent().MapProvider.optimizeRoute(this.oResource, this.aData, this.getBreaks()).then(this._setTravelTimeToGantt.bind(
 					this));
 			}
 
+		},
+		/**
+		 * getting the unavailibility of type "B" (Breaks) to pass into Route Calculation/Optimization PTV service
+		 * since 2209
+		 */
+		getBreaks: function () {
+			var aAvailabilitySet = this.oResource.ResourceAvailabilitySet.results,
+				oStartTime = new Date(_.cloneDeep(this.oSelectedDate).setHours("0", "0", "0")),
+				oEndTime = new Date(_.cloneDeep(this.oSelectedDate).setHours("23", "59", "59")),
+				aUnavailability = [];
+
+			aAvailabilitySet.forEach(function (oItem) {
+				if (oItem.AvailabilityTypeGroup === "B" && oItem.DateFrom >= oStartTime && oItem.DateTo <= oEndTime) {
+					aUnavailability.push({
+						sModelPath: "/ResourceAvailabilitySet" + "('" + oItem.Guid + "')",
+						title: oItem.Description,
+						text: moment(oItem.DateFrom).format("HH:mm") + " - " + moment(oItem.DateTo).format("HH:mm"),
+						color: oItem.BlockPercentageColor || oItem.GANTT_UNAVAILABILITY_COLOR,
+						icon: null,
+						type: "Blocker",
+						DateFrom: oItem.DateFrom,
+						DateTo: oItem.DateTo
+					});
+				}
+			}.bind(this));
+			return aUnavailability;
 		},
 		/**
 		 * setting Travel Time object to Gantt and updating new date time for assignments based on travel Time

@@ -72,11 +72,11 @@ sap.ui.define([
 		oSinglePlanningModel: null,
 
 		aOriginalData: [],
-		
+
 		aUnavailabilities: [],
-		
-		init: function() {
-			
+
+		init: function () {
+
 		},
 
 		/* =========================================================== */
@@ -86,8 +86,8 @@ sap.ui.define([
 		/**
 		 * open single planning calendar dialog
 		 */
-		 
-		 open: function (oView, sPath, oTreeData, sNodeType, oParentData, bFromMap) {
+
+		open: function (oView, sPath, oTreeData, sNodeType, oParentData, bFromMap) {
 			// create dialog lazily
 			if (!this.oPlannerDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
@@ -104,22 +104,22 @@ sap.ui.define([
 				this.onOpen(oView, sPath, oTreeData, sNodeType, oParentData, bFromMap);
 			}
 		},
-		 
+
 		onOpen: function (oView, sPath, oTreeData, sNodeType, oParentData, bFromMap) {
 			this.oParentController = oView.getController();
-			
+
 			oView.addDependent(this.oPlannerDialog);
 			this.oPlannerDialog.addStyleClass(this.oParentController.getOwnerComponent().getContentDensityClass());
-			
+
 			this.oResourceBundle = this.oParentController.getResourceBundle();
 			this.oSinglePlanner = sap.ui.getCore().byId("idSinglePlanningCalendar");
 			this.oSelectedData = oTreeData;
 			this.sSelectedPath = sPath;
 			this._bFromMap = bFromMap;
 			this.oUserModel = this.oParentController.getModel("user");
-			
+
 			this.oSinglePlanningModel = oView.getController().getOwnerComponent().getModel("mapSinglePlanning");
-			
+
 			//set view for this calendar base on NodeType
 			this._setCalenderViews(sNodeType);
 			this.oSinglePlanningModel.setProperty("/startDate", oTreeData.StartDate);
@@ -134,8 +134,8 @@ sap.ui.define([
 
 			// Commenting the condition due to displaying the break time in case of no assignment as well : By Rakesh Sahu
 			// if (oTreeData.ChildCount > 0) {
-				//load assignments for this day, resource and resource group
-				this._loadAssignmentsForDay(oTreeData);
+			//load assignments for this day, resource and resource group
+			this._loadAssignmentsForDay(oTreeData);
 			// }
 			this._loadLegendData();
 			this.oSinglePlanningModel.setProperty("/overallTravelTime", 0);
@@ -277,10 +277,10 @@ sap.ui.define([
 								this._setAssignmentsData(aUpdatedAssignments);
 								this.oSinglePlanningModel.setProperty("/hasChanges", true);
 								this.oSinglePlanner.setBusy(false);
-						}.bind(this)).catch(function(oError) {
-							Log.error(oError.message);
-							this.oSinglePlanner.setBusy(false);
-						}.bind(this));
+							}.bind(this)).catch(function (oError) {
+								Log.error(oError.message);
+								this.oSinglePlanner.setBusy(false);
+							}.bind(this));
 					}
 				} else if (oData.type === this.mTypes.BLOCKER) {
 					this.oParentController.showMessageToast(this.oResourceBundle.getText("ymsg.notAllowedChangeUnavailable"));
@@ -298,7 +298,7 @@ sap.ui.define([
 			this._saveChangedAssignments(function () {
 				oViewModel.setProperty("/mapSettings/bIsSignlePlnAsgnSaved", true);
 				this._loadAssignmentsForDay(this.oSelectedData); // TODO: _loadAssignmentsForDay called multiple times after saving. Find out, what's wrong.
-				
+
 			}.bind(this));
 		},
 
@@ -321,12 +321,12 @@ sap.ui.define([
 			if (aAssignments.length > 0) {
 				this.oSinglePlanner.setBusy(true);
 				this.oParentController.getOwnerComponent().MapProvider.calculateRoute(
-					aAssignments[0].Resource, aAssignments, oStartDate)
-					.then(function(aUpdatedAssignments) {
+						aAssignments[0].Resource, aAssignments, oStartDate)
+					.then(function (aUpdatedAssignments) {
 						this._setAssignmentsData(aUpdatedAssignments);
 						this.oSinglePlanningModel.setProperty("/hasChanges", true);
 						this.oSinglePlanner.setBusy(false);
-					}.bind(this)).catch(function(oError) {
+					}.bind(this)).catch(function (oError) {
 						Log.error(oError.message);
 						this.oSinglePlanner.setBusy(false);
 					}.bind(this));
@@ -338,7 +338,7 @@ sap.ui.define([
 		 */
 		onPressOptimizeRoute: function (oEvent) {
 			var aAssignments = this._getOnlyAppointmentsByKeyValue("type", this.mTypes.APPOINTMENT);
-			
+
 			if (aAssignments.length > 0) {
 				this.oSinglePlanner.setBusy(true);
 				this.oParentController.getOwnerComponent().MapProvider.optimizeRoute(
@@ -348,7 +348,7 @@ sap.ui.define([
 						this.oSinglePlanningModel.setProperty("/hasChanges", true);
 						this.oSinglePlanner.setBusy(false);
 						this.oParentController.showMessageToast(this.oResourceBundle.getText("ymsg.routeOptimized"));
-					}.bind(this)).catch(function(oError) {
+					}.bind(this)).catch(function (oError) {
 						Log.error(oError.message);
 						this.oSinglePlanner.setBusy(false);
 					}.bind(this));
@@ -556,7 +556,7 @@ sap.ui.define([
 							// That means, all the route calculations and calendar settings regarding start and end hours should be 
 							// synchronised with data received from ResourceAvailabilitySet. At the moment the values are set from
 							// global parameters.
-							
+
 							// this.oSinglePlanningModel.setProperty("/startHour", moment(oItem.DateFrom).hour());
 							// this.oSinglePlanningModel.setProperty("/endHour", moment(oItem.DateTo).hour());
 						} else {
@@ -585,7 +585,7 @@ sap.ui.define([
 		 */
 		_loadAssignmentsForDay: function (oResourseHierachyData) {
 			var sEntitySetPath = "/AssignmentSet";
-			
+
 			if (this.oParentController.oMapUtilities.getAssignmentsFiltersWithinDateFrame) {
 				this.oSinglePlanningModel.setProperty("/hasChanges", false);
 				this.oSinglePlanner.setBusy(true);
@@ -600,18 +600,18 @@ sap.ui.define([
 				}.bind(this));
 			}
 		},
-		
+
 		/**
 		 * Create an appointments array and set it to local model according to provided assignments and its travel times.
 		 * @param {com.evorait.evoplan.Assignment[]} aAssignments - array of assignments to be set to single planner
 		 * @return {Object[]} array of appointments including assignments as well as travel appointments
 		 */
-		_setAssignmentsData: function(aAssignments) {
+		_setAssignmentsData: function (aAssignments) {
 			var sEntitySetPath = "/AssignmentSet",
 				sTravelAppointments = [],
 				oTravelItem = null,
 				nOverallTravelTime = 0;
-				
+
 			this.oSinglePlanner.setBusy(true);
 
 			if (aAssignments.length && aAssignments.length > 0) {
@@ -633,6 +633,11 @@ sap.ui.define([
 						oTravelItem.DateTo = oAssignment.DateFrom;
 						oTravelItem.Guid = oAssignment.Guid + "_before";
 						oTravelItem.type = this.mTypes.TRAVEL_BEFORE;
+
+						if (this.aUnavailabilities && this.aUnavailabilities.length) {
+							oTravelItem = this._checkOverlappingUnavailability(oTravelItem, oAssignment.TRAVEL_TIME);
+						}
+
 						sTravelAppointments.push(oTravelItem);
 						nOverallTravelTime += parseFloat(oAssignment.TRAVEL_TIME);
 					}
@@ -679,6 +684,23 @@ sap.ui.define([
 				oEventBus.publish("BaseController", "resetMapSelection", {});
 				oEventBus.publish("BaseController", "refreshMapTreeTable", {});
 			}.bind(this));
+		},
+		
+		/**
+		 * to avoid overlapping of Travel time into Break(unavailability)
+		 * in Route Optimization
+		 */
+		_checkOverlappingUnavailability: function (oTravelItem, nTravelTime) {
+			var bOverlappingUnavailability = (this.aUnavailabilities[0].DateFrom <= oTravelItem.DateFrom && oTravelItem.DateFrom >= this.aUnavailabilities[
+				0].DateTo) || (this.aUnavailabilities[0].DateFrom <= oTravelItem.DateTo && oTravelItem.DateTo >= this.aUnavailabilities[
+				0].DateTo);
+			if (bOverlappingUnavailability) {
+				oTravelItem.DateFrom = moment(this.aUnavailabilities[0].DateFrom).subtract(nTravelTime, "minutes").toDate();
+				oTravelItem.DateTo = this.aUnavailabilities[0].DateFrom;
+				return oTravelItem;
+			} else {
+				return oTravelItem;
+			}
 		}
 	});
 });
