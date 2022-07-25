@@ -831,12 +831,12 @@ sap.ui.define([
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
-					this._resetParentChildNodes(sPath);
+					this._resetParentChildNodes(sPath, oOriginalData);
 				}.bind(this));
 			}.bind(this), function (oError) {
 				this.oGanttModel.setProperty(sPath + "/busy", false);
 				this._resetChanges(sPath);
-				this._resetParentChildNodes(sPath);
+				this._resetParentChildNodes(sPath, oOriginalData);
 			}.bind(this));
 		},
 
@@ -1491,18 +1491,20 @@ sap.ui.define([
 			var aGanttData = this.oGanttModel.getProperty("/data/children");
 			for (let i = 0; i < aGanttData.length; i++) {
 				var aResources = aGanttData[i].children;
-				for (let j = 0; aResources && j < aResources.length; j++) {
-					var oResource = aResources[j];
-					oResource.AssignmentSet.results = [];
-					for (var k in aAssignments) {
-						if (oResource.NodeId === aAssignments[k].ObjectId) {
-							// aAssignments[k].NodeType = "ASSIGNMENT";
-							// aAssignments[k].AssignmentSet = {};
-							// aAssignments[k].AssignmentSet.results = [aAssignments[k]];
-							oResource.AssignmentSet.results.push(aAssignments[k]);
+				if (aResources) {
+					for (let j = 0; aResources && j < aResources.length; j++) {
+						var oResource = aResources[j];
+						oResource.AssignmentSet.results = [];
+						for (var k in aAssignments) {
+							if (oResource.NodeId === aAssignments[k].ObjectId) {
+								// aAssignments[k].NodeType = "ASSIGNMENT";
+								// aAssignments[k].AssignmentSet = {};
+								// aAssignments[k].AssignmentSet.results = [aAssignments[k]];
+								oResource.AssignmentSet.results.push(aAssignments[k]);
+							}
 						}
+						// oResource.children = _.cloneDeep(oResource.AssignmentSet.results);
 					}
-					// oResource.children = _.cloneDeep(oResource.AssignmentSet.results);
 				}
 			}
 			this.oGanttModel.refresh();
