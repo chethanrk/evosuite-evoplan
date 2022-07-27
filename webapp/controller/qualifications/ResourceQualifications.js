@@ -127,11 +127,14 @@ sap.ui.define([
 		_loadContentDemandTab: function () {
 			var oIconTabBar = this._oView.byId("idResourceQualificationIconTabBar");
 			if (!this._oDemandTab) {
-				this._oDemandTab = sap.ui.xmlfragment("com.evorait.evoplan.view.qualifications.fragments.ResourceQualificationDemandTab", this);
-				this._oView.addDependent(this._oDemandTab);
-				this._configureDataTable(sap.ui.getCore().byId("idResourceQualificationDemandsTable").getTable());
+				var sFragmentPath = "com.evorait.evoplan.view.qualifications.fragments.ResourceQualificationDemandTab";
+				this.loadFragment(sFragmentPath, this).then(function (oFragment) {
+					this._oDemandTab = oFragment;
+					this._oView.addDependent(this._oDemandTab);
+					this._configureDataTable(sap.ui.getCore().byId("idResourceQualificationDemandsTable").getTable());
+					oIconTabBar.addContent(this._oDemandTab);
+				}.bind(this));
 			}
-			oIconTabBar.addContent(this._oDemandTab);
 		},
 		/**
 		 * On press assign Button on Demands Tab in Resource Qualification

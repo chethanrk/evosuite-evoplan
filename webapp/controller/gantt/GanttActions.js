@@ -500,16 +500,22 @@ sap.ui.define([
 				oTargetObj = oGanttModel.getProperty(sPath),
 				sChildPath, aChildrenData, sNewPath, sAssignmentPath, aAssignmentData, aChildNodeData, sObjectIDRelation, sObjectID;
 			oGanttModel.setProperty(sPath + "/ResourceAvailabilitySet", oOriginalData.ResourceAvailabilitySet);
+			if (!oTargetObj) {
+				oTargetObj = oOriginalData;
+			}
 			if (oTargetObj.Guid === "") {
 				this._resetUnSavedNodeData(sPath, oOriginalData);
 			} else {
 				//Condition when we Change at Assignment Nodes
 				if (sPath.length > 60) {
-					sAssignmentPath = sPath.substring(0, 27);
+					//	sAssignmentPath = sPath.substring(0, 27);
+					sAssignmentPath = sPath.split("/AssignmentSet/results/")[0];
+					sAssignmentPath = this._getAssignmentChildPath(sAssignmentPath);
 					sAssignmentPath = sAssignmentPath + "/AssignmentSet/results";
 					aAssignmentData = oGanttModel.getProperty(sAssignmentPath);
 					sObjectIDRelation = oTargetObj.OBJECT_ID_RELATION + "//" + oTargetObj.ResourceGuid;
 					oTargetObj.OBJECT_ID_RELATION = sObjectIDRelation;
+					oGanttModel.setProperty(sPath, oTargetObj);
 					for (var a in aAssignmentData) {
 						if (oTargetObj.Guid === aAssignmentData[a].Guid) {
 							sNewPath = sAssignmentPath + "/" + a;
@@ -989,7 +995,17 @@ sap.ui.define([
 				}
 			}
 			return aCreatedAssignments;
-		}
+		},
+
+		_getAssignmentChildPath: function (sAssignmentPath) {
+			var aPaths = sAssignmentPath.split("/"),
+				aPaths = aPaths.slice(0, -2),
+				sNewPath = "";
+			for (var a in aPaths) {
+				sNewPath = sNewPath + "/" + aPaths[a];
+			}
+			return sNewPath.slice(1);
+		},
 	});
 
 });

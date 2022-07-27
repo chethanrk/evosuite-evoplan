@@ -23,13 +23,21 @@
        
 		
 		function startApp() {
-			// Fetching Url parameters and setting as componentData
-            var oStartupParameters = jQuery.sap.getUriParameters().mParams;
 			sap.ui.getCore().attachInit(function () {
 				sap.ui.require([
 					"sap/ui/core/ComponentContainer",
 					"sap/ui/core/Component",
-				], function (ComponentContainer, Component) {
+					"sap/base/util/UriParameters"
+				], function (ComponentContainer, Component, UriParameters) {
+					// Fetching Url parameters and setting as componentData
+					var mParams = UriParameters.fromQuery(window.location.search),
+						aKeys = Array.from(mParams.keys()),
+						oStartupParameters = {};
+					
+					aKeys.forEach(function(sKey){
+						oStartupParameters[sKey] = mParams.get(sKey);
+					});
+					
 					sap.ui.component({
 						name: "com.evorait.evoplan",
 						async: true,

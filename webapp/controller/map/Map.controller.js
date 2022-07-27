@@ -448,10 +448,14 @@ sap.ui.define([
 				this._bShowAssignment = false;
 				this.applyFiltersToMap([aFilters]);
 			}
-
 			if (aFilters) {
 				oEvent.getParameter("bindingParams").filters.push(aFilters);
 			}
+		},
+
+		_showAssignedDemands: function () {
+			this._bShowAssignment = true;
+			this._oDraggableTable.rebindTable();
 		},
 
 		onAfterRendering: function () {

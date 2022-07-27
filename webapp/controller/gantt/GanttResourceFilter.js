@@ -41,7 +41,6 @@ sap.ui.define([
 				this._oView.addDependent(oDialog);
 			}.bind(this));
 		},
-
 		/**
 		 * event fired when the FilterBar is initialized to indicate that metadata are available
 		 * during navigation from Map to Ganntt for showing assignments of a resource
@@ -50,9 +49,8 @@ sap.ui.define([
 		onBeforeInitialise: function () {
 			this.applyNavigationFilters();
 		},
-
 		/**
-		 * when navigating from Maps to Gantt 
+		 * when navigating from Maps to Gantt
 		 * onShowAssignments button click from the Resource Pin popover
 		 * apply the selected resource filter in the gantt view
 		 */
@@ -133,15 +131,15 @@ sap.ui.define([
 						aFilters.push(new Filter("ResourceGroupGuid", FilterOperator.EQ, aResGroups[m]));
 					}
 					oFilter = new Filter(aFilters, false);
+					sFilterCount = aFilters.length;
 				}
 				if (aResources.length > 0) {
 					for (var n in aResources) {
 						aFilters.push(new Filter("NodeId", FilterOperator.EQ, aResources[n]));
+						aFilters.push(new Filter("ObjectId", FilterOperator.EQ, aResources[n]));
 					}
 					oFilter = new Filter(aFilters, false);
-				}
-				if (aFilters && aFilters.length) {
-					sFilterCount = aFilters.length;
+					sFilterCount = aFilters.length / 2;
 				}
 				oFinalFilter = oFilter ? [oFilter] : [];
 				this._treeTable.getBinding("rows").filter(oFinalFilter, "Application");

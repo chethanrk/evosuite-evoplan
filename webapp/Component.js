@@ -416,7 +416,8 @@ sap.ui.define([
 		getContentDensityClass: function () {
 			if (this._sContentDensityClass === undefined) {
 				// check whether FLP has already set the content density class; do nothing in this case
-				if (jQuery(document.body).hasClass("sapUiSizeCozy") || jQuery(document.body).hasClass("sapUiSizeCompact")) {
+				var element = document.getElementsByTagName("body")[0];
+				if (element.classList.contains("sapUiSizeCozy") || element.classList.contains("sapUiSizeCompact")) {
 					this._sContentDensityClass = "";
 				} else if (Device.system.desktop && Device.support.touch) { // apply "compact" mode if touch is not supported
 					// "cozy" in case of touch support; default for most sap.m controls, but needed for desktop-first controls like sap.ui.table.Table
