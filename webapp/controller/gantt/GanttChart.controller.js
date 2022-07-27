@@ -1555,15 +1555,19 @@ sap.ui.define([
 		_refreshCaacities: function (aSelectedResourcePath) {
 			var aFilters = [],
 				oUserData = this.getModel("user").getData(),
-				oTargetData;
+				oTargetData,
+				sNodeId = "";
 
 			for (var i in aSelectedResourcePath) {
 				aFilters = [];
 				oTargetData = this.oGanttModel.getProperty(aSelectedResourcePath[i]);
+				if (oTargetData) {
+					sNodeId = oTargetData.NodeId;
+				}
 				aFilters.push(new Filter("HierarchyLevel", FilterOperator.LE, 1));
 				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 				aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-				aFilters.push(new Filter("NodeId", FilterOperator.EQ, oTargetData.NodeId));
+				aFilters.push(new Filter("NodeId", FilterOperator.EQ, sNodeId));
 
 				this._updateCapacity(aFilters, aSelectedResourcePath[i]);
 			}
