@@ -875,12 +875,12 @@ sap.ui.define([
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
-					this._resetParentChildNodes(sPath);
+					this._resetParentChildNodes(sPath, oOriginalData);
 				}.bind(this));
 			}.bind(this), function (oError) {
 				this.oGanttModel.setProperty(sPath + "/busy", false);
 				this._resetChanges(sPath);
-				this._resetParentChildNodes(sPath);
+				this._resetParentChildNodes(sPath, oOriginalData);
 			}.bind(this));
 		},
 
@@ -1570,7 +1570,8 @@ sap.ui.define([
 			var aGanttData = this.oGanttModel.getProperty("/data/children");
 			for (let i = 0; i < aGanttData.length; i++) {
 				var aResources = aGanttData[i].children;
-				for (let j = 0; aResources && j < aResources.length; j++) {
+				if(aResources){
+				for (let j = 0; j < aResources.length; j++) {
 					var oResource = aResources[j];
 					oResource.AssignmentSet.results = [];
 					for (var k in aAssignments) {
@@ -1582,6 +1583,7 @@ sap.ui.define([
 						}
 					}
 					// oResource.children = _.cloneDeep(oResource.AssignmentSet.results);
+				}
 				}
 			}
 			this.oGanttModel.refresh();
@@ -1640,15 +1642,19 @@ sap.ui.define([
 		_refreshCaacities: function (aSelectedResourcePath) {
 			var aFilters = [],
 				oUserData = this.getModel("user").getData(),
-				oTargetData;
+				oTargetData,
+				sNodeId = "";
 
 			for (var i in aSelectedResourcePath) {
 				aFilters = [];
 				oTargetData = this.oGanttModel.getProperty(aSelectedResourcePath[i]);
+				if (oTargetData) {
+					sNodeId = oTargetData.NodeId;
+				}
 				aFilters.push(new Filter("HierarchyLevel", FilterOperator.LE, 1));
 				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 				aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-				aFilters.push(new Filter("NodeId", FilterOperator.EQ, oTargetData.NodeId));
+				aFilters.push(new Filter("NodeId", FilterOperator.EQ, sNodeId));
 
 				this._updateCapacity(aFilters, aSelectedResourcePath[i]);
 			}
@@ -1772,7 +1778,7 @@ sap.ui.define([
 			this.assignmentRowContext = oSource.getParent().getBindingContext("ganttModel");
 			if (this.assignmentRowContext) {
 				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().Guid + "')";
-				this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext);
+				this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);

@@ -133,15 +133,15 @@ sap.ui.define([
 						aFilters.push(new Filter("ResourceGroupGuid", FilterOperator.EQ, aResGroups[m]));
 					}
 					oFilter = new Filter(aFilters, false);
+					sFilterCount = aFilters.length;
 				}
 				if (aResources.length > 0) {
 					for (var n in aResources) {
 						aFilters.push(new Filter("NodeId", FilterOperator.EQ, aResources[n]));
+						aFilters.push(new Filter("ObjectId", FilterOperator.EQ, aResources[n]));
 					}
 					oFilter = new Filter(aFilters, false);
-				}
-				if (aFilters && aFilters.length) {
-					sFilterCount = aFilters.length;
+					sFilterCount = aFilters.length / 2;
 				}
 				oFinalFilter = oFilter ? [oFilter] : [];
 				this._treeTable.getBinding("rows").filter(oFinalFilter, "Application");
