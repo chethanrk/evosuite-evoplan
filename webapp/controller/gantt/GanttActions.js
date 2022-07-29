@@ -842,7 +842,7 @@ sap.ui.define([
 			if (sSourcePath) {
 				var sParentPath = sSourcePath.substring(0, 27),
 					sNewPath = sParentPath + "/AssignmentSet/results",
-					sParentSplitPath = sSourcePath.split("/AssignmentSet")[0],
+					sParentSplitPath = sSourcePath.split("/AssignmentSet")[1],
 					sSplitPath = sParentSplitPath.split("/"),
 					index = sSplitPath[sSplitPath.length - 1],
 					sChildPath = sPath.split("/AssignmentSet/results")[0],
