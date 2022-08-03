@@ -961,12 +961,12 @@ sap.ui.define([
 			return sDescription;
 		},
 		/*
-		* Customizing remaining work label
-		* @since 2205
-		* Author Bhumika
-		* @param sText
-		* @returns Label string
-		*/
+		 * Customizing remaining work label
+		 * @since 2205
+		 * Author Bhumika
+		 * @param sText
+		 * @returns Label string
+		 */
 		RemainingWorkLabel: function (sText) {
 			var oComponent = this._component,
 				oBundle;
@@ -975,12 +975,23 @@ sap.ui.define([
 			} else {
 				oBundle = this.getResourceBundle();
 			}
-			if (sText) {			// Remaning Work
+			if (sText) { // Remaning Work
 				return oBundle.getText("xtit.remainingWork");
-			}
-			else {					// Progress
+			} else { // Progress
 				return oBundle.getText("xtit.progress");
 			}
+		},
+
+		/*
+		 * Handling visibility of Save button in assignment dialog 
+		 * @since 2209
+		 * Author Bhumika
+		 * @param bChange
+		 * @param bReassign
+		 * @returns boolean
+		 */
+		formartVisibleSaveBtn: function (bChange, bReassign) {
+			return bChange || bReassign;
 		}
 	};
 });
