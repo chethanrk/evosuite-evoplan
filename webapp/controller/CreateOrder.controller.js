@@ -76,6 +76,7 @@ sap.ui.define([
 					this.setDefaultValues(data);
 				}
 			}
+			this.oViewModel.setProperty("/busy", false);
 		},
 
 		/**
