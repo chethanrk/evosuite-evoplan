@@ -41,6 +41,28 @@ sap.ui.define([
 				this._oView.addDependent(oDialog);
 			}.bind(this));
 		},
+		/**
+		 * event fired when the FilterBar is initialized to indicate that metadata are available
+		 * during navigation from Map to Ganntt for showing assignments of a resource
+		 * apply the navigation filters
+		 */
+		onBeforeInitialise: function () {
+			this.applyNavigationFilters();
+		},
+		/**
+		 * when navigating from Maps to Gantt
+		 * onShowAssignments button click from the Resource Pin popover
+		 * apply the selected resource filter in the gantt view
+		 */
+		applyNavigationFilters: function () {
+			if (this._oFilterBar) { // check if the filterbar is already initialised
+				var aNavigationFilters = this._viewModel.getProperty("/ganttResourceFiltersFromPin");
+				if (aNavigationFilters.length > 0) {
+					var oFilter = aNavigationFilters[0];
+					this._oFilterBar.setFilterData(oFilter);
+				}
+			}
+		},
 
 		/**
 		 * Sets the necessary value as global to this controller

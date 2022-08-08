@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable" xmlns="sap.m">
-	<ResponsivePopover title="{i18n>xtit.assignments}" class="sapUiPopupWithPadding" placement="Auto" contentWidth="50%"
+	<ResponsivePopover title="{i18n>xtit.assignments}" class="sapUiPopupWithPadding" placement="Auto" contentWidth="60%"
 		beforeOpen="onBeforeOpenAssigments" afterClose="onAfterCloseAssigments">
 		<beginButton>
 			<core:ExtensionPoint name="PopoverExtP|Assignments|AssignmentSet|AssignmentListTable|BeginButton"/>
@@ -31,6 +31,24 @@
 					<Column minScreenWidth="Tablet" demandPopin="true">
 						<Text text="{/#Demand/DateTo/@sap:label}"/>
 					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{/#Demand/TRAVEL_TIME/@sap:label}"/>
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{/#Demand/TRAVEL_BACK_TIME/@sap:label}"/>
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{/#Demand/TRAVEL_TIME_UNIT/@sap:label}"/>
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{/#Demand/DISTANCE/@sap:label}"/>
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{/#Demand/DISTANCE_BACK/@sap:label}"/>
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{/#Demand/DISTANCE_UNIT/@sap:label}"/>
+					</Column>
 					<core:ExtensionPoint name="TableExtP|Assignments|AssignmentSet|AssignmentListTable|CustomColumn"/>
 				</columns>
 				<items>
@@ -41,6 +59,12 @@
 							<Text text="{ path:'PERSON_NUMBER' }"/>
 							<Text text="{ path:'DateFrom', type:'sap.ui.model.odata.type.DateTimeOffset' }"/>
 							<Text text="{ path:'DateTo', type:'sap.ui.model.odata.type.DateTimeOffset' }"/>
+							<Text text="{TRAVEL_TIME}"/>
+							<Text text="{TRAVEL_BACK_TIME}"/>
+							<Text text="{TRAVEL_TIME_UNIT}"/>
+							<Text text="{DISTANCE}"/>
+							<Text text="{DISTANCE_BACK}"/>
+							<Text text="{DISTANCE_UNIT}"/>
 							<core:ExtensionPoint name="TableExtP|Assignments|AssignmentSet|AssignmentListTable|CustomCell"/>
 						</cells>
 					</ColumnListItem>

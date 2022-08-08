@@ -36,7 +36,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/LongTextPopover",
 	"com/evorait/evoplan/controller/common/NetworkAssignment",
 	"com/evorait/evoplan/controller/common/AssignmentStatus",
-	"com/evorait/evoplan/controller/gantt/GanttAssignmentPopOver"
+	"com/evorait/evoplan/controller/gantt/GanttAssignmentPopOver",
+	"com/evorait/evoplan/controller/map/SingleDayPlanner"
 ], function (
 	UIComponent,
 	Device,
@@ -74,7 +75,8 @@ sap.ui.define([
 	LongTextPopover,
 	NetworkAssignment,
 	AssignmentStatus,
-	GanttAssignmentPopOver) {
+	GanttAssignmentPopOver,
+	SingleDayPlanner) {
 
 	"use strict";
 
@@ -88,6 +90,10 @@ sap.ui.define([
 		},
 
 		_appId: "evoplan",
+		
+		MapProvider: null,
+
+		_pMapProviderLoaded: null,
 
 		/**
 		 * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
@@ -150,8 +156,12 @@ sap.ui.define([
 					routeData: [],
 					checkedDemands: [],
 					assignedDemands: [],
-					bRouteDateSelected: false
+					bRouteDateSelected: false,
+					aAssignedAsignmentsForPlanning:[],
+					droppedResources: [],
+					bIsSignlePlnAsgnSaved: false
 				},
+				resourceTreeShowRouteColumn: false,
 				resourceFilterforRightTechnician: false,
 				CheckRightTechnician: false,
 				WarningMsgResourceTree: false,
@@ -173,8 +183,9 @@ sap.ui.define([
 				oResponseMessages: [],
 				aFixedAppointmentsList: {},
 				bDemandEditMode: false,
+				ganttResourceFiltersFromPin: [],
+				ganttDateRangeFromMap: [],
 				iFirstDraggedIndex: -1
-
 			});
 			this.setModel(oViewModel, "viewModel");
 
@@ -251,6 +262,16 @@ sap.ui.define([
 					children: []
 				}
 			}, false), "ganttOriginalData");
+			
+			var oSinglePlanningModel = models.createHelperModel({
+				hasChanges: false,
+				appointments: [],
+				legendShown: false,
+				legendItems: [],
+				legendAppointmentItems: []
+			});
+			oSinglePlanningModel.setDefaultBindingMode("TwoWay");
+			this.setModel(oSinglePlanningModel, "mapSinglePlanning");
 
 			this.DialogTemplateRenderer = new DialogTemplateRenderController(this);
 
@@ -294,7 +315,7 @@ sap.ui.define([
 			]));
 
 			aPromises.push(this._getData("/MapProviderSet", [], {
-				$expand: "MapSource"
+				$expand: ["MapSource", "MapServiceLinks"],
 			}));
 
 			//Fetching Cost Element F4 for Vendor Assignment
@@ -311,6 +332,7 @@ sap.ui.define([
 				}
 				if (data[2].results.length > 0) {
 					this.getModel("mapConfig").setData(data[2].results[0]);
+					this.initializeMapProvider();
 				}
 				if (data[3].results.length > 0) {
 					this.getModel("oCostElementModel").setData(data[3].results);
@@ -482,6 +504,9 @@ sap.ui.define([
 
 			this.GanttAssignmentPopOver = new GanttAssignmentPopOver();
 			this.GanttAssignmentPopOver.init();
+			
+			this.singleDayPlanner = new SingleDayPlanner();
+			this.singleDayPlanner.init();
 
 		},
 
@@ -674,6 +699,22 @@ sap.ui.define([
 				}
 			}
 			return false;
+		},
+		
+		/**
+		 * Instatiate and initialize map provider object. 
+		 * Type of the instance depends on configuration provided by backend: oMapConfigModel.getProperty("/name")
+		 */
+		initializeMapProvider: function() {
+			// dependency injection for MapProvider
+			var oMapConfigModel = this.getModel("mapConfig");
+			var sProviderJSModuleName = Constants.MAP.JS_PROVIDERS_PATH + oMapConfigModel.getProperty("/name");
+			this._pMapProviderLoaded = new Promise(function(resolve, reject) {
+				sap.ui.require([sProviderJSModuleName], function(cMapProvider) {
+					this.MapProvider = new cMapProvider(this, oMapConfigModel);
+					resolve();
+				}.bind(this));
+			}.bind(this));
 		}
 	});
 });

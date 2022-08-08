@@ -1,0 +1,11 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:u="sap.ui.unified" xmlns:core="sap.ui.core">
+	<Dialog title="{i18n>xtit.selectDate}" class="sapUiPopupWithPadding">
+		<content>
+			<u:Calendar id="idDateSelection" select="onSelectDate"/>
+		</content>
+		<endButton>
+			<Button text="Close" type="Emphasized" press="onCloseCalDialog"/>
+			<core:ExtensionPoint name="DialogExtP|Map|CalendarDialog|CustomAction"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

@@ -95,9 +95,11 @@ sap.ui.define([
 		insertTemplateFragment: function (sPath, sViewName, sContainerId, callbackFn, mParams, callbackfn2) {
 			var oView = this.getView(),
 				sControllerName = null;
-
-			if (mParams.controllerName) {
+			
+			if (mParams.oView) {
 				oView = mParams.oView;
+			}
+			if (mParams.controllerName) {
 				sControllerName = mParams.controllerName;
 			}
 
@@ -237,6 +239,9 @@ sap.ui.define([
 						eventBus.publish("TemplateRendererEvoPlan", "changedBinding", {
 							viewNameId: sViewName
 						});
+						if (callbackFn && mParams.bCallBackInChange) {
+							callbackFn();
+						}
 						if (callbackfn2) {
 							oEvent.getSource().refresh();
 							callbackfn2("change", null, mParams);

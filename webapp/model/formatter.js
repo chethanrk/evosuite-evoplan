@@ -992,6 +992,52 @@ sap.ui.define([
 		 */
 		formartVisibleSaveBtn: function (bChange, bReassign) {
 			return bChange || bReassign;
+		},
+        
+        /**
+		 * Visibility of toggle button for displying a route for resource
+		 * @Author Valerii
+		 * @since 2205
+		 * @param sNodeType
+		 * @returns boolean
+		 */
+		formatDisplayRouteVisibility: function(sNodeType) {
+			var oComponent = this._component,
+				oUserModel,
+				oViewModel;
+				
+			var oGlobalPropertiesMapping = {
+				TIMEDAY: "/ENABLE_MAP_ROUTE_DAILY",
+				TIMEWEEK: "/ENABLE_MAP_ROUTE_WEEKLY"
+			};
+			
+			if (oComponent) {
+				oUserModel = oComponent.getModel("user");
+				oViewModel = oComponent.getModel("viewModel");
+			} else {
+				oUserModel = this.getModel("user");
+				oViewModel = this.getModel("viewModel");
+			}
+			
+			var bGlobalVisibility = oUserModel.getProperty(oGlobalPropertiesMapping[sNodeType]);
+			
+			if(bGlobalVisibility && sNodeType === oViewModel.getProperty("/selectedHierarchyView")) {
+				return true;
+			}
+			
+			return false;
+		},
+		
+		/**
+		 * decides the visibility of the planner icon
+		 * currently visible only in daily view, for the date nodes and only in map resource tree
+		 * @param {sNodeType}
+		 * @param {sViewType}
+		 */
+		decidePlannerIconVisiblity: function(sNodeType, bIsMapResourceTree) {
+			if (bIsMapResourceTree && sNodeType === "TIMEDAY") {
+				return true;
+			}
 		}
 	};
 });

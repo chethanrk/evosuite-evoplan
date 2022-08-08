@@ -25,6 +25,13 @@ sap.ui.define([
 				titleText = oAssoTitle ? oAssoTitle.getText() : oControl.getText();
 			var oResourceIcon = oControl._icon;
 			var sHighlightColor = oControl.getHighlightColor();
+
+			var oi18nModel = oControl.getModel("i18n"),
+				sPlannerIconTooltip = oi18nModel.getProperty("xtit.singlePlanningCalendar");
+			var oPlannerIcon = oControl._plannerIcon;
+			oPlannerIcon.setSrc("sap-icon://create-entry-time");
+			oPlannerIcon.setTooltip(sPlannerIconTooltip);
+			
 			// Setting icon to render which resource we are showing
 			oResourceIcon.setSrc(oControl.getIcon() !== "" ? oControl.getIcon() : "sap-icon://employee");
 
@@ -104,6 +111,11 @@ sap.ui.define([
 			if (isLink) {
 				oRm.write("</a>");
 			}
+			
+			//add planner icon next to title
+			if (oControl.getIsPlannerIconVisible()) {
+				oRm.renderControl(oPlannerIcon);
+			}
 
 			oRm.write("</", sTag, ">");
 		};
@@ -119,7 +131,7 @@ sap.ui.define([
 		CustomTitleRenderer.renderAvailabilityIcon = function (oRm, oIconInfo, oAvailabilityIcon, oControl) {
 			oRm.write("<span");
 			oRm.addClass("sapUiIcon");
-			oRm.addClass("sapUiTinyMarginBegin");
+			oRm.addClass("sapUiTinyMarginBeginEnd");
 			if (oAvailabilityIcon) {
 				oRm.writeAttributeEscaped("data-sap-ui-icon-content", oAvailabilityIcon.content);
 				if (oIconInfo && oIconInfo.fontFamily) {

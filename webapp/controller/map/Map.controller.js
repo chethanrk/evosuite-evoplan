@@ -1,33 +1,265 @@
+/* globals axios */
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/NavigationActionSheet",
+	"com/evorait/evoplan/controller/common/AssignmentActionsController",
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"com/evorait/evoplan/controller/map/MapConfig",
+	"com/evorait/evoplan/controller/map/PinPopover",
 	"sap/ui/core/Fragment",
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/MessageToast",
-	"sap/ui/core/Popup",
-	"sap/m/GroupHeaderListItem"
-], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, Fragment, Dialog, Button, MessageToast,
-
-	Popup, GroupHeaderListItem) {
+	"sap/m/GroupHeaderListItem",
+	"sap/ui/unified/Calendar",
+	"com/evorait/evoplan/controller/map/MapUtilities",
+	"sap/ui/core/mvc/OverrideExecution"
+], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
+	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, MapUtilities, OverrideExecution) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
+
+		metadata: {
+			// extension can declare the public methods
+			// in general methods that start with "_" are private
+			// lyfecycle methods are not mentioned in methods list. They always have dafault properties
+			methods: {
+				DUMMY: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				getGroupHeader: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onSelect: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onDeselect: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onDrop: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onResourceSelect: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onCloseCalDialog: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onSelectDate: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				getSelectedDemandFilters: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onBeforeRebindTable: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onInitialized: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onReset: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onClear: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onClearRoutes: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onContextMenuMap: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				setMapBusy: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				openActionSheet: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onDragStart: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onDragEnd: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onChangeStatusButtonPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onRowSelectionChange: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onAssignButtonPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				OnClickOrderId: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onDemandFilterChange: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				applyFiltersToMap: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				checkAllDemands: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				unCheckAllDemands: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				updateMapDemandSelection: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onSelectMapLagend: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onResetLegendSelection: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onClickMapDemandFilter: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onCloseDialog: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onClusterSwitchPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onDemandQualificationIconPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onContextMenu: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onSelectSpots: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onClickAssignCount: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onMaterialInfoButtonPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onMaterialStatusPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onClickLongText: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onClickOprationLongText: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onPressUnassignDemand: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onAssignmentStatusButtonPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				}
+			}
+		},
+
 		selectedDemands: [],
 		_isDemandDraggable: false,
+		_oGeoMap: null,
+		_mapContextActionSheet: null,
+
 		onInit: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oMapModel = this.getModel("mapConfig");
+			this._oGeoMap = oGeoMap;
 			oGeoMap.setMapConfiguration(MapConfig.getMapConfiguration(oMapModel));
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			this._oEventBus.subscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.subscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.subscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.subscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
+			this._oEventBus.subscribe("MapController", "displayRoute", this._zoomToPoint, this);
 
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
@@ -40,6 +272,13 @@ sap.ui.define([
 			};
 			this.oVBI = this.getView().byId("idGeoMap");
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
+
+			this.getModel("viewModel").setProperty("/GeoJsonLayersData", []);
+
+			//initialize PinPopover controller
+			this.oPinPopover = new PinPopover(this);
+
+			this.oMapUtilities = new MapUtilities();
 		},
 
 		//TODO comment
@@ -91,6 +330,79 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/bRouteDateSelected", false);
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			this._oDraggableTable.rebindTable();
+		},
+		/**
+		 * When Demands are dropped on resource pins
+		 * Check Assignable demands
+		 * open the date picker to select the day.
+		 * If demand status is other than INIT then check for unassinable Demand
+		 * If demand can be reasignable then reassign the demand to the resource on which it dropped.
+		 * Open the single planner with assigned assignments for that day
+		 * 
+		 * @Author Rahul
+		 * 
+		 */
+
+		onDrop: function (oEvent) {
+			var oViewModel = this.getModel("viewModel"),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
+				oDragSource = oEvent.getParameter("oDragSource"),
+				oContext = oDragSource.getBindingContext(),
+				sPath = oContext.getPath();
+
+			if (aSelectedDemands.length > 0) {
+				if (!aSelectedDemands.includes(sPath)) {
+					aSelectedDemands.push(sPath);
+				}
+			} else {
+				aSelectedDemands.push(sPath);
+			}
+			oViewModel.setProperty("/mapSettings/bIsSignlePlnAsgnSaved", false);
+			this._selectedResource = oEvent.getSource();
+			this.aDraggedDemands = aSelectedDemands;
+			this._checkForMultipleResources(oEvent.getSource().getBindingContext().getObject());
+
+		},
+
+		onResourceSelect: function (oEvent) {
+			this._selectedResource = oEvent.getParameter("item");
+			this._openCalendar();
+			oEvent.getSource().getParent().close();
+		},
+
+		/**
+		 * @author Rahul
+		 * */
+		onCloseCalDialog: function (oEvent) {
+			oEvent.getSource().getParent().close();
+		},
+		/**
+		 * @author Rahul
+		 * */
+		onSelectDate: function (oEvent) {
+			var oCalendar = oEvent.getSource(),
+				oSelectedDate = oCalendar.getSelectedDates(),
+				aAssignableDemands = this._checkDemands(),
+				oResourceContext = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel") :
+				this._selectedResource.getBindingContext(),
+				sPath = oResourceContext.getPath(),
+				oResourceBundle = this.getResourceBundle(),
+				sDescription = this._selectedResource.getBindingContext("viewModel") ? this._selectedResource.getBindingContext("viewModel").getProperty(
+					sPath + "/Description") : this._selectedResource.getBindingContext().getProperty(sPath + "/Description");
+			if (aAssignableDemands.aUnAssignableDemands.length > 0) {
+				//increased the msg appearance time to 6 seconds
+				MessageToast.show(oResourceBundle.getText("ymsg.unasignableDemands"), {
+					duration: 6000
+				});
+			}
+			// added condition, in case there no assignable demands then planning calendar would not open, date picker calendar would be closed
+			if (aAssignableDemands.aAssignableDemands && aAssignableDemands.aAssignableDemands.length) {
+				this._assignDemands(aAssignableDemands, oResourceContext, oSelectedDate[
+					0].getStartDate(), oCalendar, sDescription);
+			} else {
+				this.oCalendarPopover.close();
+			}
+
 		},
 		/**
 		 * Create filters for the selected demands
@@ -210,37 +522,31 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/assignedDemands", []);
 			this._oDraggableTable.rebindTable();
 		},
+
 		/**
-		 * Reset the map selection in the Model
-		 * @Author: Rahul
+		 * Clear displayed routes on Map
+		 * @param {sap.ui.base.Event} oEvent - `press` event
 		 */
-		_resetMapSelection: function () {
-			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
-			var aDemandGuidEntity = [],
-				oViewModel = this.getModel("viewModel"),
-				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
-			if (aSelectedDemands.length > 0) {
-				aSelectedDemands.forEach(function (entry) {
-					aDemandGuidEntity.push("/DemandSet('" + entry.split("'")[1] + "')");
-				});
-				oViewModel.setProperty("/mapSettings/selectedDemands", []);
-				this.getModel().resetChanges(aDemandGuidEntity);
-			}
+		onClearRoutes: function (oEvent) {
+			this._oEventBus.publish("Map", "clearRoutes", {});
 		},
+
 		/**
-		 * Set the map selection in the Model
-		 * @Author: Rahul
+		 * Display ActionSheet on right-click on Map
+		 * @param {sap.ui.base.Event} oEvent - `contextMenu` event
 		 */
-		_setMapSelection: function () {
-			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
-			var oViewModel = this.getModel("viewModel"),
-				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
-			if (aSelectedDemands.length > 0) {
-				aSelectedDemands.forEach(function (entry) {
-					this.getModel().setProperty("/DemandSet('" + entry.split("'")[1] + "')/IS_SELECTED", true);
-				}.bind(this));
+		onContextMenuMap: function (oEvent) {
+			var oSourcePosition = [oEvent.mParameters.clientX, oEvent.mParameters.clientY];
+			var oDivOnThePosition = this.oMapUtilities.gethiddenDivPosition(oSourcePosition, this.getView());
+
+			if (!this._mapContextActionSheet) {
+				this._mapContextActionSheet = sap.ui.xmlfragment("com.evorait.evoplan.view.map.fragments.MapContextActionSheet", this);
+				this.getView().addDependent(this._mapContextActionSheet);
 			}
+
+			this._mapContextActionSheet.openBy(oDivOnThePosition);
 		},
+
 		/**
 		 * Enable/Disable busy indicator in map
 		 * @Author Rakesh Sahu
@@ -251,69 +557,6 @@ sap.ui.define([
 			this.getModel("viewModel").setProperty("/mapSettings/busy", bValue);
 		},
 
-		/**
-		 * deselect all checkboxes in table
-		 * @private
-		 */
-		_deselectAll: function () {
-			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
-			this._oDataTable.clearSelection();
-		},
-		/**
-		 * check for unsaved data in Demand table
-		 * on click on navigate acion navigate to Demand Detail Page
-		 * modified method since 2201, by Rakesh Sahu
-		 * @param oEvent
-		 */
-		_onActionPress: function (oEvent) {
-			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
-				oViewModel = this.getModel("viewModel"),
-				oModel = this.getModel(),
-				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
-
-			this.oRow = oEvent.getParameter("row");
-
-			if (bDemandEditMode && oModel.hasPendingChanges()) {
-				this.showDemandEditModeWarningMessage().then(function (bResponse) {
-					var sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
-						sSave = oResourceBundle.getText("xbut.buttonSave");
-
-					if (bResponse === sDiscard) {
-						oModel.resetChanges();
-						oViewModel.setProperty("/bDemandEditMode", false);
-						this._navToDetail(null, this.oRow);
-					} else
-					if (bResponse === sSave) {
-						oViewModel.setProperty("/bDemandEditMode", false);
-						this.submitDemandTableChanges();
-					}
-				}.bind(this));
-
-			} else {
-				if (bDemandEditMode) {
-					oViewModel.setProperty("/bDemandEditMode", false);
-				}
-				this._navToDetail(oEvent);
-			}
-		},
-		/**
-		 * navigation to demand detail page
-		 * added method since 2201, by Rakesh Sahu
-		 * @param oEvent
-		 * @param oRow
-		 */
-		_navToDetail: function (oEvent, oRow) {
-			oRow = oRow ? oRow : oEvent.getParameter("row");
-			var oRouter = this.getRouter(),
-				oContext = oRow.getBindingContext(),
-				sPath = oContext.getPath(),
-				oModel = oContext.getModel(),
-				oData = oModel.getProperty(sPath);
-			this.onReset();
-			oRouter.navTo("mapDemandDetails", {
-				guid: oData.Guid
-			});
-		},
 		/**
 		 *  opens the action sheet
 		 */
@@ -362,39 +605,7 @@ sap.ui.define([
 		onDragEnd: function (oEvent) {
 			this._deselectAll();
 		},
-		/**
-		 *  refresh the whole map view including map and demand table
-		 */
-		_refreshMapView: function (oEvent) {
-			// Code to refresh Map Demand Table
-			if (this._bLoaded) {
-				var oViewModel = this.getModel("viewModel");
-				oViewModel.setProperty("/mapSettings/routeData", []);
-				this._resetMapSelection();
-				setTimeout(function () {
-					this._refreshMapBinding();
-				}.bind(this), 10);
 
-				this._oDraggableTable.rebindTable();
-				this.onResetLegendSelection();
-			}
-			this._bLoaded = true;
-		},
-		/**
-		 * refresh the whole map container bindings
-		 * @Author Rakesh Sahu
-		 * @return
-		 * @param oEvent
-		 */
-		_refreshMapBinding: function () {
-			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
-			// Code to refresh Map
-			this.setMapBusy(true);
-			var oGeoMap = this.getView().byId("idGeoMap"),
-				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items");
-			this._resetMapSelection();
-			oBinding.refresh();
-		},
 		/**
 		 * open change status dialog
 		 * @param oEvent
@@ -660,12 +871,12 @@ sap.ui.define([
 			}
 			// oStatusFilter.setTokens(aTokens);
 			var oFilterData = {};
-			oFilterData["Status"] = {
+			oFilterData.Status = {
 				items: [],
 				ranges: [],
 				value: ""
 			};
-			oFilterData["Status"].items = values;
+			oFilterData.Status.items = values;
 			this._smartFilter.setFilterData(oFilterData);
 		},
 		/**
@@ -747,40 +958,16 @@ sap.ui.define([
 			this.getOwnerComponent().DemandQualifications.open(this.getView(), sDemandGuid);
 
 		},
-		/* Demand Table Filter
-		 * @Author Pranav
-		 */
-		_mapDemandTableFilter: function (oFilters) {
-			this.byId("draggableList").rebindTable();
-			this.getModel("viewModel").setProperty("/mapSettings/routeData", []);
-		},
+
 		/**
 		 * To Handle Right click on Map Spots.
-		 * @author Rakesh
+		 * @param {object} oEvent - Right click event on Spot 
 		 */
 		onContextMenu: function (oEvent) {
 			var oSpot = oEvent.getSource(),
-				oMenu = oEvent.mParameters.menu;
-
-			this.selectedDemandPath = oSpot.getBindingContext().getPath();
-			oMenu = this.addSpotContextMenuItems(oMenu);
-			oSpot.openContextMenu(oMenu);
-		},
-		/**
-		 * To add Menu Items in Context Menu of seleceted Spot.
-		 */
-		addSpotContextMenuItems: function (oMenu) {
-			oMenu.addItem(new sap.ui.unified.MenuItem({
-				text: this.getResourceBundle().getText("xbut.changeStatus"),
-				icon: "sap-icon://flag",
-				select: this.onChangeStatusButtonPress.bind(this)
-			}));
-			oMenu.addItem(new sap.ui.unified.MenuItem({
-				text: this.getResourceBundle().getText("xbut.assign"),
-				icon: "sap-icon://activity-individual",
-				select: this.onAssignButtonPress.bind(this)
-			}));
-			return oMenu;
+				sType = oSpot.data("Type");
+			this.getModel("viewModel").setProperty("/mapSettings/spotContextMenuType", sType);
+			this.oPinPopover.open(oSpot, sType);
 		},
 
 		/**
@@ -830,7 +1017,7 @@ sap.ui.define([
 				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 					oViewModel.setProperty("/busy", false);
-				}.bind(this));
+				});
 			}
 		},
 
@@ -882,6 +1069,277 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
 		},
+
+		/* =========================================================== */
+		/* internal methods                                            */
+		/* =========================================================== */
+
+		/**
+		 * Check for multiple resources residing in same location
+		 * 
+		 * @Author Rahul
+		 */
+		_checkForMultipleResources: function (oResource) {
+			var aFilters = [],
+				oViewModel = this.getModel("viewModel");
+			var oView = this.getView();
+
+			aFilters.push(new Filter("LONGITUDE", FilterOperator.EQ, oResource.LONGITUDE));
+			aFilters.push(new Filter("LATITUDE", FilterOperator.EQ, oResource.LATITUDE));
+			this.setMapBusy(true);
+			this.getOwnerComponent().readData("/ResourceSet", aFilters).then(function (response) {
+				this.setMapBusy(false);
+				oViewModel.setProperty("/mapSettings/droppedResources", response.results);
+				if (!this.oResourceSheet && response.results.length > 1) {
+					Fragment.load({
+						name: "com.evorait.evoplan.view.map.fragments.ActionSheet",
+						controller: this
+					}).then(function (popover) {
+						this.oResourceSheet = popover;
+						oView.addDependent(this.oResourceSheet);
+						this.oResourceSheet.open();
+					}.bind(this));
+				} else if (this.oResourceSheet && response.results.length > 1) {
+					this.oResourceSheet.open();
+				} else {
+					this._openCalendar();
+				}
+			}.bind(this));
+
+		},
+
+		_showAssignedDemands: function () {
+			this._bShowAssignment = true;
+			this._oDraggableTable.rebindTable();
+		},
+
+		/**
+		 * Reset the map selection in the Model
+		 * @Author: Rahul
+		 */
+		_resetMapSelection: function () {
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
+			var aDemandGuidEntity = [],
+				oViewModel = this.getModel("viewModel"),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
+			if (aSelectedDemands.length > 0) {
+				aSelectedDemands.forEach(function (entry) {
+					aDemandGuidEntity.push("/DemandSet('" + entry.split("'")[1] + "')");
+				});
+				oViewModel.setProperty("/mapSettings/selectedDemands", []);
+				this.getModel().resetChanges(aDemandGuidEntity);
+			}
+		},
+		/**
+		 * Set the map selection in the Model
+		 * @Author: Rahul
+		 */
+		_setMapSelection: function () {
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
+			var oViewModel = this.getModel("viewModel"),
+				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands");
+			if (aSelectedDemands.length > 0) {
+				aSelectedDemands.forEach(function (entry) {
+					this.getModel().setProperty("/DemandSet('" + entry.split("'")[1] + "')/IS_SELECTED", true);
+				}.bind(this));
+			}
+		},
+
+		/**
+		 * deselect all checkboxes in table
+		 * @private
+		 */
+		_deselectAll: function () {
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
+			this._oDataTable.clearSelection();
+		},
+		/**
+		 * check for unsaved data in Demand table
+		 * on click on navigate acion navigate to Demand Detail Page
+		 * modified method since 2201, by Rakesh Sahu
+		 * @param oEvent
+		 */
+		_onActionPress: function (oEvent) {
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				oViewModel = this.getModel("viewModel"),
+				oModel = this.getModel(),
+				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
+
+			this.oRow = oEvent.getParameter("row");
+
+			if (bDemandEditMode && oModel.hasPendingChanges()) {
+				this.showDemandEditModeWarningMessage().then(function (bResponse) {
+					var sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
+						sSave = oResourceBundle.getText("xbut.buttonSave");
+
+					if (bResponse === sDiscard) {
+						oModel.resetChanges();
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this._navToDetail(null, this.oRow);
+					} else
+					if (bResponse === sSave) {
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this.submitDemandTableChanges();
+					}
+				}.bind(this));
+
+			} else {
+				if (bDemandEditMode) {
+					oViewModel.setProperty("/bDemandEditMode", false);
+				}
+				this._navToDetail(oEvent);
+			}
+		},
+		/**
+		 * navigation to demand detail page
+		 * added method since 2201, by Rakesh Sahu
+		 * @param oEvent
+		 * @param oRow
+		 */
+		_navToDetail: function (oEvent, oRow) {
+			oRow = oRow ? oRow : oEvent.getParameter("row");
+			var oRouter = this.getRouter(),
+				oContext = oRow.getBindingContext(),
+				sPath = oContext.getPath(),
+				oModel = oContext.getModel(),
+				oData = oModel.getProperty(sPath);
+			this.onReset();
+			oRouter.navTo("mapDemandDetails", {
+				guid: oData.Guid
+			});
+		},
+
+		/**
+		 *  refresh the whole map view including map and demand table
+		 */
+		_refreshMapView: function (oEvent) {
+			// Code to refresh Map Demand Table
+			if (this._bLoaded) {
+				var oViewModel = this.getModel("viewModel");
+				oViewModel.setProperty("/mapSettings/routeData", []);
+				this._resetMapSelection();
+				setTimeout(function () {
+					this._refreshMapBinding();
+				}.bind(this), 10);
+
+				this._oDraggableTable.rebindTable();
+				this.onResetLegendSelection();
+			}
+			this._bLoaded = true;
+		},
+		/**
+		 * refresh the whole map container bindings
+		 * @Author Rakesh Sahu
+		 * @return
+		 * @param oEvent
+		 */
+		_refreshMapBinding: function () {
+			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
+			// Code to refresh Map
+			this.setMapBusy(true);
+			var oGeoMap = this.getView().byId("idGeoMap"),
+				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items");
+			this._resetMapSelection();
+			oBinding.refresh();
+		},
+
+		/* Demand Table Filter
+		 * @Author Pranav
+		 */
+		_mapDemandTableFilter: function (oFilters) {
+			this.byId("draggableList").rebindTable();
+			this.getModel("viewModel").setProperty("/mapSettings/routeData", []);
+		},
+
+		_zoomToPoint: function (sEventChannel, sEventName, oPoint) {
+			this._oGeoMap.setCenterPosition(oPoint.LONGITUDE + ";" + oPoint.LATITUDE);
+			this._oGeoMap.setZoomlevel(13);
+		},
+		/**
+		 * Checks the Demands for correct status in order assign or reAssign
+		 * */
+		_checkDemands: function () {
+			var aSelectedDemands = this.aDraggedDemands,
+				oModel = this.getModel(),
+				aAssignableDemands = [],
+				aUnAssignableDemands = [];
+
+			for (var i in aSelectedDemands) {
+				var oDemandObject = oModel.getProperty(aSelectedDemands[i]);
+				if (oDemandObject.ALLOW_ASSIGN) {
+					aAssignableDemands.push(aSelectedDemands[i]);
+				} else {
+					aUnAssignableDemands.push(oDemandObject);
+				}
+			}
+			return {
+				aAssignableDemands: aAssignableDemands,
+				aUnAssignableDemands: aUnAssignableDemands
+			};
+
+		},
+		/**
+		 * Assign dragged demand to the resource on which it is dropped for selected date
+		 * And open the single planner for that day
+		 * 
+		 * @Author Rahul
+		 * 
+		 */
+		_assignDemands: function (oDemandObject, oResourceContext, oTargetDate, oCalendar, sDescription) {
+			var aAssignableDemands = oDemandObject.aAssignableDemands;
+			oCalendar.setBusy(true);
+			var sResourcePath = oResourceContext.getPath();
+			Promise.all(this.assignedDemands(aAssignableDemands, sResourcePath, this._getDate(oTargetDate), null, null, true)).then(function (
+				responses) {
+				oCalendar.setBusy(false);
+				this.getModel("viewModel").setProperty("/mapSettings/aAssignedAsignmentsForPlanning", responses);
+				// this._refreshMapView();
+				// this._oEventBus.publish("BaseController", "refreshMapTreeTable", {});
+				this.oCalendarPopover.close();
+				this.getOwnerComponent().singleDayPlanner.open(this.getView(), sResourcePath, {
+					StartDate: oTargetDate,
+					EndDate: oTargetDate,
+					ChildCount: aAssignableDemands.length,
+					ResourceGuid: oResourceContext.getObject().ResourceGuid,
+					ResourceGroupGuid: oResourceContext.getObject().ResourceGroupGuid
+				}, "TIMEDAY", {
+					Description: sDescription
+				}, true);
+			}.bind(this));
+		},
+		/**
+		 * Open the current calendar to select the date
+		 * 
+		 * @Author Rahul
+		 * */
+		_openCalendar: function (oResource) {
+			var oView = this.getView();
+			if (!this.oCalendarPopover) {
+				Fragment.load({
+					name: "com.evorait.evoplan.view.map.fragments.CalendarDialog",
+					controller: this,
+					id: "idSelectDate"
+				}).then(function (popover) {
+					this.oCalendarPopover = popover;
+					oView.addDependent(this.oCalendarPopover);
+					this.oCalendarPopover.open();
+				}.bind(this));
+			} else {
+				this.oCalendarPopover.open();
+
+			}
+		},
+		/**
+		 *  Get date with timezone offset
+		 * 
+		 */
+		_getDate: function (date) {
+			var iYear = date.getFullYear(),
+				iMonth = date.getMonth().toString().length === 1 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1,
+				iDate = date.getDate().toString().length === 1 ? "0" + date.getDate() : date.getDate();
+
+			return new Date(iYear + "-" + iMonth + "-" + iDate);
+		}
 	});
 
 });

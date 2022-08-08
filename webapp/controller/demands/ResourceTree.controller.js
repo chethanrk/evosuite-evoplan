@@ -83,7 +83,7 @@ sap.ui.define([
 				} else {
 					this.getView().getModel("viewModel").setProperty("/selectedHierarchyView", sViewSelectedKey);
 				}
-
+				this.getModel("viewModel").setProperty("/resourceTreeShowRouteColumn", false);
 			}
 		},
 

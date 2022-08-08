@@ -60,6 +60,16 @@ sap.ui.define([
 				highlightColor:{
 					type: "string",
 					group: "Misc"
+				},
+				plannerIcon: {
+					type: "sap.ui.core.URI",
+					group: "Appearance",
+					defaultValue: "sap-icon://create-entry-time"
+				},
+				isPlannerIconVisible: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
 				}
 			},
 			events: {
@@ -71,9 +81,13 @@ sap.ui.define([
 				},
 				resourceIconPress: {
 					allowPreventDefault: true
+				},
+				plannerIconPress: {
+					allowPreventDefault: true
 				}
 			}
 		},
+		
 		init: function () {
 			this._icon = new Icon({
 				tooltip:"{i18n>xtit.clicktosee}",
@@ -83,7 +97,17 @@ sap.ui.define([
 					}
 				}.bind(this)
 			});
+			
+			this._plannerIcon = new Icon({
+				press:function(oEvent){
+					if(this.getEnableQualification()){
+						this.firePlannerIconPress(oEvent);
+					}
+				}.bind(this)
+			});
+			this._plannerIcon.addStyleClass("sapUiTinyMarginBegin");
 		},
+		
 		onAfterRendering: function () {
 			if (sap.ui.core.Control.prototype.onAfterRendering) {
 				sap.ui.core.Control.prototype.onAfterRendering.apply(this, arguments);
