@@ -31,11 +31,9 @@
 					<Label text="{i18n>xfld.newAssign}" visible="{assignment>/AllowReassign}"/>
 					<core:ExtensionPoint name="SimpleFormExtP|AssignInfo|AssignmentSet|UpdateAssignmentForm|CustomFields"/>
 					<Button id="reassignDialogButton" text="{i18n>xbut.selectResource}" press="onPressReAssign" enabled="{assignment>/AllowReassign}"
-						visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleReassign' }"/>
-					<Label text="{i18n>xfld.newAssignment}"
-						visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleReassign' }"/>
-					<Text text="{assignment>/NewAssignDesc}"
-						visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleReassign' }"/>
+						visible="{assignment>/AllowReassign}"/>
+					<Label text="{i18n>xfld.newAssignment}" visible="{assignment>/AllowReassign}"/>
+					<Text text="{assignment>/NewAssignDesc}" visible="{assignment>/AllowReassign}"/>
 					<Label text="{i18n>xbut.ChngAssgnStatus}" visible="{user>/ENABLE_ASSIGNMENT_STATUS}"></Label>
 					<Button icon="sap-icon://order-status" tooltip="{i18n>xbut.ChngAssgnStatus}" visible="{user>/ENABLE_ASSIGNMENT_STATUS}"
 						press="openAssignmentStatus"></Button>

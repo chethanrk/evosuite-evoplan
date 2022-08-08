@@ -470,11 +470,15 @@ sap.ui.define([
 		_deleteChildAssignment: function (sAssignGuid, sPath) {
 			var oGanttModel = this.getModel("ganttModel"),
 				oGanttOriginalModel = this.getModel("ganttOriginalData"),
-				aAssignmentData, sChildPath;
+				aAssignmentData, sChildPath, oNewChildPath, aChildAssignmentData;
 			if (sPath.length > 60) {
-				sChildPath = sPath.substring(0, 27);
+				sChildPath = sPath.split("/AssignmentSet/results/")[0];
+				oNewChildPath = this._getDeleteChildPath(sChildPath);
+				sChildPath = this._getAssignmentChildPath(sChildPath);
 				sChildPath = sChildPath + "/AssignmentSet/results/";
 				aAssignmentData = oGanttModel.getProperty(sChildPath);
+				aChildAssignmentData = oGanttModel.getProperty(oNewChildPath.sPath);
+				aChildAssignmentData.splice(oNewChildPath.iIndex, 1);
 				for (var a in aAssignmentData) {
 					if (sAssignGuid === aAssignmentData[a].Guid) {
 						aAssignmentData.splice(a, 1);
@@ -483,6 +487,10 @@ sap.ui.define([
 				}
 				var oOriginData = oGanttModel.getProperty(sChildPath);
 				oGanttOriginalModel.setProperty(sChildPath, _.cloneDeep(oOriginData));
+			} else {
+				sChildPath = sPath.split("/AssignmentSet/results/")[0];
+				aAssignmentData = oGanttModel.getProperty(sChildPath + "/children");
+				aAssignmentData.splice(0, 1);
 			}
 			oGanttModel.refresh(true);
 			oGanttOriginalModel.refresh(true);
@@ -578,7 +586,7 @@ sap.ui.define([
 				aChildAsgnData = oGanttModel.getProperty(sTargetPath + "/children");
 				aChildAsgnData.push(aData);
 				iChildAsgnLen = aChildAsgnData.length;
-				if (aChildAsgnData[iChildAsgnLen - 1].Guid === aChildAsgnData[iChildAsgnLen - 2].Guid) {
+				if (iChildAsgnLen !== 1 && aChildAsgnData[iChildAsgnLen - 1].Guid === aChildAsgnData[iChildAsgnLen - 2].Guid) {
 					aChildAsgnData.splice(iChildAsgnLen - 1, 1);
 				}
 			}
@@ -876,7 +884,7 @@ sap.ui.define([
 			if (sSourcePath) {
 				var sParentPath = sSourcePath.substring(0, 27),
 					sNewPath = sParentPath + "/AssignmentSet/results",
-					sParentSplitPath = sSourcePath.split("/AssignmentSet")[0],
+					sParentSplitPath = sSourcePath.split("/AssignmentSet")[1],
 					sSplitPath = sParentSplitPath.split("/"),
 					index = sSplitPath[sSplitPath.length - 1],
 					sChildPath = sPath.split("/AssignmentSet/results")[0],
@@ -1006,6 +1014,20 @@ sap.ui.define([
 			}
 			return sNewPath.slice(1);
 		},
+
+		_getDeleteChildPath: function (sChildPath) {
+			var aNewChildPath = sChildPath.split("/"),
+				iLen = aNewChildPath[aNewChildPath.length - 1],
+				aNewChildPath = aNewChildPath.slice(0, -1),
+				sNewChildPath = "";
+			for (var a in aNewChildPath) {
+				sNewChildPath = sNewChildPath + "/" + aNewChildPath[a];
+			}
+			return {
+				sPath: sNewChildPath.slice(1),
+				iIndex: iLen
+			};
+		}
 	});
 
 });
