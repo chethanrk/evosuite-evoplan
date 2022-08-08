@@ -83,7 +83,7 @@ sap.ui.define([
 				return "#FFF";
 			} else if (sTypeGroup === "O") {
 				return "transparent";
-			} else if (sTypeGroup === "L") {
+			} else if (sTypeGroup === "L" || sTypeGroup === "B") {
 				return sColour;
 			} else {
 				return "transparent";

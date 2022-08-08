@@ -249,6 +249,17 @@ sap.ui.define([
 					filters: aResources,
 					and: false
 				}));
+			} else if (this._mParameters.bFromSpotContextMenu) {
+				for (var i = 0; i < aSelectedResources.length; i++) {
+					obj = oModel.getProperty(aSelectedResources[i]);
+					if (obj.Guid && obj.Guid !== "") {
+						aResources.push(new Filter("Guid", FilterOperator.EQ, obj.Guid));
+					}
+				}
+				aFilters.push(new Filter({
+					filters: aResources,
+					and: false
+				}));
 			} else {
 				for (var i = 0; i < aSelectedResources.length; i++) {
 					obj = oModel.getProperty(aSelectedResources[i]);

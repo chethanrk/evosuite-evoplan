@@ -155,6 +155,8 @@
 				"uri": "assets/js/promise-polyfills"
 			}, {
 				"uri": "assets/js/lodash.js"
+			}, {
+				"uri": "assets/js/axios.min.js"
 			}]
 		},
 		"routing": {

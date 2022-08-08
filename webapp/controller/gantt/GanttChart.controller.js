@@ -5,6 +5,7 @@ sap.ui.define([
 	"com/evorait/evoplan/model/ganttFormatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterType",
 	"sap/ui/core/Popup",
 	"sap/m/MessageToast",
 	"sap/ui/core/Fragment",
@@ -12,9 +13,11 @@ sap.ui.define([
 	"com/evorait/evoplan/model/Constants",
 	"sap/gantt/misc/Utility",
 	"sap/gantt/def/pattern/SlashPattern",
-	"sap/gantt/def/pattern/BackSlashPattern"
-], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, Popup, MessageToast, Fragment, CoordinateUtils, Constants,
-	Utility, SlashPattern, BackSlashPattern) {
+	"sap/gantt/def/pattern/BackSlashPattern",
+	"com/evorait/evoplan/controller/map/MapUtilities",
+], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, FilterType, Popup, MessageToast, Fragment, CoordinateUtils,
+	Constants,
+	Utility, SlashPattern, BackSlashPattern, MapUtilities) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttChart", {
@@ -84,6 +87,8 @@ sap.ui.define([
 			this.getOwnerComponent().GanttResourceFilter.init(this.getView(), this._treeTable);
 
 			this.bGanttHorizonChange = false; //Flag to identify Gantt Horizon Date Change
+
+			this.oMapUtilities = new MapUtilities();
 		},
 		/**
 		 * Initialize the fetch of data for Gantt chart
@@ -101,6 +106,27 @@ sap.ui.define([
 				this._addAssociations.bind(this)();
 			}
 			this._setGanttBgColor();
+
+			// when navigating from Maps to Gantt 
+			// onShowAssignments button click from the Resource Pin popover
+			// apply the selected resource filter in the gantt view
+			this.handleNavigationFromMap();
+
+			this._resetSelections();
+			//resetting buttons due to Resource selection is resetted.	
+			this.resetToolbarButtons();
+		},
+		/**
+		 * to reset buttons when navigate from Map or reset the selection of resources
+		 */
+		resetToolbarButtons: function () {
+			this.selectedResources = [];
+			this.byId("idButtonreassign").setEnabled(false);
+			this.byId("idButtonunassign").setEnabled(false);
+			this.byId("idButtonCreUA").setEnabled(false);
+			this.byId("idButtonTimeAlloc").setEnabled(false);
+			this.byId("idCalculateRoute").setEnabled(false);
+			this.byId("idOptimizeRoute").setEnabled(false);
 		},
 
 		/**
@@ -142,7 +168,15 @@ sap.ui.define([
 		 * Event when visble horizont was changed
 		 * @param oEvent
 		 */
-		onVisibleHorizonUpdate: function (oEvent) {
+		onVisibleHorizonUpdate: function (oEvent, oStartTime, oEndTime) {
+			if (!oEvent) {
+				this.oGanttModel.setProperty("/settings", {
+					startTime: new Date(oStartTime.setDate(oStartTime.getDate() - 1)),
+					endTime: new Date(oEndTime.setDate(oEndTime.getDate() + 1)),
+				});
+				this.oGanttModel.refresh();
+				return;
+			}
 			var mParams = oEvent.getParameters(),
 				sStartTime = mParams.currentVisibleHorizon.getStartTime();
 
@@ -159,7 +193,7 @@ sap.ui.define([
 				if (typeof mParams.type === "undefined" && typeof oDate === "string" && sStartTime !== oDate) {
 					bGanttViewJumped = true;
 					oNewStartDate = moment(oDate.slice(0, 8) + "T" + oDate.slice(8)).toDate();
-				}else {
+				} else {
 					oNewStartDate = sap.gantt.misc.Format.abapTimestampToDate(oNewStartDate);
 				}
 
@@ -174,6 +208,11 @@ sap.ui.define([
 					startTime: mParams.currentVisibleHorizon.getStartTime(),
 					endTime: mParams.currentVisibleHorizon.getEndTime()
 				});
+			}
+
+			//resetting buttons due to Resource selection is resetted.
+			if (!(this.selectedResources && this.selectedResources.length)) {
+				this.resetToolbarButtons();
 			}
 		},
 
@@ -513,8 +552,11 @@ sap.ui.define([
 				StartDate: this.getView().byId("idDateRangeGantt2").getDateValue(),
 				EndDate: this.getView().byId("idDateRangeGantt2").getSecondDateValue()
 			});
-			this.getModel("user").setProperty("/DEFAULT_GANT_START_DATE", oEvent.getParameter("from"));
-			this.getModel("user").setProperty("/DEFAULT_GANT_END_DATE", oEvent.getParameter("to"));
+			if (oEvent) {
+				this.getModel("user").setProperty("/DEFAULT_GANT_START_DATE", oEvent.getParameter("from"));
+				this.getModel("user").setProperty("/DEFAULT_GANT_END_DATE", oEvent.getParameter("to"));
+			}
+			this.resetToolbarButtons();
 			this._loadGanttData();
 		},
 		/**
@@ -629,9 +671,13 @@ sap.ui.define([
 				"") {
 				this.byId("idButtonCreUA").setEnabled(true);
 				this.byId("idButtonTimeAlloc").setEnabled(true);
+				this.byId("idCalculateRoute").setEnabled(true);
+				this.byId("idOptimizeRoute").setEnabled(true);
 			} else {
 				this.byId("idButtonCreUA").setEnabled(false);
 				this.byId("idButtonTimeAlloc").setEnabled(false);
+				this.byId("idCalculateRoute").setEnabled(false);
+				this.byId("idOptimizeRoute").setEnabled(false);
 			}
 
 		},
@@ -793,7 +839,7 @@ sap.ui.define([
 					this.oGanttModel.setProperty(oData.sPath + "/Demand", oResult.Demand);
 					this.oViewModel.setProperty("/ganttSettings/shapeData", oData);
 					this.oViewModel.setProperty("/ganttSettings/Enable_Relationships", bEnableRelationships);
-					this._oContextMenu.open(true, oShape, Popup.Dock.BeginTop, Popup.Dock.endBottom, oShape);
+					this._oContextMenu.open(true, oShape, Popup.Dock.BeginTop, Popup.Dock.EndBottom, oShape);
 				}.bind(this));
 			}
 		},
@@ -1280,13 +1326,13 @@ sap.ui.define([
 				sStartDate = date.startOf("day").subtract(1, "day").toDate();
 				sEndDate = date.endOf("day").add(1, "day").toDate();
 			}
-			
+
 			//Setting Existing Visible Horizon Dates On ContextMenu Opening For First Time To Avoid Jumping @since 2205
 			if (this._bFirstTimeContextMenuOpen) {
 				sStartDate = this.oGanttModel.getProperty("/settings/startTime");
 				sEndDate = this.oGanttModel.getProperty("/settings/endTime");
 			}
-			
+
 			this.oGanttModel.setProperty("/settings", {
 				startTime: sStartDate,
 				endTime: sEndDate
@@ -1348,6 +1394,7 @@ sap.ui.define([
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
 					// this._addAssociations.bind(this)();
 				}.bind(this));
+			this.resetToolbarButtons();
 		},
 		/**
 		 * when data was loaded then children needs added to right parent node
@@ -1438,10 +1485,22 @@ sap.ui.define([
 		 */
 		_refreshAssignments: function (sChannel, sEvent, oData) {
 			if (sChannel === "BaseController" && sEvent === "refreshAssignments") {
-				//update ganttModels with results from function import
 				var aFilters = [],
 					oUserData = this.getModel("user").getData(),
 					aPromises = [];
+				//update ganttModels with results from function import
+				if (this.bDoNotRefreshTree) {
+					aFilters.push(new Filter("ObjectId", FilterOperator.EQ, this.oResource.ResourceGuid + "//" + this.oResource.ResourceGroupGuid));
+					aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+					aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+					this.getModel("appView").setProperty("/busy", true);
+					this.getOwnerComponent()._getData("/AssignmentSet", [aFilters]).then(function (result) {
+						this.updateResourceAfterRouting(result);
+						this.getModel("appView").setProperty("/busy", false);
+					}.bind(this));
+					this.bDoNotRefreshTree = false;
+					return;
+				}
 
 				aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 				aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
@@ -1453,8 +1512,31 @@ sap.ui.define([
 					this.getModel().setUseBatch(true);
 					this.getModel("appView").setProperty("/busy", false);
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
+					this.oGanttOriginDataModel.refresh();
 				}.bind(this));
 			}
+		},
+		/**
+		 * resetting the assignment and children node after route calculation/optimization
+		 * @param {Object} result
+		 * @Author Rakesh Sahu
+		 */
+		updateResourceAfterRouting: function (result) {
+			this.oResource.AssignmentSet = result;
+			if (this.oResource.AssignmentSet && this.oResource.AssignmentSet.results.length > 0) {
+				this.oResource.children = this.oResource.AssignmentSet.results;
+				this.oResource.children.forEach(function (oAssignItem, idx) {
+					this.oResource.AssignmentSet.results[idx].NodeType = "ASSIGNMENT";
+					this.oResource.AssignmentSet.results[idx].ResourceAvailabilitySet = this.oResource.ResourceAvailabilitySet;
+					var clonedObj = _.cloneDeep(this.oResource.AssignmentSet.results[idx]);
+					//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
+					clonedObj.OBJECT_ID_RELATION = clonedObj.OBJECT_ID_RELATION + "//" + clonedObj.ResourceGuid;
+					this.oResource.children[idx].AssignmentSet = {
+						results: [clonedObj]
+					};
+				}.bind(this));
+			}
+			this._setGanttVisibleHorizon(new Date(this.oSelectedDate));
 		},
 
 		/**
@@ -1540,6 +1622,11 @@ sap.ui.define([
 		 */
 		_refreshCapacity: function (sChannel, sEvent, oData) {
 			var aSelectedResourcePath = this.selectedResources;
+
+			if (this.bDoNotRefreshCapacity) {
+				this.bDoNotRefreshCapacity = false;
+				return;
+			}
 
 			if (oData.sTargetPath) {
 				this._refreshCaacities([oData.sTargetPath]);
@@ -1795,6 +1882,257 @@ sap.ui.define([
 			}.bind(this));
 			this.oGanttModel.setProperty(sPath + "/busy", false);
 			this.oGanttModel.refresh(true);
+		},
+
+		/**
+		 * when navigating from Maps to Gantt 
+		 * onShowAssignments button click from the Resource Pin popover
+		 * apply the selected resource filter in the gantt view
+		 * also apply the date range from Map resource tree filterbar
+		 */
+		handleNavigationFromMap: function () {
+			// apply the resource filter
+			this.getOwnerComponent().GanttResourceFilter.applyNavigationFilters();
+
+			// set the date range from Maps
+			var aNavigationDateRange = this.oViewModel.getProperty("/ganttDateRangeFromMap");
+			if (aNavigationDateRange.length) {
+				this.getView().byId("idDateRangeGantt2").setDateValue(new Date(aNavigationDateRange[0]));
+				this.getView().byId("idDateRangeGantt2").setSecondDateValue(new Date(aNavigationDateRange[1]));
+			}
+		},
+
+		/**
+		 * handle date select form calandar to get the travel time calculation
+		 * @param oEvent
+		 * since 2205
+		 */
+		handleCalendarSelect: function (oEvent) {
+			var oSelectedDate = oEvent.getSource().getSelectedDates()[0].getStartDate(),
+				oFilter,
+				sMsg;
+			this.oResource = this.getModel("ganttModel").getProperty(this.selectedResources[0]);
+			this.oSelectedDate = oSelectedDate;
+
+			//preparing filters to get the Assignment of selected date
+			oFilter = this.oMapUtilities.getAssignmentsFiltersWithinDateFrame(this.oResource, this.oSelectedDate);
+
+			//Reading oData to get the Assignment of selected date
+			this.getOwnerComponent()._getData("/AssignmentSet", [oFilter]).then(function (result) {
+				this.aData = result.results;
+				if (this.aData.length === 0) {
+					// in case of no assignments, showing messageToast
+					sMsg = this.getResourceBundle().getText("ymsg.noAssignmentsOnDate");
+					this.showMessageToast(sMsg);
+				} else {
+					this.aData.sort(function (a, b) {
+						return a.DateFrom - b.DateFrom;
+					});
+					// if there are assignments, then proceed to calculate the travel time
+					this._getTravelTimeFromPTV();
+				}
+			}.bind(this));
+
+		},
+		/**
+		 * creating filter object to read assignments of selected date 
+		 * @param oResource
+		 * @param oSelectedDate
+		 * since 2205
+		 */
+		_getFiltersToReadAssignments: function (oResource, oSelectedDate) {
+			var aFilters = [];
+			aFilters.push(new Filter("ObjectId", FilterOperator.EQ, oResource.ResourceGuid + "//" + oResource.ResourceGroupGuid));
+			aFilters.push(new Filter("DateTo", FilterOperator.GE, oSelectedDate));
+			aFilters.push(new Filter("DateFrom", FilterOperator.LE, oSelectedDate.setHours(23, 59, 59, 999)));
+			return new Filter(aFilters, true);
+		},
+		/**
+		 * Reading assignments with travel time from PTV
+		 * since 2205
+		 */
+		_getTravelTimeFromPTV: function () {
+			this.getModel("appView").setProperty("/busy", true);
+			if (this.routeOperation === "Calculate") {
+				//Sending the assignments and resource to PTV to calculte the travel time between Assignments
+				this.getOwnerComponent().MapProvider.calculateRoute(this.oResource, this.aData).then(this._setTravelTimeToGantt.bind(
+					this));
+			} else {
+				//Sending the assignments and resource to PTV to get Optimized travel time between assignments
+				this.getOwnerComponent().MapProvider.optimizeRoute(this.oResource, this.aData, this.getBreaks()).then(this._setTravelTimeToGantt.bind(
+					this));
+			}
+
+		},
+		/**
+		 * getting the unavailibility of type "B" (Breaks) to pass into Route Calculation/Optimization PTV service
+		 * since 2209
+		 */
+		getBreaks: function () {
+			var aAvailabilitySet = this.oResource.ResourceAvailabilitySet.results,
+				oStartTime = new Date(_.cloneDeep(this.oSelectedDate).setHours("0", "0", "0")),
+				oEndTime = new Date(_.cloneDeep(this.oSelectedDate).setHours("23", "59", "59")),
+				aUnavailability = [];
+
+			aAvailabilitySet.forEach(function (oItem) {
+				if (oItem.AvailabilityTypeGroup === "B" && oItem.DateFrom >= oStartTime && oItem.DateTo <= oEndTime) {
+					aUnavailability.push({
+						sModelPath: "/ResourceAvailabilitySet" + "('" + oItem.Guid + "')",
+						title: oItem.Description,
+						text: moment(oItem.DateFrom).format("HH:mm") + " - " + moment(oItem.DateTo).format("HH:mm"),
+						color: oItem.BlockPercentageColor || oItem.GANTT_UNAVAILABILITY_COLOR,
+						icon: null,
+						type: "Blocker",
+						DateFrom: oItem.DateFrom,
+						DateTo: oItem.DateTo
+					});
+				}
+			}.bind(this));
+			return aUnavailability;
+		},
+		/**
+		 * setting Travel Time object to Gantt and updating new date time for assignments based on travel Time
+		 * since 2205
+		 */
+		_setTravelTimeToGantt: function (results) {
+			var oTempDate,
+				oAssignment;
+
+			this.aData = results;
+			this.aAssignmetsWithTravelTime = [];
+			this.aTravelTimes = [];
+
+			// this.getModel("appView").setProperty("/busy", false);
+
+			//Setting the gantt char Visible horizon to see selected date assignments
+			this._setGanttVisibleHorizon(new Date(this.oSelectedDate));
+
+			//Route Creation in Map (changing the date and time of assignments according to travel)
+			for (var i = 0; i < this.aData.length; i++) {
+				//creating object for shape to show Travel Time in Gantt Chart
+				oAssignment = this._getTravelTimeObject(i);
+
+				//condition to check whether travel is 0 then no need to create travel time object 
+				if (this.aData[i].TRAVEL_TIME != 0) {
+					this.aTravelTimes.push(oAssignment);
+				}
+
+				//pushing the updated assignments to show into the gantt
+				this.aAssignmetsWithTravelTime.push(this.aData[i]);
+
+				//creating object for shape to show Travel back Time in Gantt Chart. This is travel time from last assignment to home
+				if (i === this.aData.length - 1) {
+					oAssignment = this._getTravelTimeObject(i, true);
+					this.aTravelTimes.push(oAssignment);
+				}
+			}
+
+			//adding updated assignments
+			this.oResource.AssignmentSet = {
+				results: this.aAssignmetsWithTravelTime
+			};
+			//adding Travel time object to show in gantt
+			this.oResource.TravelTimes = {
+				results: this.aTravelTimes
+			};
+			this.getModel("ganttModel").refresh();
+
+			// method call to save the updated assignments into the backend
+			this.updateAssignments(this.aAssignmetsWithTravelTime);
+
+		},
+		/**
+		 * Setting the gantt char Visible horizon to see selected date assignments
+		 * @param ODate
+		 * since 2205
+		 */
+		_setGanttVisibleHorizon: function (oDate) {
+			if (this._axisTime) {
+				oDate = new Date(oDate.setDate(oDate.getDate() - 2));
+				this._axisTime.setVisibleHorizon(new sap.gantt.config.TimeHorizon({
+					startTime: new Date(oDate.setHours(0, 0, 0)),
+					endTime: new Date(oDate.setHours(23, 59, 59, 999))
+				}));
+			} else {
+				this.onVisibleHorizonUpdate(null, new Date(oDate.setHours(0, 0, 0)), new Date(oDate.setHours(23, 59, 59, 999)));
+			}
+		},
+
+		/**
+		 * Create object for Travel time between the assignments to show in Gantt
+		 * @param nIndex
+		 * since 2205
+		 */
+		_getTravelTimeObject: function (nIndex, bIsTravelBackTime) {
+			var oTempDate,
+				oStartDate,
+				oEndDate,
+				nEffort = bIsTravelBackTime ? (this.aData[nIndex].TRAVEL_BACK_TIME / 60).toFixed(1) : (this.aData[nIndex].TRAVEL_TIME / 60).toFixed(
+					1),
+				nTravelTime = bIsTravelBackTime ? parseFloat(this.aData[nIndex].TRAVEL_BACK_TIME).toFixed(2) : parseFloat(this.aData[nIndex].TRAVEL_TIME)
+				.toFixed(2);
+			if (bIsTravelBackTime) {
+				oTempDate = new Date(this.aData[nIndex].DateTo.toString());
+				oStartDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
+				oEndDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[nIndex].TRAVEL_BACK_TIME) - 1));
+			} else if (nIndex === 0) {
+				// Setting the Travel time for First Assignment
+				oTempDate = new Date(this.aData[nIndex].DateFrom.toString());
+				oStartDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() - this.aData[nIndex].TRAVEL_TIME - 1));
+				oEndDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[nIndex].TRAVEL_TIME) - 1));
+			} else {
+				// Setting the Travel time for other than First Assignment
+				oTempDate = new Date(this.aData[nIndex -
+					1].DateTo.toString());
+				oStartDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
+				oEndDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + parseFloat(this.aData[nIndex].TRAVEL_TIME)));
+			}
+			return {
+				DateFrom: oStartDate,
+				DateTo: oEndDate,
+				Description: "Travel Time",
+				Effort: nEffort,
+				TRAVEL_TIME: nTravelTime
+			};
+		},
+
+		/**
+		 * Method to save the updated assignments to backend after calculating the route
+		 * @param aAssignments
+		 * since 2205
+		 */
+		updateAssignments: function (aAssignments) {
+			var oParams = {},
+				bIsLast = false;
+
+			//flags to prevent refresh after saving the updated assignments into the backend	
+			this.bDoNotRefreshTree = true;
+			this.bDoNotRefreshCapacity = true;
+			for (var i = 0; i < aAssignments.length; i++) {
+				oParams = {
+					DateFrom: aAssignments[i].DateFrom,
+					TimeFrom: {
+						ms: aAssignments[i].DateFrom.getTime()
+					},
+					DateTo: aAssignments[i].DateTo,
+					TimeTo: {
+						ms: aAssignments[i].DateTo.getTime()
+					},
+					AssignmentGUID: aAssignments[i].Guid,
+					EffortUnit: aAssignments[i].EffortUnit,
+					Effort: aAssignments[i].Effort,
+					ResourceGroupGuid: aAssignments[i].ResourceGroupGuid,
+					ResourceGuid: aAssignments[i].ResourceGuid,
+					TravelTime: aAssignments[i].TRAVEL_TIME,
+					Distance: aAssignments[i].DISTANCE,
+					DistanceBack: aAssignments[i].DISTANCE_BACK
+				};
+				if (i === aAssignments.length - 1) {
+					bIsLast = true;
+					oParams.TravelBackTime = aAssignments[i].TRAVEL_BACK_TIME;
+				}
+				this.callFunctionImport(oParams, "UpdateAssignment", "POST", this._mParameters, bIsLast);
+			}
 		}
 	});
 

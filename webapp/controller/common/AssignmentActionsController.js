@@ -19,9 +19,10 @@ sap.ui.define([
 		 * @param {String} sTargetPath
 		 * @return {Promise}
 		 */
-		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, oNewEndDate, aGuids) {
+		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, oNewEndDate, aGuids, bFromMap) {
 			var oModel = this.getModel(),
-				targetObj = oModel.getProperty(sTargetPath),
+				oViewModel = this.getModel("viewModel"),
+				targetObj = bFromMap ? oViewModel.getProperty(sTargetPath) : oModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
 				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
 				aDragSession = this.getModel("viewModel").getData().dragSession,
@@ -31,7 +32,10 @@ sap.ui.define([
 				sDemandGuid,
 				oParams;
 				
-				if (aGanttDemandDragged === "fromGanttSplit") {
+				if(bFromMap && !oViewModel.getProperty(sTargetPath)){
+					targetObj = oModel.getProperty(sTargetPath);
+				}
+				if (aGanttDemandDragged === "fromGanttSplit" && !bFromMap) {
 				aGanttDemandDragged = {};
 				aGanttDemandDragged.sPath = slocStor.split(",")[0];
 				aGanttDemandDragged.oData = this.getModel().getProperty(aGanttDemandDragged.sPath);
@@ -56,7 +60,10 @@ sap.ui.define([
 						__edmType: "Edm.Time"
 					};
 					oParams.DateTo = oNewEndDate || oTargetDate;
-					oParams.TimeTo = targetObj.EndTime;
+					oParams.TimeTo = targetObj.EndTime || {
+						ms: oTargetDate.getTime(),
+						__edmType: "Edm.Time"
+					};
 				} else {
 					// When we drop it on resource tree rows
 					if (targetObj.StartDate) {
@@ -94,7 +101,7 @@ sap.ui.define([
 				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}
-			return aPromises;
+				return aPromises;
 		},
 		/**
 		 * Deletes the assignment
