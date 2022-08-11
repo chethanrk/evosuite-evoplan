@@ -365,6 +365,150 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onShapeDrop: function (oEvent) {
+			if (this.aSelectedAssignmentsPaths.length > 1) {
+				this.handleShapeDropMultiAssignment(oEvent);
+			} else {
+				this.handleShapeDropReAssignment(oEvent);
+			}
+		},
+
+		/**
+		 * When a shape is dragging started
+		 * Need to keep all selected assignment path for future manipulation
+		 * @param oEvent
+		 */
+		onShapeDragStart: function (oEvent) {
+			var aShapeUids = oEvent.getSource().getSelectedShapeUid(),
+				sPath;
+			this.aSelectedAssignmentsPaths = [];
+
+			aShapeUids.forEach(function (oItem) {
+				sPath = oItem.split(":").pop();
+				sPath = sPath.split("[")[0];
+				this.aSelectedAssignmentsPaths.push(sPath);
+			}.bind(this));
+		},
+
+		/**
+		 * When shapes getting selected 
+		 * based on number of selection changing the axis movement direction
+		 * @param oEvent
+		 */
+		onShapeSelectionChange: function (oEvent) {
+			var aSelectedShapes = oEvent.getSource().getSelectedShapeUid();
+			if (aSelectedShapes.length === 1) {
+				this.initializeMultiAssignment(true);
+			} else {
+				this.initializeMultiAssignment();
+			}
+		},
+		/**
+		 * method to handle shape Drop When a shape is dragged inside Gantt on same axis
+		 * and dropped to same row or another resource row
+		 * @param oEvent
+		 */
+		handleShapeDropMultiAssignment: function (oEvent) {
+			var oDataModel = this._treeTable.getModel("data"),
+				oNewDateTime = oEvent.getParameter("newDateTime"),
+				oDraggedShapeDates = oEvent.getParameter("draggedShapeDates"),
+				sLastDraggedShapeUid = oEvent.getParameter("lastDraggedShapeUid"),
+				oOldStartDateTime = oDraggedShapeDates[sLastDraggedShapeUid].time,
+				oOldEndDateTime = oDraggedShapeDates[sLastDraggedShapeUid].endTime,
+				iMoveWidthInMs = oNewDateTime.getTime() - oOldStartDateTime.getTime();
+
+			this.updateAssignmentsDateTime(iMoveWidthInMs);
+		},
+		updateAssignmentsDateTime: function (nTimeDifference) {
+			var bAllowFixedAppointments = this.getModel("user").getProperty("/ENABLE_GANTT_CHNG_FIXED_ASGN"),
+				aAssignments = [],
+				aPathsToBeRemoved = [],
+				oAssignmentData;
+
+			for (var i = 0; i < this.aSelectedAssignmentsPaths.length; i++) {
+				oAssignmentData = this.getModel("ganttModel").getProperty(this.aSelectedAssignmentsPaths[i]);
+				// condition to check if assignment is FIXED APPOINTMENT and is allowed to change 
+				if (!(oAssignmentData.FIXED_APPOINTMENT && bAllowFixedAppointments)) {
+					oAssignmentData.DateFrom = new Date(oAssignmentData.DateFrom.getTime() + nTimeDifference);
+					oAssignmentData.DateTo = new Date(oAssignmentData.DateTo.getTime() + nTimeDifference);
+					aAssignments.push(oAssignmentData);
+
+				} else {
+					aPathsToBeRemoved.push(this.aSelectedAssignmentsPaths[i]);
+				}
+				// oAssignment
+			}
+
+			for (var i = 0; i < aPathsToBeRemoved.length; i++) {
+				this.aSelectedAssignmentsPaths.splice(aPathsToBeRemoved.indexOf(aPathsToBeRemoved[i]), 1);
+			};
+			this._checkAssignmentsOnUnavailabilty(aAssignments);
+			this.getModel("ganttModel").refresh();
+			this.updateAssignments(aAssignments, true);
+		},
+		/**
+		 * to check if any Assignment falls in unavailability after multiassignment on same axis
+		 * @param aAssignments
+		 * since 2209
+		 */
+		_checkAssignmentsOnUnavailabilty: function (aAssignments) {
+			var oModel = this.getModel();
+			this.aUnavailabilityChecks = []
+
+			for (var i = 0; i < aAssignments.length; i++) {
+				this.aUnavailabilityChecks.push(new Promise(function (resolve, reject) {
+					this.executeFunctionImport(oModel, {
+						ResourceGuid: aAssignments[i].ResourceGuid,
+						StartTimestamp: aAssignments[i].DateFrom,
+						DemandGuid: aAssignments[i].DemandGuid,
+						Unavailabilty_check: "X"
+					}, "ResourceAvailabilityCheck", "GET").then(function (data, oResponse) {
+						resolve(data.Unavailable);
+					}.bind(this));
+				}.bind(this)));
+
+			}
+
+			Promise.all(this.aUnavailabilityChecks).then(function (aPromiseAllResults) {
+				if (aPromiseAllResults.includes(true)) {
+					this.ShowMessageForUnAvailability(aAssignments, aPromiseAllResults);
+				}
+			}.bind(this));
+		},
+
+		/**
+		 * Display message for Assignment falls in unavailability after multiassignment on same axis
+		 * @param oEvent
+		 * since 2209
+		 */
+		ShowMessageForUnAvailability: function (aAssignments, aUnavailableList) {
+			var sMsgItem = "",
+				item = {},
+				iCounter = 0;
+			debugger;
+			for (var i = 0; i < aUnavailableList.length; i++) {
+				if (aUnavailableList[i]) {
+					sMsgItem = sMsgItem + aAssignments[i].ORDERID + "/" + aAssignments[i].OPERATIONID + "  " + aAssignments[i].DemandDesc + "\r\n";
+					iCounter++;
+				}
+			}
+			if (sMsgItem) {
+				item.type = "Information";
+				item.description = sMsgItem;
+				item.subtitle = sMsgItem;
+				item.title = this.getModel("i18n").getResourceBundle().getText("xmsg.assignedToUnavailability");
+				item.counter = iCounter;
+				this.getModel("MessageModel").setData([item]);
+				sap.m.MessageToast.show(item.title + "\r\n" + item.subtitle, {
+					duration: 6000
+				});
+			}
+		},
+		/**
+		 * method to handle shape Drop When a shape is dragged inside Gantt to reassign
+		 * and dropped to same row or another resource row
+		 * @param oEvent
+		 */
+		handleShapeDropReAssignment: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				msg = this.getResourceBundle().getText("msg.ganttShapeDropError"),
 				oTargetContext = oParams.targetRow ? oParams.targetRow.getBindingContext("ganttModel") : null;
@@ -1490,7 +1634,10 @@ sap.ui.define([
 			if (sChannel === "BaseController" && sEvent === "refreshAssignments") {
 				var aFilters = [],
 					oUserData = this.getModel("user").getData(),
-					aPromises = [];
+					aPromises = [],
+					aObjectIDs = [],
+					oTempObjectID,
+					aResourcePaths = [];
 				//update ganttModels with results from function import
 				if (this.bDoNotRefreshTree) {
 					aFilters.push(new Filter("ObjectId", FilterOperator.EQ, this.oResource.ResourceGuid + "//" + this.oResource.ResourceGroupGuid));
@@ -1503,20 +1650,24 @@ sap.ui.define([
 					}.bind(this));
 					this.bDoNotRefreshTree = false;
 					return;
+				} else if (this.bDoRefreshResourceAssignments) {
+					this._updateResourceAsignments();
+					return;
+				} else {
+					aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+					aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+					this.getModel().setUseBatch(false);
+					aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
+					this.getModel("appView").setProperty("/busy", true);
+					Promise.all(aPromises).then(function (data) {
+						this._addAssignemets(data[0].results);
+						this.getModel().setUseBatch(true);
+						this.getModel("appView").setProperty("/busy", false);
+						this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
+						// this.oGanttOriginDataModel.refresh();
+					}.bind(this));
 				}
 
-				aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
-				aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-				this.getModel().setUseBatch(false);
-				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
-				this.getModel("appView").setProperty("/busy", true);
-				Promise.all(aPromises).then(function (data) {
-					this._addAssignemets(data[0].results);
-					this.getModel().setUseBatch(true);
-					this.getModel("appView").setProperty("/busy", false);
-					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
-					this.oGanttOriginDataModel.refresh();
-				}.bind(this));
 			}
 		},
 		/**
@@ -1524,7 +1675,8 @@ sap.ui.define([
 		 * @param {Object} result
 		 * @Author Rakesh Sahu
 		 */
-		updateResourceAfterRouting: function (result) {
+		updateResourceAfterRouting: function (result, bNoChangeGanttView) {
+			debugger;
 			this.oResource.AssignmentSet = result;
 			if (this.oResource.AssignmentSet && this.oResource.AssignmentSet.results.length > 0) {
 				this.oResource.children = this.oResource.AssignmentSet.results;
@@ -1539,7 +1691,9 @@ sap.ui.define([
 					};
 				}.bind(this));
 			}
-			this._setGanttVisibleHorizon(new Date(this.oSelectedDate));
+			if (!bNoChangeGanttView) {
+				this._setGanttVisibleHorizon(new Date(this.oSelectedDate));
+			}
 		},
 
 		/**
@@ -1647,11 +1801,11 @@ sap.ui.define([
 				oUserData = this.getModel("user").getData(),
 				oTargetData,
 				sNodeId = "";
-				
+
 			for (var i in aSelectedResourcePath) {
 				aFilters = [];
 				oTargetData = this.oGanttModel.getProperty(aSelectedResourcePath[i]);
-					if (oTargetData) {
+				if (oTargetData) {
 					sNodeId = oTargetData.NodeId;
 				}
 				aFilters.push(new Filter("HierarchyLevel", FilterOperator.LE, 1));
@@ -2104,13 +2258,17 @@ sap.ui.define([
 		 * @param aAssignments
 		 * since 2205
 		 */
-		updateAssignments: function (aAssignments) {
+		updateAssignments: function (aAssignments, bIsFromMoveOnSameAxis) {
 			var oParams = {},
 				bIsLast = false;
 
-			//flags to prevent refresh after saving the updated assignments into the backend	
-			this.bDoNotRefreshTree = true;
-			this.bDoNotRefreshCapacity = true;
+			//flags to prevent refresh after saving the updated assignments into the backend
+			if (bIsFromMoveOnSameAxis) {
+				this.bDoRefreshResourceAssignments = true;
+			} else {
+				this.bDoNotRefreshTree = true;
+				this.bDoNotRefreshCapacity = true;
+			}
 			for (var i = 0; i < aAssignments.length; i++) {
 				oParams = {
 					DateFrom: aAssignments[i].DateFrom,
@@ -2136,7 +2294,53 @@ sap.ui.define([
 				}
 				this.callFunctionImport(oParams, "UpdateAssignment", "POST", this._mParameters, bIsLast);
 			}
-		}
+		},
+		/**
+		 * method for switch to toggle between Multi Assignment on Axis or reAssignment operation
+		 * @param oEvent
+		 * since 2209
+		 */
+		initializeMultiAssignment: function (bVerticalMovement) {
+			if (bVerticalMovement) {
+				this._ganttChart.setProperty("dragOrientation", sap.gantt.DragOrientation.Free);
+			} else {
+				this._ganttChart.setProperty("dragOrientation", sap.gantt.DragOrientation.Horizontal);
+			}
+		},
+		/**
+		 * Method to update resouces after recheduling multiple Assignments on same axis
+		 * since 2209
+		 */
+		_updateResourceAsignments: function () {
+			var aFilters = [],
+				oUserData = this.getModel("user").getData(),
+				aPromises = [],
+				aObjectIDs = [],
+				oTempObjectID,
+				aResourcePaths = [];
+
+			for (var i = 0; i < this.aSelectedAssignmentsPaths.length; i++) {
+				oTempObjectID = this.oGanttModel.getProperty(this.aSelectedAssignmentsPaths[i] +
+					"/ObjectId");
+				aFilters = [];
+				if (!aObjectIDs.includes(oTempObjectID)) {
+					aResourcePaths.push(this.aSelectedAssignmentsPaths[i].split("/").splice(0, 6).join("/"))
+					aFilters.push(new Filter("ObjectId", FilterOperator.EQ, oTempObjectID));
+					aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+					aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+					aPromises.push(this.getOwnerComponent()._getData("/AssignmentSet", [aFilters]));
+				}
+			}
+			this.getModel("appView").setProperty("/busy", true);
+			Promise.all(aPromises).then(function (results) {
+				for (i = 0; i < aResourcePaths.length; i++) {
+					this.oResource = this.oGanttOriginDataModel.getProperty(aResourcePaths[i]);
+					this.updateResourceAfterRouting(results[i], true);
+				}
+				this.getModel("appView").setProperty("/busy", false);
+			}.bind(this));
+			this.bDoRefreshResourceAssignments = false;
+		},
 	});
 
 });
