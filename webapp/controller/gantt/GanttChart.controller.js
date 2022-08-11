@@ -418,6 +418,11 @@ sap.ui.define([
 
 			this.updateAssignmentsDateTime(iMoveWidthInMs);
 		},
+		
+		/**
+		 * update new date time to dropped multiple assigments on same axis
+		 * @param nTimeDifference
+		 */
 		updateAssignmentsDateTime: function (nTimeDifference) {
 			var bAllowFixedAppointments = this.getModel("user").getProperty("/ENABLE_GANTT_CHNG_FIXED_ASGN"),
 				aAssignments = [],
@@ -435,7 +440,6 @@ sap.ui.define([
 				} else {
 					aPathsToBeRemoved.push(this.aSelectedAssignmentsPaths[i]);
 				}
-				// oAssignment
 			}
 
 			for (var i = 0; i < aPathsToBeRemoved.length; i++) {
@@ -484,7 +488,7 @@ sap.ui.define([
 			var sMsgItem = "",
 				item = {},
 				iCounter = 0;
-			debugger;
+				
 			for (var i = 0; i < aUnavailableList.length; i++) {
 				if (aUnavailableList[i]) {
 					sMsgItem = sMsgItem + aAssignments[i].ORDERID + "/" + aAssignments[i].OPERATIONID + "  " + aAssignments[i].DemandDesc + "\r\n";
@@ -1634,10 +1638,8 @@ sap.ui.define([
 			if (sChannel === "BaseController" && sEvent === "refreshAssignments") {
 				var aFilters = [],
 					oUserData = this.getModel("user").getData(),
-					aPromises = [],
-					aObjectIDs = [],
-					oTempObjectID,
-					aResourcePaths = [];
+					aPromises = [];
+					
 				//update ganttModels with results from function import
 				if (this.bDoNotRefreshTree) {
 					aFilters.push(new Filter("ObjectId", FilterOperator.EQ, this.oResource.ResourceGuid + "//" + this.oResource.ResourceGroupGuid));
@@ -1664,7 +1666,7 @@ sap.ui.define([
 						this.getModel().setUseBatch(true);
 						this.getModel("appView").setProperty("/busy", false);
 						this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
-						// this.oGanttOriginDataModel.refresh();
+						this.oGanttOriginDataModel.refresh();
 					}.bind(this));
 				}
 
@@ -1676,7 +1678,6 @@ sap.ui.define([
 		 * @Author Rakesh Sahu
 		 */
 		updateResourceAfterRouting: function (result, bNoChangeGanttView) {
-			debugger;
 			this.oResource.AssignmentSet = result;
 			if (this.oResource.AssignmentSet && this.oResource.AssignmentSet.results.length > 0) {
 				this.oResource.children = this.oResource.AssignmentSet.results;
