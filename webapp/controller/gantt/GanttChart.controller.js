@@ -474,7 +474,7 @@ sap.ui.define([
 
 			Promise.all(this.aUnavailabilityChecks).then(function (aPromiseAllResults) {
 				if (aPromiseAllResults.includes(true)) {
-					this.ShowMessageForUnAvailability(aAssignments, aPromiseAllResults);
+					this.showMessageForUnAvailability(aAssignments, aPromiseAllResults);
 				}
 			}.bind(this));
 		},
@@ -484,7 +484,7 @@ sap.ui.define([
 		 * @param oEvent
 		 * since 2209
 		 */
-		ShowMessageForUnAvailability: function (aAssignments, aUnavailableList) {
+		showMessageForUnAvailability: function (aAssignments, aUnavailableList) {
 			var sMsgItem = "",
 				item = {},
 				iCounter = 0;
