@@ -104,6 +104,8 @@ sap.ui.define([
 				sResourceGroup = oNodeData.ResourceGroupGuid,
 				oStartDate = oNodeData.StartDate || this._dateFrom,
 				oEndDate = oNodeData.EndDate || this._dateTo,
+				oStartTime = oNodeData.StartTime,
+				oEndTime = oNodeData.EndTime,
 				aFilters = [],
 				sSelectedView = this._component.getModel("viewModel").getProperty("/selectedHierarchyView");
 
@@ -114,10 +116,14 @@ sap.ui.define([
 			} else {
 				aFilters.push(new Filter("ObjectId", FilterOperator.EQ, sResource + "//" + sResourceGroup));
 			}
+
 			aFilters.push(new Filter("AssignmentType", FilterOperator.EQ, "CAP"));
 			aFilters.push(new Filter("NODE_TYPE", FilterOperator.EQ, sSelectedView));
-			aFilters.push(new Filter("DateFrom", FilterOperator.LE, oEndDate));
-			aFilters.push(new Filter("DateTo", FilterOperator.GE, oStartDate));
+			aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.mergeDateTime(oEndDate, oStartTime)));
+			// Setting end time to end of day to fetch assignments; from 2209
+			aFilters.push(new Filter("DateTo", FilterOperator.GE, new Date(formatter.mergeDateTime(oStartDate, oEndTime).setHours(23, 59, 59))));
+			aFilters.push(new Filter("TimeFrom", FilterOperator.LE, oStartTime));
+			aFilters.push(new Filter("TimeTo", FilterOperator.GE, oEndTime));
 			oBinding.filter(aFilters);
 		},
 		/**
