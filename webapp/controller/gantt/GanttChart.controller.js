@@ -418,7 +418,7 @@ sap.ui.define([
 
 			this.updateAssignmentsDateTime(iMoveWidthInMs);
 		},
-		
+
 		/**
 		 * update new date time to dropped multiple assigments on same axis
 		 * @param nTimeDifference
@@ -488,7 +488,7 @@ sap.ui.define([
 			var sMsgItem = "",
 				item = {},
 				iCounter = 0;
-				
+
 			for (var i = 0; i < aUnavailableList.length; i++) {
 				if (aUnavailableList[i]) {
 					sMsgItem = sMsgItem + aAssignments[i].ORDERID + "/" + aAssignments[i].OPERATIONID + "  " + aAssignments[i].DemandDesc + "\r\n";
@@ -1639,7 +1639,7 @@ sap.ui.define([
 				var aFilters = [],
 					oUserData = this.getModel("user").getData(),
 					aPromises = [];
-					
+
 				//update ganttModels with results from function import
 				if (this.bDoNotRefreshTree) {
 					aFilters.push(new Filter("ObjectId", FilterOperator.EQ, this.oResource.ResourceGuid + "//" + this.oResource.ResourceGroupGuid));
@@ -2268,8 +2268,8 @@ sap.ui.define([
 				this.bDoRefreshResourceAssignments = true;
 			} else {
 				this.bDoNotRefreshTree = true;
-				this.bDoNotRefreshCapacity = true;
 			}
+			this.bDoNotRefreshCapacity = true;
 			for (var i = 0; i < aAssignments.length; i++) {
 				oParams = {
 					DateFrom: aAssignments[i].DateFrom,
@@ -2313,33 +2313,14 @@ sap.ui.define([
 		 * since 2209
 		 */
 		_updateResourceAsignments: function () {
-			var aFilters = [],
-				oUserData = this.getModel("user").getData(),
-				aPromises = [],
-				aObjectIDs = [],
-				oTempObjectID,
-				aResourcePaths = [];
-
+			var oAssignment;
+			//changing children date time according to parent assignment
 			for (var i = 0; i < this.aSelectedAssignmentsPaths.length; i++) {
-				oTempObjectID = this.oGanttModel.getProperty(this.aSelectedAssignmentsPaths[i] +
-					"/ObjectId");
-				aFilters = [];
-				if (!aObjectIDs.includes(oTempObjectID)) {
-					aResourcePaths.push(this.aSelectedAssignmentsPaths[i].split("/").splice(0, 6).join("/"))
-					aFilters.push(new Filter("ObjectId", FilterOperator.EQ, oTempObjectID));
-					aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
-					aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-					aPromises.push(this.getOwnerComponent()._getData("/AssignmentSet", [aFilters]));
-				}
+				oAssignment = this.oGanttModel.getProperty(this.aSelectedAssignmentsPaths[i]);
+				oAssignment.AssignmentSet.results[0].DateFrom = oAssignment.DateFrom;
+				oAssignment.AssignmentSet.results[0].DateTo = oAssignment.DateTo;
 			}
-			this.getModel("appView").setProperty("/busy", true);
-			Promise.all(aPromises).then(function (results) {
-				for (i = 0; i < aResourcePaths.length; i++) {
-					this.oResource = this.oGanttOriginDataModel.getProperty(aResourcePaths[i]);
-					this.updateResourceAfterRouting(results[i], true);
-				}
-				this.getModel("appView").setProperty("/busy", false);
-			}.bind(this));
+			this.oGanttModel.refresh();
 			this.bDoRefreshResourceAssignments = false;
 		},
 	});
