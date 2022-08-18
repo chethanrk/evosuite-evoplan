@@ -119,9 +119,9 @@ sap.ui.define([
 
 			aFilters.push(new Filter("AssignmentType", FilterOperator.EQ, "CAP"));
 			aFilters.push(new Filter("NODE_TYPE", FilterOperator.EQ, sSelectedView));
-			aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.mergeDateTime(oEndDate, oStartTime)));
 			// Setting end time to end of day to fetch assignments; from 2209
-			aFilters.push(new Filter("DateTo", FilterOperator.GE, new Date(formatter.mergeDateTime(oStartDate, oEndTime).setHours(23, 59, 59))));
+			aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.mergeDateTime(oEndDate, oEndTime).setHours(23, 59, 59)));
+			aFilters.push(new Filter("DateTo", FilterOperator.GE, new Date(formatter.mergeDateTime(oStartDate, oStartTime))));
 			aFilters.push(new Filter("TimeFrom", FilterOperator.LE, oStartTime));
 			aFilters.push(new Filter("TimeTo", FilterOperator.GE, oEndTime));
 			oBinding.filter(aFilters);
