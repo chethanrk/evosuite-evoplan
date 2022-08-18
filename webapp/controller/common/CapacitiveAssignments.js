@@ -20,7 +20,7 @@ sap.ui.define([
 		 * @param oView
 		 * @param sBindPath
 		 */
-		open: function (oView, oEvent, mParameters) {
+		open: function (oView, oSource, mParameters) {
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
@@ -31,10 +31,10 @@ sap.ui.define([
 				}).then(function (oDialog) {
 					oView.getModel("appView").setProperty("/busy", false);
 					this._oDialog = oDialog;
-					this.onOpen(oDialog, oView, oEvent, mParameters);
+					this.onOpen(oDialog, oView, oSource, mParameters);
 				}.bind(this));
 			} else {
-				this.onOpen(this._oDialog, oView, oEvent, mParameters);
+				this.onOpen(this._oDialog, oView, oSource, mParameters);
 			}
 		},
 
@@ -43,7 +43,7 @@ sap.ui.define([
 		 * @param oView
 		 * @param oEvent
 		 */
-		onOpen: function (oDialog, oView, oEvent, mParameters) {
+		onOpen: function (oDialog, oView, oSource, mParameters) {
 			var oViewFilterSettings = oView.getController().oFilterConfigsController || null;
 			oDialog.setModel(new JSONModel({
 				count: 0
@@ -58,8 +58,8 @@ sap.ui.define([
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 			// connect dialog to view (models, lifecycle)
 			oView.addDependent(oDialog);
-			this._bindPopover(oDialog, oEvent);
-			oDialog.openBy(oEvent.getSource());
+			this._bindPopover(oDialog, oSource);
+			oDialog.openBy(oSource);
 		},
 		/**
 		 * Closes the capacitive popover
@@ -75,12 +75,11 @@ sap.ui.define([
 		 * @param oEvent
 		 * @private
 		 */
-		_bindPopover: function (oDialog, oEvent) {
+		_bindPopover: function (oDialog, oSource) {
 			var oTable = oDialog.getContent()[0],
-				oBinding = oTable.getBinding("items"),
-				oSource = oEvent.getSource();
+				oBinding = oTable.getBinding("items")
 			if (oSource) {
-				var oRow = oEvent.getSource().getParent(),
+				var oRow = oSource.getParent(),
 					oContext = oRow.getBindingContext(),
 					oNodeData = oContext.getModel().getProperty(oContext.getPath());
 

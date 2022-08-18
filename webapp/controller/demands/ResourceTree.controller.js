@@ -434,7 +434,7 @@ sap.ui.define([
 		 */
 		openCapacitivePopup: function (oEvent) {
 			var oComponent = this.getOwnerComponent();
-			oComponent.capacitiveAssignments.open(this.getView(), oEvent, this._mParameters);
+			oComponent.capacitiveAssignments.open(this.getView(), oEvent.getSource(), this._mParameters);
 		},
 		/**
 		 * on press, open the dialog to create an unavailability for selected resources
