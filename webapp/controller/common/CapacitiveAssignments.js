@@ -20,7 +20,7 @@ sap.ui.define([
 		 * @param oView
 		 * @param sBindPath
 		 */
-		open: function (oView, oEvent, mParameters) {
+		open: function (oView, oSource, mParameters) {
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
@@ -31,10 +31,10 @@ sap.ui.define([
 				}).then(function (oDialog) {
 					oView.getModel("appView").setProperty("/busy", false);
 					this._oDialog = oDialog;
-					this.onOpen(oDialog, oView, oEvent, mParameters);
+					this.onOpen(oDialog, oView, oSource, mParameters);
 				}.bind(this));
 			} else {
-				this.onOpen(this._oDialog, oView, oEvent, mParameters);
+				this.onOpen(this._oDialog, oView, oSource, mParameters);
 			}
 		},
 
@@ -43,7 +43,7 @@ sap.ui.define([
 		 * @param oView
 		 * @param oEvent
 		 */
-		onOpen: function (oDialog, oView, oEvent, mParameters) {
+		onOpen: function (oDialog, oView, oSource, mParameters) {
 			var oViewFilterSettings = oView.getController().oFilterConfigsController || null;
 			oDialog.setModel(new JSONModel({
 				count: 0
@@ -58,8 +58,8 @@ sap.ui.define([
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 			// connect dialog to view (models, lifecycle)
 			oView.addDependent(oDialog);
-			this._bindPopover(oDialog, oEvent);
-			oDialog.openBy(oEvent.getSource());
+			this._bindPopover(oDialog, oSource);
+			oDialog.openBy(oSource);
 		},
 		/**
 		 * Closes the capacitive popover
@@ -75,12 +75,11 @@ sap.ui.define([
 		 * @param oEvent
 		 * @private
 		 */
-		_bindPopover: function (oDialog, oEvent) {
+		_bindPopover: function (oDialog, oSource) {
 			var oTable = oDialog.getContent()[0],
-				oBinding = oTable.getBinding("items"),
-				oSource = oEvent.getSource();
+				oBinding = oTable.getBinding("items")
 			if (oSource) {
-				var oRow = oEvent.getSource().getParent(),
+				var oRow = oSource.getParent(),
 					oContext = oRow.getBindingContext(),
 					oNodeData = oContext.getModel().getProperty(oContext.getPath());
 
@@ -104,6 +103,8 @@ sap.ui.define([
 				sResourceGroup = oNodeData.ResourceGroupGuid,
 				oStartDate = oNodeData.StartDate || this._dateFrom,
 				oEndDate = oNodeData.EndDate || this._dateTo,
+				oStartTime = oNodeData.StartTime,
+				oEndTime = oNodeData.EndTime,
 				aFilters = [],
 				sSelectedView = this._component.getModel("viewModel").getProperty("/selectedHierarchyView");
 
@@ -114,10 +115,14 @@ sap.ui.define([
 			} else {
 				aFilters.push(new Filter("ObjectId", FilterOperator.EQ, sResource + "//" + sResourceGroup));
 			}
+
 			aFilters.push(new Filter("AssignmentType", FilterOperator.EQ, "CAP"));
 			aFilters.push(new Filter("NODE_TYPE", FilterOperator.EQ, sSelectedView));
-			aFilters.push(new Filter("DateFrom", FilterOperator.LE, oEndDate));
-			aFilters.push(new Filter("DateTo", FilterOperator.GE, oStartDate));
+			// Setting end time to end of day to fetch assignments; from 2209
+			aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.mergeDateTime(oEndDate, oEndTime).setHours(23, 59, 59)));
+			aFilters.push(new Filter("DateTo", FilterOperator.GE, new Date(formatter.mergeDateTime(oStartDate, oStartTime))));
+			aFilters.push(new Filter("TimeFrom", FilterOperator.LE, oStartTime));
+			aFilters.push(new Filter("TimeTo", FilterOperator.GE, oEndTime));
 			oBinding.filter(aFilters);
 		},
 		/**

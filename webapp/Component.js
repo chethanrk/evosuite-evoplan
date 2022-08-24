@@ -219,7 +219,9 @@ sap.ui.define([
 			this._getFunctionSetCount();
 
 			this.setModel(models.createUserModel({
-				ENABLE_ASSET_PLANNING: false
+				ENABLE_ASSET_PLANNING: false,
+				ENABLE_EVOORDERRELATE_BUTTON: false,
+				ENABLE_EVORESOURCE_BUTTON: false
 			}), "user");
 
 			//Creating the Global message model from MessageManager

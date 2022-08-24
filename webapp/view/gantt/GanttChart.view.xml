@@ -16,8 +16,8 @@
 							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.ResourceActions" type="XML"/>
 							<Button id="idCalculateRoute" enabled="false" visible="{user>/ENABLE_MANAGE_ABSENCE}" text="Calculate Route" tooltip="Calculate Route"
 								press="onCalculateRoutePress" busyIndicatorDelay="0"/>
-							<Button id="idOptimizeRoute" enabled="false" text="Optimize Route" tooltip="Optimize Route"
-								press="onCalculateRoutePress" busyIndicatorDelay="0"/>	
+							<Button id="idOptimizeRoute" enabled="false" text="Optimize Route" tooltip="Optimize Route" press="onCalculateRoutePress"
+								busyIndicatorDelay="0"/>
 							<Button id="idToday" text="{i18n>xtit.today}" press="onPressToday"/>
 							<core:ExtensionPoint name="GanttExtP|GanttChart|GanttHeircrchySet|GanttToolbar|After"/>
 						</gnt2:content>
@@ -37,9 +37,10 @@
 				</gnt2:toolbar>
 				<gnt2:ganttCharts>
 					<gnt2:GanttChartWithTable id="idGanttResourceAssignments" class="resourceGanttWithTable" ghostAlignment="Start" adhocLineLayer="Bottom"
-						shapeSelectionMode="Single" shapeSelectionSettings="{color: '#808080', strokeWidth: 1, strokeDasharray: '5,2'}" dragStart="onShapeDragStart"
-						shapeDrop="onShapeDrop" shapeResize="onShapeResize" shapeDoubleClick="onShapeDoubleClick" shapeContextMenu="onShapeContextMenu" 
-						showShapeTimeOnDrag="true" selectionPanelSize="{viewModel>/ganttSelectionPane}" nowLineInUTC="false" visibleHorizonUpdate="onVisibleHorizonUpdate">
+						shapeSelectionMode="MultiWithKeyboard" dragOrientation="Horizontal" shapeSelectionChange="onShapeSelectionChange"
+						shapeSelectionSettings="{color: '#808080', strokeWidth: 1, strokeDasharray: '5,2'}" dragStart="onShapeDragStart" shapeDrop="onShapeDrop"
+						shapeResize="onShapeResize" shapeDoubleClick="onShapeDoubleClick" shapeContextMenu="onShapeContextMenu" showShapeTimeOnDrag="true"
+						selectionPanelSize="{viewModel>/ganttSelectionPane}" nowLineInUTC="false" visibleHorizonUpdate="onVisibleHorizonUpdate">
 						<gnt2:table>
 							<table:TreeTable id="idGanttResourceTreeTable" class="resourceGanttTreeTable" selectionMode="Single" visibleRowCountMode="Auto"
 								threshold="10" enableColumnReordering="false" enableBusyIndicator="true" busyStateChanged="onBusyStateChanged" enableCellFilter="false"
