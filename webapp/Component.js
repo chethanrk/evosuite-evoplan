@@ -37,7 +37,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/NetworkAssignment",
 	"com/evorait/evoplan/controller/common/AssignmentStatus",
 	"com/evorait/evoplan/controller/gantt/GanttAssignmentPopOver",
-	"com/evorait/evoplan/controller/map/SingleDayPlanner"
+	"com/evorait/evoplan/controller/map/SingleDayPlanner",
+	"com/evorait/evoplan/controller/common/ResourceAvailabilities",
 ], function (
 	UIComponent,
 	Device,
@@ -76,7 +77,8 @@ sap.ui.define([
 	NetworkAssignment,
 	AssignmentStatus,
 	GanttAssignmentPopOver,
-	SingleDayPlanner) {
+	SingleDayPlanner,
+	ResourceAvailabilities) {
 
 	"use strict";
 
@@ -185,7 +187,11 @@ sap.ui.define([
 				bDemandEditMode: false,
 				ganttResourceFiltersFromPin: [],
 				ganttDateRangeFromMap: [],
-				iFirstDraggedIndex: -1
+				iFirstDraggedIndex: -1,
+				availabilities: {
+					data: [],
+					isToAssign: false
+				}
 			});
 			this.setModel(oViewModel, "viewModel");
 
@@ -509,6 +515,9 @@ sap.ui.define([
 
 			this.singleDayPlanner = new SingleDayPlanner();
 			this.singleDayPlanner.init();
+
+			this.ResourceAvailabilities = new ResourceAvailabilities();
+			this.ResourceAvailabilities.init();
 
 		},
 

@@ -2,11 +2,12 @@
 	xmlns:l="sap.ui.layout" xmlns:dnd="sap.ui.core.dnd" xmlns:controls="com.evorait.evoplan.ui.controls">
 	<smartTable:SmartTable id="droppableTable" entitySet="{viewModel>/treeSet}" class="listTreeTable" tableType="TreeTable" fitContainer="true"
 		useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false" smartFilterId="resourceTreeFilterBar"
-		header="Hierarchy" showRowCount="false" beforeRebindTable="onBeforeRebindTable" enableAutoBinding="true">
+		header="Hierarchy" showRowCount="false" beforeRebindTable="onBeforeRebindTable" enableAutoBinding="true"
+		requestAtLeastFields="StatusIcon,IsSelected,NodeId,ResourceGroupGuid,NodeType,ResourceGuid,DemandGuid,ParentNodeId,AssignmentGuid,HierarchyLevel,DrillState,Description,AssignmentCount,Utilization,StartDate,StartTime,EndDate,EndTime,IS_AVAILABLE,TOTAL_EFFORT,ACTUAL_WORKING_HOURS,PLANNED_WORKING_HOURS,CAPACITIVE_EFFORT,ASSIGNMENT_TYPE,ResourceIcon,GANTT_ENABLED,RES_ASGN_START_DATE,RES_ASGN_START_TIME,RES_ASGN_END_DATE,RES_ASGN_END_TIME,REQUIREMENT_PROFILE_ID,REQUIREMENT_PROFILE_COLOR,ISEXTERNAL,RES_ASGN_AVAILABILITY_FLAG">
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1"/>
 		</smartTable:layoutData>
-		<table:TreeTable toggleOpenState="onToggleOpenState"  rowHeight="33">
+		<table:TreeTable toggleOpenState="onToggleOpenState" rowHeight="33">
 			<table:columns >
 				<table:Column label="{i18n>xtit.tableObject}" name="{i18n>xtit.tableObject}">
 					<table:customData>
@@ -16,16 +17,17 @@
 						<controls:CustomTitle text="{Description}" tooltip="{Description}"
 							titleStyle="{ path: 'NodeType', formatter: '.formatter.formatResourceTitle' }"
 							availabilityIcon="{ path: 'IS_AVAILABLE', formatter: '.formatter.getAvailabilityIcon' }"
-							iconColor="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconColor' }"
+							iconColor="{parts:['IS_AVAILABLE'], formatter: '.formatter.formatIconColor' }"
 							iconTooltip="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconTooltip' }"
-							icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'},{path: 'ResourceIcon'} ], formatter: '.formatter.getResourceIcon' }"
+							icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'},{path: 'ResourceIcon'}], formatter: '.formatter.getResourceIcon' }"
 							isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink" resourceIconPress="onResourceIconPress"
 							enableQualification="{user>/ENABLE_QUALIFICATION}" plannerIconPress="onPlannerIconPress"
 							isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}"
 							showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
 							workTime="{path:'ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}"
 							highlightColor="{ path:'REQUIREMENT_PROFILE_COLOR', formatter:'.formatter.formatHighlighter'}"
-							isPlannerIconVisible="{ parts:[{path: 'NodeType'}, {path:'viewModel>/resourceTreeShowRouteColumn'}], formatter: '.formatter.decidePlannerIconVisiblity' }">
+							isPlannerIconVisible="{ parts:[{path: 'NodeType'}, {path:'viewModel>/resourceTreeShowRouteColumn'}], formatter: '.formatter.decidePlannerIconVisiblity' }"
+							nodeType="{path:'NodeType'}" nodeIconColor="{path:'RES_ASGN_AVAILABILITY_FLAG', formatter: '.formatter.formatNodeIconColor' }">
 							<!--<controls:customData>
 								<core:CustomData key="objectId" value="{NodeId}" writeToDom="true"></core:CustomData>
 							</controls:customData>-->
@@ -47,7 +49,7 @@
 						<core:CustomData key="p13nData" value='\{"columnKey": "Utilization", "leadingProperty": "Utilization"}'/>
 					</table:customData>
 					<table:template>
-							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.UtilizationTreeColumn" type="XML"/>
+						<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.UtilizationTreeColumn" type="XML"/>
 					</table:template>
 				</table:Column>
 				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="4.5rem" hAlign="End"
@@ -60,7 +62,7 @@
 					</table:template>
 				</table:Column>
 				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="15%" hAlign="End"
-				visible="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/remainingWork'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatRemainingWorkProgressBarVisibility'}">
+					visible="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/remainingWork'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatRemainingWorkProgressBarVisibility'}">
 					<table:customData>
 						<core:CustomData key="p13nData" value='\{"columnKey": "REMAIN_WORK_UTILIZATION", "leadingProperty": "REMAIN_WORK_UTILIZATION"}'/>
 					</table:customData>
@@ -74,7 +76,8 @@
 						<core:CustomData key="p13nData" value='\{"columnKey": "CAPACITIVE_EFFORT", "leadingProperty": "CAPACITIVE_EFFORT"}'/>
 					</table:customData>
 					<table:template>
-						<Link text="{path:'CAPACITIVE_EFFORT', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 2 }}" visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }" press="openCapacitivePopup"/>
+						<Link text="{path:'CAPACITIVE_EFFORT', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 2 }}"
+							visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }" press="openCapacitivePopup"/>
 					</table:template>
 				</table:Column>
 				<table:Column label="{i18n>xtit.tableAssignment}" name="{i18n>xtit.tableAssignment}" width="2.5rem" hAlign="End">
@@ -85,15 +88,12 @@
 						<Text text="{AssignmentCount}" visible="{= ${NodeType} === 'ASSIGNMENT' ? false : true }" wrapping="false"/>
 					</table:template>
 				</table:Column>
-				
 				<table:Column visible="{viewModel>/resourceTreeShowRouteColumn}" id="idResourceColumnShowRoot" label="ROUTE" name="ROUTE" width="3rem">
 					<table:template>
 						<ToggleButton visible="{ path: 'NodeType', formatter: '.formatter.formatDisplayRouteVisibility' }" press="onShowRoutePress"
 							icon="{user>/DEFAULT_MAP_SHOW_ROUTE_ICON}" tooltip="{i18n>xtit.showRoute}" pressed="{IsRouteDisplayed}"/>
 					</table:template>
 				</table:Column>
-				
-				
 				<table:Column label="{i18n>xtit.tableCheckbox}" name="{i18n>xtit.tableCheckbox}" width="2.5rem" class="sapUiNoContentPadding">
 					<table:customData>
 						<core:CustomData key="p13nData" value='\{"columnKey": "NodeType", "leadingProperty": "NodeType"}'/>

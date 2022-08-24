@@ -526,12 +526,21 @@ sap.ui.define([
 				oContext = oRow.getBindingContext(),
 				sPath = oContext.getPath(),
 				oModel = oContext.getModel(),
-				oResourceNode = oModel.getProperty(sPath);
+				oResourceNode = oModel.getProperty(sPath),
+				bShowAvailability = (oResourceNode.NodeType === "TIMEMONTH" || oResourceNode.NodeType === "TIMEWEEK") && oResourceNode.RES_ASGN_AVAILABILITY_FLAG ===
+				"P";
 
 			var sObjectId = oResourceNode.NodeId;
 			//Opening Resource Qualification only on Resource Node Icon
 			if (oResourceNode.NodeType === "RESOURCE") {
 				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
+			} else if (bShowAvailability) {
+				//Added new condition to Check & show resource availability for WEEK/MONTH view
+				this.getResourceAvailabilityInfo(oContext.getObject()).then(function (results) {
+					this.getModel("viewModel").setProperty("/availabilities/data", results);
+					this.getModel("viewModel").setProperty("/availabilities/isToAssign", false);
+					this.getOwnerComponent().ResourceAvailabilities.open(this.getView(), this._mParameters);
+				}.bind(this));
 			}
 		},
 		/**

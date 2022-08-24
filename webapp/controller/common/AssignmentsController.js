@@ -16,11 +16,21 @@ sap.ui.define([
 				targetObj = this.getModel().getProperty(sTargetPath),
 				bValdiMsgPopupFlag = this.getModel("user").getProperty("/ENABLE_RES_ASGN_VALID_MESG_DEM"), //Condition to check Global configuration for validation Mesg Popup
 				bIsGroup = targetObj.NodeType === "RES_GROUP",
-				bIsPool = targetObj.NodeType === "RESOURCE" && targetObj.ResourceGuid === "";
+				bIsPool = targetObj.NodeType === "RESOURCE" && targetObj.ResourceGuid === "",
+				bShowAvailability = (targetObj.NodeType === "TIMEMONTH" || targetObj.NodeType === "TIMEWEEK") && targetObj.RES_ASGN_AVAILABILITY_FLAG ===
+				"P";
 
-			if (bIsGroup || bIsPool || this.isTargetValid(sTargetPath) || !bValdiMsgPopupFlag) {
+			//Added new condition to Check & show resource availability for WEEK/MONTH view
+			if (bShowAvailability) {
+				this.getResourceAvailabilityInfo(targetObj).then(function (results) {
+					this.getModel("viewModel").setProperty("/availabilities/data", results);
+					this.getModel("viewModel").setProperty("/availabilities/isToAssign", true);
+					this.getOwnerComponent().ResourceAvailabilities.open(this.getView(), aSourcePaths, targetObj, this._mParameters);
+				}.bind(this));
+			} else if (bIsGroup || bIsPool || this.isTargetValid(sTargetPath) || !bValdiMsgPopupFlag) {
 				oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
 				this.checkQualificationAssignment(aSourcePaths, targetObj, oParams, mParameters); //Proceed to check the Qualification
+
 			} else {
 				this.openTargetValiditynMsgBox(aSourcePaths, targetObj, oParams, mParameters);
 			}
