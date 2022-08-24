@@ -978,6 +978,13 @@ sap.ui.define([
 				return oDate;
 			}
 		},
+		
+		/**
+		 * get Availability intervals of resource for a month/week
+		 * @param oNode
+		 * Since 2209
+		 * @Author Rakesh Sahu
+		 */
 		getResourceAvailabilityInfo: function (oNode) {
 			var oModel = this.getModel(),
 				oParams = {

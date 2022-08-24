@@ -668,7 +668,6 @@ sap.ui.define([
 		 * @param vEndTime end time for the assignment
 		 */
 		setDateTimeParams: function (oParams, vStartdate, vStartTime, vEndDate, vEndTime, oTargetDate, oNewEndDate) {
-			debugger;
 			var vCurrentTime = new Date().getTime();
 			if (vStartdate) {
 				oParams.DateFrom = oTargetDate ? oTargetDate : vStartdate;

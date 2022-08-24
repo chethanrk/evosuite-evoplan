@@ -189,9 +189,8 @@ sap.ui.define([
 				ganttDateRangeFromMap: [],
 				iFirstDraggedIndex: -1,
 				availabilities: {
-					resourceName: "",
 					data: [],
-					isToAssign:false
+					isToAssign: false
 				}
 			});
 			this.setModel(oViewModel, "viewModel");
@@ -514,7 +513,7 @@ sap.ui.define([
 
 			this.singleDayPlanner = new SingleDayPlanner();
 			this.singleDayPlanner.init();
-			
+
 			this.ResourceAvailabilities = new ResourceAvailabilities();
 			this.ResourceAvailabilities.init();
 

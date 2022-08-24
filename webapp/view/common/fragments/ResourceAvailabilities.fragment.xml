@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable" xmlns="sap.m">
-	<Dialog title="{i18n>xtit.availabiltyDialog}" class="sapUiPopupWithPadding" contentWidth="30%">
+	<Dialog title="{i18n>xtit.availabiltyDialog}" class="sapUiPopupWithPadding" contentWidth="40%">
 		<buttons>
 			<Button text="{i18n>xbut.assign}" press="onPressAssignButton" visible="{path:'viewModel>/availabilities/isToAssign'}"/>
 			<Button text="{i18n>xbut.buttonClose}" press="onPressCloseButton"/>
@@ -8,9 +8,6 @@
 			<Table id="idResourceAvailabilitiesTable" class="sapUiNoContentPadding"
 				items="{path:'viewModel>/availabilities/data', templateShareable:true}"
 				mode="{=${viewModel>/availabilities/isToAssign} === true?'SingleSelectLeft':'None'}">
-				<!--<headerToolbar>-->
-				<!--	<core:ExtensionPoint name="TableExtP|Assignments|AssignmentSet|AssignmentListTable|CustomHeaderToolbar"/>-->
-				<!--</headerToolbar>-->
 				<columns >
 					<Column>
 						<Text text="{/#Resource/DateFrom/@sap:label}"/>
