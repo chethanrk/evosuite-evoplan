@@ -37,7 +37,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/NetworkAssignment",
 	"com/evorait/evoplan/controller/common/AssignmentStatus",
 	"com/evorait/evoplan/controller/gantt/GanttAssignmentPopOver",
-	"com/evorait/evoplan/controller/map/SingleDayPlanner"
+	"com/evorait/evoplan/controller/map/SingleDayPlanner",
+	"com/evorait/evoplan/controller/common/ResourceAvailabilities",
 ], function (
 	UIComponent,
 	Device,
@@ -76,7 +77,8 @@ sap.ui.define([
 	NetworkAssignment,
 	AssignmentStatus,
 	GanttAssignmentPopOver,
-	SingleDayPlanner) {
+	SingleDayPlanner,
+	ResourceAvailabilities) {
 
 	"use strict";
 
@@ -90,7 +92,7 @@ sap.ui.define([
 		},
 
 		_appId: "evoplan",
-		
+
 		MapProvider: null,
 
 		_pMapProviderLoaded: null,
@@ -157,7 +159,7 @@ sap.ui.define([
 					checkedDemands: [],
 					assignedDemands: [],
 					bRouteDateSelected: false,
-					aAssignedAsignmentsForPlanning:[],
+					aAssignedAsignmentsForPlanning: [],
 					droppedResources: [],
 					bIsSignlePlnAsgnSaved: false
 				},
@@ -185,7 +187,12 @@ sap.ui.define([
 				bDemandEditMode: false,
 				ganttResourceFiltersFromPin: [],
 				ganttDateRangeFromMap: [],
-				iFirstDraggedIndex: -1
+				iFirstDraggedIndex: -1,
+				availabilities: {
+					resourceName: "",
+					data: [],
+					isToAssign:false
+				}
 			});
 			this.setModel(oViewModel, "viewModel");
 
@@ -262,7 +269,7 @@ sap.ui.define([
 					children: []
 				}
 			}, false), "ganttOriginalData");
-			
+
 			var oSinglePlanningModel = models.createHelperModel({
 				hasChanges: false,
 				appointments: [],
@@ -504,9 +511,12 @@ sap.ui.define([
 
 			this.GanttAssignmentPopOver = new GanttAssignmentPopOver();
 			this.GanttAssignmentPopOver.init();
-			
+
 			this.singleDayPlanner = new SingleDayPlanner();
 			this.singleDayPlanner.init();
+			
+			this.ResourceAvailabilities = new ResourceAvailabilities();
+			this.ResourceAvailabilities.init();
 
 		},
 
@@ -700,17 +710,17 @@ sap.ui.define([
 			}
 			return false;
 		},
-		
+
 		/**
 		 * Instatiate and initialize map provider object. 
 		 * Type of the instance depends on configuration provided by backend: oMapConfigModel.getProperty("/name")
 		 */
-		initializeMapProvider: function() {
+		initializeMapProvider: function () {
 			// dependency injection for MapProvider
 			var oMapConfigModel = this.getModel("mapConfig");
 			var sProviderJSModuleName = Constants.MAP.JS_PROVIDERS_PATH + oMapConfigModel.getProperty("/name");
-			this._pMapProviderLoaded = new Promise(function(resolve, reject) {
-				sap.ui.require([sProviderJSModuleName], function(cMapProvider) {
+			this._pMapProviderLoaded = new Promise(function (resolve, reject) {
+				sap.ui.require([sProviderJSModuleName], function (cMapProvider) {
 					this.MapProvider = new cMapProvider(this, oMapConfigModel);
 					resolve();
 				}.bind(this));

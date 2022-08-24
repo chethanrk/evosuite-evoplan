@@ -977,6 +977,29 @@ sap.ui.define([
 				oDate.setSeconds(oOperationTime.getSeconds());
 				return oDate;
 			}
+		},
+		getResourceAvailabilityInfo: function (oNode) {
+			var oModel = this.getModel(),
+				oParams = {
+					ResourceGroupGuid: oNode.ResourceGroupGuid,
+					ResourceGuid: oNode.ResourceGuid,
+					StartTimestamp: oNode.StartDate,
+					EndTimestamp: oNode.EndDate
+				};
+			return new Promise(function (resolve, reject) {
+				this.getModel("appView").setProperty("/busy", true);
+				//Calling Function Import to get Resource availability intervals for Weekly/Monthly view
+				this.executeFunctionImport(oModel, oParams, "GetResourceAssignmentInfo", "GET").then(function (oData, response) {
+					this.getModel("appView").setProperty("/busy", false);
+					// Condition to Check if function import returns any result or Empty
+					if (oData.results && oData.results.length) {
+						resolve(oData.results);
+					} else {
+						this.showMessageToast(this.getResourceBundle().getText("ymsg.noAvailability"));
+						reject();
+					}
+				}.bind(this));
+			}.bind(this));
 		}
 	});
 

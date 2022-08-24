@@ -31,10 +31,15 @@ sap.ui.define([
 			var oPlannerIcon = oControl._plannerIcon;
 			oPlannerIcon.setSrc("sap-icon://create-entry-time");
 			oPlannerIcon.setTooltip(sPlannerIconTooltip);
-			
+
 			// Setting icon to render which resource we are showing
 			oResourceIcon.setSrc(oControl.getIcon() !== "" ? oControl.getIcon() : "sap-icon://employee");
 
+			if ((oControl.getNodeType() === "TIMEMONTH" || oControl.getNodeType() === "TIMEWEEK") && oControl.getNodeIconColor()) {
+				oResourceIcon.setColor(oControl.getNodeIconColor());
+			} else {
+				oResourceIcon.setColor("");
+			}
 			oRm.write("<", sTag);
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapMTitle");
@@ -111,7 +116,7 @@ sap.ui.define([
 			if (isLink) {
 				oRm.write("</a>");
 			}
-			
+
 			//add planner icon next to title
 			if (oControl.getIsPlannerIconVisible()) {
 				oRm.renderControl(oPlannerIcon);
