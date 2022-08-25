@@ -96,6 +96,12 @@ sap.ui.define([
 				oAssignment.DateFrom = data.DateFrom;
 				oAssignment.DateTo = data.DateTo; 
 			}
+			// setting the flag to hide show go to details button
+			if(mParameters){
+				if(mParameters.hasOwnProperty("bFromDetail")){
+					oAssignment.ShowGoToDetailBtn=false;
+				}
+			}                         
 			this.oAssignmentModel.setData(oAssignment);
 
 			//Set the ResourceGroupGuid 
@@ -303,7 +309,8 @@ sap.ui.define([
 				objSourceType: "",
 				Notification: "",
 				isNewAssignment: false,
-				showError: false
+				showError: false,
+				ShowGoToDetailBtn:true
 			};
 		},
 
