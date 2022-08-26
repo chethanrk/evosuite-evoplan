@@ -978,9 +978,9 @@ sap.ui.define([
 				return oDate;
 			}
 		},
-		
+
 		/**
-		 * get Availability intervals of resource for a month/week
+		 * get Availability intervals of resource for a week/month/quarter/year
 		 * @param oNode
 		 * Since 2209
 		 * @Author Rakesh Sahu
@@ -1007,6 +1007,16 @@ sap.ui.define([
 					}
 				}.bind(this));
 			}.bind(this));
+		},
+		/**
+		 * check to show Availability intervals of resource for a week/month/quarter/year
+		 * @param oNode
+		 * Since 2209
+		 * @Author Rakesh Sahu
+		 */
+		checkToShowAvailabilities: function (oNode) {
+			return (oNode.NodeType === "TIMEMONTH" || oNode.NodeType === "TIMEWEEK" || oNode.NodeType === "TIMEQUART" || oNode.NodeType === "TIMEYEAR") && oNode.RES_ASGN_AVAILABILITY_FLAG ===
+				"P";
 		}
 	});
 

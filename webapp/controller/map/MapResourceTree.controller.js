@@ -574,12 +574,11 @@ sap.ui.define([
 				oContext = oRow.getBindingContext();
 
 			if (oContext) {
-				var oNodeData = oContext.getObject(),
-					bShowAvailability = (oNodeData.NodeType === "TIMEMONTH" || oNodeData.NodeType === "TIMEWEEK") && oNodeData.RES_ASGN_AVAILABILITY_FLAG ===
-					"P";
+				var oNodeData = oContext.getObject();
+				
 				if (oNodeData.NodeType === "RESOURCE" || oNodeData.NodeType === "RES_GROUP") {
 					this.getOwnerComponent().ResourceQualifications.open(this.getView(), oNodeData.NodeId);
-				} else if (bShowAvailability) {
+				} else if (this.checkToShowAvailabilities(oNodeData)) {
 					//Added new condition to Check & show resource availability for WEEK/MONTH view
 					this.getResourceAvailabilityInfo(oNodeData).then(function (results) {
 						this.getModel("viewModel").setProperty("/availabilities/data", results);
