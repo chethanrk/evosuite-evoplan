@@ -16,12 +16,10 @@ sap.ui.define([
 				targetObj = this.getModel().getProperty(sTargetPath),
 				bValdiMsgPopupFlag = this.getModel("user").getProperty("/ENABLE_RES_ASGN_VALID_MESG_DEM"), //Condition to check Global configuration for validation Mesg Popup
 				bIsGroup = targetObj.NodeType === "RES_GROUP",
-				bIsPool = targetObj.NodeType === "RESOURCE" && targetObj.ResourceGuid === "",
-				bShowAvailability = (targetObj.NodeType === "TIMEMONTH" || targetObj.NodeType === "TIMEWEEK") && targetObj.RES_ASGN_AVAILABILITY_FLAG ===
-				"P";
+				bIsPool = targetObj.NodeType === "RESOURCE" && targetObj.ResourceGuid === "";
 
 			//Added new condition to Check & show resource availability for WEEK/MONTH view
-			if (bShowAvailability) {
+			if (this.checkToShowAvailabilities(targetObj)) {
 				this.getResourceAvailabilityInfo(targetObj).then(function (results) {
 					this.getModel("viewModel").setProperty("/availabilities/data", results);
 					this.getModel("viewModel").setProperty("/availabilities/isToAssign", true);

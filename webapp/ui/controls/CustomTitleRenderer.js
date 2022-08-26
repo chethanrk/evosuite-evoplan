@@ -35,7 +35,9 @@ sap.ui.define([
 			// Setting icon to render which resource we are showing
 			oResourceIcon.setSrc(oControl.getIcon() !== "" ? oControl.getIcon() : "sap-icon://employee");
 
-			if ((oControl.getNodeType() === "TIMEMONTH" || oControl.getNodeType() === "TIMEWEEK") && oControl.getNodeIconColor()) {
+			if ((oControl.getNodeType() === "TIMEYEAR" || oControl.getNodeType() === "TIMEQUART" || oControl.getNodeType() === "TIMEMONTH" ||
+					oControl.getNodeType() === "TIMEWEEK") &&
+				oControl.getNodeIconColor()) {
 				oResourceIcon.setColor(oControl.getNodeIconColor());
 			} else {
 				oResourceIcon.setColor("");
