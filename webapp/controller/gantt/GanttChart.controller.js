@@ -432,7 +432,7 @@ sap.ui.define([
 			for (var i = 0; i < this.aSelectedAssignmentsPaths.length; i++) {
 				oAssignmentData = this.getModel("ganttModel").getProperty(this.aSelectedAssignmentsPaths[i]);
 				// condition to check if assignment is FIXED APPOINTMENT and is allowed to change 
-				if (!(oAssignmentData.FIXED_APPOINTMENT && bAllowFixedAppointments)) {
+				if (!oAssignmentData.FIXED_APPOINTMENT || (oAssignmentData.FIXED_APPOINTMENT && bAllowFixedAppointments)) {
 					oAssignmentData.DateFrom = new Date(oAssignmentData.DateFrom.getTime() + nTimeDifference);
 					oAssignmentData.DateTo = new Date(oAssignmentData.DateTo.getTime() + nTimeDifference);
 					aAssignments.push(oAssignmentData);
@@ -464,7 +464,7 @@ sap.ui.define([
 						ResourceGuid: aAssignments[i].ResourceGuid,
 						StartTimestamp: aAssignments[i].DateFrom,
 						DemandGuid: aAssignments[i].DemandGuid,
-						Unavailabilty_check: "X"
+						UnavailabilityCheck: true
 					}, "ResourceAvailabilityCheck", "GET").then(function (data, oResponse) {
 						resolve(data.Unavailable);
 					}.bind(this));
@@ -491,7 +491,7 @@ sap.ui.define([
 
 			for (var i = 0; i < aUnavailableList.length; i++) {
 				if (aUnavailableList[i]) {
-					sMsgItem = sMsgItem + aAssignments[i].ORDERID + "/" + aAssignments[i].OPERATIONID + "  " + aAssignments[i].DemandDesc + "\r\n";
+					sMsgItem = sMsgItem + aAssignments[i].ORDERID + " / " + aAssignments[i].OPERATIONID + "  " + aAssignments[i].DemandDesc + "\r\n";
 					iCounter++;
 				}
 			}
@@ -2313,12 +2313,19 @@ sap.ui.define([
 		 * since 2209
 		 */
 		_updateResourceAsignments: function () {
-			var oAssignment;
+			var oAssignment,
+				oParentAssignment;
 			//changing children date time according to parent assignment
 			for (var i = 0; i < this.aSelectedAssignmentsPaths.length; i++) {
 				oAssignment = this.oGanttModel.getProperty(this.aSelectedAssignmentsPaths[i]);
-				oAssignment.AssignmentSet.results[0].DateFrom = oAssignment.DateFrom;
-				oAssignment.AssignmentSet.results[0].DateTo = oAssignment.DateTo;
+				oParentAssignment = this.oGanttModel.getProperty(this.aSelectedAssignmentsPaths[i].split("/").splice(0, 8).join("/"));
+				if (oAssignment.AssignmentSet) {
+					oAssignment.AssignmentSet.results[0].DateFrom = oAssignment.DateFrom;
+					oAssignment.AssignmentSet.results[0].DateTo = oAssignment.DateTo;
+				} else {
+					oParentAssignment.DateFrom = oAssignment.DateFrom;
+					oParentAssignment.DateTo = oAssignment.DateTo;
+				}
 			}
 			this.oGanttModel.refresh();
 			this.bDoRefreshResourceAssignments = false;
