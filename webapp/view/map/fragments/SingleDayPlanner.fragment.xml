@@ -1,4 +1,5 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:unified="sap.ui.unified" xmlns:tnt="sap.tnt" xmlns:l="sap.ui.layout" core:require="{ formatMessage: 'sap/base/strings/formatMessage' }">
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:unified="sap.ui.unified" xmlns:tnt="sap.tnt" xmlns:l="sap.ui.layout"
+	core:require="{ formatMessage: 'sap/base/strings/formatMessage' }">
 	<Dialog id="idMapSingleDayPlanner" class="sapUiTinyMargin" stretch="true" draggable="false" resizable="true">
 		<customHeader>
 			<Bar>
@@ -15,7 +16,8 @@
 			<l:DynamicSideContent class="sapUiDSCExplored sapUiContentPadding" sideContentVisibility="AlwaysShow"
 				showSideContent="{path: 'mapSinglePlanning>/legendShown'}" containerQuery="true" breakpointChanged="updateToggleButtonState">
 				<l:mainContent>
-					<SinglePlanningCalendar id="idSinglePlanningCalendar" title="{parts: ['i18n>xtit.planningFor', 'mapSinglePlanning>/parentData/Description', 'mapSinglePlanning>/overallTravelTime'], formatter: 'formatMessage'}"
+					<SinglePlanningCalendar id="idSinglePlanningCalendar"
+						title="{parts: ['i18n>xtit.planningFor', 'mapSinglePlanning>/parentData/Description', 'mapSinglePlanning>/overallTravelTime'], formatter: 'formatMessage'}"
 						startDate="{path: 'mapSinglePlanning>/startDate'}" fullDay="true" startHour="{mapSinglePlanning>/startHour}"
 						endHour="{mapSinglePlanning>/endHour}" appointments="{path: 'mapSinglePlanning>/appointments'}"
 						specialDates="{path: 'mapSinglePlanning>/specialDates'}" enableAppointmentsCreate="false" enableAppointmentsDragAndDrop="true"
@@ -28,9 +30,9 @@
 							<Button text="{i18n>xbut.buttonCancel}" icon="sap-icon://cancel" press="onPressCancelAppointments" tooltip="{i18n>xbut.buttonCancel}"/>
 							<Text text="|"/>
 							<Button type="Default" text="{i18n>xbut.calcRoute}" icon="sap-icon://map-3" press="onPressCalculateRoute" tooltip="{i18n>xbut.calcRoute}"
-								visible="{ ${user>/ENABLE_MAP_ROUTE_CALCULATE} === 'X'}"/>
+								visible="{user>/ENABLE_MAP_ROUTE_CALCULATE}"/>
 							<Button type="Default" text="{i18n>xbut.optRoute}" icon="sap-icon://map-2" press="onPressOptimizeRoute" tooltip="{i18n>xbut.optRoute}"
-								visible="{ ${user>/ENABLE_MAP_ROUTE_OPTIMIZE} === 'X'}"/>
+								visible="{user>/ENABLE_MAP_ROUTE_OPTIMIZE}"/>
 							<ToggleButton text="Full Day" press="toggleFullDay"/>
 							<ToggleButton pressed="{path: 'mapSinglePlanning>/legendShown'}" icon="sap-icon://legend"/>
 						</actions>
