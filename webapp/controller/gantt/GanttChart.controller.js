@@ -427,27 +427,34 @@ sap.ui.define([
 			var bAllowFixedAppointments = this.getModel("user").getProperty("/ENABLE_GANTT_CHNG_FIXED_ASGN"),
 				aAssignments = [],
 				aPathsToBeRemoved = [],
-				oAssignmentData;
+				aUpdateAssignments = [],
+				oAssignmentData,
+				oParams;
 
 			for (var i = 0; i < this.aSelectedAssignmentsPaths.length; i++) {
 				oAssignmentData = this.getModel("ganttModel").getProperty(this.aSelectedAssignmentsPaths[i]);
 				// condition to check if assignment is FIXED APPOINTMENT and is allowed to change 
 				if (!oAssignmentData.FIXED_APPOINTMENT || (oAssignmentData.FIXED_APPOINTMENT && bAllowFixedAppointments)) {
-					oAssignmentData.DateFrom = new Date(oAssignmentData.DateFrom.getTime() + nTimeDifference);
-					oAssignmentData.DateTo = new Date(oAssignmentData.DateTo.getTime() + nTimeDifference);
 					aAssignments.push(oAssignmentData);
-
+					oParams = this._getAssignmentParams(oAssignmentData, nTimeDifference);
+					aUpdateAssignments.push(this.executeFunctionImport(this.getModel(), oParams, "UpdateAssignment", "POST"));
 				} else {
 					aPathsToBeRemoved.push(this.aSelectedAssignmentsPaths[i]);
 				}
 			}
 
+			//removing assignments that are not movable
 			for (var i = 0; i < aPathsToBeRemoved.length; i++) {
 				this.aSelectedAssignmentsPaths.splice(aPathsToBeRemoved.indexOf(aPathsToBeRemoved[i]), 1);
 			};
-			this._checkAssignmentsOnUnavailabilty(aAssignments);
-			this.getModel("ganttModel").refresh();
-			this.updateAssignments(aAssignments, true);
+
+			//Calling "Update" function import to update date/time to backend
+			this.getModel("appView").setProperty("/busy", true);
+			Promise.all(aUpdateAssignments).then(function (aPromiseAllResults) {
+				this.getModel("appView").setProperty("/busy", false);
+				//method to update assignments in local json model
+				this._updateResourceAsignments(aPromiseAllResults);
+			}.bind(this));
 		},
 		/**
 		 * to check if any Assignment falls in unavailability after multiassignment on same axis
@@ -1651,10 +1658,6 @@ sap.ui.define([
 						this.getModel("appView").setProperty("/busy", false);
 					}.bind(this));
 					this.bDoNotRefreshTree = false;
-					return;
-				} else if (this.bDoRefreshResourceAssignments) {
-					this._updateResourceAsignments();
-					return;
 				} else {
 					aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 					aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
@@ -2259,16 +2262,12 @@ sap.ui.define([
 		 * @param aAssignments
 		 * since 2205
 		 */
-		updateAssignments: function (aAssignments, bIsFromMoveOnSameAxis) {
+		updateAssignments: function (aAssignments) {
 			var oParams = {},
 				bIsLast = false;
 
 			//flags to prevent refresh after saving the updated assignments into the backend
-			if (bIsFromMoveOnSameAxis) {
-				this.bDoRefreshResourceAssignments = true;
-			} else {
-				this.bDoNotRefreshTree = true;
-			}
+			this.bDoNotRefreshTree = true;
 			this.bDoNotRefreshCapacity = true;
 			for (var i = 0; i < aAssignments.length; i++) {
 				oParams = {
@@ -2297,6 +2296,28 @@ sap.ui.define([
 			}
 		},
 		/**
+		 * Method to get parameters to updated assignments to backend with new date/time
+		 * @param aAssignments
+		 * since 2209
+		 */
+		_getAssignmentParams: function (oAssignment, nTimeDifference) {
+			var oParams = {
+				DateFrom: new Date(oAssignment.DateFrom.getTime() + nTimeDifference),
+				TimeFrom: {
+					ms: oAssignment.DateFrom.getTime() + nTimeDifference
+				},
+				DateTo: new Date(oAssignment.DateTo.getTime() + nTimeDifference),
+				TimeTo: {
+					ms: oAssignment.DateTo.getTime() + nTimeDifference
+				},
+				AssignmentGUID: oAssignment.Guid,
+				ResourceGroupGuid: oAssignment.ResourceGroupGuid,
+				ResourceGuid: oAssignment.ResourceGuid
+			};
+
+			return oParams;
+		},
+		/**
 		 * method for switch to toggle between Multi Assignment on Axis or reAssignment operation
 		 * @param oEvent
 		 * since 2209
@@ -2312,23 +2333,34 @@ sap.ui.define([
 		 * Method to update resouces after recheduling multiple Assignments on same axis
 		 * since 2209
 		 */
-		_updateResourceAsignments: function () {
+		_updateResourceAsignments: function (aUpdatedAssignments) {
 			var oAssignment,
-				oParentAssignment;
-			//changing children date time according to parent assignment
+				oParentAssignment,
+				aCheckAvailability = [];
+			
+			//updating assignments according to backend data
 			for (var i = 0; i < this.aSelectedAssignmentsPaths.length; i++) {
 				oAssignment = this.oGanttModel.getProperty(this.aSelectedAssignmentsPaths[i]);
-				oParentAssignment = this.oGanttModel.getProperty(this.aSelectedAssignmentsPaths[i].split("/").splice(0, 8).join("/"));
-				if (oAssignment.AssignmentSet) {
-					oAssignment.AssignmentSet.results[0].DateFrom = oAssignment.DateFrom;
-					oAssignment.AssignmentSet.results[0].DateTo = oAssignment.DateTo;
-				} else {
-					oParentAssignment.DateFrom = oAssignment.DateFrom;
-					oParentAssignment.DateTo = oAssignment.DateTo;
+				if (aUpdatedAssignments[i].ObjectId) {
+					oAssignment.DateFrom = aUpdatedAssignments[i].DateFrom;
+					oAssignment.DateTo = aUpdatedAssignments[i].DateTo;
+					oParentAssignment = this.oGanttModel.getProperty(this.aSelectedAssignmentsPaths[i].split("/").splice(0, 8).join("/"));
+					if (oAssignment.AssignmentSet) {
+						oAssignment.AssignmentSet.results[0].DateFrom = oAssignment.DateFrom;
+						oAssignment.AssignmentSet.results[0].DateTo = oAssignment.DateTo;
+					} else {
+						oParentAssignment.DateFrom = oAssignment.DateFrom;
+						oParentAssignment.DateTo = oAssignment.DateTo;
+					}
+					aCheckAvailability.push(oAssignment);
 				}
 			}
 			this.oGanttModel.refresh();
 			this.bDoRefreshResourceAssignments = false;
+			
+			// Resource availability check for moved assignment to show the Information message
+			this._checkAssignmentsOnUnavailabilty(aCheckAvailability);
+			eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 		},
 	});
 
