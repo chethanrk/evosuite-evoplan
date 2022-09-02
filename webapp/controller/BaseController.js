@@ -723,13 +723,10 @@ sap.ui.define([
 				}) || "", // generate the Hash to display a Notification details app
 
 				//Setting ShellHash Parameters for EvoTime and Other apps
-				sShellHash = sHash + sParameter; // + sKey;
+				sShellHash = sHash + sParameter, // + sKey;
 
-			oCrossAppNavigator.toExternal({
-				target: {
-					shellHash: sShellHash // sHash + "&/" + sParameter + "/" + sKey
-				}
-			});
+				sUrl = window.location.href.split('#')[0] + sShellHash;
+				window.open(sUrl, "_blank");
 
 		},
 		clearLocalStorage: function () {
