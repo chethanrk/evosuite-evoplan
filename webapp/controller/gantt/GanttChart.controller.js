@@ -1748,7 +1748,6 @@ sap.ui.define([
 						// oResource.children = _.cloneDeep(oResource.AssignmentSet.results);
 					}
 				}
-				}
 			}
 			this.oGanttModel.refresh();
 		},
