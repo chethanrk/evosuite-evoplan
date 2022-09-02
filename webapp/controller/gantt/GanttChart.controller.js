@@ -478,8 +478,10 @@ sap.ui.define([
 				}.bind(this)));
 
 			}
-
+			
+			this.getModel("appView").setProperty("/busy", true);
 			Promise.all(this.aUnavailabilityChecks).then(function (aPromiseAllResults) {
+				this.getModel("appView").setProperty("/busy", false);
 				if (aPromiseAllResults.includes(true)) {
 					this.showMessageForUnAvailability(aAssignments, aPromiseAllResults);
 				}
