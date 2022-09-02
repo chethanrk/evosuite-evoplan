@@ -478,8 +478,10 @@ sap.ui.define([
 				}.bind(this)));
 
 			}
-
+			
+			this.getModel("appView").setProperty("/busy", true);
 			Promise.all(this.aUnavailabilityChecks).then(function (aPromiseAllResults) {
+				this.getModel("appView").setProperty("/busy", false);
 				if (aPromiseAllResults.includes(true)) {
 					this.showMessageForUnAvailability(aAssignments, aPromiseAllResults);
 				}
@@ -2360,7 +2362,7 @@ sap.ui.define([
 			
 			// Resource availability check for moved assignment to show the Information message
 			this._checkAssignmentsOnUnavailabilty(aCheckAvailability);
-			eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+			this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 		},
 	});
 
