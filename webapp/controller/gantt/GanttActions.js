@@ -472,7 +472,6 @@ sap.ui.define([
 				oGanttOriginalModel = this.getModel("ganttOriginalData"),
 				aAssignmentData, sChildPath, oNewChildPath, aChildAssignmentData;
 			if (sPath.length > 60) {
-				//	sChildPath = sPath.substring(0, 27);
 				sChildPath = sPath.split("/AssignmentSet/results/")[0];
 				oNewChildPath = this._getDeleteChildPath(sChildPath);
 				sChildPath = this._getAssignmentChildPath(sChildPath);
@@ -885,7 +884,7 @@ sap.ui.define([
 			if (sSourcePath) {
 				var sParentPath = sSourcePath.substring(0, 27),
 					sNewPath = sParentPath + "/AssignmentSet/results",
-					sParentSplitPath = sSourcePath.split("/AssignmentSet")[0],
+					sParentSplitPath = sSourcePath.split("/AssignmentSet")[1],
 					sSplitPath = sParentSplitPath.split("/"),
 					index = sSplitPath[sSplitPath.length - 1],
 					sChildPath = sPath.split("/AssignmentSet/results")[0],

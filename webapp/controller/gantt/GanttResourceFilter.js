@@ -41,7 +41,6 @@ sap.ui.define([
 				this._oView.addDependent(oDialog);
 			}.bind(this));
 		},
-
 		/**
 		 * event fired when the FilterBar is initialized to indicate that metadata are available
 		 * during navigation from Map to Ganntt for showing assignments of a resource
@@ -50,9 +49,8 @@ sap.ui.define([
 		onBeforeInitialise: function () {
 			this.applyNavigationFilters();
 		},
-
 		/**
-		 * when navigating from Maps to Gantt 
+		 * when navigating from Maps to Gantt
 		 * onShowAssignments button click from the Resource Pin popover
 		 * apply the selected resource filter in the gantt view
 		 */

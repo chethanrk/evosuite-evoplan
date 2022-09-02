@@ -6,9 +6,10 @@
 sap.ui.define([
 		"sap/ui/core/Renderer",
 		"sap/ui/core/Icon",
-		"sap/ui/core/IconPool"
+		"sap/ui/core/IconPool",
+		"sap/base/security/encodeXML"
 	],
-	function (Renderer, Icon, IconPool) {
+	function (Renderer, Icon, IconPool, encodeXML) {
 		"use strict";
 
 		var CustomTitleRenderer = {};
@@ -30,10 +31,17 @@ sap.ui.define([
 			var oPlannerIcon = oControl._plannerIcon;
 			oPlannerIcon.setSrc("sap-icon://create-entry-time");
 			oPlannerIcon.setTooltip(sPlannerIconTooltip);
-			
+
 			// Setting icon to render which resource we are showing
 			oResourceIcon.setSrc(oControl.getIcon() !== "" ? oControl.getIcon() : "sap-icon://employee");
 
+			if ((oControl.getNodeType() === "TIMEYEAR" || oControl.getNodeType() === "TIMEQUART" || oControl.getNodeType() === "TIMEMONTH" ||
+					oControl.getNodeType() === "TIMEWEEK") &&
+				oControl.getNodeIconColor()) {
+				oResourceIcon.setColor(oControl.getNodeIconColor());
+			} else {
+				oResourceIcon.setColor("");
+			}
 			oRm.write("<", sTag);
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapMTitle");
@@ -110,7 +118,7 @@ sap.ui.define([
 			if (isLink) {
 				oRm.write("</a>");
 			}
-			
+
 			//add planner icon next to title
 			if (oControl.getIsPlannerIconVisible()) {
 				oRm.renderControl(oPlannerIcon);
@@ -134,11 +142,11 @@ sap.ui.define([
 			if (oAvailabilityIcon) {
 				oRm.writeAttributeEscaped("data-sap-ui-icon-content", oAvailabilityIcon.content);
 				if (oIconInfo && oIconInfo.fontFamily) {
-					oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
+					oRm.addStyle("font-family", "'" + encodeXML(oIconInfo.fontFamily) + "'");
 				} else if (oAvailabilityIcon.fontFamily) {
-					oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oAvailabilityIcon.fontFamily) + "'");
+					oRm.addStyle("font-family", "'" + encodeXML(oAvailabilityIcon.fontFamily) + "'");
 				} else {
-					oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML("SAP-icons") + "'");
+					oRm.addStyle("font-family", "'" + encodeXML("SAP-icons") + "'");
 				}
 				oRm.writeAttributeEscaped("title", oControl.getIconTooltip());
 				oRm.addStyle("color", oControl.getIconColor());

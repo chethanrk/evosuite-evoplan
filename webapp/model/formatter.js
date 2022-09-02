@@ -48,7 +48,7 @@ sap.ui.define([
 		 * return right path of logo for every system
 		 */
 		getLogoImageLink: function () {
-			var path = $.sap.getModulePath("com.evorait.evoplan", "/assets/img/evoplan_h50px.png");
+			var path = sap.ui.require.toUrl("com/evorait/evoplan/assets/img/evoplan_h50px.png");
 			return path;
 		},
 
@@ -961,12 +961,12 @@ sap.ui.define([
 			return sDescription;
 		},
 		/*
-		* Customizing remaining work label
-		* @since 2205
-		* Author Bhumika
-		* @param sText
-		* @returns Label string
-		*/
+		 * Customizing remaining work label
+		 * @since 2205
+		 * Author Bhumika
+		 * @param sText
+		 * @returns Label string
+		 */
 		RemainingWorkLabel: function (sText) {
 			var oComponent = this._component,
 				oBundle;
@@ -975,14 +975,25 @@ sap.ui.define([
 			} else {
 				oBundle = this.getResourceBundle();
 			}
-			if (sText) {			// Remaning Work
+			if (sText) { // Remaning Work
 				return oBundle.getText("xtit.remainingWork");
-			}
-			else {					// Progress
+			} else { // Progress
 				return oBundle.getText("xtit.progress");
 			}
 		},
-		
+
+		/*
+		 * Handling visibility of Save button in assignment dialog 
+		 * @since 2209
+		 * Author Bhumika
+		 * @param bChange
+		 * @param bReassign
+		 * @returns boolean
+		 */
+		formartVisibleSaveBtn: function (bChange, bReassign) {
+			return bChange || bReassign;
+		},
+
 		/**
 		 * Visibility of toggle button for displying a route for resource
 		 * @Author Valerii
@@ -990,16 +1001,16 @@ sap.ui.define([
 		 * @param sNodeType
 		 * @returns boolean
 		 */
-		formatDisplayRouteVisibility: function(sNodeType) {
+		formatDisplayRouteVisibility: function (sNodeType) {
 			var oComponent = this._component,
 				oUserModel,
 				oViewModel;
-				
+
 			var oGlobalPropertiesMapping = {
 				TIMEDAY: "/ENABLE_MAP_ROUTE_DAILY",
 				TIMEWEEK: "/ENABLE_MAP_ROUTE_WEEKLY"
 			};
-			
+
 			if (oComponent) {
 				oUserModel = oComponent.getModel("user");
 				oViewModel = oComponent.getModel("viewModel");
@@ -1007,26 +1018,37 @@ sap.ui.define([
 				oUserModel = this.getModel("user");
 				oViewModel = this.getModel("viewModel");
 			}
-			
+
 			var bGlobalVisibility = oUserModel.getProperty(oGlobalPropertiesMapping[sNodeType]);
-			
-			if(bGlobalVisibility && sNodeType === oViewModel.getProperty("/selectedHierarchyView")) {
+
+			if (bGlobalVisibility && sNodeType === oViewModel.getProperty("/selectedHierarchyView")) {
 				return true;
 			}
-			
+
 			return false;
 		},
-		
+
 		/**
 		 * decides the visibility of the planner icon
 		 * currently visible only in daily view, for the date nodes and only in map resource tree
 		 * @param {sNodeType}
 		 * @param {sViewType}
 		 */
-		decidePlannerIconVisiblity: function(sNodeType, bIsMapResourceTree) {
+		decidePlannerIconVisiblity: function (sNodeType, bIsMapResourceTree) {
 			if (bIsMapResourceTree && sNodeType === "TIMEDAY") {
 				return true;
 			}
-		}
+		},
+		/**
+		 * @Author Rakesh
+		 * format the node icon according to availability for weekly/Monthly view
+		 * @param sValue
+		 */
+		formatNodeIconColor: function (sValue) {
+			if (sValue && sValue === "P") {
+				return resourceAvailability[sValue].color;
+			}
+			return "";
+		},
 	};
 });

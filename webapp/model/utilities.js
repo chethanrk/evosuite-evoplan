@@ -1,6 +1,7 @@
 sap.ui.define([
-	"sap/ui/Device"
-], function (Device) {
+	"sap/ui/Device",
+	"sap/ui/core/syncStyleClass"
+], function (Device, syncStyleClass) {
 	"use strict";
 
 	// class providing static utility methods.
@@ -9,13 +10,54 @@ sap.ui.define([
 	var sContentDensityClass = (function () {
 		var sCozyClass = "sapUiSizeCozy",
 			sCompactClass = "sapUiSizeCompact",
-			oBody = jQuery(document.body);
-		if (oBody.hasClass(sCozyClass) || oBody.hasClass(sCompactClass)) { // density class is already set by the FLP
+			oBody = document.getElementsByTagName("body")[0];
+
+		if (oBody.classList.contains(sCozyClass) || oBody.classList.contains(sCompactClass)) { // density class is already set by the FLP
 			return "";
 		} else {
 			return Device.support.touch ? sCozyClass : sCompactClass;
 		}
 	}());
+
+	/**
+	 * Sanitize a URL.
+	 *
+	 * Source @braintree/sanitize-url
+	 * <https://github.com/braintree/sanitize-url>
+	 *
+	 * @param {string} url
+	 * @return {string}
+	 */
+	var sanitizeUrl = function (url) {
+		if (!url) {
+			return "about:blank";
+		}
+
+		var invalidProtocolRegex = /^(%20|\s)*(javascript|data|vbscript)/im;
+		var ctrlCharactersRegex = /[^\x20-\x7EÀ-ž]/gim;
+		var urlSchemeRegex = /^([^:]+):/gm;
+		var relativeFirstCharacters = [".", "/"];
+
+		function _isRelativeUrlWithoutProtocol(uri) {
+			return relativeFirstCharacters.indexOf(uri[0]) > -1;
+		}
+
+		var sanitizedUrl = url.replace(ctrlCharactersRegex, "").trim();
+		if (_isRelativeUrlWithoutProtocol(sanitizedUrl)) {
+			return sanitizedUrl;
+		}
+
+		var urlSchemeParseResults = sanitizedUrl.match(urlSchemeRegex);
+		if (!urlSchemeParseResults) {
+			return sanitizedUrl;
+		}
+
+		var urlScheme = urlSchemeParseResults[0];
+		if (invalidProtocolRegex.test(urlScheme)) {
+			return "about:blank";
+		}
+		return sanitizedUrl;
+	};
 
 	var oResourceFormats = {
 		RES_GROUP: {
@@ -150,7 +192,7 @@ sap.ui.define([
 
 		// defines a dependency from oControl to oView
 		attachControlToView: function (oView, oControl) {
-			jQuery.sap.syncStyleClass(sContentDensityClass, oView, oControl);
+			syncStyleClass(sContentDensityClass, oView, oControl);
 			oView.addDependent(oControl);
 		},
 
@@ -162,6 +204,9 @@ sap.ui.define([
 		//returns the resource availability settings
 		getResourceAvailability: function () {
 			return oResourceAvailability;
-		}
+		},
+
+		//secure santizing of urls
+		sanitizeUrl: sanitizeUrl
 	};
 });

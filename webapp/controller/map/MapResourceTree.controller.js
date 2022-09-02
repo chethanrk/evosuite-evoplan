@@ -575,23 +575,31 @@ sap.ui.define([
 
 			if (oContext) {
 				var oNodeData = oContext.getObject();
+				
 				if (oNodeData.NodeType === "RESOURCE" || oNodeData.NodeType === "RES_GROUP") {
 					this.getOwnerComponent().ResourceQualifications.open(this.getView(), oNodeData.NodeId);
+				} else if (this.checkToShowAvailabilities(oNodeData)) {
+					//Added new condition to Check & show resource availability for WEEK/MONTH view
+					this.getResourceAvailabilityInfo(oNodeData).then(function (results) {
+						this.getModel("viewModel").setProperty("/availabilities/data", results);
+						this.getModel("viewModel").setProperty("/availabilities/isToAssign", false);
+						this.getOwnerComponent().ResourceAvailabilities.open(this.getView(), this._mParameters);
+					}.bind(this));
 				}
 			}
 		},
-		
+
 		/**
 		 * opens the single day planning calender for a resource for that date
 		 * on click of planner icon in daily view
 		 * @param {oEvent} planner icon press event
 		 */
-		onPlannerIconPress: function(oEvent) {
+		onPlannerIconPress: function (oEvent) {
 			var oRow = oEvent.getSource().getParent(),
 				oContext = oRow.getBindingContext(),
 				sPath = oContext.getPath(),
 				oUserModel = this.getModel("user");
-				
+
 			if (oContext) {
 				var oNodeData = oContext.getObject();
 				if (oNodeData.NodeType === "TIMEDAY" && oUserModel.getProperty("/ENABLE_MAP_ROUTE_DAILY") ||

@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Fragment"
-], function (BaseController, formatter, Filter, FilterOperator, JSONModel, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/base/util/merge"
+], function (BaseController, formatter, Filter, FilterOperator, JSONModel, Fragment, merge) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.PlanningCalendarDialog", {
@@ -342,7 +343,7 @@ sap.ui.define([
 					oUserModel = this._component.getModel("user"),
 					oResourceBundle = this._component.getModel("i18n").getResourceBundle(),
 					iNewEffort = this.getEffortTimeDifference(oStartDate, oEndDate),
-					oParams = jQuery.extend({}, {
+					oParams = merge({}, {
 						DateFrom: oStartDate || 0,
 						TimeFrom: {
 							__edmtype: "Edm.Time",
@@ -358,7 +359,7 @@ sap.ui.define([
 						Effort: oAssignmentData.Effort,
 						ResourceGroupGuid: oRowData.ResourceGroupGuid,
 						ResourceGuid: oRowData.ResourceGuid
-					}, true);
+					});
 
 				oParams.DateTo = this.onChangeEndDateAfterResize(oParams);
 				oEndDate = oParams.DateTo;
@@ -482,7 +483,7 @@ sap.ui.define([
 		 * @param bIsUnAssign {boolean} flag indicate the action that is it unassign or reassign.
 		 */
 		_storeChanges: function (oChangedData, bIsUnAssign) {
-			var oParams = oChangedData ? jQuery.extend({}, {
+			var oParams = oChangedData ? merge({}, {
 				DateFrom: oChangedData.DateFrom || 0,
 				TimeFrom: {
 					__edmtype: "Edm.Time",
@@ -498,7 +499,7 @@ sap.ui.define([
 				Effort: oChangedData.Effort,
 				ResourceGroupGuid: oChangedData.ResourceGroupGuid,
 				ResourceGuid: oChangedData.ResourceGuid
-			}, true) : null;
+			}) : null;
 
 			if (!bIsUnAssign) {
 				this._changedAssignments[oParams.AssignmentGUID] = oParams;

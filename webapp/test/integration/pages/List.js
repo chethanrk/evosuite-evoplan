@@ -64,7 +64,7 @@ sap.ui.define([
 
 		onTheListPage: {
 			baseClass: Common,
-			actions: jQuery.extend({
+			actions: {
 				iPressATableItemAtPosition: function (iPosition) {
 					return this.waitFor(createWaitForItemAtPosition({
 						position: iPosition,
@@ -155,7 +155,7 @@ sap.ui.define([
 						errorMessage: "Was not able see the Assign button or Assign button is enabled"
 					});
 				},
-				
+
 				// 	iSelectTableDragandDrop: function () {
 				// 	debugger;
 				// 	return this.waitFor({
@@ -172,78 +172,78 @@ sap.ui.define([
 				// 		errorMessage: "Demand Table does not support Drag and Drop"
 				// 	});
 				// },
-				
-					iSelectTableDragandDrop: function () {
-					return this.waitFor({	
+
+				iSelectTableDragandDrop: function () {
+					return this.waitFor({
 						controlType: "sap.ui.table.Row",
-						autoWait : true,
+						autoWait: true,
 						matchers: new BindingPath({
 							path: "/DemandSet('0AA10FE57E901EDAA5B923B327196450')"
 						}),
 						actions: new Drag(),
-							success : function(oDrag){
-								oDrag[0].$("trigger").trigger("drag");
+						success: function (oDrag) {
+							oDrag[0].$("trigger").trigger("drag");
 						},
-						
+
 						errorMessage: "Demand Table does not support Drag and Drop"
 					});
 				},
 
-	iSelectTableDrop: function () {
+				iSelectTableDrop: function () {
 					return this.waitFor({
 						id: sTableId,
 						viewName: sViewName,
-						autoWait : true,
+						autoWait: true,
 						matchers: new BindingPath({
 							path: "/DemandSet('0AA10FE57E901EDB8EF02F69E7721937')"
 						}),
-						success : function(oDrag){
-								oDrag[0].$("trigger").trigger("drop");
+						success: function (oDrag) {
+							oDrag[0].$("trigger").trigger("drop");
 						},
-			
+
 						errorMessage: "Demand Table does not support Drop"
 					});
 				},
-				
-				iShouldSeeDragAndDrop : function () {
+
+				iShouldSeeDragAndDrop: function () {
 					return this.waitFor({
 						id: sTableId,
 						viewName: sViewName,
-					
+
 						matchers: new BindingPath({
-						 	path: "/DemandSet('0AA10FE57E901EDB8EF02F69E7721937')"
-						 }),
-					
-						actions : new Drag(),
-							autoWait : true,
-					
-						success : function(oDemandTable){
-						Opa5.assert.ok(true, "Demand Drag is working fine");
-				
+							path: "/DemandSet('0AA10FE57E901EDB8EF02F69E7721937')"
+						}),
+
+						actions: new Drag(),
+						autoWait: true,
+
+						success: function (oDemandTable) {
+							Opa5.assert.ok(true, "Demand Drag is working fine");
+
 						},
-			
+
 						errorMessage: "Demand Table does not support Drop"
 					});
 				},
-			}),
-			assertions: jQuery.extend({
-				iFinishDragAndDrop : function(){
+			},
+			assertions: {
+				iFinishDragAndDrop: function () {
 					return this.waitFor({
 						id: sTableId,
 						viewName: sViewName,
-							autoWait : true,
+						autoWait: true,
 						success: function (oDrag) {
 							Opa5.assert.ok(true, "Demand Drag is working fine");
 						},
 						errorMessage: "Drag and Drop failed for Demand Table"
 					});
-				
+
 				},
 				iShouldDragAndDrop: function () {
 					return this.waitFor({
 						id: sTableId,
 						viewName: sViewName,
-					
+
 						success: function (oDrag) {
 							Opa5.assert.ok(true, "Demand Drag is working fine");
 						},
@@ -424,8 +424,7 @@ sap.ui.define([
 						}
 					});
 				}
-
-			})
+			}
 		}
 	});
 });
