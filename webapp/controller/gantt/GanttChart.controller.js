@@ -478,7 +478,7 @@ sap.ui.define([
 				}.bind(this)));
 
 			}
-			
+
 			this.getModel("appView").setProperty("/busy", true);
 			Promise.all(this.aUnavailabilityChecks).then(function (aPromiseAllResults) {
 				this.getModel("appView").setProperty("/busy", false);
@@ -1034,7 +1034,11 @@ sap.ui.define([
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
-					this._resetParentChildNodes(sPath, oOriginalData);
+					if (sRequestType !== "reassign") {
+						this._resetParentChildNodes(sPath, oOriginalData);
+					} else {
+						this.oGanttModel.setProperty(sSourcePath, oOriginalData);
+					}
 				}.bind(this));
 			}.bind(this), function (oError) {
 				this.oGanttModel.setProperty(sPath + "/busy", false);
@@ -2339,7 +2343,7 @@ sap.ui.define([
 			var oAssignment,
 				oParentAssignment,
 				aCheckAvailability = [];
-			
+
 			//updating assignments according to backend data
 			for (var i = 0; i < this.aSelectedAssignmentsPaths.length; i++) {
 				oAssignment = this.oGanttModel.getProperty(this.aSelectedAssignmentsPaths[i]);
@@ -2359,7 +2363,7 @@ sap.ui.define([
 			}
 			this.oGanttModel.refresh();
 			this.bDoRefreshResourceAssignments = false;
-			
+
 			// Resource availability check for moved assignment to show the Information message
 			this._checkAssignmentsOnUnavailabilty(aCheckAvailability);
 			this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
