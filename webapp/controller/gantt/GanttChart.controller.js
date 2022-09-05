@@ -500,7 +500,11 @@ sap.ui.define([
 
 			for (var i = 0; i < aUnavailableList.length; i++) {
 				if (aUnavailableList[i]) {
-					sMsgItem = sMsgItem + aAssignments[i].ORDERID + " / " + aAssignments[i].OPERATIONID + "  " + aAssignments[i].DemandDesc + "\r\n";
+					if (aAssignments[i].ORDERID) {
+						sMsgItem = sMsgItem + aAssignments[i].ORDERID + " / " + aAssignments[i].OPERATIONID + "  " + aAssignments[i].DemandDesc + "\r\n";
+					} else {
+						sMsgItem = sMsgItem + aAssignments[i].NOTIFICATION + "  " + aAssignments[i].DemandDesc + "\r\n";
+					}
 					iCounter++;
 				}
 			}
