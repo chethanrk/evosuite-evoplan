@@ -14,10 +14,10 @@
 							<Button id="idButtonTimeAlloc" enabled="false" text="{i18n>xbut.timeallocation}" visible="{user>/ENABLE_BLOCK_TIME}"
 								press="onTimeAllocPress"/>
 							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.ResourceActions" type="XML"/>
-							<Button id="idCalculateRoute" enabled="false" visible="{user>/ENABLE_MANAGE_ABSENCE}" text="Calculate Route" tooltip="Calculate Route"
-								press="onCalculateRoutePress" busyIndicatorDelay="0"/>
-							<Button id="idOptimizeRoute" enabled="false" text="Optimize Route" tooltip="Optimize Route" press="onCalculateRoutePress"
-								busyIndicatorDelay="0"/>
+							<Button id="idCalculateRoute" enabled="false" visible="{user>/ENABLE_MAP_ROUTE_CALCULATE}" text="{i18n>xbut.calcRoute}"
+								tooltip="{i18n>xbut.calcRoute}" press="onCalculateRoutePress" busyIndicatorDelay="0"/>
+							<Button id="idOptimizeRoute" enabled="false" visible="{user>/ENABLE_MAP_ROUTE_OPTIMIZE}" text="{i18n>xbut.optRoute}"
+								tooltip="{i18n>xbut.optRoute}" press="onCalculateRoutePress" busyIndicatorDelay="0"/>
 							<Button id="idToday" text="{i18n>xtit.today}" press="onPressToday"/>
 							<core:ExtensionPoint name="GanttExtP|GanttChart|GanttHeircrchySet|GanttToolbar|After"/>
 						</gnt2:content>

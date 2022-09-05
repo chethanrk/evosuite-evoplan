@@ -27,7 +27,7 @@
 		<f:footer>
 			<OverflowToolbar>
 				<core:ExtensionPoint name="PageExtP|Map|ResourceHierarchySet|Footer|Actions|Left"/>
-				<Button id="showRoute" enabled="false" visible="{user>/ENABLE_MANAGE_ABSENCE}" text="Route" tooltip="Route" 
+				<Button id="showRoute" enabled="false" visible="{user>/ENABLE_MAP_SHOW_ROUTES}" text="{i18n>xbut.route}" tooltip="{i18n>xbut.route}" 
 						press="onRoutePress" busyIndicatorDelay="0">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="true"/>

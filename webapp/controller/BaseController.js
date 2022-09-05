@@ -977,6 +977,46 @@ sap.ui.define([
 				oDate.setSeconds(oOperationTime.getSeconds());
 				return oDate;
 			}
+		},
+
+		/**
+		 * get Availability intervals of resource for a week/month/quarter/year
+		 * @param oNode
+		 * Since 2209
+		 * @Author Rakesh Sahu
+		 */
+		getResourceAvailabilityInfo: function (oNode) {
+			var oModel = this.getModel(),
+				oParams = {
+					ResourceGroupGuid: oNode.ResourceGroupGuid,
+					ResourceGuid: oNode.ResourceGuid,
+					StartTimestamp: oNode.StartDate,
+					EndTimestamp: oNode.EndDate
+				};
+			return new Promise(function (resolve, reject) {
+				this.getModel("appView").setProperty("/busy", true);
+				//Calling Function Import to get Resource availability intervals for Weekly/Monthly view
+				this.executeFunctionImport(oModel, oParams, "GetResourceAssignmentInfo", "GET").then(function (oData, response) {
+					this.getModel("appView").setProperty("/busy", false);
+					// Condition to Check if function import returns any result or Empty
+					if (oData.results && oData.results.length) {
+						resolve(oData.results);
+					} else {
+						this.showMessageToast(this.getResourceBundle().getText("ymsg.noAvailability"));
+						reject();
+					}
+				}.bind(this));
+			}.bind(this));
+		},
+		/**
+		 * check to show Availability intervals of resource for a week/month/quarter/year
+		 * @param oNode
+		 * Since 2209
+		 * @Author Rakesh Sahu
+		 */
+		checkToShowAvailabilities: function (oNode) {
+			return (oNode.NodeType === "TIMEMONTH" || oNode.NodeType === "TIMEWEEK" || oNode.NodeType === "TIMEQUART" || oNode.NodeType === "TIMEYEAR") && oNode.RES_ASGN_AVAILABILITY_FLAG ===
+				"P";
 		}
 	});
 

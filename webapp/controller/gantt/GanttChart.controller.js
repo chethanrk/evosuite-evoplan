@@ -1038,7 +1038,11 @@ sap.ui.define([
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
-					this._resetParentChildNodes(sPath, oOriginalData);
+					if (sRequestType !== "reassign") {
+						this._resetParentChildNodes(sPath, oOriginalData);
+					} else {
+						this.oGanttModel.setProperty(sSourcePath, oOriginalData);
+					}
 				}.bind(this));
 			}.bind(this), function (oError) {
 				this.oGanttModel.setProperty(sPath + "/busy", false);
