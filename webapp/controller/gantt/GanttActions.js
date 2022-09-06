@@ -894,9 +894,12 @@ sap.ui.define([
 					aParentAssgnData.splice(iDeleteIndex, 1);
 					aChildNodeData.splice(iDeleteIndex, 1);
 					sChildPath = sPath.split("/AssignmentSet/results")[0];
+					var oOriginalData = oGanttOriginDataModel.getProperty(sSplitPath + "/children");
+					oOriginalData.splice(iDeleteIndex, 1);
+					oGanttModel.setProperty(sSplitPath + "/children", oGanttOriginDataModel.getProperty(sSplitPath + "/children"));
 				} else {
-					sParentPath = sSourcePath.substring(0, 27),
-						sNewPath = sParentPath + "/AssignmentSet/results",
+					sParentPath = sSourcePath.substring(0, 27);
+					sNewPath = sParentPath + "/AssignmentSet/results";
 					sParentSplitPath = sSourcePath.split("/AssignmentSet")[1];
 					sSplitPath = sParentSplitPath.split("/");
 					iDeleteIndex = sSplitPath[sSplitPath.length - 1];
@@ -914,6 +917,7 @@ sap.ui.define([
 					});
 					oGanttModel.setProperty(sChildPath + "/children/0/AssignmentSet/results/0/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION +
 						"//" + aData.ResourceGuid);
+					oGanttOriginDataModel.setProperty(sChildPath, _.cloneDeep(oGanttModel.getProperty(sChildPath)));
 				}
 			}
 			oGanttOriginDataModel.refresh(true);
