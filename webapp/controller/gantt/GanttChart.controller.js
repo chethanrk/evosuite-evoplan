@@ -1037,11 +1037,9 @@ sap.ui.define([
 				}.bind(this), function () {
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
-					this._resetChanges(sPath);
 					if (sRequestType !== "reassign") {
+						this._resetChanges(sPath);
 						this._resetParentChildNodes(sPath, oOriginalData);
-					} else {
-						this.oGanttModel.setProperty(sSourcePath, oOriginalData);
 					}
 				}.bind(this));
 			}.bind(this), function (oError) {
@@ -1100,18 +1098,20 @@ sap.ui.define([
 				var oPendingChanges = this._updatePendingChanges(sPath, sType),
 					oData = this.oGanttModel.getProperty(sPath);
 
-				if (!this._validateChangedData(sPath, oPendingChanges[sPath], oData, sType)) {
-					this._resetChanges(sPath);
-					reject();
-				}
-				//when user wants proceed check qualification
-				if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
-					this._checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
+				this._validateChangedData(sPath, oPendingChanges[sPath], oData, sType).then(function (results) {
+					if (!results) {
+						reject();
+					}
+
+					//when user wants proceed check qualification
+					if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
+						this._checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
+							this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
+						}.bind(this), reject);
+					} else {
 						this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
-					}.bind(this), reject);
-				} else {
-					this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
-				}
+					}
+				}.bind(this));
 			}.bind(this));
 		},
 
@@ -1187,7 +1187,8 @@ sap.ui.define([
 				if (this.mRequestTypes.reassign === sType && !oData.Demand.ALLOW_REASSIGN) {
 					sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
 					this._showAssignErrorDialog([oData.Description], null, sDisplayMessage);
-					return reject(sDisplayMessage);
+					this._resetChanges(sPath);
+					reject;
 				}
 				//has it a new parent
 				if (this.mRequestTypes.reassign === sType && oChanges.ResourceGuid) {
@@ -1196,10 +1197,11 @@ sap.ui.define([
 							data: oNewParent
 						})) {
 						return reject("Parent not assignable");
-					}
-					//is parent not available then show warning and ask if they want proceed
-					if (!this.isAvailable(null, oNewParent)) {
+					} else if (!this.isAvailable(null, oNewParent)) {
+						//is parent not available then show warning and ask if they want proceed
 						this.showMessageToProceed().then(resolve, reject);
+					} else {
+						resolve(true);
 					}
 				}
 			}.bind(this));
