@@ -33,8 +33,8 @@ sap.ui.define([
 			return "about:blank";
 		}
 
-		var invalidProtocolRegex = /^(%20|\s)*(javascript|data|vbscript)/im;
-		var ctrlCharactersRegex = /[^\x20-\x7EÀ-ž]/gim;
+		var invalidProtocolRegex = /^([^\w]*)(javascript|data|vbscript)/im;
+		var ctrlCharactersRegex = /[\u0000-\u001F\u007F-\u009F\u2000-\u200D\uFEFF]/gim;
 		var urlSchemeRegex = /^([^:]+):/gm;
 		var relativeFirstCharacters = [".", "/"];
 
