@@ -99,7 +99,8 @@ sap.ui.define([
 		initializeGantt: function () {
 			this.oGanttModel = this.getView().getModel("ganttModel");
 			this.oGanttOriginDataModel = this.getView().getModel("ganttOriginalData");
-
+			
+			this.oViewModel.setProperty("/ganttSelectionPane", "28%");
 			this.oGanttModel.setSizeLimit(999999999);
 			this.oGanttOriginDataModel.setSizeLimit(999999999);
 			if (this.oGanttModel.getProperty("/data/children").length === 0) {

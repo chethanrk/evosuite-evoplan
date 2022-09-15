@@ -17,10 +17,10 @@ sap.ui.define([
 		 * @param oView
 		 * @param sBindPath
 		 */
-		open: function (oView, oEvent, mParameters) {
-			var oSource = oEvent.getSource(),
-				oContext = oSource.getBindingContext(),
+		open: function (oView, oSource, mParameters) {
+			var oContext = oSource.getBindingContext(),
 				oModel = oContext.getModel();
+
 			// create dialog lazily
 			this._mParameters = mParameters;
 			this._component = oView.getController().getOwnerComponent();
