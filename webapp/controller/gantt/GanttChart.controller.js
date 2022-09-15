@@ -99,7 +99,7 @@ sap.ui.define([
 		initializeGantt: function () {
 			this.oGanttModel = this.getView().getModel("ganttModel");
 			this.oGanttOriginDataModel = this.getView().getModel("ganttOriginalData");
-			
+
 			this.oViewModel.setProperty("/ganttSelectionPane", "28%");
 			this.oGanttModel.setSizeLimit(999999999);
 			this.oGanttOriginDataModel.setSizeLimit(999999999);
@@ -471,6 +471,7 @@ sap.ui.define([
 					this.executeFunctionImport(oModel, {
 						ResourceGuid: aAssignments[i].ResourceGuid,
 						StartTimestamp: aAssignments[i].DateFrom,
+						EndTimestamp: aAssignments[i].DateTo,
 						DemandGuid: aAssignments[i].DemandGuid,
 						UnavailabilityCheck: true
 					}, "ResourceAvailabilityCheck", "GET").then(function (data, oResponse) {
@@ -497,15 +498,18 @@ sap.ui.define([
 		showMessageForUnAvailability: function (aAssignments, aUnavailableList) {
 			var sMsgItem = "",
 				item = {},
-				iCounter = 0;
+				iCounter = 0,
+				aCheckObjectIDs = [];
 
 			for (var i = 0; i < aUnavailableList.length; i++) {
-				if (aUnavailableList[i]) {
+				if (aUnavailableList[i] && !aCheckObjectIDs.includes(aAssignments[i].ObjectId)) {
 					if (aAssignments[i].ORDERID) {
-						sMsgItem = sMsgItem + aAssignments[i].ORDERID + " / " + aAssignments[i].OPERATIONID + "  " + aAssignments[i].DemandDesc + "\r\n";
+						sMsgItem = sMsgItem + aAssignments[i].ORDERID + " / " + aAssignments[i].OPERATIONID + "  " + aAssignments[i].DemandDesc +
+							"\r\n";
 					} else {
 						sMsgItem = sMsgItem + aAssignments[i].NOTIFICATION + "  " + aAssignments[i].DemandDesc + "\r\n";
 					}
+					aCheckObjectIDs.push(aAssignments[i].ObjectId);
 					iCounter++;
 				}
 			}
