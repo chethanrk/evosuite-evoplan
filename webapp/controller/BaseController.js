@@ -723,13 +723,10 @@ sap.ui.define([
 				}) || "", // generate the Hash to display a Notification details app
 
 				//Setting ShellHash Parameters for EvoTime and Other apps
-				sShellHash = sHash + sParameter; // + sKey;
+				sShellHash = sHash + sParameter, // + sKey;
 
-			oCrossAppNavigator.toExternal({
-				target: {
-					shellHash: sShellHash // sHash + "&/" + sParameter + "/" + sKey
-				}
-			});
+				sUrl = window.location.href.split('#')[0] + sShellHash;
+				window.open(sUrl, "_blank");
 
 		},
 
@@ -1015,7 +1012,8 @@ sap.ui.define([
 		 * @Author Rakesh Sahu
 		 */
 		checkToShowAvailabilities: function (oNode) {
-			return (oNode.NodeType === "TIMEMONTH" || oNode.NodeType === "TIMEWEEK" || oNode.NodeType === "TIMEQUART" || oNode.NodeType === "TIMEYEAR") && oNode.RES_ASGN_AVAILABILITY_FLAG ===
+			return (oNode.NodeType === "TIMEMONTH" || oNode.NodeType === "TIMEWEEK" || oNode.NodeType === "TIMEQUART" || oNode.NodeType ===
+					"TIMEYEAR") && oNode.RES_ASGN_AVAILABILITY_FLAG ===
 				"P";
 		}
 	});
