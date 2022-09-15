@@ -499,17 +499,17 @@ sap.ui.define([
 			var sMsgItem = "",
 				item = {},
 				iCounter = 0,
-				aCheckObjectIDs = [];
+				aCheckGuids = [];
 
 			for (var i = 0; i < aUnavailableList.length; i++) {
-				if (aUnavailableList[i] && !aCheckObjectIDs.includes(aAssignments[i].ObjectId)) {
+				if (aUnavailableList[i] && !aCheckGuids.includes(aAssignments[i].Guid)) {
 					if (aAssignments[i].ORDERID) {
 						sMsgItem = sMsgItem + aAssignments[i].ORDERID + " / " + aAssignments[i].OPERATIONID + "  " + aAssignments[i].DemandDesc +
 							"\r\n";
 					} else {
 						sMsgItem = sMsgItem + aAssignments[i].NOTIFICATION + "  " + aAssignments[i].DemandDesc + "\r\n";
 					}
-					aCheckObjectIDs.push(aAssignments[i].ObjectId);
+					aCheckGuids.push(aAssignments[i].Guid);
 					iCounter++;
 				}
 			}
@@ -2377,7 +2377,6 @@ sap.ui.define([
 
 			// Resource availability check for moved assignment to show the Information message
 			this._checkAssignmentsOnUnavailabilty(aCheckAvailability);
-			this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 		},
 	});
 
