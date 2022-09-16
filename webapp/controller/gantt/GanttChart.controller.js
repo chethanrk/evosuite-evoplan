@@ -1106,10 +1106,8 @@ sap.ui.define([
 				this._validateChangedData(sPath, oPendingChanges[sPath], oData, sType).then(function (results) {
 					if (!results) {
 						reject();
-					}
-
-					//when user wants proceed check qualification
-					if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
+					}else if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
+						//when user wants proceed check qualification
 						this._checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
 							this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
 						}.bind(this), reject);
@@ -1184,14 +1182,14 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				var sDisplayMessage = "";
 				//when shape was resized
-				if (sType === this.mRequestTypes.resize && this._validateShapeOnResize(oData).then(function (resolve1, reject) {
+				if (sType === this.mRequestTypes.resize) {
+					resolve(this._validateShapeOnResize(oData).then(function (resolve1, reject) {
 						if (resolve1) {
 							return true;
 						} else {
 							return false;
 						}
-					}.bind(this))) {
-					resolve(true);
+					}.bind(this)));
 				}
 
 				//is re-assign allowed
@@ -1295,10 +1293,11 @@ sap.ui.define([
 					reject();
 				}
 				//resized effort needs validated
+				debugger;
 				if (bEnableResizeEffortCheck && iNewEffort < oData.Effort) {
-					this._showConfirmMessageBox(this.getResourceBundle().getText("xtit.effortvalidate")).then(function (data) {
-						return data === sap.m.MessageBox.Action.YES ? resolve() : reject();
-					});
+					resolve(this._showConfirmMessageBox(this.getResourceBundle().getText("xtit.effortvalidate")).then(function (data) {
+						return data === sap.m.MessageBox.Action.YES ? true : false;
+					}))
 				} else {
 					resolve(true);
 				}
