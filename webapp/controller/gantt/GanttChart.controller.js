@@ -1184,8 +1184,14 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				var sDisplayMessage = "";
 				//when shape was resized
-				if (sType === this.mRequestTypes.resize) {
-					this._validateShapeOnResize(oData).then(null, reject);
+				if (sType === this.mRequestTypes.resize && this._validateShapeOnResize(oData).then(function (resolve1, reject) {
+						if (resolve1) {
+							return true;
+						} else {
+							return false;
+						}
+					}.bind(this))) {
+					resolve(true);
 				}
 
 				//is re-assign allowed
@@ -1208,6 +1214,8 @@ sap.ui.define([
 					} else {
 						resolve(true);
 					}
+				} else {
+					resolve(true);
 				}
 			}.bind(this));
 		},
@@ -1292,7 +1300,7 @@ sap.ui.define([
 						return data === sap.m.MessageBox.Action.YES ? resolve() : reject();
 					});
 				} else {
-					resolve();
+					resolve(true);
 				}
 			}.bind(this));
 		},
