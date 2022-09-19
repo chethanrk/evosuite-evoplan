@@ -228,11 +228,11 @@ sap.ui.define([
 						actions: [sAction, sap.m.MessageBox.Action.CANCEL],
 						styleClass: oComponent.getContentDensityClass(),
 						onClose: function (sValue) {
-							return sValue === sAction ? resolve() : reject();
+							return sValue === sAction ? resolve(true) : resolve(false);
 						}
 					}
 				);
-			});
+			}.bind(this));
 		},
 
 		/**
