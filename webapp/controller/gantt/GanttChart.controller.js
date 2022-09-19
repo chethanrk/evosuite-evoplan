@@ -1042,8 +1042,8 @@ sap.ui.define([
 				}.bind(this), function () {
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
+					this._resetChanges(sPath);
 					if (sRequestType !== "reassign") {
-						this._resetChanges(sPath);
 						this._resetParentChildNodes(sPath, oOriginalData);
 					}
 				}.bind(this));
@@ -1106,7 +1106,7 @@ sap.ui.define([
 				this._validateChangedData(sPath, oPendingChanges[sPath], oData, sType).then(function (results) {
 					if (!results) {
 						reject();
-					}else if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
+					} else if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
 						//when user wants proceed check qualification
 						this._checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
 							this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
@@ -1208,7 +1208,13 @@ sap.ui.define([
 						return reject("Parent not assignable");
 					} else if (!this.isAvailable(null, oNewParent)) {
 						//is parent not available then show warning and ask if they want proceed
-						this.showMessageToProceed().then(resolve, reject);
+						resolve(this.showMessageToProceed().then(function (resolve, reject) {
+							if (resolve) {
+								return true;
+							} else {
+								return false;
+							}
+						}));
 					} else {
 						resolve(true);
 					}
@@ -1293,7 +1299,6 @@ sap.ui.define([
 					reject();
 				}
 				//resized effort needs validated
-				debugger;
 				if (bEnableResizeEffortCheck && iNewEffort < oData.Effort) {
 					resolve(this._showConfirmMessageBox(this.getResourceBundle().getText("xtit.effortvalidate")).then(function (data) {
 						return data === sap.m.MessageBox.Action.YES ? true : false;
