@@ -35,7 +35,7 @@
 						oStartupParameters = {};
 					
 					aKeys.forEach(function(sKey){
-						oStartupParameters[sKey] = mParams.get(sKey);
+						oStartupParameters[sKey] = [mParams.get(sKey)];
 					});
 					
 					sap.ui.component({

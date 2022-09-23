@@ -38,7 +38,7 @@
 				<gnt2:ganttCharts>
 					<gnt2:GanttChartWithTable id="idGanttResourceAssignments" class="resourceGanttWithTable" ghostAlignment="Start" adhocLineLayer="Bottom"
 						shapeSelectionMode="MultiWithKeyboard" dragOrientation="Horizontal" shapeSelectionChange="onShapeSelectionChange"
-						shapeSelectionSettings="{color: '#808080', strokeWidth: 1, strokeDasharray: '5,2'}" dragStart="onShapeDragStart" shapeDrop="onShapeDrop"
+						shapeSelectionSettings="{color: '#808080', strokeWidth: 2, strokeDasharray: '5,2'}" dragStart="onShapeDragStart" shapeDrop="onShapeDrop"
 						shapeResize="onShapeResize" shapeDoubleClick="onShapeDoubleClick" shapeContextMenu="onShapeContextMenu" showShapeTimeOnDrag="true"
 						selectionPanelSize="{viewModel>/ganttSelectionPane}" nowLineInUTC="false" visibleHorizonUpdate="onVisibleHorizonUpdate">
 						<gnt2:table>
