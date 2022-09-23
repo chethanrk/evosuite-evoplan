@@ -207,7 +207,7 @@ sap.ui.define([
 				}.bind(this),
 				error: function (oError) {
 					//set first dragged index to set initial
-					this.getModel("viewModel").setProperty("/iFirstDraggedIndex", -1);
+					this.getModel("viewModel").setProperty("/iFirstVisibleRowIndex", -1);
 					//Handle Error
 					MessageToast.show(oResourceBundle.getText("errorMessage"), {
 						duration: 5000
@@ -726,7 +726,7 @@ sap.ui.define([
 				sShellHash = sHash + sParameter, // + sKey;
 
 				sUrl = window.location.href.split('#')[0] + sShellHash;
-				window.open(sUrl, "_blank");
+			window.open(sUrl, "_blank");
 
 		},
 

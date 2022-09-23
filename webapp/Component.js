@@ -187,7 +187,7 @@ sap.ui.define([
 				bDemandEditMode: false,
 				ganttResourceFiltersFromPin: [],
 				ganttDateRangeFromMap: [],
-				iFirstDraggedIndex: -1,
+				iFirstVisibleRowIndex: -1,
 				availabilities: {
 					data: [],
 					isToAssign: false

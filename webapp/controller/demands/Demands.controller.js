@@ -141,11 +141,11 @@ sap.ui.define([
 		onBusyStateChanged: function (oEvent) {
 			var parameters = oEvent.getParameters();
 			if (parameters.busy === false) {
-				var aDraggedIndex = this.getModel("viewModel").getProperty("/iFirstDraggedIndex");
+				var aDraggedIndex = this.getModel("viewModel").getProperty("/iFirstVisibleRowIndex");
 				if (aDraggedIndex && aDraggedIndex !== -1) {
 					this._oDataTable.setFirstVisibleRow(aDraggedIndex);
 					//set first dragged index to set initial
-					this.getModel("viewModel").setProperty("/iFirstDraggedIndex", -1);
+					this.getModel("viewModel").setProperty("/iFirstVisibleRowIndex", -1);
 				}
 			}
 		},
@@ -265,6 +265,9 @@ sap.ui.define([
 				aIndices = this._oDataTable.getSelectedIndices(),
 				oSelectedPaths, aPathsData;
 			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", false);
+
+			// Set index of first visible row to avoid scrolling to top after drag n drop
+			this.getModel("viewModel").setProperty("/iFirstVisibleRowIndex", this._oDataTable.getFirstVisibleRow());
 
 			//Restricting selected demand list as per the global config select all property 
 			aIndices = aIndices.slice(0, this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL"));
