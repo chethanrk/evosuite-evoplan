@@ -2353,9 +2353,9 @@ sap.ui.define([
 		 */
 		initializeMultiAssignment: function (bVerticalMovement) {
 			if (bVerticalMovement) {
-				this._ganttChart.setProperty("dragOrientation", sap.gantt.DragOrientation.Free);
+				this._ganttChart.setProperty("dragOrientation", sap.gantt.DragOrientation.Free, true);
 			} else {
-				this._ganttChart.setProperty("dragOrientation", sap.gantt.DragOrientation.Horizontal);
+				this._ganttChart.setProperty("dragOrientation", sap.gantt.DragOrientation.Horizontal, true);
 			}
 		},
 		/**

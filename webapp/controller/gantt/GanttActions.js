@@ -582,6 +582,7 @@ sap.ui.define([
 				sObjectIdRelation, aChildNodeData;
 			if (!oGanttModel.getProperty(sTargetPath + "/children")) {
 				oGanttModel.setProperty(sTargetPath + "/children", [aData]);
+				oGanttOriginalModel.setProperty(sTargetPath + "/children", [aData]);
 			} else {
 				aChildAsgnData = oGanttModel.getProperty(sTargetPath + "/children");
 				aChildAsgnData.push(aData);
