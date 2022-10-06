@@ -90,7 +90,7 @@ sap.ui.define([
 		},
 
 		_appId: "evoplan",
-		
+
 		MapProvider: null,
 
 		_pMapProviderLoaded: null,
@@ -157,7 +157,7 @@ sap.ui.define([
 					checkedDemands: [],
 					assignedDemands: [],
 					bRouteDateSelected: false,
-					aAssignedAsignmentsForPlanning:[],
+					aAssignedAsignmentsForPlanning: [],
 					droppedResources: [],
 					bIsSignlePlnAsgnSaved: false
 				},
@@ -185,7 +185,7 @@ sap.ui.define([
 				bDemandEditMode: false,
 				ganttResourceFiltersFromPin: [],
 				ganttDateRangeFromMap: [],
-				iFirstDraggedIndex: -1
+				iFirstVisibleRowIndex: -1
 			});
 			this.setModel(oViewModel, "viewModel");
 
@@ -262,7 +262,7 @@ sap.ui.define([
 					children: []
 				}
 			}, false), "ganttOriginalData");
-			
+
 			var oSinglePlanningModel = models.createHelperModel({
 				hasChanges: false,
 				appointments: [],
@@ -503,7 +503,7 @@ sap.ui.define([
 
 			this.GanttAssignmentPopOver = new GanttAssignmentPopOver();
 			this.GanttAssignmentPopOver.init();
-			
+
 			this.singleDayPlanner = new SingleDayPlanner();
 			this.singleDayPlanner.init();
 
@@ -699,17 +699,17 @@ sap.ui.define([
 			}
 			return false;
 		},
-		
+
 		/**
 		 * Instatiate and initialize map provider object. 
 		 * Type of the instance depends on configuration provided by backend: oMapConfigModel.getProperty("/name")
 		 */
-		initializeMapProvider: function() {
+		initializeMapProvider: function () {
 			// dependency injection for MapProvider
 			var oMapConfigModel = this.getModel("mapConfig");
 			var sProviderJSModuleName = Constants.MAP.JS_PROVIDERS_PATH + oMapConfigModel.getProperty("/name");
-			this._pMapProviderLoaded = new Promise(function(resolve, reject) {
-				sap.ui.require([sProviderJSModuleName], function(cMapProvider) {
+			this._pMapProviderLoaded = new Promise(function (resolve, reject) {
+				sap.ui.require([sProviderJSModuleName], function (cMapProvider) {
 					this.MapProvider = new cMapProvider(this, oMapConfigModel);
 					resolve();
 				}.bind(this));
