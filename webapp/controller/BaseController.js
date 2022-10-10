@@ -11,9 +11,10 @@ sap.ui.define([
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
 	"com/evorait/evoplan/model/formatter",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"sap/base/Log"
 ], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText, Constants,
-	RowAction, RowActionItem, formatter, Fragment) {
+	RowAction, RowActionItem, formatter, Fragment, Log) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.BaseController", {
@@ -107,7 +108,7 @@ sap.ui.define([
 				try {
 					oData = JSON.parse(oResponse.headers["sap-message"]);
 				} catch (ex) {
-					jQuery.sap.log.error("Failed to parse the message header");
+					Log.error("Failed to parse the message header");
 				}
 				if (oData && oData.details.length > 0) {
 					var oMessage, bContainsError;
@@ -134,7 +135,7 @@ sap.ui.define([
 					try {
 						oData = JSON.parse(oResponse.responseText);
 					} catch (ex) {
-						jQuery.sap.log.error("Failed to parse the message header");
+						Log.error("Failed to parse the message header");
 					}
 					if (oData && oData.error) {
 						bContainsError = true;
@@ -613,14 +614,13 @@ sap.ui.define([
 		},
 
 		_setRowActionTemplate: function (oDataTable, onClickNavigation, openActionSheet) {
-
 			var oTemplate = oDataTable.getRowActionTemplate(),
 				oResourceBundle = this.getModel("i18n").getResourceBundle();
 			if (oTemplate) {
 				oTemplate.destroy();
 				oTemplate = null;
 			}
-			// oTemplate = sap.ui.xmlfragment("com.evorait.evoplan.view.fragments.RowActions", this);
+
 			oTemplate = new RowAction({
 				items: [
 					new RowActionItem({
@@ -729,19 +729,28 @@ sap.ui.define([
 			window.open(sUrl, "_blank");
 
 		},
+
 		clearLocalStorage: function () {
 			localStorage.removeItem("Evo-Dmnd-pageRefresh");
 			localStorage.removeItem("Evo-Dmnd-guid");
 		},
+
 		/**
-		 * TODO to be designed 
+		 * Load fragment async
+		 * @param sPath
+		 * @param oController
+		 * @param sId
+		 * @return Promise
 		 */
 		loadFragment: function (sPath, oController, sId) {
-			// return Fragment.load({
-			// 	name:sPath,
-			// 	id: sId,
-			// 	controller: oController
-			// });
+			return Fragment.load({
+				name: sPath,
+				controller: oController || this,
+				type: "XML",
+				id: sId
+			}).then(function (oFragment) {
+				return oFragment;
+			});
 		},
 
 		/**
@@ -965,6 +974,47 @@ sap.ui.define([
 				oDate.setSeconds(oOperationTime.getSeconds());
 				return oDate;
 			}
+		},
+
+		/**
+		 * get Availability intervals of resource for a week/month/quarter/year
+		 * @param oNode
+		 * Since 2209
+		 * @Author Rakesh Sahu
+		 */
+		getResourceAvailabilityInfo: function (oNode) {
+			var oModel = this.getModel(),
+				oParams = {
+					ResourceGroupGuid: oNode.ResourceGroupGuid,
+					ResourceGuid: oNode.ResourceGuid,
+					StartTimestamp: oNode.StartDate,
+					EndTimestamp: oNode.EndDate
+				};
+			return new Promise(function (resolve, reject) {
+				this.getModel("appView").setProperty("/busy", true);
+				//Calling Function Import to get Resource availability intervals for Weekly/Monthly view
+				this.executeFunctionImport(oModel, oParams, "GetResourceAssignmentInfo", "GET").then(function (oData, response) {
+					this.getModel("appView").setProperty("/busy", false);
+					// Condition to Check if function import returns any result or Empty
+					if (oData.results && oData.results.length) {
+						resolve(oData.results);
+					} else {
+						this.showMessageToast(this.getResourceBundle().getText("ymsg.noAvailability"));
+						reject();
+					}
+				}.bind(this));
+			}.bind(this));
+		},
+		/**
+		 * check to show Availability intervals of resource for a week/month/quarter/year
+		 * @param oNode
+		 * Since 2209
+		 * @Author Rakesh Sahu
+		 */
+		checkToShowAvailabilities: function (oNode) {
+			return (oNode.NodeType === "TIMEMONTH" || oNode.NodeType === "TIMEWEEK" || oNode.NodeType === "TIMEQUART" || oNode.NodeType ===
+					"TIMEYEAR") && oNode.RES_ASGN_AVAILABILITY_FLAG ===
+				"P";
 		}
 	});
 

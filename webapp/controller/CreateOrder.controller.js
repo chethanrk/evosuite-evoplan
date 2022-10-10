@@ -30,7 +30,7 @@ sap.ui.define([
 			var iOriginalBusyDelay,
 				oViewModel = this.getOwnerComponent().getModel("viewModel");
 			iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
-			this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
+			this._oMessagePopover = this.getOwnerComponent()._oMessagePopover;
 			this.getView().addDependent(this._oMessagePopover);
 
 			this.getOwnerComponent().getModel().metadataLoaded().then(function () {
@@ -76,6 +76,7 @@ sap.ui.define([
 					this.setDefaultValues(data);
 				}
 			}
+			this.oViewModel.setProperty("/busy", false);
 		},
 
 		/**

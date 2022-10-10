@@ -10,7 +10,7 @@
 	<!-- Bootstrapping UI5 -->
 	<!-- https://sapui5.hana.ondemand.com/resources/sap-ui-core.js -->
 	<script id="sap-ui-bootstrap"
-			src="https://sapui5.hana.ondemand.com/1.71.36/resources/sap-ui-core.js"
+			src="https://sapui5.hana.ondemand.com/1.71.49/resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_fiori_3"
 			data-sap-ui-resourceroots='{"com.evorait.evoplan": "."}'
 			data-sap-ui-compatVersion="edge"
@@ -23,13 +23,21 @@
        
 		
 		function startApp() {
-			// Fetching Url parameters and setting as componentData
-            var oStartupParameters = jQuery.sap.getUriParameters().mParams;
 			sap.ui.getCore().attachInit(function () {
 				sap.ui.require([
 					"sap/ui/core/ComponentContainer",
 					"sap/ui/core/Component",
-				], function (ComponentContainer, Component) {
+					"sap/base/util/UriParameters"
+				], function (ComponentContainer, Component, UriParameters) {
+					// Fetching Url parameters and setting as componentData
+					var mParams = UriParameters.fromQuery(window.location.search),
+						aKeys = Array.from(mParams.keys()),
+						oStartupParameters = {};
+					
+					aKeys.forEach(function(sKey){
+						oStartupParameters[sKey] = [mParams.get(sKey)];
+					});
+					
 					sap.ui.component({
 						name: "com.evorait.evoplan",
 						async: true,

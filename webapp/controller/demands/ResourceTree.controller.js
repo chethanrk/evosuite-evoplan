@@ -434,7 +434,7 @@ sap.ui.define([
 		 */
 		openCapacitivePopup: function (oEvent) {
 			var oComponent = this.getOwnerComponent();
-			oComponent.capacitiveAssignments.open(this.getView(), oEvent, this._mParameters);
+			oComponent.capacitiveAssignments.open(this.getView(), oEvent.getSource(), this._mParameters);
 		},
 		/**
 		 * on press, open the dialog to create an unavailability for selected resources
@@ -532,6 +532,13 @@ sap.ui.define([
 			//Opening Resource Qualification only on Resource Node Icon
 			if (oResourceNode.NodeType === "RESOURCE") {
 				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
+			} else if (this.checkToShowAvailabilities(oResourceNode)) {
+				//Added new condition to Check & show resource availability for WEEK/MONTH view
+				this.getResourceAvailabilityInfo(oContext.getObject()).then(function (results) {
+					this.getModel("viewModel").setProperty("/availabilities/data", results);
+					this.getModel("viewModel").setProperty("/availabilities/isToAssign", false);
+					this.getOwnerComponent().ResourceAvailabilities.open(this.getView(), this._mParameters);
+				}.bind(this));
 			}
 		},
 		/**

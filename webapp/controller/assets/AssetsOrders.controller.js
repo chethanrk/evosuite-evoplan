@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/core/Fragment"
-], function (Controller, formatter, History, JSONModel, Filter, FilterOperator, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/base/util/merge"
+], function (Controller, formatter, History, JSONModel, Filter, FilterOperator, Fragment, merge) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.assets.AssetsOrders", {
@@ -451,7 +452,7 @@ sap.ui.define([
 				aAssetFilters = this.getModel("viewModel").getProperty("/assetsFilter"),
 				oDateRangeFilter = this.getModel("viewModel").getProperty("/assetsRangeFilter"),
 				oPlanningDataTypeFilter = this.getModel("viewModel").getProperty("/planningDataTypeFilter"),
-				aAllFilters = jQuery.extend(true, [], aAssetFilters);
+				aAllFilters = merge([], aAssetFilters);
 			if (oDateRangeFilter) {
 				aAllFilters.push(oDateRangeFilter);
 			}

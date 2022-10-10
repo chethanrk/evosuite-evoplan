@@ -36,6 +36,8 @@ sap.ui.define([
 			unassign: "unassign"
 		},
 
+		bGanttFirstTime: true,
+
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -98,6 +100,7 @@ sap.ui.define([
 			this.oGanttModel = this.getView().getModel("ganttModel");
 			this.oGanttOriginDataModel = this.getView().getModel("ganttOriginalData");
 
+			this.oViewModel.setProperty("/ganttSelectionPane", "28%");
 			this.oGanttModel.setSizeLimit(999999999);
 			this.oGanttOriginDataModel.setSizeLimit(999999999);
 			if (this.oGanttModel.getProperty("/data/children").length === 0) {
@@ -363,6 +366,171 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onShapeDrop: function (oEvent) {
+			if (this.aSelectedAssignmentsPaths.length > 1) {
+				this.handleShapeDropMultiAssignment(oEvent);
+			} else {
+				this.handleShapeDropReAssignment(oEvent);
+			}
+		},
+
+		/**
+		 * When a shape is dragging started
+		 * Need to keep all selected assignment path for future manipulation
+		 * @param oEvent
+		 */
+		onShapeDragStart: function (oEvent) {
+			var aShapeUids = oEvent.getSource().getSelectedShapeUid(),
+				sPath;
+			this.aSelectedAssignmentsPaths = [];
+
+			aShapeUids.forEach(function (oItem) {
+				sPath = oItem.split(":").pop();
+				sPath = sPath.split("[")[0];
+				this.aSelectedAssignmentsPaths.push(sPath);
+			}.bind(this));
+		},
+
+		/**
+		 * When shapes getting selected 
+		 * based on number of selection changing the axis movement direction
+		 * @param oEvent
+		 */
+		onShapeSelectionChange: function (oEvent) {
+			var aSelectedShapes = oEvent.getSource().getSelectedShapeUid();
+			if (aSelectedShapes.length === 1) {
+				this.initializeMultiAssignment(true);
+			} else {
+				this.initializeMultiAssignment();
+			}
+		},
+		/**
+		 * method to handle shape Drop When a shape is dragged inside Gantt on same axis
+		 * and dropped to same row or another resource row
+		 * @param oEvent
+		 */
+		handleShapeDropMultiAssignment: function (oEvent) {
+			var oDataModel = this._treeTable.getModel("data"),
+				oNewDateTime = oEvent.getParameter("newDateTime"),
+				oDraggedShapeDates = oEvent.getParameter("draggedShapeDates"),
+				sLastDraggedShapeUid = oEvent.getParameter("lastDraggedShapeUid"),
+				oOldStartDateTime = oDraggedShapeDates[sLastDraggedShapeUid].time,
+				oOldEndDateTime = oDraggedShapeDates[sLastDraggedShapeUid].endTime,
+				iMoveWidthInMs = oNewDateTime.getTime() - oOldStartDateTime.getTime();
+
+			this.updateAssignmentsDateTime(iMoveWidthInMs);
+		},
+
+		/**
+		 * update new date time to dropped multiple assigments on same axis
+		 * @param nTimeDifference
+		 */
+		updateAssignmentsDateTime: function (nTimeDifference) {
+			var bAllowFixedAppointments = this.getModel("user").getProperty("/ENABLE_GANTT_CHNG_FIXED_ASGN"),
+				aAssignments = [],
+				aPathsToBeRemoved = [],
+				aUpdateAssignments = [],
+				oAssignmentData,
+				oParams;
+
+			for (var i = 0; i < this.aSelectedAssignmentsPaths.length; i++) {
+				oAssignmentData = this.getModel("ganttModel").getProperty(this.aSelectedAssignmentsPaths[i]);
+				// condition to check if assignment is FIXED APPOINTMENT and is allowed to change 
+				if (!oAssignmentData.FIXED_APPOINTMENT || (oAssignmentData.FIXED_APPOINTMENT && bAllowFixedAppointments)) {
+					aAssignments.push(oAssignmentData);
+					oParams = this._getAssignmentParams(oAssignmentData, nTimeDifference);
+					aUpdateAssignments.push(this.executeFunctionImport(this.getModel(), oParams, "UpdateAssignment", "POST"));
+				} else {
+					aPathsToBeRemoved.push(this.aSelectedAssignmentsPaths[i]);
+				}
+			}
+
+			//removing assignments that are not movable
+			for (var i = 0; i < aPathsToBeRemoved.length; i++) {
+				this.aSelectedAssignmentsPaths.splice(aPathsToBeRemoved.indexOf(aPathsToBeRemoved[i]), 1);
+			};
+
+			//Calling "Update" function import to update date/time to backend
+			this.getModel("appView").setProperty("/busy", true);
+			Promise.all(aUpdateAssignments).then(function (aPromiseAllResults) {
+				this.getModel("appView").setProperty("/busy", false);
+				//method to update assignments in local json model
+				this._updateResourceAsignments(aPromiseAllResults);
+			}.bind(this));
+		},
+		/**
+		 * to check if any Assignment falls in unavailability after multiassignment on same axis
+		 * @param aAssignments
+		 * since 2209
+		 */
+		_checkAssignmentsOnUnavailabilty: function (aAssignments) {
+			var oModel = this.getModel();
+			this.aUnavailabilityChecks = []
+
+			for (var i = 0; i < aAssignments.length; i++) {
+				this.aUnavailabilityChecks.push(new Promise(function (resolve, reject) {
+					this.executeFunctionImport(oModel, {
+						ResourceGuid: aAssignments[i].ResourceGuid,
+						StartTimestamp: aAssignments[i].DateFrom,
+						EndTimestamp: aAssignments[i].DateTo,
+						DemandGuid: aAssignments[i].DemandGuid,
+						UnavailabilityCheck: true
+					}, "ResourceAvailabilityCheck", "GET").then(function (data, oResponse) {
+						resolve(data.Unavailable);
+					}.bind(this));
+				}.bind(this)));
+
+			}
+
+			this.getModel("appView").setProperty("/busy", true);
+			Promise.all(this.aUnavailabilityChecks).then(function (aPromiseAllResults) {
+				this.getModel("appView").setProperty("/busy", false);
+				if (aPromiseAllResults.includes(true)) {
+					this.showMessageForUnAvailability(aAssignments, aPromiseAllResults);
+				}
+			}.bind(this));
+		},
+
+		/**
+		 * Display message for Assignment falls in unavailability after multiassignment on same axis
+		 * @param oEvent
+		 * since 2209
+		 */
+		showMessageForUnAvailability: function (aAssignments, aUnavailableList) {
+			var sMsgItem = "",
+				item = {},
+				iCounter = 0,
+				aCheckGuids = [];
+
+			for (var i = 0; i < aUnavailableList.length; i++) {
+				if (aUnavailableList[i] && !aCheckGuids.includes(aAssignments[i].Guid)) {
+					if (aAssignments[i].ORDERID) {
+						sMsgItem = sMsgItem + aAssignments[i].ORDERID + " / " + aAssignments[i].OPERATIONID + "  " + aAssignments[i].DemandDesc +
+							"\r\n";
+					} else {
+						sMsgItem = sMsgItem + aAssignments[i].NOTIFICATION + "  " + aAssignments[i].DemandDesc + "\r\n";
+					}
+					aCheckGuids.push(aAssignments[i].Guid);
+					iCounter++;
+				}
+			}
+			if (sMsgItem) {
+				item.type = "Information";
+				item.description = sMsgItem;
+				item.subtitle = sMsgItem;
+				item.title = this.getModel("i18n").getResourceBundle().getText("xmsg.assignedToUnavailability");
+				item.counter = iCounter;
+				this.getModel("MessageModel").setData([item]);
+				sap.m.MessageToast.show(item.title + "\r\n" + item.subtitle, {
+					duration: 6000
+				});
+			}
+		},
+		/**
+		 * method to handle shape Drop When a shape is dragged inside Gantt to reassign
+		 * and dropped to same row or another resource row
+		 * @param oEvent
+		 */
+		handleShapeDropReAssignment: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				msg = this.getResourceBundle().getText("msg.ganttShapeDropError"),
 				oTargetContext = oParams.targetRow ? oParams.targetRow.getBindingContext("ganttModel") : null;
@@ -875,7 +1043,9 @@ sap.ui.define([
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
-					this._resetParentChildNodes(sPath, oOriginalData);
+					if (sRequestType !== "reassign") {
+						this._resetParentChildNodes(sPath, oOriginalData);
+					}
 				}.bind(this));
 			}.bind(this), function (oError) {
 				this.oGanttModel.setProperty(sPath + "/busy", false);
@@ -933,18 +1103,18 @@ sap.ui.define([
 				var oPendingChanges = this._updatePendingChanges(sPath, sType),
 					oData = this.oGanttModel.getProperty(sPath);
 
-				if (!this._validateChangedData(sPath, oPendingChanges[sPath], oData, sType)) {
-					this._resetChanges(sPath);
-					reject();
-				}
-				//when user wants proceed check qualification
-				if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
-					this._checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
+				this._validateChangedData(sPath, oPendingChanges[sPath], oData, sType).then(function (results) {
+					if (!results) {
+						reject();
+					} else if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
+						//when user wants proceed check qualification
+						this._checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
+							this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
+						}.bind(this), reject);
+					} else {
 						this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
-					}.bind(this), reject);
-				} else {
-					this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
-				}
+					}
+				}.bind(this));
 			}.bind(this));
 		},
 
@@ -1013,14 +1183,21 @@ sap.ui.define([
 				var sDisplayMessage = "";
 				//when shape was resized
 				if (sType === this.mRequestTypes.resize) {
-					this._validateShapeOnResize(oData).then(null, reject);
+					resolve(this._validateShapeOnResize(oData).then(function (resolve1, reject) {
+						if (resolve1) {
+							return true;
+						} else {
+							return false;
+						}
+					}.bind(this)));
 				}
 
 				//is re-assign allowed
 				if (this.mRequestTypes.reassign === sType && !oData.Demand.ALLOW_REASSIGN) {
 					sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
 					this._showAssignErrorDialog([oData.Description], null, sDisplayMessage);
-					return reject(sDisplayMessage);
+					this._resetChanges(sPath);
+					reject;
 				}
 				//has it a new parent
 				if (this.mRequestTypes.reassign === sType && oChanges.ResourceGuid) {
@@ -1029,11 +1206,20 @@ sap.ui.define([
 							data: oNewParent
 						})) {
 						return reject("Parent not assignable");
+					} else if (!this.isAvailable(null, oNewParent)) {
+						//is parent not available then show warning and ask if they want proceed
+						resolve(this.showMessageToProceed().then(function (resolve, reject) {
+							if (resolve) {
+								return true;
+							} else {
+								return false;
+							}
+						}));
+					} else {
+						resolve(true);
 					}
-					//is parent not available then show warning and ask if they want proceed
-					if (!this.isAvailable(null, oNewParent)) {
-						this.showMessageToProceed().then(resolve, reject);
-					}
+				} else {
+					resolve(true);
 				}
 			}.bind(this));
 		},
@@ -1114,11 +1300,11 @@ sap.ui.define([
 				}
 				//resized effort needs validated
 				if (bEnableResizeEffortCheck && iNewEffort < oData.Effort) {
-					this._showConfirmMessageBox(this.getResourceBundle().getText("xtit.effortvalidate")).then(function (data) {
-						return data === sap.m.MessageBox.Action.YES ? resolve() : reject();
-					});
+					resolve(this._showConfirmMessageBox(this.getResourceBundle().getText("xtit.effortvalidate")).then(function (data) {
+						return data === sap.m.MessageBox.Action.YES ? true : false;
+					}))
 				} else {
-					resolve();
+					resolve(true);
 				}
 			}.bind(this));
 		},
@@ -1328,7 +1514,7 @@ sap.ui.define([
 			}
 
 			//Setting Existing Visible Horizon Dates On ContextMenu Opening For First Time To Avoid Jumping @since 2205
-			if (this._bFirstTimeContextMenuOpen) {
+			if (this._bFirstTimeContextMenuOpen || !this.bGanttFirstTime) {
 				sStartDate = this.oGanttModel.getProperty("/settings/startTime");
 				sEndDate = this.oGanttModel.getProperty("/settings/endTime");
 			}
@@ -1349,6 +1535,7 @@ sap.ui.define([
 				this.oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
 			}
 			this.bGanttHorizonChange = false; // Resetting/Clearing Gantt Horizon Flag
+			this.bGanttFirstTime = false;
 		},
 		/**
 		 * load tree data from a certain hierarchy level
@@ -1488,6 +1675,7 @@ sap.ui.define([
 				var aFilters = [],
 					oUserData = this.getModel("user").getData(),
 					aPromises = [];
+
 				//update ganttModels with results from function import
 				if (this.bDoNotRefreshTree) {
 					aFilters.push(new Filter("ObjectId", FilterOperator.EQ, this.oResource.ResourceGuid + "//" + this.oResource.ResourceGroupGuid));
@@ -1499,21 +1687,21 @@ sap.ui.define([
 						this.getModel("appView").setProperty("/busy", false);
 					}.bind(this));
 					this.bDoNotRefreshTree = false;
-					return;
+				} else {
+					aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+					aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+					this.getModel().setUseBatch(false);
+					aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
+					this.getModel("appView").setProperty("/busy", true);
+					Promise.all(aPromises).then(function (data) {
+						this._addAssignemets(data[0].results);
+						this.getModel().setUseBatch(true);
+						this.getModel("appView").setProperty("/busy", false);
+						this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
+						this.oGanttOriginDataModel.refresh();
+					}.bind(this));
 				}
 
-				aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
-				aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-				this.getModel().setUseBatch(false);
-				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
-				this.getModel("appView").setProperty("/busy", true);
-				Promise.all(aPromises).then(function (data) {
-					this._addAssignemets(data[0].results);
-					this.getModel().setUseBatch(true);
-					this.getModel("appView").setProperty("/busy", false);
-					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
-					this.oGanttOriginDataModel.refresh();
-				}.bind(this));
 			}
 		},
 		/**
@@ -1521,7 +1709,7 @@ sap.ui.define([
 		 * @param {Object} result
 		 * @Author Rakesh Sahu
 		 */
-		updateResourceAfterRouting: function (result) {
+		updateResourceAfterRouting: function (result, bNoChangeGanttView) {
 			this.oResource.AssignmentSet = result;
 			if (this.oResource.AssignmentSet && this.oResource.AssignmentSet.results.length > 0) {
 				this.oResource.children = this.oResource.AssignmentSet.results;
@@ -1536,7 +1724,9 @@ sap.ui.define([
 					};
 				}.bind(this));
 			}
-			this._setGanttVisibleHorizon(new Date(this.oSelectedDate));
+			if (!bNoChangeGanttView) {
+				this._setGanttVisibleHorizon(new Date(this.oSelectedDate));
+			}
 		},
 
 		/**
@@ -1570,20 +1760,20 @@ sap.ui.define([
 			var aGanttData = this.oGanttModel.getProperty("/data/children");
 			for (let i = 0; i < aGanttData.length; i++) {
 				var aResources = aGanttData[i].children;
-				if(aResources){
-				for (let j = 0; j < aResources.length; j++) {
-					var oResource = aResources[j];
-					oResource.AssignmentSet.results = [];
-					for (var k in aAssignments) {
-						if (oResource.NodeId === aAssignments[k].ObjectId) {
-							// aAssignments[k].NodeType = "ASSIGNMENT";
-							// aAssignments[k].AssignmentSet = {};
-							// aAssignments[k].AssignmentSet.results = [aAssignments[k]];
-							oResource.AssignmentSet.results.push(aAssignments[k]);
+				if (aResources) {
+					for (let j = 0; aResources && j < aResources.length; j++) {
+						var oResource = aResources[j];
+						oResource.AssignmentSet.results = [];
+						for (var k in aAssignments) {
+							if (oResource.NodeId === aAssignments[k].ObjectId) {
+								// aAssignments[k].NodeType = "ASSIGNMENT";
+								// aAssignments[k].AssignmentSet = {};
+								// aAssignments[k].AssignmentSet.results = [aAssignments[k]];
+								oResource.AssignmentSet.results.push(aAssignments[k]);
+							}
 						}
+						// oResource.children = _.cloneDeep(oResource.AssignmentSet.results);
 					}
-					// oResource.children = _.cloneDeep(oResource.AssignmentSet.results);
-				}
 				}
 			}
 			this.oGanttModel.refresh();
@@ -2105,7 +2295,7 @@ sap.ui.define([
 			var oParams = {},
 				bIsLast = false;
 
-			//flags to prevent refresh after saving the updated assignments into the backend	
+			//flags to prevent refresh after saving the updated assignments into the backend
 			this.bDoNotRefreshTree = true;
 			this.bDoNotRefreshCapacity = true;
 			for (var i = 0; i < aAssignments.length; i++) {
@@ -2133,7 +2323,73 @@ sap.ui.define([
 				}
 				this.callFunctionImport(oParams, "UpdateAssignment", "POST", this._mParameters, bIsLast);
 			}
-		}
+		},
+		/**
+		 * Method to get parameters to updated assignments to backend with new date/time
+		 * @param aAssignments
+		 * since 2209
+		 */
+		_getAssignmentParams: function (oAssignment, nTimeDifference) {
+			var oParams = {
+				DateFrom: new Date(oAssignment.DateFrom.getTime() + nTimeDifference),
+				TimeFrom: {
+					ms: oAssignment.DateFrom.getTime() + nTimeDifference
+				},
+				DateTo: new Date(oAssignment.DateTo.getTime() + nTimeDifference),
+				TimeTo: {
+					ms: oAssignment.DateTo.getTime() + nTimeDifference
+				},
+				AssignmentGUID: oAssignment.Guid,
+				ResourceGroupGuid: oAssignment.ResourceGroupGuid,
+				ResourceGuid: oAssignment.ResourceGuid
+			};
+
+			return oParams;
+		},
+		/**
+		 * method for switch to toggle between Multi Assignment on Axis or reAssignment operation
+		 * @param oEvent
+		 * since 2209
+		 */
+		initializeMultiAssignment: function (bVerticalMovement) {
+			if (bVerticalMovement) {
+				this._ganttChart.setProperty("dragOrientation", sap.gantt.DragOrientation.Free, true);
+			} else {
+				this._ganttChart.setProperty("dragOrientation", sap.gantt.DragOrientation.Horizontal, true);
+			}
+		},
+		/**
+		 * Method to update resouces after recheduling multiple Assignments on same axis
+		 * since 2209
+		 */
+		_updateResourceAsignments: function (aUpdatedAssignments) {
+			var oAssignment,
+				oParentAssignment,
+				aCheckAvailability = [];
+
+			//updating assignments according to backend data
+			for (var i = 0; i < this.aSelectedAssignmentsPaths.length; i++) {
+				oAssignment = this.oGanttModel.getProperty(this.aSelectedAssignmentsPaths[i]);
+				if (aUpdatedAssignments[i].ObjectId) {
+					oAssignment.DateFrom = aUpdatedAssignments[i].DateFrom;
+					oAssignment.DateTo = aUpdatedAssignments[i].DateTo;
+					oParentAssignment = this.oGanttModel.getProperty(this.aSelectedAssignmentsPaths[i].split("/").splice(0, 8).join("/"));
+					if (oAssignment.AssignmentSet) {
+						oAssignment.AssignmentSet.results[0].DateFrom = oAssignment.DateFrom;
+						oAssignment.AssignmentSet.results[0].DateTo = oAssignment.DateTo;
+					} else {
+						oParentAssignment.DateFrom = oAssignment.DateFrom;
+						oParentAssignment.DateTo = oAssignment.DateTo;
+					}
+					aCheckAvailability.push(oAssignment);
+				}
+			}
+			this.oGanttModel.refresh();
+			this.bDoRefreshResourceAssignments = false;
+
+			// Resource availability check for moved assignment to show the Information message
+			this._checkAssignmentsOnUnavailabilty(aCheckAvailability);
+		},
 	});
 
 });

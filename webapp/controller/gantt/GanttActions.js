@@ -228,11 +228,11 @@ sap.ui.define([
 						actions: [sAction, sap.m.MessageBox.Action.CANCEL],
 						styleClass: oComponent.getContentDensityClass(),
 						onClose: function (sValue) {
-							return sValue === sAction ? resolve() : reject();
+							return sValue === sAction ? resolve(true) : resolve(false);
 						}
 					}
 				);
-			});
+			}.bind(this));
 		},
 
 		/**
@@ -472,7 +472,6 @@ sap.ui.define([
 				oGanttOriginalModel = this.getModel("ganttOriginalData"),
 				aAssignmentData, sChildPath, oNewChildPath, aChildAssignmentData;
 			if (sPath.length > 60) {
-				//	sChildPath = sPath.substring(0, 27);
 				sChildPath = sPath.split("/AssignmentSet/results/")[0];
 				oNewChildPath = this._getDeleteChildPath(sChildPath);
 				sChildPath = this._getAssignmentChildPath(sChildPath);
@@ -583,6 +582,7 @@ sap.ui.define([
 				sObjectIdRelation, aChildNodeData;
 			if (!oGanttModel.getProperty(sTargetPath + "/children")) {
 				oGanttModel.setProperty(sTargetPath + "/children", [aData]);
+				oGanttOriginalModel.setProperty(sTargetPath + "/children", [aData]);
 			} else {
 				aChildAsgnData = oGanttModel.getProperty(sTargetPath + "/children");
 				aChildAsgnData.push(aData);
@@ -846,7 +846,7 @@ sap.ui.define([
 				this._oCalendarPopover.openBy(oButton);
 			}
 		},
-		
+
 		/*
 		 * Closing the calendar popover for route calculation
 		 * @param oEvent
@@ -855,7 +855,7 @@ sap.ui.define([
 		onCloseDialog: function (oEvent) {
 			this._oCalendarPopover.close();
 		},
-		
+
 		/**
 		 * Fetching Assignment Status for selected Assignments
 		 * @param sUri
@@ -881,17 +881,35 @@ sap.ui.define([
 		 */
 		_resetParentNodeData: function (sPath, sSourcePath, aData) {
 			var oGanttModel = this.getModel("ganttModel"),
-				oGanttOriginDataModel = this.getModel("ganttOriginalData");
+				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
+				sParentPath, sNewPath, sChildPath, iDeleteIndex, aParentAssgnData, aChildNodeData, sParentSplitPath, sSplitPath;
 			if (sSourcePath) {
-				var sParentPath = sSourcePath.substring(0, 27),
-					sNewPath = sParentPath + "/AssignmentSet/results",
-					sParentSplitPath = sSourcePath.split("/AssignmentSet")[0],
-					sSplitPath = sParentSplitPath.split("/"),
-					index = sSplitPath[sSplitPath.length - 1],
-					sChildPath = sPath.split("/AssignmentSet/results")[0],
+				// When Dragged from Child Nodes
+				if (sSourcePath.length > 60) {
+					sParentPath = sSourcePath.split("/AssignmentSet/");
+					sNewPath = sParentPath[0].split("/");
+					iDeleteIndex = sNewPath[sNewPath.length - 1];
+					sSplitPath = this._getAssignmentChildPath(sParentPath[0]);
+					aParentAssgnData = oGanttModel.getProperty(sSplitPath + "/children");
+					aChildNodeData = oGanttModel.getProperty(sSplitPath + "/AssignmentSet/results");
+					aParentAssgnData.splice(iDeleteIndex, 1);
+					aChildNodeData.splice(iDeleteIndex, 1);
+					sChildPath = sPath.split("/AssignmentSet/results")[0];
+					var oOriginalData = oGanttOriginDataModel.getProperty(sSplitPath + "/children");
+					oOriginalData.splice(iDeleteIndex, 1);
+					oGanttModel.setProperty(sSplitPath + "/children", oGanttOriginDataModel.getProperty(sSplitPath + "/children"));
+				} else {
+					sParentPath = sSourcePath.substring(0, 27);
+					sNewPath = sParentPath + "/AssignmentSet/results";
+					sParentSplitPath = sSourcePath.split("/AssignmentSet")[1];
+					sSplitPath = sParentSplitPath.split("/");
+					iDeleteIndex = sSplitPath[sSplitPath.length - 1];
+					sChildPath = sPath.split("/AssignmentSet/results")[0];
 					aParentAssgnData = oGanttModel.getProperty(sNewPath);
-				aParentAssgnData.splice(index, 1);
-				oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
+					aParentAssgnData.splice(iDeleteIndex, 1);
+					oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
+				}
+
 				if (!oGanttModel.getProperty(sChildPath + "/children")) {
 					oGanttModel.setProperty(sChildPath + "/children", [aData]);
 					oGanttModel.setProperty(sChildPath + "/children/0/NodeType", "ASSIGNMENT");
@@ -900,6 +918,7 @@ sap.ui.define([
 					});
 					oGanttModel.setProperty(sChildPath + "/children/0/AssignmentSet/results/0/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION +
 						"//" + aData.ResourceGuid);
+					oGanttOriginDataModel.setProperty(sChildPath, _.cloneDeep(oGanttModel.getProperty(sChildPath)));
 				}
 			}
 			oGanttOriginDataModel.refresh(true);
@@ -1006,6 +1025,10 @@ sap.ui.define([
 			return aCreatedAssignments;
 		},
 
+		/**
+		 * Splitting Child Assignment Node Path
+		 * @param sAssignmentPath
+		 */
 		_getAssignmentChildPath: function (sAssignmentPath) {
 			var aPaths = sAssignmentPath.split("/"),
 				aPaths = aPaths.slice(0, -2),
@@ -1016,6 +1039,10 @@ sap.ui.define([
 			return sNewPath.slice(1);
 		},
 
+		/**
+		 * Splitting Child Node Path for Unassign
+		 * @param sChildPath
+		 */
 		_getDeleteChildPath: function (sChildPath) {
 			var aNewChildPath = sChildPath.split("/"),
 				iLen = aNewChildPath[aNewChildPath.length - 1],

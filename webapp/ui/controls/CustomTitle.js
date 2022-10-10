@@ -57,7 +57,7 @@ sap.ui.define([
 					group: "Misc",
 					defaultValue: false
 				},
-				highlightColor:{
+				highlightColor: {
 					type: "string",
 					group: "Misc"
 				},
@@ -70,6 +70,14 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: false
+				},
+				nodeType: {
+					type: "string",
+					group: "Misc"
+				},
+				nodeIconColor: {
+					type: "string",
+					group: "Misc"
 				}
 			},
 			events: {
@@ -87,17 +95,17 @@ sap.ui.define([
 				}
 			}
 		},
-		
+
 		init: function () {
 			this._icon = new Icon({
-				tooltip:"{i18n>xtit.clicktosee}",
-				press:function(oEvent){
-					if(this.getEnableQualification()){
+				tooltip: "{i18n>xtit.clicktosee}",
+				press: function (oEvent) {
+					if (this.getEnableQualification()) {
 						this.fireResourceIconPress(oEvent);
 					}
 				}.bind(this)
 			});
-			
+
 			this._plannerIcon = new Icon({
 				press:function(oEvent){
 						this.firePlannerIconPress(oEvent);
@@ -105,7 +113,7 @@ sap.ui.define([
 			});
 			this._plannerIcon.addStyleClass("sapUiTinyMarginBegin");
 		},
-		
+
 		onAfterRendering: function () {
 			if (sap.ui.core.Control.prototype.onAfterRendering) {
 				sap.ui.core.Control.prototype.onAfterRendering.apply(this, arguments);
@@ -141,8 +149,6 @@ sap.ui.define([
 	} else {
 		CustomTitle.prototype.onclick = CustomTitle.prototype._handlePress;
 	}
-
-	
 
 	return CustomTitle;
 });

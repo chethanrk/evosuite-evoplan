@@ -592,13 +592,52 @@ sap.ui.define([
 		 * Opens long text view/edit popover
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
 		 */
+		openLongTextPopover: function (oSource) {
+			var oViewModel = this.getModel("viewModel"),
+				oModel = this.getModel(),
+				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
+			if (bDemandEditMode && oModel.hasPendingChanges()) {
+				this._oSource = oSource;
+				this.showDemandEditModeWarningMessage().then(this.handleResponse.bind(this));
+			} else {
+				oViewModel.setProperty("/bDemandEditMode", false);
+				this.getOwnerComponent().longTextPopover.open(this.getView(), oSource);
+			}
+		},
+		/**
+		 * handle message popover response to save data/ open longtext popover
+		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
+		 */
+		handleResponse: function (bResponse) {
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				oViewModel = this.getModel("viewModel"),
+				oModel = this.getModel(),
+				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode"),
+				sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
+				sSave = oResourceBundle.getText("xbut.buttonSave");
+
+			if (bResponse === sDiscard) {
+				oModel.resetChanges();
+				oViewModel.setProperty("/bDemandEditMode", false);
+				this.getOwnerComponent().longTextPopover.open(this.getView(), this._oSource);
+			} else if (bResponse === sSave) {
+				oViewModel.setProperty("/bDemandEditMode", false);
+				this.submitDemandTableChanges();
+			}
+		},
+		/**
+		 * on press order long text icon in Demand table
+		 */
 		onClickLongText: function (oEvent) {
 			this._viewModel.setProperty("/isOpetationLongTextPressed", false);
-			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
+			this.openLongTextPopover(oEvent.getSource());
 		},
+		/**
+		 * on press operation long text icon in Demand table
+		 */
 		onClickOprationLongText: function (oEvent) {
 			this._viewModel.setProperty("/isOpetationLongTextPressed", true);
-			this.getOwnerComponent().longTextPopover.open(this.getView(), oEvent);
+			this.openLongTextPopover(oEvent.getSource());
 		},
 		/**
 		 * on press unassign button in footer
