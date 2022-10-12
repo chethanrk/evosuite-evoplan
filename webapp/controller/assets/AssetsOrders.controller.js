@@ -387,7 +387,9 @@ sap.ui.define([
 		 * @private
 		 */
 		_enableHeaderButton: function (bState) {
-			this.byId("idCreateBut").setEnabled(bState);
+			if (this.getModel("user").getProperty("/ENABLE_PM_AUTH_CHECK") && this.getModel("user").getProperty("/ENABLE_IW31_AUTH_CHECK")) {
+				this.byId("idCreateBut").setEnabled(bState);
+			}
 			this.byId("idTimeAlloBut").setEnabled(bState);
 		},
 		/**

@@ -645,7 +645,9 @@ sap.ui.define([
 				sDemandPath, bComponentExist;
 			var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
-				this.byId("assignButton").setEnabled(true);
+				if (this.getModel("user").getProperty("/ENABLE_PM_AUTH_CHECK") && this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")) {
+					this.byId("assignButton").setEnabled(true);
+				}
 				this.byId("changeStatusButton").setEnabled(true);
 				this.byId("idAssignmentStatusButton").setEnabled(true);
 				this.byId("idOverallStatusButton").setEnabled(true);
