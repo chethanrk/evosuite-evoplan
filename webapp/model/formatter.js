@@ -1059,9 +1059,22 @@ sap.ui.define([
 		 */
 		editBtnVisibility: function (sEdit, bAuthPM, bAuthIW32) {
 			if (bAuthPM) {
-				return sEdit && bAuthIW32;
+				return Boolean(sEdit && bAuthIW32);
 			}
 			return false;
 		},
+
+		/**
+		 * @Author Bhumika
+		 * Decide the visibility of edit button in Demand list
+		 * @param bAuthPM, bAuthIW32
+		 * @return {Boolean}
+		 */
+		formartEnableBtn: function (bAuthPM, bAuthIW32) {
+			if (bAuthPM) {
+				return Boolean(bAuthIW32);
+			}
+			return false;
+		}
 	};
 });
