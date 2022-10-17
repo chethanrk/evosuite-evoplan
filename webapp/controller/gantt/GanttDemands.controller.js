@@ -25,7 +25,7 @@ sap.ui.define([
 			var onClickNavigation = this.onActionPress.bind(this),
 				openActionSheet = this.openActionSheet.bind(this),
 				oAppModel = this.getModel("appView");
-			
+
 			this._viewModel = this.getModel("viewModel");
 			this._mParameters = {
 				bFromGantt: true
@@ -64,6 +64,12 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onDragStart: function (oEvent) {
+			var sMsg = this.getResourceBundle().getText("msg.notAuthorizedForAssign");
+			if (!this.getModel("user").getProperty("/ENABLE_PM_AUTH_CHECK") || !this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")) {
+				this.showMessageToast(sMsg);
+				oEvent.preventDefault();
+				return;
+			}
 			var oDragSession = oEvent.getParameter("dragSession"),
 				oDraggedControl = oDragSession.getDragControl(),
 				aIndices = this._oDataTable.getSelectedIndices(),
@@ -166,7 +172,9 @@ sap.ui.define([
 				index = oEvent.getParameter("rowIndex"),
 				sDemandPath, bComponentExist;
 			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
-				this.byId("assignButton").setEnabled(true);
+				if (this.getModel("user").getProperty("/ENABLE_PM_AUTH_CHECK") && this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")) {
+					this.byId("assignButton").setEnabled(true);
+				}
 				this.byId("changeStatusButton").setEnabled(true);
 				this.byId("idAssignmentStatusButton").setEnabled(true);
 				this.byId("idOverallStatusButton").setEnabled(true);
