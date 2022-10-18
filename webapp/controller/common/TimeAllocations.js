@@ -188,7 +188,7 @@ sap.ui.define([
 				return oData;
 			} else if (!oChanges && this._oModel.hasPendingChanges()) {
 				oData.DateFrom = Fragment.byId(this._id, "idUpdateFromDate").getDateValue();
-				oData.DateTo =Fragment.byId(this._id, "idUpdateToDate").getDateValue();
+				oData.DateTo = Fragment.byId(this._id, "idUpdateToDate").getDateValue();
 				if (this.sSource !== "timeAlloc") {
 					oData.AvailType = Fragment.byId(this._id, "idManagAbsAvailType").getSelectedKey();
 				}
@@ -495,7 +495,9 @@ sap.ui.define([
 			this._refreshTreeGantt(oEvent);
 
 			//to reset "Manage absence" btn enable/disable
-			this._oView.getController().selectedResources = [];
+			if (!this._mParameters.bFromNewGantt) {
+				this._oView.getController().selectedResources = [];
+			}
 
 			this._oView.byId("idButtonreassign").setEnabled(false);
 			this._oView.byId("idButtonunassign").setEnabled(false);
