@@ -126,8 +126,9 @@ sap.ui.define([
 			this.selectedResources = [];
 			this.byId("idButtonreassign").setEnabled(false);
 			this.byId("idButtonunassign").setEnabled(false);
-			this.byId("idButtonCreUA").setEnabled(false);
-			this.byId("idButtonTimeAlloc").setEnabled(false);
+			// this.byId("idButtonCreUA").setEnabled(false);
+			// this.byId("idButtonTimeAlloc").setEnabled(false);
+			this.byId("idButtonTimeAllocNew").setEnabled(false);
 			this.byId("idCalculateRoute").setEnabled(false);
 			this.byId("idOptimizeRoute").setEnabled(false);
 		},
@@ -837,13 +838,15 @@ sap.ui.define([
 
 			if (this.selectedResources.length === 1 && oData && oData.NodeType === "RESOURCE" && oData.ResourceGuid !== "" && oData.ResourceGroupGuid !==
 				"") {
-				this.byId("idButtonCreUA").setEnabled(true);
-				this.byId("idButtonTimeAlloc").setEnabled(true);
+				// this.byId("idButtonCreUA").setEnabled(true);
+				// this.byId("idButtonTimeAlloc").setEnabled(true);
+				this.byId("idButtonTimeAllocNew").setEnabled(true);
 				this.byId("idCalculateRoute").setEnabled(true);
 				this.byId("idOptimizeRoute").setEnabled(true);
 			} else {
-				this.byId("idButtonCreUA").setEnabled(false);
-				this.byId("idButtonTimeAlloc").setEnabled(false);
+				// this.byId("idButtonCreUA").setEnabled(false);
+				// this.byId("idButtonTimeAlloc").setEnabled(false);
+				this.byId("idButtonTimeAllocNew").setEnabled(false);
 				this.byId("idCalculateRoute").setEnabled(false);
 				this.byId("idOptimizeRoute").setEnabled(false);
 			}

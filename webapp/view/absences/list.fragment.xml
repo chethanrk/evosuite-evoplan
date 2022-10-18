@@ -6,8 +6,7 @@
           title="Products"
           showHeader="false">
         <content>
-            <smartList:SmartList id="idResourceAvailList" entitySet="ResourceAvailabilitySet"
-                                 showRowCount="true" enableAutoBinding="true" dataReceived="onRemoveDeleteMode"
+            <smartList:SmartList id="idResourceAvailList" entitySet="ResourceAvailabilitySet" showRowCount="true" enableAutoBinding="true" dataReceived="onRemoveDeleteMode"
                                  selectFields="Description,DateFrom,DateTo,ResourceDescription,Guid,BlockPercentage,UI_DISABLE_ABSENCE_DELETE,UI_DISABLE_ABSENCE_EDIT,AVAILABLE_HOURS,BLOCKED_HOURS">
                 <smartList:listItemTemplate>
                     <StandardListItem title="{Description}" type="Active"

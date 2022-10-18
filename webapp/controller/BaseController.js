@@ -1015,7 +1015,25 @@ sap.ui.define([
 			return (oNode.NodeType === "TIMEMONTH" || oNode.NodeType === "TIMEWEEK" || oNode.NodeType === "TIMEQUART" || oNode.NodeType ===
 					"TIMEYEAR") && oNode.RES_ASGN_AVAILABILITY_FLAG ===
 				"P";
-		}
+		},
+		
+		/**
+		 * open the SIngle Time Allocation dialog Blockers and Manage Absence for selected resource
+		 * @param oEvent
+		 * Since 2301.1.0
+		 * @Author Rakesh Sahu
+		 */
+		onNewTimeAllocPress: function (oEvent) {
+			var oResourceBundle = this.getResourceBundle();
+			if (this.selectedResources.length === 0) {
+				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
+				return;
+			}
+			// to identify the action done on respective page
+			localStorage.setItem("Evo-Action-page", "ganttSplit");
+			this.getOwnerComponent().TimeAllocations.open(this.getView(), [this.selectedResources[0]], this._mParameters, "timeAlloc");
+
+		},
 	});
 
 });

@@ -39,6 +39,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttAssignmentPopOver",
 	"com/evorait/evoplan/controller/map/SingleDayPlanner",
 	"com/evorait/evoplan/controller/common/ResourceAvailabilities",
+	"com/evorait/evoplan/controller/common/TimeAllocations"
 ], function (
 	UIComponent,
 	Device,
@@ -78,7 +79,8 @@ sap.ui.define([
 	AssignmentStatus,
 	GanttAssignmentPopOver,
 	SingleDayPlanner,
-	ResourceAvailabilities) {
+	ResourceAvailabilities,
+	TimeAllocations) {
 
 	"use strict";
 
@@ -191,6 +193,12 @@ sap.ui.define([
 				availabilities: {
 					data: [],
 					isToAssign: false
+				},
+				timeAllocations:{
+					countAll:0,
+					countBlockers:0,
+					countAbsences:0,
+					enableTabs:true
 				}
 			});
 			this.setModel(oViewModel, "viewModel");
@@ -518,6 +526,9 @@ sap.ui.define([
 
 			this.ResourceAvailabilities = new ResourceAvailabilities();
 			this.ResourceAvailabilities.init();
+			
+			this.TimeAllocations = new TimeAllocations();
+			this.TimeAllocations.init();
 
 		},
 
