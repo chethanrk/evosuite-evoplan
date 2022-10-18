@@ -47,7 +47,6 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onOpen: function (oDialog, oView, aSelectedPath, mParameters, sSource) {
-			// var oDialog = this.getDialog(oView);
 			this._oView = oView;
 			this._component = oView.getController().getOwnerComponent();
 			this._oModel = this._component.getModel();
@@ -103,6 +102,7 @@ sap.ui.define([
 				oDetail = Fragment.byId(this._id, "detail");
 
 			this._selectedPath = sPath;
+			this._oSelectedItem = oSelectedItem;
 			this._oSelectedItemContext = oContext;
 
 			oDetail.unbindElement();
@@ -186,6 +186,13 @@ sap.ui.define([
 					oData.AvailType = Fragment.byId(this._id, "idManagAbsAvailType").getSelectedKey();
 				}
 				return oData;
+			} else if (!oChanges && this._oModel.hasPendingChanges()) {
+				oData.DateFrom = Fragment.byId(this._id, "idUpdateFromDate").getDateValue();
+				oData.DateTo =Fragment.byId(this._id, "idUpdateToDate").getDateValue();
+				if (this.sSource !== "timeAlloc") {
+					oData.AvailType = Fragment.byId(this._id, "idManagAbsAvailType").getSelectedKey();
+				}
+				return oData;
 			} else if (sProperty === "DELETE") {
 				return oData;
 			}
@@ -226,7 +233,6 @@ sap.ui.define([
 				filters: aFilters,
 				and: true
 			}));
-			// this.refreshTabCounts();
 		},
 
 		/**
@@ -239,7 +245,6 @@ sap.ui.define([
 
 			oUpdateData.StartTimestamp = oChanges.DateFrom;
 			oUpdateData.EndTimestamp = oChanges.DateTo;
-			debugger;
 			if (this.sSource === "timeAlloc") {
 				var oStartDate, oEndDate;
 				oUpdateData.BlockPercentage = oChanges.BlockPercentage;
@@ -342,24 +347,14 @@ sap.ui.define([
 			Fragment.byId(this._id, "detail").unbindElement();
 			var oEventBus = sap.ui.getCore().getEventBus();
 			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
-				//	this._oModel.resetChanges();
-
 				//to reset "Manage absence" btn enable/disable
-				// this._oView.getController().selectedResources = [];
 				this._oView.byId("idButtonreassign").setEnabled(false);
 				this._oView.byId("idButtonunassign").setEnabled(false);
-				// this._oView.byId("idButtonCreUA").setEnabled(false);
 				this._oView.byId("idButtonTimeAllocNew").setEnabled(false);
-				if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
-					// this._oView.byId("idButtonTimeAlloc").setEnabled(false);
-				}
-				if (this._mParameters.bFromMap) {
-					this._oView.byId("showRoute").setEnabled(false);
-				}
 
 				Fragment.byId(this._id, "idTimeAllocSlider").setValue(0);
 				Fragment.byId(this._id, "idCreateDescription").setValue("");
-			} else if (this._mParameters.bFromHome) {
+			} else if (this._mParameters.bFromHome || this._mParameters.bFromMap) {
 				oEventBus.publish("ManageAbsences", "ClearSelection", {});
 			}
 		},
@@ -385,6 +380,7 @@ sap.ui.define([
 				oDetail.setBindingContext(oContext);
 				this._oApp.to(this._id + "--create");
 			}.bind(this));
+
 			//Enabling/Disabling the form for Time Allocation & Manage Absence
 			Fragment.byId(this._id, "idMangAbsAllocation").setVisible(true);
 			Fragment.byId(this._id, "idTimeAllocation").setVisible(false);
@@ -415,6 +411,7 @@ sap.ui.define([
 				oDetail.setBindingContext(oContext);
 				this._oApp.to(this._id + "--create");
 			}.bind(this));
+
 			//Enabling/Disabling the form for Time Allocation & Manage Absence
 			Fragment.byId(this._id, "idTimeAllocation").setVisible(true);
 			Fragment.byId(this._id, "idMangAbsAllocation").setVisible(false);
@@ -469,9 +466,6 @@ sap.ui.define([
 						Fragment.byId(this._id, "idBlockdHour").setValue(data.BLOCKED_HOURS);
 						Fragment.byId(this._id, "idTimeAllocSlider").setValue(data.BlockPercentage);
 						Fragment.byId(this._id, "idUpdateAvailablHour").setValue(data.AVAILABLE_HOURS);
-						//	this._oModel.setProperty(this._selectedPath+"/AVAILABLE_HOURS",data.AVAILABLE_HOURS);
-						//Fragment.byId(this._id, "idUpdateBlockdHour").setValue(data.BLOCKED_HOURS);
-						//	Fragment.byId(this._id, "idUpdateTimeAllocSlider").setValue(data.BlockPercentage);
 						this.AVAILABLE_HOURS = data.AVAILABLE_HOURS;
 						this.BLOCKED_HOURS = data.BLOCKED_HOURS;
 						if (this._isUpdate) {
@@ -501,19 +495,17 @@ sap.ui.define([
 			this._refreshTreeGantt(oEvent);
 
 			//to reset "Manage absence" btn enable/disable
-			// this._oView.getController().selectedResources = [];
+			this._oView.getController().selectedResources = [];
+
 			this._oView.byId("idButtonreassign").setEnabled(false);
 			this._oView.byId("idButtonunassign").setEnabled(false);
-			// this._oView.byId("idButtonCreUA").setEnabled(false);
 			this._oView.byId("idButtonTimeAllocNew").setEnabled(false);
-			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
-				// this._oView.byId("idButtonTimeAlloc").setEnabled(false);
-				this._oView.getController().selectedResources = [];
-			}
+
 			if (this._mParameters.bFromMap) {
 				this._oView.byId("showRoute").setEnabled(false);
+				this._oView.byId("showPlanCalendar").setEnabled(false);
+				this._oView.byId("assignedDemands").setEnabled(false);
 			}
-			this._oView.getController().selectedResources = [];
 		},
 		/**
 		 * If any absence are created/updated/deleted the resource tree/ gantt will refreshed
@@ -743,7 +735,6 @@ sap.ui.define([
 				Fragment.byId(this._id, "idCreateTimeAlloc").setVisible(false);
 				Fragment.byId(this._id, "idCreateAbsence").setVisible(false);
 				Fragment.byId(this._id, "idBack").setVisible(true);
-
 				Fragment.byId(this._id, "idCreateSaveAvail").setVisible(true);
 			}
 

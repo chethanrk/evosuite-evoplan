@@ -12,7 +12,6 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/PlanningCalendarDialog",
 	"com/evorait/evoplan/controller/common/CapacitiveAssignments",
 	"com/evorait/evoplan/controller/common/CreateResourceUnAvailability",
-	"com/evorait/evoplan/controller/common/ManageResourceAvailability",
 	"com/evorait/evoplan/controller/common/NavigationActionSheet",
 	"com/evorait/evoplan/controller/qualifications/ResourceQualifications",
 	"com/evorait/evoplan/controller/qualifications/QualificationCheck",
@@ -54,7 +53,6 @@ sap.ui.define([
 	PlanningCalendarDialog,
 	CapacitiveAssignments,
 	CreateResourceUnAvailability,
-	ManageResourceAvailability,
 	NavigationActionSheet,
 	ResourceQualifications,
 	QualificationCheck,
@@ -475,9 +473,6 @@ sap.ui.define([
 
 			this.createUnAvail = new CreateResourceUnAvailability();
 			this.createUnAvail.init();
-
-			this.manageAvail = new ManageResourceAvailability();
-			this.manageAvail.init();
 
 			this.NavigationActionSheet = new NavigationActionSheet();
 			this.NavigationActionSheet.init();

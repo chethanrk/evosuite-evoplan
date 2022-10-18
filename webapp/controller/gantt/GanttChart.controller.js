@@ -126,8 +126,6 @@ sap.ui.define([
 			this.selectedResources = [];
 			this.byId("idButtonreassign").setEnabled(false);
 			this.byId("idButtonunassign").setEnabled(false);
-			// this.byId("idButtonCreUA").setEnabled(false);
-			// this.byId("idButtonTimeAlloc").setEnabled(false);
 			this.byId("idButtonTimeAllocNew").setEnabled(false);
 			this.byId("idCalculateRoute").setEnabled(false);
 			this.byId("idOptimizeRoute").setEnabled(false);
@@ -763,39 +761,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * open the create unavailability dialog for selected resource
-		 * @param oEvent
-		 */
-		onCreateAbsence: function (oEvent) {
-			var oResourceBundle = this.getResourceBundle();
-			if (this.selectedResources.length === 0) {
-				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
-				return;
-			}
-			// to identify the action done on respective page
-			localStorage.setItem("Evo-Action-page", "ganttSplit");
-
-			this.getOwnerComponent().manageAvail.open(this.getView(), [this.selectedResources[0]], this._mParameters);
-
-		},
-		/**
-		 * open the Time Allocation dialog for selected resource
-		 * @param oEvent
-		 */
-		onTimeAllocPress: function (oEvent) {
-			var oResourceBundle = this.getResourceBundle();
-			if (this.selectedResources.length === 0) {
-				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
-				return;
-			}
-			// to identify the action done on respective page
-			localStorage.setItem("Evo-Action-page", "ganttSplit");
-
-			this.getOwnerComponent().manageAvail.open(this.getView(), [this.selectedResources[0]], this._mParameters, "timeAlloc");
-
-		},
-
-		/**
 		 * on click on today adjust the view of Gantt horizon.
 		 */
 		onPressToday: function (oEvent) {
@@ -838,14 +803,10 @@ sap.ui.define([
 
 			if (this.selectedResources.length === 1 && oData && oData.NodeType === "RESOURCE" && oData.ResourceGuid !== "" && oData.ResourceGroupGuid !==
 				"") {
-				// this.byId("idButtonCreUA").setEnabled(true);
-				// this.byId("idButtonTimeAlloc").setEnabled(true);
 				this.byId("idButtonTimeAllocNew").setEnabled(true);
 				this.byId("idCalculateRoute").setEnabled(true);
 				this.byId("idOptimizeRoute").setEnabled(true);
 			} else {
-				// this.byId("idButtonCreUA").setEnabled(false);
-				// this.byId("idButtonTimeAlloc").setEnabled(false);
 				this.byId("idButtonTimeAllocNew").setEnabled(false);
 				this.byId("idCalculateRoute").setEnabled(false);
 				this.byId("idOptimizeRoute").setEnabled(false);
@@ -1908,10 +1869,6 @@ sap.ui.define([
 				oItem.FIXED_ASSGN_START_DATE = new Date(oItem.FIXED_ASSGN_START_DATE);
 				oItem.FIXED_ASSGN_END_DATE = new Date(oItem.FIXED_ASSGN_END_DATE);
 
-				// oDemandObjects.push({
-				// 	sPath: oItem.sPath,
-				// 	oData: oItem.oDemandObj
-				// });
 				oDemandObjects.push(oItem);
 
 			}.bind(this));

@@ -253,7 +253,7 @@ sap.ui.define([
 			if (this.selectedResources.length === 1) {
 				this._selectionResourceTree(oParams, oNewNode);
 			} else {
-				this.byId("idButtonCreUA").setEnabled(false);
+				this.byId("idButtonTimeAllocNew").setEnabled(false);
 				this.byId("showRoute").setEnabled(false);
 			}
 			if (this.selectedResources.length >= 1) {
@@ -449,7 +449,7 @@ sap.ui.define([
 			this.byId("showPlanCalendar").setEnabled(false);
 			this.byId("idButtonreassign").setEnabled(false);
 			this.byId("idButtonunassign").setEnabled(false);
-			this.byId("idButtonCreUA").setEnabled(false);
+			this.byId("idButtonTimeAllocNew").setEnabled(false);
 			this.byId("showRoute").setEnabled(false);
 			this.byId("assignedDemands").setEnabled(false);
 		},
@@ -575,7 +575,7 @@ sap.ui.define([
 
 			if (oContext) {
 				var oNodeData = oContext.getObject();
-				
+
 				if (oNodeData.NodeType === "RESOURCE" || oNodeData.NodeType === "RES_GROUP") {
 					this.getOwnerComponent().ResourceQualifications.open(this.getView(), oNodeData.NodeId);
 				} else if (this.checkToShowAvailabilities(oNodeData)) {
@@ -779,13 +779,13 @@ sap.ui.define([
 			// Disble the button for the selection on Group and Pool Node.
 			var oSelectedData = this.getModel().getProperty(this.selectedResources[0]);
 			if (oParams.selected && oNewNode.NodeType === "RESOURCE" && oNewNode.ResourceGuid !== "" && oNewNode.ResourceGroupGuid !== "") {
-				this.byId("idButtonCreUA").setEnabled(true);
+				this.byId("idButtonTimeAllocNew").setEnabled(true);
 				this.byId("showRoute").setEnabled(true);
 			} else if (oSelectedData.NodeType === "RESOURCE" && oSelectedData.ResourceGuid !== "" && oSelectedData.ResourceGroupGuid !== "") {
-				this.byId("idButtonCreUA").setEnabled(true);
+				this.byId("idButtonTimeAllocNew").setEnabled(true);
 				this.byId("showRoute").setEnabled(true);
 			} else {
-				this.byId("idButtonCreUA").setEnabled(false);
+				this.byId("idButtonTimeAllocNew").setEnabled(false);
 				this.byId("showRoute").setEnabled(false);
 			}
 		},
