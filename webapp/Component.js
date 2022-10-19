@@ -12,7 +12,6 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/PlanningCalendarDialog",
 	"com/evorait/evoplan/controller/common/CapacitiveAssignments",
 	"com/evorait/evoplan/controller/common/CreateResourceUnAvailability",
-	"com/evorait/evoplan/controller/common/ManageResourceAvailability",
 	"com/evorait/evoplan/controller/common/NavigationActionSheet",
 	"com/evorait/evoplan/controller/qualifications/ResourceQualifications",
 	"com/evorait/evoplan/controller/qualifications/QualificationCheck",
@@ -39,6 +38,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttAssignmentPopOver",
 	"com/evorait/evoplan/controller/map/SingleDayPlanner",
 	"com/evorait/evoplan/controller/common/ResourceAvailabilities",
+	"com/evorait/evoplan/controller/common/TimeAllocations"
 ], function (
 	UIComponent,
 	Device,
@@ -53,7 +53,6 @@ sap.ui.define([
 	PlanningCalendarDialog,
 	CapacitiveAssignments,
 	CreateResourceUnAvailability,
-	ManageResourceAvailability,
 	NavigationActionSheet,
 	ResourceQualifications,
 	QualificationCheck,
@@ -78,7 +77,8 @@ sap.ui.define([
 	AssignmentStatus,
 	GanttAssignmentPopOver,
 	SingleDayPlanner,
-	ResourceAvailabilities) {
+	ResourceAvailabilities,
+	TimeAllocations) {
 
 	"use strict";
 
@@ -191,6 +191,12 @@ sap.ui.define([
 				availabilities: {
 					data: [],
 					isToAssign: false
+				},
+				timeAllocations:{
+					countAll:0,
+					countBlockers:0,
+					countAbsences:0,
+					enableTabs:true
 				}
 			});
 			this.setModel(oViewModel, "viewModel");
@@ -471,9 +477,6 @@ sap.ui.define([
 			this.createUnAvail = new CreateResourceUnAvailability();
 			this.createUnAvail.init();
 
-			this.manageAvail = new ManageResourceAvailability();
-			this.manageAvail.init();
-
 			this.NavigationActionSheet = new NavigationActionSheet();
 			this.NavigationActionSheet.init();
 
@@ -521,6 +524,9 @@ sap.ui.define([
 
 			this.ResourceAvailabilities = new ResourceAvailabilities();
 			this.ResourceAvailabilities.init();
+			
+			this.TimeAllocations = new TimeAllocations();
+			this.TimeAllocations.init();
 
 		},
 
