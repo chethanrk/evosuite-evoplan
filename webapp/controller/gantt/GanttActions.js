@@ -874,56 +874,6 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		/**
-		 * Resetting parent assignments after reassigning to other resources 
-		 * @param sSourcePath
-		 * @since 2205
-		 */
-		_resetParentNodeData: function (sPath, sSourcePath, aData) {
-			var oGanttModel = this.getModel("ganttModel"),
-				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
-				sParentPath, sNewPath, sChildPath, iDeleteIndex, aParentAssgnData, aChildNodeData, sParentSplitPath, sSplitPath;
-			if (sSourcePath) {
-				// When Dragged from Child Nodes
-				if (sSourcePath.length > 60) {
-					sParentPath = sSourcePath.split("/AssignmentSet/");
-					sNewPath = sParentPath[0].split("/");
-					iDeleteIndex = sNewPath[sNewPath.length - 1];
-					sSplitPath = this._getAssignmentChildPath(sParentPath[0]);
-					aParentAssgnData = oGanttModel.getProperty(sSplitPath + "/children");
-					aChildNodeData = oGanttModel.getProperty(sSplitPath + "/AssignmentSet/results");
-					aParentAssgnData.splice(iDeleteIndex, 1);
-					aChildNodeData.splice(iDeleteIndex, 1);
-					sChildPath = sPath.split("/AssignmentSet/results")[0];
-					var oOriginalData = oGanttOriginDataModel.getProperty(sSplitPath + "/children");
-					oOriginalData.splice(iDeleteIndex, 1);
-					oGanttModel.setProperty(sSplitPath + "/children", oGanttOriginDataModel.getProperty(sSplitPath + "/children"));
-				} else {
-					sParentPath = sSourcePath.substring(0, 27);
-					sNewPath = sParentPath + "/AssignmentSet/results";
-					sParentSplitPath = sSourcePath.split("/AssignmentSet")[1];
-					sSplitPath = sParentSplitPath.split("/");
-					iDeleteIndex = sSplitPath[sSplitPath.length - 1];
-					sChildPath = sPath.split("/AssignmentSet/results")[0];
-					aParentAssgnData = oGanttModel.getProperty(sNewPath);
-					aParentAssgnData.splice(iDeleteIndex, 1);
-					oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
-				}
-
-				if (!oGanttModel.getProperty(sChildPath + "/children")) {
-					oGanttModel.setProperty(sChildPath + "/children", [aData]);
-					oGanttModel.setProperty(sChildPath + "/children/0/NodeType", "ASSIGNMENT");
-					oGanttModel.setProperty(sChildPath + "/children/0/AssignmentSet", {
-						results: [aData]
-					});
-					oGanttModel.setProperty(sChildPath + "/children/0/AssignmentSet/results/0/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION +
-						"//" + aData.ResourceGuid);
-					oGanttOriginDataModel.setProperty(sChildPath, _.cloneDeep(oGanttModel.getProperty(sChildPath)));
-				}
-			}
-			oGanttOriginDataModel.refresh(true);
-			oGanttModel.refresh(true);
-		},
 
 		/**
 		 * Updating Assignment Status for Assignmnets after changing

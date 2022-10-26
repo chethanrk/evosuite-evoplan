@@ -999,9 +999,13 @@ sap.ui.define([
 							sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
 						});
 					}
-					this._resetParentChildNodes(sPath, oOriginalData);
+
 					if (sRequestType === "reassign") {
-						this._resetParentNodeData(sPath, sSourcePath, aData);
+						//method call for updating resource assignment in case of single reassignment
+						this._refreshChangedResources(sPath, sSourcePath);
+					} else {
+						//method call for updating resource assignment in case of Multi Assignment in same axis
+						this._resetParentChildNodes(sPath, oOriginalData);
 					}
 				}.bind(this), function () {
 					//on reject validation or user don't want proceed
@@ -1822,9 +1826,12 @@ sap.ui.define([
 			// if (oViewModel.getProperty("/showUtilization")) {
 			this.oGanttModel.setProperty(sPath + "/busy", true);
 			this.getOwnerComponent().readData("/GanttResourceHierarchySet", aFilters).then(function (data) {
-				this.oGanttModel.setProperty(sPath + "/Utilization", data.results[0].Utilization);
-				this.oGanttOriginDataModel.setProperty(sPath + "/Utilization", data.results[0].Utilization);
-				this.oGanttModel.setProperty(sPath + "/busy", false);
+				if (data.results[0]) {
+					//added condition to remove error in consol as unable to get data sometimes
+					this.oGanttModel.setProperty(sPath + "/Utilization", data.results[0].Utilization);
+					this.oGanttOriginDataModel.setProperty(sPath + "/Utilization", data.results[0].Utilization);
+					this.oGanttModel.setProperty(sPath + "/busy", false);
+				}
 				this.oGanttModel.refresh();
 			}.bind(this));
 			// }
@@ -2087,14 +2094,15 @@ sap.ui.define([
 		/**
 		 * creating filter object to read assignments of selected date 
 		 * @param oResource
-		 * @param oSelectedDate
+		 * @param oDateFrom
+		 * @param oDateTo
 		 * since 2205
 		 */
-		_getFiltersToReadAssignments: function (oResource, oSelectedDate) {
+		_getFiltersToReadAssignments: function (oResource, oDateFrom, oDateTo) {
 			var aFilters = [];
 			aFilters.push(new Filter("ObjectId", FilterOperator.EQ, oResource.ResourceGuid + "//" + oResource.ResourceGroupGuid));
-			aFilters.push(new Filter("DateTo", FilterOperator.GE, oSelectedDate));
-			aFilters.push(new Filter("DateFrom", FilterOperator.LE, oSelectedDate.setHours(23, 59, 59, 999)));
+			aFilters.push(new Filter("DateTo", FilterOperator.GE, oDateFrom));
+			aFilters.push(new Filter("DateFrom", FilterOperator.LE, oDateTo.setHours(23, 59, 59, 999)));
 			return new Filter(aFilters, true);
 		},
 		/**
@@ -2350,6 +2358,74 @@ sap.ui.define([
 			// Resource availability check for moved assignment to show the Information message
 			this._checkAssignmentsOnUnavailabilty(aCheckAvailability);
 		},
+
+		/**
+		 * handle refresh operation of source and target Resources in single reassignment operation
+		 * @param {String} sTargetPath
+		 * @param {String} sSourcePath
+		 * since 2301.1.0
+		 * @Author Rakesh Sahu
+		 */
+		_refreshChangedResources: function (sTargetPath, sSourcePath) {
+			var oUserData = this.getModel("user").getData(),
+				oTargetResource = this.oGanttModel.getProperty(sTargetPath.split("/").splice(0, 6).join("/")),
+				oSourceResource = this.oGanttModel.getProperty(sSourcePath.split("/").splice(0, 6).join("/")),
+				aFilters, aPromises = [];
+
+			this._oTargetResourcePath = sTargetPath.split("/").splice(0, 6).join("/");
+			this._oSourceResourcePath = sSourcePath.split("/").splice(0, 6).join("/");
+			aFilters = this._getFiltersToReadAssignments(oTargetResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
+			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
+
+			aFilters = this._getFiltersToReadAssignments(oSourceResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
+			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
+
+			this.getModel("appView").setProperty("/busy", true);
+			Promise.all(aPromises).then(function (data) {
+				this.updateAfterReAssignment(data, oTargetResource, oSourceResource)
+				this.getModel("appView").setProperty("/busy", false);
+			}.bind(this));
+
+		},
+		/**
+		 * handle refresh assignments of source and target Resources in single reassignment operation
+		 * @param {Object} aData
+		 * @param {String} sTargetPath
+		 * @param {String} sSourcePath
+		 * since 2301.1.0
+		 * @Author Rakesh Sahu
+		 */
+		updateAfterReAssignment: function (aData, oTargetResource, oSourceResource) {
+			oTargetResource.AssignmentSet = aData[0];
+			oSourceResource.AssignmentSet = aData[1];
+			this.updateResourceChildren(oTargetResource);
+			this.updateResourceChildren(oSourceResource);
+			this.oGanttOriginDataModel.setProperty(this._oTargetResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oTargetResourcePath)));
+			this.oGanttOriginDataModel.setProperty(this._oSourceResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oSourceResourcePath)));
+			this.oGanttModel.refresh();
+			this.oGanttOriginDataModel.refresh();
+		},
+		/**
+		 * creating children node for all the assignments of given resource
+		 * @param {Object} oResource
+		 * since 2301.1.0
+		 * @Author Rakesh Sahu
+		 */
+		updateResourceChildren: function (oResource) {
+			if (oResource.AssignmentSet && oResource.AssignmentSet.results.length > 0) {
+				oResource.children = oResource.AssignmentSet.results;
+				oResource.children.forEach(function (oAssignItem, idx) {
+					oResource.AssignmentSet.results[idx].NodeType = "ASSIGNMENT";
+					oResource.AssignmentSet.results[idx].ResourceAvailabilitySet = oResource.ResourceAvailabilitySet;
+					var clonedObj = _.cloneDeep(oResource.AssignmentSet.results[idx]);
+					//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
+					clonedObj.OBJECT_ID_RELATION = clonedObj.OBJECT_ID_RELATION + "//" + clonedObj.ResourceGuid;
+					oResource.children[idx].AssignmentSet = {
+						results: [clonedObj]
+					};
+				}.bind(this));
+			}
+		}
 	});
 
 });
