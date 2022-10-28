@@ -2,10 +2,11 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
+	"sap/ui/model/Sorter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment"
-], function (BaseController, formatter, Filter, FilterOperator, JSONModel, Fragment) {
+], function (BaseController, formatter, Filter, Sorter, FilterOperator, JSONModel, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.ManageResourceAvailability", {
@@ -56,6 +57,10 @@ sap.ui.define([
 			this._oUserModel = this._component.getModel("user");
 			this._bShowBlockers = this._oUserModel.getProperty("/ENABLE_BLOCK_TIME");
 			this._bShowAbsences = this._oUserModel.getProperty("/ENABLE_MANAGE_ABSENCE");
+			this._bCreateAbsences = this._oUserModel.getProperty("/ENABLE_ABSENCE_CREATE");
+			this._bChangeAbsences = this._oUserModel.getProperty("/ENABLE_ABSENCE_CHANGE");
+			this._bCreateBlockers = this._oUserModel.getProperty("/ENABLE_CREATE_ASSET_TIME_ALLOC");
+			this._bChangeBlockers = this._oUserModel.getProperty("/ENABLE_CHANGE_ASSET_TIME_ALLOC");
 			this._mParameters = mParameters || {
 				bFromHome: true
 			};
@@ -208,7 +213,8 @@ sap.ui.define([
 				oViewFilterSettings = this._oView.getController().oFilterConfigsController || null,
 				sDateControl1,
 				sDateControl2,
-				sSelectedTab = this._TimeAllocationTabBar.getSelectedKey();
+				sSelectedTab = this._TimeAllocationTabBar.getSelectedKey(),
+				oSorter;
 
 			if (this._mParameters.bFromGantt) {
 				// if we decide to keep different date range for demand view and gantt view
@@ -228,13 +234,25 @@ sap.ui.define([
 			oList = Fragment.byId(this._id, "idResourceAvailList").getList();
 			oBinding = oList.getBinding("items");
 			aFilters = this._getAvailabilityFilters(sSelectedTab, this._resource, sDateControl2, sDateControl1);
-
 			oBinding.filter(new Filter({
 				filters: aFilters,
 				and: true
 			}));
+			if (sSelectedTab === "All") {
+				oSorter = new Sorter({
+					path: "AVAILABILITY_GROUP_DESCR",
+					descending: true,
+					group: true
+				});
+			} else {
+				oSorter = new Sorter({
+					path: "AVAILABILITY_GROUP_DESCR",
+					descending: true,
+					group: false
+				});
+			}
+			oBinding.sort(oSorter);
 		},
-
 		/**
 		 * This Event is triggered when creating/updating the field values for Manage Absence and Time Allocation
 		 * @param sProperty - To identify whether its create or update
@@ -541,7 +559,7 @@ sap.ui.define([
 			if (this._oView.getModel("user").getProperty("/ENABLE_ABSENCE_DELETE")) {
 				var aItems = this._oList.getItems();
 				for (var d in aItems) {
-					if (aItems[d].getBindingContext().getObject().UI_DISABLE_ABSENCE_DELETE) {
+					if (aItems[d].getBindingContext() && aItems[d].getBindingContext().getObject().UI_DISABLE_ABSENCE_DELETE) {
 						aItems[d].getDeleteControl() ? aItems[d].getDeleteControl().setVisible(false) : "";
 					} else {
 						aItems[d].getDeleteControl() ? aItems[d].getDeleteControl().setVisible(true) : "";
@@ -697,49 +715,55 @@ sap.ui.define([
 		updateButtonsVisibility: function (sSourceView) {
 			var sSelectedTab = this._TimeAllocationTabBar.getSelectedKey(),
 				oBtnCreateBlocker = Fragment.byId(this._id, "idCreateTimeAlloc"),
-				oBtnCreateAbsence = Fragment.byId(this._id, "idCreateAbsence");
+				oBtnCreateAbsence = Fragment.byId(this._id, "idCreateAbsence"),
+				oBtnBack = Fragment.byId(this._id, "idBack"),
+				oBtnSave = Fragment.byId(this._id, "idSaveAvail"),
+				oBtnCreate = Fragment.byId(this._id, "idCreateSaveAvail");
 
 			if (sSourceView === "List") {
 				this._oViewModel.setProperty("/timeAllocations/enableTabs", true);
-				Fragment.byId(this._id, "idBack").setVisible(false);
-				Fragment.byId(this._id, "idSaveAvail").setVisible(false);
-				Fragment.byId(this._id, "idCreateSaveAvail").setVisible(false);
+				oBtnBack.setVisible(false);
+				oBtnSave.setVisible(false);
+				oBtnCreate.setVisible(false);
 
 				if (sSelectedTab === "Blockers") {
-					this._bShowBlockers ? oBtnCreateBlocker.setVisible(true) : oBtnCreateBlocker.setVisible(false);
-					Fragment.byId(this._id, "idCreateAbsence").setVisible(false);
+					oBtnCreateAbsence.setVisible(false);
+					this._bShowBlockers && this._bCreateBlockers ? oBtnCreateBlocker.setVisible(true) : oBtnCreateBlocker.setVisible(false);
 				} else if (sSelectedTab === "Absences") {
-					Fragment.byId(this._id, "idCreateTimeAlloc").setVisible(false);
-					this._bShowAbsences ? oBtnCreateAbsence.setVisible(true) : oBtnCreateAbsence.setVisible(false);
+					oBtnCreateBlocker.setVisible(false);
+					this._bShowAbsences && this._bCreateAbsences ? oBtnCreateAbsence.setVisible(true) : oBtnCreateAbsence.setVisible(false);
 				} else {
-					this._bShowBlockers ? oBtnCreateBlocker.setVisible(true) : oBtnCreateBlocker.setVisible(false);
-					this._bShowAbsences ? oBtnCreateAbsence.setVisible(true) : oBtnCreateAbsence.setVisible(false);
+					this._bShowBlockers && this._bCreateBlockers ? oBtnCreateBlocker.setVisible(true) : oBtnCreateBlocker.setVisible(false);
+					this._bShowAbsences && this._bCreateAbsences ? oBtnCreateAbsence.setVisible(true) : oBtnCreateAbsence.setVisible(false);
 				}
 			} else if (sSourceView === "Update") {
 				this._oViewModel.setProperty("/timeAllocations/enableTabs", false);
-				Fragment.byId(this._id, "idBack").setVisible(true);
-				Fragment.byId(this._id, "idSaveAvail").setVisible(true);
+				oBtnBack.setVisible(true);
+				oBtnSave.setVisible(false);
 
-				Fragment.byId(this._id, "idCreateTimeAlloc").setVisible(false);
-				Fragment.byId(this._id, "idCreateAbsence").setVisible(false);
+				oBtnCreateBlocker.setVisible(false);
+				oBtnCreateAbsence.setVisible(false);
 
 				if (this._oSelectedItemContext.getProperty("AvailabilityTypeGroup") === "L") {
 					Fragment.byId(this._id, "idUpdateMangAbs").setVisible(false);
 					Fragment.byId(this._id, "idUpdateTimeAllocation").setVisible(true);
+					this._bChangeBlockers ? oBtnSave.setVisible(true) : null;
 					this.sSource = "timeAlloc";
 				} else {
 					this.sSource = "";
+					this._bChangeAbsences ? oBtnSave.setVisible(true) : null;
 					Fragment.byId(this._id, "idUpdateMangAbs").setVisible(true);
 					Fragment.byId(this._id, "idUpdateTimeAllocation").setVisible(false);
 				}
 			} else if (sSourceView === "CreateAbsence" || sSourceView === "CreateBlocker") {
 				this._oViewModel.setProperty("/timeAllocations/enableTabs", false);
-				Fragment.byId(this._id, "idCreateTimeAlloc").setVisible(false);
-				Fragment.byId(this._id, "idCreateAbsence").setVisible(false);
-				Fragment.byId(this._id, "idBack").setVisible(true);
-				Fragment.byId(this._id, "idCreateSaveAvail").setVisible(true);
+				oBtnCreateBlocker.setVisible(false);
+				oBtnCreateAbsence.setVisible(false);
+				oBtnBack.setVisible(true);
+				if ((sSourceView === "CreateBlocker" && this._bCreateBlockers) || (sSourceView === "CreateAbsence" && this._bCreateAbsences)) {
+					oBtnCreate.setVisible(true);
+				}
 			}
-
 		},
 
 		/**
@@ -807,17 +831,21 @@ sap.ui.define([
 				nCountBlockers = 0,
 				nCountAbsenses = 0,
 				aItems = this._oList.getItems(),
+				oContext,
 				nCountList = aItems.length;
 
 			if (sSelectedTab === "All") {
 				nCountAll = nCountList;
 				for (var d in aItems) {
-					if (aItems[d].getBindingContext().getObject().AvailabilityTypeGroup === "L") {
+					oContext = aItems[d].getBindingContext();
+					if (oContext && oContext.getObject().AvailabilityTypeGroup === "L") {
 						nCountBlockers++;
-					} else {
+					}
+					if (oContext && oContext.getObject().AvailabilityTypeGroup === "N") {
 						nCountAbsenses++
 					}
 				}
+				nCountAll = nCountAbsenses + nCountBlockers;
 				this.updateTabCounts(nCountAll, nCountBlockers, nCountAbsenses);
 			} else if (this._bShowBlockers && this._bShowAbsences) {
 				var sUri = "/ResourceAvailabilitySet/$count",
