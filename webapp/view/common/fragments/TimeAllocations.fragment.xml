@@ -1,14 +1,17 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
 	<Dialog afterOpen="configureList" contentWidth="45%" contentHeight="100%" verticalScrolling="false">
 		<content>
-			<IconTabBar id="idTimeAllocationIconTabBar" select="onTabSelectionChanged" expanded="true" expandable="false" stretchContentHeight="true" >
+			<IconTabBar id="idTimeAllocationIconTabBar" select="onTabSelectionChanged" expanded="true" expandable="false" stretchContentHeight="true">
 				<items>
-					<IconTabFilter id="idIconTabAll" count="{viewModel>/timeAllocations/countAll}" enabled="{viewModel>/timeAllocations/enableTabs}" text="{i18n>xbut.all}" key="All" />
-					<IconTabFilter id="idIconTabBlockers" count="{viewModel>/timeAllocations/countBlockers}" enabled="{viewModel>/timeAllocations/enableTabs}" text="{i18n>xtit.blockers}" key="Blockers" visible="{user>/ENABLE_BLOCK_TIME}"/>
-					<IconTabFilter id="idIconTabAbsences" count="{viewModel>/timeAllocations/countAbsences}" enabled="{viewModel>/timeAllocations/enableTabs}" text="{i18n>xtit.absences}" key="Absences" visible="{user>/ENABLE_MANAGE_ABSENCE}"/>
+					<IconTabFilter id="idIconTabAll" count="{viewModel>/timeAllocations/countAll}" enabled="{viewModel>/timeAllocations/enableTabs}"
+						text="{i18n>xbut.all}" key="All" visible="{=${user>/ENABLE_BLOCK_TIME} &amp;&amp; ${user>/ENABLE_MANAGE_ABSENCE}}"/>
+					<IconTabFilter id="idIconTabBlockers" count="{viewModel>/timeAllocations/countBlockers}" enabled="{viewModel>/timeAllocations/enableTabs}"
+						text="{i18n>xtit.blockers}" key="Blockers" visible="{user>/ENABLE_BLOCK_TIME}"/>
+					<IconTabFilter id="idIconTabAbsences" count="{viewModel>/timeAllocations/countAbsences}" enabled="{viewModel>/timeAllocations/enableTabs}"
+						text="{i18n>xtit.absences}" key="Absences" visible="{user>/ENABLE_MANAGE_ABSENCE}"/>
 				</items>
 				<content >
-					<App id="navCon" initialPage="master" >
+					<App id="navCon" initialPage="master">
 						<!--Page to show list with delete-->
 						<core:Fragment fragmentName="com.evorait.evoplan.view.TimeAllocations.list" type="XML"/>
 						<!--Page to Update-->
