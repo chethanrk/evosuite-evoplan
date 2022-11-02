@@ -1,7 +1,7 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:smartForm="sap.ui.comp.smartform"
 	xmlns:smartField="sap.ui.comp.smartfield">
-	<Page id="detail" showNavButton="true" showHeader="false">
-		<VBox id="idUpdateMangAbs" class="sapUiSmallMarginBeginEnd" visible="false">
+	<Page id="detail" showNavButton="true" showHeader="false" enableScrolling="false">
+		<VBox id="idUpdateMangAbs" class="sapUiSmallMarginBeginEnd" visible="false" >
 			<smartForm:SmartForm id="idFormAvail" editTogglable="false" editable="true">
 				<smartForm:layout>
 					<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
@@ -20,14 +20,14 @@
 				</smartForm:Group>
 			</smartForm:SmartForm>
 		</VBox>
-		<VBox id="idUpdateTimeAllocation" class="sapUiTinyMarginBeginEnd" visible="false">
+		<VBox id="idUpdateTimeAllocation" class="sapUiTinyMarginBeginEnd" visible="false" >
 			<Label class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop" text="{/#ResourceAvailability/DateFrom/@sap:label}"/>
 			<DatePicker id="idUpdateFromDate" width="95%" editable="{user>/ENABLE_ABSENCE_CHANGE}" dateValue="{DateFrom}" placeholder="Enter Date"
 				change="handleUpdateChange" class="sapUiSmallMarginBeginEnd"/>
 			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/DateTo/@sap:label}"/>
 			<DatePicker id="idUpdateToDate" width="95%" editable="{user>/ENABLE_ABSENCE_CHANGE}" dateValue="{DateTo}" placeholder="Enter Date"
 				change="handleUpdateChange" class="sapUiSmallMarginBeginEnd"/>
-			<smartForm:SmartForm id="idUpdateTimeCreateFormAvail" editTogglable="false" editable="true">
+			<smartForm:SmartForm id="idUpdateTimeCreateFormAvail" editTogglable="false" editable="true" >
 				<smartForm:layout>
 					<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
 				</smartForm:layout>
@@ -51,17 +51,6 @@
 				text="{/ResourceAvailabilitySet/AVAILABILITY_DESCR/##com.sap.vocabularies.Common.v1.Label/String}"/>
 			<Input id="idUpdateDescription" value="{AVAILABILITY_DESCR}" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}" class="sapUiSmallMarginBeginEnd" width="95%" maxLength="100"/>
 			<core:ExtensionPoint name="FromExtP|ManageResources|TimeAllocation|ResourceAvailabilitySet|Upadte|CustomElements" />
-		
 		</VBox>
-		<footer>
-			<OverflowToolbar>
-				<core:ExtensionPoint name="PageExtP|ManageResources|ResourceAvailabilitySet|Update|Footer|Left" />
-				<Button id="idBack" text="{i18n>xbut.buttonBack}" press="onNavBack"/>
-				<ToolbarSpacer/>
-				<Button id="idSaveAvail" text="{i18n>xbut.buttonSave}" visible="{user>/ENABLE_ABSENCE_CHANGE}" type="Emphasized" enabled="true"
-					press=".onAction($event,'SAVE')"></Button>
-				<core:ExtensionPoint name="PageExtP|ManageResources|ResourceAvailabilitySet|Update|Footer|Right" />
-			</OverflowToolbar>
-		</footer>
 	</Page>
 </core:FragmentDefinition>

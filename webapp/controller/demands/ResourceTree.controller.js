@@ -138,14 +138,14 @@ sap.ui.define([
 			if (this.selectedResources.length === 1) {
 				oSelectedData = this.getModel().getProperty(this.selectedResources[0]);
 				if (oParams.selected && oNewNode.NodeType === "RESOURCE" && oNewNode.ResourceGuid !== "" && oNewNode.ResourceGroupGuid !== "") {
-					this.byId("idButtonCreUA").setEnabled(true);
+					this.byId("idButtonTimeAllocNew").setEnabled(true);
 				} else if (oSelectedData.NodeType === "RESOURCE" && oSelectedData.ResourceGuid !== "" && oSelectedData.ResourceGroupGuid !== "") {
-					this.byId("idButtonCreUA").setEnabled(true);
+					this.byId("idButtonTimeAllocNew").setEnabled(true);
 				} else {
-					this.byId("idButtonCreUA").setEnabled(false);
+					this.byId("idButtonTimeAllocNew").setEnabled(false);
 				}
 			} else {
-				this.byId("idButtonCreUA").setEnabled(false);
+				this.byId("idButtonTimeAllocNew").setEnabled(false);
 			}
 		},
 
@@ -400,7 +400,7 @@ sap.ui.define([
 			this.byId("showPlanCalendar").setEnabled(false);
 			this.byId("idButtonreassign").setEnabled(false);
 			this.byId("idButtonunassign").setEnabled(false);
-			this.byId("idButtonCreUA").setEnabled(false);
+			this.byId("idButtonTimeAllocNew").setEnabled(false);
 		},
 		/**
 		 * On select of capacitive checkbox the adjusting splitter length
