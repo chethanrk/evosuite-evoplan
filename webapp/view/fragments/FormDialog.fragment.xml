@@ -6,10 +6,10 @@
 			<Button text="{i18n>xbut.gotodemand}" visible="{assignment>/ShowGoToDetailBtn}" type="Emphasized" press="onGotoDemand"/>
 			<Button text="{i18n>xbut.buttonClose}" press="onCloseDialog"/>
 			<Button text="{i18n>xbut.buttonUnassign}" type="Reject" press="onDeleteAssignment" visible="{assignment>/AllowUnassign}"
-				enabled="{parts:['user>/ENABLE_PM_AUTH_CHECK', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter:'.formatter.formartEnableBtn'}"/>
+				enabled="{parts:['viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter:'.formatter.formartEnableBtn'}"/>
 			<Button text="{i18n>xbut.buttonSave}" type="Emphasized" press="onSaveDialog"
 				visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleSaveBtn' }"
-				enabled="{parts:['user>/ENABLE_PM_AUTH_CHECK', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter:'.formatter.formartEnableBtn'}"/>
+				enabled="{parts:['viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter:'.formatter.formartEnableBtn'}"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>
