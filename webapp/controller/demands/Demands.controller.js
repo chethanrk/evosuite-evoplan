@@ -205,17 +205,21 @@ sap.ui.define([
 			//enable/disable buttons on footer when there is some/no selected rows
 			oDataTable.attachRowSelectionChange(function () {
 				var selected = this._oDataTable.getSelectedIndices(),
+					bEnable = Boolean(this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")),
 					sDemandPath, bComponentExist;
 				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 				if (selected.length > 0 && selected.length <= iMaxRowSelection) {
 					this.byId("idfindRightTechnicianButton").setEnabled(true);
-					if (this.getModel("user").getProperty("/ENABLE_PM_AUTH_CHECK") && this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")) {
-						this.byId("assignButton").setEnabled(true);
-					}
+					this.byId("assignButton").setEnabled(true);
 					this.byId("changeStatusButton").setEnabled(true);
+					this.byId("idUnassignButton").setEnabled(true);
 					this.byId("idAssignmentStatusButton").setEnabled(true);
 					this.byId("idOverallStatusButton").setEnabled(true);
-					this.byId("idUnassignButton").setEnabled(true);
+					if (this.getModel("viewModel").getProperty("/authorizeCheck")) {
+						this.byId("assignButton").setEnabled(bEnable);
+						this.byId("changeStatusButton").setEnabled(bEnable);
+						this.byId("idUnassignButton").setEnabled(bEnable);
+					}
 				} else {
 					this.byId("idfindRightTechnicianButton").setEnabled(false);
 					this.byId("assignButton").setEnabled(false);
@@ -263,7 +267,7 @@ sap.ui.define([
 		 */
 		onDragStart: function (oEvent) {
 			var sMsg = this.getResourceBundle().getText("msg.notAuthorizedForAssign");
-			if (!this.getModel("user").getProperty("/ENABLE_PM_AUTH_CHECK") || !this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")) {
+			if (this.getModel("viewModel").getProperty("/authorizeCheck") && !this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")) {
 				this.showMessageToast(sMsg);
 				oEvent.preventDefault();
 				return;
