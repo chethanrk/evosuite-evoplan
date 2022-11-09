@@ -224,7 +224,7 @@ sap.ui.define([
 		 * @param sFuncName Function name of the function import
 		 * @param sMethod method of http operation ex: GET/POST/PUT/DELETE
 		 */
-		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod) {
+		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod, bFromMultiTimeAlloc) {
 			var oResourceBundle = this.getResourceBundle();
 
 			return new Promise(function (resolve, reject) {
@@ -233,8 +233,13 @@ sap.ui.define([
 					urlParameters: oParams,
 					refreshAfterChange: false,
 					success: function (oData, oResponse) {
-						var bContainsError = this.showMessage(oResponse);
-						resolve(oData, oResponse, bContainsError);
+						if (bFromMultiTimeAlloc) {
+							resolve([oData, oResponse]);
+						} else {
+							var bContainsError = this.showMessage(oResponse);
+							resolve(oData, oResponse, bContainsError);
+						}
+
 					}.bind(this),
 					error: function (oError) {
 						//Handle Error
@@ -1016,7 +1021,7 @@ sap.ui.define([
 					"TIMEYEAR") && oNode.RES_ASGN_AVAILABILITY_FLAG ===
 				"P";
 		},
-		
+
 		/**
 		 * open the SIngle Time Allocation dialog Blockers and Manage Absence for selected resource
 		 * @param oEvent
@@ -1029,9 +1034,10 @@ sap.ui.define([
 				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
 				return;
 			}
+
 			// to identify the action done on respective page
 			localStorage.setItem("Evo-Action-page", "ganttSplit");
-			this.getOwnerComponent().TimeAllocations.open(this.getView(), [this.selectedResources[0]], this._mParameters, "timeAlloc");
+			this.getOwnerComponent().TimeAllocations.open(this.getView(), this.selectedResources, this._mParameters, "timeAlloc");
 
 		},
 	});

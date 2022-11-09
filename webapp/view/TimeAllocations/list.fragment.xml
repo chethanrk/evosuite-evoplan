@@ -3,7 +3,7 @@
 		<content>
 			<smartList:SmartList id="idResourceAvailList" entitySet="ResourceAvailabilitySet" showRowCount="true" enableAutoBinding="true"
 				dataReceived="afterListRefresh" fitContainer="true" 
-				selectFields="Description,DateFrom,DateTo,ResourceDescription,Guid,BlockPercentage,UI_DISABLE_ABSENCE_DELETE,UI_DISABLE_ABSENCE_EDIT,AVAILABLE_HOURS,BLOCKED_HOURS,AvailabilityTypeGroup,AVAILABILITY_GROUP_DESCR">
+				selectFields="Description,DateFrom,DateTo,ResourceDescription,Guid,BlockPercentage,UI_DISABLE_ABSENCE_DELETE,UI_DISABLE_ABSENCE_EDIT,AVAILABLE_HOURS,BLOCKED_HOURS,AvailabilityTypeGroup,AVAILABILITY_GROUP_DESCR,ResourceGuid">
 				<smartList:listItemTemplate>
 					<StandardListItem title="{Description}" type="Active"
 						description="{path : 'DateFrom', type : 'sap.ui.model.odata.type.DateTime'} - {path : 'DateTo', type : 'sap.ui.model.odata.type.DateTime'}"/>

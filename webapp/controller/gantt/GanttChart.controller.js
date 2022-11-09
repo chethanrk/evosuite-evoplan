@@ -794,8 +794,9 @@ sap.ui.define([
 			if (this.selectedResources.length > 0) {
 				this.byId("idButtonreassign").setEnabled(true);
 				this.byId("idButtonunassign").setEnabled(true);
-
+				this.byId("idButtonTimeAllocNew").setEnabled(true);
 			} else {
+				this.byId("idButtonTimeAllocNew").setEnabled(false);
 				this.byId("idButtonreassign").setEnabled(false);
 				this.byId("idButtonunassign").setEnabled(false);
 			}
@@ -803,11 +804,9 @@ sap.ui.define([
 
 			if (this.selectedResources.length === 1 && oData && oData.NodeType === "RESOURCE" && oData.ResourceGuid !== "" && oData.ResourceGroupGuid !==
 				"") {
-				this.byId("idButtonTimeAllocNew").setEnabled(true);
 				this.byId("idCalculateRoute").setEnabled(true);
 				this.byId("idOptimizeRoute").setEnabled(true);
 			} else {
-				this.byId("idButtonTimeAllocNew").setEnabled(false);
 				this.byId("idCalculateRoute").setEnabled(false);
 				this.byId("idOptimizeRoute").setEnabled(false);
 			}
