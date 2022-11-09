@@ -94,6 +94,12 @@ sap.ui.define([
 			//update list according to selected tab
 			this.onTabSelectionChanged(null, true);
 		},
+		/**
+		 * to get resource guids of all selected resources
+		 * collection all resource names to display in title
+		 * @param aSelectedPaths 
+		 * @param oModel
+		 */
 		getResourceGuids: function (aSelectedPaths, oModel) {
 			var aResourceGuids = [];
 
