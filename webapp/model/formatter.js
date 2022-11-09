@@ -1057,11 +1057,11 @@ sap.ui.define([
 		 * @param sEdit, bAuthPM, bAuthIW32
 		 * @return {Boolean}
 		 */
-		editBtnVisibility: function (sEdit, bAuthPM, bAuthIW32) {
-			if (bAuthPM) {
+		editBtnVisibility: function (sEdit, bAuthCheck, bAuthIW32) {
+			if (bAuthCheck) {
 				return Boolean(sEdit && bAuthIW32);
 			}
-			return false;
+			return true;
 		},
 
 		/**
@@ -1070,11 +1070,11 @@ sap.ui.define([
 		 * @param bAuthPM, bAuthIW32
 		 * @return {Boolean}
 		 */
-		formartEnableBtn: function (bAuthPM, bAuthIW32) {
-			if (bAuthPM) {
+		formartEnableBtn: function (bAuthCheck, bAuthIW32) {
+			if (bAuthCheck) {
 				return Boolean(bAuthIW32);
 			}
-			return false;
+			return true;
 		}
 	};
 });

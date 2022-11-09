@@ -7,7 +7,7 @@
 			<ToolbarLayoutData shrinkable="true"/>
 		</layoutData>
 	</Button>
-		<Button id="idAssignmentStatusButton" text="{i18n>xbut.ChngAssgnStatus}" tooltip="{i18n>xbut.ChngAssgnStatus}"
+	<Button id="idAssignmentStatusButton" text="{i18n>xbut.ChngAssgnStatus}" tooltip="{i18n>xbut.ChngAssgnStatus}"
 		icon="sap-icon://order-status" visible="{user>/ENABLE_ASSIGNMENT_STATUS}" enabled="false" press="onAssignmentStatusButtonPress">
 		<layoutData>
 			<ToolbarLayoutData shrinkable="true"/>

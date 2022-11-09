@@ -198,7 +198,8 @@ sap.ui.define([
 					countAbsences:0,
 					enableTabs:true,
 					createdData:[]
-				}
+				},
+                authorizeCheck: false
 			});
 			this.setModel(oViewModel, "viewModel");
 
@@ -345,6 +346,7 @@ sap.ui.define([
 			//sets user model - model has to be intantiated before any view is loaded
 			Promise.all(aPromises).then(function (data) {
 				this.getModel("user").setData(data[0]);
+				this.getModel("viewModel").setProperty("/authorizeCheck", data[0].ENABLE_PM_AUTH_CHECK);
 				if (data[1].results.length > 0) {
 					this.getModel("navLinks").setData(data[1].results);
 				}

@@ -642,16 +642,20 @@ sap.ui.define([
 		onRowSelectionChange: function (oEvent) {
 			this._bDemandListScroll = true; //Flag to identify Demand List row is selected and scrolled or not
 			var selected = this._oDataTable.getSelectedIndices(),
+				bEnable = Boolean(this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")),
 				sDemandPath, bComponentExist;
 			var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
-				if (this.getModel("user").getProperty("/ENABLE_PM_AUTH_CHECK") && this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")) {
-					this.byId("assignButton").setEnabled(true);
-				}
+				this.byId("assignButton").setEnabled(true);
 				this.byId("changeStatusButton").setEnabled(true);
+				this.byId("idUnassignButton").setEnabled(true);
 				this.byId("idAssignmentStatusButton").setEnabled(true);
 				this.byId("idOverallStatusButton").setEnabled(true);
-				this.byId("idUnassignButton").setEnabled(true);
+				if (this.getModel("viewModel").getProperty("/authorizeCheck")) {
+					this.byId("assignButton").setEnabled(bEnable);
+					this.byId("changeStatusButton").setEnabled(bEnable);
+					this.byId("idUnassignButton").setEnabled(bEnable);
+				}
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);

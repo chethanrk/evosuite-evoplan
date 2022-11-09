@@ -387,10 +387,11 @@ sap.ui.define([
 		 * @private
 		 */
 		_enableHeaderButton: function (bState) {
-			if (this.getModel("user").getProperty("/ENABLE_PM_AUTH_CHECK") && this.getModel("user").getProperty("/ENABLE_IW31_AUTH_CHECK")) {
-				this.byId("idCreateBut").setEnabled(bState);
-			}
+			this.byId("idCreateBut").setEnabled(bState);
 			this.byId("idTimeAlloBut").setEnabled(bState);
+			if (this.getModel("viewModel").getProperty("/authorizeCheck")) {
+				this.byId("idCreateBut").setEnabled(Boolean(this.getModel("user").getProperty("/ENABLE_IW31_AUTH_CHECK")));
+			}
 		},
 		/**
 		 * Clears the Time Allocation fields

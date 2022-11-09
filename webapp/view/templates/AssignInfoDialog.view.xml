@@ -18,14 +18,17 @@
 					<Label text="{/#Assignment/DateFrom/@sap:label}"/>
 					<DateTimePicker name="DateFrom"
 						value="{path:'assignment>/DateFrom', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true} }"
-						editable="{assignment>/AllowChange}" change="onAssignmentDateChange"/>
+						editable="{parts:['assignment>/AllowChange', 'viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter:'.formatter.editBtnVisibility'}"
+						change="onAssignmentDateChange"/>
 					<Label text="{/#Assignment/DateTo/@sap:label}"/>
 					<DateTimePicker id="idDateToAssignInf" name="DateTo"
 						value="{path:'assignment>/DateTo', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true} }"
-						editable="{assignment>/AllowChange}" change="onAssignmentDateChange"/>
+						editable="{parts:['assignment>/AllowChange', 'viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter:'.formatter.editBtnVisibility'}"
+						change="onAssignmentDateChange"/>
 					<Label text="{/#Assignment/Effort/@sap:label}"/>
 					<Input type="Text" name="Effort" value="{path:'assignment>/Effort', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 2 }}"
-						editable="{assignment>/AllowChange}" change="onPSDemandEffortValidation"/>
+						editable="{parts:['assignment>/AllowChange', 'viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter:'.formatter.editBtnVisibility'}"
+						change="onPSDemandEffortValidation"/>
 					<Label text="{/#Assignment/EffortUnit/@sap:label}"/>
 					<Text text="{assignment>/EffortUnit}"/>
 					<Label text="{i18n>xfld.newAssign}" visible="{assignment>/AllowReassign}"/>
