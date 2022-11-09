@@ -128,24 +128,12 @@ sap.ui.define([
 				this.byId("showPlanCalendar").setEnabled(true);
 				this.byId("idButtonreassign").setEnabled(true);
 				this.byId("idButtonunassign").setEnabled(true);
+				this.byId("idButtonTimeAllocNew").setEnabled(true);
 			} else {
+				this.byId("idButtonTimeAllocNew").setEnabled(false);
 				this.byId("showPlanCalendar").setEnabled(false);
 				this.byId("idButtonreassign").setEnabled(false);
 				this.byId("idButtonunassign").setEnabled(false);
-			}
-			// Disable the Manage absence button when more than one resources are selected
-			// Disble the button for the selection on Group and Pool Node.
-			if (this.selectedResources.length === 1) {
-				oSelectedData = this.getModel().getProperty(this.selectedResources[0]);
-				if (oParams.selected && oNewNode.NodeType === "RESOURCE" && oNewNode.ResourceGuid !== "" && oNewNode.ResourceGroupGuid !== "") {
-					this.byId("idButtonTimeAllocNew").setEnabled(true);
-				} else if (oSelectedData.NodeType === "RESOURCE" && oSelectedData.ResourceGuid !== "" && oSelectedData.ResourceGroupGuid !== "") {
-					this.byId("idButtonTimeAllocNew").setEnabled(true);
-				} else {
-					this.byId("idButtonTimeAllocNew").setEnabled(false);
-				}
-			} else {
-				this.byId("idButtonTimeAllocNew").setEnabled(false);
 			}
 		},
 

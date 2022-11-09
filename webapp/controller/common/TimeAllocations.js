@@ -21,7 +21,7 @@ sap.ui.define([
 		 * init and get dialog view
 		 * @returns {sap.ui.core.Control|sap.ui.core.Control[]|*}
 		 */
-		open: function (oView, aSelectedPath, mParameters, sSource) {
+		open: function (oView, aSelectedPaths, mParameters, sSource) {
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
@@ -34,10 +34,10 @@ sap.ui.define([
 					oDialog.setEscapeHandler(this.onEscapeDialog.bind(this));
 					this._oDialog = oDialog;
 					Fragment.byId("TimeAllocations", "idResourceAvailList-toolbar").setVisible(false);
-					this.onOpen(oDialog, oView, aSelectedPath, mParameters, sSource);
+					this.onOpen(oDialog, oView, aSelectedPaths, mParameters, sSource);
 				}.bind(this));
 			} else {
-				this.onOpen(this._oDialog, oView, aSelectedPath, mParameters, sSource);
+				this.onOpen(this._oDialog, oView, aSelectedPaths, mParameters, sSource);
 			}
 		},
 
@@ -47,7 +47,7 @@ sap.ui.define([
 		 * @param oView
 		 * @param oEvent
 		 */
-		onOpen: function (oDialog, oView, aSelectedPath, mParameters, sSource) {
+		onOpen: function (oDialog, oView, aSelectedPaths, mParameters, sSource) {
 			this._oView = oView;
 			this._component = oView.getController().getOwnerComponent();
 			this._oModel = this._component.getModel();
@@ -74,17 +74,17 @@ sap.ui.define([
 			this._oList = Fragment.byId(this._id, "idResourceAvailList").getList();
 			this._TimeAllocationTabBar = Fragment.byId(this._id, "idTimeAllocationIconTabBar");
 			if (this._mParameters.bFromPlannCal) {
-				this._resource = this._calendarModel.getProperty(aSelectedPath[0]).ResourceGuid;
+				this._resource = this._calendarModel.getProperty(aSelectedPaths[0]).ResourceGuid;
+				this._aResourceGuids = this.getResourceGuids(aSelectedPaths, this._calendarModel);
 			} else if (this._mParameters.bFromNewGantt) {
-				this._resource = this._ganttModel.getProperty(aSelectedPath[0] + "/ResourceGuid");
-				this._resourceName = this._ganttModel.getProperty(aSelectedPath[0] + "/Description");
-
+				this._resource = this._ganttModel.getProperty(aSelectedPaths[0] + "/ResourceGuid");
+				this._aResourceGuids = this.getResourceGuids(aSelectedPaths, this._ganttModel);
 			} else {
-				this._resource = this._oModel.getProperty(aSelectedPath[0] + "/ResourceGuid");
-				this._resourceName = this._oModel.getProperty(aSelectedPath[0] + "/Description");
+				this._resource = this._oModel.getProperty(aSelectedPaths[0] + "/ResourceGuid");
+				this._aResourceGuids = this.getResourceGuids(aSelectedPaths, this._oModel);
 			}
 
-			oDialog.setTitle(this._resourceName);
+			oDialog.setTitle(this._resourceBundle.getText("xtit.timeAllocations"))
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 
 			// connect dialog to view (models, lifecycle)
@@ -93,6 +93,17 @@ sap.ui.define([
 
 			//update list according to selected tab
 			this.onTabSelectionChanged(null, true);
+		},
+		getResourceGuids: function (aSelectedPaths, oModel) {
+			var aResourceGuids = [];
+
+			this._resourceNames = [];
+			for (var i in aSelectedPaths) {
+				aResourceGuids.push(oModel.getProperty(aSelectedPaths[i] + "/ResourceGuid"));
+				this._resourceNames.push(oModel.getProperty(aSelectedPaths[i] + "/Description"));
+			}
+			this._resourceNames = this._resourceNames.join(", ");
+			return aResourceGuids;
 		},
 		/**
 		 * Navigates to detail page on click on item
@@ -233,24 +244,17 @@ sap.ui.define([
 
 			oList = Fragment.byId(this._id, "idResourceAvailList").getList();
 			oBinding = oList.getBinding("items");
-			aFilters = this._getAvailabilityFilters(sSelectedTab, this._resource, sDateControl2, sDateControl1);
+			aFilters = this._getAvailabilityFilters(sSelectedTab, sDateControl2, sDateControl1);
 			oBinding.filter(new Filter({
 				filters: aFilters,
 				and: true
 			}));
-			if (sSelectedTab === "All") {
-				oSorter = new Sorter({
-					path: "AVAILABILITY_GROUP_DESCR",
-					descending: true,
-					group: true
-				});
-			} else {
-				oSorter = new Sorter({
-					path: "AVAILABILITY_GROUP_DESCR",
-					descending: true,
-					group: false
-				});
-			}
+			oSorter = new Sorter({
+				path: "AVAILABILITY_GROUP_DESCR",
+				descending: true,
+				group: true
+			});
+
 			oBinding.sort(oSorter);
 		},
 		/**
@@ -277,12 +281,12 @@ sap.ui.define([
 
 			if (sProperty === "SAVE") {
 				oUpdateData.Guid = oChanges.Guid;
+				if (this._checkMandaoryFields(oChanges, sProperty)) {
+					this._callFunction(oUpdateData);
+				}
 			} else if (sProperty === "CREATE") {
 				oUpdateData.AvailabilityType = oChanges.AvailType;
-			}
-
-			if (this._checkMandaoryFields(oChanges, sProperty)) {
-				this._callFunction(oUpdateData);
+				this._callFunction(oUpdateData, true);
 			}
 		},
 
@@ -301,6 +305,7 @@ sap.ui.define([
 					this._ProceedToManageAbsenceService(sProperty, oChanges, oUpdateData);
 				} else {
 					oUpdateData.Guid = oChanges.Guid;
+					oUpdateData.ResourceGuid = oChanges.ResourceGuid;
 					this._deleteUnavailability(oUpdateData);
 				}
 				if (!this._checkMandaoryFields(oChanges, sProperty)) {
@@ -363,9 +368,10 @@ sap.ui.define([
 		 */
 		_resetChanges: function (oEvent, sProperty) {
 			Fragment.byId(this._id, "detail").unbindElement();
+			Fragment.byId(this._id, "create").setBindingContext(null);
 			var oEventBus = sap.ui.getCore().getEventBus();
 			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
-				//to reset "Manage absence" btn enable/disable
+				//to reset "Time Allocations" btn enable/disable
 				this._oView.byId("idButtonreassign").setEnabled(false);
 				this._oView.byId("idButtonunassign").setEnabled(false);
 				this._oView.byId("idButtonTimeAllocNew").setEnabled(false);
@@ -390,7 +396,7 @@ sap.ui.define([
 						AvailabilityTypeGroup: "N",
 						AvailType: sAvailType[0],
 						Description: sAvailType[1],
-						ResourceDescription: this._resourceName
+						ResourceDescription: this._resourceNames
 					}
 				});
 				this._oSelectedItemContext = oContext;
@@ -421,7 +427,7 @@ sap.ui.define([
 						AvailabilityTypeGroup: "L",
 						AvailType: sAvailType[0],
 						Description: sAvailType[1],
-						ResourceDescription: this._resourceName
+						ResourceDescription: this._resourceNames
 					}
 				});
 				this._oSelectedItemContext = oContext;
@@ -460,14 +466,35 @@ sap.ui.define([
 		 * @param oData
 		 * @private
 		 */
-		_callFunction: function (oData) {
+		_callFunction: function (oData, bIsCreate) {
+			var aPromises = [];
 			this._oDialog.setBusy(true);
 			this._dataDirty = true;
-			new Promise(function (resolve, reject) {
-				this.executeFunctionImport.call(this._oView.getController(), this._oModel, oData, "ManageAbsence", "POST").then(function (data) {
-					this._refreshList();
+
+			// condition to call service for single/multiple resource
+			if (!bIsCreate || this._aResourceGuids.length === 1) {
+				new Promise(function (resolve, reject) {
+					this.executeFunctionImport.call(this._oView.getController(), this._oModel, oData, "ManageAbsence", "POST").then(function (data) {
+						this._refreshList();
+					}.bind(this));
 				}.bind(this));
-			}.bind(this));
+			} else {
+				for (var i in this._aResourceGuids) {
+					oData.ResourceGuid = this._aResourceGuids[i];
+					aPromises.push(this.executeFunctionImport.call(this._oView.getController(), this._oModel, oData, "ManageAbsence", "POST", true));
+				}
+				Promise.all(aPromises).then(function (aPromiseAllResults, oResponse, bContainsError) {
+					if (aPromiseAllResults && aPromiseAllResults.length) {
+						var oMessages = [];
+						for (var i in aPromiseAllResults) {
+							oMessages.push(JSON.parse(aPromiseAllResults[i][1].headers["sap-message"]));
+						}
+						this._oViewModel.setProperty("/oResponseMessages", oMessages);
+						this.showResponseMessagePopup.call(this._oView.getController());
+						this._refreshList();
+					}
+				}.bind(this));
+			}
 		},
 		/**
 		 * Calls the respective function import
@@ -512,7 +539,7 @@ sap.ui.define([
 			this._oModel.resetChanges();
 			this._refreshTreeGantt(oEvent);
 
-			//to reset "Manage absence" btn enable/disable
+			//to reset "Time Allocation" btn enable/disable
 			if (!this._mParameters.bFromNewGantt) {
 				this._oView.getController().selectedResources = [];
 			}
@@ -774,30 +801,36 @@ sap.ui.define([
 		 * @param oDateTo
 		 * since Release/2301.1
 		 */
-		_getAvailabilityFilters: function (sSelectedTab, sResourceGuid, oDateFrom, oDateTo) {
-			var aFilters;
+		_getAvailabilityFilters: function (sSelectedTab, oDateFrom, oDateTo) {
+			var aFilters = [],
+				aResourceFilters = [];
+
+			if (this._aResourceGuids.length > 1) {
+				for (var i in this._aResourceGuids) {
+					aResourceFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, this._aResourceGuids[i]));
+				}
+				aFilters.push(new Filter({
+					filters: aResourceFilters,
+					and: false
+				}));
+			} else {
+				aFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, this._aResourceGuids[0]));
+			}
+
 			if (sSelectedTab === "Blockers") {
-				aFilters = [
-					new Filter("ResourceGuid", FilterOperator.EQ, sResourceGuid),
-					new Filter("DateFrom", FilterOperator.LE, oDateFrom),
-					new Filter("DateTo", FilterOperator.GE, oDateTo),
-					new Filter("AvailabilityTypeGroup", FilterOperator.EQ, "L")
-				];
+				aFilters.push(new Filter("DateFrom", FilterOperator.LE, oDateFrom));
+				aFilters.push(new Filter("DateTo", FilterOperator.GE, oDateTo));
+				aFilters.push(new Filter("AvailabilityTypeGroup", FilterOperator.EQ, "L"));
+
 			} else
 			if (sSelectedTab === "Absences") {
-				aFilters = [
-					new Filter("ResourceGuid", FilterOperator.EQ, sResourceGuid),
-					new Filter("DateFrom", FilterOperator.LE, oDateFrom),
-					new Filter("DateTo", FilterOperator.GE, oDateTo),
-					new Filter("AvailabilityTypeGroup", FilterOperator.EQ, "N")
-				];
+				aFilters.push(new Filter("DateFrom", FilterOperator.LE, oDateFrom));
+				aFilters.push(new Filter("DateTo", FilterOperator.GE, oDateTo));
+				aFilters.push(new Filter("AvailabilityTypeGroup", FilterOperator.EQ, "N"));
 			} else {
-				aFilters = [
-					new Filter("ResourceGuid", FilterOperator.EQ, sResourceGuid),
-					new Filter("DateFrom", FilterOperator.LE, oDateFrom),
-					new Filter("DateTo", FilterOperator.GE, oDateTo),
+				aFilters.push(new Filter("DateFrom", FilterOperator.LE, oDateFrom));
+				aFilters.push(new Filter("DateTo", FilterOperator.GE, oDateTo));
 
-				];
 				if (this._bShowBlockers && this._bShowAbsences) {
 					aFilters.push(new Filter({
 						filters: [new Filter("AvailabilityTypeGroup", FilterOperator.EQ, "L"), new Filter("AvailabilityTypeGroup", FilterOperator.EQ,
@@ -831,11 +864,9 @@ sap.ui.define([
 				nCountBlockers = 0,
 				nCountAbsenses = 0,
 				aItems = this._oList.getItems(),
-				oContext,
-				nCountList = aItems.length;
+				oContext;
 
 			if (sSelectedTab === "All") {
-				nCountAll = nCountList;
 				for (var d in aItems) {
 					oContext = aItems[d].getBindingContext();
 					if (oContext && oContext.getObject().AvailabilityTypeGroup === "L") {
@@ -852,14 +883,26 @@ sap.ui.define([
 					aFilters,
 					oComponent = this._oView.getController().getOwnerComponent();
 
-				aFilters = this._getAvailabilityFilters(sSelectedTab === "Blockers" ? "Absences" : "Blockers", this._resource, this.oDate2, this.oDate1);
+				aFilters = this._getAvailabilityFilters(sSelectedTab === "Blockers" ? "Absences" : "Blockers", this.oDate2, this.oDate1);
 				oComponent.readData(sUri, aFilters).then(function (nCount) {
 					if (sSelectedTab === "Blockers") {
-						nCountBlockers = nCountList;
+						nCountBlockers = 0;
+						for (d in aItems) {
+							oContext = aItems[d].getBindingContext();
+							if (oContext && oContext.getObject().AvailabilityTypeGroup === "L") {
+								nCountBlockers++;
+							}
+						}
 						nCountAbsenses = parseInt(nCount);
 					} else {
 						nCountBlockers = parseInt(nCount);
-						nCountAbsenses = nCountList;
+						nCountAbsenses = 0;
+						for (d in aItems) {
+							oContext = aItems[d].getBindingContext();
+							if (oContext && oContext.getObject().AvailabilityTypeGroup === "N") {
+								nCountAbsenses++;
+							}
+						}
 					}
 					nCountAll = nCountBlockers + nCountAbsenses;
 					this.updateTabCounts(nCountAll, nCountBlockers, nCountAbsenses);

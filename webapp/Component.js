@@ -196,7 +196,8 @@ sap.ui.define([
 					countAll:0,
 					countBlockers:0,
 					countAbsences:0,
-					enableTabs:true
+					enableTabs:true,
+					createdData:[]
 				}
 			});
 			this.setModel(oViewModel, "viewModel");
