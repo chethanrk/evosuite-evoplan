@@ -192,14 +192,17 @@ sap.ui.define([
 					data: [],
 					isToAssign: false
 				},
-				timeAllocations:{
-					countAll:0,
-					countBlockers:0,
-					countAbsences:0,
-					enableTabs:true,
-					createdData:[]
+				timeAllocations: {
+					countAll: 0,
+					countBlockers: 0,
+					countAbsences: 0,
+					enableTabs: true,
+					createData: [],
+					createDataCopy: [],
+					StartDate: "",
+					EndDate: ""
 				},
-                authorizeCheck: false
+				authorizeCheck: false
 			});
 			this.setModel(oViewModel, "viewModel");
 
@@ -527,7 +530,7 @@ sap.ui.define([
 
 			this.ResourceAvailabilities = new ResourceAvailabilities();
 			this.ResourceAvailabilities.init();
-			
+
 			this.TimeAllocations = new TimeAllocations();
 			this.TimeAllocations.init();
 
