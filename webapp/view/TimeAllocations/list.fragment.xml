@@ -1,15 +1,16 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:smartList="sap.ui.comp.smartlist">
-	<Page id="master" title="Products" showHeader="false" >
+	<Page id="master" title="Products" showHeader="false">
 		<content>
-			<smartList:SmartList id="idResourceAvailList" entitySet="ResourceAvailabilitySet" showRowCount="true" enableAutoBinding="true"
-				dataReceived="afterListRefresh" fitContainer="true" 
+			<smartList:SmartList id="idResourceAvailList" entitySet="ResourceAvailabilitySet" showRowCount="false" enableAutoBinding="true"
+				dataReceived="afterListRefresh" fitContainer="true"
+				header="{path: 'viewModel>/timeAllocations/StartDate', type: 'sap.ui.model.type.DateTime', formatOptions: { pattern: 'MMM dd, yyyy' }} - {path: 'viewModel>/timeAllocations/EndDate', type: 'sap.ui.model.type.DateTime', formatOptions: { pattern: 'MMM dd, yyyy' }}"
 				selectFields="Description,DateFrom,DateTo,ResourceDescription,Guid,BlockPercentage,UI_DISABLE_ABSENCE_DELETE,UI_DISABLE_ABSENCE_EDIT,AVAILABLE_HOURS,BLOCKED_HOURS,AvailabilityTypeGroup,AVAILABILITY_GROUP_DESCR,ResourceGuid">
 				<smartList:listItemTemplate>
 					<StandardListItem title="{Description}" type="Active"
 						description="{path : 'DateFrom', type : 'sap.ui.model.odata.type.DateTime'} - {path : 'DateTo', type : 'sap.ui.model.odata.type.DateTime'}"/>
 				</smartList:listItemTemplate>
 				<List itemPress="onClickItem" growing="true" growingThreshold="20" mode="{= ${user>/ENABLE_ABSENCE_DELETE} ? 'Delete' : 'None'}"
-					delete=".onAction($event, 'DELETE')" ></List>
+					delete=".onAction($event, 'DELETE')"></List>
 			</smartList:SmartList>
 		</content>
 	</Page>
