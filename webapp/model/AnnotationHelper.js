@@ -226,24 +226,36 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 		 * since 2205
 		 */
 		var getIconGanttAssignment = function (sProperty) {
-			sProperty = sProperty ? sProperty.Path : undefined;
-
-			switch (sProperty) {
-			case "ORDERID":
-				return "sap-icon://eam-work-order";
-			case "NOTIFICATION":
-				return "sap-icon://message-information";
-			case "DemandDesc":
-				return "sap-icon://employee-pane";
-			case "Effort":
-				return "sap-icon://time-entry-request";
-			case "RESOURCE_DESCRIPTION":
-				return "sap-icon://employee";
-			case "GROUP_DESCRIPTION":
-				return "sap-icon://time-entry-request";
-			default:
-				return "sap-icon://busy";
+				debugger;
+			if (sProperty) {
+				if (sProperty.Path === "DemandDesc") {
+					sProperty.Path = "DEMAND_DESC_I";
+				} else {
+					sProperty.Path = sProperty.Path.toUpperCase() + "_I";
+				}
+				debugger;
+				return oDataAnnotationHelper.simplePath(sProperty);
+				// oDataAnnotationHelper.simplePath(sProperty);
+				// debugger;
 			}
+			// sProperty = sProperty ? sProperty.Path : undefined;
+
+			// switch (sProperty) {
+			// case "ORDERID":
+			// 	return "sap-icon://eam-work-order";
+			// case "NOTIFICATION":
+			// 	return "sap-icon://message-information";
+			// case "DemandDesc":
+			// 	return "sap-icon://employee-pane";
+			// case "Effort":
+			// 	return "sap-icon://time-entry-request";
+			// case "RESOURCE_DESCRIPTION":
+			// 	return "sap-icon://employee";
+			// case "GROUP_DESCRIPTION":
+			// 	return "sap-icon://time-entry-request";
+			// default:
+			// 	return "sap-icon://busy";
+			// }
 		};
 
 		/**

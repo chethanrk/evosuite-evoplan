@@ -4,7 +4,7 @@
         xmlns:axistime="sap.gantt.axistime"
         xmlns:config="sap.gantt.config">
 
-    <axistime:StepwiseZoomStrategy id="idAxisTime">
+    <axistime:StepwiseZoomStrategy id="idAxisTime" firstDayOfWeek="2">
         <axistime:totalHorizon>
             <config:TimeHorizon
                     startTime="{user>/DEFAULT_GANT_START_DATE}"
