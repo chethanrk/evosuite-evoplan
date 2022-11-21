@@ -203,6 +203,9 @@ sap.ui.define([
 				}
 				if (this._aSelectedDemands.length > 0) {
 					this.byId("assignButton").setEnabled(true);
+					if (this.getModel("viewModel").getProperty("/authorizeCheck")) {
+						this.byId("assignButton").setEnabled(Boolean(this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")));
+					}
 				} else {
 					this.byId("assignButton").setEnabled(false);
 				}

@@ -65,7 +65,7 @@ sap.ui.define([
 		 */
 		onDragStart: function (oEvent) {
 			var sMsg = this.getResourceBundle().getText("msg.notAuthorizedForAssign");
-			if (this.getModel("viewModel").getProperty("authorizeCheck") && !this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")) {
+			if (this.getModel("viewModel").getProperty("/authorizeCheck") && !this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")) {
 				this.showMessageToast(sMsg);
 				oEvent.preventDefault();
 				return;

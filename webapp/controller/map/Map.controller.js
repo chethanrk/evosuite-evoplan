@@ -572,6 +572,12 @@ sap.ui.define([
 		 * On DragStart set the dragSession selected demands
 		 */
 		onDragStart: function (oEvent) {
+			var sMsg = this.getResourceBundle().getText("msg.notAuthorizedForAssign");
+			if (this.getModel("viewModel").getProperty("/authorizeCheck") && !this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")) {
+				this.showMessageToast(sMsg);
+				oEvent.preventDefault();
+				return;
+			}
 			var oDragSession = oEvent.getParameter("dragSession"),
 				oDraggedControl = oDragSession.getDragControl();
 
