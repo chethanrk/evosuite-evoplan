@@ -9,7 +9,7 @@
 					<template:repeat list="{data>}">
 						<CustomListItem>
 							<HBox>
-								<core:Icon size="1.6rem" src="{=${path:'data>Core.LongDescription',formatter:'com.evorait.evoplan.model.AnnotationHelper.getIconGanttAssignment'}}"
+								<core:Icon size="1.6rem" src="{path:'data>Org.OData.Core.V1.LongDescription',formatter:'.AH.simplePath'}"
 									color="#6a6d70" class="sapUiSmallMarginBegin sapUiTinyMarginTop"/>
 								<VBox class="sapUiSmallMarginBegin sapUiTinyMarginTopBottom">
 									<Label text="{path:'data>Value',formatter:'com.evorait.evoplan.model.AnnotationHelper.getLabel'}:"/>
