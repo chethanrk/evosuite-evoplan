@@ -1,5 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:u="sap.ui.unified">
-	<u:Menu itemSelect="handleMenuItemPress">
+	<u:Menu itemSelect="handleMenuItemPress"
+		enabled="{parts: ['viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter: '.formatter.formartEnableBtn'}">
 		<u:customData>
 			<core:CustomData key="Path" value="{viewModel>/ganttSettings/shapeData/sPath}"/>
 		</u:customData>

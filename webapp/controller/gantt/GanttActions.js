@@ -16,7 +16,10 @@ sap.ui.define([
 		/**
 		 * formatter for for Gantt view
 		 */
-		isBusyShape: function (bAllowProperty, bIsBusy) {
+		isBusyShape: function (bAllowProperty, bIsBusy, bPmAuth, bIW32Auth) {
+			if (bPmAuth) {
+				return Boolean(bAllowProperty && !bIsBusy && bIW32Auth);
+			}
 			return bAllowProperty && !bIsBusy;
 		},
 
@@ -873,7 +876,6 @@ sap.ui.define([
 				});
 			}.bind(this));
 		},
-
 
 		/**
 		 * Updating Assignment Status for Assignmnets after changing

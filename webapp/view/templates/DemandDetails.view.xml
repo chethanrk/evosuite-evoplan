@@ -10,7 +10,8 @@
 					<uxap:actions>
 						<core:ExtensionPoint name="PageExtP|DemandDetail|DemandSet|ObjectPageHeaderActionButton|Before"/>
 						<uxap:ObjectPageHeaderActionButton id="idAssignHeaderAction" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" type="Emphasized"
-							hideIcon="false" hideText="false" press="onClickAssign" visible="{ALLOW_ASSIGN}">
+							hideIcon="false" hideText="false" press="onClickAssign" visible="{ALLOW_ASSIGN}"
+							enabled="{parts:['viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter:'.formatter.formartEnableBtn'}">
 							<uxap:dependents>
 								<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.ActionSheetTemplate" type="XML"/>
 							</uxap:dependents>

@@ -548,17 +548,23 @@ sap.ui.define([
 		 * @param bEnableResize
 		 * @return {*}
 		 */
-		formatResizeEnable: function (bEnableDragDrop, bEnableResize, sObjectType) {
+		formatResizeEnable: function (bEnableDragDrop, bEnableResize, sObjectType, bPmAuth, bIw32Auth) {
 			if (sObjectType === "ASSET") {
 				return false;
+			}
+			if (bPmAuth) {
+				return Boolean(bEnableResize && bIw32Auth);
 			}
 			return bEnableResize;
 		},
 		/**
 		 *
 		 */
-		formatDragAndDropEnable: function (bDragDrop, sObjectType) {
+		formatDragAndDropEnable: function (bDragDrop, sObjectType, bPmAuth, bIw32Auth) {
 			if (bDragDrop && sObjectType !== "ASSET") {
+				if (bPmAuth) {
+					return Boolean(bIw32Auth);
+				}
 				return true;
 			}
 			return false;
