@@ -77,7 +77,7 @@ sap.ui.define([
 		 */
 		_bindPopover: function (oDialog, oSource) {
 			var oTable = oDialog.getContent()[0],
-				oBinding = oTable.getBinding("items")
+				oBinding = oTable.getBinding("items");
 			if (oSource) {
 				var oRow = oSource.getParent(),
 					oContext = oRow.getBindingContext(),
@@ -107,6 +107,8 @@ sap.ui.define([
 				oEndTime = oNodeData.EndTime,
 				aFilters = [],
 				sSelectedView = this._component.getModel("viewModel").getProperty("/selectedHierarchyView");
+				oStartDate = new Date(oStartDate);
+				oEndDate = new Date(oEndDate);
 
 			if (oNodeData.NodeType === "RESOURCE") {
 				aFilters.push(new Filter("ObjectId", FilterOperator.EQ, sResource + "//" + sResourceGroup));
