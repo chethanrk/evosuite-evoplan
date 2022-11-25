@@ -221,32 +221,6 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 		};
 
 		/**
-		 * get icon base on the property 
-		 * gantt assignment Popover
-		 * since 2205
-		 */
-		var getIconGanttAssignment = function (sProperty) {
-			sProperty = sProperty ? sProperty.Path : undefined;
-
-			switch (sProperty) {
-			case "ORDERID":
-				return "sap-icon://eam-work-order";
-			case "NOTIFICATION":
-				return "sap-icon://message-information";
-			case "DemandDesc":
-				return "sap-icon://employee-pane";
-			case "Effort":
-				return "sap-icon://time-entry-request";
-			case "RESOURCE_DESCRIPTION":
-				return "sap-icon://employee";
-			case "GROUP_DESCRIPTION":
-				return "sap-icon://time-entry-request";
-			default:
-				return "sap-icon://busy";
-			}
-		};
-
-		/**
 		 * get Label from the property 
 		 * gantt assignment Popover
 		 * since 2205
@@ -268,7 +242,6 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 			getFieldExtPoint: getFieldExtPoint,
 			getExtPoint: getExtPoint,
 			getEntitySet: getEntitySet,
-			getIconGanttAssignment: getIconGanttAssignment,
 			getLabel: getLabel
 		};
 
