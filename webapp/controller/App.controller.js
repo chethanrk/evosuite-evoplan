@@ -458,13 +458,14 @@ sap.ui.define([
 				sText = oEvent.getSource().getText(),
 				oResourceBundleText = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
 				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode"),
-				sServicePath = "https://" + this.getModel("user").getProperty("/ServerPath");
+				sServicePath = "https://" + this.getModel("user").getProperty("/ServerPath"),
+				aNavLinks = this.getModel("navLinks").getData(),
+				aSelectedLinkData;
 
-			if (sText === oResourceBundleText.getText("xtit.evoOrderRelate")) {
-				sUri = sServicePath + this.getModel("user").getProperty("/DEFAULT_EVOORDERRELATE_URL");
-			} else if (sText === oResourceBundleText.getText("xtit.evoResource")) {
-				sUri = sServicePath + this.getModel("user").getProperty("/DEFAULT_EVORESOURCE_URL");
-			}
+				aSelectedLinkData = aNavLinks.filter( function(item) {
+					return item.ApplicationName === sText;	
+				});
+				sUri = sServicePath + aSelectedLinkData[0].Value1;
 
 			//Logic for Navigation in BSP application
 			if (sLaunchMode === Constants.LAUNCH_MODE.BSP) {
