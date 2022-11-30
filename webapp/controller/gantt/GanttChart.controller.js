@@ -161,9 +161,13 @@ sap.ui.define([
 		 */
 		onShapeDoubleClick: function (oEvent) {
 			var oShapeContext = oEvent.getParameter("shape").getBindingContext("ganttModel"),
-				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId();
-			this.getOwnerComponent().GanttAssignmentPopOver.open(this.getView(), sap.ui.getCore().byId(sToolbarId + "-settingsButton"),
-				oShapeContext);
+				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId(),
+				oGanttModel = this.getModel('ganttModel'),
+				sNodeType = oGanttModel.getProperty(oShapeContext.getPath()).NodeType;
+			if (sNodeType === "ASSIGNMENT") {
+				this.getOwnerComponent().GanttAssignmentPopOver.open(this.getView(), sap.ui.getCore().byId(sToolbarId + "-settingsButton"),
+					oShapeContext);
+			}
 		},
 
 		/**

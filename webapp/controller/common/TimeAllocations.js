@@ -272,6 +272,10 @@ sap.ui.define([
 		 */
 		_ProceedToManageAbsenceService: function (sProperty, oChanges, oUpdateData) {
 
+			if (!this._checkMandaoryFields(oChanges, sProperty)) {
+				return;
+			}
+
 			oUpdateData.StartTimestamp = oChanges.DateFrom;
 			oUpdateData.EndTimestamp = oChanges.DateTo;
 			if (this.sSource === "timeAlloc") {
@@ -288,9 +292,7 @@ sap.ui.define([
 
 			if (sProperty === "SAVE") {
 				oUpdateData.Guid = oChanges.Guid;
-				if (this._checkMandaoryFields(oChanges, sProperty)) {
-					this._callFunction(oUpdateData);
-				}
+				this._callFunction(oUpdateData);
 			} else if (sProperty === "CREATE") {
 				oUpdateData.AvailabilityType = oChanges.AvailType;
 				this._callFunction(oUpdateData, true);
