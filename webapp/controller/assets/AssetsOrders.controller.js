@@ -382,6 +382,9 @@ sap.ui.define([
 			this._selectedAsset = oData;
 			// Disable header buttons
 			this._enableHeaderButton(true);
+			if (this.getModel("viewModel").getProperty("/authorizeCheck")) {
+				this.byId("idCreateBut").setEnabled(Boolean(this.getModel("user").getProperty("/ENABLE_IW31_AUTH_CHECK")));
+			}
 		},
 		/**
 		 * @Author Rahul
@@ -392,9 +395,6 @@ sap.ui.define([
 		_enableHeaderButton: function (bState) {
 			this.byId("idCreateBut").setEnabled(bState);
 			this.byId("idTimeAlloBut").setEnabled(bState);
-			if (this.getModel("viewModel").getProperty("/authorizeCheck")) {
-				this.byId("idCreateBut").setEnabled(Boolean(this.getModel("user").getProperty("/ENABLE_IW31_AUTH_CHECK")));
-			}
 		},
 		/**
 		 * Clears the Time Allocation fields
