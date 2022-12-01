@@ -1067,7 +1067,7 @@ sap.ui.define([
 			if (bAuthCheck) {
 				return Boolean(sEdit && bAuthIW32);
 			}
-			return true;
+			return sEdit;
 		},
 
 		/**
