@@ -19,10 +19,12 @@
 								<core:CustomData key="type" value="A"/>
 							</customData>
 						</CheckBox>
-						<Button id="idCreateBut" text="{i18n>xbut.createOrder}" visible="{user>/ENABLE_ORDER_CREATE}"  tooltip="{i18n>xbut.createOrder}" press="createOrder" enabled="false"
+						<Button id="idCreateBut" text="{i18n>xbut.createOrder}" visible="{user>/ENABLE_ORDER_CREATE}" tooltip="{i18n>xbut.createOrder}"
+							press="createOrder"
+							enabled="{ parts:[ 'viewModel>/bBtnEnabled', 'viewModel>/authorizeCheck', 'user>/ENABLE_IW31_AUTH_CHECK' ], formatter:'.formatter.editBtnVisibility' }"
 							type="Emphasized"/>
-						<Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" visible="{user>/ENABLE_CREATE_ASSET_TIME_ALLOC}" tooltip="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc" enabled="false"
-							type="Emphasized"/>
+						<Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" visible="{user>/ENABLE_CREATE_ASSET_TIME_ALLOC}"
+							tooltip="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc" enabled="{viewModel>/bBtnEnabled}" type="Emphasized"/>
 						<core:ExtensionPoint name="PageExtP|Asset|AssetPlanningDataSet|Header|Right"/>
 					</OverflowToolbar>
 				</f:content>

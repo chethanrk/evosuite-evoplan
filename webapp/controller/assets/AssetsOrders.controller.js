@@ -381,21 +381,9 @@ sap.ui.define([
 				oData = oModel.getProperty(sPath);
 			this._selectedAsset = oData;
 			// Disable header buttons
-			this._enableHeaderButton(true);
+			this.getModel("viewModel").setProperty("/bBtnEnabled", true);
 		},
-		/**
-		 * @Author Rahul
-		 * @since 2.1
-		 * @param bState:boolean to set enabled property
-		 * @private
-		 */
-		_enableHeaderButton: function (bState) {
-			this.byId("idCreateBut").setEnabled(bState);
-			this.byId("idTimeAlloBut").setEnabled(bState);
-			if (this.getModel("viewModel").getProperty("/authorizeCheck")) {
-				this.byId("idCreateBut").setEnabled(Boolean(this.getModel("user").getProperty("/ENABLE_IW31_AUTH_CHECK")));
-			}
-		},
+
 		/**
 		 * Clears the Time Allocation fields
 		 * @since 2.1
@@ -466,7 +454,7 @@ sap.ui.define([
 				aAllFilters.push(oPlanningDataTypeFilter);
 			}
 			oBinding.filter(aAllFilters);
-			this._enableHeaderButton(false);
+			this.getModel("viewModel").setProperty("/bBtnEnabled", false);
 			this.byId("assignButton").setEnabled(false);
 			this._aSelectedDemands = [];
 		},
