@@ -320,7 +320,7 @@ sap.ui.define([
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 			} else if (sRoute === "splitDemands") {
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			} else if (sRoute === "detail") {
+			} else if (sRoute === "DemandDetail") {
 				/* No action require */
 			} else if (sRoute === "map") {
 				this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
