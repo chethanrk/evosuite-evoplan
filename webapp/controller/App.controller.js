@@ -460,16 +460,21 @@ sap.ui.define([
 				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode"),
 				sServicePath = "https://" + this.getModel("user").getProperty("/ServerPath"),
 				aNavLinks = this.getModel("navLinks").getData(),
-				aSelectedLinkData;
+				aSelectedLinkData,
+				sSemanticObj,
+				sAction;
 
-				aSelectedLinkData = aNavLinks.filter( function(item) {
-					return item.ApplicationName === sText;	
-				});
-				sUri = sServicePath + aSelectedLinkData[0].Value1;
-
+			aSelectedLinkData = aNavLinks.filter(function (item) {
+				return item.ApplicationName === sText;
+			});
 			//Logic for Navigation in BSP application
 			if (sLaunchMode === Constants.LAUNCH_MODE.BSP) {
+				sUri = sServicePath + aSelectedLinkData[0].Value1;
 				window.open(sUri, "_blank");
+			} else if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
+				sSemanticObj = aSelectedLinkData[0].Value1.split("\\\\_\\\\")[0];
+				sAction = aSelectedLinkData[0].Value1.split("\\\\_\\\\")[1];
+				this.navToApp(sSemanticObj, sAction);
 			}
 		}
 	});
