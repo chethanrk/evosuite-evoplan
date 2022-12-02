@@ -575,14 +575,16 @@ sap.ui.define([
 		onMaterialStatusPress: function (oEvent) {
 			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
 				oViewModel = this.getModel("appView"),
-				sDemandPath;
+				sDemandPath,
+				aPromise = [];
 			oViewModel.setProperty("/busy", true);
 			for (var i = 0; i < oSelectedIndices.length; i++) {
 				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
-				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
-					oViewModel.setProperty("/busy", false);
-				}.bind(this));
+				aPromise.push(this.getOwnerComponent()._getData(sDemandPath));
 			}
+			Promise.all(aPromise).then(function () {
+				oViewModel.setProperty("/busy", false);
+			});
 		},
 		/**
 		 * Resetting Demand selection based on not allowed for find technician 
