@@ -1039,16 +1039,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
 		 */
 		openLongTextPopover: function (oSource) {
-			var oViewModel = this.getModel("viewModel"),
-				oModel = this.getModel(),
-				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
-			if (bDemandEditMode && oModel.hasPendingChanges()) {
-				this._oSource = oSource;
-				this.showDemandEditModeWarningMessage().then(this.handleResponse.bind(this));
-			} else {
-				oViewModel.setProperty("/bDemandEditMode", false);
-				this.getOwnerComponent().longTextPopover.open(this.getView(), oSource);
-			}
+			this.getOwnerComponent().longTextPopover.open(this.getView(), oSource);
 		},
 		/**
 		 * handle message popover response to save data/ open longtext popover
