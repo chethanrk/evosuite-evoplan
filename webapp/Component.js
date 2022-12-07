@@ -202,7 +202,8 @@ sap.ui.define([
 					StartDate: "",
 					EndDate: ""
 				},
-				authorizeCheck: false
+				validateIW31Auth: true,
+				validateIW32Auth: true
 			});
 			this.setModel(oViewModel, "viewModel");
 
@@ -349,7 +350,6 @@ sap.ui.define([
 			//sets user model - model has to be intantiated before any view is loaded
 			Promise.all(aPromises).then(function (data) {
 				this.getModel("user").setData(data[0]);
-				this.getModel("viewModel").setProperty("/authorizeCheck", data[0].ENABLE_PM_AUTH_CHECK);
 				if (data[1].results.length > 0) {
 					this.getModel("navLinks").setData(data[1].results);
 				}
@@ -367,6 +367,9 @@ sap.ui.define([
 				if (data[0].ENABLE_PUSH_DEMAND) {
 					WebSocket.init(this);
 				}
+
+				//Intialize variables for SAP authorization
+				this._handleAuthorization();
 
 				// create the views based on the url/hash
 				this.getRouter().initialize();
@@ -741,6 +744,19 @@ sap.ui.define([
 					resolve();
 				}.bind(this));
 			}.bind(this));
+		},
+
+		/**
+		 * Handle SAP authorization
+		 */
+		_handleAuthorization: function () {
+			var bPMAuth = this.getModel("user").getProperty("/ENABLE_PM_AUTH_CHECK"),
+				bIW31Auth = this.getModel("user").getProperty("/ENABLE_IW31_AUTH_CHECK"),
+				bIW32Auth = this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK");
+			if (bPMAuth) {
+				this.getModel("viewModel").setProperty("/validateIW31Auth", Boolean(bIW31Auth));
+				this.getModel("viewModel").setProperty("/validateIW32Auth", Boolean(bIW32Auth));
+			}
 		}
 	});
 });

@@ -10,8 +10,8 @@
 					<rows>
 						<PlanningCalendarRow icon="{ path: 'calendarModel>ObjectType', formatter: '.formatter.getResourceIcon' }"
 							title="{calendarModel>GroupDescription}" text="{calendarModel>ResourceDescription}"
-							enableAppointmentsDragAndDrop="{ parts:[ {path:'user>/ENABLE_DRAG_DROP'}, {path:'calendarModel>ObjectType'}, {path:'viewModel>/authorizeCheck'}, {path:'user>/ENABLE_IW32_AUTH_CHECK'} ], formatter:'.formatter.formatDragAndDropEnable'}"
-							enableAppointmentsResize="{ parts:[ {path:'user>/ENABLE_DRAG_DROP'}, {path:'user>/ENABLE_RESIZE'}, {path:'calendarModel>ObjectType'}, {path:'viewModel>/authorizeCheck'}, {path:'user>/ENABLE_IW32_AUTH_CHECK'} ], formatter:'.formatter.formatResizeEnable'}"
+							enableAppointmentsDragAndDrop="{ parts:[ {path:'user>/ENABLE_DRAG_DROP'}, {path:'calendarModel>ObjectType'}, {path:'viewModel>/validateIW32Auth'}], formatter:'.formatter.formatDragAndDropEnable'}"
+							enableAppointmentsResize="{ parts:[ {path:'user>/ENABLE_DRAG_DROP'}, {path:'user>/ENABLE_RESIZE'}, {path:'calendarModel>ObjectType'}, {path:'viewModel>/validateIW32Auth'}], formatter:'.formatter.formatResizeEnable'}"
 							appointmentDragEnter="onAppointmentDragEnter" appointmentDrop="onAppointmentDrop" appointmentResize="onAppointmentResize"
 							appointments="{path : 'calendarModel>Assignments', templateShareable: 'true'}"
 							intervalHeaders="{path: 'calendarModel>AbsenceInfo', templateShareable: 'true'}">

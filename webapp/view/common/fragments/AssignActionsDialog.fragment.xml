@@ -39,10 +39,9 @@
 		<buttons>
 			<core:ExtensionPoint name="DialogExtP|AssignActionDialog|AssignmentSet|DialogActions|Left"/>
 			<Button id="idCloseDialog" text="{i18n>xbut.buttonClose}" press="onCloseDialog"/>
-			<Button id="idButtonBulkUnAssign" text="{i18n>xbut.buttonUnassign}" type="Emphasized"
-				enabled="{parts:['viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter:'.formatter.formartEnableBtn'}" press="onUnassign"/>
-			<Button id="idButtonBulkReAssign" text="{i18n>xfld.newAssign}" type="Emphasized"
-				enabled="{parts:['viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter:'.formatter.formartEnableBtn'}" press="onReassign"/>
+			<Button id="idButtonBulkUnAssign" text="{i18n>xbut.buttonUnassign}" type="Emphasized" enabled="{viewModel>/validateIW32Auth}"
+				press="onUnassign"/>
+			<Button id="idButtonBulkReAssign" text="{i18n>xfld.newAssign}" type="Emphasized" enabled="{viewModel>/validateIW32Auth}" press="onReassign"/>
 			<core:ExtensionPoint name="DialogExtP|AssignActionDialog|AssignmentSet|DialogActions|Right"/>
 		</buttons>
 	</Dialog>
