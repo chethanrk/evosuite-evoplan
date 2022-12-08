@@ -54,11 +54,10 @@ sap.ui.define([
 		},
 
 		getSetFunction: function (a, b, c, d) {
-			return a && !b && c !== "COMP" && d; // === 1;
+			return a && !b && c !== "COMP" && d; 
 		},
 
 		getVisible: function (a, b, c, d, e) {
-			//	d = d === 2 || d === 3;
 			return a && !b && c !== "COMP" && d && !e;
 		},
 
@@ -119,7 +118,6 @@ sap.ui.define([
 		 */
 		onClickAction: function (oEvent) {
 			localStorage.setItem("Evo-Action-page", "DemandDetails");
-			// sap.ui.getCore().byId("idStatusActionSheet").openBy(oEvent.getSource());
 			this.getView().byId("idStatusActionSheet").openBy(oEvent.getSource());
 		},
 

@@ -50,7 +50,6 @@
 												<vbm:Spots customProperties="{= ['Status']}" items="{ path:'/DemandSet', parameters:{ batchGroupId:'mapdemands' } }" select="onSelect"
 													deselect="onDeselect">
 													<vbm:items>
-														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0) position="{LONGITUDE};{LATITUDE};0"-->
 														<core:ExtensionPoint name="GeoMapExtP|Map|Spots|DemandSet|items">
 															<vbm:Spot selectColor="{user>/DEFAULT_DEMAND_MAP_SEL_PIN_CLR}" contentColor="{MAP_MARKER_COLOUR}" hotScale="1.1;1.1;1.1"
 																tooltip="{DEMAND_KEY}" type="Inactive" select="{IS_SELECTED}" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}"
@@ -71,7 +70,6 @@
 												</vbm:Spots>
 												<vbm:Spots items="{ path:'/ResourceSet', parameters:{ batchGroupId:'mapdemands' } }" select="onSelectResourcePin">
 													<vbm:items>
-														<!--#008000 . RHLSA(2.0;2.0;2.0;2.0) position="{LONGITUDE};{LATITUDE};0"-->
 														<core:ExtensionPoint name="GeoMapExtP|Map|Spots|ResourceSet|items">
 															<vbm:Spot contentColor="{user>/DEFAULT_RES_MAP_SEL_PIN_CLR}" 
 																tooltip="{ResourceDescription}" type="Inactive" icon="{user>/DEFAULT_RES_MAP_MARKER_ICON}" contentSize="17rem" changeable="false"

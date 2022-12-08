@@ -747,7 +747,7 @@ sap.ui.define([
 				if (this.getModel().getProperty(oRoute.path)) {
 					this.getModel().setProperty(oRoute.path + "/IsRouteDisplayed", false);
 				}
-			}.bind(this))
+			}.bind(this));
 			this.getModel("viewModel").setProperty("/GeoJsonLayersData", []);
 		},
 
@@ -822,7 +822,6 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree: function () {
-			// this.pIsFilterBarInitalized.then(function () {
 			var oTreeTable = this._oDataTable,
 				oTreeBinding = oTreeTable.getBinding("rows");
 
@@ -830,11 +829,10 @@ sap.ui.define([
 			this.resetChanges();
 			if (oTreeBinding && !this._bFirsrTime) {
 				this.mTreeState = this._getTreeState();
-				this._oDroppableTable.rebindTable(); //oTreeBinding.refresh();
+				this._oDroppableTable.rebindTable(); 
 			}
 			this._bFirsrTime = false;
 			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", false);
-			// }.bind(this));
 		},
 
 		/**

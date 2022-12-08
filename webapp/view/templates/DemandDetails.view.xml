@@ -19,9 +19,6 @@
 						<uxap:ObjectPageHeaderActionButton id="idSetFunctionHeaderAction" text="{i18n>xbut.buttonExecuteFunction}"
 							tooltip="{i18n>xbut.buttonExecuteFunction}" type="Emphasized" hideIcon="false" hideText="false" press="onClickSetFunction"
 							visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_SET_FUNCTION'}], formatter: '.getSetFunction' }">
-							<!--<uxap:dependents>-->
-							<!--	<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.ActionSheetTemplate" type="XML"/>-->
-							<!--</uxap:dependents>-->
 						</uxap:ObjectPageHeaderActionButton>
 						<uxap:ObjectPageHeaderActionButton id="idStatusHeaderAction" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
 							visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_CHANGE_STATUS'},{path :'user>/ENABLE_ASSIGNMENT_STATUS'}], formatter: '.getVisible' }"

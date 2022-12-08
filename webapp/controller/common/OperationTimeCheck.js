@@ -64,7 +64,6 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onAssignmentDateCheckSelectAll: function (oEvent) {
-			//	sap.ui.getCore().byId("idAsgnDateCheckTable").selectAll();
 			var oTable = sap.ui.getCore().byId("idAsgnDateCheckTable"),
 				oViewModel = oTable.getModel("viewModel"),
 				aOperationTimesList = oViewModel.getProperty("/dragSession");
@@ -126,8 +125,6 @@ sap.ui.define([
 					oEvent.getBindingContext("viewModel").getObject().IsSelected = false;
 				}
 			});
-
-			//	this.onAssignmentDateCheckSelectAll();
 		},
 
 	});

@@ -39,12 +39,11 @@ sap.ui.define([
 				oBinding = oParams.bindingParams,
 				oUserModel = this.getModel("user"),
 				oMatchType = this.byId("resourceMngFilter").getSelectedKey(),
-				aFilter,
 				sCurrentDate = this._oDateFormatDateOnly.format(new Date());
 			new Filter({
 				filters: [new Filter("End", FilterOperator.LT, new Date())],
 				and: false
-			})
+			});
 
 			if (oMatchType === "past") {
 				oBinding.filters.push(new Filter({
@@ -63,8 +62,6 @@ sap.ui.define([
 			} else {
 				this.mTreeState = this._getTreeState();
 			}
-			// Bug fix for some time tree getting collapsed
-			// oBinding.parameters.numberOfExpandedLevels = 1; //oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND") ? 1 : 0;
 
 		},
 		/**
@@ -227,46 +224,7 @@ sap.ui.define([
 			}
 			for (i in aPayLoad) {
 				this.doCreateResource(this.getModel(), sPath, aPayLoad[i]).then(function (oResponse) {});
-				// var sEntryPath = "/ResourceManagementSet('" + aPayLoad[i].NodeId + "')";
-				// var sEntryPath = "/ResourceManagementSet";
-				// this._oEvoplanResourceTable.getBinding().createEntry(sEntryPath, {
-				// 	properties: aPayLoad[i]
-				// });
-
-				// var sEntryPath = "/ResourceManagementSet",
-				// 	// oEntryContext = new sap.ui.model.Context(oModel, sEntryPath);
-				// var oEntryContext = this.getModel().createEntry(sEntryPath, {
-				// 		// context: oEntryContext,
-				// properties: aPayLoad[i]
-				// 			// ,
-				// 			// success: function (oData, oRes) {
-				// 			// 	aletrt("Suc");
-				// 			// },
-				// 			// error: function (oErr) {
-				// 			// 	aletrt("Err");
-				// 			// }
-				// });
-				// this._oEvoplanResourceTable.refreshRows();
-
-				// this._oEvoplanResourceTable.invalidate();
-
-				// this._oEvoplanResourceTable.rerender();
-
-				// oModel.refresh();
-
-				// this._oEvoplanResourceTable.refreshAggregation("rows", sap.ui.model.ChangeReason.Add);
-
-				// this.getModel().createBindingContext(sEntryPath, oEntryContext );
-
-				// this._oEvoplanResourceTable.setBindingContext(oEntryContext);
-
-				// oModel.submitChanges();
-
-				// }.bind(this));
-
-				// this._oEvoplanResourceTable.getRows()
-				// var oNewRow = new sap.ui.table.Row("idABC", oEntryContext.getObject());
-				// var oNewRow = new sap.ui.table.Row("idABC", oEntryContext.getObject());
+			
 			}
 			// remove Selections after Create
 			this.oHrResourceTable.clearSelection();
@@ -291,11 +249,9 @@ sap.ui.define([
 			this.mTreeState = this._getTreeState();
 			if (isCopy) {
 				this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
-				// this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
 			} else if (!aPayload.AssignmentCount) {
 				this.doDeleteResource(this._oModel, sSourceItemPath, true).then(function (oResponse) {
 					this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
-					// this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
 				}.bind(this));
 			} else {
 				this._callAssignmentsPopUp("moveResource");
@@ -308,7 +264,7 @@ sap.ui.define([
 		_callAssignmentsPopUp: function (sOperationType) {
 			var aParameters = {
 				ObjectId: this._oSelectedNodeContext.getProperty("NodeId")
-			}
+			};
 			if (sOperationType === "updateResource") {
 				aParameters.StartTimestamp = this._aPayLoad.Start;
 				aParameters.EndTimestamp = this._aPayLoad.End;
@@ -418,7 +374,6 @@ sap.ui.define([
 				oEditFormPopover.bindElement(sPath);
 				oEditFormPopover.openBy(oButton);
 			}.bind(this));
-			// this.handleUpdateResource(this._oModel, this._oSelectedContext.getPath);
 		},
 		/**
 		 * validation for saving the updated values for Group or Resource.
@@ -449,7 +404,6 @@ sap.ui.define([
 		onPressPopoverSaveButton: function () {
 			var oUpdatedJSONData = this._oViewModel.getProperty("/manageResourcesSettings/selectedRow"),
 				oUpdatedRow = JSON.parse(JSON.stringify(oUpdatedJSONData)),
-				// var oUpdatedRow = this._oViewModel.getProperty("/manageResourcesSettings/selectedRow"),
 				oSelectedRow = this._oSelectedContext.getObject(),
 				sSelectedPath = this._oSelectedContext.getPath(),
 				sNodeType = oSelectedRow.NodeType;
@@ -549,9 +503,7 @@ sap.ui.define([
 			if (expandIdx.length > 0) {
 				this._oEvoplanResourceTable.expand(expandIdx);
 			} else if (collapseIdx.length > 0) {
-				// this._oEvoplanResourceTable.collapse(collapseIdx);
 			} else {
-				// //this.mTreeState = this._getTreeState();= {};
 			}
 		},
 		onResourceMngFilterSelectionChange: function (oEvent) {

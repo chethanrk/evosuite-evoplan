@@ -21,9 +21,6 @@
 			</ObjectPageLayout>
 		</m:content>
 		<m:buttons>
-			<!--<Button text="{i18n>xbut.gotodemand}"
-                    type="Emphasized"
-                    press="onGotoDemand" />-->
 			<m:Button text="{i18n>xbut.buttonClose}" press="onCloseDialog"/>
 			<core:ExtensionPoint name="DialogExtP|Qualification|DemandQualification|CustomAction"/>
 		</m:buttons>

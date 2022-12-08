@@ -272,12 +272,11 @@ sap.ui.define([
 			sap.ui.getCore().byId("idStatusActionSheet").openBy(oEvent.getSource());
 		},
 		getVisible: function (a, b, c, d) {
-		//	d = d === 2 || d === 3;
 			return a && !b && c !== "COMP" && d;
 		},
 		
 		getSetFunction: function (a, b, c, d) {
-			return a && !b && c !== "COMP" && d;// === 1;
+			return a && !b && c !== "COMP" && d;
 		},
 			/**
 		 * Opens the StatusDialog to set status for demand 

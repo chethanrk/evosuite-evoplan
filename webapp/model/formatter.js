@@ -758,7 +758,7 @@ sap.ui.define([
 		formatMapSpot: function (oLatitude, oLongitude) {
 			if (oLatitude && oLongitude) {
 				if (oLatitude === "0.000000000000" && oLongitude === "0.000000000000") {
-					return "0;0;0"; //return "";
+					return "0;0;0"; 
 				} else {
 					return oLatitude + ";" + oLongitude + ";0";
 				}
@@ -768,16 +768,9 @@ sap.ui.define([
 			if (sDes) {
 				return sDes;
 			}
-			// switch (sDes) {
-			// case "Florian Hard":
-			// 	return "#ff6060";
-			// case "Olaf Hartmann":
-			// 	return "#6BDE6B";
-			// default:
 			return "";
-
-			// }
 		},
+		
 		setVisibilityDeleteButton: function (sNodeType) {
 			if (sNodeType === "RES_GROUP") {
 				return false;

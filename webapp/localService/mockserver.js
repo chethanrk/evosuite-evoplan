@@ -80,23 +80,6 @@ sap.ui.define([
 						}
 					});
 
-					/* aRequests.push({
-					    method: "GET",
-					    path: new RegExp("AssetSet(.*)"),
-					    response: function(oXhr, sUrlParams) {
-					        Log.debug("Incoming request for AssetPlanningDataSet");
-					        jQuery.ajax({
-								url: sJsonFilesUrl+"/AssetPlanningDataSet.json",
-								dataType: "json",
-								async: false,
-								success: function (oResponse) {
-									oXhr.respondJSON(200, {}, JSON.stringify(oResponse.data));
-								}
-							});
-					        return true;
-					    }
-					});*/
-
 					aRequests.push({
 						method: "POST",
 						path: new RegExp("CreateAssignment(.*)"),

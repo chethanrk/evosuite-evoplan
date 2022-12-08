@@ -114,7 +114,6 @@ sap.ui.define([
 			if (aGanttDemandDragged === "fromGanttSplit" || !oModel.getProperty(aItems[0])) {
 				aGanttDemandDragged = {};
 				aGanttDemandDragged.bFromGanttSplit = true;
-				// aGanttDemandDragged.sPath = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData/sPath");
 				aGanttDemandDragged.oData = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData")[0];
 				aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE);
 				aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE);
@@ -275,7 +274,7 @@ sap.ui.define([
 				}
 				oQualificationParameters = {
 					DemandMultiGuid: sDemandGuids,
-					ObjectId: sObjectId, //oTargetObj.NodeId, //targetObj.ResourceGroupGuid,
+					ObjectId: sObjectId, 
 					StartTimestamp: oTargetDate,
 					EndTimestamp: oNewEndDate ? oNewEndDate : oTargetDate
 				};
@@ -519,7 +518,6 @@ sap.ui.define([
 			} else {
 				//Condition when we Change at Assignment Nodes
 				if (sPath.length > 60) {
-					//	sAssignmentPath = sPath.substring(0, 27);
 					sAssignmentPath = sPath.split("/AssignmentSet/results/")[0];
 					sAssignmentPath = this._getAssignmentChildPath(sAssignmentPath);
 					sAssignmentPath = sAssignmentPath + "/AssignmentSet/results";

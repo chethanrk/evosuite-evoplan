@@ -2,7 +2,6 @@
 	xmlns:layout="sap.ui.layout" xmlns:date="com.evorait.evotime.block.date" xmlns:log="com.evorait.evotime.block.log"
 	xmlns:smartForm="sap.ui.comp.smartform" xmlns:smartField="sap.ui.comp.smartfield" xmlns:sections="com.evorait.evoplan.block.sections"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
-	<!--<Text text="Hello XML Template" />-->
 	<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
 		<template:if test="{meta>com.sap.vocabularies.UI.v1.HeaderInfo}">
 			<template:with path="meta>com.sap.vocabularies.UI.v1.HeaderInfo" var="header">
@@ -19,9 +18,6 @@
 								</uxap:ObjectPageHeaderActionButton>
 								<uxap:ObjectPageHeaderActionButton id="idSetFunctionHeaderAction" text="{i18n>xbut.buttonExecuteFunction}" tooltip="{i18n>xbut.buttonExecuteFunction}" type="Emphasized"
 									hideIcon="false" hideText="false" press="onClickSetFunction" 	visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_SET_FUNCTION'}], formatter: '.getSetFunction' }">
-									<!--<uxap:dependents>-->
-									<!--	<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.ActionSheetTemplate" type="XML"/>-->
-									<!--</uxap:dependents>-->
 								</uxap:ObjectPageHeaderActionButton>
 								<uxap:ObjectPageHeaderActionButton id="idStatusHeaderAction" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
 									visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_CHANGE_STATUS'}], formatter: '.getVisible' }"

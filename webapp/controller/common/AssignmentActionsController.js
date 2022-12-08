@@ -124,39 +124,12 @@ sap.ui.define([
 			var sDisplayMessage,
 				oResource;
 
-			// if (isReassign && !oData.AllowReassign) {
-			// 	sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
-			// 	this._showAssignErrorDialog([oData.Description], null, sDisplayMessage);
-			// 	return;
-			// }
-
 			this.executeFunctionImport(oModel, oParams, "UpdateAssignment", "POST", mParameters, true).then(function (oData, oResponse) {
 
 			}.bind(this));
 			return;
-			// var oParams = {
-			// 	DateFrom: oData.DateFrom || 0,
-			// 	TimeFrom: {
-			// 		__edmtype: "Edm.Time",
-			// 		ms: oData.DateFrom.getTime()
-			// 	},
-			// 	DateTo: oData.DateTo || 0,
-			// 	TimeTo: {
-			// 		__edmtype: "Edm.Time",
-			// 		ms: oData.DateTo.getTime()
-			// 	},
-			// 	AssignmentGUID: sAssignmentGUID,
-			// 	EffortUnit: oData.EffortUnit,
-			// 	Effort: oData.Effort,
-			// 	ResourceGroupGuid: oData.ResourceGroupGuid,
-			// 	ResourceGuid: oData.ResourceGuid
-			// };
+			
 
-			// if (isReassign && oData.NewAssignPath) {
-			// 	oResource = this.getModel().getProperty(oData.NewAssignPath);
-			// 	oParams.ResourceGroupGuid = oResource.ResourceGroupGuid;
-			// 	oParams.ResourceGuid = oResource.ResourceGuid;
-			// }
 			this.clearMessageModel();
 			if (isReassign && !this.isAssignable({
 					sPath: oData.NewAssignPath
@@ -167,7 +140,6 @@ sap.ui.define([
 				this.showMessageToProceed(null, null, null, null, true, oParams, mParameters);
 			} else {
 				// Proceed to check the Qualification for UpdateAssignment
-				// this.checkQualificationUpdate(oData, oParams, mParameters);
 			}
 		},
 		/**
@@ -196,7 +168,7 @@ sap.ui.define([
 				}
 				oQualificationParameters = {
 					DemandMultiGuid: sDemandGuids,
-					ObjectId: targetObj.NodeId, //targetObj.ResourceGroupGuid,
+					ObjectId: targetObj.NodeId, 
 					StartTimestamp: oTargetDate,
 					EndTimestamp: oNewEndDate ? oNewEndDate : oTargetDate
 				};

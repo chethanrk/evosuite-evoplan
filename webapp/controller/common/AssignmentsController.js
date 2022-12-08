@@ -516,13 +516,6 @@ sap.ui.define([
 					this.callFunctionImport(aAllParameters[i], "UpdateAssignment", "POST", mParameters, bIsLast);
 				}
 			}
-
-			// if (parseInt(i, 10) === aContexts.length - 1) {
-			// 	bIsLast = true;
-			// }
-			// // call function import
-			// this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, bIsLast);
-
 		},
 		/**
 		 * delete assignments in bulk
@@ -613,7 +606,6 @@ sap.ui.define([
 				if (aAbsences[j]) {
 					this.callFunctionImport(aAbsences[j], "ManageAbsence", "POST", oData.mParameters, bIsLast);
 				} else {
-					//
 				}
 			}
 		},
@@ -883,7 +875,7 @@ sap.ui.define([
 
 			oNewAssign = this.getModel().getProperty(oResourcePath);
 			if (oNewAssign.NodeType !== "RESOURCE") {
-				oAssignment = this.setDateTimeParams(oAssignment, oNewAssign.StartDate, oNewAssign.StartTime, oNewAssign.EndDate, oNewAssign.EndTime)
+				oAssignment = this.setDateTimeParams(oAssignment, oNewAssign.StartDate, oNewAssign.StartTime, oNewAssign.EndDate, oNewAssign.EndTime);
 			} else {
 				oAssignment = this.setDateTimeParams(oAssignment, oAssignment.DateFrom, {
 					ms: oAssignment.DateFrom.getTime()

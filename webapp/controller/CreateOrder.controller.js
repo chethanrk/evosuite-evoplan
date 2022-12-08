@@ -234,7 +234,6 @@ sap.ui.define([
 						}
 					} else {
 						for (var j in data.__batchResponses[i].__changeResponses) {
-							// sOrderId = data.__batchResponses[j].__changeResponses[0].data.OrderId;
 							if (data.__batchResponses[j].__changeResponses) {
 								oResponse = data.__batchResponses[j].__changeResponses[0];
 							}

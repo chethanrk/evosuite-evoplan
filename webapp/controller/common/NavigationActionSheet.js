@@ -13,7 +13,6 @@ sap.ui.define([
 		formatter: formatter,
 
 		init: function () {
-			// alert("Nav Action Initiated..");
 		},
 
 		open: function (oView, oParent, oSelectedItem) {

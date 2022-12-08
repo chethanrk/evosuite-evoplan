@@ -355,7 +355,6 @@ sap.ui.define([
 						$expand: "DemandToAssignment"
 					},
 					success: function (oAssignmentData) {
-						//fCheckResourceHierarchyData(oData, fResolve);
 						fResolve(oAssignmentData);
 					}
 				});
