@@ -548,24 +548,18 @@ sap.ui.define([
 		 * @param bEnableResize
 		 * @return {*}
 		 */
-		formatResizeEnable: function (bEnableDragDrop, bEnableResize, sObjectType, bPmAuth, bIw32Auth) {
+		formatResizeEnable: function (bEnableDragDrop, bEnableResize, sObjectType, bAuthCheck) {
 			if (sObjectType === "ASSET") {
 				return false;
 			}
-			if (bPmAuth) {
-				return Boolean(bEnableResize && bIw32Auth);
-			}
-			return bEnableResize;
+			return Boolean(bEnableResize && bAuthCheck);
 		},
 		/**
 		 *
 		 */
-		formatDragAndDropEnable: function (bDragDrop, sObjectType, bPmAuth, bIw32Auth) {
+		formatDragAndDropEnable: function (bDragDrop, sObjectType, bAuthCheck) {
 			if (bDragDrop && sObjectType !== "ASSET") {
-				if (bPmAuth) {
-					return Boolean(bIw32Auth);
-				}
-				return true;
+				return bAuthCheck;
 			}
 			return false;
 		},
@@ -1060,27 +1054,11 @@ sap.ui.define([
 		/**
 		 * @Author Bhumika
 		 * Decide the visibility of edit button in Demand list
-		 * @param sEdit, bAuthPM, bAuthIW32
+		 * @param sEdit, bAuthCheck
 		 * @return {Boolean}
 		 */
-		editBtnVisibility: function (sEdit, bAuthCheck, bAuthIW32) {
-			if (bAuthCheck) {
-				return Boolean(sEdit && bAuthIW32);
-			}
-			return sEdit;
-		},
-
-		/**
-		 * @Author Bhumika
-		 * Decide the visibility of edit button in Demand list
-		 * @param bAuthPM, bAuthIW32
-		 * @return {Boolean}
-		 */
-		formartEnableBtn: function (bAuthCheck, bAuthIW32) {
-			if (bAuthCheck) {
-				return Boolean(bAuthIW32);
-			}
-			return true;
+		editBtnVisibility: function (sEdit, bAuthCheck) {
+			return Boolean(sEdit && bAuthCheck);
 		}
 	};
 });

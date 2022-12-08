@@ -5,8 +5,8 @@
 		tooltip="{ganttModel>DemandDesc} - {ganttModel>STATUS}" fill="{ganttModel>DEMAND_STATUS_COLOR}"
 		stroke="{parts: ['ganttModel>DEMAND_STATUS_COLOR',{value:'-20', model:'ganttModel'}], formatter: '.ganttFormatter.shadeColor'}"
 		strokeWidth="1" yBias="-1"
-		resizable="{parts: ['user>/ENABLE_RESIZE', 'ganttModel>busy', 'viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter: '.isBusyShape'}"
+		resizable="{parts: ['user>/ENABLE_RESIZE', 'ganttModel>busy', 'viewModel>/validateIW32Auth'], formatter: '.isBusyShape'}"
 		selectable="{= ${ganttModel>busy} ? false : true}" strokeOpacity="{= ${ganttModel>busy} ? 0.5 : 1}"
 		opacity="{= ${ganttModel>busy} ? 0.5 : 1}" rx="4" ry="4"
-		draggable="{parts: ['user>/ENABLE_DRAG_DROP', 'ganttModel>busy', 'viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter: '.isBusyShape'}"/>
+		draggable="{parts: ['user>/ENABLE_DRAG_DROP', 'ganttModel>busy', 'viewModel>/validateIW32Auth'], formatter: '.isBusyShape'}"/>
 </core:FragmentDefinition>

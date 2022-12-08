@@ -16,11 +16,8 @@ sap.ui.define([
 		/**
 		 * formatter for for Gantt view
 		 */
-		isBusyShape: function (bAllowProperty, bIsBusy, bPmAuth, bIW32Auth) {
-			if (bPmAuth) {
-				return Boolean(bAllowProperty && !bIsBusy && bIW32Auth);
-			}
-			return bAllowProperty && !bIsBusy;
+		isBusyShape: function (bAllowProperty, bIsBusy, bAuthCheck) {
+			return Boolean(bAllowProperty && !bIsBusy && bAuthCheck);
 		},
 
 		/**
