@@ -99,7 +99,6 @@
 					<smartTable:SmartTable id="idTableHrResources" entitySet="ResourceMasterSet" useExportToExcel="false" useVariantManagement="true"
 						fitContainer="true" height="100%" useTablePersonalisation="true" header="{i18n>xtit.hrResourceTable}" showRowCount="true"
 						enableAutoBinding="true" class="sapUiTinyMarginBegin" requestAtLeastFields="Guid" smartFilterId="idSmartFilterResources">
-						<!--initiallyVisibleFields="Firstname,Lastname"-->
 						<!--layout data used to make the table growing but the filter bar fixed-->
 						<smartTable:layoutData>
 							<FlexItemData growFactor="1"/>

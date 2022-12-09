@@ -28,9 +28,6 @@
 							highlightColor="{ path:'REQUIREMENT_PROFILE_COLOR', formatter:'.formatter.formatHighlighter'}"
 							isPlannerIconVisible="{ parts:[{path: 'NodeType'}, {path:'viewModel>/resourceTreeShowRouteColumn'}], formatter: '.formatter.decidePlannerIconVisiblity' }"
 							nodeType="{path:'NodeType'}" nodeIconColor="{path:'RES_ASGN_AVAILABILITY_FLAG', formatter: '.formatter.formatNodeIconColor' }">
-							<!--<controls:customData>
-								<core:CustomData key="objectId" value="{NodeId}" writeToDom="true"></core:CustomData>
-							</controls:customData>-->
 						</controls:CustomTitle>
 					</table:template>
 				</table:Column>
