@@ -141,7 +141,6 @@ sap.ui.define([
 				}
 
 				if (sRequirementProfileId) {
-					// aRequirementProfileIds.push(entry.oData.REQUIREMENT_PROFILE_ID);
 					aRequirementProfileIds.push(new Filter("REQUIREMENT_PROFILE_ID", FilterOperator.EQ, sRequirementProfileId));
 				}
 			}.bind(this));
@@ -326,6 +325,7 @@ sap.ui.define([
 				this.open(oData.oView, oData.isReassign, oData.aSelectedContexts, oData.isBulkReassign, oData.parameters);
 			}
 		},
+		
 		exit: function () {
 			this._eventBus.unsubscribe("AssignInfoDialog", "selectAssign", this._triggerOpenDialog, this);
 			this._eventBus.unsubscribe("AssignActionsDialog", "selectAssign", this._triggerOpenDialog, this);

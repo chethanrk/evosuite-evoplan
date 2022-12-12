@@ -33,7 +33,6 @@
                                            textAlign="Begin"/>
                                 </form:label>
                                 <form:fields>
-                                    <!--<Input id="idTimeAllocColr" value="{timeAlloc>/priority}" change="onChange" required="true"/>-->
                                     <ComboBox id="idTimeAllocColr" selectedKey="{timeAlloc>/priority}"
 										items="{
 												path: '/UnavailabilityCodesSet'

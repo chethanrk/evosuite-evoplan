@@ -97,7 +97,6 @@ sap.ui.define([
 			aFilters.push(new Filter("TimeFrom", FilterOperator.GE, oTimeFrom));
 			aFilters.push(new Filter("TimeTo", FilterOperator.LE, oTimeTo));
 			aFilters.push(new Filter("ObjectId", FilterOperator.EQ, oResourceHierarchy.ResourceGuid + "//" + oResourceHierarchy.ResourceGroupGuid));
-			// aFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, oResourceHierarchy.ResourceGuid));
 			
 			return aFilters;
 		}

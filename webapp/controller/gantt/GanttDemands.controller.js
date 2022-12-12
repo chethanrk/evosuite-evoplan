@@ -212,7 +212,7 @@ sap.ui.define([
 				this._aSelectedIndices = [];
 			} else {
 				if (!this._aSelectedIndices.includes(index)) {
-					this._aSelectedIndices.push(index)
+					this._aSelectedIndices.push(index);
 				} else {
 					this._aSelectedIndices.splice(this._aSelectedIndices.indexOf(index), 1);
 				}

@@ -139,7 +139,6 @@ sap.ui.define([
 				break;
 
 			case oResourceBundle.getText("xbut.pageWeeklyPlanner"):
-				//oRouter.navTo("TestFull", {});
 				break;
 			case oResourceBundle.getText("xbut.pageMessageCockpit"):
 				if (this._routeValidation("ENABLE_EMP")) {

@@ -15,7 +15,6 @@
 						<ToolbarSpacer/>
 						<Button icon="sap-icon://order-status" tooltip="{i18n>xbut.ChngAssgnStatus}" visible="{viewModel>/Show_Assignment_Status_Button}"
 							enabled="{viewModel>/Disable_Assignment_Status_Button}" press="openAssignmentStatus"/>
-						<!--{user>/ENABLE_QUALIFICATION}-->
 						<HBox id="idCheckRightTechnician" visible="false" class="sapUiMediumMarginEnd">
 							<Switch customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}" state="{viewModel>/CheckRightTechnician}"
 								change="onClickEnableFindTechnician"></Switch>

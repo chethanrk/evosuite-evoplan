@@ -143,8 +143,8 @@ sap.ui.define([
 					oItem.IsSelected = false;
 				}
 			}
-			this.getView().byId("idResourceAssignmentsTable").getModel("viewModel").refresh()
-			oSelectedContexts = oEvent.getSource().getSelectedContexts()
+			this.getView().byId("idResourceAssignmentsTable").getModel("viewModel").refresh();
+			oSelectedContexts = oEvent.getSource().getSelectedContexts();
 			if (oSelectedContexts && oSelectedContexts.length) {
 				oUnassignBtn.setEnabled(true);
 			} else {
@@ -200,7 +200,6 @@ sap.ui.define([
 			this._oViewModel.setProperty(sAssignmentsPath, aNewAssignmentData);
 			// commenting this code to separate the Proceed functionality from unassgin button
 			if (!aNewAssignmentData.length && sOperationType === "updateResource" && this._bIsUpdateProceed) {
-				// MessageToast.show("Update");
 				this._aPayLoad.Start = this._oDateFormat.format(new Date(new Date(this._aPayLoad.Start).setHours(0, 0, 0)));
 				this._aPayLoad.End = this._oDateFormat.format(new Date(new Date(this._aPayLoad.End).setHours(23, 59, 59)));
 				this.proceedToUpdate(this._oSelectedNodeContext.getPath(), this._aPayLoad);
@@ -233,7 +232,7 @@ sap.ui.define([
 					this._oEventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
 				}.bind(this));
 			} else if (sOperationType === "updateResource") {
-				this.getView().byId("idResourceAssignmentsTable").selectAll()
+				this.getView().byId("idResourceAssignmentsTable").selectAll();
 				var aContextPaths = this.getView().byId("idResourceAssignmentsTable").getSelectedContextPaths();
 				if (aContextPaths.length) {
 					this._bIsUpdateProceed = true;

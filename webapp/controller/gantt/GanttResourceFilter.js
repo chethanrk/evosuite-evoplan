@@ -94,7 +94,6 @@ sap.ui.define([
 		 * @returns {null}
 		 */
 		onClear: function (oEvent) {
-			// this._oFilterBar.getControlByKey("ResourceGroupGuid").setSelectedItems([]);
 		},
 
 		/**

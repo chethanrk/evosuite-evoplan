@@ -75,7 +75,6 @@
 					</table:Column>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.AssignmentCountColumn" type="XML"/>
 					<core:ExtensionPoint name="TableExtP|GanttDemands|DemandSet|Table|CustomColoumn"/>
-					<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.OrderIdColumn" type="XML"/>-->
 				</table:columns>
 				<table:dragDropConfig>
 					<dnd:DragInfo sourceAggregation="rows" dragStart="onDragStart" dragEnd="onDragEnd"/>

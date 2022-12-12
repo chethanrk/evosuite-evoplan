@@ -211,7 +211,6 @@ sap.ui.define([
 		 * @param response
 		 */
 		onSuccess: function (data, response) {
-			//var oDialog = this.getDialog();
 			this._oCalendarModel.setData({
 				resources: this._createData(data)
 			});
@@ -613,7 +612,6 @@ sap.ui.define([
 			};
 			for (var l = 0; l < data.__batchResponses.length; l++) {
 				var oData = data.__batchResponses[l] ? data.__batchResponses[l].data : {};
-				// as 
 				if (oData.results.length > 0 && oData.results[0].__metadata.type === "com.evorait.evoplan.Assignment") {
 					oDataObject.oAssignData = oData;
 				} else if (oData.results.length > 0 && oData.results[0].__metadata.type === "com.evorait.evoplan.ResourceAvailability") {

@@ -105,7 +105,7 @@ sap.ui.define([
 			}
 			if (!sPath) {
 				msg = this._component.getModel("i18n").getResourceBundle().getText("ymsg.noChange");
-				this.showMessageToast(msg)
+				this.showMessageToast(msg);
 				return;
 			}
 			return new Promise(function (resolve, reject) {

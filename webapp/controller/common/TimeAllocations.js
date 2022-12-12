@@ -83,7 +83,7 @@ sap.ui.define([
 				this._aResourceGuids = this.getResourceGuids(aSelectedPaths, this._oModel);
 			}
 
-			oDialog.setTitle(this._resourceBundle.getText("xtit.timeAllocations"))
+			oDialog.setTitle(this._resourceBundle.getText("xtit.timeAllocations"));
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 
 			// connect dialog to view (models, lifecycle)
@@ -197,7 +197,6 @@ sap.ui.define([
 				oData.AvailType = Fragment.byId(this._id, "idTimeAllocAvailType").getSelectedKey();
 				oData.Description = Fragment.byId(this._id, "idCreateDescription").getValue();
 			} else {
-				//oData.BlockPercentage = 0;
 			}
 			oChanges = this._oModel.hasPendingChanges() ? this._oModel.getPendingChanges()[aPath.join("")] : undefined;
 			if (oChanges && sProperty !== "DELETE") {
@@ -612,8 +611,6 @@ sap.ui.define([
 				aAvailabilityData,
 				iActualAvailHours,
 				iUpdatedAvailableHour;
-			// iActualAvailHour = this.AVAILABLE_HOURS,
-			// iUpdatedAvailableHour;
 			this._oViewModel.setProperty("/timeAllocations/createData", _.clone(this._oViewModel.getProperty("/timeAllocations/createDataCopy")));
 
 			aAvailabilityData = this._oViewModel.getProperty("/timeAllocations/createData");
@@ -625,7 +622,7 @@ sap.ui.define([
 						iUpdatedAvailableHour = iActualAvailHours * (100 - iUpdatedBlockPer) * 0.01;
 						aAvailabilityData[i].BLOCKED_HOURS = parseFloat(iActualAvailHours - iUpdatedAvailableHour).toFixed(1);
 					} else {
-						aAvailabilityData[i].BLOCKED_HOURS = 0
+						aAvailabilityData[i].BLOCKED_HOURS = 0;
 					}
 				}
 			}
@@ -845,7 +842,7 @@ sap.ui.define([
 						filters: [new Filter("AvailabilityTypeGroup", FilterOperator.EQ, "L"), new Filter("AvailabilityTypeGroup", FilterOperator.EQ,
 							"N")],
 						and: false
-					}))
+					}));
 				} else if (this._bShowBlockers) {
 					aFilters.push(new Filter("AvailabilityTypeGroup", FilterOperator.EQ, "L"));
 				} else {

@@ -877,7 +877,6 @@ sap.ui.define([
 			} else {
 				oLegendList.setSelectedItem(oLegendList.getSelectedItem(), false);
 			}
-			// oStatusFilter.setTokens(aTokens);
 			var oFilterData = {};
 			oFilterData.Status = {
 				items: [],
@@ -1146,10 +1145,6 @@ sap.ui.define([
 
 		},
 
-		_showAssignedDemands: function () {
-			this._bShowAssignment = true;
-			this._oDraggableTable.rebindTable();
-		},
 
 		/**
 		 * Reset the map selection in the Model
@@ -1331,8 +1326,6 @@ sap.ui.define([
 				responses) {
 				oCalendar.setBusy(false);
 				this.getModel("viewModel").setProperty("/mapSettings/aAssignedAsignmentsForPlanning", responses);
-				// this._refreshMapView();
-				// this._oEventBus.publish("BaseController", "refreshMapTreeTable", {});
 				this.oCalendarPopover.close();
 				this.getOwnerComponent().singleDayPlanner.open(this.getView(), sResourcePath, {
 					StartDate: oTargetDate,

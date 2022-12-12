@@ -10,8 +10,6 @@
 					<FlexBox id="idResToolbar" alignItems="Start" justifyContent="SpaceBetween">
 						<items>
 							<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.TreeExpandCollapse" type="XML"/>
-							<!--<CheckBox id="idCheckRightTechnician" text="Qualification Status" selected="{viewModel>/CheckRightTechnician}"-->
-							<!--	visible="{user>/ENABLE_QUALIFICATION}" select="onClickEnableFindTechnician"/>-->
 							<core:ExtensionPoint name="PageExtP|ResourceTree|ResourceHierarchySet|Header|Actions|Left"/>
 							<HBox visible="{user>/ENABLE_QUALIFICATION}">
 								<Switch id="idCheckRightTechnician" customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}"
@@ -40,7 +38,6 @@
 			</f:DynamicPageHeader>
 		</f:header>
 		<f:content>
-			<!--<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.ResourceTreeTable" type="XML"/>-->
 		</f:content>
 		<f:footer>
 			<OverflowToolbar id="idResourceTreeFooterToolbar">

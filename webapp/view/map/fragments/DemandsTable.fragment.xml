@@ -73,18 +73,9 @@
 							tooltip="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncTooltip' }"></core:Icon>
 					</table:template>
 				</table:Column>
-				<!--<table:Column hAlign="Center" width="4rem">-->
-				<!--				<table:customData>-->
-				<!--					<core:CustomData key="p13nData" value='\{"columnKey": "ACTUAL_WORK_TIME", "leadingProperty": "ACTUAL_WORK_TIME"}'/>-->
-				<!--				</table:customData>-->
-				<!--				<Label text="{/#Demand/ACTUAL_WORK_TIME/@sap:label}"/>-->
-				<!--				<table:template>-->
-				<!--					<Text text="{path:'ACTUAL_WORK_TIME', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 3 }}"/>-->
-				<!--				</table:template>-->
-				<!--			</table:Column>-->
+			
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.AssignmentCountColumn" type="XML"/>
 				<core:ExtensionPoint name="TableExtP|Map|DemandSet|Table|CustomColoumn"/>
-				<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.OrderIdColumn" type="XML"/>-->
 			</table:columns>
 			<table:dragDropConfig>
 				<dnd:DragInfo sourceAggregation="rows" groupName="demandView" dragStart="onDragStart" dragEnd="onDragEnd"/>

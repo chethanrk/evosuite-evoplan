@@ -377,7 +377,6 @@ sap.ui.define([
 				if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGNMENT_STATUS") && this._oView.getModel("viewModel").getProperty(
 						"/Show_Assignment_Status_Button")) {
 					this._oView.getModel("viewModel").setProperty("/Show_Assignment_Status_Button", false);
-					//	this._oView.getModel("viewModel").setProperty("/Show_Assignment_Status_Button", false );
 				}
 			}
 		},
@@ -385,8 +384,7 @@ sap.ui.define([
 		 * Deselect from assignments list items not allowed to check Find Technician
 		 */
 		_deselectAssignments: function (sChannel, oEvent, oData) {
-			var oSelectedContextPaths = [],
-				sAssignmentPath,
+			var	sAssignmentPath,
 				oItemsAssignmentList;
 			oItemsAssignmentList = this._oAssignMentTable.getItems();
 			for (var i = 0; i < oItemsAssignmentList.length; i++) {

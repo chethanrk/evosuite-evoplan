@@ -286,9 +286,6 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshAssetCal", {});
 			} else if (oParameter.bFromPlannCal) {
 				eventBus.publish("AssignInfoDialog", "RefreshCalendar", {});
-				// eventBus.publish("BaseController", "refreshTreeTable", {});
-				// eventBus.publish("BaseController", "refreshDemandTable", {});
-				// eventBus.publish("BaseController", "refreshDemandOverview", {});
 			} else if (oParameter.bFromDetail) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				eventBus.publish("BaseController", "refreshDemandOverview", {});
@@ -297,10 +294,8 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshGanttChart", oData);
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (oParameter.bFromMap) {
-				// eventBus.publish("BaseController", "resetMapSelection", {});
 				eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				eventBus.publish("BaseController", "refreshMapView", {});
-				// eventBus.publish("BaseController", "refreshMapDemandTable", {});
 			} else if (oParameter.bFromGanttSplit) {
 				eventBus.publish("BaseController", "refreshGanttChart", oData);
 			} else if (oParameter.bFromDemandSplit) {
@@ -934,9 +929,7 @@ sap.ui.define([
 					actions: [sDiscard, sCancel, sSave],
 					styleClass: this.getOwnerComponent().getContentDensityClass(),
 					onClose: function (sAction) {
-						// sap.m.MessageToast.show("Action selected: " + sAction);
 						resolve(sAction);
-						// MessageToast.show("Action selected: " + sAction);
 					}
 				});
 			}.bind(this));

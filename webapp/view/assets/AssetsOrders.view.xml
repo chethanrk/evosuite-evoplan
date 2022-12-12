@@ -35,18 +35,9 @@
 				busyIndicatorDelay="0" appointmentsVisualization="Filled" appointmentSelect="showDetails" showEmptyIntervalHeaders="false"
 				showWeekNumbers="true" class="sapUiNoContentPadding" intervalSelect="intervalSelect" groupAppointmentsMode="Expanded" viewKey="Month"
 				rowSelectionChange="onRowSelectionChange">
-				<!--<toolbarContent>
-                            <Title text="{i18n>xtit.orders}"
-                                   titleStyle="H4"
-                            />
-
-                        </toolbarContent>-->
 				<rows>
 					<PlanningCalendarRow icon="{ path:'TechnicalObjectType', formatter:'.formatter.getAssetIcon' }" title="{Description}"
 						text="{TechnicalObject}" appointments="{path : 'AssetPlanningDataSet', templateShareable: 'true'}">
-						<!--<customData>
-                                    <core:CustomData key="emp-name" value="{name}" writeToDom="true"/>
-                                </customData>-->
 						<appointments>
 							<unified:CalendarAppointment startDate="{StartTimestamp}" endDate="{EndTimestamp}" title="{Description}" text="{OrderId}"
 								icon="{STATUS_ICON}" tooltip="{ parts:[ {path:'Description'}, {path:'STATUS_DESC'} ], formatter:'.formatter.formatDemandTooltip' }"
@@ -58,8 +49,6 @@
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
-				<!--<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"-->
-				<!--	type="Emphasized" press="onMessagePopoverPress"></Button>-->
 				<core:ExtensionPoint name="PageExtP|Asset|AssetPlanningDataSet|Footer|Left"/>
 				<ToolbarSpacer/>
 				<Button id="assignButton" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" icon="sap-icon://activity-individual"

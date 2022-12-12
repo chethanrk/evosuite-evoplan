@@ -488,7 +488,6 @@ sap.ui.define([
 			var aRequirementProfileIds = [];
 			oData.forEach(function (entry) {
 				if (entry.oData.REQUIREMENT_PROFILE_ID) {
-					// aRequirementProfileIds.push(entry.oData.REQUIREMENT_PROFILE_ID);
 					aRequirementProfileIds.push(new Filter("REQUIREMENT_PROFILE_ID", FilterOperator.EQ, entry.oData.REQUIREMENT_PROFILE_ID));
 				}
 			});
@@ -588,7 +587,6 @@ sap.ui.define([
 		_deselectDemands: function (sChannel, oEvent, oData) {
 			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
 				sDemandPath;
-			// oItemsAssignmentList = this._oAssignMentTable.getItems();
 			for (var i = 0; i < oSelectedIndices.length; i++) {
 				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
 				if (oData.oDeselectAssignmentsContexts.includes(sDemandPath)) {

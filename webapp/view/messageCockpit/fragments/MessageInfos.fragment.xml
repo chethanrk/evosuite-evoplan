@@ -9,9 +9,7 @@
             class="sapUiPopupWithPadding"
             placement="Auto"
             contentWidth="39%">
-        <!--<endButton>-->
-        <!--    <Button text="{i18n>xbut.buttonClose}" press="handleCloseButton" />-->
-        <!--</endButton>-->
+       
         <content>
             	<smartTable:SmartTable 
 						id="idMessageTable" 

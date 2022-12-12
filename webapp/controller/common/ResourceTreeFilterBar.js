@@ -59,12 +59,9 @@ sap.ui.define([
 			this._sId = oView.getId();
 			this._oView = oView;
 			this._component = this._oView.getController().getOwnerComponent();
-			// this._oDroppableTable = oView.byId("droppableTable");
-			// this._oDataTable = this._oDroppableTable.getTable();
 			this._viewModel = this._component.getModel("viewModel");
 			this._userModel = this._component.getModel("user"); 
 			//use global promise for getting when filterbar was fully initalized
-			// this._isInitalizedProm = new Promise(function (resolve, reject) {
 			// create fragment lazily
 			return Fragment.load({
 				name: "com.evorait.evoplan.view.common.fragments.ResourceTreeFilterBar",
@@ -77,7 +74,6 @@ sap.ui.define([
 				//Filterbar is now official initialized
 				this._oFilterBar.attachInitialized(function (oEvent) {
 					this.onInitialized(oEvent);
-					// resolve();
 				}.bind(this));
 				// connect filterbar to view (models, lifecycle)
 				oLayout.addContent(content);
@@ -135,7 +131,6 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onBeforeVariantFetch: function (oEvent) {
-			// this.getInitalizedPromise().then(function () {
 			if (this._oVariantMangement.getSelectionKey() === "*standard*") {
 				this._setDateFilterControls(this._aCustomFilters.viewType.default);
 				this._updateCustomFilterData();
@@ -145,7 +140,6 @@ sap.ui.define([
 			}
 			this._updateCustomFilterData();
 			this._oFilterBar.setFilterData(this._oCustomFilterData);
-			// }.bind(this));
 		},
 
 		/**
@@ -153,7 +147,6 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onFilterBarChanged: function (oEvent) {
-			// this._updateCustomFilterData();
 		},
 
 		/**
@@ -476,7 +469,6 @@ sap.ui.define([
 		 */
 		_triggerSearch: function () {
 			this._oFilterBar.search();
-			// this._oDataTable.getBinding("rows").refresh();
 		},
 
 		/**
@@ -557,7 +549,7 @@ sap.ui.define([
 			} else if (sDateRangeType) {
 				selectedTimeFormat = formatter.getResourceFormatByKey(sDateRangeType);
 				configStartDate = this._userModel.getProperty(selectedTimeFormat.configStartDate);
-				configStartEnd = this._userModel.getProperty(selectedTimeFormat.configStartEnd)
+				configStartEnd = this._userModel.getProperty(selectedTimeFormat.configStartEnd);
 				if(configStartDate && configStartEnd)
 				{
 					return [this.formatter.date(configStartDate), this.formatter.date(configStartEnd)];

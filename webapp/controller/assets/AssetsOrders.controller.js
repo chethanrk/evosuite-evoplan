@@ -60,9 +60,8 @@ sap.ui.define([
 			this.setModel(oTimeAllocModel, "timeAlloc");
 			// Set default date range
 			this._setDefaultDateRange();
-			// this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
-			// this.getView().addDependent(this._oMessagePopover);
 		},
+		
 		/**
 		 * Similar to onAfterRendering, but this hook is invoked before the controller's View is re-rendered
 		 * (NOT before the first rendering! onInit() is used for that one!).
@@ -523,8 +522,8 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onMessagePopoverPress: function (oEvent) {
-			// this._oMessagePopover.openBy(oEvent.getSource());
 		},
+		
 		/**
 		 * Multi Assignment from asset view. Opens the Tree table dialog to select resource
 		 * @since 2.1

@@ -39,8 +39,6 @@
 							<Text text="{parts:[ {path:'viewModel>oData/FIXED_ASSGN_START_DATE'}, {path:'viewModel>oData/FIXED_ASSGN_START_TIME'} ], formatter:'.formatter.onDisplayOperationTimes'}"/>
 							<Text text="{parts:[ {path:'viewModel>oData/FIXED_ASSGN_END_DATE'}, {path:'viewModel>oData/FIXED_ASSGN_END_TIME'} ], formatter:'.formatter.onDisplayOperationTimes'}"/>
 							<core:ExtensionPoint name="TableExtP|OperationTimeCheck|DraggedDemands|CustomCell" ></core:ExtensionPoint>
-							<!--<Text text="{path:'viewModel>oData/FIXED_ASSGN_START_DATE', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium'}}"/>-->
-							<!--<Text text="{path:'viewModel>oData/FIXED_ASSGN_END_DATE', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium'}}"/>-->
 						</cells>
 					</ColumnListItem>
 				</items>
