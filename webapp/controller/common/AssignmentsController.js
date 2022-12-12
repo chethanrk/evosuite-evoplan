@@ -363,7 +363,7 @@ sap.ui.define([
 
 			if (isReassign && !oData.AllowReassign) {
 				sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
-				this._showAssignErrorDialog([oData.Description], null, sDisplayMessage);
+				this._showAssignErrorDialog([this.getMessageDescWithOrderID(oData, oData.Description)], null, sDisplayMessage);
 				//when from new gantt shape busy state needs removed
 				if (mParameters.bCustomBusy && (mParameters.bFromNewGantt || mParameters.bFromNewGanttSplit)) {
 					this._oView.getModel("ganttModel").setProperty(mParameters.sSourcePath + "/busy", false);
@@ -605,8 +605,7 @@ sap.ui.define([
 				// call function import
 				if (aAbsences[j]) {
 					this.callFunctionImport(aAbsences[j], "ManageAbsence", "POST", oData.mParameters, bIsLast);
-				} else {
-				}
+				} else {}
 			}
 		},
 		/**

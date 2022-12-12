@@ -371,7 +371,7 @@ sap.ui.define([
 							});
 							oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
 						} else {
-							aNonAssignableDemands.push(oData.DemandDesc);
+							aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData));
 						}
 					} else {
 						aPathsData.push({
@@ -394,7 +394,7 @@ sap.ui.define([
 						});
 					} else {
 						aDemands[j].setSelected(false);
-						aNonAssignableDemands.push(oData.Description);
+						aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData, oData.Description));
 						delete aDemands[j];
 					}
 				}
@@ -1033,6 +1033,22 @@ sap.ui.define([
 			this.getOwnerComponent().TimeAllocations.open(this.getView(), this.selectedResources, this._mParameters, "timeAlloc");
 
 		},
+
+		/**
+		 * concatinate demand description with OrderID/Notification to display in error message dialog 
+		 * @param oData
+		 * @param Desc
+		 * Since 2301.4.0
+		 * @Author Rakesh Sahu
+		 */
+		getMessageDescWithOrderID: function (oData, Desc) {
+			Desc = Desc ? Desc : oData.DemandDesc;
+			if (oData.ORDERID) {
+				return oData.ORDERID + " / " + oData.OPERATIONID + "  " + Desc
+			} else {
+				return oData.NOTIFICATION + "  " + Desc;
+			}
+		}
 	});
 
 });

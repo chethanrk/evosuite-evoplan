@@ -110,7 +110,7 @@ sap.ui.define([
 				if (oDemand.ALLOW_FINDRESOURCE) {
 					oAllowedSelectedPaths.push(aSelectedPaths[i]);
 				} else {
-					oNotAllowedPaths.push(oDemand.DemandDesc);
+					oNotAllowedPaths.push(this.getMessageDescWithOrderID(oDemand));
 					oDeselectAssignmentsContexts.push(aSelectedPaths[i].sPath);
 				}
 			}

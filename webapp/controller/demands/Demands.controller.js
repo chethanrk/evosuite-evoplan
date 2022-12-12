@@ -525,7 +525,7 @@ sap.ui.define([
 					});
 					oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
 				} else {
-					aNonAssignableDemands.push(oData.DemandDesc);
+					aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData));
 				}
 			}
 			return {
