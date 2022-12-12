@@ -715,7 +715,7 @@ sap.ui.define([
 				if (oData.ALLOW_ASSIGN) {
 					this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, this._mParameters);
 				} else {
-					this._showAssignErrorDialog([oData.DemandDesc]);
+					this._showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
 				}
 			} else {
 				//Operation performed from Demands Toolbar
