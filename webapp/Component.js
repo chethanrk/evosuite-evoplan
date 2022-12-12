@@ -108,311 +108,34 @@ sap.ui.define([
 			// initialize the error handler with the component
 			this._oErrorHandler = new ErrorHandler(this);
 
-			// set the device model
-			this.setModel(models.createDeviceModel(), "device");
-			var oViewModel = new JSONModel({
-				treeSet: "ResourceHierarchySet",
-				ganttTreeSet: "GanttResourceHierarchySet",
-				subFilterEntity: "Demand",
-				subTableSet: "DemandSet",
-				tableBusyDelay: 0,
-				persistencyKeyTable: "evoPlan_ui",
-				persistencyKeyTree: "evoPlan_resource",
-				persistencyKeyDemandTable: "evoPlan_demands",
-				persistencyKeyGanttDemandFilter: "evoPlan_GanttResourceFilter",
-				counterResourceFilter: "",
-				showStatusChangeButton: false,
-				busy: true,
-				delay: 0,
-				assetStartDate: new Date(),
-				dragSession: null, // Drag session added as we are keeping dragged data in the model.
-				gantDragSession: null, // Drag session from Gantt View added as we are keeping dragged data in the model.
-				detailPageBreadCrum: "",
-				capacityPlanning: false,
-				remainingWork: false,
-				dragDropSetting: {
-					isReassign: false
-				},
-				splitterDivider: "30%",
-				ganttSelectionPane: "28%",
-				showUtilization: false,
-				selectedHierarchyView: "TIMENONE",
-				enableReprocess: false,
-				launchMode: Constants.LAUNCH_MODE.BSP,
-				DefaultDemandStatus: "",
-				ganttSettings: {
-					active: false,
-					shapeOperation: {
-						unassign: false,
-						reassign: false,
-						change: false
-					},
-					aGanttSplitDemandData: false,
-					GanttPopOverData: {}
-				},
-				showDemands: true,
-				mapSettings: {
-					busy: false,
-					filters: [],
-					selectedDemands: [],
-					routeData: [],
-					checkedDemands: [],
-					assignedDemands: [],
-					bRouteDateSelected: false,
-					aAssignedAsignmentsForPlanning: [],
-					droppedResources: [],
-					bIsSignlePlnAsgnSaved: false
-				},
-				resourceTreeShowRouteColumn: false,
-				resourceFilterforRightTechnician: false,
-				CheckRightTechnician: false,
-				WarningMsgResourceTree: false,
-				resourceQualification: {
-					AssignBtnVisible: false,
-					AssignBtnEnable: false,
-					FindResourceBtnVisible: false,
-					FindResourceBtnEnable: false
-				},
-				manageResourcesSettings: {
-					selectedRow: false,
-					operationType: "",
-					Assignments: {},
-					removedIndices: [],
-					draggedItemContext: []
-				},
-				densityClass: this.getContentDensityClass(),
-				isOpetationLongTextPressed: false,
-				oResponseMessages: [],
-				aFixedAppointmentsList: {},
-				bDemandEditMode: false,
-				ganttResourceFiltersFromPin: [],
-				ganttDateRangeFromMap: [],
-				iFirstVisibleRowIndex: -1,
-				availabilities: {
-					data: [],
-					isToAssign: false
-				},
-				timeAllocations: {
-					countAll: 0,
-					countBlockers: 0,
-					countAbsences: 0,
-					enableTabs: true,
-					createData: [],
-					createDataCopy: [],
-					StartDate: "",
-					EndDate: ""
-				},
-				validateIW31Auth: true,
-				validateIW32Auth: true
-			});
-			this.setModel(oViewModel, "viewModel");
+			//Initializing all the global models
+			this._createDataModels();
 
-			//creates the Information model and sets to the component
-			this.setModel(models.createInformationModel(this), "InformationModel");
-
+			//Initialzing Dialogs
 			this._initDialogs();
-
-			//Creating the Global assignment model for assignInfo Dialog
-			this.setModel(models.createAssignmentModel({}), "assignment");
-
-			//Creating the Global assignment model for assignInfo Dialog
-			this.setModel(models.createNavLinksModel([]), "navLinks");
-
-			//Creating the Global assignment model for assignInfo Dialog
-			this.setModel(models.createMapConfigModel([]), "mapConfig");
-
-			this.setModel(models.createMessageCounterModel({
-				S: 0,
-				E: 0,
-				I: 0
-			}), "messageCounter");
 
 			//proof if there are a status set and button in footer should be visible
 			this._getFunctionSetCount();
 
-			this.setModel(models.createUserModel({
-				ENABLE_ASSET_PLANNING: false,
-				ENABLE_EVOORDERRELATE_BUTTON: false,
-				ENABLE_EVORESOURCE_BUTTON: false,
-				ENABLE_IW32_AUTH_CHECK: false,
-				ENABLE_IW31_AUTH_CHECK: false,
-				ENABLE_PM_AUTH_CHECK: false
-			}), "user");
-
-			//Creating the Global message model from MessageManager
-			var oMessageModel = new JSONModel();
-			oMessageModel.setData([]);
-			this.setModel(oMessageModel, "MessageModel");
-
-			//Creating the global for planning calendar
-			var oCalendarModel = new JSONModel();
-			oCalendarModel.setSizeLimit(9999999999);
-			oCalendarModel.setData({});
-			this.setModel(oCalendarModel, "calendarModel");
-			// Resource groups model
-			this.setModel(new JSONModel([]), "resGroups");
-
-			//Cost Element Model for Vendor Assignment
-			var oCostElementModel = new JSONModel();
-			oCostElementModel.setSizeLimit(9999999999);
-			oCostElementModel.setData({});
-			this.setModel(oCostElementModel, "oCostElementModel");
-
-			//Currency Model for Vendor Assignment
-			var oCurrencyModel = new JSONModel();
-			oCurrencyModel.setSizeLimit(9999999999);
-			oCurrencyModel.setData({});
-			this.setModel(oCurrencyModel, "oCurrencyModel");
-
-			//Creating Model for Availability Group in Gantt
-			this.setModel(new JSONModel({
-				timeAllocation: [],
-				manageAbsence: []
-			}), "availabilityGroup");
-
-			this.setModel(models.createHelperModel({
-				navLinks: {}
-			}), "templateProperties");
-
-			this.setModel(models.createHelperModel({
-				data: {
-					children: []
-				},
-				pendingChanges: {}
-			}, true), "ganttModel");
-			this.setModel(models.createHelperModel({
-				data: {
-					children: []
-				}
-			}, false), "ganttOriginalData");
-
-			var oSinglePlanningModel = models.createHelperModel({
-				hasChanges: false,
-				appointments: [],
-				legendShown: false,
-				legendItems: [],
-				legendAppointmentItems: []
-			});
-			oSinglePlanningModel.setDefaultBindingMode("TwoWay");
-			this.setModel(oSinglePlanningModel, "mapSinglePlanning");
-
 			this.DialogTemplateRenderer = new DialogTemplateRenderController(this);
 
-			// Message popover link
-			var oLink = new Link({
-				text: "{i18n>xtit.showMoreInfo}",
-				href: "",
-				target: "_blank"
-			});
+			//Message Popover Initialzation
+			this._createMessagePopover();
 
-			// Message popover template
-			var oMessageTemplate = new MessagePopoverItem({
-				type: "{MessageModel>type}",
-				title: "{MessageModel>title}",
-				description: "{MessageModel>description}",
-				subtitle: "{MessageModel>subtitle}",
-				counter: "{MessageModel>counter}",
-				link: oLink
-			});
-
-			//Message Popover
-			var oMessagePopover = new MessagePopover({
-				items: {
-					path: "MessageModel>/",
-					template: oMessageTemplate
-				}
-			});
-			this._oMessagePopover = oMessagePopover;
-
+			//Fetching Resource Groups
 			this._getResourceGroups();
 
 			UIComponent.prototype.init.apply(this, arguments);
 			if (sap.ushell && sap.ushell.Container) {
 				this.getModel("viewModel").setProperty("/launchMode", Constants.LAUNCH_MODE.FIORI);
 			}
-			var aPromises = [];
-			aPromises.push(this._getSystemInformation());
-			aPromises.push(this._getData("/NavigationLinksSet", [new Filter("LaunchMode", FilterOperator.EQ, this.getModel("viewModel").getProperty(
-					"/launchMode")),
-				new Filter("LaunchMode", FilterOperator.EQ, "ITS")
-			]));
 
-			aPromises.push(this._getData("/MapProviderSet", [], {
-				$expand: ["MapSource", "MapServiceLinks"],
-			}));
-
-			//Fetching Cost Element F4 for Vendor Assignment
-			aPromises.push(this._getData("/ShCostelementSet", [], {}));
-
-			//Fetching Currency F4 for Vendor Assignment
-			aPromises.push(this._getData("/ShCurrencySet", [], {}));
-
-			//sets user model - model has to be intantiated before any view is loaded
-			Promise.all(aPromises).then(function (data) {
-				this.getModel("user").setData(data[0]);
-				if (data[1].results.length > 0) {
-					this.getModel("navLinks").setData(data[1].results);
-				}
-				if (data[2].results.length > 0) {
-					this.getModel("mapConfig").setData(data[2].results[0]);
-					this.initializeMapProvider();
-				}
-				if (data[3].results.length > 0) {
-					this.getModel("oCostElementModel").setData(data[3].results);
-				}
-				if (data[4].results.length > 0) {
-					this.getModel("oCurrencyModel").setData(data[4].results);
-				}
-				// Initialize websocket
-				if (data[0].ENABLE_PUSH_DEMAND) {
-					WebSocket.init(this);
-				}
-
-				//Intialize variables for SAP authorization
-				this._handleAuthorization();
-
-				// create the views based on the url/hash
-				this.getRouter().initialize();
-			}.bind(this));
-
-			//lodating Avalability type for Time Allocation in Gantt
-			this._getAvailabilityGroup("L");
-
-			//loading Availability type for Manage Absence in Gantt
-			this._getAvailabilityGroup("N");
+			//Initial Batch Calls
+			this._initialBatchCalls();
 
 			// Not able load more than 100 associations
 			this.getModel().setSizeLimit(600);
 
-			this._setApp2AppLinks();
-
-		},
-
-		/**
-		 * read app2app navigation links from backend
-		 */
-		_setApp2AppLinks: function () {
-			if (sap.ushell && sap.ushell.Container) {
-				this.getModel("viewModel").setProperty("/launchMode", Constants.LAUNCH_MODE.FIORI);
-			}
-			var oFilter = new Filter("LaunchMode", FilterOperator.EQ, this.getModel("viewModel").getProperty("/launchMode")),
-				mProps = {};
-
-			this.oTemplatePropsProm = new Promise(function (resolve) {
-				this._getData("/NavigationLinksSet", [oFilter])
-					.then(function (data) {
-						data.results.forEach(function (oItem) {
-							if (oItem.Value1 && Constants.APPLICATION[oItem.ApplicationId]) {
-								if (Constants.PROPERTY || oItem.Value2 !== "") {
-									oItem.Property = oItem.Value2 || Constants.PROPERTY[oItem.ApplicationId];
-									mProps[oItem.Property] = oItem;
-								}
-							}
-						}.bind(this));
-						this.getModel("templateProperties").setProperty("/navLinks/", mProps);
-						resolve(mProps);
-					}.bind(this));
-			}.bind(this));
 		},
 
 		/**
@@ -540,64 +263,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Extract messages from a the MessageModel.
-		 *
-		 * @Author Rahul
-		 * @param {object} oData data of MessageModel
-		 * @return
-		 * @function
-		 * @public
-		 */
-		createMessages: function () {
-			var aMessages = JSON.parse(JSON.stringify(this.getModel("MessageModel").getData()));
-			var iCountError = 0,
-				iCountWarning = 0,
-				iCountSuccess = 0,
-				iCounter = 0,
-				iCountInfo = 0;
-			var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
-			var oData = oMessageModel.getData();
-			var oResourceBundle = this.getModel("i18n").getResourceBundle();
-
-			if (oData.length === 0) {
-				return;
-			}
-
-			for (var i = 0; i < oData.length; i++) {
-				var item = {};
-				if (oData[i].type === "Error") {
-					item.title = oResourceBundle.getText("xtit.errorMsg");
-					iCountError = iCountError + 1;
-					iCounter = iCountError;
-				}
-				if (oData[i].type === "Warning") {
-					item.title = oResourceBundle.getText("xtit.warningMsg");
-					iCountWarning = iCountWarning + 1;
-					iCounter = iCountWarning;
-				}
-				if (oData[i].type === "Success") {
-					item.title = oResourceBundle.getText("xtit.successMsg");
-					iCountSuccess = iCountSuccess + 1;
-					iCounter = iCountSuccess;
-				}
-				if (oData[i].type === "Information") {
-					item.title = oResourceBundle.getText("xtit.informationMsg");
-					iCountInfo = iCountInfo + 1;
-					iCounter = iCountInfo;
-				}
-				item.type = oData[i].type;
-				item.description = oData[i].message;
-				item.subtitle = oData[i].message;
-				item.counter = iCounter;
-
-				if (!JSON.stringify(aMessages).includes(JSON.stringify(item))) {
-					aMessages.push(item);
-				}
-
-			}
-			this.getModel("MessageModel").setData(aMessages);
-		},
-		/**
 		 * Calls the GetSystemInformation 
 		 */
 		_getSystemInformation: function () {
@@ -614,6 +279,7 @@ sap.ui.define([
 				});
 			}.bind(this));
 		},
+
 		/**
 		 * Calls the GetSystemInformation 
 		 */
@@ -632,6 +298,7 @@ sap.ui.define([
 				});
 			}.bind(this));
 		},
+
 		/**
 		 * gets the Count of Demand functions configured
 		 */
@@ -647,6 +314,7 @@ sap.ui.define([
 				}
 			});
 		},
+
 		/**
 		 * Get All resource groups
 		 * @private
@@ -666,29 +334,30 @@ sap.ui.define([
 				}
 			});
 		},
+
 		/**
 		 * Get AvailabilityType for Time Allocation
 		 * @private
 		 */
-		_getAvailabilityGroup: function (sAvailabilityTypeGroup) {
-			this.getModel().read("/SHAvailabilityTypeSet", {
-				filters: [
-					new Filter("AVAILABILITY_TYPE_GROUP", FilterOperator.EQ, sAvailabilityTypeGroup)
-				],
-				success: function (oData, oResponse) {
-					if (oData && oData.results.length > 0) {
-						if (sAvailabilityTypeGroup === "L") {
-							this.getModel("availabilityGroup").setProperty("/timeAllocation", oData.results);
-						} else {
-							this.getModel("availabilityGroup").setProperty("/manageAbsence", oData.results);
-						}
-					}
-				}.bind(this),
-				error: function (oError) {
-					//Handle Error
-				}
-			});
-		},
+		// _getAvailabilityGroup: function (sAvailabilityTypeGroup) {
+		// 	this.getModel().read("/SHAvailabilityTypeSet", {
+		// 		filters: [
+		// 			new Filter("AVAILABILITY_TYPE_GROUP", FilterOperator.EQ, sAvailabilityTypeGroup)
+		// 		],
+		// 		success: function (oData, oResponse) {
+		// 			if (oData && oData.results.length > 0) {
+		// 				if (sAvailabilityTypeGroup === "L") {
+		// 					this.getModel("availabilityGroup").setProperty("/timeAllocation", oData.results);
+		// 				} else {
+		// 					this.getModel("availabilityGroup").setProperty("/manageAbsence", oData.results);
+		// 				}
+		// 			}
+		// 		}.bind(this),
+		// 		error: function (oError) {
+		// 			//Handle Error
+		// 		}
+		// 	});
+		// },
 
 		/**
 		 *  Read call given entityset and filters
@@ -757,6 +426,294 @@ sap.ui.define([
 				this.getModel("viewModel").setProperty("/validateIW31Auth", Boolean(bIW31Auth));
 				this.getModel("viewModel").setProperty("/validateIW32Auth", Boolean(bIW32Auth));
 			}
+		},
+
+		/**
+		 * Initail Batch Get Call with Promises for fetching
+		 * GetSystemInformation, NavigationLinks and other services
+		 */
+		_initialBatchCalls: function () {
+			var aPromises = [];
+			aPromises.push(this._getSystemInformation());
+			aPromises.push(this._getData("/NavigationLinksSet", [new Filter("LaunchMode", FilterOperator.EQ, this.getModel("viewModel").getProperty(
+					"/launchMode")),
+				new Filter("LaunchMode", FilterOperator.EQ, "ITS")
+			]));
+
+			aPromises.push(this._getData("/MapProviderSet", [], {
+				$expand: ["MapSource", "MapServiceLinks"]
+			}));
+
+			//Fetching Cost Element F4 for Vendor Assignment
+			aPromises.push(this._getData("/ShCostelementSet", [], {}));
+
+			//Fetching Currency F4 for Vendor Assignment
+			aPromises.push(this._getData("/ShCurrencySet", [], {}));
+
+			//lodaing Avalability type for Time Allocation in Gantt
+			aPromises.push(this._getData("/SHAvailabilityTypeSet", [
+				new Filter("AVAILABILITY_TYPE_GROUP", FilterOperator.EQ, "L")
+			]));
+
+			//loading Availability type for Manage Absence in Gantt
+			aPromises.push(this._getData("/SHAvailabilityTypeSet", [
+				new Filter("AVAILABILITY_TYPE_GROUP", FilterOperator.EQ, "N")
+			]));
+
+			//sets user model - model has to be intantiated before any view is loaded
+			Promise.all(aPromises).then(function (data) {
+				this.getModel("user").setData(data[0]);
+				if (data[1].results.length > 0) {
+					this.getModel("navLinks").setData(data[1].results);
+				}
+				if (data[2].results.length > 0) {
+					this.getModel("mapConfig").setData(data[2].results[0]);
+					this.initializeMapProvider();
+				}
+				if (data[3].results.length > 0) {
+					this.getModel("oCostElementModel").setData(data[3].results);
+				}
+				if (data[4].results.length > 0) {
+					this.getModel("oCurrencyModel").setData(data[4].results);
+				}
+
+				//lodaing Avalability type data for Time Allocation in Gantt
+				this.getModel("availabilityGroup").setProperty("/timeAllocation", data[5].results);
+
+				//loading Availability type data for Manage Absence in Gantt
+				this.getModel("availabilityGroup").setProperty("/manageAbsence", data[6].results);
+
+				// Initialize websocket
+				if (data[0].ENABLE_PUSH_DEMAND) {
+					WebSocket.init(this);
+				}
+
+				//Intialize variables for SAP authorization
+				this._handleAuthorization();
+
+				// create the views based on the url/hash
+				this.getRouter().initialize();
+			}.bind(this));
+		},
+
+		/**
+		 * Function to declare all the global models and it's properties
+		 */
+		_createDataModels: function () {
+			// set the device model
+			this.setModel(models.createDeviceModel(), "device");
+			var oViewModel = new JSONModel({
+				treeSet: "ResourceHierarchySet",
+				ganttTreeSet: "GanttResourceHierarchySet",
+				subFilterEntity: "Demand",
+				subTableSet: "DemandSet",
+				tableBusyDelay: 0,
+				persistencyKeyTable: "evoPlan_ui",
+				persistencyKeyTree: "evoPlan_resource",
+				persistencyKeyDemandTable: "evoPlan_demands",
+				persistencyKeyGanttDemandFilter: "evoPlan_GanttResourceFilter",
+				counterResourceFilter: "",
+				showStatusChangeButton: false,
+				busy: true,
+				delay: 0,
+				assetStartDate: new Date(),
+				dragSession: null, // Drag session added as we are keeping dragged data in the model.
+				gantDragSession: null, // Drag session from Gantt View added as we are keeping dragged data in the model.
+				detailPageBreadCrum: "",
+				capacityPlanning: false,
+				remainingWork: false,
+				dragDropSetting: {
+					isReassign: false
+				},
+				splitterDivider: "30%",
+				ganttSelectionPane: "28%",
+				showUtilization: false,
+				selectedHierarchyView: "TIMENONE",
+				enableReprocess: false,
+				launchMode: Constants.LAUNCH_MODE.BSP,
+				DefaultDemandStatus: "",
+				ganttSettings: {
+					active: false,
+					shapeOperation: {
+						unassign: false,
+						reassign: false,
+						change: false
+					},
+					aGanttSplitDemandData: false,
+					GanttPopOverData: {}
+				},
+				showDemands: true,
+				mapSettings: {
+					busy: false,
+					filters: [],
+					selectedDemands: [],
+					routeData: [],
+					checkedDemands: [],
+					assignedDemands: [],
+					bRouteDateSelected: false,
+					aAssignedAsignmentsForPlanning: [],
+					droppedResources: [],
+					bIsSignlePlnAsgnSaved: false
+				},
+				resourceTreeShowRouteColumn: false,
+				resourceFilterforRightTechnician: false,
+				CheckRightTechnician: false,
+				WarningMsgResourceTree: false,
+				resourceQualification: {
+					AssignBtnVisible: false,
+					AssignBtnEnable: false,
+					FindResourceBtnVisible: false,
+					FindResourceBtnEnable: false
+				},
+				manageResourcesSettings: {
+					selectedRow: false,
+					operationType: "",
+					Assignments: {},
+					removedIndices: [],
+					draggedItemContext: []
+				},
+				densityClass: this.getContentDensityClass(),
+				isOpetationLongTextPressed: false,
+				oResponseMessages: [],
+				aFixedAppointmentsList: {},
+				bDemandEditMode: false,
+				ganttResourceFiltersFromPin: [],
+				ganttDateRangeFromMap: [],
+				iFirstVisibleRowIndex: -1,
+				availabilities: {
+					data: [],
+					isToAssign: false
+				},
+				timeAllocations: {
+					countAll: 0,
+					countBlockers: 0,
+					countAbsences: 0,
+					enableTabs: true,
+					createData: [],
+					createDataCopy: [],
+					StartDate: "",
+					EndDate: ""
+				},
+				validateIW31Auth: true,
+				validateIW32Auth: true
+			});
+			this.setModel(oViewModel, "viewModel");
+
+			//creates the Information model and sets to the component
+			this.setModel(models.createInformationModel(this), "InformationModel");
+
+			//Creating the Global assignment model for assignInfo Dialog
+			this.setModel(models.createAssignmentModel({}), "assignment");
+
+			//Creating the Global assignment model for assignInfo Dialog
+			this.setModel(models.createNavLinksModel([]), "navLinks");
+
+			//Creating the Global assignment model for assignInfo Dialog
+			this.setModel(models.createMapConfigModel([]), "mapConfig");
+
+			this.setModel(models.createMessageCounterModel({
+				S: 0,
+				E: 0,
+				I: 0
+			}), "messageCounter");
+
+			this.setModel(models.createUserModel({
+				ENABLE_ASSET_PLANNING: false,
+				ENABLE_EVOORDERRELATE_BUTTON: false,
+				ENABLE_EVORESOURCE_BUTTON: false,
+				ENABLE_IW32_AUTH_CHECK: false,
+				ENABLE_IW31_AUTH_CHECK: false,
+				ENABLE_PM_AUTH_CHECK: false
+			}), "user");
+
+			//Creating the Global message model from MessageManager
+			var oMessageModel = new JSONModel();
+			oMessageModel.setData([]);
+			this.setModel(oMessageModel, "MessageModel");
+
+			//Creating the global for planning calendar
+			var oCalendarModel = new JSONModel();
+			oCalendarModel.setSizeLimit(9999999999);
+			oCalendarModel.setData({});
+			this.setModel(oCalendarModel, "calendarModel");
+
+			// Resource groups model
+			this.setModel(new JSONModel([]), "resGroups");
+
+			//Cost Element Model for Vendor Assignment
+			var oCostElementModel = new JSONModel();
+			oCostElementModel.setSizeLimit(9999999999);
+			oCostElementModel.setData({});
+			this.setModel(oCostElementModel, "oCostElementModel");
+
+			//Currency Model for Vendor Assignment
+			var oCurrencyModel = new JSONModel();
+			oCurrencyModel.setSizeLimit(9999999999);
+			oCurrencyModel.setData({});
+			this.setModel(oCurrencyModel, "oCurrencyModel");
+
+			//Creating Model for Availability Group in Gantt
+			this.setModel(new JSONModel({
+				timeAllocation: [],
+				manageAbsence: []
+			}), "availabilityGroup");
+
+			this.setModel(models.createHelperModel({
+				navLinks: {}
+			}), "templateProperties");
+
+			this.setModel(models.createHelperModel({
+				data: {
+					children: []
+				},
+				pendingChanges: {}
+			}, true), "ganttModel");
+			this.setModel(models.createHelperModel({
+				data: {
+					children: []
+				}
+			}, false), "ganttOriginalData");
+
+			var oSinglePlanningModel = models.createHelperModel({
+				hasChanges: false,
+				appointments: [],
+				legendShown: false,
+				legendItems: [],
+				legendAppointmentItems: []
+			});
+			oSinglePlanningModel.setDefaultBindingMode("TwoWay");
+			this.setModel(oSinglePlanningModel, "mapSinglePlanning");
+		},
+
+		/**
+		 * Function to initialize Message Popover
+		 */
+		_createMessagePopover: function () {
+			// Message popover link
+			var oLink = new Link({
+				text: "{i18n>xtit.showMoreInfo}",
+				href: "",
+				target: "_blank"
+			});
+
+			// Message popover template
+			var oMessageTemplate = new MessagePopoverItem({
+				type: "{MessageModel>type}",
+				title: "{MessageModel>title}",
+				description: "{MessageModel>description}",
+				subtitle: "{MessageModel>subtitle}",
+				counter: "{MessageModel>counter}",
+				link: oLink
+			});
+
+			//Message Popover
+			var oMessagePopover = new MessagePopover({
+				items: {
+					path: "MessageModel>/",
+					template: oMessageTemplate
+				}
+			});
+			this._oMessagePopover = oMessagePopover;
 		}
 	});
 });
