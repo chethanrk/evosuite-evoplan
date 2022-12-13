@@ -155,6 +155,24 @@ sap.ui.define([
 			UIComponent.prototype.destroy.apply(this, arguments);
 
 		},
+		/**
+		 *  Read call given entityset and filters
+		 */
+		readData: function (sUri, aFilters, mUrlParams) {
+			return new Promise(function (resolve, reject) {
+				this.getModel().read(sUri, {
+					filters: aFilters,
+					urlParameters: mUrlParams || {},
+					success: function (oData, oResponse) {
+						resolve(oData);
+					}.bind(this),
+					error: function (oError) {
+						//Handle Error
+						reject(oError);
+					}.bind(this)
+				});
+			}.bind(this));
+		},
 
 		/**
 		 * This method can be called to determine whether the sapUiSizeCompact or sapUiSizeCozy
@@ -182,6 +200,46 @@ sap.ui.define([
 			return this._sContentDensityClass;
 		},
 
+		/**
+		 * get url GET parameter by key name
+		 */
+		getLinkParameterByName: function (sKey) {
+			var oComponentData = this.getComponentData();
+			//Fiori Launchpad startup parameters
+			if (oComponentData) {
+				var oStartupParams = oComponentData.startupParameters;
+				if (oStartupParams[sKey] && (oStartupParams[sKey].length > 0)) {
+					return oStartupParams[sKey][0];
+				}
+			} else {
+				var queryString = window.location.search,
+					urlParams = new URLSearchParams(queryString);
+				if (urlParams.has(sKey)) {
+					return urlParams.get(sKey);
+				}
+			}
+			return false;
+		},
+
+		/**
+		 * Instatiate and initialize map provider object. 
+		 * Type of the instance depends on configuration provided by backend: oMapConfigModel.getProperty("/name")
+		 */
+		initializeMapProvider: function () {
+			// dependency injection for MapProvider
+			var oMapConfigModel = this.getModel("mapConfig");
+			var sProviderJSModuleName = Constants.MAP.JS_PROVIDERS_PATH + oMapConfigModel.getProperty("/name");
+			this._pMapProviderLoaded = new Promise(function (resolve, reject) {
+				sap.ui.require([sProviderJSModuleName], function (cMapProvider) {
+					this.MapProvider = new cMapProvider(this, oMapConfigModel);
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		},
+		
+		/* =========================================================== */
+		/* Private methods                                              */
+		/* =========================================================== */
 		/**
 		 * init different global dialogs with controls
 		 * @private
@@ -333,86 +391,6 @@ sap.ui.define([
 					//Handle Error
 				}
 			});
-		},
-
-		/**
-		 * Get AvailabilityType for Time Allocation
-		 * @private
-		 */
-		// _getAvailabilityGroup: function (sAvailabilityTypeGroup) {
-		// 	this.getModel().read("/SHAvailabilityTypeSet", {
-		// 		filters: [
-		// 			new Filter("AVAILABILITY_TYPE_GROUP", FilterOperator.EQ, sAvailabilityTypeGroup)
-		// 		],
-		// 		success: function (oData, oResponse) {
-		// 			if (oData && oData.results.length > 0) {
-		// 				if (sAvailabilityTypeGroup === "L") {
-		// 					this.getModel("availabilityGroup").setProperty("/timeAllocation", oData.results);
-		// 				} else {
-		// 					this.getModel("availabilityGroup").setProperty("/manageAbsence", oData.results);
-		// 				}
-		// 			}
-		// 		}.bind(this),
-		// 		error: function (oError) {
-		// 			//Handle Error
-		// 		}
-		// 	});
-		// },
-
-		/**
-		 *  Read call given entityset and filters
-		 */
-		readData: function (sUri, aFilters, mUrlParams) {
-			return new Promise(function (resolve, reject) {
-				this.getModel().read(sUri, {
-					filters: aFilters,
-					urlParameters: mUrlParams || {},
-					success: function (oData, oResponse) {
-						resolve(oData);
-					}.bind(this),
-					error: function (oError) {
-						//Handle Error
-						reject(oError);
-					}.bind(this)
-				});
-			}.bind(this));
-		},
-
-		/**
-		 * get url GET parameter by key name
-		 */
-		getLinkParameterByName: function (sKey) {
-			var oComponentData = this.getComponentData();
-			//Fiori Launchpad startup parameters
-			if (oComponentData) {
-				var oStartupParams = oComponentData.startupParameters;
-				if (oStartupParams[sKey] && (oStartupParams[sKey].length > 0)) {
-					return oStartupParams[sKey][0];
-				}
-			} else {
-				var queryString = window.location.search,
-					urlParams = new URLSearchParams(queryString);
-				if (urlParams.has(sKey)) {
-					return urlParams.get(sKey);
-				}
-			}
-			return false;
-		},
-
-		/**
-		 * Instatiate and initialize map provider object. 
-		 * Type of the instance depends on configuration provided by backend: oMapConfigModel.getProperty("/name")
-		 */
-		initializeMapProvider: function () {
-			// dependency injection for MapProvider
-			var oMapConfigModel = this.getModel("mapConfig");
-			var sProviderJSModuleName = Constants.MAP.JS_PROVIDERS_PATH + oMapConfigModel.getProperty("/name");
-			this._pMapProviderLoaded = new Promise(function (resolve, reject) {
-				sap.ui.require([sProviderJSModuleName], function (cMapProvider) {
-					this.MapProvider = new cMapProvider(this, oMapConfigModel);
-					resolve();
-				}.bind(this));
-			}.bind(this));
 		},
 
 		/**
