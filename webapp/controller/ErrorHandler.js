@@ -37,7 +37,6 @@ sap.ui.define([
 			this._oModel.attachRequestCompleted(function (oEvent) {
 				var oParams = oEvent.getParameters();
 				if (oParams.success) {
-				//	this._oComponent.createMessages();
 					this.createMessages();
 				}
 			}, this);
