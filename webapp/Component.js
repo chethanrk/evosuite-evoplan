@@ -90,13 +90,9 @@ sap.ui.define([
 				fullWidth: true
 			}
 		},
-
 		_appId: "evoplan",
-
 		MapProvider: null,
-
 		_pMapProviderLoaded: null,
-
 		/**
 		 * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
 		 * In this function, the device models are set and the router is initialized.
@@ -104,7 +100,6 @@ sap.ui.define([
 		 * @override
 		 */
 		init: function () {
-
 			// initialize the error handler with the component
 			this._oErrorHandler = new ErrorHandler(this);
 
@@ -131,11 +126,10 @@ sap.ui.define([
 			}
 
 			//Initial Batch Calls
-			this._initialBatchCalls();
+			this._prepareInitialData();
 
 			// Not able load more than 100 associations
 			this.getModel().setSizeLimit(600);
-
 		},
 
 		/**
@@ -410,7 +404,7 @@ sap.ui.define([
 		 * Initail Batch Get Call with Promises for fetching
 		 * GetSystemInformation, NavigationLinks and other services
 		 */
-		_initialBatchCalls: function () {
+		_prepareInitialData: function () {
 			var aPromises = [];
 			aPromises.push(this._getSystemInformation());
 			aPromises.push(this._getData("/NavigationLinksSet", [new Filter("LaunchMode", FilterOperator.EQ, this.getModel("viewModel").getProperty(
