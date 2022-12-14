@@ -46,6 +46,7 @@ sap.ui.define([
 		onInit: function () {
 			this.oViewModel = this.getModel("viewModel");
 			this.oUserModel = this.getModel("user");
+			this.oAppViewModel = this.getModel("appView");
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			//set on first load required filters
 			this._treeTable = this.getView().byId("idGanttResourceTreeTable");
@@ -1706,17 +1707,29 @@ sap.ui.define([
 		 */
 		_refreshAvailabilities: function (sChannel, sEvent, oData) {
 			var sSelectedResourcePath = this.selectedResources[0],
-				aFilters = [],
-				oUserData = this.getModel("user").getData();
+				aFilters,
+				oUserData = this.getModel("user").getData(),
+				sResourceGuid,
+				aPromises = [];
 			if (sChannel === "BaseController" && sEvent === "refreshAvailabilities") {
-				aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
-				aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-				aFilters.push(new Filter("ResourceGuid", FilterOperator.EQ, oData.resource));
-				this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters).then(function (data) {
-					this.oGanttModel.setProperty(sSelectedResourcePath + "/ResourceAvailabilitySet/results", data.results);
-					this.oGanttOriginDataModel.setProperty(sSelectedResourcePath + "/ResourceAvailabilitySet/results", _.cloneDeep(data.results));
+				for (var i in this.selectedResources) {
+					sResourceGuid = this.oGanttModel.getProperty(this.selectedResources[i]).ResourceGuid;
+					aFilters = [
+						new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)),
+						new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)),
+						new Filter("ResourceGuid", FilterOperator.EQ, sResourceGuid)
+					];
+					aPromises.push(this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters));
+				}
+				this.oAppViewModel.setProperty("/busy", true);
+				Promise.all(aPromises).then(function (aResults) {
+					for (i in this.selectedResources) {
+						this.oGanttModel.setProperty(this.selectedResources[i] + "/ResourceAvailabilitySet", aResults[i]);
+						this.oGanttOriginDataModel.setProperty(this.selectedResources[i] + "/ResourceAvailabilitySet", _.cloneDeep(aResults[i]));
+					}
 					this.oGanttModel.refresh();
 					this._resetSelections();
+					this.oAppViewModel.setProperty("/busy", false);
 				}.bind(this));
 			}
 		},
