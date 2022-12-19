@@ -30,7 +30,6 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttActions",
 	"com/evorait/evoplan/controller/DialogTemplateRenderController",
 	"com/evorait/evoplan/controller/common/OperationTimeCheck",
-	"com/evorait/evoplan/controller/gantt/GanttResourceTreeFilter",
 	"com/evorait/evoplan/controller/common/VendorAssignment",
 	"com/evorait/evoplan/controller/common/LongTextPopover",
 	"com/evorait/evoplan/controller/common/NetworkAssignment",
@@ -70,7 +69,6 @@ sap.ui.define([
 	GanttResourceFilter,
 	GanttActions, DialogTemplateRenderController,
 	OperationTimeCheck,
-	GanttResourceTreeFilter,
 	VendorAssignment,
 	LongTextPopover,
 	NetworkAssignment,
@@ -282,8 +280,6 @@ sap.ui.define([
 			this.FixedAppointmentsList = new FixedAppointmentsList();
 
 			this.GanttResourceFilter = new GanttResourceFilter();
-
-			this.GanttResourceTreeFilter = new GanttResourceTreeFilter();
 
 			this.OperationTimeCheck = new OperationTimeCheck();
 			this.OperationTimeCheck.init();
