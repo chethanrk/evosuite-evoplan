@@ -12,10 +12,16 @@ sap.ui.define([
 	"sap/ui/table/RowActionItem",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/core/Fragment",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/m/library"
 ], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText, Constants,
-	RowAction, RowActionItem, formatter, Fragment, Log) {
+	RowAction, RowActionItem, formatter, Fragment, Log, MobileLibrary) {
 	"use strict";
+
+	var ButtonType = MobileLibrary.ButtonType,
+		DialogType = MobileLibrary.DialogType,
+		Label = MobileLibrary.Label,
+		VBox = MobileLibrary.VBox;
 
 	return Controller.extend("com.evorait.evoplan.controller.BaseController", {
 		formatter: formatter,
@@ -1040,6 +1046,181 @@ sap.ui.define([
 			this.getOwnerComponent().TimeAllocations.open(this.getView(), this.selectedResources, this._mParameters, "timeAlloc");
 
 		},
+
+		/**
+		 * from relase 2301
+		 * to check if any Assignment is done to a Resources who is unavailabe
+		 * method called during Split assignments scenario to find unavailability
+		 * example: if assignment is of 20 hours and resource is available for only 8 hours, 
+		 * the method returns Unavailable: true
+		 * based on this multiple assignments are created for the resource on different days
+		 * 
+		 * @params {array} aAssignments - array of assingments for which resource availability needs to be checked
+		 * @returns {array} aDemandsForSplitAssignment - resloves array of assignments for which Split should happen
+		 *
+		 */
+		 checkResourceUnavailabilty: function (aAssignments, mParameters) {
+			var oModel = this.getModel(),
+				aUnavailabilityChecks = [], aDemandsForSplitAssignment = [],
+				sSelectedHierarchyView = this.getModel("viewModel").getProperty("/selectedHierarchyView"),
+				oResourceAvailabiltyResponse = {
+					arrayOfDemands : aAssignments,
+					arrayOfDemandsToSplit : [],
+					splitConfirmation : "NO",
+					mParameters : mParameters
+				};
+
+			var oUnavailabilityPromise = new Promise(function(finalResolve, finalReject) {
+
+				for (var i = 0; i < aAssignments.length; i++) {
+					aUnavailabilityChecks.push(new Promise(function (resolve, reject) {
+						var oAvailabilityCheckObject = {
+							ResourceGuid: aAssignments[i].ResourceGuid,
+							StartTimestamp: aAssignments[i].DateFrom,
+							DemandGuid: aAssignments[i].DemandGuid,
+							DailyView: sSelectedHierarchyView === "TIMEDAY"
+						};
+						if (aAssignments[i].DateTo) {
+							oAvailabilityCheckObject.EndTimestamp = aAssignments[i].DateTo;
+						}
+						this.executeFunctionImport(oModel, oAvailabilityCheckObject, "ResourceAvailabilityCheck", "GET").then(
+							function (oAvailabilityData, oResponse) {
+							// if resource unavailable for this demand push the demand to aDemandsForSplitAssignment
+							// else push it to aNormalAssignmentArray
+							if (oAvailabilityData.Unavailable) {
+								aDemandsForSplitAssignment.push(oAvailabilityData.DemandGuid);
+							}
+							resolve(oAvailabilityData.Unavailable);
+						});
+					}.bind(this)));
+				}
+	
+				this.getModel("appView").setProperty("/busy", true);
+				Promise.all(aUnavailabilityChecks).then(function (aPromiseAllResults) {
+					this.getModel("appView").setProperty("/busy", false);
+					
+					if (aPromiseAllResults.includes(true)) {
+						oResourceAvailabiltyResponse.arrayOfDemandsToSplit = aDemandsForSplitAssignment;
+						finalResolve(oResourceAvailabiltyResponse);
+					} else {
+						finalResolve(oResourceAvailabiltyResponse);
+					}
+				}.bind(this));
+			}.bind(this));
+
+			return oUnavailabilityPromise;
+			
+		},
+
+		/**
+		 * show dialog to confirm the split for demands which have work more than the resource availability
+		 * on resolve/OK split create assignment and on reject/Cancel normal create assignment is triggered to backend
+		 * 
+		 * @param {array} aDemandsForSplitAssignment 
+		 * @param {promise resolve} finalResolve 
+		 * @param {promise reject} finalReject 
+		 */
+		showSplitConfirmationDialog: function(oResourceAvailabiltyResponse) {
+			var oModel = this.getModel(),
+				oViewModel = this.getModel("viewModel"),
+				oi18nModel = this.getModel("i18n"),
+				sDisplayDemandInfo, sDemandDescriptionWithOrderOperation,
+
+				aDemandsForSplitAssignment = oResourceAvailabiltyResponse.arrayOfDemandsToSplit,
+				bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP");
+
+			return new Promise(function(resolve, reject) {
+
+				this.dialogResolve = resolve;
+				this.dialogReject = reject;
+				this.resourceAvailabiltyResponse = oResourceAvailabiltyResponse;
+
+				if (aDemandsForSplitAssignment.length > 0 && bShowSplitConfirmationDialog) {
+					for (var iIndex = 0; iIndex < aDemandsForSplitAssignment.length; iIndex++) {
+						var oDemandDetails = oModel.getProperty("/DemandSet('" + aDemandsForSplitAssignment[iIndex] + "')"),
+							sDemandDescription = oDemandDetails.DemandDesc,
+							sOrderId = oDemandDetails.ORDERID,
+							sOperationId = oDemandDetails.OPERATIONID;
+						sDemandDescriptionWithOrderOperation = sOrderId + " - " + sOperationId + " - " + sDemandDescription;
+						sDisplayDemandInfo = sDisplayDemandInfo ? sDisplayDemandInfo + "\n \n" +  sDemandDescriptionWithOrderOperation : sDemandDescriptionWithOrderOperation;
+					}
+					oViewModel.setProperty("/splitConfirmationDialogInfo", sDisplayDemandInfo);
+				
+					if (!this.oConfirmDialog) {
+						this.oConfirmDialog = new Dialog({
+							type: DialogType.Message,
+							title: oi18nModel.getProperty("xtit.confirmSplit"),
+							content: [
+								new VBox({
+									items:[
+										new Label({
+											wrapping: true,
+											text: oi18nModel.getProperty("xmsg.confirmSplit")
+										}),
+										new Label({text: ""}), // empty space
+										new Label({
+											design: "Bold",
+											wrapping: true,
+											text: "{viewModel>/splitConfirmationDialogInfo}"
+										})
+									]
+								})
+							],
+							buttons: [
+								new Button({
+									type: ButtonType.Emphasized,
+									text: oi18nModel.getProperty("xbut.splitConfirmDialogYes"),
+									press: function () {
+										this.oConfirmDialog.close();
+										// resolve the aDemandsForSplitAssignment
+										this.resourceAvailabiltyResponse.splitConfirmation = "YES";
+										this.dialogResolve(this.resourceAvailabiltyResponse);
+									}.bind(this)
+								}),
+								new Button({
+									text: oi18nModel.getProperty("xbut.splitConfirmDialogNo"),
+									press: function() {
+										this.oConfirmDialog.close();
+										// resolve the aDemandsForSplitAssignment
+										this.resourceAvailabiltyResponse.splitConfirmation = "NO";
+										this.resourceAvailabiltyResponse.arrayOfDemandsToSplit = [];
+										this.dialogResolve(this.resourceAvailabiltyResponse);	
+									}.bind(this)
+								}),
+								new Button({
+									text: oi18nModel.getProperty("xbut.splitConfirmDialogCancel"),
+									press:function() {
+										this.oConfirmDialog.close();
+										this.dialogReject("Cancel");
+									}.bind(this)
+								})
+							]
+						});
+		
+						this.getView().addDependent(this.oConfirmDialog);
+					}
+		
+					this.oConfirmDialog.open();
+				} else if (aDemandsForSplitAssignment.length > 0 && !bShowSplitConfirmationDialog) {
+					// scenario where split global config is enabled and user dont want to see confirmation for split,
+					// always consider split by default
+					this.resourceAvailabiltyResponse.splitConfirmation = "YES";
+					this.dialogResolve(this.resourceAvailabiltyResponse);
+				} else {
+					this.dialogResolve(this.resourceAvailabiltyResponse);
+				}
+			}.bind(this));
+			
+		},
+
+		/**
+		 * catch for the split assignment method prmomises
+		 * 
+		 * @param {object} oResponse
+		 */
+		handlePromiseChainCatch: function(oResponse) {
+			//console.log(oResponse);
+		}
 	});
 
 });

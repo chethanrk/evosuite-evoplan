@@ -338,14 +338,73 @@ sap.ui.define([
 				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", this.aFixedAppointmentDemands);
 				this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), this.aFixedAppointmentPayload, aAllParameters, mParameters);
 			} else {
-				for (var i = 0; i < aAllParameters.length; i++) {
-					if (parseInt(i, 10) === aAllParameters.length - 1) {
-						bIsLast = true;
+				// if global config enabled for split assignments
+				// also call new logic only in Simple and Daily views
+				// then first check with backend if resource availability is there for the assignment work hours 
+				// since release 2301
+				var bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
+					sSelectedHierarchyView = this.getModel("viewModel").getProperty("/selectedHierarchyView");
+				if (bSplitGlobalConfigEnabled && (sSelectedHierarchyView === "TIMENONE" || sSelectedHierarchyView === "TIMEDAY")) {
+					this.checkAndExecuteSplitAssignments(aAllParameters, mParameters);
+				} else {
+					for (var iIndex = 0; iIndex < aAllParameters.length; iIndex++) {
+						if (parseInt(iIndex, 10) === aAllParameters.length - 1) {
+							bIsLast = true;
+						}
+						this.callFunctionImport(aAllParameters[iIndex], "CreateAssignment", "POST", mParameters, bIsLast);
 					}
-					this.callFunctionImport(aAllParameters[i], "CreateAssignment", "POST", mParameters, bIsLast);
 				}
 			}
 
+		},
+
+		/**
+		 * method checks resourceAvailabilty for the selected demands 
+		 * then confirms if the user wants to split the assignments
+		 * on confirm/reject then calls the required function imports
+		 * 
+		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
+		 */
+		checkAndExecuteSplitAssignments: function(aAssignments, mParameters) {
+			this.checkResourceUnavailabilty(aAssignments, mParameters).catch(this.handlePromiseChainCatch)
+				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch)
+				.then(this.callRequiredFunctionImports.bind(this)).catch(this.handlePromiseChainCatch);
+		},
+
+		/**
+		 * based on the response from split confirmation dialog calls the required function imports
+		 * strucuture of oConfirmationDialogResponse :
+		 * { arrayOfDemands : aAssignments,
+		 *   arrayOfDemandsToSplit : [],
+		 *   splitConfirmation : "NO"
+		 * };
+		 * @param {object} oConfirmationDialogResponse response from split confirmation dialog
+		 * 
+		 */
+		callRequiredFunctionImports: function(oConfirmationDialogResponse) {
+			if(oConfirmationDialogResponse) {
+				var aDemands = oConfirmationDialogResponse.arrayOfDemands,
+					aDemandGuidsToSplit = oConfirmationDialogResponse.arrayOfDemandsToSplit,
+					mParameters = oConfirmationDialogResponse.mParameters,
+
+					sSelectedHierarchyView = this.getModel("viewModel").getProperty("/selectedHierarchyView"),
+					bIsLast;
+				for (var iIndex = 0; iIndex < aDemands.length; iIndex++) {
+					if (parseInt(iIndex, 10) === aDemands.length - 1) {
+						bIsLast = true;
+					}
+					// if Demand is present in aDemandsForSplitAssignment it means the assignment is of more effort than the resource availability
+					// 	thus call the functionImport 'CreateSplitStretchAssignment' 
+					// else it means the resource availability is proper for the assignment 
+					//  thus call the functionImport 'CreateAssignment'
+					if (aDemandGuidsToSplit.includes(aDemands[iIndex].DemandGuid)) {
+						aDemands[iIndex].ResourceView = sSelectedHierarchyView === "TIMENONE" ? "SIMPLE" : "DAILY";
+						this.callFunctionImport(aDemands[iIndex], "CreateSplitStretchAssignments", "POST", mParameters, bIsLast);
+					} else {
+						this.callFunctionImport(aDemands[iIndex], "CreateAssignment", "POST", mParameters, bIsLast);
+					}
+				}
+			}
 		},
 
 		/**
