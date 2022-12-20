@@ -54,11 +54,11 @@ sap.ui.define([
 
 				// if global config enabled for split assignments
 				// then first check with backend if resource availability is there for the assignment work hours 
-				// also call new logic only in Simple and Daily views
+				// also call new logic only when drop happens on Respurce NodeType - RESOURCE or TIMEDAY
 				// since release 2301
 				var bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
-				sSelectedHierarchyView = this.getModel("viewModel").getProperty("/selectedHierarchyView"),
-				bExecuteAssignmentSplitCode = bSplitGlobalConfigEnabled && (sSelectedHierarchyView === "TIMENONE" || sSelectedHierarchyView === "TIMEDAY"),
+				sResourceNodeType = oResourceData.NodeType,
+				bExecuteAssignmentSplitCode = bSplitGlobalConfigEnabled && (sResourceNodeType === "RESOURCE" || sResourceNodeType === "TIMEDAY"),
 				aAllAssignmentsParams = [];
 				
 				// creating function import calls for fixed appointments
@@ -107,7 +107,7 @@ sap.ui.define([
 				}
 				
 				if (bExecuteAssignmentSplitCode) {
-					this.checkAndExecuteSplitForGanttMultiAssign(aAllAssignmentsParams, {});
+					this.checkAndExecuteSplitForGanttMultiAssign(aAllAssignmentsParams, {}, sResourceNodeType);
 				} else {
 					aPromises = this.createMultiAssignments(aAllAssignmentsParams);
 					this.resolveMultiAssign(aPromises);
@@ -144,8 +144,8 @@ sap.ui.define([
 		 * 
 		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
 		 */
-		checkAndExecuteSplitForGanttMultiAssign: function(aAssignments, mParameters) {
-			this.checkResourceUnavailabilty(aAssignments, mParameters).catch(this.handlePromiseChainCatch)
+		checkAndExecuteSplitForGanttMultiAssign: function(aAssignments, mParameters, sResourceNodeType) {
+			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch)
 				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch)
 				.then(this.callRequiredFunctionImportsForMultiAssign.bind(this)).catch(this.handlePromiseChainCatch);
 		},
@@ -164,10 +164,10 @@ sap.ui.define([
 		callRequiredFunctionImportsForMultiAssign: function(oConfirmationDialogResponse) {
 			if(oConfirmationDialogResponse) {
 				var aAssignmentsParamsForMultiAssignment = [];
+
 				var aDemands = oConfirmationDialogResponse.arrayOfDemands,
 				aDemandGuidsToSplit = oConfirmationDialogResponse.arrayOfDemandsToSplit,
-
-				sSelectedHierarchyView = this.getModel("viewModel").getProperty("/selectedHierarchyView"),
+				sResourceNodeType = oConfirmationDialogResponse.nodeType,
 				aPromises = [];
 
 				if (aDemandGuidsToSplit.length === 0) {
@@ -179,7 +179,7 @@ sap.ui.define([
 						// else it means the resource availability is proper for the assignment or user doesnt want to split
 						//  thus call the functionImport 'CreateMultiAssignment'
 						if (aDemandGuidsToSplit.includes(aDemands[iIndex].DemandGuid)) {
-							aDemands[iIndex].ResourceView = sSelectedHierarchyView === "TIMENONE" ? "SIMPLE" : "DAILY";
+							aDemands[iIndex].ResourceView = sResourceNodeType === "RESOURCE" ? "SIMPLE" : "DAILY";
 							aPromises.push(this.executeFunctionImport(this.getModel(), aDemands[iIndex], "CreateSplitStretchAssignments", "POST"));
 						} else {
 							aAssignmentsParamsForMultiAssignment.push(aDemands[iIndex]);
@@ -298,13 +298,13 @@ sap.ui.define([
 					}
 	
 					// if global config enabled for split assignments
-					// also call new logic only in Simple and Daily views
+					// also call new logic only when drop happens on Respurce NodeType - RESOURCE or TIMEDAY
 					// then first check with backend if resource availability is there for the assignment work hours 
 					// since release 2301
 					var bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
-						sSelectedHierarchyView = this.getModel("viewModel").getProperty("/selectedHierarchyView");
-					if (bSplitGlobalConfigEnabled && (sSelectedHierarchyView === "TIMENONE" || sSelectedHierarchyView === "TIMEDAY")) {
-						this.checkAndExecuteSplitAssignments([oParams], {});
+						sResourceNodeType = targetObj.NodeType;
+					if (bSplitGlobalConfigEnabled && (sResourceNodeType === "RESOURCE" || sResourceNodeType === "TIMEDAY")) {
+						this.checkAndExecuteSplitAssignments([oParams], {}, sResourceNodeType);
 					} else {
 						aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 						this.resolveAssignment(aPromises);
@@ -321,8 +321,8 @@ sap.ui.define([
 		 * 
 		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
 		 */
-		checkAndExecuteSplitAssignments: function(aAssignments, mParameters) {
-			this.checkResourceUnavailabilty(aAssignments, mParameters).catch(this.handlePromiseChainCatch)
+		checkAndExecuteSplitAssignments: function(aAssignments, mParameters, sResourceNodeType) {
+			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch)
 				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch)
 				.then(this.callRequiredFunctionImports.bind(this)).catch(this.handlePromiseChainCatch);
 		},
@@ -344,13 +344,13 @@ sap.ui.define([
 				var aDemands = oConfirmationDialogResponse.arrayOfDemands,
 					aDemandGuidsToSplit = oConfirmationDialogResponse.arrayOfDemandsToSplit,
 
-					sSelectedHierarchyView = this.getModel("viewModel").getProperty("/selectedHierarchyView"),
+					sResourceNodeType = oConfirmationDialogResponse.nodeType,
 					aPromises = [],
 					oModel = this.getModel();
 
 				for (var iIndex = 0; iIndex < aDemands.length; iIndex++) {
 					if (aDemandGuidsToSplit.includes(aDemands[iIndex].DemandGuid)) {
-						aDemands[iIndex].ResourceView = sSelectedHierarchyView === "TIMENONE" ? "SIMPLE" : "DAILY";
+						aDemands[iIndex].ResourceView = sResourceNodeType === "RESOURCE" ? "SIMPLE" : "DAILY";
 						aPromises.push(this.executeFunctionImport(oModel, aDemands[iIndex], "CreateSplitStretchAssignments", "POST"));
 					} else {
 						aPromises.push(this.executeFunctionImport(oModel, aDemands[iIndex], "CreateAssignment", "POST"));

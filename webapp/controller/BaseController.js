@@ -1059,7 +1059,7 @@ sap.ui.define([
 		 * @returns {array} aDemandsForSplitAssignment - resloves array of assignments for which Split should happen
 		 *
 		 */
-		 checkResourceUnavailabilty: function (aAssignments, mParameters) {
+		 checkResourceUnavailabilty: function (aAssignments, mParameters, sResourceNodeType) {
 			var oModel = this.getModel(),
 				aUnavailabilityChecks = [], aDemandsForSplitAssignment = [],
 				sSelectedHierarchyView = this.getModel("viewModel").getProperty("/selectedHierarchyView"),
@@ -1067,7 +1067,8 @@ sap.ui.define([
 					arrayOfDemands : aAssignments,
 					arrayOfDemandsToSplit : [],
 					splitConfirmation : "NO",
-					mParameters : mParameters
+					mParameters : mParameters,
+					nodeType : sResourceNodeType
 				};
 
 			var oUnavailabilityPromise = new Promise(function(finalResolve, finalReject) {

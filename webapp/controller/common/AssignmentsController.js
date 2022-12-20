@@ -339,13 +339,14 @@ sap.ui.define([
 				this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), this.aFixedAppointmentPayload, aAllParameters, mParameters);
 			} else {
 				// if global config enabled for split assignments
-				// also call new logic only in Simple and Daily views
+				// also call new logic only when drop happens on Respurce NodeType - RESOURCE or TIMEDAY
 				// then first check with backend if resource availability is there for the assignment work hours 
 				// since release 2301
 				var bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
-					sSelectedHierarchyView = this.getModel("viewModel").getProperty("/selectedHierarchyView");
-				if (bSplitGlobalConfigEnabled && (sSelectedHierarchyView === "TIMENONE" || sSelectedHierarchyView === "TIMEDAY")) {
-					this.checkAndExecuteSplitAssignments(aAllParameters, mParameters);
+					sResourceNodeType = targetObj.NodeType;
+
+				if (bSplitGlobalConfigEnabled && (sResourceNodeType === "RESOURCE" || sResourceNodeType === "TIMEDAY")) {
+					this.checkAndExecuteSplitAssignments(aAllParameters, mParameters, sResourceNodeType);
 				} else {
 					for (var iIndex = 0; iIndex < aAllParameters.length; iIndex++) {
 						if (parseInt(iIndex, 10) === aAllParameters.length - 1) {
@@ -365,8 +366,8 @@ sap.ui.define([
 		 * 
 		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
 		 */
-		checkAndExecuteSplitAssignments: function(aAssignments, mParameters) {
-			this.checkResourceUnavailabilty(aAssignments, mParameters).catch(this.handlePromiseChainCatch)
+		checkAndExecuteSplitAssignments: function(aAssignments, mParameters, sResourceNodeType) {
+			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch)
 				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch)
 				.then(this.callRequiredFunctionImports.bind(this)).catch(this.handlePromiseChainCatch);
 		},
@@ -382,12 +383,11 @@ sap.ui.define([
 		 * 
 		 */
 		callRequiredFunctionImports: function(oConfirmationDialogResponse) {
-			if(oConfirmationDialogResponse) {
+			if (oConfirmationDialogResponse) {
 				var aDemands = oConfirmationDialogResponse.arrayOfDemands,
 					aDemandGuidsToSplit = oConfirmationDialogResponse.arrayOfDemandsToSplit,
 					mParameters = oConfirmationDialogResponse.mParameters,
-
-					sSelectedHierarchyView = this.getModel("viewModel").getProperty("/selectedHierarchyView"),
+					sResourceNodeType = oConfirmationDialogResponse.nodeType,
 					bIsLast;
 				for (var iIndex = 0; iIndex < aDemands.length; iIndex++) {
 					if (parseInt(iIndex, 10) === aDemands.length - 1) {
@@ -398,7 +398,7 @@ sap.ui.define([
 					// else it means the resource availability is proper for the assignment 
 					//  thus call the functionImport 'CreateAssignment'
 					if (aDemandGuidsToSplit.includes(aDemands[iIndex].DemandGuid)) {
-						aDemands[iIndex].ResourceView = sSelectedHierarchyView === "TIMENONE" ? "SIMPLE" : "DAILY";
+						aDemands[iIndex].ResourceView = sResourceNodeType === "RESOURCE" ? "SIMPLE" : "DAILY";
 						this.callFunctionImport(aDemands[iIndex], "CreateSplitStretchAssignments", "POST", mParameters, bIsLast);
 					} else {
 						this.callFunctionImport(aDemands[iIndex], "CreateAssignment", "POST", mParameters, bIsLast);
