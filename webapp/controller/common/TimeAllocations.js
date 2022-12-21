@@ -75,7 +75,7 @@ sap.ui.define([
 			if (this._mParameters.bFromPlannCal) {
 				this._resource = this._calendarModel.getProperty(aSelectedPaths[0]).ResourceGuid;
 				this._aResourceGuids = this.getResourceGuids(aSelectedPaths, this._calendarModel);
-			} else if (this._mParameters.bFromNewGantt) {
+			} else if (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
 				this._resource = this._ganttModel.getProperty(aSelectedPaths[0] + "/ResourceGuid");
 				this._aResourceGuids = this.getResourceGuids(aSelectedPaths, this._ganttModel);
 			} else {
@@ -196,8 +196,7 @@ sap.ui.define([
 				oData.BlockPercentage = Fragment.byId(this._id, "idTimeAllocSlider").getValue();
 				oData.AvailType = Fragment.byId(this._id, "idTimeAllocAvailType").getSelectedKey();
 				oData.Description = Fragment.byId(this._id, "idCreateDescription").getValue();
-			} else {
-			}
+			} else {}
 			oChanges = this._oModel.hasPendingChanges() ? this._oModel.getPendingChanges()[aPath.join("")] : undefined;
 			if (oChanges && sProperty !== "DELETE") {
 				oData.DateFrom = oChanges.DateFrom ? oChanges.DateFrom : oData.DateFrom;
@@ -235,7 +234,7 @@ sap.ui.define([
 				// if we decide to keep different date range for demand view and gantt view
 				sDateControl1 = this._oUserModel.getProperty("/DEFAULT_GANT_START_DATE");
 				sDateControl2 = this._oUserModel.getProperty("/DEFAULT_GANT_END_DATE");
-			} else if (this._mParameters.bFromNewGantt) {
+			} else if (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
 				// For New Gantt fetching the Dates from DateRange Selection
 				sDateControl1 = this._oView.byId("idDateRangeGantt2").getDateValue();
 				sDateControl2 = this._oView.byId("idDateRangeGantt2").getSecondDateValue();
@@ -382,7 +381,7 @@ sap.ui.define([
 			Fragment.byId(this._id, "detail").unbindElement();
 			Fragment.byId(this._id, "create").setBindingContext(null);
 			var oEventBus = sap.ui.getCore().getEventBus();
-			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt) {
+			if (this._mParameters.bFromGantt || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
 				//to reset "Time Allocations" btn enable/disable
 				this._oView.byId("idButtonreassign").setEnabled(false);
 				this._oView.byId("idButtonunassign").setEnabled(false);
@@ -545,7 +544,7 @@ sap.ui.define([
 			this._refreshTreeGantt(oEvent);
 
 			//to reset "Time Allocation" btn enable/disable
-			if (!this._mParameters.bFromNewGantt) {
+			if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromNewGanttSplit) {
 				this._oView.getController().selectedResources = [];
 			}
 
@@ -571,11 +570,11 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshGanttChart", {});
 			} else if (this._dataDirty && this._mParameters.bFromHome) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});
-			} else if (this._dataDirty && this._mParameters.bFromNewGantt) {
+			} else if (this._dataDirty && (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit)) {
 				eventBus.publish("BaseController", "refreshAvailabilities", {
 					resource: this._resource
 				});
-			} else if (this._mParameters.bFromNewGantt && !this._dataDirty) {
+			} else if ((this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) && !this._dataDirty) {
 				eventBus.publish("BaseController", "resetSelections", {});
 			}
 			this._dataDirty = false;
