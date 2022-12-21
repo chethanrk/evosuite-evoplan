@@ -163,7 +163,7 @@ sap.ui.define([
 						"/NewAssignPath") + "/ResourceGuid");
 				}
 
-				if (Number(iNewEffort) < Number(sEffort)) {
+				if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGN_EFFORT_POPUP") && Number(iNewEffort) < Number(sEffort)) {
 					this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
 						if (oAction === "YES") {
 							this.onSaveAssignments();
