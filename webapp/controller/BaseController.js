@@ -133,6 +133,8 @@ sap.ui.define([
 						this.showMessageToast(oData.message);
 					}
 
+				} else if (oData && oData.severity === "error") {
+					this._showErrorMessage(oData.message, fnCallback);
 				} else {
 					this.showMessageToast(oData.message);
 				}
@@ -192,7 +194,7 @@ sap.ui.define([
 				oViewModel = this.getModel("appView"),
 				oResourceBundle = this.getResourceBundle();
 
-			if (mParameters && !mParameters.bCustomBusy) {
+			if (mParameters === undefined || (mParameters && !mParameters.bCustomBusy)) {
 				oViewModel.setProperty("/busy", true);
 			}
 
