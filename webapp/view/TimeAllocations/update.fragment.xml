@@ -23,10 +23,10 @@
 		<VBox id="idUpdateTimeAllocation" class="sapUiTinyMarginBeginEnd" visible="false">
 			<Panel headerText="{ResourceDescription}">
 				<Label class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop" text="{/#ResourceAvailability/DateFrom/@sap:label}"/>
-				<DatePicker id="idUpdateFromDate" width="95%" editable="{user>/ENABLE_ABSENCE_CHANGE}" dateValue="{DateFrom}" placeholder="Enter Date"
+				<DatePicker id="idUpdateFromDate" width="95%" editable="{user>/ENABLE_CHANGE_ASSET_TIME_ALLOC}" dateValue="{DateFrom}" placeholder="Enter Date"
 					change="handleUpdateChange" class="sapUiSmallMarginBeginEnd"/>
 				<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/DateTo/@sap:label}"/>
-				<DatePicker id="idUpdateToDate" width="95%" editable="{user>/ENABLE_ABSENCE_CHANGE}" dateValue="{DateTo}" placeholder="Enter Date"
+				<DatePicker id="idUpdateToDate" width="95%" editable="{user>/ENABLE_CHANGE_ASSET_TIME_ALLOC}" dateValue="{DateTo}" placeholder="Enter Date"
 					change="handleUpdateChange" class="sapUiSmallMarginBeginEnd"/>
 				<smartForm:SmartForm id="idUpdateTimeCreateFormAvail" editTogglable="false" editable="true">
 					<smartForm:layout>
@@ -47,10 +47,10 @@
 				</smartForm:SmartForm>
 				<Label class="sapUiSmallMarginBeginEnd" text="{/#ResourceAvailability/BlockPercentage/@sap:label}"/>
 				<Slider id="idUpdateTimeAllocSlider" class="sapUiSmallMarginBeginEnd" width="97%" min="0" value="{BlockPercentage}" max="100"
-					change="onUpdateSliderChange" showAdvancedTooltip="true" showHandleTooltip="false"/>
+					change="onUpdateSliderChange" showAdvancedTooltip="true" showHandleTooltip="false" enabled="{user>/ENABLE_CHANGE_ASSET_TIME_ALLOC}"/>
 				<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}"
 					text="{/ResourceAvailabilitySet/AVAILABILITY_DESCR/##com.sap.vocabularies.Common.v1.Label/String}"/>
-				<Input id="idUpdateDescription" value="{AVAILABILITY_DESCR}" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}" class="sapUiSmallMarginBeginEnd"
+				<Input id="idUpdateDescription" value="{AVAILABILITY_DESCR}" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}" enabled="{user>/ENABLE_CHANGE_ASSET_TIME_ALLOC}" class="sapUiSmallMarginBeginEnd"
 					width="95%" maxLength="100"/>
 				<core:ExtensionPoint name="FromExtP|ManageResources|TimeAllocation|ResourceAvailabilitySet|Upadte|CustomElements"/>
 			</Panel>
