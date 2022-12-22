@@ -7,7 +7,7 @@ sap.ui.define([
 ], function (FormController, Component, History, Filter, FilterOperator) {
 	"use strict";
 
-	return FormController.extend("com.evorait.evoplan.controller.CreateOrder", {
+	return FormController.extend("com.evorait.evoplan.controller.assets.CreateOrder", {
 
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
