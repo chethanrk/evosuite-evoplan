@@ -35,6 +35,7 @@ sap.ui.define([
 				this.onOpen(this._oDialog, oView, aSelectedPath, mParameters);
 			}
 		},
+		
 		onAfterOpen: function (oEvent) {
 			this._configureResourceAvail();
 		},
@@ -160,7 +161,6 @@ sap.ui.define([
 		_refreshTreeGantt: function (response) {
 			var eventBus = sap.ui.getCore().getEventBus();
 			if (this._mParameters.bFromGantt) {
-				// this.changeGanttHorizonViewAt(this._component.getModel("viewModel"),oData.dateFrom,oData.dateTo);
 				eventBus.publish("BaseController", "refreshGanttChart", {});
 			} else if (this._mParameters.bFromHome) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});

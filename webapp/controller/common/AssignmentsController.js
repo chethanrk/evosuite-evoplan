@@ -422,7 +422,7 @@ sap.ui.define([
 
 			if (isReassign && !oData.AllowReassign) {
 				sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
-				this._showAssignErrorDialog([oData.Description], null, sDisplayMessage);
+				this._showAssignErrorDialog([this.getMessageDescWithOrderID(oData, oData.Description)], null, sDisplayMessage);
 				//when from new gantt shape busy state needs removed
 				if (mParameters.bCustomBusy && (mParameters.bFromNewGantt || mParameters.bFromNewGanttSplit)) {
 					this._oView.getModel("ganttModel").setProperty(mParameters.sSourcePath + "/busy", false);
@@ -575,13 +575,6 @@ sap.ui.define([
 					this.callFunctionImport(aAllParameters[i], "UpdateAssignment", "POST", mParameters, bIsLast);
 				}
 			}
-
-			// if (parseInt(i, 10) === aContexts.length - 1) {
-			// 	bIsLast = true;
-			// }
-			// // call function import
-			// this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, bIsLast);
-
 		},
 		/**
 		 * delete assignments in bulk
@@ -671,9 +664,7 @@ sap.ui.define([
 				// call function import
 				if (aAbsences[j]) {
 					this.callFunctionImport(aAbsences[j], "ManageAbsence", "POST", oData.mParameters, bIsLast);
-				} else {
-					//
-				}
+				} else {}
 			}
 		},
 		/**
@@ -942,7 +933,7 @@ sap.ui.define([
 
 			oNewAssign = this.getModel().getProperty(oResourcePath);
 			if (oNewAssign.NodeType !== "RESOURCE") {
-				oAssignment = this.setDateTimeParams(oAssignment, oNewAssign.StartDate, oNewAssign.StartTime, oNewAssign.EndDate, oNewAssign.EndTime)
+				oAssignment = this.setDateTimeParams(oAssignment, oNewAssign.StartDate, oNewAssign.StartTime, oNewAssign.EndDate, oNewAssign.EndTime);
 			} else {
 				oAssignment = this.setDateTimeParams(oAssignment, oAssignment.DateFrom, {
 					ms: oAssignment.DateFrom.getTime()

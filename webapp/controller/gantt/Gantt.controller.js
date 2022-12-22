@@ -232,7 +232,6 @@ sap.ui.define([
 				return;
 			}
 
-			// oViewModel.setProperty("/ganttSettings/busy", true);
 			// Check the resource assignable or not
 			if (!this.isAssignable({
 					data: oResourceData
@@ -299,7 +298,6 @@ sap.ui.define([
 					this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], this._mParameters, "OldGantt");
 				} else {
 					this._assignDemands(oResourceData, sDragPath, oDropContext.getPath(), new Date(), true);
-					// this._assignDemands(oResourceData, sDragPath, oDropContext.getPath(), null, true);
 				}
 			} else {
 				oParams.DateFrom = new Date(new Date().setHours(0));

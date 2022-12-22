@@ -10,8 +10,7 @@
 					<uxap:actions>
 						<core:ExtensionPoint name="PageExtP|DemandDetail|DemandSet|ObjectPageHeaderActionButton|Before"/>
 						<uxap:ObjectPageHeaderActionButton id="idAssignHeaderAction" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" type="Emphasized"
-							hideIcon="false" hideText="false" press="onClickAssign" visible="{ALLOW_ASSIGN}"
-							enabled="{parts:['viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter:'.formatter.formartEnableBtn'}">
+							hideIcon="false" hideText="false" press="onClickAssign" visible="{ALLOW_ASSIGN}" enabled="{viewModel>/validateIW32Auth}">
 							<uxap:dependents>
 								<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.ActionSheetTemplate" type="XML"/>
 							</uxap:dependents>
@@ -19,14 +18,10 @@
 						<uxap:ObjectPageHeaderActionButton id="idSetFunctionHeaderAction" text="{i18n>xbut.buttonExecuteFunction}"
 							tooltip="{i18n>xbut.buttonExecuteFunction}" type="Emphasized" hideIcon="false" hideText="false" press="onClickSetFunction"
 							visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_SET_FUNCTION'}], formatter: '.getSetFunction' }">
-							<!--<uxap:dependents>-->
-							<!--	<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.ActionSheetTemplate" type="XML"/>-->
-							<!--</uxap:dependents>-->
 						</uxap:ObjectPageHeaderActionButton>
 						<uxap:ObjectPageHeaderActionButton id="idStatusHeaderAction" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
 							visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_CHANGE_STATUS'},{path :'user>/ENABLE_ASSIGNMENT_STATUS'}], formatter: '.getVisible' }"
-							hideIcon="false" hideText="false" press="onClickAction"
-							enabled="{parts:['viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter:'.formatter.formartEnableBtn'}"/>
+							hideIcon="false" hideText="false" press="onClickAction" enabled="{viewModel>/validateIW32Auth}"/>
 						<Button text="{i18n>xbut.buttonBack}" tooltip="{i18n>xbut.buttonBack}" type="Default" press="navBack"/>
 						<core:ExtensionPoint name="PageExt|DemandDetail|DemandSet|ObjectPageHeaderActionButton|After"/>
 					</uxap:actions>

@@ -73,8 +73,17 @@ sap.ui.define([
 		 * Handles the popover 'afterClose' event
 		 */
 		onAfterCloseLongText: function (oEvent) {
-			var oModel = oEvent.getSource().getBindingContext().getModel();
-			oModel.resetChanges();
+			var oModel = oEvent.getSource().getBindingContext().getModel(),
+				aChanges = Object.entries(oModel.getPendingChanges()),
+				sPath = "";
+			for (var i in aChanges) {
+				if (aChanges[i][0].indexOf("LongTextSet") !== -1) {
+					sPath = "/" + aChanges[i][0];
+				}
+			}
+			if (sPath) {
+				oModel.resetChanges([sPath]);
+			}
 			this._refreshRowContext(oModel);
 		},
 
@@ -83,9 +92,24 @@ sap.ui.define([
 		 * Calls function import to post the long text data to a backend
 		 */
 		onSaveLongText: function (oEvent) {
-			var oModel = oEvent.getSource().getBindingContext().getModel();
+			var oModel = oEvent.getSource().getBindingContext().getModel(),
+				aChanges = Object.entries(oModel.getPendingChanges()),
+				sPath = "",
+				oParam = "",
+				msg;
+			for (var i in aChanges) {
+				if (aChanges[i][0].indexOf("LongTextSet") !== -1) {
+					sPath = "/" + aChanges[i][0];
+					oParam = aChanges[i][1];
+				}
+			}
+			if (!sPath) {
+				msg = this._component.getModel("i18n").getResourceBundle().getText("ymsg.noChange");
+				this.showMessageToast(msg);
+				return;
+			}
 			return new Promise(function (resolve, reject) {
-				oModel.submitChanges({
+				oModel.update(sPath, oParam, {
 					success: function (oData) {
 						resolve(oData);
 					},
@@ -94,11 +118,11 @@ sap.ui.define([
 					}
 				});
 			}.bind(this)).then(function (oData) {
-				var msg = this._component.getModel("i18n").getResourceBundle().getText("xmsg.saveSuccess");
+				msg = this._component.getModel("i18n").getResourceBundle().getText("xmsg.saveSuccess");
 				this.showMessageToast(msg);
 				this._oLongTextPopover.close();
 			}.bind(this)).catch(function (oError) {
-				var msg = this._component.getModel("i18n").getResourceBundle().getText("errorMessage");
+				msg = this._component.getModel("i18n").getResourceBundle().getText("errorMessage");
 				this.showMessageToast(msg);
 			}.bind(this));
 		},

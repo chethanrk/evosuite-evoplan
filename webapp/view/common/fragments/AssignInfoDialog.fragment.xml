@@ -32,26 +32,8 @@
 						editable="{assignment>/AllowChange}" change="onAssignmentDateChange"/>
 					<Label text="{/#Assignment/Effort/@sap:label}"/>
 					<Input type="Text" name="Effort" value="{assignment>/Effort}" editable="{assignment>/AllowChange}"/>
-					<!--<smartField:SmartLabel labelFor="idEfforUnit" />
-					<smartField:SmartField value="{Demand/EffortUnit}" id="idEfforUnit"
-						change="onChangeUnit">
-						<smartField:configuration>
-							<smartField:Configuration 
-								controlType="selection"
-								displayBehaviour="idAndDescription">
-							</smartField:Configuration>
-						</smartField:configuration>
-					</smartField:SmartField>-->
 					<Label text="{/#Assignment/EffortUnit/@sap:label}"/>
 					<Text text="{assignment>/EffortUnit}"/>
-					<!--<Select
-					selectedKey="{assignment>/EffortUnit}"
-					items="{
-						path: '/TimeUnitsSet'
-					}"
-                    enabled="{assignment>/AllowChange}">
-					<core:Item key="{Msehi}" text="{Msehl}" />
-				</Select>-->
 					<Label text="{i18n>xfld.newAssign}" visible="{assignment>/AllowReassign}"/>
 					<CheckBox
 						visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleReassign' }"

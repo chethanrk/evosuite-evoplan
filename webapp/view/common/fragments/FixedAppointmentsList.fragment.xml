@@ -5,7 +5,6 @@
 				mode="MultiSelect" items="{viewModel>/aFixedAppointmentsList}">
 				<headerToolbar>
 					<Toolbar>
-						<!--<core:Icon src="sap-icon://employee" class="size1 sapUiTinyMarginEnd" color="#031E48"></core:Icon>-->
 						<Text text="{i18n>ymsg.fixedAppointmentValidity}"/>
 					</Toolbar>
 				</headerToolbar>

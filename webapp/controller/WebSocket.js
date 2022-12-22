@@ -22,7 +22,6 @@ sap.ui.define([
 				return;
 			}
 			this.oWebSocket = new SapPcpWebSocket(sWebSocHost + "//" + host + "/sap/bc/apc/evora/ep_core_push_apc");
-			// this.oWebSocket = new SapPcpWebSocket("wss://websocketad74c0790.hana.ondemand.com/websocket/Endpoint");
 			this.oWebSocket.attachOpen(function (e) {
 				Log.info("Websocket connection opened");
 			});
@@ -69,27 +68,22 @@ sap.ui.define([
 				"splitDemandDetails" || sCurrentRoute === "splitGanttDetails") {
 				setTimeout(function () {
 					if (sActionPage === "ganttSplit" || sCurrentRoute === "splitDemands") {
-						//MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 					} else if (sActionPage === "ganttSplit" && sCurrentRoute === "splitDemandDetails") {
 						// refresh demand detail page
-						//MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandOverview", {});
 					} else if (sActionPage === "splitDemands" && (sCurrentRoute === "ganttSplit" || sCurrentRoute === "newGanttSplit")) {
 						//MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshGanttChart", {});
 					} else if (sActionPage === "splitDemands" && sCurrentRoute === "splitGanttDetails") {
 						// refresh demand detail page
-						//MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandOverview", {});
 					} else if (sActionPage === "DemandDetails" && sCurrentRoute === "splitDemands") {
-						//MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 					} else if (sActionPage === "DemandDetails" && (sCurrentRoute === "ganttSplit" || sCurrentRoute === "newGanttSplit")) {
 						//MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshGanttChart", {});
 					} else if (sActionPage === "DemandDetails" && (sCurrentRoute === "splitDemandDetails" || sCurrentRoute === "splitGanttDetails")) {
-						//MessageToast.show(sMsg);
 						eventBus.publish("BaseController", "refreshDemandOverview", {});
 					}
 

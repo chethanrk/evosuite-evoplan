@@ -294,9 +294,6 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshAssetCal", {});
 			} else if (oParameter.bFromPlannCal) {
 				eventBus.publish("AssignInfoDialog", "RefreshCalendar", {});
-				// eventBus.publish("BaseController", "refreshTreeTable", {});
-				// eventBus.publish("BaseController", "refreshDemandTable", {});
-				// eventBus.publish("BaseController", "refreshDemandOverview", {});
 			} else if (oParameter.bFromDetail) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				eventBus.publish("BaseController", "refreshDemandOverview", {});
@@ -305,10 +302,8 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshGanttChart", oData);
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (oParameter.bFromMap) {
-				// eventBus.publish("BaseController", "resetMapSelection", {});
 				eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				eventBus.publish("BaseController", "refreshMapView", {});
-				// eventBus.publish("BaseController", "refreshMapDemandTable", {});
 			} else if (oParameter.bFromGanttSplit) {
 				eventBus.publish("BaseController", "refreshGanttChart", oData);
 			} else if (oParameter.bFromDemandSplit) {
@@ -384,7 +379,7 @@ sap.ui.define([
 							});
 							oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
 						} else {
-							aNonAssignableDemands.push(oData.DemandDesc);
+							aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData));
 						}
 					} else {
 						aPathsData.push({
@@ -407,7 +402,7 @@ sap.ui.define([
 						});
 					} else {
 						aDemands[j].setSelected(false);
-						aNonAssignableDemands.push(oData.Description);
+						aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData, oData.Description));
 						delete aDemands[j];
 					}
 				}
@@ -942,9 +937,7 @@ sap.ui.define([
 					actions: [sDiscard, sCancel, sSave],
 					styleClass: this.getOwnerComponent().getContentDensityClass(),
 					onClose: function (sAction) {
-						// sap.m.MessageToast.show("Action selected: " + sAction);
 						resolve(sAction);
-						// MessageToast.show("Action selected: " + sAction);
 					}
 				});
 			}.bind(this));
@@ -1047,6 +1040,21 @@ sap.ui.define([
 			localStorage.setItem("Evo-Action-page", "ganttSplit");
 			this.getOwnerComponent().TimeAllocations.open(this.getView(), this.selectedResources, this._mParameters, "timeAlloc");
 
+		},
+
+		/* concatinate demand description with OrderID/Notification to display in error message dialog 
+		 * @param oData
+		 * @param Desc
+		 * Since 2301.4.0
+		 * @Author Rakesh Sahu
+		 */
+		getMessageDescWithOrderID: function (oData, Desc) {
+			Desc = Desc ? Desc : oData.DemandDesc;
+			if (oData.ORDERID) {
+				return oData.ORDERID + " / " + oData.OPERATIONID + "  " + Desc
+			} else {
+				return oData.NOTIFICATION + "  " + Desc;
+			}
 		},
 
 		/**

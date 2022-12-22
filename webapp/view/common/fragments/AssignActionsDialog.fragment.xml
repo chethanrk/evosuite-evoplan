@@ -15,7 +15,6 @@
 						<ToolbarSpacer/>
 						<Button icon="sap-icon://order-status" tooltip="{i18n>xbut.ChngAssgnStatus}" visible="{viewModel>/Show_Assignment_Status_Button}"
 							enabled="{viewModel>/Disable_Assignment_Status_Button}" press="openAssignmentStatus"/>
-						<!--{user>/ENABLE_QUALIFICATION}-->
 						<HBox id="idCheckRightTechnician" visible="false" class="sapUiMediumMarginEnd">
 							<Switch customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}" state="{viewModel>/CheckRightTechnician}"
 								change="onClickEnableFindTechnician"></Switch>
@@ -39,10 +38,9 @@
 		<buttons>
 			<core:ExtensionPoint name="DialogExtP|AssignActionDialog|AssignmentSet|DialogActions|Left"/>
 			<Button id="idCloseDialog" text="{i18n>xbut.buttonClose}" press="onCloseDialog"/>
-			<Button id="idButtonBulkUnAssign" text="{i18n>xbut.buttonUnassign}" type="Emphasized"
-				enabled="{parts:['viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter:'.formatter.formartEnableBtn'}" press="onUnassign"/>
-			<Button id="idButtonBulkReAssign" text="{i18n>xfld.newAssign}" type="Emphasized"
-				enabled="{parts:['viewModel>/authorizeCheck', 'user>/ENABLE_IW32_AUTH_CHECK'], formatter:'.formatter.formartEnableBtn'}" press="onReassign"/>
+			<Button id="idButtonBulkUnAssign" text="{i18n>xbut.buttonUnassign}" type="Emphasized" enabled="{viewModel>/validateIW32Auth}"
+				press="onUnassign"/>
+			<Button id="idButtonBulkReAssign" text="{i18n>xfld.newAssign}" type="Emphasized" enabled="{viewModel>/validateIW32Auth}" press="onReassign"/>
 			<core:ExtensionPoint name="DialogExtP|AssignActionDialog|AssignmentSet|DialogActions|Right"/>
 		</buttons>
 	</Dialog>

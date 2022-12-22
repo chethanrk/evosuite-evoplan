@@ -92,18 +92,18 @@ sap.ui.define([
 			this._mParameters = mParameters || {
 				bFromHome: true
 			};
-			if(this._mParameters.bFromPlannCal) {
+			if (this._mParameters.bFromPlannCal) {
 				oAssignment.DateFrom = data.DateFrom;
-				oAssignment.DateTo = data.DateTo; 
+				oAssignment.DateTo = data.DateTo;
 			}
 			// setting the flag to hide show go to details button
-			if(mParameters){
-				if(mParameters.hasOwnProperty("bFromDetail")){
-					if(mParameters.bFromDetail===true){
-						oAssignment.ShowGoToDetailBtn=false;						
+			if (mParameters) {
+				if (mParameters.hasOwnProperty("bFromDetail")) {
+					if (mParameters.bFromDetail === true) {
+						oAssignment.ShowGoToDetailBtn = false;
 					}
 				}
-			}                         
+			}
 			this.oAssignmentModel.setData(oAssignment);
 
 			//Set the ResourceGroupGuid 
@@ -128,9 +128,8 @@ sap.ui.define([
 			}
 			this._getAssignedDemand(oAssignementPath, data);
 			this._assignmentGuid = oAssignment.AssignmentGuid;
-			// open dialog
-			//oDialog.open();
 		},
+
 		/**
 		 * Method get triggers when user selects any perticular unit from value help
 		 * and outputs the same in input
@@ -164,7 +163,7 @@ sap.ui.define([
 						"/NewAssignPath") + "/ResourceGuid");
 				}
 
-				if (Number(iNewEffort) < Number(sEffort)) {
+				if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGN_EFFORT_POPUP") && Number(iNewEffort) < Number(sEffort)) {
 					this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
 						if (oAction === "YES") {
 							this.onSaveAssignments();
@@ -269,7 +268,6 @@ sap.ui.define([
 			this._oDialog.unbindElement();
 			this.oAssignmentModel.setProperty("/AllowUnassign", false);
 			this.reAssign = false; // setting to default on close of Dialog
-			// this.oAssignmentModel.setData({});// Commented to have data in Qualification Match Dialog Methods:by Rakesh Sahu
 		},
 
 		/**
@@ -312,7 +310,7 @@ sap.ui.define([
 				Notification: "",
 				isNewAssignment: false,
 				showError: false,
-				ShowGoToDetailBtn:true
+				ShowGoToDetailBtn: true
 			};
 		},
 
@@ -325,27 +323,6 @@ sap.ui.define([
 			var sPath = sBindPath,
 				oDialog = this._oDialog,
 				oModel = this.oAssignmentModel;
-
-			/*oDialog.bindElement({
-				path: sPath,
-				parameters: {
-					expand: "Demand"
-				},
-				events: {
-					change: function () {
-						var oElementBinding = oDialog.getElementBinding();
-						oElementBinding.refresh();
-						var	oContext = oElementBinding.getBoundContext(),
-							oDemandData;
-
-						// oDateToField = sap.ui.getCore().byId("idDateToAssignInf");
-
-						if (!oContext) {
-							oModel.setProperty("/showError", true);
-							return;
-						}*/
-			//Setting min date to DateTo to restrict selection of invalid dates
-			// oDateToField.setMinDate(oContext.getProperty("DateFrom"));
 
 			oModel.setProperty("/showError", false);
 			if (oModel.getProperty("/DateFrom") === "" || oModel.getProperty("/DateTo") === "") {
@@ -372,15 +349,6 @@ sap.ui.define([
 			oModel.setProperty("/DemandGuid", oDemandData.Guid);
 			oModel.setProperty("/Notification", oDemandData.NOTIFICATION);
 			oModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
-			/*},
-					dataRequested: function () {
-						oDialog.setBusy(true);
-					},
-					dataReceived: function () {
-						oDialog.setBusy(false);
-					}
-				}
-			});*/
 
 		},
 

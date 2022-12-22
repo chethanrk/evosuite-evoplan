@@ -205,21 +205,16 @@ sap.ui.define([
 			//enable/disable buttons on footer when there is some/no selected rows
 			oDataTable.attachRowSelectionChange(function () {
 				var selected = this._oDataTable.getSelectedIndices(),
-					bEnable = Boolean(this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")),
+					bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
 					sDemandPath, bComponentExist;
 				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 				if (selected.length > 0 && selected.length <= iMaxRowSelection) {
 					this.byId("idfindRightTechnicianButton").setEnabled(true);
-					this.byId("assignButton").setEnabled(true);
-					this.byId("changeStatusButton").setEnabled(true);
-					this.byId("idUnassignButton").setEnabled(true);
-					this.byId("idAssignmentStatusButton").setEnabled(true);
+					this.byId("assignButton").setEnabled(bEnable);
+					this.byId("changeStatusButton").setEnabled(bEnable);
+					this.byId("idUnassignButton").setEnabled(bEnable);
+					this.byId("idAssignmentStatusButton").setEnabled(bEnable);
 					this.byId("idOverallStatusButton").setEnabled(true);
-					if (this.getModel("viewModel").getProperty("/authorizeCheck")) {
-						this.byId("assignButton").setEnabled(bEnable);
-						this.byId("changeStatusButton").setEnabled(bEnable);
-						this.byId("idUnassignButton").setEnabled(bEnable);
-					}
 				} else {
 					this.byId("idfindRightTechnicianButton").setEnabled(false);
 					this.byId("assignButton").setEnabled(false);
@@ -267,7 +262,7 @@ sap.ui.define([
 		 */
 		onDragStart: function (oEvent) {
 			var sMsg = this.getResourceBundle().getText("msg.notAuthorizedForAssign");
-			if (this.getModel("viewModel").getProperty("/authorizeCheck") && !this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")) {
+			if (!this.getModel("viewModel").getProperty("/validateIW32Auth")) {
 				this.showMessageToast(sMsg);
 				oEvent.preventDefault();
 				return;
@@ -493,7 +488,6 @@ sap.ui.define([
 			var aRequirementProfileIds = [];
 			oData.forEach(function (entry) {
 				if (entry.oData.REQUIREMENT_PROFILE_ID) {
-					// aRequirementProfileIds.push(entry.oData.REQUIREMENT_PROFILE_ID);
 					aRequirementProfileIds.push(new Filter("REQUIREMENT_PROFILE_ID", FilterOperator.EQ, entry.oData.REQUIREMENT_PROFILE_ID));
 				}
 			});
@@ -531,7 +525,7 @@ sap.ui.define([
 					});
 					oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
 				} else {
-					aNonAssignableDemands.push(oData.DemandDesc);
+					aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData));
 				}
 			}
 			return {
@@ -575,14 +569,16 @@ sap.ui.define([
 		onMaterialStatusPress: function (oEvent) {
 			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
 				oViewModel = this.getModel("appView"),
-				sDemandPath;
+				sDemandPath,
+				aPromise = [];
 			oViewModel.setProperty("/busy", true);
 			for (var i = 0; i < oSelectedIndices.length; i++) {
 				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
-				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
-					oViewModel.setProperty("/busy", false);
-				}.bind(this));
+				aPromise.push(this.getOwnerComponent()._getData(sDemandPath));
 			}
+			Promise.all(aPromise).then(function () {
+				oViewModel.setProperty("/busy", false);
+			});
 		},
 		/**
 		 * Resetting Demand selection based on not allowed for find technician 
@@ -591,7 +587,6 @@ sap.ui.define([
 		_deselectDemands: function (sChannel, oEvent, oData) {
 			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
 				sDemandPath;
-			// oItemsAssignmentList = this._oAssignMentTable.getItems();
 			for (var i = 0; i < oSelectedIndices.length; i++) {
 				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
 				if (oData.oDeselectAssignmentsContexts.includes(sDemandPath)) {
@@ -605,16 +600,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
 		 */
 		openLongTextPopover: function (oSource) {
-			var oViewModel = this.getModel("viewModel"),
-				oModel = this.getModel(),
-				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
-			if (bDemandEditMode && oModel.hasPendingChanges()) {
-				this._oSource = oSource;
-				this.showDemandEditModeWarningMessage().then(this.handleResponse.bind(this));
-			} else {
-				oViewModel.setProperty("/bDemandEditMode", false);
-				this.getOwnerComponent().longTextPopover.open(this.getView(), oSource);
-			}
+			this.getOwnerComponent().longTextPopover.open(this.getView(), oSource);
 		},
 		/**
 		 * handle message popover response to save data/ open longtext popover

@@ -112,7 +112,7 @@ sap.ui.define([
 			for (var i in aSelectedPaths) {
 				oDemand = aSelectedPaths[i].oData;
 				if (!oDemand["ALLOW_" + sSelectedFunction]) {
-					aNonChangable.push(oDemand.DemandDesc);
+					aNonChangable.push(this.getMessageDescWithOrderID(oDemand));
 					bChangable = false;
 				} else {
 					aIndices.push(aSelectedPaths[i].index);

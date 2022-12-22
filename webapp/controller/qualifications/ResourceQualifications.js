@@ -184,7 +184,7 @@ sap.ui.define([
 					});
 					oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
 				} else {
-					aNonAssignableDemands.push(oData.DemandDesc);
+					aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData));
 				}
 			}
 			return {
@@ -204,8 +204,7 @@ sap.ui.define([
 		onBeforeRebindDemandsTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
-				oMatchType = sap.ui.getCore().byId("idButtonQualificationMatchType").getSelectedKey(),
-				aFilter;
+				oMatchType = sap.ui.getCore().byId("idButtonQualificationMatchType").getSelectedKey();
 
 			if (oMatchType === "Full") {
 				oBinding.filters = [new Filter("RESOURCE_MATCH", FilterOperator.EQ, "F")];
@@ -214,7 +213,6 @@ sap.ui.define([
 			} else {
 				oBinding.filters = [];
 			}
-			// oBinding.filters = [new Filter(aFilter, true)];
 		},
 
 		/**

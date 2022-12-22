@@ -548,24 +548,18 @@ sap.ui.define([
 		 * @param bEnableResize
 		 * @return {*}
 		 */
-		formatResizeEnable: function (bEnableDragDrop, bEnableResize, sObjectType, bPmAuth, bIw32Auth) {
+		formatResizeEnable: function (bEnableDragDrop, bEnableResize, sObjectType, bAuthCheck) {
 			if (sObjectType === "ASSET") {
 				return false;
 			}
-			if (bPmAuth) {
-				return Boolean(bEnableResize && bIw32Auth);
-			}
-			return bEnableResize;
+			return Boolean(bEnableResize && bAuthCheck);
 		},
 		/**
 		 *
 		 */
-		formatDragAndDropEnable: function (bDragDrop, sObjectType, bPmAuth, bIw32Auth) {
+		formatDragAndDropEnable: function (bDragDrop, sObjectType, bAuthCheck) {
 			if (bDragDrop && sObjectType !== "ASSET") {
-				if (bPmAuth) {
-					return Boolean(bIw32Auth);
-				}
-				return true;
+				return bAuthCheck;
 			}
 			return false;
 		},
@@ -758,7 +752,7 @@ sap.ui.define([
 		formatMapSpot: function (oLatitude, oLongitude) {
 			if (oLatitude && oLongitude) {
 				if (oLatitude === "0.000000000000" && oLongitude === "0.000000000000") {
-					return "0;0;0"; //return "";
+					return "0;0;0"; 
 				} else {
 					return oLatitude + ";" + oLongitude + ";0";
 				}
@@ -768,16 +762,9 @@ sap.ui.define([
 			if (sDes) {
 				return sDes;
 			}
-			// switch (sDes) {
-			// case "Florian Hard":
-			// 	return "#ff6060";
-			// case "Olaf Hartmann":
-			// 	return "#6BDE6B";
-			// default:
 			return "";
-
-			// }
 		},
+		
 		setVisibilityDeleteButton: function (sNodeType) {
 			if (sNodeType === "RES_GROUP") {
 				return false;
@@ -1060,27 +1047,11 @@ sap.ui.define([
 		/**
 		 * @Author Bhumika
 		 * Decide the visibility of edit button in Demand list
-		 * @param sEdit, bAuthPM, bAuthIW32
+		 * @param sEdit, bAuthCheck
 		 * @return {Boolean}
 		 */
-		editBtnVisibility: function (sEdit, bAuthCheck, bAuthIW32) {
-			if (bAuthCheck) {
-				return Boolean(sEdit && bAuthIW32);
-			}
-			return sEdit;
-		},
-
-		/**
-		 * @Author Bhumika
-		 * Decide the visibility of edit button in Demand list
-		 * @param bAuthPM, bAuthIW32
-		 * @return {Boolean}
-		 */
-		formartEnableBtn: function (bAuthCheck, bAuthIW32) {
-			if (bAuthCheck) {
-				return Boolean(bAuthIW32);
-			}
-			return true;
+		editBtnVisibility: function (sEdit, bAuthCheck) {
+			return Boolean(sEdit && bAuthCheck);
 		}
 	};
 });

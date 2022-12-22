@@ -65,7 +65,7 @@ sap.ui.define([
 		 */
 		onDragStart: function (oEvent) {
 			var sMsg = this.getResourceBundle().getText("msg.notAuthorizedForAssign");
-			if (this.getModel("viewModel").getProperty("/authorizeCheck") && !this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")) {
+			if (!this.getModel("viewModel").getProperty("/validateIW32Auth")) {
 				this.showMessageToast(sMsg);
 				oEvent.preventDefault();
 				return;
@@ -169,20 +169,15 @@ sap.ui.define([
 			var selected = this._oDataTable.getSelectedIndices(),
 				iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL"),
 				selected = this._oDataTable.getSelectedIndices(),
-				bEnable = Boolean(this.getModel("user").getProperty("/ENABLE_IW32_AUTH_CHECK")),
+				bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
 				index = oEvent.getParameter("rowIndex"),
 				sDemandPath, bComponentExist;
 			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
-				this.byId("assignButton").setEnabled(true);
-				this.byId("changeStatusButton").setEnabled(true);
-				this.byId("idUnassignButton").setEnabled(true);
-				this.byId("idAssignmentStatusButton").setEnabled(true);
+				this.byId("assignButton").setEnabled(bEnable);
+				this.byId("changeStatusButton").setEnabled(bEnable);
+				this.byId("idUnassignButton").setEnabled(bEnable);
+				this.byId("idAssignmentStatusButton").setEnabled(bEnable);
 				this.byId("idOverallStatusButton").setEnabled(true);
-				if (this.getModel("viewModel").getProperty("/authorizeCheck")) {
-					this.byId("assignButton").setEnabled(bEnable);
-					this.byId("changeStatusButton").setEnabled(bEnable);
-					this.byId("idUnassignButton").setEnabled(bEnable);
-				}
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
@@ -217,7 +212,7 @@ sap.ui.define([
 				this._aSelectedIndices = [];
 			} else {
 				if (!this._aSelectedIndices.includes(index)) {
-					this._aSelectedIndices.push(index)
+					this._aSelectedIndices.push(index);
 				} else {
 					this._aSelectedIndices.splice(this._aSelectedIndices.indexOf(index), 1);
 				}
@@ -330,16 +325,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
 		 */
 		openLongTextPopover: function (oSource) {
-			var oViewModel = this.getModel("viewModel"),
-				oModel = this.getModel(),
-				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode");
-			if (bDemandEditMode && oModel.hasPendingChanges()) {
-				this._oSource = oSource;
-				this.showDemandEditModeWarningMessage().then(this.handleResponse.bind(this));
-			} else {
-				oViewModel.setProperty("/bDemandEditMode", false);
-				this.getOwnerComponent().longTextPopover.open(this.getView(), oSource);
-			}
+			this.getOwnerComponent().longTextPopover.open(this.getView(), oSource);
 		},
 		/**
 		 * handle message popover response to save data/ open longtext popover
