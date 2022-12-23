@@ -381,6 +381,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_resetChanges: function (oEvent, sProperty) {
+			var iDefaultDur = this._oUserModel.getProperty("/DEFAULT_BLOCK_DUR_PERCENTAGE");
 			Fragment.byId(this._id, "detail").unbindElement();
 			Fragment.byId(this._id, "create").setBindingContext(null);
 			var oEventBus = sap.ui.getCore().getEventBus();
@@ -390,7 +391,7 @@ sap.ui.define([
 				this._oView.byId("idButtonunassign").setEnabled(false);
 				this._oView.byId("idButtonTimeAllocNew").setEnabled(false);
 
-				Fragment.byId(this._id, "idTimeAllocSlider").setValue(0);
+				Fragment.byId(this._id, "idTimeAllocSlider").setValue(iDefaultDur);
 				Fragment.byId(this._id, "idCreateDescription").setValue("");
 			} else if (this._mParameters.bFromHome || this._mParameters.bFromMap) {
 				oEventBus.publish("ManageAbsences", "ClearSelection", {});
@@ -432,6 +433,7 @@ sap.ui.define([
 		 */
 		onCreateTimeAlloc: function (oEvent) {
 			var sAvailType = this._oUserModel.getProperty("/DEFAULT_ABSENCE_TYPE").split(";"),
+				iDefaultDur = this._oUserModel.getProperty("/DEFAULT_BLOCK_DUR_PERCENTAGE"),
 				oEndDate = new Date();
 			this._oModel.metadataLoaded().then(function () {
 				var oContext = this._oModel.createEntry("/ResourceAvailabilitySet", {
@@ -453,7 +455,7 @@ sap.ui.define([
 			//Enabling/Disabling the form for Time Allocation & Manage Absence
 			Fragment.byId(this._id, "idTimeAllocation").setVisible(true);
 			Fragment.byId(this._id, "idMangAbsAllocation").setVisible(false);
-			Fragment.byId(this._id, "idTimeAllocSlider").setValue(0);
+			Fragment.byId(this._id, "idTimeAllocSlider").setValue(iDefaultDur);
 			this.sSource = "timeAlloc";
 			this._getMultiResourceAvailability(new Date(), oEndDate.setHours(23, 59, 59));
 			this.updateButtonsVisibility("CreateBlocker");
