@@ -147,8 +147,11 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onNavBack: function (oEvent) {
-			var oChanges = this._getChangedData(oEvent);
-			if (!oChanges) {
+			var oChanges = this._getChangedData(oEvent),
+				bIsAbsenceUpadatePage = Fragment.byId(this._id, "idUpdateMangAbs").getVisible(),
+				bIsBlockerUpadatePage = Fragment.byId(this._id, "idUpdateTimeAllocation").getVisible();
+			if (!oChanges || (oChanges && bIsAbsenceUpadatePage && !this._bChangeAbsences) || (oChanges && bIsBlockerUpadatePage && !this._bChangeBlockers)) {
+				this._resetChanges(oEvent);
 				this._oApp.back();
 				this.onTabSelectionChanged();
 			} else {
@@ -587,13 +590,21 @@ sap.ui.define([
 		 *	@private
 		 */
 		onRemoveDeleteMode: function () {
-			if (this._oView.getModel("user").getProperty("/ENABLE_ABSENCE_DELETE")) {
-				var aItems = this._oList.getItems();
-				for (var d in aItems) {
-					if (aItems[d].getBindingContext() && aItems[d].getBindingContext().getObject().UI_DISABLE_ABSENCE_DELETE) {
-						aItems[d].getDeleteControl() ? aItems[d].getDeleteControl().setVisible(false) : "";
-					} else {
-						aItems[d].getDeleteControl() ? aItems[d].getDeleteControl().setVisible(true) : "";
+			var bEnableDeleteBlockers = this._oUserModel.getProperty("/ENABLE_BLOCKER_DESCR_TEXT"),
+				bEnableDeleteAbsence = this._oUserModel.getProperty("/ENABLE_ABSENCE_DELETE"),
+				aItems, oListObject, oItemControl;
+			if (bEnableDeleteBlockers || bEnableDeleteAbsence) {
+				this._oList.setMode("Delete");
+				aItems = this._oList.getItems();
+				for (var i in aItems) {
+					oListObject = aItems[i].getBindingContext();
+					oItemControl = aItems[i].getDeleteControl();
+					oItemControl ? oItemControl.setVisible(false) : "";
+					if (bEnableDeleteBlockers && oListObject && oListObject.getProperty("AvailabilityTypeGroup") === 'L') {
+						oItemControl ? oItemControl.setVisible(true) : "";
+					}
+					if (bEnableDeleteAbsence && oListObject && oListObject.getProperty("AvailabilityTypeGroup") === 'N') {
+						oItemControl ? oItemControl.setVisible(true) : "";
 					}
 				}
 			} else {
