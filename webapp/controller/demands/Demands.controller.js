@@ -558,8 +558,8 @@ sap.ui.define([
 			if (oSelectedPaths.aPathsData.length > 0 && iMaxSelcRow >= this._aSelectedRowsIdx.length) {
 				this.getOwnerComponent().materialInfoDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
 			} else {
-				var msg = this.getResourceBundle().getText("ymsg.selectMaxItemMaterialInfo");
-				MessageToast.show(msg + " " + iMaxSelcRow);
+				var msg = this.getResourceBundle().getText("ymsg.selectMaxItemMaterialInfo", [iMaxSelcRow]);
+				MessageToast.show(msg);
 			}
 		},
 		/**
