@@ -112,6 +112,7 @@ sap.ui.define([
 					} else if(_.includes(sRequestUri, 'Q')){
 						oCounterModel.setProperty("/I", parseInt(oData));
 					}
+					oModel.setUseBatch(true);
 				}
 			});
 		},
