@@ -70,6 +70,9 @@ sap.ui.define([
 				oAssignment.ResourceGuid = oAssignData.ResourceGuid;
 				oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
 
+				oAssignment.SplitIndex = oAssignData.SPLIT_INDEX;
+				oAssignment.SplitCounter = oAssignData.SPLIT_COUNTER;
+
 				if (oView.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT")) {
 					oAssignment.OldEffort = oAssignData.Effort;
 					oAssignment.REMAINING_DURATION = oAssignData.REMAINING_DURATION;
@@ -86,6 +89,9 @@ sap.ui.define([
 				oAssignment.ResourceGroupDesc = oAssignmentData.GROUP_DESCRIPTION;
 				oAssignment.ResourceGuid = oAssignmentData.ResourceGuid;
 				oAssignment.ResourceDesc = oAssignmentData.RESOURCE_DESCRIPTION;
+
+				oAssignment.SplitIndex = oAssignmentData.SPLIT_INDEX;
+				oAssignment.SplitCounter = oAssignmentData.SPLIT_COUNTER;
 			}
 
 			this._oView = oView;
@@ -216,10 +222,24 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onDeleteAssignment: function (oEvent) {
-			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid");
+			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid"),
+
+				sDemandGuid = this.oAssignmentModel.getProperty("/DemandGuid"),
+				sSplitIndex = this.oAssignmentModel.getProperty("/SplitIndex"),
+				sSplitCounter = this.oAssignmentModel.getProperty("/SplitCounter"),
+				bSplitGlobalConfigEnabled = this._oView.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN");
+			
 			if (this._mParameters && this._mParameters.bFromPlannCal) {
 				this._eventBus.publish("AssignInfoDialog", "refreshAssignment", {
 					unassign: true
+				});
+			} else if (bSplitGlobalConfigEnabled && sSplitIndex > 0 && sSplitCounter > 0) {
+				this._eventBus.publish("AssignInfoDialog", "deleteSplitAssignments", {
+					assignmentGuid: sId,
+					DemandGuid: sDemandGuid,
+					splitIndex: sSplitIndex,
+					splitCounter: sSplitCounter,
+					parameters: this._mParameters
 				});
 			} else {
 				this._eventBus.publish("AssignInfoDialog", "deleteAssignment", {

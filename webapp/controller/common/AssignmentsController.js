@@ -2,8 +2,9 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/BaseController",
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
-	"com/evorait/evoplan/model/Constants"
-], function (BaseController, MessageBox, formatter, Constants) {
+	"com/evorait/evoplan/model/Constants",
+	"sap/ui/core/Fragment"
+], function (BaseController, MessageBox, formatter, Constants, Fragment) {
 	return BaseController.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
 		/**
 		 * save assignment after drop
@@ -599,6 +600,7 @@ sap.ui.define([
 				this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, bIsLast);
 			}
 		},
+
 		/**
 		 * delete assignment
 		 * @param sPath
@@ -1032,6 +1034,80 @@ sap.ui.define([
 						this.updateAssignment(true, mParameter);
 					}
 				}.bind(this));
+		},
+
+		/**
+		 * 
+		 * @param {object} oData - data object with assignments details
+		 * @returns promise - which is resolved with oData on user oConfirmationDialogResponse
+		 * and rejected on cancel press
+		 */
+		deleteSplitsUserConfirm: function(oData) {
+
+			var oDeleteSplitsUserConfirmPromise = new Promise(function (resolve, reject) {
+
+				this.splitDeleteDialogResolve = resolve;
+				this.splitDeleteDialogReject = reject;
+				this.splitDeleteDialogDataToResolve = oData;
+
+				if (!this.oSplitDeleteConfirmDialog) {
+					Fragment.load({
+						id: "DeleteSplitsConfirmDialog",
+						name: "com.evorait.evoplan.view.common.fragments.DeleteSplitsConfirmDialog",
+						controller: this
+					}).then(function (oDialog) {
+						this.oSplitDeleteConfirmDialog = oDialog;
+						this.getView().addDependent(this.oSplitDeleteConfirmDialog);
+						this.oSplitDeleteConfirmDialog.open();
+					}.bind(this));
+				} else {
+					this.oSplitDeleteConfirmDialog.open();
+				}
+			}.bind(this));
+
+			return oDeleteSplitsUserConfirmPromise;
+		},
+
+		/**
+		 * Method called on Proceed press in all splits unassign user confirmation dialog
+		 */
+		onProceedWithSplitDeletion: function() {
+			if (this.oSplitDeleteConfirmDialog) {
+				this.splitDeleteDialogResolve(this.splitDeleteDialogDataToResolve);
+				this.oSplitDeleteConfirmDialog.close();
+			}
+		},
+
+		/**
+		 * Method called on Cancel press in all splits unassign user confirmation dialog
+		 */
+		onCancelSplitDeletion: function() {
+			if (this.oSplitDeleteConfirmDialog) {
+				this.splitDeleteDialogReject();
+				this.oSplitDeleteConfirmDialog.close();
+			}
+		},
+
+		/**
+		 * Method called on reject/catch scenarios of split unassign confirm dialog
+		 */
+		_catchError: function(oError) {
+			//do nothing
+		},
+
+		/**
+		 * Method call to delete all assignments which are part of a split
+		 * UI passes the Assignments Guid, deletion handled in backend
+		 * 
+		 * @param {object} oUserConfirmResponse 
+		 * 
+		 */
+		deleteSplitAssignments: function(oUserConfirmResponse) {
+			if (oUserConfirmResponse) {
+				var sAssginmentGuid = oUserConfirmResponse.assignmentGuid,
+					mParameters = oUserConfirmResponse.parameters;
+				this.deleteAssignment(sAssginmentGuid, mParameters);
+			}
 		}
 	});
 });
