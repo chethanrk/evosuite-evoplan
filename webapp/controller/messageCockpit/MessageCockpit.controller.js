@@ -77,59 +77,43 @@ sap.ui.define([
 			this._oMessagePopover.openBy(oEvent.getSource());
 		},
 		_refreshCounts: function (oEvent) {
-			var oModel = this.getModel(),
-				aDeferredGroups;
+			var	aFilters = [];
 
-			oModel.read("/MessageSet/$count", {
-				groupId: "counter",
-				filters: [
-					new Filter("SyncStatus", FilterOperator.EQ, "E")
-				]
-			});
-			oModel.read("/MessageSet/$count", {
-				groupId: "counter",
-				filters: [
-					new Filter("SyncStatus", FilterOperator.EQ, "S")
-				]
-			});
-			oModel.read("/MessageSet/$count", {
-				groupId: "counter",
-				filters: [
-					new Filter("SyncStatus", FilterOperator.EQ, "Q")
-				]
-			});
+			aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
+			aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
+			aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
 
-			aDeferredGroups = oModel.getDeferredGroups();
-			aDeferredGroups = aDeferredGroups.concat(["counter"]);
-			oModel.setDeferredGroups(aDeferredGroups);
-
-			oModel.submitChanges({
-				groupId: "counter",
-				success: this._onSuccess.bind(this)
-			});
+			aFilters.forEach(function (item) {
+				this._onFilterCount(item);
+			}.bind(this));
 
 		},
 
 		/** 
 		 * Get the cout of error, success and inprocess messages
-		 * @constructor 
-		 * @param data
-		 * @param response
+		 * @param oFilter - one by one filter is passed to this function
 		 */
-		_onSuccess: function (data, response) {
-			var iErrorCount = 0,
-				iSuccessCount = 0,
-				iInProcessCount = 0,
-				oCounterModel = this.getModel("messageCounter");
-			if (data.__batchResponses) {
-				iErrorCount = parseInt(data.__batchResponses[0].data, 10);
-				iSuccessCount = parseInt(data.__batchResponses[1].data, 10);
-				iInProcessCount = parseInt(data.__batchResponses[2].data, 10);
-
-				oCounterModel.setProperty("/S", iSuccessCount);
-				oCounterModel.setProperty("/E", iErrorCount);
-				oCounterModel.setProperty("/I", iInProcessCount);
-			}
+		_onFilterCount: function (oFilter) {
+			var oCounterModel = this.getModel("messageCounter"),
+				oModel = this.getModel(),
+				sRequestUri;
+				
+			oModel.setUseBatch(false);
+			oModel.read("/MessageSet/$count", {
+					filters: [
+						oFilter
+					],
+				success: function (oData, oResponse) {
+					sRequestUri = oResponse.requestUri.split('eq')[1];
+					if(_.includes(sRequestUri, 'S')){
+						oCounterModel.setProperty("/S", parseInt(oData));
+					} else if(_.includes(sRequestUri, 'E')){
+						oCounterModel.setProperty("/E", parseInt(oData));
+					} else if(_.includes(sRequestUri, 'Q')){
+						oCounterModel.setProperty("/I", parseInt(oData));
+					}
+				}
+			});
 		},
 
 		/** 
