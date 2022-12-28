@@ -20,7 +20,8 @@ sap.ui.define([
 			this.getRouter().getRoute("messageCockpit").attachPatternMatched(this._refreshCounts, this);
 			var oDataTable = this.getView().byId("idProcessTable").getTable();
 			oDataTable.setVisibleRowCountMode("Auto");
-			this._oMessagePopover = this.getOwnerComponent()._oMessagePopover;
+			this.oComponent = this.getOwnerComponent();
+			this._oMessagePopover = this.oComponent._oMessagePopover;
 			var oTemplate = oDataTable.getRowActionTemplate();
 			if (oTemplate) {
 				oTemplate.destroy();
@@ -77,14 +78,38 @@ sap.ui.define([
 			this._oMessagePopover.openBy(oEvent.getSource());
 		},
 		_refreshCounts: function (oEvent) {
-			var	aFilters = [];
+			var aFilters = [],
+				sRequestUri,
+				oModel = this.getModel(),
+				oCounterModel = this.getModel("messageCounter");
 
 			aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
 			aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
 			aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
 
+			oModel.setUseBatch(false);
+			// aPromises.push(this.oComponent.readData("/MessageSet/$count", [aFilters[0]], undefined));
+			// aPromises.push(this.oComponent.readData("/MessageSet/$count", [aFilters[1]], undefined));
+			// aPromises.push(this.oComponent.readData("/MessageSet/$count", [aFilters[2]], undefined));
+			// Promise.all(aPromises).then(function(data) {
+			// 	debugger
+			// 	oModel.setUseBatch(true);	
+			// });
+
+			var callBackFn = function (oResponse) {
+				sRequestUri = oResponse.requestUri.split('eq')[1];
+				if (_.includes(sRequestUri, 'S')) {
+					oCounterModel.setProperty("/S", parseInt(oResponse.data));
+				} else if (_.includes(sRequestUri, 'E')) {
+					oCounterModel.setProperty("/E", parseInt(oResponse.data));
+				} else if (_.includes(sRequestUri, 'Q')) {
+					oCounterModel.setProperty("/I", parseInt(oResponse.data));
+				}
+			};
+
 			aFilters.forEach(function (item) {
-				this._onFilterCount(item);
+				// this._onFilterCount(item);
+				this.oComponent.readData("/MessageSet/$count", [item], undefined, callBackFn);
 			}.bind(this));
 
 		},
@@ -97,19 +122,22 @@ sap.ui.define([
 			var oCounterModel = this.getModel("messageCounter"),
 				oModel = this.getModel(),
 				sRequestUri;
-				
+
 			oModel.setUseBatch(false);
+
+			this.oComponent.readData("/MessageSet/$count", )
+
 			oModel.read("/MessageSet/$count", {
-					filters: [
-						oFilter
-					],
+				filters: [
+					oFilter
+				],
 				success: function (oData, oResponse) {
 					sRequestUri = oResponse.requestUri.split('eq')[1];
-					if(_.includes(sRequestUri, 'S')){
+					if (_.includes(sRequestUri, 'S')) {
 						oCounterModel.setProperty("/S", parseInt(oData));
-					} else if(_.includes(sRequestUri, 'E')){
+					} else if (_.includes(sRequestUri, 'E')) {
 						oCounterModel.setProperty("/E", parseInt(oData));
-					} else if(_.includes(sRequestUri, 'Q')){
+					} else if (_.includes(sRequestUri, 'Q')) {
 						oCounterModel.setProperty("/I", parseInt(oData));
 					}
 					oModel.setUseBatch(true);
