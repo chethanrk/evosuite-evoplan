@@ -1016,14 +1016,14 @@ sap.ui.define([
 		},
 
 		/**
-		 * open the SIngle Time Allocation dialog Blockers and Manage Absence for selected resource
+		 * open the Single Time Allocation dialog Blockers and Manage Absence for selected resource
 		 * @param oEvent
 		 * Since 2301.1.0
 		 * @Author Rakesh Sahu
 		 */
 		onNewTimeAllocPress: function (oEvent) {
 			var oResourceBundle = this.getResourceBundle();
-			if (this.selectedResources.length === 0) {
+			if (this.selectedResources.length === 0 || this.removeSelectedResourceGroups()) {
 				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
 				return;
 			}
@@ -1047,6 +1047,42 @@ sap.ui.define([
 				return oData.ORDERID + " / " + oData.OPERATIONID + "  " + Desc
 			} else {
 				return oData.NOTIFICATION + "  " + Desc;
+			}
+		},
+		
+		/**
+		 * remove the selection of resource group on press of time allocation button 
+		 * time allocation dialog does not work for resource Group
+		 * it works for multiple resources only
+		 */
+		removeSelectedResourceGroups: function () {
+			var oModel,
+				aRemoveItems = [];
+			oModel = this._mParameters.bFromHome || this._mParameters.bFromMap ? this.getModel() : this.getModel("ganttModel");
+			for (var i in this.selectedResources) {
+				if (oModel.getProperty(this.selectedResources[i] + "/NodeType") === "RES_GROUP") {
+					aRemoveItems.push(this.selectedResources[i]);
+				}
+			}
+			for (i in aRemoveItems) {
+				this.selectedResources.splice(this.selectedResources.indexOf(aRemoveItems[i]), 1);
+				this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit ? oModel.setProperty(aRemoveItems[i] + "/IsSelected",
+					false) : null;
+			}
+			if (this.selectedResources.length) {
+				return false;
+			} else {
+				this.resetResourceTreeSelection(aRemoveItems);
+				return true;
+			}
+		},
+		
+		/**
+		 * deselect the Resource group which are removed from selection on press of time allocation button 
+		 */
+		resetResourceTreeSelection: function (aRemoveItems) {
+			if (this._mParameters.bFromHome || this._mParameters.bFromMap) {
+				this._eventBus.publish("ManageAbsences", "ClearSelection", {});
 			}
 		}
 	});
