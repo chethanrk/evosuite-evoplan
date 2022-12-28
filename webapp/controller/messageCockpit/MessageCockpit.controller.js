@@ -88,13 +88,6 @@ sap.ui.define([
 			aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
 
 			oModel.setUseBatch(false);
-			// aPromises.push(this.oComponent.readData("/MessageSet/$count", [aFilters[0]], undefined));
-			// aPromises.push(this.oComponent.readData("/MessageSet/$count", [aFilters[1]], undefined));
-			// aPromises.push(this.oComponent.readData("/MessageSet/$count", [aFilters[2]], undefined));
-			// Promise.all(aPromises).then(function(data) {
-			// 	debugger
-			// 	oModel.setUseBatch(true);	
-			// });
 
 			var callBackFn = function (oResponse) {
 				sRequestUri = oResponse.requestUri.split('eq')[1];
@@ -105,44 +98,13 @@ sap.ui.define([
 				} else if (_.includes(sRequestUri, 'Q')) {
 					oCounterModel.setProperty("/I", parseInt(oResponse.data));
 				}
+				oModel.setUseBatch(true);
 			};
 
 			aFilters.forEach(function (item) {
-				// this._onFilterCount(item);
 				this.oComponent.readData("/MessageSet/$count", [item], undefined, callBackFn);
 			}.bind(this));
 
-		},
-
-		/** 
-		 * Get the cout of error, success and inprocess messages
-		 * @param oFilter - one by one filter is passed to this function
-		 */
-		_onFilterCount: function (oFilter) {
-			var oCounterModel = this.getModel("messageCounter"),
-				oModel = this.getModel(),
-				sRequestUri;
-
-			oModel.setUseBatch(false);
-
-			this.oComponent.readData("/MessageSet/$count", )
-
-			oModel.read("/MessageSet/$count", {
-				filters: [
-					oFilter
-				],
-				success: function (oData, oResponse) {
-					sRequestUri = oResponse.requestUri.split('eq')[1];
-					if (_.includes(sRequestUri, 'S')) {
-						oCounterModel.setProperty("/S", parseInt(oData));
-					} else if (_.includes(sRequestUri, 'E')) {
-						oCounterModel.setProperty("/E", parseInt(oData));
-					} else if (_.includes(sRequestUri, 'Q')) {
-						oCounterModel.setProperty("/I", parseInt(oData));
-					}
-					oModel.setUseBatch(true);
-				}
-			});
 		},
 
 		/** 
