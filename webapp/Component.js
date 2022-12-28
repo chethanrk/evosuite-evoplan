@@ -128,7 +128,7 @@ sap.ui.define([
 
 			// Not able load more than 100 associations
 			this.getModel().setSizeLimit(600);
-			
+
 			this._setApp2AppLinks();
 		},
 
@@ -473,15 +473,8 @@ sap.ui.define([
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
 			var oViewModel = new JSONModel({
-				treeSet: "ResourceHierarchySet",
-				ganttTreeSet: "GanttResourceHierarchySet",
 				subFilterEntity: "Demand",
-				subTableSet: "DemandSet",
 				tableBusyDelay: 0,
-				persistencyKeyTable: "evoPlan_ui",
-				persistencyKeyTree: "evoPlan_resource",
-				persistencyKeyDemandTable: "evoPlan_demands",
-				persistencyKeyGanttDemandFilter: "evoPlan_GanttResourceFilter",
 				counterResourceFilter: "",
 				showStatusChangeButton: false,
 				busy: true,

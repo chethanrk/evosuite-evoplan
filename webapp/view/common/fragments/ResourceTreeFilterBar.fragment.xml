@@ -1,7 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
 	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-	<smartFilterBar:SmartFilterBar id="resourceTreeFilterBar" class="treeTableFilterBar" persistencyKey="{viewModel>/persistencyKeyTree}"
-		considerSelectionVariants="true" entitySet="{viewModel>/treeSet}" enableBasicSearch="false" liveMode="true" showGoOnFB="true"
+	<smartFilterBar:SmartFilterBar id="resourceTreeFilterBar" class="treeTableFilterBar" persistencyKey="com.evorait.evosuite.evoplan.ResourceTree"
+		considerSelectionVariants="true" entitySet="ResourceHierarchySet" enableBasicSearch="false" liveMode="true" showGoOnFB="true"
 		filterBarExpanded="false" beforeVariantFetch="onBeforeVariantFetch" afterVariantLoad="onAfterVariantLoad" filterContainerWidth="10rem"
 		filterChange="onFilterBarChanged" containerQuery="true" showRestoreOnFB="true" showClearOnFB="false" showFilterConfiguration="false">
 		<smartFilterBar:controlConfiguration>
@@ -27,9 +27,7 @@
 			<smartFilterBar:ControlConfiguration key="ResourceGroupGuid" label="{i18n>xtit.filterTitleGroup}" visibleInAdvancedArea="false" width="100%"
 				groupId="_BASIC" index="2">
 				<smartFilterBar:customControl>
-					<MultiComboBox
-						items="{ path: 'resGroups>/', templateShareable: true }"
-						selectionChange="onCustomFilterChange">
+					<MultiComboBox items="{ path: 'resGroups>/', templateShareable: true }" selectionChange="onCustomFilterChange">
 						<core:Item key="{resGroups>ObjectId}" text="{resGroups>GroupDescription}"/>
 					</MultiComboBox>
 				</smartFilterBar:customControl>

@@ -1,9 +1,8 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:table="sap.ui.table" xmlns:core="sap.ui.core"
 	xmlns:dnd="sap.ui.core.dnd">
 	<smartTable:SmartTable id="draggableList" height="100%" width="100%" direction="Column" fitContainer="true" enableAutoBinding="true"
-		entitySet="{viewModel>/subTableSet}" smartFilterId="listReportFilter" showRowCount="true" header="{i18n>xtit.itemListTitle}"
-		useExportToExcel="true" useVariantManagement="true" beforeRebindTable="onBeforeRebindTable"
-		persistencyKey="{viewModel>/persistencyKeyDemandTable}" useTablePersonalisation="true"
+		entitySet="DemandSet" smartFilterId="listReportFilter" showRowCount="true" header="{i18n>xtit.itemListTitle}" useExportToExcel="true"
+		useVariantManagement="true" beforeRebindTable="onBeforeRebindTable" persistencyKey="com.evorait.evosuite.evoplan.DemandsTable" useTablePersonalisation="true"
 		requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,FIXED_APPOINTMENT_ICON_COLOR,FIXED_APPOINTMENT,FIXED_APPOINTMENT_START_DATE,FIXED_APPOINTMENT_START_TIME,FIXED_APPOINTMENT_END_DATE,FIXED_APPOINTMENT_END_TIME">
 		<!-- layout data used to make the table growing but the filter bar fixed -->
 		<smartTable:layoutData>
@@ -11,12 +10,12 @@
 		</smartTable:layoutData>
 		<smartTable:customToolbar>
 			<OverflowToolbar>
-				<core:ExtensionPoint name="TableExtP|Fragments|DemandSet|DemandTable|Toolbar|Left" />
+				<core:ExtensionPoint name="TableExtP|Fragments|DemandSet|DemandTable|Toolbar|Left"/>
 				<ToolbarSpacer/>
 				<ToggleButton icon="{=${viewModel>/showDemands} === true?'sap-icon://show':'sap-icon://hide'}" enabled="true"
 					pressed="{viewModel>/showDemands}"/>
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandToolbarButtons" type="XML"/>
-				<core:ExtensionPoint name="TableExtP|Fragments|DemandSet|DemandTable|Toolbar|Right" />
+				<core:ExtensionPoint name="TableExtP|Fragments|DemandSet|DemandTable|Toolbar|Right"/>
 			</OverflowToolbar>
 		</smartTable:customToolbar>
 		<table:Table enableGrouping="true" visibleRowCountMode="Auto" enableColumnReordering="false" enableCellFilter="false"
@@ -56,7 +55,7 @@
 					</table:template>
 				</table:Column>
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.AssignmentCountColumn" type="XML"/>
-				<core:ExtensionPoint name="TableExtP|Fragments|DemandSet|DemandTable|CustomColumn" />
+				<core:ExtensionPoint name="TableExtP|Fragments|DemandSet|DemandTable|CustomColumn"/>
 			</table:columns>
 			<table:dragDropConfig>
 				<dnd:DragInfo sourceAggregation="rows" groupName="demandView" dragStart="onDragStart" dragEnd="onDragEnd"/>
