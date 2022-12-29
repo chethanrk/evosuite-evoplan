@@ -640,92 +640,36 @@ sap.ui.define([
 			oDataTable.setRowActionTemplate(oTemplate);
 			oDataTable.setRowActionCount(oTemplate.getItems().length);
 		},
+		
 		/**
-		 *	Navigates to evoOrder detail page with static url. 
+		 * Navigate to other apps as BSP Apps 
+		 * @param sUri
 		 */
-		handleNavigationLinkAction: function (oDemandObj, oAppInfo, oViewModel, oUserModel) {
-			var sUri, sSemanticObject, sParameter, sKey, oKeyChar, aPlaceholders,
-				sAction,
-				sAdditionInfo,
-				sServicePath = "https://" + oUserModel.getProperty("/ServerPath"),
-				sLaunchMode = oViewModel ? oViewModel.getProperty("/launchMode") : this.getModel("viewModel").getProperty("/launchMode");
-
-			//Logic for Transaction Navigation
-			if (oAppInfo.LaunchMode === "ITS") {
-				sAdditionInfo = oAppInfo.Value1;
-				sUri = sAdditionInfo.split("\\")[0];
-				sParameter = sAdditionInfo.split("\\")[sAdditionInfo.split("\\").length - 1];
-				oKeyChar = oDemandObj[sParameter];
-				sUri = sUri + oKeyChar;
-				if (sAdditionInfo.substring(0, 5) !== "https") {
-					sUri = sServicePath + sUri;
-				}
-				window.open(sUri, "_blank");
-			} else {
-				//Logic for Navigation in Fiori Launchpad
-				if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
-					sAdditionInfo = oAppInfo.Value1 || "";
-					sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];
-					sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "dispatch";
-					aPlaceholders = sAdditionInfo.split("\\\\_\\\\").splice(2);
-					sParameter = "";
-					for (var a = 0; a < aPlaceholders.length; a++) {
-						oKeyChar = aPlaceholders[a].charAt(0);
-						if (oKeyChar === "?") {
-							sParameter = sParameter + aPlaceholders[a].split("=")[0] + "=" + oDemandObj[aPlaceholders[a].split("=")[1]];
-						} else {
-							if (oKeyChar === aPlaceholders[a].charAt(aPlaceholders[a].length - 1)) {
-								sParameter = sParameter + aPlaceholders[a];
-							} else {
-								sParameter = sParameter + oDemandObj[aPlaceholders[a].split(oKeyChar)[1]] + oKeyChar;
-							}
-						}
-					}
-					if (oKeyChar === "?") {
-						sParameter = "?" + sParameter.slice(1);
-					} else {
-						sParameter = "&" + sParameter.slice(0, -1);
-					}
-					if (sSemanticObject && sAction) {
-						this.navToApp(sSemanticObject, sAction, sParameter);
-					}
-				} else { //Logic for Navigating as BSP URL
-					sAdditionInfo = oAppInfo.Value1;
-					aPlaceholders = sAdditionInfo.split("\\").slice(2);
-					sUri = sAdditionInfo.split("\\")[0];
-					oKeyChar = sUri.charAt(sUri.length - 1);
-					for (var s = 0; s < aPlaceholders.length; s++) {
-						if (aPlaceholders[s].includes("/")) {
-							sKey = oDemandObj[aPlaceholders[s].split("/")[0]] + oKeyChar;
-							if (aPlaceholders[s].includes("&")) {
-								sKey = aPlaceholders[s].split(oKeyChar)[0] + oKeyChar + oDemandObj[aPlaceholders[s].split(oKeyChar)[1].split("/")[0]];
-								sUri = sUri.slice(0, -1);
-							}
-							sUri = sUri + sKey;
-						}
-					}
-					sUri = sUri.slice(0, -1);
-					if (sAdditionInfo.substring(0, 5) !== "https") {
-						sUri = sServicePath + sUri;
-					}
-					window.open(sUri, "_blank");
-				}
-			}
+		navigateToApps: function (sUri) {
+			window.open(sUri, "_blank");
 		},
 
-		navToApp: function (sSemanticObject, sAction, sParameter) {
-			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation"),
-				sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
+		/**
+		 * Navigate to other apps in Fiori Launchpad 
+		 * @param sSemanticObject
+		 * @param sAction
+		 * @param sParameter
+		 * @param sParamValue
+		 */
+		navToApp: function (sSemanticObject, sAction, sParameter, sParamValue) {
+			var sHash, sUrl,
+				oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation"),
+				mParams = {};
+			mParams[sParameter] = [sParamValue];
+			sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
 					target: {
 						semanticObject: sSemanticObject,
 						action: sAction
-					}
+					},
+					params: mParams
 				}) || "", // generate the Hash to display a Notification details app
 
-				//Setting ShellHash Parameters for EvoTime and Other apps
-				sShellHash = sHash + sParameter, // + sKey;
-
-				sUrl = window.location.href.split('#')[0] + sShellHash;
+				sUrl = window.location.href.split('#')[0] + sHash;
 			window.open(sUrl, "_blank");
 
 		},
