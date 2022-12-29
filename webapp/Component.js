@@ -151,7 +151,6 @@ sap.ui.define([
 		},
 		/**
 		 *  Read call given entityset and filters
-		 * callBackFn - used for sending back response
 		 */
 		readData: function (sUri, aFilters, mUrlParams) {
 			return new Promise(function (resolve, reject) {
