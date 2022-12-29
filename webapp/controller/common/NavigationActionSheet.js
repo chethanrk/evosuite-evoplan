@@ -63,7 +63,14 @@ sap.ui.define([
 				oData = oModel.getProperty(sPath);
 			this.linkToOtherApp(oData, oSource.getModel("viewModel"), oSource.getModel("user"));
 		},
-
+		
+		/**
+		 * Navigation Logic for EvoApps Detail Screen 
+		 * based on Launch Mode's
+		 * @param oAppInfo
+		 * @param oViewModel
+		 * @param oUserModel
+		 */
 		linkToOtherApp: function (oAppInfo, oViewModel, oUserModel) {
 			var sUri, sSemanticObject, sAction, sAdditionInfo, sParameter, sParamValue, oKeyChar,
 				sServicePath = "https://" + oUserModel.getProperty("/ServerPath"),
