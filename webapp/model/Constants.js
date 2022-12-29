@@ -2,23 +2,37 @@ sap.ui.define([], function () {
 	"use strict";
 
 	var constants = {
-		APPLICATION:{
-			EVOPLAN:"EVOPLAN",
-			EVOORDER:"EVOORDER"
+		APPLICATION: {
+			EVOEQUIP: "EVOEQUIP",
+			EVOORDER: "EVOORDER",
+			EVOFLOC: "EVOFLOC",
+			EVONOTIFY: "EVONOTIFY",
+			EVORELATE: "EVORELATE",
+			EVORES: "EVORES",
+			EVOTIME: "EVOTIME",
+			GUI1: "GUI1",
+			GUI2: "GUI2"
 		},
-		LAUNCH_MODE:{
-			FIORI:"LAUNCHPAD",
-			BSP:"BSP"
+		PROPERTY: {
+			EVOORDER: "ORDERID",
+			EVONOTIFY: "NOTIFICATION",
+			EVOEQUIP: "EQUIPMENT",
+			EVOFLOC: "FUNCTIONAL_LOCATION"
 		},
-		PLANNINGCAL:{
-			ABSENCE:"ABSENCE",
-			ASSET_UNAVAILABILITY:"ASSETUA",
-			ASSIGNMENTS:"ASSIGNMENT"
+		LAUNCH_MODE: {
+			FIORI: "LAUNCHPAD",
+			BSP: "BSP",
+			ITS: "ITS"
 		},
-		GANTT:{
-			NAME:"Gantt",
-			SPLIT:"GanttSplit",
-			SPLITDMD:"splitDemands"
+		PLANNINGCAL: {
+			ABSENCE: "ABSENCE",
+			ASSET_UNAVAILABILITY: "ASSETUA",
+			ASSIGNMENTS: "ASSIGNMENT"
+		},
+		GANTT: {
+			NAME: "Gantt",
+			SPLIT: "GanttSplit",
+			SPLITDMD: "splitDemands"
 		},
 		MAP: {
 			JS_PROVIDERS_PATH: "com/evorait/evoplan/controller/map/"
@@ -57,9 +71,9 @@ sap.ui.define([], function () {
 			HOME: "Home",
 			RESOURCE_TREE: "ResourceTree",
 			DEMAND_DETAILS: "DemandDetails",
-			GANTT_DEMAND:"GanttDemand",
-			GANTTSPLIT:"GantSplit",
-			PLANNING_CALENDER:"PlanningCalender",
+			GANTT_DEMAND: "GanttDemand",
+			GANTTSPLIT: "GantSplit",
+			PLANNING_CALENDER: "PlanningCalender",
 			RESOURCE_QUALIFICATION: "ResourcQualification",
 			ASSET: "Asset",
 			DETAIL: "Detail",
@@ -76,8 +90,8 @@ sap.ui.define([], function () {
 			ORDER_QUALIFIER: "OrderAssignmentDialog",
 			NETWORK_OBJECTSOURCETYPE: "DEM_PSNW",
 			NETWORK_QUALIFIER: "NetworkAssignmentDialog",
-			GANTT_POP_OVER_QUALIFIER:"GanttAssignmentPopOver",
-			MAP_DEMAND_PIN:"MapDemandPin"
+			GANTT_POP_OVER_QUALIFIER: "GanttAssignmentPopOver",
+			MAP_DEMAND_PIN: "MapDemandPin"
 		}
 	};
 
