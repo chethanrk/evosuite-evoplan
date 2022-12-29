@@ -450,7 +450,7 @@ sap.ui.define([
 			//removing assignments that are not movable
 			for (var i = 0; i < aPathsToBeRemoved.length; i++) {
 				this.aSelectedAssignmentsPaths.splice(aPathsToBeRemoved.indexOf(aPathsToBeRemoved[i]), 1);
-			};
+			}
 
 			//Calling "Update" function import to update date/time to backend
 			this.getModel("appView").setProperty("/busy", true);

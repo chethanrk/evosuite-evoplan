@@ -4,10 +4,10 @@
 	<Page id="listPage" title="{i18n>xtit.itemListTitle}" showFooter="false" showHeader="false">
 		<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandsTable" type="XML"/>-->
 		<smartTable:SmartTable id="draggableList" height="100%" width="100%" direction="Column" fitContainer="true" enableAutoBinding="true"
-			entitySet="{viewModel>/subTableSet}" smartFilterId="listReportFilter" showRowCount="true" header="{i18n>xtit.itemListTitle}"
+			entitySet="DemandSet" smartFilterId="listReportFilter" showRowCount="true" header="{i18n>xtit.itemListTitle}"
 			editTogglable="{parts:['user>/ENABLE_DEMAND_EDIT', 'viewModel>/validateIW32Auth'], formatter:'.formatter.editBtnVisibility'}"
 			editable="{viewModel>/bDemandEditMode}" app:useSmartField="true" editToggled="onEditToggledDemandTable" useExportToExcel="true"
-			useVariantManagement="true" persistencyKey="{viewModel>/persistencyKeyDemandTable}" useTablePersonalisation="true"
+			useVariantManagement="true" persistencyKey="com.evorait.evosuite.evoplan.DemandsTable" useTablePersonalisation="true"
 			requestAtLeastFields="ORDERID,DemandDesc,Guid,ASGNMNT_CHANGE_ALLOWED,ALLOW_REASSIGN,ALLOW_UNASSIGN,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,DEMAND_ICON,REQUIREMENT_PROFILE_ID,ENABLE_ROUTE_EVOORDER,ENABLE_ROUTE_EVOEQUIP,ENABLE_ROUTE_EVONOTIFY,ENABLE_ROUTE_EVOTIME,EQUIPMENT,NOTIFICATION,ORDER_TYPE,ENABLE_ROUTE_GUI1,ENABLE_ROUTE_GUI2,ENABLE_ROUTE_EVOFLOC,FUNCTIONAL_LOC,COMPONENT_EXISTS,FIXED_ASSGN_START_DATE,FIXED_ASSGN_START_TIME,FIXED_ASSGN_END_DATE,FIXED_ASSGN_END_TIME,ALLOW_ASSIGNMENT_DIALOG,LONG_TEXT_ICON,OBJECT_SOURCE_TYPE,FIXED_APPOINTMENT_ICON_COLOR,FIXED_APPOINTMENT,FIXED_APPOINTMENT_START_DATE,FIXED_APPOINTMENT_START_TIME,FIXED_APPOINTMENT_END_DATE,FIXED_APPOINTMENT_END_TIME,MATERIAL_STATUS_ICON,MATERIAL_STATUS_DESC,MATERIAL_STATUS_STATE,Effort,DURATION">
 			<!-- layout data used to make the table growing but the filter bar fixed -->
 			<smartTable:layoutData>
@@ -28,51 +28,9 @@
 					<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
 				</table:rowSettingsTemplate>
 				<table:columns>
-					<table:Column hAlign="Center" width="3rem" visible="{:= ${/#Demand/STATUS_ICON/@sap:visible} === 'false' ? false : true}">
-						<table:customData>
-							<core:CustomData key="p13nData" value='\{"columnKey": "STATUS_ICON", "leadingProperty": "STATUS_ICON"}'/>
-						</table:customData>
-						<Label text="{/#Demand/STATUS_ICON/@sap:label}"/>
-						<table:template>
-							<core:Icon src="{STATUS_ICON}"
-								color="{ parts:['CRITICALITY','FIXED_APPOINTMENT_ICON_COLOR'], formatter:'.formatter.formatStatusIconColor' }" tooltip="{StatusDesc}"></core:Icon>
-						</table:template>
-					</table:Column>
-					<table:Column hAlign="Center" width="3rem">
-						<table:customData>
-							<core:CustomData key="p13nData" value='\{"columnKey": "DEMAND_ICON", "leadingProperty": "DEMAND_ICON"}'/>
-						</table:customData>
-						<Label text="{/#Demand/DEMAND_ICON/@sap:label}"/>
-						<table:template>
-							<core:Icon src="{DEMAND_ICON}" tooltip="{DemandDesc}"></core:Icon>
-						</table:template>
-					</table:Column>
-					<table:Column hAlign="Center" width="9rem" visible="{user>/ENABLE_MATERIAL_AVAILABILITY}">
-						<table:customData>
-							<core:CustomData key="p13nData" value='\{"columnKey": "MATERIAL_STATUS", "leadingProperty": "MATERIAL_STATUS"}'/>
-						</table:customData>
-						<Label text="{/#Demand/MATERIAL_STATUS/@sap:label}"/>
-						<table:template>
-							<HBox>
-								<ObjectStatus class="sapUiTinyMargin" tooltip="{MATERIAL_STATUS_DESC}" text="{MATERIAL_STATUS_DESC}"
-									visible="{ path:'COMPONENT_EXISTS', formatter:'.formatter.formatComponentExist' }" icon="{MATERIAL_STATUS_ICON}"
-									state="{path:'MATERIAL_STATUS_STATE',formatter:'.formatter.getDemandState'}"/>
-							</HBox>
-						</table:template>
-					</table:Column>
+					<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandComonTableColumns" type="XML"/>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.LongTextColumn" type="XML"/>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandQualificationColumn" type="XML"/>
-					<table:Column hAlign="Center" width="3rem" visible="{user>/ENABLE_EMP}">
-						<table:customData>
-							<core:CustomData key="p13nData" value='\{"columnKey": "SYNC_STATUS", "leadingProperty": "SYNC_STATUS"}'/>
-						</table:customData>
-						<Label text="{/#Demand/SYNC_STATUS/@sap:label}"/>
-						<table:template>
-							<core:Icon src="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIcon' }"
-								color="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncIconColor' }"
-								tooltip="{ path:'SYNC_STATUS', formatter:'.formatter.formatSyncTooltip' }"></core:Icon>
-						</table:template>
-					</table:Column>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.AssignmentCountColumn" type="XML"/>
 					<core:ExtensionPoint name="TableExtP|GanttDemands|DemandSet|Table|CustomColoumn"/>
 				</table:columns>

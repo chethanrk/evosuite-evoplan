@@ -30,7 +30,6 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttActions",
 	"com/evorait/evoplan/controller/DialogTemplateRenderController",
 	"com/evorait/evoplan/controller/common/OperationTimeCheck",
-	"com/evorait/evoplan/controller/gantt/GanttResourceTreeFilter",
 	"com/evorait/evoplan/controller/common/VendorAssignment",
 	"com/evorait/evoplan/controller/common/LongTextPopover",
 	"com/evorait/evoplan/controller/common/NetworkAssignment",
@@ -70,7 +69,6 @@ sap.ui.define([
 	GanttResourceFilter,
 	GanttActions, DialogTemplateRenderController,
 	OperationTimeCheck,
-	GanttResourceTreeFilter,
 	VendorAssignment,
 	LongTextPopover,
 	NetworkAssignment,
@@ -130,6 +128,8 @@ sap.ui.define([
 
 			// Not able load more than 100 associations
 			this.getModel().setSizeLimit(600);
+
+			this._setApp2AppLinks();
 		},
 
 		/**
@@ -230,7 +230,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-		
+
 		/* =========================================================== */
 		/* Private methods                                              */
 		/* =========================================================== */
@@ -282,8 +282,6 @@ sap.ui.define([
 			this.FixedAppointmentsList = new FixedAppointmentsList();
 
 			this.GanttResourceFilter = new GanttResourceFilter();
-
-			this.GanttResourceTreeFilter = new GanttResourceTreeFilter();
 
 			this.OperationTimeCheck = new OperationTimeCheck();
 			this.OperationTimeCheck.init();
@@ -475,15 +473,8 @@ sap.ui.define([
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
 			var oViewModel = new JSONModel({
-				treeSet: "ResourceHierarchySet",
-				ganttTreeSet: "GanttResourceHierarchySet",
 				subFilterEntity: "Demand",
-				subTableSet: "DemandSet",
 				tableBusyDelay: 0,
-				persistencyKeyTable: "evoPlan_ui",
-				persistencyKeyTree: "evoPlan_resource",
-				persistencyKeyDemandTable: "evoPlan_demands",
-				persistencyKeyGanttDemandFilter: "evoPlan_GanttResourceFilter",
 				counterResourceFilter: "",
 				showStatusChangeButton: false,
 				busy: true,
@@ -686,6 +677,32 @@ sap.ui.define([
 				}
 			});
 			this._oMessagePopover = oMessagePopover;
-		}
+		},
+
+		/* read app2app navigation links from backend
+		 *	Used in Create Order
+		 */
+		_setApp2AppLinks: function () {
+			if (sap.ushell && sap.ushell.Container) {
+				this.getModel("viewModel").setProperty("/launchMode", Constants.LAUNCH_MODE.FIORI);
+			}
+			var oFilter = new Filter("LaunchMode", FilterOperator.EQ, this.getModel("viewModel").getProperty("/launchMode")),
+				mProps = {};
+			this.oTemplatePropsProm = new Promise(function (resolve) {
+				this._getData("/NavigationLinksSet", [oFilter])
+					.then(function (data) {
+						data.results.forEach(function (oItem) {
+							if (oItem.Value1 && Constants.APPLICATION[oItem.ApplicationId]) {
+								if (Constants.PROPERTY || oItem.Value2 !== "") {
+									oItem.Property = oItem.Value2 || Constants.PROPERTY[oItem.ApplicationId];
+									mProps[oItem.Property] = oItem;
+								}
+							}
+						}.bind(this));
+						this.getModel("templateProperties").setProperty("/navLinks/", mProps);
+						resolve(mProps);
+					}.bind(this));
+			}.bind(this));
+		},
 	});
 });

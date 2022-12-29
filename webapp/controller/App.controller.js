@@ -492,7 +492,7 @@ sap.ui.define([
 			} else if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
 				sSemanticObj = aSelectedLinkData[0].Value1.split("\\\\_\\\\")[0];
 				sAction = aSelectedLinkData[0].Value1.split("\\\\_\\\\")[1];
-				this.navToApp(sSemanticObj, sAction, "");
+				this.navToApp(sSemanticObj, sAction, "", "");
 			}
 		}
 	});
