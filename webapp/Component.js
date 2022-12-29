@@ -153,16 +153,13 @@ sap.ui.define([
 		 *  Read call given entityset and filters
 		 * callBackFn - used for sending back response
 		 */
-		readData: function (sUri, aFilters, mUrlParams, callBackFn) {
+		readData: function (sUri, aFilters, mUrlParams) {
 			return new Promise(function (resolve, reject) {
 				this.getModel().read(sUri, {
 					filters: aFilters,
 					urlParameters: mUrlParams || {},
 					success: function (oData, oResponse) {
 						resolve(oData);
-						if(callBackFn){
-							callBackFn(oResponse);
-						}
 					}.bind(this),
 					error: function (oError) {
 						//Handle Error

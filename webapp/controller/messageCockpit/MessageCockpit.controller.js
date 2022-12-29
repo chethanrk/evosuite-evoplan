@@ -78,32 +78,24 @@ sap.ui.define([
 			this._oMessagePopover.openBy(oEvent.getSource());
 		},
 		_refreshCounts: function (oEvent) {
-			var aFilters = [],
-				sRequestUri,
-				oModel = this.getModel(),
+			var oModel = this.getModel(),
 				oCounterModel = this.getModel("messageCounter");
 
-			aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
-			aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
-			aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
-
 			oModel.setUseBatch(false);
-
-			var callBackFn = function (oResponse) {
-				sRequestUri = oResponse.requestUri.split('eq')[1];
-				if (_.includes(sRequestUri, 'S')) {
-					oCounterModel.setProperty("/S", parseInt(oResponse.data));
-				} else if (_.includes(sRequestUri, 'E')) {
-					oCounterModel.setProperty("/E", parseInt(oResponse.data));
-				} else if (_.includes(sRequestUri, 'Q')) {
-					oCounterModel.setProperty("/I", parseInt(oResponse.data));
-				}
-				oModel.setUseBatch(true);
-			};
-
-			aFilters.forEach(function (item) {
-				this.oComponent.readData("/MessageSet/$count", [item], undefined, callBackFn);
-			}.bind(this));
+			
+			this.oComponent.readData("/MessageSet/$count", [new Filter("SyncStatus", FilterOperator.EQ, "E")])
+				.then( function (data) {
+					oModel.setUseBatch(true);
+					oCounterModel.setProperty("/E", parseInt(data));
+			});
+			this.oComponent.readData("/MessageSet/$count", [new Filter("SyncStatus", FilterOperator.EQ, "Q")])
+				.then( function (data) {
+					oCounterModel.setProperty("/I", parseInt(data));
+			});
+			this.oComponent.readData("/MessageSet/$count", [new Filter("SyncStatus", FilterOperator.EQ, "S")])
+				.then( function (data) {
+					oCounterModel.setProperty("/S", parseInt(data));
+			});
 
 		},
 
