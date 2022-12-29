@@ -1231,6 +1231,23 @@ sap.ui.define([
 		 */
 		handlePromiseChainCatch: function(oResponse) {
 			//console.log(oResponse);
+		},
+
+		/**
+		 * Checks if the passed assignment is part of split or not
+		 * 
+		 * @param {object} oModel main model evoplan service
+		 * @param {string} sAssignGuid assignment guid
+		 * @returns boolean if the selected assignment is part of a split
+		 */
+		checkIfAssignmentPartOfSplit: function(oModel, sAssignGuid) {
+			var sAssignmentPath = "/AssignmentSet('" + sAssignGuid + "')",
+				sAssignmentObject = oModel.getProperty(sAssignmentPath);
+
+			if (sAssignmentObject && sAssignmentObject.SPLIT_INDEX > 0 && sAssignmentObject.SPLIT_COUNTER > 0 ) {
+				return true;
+			}
+			return false;
 		}
 	});
 

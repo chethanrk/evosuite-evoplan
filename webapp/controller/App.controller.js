@@ -28,7 +28,6 @@ sap.ui.define([
 			this._eventBus.subscribe("PlanningCalendarDialog", "saveAllAssignments", this._triggerSaveAllAssignments, this);
 
 			this._eventBus.subscribe("AssignInfoDialog", "deleteSplitAssignments", this._triggerDeleteSplitAssignments, this);
-			this._eventBus.subscribe("AssignActionsDialog", "bulkDeleteSplitAssignments", this._triggerDeleteSplitAssignments, this);
 
 			var oViewModel,
 				fnSetAppNotBusy,
@@ -398,12 +397,6 @@ sap.ui.define([
 				// then fire the bulkDeleteAssignments
 				this.deleteSplitsUserConfirm(oData).catch(this._catchError.bind(this))
 				.then(this.deleteSplitAssignments.bind(this)).catch(this._catchError.bind(this));	
-			} else if (sEvent === "bulkDeleteSplitAssignment") {
-				// fire a call to fetch related splits
-				// then fire the bulkDeleteAssignments
-				this.fetchSplitAssignmentsOfDemand(oData)
-				//.then(this.userConfirmDialog.bind(this)).catch(this._catchError.bind(this))
-				.then(this.bulkDeleteAssignment.bind(this));
 			}
 		},
 
@@ -471,7 +464,6 @@ sap.ui.define([
 			this._eventBus.unsubscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
 			this._eventBus.unsubscribe("PlanningCalendarDialog", "saveAllAssignments", this._triggerSaveAllAssignments, this);
 			this._eventBus.subscribe("AssignInfoDialog", "deleteSplitAssignments", this._triggerDeleteSplitAssignments, this);
-			this._eventBus.subscribe("AssignActionsDialog", "bulkDeleteSplitAssignments", this._triggerDeleteSplitAssignments, this);
 		},
 
 		/**

@@ -606,8 +606,17 @@ sap.ui.define([
 		 * Unassign assignment with delete confirmation dialog. 
 		 */
 		_deleteAssignment: function (oModel, sAssignGuid, sPath, oEventBus) {
-			var oGanttModel = this.getModel("ganttModel");
-			this._showConfirmMessageBox.call(this, this.getResourceBundle().getText("ymsg.confirmDel")).then(function (data) {
+			var oGanttModel = this.getModel("ganttModel"),
+
+				bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
+				isAssignmentPartOfSplit = this.checkIfAssignmentPartOfSplit(oModel, sAssignGuid),
+				oResourceBundle = this.getResourceBundle(),
+				sConfirmMessage = oResourceBundle.getText("ymsg.confirmDel");
+			
+			if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
+				sConfirmMessage = oResourceBundle.getText("xmsg.deleteAllSplitAssignments");
+			}
+			this._showConfirmMessageBox.call(this, sConfirmMessage).then(function (data) {
 				oGanttModel.setProperty(sPath + "/busy", true);
 				if (data === "YES") {
 					this.deleteAssignment(oModel, sAssignGuid).then(function () {
@@ -619,6 +628,11 @@ sap.ui.define([
 								sTargetPath: sPath.split("/AssignmentSet/results/")[0]
 							});
 							oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+							if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
+								// in case of split unassign, all the splits are unassigned from backend,
+								// thus on refresh of the entire gantt the splits are also deleted from the gantt UI
+								oEventBus.publish("BaseController", "refreshFullGantt", {});
+							}
 						}.bind(this),
 						function () {
 							oGanttModel.setProperty(sPath + "/busy", false);
