@@ -20,7 +20,8 @@ sap.ui.define([
 			this.getRouter().getRoute("messageCockpit").attachPatternMatched(this._refreshCounts, this);
 			var oDataTable = this.getView().byId("idProcessTable").getTable();
 			oDataTable.setVisibleRowCountMode("Auto");
-			this._oMessagePopover = this.getOwnerComponent()._oMessagePopover;
+			this.oComponent = this.getOwnerComponent();
+			this._oMessagePopover = this.oComponent._oMessagePopover;
 			var oTemplate = oDataTable.getRowActionTemplate();
 			if (oTemplate) {
 				oTemplate.destroy();
@@ -78,58 +79,24 @@ sap.ui.define([
 		},
 		_refreshCounts: function (oEvent) {
 			var oModel = this.getModel(),
-				aDeferredGroups;
-
-			oModel.read("/MessageSet/$count", {
-				groupId: "counter",
-				filters: [
-					new Filter("SyncStatus", FilterOperator.EQ, "E")
-				]
-			});
-			oModel.read("/MessageSet/$count", {
-				groupId: "counter",
-				filters: [
-					new Filter("SyncStatus", FilterOperator.EQ, "S")
-				]
-			});
-			oModel.read("/MessageSet/$count", {
-				groupId: "counter",
-				filters: [
-					new Filter("SyncStatus", FilterOperator.EQ, "Q")
-				]
-			});
-
-			aDeferredGroups = oModel.getDeferredGroups();
-			aDeferredGroups = aDeferredGroups.concat(["counter"]);
-			oModel.setDeferredGroups(aDeferredGroups);
-
-			oModel.submitChanges({
-				groupId: "counter",
-				success: this._onSuccess.bind(this)
-			});
-
-		},
-
-		/** 
-		 * Get the cout of error, success and inprocess messages
-		 * @constructor 
-		 * @param data
-		 * @param response
-		 */
-		_onSuccess: function (data, response) {
-			var iErrorCount = 0,
-				iSuccessCount = 0,
-				iInProcessCount = 0,
 				oCounterModel = this.getModel("messageCounter");
-			if (data.__batchResponses) {
-				iErrorCount = parseInt(data.__batchResponses[0].data, 10);
-				iSuccessCount = parseInt(data.__batchResponses[1].data, 10);
-				iInProcessCount = parseInt(data.__batchResponses[2].data, 10);
 
-				oCounterModel.setProperty("/S", iSuccessCount);
-				oCounterModel.setProperty("/E", iErrorCount);
-				oCounterModel.setProperty("/I", iInProcessCount);
-			}
+			oModel.setUseBatch(false);
+			
+			this.oComponent.readData("/MessageSet/$count", [new Filter("SyncStatus", FilterOperator.EQ, "E")])
+				.then( function (data) {
+					oModel.setUseBatch(true);
+					oCounterModel.setProperty("/E", parseInt(data));
+			});
+			this.oComponent.readData("/MessageSet/$count", [new Filter("SyncStatus", FilterOperator.EQ, "Q")])
+				.then( function (data) {
+					oCounterModel.setProperty("/I", parseInt(data));
+			});
+			this.oComponent.readData("/MessageSet/$count", [new Filter("SyncStatus", FilterOperator.EQ, "S")])
+				.then( function (data) {
+					oCounterModel.setProperty("/S", parseInt(data));
+			});
+
 		},
 
 		/** 
