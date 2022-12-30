@@ -1345,8 +1345,9 @@ sap.ui.define([
 				function(aPromises) {
 					Promise.all(aPromises)
 						.then(function (aResults) {
-							if (aResults.length > 0) {
-								this._addCreatedAssignment(aResults, oTarget, sDummyPath);
+							var aCreatedAssignments = this._getCreatedAssignments(aResults);
+							if (aCreatedAssignments.length > 0) {
+								this._addCreatedAssignment(aCreatedAssignments, oTarget, sDummyPath);
 							}
 						}.bind(this), function () {
 							if (sDummyPath) {

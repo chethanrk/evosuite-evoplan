@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:smartTable="sap.ui.comp.smarttable">
-	<Dialog title="" contentWidth="100%" resizable="true" contentHeight="80%" stretch="false" beforeOpen="onBeforeOpen" afterClose="onDialogClose">
+	<Dialog title="" contentWidth="100%" resizable="true" contentHeight="80%" stretch="false" beforeOpen="onBeforeOpen">
 		<content>
 			<MessageStrip id="idAssignActionDialogStrip"
 				text="{i18n>xmsg.messageStripDeleteAllAssignments}"

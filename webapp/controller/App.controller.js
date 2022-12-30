@@ -393,8 +393,7 @@ sap.ui.define([
 		 */
 		_triggerDeleteSplitAssignments: function(sChanel, sEvent, oData) {
 			if (sEvent === "deleteSplitAssignments") {
-				// fire a call to fetch related splits
-				// then fire the bulkDeleteAssignments
+				// ask for user confirmation that related splits of the selected assignment will also be unassigned
 				this.deleteSplitsUserConfirm(oData).catch(this._catchError.bind(this))
 				.then(this.deleteSplitAssignments.bind(this)).catch(this._catchError.bind(this));	
 			}

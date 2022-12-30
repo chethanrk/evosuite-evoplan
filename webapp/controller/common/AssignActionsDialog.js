@@ -95,9 +95,11 @@ sap.ui.define([
 				bEnableQualification = this._oView.getModel("user").getProperty("/ENABLE_QUALIFICATION"),
 				oDialog = this._oDialog,
 				
-				oSplitInfoMessageStrip = sap.ui.getCore().byId("AssignActions--idAssignActionDialogStrip");
+				oSplitInfoMessageStrip = sap.ui.getCore().byId("AssignActions--idAssignActionDialogStrip"),
+				oAssignActionsDialogSmartTable = sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable"),
+				bSplitGlobalConfigEnabled = this._oView.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN");
 
-			this._oAssignMentTable = sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable").getTable();
+			this._oAssignMentTable = oAssignActionsDialogSmartTable.getTable();
 
 			if (this._isUnAssign) {
 				oUnAssignBtn.setVisible(true);
@@ -120,7 +122,16 @@ sap.ui.define([
 				oDialog.setTitle(this._resourceBundle.getText("xbut.ChngAssgnStatus"));
 			}
 			if (this.isFirstTime) {
-				sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable").rebindTable();
+				oAssignActionsDialogSmartTable.rebindTable();
+			}
+
+			// In case of split configuration is enabled, 
+			// the split_index and split_counter columns should be visible by default in assign actions dialog
+			// setInitiallyVisibleFields should be done before the control is initialized
+			if (bSplitGlobalConfigEnabled && !oAssignActionsDialogSmartTable.isInitialised()) {
+				var sInitiallyVisibleFields = oAssignActionsDialogSmartTable.getInitiallyVisibleFields();
+				sInitiallyVisibleFields = sInitiallyVisibleFields + ",SPLIT_INDEX,SPLIT_COUNTER";
+				oAssignActionsDialogSmartTable.setInitiallyVisibleFields(sInitiallyVisibleFields);
 			}
 
 			oSplitInfoMessageStrip.setVisible(false);
