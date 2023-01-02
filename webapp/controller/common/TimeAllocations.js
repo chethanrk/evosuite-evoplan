@@ -637,6 +637,10 @@ sap.ui.define([
 						aAvailabilityData[i].BLOCKED_HOURS = 0;
 					}
 				}
+			} else {
+				for (var i in aAvailabilityData) {
+					aAvailabilityData[i].BLOCKED_HOURS = 0;
+				}
 			}
 			this._oViewModel.refresh();
 		},
@@ -927,6 +931,12 @@ sap.ui.define([
 					StartTimestamp: oStartDate,
 					EndTimestamp: oEndDate
 				};
+			var iSliderPercent = Fragment.byId(this._id, "idTimeAllocSlider").getValue();
+			
+			var calculateBlockedHour = function(availableHour){
+				return parseFloat(availableHour * (iSliderPercent / 100)).toFixed(1);	
+			};
+			
 			this._oDialog.setBusy(true);
 			this._dataDirty = true;
 			for (var i in this._aResourceGuids) {
@@ -941,8 +951,8 @@ sap.ui.define([
 						oData.push({
 							ResourceDescription: aPromiseAllResults[i][0].ResourceDescription,
 							AVAILABLE_HOURS: aPromiseAllResults[i][0].AVAILABLE_HOURS,
-							BLOCKED_HOURS: 0,
-							BlockPercentage: 0
+							BLOCKED_HOURS: calculateBlockedHour(aPromiseAllResults[i][0].AVAILABLE_HOURS),
+							BlockPercentage: iSliderPercent
 						});
 					}
 					this._oViewModel.setProperty("/timeAllocations/createData", oData);
