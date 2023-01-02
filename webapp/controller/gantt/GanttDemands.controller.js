@@ -24,14 +24,15 @@ sap.ui.define([
 			// Row Action template to navigate to Detail page
 			var onClickNavigation = this.onActionPress.bind(this),
 				openActionSheet = this.openActionSheet.bind(this),
-				oAppModel = this.getModel("appView");
+				this.oAppModel = this.getModel("appView"),
+				this.oUserModel = this.getModel("user");
 
 			this._viewModel = this.getModel("viewModel");
 			this._mParameters = {
 				bFromGantt: true
 			};
 
-			if (oAppModel.getProperty("/currentRoute") === "splitDemands") {
+			if (this.oAppModel.getProperty("/currentRoute") === "splitDemands") {
 				this._mParameters = {
 					bFromDemandSplit: true
 				};
@@ -65,7 +66,7 @@ sap.ui.define([
 		 */
 		onDragStart: function (oEvent) {
 			var sMsg = this.getResourceBundle().getText("msg.notAuthorizedForAssign");
-			if (!this.getModel("viewModel").getProperty("/validateIW32Auth")) {
+			if (!this._viewModel.getProperty("/validateIW32Auth")) {
 				this.showMessageToast(sMsg);
 				oEvent.preventDefault();
 				return;
@@ -95,8 +96,8 @@ sap.ui.define([
 				});
 			});
 
-			this.getModel("viewModel").setProperty("/gantDragSession", aSelDemandGuid);
-			this.getModel("viewModel").setProperty("/dragSession", aPathsData);
+			this._viewModel.setProperty("/gantDragSession", aSelDemandGuid);
+			this._viewModel.setProperty("/dragSession", aPathsData);
 			localStorage.setItem("Evo-Dmnd-guid", JSON.stringify(aSelectedDemandObject));
 			localStorage.setItem("Evo-aPathsData", JSON.stringify(aPathsData));
 
@@ -131,7 +132,7 @@ sap.ui.define([
 				this._aSelectedRowsIdx.length = 100;
 			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
-			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
+			this._viewModel.setProperty("/dragSession", oSelectedPaths.aPathsData);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
 				// TODO comment
@@ -167,9 +168,9 @@ sap.ui.define([
 		 */
 		onRowSelectionChange: function (oEvent) {
 			var selected = this._oDataTable.getSelectedIndices(),
-				iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL"),
+				iMaxRowSelection = this.oUserModel.getProperty("/DEFAULT_DEMAND_SELECT_ALL"),
 				selected = this._oDataTable.getSelectedIndices(),
-				bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
+				bEnable = this._viewModel.getProperty("/validateIW32Auth"),
 				index = oEvent.getParameter("rowIndex"),
 				sDemandPath, bComponentExist;
 			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
@@ -299,7 +300,7 @@ sap.ui.define([
 		 */
 		handleResponse: function (bResponse) {
 			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
-				oViewModel = this.getModel("viewModel"),
+				oViewModel = this._viewModel,
 				oModel = this.getModel(),
 				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode"),
 				sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
@@ -351,8 +352,8 @@ sap.ui.define([
 			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
 			var aSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx);
 			if (aSelectedPaths.aAssignmentDemands.length > 0) {
-				this.getModel("viewModel").setProperty("/Show_Assignment_Status_Button", true);
-				this.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
+				this._viewModel.setProperty("/Show_Assignment_Status_Button", true);
+				this._viewModel.setProperty("/Disable_Assignment_Status_Button", false);
 				this.getOwnerComponent().assignActionsDialog.open(this.getView(), aSelectedPaths, true, this._mParameters);
 			} else {
 				sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.noAssignments"));
