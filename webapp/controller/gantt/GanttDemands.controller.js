@@ -23,10 +23,10 @@ sap.ui.define([
 		onInit: function () {
 			// Row Action template to navigate to Detail page
 			var onClickNavigation = this.onActionPress.bind(this),
-				openActionSheet = this.openActionSheet.bind(this),
-				this.oAppModel = this.getModel("appView"),
-				this.oUserModel = this.getModel("user");
-
+				openActionSheet = this.openActionSheet.bind(this);
+			
+			this.oAppModel = this.getModel("appView");
+			this.oUserModel = this.getModel("user");
 			this._viewModel = this.getModel("viewModel");
 			this._mParameters = {
 				bFromGantt: true
