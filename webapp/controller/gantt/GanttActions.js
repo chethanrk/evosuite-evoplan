@@ -801,19 +801,6 @@ sap.ui.define([
 			oGanttModel.refresh(true);
 			oGanttOriginalModel.refresh(true);
 		},
-		/**
-		 * getting Demand objects form local model coming from gantt split
-		 * @param sPath
-		 * @since 2205
-		 */
-		_getDemandObjectSplitPage: function (sPath) {
-			var aDragSessionData = this.getModel("viewModel").getProperty("/dragSession");
-			for (var i = 0; i < aDragSessionData.length; i++) {
-				if (aDragSessionData[i].sPath === sPath) {
-					return aDragSessionData[i].oData;
-				}
-			}
-		},
 
 		/**
 		 * check for unsaved data in Demand table

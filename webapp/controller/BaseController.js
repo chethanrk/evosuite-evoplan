@@ -1076,10 +1076,9 @@ sap.ui.define([
 		 * @param {promise reject} finalReject 
 		 */
 		showSplitConfirmationDialog: function(oResourceAvailabiltyResponse) {
-			var oModel = this.getModel(),
-				oViewModel = this.getModel("viewModel"),
+			var oViewModel = this.getModel("viewModel"),
 				oi18nModel = this.getModel("i18n"),
-				sDisplayDemandInfo, sDemandDescriptionWithOrderOperation,
+				sDisplayDemandInfo,
 
 				aDemandsForSplitAssignment = oResourceAvailabiltyResponse.arrayOfDemandsToSplit,
 				bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP");
@@ -1091,14 +1090,7 @@ sap.ui.define([
 				this.resourceAvailabiltyResponse = oResourceAvailabiltyResponse;
 
 				if (aDemandsForSplitAssignment.length > 0 && bShowSplitConfirmationDialog) {
-					for (var iIndex = 0; iIndex < aDemandsForSplitAssignment.length; iIndex++) {
-						var oDemandDetails = oModel.getProperty("/DemandSet('" + aDemandsForSplitAssignment[iIndex] + "')"),
-							sDemandDescription = oDemandDetails.DemandDesc,
-							sOrderId = oDemandDetails.ORDERID,
-							sOperationId = oDemandDetails.OPERATIONID;
-						sDemandDescriptionWithOrderOperation = sOrderId + " - " + sOperationId + " - " + sDemandDescription;
-						sDisplayDemandInfo = sDisplayDemandInfo ? sDisplayDemandInfo + "\n \n" +  sDemandDescriptionWithOrderOperation : sDemandDescriptionWithOrderOperation;
-					}
+					sDisplayDemandInfo = this.getDemandDetailsWithDesciption(aDemandsForSplitAssignment);
 					oViewModel.setProperty("/splitConfirmationDialogInfo", sDisplayDemandInfo);
 				
 					if (!this.oConfirmDialog) {
@@ -1166,6 +1158,53 @@ sap.ui.define([
 				}
 			}.bind(this));
 			
+		},
+
+
+		/**
+		 * method returns a message to be shown to the user
+		 * asking for confirmation to continue with splits or not
+		 * message includes orderid, operationId, demand description
+		 * 
+		 * @param {array} aDemandsForSplitAssignment demands which are marked for split
+		 * @returns 
+		 */
+		getDemandDetailsWithDesciption: function(aDemandsForSplitAssignment) {
+			var oModel = this.getModel(),
+				sDisplayDemandInfo, sDemandDescriptionWithOrderOperation,
+				aDemandObjectsFromLocalStorage = JSON.parse(localStorage.getItem("Evo-Dmnd-guid"));
+
+			for (var iIndex = 0; iIndex < aDemandsForSplitAssignment.length; iIndex++) {
+				var sDemandPath = "/DemandSet('" + aDemandsForSplitAssignment[iIndex] + "')",
+					oDemandDetails = oModel.getProperty(sDemandPath);
+
+				// in case of gantt split scenarios when the DemandContext is not found from model
+				// fetch it from the local storgae data
+				if (!oDemandDetails && aDemandObjectsFromLocalStorage.length > 0) {
+					oDemandDetails = this._getDemandObjectSplitPage(sDemandPath);
+				}
+
+				var sDemandDescription = oDemandDetails.DemandDesc ? oDemandDetails.DemandDesc : "",
+					sOrderId = oDemandDetails.ORDERID ? oDemandDetails.ORDERID : "",
+					sOperationId = oDemandDetails.OPERATIONID ? oDemandDetails.OPERATIONID : "";
+				sDemandDescriptionWithOrderOperation = sOrderId + " - " + sOperationId + " - " + sDemandDescription;
+				sDisplayDemandInfo = sDisplayDemandInfo ? sDisplayDemandInfo + "\n \n" +  sDemandDescriptionWithOrderOperation : sDemandDescriptionWithOrderOperation;
+			}
+			return sDisplayDemandInfo;
+		},
+
+		/**
+		 * getting Demand objects form local model coming from gantt split
+		 * @param sPath
+		 * @since 2205
+		 */
+		_getDemandObjectSplitPage: function (sPath) {
+			var aDragSessionData = JSON.parse(localStorage.getItem("Evo-Dmnd-guid"));
+			for (var i = 0; i < aDragSessionData.length; i++) {
+				if (aDragSessionData[i].sPath === sPath) {
+					return aDragSessionData[i].oDemandObject;
+				}
+			}
 		},
 
 		/**
