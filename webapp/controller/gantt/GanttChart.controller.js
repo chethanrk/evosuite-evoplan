@@ -1624,7 +1624,7 @@ sap.ui.define([
 			aPromises.push(this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters));
 			this._treeTable.setBusy(true);
 			Promise.all(aPromises).then(function (data) {
-				this._addAssignemets(data[0].results);
+				this._addAssignments(data[0].results);
 				this._addAvailabilities(data[1].results);
 				this.getModel().setUseBatch(true);
 				this._treeTable.setBusy(false);
@@ -1663,7 +1663,7 @@ sap.ui.define([
 					aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
 					this.getModel("appView").setProperty("/busy", true);
 					Promise.all(aPromises).then(function (data) {
-						this._addAssignemets(data[0].results);
+						this._addAssignments(data[0].results);
 						this.getModel().setUseBatch(true);
 						this.getModel("appView").setProperty("/busy", false);
 						this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
@@ -1737,7 +1737,7 @@ sap.ui.define([
 		 * Adding assignemnts into Gantt data in Gantt Model 
 		 * @Author Rahul
 		 */
-		_addAssignemets: function (aAssignments) {
+		_addAssignments: function (aAssignments) {
 			var aGanttData = this.oGanttModel.getProperty("/data/children");
 			for (let i = 0; i < aGanttData.length; i++) {
 				var aResources = aGanttData[i].children;
@@ -1796,9 +1796,9 @@ sap.ui.define([
 			}
 
 			if (oData.sTargetPath) {
-				this._refreshCaacities([oData.sTargetPath]);
+				this._refreshCapacities([oData.sTargetPath]);
 			} else if (aSelectedResourcePath.length > 0) {
-				this._refreshCaacities(aSelectedResourcePath);
+				this._refreshCapacities(aSelectedResourcePath);
 			} else {
 				this._loadGanttData();
 			}
@@ -1806,7 +1806,7 @@ sap.ui.define([
 		/**
 		 * refreshes the utilization in gantt chart table by calling GanttResourceHierarchySet
 		 * */
-		_refreshCaacities: function (aSelectedResourcePath) {
+		_refreshCapacities: function (aSelectedResourcePath) {
 			var aFilters = [],
 				oUserData = this.getModel("user").getData(),
 				oTargetData,
