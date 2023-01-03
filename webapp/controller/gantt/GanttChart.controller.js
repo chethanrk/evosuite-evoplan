@@ -52,7 +52,7 @@ sap.ui.define([
 			this._treeTable = this.getView().byId("idGanttResourceTreeTable");
 			this._ganttChart = this.getView().byId("idGanttResourceAssignments");
 			this._axisTime = this.getView().byId("idAxisTime");
-			this._userData = this.getModel("user").getData();
+			this._userData = this.oUserModel.getData();
 
 			this._oEventBus.subscribe("BaseController", "refreshAssignments", this._refreshAssignments, this);
 			this._oEventBus.subscribe("BaseController", "refreshAvailabilities", this._refreshAvailabilities, this);
@@ -163,8 +163,7 @@ sap.ui.define([
 		onShapeDoubleClick: function (oEvent) {
 			var oShapeContext = oEvent.getParameter("shape").getBindingContext("ganttModel"),
 				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId(),
-				oGanttModel = this.getModel('ganttModel'),
-				sNodeType = oGanttModel.getProperty(oShapeContext.getPath()).NodeType;
+				sNodeType = this.oGanttModel.getProperty(oShapeContext.getPath()).NodeType;
 			if (sNodeType === "ASSIGNMENT") {
 				this.getOwnerComponent().GanttAssignmentPopOver.open(this.getView(), sap.ui.getCore().byId(sToolbarId + "-settingsButton"),
 					oShapeContext);
@@ -237,24 +236,24 @@ sap.ui.define([
 				bAllowVendorAssignment = this.getModel().getProperty(oDragContext + "/ALLOW_ASSIGNMENT_DIALOG"),
 				sOperationStartDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_START_DATE"),
 				sOperationEndDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_END_DATE"),
-				aPSDemandsNetworkAssignment = this._showNetworkAssignments(this.getModel("viewModel"));
-			this.onShowOperationTimes(this.getModel("viewModel"));
-			this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
+				aPSDemandsNetworkAssignment = this._showNetworkAssignments(this.oViewModel);
+			this.onShowOperationTimes(this.oViewModel);
+			this.onAllowVendorAssignment(this.oViewModel, this.oUserModel);
 
 			//Allowing Demand Drop only on Non-Assignmnet Nodes   @Since 2205
 			if (oDropObject.NodeType !== "ASSIGNMENT") {
 				//Checking PS Demands for Network Assignment 
-				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+				if (this.oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
 					this.getOwnerComponent().NetworkAssignment.open(this.getView(), oDropObject, aPSDemandsNetworkAssignment, this._mParameters,
 						oDraggedControl,
 						oDroppedControl, oBrowserEvent);
 				}
 				//Checking Vendor Assignment for External Resources
-				else if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
+				else if (this.oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
 					this.getOwnerComponent().VendorAssignment.open(this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
 						oDroppedControl, oBrowserEvent);
 				} else {
-					if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !==
+					if (this.oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !==
 						null) {
 						this.getOwnerComponent().OperationTimeCheck.open(this.getView(), {
 							bFromNewGantt: true
@@ -270,16 +269,16 @@ sap.ui.define([
 			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
 				slocStor = JSON.parse(localStorage.getItem("Evo-Dmnd-guid")),
-				sDragPath = oDragContext ? this.getModel("viewModel").getProperty("/gantDragSession") : this._getDragPaths(slocStor),
+				sDragPath = oDragContext ? this.oViewModel.getProperty("/gantDragSession") : this._getDragPaths(slocStor),
 				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
-				oResourceData = this.getModel("ganttModel").getProperty(oDropContext.getPath()),
+				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
 				oSvgPoint,
 				sPath = sDragPath ? sDragPath[0] : undefined,
-				oDemandObj = this._getDemandObjectsByPath(this.getModel("viewModel").getProperty("/gantDragSession"), slocStor),
+				oDemandObj = this._getDemandObjectsByPath(this.oViewModel.getProperty("/gantDragSession"), slocStor),
 				bShowFixedAppointmentDialog,
-				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
+				bShowFutureFixedAssignments = this.oUserModel.getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
 				oParams = {};
-			this.getModel("viewModel").setProperty("/aFixedAppointmentsList", []);
+			this.oViewModel.setProperty("/aFixedAppointmentsList", []);
 
 			//Null check for
 			if ((!oDragContext || !sDragPath) && !oDropContext) {
@@ -428,7 +427,7 @@ sap.ui.define([
 		 * @param nTimeDifference
 		 */
 		updateAssignmentsDateTime: function (nTimeDifference) {
-			var bAllowFixedAppointments = this.getModel("user").getProperty("/ENABLE_GANTT_CHNG_FIXED_ASGN"),
+			var bAllowFixedAppointments = this.oUserModel.getProperty("/ENABLE_GANTT_CHNG_FIXED_ASGN"),
 				aAssignments = [],
 				aPathsToBeRemoved = [],
 				aUpdateAssignments = [],
@@ -436,7 +435,7 @@ sap.ui.define([
 				oParams;
 
 			for (var i = 0; i < this.aSelectedAssignmentsPaths.length; i++) {
-				oAssignmentData = this.getModel("ganttModel").getProperty(this.aSelectedAssignmentsPaths[i]);
+				oAssignmentData = this.oGanttModel.getProperty(this.aSelectedAssignmentsPaths[i]);
 				// condition to check if assignment is FIXED APPOINTMENT and is allowed to change 
 				if (!oAssignmentData.FIXED_APPOINTMENT || (oAssignmentData.FIXED_APPOINTMENT && bAllowFixedAppointments)) {
 					aAssignments.push(oAssignmentData);
@@ -453,9 +452,9 @@ sap.ui.define([
 			}
 
 			//Calling "Update" function import to update date/time to backend
-			this.getModel("appView").setProperty("/busy", true);
+			this.oAppViewModel.setProperty("/busy", true);
 			Promise.all(aUpdateAssignments).then(function (aPromiseAllResults) {
-				this.getModel("appView").setProperty("/busy", false);
+				this.oAppViewModel.setProperty("/busy", false);
 				//method to update assignments in local json model
 				this._updateResourceAsignments(aPromiseAllResults);
 			}.bind(this));
@@ -484,9 +483,9 @@ sap.ui.define([
 
 			}
 
-			this.getModel("appView").setProperty("/busy", true);
+			this.oAppViewModel.setProperty("/busy", true);
 			Promise.all(this.aUnavailabilityChecks).then(function (aPromiseAllResults) {
-				this.getModel("appView").setProperty("/busy", false);
+				this.oAppViewModel.setProperty("/busy", false);
 				if (aPromiseAllResults.includes(true)) {
 					this.showMessageForUnAvailability(aAssignments, aPromiseAllResults);
 				}
@@ -564,7 +563,7 @@ sap.ui.define([
 				for (var key in oParams.draggedShapeDates) {
 					var sSourcePath = Utility.parseUid(key).shapeDataName,
 						sTargetPath = oTargetContext.getPath(),
-						oSourceData = this.getModel("ganttModel").getProperty(sSourcePath),
+						oSourceData = this.oGanttModel.getProperty(sSourcePath),
 						sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
 
 					//set new time and resource data to gantt model, setting also new pathes
@@ -634,7 +633,7 @@ sap.ui.define([
 				sAsgnStsFnctnKey = oSelectedItem.data("StatusFunction"),
 				sRelationshipKey = oSelectedItem.data("RELATIONSHIP"),
 				oData = this.oGanttModel.getProperty(sPath),
-				oAppModel = this.getModel("appView"),
+				oAppModel = this.oAppViewModel,
 				sDataModelPath = this._getAssignmentDataModelPath(oData.Guid),
 				mParameters = {
 					bFromNewGantt: true,
@@ -724,8 +723,8 @@ sap.ui.define([
 				EndDate: this.getView().byId("idDateRangeGantt2").getSecondDateValue()
 			});
 			if (oEvent) {
-				this.getModel("user").setProperty("/DEFAULT_GANT_START_DATE", oEvent.getParameter("from"));
-				this.getModel("user").setProperty("/DEFAULT_GANT_END_DATE", oEvent.getParameter("to"));
+				this.oUserModel.setProperty("/DEFAULT_GANT_START_DATE", oEvent.getParameter("from"));
+				this.oUserModel.setProperty("/DEFAULT_GANT_END_DATE", oEvent.getParameter("to"));
 			}
 			this.resetToolbarButtons();
 			this._loadGanttData();
@@ -768,7 +767,7 @@ sap.ui.define([
 		 * on click on today adjust the view of Gantt horizon.
 		 */
 		onPressToday: function (oEvent) {
-			this.changeGanttHorizonViewAt(this.getModel("viewModel"), this._axisTime.getZoomLevel(), this._axisTime);
+			this.changeGanttHorizonViewAt(this.oViewModel, this._axisTime.getZoomLevel(), this._axisTime);
 		},
 
 		/**
@@ -785,7 +784,7 @@ sap.ui.define([
 				oParams = oEvent.getParameters();
 
 			//Sets the property IsSelected manually
-			this.getModel("ganttModel").setProperty(sPath + "/IsSelected", oParams.selected);
+			this.oGanttModel.setProperty(sPath + "/IsSelected", oParams.selected);
 
 			if (oParams.selected) {
 				this.selectedResources.push(sPath);
@@ -804,7 +803,7 @@ sap.ui.define([
 				this.byId("idButtonreassign").setEnabled(false);
 				this.byId("idButtonunassign").setEnabled(false);
 			}
-			var oData = this.getModel("ganttModel").getProperty(this.selectedResources[0]);
+			var oData = this.oGanttModel.getProperty(this.selectedResources[0]);
 
 			if (this.selectedResources.length === 1 && oData && oData.NodeType === "RESOURCE" && oData.ResourceGuid !== "" && oData.ResourceGroupGuid !==
 				"") {
@@ -965,7 +964,7 @@ sap.ui.define([
 			var oData = oContext.getObject(),
 				sPath = oContext.getPath(),
 				bEnableRelationships = false;
-			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGN_GANTT") && sPath.length > 60) {
+			if (this.oUserModel.getProperty("/ENABLE_NETWORK_ASSIGN_GANTT") && sPath.length > 60) {
 				bEnableRelationships = true;
 			}
 			if (oData.DEMAND_STATUS !== "COMP") {
@@ -1077,7 +1076,7 @@ sap.ui.define([
 				this._validateChangedData(sPath, oPendingChanges[sPath], oData, sType).then(function (results) {
 					if (!results) {
 						reject();
-					} else if (this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
+					} else if (this.oUserModel.getProperty("/ENABLE_QUALIFICATION")) {
 						//when user wants proceed check qualification
 						this._checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
 							this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
@@ -1221,7 +1220,7 @@ sap.ui.define([
 		 */
 		_checkResourceQualification: function (aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids, mParameters) {
 			return new Promise(function (resolve, reject) {
-				var oTargetObject = this.getModel("ganttModel").getProperty(oTarget);
+				var oTargetObject = this.oGanttModel.getProperty(oTarget);
 				this._sendCheckQualification(aSourcePaths, oTargetObject, oTargetDate, oNewEndDate, aGuids, mParameters).then(resolve, reject);
 			}.bind(this));
 		},
@@ -1239,7 +1238,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.checkQualification(aSourcePaths, oTargetObject, oTargetDate, oNewEndDate, aGuids).then(function (data) {
 					if (data.result.results && data.result.results.length) {
-						this.getModel("viewModel").setProperty("/QualificationMatchList", {
+						this.oViewModel.setProperty("/QualificationMatchList", {
 							TargetObject: oTargetObject,
 							QualificationData: data.result.results,
 							SourcePaths: aSourcePaths,
@@ -1289,10 +1288,10 @@ sap.ui.define([
 		 * @private
 		 */
 		_validateAndAssignDemands: function (oResourceData, aSources, oTarget, oTargetDate, aGuids) {
-			var oUserData = this.getModel("user").getData();
+			var oUserData = this.oUserModel.getData();
 			var sDummyPath = this._createDummyAssignment(oTarget, oTargetDate);
 			this.oGanttModel.setProperty(sDummyPath + "/busy", true);
-			var aFixedAppointments = this.getModel("viewModel").getProperty("/aFixedAppointmentsList")[0];
+			var aFixedAppointments = this.oViewModel.getProperty("/aFixedAppointmentsList")[0];
 
 			//Condition for checking Fixed Appointments Qualification check
 			if (oUserData.ENABLE_QUALIFICATION && aFixedAppointments && aFixedAppointments.IsSelected) {
@@ -1525,7 +1524,7 @@ sap.ui.define([
 					mParams = {
 						"$expand": "AssignmentSet,ResourceAvailabilitySet"
 					},
-					oUserData = this.getModel("user").getData();
+					oUserData = this.oUserModel.getData();
 
 				aFilters.push(new Filter("HierarchyLevel", FilterOperator.EQ, iLevel));
 				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
@@ -1620,7 +1619,7 @@ sap.ui.define([
 		 */
 		_addAssociations: function () {
 			var aFilters = [],
-				oUserData = this.getModel("user").getData(),
+				oUserData = this.oUserModel.getData(),
 				aPromises = [];
 
 			aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
@@ -1630,7 +1629,7 @@ sap.ui.define([
 			aPromises.push(this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters));
 			this._treeTable.setBusy(true);
 			Promise.all(aPromises).then(function (data) {
-				this._addAssignemets(data[0].results);
+				this._addAssignments(data[0].results);
 				this._addAvailabilities(data[1].results);
 				this.getModel().setUseBatch(true);
 				this._treeTable.setBusy(false);
@@ -1648,7 +1647,7 @@ sap.ui.define([
 		_refreshAssignments: function (sChannel, sEvent, oData) {
 			if (sChannel === "BaseController" && sEvent === "refreshAssignments") {
 				var aFilters = [],
-					oUserData = this.getModel("user").getData(),
+					oUserData = this.oUserModel.getData(),
 					aPromises = [];
 
 				//update ganttModels with results from function import
@@ -1656,10 +1655,10 @@ sap.ui.define([
 					aFilters.push(new Filter("ObjectId", FilterOperator.EQ, this.oResource.ResourceGuid + "//" + this.oResource.ResourceGroupGuid));
 					aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 					aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-					this.getModel("appView").setProperty("/busy", true);
+					this.oAppViewModel.setProperty("/busy", true);
 					this.getOwnerComponent()._getData("/AssignmentSet", [aFilters]).then(function (result) {
 						this.updateResourceAfterRouting(result);
-						this.getModel("appView").setProperty("/busy", false);
+						this.oAppViewModel.setProperty("/busy", false);
 					}.bind(this));
 					this.bDoNotRefreshTree = false;
 				} else {
@@ -1667,11 +1666,11 @@ sap.ui.define([
 					aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
 					this.getModel().setUseBatch(false);
 					aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
-					this.getModel("appView").setProperty("/busy", true);
+					this.oAppViewModel.setProperty("/busy", true);
 					Promise.all(aPromises).then(function (data) {
-						this._addAssignemets(data[0].results);
+						this._addAssignments(data[0].results);
 						this.getModel().setUseBatch(true);
-						this.getModel("appView").setProperty("/busy", false);
+						this.oAppViewModel.setProperty("/busy", false);
 						this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
 						this.oGanttOriginDataModel.refresh();
 					}.bind(this));
@@ -1714,7 +1713,7 @@ sap.ui.define([
 		_refreshAvailabilities: function (sChannel, sEvent, oData) {
 			var sSelectedResourcePath = this.selectedResources[0],
 				aFilters,
-				oUserData = this.getModel("user").getData(),
+				oUserData = this.oUserModel.getData(),
 				sResourceGuid,
 				aPromises = [];
 			if (sChannel === "BaseController" && sEvent === "refreshAvailabilities") {
@@ -1743,7 +1742,7 @@ sap.ui.define([
 		 * Adding assignemnts into Gantt data in Gantt Model 
 		 * @Author Rahul
 		 */
-		_addAssignemets: function (aAssignments) {
+		_addAssignments: function (aAssignments) {
 			var aGanttData = this.oGanttModel.getProperty("/data/children");
 			for (let i = 0; i < aGanttData.length; i++) {
 				var aResources = aGanttData[i].children;
@@ -1802,9 +1801,9 @@ sap.ui.define([
 			}
 
 			if (oData.sTargetPath) {
-				this._refreshCaacities([oData.sTargetPath]);
+				this._refreshCapacities([oData.sTargetPath]);
 			} else if (aSelectedResourcePath.length > 0) {
-				this._refreshCaacities(aSelectedResourcePath);
+				this._refreshCapacities(aSelectedResourcePath);
 			} else {
 				this._loadGanttData();
 			}
@@ -1812,9 +1811,9 @@ sap.ui.define([
 		/**
 		 * refreshes the utilization in gantt chart table by calling GanttResourceHierarchySet
 		 * */
-		_refreshCaacities: function (aSelectedResourcePath) {
+		_refreshCapacities: function (aSelectedResourcePath) {
 			var aFilters = [],
-				oUserData = this.getModel("user").getData(),
+				oUserData = this.oUserModel.getData(),
 				oTargetData,
 				sNodeId = "";
 
@@ -1873,7 +1872,7 @@ sap.ui.define([
 		 * Converting date into objects from String passed from Gantt Split
 		 * */
 		openFixedAppointmentDialog: function (oParams, sSource) {
-			this.getModel("viewModel").setProperty("/aFixedAppointmentsList", this.aFixedAppointmentDemands);
+			this.oViewModel.setProperty("/aFixedAppointmentsList", this.aFixedAppointmentDemands);
 			this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), [], oParams, this._mParameters, sSource);
 		},
 
@@ -2040,14 +2039,14 @@ sap.ui.define([
 			var sUri = "/AssignmentSet('" + oData.Guid + "')";
 			this._getAssignmentStatus(sUri).then(function (data) {
 				if (data["ALLOW_" + sAsgnStsFnctnKey]) {
-					this.getModel("appView").setProperty("/busy", true);
+					this.oAppViewModel.setProperty("/busy", true);
 					var oParams = {
 						Function: sAsgnStsFnctnKey,
 						AssignmentGUID: oData.Guid
 					};
 					this.executeFunctionImport(this.getModel(), oParams, "ExecuteAssignmentFunction", "POST").then(
 						function (aData) {
-							this.getModel("appView").setProperty("/busy", false);
+							this.oAppViewModel.setProperty("/busy", false);
 							this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 							this._updateAssignmentStatus(sPath, sAsgnStsFnctnKey, aData);
 						}.bind(this));
@@ -2086,7 +2085,7 @@ sap.ui.define([
 			var oSelectedDate = oEvent.getSource().getSelectedDates()[0].getStartDate(),
 				oFilter,
 				sMsg;
-			this.oResource = this.getModel("ganttModel").getProperty(this.selectedResources[0]);
+			this.oResource = this.oGanttModel.getProperty(this.selectedResources[0]);
 			this.oSelectedDate = oSelectedDate;
 
 			//preparing filters to get the Assignment of selected date
@@ -2128,7 +2127,7 @@ sap.ui.define([
 		 * since 2205
 		 */
 		_getTravelTimeFromPTV: function () {
-			this.getModel("appView").setProperty("/busy", true);
+			this.oAppViewModel.setProperty("/busy", true);
 			if (this.routeOperation === "Calculate") {
 				//Sending the assignments and resource to PTV to calculte the travel time between Assignments
 				this.getOwnerComponent().MapProvider.calculateRoute(this.oResource, this.aData).then(this._setTravelTimeToGantt.bind(
@@ -2209,7 +2208,7 @@ sap.ui.define([
 			this.oResource.TravelTimes = {
 				results: this.aTravelTimes
 			};
-			this.getModel("ganttModel").refresh();
+			this.oGanttModel.refresh();
 
 			// method call to save the updated assignments into the backend
 			this.updateAssignments(this.aAssignmetsWithTravelTime);
@@ -2383,7 +2382,7 @@ sap.ui.define([
 		 * @Author Rakesh Sahu
 		 */
 		_refreshChangedResources: function (sTargetPath, sSourcePath) {
-			var oUserData = this.getModel("user").getData(),
+			var oUserData = this.oUserModel.getData(),
 				oTargetResource = this.oGanttModel.getProperty(sTargetPath.split("/").splice(0, 6).join("/")),
 				oSourceResource = this.oGanttModel.getProperty(sSourcePath.split("/").splice(0, 6).join("/")),
 				aFilters, aPromises = [];
@@ -2396,10 +2395,10 @@ sap.ui.define([
 			aFilters = this._getFiltersToReadAssignments(oSourceResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
 			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
 
-			this.getModel("appView").setProperty("/busy", true);
+			this.oAppViewModel.setProperty("/busy", true);
 			Promise.all(aPromises).then(function (data) {
 				this.updateAfterReAssignment(data, oTargetResource, oSourceResource);
-				this.getModel("appView").setProperty("/busy", false);
+				this.oAppViewModel.setProperty("/busy", false);
 			}.bind(this));
 
 		},

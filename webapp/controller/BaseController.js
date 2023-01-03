@@ -331,6 +331,41 @@ sap.ui.define([
 		},
 
 		/**
+		 * On Material Info Button press event 
+		 * 
+		 */
+		onMaterialInfoButtonPress: function () {
+			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+			if (this._aSelectedRowsIdx.length > 100) {
+				this._aSelectedRowsIdx.length = 100;
+			}
+			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
+			var iMaxSelcRow = this.getModel("user").getProperty("/DEFAULT_MAX_DEM_SEL_MAT_LIST");
+			if (oSelectedPaths.aPathsData.length > 0 && iMaxSelcRow >= this._aSelectedRowsIdx.length) {
+				this.getOwnerComponent().materialInfoDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
+			} else {
+				var msg = this.getResourceBundle().getText("ymsg.selectMaxItemMaterialInfo", [iMaxSelcRow]);
+				MessageToast.show(msg);
+			}
+		},
+		/**
+		 * On Refresh Status Button press in Demand Table 
+		 * 
+		 */
+		onMaterialStatusPress: function (oEvent) {
+			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
+				oViewModel = this.getModel("appView"),
+				sDemandPath;
+			oViewModel.setProperty("/busy", true);
+			for (var i = 0; i < oSelectedIndices.length; i++) {
+				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
+				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
+					oViewModel.setProperty("/busy", false);
+				}.bind(this));
+			}
+		},
+
+		/**
 		 * get all selected rows from table and return to draggable helper function
 		 * @param aSelectedRowsIdx
 		 * @private
@@ -968,14 +1003,14 @@ sap.ui.define([
 		},
 
 		/**
-		 * open the SIngle Time Allocation dialog Blockers and Manage Absence for selected resource
+		 * open the Single Time Allocation dialog Blockers and Manage Absence for selected resource
 		 * @param oEvent
 		 * Since 2301.1.0
 		 * @Author Rakesh Sahu
 		 */
 		onNewTimeAllocPress: function (oEvent) {
 			var oResourceBundle = this.getResourceBundle();
-			if (this.selectedResources.length === 0) {
+			if (this.selectedResources.length === 0 || this.removeSelectedResourceGroups()) {
 				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
 				return;
 			}
@@ -1231,6 +1266,42 @@ sap.ui.define([
 				return true;
 			}
 			return false;
+		},
+		
+		/**
+		 * remove the selection of resource group on press of time allocation button 
+		 * time allocation dialog does not work for resource Group
+		 * it works for multiple resources only
+		 */
+		removeSelectedResourceGroups: function () {
+			var oModel,
+				aRemoveItems = [];
+			oModel = this._mParameters.bFromHome || this._mParameters.bFromMap ? this.getModel() : this.getModel("ganttModel");
+			for (var i in this.selectedResources) {
+				if (oModel.getProperty(this.selectedResources[i] + "/NodeType") === "RES_GROUP") {
+					aRemoveItems.push(this.selectedResources[i]);
+				}
+			}
+			for (i in aRemoveItems) {
+				this.selectedResources.splice(this.selectedResources.indexOf(aRemoveItems[i]), 1);
+				this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit ? oModel.setProperty(aRemoveItems[i] + "/IsSelected",
+					false) : null;
+			}
+			if (this.selectedResources.length) {
+				return false;
+			} else {
+				this.resetResourceTreeSelection(aRemoveItems);
+				return true;
+			}
+		},
+		
+		/**
+		 * deselect the Resource group which are removed from selection on press of time allocation button 
+		 */
+		resetResourceTreeSelection: function (aRemoveItems) {
+			if (this._mParameters.bFromHome || this._mParameters.bFromMap) {
+				this._eventBus.publish("ManageAbsences", "ClearSelection", {});
+			}
 		}
 	});
 

@@ -211,16 +211,6 @@ sap.ui.define([
 					final: false,
 					overrideExecution: OverrideExecution.Instead
 				},
-				onMaterialInfoButtonPress: {
-					public: true,
-					final: false,
-					overrideExecution: OverrideExecution.Instead
-				},
-				onMaterialStatusPress: {
-					public: true,
-					final: false,
-					overrideExecution: OverrideExecution.Instead
-				},
 				onClickLongText: {
 					public: true,
 					final: false,
@@ -994,41 +984,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * On Material Info Button press event 
-		 * 
-		 */
-		onMaterialInfoButtonPress: function () {
-			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			if (this._aSelectedRowsIdx.length > 100) {
-				this._aSelectedRowsIdx.length = 100;
-			}
-			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
-			var iMaxSelcRow = this.getModel("user").getProperty("/DEFAULT_MAX_DEM_SEL_MAT_LIST");
-			if (oSelectedPaths.aPathsData.length > 0 && iMaxSelcRow >= this._aSelectedRowsIdx.length) {
-				this.getOwnerComponent().materialInfoDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
-			} else {
-				var msg = this.getResourceBundle().getText("ymsg.selectMaxItemMaterialInfo",[iMaxSelcRow]);
-				MessageToast.show(msg);
-			}
-		},
-		/**
-		 * On Refresh Status Button press in Demand Table 
-		 * 
-		 */
-		onMaterialStatusPress: function (oEvent) {
-			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
-				oViewModel = this.getModel("appView"),
-				sDemandPath;
-			oViewModel.setProperty("/busy", true);
-			for (var i = 0; i < oSelectedIndices.length; i++) {
-				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
-				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
-					oViewModel.setProperty("/busy", false);
-				});
-			}
-		},
-
-		/**
 		 * Opens long text view/edit popover
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
 		 */
@@ -1144,7 +1099,6 @@ sap.ui.define([
 			}.bind(this));
 
 		},
-
 
 		/**
 		 * Reset the map selection in the Model

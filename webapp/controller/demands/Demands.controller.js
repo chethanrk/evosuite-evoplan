@@ -544,42 +544,7 @@ sap.ui.define([
 				this._eventBus.publish("FindTechnician", "setBusyResourceTree");
 			}
 		},
-		/**
-		 * On Material Info Button press event 
-		 * 
-		 */
-		onMaterialInfoButtonPress: function () {
-			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			if (this._aSelectedRowsIdx.length > 100) {
-				this._aSelectedRowsIdx.length = 100;
-			}
-			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
-			var iMaxSelcRow = this.getModel("user").getProperty("/DEFAULT_MAX_DEM_SEL_MAT_LIST");
-			if (oSelectedPaths.aPathsData.length > 0 && iMaxSelcRow >= this._aSelectedRowsIdx.length) {
-				this.getOwnerComponent().materialInfoDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
-			} else {
-				var msg = this.getResourceBundle().getText("ymsg.selectMaxItemMaterialInfo", [iMaxSelcRow]);
-				MessageToast.show(msg);
-			}
-		},
-		/**
-		 * On Refresh Status Button press in Demand Table 
-		 * 
-		 */
-		onMaterialStatusPress: function (oEvent) {
-			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
-				oViewModel = this.getModel("appView"),
-				sDemandPath,
-				aPromise = [];
-			oViewModel.setProperty("/busy", true);
-			for (var i = 0; i < oSelectedIndices.length; i++) {
-				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
-				aPromise.push(this.getOwnerComponent()._getData(sDemandPath));
-			}
-			Promise.all(aPromise).then(function () {
-				oViewModel.setProperty("/busy", false);
-			});
-		},
+
 		/**
 		 * Resetting Demand selection based on not allowed for find technician 
 		 * 
