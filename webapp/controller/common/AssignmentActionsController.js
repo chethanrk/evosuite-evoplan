@@ -24,18 +24,18 @@ sap.ui.define([
 				oViewModel = this.getModel("viewModel"),
 				targetObj = bFromMap ? oViewModel.getProperty(sTargetPath) : oModel.getProperty(sTargetPath),
 				aItems = aSourcePaths ? aSourcePaths : aGuids,
-				slocStor = localStorage.getItem("Evo-Dmnd-guid"),
+				slocStor = this.localStorage.get("Evo-Dmnd-guid"),
 				aDragSession = this.getModel("viewModel").getData().dragSession,
 				aGanttDemandDragged = aDragSession && aDragSession.length ? aDragSession[0] : "fromGanttSplit",
 				aPromises = [],
 				oDemandObj,
 				sDemandGuid,
 				oParams;
-				
-				if(bFromMap && !oViewModel.getProperty(sTargetPath)){
-					targetObj = oModel.getProperty(sTargetPath);
-				}
-				if (aGanttDemandDragged === "fromGanttSplit" && !bFromMap) {
+
+			if (bFromMap && !oViewModel.getProperty(sTargetPath)) {
+				targetObj = oModel.getProperty(sTargetPath);
+			}
+			if (aGanttDemandDragged === "fromGanttSplit" && !bFromMap) {
 				aGanttDemandDragged = {};
 				aGanttDemandDragged.sPath = slocStor.split(",")[0];
 				aGanttDemandDragged.oData = this.getModel().getProperty(aGanttDemandDragged.sPath);
@@ -95,13 +95,14 @@ sap.ui.define([
 					oParams.Currency = aGanttDemandDragged.oData.Currency;
 				}
 				//Effort and Effort Unit fields update for PS Demands Network Assignment
-				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && this._mParameters.bFromGantt && aGanttDemandDragged.oData.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && this._mParameters.bFromGantt && aGanttDemandDragged.oData.OBJECT_SOURCE_TYPE ===
+					"DEM_PSNW") {
 					oParams.Effort = aGanttDemandDragged.oData.Duration;
 					oParams.EffortUnit = aGanttDemandDragged.oData.DurationUnit;
 				}
 				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 			}
-				return aPromises;
+			return aPromises;
 		},
 		/**
 		 * Deletes the assignment
@@ -128,7 +129,6 @@ sap.ui.define([
 
 			}.bind(this));
 			return;
-			
 
 			this.clearMessageModel();
 			if (isReassign && !this.isAssignable({
@@ -168,7 +168,7 @@ sap.ui.define([
 				}
 				oQualificationParameters = {
 					DemandMultiGuid: sDemandGuids,
-					ObjectId: targetObj.NodeId, 
+					ObjectId: targetObj.NodeId,
 					StartTimestamp: oTargetDate,
 					EndTimestamp: oNewEndDate ? oNewEndDate : oTargetDate
 				};

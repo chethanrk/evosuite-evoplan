@@ -15,9 +15,10 @@ sap.ui.define([
 	"sap/gantt/def/pattern/SlashPattern",
 	"sap/gantt/def/pattern/BackSlashPattern",
 	"com/evorait/evoplan/controller/map/MapUtilities",
+	"sap/ui/util/Storage"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, FilterType, Popup, MessageToast, Fragment, CoordinateUtils,
 	Constants,
-	Utility, SlashPattern, BackSlashPattern, MapUtilities) {
+	Utility, SlashPattern, BackSlashPattern, MapUtilities, Storage) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttChart", {
@@ -37,6 +38,8 @@ sap.ui.define([
 		},
 
 		bGanttFirstTime: true,
+
+		localStorage: new Storage(Storage.Type.local, "EvoPlan"),
 
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
@@ -268,7 +271,7 @@ sap.ui.define([
 		onProceedNewGanttDemandDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
 			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
-				slocStor = JSON.parse(localStorage.getItem("Evo-Dmnd-guid")),
+				slocStor = JSON.parse(this.localStorage.get("Evo-Dmnd-guid")),
 				sDragPath = oDragContext ? this.oViewModel.getProperty("/gantDragSession") : this._getDragPaths(slocStor),
 				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
 				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
@@ -294,7 +297,7 @@ sap.ui.define([
 			// TODO Resource needs to be validated if resource is assignable or not
 
 			// to identify the action done on respective page
-			localStorage.setItem("Evo-Action-page", "ganttSplit");
+			this.localStorage.put("Evo-Action-page", "ganttSplit");
 
 			oParams.oResourceData = oResourceData;
 			oParams.sDragPath = sDragPath;
@@ -557,7 +560,7 @@ sap.ui.define([
 			//Allowing Assignment Shape Drop Only on Resource Nodes
 			if (oTargetContext.getObject().NodeType === "RESOURCE") {
 				// to identify the action done on respective page
-				localStorage.setItem("Evo-Action-page", "ganttSplit");
+				this.localStorage.put("Evo-Action-page", "ganttSplit");
 
 				//could be multiple shape pathes
 				for (var key in oParams.draggedShapeDates) {
@@ -585,7 +588,7 @@ sap.ui.define([
 				oShape = oParams.shape;
 
 			// to identify the action done on respective page
-			localStorage.setItem("Evo-Action-page", "ganttSplit");
+			this.localStorage.put("Evo-Action-page", "ganttSplit");
 			this.oGanttModel.setProperty(sPath + "/DateFrom", oParams.newTime[0]);
 			this.oGanttModel.setProperty(sPath + "/DateTo", oParams.newTime[1]);
 			this.oGanttModel.setProperty(sPath + "/OldAssignPath", sPath.split("/AssignmentSet/results/")[0]);
@@ -650,7 +653,7 @@ sap.ui.define([
 					bFromNewGanttSplit: true
 				};
 			}
-			localStorage.setItem("Evo-Action-page", "ganttSplit");
+			this.localStorage.put("Evo-Action-page", "ganttSplit");
 			this.oGanttModel.setProperty(sPath + "/busy", true);
 			//get demand details to assignment
 
@@ -750,7 +753,7 @@ sap.ui.define([
 		 */
 		onPressReassign: function (oEvent) {
 			// to identify the action done on respective page
-			localStorage.setItem("Evo-Action-page", "ganttSplit");
+			this.localStorage.put("Evo-Action-page", "ganttSplit");
 			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, false, this._mParameters);
 		},
 		/**
@@ -759,7 +762,7 @@ sap.ui.define([
 		 */
 		onPressUnassign: function (oEvent) {
 			// to identify the action done on respective page
-			localStorage.setItem("Evo-Action-page", "ganttSplit");
+			this.localStorage.put("Evo-Action-page", "ganttSplit");
 			this.getOwnerComponent().assignActionsDialog.open(this.getView(), this.selectedResources, true, this._mParameters);
 		},
 
@@ -1299,7 +1302,8 @@ sap.ui.define([
 					data) {
 					this._assignDemands(aSources, oTarget, oTargetDate, aFixedAppointments.FIXED_ASSGN_END_DATE, aGuids, sDummyPath);
 				}.bind(this));
-			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && oUserData.ENABLE_QUALIFICATION && !oUserData.ENABLE_SPLIT_STRETCH_ASSIGN) {
+			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && oUserData.ENABLE_QUALIFICATION && !
+				oUserData.ENABLE_SPLIT_STRETCH_ASSIGN) {
 				this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids).then(function (oEndDate) {
 					this._checkResourceQualification(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(function (data) {
 						this._assignDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath);
@@ -1312,7 +1316,8 @@ sap.ui.define([
 					this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 				}.bind(this));
 
-			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && !oUserData.ENABLE_QUALIFICATION && !oUserData.ENABLE_SPLIT_STRETCH_ASSIGN) {
+			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && !oUserData.ENABLE_QUALIFICATION && !
+				oUserData.ENABLE_SPLIT_STRETCH_ASSIGN) {
 				this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids).then(function (oEndDate) {
 					this._assignDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath);
 				}.bind(this));
@@ -1341,7 +1346,7 @@ sap.ui.define([
 		_assignDemands: function (aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath) {
 
 			this.assignedDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(
-				function(aPromises) {
+				function (aPromises) {
 					Promise.all(aPromises)
 						.then(function (aResults) {
 							var aCreatedAssignments = this._getCreatedAssignments(aResults);
@@ -1968,7 +1973,7 @@ sap.ui.define([
 			this.oGanttModel.setProperty(sDummyPath + "/busy", true);
 
 			this.assignMultipleDemands(oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects).then(
-				function(aPromises) {
+				function (aPromises) {
 					Promise.all(aPromises).then(
 						function (aResults, oResponse) {
 							if (aResults.length > 0) {

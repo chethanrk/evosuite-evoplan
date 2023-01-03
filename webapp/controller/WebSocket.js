@@ -4,11 +4,14 @@ sap.ui.define([
 	"sap/ui/core/ws/SapPcpWebSocket",
 	"sap/m/MessageToast",
 	"sap/base/Log",
-	"com/evorait/evoplan/model/utilities"
-], function (JSONModel, Device, SapPcpWebSocket, MessageToast, Log, Utilities) {
+	"com/evorait/evoplan/model/utilities",
+	"sap/ui/util/Storage"
+], function (JSONModel, Device, SapPcpWebSocket, MessageToast, Log, Utilities, Storage) {
 	"use strict";
 
 	return {
+		localStorage: new Storage(Storage.Type.local, "EvoPlan"),
+
 		getWsConnection: function (oComponent) {
 			var host = Utilities.sanitizeUrl(window.location.host),
 				sWebSocHost;
@@ -57,7 +60,7 @@ sap.ui.define([
 			var oAppViewModel = this._component.getModel("appView"),
 				sCurrentRoute = oAppViewModel.getProperty("/currentRoute"),
 				eventBus = sap.ui.getCore().getEventBus(),
-				sActionPage = localStorage.getItem("Evo-Action-page");
+				sActionPage = this.localStorage.get("Evo-Action-page");
 
 			if (oEvent.getParameter("pcpFields").errorText) {
 				// Message is an error text
@@ -92,9 +95,9 @@ sap.ui.define([
 			}
 		},
 		clearLocalStorage: function () {
-			localStorage.removeItem("Evo-Dmnd-pageRefresh");
-			localStorage.removeItem("Evo-Dmnd-guid");
-			localStorage.removeItem("Evo-Action-page");
+			this.localStorage.remove("Evo-Dmnd-pageRefresh");
+			this.localStorage.remove("Evo-Dmnd-guid");
+			this.localStorage.remove("Evo-Action-page");
 		}
 
 	};
