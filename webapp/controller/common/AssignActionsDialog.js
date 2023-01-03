@@ -93,8 +93,13 @@ sap.ui.define([
 				oReAssignBtn = sap.ui.getCore().byId("AssignActions--idButtonBulkReAssign"),
 				oCheckRightTechnician = sap.ui.getCore().byId("AssignActions--idCheckRightTechnician"),
 				bEnableQualification = this._oView.getModel("user").getProperty("/ENABLE_QUALIFICATION"),
-				oDialog = this._oDialog;
-			this._oAssignMentTable = sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable").getTable();
+				oDialog = this._oDialog,
+				
+				oSplitInfoMessageStrip = sap.ui.getCore().byId("AssignActions--idAssignActionDialogStrip"),
+				oAssignActionsDialogSmartTable = sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable"),
+				bSplitGlobalConfigEnabled = this._oView.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN");
+
+			this._oAssignMentTable = oAssignActionsDialogSmartTable.getTable();
 
 			if (this._isUnAssign) {
 				oUnAssignBtn.setVisible(true);
@@ -117,11 +122,23 @@ sap.ui.define([
 				oDialog.setTitle(this._resourceBundle.getText("xbut.ChngAssgnStatus"));
 			}
 			if (this.isFirstTime) {
-				sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable").rebindTable();
+				oAssignActionsDialogSmartTable.rebindTable();
 			}
+
+			// In case of split configuration is enabled, 
+			// the split_index and split_counter columns should be visible by default in assign actions dialog
+			// setInitiallyVisibleFields should be done before the control is initialized
+			if (bSplitGlobalConfigEnabled && !oAssignActionsDialogSmartTable.isInitialised()) {
+				var sInitiallyVisibleFields = oAssignActionsDialogSmartTable.getInitiallyVisibleFields();
+				sInitiallyVisibleFields = sInitiallyVisibleFields + ",SPLIT_INDEX,SPLIT_COUNTER";
+				oAssignActionsDialogSmartTable.setInitiallyVisibleFields(sInitiallyVisibleFields);
+			}
+
+			oSplitInfoMessageStrip.setVisible(false);
 
 			this.isFirstTime = true;
 		},
+
 		/**
 		 * Event for unassign
 		 *
@@ -333,19 +350,27 @@ sap.ui.define([
 				}
 				this._oView.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", bEnableAssignmentStatusButton);
 			} else {
-				if (oEvent.getParameter("selected") && !oEvent.getParameter("selectAll")) {
-					var oListItem = oEvent.getParameter("listItem"),
-						oContext = oListItem.getBindingContext(),
-						sPath = oContext.getPath(),
-						oModel = oContext.getModel(),
-						bFlag = false;
+				var oListItem = oEvent.getParameter("listItem"),
+					oContext = oListItem.getBindingContext(),
+					sPath = oContext.getPath(),
+					oModel = oContext.getModel(),
+					bFlag = false,
+					sSelectedItemSPlitIndex = oContext.getProperty("SPLIT_INDEX"), sSelectedItemSPlitCounter = oContext.getProperty("SPLIT_COUNTER"),
+					bSplitGlobalConfigEnabled = this._oView.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
+					oSplitInfoMessageStrip = sap.ui.getCore().byId("AssignActions--idAssignActionDialogStrip");
 
-					if (!this._isUnAssign) {
-						bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_REASSIGN");
+				if (oEvent.getParameter("selected") && !oEvent.getParameter("selectAll")) {
+					if (this._isUnAssign && bSplitGlobalConfigEnabled && sSelectedItemSPlitIndex && sSelectedItemSPlitCounter) {
+						oSplitInfoMessageStrip.setVisible(true);
+						this.selectAllSplitAssignments(oContext, oEvent.getSource().getItems(), false);
 					} else {
-						bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_UNASSIGN");
+						if (!this._isUnAssign) {
+							bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_REASSIGN");
+						} else {
+							bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_UNASSIGN");
+						}
+						oListItem.setSelected(bFlag);
 					}
-					oListItem.setSelected(bFlag);
 				} else {
 					if (oEvent.getParameter("selectAll")) {
 						//_bSelectAll is used for toggling between select all & diselect all
@@ -358,6 +383,9 @@ sap.ui.define([
 							this._bSelectAll = true;
 						}
 					} else if (!oEvent.getParameter("selected")) {
+						if (bSplitGlobalConfigEnabled && sSelectedItemSPlitIndex && sSelectedItemSPlitCounter) {
+							this.selectAllSplitAssignments(oContext, oEvent.getSource().getItems(), true);
+						}
 						this._bSelectAll = true;
 					} else {
 						this._oAssignMentTable.removeSelections();
@@ -366,6 +394,44 @@ sap.ui.define([
 				}
 			}
 		},
+
+		/**
+		 * In case of selection of an assignment which is part of a split 
+		 * this method will auto mark the other assignments of the same split for unassignment
+		 * 
+		 * @param {object} oContext selected item's context
+		 * @param {array} aAllListItems all the list items of assign actions dialog
+		 * @param {boolean} isUnSelect whether the method is called during select or unselect
+		 */
+		selectAllSplitAssignments: function(oContext, aAllListItems, isUnSelect) {
+			// check if the selected assignment has split partners, need to mark them for deletion as well
+			// first get the DemandGuid of the selected Assignment
+			// then from model fetch the oModel.getProperty("/DemandSet(<demand_guid>/DemandToAssignment") to get all split assignments
+			// then loop through oEvent.getSource().getItems() to mark each of them for deletion
+			var sDemandGuid = oContext.getProperty("DemandGuid"),
+				sSelectedItemSPlitIndex = oContext.getProperty("SPLIT_INDEX"),
+				sPath = oContext.getPath(), oModel = oContext.getModel(),
+				bFlag;
+
+			var oItem, oItemContext, sAssignmentGuid, sItemSplitIndex;
+			for (var i in aAllListItems) {
+				oItem = aAllListItems[i]; oItemContext = oItem.getBindingContext();
+				sAssignmentGuid = oItemContext.getProperty("DemandGuid");
+				sItemSplitIndex = oItemContext.getProperty("SPLIT_INDEX");
+
+				if (!isUnSelect && sAssignmentGuid === sDemandGuid && sItemSplitIndex === sSelectedItemSPlitIndex) {
+					bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_UNASSIGN");
+					bFlag = bFlag ? bFlag : true;
+					oItem.setSelected(bFlag);
+				}
+
+				// same if user unchecks one of them from unassign dialog
+				if (isUnSelect && sAssignmentGuid === sDemandGuid && sItemSplitIndex === sSelectedItemSPlitIndex) {
+					oItem.setSelected(false);
+				}
+			}
+		},
+
 		/**
 		 * close dialog
 		 */

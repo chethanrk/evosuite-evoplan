@@ -49,6 +49,14 @@
 					<Column minScreenWidth="Tablet" demandPopin="true">
 						<Text text="{/#Demand/DISTANCE_UNIT/@sap:label}"/>
 					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true" 
+							visible="{= ${path: 'user>/ENABLE_SPLIT_STRETCH_ASSIGN'}}">
+						<Text text="{/#Assignment/SPLIT_INDEX/@sap:label}"/>
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true"
+							visible="{= ${path: 'user>/ENABLE_SPLIT_STRETCH_ASSIGN'}}">
+						<Text text="{/#Assignment/SPLIT_COUNTER/@sap:label}"/>
+					</Column>
 					<core:ExtensionPoint name="TableExtP|Assignments|AssignmentSet|AssignmentListTable|CustomColumn"/>
 				</columns>
 				<items>
@@ -65,6 +73,8 @@
 							<Text text="{DISTANCE}"/>
 							<Text text="{DISTANCE_BACK}"/>
 							<Text text="{DISTANCE_UNIT}"/>
+							<Text text="{SPLIT_INDEX}"/>
+							<Text text="{SPLIT_COUNTER}"/>
 							<core:ExtensionPoint name="TableExtP|Assignments|AssignmentSet|AssignmentListTable|CustomCell"/>
 						</cells>
 					</ColumnListItem>

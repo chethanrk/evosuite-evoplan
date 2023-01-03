@@ -1299,7 +1299,7 @@ sap.ui.define([
 					data) {
 					this._assignDemands(aSources, oTarget, oTargetDate, aFixedAppointments.FIXED_ASSGN_END_DATE, aGuids, sDummyPath);
 				}.bind(this));
-			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && oUserData.ENABLE_QUALIFICATION) {
+			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && oUserData.ENABLE_QUALIFICATION && !oUserData.ENABLE_SPLIT_STRETCH_ASSIGN) {
 				this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids).then(function (oEndDate) {
 					this._checkResourceQualification(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(function (data) {
 						this._assignDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath);
@@ -1312,7 +1312,7 @@ sap.ui.define([
 					this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 				}.bind(this));
 
-			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && !oUserData.ENABLE_QUALIFICATION) {
+			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && !oUserData.ENABLE_QUALIFICATION && !oUserData.ENABLE_SPLIT_STRETCH_ASSIGN) {
 				this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids).then(function (oEndDate) {
 					this._assignDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath);
 				}.bind(this));
@@ -1339,17 +1339,23 @@ sap.ui.define([
 		 * @param {String} sDummyPath
 		 */
 		_assignDemands: function (aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath) {
-			Promise.all(this.assignedDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids))
-				.then(function (aResults) {
-					if (aResults.length > 0) {
-						this._addCreatedAssignment(aResults, oTarget, sDummyPath);
-					}
-				}.bind(this), function () {
-					if (sDummyPath) {
-						this.oGanttModel.setProperty(sDummyPath, null);
-						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-					}
-				}.bind(this));
+
+			this.assignedDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(
+				function(aPromises) {
+					Promise.all(aPromises)
+						.then(function (aResults) {
+							var aCreatedAssignments = this._getCreatedAssignments(aResults);
+							if (aCreatedAssignments.length > 0) {
+								this._addCreatedAssignment(aCreatedAssignments, oTarget, sDummyPath);
+							}
+						}.bind(this), function () {
+							if (sDummyPath) {
+								this.oGanttModel.setProperty(sDummyPath, null);
+								this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+							}
+						}.bind(this));
+				}.bind(this)
+			);
 		},
 
 		/**
@@ -1961,24 +1967,31 @@ sap.ui.define([
 			var sDummyPath = this._createDummyAssignment(oTarget, oTargetDate);
 			this.oGanttModel.setProperty(sDummyPath + "/busy", true);
 
-			Promise.all(this.AssignMultipleDemands(oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects))
-				.then(function (aResults, oResponse) {
-						if (aResults.length > 0) {
-							var aCreatedAssignments = this._getCreatedAssignments(aResults);
-							if (aCreatedAssignments.length > 0) {
-								this._addCreatedAssignment(aCreatedAssignments, oTarget, sDummyPath);
-							} else {
+			this.assignMultipleDemands(oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects).then(
+				function(aPromises) {
+					Promise.all(aPromises).then(
+						function (aResults, oResponse) {
+							if (aResults.length > 0) {
+								var aCreatedAssignments = this._getCreatedAssignments(aResults);
+								if (aCreatedAssignments.length > 0) {
+									this._addCreatedAssignment(aCreatedAssignments, oTarget, sDummyPath);
+								} else {
+									this.oGanttModel.setProperty(sDummyPath, null);
+									this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+								}
+							}
+							//	this._oEventBus.publish("BaseController", "refreshAssignments", aResults);
+							//	this._oEventBus.publish("BaseController", "refreshCapacity", {});
+						}.bind(this),
+						function () {
+							if (sDummyPath) {
 								this.oGanttModel.setProperty(sDummyPath, null);
 								this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 							}
-						}
-					}.bind(this),
-					function () {
-						if (sDummyPath) {
-							this.oGanttModel.setProperty(sDummyPath, null);
-							this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-						}
-					}.bind(this));
+						}.bind(this)
+					);
+				}.bind(this)
+			);
 		},
 		/**
 		 * getting demand Objects form paths
