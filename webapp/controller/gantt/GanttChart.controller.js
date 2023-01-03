@@ -264,6 +264,8 @@ sap.ui.define([
 				}
 			}
 		},
+		
+		//TODO comment
 
 		onProceedNewGanttDemandDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
 			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
@@ -983,6 +985,7 @@ sap.ui.define([
 		 * update assignment
 		 * @param {String} sPath
 		 * @param {String} sRequestType
+		 * @param {String} sSourcePath
 		 */
 		_updateDraggedShape: function (sPath, sRequestType, sSourcePath) {
 			this.oGanttModel.setProperty(sPath + "/busy", true);
@@ -1144,6 +1147,7 @@ sap.ui.define([
 		/**
 		 * checks if changes of this assignment allowed to save
 		 * when its re-assignment is parent available and allowed to assign
+		 * @param {String} sPath contains the path
 		 * @param {Object} oChanges only changed data
 		 * @param {Object} oData whole assignment data
 		 * @param {String} sType from this._mRequestTypes
@@ -1257,7 +1261,7 @@ sap.ui.define([
 
 		/**
 		 * validate shape data on resize
-		 * @param {String} sPath
+		 * @param {Object} oData
 		 * @return Promise
 		 */
 		_validateShapeOnResize: function (oData) {
@@ -1281,10 +1285,10 @@ sap.ui.define([
 		/**
 		 * Calls the respective function import to create assignments
 		 * @param {Object} oResourceData - Resource data on which demand is dropped
-		 * @param {Object} aSources - Dragged Demand paths
+		 * @param {Array} aSources - Dragged Demand paths
 		 * @param {Object} oTarget Dropped Resource Path
 		 * @param {Object} oTargetDate - Target date and time when the demand is dropped
-		 * @param {Object} aGuids Array of guids in case of split window 
+		 * @param {Array} aGuids Array of guids in case of split window 
 		 * @private
 		 */
 		_validateAndAssignDemands: function (oResourceData, aSources, oTarget, oTargetDate, aGuids) {
@@ -1362,6 +1366,8 @@ sap.ui.define([
 		 * Proceed to assignment with Stretch, check if Date Time is not valid
 		 * @param {Object} aSources Demand paths
 		 * @param {Object} oTarget Resource Path
+		 * TODO parameters to be updated
+		 * @return promise
 		 * @private
 		 */
 		_checkAssignmentForStretch: function (oResourceData, aSources, oTarget, oTargetDate, aGuids, fnCheckValidation) {
@@ -1393,7 +1399,7 @@ sap.ui.define([
 		},
 		/**
 		 * Creating dummy assignment
-		 * @param {Object} sTargetPath Target path for the resource
+		 * @param {String} sTargetPath Target path for the resource
 		 * @param {Object} oTargetDate Target date on which demand is dropped
 		 */
 		_createDummyAssignment: function (sTargetPath, oTargetDate) {
@@ -1437,8 +1443,9 @@ sap.ui.define([
 		},
 		/**
 		 * Add created assignment into the both the model after success creation of assignment
-		 * @param data {Object} Response from function import
+		 * @param data {Array} Response from function import
 		 * @param sTargetPath {string} target path of resource
+		 * @param sDummyPath {string} dummy path of resource
 		 */
 		_addCreatedAssignment: function (data, sTargetPath, sDummyPath) {
 			var aAssignments = this.oGanttModel.getProperty(sTargetPath).AssignmentSet.results;
@@ -1471,7 +1478,6 @@ sap.ui.define([
 		},
 		/**
 		 * Change view horizon time at specified timestamp
-		 * @param oModel {object} viewModel
 		 * @param iZoomLevel {integer} 
 		 * @param oAxisTimeStrategy {object} control
 		 * @param oDate {object} date
@@ -1593,9 +1599,10 @@ sap.ui.define([
 		/**
 		 * loop trough all nested array of children
 		 * When max level for search was reached execute callbackFn
-		 * @param aChildren
-		 * @param iMaxLevel
-		 * @param callbackFn
+		 * @param {Array} aChildren
+		 * @param {Integer} iMaxLevel
+		 * @param {Function} callbackFn
+		 * @returns Array
 		 */
 		_recurseChildren2Level: function (aChildren, iMaxLevel, callbackFn) {
 			function recurse(aItems, level) {
@@ -1681,6 +1688,7 @@ sap.ui.define([
 		/**
 		 * resetting the assignment and children node after route calculation/optimization
 		 * @param {Object} result
+		 * @param {Boolean} bNoChangeGanttView
 		 * @Author Rakesh Sahu
 		 */
 		updateResourceAfterRouting: function (result, bNoChangeGanttView) {
@@ -1740,6 +1748,7 @@ sap.ui.define([
 		},
 		/**
 		 * Adding assignemnts into Gantt data in Gantt Model 
+		 * @param {Array} aAssignments
 		 * @Author Rahul
 		 */
 		_addAssignments: function (aAssignments) {
@@ -1762,6 +1771,7 @@ sap.ui.define([
 		},
 		/**
 		 * Adding availabilities into Gantt data in Gantt Model 
+		 * @param {Array} aAvailabilities
 		 * @Author Rahul
 		 */
 		_addAvailabilities: function (aAvailabilities) {
@@ -1791,6 +1801,7 @@ sap.ui.define([
 		},
 		/**
 		 *  refreshes the utilization in gantt chart table
+		 * //TODO update the parameters sChannel and sEvent not in use
 		 */
 		_refreshCapacity: function (sChannel, sEvent, oData) {
 			var aSelectedResourcePath = this.selectedResources;
@@ -1810,6 +1821,7 @@ sap.ui.define([
 		},
 		/**
 		 * refreshes the utilization in gantt chart table by calling GanttResourceHierarchySet
+		 * @param {Array} aSelectedResourcePath
 		 * */
 		_refreshCapacities: function (aSelectedResourcePath) {
 			var aFilters = [],
@@ -1834,6 +1846,8 @@ sap.ui.define([
 		},
 		/**
 		 * refreshes the utilization in gantt chart table by calling GanttResourceHierarchySet
+		 * @param {Array} aFilters
+		 * @param {String} sPath
 		 * */
 		_updateCapacity: function (aFilters, sPath) {
 			this.oGanttModel.setProperty(sPath + "/busy", true);
@@ -1850,9 +1864,9 @@ sap.ui.define([
 		},
 		/**
 		 * check if Fixed appointment dialog to display or not
-		 * @param bShowFutureFixedAssignments
-		 * @param oStartDate
-		 * @param oDemandObj
+		 * @param {Boolean} bShowFutureFixedAssignments
+		 * @param {Object} oStartDate
+		 * @param {Object} oDemandObj
 		 **/
 		checkFixedAppointPopupToDisplay: function (bShowFutureFixedAssignments, oStartDate, oDemandObj) {
 			var isFixedAppointment = false;
@@ -1870,6 +1884,8 @@ sap.ui.define([
 		},
 		/**
 		 * Converting date into objects from String passed from Gantt Split
+		 * @param {Object} oParams
+		 * @param {String} sSource
 		 * */
 		openFixedAppointmentDialog: function (oParams, sSource) {
 			this.oViewModel.setProperty("/aFixedAppointmentsList", this.aFixedAppointmentDemands);
@@ -1878,7 +1894,7 @@ sap.ui.define([
 
 		/**
 		 * Converting date into objects from String passed from Gantt Split
-		 * @param aDemandData
+		 * @param {Array} aDemandData
 		 **/
 		convertDateToObjects: function (aDemandData) {
 			var oDemandObjects = [];
@@ -1898,10 +1914,10 @@ sap.ui.define([
 
 		/**
 		 * Set color pattern for some unavailabilities
-		 * @param sTypeGroup
-		 * @param sType
-		 * @param sColor
-		 * @param sPattern
+		 * @param {String} sTypeGroup
+		 * @param {String} sType
+		 * @param {String} sColor
+		 * @param {String} sPattern
 		 */
 		_setAvailabilitiesPatterns: function (sTypeGroup, sType, sColor, sPattern) {
 			if (sPattern) {
@@ -1956,11 +1972,11 @@ sap.ui.define([
 		/**
 		 * multi assignments of demands via Fixed assignment Dialog Event bus call
 		 * handle demand assignment for Gantt Json model 
-		 * @param oResourceData
-		 * @param aSource
-		 * @param oTarget
-		 * @param oTargetDate
-		 * @param aFixedAppointmentObjects
+		 * @param {Object} oResourceData
+		 * @param {Array} aSource
+		 * @param {Object} oTarget
+		 * @param {Object} oTargetDate
+		 * @param {Array} aFixedAppointmentObjects
 		 * since 2205
 		 */
 		_handleMultipleAssignment: function (oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects) {
@@ -1996,8 +2012,9 @@ sap.ui.define([
 		/**
 		 * getting demand Objects form paths
 		 * handle demand assignment for Gantt Json model 
-		 * @param aPaths_gantt
+		 * @param {Array} aPaths_gantt
 		 * @param oDemands_ganttSplit
+		 * //TODO oDemands_ganttSplit looks like an Array as per the below code but the naming convention is of Object
 		 * since 2205
 		 */
 		_getDemandObjectsByPath: function (aPaths_gantt, oDemands_ganttSplit) {
@@ -2030,9 +2047,9 @@ sap.ui.define([
 
 		/**
 		 * OnSelection of Assignment Status Change
-		 * @param sPath
-		 * @param oData
-		 * @param sAsgnStsFnctnKey
+		 * @param {String} sPath
+		 * @param {Object} oData
+		 * @param {String} sAsgnStsFnctnKey
 		 * since 2205
 		 */
 		_onContextMenuAssignmentStatusChange: function (sPath, oData, sAsgnStsFnctnKey) {
@@ -2110,9 +2127,9 @@ sap.ui.define([
 		},
 		/**
 		 * creating filter object to read assignments of selected date 
-		 * @param oResource
-		 * @param oDateFrom
-		 * @param oDateTo
+		 * @param {Object} oResource
+		 * @param {Object} oDateFrom
+		 * @param {Object} oDateTo
 		 * since 2205
 		 */
 		_getFiltersToReadAssignments: function (oResource, oDateFrom, oDateTo) {
@@ -2167,6 +2184,7 @@ sap.ui.define([
 		},
 		/**
 		 * setting Travel Time object to Gantt and updating new date time for assignments based on travel Time
+		 * @param {Array} results
 		 * since 2205
 		 */
 		_setTravelTimeToGantt: function (results) {
@@ -2216,7 +2234,7 @@ sap.ui.define([
 		},
 		/**
 		 * Setting the gantt char Visible horizon to see selected date assignments
-		 * @param ODate
+		 * @param {Object} ODate
 		 * since 2205
 		 */
 		_setGanttVisibleHorizon: function (oDate) {
@@ -2233,7 +2251,8 @@ sap.ui.define([
 
 		/**
 		 * Create object for Travel time between the assignments to show in Gantt
-		 * @param nIndex
+		 * @param {Integer} nIndex
+		 * @param {Boolean} bIsTravelBackTime
 		 * since 2205
 		 */
 		_getTravelTimeObject: function (nIndex, bIsTravelBackTime) {
@@ -2271,7 +2290,7 @@ sap.ui.define([
 
 		/**
 		 * Method to save the updated assignments to backend after calculating the route
-		 * @param aAssignments
+		 * @param {Array} aAssignments
 		 * since 2205
 		 */
 		updateAssignments: function (aAssignments) {
@@ -2309,7 +2328,8 @@ sap.ui.define([
 		},
 		/**
 		 * Method to get parameters to updated assignments to backend with new date/time
-		 * @param aAssignments
+		 * @param {Object} oAssignment
+		 * @param {Integer} nTimeDifference
 		 * since 2209
 		 */
 		_getAssignmentParams: function (oAssignment, nTimeDifference) {
@@ -2331,7 +2351,7 @@ sap.ui.define([
 		},
 		/**
 		 * method for switch to toggle between Multi Assignment on Axis or reAssignment operation
-		 * @param oEvent
+		 * @param {Boolean} bVerticalMovement
 		 * since 2209
 		 */
 		initializeMultiAssignment: function (bVerticalMovement) {
@@ -2343,6 +2363,7 @@ sap.ui.define([
 		},
 		/**
 		 * Method to update resouces after recheduling multiple Assignments on same axis
+		 * @param {Array} aUpdatedAssignments
 		 * since 2209
 		 */
 		_updateResourceAsignments: function (aUpdatedAssignments) {
@@ -2404,9 +2425,9 @@ sap.ui.define([
 		},
 		/**
 		 * handle refresh assignments of source and target Resources in single reassignment operation
-		 * @param {Object} aData
-		 * @param {String} sTargetPath
-		 * @param {String} sSourcePath
+		 * @param {Array} aData
+		 * @param {Object} oTargetResource
+		 * @param {Object} oSourceResource
 		 * since 2301.1.0
 		 * @Author Rakesh Sahu
 		 */
