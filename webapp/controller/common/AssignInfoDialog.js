@@ -536,8 +536,7 @@ sap.ui.define([
 					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.validEffort"));
 					bValidEffort = false;
 				} else if (Number(sOldEffort) + Number(sRemainingDuration) < Number(sEffort)) {
-					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration") + sTotalEffort + " " +
-						sEffortUnit);
+					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration",[sTotalEffort,sEffortUnit]));
 					bValidEffort = false;
 				}
 			}

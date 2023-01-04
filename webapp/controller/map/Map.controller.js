@@ -656,8 +656,8 @@ sap.ui.define([
 				this.byId("idUnassignButton").setEnabled(false);
 				//If the selected demands exceeds more than the maintained selected configuration value
 				if (iMaxRowSelection <= selected.length) {
-					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection");
-					MessageToast.show(sMsg + " " + iMaxRowSelection);
+					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection",[iMaxRowSelection]);
+					MessageToast.show(sMsg);
 				}
 			}
 			// To make selection on map by selecting Demand from demand table
