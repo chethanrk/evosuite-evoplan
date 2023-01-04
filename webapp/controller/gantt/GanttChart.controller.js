@@ -280,8 +280,6 @@ sap.ui.define([
 				oSvgPoint,
 				sPath = sDragPath ? sDragPath[0] : undefined,
 				oDemandObj = this._getDemandObjectsByPath(this.oViewModel.getProperty("/gantDragSession"), slocStor),
-				bShowFixedAppointmentDialog,
-				bShowFutureFixedAssignments = this.oUserModel.getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
 				oParams = {};
 			this.oViewModel.setProperty("/aFixedAppointmentsList", []);
 
@@ -309,49 +307,50 @@ sap.ui.define([
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				//Condition added and Method is modified for fixed Appointments			// since Release/2201
 				oParams.DateFrom = oAxisTime.viewToTime(oSvgPoint.x);
-				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
-				if (bShowFixedAppointmentDialog) {
-					this.openFixedAppointmentDialog(oParams, "Gantt");
-				} else if (sDragPath && sDragPath.length > 1) {
-					this._handleMultipleAssignment(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), []);
-				} else {
-					this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x));
-				}
+				this._handleDemandDrop("Gantt", oParams, oDemandObj, sDragPath, oResourceData, oDropContext, oAxisTime.viewToTime(oSvgPoint.x));
 
 			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) { // When we drop on gantt chart from split window
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				oParams.DateFrom = oAxisTime.viewToTime(oSvgPoint.x);
-				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
-				if (bShowFixedAppointmentDialog) {
-					this.openFixedAppointmentDialog(oParams, "Gantt-Split");
-				} else if (sDragPath && sDragPath.length > 1) {
-					this._handleMultipleAssignment(oResourceData, sDragPath, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), []);
-				} else {
-					this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), oAxisTime.viewToTime(oSvgPoint.x), sDragPath);
-				}
+				this._handleDemandDrop("Gantt-Split", oParams, oDemandObj, sDragPath, oResourceData, oDropContext, oAxisTime.viewToTime(oSvgPoint.x));
 
 			} else if (oDragContext) { // When we drop on the resource 
 				oParams.DateFrom = new Date(new Date().setHours(0));
-				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
-				if (bShowFixedAppointmentDialog) {
-					this.openFixedAppointmentDialog(oParams, "Gantt");
-				} else if (sDragPath && sDragPath.length > 1) {
-					this._handleMultipleAssignment(oResourceData, sDragPath, oDropContext.getPath(), new Date(), []);
-				} else {
-					this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), new Date());
-				}
+				this._handleDemandDrop("Gantt", oParams, oDemandObj, sDragPath, oResourceData, oDropContext, new Date());
 
 			} else { // When we drop on the resource from split window
 				oParams.DateFrom = new Date(new Date().setHours(0));
-				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
-				if (bShowFixedAppointmentDialog) {
-					this.openFixedAppointmentDialog(oParams, "Gantt-Split");
-				} else if (sDragPath && sDragPath.length > 1) {
-					this._handleMultipleAssignment(oResourceData, sDragPath, oDropContext.getPath(), new Date(), []);
-				} else {
-					this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), new Date(), sDragPath);
-				}
+				this._handleDemandDrop("Gantt-Split", oParams, oDemandObj, sDragPath, oResourceData, oDropContext, new Date());
+			}
+		},
 
+		/**
+		 * Handles multi assinment or single assignment on Gantt or resource drop
+		 * @param sView - For cusotmizing base don Gantt/Gantt_Split view
+		 * @param oParams - Parameters for fixed appointment dialog
+		 * @param oDemandObj - Dropped demand
+		 * @param sDragPath - Dragged path for demand
+		 * @param oResourceData - Resorce for assignment creation
+		 * @param oDropContext - Context of Dropped object
+		 * @param oStartDate - Statrt date of assignment(Latest if dropped on Resource; Axistime if on Gantt)
+		 */
+		_handleDemandDrop: function (sView, oParams, oDemandObj, sDragPath, oResourceData, oDropContext, oStartDate) {
+			var bShowFutureFixedAssignments = this.oUserModel.getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
+				bShowFixedAppointmentDialog;
+			bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
+			if (bShowFixedAppointmentDialog) {
+				this.openFixedAppointmentDialog(oParams, sView);
+			} else if (sDragPath && sDragPath.length > 1) {
+				this._handleMultipleAssignment(oResourceData, sDragPath, oDropContext.getPath(), oStartDate, []);
+			} else {
+				switch (sView) {
+				case "Gantt":
+					this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oStartDate);
+					break;
+				case "Gantt-Split":
+					this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), oStartDate, sDragPath);
+					break;
+				}
 			}
 		},
 
