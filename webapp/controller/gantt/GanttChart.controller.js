@@ -321,6 +321,13 @@ sap.ui.define([
 
 		/**
 		 * Handles multi assinment or single assignment on Gantt or resource drop
+		 * @param sView - For cusotmizing base don Gantt/Gantt_Split view
+		 * @param oParams - Parameters for fixed appointment dialog
+		 * @param oDemandObj - Dropped demand
+		 * @param sDragPath - Dragged path for demand
+		 * @param oResourceData - Resorce for assignment creation
+		 * @param oDropContext - Context of Dropped object
+		 * @param oStartDate - Statrt date of assignment(Latest if dropped on Resource; Axistime if on Gantt)
 		 */
 		_handleDemandDrop: function (sView, oParams, oDemandObj, sDragPath, oResourceData, oDropContext, oStartDate) {
 			var bShowFutureFixedAssignments = this.oUserModel.getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
