@@ -534,10 +534,10 @@ sap.ui.define([
 				bValidEffort = true;
 			if (this._oView.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && sObjectSourceType === "DEM_PSNW") {
 				if (sEffort.toString().includes("-") || Number(sEffort) <= 0) {
-					MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.validEffort"));
+					this.showMessageToast(this._oView.getController().getResourceBundle().getText("ymsg.validEffort"));
 					bValidEffort = false;
 				} else if (Number(sOldEffort) + Number(sRemainingDuration) < Number(sEffort)) {
-					MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration",[sTotalEffort,sEffortUnit]));
+					this.showMessageToast(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration",[sTotalEffort,sEffortUnit]));
 					bValidEffort = false;
 				}
 			}

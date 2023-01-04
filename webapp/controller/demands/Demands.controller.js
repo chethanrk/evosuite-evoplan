@@ -93,7 +93,7 @@ sap.ui.define([
 				});
 			} else {
 				var msg = this.getResourceBundle().getText("ymsg.selectMinItem");
-				MessageToast.show(msg);
+				this.showMessageToast(msg);
 			}
 		},
 		/**
@@ -226,7 +226,7 @@ sap.ui.define([
 					//If the selected demands exceeds more than the maintained selected configuration value
 					if (iMaxRowSelection <= selected.length) {
 						var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection",[iMaxRowSelection]);
-						MessageToast.show(sMsg);
+						this.showMessageToast(sMsg);
 					}
 				}
 
@@ -631,7 +631,7 @@ sap.ui.define([
 					bFromHome: true
 				});
 			} else {
-				MessageToast.show(this.getResourceBundle().getText("ymsg.noAssignments"));
+				this.showMessageToast(this.getResourceBundle().getText("ymsg.noAssignments"));
 			}
 		}
 

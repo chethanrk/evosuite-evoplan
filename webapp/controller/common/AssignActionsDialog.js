@@ -154,7 +154,7 @@ sap.ui.define([
 			//check at least one demand selected
 			if (aContexts.length === 0) {
 				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.selectMinItem");
-				MessageToast.show(sMsg);
+				this.showMessageToast(sMsg);
 				return;
 			}
 
@@ -179,7 +179,7 @@ sap.ui.define([
 			//check at least one demand selected
 			if (aContexts.length === 0) {
 				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.selectMinItem");
-				MessageToast.show(sMsg);
+				this.showMessageToast(sMsg);
 				return;
 			}
 			this._eventBus.publish("AssignActionsDialog", "selectAssign", {

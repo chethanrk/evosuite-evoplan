@@ -106,7 +106,7 @@ sap.ui.define([
 
 			//Check for no Items selected to Proceed
 			if (!oTable.getSelectedItems().length) {
-				MessageToast.show(this.getResourceBundle().getText("xmsg.msgItemSelect"));
+				this.showMessageToast(this.getResourceBundle().getText("xmsg.msgItemSelect"));
 				return;
 			}
 			//getting Selected Demands based on the Available parameter

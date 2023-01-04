@@ -212,9 +212,9 @@ sap.ui.define([
 					sEffortUnit = oObject.EffortUnit,
 					sTotalEffort = Number(sEffort) + Number(sRemainingDuration);
 				if (sValue.includes("-") || Number(sValue) <= 0) {
-					MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.validEffort"));
+					this.showMessageToast(this.getView().getController().getResourceBundle().getText("ymsg.validEffort"));
 				} else if (Number(sEffort) + Number(sRemainingDuration) < Number(sNewValue)) {
-					MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.invalidAssgnDuration",[sTotalEffort,sEffortUnit]));
+					this.showMessageToast(this.getView().getController().getResourceBundle().getText("ymsg.invalidAssgnDuration",[sTotalEffort,sEffortUnit]));
 				}
 			}
 		},

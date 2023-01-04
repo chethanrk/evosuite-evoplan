@@ -954,7 +954,7 @@ sap.ui.define([
 				this.getModel("appView").setProperty("/busy", false);
 				if (aData.results.length === 0) {
 					sMsg = oResourceBundle.getText("ymsg.noRelationships", [oData.ORDERID, oData.OPERATIONID]);
-					MessageToast.show(sMsg);
+					this.showMessageToast(sMsg);
 				}
 				this.showMessage(oResponse);
 				oGanttModel.setProperty(sPath + "/RelationshipSet", aData);

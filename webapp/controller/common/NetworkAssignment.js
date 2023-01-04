@@ -113,9 +113,9 @@ sap.ui.define([
 				oResourceBundle = this._oView.getController().getResourceBundle();
 			var sMsg = oResourceBundle.getText("ymsg.negativeLineItemDuration", [oContext.getObject().ORDERID, oContext.getObject().OPERATIONID]);
 			if (sDurationHrs.includes("-") || Number(sDurationHrs) <= 0) {
-				MessageToast.show(sMsg);
+				this.showMessageToast(sMsg);
 			} else if (Number(sDurationHrs) > Number(sRemainingHrs)) {
-				MessageToast.show(sMsg);
+				this.showMessageToast(sMsg);
 			}
 		},
 
@@ -134,11 +134,11 @@ sap.ui.define([
 				iCount = Number(i) + 1;
 				var sMsg = oResourceBundle.getText("ymsg.negativeLineItemDuration", [oItem.ORDERID, oItem.OPERATIONID]);
 				if (oItem.DURATION.includes("-") || Number(oItem.DURATION) <= 0) {
-					MessageToast.show(sMsg);
+					this.showMessageToast(sMsg);
 					bValid = false;
 					break;
 				} else if (Number(oItem.DURATION) > Number(oItem.REMAINING_DURATION)) {
-					MessageToast.show(sMsg);
+					this.showMessageToast(sMsg);
 					bValid = false;
 					break;
 				}

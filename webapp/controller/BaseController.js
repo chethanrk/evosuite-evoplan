@@ -217,9 +217,7 @@ sap.ui.define([
 					//set first dragged index to set initial
 					this.getModel("viewModel").setProperty("/iFirstVisibleRowIndex", -1);
 					//Handle Error
-					MessageToast.show(oResourceBundle.getText("errorMessage"), {
-						duration: 5000
-					});
+					this.showMessageToast(oResourceBundle.getText("errorMessage"));
 				}.bind(this)
 			});
 		},
@@ -251,11 +249,9 @@ sap.ui.define([
 					}.bind(this),
 					error: function (oError) {
 						//Handle Error
-						MessageToast.show(oResourceBundle.getText("errorMessage"), {
-							duration: 5000
-						});
+						this.showMessageToast(oResourceBundle.getText("errorMessage"));
 						reject(oError);
-					}
+					}.bind(this)
 				});
 			}.bind(this));
 		},
@@ -345,7 +341,7 @@ sap.ui.define([
 				this.getOwnerComponent().materialInfoDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
 			} else {
 				var msg = this.getResourceBundle().getText("ymsg.selectMaxItemMaterialInfo", [iMaxSelcRow]);
-				MessageToast.show(msg);
+				this.showMessageToast(msg);
 			}
 		},
 		/**
@@ -683,7 +679,7 @@ sap.ui.define([
 			oDataTable.setRowActionTemplate(oTemplate);
 			oDataTable.setRowActionCount(oTemplate.getItems().length);
 		},
-		
+
 		/**
 		 * Navigate to other apps as BSP Apps 
 		 * @param sUri
@@ -1048,19 +1044,20 @@ sap.ui.define([
 		 * @returns {array} aDemandsForSplitAssignment - resloves array of assignments for which Split should happen
 		 *
 		 */
-		 checkResourceUnavailabilty: function (aAssignments, mParameters, sResourceNodeType) {
+		checkResourceUnavailabilty: function (aAssignments, mParameters, sResourceNodeType) {
 			var oModel = this.getModel(),
-				aUnavailabilityChecks = [], aDemandsForSplitAssignment = [],
+				aUnavailabilityChecks = [],
+				aDemandsForSplitAssignment = [],
 				sSelectedHierarchyView = this.getModel("viewModel").getProperty("/selectedHierarchyView"),
 				oResourceAvailabiltyResponse = {
-					arrayOfDemands : aAssignments,
-					arrayOfDemandsToSplit : [],
-					splitConfirmation : "NO",
-					mParameters : mParameters,
-					nodeType : sResourceNodeType
+					arrayOfDemands: aAssignments,
+					arrayOfDemandsToSplit: [],
+					splitConfirmation: "NO",
+					mParameters: mParameters,
+					nodeType: sResourceNodeType
 				};
 
-			var oUnavailabilityPromise = new Promise(function(finalResolve, finalReject) {
+			var oUnavailabilityPromise = new Promise(function (finalResolve, finalReject) {
 
 				for (var i = 0; i < aAssignments.length; i++) {
 					aUnavailabilityChecks.push(new Promise(function (resolve, reject) {
@@ -1075,20 +1072,20 @@ sap.ui.define([
 						}
 						this.executeFunctionImport(oModel, oAvailabilityCheckObject, "ResourceAvailabilityCheck", "GET").then(
 							function (oAvailabilityData, oResponse) {
-							// if resource unavailable for this demand push the demand to aDemandsForSplitAssignment
-							// else push it to aNormalAssignmentArray
-							if (oAvailabilityData.Unavailable) {
-								aDemandsForSplitAssignment.push(oAvailabilityData.DemandGuid);
-							}
-							resolve(oAvailabilityData.Unavailable);
-						});
+								// if resource unavailable for this demand push the demand to aDemandsForSplitAssignment
+								// else push it to aNormalAssignmentArray
+								if (oAvailabilityData.Unavailable) {
+									aDemandsForSplitAssignment.push(oAvailabilityData.DemandGuid);
+								}
+								resolve(oAvailabilityData.Unavailable);
+							});
 					}.bind(this)));
 				}
-	
+
 				this.getModel("appView").setProperty("/busy", true);
 				Promise.all(aUnavailabilityChecks).then(function (aPromiseAllResults) {
 					this.getModel("appView").setProperty("/busy", false);
-					
+
 					if (aPromiseAllResults.includes(true)) {
 						oResourceAvailabiltyResponse.arrayOfDemandsToSplit = aDemandsForSplitAssignment;
 						finalResolve(oResourceAvailabiltyResponse);
@@ -1099,7 +1096,7 @@ sap.ui.define([
 			}.bind(this));
 
 			return oUnavailabilityPromise;
-			
+
 		},
 
 		/**
@@ -1110,7 +1107,7 @@ sap.ui.define([
 		 * @param {promise resolve} finalResolve 
 		 * @param {promise reject} finalReject 
 		 */
-		showSplitConfirmationDialog: function(oResourceAvailabiltyResponse) {
+		showSplitConfirmationDialog: function (oResourceAvailabiltyResponse) {
 			var oViewModel = this.getModel("viewModel"),
 				oi18nModel = this.getModel("i18n"),
 				sDisplayDemandInfo,
@@ -1118,7 +1115,7 @@ sap.ui.define([
 				aDemandsForSplitAssignment = oResourceAvailabiltyResponse.arrayOfDemandsToSplit,
 				bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP");
 
-			return new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
 
 				this.dialogResolve = resolve;
 				this.dialogReject = reject;
@@ -1127,19 +1124,21 @@ sap.ui.define([
 				if (aDemandsForSplitAssignment.length > 0 && bShowSplitConfirmationDialog) {
 					sDisplayDemandInfo = this.getDemandDetailsWithDesciption(aDemandsForSplitAssignment);
 					oViewModel.setProperty("/splitConfirmationDialogInfo", sDisplayDemandInfo);
-				
+
 					if (!this.oConfirmDialog) {
 						this.oConfirmDialog = new Dialog({
 							type: DialogType.Message,
 							title: oi18nModel.getProperty("xtit.confirmSplit"),
 							content: [
 								new VBox({
-									items:[
+									items: [
 										new Label({
 											wrapping: true,
 											text: oi18nModel.getProperty("xmsg.confirmSplit")
 										}),
-										new Label({text: ""}), // empty space
+										new Label({
+											text: ""
+										}), // empty space
 										new Label({
 											design: "Bold",
 											wrapping: true,
@@ -1161,27 +1160,27 @@ sap.ui.define([
 								}),
 								new Button({
 									text: oi18nModel.getProperty("xbut.splitConfirmDialogNo"),
-									press: function() {
+									press: function () {
 										this.oConfirmDialog.close();
 										// resolve the aDemandsForSplitAssignment
 										this.resourceAvailabiltyResponse.splitConfirmation = "NO";
 										this.resourceAvailabiltyResponse.arrayOfDemandsToSplit = [];
-										this.dialogResolve(this.resourceAvailabiltyResponse);	
+										this.dialogResolve(this.resourceAvailabiltyResponse);
 									}.bind(this)
 								}),
 								new Button({
 									text: oi18nModel.getProperty("xbut.splitConfirmDialogCancel"),
-									press:function() {
+									press: function () {
 										this.oConfirmDialog.close();
 										this.dialogReject("Cancel");
 									}.bind(this)
 								})
 							]
 						});
-		
+
 						this.getView().addDependent(this.oConfirmDialog);
 					}
-		
+
 					this.oConfirmDialog.open();
 				} else if (aDemandsForSplitAssignment.length > 0 && !bShowSplitConfirmationDialog) {
 					// scenario where split global config is enabled and user dont want to see confirmation for split,
@@ -1192,9 +1191,8 @@ sap.ui.define([
 					this.dialogResolve(this.resourceAvailabiltyResponse);
 				}
 			}.bind(this));
-			
-		},
 
+		},
 
 		/**
 		 * method returns a message to be shown to the user
@@ -1204,7 +1202,7 @@ sap.ui.define([
 		 * @param {array} aDemandsForSplitAssignment demands which are marked for split
 		 * @returns 
 		 */
-		getDemandDetailsWithDesciption: function(aDemandsForSplitAssignment) {
+		getDemandDetailsWithDesciption: function (aDemandsForSplitAssignment) {
 			var oModel = this.getModel(),
 				sDisplayDemandInfo, sDemandDescriptionWithOrderOperation,
 				aDemandObjectsFromLocalStorage = JSON.parse(localStorage.getItem("Evo-Dmnd-guid"));
@@ -1223,7 +1221,8 @@ sap.ui.define([
 					sOrderId = oDemandDetails.ORDERID ? oDemandDetails.ORDERID : "",
 					sOperationId = oDemandDetails.OPERATIONID ? oDemandDetails.OPERATIONID : "";
 				sDemandDescriptionWithOrderOperation = sOrderId + " - " + sOperationId + " - " + sDemandDescription;
-				sDisplayDemandInfo = sDisplayDemandInfo ? sDisplayDemandInfo + "\n \n" +  sDemandDescriptionWithOrderOperation : sDemandDescriptionWithOrderOperation;
+				sDisplayDemandInfo = sDisplayDemandInfo ? sDisplayDemandInfo + "\n \n" + sDemandDescriptionWithOrderOperation :
+					sDemandDescriptionWithOrderOperation;
 			}
 			return sDisplayDemandInfo;
 		},
@@ -1247,7 +1246,7 @@ sap.ui.define([
 		 * 
 		 * @param {object} oResponse
 		 */
-		handlePromiseChainCatch: function(oResponse) {
+		handlePromiseChainCatch: function (oResponse) {
 			//console.log(oResponse);
 		},
 
@@ -1258,16 +1257,16 @@ sap.ui.define([
 		 * @param {string} sAssignGuid assignment guid
 		 * @returns boolean if the selected assignment is part of a split
 		 */
-		checkIfAssignmentPartOfSplit: function(oModel, sAssignGuid) {
+		checkIfAssignmentPartOfSplit: function (oModel, sAssignGuid) {
 			var sAssignmentPath = "/AssignmentSet('" + sAssignGuid + "')",
 				sAssignmentObject = oModel.getProperty(sAssignmentPath);
 
-			if (sAssignmentObject && sAssignmentObject.SPLIT_INDEX > 0 && sAssignmentObject.SPLIT_COUNTER > 0 ) {
+			if (sAssignmentObject && sAssignmentObject.SPLIT_INDEX > 0 && sAssignmentObject.SPLIT_COUNTER > 0) {
 				return true;
 			}
 			return false;
 		},
-		
+
 		/**
 		 * remove the selection of resource group on press of time allocation button 
 		 * time allocation dialog does not work for resource Group
@@ -1294,7 +1293,7 @@ sap.ui.define([
 				return true;
 			}
 		},
-		
+
 		/**
 		 * deselect the Resource group which are removed from selection on press of time allocation button 
 		 */
