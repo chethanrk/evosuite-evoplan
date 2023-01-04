@@ -24,7 +24,7 @@ sap.ui.define([
 			// Row Action template to navigate to Detail page
 			var onClickNavigation = this.onActionPress.bind(this),
 				openActionSheet = this.openActionSheet.bind(this);
-			
+
 			this.oAppModel = this.getModel("appView");
 			this.oUserModel = this.getModel("user");
 			this._viewModel = this.getModel("viewModel");
@@ -98,8 +98,8 @@ sap.ui.define([
 
 			this._viewModel.setProperty("/gantDragSession", aSelDemandGuid);
 			this._viewModel.setProperty("/dragSession", aPathsData);
-			localStorage.setItem("Evo-Dmnd-guid", JSON.stringify(aSelectedDemandObject));
-			localStorage.setItem("Evo-aPathsData", JSON.stringify(aPathsData));
+			this.localStorage.put("Evo-Dmnd-guid", JSON.stringify(aSelectedDemandObject));
+			this.localStorage.put("Evo-aPathsData", JSON.stringify(aPathsData));
 
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
@@ -136,7 +136,7 @@ sap.ui.define([
 
 			if (oSelectedPaths.aPathsData.length > 0) {
 				// TODO comment
-				localStorage.setItem("Evo-Action-page", "splitDemands");
+				this.localStorage.put("Evo-Action-page", "splitDemands");
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
 			}
 			if (oSelectedPaths.aNonAssignable.length > 0) {
@@ -154,7 +154,7 @@ sap.ui.define([
 
 			if (this._aSelectedRowsIdx.length > 0) {
 				// TODO comment
-				localStorage.setItem("Evo-Action-page", "splitDemands");
+				this.localStorage.put("Evo-Action-page", "splitDemands");
 				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData, this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("ymsg.selectMinItem");
