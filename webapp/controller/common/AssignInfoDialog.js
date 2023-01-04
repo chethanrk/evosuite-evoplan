@@ -1,8 +1,9 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"com/evorait/evoplan/model/formatter",
-	"sap/ui/core/Fragment"
-], function (BaseController, formatter, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/m/MessageToast"
+], function (BaseController, formatter, Fragment,MessageToast) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.AssignInfoDialog", {
@@ -533,10 +534,10 @@ sap.ui.define([
 				bValidEffort = true;
 			if (this._oView.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && sObjectSourceType === "DEM_PSNW") {
 				if (sEffort.toString().includes("-") || Number(sEffort) <= 0) {
-					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.validEffort"));
+					MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.validEffort"));
 					bValidEffort = false;
 				} else if (Number(sOldEffort) + Number(sRemainingDuration) < Number(sEffort)) {
-					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration",[sTotalEffort,sEffortUnit]));
+					MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration",[sTotalEffort,sEffortUnit]));
 					bValidEffort = false;
 				}
 			}

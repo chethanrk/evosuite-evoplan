@@ -1051,7 +1051,7 @@ sap.ui.define([
 				this.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
 				this.getOwnerComponent().assignActionsDialog.open(this.getView(), aSelectedPaths, true, this._mParameters);
 			} else {
-				sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.noAssignments"));
+				MessageToast.show(this.getResourceBundle().getText("ymsg.noAssignments"));
 			}
 		},
 

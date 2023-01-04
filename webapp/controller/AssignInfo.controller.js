@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"com/evorait/evoplan/model/Constants"
-], function (BaseController, formatter, models, MessageStrip, Filter, FilterOperator, Constants) {
+	"com/evorait/evoplan/model/Constants",
+	"sap/m/MessageToast"
+], function (BaseController, formatter, models, MessageStrip, Filter, FilterOperator, Constants,MessageToast) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.AssignInfo", {
@@ -211,9 +212,9 @@ sap.ui.define([
 					sEffortUnit = oObject.EffortUnit,
 					sTotalEffort = Number(sEffort) + Number(sRemainingDuration);
 				if (sValue.includes("-") || Number(sValue) <= 0) {
-					sap.m.MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.validEffort"));
+					MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.validEffort"));
 				} else if (Number(sEffort) + Number(sRemainingDuration) < Number(sNewValue)) {
-					sap.m.MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.invalidAssgnDuration",[sTotalEffort,sEffortUnit]));
+					MessageToast.show(this.getView().getController().getResourceBundle().getText("ymsg.invalidAssgnDuration",[sTotalEffort,sEffortUnit]));
 				}
 			}
 		},

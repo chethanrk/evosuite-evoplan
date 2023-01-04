@@ -631,7 +631,7 @@ sap.ui.define([
 					bFromHome: true
 				});
 			} else {
-				sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.noAssignments"));
+				MessageToast.show(this.getResourceBundle().getText("ymsg.noAssignments"));
 			}
 		}
 

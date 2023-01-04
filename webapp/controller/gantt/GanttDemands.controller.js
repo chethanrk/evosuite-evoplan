@@ -24,7 +24,7 @@ sap.ui.define([
 			// Row Action template to navigate to Detail page
 			var onClickNavigation = this.onActionPress.bind(this),
 				openActionSheet = this.openActionSheet.bind(this);
-			
+
 			this.oAppModel = this.getModel("appView");
 			this.oUserModel = this.getModel("user");
 			this._viewModel = this.getModel("viewModel");
@@ -188,7 +188,7 @@ sap.ui.define([
 				this.byId("idUnassignButton").setEnabled(false);
 				//If the selected demands exceeds more than the maintained selected configuration value
 				if (iMaxRowSelection <= selected.length) {
-					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection",[iMaxRowSelection]);
+					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
 					MessageToast.show(sMsg);
 				}
 			}
@@ -356,7 +356,7 @@ sap.ui.define([
 				this._viewModel.setProperty("/Disable_Assignment_Status_Button", false);
 				this.getOwnerComponent().assignActionsDialog.open(this.getView(), aSelectedPaths, true, this._mParameters);
 			} else {
-				sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.noAssignments"));
+				MessageToast.show(this.getResourceBundle().getText("ymsg.noAssignments"));
 			}
 		},
 

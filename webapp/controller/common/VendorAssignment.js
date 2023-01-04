@@ -132,32 +132,32 @@ sap.ui.define([
 				if (aVendorAssignmentList[a].oData.ALLOW_ASSIGNMENT_DIALOG) {
 					iCount = Number(a) + 1;
 					if (aVendorAssignmentList[a].oData.CostElement === "" && aVendorAssignmentList[a].oData.Estimate !== "") {
-						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateCostElement", [iCount]));
+						MessageToast.show(this.getResourceBundle().getText("ymsg.validateCostElement", [iCount]));
 						bValidationCheck = false;
 						break;
 					} else if (aVendorAssignmentList[a].oData.CostElement !== "" && Number(aVendorAssignmentList[a].oData.Estimate) === 0) {
-						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateEstimate", [iCount]));
+						MessageToast.show(this.getResourceBundle().getText("ymsg.validateEstimate", [iCount]));
 						bValidationCheck = false;
 						break;
 					} else if (aVendorAssignmentList[a].oData.CostElement === "" && aVendorAssignmentList[a].oData.Currency !== "") {
-						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateCostElement", [iCount]));
+						MessageToast.show(this.getResourceBundle().getText("ymsg.validateCostElement", [iCount]));
 						bValidationCheck = false;
 						break;
 					} else if (aVendorAssignmentList[a].oData.CostElement !== "" && aVendorAssignmentList[a].oData.Estimate === "") {
-						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateEstimate", [iCount]));
+						MessageToast.show(this.getResourceBundle().getText("ymsg.validateEstimate", [iCount]));
 						bValidationCheck = false;
 						break;
 					} else if (aVendorAssignmentList[a].oData.CostElement !== "" && aVendorAssignmentList[a].oData.Estimate === "") {
-						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateEstimate", [iCount]));
+						MessageToast.show(this.getResourceBundle().getText("ymsg.validateEstimate", [iCount]));
 						bValidationCheck = false;
 						break;
 					} else if (aVendorAssignmentList[a].oData.Estimate !== "" && aVendorAssignmentList[a].oData.Currency === "") {
-						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateCurrency", [iCount]));
+						MessageToast.show(this.getResourceBundle().getText("ymsg.validateCurrency", [iCount]));
 						bValidationCheck = false;
 						break;
 					} else if (aVendorAssignmentList[a].oData.CostElement !== "" &&
 						aVendorAssignmentList[a].oData.Currency === "") {
-						sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.validateCurrency", [iCount]));
+						MessageToast.show(this.getResourceBundle().getText("ymsg.validateCurrency", [iCount]));
 						bValidationCheck = false;
 						break;
 					}
