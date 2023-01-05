@@ -367,7 +367,7 @@ sap.ui.define([
 		 * 
 		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
 		 */
-		checkAndExecuteSplitAssignments: function(aAssignments, mParameters, sResourceNodeType) {
+		checkAndExecuteSplitAssignments: function (aAssignments, mParameters, sResourceNodeType) {
 			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch)
 				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch)
 				.then(this.callRequiredFunctionImports.bind(this)).catch(this.handlePromiseChainCatch);
@@ -383,7 +383,7 @@ sap.ui.define([
 		 * @param {object} oConfirmationDialogResponse response from split confirmation dialog
 		 * 
 		 */
-		callRequiredFunctionImports: function(oConfirmationDialogResponse) {
+		callRequiredFunctionImports: function (oConfirmationDialogResponse) {
 			if (oConfirmationDialogResponse) {
 				var aDemands = oConfirmationDialogResponse.arrayOfDemands,
 					aDemandGuidsToSplit = oConfirmationDialogResponse.arrayOfDemandsToSplit,
@@ -745,7 +745,7 @@ sap.ui.define([
 
 			//condition added to getData from gantt split : since 2205	
 			if (!aSources) {
-				aSources = JSON.parse(localStorage.getItem("Evo-aPathsData"));
+				aSources = JSON.parse(this.localStorage.get("Evo-aPathsData"));
 			}
 			for (var f in aSources) {
 				aSources[f].IsDisplayed = true;
@@ -848,7 +848,7 @@ sap.ui.define([
 
 			//condition added to getData from gantt split : since 2205	
 			if (!aSources) {
-				aSources = JSON.parse(localStorage.getItem("Evo-aPathsData"));
+				aSources = JSON.parse(this.localStorage.get("Evo-aPathsData"));
 			}
 			for (var n in aSources) {
 				if (aSources[n].oData.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
@@ -1042,7 +1042,7 @@ sap.ui.define([
 		 * @returns promise - which is resolved with oData on user oConfirmationDialogResponse
 		 * and rejected on cancel press
 		 */
-		deleteSplitsUserConfirm: function(oData) {
+		deleteSplitsUserConfirm: function (oData) {
 
 			var oDeleteSplitsUserConfirmPromise = new Promise(function (resolve, reject) {
 
@@ -1071,7 +1071,7 @@ sap.ui.define([
 		/**
 		 * Method called on Proceed press in all splits unassign user confirmation dialog
 		 */
-		onProceedWithSplitDeletion: function() {
+		onProceedWithSplitDeletion: function () {
 			if (this.oSplitDeleteConfirmDialog) {
 				this.splitDeleteDialogResolve(this.splitDeleteDialogDataToResolve);
 				this.oSplitDeleteConfirmDialog.close();
@@ -1081,7 +1081,7 @@ sap.ui.define([
 		/**
 		 * Method called on Cancel press in all splits unassign user confirmation dialog
 		 */
-		onCancelSplitDeletion: function() {
+		onCancelSplitDeletion: function () {
 			if (this.oSplitDeleteConfirmDialog) {
 				this.splitDeleteDialogReject();
 				this.oSplitDeleteConfirmDialog.close();
@@ -1091,7 +1091,7 @@ sap.ui.define([
 		/**
 		 * Method called on reject/catch scenarios of split unassign confirm dialog
 		 */
-		_catchError: function(oError) {
+		_catchError: function (oError) {
 			//do nothing
 		},
 
@@ -1102,7 +1102,7 @@ sap.ui.define([
 		 * @param {object} oUserConfirmResponse 
 		 * 
 		 */
-		deleteSplitAssignments: function(oUserConfirmResponse) {
+		deleteSplitAssignments: function (oUserConfirmResponse) {
 			if (oUserConfirmResponse) {
 				var sAssginmentGuid = oUserConfirmResponse.assignmentGuid,
 					mParameters = oUserConfirmResponse.parameters;
