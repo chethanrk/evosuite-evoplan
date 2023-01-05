@@ -382,9 +382,7 @@ sap.ui.define([
 					sPath + "/Description") : this._selectedResource.getBindingContext().getProperty(sPath + "/Description");
 			if (aAssignableDemands.aUnAssignableDemands.length > 0) {
 				//increased the msg appearance time to 6 seconds
-				MessageToast.show(oResourceBundle.getText("ymsg.unasignableDemands"), {
-					duration: 6000
-				});
+				this.showMessageToast(oResourceBundle.getText("ymsg.unasignableDemands"));
 			}
 			// added condition, in case there no assignable demands then planning calendar would not open, date picker calendar would be closed
 			if (aAssignableDemands.aAssignableDemands && aAssignableDemands.aAssignableDemands.length) {
@@ -627,7 +625,7 @@ sap.ui.define([
 					this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData, this._mParameters);
 				} else {
 					var msg = this.getResourceBundle().getText("ymsg.selectMinItem");
-					MessageToast.show(msg);
+					this.showMessageToast(msg);
 				}
 			}
 		},
@@ -656,8 +654,8 @@ sap.ui.define([
 				this.byId("idUnassignButton").setEnabled(false);
 				//If the selected demands exceeds more than the maintained selected configuration value
 				if (iMaxRowSelection <= selected.length) {
-					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection");
-					MessageToast.show(sMsg + " " + iMaxRowSelection);
+					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection",[iMaxRowSelection]);
+					this.showMessageToast(sMsg);
 				}
 			}
 			// To make selection on map by selecting Demand from demand table
@@ -1051,7 +1049,7 @@ sap.ui.define([
 				this.getModel("viewModel").setProperty("/Disable_Assignment_Status_Button", false);
 				this.getOwnerComponent().assignActionsDialog.open(this.getView(), aSelectedPaths, true, this._mParameters);
 			} else {
-				sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.noAssignments"));
+				this.showMessageToast(this.getResourceBundle().getText("ymsg.noAssignments"));
 			}
 		},
 

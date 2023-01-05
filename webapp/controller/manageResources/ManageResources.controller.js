@@ -145,7 +145,7 @@ sap.ui.define([
 				oDraggedItemContext = this._oEvoplanResourceTable.getContextByIndex(nDraggedItemIndex),
 				sNodeType = oDraggedItemContext.getProperty("NodeType");
 			if (sNodeType === "RES_GROUP") {
-				MessageToast.show(this._oResourceBundle.getText("ymsg.errGroupDrag"));
+				this.showMessageToast(this._oResourceBundle.getText("ymsg.errGroupDrag"));
 				oEvent.preventDefault();
 			} else {
 				this._oViewModel.setProperty("/manageResourcesSettings/draggedItemContext", oDraggedItemContext);
@@ -395,7 +395,7 @@ sap.ui.define([
 				this.oResourceDateRange.setValueState("None");
 			} else {
 				this.oResourceDateRange.setValueState("Error");
-				MessageToast.show(this._oResourceBundle.getText("ymsg.invalidDateRange"));
+				this.showMessageToast(this._oResourceBundle.getText("ymsg.invalidDateRange"));
 			}
 		},
 		/**
@@ -411,7 +411,7 @@ sap.ui.define([
 			oUpdatedRow.Start = oUpdatedJSONData.Start;
 			oUpdatedRow.End = oUpdatedJSONData.End;
 			if (sNodeType === "RESOURCE" && this.oResourceDateRange.getValueState() !== "None") {
-				MessageToast.show(this._oResourceBundle.getText("ymsg.invalidDateRange"));
+				this.showMessageToast(this._oResourceBundle.getText("ymsg.invalidDateRange"));
 				return;
 			}
 			oSelectedRow = this.convertDateToUTC(oSelectedRow, true);
@@ -434,7 +434,7 @@ sap.ui.define([
 				}
 
 			} else {
-				MessageToast.show(this._oResourceBundle.getText("ymsg.noChange"));
+				this.showMessageToast(this._oResourceBundle.getText("ymsg.noChange"));
 			}
 			this.onPressPopoverCloseButton();
 		},

@@ -526,9 +526,7 @@ sap.ui.define([
 				item.title = this.getModel("i18n").getResourceBundle().getText("xmsg.assignedToUnavailability");
 				item.counter = iCounter;
 				this.getModel("MessageModel").setData([item]);
-				sap.m.MessageToast.show(item.title + "\r\n" + item.subtitle, {
-					duration: 6000
-				});
+				this.showMessageToast(item.title + "\r\n" + item.subtitle);
 			}
 		},
 		/**

@@ -166,7 +166,7 @@ sap.ui.define([
 
 			if (!aContextPaths.length) {
 				sMsg = this.getResourceBundle().getText("ymsg.selectMinAssignment");
-				MessageToast.show(sMsg);
+				this.showMessageToast(sMsg);
 				return;
 			}
 			for (var i in aContextPaths) {

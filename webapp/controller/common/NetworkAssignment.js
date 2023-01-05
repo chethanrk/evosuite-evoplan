@@ -4,8 +4,9 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/core/Fragment"
-], function (BaseController, models, formatter, Filter, FilterOperator, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/m/MessageToast"
+], function (BaseController, models, formatter, Filter, FilterOperator, Fragment,MessageToast) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.NetworkAssignment", {
@@ -112,9 +113,9 @@ sap.ui.define([
 				oResourceBundle = this._oView.getController().getResourceBundle();
 			var sMsg = oResourceBundle.getText("ymsg.negativeLineItemDuration", [oContext.getObject().ORDERID, oContext.getObject().OPERATIONID]);
 			if (sDurationHrs.includes("-") || Number(sDurationHrs) <= 0) {
-				sap.m.MessageToast.show(sMsg);
+				this.showMessageToast(sMsg);
 			} else if (Number(sDurationHrs) > Number(sRemainingHrs)) {
-				sap.m.MessageToast.show(sMsg);
+				this.showMessageToast(sMsg);
 			}
 		},
 
@@ -133,11 +134,11 @@ sap.ui.define([
 				iCount = Number(i) + 1;
 				var sMsg = oResourceBundle.getText("ymsg.negativeLineItemDuration", [oItem.ORDERID, oItem.OPERATIONID]);
 				if (oItem.DURATION.includes("-") || Number(oItem.DURATION) <= 0) {
-					sap.m.MessageToast.show(sMsg);
+					this.showMessageToast(sMsg);
 					bValid = false;
 					break;
 				} else if (Number(oItem.DURATION) > Number(oItem.REMAINING_DURATION)) {
-					sap.m.MessageToast.show(sMsg);
+					this.showMessageToast(sMsg);
 					bValid = false;
 					break;
 				}
