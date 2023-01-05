@@ -13,9 +13,10 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/core/Fragment",
 	"sap/base/Log",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/util/Storage"
 ], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText, Constants,
-	RowAction, RowActionItem, formatter, Fragment, Log, MobileLibrary) {
+	RowAction, RowActionItem, formatter, Fragment, Log, MobileLibrary, Storage) {
 	"use strict";
 
 	var ButtonType = MobileLibrary.ButtonType,
@@ -25,6 +26,8 @@ sap.ui.define([
 
 	return Controller.extend("com.evorait.evoplan.controller.BaseController", {
 		formatter: formatter,
+
+		localStorage: new Storage(Storage.Type.local, "EvoPlan"),
 		/**
 		 * Convenience method for accessing the router in every controller of the application.
 		 * @public
@@ -714,8 +717,8 @@ sap.ui.define([
 		},
 
 		clearLocalStorage: function () {
-			localStorage.removeItem("Evo-Dmnd-pageRefresh");
-			localStorage.removeItem("Evo-Dmnd-guid");
+			this.localStorage.remove("Evo-Dmnd-pageRefresh");
+			this.localStorage.remove("Evo-Dmnd-guid");
 		},
 
 		/**
@@ -1012,7 +1015,7 @@ sap.ui.define([
 			}
 
 			// to identify the action done on respective page
-			localStorage.setItem("Evo-Action-page", "ganttSplit");
+			this.localStorage.put("Evo-Action-page", "ganttSplit");
 			this.getOwnerComponent().TimeAllocations.open(this.getView(), this.selectedResources, this._mParameters, "timeAlloc");
 
 		},
@@ -1205,7 +1208,7 @@ sap.ui.define([
 		getDemandDetailsWithDesciption: function (aDemandsForSplitAssignment) {
 			var oModel = this.getModel(),
 				sDisplayDemandInfo, sDemandDescriptionWithOrderOperation,
-				aDemandObjectsFromLocalStorage = JSON.parse(localStorage.getItem("Evo-Dmnd-guid"));
+				aDemandObjectsFromLocalStorage = JSON.parse(this.localStorage.get("Evo-Dmnd-guid"));
 
 			for (var iIndex = 0; iIndex < aDemandsForSplitAssignment.length; iIndex++) {
 				var sDemandPath = "/DemandSet('" + aDemandsForSplitAssignment[iIndex] + "')",
@@ -1233,7 +1236,7 @@ sap.ui.define([
 		 * @since 2205
 		 */
 		_getDemandObjectSplitPage: function (sPath) {
-			var aDragSessionData = JSON.parse(localStorage.getItem("Evo-Dmnd-guid"));
+			var aDragSessionData = JSON.parse(this.localStorage.get("Evo-Dmnd-guid"));
 			for (var i = 0; i < aDragSessionData.length; i++) {
 				if (aDragSessionData[i].sPath === sPath) {
 					return aDragSessionData[i].oDemandObject;

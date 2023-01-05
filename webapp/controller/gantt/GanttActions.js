@@ -1,6 +1,6 @@
 /* globals _ */
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/AssignmentsController",
+	"com/evorait/evoplan/controller/gantt/GanttRoute",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -8,10 +8,10 @@ sap.ui.define([
 	"sap/m/Tokenizer",
 	"sap/ui/core/Fragment",
 	"sap/m/MessageToast"
-], function (AssignmentsController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageToast) {
+], function (Controller, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageToast) {
 	"use strict";
 
-	return AssignmentsController.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
+	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
 
 		/**
 		 * formatter for for Gantt view
@@ -44,7 +44,7 @@ sap.ui.define([
 				oDemandObj,
 				oParams;
 
-			return new Promise(function(resolveMultiAssign, rejectMultiAssign) {
+			return new Promise(function (resolveMultiAssign, rejectMultiAssign) {
 
 				this.resolveMultiAssign = resolveMultiAssign;
 				this.rejectMultiAssign = rejectMultiAssign;
@@ -54,10 +54,10 @@ sap.ui.define([
 				// also call new logic only when drop happens on Respurce NodeType - RESOURCE or TIMEDAY
 				// since release 2301
 				var bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
-				sResourceNodeType = oResourceData.NodeType,
-				bExecuteAssignmentSplitCode = bSplitGlobalConfigEnabled && (sResourceNodeType === "RESOURCE" || sResourceNodeType === "TIMEDAY"),
-				aAllAssignmentsParams = [];
-				
+					sResourceNodeType = oResourceData.NodeType,
+					bExecuteAssignmentSplitCode = bSplitGlobalConfigEnabled && (sResourceNodeType === "RESOURCE" || sResourceNodeType === "TIMEDAY"),
+					aAllAssignmentsParams = [];
+
 				// creating function import calls for fixed appointments
 				for (var i in aFixedAppointmentObjects) {
 					oParams = {
@@ -93,7 +93,7 @@ sap.ui.define([
 						oDemandObj = this._getDemandObjectSplitPage(aSources[i]);
 					}
 					oParams.DemandGuid = oDemandObj.Guid;
-					
+
 					if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && oDemandObj.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
 						oParams.Duration = oDemandObj.Duration;
 					} else {
@@ -102,14 +102,14 @@ sap.ui.define([
 
 					aAllAssignmentsParams.push(oParams);
 				}
-				
+
 				if (bExecuteAssignmentSplitCode) {
 					this.checkAndExecuteSplitForGanttMultiAssign(aAllAssignmentsParams, {}, sResourceNodeType);
 				} else {
 					aPromises = this.createMultiAssignments(aAllAssignmentsParams);
 					this.resolveMultiAssign(aPromises);
 				}
-				
+
 			}.bind(this));
 		},
 
@@ -120,8 +120,9 @@ sap.ui.define([
 		 * @param {array} aAssignmentsParamsForMultiAssignment 
 		 * @returns array of promises with CreateMultiAssignment function import call
 		 */
-		createMultiAssignments: function(aAssignmentsParamsForMultiAssignment) {
-			var sDemandDurationConcat = "", aPromises = [];
+		createMultiAssignments: function (aAssignmentsParamsForMultiAssignment) {
+			var sDemandDurationConcat = "",
+				aPromises = [];
 			for (var iIndex in aAssignmentsParamsForMultiAssignment) {
 				var oParams = aAssignmentsParamsForMultiAssignment[iIndex];
 				sDemandDurationConcat = sDemandDurationConcat + "," + oParams.DemandGuid + "//" + oParams.Duration;
@@ -141,7 +142,7 @@ sap.ui.define([
 		 * 
 		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
 		 */
-		checkAndExecuteSplitForGanttMultiAssign: function(aAssignments, mParameters, sResourceNodeType) {
+		checkAndExecuteSplitForGanttMultiAssign: function (aAssignments, mParameters, sResourceNodeType) {
 			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch)
 				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch)
 				.then(this.callRequiredFunctionImportsForMultiAssign.bind(this)).catch(this.handlePromiseChainCatch);
@@ -158,14 +159,14 @@ sap.ui.define([
 		 * resolves the promise of assignMultipleDemands method
 		 * 
 		 */
-		callRequiredFunctionImportsForMultiAssign: function(oConfirmationDialogResponse) {
-			if(oConfirmationDialogResponse) {
+		callRequiredFunctionImportsForMultiAssign: function (oConfirmationDialogResponse) {
+			if (oConfirmationDialogResponse) {
 				var aAssignmentsParamsForMultiAssignment = [];
 
 				var aDemands = oConfirmationDialogResponse.arrayOfDemands,
-				aDemandGuidsToSplit = oConfirmationDialogResponse.arrayOfDemandsToSplit,
-				sResourceNodeType = oConfirmationDialogResponse.nodeType,
-				aPromises = [];
+					aDemandGuidsToSplit = oConfirmationDialogResponse.arrayOfDemandsToSplit,
+					sResourceNodeType = oConfirmationDialogResponse.nodeType,
+					aPromises = [];
 
 				if (aDemandGuidsToSplit.length === 0) {
 					aPromises = this.createMultiAssignments(aDemands);
@@ -185,7 +186,8 @@ sap.ui.define([
 					if (aAssignmentsParamsForMultiAssignment.length > 1) {
 						aPromises = aPromises.concat(this.createMultiAssignments(aAssignmentsParamsForMultiAssignment));
 					} else if (aAssignmentsParamsForMultiAssignment.length === 1) {
-						aPromises = aPromises.concat(this.executeFunctionImport(this.getModel(), aAssignmentsParamsForMultiAssignment[0], "CreateAssignment", "POST"));
+						aPromises = aPromises.concat(this.executeFunctionImport(this.getModel(), aAssignmentsParamsForMultiAssignment[0],
+							"CreateAssignment", "POST"));
 					}
 				}
 				this.resolveMultiAssign(aPromises);
@@ -212,7 +214,7 @@ sap.ui.define([
 				aPromises = [],
 				oDemandObj;
 
-			return new Promise(function(resolveAssignment, rejectAssignment) {
+			return new Promise(function (resolveAssignment, rejectAssignment) {
 
 				this.resolveAssignment = resolveAssignment;
 				this.rejectAssignment = rejectAssignment;
@@ -224,9 +226,9 @@ sap.ui.define([
 					aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE);
 					aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE);
 				}
-	
+
 				this.clearMessageModel();
-	
+
 				for (var i = 0; i < aItems.length; i++) {
 					oDemandObj = aGanttDemandDragged.bFromGanttSplit ? aGanttDemandDragged.oData : oModel.getProperty(aItems[i]);
 					var sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i].split("'")[1],
@@ -253,7 +255,7 @@ sap.ui.define([
 							oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
 							oParams.TimeFrom = targetObj.StartTime;
 						}
-	
+
 						if (targetObj.EndDate) {
 							oParams.DateTo = targetObj.EndDate;
 							oParams.TimeTo = targetObj.EndTime;
@@ -262,8 +264,9 @@ sap.ui.define([
 							oParams.TimeTo = targetObj.EndTime;
 						}
 					}
-	
-					if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && this._mParameters.bFromNewGantt && aGanttDemandDragged.IsSelected) {
+
+					if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && this._mParameters.bFromNewGantt && aGanttDemandDragged
+						.IsSelected) {
 						oParams.DateFrom = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME);
 						oParams.TimeFrom.ms = oParams.DateFrom.getTime();
 						oParams.DateTo = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME);
@@ -292,7 +295,7 @@ sap.ui.define([
 						oParams.TimeTo = {};
 						oParams.TimeTo.ms = oDemandObj.FIXED_APPOINTMENT_END_DATE ? oDemandObj.FIXED_APPOINTMENT_END_DATE.getTime() : 0;
 					}
-	
+
 					// if global config enabled for split assignments
 					// also call new logic only when drop happens on Respurce NodeType - RESOURCE or TIMEDAY
 					// then first check with backend if resource availability is there for the assignment work hours 
@@ -307,7 +310,7 @@ sap.ui.define([
 					}
 				}
 			}.bind(this));
-			
+
 		},
 
 		/**
@@ -317,7 +320,7 @@ sap.ui.define([
 		 * 
 		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
 		 */
-		checkAndExecuteSplitAssignments: function(aAssignments, mParameters, sResourceNodeType) {
+		checkAndExecuteSplitAssignments: function (aAssignments, mParameters, sResourceNodeType) {
 			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch)
 				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch)
 				.then(this.callRequiredFunctionImports.bind(this)).catch(this.handlePromiseChainCatch);
@@ -334,8 +337,8 @@ sap.ui.define([
 		 * resolves the promise of assignedDemands method
 		 * 
 		 */
-		callRequiredFunctionImports: function(oConfirmationDialogResponse) {
-			if(oConfirmationDialogResponse) {
+		callRequiredFunctionImports: function (oConfirmationDialogResponse) {
+			if (oConfirmationDialogResponse) {
 
 				var aDemands = oConfirmationDialogResponse.arrayOfDemands,
 					aDemandGuidsToSplit = oConfirmationDialogResponse.arrayOfDemandsToSplit,
@@ -440,7 +443,7 @@ sap.ui.define([
 				}
 				oQualificationParameters = {
 					DemandMultiGuid: sDemandGuids,
-					ObjectId: sObjectId, 
+					ObjectId: sObjectId,
 					StartTimestamp: oTargetDate,
 					EndTimestamp: oNewEndDate ? oNewEndDate : oTargetDate
 				};
@@ -612,7 +615,7 @@ sap.ui.define([
 				isAssignmentPartOfSplit = this.checkIfAssignmentPartOfSplit(oModel, sAssignGuid),
 				oResourceBundle = this.getResourceBundle(),
 				sConfirmMessage = oResourceBundle.getText("ymsg.confirmDel");
-			
+
 			if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
 				sConfirmMessage = oResourceBundle.getText("xmsg.deleteAllSplitAssignments");
 			}
@@ -980,48 +983,6 @@ sap.ui.define([
 					}
 				});
 			}.bind(this));
-		},
-
-		/*
-		 * Handle press of Calculate travel time Button in gantt toolbar
-		 * @param oEvent
-		 * since 2205
-		 */
-		onCalculateRoutePress: function (oEvent) {
-			var oButton = oEvent.getSource(),
-				oView = this.getView(),
-				oStarDate = this.getModel("user").getProperty("/DEFAULT_GANT_START_DATE"),
-				oEndDate = this.getModel("user").getProperty("/DEFAULT_GANT_END_DATE"),
-				sSourceId = oEvent.getSource().getId();
-
-			this.routeOperation = sSourceId.includes("Optimize") ? "Optimize" : "Calculate";
-			if (!this._oCalendarPopover) {
-				Fragment.load({
-					name: "com.evorait.evoplan.view.map.fragments.RouteDateFilter",
-					id: oView.getId(),
-					controller: this
-				}).then(function (oPopover) {
-					this._oCalendarPopover = oPopover;
-					this.getView().addDependent(this._oCalendarPopover);
-					this._oCalendarPopover.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-					this.getView().byId("DRSMap").setMinDate(oStarDate);
-					this.getView().byId("DRSMap").setMaxDate(oEndDate);
-					this._oCalendarPopover.openBy(oButton);
-				}.bind(this));
-			} else {
-				this.getView().byId("DRSMap").setMinDate(oStarDate);
-				this.getView().byId("DRSMap").setMaxDate(oEndDate);
-				this._oCalendarPopover.openBy(oButton);
-			}
-		},
-
-		/*
-		 * Closing the calendar popover for route calculation
-		 * @param oEvent
-		 * since 2205
-		 */
-		onCloseDialog: function (oEvent) {
-			this._oCalendarPopover.close();
 		},
 
 		/**
