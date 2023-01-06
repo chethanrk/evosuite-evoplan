@@ -10,6 +10,10 @@ sap.ui.define([
 
 		formatter: formatter,
 
+		/* =========================================================== */
+		/* Event & Public methods                                      */
+		/* =========================================================== */
+
 		init: function () {},
 
 		/**
@@ -54,11 +58,25 @@ sap.ui.define([
 		},
 
 		/**
+		 * on Close on pop over
+		 */
+		onCloseAssigmentsPopover: function (oEvent) {
+			if (this._component) {
+				this._component.DialogTemplateRenderer.closeResponsivePopOver();
+			}
+		},
+
+		/* =========================================================== */
+		/* Private methods                                             */
+		/* =========================================================== */
+
+		/**
 		 * event triggered after opening the Responsive Popover
 		 * setting the Title and Status
 		 * @param oDialog
 		 * @param oView
 		 */
+
 		_openPopOver: function (oDialog, oView, sPath, sEvent, data, mParams) {
 			this._setPopOverData(this._oShapeContext.getObject());
 		},
@@ -78,16 +96,6 @@ sap.ui.define([
 					status: oData.DEMAND_STATUS
 				};
 			this._oView.getModel("viewModel").setProperty("/ganttSettings/GanttPopOverData", aDetails);
-
-		},
-		/**
-		 * on Close on pop over
-		 */
-		onCloseAssigmentsPopover: function (oEvent) {
-			if (this._component) {
-				this._component.DialogTemplateRenderer.closeResponsivePopOver();
-			}
 		}
-
 	});
 });

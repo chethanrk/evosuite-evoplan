@@ -1307,6 +1307,8 @@ sap.ui.define([
 		resetResourceTreeSelection: function (aRemoveItems) {
 			if (this._mParameters.bFromHome || this._mParameters.bFromMap) {
 				this._eventBus.publish("ManageAbsences", "ClearSelection", {});
+			} else {
+				this._oEventBus.publish("BaseController", "resetSelections", {});
 			}
 		}
 	});

@@ -20,10 +20,21 @@ sap.ui.define([
 
 		_bLoaded: false,
 
+		/* =========================================================== */
+		/* lifecycle methods                                           */
+		/* =========================================================== */
+
+		/**
+		 * Called when the Gantt demand controller is instantiated.
+		 * Called when a controller is instantiated and its View controls (if available) are already created.
+		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
+		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
+		 * @public
+		 */
 		onInit: function () {
 			// Row Action template to navigate to Detail page
 			var onClickNavigation = this.onActionPress.bind(this),
-				openActionSheet = this.openActionSheet.bind(this);
+				openActionSheet = this._openActionSheet.bind(this);
 
 			this.oAppModel = this.getModel("appView");
 			this.oUserModel = this.getModel("user");
@@ -60,10 +71,22 @@ sap.ui.define([
 			this._aSelectedIndices = [];
 		},
 
+		/**
+		 * on page exit
+		 */
+		onExit: function () {
+			this._oEventBus.unsubscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
+		},
+
+		/* =========================================================== */
+		/* Event & Public methods                                      */
+		/* =========================================================== */
+
 		/** 
 		 * On Drag start restrict demand having status other init
 		 * @param oEvent
 		 */
+
 		onDragStart: function (oEvent) {
 			var sMsg = this.getResourceBundle().getText("msg.notAuthorizedForAssign");
 			if (!this._viewModel.getProperty("/validateIW32Auth")) {
@@ -114,13 +137,7 @@ sap.ui.define([
 		onDragEnd: function (oEvent) {
 			this._deselectAll();
 		},
-		/**
-		 * deselect all checkboxes in table
-		 * @private
-		 */
-		_deselectAll: function () {
-			this._oDataTable.clearSelection();
-		},
+
 		/**
 		 * on press assign button in footer
 		 * show modal with user for select
@@ -220,27 +237,7 @@ sap.ui.define([
 				}
 			}
 		},
-		/**
-		 * Refresh the demand table 
-		 * 
-		 */
-		_refreshDemandTable: function () {
-			if (this._bLoaded) {
-				this._oDraggableTable.rebindTable();
-			}
-			this._bLoaded = true;
-		},
-		/**
-		 *  opens the action sheet
-		 *  @param oEvent
-		 */
-		openActionSheet: function (oEvent) {
-			var oContext = oEvent.getSource().getParent().getParent().getBindingContext(),
-				oModel = oContext.getModel(),
-				sPath = oContext.getPath();
-			this.selectedDemandData = oModel.getProperty(sPath);
-			this.getOwnerComponent().NavigationActionSheet.open(this.getView(), oEvent.getSource().getParent(), this.selectedDemandData);
-		},
+
 		/**
 		 *	Navigates to evoOrder detail page with static url. 
 		 * @param oEvent
@@ -249,7 +246,7 @@ sap.ui.define([
 			var sOrderId = oEvent.getSource().getText();
 			this.openEvoOrder(sOrderId);
 		},
-		
+
 		//TODO comment
 		onClickSplit: function (oEvent) {
 			window.open("#Gantt/SplitDemands", "_blank");
@@ -292,13 +289,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Opens long text view/edit popover
-		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
-		 */
-		openLongTextPopover: function (oSource) {
-			this.getOwnerComponent().longTextPopover.open(this.getView(), oSource);
-		},
-		/**
 		 * handle message popover response to save data/ open longtext popover
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
 		 * //TODO update the paramter
@@ -326,7 +316,7 @@ sap.ui.define([
 		 */
 		onClickLongText: function (oEvent) {
 			this._viewModel.setProperty("/isOpetationLongTextPressed", false);
-			this.openLongTextPopover(oEvent.getSource());
+			this._openLongTextPopover(oEvent.getSource());
 		},
 		/**
 		 * on press operation long text icon in Demand table
@@ -334,7 +324,7 @@ sap.ui.define([
 		 */
 		onClickOprationLongText: function (oEvent) {
 			this._viewModel.setProperty("/isOpetationLongTextPressed", true);
-			this.openLongTextPopover(oEvent.getSource());
+			this._openLongTextPopover(oEvent.getSource());
 		},
 
 		/**
@@ -367,9 +357,45 @@ sap.ui.define([
 			}
 		},
 
-		onExit: function () {
-			this._oEventBus.unsubscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
-		}
+		/* =========================================================== */
+		/* Private methods                                             */
+		/* =========================================================== */
+
+		/**
+		 * deselect all checkboxes in table
+		 * @private
+		 */
+		_deselectAll: function () {
+			this._oDataTable.clearSelection();
+		},
+		/**
+		 * Refresh the demand table 
+		 * 
+		 */
+		_refreshDemandTable: function () {
+			if (this._bLoaded) {
+				this._oDraggableTable.rebindTable();
+			}
+			this._bLoaded = true;
+		},
+		/**
+		 *  opens the action sheet
+		 *  @param oEvent
+		 */
+		_openActionSheet: function (oEvent) {
+			var oContext = oEvent.getSource().getParent().getParent().getBindingContext(),
+				oModel = oContext.getModel(),
+				sPath = oContext.getPath();
+			this.selectedDemandData = oModel.getProperty(sPath);
+			this.getOwnerComponent().NavigationActionSheet.open(this.getView(), oEvent.getSource().getParent(), this.selectedDemandData);
+		},
+		/**
+		 * Opens long text view/edit popover
+		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
+		 */
+		_openLongTextPopover: function (oSource) {
+			this.getOwnerComponent().longTextPopover.open(this.getView(), oSource);
+		},
 
 	});
 
