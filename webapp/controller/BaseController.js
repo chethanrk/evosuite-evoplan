@@ -220,9 +220,7 @@ sap.ui.define([
 					//set first dragged index to set initial
 					this.getModel("viewModel").setProperty("/iFirstVisibleRowIndex", -1);
 					//Handle Error
-					MessageToast.show(oResourceBundle.getText("errorMessage"), {
-						duration: 5000
-					});
+					this.showMessageToast(oResourceBundle.getText("errorMessage"));
 				}.bind(this)
 			});
 		},
@@ -254,11 +252,9 @@ sap.ui.define([
 					}.bind(this),
 					error: function (oError) {
 						//Handle Error
-						MessageToast.show(oResourceBundle.getText("errorMessage"), {
-							duration: 5000
-						});
+						this.showMessageToast(oResourceBundle.getText("errorMessage"));
 						reject(oError);
-					}
+					}.bind(this)
 				});
 			}.bind(this));
 		},
@@ -348,7 +344,7 @@ sap.ui.define([
 				this.getOwnerComponent().materialInfoDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
 			} else {
 				var msg = this.getResourceBundle().getText("ymsg.selectMaxItemMaterialInfo", [iMaxSelcRow]);
-				MessageToast.show(msg);
+				this.showMessageToast(msg);
 			}
 		},
 		/**

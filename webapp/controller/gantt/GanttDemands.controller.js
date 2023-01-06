@@ -175,7 +175,7 @@ sap.ui.define([
 				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData, this._mParameters);
 			} else {
 				var msg = this.getResourceBundle().getText("ymsg.selectMinItem");
-				MessageToast.show(msg);
+				this.showMessageToast(msg);
 			}
 		},
 
@@ -206,8 +206,8 @@ sap.ui.define([
 				this.byId("idUnassignButton").setEnabled(false);
 				//If the selected demands exceeds more than the maintained selected configuration value
 				if (iMaxRowSelection <= selected.length) {
-					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection");
-					MessageToast.show(sMsg + " " + iMaxRowSelection);
+					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+					this.showMessageToast(sMsg);
 				}
 			}
 			//Enabling/Disabling the Material Status Button based on Component_Exit flag
@@ -353,7 +353,7 @@ sap.ui.define([
 				this._viewModel.setProperty("/Disable_Assignment_Status_Button", false);
 				this.getOwnerComponent().assignActionsDialog.open(this.getView(), aSelectedPaths, true, this._mParameters);
 			} else {
-				sap.m.MessageToast.show(this.getResourceBundle().getText("ymsg.noAssignments"));
+				this.showMessageToast(this.getResourceBundle().getText("ymsg.noAssignments"));
 			}
 		},
 
