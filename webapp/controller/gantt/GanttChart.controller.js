@@ -41,6 +41,10 @@ sap.ui.define([
 
 		localStorage: new Storage(Storage.Type.local, "EvoPlan"),
 
+		/* =========================================================== */
+		/* lifecycle methods                                           */
+		/* =========================================================== */
+
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -69,7 +73,7 @@ sap.ui.define([
 				this._mParameters = {
 					bFromNewGantt: true
 				};
-				this.initializeGantt();
+				this._initializeGantt();
 			}.bind(this));
 
 			this.getRouter().getRoute("newGanttSplit").attachPatternMatched(function () {
@@ -77,7 +81,7 @@ sap.ui.define([
 				this._mParameters = {
 					bFromNewGanttSplit: true
 				};
-				this.initializeGantt();
+				this._initializeGantt();
 			}.bind(this));
 
 			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
@@ -96,44 +100,6 @@ sap.ui.define([
 
 			this.oMapUtilities = new MapUtilities();
 		},
-		/**
-		 * Initialize the fetch of data for Gantt chart
-		 * 
-		 */
-		initializeGantt: function () {
-			this.oGanttModel = this.getView().getModel("ganttModel");
-			this.oGanttOriginDataModel = this.getView().getModel("ganttOriginalData");
-
-			this.oViewModel.setProperty("/ganttSelectionPane", "28%");
-			this.oGanttModel.setSizeLimit(999999999);
-			this.oGanttOriginDataModel.setSizeLimit(999999999);
-			if (this.oGanttModel.getProperty("/data/children").length === 0) {
-				this._loadGanttData();
-			} else {
-				this._addAssociations.bind(this)();
-			}
-			this._setGanttBgColor();
-
-			// when navigating from Maps to Gantt 
-			// onShowAssignments button click from the Resource Pin popover
-			// apply the selected resource filter in the gantt view
-			this.handleNavigationFromMap();
-
-			this._resetSelections();
-			//resetting buttons due to Resource selection is resetted.	
-			this.resetToolbarButtons();
-		},
-		/**
-		 * to reset buttons when navigate from Map or reset the selection of resources
-		 */
-		resetToolbarButtons: function () {
-			this.selectedResources = [];
-			this.byId("idButtonreassign").setEnabled(false);
-			this.byId("idButtonunassign").setEnabled(false);
-			this.byId("idButtonTimeAllocNew").setEnabled(false);
-			this.byId("idCalculateRoute").setEnabled(false);
-			this.byId("idOptimizeRoute").setEnabled(false);
-		},
 
 		/**
 		 * on page exit
@@ -147,7 +113,7 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
 		},
 		/* =========================================================== */
-		/* event methods                                               */
+		/* Event & Public methods                                      */
 		/* =========================================================== */
 
 		/**
@@ -221,7 +187,7 @@ sap.ui.define([
 
 			//resetting buttons due to Resource selection is resetted.
 			if (!(this.selectedResources && this.selectedResources.length)) {
-				this.resetToolbarButtons();
+				this._resetToolbarButtons();
 			}
 		},
 
@@ -267,9 +233,13 @@ sap.ui.define([
 				}
 			}
 		},
-		
-		//TODO comment
 
+		/**
+		 * method to handle assignment process after dropping demand and completed the initial checks
+		 * @param oDraggedControl dragged demand object
+		 * @param oDroppedControl object into which the dragged items are dropped 
+		 * @param oBrowserEvent   'Event' parameter of occured Event  
+		 */
 		onProceedNewGanttDemandDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
 			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
@@ -290,7 +260,7 @@ sap.ui.define([
 
 			//retreive the demand object, passed from Gantt split in local storage
 			if (!oDemandObj) {
-				oDemandObj = this.convertDateToObjects(slocStor[0]);
+				oDemandObj = this._convertDateToObjects(slocStor[0]);
 			}
 
 			// Check the resource assignable or not
@@ -325,57 +295,15 @@ sap.ui.define([
 		},
 
 		/**
-		 * Handles multi assinment or single assignment on Gantt or resource drop
-		 * @param sView - For cusotmizing base don Gantt/Gantt_Split view
-		 * @param oParams - Parameters for fixed appointment dialog
-		 * @param oDemandObj - Dropped demand
-		 * @param sDragPath - Dragged path for demand
-		 * @param oResourceData - Resorce for assignment creation
-		 * @param oDropContext - Context of Dropped object
-		 * @param oStartDate - Statrt date of assignment(Latest if dropped on Resource; Axistime if on Gantt)
-		 */
-		_handleDemandDrop: function (sView, oParams, oDemandObj, sDragPath, oResourceData, oDropContext, oStartDate) {
-			var bShowFutureFixedAssignments = this.oUserModel.getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
-				bShowFixedAppointmentDialog;
-			bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
-			if (bShowFixedAppointmentDialog) {
-				this.openFixedAppointmentDialog(oParams, sView);
-			} else if (sDragPath && sDragPath.length > 1) {
-				this._handleMultipleAssignment(oResourceData, sDragPath, oDropContext.getPath(), oStartDate, []);
-			} else {
-				switch (sView) {
-				case "Gantt":
-					this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oStartDate);
-					break;
-				case "Gantt-Split":
-					this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), oStartDate, sDragPath);
-					break;
-				}
-			}
-		},
-
-		/**
-		 * Preceed to assignment via Fixed assignment Dialog Event bus call
-		 * @param 
-		 */
-		_proceedToAssign: function (sChannel, oEvent, oData) {
-			if (oData.sDragPath || oData.aFixedAppointmentObjects) {
-				this._handleMultipleAssignment(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate, oData.aFixedAppointmentObjects);
-			} else {
-				this._validateAndAssignDemands(oData.oResourceData, null, oData.oTarget, oData.oTargetDate, oData.aGuids);
-			}
-		},
-
-		/**
 		 * When a shape is dragged inside Gantt
 		 * and dropped to same row or another resource row
 		 * @param oEvent
 		 */
 		onShapeDrop: function (oEvent) {
 			if (this.aSelectedAssignmentsPaths.length > 1) {
-				this.handleShapeDropMultiAssignment(oEvent);
+				this._handleShapeDropMultiAssignment(oEvent);
 			} else {
-				this.handleShapeDropReAssignment(oEvent);
+				this._handleShapeDropReAssignment(oEvent);
 			}
 		},
 
@@ -404,174 +332,9 @@ sap.ui.define([
 		onShapeSelectionChange: function (oEvent) {
 			var aSelectedShapes = oEvent.getSource().getSelectedShapeUid();
 			if (aSelectedShapes.length === 1) {
-				this.initializeMultiAssignment(true);
+				this._initializeMultiAssignment(true);
 			} else {
-				this.initializeMultiAssignment();
-			}
-		},
-		/**
-		 * method to handle shape Drop When a shape is dragged inside Gantt on same axis
-		 * and dropped to same row or another resource row
-		 * @param oEvent
-		 */
-		handleShapeDropMultiAssignment: function (oEvent) {
-			var oDataModel = this._treeTable.getModel("data"),
-				oNewDateTime = oEvent.getParameter("newDateTime"),
-				oDraggedShapeDates = oEvent.getParameter("draggedShapeDates"),
-				sLastDraggedShapeUid = oEvent.getParameter("lastDraggedShapeUid"),
-				oOldStartDateTime = oDraggedShapeDates[sLastDraggedShapeUid].time,
-				oOldEndDateTime = oDraggedShapeDates[sLastDraggedShapeUid].endTime,
-				iMoveWidthInMs = oNewDateTime.getTime() - oOldStartDateTime.getTime();
-
-			this.updateAssignmentsDateTime(iMoveWidthInMs);
-		},
-
-		/**
-		 * update new date time to dropped multiple assigments on same axis
-		 * @param nTimeDifference
-		 */
-		updateAssignmentsDateTime: function (nTimeDifference) {
-			var bAllowFixedAppointments = this.oUserModel.getProperty("/ENABLE_GANTT_CHNG_FIXED_ASGN"),
-				aAssignments = [],
-				aPathsToBeRemoved = [],
-				aUpdateAssignments = [],
-				oAssignmentData,
-				oParams;
-
-			for (var i = 0; i < this.aSelectedAssignmentsPaths.length; i++) {
-				oAssignmentData = this.oGanttModel.getProperty(this.aSelectedAssignmentsPaths[i]);
-				// condition to check if assignment is FIXED APPOINTMENT and is allowed to change 
-				if (!oAssignmentData.FIXED_APPOINTMENT || (oAssignmentData.FIXED_APPOINTMENT && bAllowFixedAppointments)) {
-					aAssignments.push(oAssignmentData);
-					oParams = this._getAssignmentParams(oAssignmentData, nTimeDifference);
-					aUpdateAssignments.push(this.executeFunctionImport(this.getModel(), oParams, "UpdateAssignment", "POST"));
-				} else {
-					aPathsToBeRemoved.push(this.aSelectedAssignmentsPaths[i]);
-				}
-			}
-
-			//removing assignments that are not movable
-			for (var i = 0; i < aPathsToBeRemoved.length; i++) {
-				this.aSelectedAssignmentsPaths.splice(aPathsToBeRemoved.indexOf(aPathsToBeRemoved[i]), 1);
-			}
-
-			//Calling "Update" function import to update date/time to backend
-			this.oAppViewModel.setProperty("/busy", true);
-			Promise.all(aUpdateAssignments).then(function (aPromiseAllResults) {
-				this.oAppViewModel.setProperty("/busy", false);
-				//method to update assignments in local json model
-				this._updateResourceAsignments(aPromiseAllResults);
-			}.bind(this));
-		},
-		/**
-		 * to check if any Assignment falls in unavailability after multiassignment on same axis
-		 * @param aAssignments
-		 * since 2209
-		 */
-		_checkAssignmentsOnUnavailabilty: function (aAssignments) {
-			var oModel = this.getModel();
-			this.aUnavailabilityChecks = [];
-
-			for (var i = 0; i < aAssignments.length; i++) {
-				this.aUnavailabilityChecks.push(new Promise(function (resolve, reject) {
-					this.executeFunctionImport(oModel, {
-						ResourceGuid: aAssignments[i].ResourceGuid,
-						StartTimestamp: aAssignments[i].DateFrom,
-						EndTimestamp: aAssignments[i].DateTo,
-						DemandGuid: aAssignments[i].DemandGuid,
-						UnavailabilityCheck: true
-					}, "ResourceAvailabilityCheck", "GET").then(function (data, oResponse) {
-						resolve(data.Unavailable);
-					}.bind(this));
-				}.bind(this)));
-
-			}
-
-			this.oAppViewModel.setProperty("/busy", true);
-			Promise.all(this.aUnavailabilityChecks).then(function (aPromiseAllResults) {
-				this.oAppViewModel.setProperty("/busy", false);
-				if (aPromiseAllResults.includes(true)) {
-					this.showMessageForUnAvailability(aAssignments, aPromiseAllResults);
-				}
-			}.bind(this));
-		},
-
-		/**
-		 * Display message for Assignment falls in unavailability after multiassignment on same axis
-		 * @param oEvent
-		 * since 2209
-		 */
-		showMessageForUnAvailability: function (aAssignments, aUnavailableList) {
-			var sMsgItem = "",
-				item = {},
-				iCounter = 0,
-				aCheckGuids = [];
-
-			for (var i = 0; i < aUnavailableList.length; i++) {
-				if (aUnavailableList[i] && !aCheckGuids.includes(aAssignments[i].Guid)) {
-					if (aAssignments[i].ORDERID) {
-						sMsgItem = sMsgItem + aAssignments[i].ORDERID + " / " + aAssignments[i].OPERATIONID + "  " + aAssignments[i].DemandDesc +
-							"\r\n";
-					} else {
-						sMsgItem = sMsgItem + aAssignments[i].NOTIFICATION + "  " + aAssignments[i].DemandDesc + "\r\n";
-					}
-					aCheckGuids.push(aAssignments[i].Guid);
-					iCounter++;
-				}
-			}
-			if (sMsgItem) {
-				item.type = "Information";
-				item.description = sMsgItem;
-				item.subtitle = sMsgItem;
-				item.title = this.getModel("i18n").getResourceBundle().getText("xmsg.assignedToUnavailability");
-				item.counter = iCounter;
-				this.getModel("MessageModel").setData([item]);
-				this.showMessageToast(item.title + "\r\n" + item.subtitle);
-			}
-		},
-		/**
-		 * method to handle shape Drop When a shape is dragged inside Gantt to reassign
-		 * and dropped to same row or another resource row
-		 * @param oEvent
-		 */
-		handleShapeDropReAssignment: function (oEvent) {
-			var oParams = oEvent.getParameters(),
-				msg = this.getResourceBundle().getText("msg.ganttShapeDropError"),
-				oTargetContext = oParams.targetRow ? oParams.targetRow.getBindingContext("ganttModel") : null;
-
-			if (!oTargetContext && !oParams.targetShape) {
-				this.showMessageToast(msg);
-				return;
-			}
-			if (!oTargetContext) {
-				oTargetContext = oParams.targetShape.getParent().getParent().getBindingContext("ganttModel");
-			}
-			//get target data
-			var oTargetData = oTargetContext ? oTargetContext.getObject() : null;
-			// If you drop in empty gantt area where there is no data OR assign is not allowed
-			if (!oTargetData || !this.isAssignable({
-					data: oTargetData
-				})) {
-				this.showMessageToast(msg);
-				return;
-			}
-
-			//Allowing Assignment Shape Drop Only on Resource Nodes
-			if (oTargetContext.getObject().NodeType === "RESOURCE") {
-				// to identify the action done on respective page
-				this.localStorage.put("Evo-Action-page", "ganttSplit");
-
-				//could be multiple shape pathes
-				for (var key in oParams.draggedShapeDates) {
-					var sSourcePath = Utility.parseUid(key).shapeDataName,
-						sTargetPath = oTargetContext.getPath(),
-						oSourceData = this.oGanttModel.getProperty(sSourcePath),
-						sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
-
-					//set new time and resource data to gantt model, setting also new pathes
-					var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
-					this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
-				}
+				this._initializeMultiAssignment();
 			}
 		},
 
@@ -728,7 +491,7 @@ sap.ui.define([
 				this.oUserModel.setProperty("/DEFAULT_GANT_START_DATE", oEvent.getParameter("from"));
 				this.oUserModel.setProperty("/DEFAULT_GANT_END_DATE", oEvent.getParameter("to"));
 			}
-			this.resetToolbarButtons();
+			this._resetToolbarButtons();
 			this._loadGanttData();
 		},
 		/**
@@ -853,9 +616,246 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * on press link of assignment in resource tree row
+		 * get parent row path and bind this path to the dialog or showing assignment information
+		 * @param oEvent
+		 * @since 2205
+		 */
+		onPressAssignmentLink: function (oEvent) {
+			var oSource = oEvent.getSource();
+			this.assignmentRowContext = oSource.getParent().getBindingContext("ganttModel");
+			if (this.assignmentRowContext) {
+				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().Guid + "')";
+				this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
+			} else {
+				var msg = this.getResourceBundle().getText("notFoundContext");
+				this.showMessageToast(msg);
+			}
+		},
+
 		/* =========================================================== */
-		/* intern methods                                              */
+		/* Private methods                                             */
 		/* =========================================================== */
+
+		/**
+		 * Initialize the fetch of data for Gantt chart
+		 * 
+		 */
+		_initializeGantt: function () {
+			this.oGanttModel = this.getView().getModel("ganttModel");
+			this.oGanttOriginDataModel = this.getView().getModel("ganttOriginalData");
+
+			this.oViewModel.setProperty("/ganttSelectionPane", "28%");
+			this.oGanttModel.setSizeLimit(999999999);
+			this.oGanttOriginDataModel.setSizeLimit(999999999);
+			if (this.oGanttModel.getProperty("/data/children").length === 0) {
+				this._loadGanttData();
+			} else {
+				this._addAssociations.bind(this)();
+			}
+			this._setGanttBgColor();
+
+			// when navigating from Maps to Gantt 
+			// onShowAssignments button click from the Resource Pin popover
+			// apply the selected resource filter in the gantt view
+			this._handleNavigationFromMap();
+
+			this._resetSelections();
+			//resetting buttons due to Resource selection is resetted.	
+			this._resetToolbarButtons();
+		},
+
+		/**
+		 * to reset buttons when navigate from Map or reset the selection of resources
+		 */
+		_resetToolbarButtons: function () {
+			this.selectedResources = [];
+			this.byId("idButtonreassign").setEnabled(false);
+			this.byId("idButtonunassign").setEnabled(false);
+			this.byId("idButtonTimeAllocNew").setEnabled(false);
+			this.byId("idCalculateRoute").setEnabled(false);
+			this.byId("idOptimizeRoute").setEnabled(false);
+		},
+
+		/**
+		 * Preceed to assignment via Fixed assignment Dialog Event bus call
+		 * @param 
+		 */
+		_proceedToAssign: function (sChannel, oEvent, oData) {
+			if (oData.sDragPath || oData.aFixedAppointmentObjects) {
+				this._handleMultipleAssignment(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate, oData.aFixedAppointmentObjects);
+			} else {
+				this._validateAndAssignDemands(oData.oResourceData, null, oData.oTarget, oData.oTargetDate, oData.aGuids);
+			}
+		},
+		/**
+		 * method to handle shape Drop When a shape is dragged inside Gantt on same axis
+		 * and dropped to same row or another resource row
+		 * @param oEvent
+		 */
+		_handleShapeDropMultiAssignment: function (oEvent) {
+			var oDataModel = this._treeTable.getModel("data"),
+				oNewDateTime = oEvent.getParameter("newDateTime"),
+				oDraggedShapeDates = oEvent.getParameter("draggedShapeDates"),
+				sLastDraggedShapeUid = oEvent.getParameter("lastDraggedShapeUid"),
+				oOldStartDateTime = oDraggedShapeDates[sLastDraggedShapeUid].time,
+				oOldEndDateTime = oDraggedShapeDates[sLastDraggedShapeUid].endTime,
+				iMoveWidthInMs = oNewDateTime.getTime() - oOldStartDateTime.getTime();
+
+			this._updateAssignmentsDateTime(iMoveWidthInMs);
+		},
+
+		/**
+		 * update new date time to dropped multiple assigments on same axis
+		 * @param nTimeDifference
+		 */
+		_updateAssignmentsDateTime: function (nTimeDifference) {
+			var bAllowFixedAppointments = this.oUserModel.getProperty("/ENABLE_GANTT_CHNG_FIXED_ASGN"),
+				aAssignments = [],
+				aPathsToBeRemoved = [],
+				aUpdateAssignments = [],
+				oAssignmentData,
+				oParams;
+
+			for (var i = 0; i < this.aSelectedAssignmentsPaths.length; i++) {
+				oAssignmentData = this.oGanttModel.getProperty(this.aSelectedAssignmentsPaths[i]);
+				// condition to check if assignment is FIXED APPOINTMENT and is allowed to change 
+				if (!oAssignmentData.FIXED_APPOINTMENT || (oAssignmentData.FIXED_APPOINTMENT && bAllowFixedAppointments)) {
+					aAssignments.push(oAssignmentData);
+					oParams = this._getAssignmentParams(oAssignmentData, nTimeDifference);
+					aUpdateAssignments.push(this.executeFunctionImport(this.getModel(), oParams, "UpdateAssignment", "POST"));
+				} else {
+					aPathsToBeRemoved.push(this.aSelectedAssignmentsPaths[i]);
+				}
+			}
+
+			//removing assignments that are not movable
+			for (var i = 0; i < aPathsToBeRemoved.length; i++) {
+				this.aSelectedAssignmentsPaths.splice(aPathsToBeRemoved.indexOf(aPathsToBeRemoved[i]), 1);
+			}
+
+			//Calling "Update" function import to update date/time to backend
+			this.oAppViewModel.setProperty("/busy", true);
+			Promise.all(aUpdateAssignments).then(function (aPromiseAllResults) {
+				this.oAppViewModel.setProperty("/busy", false);
+				//method to update assignments in local json model
+				this._updateResourceAssignments(aPromiseAllResults);
+			}.bind(this));
+		},
+		/**
+		 * to check if any Assignment falls in unavailability after multiassignment on same axis
+		 * @param aAssignments
+		 * since 2209
+		 */
+		_checkAssignmentsOnUnavailabilty: function (aAssignments) {
+			var oModel = this.getModel();
+			this.aUnavailabilityChecks = [];
+
+			for (var i = 0; i < aAssignments.length; i++) {
+				this.aUnavailabilityChecks.push(new Promise(function (resolve, reject) {
+					this.executeFunctionImport(oModel, {
+						ResourceGuid: aAssignments[i].ResourceGuid,
+						StartTimestamp: aAssignments[i].DateFrom,
+						EndTimestamp: aAssignments[i].DateTo,
+						DemandGuid: aAssignments[i].DemandGuid,
+						UnavailabilityCheck: true
+					}, "ResourceAvailabilityCheck", "GET").then(function (data, oResponse) {
+						resolve(data.Unavailable);
+					}.bind(this));
+				}.bind(this)));
+
+			}
+
+			this.oAppViewModel.setProperty("/busy", true);
+			Promise.all(this.aUnavailabilityChecks).then(function (aPromiseAllResults) {
+				this.oAppViewModel.setProperty("/busy", false);
+				if (aPromiseAllResults.includes(true)) {
+					this._showMessageForUnAvailability(aAssignments, aPromiseAllResults);
+				}
+			}.bind(this));
+		},
+
+		/**
+		 * Display message for Assignment falls in unavailability after multiassignment on same axis
+		 * @param oEvent
+		 * since 2209
+		 */
+		_showMessageForUnAvailability: function (aAssignments, aUnavailableList) {
+			var sMsgItem = "",
+				item = {},
+				iCounter = 0,
+				aCheckGuids = [];
+
+			for (var i = 0; i < aUnavailableList.length; i++) {
+				if (aUnavailableList[i] && !aCheckGuids.includes(aAssignments[i].Guid)) {
+					if (aAssignments[i].ORDERID) {
+						sMsgItem = sMsgItem + aAssignments[i].ORDERID + " / " + aAssignments[i].OPERATIONID + "  " + aAssignments[i].DemandDesc +
+							"\r\n";
+					} else {
+						sMsgItem = sMsgItem + aAssignments[i].NOTIFICATION + "  " + aAssignments[i].DemandDesc + "\r\n";
+					}
+					aCheckGuids.push(aAssignments[i].Guid);
+					iCounter++;
+				}
+			}
+			if (sMsgItem) {
+				item.type = "Information";
+				item.description = sMsgItem;
+				item.subtitle = sMsgItem;
+				item.title = this.getModel("i18n").getResourceBundle().getText("xmsg.assignedToUnavailability");
+				item.counter = iCounter;
+				this.getModel("MessageModel").setData([item]);
+				sap.m.MessageToast.show(item.title + "\r\n" + item.subtitle, {
+					duration: 6000
+				});
+			}
+		},
+		/**
+		 * method to handle shape Drop When a shape is dragged inside Gantt to reassign
+		 * and dropped to same row or another resource row
+		 * @param oEvent
+		 */
+		_handleShapeDropReAssignment: function (oEvent) {
+			var oParams = oEvent.getParameters(),
+				msg = this.getResourceBundle().getText("msg.ganttShapeDropError"),
+				oTargetContext = oParams.targetRow ? oParams.targetRow.getBindingContext("ganttModel") : null;
+
+			if (!oTargetContext && !oParams.targetShape) {
+				this.showMessageToast(msg);
+				return;
+			}
+			if (!oTargetContext) {
+				oTargetContext = oParams.targetShape.getParent().getParent().getBindingContext("ganttModel");
+			}
+			//get target data
+			var oTargetData = oTargetContext ? oTargetContext.getObject() : null;
+			// If you drop in empty gantt area where there is no data OR assign is not allowed
+			if (!oTargetData || !this.isAssignable({
+					data: oTargetData
+				})) {
+				this.showMessageToast(msg);
+				return;
+			}
+
+			//Allowing Assignment Shape Drop Only on Resource Nodes
+			if (oTargetContext.getObject().NodeType === "RESOURCE") {
+				// to identify the action done on respective page
+				this.localStorage.put("Evo-Action-page", "ganttSplit");
+
+				//could be multiple shape pathes
+				for (var key in oParams.draggedShapeDates) {
+					var sSourcePath = Utility.parseUid(key).shapeDataName,
+						sTargetPath = oTargetContext.getPath(),
+						oSourceData = this.oGanttModel.getProperty(sSourcePath),
+						sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
+
+					//set new time and resource data to gantt model, setting also new pathes
+					var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
+					this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+				}
+			}
+		},
 
 		/**
 		 * set background color of Gantt by dynamic adding style sheet rule
@@ -1563,7 +1563,7 @@ sap.ui.define([
 					this._changeGanttHorizonViewAt(this._axisTime.getZoomLevel(), this._axisTime);
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
 				}.bind(this));
-			this.resetToolbarButtons();
+			this._resetToolbarButtons();
 		},
 		/**
 		 * when data was loaded then children needs added to right parent node
@@ -1687,7 +1687,7 @@ sap.ui.define([
 
 			}
 		},
-	
+
 		/**
 		 * fetch event when callFunctionImport happened in BaseController
 		 * @param {String} sChannel
@@ -1775,6 +1775,7 @@ sap.ui.define([
 				this.oGanttModel.setProperty(this.selectedResources[i] + "/IsSelected", false);
 			}
 			this.selectedResources = [];
+			this._resetToolbarButtons();
 		},
 		/**
 		 *  refreshes the utilization in gantt chart table
@@ -1845,7 +1846,7 @@ sap.ui.define([
 		 * @param {Object} oStartDate
 		 * @param {Object} oDemandObj
 		 **/
-		checkFixedAppointPopupToDisplay: function (bShowFutureFixedAssignments, oStartDate, oDemandObj) {
+		_checkFixedAppointPopupToDisplay: function (bShowFutureFixedAssignments, oStartDate, oDemandObj) {
 			var isFixedAppointment = false;
 			this.aFixedAppointmentDemands = [];
 			oDemandObj.forEach(function (oItem) {
@@ -1864,7 +1865,7 @@ sap.ui.define([
 		 * @param {Object} oParams
 		 * @param {String} sSource
 		 * */
-		openFixedAppointmentDialog: function (oParams, sSource) {
+		_openFixedAppointmentDialog: function (oParams, sSource) {
 			this.oViewModel.setProperty("/aFixedAppointmentsList", this.aFixedAppointmentDemands);
 			this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), [], oParams, this._mParameters, sSource);
 		},
@@ -1873,7 +1874,7 @@ sap.ui.define([
 		 * Converting date into objects from String passed from Gantt Split
 		 * @param {Array} aDemandData
 		 **/
-		convertDateToObjects: function (aDemandData) {
+		_convertDateToObjects: function (aDemandData) {
 			var oDemandObjects = [];
 			aDemandData.forEach(function (oItem) {
 				oItem.FIXED_APPOINTMENT_START_DATE = new Date(oItem.FIXED_APPOINTMENT_START_DATE);
@@ -1930,23 +1931,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * on press link of assignment in resource tree row
-		 * get parent row path and bind this path to the dialog or showing assignment information
-		 * @param oEvent
-		 * @since 2205
-		 */
-		onPressAssignmentLink: function (oEvent) {
-			var oSource = oEvent.getSource();
-			this.assignmentRowContext = oSource.getParent().getBindingContext("ganttModel");
-			if (this.assignmentRowContext) {
-				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().Guid + "')";
-				this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
-			} else {
-				var msg = this.getResourceBundle().getText("notFoundContext");
-				this.showMessageToast(msg);
-			}
-		},
-		/**
 		 * multi assignments of demands via Fixed assignment Dialog Event bus call
 		 * handle demand assignment for Gantt Json model 
 		 * @param {Object} oResourceData
@@ -2000,7 +1984,7 @@ sap.ui.define([
 				oDemands_ganttSplit.forEach(function (oItem) {
 					oDemandObjects.push(oItem.oDemandObject);
 				}.bind(this));
-				oDemandObjects = this.convertDateToObjects(oDemandObjects);
+				oDemandObjects = this._convertDateToObjects(oDemandObjects);
 			} else {
 				aPaths_gantt.forEach(function (sPath) {
 					oDemandObjects.push(this.getModel().getProperty(sPath));
@@ -2058,7 +2042,7 @@ sap.ui.define([
 		 * apply the selected resource filter in the gantt view
 		 * also apply the date range from Map resource tree filterbar
 		 */
-		handleNavigationFromMap: function () {
+		_handleNavigationFromMap: function () {
 			// apply the resource filter
 			this.getOwnerComponent().GanttResourceFilter.applyNavigationFilters();
 
@@ -2070,7 +2054,6 @@ sap.ui.define([
 			}
 		},
 
-	
 		/**
 		 * creating filter object to read assignments of selected date 
 		 * @param {Object} oResource
@@ -2085,7 +2068,7 @@ sap.ui.define([
 			aFilters.push(new Filter("DateFrom", FilterOperator.LE, oDateTo.setHours(23, 59, 59, 999)));
 			return new Filter(aFilters, true);
 		},
-	
+
 		/**
 		 * Setting the gantt char Visible horizon to see selected date assignments
 		 * @param {Object} ODate
@@ -2103,14 +2086,12 @@ sap.ui.define([
 			}
 		},
 
-	
-
 		/**
 		 * Method to save the updated assignments to backend after calculating the route
 		 * @param {Array} aAssignments
 		 * since 2205
 		 */
-		updateAssignments: function (aAssignments) {
+		_updateAssignments: function (aAssignments) {
 			var oParams = {},
 				bIsLast = false;
 
@@ -2171,7 +2152,7 @@ sap.ui.define([
 		 * @param {Boolean} bVerticalMovement
 		 * since 2209
 		 */
-		initializeMultiAssignment: function (bVerticalMovement) {
+		_initializeMultiAssignment: function (bVerticalMovement) {
 			if (bVerticalMovement) {
 				this._ganttChart.setProperty("dragOrientation", sap.gantt.DragOrientation.Free, true);
 			} else {
@@ -2183,7 +2164,7 @@ sap.ui.define([
 		 * @param {Array} aUpdatedAssignments
 		 * since 2209
 		 */
-		_updateResourceAsignments: function (aUpdatedAssignments) {
+		_updateResourceAssignments: function (aUpdatedAssignments) {
 			var oAssignment,
 				oParentAssignment,
 				aCheckAvailability = [];
@@ -2235,7 +2216,7 @@ sap.ui.define([
 
 			this.oAppViewModel.setProperty("/busy", true);
 			Promise.all(aPromises).then(function (data) {
-				this.updateAfterReAssignment(data, oTargetResource, oSourceResource);
+				this._updateAfterReAssignment(data, oTargetResource, oSourceResource);
 				this.oAppViewModel.setProperty("/busy", false);
 			}.bind(this));
 
@@ -2248,11 +2229,11 @@ sap.ui.define([
 		 * since 2301.1.0
 		 * @Author Rakesh Sahu
 		 */
-		updateAfterReAssignment: function (aData, oTargetResource, oSourceResource) {
+		_updateAfterReAssignment: function (aData, oTargetResource, oSourceResource) {
 			oTargetResource.AssignmentSet = aData[0];
 			oSourceResource.AssignmentSet = aData[1];
-			this.updateResourceChildren(oTargetResource);
-			this.updateResourceChildren(oSourceResource);
+			this._updateResourceChildren(oTargetResource);
+			this._updateResourceChildren(oSourceResource);
 			this.oGanttOriginDataModel.setProperty(this._oTargetResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oTargetResourcePath)));
 			this.oGanttOriginDataModel.setProperty(this._oSourceResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oSourceResourcePath)));
 			this.oGanttModel.refresh();
@@ -2264,7 +2245,7 @@ sap.ui.define([
 		 * since 2301.1.0
 		 * @Author Rakesh Sahu
 		 */
-		updateResourceChildren: function (oResource) {
+		_updateResourceChildren: function (oResource) {
 			if (oResource.AssignmentSet && oResource.AssignmentSet.results.length > 0) {
 				oResource.children = oResource.AssignmentSet.results;
 				oResource.children.forEach(function (oAssignItem, idx) {
@@ -2278,7 +2259,38 @@ sap.ui.define([
 					};
 				}.bind(this));
 			}
-		}
+		},
+
+		/**
+		 * Handles multi assinment or single assignment on Gantt or resource drop
+		 * @param sView - For cusotmizing base don Gantt/Gantt_Split view
+		 * @param oParams - Parameters for fixed appointment dialog
+		 * @param oDemandObj - Dropped demand
+		 * @param sDragPath - Dragged path for demand
+		 * @param oResourceData - Resorce for assignment creation
+		 * @param oDropContext - Context of Dropped object
+		 * @param oStartDate - Statrt date of assignment(Latest if dropped on Resource; Axistime if on Gantt)
+		 */
+		_handleDemandDrop: function (sView, oParams, oDemandObj, sDragPath, oResourceData, oDropContext, oStartDate) {
+			var bShowFutureFixedAssignments = this.oUserModel.getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
+				bShowFixedAppointmentDialog;
+			bShowFixedAppointmentDialog = this._checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
+			if (bShowFixedAppointmentDialog) {
+				this._openFixedAppointmentDialog(oParams, sView);
+			} else if (sDragPath && sDragPath.length > 1) {
+				this._handleMultipleAssignment(oResourceData, sDragPath, oDropContext.getPath(), oStartDate, []);
+			} else {
+				switch (sView) {
+				case "Gantt":
+					this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oStartDate);
+					break;
+				case "Gantt-Split":
+					this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), oStartDate, sDragPath);
+					break;
+				}
+			}
+		},
+
 	});
 
 });
