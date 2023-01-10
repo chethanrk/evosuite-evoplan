@@ -68,12 +68,7 @@ sap.ui.define([
 					public: true,
 					final: false,
 					overrideExecution: OverrideExecution.Instead
-				},
-				onRowSelectionChange: {
-					public: true,
-					final: false,
-					overrideExecution: OverrideExecution.Instead
-				},
+				}
 			}
 		},
 
@@ -224,63 +219,6 @@ sap.ui.define([
 			}
 		},
 
-		/**
-		 * enable/disable buttons on footer when there is some/no selected rows
-		 * @since 3.0
-		 */
-		onRowSelectionChange: function (oEvent) {
-			if (this._mParameters && this._mParameters.bFromMap) {
-				this._bDemandListScroll = true; //Flag to identify Demand List row is selected and scrolled or not
-			}
-			var selected = this._oDataTable.getSelectedIndices(),
-				bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
-				sDemandPath, bComponentExist, sMsg,
-				iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
-			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
-				this.byId("assignButton").setEnabled(bEnable);
-				this.byId("changeStatusButton").setEnabled(bEnable);
-				this.byId("idUnassignButton").setEnabled(bEnable);
-				this.byId("idAssignmentStatusButton").setEnabled(bEnable);
-				this.byId("idOverallStatusButton").setEnabled(true);
-			} else {
-				this.byId("assignButton").setEnabled(false);
-				this.byId("changeStatusButton").setEnabled(false);
-				this.byId("idAssignmentStatusButton").setEnabled(false);
-				this.byId("materialInfo").setEnabled(false);
-				this.byId("idOverallStatusButton").setEnabled(false);
-				this.byId("idUnassignButton").setEnabled(false);
-				//If the selected demands exceeds more than the maintained selected configuration value
-				if (iMaxRowSelection <= selected.length) {
-					sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
-					this.showMessageToast(sMsg);
-				}
-			}
-			// To make selection on map by selecting Demand from demand table
-			if (oEvent.getParameter("selectAll")) {
-				this.checkAllDemands();
-			} else if (oEvent.getParameter("rowIndex") === -1) {
-				this.unCheckAllDemands();
-			} else {
-				if (!this._isDemandDraggable) {
-					this.updateMapDemandSelection(oEvent);
-				}
-			}
-
-			//Enabling/Disabling the Material Status Button based on Component_Exit flag
-			for (var i = 0; i < selected.length; i++) {
-				sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
-				bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
-				if (bComponentExist) {
-					this.byId("materialInfo").setEnabled(true);
-					this.byId("idOverallStatusButton").setEnabled(true);
-					break;
-				} else {
-					this.byId("materialInfo").setEnabled(false);
-					this.byId("idOverallStatusButton").setEnabled(false);
-				}
-			}
-		},
-		
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
