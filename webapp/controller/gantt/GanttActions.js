@@ -787,7 +787,7 @@ sap.ui.define([
 				OBJECT_ID_RELATION: sObjectIdRelation
 			});
 			for (var a in aAssignmentData) {
-				if (sAssignmentGuid === aAssignmentData[a].Guid) {
+				if (aAssignmentData[a] && sAssignmentGuid === aAssignmentData[a].Guid) {
 					sNewPath = xPath + "/AssignmentSet";
 					oGanttModel.setProperty(sNewPath, {
 						results: [aChildNodeData]
