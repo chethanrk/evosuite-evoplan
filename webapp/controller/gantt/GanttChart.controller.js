@@ -852,7 +852,7 @@ sap.ui.define([
 
 					//set new time and resource data to gantt model, setting also new pathes
 					var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
-					this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+					this._updateDraggedShape(sNewPath, sRequestType, sSourcePath, oTargetContext);
 				}
 			}
 		},
@@ -986,15 +986,16 @@ sap.ui.define([
 		 * @param {String} sPath
 		 * @param {String} sRequestType
 		 * @param {String} sSourcePath
+		 * @param {object} oTargetContext - target of the shape drag
 		 */
-		_updateDraggedShape: function (sPath, sRequestType, sSourcePath) {
+		_updateDraggedShape: function (sPath, sRequestType, sSourcePath, oTargetContext) {
 			this.oGanttModel.setProperty(sPath + "/busy", true);
 			var oData = this.oGanttModel.getProperty(sPath),
 				oOriginalData = this.oGanttModel.getProperty(sPath);
 			//get demand details to this assignment
 			this._getRelatedDemandData(oData).then(function (oResult) {
 				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
-				this._validateAndSendChangedData(sPath, sRequestType).then(function (aData) {
+				this._validateAndSendChangedData(sPath, sRequestType, oTargetContext).then(function (aData) {
 					// these events
 					this._oEventBus.publish("BaseController", "refreshCapacity", {
 						sTargetPath: sPath.split("/AssignmentSet/results/")[0]
@@ -1011,6 +1012,16 @@ sap.ui.define([
 					} else {
 						//method call for updating resource assignment in case of Multi Assignment in same axis
 						this._resetParentChildNodes(sPath, oOriginalData);
+					}
+
+					// in case of gantt shape drag from POOL to RESOURCE 
+					// on successful call of CreateSplitStretchAssignments the response contains the array of split assignments
+					// add those to the gantt view
+					if (aData && aData.results && aData.results.length > 0) {
+						var aCreatedAssignments = this._getCreatedAssignments(aData.results);
+						if (aCreatedAssignments.length > 0) {
+							this._addCreatedAssignment(aCreatedAssignments, sPath.split("/AssignmentSet/results/")[0]);
+						}
 					}
 				}.bind(this), function () {
 					//on reject validation or user don't want proceed
@@ -1071,10 +1082,14 @@ sap.ui.define([
 		 * @param {String} sType from this._mRequestTypes
 		 * @return {Promise} 
 		 */
-		_validateAndSendChangedData: function (sPath, sType) {
+		_validateAndSendChangedData: function (sPath, sType, oTargetContext) {
 			return new Promise(function (resolve, reject) {
 				var oPendingChanges = this._updatePendingChanges(sPath, sType),
 					oData = this.oGanttModel.getProperty(sPath);
+
+				var bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
+					sResourceNodeType = oTargetContext && oTargetContext.getObject().NodeType,
+					bExecuteAssignmentSplitCode = bSplitGlobalConfigEnabled && sResourceNodeType === "RESOURCE";
 
 				this._validateChangedData(sPath, oPendingChanges[sPath], oData, sType).then(function (results) {
 					if (!results) {
@@ -1082,10 +1097,20 @@ sap.ui.define([
 					} else if (this.oUserModel.getProperty("/ENABLE_QUALIFICATION")) {
 						//when user wants proceed check qualification
 						this._checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
-							this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
+							// in the case of gantt shape drag from POOL to RESOURCE cal the split checks
+							// checks if the demand duration is more than the resource availablity
+							if (bExecuteAssignmentSplitCode && oData.STATUS === "POOL") {
+								this._proceedWithSplitOnReAssign(sPath, sType, oPendingChanges, oData, sResourceNodeType).then(resolve, reject);
+							} else {
+								this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
+							}
 						}.bind(this), reject);
 					} else {
-						this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
+						if (bExecuteAssignmentSplitCode && oData.STATUS === "POOL") {
+							this._proceedWithSplitOnReAssign(sPath, sType, oPendingChanges, oData, sResourceNodeType).then(resolve, reject);
+						} else {
+							this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
+						}
 					}
 				}.bind(this));
 			}.bind(this));
@@ -2290,6 +2315,109 @@ sap.ui.define([
 				}
 			}
 		},
+
+		/**
+		 * in case of gantt shape drag from POOL to RESOURCE cal the split checks
+		 * checks if the demand duration is more than the resource availablity
+		 * 
+		 * @param {string} sPath - path of the dragged assignment
+		 * @param {string} sType - reassign or update
+		 * @param {object} oPendingChanges 
+		 * @param {object} oData - demand Data
+		 * @param {object} sResourceNodeType - node type of the target to which shape is dragged
+		 */
+		_proceedWithSplitOnReAssign: function (sPath, sType, oPendingChanges, oData, sResourceNodeType) {
+			return new Promise(function (resolve, reject) {
+
+				this.splitReassignResolve = resolve;
+				this.splitReassignReject = reject;
+
+				var oParams = {
+					DateFrom: oData.DateFrom || 0,
+					TimeFrom: {
+						__edmtype: "Edm.Time",
+						ms: oData.DateFrom.getTime()
+					},
+					DateTo: oData.DateTo || 0,
+					TimeTo: {
+						__edmtype: "Edm.Time",
+						ms: oData.DateTo.getTime()
+					},
+					AssignmentGUID: oData.Guid,
+					EffortUnit: oData.EffortUnit,
+					Effort: oData.Effort,
+					ResourceGroupGuid: oData.ResourceGroupGuid,
+					ResourceGuid: oData.ResourceGuid,
+					DemandGuid: oData.DemandGuid
+				},
+				mParameters = {
+					path: sPath,
+					type: sType,
+					pendingChanges: oPendingChanges,
+					demandData: oData
+				};
+
+				//has new parent?
+				if (this.mRequestTypes.reassign === sType && oPendingChanges[sPath].ResourceGuid) {
+					oParams.ResourceGroupGuid = oData.ResourceGroupGuid;
+					oParams.ResourceGuid = oData.ResourceGuid;
+				}
+
+				this.checkAndExecuteSplitForGanttReAssign([oParams], mParameters, sResourceNodeType);
+
+			}.bind(this));
+		},
+
+		/**
+		 * method checks resourceAvailabilty for the selected demands 
+		 * then confirms if the user wants to split the assignments
+		 * on confirm/reject then calls the required function imports
+		 * 
+		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
+		 */
+		checkAndExecuteSplitForGanttReAssign: function (aAssignments, mParameters, sResourceNodeType) {
+			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch)
+				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch)
+				.then(this.callRequiredFunctionImportsForReAssign.bind(this)).catch(this.handlePromiseChainCatch);
+		},
+
+		/**
+		 * based on the response from split confirmation dialog calls the required function imports
+		 * strucuture of oConfirmationDialogResponse :
+		 * { arrayOfDemands : aAssignments,
+		 *   arrayOfDemandsToSplit : [],
+		 * 	 mParameters : properties to pass till the end of promise chain
+		 *   splitConfirmation : "YES/NO"
+		 * };
+		 * @param {object} oConfirmationDialogResponse response from split confirmation dialog
+		 * resolves the promise of assignMultipleDemands method
+		 * 
+		 */
+		callRequiredFunctionImportsForReAssign: function (oConfirmationDialogResponse) {
+			if (oConfirmationDialogResponse) {
+
+				var aDemands = oConfirmationDialogResponse.arrayOfDemands,
+					aDemandGuidsToSplit = oConfirmationDialogResponse.arrayOfDemandsToSplit,
+					sResourceNodeType = oConfirmationDialogResponse.nodeType,
+					mParameters = oConfirmationDialogResponse.mParameters;
+
+				var sPath = mParameters.path,
+					sType = mParameters.type,
+					oPendingChanges = mParameters.pendingChanges,
+					oData = mParameters.demandData;
+
+				if (aDemandGuidsToSplit.length === 0) {
+					this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData)
+						.then(this.splitReassignResolve, this.splitReassignReject);
+				} else {	
+					if (aDemandGuidsToSplit.includes(aDemands[0].DemandGuid)) {
+						aDemands[0].ResourceView = sResourceNodeType === "RESOURCE" ? "SIMPLE" : "DAILY";
+						this.executeFunctionImport(this.getModel(), aDemands[0], "CreateSplitStretchAssignments", "POST")
+							.then(this.splitReassignResolve, this.splitReassignReject);
+					}
+				}
+			}
+		}
 
 	});
 
