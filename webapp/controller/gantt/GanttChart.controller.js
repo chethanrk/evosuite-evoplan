@@ -2363,7 +2363,7 @@ sap.ui.define([
 					oParams.ResourceGuid = oData.ResourceGuid;
 				}
 
-				this.checkAndExecuteSplitForGanttReAssign([oParams], mParameters, sResourceNodeType);
+				this._checkAndExecuteSplitForGanttReAssign([oParams], mParameters, sResourceNodeType);
 
 			}.bind(this));
 		},
@@ -2374,11 +2374,13 @@ sap.ui.define([
 		 * on confirm/reject then calls the required function imports
 		 * 
 		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
+		 * @param {object} mParameters
+		 * @param {string} sResourceNodeType - node type of the resource to which shape is dragged
 		 */
-		checkAndExecuteSplitForGanttReAssign: function (aAssignments, mParameters, sResourceNodeType) {
+		_checkAndExecuteSplitForGanttReAssign: function (aAssignments, mParameters, sResourceNodeType) {
 			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch)
 				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch)
-				.then(this.callRequiredFunctionImportsForReAssign.bind(this)).catch(this.handlePromiseChainCatch);
+				.then(this._callRequiredFunctionImportsForReAssign.bind(this)).catch(this.handlePromiseChainCatch);
 		},
 
 		/**
@@ -2393,7 +2395,7 @@ sap.ui.define([
 		 * resolves the promise of assignMultipleDemands method
 		 * 
 		 */
-		callRequiredFunctionImportsForReAssign: function (oConfirmationDialogResponse) {
+		_callRequiredFunctionImportsForReAssign: function (oConfirmationDialogResponse) {
 			if (oConfirmationDialogResponse) {
 
 				var aDemands = oConfirmationDialogResponse.arrayOfDemands,
