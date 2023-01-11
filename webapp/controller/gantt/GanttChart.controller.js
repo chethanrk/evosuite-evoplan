@@ -68,6 +68,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("BaseController", "refreshCapacity", this._refreshCapacity, this);
 			this._oEventBus.subscribe("BaseController", "refreshFullGantt", this._loadGanttData, this);
 			this._oEventBus.subscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
+			this._oEventBus.subscribe("GanttChart", "refreshResourceOnDelete", this._refreshResourceOnBulkDelete, this);
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
@@ -111,6 +112,7 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
 			this._oEventBus.unsubscribe("BaseController", "refreshCapacity", this._refreshCapacity, this);
 			this._oEventBus.unsubscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
+			this._oEventBus.unsubscribe("GanttChart", "refreshResourceOnDelete", this._refreshResourceOnBulkDelete, this);
 		},
 		/* =========================================================== */
 		/* Event & Public methods                                      */
@@ -2289,6 +2291,58 @@ sap.ui.define([
 					break;
 				}
 			}
+		},
+
+		/**
+		 * handle refresh operation of Resource after bulk delete operation
+		 * copied from _refreshChangedResources
+		 * since 2301.1.0
+		 * @Author Bhumika Ranawat
+		 */
+		_refreshResourceOnBulkDelete: function (sChannel, sEvent, oData) {
+			if (sChannel == "GanttChart" && sEvent == "refreshResourceOnDelete") {
+				var oUserData = this.oUserModel.getData(),
+					oTargetResource,
+					aFilters, aPromises = [];
+
+				for (var i in this.selectedResources) {
+					oTargetResource = this.oGanttModel.getProperty(this.selectedResources[i].split("/").splice(0, 6).join("/"));
+					this._oTargetResourcePath = this.selectedResources[i].split("/").splice(0, 6).join("/");
+					aFilters = this._getFiltersToReadAssignments(oTargetResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
+					aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
+
+					this.oAppViewModel.setProperty("/busy", true);
+					Promise.all(aPromises).then(function (data) {
+						oTargetResource.AssignmentSet = data[0];
+						this._updateDeletedChildren(oTargetResource);
+						this.oGanttOriginDataModel.setProperty(this._oTargetResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oTargetResourcePath)));
+						this.oGanttModel.refresh();
+						this.oGanttOriginDataModel.refresh();
+						this.oAppViewModel.setProperty("/busy", false);
+					}.bind(this));
+				}
+			}
+		},
+
+		/**
+		 * Updating children when no assignments are present
+		 * copied from _updateResourceChildren
+		 * @param {Object} oResource
+		 * since 2301.1.0
+		 * @Author Bhumika Ranawat
+		 */
+		_updateDeletedChildren: function (oResource) {
+			oResource.children = oResource.AssignmentSet.results;
+			oResource.children.forEach(function (oAssignItem, idx) {
+				oResource.AssignmentSet.results[idx].NodeType = "ASSIGNMENT";
+				oResource.AssignmentSet.results[idx].ResourceAvailabilitySet = oResource.ResourceAvailabilitySet;
+				var clonedObj = _.cloneDeep(oResource.AssignmentSet.results[idx]);
+				//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
+				clonedObj.OBJECT_ID_RELATION = clonedObj.OBJECT_ID_RELATION + "//" + clonedObj.ResourceGuid;
+				oResource.children[idx].AssignmentSet = {
+					results: [clonedObj]
+				};
+			}.bind(this));
 		},
 
 	});
