@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/OverrideExecution"
 ], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution) {
 
-	return BaseController.extend("com.evorait.evoplan.controller.common.Demand", {
+	return BaseController.extend("com.evorait.evoplan.controller.common.DemandTableOperations", {
 
 		metadata: {
 			// extension can declare the public methods
