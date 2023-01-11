@@ -2306,21 +2306,23 @@ sap.ui.define([
 					aFilters, aPromises = [];
 
 				for (var i in this.selectedResources) {
-					oTargetResource = this.oGanttModel.getProperty(this.selectedResources[i].split("/").splice(0, 6).join("/"));
-					this._oTargetResourcePath = this.selectedResources[i].split("/").splice(0, 6).join("/");
+					oTargetResource = this.oGanttModel.getProperty(this.selectedResources[i]);
 					aFilters = this._getFiltersToReadAssignments(oTargetResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
 					aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
-
-					this.oAppViewModel.setProperty("/busy", true);
-					Promise.all(aPromises).then(function (data) {
-						oTargetResource.AssignmentSet = data[0];
-						this._updateDeletedChildren(oTargetResource);
-						this.oGanttOriginDataModel.setProperty(this._oTargetResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oTargetResourcePath)));
-						this.oGanttModel.refresh();
-						this.oGanttOriginDataModel.refresh();
-						this.oAppViewModel.setProperty("/busy", false);
-					}.bind(this));
 				}
+				this.oAppViewModel.setProperty("/busy", true);
+				Promise.all(aPromises).then(function (data) {
+					for (var i in this.selectedResources) {
+						oTargetResource = this.oGanttModel.getProperty(this.selectedResources[i]);
+						oTargetResource.AssignmentSet = data[i];
+						this._updateDeletedChildren(oTargetResource);
+						this.oGanttOriginDataModel.setProperty(this.selectedResources[i], _.cloneDeep(this.oGanttModel.getProperty(this.selectedResources[
+							i])));
+					}
+					this.oGanttModel.refresh();
+					this.oGanttOriginDataModel.refresh();
+					this.oAppViewModel.setProperty("/busy", false);
+				}.bind(this));
 			}
 		},
 
