@@ -1063,26 +1063,28 @@ sap.ui.define([
 			var oUnavailabilityPromise = new Promise(function (finalResolve, finalReject) {
 
 				for (var i = 0; i < aAssignments.length; i++) {
-					aUnavailabilityChecks.push(new Promise(function (resolve, reject) {
-						var oAvailabilityCheckObject = {
-							ResourceGuid: aAssignments[i].ResourceGuid,
-							StartTimestamp: aAssignments[i].DateFrom,
-							DemandGuid: aAssignments[i].DemandGuid,
-							DailyView: sSelectedHierarchyView === "TIMEDAY"
-						};
-						if (aAssignments[i].DateTo) {
-							oAvailabilityCheckObject.EndTimestamp = aAssignments[i].DateTo;
-						}
-						this.executeFunctionImport(oModel, oAvailabilityCheckObject, "ResourceAvailabilityCheck", "GET").then(
-							function (oAvailabilityData, oResponse) {
-								// if resource unavailable for this demand push the demand to aDemandsForSplitAssignment
-								// else push it to aNormalAssignmentArray
-								if (oAvailabilityData.Unavailable) {
-									aDemandsForSplitAssignment.push(oAvailabilityData.DemandGuid);
-								}
-								resolve(oAvailabilityData.Unavailable);
-							});
-					}.bind(this)));
+					if (aAssignments[i].ResourceGuid) {
+						aUnavailabilityChecks.push(new Promise(function (resolve, reject) {
+							var oAvailabilityCheckObject = {
+								ResourceGuid: aAssignments[i].ResourceGuid,
+								StartTimestamp: aAssignments[i].DateFrom,
+								DemandGuid: aAssignments[i].DemandGuid,
+								DailyView: sSelectedHierarchyView === "TIMEDAY"
+							};
+							if (aAssignments[i].DateTo) {
+								oAvailabilityCheckObject.EndTimestamp = aAssignments[i].DateTo;
+							}
+							this.executeFunctionImport(oModel, oAvailabilityCheckObject, "ResourceAvailabilityCheck", "GET").then(
+								function (oAvailabilityData, oResponse) {
+									// if resource unavailable for this demand push the demand to aDemandsForSplitAssignment
+									// else push it to aNormalAssignmentArray
+									if (oAvailabilityData.Unavailable) {
+										aDemandsForSplitAssignment.push(oAvailabilityData.DemandGuid);
+									}
+									resolve(oAvailabilityData.Unavailable);
+								});
+						}.bind(this)));
+					}
 				}
 
 				this.getModel("appView").setProperty("/busy", true);
