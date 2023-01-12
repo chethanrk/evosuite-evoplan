@@ -1024,6 +1024,7 @@ sap.ui.define([
 					if (sRequestType === "reassign") {
 						//method call for updating resource assignment in case of single reassignment
 						this._refreshChangedResources(sPath, sSourcePath);
+						this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 					} else {
 						//method call for updating resource assignment in case of Multi Assignment in same axis
 						this._resetParentChildNodes(sPath, oOriginalData);
