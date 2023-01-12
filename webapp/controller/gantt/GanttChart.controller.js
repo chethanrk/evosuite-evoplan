@@ -1002,7 +1002,6 @@ sap.ui.define([
 		 * @param {String} sPath
 		 * @param {String} sRequestType
 		 * @param {String} sSourcePath
-		 * @param {object} oTargetContext - target of the shape drag
 		 */
 		_updateDraggedShape: function (sPath, sRequestType, sSourcePath) {
 			this.oGanttModel.setProperty(sPath + "/busy", true);
@@ -2434,7 +2433,7 @@ sap.ui.define([
 				}
 			}
 		},
-		
+
 		/*
 		 * Assign new drop context if Demand dropped on Resource group and Pool is resource
 		 */
