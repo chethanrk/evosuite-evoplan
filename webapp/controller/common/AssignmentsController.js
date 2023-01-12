@@ -1,11 +1,12 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/BaseController",
+	"com/evorait/evoplan/controller/common/DemandTableOperations",
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment"
-], function (BaseController, MessageBox, formatter, Constants, Fragment) {
-	return BaseController.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
+], function (DemandTableOperations, MessageBox, formatter, Constants, Fragment) {
+	
+	return DemandTableOperations.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
 		/**
 		 * save assignment after drop
 		 * 

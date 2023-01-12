@@ -245,10 +245,26 @@ sap.ui.define([
 		onProceedNewGanttDemandDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
 			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
-				slocStor = JSON.parse(this.localStorage.get("Evo-Dmnd-guid")),
+				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
+				sDefaultPool = this.getModel("user").getProperty("/DEFAULT_POOL_FUNCTION");
+
+			if (oResourceData.NodeType === "RES_GROUP") { //When demand dropped on Resource group
+				if (!this.isAssignable({
+						data: oResourceData
+					})) {
+					return;
+				} else {
+					if (sDefaultPool == "RESOURCE") { //If deafult pool function is Resource change drop context
+						oDropContext = this._handlePoolAssignment(oDropContext, oResourceData);
+						oResourceData = this.getModel("ganttModel").getProperty(oDropContext.getPath());
+					}
+				}
+			}
+
+			var slocStor = JSON.parse(this.localStorage.get("Evo-Dmnd-guid")),
 				sDragPath = oDragContext ? this.oViewModel.getProperty("/gantDragSession") : this._getDragPaths(slocStor),
 				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
-				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
+
 				oSvgPoint,
 				sPath = sDragPath ? sDragPath[0] : undefined,
 				oDemandObj = this._getDemandObjectsByPath(this.oViewModel.getProperty("/gantDragSession"), slocStor),
@@ -2294,6 +2310,18 @@ sap.ui.define([
 		},
 
 		/**
+		 * Assign new drop context if Demand dropped on Resource group and Pool is resource
+		 */
+		_handlePoolAssignment: function (oDropContext, oResourceData) {
+			var iPoolRes = oResourceData.children.length - 1,
+				sDropPath = oDropContext.getPath(),
+				sNewDropPath;
+			sNewDropPath = sDropPath + "/children/" + iPoolRes;
+			oDropContext = this.getView().getModel("ganttModel").getContext(sNewDropPath);
+			return oDropContext;
+		},
+        
+        /**
 		 * handle refresh operation of Resource after bulk delete operation
 		 * copied from _refreshChangedResources
 		 * since 2301.1.0
