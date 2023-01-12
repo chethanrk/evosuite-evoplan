@@ -60,8 +60,9 @@ sap.ui.define([
 				oContext = oSource.getBindingContext("navLinks"),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
-				oData = oModel.getProperty(sPath);
-			this.linkToOtherApp(oData, oSource.getModel("viewModel"), oSource.getModel("user"));
+				oData = oModel.getProperty(sPath),
+				oDemandData = this.selectedDemandData;
+			this.linkToOtherApps(oData, oSource.getModel("viewModel"), oSource.getModel("user"), oDemandData);
 		},
 		
 		/**
@@ -71,7 +72,7 @@ sap.ui.define([
 		 * @param oViewModel
 		 * @param oUserModel
 		 */
-		linkToOtherApp: function (oAppInfo, oViewModel, oUserModel) {
+		linkToOtherApps: function (oAppInfo, oViewModel, oUserModel, oDemandData) {
 			var sUri, sSemanticObject, sAction, sAdditionInfo, sParameter, sParamValue, oKeyChar,
 				sServicePath = "https://" + oUserModel.getProperty("/ServerPath"),
 				sLaunchMode = oViewModel ? oViewModel.getProperty("/launchMode") : this.getModel("viewModel").getProperty("/launchMode");
@@ -81,7 +82,7 @@ sap.ui.define([
 				sAdditionInfo = oAppInfo.Value1;
 				sUri = sAdditionInfo.split("\\")[0];
 				sParameter = sAdditionInfo.split("\\")[sAdditionInfo.split("\\").length - 1];
-				oKeyChar = this.selectedDemandData[sParameter];
+				oKeyChar = oDemandData[sParameter];
 				sUri = sUri + oKeyChar;
 				if (sAdditionInfo.substring(0, 5) !== "https") {
 					sUri = sServicePath + sUri;
@@ -94,14 +95,14 @@ sap.ui.define([
 					sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];
 					sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "Display";
 					sParameter = sAdditionInfo.split("\\\\_\\\\")[2];
-					sParamValue = this.selectedDemandData[oAppInfo.Value2];
+					sParamValue = oDemandData[oAppInfo.Value2];
 					if (sSemanticObject && sAction) {
 						this.navToApp(sSemanticObject, sAction, sParameter, sParamValue);
 					}
 				} else {
 					//Logic for Navigating to BSP URL
 					sAdditionInfo = oAppInfo.Value1;
-					sParameter = this.selectedDemandData[oAppInfo.Value2];
+					sParameter = oDemandData[oAppInfo.Value2];
 					sUri = sAdditionInfo.replace("\\\\place_h1\\\\", sParameter);
 					sUri = sServicePath + sUri;
 					this.navigateToApps(sUri);
