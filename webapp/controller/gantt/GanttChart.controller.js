@@ -852,7 +852,7 @@ sap.ui.define([
 
 					//set new time and resource data to gantt model, setting also new pathes
 					var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
-					this._updateDraggedShape(sNewPath, sRequestType, sSourcePath, oTargetContext);
+					this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
 				}
 			}
 		},
@@ -988,14 +988,14 @@ sap.ui.define([
 		 * @param {String} sSourcePath
 		 * @param {object} oTargetContext - target of the shape drag
 		 */
-		_updateDraggedShape: function (sPath, sRequestType, sSourcePath, oTargetContext) {
+		_updateDraggedShape: function (sPath, sRequestType, sSourcePath) {
 			this.oGanttModel.setProperty(sPath + "/busy", true);
 			var oData = this.oGanttModel.getProperty(sPath),
 				oOriginalData = this.oGanttModel.getProperty(sPath);
 			//get demand details to this assignment
 			this._getRelatedDemandData(oData).then(function (oResult) {
 				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
-				this._validateAndSendChangedData(sPath, sRequestType, oTargetContext).then(function (aData) {
+				this._validateAndSendChangedData(sPath, sRequestType).then(function (aData) {
 					// these events
 					this._oEventBus.publish("BaseController", "refreshCapacity", {
 						sTargetPath: sPath.split("/AssignmentSet/results/")[0]
@@ -1082,14 +1082,12 @@ sap.ui.define([
 		 * @param {String} sType from this._mRequestTypes
 		 * @return {Promise} 
 		 */
-		_validateAndSendChangedData: function (sPath, sType, oTargetContext) {
+		_validateAndSendChangedData: function (sPath, sType) {
 			return new Promise(function (resolve, reject) {
 				var oPendingChanges = this._updatePendingChanges(sPath, sType),
 					oData = this.oGanttModel.getProperty(sPath);
 
-				var bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
-					sResourceNodeType = oTargetContext && oTargetContext.getObject().NodeType,
-					bExecuteAssignmentSplitCode = bSplitGlobalConfigEnabled && sResourceNodeType === "RESOURCE";
+				var bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN");
 
 				this._validateChangedData(sPath, oPendingChanges[sPath], oData, sType).then(function (results) {
 					if (!results) {
@@ -1099,15 +1097,15 @@ sap.ui.define([
 						this._checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
 							// in the case of gantt shape drag from POOL to RESOURCE cal the split checks
 							// checks if the demand duration is more than the resource availablity
-							if (bExecuteAssignmentSplitCode && oData.STATUS === "POOL") {
-								this._proceedWithSplitOnReAssign(sPath, sType, oPendingChanges, oData, sResourceNodeType).then(resolve, reject);
+							if (bSplitGlobalConfigEnabled && oData.STATUS === "POOL") {
+								this._proceedWithSplitOnReAssign(sPath, sType, oPendingChanges, oData, "RESOURCE").then(resolve, reject);
 							} else {
 								this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
 							}
 						}.bind(this), reject);
 					} else {
-						if (bExecuteAssignmentSplitCode && oData.STATUS === "POOL") {
-							this._proceedWithSplitOnReAssign(sPath, sType, oPendingChanges, oData, sResourceNodeType).then(resolve, reject);
+						if (bSplitGlobalConfigEnabled && oData.STATUS === "POOL") {
+							this._proceedWithSplitOnReAssign(sPath, sType, oPendingChanges, oData, "RESOURCE").then(resolve, reject);
 						} else {
 							this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
 						}
