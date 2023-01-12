@@ -1286,8 +1286,7 @@ sap.ui.define([
 			}
 			for (i in aRemoveItems) {
 				this.selectedResources.splice(this.selectedResources.indexOf(aRemoveItems[i]), 1);
-				this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit ? oModel.setProperty(aRemoveItems[i] + "/IsSelected",
-					false) : null;
+				oModel.setProperty(aRemoveItems[i] + "/IsSelected",false);
 			}
 			if (this.selectedResources.length) {
 				return false;

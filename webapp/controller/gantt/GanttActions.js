@@ -908,8 +908,7 @@ sap.ui.define([
 
 			this.getOwnerComponent().readData(sDemandPath).then(function (oDemandData) {
 				var oAppInfo = this.getAppInfo(this.oSource.getModel("navLinks").getData(), this.sAppName);
-				this.handleNavigationLinkAction(oDemandData, oAppInfo, this.oSource.getModel("viewModel"), this.oSource.getModel(
-					"user"));
+				this.getOwnerComponent().NavigationActionSheet.linkToOtherApps(oAppInfo, this.oSource.getModel("viewModel"), this.oSource.getModel("user"), oDemandData);                         
 			}.bind(this));
 		},
 
