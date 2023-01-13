@@ -682,130 +682,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Resets a changed data by model path on both Parent and Child Nodes
-		 * @param sPath
-		 * @param oOriginalData
-		 * @since 2205
-		 */
-		_resetParentChildNodes: function (sPath, oOriginalData) {
-			var oGanttModel = this.getModel("ganttModel"),
-				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
-				oTargetObj = oGanttModel.getProperty(sPath),
-				sChildPath, aChildrenData, sNewPath, sAssignmentPath, aAssignmentData, aChildNodeData, sObjectIDRelation, sObjectID;
-			oGanttModel.setProperty(sPath + "/ResourceAvailabilitySet", oOriginalData.ResourceAvailabilitySet);
-			if (!oTargetObj) {
-				oTargetObj = oOriginalData;
-			}
-			if (oTargetObj.Guid === "") {
-				this._resetUnSavedNodeData(sPath, oOriginalData);
-			} else {
-				//Condition when we Change at Assignment Nodes
-				if (sPath.length > 60) {
-					sAssignmentPath = sPath.split("/AssignmentSet/results/")[0];
-					sAssignmentPath = this._getAssignmentChildPath(sAssignmentPath);
-					sAssignmentPath = sAssignmentPath + "/AssignmentSet/results";
-					aAssignmentData = oGanttModel.getProperty(sAssignmentPath);
-					sObjectIDRelation = oTargetObj.OBJECT_ID_RELATION + "//" + oTargetObj.ResourceGuid;
-					oTargetObj.OBJECT_ID_RELATION = sObjectIDRelation;
-					oGanttModel.setProperty(sPath, oTargetObj);
-					for (var a in aAssignmentData) {
-						if (oTargetObj.Guid === aAssignmentData[a].Guid) {
-							sNewPath = sAssignmentPath + "/" + a;
-							sObjectID = oTargetObj.Guid + "//" + oTargetObj.ResourceGuid + "//" + oTargetObj.ResourceGroupGuid;
-							aChildNodeData = Object.assign({}, oTargetObj, {
-								OBJECT_ID_RELATION: sObjectID
-							});
-							oGanttModel.setProperty(sNewPath, aChildNodeData);
-							oGanttModel.setProperty(sNewPath + "/AssignmentSet", {
-								results: [oTargetObj]
-							});
-							oGanttModel.setProperty(sNewPath + "/DemandDesc", oTargetObj.DemandDesc);
-							oGanttModel.setProperty(sNewPath + "/NodeType", "ASSIGNMENT");
-							oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
-							oGanttOriginDataModel.setProperty(sNewPath + "/AssignmentSet", _.cloneDeep(oGanttModel.getProperty(sNewPath + "/AssignmentSet")));
-							break;
-						}
-					}
-				} else {
-					sChildPath = sPath.split("/AssignmentSet/results/")[0];
-					aChildrenData = oGanttModel.getProperty(sChildPath + "/children");
-					for (var c in aChildrenData) {
-						if (oTargetObj.Guid === aChildrenData[c].Guid) {
-							sNewPath = sChildPath + "/children/" + c;
-							sObjectIDRelation = oTargetObj.OBJECT_ID_RELATION + "//" + oTargetObj.ResourceGuid;
-							aChildNodeData = Object.assign({}, oTargetObj, {
-								OBJECT_ID_RELATION: sObjectIDRelation
-							});
-							oGanttModel.setProperty(sNewPath + "/AssignmentSet", {
-								results: [aChildNodeData]
-							});
-							oGanttModel.setProperty(sNewPath + "/DemandDesc", oTargetObj.DemandDesc);
-							oGanttModel.setProperty(sNewPath + "/NodeType", "ASSIGNMENT");
-							oGanttOriginDataModel.setProperty(sNewPath + "/AssignmentSet", _.cloneDeep(oGanttModel.getProperty(sNewPath + "/AssignmentSet")));
-							break;
-						}
-					}
-				}
-				oGanttOriginDataModel.refresh(true);
-				oGanttModel.refresh(true);
-			}
-		},
-		/**
-		 * Creating a new Assignment node and shape after assignmnet creation
-		 * @param aData
-		 * @param sTargetPath
-		 * @param sDummyPath
-		 * @since 2205
-		 */
-		_appendChildAssignment: function (aData, sTargetPath, sDummyPath) {
-			var oGanttModel = this.getModel("ganttModel"),
-				oGanttOriginalModel = this.getModel("ganttOriginalData"),
-				aAssignmentData = oGanttModel.getProperty(sTargetPath + "/AssignmentSet/results"),
-				aChildData, iChildAsgnLen, aChildAsgnData,
-				iChildLength, sAssignmentGuid, sNewPath, aCloneChildData, aCloneChildAssignmentData, aResourceAvailabilities,
-				sObjectIdRelation, aChildNodeData;
-			if (!oGanttModel.getProperty(sTargetPath + "/children")) {
-				oGanttModel.setProperty(sTargetPath + "/children", [aData]);
-				oGanttOriginalModel.setProperty(sTargetPath + "/children", [aData]);
-			} else {
-				aChildAsgnData = oGanttModel.getProperty(sTargetPath + "/children");
-				aChildAsgnData.push(aData);
-				iChildAsgnLen = aChildAsgnData.length;
-				if (iChildAsgnLen !== 1 && aChildAsgnData[iChildAsgnLen - 1].Guid === aChildAsgnData[iChildAsgnLen - 2].Guid) {
-					aChildAsgnData.splice(iChildAsgnLen - 1, 1);
-				}
-			}
-			aChildData = oGanttModel.getProperty(sTargetPath + "/children");
-			iChildLength = aChildData.length - 1;
-			aResourceAvailabilities = oGanttModel.getProperty(sTargetPath + "/ResourceAvailabilitySet");
-			var xPath = sTargetPath + "/children/" + iChildLength;
-			sAssignmentGuid = oGanttModel.getProperty(xPath + "/Guid");
-			oGanttModel.setProperty(xPath + "/DemandDesc", aData.DemandDesc);
-			oGanttModel.setProperty(xPath + "/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION);
-			sObjectIdRelation = aData.OBJECT_ID_RELATION + "//" + aData.ResourceGuid;
-			aChildNodeData = Object.assign({}, aData, {
-				OBJECT_ID_RELATION: sObjectIdRelation
-			});
-			for (var a in aAssignmentData) {
-				if (aAssignmentData[a] && sAssignmentGuid === aAssignmentData[a].Guid) {
-					sNewPath = xPath + "/AssignmentSet";
-					oGanttModel.setProperty(sNewPath, {
-						results: [aChildNodeData]
-					});
-					oGanttModel.setProperty(xPath + "/NodeType", "ASSIGNMENT");
-					oGanttModel.setProperty(xPath + "/ResourceAvailabilitySet", aResourceAvailabilities);
-					oGanttModel.setProperty(sNewPath + "/results/0" + "/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION + "//" + aData.ResourceGuid);
-				}
-			}
-			aCloneChildData = oGanttModel.getProperty(xPath);
-			oGanttOriginalModel.setProperty(xPath, _.cloneDeep(aCloneChildData));
-			aCloneChildAssignmentData = oGanttModel.getProperty(sNewPath);
-			oGanttOriginalModel.setProperty(sNewPath, _.cloneDeep(aCloneChildAssignmentData));
-			oGanttModel.refresh(true);
-			oGanttOriginalModel.refresh(true);
-		},
-
-		/**
 		 * check for unsaved data in Demand table
 		 * on click on navigate acion navigate to Demand Detail Page
 		 * modified method since 2201, by Rakesh Sahu
@@ -908,7 +784,8 @@ sap.ui.define([
 
 			this.getOwnerComponent().readData(sDemandPath).then(function (oDemandData) {
 				var oAppInfo = this.getAppInfo(this.oSource.getModel("navLinks").getData(), this.sAppName);
-				this.getOwnerComponent().NavigationActionSheet.linkToOtherApps(oAppInfo, this.oSource.getModel("viewModel"), this.oSource.getModel("user"), oDemandData);                         
+				this.getOwnerComponent().NavigationActionSheet.linkToOtherApps(oAppInfo, this.oSource.getModel("viewModel"), this.oSource.getModel(
+					"user"), oDemandData);
 			}.bind(this));
 		},
 
@@ -1034,51 +911,6 @@ sap.ui.define([
 			oGanttModel.setProperty(sPath + "/DEMAND_STATUS", aData.DEMAND_STATUS);
 			oGanttOriginDataModel.refresh(true);
 			oGanttModel.refresh(true);
-		},
-
-		/**
-		 * Resetting Assignment Shape Data when the data is unsaved 
-		 * @param sPath
-		 * @param oOriginalData
-		 * @since 2205
-		 */
-		_resetUnSavedNodeData: function (sPath, oOriginalData) {
-			var oGanttModel = this.getModel("ganttModel"),
-				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
-				oTargetObj, sChildPath, sSplitChildPath, sObjectIDRelation, iIndex, aChildNodeData, aChildData, sNewPath;
-
-			//Condition when we Change at Assignment Nodes
-			if (sPath.length > 60) {
-				sChildPath = sPath.substring(0, 27);
-				sSplitChildPath = sPath.split("/AssignmentSet")[0];
-				iIndex = sSplitChildPath[sSplitChildPath.length - 1];
-				sNewPath = sChildPath + "/AssignmentSet/results/" + iIndex;
-				aChildData = oGanttModel.getProperty(sNewPath);
-				sObjectIDRelation = aChildData.OBJECT_ID_RELATION + "//" + aChildData.ResourceGuid; //+ "//" + aD1.ResourceGroupGuid;
-				aChildNodeData = Object.assign({}, aChildData, {
-					OBJECT_ID_RELATION: sObjectIDRelation
-				});
-				oGanttModel.setProperty(sPath, aChildNodeData);
-				oGanttModel.setProperty(sNewPath, aChildData);
-				oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
-			} else {
-				oTargetObj = oOriginalData.AssignmentSet.results[0];
-				iIndex = sPath[sPath.length - 1];
-				sNewPath = sPath.split("/AssignmentSet")[0];
-				sNewPath = sNewPath + "/children/" + iIndex;
-				oGanttModel.setProperty(sNewPath, oTargetObj);
-				oGanttModel.setProperty(sNewPath + "/AssignmentSet", {
-					results: [oTargetObj]
-				});
-				sObjectIDRelation = oOriginalData.Guid + "//" + oOriginalData.ResourceGuid + "//" + oOriginalData.ResourceGroupGuid;
-				aChildNodeData = Object.assign({}, oTargetObj, {
-					OBJECT_ID_RELATION: sObjectIDRelation
-				});
-				oGanttModel.setProperty(sPath, aChildNodeData);
-				oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
-			}
-			oGanttModel.refresh(true);
-			oGanttOriginDataModel.refresh(true);
 		},
 
 		/**

@@ -1028,20 +1028,20 @@ sap.ui.define([
 						this._refreshChangedResources(sPath, sSourcePath);
 					} else {
 						//method call for updating resource assignment in case of Multi Assignment in same axis
-						this._resetParentChildNodes(sPath, oOriginalData);
+						this._refreshChangedResources(sPath);
 					}
 				}.bind(this), function () {
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
 					if (sRequestType !== "reassign") {
-						this._resetParentChildNodes(sPath, oOriginalData);
+							this._refreshChangedResources(sPath);
 					}
 				}.bind(this));
 			}.bind(this), function (oError) {
 				this.oGanttModel.setProperty(sPath + "/busy", false);
 				this._resetChanges(sPath);
-				this._resetParentChildNodes(sPath, oOriginalData);
+					this._refreshChangedResources(sPath);
 			}.bind(this));
 		},
 
@@ -1484,10 +1484,9 @@ sap.ui.define([
 
 				}
 				this.oGanttOriginDataModel.setProperty(sDummyPath, _.cloneDeep(data[i]));
-				this._appendChildAssignment(data[i], sTargetPath, sDummyPath);
 				this.oGanttModel.refresh();
-
 			}
+			this._refreshChangedResources(sTargetPath);
 			if (this._routeName !== Constants.GANTT.SPLIT) {
 				this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			}
@@ -2221,16 +2220,19 @@ sap.ui.define([
 		_refreshChangedResources: function (sTargetPath, sSourcePath) {
 			var oUserData = this.oUserModel.getData(),
 				oTargetResource = this.oGanttModel.getProperty(sTargetPath.split("/").splice(0, 6).join("/")),
-				oSourceResource = this.oGanttModel.getProperty(sSourcePath.split("/").splice(0, 6).join("/")),
+				oSourceResource,
 				aFilters, aPromises = [];
 
 			this._oTargetResourcePath = sTargetPath.split("/").splice(0, 6).join("/");
-			this._oSourceResourcePath = sSourcePath.split("/").splice(0, 6).join("/");
 			aFilters = this._getFiltersToReadAssignments(oTargetResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
 			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
 
-			aFilters = this._getFiltersToReadAssignments(oSourceResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
-			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
+			if (sSourcePath) {
+				oSourceResource = this.oGanttModel.getProperty(sSourcePath.split("/").splice(0, 6).join("/"));
+				this._oSourceResourcePath = sSourcePath.split("/").splice(0, 6).join("/");
+				aFilters = this._getFiltersToReadAssignments(oSourceResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
+				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
+			}
 
 			this.oAppViewModel.setProperty("/busy", true);
 			Promise.all(aPromises).then(function (data) {
@@ -2249,11 +2251,14 @@ sap.ui.define([
 		 */
 		_updateAfterReAssignment: function (aData, oTargetResource, oSourceResource) {
 			oTargetResource.AssignmentSet = aData[0];
-			oSourceResource.AssignmentSet = aData[1];
-			this._updateResourceChildren(oTargetResource);
-			this._updateResourceChildren(oSourceResource);
 			this.oGanttOriginDataModel.setProperty(this._oTargetResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oTargetResourcePath)));
-			this.oGanttOriginDataModel.setProperty(this._oSourceResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oSourceResourcePath)));
+			this._updateResourceChildren(oTargetResource);
+
+			if (oSourceResource) {
+				oSourceResource.AssignmentSet = aData[1];
+				this._updateResourceChildren(oSourceResource);
+				this.oGanttOriginDataModel.setProperty(this._oSourceResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oSourceResourcePath)));
+			}
 			this.oGanttModel.refresh();
 			this.oGanttOriginDataModel.refresh();
 		},
@@ -2320,8 +2325,8 @@ sap.ui.define([
 			oDropContext = this.getView().getModel("ganttModel").getContext(sNewDropPath);
 			return oDropContext;
 		},
-        
-        /**
+
+		/**
 		 * handle refresh operation of Resource after bulk delete operation
 		 * copied from _refreshChangedResources
 		 * since 2301.1.0
