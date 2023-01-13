@@ -587,6 +587,7 @@ sap.ui.define([
 		bulkDeleteAssignment: function (aContexts, mParameters) {
 			var oModel = this.getModel(),
 				bIsLast = null,
+				oEventBus = sap.ui.getCore().getEventBus(),
 				sPath, sAssignmentGuid, oParams;
 			this.clearMessageModel();
 			for (var i in aContexts) {
@@ -598,6 +599,7 @@ sap.ui.define([
 				if (parseInt(i, 10) === aContexts.length - 1) {
 					bIsLast = true;
 				}
+				oEventBus.publish("GanttChart", "refreshResourceOnDelete");
 				this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, bIsLast);
 			}
 		},
