@@ -10,7 +10,8 @@
 			</core:ExtensionPoint>
 		</endButton>
 		<content>
-			<Table id="idAssignmentTable" class="sapUiNoContentPadding" items="{path:'DemandToAssignment', templateShareable:true}"
+			<Table id="idAssignmentTable" class="sapUiNoContentPadding" 
+				items="{path:'DemandToAssignment', templateShareable:true, sorter: [{ path: 'SPLIT_INDEX', descending: false}, { path: 'SPLIT_COUNTER', descending: false}]}"
 				itemPress="onClickRow">
 				<headerToolbar>
 					<core:ExtensionPoint name="TableExtP|Assignments|AssignmentSet|AssignmentListTable|CustomHeaderToolbar"/>
