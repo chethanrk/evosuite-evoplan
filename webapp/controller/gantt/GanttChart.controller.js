@@ -68,6 +68,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("BaseController", "refreshCapacity", this._refreshCapacity, this);
 			this._oEventBus.subscribe("BaseController", "refreshFullGantt", this._loadGanttData, this);
 			this._oEventBus.subscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
+			this._oEventBus.subscribe("GanttChart", "refreshResourceOnDelete", this._refreshResourceOnBulkDelete, this);
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
@@ -111,6 +112,7 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
 			this._oEventBus.unsubscribe("BaseController", "refreshCapacity", this._refreshCapacity, this);
 			this._oEventBus.unsubscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
+			this._oEventBus.unsubscribe("GanttChart", "refreshResourceOnDelete", this._refreshResourceOnBulkDelete, this);
 		},
 		/* =========================================================== */
 		/* Event & Public methods                                      */
@@ -243,10 +245,26 @@ sap.ui.define([
 		onProceedNewGanttDemandDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
 			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
-				slocStor = JSON.parse(this.localStorage.get("Evo-Dmnd-guid")),
+				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
+				sDefaultPool = this.getModel("user").getProperty("/DEFAULT_POOL_FUNCTION");
+
+			if (oResourceData.NodeType === "RES_GROUP") { //When demand dropped on Resource group
+				if (!this.isAssignable({
+						data: oResourceData
+					})) {
+					return;
+				} else {
+					if (sDefaultPool == "RESOURCE") { //If deafult pool function is Resource change drop context
+						oDropContext = this._handlePoolAssignment(oDropContext, oResourceData);
+						oResourceData = this.getModel("ganttModel").getProperty(oDropContext.getPath());
+					}
+				}
+			}
+
+			var slocStor = JSON.parse(this.localStorage.get("Evo-Dmnd-guid")),
 				sDragPath = oDragContext ? this.oViewModel.getProperty("/gantDragSession") : this._getDragPaths(slocStor),
 				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
-				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
+
 				oSvgPoint,
 				sPath = sDragPath ? sDragPath[0] : undefined,
 				oDemandObj = this._getDemandObjectsByPath(this.oViewModel.getProperty("/gantDragSession"), slocStor),
@@ -1012,6 +1030,16 @@ sap.ui.define([
 						//method call for updating resource assignment in case of Multi Assignment in same axis
 						this._resetParentChildNodes(sPath, oOriginalData);
 					}
+
+					// in case of gantt shape drag from POOL to RESOURCE 
+					// on successful call of CreateSplitStretchAssignments the response contains the array of split assignments
+					// add those to the gantt view
+					if (aData && aData.results && aData.results.length > 0) {
+						var aCreatedAssignments = this._getCreatedAssignments(aData.results);
+						if (aCreatedAssignments.length > 0) {
+							this._addCreatedAssignment(aCreatedAssignments, sPath.split("/AssignmentSet/results/")[0]);
+						}
+					}
 				}.bind(this), function () {
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
@@ -1076,16 +1104,28 @@ sap.ui.define([
 				var oPendingChanges = this._updatePendingChanges(sPath, sType),
 					oData = this.oGanttModel.getProperty(sPath);
 
+				var bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN");
+
 				this._validateChangedData(sPath, oPendingChanges[sPath], oData, sType).then(function (results) {
 					if (!results) {
 						reject();
 					} else if (this.oUserModel.getProperty("/ENABLE_QUALIFICATION")) {
 						//when user wants proceed check qualification
 						this._checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
-							this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
+							// in the case of gantt shape drag from POOL to RESOURCE cal the split checks
+							// checks if the demand duration is more than the resource availablity
+							if (bSplitGlobalConfigEnabled && oData.STATUS === "POOL") {
+								this._proceedWithSplitOnReAssign(sPath, sType, oPendingChanges, oData, "RESOURCE").then(resolve, reject);
+							} else {
+								this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
+							}
 						}.bind(this), reject);
 					} else {
-						this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
+						if (bSplitGlobalConfigEnabled && oData.STATUS === "POOL") {
+							this._proceedWithSplitOnReAssign(sPath, sType, oPendingChanges, oData, "RESOURCE").then(resolve, reject);
+						} else {
+							this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
+						}
 					}
 				}.bind(this));
 			}.bind(this));
@@ -2289,6 +2329,177 @@ sap.ui.define([
 					break;
 				}
 			}
+		},
+
+		/**
+		 * in case of gantt shape drag from POOL to RESOURCE cal the split checks
+		 * checks if the demand duration is more than the resource availablity
+		 * 
+		 * @param {string} sPath - path of the dragged assignment
+		 * @param {string} sType - reassign or update
+		 * @param {object} oPendingChanges 
+		 * @param {object} oData - demand Data
+		 * @param {object} sResourceNodeType - node type of the target to which shape is dragged
+		 */
+		_proceedWithSplitOnReAssign: function (sPath, sType, oPendingChanges, oData, sResourceNodeType) {
+			return new Promise(function (resolve, reject) {
+
+				this.splitReassignResolve = resolve;
+				this.splitReassignReject = reject;
+
+				var oParams = {
+					DateFrom: oData.DateFrom || 0,
+					TimeFrom: {
+						__edmtype: "Edm.Time",
+						ms: oData.DateFrom.getTime()
+					},
+					DateTo: oData.DateTo || 0,
+					TimeTo: {
+						__edmtype: "Edm.Time",
+						ms: oData.DateTo.getTime()
+					},
+					AssignmentGUID: oData.Guid,
+					EffortUnit: oData.EffortUnit,
+					Effort: oData.Effort,
+					ResourceGroupGuid: oData.ResourceGroupGuid,
+					ResourceGuid: oData.ResourceGuid,
+					DemandGuid: oData.DemandGuid
+				},
+				mParameters = {
+					path: sPath,
+					type: sType,
+					pendingChanges: oPendingChanges,
+					demandData: oData
+				};
+
+				//has new parent?
+				if (this.mRequestTypes.reassign === sType && oPendingChanges[sPath].ResourceGuid) {
+					oParams.ResourceGroupGuid = oData.ResourceGroupGuid;
+					oParams.ResourceGuid = oData.ResourceGuid;
+				}
+
+				this._checkAndExecuteSplitForGanttReAssign([oParams], mParameters, sResourceNodeType);
+
+			}.bind(this));
+		},
+
+		/**
+		 * method checks resourceAvailabilty for the selected demands 
+		 * then confirms if the user wants to split the assignments
+		 * on confirm/reject then calls the required function imports
+		 * 
+		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
+		 * @param {object} mParameters
+		 * @param {string} sResourceNodeType - node type of the resource to which shape is dragged
+		 */
+		_checkAndExecuteSplitForGanttReAssign: function (aAssignments, mParameters, sResourceNodeType) {
+			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch)
+				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch)
+				.then(this._callRequiredFunctionImportsForReAssign.bind(this)).catch(this.handlePromiseChainCatch);
+		},
+
+		/**
+		 * based on the response from split confirmation dialog calls the required function imports
+		 * strucuture of oConfirmationDialogResponse :
+		 * { arrayOfDemands : aAssignments,
+		 *   arrayOfDemandsToSplit : [],
+		 * 	 mParameters : properties to pass till the end of promise chain
+		 *   splitConfirmation : "YES/NO"
+		 * };
+		 * @param {object} oConfirmationDialogResponse response from split confirmation dialog
+		 * resolves the promise of assignMultipleDemands method
+		 * 
+		 */
+		_callRequiredFunctionImportsForReAssign: function (oConfirmationDialogResponse) {
+			if (oConfirmationDialogResponse) {
+
+				var aDemands = oConfirmationDialogResponse.arrayOfDemands,
+					aDemandGuidsToSplit = oConfirmationDialogResponse.arrayOfDemandsToSplit,
+					sResourceNodeType = oConfirmationDialogResponse.nodeType,
+					mParameters = oConfirmationDialogResponse.mParameters;
+
+				var sPath = mParameters.path,
+					sType = mParameters.type,
+					oPendingChanges = mParameters.pendingChanges,
+					oData = mParameters.demandData;
+
+				if (aDemandGuidsToSplit.length === 0) {
+					this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData)
+						.then(this.splitReassignResolve, this.splitReassignReject);
+				} else {	
+					if (aDemandGuidsToSplit.includes(aDemands[0].DemandGuid)) {
+						aDemands[0].ResourceView = sResourceNodeType === "RESOURCE" ? "SIMPLE" : "DAILY";
+						this.executeFunctionImport(this.getModel(), aDemands[0], "CreateSplitStretchAssignments", "POST")
+							.then(this.splitReassignResolve, this.splitReassignReject);
+					}
+				}
+			}
+		},
+
+		/*
+		 * Assign new drop context if Demand dropped on Resource group and Pool is resource
+		 */
+		_handlePoolAssignment: function (oDropContext, oResourceData) {
+			var iPoolRes = oResourceData.children.length - 1,
+				sDropPath = oDropContext.getPath(),
+				sNewDropPath;
+			sNewDropPath = sDropPath + "/children/" + iPoolRes;
+			oDropContext = this.getView().getModel("ganttModel").getContext(sNewDropPath);
+			return oDropContext;
+		},
+        
+        /**
+		 * handle refresh operation of Resource after bulk delete operation
+		 * copied from _refreshChangedResources
+		 * since 2301.1.0
+		 * @Author Bhumika Ranawat
+		 */
+		_refreshResourceOnBulkDelete: function (sChannel, sEvent, oData) {
+			if (sChannel == "GanttChart" && sEvent == "refreshResourceOnDelete") {
+				var oUserData = this.oUserModel.getData(),
+					oTargetResource,
+					aFilters, aPromises = [];
+
+				for (var i in this.selectedResources) {
+					oTargetResource = this.oGanttModel.getProperty(this.selectedResources[i]);
+					aFilters = this._getFiltersToReadAssignments(oTargetResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
+					aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
+				}
+				this.oAppViewModel.setProperty("/busy", true);
+				Promise.all(aPromises).then(function (data) {
+					for (var i in this.selectedResources) {
+						oTargetResource = this.oGanttModel.getProperty(this.selectedResources[i]);
+						oTargetResource.AssignmentSet = data[i];
+						this._updateDeletedChildren(oTargetResource);
+						this.oGanttOriginDataModel.setProperty(this.selectedResources[i], _.cloneDeep(this.oGanttModel.getProperty(this.selectedResources[
+							i])));
+					}
+					this.oGanttModel.refresh();
+					this.oGanttOriginDataModel.refresh();
+					this.oAppViewModel.setProperty("/busy", false);
+				}.bind(this));
+			}
+		},
+
+		/**
+		 * Updating children when no assignments are present
+		 * copied from _updateResourceChildren
+		 * @param {Object} oResource
+		 * since 2301.1.0
+		 * @Author Bhumika Ranawat
+		 */
+		_updateDeletedChildren: function (oResource) {
+			oResource.children = oResource.AssignmentSet.results;
+			oResource.children.forEach(function (oAssignItem, idx) {
+				oResource.AssignmentSet.results[idx].NodeType = "ASSIGNMENT";
+				oResource.AssignmentSet.results[idx].ResourceAvailabilitySet = oResource.ResourceAvailabilitySet;
+				var clonedObj = _.cloneDeep(oResource.AssignmentSet.results[idx]);
+				//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
+				clonedObj.OBJECT_ID_RELATION = clonedObj.OBJECT_ID_RELATION + "//" + clonedObj.ResourceGuid;
+				oResource.children[idx].AssignmentSet = {
+					results: [clonedObj]
+				};
+			}.bind(this));
 		},
 
 	});

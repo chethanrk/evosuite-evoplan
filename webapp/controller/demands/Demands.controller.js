@@ -38,6 +38,9 @@ sap.ui.define([
 			this._eventBus.subscribe("AssignTreeDialog", "updateDemandTableSelection", this._deselectDemands, this);
 			//toAdd busystete change event to the table
 			this._oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
+			this._mParameters = {
+				bFromHome: true
+			};
 		},
 
 		/* =========================================================== */
@@ -79,23 +82,6 @@ sap.ui.define([
 			}
 		},
 
-		/**
-		 * open change status dialog
-		 * @param oEvent
-		 */
-		onChangeStatusButtonPress: function (oEvent) {
-			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
-
-			if (this._aSelectedRowsIdx.length > 0) {
-				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData, {
-					bFromHome: true
-				});
-			} else {
-				var msg = this.getResourceBundle().getText("ymsg.selectMinItem");
-				this.showMessageToast(msg);
-			}
-		},
 		/**
 		 * check for unsaved data in Demand table
 		 * on click on navigate acion navigate to Demand Detail Page
@@ -225,7 +211,7 @@ sap.ui.define([
 					this.byId("idUnassignButton").setEnabled(false);
 					//If the selected demands exceeds more than the maintained selected configuration value
 					if (iMaxRowSelection <= selected.length) {
-						var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection",[iMaxRowSelection]);
+						var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
 						this.showMessageToast(sMsg);
 					}
 				}
@@ -247,14 +233,6 @@ sap.ui.define([
 
 				this.showWarningMsgResourceTree(true);
 			}, this);
-		},
-
-		/**
-		 * deselect all checkboxes in table
-		 * @private
-		 */
-		_deselectAll: function () {
-			this._oDataTable.clearSelection();
 		},
 
 		/**
@@ -296,14 +274,7 @@ sap.ui.define([
 				oEvent.preventDefault();
 			}
 		},
-		/**
-		 * On Drag end check for dropped control, If dropped control not found
-		 * then make reset the selection
-		 * @param oEvent
-		 */
-		onDragEnd: function (oEvent) {
-			this._deselectAll();
-		},
+	
 		/**
 		 * Refresh's the demand table
 		 * @param sChanel
@@ -321,24 +292,6 @@ sap.ui.define([
 			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", false);
 		},
 
-		/**
-		 * Opens the popup containing button to nav to Evo Order App
-		 * @param oEvent
-		 */
-		openActionSheet: function (oEvent) {
-			var oContext = oEvent.getSource().getParent().getParent().getBindingContext(),
-				oModel = oContext.getModel(),
-				sPath = oContext.getPath();
-			this.selectedDemandData = oModel.getProperty(sPath);
-			this.getOwnerComponent().NavigationActionSheet.open(this.getView(), oEvent.getSource().getParent(), this.selectedDemandData);
-		},
-		/**
-		 *	Navigates to evoOrder detail page with static url.
-		 */
-		OnClickOrderId: function (oEvent) {
-			var sOrderId = oEvent.getSource().getText();
-			this.openEvoOrder(sOrderId);
-		},
 		/**
 		 * Event will triggered when the filter is initialized
 		 * @param oEvent
@@ -458,7 +411,6 @@ sap.ui.define([
 
 		/**
 		 * To Highlight Resources Based on Selected Demands
-		 * 
 		 */
 		onPressFindResource: function (oEvent) {
 			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
@@ -482,7 +434,6 @@ sap.ui.define([
 
 		/**
 		 * get Filters of Requirement Profile IDs of Selected Demands
-		 * 
 		 */
 		getFormattedReqProfileId: function (oData) {
 			var aRequirementProfileIds = [];
@@ -495,16 +446,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Open's assignments list
-		 * 
-		 */
-		onClickAssignCount: function (oEvent) {
-			this.getOwnerComponent().assignmentList.open(this.getView(), oEvent);
-		},
-
-		/**
 		 * Validate Selected Demands Based on ALLOW_FINDRESOURCE Flag
-		 * 
 		 */
 		_getAllowedDemandsToCheckResource: function (oTable, aSelectedRowsIdx) {
 			var aPathsData = [],
@@ -547,7 +489,6 @@ sap.ui.define([
 
 		/**
 		 * Resetting Demand selection based on not allowed for find technician 
-		 * 
 		 */
 		_deselectDemands: function (sChannel, oEvent, oData) {
 			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
@@ -559,81 +500,6 @@ sap.ui.define([
 				}
 			}
 		},
-
-		/**
-		 * Opens long text view/edit popover
-		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
-		 */
-		openLongTextPopover: function (oSource) {
-			this.getOwnerComponent().longTextPopover.open(this.getView(), oSource);
-		},
-		/**
-		 * handle message popover response to save data/ open longtext popover
-		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
-		 */
-		handleResponse: function (bResponse) {
-			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
-				oViewModel = this.getModel("viewModel"),
-				oModel = this.getModel(),
-				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode"),
-				sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
-				sSave = oResourceBundle.getText("xbut.buttonSave");
-
-			if (bResponse === sDiscard) {
-				oModel.resetChanges();
-				oViewModel.setProperty("/bDemandEditMode", false);
-				this.getOwnerComponent().longTextPopover.open(this.getView(), this._oSource);
-			} else if (bResponse === sSave) {
-				oViewModel.setProperty("/bDemandEditMode", false);
-				this.submitDemandTableChanges();
-			}
-		},
-		/**
-		 * on press order long text icon in Demand table
-		 */
-		onClickLongText: function (oEvent) {
-			this._viewModel.setProperty("/isOpetationLongTextPressed", false);
-			this.openLongTextPopover(oEvent.getSource());
-		},
-		/**
-		 * on press operation long text icon in Demand table
-		 */
-		onClickOprationLongText: function (oEvent) {
-			this._viewModel.setProperty("/isOpetationLongTextPressed", true);
-			this.openLongTextPopover(oEvent.getSource());
-		},
-		/**
-		 * on press unassign button in footer
-		 */
-		onPressUnassignDemand: function () {
-			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
-			if (oSelectedPaths.aUnAssignDemands.length > 0) {
-				this.getOwnerComponent().assignActionsDialog.open(this.getView(), oSelectedPaths, true, {
-					bFromHome: true
-				});
-			} else {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
-			}
-		},
-		/**
-		 * On Press of Change Assignment Status Button
-		 * Since 2205
-		 * @Author Chethan RK
-		 */
-		onAssignmentStatusButtonPress: function () {
-			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			var aSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx);
-			if (aSelectedPaths.aAssignmentDemands.length > 0) {
-				this._viewModel.setProperty("/Show_Assignment_Status_Button", true);
-				this._viewModel.setProperty("/Disable_Assignment_Status_Button", false);
-				this.getOwnerComponent().assignActionsDialog.open(this.getView(), aSelectedPaths, true, {
-					bFromHome: true
-				});
-			} else {
-				this.showMessageToast(this.getResourceBundle().getText("ymsg.noAssignments"));
-			}
-		}
 
 	});
 });

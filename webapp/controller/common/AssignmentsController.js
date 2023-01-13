@@ -1,11 +1,12 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/BaseController",
+	"com/evorait/evoplan/controller/common/DemandTableOperations",
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment"
-], function (BaseController, MessageBox, formatter, Constants, Fragment) {
-	return BaseController.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
+], function (DemandTableOperations, MessageBox, formatter, Constants, Fragment) {
+	
+	return DemandTableOperations.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
 		/**
 		 * save assignment after drop
 		 * 
@@ -586,6 +587,7 @@ sap.ui.define([
 		bulkDeleteAssignment: function (aContexts, mParameters) {
 			var oModel = this.getModel(),
 				bIsLast = null,
+				oEventBus = sap.ui.getCore().getEventBus(),
 				sPath, sAssignmentGuid, oParams;
 			this.clearMessageModel();
 			for (var i in aContexts) {
@@ -597,6 +599,7 @@ sap.ui.define([
 				if (parseInt(i, 10) === aContexts.length - 1) {
 					bIsLast = true;
 				}
+				oEventBus.publish("GanttChart", "refreshResourceOnDelete");
 				this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, bIsLast);
 			}
 		},
