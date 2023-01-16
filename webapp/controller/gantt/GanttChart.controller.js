@@ -2228,8 +2228,8 @@ sap.ui.define([
 			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
 
 			if (sSourcePath) {
-				oSourceResource = this.oGanttModel.getProperty(sSourcePath.split("/").splice(0, 6).join("/"));
-				this._oSourceResourcePath = sSourcePath.split("/").splice(0, 6).join("/");
+					this._oSourceResourcePath = sSourcePath.split("/").splice(0, 6).join("/");
+				oSourceResource = this.oGanttModel.getProperty(this._oSourceResourcePath);
 				aFilters = this._getFiltersToReadAssignments(oSourceResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
 				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
 			}
