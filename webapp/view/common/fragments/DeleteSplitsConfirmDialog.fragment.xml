@@ -4,7 +4,7 @@
 			<Text text="{i18n>xmsg.deleteAllSplitAssignments}" wrapping="true"/>
 		</content>
 		<buttons>
-			<Button text="{i18n>xbut.proceed}" type="Emphasized" press="onProceedWithSplitDeletion"/>
+			<Button text="{i18n>xbut.buttonProceed}" type="Emphasized" press="onProceedWithSplitDeletion"/>
 			<Button text="{i18n>xbut.buttonCancel}" press="onCancelSplitDeletion"/>
 		</buttons>
 	</Dialog>
