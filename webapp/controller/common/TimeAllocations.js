@@ -496,12 +496,7 @@ sap.ui.define([
 				}
 				Promise.all(aPromises).then(function (aPromiseAllResults, oResponse, bContainsError) {
 					if (aPromiseAllResults && aPromiseAllResults.length) {
-						var oMessages = [];
-						for (var i in aPromiseAllResults) {
-							oMessages.push(JSON.parse(aPromiseAllResults[i][1].headers["sap-message"]));
-						}
-						this._oViewModel.setProperty("/oResponseMessages", oMessages);
-						this.showResponseMessagePopup.call(this._oView.getController());
+						this.handelResponsesToShowMessages.call(this._oView.getController(), aPromiseAllResults)
 						this._refreshList();
 					}
 				}.bind(this));
@@ -932,11 +927,11 @@ sap.ui.define([
 					EndTimestamp: oEndDate
 				};
 			var iSliderPercent = Fragment.byId(this._id, "idTimeAllocSlider").getValue();
-			
-			var calculateBlockedHour = function(availableHour){
-				return parseFloat(availableHour * (iSliderPercent / 100)).toFixed(1);	
+
+			var calculateBlockedHour = function (availableHour) {
+				return parseFloat(availableHour * (iSliderPercent / 100)).toFixed(1);
 			};
-			
+
 			this._oDialog.setBusy(true);
 			this._dataDirty = true;
 			for (var i in this._aResourceGuids) {

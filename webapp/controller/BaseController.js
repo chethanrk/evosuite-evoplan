@@ -851,19 +851,26 @@ sap.ui.define([
 		 * @param oData
 		 */
 		handelResponsesToShowMessages: function (oData, oResponse) {
-			var oResponses = oData.__batchResponses[0].__changeResponses,
-				oMessages = [],
+			var oResponses, oMessages = [],
 				oDetails;
-			for (var i in oResponses) {
-				oDetails = JSON.parse(oResponses[i].headers["sap-message"]).details;
-				if (oDetails && oDetails.length) {
-					for (var j in oDetails) {
-						if (!JSON.stringify(oMessages).includes(JSON.stringify(oDetails[j].message))) {
-							oMessages.push(oDetails[j]);
+			if (Array.isArray(oData)) {
+				oResponses = oData;
+				for (var i in oResponses) {
+					oMessages.push(JSON.parse(oResponses[i][1].headers["sap-message"]));
+				}
+			} else {
+				oResponses = oData.__batchResponses[0].__changeResponses;
+				for (var i in oResponses) {
+					oDetails = JSON.parse(oResponses[i].headers["sap-message"]).details;
+					if (oDetails && oDetails.length) {
+						for (var j in oDetails) {
+							if (!JSON.stringify(oMessages).includes(JSON.stringify(oDetails[j].message))) {
+								oMessages.push(oDetails[j]);
+							}
 						}
+					} else {
+						oMessages.push(JSON.parse(oResponses[i].headers["sap-message"]));
 					}
-				} else {
-					oMessages.push(JSON.parse(oResponses[i].headers["sap-message"]));
 				}
 			}
 			this.getModel("viewModel").setProperty("/oResponseMessages", oMessages);
@@ -1288,7 +1295,7 @@ sap.ui.define([
 			}
 			for (i in aRemoveItems) {
 				this.selectedResources.splice(this.selectedResources.indexOf(aRemoveItems[i]), 1);
-				oModel.setProperty(aRemoveItems[i] + "/IsSelected",false);
+				oModel.setProperty(aRemoveItems[i] + "/IsSelected", false);
 			}
 			if (this.selectedResources.length) {
 				return false;
