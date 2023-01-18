@@ -15,24 +15,8 @@ sap.ui.define([
 	return AssignmentsController.extend("com.evorait.evoplan.controller.gantt.GanttQualificationChecks", {
 		
 		/* =========================================================== */
-		/* Event & Public methods                                      */
+		/* Public methods                                      */
 		/* =========================================================== */
-		/**
-		 * Opens the resource qualification dialog 
-		 */
-		onResourceIconPress: function (oEvent) {
-			var oRow = oEvent.getSource().getParent(),
-				oContext = oRow.getBindingContext("ganttModel"),
-				sPath = oContext.getPath(),
-				oModel = oContext.getModel(),
-				oResourceNode = oModel.getProperty(sPath),
-				sObjectId = oResourceNode.NodeId;
-
-			if (oResourceNode.NodeType !== "ASSIGNMENT") {
-				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
-			}
-		},
-
 		/**
 		 * when shape was dragged to another place
 		 * validate qualification for this resource node

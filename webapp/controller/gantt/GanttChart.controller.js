@@ -512,7 +512,21 @@ sap.ui.define([
 			this._resetToolbarButtons();
 			this._loadGanttData();
 		},
-		
+		/**
+		 * Opens the resource qualification dialog 
+		 */
+		onResourceIconPress: function (oEvent) {
+			var oRow = oEvent.getSource().getParent(),
+				oContext = oRow.getBindingContext("ganttModel"),
+				sPath = oContext.getPath(),
+				oModel = oContext.getModel(),
+				oResourceNode = oModel.getProperty(sPath),
+				sObjectId = oResourceNode.NodeId;
+
+			if (oResourceNode.NodeType !== "ASSIGNMENT") {
+				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
+			}
+		},
 		/**
 		 * Open's Dialog containing assignments to reassign
 		 * @param oEvent
