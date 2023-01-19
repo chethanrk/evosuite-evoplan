@@ -1497,6 +1497,7 @@ sap.ui.define([
 					this.oGanttModel.setProperty(sDummyPath, null);
 					return;
 				}
+				data[i].NodeType = "ASSIGNMENT";
 				if (i > 0) {
 					aAssignments.push(data[i]);
 					sDummyPath = sTargetPath + "/AssignmentSet/results/" + (aAssignments.length - 1);
