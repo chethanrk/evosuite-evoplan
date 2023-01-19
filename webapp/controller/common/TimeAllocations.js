@@ -496,7 +496,7 @@ sap.ui.define([
 				}
 				Promise.all(aPromises).then(function (aPromiseAllResults, oResponse, bContainsError) {
 					if (aPromiseAllResults && aPromiseAllResults.length) {
-						this.handelResponsesToShowMessages.call(this._oView.getController(), aPromiseAllResults)
+						this.handleResponsesToShowMessages.call(this._oView.getController(), aPromiseAllResults)
 						this._refreshList();
 					}
 				}.bind(this));

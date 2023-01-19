@@ -841,7 +841,7 @@ sap.ui.define([
 						reject(oError);
 					}
 				});
-			}.bind(this)).then(this.handelResponsesToShowMessages.bind(this)).catch(function (oError) {
+			}.bind(this)).then(this.handleResponsesToShowMessages.bind(this)).catch(function (oError) {
 				oModel.resetChanges();
 			}.bind(this));
 		},
@@ -850,8 +850,7 @@ sap.ui.define([
 		 * Handle the response Message on Edit of Demand Table
 		 * @param oData
 		 */
-		handelResponsesToShowMessages: function (oData) {
-			//oResponses oMessages
+		handleResponsesToShowMessages: function (oData) {
 			var aMultiResponses, aMessages = [],
 				oDetails;
 			if (Array.isArray(oData)) {
