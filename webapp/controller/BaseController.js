@@ -860,7 +860,7 @@ sap.ui.define([
 				oDetails = JSON.parse(oResponseItem.headers["sap-message"]).details;
 				if (oDetails && oDetails.length) {
 					for (var j in oDetails) {
-						if (!JSON.stringify(aMessages).includes(JSON.stringify(oDetails[j].message))) {
+						if (JSON.stringify(aMessages).indexOf(JSON.stringify(oDetails[j].message)) === -1) {
 							aMessages.push(oDetails[j]);
 						}
 					}
