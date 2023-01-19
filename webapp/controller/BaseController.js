@@ -848,6 +848,7 @@ sap.ui.define([
 
 		/**
 		 * Handle the response Message on Edit of Demand Table
+		 * and in the time allocation controller
 		 * @param oData
 		 */
 		handleResponsesToShowMessages: function (oData) {
