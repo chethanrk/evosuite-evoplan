@@ -854,14 +854,11 @@ sap.ui.define([
 		handleResponsesToShowMessages: function (oData) {
 			var aMultiResponses, aMessages = [],
 				oDetails;
-			if (Array.isArray(oData)) {
-				aMultiResponses = oData;
-				for (var i in aMultiResponses) {
+			aMultiResponses = Array.isArray(oData) ? oData : oData.__batchResponses[0].__changeResponses;
+			for (var i in aMultiResponses) {
+				if (Array.isArray(aMultiResponses[i])) {
 					aMessages.push(JSON.parse(aMultiResponses[i][1].headers["sap-message"]));
-				}
-			} else {
-				aMultiResponses = oData.__batchResponses[0].__changeResponses;
-				for (var i in aMultiResponses) {
+				} else {
 					oDetails = JSON.parse(aMultiResponses[i].headers["sap-message"]).details;
 					if (oDetails && oDetails.length) {
 						for (var j in oDetails) {
