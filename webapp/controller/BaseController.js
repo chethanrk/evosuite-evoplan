@@ -841,32 +841,34 @@ sap.ui.define([
 						reject(oError);
 					}
 				});
-			}.bind(this)).then(this.handelResponsesToShowMessages.bind(this)).catch(function (oError) {
+			}.bind(this)).then(this.handleResponsesToShowMessages.bind(this)).catch(function (oError) {
 				oModel.resetChanges();
 			}.bind(this));
 		},
 
 		/**
 		 * Handle the response Message on Edit of Demand Table
+		 * and in the time allocation controller
 		 * @param oData
 		 */
-		handelResponsesToShowMessages: function (oData, oResponse) {
-			var oResponses = oData.__batchResponses[0].__changeResponses,
-				oMessages = [],
-				oDetails;
-			for (var i in oResponses) {
-				oDetails = JSON.parse(oResponses[i].headers["sap-message"]).details;
+		handleResponsesToShowMessages: function (oData) {
+			var aMultiResponses, aMessages = [],
+				oDetails, oResponseItem;
+			aMultiResponses = oData.length ? oData : oData.__batchResponses[0].__changeResponses;
+			for (var i in aMultiResponses) {
+				oResponseItem = aMultiResponses[i][1] ? aMultiResponses[i][1] : aMultiResponses[i];
+				oDetails = JSON.parse(oResponseItem.headers["sap-message"]).details;
 				if (oDetails && oDetails.length) {
 					for (var j in oDetails) {
-						if (!JSON.stringify(oMessages).includes(JSON.stringify(oDetails[j].message))) {
-							oMessages.push(oDetails[j]);
+						if (JSON.stringify(aMessages).indexOf(JSON.stringify(oDetails[j].message)) === -1) {
+							aMessages.push(oDetails[j]);
 						}
 					}
 				} else {
-					oMessages.push(JSON.parse(oResponses[i].headers["sap-message"]));
+					aMessages.push(JSON.parse(oResponseItem.headers["sap-message"]));
 				}
 			}
-			this.getModel("viewModel").setProperty("/oResponseMessages", oMessages);
+			this.getModel("viewModel").setProperty("/oResponseMessages", aMessages);
 			this.showResponseMessagePopup();
 			this.getModel().resetChanges();
 		},
@@ -1288,7 +1290,7 @@ sap.ui.define([
 			}
 			for (i in aRemoveItems) {
 				this.selectedResources.splice(this.selectedResources.indexOf(aRemoveItems[i]), 1);
-				oModel.setProperty(aRemoveItems[i] + "/IsSelected",false);
+				oModel.setProperty(aRemoveItems[i] + "/IsSelected", false);
 			}
 			if (this.selectedResources.length) {
 				return false;
