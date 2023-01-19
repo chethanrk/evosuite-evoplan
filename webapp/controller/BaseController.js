@@ -856,7 +856,7 @@ sap.ui.define([
 				oDetails;
 			aMultiResponses = Array.isArray(oData) ? oData : oData.__batchResponses[0].__changeResponses;
 			for (var i in aMultiResponses) {
-				if (Array.isArray(aMultiResponses[i])) {
+				if (aMultiResponses[i].length) {
 					aMessages.push(JSON.parse(aMultiResponses[i][1].headers["sap-message"]));
 				} else {
 					oDetails = JSON.parse(aMultiResponses[i].headers["sap-message"]).details;
