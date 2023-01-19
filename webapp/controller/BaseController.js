@@ -850,30 +850,31 @@ sap.ui.define([
 		 * Handle the response Message on Edit of Demand Table
 		 * @param oData
 		 */
-		handelResponsesToShowMessages: function (oData, oResponse) {
-			var oResponses, oMessages = [],
+		handelResponsesToShowMessages: function (oData) {
+			//oResponses oMessages
+			var aMultiResponses, aMessages = [],
 				oDetails;
 			if (Array.isArray(oData)) {
-				oResponses = oData;
-				for (var i in oResponses) {
-					oMessages.push(JSON.parse(oResponses[i][1].headers["sap-message"]));
+				aMultiResponses = oData;
+				for (var i in aMultiResponses) {
+					aMessages.push(JSON.parse(aMultiResponses[i][1].headers["sap-message"]));
 				}
 			} else {
-				oResponses = oData.__batchResponses[0].__changeResponses;
-				for (var i in oResponses) {
-					oDetails = JSON.parse(oResponses[i].headers["sap-message"]).details;
+				aMultiResponses = oData.__batchResponses[0].__changeResponses;
+				for (var i in aMultiResponses) {
+					oDetails = JSON.parse(aMultiResponses[i].headers["sap-message"]).details;
 					if (oDetails && oDetails.length) {
 						for (var j in oDetails) {
-							if (!JSON.stringify(oMessages).includes(JSON.stringify(oDetails[j].message))) {
-								oMessages.push(oDetails[j]);
+							if (!JSON.stringify(aMessages).includes(JSON.stringify(oDetails[j].message))) {
+								aMessages.push(oDetails[j]);
 							}
 						}
 					} else {
-						oMessages.push(JSON.parse(oResponses[i].headers["sap-message"]));
+						aMessages.push(JSON.parse(aMultiResponses[i].headers["sap-message"]));
 					}
 				}
 			}
-			this.getModel("viewModel").setProperty("/oResponseMessages", oMessages);
+			this.getModel("viewModel").setProperty("/oResponseMessages", aMessages);
 			this.showResponseMessagePopup();
 			this.getModel().resetChanges();
 		},
