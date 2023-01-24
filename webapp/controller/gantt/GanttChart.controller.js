@@ -1112,7 +1112,7 @@ sap.ui.define([
 						reject();
 					} else if (this.oUserModel.getProperty("/ENABLE_QUALIFICATION")) {
 						//when user wants proceed check qualification
-						this._checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
+						this.checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
 							// in the case of gantt shape drag from POOL to RESOURCE cal the split checks
 							// checks if the demand duration is more than the resource availablity
 							if (bSplitGlobalConfigEnabled && oData.STATUS === "POOL") {
@@ -1240,67 +1240,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * when shape was dragged to another place
-		 * validate qualification for this resource node
-		 * @param {String} sPath - path of assignment in Gantt Model
-		 * @param {Object} oChanges - pending changes of this assignment in GanttModel
-		 * @param {Object} oData - full assignment data with Demand data
-		 */
-		_checkQualificationForChangedShapes: function (sPath, oChanges, oData) {
-			return new Promise(function (resolve, reject) {
-				var sTargetPath = oData.NewAssignPath ? oData.NewAssignPath : oChanges.OldAssignPath;
-				var oTargetData = this.oGanttModel.getProperty(sTargetPath);
-				this._sendCheckQualification(null, oTargetData, oData.DateFrom, oData.DateTo, [oData.Demand.Guid], null).then(resolve, reject);
-			}.bind(this));
-		},
-		/**
-		 * Proceed to Qualification Check for Demand Assignment/Reassignment/Update, before Service call (Call Function Import) 
-		 * @param {Object} aSourcePaths Demand paths
-		 * @param {Object} oTarget Resource Path
-		 * @param {Object} oTargetDate Target date of assignment
-		 * @param {Object} oNewEndDate new end date from streach validation
-		 * @param {Object} aGuids Array of demand paths in case of split window
-		 * @param {Object} mParameters parameters for function import
-		 * @private
-		 */
-		_checkResourceQualification: function (aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids, mParameters) {
-			return new Promise(function (resolve, reject) {
-				var oTargetObject = this.oGanttModel.getProperty(oTarget);
-				this._sendCheckQualification(aSourcePaths, oTargetObject, oTargetDate, oNewEndDate, aGuids, mParameters).then(resolve, reject);
-			}.bind(this));
-		},
-
-		/**
-		 * Proceed to Qualification Check for Demand Assignment/Reassignment/Update, before Service call (Call Function Import) 
-		 * @param {Object} aSourcePaths Demand paths
-		 * @param {Object} oTargetObject Resource Path
-		 * @param {Object} oTargetDate Target date of assignment
-		 * @param {Object} oNewEndDate new end date from streach validation
-		 * @param {Object} aGuids Array of demand paths in case of split window
-		 * @param {Object} mParameters parameters for function import
-		 */
-		_sendCheckQualification: function (aSourcePaths, oTargetObject, oTargetDate, oNewEndDate, aGuids, mParameters) {
-			return new Promise(function (resolve, reject) {
-				this.checkQualification(aSourcePaths, oTargetObject, oTargetDate, oNewEndDate, aGuids).then(function (data) {
-					if (data.result.results && data.result.results.length) {
-						this.oViewModel.setProperty("/QualificationMatchList", {
-							TargetObject: oTargetObject,
-							QualificationData: data.result.results,
-							SourcePaths: aSourcePaths,
-							mParameter: mParameters,
-							targetDate: oTargetDate,
-							newEndDate: oNewEndDate,
-							aGuids: aGuids
-						});
-						this.getOwnerComponent().QualificationCheck.open(this, this.getView(), {}, resolve, reject);
-					} else {
-						resolve();
-					}
-				}.bind(this));
-			}.bind(this));
-		},
-
-		/**
 		 * validate shape data on resize
 		 * @param {Object} oData
 		 * @return Promise
@@ -1340,14 +1279,14 @@ sap.ui.define([
 
 			//Condition for checking Fixed Appointments Qualification check
 			if (oUserData.ENABLE_QUALIFICATION && aFixedAppointments && aFixedAppointments.IsSelected) {
-				this._checkResourceQualification(aSources, oTarget, oTargetDate, aFixedAppointments.FIXED_ASSGN_END_DATE, aGuids).then(function (
+				this.checkResourceQualification(aSources, oTarget, oTargetDate, aFixedAppointments.FIXED_ASSGN_END_DATE, aGuids).then(function (
 					data) {
 					this._assignDemands(aSources, oTarget, oTargetDate, aFixedAppointments.FIXED_ASSGN_END_DATE, aGuids, sDummyPath);
 				}.bind(this));
 			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && oUserData.ENABLE_QUALIFICATION && !
 				oUserData.ENABLE_SPLIT_STRETCH_ASSIGN) {
 				this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids).then(function (oEndDate) {
-					this._checkResourceQualification(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(function (data) {
+					this.checkResourceQualification(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(function (data) {
 						this._assignDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath);
 					}.bind(this), function () {
 						this.oGanttModel.setProperty(sDummyPath, null);
@@ -1365,7 +1304,7 @@ sap.ui.define([
 				}.bind(this));
 
 			} else if (oUserData.ENABLE_QUALIFICATION) {
-				this._checkResourceQualification(aSources, oTarget, oTargetDate, null, aGuids).then(function (data) {
+				this.checkResourceQualification(aSources, oTarget, oTargetDate, null, aGuids).then(function (data) {
 					this._assignDemands(aSources, oTarget, oTargetDate, null, aGuids, sDummyPath);
 				}.bind(this));
 
@@ -2127,44 +2066,6 @@ sap.ui.define([
 			}
 		},
 
-		/**
-		 * Method to save the updated assignments to backend after calculating the route
-		 * @param {Array} aAssignments
-		 * since 2205
-		 */
-		_updateAssignments: function (aAssignments) {
-			var oParams = {},
-				bIsLast = false;
-
-			//flags to prevent refresh after saving the updated assignments into the backend
-			this.bDoNotRefreshTree = true;
-			this.bDoNotRefreshCapacity = true;
-			for (var i = 0; i < aAssignments.length; i++) {
-				oParams = {
-					DateFrom: aAssignments[i].DateFrom,
-					TimeFrom: {
-						ms: aAssignments[i].DateFrom.getTime()
-					},
-					DateTo: aAssignments[i].DateTo,
-					TimeTo: {
-						ms: aAssignments[i].DateTo.getTime()
-					},
-					AssignmentGUID: aAssignments[i].Guid,
-					EffortUnit: aAssignments[i].EffortUnit,
-					Effort: aAssignments[i].Effort,
-					ResourceGroupGuid: aAssignments[i].ResourceGroupGuid,
-					ResourceGuid: aAssignments[i].ResourceGuid,
-					TravelTime: aAssignments[i].TRAVEL_TIME,
-					Distance: aAssignments[i].DISTANCE,
-					DistanceBack: aAssignments[i].DISTANCE_BACK
-				};
-				if (i === aAssignments.length - 1) {
-					bIsLast = true;
-					oParams.TravelBackTime = aAssignments[i].TRAVEL_BACK_TIME;
-				}
-				this.callFunctionImport(oParams, "UpdateAssignment", "POST", this._mParameters, bIsLast);
-			}
-		},
 		/**
 		 * Method to get parameters to updated assignments to backend with new date/time
 		 * @param {Object} oAssignment

@@ -1,5 +1,5 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/AssignmentsController",
+	"com/evorait/evoplan/controller/gantt/GanttQualificationChecks",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -9,10 +9,10 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual"
-], function (AssignmentsController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageToast) {
+], function (GanttQualificationChecks, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageToast) {
 	"use strict";
 
-	return AssignmentsController.extend("com.evorait.evoplan.controller.gantt.GanttRoute", {
+	return GanttQualificationChecks.extend("com.evorait.evoplan.controller.gantt.GanttRoute", {
 		/*
 		 * Handle press of Calculate travel time Button in gantt toolbar
 		 * @param oEvent
@@ -137,7 +137,7 @@ sap.ui.define([
 			}.bind(this));
 			return aUnavailability;
 		},
-		
+
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
@@ -205,7 +205,7 @@ sap.ui.define([
 			this.oGanttModel.refresh();
 
 			// method call to save the updated assignments into the backend
-			this.updateAssignments(this.aAssignmetsWithTravelTime);
+			this._updateAssignments(this.aAssignmetsWithTravelTime);
 
 		},
 		/**
@@ -245,6 +245,44 @@ sap.ui.define([
 				Effort: nEffort,
 				TRAVEL_TIME: nTravelTime
 			};
+		},
+		/**
+		 * Method to save the updated assignments to backend after calculating the route
+		 * @param {Array} aAssignments
+		 * since 2205
+		 */
+		_updateAssignments: function (aAssignments) {
+			var oParams = {},
+				bIsLast = false;
+
+			//flags to prevent refresh after saving the updated assignments into the backend
+			this.bDoNotRefreshTree = true;
+			this.bDoNotRefreshCapacity = true;
+			for (var i = 0; i < aAssignments.length; i++) {
+				oParams = {
+					DateFrom: aAssignments[i].DateFrom,
+					TimeFrom: {
+						ms: aAssignments[i].DateFrom.getTime()
+					},
+					DateTo: aAssignments[i].DateTo,
+					TimeTo: {
+						ms: aAssignments[i].DateTo.getTime()
+					},
+					AssignmentGUID: aAssignments[i].Guid,
+					EffortUnit: aAssignments[i].EffortUnit,
+					Effort: aAssignments[i].Effort,
+					ResourceGroupGuid: aAssignments[i].ResourceGroupGuid,
+					ResourceGuid: aAssignments[i].ResourceGuid,
+					TravelTime: aAssignments[i].TRAVEL_TIME,
+					Distance: aAssignments[i].DISTANCE,
+					DistanceBack: aAssignments[i].DISTANCE_BACK
+				};
+				if (i === aAssignments.length - 1) {
+					bIsLast = true;
+					oParams.TravelBackTime = aAssignments[i].TRAVEL_BACK_TIME;
+				}
+				this.callFunctionImport(oParams, "UpdateAssignment", "POST", this._mParameters, bIsLast);
+			}
 		},
 	});
 });

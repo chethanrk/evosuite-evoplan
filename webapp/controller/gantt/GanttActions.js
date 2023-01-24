@@ -407,57 +407,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Validation of demand for resource qualification
-		 * 
-		 * @param {Array} aSourcePaths - collection of demand pathes
-		 * @param {String} targetObj - target resource for node ID
-		 * @param {Object} oTargetDate - new start date 
-		 * @param {Object} oNewEndDate - new end date
-		 * @param {Array} aGuids - collection of IDs from Demands
-		 **/
-		checkQualification: function (aSourcePaths, oTargetObj, oTargetDate, oNewEndDate, aGuids) {
-			var oQualificationParameters,
-				oModel = this.getModel(),
-				sDemandGuids = "",
-				sObjectId,
-				aItems = aSourcePaths ? aSourcePaths : aGuids;
-			return new Promise(function (resolve, reject) {
-				//collect all demand Guids for function import
-				for (var i = 0; i < aItems.length; i++) {
-					var sPath = aItems[i].sPath ? aItems[i].sPath : aItems[i];
-					if (sPath.indexOf("'") >= 0 && !aSourcePaths) {
-						sPath = sPath.split("'")[1];
-					}
-
-					var oDemandObj = oModel.getProperty(sPath);
-					var sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i];
-					if (sDemandGuids === "") {
-						sDemandGuids = sDemandGuid;
-					} else {
-						sDemandGuids = sDemandGuids + "//" + sDemandGuid;
-					}
-				}
-				sObjectId = oTargetObj.NodeId;
-				if (oTargetObj.NodeType === "ASSIGNMENT") {
-					sObjectId = oTargetObj.ObjectId;
-				}
-				oQualificationParameters = {
-					DemandMultiGuid: sDemandGuids,
-					ObjectId: sObjectId,
-					StartTimestamp: oTargetDate,
-					EndTimestamp: oNewEndDate ? oNewEndDate : oTargetDate
-				};
-				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(
-					function (oData, response) {
-						resolve({
-							params: oQualificationParameters,
-							result: oData
-						});
-					}, reject);
-			}.bind(this));
-		},
-
-		/**
 		 *
 		 * @param aSources - Demands as sources
 		 * @param oTarget - Resource as target
