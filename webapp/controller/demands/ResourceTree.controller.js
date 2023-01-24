@@ -272,8 +272,10 @@ sap.ui.define([
 		 * on drop on resource, triggers create assignment for dragged demands
 		 */
 		onDropOnResource: function (oEvent) {
-			var oDraggedControl = oEvent.getParameter("droppedControl"),
-				oContext = oDraggedControl.getBindingContext(),
+			var oDroppedControl = oEvent.getParameter("droppedControl"),
+			    oDraggedControl = oEvent.getParameter("draggedControl"),
+				oContext = oDroppedControl.getBindingContext(),
+				oDraggedContext = oDraggedControl.getBindingContext(),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
@@ -296,10 +298,16 @@ sap.ui.define([
 				return;
 			}
 
-			if (this._oViewModel.getProperty("/dragDropSetting/isReassign")) {
-				mParameter = {
+			mParameter = {
 					bFromHome: true
-				};
+			};
+			
+			//if its the same resource then update has to be called
+			if(oTargetData.ResourceGuid === oModel.getProperty(oDraggedContext.getPath()).ResourceGuid){
+				//call update
+				this.handleDropOnSameResource(this.assignmentPath, sPath, mParameter);
+			} else if (this._oViewModel.getProperty("/dragDropSetting/isReassign")) {
+				
 				this.getOwnerComponent()._getData(this.sDemandPath)
 					.then(function (oData) {
 						oViewModel.setProperty("/dragSession", [{

@@ -909,6 +909,24 @@ sap.ui.define([
 			}
 			return true;
 		},
+		
+		/**
+		 * This function is called when assignment is moved to different node under same resource
+		 * @author Giri
+		 * @params - assignmentPath - It is the path where the assignment is to be assigned
+		 *			 sResourcePath - It is path of Resource where it will be assigned
+		 *			 updateParameters - To differentiate between Home and map screen
+		 * */
+		handleDropOnSameResource: function (assignmentPath, sResourcePath, updateParameters) {
+			var mParams = {
+				$expand: "Demand"
+			};
+			this.getOwnerComponent()._getData(assignmentPath, null, mParams)
+				.then(function (oAssignData) {
+					this._setAssignmentDetail(oAssignData, sResourcePath);
+					this.updateAssignment(false, updateParameters);
+			}.bind(this));
+		},
 
 		/**
 		 * Setting dragged assignment to Assignment Model
