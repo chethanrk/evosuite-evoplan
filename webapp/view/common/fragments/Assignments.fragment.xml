@@ -32,22 +32,22 @@
 					<Column minScreenWidth="Tablet" demandPopin="true">
 						<Text text="{/#Demand/DateTo/@sap:label}"/>
 					</Column>
-					<Column minScreenWidth="Tablet" demandPopin="true">
+					<Column minScreenWidth="Tablet" demandPopin="true" visible="{= ${path: 'user>/ENABLE_MAP_FIELDS_IN_ASGNMT'}}">
 						<Text text="{/#Demand/TRAVEL_TIME/@sap:label}"/>
 					</Column>
-					<Column minScreenWidth="Tablet" demandPopin="true">
+					<Column minScreenWidth="Tablet" demandPopin="true" visible="{= ${path: 'user>/ENABLE_MAP_FIELDS_IN_ASGNMT'}}">
 						<Text text="{/#Demand/TRAVEL_BACK_TIME/@sap:label}"/>
 					</Column>
-					<Column minScreenWidth="Tablet" demandPopin="true">
+					<Column minScreenWidth="Tablet" demandPopin="true" visible="{= ${path: 'user>/ENABLE_MAP_FIELDS_IN_ASGNMT'}}">
 						<Text text="{/#Demand/TRAVEL_TIME_UNIT/@sap:label}"/>
 					</Column>
-					<Column minScreenWidth="Tablet" demandPopin="true">
+					<Column minScreenWidth="Tablet" demandPopin="true" visible="{= ${path: 'user>/ENABLE_MAP_FIELDS_IN_ASGNMT'}}">
 						<Text text="{/#Demand/DISTANCE/@sap:label}"/>
 					</Column>
-					<Column minScreenWidth="Tablet" demandPopin="true">
+					<Column minScreenWidth="Tablet" demandPopin="true" visible="{= ${path: 'user>/ENABLE_MAP_FIELDS_IN_ASGNMT'}}">
 						<Text text="{/#Demand/DISTANCE_BACK/@sap:label}"/>
 					</Column>
-					<Column minScreenWidth="Tablet" demandPopin="true">
+					<Column minScreenWidth="Tablet" demandPopin="true" visible="{= ${path: 'user>/ENABLE_MAP_FIELDS_IN_ASGNMT'}}">
 						<Text text="{/#Demand/DISTANCE_UNIT/@sap:label}"/>
 					</Column>
 					<Column minScreenWidth="Tablet" demandPopin="true" 
