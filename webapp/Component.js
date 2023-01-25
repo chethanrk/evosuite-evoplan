@@ -98,6 +98,13 @@ sap.ui.define([
 		 * @override
 		 */
 		init: function () {
+			// for Gantt calendar wrong week, setting the language as english-UK
+			var oCoreConfigurations = sap.ui.getCore().getConfiguration(),
+				sFormatLocale = oCoreConfigurations.getFormatLocale();
+
+			if (sFormatLocale === "en-US" || sFormatLocale === "en") {
+				oCoreConfigurations.setLanguage("en-GB");
+			}
 			// initialize the error handler with the component
 			this._oErrorHandler = new ErrorHandler(this);
 

@@ -457,7 +457,7 @@ sap.ui.define([
 			Fragment.byId(this._id, "idMangAbsAllocation").setVisible(false);
 			Fragment.byId(this._id, "idTimeAllocSlider").setValue(iDefaultDur);
 			this.sSource = "timeAlloc";
-			this._getMultiResourceAvailability(new Date(), oEndDate.setHours(23, 59, 59));
+			this._getMultiResourceAvailability(moment().startOf("day").toDate(), moment().endOf("day").toDate());
 			this.updateButtonsVisibility("CreateBlocker");
 		},
 		/**
@@ -924,7 +924,8 @@ sap.ui.define([
 				oData = {
 					ResourceGuid: "",
 					StartTimestamp: oStartDate,
-					EndTimestamp: oEndDate
+					EndTimestamp: oEndDate,
+					OperationType: "Create"
 				};
 			var iSliderPercent = Fragment.byId(this._id, "idTimeAllocSlider").getValue();
 
