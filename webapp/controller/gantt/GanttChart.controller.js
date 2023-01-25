@@ -2194,7 +2194,7 @@ sap.ui.define([
 		 * @Author Rakesh Sahu
 		 */
 		_updateResourceChildren: function (oResource) {
-			if (oResource.AssignmentSet && oResource.AssignmentSet.results.length > 0) {
+			if (oResource.AssignmentSet) {
 				oResource.children = oResource.AssignmentSet.results;
 				oResource.children.forEach(function (oAssignItem, idx) {
 					oResource.AssignmentSet.results[idx].NodeType = "ASSIGNMENT";
