@@ -832,6 +832,7 @@ sap.ui.define([
 		},
 		submitDemandTableChanges: function () {
 			var oModel = this.getModel();
+			this.bFromTable = true;
 			return new Promise(function (resolve, reject) {
 				oModel.submitChanges({
 					success: function (oData, oResponse) {
@@ -869,7 +870,13 @@ sap.ui.define([
 				}
 			}
 			this.getModel("viewModel").setProperty("/oResponseMessages", aMessages);
-			this.showResponseMessagePopup();
+			if(this.bFromTable){
+				this.bFromTable = false;
+				this.showResponseMessageToast();   //used for showing in MessageToast
+			} else {
+				this.showResponseMessagePopup(); //used to show in Messagebox
+			}
+			
 			this.getModel().resetChanges();
 		},
 
@@ -891,6 +898,18 @@ sap.ui.define([
 				this.oResponseMessagePopup.open();
 			}
 		},
+		
+		/**
+		 * Display the messages after inline edit success in Message Toast;
+		 * */
+		 showResponseMessageToast: function(){
+			var sMessages = this.getModel("viewModel").getProperty("/oResponseMessages");
+			sMessages = sMessages.map( function(item){
+				return item.message;
+			}).join("\n");
+			this.showMessageToast(sMessages);	
+		 },
+
 
 		/**
 		 * On close the response Message Pop up
