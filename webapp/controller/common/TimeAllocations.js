@@ -681,7 +681,8 @@ sap.ui.define([
 			var oData = {
 				ResourceGuid: this._resource,
 				StartTimestamp: Fragment.byId(this._id, "idUpdateFromDate").getDateValue(),
-				EndTimestamp: oEndDate.setHours(23, 59, 59)
+				EndTimestamp: oEndDate.setHours(23, 59, 59),
+				OperationType: "U"
 			};
 			this._callFunctionGetResourceAvailability(oData);
 		},
@@ -925,7 +926,7 @@ sap.ui.define([
 					ResourceGuid: "",
 					StartTimestamp: oStartDate,
 					EndTimestamp: oEndDate,
-					OperationType: "Create"
+					OperationType: "C"
 				};
 			var iSliderPercent = Fragment.byId(this._id, "idTimeAllocSlider").getValue();
 
