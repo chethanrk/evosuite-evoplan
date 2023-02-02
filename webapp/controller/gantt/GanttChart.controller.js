@@ -1340,6 +1340,12 @@ sap.ui.define([
 								this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 							}
 						}.bind(this));
+				}.bind(this),
+				function () {
+					if (sDummyPath) {
+						this.oGanttModel.setProperty(sDummyPath, null);
+						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+					}
 				}.bind(this)
 			);
 		},
@@ -1947,6 +1953,12 @@ sap.ui.define([
 							}
 						}.bind(this)
 					);
+				}.bind(this),
+				function () {
+					if (sDummyPath) {
+						this.oGanttModel.setProperty(sDummyPath, null);
+						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+					}
 				}.bind(this)
 			);
 		},

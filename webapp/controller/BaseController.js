@@ -1136,7 +1136,7 @@ sap.ui.define([
 		showSplitConfirmationDialog: function (oResourceAvailabiltyResponse) {
 			var oViewModel = this.getModel("viewModel"),
 				oi18nModel = this.getModel("i18n"),
-				sDisplayDemandInfo,
+				sDisplayDemandInfo, sCancelResponse, aDraggedDemands = [],
 
 				aDemandsForSplitAssignment = oResourceAvailabiltyResponse.arrayOfDemandsToSplit,
 				bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP");
@@ -1198,7 +1198,9 @@ sap.ui.define([
 									text: oi18nModel.getProperty("xbut.splitConfirmDialogCancel"),
 									press: function () {
 										this.oConfirmDialog.close();
-										this.dialogReject("Cancel");
+										aDraggedDemands = this.resourceAvailabiltyResponse && this.resourceAvailabiltyResponse.arrayOfDemands;
+										sCancelResponse = aDraggedDemands.length > 1 ? "Cancel_Multi" : "Cancel";
+										this.dialogReject(sCancelResponse);
 									}.bind(this)
 								})
 							]
@@ -1270,10 +1272,14 @@ sap.ui.define([
 		/**
 		 * catch for the split assignment method prmomises
 		 * 
-		 * @param {object} oResponse
+		 * @param {string} sResponse
 		 */
-		handlePromiseChainCatch: function (oResponse) {
-			//console.log(oResponse);
+		handlePromiseChainCatch: function (sResponse) {
+			if (sResponse === "Cancel" && this.rejectAssignment) {
+				this.rejectAssignment();
+			} else if (sResponse === "Cancel_Multi" && this.rejectMultiAssign) {
+				this.rejectMultiAssign();
+			}
 		},
 
 		/**

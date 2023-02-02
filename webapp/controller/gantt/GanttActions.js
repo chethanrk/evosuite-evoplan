@@ -143,9 +143,9 @@ sap.ui.define([
 		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
 		 */
 		checkAndExecuteSplitForGanttMultiAssign: function (aAssignments, mParameters, sResourceNodeType) {
-			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch)
-				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch)
-				.then(this.callRequiredFunctionImportsForMultiAssign.bind(this)).catch(this.handlePromiseChainCatch);
+			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch.bind(this))
+				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch.bind(this))
+				.then(this.callRequiredFunctionImportsForMultiAssign.bind(this)).catch(this.handlePromiseChainCatch.bind(this));
 		},
 
 		/**
@@ -321,9 +321,9 @@ sap.ui.define([
 		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
 		 */
 		checkAndExecuteSplitAssignments: function (aAssignments, mParameters, sResourceNodeType) {
-			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch)
-				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch)
-				.then(this.callRequiredFunctionImports.bind(this)).catch(this.handlePromiseChainCatch);
+			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch.bind(this))
+				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch.bind(this))
+				.then(this.callRequiredFunctionImports.bind(this)).catch(this.handlePromiseChainCatch.bind(this));
 		},
 
 		/**
