@@ -496,7 +496,7 @@ sap.ui.define([
 				}
 				Promise.all(aPromises).then(function (aPromiseAllResults, oResponse, bContainsError) {
 					if (aPromiseAllResults && aPromiseAllResults.length) {
-						this.handleResponsesToShowMessages.call(this._oView.getController(), aPromiseAllResults)
+						this.handleResponsesToShowMessages.call(this._oView.getController(), aPromiseAllResults,true);
 						this._refreshList();
 					}
 				}.bind(this));
@@ -616,8 +616,8 @@ sap.ui.define([
 		onSliderChange: function (oEvent) {
 			var iUpdatedBlockPer = oEvent.getParameters().value,
 				aAvailabilityData,
-				iActualAvailHours,
-				iUpdatedAvailableHour;
+				iActualAvailHours;
+
 			this._oViewModel.setProperty("/timeAllocations/createData", _.clone(this._oViewModel.getProperty("/timeAllocations/createDataCopy")));
 
 			aAvailabilityData = this._oViewModel.getProperty("/timeAllocations/createData");
@@ -626,8 +626,7 @@ sap.ui.define([
 					iActualAvailHours = aAvailabilityData[i].AVAILABLE_HOURS;
 					iActualAvailHours = iActualAvailHours.includes(",") ? iActualAvailHour.replace(",", ".") : iActualAvailHours;
 					if (iUpdatedBlockPer) {
-						iUpdatedAvailableHour = iActualAvailHours * (100 - iUpdatedBlockPer) * 0.01;
-						aAvailabilityData[i].BLOCKED_HOURS = parseFloat(iActualAvailHours - iUpdatedAvailableHour).toFixed(1);
+						aAvailabilityData[i].BLOCKED_HOURS = this._calculateBlockedHours(iActualAvailHours, iUpdatedBlockPer);
 					} else {
 						aAvailabilityData[i].BLOCKED_HOURS = 0;
 					}
@@ -646,16 +645,14 @@ sap.ui.define([
 		 */
 		onUpdateSliderChange: function (oEvent) {
 			var iUpdatedBlockPer = oEvent.getParameters().value,
-				iActualAvailHour = Fragment.byId(this._id, "idUpdateAvailablHour").getValue(),
-				iUpdatedAvailableHour;
+				iActualAvailHour = Fragment.byId(this._id, "idUpdateAvailablHour").getValue();
 
 			//replacing comma with dot as this property is getting used in calculations 	
 			if (iActualAvailHour.includes(",")) {
 				iActualAvailHour = iActualAvailHour.replace(",", ".");
 			}
 			if (iUpdatedBlockPer) {
-				iUpdatedAvailableHour = iActualAvailHour * (100 - iUpdatedBlockPer) * 0.01;
-				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(iActualAvailHour - iUpdatedAvailableHour);
+				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(this._calculateBlockedHours(iActualAvailHour, iUpdatedBlockPer));
 			} else {
 				Fragment.byId(this._id, "idUpdateAvailablHour").setValue(this.AVAILABLE_HOURS);
 				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(0);
@@ -705,7 +702,7 @@ sap.ui.define([
 			} else if (iUpdateBlockPercentag == 100) {
 				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(this.AVAILABLE_HOURS);
 			} else {
-				iUpdateBlockHr = iUpdateActualAvailHour - (iUpdateBlockPercentag * iUpdateActualAvailHour) * 0.01;
+				iUpdateBlockHr = this._calculateBlockedHours(iUpdateActualAvailHour, iUpdateBlockPercentag);
 				Fragment.byId(this._id, "idUpdateBlockdHour").setValue(iUpdateBlockHr);
 			}
 		},
@@ -929,11 +926,6 @@ sap.ui.define([
 					OperationType: "C"
 				};
 			var iSliderPercent = Fragment.byId(this._id, "idTimeAllocSlider").getValue();
-
-			var calculateBlockedHour = function (availableHour) {
-				return parseFloat(availableHour * (iSliderPercent / 100)).toFixed(1);
-			};
-
 			this._oDialog.setBusy(true);
 			this._dataDirty = true;
 			for (var i in this._aResourceGuids) {
@@ -948,7 +940,7 @@ sap.ui.define([
 						oData.push({
 							ResourceDescription: aPromiseAllResults[i][0].ResourceDescription,
 							AVAILABLE_HOURS: aPromiseAllResults[i][0].AVAILABLE_HOURS,
-							BLOCKED_HOURS: calculateBlockedHour(aPromiseAllResults[i][0].AVAILABLE_HOURS),
+							BLOCKED_HOURS: this._calculateBlockedHours(aPromiseAllResults[i][0].AVAILABLE_HOURS, iSliderPercent),
 							BlockPercentage: iSliderPercent
 						});
 					}
@@ -957,6 +949,16 @@ sap.ui.define([
 					this._oDialog.setBusy(false);
 				}
 			}.bind(this));
+		},
+		
+		/**
+		 * calculte blocked hours based on available hours and blocked percentage
+		 * @param availableHour
+		 * @param iSliderPercent
+		 * since Release/2301.2
+		 */
+		_calculateBlockedHours: function (iAvailableHour, iSliderPercent) {
+			return parseFloat(iAvailableHour * (iSliderPercent / 100)).toFixed(1);
 		}
 	});
 });

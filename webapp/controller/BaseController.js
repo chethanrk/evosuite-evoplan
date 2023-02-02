@@ -852,31 +852,35 @@ sap.ui.define([
 		 * and in the time allocation controller
 		 * @param oData
 		 */
-		handleResponsesToShowMessages: function (oData) {
+		handleResponsesToShowMessages: function (oData, bFromTimeAllocations) {
 			var aMultiResponses, aMessages = [],
 				oDetails, oResponseItem;
 			aMultiResponses = oData.length ? oData : oData.__batchResponses[0].__changeResponses;
 			for (var i in aMultiResponses) {
 				oResponseItem = aMultiResponses[i][1] ? aMultiResponses[i][1] : aMultiResponses[i];
 				oDetails = JSON.parse(oResponseItem.headers["sap-message"]).details;
-				if (oDetails && oDetails.length) {
-					for (var j in oDetails) {
-						if (JSON.stringify(aMessages).indexOf(JSON.stringify(oDetails[j].message)) === -1) {
-							aMessages.push(oDetails[j]);
-						}
-					}
-				} else {
+				if (bFromTimeAllocations) {
 					aMessages.push(JSON.parse(oResponseItem.headers["sap-message"]));
+				} else {
+					if (oDetails && oDetails.length) {
+						for (var j in oDetails) {
+							if (JSON.stringify(aMessages).indexOf(JSON.stringify(oDetails[j].message)) === -1) {
+								aMessages.push(oDetails[j]);
+							}
+						}
+					} else {
+						aMessages.push(JSON.parse(oResponseItem.headers["sap-message"]));
+					}
 				}
 			}
 			this.getModel("viewModel").setProperty("/oResponseMessages", aMessages);
-			if(this.bFromTable){
+			if (this.bFromTable) {
 				this.bFromTable = false;
-				this.showResponseMessageToast();   //used for showing in MessageToast
+				this.showResponseMessageToast(); //used for showing in MessageToast
 			} else {
 				this.showResponseMessagePopup(); //used to show in Messagebox
 			}
-			
+
 			this.getModel().resetChanges();
 		},
 
@@ -898,18 +902,17 @@ sap.ui.define([
 				this.oResponseMessagePopup.open();
 			}
 		},
-		
+
 		/**
 		 * Display the messages after inline edit success in Message Toast;
 		 * */
-		 showResponseMessageToast: function(){
+		showResponseMessageToast: function () {
 			var sMessages = this.getModel("viewModel").getProperty("/oResponseMessages");
-			sMessages = sMessages.map( function(item){
+			sMessages = sMessages.map(function (item) {
 				return item.message;
 			}).join("\n");
-			this.showMessageToast(sMessages);	
-		 },
-
+			this.showMessageToast(sMessages);
+		},
 
 		/**
 		 * On close the response Message Pop up
