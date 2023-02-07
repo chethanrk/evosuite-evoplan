@@ -1,8 +1,9 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentsController",
 	"com/evorait/evoplan/model/formatter",
-	"sap/ui/core/Fragment"
-], function (BaseController, formatter, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/m/MessageToast"
+], function (BaseController, formatter, Fragment,MessageToast) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.AssignInfoDialog", {
@@ -70,6 +71,9 @@ sap.ui.define([
 				oAssignment.ResourceGuid = oAssignData.ResourceGuid;
 				oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
 
+				oAssignment.SplitIndex = oAssignData.SPLIT_INDEX;
+				oAssignment.SplitCounter = oAssignData.SPLIT_COUNTER;
+
 				if (oView.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT")) {
 					oAssignment.OldEffort = oAssignData.Effort;
 					oAssignment.REMAINING_DURATION = oAssignData.REMAINING_DURATION;
@@ -86,24 +90,27 @@ sap.ui.define([
 				oAssignment.ResourceGroupDesc = oAssignmentData.GROUP_DESCRIPTION;
 				oAssignment.ResourceGuid = oAssignmentData.ResourceGuid;
 				oAssignment.ResourceDesc = oAssignmentData.RESOURCE_DESCRIPTION;
+
+				oAssignment.SplitIndex = oAssignmentData.SPLIT_INDEX;
+				oAssignment.SplitCounter = oAssignmentData.SPLIT_COUNTER;
 			}
 
 			this._oView = oView;
 			this._mParameters = mParameters || {
 				bFromHome: true
 			};
-			if(this._mParameters.bFromPlannCal) {
+			if (this._mParameters.bFromPlannCal) {
 				oAssignment.DateFrom = data.DateFrom;
-				oAssignment.DateTo = data.DateTo; 
+				oAssignment.DateTo = data.DateTo;
 			}
 			// setting the flag to hide show go to details button
-			if(mParameters){
-				if(mParameters.hasOwnProperty("bFromDetail")){
-					if(mParameters.bFromDetail===true){
-						oAssignment.ShowGoToDetailBtn=false;						
+			if (mParameters) {
+				if (mParameters.hasOwnProperty("bFromDetail")) {
+					if (mParameters.bFromDetail === true) {
+						oAssignment.ShowGoToDetailBtn = false;
 					}
 				}
-			}                         
+			}
 			this.oAssignmentModel.setData(oAssignment);
 
 			//Set the ResourceGroupGuid 
@@ -128,9 +135,8 @@ sap.ui.define([
 			}
 			this._getAssignedDemand(oAssignementPath, data);
 			this._assignmentGuid = oAssignment.AssignmentGuid;
-			// open dialog
-			//oDialog.open();
 		},
+
 		/**
 		 * Method get triggers when user selects any perticular unit from value help
 		 * and outputs the same in input
@@ -164,7 +170,7 @@ sap.ui.define([
 						"/NewAssignPath") + "/ResourceGuid");
 				}
 
-				if (Number(iNewEffort) < Number(sEffort)) {
+				if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGN_EFFORT_POPUP") && Number(iNewEffort) < Number(sEffort)) {
 					this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
 						if (oAction === "YES") {
 							this.onSaveAssignments();
@@ -217,10 +223,24 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onDeleteAssignment: function (oEvent) {
-			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid");
+			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid"),
+
+				sDemandGuid = this.oAssignmentModel.getProperty("/DemandGuid"),
+				sSplitIndex = this.oAssignmentModel.getProperty("/SplitIndex"),
+				sSplitCounter = this.oAssignmentModel.getProperty("/SplitCounter"),
+				bSplitGlobalConfigEnabled = this._oView.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN");
+			
 			if (this._mParameters && this._mParameters.bFromPlannCal) {
 				this._eventBus.publish("AssignInfoDialog", "refreshAssignment", {
 					unassign: true
+				});
+			} else if (bSplitGlobalConfigEnabled && sSplitIndex > 0 && sSplitCounter > 0) {
+				this._eventBus.publish("AssignInfoDialog", "deleteSplitAssignments", {
+					assignmentGuid: sId,
+					DemandGuid: sDemandGuid,
+					splitIndex: sSplitIndex,
+					splitCounter: sSplitCounter,
+					parameters: this._mParameters
 				});
 			} else {
 				this._eventBus.publish("AssignInfoDialog", "deleteAssignment", {
@@ -269,7 +289,6 @@ sap.ui.define([
 			this._oDialog.unbindElement();
 			this.oAssignmentModel.setProperty("/AllowUnassign", false);
 			this.reAssign = false; // setting to default on close of Dialog
-			// this.oAssignmentModel.setData({});// Commented to have data in Qualification Match Dialog Methods:by Rakesh Sahu
 		},
 
 		/**
@@ -312,7 +331,7 @@ sap.ui.define([
 				Notification: "",
 				isNewAssignment: false,
 				showError: false,
-				ShowGoToDetailBtn:true
+				ShowGoToDetailBtn: true
 			};
 		},
 
@@ -325,27 +344,6 @@ sap.ui.define([
 			var sPath = sBindPath,
 				oDialog = this._oDialog,
 				oModel = this.oAssignmentModel;
-
-			/*oDialog.bindElement({
-				path: sPath,
-				parameters: {
-					expand: "Demand"
-				},
-				events: {
-					change: function () {
-						var oElementBinding = oDialog.getElementBinding();
-						oElementBinding.refresh();
-						var	oContext = oElementBinding.getBoundContext(),
-							oDemandData;
-
-						// oDateToField = sap.ui.getCore().byId("idDateToAssignInf");
-
-						if (!oContext) {
-							oModel.setProperty("/showError", true);
-							return;
-						}*/
-			//Setting min date to DateTo to restrict selection of invalid dates
-			// oDateToField.setMinDate(oContext.getProperty("DateFrom"));
 
 			oModel.setProperty("/showError", false);
 			if (oModel.getProperty("/DateFrom") === "" || oModel.getProperty("/DateTo") === "") {
@@ -372,15 +370,6 @@ sap.ui.define([
 			oModel.setProperty("/DemandGuid", oDemandData.Guid);
 			oModel.setProperty("/Notification", oDemandData.NOTIFICATION);
 			oModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
-			/*},
-					dataRequested: function () {
-						oDialog.setBusy(true);
-					},
-					dataReceived: function () {
-						oDialog.setBusy(false);
-					}
-				}
-			});*/
 
 		},
 
@@ -545,11 +534,10 @@ sap.ui.define([
 				bValidEffort = true;
 			if (this._oView.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && sObjectSourceType === "DEM_PSNW") {
 				if (sEffort.toString().includes("-") || Number(sEffort) <= 0) {
-					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.validEffort"));
+					this.showMessageToast(this._oView.getController().getResourceBundle().getText("ymsg.validEffort"));
 					bValidEffort = false;
 				} else if (Number(sOldEffort) + Number(sRemainingDuration) < Number(sEffort)) {
-					sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration") + sTotalEffort + " " +
-						sEffortUnit);
+					this.showMessageToast(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration",[sTotalEffort,sEffortUnit]));
 					bValidEffort = false;
 				}
 			}

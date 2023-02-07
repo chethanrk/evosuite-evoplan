@@ -8,9 +8,9 @@
 				<uxap:ObjectPageHeader class="sapUiNoContentPadding" objectImageURI="{STATUS_ICON}" objectImageShape="Circle" objectTitle="{DemandDesc}"
 					objectSubtitle="{ExtKey}" objectImageAlt="{i18n>xfld.demandName}" id="ObjectPageLayoutHeaderTitle">
 					<uxap:actions>
-						<core:ExtensionPoint name="PageExtP|DemandDetail|DemandSet|ObjectPageHeaderActionButton|Before" />
+						<core:ExtensionPoint name="PageExtP|DemandDetail|DemandSet|ObjectPageHeaderActionButton|Before"/>
 						<uxap:ObjectPageHeaderActionButton id="idAssignHeaderAction" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" type="Emphasized"
-							hideIcon="false" hideText="false" press="onClickAssign" visible="{ALLOW_ASSIGN}">
+							hideIcon="false" hideText="false" press="onClickAssign" visible="{ALLOW_ASSIGN}" enabled="{viewModel>/validateIW32Auth}">
 							<uxap:dependents>
 								<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.ActionSheetTemplate" type="XML"/>
 							</uxap:dependents>
@@ -18,21 +18,18 @@
 						<uxap:ObjectPageHeaderActionButton id="idSetFunctionHeaderAction" text="{i18n>xbut.buttonExecuteFunction}"
 							tooltip="{i18n>xbut.buttonExecuteFunction}" type="Emphasized" hideIcon="false" hideText="false" press="onClickSetFunction"
 							visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_SET_FUNCTION'}], formatter: '.getSetFunction' }">
-							<!--<uxap:dependents>-->
-							<!--	<core:Fragment fragmentName="com.evorait.evoplan.ui.templates.ActionSheetTemplate" type="XML"/>-->
-							<!--</uxap:dependents>-->
 						</uxap:ObjectPageHeaderActionButton>
 						<uxap:ObjectPageHeaderActionButton id="idStatusHeaderAction" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
 							visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_CHANGE_STATUS'},{path :'user>/ENABLE_ASSIGNMENT_STATUS'}], formatter: '.getVisible' }"
-							hideIcon="false" hideText="false" press="onClickAction"/>
+							hideIcon="false" hideText="false" press="onClickAction" enabled="{viewModel>/validateIW32Auth}"/>
 						<Button text="{i18n>xbut.buttonBack}" tooltip="{i18n>xbut.buttonBack}" type="Default" press="navBack"/>
-						<core:ExtensionPoint name="PageExt|DemandDetail|DemandSet|ObjectPageHeaderActionButton|After" />
+						<core:ExtensionPoint name="PageExt|DemandDetail|DemandSet|ObjectPageHeaderActionButton|After"/>
 					</uxap:actions>
 					<uxap:breadcrumbs>
-						<core:ExtensionPoint name="PageExt|DemandSet|DemandDetail|Breadcrumbs" >
-						<Breadcrumbs currentLocationText="{i18n>xtit.demandDetail}">
-							<Link text="{viewModel>/detailPageBreadCrum}" press="navBack"/>
-						</Breadcrumbs>
+						<core:ExtensionPoint name="PageExt|DemandSet|DemandDetail|Breadcrumbs">
+							<Breadcrumbs currentLocationText="{i18n>xtit.demandDetail}">
+								<Link text="{viewModel>/detailPageBreadCrum}" press="navBack"/>
+							</Breadcrumbs>
 						</core:ExtensionPoint>
 					</uxap:breadcrumbs>
 				</uxap:ObjectPageHeader>
@@ -61,7 +58,7 @@
 								</uxap:ObjectPageSection>
 							</template:then>
 							<template:elseif test="{:= (${contentTabs>Org.OData.Core.V1.Description/String} === 'Table')}">
-								<core:ExtensionPoint name="SectionExtP|DemandDetail|{:= ${contentTabs>Org.OData.Core.V1.LongDescription/String} }|Before" />
+								<core:ExtensionPoint name="SectionExtP|DemandDetail|{:= ${contentTabs>Org.OData.Core.V1.LongDescription/String} }|Before"/>
 								<uxap:ObjectPageSection title="{path:'contentTabs>com.sap.vocabularies.Common.v1.Label',formatter:'.AH.format'}">
 									<uxap:subSections>
 										<uxap:ObjectPageSubSection>
@@ -81,19 +78,19 @@
 										</uxap:ObjectPageSubSection>
 									</uxap:subSections>
 								</uxap:ObjectPageSection>
-								<core:ExtensionPoint name="SectionExtP|DemandDetail|{:= ${contentTabs>Org.OData.Core.V1.LongDescription/String} }|After" />
+								<core:ExtensionPoint name="SectionExtP|DemandDetail|{:= ${contentTabs>Org.OData.Core.V1.LongDescription/String} }|After"/>
 							</template:elseif>
 						</template:if>
 					</template:repeat>
 				</template:with>
 			</uxap:sections>
 			<uxap:footer>
-					<OverflowToolbar id="idDemandDetailsFooter" visible="false">
-						<core:ExtensionPoint name="PageExtP|DemandDetail|DemandSet|Footer|Left"/>
-						<ToolbarSpacer/>
-						<core:ExtensionPoint name="PageExtP|DemandDetail|DemandSet|Footer|Right"/>
-					</OverflowToolbar>
-				</uxap:footer>
+				<OverflowToolbar id="idDemandDetailsFooter" visible="false">
+					<core:ExtensionPoint name="PageExtP|DemandDetail|DemandSet|Footer|Left"/>
+					<ToolbarSpacer/>
+					<core:ExtensionPoint name="PageExtP|DemandDetail|DemandSet|Footer|Right"/>
+				</OverflowToolbar>
+			</uxap:footer>
 		</uxap:ObjectPageLayout>
 	</template:alias>
 </mvc:View>

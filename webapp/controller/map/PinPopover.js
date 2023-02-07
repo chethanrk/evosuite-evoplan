@@ -7,8 +7,9 @@ sap.ui.define([
 	"com/evorait/evoplan/model/Constants",
 	"com/evorait/evoplan/controller/TemplateRenderController",
 	"com/evorait/evoplan/controller/common/ResourceTreeFilterBar",
-	"com/evorait/evoplan/controller/map/MapUtilities"
-], function (Controller, OverrideExecution, Log, Fragment, DatePicker, Constants, TemplateRenderController, ResourceTreeFilterBar, MapUtilities) {
+	"com/evorait/evoplan/controller/map/MapUtilities",
+	"sap/m/MessageToast"
+], function (Controller, OverrideExecution, Log, Fragment, DatePicker, Constants, TemplateRenderController, ResourceTreeFilterBar, MapUtilities,MessageToast) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.map.PinPopover", {
@@ -251,7 +252,7 @@ sap.ui.define([
 					}.bind(this)
 				});
 			} else {
-				this.oController._showAssignErrorDialog([oData.DemandDesc]);
+				this.oController._showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
 			}
 		},
 
@@ -355,7 +356,6 @@ sap.ui.define([
 						$expand: "DemandToAssignment"
 					},
 					success: function (oAssignmentData) {
-						//fCheckResourceHierarchyData(oData, fResolve);
 						fResolve(oAssignmentData);
 					}
 				});
@@ -402,7 +402,7 @@ sap.ui.define([
 						return this.getOwnerComponent().readData("/ResourceSet", [aResourceFilters]);
 					} else {
 						this.oPopover.close();
-						sap.m.MessageToast.show(this.oController.getResourceBundle().getText("ymsg.noAssignmentsOfDemand"));
+						MessageToast.show(this.oController.getResourceBundle().getText("ymsg.noAssignmentsOfDemand"));
 					}
 				}.bind(this)).then(function (oResourceData) {
 					oResource = oResourceData.results && oResourceData.results.length > 0 && oResourceData.results[0];
@@ -411,14 +411,14 @@ sap.ui.define([
 						return this.getOwnerComponent().readData("/AssignmentSet", [aAssignmentFilters]);
 					} else {
 						this.oPopover.close();
-						sap.m.MessageToast.show(this.oController.getResourceBundle().getText("ymsg.noResourceOfAssignment"));
+						MessageToast.show(this.oController.getResourceBundle().getText("ymsg.noResourceOfAssignment"));
 					}
 				}.bind(this)).then(function (aAssignments) {
 					if (aAssignments.results && aAssignments.results.length && aAssignments.results.length > 0) {
 						return this.getOwnerComponent().MapProvider.getRoutePolyline(oResource, aAssignments.results);
 					} else {
 						this.oPopover.close();
-						sap.m.MessageToast.show(this.oController.getResourceBundle().getText("ymsg.noAssignmentsOfDemand"));
+						MessageToast.show(this.oController.getResourceBundle().getText("ymsg.noAssignmentsOfDemand"));
 					}
 				}.bind(this)).then(function (oResponse) {
 					var oLayer = {};

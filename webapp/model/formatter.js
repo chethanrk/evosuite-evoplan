@@ -548,18 +548,18 @@ sap.ui.define([
 		 * @param bEnableResize
 		 * @return {*}
 		 */
-		formatResizeEnable: function (bEnableDragDrop, bEnableResize, sObjectType) {
+		formatResizeEnable: function (bEnableDragDrop, bEnableResize, sObjectType, bAuthCheck) {
 			if (sObjectType === "ASSET") {
 				return false;
 			}
-			return bEnableResize;
+			return Boolean(bEnableResize && bAuthCheck);
 		},
 		/**
 		 *
 		 */
-		formatDragAndDropEnable: function (bDragDrop, sObjectType) {
+		formatDragAndDropEnable: function (bDragDrop, sObjectType, bAuthCheck) {
 			if (bDragDrop && sObjectType !== "ASSET") {
-				return true;
+				return bAuthCheck;
 			}
 			return false;
 		},
@@ -752,7 +752,7 @@ sap.ui.define([
 		formatMapSpot: function (oLatitude, oLongitude) {
 			if (oLatitude && oLongitude) {
 				if (oLatitude === "0.000000000000" && oLongitude === "0.000000000000") {
-					return "0;0;0"; //return "";
+					return "0;0;0"; 
 				} else {
 					return oLatitude + ";" + oLongitude + ";0";
 				}
@@ -762,16 +762,9 @@ sap.ui.define([
 			if (sDes) {
 				return sDes;
 			}
-			// switch (sDes) {
-			// case "Florian Hard":
-			// 	return "#ff6060";
-			// case "Olaf Hartmann":
-			// 	return "#6BDE6B";
-			// default:
 			return "";
-
-			// }
 		},
+		
 		setVisibilityDeleteButton: function (sNodeType) {
 			if (sNodeType === "RES_GROUP") {
 				return false;
@@ -1050,5 +1043,15 @@ sap.ui.define([
 			}
 			return "";
 		},
+
+		/**
+		 * @Author Bhumika
+		 * Decide the visibility of edit button in Demand list
+		 * @param sEdit, bAuthCheck
+		 * @return {Boolean}
+		 */
+		editBtnVisibility: function (sEdit, bAuthCheck) {
+			return Boolean(sEdit && bAuthCheck);
+		}
 	};
 });

@@ -4,8 +4,9 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/core/Fragment"
-], function (BaseController, models, formatter, Filter, FilterOperator, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/m/MessageToast"
+], function (BaseController, models, formatter, Filter, FilterOperator, Fragment,MessageToast) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.NetworkAssignment", {
@@ -110,13 +111,11 @@ sap.ui.define([
 				oContext = oSource.getBindingContext(),
 				sRemainingHrs = oContext.getObject().REMAINING_DURATION,
 				oResourceBundle = this._oView.getController().getResourceBundle();
-			var msg = oResourceBundle.getText("ymsg.negativeLineItemDuration") + oContext.getObject().ORDERID +
-				" " + oResourceBundle.getText("ymsg.negativeDuration") + oContext.getObject().OPERATIONID;
+			var sMsg = oResourceBundle.getText("ymsg.negativeLineItemDuration", [oContext.getObject().ORDERID, oContext.getObject().OPERATIONID]);
 			if (sDurationHrs.includes("-") || Number(sDurationHrs) <= 0) {
-				sap.m.MessageToast.show(msg);
-				//sap.m.MessageToast.show(this._oView.getController().getResourceBundle().getText("ymsg.negativeDuration"));
+				this.showMessageToast(sMsg);
 			} else if (Number(sDurationHrs) > Number(sRemainingHrs)) {
-				sap.m.MessageToast.show(msg); //sap.m.MessageToast.show(oResourceBundle.getText("ymsg.invalidChangeDuration"));
+				this.showMessageToast(sMsg);
 			}
 		},
 
@@ -133,15 +132,13 @@ sap.ui.define([
 				var oContext = aItems[i].getBindingContext(),
 					oItem = oContext.getObject();
 				iCount = Number(i) + 1;
-				var msg = oResourceBundle.getText("ymsg.negativeLineItemDuration") + oItem.ORDERID + " " + oResourceBundle.getText(
-					"ymsg.negativeDuration") + oItem.OPERATIONID;
+				var sMsg = oResourceBundle.getText("ymsg.negativeLineItemDuration", [oItem.ORDERID, oItem.OPERATIONID]);
 				if (oItem.DURATION.includes("-") || Number(oItem.DURATION) <= 0) {
-					sap.m.MessageToast.show(msg);
+					this.showMessageToast(sMsg);
 					bValid = false;
 					break;
 				} else if (Number(oItem.DURATION) > Number(oItem.REMAINING_DURATION)) {
-					//sap.m.MessageToast.show(oResourceBundle.getText("ymsg.invalidDuration") + iCount);
-					sap.m.MessageToast.show(msg);
+					this.showMessageToast(sMsg);
 					bValid = false;
 					break;
 				}

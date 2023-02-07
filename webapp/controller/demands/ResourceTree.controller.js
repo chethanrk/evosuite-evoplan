@@ -128,24 +128,12 @@ sap.ui.define([
 				this.byId("showPlanCalendar").setEnabled(true);
 				this.byId("idButtonreassign").setEnabled(true);
 				this.byId("idButtonunassign").setEnabled(true);
+				this.byId("idButtonTimeAllocNew").setEnabled(true);
 			} else {
+				this.byId("idButtonTimeAllocNew").setEnabled(false);
 				this.byId("showPlanCalendar").setEnabled(false);
 				this.byId("idButtonreassign").setEnabled(false);
 				this.byId("idButtonunassign").setEnabled(false);
-			}
-			// Disable the Manage absence button when more than one resources are selected
-			// Disble the button for the selection on Group and Pool Node.
-			if (this.selectedResources.length === 1) {
-				oSelectedData = this.getModel().getProperty(this.selectedResources[0]);
-				if (oParams.selected && oNewNode.NodeType === "RESOURCE" && oNewNode.ResourceGuid !== "" && oNewNode.ResourceGroupGuid !== "") {
-					this.byId("idButtonCreUA").setEnabled(true);
-				} else if (oSelectedData.NodeType === "RESOURCE" && oSelectedData.ResourceGuid !== "" && oSelectedData.ResourceGroupGuid !== "") {
-					this.byId("idButtonCreUA").setEnabled(true);
-				} else {
-					this.byId("idButtonCreUA").setEnabled(false);
-				}
-			} else {
-				this.byId("idButtonCreUA").setEnabled(false);
 			}
 		},
 
@@ -284,8 +272,10 @@ sap.ui.define([
 		 * on drop on resource, triggers create assignment for dragged demands
 		 */
 		onDropOnResource: function (oEvent) {
-			var oDraggedControl = oEvent.getParameter("droppedControl"),
-				oContext = oDraggedControl.getBindingContext(),
+			var oDroppedControl = oEvent.getParameter("droppedControl"),
+			    oDraggedControl = oEvent.getParameter("draggedControl"),
+				oContext = oDroppedControl.getBindingContext(),
+				oDraggedContext = oDraggedControl.getBindingContext(),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
@@ -308,10 +298,16 @@ sap.ui.define([
 				return;
 			}
 
-			if (this._oViewModel.getProperty("/dragDropSetting/isReassign")) {
-				mParameter = {
+			mParameter = {
 					bFromHome: true
-				};
+			};
+			
+			//if its the same resource then update has to be called
+			if(oTargetData.ResourceGuid === oModel.getProperty(oDraggedContext.getPath()).ResourceGuid){
+				//call update
+				this.handleDropOnSameResource(this.assignmentPath, sPath, mParameter);
+			} else if (this._oViewModel.getProperty("/dragDropSetting/isReassign")) {
+				
 				this.getOwnerComponent()._getData(this.sDemandPath)
 					.then(function (oData) {
 						oViewModel.setProperty("/dragSession", [{
@@ -370,7 +366,7 @@ sap.ui.define([
 				this.resetChanges();
 				if (oTreeBinding && !this._bFirsrTime) {
 					this.mTreeState = this._getTreeState();
-					this._oDroppableTable.rebindTable(); //oTreeBinding.refresh();
+					this._oDroppableTable.rebindTable(); 
 				}
 			}
 			this._bFirsrTime = false;
@@ -400,7 +396,7 @@ sap.ui.define([
 			this.byId("showPlanCalendar").setEnabled(false);
 			this.byId("idButtonreassign").setEnabled(false);
 			this.byId("idButtonunassign").setEnabled(false);
-			this.byId("idButtonCreUA").setEnabled(false);
+			this.byId("idButtonTimeAllocNew").setEnabled(false);
 		},
 		/**
 		 * On select of capacitive checkbox the adjusting splitter length

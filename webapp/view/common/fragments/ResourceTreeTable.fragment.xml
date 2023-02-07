@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:table="sap.ui.table"
 	xmlns:l="sap.ui.layout" xmlns:dnd="sap.ui.core.dnd" xmlns:controls="com.evorait.evoplan.ui.controls">
-	<smartTable:SmartTable id="droppableTable" entitySet="{viewModel>/treeSet}" class="listTreeTable" tableType="TreeTable" fitContainer="true"
+	<smartTable:SmartTable id="droppableTable" entitySet="ResourceHierarchySet" class="listTreeTable" tableType="TreeTable" fitContainer="true"
 		useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false" smartFilterId="resourceTreeFilterBar"
 		header="Hierarchy" showRowCount="false" beforeRebindTable="onBeforeRebindTable" enableAutoBinding="true"
 		requestAtLeastFields="StatusIcon,IsSelected,NodeId,ResourceGroupGuid,NodeType,ResourceGuid,DemandGuid,ParentNodeId,AssignmentGuid,HierarchyLevel,DrillState,Description,AssignmentCount,Utilization,StartDate,StartTime,EndDate,EndTime,IS_AVAILABLE,TOTAL_EFFORT,ACTUAL_WORKING_HOURS,PLANNED_WORKING_HOURS,CAPACITIVE_EFFORT,ASSIGNMENT_TYPE,ResourceIcon,GANTT_ENABLED,RES_ASGN_START_DATE,RES_ASGN_START_TIME,RES_ASGN_END_DATE,RES_ASGN_END_TIME,REQUIREMENT_PROFILE_ID,REQUIREMENT_PROFILE_COLOR,ISEXTERNAL,RES_ASGN_AVAILABILITY_FLAG">
@@ -27,11 +27,7 @@
 							workTime="{path:'ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}"
 							highlightColor="{ path:'REQUIREMENT_PROFILE_COLOR', formatter:'.formatter.formatHighlighter'}"
 							isPlannerIconVisible="{ parts:[{path: 'NodeType'}, {path:'viewModel>/resourceTreeShowRouteColumn'}], formatter: '.formatter.decidePlannerIconVisiblity' }"
-							nodeType="{path:'NodeType'}" nodeIconColor="{path:'RES_ASGN_AVAILABILITY_FLAG', formatter: '.formatter.formatNodeIconColor' }">
-							<!--<controls:customData>
-								<core:CustomData key="objectId" value="{NodeId}" writeToDom="true"></core:CustomData>
-							</controls:customData>-->
-						</controls:CustomTitle>
+							nodeType="{path:'NodeType'}" nodeIconColor="{path:'RES_ASGN_AVAILABILITY_FLAG', formatter: '.formatter.formatNodeIconColor' }"></controls:CustomTitle>
 					</table:template>
 				</table:Column>
 				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="4.5rem" hAlign="End"

@@ -27,6 +27,8 @@ sap.ui.define([
 			this._eventBus.subscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
 			this._eventBus.subscribe("PlanningCalendarDialog", "saveAllAssignments", this._triggerSaveAllAssignments, this);
 
+			this._eventBus.subscribe("AssignInfoDialog", "deleteSplitAssignments", this._triggerDeleteSplitAssignments, this);
+
 			var oViewModel,
 				fnSetAppNotBusy,
 				iOriginalBusyDelay = this.getView().getBusyIndicatorDelay(),
@@ -139,7 +141,6 @@ sap.ui.define([
 				break;
 
 			case oResourceBundle.getText("xbut.pageWeeklyPlanner"):
-				//oRouter.navTo("TestFull", {});
 				break;
 			case oResourceBundle.getText("xbut.pageMessageCockpit"):
 				if (this._routeValidation("ENABLE_EMP")) {
@@ -320,7 +321,7 @@ sap.ui.define([
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 			} else if (sRoute === "splitDemands") {
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-			} else if (sRoute === "detail") {
+			} else if (sRoute === "DemandDetail") {
 				/* No action require */
 			} else if (sRoute === "map") {
 				this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
@@ -380,6 +381,21 @@ sap.ui.define([
 				this.deleteAssignment(oData.sId, oData.parameters);
 			} else if (sEvent === "bulkDeleteAssignment") {
 				this.bulkDeleteAssignment(oData.aContexts, oData.parameters);
+			}
+		},
+
+		/**
+		 * Triggers the unassign for split assignments 
+		 * 
+		 * @param {string} sChanel 
+		 * @param {string} sEvent 
+		 * @param {object} oData 
+		 */
+		_triggerDeleteSplitAssignments: function(sChanel, sEvent, oData) {
+			if (sEvent === "deleteSplitAssignments") {
+				// ask for user confirmation that related splits of the selected assignment will also be unassigned
+				this.deleteSplitsUserConfirm(oData).catch(this._catchError.bind(this))
+				.then(this.deleteSplitAssignments.bind(this)).catch(this._catchError.bind(this));	
 			}
 		},
 
@@ -446,6 +462,7 @@ sap.ui.define([
 			this._eventBus.unsubscribe("AssignInfoDialog", "deleteAssignment", this._triggerDeleteAssign, this);
 			this._eventBus.unsubscribe("AssignActionsDialog", "bulkDeleteAssignment", this._triggerDeleteAssign, this);
 			this._eventBus.unsubscribe("PlanningCalendarDialog", "saveAllAssignments", this._triggerSaveAllAssignments, this);
+			this._eventBus.subscribe("AssignInfoDialog", "deleteSplitAssignments", this._triggerDeleteSplitAssignments, this);
 		},
 
 		/**
@@ -458,17 +475,23 @@ sap.ui.define([
 				sText = oEvent.getSource().getText(),
 				oResourceBundleText = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
 				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode"),
-				sServicePath = "https://" + this.getModel("user").getProperty("/ServerPath");
+				sServicePath = "https://" + this.getModel("user").getProperty("/ServerPath"),
+				aNavLinks = this.getModel("navLinks").getData(),
+				aSelectedLinkData,
+				sSemanticObj,
+				sAction;
 
-			if (sText === oResourceBundleText.getText("xtit.evoOrderRelate")) {
-				sUri = sServicePath + this.getModel("user").getProperty("/DEFAULT_EVOORDERRELATE_URL");
-			} else if (sText === oResourceBundleText.getText("xtit.evoResource")) {
-				sUri = sServicePath + this.getModel("user").getProperty("/DEFAULT_EVORESOURCE_URL");
-			}
-
+			aSelectedLinkData = aNavLinks.filter(function (item) {
+				return item.ApplicationName === sText;
+			});
 			//Logic for Navigation in BSP application
 			if (sLaunchMode === Constants.LAUNCH_MODE.BSP) {
+				sUri = sServicePath + aSelectedLinkData[0].Value1;
 				window.open(sUri, "_blank");
+			} else if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
+				sSemanticObj = aSelectedLinkData[0].Value1.split("\\\\_\\\\")[0];
+				sAction = aSelectedLinkData[0].Value1.split("\\\\_\\\\")[1];
+				this.navToApp(sSemanticObj, sAction, "", "");
 			}
 		}
 	});

@@ -60,9 +60,8 @@ sap.ui.define([
 			this.setModel(oTimeAllocModel, "timeAlloc");
 			// Set default date range
 			this._setDefaultDateRange();
-			// this._oMessagePopover = sap.ui.getCore().byId("idMessagePopover");
-			// this.getView().addDependent(this._oMessagePopover);
 		},
+		
 		/**
 		 * Similar to onAfterRendering, but this hook is invoked before the controller's View is re-rendered
 		 * (NOT before the first rendering! onInit() is used for that one!).
@@ -202,7 +201,7 @@ sap.ui.define([
 					this._aSelectedDemands.push(oSelectedDemand);
 				}
 				if (this._aSelectedDemands.length > 0) {
-					this.byId("assignButton").setEnabled(true);
+					this.byId("assignButton").setEnabled(this.getModel("viewModel").getProperty("/validateIW32Auth"));
 				} else {
 					this.byId("assignButton").setEnabled(false);
 				}
@@ -378,18 +377,9 @@ sap.ui.define([
 				oData = oModel.getProperty(sPath);
 			this._selectedAsset = oData;
 			// Disable header buttons
-			this._enableHeaderButton(true);
+			this.getModel("viewModel").setProperty("/bBtnEnabled", true);
 		},
-		/**
-		 * @Author Rahul
-		 * @since 2.1
-		 * @param bState:boolean to set enabled property
-		 * @private
-		 */
-		_enableHeaderButton: function (bState) {
-			this.byId("idCreateBut").setEnabled(bState);
-			this.byId("idTimeAlloBut").setEnabled(bState);
-		},
+
 		/**
 		 * Clears the Time Allocation fields
 		 * @since 2.1
@@ -460,7 +450,7 @@ sap.ui.define([
 				aAllFilters.push(oPlanningDataTypeFilter);
 			}
 			oBinding.filter(aAllFilters);
-			this._enableHeaderButton(false);
+			this.getModel("viewModel").setProperty("/bBtnEnabled", false);
 			this.byId("assignButton").setEnabled(false);
 			this._aSelectedDemands = [];
 		},
@@ -532,8 +522,8 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onMessagePopoverPress: function (oEvent) {
-			// this._oMessagePopover.openBy(oEvent.getSource());
 		},
+		
 		/**
 		 * Multi Assignment from asset view. Opens the Tree table dialog to select resource
 		 * @since 2.1

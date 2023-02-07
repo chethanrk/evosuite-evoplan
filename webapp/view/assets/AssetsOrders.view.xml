@@ -19,10 +19,11 @@
 								<core:CustomData key="type" value="A"/>
 							</customData>
 						</CheckBox>
-						<Button id="idCreateBut" text="{i18n>xbut.createOrder}" visible="{user>/ENABLE_ORDER_CREATE}"  tooltip="{i18n>xbut.createOrder}" press="createOrder" enabled="false"
+						<Button id="idCreateBut" text="{i18n>xbut.createOrder}" visible="{user>/ENABLE_ORDER_CREATE}" tooltip="{i18n>xbut.createOrder}"
+							press="createOrder" enabled="{ parts:[ 'viewModel>/bBtnEnabled', 'viewModel>/validateIW31Auth'], formatter:'.formatter.editBtnVisibility' }"
 							type="Emphasized"/>
-						<Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" visible="{user>/ENABLE_CREATE_ASSET_TIME_ALLOC}" tooltip="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc" enabled="false"
-							type="Emphasized"/>
+						<Button id="idTimeAlloBut" text="{i18n>xtit.createTimeAlloc}" visible="{user>/ENABLE_CREATE_ASSET_TIME_ALLOC}"
+							tooltip="{i18n>xtit.createTimeAlloc}" press="createTimeAlloc" enabled="{viewModel>/bBtnEnabled}" type="Emphasized"/>
 						<core:ExtensionPoint name="PageExtP|Asset|AssetPlanningDataSet|Header|Right"/>
 					</OverflowToolbar>
 				</f:content>
@@ -34,18 +35,9 @@
 				busyIndicatorDelay="0" appointmentsVisualization="Filled" appointmentSelect="showDetails" showEmptyIntervalHeaders="false"
 				showWeekNumbers="true" class="sapUiNoContentPadding" intervalSelect="intervalSelect" groupAppointmentsMode="Expanded" viewKey="Month"
 				rowSelectionChange="onRowSelectionChange">
-				<!--<toolbarContent>
-                            <Title text="{i18n>xtit.orders}"
-                                   titleStyle="H4"
-                            />
-
-                        </toolbarContent>-->
 				<rows>
 					<PlanningCalendarRow icon="{ path:'TechnicalObjectType', formatter:'.formatter.getAssetIcon' }" title="{Description}"
 						text="{TechnicalObject}" appointments="{path : 'AssetPlanningDataSet', templateShareable: 'true'}">
-						<!--<customData>
-                                    <core:CustomData key="emp-name" value="{name}" writeToDom="true"/>
-                                </customData>-->
 						<appointments>
 							<unified:CalendarAppointment startDate="{StartTimestamp}" endDate="{EndTimestamp}" title="{Description}" text="{OrderId}"
 								icon="{STATUS_ICON}" tooltip="{ parts:[ {path:'Description'}, {path:'STATUS_DESC'} ], formatter:'.formatter.formatDemandTooltip' }"
@@ -57,8 +49,6 @@
 		</f:content>
 		<f:footer>
 			<OverflowToolbar>
-				<!--<Button icon="sap-icon://message-popup" text="{= ${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length === 0 ? false : true}"-->
-				<!--	type="Emphasized" press="onMessagePopoverPress"></Button>-->
 				<core:ExtensionPoint name="PageExtP|Asset|AssetPlanningDataSet|Footer|Left"/>
 				<ToolbarSpacer/>
 				<Button id="assignButton" text="{i18n>xbut.assign}" tooltip="{i18n>xbut.assign}" icon="sap-icon://activity-individual"

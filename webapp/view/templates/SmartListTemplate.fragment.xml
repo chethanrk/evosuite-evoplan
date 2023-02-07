@@ -9,7 +9,7 @@
 					<template:repeat list="{data>}">
 						<CustomListItem>
 							<HBox>
-								<core:Icon size="1.6rem" src="{path:'data>Value',formatter:'com.evorait.evoplan.model.AnnotationHelper.getIconGanttAssignment'}"
+								<core:Icon size="1.6rem" src="{path:'data>Org.OData.Core.V1.LongDescription',formatter:'.AH.simplePath'}"
 									color="#6a6d70" class="sapUiSmallMarginBegin sapUiTinyMarginTop"/>
 								<VBox class="sapUiSmallMarginBegin sapUiTinyMarginTopBottom">
 									<Label text="{path:'data>Value',formatter:'com.evorait.evoplan.model.AnnotationHelper.getLabel'}:"/>
@@ -25,7 +25,7 @@
 												press="onPressNotficationNumber"/>
 										</template:elseif>
 										<template:else>
-											<Text text="{path:'data>Value',formatter:'.AH.simplePath'} {path:'data>Org.OData.Measures.V1.Unit',formatter:'.AH.simplePath'}"/>
+											<Text text="{path:'data>Value',formatter:'.AH.simplePath'}{path:'data>Org.OData.Measures.V1.Unit',formatter:'.AH.simplePath'}"/>
 										</template:else>
 									</template:if>
 								</VBox>

@@ -1,6 +1,6 @@
 /* globals _ */
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/AssignmentsController",
+	"com/evorait/evoplan/controller/gantt/GanttRoute",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -8,16 +8,16 @@ sap.ui.define([
 	"sap/m/Tokenizer",
 	"sap/ui/core/Fragment",
 	"sap/m/MessageToast"
-], function (AssignmentsController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageToast) {
+], function (Controller, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageToast) {
 	"use strict";
 
-	return AssignmentsController.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
+	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
 
 		/**
 		 * formatter for for Gantt view
 		 */
-		isBusyShape: function (bAllowProperty, bIsBusy) {
-			return bAllowProperty && !bIsBusy;
+		isBusyShape: function (bAllowProperty, bIsBusy, bAuthCheck) {
+			return Boolean(bAllowProperty && !bIsBusy && bAuthCheck);
 		},
 
 		/**
@@ -38,57 +38,162 @@ sap.ui.define([
 		 * @param oTargetDate
 		 * @param aFixedAppointmentObjects
 		 */
-		AssignMultipleDemands: function (oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects) {
+		assignMultipleDemands: function (oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects) {
 			var oModel = this.getModel(),
 				aPromises = [],
 				oDemandObj,
 				oParams;
 
-			// creating function import calls for fixed appointments
-			for (var i in aFixedAppointmentObjects) {
-				oParams = {
-					DemandGuid: aFixedAppointmentObjects[i].Guid,
-					ResourceGroupGuid: oResourceData.ResourceGroupGuid,
-					ResourceGuid: oResourceData.ResourceGuid,
-					DateFrom: this.setCustomDateTime(aFixedAppointmentObjects[i].FIXED_APPOINTMENT_START_DATE, aFixedAppointmentObjects[i].FIXED_APPOINTMENT_START_TIME),
-					TimeFrom: {},
-					DateTo: this.setCustomDateTime(aFixedAppointmentObjects[i].FIXED_APPOINTMENT_END_DATE, aFixedAppointmentObjects[i].FIXED_APPOINTMENT_END_TIME),
-					TimeTo: {}
-				};
-				oParams.TimeFrom.ms = oParams.DateFrom ? oParams.DateFrom.getTime() : 0;
-				oParams.TimeTo.ms = oParams.DateTo ? oParams.DateTo.getTime() : 0;
-				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
-			}
+			return new Promise(function (resolveMultiAssign, rejectMultiAssign) {
 
-			oParams = {
-				DemandGuid: "",
-				ResourceGroupGuid: oResourceData.ResourceGroupGuid,
-				ResourceGuid: oResourceData.ResourceGuid,
-				DateFrom: oTargetDate,
-				TimeFrom: {
-					ms: oTargetDate ? oTargetDate.getTime() : 0
-				}
-			};
-			// creating function import calls for multi assignment for non-fixed appointments
-			for (var i in aSources) {
-				oDemandObj = oModel.getProperty(aSources[i]);
+				this.resolveMultiAssign = resolveMultiAssign;
+				this.rejectMultiAssign = rejectMultiAssign;
 
-				if (this._mParameters.bFromNewGanttSplit) {
-					oDemandObj = this._getDemandObjectSplitPage(aSources[i]);
+				// if global config enabled for split assignments
+				// then first check with backend if resource availability is there for the assignment work hours 
+				// also call new logic only when drop happens on Respurce NodeType - RESOURCE or TIMEDAY
+				// since release 2301
+				var bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
+					sResourceNodeType = oResourceData.NodeType,
+					bExecuteAssignmentSplitCode = bSplitGlobalConfigEnabled && (sResourceNodeType === "RESOURCE" || sResourceNodeType === "TIMEDAY"),
+					aAllAssignmentsParams = [];
+
+				// creating function import calls for fixed appointments
+				for (var i in aFixedAppointmentObjects) {
+					oParams = {
+						DemandGuid: aFixedAppointmentObjects[i].Guid,
+						ResourceGroupGuid: oResourceData.ResourceGroupGuid,
+						ResourceGuid: oResourceData.ResourceGuid,
+						DateFrom: this.setCustomDateTime(aFixedAppointmentObjects[i].FIXED_APPOINTMENT_START_DATE, aFixedAppointmentObjects[i].FIXED_APPOINTMENT_START_TIME),
+						TimeFrom: {},
+						DateTo: this.setCustomDateTime(aFixedAppointmentObjects[i].FIXED_APPOINTMENT_END_DATE, aFixedAppointmentObjects[i].FIXED_APPOINTMENT_END_TIME),
+						TimeTo: {}
+					};
+					oParams.TimeFrom.ms = oParams.DateFrom ? oParams.DateFrom.getTime() : 0;
+					oParams.TimeTo.ms = oParams.DateTo ? oParams.DateTo.getTime() : 0;
+					aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
 				}
-				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && oDemandObj.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
-					oParams.DemandGuid = oParams.DemandGuid + "," + oDemandObj.Guid + "//" + oDemandObj.Duration;
+
+				// non-fixed appointments
+				// creating function import calls for multi assignment for non-fixed appointments
+				for (var i in aSources) {
+					oParams = {
+						DemandGuid: "",
+						ResourceGroupGuid: oResourceData.ResourceGroupGuid,
+						ResourceGuid: oResourceData.ResourceGuid,
+						DateFrom: oTargetDate,
+						TimeFrom: {
+							ms: oTargetDate ? oTargetDate.getTime() : 0
+						}
+					};
+
+					oDemandObj = oModel.getProperty(aSources[i]);
+
+					if (this._mParameters.bFromNewGanttSplit) {
+						oDemandObj = this._getDemandObjectSplitPage(aSources[i]);
+					}
+					oParams.DemandGuid = oDemandObj.Guid;
+
+					if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && oDemandObj.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+						oParams.Duration = oDemandObj.Duration;
+					} else {
+						oParams.Duration = oDemandObj.DURATION;
+					}
+
+					aAllAssignmentsParams.push(oParams);
+				}
+
+				if (bExecuteAssignmentSplitCode) {
+					this.checkAndExecuteSplitForGanttMultiAssign(aAllAssignmentsParams, {}, sResourceNodeType);
 				} else {
-					oParams.DemandGuid = oParams.DemandGuid + "," + oDemandObj.Guid + "//" + oDemandObj.DURATION;
+					aPromises = this.createMultiAssignments(aAllAssignmentsParams);
+					this.resolveMultiAssign(aPromises);
 				}
+
+			}.bind(this));
+		},
+
+		/**
+		 * method to form the parameters and guids in required format
+		 * and call the CreateMultiAssignment function import
+		 * 
+		 * @param {array} aAssignmentsParamsForMultiAssignment 
+		 * @returns array of promises with CreateMultiAssignment function import call
+		 */
+		createMultiAssignments: function (aAssignmentsParamsForMultiAssignment) {
+			var sDemandDurationConcat = "",
+				aPromises = [];
+			for (var iIndex in aAssignmentsParamsForMultiAssignment) {
+				var oParams = aAssignmentsParamsForMultiAssignment[iIndex];
+				sDemandDurationConcat = sDemandDurationConcat + "," + oParams.DemandGuid + "//" + oParams.Duration;
 			}
 			if (oParams.DemandGuid) {
-				oParams.DemandGuid = oParams.DemandGuid.substr(1);
+				oParams.DemandGuid = sDemandDurationConcat.substring(1);
+				delete oParams.Duration;
 				aPromises.push(this.executeFunctionImport(this.getModel(), oParams, "CreateMultiAssignment", "POST"));
 			}
-
 			return aPromises;
 		},
+
+		/**
+		 * method checks resourceAvailabilty for the selected demands 
+		 * then confirms if the user wants to split the assignments
+		 * on confirm/reject then calls the required function imports
+		 * 
+		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
+		 */
+		checkAndExecuteSplitForGanttMultiAssign: function (aAssignments, mParameters, sResourceNodeType) {
+			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch.bind(this))
+				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch.bind(this))
+				.then(this.callRequiredFunctionImportsForMultiAssign.bind(this)).catch(this.handlePromiseChainCatch.bind(this));
+		},
+
+		/**
+		 * based on the response from split confirmation dialog calls the required function imports
+		 * strucuture of oConfirmationDialogResponse :
+		 * { arrayOfDemands : aAssignments,
+		 *   arrayOfDemandsToSplit : [],
+		 *   splitConfirmation : "NO"
+		 * };
+		 * @param {object} oConfirmationDialogResponse response from split confirmation dialog
+		 * resolves the promise of assignMultipleDemands method
+		 * 
+		 */
+		callRequiredFunctionImportsForMultiAssign: function (oConfirmationDialogResponse) {
+			if (oConfirmationDialogResponse) {
+				var aAssignmentsParamsForMultiAssignment = [];
+
+				var aDemands = oConfirmationDialogResponse.arrayOfDemands,
+					aDemandGuidsToSplit = oConfirmationDialogResponse.arrayOfDemandsToSplit,
+					sResourceNodeType = oConfirmationDialogResponse.nodeType,
+					aPromises = [];
+
+				if (aDemandGuidsToSplit.length === 0) {
+					aPromises = this.createMultiAssignments(aDemands);
+				} else {
+					for (var iIndex = 0; iIndex < aDemands.length; iIndex++) {
+						// if Demand is present in aDemandsForSplitAssignment it means the assignment is of more effort than the resource availability
+						// 	thus call the functionImport 'CreateSplitStretchAssignments' 
+						// else it means the resource availability is proper for the assignment or user doesnt want to split
+						//  thus call the functionImport 'CreateMultiAssignment'
+						if (aDemandGuidsToSplit.includes(aDemands[iIndex].DemandGuid)) {
+							aDemands[iIndex].ResourceView = sResourceNodeType === "RESOURCE" ? "SIMPLE" : "DAILY";
+							aPromises.push(this.executeFunctionImport(this.getModel(), aDemands[iIndex], "CreateSplitStretchAssignments", "POST"));
+						} else {
+							aAssignmentsParamsForMultiAssignment.push(aDemands[iIndex]);
+						}
+					}
+					if (aAssignmentsParamsForMultiAssignment.length > 1) {
+						aPromises = aPromises.concat(this.createMultiAssignments(aAssignmentsParamsForMultiAssignment));
+					} else if (aAssignmentsParamsForMultiAssignment.length === 1) {
+						aPromises = aPromises.concat(this.executeFunctionImport(this.getModel(), aAssignmentsParamsForMultiAssignment[0],
+							"CreateAssignment", "POST"));
+					}
+				}
+				this.resolveMultiAssign(aPromises);
+			}
+		},
+
 		/**
 		 * save assignment after drop
 		 * Calls the function import of create assignment the returns the promise.
@@ -108,86 +213,152 @@ sap.ui.define([
 				aFixedAppointments = oViewModel.getProperty("/aFixedAppointmentsList")[0],
 				aPromises = [],
 				oDemandObj;
-			if (aGanttDemandDragged === "fromGanttSplit" || !oModel.getProperty(aItems[0])) {
-				aGanttDemandDragged = {};
-				aGanttDemandDragged.bFromGanttSplit = true;
-				// aGanttDemandDragged.sPath = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData/sPath");
-				aGanttDemandDragged.oData = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData")[0];
-				aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE);
-				aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE);
-			}
 
-			this.clearMessageModel();
+			return new Promise(function (resolveAssignment, rejectAssignment) {
 
-			for (var i = 0; i < aItems.length; i++) {
-				oDemandObj = aGanttDemandDragged.bFromGanttSplit ? aGanttDemandDragged.oData : oModel.getProperty(aItems[i]);
-				var sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i].split("'")[1],
-					oParams = {
-						DemandGuid: sDemandGuid,
-						ResourceGroupGuid: targetObj.ResourceGroupGuid,
-						ResourceGuid: targetObj.ResourceGuid
-					};
-				// When we drop on the Gantt chart directly
-				if (oTargetDate) {
-					oParams.DateFrom = oTargetDate;
-					oParams.TimeFrom = {
-						ms: oTargetDate.getTime(),
-						__edmType: "Edm.Time"
-					};
-					oParams.DateTo = oNewEndDate || oTargetDate;
-					oParams.TimeTo = targetObj.EndTime;
-				} else {
-					// When we drop it on resource tree rows
-					if (targetObj.StartDate) {
-						oParams.DateFrom = targetObj.StartDate;
-						oParams.TimeFrom = targetObj.StartTime;
-					} else {
-						oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
-						oParams.TimeFrom = targetObj.StartTime;
-					}
+				this.resolveAssignment = resolveAssignment;
+				this.rejectAssignment = rejectAssignment;
 
-					if (targetObj.EndDate) {
-						oParams.DateTo = targetObj.EndDate;
+				if (aGanttDemandDragged === "fromGanttSplit" || !oModel.getProperty(aItems[0])) {
+					aGanttDemandDragged = {};
+					aGanttDemandDragged.bFromGanttSplit = true;
+					aGanttDemandDragged.oData = oViewModel.getProperty("/ganttSettings/aGanttSplitDemandData")[0];
+					aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_START_DATE);
+					aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE = new Date(aGanttDemandDragged.oData.FIXED_APPOINTMENT_END_DATE);
+				}
+
+				this.clearMessageModel();
+
+				for (var i = 0; i < aItems.length; i++) {
+					oDemandObj = aGanttDemandDragged.bFromGanttSplit ? aGanttDemandDragged.oData : oModel.getProperty(aItems[i]);
+					var sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i].split("'")[1],
+						oParams = {
+							DemandGuid: sDemandGuid,
+							ResourceGroupGuid: targetObj.ResourceGroupGuid,
+							ResourceGuid: targetObj.ResourceGuid
+						};
+					// When we drop on the Gantt chart directly
+					if (oTargetDate) {
+						oParams.DateFrom = oTargetDate;
+						oParams.TimeFrom = {
+							ms: oTargetDate.getTime(),
+							__edmType: "Edm.Time"
+						};
+						oParams.DateTo = oNewEndDate || oTargetDate;
 						oParams.TimeTo = targetObj.EndTime;
 					} else {
-						oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
-						oParams.TimeTo = targetObj.EndTime;
+						// When we drop it on resource tree rows
+						if (targetObj.StartDate) {
+							oParams.DateFrom = targetObj.StartDate;
+							oParams.TimeFrom = targetObj.StartTime;
+						} else {
+							oParams.DateFrom = new Date(); // When Start Date Null/In the Simple view today date will sent
+							oParams.TimeFrom = targetObj.StartTime;
+						}
+
+						if (targetObj.EndDate) {
+							oParams.DateTo = targetObj.EndDate;
+							oParams.TimeTo = targetObj.EndTime;
+						} else {
+							oParams.DateTo = new Date(); // When Start Date Null/In the Simple view today date will sent
+							oParams.TimeTo = targetObj.EndTime;
+						}
+					}
+
+					if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && this._mParameters.bFromNewGantt && aGanttDemandDragged
+						.IsSelected) {
+						oParams.DateFrom = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME);
+						oParams.TimeFrom.ms = oParams.DateFrom.getTime();
+						oParams.DateTo = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME);
+						oParams.TimeTo.ms = oParams.DateTo.getTime();
+					}
+					//Cost Element, Estimate and Currency fields update for Vendor Assignment
+					if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && targetObj.ISEXTERNAL && aGanttDemandDragged.oData.ALLOW_ASSIGNMENT_DIALOG) {
+						oParams.CostElement = aGanttDemandDragged.oData.CostElement;
+						oParams.Estimate = aGanttDemandDragged.oData.Estimate;
+						oParams.Currency = aGanttDemandDragged.oData.Currency;
+					}
+					//Effort and Effort Unit fields update for PS Demands Network Assignment
+					if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && this._mParameters.bFromNewGantt && aGanttDemandDragged.oData
+						.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
+						oParams.Effort = aGanttDemandDragged.oData.Duration;
+						oParams.EffortUnit = aGanttDemandDragged.oData.DurationUnit;
+					}
+					//Fixed Appointments for Gantt
+					if (aFixedAppointments && aFixedAppointments.IsSelected) {
+						oDemandObj.FIXED_APPOINTMENT_START_DATE = this.setCustomDateTime(oDemandObj.FIXED_APPOINTMENT_START_DATE, oDemandObj.FIXED_APPOINTMENT_START_TIME);
+						oDemandObj.FIXED_APPOINTMENT_END_DATE = this.setCustomDateTime(oDemandObj.FIXED_APPOINTMENT_END_DATE, oDemandObj.FIXED_APPOINTMENT_END_TIME);
+						oParams.DateFrom = oDemandObj.FIXED_APPOINTMENT_START_DATE;
+						oParams.TimeFrom = {};
+						oParams.TimeFrom.ms = oDemandObj.FIXED_APPOINTMENT_START_DATE ? oDemandObj.FIXED_APPOINTMENT_START_DATE.getTime() : 0;
+						oParams.DateTo = oDemandObj.FIXED_APPOINTMENT_END_DATE;
+						oParams.TimeTo = {};
+						oParams.TimeTo.ms = oDemandObj.FIXED_APPOINTMENT_END_DATE ? oDemandObj.FIXED_APPOINTMENT_END_DATE.getTime() : 0;
+					}
+
+					// if global config enabled for split assignments
+					// also call new logic only when drop happens on Respurce NodeType - RESOURCE or TIMEDAY
+					// then first check with backend if resource availability is there for the assignment work hours 
+					// since release 2301
+					var bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
+						sResourceNodeType = targetObj.NodeType;
+					if (bSplitGlobalConfigEnabled && (sResourceNodeType === "RESOURCE" || sResourceNodeType === "TIMEDAY")) {
+						this.checkAndExecuteSplitAssignments([oParams], {}, sResourceNodeType);
+					} else {
+						aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
+						this.resolveAssignment(aPromises);
 					}
 				}
+			}.bind(this));
 
-				if (this.getModel("user").getProperty("/ENABLE_ASGN_DATE_VALIDATION") && this._mParameters.bFromNewGantt && aGanttDemandDragged.IsSelected) {
-					oParams.DateFrom = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_START_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_START_TIME);
-					oParams.TimeFrom.ms = oParams.DateFrom.getTime();
-					oParams.DateTo = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME);
-					oParams.TimeTo.ms = oParams.DateTo.getTime();
-				}
-				//Cost Element, Estimate and Currency fields update for Vendor Assignment
-				if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && targetObj.ISEXTERNAL && aGanttDemandDragged.oData.ALLOW_ASSIGNMENT_DIALOG) {
-					oParams.CostElement = aGanttDemandDragged.oData.CostElement;
-					oParams.Estimate = aGanttDemandDragged.oData.Estimate;
-					oParams.Currency = aGanttDemandDragged.oData.Currency;
-				}
-				//Effort and Effort Unit fields update for PS Demands Network Assignment
-				if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && this._mParameters.bFromNewGantt && aGanttDemandDragged.oData
-					.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
-					oParams.Effort = aGanttDemandDragged.oData.Duration;
-					oParams.EffortUnit = aGanttDemandDragged.oData.DurationUnit;
-				}
-				//Fixed Appointments for Gantt
-				if (aFixedAppointments && aFixedAppointments.IsSelected) {
-					oDemandObj.FIXED_APPOINTMENT_START_DATE = this.setCustomDateTime(oDemandObj.FIXED_APPOINTMENT_START_DATE, oDemandObj.FIXED_APPOINTMENT_START_TIME);
-					oDemandObj.FIXED_APPOINTMENT_END_DATE = this.setCustomDateTime(oDemandObj.FIXED_APPOINTMENT_END_DATE, oDemandObj.FIXED_APPOINTMENT_END_TIME);
-					oParams.DateFrom = oDemandObj.FIXED_APPOINTMENT_START_DATE;
-					oParams.TimeFrom = {};
-					oParams.TimeFrom.ms = oDemandObj.FIXED_APPOINTMENT_START_DATE ? oDemandObj.FIXED_APPOINTMENT_START_DATE.getTime() : 0;
-					oParams.DateTo = oDemandObj.FIXED_APPOINTMENT_END_DATE;
-					oParams.TimeTo = {};
-					oParams.TimeTo.ms = oDemandObj.FIXED_APPOINTMENT_END_DATE ? oDemandObj.FIXED_APPOINTMENT_END_DATE.getTime() : 0;
-				}
-				aPromises.push(this.executeFunctionImport(oModel, oParams, "CreateAssignment", "POST"));
-			}
-			return aPromises;
 		},
+
+		/**
+		 * method checks resourceAvailabilty for the selected demands 
+		 * then confirms if the user wants to split the assignments
+		 * on confirm/reject then calls the required function imports
+		 * 
+		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
+		 */
+		checkAndExecuteSplitAssignments: function (aAssignments, mParameters, sResourceNodeType) {
+			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch.bind(this))
+				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch.bind(this))
+				.then(this.callRequiredFunctionImports.bind(this)).catch(this.handlePromiseChainCatch.bind(this));
+		},
+
+		/**
+		 * based on the response from split confirmation dialog calls the required function imports
+		 * strucuture of oConfirmationDialogResponse :
+		 * { arrayOfDemands : aAssignments,
+		 *   arrayOfDemandsToSplit : [],
+		 *   splitConfirmation : "NO"
+		 * };
+		 * @param {object} oConfirmationDialogResponse response from split confirmation dialog
+		 * resolves the promise of assignedDemands method
+		 * 
+		 */
+		callRequiredFunctionImports: function (oConfirmationDialogResponse) {
+			if (oConfirmationDialogResponse) {
+
+				var aDemands = oConfirmationDialogResponse.arrayOfDemands,
+					aDemandGuidsToSplit = oConfirmationDialogResponse.arrayOfDemandsToSplit,
+
+					sResourceNodeType = oConfirmationDialogResponse.nodeType,
+					aPromises = [],
+					oModel = this.getModel();
+
+				for (var iIndex = 0; iIndex < aDemands.length; iIndex++) {
+					if (aDemandGuidsToSplit.includes(aDemands[iIndex].DemandGuid)) {
+						aDemands[iIndex].ResourceView = sResourceNodeType === "RESOURCE" ? "SIMPLE" : "DAILY";
+						aPromises.push(this.executeFunctionImport(oModel, aDemands[iIndex], "CreateSplitStretchAssignments", "POST"));
+					} else {
+						aPromises.push(this.executeFunctionImport(oModel, aDemands[iIndex], "CreateAssignment", "POST"));
+					}
+				}
+				this.resolveAssignment(aPromises);
+			}
+		},
+
 		/**
 		 * Deletes the assignment
 		 *
@@ -232,57 +403,6 @@ sap.ui.define([
 						}
 					}
 				);
-			}.bind(this));
-		},
-
-		/**
-		 * Validation of demand for resource qualification
-		 * 
-		 * @param {Array} aSourcePaths - collection of demand pathes
-		 * @param {String} targetObj - target resource for node ID
-		 * @param {Object} oTargetDate - new start date 
-		 * @param {Object} oNewEndDate - new end date
-		 * @param {Array} aGuids - collection of IDs from Demands
-		 **/
-		checkQualification: function (aSourcePaths, oTargetObj, oTargetDate, oNewEndDate, aGuids) {
-			var oQualificationParameters,
-				oModel = this.getModel(),
-				sDemandGuids = "",
-				sObjectId,
-				aItems = aSourcePaths ? aSourcePaths : aGuids;
-			return new Promise(function (resolve, reject) {
-				//collect all demand Guids for function import
-				for (var i = 0; i < aItems.length; i++) {
-					var sPath = aItems[i].sPath ? aItems[i].sPath : aItems[i];
-					if (sPath.indexOf("'") >= 0 && !aSourcePaths) {
-						sPath = sPath.split("'")[1];
-					}
-
-					var oDemandObj = oModel.getProperty(sPath);
-					var sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i];
-					if (sDemandGuids === "") {
-						sDemandGuids = sDemandGuid;
-					} else {
-						sDemandGuids = sDemandGuids + "//" + sDemandGuid;
-					}
-				}
-				sObjectId = oTargetObj.NodeId;
-				if (oTargetObj.NodeType === "ASSIGNMENT") {
-					sObjectId = oTargetObj.ObjectId;
-				}
-				oQualificationParameters = {
-					DemandMultiGuid: sDemandGuids,
-					ObjectId: sObjectId, //oTargetObj.NodeId, //targetObj.ResourceGroupGuid,
-					StartTimestamp: oTargetDate,
-					EndTimestamp: oNewEndDate ? oNewEndDate : oTargetDate
-				};
-				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(
-					function (oData, response) {
-						resolve({
-							params: oQualificationParameters,
-							result: oData
-						});
-					}, reject);
 			}.bind(this));
 		},
 
@@ -438,8 +558,17 @@ sap.ui.define([
 		 * Unassign assignment with delete confirmation dialog. 
 		 */
 		_deleteAssignment: function (oModel, sAssignGuid, sPath, oEventBus) {
-			var oGanttModel = this.getModel("ganttModel");
-			this._showConfirmMessageBox.call(this, this.getResourceBundle().getText("ymsg.confirmDel")).then(function (data) {
+			var oGanttModel = this.getModel("ganttModel"),
+
+				bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
+				isAssignmentPartOfSplit = this.checkIfAssignmentPartOfSplit(oModel, sAssignGuid),
+				oResourceBundle = this.getResourceBundle(),
+				sConfirmMessage = oResourceBundle.getText("ymsg.confirmDel");
+
+			if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
+				sConfirmMessage = oResourceBundle.getText("xmsg.deleteAllSplitAssignments");
+			}
+			this._showConfirmMessageBox.call(this, sConfirmMessage).then(function (data) {
 				oGanttModel.setProperty(sPath + "/busy", true);
 				if (data === "YES") {
 					this.deleteAssignment(oModel, sAssignGuid).then(function () {
@@ -451,6 +580,11 @@ sap.ui.define([
 								sTargetPath: sPath.split("/AssignmentSet/results/")[0]
 							});
 							oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+							if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
+								// in case of split unassign, all the splits are unassigned from backend,
+								// thus on refresh of the entire gantt the splits are also deleted from the gantt UI
+								oEventBus.publish("BaseController", "refreshFullGantt", {});
+							}
 						}.bind(this),
 						function () {
 							oGanttModel.setProperty(sPath + "/busy", false);
@@ -494,144 +628,6 @@ sap.ui.define([
 			}
 			oGanttModel.refresh(true);
 			oGanttOriginalModel.refresh(true);
-		},
-
-		/**
-		 * Resets a changed data by model path on both Parent and Child Nodes
-		 * @param sPath
-		 * @param oOriginalData
-		 * @since 2205
-		 */
-		_resetParentChildNodes: function (sPath, oOriginalData) {
-			var oGanttModel = this.getModel("ganttModel"),
-				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
-				oTargetObj = oGanttModel.getProperty(sPath),
-				sChildPath, aChildrenData, sNewPath, sAssignmentPath, aAssignmentData, aChildNodeData, sObjectIDRelation, sObjectID;
-			oGanttModel.setProperty(sPath + "/ResourceAvailabilitySet", oOriginalData.ResourceAvailabilitySet);
-			if (!oTargetObj) {
-				oTargetObj = oOriginalData;
-			}
-			if (oTargetObj.Guid === "") {
-				this._resetUnSavedNodeData(sPath, oOriginalData);
-			} else {
-				//Condition when we Change at Assignment Nodes
-				if (sPath.length > 60) {
-					//	sAssignmentPath = sPath.substring(0, 27);
-					sAssignmentPath = sPath.split("/AssignmentSet/results/")[0];
-					sAssignmentPath = this._getAssignmentChildPath(sAssignmentPath);
-					sAssignmentPath = sAssignmentPath + "/AssignmentSet/results";
-					aAssignmentData = oGanttModel.getProperty(sAssignmentPath);
-					sObjectIDRelation = oTargetObj.OBJECT_ID_RELATION + "//" + oTargetObj.ResourceGuid;
-					oTargetObj.OBJECT_ID_RELATION = sObjectIDRelation;
-					oGanttModel.setProperty(sPath, oTargetObj);
-					for (var a in aAssignmentData) {
-						if (oTargetObj.Guid === aAssignmentData[a].Guid) {
-							sNewPath = sAssignmentPath + "/" + a;
-							sObjectID = oTargetObj.Guid + "//" + oTargetObj.ResourceGuid + "//" + oTargetObj.ResourceGroupGuid;
-							aChildNodeData = Object.assign({}, oTargetObj, {
-								OBJECT_ID_RELATION: sObjectID
-							});
-							oGanttModel.setProperty(sNewPath, aChildNodeData);
-							oGanttModel.setProperty(sNewPath + "/AssignmentSet", {
-								results: [oTargetObj]
-							});
-							oGanttModel.setProperty(sNewPath + "/DemandDesc", oTargetObj.DemandDesc);
-							oGanttModel.setProperty(sNewPath + "/NodeType", "ASSIGNMENT");
-							oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
-							oGanttOriginDataModel.setProperty(sNewPath + "/AssignmentSet", _.cloneDeep(oGanttModel.getProperty(sNewPath + "/AssignmentSet")));
-							break;
-						}
-					}
-				} else {
-					sChildPath = sPath.split("/AssignmentSet/results/")[0];
-					aChildrenData = oGanttModel.getProperty(sChildPath + "/children");
-					for (var c in aChildrenData) {
-						if (oTargetObj.Guid === aChildrenData[c].Guid) {
-							sNewPath = sChildPath + "/children/" + c;
-							sObjectIDRelation = oTargetObj.OBJECT_ID_RELATION + "//" + oTargetObj.ResourceGuid;
-							aChildNodeData = Object.assign({}, oTargetObj, {
-								OBJECT_ID_RELATION: sObjectIDRelation
-							});
-							oGanttModel.setProperty(sNewPath + "/AssignmentSet", {
-								results: [aChildNodeData]
-							});
-							oGanttModel.setProperty(sNewPath + "/DemandDesc", oTargetObj.DemandDesc);
-							oGanttModel.setProperty(sNewPath + "/NodeType", "ASSIGNMENT");
-							oGanttOriginDataModel.setProperty(sNewPath + "/AssignmentSet", _.cloneDeep(oGanttModel.getProperty(sNewPath + "/AssignmentSet")));
-							break;
-						}
-					}
-				}
-				oGanttOriginDataModel.refresh(true);
-				oGanttModel.refresh(true);
-			}
-		},
-		/**
-		 * Creating a new Assignment node and shape after assignmnet creation
-		 * @param aData
-		 * @param sTargetPath
-		 * @param sDummyPath
-		 * @since 2205
-		 */
-		_appendChildAssignment: function (aData, sTargetPath, sDummyPath) {
-			var oGanttModel = this.getModel("ganttModel"),
-				oGanttOriginalModel = this.getModel("ganttOriginalData"),
-				aAssignmentData = oGanttModel.getProperty(sTargetPath + "/AssignmentSet/results"),
-				aChildData, iChildAsgnLen, aChildAsgnData,
-				iChildLength, sAssignmentGuid, sNewPath, aCloneChildData, aCloneChildAssignmentData, aResourceAvailabilities,
-				sObjectIdRelation, aChildNodeData;
-			if (!oGanttModel.getProperty(sTargetPath + "/children")) {
-				oGanttModel.setProperty(sTargetPath + "/children", [aData]);
-				oGanttOriginalModel.setProperty(sTargetPath + "/children", [aData]);
-			} else {
-				aChildAsgnData = oGanttModel.getProperty(sTargetPath + "/children");
-				aChildAsgnData.push(aData);
-				iChildAsgnLen = aChildAsgnData.length;
-				if (iChildAsgnLen !== 1 && aChildAsgnData[iChildAsgnLen - 1].Guid === aChildAsgnData[iChildAsgnLen - 2].Guid) {
-					aChildAsgnData.splice(iChildAsgnLen - 1, 1);
-				}
-			}
-			aChildData = oGanttModel.getProperty(sTargetPath + "/children");
-			iChildLength = aChildData.length - 1;
-			aResourceAvailabilities = oGanttModel.getProperty(sTargetPath + "/ResourceAvailabilitySet");
-			var xPath = sTargetPath + "/children/" + iChildLength;
-			sAssignmentGuid = oGanttModel.getProperty(xPath + "/Guid");
-			oGanttModel.setProperty(xPath + "/DemandDesc", aData.DemandDesc);
-			oGanttModel.setProperty(xPath + "/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION);
-			sObjectIdRelation = aData.OBJECT_ID_RELATION + "//" + aData.ResourceGuid;
-			aChildNodeData = Object.assign({}, aData, {
-				OBJECT_ID_RELATION: sObjectIdRelation
-			});
-			for (var a in aAssignmentData) {
-				if (sAssignmentGuid === aAssignmentData[a].Guid) {
-					sNewPath = xPath + "/AssignmentSet";
-					oGanttModel.setProperty(sNewPath, {
-						results: [aChildNodeData]
-					});
-					oGanttModel.setProperty(xPath + "/NodeType", "ASSIGNMENT");
-					oGanttModel.setProperty(xPath + "/ResourceAvailabilitySet", aResourceAvailabilities);
-					oGanttModel.setProperty(sNewPath + "/results/0" + "/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION + "//" + aData.ResourceGuid);
-				}
-			}
-			aCloneChildData = oGanttModel.getProperty(xPath);
-			oGanttOriginalModel.setProperty(xPath, _.cloneDeep(aCloneChildData));
-			aCloneChildAssignmentData = oGanttModel.getProperty(sNewPath);
-			oGanttOriginalModel.setProperty(sNewPath, _.cloneDeep(aCloneChildAssignmentData));
-			oGanttModel.refresh(true);
-			oGanttOriginalModel.refresh(true);
-		},
-		/**
-		 * getting Demand objects form local model coming from gantt split
-		 * @param sPath
-		 * @since 2205
-		 */
-		_getDemandObjectSplitPage: function (sPath) {
-			var aDragSessionData = this.getModel("viewModel").getProperty("/dragSession");
-			for (var i = 0; i < aDragSessionData.length; i++) {
-				if (aDragSessionData[i].sPath === sPath) {
-					return aDragSessionData[i].oData;
-				}
-			}
 		},
 
 		/**
@@ -737,8 +733,8 @@ sap.ui.define([
 
 			this.getOwnerComponent().readData(sDemandPath).then(function (oDemandData) {
 				var oAppInfo = this.getAppInfo(this.oSource.getModel("navLinks").getData(), this.sAppName);
-				this.handleNavigationLinkAction(oDemandData, oAppInfo, this.oSource.getModel("viewModel"), this.oSource.getModel(
-					"user"));
+				this.getOwnerComponent().NavigationActionSheet.linkToOtherApps(oAppInfo, this.oSource.getModel("viewModel"), this.oSource.getModel(
+					"user"), oDemandData);
 			}.bind(this));
 		},
 
@@ -786,7 +782,7 @@ sap.ui.define([
 				this.getModel("appView").setProperty("/busy", false);
 				if (aData.results.length === 0) {
 					sMsg = oResourceBundle.getText("ymsg.noRelationships", [oData.ORDERID, oData.OPERATIONID]);
-					sap.m.MessageToast.show(sMsg);
+					this.showMessageToast(sMsg);
 				}
 				this.showMessage(oResponse);
 				oGanttModel.setProperty(sPath + "/RelationshipSet", aData);
@@ -814,48 +810,6 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		/*
-		 * Handle press of Calculate travel time Button in gantt toolbar
-		 * @param oEvent
-		 * since 2205
-		 */
-		onCalculateRoutePress: function (oEvent) {
-			var oButton = oEvent.getSource(),
-				oView = this.getView(),
-				oStarDate = this.getModel("user").getProperty("/DEFAULT_GANT_START_DATE"),
-				oEndDate = this.getModel("user").getProperty("/DEFAULT_GANT_END_DATE"),
-				sSourceId = oEvent.getSource().getId();
-
-			this.routeOperation = sSourceId.includes("Optimize") ? "Optimize" : "Calculate";
-			if (!this._oCalendarPopover) {
-				Fragment.load({
-					name: "com.evorait.evoplan.view.map.fragments.RouteDateFilter",
-					id: oView.getId(),
-					controller: this
-				}).then(function (oPopover) {
-					this._oCalendarPopover = oPopover;
-					this.getView().addDependent(this._oCalendarPopover);
-					this._oCalendarPopover.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-					this.getView().byId("DRSMap").setMinDate(oStarDate);
-					this.getView().byId("DRSMap").setMaxDate(oEndDate);
-					this._oCalendarPopover.openBy(oButton);
-				}.bind(this));
-			} else {
-				this.getView().byId("DRSMap").setMinDate(oStarDate);
-				this.getView().byId("DRSMap").setMaxDate(oEndDate);
-				this._oCalendarPopover.openBy(oButton);
-			}
-		},
-
-		/*
-		 * Closing the calendar popover for route calculation
-		 * @param oEvent
-		 * since 2205
-		 */
-		onCloseDialog: function (oEvent) {
-			this._oCalendarPopover.close();
-		},
-
 		/**
 		 * Fetching Assignment Status for selected Assignments
 		 * @param sUri
@@ -872,57 +826,6 @@ sap.ui.define([
 					}
 				});
 			}.bind(this));
-		},
-
-		/**
-		 * Resetting parent assignments after reassigning to other resources 
-		 * @param sSourcePath
-		 * @since 2205
-		 */
-		_resetParentNodeData: function (sPath, sSourcePath, aData) {
-			var oGanttModel = this.getModel("ganttModel"),
-				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
-				sParentPath, sNewPath, sChildPath, iDeleteIndex, aParentAssgnData, aChildNodeData, sParentSplitPath, sSplitPath;
-			if (sSourcePath) {
-				// When Dragged from Child Nodes
-				if (sSourcePath.length > 60) {
-					sParentPath = sSourcePath.split("/AssignmentSet/");
-					sNewPath = sParentPath[0].split("/");
-					iDeleteIndex = sNewPath[sNewPath.length - 1];
-					sSplitPath = this._getAssignmentChildPath(sParentPath[0]);
-					aParentAssgnData = oGanttModel.getProperty(sSplitPath + "/children");
-					aChildNodeData = oGanttModel.getProperty(sSplitPath + "/AssignmentSet/results");
-					aParentAssgnData.splice(iDeleteIndex, 1);
-					aChildNodeData.splice(iDeleteIndex, 1);
-					sChildPath = sPath.split("/AssignmentSet/results")[0];
-					var oOriginalData = oGanttOriginDataModel.getProperty(sSplitPath + "/children");
-					oOriginalData.splice(iDeleteIndex, 1);
-					oGanttModel.setProperty(sSplitPath + "/children", oGanttOriginDataModel.getProperty(sSplitPath + "/children"));
-				} else {
-					sParentPath = sSourcePath.substring(0, 27);
-					sNewPath = sParentPath + "/AssignmentSet/results";
-					sParentSplitPath = sSourcePath.split("/AssignmentSet")[1];
-					sSplitPath = sParentSplitPath.split("/");
-					iDeleteIndex = sSplitPath[sSplitPath.length - 1];
-					sChildPath = sPath.split("/AssignmentSet/results")[0];
-					aParentAssgnData = oGanttModel.getProperty(sNewPath);
-					aParentAssgnData.splice(iDeleteIndex, 1);
-					oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
-				}
-
-				if (!oGanttModel.getProperty(sChildPath + "/children")) {
-					oGanttModel.setProperty(sChildPath + "/children", [aData]);
-					oGanttModel.setProperty(sChildPath + "/children/0/NodeType", "ASSIGNMENT");
-					oGanttModel.setProperty(sChildPath + "/children/0/AssignmentSet", {
-						results: [aData]
-					});
-					oGanttModel.setProperty(sChildPath + "/children/0/AssignmentSet/results/0/OBJECT_ID_RELATION", aData.OBJECT_ID_RELATION +
-						"//" + aData.ResourceGuid);
-					oGanttOriginDataModel.setProperty(sChildPath, _.cloneDeep(oGanttModel.getProperty(sChildPath)));
-				}
-			}
-			oGanttOriginDataModel.refresh(true);
-			oGanttModel.refresh(true);
 		},
 
 		/**
@@ -957,51 +860,6 @@ sap.ui.define([
 			oGanttModel.setProperty(sPath + "/DEMAND_STATUS", aData.DEMAND_STATUS);
 			oGanttOriginDataModel.refresh(true);
 			oGanttModel.refresh(true);
-		},
-
-		/**
-		 * Resetting Assignment Shape Data when the data is unsaved 
-		 * @param sPath
-		 * @param oOriginalData
-		 * @since 2205
-		 */
-		_resetUnSavedNodeData: function (sPath, oOriginalData) {
-			var oGanttModel = this.getModel("ganttModel"),
-				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
-				oTargetObj, sChildPath, sSplitChildPath, sObjectIDRelation, iIndex, aChildNodeData, aChildData, sNewPath;
-
-			//Condition when we Change at Assignment Nodes
-			if (sPath.length > 60) {
-				sChildPath = sPath.substring(0, 27);
-				sSplitChildPath = sPath.split("/AssignmentSet")[0];
-				iIndex = sSplitChildPath[sSplitChildPath.length - 1];
-				sNewPath = sChildPath + "/AssignmentSet/results/" + iIndex;
-				aChildData = oGanttModel.getProperty(sNewPath);
-				sObjectIDRelation = aChildData.OBJECT_ID_RELATION + "//" + aChildData.ResourceGuid; //+ "//" + aD1.ResourceGroupGuid;
-				aChildNodeData = Object.assign({}, aChildData, {
-					OBJECT_ID_RELATION: sObjectIDRelation
-				});
-				oGanttModel.setProperty(sPath, aChildNodeData);
-				oGanttModel.setProperty(sNewPath, aChildData);
-				oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
-			} else {
-				oTargetObj = oOriginalData.AssignmentSet.results[0];
-				iIndex = sPath[sPath.length - 1];
-				sNewPath = sPath.split("/AssignmentSet")[0];
-				sNewPath = sNewPath + "/children/" + iIndex;
-				oGanttModel.setProperty(sNewPath, oTargetObj);
-				oGanttModel.setProperty(sNewPath + "/AssignmentSet", {
-					results: [oTargetObj]
-				});
-				sObjectIDRelation = oOriginalData.Guid + "//" + oOriginalData.ResourceGuid + "//" + oOriginalData.ResourceGroupGuid;
-				aChildNodeData = Object.assign({}, oTargetObj, {
-					OBJECT_ID_RELATION: sObjectIDRelation
-				});
-				oGanttModel.setProperty(sPath, aChildNodeData);
-				oGanttOriginDataModel.setProperty(sNewPath, _.cloneDeep(oGanttModel.getProperty(sNewPath)));
-			}
-			oGanttModel.refresh(true);
-			oGanttOriginDataModel.refresh(true);
 		},
 
 		/**

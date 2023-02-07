@@ -243,7 +243,9 @@ sap.ui.define([
 				this.byId("showPlanCalendar").setEnabled(true);
 				this.byId("idButtonreassign").setEnabled(true);
 				this.byId("idButtonunassign").setEnabled(true);
+				this.byId("idButtonTimeAllocNew").setEnabled(true);
 			} else {
+				this.byId("idButtonTimeAllocNew").setEnabled(false);
 				this.byId("showPlanCalendar").setEnabled(false);
 				this.byId("idButtonreassign").setEnabled(false);
 				this.byId("idButtonunassign").setEnabled(false);
@@ -253,7 +255,6 @@ sap.ui.define([
 			if (this.selectedResources.length === 1) {
 				this._selectionResourceTree(oParams, oNewNode);
 			} else {
-				this.byId("idButtonCreUA").setEnabled(false);
 				this.byId("showRoute").setEnabled(false);
 			}
 			if (this.selectedResources.length >= 1) {
@@ -365,8 +366,10 @@ sap.ui.define([
 		 * on drop on resource, triggers create assignment for dragged demands
 		 */
 		onDropOnResource: function (oEvent) {
-			var oDraggedControl = oEvent.getParameter("droppedControl"),
-				oContext = oDraggedControl.getBindingContext(),
+			var oDroppedControl = oEvent.getParameter("droppedControl"),
+				oDraggedControl = oEvent.getParameter("draggedControl"),
+				oContext = oDroppedControl.getBindingContext(),
+				oDraggedContext = oDraggedControl.getBindingContext(),
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oTargetData = oModel.getProperty(sPath),
@@ -389,10 +392,15 @@ sap.ui.define([
 				return;
 			}
 
-			if (this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")) {
-				mParameter = {
+			mParameter = {
 					bFromMap: true
-				};
+			};
+			
+			//if its the same resource then update has to be called
+			if(oTargetData.ResourceGuid === oModel.getProperty(oDraggedContext.getPath()).ResourceGuid){
+				//call update
+				this.handleDropOnSameResource(this.assignmentPath, sPath, mParameter);
+			} else if (this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")) {
 				this.getOwnerComponent()._getData(this.sDemandPath)
 					.then(function (oData) {
 						oViewModel.setProperty("/dragSession", [{
@@ -449,7 +457,7 @@ sap.ui.define([
 			this.byId("showPlanCalendar").setEnabled(false);
 			this.byId("idButtonreassign").setEnabled(false);
 			this.byId("idButtonunassign").setEnabled(false);
-			this.byId("idButtonCreUA").setEnabled(false);
+			this.byId("idButtonTimeAllocNew").setEnabled(false);
 			this.byId("showRoute").setEnabled(false);
 			this.byId("assignedDemands").setEnabled(false);
 		},
@@ -575,7 +583,7 @@ sap.ui.define([
 
 			if (oContext) {
 				var oNodeData = oContext.getObject();
-				
+
 				if (oNodeData.NodeType === "RESOURCE" || oNodeData.NodeType === "RES_GROUP") {
 					this.getOwnerComponent().ResourceQualifications.open(this.getView(), oNodeData.NodeId);
 				} else if (this.checkToShowAvailabilities(oNodeData)) {
@@ -746,7 +754,7 @@ sap.ui.define([
 				if (this.getModel().getProperty(oRoute.path)) {
 					this.getModel().setProperty(oRoute.path + "/IsRouteDisplayed", false);
 				}
-			}.bind(this))
+			}.bind(this));
 			this.getModel("viewModel").setProperty("/GeoJsonLayersData", []);
 		},
 
@@ -779,13 +787,10 @@ sap.ui.define([
 			// Disble the button for the selection on Group and Pool Node.
 			var oSelectedData = this.getModel().getProperty(this.selectedResources[0]);
 			if (oParams.selected && oNewNode.NodeType === "RESOURCE" && oNewNode.ResourceGuid !== "" && oNewNode.ResourceGroupGuid !== "") {
-				this.byId("idButtonCreUA").setEnabled(true);
 				this.byId("showRoute").setEnabled(true);
 			} else if (oSelectedData.NodeType === "RESOURCE" && oSelectedData.ResourceGuid !== "" && oSelectedData.ResourceGroupGuid !== "") {
-				this.byId("idButtonCreUA").setEnabled(true);
 				this.byId("showRoute").setEnabled(true);
 			} else {
-				this.byId("idButtonCreUA").setEnabled(false);
 				this.byId("showRoute").setEnabled(false);
 			}
 		},
@@ -824,7 +829,6 @@ sap.ui.define([
 		 * @private
 		 */
 		_triggerRefreshTree: function () {
-			// this.pIsFilterBarInitalized.then(function () {
 			var oTreeTable = this._oDataTable,
 				oTreeBinding = oTreeTable.getBinding("rows");
 
@@ -832,11 +836,10 @@ sap.ui.define([
 			this.resetChanges();
 			if (oTreeBinding && !this._bFirsrTime) {
 				this.mTreeState = this._getTreeState();
-				this._oDroppableTable.rebindTable(); //oTreeBinding.refresh();
+				this._oDroppableTable.rebindTable(); 
 			}
 			this._bFirsrTime = false;
 			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", false);
-			// }.bind(this));
 		},
 
 		/**

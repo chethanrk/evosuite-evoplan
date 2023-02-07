@@ -20,7 +20,6 @@ sap.ui.define([
 		onInit: function () {
 			var oAssetTree = this.byId("idAssetTree");
 			this._configureDataTable(oAssetTree);
-			// this._initCustomVariant();
 			var iOriginalBusyDelay,
 				oViewModel = this.getOwnerComponent().getModel("viewModel");
 			this._eventBus = sap.ui.getCore().getEventBus();
@@ -50,8 +49,6 @@ sap.ui.define([
 		 * @memberOf com.evorait.evoplan.view.Assets
 		 */
 		onAfterRendering: function () {
-			// var oDataTable = this.byId("idAssetTree");
-			// oDataTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
 		},
 
 		/**

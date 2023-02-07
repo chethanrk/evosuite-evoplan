@@ -1,8 +1,8 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:smartForm="sap.ui.comp.smartform"
-	xmlns:smartField="sap.ui.comp.smartfield">
+	xmlns:smartField="sap.ui.comp.smartfield" xmlns:f="sap.ui.layout.form">
 	<Page id="create" showHeader="false">
 		<VBox id="idMangAbsAllocation" class="sapUiSmallMarginBeginEnd" visible="false">
-			<smartForm:SmartForm id="idCreateFormAvail" editTogglable="false" editable="true">
+			<smartForm:SmartForm id="idCreateFormAvail" editTogglable="false" editable="true" title="{ResourceDescription}">
 				<smartForm:layout>
 					<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
 				</smartForm:layout>
@@ -13,7 +13,7 @@
 					<smartForm:GroupElement >
 						<smartField:SmartField value="{DateTo}"/>
 					</smartForm:GroupElement>
-					<core:ExtensionPoint name="FromExtP|ManageResources|ManageAbsence|ResourceAvailabilitySet|Create|GroupElement" />
+					<core:ExtensionPoint name="FromExtP|ManageResources|ManageAbsence|ResourceAvailabilitySet|Create|GroupElement"/>
 				</smartForm:Group>
 			</smartForm:SmartForm>
 			<Label class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop" text="{/#ResourceAvailability/Description/@sap:label}"/>
@@ -28,42 +28,32 @@
 				class="sapUiSmallMarginBeginEnd"/>
 			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/DateTo/@sap:label}"/>
 			<DatePicker id="idToDate" width="95%" dateValue="{DateTo}" placeholder="Enter Date" change="handleChange" class="sapUiSmallMarginBeginEnd"/>
-			<smartForm:SmartForm id="idCreateTimeCreateFormAvail" editTogglable="false" editable="true">
-				<smartForm:layout>
-					<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
-				</smartForm:layout>
-				<smartForm:Group>
-					<smartForm:GroupElement>
-						<smartField:SmartField id="idAvailablHour" value="{AVAILABLE_HOURS}"/>
-					</smartForm:GroupElement>
-					<smartForm:GroupElement>
-						<smartField:SmartField id="idBlockdHour" value="{BLOCKED_HOURS}"/> 
-					</smartForm:GroupElement>
-					<core:ExtensionPoint name="FromExtP|ManageResources|TimeAllocation|ResourceAvailabilitySet|Create|GroupElement" />
-				</smartForm:Group>
-			</smartForm:SmartForm>
 			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/Description/@sap:label}"/>
 			<Select id="idTimeAllocAvailType" class="sapUiSmallMarginBeginEnd" width="95%"
 				items="{ path: 'availabilityGroup>/timeAllocation', sorter: { path: 'AVAILABILITY_TYPE' } }">
 				<core:Item key="{availabilityGroup>AVAILABILITY_TYPE}" text="{availabilityGroup>AVAILABILITY_DESC}"/>
 			</Select>
 			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/BlockPercentage/@sap:label}"/>
-			<Slider id="idTimeAllocSlider" class="sapUiSmallMarginBeginEnd" width="97%" min="0" max="100" showAdvancedTooltip="true" change="onSliderChange"
-				showHandleTooltip="false"/>
+			<Slider id="idTimeAllocSlider" class="sapUiSmallMarginBeginEnd" width="97%" min="0" max="100" showAdvancedTooltip="true"
+				change="onSliderChange" showHandleTooltip="false"/>
 			<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}"
 				text="{/ResourceAvailabilitySet/AVAILABILITY_DESCR/##com.sap.vocabularies.Common.v1.Label/String}"/>
 			<Input id="idCreateDescription" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}" class="sapUiSmallMarginBeginEnd" width="95%" maxLength="100"/>
-			<core:ExtensionPoint name="FromExtP|ManageResources|TimeAllocation|ResourceAvailabilitySet|Create|CustomElements" />
-		</VBox> 
-		<footer>
-			<core:ExtensionPoint name="PageExtP|ManageResources|ResourceAvailabilitySet|Create|Footer|Left" />
-			<OverflowToolbar>
-				<Button id="idCreateBack" text="{i18n>xbut.buttonBack}" press="onNavBack"/>
-				<ToolbarSpacer/>
-				<Button id="idCreateSaveAvail" visible="{user>/ENABLE_ABSENCE_CREATE}" text="{i18n>xbut.buttonSave}" type="Emphasized" enabled="true"
-					press=".onAction($event,'CREATE')"></Button>
-				<core:ExtensionPoint name="PageExtP|ManageResources|ResourceAvailabilitySet|Create|Footer|Left" />
-			</OverflowToolbar>
-		</footer>
+			<VBox items="{path:'viewModel>/timeAllocations/createData'}">
+				<f:SimpleForm id="SimpleFormDisplay480_12120" editable="false" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="6"
+					labelSpanM="6" labelSpanS="6" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="4"
+					columnsL="2" columnsM="2" singleContainerFullSize="false">
+					<f:content>
+						<core:Title text="{viewModel>ResourceDescription}"/>
+						<Label text="Available Hours"/>
+						<Text text="{viewModel>AVAILABLE_HOURS}"/>
+						<core:Title text=""/>
+						<Label text="Blocked Hours"/>
+						<Text text="{viewModel>BLOCKED_HOURS}"/>
+					</f:content>
+				</f:SimpleForm>
+			</VBox>
+			<core:ExtensionPoint name="FromExtP|ManageResources|TimeAllocation|ResourceAvailabilitySet|Create|CustomElements"/>
+		</VBox>
 	</Page>
 </core:FragmentDefinition>

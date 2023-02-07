@@ -1,0 +1,59 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:smartForm="sap.ui.comp.smartform"
+	xmlns:smartField="sap.ui.comp.smartfield" xmlns:f="sap.ui.layout.form">
+	<Page id="detail" showNavButton="true" showHeader="false" enableScrolling="false">
+		<VBox id="idUpdateMangAbs" class="sapUiSmallMarginBeginEnd" visible="false">
+			<smartForm:SmartForm id="idFormAvail" editTogglable="false" editable="true" title="{ResourceDescription}">
+				<smartForm:layout>
+					<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
+				</smartForm:layout>
+				<smartForm:Group>
+					<smartForm:GroupElement >
+						<smartField:SmartField value="{DateFrom}" editable="{user>/ENABLE_ABSENCE_CHANGE}" contextEditable="{user>/ENABLE_ABSENCE_CHANGE}"/>
+					</smartForm:GroupElement>
+					<smartForm:GroupElement >
+						<smartField:SmartField value="{DateTo}" editable="{user>/ENABLE_ABSENCE_CHANGE}" contextEditable="{user>/ENABLE_ABSENCE_CHANGE}"/>
+					</smartForm:GroupElement>
+					<smartForm:GroupElement>
+						<smartField:SmartField value="{Description}" editable="false" contextEditable="false"></smartField:SmartField>
+					</smartForm:GroupElement>
+					<core:ExtensionPoint name="FromExtP|ManageResources|ManageAbsence|ResourceAvailabilitySet|Update|GroupElement"/>
+				</smartForm:Group>
+			</smartForm:SmartForm>
+		</VBox>
+		<VBox id="idUpdateTimeAllocation" class="sapUiTinyMarginBeginEnd" visible="false">
+			<Panel headerText="{ResourceDescription}">
+				<Label class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop" text="{/#ResourceAvailability/DateFrom/@sap:label}"/>
+				<DatePicker id="idUpdateFromDate" width="95%" editable="{user>/ENABLE_CHANGE_ASSET_TIME_ALLOC}" dateValue="{DateFrom}" placeholder="Enter Date"
+					change="handleUpdateChange" class="sapUiSmallMarginBeginEnd"/>
+				<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" text="{/#ResourceAvailability/DateTo/@sap:label}"/>
+				<DatePicker id="idUpdateToDate" width="95%" editable="{user>/ENABLE_CHANGE_ASSET_TIME_ALLOC}" dateValue="{DateTo}" placeholder="Enter Date"
+					change="handleUpdateChange" class="sapUiSmallMarginBeginEnd"/>
+				<smartForm:SmartForm id="idUpdateTimeCreateFormAvail" editTogglable="false" editable="true">
+					<smartForm:layout>
+						<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
+					</smartForm:layout>
+					<smartForm:Group>
+						<smartForm:GroupElement>
+							<smartField:SmartField value="{Description}" editable="false" contextEditable="false"></smartField:SmartField>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement>
+							<smartField:SmartField id="idUpdateAvailablHour" value="{AVAILABLE_HOURS}"/>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement>
+							<smartField:SmartField id="idUpdateBlockdHour" value="{BLOCKED_HOURS}"/>
+						</smartForm:GroupElement>
+						<core:ExtensionPoint name="FromExtP|ManageResources|TimeAllocation|ResourceAvailabilitySet|Update|GroupElement"/>
+					</smartForm:Group>
+				</smartForm:SmartForm>
+				<Label class="sapUiSmallMarginBeginEnd" text="{/#ResourceAvailability/BlockPercentage/@sap:label}"/>
+				<Slider id="idUpdateTimeAllocSlider" class="sapUiSmallMarginBeginEnd" width="97%" min="0" value="{BlockPercentage}" max="100"
+					change="onUpdateSliderChange" showAdvancedTooltip="true" showHandleTooltip="false" enabled="{user>/ENABLE_CHANGE_ASSET_TIME_ALLOC}"/>
+				<Label class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}"
+					text="{/ResourceAvailabilitySet/AVAILABILITY_DESCR/##com.sap.vocabularies.Common.v1.Label/String}"/>
+				<Input id="idUpdateDescription" value="{AVAILABILITY_DESCR}" visible="{user>/ENABLE_BLOCKER_DESCR_TEXT}" enabled="{user>/ENABLE_CHANGE_ASSET_TIME_ALLOC}" class="sapUiSmallMarginBeginEnd"
+					width="95%" maxLength="100"/>
+				<core:ExtensionPoint name="FromExtP|ManageResources|TimeAllocation|ResourceAvailabilitySet|Upadte|CustomElements"/>
+			</Panel>
+		</VBox>
+	</Page>
+</core:FragmentDefinition>

@@ -2,16 +2,16 @@
 	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<Dialog id="idGanttDemandFilterDialog" title="{i18n>xtit.ganttFilters}" draggable="true" afterClose="onAfterClose">
 		<content>
-			<smartFilterBar:SmartFilterBar id="ganttResourceTreeFilterBar" class="treeTableFilterBar"
-				persistencyKey="{viewModel>/persistencyKeyGanttDemandFilter}" considerSelectionVariants="true" entitySet="{viewModel>/ganttTreeSet}"
-				enableBasicSearch="false" liveMode="true" showGoOnFB="true" filterBarExpanded="true" beforeVariantFetch="onBeforeVariantFetch"
-				afterVariantLoad="onAfterVariantLoad" initialise="onBeforeInitialise" initialized="onGanttFilterInitialized" filterContainerWidth="10rem" filterChange="onGanttResourceFilterChange" containerQuery="true"
+			<smartFilterBar:SmartFilterBar id="ganttResourceTreeFilterBar" class="treeTableFilterBar" persistencyKey="com.evorait.evosuite.evoplan.ResourceFilter"
+				considerSelectionVariants="true" entitySet="GanttResourceHierarchySet" enableBasicSearch="false" liveMode="true" showGoOnFB="true"
+				filterBarExpanded="true" beforeVariantFetch="onBeforeVariantFetch" afterVariantLoad="onAfterVariantLoad" initialise="onBeforeInitialise"
+				initialized="onGanttFilterInitialized" filterContainerWidth="10rem" filterChange="onGanttResourceFilterChange" containerQuery="true"
 				showRestoreButton="true" showRestoreOnFB="true" showClearButton="true" showClearOnFB="true" showFilterConfiguration="false">
 				<smartFilterBar:layoutData>
 					<FlexItemData shrinkFactor="0"/>
 				</smartFilterBar:layoutData>
-					<smartFilterBar:controlConfiguration>
-			<core:ExtensionPoint name="FilterExtP|GanttChart|GanttHeircrchySet|ResourceFilterDialog|ControlConfiguration"/>
+				<smartFilterBar:controlConfiguration>
+					<core:ExtensionPoint name="FilterExtP|GanttChart|GanttHeircrchySet|ResourceFilterDialog|ControlConfiguration"/>
 				</smartFilterBar:controlConfiguration>
 			</smartFilterBar:SmartFilterBar>
 		</content>

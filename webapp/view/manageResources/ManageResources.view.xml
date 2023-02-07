@@ -45,13 +45,11 @@
 							</OverflowToolbar>
 						</smartTable:customToolbar>
 						<table:TreeTable id="idDataTableEvoplanGroup" selectionMode="None" visibleRowCountMode="Auto">
-							<!--visibleRowCountMode="Auto"-->
 							<table:columns>
 								<table:Column>
 									<table:customData>
 										<core:CustomData key="p13nData" value='\{"columnKey": "Description", "leadingProperty": "Description"}'/>
 									</table:customData>
-									<!--<Label text="{i18n>xlab.groupResourceDescription}"></Label>-->
 									<Label text="{/ResourceManagementSet/Description/##com.sap.vocabularies.Common.v1.Label/String}"></Label>
 									<table:template>
 										<Text text="{Description}"/>
@@ -101,7 +99,6 @@
 					<smartTable:SmartTable id="idTableHrResources" entitySet="ResourceMasterSet" useExportToExcel="false" useVariantManagement="true"
 						fitContainer="true" height="100%" useTablePersonalisation="true" header="{i18n>xtit.hrResourceTable}" showRowCount="true"
 						enableAutoBinding="true" class="sapUiTinyMarginBegin" requestAtLeastFields="Guid" smartFilterId="idSmartFilterResources">
-						<!--initiallyVisibleFields="Firstname,Lastname"-->
 						<!--layout data used to make the table growing but the filter bar fixed-->
 						<smartTable:layoutData>
 							<FlexItemData growFactor="1"/>
@@ -114,7 +111,6 @@
 							</OverflowToolbar>
 						</smartTable:customToolbar>
 						<table:Table id="idDataTableHrResource" selectionMode="MultiToggle" enableCellFilter="true" threshold="30" visibleRowCountMode="Auto">
-							<!--visibleRowCountMode="Auto"-->
 							<table:columns>
 								<table:Column filterProperty="Firstname" sortProperty="Firstname">
 									<table:customData >

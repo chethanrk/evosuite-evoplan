@@ -5,9 +5,11 @@
 		<buttons>
 			<Button text="{i18n>xbut.gotodemand}" visible="{assignment>/ShowGoToDetailBtn}" type="Emphasized" press="onGotoDemand"/>
 			<Button text="{i18n>xbut.buttonClose}" press="onCloseDialog"/>
-			<Button text="{i18n>xbut.buttonUnassign}" type="Reject" press="onDeleteAssignment" visible="{assignment>/AllowUnassign}"/>
+			<Button text="{i18n>xbut.buttonUnassign}" type="Reject" press="onDeleteAssignment" visible="{assignment>/AllowUnassign}"
+				enabled="{viewModel>/validateIW32Auth}"/>
 			<Button text="{i18n>xbut.buttonSave}" type="Emphasized" press="onSaveDialog"
-				visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleSaveBtn' }"/>
+				visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleSaveBtn' }"
+				enabled="{viewModel>/validateIW32Auth}"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

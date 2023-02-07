@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:u="sap.ui.unified">
-	<u:Menu itemSelect="handleMenuItemPress">
+	<u:Menu itemSelect="handleMenuItemPress" enabled="{viewModel>/validateIW32Auth}">
 		<u:customData>
 			<core:CustomData key="Path" value="{viewModel>/ganttSettings/shapeData/sPath}"/>
 		</u:customData>

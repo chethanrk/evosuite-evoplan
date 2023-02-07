@@ -12,13 +12,22 @@ sap.ui.define([
 	"sap/ui/table/RowActionItem",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/core/Fragment",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/m/library",
+	"sap/ui/util/Storage"
 ], function (Controller, History, Dialog, Button, Text, MessageToast, MessageBox, FormattedText, Constants,
-	RowAction, RowActionItem, formatter, Fragment, Log) {
+	RowAction, RowActionItem, formatter, Fragment, Log, MobileLibrary, Storage) {
 	"use strict";
+
+	var ButtonType = MobileLibrary.ButtonType,
+		DialogType = MobileLibrary.DialogType,
+		Label = MobileLibrary.Label,
+		VBox = MobileLibrary.VBox;
 
 	return Controller.extend("com.evorait.evoplan.controller.BaseController", {
 		formatter: formatter,
+
+		localStorage: new Storage(Storage.Type.local, "EvoPlan"),
 		/**
 		 * Convenience method for accessing the router in every controller of the application.
 		 * @public
@@ -127,6 +136,8 @@ sap.ui.define([
 						this.showMessageToast(oData.message);
 					}
 
+				} else if (oData && oData.severity === "error") {
+					this._showErrorMessage(oData.message, fnCallback);
 				} else {
 					this.showMessageToast(oData.message);
 				}
@@ -186,7 +197,7 @@ sap.ui.define([
 				oViewModel = this.getModel("appView"),
 				oResourceBundle = this.getResourceBundle();
 
-			if (mParameters && !mParameters.bCustomBusy) {
+			if (mParameters === undefined || (mParameters && !mParameters.bCustomBusy)) {
 				oViewModel.setProperty("/busy", true);
 			}
 
@@ -209,9 +220,7 @@ sap.ui.define([
 					//set first dragged index to set initial
 					this.getModel("viewModel").setProperty("/iFirstVisibleRowIndex", -1);
 					//Handle Error
-					MessageToast.show(oResourceBundle.getText("errorMessage"), {
-						duration: 5000
-					});
+					this.showMessageToast(oResourceBundle.getText("errorMessage"));
 				}.bind(this)
 			});
 		},
@@ -224,7 +233,7 @@ sap.ui.define([
 		 * @param sFuncName Function name of the function import
 		 * @param sMethod method of http operation ex: GET/POST/PUT/DELETE
 		 */
-		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod) {
+		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod, bFromMultiTimeAlloc) {
 			var oResourceBundle = this.getResourceBundle();
 
 			return new Promise(function (resolve, reject) {
@@ -233,16 +242,19 @@ sap.ui.define([
 					urlParameters: oParams,
 					refreshAfterChange: false,
 					success: function (oData, oResponse) {
-						var bContainsError = this.showMessage(oResponse);
-						resolve(oData, oResponse, bContainsError);
+						if (bFromMultiTimeAlloc) {
+							resolve([oData, oResponse]);
+						} else {
+							var bContainsError = this.showMessage(oResponse);
+							resolve(oData, oResponse, bContainsError);
+						}
+
 					}.bind(this),
 					error: function (oError) {
 						//Handle Error
-						MessageToast.show(oResourceBundle.getText("errorMessage"), {
-							duration: 5000
-						});
+						this.showMessageToast(oResourceBundle.getText("errorMessage"));
 						reject(oError);
-					}
+					}.bind(this)
 				});
 			}.bind(this));
 		},
@@ -281,9 +293,6 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshAssetCal", {});
 			} else if (oParameter.bFromPlannCal) {
 				eventBus.publish("AssignInfoDialog", "RefreshCalendar", {});
-				// eventBus.publish("BaseController", "refreshTreeTable", {});
-				// eventBus.publish("BaseController", "refreshDemandTable", {});
-				// eventBus.publish("BaseController", "refreshDemandOverview", {});
 			} else if (oParameter.bFromDetail) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				eventBus.publish("BaseController", "refreshDemandOverview", {});
@@ -292,10 +301,8 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshGanttChart", oData);
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (oParameter.bFromMap) {
-				// eventBus.publish("BaseController", "resetMapSelection", {});
 				eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				eventBus.publish("BaseController", "refreshMapView", {});
-				// eventBus.publish("BaseController", "refreshMapDemandTable", {});
 			} else if (oParameter.bFromGanttSplit) {
 				eventBus.publish("BaseController", "refreshGanttChart", oData);
 			} else if (oParameter.bFromDemandSplit) {
@@ -320,6 +327,41 @@ sap.ui.define([
 		 */
 		getOrientationEvent: function () {
 			return window.onorientationchange ? "orientationchange" : "resize";
+		},
+
+		/**
+		 * On Material Info Button press event 
+		 * 
+		 */
+		onMaterialInfoButtonPress: function () {
+			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
+			if (this._aSelectedRowsIdx.length > 100) {
+				this._aSelectedRowsIdx.length = 100;
+			}
+			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
+			var iMaxSelcRow = this.getModel("user").getProperty("/DEFAULT_MAX_DEM_SEL_MAT_LIST");
+			if (oSelectedPaths.aPathsData.length > 0 && iMaxSelcRow >= this._aSelectedRowsIdx.length) {
+				this.getOwnerComponent().materialInfoDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
+			} else {
+				var msg = this.getResourceBundle().getText("ymsg.selectMaxItemMaterialInfo", [iMaxSelcRow]);
+				this.showMessageToast(msg);
+			}
+		},
+		/**
+		 * On Refresh Status Button press in Demand Table 
+		 * 
+		 */
+		onMaterialStatusPress: function (oEvent) {
+			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
+				oViewModel = this.getModel("appView"),
+				sDemandPath;
+			oViewModel.setProperty("/busy", true);
+			for (var i = 0; i < oSelectedIndices.length; i++) {
+				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
+				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
+					oViewModel.setProperty("/busy", false);
+				}.bind(this));
+			}
 		},
 
 		/**
@@ -371,7 +413,7 @@ sap.ui.define([
 							});
 							oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
 						} else {
-							aNonAssignableDemands.push(oData.DemandDesc);
+							aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData));
 						}
 					} else {
 						aPathsData.push({
@@ -394,7 +436,7 @@ sap.ui.define([
 						});
 					} else {
 						aDemands[j].setSelected(false);
-						aNonAssignableDemands.push(oData.Description);
+						aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData, oData.Description));
 						delete aDemands[j];
 					}
 				}
@@ -640,99 +682,43 @@ sap.ui.define([
 			oDataTable.setRowActionTemplate(oTemplate);
 			oDataTable.setRowActionCount(oTemplate.getItems().length);
 		},
-		/**
-		 *	Navigates to evoOrder detail page with static url. 
-		 */
-		handleNavigationLinkAction: function (oDemandObj, oAppInfo, oViewModel, oUserModel) {
-			var sUri, sSemanticObject, sParameter, sKey, oKeyChar, aPlaceholders,
-				sAction,
-				sAdditionInfo,
-				sServicePath = "https://" + oUserModel.getProperty("/ServerPath"),
-				sLaunchMode = oViewModel ? oViewModel.getProperty("/launchMode") : this.getModel("viewModel").getProperty("/launchMode");
 
-			//Logic for Transaction Navigation
-			if (oAppInfo.LaunchMode === "ITS") {
-				sAdditionInfo = oAppInfo.Value1;
-				sUri = sAdditionInfo.split("\\")[0];
-				sParameter = sAdditionInfo.split("\\")[sAdditionInfo.split("\\").length - 1];
-				oKeyChar = oDemandObj[sParameter];
-				sUri = sUri + oKeyChar;
-				if (sAdditionInfo.substring(0, 5) !== "https") {
-					sUri = sServicePath + sUri;
-				}
-				window.open(sUri, "_blank");
-			} else {
-				//Logic for Navigation in Fiori Launchpad
-				if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
-					sAdditionInfo = oAppInfo.Value1 || "";
-					sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];
-					sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "dispatch";
-					aPlaceholders = sAdditionInfo.split("\\\\_\\\\").splice(2);
-					sParameter = "";
-					for (var a = 0; a < aPlaceholders.length; a++) {
-						oKeyChar = aPlaceholders[a].charAt(0);
-						if (oKeyChar === "?") {
-							sParameter = sParameter + aPlaceholders[a].split("=")[0] + "=" + oDemandObj[aPlaceholders[a].split("=")[1]];
-						} else {
-							if (oKeyChar === aPlaceholders[a].charAt(aPlaceholders[a].length - 1)) {
-								sParameter = sParameter + aPlaceholders[a];
-							} else {
-								sParameter = sParameter + oDemandObj[aPlaceholders[a].split(oKeyChar)[1]] + oKeyChar;
-							}
-						}
-					}
-					if (oKeyChar === "?") {
-						sParameter = "?" + sParameter.slice(1);
-					} else {
-						sParameter = "&" + sParameter.slice(0, -1);
-					}
-					if (sSemanticObject && sAction) {
-						this.navToApp(sSemanticObject, sAction, sParameter);
-					}
-				} else { //Logic for Navigating as BSP URL
-					sAdditionInfo = oAppInfo.Value1;
-					aPlaceholders = sAdditionInfo.split("\\").slice(2);
-					sUri = sAdditionInfo.split("\\")[0];
-					oKeyChar = sUri.charAt(sUri.length - 1);
-					for (var s = 0; s < aPlaceholders.length; s++) {
-						if (aPlaceholders[s].includes("/")) {
-							sKey = oDemandObj[aPlaceholders[s].split("/")[0]] + oKeyChar;
-							if (aPlaceholders[s].includes("&")) {
-								sKey = aPlaceholders[s].split(oKeyChar)[0] + oKeyChar + oDemandObj[aPlaceholders[s].split(oKeyChar)[1].split("/")[0]];
-								sUri = sUri.slice(0, -1);
-							}
-							sUri = sUri + sKey;
-						}
-					}
-					sUri = sUri.slice(0, -1);
-					if (sAdditionInfo.substring(0, 5) !== "https") {
-						sUri = sServicePath + sUri;
-					}
-					window.open(sUri, "_blank");
-				}
-			}
+		/**
+		 * Navigate to other apps as BSP Apps 
+		 * @param sUri
+		 */
+		navigateToApps: function (sUri) {
+			window.open(sUri, "_blank");
 		},
 
-		navToApp: function (sSemanticObject, sAction, sParameter) {
-			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation"),
-				sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
+		/**
+		 * Navigate to other apps in Fiori Launchpad 
+		 * @param sSemanticObject
+		 * @param sAction
+		 * @param sParameter
+		 * @param sParamValue
+		 */
+		navToApp: function (sSemanticObject, sAction, sParameter, sParamValue) {
+			var sHash, sUrl,
+				oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation"),
+				mParams = {};
+			mParams[sParameter] = [sParamValue];
+			sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
 					target: {
 						semanticObject: sSemanticObject,
 						action: sAction
-					}
+					},
+					params: mParams
 				}) || "", // generate the Hash to display a Notification details app
 
-				//Setting ShellHash Parameters for EvoTime and Other apps
-				sShellHash = sHash + sParameter, // + sKey;
-
-				sUrl = window.location.href.split('#')[0] + sShellHash;
+				sUrl = window.location.href.split('#')[0] + sHash;
 			window.open(sUrl, "_blank");
 
 		},
 
 		clearLocalStorage: function () {
-			localStorage.removeItem("Evo-Dmnd-pageRefresh");
-			localStorage.removeItem("Evo-Dmnd-guid");
+			this.localStorage.remove("Evo-Dmnd-pageRefresh");
+			this.localStorage.remove("Evo-Dmnd-guid");
 		},
 
 		/**
@@ -846,6 +832,7 @@ sap.ui.define([
 		},
 		submitDemandTableChanges: function () {
 			var oModel = this.getModel();
+			this.bFromTable = true;
 			return new Promise(function (resolve, reject) {
 				oModel.submitChanges({
 					success: function (oData, oResponse) {
@@ -855,33 +842,45 @@ sap.ui.define([
 						reject(oError);
 					}
 				});
-			}.bind(this)).then(this.handelResponsesToShowMessages.bind(this)).catch(function (oError) {
+			}.bind(this)).then(this.handleResponsesToShowMessages.bind(this)).catch(function (oError) {
 				oModel.resetChanges();
 			}.bind(this));
 		},
 
 		/**
 		 * Handle the response Message on Edit of Demand Table
+		 * and in the time allocation controller
 		 * @param oData
 		 */
-		handelResponsesToShowMessages: function (oData, oResponse) {
-			var oResponses = oData.__batchResponses[0].__changeResponses,
-				oMessages = [],
-				oDetails;
-			for (var i in oResponses) {
-				oDetails = JSON.parse(oResponses[i].headers["sap-message"]).details;
-				if (oDetails && oDetails.length) {
-					for (var j in oDetails) {
-						if (!JSON.stringify(oMessages).includes(JSON.stringify(oDetails[j].message))) {
-							oMessages.push(oDetails[j]);
-						}
-					}
+		handleResponsesToShowMessages: function (oData, bFromTimeAllocations) {
+			var aMultiResponses, aMessages = [],
+				oDetails, oResponseItem;
+			aMultiResponses = oData.length ? oData : oData.__batchResponses[0].__changeResponses;
+			for (var i in aMultiResponses) {
+				oResponseItem = aMultiResponses[i][1] ? aMultiResponses[i][1] : aMultiResponses[i];
+				oDetails = JSON.parse(oResponseItem.headers["sap-message"]).details;
+				if (bFromTimeAllocations) {
+					aMessages.push(JSON.parse(oResponseItem.headers["sap-message"]));
 				} else {
-					oMessages.push(JSON.parse(oResponses[i].headers["sap-message"]));
+					if (oDetails && oDetails.length) {
+						for (var j in oDetails) {
+							if (JSON.stringify(aMessages).indexOf(JSON.stringify(oDetails[j].message)) === -1) {
+								aMessages.push(oDetails[j]);
+							}
+						}
+					} else {
+						aMessages.push(JSON.parse(oResponseItem.headers["sap-message"]));
+					}
 				}
 			}
-			this.getModel("viewModel").setProperty("/oResponseMessages", oMessages);
-			this.showResponseMessagePopup();
+			this.getModel("viewModel").setProperty("/oResponseMessages", aMessages);
+			if (this.bFromTable) {
+				this.bFromTable = false;
+				this.showResponseMessageToast(); //used for showing in MessageToast
+			} else {
+				this.showResponseMessagePopup(); //used to show in Messagebox
+			}
+
 			this.getModel().resetChanges();
 		},
 
@@ -902,6 +901,17 @@ sap.ui.define([
 			} else {
 				this.oResponseMessagePopup.open();
 			}
+		},
+
+		/**
+		 * Display the messages after inline edit success in Message Toast;
+		 * */
+		showResponseMessageToast: function () {
+			var sMessages = this.getModel("viewModel").getProperty("/oResponseMessages");
+			sMessages = sMessages.map(function (item) {
+				return item.message;
+			}).join("\n");
+			this.showMessageToast(sMessages);
 		},
 
 		/**
@@ -929,9 +939,7 @@ sap.ui.define([
 					actions: [sDiscard, sCancel, sSave],
 					styleClass: this.getOwnerComponent().getContentDensityClass(),
 					onClose: function (sAction) {
-						// sap.m.MessageToast.show("Action selected: " + sAction);
 						resolve(sAction);
-						// MessageToast.show("Action selected: " + sAction);
 					}
 				});
 			}.bind(this));
@@ -1015,6 +1023,320 @@ sap.ui.define([
 			return (oNode.NodeType === "TIMEMONTH" || oNode.NodeType === "TIMEWEEK" || oNode.NodeType === "TIMEQUART" || oNode.NodeType ===
 					"TIMEYEAR") && oNode.RES_ASGN_AVAILABILITY_FLAG ===
 				"P";
+		},
+
+		/**
+		 * open the Single Time Allocation dialog Blockers and Manage Absence for selected resource
+		 * @param oEvent
+		 * Since 2301.1.0
+		 * @Author Rakesh Sahu
+		 */
+		onNewTimeAllocPress: function (oEvent) {
+			var oResourceBundle = this.getResourceBundle();
+			if (this.selectedResources.length === 0 || this.removeSelectedResourceGroups()) {
+				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
+				return;
+			}
+
+			// to identify the action done on respective page
+			this.localStorage.put("Evo-Action-page", "ganttSplit");
+			this.getOwnerComponent().TimeAllocations.open(this.getView(), this.selectedResources, this._mParameters, "timeAlloc");
+
+		},
+
+		/* concatinate demand description with OrderID/Notification to display in error message dialog 
+		 * @param oData
+		 * @param Desc
+		 * Since 2301.4.0
+		 * @Author Rakesh Sahu
+		 */
+		getMessageDescWithOrderID: function (oData, Desc) {
+			Desc = Desc ? Desc : oData.DemandDesc;
+			if (oData.ORDERID) {
+				return oData.ORDERID + " / " + oData.OPERATIONID + "  " + Desc
+			} else {
+				return oData.NOTIFICATION + "  " + Desc;
+			}
+		},
+
+		/**
+		 * from relase 2301
+		 * to check if any Assignment is done to a Resources who is unavailabe
+		 * method called during Split assignments scenario to find unavailability
+		 * example: if assignment is of 20 hours and resource is available for only 8 hours, 
+		 * the method returns Unavailable: true
+		 * based on this multiple assignments are created for the resource on different days
+		 * 
+		 * @params {array} aAssignments - array of assingments for which resource availability needs to be checked
+		 * @returns {array} aDemandsForSplitAssignment - resloves array of assignments for which Split should happen
+		 *
+		 */
+		checkResourceUnavailabilty: function (aAssignments, mParameters, sResourceNodeType) {
+			var oModel = this.getModel(),
+				aUnavailabilityChecks = [],
+				aDemandsForSplitAssignment = [],
+				sSelectedHierarchyView = this.getModel("viewModel").getProperty("/selectedHierarchyView"),
+				oResourceAvailabiltyResponse = {
+					arrayOfDemands: aAssignments,
+					arrayOfDemandsToSplit: [],
+					splitConfirmation: "NO",
+					mParameters: mParameters,
+					nodeType: sResourceNodeType
+				};
+
+			var oUnavailabilityPromise = new Promise(function (finalResolve, finalReject) {
+
+				for (var i = 0; i < aAssignments.length; i++) {
+					if (aAssignments[i].ResourceGuid) {
+						aUnavailabilityChecks.push(new Promise(function (resolve, reject) {
+							var oAvailabilityCheckObject = {
+								ResourceGuid: aAssignments[i].ResourceGuid,
+								StartTimestamp: aAssignments[i].DateFrom,
+								DemandGuid: aAssignments[i].DemandGuid,
+								DailyView: sSelectedHierarchyView === "TIMEDAY"
+							};
+							if (aAssignments[i].DateTo) {
+								oAvailabilityCheckObject.EndTimestamp = aAssignments[i].DateTo;
+							}
+							this.executeFunctionImport(oModel, oAvailabilityCheckObject, "ResourceAvailabilityCheck", "GET").then(
+								function (oAvailabilityData, oResponse) {
+									// if resource unavailable for this demand push the demand to aDemandsForSplitAssignment
+									// else push it to aNormalAssignmentArray
+									if (oAvailabilityData.Unavailable) {
+										aDemandsForSplitAssignment.push(oAvailabilityData.DemandGuid);
+									}
+									resolve(oAvailabilityData.Unavailable);
+								});
+						}.bind(this)));
+					}
+				}
+
+				this.getModel("appView").setProperty("/busy", true);
+				Promise.all(aUnavailabilityChecks).then(function (aPromiseAllResults) {
+					this.getModel("appView").setProperty("/busy", false);
+
+					if (aPromiseAllResults.includes(true)) {
+						oResourceAvailabiltyResponse.arrayOfDemandsToSplit = aDemandsForSplitAssignment;
+						finalResolve(oResourceAvailabiltyResponse);
+					} else {
+						finalResolve(oResourceAvailabiltyResponse);
+					}
+				}.bind(this));
+			}.bind(this));
+
+			return oUnavailabilityPromise;
+
+		},
+
+		/**
+		 * show dialog to confirm the split for demands which have work more than the resource availability
+		 * on resolve/OK split create assignment and on reject/Cancel normal create assignment is triggered to backend
+		 * 
+		 * @param {array} aDemandsForSplitAssignment 
+		 * @param {promise resolve} finalResolve 
+		 * @param {promise reject} finalReject 
+		 */
+		showSplitConfirmationDialog: function (oResourceAvailabiltyResponse) {
+			var oViewModel = this.getModel("viewModel"),
+				oi18nModel = this.getModel("i18n"),
+				sDisplayDemandInfo, sCancelResponse, aDraggedDemands = [],
+
+				aDemandsForSplitAssignment = oResourceAvailabiltyResponse.arrayOfDemandsToSplit,
+				bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP");
+
+			return new Promise(function (resolve, reject) {
+
+				this.dialogResolve = resolve;
+				this.dialogReject = reject;
+				this.resourceAvailabiltyResponse = oResourceAvailabiltyResponse;
+
+				if (aDemandsForSplitAssignment.length > 0 && bShowSplitConfirmationDialog) {
+					sDisplayDemandInfo = this.getDemandDetailsWithDesciption(aDemandsForSplitAssignment);
+					oViewModel.setProperty("/splitConfirmationDialogInfo", sDisplayDemandInfo);
+
+					if (!this.oConfirmDialog) {
+						this.oConfirmDialog = new Dialog({
+							type: DialogType.Message,
+							title: oi18nModel.getProperty("xtit.confirmSplit"),
+							content: [
+								new VBox({
+									items: [
+										new Label({
+											wrapping: true,
+											text: oi18nModel.getProperty("xmsg.confirmSplit")
+										}),
+										new Label({
+											text: ""
+										}), // empty space
+										new Label({
+											design: "Bold",
+											wrapping: true,
+											text: "{viewModel>/splitConfirmationDialogInfo}"
+										})
+									]
+								})
+							],
+							buttons: [
+								new Button({
+									type: ButtonType.Emphasized,
+									text: oi18nModel.getProperty("xbut.splitConfirmDialogYes"),
+									press: function () {
+										this.oConfirmDialog.close();
+										// resolve the aDemandsForSplitAssignment
+										this.resourceAvailabiltyResponse.splitConfirmation = "YES";
+										this.dialogResolve(this.resourceAvailabiltyResponse);
+									}.bind(this)
+								}),
+								new Button({
+									text: oi18nModel.getProperty("xbut.splitConfirmDialogNo"),
+									press: function () {
+										this.oConfirmDialog.close();
+										// resolve the aDemandsForSplitAssignment
+										this.resourceAvailabiltyResponse.splitConfirmation = "NO";
+										this.resourceAvailabiltyResponse.arrayOfDemandsToSplit = [];
+										this.dialogResolve(this.resourceAvailabiltyResponse);
+									}.bind(this)
+								}),
+								new Button({
+									text: oi18nModel.getProperty("xbut.splitConfirmDialogCancel"),
+									press: function () {
+										this.oConfirmDialog.close();
+										aDraggedDemands = this.resourceAvailabiltyResponse && this.resourceAvailabiltyResponse.arrayOfDemands;
+										sCancelResponse = aDraggedDemands.length > 1 ? "Cancel_Multi" : "Cancel";
+										this.dialogReject(sCancelResponse);
+									}.bind(this)
+								})
+							]
+						});
+
+						this.getView().addDependent(this.oConfirmDialog);
+					}
+
+					this.oConfirmDialog.open();
+				} else if (aDemandsForSplitAssignment.length > 0 && !bShowSplitConfirmationDialog) {
+					// scenario where split global config is enabled and user dont want to see confirmation for split,
+					// always consider split by default
+					this.resourceAvailabiltyResponse.splitConfirmation = "YES";
+					this.dialogResolve(this.resourceAvailabiltyResponse);
+				} else {
+					this.dialogResolve(this.resourceAvailabiltyResponse);
+				}
+			}.bind(this));
+
+		},
+
+		/**
+		 * method returns a message to be shown to the user
+		 * asking for confirmation to continue with splits or not
+		 * message includes orderid, operationId, demand description
+		 * 
+		 * @param {array} aDemandsForSplitAssignment demands which are marked for split
+		 * @returns 
+		 */
+		getDemandDetailsWithDesciption: function (aDemandsForSplitAssignment) {
+			var oModel = this.getModel(),
+				sDisplayDemandInfo, sDemandDescriptionWithOrderOperation,
+				aDemandObjectsFromLocalStorage = JSON.parse(this.localStorage.get("Evo-Dmnd-guid"));
+
+			for (var iIndex = 0; iIndex < aDemandsForSplitAssignment.length; iIndex++) {
+				var sDemandPath = "/DemandSet('" + aDemandsForSplitAssignment[iIndex] + "')",
+					oDemandDetails = oModel.getProperty(sDemandPath);
+
+				// in case of gantt split scenarios when the DemandContext is not found from model
+				// fetch it from the local storgae data
+				if (!oDemandDetails && aDemandObjectsFromLocalStorage.length > 0) {
+					oDemandDetails = this._getDemandObjectSplitPage(sDemandPath);
+				}
+
+				var sDemandDescription = oDemandDetails.DemandDesc ? oDemandDetails.DemandDesc : "",
+					sOrderId = oDemandDetails.ORDERID ? oDemandDetails.ORDERID : "",
+					sOperationId = oDemandDetails.OPERATIONID ? oDemandDetails.OPERATIONID : "";
+				sDemandDescriptionWithOrderOperation = sOrderId + " - " + sOperationId + " - " + sDemandDescription;
+				sDisplayDemandInfo = sDisplayDemandInfo ? sDisplayDemandInfo + "\n \n" + sDemandDescriptionWithOrderOperation :
+					sDemandDescriptionWithOrderOperation;
+			}
+			return sDisplayDemandInfo;
+		},
+
+		/**
+		 * getting Demand objects form local model coming from gantt split
+		 * @param sPath
+		 * @since 2205
+		 */
+		_getDemandObjectSplitPage: function (sPath) {
+			var aDragSessionData = JSON.parse(this.localStorage.get("Evo-Dmnd-guid"));
+			for (var i = 0; i < aDragSessionData.length; i++) {
+				if (aDragSessionData[i].sPath === sPath) {
+					return aDragSessionData[i].oDemandObject;
+				}
+			}
+		},
+
+		/**
+		 * catch for the split assignment method prmomises
+		 * 
+		 * @param {string} sResponse
+		 */
+		handlePromiseChainCatch: function (sResponse) {
+			if (sResponse === "Cancel" && this.rejectAssignment) {
+				this.rejectAssignment();
+			} else if (sResponse === "Cancel_Multi" && this.rejectMultiAssign) {
+				this.rejectMultiAssign();
+			}
+		},
+
+		/**
+		 * Checks if the passed assignment is part of split or not
+		 * 
+		 * @param {object} oModel main model evoplan service
+		 * @param {string} sAssignGuid assignment guid
+		 * @returns boolean if the selected assignment is part of a split
+		 */
+		checkIfAssignmentPartOfSplit: function (oModel, sAssignGuid) {
+			var sAssignmentPath = "/AssignmentSet('" + sAssignGuid + "')",
+				sAssignmentObject = oModel.getProperty(sAssignmentPath);
+
+			if (sAssignmentObject && sAssignmentObject.SPLIT_INDEX > 0 && sAssignmentObject.SPLIT_COUNTER > 0) {
+				return true;
+			}
+			return false;
+		},
+
+		/**
+		 * remove the selection of resource group on press of time allocation button 
+		 * time allocation dialog does not work for resource Group
+		 * it works for multiple resources only
+		 */
+		removeSelectedResourceGroups: function () {
+			var oModel,
+				aRemoveItems = [];
+			oModel = this._mParameters.bFromHome || this._mParameters.bFromMap ? this.getModel() : this.getModel("ganttModel");
+			for (var i in this.selectedResources) {
+				if (oModel.getProperty(this.selectedResources[i] + "/NodeType") === "RES_GROUP") {
+					aRemoveItems.push(this.selectedResources[i]);
+				}
+			}
+			for (i in aRemoveItems) {
+				this.selectedResources.splice(this.selectedResources.indexOf(aRemoveItems[i]), 1);
+				oModel.setProperty(aRemoveItems[i] + "/IsSelected", false);
+			}
+			if (this.selectedResources.length) {
+				return false;
+			} else {
+				this.resetResourceTreeSelection(aRemoveItems);
+				return true;
+			}
+		},
+
+		/**
+		 * deselect the Resource group which are removed from selection on press of time allocation button 
+		 */
+		resetResourceTreeSelection: function (aRemoveItems) {
+			if (this._mParameters.bFromHome || this._mParameters.bFromMap) {
+				this._eventBus.publish("ManageAbsences", "ClearSelection", {});
+			} else {
+				this._oEventBus.publish("BaseController", "resetSelections", {});
+			}
 		}
 	});
 

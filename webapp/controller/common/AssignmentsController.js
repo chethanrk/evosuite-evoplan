@@ -1,10 +1,12 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/BaseController",
+	"com/evorait/evoplan/controller/common/DemandTableOperations",
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
-	"com/evorait/evoplan/model/Constants"
-], function (BaseController, MessageBox, formatter, Constants) {
-	return BaseController.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
+	"com/evorait/evoplan/model/Constants",
+	"sap/ui/core/Fragment"
+], function (DemandTableOperations, MessageBox, formatter, Constants, Fragment) {
+	
+	return DemandTableOperations.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
 		/**
 		 * save assignment after drop
 		 * 
@@ -338,14 +340,73 @@ sap.ui.define([
 				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", this.aFixedAppointmentDemands);
 				this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), this.aFixedAppointmentPayload, aAllParameters, mParameters);
 			} else {
-				for (var i = 0; i < aAllParameters.length; i++) {
-					if (parseInt(i, 10) === aAllParameters.length - 1) {
-						bIsLast = true;
+				// if global config enabled for split assignments
+				// also call new logic only when drop happens on Respurce NodeType - RESOURCE or TIMEDAY
+				// then first check with backend if resource availability is there for the assignment work hours 
+				// since release 2301
+				var bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
+					sResourceNodeType = targetObj.NodeType;
+
+				if (bSplitGlobalConfigEnabled && (sResourceNodeType === "RESOURCE" || sResourceNodeType === "TIMEDAY")) {
+					this.checkAndExecuteSplitAssignments(aAllParameters, mParameters, sResourceNodeType);
+				} else {
+					for (var iIndex = 0; iIndex < aAllParameters.length; iIndex++) {
+						if (parseInt(iIndex, 10) === aAllParameters.length - 1) {
+							bIsLast = true;
+						}
+						this.callFunctionImport(aAllParameters[iIndex], "CreateAssignment", "POST", mParameters, bIsLast);
 					}
-					this.callFunctionImport(aAllParameters[i], "CreateAssignment", "POST", mParameters, bIsLast);
 				}
 			}
 
+		},
+
+		/**
+		 * method checks resourceAvailabilty for the selected demands 
+		 * then confirms if the user wants to split the assignments
+		 * on confirm/reject then calls the required function imports
+		 * 
+		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
+		 */
+		checkAndExecuteSplitAssignments: function (aAssignments, mParameters, sResourceNodeType) {
+			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch)
+				.then(this.showSplitConfirmationDialog.bind(this)).catch(this.handlePromiseChainCatch)
+				.then(this.callRequiredFunctionImports.bind(this)).catch(this.handlePromiseChainCatch);
+		},
+
+		/**
+		 * based on the response from split confirmation dialog calls the required function imports
+		 * strucuture of oConfirmationDialogResponse :
+		 * { arrayOfDemands : aAssignments,
+		 *   arrayOfDemandsToSplit : [],
+		 *   splitConfirmation : "NO"
+		 * };
+		 * @param {object} oConfirmationDialogResponse response from split confirmation dialog
+		 * 
+		 */
+		callRequiredFunctionImports: function (oConfirmationDialogResponse) {
+			if (oConfirmationDialogResponse) {
+				var aDemands = oConfirmationDialogResponse.arrayOfDemands,
+					aDemandGuidsToSplit = oConfirmationDialogResponse.arrayOfDemandsToSplit,
+					mParameters = oConfirmationDialogResponse.mParameters,
+					sResourceNodeType = oConfirmationDialogResponse.nodeType,
+					bIsLast;
+				for (var iIndex = 0; iIndex < aDemands.length; iIndex++) {
+					if (parseInt(iIndex, 10) === aDemands.length - 1) {
+						bIsLast = true;
+					}
+					// if Demand is present in aDemandsForSplitAssignment it means the assignment is of more effort than the resource availability
+					// 	thus call the functionImport 'CreateSplitStretchAssignment' 
+					// else it means the resource availability is proper for the assignment 
+					//  thus call the functionImport 'CreateAssignment'
+					if (aDemandGuidsToSplit.includes(aDemands[iIndex].DemandGuid)) {
+						aDemands[iIndex].ResourceView = sResourceNodeType === "RESOURCE" ? "SIMPLE" : "DAILY";
+						this.callFunctionImport(aDemands[iIndex], "CreateSplitStretchAssignments", "POST", mParameters, bIsLast);
+					} else {
+						this.callFunctionImport(aDemands[iIndex], "CreateAssignment", "POST", mParameters, bIsLast);
+					}
+				}
+			}
 		},
 
 		/**
@@ -363,7 +424,7 @@ sap.ui.define([
 
 			if (isReassign && !oData.AllowReassign) {
 				sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
-				this._showAssignErrorDialog([oData.Description], null, sDisplayMessage);
+				this._showAssignErrorDialog([this.getMessageDescWithOrderID(oData, oData.Description)], null, sDisplayMessage);
 				//when from new gantt shape busy state needs removed
 				if (mParameters.bCustomBusy && (mParameters.bFromNewGantt || mParameters.bFromNewGanttSplit)) {
 					this._oView.getModel("ganttModel").setProperty(mParameters.sSourcePath + "/busy", false);
@@ -516,13 +577,6 @@ sap.ui.define([
 					this.callFunctionImport(aAllParameters[i], "UpdateAssignment", "POST", mParameters, bIsLast);
 				}
 			}
-
-			// if (parseInt(i, 10) === aContexts.length - 1) {
-			// 	bIsLast = true;
-			// }
-			// // call function import
-			// this.callFunctionImport(oParams, "UpdateAssignment", "POST", mParameters, bIsLast);
-
 		},
 		/**
 		 * delete assignments in bulk
@@ -533,6 +587,7 @@ sap.ui.define([
 		bulkDeleteAssignment: function (aContexts, mParameters) {
 			var oModel = this.getModel(),
 				bIsLast = null,
+				oEventBus = sap.ui.getCore().getEventBus(),
 				sPath, sAssignmentGuid, oParams;
 			this.clearMessageModel();
 			for (var i in aContexts) {
@@ -544,9 +599,11 @@ sap.ui.define([
 				if (parseInt(i, 10) === aContexts.length - 1) {
 					bIsLast = true;
 				}
+				oEventBus.publish("GanttChart", "refreshResourceOnDelete");
 				this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, bIsLast);
 			}
 		},
+
 		/**
 		 * delete assignment
 		 * @param sPath
@@ -612,9 +669,7 @@ sap.ui.define([
 				// call function import
 				if (aAbsences[j]) {
 					this.callFunctionImport(aAbsences[j], "ManageAbsence", "POST", oData.mParameters, bIsLast);
-				} else {
-					//
-				}
+				} else {}
 			}
 		},
 		/**
@@ -693,7 +748,7 @@ sap.ui.define([
 
 			//condition added to getData from gantt split : since 2205	
 			if (!aSources) {
-				aSources = JSON.parse(localStorage.getItem("Evo-aPathsData"));
+				aSources = JSON.parse(this.localStorage.get("Evo-aPathsData"));
 			}
 			for (var f in aSources) {
 				aSources[f].IsDisplayed = true;
@@ -796,7 +851,7 @@ sap.ui.define([
 
 			//condition added to getData from gantt split : since 2205	
 			if (!aSources) {
-				aSources = JSON.parse(localStorage.getItem("Evo-aPathsData"));
+				aSources = JSON.parse(this.localStorage.get("Evo-aPathsData"));
 			}
 			for (var n in aSources) {
 				if (aSources[n].oData.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
@@ -854,6 +909,24 @@ sap.ui.define([
 			}
 			return true;
 		},
+		
+		/**
+		 * This function is called when assignment is moved to different node under same resource
+		 * @author Giri
+		 * @params - assignmentPath - It is the path where the assignment is to be assigned
+		 *			 sResourcePath - It is path of Resource where it will be assigned
+		 *			 updateParameters - To differentiate between Home and map screen
+		 * */
+		handleDropOnSameResource: function (assignmentPath, sResourcePath, updateParameters) {
+			var mParams = {
+				$expand: "Demand"
+			};
+			this.getOwnerComponent()._getData(assignmentPath, null, mParams)
+				.then(function (oAssignData) {
+					this._setAssignmentDetail(oAssignData, sResourcePath);
+					this.updateAssignment(false, updateParameters);
+			}.bind(this));
+		},
 
 		/**
 		 * Setting dragged assignment to Assignment Model
@@ -883,7 +956,7 @@ sap.ui.define([
 
 			oNewAssign = this.getModel().getProperty(oResourcePath);
 			if (oNewAssign.NodeType !== "RESOURCE") {
-				oAssignment = this.setDateTimeParams(oAssignment, oNewAssign.StartDate, oNewAssign.StartTime, oNewAssign.EndDate, oNewAssign.EndTime)
+				oAssignment = this.setDateTimeParams(oAssignment, oNewAssign.StartDate, oNewAssign.StartTime, oNewAssign.EndDate, oNewAssign.EndTime);
 			} else {
 				oAssignment = this.setDateTimeParams(oAssignment, oAssignment.DateFrom, {
 					ms: oAssignment.DateFrom.getTime()
@@ -982,6 +1055,80 @@ sap.ui.define([
 						this.updateAssignment(true, mParameter);
 					}
 				}.bind(this));
+		},
+
+		/**
+		 * 
+		 * @param {object} oData - data object with assignments details
+		 * @returns promise - which is resolved with oData on user oConfirmationDialogResponse
+		 * and rejected on cancel press
+		 */
+		deleteSplitsUserConfirm: function (oData) {
+
+			var oDeleteSplitsUserConfirmPromise = new Promise(function (resolve, reject) {
+
+				this.splitDeleteDialogResolve = resolve;
+				this.splitDeleteDialogReject = reject;
+				this.splitDeleteDialogDataToResolve = oData;
+
+				if (!this.oSplitDeleteConfirmDialog) {
+					Fragment.load({
+						id: "DeleteSplitsConfirmDialog",
+						name: "com.evorait.evoplan.view.common.fragments.DeleteSplitsConfirmDialog",
+						controller: this
+					}).then(function (oDialog) {
+						this.oSplitDeleteConfirmDialog = oDialog;
+						this.getView().addDependent(this.oSplitDeleteConfirmDialog);
+						this.oSplitDeleteConfirmDialog.open();
+					}.bind(this));
+				} else {
+					this.oSplitDeleteConfirmDialog.open();
+				}
+			}.bind(this));
+
+			return oDeleteSplitsUserConfirmPromise;
+		},
+
+		/**
+		 * Method called on Proceed press in all splits unassign user confirmation dialog
+		 */
+		onProceedWithSplitDeletion: function () {
+			if (this.oSplitDeleteConfirmDialog) {
+				this.splitDeleteDialogResolve(this.splitDeleteDialogDataToResolve);
+				this.oSplitDeleteConfirmDialog.close();
+			}
+		},
+
+		/**
+		 * Method called on Cancel press in all splits unassign user confirmation dialog
+		 */
+		onCancelSplitDeletion: function () {
+			if (this.oSplitDeleteConfirmDialog) {
+				this.splitDeleteDialogReject();
+				this.oSplitDeleteConfirmDialog.close();
+			}
+		},
+
+		/**
+		 * Method called on reject/catch scenarios of split unassign confirm dialog
+		 */
+		_catchError: function (oError) {
+			//do nothing
+		},
+
+		/**
+		 * Method call to delete all assignments which are part of a split
+		 * UI passes the Assignments Guid, deletion handled in backend
+		 * 
+		 * @param {object} oUserConfirmResponse 
+		 * 
+		 */
+		deleteSplitAssignments: function (oUserConfirmResponse) {
+			if (oUserConfirmResponse) {
+				var sAssginmentGuid = oUserConfirmResponse.assignmentGuid,
+					mParameters = oUserConfirmResponse.parameters;
+				this.deleteAssignment(sAssginmentGuid, mParameters);
+			}
 		}
 	});
 });

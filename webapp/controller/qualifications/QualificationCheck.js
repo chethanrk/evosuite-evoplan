@@ -106,7 +106,7 @@ sap.ui.define([
 
 			//Check for no Items selected to Proceed
 			if (!oTable.getSelectedItems().length) {
-				MessageToast.show(this.getResourceBundle().getText("xmsg.msgItemSelect"));
+				this.showMessageToast(this.getResourceBundle().getText("xmsg.msgItemSelect"));
 				return;
 			}
 			//getting Selected Demands based on the Available parameter
@@ -174,7 +174,6 @@ sap.ui.define([
 			var aSelectedGuids = this.getSelectedGuids(aQualificationItems),
 				aSelectedSources = [];
 			if (oTable.isAllSelectableSelected()) {
-				// aSelectedSources = aSourcePaths;
 				aSelectedSources = aSourcePaths ? aSourcePaths : aSourceContexts;
 				return aSelectedSources;
 			}
@@ -209,11 +208,7 @@ sap.ui.define([
 				aSelectedGuids = aGuids;
 			} else {
 				//TODO the else part would never be executing as single selectio is being used for Gantt, keeping these code for Future use
-				// for (var i = 0; i < aQualificationItems.length; i++) {
-				// 	if (aQualificationItems[i].IsSelected && !aSelectedGuids.includes(aQualificationItems[i].DemandGuid)) {
-				// 		aSelectedGuids.push("/DemandSet('" + aQualificationItems[i].DemandGuid + "')");
-				// 	}
-				// }
+			
 			}
 			return aSelectedGuids;
 		}

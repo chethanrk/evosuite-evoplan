@@ -54,11 +54,10 @@ sap.ui.define([
 		},
 
 		getSetFunction: function (a, b, c, d) {
-			return a && !b && c !== "COMP" && d; // === 1;
+			return a && !b && c !== "COMP" && d;
 		},
 
 		getVisible: function (a, b, c, d, e) {
-			//	d = d === 2 || d === 3;
 			return a && !b && c !== "COMP" && d && !e;
 		},
 
@@ -82,13 +81,13 @@ sap.ui.define([
 				this.getModel("viewModel").setProperty("/dragSession", oSelectedData);
 				this.onShowOperationTimes(this.getModel("viewModel"));
 				this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
-				
-				localStorage.setItem("Evo-Action-page", "DemandDetails");
+
+				this.localStorage.put("Evo-Action-page", "DemandDetails");
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, {
 					bFromDetail: true
 				});
 			} else {
-				this._showAssignErrorDialog([oData.DemandDesc]);
+				this._showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
 			}
 		},
 
@@ -118,8 +117,7 @@ sap.ui.define([
 		 * open's a action sheets with possible statuses. 
 		 */
 		onClickAction: function (oEvent) {
-			localStorage.setItem("Evo-Action-page", "DemandDetails");
-			// sap.ui.getCore().byId("idStatusActionSheet").openBy(oEvent.getSource());
+			this.localStorage.put("Evo-Action-page", "DemandDetails");
 			this.getView().byId("idStatusActionSheet").openBy(oEvent.getSource());
 		},
 
@@ -139,7 +137,7 @@ sap.ui.define([
 					bFromDetail: true
 				},
 				oDemandContext = this.getView().getBindingContext().getObject();
-			localStorage.setItem("Evo-Action-page", "DemandDetails");
+			this.localStorage.put("Evo-Action-page", "DemandDetails");
 			this.openAssignInfoDialog(this.getView(), sPath, oContext, mParameters, oDemandContext);
 		},
 
