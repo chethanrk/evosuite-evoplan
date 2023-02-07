@@ -308,7 +308,39 @@ sap.ui.define([
 
 			} else { // When we drop on the resource from split window
 				oParams.DateFrom = new Date(new Date().setHours(0));
-				this._handleDemandDrop("Gantt-Split", oParams, oDemandObj, sDragPath, oResourceData, oDropContext, new Date());
+				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
+				if (bShowFixedAppointmentDialog) {
+					this.openFixedAppointmentDialog(oParams, "Gantt-Split");
+				} else if (sDragPath && sDragPath.length > 1) {
+					this._handleMultipleAssignment(oResourceData, sDragPath, oDropContext.getPath(), new Date(), []);
+				} else {
+					this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), new Date(), sDragPath);
+				}
+
+			}
+		},
+
+		/**
+		 * Assign new drop context if Demand dropped on Resource group and Pool is resource
+		 */
+		_handlePoolAssignment: function (oDropContext, oResourceData) {
+			var iPoolRes = oResourceData.children.length - 1,
+				sDropPath = oDropContext.getPath(),
+				sNewDropPath;
+			sNewDropPath = sDropPath + "/children/" + iPoolRes;
+			oDropContext = this.getView().getModel("ganttModel").getContext(sNewDropPath);
+			return oDropContext;
+		},
+
+		/**
+		 * Preceed to assignment via Fixed assignment Dialog Event bus call
+		 * @param 
+		 */
+		_proceedToAssign: function (sChannel, oEvent, oData) {
+			if (oData.sDragPath || oData.aFixedAppointmentObjects) {
+				this._handleMultipleAssignment(oData.oResourceData, oData.sDragPath, oData.oTarget, oData.oTargetDate, oData.aFixedAppointmentObjects);
+			} else {
+				this._validateAndAssignDemands(oData.oResourceData, null, oData.oTarget, oData.oTargetDate, oData.aGuids);
 			}
 		},
 

@@ -107,10 +107,8 @@ sap.ui.define([
 			});
 
 			this._plannerIcon = new Icon({
-				press: function (oEvent) {
-					if (this.getEnableQualification()) {
+				press:function(oEvent){
 						this.firePlannerIconPress(oEvent);
-					}
 				}.bind(this)
 			});
 			this._plannerIcon.addStyleClass("sapUiTinyMarginBegin");
