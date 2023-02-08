@@ -100,15 +100,13 @@ sap.ui.define([
 			this._icon = new Icon({
 				tooltip: "{i18n>xtit.clicktosee}",
 				press: function (oEvent) {
-					if (this.getEnableQualification()) {
-						this.fireResourceIconPress(oEvent);
-					}
+					this.fireResourceIconPress(oEvent);
 				}.bind(this)
 			});
 
 			this._plannerIcon = new Icon({
-				press:function(oEvent){
-						this.firePlannerIconPress(oEvent);
+				press: function (oEvent) {
+					this.firePlannerIconPress(oEvent);
 				}.bind(this)
 			});
 			this._plannerIcon.addStyleClass("sapUiTinyMarginBegin");

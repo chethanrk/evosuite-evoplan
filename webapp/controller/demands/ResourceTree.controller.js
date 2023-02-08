@@ -273,7 +273,7 @@ sap.ui.define([
 		 */
 		onDropOnResource: function (oEvent) {
 			var oDroppedControl = oEvent.getParameter("droppedControl"),
-			    oDraggedControl = oEvent.getParameter("draggedControl"),
+				oDraggedControl = oEvent.getParameter("draggedControl"),
 				oContext = oDroppedControl.getBindingContext(),
 				oDraggedContext = oDraggedControl.getBindingContext(),
 				oModel = oContext.getModel(),
@@ -299,15 +299,15 @@ sap.ui.define([
 			}
 
 			mParameter = {
-					bFromHome: true
+				bFromHome: true
 			};
-			
+
 			//if its the same resource then update has to be called
-			if(oTargetData.ResourceGuid === oModel.getProperty(oDraggedContext.getPath()).ResourceGuid){
+			if (oTargetData.ResourceGuid === oModel.getProperty(oDraggedContext.getPath()).ResourceGuid) {
 				//call update
 				this.handleDropOnSameResource(this.assignmentPath, sPath, mParameter);
 			} else if (this._oViewModel.getProperty("/dragDropSetting/isReassign")) {
-				
+
 				this.getOwnerComponent()._getData(this.sDemandPath)
 					.then(function (oData) {
 						oViewModel.setProperty("/dragSession", [{
@@ -366,7 +366,7 @@ sap.ui.define([
 				this.resetChanges();
 				if (oTreeBinding && !this._bFirsrTime) {
 					this.mTreeState = this._getTreeState();
-					this._oDroppableTable.rebindTable(); 
+					this._oDroppableTable.rebindTable();
 				}
 			}
 			this._bFirsrTime = false;
@@ -526,7 +526,7 @@ sap.ui.define([
 
 			var sObjectId = oResourceNode.NodeId;
 			//Opening Resource Qualification only on Resource Node Icon
-			if (oResourceNode.NodeType === "RESOURCE") {
+			if (oResourceNode.NodeType === "RESOURCE" && this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
 				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
 			} else if (this.checkToShowAvailabilities(oResourceNode)) {
 				//Added new condition to Check & show resource availability for WEEK/MONTH view
