@@ -555,7 +555,7 @@ sap.ui.define([
 				oResourceNode = oModel.getProperty(sPath),
 				sObjectId = oResourceNode.NodeId;
 
-			if (oResourceNode.NodeType !== "ASSIGNMENT") {
+			if (oResourceNode.NodeType !== "ASSIGNMENT" && this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
 				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
 			}
 		},
@@ -1078,13 +1078,13 @@ sap.ui.define([
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
 					if (sRequestType !== "reassign") {
-							this._refreshChangedResources(sPath);
+						this._refreshChangedResources(sPath);
 					}
 				}.bind(this));
 			}.bind(this), function (oError) {
 				this.oGanttModel.setProperty(sPath + "/busy", false);
 				this._resetChanges(sPath);
-					this._refreshChangedResources(sPath);
+				this._refreshChangedResources(sPath);
 			}.bind(this));
 		},
 
@@ -2197,7 +2197,7 @@ sap.ui.define([
 			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
 
 			if (sSourcePath) {
-					this._oSourceResourcePath = sSourcePath.split("/").splice(0, 6).join("/");
+				this._oSourceResourcePath = sSourcePath.split("/").splice(0, 6).join("/");
 				oSourceResource = this.oGanttModel.getProperty(this._oSourceResourcePath);
 				aFilters = this._getFiltersToReadAssignments(oSourceResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
 				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
@@ -2300,29 +2300,29 @@ sap.ui.define([
 				this.splitReassignReject = reject;
 
 				var oParams = {
-					DateFrom: oData.DateFrom || 0,
-					TimeFrom: {
-						__edmtype: "Edm.Time",
-						ms: oData.DateFrom.getTime()
+						DateFrom: oData.DateFrom || 0,
+						TimeFrom: {
+							__edmtype: "Edm.Time",
+							ms: oData.DateFrom.getTime()
+						},
+						DateTo: oData.DateTo || 0,
+						TimeTo: {
+							__edmtype: "Edm.Time",
+							ms: oData.DateTo.getTime()
+						},
+						AssignmentGUID: oData.Guid,
+						EffortUnit: oData.EffortUnit,
+						Effort: oData.Effort,
+						ResourceGroupGuid: oData.ResourceGroupGuid,
+						ResourceGuid: oData.ResourceGuid,
+						DemandGuid: oData.DemandGuid
 					},
-					DateTo: oData.DateTo || 0,
-					TimeTo: {
-						__edmtype: "Edm.Time",
-						ms: oData.DateTo.getTime()
-					},
-					AssignmentGUID: oData.Guid,
-					EffortUnit: oData.EffortUnit,
-					Effort: oData.Effort,
-					ResourceGroupGuid: oData.ResourceGroupGuid,
-					ResourceGuid: oData.ResourceGuid,
-					DemandGuid: oData.DemandGuid
-				},
-				mParameters = {
-					path: sPath,
-					type: sType,
-					pendingChanges: oPendingChanges,
-					demandData: oData
-				};
+					mParameters = {
+						path: sPath,
+						type: sType,
+						pendingChanges: oPendingChanges,
+						demandData: oData
+					};
 
 				//has new parent?
 				if (this.mRequestTypes.reassign === sType && oPendingChanges[sPath].ResourceGuid) {
@@ -2378,7 +2378,7 @@ sap.ui.define([
 				if (aDemandGuidsToSplit.length === 0) {
 					this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData)
 						.then(this.splitReassignResolve, this.splitReassignReject);
-				} else {	
+				} else {
 					if (aDemandGuidsToSplit.includes(aDemands[0].DemandGuid)) {
 						aDemands[0].ResourceView = sResourceNodeType === "RESOURCE" ? "SIMPLE" : "DAILY";
 						this.executeFunctionImport(this.getModel(), aDemands[0], "CreateSplitStretchAssignments", "POST")
