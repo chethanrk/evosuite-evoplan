@@ -402,7 +402,6 @@ sap.ui.define([
 				this.applyFiltersToMap([aFilters]);
 			}
 			if (aFilters) {
-				debugger;
 				this._isFilterAppliedToMap = true;
 				oEvent.getParameter("bindingParams").filters.push(aFilters);
 			}
@@ -416,7 +415,6 @@ sap.ui.define([
 		onAfterRendering: function () {
 			//to select All demands on table rebinde based on selected markers in map
 			this._oDraggableTable.attachDataReceived(function () {
-				debugger;
 				if (this._isFilterAppliedToMap) {
 					this._isFilterAppliedToMap = false;
 					setTimeout(function () {
