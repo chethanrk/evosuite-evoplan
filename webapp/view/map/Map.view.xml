@@ -47,49 +47,41 @@
 														</core:ExtensionPoint>
 													</vbm:items>
 												</vbm:Routes>
-												<vbm:Spots customProperties="{= ['Status']}" items="{ path:'/DemandSet', parameters:{ batchGroupId:'mapdemands' } }" select="onSelect"
-													deselect="onDeselect">
+												<vbm:Spots items="{viewModel>/mapSettings/DemandSet}" select="onSelect" deselect="onDeselect">
 													<vbm:items>
-														<core:ExtensionPoint name="GeoMapExtP|Map|Spots|DemandSet|items">
-															<vbm:Spot selectColor="{user>/DEFAULT_DEMAND_MAP_SEL_PIN_CLR}" contentColor="{MAP_MARKER_COLOUR}" hotScale="1.1;1.1;1.1"
-																tooltip="{DEMAND_KEY}" type="Inactive" select="{IS_SELECTED}" scale="{path:'IS_SELECTED',formatter:'.formatter.getSpotScale'}"
-																icon="{user>/DEFAULT_DEMAND_MAP_MARKER_ICON}" contentSize="25rem" changeable="true"
-																position="{parts:[{path:'LONGITUDE'}, {path:'LATITUDE'} ], formatter:'.formatter.formatMapSpot'}" contextMenu="onContextMenu"
-																>
-																<vbm:customData>
-																	<core:CustomData key="Status" value="{Status}"/>
-																	<core:CustomData key="Type" value="Demand"/>
-																</vbm:customData>
-																
-															</vbm:Spot>
-														</core:ExtensionPoint>
+														<vbm:Spot selectColor="{user>/DEFAULT_DEMAND_MAP_SEL_PIN_CLR}" contentColor="{viewModel>MAP_MARKER_COLOUR}" hotScale="1.1;1.1;1.1"
+															tooltip="{viewModel>DEMAND_KEY}" type="Inactive" select="{viewModel>IS_SELECTED}"
+															scale="{path:'viewModel>IS_SELECTED',formatter:'.formatter.getSpotScale'}" icon="{user>/DEFAULT_DEMAND_MAP_MARKER_ICON}" contentSize="25rem"
+															changeable="true" position="{parts:[{path:'viewModel>LONGITUDE'}, {path:'viewModel>LATITUDE'} ], formatter:'.formatter.formatMapSpot'}"
+															contextMenu="onContextMenu">
+															<vbm:customData>
+																<core:CustomData key="Type" value="Demand"/>
+															</vbm:customData>
+														</vbm:Spot>
 													</vbm:items>
 													<vbm:dragSource>
 														<vbm:DragSource type="Spot"/>
 													</vbm:dragSource>
 												</vbm:Spots>
-												<vbm:Spots items="{ path:'/ResourceSet', parameters:{ batchGroupId:'mapdemands' } }" select="onSelectResourcePin">
-													<vbm:items>
-														<core:ExtensionPoint name="GeoMapExtP|Map|Spots|ResourceSet|items">
-															<vbm:Spot contentColor="{user>/DEFAULT_RES_MAP_SEL_PIN_CLR}" 
-																tooltip="{ResourceDescription}" type="Inactive" icon="{user>/DEFAULT_RES_MAP_MARKER_ICON}" contentSize="17rem" changeable="false"
-																position="{parts:[{path:'LONGITUDE'}, {path:'LATITUDE'} ], formatter:'.formatter.formatMapSpot'}" contextMenu="onContextMenu"
-																drop="onDrop">
-																<vbm:customData>
-																	<core:CustomData key="Type" value="Resource"/>
-																</vbm:customData>
-															</vbm:Spot>
-														</core:ExtensionPoint>
-													</vbm:items>
-													
-													<vbm:dropTarget>
-														<vbm:DropTarget type="Spot"/>
-													</vbm:dropTarget>
-												</vbm:Spots>
+												<!--<vbm:Spots items="{ path:'/ResourceSet', parameters:{ batchGroupId:'mapdemands' } }" select="onSelectResourcePin">-->
+												<!--	<vbm:items>-->
+												<!--		<core:ExtensionPoint name="GeoMapExtP|Map|Spots|ResourceSet|items">-->
+												<!--			<vbm:Spot contentColor="{user>/DEFAULT_RES_MAP_SEL_PIN_CLR}" tooltip="{ResourceDescription}" type="Inactive"-->
+												<!--				icon="{user>/DEFAULT_RES_MAP_MARKER_ICON}" contentSize="17rem" changeable="false"-->
+												<!--				position="{parts:[{path:'LONGITUDE'}, {path:'LATITUDE'} ], formatter:'.formatter.formatMapSpot'}" contextMenu="onContextMenu" drop="onDrop">-->
+												<!--				<vbm:customData>-->
+												<!--					<core:CustomData key="Type" value="Resource"/>-->
+												<!--				</vbm:customData>-->
+												<!--			</vbm:Spot>-->
+												<!--		</core:ExtensionPoint>-->
+												<!--	</vbm:items>-->
+												<!--	<vbm:dropTarget>-->
+												<!--		<vbm:DropTarget type="Spot"/>-->
+												<!--	</vbm:dropTarget>-->
+												<!--</vbm:Spots>-->
 											</vbm:vos>
 											<vbm:geoJsonLayers>
-												<vbm:GeoJsonLayer data="{viewModel>data}" defaultBorderColor="{viewModel>color}" defaultFillColor="{viewModel>color}"
-													defaultLineWidth="50"></vbm:GeoJsonLayer>
+												<vbm:GeoJsonLayer data="{viewModel>data}" defaultBorderColor="{viewModel>color}" defaultFillColor="{viewModel>color}" defaultLineWidth="50"></vbm:GeoJsonLayer>
 											</vbm:geoJsonLayers>
 										</vbm:GeoMap>
 									</vk:content>

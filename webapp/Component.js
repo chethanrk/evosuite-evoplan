@@ -516,7 +516,8 @@ sap.ui.define([
 					bRouteDateSelected: false,
 					aAssignedAsignmentsForPlanning: [],
 					droppedResources: [],
-					bIsSignlePlnAsgnSaved: false
+					bIsSignlePlnAsgnSaved: false,
+					DemandSet: []
 				},
 				resourceTreeShowRouteColumn: false,
 				resourceFilterforRightTechnician: false,
@@ -560,6 +561,7 @@ sap.ui.define([
 				validateIW31Auth: true,
 				validateIW32Auth: true
 			});
+			oViewModel.setSizeLimit(999999999);
 			this.setModel(oViewModel, "viewModel");
 
 			//creates the Information model and sets to the component
