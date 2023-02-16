@@ -34,11 +34,12 @@ sap.ui.define([
 
 			// Setting icon to render which resource we are showing
 			oResourceIcon.setSrc(oControl.getIcon() !== "" ? oControl.getIcon() : "sap-icon://employee");
-
 			if ((oControl.getNodeType() === "TIMEYEAR" || oControl.getNodeType() === "TIMEQUART" || oControl.getNodeType() === "TIMEMONTH" ||
 					oControl.getNodeType() === "TIMEWEEK") &&
 				oControl.getNodeIconColor()) {
 				oResourceIcon.setColor(oControl.getNodeIconColor());
+			} else if (oControl.getIsDuplicate()) {
+				oResourceIcon.setColor(oControl.getDuplicateColor());
 			} else {
 				oResourceIcon.setColor("");
 			}

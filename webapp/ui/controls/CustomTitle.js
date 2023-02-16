@@ -78,6 +78,16 @@ sap.ui.define([
 				nodeIconColor: {
 					type: "string",
 					group: "Misc"
+				},
+				isDuplicate: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
+				},
+				duplicateColor: {
+					type: "sap.ui.core.CSSColor",
+					group: "Appearance",
+					defaultValue: "orange"
 				}
 			},
 			events: {
