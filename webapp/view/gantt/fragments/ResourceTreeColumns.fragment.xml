@@ -13,7 +13,8 @@
 				isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatGanttProgressBarVisibility'}"
 				showWorkTime="{path: 'ganttModel>NodeType', formatter: '.formatter.isResource'}"
 				workTime="{path:'ganttModel>ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}"
-				isDuplicate="{ganttModel>DUPLICATE_ASSIGNMENT_FLAG}" duplicateColor="{ganttModel>DUPLICATE_ASSIGNMENT_COLOR}"></controls:CustomTitle>
+				isDuplicate="{ganttModel>DUPLICATE_ASSIGNMENT_FLAG}" duplicateColor="{ganttModel>DUPLICATE_ASSIGNMENT_COLOR}"
+				nodeType="{ganttModel>NODE_TYPE}"></controls:CustomTitle>
 		</table:template>
 	</table:Column>
 </core:FragmentDefinition>

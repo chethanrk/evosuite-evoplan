@@ -38,7 +38,7 @@ sap.ui.define([
 					oControl.getNodeType() === "TIMEWEEK") &&
 				oControl.getNodeIconColor()) {
 				oResourceIcon.setColor(oControl.getNodeIconColor());
-			} else if (oControl.getIsDuplicate()) {
+			} else if (oControl.getNodeType() === "ASSIGNMENT" && oControl.getIsDuplicate()) {
 				oResourceIcon.setColor(oControl.getDuplicateColor());
 			} else {
 				oResourceIcon.setColor("");
