@@ -1,12 +1,26 @@
 <core:FragmentDefinition xmlns="sap.ui.table" xmlns:core="sap.ui.core" xmlns:gnt2="sap.gantt.simple">
 	<!-- Assignment shape -->
-	<gnt2:BaseRectangle shapeId="{ganttModel>OBJECT_ID_RELATION}" countInBirdEye="true" hoverable="true" time="{ganttModel>DateFrom}"
-		height="19" endTime="{ganttModel>DateTo}" title="{ganttModel>DemandDesc}" showTitle="true"
-		tooltip="{ganttModel>DemandDesc} - {ganttModel>STATUS}" fill="{ganttModel>DEMAND_STATUS_COLOR}"
-		stroke="{parts: ['ganttModel>DEMAND_STATUS_COLOR',{value:'-20', model:'ganttModel'}], formatter: '.ganttFormatter.shadeColor'}"
-		strokeWidth="1" yBias="-1"
-		resizable="{parts: ['user>/ENABLE_RESIZE', 'ganttModel>busy', 'viewModel>/validateIW32Auth'], formatter: '.isBusyShape'}"
-		selectable="{= ${ganttModel>busy} ? false : true}" strokeOpacity="{= ${ganttModel>busy} ? 0.5 : 1}"
-		opacity="{= ${ganttModel>busy} ? 0.5 : 1}" rx="4" ry="4"
-		draggable="{parts: ['user>/ENABLE_DRAG_DROP', 'ganttModel>busy', 'viewModel>/validateIW32Auth'], formatter: '.isBusyShape'}"/>
+	<gnt2:BaseConditionalShape activeShape="{= ${ganttModel>DUPLICATE_ASSIGNMENT_FLAG} ? 1 : 0}">
+		<gnt2:shapes>
+			<gnt2:BaseRectangle shapeId="{ganttModel>OBJECT_ID_RELATION}" countInBirdEye="true" hoverable="true" time="{ganttModel>DateFrom}"
+				height="19" endTime="{ganttModel>DateTo}" title="{ganttModel>DemandDesc}" showTitle="true"
+				tooltip="{ganttModel>DemandDesc} - {ganttModel>STATUS}" fill="{ganttModel>DEMAND_STATUS_COLOR}"
+				stroke="{parts: ['ganttModel>DEMAND_STATUS_COLOR',{value:'-20', model:'ganttModel'}], formatter: '.ganttFormatter.shadeColor'}"
+				strokeWidth="1" yBias="-1"
+				resizable="{parts: ['user>/ENABLE_RESIZE', 'ganttModel>busy', 'viewModel>/validateIW32Auth'], formatter: '.isBusyShape'}"
+				selectable="{= ${ganttModel>busy} ? false : true}" strokeOpacity="{= ${ganttModel>busy} ? 0.5 : 1}"
+				opacity="{= ${ganttModel>busy} ? 0.5 : 1}" rx="4" ry="4"
+				draggable="{parts: ['user>/ENABLE_DRAG_DROP', 'ganttModel>busy', 'viewModel>/validateIW32Auth'], formatter: '.isBusyShape'}"/>
+			<gnt2:BaseRectangle shapeId="{ganttModel>OBJECT_ID_RELATION}" countInBirdEye="true" hoverable="true" time="{ganttModel>DateFrom}"
+				height="19" endTime="{ganttModel>DateTo}" title="{ganttModel>DemandDesc}" showTitle="true"
+				tooltip="{ganttModel>DemandDesc} - {ganttModel>STATUS}"
+				fill="{path: 'ganttModel>DEMAND_STATUS_COLOR', formatter: '.ganttFormatter.fillGradient'}"
+				stroke="{parts: ['ganttModel>DEMAND_STATUS_COLOR',{value:'-20', model:'ganttModel'}], formatter: '.ganttFormatter.shadeColor'}"
+				strokeWidth="1" yBias="-1"
+				resizable="{parts: ['user>/ENABLE_RESIZE', 'ganttModel>busy', 'viewModel>/validateIW32Auth'], formatter: '.isBusyShape'}"
+				selectable="{= ${ganttModel>busy} ? false : true}" strokeOpacity="{= ${ganttModel>busy} ? 0.5 : 1}"
+				opacity="{= ${ganttModel>busy} ? 0.5 : 1}" rx="4" ry="4"
+				draggable="{parts: ['user>/ENABLE_DRAG_DROP', 'ganttModel>busy', 'viewModel>/validateIW32Auth'], formatter: '.isBusyShape'}"/>
+		</gnt2:shapes>
+	</gnt2:BaseConditionalShape>
 </core:FragmentDefinition>
