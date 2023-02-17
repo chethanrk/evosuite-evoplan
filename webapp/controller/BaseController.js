@@ -334,10 +334,6 @@ sap.ui.define([
 		 * 
 		 */
 		onMaterialInfoButtonPress: function () {
-			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			if (this._aSelectedRowsIdx.length > 100) {
-				this._aSelectedRowsIdx.length = 100;
-			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
 			var iMaxSelcRow = this.getModel("user").getProperty("/DEFAULT_MAX_DEM_SEL_MAT_LIST");
 			if (oSelectedPaths.aPathsData.length > 0 && iMaxSelcRow >= this._aSelectedRowsIdx.length) {
@@ -352,12 +348,11 @@ sap.ui.define([
 		 * 
 		 */
 		onMaterialStatusPress: function (oEvent) {
-			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
-				oViewModel = this.getModel("appView"),
+			var	oViewModel = this.getModel("appView"),
 				sDemandPath;
 			oViewModel.setProperty("/busy", true);
-			for (var i = 0; i < oSelectedIndices.length; i++) {
-				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
+			for (var i = 0; i < this._aSelectedRowsIdx.length; i++) {
+				sDemandPath = this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[i]).getPath();
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 					oViewModel.setProperty("/busy", false);
 				}.bind(this));
