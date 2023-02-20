@@ -189,10 +189,10 @@ sap.ui.define([
 			this._setRowActionTemplate(oDataTable, onClickNavigation, openActionSheet);
 
 			//enable/disable buttons on footer when there is some/no selected rows
-			oDataTable.attachRowSelectionChange(function () {
+			oDataTable.attachRowSelectionChange(function (oEvent) {
 				var selected = this._oDataTable.getSelectedIndices(),
 					bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
-					sDemandPath, bComponentExist;
+					sDemandPath, bComponentExist, sMsg;
 				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 				if (selected.length > 0 && selected.length <= iMaxRowSelection) {
 					this.byId("idfindRightTechnicianButton").setEnabled(true);
@@ -210,8 +210,11 @@ sap.ui.define([
 					this.byId("materialInfo").setEnabled(false);
 					this.byId("idUnassignButton").setEnabled(false);
 					//If the selected demands exceeds more than the maintained selected configuration value
-					if (iMaxRowSelection <= selected.length) {
-						var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+					if (iMaxRowSelection <= selected.length && oEvent.getParameter("selectAll")) {
+						sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection, selected.length]);
+						this.showMessageToast(sMsg);
+					} else if (iMaxRowSelection <= selected.length) {
+						sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
 						this.showMessageToast(sMsg);
 					}
 				}
@@ -274,7 +277,7 @@ sap.ui.define([
 				oEvent.preventDefault();
 			}
 		},
-	
+
 		/**
 		 * Refresh's the demand table
 		 * @param sChanel
