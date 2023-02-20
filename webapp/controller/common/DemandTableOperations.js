@@ -77,8 +77,6 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onChangeStatusButtonPress: function (oEvent) {
-			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-
 			if (this._mParameters.bFromMap) {
 				var sParentId = oEvent.getSource().getParent().getId();
 				if (sParentId.includes("menu")) {
@@ -160,7 +158,6 @@ sap.ui.define([
 		 * on press unassign button in footer
 		 */
 		onPressUnassignDemand: function () {
-			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 			if (oSelectedPaths.aUnAssignDemands.length > 0) {
 				this.getOwnerComponent().assignActionsDialog.open(this.getView(), oSelectedPaths, true, this._mParameters);
