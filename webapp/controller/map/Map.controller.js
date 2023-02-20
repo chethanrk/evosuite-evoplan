@@ -573,6 +573,9 @@ sap.ui.define([
 			//If the selected demands exceeds more than the maintained selected configuration value
 			if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
 				var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+				if (oEvent.getParameter("selectAll")) {
+					sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection, this._aSelectedRowsIdx.length]);
+				}
 				this.showMessageToast(sMsg);
 			}
 
