@@ -1,6 +1,7 @@
 sap.ui.define([
-	"sap/ui/model/type/Currency"
-], function (Currency) {
+	"sap/ui/model/type/Currency",
+	"sap/gantt/def/gradient/Stop"
+], function (Currency, Stop) {
 	"use strict";
 
 	var shapeNodeType = "ASSIGNMENT";
@@ -172,6 +173,19 @@ sap.ui.define([
 			} else {
 				return false;
 			}
+		},
+
+		/**
+		 * Set fill gradient for duplicate assignments
+		 * @param sColor -> primary color of gradient (same as assignment color)
+		 */
+		fillGradient: function (sColor) {
+			var oStop = new Stop({
+				offSet: "0%",
+				stopColor: sColor || "#fff"
+			});
+			this.byId("dupGradient").insertStop(oStop, 0);
+			return "url(#" + this._viewId + "--dupGradient" + ")";
 		}
 	};
 });

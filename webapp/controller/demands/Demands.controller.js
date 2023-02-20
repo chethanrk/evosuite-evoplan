@@ -67,10 +67,6 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onAssignButtonPress: function (oEvent) {
-			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			if (this._aSelectedRowsIdx.length > 100) {
-				this._aSelectedRowsIdx.length = 100;
-			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
 
@@ -194,7 +190,13 @@ sap.ui.define([
 					bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
 					sDemandPath, bComponentExist, sMsg;
 				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
-				if (selected.length > 0 && selected.length <= iMaxRowSelection) {
+
+				this._aSelectedRowsIdx = _.clone(selected);
+				if (this._aSelectedRowsIdx.length > 0) {
+					this._aSelectedRowsIdx.length = this._aSelectedRowsIdx.length > 0 && this._aSelectedRowsIdx.length <= iMaxRowSelection ? this._aSelectedRowsIdx
+						.length : iMaxRowSelection;
+				}
+				if (this._aSelectedRowsIdx.length > 0 && this._aSelectedRowsIdx.length <= iMaxRowSelection) {
 					this.byId("idfindRightTechnicianButton").setEnabled(true);
 					this.byId("assignButton").setEnabled(bEnable);
 					this.byId("changeStatusButton").setEnabled(bEnable);
@@ -209,19 +211,20 @@ sap.ui.define([
 					this.byId("idOverallStatusButton").setEnabled(false);
 					this.byId("materialInfo").setEnabled(false);
 					this.byId("idUnassignButton").setEnabled(false);
-					//If the selected demands exceeds more than the maintained selected configuration value
-					if (iMaxRowSelection <= selected.length && oEvent.getParameter("selectAll")) {
-						sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection, selected.length]);
-						this.showMessageToast(sMsg);
-					} else if (iMaxRowSelection <= selected.length) {
-						sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
-						this.showMessageToast(sMsg);
-					}
+				}
+
+				//If the selected demands exceeds more than the maintained selected configuration value
+				if (iMaxRowSelection <= this._aSelectedRowsIdx.length && oEvent.getParameter("selectAll")) {
+					sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection, this._aSelectedRowsIdx.length]);
+					this.showMessageToast(sMsg);
+				} else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
+					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+					this.showMessageToast(sMsg);
 				}
 
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
-				for (var i = 0; i < selected.length; i++) {
-					sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
+				for (var i = 0; i < this._aSelectedRowsIdx.length; i++) {
+					sDemandPath = this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[i]).getPath();
 					bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
 					if (bComponentExist) {
 						this.byId("materialInfo").setEnabled(true);
