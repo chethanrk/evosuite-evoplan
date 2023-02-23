@@ -228,7 +228,21 @@ sap.ui.define([
 		onPressGanttFilters: function () {
 			this._oGanttDemandFilter.open();
 		},
-
+		/**
+		 *On Change filters event in the Gantt Demands Filter Dialog 
+		 */
+		onGanttDemandFilterChange: function (oEvent) {
+			var oView = this.getView(),
+				oResourceBundle = oView.getModel("i18n").getResourceBundle(),
+				oViewModel = oView.getModel("viewModel"),
+				sFilterText = oResourceBundle.getText("xbut.filters"),
+				sFilterCount = Object.keys(oEvent.getSource().getFilterData()).length;
+			if (sFilterCount > 0) {
+				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText + "(" + sFilterCount + ")");
+			} else {
+				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText);
+			}
+		},
 		/**
 		 * Close the Gantt Demands Filter Dialog 
 		 */
