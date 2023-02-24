@@ -1542,8 +1542,9 @@ sap.ui.define([
 		 * load tree data from a certain hierarchy level
 		 * resolve returns increased level by step 1
 		 * @params iLevel
+		 * @param {array} aParamDemandsFilter
 		 */
-		_loadTreeData: function (iLevel, mParamDemandsFilter) {
+		_loadTreeData: function (iLevel, aParamDemandsFilter) {
 			return new Promise(function (resolve) {
 				var sEntitySet = "/GanttResourceHierarchySet",
 					aFilters = [],
@@ -1554,9 +1555,9 @@ sap.ui.define([
 				aFilters.push(new Filter("HierarchyLevel", FilterOperator.EQ, iLevel));
 				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 				aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-				if (mParamDemandsFilter) {
-					for (var x in mParamDemandsFilter) {
-						aFilters.push(mParamDemandsFilter[x])
+				if (aParamDemandsFilter) {
+					for (var x in aParamDemandsFilter) {
+						aFilters.push(aParamDemandsFilter[x]);
 					}
 				}
 				//is also very fast with expands
@@ -1572,14 +1573,16 @@ sap.ui.define([
 		},
 		/**
 		 * Load the tree data and process the data to create assignments as child nodes
-		 * 
+		 * @param {string} sChannel (only in case of event bus)
+		 * @param {string} sEvent (only in case of event bus)
+		 * @param {array} aParamDemandsFilter in case of filter gantt trigerred from gantt demands table
 		 */
-		_loadGanttData: function (channel, event, mParamDemandsFilter) {
+		_loadGanttData: function (sChannel, sEvent, aParamDemandsFilter) {
 			//expanded level is 1 so load at first 0 and 1 hirarchy levels
 			this._treeTable.setBusy(true);
-			this._loadTreeData(0, mParamDemandsFilter)
+			this._loadTreeData(0, aParamDemandsFilter)
 				.then(function (resolve) {
-					this._loadTreeData(resolve, mParamDemandsFilter);
+					this._loadTreeData(resolve, aParamDemandsFilter);
 				}.bind(this))
 				.then(function () {
 					this._treeTable.expandToLevel(1);

@@ -228,7 +228,6 @@ sap.ui.define([
 				for (var x in data["results"]) {
 					aFilters.push(new Filter("DemandGuid", FilterOperator.EQ, data["results"][x]["Guid"]));
 				}
-				console.log(aFilters);
 				this._oEventBus.publish("BaseController", "refreshFullGantt", aFilters);
 			}.bind(this));
 		},
