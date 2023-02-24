@@ -1543,7 +1543,7 @@ sap.ui.define([
 		 * resolve returns increased level by step 1
 		 * @params iLevel
 		 */
-		_loadTreeData: function (iLevel) {
+		_loadTreeData: function (iLevel, mParamDemandsFilter) {
 			return new Promise(function (resolve) {
 				var sEntitySet = "/GanttResourceHierarchySet",
 					aFilters = [],
@@ -1551,12 +1551,19 @@ sap.ui.define([
 						"$expand": "AssignmentSet,ResourceAvailabilitySet"
 					},
 					oUserData = this.oUserModel.getData();
-
+				//console.log(iLevel);
 				aFilters.push(new Filter("HierarchyLevel", FilterOperator.EQ, iLevel));
 				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 				aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+				if (mParamDemandsFilter) {
+					console.log(mParamDemandsFilter, "filters passed")
+					for (var x in mParamDemandsFilter) {
+						aFilters.push(mParamDemandsFilter[x])
+					}
+				}
 				//is also very fast with expands
 				this.getOwnerComponent().readData(sEntitySet, aFilters, mParams).then(function (oResult) {
+					console.log(oResult);
 					if (iLevel > 0) {
 						this._addChildrenToParent(iLevel, oResult.results);
 					} else {
@@ -1570,11 +1577,13 @@ sap.ui.define([
 		 * Load the tree data and process the data to create assignments as child nodes
 		 * 
 		 */
-		_loadGanttData: function () {
+		_loadGanttData: function (channel, event, mParamDemandsFilter) {
 			//expanded level is 1 so load at first 0 and 1 hirarchy levels
 			this._treeTable.setBusy(true);
-			this._loadTreeData(0)
-				.then(this._loadTreeData.bind(this))
+			this._loadTreeData(0, mParamDemandsFilter)
+				.then(function (resolve) {
+					this._loadTreeData(resolve, mParamDemandsFilter);
+				}.bind(this))
 				.then(function () {
 					this._treeTable.expandToLevel(1);
 					this._treeTable.setBusy(false);
