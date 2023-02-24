@@ -250,6 +250,7 @@ sap.ui.define([
 				sFilterCount = Object.keys(oEvent.getSource().getFilterData()).length;
 			if (sFilterCount > 0) {
 				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText + "(" + sFilterCount + ")");
+				oViewModel.setProperty("/bFilterGantBtnDemandtsGantt", true);
 			} else {
 				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText);
 			}
