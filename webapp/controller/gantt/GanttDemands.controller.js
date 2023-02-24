@@ -253,6 +253,7 @@ sap.ui.define([
 				oViewModel.setProperty("/bFilterGantBtnDemandtsGantt", true);
 			} else {
 				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText);
+				oViewModel.setProperty("/bFilterGantBtnDemandtsGantt", false);
 			}
 		},
 		/**
