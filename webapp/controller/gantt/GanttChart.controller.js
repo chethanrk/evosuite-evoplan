@@ -75,6 +75,7 @@ sap.ui.define([
 					bFromNewGantt: true
 				};
 				this._initializeGantt();
+				this._initilizeDemandGanttBtns();
 			}.bind(this));
 
 			this.getRouter().getRoute("newGanttSplit").attachPatternMatched(function () {
@@ -2462,6 +2463,16 @@ sap.ui.define([
 				};
 			}.bind(this));
 		},
+		/**
+		 * Resetting the button and text for gant filter on demands table in the gant view
+		 * @Author Manik Saluja
+		 */
+		_initilizeDemandGanttBtns: function () {
+			var oViewModel = this.getView().getModel("viewModel"),
+				oResourceModel = this.getResourceBundle();
+			oViewModel.setProperty("/bFilterGantBtnDemandtsGantt", false);
+			oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", oResourceModel.getText("xbut.filters"));
+		}
 
 	});
 
