@@ -1551,19 +1551,16 @@ sap.ui.define([
 						"$expand": "AssignmentSet,ResourceAvailabilitySet"
 					},
 					oUserData = this.oUserModel.getData();
-				//console.log(iLevel);
 				aFilters.push(new Filter("HierarchyLevel", FilterOperator.EQ, iLevel));
 				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 				aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
 				if (mParamDemandsFilter) {
-					console.log(mParamDemandsFilter, "filters passed")
 					for (var x in mParamDemandsFilter) {
 						aFilters.push(mParamDemandsFilter[x])
 					}
 				}
 				//is also very fast with expands
 				this.getOwnerComponent().readData(sEntitySet, aFilters, mParams).then(function (oResult) {
-					console.log(oResult);
 					if (iLevel > 0) {
 						this._addChildrenToParent(iLevel, oResult.results);
 					} else {
