@@ -112,11 +112,6 @@
 						<gnt2:svgDefs>
 							<def:SvgDefs id="idGanttChartSvgDefs">
 								<core:ExtensionPoint name="GanttExtP|GanttChart|GanttHeircrchySet|GanttPattern"/>
-								<grad:LinearGradient id="dupGradient" x2="1.5" y2="10">
-									<grad:stops>
-										<grad:Stop offSet="10%" stopColor="#FFFF"/>
-									</grad:stops>
-								</grad:LinearGradient>
 							</def:SvgDefs>
 						</gnt2:svgDefs>
 					</gnt2:GanttChartWithTable>
