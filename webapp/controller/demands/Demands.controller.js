@@ -188,7 +188,7 @@ sap.ui.define([
 			oDataTable.attachRowSelectionChange(function (oEvent) {
 				var selected = this._oDataTable.getSelectedIndices(),
 					bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
-					sDemandPath, bComponentExist;
+					sDemandPath, bComponentExist, sMsg;
 				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 
 				this._aSelectedRowsIdx = _.clone(selected);
@@ -214,11 +214,11 @@ sap.ui.define([
 				}
 
 				//If the selected demands exceeds more than the maintained selected configuration value
-				if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
-					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
-					if (oEvent.getParameter("selectAll")) {
-						sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection, this._aSelectedRowsIdx.length]);
-					}
+				if (oEvent.getParameter("selectAll")) {
+					sMsg = this.getResourceBundle().getText("ymsg.allSelect", [this._aSelectedRowsIdx.length]);
+					this.showMessageToast(sMsg);
+				} else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
+					sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
 					this.showMessageToast(sMsg);
 				}
 

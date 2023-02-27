@@ -158,7 +158,7 @@ sap.ui.define([
 				iMaxRowSelection = this.oUserModel.getProperty("/DEFAULT_DEMAND_SELECT_ALL"),
 				bEnable = this._viewModel.getProperty("/validateIW32Auth"),
 				index = oEvent.getParameter("rowIndex"),
-				sDemandPath, bComponentExist;
+				sDemandPath, bComponentExist, sMsg;
 
 			this._aSelectedRowsIdx = _.clone(selected);
 			if (this._aSelectedRowsIdx.length > 0) {
@@ -181,11 +181,11 @@ sap.ui.define([
 			}
 
 			//If the selected demands exceeds more than the maintained selected configuration value
-			if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
-				var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
-				if (oEvent.getParameter("selectAll")) {
-					sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection, this._aSelectedRowsIdx.length]);
-				}
+			if (oEvent.getParameter("selectAll")) {
+				sMsg = this.getResourceBundle().getText("ymsg.allSelect", [this._aSelectedRowsIdx.length]);
+				this.showMessageToast(sMsg);
+			} else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
+				sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
 				this.showMessageToast(sMsg);
 			}
 
