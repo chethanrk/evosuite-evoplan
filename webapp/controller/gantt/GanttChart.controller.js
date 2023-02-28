@@ -690,7 +690,10 @@ sap.ui.define([
 		 * Set fill gradient for duplicate assignments
 		 * @param sColor -> primary color of gradient (same as assignment color)
 		 */
-		fillGradient: function (sColor) {
+		fillGradient: function (sColor, bDuplicate) {
+			if (!bDuplicate) {
+				return sColor;
+			}
 			if (!this._oSVG) {
 				this._oSVG = this.getView().byId("idGanttChartSvgDefs");
 				this._aGradientSVGDef = [];
