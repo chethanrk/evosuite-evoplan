@@ -69,11 +69,11 @@ sap.ui.define([
 		 * @param {object} oSPot - spot control inside map
 		 * @param {string} sType - type of pin (Demand|Resource) 
 		 */
-		open: function (oSpot, sType) {
+		open: function (oSpot, sType, sPath) {
 			var oSpotPosition = oSpot.mClickPos,
 				bIsDemand = sType === "Demand";
 
-			this.selectedDemandPath = "/DemandSet('" + oSpot.getBindingContext('viewModel').getProperty('Guid') + "')";
+			this.selectedDemandPath = sPath//"/DemandSet('" + oSpot.getBindingContext('viewModel').getProperty('Guid') + "')";
 			this._selectedDemands = oSpot;
 			this.pinType = sType;
 
