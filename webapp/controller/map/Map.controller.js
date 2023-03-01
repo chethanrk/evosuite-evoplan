@@ -302,8 +302,7 @@ sap.ui.define([
 			var oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
 				oDragSource = oEvent.getParameter("oDragSource"),
-				oContext = oDragSource.getBindingContext(),
-				sPath = oContext.getPath();
+				sPath = this._getSpotPath(oDragSource);
 
 			if (aSelectedDemands.length > 0) {
 				if (!aSelectedDemands.includes(sPath)) {
@@ -888,7 +887,7 @@ sap.ui.define([
 			var oSpot = oEvent.getSource(),
 				sType = oSpot.data("Type");
 			this.getModel("viewModel").setProperty("/mapSettings/spotContextMenuType", sType);
-			this.oPinPopover.open(oSpot, sType);
+			this.oPinPopover.open(oSpot, sType, this._getSpotPath(oSpot));
 		},
 
 		/**
