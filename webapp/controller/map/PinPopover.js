@@ -73,7 +73,7 @@ sap.ui.define([
 			var oSpotPosition = oSpot.mClickPos,
 				bIsDemand = sType === "Demand";
 
-			this.selectedDemandPath = sPath//"/DemandSet('" + oSpot.getBindingContext('viewModel').getProperty('Guid') + "')";
+			this.selectedDemandPath = sPath;
 			this._selectedDemands = oSpot;
 			this.pinType = sType;
 
