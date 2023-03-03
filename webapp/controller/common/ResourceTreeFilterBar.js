@@ -60,7 +60,7 @@ sap.ui.define([
 			this._oView = oView;
 			this._component = this._oView.getController().getOwnerComponent();
 			this._viewModel = this._component.getModel("viewModel");
-			this._userModel = this._component.getModel("user"); 
+			this._userModel = this._component.getModel("user");
 			//use global promise for getting when filterbar was fully initalized
 			// create fragment lazily
 			return Fragment.load({
@@ -146,8 +146,7 @@ sap.ui.define([
 		 * event when something in SmartFileterBar was changed
 		 * @param oEvent
 		 */
-		onFilterBarChanged: function (oEvent) {
-		},
+		onFilterBarChanged: function (oEvent) {},
 
 		/**
 		 * event when a custom control value changed
@@ -298,26 +297,26 @@ sap.ui.define([
 				return oCtrl.getSelectedKey();
 			}
 		},
-		
+
 		/**
 		 * Bind the 'View' select control to provided entity set
 		 * @param {string} sEntitySetPath - Path to entity set that should be bound to the 'View' select
 		 * 
 		 */
-		bindViewFilterItemsToEntity: function(sEntitySetPath) {
+		bindViewFilterItemsToEntity: function (sEntitySetPath) {
 			var oViewSelect = this._oView.byId("idTimeView");
-			var oItemTemplate = new Item ({
+			var oItemTemplate = new Item({
 				key: "{MODE}",
 				text: "{TEXT}"
 			});
-			
+
 			oViewSelect.bindItems({
 				path: sEntitySetPath,
 				template: oItemTemplate
 			});
-			
+
 		},
-		
+
 		/* =========================================================== */
 		/* internal methods                                            */
 		/* =========================================================== */
@@ -335,7 +334,11 @@ sap.ui.define([
 					oCtrl = this._oFilterBar.getControlByKey(sFilterKey);
 				if (oCtrl) {
 					try {
-						this._oCustomFilterData._CUSTOM[sFilterKey] = oCtrl.getValue();
+						if (oCtrl.getDateValue()) {
+							this._oCustomFilterData._CUSTOM[sFilterKey] = oCtrl.getDateValue();
+						} else {
+							this._oCustomFilterData._CUSTOM[sFilterKey] = oCtrl.getValue();
+						}
 					} catch (e) { /*do nothing*/ }
 					try {
 						this._oCustomFilterData._CUSTOM[sFilterKey] = oCtrl.getSelectedKey();
@@ -530,7 +533,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_getDateRangeValues: function (oData, sDateRangeType) {
-			var selectedTimeFormat,configStartDate,configStartEnd;
+			var selectedTimeFormat, configStartDate, configStartEnd;
 			if (oData) {
 				if (oData.hasOwnProperty(this._aCustomFilters.startDate.origin) || oData.hasOwnProperty(this._aCustomFilters.endDate.origin)) {
 					var sViewType = oData[this._aCustomFilters.viewType.origin];
@@ -550,13 +553,10 @@ sap.ui.define([
 				selectedTimeFormat = formatter.getResourceFormatByKey(sDateRangeType);
 				configStartDate = this._userModel.getProperty(selectedTimeFormat.configStartDate);
 				configStartEnd = this._userModel.getProperty(selectedTimeFormat.configStartEnd);
-				if(configStartDate && configStartEnd)
-				{
+				if (configStartDate && configStartEnd) {
 					return [this.formatter.date(configStartDate), this.formatter.date(configStartEnd)];
-				}
-				else
-				{
-				return [this.formatter.date(selectedTimeFormat.getDateBegin()), this.formatter.date(selectedTimeFormat.getDateEnd())];
+				} else {
+					return [this.formatter.date(selectedTimeFormat.getDateBegin()), this.formatter.date(selectedTimeFormat.getDateEnd())];
 				}
 			} else if (this._oCustomFilterData._CUSTOM[this._aCustomFilters.startDate.origin]) {
 				return [
