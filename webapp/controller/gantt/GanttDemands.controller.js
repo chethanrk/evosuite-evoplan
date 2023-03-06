@@ -69,6 +69,9 @@ sap.ui.define([
 			this._oGanttDemandFilter = this.getView().byId("idGanttDemandFilterDialog");
 			this._oGanttDemandFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 			this._aSelectedIndices = [];
+			// add binging change event forthe demands table
+			this._addDemandTblBindingChangeEvent();
+
 		},
 
 		/**
@@ -218,6 +221,16 @@ sap.ui.define([
 		},
 
 		//TODO comment
+		onPressFilterGantChart: function () {
+			var aPplicationFilters = this.getView().byId("draggableList").getTable().getBinding("rows").aApplicationFilters;
+			var aFilters = [];
+			this.getOwnerComponent().readData("/DemandSet", aPplicationFilters, "$select=Guid").then(function (data) {
+				for (var x in data["results"]) {
+					aFilters.push(new Filter("DemandGuid", FilterOperator.EQ, data["results"][x]["Guid"]));
+				}
+				this._oEventBus.publish("BaseController", "refreshFullGantt", aFilters);
+			}.bind(this));
+		},
 		onClickSplit: function (oEvent) {
 			window.open("#Gantt/SplitDemands", "_blank");
 		},
@@ -228,7 +241,21 @@ sap.ui.define([
 		onPressGanttFilters: function () {
 			this._oGanttDemandFilter.open();
 		},
-
+		/**
+		 *On Change filters event in the Gantt Demands Filter Dialog 
+		 */
+		onGanttDemandFilterChange: function (oEvent) {
+			var oView = this.getView(),
+				oResourceBundle = oView.getModel("i18n").getResourceBundle(),
+				oViewModel = oView.getModel("viewModel"),
+				sFilterText = oResourceBundle.getText("xbut.filters"),
+				sFilterCount = Object.keys(oEvent.getSource().getFilterData()).length;
+			if (sFilterCount > 0) {
+				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText + "(" + sFilterCount + ")");
+			} else {
+				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText);
+			}
+		},
 		/**
 		 * Close the Gantt Demands Filter Dialog 
 		 */
@@ -250,6 +277,34 @@ sap.ui.define([
 			}
 			this._bLoaded = true;
 		},
+
+		/**
+		 * This method is trigerred on refresh of the binding of the table
+		 * @Author Manik
+		 */
+		_addDemandTblBindingChangeEvent: function () {
+			/*Here we are checking if the demands table binding change
+				is due to  the applied flter based on that we have written logic to 
+				enable to disable the filter gantt button(in table toolbar)
+			*/
+			var oTable = this._oDataTable,
+				oViewModel = this._viewModel; //Get hold of Table
+			oTable.addEventDelegate({ //Table onAfterRendering event
+				onAfterRendering: function () {
+					if (this.getBinding("rows")) {
+						this.getBinding("rows").attachChange(function (oEvent) {
+							if (oEvent.getParameter("reason") === "filter") {
+								if (oEvent.getSource().aApplicationFilters.length > 0) {
+									oViewModel.setProperty("/bFilterGantBtnDemandtsGantt", true);
+								} else {
+									oViewModel.setProperty("/bFilterGantBtnDemandtsGantt", false);
+								}
+							}
+						});
+					}
+				}
+			}, oTable);
+		}
 
 	});
 

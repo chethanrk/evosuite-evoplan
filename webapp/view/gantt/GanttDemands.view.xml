@@ -17,7 +17,9 @@
 				<OverflowToolbar>
 					<core:ExtensionPoint name="TableExtP|GanttDemands|DemandSet|TableToolbar|Left"/>
 					<ToolbarSpacer/>
-					<Button id="idBtnGanttFilter" text="{i18n>xbut.filters}" press="onPressGanttFilters" icon="sap-icon://filter"/>
+					<Button visible="{user>/ENABLE_GANTT_FILTER_BUTTON}" text="{i18n>xbut.filterGantt}" press="onPressFilterGantChart"
+						enabled="{viewModel>/bFilterGantBtnDemandtsGantt}"/>
+					<Button id="idBtnGanttFilter" text="{viewModel>/aFilterBtntextGanttDemandTbl}" press="onPressGanttFilters" icon="sap-icon://filter"/>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandToolbarButtons" type="XML"/>
 					<core:ExtensionPoint name="TableExtP|GanttDemands|DemandSet|TableToolbar|Right"/>
 				</OverflowToolbar>

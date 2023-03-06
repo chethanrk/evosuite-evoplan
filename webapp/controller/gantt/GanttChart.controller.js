@@ -1577,8 +1577,9 @@ sap.ui.define([
 		 * load tree data from a certain hierarchy level
 		 * resolve returns increased level by step 1
 		 * @params iLevel
+		 * @param {array} aParamDemandsFilter
 		 */
-		_loadTreeData: function (iLevel) {
+		_loadTreeData: function (iLevel, aParamDemandsFilter) {
 			return new Promise(function (resolve) {
 				var sEntitySet = "/GanttResourceHierarchySet",
 					aFilters = [],
@@ -1586,10 +1587,14 @@ sap.ui.define([
 						"$expand": "AssignmentSet,ResourceAvailabilitySet"
 					},
 					oUserData = this.oUserModel.getData();
-
 				aFilters.push(new Filter("HierarchyLevel", FilterOperator.EQ, iLevel));
 				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 				aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+				if (aParamDemandsFilter && iLevel > 0) {
+					for (var x in aParamDemandsFilter) {
+						aFilters.push(aParamDemandsFilter[x]);
+					}
+				}
 				//is also very fast with expands
 				this.getOwnerComponent().readData(sEntitySet, aFilters, mParams).then(function (oResult) {
 					if (iLevel > 0) {
@@ -1603,13 +1608,17 @@ sap.ui.define([
 		},
 		/**
 		 * Load the tree data and process the data to create assignments as child nodes
-		 * 
+		 * @param {string} sChannel (only in case of event bus)
+		 * @param {string} sEvent (only in case of event bus)
+		 * @param {array} aParamDemandsFilter in case of filter gantt trigerred from gantt demands table
 		 */
-		_loadGanttData: function () {
+		_loadGanttData: function (sChannel, sEvent, aParamDemandsFilter) {
 			//expanded level is 1 so load at first 0 and 1 hirarchy levels
 			this._treeTable.setBusy(true);
-			this._loadTreeData(0)
-				.then(this._loadTreeData.bind(this))
+			this._loadTreeData(0, aParamDemandsFilter)
+				.then(function (resolve) {
+					this._loadTreeData(resolve, aParamDemandsFilter);
+				}.bind(this))
 				.then(function () {
 					this._treeTable.expandToLevel(1);
 					this._treeTable.setBusy(false);
@@ -2487,7 +2496,7 @@ sap.ui.define([
 					results: [clonedObj]
 				};
 			}.bind(this));
-		},
+		}
 
 	});
 
