@@ -15,10 +15,12 @@ sap.ui.define([
 	"sap/gantt/def/pattern/SlashPattern",
 	"sap/gantt/def/pattern/BackSlashPattern",
 	"com/evorait/evoplan/controller/map/MapUtilities",
-	"sap/ui/util/Storage"
+	"sap/ui/util/Storage",
+	"sap/gantt/def/gradient/Stop",
+	"sap/gantt/def/gradient/LinearGradient"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, FilterType, Popup, MessageToast, Fragment, CoordinateUtils,
 	Constants,
-	Utility, SlashPattern, BackSlashPattern, MapUtilities, Storage) {
+	Utility, SlashPattern, BackSlashPattern, MapUtilities, Storage, Stop, LinearGradient) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttChart", {
@@ -682,6 +684,39 @@ sap.ui.define([
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
 			}
+		},
+
+		/**
+		 * Set fill gradient for duplicate assignments
+		 * @param sColor -> primary color of gradient (same as assignment color)
+		 */
+		fillGradient: function (sColor, bDuplicate) {
+			if (!bDuplicate) {
+				return sColor;
+			}
+			if (!this._oSVG) {
+				this._oSVG = this.getView().byId("idGanttChartSvgDefs");
+				this._aGradientSVGDef = [];
+			}
+			var sGradId = this._viewId + "--dupGradient-" + sColor.replace("#", '');
+			if (this._aGradientSVGDef.indexOf(sGradId) < 0) {
+				var oGrad = new LinearGradient(sGradId, {
+					x2: "1.5",
+					y2: "10",
+					stops: [new Stop({
+							offSet: "0%",
+							stopColor: sColor || "#fff"
+						}),
+						new Stop({
+							offSet: "10%",
+							stopColor: "#FFFF"
+						})
+					]
+				});
+				this._oSVGDef.insertDef(oGrad);
+				this._aGradientSVGDef.push(sGradId);
+			}
+			return "url(#" + sGradId + ")";
 		},
 
 		/* =========================================================== */
