@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar">
-	<smartFilterBar:SmartFilterBar id="idToolsListFilter" entitySet="PRTToolSet" persistencyKey="com.evorait.evosuite.evoplan.DemandFilter"
+	<smartFilterBar:SmartFilterBar id="idToolsListFilter" entitySet="PRTToolSet" persistencyKey="com.evorait.evosuite.evoplan.ToolsFilter"
 		enableBasicSearch="false" useToolbar="true" considerSelectionVariants="true" showClearButton="true" showRestoreButton="true"
 		showRestoreOnFB="true" showClearOnFB="true" initialized="onInitialized" filterChange="onDemandFilterChange">
 	</smartFilterBar:SmartFilterBar>
