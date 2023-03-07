@@ -1,0 +1,13 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar">
+	<smartFilterBar:SmartFilterBar id="idToolsListFilter" entitySet="PRTToolSet" persistencyKey="com.evorait.evosuite.evoplan.DemandFilter"
+		enableBasicSearch="false" useToolbar="true" considerSelectionVariants="true" showClearButton="true" showRestoreButton="true"
+		showRestoreOnFB="true" showClearOnFB="true" initialized="onInitialized" filterChange="onDemandFilterChange">
+		<smartFilterBar:controlConfiguration>
+			<!--<smartFilterBar:ControlConfiguration key="TOOL_ID" visibleInAdvancedArea="false"></smartFilterBar:ControlConfiguration>-->
+			<!--<smartFilterBar:ControlConfiguration key="TOOL_TYPE" visibleInAdvancedArea="false"></smartFilterBar:ControlConfiguration>-->
+			<!--<smartFilterBar:ControlConfiguration key="TOOL_DESCRIPTION" visibleInAdvancedArea="false"></smartFilterBar:ControlConfiguration>-->
+			<!--<smartFilterBar:ControlConfiguration key="TOOL_CATEGORY" visibleInAdvancedArea="false"></smartFilterBar:ControlConfiguration>-->
+			<!--<smartFilterBar:ControlConfiguration key="TOOL_DIVISION" visibleInAdvancedArea="false"></smartFilterBar:ControlConfiguration>-->
+		</smartFilterBar:controlConfiguration>
+	</smartFilterBar:SmartFilterBar>
+</core:FragmentDefinition>

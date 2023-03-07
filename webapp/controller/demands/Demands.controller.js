@@ -30,6 +30,10 @@ sap.ui.define([
 		 */
 		onInit: function () {
 			this._oDraggableTable = this.byId("draggableList");
+			this._oToolsTable = this.byId("idToolsTable");
+			this._oDemandsViewPage = this.byId("idDemandsViewDynamicPage");
+			this._oToolsViewPage = this.byId("idToolsViewDynamicPage");
+			this._oViewModel = this.getModel("viewModel");
 			this._oDataTable = this._oDraggableTable.getTable();
 			this._configureDataTable(this._oDataTable);
 			this._aSelectedRowsIdx = [];
@@ -53,12 +57,12 @@ sap.ui.define([
 		 */
 		onAfterRendering: function (oEvent) {
 			var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle"),
-				noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]),
-				viewModel = this.getModel("viewModel");
-			this._viewModel = viewModel;
-			viewModel.setProperty("/subViewTitle", tableTitle);
-			viewModel.setProperty("/subTableNoDataText", noDataText);
-			viewModel.setProperty("/Show_Assignment_Status_Button", false);
+				noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]);
+				
+			this._oViewModel.setProperty("/PRT/bIsGantt",false);	
+			this._oViewModel.setProperty("/subViewTitle", tableTitle);
+			this._oViewModel.setProperty("/subTableNoDataText", noDataText);
+			this._oViewModel.setProperty("/Show_Assignment_Status_Button", false);
 		},
 
 		/**

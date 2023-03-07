@@ -16,6 +16,12 @@
 			<smartTable:customToolbar>
 				<OverflowToolbar>
 					<core:ExtensionPoint name="TableExtP|GanttDemands|DemandSet|TableToolbar|Left"/>
+					<SegmentedButton selectedKey="{viewModel>/PRT/btnSelectedKey}" selectionChange="handleViewSelectionChange">
+						<items>
+							<SegmentedButtonItem text="{i18n>xtit.itemListTitle}" key="demands"/>
+							<SegmentedButtonItem text="{i18n>xtit.PRTlistTitle}" key="tools"/>
+						</items>
+					</SegmentedButton>
 					<ToolbarSpacer/>
 					<Button id="idBtnGanttFilter" text="{i18n>xbut.filters}" press="onPressGanttFilters" icon="sap-icon://filter"/>
 					<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandToolbarButtons" type="XML"/>
@@ -39,6 +45,7 @@
 				</table:dragDropConfig>
 			</table:Table>
 		</smartTable:SmartTable>
+		<core:Fragment fragmentName="com.evorait.evoplan.view.PRT.ToolsList" type="XML"/>
 		<dependents>
 			<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.GanttDemandFilter" type="XML"/>
 		</dependents>

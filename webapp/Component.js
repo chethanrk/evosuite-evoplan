@@ -559,7 +559,11 @@ sap.ui.define([
 					EndDate: ""
 				},
 				validateIW31Auth: true,
-				validateIW32Auth: true
+				validateIW32Auth: true,
+				PRT:{
+					btnSelectedKey:"demands",
+					bIsGantt:false
+				}
 			});
 			oViewModel.setSizeLimit(999999999);
 			this.setModel(oViewModel, "viewModel");
