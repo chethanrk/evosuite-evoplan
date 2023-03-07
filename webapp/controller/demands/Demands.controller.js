@@ -58,7 +58,8 @@ sap.ui.define([
 		onAfterRendering: function (oEvent) {
 			var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle"),
 				noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]);
-				
+			
+			this.handleViewSelectionChange();	
 			this._oViewModel.setProperty("/PRT/bIsGantt",false);	
 			this._oViewModel.setProperty("/subViewTitle", tableTitle);
 			this._oViewModel.setProperty("/subTableNoDataText", noDataText);
