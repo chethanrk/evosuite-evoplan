@@ -1028,7 +1028,7 @@ sap.ui.define([
 		 */
 		onNewTimeAllocPress: function (oEvent) {
 			var oResourceBundle = this.getResourceBundle();
-			if (this.selectedResources.length === 0 || this.removeSelectedResourceGroups()) {
+			if (this.selectedResources.length === 0 || this.removeSelectedPoolnResourceGroups()) {
 				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
 				return;
 			}
@@ -1298,16 +1298,17 @@ sap.ui.define([
 		},
 
 		/**
-		 * remove the selection of resource group on press of time allocation button 
-		 * time allocation dialog does not work for resource Group
+		 * remove the selection of resource group and pool resources on press of time allocation button 
+		 * time allocation dialog does not work for resource Group and pool resource
 		 * it works for multiple resources only
 		 */
-		removeSelectedResourceGroups: function () {
+		removeSelectedPoolnResourceGroups: function () {
 			var oModel,
 				aRemoveItems = [];
 			oModel = this._mParameters.bFromHome || this._mParameters.bFromMap ? this.getModel() : this.getModel("ganttModel");
 			for (var i in this.selectedResources) {
-				if (oModel.getProperty(this.selectedResources[i] + "/NodeType") === "RES_GROUP") {
+				if (oModel.getProperty(this.selectedResources[i] + "/NodeType") === "RES_GROUP" || oModel.getProperty(this.selectedResources[i] +
+						"/ResourceGuid") === "") {
 					aRemoveItems.push(this.selectedResources[i]);
 				}
 			}

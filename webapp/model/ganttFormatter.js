@@ -173,19 +173,6 @@ sap.ui.define([
 			} else {
 				return false;
 			}
-		},
-
-		/**
-		 * Set fill gradient for duplicate assignments
-		 * @param sColor -> primary color of gradient (same as assignment color)
-		 */
-		fillGradient: function (sColor) {
-			var oStop = new Stop({
-				offSet: "0%",
-				stopColor: sColor || "#fff"
-			});
-			this.byId("dupGradient").insertStop(oStop, 0);
-			return "url(#" + this._viewId + "--dupGradient" + ")";
 		}
 	};
 });

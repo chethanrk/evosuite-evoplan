@@ -73,6 +73,9 @@ sap.ui.define([
 			this._oGanttDemandFilter = this.getView().byId("idGanttDemandFilterDialog");
 			this._oGanttDemandFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 			this._aSelectedIndices = [];
+			// add binging change event forthe demands table
+			this._addDemandTblBindingChangeEvent();
+
 		},
 
 		/**
@@ -162,7 +165,7 @@ sap.ui.define([
 				iMaxRowSelection = this.oUserModel.getProperty("/DEFAULT_DEMAND_SELECT_ALL"),
 				bEnable = this._oViewModel.getProperty("/validateIW32Auth"),
 				index = oEvent.getParameter("rowIndex"),
-				sDemandPath, bComponentExist;
+				sDemandPath, bComponentExist, sMsg;
 
 			this._aSelectedRowsIdx = _.clone(selected);
 			if (this._aSelectedRowsIdx.length > 0) {
@@ -185,11 +188,11 @@ sap.ui.define([
 			}
 
 			//If the selected demands exceeds more than the maintained selected configuration value
-			if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
-				var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
-				if (oEvent.getParameter("selectAll")) {
-					sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection, this._aSelectedRowsIdx.length]);
-				}
+			if (oEvent.getParameter("selectAll")) {
+				sMsg = this.getResourceBundle().getText("ymsg.allSelect", [this._aSelectedRowsIdx.length]);
+				this.showMessageToast(sMsg);
+			} else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
+				sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
 				this.showMessageToast(sMsg);
 			}
 
@@ -222,6 +225,16 @@ sap.ui.define([
 		},
 
 		//TODO comment
+		onPressFilterGantChart: function () {
+			var aPplicationFilters = this.getView().byId("draggableList").getTable().getBinding("rows").aApplicationFilters;
+			var aFilters = [];
+			this.getOwnerComponent().readData("/DemandSet", aPplicationFilters, "$select=Guid").then(function (data) {
+				for (var x in data["results"]) {
+					aFilters.push(new Filter("DemandGuid", FilterOperator.EQ, data["results"][x]["Guid"]));
+				}
+				this._oEventBus.publish("BaseController", "refreshFullGantt", aFilters);
+			}.bind(this));
+		},
 		onClickSplit: function (oEvent) {
 			window.open("#Gantt/SplitDemands", "_blank");
 		},
@@ -232,7 +245,21 @@ sap.ui.define([
 		onPressGanttFilters: function () {
 			this._oGanttDemandFilter.open();
 		},
-
+		/**
+		 *On Change filters event in the Gantt Demands Filter Dialog 
+		 */
+		onGanttDemandFilterChange: function (oEvent) {
+			var oView = this.getView(),
+				oResourceBundle = oView.getModel("i18n").getResourceBundle(),
+				oViewModel = oView.getModel("viewModel"),
+				sFilterText = oResourceBundle.getText("xbut.filters"),
+				sFilterCount = Object.keys(oEvent.getSource().getFilterData()).length;
+			if (sFilterCount > 0) {
+				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText + "(" + sFilterCount + ")");
+			} else {
+				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText);
+			}
+		},
 		/**
 		 * Close the Gantt Demands Filter Dialog 
 		 */
@@ -253,6 +280,34 @@ sap.ui.define([
 			}
 			this._bLoaded = true;
 		},
+
+		/**
+		 * This method is trigerred on refresh of the binding of the table
+		 * @Author Manik
+		 */
+		_addDemandTblBindingChangeEvent: function () {
+			/*Here we are checking if the demands table binding change
+				is due to  the applied flter based on that we have written logic to 
+				enable to disable the filter gantt button(in table toolbar)
+			*/
+			var oTable = this._oDataTable,
+				oViewModel = this._viewModel; //Get hold of Table
+			oTable.addEventDelegate({ //Table onAfterRendering event
+				onAfterRendering: function () {
+					if (this.getBinding("rows")) {
+						this.getBinding("rows").attachChange(function (oEvent) {
+							if (oEvent.getParameter("reason") === "filter") {
+								if (oEvent.getSource().aApplicationFilters.length > 0) {
+									oViewModel.setProperty("/bFilterGantBtnDemandtsGantt", true);
+								} else {
+									oViewModel.setProperty("/bFilterGantBtnDemandtsGantt", false);
+								}
+							}
+						});
+					}
+				}
+			}, oTable);
+		}
 
 	});
 

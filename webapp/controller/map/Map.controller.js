@@ -302,8 +302,7 @@ sap.ui.define([
 			var oViewModel = this.getModel("viewModel"),
 				aSelectedDemands = oViewModel.getProperty("/mapSettings/selectedDemands"),
 				oDragSource = oEvent.getParameter("oDragSource"),
-				oContext = oDragSource.getBindingContext(),
-				sPath = oContext.getPath();
+				sPath = this._getSpotPath(oDragSource);
 
 			if (aSelectedDemands.length > 0) {
 				if (!aSelectedDemands.includes(sPath)) {
@@ -547,7 +546,7 @@ sap.ui.define([
 			//todo need to check scroll, this flag is disturbing selection/deselection
 			var selected = this._oDataTable.getSelectedIndices(),
 				bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
-				sDemandPath, bComponentExist;
+				sDemandPath, bComponentExist, sMsg;
 			var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 
 			this._aSelectedRowsIdx = _.clone(selected);
@@ -571,11 +570,11 @@ sap.ui.define([
 			}
 
 			//If the selected demands exceeds more than the maintained selected configuration value
-			if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
-				var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
-				if (oEvent.getParameter("selectAll")) {
-					sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection, this._aSelectedRowsIdx.length]);
-				}
+			if (oEvent.getParameter("selectAll")) {
+				sMsg = this.getResourceBundle().getText("ymsg.allSelect", [this._aSelectedRowsIdx.length]);
+				this.showMessageToast(sMsg);
+			} else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
+				sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
 				this.showMessageToast(sMsg);
 			}
 
@@ -888,7 +887,7 @@ sap.ui.define([
 			var oSpot = oEvent.getSource(),
 				sType = oSpot.data("Type");
 			this.getModel("viewModel").setProperty("/mapSettings/spotContextMenuType", sType);
-			this.oPinPopover.open(oSpot, sType);
+			this.oPinPopover.open(oSpot, sType, this._getSpotPath(oSpot));
 		},
 
 		/**
