@@ -196,7 +196,7 @@ sap.ui.define([
 			if (!this.isLoaded) {
 				this.isLoaded = true;
 			}
-			
+
 			// Bug fix for some time tree getting collapsed
 			if (oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND")) {
 				oBinding.parameters.numberOfExpandedLevels = nTreeExpandLevel ? nTreeExpandLevel : 1;
@@ -569,6 +569,18 @@ sap.ui.define([
 					this._oDroppableTable.rebindTable();
 				}
 			}
+		},
+
+		/**
+		 * Tools droppped on resource tree, triggers create assignment for dragged tools
+		 */
+		onToolDropOnResource: function (oEvent) {
+			var oTargetControl = oEvent.getParameter("droppedControl"),
+				oTargetContext = oTargetControl.getBindingContext(),
+				sTargetPath = oTargetContext.getPath(),
+				aSources = this._oViewModel.getProperty("/dragSession");
+
+			this.checksBeforeAssignTools(aSources, sTargetPath, this._mParameters);
 		}
 	});
 });

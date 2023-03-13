@@ -182,6 +182,14 @@
 					"resourceTree"
 				]
 			}, {
+				"pattern": "DemandTools",
+				"name": "demandTools",
+				"target": [
+					"resourceTree",
+					"Tools"
+					
+				]
+			}, {
 				"pattern": "Demand/{guid}",
 				"name": "DemandDetail",
 				"target": [
@@ -323,6 +331,14 @@
 					"viewType": "XML",
 					"viewName": "Demands",
 					"viewPath": "com.evorait.evoplan.view.demands",
+					"viewLevel": 3,
+					"controlId": "rightPanel",
+					"parent": "splitHorNavigation"
+				},
+				"Tools": {
+					"viewType": "XML",
+					"viewName": "Tools",
+					"viewPath": "com.evorait.evoplan.view.PRT",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
 					"parent": "splitHorNavigation"

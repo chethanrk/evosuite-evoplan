@@ -45,6 +45,7 @@ sap.ui.define([
 			this._mParameters = {
 				bFromHome: true
 			};
+			this._oRouter = this.getOwnerComponent().getRouter();
 		},
 
 		/* =========================================================== */
@@ -58,12 +59,13 @@ sap.ui.define([
 		onAfterRendering: function (oEvent) {
 			var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle"),
 				noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]);
-			
-			this.handleViewSelectionChange();	
-			this._oViewModel.setProperty("/PRT/bIsGantt",false);	
+
+			this._oViewModel.setProperty("/PRT/btnSelectedKey", "demands");
+			this._oViewModel.setProperty("/PRT/bIsGantt",false);
 			this._oViewModel.setProperty("/subViewTitle", tableTitle);
 			this._oViewModel.setProperty("/subTableNoDataText", noDataText);
 			this._oViewModel.setProperty("/Show_Assignment_Status_Button", false);
+			this._oViewModel.refresh();
 		},
 
 		/**
@@ -509,6 +511,26 @@ sap.ui.define([
 				if (oData.oDeselectAssignmentsContexts.includes(sDemandPath)) {
 					this._oDataTable.removeSelectionInterval(oSelectedIndices[i], oSelectedIndices[i]);
 				}
+			}
+		},
+		onBeforeRebindToolsTable: function (oEvent) {
+			oEvent.getParameter("bindingParams").filters.push(new Filter("TOOL_TYPE", FilterOperator.EQ, this.getModel("user").getProperty(
+				"/ENABLE_TOOL_TYPE")));
+		},
+		handleViewSelectionChange: function (oEvent) {
+			// var navCon = this.byId("navCon");
+			// var sSelectedKey = this._oViewModel.getProperty("/PRT/btnSelectedKey");
+			// if (sSelectedKey === "demands") {
+			// 	navCon.to(this.byId('idDemandsViewDynamicPage'));
+			// } else {
+			// 	navCon.to(this.byId('idToolsViewDynamicPage'));
+			// }
+			this.getOwnerComponent().bIsFromPRTSwitch = true;
+			var sSelectedKey = this._oViewModel.getProperty("/PRT/btnSelectedKey");
+			if (sSelectedKey === "demands") {
+				this._oRouter.navTo("demands", {});
+			} else {
+				this._oRouter.navTo("demandTools", {});
 			}
 		},
 

@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:f="sap.f">
-	<f:DynamicPage id="idToolsViewDynamicPage" visible="false" headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true"
+	<f:DynamicPage id="idToolsViewDynamicPage" headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true"
 		showFooter="true" toggleHeaderOnTitleClick="false" class="sapUiNoContentPadding tableContentPage">
 		<f:header>
 			<f:DynamicPageHeader id="idToolsViewDemandsHeader" pinnable="true">

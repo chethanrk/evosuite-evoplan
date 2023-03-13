@@ -42,7 +42,7 @@
 								<core:ExtensionPoint name="TableExtP|Demands|DemandsSet|CustomToolbar|Right"/>
 							</OverflowToolbar>
 						</smartTable:customToolbar>
-						<table:Table id="idDemandsPageInnerTable" columnResize="onColumnResize" minAutoRowCount="5" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}"
+						<table:Table id="idDemandsPageInnerTable" columnResize="onColumnResize" minAutoRowCount="25" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}"
 							cellClick="onCopyDemandCellData">
 							<table:rowSettingsTemplate>
 								<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
@@ -77,7 +77,6 @@
 					</OverflowToolbar>
 				</f:footer>
 			</f:DynamicPage>
-			<core:Fragment fragmentName="com.evorait.evoplan.view.PRT.ToolsDynamicPage" type="XML"/>
 		</content>
 	</Page>
 </mvc:View>
