@@ -105,6 +105,7 @@
 			</table:columns>
 			<table:dragDropConfig>
 				<dnd:DropInfo targetAggregation="rows" groupName="demandView" dropPosition="On" drop="onDropOnResource"/>
+				<dnd:DropInfo targetAggregation="rows" groupName="ToolsView" dropPosition="On" drop="onToolDropOnResource"/>
 				<dnd:DragInfo sourceAggregation="rows" groupName="demandView" dragStart="onDragStart"/>
 			</table:dragDropConfig>
 		</table:TreeTable>

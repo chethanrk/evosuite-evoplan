@@ -561,7 +561,11 @@ sap.ui.define([
 				validateIW31Auth: true,
 				validateIW32Auth: true,
 				aFilterBtntextGanttDemandTbl: this.getModel("i18n").getResourceBundle().getText("xbut.filters"),
-				bFilterGantBtnDemandtsGantt:false
+				bFilterGantBtnDemandtsGantt:false,
+				PRT:{
+					btnSelectedKey:"demands",
+					bIsGantt:false
+				}
 			});
 			oViewModel.setSizeLimit(999999999);
 			this.setModel(oViewModel, "viewModel");

@@ -326,6 +326,8 @@ sap.ui.define([
 			} else if (sRoute === "map") {
 				this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshMapView", {});
+			} else if (this.getOwnerComponent().bIsFromPRTSwitch && (sRoute === "demands" || sRoute === "demandTools")) {
+				this.getOwnerComponent().bIsFromPRTSwitch = false;
 			} else {
 				this._eventBus.publish("BaseController", "refreshTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshDemandTable", {});
@@ -391,11 +393,11 @@ sap.ui.define([
 		 * @param {string} sEvent 
 		 * @param {object} oData 
 		 */
-		_triggerDeleteSplitAssignments: function(sChanel, sEvent, oData) {
+		_triggerDeleteSplitAssignments: function (sChanel, sEvent, oData) {
 			if (sEvent === "deleteSplitAssignments") {
 				// ask for user confirmation that related splits of the selected assignment will also be unassigned
 				this.deleteSplitsUserConfirm(oData).catch(this._catchError.bind(this))
-				.then(this.deleteSplitAssignments.bind(this)).catch(this._catchError.bind(this));	
+					.then(this.deleteSplitAssignments.bind(this)).catch(this._catchError.bind(this));
 			}
 		},
 

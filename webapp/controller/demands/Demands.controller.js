@@ -30,6 +30,7 @@ sap.ui.define([
 		 */
 		onInit: function () {
 			this._oDraggableTable = this.byId("draggableList");
+			this._viewModel  = this.getModel("viewModel");
 			this._oDataTable = this._oDraggableTable.getTable();
 			this._configureDataTable(this._oDataTable);
 			this._aSelectedRowsIdx = [];
@@ -41,6 +42,7 @@ sap.ui.define([
 			this._mParameters = {
 				bFromHome: true
 			};
+			this._oRouter = this.getOwnerComponent().getRouter();
 		},
 
 		/* =========================================================== */
@@ -53,12 +55,14 @@ sap.ui.define([
 		 */
 		onAfterRendering: function (oEvent) {
 			var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle"),
-				noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]),
-				viewModel = this.getModel("viewModel");
-			this._viewModel = viewModel;
-			viewModel.setProperty("/subViewTitle", tableTitle);
-			viewModel.setProperty("/subTableNoDataText", noDataText);
-			viewModel.setProperty("/Show_Assignment_Status_Button", false);
+				noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]);
+
+			this._viewModel .setProperty("/PRT/btnSelectedKey", "demands");
+			this._viewModel .setProperty("/PRT/bIsGantt",false);
+			this._viewModel .setProperty("/subViewTitle", tableTitle);
+			this._viewModel .setProperty("/subTableNoDataText", noDataText);
+			this._viewModel .setProperty("/Show_Assignment_Status_Button", false);
+			this._viewModel .refresh();
 		},
 
 		/**
@@ -504,6 +508,20 @@ sap.ui.define([
 				if (oData.oDeselectAssignmentsContexts.includes(sDemandPath)) {
 					this._oDataTable.removeSelectionInterval(oSelectedIndices[i], oSelectedIndices[i]);
 				}
+			}
+		},
+		
+		/**
+		 * Event handler to switch between Demand and Tool list
+		 * @param oEvent
+		 */
+		handleViewSelectionChange: function (oEvent) {
+			this.getOwnerComponent().bIsFromPRTSwitch = true;
+			var sSelectedKey = this._viewModel .getProperty("/PRT/btnSelectedKey");
+			if (sSelectedKey === "demands") {
+				this._oRouter.navTo("demands", {});
+			} else {
+				this._oRouter.navTo("demandTools", {});
 			}
 		},
 
