@@ -30,10 +30,7 @@ sap.ui.define([
 		 */
 		onInit: function () {
 			this._oDraggableTable = this.byId("draggableList");
-			this._oToolsTable = this.byId("idToolsTable");
-			this._oDemandsViewPage = this.byId("idDemandsViewDynamicPage");
-			this._oToolsViewPage = this.byId("idToolsViewDynamicPage");
-			this._oViewModel = this.getModel("viewModel");
+			this._viewModel  = this.getModel("viewModel");
 			this._oDataTable = this._oDraggableTable.getTable();
 			this._configureDataTable(this._oDataTable);
 			this._aSelectedRowsIdx = [];
@@ -60,12 +57,12 @@ sap.ui.define([
 			var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle"),
 				noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]);
 
-			this._oViewModel.setProperty("/PRT/btnSelectedKey", "demands");
-			this._oViewModel.setProperty("/PRT/bIsGantt",false);
-			this._oViewModel.setProperty("/subViewTitle", tableTitle);
-			this._oViewModel.setProperty("/subTableNoDataText", noDataText);
-			this._oViewModel.setProperty("/Show_Assignment_Status_Button", false);
-			this._oViewModel.refresh();
+			this._viewModel .setProperty("/PRT/btnSelectedKey", "demands");
+			this._viewModel .setProperty("/PRT/bIsGantt",false);
+			this._viewModel .setProperty("/subViewTitle", tableTitle);
+			this._viewModel .setProperty("/subTableNoDataText", noDataText);
+			this._viewModel .setProperty("/Show_Assignment_Status_Button", false);
+			this._viewModel .refresh();
 		},
 
 		/**
@@ -513,20 +510,14 @@ sap.ui.define([
 				}
 			}
 		},
-		onBeforeRebindToolsTable: function (oEvent) {
-			oEvent.getParameter("bindingParams").filters.push(new Filter("TOOL_TYPE", FilterOperator.EQ, this.getModel("user").getProperty(
-				"/ENABLE_TOOL_TYPE")));
-		},
+		
+		/**
+		 * Event handler to switch between Demand and Tool list
+		 * @param oEvent
+		 */
 		handleViewSelectionChange: function (oEvent) {
-			// var navCon = this.byId("navCon");
-			// var sSelectedKey = this._oViewModel.getProperty("/PRT/btnSelectedKey");
-			// if (sSelectedKey === "demands") {
-			// 	navCon.to(this.byId('idDemandsViewDynamicPage'));
-			// } else {
-			// 	navCon.to(this.byId('idToolsViewDynamicPage'));
-			// }
 			this.getOwnerComponent().bIsFromPRTSwitch = true;
-			var sSelectedKey = this._oViewModel.getProperty("/PRT/btnSelectedKey");
+			var sSelectedKey = this._viewModel .getProperty("/PRT/btnSelectedKey");
 			if (sSelectedKey === "demands") {
 				this._oRouter.navTo("demands", {});
 			} else {

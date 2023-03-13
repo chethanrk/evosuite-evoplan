@@ -38,7 +38,7 @@ sap.ui.define([
 
 			this.oAppModel = this.getModel("appView");
 			this.oUserModel = this.getModel("user");
-			this._oViewModel = this.getModel("viewModel");
+			this._viewModel  = this.getModel("viewModel");
 			this._mParameters = {
 				bFromGantt: true
 			};
@@ -57,14 +57,14 @@ sap.ui.define([
 			this._oDataTable = this._oDemandsViewPage.getTable();
 			this.getRouter().getRoute("splitDemands").attachMatched(function () {
 				this._routeName = Constants.GANTT.SPLITDMD;
-				this._oViewModel.setProperty("/PRT/bIsGantt",true);
+				this._viewModel .setProperty("/PRT/bIsGantt",true);
 			}.bind(this));
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = "newgantt";
 				this._mParameters = {
 					bFromNewGantt: true
 				};
-				this._oViewModel.setProperty("/PRT/bIsGantt",true);
+				this._viewModel .setProperty("/PRT/bIsGantt",true);
 				this.handleViewSelectionChange();
 			}.bind(this));
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
@@ -96,7 +96,7 @@ sap.ui.define([
 
 		onDragStart: function (oEvent) {
 			var sMsg = this.getResourceBundle().getText("msg.notAuthorizedForAssign");
-			if (!this._oViewModel.getProperty("/validateIW32Auth")) {
+			if (!this._viewModel .getProperty("/validateIW32Auth")) {
 				this.showMessageToast(sMsg);
 				oEvent.preventDefault();
 				return;
@@ -126,8 +126,8 @@ sap.ui.define([
 				});
 			});
 
-			this._oViewModel.setProperty("/gantDragSession", aSelDemandGuid);
-			this._oViewModel.setProperty("/dragSession", aPathsData);
+			this._viewModel .setProperty("/gantDragSession", aSelDemandGuid);
+			this._viewModel .setProperty("/dragSession", aPathsData);
 			this.localStorage.put("Evo-Dmnd-guid", JSON.stringify(aSelectedDemandObject));
 			this.localStorage.put("Evo-aPathsData", JSON.stringify(aPathsData));
 
@@ -144,7 +144,7 @@ sap.ui.define([
 		 */
 		onAssignButtonPress: function (oEvent) {
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
-			this._oViewModel.setProperty("/dragSession", oSelectedPaths.aPathsData);
+			this._viewModel .setProperty("/dragSession", oSelectedPaths.aPathsData);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
 				// TODO comment
@@ -163,7 +163,7 @@ sap.ui.define([
 		onRowSelectionChange: function (oEvent) {
 			var selected = this._oDataTable.getSelectedIndices(),
 				iMaxRowSelection = this.oUserModel.getProperty("/DEFAULT_DEMAND_SELECT_ALL"),
-				bEnable = this._oViewModel.getProperty("/validateIW32Auth"),
+				bEnable = this._viewModel .getProperty("/validateIW32Auth"),
 				index = oEvent.getParameter("rowIndex"),
 				sDemandPath, bComponentExist, sMsg;
 

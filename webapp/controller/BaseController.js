@@ -1333,22 +1333,7 @@ sap.ui.define([
 			} else {
 				this._oEventBus.publish("BaseController", "resetSelections", {});
 			}
-		},
-		
-		/**
-		 * PRT: method to switch between Demands and Tools list
-		 * this method is getting used in Gantt and Demand Controller
-		 */
-		handleViewSelectionChange: function (oEvent) {
-			var sSelectedKey = this._oViewModel.getProperty("/PRT/btnSelectedKey");
-			if (sSelectedKey === "demands") {
-				this._oToolsViewPage.setVisible(false);
-				this._oDemandsViewPage.setVisible(true);
-			} else {
-				this._oDemandsViewPage.setVisible(false);
-				this._oToolsViewPage.setVisible(true);
-			}
-		},
+		}
 	});
 
 });
