@@ -318,6 +318,9 @@ sap.ui.define([
 			} else if (oParameter.bFromNewGanttSplit) {
 				eventBus.publish("BaseController", "refreshAssignments", oData);
 				eventBus.publish("BaseController", "refreshCapacity", {});
+			} else if (oParameter.bFromDemandTools) {
+				eventBus.publish("BaseController", "refreshTreeTable", {});
+				eventBus.publish("BaseController", "refreshToolsTable", {});
 			}
 
 		},
