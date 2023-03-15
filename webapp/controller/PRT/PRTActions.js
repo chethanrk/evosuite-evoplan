@@ -32,17 +32,17 @@ sap.ui.define([
 					TimeTo: oTargetObj.EndTime,
 					ResourceGroupGuid: oTargetObj.ResourceGroupGuid,
 					ResourceGuid: oTargetObj.ResourceGuid
-				}
+				};
 				this._proceedToAssignTools(aSources, oDateParams, mParameters);
 
 			} else if (sNodeType === "RESOURCE") {
 				//todo show Dialog to get the dates for Resource node
-				MessageToast.show("Development is in progress");
+				// MessageToast.show("Development is in progress");
 			} else {
 				//todo default condition
 			}
 		},
-		
+
 		/**
 		 * method to call assignment service
 		 * @param aSources Selected tools data and path
@@ -61,13 +61,11 @@ sap.ui.define([
 					ResourceGroupGuid: oDateParams.ResourceGroupGuid,
 					ResourceGuid: oDateParams.ResourceGuid
 				};
-				oParams.TOOL_ID = aSources[i].oData.TOOL_ID;
-				alert(aSources[i].oData.TOOL_ID);
+				oParams.ToolId = aSources[i].oData.TOOL_ID;
 				if (parseInt(i, 10) === aSources.length - 1) {
 					bIsLast = true;
 				}
-				MessageToast.show("function import call ");
-				// this.callFunctionImport(oParams, "CreateAssignment", "POST", mParameters, bIsLast);
+				this.callFunctionImport(oParams, "CreateToolAssignment", "POST", mParameters, bIsLast)
 			}
 		}
 	});

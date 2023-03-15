@@ -2,15 +2,15 @@
 	xmlns:dnd="sap.ui.core.dnd" xmlns:table="sap.ui.table">
 	<smartTable:SmartTable id="idToolsTable" visible="true" height="100%" width="100%" direction="Column" fitContainer="true"
 		enableAutoBinding="true" entitySet="PRTToolSet" smartFilterId="idToolsListFilter" showRowCount="true" header="{i18n>xtit.PRTlistTitle}"
-		useExportToExcel="true" useVariantManagement="true" persistencyKey="com.evorait.evosuite.evoplan.ToolsTable"
-		useTablePersonalisation="true" requestAtLeastFields="TOOL_ID,TOOL_TYPE,TOOL_DESCRIPTION,TOOL_CATEGORY,TOOL_DIVISION"
-		beforeRebindTable="onBeforeRebindToolsTable">
+		useExportToExcel="true" useVariantManagement="true" persistencyKey="com.evorait.evosuite.evoplan.ToolsTable" useTablePersonalisation="true"
+		requestAtLeastFields="TOOL_ID,TOOL_TYPE,TOOL_DESCRIPTION,TOOL_CATEGORY,TOOL_DIVISION" beforeRebindTable="onBeforeRebindToolsTable">
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1"/>
 		</smartTable:layoutData>
 		<smartTable:customToolbar>
 			<OverflowToolbar>
-				<SegmentedButton selectedKey="{viewModel>/PRT/btnSelectedKey}" selectionChange="handleViewSelectionChange" visible="{viewModel>/PRT/bIsGantt}">
+				<SegmentedButton selectedKey="{viewModel>/PRT/btnSelectedKey}" selectionChange="handleViewSelectionChange"
+					visible="{viewModel>/PRT/bIsGantt}">
 					<items>
 						<SegmentedButtonItem text="{i18n>xtit.itemListTitle}" key="demands"/>
 						<SegmentedButtonItem text="{i18n>xtit.PRTlistTitle}" key="tools"/>
@@ -18,5 +18,10 @@
 				</SegmentedButton>
 			</OverflowToolbar>
 		</smartTable:customToolbar>
+		<table:Table visibleRowCountMode="Auto">
+			<table:dragDropConfig>
+				<dnd:DragInfo sourceAggregation="rows" groupName="ToolsView" dragStart="onToolsDragStart" dragEnd="onToolsDragEnd"/>
+			</table:dragDropConfig>
+		</table:Table>
 	</smartTable:SmartTable>
 </core:FragmentDefinition>

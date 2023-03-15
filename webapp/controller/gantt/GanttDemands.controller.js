@@ -64,8 +64,6 @@ sap.ui.define([
 				this._mParameters = {
 					bFromNewGantt: true
 				};
-				this._viewModel .setProperty("/PRT/bIsGantt",true);
-				this.handleViewSelectionChange();
 			}.bind(this));
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
 

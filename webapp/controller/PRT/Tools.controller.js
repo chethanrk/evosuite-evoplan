@@ -30,9 +30,18 @@ sap.ui.define([
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oViewModel = this.getModel("viewModel");
 			this._oUserModel = this.getModel("user");
+			this._oDraggableToolsTable = this.byId("idToolsTable");
+			this._oToolsTable = this.byId("idToolsTable").getTable();
+			this._eventBus = sap.ui.getCore().getEventBus();
 			this._mParameters = {
 				bFromDemandTools: true
 			};
+			this._eventBus.subscribe("BaseController", "refreshToolsTable", this._refreshToolsTable, this);
+			this.getRouter().getRoute("demandTools").attachPatternMatched(function () {
+				if(!this._oUserModel.getProperty("/ENABLE_PRT")){
+				this._oRouter.navTo("demands",{});	
+				}
+			}.bind(this));
 		},
 		/**
 		 * after rendering of view
@@ -40,14 +49,20 @@ sap.ui.define([
 		 */
 		onAfterRendering: function (oEvent) {
 			this._oViewModel.setProperty("/PRT/btnSelectedKey", "tools");
-			this._oViewModel.setProperty("/PRT/bIsGantt",false);
+			this._oViewModel.setProperty("/PRT/bIsGantt", false);
 			this._oViewModel.refresh();
+		},
+		/**
+		 * Called when view attached is destroyed
+		 */
+		onExit: function () {
+			this._eventBus.unsubscribe("BaseController", "refreshToolsTable", this._refreshToolsTable, this);
 		},
 
 		/* =========================================================== */
 		/* event handlers &  Public methods                            */
 		/* =========================================================== */
-		
+
 		/**
 		 * event before loading the the tool list
 		 * adding default filters
@@ -57,7 +72,7 @@ sap.ui.define([
 			oEvent.getParameter("bindingParams").filters.push(new Filter("TOOL_TYPE", FilterOperator.EQ, this._oUserModel.getProperty(
 				"/ENABLE_TOOL_TYPE")));
 		},
-		
+
 		/**
 		 * Event handler to switch between Demand and Tool list
 		 * @param oEvent
@@ -71,7 +86,7 @@ sap.ui.define([
 				this._oRouter.navTo("demandTools", {});
 			}
 		},
-		
+
 		/**
 		 * Drag items from Tool list
 		 * to store dragged items in local JSON model
@@ -80,18 +95,19 @@ sap.ui.define([
 		onToolsDragStart: function (oEvent) {
 			var oDragSession = oEvent.getParameter("dragSession"),
 				oDraggedControl = oDragSession.getDragControl(),
-				aIndices = this._oToolsTable.getSelectedIndices(),
+				oToolsTable = this._oDraggableToolsTable.getTable(),
+				aIndices = oToolsTable.getSelectedIndices(),
 				oSelectedPaths;
 
-			oSelectedPaths = this._getSelectedToolsPaths(this._oToolsTable, aIndices);
+			oSelectedPaths = this._getSelectedToolsPaths(oToolsTable, aIndices);
 			// keeping the data in drag session
 			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
 		},
-		
+
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
-		
+
 		/**
 		 * reading context and getting path of selected items from Tool list
 		 * helper method for tools assignment process
@@ -116,5 +132,8 @@ sap.ui.define([
 				aNonAssignable: []
 			};
 		},
+		_refreshToolsTable: function () {
+			this._oDraggableToolsTable.rebindTable();
+		}
 	});
 });
