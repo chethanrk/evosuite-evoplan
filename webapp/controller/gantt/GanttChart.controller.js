@@ -1226,6 +1226,11 @@ sap.ui.define([
 					ResourceGuid: oData.ResourceGuid
 				};
 
+				//If assignment is duplicate then send the resource group id of original assignment
+				if (oData.DUPLICATE_ASSIGNMENT_FLAG) {
+					oParams.ResourceGroupGuid = oData.ORIGINAL_RESGRP_GUID;
+				}
+
 				//has new parent?
 				if (this.mRequestTypes.reassign === sType && oPendingChanges[sPath].ResourceGuid) {
 					oParams.ResourceGroupGuid = oData.ResourceGroupGuid;
@@ -1617,7 +1622,7 @@ sap.ui.define([
 			this._treeTable.setBusy(true);
 			this._loadTreeData(0, aParamDemandsFilter)
 				.then(function (resolve) {
-					this._loadTreeData(resolve, aParamDemandsFilter);
+					return this._loadTreeData(resolve, aParamDemandsFilter);
 				}.bind(this))
 				.then(function () {
 					this._treeTable.expandToLevel(1);
