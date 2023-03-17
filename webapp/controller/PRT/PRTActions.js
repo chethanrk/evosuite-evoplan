@@ -51,9 +51,13 @@ sap.ui.define([
 				endDate.setDate(endDate.getDate() + parseInt(iDefNum));
 				this._oViewModel.setProperty("/toolAsgnDefaultDates/startDate", new Date());
 				this._oViewModel.setProperty("/toolAsgnDefaultDates/endDate", new Date(endDate));
-				if (oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) {
+				if (oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) { // If Dialog show config is on 
 					this.open(this.getView(), oDateParams, aSources, mParameters);
-				} else {
+				} else { // If dialog show config is off
+					oDateParams.DateFrom = new Date();
+					oDateParams.TimeFrom.ms = new Date().getTime();
+					oDateParams.DateTo = new Date(endDate);
+					oDateParams.TimeTo.ms = endDate.getTime();
 					this._proceedToAssignTools(aSources, oDateParams, mParameters);
 				}
 			} else {
