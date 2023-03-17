@@ -137,12 +137,21 @@ sap.ui.define([
 		 * method to trigger function import for tool assignment
 		 */
 		onSaveDialog: function () {
-			this._oDateParams.DateFrom = this._oViewModel.getProperty("/toolAsgnDefaultDates/startDate");
-			this._oDateParams.TimeFrom.ms = this._oViewModel.getProperty("/toolAsgnDefaultDates/startDate").getTime();
-			this._oDateParams.DateTo = this._oViewModel.getProperty("/toolAsgnDefaultDates/endDate");
-			this._oDateParams.TimeTo.ms = this._oViewModel.getProperty("/toolAsgnDefaultDates/endDate").getTime();
-			this._proceedToAssignTools(this._aSources, this._oDateParams, this._mParameters);
-			this.onCloseDialog();
+			var oStartDate = this._oViewModel.getProperty("/toolAsgnDefaultDates/startDate"),
+				oEndDate = this._oViewModel.getProperty("/toolAsgnDefaultDates/endDate"),
+				sMsg = this.getResourceBundle().getText("ymsg.datesInvalid");
+
+			if (oStartDate <= oEndDate) {
+				this._oDateParams.DateFrom = oStartDate;
+				this._oDateParams.TimeFrom.ms = oStartDate.getTime();
+				this._oDateParams.DateTo = oEndDate;
+				this._oDateParams.TimeTo.ms = oEndDate.getTime();
+
+				this._proceedToAssignTools(this._aSources, this._oDateParams, this._mParameters);
+				this.onCloseDialog();
+			} else {
+				this.showMessageToast(sMsg);
+			}
 		},
 	});
 });
