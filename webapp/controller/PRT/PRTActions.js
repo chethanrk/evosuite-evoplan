@@ -35,7 +35,8 @@ sap.ui.define([
 				DateTo: "",
 				TimeTo: {},
 				ResourceGroupGuid: oTargetObj.ResourceGroupGuid,
-				ResourceGuid: oTargetObj.ResourceGuid
+				ResourceGuid: oTargetObj.ResourceGuid,
+				DemandGuid: ""
 			}
 
 			if (bIsDateNode) {
@@ -81,9 +82,11 @@ sap.ui.define([
 					DateTo: oDateParams.DateTo,
 					TimeTo: oDateParams.TimeTo,
 					ResourceGroupGuid: oDateParams.ResourceGroupGuid,
-					ResourceGuid: oDateParams.ResourceGuid
+					ResourceGuid: oDateParams.ResourceGuid,
+					DemandGuid: oDateParams.DemandGuid
 				};
 				oParams.ToolId = aSources[i].oData.TOOL_ID;
+				oParams.ToolType = aSources[i].oData.TOOL_TYPE;
 				if (parseInt(i, 10) === aSources.length - 1) {
 					bIsLast = true;
 				}
