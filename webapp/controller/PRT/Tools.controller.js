@@ -99,7 +99,11 @@ sap.ui.define([
 				aIndices = oToolsTable.getSelectedIndices(),
 				oSelectedPaths;
 
-			oSelectedPaths = this._getSelectedToolsPaths(oToolsTable, aIndices);
+			if (aIndices.length > 0) {
+				oSelectedPaths = this._getSelectedToolsPaths(this._oToolsTable, aIndices);
+			} else {
+				oSelectedPaths = this._getSelectedToolsPaths(this._oToolsTable, [oDraggedControl.getIndex()]);
+			}
 			// keeping the data in drag session
 			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
 		},
