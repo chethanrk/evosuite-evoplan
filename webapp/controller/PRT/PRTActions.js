@@ -50,8 +50,8 @@ sap.ui.define([
 				var endDate = new Date(),
 					iDefNum = oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS");
 				endDate.setDate(endDate.getDate() + parseInt(iDefNum));
-				this._oViewModel.setProperty("/toolAsgnDefaultDates/startDate", new Date());
-				this._oViewModel.setProperty("/toolAsgnDefaultDates/endDate", new Date(endDate));
+				this._oViewModel.setProperty("/PRT/defaultStartDate", new Date());
+				this._oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
 				if (oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) { // If Dialog show config is on 
 					this.open(this.getView(), oDateParams, aSources, mParameters);
 				} else { // If dialog show config is off
@@ -87,7 +87,7 @@ sap.ui.define([
 					DemandGuid: oDateParams.DemandGuid
 				};
 				oParams.ToolId = aSources[i].oData.TOOL_ID;
-                oParams.ToolType = aSources[i].oData.TOOL_TYPE;
+				oParams.ToolType = aSources[i].oData.TOOL_TYPE;
 				if (parseInt(i, 10) === aSources.length - 1) {
 					bIsLast = true;
 				}
@@ -145,8 +145,8 @@ sap.ui.define([
 		 * method to trigger function import for tool assignment
 		 */
 		onSaveDialog: function () {
-			var oStartDate = this._oViewModel.getProperty("/toolAsgnDefaultDates/startDate"),
-				oEndDate = this._oViewModel.getProperty("/toolAsgnDefaultDates/endDate"),
+			var oStartDate = this._oViewModel.getProperty("/PRT/defaultStartDate"),
+				oEndDate = this._oViewModel.getProperty("/PRT/defaultEndDate"),
 				sMsg = this.getResourceBundle().getText("ymsg.datesInvalid");
 
 			if (oStartDate <= oEndDate) {

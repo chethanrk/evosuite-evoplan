@@ -564,11 +564,9 @@ sap.ui.define([
 				bFilterGantBtnDemandtsGantt: false,
 				PRT: {
 					btnSelectedKey: "demands",
-					bIsGantt: false
-				},
-				toolAsgnDefaultDates: {
-					startDate: "",
-					endDate: ""
+					bIsGantt: false,
+					defaultStartDate: "",
+					defaultEndDate: ""
 				}
 			});
 			oViewModel.setSizeLimit(999999999);

@@ -8,10 +8,10 @@
 					<form:content>
 						<Label text="{i18n>xfld.startDate}"/>
 						<DateTimePicker name="Start date"
-							value="{path: 'viewModel>/toolAsgnDefaultDates/startDate', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true}}"/>
+							value="{path: 'viewModel>/PRT/defaultStartDate', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true}}"/>
 						<Label text="{i18n>xfld.endDate}"/>
 						<DateTimePicker name="End date"
-							value="{path: 'viewModel>/toolAsgnDefaultDates/endDate', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true}}"/>
+							value="{path: 'viewModel>/PRT/defaultEndDate', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true}}"/>
 					</form:content>
 				</form:SimpleForm>
 			</HBox>
