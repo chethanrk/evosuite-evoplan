@@ -30,10 +30,18 @@ sap.ui.define([
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oViewModel = this.getModel("viewModel");
 			this._oUserModel = this.getModel("user");
+			this._oDraggableToolsTable = this.byId("idToolsTable");
 			this._oToolsTable = this.byId("idToolsTable").getTable();
+			this._eventBus = sap.ui.getCore().getEventBus();
 			this._mParameters = {
 				bFromDemandTools: true
 			};
+			this._eventBus.subscribe("BaseController", "refreshToolsTable", this._refreshToolsTable, this);
+			this.getRouter().getRoute("demandTools").attachPatternMatched(function () {
+				if(!this._oUserModel.getProperty("/ENABLE_PRT")){
+				this._oRouter.navTo("demands",{});	
+				}
+			}.bind(this));
 		},
 		/**
 		 * after rendering of view
@@ -43,6 +51,12 @@ sap.ui.define([
 			this._oViewModel.setProperty("/PRT/btnSelectedKey", "tools");
 			this._oViewModel.setProperty("/PRT/bIsGantt", false);
 			this._oViewModel.refresh();
+		},
+		/**
+		 * Called when view attached is destroyed
+		 */
+		onExit: function () {
+			this._eventBus.unsubscribe("BaseController", "refreshToolsTable", this._refreshToolsTable, this);
 		},
 
 		/* =========================================================== */
@@ -81,7 +95,8 @@ sap.ui.define([
 		onToolsDragStart: function (oEvent) {
 			var oDragSession = oEvent.getParameter("dragSession"),
 				oDraggedControl = oDragSession.getDragControl(),
-				aIndices = this._oToolsTable.getSelectedIndices(),
+				oToolsTable = this._oDraggableToolsTable.getTable(),
+				aIndices = oToolsTable.getSelectedIndices(),
 				oSelectedPaths;
 
 			if (aIndices.length > 0) {
@@ -121,5 +136,8 @@ sap.ui.define([
 				aNonAssignable: []
 			};
 		},
+		_refreshToolsTable: function () {
+			this._oDraggableToolsTable.rebindTable();
+		}
 	});
 });

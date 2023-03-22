@@ -482,6 +482,7 @@ sap.ui.define([
 					functionKey: sFunctionKey,
 					parameters: mParameters
 				});
+
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonChange")) {
 				//change assignment
 				this.openAssignInfoDialog(this.getView(), sDataModelPath, null, mParameters, null);
@@ -1226,6 +1227,11 @@ sap.ui.define([
 					ResourceGuid: oData.ResourceGuid
 				};
 
+				//If assignment is duplicate then send the resource group id of original assignment
+				if (oData.DUPLICATE_ASSIGNMENT_FLAG) {
+					oParams.ResourceGroupGuid = oData.ORIGINAL_RESGRP_GUID;
+				}
+
 				//has new parent?
 				if (this.mRequestTypes.reassign === sType && oPendingChanges[sPath].ResourceGuid) {
 					oParams.ResourceGroupGuid = oData.ResourceGroupGuid;
@@ -1617,7 +1623,7 @@ sap.ui.define([
 			this._treeTable.setBusy(true);
 			this._loadTreeData(0, aParamDemandsFilter)
 				.then(function (resolve) {
-					this._loadTreeData(resolve, aParamDemandsFilter);
+					return this._loadTreeData(resolve, aParamDemandsFilter);
 				}.bind(this))
 				.then(function () {
 					this._treeTable.expandToLevel(1);
@@ -2250,9 +2256,34 @@ sap.ui.define([
 			this.oAppViewModel.setProperty("/busy", true);
 			Promise.all(aPromises).then(function (data) {
 				this._updateAfterReAssignment(data, oTargetResource, oSourceResource);
+				this._updateDuplicateAssignment(oTargetResource);
 				this.oAppViewModel.setProperty("/busy", false);
 			}.bind(this));
 
+		},
+
+		/**
+		 * Refresh assignments of duplicate/original resource when assignment is changed for original/duplicate resource
+		 */
+		_updateDuplicateAssignment: function (oTargetResource) {
+			if (oTargetResource.DUPLICATE_RESOURCE) {
+				var aGanttData = this.oGanttModel.getData().data.children;
+				var aResGrps = oTargetResource.DUPLICATE_RESGRP_GUIDS.split('/');
+				for (var i = 0; i < aResGrps.length - 1; i++) {
+					this.bDoNotRefreshTree = true;
+					aGanttData.forEach(function (aChildren) {
+						if (aChildren.NodeId == aResGrps[i]) {
+							aChildren.children.forEach(function (aResources) {
+								if (aResources.ResourceGuid == oTargetResource.ResourceGuid) {
+									this.oResource = aResources;
+									return;
+								}
+							}.bind(this));
+						}
+					}.bind(this));
+					this._oEventBus.publish("BaseController", "refreshAssignments");
+				}
+			}
 		},
 		/**
 		 * handle refresh assignments of source and target Resources in single reassignment operation

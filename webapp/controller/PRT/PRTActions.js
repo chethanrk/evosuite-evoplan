@@ -61,6 +61,7 @@ sap.ui.define([
 					oDateParams.TimeTo.ms = endDate.getTime();
 					this._proceedToAssignTools(aSources, oDateParams, mParameters);
 				}
+
 			} else {
 				//todo default condition
 			}
@@ -86,7 +87,7 @@ sap.ui.define([
 					DemandGuid: oDateParams.DemandGuid
 				};
 				oParams.ToolId = aSources[i].oData.TOOL_ID;
-				oParams.ToolType = aSources[i].oData.TOOL_TYPE;
+                oParams.ToolType = aSources[i].oData.TOOL_TYPE;
 				if (parseInt(i, 10) === aSources.length - 1) {
 					bIsLast = true;
 				}
