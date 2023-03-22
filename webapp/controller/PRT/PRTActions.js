@@ -41,9 +41,9 @@ sap.ui.define([
 
 			if (bIsDateNode) {
 				oDateParams.DateFrom = oTargetObj.StartDate;
-				oDateParams.TimeFrom.ms = oTargetObj.StartTime;
+				oDateParams.TimeFrom = oTargetObj.StartTime;
 				oDateParams.DateTo = oTargetObj.EndDate;
-				oDateParams.TimeTo.ms = oTargetObj.EndTime;
+				oDateParams.TimeTo = oTargetObj.EndTime;
 				this._proceedToAssignTools(aSources, oDateParams, mParameters);
 
 			} else if (sNodeType === "RESOURCE") {
