@@ -2257,7 +2257,6 @@ sap.ui.define([
 			Promise.all(aPromises).then(function (data) {
 				this._updateAfterReAssignment(data, oTargetResource, oSourceResource);
 				this._updateDuplicateAssignment(oTargetResource);
-				this.oAppViewModel.setProperty("/busy", false);
 			}.bind(this));
 
 		},
@@ -2292,12 +2291,16 @@ sap.ui.define([
 					}.bind(this));
 					aPromise.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters)); // Push promises for update resource's assignments list
 				}
+
 				Promise.all(aPromise).then(function (aData) {
 					for (var i in aData) {
 						this.oResource = aUpdateResources[i];
 						this.updateResourceAfterRouting(aData[i]); // Update assignment set and children of Resource in local model
+						this.oAppViewModel.setProperty("/busy", false);
 					}
 				}.bind(this));
+			} else {
+				this.oAppViewModel.setProperty("/busy", false);
 			}
 		},
 		/**
