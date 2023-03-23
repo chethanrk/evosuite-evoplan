@@ -53,7 +53,7 @@ sap.ui.define([
 				this._oViewModel.setProperty("/PRT/defaultStartDate", new Date());
 				this._oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
 				if (oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) { // If Dialog show config is on 
-					this.open(this.getView(), oDateParams, aSources, mParameters);
+					this.openDateSelectionDialog(this.getView(), oDateParams, aSources, mParameters);
 				} else { // If dialog show config is off
 					oDateParams.DateFrom = new Date();
 					oDateParams.TimeFrom.ms = new Date().getTime();
@@ -102,7 +102,7 @@ sap.ui.define([
 		 * @param aSources Selected tools data and path
 		 * @param mParameters flag of source view 
 		 */
-		open: function (oView, oDateParams, aSources, mParameters) {
+		openDateSelectionDialog: function (oView, oDateParams, aSources, mParameters) {
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
