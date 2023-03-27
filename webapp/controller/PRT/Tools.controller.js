@@ -37,17 +37,33 @@ sap.ui.define([
 				bFromDemandTools: true
 			};
 			this._eventBus.subscribe("BaseController", "refreshToolsTable", this._refreshToolsTable, this);
-			this.getRouter().getRoute("demandTools").attachPatternMatched(function () {
-				if(!this._oUserModel.getProperty("/ENABLE_PRT")){
-				this._oRouter.navTo("demands",{});	
-				}
+			
+			this._oRouter.getRoute("demandTools").attachPatternMatched(function () {
+				this._oViewModel.setProperty("/PRT/bIsGantt", false);
 			}.bind(this));
+			this._oRouter.getRoute("ganttTools").attachPatternMatched(function () {
+				this._oViewModel.setProperty("/PRT/bIsGantt", true);
+			}.bind(this));
+			this._oRouter.getRoute("ganttTools").attachPatternMatched(function () {
+				this._oViewModel.setProperty("/PRT/bIsGantt", true);
+			}.bind(this));
+			this._oRouter.getRoute("GanttSplitTools").attachPatternMatched(function () {
+				this._oViewModel.setProperty("/PRT/bIsGantt", true);
+			}.bind(this));
+			
+			//Tool filter dialog to show in Gantt/Split-Gantt
+			this._oGanttToolsFilter = this.getView().byId("idGanttToolsFilterDialog");
+			this._oGanttToolsFilter ? this._oGanttToolsFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass()) : null;
+
 		},
 		/**
 		 * after rendering of view
 		 * @param oEvent
 		 */
 		onAfterRendering: function (oEvent) {
+			if (!this._oUserModel.getProperty("/ENABLE_PRT")) {
+				this._oRouter.navTo("demands", {});
+			}
 			this._oViewModel.setProperty("/PRT/btnSelectedKey", "tools");
 			this._oViewModel.setProperty("/PRT/bIsGantt", false);
 			this._oViewModel.refresh();
@@ -79,11 +95,16 @@ sap.ui.define([
 		 */
 		handleViewSelectionChange: function (oEvent) {
 			this.getOwnerComponent().bIsFromPRTSwitch = true;
-			var sSelectedKey = this._oViewModel.getProperty("/PRT/btnSelectedKey");
-			if (sSelectedKey === "demands") {
+			var sSelectedKey = this._oViewModel.getProperty("/PRT/btnSelectedKey"),
+				sCurrentHash = this._oRouter.getHashChanger().getHash();
+
+			// go back to demand list view based on current page
+			if (sCurrentHash === "DemandTools") {
 				this._oRouter.navTo("demands", {});
-			} else {
-				this._oRouter.navTo("demandTools", {});
+			} else if (sCurrentHash === "GanttTools") {
+				this._oRouter.navTo("newgantt", {});
+			} else if (sCurrentHash === "SplitPage/SplitGanttTools") {
+				this._oRouter.navTo("splitDemands", {});
 			}
 		},
 
@@ -102,6 +123,18 @@ sap.ui.define([
 			oSelectedPaths = this._getSelectedToolsPaths(oToolsTable, aIndices);
 			// keeping the data in drag session
 			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
+		},
+		/**
+		 * Open the Gantt Toolss Filter Dialog 
+		 */
+		onPressGanttToolsFilters: function () {
+			this._oGanttToolsFilter.open();
+		},
+		/**
+		 * Close the Gantt Tools Filter Dialog 
+		 */
+		onCloseGanttToolsFilters: function () {
+			this._oGanttToolsFilter.close();
 		},
 
 		/* =========================================================== */

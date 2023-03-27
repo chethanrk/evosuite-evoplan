@@ -186,8 +186,8 @@
 				"name": "demandTools",
 				"target": [
 					"resourceTree",
-					"Tools"
-					
+					"DemandTools"
+
 				]
 			}, {
 				"pattern": "Demand/{guid}",
@@ -245,6 +245,13 @@
 					"demandsGantt"
 				]
 			}, {
+				"pattern": "GanttTools",
+				"name": "ganttTools",
+				"target": [
+					"newgantt",
+					"GanttTools"
+				]
+			}, {
 				"pattern": "Gantt/Demand/{guid}",
 				"name": "ganttDemandDetails",
 				"target": [
@@ -267,6 +274,12 @@
 				"name": "newGanttSplit",
 				"target": [
 					"newGanttFullscreen"
+				]
+			}, {
+				"pattern": "SplitPage/SplitGanttTools",
+				"name": "GanttSplitTools",
+				"target": [
+					"ganttSplitTools"
 				]
 			}, {
 				"pattern": "SplitPage/Demand/{guid}",
@@ -335,13 +348,21 @@
 					"controlId": "rightPanel",
 					"parent": "splitHorNavigation"
 				},
-				"Tools": {
+				"DemandTools": {
 					"viewType": "XML",
-					"viewName": "Tools",
+					"viewName": "DemandTools",
 					"viewPath": "com.evorait.evoplan.view.PRT",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
 					"parent": "splitHorNavigation"
+				},
+				"GanttTools": {
+					"viewType": "XML",
+					"viewName": "GanttTools",
+					"viewPath": "com.evorait.evoplan.view.PRT",
+					"viewLevel": 4,
+					"controlId": "bottomPanel",
+					"parent": "splitVerNavigation"
 				},
 				"demandsGantt": {
 					"viewType": "XML",
@@ -443,6 +464,15 @@
 					"viewId": "idFullGantt",
 					"viewPath": "com.evorait.evoplan.view.gantt",
 					"viewName": "GanttChart",
+					"parent": "fullNavigation",
+					"controlId": "fullPanel",
+					"viewLevel": 4
+				},
+				"ganttSplitTools": {
+					"viewType": "XML",
+					"viewId": "idFullGantt",
+					"viewPath": "com.evorait.evoplan.view.PRT",
+					"viewName": "GanttTools",
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",
 					"viewLevel": 4

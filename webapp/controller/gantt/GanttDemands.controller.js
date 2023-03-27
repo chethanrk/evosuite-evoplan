@@ -38,11 +38,8 @@ sap.ui.define([
 
 			this.oAppModel = this.getModel("appView");
 			this.oUserModel = this.getModel("user");
-			this._viewModel  = this.getModel("viewModel");
-			this._mParameters = {
-				bFromGantt: true
-			};
-
+			this._viewModel = this.getModel("viewModel");
+			this._oRouter = this.getRouter();
 			if (this.oAppModel.getProperty("/currentRoute") === "splitDemands") {
 				this._mParameters = {
 					bFromDemandSplit: true
@@ -55,15 +52,20 @@ sap.ui.define([
 			this._oDemandsViewPage = this.byId("draggableList");
 			this._oToolsViewPage = this.byId("idToolsTable");
 			this._oDataTable = this._oDemandsViewPage.getTable();
-			this.getRouter().getRoute("splitDemands").attachMatched(function () {
+			this._oRouter.getRoute("splitDemands").attachMatched(function () {
 				this._routeName = Constants.GANTT.SPLITDMD;
-				this._viewModel .setProperty("/PRT/bIsGantt",true);
+				this._viewModel.setProperty("/PRT/bIsGantt", true);
+				this._mParameters = {
+					bFromDemandSplit: true
+				};
 			}.bind(this));
-			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
+			this._oRouter.getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = "newgantt";
 				this._mParameters = {
 					bFromNewGantt: true
 				};
+				this._viewModel.setProperty("/PRT/bIsGantt", true);
+				this._viewModel.setProperty("/PRT/btnSelectedKey", "demands");
 			}.bind(this));
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
 
@@ -94,7 +96,7 @@ sap.ui.define([
 
 		onDragStart: function (oEvent) {
 			var sMsg = this.getResourceBundle().getText("msg.notAuthorizedForAssign");
-			if (!this._viewModel .getProperty("/validateIW32Auth")) {
+			if (!this._viewModel.getProperty("/validateIW32Auth")) {
 				this.showMessageToast(sMsg);
 				oEvent.preventDefault();
 				return;
@@ -124,8 +126,8 @@ sap.ui.define([
 				});
 			});
 
-			this._viewModel .setProperty("/gantDragSession", aSelDemandGuid);
-			this._viewModel .setProperty("/dragSession", aPathsData);
+			this._viewModel.setProperty("/gantDragSession", aSelDemandGuid);
+			this._viewModel.setProperty("/dragSession", aPathsData);
 			this.localStorage.put("Evo-Dmnd-guid", JSON.stringify(aSelectedDemandObject));
 			this.localStorage.put("Evo-aPathsData", JSON.stringify(aPathsData));
 
@@ -142,7 +144,7 @@ sap.ui.define([
 		 */
 		onAssignButtonPress: function (oEvent) {
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
-			this._viewModel .setProperty("/dragSession", oSelectedPaths.aPathsData);
+			this._viewModel.setProperty("/dragSession", oSelectedPaths.aPathsData);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
 				// TODO comment
@@ -161,7 +163,7 @@ sap.ui.define([
 		onRowSelectionChange: function (oEvent) {
 			var selected = this._oDataTable.getSelectedIndices(),
 				iMaxRowSelection = this.oUserModel.getProperty("/DEFAULT_DEMAND_SELECT_ALL"),
-				bEnable = this._viewModel .getProperty("/validateIW32Auth"),
+				bEnable = this._viewModel.getProperty("/validateIW32Auth"),
 				index = oEvent.getParameter("rowIndex"),
 				sDemandPath, bComponentExist, sMsg;
 
@@ -263,6 +265,22 @@ sap.ui.define([
 		 */
 		onCloseGanttFilter: function () {
 			this._oGanttDemandFilter.close();
+		},
+
+		/**
+		 * Event handler to switch between Demand and Tool list
+		 * @param oEvent
+		 */
+		handleViewSelectionChange: function (oEvent) {
+			this.getOwnerComponent().bIsFromPRTSwitch = true;
+			var sSelectedKey = this._viewModel.getProperty("/PRT/btnSelectedKey");
+			if (sSelectedKey === "tools" && this._mParameters.bFromNewGantt) {
+				this._oRouter.navTo("ganttTools", {});
+			} else if (sSelectedKey === "tools" && this._mParameters.bFromDemandSplit) {
+				this._oRouter.navTo("GanttSplitTools", {});
+			} else {
+				this._oRouter.navTo("newgantt", {});
+			}
 		},
 		/* =========================================================== */
 		/* Private methods                                             */

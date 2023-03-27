@@ -1,0 +1,8 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<SegmentedButton visible="{user>/ENABLE_PRT}" selectedKey="{viewModel>/PRT/btnSelectedKey}" selectionChange="handleViewSelectionChange">
+		<items>
+			<SegmentedButtonItem text="{i18n>xtit.itemListTitle}" key="demands"/>
+			<SegmentedButtonItem text="{i18n>xtit.PRTlistTitle}" key="tools"/>
+		</items>
+	</SegmentedButton>
+</core:FragmentDefinition>
