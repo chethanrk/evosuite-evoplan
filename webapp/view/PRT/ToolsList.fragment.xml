@@ -8,14 +8,15 @@
 			<FlexItemData growFactor="1"/>
 		</smartTable:layoutData>
 		<smartTable:customToolbar>
-			<OverflowToolbar>
-				<SegmentedButton selectedKey="{viewModel>/PRT/btnSelectedKey}" selectionChange="handleViewSelectionChange"
-					visible="{viewModel>/PRT/bIsGantt}">
+			<OverflowToolbar visible="{viewModel>/PRT/bIsGantt}">
+				<SegmentedButton selectedKey="{viewModel>/PRT/btnSelectedKey}" selectionChange="handleViewSelectionChange">
 					<items>
 						<SegmentedButtonItem text="{i18n>xtit.itemListTitle}" key="demands"/>
 						<SegmentedButtonItem text="{i18n>xtit.PRTlistTitle}" key="tools"/>
 					</items>
 				</SegmentedButton>
+				<ToolbarSpacer/>
+				<Button text="{viewModel>/aFilterBtntextGanttDemandTbl}" press="onPressGanttToolsFilters" icon="sap-icon://filter"/>
 			</OverflowToolbar>
 		</smartTable:customToolbar>
 		<table:Table visibleRowCountMode="Auto">

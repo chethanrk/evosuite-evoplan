@@ -2,7 +2,8 @@
 	xmlns:semantic="sap.m.semantic" xmlns:dnd="sap.ui.core.dnd" xmlns:table="sap.ui.table" xmlns:tnt="sap.tnt"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" controllerName="com.evorait.evoplan.controller.PRT.Tools"
 	displayBlock="true" height="100%">
-	<Page id="listPage" title="{i18n>xtit.itemListTitle}" showFooter="false" showHeader="{user>/ENABLE_PRT}" enableScrolling="false">
+	<Page id="listPage" title="{i18n>xtit.itemListTitle}" showFooter="false"
+		showHeader="{= ${user>/ENABLE_PRT} &amp;&amp; ${viewModel>/PRT/bIsGantt} === false}" enableScrolling="false">
 		<customHeader>
 			<Toolbar style="Clear">
 				<SegmentedButton id="idPRTSegmentedBtn" selectedKey="{viewModel>/PRT/btnSelectedKey}" selectionChange="handleViewSelectionChange">

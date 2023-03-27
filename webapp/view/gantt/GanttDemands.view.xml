@@ -16,6 +16,7 @@
 			<smartTable:customToolbar>
 				<OverflowToolbar>
 					<core:ExtensionPoint name="TableExtP|GanttDemands|DemandSet|TableToolbar|Left"/>
+					<core:Fragment fragmentName="com.evorait.evoplan.view.PRT.SegmentedButton" type="XML"/>
 					<ToolbarSpacer/>
 					<Button visible="{user>/ENABLE_GANTT_FILTER_BUTTON}" text="{i18n>xbut.filterGantt}" press="onPressFilterGantChart"
 						enabled="{viewModel>/bFilterGantBtnDemandtsGantt}"/>

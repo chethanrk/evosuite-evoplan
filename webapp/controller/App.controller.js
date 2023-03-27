@@ -312,6 +312,10 @@ sap.ui.define([
 		 * @constructor 
 		 */
 		_onObjectMatched: function (sRoute) {
+			if (this.getOwnerComponent().bIsFromPRTSwitch) {
+				this.getOwnerComponent().bIsFromPRTSwitch = false;
+				return;
+			}
 			if (sRoute === "gantt") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
@@ -332,6 +336,7 @@ sap.ui.define([
 				this._eventBus.publish("BaseController", "refreshTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshDemandTable", {});
 			}
+
 		},
 		/**
 		 * catch event from dialog for saving demand status change
