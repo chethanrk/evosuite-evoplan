@@ -44,9 +44,6 @@ sap.ui.define([
 			this._oRouter.getRoute("ganttTools").attachPatternMatched(function () {
 				this._oViewModel.setProperty("/PRT/bIsGantt", true);
 			}.bind(this));
-			this._oRouter.getRoute("ganttTools").attachPatternMatched(function () {
-				this._oViewModel.setProperty("/PRT/bIsGantt", true);
-			}.bind(this));
 			this._oRouter.getRoute("GanttSplitTools").attachPatternMatched(function () {
 				this._oViewModel.setProperty("/PRT/bIsGantt", true);
 			}.bind(this));
