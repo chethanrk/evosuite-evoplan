@@ -72,9 +72,11 @@ sap.ui.define([
 		_routeMatched: function (oEvent) {
 			var oParameters = oEvent.getParameters(),
 				sRouteName = oParameters.name; // route name
-			if (sRouteName === "demands") {
-				this._mParameters = {
+			if (sRouteName === "demands" || sRouteName === "demandTools") {
+				this._mParameters = sRouteName === "demands" ? {
 					bFromHome: true
+				} : {
+					bFromDemandTools: true
 				};
 				var sViewSelectedKey = this.getView().byId("idTimeView").getSelectedKey();
 				if (sViewSelectedKey === "TIMENONE") {

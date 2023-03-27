@@ -427,7 +427,12 @@ sap.ui.define([
 			this.executeFunctionImport(this.getModel(), {}, "RefreshSharedMemoryAreas", "POST").then(function () {
 				if (oSelectedRoute === oResourceBundleText.getText("xbut.pageDemands")) {
 					oComponent._getResourceGroups.call(oComponent);
-					this._eventBus.publish("BaseController", "refreshDemandTable", {});
+					if (this.getModel('viewModel').getProperty("/PRT/btnSelectedKey") === "demands") {
+						this._eventBus.publish("BaseController", "refreshDemandTable", {});
+					} else {
+						this._eventBus.publish("BaseController", "refreshToolsTable", {});
+					}
+
 					this._eventBus.publish("BaseController", "refreshBufferTreeTable", {});
 				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageGanttChart")) {
 					this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});

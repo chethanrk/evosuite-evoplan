@@ -1,0 +1,25 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
+	<Dialog title="{i18n>xtit.selectDates}">
+		<content>
+			<HBox>
+				<form:SimpleForm id="toolAsignmentDatesForm" editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3"
+					labelSpanS="12" emptySpanXL="2" emptySpanL="2" emptySpanM="2" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1"
+					singleContainerFullSize="false">
+					<form:content>
+						<Label text="{i18n>xfld.startDate}"/>
+						<DateTimePicker name="Start date"
+							value="{path: 'viewModel>/PRT/defaultStartDate', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true}}"/>
+						<Label text="{i18n>xfld.endDate}"/>
+						<DateTimePicker name="End date"
+							value="{path: 'viewModel>/PRT/defaultEndDate', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true}}"/>
+					</form:content>
+				</form:SimpleForm>
+			</HBox>
+		</content>
+		<buttons>
+			<core:ExtensionPoint name="DialogExtP|ToolAssignDates|PRTToolSet|Buttons"/>
+			<Button text="{i18n>xbut.buttonClose}" press="onCloseDialog"/>
+			<Button text="{i18n>xbut.buttonSave}" type="Emphasized" press="onSaveDialog"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>
