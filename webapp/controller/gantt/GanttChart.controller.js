@@ -2257,7 +2257,6 @@ sap.ui.define([
 			Promise.all(aPromises).then(function (data) {
 				this._updateAfterReAssignment(data, oTargetResource, oSourceResource);
 				this._updateDuplicateAssignment(oTargetResource);
-				this.oAppViewModel.setProperty("/busy", false);
 			}.bind(this));
 
 		},
@@ -2267,22 +2266,41 @@ sap.ui.define([
 		 */
 		_updateDuplicateAssignment: function (oTargetResource) {
 			if (oTargetResource.DUPLICATE_RESOURCE) {
+				var aFilters = [],
+					oUserData = this.oUserModel.getData(),
+					aPromise = [],
+					aUpdateResources = [];
+
 				var aGanttData = this.oGanttModel.getData().data.children;
 				var aResGrps = oTargetResource.DUPLICATE_RESGRP_GUIDS.split('/');
 				for (var i = 0; i < aResGrps.length - 1; i++) {
-					this.bDoNotRefreshTree = true;
+
+					aFilters = [];
+					aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
+					aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+
 					aGanttData.forEach(function (aChildren) {
 						if (aChildren.NodeId == aResGrps[i]) {
 							aChildren.children.forEach(function (aResources) {
 								if (aResources.ResourceGuid == oTargetResource.ResourceGuid) {
-									this.oResource = aResources;
-									return;
+									aUpdateResources.push(aResources);
+									aFilters.push(new Filter("ObjectId", FilterOperator.EQ, aResources.ResourceGuid + "//" + aResources.ResourceGroupGuid));
 								}
 							}.bind(this));
 						}
 					}.bind(this));
-					this._oEventBus.publish("BaseController", "refreshAssignments");
+					aPromise.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters)); // Push promises for update resource's assignments list
 				}
+
+				Promise.all(aPromise).then(function (aData) {
+					for (var i in aData) {
+						this.oResource = aUpdateResources[i];
+						this.updateResourceAfterRouting(aData[i]); // Update assignment set and children of Resource in local model
+						this.oAppViewModel.setProperty("/busy", false);
+					}
+				}.bind(this));
+			} else {
+				this.oAppViewModel.setProperty("/busy", false);
 			}
 		},
 		/**
