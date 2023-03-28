@@ -17,7 +17,6 @@ sap.ui.define([
 		 * @param mParameters flag of source view 
 		 */
 		checksBeforeAssignTools: function (aSources, sTargetPath, mParameters) {
-			console.log(aSources, sTargetPath, mParameters);
 			var oDateParams,
 				oTargetObj = this.getModel().getProperty(sTargetPath),
 				sNodeType = oTargetObj.NodeType,
@@ -25,7 +24,6 @@ sap.ui.define([
 				sNodeType ===
 				"TIMEYEAR",
 				oUserModel = this.getModel("user");
-			//console.log(oTargetObj);
 			if (!this._oViewModel) {
 				this._oViewModel = this.getModel("viewModel");
 			}
@@ -64,8 +62,6 @@ sap.ui.define([
 				}
 
 			} else if (sNodeType === "ASSIGNMENT") {
-
-				console.log("assignment", oTargetObj);
 				var endDate = new Date(),
 					iDefNum = oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS");
 				endDate.setDate(endDate.getDate() + parseInt(iDefNum));
@@ -109,7 +105,6 @@ sap.ui.define([
 				};
 				oParams.ToolId = aSources[i].oData.TOOL_ID;
 				oParams.ToolType = aSources[i].oData.TOOL_TYPE;
-				console.log(oParams);
 				if (parseInt(i, 10) === aSources.length - 1) {
 					bIsLast = true;
 				}
