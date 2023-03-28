@@ -62,25 +62,14 @@ sap.ui.define([
 				}
 
 			} else if (sNodeType === "ASSIGNMENT") {
-				var endDate = new Date(),
-					iDefNum = oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS");
-				endDate.setDate(endDate.getDate() + parseInt(iDefNum));
-				this._oViewModel.setProperty("/PRT/defaultStartDate", new Date());
-				this._oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
-				if (oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) { // If Dialog show config is on 
-					this.openDateSelectionDialog(this.getView(), oDateParams, aSources, mParameters);
-				} else { // If dialog show config is off
-					oDateParams.DateFrom = new Date();
-					oDateParams.TimeFrom.ms = new Date().getTime();
-					oDateParams.DateTo = new Date(endDate);
-					oDateParams.TimeTo.ms = endDate.getTime();
-					oDateParams.DemandGuid = oTargetObj.DemandGuid;
-					oDateParams.ResourceGroupGuid = "";
-					oDateParams.ResourceGuid = "";
-					this._proceedToAssignTools(aSources, oDateParams, mParameters);
-				}
-
-				//todo default condition
+				oDateParams.DateFrom = oTargetObj.StartDate;
+				oDateParams.TimeFrom = oTargetObj.StartTime;
+				oDateParams.DateTo = oTargetObj.EndDate;
+				oDateParams.TimeTo = oTargetObj.EndTime;
+				oDateParams.DemandGuid = oTargetObj.DemandGuid;
+				oDateParams.ResourceGroupGuid = "";
+				oDateParams.ResourceGuid = "";
+				this._proceedToAssignTools(aSources, oDateParams, mParameters);
 			}
 		},
 
