@@ -17,6 +17,7 @@ sap.ui.define([
 		 * @param mParameters flag of source view 
 		 */
 		checksBeforeAssignTools: function (aSources, sTargetPath, mParameters) {
+			console.log(aSources, sTargetPath, mParameters);
 			var oDateParams,
 				oTargetObj = this.getModel().getProperty(sTargetPath),
 				sNodeType = oTargetObj.NodeType,
@@ -24,7 +25,7 @@ sap.ui.define([
 				sNodeType ===
 				"TIMEYEAR",
 				oUserModel = this.getModel("user");
-
+			//console.log(oTargetObj);
 			if (!this._oViewModel) {
 				this._oViewModel = this.getModel("viewModel");
 			}
@@ -62,7 +63,27 @@ sap.ui.define([
 					this._proceedToAssignTools(aSources, oDateParams, mParameters);
 				}
 
-			} else {
+			} else if (sNodeType === "ASSIGNMENT") {
+
+				console.log("assignment", oTargetObj);
+				var endDate = new Date(),
+					iDefNum = oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS");
+				endDate.setDate(endDate.getDate() + parseInt(iDefNum));
+				this._oViewModel.setProperty("/PRT/defaultStartDate", new Date());
+				this._oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
+				if (oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) { // If Dialog show config is on 
+					this.openDateSelectionDialog(this.getView(), oDateParams, aSources, mParameters);
+				} else { // If dialog show config is off
+					oDateParams.DateFrom = new Date();
+					oDateParams.TimeFrom.ms = new Date().getTime();
+					oDateParams.DateTo = new Date(endDate);
+					oDateParams.TimeTo.ms = endDate.getTime();
+					oDateParams.DemandGuid = oTargetObj.DemandGuid;
+					oDateParams.ResourceGroupGuid = "";
+					oDateParams.ResourceGuid = "";
+					this._proceedToAssignTools(aSources, oDateParams, mParameters);
+				}
+
 				//todo default condition
 			}
 		},
@@ -88,6 +109,7 @@ sap.ui.define([
 				};
 				oParams.ToolId = aSources[i].oData.TOOL_ID;
 				oParams.ToolType = aSources[i].oData.TOOL_TYPE;
+				console.log(oParams);
 				if (parseInt(i, 10) === aSources.length - 1) {
 					bIsLast = true;
 				}
