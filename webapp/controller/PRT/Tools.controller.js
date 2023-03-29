@@ -82,8 +82,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onBeforeRebindToolsTable: function (oEvent) {
-			oEvent.getParameter("bindingParams").filters.push(new Filter("TOOL_TYPE", FilterOperator.EQ, this._oUserModel.getProperty(
-				"/ENABLE_TOOL_TYPE")));
+			oEvent.getParameter("bindingParams").filters.push(new Filter("TOOL_TYPE", FilterOperator.EQ, "EQ"));
 		},
 
 		/**
