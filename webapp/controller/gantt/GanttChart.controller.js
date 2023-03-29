@@ -101,12 +101,12 @@ sap.ui.define([
 
 			this.oMapUtilities = new MapUtilities();
 		},
-		
+
 		/**
 		 * after rendering of view
 		 * @param oEvent
 		 */
-		onAfterRendering: function(){
+		onAfterRendering: function () {
 			this._initializeGantt();
 		},
 		/**
@@ -724,7 +724,91 @@ sap.ui.define([
 			}
 			return "url(#" + sGradId + ")";
 		},
-		
+
+		onToolDrop: function (oEvent) {
+			var oDraggedControl = oEvent.getParameter("draggedControl"),
+				oDroppedControl = oEvent.getParameter("droppedControl"),
+				oBrowserEvent = oEvent.getParameter("browserEvent"),
+				oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
+				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
+				oDropObject = oDropContext.getObject();
+
+			if (oDropObject.NodeType !== "RES_GROUP") {
+				this.onProceedGanttToolDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
+			}
+		},
+
+		onProceedGanttToolDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
+			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
+				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
+				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
+				sTargetPath = oDropContext.getPath(),
+				aSources = this.oViewModel.getProperty("/dragSession"),
+				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
+				iDefNum = this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS"),
+				oSvgPoint, oTargetDate, endDate;
+
+			if (oBrowserEvent.target.tagName === "rect" && oDragContext) { // When we drop on gantt chart in the same view
+				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
+				oTargetDate = oAxisTime.viewToTime(oSvgPoint.x);
+
+			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) { // When we drop on gantt chart from split window
+				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
+				oTargetDate = oAxisTime.viewToTime(oSvgPoint.x);
+
+			} else if (oDragContext) { // When we drop on the resource 
+				oTargetDate = new Date(new Date().setHours(0));
+
+			} else { // When we drop on the resource from split window
+				oTargetDate = new Date(new Date().setHours(0));
+			}
+
+			endDate = _.cloneDeep(oTargetDate);
+			endDate.setDate(oTargetDate.getDate() + parseInt(iDefNum));
+			this.oViewModel.setProperty("/PRT/defaultStartDate", oTargetDate);
+			this.oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
+
+			var oTool = {
+				AssignmentType: "",
+				DEMAND_STATUS: "ASGN",
+				DEMAND_STATUS_COLOR: "#90EE90",
+				DEMAND_STATUS_ICON: "sap-icon://employee-pane",
+				DateFrom: moment(oTargetDate).toDate(),
+				DateTo: moment(oTargetDate).add(5, "hour").toDate(),
+				DemandGuid: "0AA10FE57E901EDC89EAB37B4CB92EB0",
+				Description: "Loading. . .",
+				Effort: "24.0",
+				EffortUnit: "H",
+				FIRSTNAME: "Ian",
+				GROUP_DESCRIPTION: "Production Line (TEST)",
+				Guid: "thisisdummyguidassignment",
+				LASTNAME: "Robb",
+				LATITUDE: "50.110942871000",
+				LONGITUDE: "8.673195901300",
+				NODE_TYPE: "TOOL",
+				NOTIFICATION: "",
+				NOTIFICATION_DESC: "",
+				OPERATIONID: "0010",
+				ORDERID: "830821",
+				ObjectId: "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
+				PERSON_NUMBER: "01000000",
+				RESOURCE_DESCRIPTION: "Ian Robb",
+				ResourceGroupGuid: "0AA10FE57E901EE9BBCE7C317649FB0D",
+				ResourceGuid: "0AA10FE57E901EE9BBCE7C31764A1B0D",
+				SUBOPERATIONID: "0000"
+			};
+			var aTools = this.oGanttModel.getProperty(sTargetPath).PRTAssignmentSet.results; // to be set when tool set association is ready from backend
+			var aTools = [];
+			aTools.push(oTool);
+
+			var sPath = sTargetPath + "/PRTAssignmentSet/results/" + (aTools.length - 1);
+			this.oGanttModel.setProperty(sTargetPath + "/PRTAssignmentSet/results", aTools);
+
+			this.oGanttModel.refresh();
+
+			this.checksBeforeAssignTools(aSources, oResourceData, this._mParameters);
+		},
+
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
@@ -1595,7 +1679,7 @@ sap.ui.define([
 				var sEntitySet = "/GanttResourceHierarchySet",
 					aFilters = [],
 					mParams = {
-						"$expand": "AssignmentSet,ResourceAvailabilitySet"
+						"$expand": "AssignmentSet,ResourceAvailabilitySet,PRTAssignmentSet"
 					},
 					oUserData = this.oUserModel.getData();
 				aFilters.push(new Filter("HierarchyLevel", FilterOperator.EQ, iLevel));
@@ -1649,20 +1733,37 @@ sap.ui.define([
 				oItem.children = [];
 				oResData.forEach(function (oResItem) {
 					if (oItem.NodeId === oResItem.ParentNodeId) {
+						if (oResItem.PRTAssignmentSet && oResItem.PRTAssignmentSet.results.length > 0) {
+							oResItem.children = oResItem.PRTAssignmentSet.results;
+							oResItem.children.forEach(function (oAssignItem, idx) {
+								oResItem.PRTAssignmentSet.results[idx].NodeType = "TOOL";
+								var clonedObj = _.cloneDeep(oResItem.PRTAssignmentSet.results[idx]);
+								//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
+								clonedObj.OBJECT_ID_RELATION = clonedObj.OBJECT_ID_RELATION + "//" + clonedObj.ResourceGuid;
+								oResItem.children[idx].PRTAssignmentSet = {
+									results: [clonedObj]
+								};
+							});
+						}
 						//add assignments as children in tree for expanding
 						if (oResItem.AssignmentSet && oResItem.AssignmentSet.results.length > 0) {
-							oResItem.children = oResItem.AssignmentSet.results;
-							oResItem.children.forEach(function (oAssignItem, idx) {
+							if (oResItem.children) {
+								oResItem.children = oResItem.children.concat(oResItem.AssignmentSet.results);
+							} else {
+								oResItem.children = oResItem.AssignmentSet.results;
+							}
+							oResItem.AssignmentSet.results.forEach(function (oAssignItem, idx) {
 								oResItem.AssignmentSet.results[idx].NodeType = "ASSIGNMENT";
 								oResItem.AssignmentSet.results[idx].ResourceAvailabilitySet = oResItem.ResourceAvailabilitySet;
 								var clonedObj = _.cloneDeep(oResItem.AssignmentSet.results[idx]);
 								//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
 								clonedObj.OBJECT_ID_RELATION = clonedObj.OBJECT_ID_RELATION + "//" + clonedObj.ResourceGuid;
-								oResItem.children[idx].AssignmentSet = {
+								oResItem.children[oResItem.PRTAssignmentSet.results.length + idx].AssignmentSet = {
 									results: [clonedObj]
 								};
 							});
 						}
+
 						oItem.children.push(oResItem);
 					}
 				});

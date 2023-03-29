@@ -37,7 +37,7 @@ sap.ui.define([
 				bFromDemandTools: true
 			};
 			this._eventBus.subscribe("BaseController", "refreshToolsTable", this._refreshToolsTable, this);
-			
+
 			this._oRouter.getRoute("demandTools").attachPatternMatched(function () {
 				this._oViewModel.setProperty("/PRT/bIsGantt", false);
 			}.bind(this));
@@ -47,7 +47,7 @@ sap.ui.define([
 			this._oRouter.getRoute("GanttSplitTools").attachPatternMatched(function () {
 				this._oViewModel.setProperty("/PRT/bIsGantt", true);
 			}.bind(this));
-			
+
 			//Tool filter dialog to show in Gantt/Split-Gantt
 			this._oGanttToolsFilter = this.getView().byId("idGanttToolsFilterDialog");
 			this._oGanttToolsFilter ? this._oGanttToolsFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass()) : null;
@@ -82,8 +82,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onBeforeRebindToolsTable: function (oEvent) {
-			oEvent.getParameter("bindingParams").filters.push(new Filter("TOOL_TYPE", FilterOperator.EQ, this._oUserModel.getProperty(
-				"/ENABLE_TOOL_TYPE")));
+			oEvent.getParameter("bindingParams").filters.push(new Filter("TOOL_TYPE", FilterOperator.EQ, "EQ"));
 		},
 
 		/**

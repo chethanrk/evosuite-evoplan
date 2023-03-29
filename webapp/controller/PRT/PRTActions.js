@@ -16,9 +16,8 @@ sap.ui.define([
 		 * @param sTargetPath Target Resource/Demand 
 		 * @param mParameters flag of source view 
 		 */
-		checksBeforeAssignTools: function (aSources, sTargetPath, mParameters) {
+		checksBeforeAssignTools: function (aSources, oTargetObj, mParameters) {
 			var oDateParams,
-				oTargetObj = this.getModel().getProperty(sTargetPath),
 				sNodeType = oTargetObj.NodeType,
 				bIsDateNode = sNodeType === "TIMEWEEK" || sNodeType === "TIMEDAY" || sNodeType === "TIMEMONTH" || sNodeType === "TIMEQUART" ||
 				sNodeType ===
@@ -47,18 +46,14 @@ sap.ui.define([
 				this._proceedToAssignTools(aSources, oDateParams, mParameters);
 
 			} else if (sNodeType === "RESOURCE") {
-				var endDate = new Date(),
-					iDefNum = oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS");
-				endDate.setDate(endDate.getDate() + parseInt(iDefNum));
-				this._oViewModel.setProperty("/PRT/defaultStartDate", new Date());
-				this._oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
+
 				if (oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) { // If Dialog show config is on 
 					this.openDateSelectionDialog(this.getView(), oDateParams, aSources, mParameters);
 				} else { // If dialog show config is off
-					oDateParams.DateFrom = new Date();
-					oDateParams.TimeFrom.ms = new Date().getTime();
-					oDateParams.DateTo = new Date(endDate);
-					oDateParams.TimeTo.ms = endDate.getTime();
+					oDateParams.DateFrom = this._oViewModel.getProperty("/PRT/defaultStartDate");
+					oDateParams.TimeFrom.ms = oDateParams.DateFrom.getTime();
+					oDateParams.DateTo = this._oViewModel.getProperty("/PRT/defaultEndDate");
+					oDateParams.TimeTo.ms = oDateParams.DateTo.getTime();
 					this._proceedToAssignTools(aSources, oDateParams, mParameters);
 				}
 
@@ -137,7 +132,7 @@ sap.ui.define([
 		/**
 		 * close dialog from XML view
 		 */
-		onCloseDialog: function () {
+		closeDateSelectionDialog: function () {
 			this._oDialog.close();
 		},
 
@@ -156,7 +151,7 @@ sap.ui.define([
 				this._oDateParams.TimeTo.ms = oEndDate.getTime();
 
 				this._proceedToAssignTools(this._aSources, this._oDateParams, this._mParameters);
-				this.onCloseDialog();
+				this.closeDateSelectionDialog();
 			} else {
 				this.showMessageToast(sMsg);
 			}
