@@ -167,7 +167,7 @@ sap.ui.define([
 			if (sValue === "ASSIGNMENT") {
 				return true;
 			}
-			return false;
+			return true;
 		},
 
 		/**
