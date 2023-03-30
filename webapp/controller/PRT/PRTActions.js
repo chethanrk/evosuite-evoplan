@@ -24,7 +24,6 @@ sap.ui.define([
 				sNodeType ===
 				"TIMEYEAR",
 				oUserModel = this.getModel("user");
-
 			if (!this._oViewModel) {
 				this._oViewModel = this.getModel("viewModel");
 			}
@@ -62,8 +61,13 @@ sap.ui.define([
 					this._proceedToAssignTools(aSources, oDateParams, mParameters);
 				}
 
-			} else {
-				//todo default condition
+			} else if (sNodeType === "ASSIGNMENT") {
+				oDateParams.DateFrom = oTargetObj.StartDate;
+				oDateParams.TimeFrom = oTargetObj.StartTime;
+				oDateParams.DateTo = oTargetObj.EndDate;
+				oDateParams.TimeTo = oTargetObj.EndTime;
+				oDateParams.DemandGuid = oTargetObj.DemandGuid;
+				this._proceedToAssignTools(aSources, oDateParams, mParameters);
 			}
 		},
 
