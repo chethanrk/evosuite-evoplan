@@ -200,7 +200,7 @@ sap.ui.define([
 					data = mParams.parentContext.getObject();
 				}
 				oDialog.setBusy(false);
-				this.oComponent.toolsAssignDialog.onOpen(oDialog);
+				this.oComponent.toolsAssignDialog.onOpen(oDialog,oView);
 			}
 		},
 	});
