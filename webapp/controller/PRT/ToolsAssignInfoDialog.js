@@ -59,7 +59,6 @@ sap.ui.define([
 		 * Cancel progress
 		 */
 		onCloseDialog: function () {
-			console.log("onclose dialog trigerred");
 			this._closeDialog();
 
 		},
