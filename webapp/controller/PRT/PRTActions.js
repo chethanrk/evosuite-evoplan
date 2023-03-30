@@ -67,8 +67,6 @@ sap.ui.define([
 				oDateParams.DateTo = oTargetObj.EndDate;
 				oDateParams.TimeTo = oTargetObj.EndTime;
 				oDateParams.DemandGuid = oTargetObj.DemandGuid;
-				oDateParams.ResourceGroupGuid = "";
-				oDateParams.ResourceGuid = "";
 				this._proceedToAssignTools(aSources, oDateParams, mParameters);
 			}
 		},
