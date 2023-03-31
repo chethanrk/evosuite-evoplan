@@ -163,8 +163,8 @@ sap.ui.define([
 		 * @param {string} sValue Operation Type
 		 * @returns {Boolean} true,if operation is 'Assignment' else false
 		 */
-		isAssignment: function (sValue) {
-			if (sValue === "ASSIGNMENT") {
+		isAssignmentorTool: function (sValue) {
+			if (sValue === "ASSIGNMENT" || sValue === "PRT") {
 				return true;
 			}
 			return false;
@@ -409,13 +409,13 @@ sap.ui.define([
 				oUser = this.getModel("user");
 			}
 			if (oUser && oUser.getProperty("/ENABLE_CUMULATIVE_CAPACITY")) {
-				if (sValue !== "ASSIGNMENT") {
+				if (sValue !== "ASSIGNMENT" && sValue != "PRT") {
 					return true;
 				} else {
 					return false;
 				}
 			} else {
-				if (sValue !== "RES_GROUP" && sValue !== "ASSIGNMENT") {
+				if (sValue !== "RES_GROUP" && sValue !== "ASSIGNMENT" && sValue != "PRT") {
 					return true;
 				}
 				return false;
@@ -752,7 +752,7 @@ sap.ui.define([
 		formatMapSpot: function (oLatitude, oLongitude) {
 			if (oLatitude && oLongitude) {
 				if (oLatitude === "0.000000000000" && oLongitude === "0.000000000000") {
-					return "0;0;0"; 
+					return "0;0;0";
 				} else {
 					return oLatitude + ";" + oLongitude + ";0";
 				}
@@ -764,7 +764,7 @@ sap.ui.define([
 			}
 			return "";
 		},
-		
+
 		setVisibilityDeleteButton: function (sNodeType) {
 			if (sNodeType === "RES_GROUP") {
 				return false;
