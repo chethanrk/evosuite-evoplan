@@ -159,9 +159,7 @@ sap.ui.define([
 		onPressAssignmentLink: function (oEvent) {
 			var oSource = oEvent.getSource();
 			this.assignmentRowContext = oSource.getParent().getBindingContext();
-			console.log(this.assignmentRowContext.getObject());
 			if (this.assignmentRowContext) {
-
 				if (this.assignmentRowContext.getObject().NodeType === "PRT") {
 					this.assignmentPath = "/PRTAssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
 					this.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext);
@@ -169,7 +167,6 @@ sap.ui.define([
 					this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
 					this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext);
 				}
-
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
