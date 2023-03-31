@@ -140,6 +140,10 @@ sap.ui.define([
 			title: "H6",
 			icon: "sap-icon://eam-work-order"
 		},
+		PRT: {
+			title: "H6",
+			icon: "sap-icon://technical-object"
+		},
 		TIMENONE: {
 			getDateBegin: function () {
 				return new Date("01/01/1990");
