@@ -185,7 +185,7 @@ sap.ui.define([
 				title: "xtit.toolsAssignInfoModalTitle",
 				type: "add",
 				smartTable: null,
-				sPath: "/PRTAssignmentSet('A12B77123F2E1EDDB28F788CA92AA0D6')",
+				sPath: sPath,
 				sDeepPath: null,
 				parentContext: oContext,
 				oDialogController: this.oComponent.toolsAssignDialog,
@@ -195,12 +195,9 @@ sap.ui.define([
 		},
 		_afterToolsAssignDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
 			if (sEvent === "dataReceived") {
-				//Fetching Context Data for PlanningCalendar 
-				if (this._mParameters && this._mParameters.bFromPlannCal) {
-					data = mParams.parentContext.getObject();
-				}
+				//Fetching Context Data for PlanningCalendar
 				oDialog.setBusy(false);
-				this.oComponent.toolsAssignDialog.onOpen(oDialog,oView);
+				this.oComponent.toolsAssignDialog.onOpen(oDialog, oView);
 			}
 		},
 	});
