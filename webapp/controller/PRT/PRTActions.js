@@ -175,8 +175,7 @@ sap.ui.define([
 
 		},
 		openToolsDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType) {
-			// ToDo use contants for qualifier.
-			var sQualifier = "ToolAssignmentDialog";
+			var sQualifier = Constants.ANNOTATION_CONSTANTS.PRT_TOOLS_ASSIGN_DIALOG;
 			var mParams = {
 				viewName: "com.evorait.evoplan.view.templates.ToolInfoDialog#" + sQualifier,
 				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
@@ -195,7 +194,7 @@ sap.ui.define([
 		},
 		_afterToolsAssignDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
 			if (sEvent === "dataReceived") {
-				//Fetching Context Data for PlanningCalendar
+				//Fetching Context Data for PlanningCalendar 
 				oDialog.setBusy(false);
 				this.oComponent.toolsAssignDialog.onOpen(oDialog, oView);
 			}
