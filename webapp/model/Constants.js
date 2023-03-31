@@ -91,7 +91,8 @@ sap.ui.define([], function () {
 			NETWORK_OBJECTSOURCETYPE: "DEM_PSNW",
 			NETWORK_QUALIFIER: "NetworkAssignmentDialog",
 			GANTT_POP_OVER_QUALIFIER: "GanttAssignmentPopOver",
-			MAP_DEMAND_PIN: "MapDemandPin"
+			MAP_DEMAND_PIN: "MapDemandPin",
+			PRT_TOOLS_ASSIGN_DIALOG:"ToolAssignmentDialogResource"
 		}
 	};
 
