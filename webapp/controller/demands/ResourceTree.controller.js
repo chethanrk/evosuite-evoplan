@@ -159,10 +159,14 @@ sap.ui.define([
 		onPressAssignmentLink: function (oEvent) {
 			var oSource = oEvent.getSource();
 			this.assignmentRowContext = oSource.getParent().getBindingContext();
-
 			if (this.assignmentRowContext) {
-				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
-				this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext);
+				if (this.assignmentRowContext.getObject().NodeType === "PRT") {
+					this.assignmentPath = "/PRTAssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
+					this.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext);
+				} else {
+					this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
+					this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext);
+				}
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);

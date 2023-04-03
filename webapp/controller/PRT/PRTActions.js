@@ -24,7 +24,6 @@ sap.ui.define([
 				sNodeType ===
 				"TIMEYEAR",
 				oUserModel = this.getModel("user");
-
 			if (!this._oViewModel) {
 				this._oViewModel = this.getModel("viewModel");
 			}
@@ -62,8 +61,13 @@ sap.ui.define([
 					this._proceedToAssignTools(aSources, oDateParams, mParameters);
 				}
 
-			} else {
-				//todo default condition
+			} else if (sNodeType === "ASSIGNMENT") {
+				oDateParams.DateFrom = oTargetObj.StartDate;
+				oDateParams.TimeFrom = oTargetObj.StartTime;
+				oDateParams.DateTo = oTargetObj.EndDate;
+				oDateParams.TimeTo = oTargetObj.EndTime;
+				oDateParams.DemandGuid = oTargetObj.DemandGuid;
+				this._proceedToAssignTools(aSources, oDateParams, mParameters);
 			}
 		},
 
@@ -159,6 +163,40 @@ sap.ui.define([
 				this.onCloseDialog();
 			} else {
 				this.showMessageToast(sMsg);
+			}
+		},
+		openToolsInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext) {
+			if (this.getOwnerComponent()) {
+				this.oComponent = this.getOwnerComponent();
+			} else {
+				this.oComponent = oView.getController().getOwnerComponent();
+			}
+			this.openToolsDialog(oView, sPath, oContext, mParameters);
+
+		},
+		openToolsDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType) {
+			var sQualifier = Constants.ANNOTATION_CONSTANTS.PRT_TOOLS_ASSIGN_DIALOG;
+			var mParams = {
+				viewName: "com.evorait.evoplan.view.templates.ToolInfoDialog#" + sQualifier,
+				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
+				entitySet: "PRTAssignmentSet",
+				controllerName: null,
+				title: "xtit.toolsAssignInfoModalTitle",
+				type: "add",
+				smartTable: null,
+				sPath: sPath,
+				sDeepPath: null,
+				parentContext: oContext,
+				oDialogController: this.oComponent.toolsAssignDialog,
+				refreshParameters: mParameters
+			};
+			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterToolsAssignDialogLoad.bind(this));
+		},
+		_afterToolsAssignDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
+			if (sEvent === "dataReceived") {
+				//Fetching Context Data for PlanningCalendar 
+				oDialog.setBusy(false);
+				this.oComponent.toolsAssignDialog.onOpen(oDialog, oView);
 			}
 		},
 	});
