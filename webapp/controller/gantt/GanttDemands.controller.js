@@ -233,6 +233,9 @@ sap.ui.define([
 					aFilters.push(new Filter("DemandGuid", FilterOperator.EQ, data["results"][x]["Guid"]));
 				}
 				this._oEventBus.publish("BaseController", "refreshFullGantt", aFilters);
+				var sMsg = this.getResourceBundle().getText("msg.filterGanttSave");
+				console.log(sMsg);
+				this.showMessageToast(sMsg);
 			}.bind(this));
 		},
 		onClickSplit: function (oEvent) {
