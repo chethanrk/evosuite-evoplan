@@ -36,8 +36,8 @@
 								<core:ExtensionPoint name="TableExtP|Demands|DemandsSet|CustomToolbar|Right"/>
 							</OverflowToolbar>
 						</smartTable:customToolbar>
-						<table:Table id="idDemandsPageInnerTable" columnResize="onColumnResize" minAutoRowCount="25" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}"
-							cellClick="onCopyDemandCellData">
+						<table:Table id="idDemandsPageInnerTable" columnResize="onColumnResize" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}"
+							cellClick="onCopyDemandCellData" visibleRowCountMode="Auto">
 							<table:rowSettingsTemplate>
 								<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
 							</table:rowSettingsTemplate>

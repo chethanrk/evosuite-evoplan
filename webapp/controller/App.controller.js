@@ -149,21 +149,6 @@ sap.ui.define([
 				}
 				oRouter.navTo("empty", {});
 				break;
-			case oResourceBundle.getText("xbut.pageGanttChart"):
-				if (this._routeValidation("ENABLE_GANTT")) {
-					oRouter.navTo("gantt", {});
-					break;
-				}
-				oRouter.navTo("empty", {});
-				break;
-			case oResourceBundle.getText("xbut.pageGanttChartSplit"):
-				if (this._routeValidation("ENABLE_GANTT_JSON")) {
-					oRouter.navTo("ganttSplit", {});
-					window.open(sRoute, "_blank");
-					break;
-				}
-				oRouter.navTo("empty", {});
-				break;
 			case oResourceBundle.getText("xbut.pageNewGanttChartSplit"):
 				if (this._routeValidation("ENABLE_GANTT_SPLIT_JSON")) {
 					oRouter.navTo("newGanttSplit", {});
@@ -257,13 +242,6 @@ sap.ui.define([
 				pageTitle = oResourceBundle.getText("xbut.pageAssetManager");
 			} else if (oParams.config.pattern.startsWith("MessageCockpit")) {
 				pageTitle = oResourceBundle.getText("xbut.pageMessageCockpit");
-			} else if (oParams.config.pattern.startsWith("Gantt")) {
-				pageTitle = oResourceBundle.getText("xbut.pageGanttChart");
-				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
-				this.getModel("viewModel").setProperty("/ganttSelectionPane", "25%");
-				if (oAppViewModel.getProperty("/currentRoute") === "newgantt" && oParams.name !== "gantt") {
-					pageTitle = oResourceBundle.getText("xbut.pageNewGantt");
-				}
 			} else if (oParams.config.pattern.startsWith("SplitPage")) {
 				pageTitle = oResourceBundle.getText("xbut.pageNewGanttChartSplit");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
@@ -274,7 +252,8 @@ sap.ui.define([
 				pageTitle = oResourceBundle.getText("xbut.pageMap");
 			} else if (oParams.config.pattern.startsWith("ManageResources")) {
 				pageTitle = oResourceBundle.getText("xbut.manageResources");
-			} else if (oParams.config.pattern.startsWith("NewGantt")) {
+			} else if (oParams.config.pattern.startsWith("NewGantt") || oParams.config.pattern.startsWith("Gantt/Demand") || oParams.config.pattern
+				.startsWith("GanttTools")) {
 				pageTitle = oResourceBundle.getText("xbut.pageNewGantt");
 			}
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
