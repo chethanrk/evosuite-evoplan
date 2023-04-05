@@ -223,8 +223,6 @@ sap.ui.define([
 				}
 			}
 		},
-
-		//TODO comment
 		onPressFilterGantChart: function () {
 			var aPplicationFilters = this.getView().byId("draggableList").getTable().getBinding("rows").aApplicationFilters;
 			var aFilters = [];
@@ -234,7 +232,6 @@ sap.ui.define([
 				}
 				this._oEventBus.publish("BaseController", "refreshFullGantt", aFilters);
 				var sMsg = this.getResourceBundle().getText("msg.filterGanttSave");
-				console.log(sMsg);
 				this.showMessageToast(sMsg);
 			}.bind(this));
 		},
