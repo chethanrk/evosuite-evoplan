@@ -46,7 +46,7 @@ sap.ui.define([
 	models,
 	momentjs,
 	ErrorHandler,
-	PRTAssignInfoDialog,
+	ToolsAssignInfoDialog,
 	AssignInfoDialog,
 	AssignTreeDialog,
 	StatusSelectDialog,
@@ -242,15 +242,20 @@ sap.ui.define([
 		 */
 		_initDialogs: function () {
 			//display and change assignment dialog
-			this.toolsAssignDialog = new PRTAssignInfoDialog();
+			this.toolsAssignInfoDialog = new ToolsAssignInfoDialog();
+			this.toolsAssignInfoDialog.init();
+			
 			this.assignInfoDialog = new AssignInfoDialog();
 			this.assignInfoDialog.init();
+			
 			//select resource from tree for assigning dialog
 			this.assignTreeDialog = new AssignTreeDialog();
 			this.assignTreeDialog.init();
+			
 			//change status of demand
 			this.statusSelectDialog = new StatusSelectDialog();
 			this.statusSelectDialog.init();
+			
 			// bulk operations for unassign/reassign demands
 			this.assignActionsDialog = new AssignActionsDialog();
 			this.assignActionsDialog.init();

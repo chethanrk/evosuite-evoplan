@@ -164,7 +164,7 @@ sap.ui.define([
 		 * @returns {Boolean} true,if operation is 'Assignment' else false
 		 */
 		isAssignmentorTool: function (sValue) {
-			if (sValue === "ASSIGNMENT" || sValue === "PRT") {
+			if (sValue === "ASSIGNMENT") {
 				return true;
 			}
 			return false;
