@@ -61,7 +61,7 @@ sap.ui.define([
 					this._proceedToAssignTools(aSources, oDateParams, mParameters);
 				}
 
-			} else if (sNodeType === "ASSIGNMENT") {
+			} else if (sNodeType === "ASSIGNMENT" && oTargetObj.ASSIGNMENT_TYPE !=="PRT") {
 				oDateParams.DateFrom = oTargetObj.StartDate;
 				oDateParams.TimeFrom = oTargetObj.StartTime;
 				oDateParams.DateTo = oTargetObj.EndDate;

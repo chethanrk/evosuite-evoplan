@@ -8,7 +8,7 @@
 				titleStyle="{ path: 'ganttModel>NodeType', formatter: '.formatter.formatResourceTitle' }"
 				iconColor="{ path: 'ganttModel>IS_AVAILABLE', formatter: '.formatter.formatIconColor' }"
 				icon="{ parts:[{path: 'ganttModel>NodeType'},{path: 'ganttModel>StatusIcon'},{path: 'ganttModel>ResourceIcon'} ], formatter: '.formatter.getResourceIcon' }"
-				isLink="{ path: 'ganttModel>NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink"
+				isLink="{ path: 'ganttModel>NodeType', formatter: '.formatter.isAssignmentorTool' }" press="onPressAssignmentLink"
 				resourceIconPress="onResourceIconPress" enableQualification="{user>/ENABLE_QUALIFICATION}"
 				isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatGanttProgressBarVisibility'}"
 				showWorkTime="{path: 'ganttModel>NodeType', formatter: '.formatter.isResource'}"
