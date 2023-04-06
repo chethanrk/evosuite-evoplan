@@ -61,7 +61,7 @@ sap.ui.define([
 					this._proceedToAssignTools(aSources, oDateParams, mParameters);
 				}
 
-			} else if (sNodeType === "ASSIGNMENT") {
+			} else if (sNodeType === "ASSIGNMENT" && oTargetObj.ASSIGNMENT_TYPE !=="PRT") {
 				oDateParams.DateFrom = oTargetObj.StartDate;
 				oDateParams.TimeFrom = oTargetObj.StartTime;
 				oDateParams.DateTo = oTargetObj.EndDate;
@@ -180,14 +180,14 @@ sap.ui.define([
 				viewName: "com.evorait.evoplan.view.templates.ToolInfoDialog#" + sQualifier,
 				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
 				entitySet: "PRTAssignmentSet",
-				controllerName: null,
+				controllerName: "PRT.ToolsAssignInfo",
 				title: "xtit.toolsAssignInfoModalTitle",
 				type: "add",
 				smartTable: null,
 				sPath: sPath,
 				sDeepPath: null,
 				parentContext: oContext,
-				oDialogController: this.oComponent.toolsAssignDialog,
+				oDialogController: this.oComponent.toolsAssignInfoDialog,
 				refreshParameters: mParameters
 			};
 			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterToolsAssignDialogLoad.bind(this));
@@ -196,7 +196,7 @@ sap.ui.define([
 			if (sEvent === "dataReceived") {
 				//Fetching Context Data for PlanningCalendar 
 				oDialog.setBusy(false);
-				this.oComponent.toolsAssignDialog.onOpen(oDialog, oView);
+				this.oComponent.toolsAssignInfoDialog.onOpen(oDialog, oView, sPath, data, mParams.refreshParameters);
 			}
 		},
 	});

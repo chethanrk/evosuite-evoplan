@@ -15,6 +15,22 @@
 				labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" emptySpanXL="2" emptySpanL="2" emptySpanM="2" emptySpanS="0" columnsXL="2"
 				columnsL="2" columnsM="1" singleContainerFullSize="false">
 				<form:content>
+					<Label text="{/#Assignment/DateFrom/@sap:label}"/>
+					<DateTimePicker name="DateFrom"
+						value="{path:'assignment>/DateFrom', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true} }"
+						change="onAssignmentDateChange"/>
+					<Label text="{/#Assignment/DateTo/@sap:label}"/>
+					<DateTimePicker id="idDateToAssignInf" name="DateTo"
+						value="{path:'assignment>/DateTo', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true} }"
+						change="onAssignmentDateChange"/>
+					<Label text="{i18n>xfld.newAssign}" visible="{assignment>/AllowReassign}"/>
+					<core:ExtensionPoint name="SimpleFormExtP|AssignInfo|AssignmentSet|UpdateAssignmentForm|CustomFields"/>
+					<Button id="reassignDialogButton" text="{i18n>xbut.selectResource}" press="onPressReAssign" visible="{assignment>/AllowReassign}"/>
+					<Label text="{i18n>xfld.newAssignment}" visible="{assignment>/AllowReassign}"/>
+					<Text text="{assignment>/NewAssignDesc}" visible="{assignment>/AllowReassign}"/>
+					<Label text="{i18n>xbut.ChngAssgnStatus}" visible="{user>/ENABLE_ASSIGNMENT_STATUS}"></Label>
+					<Button icon="sap-icon://order-status" tooltip="{i18n>xbut.ChngAssgnStatus}" visible="{user>/ENABLE_ASSIGNMENT_STATUS}"
+						enabled="{viewModel>/validateIW32Auth}" press="openAssignmentStatus"></Button>
 				</form:content>
 			</form:SimpleForm>
 		</HBox>

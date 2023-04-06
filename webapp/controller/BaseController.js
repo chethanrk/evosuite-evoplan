@@ -284,8 +284,11 @@ sap.ui.define([
 
 			if (oParameter.bFromHome) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});
-				eventBus.publish("BaseController", "refreshDemandTable", {});
-				eventBus.publish("BaseController", "refreshDemandOverview", {});
+				if (!oParameter.bIsFromPRTAssignmentInfo) {
+					eventBus.publish("BaseController", "refreshDemandTable", {});
+					eventBus.publish("BaseController", "refreshDemandOverview", {});
+				}
+
 				if (oParameter.bFromResourcQualification) {
 					eventBus.publish("ResourceQualificationDialog", "refreshQualificationDemandsTable", {});
 				}
@@ -320,7 +323,9 @@ sap.ui.define([
 				eventBus.publish("BaseController", "refreshCapacity", {});
 			} else if (oParameter.bFromDemandTools) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});
-				eventBus.publish("BaseController", "refreshToolsTable", {});
+				if (!oParameter.bIsFromPRTAssignmentInfo) {
+					eventBus.publish("BaseController", "refreshToolsTable", {});
+				}
 			}
 
 		},
