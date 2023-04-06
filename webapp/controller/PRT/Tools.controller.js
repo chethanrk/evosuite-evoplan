@@ -114,15 +114,26 @@ sap.ui.define([
 				oDraggedControl = oDragSession.getDragControl(),
 				oToolsTable = this._oDraggableToolsTable.getTable(),
 				aIndices = oToolsTable.getSelectedIndices(),
-				oSelectedPaths;
+				oSelectedPaths, aSelectedToolObject = [];
 
-			if (aIndices.length > 0) {
+			if (aIndices.length > 1) {
 				oSelectedPaths = this._getSelectedToolsPaths(this._oToolsTable, aIndices);
 			} else {
 				oSelectedPaths = this._getSelectedToolsPaths(this._oToolsTable, [oDraggedControl.getIndex()]);
 			}
+
+			oSelectedPaths.aPathsData.forEach(function (item) {
+				aSelectedToolObject.push({
+					sPath: item.sPath,
+					oDemandObject: item.oData
+				});
+			});
+
 			// keeping the data in drag session
 			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
+			this.localStorage.put("Evo-Tools-guid", JSON.stringify(aSelectedToolObject));
+			this.localStorage.put("Evo-aPathsData", JSON.stringify(oSelectedPaths.aPathsData));
+			this.localStorage.put("Evo-toolDrag", "Tools");
 		},
 		/**
 		 * Open the Gantt Toolss Filter Dialog 

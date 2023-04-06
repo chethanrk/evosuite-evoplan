@@ -85,7 +85,6 @@
 									</gnt2:GanttRowSettings>
 								</table:rowSettingsTemplate>
 								<table:dragDropConfig>
-									<dnd:DropInfo targetAggregation="rows" groupName="ToolsView" dropPosition="On" drop="onToolDrop"/>
 									<dnd:DropInfo targetAggregation="rows" dropPosition="On" drop="onDemandDrop"/>
 								</table:dragDropConfig>
 								<table:columns>

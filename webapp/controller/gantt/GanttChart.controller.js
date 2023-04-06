@@ -214,30 +214,35 @@ sap.ui.define([
 				bAllowVendorAssignment = this.getModel().getProperty(oDragContext + "/ALLOW_ASSIGNMENT_DIALOG"),
 				sOperationStartDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_START_DATE"),
 				sOperationEndDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_END_DATE"),
+				sToolDrag = this.localStorage.get("Evo-toolDrag"),
 				aPSDemandsNetworkAssignment = this._showNetworkAssignments(this.oViewModel);
 			this.onShowOperationTimes(this.oViewModel);
 			this.onAllowVendorAssignment(this.oViewModel, this.oUserModel);
 
-			//Allowing Demand Drop only on Non-Assignmnet Nodes   @Since 2205
-			if (oDropObject.NodeType !== "ASSIGNMENT") {
-				//Checking PS Demands for Network Assignment 
-				if (this.oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
-					this.getOwnerComponent().NetworkAssignment.open(this.getView(), oDropObject, aPSDemandsNetworkAssignment, this._mParameters,
-						oDraggedControl,
-						oDroppedControl, oBrowserEvent);
-				}
-				//Checking Vendor Assignment for External Resources
-				else if (this.oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
-					this.getOwnerComponent().VendorAssignment.open(this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
-						oDroppedControl, oBrowserEvent);
-				} else {
-					if (this.oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !==
-						null) {
-						this.getOwnerComponent().OperationTimeCheck.open(this.getView(), {
-							bFromNewGantt: true
-						}, oDropContext.getPath(), oDraggedControl, oDroppedControl, oBrowserEvent);
+			if (sToolDrag === "Tools") {
+				this.onToolDrop(oEvent);
+			} else {
+				//Allowing Demand Drop only on Non-Assignmnet Nodes   @Since 2205
+				if (oDropObject.NodeType !== "ASSIGNMENT") {
+					//Checking PS Demands for Network Assignment 
+					if (this.oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+						this.getOwnerComponent().NetworkAssignment.open(this.getView(), oDropObject, aPSDemandsNetworkAssignment, this._mParameters,
+							oDraggedControl,
+							oDroppedControl, oBrowserEvent);
+					}
+					//Checking Vendor Assignment for External Resources
+					else if (this.oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
+						this.getOwnerComponent().VendorAssignment.open(this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
+							oDroppedControl, oBrowserEvent);
 					} else {
-						this.onProceedNewGanttDemandDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
+						if (this.oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !==
+							null) {
+							this.getOwnerComponent().OperationTimeCheck.open(this.getView(), {
+								bFromNewGantt: true
+							}, oDropContext.getPath(), oDraggedControl, oDroppedControl, oBrowserEvent);
+						} else {
+							this.onProceedNewGanttDemandDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
+						}
 					}
 				}
 			}
@@ -743,7 +748,7 @@ sap.ui.define([
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
 				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
 				sTargetPath = oDropContext.getPath(),
-				aSources = this.oViewModel.getProperty("/dragSession"),
+				aSources = this.oViewModel.getProperty("/dragSession") || this.localStorage.get("Evo-aPathsData"),
 				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
 				iDefNum = this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS"),
 				oSvgPoint, oTargetDate, endDate;
