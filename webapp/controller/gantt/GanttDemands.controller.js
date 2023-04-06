@@ -223,8 +223,6 @@ sap.ui.define([
 				}
 			}
 		},
-
-		//TODO comment
 		onPressFilterGantChart: function () {
 			var aPplicationFilters = this.getView().byId("draggableList").getTable().getBinding("rows").aApplicationFilters;
 			var aFilters = [];
@@ -233,6 +231,8 @@ sap.ui.define([
 					aFilters.push(new Filter("DemandGuid", FilterOperator.EQ, data["results"][x]["Guid"]));
 				}
 				this._oEventBus.publish("BaseController", "refreshFullGantt", aFilters);
+				var sMsg = this.getResourceBundle().getText("msg.filterGanttSave");
+				this.showMessageToast(sMsg);
 			}.bind(this));
 		},
 		onClickSplit: function (oEvent) {
