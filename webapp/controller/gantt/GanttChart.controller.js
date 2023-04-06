@@ -2142,6 +2142,7 @@ sap.ui.define([
 		 */
 		_getFiltersToReadAssignments: function (oResource, oDateFrom, oDateTo) {
 			var aFilters = [];
+			//if ResourceGuid blank then its POOL else assignment
 			if(oResource.ResourceGuid === ""){
 				aFilters.push(new Filter("ObjectId", FilterOperator.EQ, oResource.ResourceGroupGuid + "//" + "X"));
 			} else {
