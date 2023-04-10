@@ -32,6 +32,8 @@ sap.ui.define([
 			this._oUserModel = this.getModel("user");
 			this._oDraggableToolsTable = this.byId("idToolsTable");
 			this._oToolsTable = this.byId("idToolsTable").getTable();
+			this._configureDataTable(this._oToolsTable);
+			this._aSelectedRowsIdx = [];
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._mParameters = {
 				bFromDemandTools: true
@@ -115,6 +117,8 @@ sap.ui.define([
 				oToolsTable = this._oDraggableToolsTable.getTable(),
 				aIndices = oToolsTable.getSelectedIndices(),
 				oSelectedPaths;
+				
+			aIndices = aIndices.slice(0, this.getModel("user").getProperty("/DEFAULT_TOOLS_SELECT_ALL"));
 
 			if (aIndices.length > 0) {
 				oSelectedPaths = this._getSelectedToolsPaths(this._oToolsTable, aIndices);
@@ -167,6 +171,33 @@ sap.ui.define([
 		},
 		_refreshToolsTable: function () {
 			this._oDraggableToolsTable.rebindTable();
+		},
+		/**
+		 * add configuration to demand table
+		 * @param oDataTable
+		 * @private
+		 */
+		_configureDataTable: function (oDataTable) {
+			oDataTable.attachRowSelectionChange(function (oEvent) {
+				var selected = this._oToolsTable.getSelectedIndices(),
+					iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_TOOLS_SELECT_ALL"),
+					sMsg;
+				
+				this._aSelectedRowsIdx = _.clone(selected);
+				if (this._aSelectedRowsIdx.length > 0) {
+					this._aSelectedRowsIdx.length = this._aSelectedRowsIdx.length > 0 && this._aSelectedRowsIdx.length <= iMaxRowSelection ? this._aSelectedRowsIdx
+						.length : iMaxRowSelection;
+				}
+				
+				//If the selected demands exceeds more than the maintained selected configuration value
+				if (oEvent.getParameter("selectAll")) {
+					sMsg = this.getResourceBundle().getText("ymsg.allSelect", [this._aSelectedRowsIdx.length]);
+					this.showMessageToast(sMsg);
+				} else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
+					sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+					this.showMessageToast(sMsg);
+				}
+			}.bind(this));
 		}
 	});
 });
