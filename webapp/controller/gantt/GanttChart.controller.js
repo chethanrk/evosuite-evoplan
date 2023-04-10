@@ -942,7 +942,7 @@ sap.ui.define([
 							//Allowing Assignment Shape Drop Only on Resource Nodes when dragged from different resources
 							if (oTargetContext.getObject().NodeType === "RESOURCE") {
 								//set new time and resource data to gantt model, setting also new pathes
-								var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
+								 sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
 								this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
 							} else { //Allowing Assignment Shape Drop Only within the same resources
 								bSameResourcePath = sTargetPath.split("/").splice(0, 6).join("/") === sSourcePath.split("/").splice(0, 6).join("/");
