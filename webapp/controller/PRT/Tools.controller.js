@@ -173,7 +173,7 @@ sap.ui.define([
 			this._oDraggableToolsTable.rebindTable();
 		},
 		/**
-		 * add configuration to demand table
+		 * add configuration to Tools table
 		 * @param oDataTable
 		 * @private
 		 */
