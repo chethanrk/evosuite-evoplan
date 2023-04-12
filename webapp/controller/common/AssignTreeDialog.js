@@ -190,7 +190,7 @@ sap.ui.define([
 
 		onSaveDialog: function () {
 			if (this._assignPath) {
-				if (!this._reAssign) {
+				if (!this._reAssign && !this._isToolReAssign) {
 					var oTargetObj = this._oView.getModel().getProperty(this._assignPath),
 						aSources = this._oView.getModel("viewModel").getProperty("/dragSession"),
 						oUserModel = this._oView.getModel("user"),
