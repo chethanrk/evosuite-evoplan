@@ -101,12 +101,12 @@ sap.ui.define([
 
 			this.oMapUtilities = new MapUtilities();
 		},
-		
+
 		/**
 		 * after rendering of view
 		 * @param oEvent
 		 */
-		onAfterRendering: function(){
+		onAfterRendering: function () {
 			this._initializeGantt();
 		},
 		/**
@@ -724,7 +724,7 @@ sap.ui.define([
 			}
 			return "url(#" + sGradId + ")";
 		},
-		
+
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
@@ -929,21 +929,27 @@ sap.ui.define([
 				return;
 			}
 
-			//Allowing Assignment Shape Drop Only on Resource Nodes
-			if (oTargetContext.getObject().NodeType === "RESOURCE") {
-				// to identify the action done on respective page
-				this.localStorage.put("Evo-Action-page", "ganttSplit");
+			// to identify the action done on respective page
+			this.localStorage.put("Evo-Action-page", "ganttSplit");
 
-				//could be multiple shape pathes
-				for (var key in oParams.draggedShapeDates) {
-					var sSourcePath = Utility.parseUid(key).shapeDataName,
-						sTargetPath = oTargetContext.getPath(),
-						oSourceData = this.oGanttModel.getProperty(sSourcePath),
-						sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
-
+			//could be multiple shape pathes
+			for (var key in oParams.draggedShapeDates) {
+				var sNewPath, bSameResourcePath,
+					sSourcePath = Utility.parseUid(key).shapeDataName,
+					sTargetPath = oTargetContext.getPath(),
+					oSourceData = this.oGanttModel.getProperty(sSourcePath),
+					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
+				//Allowing Assignment Shape Drop Only on Resource Nodes when dragged from different resources
+				if (oTargetContext.getObject().NodeType === "RESOURCE") {
 					//set new time and resource data to gantt model, setting also new pathes
-					var sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
+					sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
 					this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+				} else { //Allowing Assignment Shape Drop Only within the same resources
+					bSameResourcePath = sTargetPath.split("/").splice(0, 6).join("/") === sSourcePath.split("/").splice(0, 6).join("/");
+					if (bSameResourcePath) {
+						sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
+						this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+					}
 				}
 			}
 		},
@@ -2143,7 +2149,7 @@ sap.ui.define([
 		_getFiltersToReadAssignments: function (oResource, oDateFrom, oDateTo) {
 			var aFilters = [];
 			//if ResourceGuid blank then its POOL else assignment
-			if(oResource.ResourceGuid === ""){
+			if (oResource.ResourceGuid === "") {
 				aFilters.push(new Filter("ObjectId", FilterOperator.EQ, oResource.ResourceGroupGuid + "//" + "X"));
 			} else {
 				aFilters.push(new Filter("ObjectId", FilterOperator.EQ, oResource.ResourceGuid + "//" + oResource.ResourceGroupGuid));
