@@ -76,6 +76,7 @@ sap.ui.define([
 				this._mParameters = {
 					bFromNewGantt: true
 				};
+				this._initializeGantt();
 			}.bind(this));
 
 			this.getRouter().getRoute("newGanttSplit").attachPatternMatched(function () {
@@ -83,6 +84,7 @@ sap.ui.define([
 				this._mParameters = {
 					bFromNewGanttSplit: true
 				};
+				this._initializeGantt();
 			}.bind(this));
 
 			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
@@ -101,14 +103,7 @@ sap.ui.define([
 
 			this.oMapUtilities = new MapUtilities();
 		},
-		
-		/**
-		 * after rendering of view
-		 * @param oEvent
-		 */
-		onAfterRendering: function(){
-			this._initializeGantt();
-		},
+
 		/**
 		 * on page exit
 		 */
@@ -724,7 +719,7 @@ sap.ui.define([
 			}
 			return "url(#" + sGradId + ")";
 		},
-		
+
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
@@ -2143,7 +2138,7 @@ sap.ui.define([
 		_getFiltersToReadAssignments: function (oResource, oDateFrom, oDateTo) {
 			var aFilters = [];
 			//if ResourceGuid blank then its POOL else assignment
-			if(oResource.ResourceGuid === ""){
+			if (oResource.ResourceGuid === "") {
 				aFilters.push(new Filter("ObjectId", FilterOperator.EQ, oResource.ResourceGroupGuid + "//" + "X"));
 			} else {
 				aFilters.push(new Filter("ObjectId", FilterOperator.EQ, oResource.ResourceGuid + "//" + oResource.ResourceGroupGuid));
