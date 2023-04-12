@@ -61,7 +61,7 @@ sap.ui.define([
 					this._proceedToAssignTools(aSources, oDateParams, mParameters);
 				}
 
-			} else if (sNodeType === "ASSIGNMENT" && oTargetObj.ASSIGNMENT_TYPE !=="PRT") {
+			} else if (sNodeType === "ASSIGNMENT" && oTargetObj.ASSIGNMENT_TYPE !== "PRT") {
 				oDateParams.DateFrom = oTargetObj.StartDate;
 				oDateParams.TimeFrom = oTargetObj.StartTime;
 				oDateParams.DateTo = oTargetObj.EndDate;
@@ -199,5 +199,35 @@ sap.ui.define([
 				this.oComponent.toolsAssignInfoDialog.onOpen(oDialog, oView, sPath, data, mParams.refreshParameters);
 			}
 		},
+
+		checkToolExists: function (aContexts) {
+			var bToolExists = false,
+				oAsgnData;
+			for (var i in aContexts) {
+				if (aContexts[i].AssignmentGUID) {
+					oAsgnData = this.getModel().getProperty("/AssignmentSet('" + aContexts[i].AssignmentGUID + "')");
+				} else {
+					oAsgnData = this.getModel().getProperty(aContexts[i].getPath());
+				}
+				if (oAsgnData.PRT_ASSIGNMENT_EXISTS) {
+					bToolExists = true;
+					break;
+				}
+			}
+			return new Promise(function (resolve, reject) {
+				if (bToolExists) {
+					this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.confirmAssignmentDelete")).then(function (response) {
+						if (sap.m.MessageBox.Action.YES === response) {
+							resolve();
+						} else {
+							reject();
+						}
+					}.bind(this));
+				} else {
+					resolve();
+				}
+			}.bind(this));
+
+		}
 	});
 });
