@@ -76,6 +76,7 @@ sap.ui.define([
 				this._mParameters = {
 					bFromNewGantt: true
 				};
+				this._initializeGantt();
 			}.bind(this));
 
 			this.getRouter().getRoute("newGanttSplit").attachPatternMatched(function () {
@@ -83,6 +84,7 @@ sap.ui.define([
 				this._mParameters = {
 					bFromNewGanttSplit: true
 				};
+				this._initializeGantt();
 			}.bind(this));
 
 			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
@@ -102,13 +104,6 @@ sap.ui.define([
 			this.oMapUtilities = new MapUtilities();
 		},
 
-		/**
-		 * after rendering of view
-		 * @param oEvent
-		 */
-		onAfterRendering: function () {
-			this._initializeGantt();
-		},
 		/**
 		 * on page exit
 		 */
