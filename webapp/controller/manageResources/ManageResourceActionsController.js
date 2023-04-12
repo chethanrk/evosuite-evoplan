@@ -169,18 +169,21 @@ sap.ui.define([
 				this.showMessageToast(sMsg);
 				return;
 			}
-			for (var i in aContextPaths) {
-				sAssignmentGuid = this._oViewModel.getProperty(aContextPaths[i] + "/Guid");
-				aRemovedIndices.push(aContextPaths[i].split("/")[aContextPaths[i].split("/").length - 1]); // getting index of selected row
-				oParams = {
-					AssignmentGUID: sAssignmentGuid
-				};
-				if (parseInt(i, 10) === aContextPaths.length - 1) {
-					bIsLast = true;
-					this._oViewModel.setProperty(sRemovedIndicesPath, aRemovedIndices);
+
+			this.checkToolExists(aContextPaths).then(function (resolve) {
+				for (var i in aContextPaths) {
+					sAssignmentGuid = this._oViewModel.getProperty(aContextPaths[i] + "/Guid");
+					aRemovedIndices.push(aContextPaths[i].split("/")[aContextPaths[i].split("/").length - 1]); // getting index of selected row
+					oParams = {
+						AssignmentGUID: sAssignmentGuid
+					};
+					if (parseInt(i, 10) === aContextPaths.length - 1) {
+						bIsLast = true;
+						this._oViewModel.setProperty(sRemovedIndicesPath, aRemovedIndices);
+					}
+					this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, bIsLast);
 				}
-				this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, bIsLast);
-			}
+			}.bind(this));
 		},
 		/**
 		 * Refresh Assignment Dialog after every delete operation
