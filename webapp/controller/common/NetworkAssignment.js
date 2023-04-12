@@ -89,7 +89,7 @@ sap.ui.define([
 		_getPSDemandFilters: function (_aPSDemandPaths) {
 			var aDemandGuid = [],
 				aFilters = [],
-				oSource = JSON.parse(localStorage.getItem("Evo-Dmnd-guid"));
+				oSource = JSON.parse(this.localStorage.get("Evo-Dmnd-guid"));
 			for (var i = 0; i < _aPSDemandPaths.length; i++) {
 					var sPath = _aPSDemandPaths[i].sPath,
 					sGuid;

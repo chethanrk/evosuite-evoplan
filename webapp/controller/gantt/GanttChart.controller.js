@@ -315,7 +315,7 @@ sap.ui.define([
 
 			} else { // When we drop on the resource from split window
 				oParams.DateFrom = new Date(new Date().setHours(0));
-				bShowFixedAppointmentDialog = this.checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
+				bShowFixedAppointmentDialog = this._checkFixedAppointPopupToDisplay(bShowFutureFixedAssignments, oParams.DateFrom, oDemandObj);
 				if (bShowFixedAppointmentDialog) {
 					this.openFixedAppointmentDialog(oParams, "Gantt-Split");
 				} else if (sDragPath && sDragPath.length > 1) {
