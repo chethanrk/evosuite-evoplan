@@ -253,7 +253,9 @@ sap.ui.define([
 			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
 				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
-				sDefaultPool = this.getModel("user").getProperty("/DEFAULT_POOL_FUNCTION");
+				sDefaultPool = this.getModel("user").getProperty("/DEFAULT_POOL_FUNCTION"),
+				bShowFutureFixedAssignments = this.oUserModel.getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
+				bShowFixedAppointmentDialog;
 
 			if (oResourceData.NodeType === "RES_GROUP") { //When demand dropped on Resource group
 				if (!this.isAssignable({
