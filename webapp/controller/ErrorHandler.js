@@ -90,7 +90,7 @@ sap.ui.define([
 				item.type = oData[i].type;
 				item.description = oData[i].message;
 				item.subtitle = oData[i].message;
-				item.counter = iCounter;
+				//item.counter = iCounter; used for counting the type of messages in message manager
 
 				if (!JSON.stringify(aMessages).includes(JSON.stringify(item))) {
 					aMessages.push(item);
