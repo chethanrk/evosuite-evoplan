@@ -612,7 +612,6 @@ sap.ui.define([
 		 * @param sPath
 		 */
 		deleteAssignment: function (sId, mParameters) {
-			debugger;
 			this.checkToolExists([{
 				AssignmentGUID: sId
 			}]).then(function (resolve) {

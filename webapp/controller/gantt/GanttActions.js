@@ -368,9 +368,13 @@ sap.ui.define([
 		 * @return {Promise}
 		 */
 		deleteAssignment: function (oModel, sAssignmentGuid) {
-			return this.executeFunctionImport(oModel, {
+			this.checkToolExists([{
 				AssignmentGUID: sAssignmentGuid
-			}, "DeleteAssignment", "POST");
+			}]).then(function (resolve) {
+				return this.executeFunctionImport(oModel, {
+					AssignmentGUID: sAssignmentGuid
+				}, "DeleteAssignment", "POST");
+			}.bind(this));
 		},
 		/**
 		 * update assignment 
