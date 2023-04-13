@@ -596,7 +596,7 @@ sap.ui.define([
 				if (resolve) { // If user click yes
 					oGanttModel.setProperty(sPath + "/busy", true);
 					fnDeleteAssignment();
-				} else { // If user clicks no OR if no tool exists
+				} else { // If no tool exists
 					this._showConfirmMessageBox.call(this, sConfirmMessage).then(function (data) {
 						oGanttModel.setProperty(sPath + "/busy", true);
 						if (data === "YES") {
