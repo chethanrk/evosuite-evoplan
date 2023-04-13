@@ -200,6 +200,9 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Check whether tool exists under demand assignment and ask for user confirmation befire deleting assignment
+		 */
 		checkToolExists: function (aContexts) {
 			var bToolExists = false,
 				oAsgnData;

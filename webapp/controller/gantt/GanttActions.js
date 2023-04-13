@@ -590,13 +590,13 @@ sap.ui.define([
 				sConfirmMessage = oResourceBundle.getText("xmsg.deleteAllSplitAssignments");
 			}
 
-			this.checkToolExists([{
+			this.checkToolExists([{ // check tool exists
 				AssignmentGUID: sAssignGuid
 			}]).then(function (resolve) {
-				if (resolve) {
+				if (resolve) { // If user click yes
 					oGanttModel.setProperty(sPath + "/busy", true);
 					fnDeleteAssignment();
-				} else {
+				} else { // If user clicks no OR if no tool exists
 					this._showConfirmMessageBox.call(this, sConfirmMessage).then(function (data) {
 						oGanttModel.setProperty(sPath + "/busy", true);
 						if (data === "YES") {
