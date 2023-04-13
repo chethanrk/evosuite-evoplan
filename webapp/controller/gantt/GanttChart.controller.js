@@ -760,7 +760,6 @@ sap.ui.define([
 			endDate.setDate(oTargetDate.getDate() + parseInt(iDefNum));
 			this.oViewModel.setProperty("/PRT/defaultStartDate", oTargetDate);
 			this.oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
-			console.log(this._mParameters);
 			this.checksBeforeAssignTools(aSources, oResourceData, this._mParameters);
 		},
 
