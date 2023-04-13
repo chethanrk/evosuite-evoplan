@@ -170,20 +170,18 @@ sap.ui.define([
 				return;
 			}
 
-			this.checkToolExists(aContextPaths).then(function (resolve) {
-				for (var i in aContextPaths) {
-					sAssignmentGuid = this._oViewModel.getProperty(aContextPaths[i] + "/Guid");
-					aRemovedIndices.push(aContextPaths[i].split("/")[aContextPaths[i].split("/").length - 1]); // getting index of selected row
-					oParams = {
-						AssignmentGUID: sAssignmentGuid
-					};
-					if (parseInt(i, 10) === aContextPaths.length - 1) {
-						bIsLast = true;
-						this._oViewModel.setProperty(sRemovedIndicesPath, aRemovedIndices);
-					}
-					this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, bIsLast);
+			for (var i in aContextPaths) {
+				sAssignmentGuid = this._oViewModel.getProperty(aContextPaths[i] + "/Guid");
+				aRemovedIndices.push(aContextPaths[i].split("/")[aContextPaths[i].split("/").length - 1]); // getting index of selected row
+				oParams = {
+					AssignmentGUID: sAssignmentGuid
+				};
+				if (parseInt(i, 10) === aContextPaths.length - 1) {
+					bIsLast = true;
+					this._oViewModel.setProperty(sRemovedIndicesPath, aRemovedIndices);
 				}
-			}.bind(this));
+				this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, bIsLast);
+			}
 		},
 		/**
 		 * Refresh Assignment Dialog after every delete operation
