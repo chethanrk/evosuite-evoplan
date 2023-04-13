@@ -368,13 +368,9 @@ sap.ui.define([
 		 * @return {Promise}
 		 */
 		deleteAssignment: function (oModel, sAssignmentGuid) {
-			this.checkToolExists([{
+			return this.executeFunctionImport(oModel, {
 				AssignmentGUID: sAssignmentGuid
-			}]).then(function (resolve) {
-				return this.executeFunctionImport(oModel, {
-					AssignmentGUID: sAssignmentGuid
-				}, "DeleteAssignment", "POST");
-			}.bind(this));
+			}, "DeleteAssignment", "POST");
 		},
 		/**
 		 * update assignment 
@@ -569,32 +565,46 @@ sap.ui.define([
 				oResourceBundle = this.getResourceBundle(),
 				sConfirmMessage = oResourceBundle.getText("ymsg.confirmDel");
 
+			var fnDeleteAssignment = function () {
+				this.deleteAssignment(oModel, sAssignGuid).then(function () {
+						oGanttModel.setProperty(sPath + "/busy", false);
+						this.getModel("ganttModel").setProperty(sPath, null);
+						this.getModel("ganttOriginalData").setProperty(sPath, null);
+						this._deleteChildAssignment(sAssignGuid, sPath);
+						oEventBus.publish("BaseController", "refreshCapacity", {
+							sTargetPath: sPath.split("/AssignmentSet/results/")[0]
+						});
+						oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+						if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
+							// in case of split unassign, all the splits are unassigned from backend,
+							// thus on refresh of the entire gantt the splits are also deleted from the gantt UI
+							oEventBus.publish("BaseController", "refreshFullGantt", {});
+						}
+					}.bind(this),
+					function () {
+						oGanttModel.setProperty(sPath + "/busy", false);
+					});
+			}.bind(this);
+
 			if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
 				sConfirmMessage = oResourceBundle.getText("xmsg.deleteAllSplitAssignments");
 			}
-			this._showConfirmMessageBox.call(this, sConfirmMessage).then(function (data) {
-				oGanttModel.setProperty(sPath + "/busy", true);
-				if (data === "YES") {
-					this.deleteAssignment(oModel, sAssignGuid).then(function () {
-							oGanttModel.setProperty(sPath + "/busy", false);
-							this.getModel("ganttModel").setProperty(sPath, null);
-							this.getModel("ganttOriginalData").setProperty(sPath, null);
-							this._deleteChildAssignment(sAssignGuid, sPath);
-							oEventBus.publish("BaseController", "refreshCapacity", {
-								sTargetPath: sPath.split("/AssignmentSet/results/")[0]
-							});
-							oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
-							if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
-								// in case of split unassign, all the splits are unassigned from backend,
-								// thus on refresh of the entire gantt the splits are also deleted from the gantt UI
-								oEventBus.publish("BaseController", "refreshFullGantt", {});
-							}
-						}.bind(this),
-						function () {
-							oGanttModel.setProperty(sPath + "/busy", false);
-						});
+
+			this.checkToolExists([{
+				AssignmentGUID: sAssignGuid
+			}]).then(function (resolve) {
+				if (resolve) {
+					oGanttModel.setProperty(sPath + "/busy", true);
+					fnDeleteAssignment();
 				} else {
-					oGanttModel.setProperty(sPath + "/busy", false);
+					this._showConfirmMessageBox.call(this, sConfirmMessage).then(function (data) {
+						oGanttModel.setProperty(sPath + "/busy", true);
+						if (data === "YES") {
+							fnDeleteAssignment();
+						} else {
+							oGanttModel.setProperty(sPath + "/busy", false);
+						}
+					}.bind(this));
 				}
 			}.bind(this));
 		},

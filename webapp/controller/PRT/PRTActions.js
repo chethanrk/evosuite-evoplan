@@ -218,13 +218,11 @@ sap.ui.define([
 				if (bToolExists) {
 					this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.confirmAssignmentDelete")).then(function (response) {
 						if (sap.m.MessageBox.Action.YES === response) {
-							resolve();
-						} else {
-							reject();
+							resolve(bToolExists);
 						}
 					}.bind(this));
 				} else {
-					resolve();
+					resolve(bToolExists);
 				}
 			}.bind(this));
 
