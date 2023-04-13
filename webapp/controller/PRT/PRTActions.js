@@ -45,7 +45,7 @@ sap.ui.define([
 				this._proceedToAssignTools(aSources, oDateParams, mParameters);
 
 			} else if (sNodeType === "RESOURCE") {
-		
+
 				if (oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) { // If Dialog show config is on 
 					this.openDateSelectionDialog(this.getView(), oDateParams, aSources, mParameters);
 				} else { // If dialog show config is off
@@ -56,7 +56,7 @@ sap.ui.define([
 					this._proceedToAssignTools(aSources, oDateParams, mParameters);
 				}
 
-			} else if (sNodeType === "ASSIGNMENT" && oTargetObj.ASSIGNMENT_TYPE !=="PRT") {
+			} else if (sNodeType === "ASSIGNMENT" && oTargetObj.ASSIGNMENT_TYPE !== "PRT") {
 				oDateParams.DateFrom = oTargetObj.StartDate;
 				oDateParams.TimeFrom = oTargetObj.StartTime;
 				oDateParams.DateTo = oTargetObj.EndDate;
@@ -153,7 +153,6 @@ sap.ui.define([
 				this._oDateParams.TimeFrom.ms = oStartDate.getTime();
 				this._oDateParams.DateTo = oEndDate;
 				this._oDateParams.TimeTo.ms = oEndDate.getTime();
-
 				this._proceedToAssignTools(this._aSources, this._oDateParams, this._mParameters);
 				this.closeDateSelectionDialog();
 			} else {

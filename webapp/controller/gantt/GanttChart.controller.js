@@ -738,6 +738,7 @@ sap.ui.define([
 			}
 		},
 		onProceedGanttToolDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
+			
 			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
 				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
@@ -759,41 +760,7 @@ sap.ui.define([
 			endDate.setDate(oTargetDate.getDate() + parseInt(iDefNum));
 			this.oViewModel.setProperty("/PRT/defaultStartDate", oTargetDate);
 			this.oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
-			var oTool = {
-				AssignmentType: "",
-				DEMAND_STATUS: "ASGN",
-				DEMAND_STATUS_COLOR: "#90EE90",
-				DEMAND_STATUS_ICON: "sap-icon://employee-pane",
-				DateFrom: moment(oTargetDate).toDate(),
-				DateTo: moment(oTargetDate).add(5, "hour").toDate(),
-				DemandGuid: "0AA10FE57E901EDC89EAB37B4CB92EB0",
-				Description: "Loading. . .",
-				Effort: "24.0",
-				EffortUnit: "H",
-				FIRSTNAME: "Ian",
-				GROUP_DESCRIPTION: "Production Line (TEST)",
-				Guid: "thisisdummyguidassignment",
-				LASTNAME: "Robb",
-				LATITUDE: "50.110942871000",
-				LONGITUDE: "8.673195901300",
-				NODE_TYPE: "TOOL",
-				NOTIFICATION: "",
-				NOTIFICATION_DESC: "",
-				OPERATIONID: "0010",
-				ORDERID: "830821",
-				ObjectId: "0AA10FE57E901EE9BBCE7C31764A1B0D//0AA10FE57E901EE9BBCE7C317649FB0D",
-				PERSON_NUMBER: "01000000",
-				RESOURCE_DESCRIPTION: "Ian Robb",
-				ResourceGroupGuid: "0AA10FE57E901EE9BBCE7C317649FB0D",
-				ResourceGuid: "0AA10FE57E901EE9BBCE7C31764A1B0D",
-				SUBOPERATIONID: "0000"
-			};
-			var aTools = this.oGanttModel.getProperty(sTargetPath).AssignmentSet.results; // to be set when tool set association is ready from backend
-			var aTools = [];
-			aTools.push(oTool);
-			var sPath = sTargetPath + "/AssignmentSet/results/" + (aTools.length - 1);
-			this.oGanttModel.setProperty(sTargetPath + "/AssignmentSet/results", aTools);
-			this.oGanttModel.refresh();
+			console.log(this._mParameters);
 			this.checksBeforeAssignTools(aSources, oResourceData, this._mParameters);
 		},
 
