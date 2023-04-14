@@ -162,7 +162,6 @@ sap.ui.define([
 				iNewEffort = this.getEffortTimeDifference(sDateFrom, sDateTo),
 				oResourceBundle = this._oView.getController().getResourceBundle(),
 				bValidEffort = this.onValidateEffort();
-			debugger;
 
 			if (this.oAssignmentModel.getData().isPRT) {
 				this.onSaveToolDialog();
