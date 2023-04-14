@@ -32,7 +32,7 @@ sap.ui.define([
 			this._oUserModel = this.getModel("user");
 			this._oDraggableToolsTable = this.byId("idToolsTable");
 			this._oToolsTable = this.byId("idToolsTable").getTable();
-			this._configureDataTable(this._oToolsTable);
+			this._configureToolDataTable(this._oToolsTable);
 			this._aSelectedRowsIdx = [];
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._mParameters = {
@@ -177,7 +177,7 @@ sap.ui.define([
 		 * @param oDataTable
 		 * @private
 		 */
-		_configureDataTable: function (oDataTable) {
+		_configureToolDataTable: function (oDataTable) {
 			oDataTable.attachRowSelectionChange(function (oEvent) {
 				var selected = this._oToolsTable.getSelectedIndices(),
 					iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_TOOLS_SELECT_ALL"),
