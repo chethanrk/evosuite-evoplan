@@ -61,7 +61,7 @@ sap.ui.define([
 					this._proceedToAssignTools(aSources, oDateParams, mParameters);
 				}
 
-			} else if (sNodeType === "ASSIGNMENT" && oTargetObj.ASSIGNMENT_TYPE !=="PRT") {
+			} else if (sNodeType === "ASSIGNMENT" && oTargetObj.ASSIGNMENT_TYPE !== "PRT") {
 				oDateParams.DateFrom = oTargetObj.StartDate;
 				oDateParams.TimeFrom = oTargetObj.StartTime;
 				oDateParams.DateTo = oTargetObj.EndDate;
@@ -187,7 +187,7 @@ sap.ui.define([
 				sPath: sPath,
 				sDeepPath: null,
 				parentContext: oContext,
-				oDialogController: this.oComponent.toolsAssignInfoDialog,
+				oDialogController: this.oComponent.assignInfoDialog,
 				refreshParameters: mParameters
 			};
 			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterToolsAssignDialogLoad.bind(this));
@@ -196,7 +196,7 @@ sap.ui.define([
 			if (sEvent === "dataReceived") {
 				//Fetching Context Data for PlanningCalendar 
 				oDialog.setBusy(false);
-				this.oComponent.toolsAssignInfoDialog.onOpen(oDialog, oView, sPath, data, mParams.refreshParameters);
+				this.oComponent.assignInfoDialog.onToolOpen(oDialog, oView, sPath, data, mParams.refreshParameters);
 			}
 		},
 	});
