@@ -99,7 +99,7 @@ sap.ui.define([
 		_getDefaultPRTToolsAssignmentModelObject: function (oAssignmentData) {
 			return {
 				AllowChange: true,
-				AllowReassign: false,
+				AllowReassign: true,
 				AllowUnassign: true,
 				PrtAssignmentGuid: oAssignmentData.PrtAssignmentGuid,
 				DateFrom: formatter.mergeDateTime(oAssignmentData.DATE_FROM, oAssignmentData.TIME_FROM),

@@ -88,10 +88,16 @@ sap.ui.define([
 		 */
 		_getPSDemandFilters: function (_aPSDemandPaths) {
 			var aDemandGuid = [],
-				aFilters = [];
+				aFilters = [],
+				oSource = JSON.parse(this.localStorage.get("Evo-Dmnd-guid"));
 			for (var i = 0; i < _aPSDemandPaths.length; i++) {
-				var sPath = _aPSDemandPaths[i].sPath,
-					sGuid = this._oView.getModel().getProperty(sPath).Guid;
+					var sPath = _aPSDemandPaths[i].sPath,
+					sGuid;
+				if(this._oView.getModel().getProperty(sPath)){
+						sGuid = this._oView.getModel().getProperty(sPath).Guid;
+				} else {
+					sGuid = oSource[i].oDemandObject.Guid;
+				}	
 				aDemandGuid.push(new Filter("Guid", FilterOperator.EQ, sGuid));
 			}
 			aFilters.push(new Filter({
@@ -193,6 +199,7 @@ sap.ui.define([
 							this._oController.onProceedToGanttDropOnResource(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
 						} else if (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
 							this._oController.onProceedNewGanttDemandDrop(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
+							this._oView.getModel("viewModel").setProperty("/dragSession", null);
 						} else {
 							this._oController.assignedDemands(aSources, this._sPath, this._mParameter);
 						}
@@ -205,6 +212,7 @@ sap.ui.define([
 		 * Closing Dialog
 		 */
 		onCancelNetworkAssignment: function () {
+			this._oView.getModel("viewModel").setProperty("/dragSession", null);
 			this._oDialog.close();
 		}
 
