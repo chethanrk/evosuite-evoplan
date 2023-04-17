@@ -741,8 +741,15 @@ sap.ui.define([
 				this.onProceedGanttToolDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
 			}
 		},
+		/**
+		 * this method is used to check and add validations on the 
+		 * tools dropped on resource and call the resprctive service for the same.
+		 * @param {object} oDraggedControl 
+		 * @param {object} oDroppedControl 
+		 * @param {object} oBrowserEvent 
+		 */
 		onProceedGanttToolDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
-
+			console.log(oDraggedControl, oDroppedControl, oBrowserEvent);
 			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
 				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
