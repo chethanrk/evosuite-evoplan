@@ -39,7 +39,7 @@ sap.ui.define([
 				bFromDemandTools: true
 			};
 			this._eventBus.subscribe("BaseController", "refreshToolsTable", this._refreshToolsTable, this);
-			
+
 			this._oRouter.getRoute("demandTools").attachPatternMatched(function () {
 				this._oViewModel.setProperty("/PRT/bIsGantt", false);
 			}.bind(this));
@@ -49,7 +49,7 @@ sap.ui.define([
 			this._oRouter.getRoute("GanttSplitTools").attachPatternMatched(function () {
 				this._oViewModel.setProperty("/PRT/bIsGantt", true);
 			}.bind(this));
-			
+
 			//Tool filter dialog to show in Gantt/Split-Gantt
 			this._oGanttToolsFilter = this.getView().byId("idGanttToolsFilterDialog");
 			this._oGanttToolsFilter ? this._oGanttToolsFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass()) : null;
@@ -117,7 +117,7 @@ sap.ui.define([
 				oToolsTable = this._oDraggableToolsTable.getTable(),
 				aIndices = oToolsTable.getSelectedIndices(),
 				oSelectedPaths;
-				
+
 			aIndices = aIndices.slice(0, this.getModel("user").getProperty("/DEFAULT_TOOLS_SELECT_ALL"));
 
 			if (aIndices.length > 0) {
@@ -179,24 +179,39 @@ sap.ui.define([
 		 */
 		_configureToolDataTable: function (oDataTable) {
 			oDataTable.attachRowSelectionChange(function (oEvent) {
-				var selected = this._oToolsTable.getSelectedIndices(),
+				var aSelectedIndices = this._oToolsTable.getSelectedIndices(),
 					iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_TOOLS_SELECT_ALL"),
 					sMsg;
+
 				
-				this._aSelectedRowsIdx = _.clone(selected);
-				if (this._aSelectedRowsIdx.length > 0) {
-					this._aSelectedRowsIdx.length = this._aSelectedRowsIdx.length > 0 && this._aSelectedRowsIdx.length <= iMaxRowSelection ? this._aSelectedRowsIdx
-						.length : iMaxRowSelection;
+				if (aSelectedIndices.length > iMaxRowSelection) {
+					var iLastIndex = aSelectedIndices.pop();
+					if (oEvent.getParameter("selectAll")) {
+						this._oToolsTable.removeSelectionInterval(iMaxRowSelection, iLastIndex);
+						sMsg = this.getResourceBundle().getText("ymsg.allToolSelect", [iMaxRowSelection]);
+						this.showMessageToast(sMsg);
+					} else {
+						this._oToolsTable.removeSelectionInterval(iLastIndex, iLastIndex);
+						sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+						this.showMessageToast(sMsg);
+					}
 				}
-				
+				this._aSelectedRowsIdx = _.clone(aSelectedIndices);
+
 				//If the selected demands exceeds more than the maintained selected configuration value
-				if (oEvent.getParameter("selectAll")) {
-					sMsg = this.getResourceBundle().getText("ymsg.allToolSelect", [this._aSelectedRowsIdx.length]);
-					this.showMessageToast(sMsg);
-				} else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
-					sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
-					this.showMessageToast(sMsg);
-				}
+				// if (oEvent.getParameter("selectAll")) {
+				// 	this._oToolsTable.clearSelection();
+				// 	this._oToolsTable.addSelectionInterval(0, iMaxRowSelection - 1);
+				// 	sMsg = this.getResourceBundle().getText("ymsg.allToolSelect", [this._aSelectedRowsIdx.length]);
+				// 	this.showMessageToast(sMsg);
+				// } else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
+				// 	this._oToolsTable.clearSelection();
+				// 	for (var i = 0; i < this._aSelectedRowsIdx; i++) {
+				// 		this._oToolsTable.addSelectionInterval(this._aSelectedRowsIdx[i], this._aSelectedRowsIdx[i]);
+				// 	}
+				// 	sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+				// 	this.showMessageToast(sMsg);
+				// }
 			}.bind(this));
 		}
 	});
