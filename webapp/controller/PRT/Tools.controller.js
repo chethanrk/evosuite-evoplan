@@ -117,8 +117,6 @@ sap.ui.define([
 				aIndices = oToolsTable.getSelectedIndices(),
 				oSelectedPaths;
 
-			aIndices = aIndices.slice(0, this.getModel("user").getProperty("/DEFAULT_TOOLS_SELECT_ALL"));
-
 			if (aIndices.length > 0) {
 				oSelectedPaths = this._getSelectedToolsPaths(this._oToolsTable, aIndices);
 			} else {
@@ -180,10 +178,10 @@ sap.ui.define([
 			oDataTable.attachRowSelectionChange(function (oEvent) {
 				var aSelectedIndices = this._oToolsTable.getSelectedIndices(),
 					iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_TOOLS_SELECT_ALL"),
-					sMsg;
+					sMsg,iLastIndex;
 
 				if (aSelectedIndices.length > iMaxRowSelection) {
-					var iLastIndex = aSelectedIndices.pop();
+					iLastIndex = aSelectedIndices.pop();
 					if (oEvent.getParameter("selectAll")) {
 						this._oToolsTable.removeSelectionInterval(iMaxRowSelection, iLastIndex);
 						sMsg = this.getResourceBundle().getText("ymsg.allToolSelect", [iMaxRowSelection]);
