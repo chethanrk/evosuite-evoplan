@@ -37,7 +37,7 @@ sap.ui.define([
 				bFromDemandTools: true
 			};
 			this._eventBus.subscribe("BaseController", "refreshToolsTable", this._refreshToolsTable, this);
-			
+
 			this._oRouter.getRoute("demandTools").attachPatternMatched(function () {
 				this._oViewModel.setProperty("/PRT/bIsGantt", false);
 			}.bind(this));
@@ -47,7 +47,7 @@ sap.ui.define([
 			this._oRouter.getRoute("GanttSplitTools").attachPatternMatched(function () {
 				this._oViewModel.setProperty("/PRT/bIsGantt", true);
 			}.bind(this));
-			
+
 			//Tool filter dialog to show in Gantt/Split-Gantt
 			this._oGanttToolsFilter = this.getView().byId("idGanttToolsFilterDialog");
 			this._oGanttToolsFilter ? this._oGanttToolsFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass()) : null;
@@ -114,15 +114,24 @@ sap.ui.define([
 				oDraggedControl = oDragSession.getDragControl(),
 				oToolsTable = this._oDraggableToolsTable.getTable(),
 				aIndices = oToolsTable.getSelectedIndices(),
-				oSelectedPaths;
+				oSelectedPaths, aSelectedToolObject = [];
 
-			if (aIndices.length > 0) {
+			if (aIndices.length > 1) {
 				oSelectedPaths = this._getSelectedToolsPaths(this._oToolsTable, aIndices);
 			} else {
 				oSelectedPaths = this._getSelectedToolsPaths(this._oToolsTable, [oDraggedControl.getIndex()]);
 			}
+			oSelectedPaths.aPathsData.forEach(function (item) {
+				aSelectedToolObject.push({
+					sPath: item.sPath,
+					oDemandObject: item.oData
+				});
+			});
 			// keeping the data in drag session
 			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
+			this.localStorage.put("Evo-Tools-guid", JSON.stringify(aSelectedToolObject));
+			this.localStorage.put("Evo-aPathsData", JSON.stringify(oSelectedPaths.aPathsData));
+			this.localStorage.put("Evo-toolDrag", "Tools");
 		},
 		/**
 		 * Open the Gantt Toolss Filter Dialog 

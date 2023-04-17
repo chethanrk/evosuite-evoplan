@@ -136,8 +136,9 @@ sap.ui.define([
 		onShapeDoubleClick: function (oEvent) {
 			var oShapeContext = oEvent.getParameter("shape").getBindingContext("ganttModel"),
 				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId(),
-				sNodeType = this.oGanttModel.getProperty(oShapeContext.getPath()).NodeType;
-			if (sNodeType === "ASSIGNMENT") {
+				sNodeType = this.oGanttModel.getProperty(oShapeContext.getPath()).NodeType,
+				bPRTAssgn = this.oGanttModel.getProperty(oShapeContext.getPath()).IS_PRT;
+			if (sNodeType === "ASSIGNMENT" && !bPRTAssgn) {
 				this.getOwnerComponent().GanttAssignmentPopOver.open(this.getView(), sap.ui.getCore().byId(sToolbarId + "-settingsButton"),
 					oShapeContext);
 			}
@@ -209,30 +210,35 @@ sap.ui.define([
 				bAllowVendorAssignment = this.getModel().getProperty(oDragContext + "/ALLOW_ASSIGNMENT_DIALOG"),
 				sOperationStartDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_START_DATE"),
 				sOperationEndDate = this.getModel().getProperty(oDragContext + "/FIXED_ASSGN_END_DATE"),
+				sToolDrag = this.localStorage.get("Evo-toolDrag"),
 				aPSDemandsNetworkAssignment = this._showNetworkAssignments(this.oViewModel);
 			this.onShowOperationTimes(this.oViewModel);
 			this.onAllowVendorAssignment(this.oViewModel, this.oUserModel);
 
 			//Allowing Demand Drop only on Non-Assignmnet Nodes   @Since 2205
-			if (oDropObject.NodeType !== "ASSIGNMENT") {
-				//Checking PS Demands for Network Assignment 
-				if (this.oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
-					this.getOwnerComponent().NetworkAssignment.open(this.getView(), oDropObject, aPSDemandsNetworkAssignment, this._mParameters,
-						oDraggedControl,
-						oDroppedControl, oBrowserEvent);
-				}
-				//Checking Vendor Assignment for External Resources
-				else if (this.oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
-					this.getOwnerComponent().VendorAssignment.open(this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
-						oDroppedControl, oBrowserEvent);
-				} else {
-					if (this.oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !==
-						null) {
-						this.getOwnerComponent().OperationTimeCheck.open(this.getView(), {
-							bFromNewGantt: true
-						}, oDropContext.getPath(), oDraggedControl, oDroppedControl, oBrowserEvent);
+			if (sToolDrag === "Tools") {
+				this.onToolDrop(oEvent);
+			} else {
+				if (oDropObject.NodeType !== "ASSIGNMENT") {
+					//Checking PS Demands for Network Assignment 
+					if (this.oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+						this.getOwnerComponent().NetworkAssignment.open(this.getView(), oDropObject, aPSDemandsNetworkAssignment, this._mParameters,
+							oDraggedControl,
+							oDroppedControl, oBrowserEvent);
+					}
+					//Checking Vendor Assignment for External Resources
+					else if (this.oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oDropObject.ISEXTERNAL && bAllowVendorAssignment) {
+						this.getOwnerComponent().VendorAssignment.open(this.getView(), oDropContext.getPath(), this._mParameters, oDraggedControl,
+							oDroppedControl, oBrowserEvent);
 					} else {
-						this.onProceedNewGanttDemandDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
+						if (this.oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && sOperationStartDate !== null && sOperationEndDate !==
+							null) {
+							this.getOwnerComponent().OperationTimeCheck.open(this.getView(), {
+								bFromNewGantt: true
+							}, oDropContext.getPath(), oDraggedControl, oDroppedControl, oBrowserEvent);
+						} else {
+							this.onProceedNewGanttDemandDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
+						}
 					}
 				}
 			}
@@ -720,6 +726,53 @@ sap.ui.define([
 				this._aGradientSVGDef.push(sGradId);
 			}
 			return "url(#" + sGradId + ")";
+		},
+		/**
+		 * when we try to drop the tool on the resource.
+		 * @param oEvent 
+		 */
+		onToolDrop: function (oEvent) {
+			var oDraggedControl = oEvent.getParameter("draggedControl"),
+				oDroppedControl = oEvent.getParameter("droppedControl"),
+				oBrowserEvent = oEvent.getParameter("browserEvent"),
+				oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
+				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
+				oDropObject = oDropContext.getObject();
+			if (oDropObject.NodeType !== "RES_GROUP") {
+				this.onProceedGanttToolDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
+			}
+		},
+		/**
+		 * this method is used to check and add validations on the 
+		 * tools dropped on resource and call the resprctive service for the same.
+		 * @param {object} oDraggedControl 
+		 * @param {object} oDroppedControl 
+		 * @param {object} oBrowserEvent 
+		 */
+		onProceedGanttToolDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
+			console.log(oDraggedControl, oDroppedControl, oBrowserEvent);
+			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
+				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
+				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
+				sTargetPath = oDropContext.getPath(),
+				aSources = this.oViewModel.getProperty("/dragSession") || this.localStorage.get("Evo-aPathsData"),
+				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
+				iDefNum = this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS"),
+				oSvgPoint, oTargetDate, endDate;
+			if (oBrowserEvent.target.tagName === "rect" && oDragContext) { // When we drop on gantt chart in the same view
+				//TODO to be developed under another ticket.
+			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) { // When we drop on gantt chart from split window
+				//TODO to be developed under another ticket.
+			} else if (oDragContext) { // When we drop on the resource 
+				oTargetDate = new Date(new Date().setHours(0));
+			} else { // When we drop on the resource from split window
+				oTargetDate = new Date(new Date().setHours(0));
+			}
+			endDate = _.cloneDeep(oTargetDate);
+			endDate.setDate(oTargetDate.getDate() + parseInt(iDefNum));
+			this.oViewModel.setProperty("/PRT/defaultStartDate", oTargetDate);
+			this.oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
+			this.checksBeforeAssignTools(aSources, oResourceData, this._mParameters);
 		},
 
 		/* =========================================================== */
@@ -1633,14 +1686,18 @@ sap.ui.define([
 				.then(function (resolve) {
 					return this._loadTreeData(resolve, aParamDemandsFilter);
 				}.bind(this))
-				.then(function () {
+				.then(function (resolve) {
+					return this._loadTreeData(resolve, aParamDemandsFilter);
+				}.bind(this))
+				.then(function (resolve) {
 					this._treeTable.expandToLevel(1);
 					this._treeTable.setBusy(false);
 					this._changeGanttHorizonViewAt(this._axisTime.getZoomLevel(), this._axisTime);
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
-				}.bind(this));
+				}.bind(this));;
 			this._resetToolbarButtons();
 		},
+
 		/**
 		 * when data was loaded then children needs added to right parent node
 		 * @param iLevel
@@ -1648,24 +1705,29 @@ sap.ui.define([
 		 */
 		_addChildrenToParent: function (iLevel, oResData) {
 			var aChildren = this.oGanttModel.getProperty("/data/children");
-			var callbackFn = function (oItem) {
+			var callbackFn = function (oItem, level) {
 				oItem.children = [];
 				oResData.forEach(function (oResItem) {
 					if (oItem.NodeId === oResItem.ParentNodeId) {
-						//add assignments as children in tree for expanding
-						if (oResItem.AssignmentSet && oResItem.AssignmentSet.results.length > 0) {
-							oResItem.children = oResItem.AssignmentSet.results;
-							oResItem.children.forEach(function (oAssignItem, idx) {
-								oResItem.AssignmentSet.results[idx].NodeType = "ASSIGNMENT";
-								oResItem.AssignmentSet.results[idx].ResourceAvailabilitySet = oResItem.ResourceAvailabilitySet;
-								var clonedObj = _.cloneDeep(oResItem.AssignmentSet.results[idx]);
-								//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
-								clonedObj.OBJECT_ID_RELATION = clonedObj.OBJECT_ID_RELATION + "//" + clonedObj.ResourceGuid;
-								oResItem.children[idx].AssignmentSet = {
-									results: [clonedObj]
-								};
+						if (oResItem.NodeType === "ASSIGNMENT") { // if it's assignment node then push same assignment in AssignmentSet to show the Shape
+							if (oResItem.AssignmentSet && oResItem.AssignmentSet.results.length > 0) {
+								oResItem.children = _.cloneDeep(oResItem.AssignmentSet.results);
+								oResItem.children.forEach(function (oAssignItem, idx) {
+									oAssignItem.NodeType = "ASSIGNMENT";
+									var clonedObj = _.cloneDeep(oAssignItem);
+									oAssignItem.AssignmentSet = { // add PRT as children to to show shape
+										results: [clonedObj]
+									};
+								});
+							}
+							oItem.AssignmentSet.results.forEach(function (oAsgn) {
+								if (oAsgn.Guid === oResItem.AssignmentGuid) {
+									oResItem.AssignmentSet.results.push(oAsgn);
+								}
 							});
+							oResItem.ResourceAvailabilitySet = oItem.ResourceAvailabilitySet; // copying resource availabilities to assignment node
 						}
+
 						oItem.children.push(oResItem);
 					}
 				});
@@ -1673,7 +1735,6 @@ sap.ui.define([
 			aChildren = this._recurseChildren2Level(aChildren, iLevel, callbackFn);
 			this.oGanttModel.setProperty("/data/children", aChildren);
 		},
-
 		/**
 		 * loop trough all nested array of children
 		 * When max level for search was reached execute callbackFn
