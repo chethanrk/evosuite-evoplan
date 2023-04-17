@@ -29,7 +29,7 @@ sap.ui.define([
 			this._eventBus.publish("AssignInfoDialog", "selectAssign", {
 				oView: this.oView,
 				isToolReAssign: true,
-				aSelectedPaths: ["/PRTAssignmentSet('" + this.oView.getModel('assignment').getProperty('/PrtAssignmentGuid') + "')"]
+				aSelectedPaths: ["/AssignmentSet('" + this.oView.getModel('assignment').getProperty('/Guid') + "')"]
 			});
 		},
 	});
