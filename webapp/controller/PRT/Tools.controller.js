@@ -33,7 +33,6 @@ sap.ui.define([
 			this._oDraggableToolsTable = this.byId("idToolsTable");
 			this._oToolsTable = this.byId("idToolsTable").getTable();
 			this._configureToolDataTable(this._oToolsTable);
-			this._aSelectedRowsIdx = [];
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._mParameters = {
 				bFromDemandTools: true
@@ -183,7 +182,6 @@ sap.ui.define([
 					iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_TOOLS_SELECT_ALL"),
 					sMsg;
 
-				
 				if (aSelectedIndices.length > iMaxRowSelection) {
 					var iLastIndex = aSelectedIndices.pop();
 					if (oEvent.getParameter("selectAll")) {
@@ -196,22 +194,6 @@ sap.ui.define([
 						this.showMessageToast(sMsg);
 					}
 				}
-				this._aSelectedRowsIdx = _.clone(aSelectedIndices);
-
-				//If the selected demands exceeds more than the maintained selected configuration value
-				// if (oEvent.getParameter("selectAll")) {
-				// 	this._oToolsTable.clearSelection();
-				// 	this._oToolsTable.addSelectionInterval(0, iMaxRowSelection - 1);
-				// 	sMsg = this.getResourceBundle().getText("ymsg.allToolSelect", [this._aSelectedRowsIdx.length]);
-				// 	this.showMessageToast(sMsg);
-				// } else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
-				// 	this._oToolsTable.clearSelection();
-				// 	for (var i = 0; i < this._aSelectedRowsIdx; i++) {
-				// 		this._oToolsTable.addSelectionInterval(this._aSelectedRowsIdx[i], this._aSelectedRowsIdx[i]);
-				// 	}
-				// 	sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
-				// 	this.showMessageToast(sMsg);
-				// }
 			}.bind(this));
 		}
 	});
