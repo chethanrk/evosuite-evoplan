@@ -726,6 +726,10 @@ sap.ui.define([
 			}
 			return "url(#" + sGradId + ")";
 		},
+		/**
+		 * when we try to drop the tool on the resource.
+		 * @param oEvent 
+		 */
 		onToolDrop: function (oEvent) {
 			var oDraggedControl = oEvent.getParameter("draggedControl"),
 				oDroppedControl = oEvent.getParameter("droppedControl"),
@@ -738,7 +742,7 @@ sap.ui.define([
 			}
 		},
 		onProceedGanttToolDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
-			
+
 			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
 				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
