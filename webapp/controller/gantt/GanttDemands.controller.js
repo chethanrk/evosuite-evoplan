@@ -130,6 +130,7 @@ sap.ui.define([
 			this._viewModel.setProperty("/dragSession", aPathsData);
 			this.localStorage.put("Evo-Dmnd-guid", JSON.stringify(aSelectedDemandObject));
 			this.localStorage.put("Evo-aPathsData", JSON.stringify(aPathsData));
+			this.localStorage.put("Evo-toolDrag", "");
 
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);

@@ -584,9 +584,14 @@ sap.ui.define([
 			var oTargetControl = oEvent.getParameter("droppedControl"),
 				oTargetContext = oTargetControl.getBindingContext(),
 				sTargetPath = oTargetContext.getPath(),
+				oTargetObj = this.getModel().getProperty(sTargetPath),
 				aSources = this._oViewModel.getProperty("/dragSession");
-
-			this.checksBeforeAssignTools(aSources, sTargetPath, this._mParameters);
+			var endDate = new Date(),
+				iDefNum = this.getModel("user").getProperty("/DEFAULT_TOOL_ASGN_DAYS");
+			endDate.setDate(endDate.getDate() + parseInt(iDefNum));
+			this._oViewModel.setProperty("/PRT/defaultStartDate", new Date());
+			this._oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
+			this.checksBeforeAssignTools(aSources, oTargetObj, this._mParameters);
 		}
 	});
 });
