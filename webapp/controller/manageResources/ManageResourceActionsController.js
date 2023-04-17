@@ -169,6 +169,7 @@ sap.ui.define([
 				this.showMessageToast(sMsg);
 				return;
 			}
+
 			for (var i in aContextPaths) {
 				sAssignmentGuid = this._oViewModel.getProperty(aContextPaths[i] + "/Guid");
 				aRemovedIndices.push(aContextPaths[i].split("/")[aContextPaths[i].split("/").length - 1]); // getting index of selected row
