@@ -132,12 +132,16 @@ sap.ui.define([
 		 * @param {string} sResourceIcon icon for Status Resource
 		 * @returns {string} icon for Resource base on Given Parameters
 		 */
-		getResourceIcon: function (sValue, sStatusIcon, sResourceIcon) {
+		getResourceIcon: function (sValue, sStatusIcon, sResourceIcon, bPRT, sPRTIcon) {
 			var iconFormat = resourceFormats[sValue];
 			if (sValue === "RESOURCE") {
 				return sResourceIcon;
-			}
-			if (sStatusIcon) {
+			} else if (bPRT) {
+				if (sPRTIcon) {
+					return sPRTIcon;
+				}
+				return sStatusIcon;
+			} else if (sStatusIcon) {
 				return sStatusIcon;
 			} else {
 				if (iconFormat) {
@@ -948,7 +952,8 @@ sap.ui.define([
 		 * @returns sDemandDesc
 		 */
 		formatGanttResourceTitle: function (sNodeType, sDescription, sDemandDesc) {
-			if (sNodeType === "ASSIGNMENT") {
+			//	if (sNodeType === "ASSIGNMENT") {
+			if (sDemandDesc) {
 				return sDemandDesc;
 			}
 			return sDescription;
