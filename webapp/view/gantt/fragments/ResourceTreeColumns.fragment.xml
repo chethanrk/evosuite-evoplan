@@ -7,7 +7,7 @@
 				tooltip="{ parts:[{path: 'ganttModel>NodeType'},{path: 'ganttModel>Description'},{path: 'ganttModel>DemandDesc'}], formatter: '.formatter.formatGanttResourceTitle' }"
 				titleStyle="{ path: 'ganttModel>NodeType', formatter: '.formatter.formatResourceTitle' }"
 				iconColor="{ path: 'ganttModel>IS_AVAILABLE', formatter: '.formatter.formatIconColor' }"
-				icon="{ parts:[{path: 'ganttModel>NodeType'},{path: 'ganttModel>StatusIcon'},{path: 'ganttModel>ResourceIcon'} ], formatter: '.formatter.getResourceIcon' }"
+				icon="{ parts:[{path: 'ganttModel>NodeType'},{path: 'ganttModel>StatusIcon'},{path: 'ganttModel>ResourceIcon'},{path: 'ganttModel>IS_PRT'},{path: 'ganttModel>DEMAND_STATUS_ICON'}], formatter: '.formatter.getResourceIcon' }"
 				isLink="{ path: 'ganttModel>NodeType', formatter: '.formatter.isAssignmentorTool' }" press="onPressAssignmentLink"
 				resourceIconPress="onResourceIconPress" enableQualification="{user>/ENABLE_QUALIFICATION}"
 				isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatGanttProgressBarVisibility'}"
