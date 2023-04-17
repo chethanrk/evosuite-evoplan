@@ -5,7 +5,6 @@ sap.ui.define([
 	"com/evorait/evoplan/model/models",
 	"com/evorait/evoplan/assets/js/moment-with-locales.min",
 	"com/evorait/evoplan/controller/ErrorHandler",
-	"com/evorait/evoplan/controller/PRT/ToolsAssignInfoDialog",
 	"com/evorait/evoplan/controller/common/AssignInfoDialog",
 	"com/evorait/evoplan/controller/common/AssignTreeDialog",
 	"com/evorait/evoplan/controller/common/StatusSelectDialog",
@@ -46,7 +45,6 @@ sap.ui.define([
 	models,
 	momentjs,
 	ErrorHandler,
-	ToolsAssignInfoDialog,
 	AssignInfoDialog,
 	AssignTreeDialog,
 	StatusSelectDialog,
@@ -242,20 +240,17 @@ sap.ui.define([
 		 */
 		_initDialogs: function () {
 			//display and change assignment dialog
-			this.toolsAssignInfoDialog = new ToolsAssignInfoDialog();
-			this.toolsAssignInfoDialog.init();
-			
 			this.assignInfoDialog = new AssignInfoDialog();
 			this.assignInfoDialog.init();
-			
+
 			//select resource from tree for assigning dialog
 			this.assignTreeDialog = new AssignTreeDialog();
 			this.assignTreeDialog.init();
-			
+
 			//change status of demand
 			this.statusSelectDialog = new StatusSelectDialog();
 			this.statusSelectDialog.init();
-			
+
 			// bulk operations for unassign/reassign demands
 			this.assignActionsDialog = new AssignActionsDialog();
 			this.assignActionsDialog.init();
