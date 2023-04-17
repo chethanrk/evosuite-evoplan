@@ -136,8 +136,9 @@ sap.ui.define([
 		onShapeDoubleClick: function (oEvent) {
 			var oShapeContext = oEvent.getParameter("shape").getBindingContext("ganttModel"),
 				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId(),
-				sNodeType = this.oGanttModel.getProperty(oShapeContext.getPath()).NodeType;
-			if (sNodeType === "ASSIGNMENT") {
+				sNodeType = this.oGanttModel.getProperty(oShapeContext.getPath()).NodeType,
+				bPRTAssgn = this.oGanttModel.getProperty(oShapeContext.getPath()).IS_PRT;
+			if (sNodeType === "ASSIGNMENT" && !bPRTAssgn) {
 				this.getOwnerComponent().GanttAssignmentPopOver.open(this.getView(), sap.ui.getCore().byId(sToolbarId + "-settingsButton"),
 					oShapeContext);
 			}
@@ -1633,14 +1634,18 @@ sap.ui.define([
 				.then(function (resolve) {
 					return this._loadTreeData(resolve, aParamDemandsFilter);
 				}.bind(this))
-				.then(function () {
+				.then(function (resolve) {
+					return this._loadTreeData(resolve, aParamDemandsFilter);
+				}.bind(this))
+				.then(function (resolve) {
 					this._treeTable.expandToLevel(1);
 					this._treeTable.setBusy(false);
 					this._changeGanttHorizonViewAt(this._axisTime.getZoomLevel(), this._axisTime);
 					this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
-				}.bind(this));
+				}.bind(this));;
 			this._resetToolbarButtons();
 		},
+
 		/**
 		 * when data was loaded then children needs added to right parent node
 		 * @param iLevel
@@ -1648,24 +1653,29 @@ sap.ui.define([
 		 */
 		_addChildrenToParent: function (iLevel, oResData) {
 			var aChildren = this.oGanttModel.getProperty("/data/children");
-			var callbackFn = function (oItem) {
+			var callbackFn = function (oItem, level) {
 				oItem.children = [];
 				oResData.forEach(function (oResItem) {
 					if (oItem.NodeId === oResItem.ParentNodeId) {
-						//add assignments as children in tree for expanding
-						if (oResItem.AssignmentSet && oResItem.AssignmentSet.results.length > 0) {
-							oResItem.children = oResItem.AssignmentSet.results;
-							oResItem.children.forEach(function (oAssignItem, idx) {
-								oResItem.AssignmentSet.results[idx].NodeType = "ASSIGNMENT";
-								oResItem.AssignmentSet.results[idx].ResourceAvailabilitySet = oResItem.ResourceAvailabilitySet;
-								var clonedObj = _.cloneDeep(oResItem.AssignmentSet.results[idx]);
-								//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
-								clonedObj.OBJECT_ID_RELATION = clonedObj.OBJECT_ID_RELATION + "//" + clonedObj.ResourceGuid;
-								oResItem.children[idx].AssignmentSet = {
-									results: [clonedObj]
-								};
+						if (oResItem.NodeType === "ASSIGNMENT") { // if it's assignment node then push same assignment in AssignmentSet to show the Shape
+							if (oResItem.AssignmentSet && oResItem.AssignmentSet.results.length > 0) {
+								oResItem.children = _.cloneDeep(oResItem.AssignmentSet.results);
+								oResItem.children.forEach(function (oAssignItem, idx) {
+									oAssignItem.NodeType = "ASSIGNMENT";
+									var clonedObj = _.cloneDeep(oAssignItem);
+									oAssignItem.AssignmentSet = { // add PRT as children to to show shape
+										results: [clonedObj]
+									};
+								});
+							}
+							oItem.AssignmentSet.results.forEach(function (oAsgn) {
+								if (oAsgn.Guid === oResItem.AssignmentGuid) {
+									oResItem.AssignmentSet.results.push(oAsgn);
+								}
 							});
+							oResItem.ResourceAvailabilitySet = oItem.ResourceAvailabilitySet; // copying resource availabilities to assignment node
 						}
+
 						oItem.children.push(oResItem);
 					}
 				});
@@ -1673,7 +1683,6 @@ sap.ui.define([
 			aChildren = this._recurseChildren2Level(aChildren, iLevel, callbackFn);
 			this.oGanttModel.setProperty("/data/children", aChildren);
 		},
-
 		/**
 		 * loop trough all nested array of children
 		 * When max level for search was reached execute callbackFn
