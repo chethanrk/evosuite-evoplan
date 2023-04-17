@@ -3,7 +3,7 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/core/Fragment",
 	"sap/m/MessageToast"
-], function (BaseController, formatter, Fragment,MessageToast) {
+], function (BaseController, formatter, Fragment, MessageToast) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.AssignInfoDialog", {
@@ -13,6 +13,7 @@ sap.ui.define([
 		init: function () {
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);
+			this._eventBus.subscribe("AssignTreeDialog", "ToolReAssignment", this._reAssignTool, this);
 		},
 
 		/**
@@ -161,24 +162,29 @@ sap.ui.define([
 				iNewEffort = this.getEffortTimeDifference(sDateFrom, sDateTo),
 				oResourceBundle = this._oView.getController().getResourceBundle(),
 				bValidEffort = this.onValidateEffort();
-			//Replacing comma in DE language with dot if any
-			this.oAssignmentModel.setProperty("/Effort", sEffort.toString().replace(",", "."));
-			sEffort = this.oAssignmentModel.getProperty("/Effort");
-			if (bValidEffort) {
-				if (this.oAssignmentModel.getProperty("/NewAssignPath") !== null) {
-					this.oAssignmentModel.getData().ResourceGuid = this._oView.getModel().getProperty(this.oAssignmentModel.getProperty(
-						"/NewAssignPath") + "/ResourceGuid");
-				}
 
-				if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGN_EFFORT_POPUP") && Number(iNewEffort) < Number(sEffort)) {
-					this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
-						if (oAction === "YES") {
-							this.onSaveAssignments();
-						}
-					}.bind(this));
+			if (this.oAssignmentModel.getData().isPRT) {
+				this.onSaveToolDialog();
+			} else {
+				//Replacing comma in DE language with dot if any
+				this.oAssignmentModel.setProperty("/Effort", sEffort.toString().replace(",", "."));
+				sEffort = this.oAssignmentModel.getProperty("/Effort");
+				if (bValidEffort) {
+					if (this.oAssignmentModel.getProperty("/NewAssignPath") !== null) {
+						this.oAssignmentModel.getData().ResourceGuid = this._oView.getModel().getProperty(this.oAssignmentModel.getProperty(
+							"/NewAssignPath") + "/ResourceGuid");
+					}
 
-				} else {
-					this.onSaveAssignments();
+					if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGN_EFFORT_POPUP") && Number(iNewEffort) < Number(sEffort)) {
+						this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
+							if (oAction === "YES") {
+								this.onSaveAssignments();
+							}
+						}.bind(this));
+
+					} else {
+						this.onSaveAssignments();
+					}
 				}
 			}
 		},
@@ -229,26 +235,31 @@ sap.ui.define([
 				sSplitIndex = this.oAssignmentModel.getProperty("/SplitIndex"),
 				sSplitCounter = this.oAssignmentModel.getProperty("/SplitCounter"),
 				bSplitGlobalConfigEnabled = this._oView.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN");
-			
-			if (this._mParameters && this._mParameters.bFromPlannCal) {
-				this._eventBus.publish("AssignInfoDialog", "refreshAssignment", {
-					unassign: true
-				});
-			} else if (bSplitGlobalConfigEnabled && sSplitIndex > 0 && sSplitCounter > 0) {
-				this._eventBus.publish("AssignInfoDialog", "deleteSplitAssignments", {
-					assignmentGuid: sId,
-					DemandGuid: sDemandGuid,
-					splitIndex: sSplitIndex,
-					splitCounter: sSplitCounter,
-					parameters: this._mParameters
-				});
+
+			if (this.oAssignmentModel.getData().isPRT) {
+				this.onDeleteToolAssignment();
 			} else {
-				this._eventBus.publish("AssignInfoDialog", "deleteAssignment", {
-					sId: sId,
-					parameters: this._mParameters
-				});
+				if (this._mParameters && this._mParameters.bFromPlannCal) {
+					this._eventBus.publish("AssignInfoDialog", "refreshAssignment", {
+						unassign: true
+					});
+				} else if (bSplitGlobalConfigEnabled && sSplitIndex > 0 && sSplitCounter > 0) {
+					this._eventBus.publish("AssignInfoDialog", "deleteSplitAssignments", {
+						assignmentGuid: sId,
+						DemandGuid: sDemandGuid,
+						splitIndex: sSplitIndex,
+						splitCounter: sSplitCounter,
+						parameters: this._mParameters
+					});
+				} else {
+					this._eventBus.publish("AssignInfoDialog", "deleteAssignment", {
+						sId: sId,
+						parameters: this._mParameters
+					});
+				}
+				this._closeDialog();
 			}
-			this._closeDialog();
+
 		},
 
 		/**
@@ -537,7 +548,9 @@ sap.ui.define([
 					this.showMessageToast(this._oView.getController().getResourceBundle().getText("ymsg.validEffort"));
 					bValidEffort = false;
 				} else if (Number(sOldEffort) + Number(sRemainingDuration) < Number(sEffort)) {
-					this.showMessageToast(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration",[sTotalEffort,sEffortUnit]));
+					this.showMessageToast(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration", [sTotalEffort,
+						sEffortUnit
+					]));
 					bValidEffort = false;
 				}
 			}
@@ -546,6 +559,135 @@ sap.ui.define([
 
 		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);
-		}
+			this._eventBus.unsubscribe("AssignTreeDialog", "ToolReAssignment");
+		},
+
+		/**
+		 * Setting dialog properties to use in tool operations
+		 */
+		onToolOpen: function (oDialog, oView, sAssignementPath, oAssignmentData, mParameters) {
+			var oPrtToolsAssignment = this._getDefaultPRTToolsAssignmentModelObject(oAssignmentData);
+
+			this._sAssignmentPath = sAssignementPath;
+			this._mParameters = mParameters;
+			this.oAssignmentModel = oView.getModel("assignment");
+			this._oDialog = oDialog;
+			this._oView = oView;
+			this._component = this._oView.getController().getOwnerComponent();
+
+			oPrtToolsAssignment.isPRT = true;
+			this.oAssignmentModel.setData(oPrtToolsAssignment);
+			oDialog.addStyleClass(this._component.getContentDensityClass());
+			oView.addDependent(oDialog);
+		},
+
+		/** 
+		 * get Parameteres to pass into Function Import
+		 */
+		_getParams: function () {
+			var oAssignmentData = this.oAssignmentModel.getData();
+			return {
+				ToolId: oAssignmentData.Tool_ID,
+				PrtAssignmentGuid: oAssignmentData.PrtAssignmentGuid,
+				DateFrom: oAssignmentData.DateFrom,
+				DateTo: oAssignmentData.DateTo,
+				TimeFrom: {
+					ms: oAssignmentData.DateFrom.getTime()
+				},
+				TimeTo: {
+					ms: oAssignmentData.DateTo.getTime()
+				},
+				ResourceGroupGuid: oAssignmentData.ResourceGroupGuid,
+				ResourceGuid: oAssignmentData.ResourceGuid
+			}
+		},
+
+		/** 
+		 * set reassignment details to assignment data object
+		 */
+		_reAssignTool: function (sChanel, sEvent, oData) {
+			// sAssignPath, aSourcePaths
+			var oNewAssign = this._oView.getModel().getProperty(oData.sAssignPath),
+				newAssignDesc = this._getParentsDescription(oNewAssign);
+
+			this.oAssignmentModel.setProperty("/NewAssignPath", oData.sAssignPath);
+			this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
+			this.oAssignmentModel.setProperty("/NewAssignDesc", newAssignDesc);
+			this.oAssignmentModel.setProperty("/ResourceGroupGuid", oNewAssign.ResourceGroupGuid);
+			this.oAssignmentModel.setProperty("/ResourceGuid", oNewAssign.ResourceGuid);
+
+			//when new assignment is time range
+			if (oNewAssign.StartDate && oNewAssign.NodeType.indexOf("TIME") >= 0) {
+				var start = formatter.mergeDateTime(oNewAssign.StartDate, oNewAssign.StartTime),
+					end = formatter.mergeDateTime(oNewAssign.EndDate, oNewAssign.EndTime);
+
+				this.oAssignmentModel.setProperty("/DateFrom", start);
+				this.oAssignmentModel.setProperty("/DateTo", end);
+			}
+		},
+
+		/** 
+		 * to getPRT assignment object for update operations
+		 * @param oAssignmentData
+		 */
+		_getDefaultPRTToolsAssignmentModelObject: function (oAssignmentData) {
+			return {
+				AllowChange: true,
+				AllowReassign: true,
+				AllowUnassign: true,
+				PrtAssignmentGuid: oAssignmentData.PrtAssignmentGuid,
+				DateFrom: formatter.mergeDateTime(oAssignmentData.DATE_FROM, oAssignmentData.TIME_FROM),
+				DateTo: formatter.mergeDateTime(oAssignmentData.DATE_TO, oAssignmentData.TIME_TO),
+				Tool_ID: oAssignmentData.ToolId,
+				Tool_Type: oAssignmentData.ToolType,
+				Tool_Description: oAssignmentData.TOOL_DESCRIPTION,
+				NewAssignPath: null,
+				NewAssignId: null,
+				NewAssignDesc: null,
+				ResourceGroupGuid: oAssignmentData.ResourceGroupGuid,
+				ResourceGuid: oAssignmentData.ResourceGuid,
+				showError: false,
+				ShowGoToDetailBtn: false
+			};
+		},
+
+		/**
+		 * save form data
+		 * @param oEvent
+		 */
+		onSaveToolDialog: function (oEvent) {
+			var oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
+				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
+				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid"),
+				oParams;
+
+			if (oDateTo !== undefined && oDateFrom !== undefined) {
+				oDateFrom = oDateFrom.getTime();
+				oDateTo = oDateTo.getTime();
+				// To Validate DateTo and DateFrom
+				if (oDateTo >= oDateFrom) {
+					oParams = this._getParams();
+					this._mParameters.bIsFromPRTAssignmentInfo = true;
+					this.callFunctionImport.call(this._oView.getController(), oParams, "ChangeToolAssignment", "POST", this._mParameters, true);
+					this._closeDialog();
+				} else {
+					this.showMessageToast(sMsg);
+				}
+			} else {
+				this.showMessageToast(sMsg);
+			}
+		},
+
+		/** 
+		 * On removing the tool assignment
+		 * @param oEvent
+		 */
+		onDeleteToolAssignment: function (oEvent) {
+			var sPrtAssignmentGuid = this.oAssignmentModel.getProperty("/PrtAssignmentGuid");
+			this.callFunctionImport.call(this._oView.getController(), {
+				PrtAssignmentGuid: sPrtAssignmentGuid
+			}, "DeleteToolAssignment", "POST", this._mParameters, true);
+			this._closeDialog();
+		},
 	});
 });
