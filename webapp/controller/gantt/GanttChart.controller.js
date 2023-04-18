@@ -690,12 +690,11 @@ sap.ui.define([
 				if (!this.assignmentRowContext.getObject().AssignmentGuid) {
 					this.assignmentRowContext.getObject().AssignmentGuid = this.assignmentRowContext.getObject().Guid;
 				}
+					this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
 				//For PRT Assignments
 				if (this.assignmentRowContext.getObject().IS_PRT) { 
-					this.assignmentPath = "/PRTAssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
 					this.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 				} else {
-					this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
 					this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 				}
 			} else {
