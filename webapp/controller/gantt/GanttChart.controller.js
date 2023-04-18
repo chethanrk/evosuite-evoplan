@@ -687,8 +687,17 @@ sap.ui.define([
 			var oSource = oEvent.getSource();
 			this.assignmentRowContext = oSource.getParent().getBindingContext("ganttModel");
 			if (this.assignmentRowContext) {
-				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().Guid + "')";
-				this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
+				if (!this.assignmentRowContext.getObject().AssignmentGuid) {
+					this.assignmentRowContext.getObject().AssignmentGuid = this.assignmentRowContext.getObject().Guid;
+				}
+				//For PRT Assignments
+				if (this.assignmentRowContext.getObject().IS_PRT) { 
+					this.assignmentPath = "/PRTAssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
+					this.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
+				} else {
+					this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
+					this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
+				}
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
