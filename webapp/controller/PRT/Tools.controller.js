@@ -83,7 +83,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onBeforeRebindToolsTable: function (oEvent) {
-			oEvent.getParameter("bindingParams").filters.push(new Filter("TOOL_TYPE", FilterOperator.EQ, "EQ"));
+			oEvent.getParameter("bindingParams").filters.push(new Filter("TOOL_TYPE", FilterOperator.EQ, "EQUI"));
 		},
 
 		/**
