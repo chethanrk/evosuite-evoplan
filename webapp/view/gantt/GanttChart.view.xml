@@ -59,7 +59,6 @@
 								</table:extension>
 								<table:rowSettingsTemplate>
 									<gnt2:GanttRowSettings rowId="{ganttModel>NodeId}_{ganttModel>ObjectId}"
-										shapes5="{ path:'ganttModel>PRTAssignmentSet/results', templateShareable:true }"
 										shapes4="{ path:'ganttModel>TravelTimes/results', templateShareable:true }"
 										shapes3="{ path:'ganttModel>AssignmentSet/results', templateShareable:true }"
 										shapes2="{ path:'ganttModel>ResourceAvailabilitySet/results', templateShareable:true }"
@@ -76,9 +75,6 @@
 										<gnt2:shapes4>
 											<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.TravelTimeShape" type="XML"/>
 										</gnt2:shapes4>
-										<gnt2:shapes5>
-											<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.ToolShape" type="XML"/>
-										</gnt2:shapes5>
 										<gnt2:relationships>
 											<core:Fragment fragmentName="com.evorait.evoplan.view.gantt.fragments.Relationships" type="XML"/>
 										</gnt2:relationships>
