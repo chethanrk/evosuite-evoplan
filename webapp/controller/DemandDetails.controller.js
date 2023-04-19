@@ -1,7 +1,8 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentsController",
-	"sap/ui/core/Component"
-], function (AssignmentsController, Component) {
+	"sap/ui/core/Component",
+	"com/evorait/evoplan/model/Constants"
+], function (AssignmentsController, Component, Constants) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.DemandDetails", {
@@ -168,6 +169,36 @@ sap.ui.define([
 				}
 			});
 		},
+		
+		onPressSmartField: function(oEvent){
+			var sAppName = oEvent.getSource().getUrl(),
+				aNavlinks = this.getModel("templateProperties").getData().navLinks,
+				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode"),
+				sAppId = aNavlinks[sAppName].ApplicationId,
+				oAppInfo = this._getAppInfoById(sAppId),
+				sParamValue = oEvent.getSource().getValue(),
+				sAdditionInfo, sSemanticObject, sAction, sParameter, sUri;
+				
+				// if there is no configuration maintained in the backend
+			if (oAppInfo === null) {
+				return;
+			}
+
+			if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
+				sAdditionInfo = oAppInfo.Value1 || "";
+				sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];
+				sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "Display";
+				sParameter = sAdditionInfo.split("\\\\_\\\\")[2];
+				if (sSemanticObject && sAction) {
+					this._navToApp(sSemanticObject, sAction, sParameter, sParamValue);
+				}
+			} else {
+				sAdditionInfo = oAppInfo.Value1;
+				sUri = sAdditionInfo.replace("\\\\place_h1\\\\", sParamValue);
+				window.open(sUri, "_blank");
+			}
+			
+		},
 
 		/**
 		 * This method required when user directly open the demand overview page
@@ -178,7 +209,46 @@ sap.ui.define([
 		 */
 		_triggerRefreshDemand: function () {
 			this.getView().getElementBinding().refresh();
-		}
+		},
+		
+		/**
+		 * get respective navigation details
+		 * @param sAppID
+		 */
+		_getAppInfoById: function (sAppID) {
+			var aNavLinks = this.getModel("templateProperties").getProperty("/navLinks");
+			for (var i in aNavLinks) {
+				if (aNavLinks.hasOwnProperty(i)) {
+					if (aNavLinks[i].ApplicationId === sAppID) {
+						return aNavLinks[i];
+					}
+				}
+			}
+			return null;
+		},
+		
+		/**
+		 * In Fiori Launchpad navigate to another app
+		 * @param sSemanticObject
+		 * @param sAction
+		 * @param sParameter
+		 * @param sParamValue
+		 * @private
+		 */
+		_navToApp: function (sSemanticObject, sAction, sParameter, sParamValue) {
+			var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation"),
+				mParams = {};
+
+			mParams[sParameter] = [sParamValue];
+			oCrossAppNavigator.toExternal({
+				target: {
+					semanticObject: sSemanticObject,
+					action: sAction
+				},
+				params: mParams
+			});
+		},
+
 
 	});
 });
