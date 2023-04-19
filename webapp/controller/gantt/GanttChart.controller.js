@@ -87,6 +87,14 @@ sap.ui.define([
 				this._initializeGantt();
 			}.bind(this));
 
+			this.getRouter().getRoute("ganttTools").attachPatternMatched(function () {
+				this._routeName = Constants.GANTT.NAME;
+				this._mParameters = {
+					bFromNewGantt: true
+				};
+				this._initializeGantt();
+			}.bind(this));
+
 			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
 				this._ganttChart.addStyleClass("resourceGanttWithTable");
 			}
@@ -218,7 +226,7 @@ sap.ui.define([
 			if (sToolDrag === "Tools") {
 				this.onToolDrop(oEvent);
 			} else {
-            //Allowing Demand Drop only on Non-Assignmnet Nodes   @Since 2205
+				//Allowing Demand Drop only on Non-Assignmnet Nodes   @Since 2205
 				if (oDropObject.NodeType !== "ASSIGNMENT") {
 					//Checking PS Demands for Network Assignment 
 					if (this.oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
@@ -758,6 +766,7 @@ sap.ui.define([
 				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
 				iDefNum = this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS"),
 				oSvgPoint, oTargetDate, endDate;
+
 			if (oBrowserEvent.target.tagName === "rect" && oDragContext) { // When we drop on gantt chart in the same view
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				oTargetDate = oAxisTime.viewToTime(oSvgPoint.x);
@@ -1652,7 +1661,7 @@ sap.ui.define([
 				var sEntitySet = "/GanttResourceHierarchySet",
 					aFilters = [],
 					mParams = {
-						"$expand": "AssignmentSet,ResourceAvailabilitySet,PRTAssignmentSet"
+						"$expand": "AssignmentSet,ResourceAvailabilitySet"
 					},
 					oUserData = this.oUserModel.getData();
 				aFilters.push(new Filter("HierarchyLevel", FilterOperator.EQ, iLevel));
