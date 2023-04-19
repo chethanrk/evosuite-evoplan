@@ -96,6 +96,25 @@ sap.ui.define([
 
 			return new Date(dateStr + "T" + timeStr);
 		},
+		/**
+		 * merge given date and time to datetime and format 
+		 * without the offset
+		 * @param date
+		 * @param time
+		 */
+		mergeDateTimeWithoutOffSet: function (date, time) {
+			var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+					pattern: "yyyy-MM-dd"
+				}),
+				timeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+					pattern: "HH:mm:ss"
+				});
+
+			var dateStr = dateFormat.format(new Date(date.getTime()));
+			var timeStr = timeFormat.format(new Date(time.ms));
+
+			return new Date(dateStr + "T" + timeStr);
+		},
 
 		/**
 		 * Identifies the Target Type
