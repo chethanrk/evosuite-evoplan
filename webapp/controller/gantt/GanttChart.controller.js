@@ -690,9 +690,9 @@ sap.ui.define([
 				if (!this.assignmentRowContext.getObject().AssignmentGuid) {
 					this.assignmentRowContext.getObject().AssignmentGuid = this.assignmentRowContext.getObject().Guid;
 				}
-					this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
+				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
 				//For PRT Assignments
-				if (this.assignmentRowContext.getObject().IS_PRT) { 
+				if (this.assignmentRowContext.getObject().IS_PRT) {
 					this.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 				} else {
 					this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
@@ -2395,12 +2395,12 @@ sap.ui.define([
 		 */
 		_updateAfterReAssignment: function (aData, oTargetResource, oSourceResource) {
 			oTargetResource.AssignmentSet = aData[0];
+			this._updateResourceChildren(oTargetResource, this._updateDmdPRTAssignments(aData[0].results));
 			this.oGanttOriginDataModel.setProperty(this._oTargetResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oTargetResourcePath)));
-			this._updateResourceChildren(oTargetResource);
 
 			if (oSourceResource) {
 				oSourceResource.AssignmentSet = aData[1];
-				this._updateResourceChildren(oSourceResource);
+				this._updateResourceChildren(oSourceResource, this._updateDmdPRTAssignments(aData[1].results));
 				this.oGanttOriginDataModel.setProperty(this._oSourceResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oSourceResourcePath)));
 			}
 			this.oGanttModel.refresh();
@@ -2412,16 +2412,23 @@ sap.ui.define([
 		 * since 2301.1.0
 		 * @Author Rakesh Sahu
 		 */
-		_updateResourceChildren: function (oResource) {
+		_updateResourceChildren: function (oResource, aChildAsgnData) {
 			if (oResource.AssignmentSet) {
-				oResource.children = oResource.AssignmentSet.results;
-				oResource.children.forEach(function (oAssignItem, idx) {
-					oResource.AssignmentSet.results[idx].NodeType = "ASSIGNMENT";
-					oResource.AssignmentSet.results[idx].ResourceAvailabilitySet = oResource.ResourceAvailabilitySet;
-					var clonedObj = _.cloneDeep(oResource.AssignmentSet.results[idx]);
+				oResource.children = aChildAsgnData;
+				oResource.children.forEach(function (oAsgnObj) {
+					oAsgnObj.NodeType = "ASSIGNMENT";
+					oAsgnObj.children.forEach(function (oAssignItem) {
+						oAssignItem.NodeType = "ASSIGNMENT";
+						var clonedAsgnObj = _.cloneDeep(oAssignItem);
+						oAssignItem.AssignmentSet = {
+							results: [clonedAsgnObj] 
+						};
+					}.bind(this));
+					oAsgnObj.ResourceAvailabilitySet = oResource.ResourceAvailabilitySet;
+					var clonedObj = _.cloneDeep(oAsgnObj);
 					//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
 					clonedObj.OBJECT_ID_RELATION = clonedObj.OBJECT_ID_RELATION + "//" + clonedObj.ResourceGuid;
-					oResource.children[idx].AssignmentSet = {
+					oAsgnObj.AssignmentSet = {
 						results: [clonedObj]
 					};
 				}.bind(this));
@@ -2627,7 +2634,38 @@ sap.ui.define([
 					results: [clonedObj]
 				};
 			}.bind(this));
-		}
+		},
+		/**
+		 * Updating children node of a Resource
+		 * including Demand and PRT assignments
+		 * @param [aAssignments] Asignments
+		 * @return [aAllAssignments] Resourse assignment children node
+		 * since 2305.0.0
+		 */
+		_updateDmdPRTAssignments: function (aAssignments) {
+			var aDmdAssignments = aAssignments.filter(function (sKey) { //Filtering Demand Assignments
+					return sKey.IS_PRT === false;
+				}),
+				aPRTAssignments = aAssignments.filter(function (sKey) { //Filtering PRT Assignments
+					return sKey.IS_PRT === true;
+				}),
+				sNodeId, aAllAssignments;
+			aDmdAssignments.forEach(function (oDmdAsgn) {
+				oDmdAsgn.children = [];
+				sNodeId = oDmdAsgn.NODE_ID;
+				aPRTAssignments.forEach(function (oPRTAsgn) {
+					oPRTAsgn.children = [];
+					if (sNodeId === oPRTAsgn.ObjectId) {
+						oPRTAsgn.IS_PRT_DUPLICATE = "X";
+						oDmdAsgn.children.push(oPRTAsgn);
+					}
+				}.bind(this));
+			}.bind(this));
+			aAllAssignments = aPRTAssignments.filter(function (sKey) {
+				return sKey.IS_PRT_DUPLICATE !== "X";
+			});
+			return aAllAssignments.concat(aDmdAssignments);
+		},
 
 	});
 
