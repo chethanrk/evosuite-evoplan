@@ -160,11 +160,10 @@ sap.ui.define([
 			var oSource = oEvent.getSource();
 			this.assignmentRowContext = oSource.getParent().getBindingContext();
 			if (this.assignmentRowContext) {
-				if (this.assignmentRowContext.getObject().ASSIGNMENT_TYPE === "PRT") {
-					this.assignmentPath = "/PRTAssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
+				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
+				if (this.assignmentRowContext.getObject().IS_PRT) {
 					this.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 				} else {
-					this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
 					this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 				}
 			} else {
@@ -272,8 +271,8 @@ sap.ui.define([
 				oContext = this._oDataTable.getContextByIndex(oDraggedControl.getIndex()),
 				oObject = oContext.getObject(),
 				vAssignGuid = oObject.AssignmentGuid;
-			
-			if (oObject.NodeType !== "ASSIGNMENT" || (oObject.NodeType === "ASSIGNMENT" && oObject.ASSIGNMENT_TYPE === "PRT")) { 
+
+			if (oObject.NodeType !== "ASSIGNMENT" || (oObject.NodeType === "ASSIGNMENT" && oObject.IS_PRT)) {
 				// if not "ASSIGNMENT" type or if "ASSIGNMENT" is "PRT" type
 				oEvent.preventDefault();
 			}

@@ -61,7 +61,7 @@ sap.ui.define([
 					return;
 				}
 
-			} else if (sNodeType === "ASSIGNMENT" && oTargetObj.ASSIGNMENT_TYPE !== "PRT") {
+			} else if (sNodeType === "ASSIGNMENT" && !oTargetObj.IS_PRT) {
 				oDateParams.DateFrom = oTargetObj.StartDate;
 				oDateParams.TimeFrom = oTargetObj.StartTime;
 				oDateParams.DateTo = oTargetObj.EndDate;
@@ -178,7 +178,7 @@ sap.ui.define([
 			var mParams = {
 				viewName: "com.evorait.evoplan.view.templates.ToolInfoDialog#" + sQualifier,
 				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
-				entitySet: "PRTAssignmentSet",
+				entitySet: "AssignmentSet",
 				controllerName: "PRT.ToolsAssignInfo",
 				title: "xtit.toolsAssignInfoModalTitle",
 				type: "add",
