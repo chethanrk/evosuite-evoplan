@@ -18,7 +18,7 @@ sap.ui.define([
 			this._eventBus.subscribe("AssignActionsDialog", "selectAssign", this._triggerOpenDialog, this);
 		},
 
-		open: function (oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent) {
+		open: function (oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent, isToolReAssign) {
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
@@ -28,10 +28,10 @@ sap.ui.define([
 				}).then(function (oDialog) {
 					oView.getModel("appView").setProperty("/busy", false);
 					this._oDialog = oDialog;
-					this.onOpen(oDialog, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent);
+					this.onOpen(oDialog, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent, isToolReAssign);
 				}.bind(this));
 			} else {
-				this.onOpen(this._oDialog, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent);
+				this.onOpen(this._oDialog, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent, isToolReAssign);
 			}
 		},
 		/**
@@ -41,11 +41,12 @@ sap.ui.define([
 		 * @param sBindPath
 		 * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
 		 */
-		onOpen: function (oDialog, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent) {
+		onOpen: function (oDialog, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent, isToolReAssign) {
 			this._oView = oView;
 			this._reAssign = isReassign;
 			this._aSelectedPaths = aSelectedPaths;
 			this._bulkReAssign = isBulkReAssign;
+			this._isToolReAssign = isToolReAssign;
 			this._mParameters = mParameters || {
 				bFromHome: true
 			};
@@ -189,7 +190,7 @@ sap.ui.define([
 
 		onSaveDialog: function () {
 			if (this._assignPath) {
-				if (!this._reAssign) {
+				if (!this._reAssign && !this._isToolReAssign) {
 					var oTargetObj = this._oView.getModel().getProperty(this._assignPath),
 						aSources = this._oView.getModel("viewModel").getProperty("/dragSession"),
 						oUserModel = this._oView.getModel("user"),
@@ -232,6 +233,14 @@ sap.ui.define([
 		 */
 		onProceedSaveDialog: function (oEvent) {
 			if (this._assignPath) {
+				if (this._isToolReAssign) {
+					this._eventBus.publish("AssignTreeDialog", "ToolReAssignment", {
+						sAssignPath: this._assignPath,
+						aSourcePaths: this._aSelectedPaths
+					});
+					this._closeDialog();
+					return;
+				}
 				if (this._callbackEvent) {
 					this._eventBus.publish("AssignTreeDialog", this._callbackEvent, {
 						sAssignPath: this._assignPath,
@@ -320,12 +329,12 @@ sap.ui.define([
 		 */
 		_triggerOpenDialog: function (sChanel, sEvent, oData) {
 			if (sChanel === "AssignInfoDialog" && sEvent === "selectAssign") {
-				this.open(oData.oView, oData.isReassign, oData.aSelectedPaths, oData.parameters);
+				this.open(oData.oView, oData.isReassign, oData.aSelectedPaths, oData.parameters, null, null, oData.isToolReAssign);
 			} else if (sChanel === "AssignActionsDialog" && sEvent === "selectAssign") {
 				this.open(oData.oView, oData.isReassign, oData.aSelectedContexts, oData.isBulkReassign, oData.parameters);
 			}
 		},
-		
+
 		exit: function () {
 			this._eventBus.unsubscribe("AssignInfoDialog", "selectAssign", this._triggerOpenDialog, this);
 			this._eventBus.unsubscribe("AssignActionsDialog", "selectAssign", this._triggerOpenDialog, this);

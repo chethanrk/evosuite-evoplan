@@ -32,6 +32,7 @@ sap.ui.define([
 			this._oUserModel = this.getModel("user");
 			this._oDraggableToolsTable = this.byId("idToolsTable");
 			this._oToolsTable = this.byId("idToolsTable").getTable();
+			this._configureToolDataTable(this._oToolsTable);
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._mParameters = {
 				bFromDemandTools: true
@@ -82,7 +83,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onBeforeRebindToolsTable: function (oEvent) {
-			oEvent.getParameter("bindingParams").filters.push(new Filter("TOOL_TYPE", FilterOperator.EQ, "EQ"));
+			oEvent.getParameter("bindingParams").filters.push(new Filter("TOOL_TYPE", FilterOperator.EQ, "EQUI"));
 		},
 
 		/**
@@ -121,14 +122,12 @@ sap.ui.define([
 			} else {
 				oSelectedPaths = this._getSelectedToolsPaths(this._oToolsTable, [oDraggedControl.getIndex()]);
 			}
-
 			oSelectedPaths.aPathsData.forEach(function (item) {
 				aSelectedToolObject.push({
 					sPath: item.sPath,
 					oDemandObject: item.oData
 				});
 			});
-
 			// keeping the data in drag session
 			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
 			this.localStorage.put("Evo-Tools-guid", JSON.stringify(aSelectedToolObject));
@@ -178,6 +177,31 @@ sap.ui.define([
 		},
 		_refreshToolsTable: function () {
 			this._oDraggableToolsTable.rebindTable();
+		},
+		/**
+		 * add configuration to Tools table
+		 * @param oDataTable
+		 * @private
+		 */
+		_configureToolDataTable: function (oDataTable) {
+			oDataTable.attachRowSelectionChange(function (oEvent) {
+				var aSelectedIndices = this._oToolsTable.getSelectedIndices(),
+					iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_TOOLS_SELECT_ALL"),
+					sMsg,iLastIndex;
+
+				if (aSelectedIndices.length > iMaxRowSelection) {
+					iLastIndex = aSelectedIndices.pop();
+					if (oEvent.getParameter("selectAll")) {
+						this._oToolsTable.removeSelectionInterval(iMaxRowSelection, iLastIndex);
+						sMsg = this.getResourceBundle().getText("ymsg.allToolSelect", [iMaxRowSelection]);
+						this.showMessageToast(sMsg);
+					} else {
+						this._oToolsTable.removeSelectionInterval(iLastIndex, iLastIndex);
+						sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+						this.showMessageToast(sMsg);
+					}
+				}
+			}.bind(this));
 		}
 	});
 });

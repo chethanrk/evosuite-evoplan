@@ -242,12 +242,15 @@ sap.ui.define([
 			//display and change assignment dialog
 			this.assignInfoDialog = new AssignInfoDialog();
 			this.assignInfoDialog.init();
+
 			//select resource from tree for assigning dialog
 			this.assignTreeDialog = new AssignTreeDialog();
 			this.assignTreeDialog.init();
+
 			//change status of demand
 			this.statusSelectDialog = new StatusSelectDialog();
 			this.statusSelectDialog.init();
+
 			// bulk operations for unassign/reassign demands
 			this.assignActionsDialog = new AssignActionsDialog();
 			this.assignActionsDialog.init();

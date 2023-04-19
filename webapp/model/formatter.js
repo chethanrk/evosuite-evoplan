@@ -132,12 +132,16 @@ sap.ui.define([
 		 * @param {string} sResourceIcon icon for Status Resource
 		 * @returns {string} icon for Resource base on Given Parameters
 		 */
-		getResourceIcon: function (sValue, sStatusIcon, sResourceIcon) {
+		getResourceIcon: function (sValue, sStatusIcon, sResourceIcon, bPRT, sPRTIcon) {
 			var iconFormat = resourceFormats[sValue];
 			if (sValue === "RESOURCE") {
 				return sResourceIcon;
-			}
-			if (sStatusIcon) {
+			} else if (bPRT) {
+				if (sPRTIcon) {
+					return sPRTIcon;
+				}
+				return sStatusIcon;
+			} else if (sStatusIcon) {
 				return sStatusIcon;
 			} else {
 				if (iconFormat) {
@@ -163,7 +167,7 @@ sap.ui.define([
 		 * @param {string} sValue Operation Type
 		 * @returns {Boolean} true,if operation is 'Assignment' else false
 		 */
-		isAssignment: function (sValue) {
+		isAssignmentorTool: function (sValue) {
 			if (sValue === "ASSIGNMENT") {
 				return true;
 			}
@@ -752,7 +756,7 @@ sap.ui.define([
 		formatMapSpot: function (oLatitude, oLongitude) {
 			if (oLatitude && oLongitude) {
 				if (oLatitude === "0.000000000000" && oLongitude === "0.000000000000") {
-					return "0;0;0"; 
+					return "0;0;0";
 				} else {
 					return oLatitude + ";" + oLongitude + ";0";
 				}
@@ -764,7 +768,7 @@ sap.ui.define([
 			}
 			return "";
 		},
-		
+
 		setVisibilityDeleteButton: function (sNodeType) {
 			if (sNodeType === "RES_GROUP") {
 				return false;
@@ -948,7 +952,8 @@ sap.ui.define([
 		 * @returns sDemandDesc
 		 */
 		formatGanttResourceTitle: function (sNodeType, sDescription, sDemandDesc) {
-			if (sNodeType === "ASSIGNMENT") {
+			//	if (sNodeType === "ASSIGNMENT") {
+			if (sDemandDesc) {
 				return sDemandDesc;
 			}
 			return sDescription;

@@ -159,10 +159,14 @@ sap.ui.define([
 		onPressAssignmentLink: function (oEvent) {
 			var oSource = oEvent.getSource();
 			this.assignmentRowContext = oSource.getParent().getBindingContext();
-
 			if (this.assignmentRowContext) {
-				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
-				this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext);
+				if (this.assignmentRowContext.getObject().ASSIGNMENT_TYPE === "PRT") {
+					this.assignmentPath = "/PRTAssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
+					this.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
+				} else {
+					this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
+					this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
+				}
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
@@ -268,7 +272,9 @@ sap.ui.define([
 				oContext = this._oDataTable.getContextByIndex(oDraggedControl.getIndex()),
 				oObject = oContext.getObject(),
 				vAssignGuid = oObject.AssignmentGuid;
-			if (oObject.NodeType !== "ASSIGNMENT") {
+			
+			if (oObject.NodeType !== "ASSIGNMENT" || (oObject.NodeType === "ASSIGNMENT" && oObject.ASSIGNMENT_TYPE === "PRT")) { 
+				// if not "ASSIGNMENT" type or if "ASSIGNMENT" is "PRT" type
 				oEvent.preventDefault();
 			}
 			this.sDemandPath = "/DemandSet('" + oObject.DemandGuid + "')";
@@ -582,14 +588,14 @@ sap.ui.define([
 				sTargetPath = oTargetContext.getPath(),
 				oTargetObj = this.getModel().getProperty(sTargetPath),
 				aSources = this._oViewModel.getProperty("/dragSession");
-
-			//set default start and end dates everytime on drop on resosurce
+                
+                //set default start and end dates everytime on drop on resosurce
 			var endDate = new Date(),
 				iDefNum = this.getModel("user").getProperty("/DEFAULT_TOOL_ASGN_DAYS");
 			endDate.setDate(endDate.getDate() + parseInt(iDefNum));
 			this._oViewModel.setProperty("/PRT/defaultStartDate", new Date());
 			this._oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
-
+            
 			this.checksBeforeAssignTools(aSources, oTargetObj, this._mParameters);
 		}
 	});

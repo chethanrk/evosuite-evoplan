@@ -5,7 +5,7 @@ sap.ui.define([
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment"
 ], function (DemandTableOperations, MessageBox, formatter, Constants, Fragment) {
-	
+
 	return DemandTableOperations.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
 		/**
 		 * save assignment after drop
@@ -590,18 +590,21 @@ sap.ui.define([
 				oEventBus = sap.ui.getCore().getEventBus(),
 				sPath, sAssignmentGuid, oParams;
 			this.clearMessageModel();
-			for (var i in aContexts) {
-				sPath = aContexts[i].getPath();
-				sAssignmentGuid = oModel.getProperty(sPath + "/Guid");
-				oParams = {
-					AssignmentGUID: sAssignmentGuid
-				};
-				if (parseInt(i, 10) === aContexts.length - 1) {
-					bIsLast = true;
+
+			this.checkToolExists(aContexts).then(function (resolve) {
+				for (var i in aContexts) {
+					sPath = aContexts[i].getPath();
+					sAssignmentGuid = oModel.getProperty(sPath + "/Guid");
+					oParams = {
+						AssignmentGUID: sAssignmentGuid
+					};
+					if (parseInt(i, 10) === aContexts.length - 1) {
+						bIsLast = true;
+					}
+					oEventBus.publish("GanttChart", "refreshResourceOnDelete");
+					this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, bIsLast);
 				}
-				oEventBus.publish("GanttChart", "refreshResourceOnDelete");
-				this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, bIsLast);
-			}
+			}.bind(this));
 		},
 
 		/**
@@ -609,11 +612,15 @@ sap.ui.define([
 		 * @param sPath
 		 */
 		deleteAssignment: function (sId, mParameters) {
-			var oParams = {
+			this.checkToolExists([{
 				AssignmentGUID: sId
-			};
-			this.clearMessageModel();
-			this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, true);
+			}]).then(function (resolve) {
+				var oParams = {
+					AssignmentGUID: sId
+				};
+				this.clearMessageModel();
+				this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, true);
+			}.bind(this));
 		},
 
 		/**
@@ -909,7 +916,7 @@ sap.ui.define([
 			}
 			return true;
 		},
-		
+
 		/**
 		 * This function is called when assignment is moved to different node under same resource
 		 * @author Giri
@@ -925,7 +932,7 @@ sap.ui.define([
 				.then(function (oAssignData) {
 					this._setAssignmentDetail(oAssignData, sResourcePath);
 					this.updateAssignment(false, updateParameters);
-			}.bind(this));
+				}.bind(this));
 		},
 
 		/**

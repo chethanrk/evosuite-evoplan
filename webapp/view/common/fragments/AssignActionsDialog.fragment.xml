@@ -1,15 +1,12 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:smartTable="sap.ui.comp.smarttable">
 	<Dialog title="" contentWidth="100%" resizable="true" contentHeight="80%" stretch="false" beforeOpen="onBeforeOpen">
 		<content>
-			<MessageStrip id="idAssignActionDialogStrip"
-				text="{i18n>xmsg.messageStripDeleteAllAssignments}"
-				showIcon="true" type="Warning" showCloseButton="true"
-				class="sapUiTinyMargin" visible="false">
-			</MessageStrip>
+			<MessageStrip id="idAssignActionDialogStrip" text="{i18n>xmsg.messageStripDeleteAllAssignments}" showIcon="true" type="Warning"
+				showCloseButton="true" class="sapUiTinyMargin" visible="false"></MessageStrip>
 			<smartTable:SmartTable id="idDemandAssignmentTable" height="100%" width="100%" direction="Column" tableType="ResponsiveTable"
 				enableAutoBinding="true" entitySet="AssignmentSet" header="{i18n>xtit.itemListTitle}" showRowCount="true" useTablePersonalisation="true"
 				useExportToExcel="false" beforeRebindTable="onBeforeRebind" initiallyVisibleFields="Effort,DateFrom,DateTo,PERSON_NUMBER,FIRSTNAME,LASTNAME"
-				requestAtLeastFields="Guid,DemandGuid,Demand" dataReceived="onDataBind" demandPopin="true">
+				requestAtLeastFields="Guid,DemandGuid,Demand,PRT_ASSIGNMENT_EXISTS" dataReceived="onDataBind" demandPopin="true">
 				<!-- layout data used to make the table growing but the filter bar fixed -->
 				<smartTable:layoutData>
 					<FlexItemData growFactor="1"/>
@@ -18,8 +15,8 @@
 					<OverflowToolbar>
 						<core:ExtensionPoint name="TableExtP|AssignActionDialog|AssignmentSet|Toolbar|Left"/>
 						<ToolbarSpacer/>
-						<Button id="idChangeStatusAssignBtn" icon="sap-icon://order-status" tooltip="{i18n>xbut.ChngAssgnStatus}" visible="{viewModel>/Show_Assignment_Status_Button}"
-							enabled="{viewModel>/Disable_Assignment_Status_Button}" press="openAssignmentStatus"/>
+						<Button id="idChangeStatusAssignBtn" icon="sap-icon://order-status" tooltip="{i18n>xbut.ChngAssgnStatus}"
+							visible="{viewModel>/Show_Assignment_Status_Button}" enabled="{viewModel>/Disable_Assignment_Status_Button}" press="openAssignmentStatus"/>
 						<HBox id="idCheckRightTechnician" visible="false" class="sapUiMediumMarginEnd">
 							<Switch customTextOn="{i18n>xlab.switchOn}" customTextOff="{i18n>xlab.switchOff}" state="{viewModel>/CheckRightTechnician}"
 								change="onClickEnableFindTechnician"></Switch>

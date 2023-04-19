@@ -2,8 +2,9 @@
 	<Dialog title="{i18n>xtit.selectDates}">
 		<content>
 			<HBox>
-				<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" emptySpanXL="2"
-					emptySpanL="2" emptySpanM="2" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1" singleContainerFullSize="false">
+				<form:SimpleForm  editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3"
+					labelSpanS="12" emptySpanXL="2" emptySpanL="2" emptySpanM="2" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1"
+					singleContainerFullSize="false">
 					<form:content>
 						<Label text="{i18n>xfld.startDate}"/>
 						<DateTimePicker name="Start date"
