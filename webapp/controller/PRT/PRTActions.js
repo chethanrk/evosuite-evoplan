@@ -22,7 +22,8 @@ sap.ui.define([
 				bIsDateNode = sNodeType === "TIMEWEEK" || sNodeType === "TIMEDAY" || sNodeType === "TIMEMONTH" || sNodeType === "TIMEQUART" ||
 				sNodeType ===
 				"TIMEYEAR",
-				oUserModel = this.getModel("user");
+				oUserModel = this.getModel("user"),
+				oResourceBundle = this.getResourceBundle();
 			if (!this._oViewModel) {
 				this._oViewModel = this.getModel("viewModel");
 			}
@@ -45,15 +46,19 @@ sap.ui.define([
 				this._proceedToAssignTools(aSources, oDateParams, mParameters);
 
 			} else if (sNodeType === "RESOURCE") {
-
-				if (oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) { // If Dialog show config is on 
-					this.openDateSelectionDialog(this.getView(), oDateParams, aSources, mParameters);
-				} else { // If dialog show config is off
-					oDateParams.DateFrom = this._oViewModel.getProperty("/PRT/defaultStartDate");
-					oDateParams.TimeFrom.ms = oDateParams.DateFrom.getTime();
-					oDateParams.DateTo = this._oViewModel.getProperty("/PRT/defaultEndDate");
-					oDateParams.TimeTo.ms = oDateParams.DateTo.getTime();
-					this._proceedToAssignTools(aSources, oDateParams, mParameters);
+				if (oTargetObj.ResourceGuid) {
+					if (oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) { // If Dialog show config is on 
+						this.openDateSelectionDialog(this.getView(), oDateParams, aSources, mParameters);
+					} else { // If dialog show config is off
+						oDateParams.DateFrom = this._oViewModel.getProperty("/PRT/defaultStartDate");
+						oDateParams.TimeFrom.ms = oDateParams.DateFrom.getTime();
+						oDateParams.DateTo = this._oViewModel.getProperty("/PRT/defaultEndDate");
+						oDateParams.TimeTo.ms = oDateParams.DateTo.getTime();
+						this._proceedToAssignTools(aSources, oDateParams, mParameters);
+					}
+				} else {
+					this.showMessageToast(oResourceBundle.getText("ymsg.poolPrtNotAllowed"));
+					return;
 				}
 
 			} else if (sNodeType === "ASSIGNMENT" && !oTargetObj.IS_PRT) {
