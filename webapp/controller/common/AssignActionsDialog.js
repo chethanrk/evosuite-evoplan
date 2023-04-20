@@ -74,8 +74,6 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onBeforeRebind: function (oEvent) {
-			console.log("method trigerred");
-
 			var mBindingParams = oEvent.getParameter("bindingParams"),
 				oFilter;
 			mBindingParams.parameters.expand = "Demand";

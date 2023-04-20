@@ -17,7 +17,6 @@ sap.ui.define([
 		 * @param mParameters flag of source view 
 		 */
 		checksBeforeAssignTools: function (aSources, oTargetObj, mParameters) {
-			console.log(oTargetObj);
 			var oDateParams,
 				sNodeType = oTargetObj.NodeType,
 				bIsDateNode = sNodeType === "TIMEWEEK" || sNodeType === "TIMEDAY" || sNodeType === "TIMEMONTH" || sNodeType === "TIMEQUART" ||
