@@ -976,6 +976,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		_handleShapeDropReAssignment: function (oEvent) {
+			debugger;
 			var oParams = oEvent.getParameters(),
 				msg = this.getResourceBundle().getText("msg.ganttShapeDropError"),
 				oTargetContext = oParams.targetRow ? oParams.targetRow.getBindingContext("ganttModel") : null;
@@ -1007,11 +1008,17 @@ sap.ui.define([
 					sTargetPath = oTargetContext.getPath(),
 					oSourceData = this.oGanttModel.getProperty(sSourcePath),
 					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
+				if (oSourceData.PRT_ASSIGNMENT_TYPE === "PRTDEMASGN") {
+					this.showMessageToast("This action is not possible");
+					return;
+				}
 				//Allowing Assignment Shape Drop Only on Resource Nodes when dragged from different resources
 				if (oTargetContext.getObject().NodeType === "RESOURCE") {
 					//set new time and resource data to gantt model, setting also new pathes
 					sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
 					this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+				} else if (oTargetContext.getObject().NodeType === "ASSIGNMENT") {
+					this.showMessageToast("This action is not possible");
 				} else { //Allowing Assignment Shape Drop Only within the same resources
 					bSameResourcePath = sTargetPath.split("/").splice(0, 6).join("/") === sSourcePath.split("/").splice(0, 6).join("/");
 					if (bSameResourcePath) {
@@ -2431,7 +2438,7 @@ sap.ui.define([
 						oAssignItem.NodeType = "ASSIGNMENT";
 						var clonedAsgnObj = _.cloneDeep(oAssignItem);
 						oAssignItem.AssignmentSet = {
-							results: [clonedAsgnObj] 
+							results: [clonedAsgnObj]
 						};
 					}.bind(this));
 					oAsgnObj.ResourceAvailabilitySet = oResource.ResourceAvailabilitySet;
