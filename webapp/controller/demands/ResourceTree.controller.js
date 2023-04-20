@@ -587,11 +587,14 @@ sap.ui.define([
 				sTargetPath = oTargetContext.getPath(),
 				oTargetObj = this.getModel().getProperty(sTargetPath),
 				aSources = this._oViewModel.getProperty("/dragSession");
+                
+                //set default start and end dates everytime on drop on resosurce
 			var endDate = new Date(),
 				iDefNum = this.getModel("user").getProperty("/DEFAULT_TOOL_ASGN_DAYS");
 			endDate.setDate(endDate.getDate() + parseInt(iDefNum));
 			this._oViewModel.setProperty("/PRT/defaultStartDate", new Date());
 			this._oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
+            
 			this.checksBeforeAssignTools(aSources, oTargetObj, this._mParameters);
 		}
 	});

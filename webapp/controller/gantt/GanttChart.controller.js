@@ -87,6 +87,14 @@ sap.ui.define([
 				this._initializeGantt();
 			}.bind(this));
 
+			this.getRouter().getRoute("ganttTools").attachPatternMatched(function () {
+				this._routeName = Constants.GANTT.NAME;
+				this._mParameters = {
+					bFromNewGantt: true
+				};
+				this._initializeGantt();
+			}.bind(this));
+
 			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
 				this._ganttChart.addStyleClass("resourceGanttWithTable");
 			}
@@ -215,10 +223,10 @@ sap.ui.define([
 			this.onShowOperationTimes(this.oViewModel);
 			this.onAllowVendorAssignment(this.oViewModel, this.oUserModel);
 
-			//Allowing Demand Drop only on Non-Assignmnet Nodes   @Since 2205
 			if (sToolDrag === "Tools") {
 				this.onToolDrop(oEvent);
 			} else {
+				//Allowing Demand Drop only on Non-Assignmnet Nodes   @Since 2205
 				if (oDropObject.NodeType !== "ASSIGNMENT") {
 					//Checking PS Demands for Network Assignment 
 					if (this.oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
@@ -758,7 +766,6 @@ sap.ui.define([
 		 * @param {object} oBrowserEvent 
 		 */
 		onProceedGanttToolDrop: function (oDraggedControl, oDroppedControl, oBrowserEvent) {
-			console.log(oDraggedControl, oDroppedControl, oBrowserEvent);
 			var oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
 				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
@@ -767,10 +774,13 @@ sap.ui.define([
 				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
 				iDefNum = this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS"),
 				oSvgPoint, oTargetDate, endDate;
+
 			if (oBrowserEvent.target.tagName === "rect" && oDragContext) { // When we drop on gantt chart in the same view
-				//TODO to be developed under another ticket.
+				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
+				oTargetDate = oAxisTime.viewToTime(oSvgPoint.x);
 			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) { // When we drop on gantt chart from split window
-				//TODO to be developed under another ticket.
+				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
+				oTargetDate = oAxisTime.viewToTime(oSvgPoint.x);
 			} else if (oDragContext) { // When we drop on the resource 
 				oTargetDate = new Date(new Date().setHours(0));
 			} else { // When we drop on the resource from split window
