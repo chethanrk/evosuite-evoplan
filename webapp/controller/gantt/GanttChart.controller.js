@@ -1164,50 +1164,56 @@ sap.ui.define([
 			var oData = this.oGanttModel.getProperty(sPath),
 				oOriginalData = this.oGanttModel.getProperty(sPath);
 			//get demand details to this assignment
-			this._getRelatedDemandData(oData).then(function (oResult) {
-				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
-				this._validateAndSendChangedData(sPath, sRequestType).then(function (aData) {
-					// these events
-					this._oEventBus.publish("BaseController", "refreshCapacity", {
-						sTargetPath: sPath.split("/AssignmentSet/results/")[0]
-					});
-					if (sSourcePath) {
+
+			if (oData.IS_PRT) {
+				this.oViewModel.setProperty("/PRT/AssignmentData",oData);
+				this.onChangeTools();
+			} else {
+				this._getRelatedDemandData(oData).then(function (oResult) {
+					this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
+					this._validateAndSendChangedData(sPath, sRequestType).then(function (aData) {
+						// these events
 						this._oEventBus.publish("BaseController", "refreshCapacity", {
-							sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
+							sTargetPath: sPath.split("/AssignmentSet/results/")[0]
 						});
-					}
-
-					if (sRequestType === "reassign") {
-						//method call for updating resource assignment in case of single reassignment
-						this._refreshChangedResources(sPath, sSourcePath);
-						this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
-					} else {
-						//method call for updating resource assignment in case of Multi Assignment in same axis
-						this._refreshChangedResources(sPath);
-					}
-
-					// in case of gantt shape drag from POOL to RESOURCE 
-					// on successful call of CreateSplitStretchAssignments the response contains the array of split assignments
-					// add those to the gantt view
-					if (aData && aData.results && aData.results.length > 0) {
-						var aCreatedAssignments = this._getCreatedAssignments(aData.results);
-						if (aCreatedAssignments.length > 0) {
-							this._addCreatedAssignment(aCreatedAssignments, sPath.split("/AssignmentSet/results/")[0]);
+						if (sSourcePath) {
+							this._oEventBus.publish("BaseController", "refreshCapacity", {
+								sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
+							});
 						}
-					}
-				}.bind(this), function () {
-					//on reject validation or user don't want proceed
+
+						if (sRequestType === "reassign") {
+							//method call for updating resource assignment in case of single reassignment
+							this._refreshChangedResources(sPath, sSourcePath);
+							this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+						} else {
+							//method call for updating resource assignment in case of Multi Assignment in same axis
+							this._refreshChangedResources(sPath);
+						}
+
+						// in case of gantt shape drag from POOL to RESOURCE 
+						// on successful call of CreateSplitStretchAssignments the response contains the array of split assignments
+						// add those to the gantt view
+						if (aData && aData.results && aData.results.length > 0) {
+							var aCreatedAssignments = this._getCreatedAssignments(aData.results);
+							if (aCreatedAssignments.length > 0) {
+								this._addCreatedAssignment(aCreatedAssignments, sPath.split("/AssignmentSet/results/")[0]);
+							}
+						}
+					}.bind(this), function () {
+						//on reject validation or user don't want proceed
+						this.oGanttModel.setProperty(sPath + "/busy", false);
+						this._resetChanges(sPath);
+						if (sRequestType !== "reassign") {
+							this._refreshChangedResources(sPath);
+						}
+					}.bind(this));
+				}.bind(this), function (oError) {
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
-					if (sRequestType !== "reassign") {
-						this._refreshChangedResources(sPath);
-					}
+					this._refreshChangedResources(sPath);
 				}.bind(this));
-			}.bind(this), function (oError) {
-				this.oGanttModel.setProperty(sPath + "/busy", false);
-				this._resetChanges(sPath);
-				this._refreshChangedResources(sPath);
-			}.bind(this));
+			}
 		},
 
 		/**
