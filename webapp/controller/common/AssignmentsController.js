@@ -783,11 +783,19 @@ sap.ui.define([
 				this.oComponent._getData(sPath, null, mParams)
 					.then(function (data) {
 						var sObjectSourceType = data.Demand.OBJECT_SOURCE_TYPE;
-						this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+						if (data.IS_PRT) {
+							this.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+						} else {
+							this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+						}
 					}.bind(this));
 			} else {
 				var sObjectSourceType = oDemandContext.OBJECT_SOURCE_TYPE;
-				this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+				if (data.IS_PRT) {
+					this.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+				} else {
+					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+				}
 			}
 		},
 

@@ -632,8 +632,8 @@ sap.ui.define([
 		 */
 		_getDefaultPRTToolsAssignmentModelObject: function (oAssignmentData) {
 			return {
-				AllowChange: true,
-				AllowReassign: true,
+				AllowChange: oAssignmentData.PRT_ASSIGNMENT_TYPE === "PRTASGN" ? true : false,
+				AllowReassign: oAssignmentData.PRT_ASSIGNMENT_TYPE === "PRTASGN" ? true : false,
 				AllowUnassign: true,
 				PrtAssignmentGuid: oAssignmentData.Guid,
 				DateFrom: formatter.mergeDateTimeWithoutOffSet(oAssignmentData.DateFrom, oAssignmentData.TimeFrom),

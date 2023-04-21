@@ -18,11 +18,11 @@
 					<Label text="{/#Assignment/DateFrom/@sap:label}"/>
 					<DateTimePicker name="DateFrom"
 						value="{path:'assignment>/DateFrom', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true} }"
-						change="onAssignmentDateChange"/>
+						change="onAssignmentDateChange" enabled="{assignment>/AllowChange}"/>
 					<Label text="{/#Assignment/DateTo/@sap:label}"/>
 					<DateTimePicker id="idDateToAssignInf" name="DateTo"
 						value="{path:'assignment>/DateTo', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true} }"
-						change="onAssignmentDateChange"/>
+						change="onAssignmentDateChange" enabled="{assignment>/AllowChange}"/>
 					<Label text="{i18n>xfld.newAssign}" visible="{assignment>/AllowReassign}"/>
 					<core:ExtensionPoint name="SimpleFormExtP|AssignInfo|AssignmentSet|UpdateAssignmentForm|CustomFields"/>
 					<Button id="reassignDialogButton" text="{i18n>xbut.selectResource}" press="onPressReAssign" visible="{assignment>/AllowReassign}"/>
