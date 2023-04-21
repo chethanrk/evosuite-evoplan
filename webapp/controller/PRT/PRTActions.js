@@ -228,6 +228,44 @@ sap.ui.define([
 				}
 			}.bind(this));
 
-		}
+		},
+		/**
+		 * method to call assignment service
+		 * @param aSources Selected tools data and path
+		 * @param oDateParams required common parameters for all the assignments 
+		 * @param mParameters flag of source view 
+		 */
+		onChangeTools: function (aSources, oDateParams, mParameters) {
+			var oParams;
+			oParams = this._getParams();
+			this._mParameters.bIsFromPRTAssignmentInfo = true;
+			return new Promise(function (resolve, reject) {
+				this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function (success) {
+					resolve(success);
+				}.bind(this), function (error) {
+					reject(error);
+				}.bind(this));
+			}.bind(this));
+		},
+		/** 
+		 * get Parameteres to pass into Function Import
+		 */
+		_getParams: function () {
+			var oPRTAssignment = this.getModel("viewModel").getProperty("/PRT/AssignmentData");
+			return {
+				ToolId: oPRTAssignment.TOOL_ID,
+				PrtAssignmentGuid: oPRTAssignment.Guid,
+				DateFrom: oPRTAssignment.DateFrom,
+				DateTo: oPRTAssignment.DateTo,
+				TimeFrom: {
+					ms: oPRTAssignment.DateFrom.getTime()
+				},
+				TimeTo: {
+					ms: oPRTAssignment.DateTo.getTime()
+				},
+				ResourceGroupGuid: oPRTAssignment.ResourceGroupGuid,
+				ResourceGuid: oPRTAssignment.ResourceGuid
+			}
+		},
 	});
 });

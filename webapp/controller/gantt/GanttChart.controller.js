@@ -415,7 +415,15 @@ sap.ui.define([
 			var oParams = oEvent.getParameters(),
 				oRowContext = oParams.shape.getBindingContext("ganttModel"),
 				sPath = oRowContext.getPath(),
-				oShape = oParams.shape;
+				oShape = oParams.shape,
+				oData = this.oGanttModel.getProperty(sPath),
+				msg;
+
+			if (oData.IS_PRT && oData.PRT_ASSIGNMENT_TYPE === "PRTDEMASGN") {
+				msg = this.getResourceBundle().getText("msg.notPossible");
+				this.showMessageToast(msg);
+				return;
+			}
 
 			// to identify the action done on respective page
 			this.localStorage.put("Evo-Action-page", "ganttSplit");
@@ -999,7 +1007,7 @@ sap.ui.define([
 
 			// to identify the action done on respective page
 			this.localStorage.put("Evo-Action-page", "ganttSplit");
-
+			msg = this.getResourceBundle().getText("msg.notPossible");
 			//could be multiple shape pathes
 			for (var key in oParams.draggedShapeDates) {
 				var sNewPath, bSameResourcePath,
@@ -1007,8 +1015,14 @@ sap.ui.define([
 					sTargetPath = oTargetContext.getPath(),
 					oSourceData = this.oGanttModel.getProperty(sSourcePath),
 					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
+				if (oSourceData.PRT_ASSIGNMENT_TYPE === "PRTDEMASGN") { // Reassigning PRT deanmd assignemnt is restricted
+					this.showMessageToast(msg);
+					return;
+				}
 				//Allowing Assignment Shape Drop Only on Resource Nodes when dragged from different resources
-				if (oTargetContext.getObject().NodeType === "RESOURCE") {
+				if (oTargetContext.getObject().NodeType === "ASSIGNMENT" || !oTargetContext.getObject().ResourceGuid) { // Reassigning PRT resource assignment to Demand assignment or PRT resource not allowed
+					this.showMessageToast(msg);
+				} else if (oTargetContext.getObject().NodeType === "RESOURCE") {
 					//set new time and resource data to gantt model, setting also new pathes
 					sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
 					this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
@@ -1158,50 +1172,60 @@ sap.ui.define([
 			var oData = this.oGanttModel.getProperty(sPath),
 				oOriginalData = this.oGanttModel.getProperty(sPath);
 			//get demand details to this assignment
-			this._getRelatedDemandData(oData).then(function (oResult) {
-				this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
-				this._validateAndSendChangedData(sPath, sRequestType).then(function (aData) {
-					// these events
-					this._oEventBus.publish("BaseController", "refreshCapacity", {
-						sTargetPath: sPath.split("/AssignmentSet/results/")[0]
-					});
-					if (sSourcePath) {
+
+			if (oData.IS_PRT) { // PRT reassignmnet
+				this.oViewModel.setProperty("/PRT/AssignmentData", oData);
+				this.onChangeTools().then(function (resolve) {
+					this._refreshChangedResources(sPath, sSourcePath);
+				}.bind(this), function (reject) {
+					this._resetChanges(sPath);
+				}.bind(this));
+			} else { // Demand update
+				this._getRelatedDemandData(oData).then(function (oResult) {
+					this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
+					this._validateAndSendChangedData(sPath, sRequestType).then(function (aData) {
+						// these events
 						this._oEventBus.publish("BaseController", "refreshCapacity", {
-							sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
+							sTargetPath: sPath.split("/AssignmentSet/results/")[0]
 						});
-					}
-
-					if (sRequestType === "reassign") {
-						//method call for updating resource assignment in case of single reassignment
-						this._refreshChangedResources(sPath, sSourcePath);
-						this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
-					} else {
-						//method call for updating resource assignment in case of Multi Assignment in same axis
-						this._refreshChangedResources(sPath);
-					}
-
-					// in case of gantt shape drag from POOL to RESOURCE 
-					// on successful call of CreateSplitStretchAssignments the response contains the array of split assignments
-					// add those to the gantt view
-					if (aData && aData.results && aData.results.length > 0) {
-						var aCreatedAssignments = this._getCreatedAssignments(aData.results);
-						if (aCreatedAssignments.length > 0) {
-							this._addCreatedAssignment(aCreatedAssignments, sPath.split("/AssignmentSet/results/")[0]);
+						if (sSourcePath) {
+							this._oEventBus.publish("BaseController", "refreshCapacity", {
+								sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
+							});
 						}
-					}
-				}.bind(this), function () {
-					//on reject validation or user don't want proceed
+
+						if (sRequestType === "reassign") {
+							//method call for updating resource assignment in case of single reassignment
+							this._refreshChangedResources(sPath, sSourcePath);
+							this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+						} else {
+							//method call for updating resource assignment in case of Multi Assignment in same axis
+							this._refreshChangedResources(sPath);
+						}
+
+						// in case of gantt shape drag from POOL to RESOURCE 
+						// on successful call of CreateSplitStretchAssignments the response contains the array of split assignments
+						// add those to the gantt view
+						if (aData && aData.results && aData.results.length > 0) {
+							var aCreatedAssignments = this._getCreatedAssignments(aData.results);
+							if (aCreatedAssignments.length > 0) {
+								this._addCreatedAssignment(aCreatedAssignments, sPath.split("/AssignmentSet/results/")[0]);
+							}
+						}
+					}.bind(this), function () {
+						//on reject validation or user don't want proceed
+						this.oGanttModel.setProperty(sPath + "/busy", false);
+						this._resetChanges(sPath);
+						if (sRequestType !== "reassign") {
+							this._refreshChangedResources(sPath);
+						}
+					}.bind(this));
+				}.bind(this), function (oError) {
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
-					if (sRequestType !== "reassign") {
-						this._refreshChangedResources(sPath);
-					}
+					this._refreshChangedResources(sPath);
 				}.bind(this));
-			}.bind(this), function (oError) {
-				this.oGanttModel.setProperty(sPath + "/busy", false);
-				this._resetChanges(sPath);
-				this._refreshChangedResources(sPath);
-			}.bind(this));
+			}
 		},
 
 		/**
@@ -2431,13 +2455,15 @@ sap.ui.define([
 				oResource.children = aChildAsgnData;
 				oResource.children.forEach(function (oAsgnObj) {
 					oAsgnObj.NodeType = "ASSIGNMENT";
-					oAsgnObj.children.forEach(function (oAssignItem) {
-						oAssignItem.NodeType = "ASSIGNMENT";
-						var clonedAsgnObj = _.cloneDeep(oAssignItem);
-						oAssignItem.AssignmentSet = {
-							results: [clonedAsgnObj]
-						};
-					}.bind(this));
+					if (oAsgnObj.children) {
+						oAsgnObj.children.forEach(function (oAssignItem) {
+							oAssignItem.NodeType = "ASSIGNMENT";
+							var clonedAsgnObj = _.cloneDeep(oAssignItem);
+							oAssignItem.AssignmentSet = {
+								results: [clonedAsgnObj]
+							};
+						}.bind(this));
+					}
 					oAsgnObj.ResourceAvailabilitySet = oResource.ResourceAvailabilitySet;
 					var clonedObj = _.cloneDeep(oAsgnObj);
 					//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
