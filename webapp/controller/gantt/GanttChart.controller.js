@@ -1131,7 +1131,8 @@ sap.ui.define([
 			var oData = oContext.getObject(),
 				sPath = oContext.getPath(),
 				bEnableRelationships = false;
-			if (this.oUserModel.getProperty("/ENABLE_NETWORK_ASSIGN_GANTT") && sPath.length > 60) {
+			//Enabling Relationships for only Demand Assignments
+			if (this.oUserModel.getProperty("/ENABLE_NETWORK_ASSIGN_GANTT") && sPath.length > 60 && !oData.IS_PRT) {
 				bEnableRelationships = true;
 			}
 			if (oData.DEMAND_STATUS !== "COMP") {
@@ -1740,7 +1741,10 @@ sap.ui.define([
 							}
 							oItem.AssignmentSet.results.forEach(function (oAsgn) {
 								if (oAsgn.Guid === oResItem.AssignmentGuid) {
-									oResItem.AssignmentSet.results.push(oAsgn);
+									var _cloneObj = _.cloneDeep(oAsgn);
+									//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
+									_cloneObj.OBJECT_ID_RELATION = _cloneObj.OBJECT_ID_RELATION + "//" + _cloneObj.ResourceGuid;
+									oResItem.AssignmentSet.results.push(_cloneObj);
 								}
 							});
 							oResItem.ResourceAvailabilitySet = oItem.ResourceAvailabilitySet; // copying resource availabilities to assignment node
@@ -2431,7 +2435,7 @@ sap.ui.define([
 						oAssignItem.NodeType = "ASSIGNMENT";
 						var clonedAsgnObj = _.cloneDeep(oAssignItem);
 						oAssignItem.AssignmentSet = {
-							results: [clonedAsgnObj] 
+							results: [clonedAsgnObj]
 						};
 					}.bind(this));
 					oAsgnObj.ResourceAvailabilitySet = oResource.ResourceAvailabilitySet;
