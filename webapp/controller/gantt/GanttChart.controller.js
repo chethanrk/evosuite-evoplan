@@ -416,9 +416,12 @@ sap.ui.define([
 				oRowContext = oParams.shape.getBindingContext("ganttModel"),
 				sPath = oRowContext.getPath(),
 				oShape = oParams.shape,
-				oData = this.oGanttModel.getProperty(sPath);
+				oData = this.oGanttModel.getProperty(sPath),
+				msg;
 
 			if (oData.IS_PRT && oData.PRT_ASSIGNMENT_TYPE === "PRTDEMASGN") {
+				msg = this.getResourceBundle().getText("msg.notPossible");
+				this.showMessageToast(msg);
 				return;
 			}
 
