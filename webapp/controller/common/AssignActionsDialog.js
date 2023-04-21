@@ -94,7 +94,7 @@ sap.ui.define([
 				oCheckRightTechnician = sap.ui.getCore().byId("AssignActions--idCheckRightTechnician"),
 				bEnableQualification = this._oView.getModel("user").getProperty("/ENABLE_QUALIFICATION"),
 				oDialog = this._oDialog,
-				
+
 				oSplitInfoMessageStrip = sap.ui.getCore().byId("AssignActions--idAssignActionDialogStrip"),
 				oAssignActionsDialogSmartTable = sap.ui.getCore().byId("AssignActions--idDemandAssignmentTable"),
 				bSplitGlobalConfigEnabled = this._oView.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN");
@@ -289,6 +289,7 @@ sap.ui.define([
 					} else if (obj.NodeType === "RES_GROUP") {
 						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
 					}
+					aResources.push(new Filter("IS_PRT", FilterOperator.EQ, false));
 				}
 
 				if (oViewFilterSettings) {
@@ -355,7 +356,8 @@ sap.ui.define([
 					sPath = oContext.getPath(),
 					oModel = oContext.getModel(),
 					bFlag = false,
-					sSelectedItemSPlitIndex = oContext.getProperty("SPLIT_INDEX"), sSelectedItemSPlitCounter = oContext.getProperty("SPLIT_COUNTER"),
+					sSelectedItemSPlitIndex = oContext.getProperty("SPLIT_INDEX"),
+					sSelectedItemSPlitCounter = oContext.getProperty("SPLIT_COUNTER"),
 					bSplitGlobalConfigEnabled = this._oView.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
 					oSplitInfoMessageStrip = sap.ui.getCore().byId("AssignActions--idAssignActionDialogStrip");
 
@@ -403,19 +405,21 @@ sap.ui.define([
 		 * @param {array} aAllListItems all the list items of assign actions dialog
 		 * @param {boolean} isUnSelect whether the method is called during select or unselect
 		 */
-		selectAllSplitAssignments: function(oContext, aAllListItems, isUnSelect) {
+		selectAllSplitAssignments: function (oContext, aAllListItems, isUnSelect) {
 			// check if the selected assignment has split partners, need to mark them for deletion as well
 			// first get the DemandGuid of the selected Assignment
 			// then from model fetch the oModel.getProperty("/DemandSet(<demand_guid>/DemandToAssignment") to get all split assignments
 			// then loop through oEvent.getSource().getItems() to mark each of them for deletion
 			var sDemandGuid = oContext.getProperty("DemandGuid"),
 				sSelectedItemSPlitIndex = oContext.getProperty("SPLIT_INDEX"),
-				sPath = oContext.getPath(), oModel = oContext.getModel(),
+				sPath = oContext.getPath(),
+				oModel = oContext.getModel(),
 				bFlag;
 
 			var oItem, oItemContext, sAssignmentGuid, sItemSplitIndex;
 			for (var i in aAllListItems) {
-				oItem = aAllListItems[i]; oItemContext = oItem.getBindingContext();
+				oItem = aAllListItems[i];
+				oItemContext = oItem.getBindingContext();
 				sAssignmentGuid = oItemContext.getProperty("DemandGuid");
 				sItemSplitIndex = oItemContext.getProperty("SPLIT_INDEX");
 
@@ -450,7 +454,7 @@ sap.ui.define([
 		 * Deselect from assignments list items not allowed to check Find Technician
 		 */
 		_deselectAssignments: function (sChannel, oEvent, oData) {
-			var	sAssignmentPath,
+			var sAssignmentPath,
 				oItemsAssignmentList;
 			oItemsAssignmentList = this._oAssignMentTable.getItems();
 			for (var i = 0; i < oItemsAssignmentList.length; i++) {
