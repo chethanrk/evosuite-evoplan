@@ -999,7 +999,7 @@ sap.ui.define([
 
 			// to identify the action done on respective page
 			this.localStorage.put("Evo-Action-page", "ganttSplit");
-
+			msg = this.getResourceBundle().getText("msg.notPossible");
 			//could be multiple shape pathes
 			for (var key in oParams.draggedShapeDates) {
 				var sNewPath, bSameResourcePath,
@@ -1007,17 +1007,17 @@ sap.ui.define([
 					sTargetPath = oTargetContext.getPath(),
 					oSourceData = this.oGanttModel.getProperty(sSourcePath),
 					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
-				if (oSourceData.PRT_ASSIGNMENT_TYPE === "PRTDEMASGN") {
-					this.showMessageToast("This action is not possible");
+				if (oSourceData.PRT_ASSIGNMENT_TYPE === "PRTDEMASGN") { // Reassigning PRT deanmd assignemnt is restricted
+					this.showMessageToast(msg);
 					return;
 				}
 				//Allowing Assignment Shape Drop Only on Resource Nodes when dragged from different resources
-				if (oTargetContext.getObject().NodeType === "RESOURCE") {
+				if (oTargetContext.getObject().NodeType === "ASSIGNMENT" || !oTargetContext.getObject().ResourceGuid) { // Reassigning PRT resource assignment to Demand assignment or PRT resource not allowed
+					this.showMessageToast(msg);
+				} else if (oTargetContext.getObject().NodeType === "RESOURCE") {
 					//set new time and resource data to gantt model, setting also new pathes
 					sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
 					this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
-				} else if (oTargetContext.getObject().NodeType === "ASSIGNMENT") {
-					this.showMessageToast("This action is not possible");
 				} else { //Allowing Assignment Shape Drop Only within the same resources
 					bSameResourcePath = sTargetPath.split("/").splice(0, 6).join("/") === sSourcePath.split("/").splice(0, 6).join("/");
 					if (bSameResourcePath) {
@@ -1164,14 +1164,14 @@ sap.ui.define([
 				oOriginalData = this.oGanttModel.getProperty(sPath);
 			//get demand details to this assignment
 
-			if (oData.IS_PRT) {
+			if (oData.IS_PRT) { // PRT reassignmnet
 				this.oViewModel.setProperty("/PRT/AssignmentData", oData);
 				this.onChangeTools().then(function (resolve) {
 					this._refreshChangedResources(sPath, sSourcePath);
 				}.bind(this), function (reject) {
 					this._resetChanges(sPath);
 				}.bind(this));
-			} else {
+			} else { // Demand update
 				this._getRelatedDemandData(oData).then(function (oResult) {
 					this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
 					this._validateAndSendChangedData(sPath, sRequestType).then(function (aData) {
