@@ -289,7 +289,7 @@ sap.ui.define([
 					} else if (obj.NodeType === "RES_GROUP") {
 						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
 					}
-					aResources.push(new Filter("PRT_ASSIGNMENT_EXISTS", FilterOperator.EQ, false));
+					aResources.push(new Filter("IS_PRT", FilterOperator.EQ, false));
 				}
 
 				if (oViewFilterSettings) {

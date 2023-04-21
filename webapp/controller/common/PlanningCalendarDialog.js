@@ -166,7 +166,7 @@ sap.ui.define([
 					aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
 				}
 				if (sType === "ASSIGNMENT") {
-					aUsers.push(new Filter("PRT_ASSIGNMENT_EXISTS", FilterOperator.EQ, false));
+					aUsers.push(new Filter("IS_PRT", FilterOperator.EQ, false));
 				}
 			}
 			if (this._mParameters.bFromGantt) {
