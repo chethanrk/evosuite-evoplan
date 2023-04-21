@@ -2443,13 +2443,15 @@ sap.ui.define([
 				oResource.children = aChildAsgnData;
 				oResource.children.forEach(function (oAsgnObj) {
 					oAsgnObj.NodeType = "ASSIGNMENT";
-					oAsgnObj.children.forEach(function (oAssignItem) {
-						oAssignItem.NodeType = "ASSIGNMENT";
-						var clonedAsgnObj = _.cloneDeep(oAssignItem);
-						oAssignItem.AssignmentSet = {
-							results: [clonedAsgnObj]
-						};
-					}.bind(this));
+					if (oAsgnObj.children) {
+						oAsgnObj.children.forEach(function (oAssignItem) {
+							oAssignItem.NodeType = "ASSIGNMENT";
+							var clonedAsgnObj = _.cloneDeep(oAssignItem);
+							oAssignItem.AssignmentSet = {
+								results: [clonedAsgnObj]
+							};
+						}.bind(this));
+					}
 					oAsgnObj.ResourceAvailabilitySet = oResource.ResourceAvailabilitySet;
 					var clonedObj = _.cloneDeep(oAsgnObj);
 					//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
