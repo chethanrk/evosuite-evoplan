@@ -437,6 +437,7 @@ sap.ui.define([
 				oShape = oParams.shape,
 				oContext = oShape.getBindingContext("ganttModel");
 
+			this.oTargetPath = oContext.sPath;
 			if (oShape && oShape.sParentAggregationName === "shapes3") {
 				if (!this._oContextMenu) {
 					Fragment.load({
@@ -504,7 +505,12 @@ sap.ui.define([
 				this.openAssignInfoDialog(this.getView(), sDataModelPath, null, mParameters, null);
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonUnassign")) {
 				//unassign
-				this._deleteAssignment(this.getModel(), oData.Guid, sPath, this._oEventBus);
+				if (oData.IS_PRT) {
+					this.deletePRTAssignment(oData, this._mParameters);
+				} else {
+					this._deleteAssignment(this.getModel(), oData.Guid, sPath, this._oEventBus);
+				}
+
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonReassign")) {
 				//reassign
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters,
@@ -2427,13 +2433,15 @@ sap.ui.define([
 				oResource.children = aChildAsgnData;
 				oResource.children.forEach(function (oAsgnObj) {
 					oAsgnObj.NodeType = "ASSIGNMENT";
-					oAsgnObj.children.forEach(function (oAssignItem) {
-						oAssignItem.NodeType = "ASSIGNMENT";
-						var clonedAsgnObj = _.cloneDeep(oAssignItem);
-						oAssignItem.AssignmentSet = {
-							results: [clonedAsgnObj] 
-						};
-					}.bind(this));
+					if (oAsgnObj.children) {
+						oAsgnObj.children.forEach(function (oAssignItem) {
+							oAssignItem.NodeType = "ASSIGNMENT";
+							var clonedAsgnObj = _.cloneDeep(oAssignItem);
+							oAssignItem.AssignmentSet = {
+								results: [clonedAsgnObj]
+							};
+						}.bind(this));
+					}
 					oAsgnObj.ResourceAvailabilitySet = oResource.ResourceAvailabilitySet;
 					var clonedObj = _.cloneDeep(oAsgnObj);
 					//Appending Object_ID_RELATION field with ResourceGuid for Assignment Children Nodes @since 2205 for Relationships
@@ -2675,6 +2683,18 @@ sap.ui.define([
 				return sKey.IS_PRT_DUPLICATE !== "X";
 			});
 			return aAllAssignments.concat(aDmdAssignments);
+		},
+		/** 
+		 * On removing the tool assignment 
+		 * from gantt context Menu
+		 * @param oEvent
+		 */
+		deletePRTAssignment: function (oData, mParameters) {
+			this.executeFunctionImport(this.getModel(), {
+				PrtAssignmentGuid: oData.Guid
+			}, "DeleteToolAssignment", "POST").then(function (results) {
+				this._refreshChangedResources(this.oTargetPath);
+			}.bind(this));
 		},
 
 	});
