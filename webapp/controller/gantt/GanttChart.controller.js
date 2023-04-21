@@ -976,7 +976,6 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		_handleShapeDropReAssignment: function (oEvent) {
-			debugger;
 			var oParams = oEvent.getParameters(),
 				msg = this.getResourceBundle().getText("msg.ganttShapeDropError"),
 				oTargetContext = oParams.targetRow ? oParams.targetRow.getBindingContext("ganttModel") : null;
@@ -1166,8 +1165,12 @@ sap.ui.define([
 			//get demand details to this assignment
 
 			if (oData.IS_PRT) {
-				this.oViewModel.setProperty("/PRT/AssignmentData",oData);
-				this.onChangeTools();
+				this.oViewModel.setProperty("/PRT/AssignmentData", oData);
+				this.onChangeTools().then(function (resolve) {
+					this._refreshChangedResources(sPath, sSourcePath);
+				}.bind(this), function (reject) {
+					this._resetChanges(sPath);
+				}.bind(this));
 			} else {
 				this._getRelatedDemandData(oData).then(function (oResult) {
 					this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
