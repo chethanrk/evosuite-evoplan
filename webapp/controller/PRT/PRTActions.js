@@ -239,8 +239,13 @@ sap.ui.define([
 			var oParams;
 			oParams = this._getParams();
 			this._mParameters.bIsFromPRTAssignmentInfo = true;
-			this.callFunctionImport(oParams, "ChangeToolAssignment", "POST", this._mParameters, true);
-
+			return new Promise(function (resolve, reject) {
+				this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function (success) {
+					resolve(success);
+				}.bind(this), function (error) {
+					reject(error);
+				}.bind(this));
+			}.bind(this));
 		},
 		/** 
 		 * get Parameteres to pass into Function Import
