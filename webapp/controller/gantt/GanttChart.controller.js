@@ -415,7 +415,12 @@ sap.ui.define([
 			var oParams = oEvent.getParameters(),
 				oRowContext = oParams.shape.getBindingContext("ganttModel"),
 				sPath = oRowContext.getPath(),
-				oShape = oParams.shape;
+				oShape = oParams.shape,
+				oData = this.oGanttModel.getProperty(sPath);
+
+			if (oData.IS_PRT && oData.PRT_ASSIGNMENT_TYPE === "PRTDEMASGN") {
+				return;
+			}
 
 			// to identify the action done on respective page
 			this.localStorage.put("Evo-Action-page", "ganttSplit");
@@ -1159,7 +1164,7 @@ sap.ui.define([
 			//get demand details to this assignment
 
 			if (oData.IS_PRT) {
-				this.oViewModel.setProperty("/PRT/AssignmentData",oData);
+				this.oViewModel.setProperty("/PRT/AssignmentData", oData);
 				this.onChangeTools();
 			} else {
 				this._getRelatedDemandData(oData).then(function (oResult) {
