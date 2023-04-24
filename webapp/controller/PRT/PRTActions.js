@@ -151,7 +151,7 @@ sap.ui.define([
 		onSaveDialog: function () {
 			var oStartDate = this._oViewModel.getProperty("/PRT/defaultStartDate"),
 				oEndDate = this._oViewModel.getProperty("/PRT/defaultEndDate"),
-				sMsg = this.getResourceBundle().getText("ymsg.datesInvalid");
+				sMsg = this.getResourceBundle().getText("ymsg.wrongDates");
 
 			if (oStartDate <= oEndDate) {
 				this._oDateParams.DateFrom = oStartDate;
