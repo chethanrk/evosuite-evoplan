@@ -190,6 +190,7 @@ sap.ui.define([
 				}
 			}
 			sap.ui.getCore().byId("idFixedAppointmentsList").removeSelections();
+			this.clearDragSession(this._oView);   
 			this._FixedAppointmentsDialog.close();
 		}
 	});

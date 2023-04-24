@@ -78,7 +78,9 @@ sap.ui.define([
 					} else {
 						resolve();
 					}
-				}.bind(this));
+				}.bind(this), function() {
+					this.clearDragSession(this.getView());
+				});
 			}.bind(this));
 		},
 
