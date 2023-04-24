@@ -1472,10 +1472,12 @@ sap.ui.define([
 					this.checkResourceQualification(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(function (data) {
 						this._assignDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath);
 					}.bind(this), function () {
+						this.clearDragSession(this.getView());
 						this.oGanttModel.setProperty(sDummyPath, null);
 						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 					}.bind(this));
 				}.bind(this), function () {
+					this.clearDragSession(this.getView());
 					this.oGanttModel.setProperty(sDummyPath, null);
 					this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 				}.bind(this));
@@ -1523,6 +1525,7 @@ sap.ui.define([
 								this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 							}
 						}.bind(this));
+					this.clearDragSession(this.getView());
 				}.bind(this),
 				function () {
 					if (sDummyPath) {
@@ -1560,6 +1563,7 @@ sap.ui.define([
 							}.bind(this));
 						}
 					}.bind(this), function () {
+						this.clearDragSession(this.getView());
 						reject();
 					});
 				} else {
@@ -2156,6 +2160,7 @@ sap.ui.define([
 							}
 						}.bind(this)
 					);
+					this.clearDragSession(this.getView());
 				}.bind(this),
 				function () {
 					if (sDummyPath) {
