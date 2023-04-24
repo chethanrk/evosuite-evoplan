@@ -95,6 +95,7 @@ sap.ui.define([
 				if (parseInt(i, 10) === aSources.length - 1) {
 					bIsLast = true;
 				}
+				this.clearMessageModel();
 				this.callFunctionImport(oParams, "CreateToolAssignment", "POST", mParameters, bIsLast)
 			}
 		},
@@ -239,6 +240,7 @@ sap.ui.define([
 			var oParams;
 			oParams = this._getParams();
 			this._mParameters.bIsFromPRTAssignmentInfo = true;
+			this.clearMessageModel();
 			return new Promise(function (resolve, reject) {
 				this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function (success) {
 					resolve(success);
