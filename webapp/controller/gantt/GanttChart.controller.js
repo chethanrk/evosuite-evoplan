@@ -1120,7 +1120,7 @@ sap.ui.define([
 			}
 		},
 		/**
-		 * reassign a demand to a new resource by context menu
+		 * reassign a PRT assignment to a new resource by context menu
 		 * @param {String} sChannel
 		 * @param {String} sEvent
 		 * @param {Object} oData
