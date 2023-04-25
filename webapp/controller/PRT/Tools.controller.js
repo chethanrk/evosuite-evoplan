@@ -34,12 +34,12 @@ sap.ui.define([
 			this._oToolsTable = this.byId("idToolsTable").getTable();
 			this._configureToolDataTable(this._oToolsTable);
 			this._eventBus = sap.ui.getCore().getEventBus();
-
-			this._eventBus.subscribe("BaseController", "refreshToolsTable", this._refreshToolsTable, this);
-
+			
 			this._mParameters = {
 				bFromDemandTools: true
 			};
+
+			this._eventBus.subscribe("BaseController", "refreshToolsTable", this._refreshToolsTable, this);
 
 			this._oRouter.getRoute("demandTools").attachPatternMatched(function () {
 				this._oViewModel.setProperty("/PRT/bIsGantt", false);
