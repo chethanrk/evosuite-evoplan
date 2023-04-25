@@ -79,6 +79,7 @@ sap.ui.define([
 			if (mParams && mParams.bCustomBusy && (mParams.bFromNewGantt || mParams.bFromNewGanttSplit)) {
 				this.oView.getModel("ganttModel").setProperty(mParams.sSourcePath + "/busy", false);
 			}
+			this.clearDragSession(this.oView);
 			this._oDialog.close();
 		},
 
