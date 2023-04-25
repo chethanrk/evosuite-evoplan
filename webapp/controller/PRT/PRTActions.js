@@ -107,7 +107,6 @@ sap.ui.define([
 			Promise.all(aPromise).then(function (oSuccess) {
 				oAppViewModel.setProperty("/busy", false);
 				this.afterUpdateOperations(mParameters, mParams);
-				// this._refreshChangedResources(this.sDropTargetPath);
 			}.bind(this), function (oError) {
 				oAppViewModel.setProperty("/busy", false);
 				this._resetChanges(this.sDropTargetPath);
