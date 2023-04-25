@@ -72,6 +72,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onCloseDialog: function (oEvent) {
+			this.clearDragSession(this.oView);
 			this._oDialog.close();
 		},
 
