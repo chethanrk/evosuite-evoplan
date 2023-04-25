@@ -91,9 +91,6 @@ sap.ui.define([
 
 			this.getRouter().getRoute("ganttTools").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
-				// this._mParameters = {
-				// 	bFromNewGantt: true
-				// };
 				this._mParameters = {
 					bFromGanttTools: true
 				};
