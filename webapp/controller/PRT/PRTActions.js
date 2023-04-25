@@ -16,7 +16,7 @@ sap.ui.define([
 		 * @param sTargetPath Target Resource/Demand 
 		 * @param mParameters flag of source view 
 		 */
-		checksBeforeAssignTools: function (aSources, oTargetObj, mParameters,sTargetPath) {
+		checksBeforeAssignTools: function (aSources, oTargetObj, mParameters, sTargetPath) {
 			var oDateParams,
 				sNodeType = oTargetObj.NodeType,
 				bIsDateNode = sNodeType === "TIMEWEEK" || sNodeType === "TIMEDAY" || sNodeType === "TIMEMONTH" || sNodeType === "TIMEQUART" ||
@@ -80,7 +80,12 @@ sap.ui.define([
 		 */
 		_proceedToAssignTools: function (aSources, oDateParams, mParameters) {
 			var oParams,
-				bIsLast,aPromise=[],oAppViewModel=this.getModel("appView");
+				bIsLast,
+				aPromise = [],
+				oAppViewModel = this.getModel("appView"),
+				mParams = {
+					sTargetPath: this.sDropTargetPath
+				};
 			for (var i = 0; i < aSources.length; i++) {
 				oParams = {
 					DateFrom: oDateParams.DateFrom,
@@ -99,14 +104,15 @@ sap.ui.define([
 				aPromise.push(this.executeFunctionImport(this.getModel(), oParams, "CreateToolAssignment", "POST"));
 			}
 			oAppViewModel.setProperty("/busy", true);
-			Promise.all(aPromise).then(function(oSuccess){
+			Promise.all(aPromise).then(function (oSuccess) {
 				oAppViewModel.setProperty("/busy", false);
-				this._refreshChangedResources(this.sDropTargetPath);
-			}.bind(this),function(oError){
+				this.afterUpdateOperations(mParameters, mParams);
+				// this._refreshChangedResources(this.sDropTargetPath);
+			}.bind(this), function (oError) {
 				oAppViewModel.setProperty("/busy", false);
 				this._resetChanges(this.sDropTargetPath);
 			}.bind(this));
-			
+
 		},
 
 		/**
