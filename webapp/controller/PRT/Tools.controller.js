@@ -34,9 +34,11 @@ sap.ui.define([
 			this._oToolsTable = this.byId("idToolsTable").getTable();
 			this._configureToolDataTable(this._oToolsTable);
 			this._eventBus = sap.ui.getCore().getEventBus();
+			
 			this._mParameters = {
 				bFromDemandTools: true
 			};
+
 			this._eventBus.subscribe("BaseController", "refreshToolsTable", this._refreshToolsTable, this);
 
 			this._oRouter.getRoute("demandTools").attachPatternMatched(function () {
@@ -53,6 +55,9 @@ sap.ui.define([
 			this._oGanttToolsFilter = this.getView().byId("idGanttToolsFilterDialog");
 			this._oGanttToolsFilter ? this._oGanttToolsFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass()) : null;
 
+			//Set default tool assign days
+			var iDefNum = this._oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS") ? this._oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS") : 0;
+			this._oViewModel.setProperty("/iDefToolAsgnDays", iDefNum);
 		},
 		/**
 		 * after rendering of view
@@ -187,7 +192,7 @@ sap.ui.define([
 			oDataTable.attachRowSelectionChange(function (oEvent) {
 				var aSelectedIndices = this._oToolsTable.getSelectedIndices(),
 					iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_TOOLS_SELECT_ALL"),
-					sMsg,iLastIndex;
+					sMsg, iLastIndex;
 
 				if (aSelectedIndices.length > iMaxRowSelection) {
 					iLastIndex = aSelectedIndices.pop();

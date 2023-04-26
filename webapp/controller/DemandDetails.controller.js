@@ -174,6 +174,7 @@ sap.ui.define([
 			var sAppName = oEvent.getSource().getUrl(),
 				aNavlinks = this.getModel("templateProperties").getData().navLinks,
 				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode"),
+				sServicePath = "https://" + this.getModel("user").getProperty("/ServerPath"),
 				sAppId = aNavlinks[sAppName].ApplicationId,
 				oAppInfo = this._getAppInfoById(sAppId),
 				sParamValue = oEvent.getSource().getValue(),
@@ -194,7 +195,7 @@ sap.ui.define([
 				}
 			} else {
 				sAdditionInfo = oAppInfo.Value1;
-				sUri = sAdditionInfo.replace("\\\\place_h1\\\\", sParamValue);
+				sUri = sServicePath + sAdditionInfo.replace("\\\\place_h1\\\\", sParamValue);
 				window.open(sUri, "_blank");
 			}
 			
