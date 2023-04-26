@@ -16,7 +16,7 @@ sap.ui.define([
 		 * @param sTargetPath Target Resource/Demand 
 		 * @param mParameters flag of source view 
 		 */
-		checksBeforeAssignTools: function (aSources, oTargetObj, mParameters) {
+		checksBeforeAssignTools: function (aSources, oTargetObj, mParameters, sTargetPath) {
 			var oDateParams,
 				sNodeType = oTargetObj.NodeType,
 				bIsDateNode = sNodeType === "TIMEWEEK" || sNodeType === "TIMEDAY" || sNodeType === "TIMEMONTH" || sNodeType === "TIMEQUART" ||
@@ -24,6 +24,7 @@ sap.ui.define([
 				"TIMEYEAR",
 				oUserModel = this.getModel("user"),
 				oResourceBundle = this.getResourceBundle();
+			this.sDropTargetPath = sTargetPath;
 			if (!this._oViewModel) {
 				this._oViewModel = this.getModel("viewModel");
 			}
@@ -79,7 +80,12 @@ sap.ui.define([
 		 */
 		_proceedToAssignTools: function (aSources, oDateParams, mParameters) {
 			var oParams,
-				bIsLast;
+				bIsLast,
+				aPromise = [],
+				oAppViewModel = this.getModel("appView"),
+				mParams = {
+					sTargetPath: this.sDropTargetPath
+				};
 			for (var i = 0; i < aSources.length; i++) {
 				oParams = {
 					DateFrom: oDateParams.DateFrom,
@@ -95,9 +101,18 @@ sap.ui.define([
 				if (parseInt(i, 10) === aSources.length - 1) {
 					bIsLast = true;
 				}
-				this.clearMessageModel();
-				this.callFunctionImport(oParams, "CreateToolAssignment", "POST", mParameters, bIsLast)
+                this.clearMessageModel();
+				aPromise.push(this.executeFunctionImport(this.getModel(), oParams, "CreateToolAssignment", "POST"));
 			}
+			oAppViewModel.setProperty("/busy", true);
+			Promise.all(aPromise).then(function (oSuccess) {
+				oAppViewModel.setProperty("/busy", false);
+				this.afterUpdateOperations(mParameters, mParams);
+			}.bind(this), function (oError) {
+				oAppViewModel.setProperty("/busy", false);
+				this._resetChanges(this.sDropTargetPath);
+			}.bind(this));
+
 		},
 
 		/**

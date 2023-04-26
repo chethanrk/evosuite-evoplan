@@ -326,6 +326,8 @@ sap.ui.define([
 				if (!oParameter.bIsFromPRTAssignmentInfo) {
 					eventBus.publish("BaseController", "refreshToolsTable", {});
 				}
+			} else if (oParameter.bFromGanttTools) {
+				eventBus.publish("GanttChart", "refreshDroppedContext", oData);
 			}
 
 		},
@@ -947,6 +949,15 @@ sap.ui.define([
 				});
 			}.bind(this));
 		},
+		
+		/**
+		 * Used for clearing the drag session
+		 * @param {object}
+		 * @Author Giri
+		 */
+		 clearDragSession: function(oView){
+			oView.getModel("viewModel").setProperty("/dragSession", null);
+		 },
 
 		/**
 		 * Fetching selected Assignments Path and Context for Assignment Status Change

@@ -67,10 +67,12 @@ sap.ui.define([
 			this._oEventBus.subscribe("BaseController", "refreshAvailabilities", this._refreshAvailabilities, this);
 			this._oEventBus.subscribe("BaseController", "resetSelections", this._resetSelections, this);
 			this._oEventBus.subscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
+			this._oEventBus.subscribe("AssignTreeDialog", "ganttShapePRTReassignment", this._reassignPRTShape, this);
 			this._oEventBus.subscribe("BaseController", "refreshCapacity", this._refreshCapacity, this);
 			this._oEventBus.subscribe("BaseController", "refreshFullGantt", this._loadGanttData, this);
 			this._oEventBus.subscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
 			this._oEventBus.subscribe("GanttChart", "refreshResourceOnDelete", this._refreshResourceOnBulkDelete, this);
+			this._oEventBus.subscribe("GanttChart", "refreshDroppedContext", this._refreshDroppedContext, this);
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
@@ -90,9 +92,15 @@ sap.ui.define([
 			this.getRouter().getRoute("ganttTools").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
-					bFromNewGantt: true
+					bFromGanttTools: true
 				};
 				this._initializeGantt();
+			}.bind(this));
+
+			this.getRouter().getRoute("GanttSplitTools").attachPatternMatched(function () {
+				this._mParameters = {
+					bFromGanttTools: true
+				};
 			}.bind(this));
 
 			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
@@ -120,9 +128,11 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("BaseController", "refreshAvailabilities", this._refreshAvailabilities, this);
 			this._oEventBus.unsubscribe("BaseController", "resetSelections", this._resetSelections, this);
 			this._oEventBus.unsubscribe("AssignTreeDialog", "ganttShapeReassignment", this._reassignShape, this);
+			this._oEventBus.unsubscribe("AssignTreeDialog", "ganttShapePRTReassignment", this._reassignPRTShape, this);
 			this._oEventBus.unsubscribe("BaseController", "refreshCapacity", this._refreshCapacity, this);
 			this._oEventBus.unsubscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
 			this._oEventBus.unsubscribe("GanttChart", "refreshResourceOnDelete", this._refreshResourceOnBulkDelete, this);
+			this._oEventBus.unsubscribe("GanttChart", "refreshDroppedContext", this._refreshDroppedContext, this);
 		},
 		/* =========================================================== */
 		/* Event & Public methods                                      */
@@ -522,7 +532,7 @@ sap.ui.define([
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonReassign")) {
 				//reassign
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters,
-					"ganttShapeReassignment");
+					oData.IS_PRT ? "ganttShapePRTReassignment" : "ganttShapeReassignment");
 			} else if (sRelationshipKey) {
 				//Show Relationships
 				if (sRelationshipKey === "SHOW") {
@@ -768,6 +778,9 @@ sap.ui.define([
 				oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
 				oDropObject = oDropContext.getObject();
+			this._mParameters = {
+				bFromGanttTools: true
+			};
 			if (oDropObject.NodeType !== "RES_GROUP") {
 				this.onProceedGanttToolDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
 			}
@@ -786,7 +799,7 @@ sap.ui.define([
 				sTargetPath = oDropContext.getPath(),
 				aSources = this.oViewModel.getProperty("/dragSession") || this.localStorage.get("Evo-aPathsData"),
 				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
-				iDefNum = this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS"),
+				iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays"),
 				oSvgPoint, oTargetDate, endDate;
 
 			if (oBrowserEvent.target.tagName === "rect" && oDragContext) { // When we drop on gantt chart in the same view
@@ -796,15 +809,15 @@ sap.ui.define([
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				oTargetDate = oAxisTime.viewToTime(oSvgPoint.x);
 			} else if (oDragContext) { // When we drop on the resource 
-				oTargetDate = new Date(new Date().setHours(0));
+				oTargetDate = new Date();
 			} else { // When we drop on the resource from split window
-				oTargetDate = new Date(new Date().setHours(0));
+				oTargetDate = new Date();
 			}
 			endDate = _.cloneDeep(oTargetDate);
 			endDate.setDate(oTargetDate.getDate() + parseInt(iDefNum));
 			this.oViewModel.setProperty("/PRT/defaultStartDate", oTargetDate);
 			this.oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
-			this.checksBeforeAssignTools(aSources, oResourceData, this._mParameters);
+			this.checksBeforeAssignTools(aSources, oResourceData, this._mParameters, sTargetPath);
 		},
 
 		/* =========================================================== */
@@ -1114,6 +1127,33 @@ sap.ui.define([
 						var sNewPath = this._setNewShapeDropData(sGanttPath, sTargetPath, null, {});
 						this._updateDraggedShape(sNewPath, this.mRequestTypes.resize);
 					}
+				}
+			}
+		},
+		/**
+		 * reassign a PRT assignment to a new resource by context menu
+		 * @param {String} sChannel
+		 * @param {String} sEvent
+		 * @param {Object} oData
+		 * @private
+		 */
+		_reassignPRTShape: function (sChannel, sEvent, oData) {
+			if (sChannel === "AssignTreeDialog" && sEvent === "ganttShapePRTReassignment") {
+				for (var i = 0; i < oData.aSourcePaths.length; i++) {
+					var oTargetResourceData = this.getModel().getProperty(oData.sAssignPath),
+						sPRTShapePath = oData.parameters.sSourcePath,
+						oPRTShapeData = this.oGanttModel.getProperty(sPRTShapePath),
+						sCurrentResourcePath = sPRTShapePath.split("/").splice(0, 6).join("/"),
+						sTargetResourcePath = this._getGanttModelPathByProperty("NodeId", oTargetResourceData.NodeId, null),
+						oParams;
+
+					oPRTShapeData.ResourceGroupGuid = oTargetResourceData.ResourceGroupGuid;
+					oPRTShapeData.ResourceGuid = oTargetResourceData.ResourceGuid;
+					this.getModel("viewModel").setProperty("/PRT/AssignmentData", oPRTShapeData);
+					oParams = this._getParams();
+					this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function () {
+						this._refreshChangedResources(sTargetResourcePath, sCurrentResourcePath);
+					}.bind(this));
 				}
 			}
 		},
@@ -1472,10 +1512,12 @@ sap.ui.define([
 					this.checkResourceQualification(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(function (data) {
 						this._assignDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath);
 					}.bind(this), function () {
+						this.clearDragSession(this.getView());
 						this.oGanttModel.setProperty(sDummyPath, null);
 						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 					}.bind(this));
 				}.bind(this), function () {
+					this.clearDragSession(this.getView());
 					this.oGanttModel.setProperty(sDummyPath, null);
 					this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 				}.bind(this));
@@ -1523,6 +1565,7 @@ sap.ui.define([
 								this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 							}
 						}.bind(this));
+					this.clearDragSession(this.getView());
 				}.bind(this),
 				function () {
 					if (sDummyPath) {
@@ -1560,6 +1603,7 @@ sap.ui.define([
 							}.bind(this));
 						}
 					}.bind(this), function () {
+						this.clearDragSession(this.getView());
 						reject();
 					});
 				} else {
@@ -2156,6 +2200,7 @@ sap.ui.define([
 							}
 						}.bind(this)
 					);
+					this.clearDragSession(this.getView());
 				}.bind(this),
 				function () {
 					if (sDummyPath) {
@@ -2724,6 +2769,13 @@ sap.ui.define([
 				this._refreshChangedResources(this.oTargetPath);
 			}.bind(this));
 		},
+
+		_refreshDroppedContext: function (sChannel, sEvent, oData) {
+			var oSourceData = oData.oSourceData,
+				sTargetPath = oSourceData.sTargetPath,
+				sSourcePath = oSourceData.sSourcePath;
+			this._refreshChangedResources(sTargetPath, sSourcePath);
+		}
 
 	});
 

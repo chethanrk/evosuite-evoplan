@@ -199,7 +199,6 @@ sap.ui.define([
 							this._oController.onProceedToGanttDropOnResource(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
 						} else if (this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
 							this._oController.onProceedNewGanttDemandDrop(this.oDraggedControl, this.oDroppedControl, this.oBrowserEvent);
-							this._oView.getModel("viewModel").setProperty("/dragSession", null);
 						} else {
 							this._oController.assignedDemands(aSources, this._sPath, this._mParameter);
 						}
@@ -212,7 +211,7 @@ sap.ui.define([
 		 * Closing Dialog
 		 */
 		onCancelNetworkAssignment: function () {
-			this._oView.getModel("viewModel").setProperty("/dragSession", null);
+			this.clearDragSession(this._oView);
 			this._oDialog.close();
 		}
 

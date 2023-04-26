@@ -356,6 +356,7 @@ sap.ui.define([
 						}
 						this.callFunctionImport(aAllParameters[iIndex], "CreateAssignment", "POST", mParameters, bIsLast);
 					}
+					this.clearDragSession(this.getView());
 				}
 			}
 
