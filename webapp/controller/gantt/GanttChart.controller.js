@@ -788,7 +788,7 @@ sap.ui.define([
 				sTargetPath = oDropContext.getPath(),
 				aSources = this.oViewModel.getProperty("/dragSession") || this.localStorage.get("Evo-aPathsData"),
 				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
-				iDefNum = this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS"),
+				iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays"),
 				oSvgPoint, oTargetDate, endDate;
 
 			if (oBrowserEvent.target.tagName === "rect" && oDragContext) { // When we drop on gantt chart in the same view
@@ -798,9 +798,9 @@ sap.ui.define([
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				oTargetDate = oAxisTime.viewToTime(oSvgPoint.x);
 			} else if (oDragContext) { // When we drop on the resource 
-				oTargetDate = new Date(new Date().setHours(0));
+				oTargetDate = new Date();
 			} else { // When we drop on the resource from split window
-				oTargetDate = new Date(new Date().setHours(0));
+				oTargetDate = new Date();
 			}
 			endDate = _.cloneDeep(oTargetDate);
 			endDate.setDate(oTargetDate.getDate() + parseInt(iDefNum));
