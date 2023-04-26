@@ -55,6 +55,9 @@ sap.ui.define([
 			this._oGanttToolsFilter = this.getView().byId("idGanttToolsFilterDialog");
 			this._oGanttToolsFilter ? this._oGanttToolsFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass()) : null;
 
+			//Set default tool assign days
+			var iDefNum = this._oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS") ? this._oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS") : 0;
+			this._oViewModel.setProperty("/iDefToolAsgnDays", iDefNum);
 		},
 		/**
 		 * after rendering of view
