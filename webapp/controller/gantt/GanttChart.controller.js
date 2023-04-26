@@ -118,6 +118,8 @@ sap.ui.define([
 			this.bGanttHorizonChange = false; //Flag to identify Gantt Horizon Date Change
 
 			this.oMapUtilities = new MapUtilities();
+			var iDefNum = this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS") ? this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS") : 0;
+			this.oViewModel.setProperty("/iDefToolAsgnDays", iDefNum);
 		},
 
 		/**

@@ -186,7 +186,12 @@ sap.ui.define([
 					}
 					oParams = this._getParams();
 					this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function () {
-						//event bus call to refresh Gantt
+						this._oEventBus.publish("GanttChart", "refreshDroppedContext", {
+							oSourceData: {
+								sTargetPath: this._oAssignmentPaths.sTargetResourcePath,
+								sSourcePath: this._oAssignmentPaths.sCurrentResourcePath
+							}
+						})
 					}.bind(this));
 				} else {
 					this._oDateParams.DateFrom = oStartDate;
@@ -308,7 +313,7 @@ sap.ui.define([
 		 */
 		getPRTDateParams: function (oPRTShapeData) {
 			var oParams = {},
-				iDefNum = this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS"),
+				iDefNum = this.getModel('viewModel').getProperty("/iDefToolAsgnDays"),
 				oStartDate = new Date(),
 				oEndDate = new Date();
 			oEndDate = new Date(oEndDate.setDate(oEndDate.getDate() + parseInt(iDefNum)));
