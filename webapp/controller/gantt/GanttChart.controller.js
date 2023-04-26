@@ -72,6 +72,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("BaseController", "refreshFullGantt", this._loadGanttData, this);
 			this._oEventBus.subscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
 			this._oEventBus.subscribe("GanttChart", "refreshResourceOnDelete", this._refreshResourceOnBulkDelete, this);
+			this._oEventBus.subscribe("GanttChart", "refreshDroppedContext", this._refreshDroppedContext, this);
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
@@ -91,9 +92,15 @@ sap.ui.define([
 			this.getRouter().getRoute("ganttTools").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
-					bFromNewGantt: true
+					bFromGanttTools: true
 				};
 				this._initializeGantt();
+			}.bind(this));
+
+			this.getRouter().getRoute("GanttSplitTools").attachPatternMatched(function () {
+				this._mParameters = {
+					bFromGanttTools: true
+				};
 			}.bind(this));
 
 			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
@@ -125,6 +132,7 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("BaseController", "refreshCapacity", this._refreshCapacity, this);
 			this._oEventBus.unsubscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
 			this._oEventBus.unsubscribe("GanttChart", "refreshResourceOnDelete", this._refreshResourceOnBulkDelete, this);
+			this._oEventBus.unsubscribe("GanttChart", "refreshDroppedContext", this._refreshDroppedContext, this);
 		},
 		/* =========================================================== */
 		/* Event & Public methods                                      */
@@ -770,6 +778,9 @@ sap.ui.define([
 				oDragContext = oDraggedControl ? oDraggedControl.getBindingContext() : undefined,
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
 				oDropObject = oDropContext.getObject();
+			this._mParameters = {
+				bFromGanttTools: true
+			};
 			if (oDropObject.NodeType !== "RES_GROUP") {
 				this.onProceedGanttToolDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
 			}
@@ -806,7 +817,7 @@ sap.ui.define([
 			endDate.setDate(oTargetDate.getDate() + parseInt(iDefNum));
 			this.oViewModel.setProperty("/PRT/defaultStartDate", oTargetDate);
 			this.oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
-			this.checksBeforeAssignTools(aSources, oResourceData, this._mParameters);
+			this.checksBeforeAssignTools(aSources, oResourceData, this._mParameters, sTargetPath);
 		},
 
 		/* =========================================================== */
@@ -2758,6 +2769,13 @@ sap.ui.define([
 				this._refreshChangedResources(this.oTargetPath);
 			}.bind(this));
 		},
+
+		_refreshDroppedContext: function (sChannel, sEvent, oData) {
+			var oSourceData = oData.oSourceData,
+				sTargetPath = oSourceData.sTargetPath,
+				sSourcePath = oSourceData.sSourcePath;
+			this._refreshChangedResources(sTargetPath, sSourcePath);
+		}
 
 	});
 
