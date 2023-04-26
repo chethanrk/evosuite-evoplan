@@ -106,7 +106,7 @@ sap.ui.define([
 		 * @param aSources Selected tools data and path
 		 * @param mParameters flag of source view 
 		 */
-		openDateSelectionDialog: function (oView, oDateParams, aSources, mParameters) {
+		openDateSelectionDialog: function (oView, oDateParams, aSources, mParameters, bIsGanttPRTReassign, oAssignmentPaths) {
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
@@ -116,10 +116,10 @@ sap.ui.define([
 				}).then(function (oDialog) {
 					oView.getModel("appView").setProperty("/busy", false);
 					this._oDialog = oDialog;
-					this.onOpen(oDialog, oView, oDateParams, aSources, mParameters);
+					this.onOpen(oDialog, oView, oDateParams, aSources, mParameters, bIsGanttPRTReassign, oAssignmentPaths);
 				}.bind(this));
 			} else {
-				this.onOpen(this._oDialog, oView, oDateParams, aSources, mParameters);
+				this.onOpen(this._oDialog, oView, oDateParams, aSources, mParameters, bIsGanttPRTReassign, oAssignmentPaths);
 			}
 		},
 
@@ -130,10 +130,12 @@ sap.ui.define([
 		 * @param aSources Selected tools data and path
 		 * @param mParameters flag of source view 
 		 */
-		onOpen: function (oDialog, oView, oDateParams, aSources, mParameters) {
+		onOpen: function (oDialog, oView, oDateParams, aSources, mParameters, bIsGanttPRTReassign, oAssignmentPaths) {
 			this._oDateParams = oDateParams;
 			this._aSources = aSources;
 			this._mParameters = mParameters;
+			this._bIsGanttPRTReassign = bIsGanttPRTReassign;
+			this._oAssignmentPaths = oAssignmentPaths;
 			oView.addDependent(oDialog);
 			oDialog.open();
 		},
@@ -149,16 +151,35 @@ sap.ui.define([
 		 * method to trigger function import for tool assignment
 		 */
 		onSaveDialog: function () {
+			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel('viewModel')
 			var oStartDate = this._oViewModel.getProperty("/PRT/defaultStartDate"),
 				oEndDate = this._oViewModel.getProperty("/PRT/defaultEndDate"),
-				sMsg = this.getResourceBundle().getText("ymsg.datesInvalid");
+				sMsg = this.getResourceBundle().getText("ymsg.datesInvalid"),
+				oPRTAssignmentData,
+				oParams;
 
 			if (oStartDate <= oEndDate) {
-				this._oDateParams.DateFrom = oStartDate;
-				this._oDateParams.TimeFrom.ms = oStartDate.getTime();
-				this._oDateParams.DateTo = oEndDate;
-				this._oDateParams.TimeTo.ms = oEndDate.getTime();
-				this._proceedToAssignTools(this._aSources, this._oDateParams, this._mParameters);
+				if (this._bIsGanttPRTReassign) {
+					oPRTAssignmentData = this.getModel('viewModel').getProperty("/PRT/AssignmentData");
+					oPRTAssignmentData.DateFrom = oStartDate,
+						oPRTAssignmentData.DateTo = oEndDate,
+						oPRTAssignmentData.TimeFrom = {
+							ms: oStartDate.getTime()
+						}
+					oPRTAssignmentData.TimeTo = {
+						ms: oEndDate.getTime()
+					}
+					oParams = this._getParams();
+					this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function () {
+						//event bus call to refresh Gantt
+					}.bind(this));
+				} else {
+					this._oDateParams.DateFrom = oStartDate;
+					this._oDateParams.TimeFrom.ms = oStartDate.getTime();
+					this._oDateParams.DateTo = oEndDate;
+					this._oDateParams.TimeTo.ms = oEndDate.getTime();
+					this._proceedToAssignTools(this._aSources, this._oDateParams, this._mParameters);
+				}
 				this.closeDateSelectionDialog();
 			} else {
 				this.showMessageToast(sMsg);
@@ -266,6 +287,30 @@ sap.ui.define([
 				ResourceGroupGuid: oPRTAssignment.ResourceGroupGuid,
 				ResourceGuid: oPRTAssignment.ResourceGuid
 			}
+		},
+		/** 
+		 * get Date n Time Parameteres to pass into Function Import/Date Selection dialog
+		 */
+		getPRTDateParams: function (oPRTShapeData) {
+			var oParams = {},
+				iDefNum = this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS"),
+				oStartDate = new Date(),
+				oEndDate = new Date();
+			oEndDate = new Date(oEndDate.setDate(oEndDate.getDate() + parseInt(iDefNum)));
+			oEndDate = new Date(oEndDate.setHours(23, 59, 59));
+
+			oParams.DateFrom = oStartDate
+			oParams.TimeFrom = {
+				ms: oStartDate.getTime()
+			};
+			oParams.DateTo = oEndDate;
+			oParams.TimeTo = {
+				ms: oEndDate.getTime()
+			};
+
+			this.oViewModel.setProperty("/PRT/defaultStartDate", oStartDate);
+			this.oViewModel.setProperty("/PRT/defaultEndDate", oEndDate);
+			return oParams;
 		},
 	});
 });
