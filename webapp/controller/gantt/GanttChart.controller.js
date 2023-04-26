@@ -118,6 +118,8 @@ sap.ui.define([
 			this.bGanttHorizonChange = false; //Flag to identify Gantt Horizon Date Change
 
 			this.oMapUtilities = new MapUtilities();
+			var iDefNum = this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS") ? this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS") : 0;
+			this.oViewModel.setProperty("/iDefToolAsgnDays", iDefNum);
 		},
 
 		/**
@@ -1145,15 +1147,28 @@ sap.ui.define([
 						oPRTShapeData = this.oGanttModel.getProperty(sPRTShapePath),
 						sCurrentResourcePath = sPRTShapePath.split("/").splice(0, 6).join("/"),
 						sTargetResourcePath = this._getGanttModelPathByProperty("NodeId", oTargetResourceData.NodeId, null),
-						oParams;
+						oParams, oDateParams;
 
 					oPRTShapeData.ResourceGroupGuid = oTargetResourceData.ResourceGroupGuid;
 					oPRTShapeData.ResourceGuid = oTargetResourceData.ResourceGuid;
 					this.getModel("viewModel").setProperty("/PRT/AssignmentData", oPRTShapeData);
 					oParams = this._getParams();
-					this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function () {
-						this._refreshChangedResources(sTargetResourcePath, sCurrentResourcePath);
-					}.bind(this));
+					oDateParams = this.getPRTDateParams(oPRTShapeData);
+					if (this.oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) {
+						this.openDateSelectionDialog(this.getView(), oDateParams, oPRTShapeData, this._mParameters, true, {
+							sCurrentResourcePath: sCurrentResourcePath,
+							sTargetResourcePath: sTargetResourcePath
+						});
+					} else {
+						oParams.DateFrom = oDateParams.DateFrom;
+						oParams.DateTo = oDateParams.DateTo;
+						oParams.TimeFrom = oDateParams.TimeFrom;
+						oParams.TimeTo = oDateParams.TimeTo;
+						this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function () {
+							this._refreshChangedResources(sTargetResourcePath, sCurrentResourcePath);
+						}.bind(this));
+					}
+
 				}
 			}
 		},
