@@ -101,6 +101,7 @@ sap.ui.define([
 				if (parseInt(i, 10) === aSources.length - 1) {
 					bIsLast = true;
 				}
+                this.clearMessageModel();
 				aPromise.push(this.executeFunctionImport(this.getModel(), oParams, "CreateToolAssignment", "POST"));
 			}
 			oAppViewModel.setProperty("/busy", true);
@@ -169,9 +170,9 @@ sap.ui.define([
 			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel('viewModel')
 			var oStartDate = this._oViewModel.getProperty("/PRT/defaultStartDate"),
 				oEndDate = this._oViewModel.getProperty("/PRT/defaultEndDate"),
-				sMsg = this.getResourceBundle().getText("ymsg.datesInvalid"),
-				oPRTAssignmentData,
-				oParams;
+				sMsg = this.getResourceBundle().getText("ymsg.wrongDates"),
+                oPRTAssignmentData,
+				oParams;;
 
 			if (oStartDate <= oEndDate) {
 				if (this._bIsGanttPRTReassign) {
@@ -280,6 +281,7 @@ sap.ui.define([
 			var oParams;
 			oParams = this._getParams();
 			this._mParameters.bIsFromPRTAssignmentInfo = true;
+			this.clearMessageModel();
 			return new Promise(function (resolve, reject) {
 				this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function (success) {
 					resolve(success);
