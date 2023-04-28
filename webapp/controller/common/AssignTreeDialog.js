@@ -192,7 +192,7 @@ sap.ui.define([
 			var msg;
 			if (this._assignPath) {
 				var oTargetObj = this._oView.getModel().getProperty(this._assignPath);
-				if (this._isToolReAssign && oTargetObj.NodeType === "RES_GROUP") { // If tool is reasssigned to group then drop the process
+				if (this._isToolReAssign && (oTargetObj.NodeType === "RES_GROUP" || oTargetObj.IS_PRT)) { // If tool is reassigned to group or tool then drop the process
 					msg = this._oView.getModel("i18n").getResourceBundle().getText("ymsg.selectResoure");
 					this.showMessageToast(msg);
 				} else if (!this._reAssign && !this._isToolReAssign) {
