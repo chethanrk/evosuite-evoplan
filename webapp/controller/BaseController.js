@@ -687,6 +687,42 @@ sap.ui.define([
 			oDataTable.setRowActionTemplate(oTemplate);
 			oDataTable.setRowActionCount(oTemplate.getItems().length);
 		},
+		/**
+		 * OnPress of Order, Notification, Equipment etc Links
+		 * in Demand Details screen and AssignInfo Dialog
+		 * @param oEvent
+		 */
+		onPressSmartField: function (oEvent) {
+			var oSource = oEvent.getSource(),
+				sAppName = oSource.getUrl(),
+				aNavlinks = this.getModel("templateProperties").getData().navLinks,
+				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode"),
+				sServicePath = "https://" + this.getModel("user").getProperty("/ServerPath"),
+				sAppId = aNavlinks[sAppName].ApplicationId,
+				oAppInfo = this._getAppInfoById(sAppId),
+				sParamValue = oSource.getValue(),
+				sAdditionInfo, sSemanticObject, sAction, sParameter, sUri;
+
+			// if there is no configuration maintained in the backend
+			if (oAppInfo === null) {
+				return;
+			}
+
+			if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
+				sAdditionInfo = oAppInfo.Value1 || "";
+				sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];
+				sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "Display";
+				sParameter = sAdditionInfo.split("\\\\_\\\\")[2];
+				if (sSemanticObject && sAction) {
+					this.navToApp(sSemanticObject, sAction, sParameter, sParamValue);
+				}
+			} else {
+				sAdditionInfo = oAppInfo.Value1;
+				sUri = sServicePath + sAdditionInfo.replace("\\\\place_h1\\\\", sParamValue);
+				this.navigateToApps(sUri);
+			}
+
+		},
 
 		/**
 		 * Navigate to other apps as BSP Apps 
@@ -949,15 +985,15 @@ sap.ui.define([
 				});
 			}.bind(this));
 		},
-		
+
 		/**
 		 * Used for clearing the drag session
 		 * @param {object}
 		 * @Author Giri
 		 */
-		 clearDragSession: function(oView){
+		clearDragSession: function (oView) {
 			oView.getModel("viewModel").setProperty("/dragSession", null);
-		 },
+		},
 
 		/**
 		 * Fetching selected Assignments Path and Context for Assignment Status Change
@@ -1352,7 +1388,23 @@ sap.ui.define([
 			} else {
 				this._oEventBus.publish("BaseController", "resetSelections", {});
 			}
-		}
+		},
+
+		/**
+		 * get respective navigation details
+		 * @param sAppID
+		 */
+		_getAppInfoById: function (sAppID) {
+			var aNavLinks = this.getModel("templateProperties").getProperty("/navLinks");
+			for (var i in aNavLinks) {
+				if (aNavLinks.hasOwnProperty(i)) {
+					if (aNavLinks[i].ApplicationId === sAppID) {
+						return aNavLinks[i];
+					}
+				}
+			}
+			return null;
+		},
 	});
 
 });
