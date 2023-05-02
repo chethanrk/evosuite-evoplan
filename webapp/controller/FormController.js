@@ -68,15 +68,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * when SmartField is visible as link
-		 * show app to app navigation popup
-		 */
-		onPressSmartField: function (oEvent) {
-			var oSource = oEvent.getSource();
-			this.openApp2AppPopover(oSource, oSource.getUrl());
-		},
-
-		/**
 		 * when ObjectStatus in header is visible as active
 		 * show app to app navigation popup
 		 */
