@@ -522,7 +522,7 @@ sap.ui.define([
 
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonChange")) {
 				//change assignment
-				this.openAssignInfoDialog(this.getView(), sDataModelPath, null, mParameters, null);
+				this.openAssignInfoDialog(this.getView(), sDataModelPath, oContext, mParameters, null);
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonUnassign")) {
 				//unassign
 				if (oData.IS_PRT) {

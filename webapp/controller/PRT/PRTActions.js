@@ -101,7 +101,7 @@ sap.ui.define([
 				if (parseInt(i, 10) === aSources.length - 1) {
 					bIsLast = true;
 				}
-                this.clearMessageModel();
+				this.clearMessageModel();
 				aPromise.push(this.executeFunctionImport(this.getModel(), oParams, "CreateToolAssignment", "POST"));
 			}
 			oAppViewModel.setProperty("/busy", true);
@@ -171,7 +171,7 @@ sap.ui.define([
 			var oStartDate = this._oViewModel.getProperty("/PRT/defaultStartDate"),
 				oEndDate = this._oViewModel.getProperty("/PRT/defaultEndDate"),
 				sMsg = this.getResourceBundle().getText("ymsg.wrongDates"),
-                oPRTAssignmentData,
+				oPRTAssignmentData,
 				oParams;;
 
 			if (oStartDate <= oEndDate) {
@@ -237,7 +237,7 @@ sap.ui.define([
 			if (sEvent === "dataReceived") {
 				//Fetching Context Data for PlanningCalendar 
 				oDialog.setBusy(false);
-				this.oComponent.assignInfoDialog.onToolOpen(oDialog, oView, sPath, data, mParams.refreshParameters);
+				this.oComponent.assignInfoDialog.onToolOpen(oDialog, oView, sPath, data, mParams);
 			}
 		},
 
