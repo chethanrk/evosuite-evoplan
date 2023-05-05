@@ -189,10 +189,14 @@ sap.ui.define([
 		},
 
 		onSaveDialog: function () {
+			var msg;
 			if (this._assignPath) {
-				if (!this._reAssign && !this._isToolReAssign) {
-					var oTargetObj = this._oView.getModel().getProperty(this._assignPath),
-						aSources = this._oView.getModel("viewModel").getProperty("/dragSession"),
+				var oTargetObj = this._oView.getModel().getProperty(this._assignPath);
+				if (this._isToolReAssign && (oTargetObj.NodeType === "RES_GROUP" || oTargetObj.IS_PRT)) { // If tool is reassigned to group or tool then drop the process
+					msg = this._oView.getModel("i18n").getResourceBundle().getText("ymsg.selectResoure");
+					this.showMessageToast(msg);
+				} else if (!this._reAssign && !this._isToolReAssign) {
+					var aSources = this._oView.getModel("viewModel").getProperty("/dragSession"),
 						oUserModel = this._oView.getModel("user"),
 						iOperationTimesLen = this.onShowOperationTimes(this._oView.getModel("viewModel")),
 						iVendorAssignmentLen = this.onAllowVendorAssignment(this._oView.getModel("viewModel"), oUserModel),
@@ -221,7 +225,7 @@ sap.ui.define([
 				}
 			} else {
 				//show error message
-				var msg = this._oView.getModel("i18n").getResourceBundle().getText("notFoundContext");
+				msg = this._oView.getModel("i18n").getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
 			}
 		},

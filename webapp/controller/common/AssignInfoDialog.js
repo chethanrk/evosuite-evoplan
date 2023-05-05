@@ -668,7 +668,7 @@ sap.ui.define([
 				if (oDateTo >= oDateFrom) {
 					oParams = this._getParams();
 					this._mParameters.bIsFromPRTAssignmentInfo = true;
-					this.clearMessageModel();
+					this.clearMessageModel.call(this._oView.getController());
 					this.callFunctionImport.call(this._oView.getController(), oParams, "ChangeToolAssignment", "POST", this._mParameters, true);
 					this._closeDialog();
 				} else {
@@ -685,7 +685,7 @@ sap.ui.define([
 		 */
 		onDeleteToolAssignment: function (oEvent) {
 			var sPrtAssignmentGuid = this.oAssignmentModel.getProperty("/PrtAssignmentGuid");
-			this.clearMessageModel();
+			this.clearMessageModel.call(this._oView.getController());
 			this.callFunctionImport.call(this._oView.getController(), {
 				PrtAssignmentGuid: sPrtAssignmentGuid
 			}, "DeleteToolAssignment", "POST", this._mParameters, true);
