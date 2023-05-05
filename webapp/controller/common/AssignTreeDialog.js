@@ -193,7 +193,7 @@ sap.ui.define([
 			if (this._assignPath) {
 				var oTargetObj = this._oView.getModel().getProperty(this._assignPath);
 				if (this._isToolReAssign && (oTargetObj.NodeType === "RES_GROUP" || oTargetObj.IS_PRT)) { // If tool is reassigned to group or tool then drop the process
-					msg = this._oView.getModel("i18n").getResourceBundle().getText("ymsg.selectResoure");
+					msg = this._oView.getModel("i18n").getResourceBundle().getText("ymsg.selectResourceOrDemand");
 					this.showMessageToast(msg);
 				} else if (!this._reAssign && !this._isToolReAssign) {
 					var aSources = this._oView.getModel("viewModel").getProperty("/dragSession"),
