@@ -196,9 +196,7 @@ sap.ui.define([
 					}.bind(this));
 				} else if (this._mParameters.hasOwnProperty("bFromGanttToolReassign")) {
 					if (this._mParameters.bFromGanttToolReassign) {
-						this._oEventBus.publish("GanttCharController", "onToolReassign", {
-							data: this._mParameters
-						});
+						this._oEventBus.publish("GanttCharController", "onToolReassign", this._mParameters);
 					}
 				} else {
 					this._oDateParams.DateFrom = oStartDate;

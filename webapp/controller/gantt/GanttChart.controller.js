@@ -1061,29 +1061,17 @@ sap.ui.define([
 						this.oViewModel.setProperty("/PRT/defaultStartDate", oSourceDataDateFrom);
 						this.oViewModel.setProperty("/PRT/defaultEndDate", oSourceDataDateTo);
 						var oTargetObj = this.oGanttModel.getProperty(sTargetPath),
-							oDateParams = {
-								DateFrom: "",
-								TimeFrom: {},
-								DateTo: "",
-								TimeTo: {},
-								ResourceGroupGuid: oTargetObj.ResourceGroupGuid,
-								ResourceGuid: oTargetObj.ResourceGuid,
-								DemandGuid: ""
-							},
 							mParameters = {
 								bFromGanttToolReassign: true,
-								sSourcePath:sSourcePath,
-								sTargetPath:sTargetPath,
-								draggedShapeDates:oParams.draggedShapeDates[key],
-								oParams:oParams,
-								sRequestType:sRequestType
-							},
-							aSources = [{
-								oData: oSourceData
-							}]
-						this.openDateSelectionDialog(this.getView(), oDateParams, aSources, mParameters);
+								sSourcePath: sSourcePath,
+								sTargetPath: sTargetPath,
+								draggedShapeDates: oParams.draggedShapeDates[key],
+								oParams: oParams,
+								sRequestType: sRequestType
+							};
+						this.openDateSelectionDialog(this.getView(), null, null, mParameters);
 					} else {
-
+						sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
 						this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
 					}
 
@@ -1096,8 +1084,9 @@ sap.ui.define([
 				}
 			}
 		},
-		_onToolReassign: function (mParam1) {
-			console.log("method trigerred",mParam1);
+		_onToolReassign: function (sChannel, sEvent, mParam1) {
+			var sNewPath = this._setNewShapeDropData(mParam1.sSourcePath, mParam1.sTargetPath, mParam1.draggedShapeDates, mParam1.oParams);
+			this._updateDraggedShape(sNewPath, mParam1.sRequestType, mParam1.sSourcePath);
 		},
 		/**
 		 * set background color of Gantt by dynamic adding style sheet rule
