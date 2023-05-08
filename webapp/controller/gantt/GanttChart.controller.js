@@ -2498,12 +2498,16 @@ sap.ui.define([
 		 * @Author Rakesh Sahu
 		 */
 		_updateAfterReAssignment: function (aData, oTargetResource, oSourceResource) {
-			oTargetResource.AssignmentSet = aData[0];
+			oTargetResource.AssignmentSet.results = aData[0].results.filter(function (sKey) { //Filtering Demand Assignments
+				return sKey.IS_PRT === false;
+			});
 			this._updateResourceChildren(oTargetResource, this._updateDmdPRTAssignments(aData[0].results));
 			this.oGanttOriginDataModel.setProperty(this._oTargetResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oTargetResourcePath)));
 
 			if (oSourceResource) {
-				oSourceResource.AssignmentSet = aData[1];
+				oSourceResource.AssignmentSet.results = aData[1].results.filter(function (sKey) { //Filtering Demand Assignments
+					return sKey.IS_PRT === false;
+				});
 				this._updateResourceChildren(oSourceResource, this._updateDmdPRTAssignments(aData[1].results));
 				this.oGanttOriginDataModel.setProperty(this._oSourceResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oSourceResourcePath)));
 			}
