@@ -73,6 +73,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
 			this._oEventBus.subscribe("GanttChart", "refreshResourceOnDelete", this._refreshResourceOnBulkDelete, this);
 			this._oEventBus.subscribe("GanttChart", "refreshDroppedContext", this._refreshDroppedContext, this);
+			this._oEventBus.subscribe("GanttCharController", "onToolReassign", this._onToolReassign, this);
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
@@ -1045,8 +1046,47 @@ sap.ui.define([
 					this.showMessageToast(msg);
 				} else if (oTargetContext.getObject().NodeType === "RESOURCE") {
 					//set new time and resource data to gantt model, setting also new pathes
-					sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
-					this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+					if (oSourceData.IS_PRT) {
+						//sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
+						console.log(oParams.draggedShapeDates);
+						var oDraggedShapeData = oParams.draggedShapeDates[key]
+						if (oDraggedShapeData) {
+							var oSourceStartDate = moment(oDraggedShapeData.time),
+								oSourceEndDate = moment(oDraggedShapeData.endTime),
+								duration = oSourceEndDate.diff(oSourceStartDate, "seconds"),
+								newEndDate = moment(oParams.newDateTime).add(duration, "seconds"),
+								oSourceDataDateFrom = oParams.newDateTime,
+								oSourceDataDateTo = newEndDate.toDate();
+						}
+						this.oViewModel.setProperty("/PRT/defaultStartDate", oSourceDataDateFrom);
+						this.oViewModel.setProperty("/PRT/defaultEndDate", oSourceDataDateTo);
+						var oTargetObj = this.oGanttModel.getProperty(sTargetPath),
+							oDateParams = {
+								DateFrom: "",
+								TimeFrom: {},
+								DateTo: "",
+								TimeTo: {},
+								ResourceGroupGuid: oTargetObj.ResourceGroupGuid,
+								ResourceGuid: oTargetObj.ResourceGuid,
+								DemandGuid: ""
+							},
+							mParameters = {
+								bFromGanttToolReassign: true,
+								sSourcePath:sSourcePath,
+								sTargetPath:sTargetPath,
+								draggedShapeDates:oParams.draggedShapeDates[key],
+								oParams:oParams,
+								sRequestType:sRequestType
+							},
+							aSources = [{
+								oData: oSourceData
+							}]
+						this.openDateSelectionDialog(this.getView(), oDateParams, aSources, mParameters);
+					} else {
+
+						this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+					}
+
 				} else { //Allowing Assignment Shape Drop Only within the same resources
 					bSameResourcePath = sTargetPath.split("/").splice(0, 6).join("/") === sSourcePath.split("/").splice(0, 6).join("/");
 					if (bSameResourcePath) {
@@ -1056,7 +1096,9 @@ sap.ui.define([
 				}
 			}
 		},
-
+		_onToolReassign: function (mParam1) {
+			console.log("method trigerred",mParam1);
+		},
 		/**
 		 * set background color of Gantt by dynamic adding style sheet rule
 		 * https://developer.mozilla.org/en-US/docs/Web/API/CSSRuleList

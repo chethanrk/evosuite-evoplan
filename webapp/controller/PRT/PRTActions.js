@@ -101,7 +101,7 @@ sap.ui.define([
 				if (parseInt(i, 10) === aSources.length - 1) {
 					bIsLast = true;
 				}
-                this.clearMessageModel();
+				this.clearMessageModel();
 				aPromise.push(this.executeFunctionImport(this.getModel(), oParams, "CreateToolAssignment", "POST"));
 			}
 			oAppViewModel.setProperty("/busy", true);
@@ -171,8 +171,8 @@ sap.ui.define([
 			var oStartDate = this._oViewModel.getProperty("/PRT/defaultStartDate"),
 				oEndDate = this._oViewModel.getProperty("/PRT/defaultEndDate"),
 				sMsg = this.getResourceBundle().getText("ymsg.wrongDates"),
-                oPRTAssignmentData,
-				oParams;;
+				oPRTAssignmentData,
+				oParams;
 
 			if (oStartDate <= oEndDate) {
 				if (this._bIsGanttPRTReassign) {
@@ -194,6 +194,12 @@ sap.ui.define([
 							}
 						})
 					}.bind(this));
+				} else if (this._mParameters.hasOwnProperty("bFromGanttToolReassign")) {
+					if (this._mParameters.bFromGanttToolReassign) {
+						this._oEventBus.publish("GanttCharController", "onToolReassign", {
+							data: this._mParameters
+						});
+					}
 				} else {
 					this._oDateParams.DateFrom = oStartDate;
 					this._oDateParams.TimeFrom.ms = oStartDate.getTime();
