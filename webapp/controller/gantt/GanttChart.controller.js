@@ -1047,8 +1047,6 @@ sap.ui.define([
 				} else if (oTargetContext.getObject().NodeType === "RESOURCE") {
 					//set new time and resource data to gantt model, setting also new pathes
 					if (oSourceData.IS_PRT) {
-						//sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
-						console.log(oParams.draggedShapeDates);
 						var oDraggedShapeData = oParams.draggedShapeDates[key]
 						if (oDraggedShapeData) {
 							var oSourceStartDate = moment(oDraggedShapeData.time),
