@@ -64,7 +64,7 @@ sap.ui.define([
 				oDemandData = this.selectedDemandData;
 			this.linkToOtherApps(oData, oSource.getModel("viewModel"), oSource.getModel("user"), oDemandData);
 		},
-		
+
 		/**
 		 * Navigation Logic for EvoApps Detail Screen 
 		 * based on Launch Mode's
@@ -104,7 +104,7 @@ sap.ui.define([
 					sAdditionInfo = oAppInfo.Value1;
 					sParameter = oDemandData[oAppInfo.Value2];
 					sUri = sAdditionInfo.replace("\\\\place_h1\\\\", sParameter);
-					sUri = sServicePath + sUri;
+					sUri = oAppInfo.ISABSOLUTE ? sUri : sServicePath + sUri;
 					this.navigateToApps(sUri);
 				}
 			}
