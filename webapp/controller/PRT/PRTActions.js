@@ -243,7 +243,7 @@ sap.ui.define([
 			if (sEvent === "dataReceived") {
 				//Fetching Context Data for PlanningCalendar 
 				oDialog.setBusy(false);
-				this.oComponent.assignInfoDialog.onToolOpen(oDialog, oView, sPath, data, mParams.refreshParameters);
+				this.oComponent.assignInfoDialog.onToolOpen(oDialog, oView, sPath, data, mParams);
 			}
 		},
 

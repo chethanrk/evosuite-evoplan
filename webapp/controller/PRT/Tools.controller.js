@@ -34,7 +34,7 @@ sap.ui.define([
 			this._oToolsTable = this.byId("idToolsTable").getTable();
 			this._configureToolDataTable(this._oToolsTable);
 			this._eventBus = sap.ui.getCore().getEventBus();
-			
+
 			this._mParameters = {
 				bFromDemandTools: true
 			};
@@ -193,19 +193,26 @@ sap.ui.define([
 				var aSelectedIndices = this._oToolsTable.getSelectedIndices(),
 					iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_TOOLS_SELECT_ALL"),
 					sMsg, iLastIndex;
-
+				
+				// condition to deselect All when max selection limit is already reach but pressing select All checkbox
+				if (oEvent.getParameter("selectAll") && this._nSelectedToolsCount === iMaxRowSelection) {
+					this._oToolsTable.clearSelection();
+					return;
+				}
 				if (aSelectedIndices.length > iMaxRowSelection) {
-					iLastIndex = aSelectedIndices.pop();
 					if (oEvent.getParameter("selectAll")) {
+						iLastIndex = aSelectedIndices.pop();
 						this._oToolsTable.removeSelectionInterval(iMaxRowSelection, iLastIndex);
 						sMsg = this.getResourceBundle().getText("ymsg.allToolSelect", [iMaxRowSelection]);
 						this.showMessageToast(sMsg);
 					} else {
+						iLastIndex = oEvent.getParameter('rowIndex');
 						this._oToolsTable.removeSelectionInterval(iLastIndex, iLastIndex);
 						sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
 						this.showMessageToast(sMsg);
 					}
 				}
+				this._nSelectedToolsCount = this._oToolsTable.getSelectedIndices().length;
 			}.bind(this));
 		}
 	});
