@@ -1124,17 +1124,17 @@ sap.ui.define([
 					oSourceEndDate = moment(oDraggedShapeData.endTime),
 					duration = oSourceEndDate.diff(oSourceStartDate, "seconds"),
 					newEndDate = moment(oParams.newDateTime).add(duration, "seconds");
-				oSourceData.DateFrom = oParams.newDateTime;
-				oSourceData.DateTo = newEndDate.toDate();
+				if (oSourceData.IS_PRT) {
+					oSourceData.DateFrom = this.oViewModel.getProperty("/PRT/defaultStartDate");
+					oSourceData.DateTo = this.oViewModel.getProperty("/PRT/defaultEndDate");
+				} else {
+					oSourceData.DateFrom = oParams.newDateTime;
+					oSourceData.DateTo = newEndDate.toDate();
+				}
 			}
 			/*	Checking if the source is PRT so that the end date can be assigned based on the 
 				iDefToolAsgnDays flag*/
-			if (oSourceData.IS_PRT) {
-				var iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays");
-				var endDate = _.cloneDeep(oSourceData.DateFrom);
-				endDate.setDate(oSourceData.DateFrom.getDate() + parseInt(iDefNum));
-				oSourceData.DateTo = endDate;
-			}
+
 			oSourceData.sSourcePath = sSourcePath;
 			oSourceData.sPath = sSourcePath;
 			oSourceData.OldAssignPath = sSourcePath.split("/AssignmentSet/results/")[0];
@@ -2543,14 +2543,14 @@ sap.ui.define([
 		 */
 		_updateAfterReAssignment: function (aData, oTargetResource, oSourceResource) {
 			oTargetResource.AssignmentSet.results = aData[0].results.filter(function (sKey) { //Filtering Demand Assignments
-				return sKey.IS_PRT === false;
+				return sKey.PRT_ASSIGNMENT_TYPE !== 'PRTDEMASGN';
 			});
 			this._updateResourceChildren(oTargetResource, this._updateDmdPRTAssignments(aData[0].results));
 			this.oGanttOriginDataModel.setProperty(this._oTargetResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oTargetResourcePath)));
 
 			if (oSourceResource) {
 				oSourceResource.AssignmentSet.results = aData[1].results.filter(function (sKey) { //Filtering Demand Assignments
-					return sKey.IS_PRT === false;
+					return sKey.PRT_ASSIGNMENT_TYPE !== 'PRTDEMASGN';
 				});
 				this._updateResourceChildren(oSourceResource, this._updateDmdPRTAssignments(aData[1].results));
 				this.oGanttOriginDataModel.setProperty(this._oSourceResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oSourceResourcePath)));
