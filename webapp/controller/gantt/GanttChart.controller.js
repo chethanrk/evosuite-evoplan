@@ -1051,8 +1051,8 @@ sap.ui.define([
 						if (oDraggedShapeData) {
 							var iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays"),
 								oSourceDataDateFrom = oParams.newDateTime,
-								oSourceDataDateTo = _.cloneDeep(oSourceDataDateFrom),
-								oSourceDataDateTo.setDate(oSourceDataDateFrom.getDate() + parseInt(iDefNum));
+								oSourceDataDateTo = _.cloneDeep(oSourceDataDateFrom);
+							oSourceDataDateTo.setDate(oSourceDataDateFrom.getDate() + parseInt(iDefNum));
 						}
 						this.oViewModel.setProperty("/PRT/defaultStartDate", oSourceDataDateFrom);
 						this.oViewModel.setProperty("/PRT/defaultEndDate", oSourceDataDateTo);
@@ -1117,6 +1117,13 @@ sap.ui.define([
 					newEndDate = moment(oParams.newDateTime).add(duration, "seconds");
 				oSourceData.DateFrom = oParams.newDateTime;
 				oSourceData.DateTo = newEndDate.toDate();
+			}
+			//
+			if (oSourceData.IS_PRT) {
+				var iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays");
+				var endDate = _.cloneDeep(oSourceData.DateFrom);
+				endDate.setDate(oSourceData.DateFrom.getDate() + parseInt(iDefNum));
+				oSourceData.DateTo = endDate;
 			}
 			oSourceData.sSourcePath = sSourcePath;
 			oSourceData.sPath = sSourcePath;
