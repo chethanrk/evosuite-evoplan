@@ -1045,7 +1045,7 @@ sap.ui.define([
 				if (oTargetContext.getObject().NodeType === "ASSIGNMENT" || !oTargetContext.getObject().ResourceGuid) { // Reassigning PRT resource assignment to Demand assignment or PRT resource not allowed
 					this.showMessageToast(msg);
 				} else if (oTargetContext.getObject().NodeType === "RESOURCE") {
-					//set new time and resource data to gantt model, setting also new pathes
+					// Here we check below of the source is PR or not.
 					if (oSourceData.IS_PRT) {
 						var oDraggedShapeData = oParams.draggedShapeDates[key]
 						if (oDraggedShapeData) {
@@ -1054,6 +1054,7 @@ sap.ui.define([
 								oSourceDataDateTo = _.cloneDeep(oSourceDataDateFrom);
 							oSourceDataDateTo.setDate(oSourceDataDateFrom.getDate() + parseInt(iDefNum));
 						}
+						// Assigning the To and From time to the dialog box model.
 						this.oViewModel.setProperty("/PRT/defaultStartDate", oSourceDataDateFrom);
 						this.oViewModel.setProperty("/PRT/defaultEndDate", oSourceDataDateTo);
 						var oTargetObj = this.oGanttModel.getProperty(sTargetPath),
@@ -1067,6 +1068,7 @@ sap.ui.define([
 							};
 						this.openDateSelectionDialog(this.getView(), null, null, mParameters);
 					} else {
+						//set new time and resource data to gantt model, setting also new pathes
 						sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
 						this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
 					}
@@ -1080,6 +1082,13 @@ sap.ui.define([
 				}
 			}
 		},
+		/**
+		 * method to handle shape Drop When a shape for Tool is dragged inside Gantt to reassign
+		 * and dropped to same row or another resource row
+		 * @param sChannel {string}
+		 * @param sEvent {string}
+		 * @param mParam1 {oBject}
+		 */
 		_onToolReassign: function (sChannel, sEvent, mParam1) {
 			var sNewPath = this._setNewShapeDropData(mParam1.sSourcePath, mParam1.sTargetPath, mParam1.draggedShapeDates, mParam1.oParams);
 			this._updateDraggedShape(sNewPath, mParam1.sRequestType, mParam1.sSourcePath);
@@ -1118,7 +1127,8 @@ sap.ui.define([
 				oSourceData.DateFrom = oParams.newDateTime;
 				oSourceData.DateTo = newEndDate.toDate();
 			}
-			//
+			/*	Checking if the source is PRT so that the end date can be assigned based on the 
+				iDefToolAsgnDays flg*/
 			if (oSourceData.IS_PRT) {
 				var iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays");
 				var endDate = _.cloneDeep(oSourceData.DateFrom);

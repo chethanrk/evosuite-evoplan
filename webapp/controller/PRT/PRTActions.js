@@ -195,6 +195,8 @@ sap.ui.define([
 						})
 					}.bind(this));
 				} else if (this._mParameters.hasOwnProperty("bFromGanttToolReassign")) {
+					/*	This nested if else condition is used when the Tool is dropped inside the 
+						gantt chart to a particular resource.*/
 					if (this._mParameters.bFromGanttToolReassign) {
 						this._oEventBus.publish("GanttCharController", "onToolReassign", this._mParameters);
 					}
