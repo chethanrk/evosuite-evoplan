@@ -1047,7 +1047,7 @@ sap.ui.define([
 					this.showMessageToast(msg);
 				} else if (oTargetContext.getObject().NodeType === "RESOURCE") {
 					// Here we check below of the source is PR or not.
-					if (oSourceData.IS_PRT && oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG");) {
+					if (oSourceData.IS_PRT && oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) {
 						var oDraggedShapeData = oParams.draggedShapeDates[key]
 						if (oDraggedShapeData) {
 							var iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays"),
