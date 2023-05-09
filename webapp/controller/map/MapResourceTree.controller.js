@@ -327,6 +327,7 @@ sap.ui.define([
 			}
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
+			aFilter.push(new Filter("IS_MAP_VIEW_CALL", FilterOperator.EQ, "X")); //To restrict fetching of PRT assignments in resource tree
 			// setting filters in local model to access in assignTree dialog.
 			this.getModel("viewModel").setProperty("/resourceFilterView", aFilter);
 			oBinding.filters = [new Filter(aFilter, true)];
