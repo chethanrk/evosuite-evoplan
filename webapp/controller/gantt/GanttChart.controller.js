@@ -1008,6 +1008,7 @@ sap.ui.define([
 		_handleShapeDropReAssignment: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				msg = this.getResourceBundle().getText("msg.ganttShapeDropError"),
+				oUserModel = this.getModel("user"),
 				oTargetContext = oParams.targetRow ? oParams.targetRow.getBindingContext("ganttModel") : null;
 
 			if (!oTargetContext && !oParams.targetShape) {
@@ -1046,7 +1047,7 @@ sap.ui.define([
 					this.showMessageToast(msg);
 				} else if (oTargetContext.getObject().NodeType === "RESOURCE") {
 					// Here we check below of the source is PR or not.
-					if (oSourceData.IS_PRT) {
+					if (oSourceData.IS_PRT && oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG");) {
 						var oDraggedShapeData = oParams.draggedShapeDates[key]
 						if (oDraggedShapeData) {
 							var iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays"),
