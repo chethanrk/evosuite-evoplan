@@ -172,7 +172,7 @@ sap.ui.define([
 				oEndDate = this._oViewModel.getProperty("/PRT/defaultEndDate"),
 				sMsg = this.getResourceBundle().getText("ymsg.wrongDates"),
 				oPRTAssignmentData,
-				oParams;;
+				oParams;
 
 			if (oStartDate <= oEndDate) {
 				if (this._bIsGanttPRTReassign) {
@@ -194,6 +194,12 @@ sap.ui.define([
 							}
 						})
 					}.bind(this));
+				} else if (this._mParameters.hasOwnProperty("bFromGanttToolReassign")) {
+					/*	This nested if else condition is used when the Tool is dropped inside the 
+						gantt chart to a particular resource.*/
+					if (this._mParameters.bFromGanttToolReassign) {
+						this._oEventBus.publish("GanttCharController", "onToolReassignGantt", this._mParameters);
+					}
 				} else {
 					this._oDateParams.DateFrom = oStartDate;
 					this._oDateParams.TimeFrom.ms = oStartDate.getTime();
