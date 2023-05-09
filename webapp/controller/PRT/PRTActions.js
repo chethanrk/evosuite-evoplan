@@ -198,7 +198,7 @@ sap.ui.define([
 					/*	This nested if else condition is used when the Tool is dropped inside the 
 						gantt chart to a particular resource.*/
 					if (this._mParameters.bFromGanttToolReassign) {
-						this._oEventBus.publish("GanttCharController", "onToolReassign", this._mParameters);
+						this._oEventBus.publish("GanttCharController", "onToolReassignGantt", this._mParameters);
 					}
 				} else {
 					this._oDateParams.DateFrom = oStartDate;

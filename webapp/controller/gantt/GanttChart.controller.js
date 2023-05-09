@@ -73,7 +73,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
 			this._oEventBus.subscribe("GanttChart", "refreshResourceOnDelete", this._refreshResourceOnBulkDelete, this);
 			this._oEventBus.subscribe("GanttChart", "refreshDroppedContext", this._refreshDroppedContext, this);
-			this._oEventBus.subscribe("GanttCharController", "onToolReassign", this._onToolReassign, this);
+			this._oEventBus.subscribe("GanttCharController", "onToolReassignGantt", this._onToolReassignGantt, this);
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
@@ -1083,13 +1083,13 @@ sap.ui.define([
 			}
 		},
 		/**
-		 * method to handle shape Drop When a shape for Tool is dragged inside Gantt to reassign
+		 * method to handle shape drop When a shape for Tool is dragged inside Gantt to reassign
 		 * and dropped to same row or another resource row
 		 * @param sChannel {string}
 		 * @param sEvent {string}
 		 * @param mParam1 {oBject}
 		 */
-		_onToolReassign: function (sChannel, sEvent, mParam1) {
+		_onToolReassignGantt: function (sChannel, sEvent, mParam1) {
 			var sNewPath = this._setNewShapeDropData(mParam1.sSourcePath, mParam1.sTargetPath, mParam1.draggedShapeDates, mParam1.oParams);
 			this._updateDraggedShape(sNewPath, mParam1.sRequestType, mParam1.sSourcePath);
 		},
@@ -1128,7 +1128,7 @@ sap.ui.define([
 				oSourceData.DateTo = newEndDate.toDate();
 			}
 			/*	Checking if the source is PRT so that the end date can be assigned based on the 
-				iDefToolAsgnDays flg*/
+				iDefToolAsgnDays flag*/
 			if (oSourceData.IS_PRT) {
 				var iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays");
 				var endDate = _.cloneDeep(oSourceData.DateFrom);
