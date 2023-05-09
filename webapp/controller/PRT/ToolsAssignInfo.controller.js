@@ -17,9 +17,22 @@ sap.ui.define([
 	return BaseController.extend("com.evorait.evoplan.controller.PRT.Tools", {
 
 		formatter: formatter,
+
+		/* =========================================================== */
+		/* lifecycle methods                                           */
+		/* =========================================================== */
+
+		/**
+		 * Called when the controller is instantiated.
+		 * @public
+		 */
 		onInit: function () {
 			this._eventBus = sap.ui.getCore().getEventBus();
 		},
+
+		/* =========================================================== */
+		/* Public methods                                              */
+		/* =========================================================== */
 
 		/**
 		 * trigger event for open select assign tree table dialog
