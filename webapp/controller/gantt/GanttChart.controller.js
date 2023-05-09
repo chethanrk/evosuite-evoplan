@@ -1049,12 +1049,10 @@ sap.ui.define([
 					if (oSourceData.IS_PRT) {
 						var oDraggedShapeData = oParams.draggedShapeDates[key]
 						if (oDraggedShapeData) {
-							var oSourceStartDate = moment(oDraggedShapeData.time),
-								oSourceEndDate = moment(oDraggedShapeData.endTime),
-								duration = oSourceEndDate.diff(oSourceStartDate, "seconds"),
-								newEndDate = moment(oParams.newDateTime).add(duration, "seconds"),
+							var iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays"),
 								oSourceDataDateFrom = oParams.newDateTime,
-								oSourceDataDateTo = newEndDate.toDate();
+								oSourceDataDateTo = _.cloneDeep(oSourceDataDateFrom),
+								oSourceDataDateTo.setDate(oSourceDataDateFrom.getDate() + parseInt(iDefNum));
 						}
 						this.oViewModel.setProperty("/PRT/defaultStartDate", oSourceDataDateFrom);
 						this.oViewModel.setProperty("/PRT/defaultEndDate", oSourceDataDateTo);
