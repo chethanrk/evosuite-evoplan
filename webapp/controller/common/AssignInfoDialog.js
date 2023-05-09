@@ -569,11 +569,12 @@ sap.ui.define([
 			var oPrtToolsAssignment = this._getDefaultPRTToolsAssignmentModelObject(oAssignmentData);
 
 			this._sAssignmentPath = sAssignementPath;
-			this._mParameters = mParameters;
+			this._mParameters = mParameters.refreshParameters;
 			this.oAssignmentModel = oView.getModel("assignment");
 			this._oDialog = oDialog;
 			this._oView = oView;
 			this._component = this._oView.getController().getOwnerComponent();
+			this.AssignmentSourcePath = mParameters.parentContext.getPath();
 
 			oPrtToolsAssignment.isPRT = true;
 			this.oAssignmentModel.setData(oPrtToolsAssignment);
@@ -668,8 +669,16 @@ sap.ui.define([
 				if (oDateTo >= oDateFrom) {
 					oParams = this._getParams();
 					this._mParameters.bIsFromPRTAssignmentInfo = true;
+					var oData = {
+						oSourceData: {
+							sTargetPath: this.AssignmentSourcePath
+						}
+					}
 					this.clearMessageModel.call(this._oView.getController());
-					this.callFunctionImport.call(this._oView.getController(), oParams, "ChangeToolAssignment", "POST", this._mParameters, true);
+					this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), oParams, "ChangeToolAssignment", "POST",
+						this._mParameters, true).then(function () {
+						this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+					}.bind(this));
 					this._closeDialog();
 				} else {
 					this.showMessageToast(sMsg);
@@ -686,9 +695,16 @@ sap.ui.define([
 		onDeleteToolAssignment: function (oEvent) {
 			var sPrtAssignmentGuid = this.oAssignmentModel.getProperty("/PrtAssignmentGuid");
 			this.clearMessageModel.call(this._oView.getController());
-			this.callFunctionImport.call(this._oView.getController(), {
+			var oData = {
+				oSourceData: {
+					sTargetPath: this.AssignmentSourcePath
+				}
+			}
+			this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), {
 				PrtAssignmentGuid: sPrtAssignmentGuid
-			}, "DeleteToolAssignment", "POST", this._mParameters, true);
+			}, "DeleteToolAssignment", "POST", this._mParameters, true).then(function () {
+				this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+			}.bind(this));
 			this._closeDialog();
 		},
 	});
