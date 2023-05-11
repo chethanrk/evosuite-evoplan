@@ -270,27 +270,6 @@ sap.ui.define([
 			}.bind(this));
 		},
 		/** 
-		 * get Parameteres to pass into Function Import
-		 */
-		_getParams: function () {
-			var oPRTAssignment = this.getModel("viewModel").getProperty("/PRT/AssignmentData");
-			return {
-				ToolId: oPRTAssignment.TOOL_ID,
-				PrtAssignmentGuid: oPRTAssignment.Guid,
-				DateFrom: oPRTAssignment.DateFrom,
-				DateTo: oPRTAssignment.DateTo,
-				TimeFrom: {
-					ms: oPRTAssignment.DateFrom.getTime()
-				},
-				TimeTo: {
-					ms: oPRTAssignment.DateTo.getTime()
-				},
-				ResourceGroupGuid: oPRTAssignment.ResourceGroupGuid,
-				ResourceGuid: oPRTAssignment.ResourceGuid,
-				DemandGuid: oPRTAssignment.DemandGuid ? oPRTAssignment.DemandGuid : ""
-			}
-		},
-		/** 
 		 * get Date n Time Parameteres to pass into Function Import/Date Selection dialog
 		 */
 		getPRTDateParams: function (oPRTShapeData) {
@@ -379,7 +358,8 @@ sap.ui.define([
 					ms: oPRTAssignment.DateTo.getTime()
 				},
 				ResourceGroupGuid: oPRTAssignment.ResourceGroupGuid,
-				ResourceGuid: oPRTAssignment.ResourceGuid
+				ResourceGuid: oPRTAssignment.ResourceGuid,
+				DemandGuid: oPRTAssignment.DemandGuid ? oPRTAssignment.DemandGuid : ""
 			}
 		},
 
