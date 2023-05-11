@@ -269,7 +269,6 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-
 		/** 
 		 * get Date n Time Parameteres to pass into Function Import/Date Selection dialog
 		 */
@@ -359,7 +358,8 @@ sap.ui.define([
 					ms: oPRTAssignment.DateTo.getTime()
 				},
 				ResourceGroupGuid: oPRTAssignment.ResourceGroupGuid,
-				ResourceGuid: oPRTAssignment.ResourceGuid
+				ResourceGuid: oPRTAssignment.ResourceGuid,
+				DemandGuid: oPRTAssignment.DemandGuid ? oPRTAssignment.DemandGuid : ""
 			}
 		},
 
