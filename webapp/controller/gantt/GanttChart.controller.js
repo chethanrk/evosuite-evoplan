@@ -770,6 +770,7 @@ sap.ui.define([
 			}
 			return "url(#" + sGradId + ")";
 		},
+
 		/**
 		 * when we try to drop the tool on the resource.
 		 * @param oEvent 
@@ -788,6 +789,7 @@ sap.ui.define([
 				this.onProceedGanttToolDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
 			}
 		},
+
 		/**
 		 * this method is used to check and add validations on the 
 		 * tools dropped on resource and call the resprctive service for the same.
