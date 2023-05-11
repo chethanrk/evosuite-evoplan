@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/m/Token",
 	"sap/m/Tokenizer",
 	"sap/ui/core/Fragment",
+	"sap/m/MessageBox",
 	"sap/m/MessageToast"
-], function (Controller, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageToast) {
+], function (Controller, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageBox, MessageToast) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
@@ -559,11 +560,11 @@ sap.ui.define([
 		 */
 		_deleteAssignment: function (oModel, sAssignGuid, sPath, oEventBus) {
 			var oGanttModel = this.getModel("ganttModel"),
-
 				bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
 				isAssignmentPartOfSplit = this.checkIfAssignmentPartOfSplit(oModel, sAssignGuid),
 				oResourceBundle = this.getResourceBundle(),
-				sConfirmMessage = oResourceBundle.getText("ymsg.confirmDel");
+				sConfirmMessage = oResourceBundle.getText("ymsg.confirmDel"),
+				sProceedBtnTxt = oResourceBundle.getText("xbut.buttonProceed");
 
 			var fnDeleteAssignment = function () {
 				this.deleteAssignment(oModel, sAssignGuid).then(function () {
@@ -586,25 +587,39 @@ sap.ui.define([
 					});
 			}.bind(this);
 
-			if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
-				sConfirmMessage = oResourceBundle.getText("xmsg.deleteAllSplitAssignments");
-			}
-
 			this.checkToolExists([{ // check tool exists
 				AssignmentGUID: sAssignGuid
 			}]).then(function (resolve) {
 				if (resolve) { // If user click yes
 					oGanttModel.setProperty(sPath + "/busy", true);
 					fnDeleteAssignment();
-				} else { // If no tool exists
-					this._showConfirmMessageBox.call(this, sConfirmMessage).then(function (data) {
-						oGanttModel.setProperty(sPath + "/busy", true);
-						if (data === "YES") {
-							fnDeleteAssignment();
-						} else {
-							oGanttModel.setProperty(sPath + "/busy", false);
-						}
-					}.bind(this));
+				} else {
+					if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
+						sConfirmMessage = oResourceBundle.getText("xmsg.deleteAllGanttSplitAssignments");
+						MessageBox.confirm(sConfirmMessage, {
+							title: oResourceBundle.getText("xtit.deleteAllSplitAssignments"),
+							actions: [sProceedBtnTxt, MessageBox.Action.CANCEL],
+							emphasizedAction: sProceedBtnTxt,
+							onClose: function (sAction) {
+								oGanttModel.setProperty(sPath + "/busy", true);
+								if (sAction === sProceedBtnTxt) {
+									fnDeleteAssignment();
+								} else {
+									oGanttModel.setProperty(sPath + "/busy", false);
+								}
+							}
+						});
+					} else {
+						// If no tool exists
+						this._showConfirmMessageBox.call(this, sConfirmMessage).then(function (data) {
+							oGanttModel.setProperty(sPath + "/busy", true);
+							if (data === "YES") {
+								fnDeleteAssignment();
+							} else {
+								oGanttModel.setProperty(sPath + "/busy", false);
+							}
+						}.bind(this));
+					}
 				}
 			}.bind(this));
 		},

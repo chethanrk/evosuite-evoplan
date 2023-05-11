@@ -1076,6 +1076,21 @@ sap.ui.define([
 		 */
 		editBtnVisibility: function (sEdit, bAuthCheck) {
 			return Boolean(sEdit && bAuthCheck);
+		},
+
+		getDialogTitle: function (bIsPrt) {
+			var oComponent = this._component,
+				oBundle;
+			if (oComponent) {
+				oBundle = oComponent.getModel("i18n").getResourceBundle();
+			} else {
+				oBundle = this.getResourceBundle();
+			}
+			if (bIsPrt) {
+				return oBundle.getText("xtit.reassignToolTitle");
+			} else {
+				return oBundle.getText("xtit.assignModalTitle");
+			}
 		}
 	};
 });

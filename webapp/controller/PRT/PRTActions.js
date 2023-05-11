@@ -10,6 +10,10 @@ sap.ui.define([
 
 	return BaseController.extend("com.evorait.evoplan.controller.PRT.PRTOperations", {
 
+		/* =========================================================== */
+		/* Public methods                                              */
+		/* =========================================================== */
+
 		/**
 		 * validations before tools assignment service call
 		 * @param aSources Selected tools data and path
@@ -73,49 +77,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * method to call assignment service
-		 * @param aSources Selected tools data and path
-		 * @param oDateParams required common parameters for all the assignments 
-		 * @param mParameters flag of source view 
-		 */
-		_proceedToAssignTools: function (aSources, oDateParams, mParameters) {
-			var oParams,
-				bIsLast,
-				aPromise = [],
-				oAppViewModel = this.getModel("appView"),
-				mParams = {
-					sTargetPath: this.sDropTargetPath
-				};
-			for (var i = 0; i < aSources.length; i++) {
-				oParams = {
-					DateFrom: oDateParams.DateFrom,
-					TimeFrom: oDateParams.TimeFrom,
-					DateTo: oDateParams.DateTo,
-					TimeTo: oDateParams.TimeTo,
-					ResourceGroupGuid: oDateParams.ResourceGroupGuid,
-					ResourceGuid: oDateParams.ResourceGuid,
-					DemandGuid: oDateParams.DemandGuid
-				};
-				oParams.ToolId = aSources[i].oData.TOOL_ID;
-				oParams.ToolType = aSources[i].oData.TOOL_TYPE;
-				if (parseInt(i, 10) === aSources.length - 1) {
-					bIsLast = true;
-				}
-				this.clearMessageModel();
-				aPromise.push(this.executeFunctionImport(this.getModel(), oParams, "CreateToolAssignment", "POST"));
-			}
-			oAppViewModel.setProperty("/busy", true);
-			Promise.all(aPromise).then(function (oSuccess) {
-				oAppViewModel.setProperty("/busy", false);
-				this.afterUpdateOperations(mParameters, mParams);
-			}.bind(this), function (oError) {
-				oAppViewModel.setProperty("/busy", false);
-				this._resetChanges(this.sDropTargetPath);
-			}.bind(this));
-
-		},
-
-		/**
 		 * method to open dates fragment for tool assignment
 		 * @param oView source view
 		 * @param oDateParams required common parameters for all the assignments 
@@ -164,7 +125,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * method to trigger function import for tool assignment
+		 * method to trigger create/update function import for tool assignment
 		 */
 		onSaveDialog: function () {
 			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel('viewModel')
@@ -172,7 +133,7 @@ sap.ui.define([
 				oEndDate = this._oViewModel.getProperty("/PRT/defaultEndDate"),
 				sMsg = this.getResourceBundle().getText("ymsg.wrongDates"),
 				oPRTAssignmentData,
-				oParams;;
+				oParams;
 
 			if (oStartDate <= oEndDate) {
 				if (this._bIsGanttPRTReassign) {
@@ -194,6 +155,12 @@ sap.ui.define([
 							}
 						})
 					}.bind(this));
+				} else if (this._mParameters.hasOwnProperty("bFromGanttToolReassign")) {
+					/*	This nested if else condition is used when the Tool is dropped inside the 
+						gantt chart to a particular resource.*/
+					if (this._mParameters.bFromGanttToolReassign) {
+						this._oEventBus.publish("GanttCharController", "onToolReassignGantt", this._mParameters);
+					}
 				} else {
 					this._oDateParams.DateFrom = oStartDate;
 					this._oDateParams.TimeFrom.ms = oStartDate.getTime();
@@ -206,6 +173,15 @@ sap.ui.define([
 				this.showMessageToast(sMsg);
 			}
 		},
+
+		/**
+		 * Open tools information dialog
+		 * @param Current view object
+		 * @param Model path of tool assignment
+		 * @param Context of tool assignment
+		 * @param Local parameters for view refresh
+		 * @param Context of demand assignment if tool is under demand assignment
+		 */
 		openToolsInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext) {
 			if (this.getOwnerComponent()) {
 				this.oComponent = this.getOwnerComponent();
@@ -215,6 +191,15 @@ sap.ui.define([
 			this.openToolsDialog(oView, sPath, oContext, mParameters);
 
 		},
+
+		/**
+		 * Set annotation parameters for tools information
+		 * @param Current view object
+		 * @param Model path of tool assignment
+		 * @param Context of tool assignment
+		 * @param Local parameters for view refresh
+		 * @param Context of demand assignment if tool is under demand assignment
+		 */
 		openToolsDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType) {
 			var sQualifier = Constants.ANNOTATION_CONSTANTS.PRT_TOOLS_ASSIGN_DIALOG;
 			var mParams = {
@@ -232,13 +217,6 @@ sap.ui.define([
 				refreshParameters: mParameters
 			};
 			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterToolsAssignDialogLoad.bind(this));
-		},
-		_afterToolsAssignDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
-			if (sEvent === "dataReceived") {
-				//Fetching Context Data for PlanningCalendar 
-				oDialog.setBusy(false);
-				this.oComponent.assignInfoDialog.onToolOpen(oDialog, oView, sPath, data, mParams);
-			}
 		},
 
 		/**
@@ -271,6 +249,7 @@ sap.ui.define([
 			}.bind(this));
 
 		},
+
 		/**
 		 * method to call assignment service
 		 * @param aSources Selected tools data and path
@@ -289,26 +268,6 @@ sap.ui.define([
 					reject(error);
 				}.bind(this));
 			}.bind(this));
-		},
-		/** 
-		 * get Parameteres to pass into Function Import
-		 */
-		_getParams: function () {
-			var oPRTAssignment = this.getModel("viewModel").getProperty("/PRT/AssignmentData");
-			return {
-				ToolId: oPRTAssignment.TOOL_ID,
-				PrtAssignmentGuid: oPRTAssignment.Guid,
-				DateFrom: oPRTAssignment.DateFrom,
-				DateTo: oPRTAssignment.DateTo,
-				TimeFrom: {
-					ms: oPRTAssignment.DateFrom.getTime()
-				},
-				TimeTo: {
-					ms: oPRTAssignment.DateTo.getTime()
-				},
-				ResourceGroupGuid: oPRTAssignment.ResourceGroupGuid,
-				ResourceGuid: oPRTAssignment.ResourceGuid
-			}
 		},
 		/** 
 		 * get Date n Time Parameteres to pass into Function Import/Date Selection dialog
@@ -334,5 +293,91 @@ sap.ui.define([
 			this.oViewModel.setProperty("/PRT/defaultEndDate", oEndDate);
 			return oParams;
 		},
+
+		/* =========================================================== */
+		/* Private methods                                              */
+		/* =========================================================== */
+
+		/**
+		 * method to call assignment service
+		 * @param aSources Selected tools data and path
+		 * @param oDateParams required common parameters for all the assignments 
+		 * @param mParameters flag of source view 
+		 */
+		_proceedToAssignTools: function (aSources, oDateParams, mParameters) {
+			var oParams,
+				bIsLast,
+				aPromise = [],
+				oAppViewModel = this.getModel("appView"),
+				mParams = {
+					sTargetPath: this.sDropTargetPath
+				};
+			for (var i = 0; i < aSources.length; i++) {
+				oParams = {
+					DateFrom: oDateParams.DateFrom,
+					TimeFrom: oDateParams.TimeFrom,
+					DateTo: oDateParams.DateTo,
+					TimeTo: oDateParams.TimeTo,
+					ResourceGroupGuid: oDateParams.ResourceGroupGuid,
+					ResourceGuid: oDateParams.ResourceGuid,
+					DemandGuid: oDateParams.DemandGuid
+				};
+				oParams.ToolId = aSources[i].oData.TOOL_ID;
+				oParams.ToolType = aSources[i].oData.TOOL_TYPE;
+				if (parseInt(i, 10) === aSources.length - 1) {
+					bIsLast = true;
+				}
+				this.clearMessageModel();
+				aPromise.push(this.executeFunctionImport(this.getModel(), oParams, "CreateToolAssignment", "POST"));
+			}
+			oAppViewModel.setProperty("/busy", true);
+			Promise.all(aPromise).then(function (oSuccess) {
+				oAppViewModel.setProperty("/busy", false);
+				this.afterUpdateOperations(mParameters, mParams);
+			}.bind(this), function (oError) {
+				oAppViewModel.setProperty("/busy", false);
+				this._resetChanges(this.sDropTargetPath);
+			}.bind(this));
+
+		},
+
+		/** 
+		 * get Parameteres to pass into Function Import
+		 */
+		_getParams: function () {
+			var oPRTAssignment = this.getModel("viewModel").getProperty("/PRT/AssignmentData");
+			return {
+				ToolId: oPRTAssignment.TOOL_ID,
+				PrtAssignmentGuid: oPRTAssignment.Guid,
+				DateFrom: oPRTAssignment.DateFrom,
+				DateTo: oPRTAssignment.DateTo,
+				TimeFrom: {
+					ms: oPRTAssignment.DateFrom.getTime()
+				},
+				TimeTo: {
+					ms: oPRTAssignment.DateTo.getTime()
+				},
+				ResourceGroupGuid: oPRTAssignment.ResourceGroupGuid,
+				ResourceGuid: oPRTAssignment.ResourceGuid,
+				DemandGuid: oPRTAssignment.DemandGuid ? oPRTAssignment.DemandGuid : ""
+			}
+		},
+
+		/** 
+		 * After tool info dialog open set parametes in dialog for further operations
+		 * @param Current dialog object
+		 * @param Current view object
+		 * @param Model path of tool assignment
+		 * @param Event name
+		 * @param Response data
+		 * @param Refresh parameters
+		 */
+		_afterToolsAssignDialogLoad: function (oDialog, oView, sPath, sEvent, data, mParams) {
+			if (sEvent === "dataReceived") {
+				//Fetching Context Data for PlanningCalendar 
+				oDialog.setBusy(false);
+				this.oComponent.assignInfoDialog.onToolOpen(oDialog, oView, sPath, data, mParams);
+			}
+		}
 	});
 });
