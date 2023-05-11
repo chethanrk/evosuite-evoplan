@@ -313,7 +313,8 @@ sap.ui.define([
 					ms: oPRTAssignment.DateTo.getTime()
 				},
 				ResourceGroupGuid: oPRTAssignment.ResourceGroupGuid,
-				ResourceGuid: oPRTAssignment.ResourceGuid
+				ResourceGuid: oPRTAssignment.ResourceGuid,
+				DemandGuid: oPRTAssignment.DemandGuid ? oPRTAssignment.DemandGuid : ""
 			}
 		},
 		/** 
