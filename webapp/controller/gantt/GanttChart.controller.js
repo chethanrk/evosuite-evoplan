@@ -2789,6 +2789,9 @@ sap.ui.define([
 			var oSourceData = oData.oSourceData,
 				sTargetPath = oSourceData.sTargetPath,
 				sSourcePath = oSourceData.sSourcePath;
+			if (!sTargetPath) {
+				sTargetPath = this.assignmentRowContext.getPath();
+			}
 			this._refreshChangedResources(sTargetPath, sSourcePath);
 		}
 
