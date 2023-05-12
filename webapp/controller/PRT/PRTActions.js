@@ -29,9 +29,8 @@ sap.ui.define([
 				oUserModel = this.getModel("user"),
 				oResourceBundle = this.getResourceBundle();
 			this.sDropTargetPath = sTargetPath;
-			if (!this._oViewModel) {
-				this._oViewModel = this.getModel("viewModel");
-			}
+			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel('viewModel');
+			this.oAppViewModel = this.getModel("appView");
 
 			oDateParams = {
 				DateFrom: "",
@@ -86,12 +85,12 @@ sap.ui.define([
 		openDateSelectionDialog: function (oView, oDateParams, aSources, mParameters, bIsGanttPRTReassign, oAssignmentPaths) {
 			// create dialog lazily
 			if (!this._oDialog) {
-				oView.getModel("appView").setProperty("/busy", true);
+				this.oAppViewModel.setProperty("/busy", true);
 				Fragment.load({
 					name: "com.evorait.evoplan.view.PRT.ToolAssignDates",
 					controller: this
 				}).then(function (oDialog) {
-					oView.getModel("appView").setProperty("/busy", false);
+					this.oAppViewModel.setProperty("/busy", false);
 					this._oDialog = oDialog;
 					this.onOpen(oDialog, oView, oDateParams, aSources, mParameters, bIsGanttPRTReassign, oAssignmentPaths);
 				}.bind(this));
@@ -128,7 +127,7 @@ sap.ui.define([
 		 * method to trigger create/update function import for tool assignment
 		 */
 		onSaveDialog: function () {
-			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel('viewModel')
+			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel('viewModel');
 			var oStartDate = this._oViewModel.getProperty("/PRT/defaultStartDate"),
 				oEndDate = this._oViewModel.getProperty("/PRT/defaultEndDate"),
 				sMsg = this.getResourceBundle().getText("ymsg.wrongDates"),
@@ -137,7 +136,7 @@ sap.ui.define([
 
 			if (oStartDate <= oEndDate) {
 				if (this._bIsGanttPRTReassign) {
-					oPRTAssignmentData = this.getModel('viewModel').getProperty("/PRT/AssignmentData");
+					oPRTAssignmentData = this._oViewModel.getProperty("/PRT/AssignmentData");
 					oPRTAssignmentData.DateFrom = oStartDate,
 						oPRTAssignmentData.DateTo = oEndDate,
 						oPRTAssignmentData.TimeFrom = {
@@ -274,7 +273,7 @@ sap.ui.define([
 		 */
 		getPRTDateParams: function (oPRTShapeData) {
 			var oParams = {},
-				iDefNum = this.getModel('viewModel').getProperty("/iDefToolAsgnDays"),
+				iDefNum = this._oViewModel.getProperty("/iDefToolAsgnDays"),
 				oStartDate = new Date(),
 				oEndDate = new Date();
 			oEndDate = new Date(oEndDate.setDate(oEndDate.getDate() + parseInt(iDefNum)));
@@ -308,7 +307,6 @@ sap.ui.define([
 			var oParams,
 				bIsLast,
 				aPromise = [],
-				oAppViewModel = this.getModel("appView"),
 				mParams = {
 					sTargetPath: this.sDropTargetPath
 				};
@@ -330,12 +328,12 @@ sap.ui.define([
 				this.clearMessageModel();
 				aPromise.push(this.executeFunctionImport(this.getModel(), oParams, "CreateToolAssignment", "POST"));
 			}
-			oAppViewModel.setProperty("/busy", true);
+			this.oAppViewModel.setProperty("/busy", true);
 			Promise.all(aPromise).then(function (oSuccess) {
-				oAppViewModel.setProperty("/busy", false);
+				this.oAppViewModel.setProperty("/busy", false);
 				this.afterUpdateOperations(mParameters, mParams);
 			}.bind(this), function (oError) {
-				oAppViewModel.setProperty("/busy", false);
+				this.oAppViewModel.setProperty("/busy", false);
 				this._resetChanges(this.sDropTargetPath);
 			}.bind(this));
 
@@ -345,7 +343,7 @@ sap.ui.define([
 		 * get Parameteres to pass into Function Import
 		 */
 		_getParams: function () {
-			var oPRTAssignment = this.getModel("viewModel").getProperty("/PRT/AssignmentData");
+			var oPRTAssignment = this._oViewModel.getProperty("/PRT/AssignmentData");
 			return {
 				ToolId: oPRTAssignment.TOOL_ID,
 				PrtAssignmentGuid: oPRTAssignment.Guid,

@@ -1198,7 +1198,7 @@ sap.ui.define([
 
 					oPRTShapeData.ResourceGroupGuid = oTargetResourceData.ResourceGroupGuid;
 					oPRTShapeData.ResourceGuid = oTargetResourceData.ResourceGuid;
-					this.getModel("viewModel").setProperty("/PRT/AssignmentData", oPRTShapeData);
+					this.oViewModel.setProperty("/PRT/AssignmentData", oPRTShapeData);
 					oParams = this._getParams();
 					oDateParams = this.getPRTDateParams(oPRTShapeData);
 					if (this.oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) {

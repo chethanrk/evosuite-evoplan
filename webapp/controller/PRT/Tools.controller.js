@@ -136,7 +136,7 @@ sap.ui.define([
 				});
 			});
 			// keeping the data in drag session
-			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
+			this._oViewModel.setProperty("/dragSession", oSelectedPaths.aPathsData);
 			this.localStorage.put("Evo-Tools-guid", JSON.stringify(aSelectedToolObject));
 			this.localStorage.put("Evo-aPathsData", JSON.stringify(oSelectedPaths.aPathsData));
 			this.localStorage.put("Evo-toolDrag", "Tools");
@@ -201,7 +201,7 @@ sap.ui.define([
 		_configureToolDataTable: function (oDataTable) {
 			oDataTable.attachRowSelectionChange(function (oEvent) {
 				var aSelectedIndices = this._oToolsTable.getSelectedIndices(),
-					iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_TOOLS_SELECT_ALL"),
+					iMaxRowSelection = this._oUserModel.getProperty("/DEFAULT_TOOLS_SELECT_ALL"),
 					sMsg, iLastIndex;
 
 				// condition to deselect All when max selection limit is already reach but pressing select All checkbox
