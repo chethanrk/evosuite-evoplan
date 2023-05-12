@@ -444,6 +444,17 @@ sap.ui.define([
 		 * On removing the tool assignment
 		 * @param oEvent
 		 */
+		openAssignmentStatus: function (oEvent) {
+			var oSource = oEvent.getSource(),
+				oContext = oSource.getBindingContext(),
+				sPath = oContext.getPath(),
+				oModel = oContext.getModel(),
+				aSelectedAssignments = [{
+					sPath: sPath,
+					oData: oModel.getProperty(sPath)
+				}];
+			this.getOwnerComponent().AssignmentStatus.open(this.getView(), oSource, aSelectedAssignments);
+		},
 		onDeleteToolAssignment: function (oEvent) {
 			var sPrtAssignmentGuid = this.oAssignmentModel.getProperty("/PrtAssignmentGuid");
 			this.clearMessageModel.call(this._oView.getController());
