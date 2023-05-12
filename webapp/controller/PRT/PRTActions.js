@@ -216,7 +216,7 @@ sap.ui.define([
 				oDialogController: this.oComponent.toolInfoDialog,
 				refreshParameters: mParameters
 			};
-			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterToolsAssignDialogLoad.bind(this));
+			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterToolsAssignDialogLoad.bind(this),true);
 		},
 
 		/**

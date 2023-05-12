@@ -558,7 +558,6 @@ sap.ui.define([
 
 		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);
-			this._eventBus.unsubscribe("AssignTreeDialog", "ToolReAssignment");
 		},
 
 		/**

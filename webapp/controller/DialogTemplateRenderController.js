@@ -11,6 +11,8 @@ sap.ui.define([
 
 		_oDialog: null,
 
+		_oToolsDialog: null,
+
 		_oResourceBundle: null,
 
 		_oView: null,
@@ -18,6 +20,8 @@ sap.ui.define([
 		_oModel: null,
 
 		_mParams: {},
+
+		_IsTool: null,
 
 		/**
 		 * overwrite constructor
@@ -32,7 +36,7 @@ sap.ui.define([
 		 * open dialog 
 		 * and render annotation based SmartForm inside dialog content
 		 */
-		open: function (oView, mParams, onDataReceived) {
+		open: function (oView, mParams, onDataReceived, bIsTool) {
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._oView = oView;
 			this._oModel = oView.getModel();
@@ -40,21 +44,31 @@ sap.ui.define([
 			this._mParams = mParams;
 			this._oSmartTable = mParams.smartTable;
 			this._component = this._oView.getController().getOwnerComponent();
-
-			//set annotation path and other parameters
+			this._IsTool = bIsTool
+				//set annotation path and other parameters
 			this.setTemplateProperties(mParams);
 
 			if (mParams.isResponsivePopOver) {
 				this._loadPopOver(this._mParams.oDialogController, onDataReceived);
+			} else if (this._IsTool) {
+				this._loadToolDialog(this._mParams.oDialogController, onDataReceived);
 			} else {
 				this._loadDialog(this._mParams.oDialogController, onDataReceived);
 			}
 		},
 
 		onExit: function () {
+			console.log("exit trigerred");
 			TemplateRenderController.prototype.onExit.apply(this, arguments);
-			this._oDialog.destroy(true);
-			this._oDialog = undefined;
+			if (this._oDialog) {
+				this._oDialog.destroy(true);
+				this._oDialog = undefined;
+			}
+			if (this._oToolsDialog) {
+				this._oToolsDialog.destroy(true);
+				this._oToolsDialog = undefined;
+			}
+
 		},
 
 		/* =========================================================== */
@@ -80,6 +94,21 @@ sap.ui.define([
 				}.bind(this));
 			} else {
 				this._setFragmentViewBinding(this._oDialog, onDataReceived);
+			}
+		},
+		_loadToolDialog: function (sDialogController, onDataReceived) {
+			if (!this._oToolsDialog) {
+				Fragment.load({
+					name: "com.evorait.evoplan.view.PRT.ToolFormDialog",
+					controller: sDialogController || this,
+					type: "XML"
+				}).then(function (oFragment) {
+					this._oToolsDialog = oFragment;
+					this._oToolsDialog.addStyleClass(this._oView.getModel("viewModel").getProperty("/densityClass"));
+					this._setFragmentViewBinding(this._oToolsDialog, onDataReceived);
+				}.bind(this));
+			} else {
+				this._setFragmentViewBinding(this._oToolsDialog, onDataReceived);
 			}
 		},
 
@@ -117,6 +146,9 @@ sap.ui.define([
 
 			if (this._mParams.isResponsivePopOver) {
 				sContainerId = "ResponsivePopOverWrapper";
+			} else if (this._IsTool) {
+				sContainerId = "ToolFormDialogWrapper";
+				oFragment.setTitle(this._oResourceBundle.getText(this._mParams.title) + "New Tool Dialog");
 			} else {
 				sContainerId = "FormDialogWrapper";
 				oFragment.setTitle(this._oResourceBundle.getText(this._mParams.title));
@@ -140,6 +172,9 @@ sap.ui.define([
 			if (this._oDialog) {
 				this._oDialog.setBusy(false);
 			}
+			if (this._oToolsDialog) {
+				this._oToolsDialog.setBusy(false);
+			}
 			if (this._ResponsivePopOver) {
 				this._ResponsivePopOver.setBusy(false);
 			}
@@ -151,7 +186,12 @@ sap.ui.define([
 		 * @param oResponse
 		 */
 		_saveSuccessFn: function (oResponse) {
-			this._oDialog.close();
+			if (this._oDialog) {
+				this._oDialog.close();
+			}
+			if (this._oToolsDialog) {
+				this._oToolsDialog.close();
+			}
 			var responseCode = oResponse.__batchResponses[0].__changeResponses;
 			if (responseCode) {
 				if (responseCode[0].statusCode === "200" || responseCode[0].statusCode === "201" || responseCode[0].statusCode === "204") {
@@ -176,7 +216,7 @@ sap.ui.define([
 		_saveErrorFn: function (oError) {
 
 		},
-		
+
 		/**
 		 * Close Gantt Assignment Responsive Popover
 		 */
