@@ -5,6 +5,7 @@ sap.ui.define([
 	"com/evorait/evoplan/model/models",
 	"com/evorait/evoplan/assets/js/moment-with-locales.min",
 	"com/evorait/evoplan/controller/ErrorHandler",
+	"com/evorait/evoplan/controller/PRT/ToolInfoDialog",
 	"com/evorait/evoplan/controller/common/AssignInfoDialog",
 	"com/evorait/evoplan/controller/common/AssignTreeDialog",
 	"com/evorait/evoplan/controller/common/StatusSelectDialog",
@@ -45,6 +46,7 @@ sap.ui.define([
 	models,
 	momentjs,
 	ErrorHandler,
+	ToolInfoDialog,
 	AssignInfoDialog,
 	AssignTreeDialog,
 	StatusSelectDialog,
@@ -242,6 +244,10 @@ sap.ui.define([
 			//display and change assignment dialog
 			this.assignInfoDialog = new AssignInfoDialog();
 			this.assignInfoDialog.init();
+
+			//display and change tools dialog
+			this.toolInfoDialog = new ToolInfoDialog();
+			this.toolInfoDialog.init();
 
 			//select resource from tree for assigning dialog
 			this.assignTreeDialog = new AssignTreeDialog();

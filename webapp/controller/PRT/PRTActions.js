@@ -213,7 +213,7 @@ sap.ui.define([
 				sPath: sPath,
 				sDeepPath: null,
 				parentContext: oContext,
-				oDialogController: this.oComponent.assignInfoDialog,
+				oDialogController: this.oComponent.toolInfoDialog,
 				refreshParameters: mParameters
 			};
 			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterToolsAssignDialogLoad.bind(this));
@@ -376,7 +376,7 @@ sap.ui.define([
 			if (sEvent === "dataReceived") {
 				//Fetching Context Data for PlanningCalendar 
 				oDialog.setBusy(false);
-				this.oComponent.assignInfoDialog.onToolOpen(oDialog, oView, sPath, data, mParams);
+				this.oComponent.toolInfoDialog.onToolOpen(oDialog, oView, sPath, data, mParams);
 			}
 		}
 	});
