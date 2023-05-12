@@ -12,7 +12,6 @@ sap.ui.define([
 
 		init: function () {
 			this._eventBus = sap.ui.getCore().getEventBus();
-			this._eventBus.subscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);
 			this._eventBus.subscribe("AssignTreeDialog", "ToolReAssignment", this._reAssignTool, this);
 		},
 
@@ -171,34 +170,6 @@ sap.ui.define([
 			var sPath = "/ResourceHierarchySet('" + sId + "')";
 			return this._oView.getModel().getProperty(sPath);
 		},
-
-		/**
-		 * get detail information and display from new assigned path
-		 * @param sChanel
-		 * @param sEvent
-		 * @param oData
-		 * @private
-		 */
-		_showNewAssignment: function (sChanel, sEvent, oData) {
-			if (sEvent === "selectedAssignment") {
-				var oNewAssign = this._oView.getModel().getProperty(oData.sPath),
-					newAssignDesc = this._getParentsDescription(oNewAssign);
-
-				this.oAssignmentModel.setProperty("/NewAssignPath", oData.sPath);
-				this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
-				this.oAssignmentModel.setProperty("/NewAssignDesc", newAssignDesc);
-
-				//when new assignment is time range
-				if (oNewAssign.StartDate && oNewAssign.NodeType.indexOf("TIME") >= 0) {
-					var start = formatter.mergeDateTime(oNewAssign.StartDate, oNewAssign.StartTime),
-						end = formatter.mergeDateTime(oNewAssign.EndDate, oNewAssign.EndTime);
-
-					this.oAssignmentModel.setProperty("/DateFrom", start);
-					this.oAssignmentModel.setProperty("/DateTo", end);
-				}
-			}
-		},
-
 		/**
 		 * get all parents description for display in dialog new assigned field
 		 * @param oNewAssign
@@ -310,7 +281,6 @@ sap.ui.define([
 		},
 
 		exit: function () {
-			this._eventBus.unsubscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);
 			this._eventBus.unsubscribe("AssignTreeDialog", "ToolReAssignment");
 		},
 

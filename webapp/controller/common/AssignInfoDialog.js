@@ -13,7 +13,6 @@ sap.ui.define([
 		init: function () {
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("AssignTreeDialog", "selectedAssignment", this._showNewAssignment, this);
-			this._eventBus.subscribe("AssignTreeDialog", "ToolReAssignment", this._reAssignTool, this);
 		},
 
 		/**
@@ -602,36 +601,6 @@ sap.ui.define([
 				ResourceGuid: oAssignmentData.ResourceGuid,
 				DemandGuid: oAssignmentData.DemandGuid ? oAssignmentData.DemandGuid : ""
 			};
-		},
-
-		/** 
-		 * set reassignment details to assignment data object
-		 */
-		_reAssignTool: function (sChanel, sEvent, oData) {
-			// sAssignPath, aSourcePaths
-			var oNewAssign = this._oView.getModel().getProperty(oData.sAssignPath),
-				newAssignDesc = this._getParentsDescription(oNewAssign);
-
-			this.oAssignmentModel.setProperty("/NewAssignPath", oData.sAssignPath);
-			this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
-			this.oAssignmentModel.setProperty("/NewAssignDesc", newAssignDesc);
-			this.oAssignmentModel.setProperty("/ResourceGroupGuid", oNewAssign.ResourceGroupGuid);
-			this.oAssignmentModel.setProperty("/ResourceGuid", oNewAssign.ResourceGuid);
-
-			if (oNewAssign.NodeType === "ASSIGNMENT") {
-				this.oAssignmentModel.setProperty("/DemandGuid", oNewAssign.DemandGuid);
-			} else {
-				this.oAssignmentModel.setProperty("/DemandGuid", "");
-			}
-
-			//when new assignment is time range
-			if (oNewAssign.StartDate && oNewAssign.NodeType.indexOf("TIME") >= 0) {
-				var start = formatter.mergeDateTime(oNewAssign.StartDate, oNewAssign.StartTime),
-					end = formatter.mergeDateTime(oNewAssign.EndDate, oNewAssign.EndTime);
-
-				this.oAssignmentModel.setProperty("/DateFrom", start);
-				this.oAssignmentModel.setProperty("/DateTo", end);
-			}
 		},
 
 		/** 
