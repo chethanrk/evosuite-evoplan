@@ -67,10 +67,10 @@ sap.ui.define([
 				}
 
 			} else if (sNodeType === "ASSIGNMENT" && !oTargetObj.IS_PRT) {
-				oDateParams.DateFrom = oTargetObj.StartDate;
-				oDateParams.TimeFrom = oTargetObj.StartTime;
-				oDateParams.DateTo = oTargetObj.EndDate;
-				oDateParams.TimeTo = oTargetObj.EndTime;
+				oDateParams.DateFrom = oTargetObj.StartDate || oTargetObj.DateFrom;
+				oDateParams.TimeFrom = oTargetObj.StartTime || oTargetObj.TimeFrom;
+				oDateParams.DateTo = oTargetObj.EndDate || oTargetObj.DateTo;
+				oDateParams.TimeTo = oTargetObj.EndTime || oTargetObj.TimeTo;
 				oDateParams.DemandGuid = oTargetObj.DemandGuid;
 				this._proceedToAssignTools(aSources, oDateParams, mParameters);
 			}

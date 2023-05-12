@@ -716,7 +716,12 @@ sap.ui.define([
 			this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), {
 				PrtAssignmentGuid: sPrtAssignmentGuid
 			}, "DeleteToolAssignment", "POST", this._mParameters, true).then(function () {
-				this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+				if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
+					this._eventBus.publish("BaseController", "refreshTreeTable", {});
+				}
+				if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
+					this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+				}
 			}.bind(this));
 			this._closeDialog();
 		},
