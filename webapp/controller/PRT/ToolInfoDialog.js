@@ -16,7 +16,6 @@ sap.ui.define([
 			this._eventBus.subscribe("AssignTreeDialog", "ToolReAssignment", this._reAssignTool, this);
 		},
 
-
 		/**
 		 * Method get triggers when user selects any perticular unit from value help
 		 * and outputs the same in input
@@ -46,8 +45,6 @@ sap.ui.define([
 				this.onSaveToolDialog();
 			}
 		},
-
-	
 
 		/** 
 		 * On unassign assignment of assignment the unassign function import will be called
@@ -138,8 +135,6 @@ sap.ui.define([
 				this._oView.getModel("ganttModel").setProperty(this._mParameters.sSourcePath + "/busy", false);
 			}
 		},
-
-	
 
 		/**
 		 * get assignment resource details
@@ -460,7 +455,12 @@ sap.ui.define([
 			this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), {
 				PrtAssignmentGuid: sPrtAssignmentGuid
 			}, "DeleteToolAssignment", "POST", this._mParameters, true).then(function () {
-				this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+				if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
+					this._eventBus.publish("BaseController", "refreshTreeTable", {});
+				}
+				if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
+					this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+				}
 			}.bind(this));
 			this._closeDialog();
 		},
