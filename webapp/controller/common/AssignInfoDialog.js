@@ -161,31 +161,27 @@ sap.ui.define([
 				iNewEffort = this.getEffortTimeDifference(sDateFrom, sDateTo),
 				oResourceBundle = this._oView.getController().getResourceBundle(),
 				bValidEffort = this.onValidateEffort();
+			//Replacing comma in DE language with dot if any
+			this.oAssignmentModel.setProperty("/Effort", sEffort.toString().replace(",", "."));
+			sEffort = this.oAssignmentModel.getProperty("/Effort");
+			if (bValidEffort) {
+				if (this.oAssignmentModel.getProperty("/NewAssignPath") !== null) {
+					this.oAssignmentModel.getData().ResourceGuid = this._oView.getModel().getProperty(this.oAssignmentModel.getProperty(
+						"/NewAssignPath") + "/ResourceGuid");
+				}
 
-			if (this.oAssignmentModel.getData().isPRT) {
-				this.onSaveToolDialog();
-			} else {
-				//Replacing comma in DE language with dot if any
-				this.oAssignmentModel.setProperty("/Effort", sEffort.toString().replace(",", "."));
-				sEffort = this.oAssignmentModel.getProperty("/Effort");
-				if (bValidEffort) {
-					if (this.oAssignmentModel.getProperty("/NewAssignPath") !== null) {
-						this.oAssignmentModel.getData().ResourceGuid = this._oView.getModel().getProperty(this.oAssignmentModel.getProperty(
-							"/NewAssignPath") + "/ResourceGuid");
-					}
+				if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGN_EFFORT_POPUP") && Number(iNewEffort) < Number(sEffort)) {
+					this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
+						if (oAction === "YES") {
+							this.onSaveAssignments();
+						}
+					}.bind(this));
 
-					if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGN_EFFORT_POPUP") && Number(iNewEffort) < Number(sEffort)) {
-						this._showEffortConfirmMessageBox(oResourceBundle.getText("xtit.effortvalidate")).then(function (oAction) {
-							if (oAction === "YES") {
-								this.onSaveAssignments();
-							}
-						}.bind(this));
-
-					} else {
-						this.onSaveAssignments();
-					}
+				} else {
+					this.onSaveAssignments();
 				}
 			}
+
 		},
 
 		/**
