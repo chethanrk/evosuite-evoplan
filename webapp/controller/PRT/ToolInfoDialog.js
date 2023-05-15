@@ -138,38 +138,13 @@ sap.ui.define([
 				}.bind(this));
 			}
 		},
-
-		/**
-		 * Validating Effort for PS Demands onSave 
-		 */
-		onValidateEffort: function () {
-			var sOldEffort = this.oAssignmentModel.getProperty("/OldEffort"),
-				sEffort = this.oAssignmentModel.getProperty("/Effort"),
-				sObjectSourceType = this.oAssignmentModel.getProperty("/OBJECT_SOURCE_TYPE"),
-				sRemainingDuration = this.oAssignmentModel.getProperty("/REMAINING_DURATION"),
-				sEffortUnit = this.oAssignmentModel.getProperty("/EffortUnit"),
-				sTotalEffort = Number(sOldEffort) + Number(sRemainingDuration),
-				bValidEffort = true;
-			if (this._oView.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && sObjectSourceType === "DEM_PSNW") {
-				if (sEffort.toString().includes("-") || Number(sEffort) <= 0) {
-					this.showMessageToast(this._oView.getController().getResourceBundle().getText("ymsg.validEffort"));
-					bValidEffort = false;
-				} else if (Number(sOldEffort) + Number(sRemainingDuration) < Number(sEffort)) {
-					this.showMessageToast(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration", [sTotalEffort,
-						sEffortUnit
-					]));
-					bValidEffort = false;
-				}
-			}
-			return bValidEffort;
-		},
+		
 		onSaveDialog: function () {
 			var sDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				sDateTo = this.oAssignmentModel.getProperty("/DateTo"),
 				sEffort = this.oAssignmentModel.getProperty("/Effort"),
 				iNewEffort = this.getEffortTimeDifference(sDateFrom, sDateTo),
 				oResourceBundle = this._oView.getController().getResourceBundle(),
-				bValidEffort = this.onValidateEffort();
 
 			if (this.oAssignmentModel.getData().isPRT) {
 				this.onSaveToolDialog();
