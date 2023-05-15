@@ -571,7 +571,7 @@ sap.ui.define([
 						oGanttModel.setProperty(sPath + "/busy", false);
 						this.getModel("ganttModel").setProperty(sPath, null);
 						this.getModel("ganttOriginalData").setProperty(sPath, null);
-						this._deleteChildAssignment(sAssignGuid, sPath);
+						this._refreshChangedResources(sPath);
 						oEventBus.publish("BaseController", "refreshCapacity", {
 							sTargetPath: sPath.split("/AssignmentSet/results/")[0]
 						});
@@ -622,41 +622,6 @@ sap.ui.define([
 					}
 				}
 			}.bind(this));
-		},
-
-		/**
-		 * Unassign assignment with delete confirmation dialog and removing the child assignment node from GanttModel
-		 * @param sAssignGuid
-		 * @param sPath
-		 * @private
-		 */
-		_deleteChildAssignment: function (sAssignGuid, sPath) {
-			var oGanttModel = this.getModel("ganttModel"),
-				oGanttOriginalModel = this.getModel("ganttOriginalData"),
-				aAssignmentData, sChildPath, oNewChildPath, aChildAssignmentData;
-			if (sPath.length > 60) {
-				sChildPath = sPath.split("/AssignmentSet/results/")[0];
-				oNewChildPath = this._getDeleteChildPath(sChildPath);
-				sChildPath = this._getAssignmentChildPath(sChildPath);
-				sChildPath = sChildPath + "/AssignmentSet/results/";
-				aAssignmentData = oGanttModel.getProperty(sChildPath);
-				aChildAssignmentData = oGanttModel.getProperty(oNewChildPath.sPath);
-				aChildAssignmentData.splice(oNewChildPath.iIndex, 1);
-				for (var a in aAssignmentData) {
-					if (sAssignGuid === aAssignmentData[a].Guid) {
-						aAssignmentData.splice(a, 1);
-						break;
-					}
-				}
-				var oOriginData = oGanttModel.getProperty(sChildPath);
-				oGanttOriginalModel.setProperty(sChildPath, _.cloneDeep(oOriginData));
-			} else {
-				sChildPath = sPath.split("/AssignmentSet/results/")[0];
-				aAssignmentData = oGanttModel.getProperty(sChildPath + "/children");
-				aAssignmentData.splice(0, 1);
-			}
-			oGanttModel.refresh(true);
-			oGanttOriginalModel.refresh(true);
 		},
 
 		/**
@@ -912,37 +877,7 @@ sap.ui.define([
 			return aCreatedAssignments;
 		},
 
-		/**
-		 * Splitting Child Assignment Node Path
-		 * @param sAssignmentPath
-		 */
-		_getAssignmentChildPath: function (sAssignmentPath) {
-			var aPaths = sAssignmentPath.split("/"),
-				aPaths = aPaths.slice(0, -2),
-				sNewPath = "";
-			for (var a in aPaths) {
-				sNewPath = sNewPath + "/" + aPaths[a];
-			}
-			return sNewPath.slice(1);
-		},
-
-		/**
-		 * Splitting Child Node Path for Unassign
-		 * @param sChildPath
-		 */
-		_getDeleteChildPath: function (sChildPath) {
-			var aNewChildPath = sChildPath.split("/"),
-				iLen = aNewChildPath[aNewChildPath.length - 1],
-				aNewChildPath = aNewChildPath.slice(0, -1),
-				sNewChildPath = "";
-			for (var a in aNewChildPath) {
-				sNewChildPath = sNewChildPath + "/" + aNewChildPath[a];
-			}
-			return {
-				sPath: sNewChildPath.slice(1),
-				iIndex: iLen
-			};
-		}
+	
 	});
 
 });
