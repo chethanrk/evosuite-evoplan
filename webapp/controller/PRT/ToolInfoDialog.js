@@ -34,19 +34,6 @@ sap.ui.define([
 			oView.addDependent(oDialog);
 		},
 		/**
-		 * Method get triggers when user selects any perticular unit from value help
-		 * and outputs the same in input
-		 * @param oEvent Select oEvent
-		 */
-		onChangeUnit: function (oEvent) {
-			var sNewValue = oEvent.getParameter("newValue"),
-				oModel = this._oView.getModel("assignment");
-			if (sNewValue && sNewValue !== "") {
-				oModel.setProperty("/EffortUnit", sNewValue);
-			}
-		},
-
-		/**
 		 * Function to validate effort assignment save 
 		 * 
 		 */
@@ -87,24 +74,6 @@ sap.ui.define([
 				this._closeDialog();
 			}
 
-		},
-
-		/**
-		 * method to change Assignment
-		 * @param oEvent
-		 */
-		onChangeAssignType: function (oEvent) {
-			var oParams = oEvent.getParameters(),
-				reassignBtn = sap.ui.getCore().byId("AssignInfoDialog--reassignDialogButton");
-
-			this.reAssign = oParams.selected;
-			reassignBtn.setEnabled(this.reAssign);
-
-			if (!this.reAssign) {
-				this.oAssignmentModel.setProperty("/NewAssignPath", null);
-				this.oAssignmentModel.setProperty("/NewAssignId", null);
-				this.oAssignmentModel.setProperty("/NewAssignDesc", null);
-			}
 		},
 
 		/**
