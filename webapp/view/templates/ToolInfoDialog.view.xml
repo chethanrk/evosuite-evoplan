@@ -28,9 +28,6 @@
 					<Button id="reassignDialogButton" text="{i18n>xbut.selectResource}" press="onPressReAssign" visible="{assignment>/AllowReassign}"/>
 					<Label text="{i18n>xfld.newAssignment}" visible="{assignment>/AllowReassign}"/>
 					<Text text="{assignment>/NewAssignDesc}" visible="{assignment>/AllowReassign}"/>
-					<Label text="{i18n>xbut.ChngAssgnStatus}" visible="{user>/ENABLE_ASSIGNMENT_STATUS}"></Label>
-					<Button icon="sap-icon://order-status" tooltip="{i18n>xbut.ChngAssgnStatus}" visible="{user>/ENABLE_ASSIGNMENT_STATUS}"
-						enabled="{viewModel>/validateIW32Auth}" press="openAssignmentStatus"></Button>
 				</form:content>
 			</form:SimpleForm>
 		</HBox>

@@ -43,36 +43,24 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onDeleteAssignment: function (oEvent) {
-			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid"),
-
-				sDemandGuid = this.oAssignmentModel.getProperty("/DemandGuid"),
-				sSplitIndex = this.oAssignmentModel.getProperty("/SplitIndex"),
-				sSplitCounter = this.oAssignmentModel.getProperty("/SplitCounter"),
-				bSplitGlobalConfigEnabled = this._oView.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN");
-
-			if (this.oAssignmentModel.getData().isPRT) {
-				this.onDeleteToolAssignment();
-			} else {
-				if (this._mParameters && this._mParameters.bFromPlannCal) {
-					this._eventBus.publish("AssignInfoDialog", "refreshAssignment", {
-						unassign: true
-					});
-				} else if (bSplitGlobalConfigEnabled && sSplitIndex > 0 && sSplitCounter > 0) {
-					this._eventBus.publish("AssignInfoDialog", "deleteSplitAssignments", {
-						assignmentGuid: sId,
-						DemandGuid: sDemandGuid,
-						splitIndex: sSplitIndex,
-						splitCounter: sSplitCounter,
-						parameters: this._mParameters
-					});
-				} else {
-					this._eventBus.publish("AssignInfoDialog", "deleteAssignment", {
-						sId: sId,
-						parameters: this._mParameters
-					});
+			var sPrtAssignmentGuid = this.oAssignmentModel.getProperty("/PrtAssignmentGuid");
+			this.clearMessageModel.call(this._oView.getController());
+			var oData = {
+				oSourceData: {
+					sTargetPath: this.AssignmentSourcePath
 				}
-				this._closeDialog();
 			}
+			this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), {
+				PrtAssignmentGuid: sPrtAssignmentGuid
+			}, "DeleteToolAssignment", "POST", this._mParameters, true).then(function () {
+				if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
+					this._eventBus.publish("BaseController", "refreshTreeTable", {});
+				}
+				if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
+					this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+				}
+			}.bind(this));
+			this._closeDialog();
 
 		},
 
@@ -191,42 +179,6 @@ sap.ui.define([
 			} else {
 				this.showMessageToast(sMsg);
 			}
-		},
-
-		/** 
-		 * On removing the tool assignment
-		 * @param oEvent
-		 */
-		openAssignmentStatus: function (oEvent) {
-			var oSource = oEvent.getSource(),
-				oContext = oSource.getBindingContext(),
-				sPath = oContext.getPath(),
-				oModel = oContext.getModel(),
-				aSelectedAssignments = [{
-					sPath: sPath,
-					oData: oModel.getProperty(sPath)
-				}];
-			this.getOwnerComponent().AssignmentStatus.open(this.getView(), oSource, aSelectedAssignments);
-		},
-		onDeleteToolAssignment: function (oEvent) {
-			var sPrtAssignmentGuid = this.oAssignmentModel.getProperty("/PrtAssignmentGuid");
-			this.clearMessageModel.call(this._oView.getController());
-			var oData = {
-				oSourceData: {
-					sTargetPath: this.AssignmentSourcePath
-				}
-			}
-			this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), {
-				PrtAssignmentGuid: sPrtAssignmentGuid
-			}, "DeleteToolAssignment", "POST", this._mParameters, true).then(function () {
-				if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
-					this._eventBus.publish("BaseController", "refreshTreeTable", {});
-				}
-				if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
-					this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
-				}
-			}.bind(this));
-			this._closeDialog();
 		},
 		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "ToolReAssignment");
