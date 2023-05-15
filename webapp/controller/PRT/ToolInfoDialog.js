@@ -138,13 +138,13 @@ sap.ui.define([
 				}.bind(this));
 			}
 		},
-		
+
 		onSaveDialog: function () {
 			var sDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				sDateTo = this.oAssignmentModel.getProperty("/DateTo"),
 				sEffort = this.oAssignmentModel.getProperty("/Effort"),
 				iNewEffort = this.getEffortTimeDifference(sDateFrom, sDateTo),
-				oResourceBundle = this._oView.getController().getResourceBundle(),
+				oResourceBundle = this._oView.getController().getResourceBundle();
 
 			if (this.oAssignmentModel.getData().isPRT) {
 				this.onSaveToolDialog();
