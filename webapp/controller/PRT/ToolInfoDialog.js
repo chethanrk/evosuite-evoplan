@@ -231,8 +231,14 @@ sap.ui.define([
 					}
 					this.clearMessageModel.call(this._oView.getController());
 					this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), oParams, "ChangeToolAssignment", "POST",
-						this._mParameters, true).then(function () {
-						this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+						this._mParameters, true).then(function (results) {
+						this.showMessage(results[1]);
+						if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
+							this._eventBus.publish("BaseController", "refreshTreeTable", {});
+						}
+						if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
+							this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+						}
 					}.bind(this));
 					this._closeDialog();
 				} else {
@@ -412,8 +418,9 @@ sap.ui.define([
 					ms: oAssignmentData.DateTo.getTime()
 				},
 				ResourceGroupGuid: oAssignmentData.ResourceGroupGuid,
-				ResourceGuid: oAssignmentData.ResourceGuid
-			}
+				ResourceGuid: oAssignmentData.ResourceGuid,
+				DemandGuid: oAssignmentData.DemandGuid ? oAssignmentData.DemandGuid : ""
+			};
 		}
 
 	});
