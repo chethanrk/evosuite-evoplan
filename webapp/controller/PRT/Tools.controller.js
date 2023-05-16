@@ -214,13 +214,12 @@ sap.ui.define([
 						iLastIndex = aSelectedIndices.pop();
 						this._oToolsTable.removeSelectionInterval(iMaxRowSelection, iLastIndex);
 						sMsg = this.getResourceBundle().getText("ymsg.allToolSelect", [iMaxRowSelection]);
-						this.showMessageToast(sMsg);
 					} else {
 						iLastIndex = oEvent.getParameter('rowIndex');
 						this._oToolsTable.removeSelectionInterval(iLastIndex, iLastIndex);
 						sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
-						this.showMessageToast(sMsg);
 					}
+					this.showMessageToast(sMsg);
 				}
 				this._nSelectedToolsCount = this._oToolsTable.getSelectedIndices().length;
 			}.bind(this));
