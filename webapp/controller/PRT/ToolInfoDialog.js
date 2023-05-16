@@ -39,7 +39,7 @@ sap.ui.define([
 		 */
 
 		/** 
-		 * On unassign assignment of assignment the unassign function import will be called
+		 * On unassign assignment of tool the delete function import will be called
 		 * @param oEvent
 		 */
 		onDeleteAssignment: function (oEvent) {
@@ -61,7 +61,6 @@ sap.ui.define([
 				}
 			}.bind(this));
 			this._closeDialog();
-
 		},
 
 		/**
@@ -126,7 +125,10 @@ sap.ui.define([
 				}.bind(this));
 			}
 		},
-
+		/**
+		 * Function to Tool save and validate date
+		 * 
+		 */
 		onSaveDialog: function () {
 			var oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
@@ -163,68 +165,6 @@ sap.ui.define([
 			} else {
 				this.showMessageToast(sMsg);
 			}
-		},
-
-		/**
-		 * save form data
-		 * @param oEvent
-		 */
-		onSaveToolDialog: function (oEvent) {
-			var oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
-				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
-				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid"),
-				oParams;
-
-			if (oDateTo !== undefined && oDateFrom !== undefined) {
-				oDateFrom = oDateFrom.getTime();
-				oDateTo = oDateTo.getTime();
-				// To Validate DateTo and DateFrom
-				if (oDateTo >= oDateFrom) {
-					oParams = this._getParams();
-					this._mParameters.bIsFromPRTAssignmentInfo = true;
-					var oData = {
-						oSourceData: {
-							sTargetPath: this.AssignmentSourcePath
-						}
-					}
-					this.clearMessageModel.call(this._oView.getController());
-					this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), oParams, "ChangeToolAssignment", "POST",
-						this._mParameters, true).then(function (results) {
-						this.showMessage(results[1]);
-						if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
-							this._eventBus.publish("BaseController", "refreshTreeTable", {});
-						}
-						if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
-							this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
-						}
-					}.bind(this));
-					this._closeDialog();
-				} else {
-					this.showMessageToast(sMsg);
-				}
-			} else {
-				this.showMessageToast(sMsg);
-			}
-		},
-		onDeleteToolAssignment: function (oEvent) {
-			var sPrtAssignmentGuid = this.oAssignmentModel.getProperty("/PrtAssignmentGuid");
-			this.clearMessageModel.call(this._oView.getController());
-			var oData = {
-				oSourceData: {
-					sTargetPath: this.AssignmentSourcePath
-				}
-			}
-			this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), {
-				PrtAssignmentGuid: sPrtAssignmentGuid
-			}, "DeleteToolAssignment", "POST", this._mParameters, true).then(function () {
-				if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
-					this._eventBus.publish("BaseController", "refreshTreeTable", {});
-				}
-				if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
-					this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
-				}
-			}.bind(this));
-			this._closeDialog();
 		},
 		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "ToolReAssignment");
