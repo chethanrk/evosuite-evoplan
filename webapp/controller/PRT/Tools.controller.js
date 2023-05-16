@@ -34,7 +34,7 @@ sap.ui.define([
 			this._oToolsTable = this.byId("idToolsTable").getTable();
 			this._configureToolDataTable(this._oToolsTable);
 			this._eventBus = sap.ui.getCore().getEventBus();
-			
+
 			this._mParameters = {
 				bFromDemandTools: true
 			};
@@ -59,6 +59,7 @@ sap.ui.define([
 			var iDefNum = this._oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS") ? this._oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS") : 0;
 			this._oViewModel.setProperty("/iDefToolAsgnDays", iDefNum);
 		},
+
 		/**
 		 * after rendering of view
 		 * @param oEvent
@@ -71,6 +72,7 @@ sap.ui.define([
 			this._oViewModel.setProperty("/PRT/bIsGantt", false);
 			this._oViewModel.refresh();
 		},
+
 		/**
 		 * Called when view attached is destroyed
 		 */
@@ -134,17 +136,19 @@ sap.ui.define([
 				});
 			});
 			// keeping the data in drag session
-			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
+			this._oViewModel.setProperty("/dragSession", oSelectedPaths.aPathsData);
 			this.localStorage.put("Evo-Tools-guid", JSON.stringify(aSelectedToolObject));
 			this.localStorage.put("Evo-aPathsData", JSON.stringify(oSelectedPaths.aPathsData));
 			this.localStorage.put("Evo-toolDrag", "Tools");
 		},
+
 		/**
 		 * Open the Gantt Toolss Filter Dialog 
 		 */
 		onPressGanttToolsFilters: function () {
 			this._oGanttToolsFilter.open();
 		},
+
 		/**
 		 * Close the Gantt Tools Filter Dialog 
 		 */
@@ -180,9 +184,15 @@ sap.ui.define([
 				aNonAssignable: []
 			};
 		},
+
+		/**
+		 * Refresh tools list table
+		 * @private
+		 */
 		_refreshToolsTable: function () {
 			this._oDraggableToolsTable.rebindTable();
 		},
+
 		/**
 		 * add configuration to Tools table
 		 * @param oDataTable
@@ -191,21 +201,28 @@ sap.ui.define([
 		_configureToolDataTable: function (oDataTable) {
 			oDataTable.attachRowSelectionChange(function (oEvent) {
 				var aSelectedIndices = this._oToolsTable.getSelectedIndices(),
-					iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_TOOLS_SELECT_ALL"),
+					iMaxRowSelection = this._oUserModel.getProperty("/DEFAULT_TOOLS_SELECT_ALL"),
 					sMsg, iLastIndex;
 
+				// condition to deselect All when max selection limit is already reach but pressing select All checkbox
+				if (oEvent.getParameter("selectAll") && this._nSelectedToolsCount === iMaxRowSelection) {
+					this._oToolsTable.clearSelection();
+					return;
+				}
 				if (aSelectedIndices.length > iMaxRowSelection) {
-					iLastIndex = aSelectedIndices.pop();
 					if (oEvent.getParameter("selectAll")) {
+						iLastIndex = aSelectedIndices.pop();
 						this._oToolsTable.removeSelectionInterval(iMaxRowSelection, iLastIndex);
 						sMsg = this.getResourceBundle().getText("ymsg.allToolSelect", [iMaxRowSelection]);
 						this.showMessageToast(sMsg);
 					} else {
+						iLastIndex = oEvent.getParameter('rowIndex');
 						this._oToolsTable.removeSelectionInterval(iLastIndex, iLastIndex);
 						sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
 						this.showMessageToast(sMsg);
 					}
 				}
+				this._nSelectedToolsCount = this._oToolsTable.getSelectedIndices().length;
 			}.bind(this));
 		}
 	});

@@ -14,7 +14,7 @@
 				showWorkTime="{path: 'ganttModel>NodeType', formatter: '.formatter.isResource'}"
 				workTime="{path:'ganttModel>ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}"
 				isDuplicate="{ganttModel>DUPLICATE_ASSIGNMENT_FLAG}" duplicateColor="{ganttModel>DUPLICATE_ASSIGNMENT_COLOR}"
-				nodeType="{ganttModel>NODE_TYPE}"></controls:CustomTitle>
+				nodeType="{ganttModel>NodeType}"></controls:CustomTitle>
 		</table:template>
 	</table:Column>
 </core:FragmentDefinition>

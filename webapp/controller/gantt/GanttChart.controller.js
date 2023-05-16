@@ -73,6 +73,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
 			this._oEventBus.subscribe("GanttChart", "refreshResourceOnDelete", this._refreshResourceOnBulkDelete, this);
 			this._oEventBus.subscribe("GanttChart", "refreshDroppedContext", this._refreshDroppedContext, this);
+			this._oEventBus.subscribe("GanttCharController", "onToolReassignGantt", this._onToolReassignGantt, this);
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
 				this._mParameters = {
@@ -522,7 +523,7 @@ sap.ui.define([
 
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonChange")) {
 				//change assignment
-				this.openAssignInfoDialog(this.getView(), sDataModelPath, null, mParameters, null);
+				this.openAssignInfoDialog(this.getView(), sDataModelPath, oContext, mParameters, null);
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonUnassign")) {
 				//unassign
 				if (oData.IS_PRT) {
@@ -769,6 +770,7 @@ sap.ui.define([
 			}
 			return "url(#" + sGradId + ")";
 		},
+
 		/**
 		 * when we try to drop the tool on the resource.
 		 * @param oEvent 
@@ -787,6 +789,7 @@ sap.ui.define([
 				this.onProceedGanttToolDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
 			}
 		},
+
 		/**
 		 * this method is used to check and add validations on the 
 		 * tools dropped on resource and call the resprctive service for the same.
@@ -1007,6 +1010,7 @@ sap.ui.define([
 		_handleShapeDropReAssignment: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				msg = this.getResourceBundle().getText("msg.ganttShapeDropError"),
+				oUserModel = this.getModel("user"),
 				oTargetContext = oParams.targetRow ? oParams.targetRow.getBindingContext("ganttModel") : null;
 
 			if (!oTargetContext && !oParams.targetShape) {
@@ -1044,9 +1048,34 @@ sap.ui.define([
 				if (oTargetContext.getObject().NodeType === "ASSIGNMENT" || !oTargetContext.getObject().ResourceGuid) { // Reassigning PRT resource assignment to Demand assignment or PRT resource not allowed
 					this.showMessageToast(msg);
 				} else if (oTargetContext.getObject().NodeType === "RESOURCE") {
-					//set new time and resource data to gantt model, setting also new pathes
-					sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
-					this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+					// Here we check below of the source is PR or not.
+					if (oSourceData.IS_PRT && oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) {
+						var oDraggedShapeData = oParams.draggedShapeDates[key]
+						if (oDraggedShapeData) {
+							var iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays"),
+								oSourceDataDateFrom = oParams.newDateTime,
+								oSourceDataDateTo = _.cloneDeep(oSourceDataDateFrom);
+							oSourceDataDateTo.setDate(oSourceDataDateFrom.getDate() + parseInt(iDefNum));
+						}
+						// Assigning the To and From time to the dialog box model.
+						this.oViewModel.setProperty("/PRT/defaultStartDate", oSourceDataDateFrom);
+						this.oViewModel.setProperty("/PRT/defaultEndDate", oSourceDataDateTo);
+						var oTargetObj = this.oGanttModel.getProperty(sTargetPath),
+							mParameters = {
+								bFromGanttToolReassign: true,
+								sSourcePath: sSourcePath,
+								sTargetPath: sTargetPath,
+								draggedShapeDates: oParams.draggedShapeDates[key],
+								oParams: oParams,
+								sRequestType: sRequestType
+							};
+						this.openDateSelectionDialog(this.getView(), null, null, mParameters);
+					} else {
+						//set new time and resource data to gantt model, setting also new pathes
+						sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
+						this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+					}
+
 				} else { //Allowing Assignment Shape Drop Only within the same resources
 					bSameResourcePath = sTargetPath.split("/").splice(0, 6).join("/") === sSourcePath.split("/").splice(0, 6).join("/");
 					if (bSameResourcePath) {
@@ -1056,7 +1085,17 @@ sap.ui.define([
 				}
 			}
 		},
-
+		/**
+		 * method to handle shape drop When a shape for Tool is dragged inside Gantt to reassign
+		 * and dropped to same row or another resource row
+		 * @param sChannel {string}
+		 * @param sEvent {string}
+		 * @param mParam1 {oBject}
+		 */
+		_onToolReassignGantt: function (sChannel, sEvent, mParam1) {
+			var sNewPath = this._setNewShapeDropData(mParam1.sSourcePath, mParam1.sTargetPath, mParam1.draggedShapeDates, mParam1.oParams);
+			this._updateDraggedShape(sNewPath, mParam1.sRequestType, mParam1.sSourcePath);
+		},
 		/**
 		 * set background color of Gantt by dynamic adding style sheet rule
 		 * https://developer.mozilla.org/en-US/docs/Web/API/CSSRuleList
@@ -1088,9 +1127,17 @@ sap.ui.define([
 					oSourceEndDate = moment(oDraggedShapeData.endTime),
 					duration = oSourceEndDate.diff(oSourceStartDate, "seconds"),
 					newEndDate = moment(oParams.newDateTime).add(duration, "seconds");
-				oSourceData.DateFrom = oParams.newDateTime;
-				oSourceData.DateTo = newEndDate.toDate();
+				if (oSourceData.IS_PRT) {
+					oSourceData.DateFrom = this.oViewModel.getProperty("/PRT/defaultStartDate");
+					oSourceData.DateTo = this.oViewModel.getProperty("/PRT/defaultEndDate");
+				} else {
+					oSourceData.DateFrom = oParams.newDateTime;
+					oSourceData.DateTo = newEndDate.toDate();
+				}
 			}
+			/*	Checking if the source is PRT so that the end date can be assigned based on the 
+				iDefToolAsgnDays flag*/
+
 			oSourceData.sSourcePath = sSourcePath;
 			oSourceData.sPath = sSourcePath;
 			oSourceData.OldAssignPath = sSourcePath.split("/AssignmentSet/results/")[0];
@@ -1151,7 +1198,7 @@ sap.ui.define([
 
 					oPRTShapeData.ResourceGroupGuid = oTargetResourceData.ResourceGroupGuid;
 					oPRTShapeData.ResourceGuid = oTargetResourceData.ResourceGuid;
-					this.getModel("viewModel").setProperty("/PRT/AssignmentData", oPRTShapeData);
+					this.oViewModel.setProperty("/PRT/AssignmentData", oPRTShapeData);
 					oParams = this._getParams();
 					oDateParams = this.getPRTDateParams(oPRTShapeData);
 					if (this.oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) {
@@ -2498,12 +2545,16 @@ sap.ui.define([
 		 * @Author Rakesh Sahu
 		 */
 		_updateAfterReAssignment: function (aData, oTargetResource, oSourceResource) {
-			oTargetResource.AssignmentSet = aData[0];
+			oTargetResource.AssignmentSet.results = aData[0].results.filter(function (sKey) { //Filtering Demand Assignments
+				return sKey.PRT_ASSIGNMENT_TYPE !== 'PRTDEMASGN';
+			});
 			this._updateResourceChildren(oTargetResource, this._updateDmdPRTAssignments(aData[0].results));
 			this.oGanttOriginDataModel.setProperty(this._oTargetResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oTargetResourcePath)));
 
 			if (oSourceResource) {
-				oSourceResource.AssignmentSet = aData[1];
+				oSourceResource.AssignmentSet.results = aData[1].results.filter(function (sKey) { //Filtering Demand Assignments
+					return sKey.PRT_ASSIGNMENT_TYPE !== 'PRTDEMASGN';
+				});
 				this._updateResourceChildren(oSourceResource, this._updateDmdPRTAssignments(aData[1].results));
 				this.oGanttOriginDataModel.setProperty(this._oSourceResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oSourceResourcePath)));
 			}
@@ -2789,6 +2840,9 @@ sap.ui.define([
 			var oSourceData = oData.oSourceData,
 				sTargetPath = oSourceData.sTargetPath,
 				sSourcePath = oSourceData.sSourcePath;
+			if (!sTargetPath) {
+				sTargetPath = this.assignmentRowContext.getPath();
+			}
 			this._refreshChangedResources(sTargetPath, sSourcePath);
 		}
 
