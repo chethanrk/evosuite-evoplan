@@ -58,7 +58,6 @@ sap.ui.define([
 		},
 
 		onExit: function () {
-			console.log("exit trigerred");
 			TemplateRenderController.prototype.onExit.apply(this, arguments);
 			if (this._oDialog) {
 				this._oDialog.destroy(true);
