@@ -147,7 +147,7 @@ sap.ui.define([
 				sContainerId = "ResponsivePopOverWrapper";
 			} else if (this._IsTool) {
 				sContainerId = "ToolFormDialogWrapper";
-				oFragment.setTitle(this._oResourceBundle.getText(this._mParams.title) + "New Tool Dialog");
+				oFragment.setTitle(this._oResourceBundle.getText(this._mParams.title));
 			} else {
 				sContainerId = "FormDialogWrapper";
 				oFragment.setTitle(this._oResourceBundle.getText(this._mParams.title));
