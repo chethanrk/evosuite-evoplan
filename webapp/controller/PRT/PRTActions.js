@@ -33,20 +33,16 @@ sap.ui.define([
 			this.oAppViewModel = this.getModel("appView");
 
 			oDateParams = {
-				DateFrom: "",
-				TimeFrom: {},
-				DateTo: "",
-				TimeTo: {},
+				DateFrom: oTargetObj.StartDate || oTargetObj.DateFrom,
+				TimeFrom: oTargetObj.StartTime || oTargetObj.TimeFrom,
+				DateTo: oTargetObj.EndDate || oTargetObj.DateTo,
+				TimeTo: oTargetObj.EndTime || oTargetObj.TimeTo,
 				ResourceGroupGuid: oTargetObj.ResourceGroupGuid,
 				ResourceGuid: oTargetObj.ResourceGuid,
 				DemandGuid: ""
 			}
 
 			if (bIsDateNode) {
-				oDateParams.DateFrom = oTargetObj.StartDate;
-				oDateParams.TimeFrom = oTargetObj.StartTime;
-				oDateParams.DateTo = oTargetObj.EndDate;
-				oDateParams.TimeTo = oTargetObj.EndTime;
 				this._proceedToAssignTools(aSources, oDateParams, mParameters);
 
 			} else if (sNodeType === "RESOURCE") {
@@ -66,10 +62,6 @@ sap.ui.define([
 				}
 
 			} else if (sNodeType === "ASSIGNMENT" && !oTargetObj.IS_PRT) {
-				oDateParams.DateFrom = oTargetObj.StartDate || oTargetObj.DateFrom;
-				oDateParams.TimeFrom = oTargetObj.StartTime || oTargetObj.TimeFrom;
-				oDateParams.DateTo = oTargetObj.EndDate || oTargetObj.DateTo;
-				oDateParams.TimeTo = oTargetObj.EndTime || oTargetObj.TimeTo;
 				oDateParams.DemandGuid = oTargetObj.DemandGuid;
 				this._proceedToAssignTools(aSources, oDateParams, mParameters);
 			}
@@ -124,56 +116,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * method to trigger create/update function import for tool assignment
-		 */
-		onSaveDialog: function () {
-			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel('viewModel');
-			var oStartDate = this._oViewModel.getProperty("/PRT/defaultStartDate"),
-				oEndDate = this._oViewModel.getProperty("/PRT/defaultEndDate"),
-				sMsg = this.getResourceBundle().getText("ymsg.wrongDates"),
-				oPRTAssignmentData,
-				oParams;
-
-			if (oStartDate <= oEndDate) {
-				if (this._bIsGanttPRTReassign) {
-					oPRTAssignmentData = this._oViewModel.getProperty("/PRT/AssignmentData");
-					oPRTAssignmentData.DateFrom = oStartDate,
-						oPRTAssignmentData.DateTo = oEndDate,
-						oPRTAssignmentData.TimeFrom = {
-							ms: oStartDate.getTime()
-						}
-					oPRTAssignmentData.TimeTo = {
-						ms: oEndDate.getTime()
-					}
-					oParams = this._getParams();
-					this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function () {
-						this._oEventBus.publish("GanttChart", "refreshDroppedContext", {
-							oSourceData: {
-								sTargetPath: this._oAssignmentPaths.sTargetResourcePath,
-								sSourcePath: this._oAssignmentPaths.sCurrentResourcePath
-							}
-						})
-					}.bind(this));
-				} else if (this._mParameters.hasOwnProperty("bFromGanttToolReassign")) {
-					/*	This nested if else condition is used when the Tool is dropped inside the 
-						gantt chart to a particular resource.*/
-					if (this._mParameters.bFromGanttToolReassign) {
-						this._oEventBus.publish("GanttCharController", "onToolReassignGantt", this._mParameters);
-					}
-				} else {
-					this._oDateParams.DateFrom = oStartDate;
-					this._oDateParams.TimeFrom.ms = oStartDate.getTime();
-					this._oDateParams.DateTo = oEndDate;
-					this._oDateParams.TimeTo.ms = oEndDate.getTime();
-					this._proceedToAssignTools(this._aSources, this._oDateParams, this._mParameters);
-				}
-				this.closeDateSelectionDialog();
-			} else {
-				this.showMessageToast(sMsg);
-			}
-		},
-
-		/**
 		 * Open tools information dialog
 		 * @param Current view object
 		 * @param Model path of tool assignment
@@ -215,7 +157,7 @@ sap.ui.define([
 				oDialogController: this.oComponent.toolInfoDialog,
 				refreshParameters: mParameters
 			};
-			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterToolsAssignDialogLoad.bind(this),true);
+			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterToolsAssignDialogLoad.bind(this), true);
 		},
 
 		/**
@@ -343,7 +285,7 @@ sap.ui.define([
 		 * get Parameteres to pass into Function Import
 		 */
 		_getParams: function () {
-			var oPRTAssignment = this._oViewModel.getProperty("/PRT/AssignmentData");
+			var oPRTAssignment = this.getModel("viewModel").getProperty("/PRT/AssignmentData");
 			return {
 				ToolId: oPRTAssignment.TOOL_ID,
 				PrtAssignmentGuid: oPRTAssignment.Guid,
