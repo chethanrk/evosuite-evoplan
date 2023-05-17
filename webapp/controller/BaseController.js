@@ -714,8 +714,7 @@ sap.ui.define([
 				}
 			} else {
 				sAdditionInfo = oAppInfo.Value1;
-				sUri = oAppInfo.ISABSOLUTE ? sAdditionInfo.replace("\\\\place_h1\\\\", sParamValue) : sServicePath + sAdditionInfo.replace(
-					"\\\\place_h1\\\\", sParamValue);
+				sUri = sServicePath + sAdditionInfo.replace("\\\\place_h1\\\\", sParamValue);
 				this.navigateToApps(sUri);
 			}
 
