@@ -68,15 +68,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * when SmartField is visible as link
-		 * show app to app navigation popup
-		 */
-		onPressSmartField: function (oEvent) {
-			var oSource = oEvent.getSource();
-			this.openApp2AppPopover(oSource, oSource.getUrl());
-		},
-
-		/**
 		 * when ObjectStatus in header is visible as active
 		 * show app to app navigation popup
 		 */
@@ -235,11 +226,11 @@ sap.ui.define([
 		 */
 		saveChanges: function (mParams, oSuccessCallback, oErrorCallback, oCtrl) {
 			if (mParams.state === "success") {
-			//	this._setBusyWhileSaving(oCtrl, true);
+				//	this._setBusyWhileSaving(oCtrl, true);
 
 				this.getModel().submitChanges({
 					success: function (oResponse) {
-					//	this._setBusyWhileSaving(oCtrl, false);
+						//	this._setBusyWhileSaving(oCtrl, false);
 						if (oResponse.__batchResponses && oResponse.__batchResponses[0].response && oResponse.__batchResponses[0].response.statusCode ===
 							"400") {
 							if (oErrorCallback) {
@@ -262,8 +253,7 @@ sap.ui.define([
 						}
 					}.bind(this)
 				});
-			} else if (mParams.state === "error") {
-			}
+			} else if (mParams.state === "error") {}
 		},
 
 		/**
