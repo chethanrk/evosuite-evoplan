@@ -249,6 +249,12 @@ sap.ui.define([
 			this.oAssignmentModel.setProperty("/ResourceGroupGuid", oNewAssign.ResourceGroupGuid);
 			this.oAssignmentModel.setProperty("/ResourceGuid", oNewAssign.ResourceGuid);
 
+			if (oNewAssign.NodeType === "ASSIGNMENT") {
+				this.oAssignmentModel.setProperty("/DemandGuid", oNewAssign.DemandGuid);
+			} else {
+				this.oAssignmentModel.setProperty("/DemandGuid", "");
+			}
+
 			//when new assignment is time range
 			if (oNewAssign.StartDate && oNewAssign.NodeType.indexOf("TIME") >= 0) {
 				var start = formatter.mergeDateTime(oNewAssign.StartDate, oNewAssign.StartTime),
