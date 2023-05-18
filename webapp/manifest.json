@@ -1,554 +1,582 @@
 {
-	"_version": "1.12.0",
-	"sap.app": {
-		"id": "com.evorait.evoplan",
-		"type": "application",
-		"i18n": "i18n/i18n.properties",
-		"title": "{{appTitle}}",
-		"shortTitle": "{{shorttitle}}",
-		"info": "{{info}}",
-		"description": "{{appDescription}}",
-		"sourceTemplate": {
-			"id": "ui5template.basicSAPUI5ApplicationProject",
-			"version": "1.40.12"
-		},
-		"tags": {
-			"keywords": [
-				"{{xfld.keyWord1}}",
-				"{{xfld.keyWord2}}"
-			]
-		},
-		"applicationVersion": {
-			"version": "2305.0.0"
-		},
-		"dataSources": {
-			"mainService": {
-				"uri": "/sap/opu/odata/EVORA/EP_MAIN_SRV/",
-				"type": "OData",
-				"settings": {
-					"odataVersion": "2.0",
-					"localUri": "localService/metadata.xml",
-					"annotations": [
-						"annotations"
-					]
-				}
-			},
-			"annotations": {
-				"type": "ODataAnnotation",
-				"uri": "annotations/annotations.xml",
-				"settings": {
-					"localUri": "annotations/annotations.xml"
-				}
-			}
-		},
-		"crossNavigation": {
-			"inbounds": {
-				"productsManage": {
-					"semanticObject": "evoPlan",
-					"action": "dispatch",
-					"title": "{{appTitle}}",
-					"subTitle": "{{appDescription}}",
-					"indicatorDataSource": {
-						"dataSource": "mainService",
-						"path": "/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandSet/$count?$filter=Status eq 'INIT'",
-						"refresh": 450
-					},
-					"signature": {
-						"parameters": {
-							"Demand": {
-								"required": false
-							}
-						},
-						"additionalParameters": "allowed"
-					},
-					"icon": "assets/img/favIcon.ico"
-				}
-			}
-		},
-		"ach": "CA"
-	},
-	"sap.ui": {
-		"technology": "UI5",
-		"icons": {
-			"icon": "assets/img/favIcon.ico",
-			"favIcon": "assets/img/favIcon.ico",
-			"phone": "assets/img/favIcon.ico",
-			"phone@2": "assets/img/favIcon.ico",
-			"tablet": "assets/img/favIcon.ico",
-			"tablet@2": "assets/img/favIcon.ico"
-		},
-		"deviceTypes": {
-			"desktop": true,
-			"tablet": true,
-			"phone": true
-		},
-		"supportedThemes": [
-			"sap_belize",
-			"sap_belize_plus",
-			"sap_belize_hcb",
-			"sap_belize_hcw",
-			"sap_fiori_3"
-		]
-	},
-	"sap.ui5": {
-		"flexEnabled": false,
-		"config": {
-			"fullWidth": true
-		},
-		"rootView": {
-			"viewName": "com.evorait.evoplan.view.App",
-			"type": "XML",
-			"id": "app",
-			"async": true
-		},
-		"dependencies": {
-			"minUI5Version": "1.70.0",
-			"libs": {
-				"sap.ui.core": {
-					"lazy": true
-				},
-				"sap.m": {
-					"lazy": true
-				},
-				"sap.uxap": {
-					"lazy": true
-				},
-				"sap.ui.comp": {
-					"lazy": true
-				},
-				"sap.ui.unified": {
-					"lazy": true
-				},
-				"sap.gantt": {
-					"lazy": true
-				}
-			}
-		},
-		"contentDensities": {
-			"compact": true,
-			"cozy": true
-		},
-		"models": {
-			"i18n": {
-				"type": "sap.ui.model.resource.ResourceModel",
-				"settings": {
-					"bundleName": "com.evorait.evoplan.i18n.i18n"
-				}
-			},
-			"": {
-				"dataSource": "mainService",
-				"preload": true,
-				"settings": {
-					"defaultBindingMode": "TwoWay"
-				}
-			},
-			"@i18n": {
-				"type": "sap.ui.model.resource.ResourceModel",
-				"uri": "i18n/i18n.properties"
-			}
-		},
-		"resources": {
-			"css": [{
-				"uri": "assets/css/style.css"
-			}],
-			"js": [{
-				"uri": "assets/js/promise-polyfills"
-			}, {
-				"uri": "assets/js/lodash.js"
-			}, {
-				"uri": "assets/js/axios.min.js"
-			}]
-		},
-		"routing": {
-			"config": {
-				"routerClass": "sap.m.routing.Router",
-				"viewType": "XML",
-				"viewPath": "com.evorait.evoplan.view",
-				"controlAggregation": "pages",
-				"controlId": "appPanel",
-				"clearControlAggregation": false,
-				"bypassed": {
-					"target": [
-						"empty"
-					]
-				},
-				"async": true
-			},
-			"routes": [{
-				"pattern": "",
-				"name": "demands",
-				"target": [
-					"demands",
-					"resourceTree"
-				]
-			}, {
-				"pattern": "DemandTools",
-				"name": "demandTools",
-				"target": [
-					"resourceTree",
-					"DemandTools"
-
-				]
-			}, {
-				"pattern": "Demand/{guid}",
-				"name": "DemandDetail",
-				"target": [
-					"resourceTree",
-					"DemandDetail"
-				]
-			}, {
-				"pattern": "AssetPlanning/{asset}/CreateOrder/New",
-				"name": "CreateOrder",
-				"target": [
-					"assets",
-					"CreateOrder"
-				]
-			}, {
-				"pattern": "AssetPlanning/{assets}/:withChildren:",
-				"name": "assetManager",
-				"target": [
-					"assets",
-					"assetsOrders"
-				]
-			}, {
-				"pattern": "AssetPlanning/{asset}/OrderCreate/new",
-				"name": "orderCreate",
-				"target": [
-					"assets",
-					"orderCreate"
-				]
-			}, {
-				"pattern": "AssetPlanning/{asset}/Demand/{guid}",
-				"name": "assetDemandDetail",
-				"target": [
-					"assets",
-					"detail"
-				]
-			}, {
-				"pattern": "MessageCockpit",
-				"name": "messageCockpit",
-				"target": [
-					"messageCockpit"
-				]
-			}, {
-				"pattern": "Gantt",
-				"name": "gantt",
-				"target": [
-					"demandsGantt",
-					"gantt"
-				]
-			}, {
-				"pattern": "NewGantt",
-				"name": "newgantt",
-				"target": [
-					"newgantt",
-					"demandsGantt"
-				]
-			}, {
-				"pattern": "GanttTools",
-				"name": "ganttTools",
-				"target": [
-					"newgantt",
-					"GanttTools"
-				]
-			}, {
-				"pattern": "Gantt/Demand/{guid}",
-				"name": "ganttDemandDetails",
-				"target": [
-					"ganttDemandDetails"
-				]
-			}, {
-				"pattern": "SplitPage/SplitDemands",
-				"name": "splitDemands",
-				"target": [
-					"demandsFullscreen"
-				]
-			}, {
-				"pattern": "SplitPage/SplitGantt",
-				"name": "ganttSplit",
-				"target": [
-					"ganttFullscreen"
-				]
-			}, {
-				"pattern": "SplitPage/SplitGanttChart",
-				"name": "newGanttSplit",
-				"target": [
-					"newGanttFullscreen"
-				]
-			}, {
-				"pattern": "SplitPage/SplitGanttTools",
-				"name": "GanttSplitTools",
-				"target": [
-					"ganttSplitTools"
-				]
-			}, {
-				"pattern": "SplitPage/Demand/{guid}",
-				"name": "splitDemandDetails",
-				"target": [
-					"ganttDemandDetails"
-				]
-			}, {
-				"pattern": "SplitPage/Gantt/{guid}",
-				"name": "splitGanttDetails",
-				"target": [
-					"ganttDemandDetails"
-				]
-			}, {
-				"pattern": "Map",
-				"name": "map",
-				"target": [
-					"map",
-					"mapResourceTree"
-				]
-			}, {
-				"pattern": "Map/Detail/{guid}",
-				"name": "mapDemandDetails",
-				"target": [
-					"mapDemandDetails"
-				]
-			}, {
-				"pattern": "ManageResources",
-				"name": "manageResources",
-				"target": [
-					"manageResources"
-				]
-			}],
-			"targets": {
-				"splitHorNavigation": {
-					"viewType": "XML",
-					"viewName": "layouts.Split2HorViewsNavi",
-					"viewLevel": 3,
-					"controlId": "appPanel"
-				},
-				"splitVerNavigation": {
-					"viewType": "XML",
-					"viewName": "layouts.Split2VerViewsNavi",
-					"viewLevel": 2,
-					"controlId": "appPanel"
-				},
-				"fullNavigation": {
-					"viewType": "XML",
-					"viewName": "layouts.FullViewNavi",
-					"viewLevel": 2,
-					"controlId": "appPanel"
-				},
-				"resourceTree": {
-					"viewType": "XML",
-					"viewName": "ResourceTree",
-					"viewPath": "com.evorait.evoplan.view.demands",
-					"viewLevel": 3,
-					"controlId": "leftPanel",
-					"parent": "splitHorNavigation"
-				},
-				"demands": {
-					"viewType": "XML",
-					"viewName": "Demands",
-					"viewPath": "com.evorait.evoplan.view.demands",
-					"viewLevel": 3,
-					"controlId": "rightPanel",
-					"parent": "splitHorNavigation"
-				},
-				"DemandTools": {
-					"viewType": "XML",
-					"viewName": "DemandTools",
-					"viewPath": "com.evorait.evoplan.view.PRT",
-					"viewLevel": 3,
-					"controlId": "rightPanel",
-					"parent": "splitHorNavigation"
-				},
-				"GanttTools": {
-					"viewType": "XML",
-					"viewName": "GanttTools",
-					"viewPath": "com.evorait.evoplan.view.PRT",
-					"viewLevel": 4,
-					"controlId": "bottomPanel",
-					"parent": "splitVerNavigation"
-				},
-				"demandsGantt": {
-					"viewType": "XML",
-					"viewName": "GanttDemands",
-					"viewPath": "com.evorait.evoplan.view.gantt",
-					"viewLevel": 4,
-					"controlId": "bottomPanel",
-					"parent": "splitVerNavigation"
-				},
-				"gantt": {
-					"viewType": "XML",
-					"viewName": "Gantt",
-					"viewId": "idGantt",
-					"viewPath": "com.evorait.evoplan.view.gantt",
-					"viewLevel": 4,
-					"controlId": "topPanel",
-					"parent": "splitVerNavigation"
-				},
-				"detail": {
-					"viewType": "XML",
-					"viewName": "ObjectPage",
-					"viewPath": "com.evorait.evoplan.view",
-					"viewLevel": 4,
-					"controlId": "rightPanel",
-					"parent": "splitHorNavigation"
-				},
-				"assets": {
-					"viewName": "Assets",
-					"viewLevel": 3,
-					"viewPath": "com.evorait.evoplan.view.assets",
-					"controlId": "leftPanel",
-					"parent": "splitHorNavigation"
-				},
-				"assetsOrders": {
-					"viewType": "XML",
-					"viewName": "AssetsOrders",
-					"viewPath": "com.evorait.evoplan.view.assets",
-					"viewLevel": 3,
-					"controlId": "rightPanel",
-					"parent": "splitHorNavigation"
-				},
-				"orderCreate": {
-					"viewType": "XML",
-					"viewName": "OrderCreate",
-					"viewPath": "com.evorait.evoplan.view.assets",
-					"viewLevel": 4,
-					"controlId": "rightPanel",
-					"parent": "splitHorNavigation"
-				},
-				"empty": {
-					"viewType": "XML",
-					"viewName": "EmptyPage",
-					"viewLevel": 3,
-					"parent": "fullNavigation",
-					"controlId": "fullPanel"
-				},
-				"weeklyPlanner": {
-					"viewType": "XML",
-					"viewName": "WeeklyPlanner",
-					"parent": "fullNavigation",
-					"controlId": "fullPanel",
-					"viewLevel": 3
-				},
-				"messageCockpit": {
-					"viewType": "XML",
-					"viewName": "MessageCockpit",
-					"viewPath": "com.evorait.evoplan.view.messageCockpit",
-					"parent": "fullNavigation",
-					"controlId": "fullPanel",
-					"viewLevel": 4
-				},
-				"ganttDemandDetails": {
-					"viewType": "XML",
-					"viewName": "ObjectPage",
-					"viewPath": "com.evorait.evoplan.view",
-					"parent": "fullNavigation",
-					"controlId": "fullPanel",
-					"viewLevel": 4
-				},
-				"demandsFullscreen": {
-					"viewType": "XML",
-					"viewName": "GanttDemands",
-					"viewPath": "com.evorait.evoplan.view.gantt",
-					"parent": "fullNavigation",
-					"controlId": "fullPanel",
-					"viewLevel": 4
-				},
-				"ganttFullscreen": {
-					"viewType": "XML",
-					"viewId": "idFullGantt",
-					"viewPath": "com.evorait.evoplan.view.gantt",
-					"viewName": "Gantt",
-					"parent": "fullNavigation",
-					"controlId": "fullPanel",
-					"viewLevel": 4
-				},
-				"newGanttFullscreen": {
-					"viewType": "XML",
-					"viewId": "idFullGantt",
-					"viewPath": "com.evorait.evoplan.view.gantt",
-					"viewName": "GanttChart",
-					"parent": "fullNavigation",
-					"controlId": "fullPanel",
-					"viewLevel": 4
-				},
-				"ganttSplitTools": {
-					"viewType": "XML",
-					"viewId": "idFullGantt",
-					"viewPath": "com.evorait.evoplan.view.PRT",
-					"viewName": "GanttTools",
-					"parent": "fullNavigation",
-					"controlId": "fullPanel",
-					"viewLevel": 4
-				},
-				"map": {
-					"viewType": "XML",
-					"viewName": "Map",
-					"viewPath": "com.evorait.evoplan.view.map",
-					"parent": "splitHorNavigation",
-					"controlId": "rightPanel",
-					"viewLevel": 3
-				},
-				"mapDemandDetails": {
-					"viewType": "XML",
-					"viewName": "ObjectPage",
-					"viewPath": "com.evorait.evoplan.view",
-					"parent": "fullNavigation",
-					"controlId": "fullPanel",
-					"viewLevel": 4
-				},
-				"ganttResourceTree": {
-					"viewType": "XML",
-					"viewName": "ResourceTree",
-					"parent": "splitHorNavigation",
-					"controlId": "leftPanel",
-					"viewLevel": 3
-				},
-				"mapResourceTree": {
-					"viewType": "XML",
-					"viewName": "MapResourceTree",
-					"viewPath": "com.evorait.evoplan.view.map",
-					"parent": "splitHorNavigation",
-					"controlId": "leftPanel",
-					"viewLevel": 3
-				},
-				"manageResources": {
-					"viewType": "XML",
-					"viewName": "ManageResources",
-					"viewPath": "com.evorait.evoplan.view.manageResources",
-					"viewLevel": 1,
-					"parent": "fullNavigation",
-					"controlId": "fullPanel"
-				},
-				"newgantt": {
-					"viewType": "XML",
-					"viewName": "GanttChart",
-					"viewPath": "com.evorait.evoplan.view.gantt",
-					"controlId": "topPanel",
-					"parent": "splitVerNavigation",
-					"viewLevel": 4
-				},
-				"DemandDetail": {
-					"viewType": "XML",
-					"viewName": "ObjectPage",
-					"viewPath": "com.evorait.evoplan.view",
-					"viewLevel": 2,
-					"controlId": "rightPanel",
-					"parent": "splitHorNavigation"
-				},
-				"CreateOrder": {
-					"viewType": "XML",
-					"viewName": "ObjectPage",
-					"viewPath": "com.evorait.evoplan.view",
-					"viewLevel": 2,
-					"controlId": "rightPanel",
-					"parent": "splitHorNavigation"
-				}
-			}
-		}
-	},
-	"sap.platform.hcp": {
-		"uri": "webapp",
-		"_version": "1.1.0"
-	},
-	"sap.platform.abap": {
-		"uri": "/sap/bc/ui5_ui5/evora/ep_ui5/webapp",
-		"_version": "1.1.0"
-	}
+    "_version": "1.12.0",
+    "sap.app": {
+        "id": "com.evorait.evoplan",
+        "type": "application",
+        "i18n": "i18n/i18n.properties",
+        "title": "{{appTitle}}",
+        "shortTitle": "{{shorttitle}}",
+        "info": "{{info}}",
+        "description": "{{appDescription}}",
+        "sourceTemplate": {
+            "id": "ui5template.basicSAPUI5ApplicationProject",
+            "version": "1.40.12",
+            "toolsId": "892a4d5f-e933-4435-afa8-0c472f137466"
+        },
+        "tags": {
+            "keywords": [
+                "{{xfld.keyWord1}}",
+                "{{xfld.keyWord2}}"
+            ]
+        },
+        "applicationVersion": {
+            "version": "2305.0.0"
+        },
+        "dataSources": {
+            "mainService": {
+                "uri": "/sap/opu/odata/EVORA/EP_MAIN_SRV/",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "2.0",
+                    "localUri": "localService/metadata.xml",
+                    "annotations": [
+                        "annotations"
+                    ]
+                }
+            },
+            "annotations": {
+                "type": "ODataAnnotation",
+                "uri": "annotations/annotations.xml",
+                "settings": {
+                    "localUri": "annotations/annotations.xml"
+                }
+            }
+        },
+        "crossNavigation": {
+            "inbounds": {
+                "productsManage": {
+                    "semanticObject": "evoPlan",
+                    "action": "dispatch",
+                    "title": "{{appTitle}}",
+                    "subTitle": "{{appDescription}}",
+                    "indicatorDataSource": {
+                        "dataSource": "mainService",
+                        "path": "/sap/opu/odata/EVORA/EP_MAIN_SRV/DemandSet/$count?$filter=Status eq 'INIT'",
+                        "refresh": 450
+                    },
+                    "signature": {
+                        "parameters": {
+                            "Demand": {
+                                "required": false
+                            }
+                        },
+                        "additionalParameters": "allowed"
+                    },
+                    "icon": "assets/img/favIcon.ico"
+                }
+            }
+        },
+        "ach": "CA"
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "icons": {
+            "icon": "assets/img/favIcon.ico",
+            "favIcon": "assets/img/favIcon.ico",
+            "phone": "assets/img/favIcon.ico",
+            "phone@2": "assets/img/favIcon.ico",
+            "tablet": "assets/img/favIcon.ico",
+            "tablet@2": "assets/img/favIcon.ico"
+        },
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        },
+        "supportedThemes": [
+            "sap_belize",
+            "sap_belize_plus",
+            "sap_belize_hcb",
+            "sap_belize_hcw",
+            "sap_fiori_3"
+        ]
+    },
+    "sap.ui5": {
+        "flexEnabled": false,
+        "config": {
+            "fullWidth": true
+        },
+        "rootView": {
+            "viewName": "com.evorait.evoplan.view.App",
+            "type": "XML",
+            "id": "app",
+            "async": true
+        },
+        "dependencies": {
+            "minUI5Version": "1.70.0",
+            "libs": {
+                "sap.ui.core": {
+                    "lazy": true
+                },
+                "sap.m": {
+                    "lazy": true
+                },
+                "sap.uxap": {
+                    "lazy": true
+                },
+                "sap.ui.comp": {
+                    "lazy": true
+                },
+                "sap.ui.unified": {
+                    "lazy": true
+                },
+                "sap.gantt": {
+                    "lazy": true
+                }
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "com.evorait.evoplan.i18n.i18n"
+                }
+            },
+            "": {
+                "dataSource": "mainService",
+                "preload": true,
+                "settings": {
+                    "defaultBindingMode": "TwoWay"
+                }
+            },
+            "@i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "uri": "i18n/i18n.properties"
+            }
+        },
+        "resources": {
+            "css": [
+                {
+                    "uri": "assets/css/style.css"
+                }
+            ],
+            "js": [
+                {
+                    "uri": "assets/js/promise-polyfills"
+                },
+                {
+                    "uri": "assets/js/lodash.js"
+                },
+                {
+                    "uri": "assets/js/axios.min.js"
+                }
+            ]
+        },
+        "routing": {
+            "config": {
+                "routerClass": "sap.m.routing.Router",
+                "viewType": "XML",
+                "viewPath": "com.evorait.evoplan.view",
+                "controlAggregation": "pages",
+                "controlId": "appPanel",
+                "clearControlAggregation": false,
+                "bypassed": {
+                    "target": [
+                        "empty"
+                    ]
+                },
+                "async": true
+            },
+            "routes": [
+                {
+                    "pattern": "",
+                    "name": "demands",
+                    "target": [
+                        "demands",
+                        "resourceTree"
+                    ]
+                },
+                {
+                    "pattern": "DemandTools",
+                    "name": "demandTools",
+                    "target": [
+                        "resourceTree",
+                        "DemandTools"
+                    ]
+                },
+                {
+                    "pattern": "Demand/{guid}",
+                    "name": "DemandDetail",
+                    "target": [
+                        "resourceTree",
+                        "DemandDetail"
+                    ]
+                },
+                {
+                    "pattern": "AssetPlanning/{asset}/CreateOrder/New",
+                    "name": "CreateOrder",
+                    "target": [
+                        "assets",
+                        "CreateOrder"
+                    ]
+                },
+                {
+                    "pattern": "AssetPlanning/{assets}/:withChildren:",
+                    "name": "assetManager",
+                    "target": [
+                        "assets",
+                        "assetsOrders"
+                    ]
+                },
+                {
+                    "pattern": "AssetPlanning/{asset}/OrderCreate/new",
+                    "name": "orderCreate",
+                    "target": [
+                        "assets",
+                        "orderCreate"
+                    ]
+                },
+                {
+                    "pattern": "AssetPlanning/{asset}/Demand/{guid}",
+                    "name": "assetDemandDetail",
+                    "target": [
+                        "assets",
+                        "detail"
+                    ]
+                },
+                {
+                    "pattern": "MessageCockpit",
+                    "name": "messageCockpit",
+                    "target": [
+                        "messageCockpit"
+                    ]
+                },
+                {
+                    "pattern": "Gantt",
+                    "name": "gantt",
+                    "target": [
+                        "demandsGantt",
+                        "gantt"
+                    ]
+                },
+                {
+                    "pattern": "NewGantt",
+                    "name": "newgantt",
+                    "target": [
+                        "newgantt",
+                        "demandsGantt"
+                    ]
+                },
+                {
+                    "pattern": "GanttTools",
+                    "name": "ganttTools",
+                    "target": [
+                        "newgantt",
+                        "GanttTools"
+                    ]
+                },
+                {
+                    "pattern": "Gantt/Demand/{guid}",
+                    "name": "ganttDemandDetails",
+                    "target": [
+                        "ganttDemandDetails"
+                    ]
+                },
+                {
+                    "pattern": "SplitPage/SplitDemands",
+                    "name": "splitDemands",
+                    "target": [
+                        "demandsFullscreen"
+                    ]
+                },
+                {
+                    "pattern": "SplitPage/SplitGantt",
+                    "name": "ganttSplit",
+                    "target": [
+                        "ganttFullscreen"
+                    ]
+                },
+                {
+                    "pattern": "SplitPage/SplitGanttChart",
+                    "name": "newGanttSplit",
+                    "target": [
+                        "newGanttFullscreen"
+                    ]
+                },
+                {
+                    "pattern": "SplitPage/SplitGanttTools",
+                    "name": "GanttSplitTools",
+                    "target": [
+                        "ganttSplitTools"
+                    ]
+                },
+                {
+                    "pattern": "SplitPage/Demand/{guid}",
+                    "name": "splitDemandDetails",
+                    "target": [
+                        "ganttDemandDetails"
+                    ]
+                },
+                {
+                    "pattern": "SplitPage/Gantt/{guid}",
+                    "name": "splitGanttDetails",
+                    "target": [
+                        "ganttDemandDetails"
+                    ]
+                },
+                {
+                    "pattern": "Map",
+                    "name": "map",
+                    "target": [
+                        "map",
+                        "mapResourceTree"
+                    ]
+                },
+                {
+                    "pattern": "Map/Detail/{guid}",
+                    "name": "mapDemandDetails",
+                    "target": [
+                        "mapDemandDetails"
+                    ]
+                },
+                {
+                    "pattern": "ManageResources",
+                    "name": "manageResources",
+                    "target": [
+                        "manageResources"
+                    ]
+                }
+            ],
+            "targets": {
+                "splitHorNavigation": {
+                    "viewType": "XML",
+                    "viewName": "layouts.Split2HorViewsNavi",
+                    "viewLevel": 3,
+                    "controlId": "appPanel"
+                },
+                "splitVerNavigation": {
+                    "viewType": "XML",
+                    "viewName": "layouts.Split2VerViewsNavi",
+                    "viewLevel": 2,
+                    "controlId": "appPanel"
+                },
+                "fullNavigation": {
+                    "viewType": "XML",
+                    "viewName": "layouts.FullViewNavi",
+                    "viewLevel": 2,
+                    "controlId": "appPanel"
+                },
+                "resourceTree": {
+                    "viewType": "XML",
+                    "viewName": "ResourceTree",
+                    "viewPath": "com.evorait.evoplan.view.demands",
+                    "viewLevel": 3,
+                    "controlId": "leftPanel",
+                    "parent": "splitHorNavigation"
+                },
+                "demands": {
+                    "viewType": "XML",
+                    "viewName": "Demands",
+                    "viewPath": "com.evorait.evoplan.view.demands",
+                    "viewLevel": 3,
+                    "controlId": "rightPanel",
+                    "parent": "splitHorNavigation"
+                },
+                "DemandTools": {
+                    "viewType": "XML",
+                    "viewName": "DemandTools",
+                    "viewPath": "com.evorait.evoplan.view.PRT",
+                    "viewLevel": 3,
+                    "controlId": "rightPanel",
+                    "parent": "splitHorNavigation"
+                },
+                "GanttTools": {
+                    "viewType": "XML",
+                    "viewName": "GanttTools",
+                    "viewPath": "com.evorait.evoplan.view.PRT",
+                    "viewLevel": 4,
+                    "controlId": "bottomPanel",
+                    "parent": "splitVerNavigation"
+                },
+                "demandsGantt": {
+                    "viewType": "XML",
+                    "viewName": "GanttDemands",
+                    "viewPath": "com.evorait.evoplan.view.gantt",
+                    "viewLevel": 4,
+                    "controlId": "bottomPanel",
+                    "parent": "splitVerNavigation"
+                },
+                "gantt": {
+                    "viewType": "XML",
+                    "viewName": "Gantt",
+                    "viewId": "idGantt",
+                    "viewPath": "com.evorait.evoplan.view.gantt",
+                    "viewLevel": 4,
+                    "controlId": "topPanel",
+                    "parent": "splitVerNavigation"
+                },
+                "detail": {
+                    "viewType": "XML",
+                    "viewName": "ObjectPage",
+                    "viewPath": "com.evorait.evoplan.view",
+                    "viewLevel": 4,
+                    "controlId": "rightPanel",
+                    "parent": "splitHorNavigation"
+                },
+                "assets": {
+                    "viewName": "Assets",
+                    "viewLevel": 3,
+                    "viewPath": "com.evorait.evoplan.view.assets",
+                    "controlId": "leftPanel",
+                    "parent": "splitHorNavigation"
+                },
+                "assetsOrders": {
+                    "viewType": "XML",
+                    "viewName": "AssetsOrders",
+                    "viewPath": "com.evorait.evoplan.view.assets",
+                    "viewLevel": 3,
+                    "controlId": "rightPanel",
+                    "parent": "splitHorNavigation"
+                },
+                "orderCreate": {
+                    "viewType": "XML",
+                    "viewName": "OrderCreate",
+                    "viewPath": "com.evorait.evoplan.view.assets",
+                    "viewLevel": 4,
+                    "controlId": "rightPanel",
+                    "parent": "splitHorNavigation"
+                },
+                "empty": {
+                    "viewType": "XML",
+                    "viewName": "EmptyPage",
+                    "viewLevel": 3,
+                    "parent": "fullNavigation",
+                    "controlId": "fullPanel"
+                },
+                "weeklyPlanner": {
+                    "viewType": "XML",
+                    "viewName": "WeeklyPlanner",
+                    "parent": "fullNavigation",
+                    "controlId": "fullPanel",
+                    "viewLevel": 3
+                },
+                "messageCockpit": {
+                    "viewType": "XML",
+                    "viewName": "MessageCockpit",
+                    "viewPath": "com.evorait.evoplan.view.messageCockpit",
+                    "parent": "fullNavigation",
+                    "controlId": "fullPanel",
+                    "viewLevel": 4
+                },
+                "ganttDemandDetails": {
+                    "viewType": "XML",
+                    "viewName": "ObjectPage",
+                    "viewPath": "com.evorait.evoplan.view",
+                    "parent": "fullNavigation",
+                    "controlId": "fullPanel",
+                    "viewLevel": 4
+                },
+                "demandsFullscreen": {
+                    "viewType": "XML",
+                    "viewName": "GanttDemands",
+                    "viewPath": "com.evorait.evoplan.view.gantt",
+                    "parent": "fullNavigation",
+                    "controlId": "fullPanel",
+                    "viewLevel": 4
+                },
+                "ganttFullscreen": {
+                    "viewType": "XML",
+                    "viewId": "idFullGantt",
+                    "viewPath": "com.evorait.evoplan.view.gantt",
+                    "viewName": "Gantt",
+                    "parent": "fullNavigation",
+                    "controlId": "fullPanel",
+                    "viewLevel": 4
+                },
+                "newGanttFullscreen": {
+                    "viewType": "XML",
+                    "viewId": "idFullGantt",
+                    "viewPath": "com.evorait.evoplan.view.gantt",
+                    "viewName": "GanttChart",
+                    "parent": "fullNavigation",
+                    "controlId": "fullPanel",
+                    "viewLevel": 4
+                },
+                "ganttSplitTools": {
+                    "viewType": "XML",
+                    "viewId": "idFullGantt",
+                    "viewPath": "com.evorait.evoplan.view.PRT",
+                    "viewName": "GanttTools",
+                    "parent": "fullNavigation",
+                    "controlId": "fullPanel",
+                    "viewLevel": 4
+                },
+                "map": {
+                    "viewType": "XML",
+                    "viewName": "Map",
+                    "viewPath": "com.evorait.evoplan.view.map",
+                    "parent": "splitHorNavigation",
+                    "controlId": "rightPanel",
+                    "viewLevel": 3
+                },
+                "mapDemandDetails": {
+                    "viewType": "XML",
+                    "viewName": "ObjectPage",
+                    "viewPath": "com.evorait.evoplan.view",
+                    "parent": "fullNavigation",
+                    "controlId": "fullPanel",
+                    "viewLevel": 4
+                },
+                "ganttResourceTree": {
+                    "viewType": "XML",
+                    "viewName": "ResourceTree",
+                    "parent": "splitHorNavigation",
+                    "controlId": "leftPanel",
+                    "viewLevel": 3
+                },
+                "mapResourceTree": {
+                    "viewType": "XML",
+                    "viewName": "MapResourceTree",
+                    "viewPath": "com.evorait.evoplan.view.map",
+                    "parent": "splitHorNavigation",
+                    "controlId": "leftPanel",
+                    "viewLevel": 3
+                },
+                "manageResources": {
+                    "viewType": "XML",
+                    "viewName": "ManageResources",
+                    "viewPath": "com.evorait.evoplan.view.manageResources",
+                    "viewLevel": 1,
+                    "parent": "fullNavigation",
+                    "controlId": "fullPanel"
+                },
+                "newgantt": {
+                    "viewType": "XML",
+                    "viewName": "GanttChart",
+                    "viewPath": "com.evorait.evoplan.view.gantt",
+                    "controlId": "topPanel",
+                    "parent": "splitVerNavigation",
+                    "viewLevel": 4
+                },
+                "DemandDetail": {
+                    "viewType": "XML",
+                    "viewName": "ObjectPage",
+                    "viewPath": "com.evorait.evoplan.view",
+                    "viewLevel": 2,
+                    "controlId": "rightPanel",
+                    "parent": "splitHorNavigation"
+                },
+                "CreateOrder": {
+                    "viewType": "XML",
+                    "viewName": "ObjectPage",
+                    "viewPath": "com.evorait.evoplan.view",
+                    "viewLevel": 2,
+                    "controlId": "rightPanel",
+                    "parent": "splitHorNavigation"
+                }
+            }
+        }
+    },
+    "sap.platform.hcp": {
+        "uri": "webapp",
+        "_version": "1.1.0"
+    },
+    "sap.platform.abap": {
+        "uri": "/sap/bc/ui5_ui5/evora/ep_ui5/webapp",
+        "_version": "1.1.0"
+    }
 }
