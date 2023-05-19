@@ -52,7 +52,7 @@ sap.ui.define([
 			}
 			this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), {
 				PrtAssignmentGuid: sPrtAssignmentGuid
-			}, "DeleteToolAssignment", "POST", this._mParameters, true).then(function () {
+			}, "DeleteToolAssignment", "POST").then(function () {
 				if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
 					this._eventBus.publish("BaseController", "refreshTreeTable", {});
 				}
