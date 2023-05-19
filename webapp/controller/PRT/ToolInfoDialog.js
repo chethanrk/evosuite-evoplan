@@ -240,6 +240,8 @@ sap.ui.define([
 		 */
 		_reAssignTool: function (sChanel, sEvent, oData) {
 			// sAssignPath, aSourcePaths
+			this._oView = this._oView ? this._oView : oData.view;
+			this.oAssignmentModel = this.oAssignmentModel ? this.oAssignmentModel : oData.oAssignmentModel;
 			var oNewAssign = this._oView.getModel().getProperty(oData.sAssignPath),
 				newAssignDesc = this._getParentsDescription(oNewAssign);
 

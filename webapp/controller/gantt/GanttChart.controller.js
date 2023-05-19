@@ -535,7 +535,7 @@ sap.ui.define([
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonReassign")) {
 				//reassign
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), true, [sDataModelPath], false, mParameters,
-					oData.IS_PRT ? "ganttShapePRTReassignment" : "ganttShapeReassignment");
+					oData.IS_PRT ? "ganttShapePRTReassignment" : "ganttShapeReassignment", oData.IS_PRT ? true : false);
 			} else if (sRelationshipKey) {
 				//Show Relationships
 				if (sRelationshipKey === "SHOW") {
