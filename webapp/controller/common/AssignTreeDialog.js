@@ -255,9 +255,9 @@ sap.ui.define([
 							aSourcePaths: this._aSelectedPaths,
 							parameters: this._mParameters
 						});
-						this._closeDialog();
-						return;
 					}
+					this._closeDialog();
+					return;
 				}
 				if (this._callbackEvent) {
 					this._eventBus.publish("AssignTreeDialog", this._callbackEvent, {
