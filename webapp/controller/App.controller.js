@@ -299,6 +299,7 @@ sap.ui.define([
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (sRoute === "newgantt") {
+				this._eventBus.publish("BaseController", "refreshFullGantt", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 			} else if (sRoute === "ganttSplit") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
