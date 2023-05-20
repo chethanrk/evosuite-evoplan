@@ -2528,7 +2528,8 @@ sap.ui.define([
 				Promise.all(aPromise).then(function (aData) {
 					for (var i in aData) {
 						this.oResource = aUpdateResources[i];
-						this.updateResourceAfterRouting(aData[i]); // Update assignment set and children of Resource in local model
+					//	this.updateResourceAfterRouting(aData[i]); 
+						this._updateAfterReAssignment([aData[i]], this.oResource);// Update assignment set and children of Resource in local model
 						this.oAppViewModel.setProperty("/busy", false);
 					}
 				}.bind(this));
