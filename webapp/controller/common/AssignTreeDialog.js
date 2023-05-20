@@ -244,8 +244,18 @@ sap.ui.define([
 				if (this._isToolReAssign) {
 					this._eventBus.publish("AssignTreeDialog", "ToolReAssignment", {
 						sAssignPath: this._assignPath,
-						aSourcePaths: this._aSelectedPaths
+						aSourcePaths: this._aSelectedPaths,
+						view: this._oView,
+						oAssignmentModel: this._oView.getModel("assignment")
+
 					});
+					if (this._callbackEvent) {
+						this._eventBus.publish("AssignTreeDialog", this._callbackEvent, {
+							sAssignPath: this._assignPath,
+							aSourcePaths: this._aSelectedPaths,
+							parameters: this._mParameters
+						});
+					}
 					this._closeDialog();
 					return;
 				}
