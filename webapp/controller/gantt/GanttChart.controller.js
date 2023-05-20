@@ -1189,19 +1189,28 @@ sap.ui.define([
 		_reassignPRTShape: function (sChannel, sEvent, oData) {
 			if (sChannel === "AssignTreeDialog" && sEvent === "ganttShapePRTReassignment") {
 				for (var i = 0; i < oData.aSourcePaths.length; i++) {
-					var oTargetResourceData = this.getModel().getProperty(oData.sAssignPath),
+					var oTargetData = this.getModel().getProperty(oData.sAssignPath),
 						sPRTShapePath = oData.parameters.sSourcePath,
 						oPRTShapeData = this.oGanttModel.getProperty(sPRTShapePath),
 						sCurrentResourcePath = sPRTShapePath.split("/").splice(0, 6).join("/"),
-						sTargetResourcePath = this._getGanttModelPathByProperty("NodeId", oTargetResourceData.NodeId, null),
+						sTargetResourcePath = this._getGanttModelPathByProperty("NodeId", oTargetData.NodeId, null),
 						oParams, oDateParams;
 
-					oPRTShapeData.ResourceGroupGuid = oTargetResourceData.ResourceGroupGuid;
-					oPRTShapeData.ResourceGuid = oTargetResourceData.ResourceGuid;
+					oPRTShapeData.ResourceGroupGuid = oTargetData.ResourceGroupGuid;
+					oPRTShapeData.ResourceGuid = oTargetData.ResourceGuid;
 					this.oViewModel.setProperty("/PRT/AssignmentData", oPRTShapeData);
 					oParams = this._getParams();
 					oDateParams = this.getPRTDateParams(oPRTShapeData);
-					if (this.oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) {
+					if (oTargetData.NodeType === "ASSIGNMENT") {
+						oParams.DateFrom = oTargetData.StartDate;
+						oParams.DateTo = oTargetData.EndDate;
+						oParams.TimeFrom = oTargetData.StartTime;
+						oParams.TimeTo = oTargetData.EndTime;
+						oParams.DemandGuid = oTargetData.DemandGuid;
+						this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function () {
+							this._refreshChangedResources(sTargetResourcePath, sCurrentResourcePath);
+						}.bind(this));
+					} else if (this.oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) {
 						this.openDateSelectionDialog(this.getView(), oDateParams, oPRTShapeData, this._mParameters, true, {
 							sCurrentResourcePath: sCurrentResourcePath,
 							sTargetResourcePath: sTargetResourcePath
