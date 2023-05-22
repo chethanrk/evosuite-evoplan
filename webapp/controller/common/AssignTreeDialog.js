@@ -56,6 +56,13 @@ sap.ui.define([
 			// connect dialog to view (models, lifecycle)
 			oView.addDependent(oDialog);
 
+			if (aSelectedPaths && aSelectedPaths.constructor === Array && mParameters) {
+				if (mParameters.hasOwnProperty("bFromNewGantt") && aSelectedPaths.length === 1) {
+					if (mParameters.bFromNewGantt) {
+						oDialog.bindElement(aSelectedPaths[0])
+					}
+				}
+			}
 			//Find Technician Feature code starts here...
 			var oDemandsPaths, sMsg,
 				bCheckRightTechnician = this._oView.getModel("viewModel").getProperty("/CheckRightTechnician");
