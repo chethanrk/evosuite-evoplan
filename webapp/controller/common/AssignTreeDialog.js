@@ -56,7 +56,7 @@ sap.ui.define([
 			// connect dialog to view (models, lifecycle)
 			oView.addDependent(oDialog);
 
-			if (Array.isArray(aSelectedPaths) && mParameters) {
+			if (aSelectedPaths && aSelectedPaths.constructor === Array && mParameters) {
 				if (mParameters.hasOwnProperty("bFromNewGantt") && aSelectedPaths.length === 1) {
 					if (mParameters.bFromNewGantt) {
 						oDialog.bindElement(aSelectedPaths[0])
