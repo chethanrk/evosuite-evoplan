@@ -52,7 +52,7 @@ sap.ui.define([
 			}
 			this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), {
 				PrtAssignmentGuid: sPrtAssignmentGuid
-			}, "DeleteToolAssignment", "POST", this._mParameters, true).then(function () {
+			}, "DeleteToolAssignment", "POST").then(function () {
 				if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
 					this._eventBus.publish("BaseController", "refreshTreeTable", {});
 				}
@@ -240,6 +240,8 @@ sap.ui.define([
 		 */
 		_reAssignTool: function (sChanel, sEvent, oData) {
 			// sAssignPath, aSourcePaths
+			this._oView = this._oView ? this._oView : oData.view;
+			this.oAssignmentModel = this.oAssignmentModel ? this.oAssignmentModel : oData.oAssignmentModel;
 			var oNewAssign = this._oView.getModel().getProperty(oData.sAssignPath),
 				newAssignDesc = this._getParentsDescription(oNewAssign);
 

@@ -116,6 +116,56 @@ sap.ui.define([
 		},
 
 		/**
+		 * method to trigger create/update function import for tool assignment
+		 */
+		onSaveDialog: function () {
+			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel('viewModel');
+			var oStartDate = this._oViewModel.getProperty("/PRT/defaultStartDate"),
+				oEndDate = this._oViewModel.getProperty("/PRT/defaultEndDate"),
+				sMsg = this.getResourceBundle().getText("ymsg.wrongDates"),
+				oPRTAssignmentData,
+				oParams;
+
+			if (oStartDate <= oEndDate) {
+				if (this._bIsGanttPRTReassign) {
+					oPRTAssignmentData = this._oViewModel.getProperty("/PRT/AssignmentData");
+					oPRTAssignmentData.DateFrom = oStartDate,
+						oPRTAssignmentData.DateTo = oEndDate,
+						oPRTAssignmentData.TimeFrom = {
+							ms: oStartDate.getTime()
+						}
+					oPRTAssignmentData.TimeTo = {
+						ms: oEndDate.getTime()
+					}
+					oParams = this._getParams();
+					this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function () {
+						this._oEventBus.publish("GanttChart", "refreshDroppedContext", {
+							oSourceData: {
+								sTargetPath: this._oAssignmentPaths.sTargetResourcePath,
+								sSourcePath: this._oAssignmentPaths.sCurrentResourcePath
+							}
+						})
+					}.bind(this));
+				} else if (this._mParameters.hasOwnProperty("bFromGanttToolReassign")) {
+					/*	This nested if else condition is used when the Tool is dropped inside the 
+						gantt chart to a particular resource.*/
+					if (this._mParameters.bFromGanttToolReassign) {
+						this._oEventBus.publish("GanttCharController", "onToolReassignGantt", this._mParameters);
+					}
+				} else {
+					this._oDateParams.DateFrom = oStartDate;
+					this._oDateParams.TimeFrom.ms = oStartDate.getTime();
+					this._oDateParams.DateTo = oEndDate;
+					this._oDateParams.TimeTo.ms = oEndDate.getTime();
+					this._proceedToAssignTools(this._aSources, this._oDateParams, this._mParameters);
+				}
+				this.closeDateSelectionDialog();
+			} else {
+				this.showMessageToast(sMsg);
+			}
+		},
+
+		/**
 		 * Open tools information dialog
 		 * @param Current view object
 		 * @param Model path of tool assignment
@@ -215,7 +265,7 @@ sap.ui.define([
 		 */
 		getPRTDateParams: function (oPRTShapeData) {
 			var oParams = {},
-				iDefNum = this._oViewModel.getProperty("/iDefToolAsgnDays"),
+				iDefNum = this.getModel("viewModel").getProperty("/iDefToolAsgnDays"),
 				oStartDate = new Date(),
 				oEndDate = new Date();
 			oEndDate = new Date(oEndDate.setDate(oEndDate.getDate() + parseInt(iDefNum)));
