@@ -42,7 +42,10 @@ sap.ui.define([
 				DemandGuid: ""
 			}
 
-			if (bIsDateNode) {
+			if (oTargetObj.OBJECT_SOURCE_TYPE === "DEM_PMNO") { //PRT assignment to notification demand not allowed
+				this.showMessageToast(oResourceBundle.getText("ymsg.prtToNotifNA"));
+				return;
+			} else if (bIsDateNode) {
 				this._proceedToAssignTools(aSources, oDateParams, mParameters);
 
 			} else if (sNodeType === "RESOURCE") {
