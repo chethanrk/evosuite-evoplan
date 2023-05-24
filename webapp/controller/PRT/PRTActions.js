@@ -341,6 +341,7 @@ sap.ui.define([
 			var oPRTAssignment = this.getModel("viewModel").getProperty("/PRT/AssignmentData");
 			return {
 				ToolId: oPRTAssignment.TOOL_ID,
+				ToolType: oPRTAssignment.TOOL_TYPE,
 				PrtAssignmentGuid: oPRTAssignment.Guid,
 				DateFrom: oPRTAssignment.DateFrom,
 				DateTo: oPRTAssignment.DateTo,
