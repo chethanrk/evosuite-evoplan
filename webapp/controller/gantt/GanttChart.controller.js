@@ -785,7 +785,10 @@ sap.ui.define([
 			this._mParameters = {
 				bFromGanttTools: true
 			};
-			if (oDropObject.NodeType !== "RES_GROUP") {
+			if (oDropObject.OBJECT_SOURCE_TYPE === "DEM_PMNO") {
+				this.showMessageToast(this.getResourceBundle().getText("ymsg.prtToNotifNA"));
+				oEvent.preventDefault();
+			} else if (oDropObject.NodeType !== "RES_GROUP") {
 				this.onProceedGanttToolDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
 			}
 		},
@@ -2537,7 +2540,7 @@ sap.ui.define([
 				Promise.all(aPromise).then(function (aData) {
 					for (var i in aData) {
 						this.oResource = aUpdateResources[i];
-						this._updateAfterReAssignment([aData[i]], this.oResource);// Update assignment set and children of Resource in local model
+						this._updateAfterReAssignment([aData[i]], this.oResource); // Update assignment set and children of Resource in local model
 						this.oAppViewModel.setProperty("/busy", false);
 					}
 				}.bind(this));
