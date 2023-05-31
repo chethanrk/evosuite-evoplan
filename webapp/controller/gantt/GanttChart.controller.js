@@ -157,7 +157,7 @@ sap.ui.define([
 		onShapeDoubleClick: function (oEvent) {
 			var oShapeContext = oEvent.getParameter("shape").getBindingContext("ganttModel"),
 				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId(),
-				sNodeType = this.oGanttModel.getProperty(oShapeContext.getPath()).NodeType,
+				sNodeType = this.oGanttModel.getProperty(oShapeContext.getPath()).NODE_TYPE,
 				bPRTAssgn = this.oGanttModel.getProperty(oShapeContext.getPath()).IS_PRT;
 			if (sNodeType === "ASSIGNMENT" && !bPRTAssgn) {
 				this.getOwnerComponent().GanttAssignmentPopOver.open(this.getView(), sap.ui.getCore().byId(sToolbarId + "-settingsButton"),
