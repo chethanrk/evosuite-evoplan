@@ -157,7 +157,7 @@ sap.ui.define([
 		onShapeDoubleClick: function (oEvent) {
 			var oShapeContext = oEvent.getParameter("shape").getBindingContext("ganttModel"),
 				sToolbarId = this.getView().byId("idPageGanttChart").getContent()[0].getToolbar().getId(),
-				sNodeType = this.oGanttModel.getProperty(oShapeContext.getPath()).NodeType,
+				sNodeType = this.oGanttModel.getProperty(oShapeContext.getPath()).NODE_TYPE,
 				bPRTAssgn = this.oGanttModel.getProperty(oShapeContext.getPath()).IS_PRT;
 			if (sNodeType === "ASSIGNMENT" && !bPRTAssgn) {
 				this.getOwnerComponent().GanttAssignmentPopOver.open(this.getView(), sap.ui.getCore().byId(sToolbarId + "-settingsButton"),
@@ -785,7 +785,10 @@ sap.ui.define([
 			this._mParameters = {
 				bFromGanttTools: true
 			};
-			if (oDropObject.NodeType !== "RES_GROUP") {
+			if (oDropObject.OBJECT_SOURCE_TYPE === "DEM_PMNO") {
+				this.showMessageToast(this.getResourceBundle().getText("ymsg.prtToNotifNA"));
+				oEvent.preventDefault();
+			} else if (oDropObject.NodeType !== "RES_GROUP") {
 				this.onProceedGanttToolDrop(oDraggedControl, oDroppedControl, oBrowserEvent);
 			}
 		},
@@ -2537,7 +2540,7 @@ sap.ui.define([
 				Promise.all(aPromise).then(function (aData) {
 					for (var i in aData) {
 						this.oResource = aUpdateResources[i];
-						this._updateAfterReAssignment([aData[i]], this.oResource);// Update assignment set and children of Resource in local model
+						this._updateAfterReAssignment([aData[i]], this.oResource); // Update assignment set and children of Resource in local model
 						this.oAppViewModel.setProperty("/busy", false);
 					}
 				}.bind(this));

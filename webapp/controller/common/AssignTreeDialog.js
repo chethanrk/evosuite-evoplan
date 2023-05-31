@@ -206,6 +206,9 @@ sap.ui.define([
 				} else if (this._isToolReAssign && !oTargetObj.ResourceGuid) {
 					msg = this._oView.getModel("i18n").getResourceBundle().getText("ymsg.poolPrtNotAllowed");
 					this.showMessageToast(msg);
+				} else if (this._isToolReAssign && oTargetObj.OBJECT_SOURCE_TYPE === "DEM_PMNO") { //PRT re-assignment to notification demand not allowed
+					msg = this._oView.getModel("i18n").getResourceBundle().getText("ymsg.prtToNotifNA");
+					this.showMessageToast(msg);
 				} else if (!this._reAssign && !this._isToolReAssign) {
 					var aSources = this._oView.getModel("viewModel").getProperty("/dragSession"),
 						oUserModel = this._oView.getModel("user"),

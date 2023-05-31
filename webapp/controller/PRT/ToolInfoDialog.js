@@ -298,6 +298,7 @@ sap.ui.define([
 			var oAssignmentData = this.oAssignmentModel.getData();
 			return {
 				ToolId: oAssignmentData.Tool_ID,
+				ToolType: oAssignmentData.Tool_Type,
 				PrtAssignmentGuid: oAssignmentData.PrtAssignmentGuid,
 				DateFrom: oAssignmentData.DateFrom,
 				DateTo: oAssignmentData.DateTo,
