@@ -5,6 +5,7 @@ sap.ui.define([
 	"com/evorait/evoplan/model/models",
 	"com/evorait/evoplan/assets/js/moment-with-locales.min",
 	"com/evorait/evoplan/controller/ErrorHandler",
+	"com/evorait/evoplan/controller/PRT/ToolInfoDialog",
 	"com/evorait/evoplan/controller/common/AssignInfoDialog",
 	"com/evorait/evoplan/controller/common/AssignTreeDialog",
 	"com/evorait/evoplan/controller/common/StatusSelectDialog",
@@ -45,6 +46,7 @@ sap.ui.define([
 	models,
 	momentjs,
 	ErrorHandler,
+	ToolInfoDialog,
 	AssignInfoDialog,
 	AssignTreeDialog,
 	StatusSelectDialog,
@@ -242,12 +244,19 @@ sap.ui.define([
 			//display and change assignment dialog
 			this.assignInfoDialog = new AssignInfoDialog();
 			this.assignInfoDialog.init();
+
+			//display and change tools dialog
+			this.toolInfoDialog = new ToolInfoDialog();
+			this.toolInfoDialog.init();
+
 			//select resource from tree for assigning dialog
 			this.assignTreeDialog = new AssignTreeDialog();
 			this.assignTreeDialog.init();
+
 			//change status of demand
 			this.statusSelectDialog = new StatusSelectDialog();
 			this.statusSelectDialog.init();
+
 			// bulk operations for unassign/reassign demands
 			this.assignActionsDialog = new AssignActionsDialog();
 			this.assignActionsDialog.init();
@@ -516,7 +525,8 @@ sap.ui.define([
 					bRouteDateSelected: false,
 					aAssignedAsignmentsForPlanning: [],
 					droppedResources: [],
-					bIsSignlePlnAsgnSaved: false
+					bIsSignlePlnAsgnSaved: false,
+					DemandSet: []
 				},
 				resourceTreeShowRouteColumn: false,
 				resourceFilterforRightTechnician: false,
@@ -558,8 +568,17 @@ sap.ui.define([
 					EndDate: ""
 				},
 				validateIW31Auth: true,
-				validateIW32Auth: true
+				validateIW32Auth: true,
+				aFilterBtntextGanttDemandTbl: this.getModel("i18n").getResourceBundle().getText("xbut.filters"),
+				bFilterGantBtnDemandtsGantt: false,
+				PRT: {
+					btnSelectedKey: "demands",
+					bIsGantt: false,
+					defaultStartDate: "",
+					defaultEndDate: ""
+				}
 			});
+			oViewModel.setSizeLimit(999999999);
 			this.setModel(oViewModel, "viewModel");
 
 			//creates the Information model and sets to the component

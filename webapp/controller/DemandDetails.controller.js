@@ -1,7 +1,8 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentsController",
-	"sap/ui/core/Component"
-], function (AssignmentsController, Component) {
+	"sap/ui/core/Component",
+	"com/evorait/evoplan/model/Constants"
+], function (AssignmentsController, Component, Constants) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.DemandDetails", {
@@ -168,7 +169,7 @@ sap.ui.define([
 				}
 			});
 		},
-
+		
 		/**
 		 * This method required when user directly open the demand overview page
 		 * and change status or assignment actions are performed
@@ -178,7 +179,8 @@ sap.ui.define([
 		 */
 		_triggerRefreshDemand: function () {
 			this.getView().getElementBinding().refresh();
-		}
+		},
+		
 
 	});
 });

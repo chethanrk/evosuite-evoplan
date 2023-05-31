@@ -78,6 +78,16 @@ sap.ui.define([
 				nodeIconColor: {
 					type: "string",
 					group: "Misc"
+				},
+				isDuplicate: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
+				},
+				duplicateColor: {
+					type: "sap.ui.core.CSSColor",
+					group: "Appearance",
+					defaultValue: "orange"
 				}
 			},
 			events: {
@@ -100,15 +110,13 @@ sap.ui.define([
 			this._icon = new Icon({
 				tooltip: "{i18n>xtit.clicktosee}",
 				press: function (oEvent) {
-					if (this.getEnableQualification()) {
-						this.fireResourceIconPress(oEvent);
-					}
+					this.fireResourceIconPress(oEvent);
 				}.bind(this)
 			});
 
 			this._plannerIcon = new Icon({
-				press:function(oEvent){
-						this.firePlannerIconPress(oEvent);
+				press: function (oEvent) {
+					this.firePlannerIconPress(oEvent);
 				}.bind(this)
 			});
 			this._plannerIcon.addStyleClass("sapUiTinyMarginBegin");

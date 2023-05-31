@@ -149,21 +149,6 @@ sap.ui.define([
 				}
 				oRouter.navTo("empty", {});
 				break;
-			case oResourceBundle.getText("xbut.pageGanttChart"):
-				if (this._routeValidation("ENABLE_GANTT")) {
-					oRouter.navTo("gantt", {});
-					break;
-				}
-				oRouter.navTo("empty", {});
-				break;
-			case oResourceBundle.getText("xbut.pageGanttChartSplit"):
-				if (this._routeValidation("ENABLE_GANTT_JSON")) {
-					oRouter.navTo("ganttSplit", {});
-					window.open(sRoute, "_blank");
-					break;
-				}
-				oRouter.navTo("empty", {});
-				break;
 			case oResourceBundle.getText("xbut.pageNewGanttChartSplit"):
 				if (this._routeValidation("ENABLE_GANTT_SPLIT_JSON")) {
 					oRouter.navTo("newGanttSplit", {});
@@ -257,13 +242,6 @@ sap.ui.define([
 				pageTitle = oResourceBundle.getText("xbut.pageAssetManager");
 			} else if (oParams.config.pattern.startsWith("MessageCockpit")) {
 				pageTitle = oResourceBundle.getText("xbut.pageMessageCockpit");
-			} else if (oParams.config.pattern.startsWith("Gantt")) {
-				pageTitle = oResourceBundle.getText("xbut.pageGanttChart");
-				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
-				this.getModel("viewModel").setProperty("/ganttSelectionPane", "25%");
-				if (oAppViewModel.getProperty("/currentRoute") === "newgantt" && oParams.name !== "gantt") {
-					pageTitle = oResourceBundle.getText("xbut.pageNewGantt");
-				}
 			} else if (oParams.config.pattern.startsWith("SplitPage")) {
 				pageTitle = oResourceBundle.getText("xbut.pageNewGanttChartSplit");
 				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
@@ -274,7 +252,8 @@ sap.ui.define([
 				pageTitle = oResourceBundle.getText("xbut.pageMap");
 			} else if (oParams.config.pattern.startsWith("ManageResources")) {
 				pageTitle = oResourceBundle.getText("xbut.manageResources");
-			} else if (oParams.config.pattern.startsWith("NewGantt")) {
+			} else if (oParams.config.pattern.startsWith("NewGantt") || oParams.config.pattern.startsWith("Gantt/Demand") || oParams.config.pattern
+				.startsWith("GanttTools")) {
 				pageTitle = oResourceBundle.getText("xbut.pageNewGantt");
 			}
 			oAppViewModel.setProperty("/pageTitle", pageTitle);
@@ -312,6 +291,10 @@ sap.ui.define([
 		 * @constructor 
 		 */
 		_onObjectMatched: function (sRoute) {
+			if (this.getOwnerComponent().bIsFromPRTSwitch) {
+				this.getOwnerComponent().bIsFromPRTSwitch = false;
+				return;
+			}
 			if (sRoute === "gantt") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
@@ -326,10 +309,13 @@ sap.ui.define([
 			} else if (sRoute === "map") {
 				this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshMapView", {});
+			} else if (this.getOwnerComponent().bIsFromPRTSwitch && (sRoute === "demands" || sRoute === "demandTools")) {
+				this.getOwnerComponent().bIsFromPRTSwitch = false;
 			} else {
 				this._eventBus.publish("BaseController", "refreshTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshDemandTable", {});
 			}
+
 		},
 		/**
 		 * catch event from dialog for saving demand status change
@@ -391,11 +377,11 @@ sap.ui.define([
 		 * @param {string} sEvent 
 		 * @param {object} oData 
 		 */
-		_triggerDeleteSplitAssignments: function(sChanel, sEvent, oData) {
+		_triggerDeleteSplitAssignments: function (sChanel, sEvent, oData) {
 			if (sEvent === "deleteSplitAssignments") {
 				// ask for user confirmation that related splits of the selected assignment will also be unassigned
 				this.deleteSplitsUserConfirm(oData).catch(this._catchError.bind(this))
-				.then(this.deleteSplitAssignments.bind(this)).catch(this._catchError.bind(this));	
+					.then(this.deleteSplitAssignments.bind(this)).catch(this._catchError.bind(this));
 			}
 		},
 
@@ -420,7 +406,12 @@ sap.ui.define([
 			this.executeFunctionImport(this.getModel(), {}, "RefreshSharedMemoryAreas", "POST").then(function () {
 				if (oSelectedRoute === oResourceBundleText.getText("xbut.pageDemands")) {
 					oComponent._getResourceGroups.call(oComponent);
-					this._eventBus.publish("BaseController", "refreshDemandTable", {});
+					if (this.getModel('viewModel').getProperty("/PRT/btnSelectedKey") === "demands") {
+						this._eventBus.publish("BaseController", "refreshDemandTable", {});
+					} else {
+						this._eventBus.publish("BaseController", "refreshToolsTable", {});
+					}
+
 					this._eventBus.publish("BaseController", "refreshBufferTreeTable", {});
 				} else if (oSelectedRoute === oResourceBundleText.getText("xbut.pageGanttChart")) {
 					this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});

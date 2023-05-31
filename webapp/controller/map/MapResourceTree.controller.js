@@ -327,6 +327,7 @@ sap.ui.define([
 			}
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
+			aFilter.push(new Filter("IS_MAP_VIEW_CALL", FilterOperator.EQ, "X")); //To restrict fetching of PRT assignments in resource tree
 			// setting filters in local model to access in assignTree dialog.
 			this.getModel("viewModel").setProperty("/resourceFilterView", aFilter);
 			oBinding.filters = [new Filter(aFilter, true)];
@@ -393,11 +394,11 @@ sap.ui.define([
 			}
 
 			mParameter = {
-					bFromMap: true
+				bFromMap: true
 			};
-			
+
 			//if its the same resource then update has to be called
-			if(oTargetData.ResourceGuid === oModel.getProperty(oDraggedContext.getPath()).ResourceGuid){
+			if (oTargetData.ResourceGuid === oModel.getProperty(oDraggedContext.getPath()).ResourceGuid) {
 				//call update
 				this.handleDropOnSameResource(this.assignmentPath, sPath, mParameter);
 			} else if (this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")) {
@@ -584,7 +585,7 @@ sap.ui.define([
 			if (oContext) {
 				var oNodeData = oContext.getObject();
 
-				if (oNodeData.NodeType === "RESOURCE" || oNodeData.NodeType === "RES_GROUP") {
+				if (oNodeData.NodeType === "RESOURCE" && this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
 					this.getOwnerComponent().ResourceQualifications.open(this.getView(), oNodeData.NodeId);
 				} else if (this.checkToShowAvailabilities(oNodeData)) {
 					//Added new condition to Check & show resource availability for WEEK/MONTH view
@@ -836,7 +837,7 @@ sap.ui.define([
 			this.resetChanges();
 			if (oTreeBinding && !this._bFirsrTime) {
 				this.mTreeState = this._getTreeState();
-				this._oDroppableTable.rebindTable(); 
+				this._oDroppableTable.rebindTable();
 			}
 			this._bFirsrTime = false;
 			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", false);

@@ -72,9 +72,11 @@ sap.ui.define([
 		_routeMatched: function (oEvent) {
 			var oParameters = oEvent.getParameters(),
 				sRouteName = oParameters.name; // route name
-			if (sRouteName === "demands") {
-				this._mParameters = {
+			if (sRouteName === "demands" || sRouteName === "demandTools") {
+				this._mParameters = sRouteName === "demands" ? {
 					bFromHome: true
+				} : {
+					bFromDemandTools: true
 				};
 				var sViewSelectedKey = this.getView().byId("idTimeView").getSelectedKey();
 				if (sViewSelectedKey === "TIMENONE") {
@@ -157,10 +159,13 @@ sap.ui.define([
 		onPressAssignmentLink: function (oEvent) {
 			var oSource = oEvent.getSource();
 			this.assignmentRowContext = oSource.getParent().getBindingContext();
-
 			if (this.assignmentRowContext) {
 				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
-				this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext);
+				if (this.assignmentRowContext.getObject().IS_PRT) {
+					this.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
+				} else {
+					this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
+				}
 			} else {
 				var msg = this.getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
@@ -188,11 +193,18 @@ sap.ui.define([
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
+				oUserModel = this.getModel("user"),
+				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels,
 				oFilterRightTechnician = this._oViewModel.getProperty("/resourceFilterforRightTechnician"),
 				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician");
 
 			if (!this.isLoaded) {
 				this.isLoaded = true;
+			}
+
+			// Bug fix for some time tree getting collapsed
+			if (oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND")) {
+				oBinding.parameters.numberOfExpandedLevels = nTreeExpandLevel ? nTreeExpandLevel : 1;
 			}
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
@@ -259,7 +271,9 @@ sap.ui.define([
 				oContext = this._oDataTable.getContextByIndex(oDraggedControl.getIndex()),
 				oObject = oContext.getObject(),
 				vAssignGuid = oObject.AssignmentGuid;
-			if (oObject.NodeType !== "ASSIGNMENT") {
+
+			if (oObject.NodeType !== "ASSIGNMENT" || (oObject.NodeType === "ASSIGNMENT" && oObject.IS_PRT)) {
+				// if not "ASSIGNMENT" type or if "ASSIGNMENT" is "PRT" type
 				oEvent.preventDefault();
 			}
 			this.sDemandPath = "/DemandSet('" + oObject.DemandGuid + "')";
@@ -273,7 +287,7 @@ sap.ui.define([
 		 */
 		onDropOnResource: function (oEvent) {
 			var oDroppedControl = oEvent.getParameter("droppedControl"),
-			    oDraggedControl = oEvent.getParameter("draggedControl"),
+				oDraggedControl = oEvent.getParameter("draggedControl"),
 				oContext = oDroppedControl.getBindingContext(),
 				oDraggedContext = oDraggedControl.getBindingContext(),
 				oModel = oContext.getModel(),
@@ -299,15 +313,15 @@ sap.ui.define([
 			}
 
 			mParameter = {
-					bFromHome: true
+				bFromHome: true
 			};
-			
+
 			//if its the same resource then update has to be called
-			if(oTargetData.ResourceGuid === oModel.getProperty(oDraggedContext.getPath()).ResourceGuid){
+			if (oTargetData.ResourceGuid === oModel.getProperty(oDraggedContext.getPath()).ResourceGuid) {
 				//call update
 				this.handleDropOnSameResource(this.assignmentPath, sPath, mParameter);
 			} else if (this._oViewModel.getProperty("/dragDropSetting/isReassign")) {
-				
+
 				this.getOwnerComponent()._getData(this.sDemandPath)
 					.then(function (oData) {
 						oViewModel.setProperty("/dragSession", [{
@@ -366,7 +380,7 @@ sap.ui.define([
 				this.resetChanges();
 				if (oTreeBinding && !this._bFirsrTime) {
 					this.mTreeState = this._getTreeState();
-					this._oDroppableTable.rebindTable(); 
+					this._oDroppableTable.rebindTable();
 				}
 			}
 			this._bFirsrTime = false;
@@ -526,7 +540,7 @@ sap.ui.define([
 
 			var sObjectId = oResourceNode.NodeId;
 			//Opening Resource Qualification only on Resource Node Icon
-			if (oResourceNode.NodeType === "RESOURCE") {
+			if (oResourceNode.NodeType === "RESOURCE" && this.getModel("user").getProperty("/ENABLE_QUALIFICATION")) {
 				this.getOwnerComponent().ResourceQualifications.open(this.getView(), sObjectId);
 			} else if (this.checkToShowAvailabilities(oResourceNode)) {
 				//Added new condition to Check & show resource availability for WEEK/MONTH view
@@ -562,6 +576,26 @@ sap.ui.define([
 					this._oDroppableTable.rebindTable();
 				}
 			}
+		},
+
+		/**
+		 * Tools droppped on resource tree, triggers create assignment for dragged tools
+		 */
+		onToolDropOnResource: function (oEvent) {
+			var oTargetControl = oEvent.getParameter("droppedControl"),
+				oTargetContext = oTargetControl.getBindingContext(),
+				sTargetPath = oTargetContext.getPath(),
+				oTargetObj = this.getModel().getProperty(sTargetPath),
+				aSources = this._oViewModel.getProperty("/dragSession");
+
+			//set default start and end dates everytime on drop on resosurce
+			var endDate = new Date(),
+				iDefNum = this._oViewModel.getProperty("/iDefToolAsgnDays");
+			endDate.setDate(endDate.getDate() + parseInt(iDefNum));
+			this._oViewModel.setProperty("/PRT/defaultStartDate", new Date());
+			this._oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
+
+			this.checksBeforeAssignTools(aSources, oTargetObj, this._mParameters);
 		}
 	});
 });

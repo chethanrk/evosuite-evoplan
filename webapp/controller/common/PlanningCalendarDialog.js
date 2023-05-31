@@ -165,6 +165,9 @@ sap.ui.define([
 				} else if (obj.NodeType === "RES_GROUP") {
 					aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
 				}
+				if (sType === "ASSIGNMENT") {
+					aUsers.push(new Filter("IS_PRT", FilterOperator.EQ, false));
+				}
 			}
 			if (this._mParameters.bFromGantt) {
 				// if we decide to keep different date range for demand view and gantt view

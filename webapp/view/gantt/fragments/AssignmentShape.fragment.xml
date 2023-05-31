@@ -2,7 +2,8 @@
 	<!-- Assignment shape -->
 	<gnt2:BaseRectangle shapeId="{ganttModel>OBJECT_ID_RELATION}" countInBirdEye="true" hoverable="true" time="{ganttModel>DateFrom}"
 		height="19" endTime="{ganttModel>DateTo}" title="{ganttModel>DemandDesc}" showTitle="true"
-		tooltip="{ganttModel>DemandDesc} - {ganttModel>STATUS}" fill="{ganttModel>DEMAND_STATUS_COLOR}"
+		tooltip="{ganttModel>DemandDesc} - {ganttModel>STATUS}"
+		fill="{parts: ['ganttModel>DEMAND_STATUS_COLOR', 'ganttModel>DUPLICATE_ASSIGNMENT_FLAG'], formatter: '.fillGradient'}"
 		stroke="{parts: ['ganttModel>DEMAND_STATUS_COLOR',{value:'-20', model:'ganttModel'}], formatter: '.ganttFormatter.shadeColor'}"
 		strokeWidth="1" yBias="-1"
 		resizable="{parts: ['user>/ENABLE_RESIZE', 'ganttModel>busy', 'viewModel>/validateIW32Auth'], formatter: '.isBusyShape'}"

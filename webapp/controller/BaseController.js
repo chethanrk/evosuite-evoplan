@@ -284,8 +284,11 @@ sap.ui.define([
 
 			if (oParameter.bFromHome) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});
-				eventBus.publish("BaseController", "refreshDemandTable", {});
-				eventBus.publish("BaseController", "refreshDemandOverview", {});
+				if (!oParameter.bIsFromPRTAssignmentInfo) {
+					eventBus.publish("BaseController", "refreshDemandTable", {});
+					eventBus.publish("BaseController", "refreshDemandOverview", {});
+				}
+
 				if (oParameter.bFromResourcQualification) {
 					eventBus.publish("ResourceQualificationDialog", "refreshQualificationDemandsTable", {});
 				}
@@ -318,6 +321,13 @@ sap.ui.define([
 			} else if (oParameter.bFromNewGanttSplit) {
 				eventBus.publish("BaseController", "refreshAssignments", oData);
 				eventBus.publish("BaseController", "refreshCapacity", {});
+			} else if (oParameter.bFromDemandTools) {
+				eventBus.publish("BaseController", "refreshTreeTable", {});
+				if (!oParameter.bIsFromPRTAssignmentInfo) {
+					eventBus.publish("BaseController", "refreshToolsTable", {});
+				}
+			} else if (oParameter.bFromGanttTools) {
+				eventBus.publish("GanttChart", "refreshDroppedContext", oData);
 			}
 
 		},
@@ -334,10 +344,6 @@ sap.ui.define([
 		 * 
 		 */
 		onMaterialInfoButtonPress: function () {
-			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			if (this._aSelectedRowsIdx.length > 100) {
-				this._aSelectedRowsIdx.length = 100;
-			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
 			var iMaxSelcRow = this.getModel("user").getProperty("/DEFAULT_MAX_DEM_SEL_MAT_LIST");
 			if (oSelectedPaths.aPathsData.length > 0 && iMaxSelcRow >= this._aSelectedRowsIdx.length) {
@@ -352,12 +358,11 @@ sap.ui.define([
 		 * 
 		 */
 		onMaterialStatusPress: function (oEvent) {
-			var oSelectedIndices = this._oDataTable.getSelectedIndices(),
-				oViewModel = this.getModel("appView"),
+			var oViewModel = this.getModel("appView"),
 				sDemandPath;
 			oViewModel.setProperty("/busy", true);
-			for (var i = 0; i < oSelectedIndices.length; i++) {
-				sDemandPath = this._oDataTable.getContextByIndex(oSelectedIndices[i]).getPath();
+			for (var i = 0; i < this._aSelectedRowsIdx.length; i++) {
+				sDemandPath = this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[i]).getPath();
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 					oViewModel.setProperty("/busy", false);
 				}.bind(this));
@@ -682,6 +687,43 @@ sap.ui.define([
 			oDataTable.setRowActionTemplate(oTemplate);
 			oDataTable.setRowActionCount(oTemplate.getItems().length);
 		},
+		/**
+		 * OnPress of Order, Notification, Equipment etc Links
+		 * in Demand Details screen and AssignInfo Dialog
+		 * @param oEvent
+		 */
+		onPressSmartField: function (oEvent) {
+			var oSource = oEvent.getSource(),
+				sAppName = oSource.getUrl(),
+				aNavlinks = this.getModel("templateProperties").getData().navLinks,
+				sLaunchMode = this.getModel("viewModel").getProperty("/launchMode"),
+				sServicePath = "https://" + this.getModel("user").getProperty("/ServerPath"),
+				sAppId = aNavlinks[sAppName].ApplicationId,
+				oAppInfo = this._getAppInfoById(sAppId),
+				sParamValue = oSource.getValue(),
+				sAdditionInfo, sSemanticObject, sAction, sParameter, sUri;
+
+			// if there is no configuration maintained in the backend
+			if (oAppInfo === null) {
+				return;
+			}
+
+			if (sLaunchMode === Constants.LAUNCH_MODE.FIORI) {
+				sAdditionInfo = oAppInfo.Value1 || "";
+				sSemanticObject = sAdditionInfo.split("\\\\_\\\\")[0];
+				sAction = sAdditionInfo.split("\\\\_\\\\")[1] || "Display";
+				sParameter = sAdditionInfo.split("\\\\_\\\\")[2];
+				if (sSemanticObject && sAction) {
+					this.navToApp(sSemanticObject, sAction, sParameter, sParamValue);
+				}
+			} else {
+				sAdditionInfo = oAppInfo.Value1;
+				sUri = oAppInfo.ISABSOLUTE ? sAdditionInfo.replace("\\\\place_h1\\\\", sParamValue) : sServicePath + sAdditionInfo.replace(
+					"\\\\place_h1\\\\", sParamValue);
+				this.navigateToApps(sUri);
+			}
+
+		},
 
 		/**
 		 * OnPress of Order, Notification, Equipment etc Links
@@ -999,6 +1041,15 @@ sap.ui.define([
 		},
 
 		/**
+		 * Used for clearing the drag session
+		 * @param {object}
+		 * @Author Giri
+		 */
+		clearDragSession: function (oView) {
+			oView.getModel("viewModel").setProperty("/dragSession", null);
+		},
+
+		/**
 		 * Fetching selected Assignments Path and Context for Assignment Status Change
 		 * @param [aSelectedAssignments]
 		 * @returns []
@@ -1086,7 +1137,7 @@ sap.ui.define([
 		 */
 		onNewTimeAllocPress: function (oEvent) {
 			var oResourceBundle = this.getResourceBundle();
-			if (this.selectedResources.length === 0 || this.removeSelectedResourceGroups()) {
+			if (this.selectedResources.length === 0 || this.removeSelectedPoolnResourceGroups()) {
 				this.showMessageToast(oResourceBundle.getText("ymsg.selectRow"));
 				return;
 			}
@@ -1356,16 +1407,17 @@ sap.ui.define([
 		},
 
 		/**
-		 * remove the selection of resource group on press of time allocation button 
-		 * time allocation dialog does not work for resource Group
+		 * remove the selection of resource group and pool resources on press of time allocation button 
+		 * time allocation dialog does not work for resource Group and pool resource
 		 * it works for multiple resources only
 		 */
-		removeSelectedResourceGroups: function () {
+		removeSelectedPoolnResourceGroups: function () {
 			var oModel,
 				aRemoveItems = [];
 			oModel = this._mParameters.bFromHome || this._mParameters.bFromMap ? this.getModel() : this.getModel("ganttModel");
 			for (var i in this.selectedResources) {
-				if (oModel.getProperty(this.selectedResources[i] + "/NodeType") === "RES_GROUP") {
+				if (oModel.getProperty(this.selectedResources[i] + "/NodeType") === "RES_GROUP" || oModel.getProperty(this.selectedResources[i] +
+						"/ResourceGuid") === "") {
 					aRemoveItems.push(this.selectedResources[i]);
 				}
 			}
@@ -1390,7 +1442,23 @@ sap.ui.define([
 			} else {
 				this._oEventBus.publish("BaseController", "resetSelections", {});
 			}
-		}
+		},
+
+		/**
+		 * get respective navigation details
+		 * @param sAppID
+		 */
+		_getAppInfoById: function (sAppID) {
+			var aNavLinks = this.getModel("templateProperties").getProperty("/navLinks");
+			for (var i in aNavLinks) {
+				if (aNavLinks.hasOwnProperty(i)) {
+					if (aNavLinks[i].ApplicationId === sAppID) {
+						return aNavLinks[i];
+					}
+				}
+			}
+			return null;
+		},
 	});
 
 });

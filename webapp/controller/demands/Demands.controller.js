@@ -30,6 +30,7 @@ sap.ui.define([
 		 */
 		onInit: function () {
 			this._oDraggableTable = this.byId("draggableList");
+			this._viewModel  = this.getModel("viewModel");
 			this._oDataTable = this._oDraggableTable.getTable();
 			this._configureDataTable(this._oDataTable);
 			this._aSelectedRowsIdx = [];
@@ -41,6 +42,7 @@ sap.ui.define([
 			this._mParameters = {
 				bFromHome: true
 			};
+			this._oRouter = this.getOwnerComponent().getRouter();
 		},
 
 		/* =========================================================== */
@@ -53,12 +55,14 @@ sap.ui.define([
 		 */
 		onAfterRendering: function (oEvent) {
 			var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle"),
-				noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]),
-				viewModel = this.getModel("viewModel");
-			this._viewModel = viewModel;
-			viewModel.setProperty("/subViewTitle", tableTitle);
-			viewModel.setProperty("/subTableNoDataText", noDataText);
-			viewModel.setProperty("/Show_Assignment_Status_Button", false);
+				noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]);
+
+			this._viewModel .setProperty("/PRT/btnSelectedKey", "demands");
+			this._viewModel .setProperty("/PRT/bIsGantt",false);
+			this._viewModel .setProperty("/subViewTitle", tableTitle);
+			this._viewModel .setProperty("/subTableNoDataText", noDataText);
+			this._viewModel .setProperty("/Show_Assignment_Status_Button", false);
+			this._viewModel .refresh();
 		},
 
 		/**
@@ -67,10 +71,6 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onAssignButtonPress: function (oEvent) {
-			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			if (this._aSelectedRowsIdx.length > 100) {
-				this._aSelectedRowsIdx.length = 100;
-			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 			this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
 
@@ -189,12 +189,18 @@ sap.ui.define([
 			this._setRowActionTemplate(oDataTable, onClickNavigation, openActionSheet);
 
 			//enable/disable buttons on footer when there is some/no selected rows
-			oDataTable.attachRowSelectionChange(function () {
+			oDataTable.attachRowSelectionChange(function (oEvent) {
 				var selected = this._oDataTable.getSelectedIndices(),
 					bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
-					sDemandPath, bComponentExist;
+					sDemandPath, bComponentExist, sMsg;
 				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
-				if (selected.length > 0 && selected.length <= iMaxRowSelection) {
+
+				this._aSelectedRowsIdx = _.clone(selected);
+				if (this._aSelectedRowsIdx.length > 0) {
+					this._aSelectedRowsIdx.length = this._aSelectedRowsIdx.length > 0 && this._aSelectedRowsIdx.length <= iMaxRowSelection ? this._aSelectedRowsIdx
+						.length : iMaxRowSelection;
+				}
+				if (this._aSelectedRowsIdx.length > 0 && this._aSelectedRowsIdx.length <= iMaxRowSelection) {
 					this.byId("idfindRightTechnicianButton").setEnabled(true);
 					this.byId("assignButton").setEnabled(bEnable);
 					this.byId("changeStatusButton").setEnabled(bEnable);
@@ -209,16 +215,20 @@ sap.ui.define([
 					this.byId("idOverallStatusButton").setEnabled(false);
 					this.byId("materialInfo").setEnabled(false);
 					this.byId("idUnassignButton").setEnabled(false);
-					//If the selected demands exceeds more than the maintained selected configuration value
-					if (iMaxRowSelection <= selected.length) {
-						var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
-						this.showMessageToast(sMsg);
-					}
+				}
+
+				//If the selected demands exceeds more than the maintained selected configuration value
+				if (oEvent.getParameter("selectAll")) {
+					sMsg = this.getResourceBundle().getText("ymsg.allSelect", [this._aSelectedRowsIdx.length]);
+					this.showMessageToast(sMsg);
+				} else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
+					sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+					this.showMessageToast(sMsg);
 				}
 
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
-				for (var i = 0; i < selected.length; i++) {
-					sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
+				for (var i = 0; i < this._aSelectedRowsIdx.length; i++) {
+					sDemandPath = this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[i]).getPath();
 					bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
 					if (bComponentExist) {
 						this.byId("materialInfo").setEnabled(true);
@@ -274,7 +284,7 @@ sap.ui.define([
 				oEvent.preventDefault();
 			}
 		},
-	
+
 		/**
 		 * Refresh's the demand table
 		 * @param sChanel
@@ -498,6 +508,20 @@ sap.ui.define([
 				if (oData.oDeselectAssignmentsContexts.includes(sDemandPath)) {
 					this._oDataTable.removeSelectionInterval(oSelectedIndices[i], oSelectedIndices[i]);
 				}
+			}
+		},
+		
+		/**
+		 * Event handler to switch between Demand and Tool list
+		 * @param oEvent
+		 */
+		handleViewSelectionChange: function (oEvent) {
+			this.getOwnerComponent().bIsFromPRTSwitch = true;
+			var sSelectedKey = this._viewModel .getProperty("/PRT/btnSelectedKey");
+			if (sSelectedKey === "demands") {
+				this._oRouter.navTo("demands", {});
+			} else {
+				this._oRouter.navTo("demandTools", {});
 			}
 		},
 

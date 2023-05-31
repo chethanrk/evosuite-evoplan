@@ -39,10 +39,7 @@ sap.ui.define([
 			this.oAppModel = this.getModel("appView");
 			this.oUserModel = this.getModel("user");
 			this._viewModel = this.getModel("viewModel");
-			this._mParameters = {
-				bFromGantt: true
-			};
-
+			this._oRouter = this.getRouter();
 			if (this.oAppModel.getProperty("/currentRoute") === "splitDemands") {
 				this._mParameters = {
 					bFromDemandSplit: true
@@ -52,16 +49,23 @@ sap.ui.define([
 
 			this._oEventBus.subscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
 
-			this._oDraggableTable = this.byId("draggableList");
-			this._oDataTable = this._oDraggableTable.getTable();
-			this.getRouter().getRoute("splitDemands").attachMatched(function () {
+			this._oDemandsViewPage = this.byId("draggableList");
+			this._oToolsViewPage = this.byId("idToolsTable");
+			this._oDataTable = this._oDemandsViewPage.getTable();
+			this._oRouter.getRoute("splitDemands").attachMatched(function () {
 				this._routeName = Constants.GANTT.SPLITDMD;
+				this._viewModel.setProperty("/PRT/bIsGantt", true);
+				this._mParameters = {
+					bFromDemandSplit: true
+				};
 			}.bind(this));
-			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
+			this._oRouter.getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = "newgantt";
 				this._mParameters = {
 					bFromNewGantt: true
 				};
+				this._viewModel.setProperty("/PRT/bIsGantt", true);
+				this._viewModel.setProperty("/PRT/btnSelectedKey", "demands");
 			}.bind(this));
 			this._setRowActionTemplate(this._oDataTable, onClickNavigation, openActionSheet);
 
@@ -69,6 +73,9 @@ sap.ui.define([
 			this._oGanttDemandFilter = this.getView().byId("idGanttDemandFilterDialog");
 			this._oGanttDemandFilter.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 			this._aSelectedIndices = [];
+			// add binging change event forthe demands table
+			this._addDemandTblBindingChangeEvent();
+
 		},
 
 		/**
@@ -123,6 +130,7 @@ sap.ui.define([
 			this._viewModel.setProperty("/dragSession", aPathsData);
 			this.localStorage.put("Evo-Dmnd-guid", JSON.stringify(aSelectedDemandObject));
 			this.localStorage.put("Evo-aPathsData", JSON.stringify(aPathsData));
+			this.localStorage.put("Evo-toolDrag", "");
 
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
@@ -136,10 +144,6 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onAssignButtonPress: function (oEvent) {
-			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			if (this._aSelectedRowsIdx.length > 100) {
-				this._aSelectedRowsIdx.length = 100;
-			}
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 			this._viewModel.setProperty("/dragSession", oSelectedPaths.aPathsData);
 
@@ -160,11 +164,16 @@ sap.ui.define([
 		onRowSelectionChange: function (oEvent) {
 			var selected = this._oDataTable.getSelectedIndices(),
 				iMaxRowSelection = this.oUserModel.getProperty("/DEFAULT_DEMAND_SELECT_ALL"),
-				selected = this._oDataTable.getSelectedIndices(),
 				bEnable = this._viewModel.getProperty("/validateIW32Auth"),
 				index = oEvent.getParameter("rowIndex"),
-				sDemandPath, bComponentExist;
-			if (selected.length > 0 && selected.length <= iMaxRowSelection) {
+				sDemandPath, bComponentExist, sMsg;
+
+			this._aSelectedRowsIdx = _.clone(selected);
+			if (this._aSelectedRowsIdx.length > 0) {
+				this._aSelectedRowsIdx.length = this._aSelectedRowsIdx.length > 0 && this._aSelectedRowsIdx.length <= iMaxRowSelection ? this._aSelectedRowsIdx
+					.length : iMaxRowSelection;
+			}
+			if (this._aSelectedRowsIdx.length > 0 && this._aSelectedRowsIdx.length <= iMaxRowSelection) {
 				this.byId("assignButton").setEnabled(bEnable);
 				this.byId("changeStatusButton").setEnabled(bEnable);
 				this.byId("idUnassignButton").setEnabled(bEnable);
@@ -177,15 +186,20 @@ sap.ui.define([
 				this.byId("idOverallStatusButton").setEnabled(false);
 				this.byId("materialInfo").setEnabled(false);
 				this.byId("idUnassignButton").setEnabled(false);
-				//If the selected demands exceeds more than the maintained selected configuration value
-				if (iMaxRowSelection <= selected.length) {
-					var sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
-					this.showMessageToast(sMsg);
-				}
 			}
+
+			//If the selected demands exceeds more than the maintained selected configuration value
+			if (oEvent.getParameter("selectAll")) {
+				sMsg = this.getResourceBundle().getText("ymsg.allSelect", [this._aSelectedRowsIdx.length]);
+				this.showMessageToast(sMsg);
+			} else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
+				sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+				this.showMessageToast(sMsg);
+			}
+
 			//Enabling/Disabling the Material Status Button based on Component_Exit flag
-			for (var i = 0; i < selected.length; i++) {
-				sDemandPath = this._oDataTable.getContextByIndex(selected[i]).getPath();
+			for (var i = 0; i < this._aSelectedRowsIdx.length; i++) {
+				sDemandPath = this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[i]).getPath();
 				bComponentExist = this.getModel().getProperty(sDemandPath + "/COMPONENT_EXISTS");
 				if (bComponentExist) {
 					this.byId("materialInfo").setEnabled(true);
@@ -210,8 +224,18 @@ sap.ui.define([
 				}
 			}
 		},
-
-		//TODO comment
+		onPressFilterGantChart: function () {
+			var aPplicationFilters = this.getView().byId("draggableList").getTable().getBinding("rows").aApplicationFilters;
+			var aFilters = [];
+			this.getOwnerComponent().readData("/DemandSet", aPplicationFilters, "$select=Guid").then(function (data) {
+				for (var x in data["results"]) {
+					aFilters.push(new Filter("DemandGuid", FilterOperator.EQ, data["results"][x]["Guid"]));
+				}
+				this._oEventBus.publish("BaseController", "refreshFullGantt", aFilters);
+				var sMsg = this.getResourceBundle().getText("msg.filterGanttSave");
+				this.showMessageToast(sMsg);
+			}.bind(this));
+		},
 		onClickSplit: function (oEvent) {
 			window.open("#Gantt/SplitDemands", "_blank");
 		},
@@ -222,7 +246,21 @@ sap.ui.define([
 		onPressGanttFilters: function () {
 			this._oGanttDemandFilter.open();
 		},
-
+		/**
+		 *On Change filters event in the Gantt Demands Filter Dialog 
+		 */
+		onGanttDemandFilterChange: function (oEvent) {
+			var oView = this.getView(),
+				oResourceBundle = oView.getModel("i18n").getResourceBundle(),
+				oViewModel = oView.getModel("viewModel"),
+				sFilterText = oResourceBundle.getText("xbut.filters"),
+				sFilterCount = Object.keys(oEvent.getSource().getFilterData()).length;
+			if (sFilterCount > 0) {
+				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText + "(" + sFilterCount + ")");
+			} else {
+				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText);
+			}
+		},
 		/**
 		 * Close the Gantt Demands Filter Dialog 
 		 */
@@ -230,6 +268,21 @@ sap.ui.define([
 			this._oGanttDemandFilter.close();
 		},
 
+		/**
+		 * Event handler to switch between Demand and Tool list
+		 * @param oEvent
+		 */
+		handleViewSelectionChange: function (oEvent) {
+			this.getOwnerComponent().bIsFromPRTSwitch = true;
+			var sSelectedKey = this._viewModel.getProperty("/PRT/btnSelectedKey");
+			if (sSelectedKey === "tools" && this._mParameters.bFromNewGantt) {
+				this._oRouter.navTo("ganttTools", {});
+			} else if (sSelectedKey === "tools" && this._mParameters.bFromDemandSplit) {
+				this._oRouter.navTo("GanttSplitTools", {});
+			} else {
+				this._oRouter.navTo("newgantt", {});
+			}
+		},
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
@@ -240,10 +293,38 @@ sap.ui.define([
 		 */
 		_refreshDemandTable: function () {
 			if (this._bLoaded) {
-				this._oDraggableTable.rebindTable();
+				this._oDemandsViewPage.rebindTable();
 			}
 			this._bLoaded = true;
 		},
+
+		/**
+		 * This method is trigerred on refresh of the binding of the table
+		 * @Author Manik
+		 */
+		_addDemandTblBindingChangeEvent: function () {
+			/*Here we are checking if the demands table binding change
+				is due to  the applied flter based on that we have written logic to 
+				enable to disable the filter gantt button(in table toolbar)
+			*/
+			var oTable = this._oDataTable,
+				oViewModel = this._viewModel; //Get hold of Table
+			oTable.addEventDelegate({ //Table onAfterRendering event
+				onAfterRendering: function () {
+					if (this.getBinding("rows")) {
+						this.getBinding("rows").attachChange(function (oEvent) {
+							if (oEvent.getParameter("reason") === "filter") {
+								if (oEvent.getSource().aApplicationFilters.length > 0) {
+									oViewModel.setProperty("/bFilterGantBtnDemandtsGantt", true);
+								} else {
+									oViewModel.setProperty("/bFilterGantBtnDemandtsGantt", false);
+								}
+							}
+						});
+					}
+				}
+			}, oTable);
+		}
 
 	});
 

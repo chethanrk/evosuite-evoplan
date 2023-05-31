@@ -13,7 +13,7 @@ sap.ui.define([
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.gantt.GanttQualificationChecks", {
-		
+
 		/* =========================================================== */
 		/* Public methods                                      */
 		/* =========================================================== */
@@ -78,7 +78,9 @@ sap.ui.define([
 					} else {
 						resolve();
 					}
-				}.bind(this));
+				}.bind(this), function () {
+					this.clearDragSession(this.getView());
+				});
 			}.bind(this));
 		},
 
@@ -116,6 +118,9 @@ sap.ui.define([
 				sObjectId = oTargetObj.NodeId;
 				if (oTargetObj.NodeType === "ASSIGNMENT") {
 					sObjectId = oTargetObj.ObjectId;
+					if (!sObjectId) {
+						sObjectId = oTargetObj.NodeId;
+					}
 				}
 				oQualificationParameters = {
 					DemandMultiGuid: sDemandGuids,

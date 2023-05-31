@@ -1,0 +1,16 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:f="sap.f">
+	<f:DynamicPage id="idToolsViewDynamicPage" headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true"
+		showFooter="true" toggleHeaderOnTitleClick="false" class="sapUiNoContentPadding tableContentPage">
+		<f:header>
+			<f:DynamicPageHeader id="idToolsViewDemandsHeader" pinnable="true" visible="{= ${viewModel>/PRT/bIsGantt} === false}">
+				<f:content>
+					<core:Fragment fragmentName="com.evorait.evoplan.view.PRT.ToolsSmartFilter" type="XML"/>
+				</f:content>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<core:Fragment fragmentName="com.evorait.evoplan.view.PRT.ToolsList" type="XML"/>
+		</f:content>
+		<f:footer></f:footer>
+	</f:DynamicPage>
+</core:FragmentDefinition>

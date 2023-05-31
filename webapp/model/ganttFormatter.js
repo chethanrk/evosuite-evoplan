@@ -1,6 +1,7 @@
 sap.ui.define([
-	"sap/ui/model/type/Currency"
-], function (Currency) {
+	"sap/ui/model/type/Currency",
+	"sap/gantt/def/gradient/Stop"
+], function (Currency, Stop) {
 	"use strict";
 
 	var shapeNodeType = "ASSIGNMENT";

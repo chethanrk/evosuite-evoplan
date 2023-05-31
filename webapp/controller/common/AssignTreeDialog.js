@@ -18,7 +18,7 @@ sap.ui.define([
 			this._eventBus.subscribe("AssignActionsDialog", "selectAssign", this._triggerOpenDialog, this);
 		},
 
-		open: function (oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent) {
+		open: function (oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent, isToolReAssign) {
 			// create dialog lazily
 			if (!this._oDialog) {
 				oView.getModel("appView").setProperty("/busy", true);
@@ -28,10 +28,10 @@ sap.ui.define([
 				}).then(function (oDialog) {
 					oView.getModel("appView").setProperty("/busy", false);
 					this._oDialog = oDialog;
-					this.onOpen(oDialog, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent);
+					this.onOpen(oDialog, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent, isToolReAssign);
 				}.bind(this));
 			} else {
-				this.onOpen(this._oDialog, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent);
+				this.onOpen(this._oDialog, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent, isToolReAssign);
 			}
 		},
 		/**
@@ -41,11 +41,12 @@ sap.ui.define([
 		 * @param sBindPath
 		 * @param isBulkReAssign - To Identify the action for the dialog is getting opened.
 		 */
-		onOpen: function (oDialog, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent) {
+		onOpen: function (oDialog, oView, isReassign, aSelectedPaths, isBulkReAssign, mParameters, callbackEvent, isToolReAssign) {
 			this._oView = oView;
 			this._reAssign = isReassign;
 			this._aSelectedPaths = aSelectedPaths;
 			this._bulkReAssign = isBulkReAssign;
+			this._isToolReAssign = isToolReAssign;
 			this._mParameters = mParameters || {
 				bFromHome: true
 			};
@@ -55,6 +56,13 @@ sap.ui.define([
 			// connect dialog to view (models, lifecycle)
 			oView.addDependent(oDialog);
 
+			if (aSelectedPaths && aSelectedPaths.constructor === Array && mParameters) {
+				if (mParameters.hasOwnProperty("bFromNewGantt") && aSelectedPaths.length === 1) {
+					if (mParameters.bFromNewGantt) {
+						oDialog.bindElement(aSelectedPaths[0])
+					}
+				}
+			}
 			//Find Technician Feature code starts here...
 			var oDemandsPaths, sMsg,
 				bCheckRightTechnician = this._oView.getModel("viewModel").getProperty("/CheckRightTechnician");
@@ -188,10 +196,21 @@ sap.ui.define([
 		},
 
 		onSaveDialog: function () {
+			var msg;
 			if (this._assignPath) {
-				if (!this._reAssign) {
-					var oTargetObj = this._oView.getModel().getProperty(this._assignPath),
-						aSources = this._oView.getModel("viewModel").getProperty("/dragSession"),
+				var oTargetObj = this._oView.getModel().getProperty(this._assignPath);
+				if (this._isToolReAssign && (oTargetObj.NodeType === "RES_GROUP" || oTargetObj.IS_PRT)) { // If tool is reassigned to group or tool or prt then drop the process
+					msg = this._oView.getModel("i18n").getResourceBundle().getText("ymsg.selectResourceOrDemand");
+					this.showMessageToast(msg);
+
+				} else if (this._isToolReAssign && !oTargetObj.ResourceGuid) {
+					msg = this._oView.getModel("i18n").getResourceBundle().getText("ymsg.poolPrtNotAllowed");
+					this.showMessageToast(msg);
+				} else if (this._isToolReAssign && oTargetObj.OBJECT_SOURCE_TYPE === "DEM_PMNO") { //PRT re-assignment to notification demand not allowed
+					msg = this._oView.getModel("i18n").getResourceBundle().getText("ymsg.prtToNotifNA");
+					this.showMessageToast(msg);
+				} else if (!this._reAssign && !this._isToolReAssign) {
+					var aSources = this._oView.getModel("viewModel").getProperty("/dragSession"),
 						oUserModel = this._oView.getModel("user"),
 						iOperationTimesLen = this.onShowOperationTimes(this._oView.getModel("viewModel")),
 						iVendorAssignmentLen = this.onAllowVendorAssignment(this._oView.getModel("viewModel"), oUserModel),
@@ -220,7 +239,7 @@ sap.ui.define([
 				}
 			} else {
 				//show error message
-				var msg = this._oView.getModel("i18n").getResourceBundle().getText("notFoundContext");
+				msg = this._oView.getModel("i18n").getResourceBundle().getText("notFoundContext");
 				this.showMessageToast(msg);
 			}
 		},
@@ -232,6 +251,24 @@ sap.ui.define([
 		 */
 		onProceedSaveDialog: function (oEvent) {
 			if (this._assignPath) {
+				if (this._isToolReAssign) {
+					this._eventBus.publish("AssignTreeDialog", "ToolReAssignment", {
+						sAssignPath: this._assignPath,
+						aSourcePaths: this._aSelectedPaths,
+						view: this._oView,
+						oAssignmentModel: this._oView.getModel("assignment")
+
+					});
+					if (this._callbackEvent) {
+						this._eventBus.publish("AssignTreeDialog", this._callbackEvent, {
+							sAssignPath: this._assignPath,
+							aSourcePaths: this._aSelectedPaths,
+							parameters: this._mParameters
+						});
+					}
+					this._closeDialog();
+					return;
+				}
 				if (this._callbackEvent) {
 					this._eventBus.publish("AssignTreeDialog", this._callbackEvent, {
 						sAssignPath: this._assignPath,
@@ -320,12 +357,12 @@ sap.ui.define([
 		 */
 		_triggerOpenDialog: function (sChanel, sEvent, oData) {
 			if (sChanel === "AssignInfoDialog" && sEvent === "selectAssign") {
-				this.open(oData.oView, oData.isReassign, oData.aSelectedPaths, oData.parameters);
+				this.open(oData.oView, oData.isReassign, oData.aSelectedPaths, oData.parameters, null, null, oData.isToolReAssign);
 			} else if (sChanel === "AssignActionsDialog" && sEvent === "selectAssign") {
 				this.open(oData.oView, oData.isReassign, oData.aSelectedContexts, oData.isBulkReassign, oData.parameters);
 			}
 		},
-		
+
 		exit: function () {
 			this._eventBus.unsubscribe("AssignInfoDialog", "selectAssign", this._triggerOpenDialog, this);
 			this._eventBus.unsubscribe("AssignActionsDialog", "selectAssign", this._triggerOpenDialog, this);

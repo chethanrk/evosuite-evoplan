@@ -90,16 +90,16 @@ sap.ui.define([
 				item.type = oData[i].type;
 				item.description = oData[i].message;
 				item.subtitle = oData[i].message;
-				item.counter = iCounter;
+				//item.counter = iCounter; used for displaying the count for the types of messages in message manager
 
 				if (!JSON.stringify(aMessages).includes(JSON.stringify(item))) {
-					aMessages.push(item);
+					aMessages.unshift(item);
 				}
 
 			}
 			this._oComponent.getModel("MessageModel").setData(aMessages);
 		},
-		
+
 		/**
 		 * Shows a {@link sap.m.MessageBox} when a service call has failed.
 		 * Only the first error message will be display.

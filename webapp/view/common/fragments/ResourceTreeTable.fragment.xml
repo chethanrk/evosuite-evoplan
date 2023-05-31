@@ -3,7 +3,7 @@
 	<smartTable:SmartTable id="droppableTable" entitySet="ResourceHierarchySet" class="listTreeTable" tableType="TreeTable" fitContainer="true"
 		useExportToExcel="false" useVariantManagement="false" useTablePersonalisation="false" smartFilterId="resourceTreeFilterBar"
 		header="Hierarchy" showRowCount="false" beforeRebindTable="onBeforeRebindTable" enableAutoBinding="true"
-		requestAtLeastFields="StatusIcon,IsSelected,NodeId,ResourceGroupGuid,NodeType,ResourceGuid,DemandGuid,ParentNodeId,AssignmentGuid,HierarchyLevel,DrillState,Description,AssignmentCount,Utilization,StartDate,StartTime,EndDate,EndTime,IS_AVAILABLE,TOTAL_EFFORT,ACTUAL_WORKING_HOURS,PLANNED_WORKING_HOURS,CAPACITIVE_EFFORT,ASSIGNMENT_TYPE,ResourceIcon,GANTT_ENABLED,RES_ASGN_START_DATE,RES_ASGN_START_TIME,RES_ASGN_END_DATE,RES_ASGN_END_TIME,REQUIREMENT_PROFILE_ID,REQUIREMENT_PROFILE_COLOR,ISEXTERNAL,RES_ASGN_AVAILABILITY_FLAG">
+		requestAtLeastFields="StatusIcon,IsSelected,NodeId,ResourceGroupGuid,NodeType,ResourceGuid,DemandGuid,ParentNodeId,AssignmentGuid,HierarchyLevel,DrillState,Description,AssignmentCount,Utilization,StartDate,StartTime,EndDate,EndTime,IS_AVAILABLE,TOTAL_EFFORT,ACTUAL_WORKING_HOURS,PLANNED_WORKING_HOURS,CAPACITIVE_EFFORT,ASSIGNMENT_TYPE,ResourceIcon,GANTT_ENABLED,RES_ASGN_START_DATE,RES_ASGN_START_TIME,RES_ASGN_END_DATE,RES_ASGN_END_TIME,REQUIREMENT_PROFILE_ID,REQUIREMENT_PROFILE_COLOR,ISEXTERNAL,RES_ASGN_AVAILABILITY_FLAG,DUPLICATE_ASSIGNMENT_FLAG,DUPLICATE_ASSIGNMENT_COLOR,IS_PRT">
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1"/>
 		</smartTable:layoutData>
@@ -20,14 +20,15 @@
 							iconColor="{parts:['IS_AVAILABLE'], formatter: '.formatter.formatIconColor' }"
 							iconTooltip="{ path: 'IS_AVAILABLE', formatter: '.formatter.formatIconTooltip' }"
 							icon="{ parts:[{path: 'NodeType'},{path: 'StatusIcon'},{path: 'ResourceIcon'}], formatter: '.formatter.getResourceIcon' }"
-							isLink="{ path: 'NodeType', formatter: '.formatter.isAssignment' }" press="onPressAssignmentLink" resourceIconPress="onResourceIconPress"
-							enableQualification="{user>/ENABLE_QUALIFICATION}" plannerIconPress="onPlannerIconPress"
+							isLink="{ path: 'NodeType', formatter: '.formatter.isAssignmentorTool' }" press="onPressAssignmentLink"
+							resourceIconPress="onResourceIconPress" enableQualification="{user>/ENABLE_QUALIFICATION}" plannerIconPress="onPlannerIconPress"
 							isWorkTimeEnabled="{parts:[{path:'viewModel>/capacityPlanning'},{path:'viewModel>/selectedHierarchyView'}], formatter: '.formatter.formatProgressBarVisibility'}"
 							showWorkTime="{path: 'NodeType', formatter: '.formatter.isResource'}"
 							workTime="{path:'ACTUAL_WORKING_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}"
 							highlightColor="{ path:'REQUIREMENT_PROFILE_COLOR', formatter:'.formatter.formatHighlighter'}"
 							isPlannerIconVisible="{ parts:[{path: 'NodeType'}, {path:'viewModel>/resourceTreeShowRouteColumn'}], formatter: '.formatter.decidePlannerIconVisiblity' }"
-							nodeType="{path:'NodeType'}" nodeIconColor="{path:'RES_ASGN_AVAILABILITY_FLAG', formatter: '.formatter.formatNodeIconColor' }"></controls:CustomTitle>
+							nodeType="{path:'NodeType'}" nodeIconColor="{path:'RES_ASGN_AVAILABILITY_FLAG', formatter: '.formatter.formatNodeIconColor' }"
+							isDuplicate="{DUPLICATE_ASSIGNMENT_FLAG}" duplicateColor="{DUPLICATE_ASSIGNMENT_COLOR}"></controls:CustomTitle>
 					</table:template>
 				</table:Column>
 				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="4.5rem" hAlign="End"
@@ -36,7 +37,8 @@
 						<core:CustomData key="p13nData" value='\{"columnKey": "TOTAL_EFFORT", "leadingProperty": "TOTAL_EFFORT"}'/>
 					</table:customData>
 					<table:template>
-						<Text text="{path:'TOTAL_EFFORT', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}" wrapping="false"/>
+						<Text text="{path:'TOTAL_EFFORT', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}" wrapping="false"
+							visible="{= !${IS_PRT}}"/>
 					</table:template>
 				</table:Column>
 				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="15%" hAlign="End"
@@ -54,7 +56,8 @@
 						<core:CustomData key="p13nData" value='\{"columnKey": "REMAINING_WORK_HOURS", "leadingProperty": "REMAINING_WORK_HOURS"}'/>
 					</table:customData>
 					<table:template>
-						<Text text="{path:'REMAINING_WORK_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}" wrapping="false"/>
+						<Text text="{path:'REMAINING_WORK_HOURS', type:'sap.ui.model.type.Float', formatOptions:{ 'decimals': 1 }}" wrapping="false"
+							visible="{= !${IS_PRT}}"/>
 					</table:template>
 				</table:Column>
 				<table:Column label="{i18n>xtit.tableWorkload}" name="{i18n>xtit.tableWorkload}" width="15%" hAlign="End"
@@ -104,6 +107,7 @@
 			</table:columns>
 			<table:dragDropConfig>
 				<dnd:DropInfo targetAggregation="rows" groupName="demandView" dropPosition="On" drop="onDropOnResource"/>
+				<dnd:DropInfo targetAggregation="rows" groupName="ToolsView" dropPosition="On" drop="onToolDropOnResource"/>
 				<dnd:DragInfo sourceAggregation="rows" groupName="demandView" dragStart="onDragStart"/>
 			</table:dragDropConfig>
 		</table:TreeTable>

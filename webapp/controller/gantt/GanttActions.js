@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/m/Token",
 	"sap/m/Tokenizer",
 	"sap/ui/core/Fragment",
+	"sap/m/MessageBox",
 	"sap/m/MessageToast"
-], function (Controller, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageToast) {
+], function (Controller, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageBox, MessageToast) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
@@ -559,75 +560,68 @@ sap.ui.define([
 		 */
 		_deleteAssignment: function (oModel, sAssignGuid, sPath, oEventBus) {
 			var oGanttModel = this.getModel("ganttModel"),
-
 				bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN"),
 				isAssignmentPartOfSplit = this.checkIfAssignmentPartOfSplit(oModel, sAssignGuid),
 				oResourceBundle = this.getResourceBundle(),
-				sConfirmMessage = oResourceBundle.getText("ymsg.confirmDel");
+				sConfirmMessage = oResourceBundle.getText("ymsg.confirmDel"),
+				sProceedBtnTxt = oResourceBundle.getText("xbut.buttonProceed");
 
-			if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
-				sConfirmMessage = oResourceBundle.getText("xmsg.deleteAllSplitAssignments");
-			}
-			this._showConfirmMessageBox.call(this, sConfirmMessage).then(function (data) {
-				oGanttModel.setProperty(sPath + "/busy", true);
-				if (data === "YES") {
-					this.deleteAssignment(oModel, sAssignGuid).then(function () {
-							oGanttModel.setProperty(sPath + "/busy", false);
-							this.getModel("ganttModel").setProperty(sPath, null);
-							this.getModel("ganttOriginalData").setProperty(sPath, null);
-							this._deleteChildAssignment(sAssignGuid, sPath);
-							oEventBus.publish("BaseController", "refreshCapacity", {
-								sTargetPath: sPath.split("/AssignmentSet/results/")[0]
-							});
-							oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
-							if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
-								// in case of split unassign, all the splits are unassigned from backend,
-								// thus on refresh of the entire gantt the splits are also deleted from the gantt UI
-								oEventBus.publish("BaseController", "refreshFullGantt", {});
-							}
-						}.bind(this),
-						function () {
-							oGanttModel.setProperty(sPath + "/busy", false);
+			var fnDeleteAssignment = function () {
+				this.deleteAssignment(oModel, sAssignGuid).then(function () {
+						oGanttModel.setProperty(sPath + "/busy", false);
+						this.getModel("ganttModel").setProperty(sPath, null);
+						this.getModel("ganttOriginalData").setProperty(sPath, null);
+						this._refreshChangedResources(sPath);
+						oEventBus.publish("BaseController", "refreshCapacity", {
+							sTargetPath: sPath.split("/AssignmentSet/results/")[0]
 						});
-				} else {
-					oGanttModel.setProperty(sPath + "/busy", false);
-				}
-			}.bind(this));
-		},
+						oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+						if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
+							// in case of split unassign, all the splits are unassigned from backend,
+							// thus on refresh of the entire gantt the splits are also deleted from the gantt UI
+							oEventBus.publish("BaseController", "refreshFullGantt", {});
+						}
+					}.bind(this),
+					function () {
+						oGanttModel.setProperty(sPath + "/busy", false);
+					});
+			}.bind(this);
 
-		/**
-		 * Unassign assignment with delete confirmation dialog and removing the child assignment node from GanttModel
-		 * @param sAssignGuid
-		 * @param sPath
-		 * @private
-		 */
-		_deleteChildAssignment: function (sAssignGuid, sPath) {
-			var oGanttModel = this.getModel("ganttModel"),
-				oGanttOriginalModel = this.getModel("ganttOriginalData"),
-				aAssignmentData, sChildPath, oNewChildPath, aChildAssignmentData;
-			if (sPath.length > 60) {
-				sChildPath = sPath.split("/AssignmentSet/results/")[0];
-				oNewChildPath = this._getDeleteChildPath(sChildPath);
-				sChildPath = this._getAssignmentChildPath(sChildPath);
-				sChildPath = sChildPath + "/AssignmentSet/results/";
-				aAssignmentData = oGanttModel.getProperty(sChildPath);
-				aChildAssignmentData = oGanttModel.getProperty(oNewChildPath.sPath);
-				aChildAssignmentData.splice(oNewChildPath.iIndex, 1);
-				for (var a in aAssignmentData) {
-					if (sAssignGuid === aAssignmentData[a].Guid) {
-						aAssignmentData.splice(a, 1);
-						break;
+			this.checkToolExists([{ // check tool exists
+				AssignmentGUID: sAssignGuid
+			}]).then(function (resolve) {
+				if (resolve) { // If user click yes
+					oGanttModel.setProperty(sPath + "/busy", true);
+					fnDeleteAssignment();
+				} else {
+					if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
+						sConfirmMessage = oResourceBundle.getText("xmsg.deleteAllGanttSplitAssignments");
+						MessageBox.confirm(sConfirmMessage, {
+							title: oResourceBundle.getText("xtit.deleteAllSplitAssignments"),
+							actions: [sProceedBtnTxt, MessageBox.Action.CANCEL],
+							emphasizedAction: sProceedBtnTxt,
+							onClose: function (sAction) {
+								oGanttModel.setProperty(sPath + "/busy", true);
+								if (sAction === sProceedBtnTxt) {
+									fnDeleteAssignment();
+								} else {
+									oGanttModel.setProperty(sPath + "/busy", false);
+								}
+							}
+						});
+					} else {
+						// If no tool exists
+						this._showConfirmMessageBox.call(this, sConfirmMessage).then(function (data) {
+							oGanttModel.setProperty(sPath + "/busy", true);
+							if (data === "YES") {
+								fnDeleteAssignment();
+							} else {
+								oGanttModel.setProperty(sPath + "/busy", false);
+							}
+						}.bind(this));
 					}
 				}
-				var oOriginData = oGanttModel.getProperty(sChildPath);
-				oGanttOriginalModel.setProperty(sChildPath, _.cloneDeep(oOriginData));
-			} else {
-				sChildPath = sPath.split("/AssignmentSet/results/")[0];
-				aAssignmentData = oGanttModel.getProperty(sChildPath + "/children");
-				aAssignmentData.splice(0, 1);
-			}
-			oGanttModel.refresh(true);
-			oGanttOriginalModel.refresh(true);
+			}.bind(this));
 		},
 
 		/**
@@ -883,37 +877,7 @@ sap.ui.define([
 			return aCreatedAssignments;
 		},
 
-		/**
-		 * Splitting Child Assignment Node Path
-		 * @param sAssignmentPath
-		 */
-		_getAssignmentChildPath: function (sAssignmentPath) {
-			var aPaths = sAssignmentPath.split("/"),
-				aPaths = aPaths.slice(0, -2),
-				sNewPath = "";
-			for (var a in aPaths) {
-				sNewPath = sNewPath + "/" + aPaths[a];
-			}
-			return sNewPath.slice(1);
-		},
-
-		/**
-		 * Splitting Child Node Path for Unassign
-		 * @param sChildPath
-		 */
-		_getDeleteChildPath: function (sChildPath) {
-			var aNewChildPath = sChildPath.split("/"),
-				iLen = aNewChildPath[aNewChildPath.length - 1],
-				aNewChildPath = aNewChildPath.slice(0, -1),
-				sNewChildPath = "";
-			for (var a in aNewChildPath) {
-				sNewChildPath = sNewChildPath + "/" + aNewChildPath[a];
-			}
-			return {
-				sPath: sNewChildPath.slice(1),
-				iIndex: iLen
-			};
-		}
+	
 	});
 
 });

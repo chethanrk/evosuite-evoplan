@@ -3,7 +3,7 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/core/Fragment",
 	"sap/m/MessageToast"
-], function (BaseController, formatter, Fragment,MessageToast) {
+], function (BaseController, formatter, Fragment, MessageToast) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.AssignInfoDialog", {
@@ -181,6 +181,7 @@ sap.ui.define([
 					this.onSaveAssignments();
 				}
 			}
+
 		},
 
 		/**
@@ -229,7 +230,7 @@ sap.ui.define([
 				sSplitIndex = this.oAssignmentModel.getProperty("/SplitIndex"),
 				sSplitCounter = this.oAssignmentModel.getProperty("/SplitCounter"),
 				bSplitGlobalConfigEnabled = this._oView.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN");
-			
+
 			if (this._mParameters && this._mParameters.bFromPlannCal) {
 				this._eventBus.publish("AssignInfoDialog", "refreshAssignment", {
 					unassign: true
@@ -249,6 +250,7 @@ sap.ui.define([
 				});
 			}
 			this._closeDialog();
+
 		},
 
 		/**
@@ -537,7 +539,9 @@ sap.ui.define([
 					this.showMessageToast(this._oView.getController().getResourceBundle().getText("ymsg.validEffort"));
 					bValidEffort = false;
 				} else if (Number(sOldEffort) + Number(sRemainingDuration) < Number(sEffort)) {
-					this.showMessageToast(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration",[sTotalEffort,sEffortUnit]));
+					this.showMessageToast(this._oView.getController().getResourceBundle().getText("ymsg.invalidAssgnDuration", [sTotalEffort,
+						sEffortUnit
+					]));
 					bValidEffort = false;
 				}
 			}

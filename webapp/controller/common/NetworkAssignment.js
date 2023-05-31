@@ -88,10 +88,16 @@ sap.ui.define([
 		 */
 		_getPSDemandFilters: function (_aPSDemandPaths) {
 			var aDemandGuid = [],
-				aFilters = [];
+				aFilters = [],
+				oSource = JSON.parse(this.localStorage.get("Evo-Dmnd-guid"));
 			for (var i = 0; i < _aPSDemandPaths.length; i++) {
-				var sPath = _aPSDemandPaths[i].sPath,
-					sGuid = this._oView.getModel().getProperty(sPath).Guid;
+					var sPath = _aPSDemandPaths[i].sPath,
+					sGuid;
+				if(this._oView.getModel().getProperty(sPath)){
+						sGuid = this._oView.getModel().getProperty(sPath).Guid;
+				} else {
+					sGuid = oSource[i].oDemandObject.Guid;
+				}	
 				aDemandGuid.push(new Filter("Guid", FilterOperator.EQ, sGuid));
 			}
 			aFilters.push(new Filter({
@@ -205,6 +211,7 @@ sap.ui.define([
 		 * Closing Dialog
 		 */
 		onCancelNetworkAssignment: function () {
+			this.clearDragSession(this._oView);
 			this._oDialog.close();
 		}
 
