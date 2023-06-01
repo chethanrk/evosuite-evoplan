@@ -186,8 +186,9 @@ sap.ui.define([
 		optimizeRoute: function (oResource, aAssignments, aBreaks) {
 			var oDate = aAssignments[0].DateFrom;
 			return this._createDistanceMatrix(oResource, aAssignments, oDate).then(function (sMatrixId) {
-				return this._planTours(oResource, aAssignments, sMatrixId, oDate, aBreaks).then(function (oTourResponse) {
-					
+					return this._planTours(oResource, aAssignments, sMatrixId, oDate, aBreaks);
+				}.bind(this)).then(function (oTourResponse) {
+						
 					this._isOptimizedRouteValid(oTourResponse, aAssignments); // don't interrupt current function execution to show, what's plannable
 
 					var aUpdatedAssignments = _.cloneDeep(aAssignments);
@@ -232,8 +233,7 @@ sap.ui.define([
 						return a.DateFrom - b.DateFrom;
 					});
 					return aUpdatedAssignments;
-				}.bind(this));
-			}.bind(this));
+				}.bind(this));;
 		},
 
 		/* =========================================================== */
