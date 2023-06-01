@@ -141,8 +141,8 @@ sap.ui.define([
 							Controller.create({
 								name: "com.evorait.evoplan.controller." + sControllerName
 							}).then(function (controller) {
-								this.createView(oModel, oMetaModel, sPath, sViewName, controller).then(setTemplateAndBind);
-							}.bind(this));
+								return this.createView(oModel, oMetaModel, sPath, sViewName, controller);
+							}).then(setTemplateAndBind);
 						} else {
 							this.createView(oModel, oMetaModel, sPath, sViewName, null).then(setTemplateAndBind);
 						}
