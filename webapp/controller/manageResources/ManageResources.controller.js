@@ -309,8 +309,7 @@ sap.ui.define([
 		 * Handle Delete Resource on press of "Delete" Action button from Tree table.
 		 */
 		_onPressDeleteButton: function (oEvent) {
-			var oSource = oEvent.getSource(),
-				oContext = oSource.getBindingContext(),
+			var oContext = oEvent.getSource().getBindingContext(),
 				sPath = oContext.getPath(),
 				nAssignmentCount = oContext.getProperty("AssignmentCount");
 
