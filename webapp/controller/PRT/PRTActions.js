@@ -1,5 +1,5 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/BaseController",
+	"com/evorait/evoplan/controller/Scheduling/SchedulingActions",
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
