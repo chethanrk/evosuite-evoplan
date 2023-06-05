@@ -923,7 +923,7 @@ sap.ui.define([
 			aFilters.push(new Filter("LATITUDE", FilterOperator.EQ, oResource.LATITUDE));
 			this.setMapBusy(true);
 			this.getOwnerComponent().readData("/ResourceSet", aFilters).then(function (response) {
-				return response;
+				resolve(response);
 			}.bind(this)).then(function(response){
 				this.setMapBusy(false);
 				oViewModel.setProperty("/mapSettings/droppedResources", response.results);
