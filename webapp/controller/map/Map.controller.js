@@ -923,8 +923,6 @@ sap.ui.define([
 			aFilters.push(new Filter("LATITUDE", FilterOperator.EQ, oResource.LATITUDE));
 			this.setMapBusy(true);
 			this.getOwnerComponent().readData("/ResourceSet", aFilters).then(function (response) {
-				resolve(response);
-			}.bind(this)).then(function(response){
 				this.setMapBusy(false);
 				oViewModel.setProperty("/mapSettings/droppedResources", response.results);
 				if (!this.oResourceSheet && response.results.length > 1) {
@@ -942,6 +940,7 @@ sap.ui.define([
 					this._openCalendar();
 				}
 			}.bind(this));
+
 		},
 
 		/**
