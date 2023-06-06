@@ -19,7 +19,7 @@ builder:
         app:
           name: /EVORA/EP_UI5
           description: EvoPlan Deployment
-          package: $tmp
+          package: /EVORA/EP_UI_UI5
           transport: EDUMMY
         exclude:
           - /test/
