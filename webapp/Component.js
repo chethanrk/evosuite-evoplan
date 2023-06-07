@@ -584,7 +584,7 @@ sap.ui.define([
 					defaultEndDate: ""
 				},
 				Scheduling:{
-
+					type:null
 				}
 			});
 			oViewModel.setSizeLimit(999999999);
