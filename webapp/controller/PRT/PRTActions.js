@@ -6,9 +6,9 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/OverrideExecution",
 	"sap/m/MessageToast"
-], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast) {
+], function (SchedulingActions, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast) {
 
-	return BaseController.extend("com.evorait.evoplan.controller.PRT.PRTOperations", {
+	return SchedulingActions.extend("com.evorait.evoplan.controller.PRT.PRTOperations", {
 
 		/* =========================================================== */
 		/* Public methods                                              */
