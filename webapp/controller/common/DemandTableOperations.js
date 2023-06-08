@@ -68,6 +68,11 @@ sap.ui.define([
 					public: true,
 					final: false,
 					overrideExecution: OverrideExecution.Instead
+				},
+				onRescheduleButtonPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
 				}
 			}
 		},
@@ -214,6 +219,15 @@ sap.ui.define([
 				oViewModel.setProperty("/bDemandEditMode", false);
 				this.submitDemandTableChanges();
 			}
+		},
+
+		/**
+		 * On press of reschedule button
+		 * @param {sap.ui.base.Event} oEvent - press event for reschedule button
+		 */
+		onRescheduleButtonPress: function(oEvent){
+			var oViewModel = this.getModel("viewModel");
+			oViewModel.setProperty("/Scheduling/sType", "RESCHEDULING");
 		},
 
 		/* =========================================================== */
