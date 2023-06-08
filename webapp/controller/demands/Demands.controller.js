@@ -66,6 +66,15 @@ sap.ui.define([
 		},
 
 		/**
+		 * Called on rebind demand smart table 
+		 * to set batch Group ID to binding params to separate batch calls
+		 * @param oEvent
+		 */
+		onBeforeRebindDemandTable: function (oEvent) {		
+			oEvent.getParameter("bindingParams").parameters.batchGroupId = "DemandBatch";
+		},
+
+		/**
 		 * on press assign button in footer
 		 * show modal with user for select
 		 * @param oEvent
