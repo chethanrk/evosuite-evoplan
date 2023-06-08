@@ -63,16 +63,7 @@ sap.ui.define([
 			this._viewModel .setProperty("/subTableNoDataText", noDataText);
 			this._viewModel .setProperty("/Show_Assignment_Status_Button", false);
 			this._viewModel .refresh();
-		},
-
-		/**
-		 * Called on rebind demand smart table 
-		 * to set batch Group ID to binding params to separate batch calls
-		 * @param oEvent
-		 */
-		onBeforeRebindDemandTable: function (oEvent) {		
-			oEvent.getParameter("bindingParams").parameters.batchGroupId = "DemandBatch";
-		},
+		},		
 
 		/**
 		 * on press assign button in footer
