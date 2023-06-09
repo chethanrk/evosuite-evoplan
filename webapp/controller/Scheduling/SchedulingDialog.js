@@ -32,7 +32,7 @@ sap.ui.define([
 		 * This dialog box is used to set the intial values to the 
 		 * wizard in the dialog box
 		 */
-		openScheduleDialog: function (oView) {
+		openSchedulingDialog: function (oView) {
 			this._oView=oView;
 			this._InitializeDialogModel();
 			// create Dialog
@@ -58,7 +58,7 @@ sap.ui.define([
 			this._iSelectedStepIndex = 0;
 			this._oSelectedStep = this._oWizard.getSteps()[this._iSelectedStepIndex];
 			// set busy indicator
-			this.handleButtonsVisibility();
+			this._handleButtonsVisibility();
 		},
 		/**
 		 * This button is used to handle the press event of 
@@ -77,7 +77,7 @@ sap.ui.define([
 			this._iSelectedStepIndex++;
 			this._oSelectedStep = oNextStep;
 
-			this.handleButtonsVisibility();
+			this._handleButtonsVisibility();
 		},
 		/**
 		 * This button is used to handle the press event of 
@@ -96,10 +96,10 @@ sap.ui.define([
 			this._iSelectedStepIndex--;
 			this._oSelectedStep = oPreviousStep;
 
-			this.handleButtonsVisibility();
+			this._handleButtonsVisibility();
 		},
 		/**
-		 * Tis method is used to handle the validation of the 
+		 * Tis method is used to handle the activation/validation of the 
 		 * first step of the wizard.
 		 */
 		additionalInfoValidation: function () {
@@ -113,7 +113,7 @@ sap.ui.define([
 			// to be added code later;
 		},
 		/**
-		 * Tis method is used to handle press event of the cancel button 
+		 * This method is used to handle press event of the cancel button 
 		 * in the dialog
 		 */
 		handleWizardCancel: function () {
@@ -132,7 +132,7 @@ sap.ui.define([
 		/* =========================================================== */
 		/**
 		 * This method is used to assign the initialize the model and assign 
-		 * it to Dialog box.
+		 * which has peroperty binded to controls of the dialog box and wizard
 		 */
 
 		_InitializeDialogModel: function () {
@@ -146,7 +146,7 @@ sap.ui.define([
 		 * This method is used to handle the button visibility/invisibility
 		 * based on selection of wizard sectopm in the footer of the dialog
 		 */
-		handleButtonsVisibility: function () {
+		_handleButtonsVisibility: function () {
 			var oModel = this._oViewModel;
 			switch (this._iSelectedStepIndex) {
 				case 0:
