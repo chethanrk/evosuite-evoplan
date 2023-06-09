@@ -585,6 +585,7 @@ sap.ui.define([
 				},
 				Scheduling:{
 					sType:"",
+					sScheduleDialogTitle:"",
 					bEnableReschedule: false,
 					SchedulingDialogFlags:{
 						

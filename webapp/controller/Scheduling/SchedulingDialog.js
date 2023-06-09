@@ -140,6 +140,9 @@ sap.ui.define([
 			if(!this._oViewModel){
 				this._oViewModel = this._oView.getModel("viewModel")
 			}
+			// setting the dialog title based on flag in viewMiodel
+			// TODO: - write logic here pending after ticket merge EVOSUITE2-4689
+			this._oViewModel.setProperty("/Scheduling/sScheduleDialogTitle",this._ResourceModel.getText("xtit.RescheduleDialogTitle"));
 			var oData = {
 				bBackButtonVisible: false,
 				bNextButtonVisible: true,
