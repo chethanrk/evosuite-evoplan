@@ -8,11 +8,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	'sap/ui/model/json/JSONModel',
 ], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast, JSONModel) {
-	var oData = {
-		bBackButtonVisible: false,
-		bNextButtonVisible: true,
-		bFinishButtonVisible: false
-	};
+	
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingDialog", {
 
 		/* =========================================================== */
@@ -117,28 +113,37 @@ sap.ui.define([
 		 * in the dialog
 		 */
 		handleWizardCancel: function () {
-			this._handleMessageBoxOpen("Are you sure you want to cancel ?", "warning");
+			var sMessage = this._ResourceModel.getText("ymsg.CancelOfReSecheduling");
+			this._handleMessageBoxOpen(sMessage, "warning");
 		},
 		/**
 		 * Tis method is used to handle press event of the subnut button 
 		 * in the dialog
 		 */
 		handleWizardSubmit: function () {
-			this._handleMessageBoxOpen("Are you sure you want to submit ?", "confirm");
+			var sMessage = this._ResourceModel.getText("ymsg.SubmitOfReSecheduling");
+			this._handleMessageBoxOpen(sMessage, "confirm");
 		},
 
 		/* =========================================================== */
 		/* Private methods                                              */
 		/* =========================================================== */
+
 		/**
-		 * This method is used to assign the initialize the model and assign 
-		 * which has peroperty binded to controls of the dialog box and wizard
+		 * This below method is used to assign the initialize the model and assign 
+		 * property binded to controls of the dialog box and wizard
 		 */
 
 		_InitializeDialogModel: function () {
+			this._ResourceModel = this._oView.getController().getModel("i18n").getResourceBundle();
 			if(!this._oViewModel){
 				this._oViewModel = this._oView.getModel("viewModel")
 			}
+			var oData = {
+				bBackButtonVisible: false,
+				bNextButtonVisible: true,
+				bFinishButtonVisible: false
+			};
 			var oInitialModelState = Object.assign({}, oData);
 			this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags",oInitialModelState);
 		},
@@ -164,7 +169,11 @@ sap.ui.define([
 			oModel.refresh();
 
 		},
+		/**
+		 * This method used to handle the open of the message box.
+		 */
 		_handleMessageBoxOpen: function (sMessage, sMessageBoxType) {
+			// later to be replaced with the generic method based on avaiability in base controller.
 			MessageBox[sMessageBoxType](sMessage, {
 				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 				onClose: function (oAction) {
