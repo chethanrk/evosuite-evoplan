@@ -30,10 +30,11 @@
 								title="{i18n>xtit.ReScheFirstStepTitle}"
 								icon="sap-icon://appointment"
 								>
+						<!--Relevent Content to be added later in the next development tickets-->
 						<MessageStrip class="sapUiSmallMarginBottom"
-								text="Validation in the wizard is controlled by calling the validateStep(Step) and invalidateStep(Step) methods "
+								text="Sample Content for Selection of Date"
 								showIcon="true"/>
-						<Text text="Cras tellus leo, volutpat vitae ullamcorper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien et viverra imperdiet, orci erat porttitor nulla, eget commodo metus nibh nec ipsum. Aliquam lacinia euismod metus, sollicitudin pellentesque purus volutpat eget. Pellentesque egestas erat quis eros convallis mattis. Mauris hendrerit sapien a malesu corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien	corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien	"/>
+					
 						
 					</WizardStep>
 					<WizardStep id="ConfirmationStep"
@@ -41,10 +42,11 @@
 								activate="optionalStepActivation"
 								icon="sap-icon://accept"
 								title="{i18n>xtit.ReScheSecondStepTitle}">
+						<!--Relevent Content to be added later in the next development tickets-->
 						<MessageStrip class="sapUiSmallMarginBottom"
-								text="You can validate steps by default with the validated='true' property of the step. The next button is always enabled."
+								text="Sample Content for Checking the PTV response"
 								showIcon="true"/>
-						<Text text="Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec ppellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien	corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien	"/>
+					
 						
 					</WizardStep>
 					

@@ -24,9 +24,8 @@ sap.ui.define([
 		 */
 
 		/**
-		 * This method is trigerred after the dialog boc is opened.
-		 * This dialog box is used to set the intial values to the 
-		 * wizard in the dialog box
+		 * This method is used to open the dialog box and call the 
+		 * relevant methods post that.
 		 */
 		openSchedulingDialog: function (oView) {
 			this._oView=oView;
@@ -40,7 +39,6 @@ sap.ui.define([
 				}).then(function (oDialog) {
 					oDialog.attachAfterOpen(this.onDialogAfterOpen, this);
 					oView.addDependent(oDialog);
-					//oDialog.bindElement("/ProductCollection/0");
 					return oDialog;
 				}.bind(this));
 			}
@@ -49,6 +47,10 @@ sap.ui.define([
 			});
 			
 		},
+		/**
+		 * This method is used to set properties once the 
+		 * dialog has been opened.
+		 */
 		onDialogAfterOpen: function () {
 			this._oWizard = this._oView.byId("WizardScheduling");
 			this._iSelectedStepIndex = 0;
@@ -57,7 +59,7 @@ sap.ui.define([
 			this._handleButtonsVisibility();
 		},
 		/**
-		 * This button is used to handle the press event of 
+		 * This method is used to handle the press event of 
 		 * Next button in the dialog box
 		 */
 		onDialogNextButton: function () {
@@ -76,7 +78,7 @@ sap.ui.define([
 			this._handleButtonsVisibility();
 		},
 		/**
-		 * This button is used to handle the press event of 
+		 * This method is used to handle the press event of 
 		 * back button in the dialog box
 		 */
 		onDialogBackButton: function () {
@@ -133,7 +135,6 @@ sap.ui.define([
 		 * This below method is used to assign the initialize the model and assign 
 		 * property binded to controls of the dialog box and wizard
 		 */
-
 		_InitializeDialogModel: function () {
 			this._ResourceModel = this._oView.getController().getModel("i18n").getResourceBundle();
 			if(!this._oViewModel){
