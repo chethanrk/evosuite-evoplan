@@ -1,0 +1,65 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.f"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:u="sap.ui.unified"
+	xmlns:layout="sap.ui.layout">
+	<Dialog
+		id="SchedulingDialog"
+		title="Re-Schedule"
+		titleAlignment="Center"
+		showHeader="true"
+		verticalScrolling="false"
+		contentHeight="70%"
+		contentWidth="80%">
+		<f:DynamicPage
+			stickySubheaderProvider="WizardScheduling"
+			toggleHeaderOnTitleClick="false"
+			class="sapUiNoContentPadding"
+			showFooter="true">
+			<f:content>
+					<Wizard id="WizardScheduling"
+						class="sapUiResponsivePadding--header sapUiResponsivePadding--content"
+						showNextButton="false"
+						navigationChange="handleNavigationChange"
+						renderMode="Page">
+				
+					<WizardStep id="DateRangeStep"
+								validated="true"
+								title="Select Range"
+								icon="sap-icon://appointment"
+								>
+						<MessageStrip class="sapUiSmallMarginBottom"
+								text="Validation in the wizard is controlled by calling the validateStep(Step) and invalidateStep(Step) methods "
+								showIcon="true"/>
+						<Text text="Cras tellus leo, volutpat vitae ullamcorper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien et viverra imperdiet, orci erat porttitor nulla, eget commodo metus nibh nec ipsum. Aliquam lacinia euismod metus, sollicitudin pellentesque purus volutpat eget. Pellentesque egestas erat quis eros convallis mattis. Mauris hendrerit sapien a malesu corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien	corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien	"/>
+						
+					</WizardStep>
+					<WizardStep id="ConfirmationStep"
+								validated="true"
+								activate="optionalStepActivation"
+								icon="sap-icon://accept"
+								title="Schedule">
+						<MessageStrip class="sapUiSmallMarginBottom"
+								text="You can validate steps by default with the validated='true' property of the step. The next button is always enabled."
+								showIcon="true"/>
+						<Text text="Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec ppellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien	corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien	"/>
+						
+					</WizardStep>
+					
+				</Wizard>
+			</f:content>
+
+			<f:footer>
+				<OverflowToolbar>
+					<ToolbarSpacer/>
+					<Button text="Previous" visible="{viewModel>/Scheduling/SchedulingDialogFlags/bBackButtonVisible}" press="onDialogBackButton" />
+					<Button text="Proceed" type="Emphasized"  visible="{viewModel>/Scheduling/SchedulingDialogFlags/bNextButtonVisible}" press="onDialogNextButton" />
+					<Button text="Finish" type="Emphasized" visible="{viewModel>/Scheduling/SchedulingDialogFlags/bFinishButtonVisible}" press="handleWizardSubmit" />
+					<Button	text="Cancel" type="Transparent" press="handleWizardCancel"/>
+				</OverflowToolbar>
+			</f:footer>
+		</f:DynamicPage>
+	</Dialog>
+</core:FragmentDefinition>

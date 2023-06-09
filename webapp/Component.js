@@ -585,7 +585,10 @@ sap.ui.define([
 				},
 				Scheduling:{
 					sType:"",
-					bEnableReschedule: false
+					bEnableReschedule: false,
+					SchedulingDialogFlags:{
+						
+					}
 				}
 			});
 			oViewModel.setSizeLimit(999999999);
