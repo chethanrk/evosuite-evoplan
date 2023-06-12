@@ -385,6 +385,9 @@ sap.ui.define([
 		 * @return
 		 */
 		onBeforeRebindTable: function (oEvent) {
+			var oParams = oEvent.getParameter("bindingParams");
+			oParams["parameters"].batchGroupId = "DemandBatch";
+			
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 
 			var aFilters,
