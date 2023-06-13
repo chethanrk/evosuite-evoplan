@@ -116,11 +116,6 @@ sap.ui.define([
 					final: false,
 					overrideExecution: OverrideExecution.Instead
 				},
-				removeRouteDataFlag: {
-					public: true,
-					final: false,
-					overrideExecution: OverrideExecution.Instead
-				},
 				onResourceIconPress: {
 					public: true,
 					final: false,
@@ -564,14 +559,6 @@ sap.ui.define([
 		 */
 		onCloseDialog: function (oEvent) {
 			this._oPopover.close();
-		},
-
-		/**
-		 * method called after close the date range fragment used for route creation to remove flag
-		 * @Author: Rakesh
-		 */
-		removeRouteDataFlag: function (oEvent) {
-			// this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false);
 		},
 
 		/**

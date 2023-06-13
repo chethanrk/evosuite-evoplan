@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:u="sap.ui.unified" xmlns:core="sap.ui.core">
-	<ResponsivePopover title="Date Range" class="sapUiPopupWithPadding" placement="HorizontalPreferredRight" afterClose="removeRouteDataFlag">
+	<ResponsivePopover title="Date Range" class="sapUiPopupWithPadding" placement="HorizontalPreferredRight" >
 		<endButton>
 			<Button text="Close" type="Emphasized" press="onCloseDialog"/>
 			<core:ExtensionPoint name="PopoverExtP|Map|RouteDatePopover|CustomAction"/>
