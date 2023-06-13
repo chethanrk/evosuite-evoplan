@@ -12,7 +12,7 @@
 		<u:MenuItem text="{i18n>xbut.buttonExecuteFunction}"
 			visible="{=${user>/ENABLE_SET_FUNCTION} &amp;&amp; !${viewModel>/ganttSettings/shapeData/IS_PRT}}"/>
 		<u:MenuItem text="{i18n>xbut.showRelationships}"
-			visible="{= ${viewModel>/ganttSettings/Enable_Relationships} &amp;&amp; ${user>/ENABLE_NETWORK_ASSIGN_GANTT} &amp;&amp; !${viewModel>/ganttSettings/shapeData/IS_PRT} &amp;&amp; ${user>/ENABLE_GANTT_CM_SHOW_RELATIONS}}">
+			visible="{= ${viewModel>/ganttSettings/Enable_Relationships} &amp;&amp; ${user>/ENABLE_NETWORK_ASSIGN_GANTT} &amp;&amp; !${viewModel>/ganttSettings/shapeData/IS_PRT}}">
 			<u:Menu itemSelect="handleStatusItemPress">
 				<u:MenuItem text="{i18n>xbut.show}">
 					<u:customData>
