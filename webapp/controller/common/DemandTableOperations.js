@@ -68,6 +68,11 @@ sap.ui.define([
 					public: true,
 					final: false,
 					overrideExecution: OverrideExecution.Instead
+				},
+				onRescheduleButtonPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
 				}
 			}
 		},
@@ -95,6 +100,16 @@ sap.ui.define([
 			} else {
 				this._proceedToChangeStatus();
 			}
+		},
+
+		/**
+		 * Called on rebind demand smart table 
+		 * to set batch Group ID to binding params to separate batch calls
+		 * @param oEvent
+		 */
+		onBeforeRebindDemandTable: function (oEvent) {		
+			var oParams = oEvent.getParameter("bindingParams");
+			oParams["parameters"].batchGroupId = "DemandBatch";
 		},
 
 		/**
@@ -214,6 +229,15 @@ sap.ui.define([
 				oViewModel.setProperty("/bDemandEditMode", false);
 				this.submitDemandTableChanges();
 			}
+		},
+
+		/**
+		 * On press of reschedule button
+		 * @param {sap.ui.base.Event} oEvent - press event for reschedule button
+		 */
+		onRescheduleButtonPress: function(oEvent){
+			var oViewModel = this.getModel("viewModel");
+			oViewModel.setProperty("/Scheduling/sType", "RESCHEDULING");
 		},
 
 		/* =========================================================== */
