@@ -1303,47 +1303,47 @@ sap.ui.define([
 			} else { // Demand update
 				this._getRelatedDemandData(oData).then(function (oResult) {
 					this.oGanttModel.setProperty(sPath + "/Demand", oResult.Demand);
-					this._validateAndSendChangedData(sPath, sRequestType).then(function (aData) {
-						// these events
-						this._oEventBus.publish("BaseController", "refreshCapacity", {
-							sTargetPath: sPath.split("/AssignmentSet/results/")[0]
-						});
-						if (sSourcePath) {
-							this._oEventBus.publish("BaseController", "refreshCapacity", {
-								sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
-							});
-						}
-
-						if (sRequestType === "reassign") {
-							//method call for updating resource assignment in case of single reassignment
-							this._refreshChangedResources(sPath, sSourcePath);
-							this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
-						} else {
-							//method call for updating resource assignment in case of Multi Assignment in same axis
-							this._refreshChangedResources(sPath);
-						}
-
-						// in case of gantt shape drag from POOL to RESOURCE 
-						// on successful call of CreateSplitStretchAssignments the response contains the array of split assignments
-						// add those to the gantt view
-						if (aData && aData.results && aData.results.length > 0) {
-							var aCreatedAssignments = this._getCreatedAssignments(aData.results);
-							if (aCreatedAssignments.length > 0) {
-								this._addCreatedAssignment(aCreatedAssignments, sPath.split("/AssignmentSet/results/")[0]);
-							}
-						}
-					}.bind(this), function () {
-						//on reject validation or user don't want proceed
-						this.oGanttModel.setProperty(sPath + "/busy", false);
-						this._resetChanges(sPath);
-						if (sRequestType !== "reassign") {
-							this._refreshChangedResources(sPath);
-						}
-					}.bind(this));
+					return this._validateAndSendChangedData(sPath, sRequestType);
 				}.bind(this), function (oError) {
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
 					this._refreshChangedResources(sPath);
+				}.bind(this)).then(function (aData) {
+					// these events
+					this._oEventBus.publish("BaseController", "refreshCapacity", {
+						sTargetPath: sPath.split("/AssignmentSet/results/")[0]
+					});
+					if (sSourcePath) {
+						this._oEventBus.publish("BaseController", "refreshCapacity", {
+							sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
+						});
+					}
+
+					if (sRequestType === "reassign") {
+						//method call for updating resource assignment in case of single reassignment
+						this._refreshChangedResources(sPath, sSourcePath);
+						this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+					} else {
+						//method call for updating resource assignment in case of Multi Assignment in same axis
+						this._refreshChangedResources(sPath);
+					}
+
+					// in case of gantt shape drag from POOL to RESOURCE 
+					// on successful call of CreateSplitStretchAssignments the response contains the array of split assignments
+					// add those to the gantt view
+					if (aData && aData.results && aData.results.length > 0) {
+						var aCreatedAssignments = this._getCreatedAssignments(aData.results);
+						if (aCreatedAssignments.length > 0) {
+							this._addCreatedAssignment(aCreatedAssignments, sPath.split("/AssignmentSet/results/")[0]);
+						}
+					}
+				}.bind(this), function () {
+					//on reject validation or user don't want proceed
+					this.oGanttModel.setProperty(sPath + "/busy", false);
+					this._resetChanges(sPath);
+					if (sRequestType !== "reassign") {
+						this._refreshChangedResources(sPath);
+					}
 				}.bind(this));
 			}
 		},
@@ -1400,26 +1400,20 @@ sap.ui.define([
 				var bSplitGlobalConfigEnabled = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN");
 
 				this._validateChangedData(sPath, oPendingChanges[sPath], oData, sType).then(function (results) {
-					if (!results) {
-						reject();
-					} else if (this.oUserModel.getProperty("/ENABLE_QUALIFICATION")) {
+					if (this.oUserModel.getProperty("/ENABLE_QUALIFICATION")) {
 						//when user wants proceed check qualification
-						this.checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData).then(function () {
-							// in the case of gantt shape drag from POOL to RESOURCE cal the split checks
-							// checks if the demand duration is more than the resource availablity
-							if (bSplitGlobalConfigEnabled && oData.STATUS === "POOL") {
-								this._proceedWithSplitOnReAssign(sPath, sType, oPendingChanges, oData, "RESOURCE").then(resolve, reject);
-							} else {
-								this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
-							}
-						}.bind(this), reject);
-					} else {
-						if (bSplitGlobalConfigEnabled && oData.STATUS === "POOL") {
-							this._proceedWithSplitOnReAssign(sPath, sType, oPendingChanges, oData, "RESOURCE").then(resolve, reject);
-						} else {
-							this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
-						}
+						return this.checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData);
 					}
+				}.bind(this)).then(function () {
+					// in the case of gantt shape drag from POOL to RESOURCE cal the split checks
+					// checks if the demand duration is more than the resource availablity
+					if (bSplitGlobalConfigEnabled && oData.STATUS === "POOL") {
+						this._proceedWithSplitOnReAssign(sPath, sType, oPendingChanges, oData, "RESOURCE").then(resolve, reject);
+					} else {
+						this._proceedWithUpdateAssignment(sPath, sType, oPendingChanges, oData).then(resolve, reject);
+					}
+				}.bind(this)).catch(function () {
+					reject();
 				}.bind(this));
 			}.bind(this));
 		},
@@ -1499,7 +1493,7 @@ sap.ui.define([
 						if (resolve1) {
 							return true;
 						} else {
-							return false;
+							reject();
 						}
 					}.bind(this)));
 				}
@@ -1524,7 +1518,7 @@ sap.ui.define([
 							if (resolve) {
 								return true;
 							} else {
-								return false;
+								reject();
 							}
 						}));
 					} else {
@@ -1583,14 +1577,15 @@ sap.ui.define([
 			} else if (oUserData.ENABLE_RESOURCE_AVAILABILITY && oUserData.ENABLE_ASSIGNMENT_STRETCH && oUserData.ENABLE_QUALIFICATION && !
 				oUserData.ENABLE_SPLIT_STRETCH_ASSIGN) {
 				this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids).then(function (oEndDate) {
-					this.checkResourceQualification(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(function (data) {
-						this._assignDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath);
-					}.bind(this), function () {
-						this.clearDragSession(this.getView());
-						this.oGanttModel.setProperty(sDummyPath, null);
-						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-					}.bind(this));
+					return this.checkResourceQualification(aSources, oTarget, oTargetDate, oEndDate, aGuids);
 				}.bind(this), function () {
+					this.clearDragSession(this.getView());
+					this.oGanttModel.setProperty(sDummyPath, null);
+					this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+					reject();
+				}.bind(this)).then(function (oEndDate) {
+					this._assignDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath);
+				}.bind(this)).catch(function () {
 					this.clearDragSession(this.getView());
 					this.oGanttModel.setProperty(sDummyPath, null);
 					this.oGanttModel.setProperty(sDummyPath + "/busy", false);
@@ -1627,18 +1622,7 @@ sap.ui.define([
 
 			this.assignedDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(
 				function (aPromises) {
-					Promise.all(aPromises)
-						.then(function (aResults) {
-							var aCreatedAssignments = this._getCreatedAssignments(aResults);
-							if (aCreatedAssignments.length > 0) {
-								this._addCreatedAssignment(aCreatedAssignments, oTarget, sDummyPath);
-							}
-						}.bind(this), function () {
-							if (sDummyPath) {
-								this.oGanttModel.setProperty(sDummyPath, null);
-								this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-							}
-						}.bind(this));
+					return Promise.all(aPromises);
 					this.clearDragSession(this.getView());
 				}.bind(this),
 				function () {
@@ -1646,8 +1630,19 @@ sap.ui.define([
 						this.oGanttModel.setProperty(sDummyPath, null);
 						this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 					}
+					reject();
 				}.bind(this)
-			);
+			).then(function (aResults) {
+				var aCreatedAssignments = this._getCreatedAssignments(aResults);
+				if (aCreatedAssignments.length > 0) {
+					this._addCreatedAssignment(aCreatedAssignments, oTarget, sDummyPath);
+				}
+			}.bind(this)).catch(function () {
+				if (sDummyPath) {
+					this.oGanttModel.setProperty(sDummyPath, null);
+					this.oGanttModel.setProperty(sDummyPath + "/busy", false);6
+				}
+			}.bind(this));
 		},
 
 		/**
@@ -1665,21 +1660,22 @@ sap.ui.define([
 						oResourceData.ResourceGuid !== "")) {
 
 					this._checkAvailability(aSources, oTarget, oTargetDate, aGuids).then(function (availabilityData) {
+						this.availabilityData = availabilityData;
 						if (!availabilityData.Unavailable) {
-							resolve(availabilityData.Endtimestamp);
+							return resolve(availabilityData.Endtimestamp);
 						} else {
-							this._showConfirmMessageBox(oResourceModel.getText("ymsg.extendMsg")).then(function (value) {
-								if (value === "YES") {
-									resolve(availabilityData.Endtimestamp);
-								} else {
-									resolve(availabilityData.EndtimestampWithstretch);
-								}
-							}.bind(this));
+							return this._showConfirmMessageBox(oResourceModel.getText("ymsg.extendMsg"));
 						}
 					}.bind(this), function () {
 						this.clearDragSession(this.getView());
 						reject();
-					});
+					}).then(function (value) {
+						if (value === "YES") {
+							resolve(this.availabilityData.Endtimestamp);
+						} else if (value === "NO") {
+							resolve(this.availabilityData.EndtimestampWithstretch);
+						}
+					}.bind(this));
 				} else {
 					resolve();
 				}
@@ -2336,16 +2332,18 @@ sap.ui.define([
 						Function: sAsgnStsFnctnKey,
 						AssignmentGUID: oData.Guid
 					};
-					this.executeFunctionImport(this.getModel(), oParams, "ExecuteAssignmentFunction", "POST").then(
-						function (aData) {
-							this.oAppViewModel.setProperty("/busy", false);
-							this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
-							this._updateAssignmentStatus(sPath, sAsgnStsFnctnKey, aData);
-						}.bind(this));
+					this.executeFunctionImport(this.getModel(), oParams, "ExecuteAssignmentFunction", "POST");
 				} else {
-					sap.m.MessageBox.error(this.getModel("i18n").getResourceBundle().getText("assignmentNotPossible"));
+					reject();
 				}
-			}.bind(this));
+			}.bind(this)).then(
+				function (aData) {
+					this.oAppViewModel.setProperty("/busy", false);
+					this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+					this._updateAssignmentStatus(sPath, sAsgnStsFnctnKey, aData);
+				}.bind(this)).catch(function(){
+					sap.m.MessageBox.error(this.getModel("i18n").getResourceBundle().getText("assignmentNotPossible"));
+				}.bind(this));
 			this.oGanttModel.setProperty(sPath + "/busy", false);
 			this.oGanttModel.refresh(true);
 		},
