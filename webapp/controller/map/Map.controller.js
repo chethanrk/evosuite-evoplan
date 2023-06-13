@@ -156,7 +156,7 @@ sap.ui.define([
 					final: false,
 					overrideExecution: OverrideExecution.Instead
 				},
-				onSelectMapLagend: {
+				onSelectMapLegend: {
 					public: true,
 					final: false,
 					overrideExecution: OverrideExecution.Instead
@@ -782,7 +782,7 @@ sap.ui.define([
 		 * @return
 		 * @param oEvent
 		 */
-		onSelectMapLagend: function (oEvent) {
+		onSelectMapLegend: function (oEvent) {
 			var sValue = oEvent.getSource().getSelectedItem().getTitle(),
 				oStatusFilter = this.byId("listReportFilter").getControlByKey("Status"),
 				aTokens = [],

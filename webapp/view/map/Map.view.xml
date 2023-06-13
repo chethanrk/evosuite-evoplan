@@ -21,7 +21,7 @@
 									<vk:content>
 										<vk:ListPanel id="idMapLegendsList"
 											items="{ path: '/MapLegendSet', sorter: { path: 'CharactersticCode', group: true }, groupHeaderFactory: '.getGroupHeader'}"
-											headerText="Legend" expanded="false" selectionMode="SingleSelectMaster" selectionChange="onSelectMapLagend" headerIcon="sap-icon://legend"
+											headerText="Legend" expanded="false" selectionMode="SingleSelectMaster" selectionChange="onSelectMapLegend" headerIcon="sap-icon://legend"
 											expand="onExpandCollapseLegends">
 											<vk:items>
 												<core:ExtensionPoint name="MapContainerExtP|Map|Legends|LegendSet|items">
