@@ -18,7 +18,7 @@ sap.ui.define([
 		 * Setting dialog properties to use in tool operations
 		 */
 		onToolOpen: function (oDialog, oView, sAssignementPath, oAssignmentData, mParameters) {
-			var oPrtToolsAssignment = this._getDefaultPRTToolsAssignmentModelObject(oAssignmentData);
+			var oPrtToolsAssignment = this._getDefaultPRTAssignmentObject(oAssignmentData);
 
 			this._sAssignmentPath = sAssignementPath;
 			this._mParameters = mParameters.refreshParameters;
@@ -271,7 +271,7 @@ sap.ui.define([
 		 * to getPRT assignment object for update operations
 		 * @param oAssignmentData
 		 */
-		_getDefaultPRTToolsAssignmentModelObject: function (oAssignmentData) {
+		_getDefaultPRTAssignmentObject: function (oAssignmentData) {
 			return {
 				AllowChange: oAssignmentData.PRT_ASSIGNMENT_TYPE === "PRTASGN" ? true : false,
 				AllowReassign: oAssignmentData.PRT_ASSIGNMENT_TYPE === "PRTASGN" ? true : false,
