@@ -28,7 +28,7 @@ sap.ui.define([
 					bFromManageResource: true
 				};
 			}.bind(this));
-			this.onInitResourceActionController();
+			this.onInitActionController();
 		},
 		/**
 		 * bind resource tree table only when filterbar was initalized
@@ -516,7 +516,7 @@ sap.ui.define([
 		 */
 		onExit: function () {
 			this._oEventBus.unsubscribe("ManageResourcesController", "refreshManageResourcesView", this._refreshManageResourcesView, this);
-			this.onExitResourceActionController();
+			this.onExitActionController();
 		}
 	});
 
