@@ -228,6 +228,7 @@ sap.ui.define([
 		onRescheduleButtonPress: function(oEvent){
 			var oViewModel = this.getModel("viewModel");
 			oViewModel.setProperty("/Scheduling/sType", "RESCHEDULING");
+			this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView());
 		},
 
 		/* =========================================================== */
