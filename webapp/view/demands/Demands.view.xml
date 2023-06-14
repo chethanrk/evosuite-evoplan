@@ -20,7 +20,7 @@
 				</f:header>
 				<f:content>
 					<smartTable:SmartTable id="draggableList" height="100%" width="100%" direction="Column" fitContainer="true" enableAutoBinding="true"
-						entitySet="DemandSet" smartFilterId="listReportFilter" showRowCount="true" header="{i18n>xtit.itemListTitle}" useExportToExcel="true"
+						entitySet="DemandSet" beforeRebindTable="onBeforeRebindDemandTable" smartFilterId="listReportFilter" showRowCount="true" header="{i18n>xtit.itemListTitle}" useExportToExcel="true"
 						useVariantManagement="true" persistencyKey="com.evorait.evosuite.evoplan.DemandsTable" useTablePersonalisation="true"
 						editTogglable="{parts:['user>/ENABLE_DEMAND_EDIT', 'viewModel>/validateIW32Auth'], formatter:'.formatter.editBtnVisibility'}"
 						editable="{viewModel>/bDemandEditMode}" app:useSmartField="true" editToggled="onEditToggledDemandTable"

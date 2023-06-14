@@ -63,7 +63,7 @@ sap.ui.define([
 			this._viewModel .setProperty("/subTableNoDataText", noDataText);
 			this._viewModel .setProperty("/Show_Assignment_Status_Button", false);
 			this._viewModel .refresh();
-		},
+		},		
 
 		/**
 		 * on press assign button in footer

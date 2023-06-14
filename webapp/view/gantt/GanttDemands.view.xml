@@ -3,7 +3,7 @@
 	controllerName="com.evorait.evoplan.controller.gantt.GanttDemands" displayBlock="true" height="100%">
 	<Page id="listPage" title="{i18n>xtit.itemListTitle}" showFooter="false" showHeader="false">
 		<!--<core:Fragment fragmentName="com.evorait.evoplan.view.fragments.DemandsTable" type="XML"/>-->
-		<smartTable:SmartTable id="draggableList" height="100%" width="100%" direction="Column" fitContainer="true" enableAutoBinding="true"
+		<smartTable:SmartTable id="draggableList"  beforeRebindTable="onBeforeRebindDemandTable"  height="100%" width="100%" direction="Column" fitContainer="true" enableAutoBinding="true"
 			entitySet="DemandSet" smartFilterId="listReportFilter" showRowCount="true" header="{i18n>xtit.itemListTitle}"
 			editTogglable="{parts:['user>/ENABLE_DEMAND_EDIT', 'viewModel>/validateIW32Auth'], formatter:'.formatter.editBtnVisibility'}"
 			editable="{viewModel>/bDemandEditMode}" app:useSmartField="true" editToggled="onEditToggledDemandTable" useExportToExcel="true"

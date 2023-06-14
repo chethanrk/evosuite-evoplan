@@ -103,6 +103,16 @@ sap.ui.define([
 		},
 
 		/**
+		 * Called on rebind demand smart table 
+		 * to set batch Group ID to binding params to separate batch calls
+		 * @param oEvent
+		 */
+		onBeforeRebindDemandTable: function (oEvent) {		
+			var oParams = oEvent.getParameter("bindingParams");
+			oParams["parameters"].batchGroupId = "DemandBatch";
+		},
+
+		/**
 		 * On Drag end check for dropped control, If dropped control not found
 		 * then make reset the selection
 		 * @param oEvent
