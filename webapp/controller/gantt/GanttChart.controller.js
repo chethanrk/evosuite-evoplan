@@ -43,6 +43,8 @@ sap.ui.define([
 
 		localStorage: new Storage(Storage.Type.local, "EvoPlan"),
 
+		_availabilityData: null,
+
 		/* =========================================================== */
 		/* lifecycle methods                                           */
 		/* =========================================================== */
@@ -1578,11 +1580,6 @@ sap.ui.define([
 				oUserData.ENABLE_SPLIT_STRETCH_ASSIGN) {
 				this._checkAssignmentForStretch(oResourceData, aSources, oTarget, oTargetDate, aGuids).then(function (oEndDate) {
 					return this.checkResourceQualification(aSources, oTarget, oTargetDate, oEndDate, aGuids);
-				}.bind(this), function () {
-					this.clearDragSession(this.getView());
-					this.oGanttModel.setProperty(sDummyPath, null);
-					this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-					reject();
 				}.bind(this)).then(function (oEndDate) {
 					this._assignDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids, sDummyPath);
 				}.bind(this)).catch(function () {
@@ -1660,9 +1657,9 @@ sap.ui.define([
 						oResourceData.ResourceGuid !== "")) {
 
 					this._checkAvailability(aSources, oTarget, oTargetDate, aGuids).then(function (availabilityData) {
-						this.availabilityData = availabilityData;
-						if (!availabilityData.Unavailable) {
-							return resolve(availabilityData.Endtimestamp);
+						this._availabilityData = availabilityData;
+						if (!this._availabilityData.Unavailable) {
+							return resolve(this._availabilityData.Endtimestamp);
 						} else {
 							return this._showConfirmMessageBox(oResourceModel.getText("ymsg.extendMsg"));
 						}
@@ -1671,9 +1668,9 @@ sap.ui.define([
 						reject();
 					}).then(function (value) {
 						if (value === "YES") {
-							resolve(this.availabilityData.Endtimestamp);
+							resolve(this._availabilityData.Endtimestamp);
 						} else if (value === "NO") {
-							resolve(this.availabilityData.EndtimestampWithstretch);
+							resolve(this._availabilityData.EndtimestampWithstretch);
 						}
 					}.bind(this));
 				} else {
@@ -2332,7 +2329,7 @@ sap.ui.define([
 						Function: sAsgnStsFnctnKey,
 						AssignmentGUID: oData.Guid
 					};
-					this.executeFunctionImport(this.getModel(), oParams, "ExecuteAssignmentFunction", "POST");
+					return this.executeFunctionImport(this.getModel(), oParams, "ExecuteAssignmentFunction", "POST");
 				} else {
 					reject();
 				}
