@@ -251,7 +251,10 @@ sap.ui.define([
 				this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
 			} else if (!aPayload.AssignmentCount) {
 				this.doDeleteResource(this._oModel, sSourceItemPath, true).then(function (oResponse) {
-					this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
+					return this.doCreateResource(this.getModel(), sEntitySetName, aPayload);
+				}.bind(this)).then(function (oResponse) {					
+				}.bind(this)).catch(function(oError){
+					//To Do Handle Catch here
 				}.bind(this));
 			} else {
 				this._callAssignmentsPopUp("moveResource");

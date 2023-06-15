@@ -226,7 +226,10 @@ sap.ui.define([
 
 			if (sOperationType === "moveResource") {
 				this.doDeleteResource(this._oModel, sPath, true).then(function (oResponse) {
-					this.doCreateResource(this._oModel, sEntitySetName, this._aPayLoad).then(function (oResponse) {}.bind(this));
+					return this.doCreateResource(this._oModel, sEntitySetName, this._aPayLoad);
+				}.bind(this)).then(function (oResponse) {
+				}.bind(this)).catch(function(oError){
+					// TO DO - Handle Catch
 				}.bind(this));
 			} else if (sOperationType === "deleteResource") {
 				this.doDeleteResource(this._oModel, sPath).then(function () {
