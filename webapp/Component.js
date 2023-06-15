@@ -20,6 +20,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentList",
 	"com/evorait/evoplan/controller/common/MaterialInfoDialog",
 	"com/evorait/evoplan/controller/common/FixedAppointmentsList",
+	"com/evorait/evoplan/controller/Scheduling/SchedulingDialog",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
 	"sap/m/Link",
@@ -61,6 +62,7 @@ sap.ui.define([
 	AssignmentList,
 	MaterialInfoDialog,
 	FixedAppointmentsList,
+	SchedulingDialog,
 	MessagePopover,
 	MessagePopoverItem,
 	Link,
@@ -249,6 +251,10 @@ sap.ui.define([
 			this.toolInfoDialog = new ToolInfoDialog();
 			this.toolInfoDialog.init();
 
+			//display and change auto scheduling and re-scheduling dialog
+			this.SchedulingDialog = new SchedulingDialog();
+			this.SchedulingDialog.init();
+			
 			//select resource from tree for assigning dialog
 			this.assignTreeDialog = new AssignTreeDialog();
 			this.assignTreeDialog.init();
@@ -576,6 +582,14 @@ sap.ui.define([
 					bIsGantt: false,
 					defaultStartDate: "",
 					defaultEndDate: ""
+				},
+				Scheduling:{
+					sType:"",
+					sScheduleDialogTitle:"",
+					bEnableReschedule: false,
+					SchedulingDialogFlags:{
+						
+					}
 				}
 			});
 			oViewModel.setSizeLimit(999999999);
