@@ -611,15 +611,15 @@ sap.ui.define([
 						});
 					} else {
 						// If no tool exists
-						this._showConfirmMessageBox.call(this, sConfirmMessage).then(function (data) {
-							oGanttModel.setProperty(sPath + "/busy", true);
-							if (data === "YES") {
-								fnDeleteAssignment();
-							} else {
-								oGanttModel.setProperty(sPath + "/busy", false);
-							}
-						}.bind(this));
+						return this._showConfirmMessageBox.call(this, sConfirmMessage);
 					}
+				}
+			}.bind(this)).then(function (data) {
+				oGanttModel.setProperty(sPath + "/busy", true);
+				if (data === "YES") {
+					fnDeleteAssignment();
+				} else {
+					oGanttModel.setProperty(sPath + "/busy", false);
 				}
 			}.bind(this));
 		},
