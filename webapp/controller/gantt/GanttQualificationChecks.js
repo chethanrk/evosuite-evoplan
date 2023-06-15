@@ -76,7 +76,7 @@ sap.ui.define([
 						});
 						this.getOwnerComponent().QualificationCheck.open(this, this.getView(), {}, resolve, reject);
 					} else {
-						resolve();
+						resolve(oNewEndDate);
 					}
 				}.bind(this), function () {
 					this.clearDragSession(this.getView());
