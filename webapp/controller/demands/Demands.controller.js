@@ -192,7 +192,7 @@ sap.ui.define([
 			oDataTable.attachRowSelectionChange(function (oEvent) {
 				var selected = this._oDataTable.getSelectedIndices(),
 					bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
-					sDemandPath, bComponentExist, sMsg, oSelectedItem;
+					sDemandPath, bComponentExist, sMsg;
 				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 
 				this._aSelectedRowsIdx = _.clone(selected);
@@ -227,14 +227,12 @@ sap.ui.define([
 				}
 
 				//Enabling or disabling Re-Schedule button based on status and flag
-				if(this._aSelectedRowsIdx.length === 1){
-					oSelectedItem = this.getModel().getProperty(this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
-					if(oSelectedItem.Status === "ASGN" && this.getModel("user").getProperty("/ALLOW_REASSIGN")){
-						this.getModel("viewModel").setProperty("/Scheduling/bEnableReschedule", true);
-					}
+				if(this._aSelectedRowsIdx[0] && this._aSelectedRowsIdx.length === 1){
+					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
 				} else {
-					this.getModel("viewModel").setProperty("/Scheduling/bEnableReschedule", false);
+					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
 				}
+				this.validateReschedule();
 
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
 				for (var i = 0; i < this._aSelectedRowsIdx.length; i++) {

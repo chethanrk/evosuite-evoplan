@@ -137,6 +137,10 @@ sap.ui.define([
 				this.byId("idButtonreassign").setEnabled(false);
 				this.byId("idButtonunassign").setEnabled(false);
 			}
+
+			//validate resource tree is selected or not for Re-Schedule
+			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", this.selectedResources);
+			this.validateReschedule();
 		},
 
 		/**
