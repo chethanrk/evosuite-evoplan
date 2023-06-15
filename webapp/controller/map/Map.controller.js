@@ -777,7 +777,7 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 		},
 		/**
-		 * Select item in Map Lagend to filter the map and Demand Table.
+		 * Select item in Map Legend to filter the map and Demand Table.
 		 * @Author Rakesh Sahu
 		 * @return
 		 * @param oEvent
