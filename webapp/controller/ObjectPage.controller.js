@@ -76,7 +76,8 @@ sap.ui.define([
 							sViewName = "com.evorait.evoplan.view.templates.DemandDetails#DemandDetailTabs";
 							mParams = {
 								Guid: window.decodeURIComponent(oArgs.guid),
-								sDeepPath: "DemandToQualification,DemandToComponents,DemandToAssignment"
+								sDeepPath: "DemandToQualification,DemandToComponents,DemandToAssignment",
+								bCallBackInChange:true //Refresh Detail Page when we open same demand for second time
 							};
 							this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageNewGanttChartSplit"));
 							this._onRouteMatched(oEvent, sViewName, "DemandSet", mParams, this.callBackFn2s);
