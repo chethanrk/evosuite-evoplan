@@ -226,6 +226,14 @@ sap.ui.define([
 					this.showMessageToast(sMsg);
 				}
 
+				//Enabling or disabling Re-Schedule button based on status and flag
+				if(this._aSelectedRowsIdx[0] && this._aSelectedRowsIdx.length === 1){
+					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
+				} else {
+					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
+				}
+				this.validateReschedule();
+
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
 				for (var i = 0; i < this._aSelectedRowsIdx.length; i++) {
 					sDemandPath = this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[i]).getPath();
