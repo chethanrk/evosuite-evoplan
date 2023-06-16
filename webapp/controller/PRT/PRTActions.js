@@ -46,22 +46,31 @@ sap.ui.define([
 				this.showMessageToast(oResourceBundle.getText("ymsg.prtToNotifNA"));
 				return;
 			} else if (bIsDateNode) {
-				this._proceedToAssignTools(aSources, oDateParams, mParameters);
+				/*Code to check Resource availability*/
+				if (oTargetObj.IS_AVAILABLE !== "A") {
+					this.showMessageToProceedPRT(oTargetObj.Description).then(function (resolve, reject) {
+						if (resolve) {
+							this._proceedToAssignTools(aSources, oDateParams, mParameters);
+						} else {
+							return;
+						}
+					});
+				} else {
+					this._proceedToAssignTools(aSources, oDateParams, mParameters);
+				}
 
 			} else if (sNodeType === "RESOURCE") {
-				if (oTargetObj.ResourceGuid) {
-					if (oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) { // If Dialog show config is on 
-						this.openDateSelectionDialog(this.getView(), oDateParams, aSources, mParameters);
-					} else { // If dialog show config is off
-						oDateParams.DateFrom = this._oViewModel.getProperty("/PRT/defaultStartDate");
-						oDateParams.TimeFrom.ms = oDateParams.DateFrom.getTime();
-						oDateParams.DateTo = this._oViewModel.getProperty("/PRT/defaultEndDate");
-						oDateParams.TimeTo.ms = oDateParams.DateTo.getTime();
-						this._proceedToAssignTools(aSources, oDateParams, mParameters);
-					}
+				var bToolAssignDialog = oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG");
+				if (oTargetObj.IS_AVAILABLE !== "A") {
+					this.showMessageToProceedPRT(oTargetObj.Description).then(function (resolve, reject) {
+						if (resolve) {
+							this.onPRTAssignmentProceed(this.getView(), oDateParams, aSources, mParameters, bToolAssignDialog, oTargetObj.ResourceGuid);
+						} else {
+							return;
+						}
+					}.bind(this));
 				} else {
-					this.showMessageToast(oResourceBundle.getText("ymsg.poolPrtNotAllowed"));
-					return;
+					this.onPRTAssignmentProceed(this.getView(), oDateParams, aSources, mParameters, bToolAssignDialog, oTargetObj.ResourceGuid);
 				}
 
 			} else if (sNodeType === "ASSIGNMENT" && !oTargetObj.IS_PRT) {
@@ -372,6 +381,56 @@ sap.ui.define([
 				oDialog.setBusy(false);
 				this.oComponent.toolInfoDialog.onToolOpen(oDialog, oView, sPath, data, mParams);
 			}
-		}
+		},
+
+		/**
+		 * method to open and set dates for tool assignment
+		 * @param oView source view
+		 * @param oDateParams required common parameters for all the assignments 
+		 * @param aSources Selected tools data and path
+		 * @param mParameters flag of source view 
+		 * @param bToolAssignDialog flag of Assign Dialog 
+		 * @param sResourceGuid for Resource GUID
+		 */
+		onPRTAssignmentProceed: function (oView, oDateParams, aSources, mParameters, bToolAssignDialog, sResourceGuid) {
+			if (sResourceGuid) {
+				if (bToolAssignDialog) { // If Dialog show config is on 
+					this.openDateSelectionDialog(this.getView(), oDateParams, aSources, mParameters);
+				} else { // If dialog show config is off
+					oDateParams.DateFrom = this._oViewModel.getProperty("/PRT/defaultStartDate");
+					oDateParams.TimeFrom.ms = oDateParams.DateFrom.getTime();
+					oDateParams.DateTo = this._oViewModel.getProperty("/PRT/defaultEndDate");
+					oDateParams.TimeTo.ms = oDateParams.DateTo.getTime();
+					this._proceedToAssignTools(aSources, oDateParams, mParameters);
+				}
+			} else {
+				this.showMessageToast(oResourceBundle.getText("ymsg.poolPrtNotAllowed"));
+				return;
+			}
+		},
+		/**
+		 * show simple confirm dialog
+		 * when action was pressed (custom or proceed action) then promise resolve is returned
+		 * @param {String} sResource
+		 * return {Promise}
+		 */
+		showMessageToProceedPRT: function (sResource) {
+			return new Promise(function (resolve, reject) {
+				var oResourceBundle = this.getResourceBundle(),
+					oComponent = this.getOwnerComponent(),
+					oView = this.getView();
+				var sAction = oResourceBundle.getText("xbut.proceed"),
+					sMsg = oResourceBundle.getText("ymsg.PRTAvailability", [sResource]);
+				sap.m.MessageBox.warning(
+					sMsg, {
+						actions: [sAction, sap.m.MessageBox.Action.CANCEL],
+						styleClass: oComponent.getContentDensityClass(),
+						onClose: function (sValue) {
+							return sValue === sAction ? resolve(true) : resolve(false);
+						}
+					}
+				);
+			}.bind(this));
+		},
 	});
 });
