@@ -22,6 +22,8 @@ sap.ui.define([
 			oViewModel = this.getModel("viewModel");
 			oScheduling = oViewModel.getProperty("/Scheduling");
 
+			//TODO - check if global config is enabled else return
+
 			if(oScheduling.selectedDemandPath){
 				oSelectedDemandItem = this.getModel().getProperty(oScheduling.selectedDemandPath);
 			
