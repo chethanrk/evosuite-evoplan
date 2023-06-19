@@ -68,7 +68,7 @@ sap.ui.define([
 				bCheckRightTechnician = this._oView.getModel("viewModel").getProperty("/CheckRightTechnician");
 
 			if (bCheckRightTechnician) {
-				oDemandsPaths = this._getAllowedDemandsToCheckResource(aSelectedPaths, isReassign, isBulkReAssign);
+				oDemandsPaths = this._getAllowedDemands(aSelectedPaths, isReassign, isBulkReAssign);
 				this._aSelectedPaths = oDemandsPaths.oAllowedSelectedPaths;
 				this._oFiltersRightTechnician = [this._getFormattedReqProfileId(this._aSelectedPaths, isReassign, isBulkReAssign)];
 			}
@@ -98,7 +98,7 @@ sap.ui.define([
 		/**
 		 * Validate Selected Demands Based on ALLOW_FINDRESOURCE Flag
 		 */
-		_getAllowedDemandsToCheckResource: function (aSelectedPaths, isReassign, isBulkReAssign) {
+		_getAllowedDemands: function (aSelectedPaths, isReassign, isBulkReAssign) {
 			var oAllowedSelectedPaths = [],
 				oNotAllowedPaths = [],
 				oDeselectAssignmentsContexts = [],

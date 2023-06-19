@@ -435,7 +435,7 @@ sap.ui.define([
 			if (this._aSelectedRowsIdx.length > 100) {
 				this._aSelectedRowsIdx.length = 100;
 			}
-			var oSelectedPaths = this._getAllowedDemandsToCheckResource(this._oDataTable, this._aSelectedRowsIdx),
+			var oSelectedPaths = this._getAllowedDemands(this._oDataTable, this._aSelectedRowsIdx),
 				sRequirementProfileIds,
 				sErrorMsg = this.getResourceBundle().getText("xmsg.findResourceNotAllowed");
 
@@ -466,7 +466,7 @@ sap.ui.define([
 		/**
 		 * Validate Selected Demands Based on ALLOW_FINDRESOURCE Flag
 		 */
-		_getAllowedDemandsToCheckResource: function (oTable, aSelectedRowsIdx) {
+		_getAllowedDemands: function (oTable, aSelectedRowsIdx) {
 			var aPathsData = [],
 				aNonAssignableDemands = [],
 				oData, oContext, sPath;

@@ -148,7 +148,7 @@ sap.ui.define([
 			if (this._aSelectedRowsIdx.length > 100) {
 				this._aSelectedRowsIdx.length = 100;
 			}
-			var oSelectedPaths = this._getAllowedDemandsToCheckResource(this._oDataTable, this._aSelectedRowsIdx);
+			var oSelectedPaths = this._getAllowedDemands(this._oDataTable, this._aSelectedRowsIdx);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
 				this._eventBus.publish("AssignTreeDialog", "assignSelectedDemand", {
@@ -165,7 +165,7 @@ sap.ui.define([
 		 * Validate Selected Demands Based on ALLOW_ASSIGN Flag
 		 * 
 		 */
-		_getAllowedDemandsToCheckResource: function (oTable, aSelectedRowsIdx) {
+		_getAllowedDemands: function (oTable, aSelectedRowsIdx) {
 			var aPathsData = [],
 				aNonAssignableDemands = [],
 				oData, oContext, sPath;
