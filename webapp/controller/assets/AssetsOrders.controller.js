@@ -168,7 +168,7 @@ sap.ui.define([
 				oRouter = this.getRouter(),
 				oUserModel = this.getModel("user");
 			if (oEvent.getParameter("multiSelect")) { // CTL+ <appointment> will trigger this parameter (Not documented in SAPUI5 Demokit)
-				this._multiAssignment(oData, oSelectedDemand);
+				this._selectMultiAssignment(oData, oSelectedDemand);
 				return;
 			} else {
 				this._aSelectedDemands = [];
@@ -189,7 +189,7 @@ sap.ui.define([
 		 * @param {Object} oSelectedDemand Selected appointment
 		 * @private
 		 */
-		_multiAssignment: function (oData, oSelectedDemand) {
+		_selectMultiAssignment: function (oData, oSelectedDemand) {
 			var oResourceBundle = this.getResourceBundle(),
 				oContext = oSelectedDemand.getBindingContext(),
 				sPath = oContext.getPath();

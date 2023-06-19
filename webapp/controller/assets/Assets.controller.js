@@ -106,7 +106,7 @@ sap.ui.define([
 
 			oModel.resetChanges();
 			this._selectedAssets = [];
-			this.checkButtons();
+			this.enableButtons();
 
 			oRouter.navTo("assetManager", {
 				assets: "NA"
@@ -168,7 +168,7 @@ sap.ui.define([
 				this._selectedAssets.splice(this._selectedAssets.indexOf(this.getModel().getProperty(sPath + "/NodeId")), 1);
 			}
 			// To enable or desable the footer buttons
-			this.checkButtons();
+			this.enableButtons();
 		},
 		/**
 		 * When any row is selected on tree table then navigating to assetManager
@@ -195,7 +195,7 @@ sap.ui.define([
 		/**
 		 * Enable or disable footer buttons on selection of rows in tree table
 		 */
-		checkButtons: function () {
+		enableButtons: function () {
 			if (this._selectedAssets.length > 0) {
 				this.byId("idButtonShoWD").setEnabled(true);
 				this.byId("idClr").setEnabled(true);
