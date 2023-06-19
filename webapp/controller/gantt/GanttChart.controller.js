@@ -1044,17 +1044,16 @@ sap.ui.define([
 					sSourcePath = Utility.parseUid(key).shapeDataName,
 					sTargetPath = oTargetContext.getPath(),
 					oSourceData = this.oGanttModel.getProperty(sSourcePath),
-					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
+					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update,
+					bSameResourcePath = sTargetPath.split("/").splice(0, 6).join("/") === sSourcePath.split("/").splice(0, 6).join("/");;
 				if (oSourceData.PRT_ASSIGNMENT_TYPE === "PRTDEMASGN") { // Reassigning PRT deanmd assignemnt is restricted
 					this.showMessageToast(msg);
 					return;
 				}
 				//Allowing Assignment Shape Drop Only on Resource Nodes when dragged from different resources
-				if (oTargetContext.getObject().NodeType === "ASSIGNMENT" || !oTargetContext.getObject().ResourceGuid) { // Reassigning PRT resource assignment to Demand assignment or PRT resource not allowed
-					this.showMessageToast(msg);
-				} else if (oTargetContext.getObject().NodeType === "RESOURCE") {
+				if (oTargetContext.getObject().NodeType === "RESOURCE" || bSameResourcePath) {
 					// Here we check below of the source is PR or not.
-					if (oSourceData.IS_PRT && oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) {
+					if (oSourceData.IS_PRT) {
 						var oDraggedShapeData = oParams.draggedShapeDates[key]
 						if (oDraggedShapeData) {
 							var iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays"),
@@ -1065,8 +1064,9 @@ sap.ui.define([
 						// Assigning the To and From time to the dialog box model.
 						this.oViewModel.setProperty("/PRT/defaultStartDate", oSourceDataDateFrom);
 						this.oViewModel.setProperty("/PRT/defaultEndDate", oSourceDataDateTo);
-						var oTargetObj = this.oGanttModel.getProperty(sTargetPath),
-							mParameters = {
+
+						if (oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) {
+							var mParameters = {
 								bFromGanttToolReassign: true,
 								sSourcePath: sSourcePath,
 								sTargetPath: sTargetPath,
@@ -1074,21 +1074,21 @@ sap.ui.define([
 								oParams: oParams,
 								sRequestType: sRequestType
 							};
-						this.openDateSelectionDialog(this.getView(), null, null, mParameters);
+							this.openDateSelectionDialog(this.getView(), null, null, mParameters);
+						} else {
+							sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
+							this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+						}
 					} else {
 						//set new time and resource data to gantt model, setting also new pathes
 						sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
 						this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
 					}
 
-				} else { //Allowing Assignment Shape Drop Only within the same resources
-					bSameResourcePath = sTargetPath.split("/").splice(0, 6).join("/") === sSourcePath.split("/").splice(0, 6).join("/");
-					if (bSameResourcePath) {
-						sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
-						this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
-					}
+				} else if (oTargetContext.getObject().NodeType === "ASSIGNMENT" || !oTargetContext.getObject().ResourceGuid) { // Reassigning PRT resource assignment to Demand assignment or PRT resource not allowed
+					this.showMessageToast(msg);
 				}
-			}
+				}
 		},
 		/**
 		 * method to handle shape drop When a shape for Tool is dragged inside Gantt to reassign
