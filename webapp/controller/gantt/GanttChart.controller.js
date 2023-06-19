@@ -1043,13 +1043,14 @@ sap.ui.define([
 					sTargetPath = oTargetContext.getPath(),
 					oSourceData = this.oGanttModel.getProperty(sSourcePath),
 					sRequestType = oSourceData.ObjectId !== oTargetData.NodeId ? this.mRequestTypes.reassign : this.mRequestTypes.update;
-				bSameResourcePath = sTargetPath.split("/").splice(0, 6).join("/") === sSourcePath.split("/").splice(0, 6).join("/");
 				if (oSourceData.PRT_ASSIGNMENT_TYPE === "PRTDEMASGN") { // Reassigning PRT deanmd assignemnt is restricted
 					this.showMessageToast(msg);
 					return;
 				}
 				//Allowing Assignment Shape Drop Only on Resource Nodes when dragged from different resources
-				if (oTargetContext.getObject().NodeType === "RESOURCE" || bSameResourcePath) {
+				if (oTargetContext.getObject().NodeType === "ASSIGNMENT" || !oTargetContext.getObject().ResourceGuid) { // Reassigning PRT resource assignment to Demand assignment or PRT resource not allowed
+					this.showMessageToast(msg);
+				} else if (oTargetContext.getObject().NodeType === "RESOURCE") {
 					// Here we check below of the source is PR or not.
 					if (oSourceData.IS_PRT && oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) {
 						var oDraggedShapeData = oParams.draggedShapeDates[key]
@@ -1078,8 +1079,12 @@ sap.ui.define([
 						this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
 					}
 
-				} else if (oTargetContext.getObject().NodeType === "ASSIGNMENT" || !oTargetContext.getObject().ResourceGuid) { // Reassigning PRT resource assignment to Demand assignment or PRT resource not allowed
-					this.showMessageToast(msg);
+				} else { //Allowing Assignment Shape Drop Only within the same resources
+					bSameResourcePath = sTargetPath.split("/").splice(0, 6).join("/") === sSourcePath.split("/").splice(0, 6).join("/");
+					if (bSameResourcePath) {
+						sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
+						this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
+					}
 				}
 			}
 		},
