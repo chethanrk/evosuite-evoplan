@@ -156,7 +156,7 @@ sap.ui.define([
 					final: false,
 					overrideExecution: OverrideExecution.Instead
 				},
-				onSelectMapLagend: {
+				onSelectMapLegend: {
 					public: true,
 					final: false,
 					overrideExecution: OverrideExecution.Instead
@@ -780,12 +780,12 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 		},
 		/**
-		 * Select item in Map Lagend to filter the map and Demand Table.
+		 * Select item in Map Legend to filter the map and Demand Table.
 		 * @Author Rakesh Sahu
 		 * @return
 		 * @param oEvent
 		 */
-		onSelectMapLagend: function (oEvent) {
+		onSelectMapLegend: function (oEvent) {
 			var sValue = oEvent.getSource().getSelectedItem().getTitle(),
 				oStatusFilter = this.byId("listReportFilter").getControlByKey("Status"),
 				aTokens = [],

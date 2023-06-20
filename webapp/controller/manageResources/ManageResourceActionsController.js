@@ -9,7 +9,7 @@ sap.ui.define([
 		sOperationTypePath = "/manageResourcesSettings/operationType";
 	return BaseController.extend("com.evorait.evoplan.controller.manageResources.ManageResourceActionsController", {
 
-		onInitResourceActionController: function () {
+		onInitActionController: function () {
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			this._oEventBus.subscribe("ManageResourcesActionsController", "refreshAssignmentDialog", this._refreshAssignmentDialog, this);
 		},
@@ -281,7 +281,7 @@ sap.ui.define([
 		 * destroy contents on Exit
 		 * @param 
 		 */
-		onExitResourceActionController: function () {
+		onExitActionController: function () {
 			this._oEventBus.unsubscribe("ManageResourcesActionsController", "refreshAssignmentDialog", this._refreshAssignmentDialog, this);
 		}
 
