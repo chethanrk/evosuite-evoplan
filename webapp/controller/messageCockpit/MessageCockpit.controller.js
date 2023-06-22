@@ -81,9 +81,6 @@ sap.ui.define([
 			var oModel = this.getModel(),
 				oCounterModel = this.getModel("messageCounter");
 
-			//to handle the failing scenario when refreshed on message cockpit
-				this.getModel("viewModel").setProperty("/bBufferRefreshVisible", false);
-
 			oModel.setUseBatch(false);
 			
 			this.oComponent.readData("/MessageSet/$count", [new Filter("SyncStatus", FilterOperator.EQ, "E")])

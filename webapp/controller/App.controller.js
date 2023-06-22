@@ -243,10 +243,14 @@ sap.ui.define([
 				pageTitle = oResourceBundle.getText("xbut.pageDemands");
 
 			this.getModel("viewModel").setProperty("/ganttSettings/active", false);
+			//buffer refresh visible for other views
+			oAppViewModel.setProperty("/bBufferRefreshVisible", true);
 
 			if (oParams.config.pattern.startsWith("AssetPlanning")) {
 				pageTitle = oResourceBundle.getText("xbut.pageAssetManager");
 			} else if (oParams.config.pattern.startsWith("MessageCockpit")) {
+				//buffer refresh hidden for message cockpit
+				oAppViewModel.setProperty("/bBufferRefreshVisible", false);
 				pageTitle = oResourceBundle.getText("xbut.pageMessageCockpit");
 			} else if (oParams.config.pattern.startsWith("SplitPage")) {
 				pageTitle = oResourceBundle.getText("xbut.pageNewGanttChartSplit");
