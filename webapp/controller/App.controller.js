@@ -128,7 +128,7 @@ sap.ui.define([
 			oAppViewModel.setProperty("/busy", true);
 
 			//set buffer refresh true for all views
-			this.getView().byId("idButtonRefresh").setVisible(true);  
+			oViewModel.setProperty("/bBufferRefreshVisible", true);  
 
 			switch (sItemText) {
 			case oResourceBundle.getText("xbut.pageDemands"):
@@ -149,7 +149,7 @@ sap.ui.define([
 			case oResourceBundle.getText("xbut.pageMessageCockpit"):
 				if (this._routeValidation("ENABLE_EMP")) {
 					//set buffer refresh visible false for message cockpit
-					this.getView().byId("idButtonRefresh").setVisible(false); 
+					oViewModel.setProperty("/bBufferRefreshVisible", false); 
 					oRouter.navTo("messageCockpit", {});
 					break;
 				}

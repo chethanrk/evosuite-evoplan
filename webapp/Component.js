@@ -590,7 +590,8 @@ sap.ui.define([
 					SchedulingDialogFlags:{
 						
 					}
-				}
+				},
+				bBufferRefreshVisible: true
 			});
 			oViewModel.setSizeLimit(999999999);
 			this.setModel(oViewModel, "viewModel");
