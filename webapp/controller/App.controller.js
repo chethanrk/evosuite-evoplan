@@ -126,6 +126,10 @@ sap.ui.define([
 			}
 			oAppViewModel.setProperty("/pageTitle", sItemText);
 			oAppViewModel.setProperty("/busy", true);
+
+			//set buffer refresh true for all views
+			this.getView().byId("idButtonRefresh").setVisible(true);  
+
 			switch (sItemText) {
 			case oResourceBundle.getText("xbut.pageDemands"):
 				oRouter.navTo("demands", {});
@@ -144,6 +148,8 @@ sap.ui.define([
 				break;
 			case oResourceBundle.getText("xbut.pageMessageCockpit"):
 				if (this._routeValidation("ENABLE_EMP")) {
+					//set buffer refresh visible false for message cockpit
+					this.getView().byId("idButtonRefresh").setVisible(false); 
 					oRouter.navTo("messageCockpit", {});
 					break;
 				}
