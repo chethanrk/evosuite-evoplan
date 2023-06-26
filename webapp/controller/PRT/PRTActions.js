@@ -1,14 +1,14 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/Scheduling/SchedulingActions",
+	"com/evorait/evoplan/controller/BaseController",
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/OverrideExecution",
 	"sap/m/MessageToast"
-], function (SchedulingActions, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast) {
+], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast) {
 
-	return SchedulingActions.extend("com.evorait.evoplan.controller.PRT.PRTOperations", {
+	return BaseController.extend("com.evorait.evoplan.controller.PRT.PRTOperations", {
 
 		/* =========================================================== */
 		/* Public methods                                              */

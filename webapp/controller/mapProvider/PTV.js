@@ -1,7 +1,7 @@
 /* globals axios */
 /* globals _ */
 sap.ui.define([
-	"com/evorait/evoplan/controller/map/MapProvider",
+	"com/evorait/evoplan/controller/mapProvider/MapProvider",
 	"sap/ui/core/mvc/OverrideExecution",
 	"sap/m/MessageBox"
 ], function (MapProvider, OverrideExecution, MessageBox) {
@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @property {string} _sDefaultResourceEndtHour - Number representing ending working hour (e.g. 17)
 	 * @property {sap.ui.model.json.JSONModel} oUserModel - User model containing system parameters for a user
 	 */
-	return MapProvider.extend("com.evorait.evoplan.controller.map.PTV", {
+	return MapProvider.extend("com.evorait.evoplan.controller.mapProvider.PTV", {
 
 		metadata: {
 			// extension can declare the public methods

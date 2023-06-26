@@ -14,7 +14,7 @@ sap.ui.define([
 	 * @property {string} sServiceUrl - Base URL for the Map Provider 
 	 * e.g. it should be 'https://xserver2-europe-eu-test.cloud.ptvgroup.com/services/rs' for the PTV test service.
 	 */
-	return Controller.extend("com.evorait.evoplan.controller.map.MapProvider", {
+	return Controller.extend("com.evorait.evoplan.controller.mapProvider.MapProvider", {
 
 		metadata: {
 			// The class is abstract.

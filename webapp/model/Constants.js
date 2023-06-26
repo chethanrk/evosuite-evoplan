@@ -35,7 +35,7 @@ sap.ui.define([], function () {
 			SPLITDMD: "splitDemands"
 		},
 		MAP: {
-			JS_PROVIDERS_PATH: "com/evorait/evoplan/controller/map/"
+			JS_PROVIDERS_PATH: "com/evorait/evoplan/controller/mapProvider/"
 		},
 		CRITICALLYSTATES: {
 			"info": {
