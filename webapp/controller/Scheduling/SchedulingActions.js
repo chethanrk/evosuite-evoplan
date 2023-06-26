@@ -11,29 +11,44 @@ sap.ui.define([
 	
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
 
+		_controller: undefined, //controller from where this class was initialized
+		oViewModel: undefined,
+		oDataModel: undefined,
+
+		/**
+		 * Set here all global properties you need from other controller
+		 * @param {*} controller 
+		 */
+		constructor: function(controller) {
+			this._controller = controller;
+			this.oViewModel = controller.getModel("viewModel");
+			this.oDataModel = controller.getModel();
+		},
+
 		/* =========================================================== */
 		/* Public methods                                              */
 		/* =========================================================== */
+
 		/**
 		 * Function to validate rescheduling button
 		 */
 		validateReschedule: function(){
-			var oSelectedDemandItem, oScheduling, oViewModel;
-			oViewModel = this.getModel("viewModel");
-			oScheduling = oViewModel.getProperty("/Scheduling");
+			var oSelectedDemandItem, oScheduling;
+			oScheduling = this.oViewModel.getProperty("/Scheduling");
 
-			//TODO - check if global config is enabled else return
+			//TODO - check if global config is enabled for multiple demands
 
 			if(oScheduling.selectedDemandPath){
-				oSelectedDemandItem = this.getModel().getProperty(oScheduling.selectedDemandPath);
+				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 			
-				if(oScheduling.selectedResources && oSelectedDemandItem.ALLOW_REASSIGN && oScheduling.selectedResources.length > 0){
-					oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
+				if(oScheduling.selectedResources && oScheduling.selectedResources.length > 0 && 
+					(oSelectedDemandItem.ALLOW_REASSIGN || oSelectedDemandItem.ALLOW_ASSIGN)){
+					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
 				} else {
-					oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 				}
 			} else {
-				oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 			}
 		}
 

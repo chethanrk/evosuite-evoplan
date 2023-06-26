@@ -12,11 +12,11 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/Constants"
 ], function (Device, JSONModel, Filter, FilterOperator,
-	FilterType, formatter, BaseController, ResourceTreeFilterBar,
+	FilterType, formatter, AssignmentsController, ResourceTreeFilterBar,
 	MessageToast, MessageBox, Fragment, Constants) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.demands.ResourceTree", {
+	return AssignmentsController.extend("com.evorait.evoplan.controller.demands.ResourceTree", {
 
 		formatter: formatter,
 
@@ -32,11 +32,15 @@ sap.ui.define([
 
 		_bFirsrTime: true,
 
+
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
 		 **/
 		onInit: function () {
+			// call super class onInit
+			AssignmentsController.prototype.onInit.apply(this, arguments);
+
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
 			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
 			this._oViewModel = this.getModel("viewModel");
@@ -140,7 +144,7 @@ sap.ui.define([
 
 			//validate resource tree is selected or not for Re-Schedule
 			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", this.selectedResources);
-			this.validateReschedule();
+			this.oSchedulingActions.validateReschedule();
 		},
 
 		/**

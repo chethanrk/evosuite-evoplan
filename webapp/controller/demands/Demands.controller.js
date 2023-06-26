@@ -29,6 +29,9 @@ sap.ui.define([
 		 * @public
 		 */
 		onInit: function () {
+			// call super class onInit
+			BaseController.prototype.onInit.apply(this, arguments);
+
 			this._oDraggableTable = this.byId("draggableList");
 			this._viewModel  = this.getModel("viewModel");
 			this._oDataTable = this._oDraggableTable.getTable();
@@ -63,7 +66,7 @@ sap.ui.define([
 			this._viewModel .setProperty("/subTableNoDataText", noDataText);
 			this._viewModel .setProperty("/Show_Assignment_Status_Button", false);
 			this._viewModel .refresh();
-		},		
+		},
 
 		/**
 		 * on press assign button in footer
@@ -106,10 +109,10 @@ sap.ui.define([
 						oViewModel.setProperty("/bDemandEditMode", false);
 						this._navToDetail(null, this.oRow);
 					} else
-					if (bResponse === sSave) {
-						oViewModel.setProperty("/bDemandEditMode", false);
-						this.submitDemandTableChanges();
-					}
+						if (bResponse === sSave) {
+							oViewModel.setProperty("/bDemandEditMode", false);
+							this.submitDemandTableChanges();
+						}
 				}.bind(this));
 
 			} else {
@@ -227,12 +230,13 @@ sap.ui.define([
 				}
 
 				//Enabling or disabling Re-Schedule button based on status and flag
+				//TODO - support multiple demands
 				if(this._aSelectedRowsIdx[0] && this._aSelectedRowsIdx.length === 1){
 					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
 				} else {
 					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
 				}
-				this.validateReschedule();
+				this.oSchedulingActions.validateReschedule();
 
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
 				for (var i = 0; i < this._aSelectedRowsIdx.length; i++) {
@@ -418,7 +422,7 @@ sap.ui.define([
 				if (aEntityTypes[i].name === sEntity) {
 					for (var j in aEntityTypes[i].property) {
 						if (aEntityTypes[i].property[j].name === sKey && (aEntityTypes[i].property[j].name.type === "Edm.DateTime" || aEntityTypes[i].property[
-								j].name.type === "Edm.DateTimeOffset")) {
+							j].name.type === "Edm.DateTimeOffset")) {
 							return true;
 						}
 					}
@@ -518,14 +522,14 @@ sap.ui.define([
 				}
 			}
 		},
-		
+
 		/**
 		 * Event handler to switch between Demand and Tool list
 		 * @param oEvent
 		 */
 		handleViewSelectionChange: function (oEvent) {
 			this.getOwnerComponent().bIsFromPRTSwitch = true;
-			var sSelectedKey = this._viewModel .getProperty("/PRT/btnSelectedKey");
+			var sSelectedKey = this._viewModel.getProperty("/PRT/btnSelectedKey");
 			if (sSelectedKey === "demands") {
 				this._oRouter.navTo("demands", {});
 			} else {

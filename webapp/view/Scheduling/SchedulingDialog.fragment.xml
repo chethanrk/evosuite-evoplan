@@ -8,7 +8,6 @@
 	<Dialog
 		id="SchedulingDialog"
 		title="{viewModel>/Scheduling/sScheduleDialogTitle}"
-		titleAlignment="Center"
 		showHeader="true"
 		verticalScrolling="false"
 		contentHeight="70%"
@@ -22,8 +21,7 @@
 					<Wizard id="WizardScheduling"
 						class="sapUiResponsivePadding--header sapUiResponsivePadding--content"
 						showNextButton="false"
-						navigationChange="handleNavigationChange"
-						renderMode="Page">
+						stepActivate="handleNavigationChange">
 				
 					<WizardStep id="DateRangeStep"
 								validated="true"
