@@ -1,15 +1,12 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/BaseController",
+	"com/evorait/evoplan/controller/TemplateRenderController",
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
-	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/mvc/OverrideExecution",
-	"sap/m/MessageToast",
-	'sap/ui/model/json/JSONModel',
-], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast, JSONModel) {
+	"sap/ui/core/mvc/OverrideExecution"
+], function (TemplateRenderController, MessageBox, formatter, Fragment, OverrideExecution) {
 	
-	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingDialog", {
+	return TemplateRenderController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingDialog", {
 
 		/* =========================================================== */
 		/* Public methods                                              */
@@ -29,7 +26,7 @@ sap.ui.define([
 		 */
 		openSchedulingDialog: function (oView) {
 			this._oView=oView;
-			this._InitializeDialogModel();
+			this._initializeDialogModel();
 			// create Dialog
 			if (!this._ScheduleDialog) {
 				this._ScheduleDialog = Fragment.load({
@@ -43,6 +40,7 @@ sap.ui.define([
 				}.bind(this));
 			}
 			this._ScheduleDialog.then(function (oDialog) {
+				//this._getTableLineItems();
 				oDialog.open();
 			});
 			
@@ -132,10 +130,17 @@ sap.ui.define([
 		/* =========================================================== */
 
 		/**
+		 * 
+		 */
+		_getDemandTableLineItems: function(){
+			
+		},
+
+		/**
 		 * This below method is used to assign the initialize the model and assign 
 		 * property binded to controls of the dialog box and wizard
 		 */
-		_InitializeDialogModel: function () {
+		_initializeDialogModel: function () {
 			this._ResourceModel = this._oView.getController().getModel("i18n").getResourceBundle();
 			if(!this._oViewModel){
 				this._oViewModel = this._oView.getModel("viewModel")
@@ -184,7 +189,7 @@ sap.ui.define([
 					if (oAction === MessageBox.Action.YES) {
 						this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
 						this._oView.byId("SchedulingDialog").close();
-						this._InitializeDialogModel();
+						this._initializeDialogModel();
 					}
 				}.bind(this)
 			});
