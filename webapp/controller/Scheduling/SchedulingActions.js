@@ -35,7 +35,7 @@ sap.ui.define([
 
 			if(oScheduling.selectedDemandPath){
 				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
-			
+
 				if(oScheduling.selectedResources && oScheduling.selectedResources.length > 0 && 
 					(oSelectedDemandItem.ALLOW_REASSIGN || oSelectedDemandItem.ALLOW_ASSIGN)){
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);

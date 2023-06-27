@@ -231,7 +231,7 @@ sap.ui.define([
 
 				//Enabling or disabling Re-Schedule button based on status and flag
 				//TODO - support multiple demands
-				if(this._aSelectedRowsIdx[0] && this._aSelectedRowsIdx.length === 1){
+				if(this._aSelectedRowsIdx.length > 0){
 					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
 				} else {
 					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
