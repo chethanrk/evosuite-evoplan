@@ -1,0 +1,20 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+
+    <core:ExtensionPoint name="WizardExtP|AutoSchedule|Step1|Content|Before"/>
+    
+    <l:VerticalLayout width="100%" class="sapNoContentPadding">
+
+        <core:Fragment fragmentName="com.evorait.evoplan.view.Scheduling.ScheduleDateRangeForm" type="XML"/>
+
+        <ScrollContainer
+            id="AutoScheduling-DemandTable"
+            height="100%"
+            width="100%"
+            vertical="true"
+            focusable="true">
+            
+        </ScrollContainer>
+    </l:VerticalLayout>
+    <core:ExtensionPoint name="WizardExtP|AutoSchedule|Step1|Content|After"/>
+    
+</core:FragmentDefinition>
