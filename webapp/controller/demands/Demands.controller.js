@@ -210,6 +210,7 @@ sap.ui.define([
 					this.byId("idUnassignButton").setEnabled(bEnable);
 					this.byId("idAssignmentStatusButton").setEnabled(bEnable);
 					this.byId("idOverallStatusButton").setEnabled(true);
+					this.byId("idPlanDemands").setEnabled(true);
 				} else {
 					this.byId("idfindRightTechnicianButton").setEnabled(false);
 					this.byId("assignButton").setEnabled(false);
@@ -218,6 +219,7 @@ sap.ui.define([
 					this.byId("idOverallStatusButton").setEnabled(false);
 					this.byId("materialInfo").setEnabled(false);
 					this.byId("idUnassignButton").setEnabled(false);
+					this.byId("idPlanDemands").setEnabled(false);
 				}
 
 				//If the selected demands exceeds more than the maintained selected configuration value
