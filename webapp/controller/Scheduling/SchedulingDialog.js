@@ -2,7 +2,6 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/TemplateRenderController",
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
-	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/models",
 	"sap/ui/core/mvc/OverrideExecution"
@@ -73,6 +72,7 @@ sap.ui.define([
 				}.bind(this));
 			}
 			this._ScheduleDialog.then(function (oDialog) {
+				//this._getTableLineItems();
 				oDialog.open();
 			}.bind(this));
 			
