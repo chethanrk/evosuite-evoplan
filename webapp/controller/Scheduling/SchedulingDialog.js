@@ -2,19 +2,37 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/TemplateRenderController",
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
+	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/OverrideExecution"
-], function (TemplateRenderController, MessageBox, formatter, Fragment, OverrideExecution) {
+], function (TemplateRenderController, MessageBox, formatter, Constants, Fragment, OverrideExecution) {
 	
 	return TemplateRenderController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingDialog", {
 
 		/* =========================================================== */
 		/* Public methods                                              */
 		/* =========================================================== */
+		_oViewModel: null,
+		_component: null,
+		_oView: null,
+		_mParams: {},
+		_oResourceBundle: null,
+		_oModel: null,
+
+		/**
+		 * overwrite constructor
+		 * set manuel owner component for nested xml views
+		 */
+		constructor: function (oComponent) {
+			this.setOwnerComponent(oComponent);
+			TemplateRenderController.apply(this, arguments);
+		},
+
 
 		init: function () {
 			
 		},
+
 		/**
 		 * This method is used to open the dialog box
 		 * @param oView source view
@@ -24,25 +42,30 @@ sap.ui.define([
 		 * This method is used to open the dialog box and call the 
 		 * relevant methods post that.
 		 */
-		openSchedulingDialog: function (oView) {
-			this._oView=oView;
+		openSchedulingDialog: function (oView, mParams) {
+			this._oView = oView;
+			this._mParams = mParams || {};
+			this._component = this._oView.getController().getOwnerComponent();
+			this._oModel = oView.getModel();
+
 			this._initializeDialogModel();
+
 			// create Dialog
 			if (!this._ScheduleDialog) {
 				this._ScheduleDialog = Fragment.load({
-					id: oView.getId(),
 					name: "com.evorait.evoplan.view.Scheduling.SchedulingDialog",
-					controller: this
+					controller: this,
+					type: "XML"
 				}).then(function (oDialog) {
 					oDialog.attachAfterOpen(this.onDialogAfterOpen, this);
 					oView.addDependent(oDialog);
+					this._renderWizardStep1Binding(oDialog);
 					return oDialog;
 				}.bind(this));
 			}
 			this._ScheduleDialog.then(function (oDialog) {
-				//this._getTableLineItems();
 				oDialog.open();
-			});
+			}.bind(this));
 			
 		},
 		/**
@@ -130,10 +153,38 @@ sap.ui.define([
 		/* =========================================================== */
 
 		/**
+		 * set wizard content for step1 
+		 * make difference between Auto and Re-Scheduling
+		 * Based on schedule type another view gets rendered bei TemplateRenderer
 		 * 
+		 * In template views the Json model and path to Json data are set instead of an entitySet
+		 * Table columns are rendered from EntitySet LineItems but Table data are from Json Model
+		 * 
+		 * @param {*} oDialog 
 		 */
-		_getDemandTableLineItems: function(){
-			
+		_renderWizardStep1Binding: function(oDialog){
+			var sPath = this.getEntityPath(this._mParams.entitySet, null, this._oView),
+			sContainerId = "DateRangeStep";
+			oDialog.setBusyIndicatorDelay(0);
+			oDialog.setBusy(true);
+
+			if (this._mParams.isAutoSchedule) {
+				//sContainerId = "AutoScheduling-DemandTable";
+				this._mParams.viewName = "com.evorait.evoplan.view.Scheduling.AutoScheduling.AutoScheduleStep1#AutoScheduleStep1";
+				this._mParams.modelName = "viewModel";
+				this._mParams.modelDataSetPath = "/Scheduling/AutoSchedule/DataSet";
+			} else {
+				//sContainerId = "ReScheduling-AssignmentTable";
+				this._mParams.viewName = "com.evorait.evoplan.view.Scheduling.ReScheduling.ReScheduleStep1#ReScheduleStep1";
+				this._mParams.modelName = "viewModel";
+				this._mParams.modelDataSetPath = "/Scheduling/ReSchedule/DataSet";
+			}
+
+			this._oModel.metadataLoaded().then(function () {
+				//get template and create views
+				this._mParams.oView = this._oView;
+				this.insertTemplateFragment(sPath, this._mParams.viewName, sContainerId, this._afterStep1RenderSuccess.bind(this, sPath), this._mParams);
+			}.bind(this));
 		},
 
 		/**
@@ -145,9 +196,17 @@ sap.ui.define([
 			if(!this._oViewModel){
 				this._oViewModel = this._oView.getModel("viewModel")
 			}
+			var sType = this._oViewModel.getProperty("/Scheduling/sType");
+			this._mParams.isAutoSchedule = sType === Constants.SCHEDULING.AUTOSCHEDULING;
+			this._mParams.isReschuduling = sType === Constants.SCHEDULING.RESCHEDULING;
+			
 			// setting the dialog title based on flag in viewMiodel
-			// TODO: - write logic here pending after ticket merge EVOSUITE2-4689
-			this._oViewModel.setProperty("/Scheduling/sScheduleDialogTitle",this._ResourceModel.getText("xtit.RescheduleDialogTitle"));
+			let sDialogTitle = this._ResourceModel.getText("xtit.AutoscheduleDialogTitle");
+			if(this._mParams.isReschuduling){
+				sDialogTitle = this._ResourceModel.getText("xtit.RescheduleDialogTitle");
+			}
+			this._oViewModel.setProperty("/Scheduling/sScheduleDialogTitle", sDialogTitle);
+
 			var oData = {
 				bBackButtonVisible: false,
 				bNextButtonVisible: true,
@@ -194,7 +253,13 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
-
+		/**
+		 * After step1 template rendering was completed
+		 * @param {*} oEvent 
+		 */
+		_afterStep1RenderSuccess: function(oEvent){
+			console.log(oEvent);
+		}
 
 	});
 });
