@@ -36,14 +36,16 @@ sap.ui.define([
 			if(oScheduling.selectedDemandPath){
 				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 
-				if(oScheduling.selectedResources && oScheduling.selectedResources.length > 0 && 
-					(oSelectedDemandItem.ALLOW_REASSIGN || oSelectedDemandItem.ALLOW_ASSIGN)){
-					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
+				if(oScheduling.selectedResources.length > 0 && oScheduling.selectedDemandPath) {
+					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", !!oSelectedDemandItem.ALLOW_REASSIGN);
+					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", !!oSelectedDemandItem.ALLOW_ASSIGN);
 				} else {
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 				}
 			} else {
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+				this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 			}
 		}
 
