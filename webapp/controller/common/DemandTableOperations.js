@@ -4,8 +4,9 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/mvc/OverrideExecution"
-], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution) {
+	"sap/ui/core/mvc/OverrideExecution",
+	"sap/base/util/deepClone"
+], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, deepClone) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.DemandTableOperations", {
 
@@ -252,8 +253,32 @@ sap.ui.define([
 		 * @return {boolean}
 		 */
 		_validateRescheduleProcess: function(){
-			this.showMessageToast("Validation successfull");
-			return true;
+			var oViewModel = this.getModel("viewModel"),
+				oDatModel = this.getModel(),
+				aResourceData = [],
+				aResourceGroupData = [],
+				aResourcePath = [],
+				oResourceObj={},
+				oUniqueResourceList={},
+				bValidateState=true;
+
+			resourcePath = oViewModel.getProperty("/Scheduling/selectedResources");
+			resourcePath.forEach(function(sPath){
+				resourceObj = deepClone(oDatModel.getProperty(sPath));
+				if(resourceObj.ResourceGuid){
+					if(oUniqueResourceList[resourceObj.ResourceGuid]){
+						this._showErrorMessage("Duplicate resource selected");
+						bValidateState = false;
+					}else{
+						oUniqueResourceList[resourceObj.ResourceGuid] = true;
+					}
+					aResourceData.push(resourceObj);
+				}else{
+					aResourceGroupData.push(resourceObj);
+				}
+			}.bind(this));
+
+			return bValidateState;
 		},
 	
 		/**
