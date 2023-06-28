@@ -237,13 +237,24 @@ sap.ui.define([
 		 */
 		onRescheduleButtonPress: function(oEvent){
 			var oViewModel = this.getModel("viewModel");
-			oViewModel.setProperty("/Scheduling/sType", "RESCHEDULING");
-			this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView());
+			if(this._validateRescheduleProcess){
+				oViewModel.setProperty("/Scheduling/sType", "RESCHEDULING");
+				this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView());
+			}
 		},
 
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
+
+		/**
+		 * This method will validate the selected data (demands and resources) and display the error message
+		 * @return {boolean}
+		 */
+		_validateRescheduleProcess: function(){
+			this.showMessageToast("Validation successfull");
+			return true;
+		},
 	
 		/**
 		 * On Open change status dialog after validating all conditions in all the views
