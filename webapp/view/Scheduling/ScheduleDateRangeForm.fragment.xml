@@ -1,4 +1,4 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 <f:SimpleForm editable="true" layout="ColumnLayout"
     columnsM="2"
     columnsL="2"

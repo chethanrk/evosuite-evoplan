@@ -252,7 +252,7 @@ sap.ui.define([
 			this.toolInfoDialog.init();
 
 			//display and change auto scheduling and re-scheduling dialog
-			this.SchedulingDialog = new SchedulingDialog();
+			this.SchedulingDialog = new SchedulingDialog(this);
 			this.SchedulingDialog.init();
 			
 			//select resource from tree for assigning dialog

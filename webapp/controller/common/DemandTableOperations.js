@@ -232,13 +232,29 @@ sap.ui.define([
 		},
 
 		/**
+		 * On press of auto-schedule button
+		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
+		 */
+		onAutoscheduleButtonPress: function(oEvent){
+			var oViewModel = this.getModel("viewModel");
+			oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
+			var mParams = {
+				entitySet: "DemandSet"
+			}
+			this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
+		},
+
+		/**
 		 * On press of reschedule button
 		 * @param {sap.ui.base.Event} oEvent - press event for reschedule button
 		 */
 		onRescheduleButtonPress: function(oEvent){
 			var oViewModel = this.getModel("viewModel");
-			oViewModel.setProperty("/Scheduling/sType", "RESCHEDULING");
-			this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView());
+			oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
+			var mParams = {
+				entitySet: "AssignmentSet"
+			}
+			this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
 		},
 
 		/* =========================================================== */
