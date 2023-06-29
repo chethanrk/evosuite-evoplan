@@ -64,7 +64,8 @@
 								<ToolbarLayoutData shrinkable="true"/>
 							</layoutData>
 						</Button>
-						<Button id="idPlanDemands" text="{i18n>xbut.planDemands}" tooltip="{i18n>xbut.planDemands}" press="onPressPlanDemands" enabled="false">
+						<Button text="{i18n>xbut.PlanDemands}" tooltip="{i18n>xbut.PlanDemands}" press="onPressPlanDemands" enabled="{viewModel>/Scheduling/bEnablePlanDemands}"
+							visible="{user>/ENABLE_AUTO_SCHEDULE_BUTTON}">
 							<layoutData>
 								<ToolbarLayoutData shrinkable="true"/>
 							</layoutData>
