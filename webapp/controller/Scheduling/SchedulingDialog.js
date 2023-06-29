@@ -57,9 +57,9 @@ sap.ui.define([
 					controller: this,
 					type: "XML"
 				}).then(function (oDialog) {
-					oDialog.attachAfterOpen(this.onDialogAfterOpen, this);
 					oView.addDependent(oDialog);
 					this._renderWizardStep1Binding(oDialog);
+					oDialog.attachAfterOpen(this.onDialogAfterOpen, this);
 					return oDialog;
 				}.bind(this));
 			}
@@ -73,7 +73,7 @@ sap.ui.define([
 		 * dialog has been opened.
 		 */
 		onDialogAfterOpen: function () {
-			this._oWizard = this._oView.byId("WizardScheduling");
+			this._oWizard = sap.ui.getCore().byId("WizardScheduling");
 			this._iSelectedStepIndex = 0;
 			this._oSelectedStep = this._oWizard.getSteps()[this._iSelectedStepIndex];
 			// set busy indicator
@@ -163,7 +163,6 @@ sap.ui.define([
 		 * @param {*} oDialog 
 		 */
 		_renderWizardStep1Binding: function(oDialog){
-			var sPath = this.getEntityPath(this._mParams.entitySet, null, this._oView),
 			sContainerId = "DateRangeStep";
 			oDialog.setBusyIndicatorDelay(0);
 			oDialog.setBusy(true);
@@ -171,11 +170,13 @@ sap.ui.define([
 			if (this._mParams.isAutoSchedule) {
 				//sContainerId = "AutoScheduling-DemandTable";
 				this._mParams.viewName = "com.evorait.evoplan.view.Scheduling.AutoScheduling.AutoScheduleStep1#AutoScheduleStep1";
+				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.LineItem";
 				this._mParams.modelName = "viewModel";
 				this._mParams.modelDataSetPath = "/Scheduling/AutoSchedule/DataSet";
 			} else {
 				//sContainerId = "ReScheduling-AssignmentTable";
 				this._mParams.viewName = "com.evorait.evoplan.view.Scheduling.ReScheduling.ReScheduleStep1#ReScheduleStep1";
+				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.LineItem";
 				this._mParams.modelName = "viewModel";
 				this._mParams.modelDataSetPath = "/Scheduling/ReSchedule/DataSet";
 			}
@@ -183,7 +184,8 @@ sap.ui.define([
 			this._oModel.metadataLoaded().then(function () {
 				//get template and create views
 				this._mParams.oView = this._oView;
-				this.insertTemplateFragment(sPath, this._mParams.viewName, sContainerId, this._afterStep1RenderSuccess.bind(this, sPath), this._mParams);
+				this.setTemplateProperties(this._mParams);
+				this.insertTemplateFragment(null, this._mParams.viewName, sContainerId, this._afterStepRenderSuccess.bind(this, oDialog), this._mParams);
 			}.bind(this));
 		},
 
@@ -247,8 +249,10 @@ sap.ui.define([
 				onClose: function (oAction) {
 					if (oAction === MessageBox.Action.YES) {
 						this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
-						this._oView.byId("SchedulingDialog").close();
-						this._initializeDialogModel();
+						this._ScheduleDialog.then(function (oDialog) {
+							oDialog.close();
+							this._initializeDialogModel();
+						}.bind(this));
 					}
 				}.bind(this)
 			});
@@ -257,8 +261,8 @@ sap.ui.define([
 		 * After step1 template rendering was completed
 		 * @param {*} oEvent 
 		 */
-		_afterStep1RenderSuccess: function(oEvent){
-			console.log(oEvent);
+		_afterStepRenderSuccess: function(oDialog){
+			oDialog.setBusy(false);
 		}
 
 	});

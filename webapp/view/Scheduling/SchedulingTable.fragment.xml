@@ -1,48 +1,45 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" 
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1" 
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+	<template:with path="templateProperties>/" var="tempProps">
+		<template:with path="templateProperties>/annotationPath" helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="paths">
+			<template:with path="paths>" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="collectionFacets">
 
-    <Table id="idProductsTable" inset="false" items="{
-			path: 'viewModel>/Scheduling/dataSet',
-			sorter: {
-				path: 'Name'
-			}
-		}">
-		<headerToolbar>
-			<OverflowToolbar>
-				<content>
-					<Title text="Products" level="H2"/>
-					<ToolbarSpacer />
-				</content>
-			</OverflowToolbar>
-		</headerToolbar>
-		<columns>
-			<Column
-				width="12em">
-				<Text text="Product" />
-			</Column>
-			<Column
-				minScreenWidth="Tablet"
-				demandPopin="true">
-				<Text text="Supplier" />
-			</Column>
-			<Column
-				minScreenWidth="Desktop"
-				demandPopin="true"
-				hAlign="End">
-				<Text text="Dimensions" />
-			</Column>
-		</columns>
-		<items>
-			<ColumnListItem vAlign="Middle">
-				<cells>
-					<ObjectIdentifier
-						title="{Name}"
-						text="{ProductId}"/>
-					<Text
-						text="{SupplierName}" />
-					<Text
-						text="{Width} x {Depth} x {Height} {DimUnit}" />
-				</cells>
-			</ColumnListItem>
-		</items>
-	</Table>
+				<Table items="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\' }' }">
+					<headerToolbar>
+						<OverflowToolbar>
+							<content>
+								<Title text="" level="H2"/>
+								<!-- Todo: When AutoSchedule set filter buttons -->
+								<ToolbarSpacer />
+							</content>
+						</OverflowToolbar>
+					</headerToolbar>
+					<columns>
+						<template:repeat list="{path:'collectionFacets>'}">
+							<template:with path="collectionFacets>Value" var="value">
+								<Column demandPopin="true" minScreenWidth="Desktop">
+									<Label text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
+								</Column>
+							</template:with>
+						</template:repeat>
+						<!-- Todo: When AutoSchedule show delete column -->
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<template:repeat list="{path:'collectionFacets>'}">
+									<template:with path="collectionFacets>Value" var="value">
+										<Text text="{= '{viewModel>'+ ${path:'value>Path'} +'}' }" />
+									</template:with>
+								</template:repeat>
+								<!-- Todo: When AutoSchedule show delete column -->
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+
+			</template:with>
+		</template:with>
+	</template:with>
 </core:FragmentDefinition>
