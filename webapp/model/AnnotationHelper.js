@@ -221,6 +221,26 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 			return oInterface ? "{" + oInterface.Path + "/##com.sap.vocabularies.Common.v1.Label/String}" : undefined;
 		};
 
+		/**
+		 * find label to property by field property key 
+		 * and template properties data
+		 * @param {*} sFieldName 
+		 * @param {*} oTempData 
+		 * @returns 
+		 */
+		var getPropertyLabel = function(sFieldName, oTempData){
+			var oMetaModel = oTempData.metaModel,
+				oEntitySet = oMetaModel.getODataEntitySet(oTempData.tempData.entitySet),
+				oEntityType = oMetaModel.getODataEntityType(oEntitySet.entityType),
+				oProperty = oMetaModel.getODataProperty(oEntityType, sFieldName);
+
+			if(oProperty["com.sap.vocabularies.Common.v1.Label"]){
+				return oProperty["com.sap.vocabularies.Common.v1.Label"]["String"];
+			}else{
+				oProperty["sap:label"];
+			}
+		};
+
 		return {
 			resolveModelPath: resolveModelPath,
 			resolveObjectHeaderPath: resolveObjectHeaderPath,
@@ -234,7 +254,8 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 			getFieldExtPoint: getFieldExtPoint,
 			getExtPoint: getExtPoint,
 			getEntitySet: getEntitySet,
-			getLabel: getLabel
+			getLabel: getLabel,
+			getPropertyLabel: getPropertyLabel
 		};
 
 	},
