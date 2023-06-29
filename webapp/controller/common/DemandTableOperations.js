@@ -77,7 +77,6 @@ sap.ui.define([
 				}
 			}
 		},
-
 		/**
 		 * open change status dialog
 		 * @param oEvent
@@ -260,9 +259,13 @@ sap.ui.define([
 				aResourcePath = [],
 				oResourceObj={},
 				oUniqueResourceList={},
-				bValidateState=true;
+				bValidateState=true,
+				oResourceTable = sap.ui.getCore().byId('__xmlview2--droppableTable'),
+				aAllResourceNodes = oResourceTable.getTable().getBinding("rows").getNodes(),
+				aResourceFromGroup = [];
 
 			resourcePath = oViewModel.getProperty("/Scheduling/selectedResources");
+			//Check for resource duplicate
 			resourcePath.forEach(function(sPath){
 				resourceObj = deepClone(oDatModel.getProperty(sPath));
 				if(resourceObj.ResourceGuid){
@@ -274,9 +277,30 @@ sap.ui.define([
 					}
 					aResourceData.push(resourceObj);
 				}else{
+					if(resourceObj.ResourceGroupGuid){
+						aAllResourceNodes.forEach(function(oNode){
+							var oNodeObject = oNode.context.getObject();
+							if(oNodeObject.ResourceGuid && resourceObj.ResourceGroupGuid === oNodeObject.ResourceGroupGuid){
+								aResourceFromGroup.push(oNodeObject);
+							}
+						})
+					}
 					aResourceGroupData.push(resourceObj);
 				}
 			}.bind(this));
+			//Check for resource duplicate
+			//Read all Resource from Resource group
+			aResourceFromGroup.forEach(function(oNodeObject){
+				if(oUniqueResourceList[oNodeObject.ResourceGuid]){
+					this._showErrorMessage("Duplicate resource selected");
+					bValidateState = false;
+				}else{
+					oUniqueResourceList[oNodeObject.ResourceGuid] = true;
+				}
+
+			}.bind(this));
+
+			//Read all Resource from Resource group
 
 			return bValidateState;
 		},
