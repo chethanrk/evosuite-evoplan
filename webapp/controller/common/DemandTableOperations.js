@@ -252,7 +252,8 @@ sap.ui.define([
 		 * @return {boolean}
 		 */
 		_validateRescheduleProcess: function(){
-			var oViewModel = this.getModel("viewModel"),
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				oViewModel = this.getModel("viewModel"),
 				oDatModel = this.getModel(),
 				aResourceData = [],
 				aResourceGroupData = [],
@@ -270,7 +271,7 @@ sap.ui.define([
 				resourceObj = deepClone(oDatModel.getProperty(sPath));
 				if(resourceObj.ResourceGuid){
 					if(oUniqueResourceList[resourceObj.ResourceGuid]){
-						this._showErrorMessage("Duplicate resource selected");
+						this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource"));
 						bValidateState = false;
 					}else{
 						oUniqueResourceList[resourceObj.ResourceGuid] = true;
@@ -292,7 +293,7 @@ sap.ui.define([
 			//Read all Resource from Resource group
 			aResourceFromGroup.forEach(function(oNodeObject){
 				if(oUniqueResourceList[oNodeObject.ResourceGuid]){
-					this._showErrorMessage("Duplicate resource selected");
+					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource"));
 					bValidateState = false;
 				}else{
 					oUniqueResourceList[oNodeObject.ResourceGuid] = true;
