@@ -9,14 +9,16 @@ sap.ui.define([
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
 	"com/evorait/evoplan/model/Constants",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"com/evorait/evoplan/controller/Scheduling/SchedulingActions"
 ], function (AssignmentsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, MessageToast, RowAction, RowActionItem,
-	Constants, Fragment) {
+	Constants, Fragment, SchedulingActions) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.gantt.GanttDemands", {
 
 		formatter: formatter,
+		oSchedulingActions: undefined,
 
 		_bLoaded: false,
 
@@ -75,6 +77,7 @@ sap.ui.define([
 			this._aSelectedIndices = [];
 			// add binging change event forthe demands table
 			this._addDemandTblBindingChangeEvent();
+			this.oSchedulingActions = new SchedulingActions(this);
 
 		},
 
@@ -282,6 +285,14 @@ sap.ui.define([
 			} else {
 				this._oRouter.navTo("newgantt", {});
 			}
+		},
+
+		/**
+		 * Function to handle press event Plan Demands Button
+		 * @param oEvent
+		 */	
+		onPressPlanDemands: function(oEvent){
+			this.oSchedulingActions.handlePlanDemands();
 		},
 		/* =========================================================== */
 		/* Private methods                                             */
