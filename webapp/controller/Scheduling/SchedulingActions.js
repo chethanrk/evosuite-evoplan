@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/OverrideExecution",
 	"sap/m/MessageToast",
-	"sap/base/util/deepClone"
-], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast, deepClone) {
+	"sap/base/util/deepClone",
+	'sap/ui/model/Filter'
+], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast, deepClone, Filter) {
 
 	
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
@@ -81,15 +82,34 @@ sap.ui.define([
 				bValidateState=true,
 				oResourceTable = sap.ui.getCore().byId('__xmlview2--droppableTable'),
 				aAllResourceNodes = oResourceTable.getTable().getBinding("rows").getNodes(),
-				aResourceFromGroup = [];
+				aResourceFromGroup = [],
+				aResourceGroupPromise = [],
+				aFilters=[],
+				mParameters={
+					$select:oResourceTable.getTable().getBinding("rows").mParameters["select"]
+				},
+				aResourceList=[];
+			
+			var checkDuplicate = function(aResourceList){
+				aResourceList.forEach(function(oResource){
+					if(oResource.ResourceGuid){
+						if(oUniqueResourceList[oResource.ResourceGuid]){
+							bValidateState = false;
+						}else{
+							oUniqueResourceList[oResource.ResourceGuid] = true;
+						}
+						aResourceData.push(oResource);
+					}
+				})
+			}
 
 			aResourcePath = oViewModel.getProperty("/Scheduling/selectedResources");
 			//Check for resource duplicate
 			aResourcePath.forEach(function(sPath){
 				oResourceObj = deepClone(oDataModel.getProperty(sPath));
+				aFilters=[];
 				if(oResourceObj.ResourceGuid){
 					if(oUniqueResourceList[oResourceObj.ResourceGuid]){
-						this._controller._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource"));
 						bValidateState = false;
 					}else{
 						oUniqueResourceList[oResourceObj.ResourceGuid] = true;
@@ -97,31 +117,25 @@ sap.ui.define([
 					aResourceData.push(oResourceObj);
 				}else{
 					if(oResourceObj.ResourceGroupGuid){
-						aAllResourceNodes.forEach(function(oNode){
-							var oNodeObject = oNode.context.getObject();
-							if(oNodeObject.ResourceGuid && oResourceObj.ResourceGroupGuid === oNodeObject.ResourceGroupGuid){
-								aResourceFromGroup.push(oNodeObject);
-							}
-						})
+						aFilters=_.clone(oResourceTable.getTable().getBinding("rows").aApplicationFilters);
+						aFilters.push(new Filter("ParentNodeId", "EQ", oResourceObj.NodeId));
+						aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceHierarchySet", aFilters, mParameters));
 					}
-					aResourceGroupData.push(oResourceObj);
+					// aResourceGroupData.push(oResourceObj);
 				}
 			}.bind(this));
 			//Check for resource duplicate
 			//Read all Resource from Resource group
-			aResourceFromGroup.forEach(function(oNodeObject){
-				if(oUniqueResourceList[oNodeObject.ResourceGuid]){
-					this._controller._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource"));
-					bValidateState = false;
-				}else{
-					oUniqueResourceList[oNodeObject.ResourceGuid] = true;
-				}
-
+			Promise.all(aResourceGroupPromise).then(function(aResult){
+				debugger;
+				aResult.forEach(function(oResult){
+					aResourceData = aResourceData.concat(oResult.results);
+				});
+				checkDuplicate(aResourceData);
+				return bValidateState;
 			}.bind(this));
-
 			//Read all Resource from Resource group
 
-			return bValidateState;
 		},
 
 	
