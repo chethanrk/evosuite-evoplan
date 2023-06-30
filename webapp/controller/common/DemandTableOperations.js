@@ -1,11 +1,12 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/PRT/PRTActions",
+	"com/evorait/evoplan/controller/Scheduling/SchedulingActions",
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/OverrideExecution"
-], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution) {
+], function (BaseController, SchedulingActions, MessageBox, formatter, Constants, Fragment, OverrideExecution) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.DemandTableOperations", {
 
@@ -75,6 +76,10 @@ sap.ui.define([
 					overrideExecution: OverrideExecution.Instead
 				}
 			}
+		},
+
+		onInit: function(oEvent){
+			this.oSchedulingActions = new SchedulingActions(this);
 		},
 		/**
 		 * open change status dialog
@@ -227,6 +232,18 @@ sap.ui.define([
 			} else if (bResponse === sSave) {
 				oViewModel.setProperty("/bDemandEditMode", false);
 				this.submitDemandTableChanges();
+			}
+		},
+
+		/**
+		 * On press of reschedule button
+		 * @param {sap.ui.base.Event} oEvent - press event for reschedule button
+		 */
+		onRescheduleButtonPress: function(oEvent){
+			var oViewModel = this.getModel("viewModel");
+			if(this.oSchedulingActions._validateRescheduleProcess()){
+				oViewModel.setProperty("/Scheduling/sType", "RESCHEDULING");
+				this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView());
 			}
 		},
 

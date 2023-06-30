@@ -5,8 +5,9 @@ sap.ui.define([
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/OverrideExecution",
-	"sap/m/MessageToast"
-], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/base/util/deepClone"
+], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast, deepClone) {
 
 	
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
@@ -23,6 +24,7 @@ sap.ui.define([
 			this._controller = controller;
 			this.oViewModel = controller.getModel("viewModel");
 			this.oDataModel = controller.getModel();
+			this.oResourceBundleModel = controller.getModel("i18n");
 		},
 
 		/* =========================================================== */
@@ -50,9 +52,7 @@ sap.ui.define([
 			} else {
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 			}
-		},
-
-		
+		},		
 	
 		/* =========================================================== */
 		/* Private methods                                              */
@@ -63,9 +63,9 @@ sap.ui.define([
 		 * @return {boolean}
 		 */
 		_validateRescheduleProcess: function(){
-			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
-				oViewModel = this.getModel("viewModel"),
-				oDatModel = this.getModel(),
+			var oResourceBundle = this.oResourceBundleModel.getResourceBundle(),
+				oViewModel = this.oViewModel,
+				oDataModel = this.oDataModel,
 				aResourceData = [],
 				aResourceGroupData = [],
 				aResourcePath = [],
@@ -79,10 +79,10 @@ sap.ui.define([
 			aResourcePath = oViewModel.getProperty("/Scheduling/selectedResources");
 			//Check for resource duplicate
 			aResourcePath.forEach(function(sPath){
-				oResourceObj = deepClone(oDatModel.getProperty(sPath));
+				oResourceObj = deepClone(oDataModel.getProperty(sPath));
 				if(oResourceObj.ResourceGuid){
 					if(oUniqueResourceList[oResourceObj.ResourceGuid]){
-						this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource"));
+						this._controller._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource"));
 						bValidateState = false;
 					}else{
 						oUniqueResourceList[oResourceObj.ResourceGuid] = true;
@@ -104,7 +104,7 @@ sap.ui.define([
 			//Read all Resource from Resource group
 			aResourceFromGroup.forEach(function(oNodeObject){
 				if(oUniqueResourceList[oNodeObject.ResourceGuid]){
-					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource"));
+					this._controller._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource"));
 					bValidateState = false;
 				}else{
 					oUniqueResourceList[oNodeObject.ResourceGuid] = true;
