@@ -52,6 +52,13 @@ sap.ui.define([
 			} else {
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 			}
+		},
+		
+		/**
+		 * Function to handle Plan Demands Operation
+		 */
+		handlePlanDemands: function(){
+			
 		},		
 	
 		/* =========================================================== */
