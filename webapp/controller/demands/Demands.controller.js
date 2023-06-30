@@ -539,5 +539,21 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Event handler to handle Plan demands functionality
+		 */
+		onPressPlanDemands: function () {
+			var oScheduling = this._viewModel.getProperty("/Scheduling"),
+			sMsg = this.getResourceBundle().getText("ymsg.select1Resource");
+
+			if(!oScheduling.selectedResources){		// When no resources are selected, do not allow plan demands
+				this.showMessageToast(sMsg);
+				return;
+			}
+			else{
+				this.oSchedulingActions.handlePlanDemands();
+			}
+		}
+
 	});
 });
