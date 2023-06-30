@@ -9,9 +9,10 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"sap/base/util/deepClone"
 ], function (BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, MessageToast,
-	RowAction, RowActionItem, Fragment) {
+	RowAction, RowActionItem, Fragment, deepClone) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.demands.Demands", {
@@ -536,6 +537,18 @@ sap.ui.define([
 				this._oRouter.navTo("demandTools", {});
 			}
 		},
+
+		/**
+		 * On press of reschedule button
+		 * @param {sap.ui.base.Event} oEvent - press event for reschedule button
+		 */
+		onRescheduleButtonPress: function(oEvent){
+			var oViewModel = this.getModel("viewModel");
+			if(this.oSchedulingActions._validateRescheduleProcess()){
+				oViewModel.setProperty("/Scheduling/sType", "RESCHEDULING");
+				this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView());
+			}
+		},		
 
 	});
 });

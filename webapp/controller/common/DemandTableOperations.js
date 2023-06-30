@@ -4,9 +4,8 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/mvc/OverrideExecution",
-	"sap/base/util/deepClone"
-], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, deepClone) {
+	"sap/ui/core/mvc/OverrideExecution"
+], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.DemandTableOperations", {
 
@@ -231,80 +230,9 @@ sap.ui.define([
 			}
 		},
 
-		/**
-		 * On press of reschedule button
-		 * @param {sap.ui.base.Event} oEvent - press event for reschedule button
-		 */
-		onRescheduleButtonPress: function(oEvent){
-			var oViewModel = this.getModel("viewModel");
-			if(this._validateRescheduleProcess()){
-				oViewModel.setProperty("/Scheduling/sType", "RESCHEDULING");
-				this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView());
-			}
-		},
-
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
-
-		/**
-		 * This method will validate the selected data (demands and resources) and display the error message
-		 * @return {boolean}
-		 */
-		_validateRescheduleProcess: function(){
-			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
-				oViewModel = this.getModel("viewModel"),
-				oDatModel = this.getModel(),
-				aResourceData = [],
-				aResourceGroupData = [],
-				aResourcePath = [],
-				oResourceObj={},
-				oUniqueResourceList={},
-				bValidateState=true,
-				oResourceTable = sap.ui.getCore().byId('__xmlview2--droppableTable'),
-				aAllResourceNodes = oResourceTable.getTable().getBinding("rows").getNodes(),
-				aResourceFromGroup = [];
-
-			resourcePath = oViewModel.getProperty("/Scheduling/selectedResources");
-			//Check for resource duplicate
-			resourcePath.forEach(function(sPath){
-				resourceObj = deepClone(oDatModel.getProperty(sPath));
-				if(resourceObj.ResourceGuid){
-					if(oUniqueResourceList[resourceObj.ResourceGuid]){
-						this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource"));
-						bValidateState = false;
-					}else{
-						oUniqueResourceList[resourceObj.ResourceGuid] = true;
-					}
-					aResourceData.push(resourceObj);
-				}else{
-					if(resourceObj.ResourceGroupGuid){
-						aAllResourceNodes.forEach(function(oNode){
-							var oNodeObject = oNode.context.getObject();
-							if(oNodeObject.ResourceGuid && resourceObj.ResourceGroupGuid === oNodeObject.ResourceGroupGuid){
-								aResourceFromGroup.push(oNodeObject);
-							}
-						})
-					}
-					aResourceGroupData.push(resourceObj);
-				}
-			}.bind(this));
-			//Check for resource duplicate
-			//Read all Resource from Resource group
-			aResourceFromGroup.forEach(function(oNodeObject){
-				if(oUniqueResourceList[oNodeObject.ResourceGuid]){
-					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource"));
-					bValidateState = false;
-				}else{
-					oUniqueResourceList[oNodeObject.ResourceGuid] = true;
-				}
-
-			}.bind(this));
-
-			//Read all Resource from Resource group
-
-			return bValidateState;
-		},
 	
 		/**
 		 * On Open change status dialog after validating all conditions in all the views

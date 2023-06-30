@@ -50,13 +50,72 @@ sap.ui.define([
 			} else {
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 			}
-		}
+		},
 
 		
 	
 		/* =========================================================== */
 		/* Private methods                                              */
 		/* =========================================================== */
+
+		/**
+		 * This method will validate the selected data (demands and resources) and display the error message
+		 * @return {boolean}
+		 */
+		_validateRescheduleProcess: function(){
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
+				oViewModel = this.getModel("viewModel"),
+				oDatModel = this.getModel(),
+				aResourceData = [],
+				aResourceGroupData = [],
+				aResourcePath = [],
+				oResourceObj={},
+				oUniqueResourceList={},
+				bValidateState=true,
+				oResourceTable = sap.ui.getCore().byId('__xmlview2--droppableTable'),
+				aAllResourceNodes = oResourceTable.getTable().getBinding("rows").getNodes(),
+				aResourceFromGroup = [];
+
+			aResourcePath = oViewModel.getProperty("/Scheduling/selectedResources");
+			//Check for resource duplicate
+			aResourcePath.forEach(function(sPath){
+				oResourceObj = deepClone(oDatModel.getProperty(sPath));
+				if(oResourceObj.ResourceGuid){
+					if(oUniqueResourceList[oResourceObj.ResourceGuid]){
+						this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource"));
+						bValidateState = false;
+					}else{
+						oUniqueResourceList[oResourceObj.ResourceGuid] = true;
+					}
+					aResourceData.push(oResourceObj);
+				}else{
+					if(oResourceObj.ResourceGroupGuid){
+						aAllResourceNodes.forEach(function(oNode){
+							var oNodeObject = oNode.context.getObject();
+							if(oNodeObject.ResourceGuid && oResourceObj.ResourceGroupGuid === oNodeObject.ResourceGroupGuid){
+								aResourceFromGroup.push(oNodeObject);
+							}
+						})
+					}
+					aResourceGroupData.push(oResourceObj);
+				}
+			}.bind(this));
+			//Check for resource duplicate
+			//Read all Resource from Resource group
+			aResourceFromGroup.forEach(function(oNodeObject){
+				if(oUniqueResourceList[oNodeObject.ResourceGuid]){
+					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource"));
+					bValidateState = false;
+				}else{
+					oUniqueResourceList[oNodeObject.ResourceGuid] = true;
+				}
+
+			}.bind(this));
+
+			//Read all Resource from Resource group
+
+			return bValidateState;
+		},
 
 	
 
