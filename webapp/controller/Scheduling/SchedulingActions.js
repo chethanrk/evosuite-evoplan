@@ -36,7 +36,7 @@ sap.ui.define([
 			if(oScheduling.selectedDemandPath){
 				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 
-				if(oScheduling.selectedResources.length > 0 && oScheduling.selectedDemandPath) {
+				if(oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", !!oSelectedDemandItem.ALLOW_REASSIGN);
 					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", !!oSelectedDemandItem.ALLOW_ASSIGN);
 				} else {

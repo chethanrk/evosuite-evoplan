@@ -4,8 +4,9 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
+	"com/evorait/evoplan/model/models",
 	"sap/ui/core/mvc/OverrideExecution"
-], function (TemplateRenderController, MessageBox, formatter, Constants, Fragment, OverrideExecution) {
+], function (TemplateRenderController, MessageBox, formatter, Constants, Fragment, models, OverrideExecution) {
 	
 	return TemplateRenderController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingDialog", {
 
@@ -18,35 +19,43 @@ sap.ui.define([
 		_mParams: {},
 		_oResourceBundle: null,
 		_oModel: null,
+		_oSchedulingModel: null,
 
 		/**
 		 * overwrite constructor
 		 * set manuel owner component for nested xml views
 		 */
 		constructor: function (oComponent) {
+			this._component = oComponent;
 			this.setOwnerComponent(oComponent);
 			TemplateRenderController.apply(this, arguments);
 		},
 
-
-		init: function () {
-			
-		},
-
 		/**
-		 * This method is used to open the dialog box
-		 * @param oView source view
+		 * initialize dialogs amin functionality
 		 */
+		init: function () {
+			this._oResourceBundle = this._component.getModel("i18n").getResourceBundle();
+			this._oViewModel = this._component.getModel("viewModel");
+			this._oModel = this._component.getModel();
+
+			this._oSchedulingModel = this._component.getModel("SchedulingModel");
+			if(!this._oSchedulingModel){
+				this._oSchedulingModel = models.createSchedulingModel();
+				this._setJsonModelDefaults();
+			}
+			this._component.setModel(this._oSchedulingModel, "SchedulingModel");
+		},
 
 		/**
 		 * This method is used to open the dialog box and call the 
 		 * relevant methods post that.
+		 * @param {*} oView 
+		 * @param {*} mParams 
 		 */
 		openSchedulingDialog: function (oView, mParams) {
 			this._oView = oView;
 			this._mParams = mParams || {};
-			this._component = this._oView.getController().getOwnerComponent();
-			this._oModel = oView.getModel();
 
 			this._initializeDialogModel();
 
@@ -136,7 +145,7 @@ sap.ui.define([
 		 * in the dialog
 		 */
 		handleWizardCancel: function () {
-			var sMessage = this._ResourceModel.getText("ymsg.CancelOfReSecheduling");
+			var sMessage = this._oResourceBundle.getText("ymsg.CancelOfReSecheduling");
 			this._handleMessageBoxOpen(sMessage, "warning");
 		},
 		/**
@@ -144,7 +153,7 @@ sap.ui.define([
 		 * in the dialog
 		 */
 		handleWizardSubmit: function () {
-			var sMessage = this._ResourceModel.getText("ymsg.SubmitOfReSecheduling");
+			var sMessage = this._oResourceBundle.getText("ymsg.SubmitOfReSecheduling");
 			this._handleMessageBoxOpen(sMessage, "confirm");
 		},
 
@@ -171,15 +180,18 @@ sap.ui.define([
 				//sContainerId = "AutoScheduling-DemandTable";
 				this._mParams.viewName = "com.evorait.evoplan.view.Scheduling.AutoScheduling.AutoScheduleStep1#AutoScheduleStep1";
 				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.LineItem";
-				this._mParams.modelName = "viewModel";
-				this._mParams.modelDataSetPath = "/Scheduling/AutoSchedule/DataSet";
+				this._mParams.modelName = "SchedulingModel";
+				this._mParams.modelDataSetPath = "/step1/dataSet";
 			} else {
 				//sContainerId = "ReScheduling-AssignmentTable";
 				this._mParams.viewName = "com.evorait.evoplan.view.Scheduling.ReScheduling.ReScheduleStep1#ReScheduleStep1";
 				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.LineItem";
-				this._mParams.modelName = "viewModel";
-				this._mParams.modelDataSetPath = "/Scheduling/ReSchedule/DataSet";
+				this._mParams.modelName = "SchedulingModel";
+				this._mParams.modelDataSetPath = "/step1/dataSet";
 			}
+
+			//Todo set table counter after data was load
+			this._setScheduleTableTitle(this._mParams.isAutoSchedule, "0");
 
 			this._oModel.metadataLoaded().then(function () {
 				//get template and create views
@@ -194,20 +206,24 @@ sap.ui.define([
 		 * property binded to controls of the dialog box and wizard
 		 */
 		_initializeDialogModel: function () {
-			this._ResourceModel = this._oView.getController().getModel("i18n").getResourceBundle();
-			if(!this._oViewModel){
-				this._oViewModel = this._oView.getModel("viewModel")
-			}
+			//is it Autoscheduling or Rescheduling?
 			var sType = this._oViewModel.getProperty("/Scheduling/sType");
 			this._mParams.isAutoSchedule = sType === Constants.SCHEDULING.AUTOSCHEDULING;
 			this._mParams.isReschuduling = sType === Constants.SCHEDULING.RESCHEDULING;
+
+			//set SchedulingModel defaults
+			this._setJsonModelDefaults(this._mParams.isAutoSchedule, this._mParams.isReschuduling);
 			
 			// setting the dialog title based on flag in viewMiodel
-			let sDialogTitle = this._ResourceModel.getText("xtit.AutoscheduleDialogTitle");
+			let sDialogTitle = this._oResourceBundle.getText("xtit.AutoscheduleDialogTitle");
 			if(this._mParams.isReschuduling){
-				sDialogTitle = this._ResourceModel.getText("xtit.RescheduleDialogTitle");
+				sDialogTitle = this._oResourceBundle.getText("xtit.RescheduleDialogTitle");
 			}
 			this._oViewModel.setProperty("/Scheduling/sScheduleDialogTitle", sDialogTitle);
+			this._oViewModel.setProperty("/Scheduling/bSchedulingTableBusy", true);
+			this._oViewModel.setProperty("/Scheduling/DateFrom", moment().startOf("day").toDate());
+			this._oViewModel.setProperty("/Scheduling/DateTo", moment().add(14, "days").endOf("day").toDate());
+
 
 			var oData = {
 				bBackButtonVisible: false,
@@ -217,6 +233,7 @@ sap.ui.define([
 			var oInitialModelState = Object.assign({}, oData);
 			this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags",oInitialModelState);
 		},
+
 		/**
 		 * This method is used to handle the button visibility/invisibility
 		 * based on selection of wizard sectopm in the footer of the dialog
@@ -237,8 +254,35 @@ sap.ui.define([
 				default: break;
 			}
 			oModel.refresh();
+		},
+
+		/**
+		 * set SchedulingModel defaults
+		 * @param {*} isAutoSchedule 
+		 * @param {*} isReSchedule 
+		 */
+		_setJsonModelDefaults: function(isAutoSchedule, isReSchedule){
+			this._oSchedulingModel.setData({
+				isAutoSchedule: isAutoSchedule || false,
+				isReschuduling: isReSchedule || false,
+				step1: {
+					dataSet: []
+				},
+				step2: {
+					dataSet: []
+				}
+			});
+
+			//############# test ####################
+			var sSelectedDemand = this._oViewModel.getProperty("/Scheduling/selectedDemandPath");
+			if(sSelectedDemand){
+				var oDemandData = this._oModel.getProperty(sSelectedDemand);
+				var step1 = [oDemandData];
+				this._oSchedulingModel.setProperty("/step1/dataSet", step1);
+			}
 
 		},
+
 		/**
 		 * This method used to handle the open of the message box.
 		 */
@@ -263,6 +307,19 @@ sap.ui.define([
 		 */
 		_afterStepRenderSuccess: function(oDialog){
 			oDialog.setBusy(false);
+		},
+
+		/**
+		 * set table title with counter for scheduling wizard
+		 * @param {*} isAutoSchedule 
+		 * @param {*} sCounter 
+		 */
+		_setScheduleTableTitle: function(isAutoSchedule, sCounter){
+			if(isAutoSchedule){
+				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemDemandListCount", [sCounter]));
+			}else{
+				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemAssignmentListCount", [sCounter]));
+			}
 		}
 
 	});

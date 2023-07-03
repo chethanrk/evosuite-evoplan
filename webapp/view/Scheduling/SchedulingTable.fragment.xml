@@ -1,43 +1,32 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" 
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:table="sap.ui.table"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1" 
 	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<template:with path="templateProperties>/" var="tempProps">
 		<template:with path="templateProperties>/annotationPath" helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="paths">
 			<template:with path="paths>" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="collectionFacets">
 
-				<Table items="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\' }' }">
-					<headerToolbar>
-						<OverflowToolbar>
-							<content>
-								<Title text="" level="H2"/>
-								<!-- Todo: When AutoSchedule set filter buttons -->
-								<ToolbarSpacer />
-							</content>
-						</OverflowToolbar>
-					</headerToolbar>
-					<columns>
+				<table:Table id="step1_SchedulingTable" rows="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\' }' }"
+					title="{viewModel>/Scheduling/sScheduleTableTitle}"
+					busyStateChanged="onBusyStateChanged"
+					enableBusyIndicator="true"
+					busy="{viewModel>/Scheduling/bSchedulingTableBusy}"
+					selectionMode="None"
+					minAutoRowCount="1"
+					visibleRowCountMode="Auto">
+
+					<table:columns>
 						<template:repeat list="{path:'collectionFacets>'}">
 							<template:with path="collectionFacets>Value" var="value">
-								<Column demandPopin="true" minScreenWidth="Desktop">
+								<table:Column width="5rem">
 									<Label text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
-								</Column>
+									<table:template>
+										<Text text="{= '{'+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'}' }" wrapping="false" />
+									</table:template>
+								</table:Column>
 							</template:with>
 						</template:repeat>
-						<!-- Todo: When AutoSchedule show delete column -->
-					</columns>
-					<items>
-						<ColumnListItem>
-							<cells>
-								<template:repeat list="{path:'collectionFacets>'}">
-									<template:with path="collectionFacets>Value" var="value">
-										<Text text="{= '{viewModel>'+ ${path:'value>Path'} +'}' }" />
-									</template:with>
-								</template:repeat>
-								<!-- Todo: When AutoSchedule show delete column -->
-							</cells>
-						</ColumnListItem>
-					</items>
-				</Table>
+					</table:columns>
+				</table:Table>
 
 			</template:with>
 		</template:with>

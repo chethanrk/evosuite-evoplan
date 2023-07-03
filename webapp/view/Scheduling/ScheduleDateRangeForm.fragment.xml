@@ -9,14 +9,16 @@
         <DateTimePicker
             id="ScheduleDateFrom"
             placeholder="Enter Date"
-            change="handleChange"/>
+            change="onChangeDateFrom"/>
         <Label text="Date to" labelFor="ScheduleDateto"/>
         <DateTimePicker
-            id="ScheduleDateto"
+            id="ScheduleDateTo"
             placeholder="Enter Date"
-            change="handleChange"/>
+            change="onChangeDateTo"/>
         <Label text="Utilization" labelFor="ScheduleUtilization"/>
-        <Slider value="50" width="100%"
+        <Slider value="{user>/DEFAULT_UTILIZATION_BAR_MAPS}" 
+            visible="{user>/ENABLE_UTILIZATION_BAR_MAPS}"
+            width="100%"
             min="0" max="100"
             showAdvancedTooltip="true"
             showHandleTooltip="false"

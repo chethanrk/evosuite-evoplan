@@ -59,6 +59,12 @@ sap.ui.define([
 			var oModel = new JSONModel(obj);
 			oModel.setDefaultBindingMode("OneWay");
 			return oModel;
+		},
+
+		createSchedulingModel: function(){
+			var oModel = new JSONModel();
+			oModel.setDefaultBindingMode("TwoWay");
+			return oModel;
 		}
 	};
 
