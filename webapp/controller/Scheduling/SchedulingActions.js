@@ -56,7 +56,7 @@ sap.ui.define([
 		 * Function to handle Plan Demands Operation
 		 */
 		handlePlanDemands: function(){
-			debugger;
+			
 		}
 
 		

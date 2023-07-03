@@ -544,13 +544,18 @@ sap.ui.define([
 		 */
 		onPressPlanDemands: function () {
 			var oScheduling = this._viewModel.getProperty("/Scheduling"),
-			sMsg = this.getResourceBundle().getText("ymsg.select1Resource");
+				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true),
+				sMsg;
+			debugger;
 
-			if(!oScheduling.selectedResources){		// When no resources are selected, do not allow plan demands
+			if (!oScheduling.selectedResources) { // When no resources are selected, do not allow plan demands
+				sMsg = this.getResourceBundle().getText("ymsg.select1Resource");
 				this.showMessageToast(sMsg);
 				return;
-			}
-			else{
+			} else if (oSelectedPaths.aNonAssignable.length > 0) { // Display non-assignable demands in error dialog
+				sMsg = this.getResourceBundle().getText("ymsg.DemandsUnassignable");
+				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, sMsg);
+			} else {
 				this.oSchedulingActions.handlePlanDemands();
 			}
 		}
