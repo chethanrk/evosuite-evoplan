@@ -931,6 +931,16 @@ sap.ui.define([
 		},
 
 		/**
+		 * 
+		 * @param {*} bSelected 
+		 * @param {*} bGlobalConfigFlag 
+		 * @returns 
+		 */
+		setVisibilityScheduleBtn: function(bSelected, bGlobalConfigFlag){
+			return bSelected && bGlobalConfigFlag;
+		},
+
+		/**
 		 * Visibility of Assignment Status Button's in Assignment Status Popover based on Allow Fields 
 		 * @Author Chethan
 		 * @since 2205

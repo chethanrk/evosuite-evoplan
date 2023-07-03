@@ -237,7 +237,7 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 			if(oProperty["com.sap.vocabularies.Common.v1.Label"]){
 				return oProperty["com.sap.vocabularies.Common.v1.Label"]["String"];
 			}else{
-				oProperty["sap:label"];
+				return oProperty["sap:label"];
 			}
 		};
 
