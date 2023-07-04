@@ -2,8 +2,8 @@
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1" 
 	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<template:with path="templateProperties>/" var="tempProps">
-		<template:with path="templateProperties>/annotationPath" helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="paths">
-			<template:with path="paths>" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="collectionFacets">
+		<template:with path="templateProperties>/annotationPath" helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="target">
+			<template:with path="target>Data" var="data">
 
 				<table:Table id="step1_SchedulingTable" rows="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\' }' }"
 					title="{viewModel>/Scheduling/sScheduleTableTitle}"
@@ -15,12 +15,25 @@
 					visibleRowCountMode="Auto">
 
 					<table:columns>
-						<template:repeat list="{path:'collectionFacets>'}">
-							<template:with path="collectionFacets>Value" var="value">
-								<table:Column width="5rem">
+						<template:repeat list="{path:'data>'}">
+							<template:with path="data>Value" var="value">
+								<table:Column>
 									<Label text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
 									<table:template>
-										<Text text="{= '{'+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'}' }" wrapping="false" />
+										<template:if test="{:= ${data>EdmType} === 'Edm.Date'}">
+											<template:then>
+												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Date\', style: \'long\'}' }" wrapping="false" />
+											</template:then>
+											<template:elseif test="{:= ${data>EdmType} === 'Edm.DateTime'}">
+												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.DateTime\', style: \'long\'}' }" wrapping="false" />
+											</template:elseif>
+											<template:elseif test="{:= ${value>Path}.toLowerCase().includes('icon')}">
+												<core:Icon src="{:= '{'+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'}' }" />
+											</template:elseif>
+											<template:else>
+												<Text text="{:= '{'+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'}' }" wrapping="false" />
+											</template:else>
+										</template:if>
 									</table:template>
 								</table:Column>
 							</template:with>
