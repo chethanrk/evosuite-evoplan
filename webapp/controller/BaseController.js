@@ -374,7 +374,7 @@ sap.ui.define([
 		 * @param aSelectedRowsIdx
 		 * @private
 		 */
-		_getSelectedRowPaths: function (oTable, aSelectedRowsIdx, checkAssignAllowed, aDemands) {
+		_getSelectedRowPaths: function (oTable, aSelectedRowsIdx, checkAssignAllowed, aDemands, bIsForScheduling) {
 			var aPathsData = [],
 				aNonAssignableDemands = [],
 				aUnAssignableDemands = [],
@@ -410,7 +410,8 @@ sap.ui.define([
 
 					//on check on oData property ALLOW_ASSIGN when flag was given
 					if (checkAssignAllowed) {
-						if (oData.ALLOW_ASSIGN) {
+						//Added condition to check for number of assignments to plan demands via scheduling
+						if ((!bIsForScheduling && oData.ALLOW_ASSIGN) ||(bIsForScheduling && oData.ALLOW_ASSIGN && oData.NUMBER_OF_ASSIGNMENTS === 0)) {
 							aPathsData.push({
 								sPath: sPath,
 								oData: oData,
@@ -418,7 +419,7 @@ sap.ui.define([
 							});
 							oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
 						} else {
-							aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData));
+							aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData, null, bIsForScheduling));
 						}
 					} else {
 						aPathsData.push({
@@ -1101,13 +1102,21 @@ sap.ui.define([
 		 * Since 2301.4.0
 		 * @Author Rakesh Sahu
 		 */
-		getMessageDescWithOrderID: function (oData, Desc) {
+		getMessageDescWithOrderID: function (oData, Desc, bIsForScheduling) {
+			var sItemDetails = "";
 			Desc = Desc ? Desc : oData.DemandDesc;
 			if (oData.ORDERID) {
-				return oData.ORDERID + " / " + oData.OPERATIONID + "  " + Desc
+				sItemDetails =  oData.ORDERID + " / " + oData.OPERATIONID + "  " + Desc
 			} else {
-				return oData.NOTIFICATION + "  " + Desc;
+				sItemDetails =  oData.NOTIFICATION + "  " + Desc;
 			}
+			
+			// Condition to add number of assignments to display in error dialog
+			if(bIsForScheduling){
+				sItemDetails = sItemDetails + " " +  oData.NUMBER_OF_ASSIGNMENTS;
+			}
+
+			return sItemDetails;
 		},
 
 		/**
