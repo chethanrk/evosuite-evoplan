@@ -591,6 +591,7 @@ sap.ui.define([
 						
 					},
 					bEnablePlanDemands: false,
+					aSelectedResources:[],
 					resourceTreeData: {
 						filter:[],
 						select:""
