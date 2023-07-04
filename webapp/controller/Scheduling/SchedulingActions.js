@@ -78,14 +78,14 @@ sap.ui.define([
 				},
 				aResourceData = [],
 				oResourceObj={},
-				oUniqueResourceList={},
 				aResourceGroupPromise = [],				
 				aFilters=[];
 				
 			
 			var checkDuplicate = function(aResourceList){
 				var bValidateState = true,
-					aResourceNameList = [];
+					aResourceNameList = [],
+					oUniqueResourceList={};
 				aResourceList.forEach(function(oResource){
 					if(oResource.ResourceGuid){
 						if(oUniqueResourceList[oResource.ResourceGuid]){
