@@ -6,9 +6,8 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/OverrideExecution",
 	"sap/m/MessageToast",
-	"sap/base/util/deepClone",
 	'sap/ui/model/Filter'
-], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast, deepClone, Filter) {
+], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast, Filter) {
 
 	
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
@@ -62,16 +61,12 @@ sap.ui.define([
 		handlePlanDemands: function(){
 			
 		},		
-	
-		/* =========================================================== */
-		/* Private methods                                              */
-		/* =========================================================== */
 
 		/**
 		 * This method will validate the selected data (demands and resources) and display the error message
 		 * @return {boolean} - 'true' if no duplicate found | 'false' if duplicate found
 		 */
-		_validateRescheduleProcess: function(){
+		checkDuplicateResource: function(){
 			var oResourceBundle = this.oResourceBundleModel.getResourceBundle(),
 				oViewModel = this.oViewModel,
 				oAppViewModel = this.oAppViewModel,
@@ -103,7 +98,7 @@ sap.ui.define([
 			};
 			//Check for resource duplicate
 			aResourcePath.forEach(function(sPath){
-				oResourceObj = deepClone(oDataModel.getProperty(sPath));
+				oResourceObj = _.clone(oDataModel.getProperty(sPath));
 				aFilters=[];
 				if(oResourceObj.ResourceGuid){
 					aResourceData.push(oResourceObj);
@@ -128,5 +123,9 @@ sap.ui.define([
 			//Read all Resource from Resource group
 
 		},
+
+		/* =========================================================== */
+		/* Private methods                                              */
+		/* =========================================================== */
 	});
 });

@@ -242,7 +242,7 @@ sap.ui.define([
 		onRescheduleButtonPress: function(oEvent){
 			var oViewModel = this.getModel("viewModel"),
 				oResourceBundle = this.getResourceBundle();	
-			this.oSchedulingActions._validateRescheduleProcess().then(function(bValidateState){
+			this.oSchedulingActions.checkDuplicateResource().then(function(bValidateState){
 				if(bValidateState){
 					oViewModel.setProperty("/Scheduling/sType", "RESCHEDULING");
 					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView());
