@@ -63,30 +63,6 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oEvent 
-         */
-        onChangeDateFrom: function(oEvent){
-            console.log(oEvent.getParameters());
-            this._validateDateDifference(oEvent.getSource(), null);
-        },
-        /**
-         * 
-         */
-        onChangeDateTo: function(oEvent){
-            console.log(oEvent.getParameters());
-            this._validateDateDifference(null, oEvent.getSource());
-        },
-
-
-        _validateDateDifference: function(DateFromChange, DateToChange){
-            console.log(this._oDateFrom.getDateValue());
-            console.log(this._oDateTo.getDateValue());
-            //var diff = this._oDateTo.getDateValue().diff(this._oDateFrom.getDateValue(), 'days');
-            //console.log(diff);
-        },
-
-        /**
          * set delete button row action to data grid table
          * @returns 
          */
