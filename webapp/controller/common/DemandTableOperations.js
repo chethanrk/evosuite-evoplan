@@ -242,12 +242,12 @@ sap.ui.define([
 		onRescheduleButtonPress: function(oEvent){
 			var oViewModel = this.getModel("viewModel"),
 				oResourceBundle = this.getResourceBundle();	
-			this.oSchedulingActions.checkDuplicateResource().then(function(bValidateState){
-				if(bValidateState){
+			this.oSchedulingActions.checkDuplicateResource().then(function(oResult){
+				if(oResult.validateState){
 					oViewModel.setProperty("/Scheduling/sType", "RESCHEDULING");
 					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView());
 				}else{
-					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource"));
+					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
 				}
 			}.bind(this));
 

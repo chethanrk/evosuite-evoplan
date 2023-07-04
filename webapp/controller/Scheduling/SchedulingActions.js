@@ -84,17 +84,22 @@ sap.ui.define([
 				
 			
 			var checkDuplicate = function(aResourceList){
-				var bValidateState = true;
+				var bValidateState = true,
+					aResourceNameList = [];
 				aResourceList.forEach(function(oResource){
 					if(oResource.ResourceGuid){
 						if(oUniqueResourceList[oResource.ResourceGuid]){
 							bValidateState = false;
+							aResourceNameList.push(oResource.Description);
 						}else{
 							oUniqueResourceList[oResource.ResourceGuid] = true;
 						}
 					}
 				});
-				return bValidateState;
+				return {
+					validateState: bValidateState,
+					resourceNames: aResourceNameList.join(", ")
+				};
 			};
 			//Check for resource duplicate
 			aResourcePath.forEach(function(sPath){
