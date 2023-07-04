@@ -182,6 +182,7 @@ sap.ui.define([
 				this.byId("idUnassignButton").setEnabled(bEnable);
 				this.byId("idAssignmentStatusButton").setEnabled(bEnable);
 				this.byId("idOverallStatusButton").setEnabled(true);
+				this._viewModel.setProperty("/Scheduling/bEnablePlanDemands",true);
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
@@ -189,6 +190,7 @@ sap.ui.define([
 				this.byId("idOverallStatusButton").setEnabled(false);
 				this.byId("materialInfo").setEnabled(false);
 				this.byId("idUnassignButton").setEnabled(false);
+				this._viewModel.setProperty("/Scheduling/bEnablePlanDemands",false);
 			}
 
 			//If the selected demands exceeds more than the maintained selected configuration value
@@ -292,6 +294,18 @@ sap.ui.define([
 		 * @param oEvent
 		 */	
 		onPressPlanDemands: function(oEvent){
+			var oSelectedPaths,
+				aSelectedResourcePaths = this._viewModel.getProperty("/Scheduling/aSelectedResources");
+			if(!aSelectedResourcePaths.length){
+				var sMsg = this.getResourceBundle().getText("ymsg.SelectResource");
+				this.showMessageToast(sMsg);
+				return;
+			}	
+			oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true);
+			if (oSelectedPaths.aNonAssignable.length > 0) {
+				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.getResourceBundle().getText("ymsg.invalidSelectedDemands"));
+			}	
+
 			this.oSchedulingActions.handlePlanDemands();
 		},
 		/* =========================================================== */
