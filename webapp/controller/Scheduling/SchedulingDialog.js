@@ -272,15 +272,6 @@ sap.ui.define([
 					dataSet: []
 				}
 			});
-
-			//############# test ####################
-			var sSelectedDemand = this._oViewModel.getProperty("/Scheduling/selectedDemandPath");
-			if(sSelectedDemand){
-				var oDemandData = this._oModel.getProperty(sSelectedDemand);
-				var step1 = [oDemandData];
-				this._oSchedulingModel.setProperty("/step1/dataSet", step1);
-			}
-
 		},
 
 		/**
