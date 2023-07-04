@@ -63,7 +63,7 @@ sap.ui.define([
 		},		
 
 		/**
-		 * This method will validate the selected data (demands and resources) and display the error message
+		 * This method will check for the duplicate resource selected or not and display the error message
 		 * @return {boolean} - 'true' if no duplicate found | 'false' if duplicate found
 		 */
 		checkDuplicateResource: function(){
