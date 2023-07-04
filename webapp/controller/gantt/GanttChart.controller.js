@@ -2036,14 +2036,26 @@ sap.ui.define([
 					for (let j = 0; aResources && j < aResources.length; j++) {
 						var oResource = aResources[j];
 						oResource.AssignmentSet.results = [];
+						oResource.children = []; //Updating resource child nodes
 						for (var k in aAssignments) {
 							if (oResource.NodeId === aAssignments[k].ObjectId) {
 								oResource.AssignmentSet.results.push(aAssignments[k]);
+								oResource.children.push(aAssignments[k]);
+								oResource.children.forEach(function (oAssignItem, idx) { //Updating resource child node data
+									oAssignItem.NodeType = "ASSIGNMENT";
+									var _cloneObj = _.cloneDeep(oAssignItem);
+			``						_cloneObj.OBJECT_ID_RELATION = _cloneObj.OBJECT_ID_RELATION + "//" + _cloneObj.ResourceGuid;
+									oAssignItem.AssignmentSet = { 
+										results: [_cloneObj]
+									};
+								});
+								
+							}
 							}
 						}
 					}
 				}
-			}
+			
 			this.oGanttModel.refresh();
 		},
 		/**
