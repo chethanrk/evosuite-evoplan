@@ -588,10 +588,10 @@ sap.ui.define([
 					sScheduleDialogTitle: "",
 					sScheduleTableTitle: "",
 					bEnableReschedule: false,
+					bEnableAutoschedule: false,
 					SchedulingDialogFlags:{
 						
-					},
-					bEnablePlanDemands: false,
+					}
 				}
 			});
 			oViewModel.setSizeLimit(999999999);

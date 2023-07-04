@@ -288,11 +288,19 @@ sap.ui.define([
 		},
 
 		/**
-		 * Function to handle press event Plan Demands Button
-		 * @param oEvent
+		 * On press of auto-schedule button
+		 * Function to handle press event Plan Demands
+		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
 		 */	
-		onPressPlanDemands: function(oEvent){
+		onAutoscheduleButtonPress: function(oEvent){
 			this.oSchedulingActions.handlePlanDemands();
+			
+			var oViewModel = this.getModel("viewModel");
+			oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
+			var mParams = {
+				entitySet: "DemandSet"
+			}
+			this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
 		},
 		/* =========================================================== */
 		/* Private methods                                             */

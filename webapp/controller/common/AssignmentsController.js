@@ -1,18 +1,16 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/DemandTableOperations",
-	"com/evorait/evoplan/controller/Scheduling/SchedulingActions",
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment"
-], function (DemandTableOperations, SchedulingActions, MessageBox, formatter, Constants, Fragment) {
+], function (DemandTableOperations, MessageBox, formatter, Constants, Fragment) {
 
 	return DemandTableOperations.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
 
-		oSchedulingActions: undefined,
-
 		onInit: function(){
-			this.oSchedulingActions = new SchedulingActions(this);
+			// call super class onInit
+			DemandTableOperations.prototype.onInit.apply(this, arguments);
 		},
 
 		/**
