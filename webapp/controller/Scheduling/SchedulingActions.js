@@ -77,10 +77,9 @@ sap.ui.define([
 				oAppViewModel = this.oAppViewModel,
 				oDataModel = this.oDataModel,
 				aResourcePath = oViewModel.getProperty("/Scheduling/selectedResources"),
-				oResourceTable = sap.ui.getCore().byId('__xmlview2--droppableTable'),
-				aTableFilters = oResourceTable.getTable().getBinding("rows").aApplicationFilters,
+				aTableFilters = oViewModel.getProperty("/Scheduling/resourceTreeData/filter"),
 				mParameters={
-					$select:oResourceTable.getTable().getBinding("rows").mParameters["select"]
+					$select:oViewModel.getProperty("/Scheduling/resourceTreeData/select")
 				},
 				aResourceData = [],
 				oResourceObj={},

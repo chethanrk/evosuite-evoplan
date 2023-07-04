@@ -591,6 +591,10 @@ sap.ui.define([
 						
 					},
 					bEnablePlanDemands: false,
+					resourceTreeData: {
+						filter:[],
+						select:""
+					}
 				}
 			});
 			oViewModel.setSizeLimit(999999999);
