@@ -240,11 +240,17 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for reschedule button
 		 */
 		onRescheduleButtonPress: function(oEvent){
-			var oViewModel = this.getModel("viewModel");
-			if(this.oSchedulingActions._validateRescheduleProcess()){
-				oViewModel.setProperty("/Scheduling/sType", "RESCHEDULING");
-				this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView());
-			}
+			var oViewModel = this.getModel("viewModel"),
+				oResourceBundle = this.getResourceBundle();	
+			this.oSchedulingActions._validateRescheduleProcess().then(function(bValidateState){
+				if(bValidateState){
+					oViewModel.setProperty("/Scheduling/sType", "RESCHEDULING");
+					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView());
+				}else{
+					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource"));
+				}
+			}.bind(this));
+
 		},
 
 		/* =========================================================== */

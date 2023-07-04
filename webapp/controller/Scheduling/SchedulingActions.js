@@ -24,6 +24,7 @@ sap.ui.define([
 		constructor: function(controller) {
 			this._controller = controller;
 			this.oViewModel = controller.getModel("viewModel");
+			this.oAppViewModel = controller.getModel("appView");
 			this.oDataModel = controller.getModel();
 			this.oResourceBundleModel = controller.getModel("i18n");
 		},
@@ -73,6 +74,7 @@ sap.ui.define([
 		_validateRescheduleProcess: function(){
 			var oResourceBundle = this.oResourceBundleModel.getResourceBundle(),
 				oViewModel = this.oViewModel,
+				oAppViewModel = this.oAppViewModel,
 				oDataModel = this.oDataModel,
 				aResourceData = [],
 				aResourceGroupData = [],
@@ -126,14 +128,15 @@ sap.ui.define([
 			}.bind(this));
 			//Check for resource duplicate
 			//Read all Resource from Resource group
-			Promise.all(aResourceGroupPromise).then(function(aResult){
-				debugger;
-				aResult.forEach(function(oResult){
-					aResourceData = aResourceData.concat(oResult.results);
-				});
-				checkDuplicate(aResourceData);
-				return bValidateState;
-			}.bind(this));
+			oAppViewModel.setProperty("/busy",true);
+			return Promise.all(aResourceGroupPromise).then(function(aResult){
+						oAppViewModel.setProperty("/busy",false);
+						aResult.forEach(function(oResult){
+							aResourceData = aResourceData.concat(oResult.results);
+						});
+						checkDuplicate(aResourceData);
+						return bValidateState;
+					}.bind(this));
 			//Read all Resource from Resource group
 
 		},
