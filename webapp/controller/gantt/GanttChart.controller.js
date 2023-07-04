@@ -677,6 +677,8 @@ sap.ui.define([
 				this.byId("idOptimizeRoute").setEnabled(false);
 			}
 
+			this.oViewModel.setProperty("/Scheduling/aSelectedResources",this.selectedResources);
+
 		},
 
 		/**
@@ -867,6 +869,7 @@ sap.ui.define([
 		 */
 		_resetToolbarButtons: function () {
 			this.selectedResources = [];
+			this.oViewModel.setProperty("/Scheduling/aSelectedResources",[]);
 			this.byId("idButtonreassign").setEnabled(false);
 			this.byId("idButtonunassign").setEnabled(false);
 			this.byId("idButtonTimeAllocNew").setEnabled(false);

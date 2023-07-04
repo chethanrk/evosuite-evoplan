@@ -591,7 +591,8 @@ sap.ui.define([
 					bEnableAutoschedule: false,
 					SchedulingDialogFlags:{
 						
-					}
+					},
+					aSelectedResources:[]
 				}
 			});
 			oViewModel.setSizeLimit(999999999);
