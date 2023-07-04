@@ -69,7 +69,7 @@ sap.ui.define([
 
 		/**
 		 * This method will validate the selected data (demands and resources) and display the error message
-		 * @return {boolean}
+		 * @return {boolean} - 'true' if no duplicate found | 'false' if duplicate found
 		 */
 		_validateRescheduleProcess: function(){
 			var oResourceBundle = this.oResourceBundleModel.getResourceBundle(),
