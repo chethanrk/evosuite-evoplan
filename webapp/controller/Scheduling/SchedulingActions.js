@@ -90,7 +90,7 @@ sap.ui.define([
 					if(oResource.ResourceGuid){
 						if(oUniqueResourceList[oResource.ResourceGuid]){
 							bValidateState = false;
-							aResourceNameList.push(oResource.Description);
+							aResourceNameList.indexOf(oResource.Description) === -1 && aResourceNameList.push(oResource.Description);
 						}else{
 							oUniqueResourceList[oResource.ResourceGuid] = true;
 						}
