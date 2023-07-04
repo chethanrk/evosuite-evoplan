@@ -411,7 +411,7 @@ sap.ui.define([
 					//on check on oData property ALLOW_ASSIGN when flag was given
 					if (checkAssignAllowed) {
 						//Added condition to check for number of assignments to plan demands via scheduling
-						if ((!bIsForScheduling && oData.ALLOW_ASSIGN) ||(bIsForScheduling && oData.ALLOW_ASSIGN && oData.NUMBER_OF_ASSIGNMENTS === 0)) {
+						if ((!bIsForScheduling && oData.ALLOW_ASSIGN) ||(bIsForScheduling && oData.ALLOW_ASSIGN && oData.NUMBER_OF_CAPACITIES <= 1)) {
 							aPathsData.push({
 								sPath: sPath,
 								oData: oData,
@@ -1103,20 +1103,16 @@ sap.ui.define([
 		 * @Author Rakesh Sahu
 		 */
 		getMessageDescWithOrderID: function (oData, Desc, bIsForScheduling) {
-			var sItemDetails = "";
 			Desc = Desc ? Desc : oData.DemandDesc;
-			if (oData.ORDERID) {
-				sItemDetails =  oData.ORDERID + " / " + oData.OPERATIONID + "  " + Desc
-			} else {
-				sItemDetails =  oData.NOTIFICATION + "  " + Desc;
-			}
-			
 			// Condition to add number of assignments to display in error dialog
 			if(bIsForScheduling){
-				sItemDetails = sItemDetails + " " +  oData.NUMBER_OF_ASSIGNMENTS;
+				return oData.ORDER_TYPE +", "+ oData.ORDERID +", "+ Desc +", "+ oData.OPERATIONID +", "+ oData.OPERATION_DESC +", "+ oData.Status +", "+ oData.NUMBER_OF_CAPACITIES;				;
 			}
-
-			return sItemDetails;
+			if (oData.ORDERID) {
+				return oData.ORDERID + " / " + oData.OPERATIONID + "  " + Desc
+			} else {
+				return oData.NOTIFICATION + "  " + Desc;
+			}		
 		},
 
 		/**
