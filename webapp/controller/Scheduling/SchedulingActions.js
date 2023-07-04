@@ -76,23 +76,21 @@ sap.ui.define([
 				oViewModel = this.oViewModel,
 				oAppViewModel = this.oAppViewModel,
 				oDataModel = this.oDataModel,
-				aResourceData = [],
-				aResourceGroupData = [],
-				aResourcePath = [],
-				oResourceObj={},
-				oUniqueResourceList={},
-				bValidateState=true,
+				aResourcePath = oViewModel.getProperty("/Scheduling/selectedResources"),
 				oResourceTable = sap.ui.getCore().byId('__xmlview2--droppableTable'),
-				aAllResourceNodes = oResourceTable.getTable().getBinding("rows").getNodes(),
-				aResourceFromGroup = [],
-				aResourceGroupPromise = [],
-				aFilters=[],
+				aTableFilters = oResourceTable.getTable().getBinding("rows").aApplicationFilters,
 				mParameters={
 					$select:oResourceTable.getTable().getBinding("rows").mParameters["select"]
 				},
-				aResourceList=[];
+				aResourceData = [],
+				oResourceObj={},
+				oUniqueResourceList={},
+				aResourceGroupPromise = [],				
+				aFilters=[];
+				
 			
 			var checkDuplicate = function(aResourceList){
+				var bValidateState = true;
 				aResourceList.forEach(function(oResource){
 					if(oResource.ResourceGuid){
 						if(oUniqueResourceList[oResource.ResourceGuid]){
@@ -100,30 +98,22 @@ sap.ui.define([
 						}else{
 							oUniqueResourceList[oResource.ResourceGuid] = true;
 						}
-						aResourceData.push(oResource);
 					}
-				})
-			}
-
-			aResourcePath = oViewModel.getProperty("/Scheduling/selectedResources");
+				});
+				return bValidateState;
+			};
 			//Check for resource duplicate
 			aResourcePath.forEach(function(sPath){
 				oResourceObj = deepClone(oDataModel.getProperty(sPath));
 				aFilters=[];
 				if(oResourceObj.ResourceGuid){
-					if(oUniqueResourceList[oResourceObj.ResourceGuid]){
-						bValidateState = false;
-					}else{
-						oUniqueResourceList[oResourceObj.ResourceGuid] = true;
-					}
 					aResourceData.push(oResourceObj);
 				}else{
 					if(oResourceObj.ResourceGroupGuid){
-						aFilters=_.clone(oResourceTable.getTable().getBinding("rows").aApplicationFilters);
+						aFilters=_.clone(aTableFilters);
 						aFilters.push(new Filter("ParentNodeId", "EQ", oResourceObj.NodeId));
 						aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceHierarchySet", aFilters, mParameters));
 					}
-					// aResourceGroupData.push(oResourceObj);
 				}
 			}.bind(this));
 			//Check for resource duplicate
@@ -133,15 +123,11 @@ sap.ui.define([
 						oAppViewModel.setProperty("/busy",false);
 						aResult.forEach(function(oResult){
 							aResourceData = aResourceData.concat(oResult.results);
-						});
-						checkDuplicate(aResourceData);
-						return bValidateState;
+						});						
+						return checkDuplicate(aResourceData);
 					}.bind(this));
 			//Read all Resource from Resource group
 
 		},
-
-	
-
 	});
 });
