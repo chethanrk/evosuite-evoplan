@@ -537,27 +537,6 @@ sap.ui.define([
 			} else {
 				this._oRouter.navTo("demandTools", {});
 			}
-		},
-
-		/**
-		 * Event handler to handle Plan demands functionality
-		 */
-		onPressPlanDemands: function () {
-			var oScheduling = this._viewModel.getProperty("/Scheduling"),
-				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true),
-				sMsg;
-			debugger;
-
-			if (!oScheduling.selectedResources.length) { // When no resources are selected, do not allow plan demands
-				sMsg = this.getResourceBundle().getText("ymsg.SelectResource");
-				this.showMessageToast(sMsg);
-				return;
-			} else if (oSelectedPaths.aNonAssignable.length > 0) { // Display non-assignable demands in error dialog
-				sMsg = this.getResourceBundle().getText("ymsg.invalidSelectedDemands");
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, sMsg);
-			} else {
-				this.oSchedulingActions.handlePlanDemands();
-			}
 		}
 
 	});
