@@ -20,7 +20,6 @@ sap.ui.define([
 			this.oViewModel = controller.getModel("viewModel");
 			this.oAppViewModel = controller.getModel("appView");
 			this.oDataModel = controller.getModel();
-			this.oResourceBundleModel = controller.getModel("i18n");
 		},
 
 		/* =========================================================== */
@@ -64,8 +63,7 @@ sap.ui.define([
 		 * @return {boolean} - 'true' if no duplicate found | 'false' if duplicate found
 		 */
 		checkDuplicateResource: function(){
-			var oResourceBundle = this.oResourceBundleModel.getResourceBundle(),
-				oViewModel = this.oViewModel,
+			var oViewModel = this.oViewModel,
 				oAppViewModel = this.oAppViewModel,
 				oDataModel = this.oDataModel,
 				aResourcePath = oViewModel.getProperty("/Scheduling/selectedResources"),
@@ -78,7 +76,7 @@ sap.ui.define([
 				aResourceGroupPromise = [],				
 				aFilters=[];
 				
-			
+			//method will check for the duplicate resource
 			var checkDuplicate = function(aResourceList){
 				var bValidateState = true,
 					aResourceNameList = [],
@@ -98,7 +96,7 @@ sap.ui.define([
 					resourceNames: aResourceNameList.join(", ")
 				};
 			};
-			//Check for resource duplicate
+			//Read all resource selected
 			aResourcePath.forEach(function(sPath){
 				oResourceObj = _.clone(oDataModel.getProperty(sPath));
 				aFilters=[];
@@ -112,7 +110,7 @@ sap.ui.define([
 					}
 				}
 			}.bind(this));
-			//Check for resource duplicate
+			//Read all resource selected
 			//Read all Resource from Resource group
 			oAppViewModel.setProperty("/busy",true);
 			return Promise.all(aResourceGroupPromise).then(function(aResult){
