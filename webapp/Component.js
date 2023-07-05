@@ -592,7 +592,6 @@ sap.ui.define([
 					SchedulingDialogFlags:{
 						
 					},
-					bEnablePlanDemands: false,
 					aSelectedResources:[]
 				}
 			});
