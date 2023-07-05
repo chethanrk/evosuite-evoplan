@@ -1,11 +1,12 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/PRT/PRTActions",
+	"com/evorait/evoplan/controller/Scheduling/SchedulingActions",
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/OverrideExecution"
-], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution) {
+], function (BaseController, SchedulingActions, MessageBox, formatter, Constants, Fragment, OverrideExecution) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.DemandTableOperations", {
 
@@ -73,8 +74,19 @@ sap.ui.define([
 					public: true,
 					final: false,
 					overrideExecution: OverrideExecution.Instead
+				},
+				onAutoscheduleButtonPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
 				}
 			}
+		},
+
+		oSchedulingActions: undefined,
+
+		onInit: function(){
+			this.oSchedulingActions = new SchedulingActions(this);
 		},
 
 		/**
@@ -232,13 +244,31 @@ sap.ui.define([
 		},
 
 		/**
+		 * On press of auto-schedule button
+		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
+		 */
+		onAutoscheduleButtonPress: function(oEvent){
+			this.oSchedulingActions.handlePlanDemands();
+
+			var oViewModel = this.getModel("viewModel");
+			oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
+			var mParams = {
+				entitySet: "DemandSet"
+			}
+			this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
+		},
+
+		/**
 		 * On press of reschedule button
 		 * @param {sap.ui.base.Event} oEvent - press event for reschedule button
 		 */
 		onRescheduleButtonPress: function(oEvent){
 			var oViewModel = this.getModel("viewModel");
-			oViewModel.setProperty("/Scheduling/sType", "RESCHEDULING");
-			this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView());
+			oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
+			var mParams = {
+				entitySet: "AssignmentSet"
+			}
+			this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
 		},
 
 		/* =========================================================== */

@@ -1,0 +1,29 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+<f:SimpleForm editable="true" layout="ColumnLayout"
+    columnsM="2"
+    columnsL="2"
+    columnsXL="2">
+    <f:content>
+        <core:ExtensionPoint name="WizardExtP|Schedule|Step1|Form|Content|Before"/>
+        <Label text="Date from" labelFor="ScheduleDateFrom"/>
+        <DateTimePicker
+            id="ScheduleDateFrom"
+            placeholder="Enter Date"
+            change="onChangeDateFrom"/>
+        <Label text="Date to" labelFor="ScheduleDateto"/>
+        <DateTimePicker
+            id="ScheduleDateTo"
+            placeholder="Enter Date"
+            change="onChangeDateTo"/>
+        <Label text="Utilization" labelFor="ScheduleUtilization"/>
+        <Slider value="{user>/DEFAULT_UTILIZATION_BAR_MAPS}" 
+            visible="{user>/ENABLE_UTILIZATION_BAR_MAPS}"
+            width="100%"
+            min="0" max="100"
+            showAdvancedTooltip="true"
+            showHandleTooltip="false"
+            class="sapUiMediumMarginBottom" />
+        <core:ExtensionPoint name="WizardExtP|Schedule|Step1|Form|Content|After"/>
+    </f:content>
+</f:SimpleForm>
+</core:FragmentDefinition>

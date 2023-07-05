@@ -1,12 +1,7 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/BaseController",
-	"sap/m/MessageBox",
-	"com/evorait/evoplan/model/formatter",
-	"com/evorait/evoplan/model/Constants",
-	"sap/ui/core/Fragment",
-	"sap/ui/core/mvc/OverrideExecution",
-	"sap/m/MessageToast"
-], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast) {
+	"com/evorait/evoplan/model/formatter"
+], function (BaseController, formatter) {
 
 	
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
@@ -40,15 +35,17 @@ sap.ui.define([
 
 			if(oScheduling.selectedDemandPath){
 				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
-			
-				if(oScheduling.selectedResources && oScheduling.selectedResources.length > 0 && 
-					(oSelectedDemandItem.ALLOW_REASSIGN || oSelectedDemandItem.ALLOW_ASSIGN)){
-					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
+
+				if(oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
+					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", !!oSelectedDemandItem.ALLOW_REASSIGN);
+					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", !!oSelectedDemandItem.ALLOW_ASSIGN);
 				} else {
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 				}
 			} else {
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+				this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 			}
 		},
 		
