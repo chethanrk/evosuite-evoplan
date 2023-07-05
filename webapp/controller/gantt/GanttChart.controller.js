@@ -2044,7 +2044,7 @@ sap.ui.define([
 								oResource.children.forEach(function (oAssignItem, idx) { //Updating resource child node data
 									oAssignItem.NodeType = "ASSIGNMENT";
 									var _cloneObj = _.cloneDeep(oAssignItem);
-			``						_cloneObj.OBJECT_ID_RELATION = _cloneObj.OBJECT_ID_RELATION + "//" + _cloneObj.ResourceGuid;
+									_cloneObj.OBJECT_ID_RELATION = _cloneObj.OBJECT_ID_RELATION + "//" + _cloneObj.ResourceGuid;
 									oAssignItem.AssignmentSet = { 
 										results: [_cloneObj]
 									};
