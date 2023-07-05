@@ -22,7 +22,7 @@ sap.ui.define([
 		assignedDemands: function (aSourcePaths, sTargetPath, mParameters) {
 			var oParams = [],
 				targetObj = this.getModel().getProperty(sTargetPath),
-				bValdiMsgPopupFlag = this.getModel("user").getProperty("/ENABLE_RES_ASGN_VALID_MESG_DEM"), //Condition to check Global configuration for validation Mesg Popup
+				bValdiMsgPopupFlag = this.getModel("user").getProperty("/ENABLE_RES_ASGN_VALID_CHECK"), //Condition to check Global configuration for validation Mesg Popup
 				bIsGroup = targetObj.NodeType === "RES_GROUP",
 				bIsPool = targetObj.NodeType === "RESOURCE" && targetObj.ResourceGuid === "";
 
