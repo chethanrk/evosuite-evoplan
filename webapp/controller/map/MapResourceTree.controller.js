@@ -311,7 +311,6 @@ sap.ui.define([
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
 				oUserModel = this.getModel("user"),
-				oViewModel = this.getModel("viewModel"),
 				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels;
 
 			if (!this.isLoaded) {
