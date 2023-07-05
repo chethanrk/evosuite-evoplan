@@ -38,13 +38,18 @@ sap.ui.define([
 
 				if(oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", !!oSelectedDemandItem.ALLOW_REASSIGN);
-					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", !!oSelectedDemandItem.ALLOW_ASSIGN);
 				} else {
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
-					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 				}
 			} else {
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+			}
+
+
+			// For enable/disable Plan-Demand button
+			if (oScheduling.selectedDemandPath && (oScheduling.selectedResources && (oScheduling.selectedResources.length > 0))){
+				this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
+			}else{
 				this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 			}
 		},
