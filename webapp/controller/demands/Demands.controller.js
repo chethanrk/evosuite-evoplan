@@ -210,7 +210,7 @@ sap.ui.define([
 					this.byId("idUnassignButton").setEnabled(bEnable);
 					this.byId("idAssignmentStatusButton").setEnabled(bEnable);
 					this.byId("idOverallStatusButton").setEnabled(true);
-					this._viewModel.setProperty("/Scheduling/bEnablePlanDemands", true);
+					this._viewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 				} else {
 					this.byId("idfindRightTechnicianButton").setEnabled(false);
 					this.byId("assignButton").setEnabled(false);
@@ -219,7 +219,7 @@ sap.ui.define([
 					this.byId("idOverallStatusButton").setEnabled(false);
 					this.byId("materialInfo").setEnabled(false);
 					this.byId("idUnassignButton").setEnabled(false);
-					this._viewModel.setProperty("/Scheduling/bEnablePlanDemands", false);
+					this._viewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 				}
 
 				//If the selected demands exceeds more than the maintained selected configuration value
@@ -233,7 +233,7 @@ sap.ui.define([
 
 				//Enabling or disabling Re-Schedule button based on status and flag
 				//TODO - support multiple demands
-				if(this._aSelectedRowsIdx[0] && this._aSelectedRowsIdx.length === 1){
+				if(this._aSelectedRowsIdx.length > 0){
 					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
 				} else {
 					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);

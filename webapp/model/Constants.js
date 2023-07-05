@@ -93,6 +93,10 @@ sap.ui.define([], function () {
 			GANTT_POP_OVER_QUALIFIER: "GanttAssignmentPopOver",
 			MAP_DEMAND_PIN: "MapDemandPin",
 			PRT_TOOLS_ASSIGN_DIALOG:"ToolAssignmentDialogResource"
+		},
+		SCHEDULING: {
+			AUTOSCHEDULING: "AutoScheduling",
+			RESCHEDULING: "ReScheduling"
 		}
 	};
 
