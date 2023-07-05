@@ -11,7 +11,6 @@ sap.ui.define([
 		onInit: function(){
 			// call super class onInit
 			DemandTableOperations.prototype.onInit.apply(this, arguments);
-			this.oSchedulingActions = new SchedulingActions(this);
 		},
 
 		/**
