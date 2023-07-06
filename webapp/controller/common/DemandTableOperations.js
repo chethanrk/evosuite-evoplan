@@ -290,7 +290,7 @@ sap.ui.define([
 				if(oResult.validateState){
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					var mParams = {
-						entitySet: "AssignmentSet"
+						entitySet: "DemandSet"
 					}
 					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
 				}else{
