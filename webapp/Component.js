@@ -592,7 +592,11 @@ sap.ui.define([
 					SchedulingDialogFlags:{
 						
 					},
-					aSelectedResources:[]
+					aSelectedResources:[],
+					resourceTreeData: {
+						filter:[],
+						select:""
+					}
 				}
 			});
 			oViewModel.setSizeLimit(999999999);
