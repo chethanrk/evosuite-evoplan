@@ -20,7 +20,8 @@ sap.ui.define([
 			this.oViewModel = controller.getModel("viewModel");
 			this.oAppViewModel = controller.getModel("appView");
 			this.oDataModel = controller.getModel();
-			console.log("method initialized")
+			this.userModel = controller.getModel("user");
+			this._IsReSchedulingEnabled = this.userModel.getProperty("/ENABLE_RESCHEDULE_BUTTON");
 		},
 
 		/* =========================================================== */
@@ -31,6 +32,10 @@ sap.ui.define([
 		 * Function to validate rescheduling button
 		 */
 		validateReschedule: function(){
+			// check if the global config is enabled or not for re-schedule.
+			if(!this._IsReSchedulingEnabled){
+				return;
+			}
 			var oSelectedDemandItem, oScheduling;
 			oScheduling = this.oViewModel.getProperty("/Scheduling");
 
