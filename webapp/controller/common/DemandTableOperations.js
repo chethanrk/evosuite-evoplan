@@ -90,6 +90,13 @@ sap.ui.define([
 		},
 
 		/**
+		 * Called when a controller is instantiated and its View controls (if available) are already created.
+		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
+		 **/
+		onInit: function(oEvent){
+			this.oSchedulingActions = new SchedulingActions(this);
+		},
+		/**
 		 * open change status dialog
 		 * @param oEvent
 		 */
@@ -248,14 +255,27 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
 		 */
 		onAutoscheduleButtonPress: function(oEvent){
-			this.oSchedulingActions.handlePlanDemands();
+			var oSchedulingResources = this._viewModel.getProperty("/Scheduling/selectedResources"),
+				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true),
+				sMsg;
 
-			var oViewModel = this.getModel("viewModel");
-			oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
-			var mParams = {
-				entitySet: "DemandSet"
+			if (!oSchedulingResources || !oSchedulingResources.length) { // When no resources are selected, do not allow plan demands
+				sMsg = this.getResourceBundle().getText("ymsg.SelectResource");
+				this.showMessageToast(sMsg);
+				return;
+			} else if (oSelectedPaths.aNonAssignable.length > 0) { // Display non-assignable demands in error dialog
+				sMsg = this.getResourceBundle().getText("ymsg.invalidSelectedDemands");
+				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, sMsg);
+			} else {
+				this.oSchedulingActions.handlePlanDemands();
+
+				var oViewModel = this.getModel("viewModel");
+				oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
+				var mParams = {
+					entitySet: "DemandSet"
+				}
+				this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
 			}
-			this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
 		},
 
 		/**
@@ -263,12 +283,19 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for reschedule button
 		 */
 		onRescheduleButtonPress: function(oEvent){
-			var oViewModel = this.getModel("viewModel");
-			oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
-			var mParams = {
-				entitySet: "AssignmentSet"
-			}
-			this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
+			var oViewModel = this.getModel("viewModel"),
+				oResourceBundle = this.getResourceBundle();	
+			this.oSchedulingActions.checkDuplicateResource().then(function(oResult){
+				if(oResult.validateState){
+					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
+					var mParams = {
+						entitySet: "AssignmentSet"
+					}
+					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
+				}else{
+					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
+				}
+			}.bind(this));
 		},
 
 		/* =========================================================== */

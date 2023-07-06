@@ -537,7 +537,7 @@ sap.ui.define([
 			} else {
 				this._oRouter.navTo("demandTools", {});
 			}
-		},
+		}
 
 	});
 });

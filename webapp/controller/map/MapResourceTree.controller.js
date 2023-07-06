@@ -326,7 +326,6 @@ sap.ui.define([
 			// setting filters in local model to access in assignTree dialog.
 			this.getModel("viewModel").setProperty("/resourceFilterView", aFilter);
 			oBinding.filters = [new Filter(aFilter, true)];
-
 		},
 
 		/**
