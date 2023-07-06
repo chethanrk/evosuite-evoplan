@@ -20,6 +20,7 @@ sap.ui.define([
 			this.oViewModel = controller.getModel("viewModel");
 			this.oAppViewModel = controller.getModel("appView");
 			this.oDataModel = controller.getModel();
+			console.log("method initialized")
 		},
 
 		/* =========================================================== */
