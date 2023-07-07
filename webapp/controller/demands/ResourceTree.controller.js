@@ -10,11 +10,10 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/ui/core/Fragment",
-	"com/evorait/evoplan/model/Constants",
-	"com/evorait/evoplan/controller/Scheduling/SchedulingActions"
+	"com/evorait/evoplan/model/Constants"
 ], function (Device, JSONModel, Filter, FilterOperator,
 	FilterType, formatter, AssignmentsController, ResourceTreeFilterBar,
-	MessageToast, MessageBox, Fragment, Constants,SchedulingActions) {
+	MessageToast, MessageBox, Fragment, Constants) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.demands.ResourceTree", {
@@ -32,8 +31,6 @@ sap.ui.define([
 		mTreeState: {},
 
 		_bFirsrTime: true,
-
-		oSchedulingActions:undefined,
 
 
 		/**
@@ -75,7 +72,6 @@ sap.ui.define([
 			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.attachRouteMatched(this._routeMatched, this);
 
-			this.oSchedulingActions = new SchedulingActions(this);
 		},
 
 		_routeMatched: function (oEvent) {

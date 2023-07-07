@@ -15,10 +15,9 @@ sap.ui.define([
 	"sap/ui/unified/Calendar",
 	"com/evorait/evoplan/controller/map/MapUtilities",
 	"sap/ui/core/mvc/OverrideExecution",
-	"com/evorait/evoplan/controller/Scheduling/SchedulingActions",
 	"com/evorait/evoplan/model/Constants",
 ], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
-	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, MapUtilities, OverrideExecution, SchedulingActions,Constants) {
+	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, MapUtilities, OverrideExecution,Constants) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
@@ -210,9 +209,11 @@ sap.ui.define([
 		_isDemandDraggable: false,
 		_oGeoMap: null,
 		_mapContextActionSheet: null,
-		oSchedulingActions: undefined,
 
 		onInit: function () {
+			// call super class onInit
+			AssignmentActionsController.prototype.onInit.apply(this, arguments);
+
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oMapModel = this.getModel("mapConfig");
 			this._oGeoMap = oGeoMap;
@@ -244,8 +245,6 @@ sap.ui.define([
 			this.oPinPopover = new PinPopover(this);
 
 			this.oMapUtilities = new MapUtilities();
-
-			this.oSchedulingActions = new SchedulingActions(this);
 		},
 
 		//TODO comment

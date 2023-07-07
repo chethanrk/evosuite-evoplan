@@ -43,6 +43,7 @@ sap.ui.define([
 					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 				} else {
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 				}
 			} else {
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
