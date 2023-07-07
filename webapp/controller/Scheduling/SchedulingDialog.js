@@ -185,7 +185,7 @@ sap.ui.define([
 			} else {
 				//sContainerId = "ReScheduling-AssignmentTable";
 				this._mParams.viewName = "com.evorait.evoplan.view.Scheduling.ReScheduling.ReScheduleStep1#ReScheduleStep1";
-				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ScheduleTable";
+				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ReScheduleTable";
 				this._mParams.modelName = "SchedulingModel";
 				this._mParams.modelDataSetPath = "/step1/dataSet";
 			}

@@ -232,6 +232,10 @@ sap.ui.define([
 				this._oViewModel.setProperty("/CheckRightTechnician", false);
 				this._oViewModel.setProperty("/resourceFilterforRightTechnician", false);
 			}
+
+			//For Scheduling
+			this._oViewModel.setProperty("/Scheduling/resourceTreeData/filter",oBinding.filters);
+			this._oViewModel.setProperty("/Scheduling/resourceTreeData/select",oBinding.parameters["select"]);
 		},
 
 		/**
