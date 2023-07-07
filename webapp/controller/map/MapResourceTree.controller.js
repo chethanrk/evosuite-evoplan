@@ -15,8 +15,9 @@ sap.ui.define([
 	"sap/base/Log", "com/evorait/evoplan/model/Constants",
 	"com/evorait/evoplan/controller/map/MapUtilities",
 	"sap/ui/core/mvc/OverrideExecution",
+	"com/evorait/evoplan/controller/Scheduling/SchedulingActions"
 ], function (Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController, ResourceTreeFilterBar,
-	MessageToast, MessageBox, Fragment, Log, Constants, MapUtilities, OverrideExecution) {
+	MessageToast, MessageBox, Fragment, Log, Constants, MapUtilities, OverrideExecution,SchedulingActions) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.map.MapResourceTree", {
@@ -160,6 +161,8 @@ sap.ui.define([
 
 		aMapDemandGuid: [],
 
+		oSchedulingActions: undefined,
+
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -195,6 +198,8 @@ sap.ui.define([
 			oRouter.attachRouteMatched(this._routeMatched, this);
 
 			this.oMapUtilities = new MapUtilities();
+
+			this.oSchedulingActions = new SchedulingActions(this);
 		},
 
 		/**
@@ -257,6 +262,11 @@ sap.ui.define([
 			} else {
 				this.byId("assignedDemands").setEnabled(false);
 			}
+
+			//validate resource tree is selected or not for Re-Schedule
+			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", this.selectedResources);
+			
+			this.oSchedulingActions.validateScheduleButtons();
 		},
 
 		/**

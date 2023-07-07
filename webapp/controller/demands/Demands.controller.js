@@ -9,9 +9,10 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"com/evorait/evoplan/controller/Scheduling/SchedulingActions"
 ], function (BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, MessageToast,
-	RowAction, RowActionItem, Fragment) {
+	RowAction, RowActionItem, Fragment,SchedulingActions) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.demands.Demands", {
@@ -19,6 +20,8 @@ sap.ui.define([
 		formatter: formatter,
 
 		_bFirstTime: true,
+
+		oSchedulingActions: undefined,
 
 		/* =========================================================== */
 		/* lifecycle methods                                           */
@@ -46,6 +49,8 @@ sap.ui.define([
 				bFromHome: true
 			};
 			this._oRouter = this.getOwnerComponent().getRouter();
+
+			this.oSchedulingActions = new SchedulingActions(this);
 		},
 
 		/* =========================================================== */
@@ -238,7 +243,7 @@ sap.ui.define([
 				} else {
 					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
 				}
-				this.oSchedulingActions.validateReschedule();
+				this.oSchedulingActions.validateScheduleButtons();
 
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
 				for (var i = 0; i < this._aSelectedRowsIdx.length; i++) {
