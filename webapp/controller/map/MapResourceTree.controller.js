@@ -314,7 +314,6 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onBeforeRebindTable: function (oEvent) {
-			console.log("binding method trigerred");
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
 				oUserModel = this.getModel("user"),
