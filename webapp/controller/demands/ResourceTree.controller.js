@@ -205,7 +205,7 @@ sap.ui.define([
 				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels,
 				oFilterRightTechnician = this._oViewModel.getProperty("/resourceFilterforRightTechnician"),
 				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician");
-
+			console.log(this._oViewModel);
 			if (!this.isLoaded) {
 				this.isLoaded = true;
 			}
@@ -231,6 +231,7 @@ sap.ui.define([
 			//For Scheduling
 			this._oViewModel.setProperty("/Scheduling/resourceTreeData/filter",oBinding.filters);
 			this._oViewModel.setProperty("/Scheduling/resourceTreeData/select",oBinding.parameters["select"]);
+			console.log("method trigerred");
 		},
 
 		/**

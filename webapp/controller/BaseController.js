@@ -1436,6 +1436,7 @@ sap.ui.define([
 				}
 			};
 			oViewModel.setProperty("/Scheduling",oBj);
+			console.log("rset json triggg")
 		}
 	});
 

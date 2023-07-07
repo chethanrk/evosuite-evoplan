@@ -314,9 +314,11 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onBeforeRebindTable: function (oEvent) {
+			console.log("binding method trigerred");
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
 				oUserModel = this.getModel("user"),
+				oViewModel=this.getModel("viewModel"),
 				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels;
 
 			if (!this.isLoaded) {
@@ -330,8 +332,11 @@ sap.ui.define([
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			aFilter.push(new Filter("IS_MAP_VIEW_CALL", FilterOperator.EQ, "X")); //To restrict fetching of PRT assignments in resource tree
 			// setting filters in local model to access in assignTree dialog.
-			this.getModel("viewModel").setProperty("/resourceFilterView", aFilter);
+			oViewModel.setProperty("/resourceFilterView", aFilter);
 			oBinding.filters = [new Filter(aFilter, true)];
+			// setting data for duplicate resrouce check in the resource tree controller.
+			oViewModel.setProperty("/Scheduling/resourceTreeData/filter",oBinding.filters);
+			oViewModel.setProperty("/Scheduling/resourceTreeData/select",oBinding.parameters["select"]);
 		},
 
 		/**
