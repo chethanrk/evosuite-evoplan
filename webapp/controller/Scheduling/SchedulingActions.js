@@ -4,7 +4,6 @@ sap.ui.define([
 	'sap/ui/model/Filter'
 ], function (BaseController, formatter, Filter) {
 
-	
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
 
 		_controller: undefined, //controller from where this class was initialized
@@ -20,6 +19,7 @@ sap.ui.define([
 			this.oViewModel = controller.getModel("viewModel");
 			this.oAppViewModel = controller.getModel("appView");
 			this.oDataModel = controller.getModel();
+			this.userModel = controller.getModel("user");
 		},
 
 		/* =========================================================== */

@@ -226,7 +226,9 @@ sap.ui.define([
 			this._oEventBus.subscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.subscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
 			this._oEventBus.subscribe("MapController", "displayRoute", this._zoomToPoint, this);
-
+			// rescheduling reset model and controller reference.
+			this._oEventBus.subscribe("BaseController", "resetSchedulingJson", this._resetSchedulingJson, this);
+			
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
 			this._oDraggableTable = this.byId("draggableList");
@@ -243,6 +245,7 @@ sap.ui.define([
 
 			//initialize PinPopover controller
 			this.oPinPopover = new PinPopover(this);
+
 
 			this.oMapUtilities = new MapUtilities();
 		},
@@ -572,6 +575,7 @@ sap.ui.define([
 				this.byId("idUnassignButton").setEnabled(bEnable);
 				this.byId("idAssignmentStatusButton").setEnabled(bEnable);
 				this.byId("idOverallStatusButton").setEnabled(true);
+				this._viewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
@@ -579,6 +583,7 @@ sap.ui.define([
 				this.byId("materialInfo").setEnabled(false);
 				this.byId("idOverallStatusButton").setEnabled(false);
 				this.byId("idUnassignButton").setEnabled(false);
+				this._viewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 			}
 
 			//If the selected demands exceeds more than the maintained selected configuration value
@@ -601,6 +606,7 @@ sap.ui.define([
 				// }
 			}
 
+
 			//Enabling/Disabling the Material Status Button based on Component_Exit flag
 			for (var i = 0; i < this._aSelectedRowsIdx.length; i++) {
 				sDemandPath = this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[i]).getPath();
@@ -615,8 +621,8 @@ sap.ui.define([
 				}
 			}
 
-			//Enabling or disabling Re-Schedule button based on status and flag
-		if(this._aSelectedRowsIdx && this._aSelectedRowsIdx.length > 0){
+		    //Enabling or disabling Re-Schedule button based on status and flag
+		    if(this._aSelectedRowsIdx && this._aSelectedRowsIdx.length > 0){
 				this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
 			} else {
 				this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);

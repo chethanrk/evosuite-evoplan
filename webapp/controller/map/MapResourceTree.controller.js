@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/base/Log", "com/evorait/evoplan/model/Constants",
 	"com/evorait/evoplan/controller/map/MapUtilities",
-	"sap/ui/core/mvc/OverrideExecution",
+	"sap/ui/core/mvc/OverrideExecution"
 ], function (Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController, ResourceTreeFilterBar,
 	MessageToast, MessageBox, Fragment, Log, Constants, MapUtilities, OverrideExecution) {
 	"use strict";
@@ -198,7 +198,6 @@ sap.ui.define([
 			oRouter.attachRouteMatched(this._routeMatched, this);
 
 			this.oMapUtilities = new MapUtilities();
-
 		},
 
 		/**
@@ -264,8 +263,7 @@ sap.ui.define([
 
 			//validate resource tree is selected or not for Re-Schedule
 			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", this.selectedResources);
-			
-			this.oSchedulingActions.validateScheduleButtons();
+			this.oSchedulingActions.validateScheduleButtons();			
 		},
 
 		/**
@@ -320,6 +318,7 @@ sap.ui.define([
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
 				oUserModel = this.getModel("user"),
+				oViewModel=this.getModel("viewModel"),
 				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels;
 
 			if (!this.isLoaded) {
@@ -333,8 +332,11 @@ sap.ui.define([
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			aFilter.push(new Filter("IS_MAP_VIEW_CALL", FilterOperator.EQ, "X")); //To restrict fetching of PRT assignments in resource tree
 			// setting filters in local model to access in assignTree dialog.
-			this.getModel("viewModel").setProperty("/resourceFilterView", aFilter);
+			oViewModel.setProperty("/resourceFilterView", aFilter);
 			oBinding.filters = [new Filter(aFilter, true)];
+			// setting data for duplicate resrouce check in the resource tree controller.
+			oViewModel.setProperty("/Scheduling/resourceTreeData/filter",oBinding.filters);
+			oViewModel.setProperty("/Scheduling/resourceTreeData/select",oBinding.parameters["select"]);
 		},
 
 		/**
