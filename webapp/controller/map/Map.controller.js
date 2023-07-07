@@ -196,6 +196,11 @@ sap.ui.define([
 					public: true,
 					final: false,
 					overrideExecution: OverrideExecution.Instead
+				},
+				onAutoscheduleButtonPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
 				}
 			}
 		},
@@ -204,6 +209,7 @@ sap.ui.define([
 		_isDemandDraggable: false,
 		_oGeoMap: null,
 		_mapContextActionSheet: null,
+		oSchedulingActions: undefined,
 
 		onInit: function () {
 			var oGeoMap = this.getView().byId("idGeoMap"),
@@ -241,6 +247,8 @@ sap.ui.define([
 
 
 			this.oMapUtilities = new MapUtilities();
+
+			this.oSchedulingActions = new SchedulingActions(this);
 		},
 
 		//TODO comment
@@ -915,6 +923,30 @@ sap.ui.define([
 		onSelectSpots: function (oEvent) {
 			// Do Not remove this method, Demand table filter on changing map selection won't work
 			this._bDemandListScroll = false;
+		},
+
+		/**
+		 * On press of auto-schedule button
+		 * Function to handle press event Plan Demands
+		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
+		 */	
+		onAutoscheduleButtonPress: function(oEvent){
+			var oSelectedPaths;
+				
+			oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true);
+			if (oSelectedPaths.aNonAssignable.length > 0) {
+				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.getResourceBundle().getText("ymsg.invalidSelectedDemands"));
+			}
+			if (oSelectedPaths.aPathsData.length > 0){
+				this.oSchedulingActions.handlePlanDemands();
+			
+				var oViewModel = this.getModel("viewModel");
+				oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
+				var mParams = {
+					entitySet: "DemandSet"
+				}
+				this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
+			}
 		},
 
 		onExit: function () {

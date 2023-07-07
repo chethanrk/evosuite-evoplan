@@ -15,7 +15,7 @@
 		<smartTable:customToolbar>
 			<OverflowToolbar>
 				<core:ExtensionPoint name="TableExtP|Map|DemandSet|TableToolbar|Left"/>
-				<ToolbarSpacer/>
+				<ToolbarSpacer/>				
 				<ToggleButton icon="{=${viewModel>/showDemands} === true?'sap-icon://show':'sap-icon://hide'}" enabled="true"
 					pressed="{viewModel>/showDemands}"/>
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandToolbarButtons" type="XML"/>
