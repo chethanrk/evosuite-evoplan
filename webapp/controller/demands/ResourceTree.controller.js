@@ -205,7 +205,6 @@ sap.ui.define([
 				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels,
 				oFilterRightTechnician = this._oViewModel.getProperty("/resourceFilterforRightTechnician"),
 				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician");
-			console.log(this._oViewModel);
 			if (!this.isLoaded) {
 				this.isLoaded = true;
 			}
