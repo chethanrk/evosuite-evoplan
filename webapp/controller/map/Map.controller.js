@@ -241,7 +241,6 @@ sap.ui.define([
 
 
 			this.oMapUtilities = new MapUtilities();
-			//TODO: add the eventbus for resertting the scheduling model once we navigate from one view to another.
 		},
 
 		//TODO comment
