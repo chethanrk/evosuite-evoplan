@@ -231,7 +231,7 @@ sap.ui.define([
 			//For Scheduling
 			this._oViewModel.setProperty("/Scheduling/resourceTreeData/filter",oBinding.filters);
 			this._oViewModel.setProperty("/Scheduling/resourceTreeData/select",oBinding.parameters["select"]);
-			console.log("method trigerred");
+			
 		},
 
 		/**
