@@ -48,6 +48,7 @@ sap.ui.define([
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", !!oSelectedDemandItem.ALLOW_REASSIGN);
 				} else {
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 				}
 			} else {
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);

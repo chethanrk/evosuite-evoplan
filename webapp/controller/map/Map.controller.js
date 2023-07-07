@@ -209,9 +209,11 @@ sap.ui.define([
 		_isDemandDraggable: false,
 		_oGeoMap: null,
 		_mapContextActionSheet: null,
-		oSchedulingActions: undefined,
 
 		onInit: function () {
+			// call super class onInit
+			AssignmentActionsController.prototype.onInit.apply(this, arguments);
+
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oMapModel = this.getModel("mapConfig");
 			this._oGeoMap = oGeoMap;
@@ -247,8 +249,6 @@ sap.ui.define([
 
 
 			this.oMapUtilities = new MapUtilities();
-
-			this.oSchedulingActions = new SchedulingActions(this);
 		},
 
 		//TODO comment

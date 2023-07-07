@@ -9,10 +9,9 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-	"sap/ui/core/Fragment",
-	"com/evorait/evoplan/controller/Scheduling/SchedulingActions"
+	"sap/ui/core/Fragment"
 ], function (BaseController, JSONModel, formatter, Filter, FilterOperator, Table, Row, MessageToast,
-	RowAction, RowActionItem, Fragment,SchedulingActions) {
+	RowAction, RowActionItem, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.demands.Demands", {
@@ -20,8 +19,6 @@ sap.ui.define([
 		formatter: formatter,
 
 		_bFirstTime: true,
-
-		oSchedulingActions: undefined,
 
 		/* =========================================================== */
 		/* lifecycle methods                                           */
@@ -51,7 +48,6 @@ sap.ui.define([
 			};
 			this._oRouter = this.getOwnerComponent().getRouter();
 
-			this.oSchedulingActions = new SchedulingActions(this);
 		},
 
 		/* =========================================================== */
