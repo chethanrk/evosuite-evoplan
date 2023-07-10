@@ -300,6 +300,13 @@ sap.ui.define([
 				this.getOwnerComponent().bIsFromPRTSwitch = false;
 				return;
 			}
+			//Reset scheduling buttons enability and stored data
+			this.getModel("viewModel").setProperty("/Scheduling/bEnableReschedule", false);
+			this.getModel("viewModel").setProperty("/Scheduling/bEnableAutoschedule", false);
+			this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
+			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", null);
+
+
 			if (sRoute === "gantt") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});

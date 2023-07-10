@@ -47,6 +47,7 @@ sap.ui.define([
 				bFromHome: true
 			};
 			this._oRouter = this.getOwnerComponent().getRouter();
+
 		},
 
 		/* =========================================================== */
@@ -239,7 +240,7 @@ sap.ui.define([
 				} else {
 					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
 				}
-				this.oSchedulingActions.validateReschedule();
+				this.oSchedulingActions.validateScheduleButtons();
 
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
 				for (var i = 0; i < this._aSelectedRowsIdx.length; i++) {

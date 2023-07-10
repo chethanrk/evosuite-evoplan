@@ -15,9 +15,9 @@ sap.ui.define([
 	"sap/ui/unified/Calendar",
 	"com/evorait/evoplan/controller/map/MapUtilities",
 	"sap/ui/core/mvc/OverrideExecution",
-	"com/evorait/evoplan/controller/Scheduling/SchedulingActions",
+	"com/evorait/evoplan/model/Constants",
 ], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
-	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, MapUtilities, OverrideExecution,SchedulingActions) {
+	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, MapUtilities, OverrideExecution,Constants) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
@@ -196,6 +196,11 @@ sap.ui.define([
 					public: true,
 					final: false,
 					overrideExecution: OverrideExecution.Instead
+				},
+				onAutoscheduleButtonPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
 				}
 			}
 		},
@@ -206,6 +211,9 @@ sap.ui.define([
 		_mapContextActionSheet: null,
 
 		onInit: function () {
+			// call super class onInit
+			AssignmentActionsController.prototype.onInit.apply(this, arguments);
+
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oMapModel = this.getModel("mapConfig");
 			this._oGeoMap = oGeoMap;
@@ -220,8 +228,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("MapController", "displayRoute", this._zoomToPoint, this);
 			// rescheduling reset model and controller reference.
 			this._oEventBus.subscribe("BaseController", "resetSchedulingJson", this._resetSchedulingJson, this);
-			this.oSchedulingActions = new SchedulingActions(this);
-
+			
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
 			this._oDraggableTable = this.byId("draggableList");
@@ -568,7 +575,6 @@ sap.ui.define([
 				this.byId("idUnassignButton").setEnabled(bEnable);
 				this.byId("idAssignmentStatusButton").setEnabled(bEnable);
 				this.byId("idOverallStatusButton").setEnabled(true);
-				this._viewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
@@ -576,7 +582,6 @@ sap.ui.define([
 				this.byId("materialInfo").setEnabled(false);
 				this.byId("idOverallStatusButton").setEnabled(false);
 				this.byId("idUnassignButton").setEnabled(false);
-				this._viewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 			}
 
 			//If the selected demands exceeds more than the maintained selected configuration value
@@ -613,14 +618,14 @@ sap.ui.define([
 					this.byId("idOverallStatusButton").setEnabled(false);
 				}
 			}
-			//Enabling or disabling Re-Schedule button based on status and flag
-				//TODO - support multiple demands
-				if(this._aSelectedRowsIdx.length > 0){
-					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
-				} else {
-					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
-				}
-				this.oSchedulingActions.validateReschedule();
+
+		    //Enabling or disabling Re-Schedule button based on status and flag
+		    if(this._aSelectedRowsIdx && this._aSelectedRowsIdx.length > 0){
+				this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
+			} else {
+				this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
+			}
+			this.oSchedulingActions.validateScheduleButtons();
 		},
 		/**
 		 * on press assign button in footer
@@ -915,6 +920,30 @@ sap.ui.define([
 		onSelectSpots: function (oEvent) {
 			// Do Not remove this method, Demand table filter on changing map selection won't work
 			this._bDemandListScroll = false;
+		},
+
+		/**
+		 * On press of auto-schedule button
+		 * Function to handle press event Plan Demands
+		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
+		 */	
+		onAutoscheduleButtonPress: function(oEvent){
+			var oSelectedPaths;
+				
+			oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true);
+			if (oSelectedPaths.aNonAssignable.length > 0) {
+				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.getResourceBundle().getText("ymsg.invalidSelectedDemands"));
+			}
+			if (oSelectedPaths.aPathsData.length > 0){
+				this.oSchedulingActions.handlePlanDemands();
+			
+				var oViewModel = this.getModel("viewModel");
+				oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
+				var mParams = {
+					entitySet: "DemandSet"
+				}
+				this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
+			}
 		},
 
 		onExit: function () {

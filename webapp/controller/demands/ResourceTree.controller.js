@@ -71,6 +71,7 @@ sap.ui.define([
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.attachRouteMatched(this._routeMatched, this);
+
 		},
 
 		_routeMatched: function (oEvent) {
@@ -144,7 +145,7 @@ sap.ui.define([
 
 			//validate resource tree is selected or not for Re-Schedule
 			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", this.selectedResources);
-			this.oSchedulingActions.validateReschedule();
+			this.oSchedulingActions.validateScheduleButtons();
 		},
 
 		/**
