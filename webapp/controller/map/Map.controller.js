@@ -576,7 +576,6 @@ sap.ui.define([
 				this.byId("idUnassignButton").setEnabled(bEnable);
 				this.byId("idAssignmentStatusButton").setEnabled(bEnable);
 				this.byId("idOverallStatusButton").setEnabled(true);
-				this._viewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
@@ -584,7 +583,6 @@ sap.ui.define([
 				this.byId("materialInfo").setEnabled(false);
 				this.byId("idOverallStatusButton").setEnabled(false);
 				this.byId("idUnassignButton").setEnabled(false);
-				this._viewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 			}
 
 			//If the selected demands exceeds more than the maintained selected configuration value
