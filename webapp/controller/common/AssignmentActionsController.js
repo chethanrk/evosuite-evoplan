@@ -10,7 +10,11 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter"
 ], function (AssignmentsController, MessageBox, formatter) {
 	return AssignmentsController.extend("com.evorait.evoplan.controller.common.AssignmentActionsController", {
-
+		
+		onInit: function(){
+			// call super class onInit
+			AssignmentsController.prototype.onInit.apply(this, arguments);
+		},
 		/**
 		 * save assignment after drop
 		 * Calls the function import of create assignment the returns the promise.

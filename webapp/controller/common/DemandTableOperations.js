@@ -85,10 +85,6 @@ sap.ui.define([
 
 		oSchedulingActions: undefined,
 
-		onInit: function(){
-			this.oSchedulingActions = new SchedulingActions(this);
-		},
-
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -289,7 +285,7 @@ sap.ui.define([
 				if(oResult.validateState){
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					var mParams = {
-						entitySet: "AssignmentSet"
+						entitySet: "DemandSet"
 					}
 					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
 				}else{

@@ -4,7 +4,6 @@ sap.ui.define([
 	'sap/ui/model/Filter'
 ], function (BaseController, formatter, Filter) {
 
-	
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
 
 		_controller: undefined, //controller from where this class was initialized
@@ -20,6 +19,7 @@ sap.ui.define([
 			this.oViewModel = controller.getModel("viewModel");
 			this.oAppViewModel = controller.getModel("appView");
 			this.oDataModel = controller.getModel();
+			this.userModel = controller.getModel("user");
 		},
 
 		/* =========================================================== */
@@ -29,7 +29,7 @@ sap.ui.define([
 		/**
 		 * Function to validate rescheduling button
 		 */
-		validateReschedule: function(){
+		validateScheduleButtons: function(){
 			var oSelectedDemandItem, oScheduling;
 			oScheduling = this.oViewModel.getProperty("/Scheduling");
 
@@ -40,8 +40,10 @@ sap.ui.define([
 
 				if(oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", !!oSelectedDemandItem.ALLOW_REASSIGN);
+					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 				} else {
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 				}
 			} else {
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);

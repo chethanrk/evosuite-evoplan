@@ -300,6 +300,13 @@ sap.ui.define([
 				this.getOwnerComponent().bIsFromPRTSwitch = false;
 				return;
 			}
+			//Reset scheduling buttons enability and stored data
+			this.getModel("viewModel").setProperty("/Scheduling/bEnableReschedule", false);
+			this.getModel("viewModel").setProperty("/Scheduling/bEnableAutoschedule", false);
+			this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
+			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", null);
+
+
 			if (sRoute === "gantt") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
@@ -312,13 +319,16 @@ sap.ui.define([
 			} else if (sRoute === "DemandDetail") {
 				/* No action require */
 			} else if (sRoute === "map") {
+				this._eventBus.publish("BaseController", "resetSchedulingJson", {});
 				this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshMapView", {});
 			} else if (this.getOwnerComponent().bIsFromPRTSwitch && (sRoute === "demands" || sRoute === "demandTools")) {
 				this.getOwnerComponent().bIsFromPRTSwitch = false;
 			} else {
+				this._eventBus.publish("BaseController", "resetSchedulingJson", {});
 				this._eventBus.publish("BaseController", "refreshTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshDemandTable", {});
+				
 			}
 
 		},

@@ -17,10 +17,11 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/map/MapUtilities",
 	"sap/ui/util/Storage",
 	"sap/gantt/def/gradient/Stop",
-	"sap/gantt/def/gradient/LinearGradient"
+	"sap/gantt/def/gradient/LinearGradient",
+	"com/evorait/evoplan/controller/Scheduling/SchedulingActions"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, FilterType, Popup, MessageToast, Fragment, CoordinateUtils,
 	Constants,
-	Utility, SlashPattern, BackSlashPattern, MapUtilities, Storage, Stop, LinearGradient) {
+	Utility, SlashPattern, BackSlashPattern, MapUtilities, Storage, Stop, LinearGradient,SchedulingActions) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttChart", {
@@ -31,6 +32,7 @@ sap.ui.define([
 
 		oGanttModel: null,
 		oGanttOriginDataModel: null,
+		oSchedulingActions: undefined,
 
 		mRequestTypes: {
 			update: "update",
@@ -123,6 +125,8 @@ sap.ui.define([
 			this.oMapUtilities = new MapUtilities();
 			var iDefNum = this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS") ? this.oUserModel.getProperty("/DEFAULT_TOOL_ASGN_DAYS") : 0;
 			this.oViewModel.setProperty("/iDefToolAsgnDays", iDefNum);
+
+			this.oSchedulingActions = new SchedulingActions(this);
 		},
 
 		/**
@@ -677,7 +681,9 @@ sap.ui.define([
 				this.byId("idOptimizeRoute").setEnabled(false);
 			}
 
-			this.oViewModel.setProperty("/Scheduling/aSelectedResources",this.selectedResources);
+			this.oViewModel.setProperty("/Scheduling/selectedResources",this.selectedResources);
+
+			this.oSchedulingActions.validateScheduleButtons();
 
 		},
 
