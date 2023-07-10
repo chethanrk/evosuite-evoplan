@@ -156,7 +156,7 @@ sap.ui.define([
 
 			for (var i = 0; i < this.selectedResources.length; i++) {
 				var obj = oModel.getProperty(this.selectedResources[i]);
-				if (obj.NodeType === "RESOURCE") {
+				if (obj.NodeType === "RESOURCE" || obj.NodeType === "ASSIGNMENT") {
 					if (obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
 						aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
 					} else {
