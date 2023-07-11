@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/base/Log", "com/evorait/evoplan/model/Constants",
 	"com/evorait/evoplan/controller/map/MapUtilities",
-	"sap/ui/core/mvc/OverrideExecution",
-	"com/evorait/evoplan/controller/Scheduling/SchedulingActions",
+	"sap/ui/core/mvc/OverrideExecution"
 ], function (Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController, ResourceTreeFilterBar,
 	MessageToast, MessageBox, Fragment, Log, Constants, MapUtilities, OverrideExecution) {
 	"use strict";
@@ -263,9 +262,10 @@ sap.ui.define([
 			} else {
 				this.byId("assignedDemands").setEnabled(false);
 			}
-			// validate the re-schedule button below.
+
+			//validate resource tree is selected or not for Re-Schedule
 			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", this.selectedResources);
-			this.oSchedulingActions.validateReschedule();
+			this.oSchedulingActions.validateScheduleButtons();			
 		},
 
 		/**

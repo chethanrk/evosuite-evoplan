@@ -15,9 +15,9 @@ sap.ui.define([
 	"sap/ui/unified/Calendar",
 	"com/evorait/evoplan/controller/map/MapUtilities",
 	"sap/ui/core/mvc/OverrideExecution",
-	"com/evorait/evoplan/controller/Scheduling/SchedulingActions",
+	"com/evorait/evoplan/model/Constants",
 ], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
-	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, MapUtilities, OverrideExecution,SchedulingActions) {
+	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, MapUtilities, OverrideExecution,Constants) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
@@ -228,8 +228,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("MapController", "displayRoute", this._zoomToPoint, this);
 			// rescheduling reset model and controller reference.
 			this._oEventBus.subscribe("BaseController", "resetSchedulingJson", this._resetSchedulingJson, this);
-			this.oSchedulingActions = new SchedulingActions(this);
-
+			
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
 			this._oDraggableTable = this.byId("draggableList");
@@ -619,14 +618,14 @@ sap.ui.define([
 					this.byId("idOverallStatusButton").setEnabled(false);
 				}
 			}
-			//Enabling or disabling Re-Schedule button based on status and flag
-				//TODO - support multiple demands
-				if(this._aSelectedRowsIdx.length > 0){
-					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
-				} else {
-					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
-				}
-				this.oSchedulingActions.validateReschedule();
+
+		    //Enabling or disabling Re-Schedule button based on status and flag
+		    if(this._aSelectedRowsIdx && this._aSelectedRowsIdx.length > 0){
+				this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
+			} else {
+				this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
+			}
+			this.oSchedulingActions.validateScheduleButtons();
 		},
 		/**
 		 * on press assign button in footer
