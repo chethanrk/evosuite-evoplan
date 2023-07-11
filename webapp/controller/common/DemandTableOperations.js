@@ -255,24 +255,18 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
 		 */
 		onAutoscheduleButtonPress: function(oEvent){
-			var oSchedulingResources = this._viewModel.getProperty("/Scheduling/selectedResources"),
-				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true),
-				oResourceBundle = this.getResourceBundle(),
-				sMsg;
+			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true),
+				oResourceBundle = this.getResourceBundle();
 
-			if (!oSchedulingResources || !oSchedulingResources.length) { // When no resources are selected, do not allow plan demands
-				sMsg = oResourceBundle.getText("ymsg.SelectResource");
-				this.showMessageToast(sMsg);
-				return;
-			} else if (oSelectedPaths.aNonAssignable.length > 0) { // Display non-assignable demands in error dialog
+			if (oSelectedPaths.aNonAssignable.length > 0) { // Display non-assignable demands in error dialog
 				sMsg = oResourceBundle.getText("ymsg.invalidSelectedDemands");
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, sMsg);
-			} else {
+			} else if (oSelectedPaths.aPathsData.length > 0) {
 				var oViewModel = this.getModel("viewModel");
 				this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
 					if (oResult.validateState) {
 						this.oSchedulingActions.handlePlanDemands();
-	
+
 						oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
 						var mParams = {
 							entitySet: "DemandSet"
@@ -282,7 +276,7 @@ sap.ui.define([
 						this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
 					}
 				}.bind(this));
-			}			
+			}
 		},
 
 		/**
