@@ -274,6 +274,8 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			oViewModel.setProperty("/mapSettings/bRouteDateSelected", false);
+			oViewModel.setProperty("/Scheduling/selectedDemandPath", aSelectedDemands[0]);
+			this.oSchedulingActions.validateScheduleButtons();
 			this._oDraggableTable.rebindTable();
 		},
 		/**
