@@ -304,9 +304,7 @@ sap.ui.define([
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true);
 			if (oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.getResourceBundle().getText("ymsg.invalidSelectedDemands"));
-			}
-
-			if (oSelectedPaths.aPathsData.length > 0) {
+			} else if (oSelectedPaths.aPathsData.length > 0) {
 				var oViewModel = this.getModel("viewModel"),
 					oResourceBundle = this.getResourceBundle();
 				this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
@@ -320,7 +318,6 @@ sap.ui.define([
 						this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
 					}
 				}.bind(this));
-
 			}
 		},
 		/* =========================================================== */
