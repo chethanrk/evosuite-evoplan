@@ -677,7 +677,7 @@ sap.ui.define([
 				this.byId("idOptimizeRoute").setEnabled(false);
 			}
 
-			this.oViewModel.setProperty("/Scheduling/aSelectedResources",this.selectedResources);
+			this.oViewModel.setProperty("/Scheduling/selectedResources", this.selectedResources);
 
 		},
 

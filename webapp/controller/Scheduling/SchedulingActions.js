@@ -10,6 +10,7 @@ sap.ui.define([
 		_controller: undefined, //controller from where this class was initialized
 		oViewModel: undefined,
 		oDataModel: undefined,
+		oGanttModel: undefined,
 
 		/**
 		 * Set here all global properties you need from other controller
@@ -20,6 +21,8 @@ sap.ui.define([
 			this.oViewModel = controller.getModel("viewModel");
 			this.oAppViewModel = controller.getModel("appView");
 			this.oDataModel = controller.getModel();
+			this.oGanttModel = controller.getModel("ganttModel");
+
 		},
 
 		/* =========================================================== */
@@ -39,7 +42,7 @@ sap.ui.define([
 				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 
 				if(oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
-					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", !!oSelectedDemandItem.ALLOW_REASSIGN);
+					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", oSelectedDemandItem.ALLOW_REASSIGN);
 				} else {
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 				}
@@ -63,6 +66,7 @@ sap.ui.define([
 			var oViewModel = this.oViewModel,
 				oAppViewModel = this.oAppViewModel,
 				oDataModel = this.oDataModel,
+				oGanttModel = this.oGanttModel,
 				aResourcePath = oViewModel.getProperty("/Scheduling/selectedResources"),
 				aTableFilters = oViewModel.getProperty("/Scheduling/resourceTreeData/filter"),
 				mParameters={
@@ -71,7 +75,8 @@ sap.ui.define([
 				aResourceData = [],
 				oResourceObj={},
 				aResourceGroupPromise = [],				
-				aFilters=[];
+				aFilters = [];
+
 				
 			//method will check for the duplicate resource
 			var checkDuplicate = function(aResourceList){
@@ -94,18 +99,22 @@ sap.ui.define([
 				};
 			};
 			//Read all resource selected
-			aResourcePath.forEach(function(sPath){
-				oResourceObj = _.clone(oDataModel.getProperty(sPath));
+			aResourcePath.forEach(function (sPath) {
+				if (sPath.indexOf("children") === -1) {
+					oResourceObj = _.clone(oDataModel.getProperty(sPath));
+				} else {
+					oResourceObj = _.clone(oGanttModel.getProperty(sPath));
+				}
+
 				aFilters=[];
 				if(oResourceObj.ResourceGuid){
 					aResourceData.push(oResourceObj);
-				}else{
-					if(oResourceObj.ResourceGroupGuid){
-						aFilters=_.clone(aTableFilters);
-						aFilters.push(new Filter("ParentNodeId", "EQ", oResourceObj.NodeId));
-						aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceHierarchySet", aFilters, mParameters));
-					}
-				}
+				} else if (oResourceObj.ResourceGroupGuid) {
+					// aFilters = _.clone(aTableFilters);
+					aFilters.push(new Filter("ResourceGroupGuid", "EQ", oResourceObj.NodeId));
+					aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceSet", aFilters));
+
+				} 
 			}.bind(this));
 			//Read all resource selected
 			//Read all Resource from Resource group

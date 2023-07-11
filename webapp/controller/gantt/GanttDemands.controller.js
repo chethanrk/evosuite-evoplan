@@ -182,7 +182,6 @@ sap.ui.define([
 				this.byId("idUnassignButton").setEnabled(bEnable);
 				this.byId("idAssignmentStatusButton").setEnabled(bEnable);
 				this.byId("idOverallStatusButton").setEnabled(true);
-				this._viewModel.setProperty("/Scheduling/bEnableAutoschedule",true);
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
@@ -190,7 +189,6 @@ sap.ui.define([
 				this.byId("idOverallStatusButton").setEnabled(false);
 				this.byId("materialInfo").setEnabled(false);
 				this.byId("idUnassignButton").setEnabled(false);
-				this._viewModel.setProperty("/Scheduling/bEnableAutoschedule",false);
 			}
 
 			//If the selected demands exceeds more than the maintained selected configuration value
@@ -295,25 +293,27 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
 		 */	
 		onAutoscheduleButtonPress: function(oEvent){
-			var oSelectedPaths,
-				aSelectedResourcePaths = this._viewModel.getProperty("/Scheduling/aSelectedResources");
-			if(!aSelectedResourcePaths.length){
-				var sMsg = this.getResourceBundle().getText("ymsg.SelectResource");
-				this.showMessageToast(sMsg);
-				return;
-			}	
-			oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true);
+			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true);
+
 			if (oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.getResourceBundle().getText("ymsg.invalidSelectedDemands"));
-			}else{
-				this.oSchedulingActions.handlePlanDemands();
+			}
 			
-				var oViewModel = this.getModel("viewModel");
-				oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
-				var mParams = {
+			if (oSelectedPaths.aPathsData.length > 0) {
+				var oViewModel = this.getModel("viewModel"),
+					oResourceBundle = this.getResourceBundle();
+				this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
+					if (oResult.validateState) {
+						oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
+						var mParams = {
 					entitySet: "DemandSet"
-				}
-				this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
+					}
+					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
+					} else {
+						this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
+					}
+				}.bind(this));
+
 			}
 		},
 		/* =========================================================== */
