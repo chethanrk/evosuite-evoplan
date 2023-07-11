@@ -71,6 +71,7 @@ sap.ui.define([
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.attachRouteMatched(this._routeMatched, this);
+
 		},
 
 		_routeMatched: function (oEvent) {
@@ -144,7 +145,7 @@ sap.ui.define([
 
 			//validate resource tree is selected or not for Re-Schedule
 			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", this.selectedResources);
-			this.oSchedulingActions.validateReschedule();
+			this.oSchedulingActions.validateScheduleButtons();
 		},
 
 		/**
@@ -205,7 +206,6 @@ sap.ui.define([
 				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels,
 				oFilterRightTechnician = this._oViewModel.getProperty("/resourceFilterforRightTechnician"),
 				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician");
-
 			if (!this.isLoaded) {
 				this.isLoaded = true;
 			}
@@ -231,6 +231,7 @@ sap.ui.define([
 			//For Scheduling
 			this._oViewModel.setProperty("/Scheduling/resourceTreeData/filter",oBinding.filters);
 			this._oViewModel.setProperty("/Scheduling/resourceTreeData/select",oBinding.parameters["select"]);
+			
 		},
 
 		/**

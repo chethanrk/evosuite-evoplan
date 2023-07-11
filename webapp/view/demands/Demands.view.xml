@@ -64,12 +64,6 @@
 								<ToolbarLayoutData shrinkable="true"/>
 							</layoutData>
 						</Button>
-						<Button text="{i18n>xbut.PlanDemands}" tooltip="{i18n>xbut.PlanDemands}" press="onAutoscheduleButtonPress" enabled="{viewModel>/Scheduling/bEnableAutoschedule}"
-							visible="{user>/ENABLE_AUTO_SCHEDULE_BUTTON}">
-							<layoutData>
-								<ToolbarLayoutData shrinkable="true"/>
-							</layoutData>
-						</Button>
 						<core:ExtensionPoint name="PageExtP|Demands|DemandSet|Footer|Left"/>
 						<ToolbarSpacer/>
 						<core:ExtensionPoint name="PageExtP|Demands|DemandSet|Footer|Right"/>

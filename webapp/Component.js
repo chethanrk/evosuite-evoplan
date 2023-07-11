@@ -592,7 +592,8 @@ sap.ui.define([
 					SchedulingDialogFlags:{
 						
 					},
-					aSelectedResources:[],
+					selectedResources:null,
+					selectedDemandPath:null,
 					resourceTreeData: {
 						filter:[],
 						select:""

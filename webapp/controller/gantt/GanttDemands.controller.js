@@ -226,6 +226,14 @@ sap.ui.define([
 					this._aSelectedIndices.splice(this._aSelectedIndices.indexOf(index), 1);
 				}
 			}
+
+			//Enabling or disabling Re-Schedule button based on status and flag
+			if (this._aSelectedRowsIdx && this._aSelectedRowsIdx.length > 0) {
+				this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
+			} else {
+				this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
+			}
+			this.oSchedulingActions.validateScheduleButtons();
 		},
 		onPressFilterGantChart: function () {
 			var aPplicationFilters = this.getView().byId("draggableList").getTable().getBinding("rows").aApplicationFilters;
@@ -291,14 +299,13 @@ sap.ui.define([
 		 * On press of auto-schedule button
 		 * Function to handle press event Plan Demands
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
-		 */	
-		onAutoscheduleButtonPress: function(oEvent){
+		 */
+		onAutoscheduleButtonPress: function (oEvent) {
 			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true);
-
 			if (oSelectedPaths.aNonAssignable.length > 0) {
 				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.getResourceBundle().getText("ymsg.invalidSelectedDemands"));
 			}
-			
+
 			if (oSelectedPaths.aPathsData.length > 0) {
 				var oViewModel = this.getModel("viewModel"),
 					oResourceBundle = this.getResourceBundle();
@@ -306,9 +313,9 @@ sap.ui.define([
 					if (oResult.validateState) {
 						oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
 						var mParams = {
-					entitySet: "DemandSet"
-					}
-					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
+							entitySet: "DemandSet"
+						}
+						this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
 					} else {
 						this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
 					}
