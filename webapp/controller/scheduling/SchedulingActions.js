@@ -123,6 +123,28 @@ sap.ui.define([
 			//Read all Resource from Resource group
 
 		},
+		/**
+		 * This method will reset the scheduling json model
+		 */
+		resetSchedulingJson:function(){
+			var oBj={
+				sType:"",
+				sScheduleDialogTitle: "",
+				sScheduleTableTitle: "",
+				bEnableReschedule: false,
+				bEnableAutoschedule: false,
+				SchedulingDialogFlags:{
+					
+				},
+				selectedResources:null,
+				selectedDemandPath:null,
+				resourceTreeData: {
+					filter:[],
+					select:""
+				}
+			}
+			this.oViewModel.setProperty("/Scheduling",oBj);
+		}
 
 		/* =========================================================== */
 		/* Private methods                                              */

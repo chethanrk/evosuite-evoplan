@@ -226,8 +226,6 @@ sap.ui.define([
 			this._oEventBus.subscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.subscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
 			this._oEventBus.subscribe("MapController", "displayRoute", this._zoomToPoint, this);
-			// rescheduling reset model and controller reference.
-			this._oEventBus.subscribe("BaseController", "resetSchedulingJson", this._resetSchedulingJson, this);
 			
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
