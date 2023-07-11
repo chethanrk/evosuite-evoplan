@@ -463,6 +463,8 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			oViewModel.setProperty("/Disable_Assignment_Status_Button", false);
 			this.onResetLegendSelection();
+			
+			this.oSchedulingActions.resetSchedulingJson();
 		},
 		/**
 		 * Clearing the selected demands the Reseting the selection
