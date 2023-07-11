@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/table/RowActionItem",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
-	"com/evorait/evoplan/controller/Scheduling/SchedulingActions"
+	"com/evorait/evoplan/controller/scheduling/SchedulingActions"
 ], function (AssignmentsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, MessageToast, RowAction, RowActionItem,
 	Constants, Fragment, SchedulingActions) {
 	"use strict";

@@ -6,7 +6,7 @@ sap.ui.define([
 ], function (BaseController, formatter, RowAction, RowActionItem) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.AutoScheduleStep1", {
+	return BaseController.extend("com.evorait.evoplan.controller.scheduling.AutoScheduleStep1", {
 
         formatter: formatter,
         _oViewModel: null,
