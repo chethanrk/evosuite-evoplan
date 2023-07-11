@@ -5,17 +5,17 @@
     columnsXL="2">
     <f:content>
         <core:ExtensionPoint name="WizardExtP|Schedule|Step1|Form|Content|Before"/>
-        <Label text="Date from" labelFor="ScheduleDateFrom"/>
+        <Label text="{i18n>xtit.DateFrom}" labelFor="ScheduleDateFrom"/>
         <DateTimePicker
             id="ScheduleDateFrom"
-            placeholder="Enter Date"
+            placeholder="{i18n>xtit.EnterDateFrom}"
             change="onChangeDateFrom"/>
-        <Label text="Date to" labelFor="ScheduleDateto"/>
+        <Label text="{i18n>xtit.DateTo}" labelFor="ScheduleDateto"/>
         <DateTimePicker
             id="ScheduleDateTo"
-            placeholder="Enter Date"
+            placeholder="{i18n>xtit.EnterDateTo}"
             change="onChangeDateTo"/>
-        <Label text="Utilization" labelFor="ScheduleUtilization"/>
+        <Label text="{i18n>xtit.Utilization}" labelFor="ScheduleUtilization"/>
         <Slider value="{user>/DEFAULT_UTILIZATION_BAR_MAPS}" 
             visible="{user>/ENABLE_UTILIZATION_BAR_MAPS}"
             width="100%"
