@@ -251,28 +251,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
 		 */
 		onAutoscheduleButtonPress: function(oEvent){
-			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true),
-				oResourceBundle = this.getResourceBundle();
-
-			if (oSelectedPaths.aNonAssignable.length > 0) { // Display non-assignable demands in error dialog
-				sMsg = oResourceBundle.getText("ymsg.invalidSelectedDemands");
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, sMsg);
-			} else if (oSelectedPaths.aPathsData.length > 0) {
-				var oViewModel = this.getModel("viewModel");
-				this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
-					if (oResult.validateState) {
-						this.oSchedulingActions.handlePlanDemands();
-
-						oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
-						var mParams = {
-							entitySet: "DemandSet"
-						}
-						this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
-					} else {
-						this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
-					}
-				}.bind(this));
-			}
+			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
 		},
 
 		/**

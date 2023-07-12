@@ -198,7 +198,6 @@ sap.ui.define([
 			oRouter.attachRouteMatched(this._routeMatched, this);
 
 			this.oMapUtilities = new MapUtilities();
-			this.oSchedulingActions = new SchedulingActions(this);
 
 		},
 
