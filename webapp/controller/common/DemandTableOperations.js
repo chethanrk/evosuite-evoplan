@@ -251,27 +251,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
 		 */
 		onAutoscheduleButtonPress: function(oEvent){
-			var oSchedulingResources = this._viewModel.getProperty("/Scheduling/selectedResources"),
-				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true),
-				sMsg;
-
-			if (!oSchedulingResources || !oSchedulingResources.length) { // When no resources are selected, do not allow plan demands
-				sMsg = this.getResourceBundle().getText("ymsg.SelectResource");
-				this.showMessageToast(sMsg);
-				return;
-			} else if (oSelectedPaths.aNonAssignable.length > 0) { // Display non-assignable demands in error dialog
-				sMsg = this.getResourceBundle().getText("ymsg.invalidSelectedDemands");
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, sMsg);
-			} else {
-				this.oSchedulingActions.handlePlanDemands();
-
-				var oViewModel = this.getModel("viewModel");
-				oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
-				var mParams = {
-					entitySet: "DemandSet"
-				}
-				this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
-			}
+			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
 		},
 
 		/**

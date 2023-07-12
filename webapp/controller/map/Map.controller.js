@@ -930,22 +930,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
 		 */	
 		onAutoscheduleButtonPress: function(oEvent){
-			var oSelectedPaths;
-				
-			oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true);
-			if (oSelectedPaths.aNonAssignable.length > 0) {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.getResourceBundle().getText("ymsg.invalidSelectedDemands"));
-			}
-			if (oSelectedPaths.aPathsData.length > 0){
-				this.oSchedulingActions.handlePlanDemands();
-			
-				var oViewModel = this.getModel("viewModel");
-				oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
-				var mParams = {
-					entitySet: "DemandSet"
-				}
-				this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
-			}
+			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
 		},
 
 		onExit: function () {
