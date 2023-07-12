@@ -334,9 +334,6 @@ sap.ui.define([
 			// setting filters in local model to access in assignTree dialog.
 			oViewModel.setProperty("/resourceFilterView", aFilter);
 			oBinding.filters = [new Filter(aFilter, true)];
-			// setting data for duplicate resrouce check in the resource tree controller.
-			oViewModel.setProperty("/Scheduling/resourceTreeData/filter",oBinding.filters);
-			oViewModel.setProperty("/Scheduling/resourceTreeData/select",oBinding.parameters["select"]);
 		},
 
 		/**
