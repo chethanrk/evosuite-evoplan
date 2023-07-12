@@ -274,6 +274,8 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			oViewModel.setProperty("/mapSettings/bRouteDateSelected", false);
+			oViewModel.setProperty("/Scheduling/selectedDemandPath", aSelectedDemands[0]);
+			this.oSchedulingActions.validateScheduleButtons();
 			this._oDraggableTable.rebindTable();
 		},
 		/**
@@ -463,6 +465,8 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			oViewModel.setProperty("/Disable_Assignment_Status_Button", false);
 			this.onResetLegendSelection();
+			this.oSchedulingActions.resetSchedulingJson();
+			this._oEventBus.publish("BaseController", "refreshMapTreeTable",{});
 		},
 		/**
 		 * Clearing the selected demands the Reseting the selection
