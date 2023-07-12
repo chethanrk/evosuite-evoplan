@@ -156,7 +156,7 @@ sap.ui.define([
 				}
 			}
 			this.oViewModel.setProperty("/Scheduling",oBj);
-		}
+		},
 
 		/**
 		 * This method will validate demands and selected resource if its eligible to Auto-Schedule
