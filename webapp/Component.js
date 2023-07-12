@@ -593,7 +593,7 @@ sap.ui.define([
 						
 					},
 					selectedResources:null,
-					selectedDemandPath:null,
+					selectedDemandPath: null,
 					resourceTreeData: {
 						filter:[],
 						select:""

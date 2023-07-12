@@ -21,7 +21,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/scheduling/SchedulingActions"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, FilterType, Popup, MessageToast, Fragment, CoordinateUtils,
 	Constants,
-	Utility, SlashPattern, BackSlashPattern, MapUtilities, Storage, Stop, LinearGradient,SchedulingActions) {
+	Utility, SlashPattern, BackSlashPattern, MapUtilities, Storage, Stop, LinearGradient, SchedulingActions) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttChart", {
@@ -287,8 +287,8 @@ sap.ui.define([
 
 			if (oResourceData.NodeType === "RES_GROUP") { //When demand dropped on Resource group
 				if (!this.isAssignable({
-						data: oResourceData
-					})) {
+					data: oResourceData
+				})) {
 					return;
 				} else {
 					if (sDefaultPool == "RESOURCE") { //If deafult pool function is Resource change drop context
@@ -680,11 +680,8 @@ sap.ui.define([
 				this.byId("idCalculateRoute").setEnabled(false);
 				this.byId("idOptimizeRoute").setEnabled(false);
 			}
-
-			this.oViewModel.setProperty("/Scheduling/selectedResources",this.selectedResources);
-
+			this.oViewModel.setProperty("/Scheduling/selectedResources", this.selectedResources);
 			this.oSchedulingActions.validateScheduleButtons();
-
 		},
 
 		/**
@@ -766,13 +763,13 @@ sap.ui.define([
 					x2: "1.5",
 					y2: "10",
 					stops: [new Stop({
-							offSet: "0%",
-							stopColor: sColor || "#fff"
-						}),
-						new Stop({
-							offSet: "10%",
-							stopColor: "#FFFF"
-						})
+						offSet: "0%",
+						stopColor: sColor || "#fff"
+					}),
+					new Stop({
+						offSet: "10%",
+						stopColor: "#FFFF"
+					})
 					]
 				});
 				this._oSVGDef.insertDef(oGrad);
@@ -875,7 +872,7 @@ sap.ui.define([
 		 */
 		_resetToolbarButtons: function () {
 			this.selectedResources = [];
-			this.oViewModel.setProperty("/Scheduling/aSelectedResources",[]);
+			this.oViewModel.setProperty("/Scheduling/aSelectedResources", []);
 			this.byId("idButtonreassign").setEnabled(false);
 			this.byId("idButtonunassign").setEnabled(false);
 			this.byId("idButtonTimeAllocNew").setEnabled(false);
@@ -1038,8 +1035,8 @@ sap.ui.define([
 			var oTargetData = oTargetContext ? oTargetContext.getObject() : null;
 			// If you drop in empty gantt area where there is no data OR assign is not allowed
 			if (!oTargetData || !this.isAssignable({
-					data: oTargetData
-				})) {
+				data: oTargetData
+			})) {
 				this.showMessageToast(msg);
 				return;
 			}
@@ -1097,7 +1094,7 @@ sap.ui.define([
 				} else if (oTargetContext.getObject().NodeType === "ASSIGNMENT" || !oTargetContext.getObject().ResourceGuid) { // Reassigning PRT resource assignment to Demand assignment or PRT resource not allowed
 					this.showMessageToast(msg);
 				}
-				}
+			}
 		},
 		/**
 		 * method to handle shape drop When a shape for Tool is dragged inside Gantt to reassign
@@ -1520,8 +1517,8 @@ sap.ui.define([
 				if (this.mRequestTypes.reassign === sType && oChanges.ResourceGuid) {
 					var oNewParent = this.oGanttModel.getProperty(oChanges.NewAssignPath);
 					if (!this.isAssignable({
-							data: oNewParent
-						})) {
+						data: oNewParent
+					})) {
 						return reject("Parent not assignable");
 					} else if (!this.isAvailable(null, oNewParent)) {
 						//is parent not available then show warning and ask if they want proceed
@@ -1646,7 +1643,7 @@ sap.ui.define([
 			}.bind(this)).catch(function () {
 				if (sDummyPath) {
 					this.oGanttModel.setProperty(sDummyPath, null);
-					this.oGanttModel.setProperty(sDummyPath + "/busy", false);6
+					this.oGanttModel.setProperty(sDummyPath + "/busy", false); 6
 				}
 			}.bind(this));
 		},
@@ -1663,7 +1660,7 @@ sap.ui.define([
 			var oResourceModel = this.getResourceBundle();
 			return new Promise(function (resolve, reject) {
 				if (oResourceData.NodeType !== "RES_GROUP" && (oResourceData.NodeType === "RESOURCE" && oResourceData.ResourceGuid &&
-						oResourceData.ResourceGuid !== "")) {
+					oResourceData.ResourceGuid !== "")) {
 
 					this._checkAvailability(aSources, oTarget, oTargetDate, aGuids).then(function (availabilityData) {
 						this._availabilityData = availabilityData;
@@ -2054,17 +2051,17 @@ sap.ui.define([
 									oAssignItem.NodeType = "ASSIGNMENT";
 									var _cloneObj = _.cloneDeep(oAssignItem);
 									_cloneObj.OBJECT_ID_RELATION = _cloneObj.OBJECT_ID_RELATION + "//" + _cloneObj.ResourceGuid;
-									oAssignItem.AssignmentSet = { 
+									oAssignItem.AssignmentSet = {
 										results: [_cloneObj]
 									};
 								});
-								
-							}
+
 							}
 						}
 					}
 				}
-			
+			}
+
 			this.oGanttModel.refresh();
 		},
 		/**
@@ -2359,7 +2356,7 @@ sap.ui.define([
 					this.oAppViewModel.setProperty("/busy", false);
 					this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 					this._updateAssignmentStatus(sPath, sAsgnStsFnctnKey, aData);
-				}.bind(this)).catch(function(){
+				}.bind(this)).catch(function () {
 					sap.m.MessageBox.error(this.getModel("i18n").getResourceBundle().getText("assignmentNotPossible"));
 				}.bind(this));
 			this.oGanttModel.setProperty(sPath + "/busy", false);
@@ -2640,12 +2637,12 @@ sap.ui.define([
 				this._handleMultipleAssignment(oResourceData, sDragPath, oDropContext.getPath(), oStartDate, []);
 			} else {
 				switch (sView) {
-				case "Gantt":
-					this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oStartDate);
-					break;
-				case "Gantt-Split":
-					this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), oStartDate, sDragPath);
-					break;
+					case "Gantt":
+						this._validateAndAssignDemands(oResourceData, sDragPath, oDropContext.getPath(), oStartDate);
+						break;
+					case "Gantt-Split":
+						this._validateAndAssignDemands(oResourceData, null, oDropContext.getPath(), oStartDate, sDragPath);
+						break;
 				}
 			}
 		},
@@ -2667,23 +2664,23 @@ sap.ui.define([
 				this.splitReassignReject = reject;
 
 				var oParams = {
-						DateFrom: oData.DateFrom || 0,
-						TimeFrom: {
-							__edmtype: "Edm.Time",
-							ms: oData.DateFrom.getTime()
-						},
-						DateTo: oData.DateTo || 0,
-						TimeTo: {
-							__edmtype: "Edm.Time",
-							ms: oData.DateTo.getTime()
-						},
-						AssignmentGUID: oData.Guid,
-						EffortUnit: oData.EffortUnit,
-						Effort: oData.Effort,
-						ResourceGroupGuid: oData.ResourceGroupGuid,
-						ResourceGuid: oData.ResourceGuid,
-						DemandGuid: oData.DemandGuid
+					DateFrom: oData.DateFrom || 0,
+					TimeFrom: {
+						__edmtype: "Edm.Time",
+						ms: oData.DateFrom.getTime()
 					},
+					DateTo: oData.DateTo || 0,
+					TimeTo: {
+						__edmtype: "Edm.Time",
+						ms: oData.DateTo.getTime()
+					},
+					AssignmentGUID: oData.Guid,
+					EffortUnit: oData.EffortUnit,
+					Effort: oData.Effort,
+					ResourceGroupGuid: oData.ResourceGroupGuid,
+					ResourceGuid: oData.ResourceGuid,
+					DemandGuid: oData.DemandGuid
+				},
 					mParameters = {
 						path: sPath,
 						type: sType,
@@ -2829,8 +2826,8 @@ sap.ui.define([
 		 */
 		_updateDmdPRTAssignments: function (aAssignments) {
 			var aDmdAssignments = aAssignments.filter(function (sKey) { //Filtering Demand Assignments
-					return sKey.IS_PRT === false;
-				}),
+				return sKey.IS_PRT === false;
+			}),
 				aPRTAssignments = aAssignments.filter(function (sKey) { //Filtering PRT Assignments
 					return sKey.IS_PRT === true;
 				}),
