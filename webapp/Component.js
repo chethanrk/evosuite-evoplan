@@ -593,7 +593,11 @@ sap.ui.define([
 						
 					},
 					selectedResources:null,
-					selectedDemandPath: null
+					selectedDemandPath: null,
+					aFinalResourceList:[],
+					oResourceData:{},
+					DateFrom: moment().startOf("day").toDate(),
+					DateTo: moment().add(14, "days").endOf("day").toDate()
 				}
 			});
 			oViewModel.setSizeLimit(999999999);

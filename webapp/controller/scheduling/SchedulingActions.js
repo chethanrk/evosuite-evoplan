@@ -95,6 +95,9 @@ sap.ui.define([
 						}
 					}
 				});
+				if(bValidateState){
+					oViewModel.setProperty("/Scheduling/aFinalResourceList", aResourceList);
+				}
 				return {
 					validateState: bValidateState,
 					resourceNames: aResourceNameList.join("\n")
@@ -143,7 +146,11 @@ sap.ui.define([
 					
 				},
 				selectedResources:null,
-				selectedDemandPath:null
+				selectedDemandPath:null,
+				aFinalResourceList:[],
+				oResourceData:{},
+				DateFrom: moment().startOf("day").toDate(),
+				DateTo: moment().add(14, "days").endOf("day").toDate()
 			}
 			this.oViewModel.setProperty("/Scheduling",oBj);
 		},
@@ -172,6 +179,79 @@ sap.ui.define([
 					}
 				}
 			}.bind(this));
+		},
+
+		/**
+		 * Method will read the Qualification, WorkSchedule, Break, Absense, Project Blocker, Assignment and store in a model
+		 */
+		createScheduleData: function(){
+			var oViewModel = this.oViewModel,
+				oAppViewModel = this.oAppViewModel,
+				aResourceList = oViewModel.getProperty("/Scheduling/aFinalResourceList"),
+				oStartDate = oViewModel.getProperty("/Scheduling/DateFrom"),
+				oEndDate =  oViewModel.getProperty("/Scheduling/DateTo"),
+				aAssignmentPromise=[],
+				aAssignmentFilter=[],
+				aAvailabilityPromise=[],
+				aAvailibilityFilter=[],
+				oFinalData={};
+			
+			
+			aResourceList.forEach(function(oResource){
+				oFinalData[oResource.ResourceGuid]={
+					assignments:[],
+					breaks:[],
+					workSchedules:[],
+					projectBlockers:[],
+					absenses:[],
+					qualifications:oResource["QUALIFICATION_DESCRIPTION"] ? oResource["QUALIFICATION_DESCRIPTION"].split(",") : []
+				};
+				//Read Assignment
+				aAssignmentFilter = [
+					new Filter("ResourceGuid", "EQ", oResource.ResourceGuid),
+					// new Filter("DateFrom", "EQ", oStartDate),
+					// new Filter("DateTo", "EQ", oEndDate)
+				];
+				aAssignmentPromise.push(this._controller.getOwnerComponent().readData("/AssignmentSet", aAssignmentFilter));
+
+				//Read WorkSchedule, Break, Absense, Project Blocker
+				//AvailibilityTypeGroup - A --WorkSchedule, -B --Break, -L --ProjectBlocker, -[N,O] --Absenses
+				aAvailibilityFilter = [
+					new Filter("ResourceGuid", "EQ", oResource.ResourceGuid),
+					new Filter("DateFrom", "EQ", oStartDate),
+					new Filter("DateTo", "EQ", oEndDate)
+				];
+				aAvailabilityPromise.push(this._controller.getOwnerComponent().readData("/ResourceAvailabilitySet", aAvailibilityFilter));
+			}.bind(this));
+			oAppViewModel.setProperty("/busy",true);
+			return Promise.all(aAssignmentPromise).then(function(aAssignment){
+				aAssignment.forEach(function(oAssignment,i){
+					oFinalData[aResourceList[i].ResourceGuid]["assignments"] = oAssignment.results;
+				});
+				return Promise.all(aAvailabilityPromise).then(function(aAvailibility){
+					return aAvailibility;
+				});
+			}).then(function(aAvailibility){
+				oAppViewModel.setProperty("/busy",false);
+				aAvailibility.forEach(function(oAvailibility,i){
+					oAvailibility.results.forEach(function(oAvail){
+						if(oAvail.AvailabilityTypeGroup === "A"){
+							oFinalData[aResourceList[i].ResourceGuid]["workSchedules"].push(oAvail);
+						}else if(oAvail.AvailabilityTypeGroup === "B"){
+							oFinalData[aResourceList[i].ResourceGuid]["breaks"].push(oAvail);
+						}else if(oAvail.AvailabilityTypeGroup === "L"){
+							oFinalData[aResourceList[i].ResourceGuid]["projectBlockers"].push(oAvail);
+						}else if(oAvail.AvailabilityTypeGroup === "N" || oAvail.AvailabilityTypeGroup === "O"){
+							oFinalData[aResourceList[i].ResourceGuid]["absenses"].push(oAvail);
+						}
+					});
+				});
+				return oFinalData		
+			}).catch(function(oError){
+				oAppViewModel.setProperty("/busy",false);
+				return false;
+			});
+			
 		},
 
 		/* =========================================================== */
