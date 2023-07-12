@@ -166,6 +166,7 @@ sap.ui.define([
 		 * @returns
 		 */
 		_showErrorMessage: function (sMessage, fnCallback) {
+			var oOwnerComponent = this._controller ? this._controller.getOwnerComponent() : this.getOwnerComponent();
 			var fnClose = function () {
 				this._bMessageOpen = false;
 			}.bind(this);
@@ -181,7 +182,7 @@ sap.ui.define([
 			}
 
 			MessageBox.error(sMessage, {
-				styleClass: this.getOwnerComponent().getContentDensityClass(),
+				styleClass: oOwnerComponent.getContentDensityClass(),
 				actions: [MessageBox.Action.CLOSE],
 				onClose: fnClose
 			});

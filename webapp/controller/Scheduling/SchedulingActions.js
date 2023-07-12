@@ -1,8 +1,9 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/model/formatter",
-	'sap/ui/model/Filter'
-], function (BaseController, formatter, Filter) {
+	'sap/ui/model/Filter',
+	"com/evorait/evoplan/model/Constants",
+], function (BaseController, formatter, Filter, Constants) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
 
@@ -10,6 +11,7 @@ sap.ui.define([
 		oViewModel: undefined,
 		oDataModel: undefined,
 		oGanttModel: undefined,
+		oResourceBundle: undefined,
 
 		/**
 		 * Set here all global properties you need from other controller
@@ -22,6 +24,7 @@ sap.ui.define([
 			this.oDataModel = controller.getModel();
 			this.oGanttModel = controller.getModel("ganttModel");
 			this.userModel = controller.getModel("user");
+			this.oResourceBundle = controller.getResourceBundle();
 
 		},
 
@@ -98,7 +101,7 @@ sap.ui.define([
 				});
 				return {
 					validateState: bValidateState,
-					resourceNames: aResourceNameList.join(", ")
+					resourceNames: aResourceNameList.join("\n")
 				};
 			};
 			//Read all resource selected
@@ -133,8 +136,67 @@ sap.ui.define([
 
 		},
 
+		/**
+		 * This method will validate demands and selected resource if its eligible to Auto-Schedule
+		 */
+		validateSelectedDemands: function (oTable, aSelectedRowsIdx) {
+			var oSelectedPaths = this._checkAllowedDemands(oTable, aSelectedRowsIdx);
+			this.checkDuplicateResource().then(function (oResult) {
+				if (oResult.validateState) {
+					if (oSelectedPaths.aNonAssignable.length > 0) {
+						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
+					} else if (oSelectedPaths.aPathsData.length > 0) {
+						this.oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
+						var mParams = {
+							entitySet: "DemandSet"
+						}
+						this._controller.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this._controller.getView(), mParams);
+					}
+
+				} else {
+					this._showErrorMessage(this.oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
+					if (oSelectedPaths.aNonAssignable.length > 0) {
+						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
+					}
+				}
+			}.bind(this));
+		},
+
 		/* =========================================================== */
 		/* Private methods                                              */
 		/* =========================================================== */
+		/**
+		 * This method will check for the Allowed flag for each selected Demands
+		 * @return {Object} - Array of allowed and not allowed demands in separate properties
+		 */
+		_checkAllowedDemands: function (oTable, aSelectedRowsIdx) {
+			var aPathsData = [],
+				aNonAssignableDemands = [],
+				oData, oContext, sPath;
+
+			oTable.clearSelection();
+
+			for (var i = 0; i < aSelectedRowsIdx.length; i++) {
+				oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
+				sPath = oContext.getPath();
+				oData = this.oDataModel.getProperty(sPath);
+
+				//Added condition to check for number of assignments to plan demands via scheduling
+				if (oData.ALLOW_ASSIGN && oData.NUMBER_OF_CAPACITIES <= 1) {
+					aPathsData.push({
+						sPath: sPath,
+						oData: oData,
+						index: aSelectedRowsIdx[i]
+					});
+					oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
+				} else {
+					aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData, null, true));
+				}
+			}
+			return {
+				aPathsData: aPathsData,
+				aNonAssignable: aNonAssignableDemands,
+			};
+		},
 	});
 });
