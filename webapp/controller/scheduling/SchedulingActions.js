@@ -74,10 +74,6 @@ sap.ui.define([
 				oDataModel = this.oDataModel,
 				oGanttModel = this.oGanttModel,
 				aResourcePath = oViewModel.getProperty("/Scheduling/selectedResources"),
-				aTableFilters = oViewModel.getProperty("/Scheduling/resourceTreeData/filter"),
-				mParameters = {
-					$select: oViewModel.getProperty("/Scheduling/resourceTreeData/select")
-				},
 				aResourceData = [],
 				oResourceObj = {},
 				aResourceGroupPromise = [],
@@ -111,12 +107,10 @@ sap.ui.define([
 				} else {
 					oResourceObj = _.clone(oGanttModel.getProperty(sPath));
 				}
-
 				aFilters = [];
 				if (oResourceObj.ResourceGuid) {
 					aResourceData.push(oResourceObj);
 				} else if (oResourceObj.ResourceGroupGuid) {
-					// aFilters = _.clone(aTableFilters);
 					aFilters.push(new Filter("ResourceGroupGuid", "EQ", oResourceObj.NodeId));
 					aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceSet", aFilters));
 
@@ -149,11 +143,7 @@ sap.ui.define([
 					
 				},
 				selectedResources:null,
-				selectedDemandPath:null,
-				resourceTreeData: {
-					filter:[],
-					select:""
-				}
+				selectedDemandPath:null
 			}
 			this.oViewModel.setProperty("/Scheduling",oBj);
 		},
