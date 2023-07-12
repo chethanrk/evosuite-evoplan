@@ -1643,7 +1643,7 @@ sap.ui.define([
 			}.bind(this)).catch(function () {
 				if (sDummyPath) {
 					this.oGanttModel.setProperty(sDummyPath, null);
-					this.oGanttModel.setProperty(sDummyPath + "/busy", false); 6
+					this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 				}
 			}.bind(this));
 		},
