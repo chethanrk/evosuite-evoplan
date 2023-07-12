@@ -67,12 +67,12 @@ sap.ui.define([
 					type: "XML"
 				}).then(function (oDialog) {
 					oView.addDependent(oDialog);
-					this._renderWizardStep1Binding(oDialog);
 					oDialog.attachAfterOpen(this.onDialogAfterOpen, this);
 					return oDialog;
 				}.bind(this));
 			}
 			this._ScheduleDialog.then(function (oDialog) {
+				this._renderWizardStep1Binding(oDialog);
 				oDialog.open();
 			}.bind(this));
 			
