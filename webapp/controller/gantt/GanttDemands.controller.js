@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/table/RowActionItem",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
-	"com/evorait/evoplan/controller/Scheduling/SchedulingActions"
+	"com/evorait/evoplan/controller/scheduling/SchedulingActions"
 ], function (AssignmentsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, MessageToast, RowAction, RowActionItem,
 	Constants, Fragment, SchedulingActions) {
 	"use strict";
@@ -182,7 +182,6 @@ sap.ui.define([
 				this.byId("idUnassignButton").setEnabled(bEnable);
 				this.byId("idAssignmentStatusButton").setEnabled(bEnable);
 				this.byId("idOverallStatusButton").setEnabled(true);
-				
 			} else {
 				this.byId("assignButton").setEnabled(false);
 				this.byId("changeStatusButton").setEnabled(false);
@@ -190,7 +189,6 @@ sap.ui.define([
 				this.byId("idOverallStatusButton").setEnabled(false);
 				this.byId("materialInfo").setEnabled(false);
 				this.byId("idUnassignButton").setEnabled(false);
-				
 			}
 
 			//If the selected demands exceeds more than the maintained selected configuration value
@@ -229,13 +227,13 @@ sap.ui.define([
 				}
 			}
 
-			 //Enabling or disabling Re-Schedule button based on status and flag
-		if(this._aSelectedRowsIdx && this._aSelectedRowsIdx.length > 0){
-			this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
-		} else {
-			this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
-		}
-		this.oSchedulingActions.validateScheduleButtons();
+			//Enabling or disabling Re-Schedule button based on status and flag
+			if (this._aSelectedRowsIdx && this._aSelectedRowsIdx.length > 0) {
+				this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
+			} else {
+				this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
+			}
+			this.oSchedulingActions.validateScheduleButtons();
 		},
 		onPressFilterGantChart: function () {
 			var aPplicationFilters = this.getView().byId("draggableList").getTable().getBinding("rows").aApplicationFilters;
@@ -301,24 +299,11 @@ sap.ui.define([
 		 * On press of auto-schedule button
 		 * Function to handle press event Plan Demands
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
-		 */	
-		onAutoscheduleButtonPress: function(oEvent){
-			var oSelectedPaths;				
-			oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true, null, true);
-			if (oSelectedPaths.aNonAssignable.length > 0) {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.getResourceBundle().getText("ymsg.invalidSelectedDemands"));
-			}
-			if (oSelectedPaths.aPathsData.length > 0){
-				this.oSchedulingActions.handlePlanDemands();
-			
-				var oViewModel = this.getModel("viewModel");
-				oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
-				var mParams = {
-					entitySet: "DemandSet"
-				}
-				this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
-			}
+		 */
+		onAutoscheduleButtonPress: function (oEvent) {
+			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
 		},
+		
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */

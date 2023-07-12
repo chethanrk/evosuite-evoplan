@@ -166,6 +166,7 @@ sap.ui.define([
 		 * @returns
 		 */
 		_showErrorMessage: function (sMessage, fnCallback) {
+			var oOwnerComponent = this._controller ? this._controller.getOwnerComponent() : this.getOwnerComponent();
 			var fnClose = function () {
 				this._bMessageOpen = false;
 			}.bind(this);
@@ -181,7 +182,7 @@ sap.ui.define([
 			}
 
 			MessageBox.error(sMessage, {
-				styleClass: this.getOwnerComponent().getContentDensityClass(),
+				styleClass: oOwnerComponent.getContentDensityClass(),
 				actions: [MessageBox.Action.CLOSE],
 				onClose: fnClose
 			});
@@ -1411,31 +1412,6 @@ sap.ui.define([
 				}
 			}
 			return null;
-		},
-		/**
-		 * get respective navigation details
-		 * This method is used to reset the scheduling json model
-		 * so that it can be reset to initial once we navigate from one view to another 
-		 * like demands, gantt and maps.
-		 */
-		_resetSchedulingJson:function(){
-			var oViewModel = this.getModel("viewModel"),
-			oBj={
-				sType:"",
-				sScheduleDialogTitle: "",
-				sScheduleTableTitle: "",
-				bEnableReschedule: false,
-				bEnableAutoschedule: false,
-				SchedulingDialogFlags:{
-					
-				},
-				aSelectedResources:[],
-				resourceTreeData: {
-					filter:[],
-					select:""
-				}
-			};
-			oViewModel.setProperty("/Scheduling",oBj);
 		}
 	});
 
