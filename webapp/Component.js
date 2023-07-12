@@ -593,11 +593,7 @@ sap.ui.define([
 						
 					},
 					selectedResources:null,
-					selectedDemandPath: null,
-					resourceTreeData: {
-						filter:[],
-						select:""
-					}
+					selectedDemandPath: null
 				}
 			});
 			oViewModel.setSizeLimit(999999999);

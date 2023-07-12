@@ -74,10 +74,6 @@ sap.ui.define([
 				oDataModel = this.oDataModel,
 				oGanttModel = this.oGanttModel,
 				aResourcePath = oViewModel.getProperty("/Scheduling/selectedResources"),
-				// aTableFilters = oViewModel.getProperty("/Scheduling/resourceTreeData/filter"),
-				// mParameters = {
-				// 	$select: oViewModel.getProperty("/Scheduling/resourceTreeData/select")
-				// },
 				aResourceData = [],
 				oResourceObj = {},
 				aResourceGroupPromise = [],
@@ -147,11 +143,7 @@ sap.ui.define([
 					
 				},
 				selectedResources:null,
-				selectedDemandPath:null,
-				resourceTreeData: {
-					filter:[],
-					select:""
-				}
+				selectedDemandPath:null
 			}
 			this.oViewModel.setProperty("/Scheduling",oBj);
 		},
