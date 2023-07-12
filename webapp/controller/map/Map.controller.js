@@ -466,7 +466,7 @@ sap.ui.define([
 			oViewModel.setProperty("/Disable_Assignment_Status_Button", false);
 			this.onResetLegendSelection();
 			this.oSchedulingActions.resetSchedulingJson();
-			this._oEventBus.publish("ManageAbsences", "ClearSelection",{});
+			this._oEventBus.publish("BaseController", "refreshMapTreeTable",{});
 		},
 		/**
 		 * Clearing the selected demands the Reseting the selection
