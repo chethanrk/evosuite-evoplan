@@ -1412,31 +1412,6 @@ sap.ui.define([
 				}
 			}
 			return null;
-		},
-		/**
-		 * get respective navigation details
-		 * This method is used to reset the scheduling json model
-		 * so that it can be reset to initial once we navigate from one view to another 
-		 * like demands, gantt and maps.
-		 */
-		_resetSchedulingJson:function(){
-			var oViewModel = this.getModel("viewModel"),
-			oBj={
-				sType:"",
-				sScheduleDialogTitle: "",
-				sScheduleTableTitle: "",
-				bEnableReschedule: false,
-				bEnableAutoschedule: false,
-				SchedulingDialogFlags:{
-					
-				},
-				aSelectedResources:[],
-				resourceTreeData: {
-					filter:[],
-					select:""
-				}
-			};
-			oViewModel.setProperty("/Scheduling",oBj);
 		}
 	});
 

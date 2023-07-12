@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/util/Storage",
 	"sap/gantt/def/gradient/Stop",
 	"sap/gantt/def/gradient/LinearGradient",
-	"com/evorait/evoplan/controller/Scheduling/SchedulingActions"
+	"com/evorait/evoplan/controller/scheduling/SchedulingActions"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, FilterType, Popup, MessageToast, Fragment, CoordinateUtils,
 	Constants,
 	Utility, SlashPattern, BackSlashPattern, MapUtilities, Storage, Stop, LinearGradient, SchedulingActions) {

@@ -62,7 +62,7 @@ sap.ui.define([
 			// create Dialog
 			if (!this._ScheduleDialog) {
 				this._ScheduleDialog = Fragment.load({
-					name: "com.evorait.evoplan.view.Scheduling.SchedulingDialog",
+					name: "com.evorait.evoplan.view.scheduling.SchedulingDialog",
 					controller: this,
 					type: "XML"
 				}).then(function (oDialog) {
@@ -178,13 +178,13 @@ sap.ui.define([
 
 			if (this._mParams.isAutoSchedule) {
 				//sContainerId = "AutoScheduling-DemandTable";
-				this._mParams.viewName = "com.evorait.evoplan.view.Scheduling.AutoScheduling.AutoScheduleStep1#AutoScheduleStep1";
+				this._mParams.viewName = "com.evorait.evoplan.view.scheduling.AutoScheduling.AutoScheduleStep1#AutoScheduleStep1";
 				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ScheduleTable";
 				this._mParams.modelName = "SchedulingModel";
 				this._mParams.modelDataSetPath = "/step1/dataSet";
 			} else {
 				//sContainerId = "ReScheduling-AssignmentTable";
-				this._mParams.viewName = "com.evorait.evoplan.view.Scheduling.ReScheduling.ReScheduleStep1#ReScheduleStep1";
+				this._mParams.viewName = "com.evorait.evoplan.view.scheduling.ReScheduling.ReScheduleStep1#ReScheduleStep1";
 				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ReScheduleTable";
 				this._mParams.modelName = "SchedulingModel";
 				this._mParams.modelDataSetPath = "/step1/dataSet";

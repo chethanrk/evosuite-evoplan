@@ -226,8 +226,6 @@ sap.ui.define([
 			this._oEventBus.subscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.subscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
 			this._oEventBus.subscribe("MapController", "displayRoute", this._zoomToPoint, this);
-			// rescheduling reset model and controller reference.
-			this._oEventBus.subscribe("BaseController", "resetSchedulingJson", this._resetSchedulingJson, this);
 			
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
@@ -276,6 +274,8 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			oViewModel.setProperty("/mapSettings/bRouteDateSelected", false);
+			oViewModel.setProperty("/Scheduling/selectedDemandPath", aSelectedDemands[0]);
+			this.oSchedulingActions.validateScheduleButtons();
 			this._oDraggableTable.rebindTable();
 		},
 		/**
@@ -465,6 +465,8 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			oViewModel.setProperty("/Disable_Assignment_Status_Button", false);
 			this.onResetLegendSelection();
+			this.oSchedulingActions.resetSchedulingJson();
+			this._oEventBus.publish("BaseController", "refreshMapTreeTable",{});
 		},
 		/**
 		 * Clearing the selected demands the Reseting the selection

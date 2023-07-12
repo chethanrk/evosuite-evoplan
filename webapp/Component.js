@@ -20,7 +20,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentList",
 	"com/evorait/evoplan/controller/common/MaterialInfoDialog",
 	"com/evorait/evoplan/controller/common/FixedAppointmentsList",
-	"com/evorait/evoplan/controller/Scheduling/SchedulingDialog",
+	"com/evorait/evoplan/controller/scheduling/SchedulingDialog",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
 	"sap/m/Link",

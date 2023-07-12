@@ -3,9 +3,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/formatter",
-	"com/evorait/evoplan/model/Constants"
-
-], function (AssignmentsController, JSONModel, Fragment, formatter, Constants) {
+	"com/evorait/evoplan/model/Constants",
+	"com/evorait/evoplan/controller/scheduling/SchedulingActions"
+], function (AssignmentsController, JSONModel, Fragment, formatter, Constants,SchedulingActions) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.App", {
@@ -55,6 +55,8 @@ sap.ui.define([
 
 			//set init page title
 			oRouter.attachRouteMatched(this._onAllRouteMatched, this);
+
+			this.oSchedulingActions = new SchedulingActions(this);
 		},
 
 		onAfterRendering: function () {
@@ -300,11 +302,8 @@ sap.ui.define([
 				this.getOwnerComponent().bIsFromPRTSwitch = false;
 				return;
 			}
+			this.oSchedulingActions.resetSchedulingJson();
 			//Reset scheduling buttons enability and stored data
-			this.getModel("viewModel").setProperty("/Scheduling/bEnableReschedule", false);
-			this.getModel("viewModel").setProperty("/Scheduling/bEnableAutoschedule", false);
-			this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
-			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", null);
 
 
 			if (sRoute === "gantt") {
@@ -319,13 +318,11 @@ sap.ui.define([
 			} else if (sRoute === "DemandDetail") {
 				/* No action require */
 			} else if (sRoute === "map") {
-				this._eventBus.publish("BaseController", "resetSchedulingJson", {});
 				this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshMapView", {});
 			} else if (this.getOwnerComponent().bIsFromPRTSwitch && (sRoute === "demands" || sRoute === "demandTools")) {
 				this.getOwnerComponent().bIsFromPRTSwitch = false;
 			} else {
-				this._eventBus.publish("BaseController", "resetSchedulingJson", {});
 				this._eventBus.publish("BaseController", "refreshTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshDemandTable", {});
 				
