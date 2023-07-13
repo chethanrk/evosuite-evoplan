@@ -209,19 +209,19 @@ sap.ui.define([
 				//Read Assignment
 				aAssignmentFilter = [
 					new Filter("ResourceGuid", "EQ", oResource.ResourceGuid),
-					// new Filter("DateFrom", "EQ", oStartDate),
-					// new Filter("DateTo", "EQ", oEndDate)
+					new Filter("DateFrom", "GE", oStartDate),
+					new Filter("DateTo", "LE", oEndDate)
 				];
-				aAssignmentPromise.push(this._controller.getOwnerComponent().readData("/AssignmentSet", aAssignmentFilter));
+				aAssignmentPromise.push(this._controller.getOwnerComponent().readData("/AssignmentSet", aAssignmentFilter, {}, "idAssignmentSet"));
 
 				//Read WorkSchedule, Break, Absense, Project Blocker
 				//AvailibilityTypeGroup - A --WorkSchedule, -B --Break, -L --ProjectBlocker, -[N,O] --Absenses
 				aAvailibilityFilter = [
 					new Filter("ResourceGuid", "EQ", oResource.ResourceGuid),
-					new Filter("DateFrom", "EQ", oStartDate),
-					new Filter("DateTo", "EQ", oEndDate)
+					new Filter("DateFrom", "LE", oEndDate),
+					new Filter("DateTo", "GE", oStartDate)
 				];
-				aAvailabilityPromise.push(this._controller.getOwnerComponent().readData("/ResourceAvailabilitySet", aAvailibilityFilter));
+				aAvailabilityPromise.push(this._controller.getOwnerComponent().readData("/ResourceAvailabilitySet", aAvailibilityFilter, {}, "idResourceAvailabilitySet"));
 			}.bind(this));
 			oAppViewModel.setProperty("/busy",true);
 			return Promise.all(aAssignmentPromise).then(function(aAssignment){

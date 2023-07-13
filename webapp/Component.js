@@ -156,10 +156,11 @@ sap.ui.define([
 		/**
 		 *  Read call given entityset and filters
 		 */
-		readData: function (sUri, aFilters, mUrlParams) {
+		readData: function (sUri, aFilters, mUrlParams, sGroupId) {
 			return new Promise(function (resolve, reject) {
 				this.getModel().read(sUri, {
 					filters: aFilters,
+					groupId: sGroupId || "",
 					urlParameters: mUrlParams || {},
 					success: function (oData, oResponse) {
 						resolve(oData);
