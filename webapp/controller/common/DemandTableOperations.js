@@ -263,19 +263,16 @@ sap.ui.define([
 				oResourceBundle = this.getResourceBundle();
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
 				if (oResult.validateState) {
-					return this.oSchedulingActions.createScheduleData(); //creating scheduling data for PTV
-				} else {
-					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
-					return false;
-				}
-			}.bind(this)).then(function (oResult) {
-				if (oResult) {
-					oViewModel.setProperty("/Scheduling/oResourceData", oResult);
-					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
+					this.oSchedulingActions.createScheduleData().then(function(oResourceScheduleData){
+						oViewModel.setProperty("/Scheduling/oResourceData", oResult);
+					}); //creating scheduling data for PTV
 					var mParams = {
 						entitySet: "DemandSet"
 					}
+					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
+				} else {
+					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));					
 				}
 			}.bind(this));
 		},
