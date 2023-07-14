@@ -263,10 +263,10 @@ sap.ui.define([
 				oResourceBundle = this.getResourceBundle();
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
 				if (oResult.validateState) {
+					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					var mParams = {
 						entitySet: "DemandSet"
 					}
-					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
 				} else {
 					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));					
