@@ -595,8 +595,8 @@ sap.ui.define([
 					},
 					selectedResources:null,
 					selectedDemandPath: null,
-					aFinalResourceList:[],
-					oResourceData:{},
+					resourceList:[],
+					resourceData:{},
 					DateFrom: moment().startOf("day").toDate(),
 					DateTo: moment().add(14, "days").endOf("day").toDate()
 				}

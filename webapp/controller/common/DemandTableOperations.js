@@ -263,9 +263,6 @@ sap.ui.define([
 				oResourceBundle = this.getResourceBundle();
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
 				if (oResult.validateState) {
-					this.oSchedulingActions.createScheduleData().then(function(oResourceScheduleData){
-						oViewModel.setProperty("/Scheduling/oResourceData", oResult);
-					}); //creating scheduling data for PTV
 					var mParams = {
 						entitySet: "DemandSet"
 					}

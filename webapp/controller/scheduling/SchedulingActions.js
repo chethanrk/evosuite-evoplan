@@ -96,7 +96,7 @@ sap.ui.define([
 					}
 				});
 				if(bValidateState){
-					oViewModel.setProperty("/Scheduling/aFinalResourceList", aResourceList);
+					oViewModel.setProperty("/Scheduling/resourceList", aResourceList); //storing the final resource list into viewModel>/Scheduling/resourceList
 				}
 				return {
 					validateState: bValidateState,
@@ -114,8 +114,8 @@ sap.ui.define([
 				if (oResourceObj.ResourceGuid) {
 					aResourceData.push(oResourceObj);
 				} else if (oResourceObj.ResourceGroupGuid) {
-					aFilters.push(new Filter("ResourceGroupGuid", "EQ", oResourceObj.NodeId));
-					aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceSet", aFilters));
+					aFilters.push(new Filter("ParentNodeId", "EQ", oResourceObj.NodeId));
+					aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceHierarchySet", aFilters));
 
 				}
 			}.bind(this));
@@ -147,8 +147,8 @@ sap.ui.define([
 				},
 				selectedResources:null,
 				selectedDemandPath:null,
-				aFinalResourceList:[],
-				oResourceData:{},
+				resourceList:[],
+				resourceData:{},
 				DateFrom: moment().startOf("day").toDate(),
 				DateTo: moment().add(14, "days").endOf("day").toDate()
 			}
@@ -182,12 +182,14 @@ sap.ui.define([
 		},
 
 		/**
-		 * Method will read the Qualification, WorkSchedule, Break, Absense, Project Blocker, Assignment and store in a model
+		 * Method read the Qualification, WorkSchedule, Break, Absense, Project Blocker, Assignment and store in a model
+		 * Method returns the promise, and the promise will return the data
+		 * @return {object}
 		 */
 		createScheduleData: function(){
 			var oViewModel = this.oViewModel,
 				oAppViewModel = this.oAppViewModel,
-				aResourceList = oViewModel.getProperty("/Scheduling/aFinalResourceList"),
+				aResourceList = oViewModel.getProperty("/Scheduling/resourceList"),
 				oStartDate = oViewModel.getProperty("/Scheduling/DateFrom"),
 				oEndDate =  oViewModel.getProperty("/Scheduling/DateTo"),
 				aAssignmentPromise=[],
@@ -204,7 +206,7 @@ sap.ui.define([
 					workSchedules:[],
 					projectBlockers:[],
 					absenses:[],
-					qualifications:oResource["QUALIFICATION_DESCRIPTION"] ? oResource["QUALIFICATION_DESCRIPTION"].split(",") : []
+					qualifications:oResource["QUALIFICATION_DESCRIPTION"] ? oResource["QUALIFICATION_DESCRIPTION"].split(",") : [] //qualification added from ResourcehierarchySet
 				};
 				//Read Assignment
 				aAssignmentFilter = [
@@ -224,11 +226,11 @@ sap.ui.define([
 				aAvailabilityPromise.push(this._controller.getOwnerComponent().readData("/ResourceAvailabilitySet", aAvailibilityFilter, {}, "idResourceAvailabilitySet"));
 			}.bind(this));
 			oAppViewModel.setProperty("/busy",true);
-			return Promise.all(aAssignmentPromise).then(function(aAssignment){
+			return Promise.all(aAssignmentPromise).then(function(aAssignment){ //promise for assignment data
 				aAssignment.forEach(function(oAssignment,i){
 					oFinalData[aResourceList[i].ResourceGuid]["assignments"] = oAssignment.results;
 				});
-				return Promise.all(aAvailabilityPromise).then(function(aAvailibility){
+				return Promise.all(aAvailabilityPromise).then(function(aAvailibility){ //promise for availability data
 					return aAvailibility;
 				});
 			}).then(function(aAvailibility){
@@ -246,6 +248,7 @@ sap.ui.define([
 						}
 					});
 				});
+				oViewModel.setProperty("/Scheduling/resourceData", oFinalData); //storing the final modelled resource data into viewModel>/Scheduling/resourcesData
 				return oFinalData		
 			}).catch(function(oError){
 				oAppViewModel.setProperty("/busy",false);
