@@ -196,11 +196,11 @@ sap.ui.define([
 				aAssignmentFilter=[],
 				aAvailabilityPromise=[],
 				aAvailibilityFilter=[],
-				oFinalData={};
+				oResourceData={};
 			
 			
 			aResourceList.forEach(function(oResource){
-				oFinalData[oResource.ResourceGuid]={
+				oResourceData[oResource.ResourceGuid]={
 					assignments:[],
 					breaks:[],
 					workSchedules:[],
@@ -228,7 +228,7 @@ sap.ui.define([
 			oAppViewModel.setProperty("/busy",true);
 			return Promise.all(aAssignmentPromise).then(function(aAssignment){ //promise for assignment data
 				aAssignment.forEach(function(oAssignment,i){
-					oFinalData[aResourceList[i].ResourceGuid]["assignments"] = oAssignment.results;
+					oResourceData[aResourceList[i].ResourceGuid]["assignments"] = oAssignment.results;
 				});
 				return Promise.all(aAvailabilityPromise).then(function(aAvailibility){ //promise for availability data
 					return aAvailibility;
@@ -238,18 +238,18 @@ sap.ui.define([
 				aAvailibility.forEach(function(oAvailibility,i){
 					oAvailibility.results.forEach(function(oAvail){
 						if(oAvail.AvailabilityTypeGroup === "A"){
-							oFinalData[aResourceList[i].ResourceGuid]["workSchedules"].push(oAvail);
+							oResourceData[aResourceList[i].ResourceGuid]["workSchedules"].push(oAvail);
 						}else if(oAvail.AvailabilityTypeGroup === "B"){
-							oFinalData[aResourceList[i].ResourceGuid]["breaks"].push(oAvail);
+							oResourceData[aResourceList[i].ResourceGuid]["breaks"].push(oAvail);
 						}else if(oAvail.AvailabilityTypeGroup === "L"){
-							oFinalData[aResourceList[i].ResourceGuid]["projectBlockers"].push(oAvail);
+							oResourceData[aResourceList[i].ResourceGuid]["projectBlockers"].push(oAvail);
 						}else if(oAvail.AvailabilityTypeGroup === "N" || oAvail.AvailabilityTypeGroup === "O"){
-							oFinalData[aResourceList[i].ResourceGuid]["absenses"].push(oAvail);
+							oResourceData[aResourceList[i].ResourceGuid]["absenses"].push(oAvail);
 						}
 					});
 				});
-				oViewModel.setProperty("/Scheduling/resourceData", oFinalData); //storing the final modelled resource data into viewModel>/Scheduling/resourcesData
-				return oFinalData		
+				oViewModel.setProperty("/Scheduling/resourceData", oResourceData); //storing the final modelled resource data into viewModel>/Scheduling/resourcesData
+				return oResourceData		
 			}).catch(function(oError){
 				oAppViewModel.setProperty("/busy",false);
 				return false;

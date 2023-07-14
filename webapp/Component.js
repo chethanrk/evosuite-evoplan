@@ -160,8 +160,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.getModel().read(sUri, {
 					filters: aFilters,
-					groupId: sGroupId || "",
 					urlParameters: mUrlParams || {},
+					groupId: sGroupId || "",
 					success: function (oData, oResponse) {
 						resolve(oData);
 					}.bind(this),
