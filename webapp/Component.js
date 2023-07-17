@@ -156,11 +156,12 @@ sap.ui.define([
 		/**
 		 *  Read call given entityset and filters
 		 */
-		readData: function (sUri, aFilters, mUrlParams) {
+		readData: function (sUri, aFilters, mUrlParams, sGroupId) {
 			return new Promise(function (resolve, reject) {
 				this.getModel().read(sUri, {
 					filters: aFilters,
 					urlParameters: mUrlParams || {},
+					groupId: sGroupId || "",
 					success: function (oData, oResponse) {
 						resolve(oData);
 					}.bind(this),
@@ -594,6 +595,10 @@ sap.ui.define([
 					},
 					selectedResources:null,
 					selectedDemandPath: null,
+					resourceList:[],
+					resourceData:{},
+					DateFrom: moment().startOf("day").toDate(),
+					DateTo: moment().add(14, "days").endOf("day").toDate(),
 					sUtilizationSlider:null
 				}
 			});
