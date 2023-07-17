@@ -190,15 +190,38 @@ sap.ui.define([
 			var oViewModel = this.oViewModel,
 				oAppViewModel = this.oAppViewModel,
 				aResourceList = oViewModel.getProperty("/Scheduling/resourceList"),
+				iResourceLength = aResourceList.length,
 				oStartDate = oViewModel.getProperty("/Scheduling/DateFrom"),
 				oEndDate =  oViewModel.getProperty("/Scheduling/DateTo"),
 				aAssignmentPromise=[],
 				aAssignmentFilter=[],
 				aAvailabilityPromise=[],
 				aAvailibilityFilter=[],
+				aAllPromise=[],
+				aAssignmentData=[],
+				aAvailabilityData=[],
 				oResourceData={};
 			
-			
+			var modelAssignmentData = function(aResult){
+				aResult.forEach(function(oAssignment,i){ //modelling assignment data
+					oResourceData[aResourceList[i].ResourceGuid]["assignments"] = oAssignment.results;
+				});
+			};
+			var modelAvailibilityData = function(aResult){
+				aResult.forEach(function(oAvailibility,i){ //modelling availibility data
+					oAvailibility.results.forEach(function(oAvail){
+						if(oAvail.AvailabilityTypeGroup === "A"){
+							oResourceData[aResourceList[i].ResourceGuid]["workSchedules"].push(oAvail);
+						}else if(oAvail.AvailabilityTypeGroup === "B"){
+							oResourceData[aResourceList[i].ResourceGuid]["breaks"].push(oAvail);
+						}else if(oAvail.AvailabilityTypeGroup === "L"){
+							oResourceData[aResourceList[i].ResourceGuid]["projectBlockers"].push(oAvail);
+						}else if(oAvail.AvailabilityTypeGroup === "N" || oAvail.AvailabilityTypeGroup === "O"){
+							oResourceData[aResourceList[i].ResourceGuid]["absenses"].push(oAvail);
+						}
+					});
+				});
+			};
 			aResourceList.forEach(function(oResource){
 				oResourceData[oResource.ResourceGuid]={
 					assignments:[],
@@ -225,31 +248,18 @@ sap.ui.define([
 				];
 				aAvailabilityPromise.push(this._controller.getOwnerComponent().readData("/ResourceAvailabilitySet", aAvailibilityFilter, {}, "idResourceAvailabilitySet"));
 			}.bind(this));
+			aAllPromise = aAssignmentPromise.concat(aAvailabilityPromise);
 			oAppViewModel.setProperty("/busy",true);
-			return Promise.all(aAssignmentPromise).then(function(aAssignment){ //promise for assignment data
-				aAssignment.forEach(function(oAssignment,i){
-					oResourceData[aResourceList[i].ResourceGuid]["assignments"] = oAssignment.results;
-				});
-				return Promise.all(aAvailabilityPromise).then(function(aAvailibility){ //promise for availability data
-					return aAvailibility;
-				});
-			}).then(function(aAvailibility){
+			return q.all(aAllPromise).then(function(oResult){
 				oAppViewModel.setProperty("/busy",false);
-				aAvailibility.forEach(function(oAvailibility,i){
-					oAvailibility.results.forEach(function(oAvail){
-						if(oAvail.AvailabilityTypeGroup === "A"){
-							oResourceData[aResourceList[i].ResourceGuid]["workSchedules"].push(oAvail);
-						}else if(oAvail.AvailabilityTypeGroup === "B"){
-							oResourceData[aResourceList[i].ResourceGuid]["breaks"].push(oAvail);
-						}else if(oAvail.AvailabilityTypeGroup === "L"){
-							oResourceData[aResourceList[i].ResourceGuid]["projectBlockers"].push(oAvail);
-						}else if(oAvail.AvailabilityTypeGroup === "N" || oAvail.AvailabilityTypeGroup === "O"){
-							oResourceData[aResourceList[i].ResourceGuid]["absenses"].push(oAvail);
-						}
-					});
-				});
+				aAssignmentData = oResult.slice(0,iResourceLength); //reading assignment data
+				aAvailabilityData = oResult.slice(iResourceLength,(iResourceLength*2)); //reading availibility data
+
+				modelAssignmentData(aAssignmentData); //modelling assignment data into oResourceData
+				modelAvailibilityData(aAvailabilityData); //modelling availibility data into oResourceData
+
 				oViewModel.setProperty("/Scheduling/resourceData", oResourceData); //storing the final modelled resource data into viewModel>/Scheduling/resourcesData
-				return oResourceData		
+				return oResourceData;				
 			}).catch(function(oError){
 				oAppViewModel.setProperty("/busy",false);
 				return false;
