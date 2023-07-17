@@ -598,7 +598,8 @@ sap.ui.define([
 					resourceList:[],
 					resourceData:{},
 					DateFrom: moment().startOf("day").toDate(),
-					DateTo: moment().add(14, "days").endOf("day").toDate()
+					DateTo: moment().add(14, "days").endOf("day").toDate(),
+					sUtilizationSlider:null
 				}
 			});
 			oViewModel.setSizeLimit(999999999);
