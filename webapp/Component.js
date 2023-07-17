@@ -593,7 +593,8 @@ sap.ui.define([
 						
 					},
 					selectedResources:null,
-					selectedDemandPath: null
+					selectedDemandPath: null,
+					sUtilizationSlider:null
 				}
 			});
 			oViewModel.setSizeLimit(999999999);
