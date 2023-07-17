@@ -187,19 +187,14 @@ sap.ui.define([
 		 * @return {object}
 		 */
 		createScheduleData: function(){
-			var oViewModel = this.oViewModel,
-				oAppViewModel = this.oAppViewModel,
-				aResourceList = oViewModel.getProperty("/Scheduling/resourceList"),
-				iResourceLength = aResourceList.length,
-				oStartDate = oViewModel.getProperty("/Scheduling/DateFrom"),
-				oEndDate =  oViewModel.getProperty("/Scheduling/DateTo"),
+			var aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
+				oStartDate = this.oViewModel.getProperty("/Scheduling/DateFrom"),
+				oEndDate =  this.oViewModel.getProperty("/Scheduling/DateTo"),
 				aAssignmentPromise=[],
 				aAssignmentFilter=[],
 				aAvailabilityPromise=[],
 				aAvailibilityFilter=[],
 				aAllPromise=[],
-				aAssignmentData=[],
-				aAvailabilityData=[],
 				oResourceData={};
 		
 			aResourceList.forEach(function(oResource){
@@ -221,14 +216,14 @@ sap.ui.define([
 				aAvailabilityPromise.push(this._controller.getOwnerComponent().readData("/ResourceAvailabilitySet", aAvailibilityFilter, {}, "idResourceAvailabilitySet"));
 			}.bind(this));
 			aAllPromise = aAssignmentPromise.concat(aAvailabilityPromise);
-			oAppViewModel.setProperty("/busy",true);
+			this.oAppViewModel.setProperty("/busy",true);
 			return Promise.all(aAllPromise).then(function(oResult){
-				oAppViewModel.setProperty("/busy",false);
+				this.oAppViewModel.setProperty("/busy",false);
 				oResourceData = this.modelResourceData(oResult);				
-				oViewModel.setProperty("/Scheduling/resourceData", oResourceData); //storing the final modelled resource data into viewModel>/Scheduling/resourcesData
+				this.oViewModel.setProperty("/Scheduling/resourceData", oResourceData); //storing the final modelled resource data into viewModel>/Scheduling/resourcesData
 				return oResourceData;				
 			}.bind(this)).catch(function(oError){
-				oAppViewModel.setProperty("/busy",false);
+				this.oAppViewModel.setProperty("/busy",false);
 				return false;
 			});
 			
@@ -239,12 +234,11 @@ sap.ui.define([
 		 * @returns {object} 
 		 */
 		modelResourceData: function(aResourceData){
-			var oViewModel = this.oViewModel,
-				aResourceList = oViewModel.getProperty("/Scheduling/resourceList"),
+			var aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
 				iResourceLength = aResourceList.length,
 				oTempResourceData = {},
 				oResourceData = {},
-				aAssignmentData = aResourceData.slice(0,iResourceLength); //reading assignment data
+				aAssignmentData = aResourceData.slice(0,iResourceLength), //reading assignment data
 				aAvailabilityData = aResourceData.slice(iResourceLength,(iResourceLength*2)); //reading availibility data
 			//looping resource list to create data
 			aResourceList.forEach(function(oResource, i){
