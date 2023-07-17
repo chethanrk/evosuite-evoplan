@@ -20,7 +20,7 @@ sap.ui.define([
 		_oResourceBundle: null,
 		_oModel: null,
 		_oSchedulingModel: null,
-		_userModel:null,
+		_oUserModel:null,
 
 		/**
 		 * overwrite constructor
@@ -46,7 +46,7 @@ sap.ui.define([
 				this._setJsonModelDefaults();
 			}
 			this._component.setModel(this._oSchedulingModel, "SchedulingModel");
-			this._userModel = this._component.getModel("user");
+			this._oUserModel = this._component.getModel("user");
 		},
 
 		/**
@@ -191,7 +191,7 @@ sap.ui.define([
 				this._mParams.modelName = "SchedulingModel";
 				this._mParams.modelDataSetPath = "/step1/dataSet";
 			}
-			this._oViewModel.setProperty("/Scheduling/sUtilizationSlider",this._userModel.getProperty("/DEFAULT_UTILIZATION_BAR_MAPS"));
+			this._oViewModel.setProperty("/Scheduling/sUtilizationSlider",this._oUserModel.getProperty("/DEFAULT_UTILIZATION_BAR_MAPS"));
 			//Todo set table counter after data was load
 			this._setScheduleTableTitle(this._mParams.isAutoSchedule, "0");
 
