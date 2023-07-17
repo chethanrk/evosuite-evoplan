@@ -250,7 +250,7 @@ sap.ui.define([
 			}.bind(this));
 			aAllPromise = aAssignmentPromise.concat(aAvailabilityPromise);
 			oAppViewModel.setProperty("/busy",true);
-			return q.all(aAllPromise).then(function(oResult){
+			return Promise.all(aAllPromise).then(function(oResult){
 				oAppViewModel.setProperty("/busy",false);
 				aAssignmentData = oResult.slice(0,iResourceLength); //reading assignment data
 				aAvailabilityData = oResult.slice(iResourceLength,(iResourceLength*2)); //reading availibility data
