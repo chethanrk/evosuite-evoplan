@@ -201,36 +201,8 @@ sap.ui.define([
 				aAssignmentData=[],
 				aAvailabilityData=[],
 				oResourceData={};
-			
-			var modelAssignmentData = function(aResult){
-				aResult.forEach(function(oAssignment,i){ //modelling assignment data
-					oResourceData[aResourceList[i].ResourceGuid]["assignments"] = oAssignment.results;
-				});
-			};
-			var modelAvailibilityData = function(aResult){
-				aResult.forEach(function(oAvailibility,i){ //modelling availibility data
-					oAvailibility.results.forEach(function(oAvail){
-						if(oAvail.AvailabilityTypeGroup === "A"){
-							oResourceData[aResourceList[i].ResourceGuid]["workSchedules"].push(oAvail);
-						}else if(oAvail.AvailabilityTypeGroup === "B"){
-							oResourceData[aResourceList[i].ResourceGuid]["breaks"].push(oAvail);
-						}else if(oAvail.AvailabilityTypeGroup === "L"){
-							oResourceData[aResourceList[i].ResourceGuid]["projectBlockers"].push(oAvail);
-						}else if(oAvail.AvailabilityTypeGroup === "N" || oAvail.AvailabilityTypeGroup === "O"){
-							oResourceData[aResourceList[i].ResourceGuid]["absenses"].push(oAvail);
-						}
-					});
-				});
-			};
+		
 			aResourceList.forEach(function(oResource){
-				oResourceData[oResource.ResourceGuid]={
-					assignments:[],
-					breaks:[],
-					workSchedules:[],
-					projectBlockers:[],
-					absenses:[],
-					qualifications:oResource["QUALIFICATION_DESCRIPTION"] ? oResource["QUALIFICATION_DESCRIPTION"].split(",") : [] //qualification added from ResourcehierarchySet
-				};
 				//Read Assignment
 				aAssignmentFilter = [
 					new Filter("ResourceGuid", "EQ", oResource.ResourceGuid),
@@ -252,19 +224,54 @@ sap.ui.define([
 			oAppViewModel.setProperty("/busy",true);
 			return Promise.all(aAllPromise).then(function(oResult){
 				oAppViewModel.setProperty("/busy",false);
-				aAssignmentData = oResult.slice(0,iResourceLength); //reading assignment data
-				aAvailabilityData = oResult.slice(iResourceLength,(iResourceLength*2)); //reading availibility data
-
-				modelAssignmentData(aAssignmentData); //modelling assignment data into oResourceData
-				modelAvailibilityData(aAvailabilityData); //modelling availibility data into oResourceData
-
+				oResourceData = this.modelResourceData(oResult);				
 				oViewModel.setProperty("/Scheduling/resourceData", oResourceData); //storing the final modelled resource data into viewModel>/Scheduling/resourcesData
 				return oResourceData;				
-			}).catch(function(oError){
+			}.bind(this)).catch(function(oError){
 				oAppViewModel.setProperty("/busy",false);
 				return false;
 			});
 			
+		},
+		/**
+		 * 
+		 * @param {object} aResourceData - will contain assignment, availability data
+		 * @returns {object} 
+		 */
+		modelResourceData: function(aResourceData){
+			var oViewModel = this.oViewModel,
+				aResourceList = oViewModel.getProperty("/Scheduling/resourceList"),
+				iResourceLength = aResourceList.length,
+				oTempResourceData = {},
+				oResourceData = {},
+				aAssignmentData = aResourceData.slice(0,iResourceLength); //reading assignment data
+				aAvailabilityData = aResourceData.slice(iResourceLength,(iResourceLength*2)); //reading availibility data
+			//looping resource list to create data
+			aResourceList.forEach(function(oResource, i){
+				oTempResourceData={
+					assignments:aAssignmentData[i].results,
+					breaks:[],
+					workSchedules:[],
+					projectBlockers:[],
+					absenses:[],
+					qualifications:oResource["QUALIFICATION_DESCRIPTION"] ? oResource["QUALIFICATION_DESCRIPTION"].split(",") : [] //qualification added from ResourcehierarchySet
+				};
+				//looping availibility data of resource to segragate based on AvailabilityTypeGroup
+				aAvailabilityData[i].results.forEach(function(oAvail){
+					if(oAvail.AvailabilityTypeGroup === "A"){
+						oTempResourceData["workSchedules"].push(oAvail);
+					}else if(oAvail.AvailabilityTypeGroup === "B"){
+						oTempResourceData["breaks"].push(oAvail);
+					}else if(oAvail.AvailabilityTypeGroup === "L"){
+						oTempResourceData["projectBlockers"].push(oAvail);
+					}else if(oAvail.AvailabilityTypeGroup === "N" || oAvail.AvailabilityTypeGroup === "O"){
+						oTempResourceData["absenses"].push(oAvail);
+					}
+				});
+				oResourceData[oResource.ResourceGuid] = oTempResourceData;
+			});
+
+			return oResourceData;
 		},
 
 		/* =========================================================== */
