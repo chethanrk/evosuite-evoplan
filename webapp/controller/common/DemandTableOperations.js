@@ -89,7 +89,7 @@ sap.ui.define([
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
 		 **/
-		onInit: function(oEvent){
+		onInit: function (oEvent) {
 			this.oSchedulingActions = new SchedulingActions(this);
 		},
 		/**
@@ -122,7 +122,7 @@ sap.ui.define([
 		 * to set batch Group ID to binding params to separate batch calls
 		 * @param oEvent
 		 */
-		onBeforeRebindDemandTable: function (oEvent) {		
+		onBeforeRebindDemandTable: function (oEvent) {
 			var oParams = oEvent.getParameter("bindingParams");
 			oParams["parameters"].batchGroupId = "DemandBatch";
 		},
@@ -223,7 +223,7 @@ sap.ui.define([
 			this.selectedDemandData = oModel.getProperty(sPath);
 			this.getOwnerComponent().NavigationActionSheet.open(this.getView(), oEvent.getSource().getParent(), this.selectedDemandData);
 		},
-		
+
 		/**
 		 * handle message popover response to save data/ open longtext popover
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
@@ -250,7 +250,7 @@ sap.ui.define([
 		 * On press of auto-schedule button
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
 		 */
-		onAutoscheduleButtonPress: function(oEvent){
+		onAutoscheduleButtonPress: function (oEvent) {
 			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
 		},
 
@@ -258,18 +258,18 @@ sap.ui.define([
 		 * On press of reschedule button
 		 * @param {sap.ui.base.Event} oEvent - press event for reschedule button
 		 */
-		onRescheduleButtonPress: function(oEvent){
+		onRescheduleButtonPress: function (oEvent) {
 			var oViewModel = this.getModel("viewModel"),
-				oResourceBundle = this.getResourceBundle();	
-			this.oSchedulingActions.checkDuplicateResource().then(function(oResult){
-				if(oResult.validateState){
+				oResourceBundle = this.getResourceBundle();
+			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
+				if (oResult.validateState) {
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					var mParams = {
 						entitySet: "DemandSet"
 					}
 					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
-				}else{
-					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
+				} else {
+					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));					
 				}
 			}.bind(this));
 		},
@@ -277,7 +277,7 @@ sap.ui.define([
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
-	
+
 		/**
 		 * On Open change status dialog after validating all conditions in all the views
 		 */
@@ -293,7 +293,7 @@ sap.ui.define([
 				this.showMessageToast(msg);
 			}
 		},
-		
+
 		/**
 		 * deselect all checkboxes in table
 		 * @private
@@ -304,7 +304,7 @@ sap.ui.define([
 			}
 			this._oDataTable.clearSelection();
 		},
-		
+
 		/**
 		 * Opens long text view/edit popover
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
