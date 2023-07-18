@@ -189,6 +189,10 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onSaveAssignments: function (oEvent) {
+			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+			if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
+				this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
+			}
 			var oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
 				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid");
@@ -224,9 +228,11 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onDeleteAssignment: function (oEvent) {
-			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid"),
-
-				sDemandGuid = this.oAssignmentModel.getProperty("/DemandGuid"),
+			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+			if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
+				this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
+			}
+			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid"),sDemandGuid = this.oAssignmentModel.getProperty("/DemandGuid"),
 				sSplitIndex = this.oAssignmentModel.getProperty("/SplitIndex"),
 				sSplitCounter = this.oAssignmentModel.getProperty("/SplitCounter"),
 				bSplitGlobalConfigEnabled = this._oView.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN");

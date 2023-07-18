@@ -156,10 +156,11 @@ sap.ui.define([
 		/**
 		 *  Read call given entityset and filters
 		 */
-		readData: function (sUri, aFilters, mUrlParams) {
+		readData: function (sUri, aFilters, mUrlParams, sGroupId) {
 			return new Promise(function (resolve, reject) {
 				this.getModel().read(sUri, {
 					filters: aFilters,
+					groupId: sGroupId || "",
 					urlParameters: mUrlParams || {},
 					success: function (oData, oResponse) {
 						resolve(oData);
@@ -594,7 +595,8 @@ sap.ui.define([
 					},
 					selectedResources:null,
 					selectedDemandPath: null
-				}
+				},
+				aUpdatedResources : []
 			});
 			oViewModel.setSizeLimit(999999999);
 			this.setModel(oViewModel, "viewModel");
