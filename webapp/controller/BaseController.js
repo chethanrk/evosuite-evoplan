@@ -1200,7 +1200,9 @@ sap.ui.define([
 				sDisplayDemandInfo, sCancelResponse, aDraggedDemands = [],
 
 				aDemandsForSplitAssignment = oResourceAvailabiltyResponse.arrayOfDemandsToSplit,
-				bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP");
+				bShowSplitConfirmationDialog, sDemandSourceType;
+				sDemandSourceType = this.getObjectSourceType(aDemandsForSplitAssignment);
+				bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP") && (sDemandSourceType === "DEM_PMWO");
 
 			return new Promise(function (resolve, reject) {
 
@@ -1412,6 +1414,29 @@ sap.ui.define([
 				}
 			}
 			return null;
+		},
+
+		/**
+		 * method returns a demand object source type
+		 * asking to display the confirmation pop up to continue with splits or not
+		 * 
+		 * @param {array} aDemandsForSplitAssignment demands which are marked for split
+		 * @returns 
+		 */
+		getObjectSourceType: function (aDemandsForSplitAssignment) {
+			var oModel = this.getModel(),
+				sDisplayObjectSourceType,
+				aDemandObjectsFromLocalStorage = JSON.parse(this.localStorage.get("Evo-Dmnd-guid"));
+
+			for (var iIndex = 0; iIndex < aDemandsForSplitAssignment.length; iIndex++) {
+				var sDemandPath = "/DemandSet('" + aDemandsForSplitAssignment[iIndex] + "')",
+					oDemandDetails = oModel.getProperty(sDemandPath);
+				if (!oDemandDetails && aDemandObjectsFromLocalStorage.length > 0) {
+					oDemandDetails = this._getDemandObjectSplitPage(sDemandPath);
+				}
+				sDisplayObjectSourceType = oDemandDetails.OBJECT_SOURCE_TYPE;
+			}
+			return sDisplayObjectSourceType;
 		},
 
 		/**

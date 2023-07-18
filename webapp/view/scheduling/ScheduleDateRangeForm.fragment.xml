@@ -15,8 +15,8 @@
             id="ScheduleDateTo"
             placeholder="{i18n>xtit.EnterDateTo}"
             change="onChangeDateTo"/>
-        <Label text="{i18n>xtit.Utilization}" labelFor="ScheduleUtilization"/>
-        <Slider value="{user>/DEFAULT_UTILIZATION_BAR_MAPS}" 
+        <Label text="{i18n>xtit.Utilization}  {viewModel>/Scheduling/sUtilizationSlider}" labelFor="ScheduleUtilization"/>
+        <Slider value="{viewModel>/Scheduling/sUtilizationSlider}"
             visible="{user>/ENABLE_UTILIZATION_BAR_MAPS}"
             width="100%"
             min="0" max="100"

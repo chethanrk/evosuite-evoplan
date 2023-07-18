@@ -162,6 +162,7 @@ sap.ui.define([
 					filters: aFilters,
 					groupId: sGroupId || "",
 					urlParameters: mUrlParams || {},
+					groupId: sGroupId || "",
 					success: function (oData, oResponse) {
 						resolve(oData);
 					}.bind(this),
@@ -594,7 +595,12 @@ sap.ui.define([
 						
 					},
 					selectedResources:null,
-					selectedDemandPath: null
+					selectedDemandPath: null,
+					resourceList:[],
+					resourceData:{},
+					DateFrom: moment().startOf("day").toDate(),
+					DateTo: moment().add(14, "days").endOf("day").toDate(),
+					sUtilizationSlider:null
 				},
 				aUpdatedResources : []
 			});

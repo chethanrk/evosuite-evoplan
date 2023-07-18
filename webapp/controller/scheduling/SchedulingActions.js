@@ -95,6 +95,9 @@ sap.ui.define([
 						}
 					}
 				});
+				if(bValidateState){
+					oViewModel.setProperty("/Scheduling/resourceList", aResourceList); //storing the final resource list into viewModel>/Scheduling/resourceList
+				}
 				return {
 					validateState: bValidateState,
 					resourceNames: aResourceNameList.join("\n")
@@ -111,8 +114,8 @@ sap.ui.define([
 				if (oResourceObj.ResourceGuid) {
 					aResourceData.push(oResourceObj);
 				} else if (oResourceObj.ResourceGroupGuid) {
-					aFilters.push(new Filter("ResourceGroupGuid", "EQ", oResourceObj.NodeId));
-					aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceSet", aFilters));
+					aFilters.push(new Filter("ParentNodeId", "EQ", oResourceObj.NodeId));
+					aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceHierarchySet", aFilters));
 
 				}
 			}.bind(this));
@@ -143,7 +146,11 @@ sap.ui.define([
 					
 				},
 				selectedResources:null,
-				selectedDemandPath:null
+				selectedDemandPath:null,
+				resourceList:[],
+				resourceData:{},
+				DateFrom: moment().startOf("day").toDate(),
+				DateTo: moment().add(14, "days").endOf("day").toDate()
 			}
 			this.oViewModel.setProperty("/Scheduling",oBj);
 		},
@@ -174,6 +181,93 @@ sap.ui.define([
 			}.bind(this));
 		},
 
+		/**
+		 * Method read the Qualification, WorkSchedule, Break, Absense, Project Blocker, Assignment and store in a model
+		 * Method returns the promise, and the promise will return the data
+		 * @return {object}
+		 */
+		createScheduleData: function(){
+			var aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
+				oStartDate = this.oViewModel.getProperty("/Scheduling/DateFrom"),
+				oEndDate =  this.oViewModel.getProperty("/Scheduling/DateTo"),
+				aAssignmentPromise=[],
+				aAssignmentFilter=[],
+				aAvailabilityPromise=[],
+				aAvailibilityFilter=[],
+				aAllPromise=[],
+				oResourceData={};
+		
+			aResourceList.forEach(function(oResource){
+				//Read Assignment
+				aAssignmentFilter = [
+					new Filter("ResourceGuid", "EQ", oResource.ResourceGuid),
+					new Filter("DateFrom", "GE", oStartDate),
+					new Filter("DateTo", "LE", oEndDate)
+				];
+				aAssignmentPromise.push(this._controller.getOwnerComponent().readData("/AssignmentSet", aAssignmentFilter, {}, "idAssignmentSet"));
+
+				//Read WorkSchedule, Break, Absense, Project Blocker
+				//AvailibilityTypeGroup - A --WorkSchedule, -B --Break, -L --ProjectBlocker, -[N,O] --Absenses
+				aAvailibilityFilter = [
+					new Filter("ResourceGuid", "EQ", oResource.ResourceGuid),
+					new Filter("DateFrom", "LE", oEndDate),
+					new Filter("DateTo", "GE", oStartDate)
+				];
+				aAvailabilityPromise.push(this._controller.getOwnerComponent().readData("/ResourceAvailabilitySet", aAvailibilityFilter, {}, "idResourceAvailabilitySet"));
+			}.bind(this));
+			aAllPromise = aAssignmentPromise.concat(aAvailabilityPromise);
+			this.oAppViewModel.setProperty("/busy",true);
+			return Promise.all(aAllPromise).then(function(oResult){
+				this.oAppViewModel.setProperty("/busy",false);
+				oResourceData = this.modelResourceData(oResult);				
+				this.oViewModel.setProperty("/Scheduling/resourceData", oResourceData); //storing the final modelled resource data into viewModel>/Scheduling/resourcesData
+				return oResourceData;				
+			}.bind(this)).catch(function(oError){
+				this.oAppViewModel.setProperty("/busy",false);
+				return false;
+			});
+			
+		},
+		/**
+		 * 
+		 * @param {object} aResourceData - will contain assignment, availability data
+		 * @returns {object} 
+		 */
+		modelResourceData: function(aResourceData){
+			var aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
+				iResourceLength = aResourceList.length,
+				oTempResourceData = {},
+				oResourceData = {},
+				aAssignmentData = aResourceData.slice(0,iResourceLength), //reading assignment data
+				aAvailabilityData = aResourceData.slice(iResourceLength,(iResourceLength*2)); //reading availibility data
+			//looping resource list to create data
+			aResourceList.forEach(function(oResource, i){
+				oTempResourceData={
+					assignments:aAssignmentData[i].results,
+					breaks:[],
+					workSchedules:[],
+					projectBlockers:[],
+					absenses:[],
+					qualifications:oResource["QUALIFICATION_DESCRIPTION"] ? oResource["QUALIFICATION_DESCRIPTION"].split(",") : [] //qualification added from ResourcehierarchySet
+				};
+				//looping availibility data of resource to segragate based on AvailabilityTypeGroup
+				aAvailabilityData[i].results.forEach(function(oAvail){
+					if(oAvail.AvailabilityTypeGroup === "A"){
+						oTempResourceData["workSchedules"].push(oAvail);
+					}else if(oAvail.AvailabilityTypeGroup === "B"){
+						oTempResourceData["breaks"].push(oAvail);
+					}else if(oAvail.AvailabilityTypeGroup === "L"){
+						oTempResourceData["projectBlockers"].push(oAvail);
+					}else if(oAvail.AvailabilityTypeGroup === "N" || oAvail.AvailabilityTypeGroup === "O"){
+						oTempResourceData["absenses"].push(oAvail);
+					}
+				});
+				oResourceData[oResource.ResourceGuid] = oTempResourceData;
+			});
+
+			return oResourceData;
+		},
+
 		/* =========================================================== */
 		/* Private methods                                              */
 		/* =========================================================== */
@@ -194,7 +288,7 @@ sap.ui.define([
 				oData = this.oDataModel.getProperty(sPath);
 
 				//Added condition to check for number of assignments to plan demands via scheduling
-				if (oData.ALLOW_ASSIGN && oData.NUMBER_OF_CAPACITIES <= 1) {
+				if (oData.ALLOW_ASSIGN && oData.NUMBER_OF_CAPACITIES === 1 && oData.OBJECT_SOURCE_TYPE === "DEM_PMWO") {
 					aPathsData.push({
 						sPath: sPath,
 						oData: oData,
