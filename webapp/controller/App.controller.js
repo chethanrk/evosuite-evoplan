@@ -237,9 +237,10 @@ sap.ui.define([
 			var oAppViewModel = this.getOwnerComponent().getModel("appView"),
 				oParams = oEvent.getParameters(),
 				oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
-				pageTitle = oResourceBundle.getText("xbut.pageDemands");
+				pageTitle = oResourceBundle.getText("xbut.pageDemands"),
+				oViewModel=this.getModel("viewModel");
 
-			this.getModel("viewModel").setProperty("/ganttSettings/active", false);
+				oViewModel.setProperty("/ganttSettings/active", false);
 			//buffer refresh visible for other views
 			oAppViewModel.setProperty("/bBufferRefreshVisible", true);
 
@@ -251,7 +252,7 @@ sap.ui.define([
 				pageTitle = oResourceBundle.getText("xbut.pageMessageCockpit");
 			} else if (oParams.config.pattern.startsWith("SplitPage")) {
 				pageTitle = oResourceBundle.getText("xbut.pageNewGanttChartSplit");
-				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
+				oViewModel.setProperty("/ganttSettings/active", true);
 				if (oParams.name === "newGanttSplit") {
 					pageTitle = oResourceBundle.getText("xbut.pageNewGanttChartSplit");
 				}
