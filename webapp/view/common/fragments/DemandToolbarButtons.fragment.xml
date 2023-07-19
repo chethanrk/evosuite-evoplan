@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-	<Button id="idScheduleButton" visible="{user>/ENABLE_AUTO_SCHEDULE_BUTTON}" text="{i18n>xbut.PlanDemands}" press="onAutoscheduleButtonPress"
+	<Button id="idScheduleButton" visible="{parts:[{path: 'viewModel>/sViewRoute'},{path: 'user>/ENABLE_AUTO_SCHEDULE_BUTTON'}], formatter: '.formatter.formatReSchedulingBtn'}" text="{i18n>xbut.PlanDemands}" press="onAutoscheduleButtonPress"
 		 enabled="{viewModel>/Scheduling/bEnableAutoschedule}">
 		<layoutData>
 			<ToolbarLayoutData shrinkable="true"/>

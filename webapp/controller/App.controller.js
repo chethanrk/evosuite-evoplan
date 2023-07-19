@@ -331,6 +331,7 @@ sap.ui.define([
 			} else {
 				this._eventBus.publish("BaseController", "refreshTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshDemandTable", {});
+				oViewModel.setProperty("/sViewRoute","DEMANDS");
 				
 			}
 			console.log(sRoute);
