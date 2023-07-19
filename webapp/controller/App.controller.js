@@ -334,8 +334,6 @@ sap.ui.define([
 				oViewModel.setProperty("/sViewRoute","DEMANDS");
 				
 			}
-			console.log(sRoute);
-
 		},
 		/**
 		 * catch event from dialog for saving demand status change
