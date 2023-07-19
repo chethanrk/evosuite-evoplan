@@ -237,10 +237,9 @@ sap.ui.define([
 			var oAppViewModel = this.getOwnerComponent().getModel("appView"),
 				oParams = oEvent.getParameters(),
 				oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
-				pageTitle = oResourceBundle.getText("xbut.pageDemands"),
-				oViewModel=this.getModel("viewModel");
+				pageTitle = oResourceBundle.getText("xbut.pageDemands");
 
-				oViewModel.setProperty("/ganttSettings/active", false);
+			this.getModel("viewModel").setProperty("/ganttSettings/active", false);
 			//buffer refresh visible for other views
 			oAppViewModel.setProperty("/bBufferRefreshVisible", true);
 
@@ -252,7 +251,7 @@ sap.ui.define([
 				pageTitle = oResourceBundle.getText("xbut.pageMessageCockpit");
 			} else if (oParams.config.pattern.startsWith("SplitPage")) {
 				pageTitle = oResourceBundle.getText("xbut.pageNewGanttChartSplit");
-				oViewModel.setProperty("/ganttSettings/active", true);
+				this.getModel("viewModel").setProperty("/ganttSettings/active", true);
 				if (oParams.name === "newGanttSplit") {
 					pageTitle = oResourceBundle.getText("xbut.pageNewGanttChartSplit");
 				}
@@ -304,23 +303,29 @@ sap.ui.define([
 				return;
 			}
 			this.oSchedulingActions.resetSchedulingJson();
+			var oViewModel = this.getModel("viewModel")
 			//Reset scheduling buttons enability and stored data
 
 
 			if (sRoute === "gantt") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				oViewModel.setProperty("/sViewRoute","GANTT")
 			} else if (sRoute === "newgantt") {
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				oViewModel.setProperty("/sViewRoute","NEWGANTT");
 			} else if (sRoute === "ganttSplit") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
+				oViewModel.setProperty("/sViewRoute","GANTTSPLIT");
 			} else if (sRoute === "splitDemands") {
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				oViewModel.setProperty("/sViewRoute","SPLITDEMANDS");
 			} else if (sRoute === "DemandDetail") {
 				/* No action require */
 			} else if (sRoute === "map") {
 				this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshMapView", {});
+				oViewModel.setProperty("/sViewRoute","MAP");
 			} else if (this.getOwnerComponent().bIsFromPRTSwitch && (sRoute === "demands" || sRoute === "demandTools")) {
 				this.getOwnerComponent().bIsFromPRTSwitch = false;
 			} else {
@@ -328,6 +333,7 @@ sap.ui.define([
 				this._eventBus.publish("BaseController", "refreshDemandTable", {});
 				
 			}
+			console.log(sRoute);
 
 		},
 		/**
