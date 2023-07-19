@@ -58,13 +58,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Function to handle Plan Demands Operation
-		 */
-		handlePlanDemands: function () {
-
-		},
-
-		/**
 		 * This method will check for the duplicate resource selected or not and display the error message
 		 * @return {boolean} - 'true' if no duplicate found | 'false' if duplicate found
 		 */
@@ -96,7 +89,8 @@ sap.ui.define([
 					}
 				});
 				if(bValidateState){
-					oViewModel.setProperty("/Scheduling/resourceList", aResourceList); //storing the final resource list into viewModel>/Scheduling/resourceList
+					//storing the final resource list into viewModel>/Scheduling/resourceList
+					oViewModel.setProperty("/Scheduling/resourceList", aResourceList); 
 				}
 				return {
 					validateState: bValidateState,
@@ -149,22 +143,33 @@ sap.ui.define([
 				selectedDemandPath:null,
 				resourceList:[],
 				resourceData:{},
-				DateFrom: moment().startOf("day").toDate(),
-				DateTo: moment().add(14, "days").endOf("day").toDate()
+				demandList: [],
+				DateFrom: moment().add(1, "days").startOf("day").toDate(),
+				DateTo: moment().add(15, "days").endOf("day").toDate(),
+				bInvalidDateRange: false,
+				sInvalidDateRangeMsg: ""
 			}
 			this.oViewModel.setProperty("/Scheduling",oBj);
 		},
 
 		/**
 		 * This method will validate demands and selected resource if its eligible to Auto-Schedule
+		 * @param {object} oTable 
+		 * @param {Array} aSelectedRowsIdx 
 		 */
 		validateSelectedDemands: function (oTable, aSelectedRowsIdx) {
 			var oSelectedPaths = this._checkAllowedDemands(oTable, aSelectedRowsIdx);
+			console.log(oSelectedPaths);
+
 			this.checkDuplicateResource().then(function (oResult) {
 				if (oResult.validateState) {
 					if (oSelectedPaths.aNonAssignable.length > 0) {
+						//show popup with list of demands who are not allow for assign
 						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
+
 					} else if (oSelectedPaths.aPathsData.length > 0) {
+						//open auto schedule wizard with selected demands
+						this.oViewModel.setProperty("/Scheduling/demandList", oSelectedPaths.aPathsData); 
 						this.oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
 						var mParams = {
 							entitySet: "DemandSet"
@@ -266,6 +271,38 @@ sap.ui.define([
 			});
 
 			return oResourceData;
+		},
+
+		/**
+		 * validate schedule date pickers of start and end date
+		 * max 14 day
+         * not in past
+         * end date not before start date
+		 * 
+		 * @param {*} oStartDate 
+		 * @param {*} oEndDate 
+		 */
+		isInvalidDateRange: function(oStartDate, oEndDate){
+			var startDate = moment(oStartDate),
+				endDate = moment(oEndDate),
+				isInvalid = false,
+				sMsg = "";
+
+			if(endDate.diff(startDate, 'days') > 14){
+				sMsg = "ymsg.scheduleDateRageTooBig";
+				isInvalid = true;
+			} else if(endDate.diff(startDate, 'days') < 0){
+				sMsg = "ymsg.scheduleDateRageTooSmall";
+				isInvalid = true;
+			} else if(startDate.diff(moment()) < 0 || endDate.diff(moment()) < 0){
+				sMsg = "ymsg.scheduleDateRageInPast";
+				isInvalid = true;
+			}
+
+			this.oViewModel.setProperty("/Scheduling/bInvalidDateRange", isInvalid);
+			this.oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bNextButtonVisible", !isInvalid);
+			this.oViewModel.setProperty("/Scheduling/sInvalidDateRangeMsg", sMsg ? this.oResourceBundle.getText(sMsg) : "");
+			return isInvalid;
 		},
 
 		/* =========================================================== */

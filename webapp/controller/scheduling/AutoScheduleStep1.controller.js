@@ -2,8 +2,9 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/model/formatter",
     "sap/ui/table/RowAction",
-    "sap/ui/table/RowActionItem"
-], function (BaseController, formatter, RowAction, RowActionItem) {
+    "sap/ui/table/RowActionItem",
+    "com/evorait/evoplan/controller/scheduling/SchedulingActions"
+], function (BaseController, formatter, RowAction, RowActionItem, SchedulingActions) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.scheduling.AutoScheduleStep1", {
@@ -23,6 +24,8 @@ sap.ui.define([
 
             this._oDateFrom = this.byId("ScheduleDateFrom");
             this._oDateTo = this.byId("ScheduleDateTo");
+
+            this.oSchedulingActions = new SchedulingActions(this);
         },
 
         /**
@@ -60,6 +63,32 @@ sap.ui.define([
                 
             aDataSet.splice(iRowIdx, 1)
             this._oSchedulingModel.setProperty("/step1/dataSet", aDataSet);
+        },
+
+        /**
+         * valiedate date from to for: 
+         * max 14 day
+         * not in past
+         * end date not before start date
+         * 
+         * @param {*} oEvent 
+         */
+        onChangeDateFrom: function(oEvent){
+            var oDate = oEvent.getSource().getDateValue();
+            this.oSchedulingActions.isInvalidDateRange(oDate, this._oDateTo.getDateValue());
+        },
+
+        /**
+         * valiedate date from to for: 
+         * max 14 day
+         * not in past
+         * end date not before start date
+         * 
+         * @param {*} oEvent 
+         */
+        onChangeDateTo: function(oEvent){
+            var oDate = oEvent.getSource().getDateValue();
+            this.oSchedulingActions.isInvalidDateRange(this._oDateFrom.getDateValue(), oDate);
         },
 
         /**

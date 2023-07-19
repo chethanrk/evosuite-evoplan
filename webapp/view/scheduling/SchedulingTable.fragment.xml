@@ -12,7 +12,7 @@
 					busy="{viewModel>/Scheduling/bSchedulingTableBusy}"
 					selectionMode="None"
 					minAutoRowCount="1"
-					visibleRowCountMode="Auto">
+					visibleRowCountMode="Interactive">
 
 					<table:columns>
 						<template:repeat list="{path:'data>'}">

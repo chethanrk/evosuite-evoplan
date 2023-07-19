@@ -26,4 +26,9 @@
         <core:ExtensionPoint name="WizardExtP|Schedule|Step1|Form|Content|After"/>
     </f:content>
 </f:SimpleForm>
+<MessageStrip
+    text="{viewModel>/Scheduling/sInvalidDateRangeMsg}"
+    visible="{viewModel>/Scheduling/bInvalidDateRange}"
+    type="Error"
+    class="sapUiMediumMarginBottom" />
 </core:FragmentDefinition>

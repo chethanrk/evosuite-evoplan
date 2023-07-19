@@ -21,6 +21,7 @@ sap.ui.define([
 		_oModel: null,
 		_oSchedulingModel: null,
 		_oUserModel:null,
+		_outdatedDemandFlagName: "bOutdatedDemand",
 
 		/**
 		 * overwrite constructor
@@ -60,6 +61,7 @@ sap.ui.define([
 			this._mParams = mParams || {};
 
 			this._initializeDialogModel();
+			this._resortSelectedDemands();
 
 			// create Dialog
 			if (!this._ScheduleDialog) {
@@ -179,13 +181,11 @@ sap.ui.define([
 			oDialog.setBusy(true);
 
 			if (this._mParams.isAutoSchedule) {
-				//sContainerId = "AutoScheduling-DemandTable";
 				this._mParams.viewName = "com.evorait.evoplan.view.scheduling.AutoScheduling.AutoScheduleStep1#AutoScheduleStep1";
 				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ScheduleTable";
 				this._mParams.modelName = "SchedulingModel";
 				this._mParams.modelDataSetPath = "/step1/dataSet";
 			} else {
-				//sContainerId = "ReScheduling-AssignmentTable";
 				this._mParams.viewName = "com.evorait.evoplan.view.scheduling.ReScheduling.ReScheduleStep1#ReScheduleStep1";
 				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ReScheduleTable";
 				this._mParams.modelName = "SchedulingModel";
@@ -223,8 +223,6 @@ sap.ui.define([
 			}
 			this._oViewModel.setProperty("/Scheduling/sScheduleDialogTitle", sDialogTitle);
 			this._oViewModel.setProperty("/Scheduling/bSchedulingTableBusy", true);
-			this._oViewModel.setProperty("/Scheduling/DateFrom", moment().startOf("day").toDate());
-			this._oViewModel.setProperty("/Scheduling/DateTo", moment().add(14, "days").endOf("day").toDate());
 
 
 			var oData = {
@@ -234,6 +232,29 @@ sap.ui.define([
 			};
 			var oInitialModelState = Object.assign({}, oData);
 			this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags",oInitialModelState);
+		},
+
+		/**
+		 * Get selected valid demands and remap demands for better PTV usage
+		 * Add flag for visibility if demand is out of date range
+		 */
+		_resortSelectedDemands: function(){
+			var aSelectedDemands = this._oViewModel.getProperty("/Scheduling/demandList"),
+				aTableDataset = [];
+				oReorderedDemands = {};
+
+			for(var i = 0, len = aSelectedDemands.length; i < len; i++){
+				let oItemData = aSelectedDemands[i].oData;
+				oItemData[this._outdatedDemandFlagName] = false;
+				oItemData.sPath = aSelectedDemands[i].sPath;
+
+				console.log(oItemData);
+				oReorderedDemands[oItemData.Guid] = oItemData;
+				aTableDataset.push(oItemData);
+			}
+
+			this._oSchedulingModel.setProperty("/step1/dataSet", aTableDataset);
+			this._oSchedulingModel.setProperty("/oDemandMapping", oReorderedDemands);
 		},
 
 		/**
@@ -267,8 +288,9 @@ sap.ui.define([
 			this._oSchedulingModel.setData({
 				isAutoSchedule: isAutoSchedule || false,
 				isReschuduling: isReSchedule || false,
+				oDemandMapping: {},
 				step1: {
-					dataSet: []
+					dataSet: [],
 				},
 				step2: {
 					dataSet: []
