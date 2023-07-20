@@ -160,6 +160,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.getModel().read(sUri, {
 					filters: aFilters,
+					groupId: sGroupId || "",
 					urlParameters: mUrlParams || {},
 					groupId: sGroupId || "",
 					success: function (oData, oResponse) {
@@ -601,7 +602,8 @@ sap.ui.define([
 					DateTo: moment().add(14, "days").endOf("day").toDate(),
 					sUtilizationSlider:null
 				},
-				sViewRoute:null
+				sViewRoute:null,
+				aUpdatedResources : []
 			});
 			oViewModel.setSizeLimit(999999999);
 			this.setModel(oViewModel, "viewModel");

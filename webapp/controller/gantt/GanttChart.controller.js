@@ -1934,24 +1934,16 @@ sap.ui.define([
 		 */
 		_addAssociations: function () {
 			var aFilters = [],
-				oUserData = this.oUserModel.getData(),
-				aPromises = [];
-
+				oUserData = this.oUserModel.getData();
+			//Refreshing Assignments for only updated Resources
+			this._refreshUpdatedResources(); 
 			aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 			aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-			this.getModel().setUseBatch(false);
-			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters));
-			aPromises.push(this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters));
-			this._treeTable.setBusy(true);
-			Promise.all(aPromises).then(function (data) {
-				this._addAssignments(data[0].results);
-				this._addAvailabilities(data[1].results);
-				this.getModel().setUseBatch(true);
-				this._treeTable.setBusy(false);
-				this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
+			this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters, null, "sAvailabilityBatchId").then(function (oData) {
+				this._addAvailabilities(oData.results);
 			}.bind(this));
 		},
-
+		
 		/**
 		 * fetch event when callFunctionImport happened in BaseController
 		 * @param {String} sChannel
@@ -2869,7 +2861,61 @@ sap.ui.define([
 				sTargetPath = this.assignmentRowContext.getPath();
 			}
 			this._refreshChangedResources(sTargetPath, sSourcePath);
-		}
+		},
+
+		/**
+		 * Removing Duplicate Objects from an Array 
+		 * @param [aData]
+		 * @returns [aUniqueArr]
+		 * Since 2309
+		 */
+		_removeDuplicateObjects: function (aData) {
+			var oUnique = {},
+				aUniqueArr = [];
+			aData.forEach(function(oResObj){
+				if(!oUnique[oResObj.NodeId]){
+					oUnique[oResObj.NodeId] = true;
+					aUniqueArr.push(oResObj)
+				}
+			});
+			return aUniqueArr;
+		},
+		/**
+		 * Refreshing only the updated Resources Assignments
+		 * when we navigate for the second/third time from other views
+		 * Since 2309
+		 */
+		_refreshUpdatedResources: function () {
+			var aGanttResGrpData = this.oGanttModel.getProperty("/data/children"),
+				aUpdatedResData = this.oViewModel.getProperty("/aUpdatedResources"),
+				sResPath,
+				aUpdatedResources = this._removeDuplicateObjects(aUpdatedResData);
+			this.oViewModel.setProperty("/aUpdatedResources", []);
+			aUpdatedResources.forEach(function (oUpdatedResObj) {
+				var sResGrpGuid = oUpdatedResObj.ResourceGroupGuid,
+					sResNodeId = oUpdatedResObj.NodeId;
+				sResPath = "/data/children/";
+				aGanttResGrpData.forEach(function (oResGrpObj, iResGrpIdx) {
+					if (sResGrpGuid === oResGrpObj.ResourceGroupGuid) {
+						var oResource = oResGrpObj.children;
+						if (oResource) {
+							sResPath = sResPath + iResGrpIdx;
+							oResource.forEach(function (oResObj, iResIdx) {
+								if (oResObj.NodeId === sResNodeId) {
+									sResPath = sResPath + "/children/" + iResIdx;
+								}
+							}.bind(this));
+						}
+					}
+				}.bind(this));
+				this._oEventBus.publish("BaseController", "refreshCapacity", {
+					sTargetPath: sResPath
+				});
+				this._refreshChangedResources(sResPath);
+			}.bind(this));
+		},
+
+
 
 	});
 

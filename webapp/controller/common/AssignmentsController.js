@@ -8,7 +8,7 @@ sap.ui.define([
 
 	return DemandTableOperations.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
 
-		onInit: function(){
+		onInit: function () {
 			// call super class onInit
 			DemandTableOperations.prototype.onInit.apply(this, arguments);
 		},
@@ -261,6 +261,11 @@ sap.ui.define([
 			this.aFixedAppointmentPayload = [];
 			this.aFixedAppointmentDemands = [];
 			this.clearMessageModel();
+			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+			if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
+				this._updatedDmdResources(this.getModel("viewModel"), targetObj);
+			}
+
 			for (var i = 0; i < aItems.length; i++) {
 				oParams = {};
 				oParams.DateFrom = oDateParams.DateFrom;
@@ -464,8 +469,8 @@ sap.ui.define([
 			}
 			this.clearMessageModel();
 			if (isReassign && !this.isAssignable({
-					sPath: oData.NewAssignPath
-				})) {
+				sPath: oData.NewAssignPath
+			})) {
 				return;
 			}
 
@@ -637,8 +642,8 @@ sap.ui.define([
 		 */
 		updateFunctionDemand: function (aSelectedPaths, sFunctionKey, mParameters) {
 			var oParams = {
-					Function: sFunctionKey
-				},
+				Function: sFunctionKey
+			},
 				bIsLast = null;
 
 			for (var i = 0; i < aSelectedPaths.length; i++) {
@@ -683,7 +688,7 @@ sap.ui.define([
 				// call function import
 				if (aAbsences[j]) {
 					this.callFunctionImport(aAbsences[j], "ManageAbsence", "POST", oData.mParameters, bIsLast);
-				} else {}
+				} else { }
 			}
 		},
 		/**
@@ -704,24 +709,24 @@ sap.ui.define([
 
 			MessageBox.warning(
 				sMessage, {
-					actions: [sAction, sap.m.MessageBox.Action.CANCEL],
-					styleClass: oComponent.getContentDensityClass(),
-					onClose: function (sValue) {
-						if (sValue === sAction && !bBulkReassign && !bUpdate) {
-							this.assignedDemands(aSources, sTargetPath, mParameters);
-						} else if (sValue === sAction && bBulkReassign) {
-							this.bulkReAssignment(sTargetPath, aContexts, mParameters);
-						} else if (sValue === sAction && bUpdate) {
-							//Proceed to check the Qualification for UpdateAssignment
-							this.checkQualificationUpdate(this.getModel("assignment").getData(), oParams, mParameters);
-						} else if (sValue === sap.m.MessageBox.Action.CANCEL) {
-							//when from new gantt shape busy state needs removed
-							if (mParameters.bCustomBusy && (mParameters.bFromNewGantt || mParameters.bFromNewGanttSplit)) {
-								this.getModel("ganttModel").setProperty(mParameters.sSourcePath + "/busy", false);
-							}
+				actions: [sAction, sap.m.MessageBox.Action.CANCEL],
+				styleClass: oComponent.getContentDensityClass(),
+				onClose: function (sValue) {
+					if (sValue === sAction && !bBulkReassign && !bUpdate) {
+						this.assignedDemands(aSources, sTargetPath, mParameters);
+					} else if (sValue === sAction && bBulkReassign) {
+						this.bulkReAssignment(sTargetPath, aContexts, mParameters);
+					} else if (sValue === sAction && bUpdate) {
+						//Proceed to check the Qualification for UpdateAssignment
+						this.checkQualificationUpdate(this.getModel("assignment").getData(), oParams, mParameters);
+					} else if (sValue === sap.m.MessageBox.Action.CANCEL) {
+						//when from new gantt shape busy state needs removed
+						if (mParameters.bCustomBusy && (mParameters.bFromNewGantt || mParameters.bFromNewGanttSplit)) {
+							this.getModel("ganttModel").setProperty(mParameters.sSourcePath + "/busy", false);
 						}
-					}.bind(this)
-				}
+					}
+				}.bind(this)
+			}
 			);
 		},
 		/**
@@ -1046,9 +1051,9 @@ sap.ui.define([
 			this.getOwnerComponent()._getData(sAssignmentPath, null, mParams)
 				.then(function (oAssignData) {
 					if (!this.checkAssigmentIsReassignable({
-							assignment: oAssignData,
-							resource: oTargetData
-						})) {
+						assignment: oAssignData,
+						resource: oTargetData
+					})) {
 						return false;
 					}
 					this.getOwnerComponent().assignTreeDialog._assignPath = sResourcePath;
