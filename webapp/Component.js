@@ -602,6 +602,7 @@ sap.ui.define([
 					DateTo: moment().add(14, "days").endOf("day").toDate(),
 					sUtilizationSlider:null
 				},
+				sViewRoute:null,
 				aUpdatedResources : []
 			});
 			oViewModel.setSizeLimit(999999999);

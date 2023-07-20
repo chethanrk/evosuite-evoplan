@@ -303,31 +303,40 @@ sap.ui.define([
 				return;
 			}
 			this.oSchedulingActions.resetSchedulingJson();
+			var oViewModel = this.getModel("viewModel")
 			//Reset scheduling buttons enability and stored data
 
 
 			if (sRoute === "gantt") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				oViewModel.setProperty("/sViewRoute","GANTT")
 			} else if (sRoute === "newgantt") {
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				oViewModel.setProperty("/sViewRoute","NEWGANTT");
 			} else if (sRoute === "ganttSplit") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
+				oViewModel.setProperty("/sViewRoute","GANTTSPLIT");
 			} else if (sRoute === "splitDemands") {
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				oViewModel.setProperty("/sViewRoute","SPLITDEMANDS");
 			} else if (sRoute === "DemandDetail") {
 				/* No action require */
 			} else if (sRoute === "map") {
 				this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshMapView", {});
+				oViewModel.setProperty("/sViewRoute","MAP");
 			} else if (this.getOwnerComponent().bIsFromPRTSwitch && (sRoute === "demands" || sRoute === "demandTools")) {
 				this.getOwnerComponent().bIsFromPRTSwitch = false;
+			}else if(sRoute === "newGanttSplit"){
+				this._eventBus.publish("BaseController", "refreshTreeTable", {});
+				this._eventBus.publish("BaseController", "refreshDemandTable", {});
+				oViewModel.setProperty("/sViewRoute","NEWGANTTSPLIT");
 			} else {
 				this._eventBus.publish("BaseController", "refreshTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshDemandTable", {});
-				
+				oViewModel.setProperty("/sViewRoute","DEMANDS");
 			}
-
 		},
 		/**
 		 * catch event from dialog for saving demand status change
