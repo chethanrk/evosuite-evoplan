@@ -35,10 +35,6 @@ sap.ui.define([
             this._oSchedulingModel = this.getOwnerComponent().getModel(this._sScheduleModelName);
             this._oViewModel = this.getModel("viewModel");
             this._oViewModel.setProperty("/Scheduling/bSchedulingTableBusy", false);
-
-            //set default date from and date to
-            this._oDateFrom.setDateValue(this._oViewModel.getProperty("/Scheduling/DateFrom"));
-            this._oDateTo.setDateValue(this._oViewModel.getProperty("/Scheduling/DateTo"));
         },
 
         /**
@@ -75,7 +71,7 @@ sap.ui.define([
          */
         onChangeDateFrom: function(oEvent){
             var oDate = oEvent.getSource().getDateValue();
-            this.oSchedulingActions.isInvalidDateRange(oDate, this._oDateTo.getDateValue());
+            this.oSchedulingActions.validateDemandDateRanges(oDate, this._oDateTo.getDateValue());
         },
 
         /**
@@ -88,7 +84,7 @@ sap.ui.define([
          */
         onChangeDateTo: function(oEvent){
             var oDate = oEvent.getSource().getDateValue();
-            this.oSchedulingActions.isInvalidDateRange(this._oDateFrom.getDateValue(), oDate);
+            this.oSchedulingActions.validateDemandDateRanges(this._oDateFrom.getDateValue(), oDate);
         },
 
         /**

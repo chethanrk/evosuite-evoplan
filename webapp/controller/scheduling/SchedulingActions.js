@@ -3,7 +3,8 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	'sap/ui/model/Filter',
 	"com/evorait/evoplan/model/Constants",
-], function (BaseController, formatter, Filter, Constants) {
+	"sap/ui/core/IconColor"
+], function (BaseController, formatter, Filter, Constants, IconColor) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
 
@@ -12,6 +13,11 @@ sap.ui.define([
 		oDataModel: undefined,
 		oGanttModel: undefined,
 		oResourceBundle: undefined,
+		mDateRangeStatus: {
+			inside: IconColor.Positive,
+			outside: IconColor.Negative,
+			neutral: IconColor.Neutral
+		},
 
 		/**
 		 * Set here all global properties you need from other controller
@@ -144,8 +150,8 @@ sap.ui.define([
 				resourceList:[],
 				resourceData:{},
 				demandList: [],
-				DateFrom: moment().add(1, "days").startOf("day").toDate(),
-				DateTo: moment().add(15, "days").endOf("day").toDate(),
+				minDate: moment().add(1, "days").startOf("day").toDate(),
+				maxDate: moment().add(15, "days").endOf("day").toDate(),
 				bInvalidDateRange: false,
 				sInvalidDateRangeMsg: ""
 			}
@@ -159,7 +165,6 @@ sap.ui.define([
 		 */
 		validateSelectedDemands: function (oTable, aSelectedRowsIdx) {
 			var oSelectedPaths = this._checkAllowedDemands(oTable, aSelectedRowsIdx);
-			console.log(oSelectedPaths);
 
 			this.checkDuplicateResource().then(function (oResult) {
 				if (oResult.validateState) {
@@ -193,8 +198,8 @@ sap.ui.define([
 		 */
 		createScheduleData: function(){
 			var aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
-				oStartDate = this.oViewModel.getProperty("/Scheduling/DateFrom"),
-				oEndDate =  this.oViewModel.getProperty("/Scheduling/DateTo"),
+				oStartDate = this.oViewModel.getProperty("/Scheduling/minDate"),
+				oEndDate =  this.oViewModel.getProperty("/Scheduling/maxDate"),
 				aAssignmentPromise=[],
 				aAssignmentFilter=[],
 				aAvailabilityPromise=[],
@@ -274,35 +279,36 @@ sap.ui.define([
 		},
 
 		/**
-		 * validate schedule date pickers of start and end date
-		 * max 14 day
-         * not in past
-         * end date not before start date
+		 * loop all demands in wizard and check if they are out of selected dates
 		 * 
 		 * @param {*} oStartDate 
 		 * @param {*} oEndDate 
 		 */
-		isInvalidDateRange: function(oStartDate, oEndDate){
-			var startDate = moment(oStartDate),
-				endDate = moment(oEndDate),
-				isInvalid = false,
-				sMsg = "";
-
-			if(endDate.diff(startDate, 'days') > 14){
-				sMsg = "ymsg.scheduleDateRageTooBig";
-				isInvalid = true;
-			} else if(endDate.diff(startDate, 'days') < 0){
-				sMsg = "ymsg.scheduleDateRageTooSmall";
-				isInvalid = true;
-			} else if(startDate.diff(moment()) < 0 || endDate.diff(moment()) < 0){
-				sMsg = "ymsg.scheduleDateRageInPast";
-				isInvalid = true;
+		validateDemandDateRanges: function(oStartDate, oEndDate){
+			if(!oStartDate || !oEndDate){
+				return;
 			}
+			var oSchedulingModel = this._controller.getModel("SchedulingModel"),
+				startDate = moment(oStartDate),
+				endDate = moment(oEndDate),
+				aDemands = oSchedulingModel.getProperty("/step1/dataSet");
 
-			this.oViewModel.setProperty("/Scheduling/bInvalidDateRange", isInvalid);
-			this.oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bNextButtonVisible", !isInvalid);
-			this.oViewModel.setProperty("/Scheduling/sInvalidDateRangeMsg", sMsg ? this.oResourceBundle.getText(sMsg) : "");
-			return isInvalid;
+			for(var i = 0, len = aDemands.length; i < len; i++){
+				var demandStartDate = moment(aDemands[i].DateFrom),
+					demandEndDate = moment(aDemands[i].DateTo);
+
+				//only when startdate and enddate of demand is inside of picked dates then its inside
+				if(demandStartDate.diff(startDate) > 0 || demandEndDate.diff(endDate) < 0){
+					aDemands[i].dateRangeStatus = sap.ui.core.IconColor.Positive;
+					aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusPositiv");
+				} else {
+					aDemands[i].dateRangeStatus = sap.ui.core.IconColor.Negative;
+					aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusNegativ");
+				}
+			}
+			oSchedulingModel.setProperty("/step1/dataSet", aDemands);
+            this.oViewModel.setProperty("/Scheduling/minDate", oStartDate);
+			this.oViewModel.setProperty("/Scheduling/maxDate", oEndDate);
 		},
 
 		/* =========================================================== */

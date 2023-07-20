@@ -15,6 +15,16 @@
 					visibleRowCountMode="Interactive">
 
 					<table:columns>
+
+						<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
+							<table:Column width="3rem">
+								<Label text="{i18n>xtit.labelScheduleInDateRange}" />
+								<table:template>
+									<core:Icon src="sap-icon://pending" color="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatus}' }" tooltip="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatusText}' }" />
+								</table:template>
+							</table:Column>
+						</template:if>
+
 						<template:repeat list="{path:'data>'}">
 							<template:with path="data>Value" var="value">
 								<table:Column>

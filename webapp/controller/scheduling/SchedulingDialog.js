@@ -21,7 +21,6 @@ sap.ui.define([
 		_oModel: null,
 		_oSchedulingModel: null,
 		_oUserModel:null,
-		_outdatedDemandFlagName: "bOutdatedDemand",
 
 		/**
 		 * overwrite constructor
@@ -245,10 +244,9 @@ sap.ui.define([
 
 			for(var i = 0, len = aSelectedDemands.length; i < len; i++){
 				let oItemData = aSelectedDemands[i].oData;
-				oItemData[this._outdatedDemandFlagName] = false;
 				oItemData.sPath = aSelectedDemands[i].sPath;
-
-				console.log(oItemData);
+				oItemData["dateRangeStatus"] = sap.ui.core.IconColor.Neutral;
+				oItemData["dateRangeStatusText"] = this._oResourceBundle.getText("ymsg.scheduleDateStatusNeutral");
 				oReorderedDemands[oItemData.Guid] = oItemData;
 				aTableDataset.push(oItemData);
 			}
