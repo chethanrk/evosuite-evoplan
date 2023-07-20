@@ -328,12 +328,16 @@ sap.ui.define([
 				oViewModel.setProperty("/sViewRoute","MAP");
 			} else if (this.getOwnerComponent().bIsFromPRTSwitch && (sRoute === "demands" || sRoute === "demandTools")) {
 				this.getOwnerComponent().bIsFromPRTSwitch = false;
+			}else if(sRoute === "newGanttSplit"){
+				this._eventBus.publish("BaseController", "refreshTreeTable", {});
+				this._eventBus.publish("BaseController", "refreshDemandTable", {});
+				oViewModel.setProperty("/sViewRoute","NEWGANTTSPLIT");
 			} else {
 				this._eventBus.publish("BaseController", "refreshTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshDemandTable", {});
 				oViewModel.setProperty("/sViewRoute","DEMANDS");
-				
 			}
+			console.log(oViewModel);
 		},
 		/**
 		 * catch event from dialog for saving demand status change
