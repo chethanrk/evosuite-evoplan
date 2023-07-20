@@ -1058,6 +1058,20 @@ sap.ui.define([
 			}
 			return "";
 		},
+		/**
+		 * @Author Manik
+		 * format the 
+		 * @param mParam1 {string}
+		 * @param mParam2 {string}
+		 */
+		formatSchedulingBtn:function(mParam1,mParam2){
+			if(mParam1 ==="DEMANDS" || mParam1 ==="NEWGANTT" || mParam1 ==="DEMANDS"){
+				if(mParam2){
+					return true
+				}
+			}
+			return false;
+		},
 
 		/**
 		 * @Author Bhumika
