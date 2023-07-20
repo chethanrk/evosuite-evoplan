@@ -33,7 +33,7 @@ sap.ui.define([
 		/* =========================================================== */
 
 		/**
-		 * Function to validate rescheduling button
+		 * Function to validate auto-scheduling button
 		 */
 		validateScheduleButtons: function () {
 			var oSelectedDemandItem, oScheduling;
@@ -56,6 +56,9 @@ sap.ui.define([
 				this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 			}
 		},
+		/**
+		 * Function to validate rescheduling button
+		 */
 		validateReScheduleButton:function () {
 			var oSelectedDemandItem, oScheduling;
 			oScheduling = this.oViewModel.getProperty("/Scheduling");

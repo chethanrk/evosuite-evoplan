@@ -196,7 +196,8 @@ sap.ui.define([
 			oDataTable.attachRowSelectionChange(function (oEvent) {
 				var selected = this._oDataTable.getSelectedIndices(),
 					bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
-					sDemandPath, bComponentExist, sMsg;
+					sDemandPath, bComponentExist, sMsg,
+					oViewModel=this.getModel("viewModel");
 				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 
 				this._aSelectedRowsIdx = _.clone(selected);
@@ -230,16 +231,6 @@ sap.ui.define([
 					this.showMessageToast(sMsg);
 				}
 
-				//Enabling or disabling Re-Schedule button based on status and flag
-				//TODO - support multiple demands
-				if(this._aSelectedRowsIdx.length > 0){
-					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
-				} else {
-					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
-				}
-				this.getModel("viewModel").setProperty("/Scheduling/aSelectedDemandPath",this._aSelectedRowsIdx);
-				this.oSchedulingActions.validateScheduleButtons();
-				this.oSchedulingActions.validateReScheduleButton();
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
 				for (var i = 0; i < this._aSelectedRowsIdx.length; i++) {
 					sDemandPath = this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[i]).getPath();
@@ -254,6 +245,16 @@ sap.ui.define([
 					}
 
 				}
+				//Enabling or disabling Re-Schedule button based on status and flag
+				//TODO - support multiple demands
+				if(this._aSelectedRowsIdx.length > 0){
+					oViewModel.setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
+				} else {
+					oViewModel.setProperty("/Scheduling/selectedDemandPath", null);
+				}
+				oViewModel.setProperty("/Scheduling/aSelectedDemandPath",this._aSelectedRowsIdx);
+				this.oSchedulingActions.validateScheduleButtons();
+				this.oSchedulingActions.validateReScheduleButton();
 
 				this.showWarningMsgResourceTree(true);
 			}, this);
