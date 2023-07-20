@@ -264,7 +264,8 @@ sap.ui.define([
 
 			//validate resource tree is selected or not for Re-Schedule
 			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", this.selectedResources);
-			this.oSchedulingActions.validateScheduleButtons();			
+			this.oSchedulingActions.validateScheduleButtons();
+			this.oSchedulingActions.validateReScheduleButton();			
 		},
 
 		/**

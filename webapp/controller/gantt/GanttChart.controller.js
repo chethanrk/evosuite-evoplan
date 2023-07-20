@@ -682,6 +682,7 @@ sap.ui.define([
 			}
 			this.oViewModel.setProperty("/Scheduling/selectedResources", this.selectedResources);
 			this.oSchedulingActions.validateScheduleButtons();
+			this.oSchedulingActions.validateReScheduleButton();
 		},
 
 		/**
