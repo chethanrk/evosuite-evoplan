@@ -159,7 +159,7 @@ sap.ui.define([
 			}
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
 			if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
-				this._updatedAssgnsPath(aContexts);
+				this._updatedAssignmentsPath(aContexts);
 			}
 
 			this._eventBus.publish("AssignActionsDialog", "bulkDeleteAssignment", {
@@ -188,7 +188,7 @@ sap.ui.define([
 			}
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
 			if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
-				this._updatedAssgnsPath(aContexts);
+				this._updatedAssignmentsPath(aContexts);
 			}
 			this._eventBus.publish("AssignActionsDialog", "selectAssign", {
 				oView: this._oView,
@@ -526,7 +526,7 @@ sap.ui.define([
 		 * @param aContexts
 		 * Since 2309
 		 */
-		_updatedAssgnsPath: function (aContexts) {
+		_updatedAssignmentsPath: function (aContexts) {
 			for (var a in aContexts) {
 				this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(aContexts[a].getPath()));
 			}
