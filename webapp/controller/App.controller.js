@@ -337,7 +337,6 @@ sap.ui.define([
 				this._eventBus.publish("BaseController", "refreshDemandTable", {});
 				oViewModel.setProperty("/sViewRoute","DEMANDS");
 			}
-			console.log(oViewModel);
 		},
 		/**
 		 * catch event from dialog for saving demand status change
