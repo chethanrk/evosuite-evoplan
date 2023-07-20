@@ -237,8 +237,9 @@ sap.ui.define([
 				} else {
 					this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
 				}
+				this.getModel("viewModel").setProperty("/Scheduling/aSelectedDemandPath",this._aSelectedRowsIdx);
 				this.oSchedulingActions.validateScheduleButtons();
-
+				this.oSchedulingActions.validateReScheduleButton();
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
 				for (var i = 0; i < this._aSelectedRowsIdx.length; i++) {
 					sDemandPath = this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[i]).getPath();

@@ -169,7 +169,8 @@ sap.ui.define([
 				iMaxRowSelection = this.oUserModel.getProperty("/DEFAULT_DEMAND_SELECT_ALL"),
 				bEnable = this._viewModel.getProperty("/validateIW32Auth"),
 				index = oEvent.getParameter("rowIndex"),
-				sDemandPath, bComponentExist, sMsg;
+				sDemandPath, bComponentExist, sMsg,
+				oViewModel=this.getModel("viewModel");
 
 			this._aSelectedRowsIdx = _.clone(selected);
 			if (this._aSelectedRowsIdx.length > 0) {
@@ -229,11 +230,13 @@ sap.ui.define([
 
 			//Enabling or disabling Re-Schedule button based on status and flag
 			if (this._aSelectedRowsIdx && this._aSelectedRowsIdx.length > 0) {
-				this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
+				oViewModel.setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
 			} else {
-				this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
+				oViewModel.setProperty("/Scheduling/selectedDemandPath", null);
 			}
+			oViewModel.setProperty("/Scheduling/aSelectedDemandPath",this._aSelectedRowsIdx);
 			this.oSchedulingActions.validateScheduleButtons();
+			this.oSchedulingActions.validateReScheduleButton();
 		},
 		onPressFilterGantChart: function () {
 			var aPplicationFilters = this.getView().byId("draggableList").getTable().getBinding("rows").aApplicationFilters;

@@ -45,17 +45,40 @@ sap.ui.define([
 				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 
 				if (oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
-					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", oSelectedDemandItem.ALLOW_REASSIGN);
+					
 					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 				} else {
-					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+					
 					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 				}
 			} else {
-				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+				
 				this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 			}
 		},
+		validateReScheduleButton:function () {
+			var oSelectedDemandItem, oScheduling;
+			oScheduling = this.oViewModel.getProperty("/Scheduling");
+			if(!this.userModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")){
+				return;
+			}
+			//TODO - check if global config is enabled for multiple demands
+			if (oScheduling.selectedDemandPath  && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length===1) {
+				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
+
+				if (oSelectedDemandItem.ALLOW_REASSIGN) {
+					this.oViewModel.setProperty("/Scheduling/bEnableReschedule",true);
+					
+				}else {
+					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+					
+				}
+			} else {
+				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+				
+			}
+		},
+
 
 		/**
 		 * Function to handle Plan Demands Operation

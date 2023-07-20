@@ -275,7 +275,9 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			oViewModel.setProperty("/mapSettings/bRouteDateSelected", false);
 			oViewModel.setProperty("/Scheduling/selectedDemandPath", aSelectedDemands[0]);
+			oViewModel.setProperty("/Scheduling/aSelectedDemandPath", aSelectedDemands);
 			this.oSchedulingActions.validateScheduleButtons();
+			this.oSchedulingActions.validateReScheduleButton();
 			this._oDraggableTable.rebindTable();
 		},
 		/**
@@ -563,7 +565,8 @@ sap.ui.define([
 			//todo need to check scroll, this flag is disturbing selection/deselection
 			var selected = this._oDataTable.getSelectedIndices(),
 				bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
-				sDemandPath, bComponentExist, sMsg;
+				sDemandPath, bComponentExist, sMsg,
+				oViewModel=this.getModel("viewModel");
 			var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 
 			this._aSelectedRowsIdx = _.clone(selected);
@@ -623,11 +626,13 @@ sap.ui.define([
 
 		    //Enabling or disabling Re-Schedule button based on status and flag
 		    if(this._aSelectedRowsIdx && this._aSelectedRowsIdx.length > 0){
-				this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
+				oViewModel.setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
 			} else {
-				this.getModel("viewModel").setProperty("/Scheduling/selectedDemandPath", null);
+				oViewModel.setProperty("/Scheduling/selectedDemandPath", null);
 			}
+			oViewModel.setProperty("/Scheduling/aSelectedDemandPath", this._aSelectedRowsIdx);
 			this.oSchedulingActions.validateScheduleButtons();
+			this.oSchedulingActions.validateReScheduleButton();
 		},
 		/**
 		 * on press assign button in footer
