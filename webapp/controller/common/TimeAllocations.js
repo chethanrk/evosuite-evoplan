@@ -557,6 +557,10 @@ sap.ui.define([
 				this._oView.byId("showPlanCalendar").setEnabled(false);
 				this._oView.byId("assignedDemands").setEnabled(false);
 			}
+			//validate resource tree is selected or not for Re-Schedule
+			this._oViewModel.setProperty("/Scheduling/selectedResources", []);
+			this._oView.getController().oSchedulingActions.validateScheduleButtons();
+			this._oView.getController().oSchedulingActions.validateReScheduleButton();
 		},
 		/**
 		 * If any absence are created/updated/deleted the resource tree/ gantt will refreshed
