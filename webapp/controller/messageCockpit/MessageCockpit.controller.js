@@ -77,26 +77,15 @@ sap.ui.define([
 		onMessagePopoverPress: function (oEvent) {
 			this._oMessagePopover.openBy(oEvent.getSource());
 		},
+
 		_refreshCounts: function (oEvent) {
-			var oModel = this.getModel(),
-				oCounterModel = this.getModel("messageCounter");
-
-			oModel.setUseBatch(false);
-			
-			this.oComponent.readData("/MessageSet/$count", [new Filter("SyncStatus", FilterOperator.EQ, "E")])
-				.then( function (data) {
-					oModel.setUseBatch(true);
-					oCounterModel.setProperty("/E", parseInt(data));
-			});
-			this.oComponent.readData("/MessageSet/$count", [new Filter("SyncStatus", FilterOperator.EQ, "Q")])
-				.then( function (data) {
-					oCounterModel.setProperty("/I", parseInt(data));
-			});
-			this.oComponent.readData("/MessageSet/$count", [new Filter("SyncStatus", FilterOperator.EQ, "S")])
-				.then( function (data) {
-					oCounterModel.setProperty("/S", parseInt(data));
-			});
-
+			var oCounterModel = this.getModel("messageCounter");
+			//Error Tab Count Call
+			this._onErrorCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "E")]);
+			//InProcess Tab Count Call
+			this._onInProcessCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "Q")]);
+			//Success Tab Count Call
+			this._onSuccessCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "S")]);
 		},
 
 		/** 
@@ -134,7 +123,8 @@ sap.ui.define([
 			var oIconTab = this.getView().byId("idIconTabBar"),
 				sSelectedKey = oIconTab.getSelectedKey(),
 				oDataTable = this.getView().byId("idProcessTable").getTable(),
-				oBinding = oDataTable.getBinding("rows");
+				oBinding = oDataTable.getBinding("rows"),
+				mCounterModel = this.getModel("messageCounter");
 
 			// oBinding.aApplicationFilters = [];
 			if (!this._firstTime) {
@@ -144,10 +134,21 @@ sap.ui.define([
 				if (oBinding.aFilters.length === 0) {
 					if (sSelectedKey === "error") {
 						aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
+						this._onErrorCountCall(mCounterModel, aFilters);
 					} else if (sSelectedKey === "success") {
 						aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
+						this._onSuccessCountCall(mCounterModel, aFilters);
 					} else {
 						aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
+						this._onInProcessCountCall(mCounterModel, aFilters);
+					}
+				} else {
+					if (sSelectedKey === "error") {
+						this._onErrorCountCall(mCounterModel, aFilters);
+					} else if (sSelectedKey === "success") {
+						this._onSuccessCountCall(mCounterModel, aFilters);
+					} else {
+						this._onInProcessCountCall(mCounterModel, aFilters);
 					}
 				}
 			}
@@ -235,8 +236,40 @@ sap.ui.define([
 			oIconTab.fireSelect({
 				selectedKey: "success"
 			});
-		}
-
+		},
+		/** 
+		*Function for Success Tab Count Call
+		*@param mCounterModel
+		*@param [aFilters]
+		*/
+		_onSuccessCountCall: function (mCounterModel, aFilters) {
+			this.oComponent.readData("/MessageSet/$count", aFilters, {}, "SuccessSyncStatus")
+				.then(function (data) {
+					mCounterModel.setProperty("/S", parseInt(data));
+				});
+		},
+		/** 
+		*Function for InProcess Tab Count Call
+		*@param mCounterModel
+		*@param [aFilters]
+		*/
+		_onInProcessCountCall: function (mCounterModel, aFilters) {
+			this.oComponent.readData("/MessageSet/$count", aFilters, {}, "InProcessSyncStatus")
+				.then(function (data) {
+					mCounterModel.setProperty("/I", parseInt(data));
+				});
+		},
+		/** 
+		*Function for Error Tab Count Call
+		*@param mCounterModel
+		*@param [aFilters]
+		*/
+		_onErrorCountCall: function (mCounterModel, aFilters) {
+			this.oComponent.readData("/MessageSet/$count", aFilters, {}, "ErrorSyncStatus")
+				.then(function (data) {
+					mCounterModel.setProperty("/E", parseInt(data));
+				});
+		},
 	});
 
 });
