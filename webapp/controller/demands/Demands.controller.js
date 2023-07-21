@@ -198,7 +198,7 @@ sap.ui.define([
 					bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
 					sDemandPath, bComponentExist, sMsg,
 					oViewModel=this.getModel("viewModel");
-				var iMaxRowSelection = 237; //this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
+				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 
 				this._aSelectedRowsIdx = _.clone(selected);
 				if (this._aSelectedRowsIdx.length > 0) {
