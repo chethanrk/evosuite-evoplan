@@ -1065,7 +1065,7 @@ sap.ui.define([
 		 * @param mParam2 {string}
 		 */
 		formatSchedulingBtn:function(mParam1,mParam2){
-			if(mParam1 ==="DEMANDS" || mParam1 ==="NEWGANTT" || mParam1 ==="MAPS"){
+			if(mParam1 ==="DEMANDS" || mParam1 ==="NEWGANTT" || mParam1 ==="MAP"){
 				if(mParam2){
 					return true
 				}
