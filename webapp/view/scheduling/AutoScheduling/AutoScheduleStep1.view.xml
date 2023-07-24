@@ -5,9 +5,9 @@
 
         <core:ExtensionPoint name="WizardExtP|AutoSchedule|Step1|Content|Before"/>
 
-        <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.ScheduleDateRangeForm" type="XML"/>
+        <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.fragments.ScheduleDateRangeForm" type="XML"/>
 
-        <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.SchedulingTable" type="XML"/>
+        <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.fragments.SchedulingTable" type="XML"/>
         
         <core:ExtensionPoint name="WizardExtP|AutoSchedule|Step1|Content|After"/>
 

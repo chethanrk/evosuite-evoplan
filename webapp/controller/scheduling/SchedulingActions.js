@@ -3,8 +3,9 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	'sap/ui/model/Filter',
 	"com/evorait/evoplan/model/Constants",
-	"sap/ui/core/IconColor"
-], function (BaseController, formatter, Filter, Constants, IconColor) {
+	"sap/ui/core/IconColor",
+	"sap/ui/core/MessageType"
+], function (BaseController, formatter, Filter, Constants, IconColor, MessageType) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
 
@@ -13,11 +14,6 @@ sap.ui.define([
 		oDataModel: undefined,
 		oGanttModel: undefined,
 		oResourceBundle: undefined,
-		mDateRangeStatus: {
-			inside: IconColor.Positive,
-			outside: IconColor.Negative,
-			neutral: IconColor.Neutral
-		},
 
 		/**
 		 * Set here all global properties you need from other controller
@@ -152,8 +148,13 @@ sap.ui.define([
 				demandList: [],
 				minDate: moment().add(1, "days").startOf("day").toDate(),
 				maxDate: moment().add(15, "days").endOf("day").toDate(),
+				startDate: null,
+				endDate: null,
+				initialFocusedDateValue: moment().add(1, "days").toDate(),
 				bInvalidDateRange: false,
-				sInvalidDateRangeMsg: ""
+				sInvalidDateRangeMsg: "",
+				btnInsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleInside", ["0"]),
+				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside", ["0"]),
 			}
 			this.oViewModel.setProperty("/Scheduling",oBj);
 		},
@@ -280,35 +281,70 @@ sap.ui.define([
 
 		/**
 		 * loop all demands in wizard and check if they are out of selected dates
-		 * 
-		 * @param {*} oStartDate 
-		 * @param {*} oEndDate 
+		 * @param {Date} oStartDate 
+		 * @param {Date} oEndDate 
+		 * @param {boolean} bEndDateChanged 
 		 */
-		validateDemandDateRanges: function(oStartDate, oEndDate){
-			if(!oStartDate || !oEndDate){
-				return;
-			}
+		validateDemandDateRanges: function(oStartDate, oEndDate, bEndDateChanged){
 			var oSchedulingModel = this._controller.getModel("SchedulingModel"),
-				startDate = moment(oStartDate),
-				endDate = moment(oEndDate),
-				aDemands = oSchedulingModel.getProperty("/step1/dataSet");
+				startDate = oStartDate ? moment(oStartDate) : null,
+				endDate = oEndDate ? moment(oEndDate) : null,
+				aDemands = oSchedulingModel.getProperty("/step1/dataSet"),
+				inside = 0,
+				outside = 0;
 
-			for(var i = 0, len = aDemands.length; i < len; i++){
-				var demandStartDate = moment(aDemands[i].DateFrom),
-					demandEndDate = moment(aDemands[i].DateTo);
-
-				//only when startdate and enddate of demand is inside of picked dates then its inside
-				if(demandStartDate.diff(startDate) > 0 || demandEndDate.diff(endDate) < 0){
-					aDemands[i].dateRangeStatus = sap.ui.core.IconColor.Positive;
-					aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusPositiv");
-				} else {
-					aDemands[i].dateRangeStatus = sap.ui.core.IconColor.Negative;
-					aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusNegativ");
+			if(startDate && endDate) {
+				//check if endDate before startDate
+				//check if end date bigger than 14 days
+				if((endDate.diff(startDate) < 0) || endDate.diff(startDate, 'days') > 14){
+					if(bEndDateChanged){
+						this.oViewModel.setProperty("/Scheduling/startDate", null);
+						startDate = null;
+					}else{
+						this.oViewModel.setProperty("/Scheduling/endDate", null);
+						endDate = null;
+					}	
 				}
 			}
-			oSchedulingModel.setProperty("/step1/dataSet", aDemands);
-            this.oViewModel.setProperty("/Scheduling/minDate", oStartDate);
-			this.oViewModel.setProperty("/Scheduling/maxDate", oEndDate);
+			if(startDate){
+				//when enddate datepicker opens set new focused date
+				this.oViewModel.setProperty("/Scheduling/initialFocusedDateValue", oStartDate);
+				//max date for datepicker is always startdate + 14 days
+				this.oViewModel.setProperty("/Scheduling/maxDate", moment(oStartDate).add(14, "days").endOf("day").toDate());
+			}
+
+			//If its Auto scheduling
+			if(oSchedulingModel.getProperty("/isAutoSchedule")){
+				for(var i = 0, len = aDemands.length; i < len; i++){
+					var demandStartDate = moment(aDemands[i].DateFrom),
+						demandEndDate = moment(aDemands[i].DateTo);
+	
+					if(!startDate || !endDate){
+						//when datepickers was set empty by user
+						aDemands[i].dateRangeIconStatus = IconColor.Neutral;
+						aDemands[i].dateRangeStatus = MessageType.None;
+						aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusNeutral");
+	
+					} else if(demandStartDate.diff(startDate) > 0 && demandEndDate.diff(endDate) < 0){
+						//only when startdate and enddate of demand is inside of picked dates then its inside
+						aDemands[i].dateRangeIconStatus = IconColor.Positive;
+						aDemands[i].dateRangeStatus = MessageType.Success;
+						aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusPositiv");
+						++inside;
+	
+					} else {
+						//when start date or end date is outside selected range
+						aDemands[i].dateRangeIconStatus = IconColor.Negative;
+						aDemands[i].dateRangeStatus = MessageType.Error;
+						aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusNegativ");
+						++outside;
+					}
+				}
+				oSchedulingModel.setProperty("/step1/dataSet", aDemands);
+				this.oViewModel.setProperty("/Scheduling/btnInsideDateRangeText", this.oResourceBundle.getText("xbut.scheduleToogleInside", [inside.toString()]));
+				this.oViewModel.setProperty("/Scheduling/btnOutsideDateRangeText", this.oResourceBundle.getText("xbut.scheduleToogleOutside", [outside.toString()]));
+			}
+			
 		},
 
 		/* =========================================================== */

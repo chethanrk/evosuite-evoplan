@@ -6,7 +6,6 @@
 			<template:with path="target>Data" var="data">
 
 				<table:Table id="step1_SchedulingTable" rows="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\' }' }"
-					title="{viewModel>/Scheduling/sScheduleTableTitle}"
 					busyStateChanged="onBusyStateChanged"
 					enableBusyIndicator="true"
 					busy="{viewModel>/Scheduling/bSchedulingTableBusy}"
@@ -14,13 +13,39 @@
 					minAutoRowCount="1"
 					visibleRowCountMode="Interactive">
 
+					<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
+						
+						<table:extension>
+							<OverflowToolbar>
+								<Title text="{viewModel>/Scheduling/sScheduleTableTitle}" />
+								<ToolbarSpacer/>
+								<ToggleButton id="btnInsideDateRange" 
+									type="Transparent" 
+									text="{viewModel>/Scheduling/btnInsideDateRangeText}" 
+									pressed="false" 
+									press="onPressInsideDate" />
+								<ToggleButton id="btnOutsideDateRange" 
+									type="Transparent" 
+									text="{viewModel>/Scheduling/btnOutsideDateRangeText}" 
+									pressed="false" 
+									press="onPressOutsideDate" />
+								<Button type="Transparent" icon="sap-icon://filter" tooltip="{i18n>xbut.filters}" press="onPressShowFilterbar"></Button>
+							</OverflowToolbar>
+						</table:extension>
+
+						<table:rowSettingsTemplate>
+							<table:RowSettings highlight="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatus}' }" highlightText="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatusText}' }"/>
+						</table:rowSettingsTemplate>
+
+					</template:if>
+
 					<table:columns>
 
 						<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
 							<table:Column width="3rem">
 								<Label text="{i18n>xtit.labelScheduleInDateRange}" />
 								<table:template>
-									<core:Icon src="sap-icon://pending" color="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatus}' }" tooltip="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatusText}' }" />
+									<core:Icon src="sap-icon://pending" color="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeIconStatus}' }" tooltip="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatusText}' }" />
 								</table:template>
 							</table:Column>
 						</template:if>

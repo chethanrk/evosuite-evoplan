@@ -65,7 +65,7 @@ sap.ui.define([
 			// create Dialog
 			if (!this._ScheduleDialog) {
 				this._ScheduleDialog = Fragment.load({
-					name: "com.evorait.evoplan.view.scheduling.SchedulingDialog",
+					name: "com.evorait.evoplan.view.scheduling.fragments.SchedulingDialog",
 					controller: this,
 					type: "XML"
 				}).then(function (oDialog) {
@@ -191,8 +191,6 @@ sap.ui.define([
 				this._mParams.modelDataSetPath = "/step1/dataSet";
 			}
 			this._oViewModel.setProperty("/Scheduling/sUtilizationSlider",this._oUserModel.getProperty("/DEFAULT_UTILIZATION_BAR_MAPS"));
-			//Todo set table counter after data was load
-			this._setScheduleTableTitle(this._mParams.isAutoSchedule, "0");
 
 			this._oModel.metadataLoaded().then(function () {
 				//get template and create views
@@ -245,12 +243,15 @@ sap.ui.define([
 			for(var i = 0, len = aSelectedDemands.length; i < len; i++){
 				let oItemData = aSelectedDemands[i].oData;
 				oItemData.sPath = aSelectedDemands[i].sPath;
-				oItemData["dateRangeStatus"] = sap.ui.core.IconColor.Neutral;
+				oItemData["dateRangeIconStatus"] = sap.ui.core.IconColor.Neutral;
+				oItemData["dateRangeStatus"] = sap.ui.core.MessageType.None;
 				oItemData["dateRangeStatusText"] = this._oResourceBundle.getText("ymsg.scheduleDateStatusNeutral");
 				oReorderedDemands[oItemData.Guid] = oItemData;
 				aTableDataset.push(oItemData);
 			}
 
+			//Todo set table counter after data was load
+			this._setScheduleTableTitle(this._mParams.isAutoSchedule, aSelectedDemands.length);
 			this._oSchedulingModel.setProperty("/step1/dataSet", aTableDataset);
 			this._oSchedulingModel.setProperty("/oDemandMapping", oReorderedDemands);
 		},
@@ -329,9 +330,9 @@ sap.ui.define([
 		 */
 		_setScheduleTableTitle: function(isAutoSchedule, sCounter){
 			if(isAutoSchedule){
-				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemDemandListCount", [sCounter]));
+				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemDemandListCount", [sCounter.toString()]));
 			}else{
-				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemAssignmentListCount", [sCounter]));
+				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemAssignmentListCount", [sCounter.toString()]));
 			}
 		}
 
