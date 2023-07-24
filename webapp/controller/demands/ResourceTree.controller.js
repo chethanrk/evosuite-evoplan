@@ -143,7 +143,7 @@ sap.ui.define([
 				this.byId("idButtonunassign").setEnabled(false);
 			}
 
-			//validate resource tree is selected or not for Re-Schedule
+			//validate resource tree is selected or not for Auto/Re-Schedule
 			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", this.selectedResources);
 			this.oSchedulingActions.validateScheduleButtons();
 			this.oSchedulingActions.validateReScheduleButton();
@@ -421,6 +421,11 @@ sap.ui.define([
 			this.byId("idButtonreassign").setEnabled(false);
 			this.byId("idButtonunassign").setEnabled(false);
 			this.byId("idButtonTimeAllocNew").setEnabled(false);
+
+			//validate resource tree is selected or not for Auto/Re-Schedule
+			this._oViewModel.setProperty("/Scheduling/selectedResources", this.selectedResources);
+			this.oSchedulingActions.validateScheduleButtons();
+			this.oSchedulingActions.validateReScheduleButton();
 		},
 		/**
 		 * On select of capacitive checkbox the adjusting splitter length
