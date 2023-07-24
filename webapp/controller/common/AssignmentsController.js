@@ -789,21 +789,16 @@ sap.ui.define([
 				this.oComponent = oView.getController().getOwnerComponent();
 			}
 			if (!oDemandContext) {
-				var mParams = {
-					$expand: "Demand"
-				};
-				this.oComponent._getData(sPath, null, mParams)
-					.then(function (data) {
-						var sObjectSourceType = data.Demand.OBJECT_SOURCE_TYPE;
-						if (data.IS_PRT) {
-							this.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
-						} else {
-							this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
-						}
-					}.bind(this));
+				var bIsPRT = (oContext.IS_PRT !== undefined) ? oContext.IS_PRT : oContext.getObject().IS_PRT;
+				var sObjectSourceType = oContext.OBJECT_SOURCE_TYPE ? oContext.OBJECT_SOURCE_TYPE : oContext.getObject().OBJECT_SOURCE_TYPE;
+				if (bIsPRT) {
+					this.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+				} else {
+					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+				}
 			} else {
 				var sObjectSourceType = oDemandContext.OBJECT_SOURCE_TYPE;
-				if (data.IS_PRT) {
+				if (oDemandContext.IS_PRT) {
 					this.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 				} else {
 					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
