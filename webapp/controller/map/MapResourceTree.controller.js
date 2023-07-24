@@ -262,7 +262,7 @@ sap.ui.define([
 				this.byId("assignedDemands").setEnabled(false);
 			}
 
-			//validate resource tree is selected or not for Re-Schedule
+			//validate resource tree is selected or not for Auto/Re-Schedule
 			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", this.selectedResources);
 			this.oSchedulingActions.validateScheduleButtons();
 			this.oSchedulingActions.validateReScheduleButton();			
@@ -465,6 +465,11 @@ sap.ui.define([
 			this.byId("idButtonTimeAllocNew").setEnabled(false);
 			this.byId("showRoute").setEnabled(false);
 			this.byId("assignedDemands").setEnabled(false);
+
+			//validate resource tree is selected or not for Auto/Re-Schedule
+			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", this.selectedResources);
+			this.oSchedulingActions.validateScheduleButtons();
+			this.oSchedulingActions.validateReScheduleButton();	
 		},
 
 		/**
