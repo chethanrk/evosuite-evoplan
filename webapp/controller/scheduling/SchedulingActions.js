@@ -61,7 +61,7 @@ sap.ui.define([
 			if (!this.userModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")) {
 				return;
 			}
-			if (oScheduling.selectedDemandPath  && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length===1) {
+			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length === 1) {
 				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 
 				if (oSelectedDemandItem.ALLOW_REASSIGN) {
@@ -84,23 +84,24 @@ sap.ui.define([
 			sSelectedDemand = this.oDataModel.getProperty(sDemandPath);
 			aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList");
 
-			return new Promise(function (resolve, reject) {
-				this.oAppViewModel.setProperty("/busy", true);
-				//to fetch the assigned resource to the selected demand
-				this._controller.getOwnerComponent().readData(sDemandPath, [], "$expand=DemandToAssignment").then(function (oData) {
-					this.oAppViewModel.setProperty("/busy", false);
-					oData.DemandToAssignment.results.forEach(function (item) {
-						aResourceList.forEach(function (resourceItem) {
-							if (resourceItem.ResourceGuid === item.ResourceGuid) {
-								aAssignedList.push(item.RESOURCE_DESCRIPTION);
-							}
-						});
+			this.oAppViewModel.setProperty("/busy", true);
+			//to fetch the assigned resource to the selected demand
+			return this._controller.getOwnerComponent().readData(sDemandPath, [], "$expand=DemandToAssignment").then(function (oData) {
+				this.oAppViewModel.setProperty("/busy", false);
+				oData.DemandToAssignment.results.forEach(function (item) {
+					aResourceList.forEach(function (resourceItem) {
+						if (resourceItem.ResourceGuid === item.ResourceGuid) {
+							aAssignedList.push(item.RESOURCE_DESCRIPTION);
+						}
 					});
-					if (aAssignedList.length > 0) {
-						reject(aAssignedList.join("\n"));
+				});
+				if (aAssignedList.length > 0) {
+					return {
+						validState: false,
+						resourceNames: aAssignedList.join("\n")
 					}
-					resolve(true);
-				}.bind(this));
+				}
+				return { validState: true };
 			}.bind(this));
 		},
 

@@ -270,15 +270,15 @@ sap.ui.define([
 					return false;
 				}
 			}.bind(this)).then(function (oResult) {
-				if (oResult) {
+				if (oResult.validState) {
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					var mParams = {
 						entitySet: "DemandSet"
 					}
 					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
+				} else {
+					this._showErrorMessage(oResourceBundle.getText("ymsg.alreadyAssigned", oResult.resourceNames));
 				}
-			}.bind(this)).catch(function (oError) {
-				this._showErrorMessage(oResourceBundle.getText("ymsg.alreadyAssigned", oError));
 			}.bind(this));
 		},
 
