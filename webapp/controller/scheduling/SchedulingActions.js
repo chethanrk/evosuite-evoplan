@@ -153,8 +153,8 @@ sap.ui.define([
 				initialFocusedDateValue: moment().add(1, "days").toDate(),
 				bInvalidDateRange: false,
 				sInvalidDateRangeMsg: "",
-				btnInsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleInside", ["0"]),
-				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside", ["0"]),
+				btnInsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleInside"),
+				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
 			}
 			this.oViewModel.setProperty("/Scheduling",oBj);
 		},
@@ -277,10 +277,6 @@ sap.ui.define([
 			});
 
 			return oResourceData;
-		},
-
-		validateSingleDemandDateRange: function(){
-
 		},
 
 		/**
