@@ -61,8 +61,7 @@ sap.ui.define([
 			if (!this.userModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")) {
 				return;
 			}
-			//TODO - check if global config is enabled for multiple demands
-			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length === 1) {
+			if (oScheduling.selectedDemandPath  && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length===1) {
 				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 
 				if (oSelectedDemandItem.ALLOW_REASSIGN) {
