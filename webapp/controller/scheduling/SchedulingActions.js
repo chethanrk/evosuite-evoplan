@@ -45,41 +45,71 @@ sap.ui.define([
 				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 
 				if (oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
-					
+
 					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 				} else {
-					
+
 					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 				}
 			} else {
-				
+
 				this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 			}
 		},
 		/**
 		 * Function to validate rescheduling button
 		 */
-		validateReScheduleButton:function () {
+		validateReScheduleButton: function () {
 			var oSelectedDemandItem, oScheduling;
 			oScheduling = this.oViewModel.getProperty("/Scheduling");
-			if(!this.userModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")){
+			if (!this.userModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")) {
 				return;
 			}
 			//TODO - check if global config is enabled for multiple demands
-			if (oScheduling.selectedDemandPath  && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length===1) {
+			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length === 1) {
 				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 
 				if (oSelectedDemandItem.ALLOW_REASSIGN) {
-					this.oViewModel.setProperty("/Scheduling/bEnableReschedule",true);
-					
-				}else {
+					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
+
+				} else {
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
-					
+
 				}
 			} else {
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
-				
+
 			}
+		},
+
+		/** 
+		*	This method will check if the selected resources contain already assigned resource to a demand for rescheduling  
+			  *   @returns  Promise - String if the selected resource is already assigned to the selected demand
+		**/
+		checkAssignedResource: function () {
+			var sDemandPath, sSelectedDemand, aResourceList, aAssignedList = [];
+			sDemandPath = this.oViewModel.getProperty("/Scheduling/selectedDemandPath");
+			sSelectedDemand = this.oDataModel.getProperty(sDemandPath);
+			aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList");
+
+			return new Promise(function (resolve, reject) {
+				this.oAppViewModel.setProperty("/busy", true);
+				//to fetch the assigned resource to the selected demand
+				this._controller.getOwnerComponent().readData(sDemandPath, [], "$expand=DemandToAssignment").then(function (oData) {
+					this.oAppViewModel.setProperty("/busy", false);
+					oData.DemandToAssignment.results.forEach(function (item) {
+						aResourceList.forEach(function (resourceItem) {
+							if (resourceItem.ResourceGuid === item.ResourceGuid) {
+								aAssignedList.push(item.RESOURCE_DESCRIPTION);
+							}
+						});
+					});
+					if (aAssignedList.length > 0) {
+						reject(aAssignedList.join("\n"));
+					}
+					resolve(true);
+				}.bind(this));
+			}.bind(this));
 		},
 
 
@@ -121,7 +151,7 @@ sap.ui.define([
 						}
 					}
 				});
-				if(bValidateState){
+				if (bValidateState) {
 					oViewModel.setProperty("/Scheduling/resourceList", aResourceList); //storing the final resource list into viewModel>/Scheduling/resourceList
 				}
 				return {
@@ -161,24 +191,24 @@ sap.ui.define([
 		/**
 		 * This method will reset the scheduling json model
 		 */
-		resetSchedulingJson:function(){
-			var oBj={
-				sType:"",
+		resetSchedulingJson: function () {
+			var oBj = {
+				sType: "",
 				sScheduleDialogTitle: "",
 				sScheduleTableTitle: "",
 				bEnableReschedule: false,
 				bEnableAutoschedule: false,
-				SchedulingDialogFlags:{
-					
+				SchedulingDialogFlags: {
+
 				},
-				selectedResources:null,
-				selectedDemandPath:null,
-				resourceList:[],
-				resourceData:{},
+				selectedResources: null,
+				selectedDemandPath: null,
+				resourceList: [],
+				resourceData: {},
 				DateFrom: moment().startOf("day").toDate(),
 				DateTo: moment().add(14, "days").endOf("day").toDate()
 			}
-			this.oViewModel.setProperty("/Scheduling",oBj);
+			this.oViewModel.setProperty("/Scheduling", oBj);
 		},
 
 		/**
@@ -212,18 +242,18 @@ sap.ui.define([
 		 * Method returns the promise, and the promise will return the data
 		 * @return {object}
 		 */
-		createScheduleData: function(){
+		createScheduleData: function () {
 			var aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
 				oStartDate = this.oViewModel.getProperty("/Scheduling/DateFrom"),
-				oEndDate =  this.oViewModel.getProperty("/Scheduling/DateTo"),
-				aAssignmentPromise=[],
-				aAssignmentFilter=[],
-				aAvailabilityPromise=[],
-				aAvailibilityFilter=[],
-				aAllPromise=[],
-				oResourceData={};
-		
-			aResourceList.forEach(function(oResource){
+				oEndDate = this.oViewModel.getProperty("/Scheduling/DateTo"),
+				aAssignmentPromise = [],
+				aAssignmentFilter = [],
+				aAvailabilityPromise = [],
+				aAvailibilityFilter = [],
+				aAllPromise = [],
+				oResourceData = {};
+
+			aResourceList.forEach(function (oResource) {
 				//Read Assignment
 				aAssignmentFilter = [
 					new Filter("ResourceGuid", "EQ", oResource.ResourceGuid),
@@ -242,49 +272,49 @@ sap.ui.define([
 				aAvailabilityPromise.push(this._controller.getOwnerComponent().readData("/ResourceAvailabilitySet", aAvailibilityFilter, {}, "idResourceAvailabilitySet"));
 			}.bind(this));
 			aAllPromise = aAssignmentPromise.concat(aAvailabilityPromise);
-			this.oAppViewModel.setProperty("/busy",true);
-			return Promise.all(aAllPromise).then(function(oResult){
-				this.oAppViewModel.setProperty("/busy",false);
-				oResourceData = this.modelResourceData(oResult);				
+			this.oAppViewModel.setProperty("/busy", true);
+			return Promise.all(aAllPromise).then(function (oResult) {
+				this.oAppViewModel.setProperty("/busy", false);
+				oResourceData = this.modelResourceData(oResult);
 				this.oViewModel.setProperty("/Scheduling/resourceData", oResourceData); //storing the final modelled resource data into viewModel>/Scheduling/resourcesData
-				return oResourceData;				
-			}.bind(this)).catch(function(oError){
-				this.oAppViewModel.setProperty("/busy",false);
+				return oResourceData;
+			}.bind(this)).catch(function (oError) {
+				this.oAppViewModel.setProperty("/busy", false);
 				return false;
 			});
-			
+
 		},
 		/**
 		 * 
 		 * @param {object} aResourceData - will contain assignment, availability data
 		 * @returns {object} 
 		 */
-		modelResourceData: function(aResourceData){
+		modelResourceData: function (aResourceData) {
 			var aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
 				iResourceLength = aResourceList.length,
 				oTempResourceData = {},
 				oResourceData = {},
-				aAssignmentData = aResourceData.slice(0,iResourceLength), //reading assignment data
-				aAvailabilityData = aResourceData.slice(iResourceLength,(iResourceLength*2)); //reading availibility data
+				aAssignmentData = aResourceData.slice(0, iResourceLength), //reading assignment data
+				aAvailabilityData = aResourceData.slice(iResourceLength, (iResourceLength * 2)); //reading availibility data
 			//looping resource list to create data
-			aResourceList.forEach(function(oResource, i){
-				oTempResourceData={
-					assignments:aAssignmentData[i].results,
-					breaks:[],
-					workSchedules:[],
-					projectBlockers:[],
-					absenses:[],
-					qualifications:oResource["QUALIFICATION_DESCRIPTION"] ? oResource["QUALIFICATION_DESCRIPTION"].split(",") : [] //qualification added from ResourcehierarchySet
+			aResourceList.forEach(function (oResource, i) {
+				oTempResourceData = {
+					assignments: aAssignmentData[i].results,
+					breaks: [],
+					workSchedules: [],
+					projectBlockers: [],
+					absenses: [],
+					qualifications: oResource["QUALIFICATION_DESCRIPTION"] ? oResource["QUALIFICATION_DESCRIPTION"].split(",") : [] //qualification added from ResourcehierarchySet
 				};
 				//looping availibility data of resource to segragate based on AvailabilityTypeGroup
-				aAvailabilityData[i].results.forEach(function(oAvail){
-					if(oAvail.AvailabilityTypeGroup === "A"){
+				aAvailabilityData[i].results.forEach(function (oAvail) {
+					if (oAvail.AvailabilityTypeGroup === "A") {
 						oTempResourceData["workSchedules"].push(oAvail);
-					}else if(oAvail.AvailabilityTypeGroup === "B"){
+					} else if (oAvail.AvailabilityTypeGroup === "B") {
 						oTempResourceData["breaks"].push(oAvail);
-					}else if(oAvail.AvailabilityTypeGroup === "L"){
+					} else if (oAvail.AvailabilityTypeGroup === "L") {
 						oTempResourceData["projectBlockers"].push(oAvail);
-					}else if(oAvail.AvailabilityTypeGroup === "N" || oAvail.AvailabilityTypeGroup === "O"){
+					} else if (oAvail.AvailabilityTypeGroup === "N" || oAvail.AvailabilityTypeGroup === "O") {
 						oTempResourceData["absenses"].push(oAvail);
 					}
 				});
