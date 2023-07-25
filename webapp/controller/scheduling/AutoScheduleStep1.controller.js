@@ -45,6 +45,20 @@ sap.ui.define([
             this._oSchedulingModel = this.getOwnerComponent().getModel(this._sScheduleModelName);
             this._oViewModel = this.getModel("viewModel");
             this._oViewModel.setProperty("/Scheduling/bSchedulingTableBusy", false);
+            this._oViewModel.setProperty("/Scheduling/sFilterCounts", this.getResourceBundle().getText("xbut.filters") + " (0)");
+            //this._oViewModel.setProperty("/Scheduling/sScheduleFilteredDemandsTableTitle", this.getResourceBundle().getText("xtit.itemFilteresDemandListCount", "0"));
+
+            var oBinding = this._oDemandsTable.getBinding("rows");
+            oBinding.attachChange(function() {
+                var aDataset = this._oSchedulingModel.getProperty("/step1/dataSet");
+                var visibleCountText = this.getResourceBundle().getText("xtit.itemFilteresDemandListCount", [oBinding.getLength()]),
+                    allCountText = this.getResourceBundle().getText("xtit.itemDemandListCount", [aDataset.length]);
+                
+                //visible filtered demands
+                this._oViewModel.setProperty("/Scheduling/sScheduleFilteredDemandsTableTitle", visibleCountText);
+                //all demands counter for scheduling
+                this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", allCountText);
+            }.bind(this));
         },
 
         /**
@@ -64,13 +78,28 @@ sap.ui.define([
          */
         onColumnDeletePress: function(oEvent){
             var oParams = oEvent.getParameters(),
-                iRowIdx = this._oDemandsTable.indexOfRow(oParams.row),
                 aDataSet = this._oSchedulingModel.getProperty("/step1/dataSet"),
-                oMappedDemands = this._oSchedulingModel.getProperty("/oDemandMapping");
+                oMappedDemands = this._oSchedulingModel.getProperty("/oDemandMapping"),
+                oContext = oParams.row.getBindingContext(this._sScheduleModelName),
+                sDeleteGuid = oContext.getProperty("Guid");
 
-            //remove from demand mapping and from table dataset
-            delete oMappedDemands[aDataSet[iRowIdx].Guid];
-            aDataSet.splice(iRowIdx, 1)
+            //remove from demand mapping
+            delete oMappedDemands[sDeleteGuid];
+            //Delete right entry also when filters are set to table
+            for(var i=0, len=aDataSet.length; i<len; i++){
+                if(sDeleteGuid === aDataSet[i].Guid){
+                    aDataSet.splice(i, 1);
+                    //set counts for inside/outside date range again
+                    if(aDataSet[i].dateRangeStatus === MessageType.Success){
+                        var count = this._oSchedulingModel.getProperty("/inside");
+                        this._oSchedulingModel.setProperty("/inside", --count);
+                    } else if(aDataSet[i].dateRangeStatus === MessageType.Error){
+                        var count = this._oSchedulingModel.getProperty("/outside");
+                        this._oSchedulingModel.setProperty("/outside", --count);
+                    }
+                    break;
+                }
+            }
 
             this._oSchedulingModel.setProperty("/step1/dataSet", aDataSet);
             this._oSchedulingModel.setProperty("/oDemandMapping", oMappedDemands);
@@ -121,30 +150,36 @@ sap.ui.define([
         },
 
         /**
-         * 
+         * when aut scheduling show in Dialog a own filterbar
          * @param {*} oEvent 
          */
         onPressShowFilterbar: function(oEvent){
-            this._oDemandFilterDialog = Fragment.load({
-                name: "com.evorait.evoplan.view.scheduling.fragments.DemandFilterDialog",
-                controller: this,
-				type: "XML"
-            }).then(function(oDialog) {
-                oDialog.addStyleClass(this._oViewModel.getProperty("/densityClass"));
-                this.getView().addDependent(oDialog);
-                return oDialog;
-            }.bind(this));
-
+            if(!this._oDemandFilterDialog){
+                this._oDemandFilterDialog = Fragment.load({
+                    name: "com.evorait.evoplan.view.scheduling.fragments.DemandFilterDialog",
+                    controller: this,
+                    type: "XML"
+                }).then(function(oDialog) {
+                    oDialog.addStyleClass(this._oViewModel.getProperty("/densityClass"));
+                    this.getView().addDependent(oDialog);
+                    return oDialog;
+                }.bind(this));
+            }
             this._oDemandFilterDialog.then(function(oDialog){
                 oDialog.open();
             });
         },
 
-        onPressCloseFilterDialog: function(){
+        /**
+         * close filter dialog and add all seleted filters 
+         * to json demand table
+         */
+        onPressAddFilterDialog: function(){
             if(this._oDemandFilterDialog){
                 this._oDemandFilterDialog.then(function(oDialog){
+                    this._setCustomTableFilter();
                     oDialog.close();
-                });
+                }.bind(this));
             }
         },
 
@@ -153,15 +188,27 @@ sap.ui.define([
 		/* Private methods                                             */
 		/* =========================================================== */
 
+        /**
+         * collect all filters and bind to json model table of demands
+         * - Filter dialog
+         * - Inside button
+         * - Outside button
+         */
         _setCustomTableFilter: function(){
-            var aFilter = [];
+            var oSmartFilter = sap.ui.getCore().byId("listReportFilter"),
+                aFilter = [];
+        
+            if(oSmartFilter){
+                aFilter = oSmartFilter.getFilters();
+                var sFilterCount = Object.keys(oSmartFilter.getFilterData()).length;
+                this._oViewModel.setProperty("/Scheduling/sFilterCounts", this.getResourceBundle().getText("xbut.filters") + " (" + sFilterCount + ")");
+            }
             if(this._oInsideFilterBtn && (this._oInsideFilterBtn.getPressed())){
                 aFilter.push(this._mFilters.inside);
             }
             if(this._oOutsideFilterBtn && (this._oOutsideFilterBtn.getPressed())){
                 aFilter.push(this._mFilters.outside);
             }
-
             this._oDemandsTable.getBinding("rows").filter(aFilter);
         },
 

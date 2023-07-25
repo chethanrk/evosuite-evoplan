@@ -279,6 +279,10 @@ sap.ui.define([
 			return oResourceData;
 		},
 
+		validateSingleDemandDateRange: function(){
+
+		},
+
 		/**
 		 * loop all demands in wizard and check if they are out of selected dates
 		 * @param {Date} oStartDate 
@@ -341,8 +345,8 @@ sap.ui.define([
 					}
 				}
 				oSchedulingModel.setProperty("/step1/dataSet", aDemands);
-				this.oViewModel.setProperty("/Scheduling/btnInsideDateRangeText", this.oResourceBundle.getText("xbut.scheduleToogleInside", [inside.toString()]));
-				this.oViewModel.setProperty("/Scheduling/btnOutsideDateRangeText", this.oResourceBundle.getText("xbut.scheduleToogleOutside", [outside.toString()]));
+				oSchedulingModel.setProperty("/inside", inside);
+				oSchedulingModel.setProperty("/outside", outside);
 			}
 			
 		},

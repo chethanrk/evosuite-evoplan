@@ -288,6 +288,8 @@ sap.ui.define([
 				isAutoSchedule: isAutoSchedule || false,
 				isReschuduling: isReSchedule || false,
 				oDemandMapping: {},
+				inside: 0,
+				outside: 0,
 				step1: {
 					dataSet: [],
 				},
