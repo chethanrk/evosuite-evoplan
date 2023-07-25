@@ -43,16 +43,12 @@ sap.ui.define([
 
 			if (oScheduling.selectedDemandPath) {
 				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
-
 				if (oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
-
 					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 				} else {
-
 					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 				}
 			} else {
-
 				this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 			}
 		},
@@ -71,14 +67,11 @@ sap.ui.define([
 
 				if (oSelectedDemandItem.ALLOW_REASSIGN) {
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
-
 				} else {
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
-
 				}
 			} else {
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
-
 			}
 		},
 

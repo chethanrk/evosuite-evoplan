@@ -263,6 +263,7 @@ sap.ui.define([
 				oResourceBundle = this.getResourceBundle();
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
 				if (oResult.validateState) {
+					//calling function to check if the demand already is assigned to one of the selected resource
 					return this.oSchedulingActions.checkAssignedResource();
 				} else {
 					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
