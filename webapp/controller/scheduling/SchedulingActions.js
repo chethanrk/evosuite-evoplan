@@ -329,5 +329,14 @@ sap.ui.define([
 				aNonAssignable: aNonAssignableDemands,
 			};
 		},
+		/**
+		 * On refresh of the resource table we have to call this method reset the resource data
+		 * so that we can 
+		 */
+		_resetResourceForScheduling:function(){
+			this.oViewModel.setProperty("/Scheduling/selectedResources", []);
+			this.validateScheduleButtons();
+			this.validateReScheduleButton();
+		}
 	});
 });
