@@ -260,9 +260,17 @@ sap.ui.define([
 		 */
 		onRescheduleButtonPress: function (oEvent) {
 			var oViewModel = this.getModel("viewModel"),
-				oResourceBundle = this.getResourceBundle();
+				oDataModel = this.getModel(),
+				oResourceBundle = this.getResourceBundle(),
+				sPath = oViewModel.getProperty("/Scheduling/selectedDemandPath"),
+				aDemandList = [];
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
 				if (oResult.validateState) {
+					aDemandList = [{
+						sPath:sPath,
+						oData:oDataModel.getProperty(sPath)
+					}];
+					oViewModel.setProperty("/Scheduling/demandList", aDemandList);
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					var mParams = {
 						entitySet: "DemandSet"

@@ -339,7 +339,7 @@ sap.ui.define([
 			}
 
 			//If its Auto scheduling
-			if(oSchedulingModel.getProperty("/isAutoSchedule")){
+			if(oSchedulingModel.getProperty("/isAutoSchedule") || oSchedulingModel.getProperty("/isReschuduling")){
 				for(var i = 0, len = aDemands.length; i < len; i++){
 					var demandStartDate = moment(aDemands[i].DateFrom),
 						demandEndDate = moment(aDemands[i].DateTo);

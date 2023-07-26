@@ -18,11 +18,11 @@
 						<OverflowToolbar>
 							<Title text="{viewModel>/Scheduling/sScheduleTableTitle}" />
 
-							<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
+							<template:if test="{:= ${tempProps>tempData/isAutoSchedule} || ${tempProps>tempData/isReschuduling} }">
 								<Title text="{viewModel>/Scheduling/sScheduleFilteredDemandsTableTitle}" />
 							</template:if>
 							<ToolbarSpacer/>
-							<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
+							<template:if test="{:= ${tempProps>tempData/isAutoSchedule} || ${tempProps>tempData/isReschuduling} }">
 								<ToggleButton id="btnInsideDateRange" 
 									type="Transparent" 
 									text="{i18n>xbut.scheduleToogleInside} ({SchedulingModel>/inside})" 
@@ -39,13 +39,13 @@
 					</table:extension>
 
 					<table:rowSettingsTemplate>
-						<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
+						<template:if test="{:= ${tempProps>tempData/isAutoSchedule} || ${tempProps>tempData/isReschuduling} }">
 							<table:RowSettings highlight="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatus}' }" highlightText="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatusText}' }"/>
 						</template:if>
 					</table:rowSettingsTemplate>
 
 					<table:columns>
-						<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
+						<template:if test="{:= ${tempProps>tempData/isAutoSchedule} || ${tempProps>tempData/isReschuduling} }">
 							<table:Column width="3rem">
 								<Label text="{i18n>xtit.labelScheduleInDateRange}" />
 								<table:template>
