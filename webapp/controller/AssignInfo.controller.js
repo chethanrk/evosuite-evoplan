@@ -126,6 +126,7 @@ sap.ui.define([
 			//Checking DateTo falls within Resource Start and End Date
 			bValidDateTo = sDateTo <= sResEndDate && sDateTo >= sResStartDate;
 
+			if (this.getModel("user").getProperty("/ENABLE_RES_ASGN_VALID_CHECK")){
 			//If DateFrom and DateTo doesn't fall within Resource Start and End Date
 			if (bIsResource && (!bValidDateFrom || !bValidDateTo)) {
 				this._showEffortConfirmMessageBox(this.getView().getController().getResourceBundle().getText("ymsg.targetValidity")).then(function (
@@ -136,6 +137,7 @@ sap.ui.define([
 					}
 				}.bind(this));
 			}
+		}
 		},
 
 		/**
