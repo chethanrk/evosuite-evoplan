@@ -263,6 +263,9 @@ sap.ui.define([
 				oResourceBundle = this.getResourceBundle();
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
 				if (oResult.validateState) {
+					if(oResult.bIsPoolExist){
+						this.showMessageToast(this.getResourceBundle().getText("ymsg.poolResourceExist"));
+					}
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					var mParams = {
 						entitySet: "DemandSet"

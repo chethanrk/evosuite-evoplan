@@ -102,7 +102,8 @@ sap.ui.define([
 				aResourceData = [],
 				oResourceObj = {},
 				aResourceGroupPromise = [],
-				aFilters = [];
+				aFilters = [],
+				bIsPoolExist=false;
 
 
 			//method will check for the duplicate resource
@@ -125,6 +126,7 @@ sap.ui.define([
 				}
 				return {
 					validateState: bValidateState,
+					bIsPoolExist: bIsPoolExist,
 					resourceNames: aResourceNameList.join("\n")
 				};
 			};
@@ -138,7 +140,9 @@ sap.ui.define([
 				aFilters = [];
 				if (oResourceObj.ResourceGuid) {
 					aResourceData.push(oResourceObj);
-				} else if (oResourceObj.ResourceGroupGuid) {
+				} else if(oResourceObj.NodeId.split(":")[0] === "POOL"){
+					bIsPoolExist = true;
+				}else if (oResourceObj.ResourceGroupGuid) {
 					aFilters.push(new Filter("ParentNodeId", "EQ", oResourceObj.NodeId));
 					aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceHierarchySet", aFilters));
 
@@ -195,6 +199,9 @@ sap.ui.define([
 							entitySet: "DemandSet"
 						}
 						this._controller.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this._controller.getView(), mParams);
+						if(oResult.bIsPoolExist){
+							this.showMessageToast(this.getResourceBundle().getText("ymsg.poolResourceExist"));
+						}
 					}
 
 				} else {
