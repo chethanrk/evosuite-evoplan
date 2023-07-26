@@ -66,6 +66,9 @@
 											<template:elseif test="{:= ${data>EdmType} === 'Edm.DateTime'}">
 												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.DateTime\', style: \'long\'}' }" wrapping="false" />
 											</template:elseif>
+											<template:elseif test="{:= ${data>EdmType} === 'Edm.Time'}">
+												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.odata.type.Time\', style: \'long\'}' }" wrapping="false" />
+											</template:elseif>
 											<template:elseif test="{:= ${value>Path}.toLowerCase().includes('icon')}">
 												<core:Icon src="{:= '{'+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'}' }" />
 											</template:elseif>

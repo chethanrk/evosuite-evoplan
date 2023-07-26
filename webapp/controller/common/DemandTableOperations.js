@@ -264,8 +264,7 @@ sap.ui.define([
 				oResourceBundle = this.getResourceBundle(),
 				sPath = oViewModel.getProperty("/Scheduling/selectedDemandPath"),
 				aDemandList = [];
-			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {				
-
+			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
 				if (oResult.bNoDuplicate) {
 					//calling function to check if the demand already is assigned to one of the selected resource
 					return this.oSchedulingActions.checkAssignedResource();
