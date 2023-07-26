@@ -64,9 +64,10 @@ sap.ui.define([
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length === 1) {
 				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 
-				if (oSelectedDemandItem.ALLOW_REASSIGN) {
-					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
-				} else {
+				if (oSelectedDemandItem.ALLOW_REASSIGN && !(oSelectedDemandItem.NUMBER_OF_CAPACITIES > 1)) {
+					this.oViewModel.setProperty("/Scheduling/bEnableReschedule",true);
+					
+				}else {
 					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 				}
 			} else {
