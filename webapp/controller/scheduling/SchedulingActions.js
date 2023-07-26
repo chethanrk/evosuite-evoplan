@@ -363,37 +363,34 @@ sap.ui.define([
 				this.oViewModel.setProperty("/Scheduling/maxDate", moment(oStartDate).add(14, "days").endOf("day").toDate());
 			}
 
-			//If its Auto scheduling
-			if(oSchedulingModel.getProperty("/isAutoSchedule") || oSchedulingModel.getProperty("/isReschuduling")){
-				for(var i = 0, len = aDemands.length; i < len; i++){
-					var demandStartDate = moment(aDemands[i].DateFrom),
-						demandEndDate = moment(aDemands[i].DateTo);
-	
-					if(!startDate || !endDate){
-						//when datepickers was set empty by user
-						aDemands[i].dateRangeIconStatus = IconColor.Neutral;
-						aDemands[i].dateRangeStatus = MessageType.None;
-						aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusNeutral");
-	
-					} else if(demandStartDate.diff(startDate) > 0 && demandEndDate.diff(endDate) < 0){
-						//only when startdate and enddate of demand is inside of picked dates then its inside
-						aDemands[i].dateRangeIconStatus = IconColor.Positive;
-						aDemands[i].dateRangeStatus = MessageType.Success;
-						aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusPositiv");
-						++inside;
-	
-					} else {
-						//when start date or end date is outside selected range
-						aDemands[i].dateRangeIconStatus = IconColor.Negative;
-						aDemands[i].dateRangeStatus = MessageType.Error;
-						aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusNegativ");
-						++outside;
-					}
+			for(var i = 0, len = aDemands.length; i < len; i++){
+				var demandStartDate = moment(aDemands[i].DateFrom),
+					demandEndDate = moment(aDemands[i].DateTo);
+
+				if(!startDate || !endDate){
+					//when datepickers was set empty by user
+					aDemands[i].dateRangeIconStatus = IconColor.Neutral;
+					aDemands[i].dateRangeStatus = MessageType.None;
+					aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusNeutral");
+
+				} else if(demandStartDate.diff(startDate) > 0 && demandEndDate.diff(endDate) < 0){
+					//only when startdate and enddate of demand is inside of picked dates then its inside
+					aDemands[i].dateRangeIconStatus = IconColor.Positive;
+					aDemands[i].dateRangeStatus = MessageType.Success;
+					aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusPositiv");
+					++inside;
+
+				} else {
+					//when start date or end date is outside selected range
+					aDemands[i].dateRangeIconStatus = IconColor.Negative;
+					aDemands[i].dateRangeStatus = MessageType.Error;
+					aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusNegativ");
+					++outside;
 				}
-				oSchedulingModel.setProperty("/step1/dataSet", aDemands);
-				oSchedulingModel.setProperty("/inside", inside);
-				oSchedulingModel.setProperty("/outside", outside);
 			}
+			oSchedulingModel.setProperty("/step1/dataSet", aDemands);
+			oSchedulingModel.setProperty("/inside", inside);
+			oSchedulingModel.setProperty("/outside", outside);
 			
 		},
 
