@@ -97,11 +97,11 @@ sap.ui.define([
 				});
 				if (aAssignedList.length > 0) {
 					return {
-						validState: false,
+						bNotAssigned: false,
 						resourceNames: aAssignedList.join("\n")
 					}
 				}
-				return { validState: true };
+				return { bNotAssigned: true };
 			}.bind(this));
 		},
 
@@ -148,7 +148,7 @@ sap.ui.define([
 					oViewModel.setProperty("/Scheduling/resourceList", aResourceList); //storing the final resource list into viewModel>/Scheduling/resourceList
 				}
 				return {
-					validateState: bValidateState,
+					bNoDuplicate: bValidateState,
 					resourceNames: aResourceNameList.join("\n")
 				};
 			};
@@ -210,7 +210,7 @@ sap.ui.define([
 		validateSelectedDemands: function (oTable, aSelectedRowsIdx) {
 			var oSelectedPaths = this._checkAllowedDemands(oTable, aSelectedRowsIdx);
 			this.checkDuplicateResource().then(function (oResult) {
-				if (oResult.validateState) {
+				if (oResult.bNoDuplicate) {
 					if (oSelectedPaths.aNonAssignable.length > 0) {
 						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 					} else if (oSelectedPaths.aPathsData.length > 0) {

@@ -262,7 +262,7 @@ sap.ui.define([
 			var oViewModel = this.getModel("viewModel"),
 				oResourceBundle = this.getResourceBundle();
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
-				if (oResult.validateState) {
+				if (oResult.bNoDuplicate) {
 					//calling function to check if the demand already is assigned to one of the selected resource
 					return this.oSchedulingActions.checkAssignedResource();
 				} else {
@@ -270,7 +270,7 @@ sap.ui.define([
 					return false;
 				}
 			}.bind(this)).then(function (oResult) {
-				if (oResult.validState) {
+				if (oResult.bNotAssigned) {
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					var mParams = {
 						entitySet: "DemandSet"
