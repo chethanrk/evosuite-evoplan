@@ -3,7 +3,9 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	'sap/ui/model/Filter',
 	"com/evorait/evoplan/model/Constants",
-], function (BaseController, formatter, Filter, Constants) {
+	"sap/ui/core/IconColor",
+	"sap/ui/core/MessageType"
+], function (BaseController, formatter, Filter, Constants, IconColor, MessageType) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
 
@@ -108,13 +110,6 @@ sap.ui.define([
 
 
 		/**
-		 * Function to handle Plan Demands Operation
-		 */
-		handlePlanDemands: function () {
-
-		},
-
-		/**
 		 * This method will check for the duplicate resource selected or not and display the error message
 		 * @return {boolean} - 'true' if no duplicate found | 'false' if duplicate found
 		 */
@@ -145,8 +140,9 @@ sap.ui.define([
 						}
 					}
 				});
-				if (bValidateState) {
-					oViewModel.setProperty("/Scheduling/resourceList", aResourceList); //storing the final resource list into viewModel>/Scheduling/resourceList
+				if(bValidateState){
+					//storing the final resource list into viewModel>/Scheduling/resourceList
+					oViewModel.setProperty("/Scheduling/resourceList", aResourceList); 
 				}
 				return {
 					bNoDuplicate: bValidateState,
@@ -195,26 +191,41 @@ sap.ui.define([
 				SchedulingDialogFlags: {
 
 				},
-				selectedResources: null,
-				selectedDemandPath: null,
-				resourceList: [],
-				resourceData: {},
-				DateFrom: moment().startOf("day").toDate(),
-				DateTo: moment().add(14, "days").endOf("day").toDate()
+				selectedResources:null,
+				selectedDemandPath:null,
+				resourceList:[],
+				resourceData:{},
+				demandList: [],
+				minDate: moment().add(1, "days").startOf("day").toDate(),
+				maxDate: moment().add(15, "days").endOf("day").toDate(),
+				startDate: null,
+				endDate: null,
+				initialFocusedDateValue: moment().add(1, "days").toDate(),
+				bInvalidDateRange: false,
+				sInvalidDateRangeMsg: "",
+				btnInsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleInside"),
+				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
 		},
 
 		/**
 		 * This method will validate demands and selected resource if its eligible to Auto-Schedule
+		 * @param {object} oTable 
+		 * @param {Array} aSelectedRowsIdx 
 		 */
 		validateSelectedDemands: function (oTable, aSelectedRowsIdx) {
 			var oSelectedPaths = this._checkAllowedDemands(oTable, aSelectedRowsIdx);
+
 			this.checkDuplicateResource().then(function (oResult) {
 				if (oResult.bNoDuplicate) {
 					if (oSelectedPaths.aNonAssignable.length > 0) {
+						//show popup with list of demands who are not allow for assign
 						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
+
 					} else if (oSelectedPaths.aPathsData.length > 0) {
+						//open auto schedule wizard with selected demands
+						this.oViewModel.setProperty("/Scheduling/demandList", oSelectedPaths.aPathsData); 
 						this.oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
 						var mParams = {
 							entitySet: "DemandSet"
@@ -238,16 +249,16 @@ sap.ui.define([
 		 */
 		createScheduleData: function () {
 			var aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
-				oStartDate = this.oViewModel.getProperty("/Scheduling/DateFrom"),
-				oEndDate = this.oViewModel.getProperty("/Scheduling/DateTo"),
-				aAssignmentPromise = [],
-				aAssignmentFilter = [],
-				aAvailabilityPromise = [],
-				aAvailibilityFilter = [],
-				aAllPromise = [],
-				oResourceData = {};
-
-			aResourceList.forEach(function (oResource) {
+				oStartDate = this.oViewModel.getProperty("/Scheduling/minDate"),
+				oEndDate =  this.oViewModel.getProperty("/Scheduling/maxDate"),
+				aAssignmentPromise=[],
+				aAssignmentFilter=[],
+				aAvailabilityPromise=[],
+				aAvailibilityFilter=[],
+				aAllPromise=[],
+				oResourceData={};
+		
+			aResourceList.forEach(function(oResource){
 				//Read Assignment
 				aAssignmentFilter = [
 					new Filter("ResourceGuid", "EQ", oResource.ResourceGuid),
@@ -316,6 +327,74 @@ sap.ui.define([
 			});
 
 			return oResourceData;
+		},
+
+		/**
+		 * loop all demands in wizard and check if they are out of selected dates
+		 * @param {Date} oStartDate 
+		 * @param {Date} oEndDate 
+		 * @param {boolean} bEndDateChanged 
+		 */
+		validateDemandDateRanges: function(oStartDate, oEndDate, bEndDateChanged){
+			var oSchedulingModel = this._controller.getModel("SchedulingModel"),
+				startDate = oStartDate ? moment(oStartDate) : null,
+				endDate = oEndDate ? moment(oEndDate) : null,
+				aDemands = oSchedulingModel.getProperty("/step1/dataSet"),
+				inside = 0,
+				outside = 0;
+
+			if(startDate && endDate) {
+				//check if endDate before startDate
+				//check if end date bigger than 14 days
+				if((endDate.diff(startDate) < 0) || endDate.diff(startDate, 'days') > 14){
+					if(bEndDateChanged){
+						this.oViewModel.setProperty("/Scheduling/startDate", null);
+						startDate = null;
+					}else{
+						this.oViewModel.setProperty("/Scheduling/endDate", null);
+						endDate = null;
+					}	
+				}
+			}
+			if(startDate){
+				//when enddate datepicker opens set new focused date
+				this.oViewModel.setProperty("/Scheduling/initialFocusedDateValue", oStartDate);
+				//max date for datepicker is always startdate + 14 days
+				this.oViewModel.setProperty("/Scheduling/maxDate", moment(oStartDate).add(14, "days").endOf("day").toDate());
+			}
+
+			//If its Auto scheduling
+			if(oSchedulingModel.getProperty("/isAutoSchedule")){
+				for(var i = 0, len = aDemands.length; i < len; i++){
+					var demandStartDate = moment(aDemands[i].DateFrom),
+						demandEndDate = moment(aDemands[i].DateTo);
+	
+					if(!startDate || !endDate){
+						//when datepickers was set empty by user
+						aDemands[i].dateRangeIconStatus = IconColor.Neutral;
+						aDemands[i].dateRangeStatus = MessageType.None;
+						aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusNeutral");
+	
+					} else if(demandStartDate.diff(startDate) > 0 && demandEndDate.diff(endDate) < 0){
+						//only when startdate and enddate of demand is inside of picked dates then its inside
+						aDemands[i].dateRangeIconStatus = IconColor.Positive;
+						aDemands[i].dateRangeStatus = MessageType.Success;
+						aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusPositiv");
+						++inside;
+	
+					} else {
+						//when start date or end date is outside selected range
+						aDemands[i].dateRangeIconStatus = IconColor.Negative;
+						aDemands[i].dateRangeStatus = MessageType.Error;
+						aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusNegativ");
+						++outside;
+					}
+				}
+				oSchedulingModel.setProperty("/step1/dataSet", aDemands);
+				oSchedulingModel.setProperty("/inside", inside);
+				oSchedulingModel.setProperty("/outside", outside);
+			}
+			
 		},
 
 		/* =========================================================== */
