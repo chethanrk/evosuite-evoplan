@@ -6,18 +6,57 @@
 			<template:with path="target>Data" var="data">
 
 				<table:Table id="step1_SchedulingTable" rows="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\' }' }"
-					title="{viewModel>/Scheduling/sScheduleTableTitle}"
 					busyStateChanged="onBusyStateChanged"
 					enableBusyIndicator="true"
+					enableCustomFilter="true"
 					busy="{viewModel>/Scheduling/bSchedulingTableBusy}"
 					selectionMode="None"
 					minAutoRowCount="1"
-					visibleRowCountMode="Auto">
+					visibleRowCountMode="Interactive">
+						
+					<table:extension>
+						<OverflowToolbar>
+							<Title text="{viewModel>/Scheduling/sScheduleTableTitle}" />
+
+							<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
+								<Title text="{viewModel>/Scheduling/sScheduleFilteredDemandsTableTitle}" />
+							</template:if>
+							<ToolbarSpacer/>
+							<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
+								<ToggleButton id="btnInsideDateRange" 
+									type="Transparent" 
+									text="{i18n>xbut.scheduleToogleInside} ({SchedulingModel>/inside})" 
+									pressed="false" 
+									press="onPressInsideDate" />
+								<ToggleButton id="btnOutsideDateRange" 
+									type="Transparent" 
+									text="{i18n>xbut.scheduleToogleOutside} ({SchedulingModel>/outside})" 
+									pressed="false" 
+									press="onPressOutsideDate" />
+								<Button type="Transparent" icon="sap-icon://filter" text="{viewModel>/Scheduling/sFilterCounts}" press="onPressShowFilterbar" />
+							</template:if>
+						</OverflowToolbar>
+					</table:extension>
+
+					<table:rowSettingsTemplate>
+						<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
+							<table:RowSettings highlight="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatus}' }" highlightText="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatusText}' }"/>
+						</template:if>
+					</table:rowSettingsTemplate>
 
 					<table:columns>
+						<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
+							<table:Column width="3rem">
+								<Label text="{i18n>xtit.labelScheduleInDateRange}" />
+								<table:template>
+									<core:Icon src="sap-icon://pending" color="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeIconStatus}' }" tooltip="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatusText}' }" />
+								</table:template>
+							</table:Column>
+						</template:if>
+
 						<template:repeat list="{path:'data>'}">
 							<template:with path="data>Value" var="value">
-								<table:Column>
+								<table:Column sortProperty="{:= ${path:'value>Path'} }">
 									<Label text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
 									<table:template>
 										<template:if test="{:= ${data>EdmType} === 'Edm.Date'}">
