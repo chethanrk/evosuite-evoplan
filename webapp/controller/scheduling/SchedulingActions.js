@@ -175,7 +175,6 @@ sap.ui.define([
 							aFilters.push(aResourceFilters[x])
 						}
 					}
-					console.log(aFilters);
 					aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceHierarchySet", aFilters));
 				}
 			}.bind(this));
@@ -186,12 +185,10 @@ sap.ui.define([
 				oAppViewModel.setProperty("/busy", false);
 				aResult.forEach(function (oResult) {
 					aResourceData = aResourceData.concat(oResult.results);
-					console.log(aResourceData);
 					aFinalResourceData = aResourceData.filter(function (oParam1) {
 						return oParam1.NodeId.indexOf("POOL") < 0
 					})
 				});
-				console.log(aFinalResourceData);
 				return checkDuplicate(aFinalResourceData);
 			}.bind(this));
 			//Read all Resource from Resource group
@@ -439,7 +436,6 @@ sap.ui.define([
 					return mParam1.sPath === "StartDate" || mParam1.sPath === "EndDate"
 				});
 			}
-			console.log(aSchedulingFilter);
 			this.oViewModel.setProperty("/Scheduling/aResourceTblFilters", aSchedulingFilter);
 		},
 

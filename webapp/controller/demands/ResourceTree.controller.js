@@ -217,7 +217,6 @@ sap.ui.define([
 			}
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
-			console.log(aFilter);
 		
 			// setting filters in local model to access in assignTree dialog.
 			this._oViewModel.setProperty("/resourceFilterView", aFilter);
