@@ -595,6 +595,7 @@ sap.ui.define([
 			}
 			this._resetToolbarButtons();
 			this._loadGanttData();
+			// setDateFilter
 		},
 		/**
 		 * Opens the resource qualification dialog 
@@ -869,7 +870,7 @@ sap.ui.define([
 			//resetting buttons due to Resource selection is resetted.	
 			this._resetToolbarButtons();
 		},
-
+	
 		/**
 		 * to reset buttons when navigate from Map or reset the selection of resources
 		 */
@@ -1827,10 +1828,14 @@ sap.ui.define([
 					mParams = {
 						"$expand": "AssignmentSet,ResourceAvailabilitySet"
 					},
-					oUserData = this.oUserModel.getData();
+					oUserData = this.oUserModel.getData(),
+					aResourceTblFilters=[];
 				aFilters.push(new Filter("HierarchyLevel", FilterOperator.EQ, iLevel));
 				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 				aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
+				aResourceTblFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)))
+				aResourceTblFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)))
+				this.oViewModel.setProperty("/Scheduling/aResourceTblFilters",aResourceTblFilters);
 				if (aParamDemandsFilter && iLevel > 0) {
 					for (var x in aParamDemandsFilter) {
 						aFilters.push(aParamDemandsFilter[x]);
@@ -2922,9 +2927,6 @@ sap.ui.define([
 				this._refreshChangedResources(sResPath);
 			}.bind(this));
 		},
-
-
-
 	});
 
 });

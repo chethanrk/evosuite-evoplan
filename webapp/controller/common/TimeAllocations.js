@@ -558,7 +558,7 @@ sap.ui.define([
 				this._oView.byId("assignedDemands").setEnabled(false);
 			}
 			//validate resource tree is selected or not for Re-Schedule
-			this._oView.getController().oSchedulingActions._resetResourceForScheduling();
+			this._oView.getController().oSchedulingActions.resetResourceForScheduling();
 		},
 		/**
 		 * If any absence are created/updated/deleted the resource tree/ gantt will refreshed
