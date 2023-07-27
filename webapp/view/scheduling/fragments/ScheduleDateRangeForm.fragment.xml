@@ -5,15 +5,22 @@
     columnsXL="2">
     <f:content>
         <core:ExtensionPoint name="WizardExtP|Schedule|Step1|Form|Content|Before"/>
-        <Label text="{i18n>xtit.DateFrom}" labelFor="ScheduleDateFrom"/>
+        <Label text="{i18n>xtit.DateFrom}" labelFor="ScheduleDateFrom" required="true"/>
         <DateTimePicker
             id="ScheduleDateFrom"
             placeholder="{i18n>xtit.EnterDateFrom}"
+            minDate="{viewModel>/Scheduling/minDate}"
+            dateValue="{viewModel>/Scheduling/startDate}"
+            initialFocusedDateValue="{viewModel>/Scheduling/initialFocusedDateValue}"
             change="onChangeDateFrom"/>
-        <Label text="{i18n>xtit.DateTo}" labelFor="ScheduleDateto"/>
+        <Label text="{i18n>xtit.DateTo}" labelFor="ScheduleDateto" required="true"/>
         <DateTimePicker
             id="ScheduleDateTo"
             placeholder="{i18n>xtit.EnterDateTo}"
+            minDate="{viewModel>/Scheduling/minDate}"
+            maxDate="{viewModel>/Scheduling/maxDate}"
+            dateValue="{viewModel>/Scheduling/endDate}"
+            initialFocusedDateValue="{viewModel>/Scheduling/initialFocusedDateValue}"
             change="onChangeDateTo"/>
         <Label text="{i18n>xtit.Utilization}  {viewModel>/Scheduling/sUtilizationSlider}" labelFor="ScheduleUtilization"/>
         <Slider value="{viewModel>/Scheduling/sUtilizationSlider}"
@@ -26,4 +33,11 @@
         <core:ExtensionPoint name="WizardExtP|Schedule|Step1|Form|Content|After"/>
     </f:content>
 </f:SimpleForm>
+
+<MessageStrip
+    text="{viewModel>/Scheduling/sInvalidDateRangeMsg}"
+    visible="{viewModel>/Scheduling/bInvalidDateRange}"
+    type="Error"
+    class="sapUiSmallMarginBeginEnd" />
+
 </core:FragmentDefinition>

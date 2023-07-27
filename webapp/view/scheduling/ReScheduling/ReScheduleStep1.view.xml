@@ -5,14 +5,10 @@
 
         <core:ExtensionPoint name="WizardExtP|ReSchedule|Step1|Content|Before"/>
         
-        <l:VerticalLayout width="100%" class="sapNoContentPadding">
-
-            <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.ScheduleDateRangeForm" type="XML"/>
-
-            <VBox id="ReScheduling-DemandTable" width="100%">
-                <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.SchedulingTable" type="XML"/>
-            </VBox>
-        </l:VerticalLayout>
+        <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.ScheduleDateRangeForm" type="XML"/>
+            
+        <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.SchedulingTable" type="XML"/>
+            
         <core:ExtensionPoint name="WizardExtP|ReSchedule|Step1|Content|After"/>
     
  </template:alias>
