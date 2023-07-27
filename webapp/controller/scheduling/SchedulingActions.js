@@ -58,9 +58,13 @@ sap.ui.define([
 		 */
 		validateReScheduleButton: function () {
 			var oSelectedDemandItem, oScheduling;
-			oScheduling = this.oViewModel.getProperty("/Scheduling");
+			oScheduling = this.oViewModel.getProperty("/Scheduling"),
+			oResourceDataModel=this.oDataModel;
 			if (!this.userModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")) {
 				return;
+			};
+			if(this.oViewModel.getProperty("/sViewRoute")==="NEWGANTT"){
+				oResourceDataModel=this.oGanttModel;
 			}
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length === 1) {
 				if (oScheduling["selectedResources"].filter(mPath => this.oDataModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1).length !== oScheduling.selectedResources.length) {
@@ -168,6 +172,7 @@ sap.ui.define([
 							aFilters.push(aResourceFilters[x])
 						}
 					}
+					console.log(aFilters);
 					aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceHierarchySet", aFilters));
 				}
 			}.bind(this));
@@ -178,6 +183,7 @@ sap.ui.define([
 				oAppViewModel.setProperty("/busy", false);
 				aResult.forEach(function (oResult) {
 					aResourceData = aResourceData.concat(oResult.results);
+					console.log(aResourceData);
 					aFinalResourceData = aResourceData.filter(function (oParam1) {
 						return oParam1.NodeId.indexOf("POOL") < 0
 					})
@@ -206,7 +212,7 @@ sap.ui.define([
 				resourceList: [],
 				resourceData: {},
 				aSelectedDemandPath: [],
-				resourceTblFilters: [],
+				aResourceTblFilters: [],
 				demandList: [],
 				minDate: moment().add(1, "days").startOf("day").toDate(),
 				maxDate: moment().add(15, "days").endOf("day").toDate(),
@@ -431,7 +437,7 @@ sap.ui.define([
 				});
 			}
 			console.log(aSchedulingFilter);
-			this.oViewModel.setProperty("/Scheduling/resourceTblFilters", aSchedulingFilter);
+			this.oViewModel.setProperty("/Scheduling/aResourceTblFilters", aSchedulingFilter);
 		},
 
 		/* =========================================================== */
