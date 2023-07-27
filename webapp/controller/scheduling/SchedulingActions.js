@@ -38,14 +38,17 @@ sap.ui.define([
 		 * Function to validate auto-scheduling button
 		 */
 		validateScheduleButtons: function () {
-			var oSelectedDemandItem, oScheduling;
-			oScheduling = this.oViewModel.getProperty("/Scheduling");
+			var oScheduling;
+			oScheduling = this.oViewModel.getProperty("/Scheduling"),
+			oResourceDataModel=this.oDataModel;
 			if (!this.userModel.getProperty("/ENABLE_AUTO_SCHEDULE_BUTTON")) {
 				return;
 			}
-
+			if(this.oViewModel.getProperty("/sViewRoute")==="NEWGANTT"){
+				oResourceDataModel=this.oGanttModel;
+			}
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
-				if (oScheduling.selectedResources.filter(mPath => this.oDataModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1).length !== oScheduling.selectedResources.length) {
+				if (oScheduling.selectedResources.filter(mPath => oResourceDataModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1).length !== oScheduling.selectedResources.length) {
 					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 					return;
 				}
@@ -67,7 +70,7 @@ sap.ui.define([
 				oResourceDataModel=this.oGanttModel;
 			}
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length === 1) {
-				if (oScheduling["selectedResources"].filter(mPath => this.oDataModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1).length !== oScheduling.selectedResources.length) {
+				if (oScheduling["selectedResources"].filter(mPath => oResourceDataModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1).length !== oScheduling.selectedResources.length) {
 					oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 					if (oSelectedDemandItem.ALLOW_REASSIGN && !(oSelectedDemandItem.NUMBER_OF_CAPACITIES > 1)) {
 						this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
