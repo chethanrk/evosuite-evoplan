@@ -103,7 +103,8 @@ sap.ui.define([
 		 */
 		showMessageToast: function (sMsg) {
 			MessageToast.show(sMsg, {
-				duration: 5000
+				duration: 5000,
+				width:"auto"
 			});
 		},
 

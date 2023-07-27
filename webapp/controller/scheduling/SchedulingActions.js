@@ -122,6 +122,7 @@ sap.ui.define([
 				aResourceData = [],
 				oResourceObj = {},
 				aResourceGroupPromise = [],
+				aPoolResource = [],
 				aFilters = [],
 				bIsPoolExist=false;
 
@@ -147,8 +148,9 @@ sap.ui.define([
 				}
 				return {
 					bNoDuplicate: bValidateState,
+					resourceNames: aResourceNameList.join("\n"),
 					bIsPoolExist: bIsPoolExist,
-					resourceNames: aResourceNameList.join("\n")
+					poolResource: aPoolResource.join("\n")
 				};
 			};
 			//Read all resource selected
@@ -162,8 +164,9 @@ sap.ui.define([
 				if (oResourceObj.ResourceGuid) {
 					aResourceData.push(oResourceObj);
 				} else if(oResourceObj.NodeId.split(":")[0] === "POOL"){
+					aPoolResource.push(oResourceObj.Description);
 					bIsPoolExist = true;
-				}else if (oResourceObj.ResourceGroupGuid) {
+				} else if (oResourceObj.ResourceGroupGuid) {
 					aFilters.push(new Filter("ParentNodeId", "EQ", oResourceObj.NodeId));
 					aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceHierarchySet", aFilters));
 
@@ -236,7 +239,9 @@ sap.ui.define([
 						}
 						this._controller.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this._controller.getView(), mParams);
 						if(oResult.bIsPoolExist){
-							this.showMessageToast(this.getResourceBundle().getText("ymsg.poolResourceExist"));
+							setTimeout(function(){
+								this.showMessageToast(this.getResourceBundle().getText("ymsg.poolResourceExist", oResult.poolResource));
+							}.bind(this),500);
 						}
 					}
 

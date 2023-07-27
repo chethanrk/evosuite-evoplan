@@ -260,8 +260,12 @@ sap.ui.define([
 		 */
 		onRescheduleButtonPress: function (oEvent) {
 			var oViewModel = this.getModel("viewModel"),
-				oResourceBundle = this.getResourceBundle();
+				oResourceBundle = this.getResourceBundle(),
+				bIsPoolExist = false,
+				sPoolNames = "";
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
+				bIsPoolExist = oResult.bIsPoolExist;
+				sPoolNames = oResult.poolResource;
 				if (oResult.bNoDuplicate) {
 					//calling function to check if the demand already is assigned to one of the selected resource
 					return this.oSchedulingActions.checkAssignedResource();
@@ -271,8 +275,10 @@ sap.ui.define([
 				}
 			}.bind(this)).then(function (oResult) {
 				if (oResult.bNotAssigned) {
-					if(oResult.bIsPoolExist){
-						this.showMessageToast(this.getResourceBundle().getText("ymsg.poolResourceExist"));
+					if(bIsPoolExist){
+						setTimeout(function(){
+							this.showMessageToast(this.getResourceBundle().getText("ymsg.poolResourceExist", sPoolNames));
+						}.bind(this),500);
 					}
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					var mParams = {
