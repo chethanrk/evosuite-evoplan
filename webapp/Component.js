@@ -586,7 +586,7 @@ sap.ui.define([
 					defaultEndDate: ""
 				},
 				// whatever properties are added here please update the same in the 
-				// method resetSchedulingJson in schedulingaction.js
+				// method resetSchedulingJson in the file schedulingaction.js
 				Scheduling:{
 					sType:"",
 					sScheduleDialogTitle: "",

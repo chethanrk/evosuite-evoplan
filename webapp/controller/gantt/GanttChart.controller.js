@@ -595,7 +595,6 @@ sap.ui.define([
 			}
 			this._resetToolbarButtons();
 			this._loadGanttData();
-			// setDateFilter
 		},
 		/**
 		 * Opens the resource qualification dialog 
@@ -1833,9 +1832,7 @@ sap.ui.define([
 				aFilters.push(new Filter("HierarchyLevel", FilterOperator.EQ, iLevel));
 				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 				aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
-				aResourceTblFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)))
-				aResourceTblFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)))
-				this.oViewModel.setProperty("/Scheduling/aResourceTblFilters",aResourceTblFilters);
+				this.oSchedulingActions.setResourceTreeFilter(aFilters);
 				if (aParamDemandsFilter && iLevel > 0) {
 					for (var x in aParamDemandsFilter) {
 						aFilters.push(aParamDemandsFilter[x]);
