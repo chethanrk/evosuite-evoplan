@@ -81,21 +81,6 @@ sap.ui.define([
 			this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 			return;
 		},
-		/**
-		 * This method will check for the Allowed flag for each selected Demands
-		 * @param {object} oParamModel model to ge the 
-		 * @param {object} oSchedulingObj json object from
-		 * @return {integer} - It will return the length of the array;
-		 */
-		_checkDuplicatePoolSelection:function(oParamModel,oSchedulingObj){
-			var aPoolSelection = oSchedulingObj.selectedResources.filter(function(mPath){
-				return oParamModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1
-			});
-			if(aPoolSelection.length  !== oSchedulingObj.selectedResources.length){
-				return true;
-			}
-			return false;
-		},
 
 		/** 
 		*	This method will check if the selected resources contain already assigned resource to a demand for rescheduling  
@@ -486,6 +471,21 @@ sap.ui.define([
 				aPathsData: aPathsData,
 				aNonAssignable: aNonAssignableDemands,
 			};
+		},
+		/**
+		 * This method will check for the Allowed flag for each selected Demands
+		 * @param {object} oParamModel model to ge the 
+		 * @param {object} oSchedulingObj json object from
+		 * @return {boolean} It will boolean based on conditon specidied in the logic.
+		 */
+		_checkDuplicatePoolSelection:function(oParamModel,oSchedulingObj){
+			var aPoolSelection = oSchedulingObj.selectedResources.filter(function(mPath){
+				return oParamModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1
+			});
+			if(aPoolSelection.length  !== oSchedulingObj.selectedResources.length){
+				return true;
+			}
+			return false;
 		},
 		
 	});
