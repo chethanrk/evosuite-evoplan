@@ -17,43 +17,33 @@
 					<table:extension>
 						<OverflowToolbar>
 							<Title text="{viewModel>/Scheduling/sScheduleTableTitle}" />
-
-							<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
-								<Title text="{viewModel>/Scheduling/sScheduleFilteredDemandsTableTitle}" />
-							</template:if>
+							<Title text="{viewModel>/Scheduling/sScheduleFilteredDemandsTableTitle}" />
 							<ToolbarSpacer/>
-							<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
-								<ToggleButton id="btnInsideDateRange" 
-									type="Transparent" 
-									text="{i18n>xbut.scheduleToogleInside} ({SchedulingModel>/inside})" 
-									pressed="false" 
-									press="onPressInsideDate" />
-								<ToggleButton id="btnOutsideDateRange" 
-									type="Transparent" 
-									text="{i18n>xbut.scheduleToogleOutside} ({SchedulingModel>/outside})" 
-									pressed="false" 
-									press="onPressOutsideDate" />
-								<Button type="Transparent" icon="sap-icon://filter" text="{viewModel>/Scheduling/sFilterCounts}" press="onPressShowFilterbar" />
-							</template:if>
+							<ToggleButton id="btnInsideDateRange" 
+								type="Transparent" 
+								text="{i18n>xbut.scheduleToogleInside} ({SchedulingModel>/inside})" 
+								pressed="false" 
+								press="onPressInsideDate" />
+							<ToggleButton id="btnOutsideDateRange" 
+								type="Transparent" 
+								text="{i18n>xbut.scheduleToogleOutside} ({SchedulingModel>/outside})" 
+								pressed="false" 
+								press="onPressOutsideDate" />
+							<Button type="Transparent" icon="sap-icon://filter" text="{viewModel>/Scheduling/sFilterCounts}" press="onPressShowFilterbar" />							
 						</OverflowToolbar>
 					</table:extension>
 
 					<table:rowSettingsTemplate>
-						<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
-							<table:RowSettings highlight="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatus}' }" highlightText="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatusText}' }"/>
-						</template:if>
+						<table:RowSettings highlight="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatus}' }" highlightText="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatusText}' }"/>						
 					</table:rowSettingsTemplate>
 
 					<table:columns>
-						<template:if test="{:= ${tempProps>tempData/isAutoSchedule} }">
-							<table:Column width="3rem">
-								<Label text="{i18n>xtit.labelScheduleInDateRange}" />
-								<table:template>
-									<core:Icon src="sap-icon://pending" color="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeIconStatus}' }" tooltip="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatusText}' }" />
-								</table:template>
-							</table:Column>
-						</template:if>
-
+						<table:Column width="3rem">
+							<Label text="{i18n>xtit.labelScheduleInDateRange}" />
+							<table:template>
+								<core:Icon src="sap-icon://pending" color="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeIconStatus}' }" tooltip="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatusText}' }" />
+							</table:template>
+						</table:Column>
 						<template:repeat list="{path:'data>'}">
 							<template:with path="data>Value" var="value">
 								<table:Column sortProperty="{:= ${path:'value>Path'} }">
@@ -65,6 +55,9 @@
 											</template:then>
 											<template:elseif test="{:= ${data>EdmType} === 'Edm.DateTime'}">
 												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.DateTime\', style: \'long\'}' }" wrapping="false" />
+											</template:elseif>
+											<template:elseif test="{:= ${data>EdmType} === 'Edm.Time'}">
+												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.odata.type.Time\', style: \'long\'}' }" wrapping="false" />
 											</template:elseif>
 											<template:elseif test="{:= ${value>Path}.toLowerCase().includes('icon')}">
 												<core:Icon src="{:= '{'+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'}' }" />
@@ -79,7 +72,6 @@
 						</template:repeat>
 					</table:columns>
 				</table:Table>
-
 			</template:with>
 		</template:with>
 	</template:with>
