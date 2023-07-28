@@ -48,7 +48,7 @@ sap.ui.define([
 				oResourceDataModel=this.oGanttModel;
 			}
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
-				if (oScheduling.selectedResources.filter(mPath => oResourceDataModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1).length !== oScheduling.selectedResources.length) {
+				if (this._checkDuplicatePoolSelection(oResourceDataModel,oScheduling)) {
 					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 					return;
 				}
@@ -70,7 +70,7 @@ sap.ui.define([
 				oResourceDataModel=this.oGanttModel;
 			}
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length === 1) {
-				if (oScheduling["selectedResources"].filter(mPath => oResourceDataModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1).length !== oScheduling.selectedResources.length) {
+				if (this._checkDuplicatePoolSelection(oResourceDataModel,oScheduling)) {
 					oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 					if (oSelectedDemandItem.ALLOW_REASSIGN && !(oSelectedDemandItem.NUMBER_OF_CAPACITIES > 1)) {
 						this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
@@ -80,6 +80,19 @@ sap.ui.define([
 			}
 			this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 			return;
+		},
+		/**
+		 * This method will check for the Allowed flag for each selected Demands
+		 * @param {object} oParamModel model to ge the 
+		 * @param {object} oSchedulingObj json object from
+		 * @return {integer} - It will return the length of the array;
+		 */
+		_checkDuplicatePoolSelection:function(oParamModel,oSchedulingObj){
+			var aPoolSelection = oSchedulingObj.selectedResources.filter(mPath => oParamModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1)
+			if(aPoolSelection.length  !== oSchedulingObj.selectedResources.length){
+				return true;
+			}
+			return false;
 		},
 
 		/** 
@@ -471,6 +484,7 @@ sap.ui.define([
 				aPathsData: aPathsData,
 				aNonAssignable: aNonAssignableDemands,
 			};
-		}
+		},
+		
 	});
 });
