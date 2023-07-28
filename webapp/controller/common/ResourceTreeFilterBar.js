@@ -335,7 +335,7 @@ sap.ui.define([
 				if (oCtrl) {
 					try {
 						if (oCtrl.getDateValue) {
-							this._oCustomFilterData._CUSTOM[sFilterKey] = oCtrl.getDateValue();
+							this._oCustomFilterData._CUSTOM[sFilterKey] = new Date(oCtrl.getValue());
 						} else {
 							this._oCustomFilterData._CUSTOM[sFilterKey] = oCtrl.getValue();
 						}

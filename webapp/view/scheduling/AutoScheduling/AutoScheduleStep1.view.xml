@@ -1,19 +1,15 @@
 <mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout" 
     xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1" 
-    controllerName="com.evorait.evoplan.controller.scheduling.AutoScheduleStep1">
+    controllerName="com.evorait.evoplan.controller.scheduling.AutoScheduleStep1" height="100%" displayBlock="true">
 	<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
 
         <core:ExtensionPoint name="WizardExtP|AutoSchedule|Step1|Content|Before"/>
+
+        <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.fragments.ScheduleDateRangeForm" type="XML"/>
+
+        <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.fragments.SchedulingTable" type="XML"/>
         
-        <l:VerticalLayout width="100%" class="sapNoContentPadding">
-
-            <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.ScheduleDateRangeForm" type="XML"/>
-
-            <VBox id="AutoScheduling-DemandTable" width="100%">
-                <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.SchedulingTable" type="XML"/>
-            </VBox>
-        </l:VerticalLayout>
         <core:ExtensionPoint name="WizardExtP|AutoSchedule|Step1|Content|After"/>
-    
+
  </template:alias>
 </mvc:View>

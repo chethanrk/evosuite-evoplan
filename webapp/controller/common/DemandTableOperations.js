@@ -260,16 +260,32 @@ sap.ui.define([
 		 */
 		onRescheduleButtonPress: function (oEvent) {
 			var oViewModel = this.getModel("viewModel"),
-				oResourceBundle = this.getResourceBundle();
+				oDataModel = this.getModel(),
+				oResourceBundle = this.getResourceBundle(),
+				sPath = oViewModel.getProperty("/Scheduling/selectedDemandPath"),
+				aDemandList = [];
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
-				if (oResult.validateState) {
+				if (oResult.bNoDuplicate) {
+					//calling function to check if the demand already is assigned to one of the selected resource
+					return this.oSchedulingActions.checkAssignedResource();
+				} else {
+					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
+					return false;
+				}
+			}.bind(this)).then(function (oResult) {
+				if (oResult.bNotAssigned) {
+					aDemandList = [{
+						sPath:sPath,
+						oData:oDataModel.getProperty(sPath)
+					}];
+					oViewModel.setProperty("/Scheduling/demandList", aDemandList);
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					var mParams = {
 						entitySet: "DemandSet"
 					}
 					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
 				} else {
-					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));					
+					this._showErrorMessage(oResourceBundle.getText("ymsg.alreadyAssigned", oResult.resourceNames));
 				}
 			}.bind(this));
 		},
