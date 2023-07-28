@@ -186,8 +186,8 @@ sap.ui.define([
 				aResult.forEach(function (oResult) {
 					aResourceData = aResourceData.concat(oResult.results);
 					aFinalResourceData = aResourceData.filter(function (oParam1) {
-						return oParam1.NodeId.indexOf("POOL") < 0
-					})
+						return (oParam1.NodeId.indexOf("POOL") < 0);
+					});
 				});
 				return checkDuplicate(aFinalResourceData);
 			}.bind(this));
@@ -430,7 +430,7 @@ sap.ui.define([
 			var aSchedulingFilter = [];
 			if(aParam instanceof Array){
 				aSchedulingFilter = aParam.filter(mParam1 => {
-					return mParam1.sPath === "StartDate" || mParam1.sPath === "EndDate"
+					return (mParam1.sPath === "StartDate" || mParam1.sPath === "EndDate");
 				});
 			}
 			this.oViewModel.setProperty("/Scheduling/aResourceTblFilters", aSchedulingFilter);
@@ -480,7 +480,7 @@ sap.ui.define([
 		 */
 		_checkDuplicatePoolSelection:function(oParamModel,oSchedulingObj){
 			var aPoolSelection = oSchedulingObj.selectedResources.filter(function(mPath){
-				return oParamModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1
+				return (oParamModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1);
 			});
 			if(aPoolSelection.length  !== oSchedulingObj.selectedResources.length){
 				return true;
