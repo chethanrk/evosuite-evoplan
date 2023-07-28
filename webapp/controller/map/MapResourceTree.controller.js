@@ -468,9 +468,7 @@ sap.ui.define([
 			this.byId("assignedDemands").setEnabled(false);
 
 			//validate resource tree is selected or not for Auto/Re-Schedule
-			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", this.selectedResources);
-			this.oSchedulingActions.validateScheduleButtons();
-			this.oSchedulingActions.validateReScheduleButton();	
+			this.oSchedulingActions.resetResourceForScheduling();
 		},
 
 		/**

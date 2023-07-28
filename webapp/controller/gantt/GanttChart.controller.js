@@ -883,9 +883,7 @@ sap.ui.define([
 			this.byId("idOptimizeRoute").setEnabled(false);
 
 			//validate resource tree is selected or not for Auto/Re-Schedule
-			this.oViewModel.setProperty("/Scheduling/selectedResources", this.selectedResources);
-			this.oSchedulingActions.validateScheduleButtons();
-			this.oSchedulingActions.validateReScheduleButton();
+			this.oSchedulingActions.resetResourceForScheduling();
 		},
 
 		/**

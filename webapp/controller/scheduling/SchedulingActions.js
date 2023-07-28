@@ -429,7 +429,7 @@ sap.ui.define([
 		setResourceTreeFilter:function(aParam){
 			var aSchedulingFilter = [];
 			if(aParam instanceof Array){
-				aSchedulingFilter = aParam.filter(mParam1 => {
+				aSchedulingFilter = aParam.filter(function(mParam1){
 					return (mParam1.sPath === "StartDate" || mParam1.sPath === "EndDate");
 				});
 			}
