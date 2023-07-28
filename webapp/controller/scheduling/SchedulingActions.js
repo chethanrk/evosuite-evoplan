@@ -122,8 +122,8 @@ sap.ui.define([
 				aResourceData = [],
 				oResourceObj = {},
 				aResourceGroupPromise = [],
-				aPoolResource = [],
 				aFilters = [],
+				aPoolResource = [],
 				bIsPoolExist=false;
 
 
@@ -222,10 +222,13 @@ sap.ui.define([
 		 * @param {Array} aSelectedRowsIdx 
 		 */
 		validateSelectedDemands: function (oTable, aSelectedRowsIdx) {
-			var oSelectedPaths = this._checkAllowedDemands(oTable, aSelectedRowsIdx);
+			var oSelectedPaths = this._checkAllowedDemands(oTable, aSelectedRowsIdx),
+			oMsgParam = {};
 
 			this.checkDuplicateResource().then(function (oResult) {
 				if (oResult.bNoDuplicate) {
+					oMsgParam["bIsPoolExist"] = oResult.bIsPoolExist;
+					oMsgParam["sPoolNames"] = oResult.poolResource;
 					if (oSelectedPaths.aNonAssignable.length > 0) {
 						//show popup with list of demands who are not allow for assign
 						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
@@ -237,12 +240,7 @@ sap.ui.define([
 						var mParams = {
 							entitySet: "DemandSet"
 						}
-						this._controller.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this._controller.getView(), mParams);
-						if(oResult.bIsPoolExist){
-							setTimeout(function(){
-								this.showMessageToast(this.getResourceBundle().getText("ymsg.poolResourceExist", oResult.poolResource));
-							}.bind(this),500);
-						}
+						this._controller.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this._controller.getView(), mParams, oMsgParam);
 					}
 
 				} else {

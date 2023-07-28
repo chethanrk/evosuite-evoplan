@@ -53,9 +53,10 @@ sap.ui.define([
 		 * This method is used to open the dialog box and call the 
 		 * relevant methods post that.
 		 * @param {*} oView 
-		 * @param {*} mParams 
+		 * @param {*} mParams
+		 * @param {object} oMsgParam - To display message toast on Scheduling Dialog
 		 */
-		openSchedulingDialog: function (oView, mParams, oErrorParam) {
+		openSchedulingDialog: function (oView, mParams, oMsgParam) {
 			this._oView = oView;
 			this._mParams = mParams || {};
 
@@ -77,8 +78,8 @@ sap.ui.define([
 			this._ScheduleDialog.then(function (oDialog) {
 				this._renderWizardStep1Binding(oDialog);
 				oDialog.open();
-				if(!_.isEmpty(oErrorParam)){
-					this._showSchedulingMessageToast(oDialog, oErrorParam);
+				if(!_.isEmpty(oMsgParam)){
+					this._showSchedulingMessageToast(oDialog, oMsgParam);
 				}
 			}.bind(this));
 			

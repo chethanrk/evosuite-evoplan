@@ -264,11 +264,11 @@ sap.ui.define([
 				oResourceBundle = this.getResourceBundle(),
 				sPath = oViewModel.getProperty("/Scheduling/selectedDemandPath"),
 				aDemandList = [],
-				oErrorParams = {};
+				oMsgParam = {};
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
-				oErrorParams["bIsPoolExist"] = oResult.bIsPoolExist;
-				oErrorParams["sPoolNames"] = oResult.poolResource;
 				if (oResult.bNoDuplicate) {
+					oMsgParam["bIsPoolExist"] = oResult.bIsPoolExist;
+					oMsgParam["sPoolNames"] = oResult.poolResource;
 					//calling function to check if the demand already is assigned to one of the selected resource
 					return this.oSchedulingActions.checkAssignedResource();
 				} else {
@@ -286,7 +286,7 @@ sap.ui.define([
 					var mParams = {
 						entitySet: "DemandSet"
 					}
-					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams, oErrorParams);
+					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams, oMsgParam);
 				} else {
 					this._showErrorMessage(oResourceBundle.getText("ymsg.alreadyAssigned", oResult.resourceNames));
 				}
