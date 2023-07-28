@@ -585,6 +585,8 @@ sap.ui.define([
 					defaultStartDate: "",
 					defaultEndDate: ""
 				},
+				// whatever properties are added here please update the same in the 
+				// method resetSchedulingJson in the file schedulingaction.js
 				Scheduling:{
 					sType:"",
 					sScheduleDialogTitle: "",
@@ -594,18 +596,20 @@ sap.ui.define([
 					SchedulingDialogFlags:{
 						
 					},
+					aSelectedDemandPath:[],
 					selectedResources:null,
 					selectedDemandPath: null,
-					aDemandSelectDemandList:[],
 					resourceList:[],
 					resourceData:{},
 					DateFrom: moment().startOf("day").toDate(),
 					DateTo: moment().add(14, "days").endOf("day").toDate(),
-					sUtilizationSlider:null
+					sUtilizationSlider:null,
+					aResourceTblFilters:[]
 				},
 				sViewRoute:null,
 				aUpdatedResources : []
 			});
+			
 			oViewModel.setSizeLimit(999999999);
 			this.setModel(oViewModel, "viewModel");
 

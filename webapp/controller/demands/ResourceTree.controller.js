@@ -217,8 +217,10 @@ sap.ui.define([
 			}
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
+		
 			// setting filters in local model to access in assignTree dialog.
 			this._oViewModel.setProperty("/resourceFilterView", aFilter);
+			this.oSchedulingActions.setResourceTreeFilter(aFilter);
 
 			oBinding.filters = [new Filter(aFilter, true)];
 
@@ -423,7 +425,7 @@ sap.ui.define([
 			this.byId("idButtonTimeAllocNew").setEnabled(false);
 
 			//validate resource tree is selected or not for Auto/Re-Schedule
-			this.oSchedulingActions._resetResourceForScheduling();
+			this.oSchedulingActions.resetResourceForScheduling();
 		},
 		/**
 		 * On select of capacitive checkbox the adjusting splitter length

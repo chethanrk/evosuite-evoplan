@@ -38,43 +38,48 @@ sap.ui.define([
 		 * Function to validate auto-scheduling button
 		 */
 		validateScheduleButtons: function () {
-			var oSelectedDemandItem, oScheduling;
-			oScheduling = this.oViewModel.getProperty("/Scheduling");
-
-			//TODO - check if global config is enabled for multiple demands
-
-			if (oScheduling.selectedDemandPath) {
-				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
-				if (oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
-					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
-				} else {
-					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
-				}
-			} else {
-				this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
+			var oScheduling;
+			oScheduling = this.oViewModel.getProperty("/Scheduling"),
+			oResourceDataModel=this.oDataModel;
+			if (!this.userModel.getProperty("/ENABLE_AUTO_SCHEDULE_BUTTON")) {
+				return;
 			}
+			if(this.oViewModel.getProperty("/sViewRoute")==="NEWGANTT"){
+				oResourceDataModel=this.oGanttModel;
+			}
+			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
+				if (this._checkDuplicatePoolSelection(oResourceDataModel,oScheduling)) {
+					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
+					return;
+				}
+			}
+			this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
+			return;
 		},
 		/**
 		 * Function to validate rescheduling button
 		 */
 		validateReScheduleButton: function () {
 			var oSelectedDemandItem, oScheduling;
-			oScheduling = this.oViewModel.getProperty("/Scheduling");
+			oScheduling = this.oViewModel.getProperty("/Scheduling"),
+			oResourceDataModel=this.oDataModel;
 			if (!this.userModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")) {
 				return;
+			};
+			if(this.oViewModel.getProperty("/sViewRoute")==="NEWGANTT"){
+				oResourceDataModel=this.oGanttModel;
 			}
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length === 1) {
-				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
-
-				if (oSelectedDemandItem.ALLOW_REASSIGN && !(oSelectedDemandItem.NUMBER_OF_CAPACITIES > 1)) {
-					this.oViewModel.setProperty("/Scheduling/bEnableReschedule",true);
-					
-				}else {
-					this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+				if (this._checkDuplicatePoolSelection(oResourceDataModel,oScheduling)) {
+					oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
+					if (oSelectedDemandItem.ALLOW_REASSIGN && !(oSelectedDemandItem.NUMBER_OF_CAPACITIES > 1)) {
+						this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
+						return;
+					}
 				}
-			} else {
-				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 			}
+			this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
+			return;
 		},
 
 		/** 
@@ -120,9 +125,12 @@ sap.ui.define([
 				oGanttModel = this.oGanttModel,
 				aResourcePath = oViewModel.getProperty("/Scheduling/selectedResources"),
 				aResourceData = [],
+				aFinalResourceData = [],
 				oResourceObj = {},
 				aResourceGroupPromise = [],
-				aFilters = [];
+				aFilters = [],
+				aResourceFilters = oViewModel.getProperty("/Scheduling/aResourceTblFilters"),
+				aFinalResouceList = [];
 
 
 			//method will check for the duplicate resource
@@ -140,9 +148,10 @@ sap.ui.define([
 						}
 					}
 				});
-				if(bValidateState){
+				if (bValidateState) {
 					//storing the final resource list into viewModel>/Scheduling/resourceList
-					oViewModel.setProperty("/Scheduling/resourceList", aResourceList); 
+
+					oViewModel.setProperty("/Scheduling/resourceList", aResourceList);
 				}
 				return {
 					bNoDuplicate: bValidateState,
@@ -161,8 +170,12 @@ sap.ui.define([
 					aResourceData.push(oResourceObj);
 				} else if (oResourceObj.ResourceGroupGuid) {
 					aFilters.push(new Filter("ParentNodeId", "EQ", oResourceObj.NodeId));
+					if (aResourceFilters.length > 0) {
+						for (var x in aResourceFilters) {
+							aFilters.push(aResourceFilters[x])
+						}
+					}
 					aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceHierarchySet", aFilters));
-
 				}
 			}.bind(this));
 			//Read all resource selected
@@ -172,8 +185,11 @@ sap.ui.define([
 				oAppViewModel.setProperty("/busy", false);
 				aResult.forEach(function (oResult) {
 					aResourceData = aResourceData.concat(oResult.results);
+					aFinalResourceData = aResourceData.filter(function (oParam1) {
+						return (oParam1.NodeId.indexOf("POOL") < 0);
+					});
 				});
-				return checkDuplicate(aResourceData);
+				return checkDuplicate(aFinalResourceData);
 			}.bind(this));
 			//Read all Resource from Resource group
 
@@ -191,10 +207,12 @@ sap.ui.define([
 				SchedulingDialogFlags: {
 
 				},
-				selectedResources:null,
-				selectedDemandPath:null,
-				resourceList:[],
-				resourceData:{},
+				selectedResources: null,
+				selectedDemandPath: null,
+				resourceList: [],
+				resourceData: {},
+				aSelectedDemandPath: [],
+				aResourceTblFilters: [],
 				demandList: [],
 				minDate: moment().add(1, "days").startOf("day").toDate(),
 				maxDate: moment().add(15, "days").endOf("day").toDate(),
@@ -225,7 +243,7 @@ sap.ui.define([
 
 					} else if (oSelectedPaths.aPathsData.length > 0) {
 						//open auto schedule wizard with selected demands
-						this.oViewModel.setProperty("/Scheduling/demandList", oSelectedPaths.aPathsData); 
+						this.oViewModel.setProperty("/Scheduling/demandList", oSelectedPaths.aPathsData);
 						this.oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
 						var mParams = {
 							entitySet: "DemandSet"
@@ -250,15 +268,15 @@ sap.ui.define([
 		createScheduleData: function () {
 			var aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
 				oStartDate = this.oViewModel.getProperty("/Scheduling/minDate"),
-				oEndDate =  this.oViewModel.getProperty("/Scheduling/maxDate"),
-				aAssignmentPromise=[],
-				aAssignmentFilter=[],
-				aAvailabilityPromise=[],
-				aAvailibilityFilter=[],
-				aAllPromise=[],
-				oResourceData={};
-		
-			aResourceList.forEach(function(oResource){
+				oEndDate = this.oViewModel.getProperty("/Scheduling/maxDate"),
+				aAssignmentPromise = [],
+				aAssignmentFilter = [],
+				aAvailabilityPromise = [],
+				aAvailibilityFilter = [],
+				aAllPromise = [],
+				oResourceData = {};
+
+			aResourceList.forEach(function (oResource) {
 				//Read Assignment
 				aAssignmentFilter = [
 					new Filter("ResourceGuid", "EQ", oResource.ResourceGuid),
@@ -335,7 +353,7 @@ sap.ui.define([
 		 * @param {Date} oEndDate 
 		 * @param {boolean} bEndDateChanged 
 		 */
-		validateDemandDateRanges: function(oStartDate, oEndDate, bEndDateChanged){
+		validateDemandDateRanges: function (oStartDate, oEndDate, bEndDateChanged) {
 			var oSchedulingModel = this._controller.getModel("SchedulingModel"),
 				startDate = oStartDate ? moment(oStartDate) : null,
 				endDate = oEndDate ? moment(oEndDate) : null,
@@ -343,20 +361,20 @@ sap.ui.define([
 				inside = 0,
 				outside = 0;
 
-			if(startDate && endDate) {
+			if (startDate && endDate) {
 				//check if endDate before startDate
 				//check if end date bigger than 14 days
-				if((endDate.diff(startDate) < 0) || endDate.diff(startDate, 'days') > 14){
-					if(bEndDateChanged){
+				if ((endDate.diff(startDate) < 0) || endDate.diff(startDate, 'days') > 14) {
+					if (bEndDateChanged) {
 						this.oViewModel.setProperty("/Scheduling/startDate", null);
 						startDate = null;
-					}else{
+					} else {
 						this.oViewModel.setProperty("/Scheduling/endDate", null);
 						endDate = null;
-					}	
+					}
 				}
 			}
-			if(startDate){
+			if (startDate) {
 				//when enddate datepicker opens set new focused date
 				this.oViewModel.setProperty("/Scheduling/initialFocusedDateValue", oStartDate);
 				//max date for datepicker is always startdate + 14 days
@@ -392,6 +410,30 @@ sap.ui.define([
 			oSchedulingModel.setProperty("/inside", inside);
 			oSchedulingModel.setProperty("/outside", outside);
 			
+		},
+		/**
+		 * On refresh of the resource table we have to call this method reset the resource data
+		 * so that we can 
+		 */
+		resetResourceForScheduling: function () {
+			this.oViewModel.setProperty("/Scheduling/selectedResources", []);
+			this.validateScheduleButtons();
+			this.validateReScheduleButton();
+		},
+		/**
+		 * This method gets trigerred from the resource tree table on before bind method 
+		 * of demand and maps view. We are setting the filters of start and end date to the 
+		 * scheduling model so that we can use the values in check duplicate method.
+		 * @param {Array} aParam
+		 */
+		setResourceTreeFilter:function(aParam){
+			var aSchedulingFilter = [];
+			if(aParam instanceof Array){
+				aSchedulingFilter = aParam.filter(function(mParam1){
+					return (mParam1.sPath === "StartDate" || mParam1.sPath === "EndDate");
+				});
+			}
+			this.oViewModel.setProperty("/Scheduling/aResourceTblFilters", aSchedulingFilter);
 		},
 
 		/* =========================================================== */
@@ -431,13 +473,20 @@ sap.ui.define([
 			};
 		},
 		/**
-		 * On refresh of the resource table we have to call this method reset the resource data
-		 * so that we can 
+		 * This method will check for the Allowed flag for each selected Demands
+		 * @param {object} oParamModel model to ge the 
+		 * @param {object} oSchedulingObj json object from
+		 * @return {boolean} It will boolean based on conditon specidied in the logic.
 		 */
-		_resetResourceForScheduling:function(){
-			this.oViewModel.setProperty("/Scheduling/selectedResources", []);
-			this.validateScheduleButtons();
-			this.validateReScheduleButton();
-		}
+		_checkDuplicatePoolSelection:function(oParamModel,oSchedulingObj){
+			var aPoolSelection = oSchedulingObj.selectedResources.filter(function(mPath){
+				return (oParamModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1);
+			});
+			if(aPoolSelection.length  !== oSchedulingObj.selectedResources.length){
+				return true;
+			}
+			return false;
+		},
+		
 	});
 });
