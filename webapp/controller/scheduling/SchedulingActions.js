@@ -414,7 +414,7 @@ sap.ui.define([
 				oData = this.oDataModel.getProperty(sPath);
 
 				//Added condition to check for number of assignments to plan demands via scheduling
-				if (oData.ALLOW_ASSIGN && oData.NUMBER_OF_CAPACITIES === 1 && oData.OBJECT_SOURCE_TYPE === "DEM_PMWO") {
+				if (oData.ALLOW_AUTOSCHEDULE) {
 					aPathsData.push({
 						sPath: sPath,
 						oData: oData,
