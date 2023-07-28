@@ -260,7 +260,10 @@ sap.ui.define([
 		 */
 		onRescheduleButtonPress: function (oEvent) {
 			var oViewModel = this.getModel("viewModel"),
+				oDataModel = this.getModel(),
 				oResourceBundle = this.getResourceBundle(),
+				sPath = oViewModel.getProperty("/Scheduling/selectedDemandPath"),
+				aDemandList = [],
 				oErrorParams = {};
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
 				oErrorParams["bIsPoolExist"] = oResult.bIsPoolExist;
@@ -274,6 +277,11 @@ sap.ui.define([
 				}
 			}.bind(this)).then(function (oResult) {
 				if (oResult.bNotAssigned) {
+					aDemandList = [{
+						sPath:sPath,
+						oData:oDataModel.getProperty(sPath)
+					}];
+					oViewModel.setProperty("/Scheduling/demandList", aDemandList);
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					var mParams = {
 						entitySet: "DemandSet"
