@@ -88,7 +88,9 @@ sap.ui.define([
 		 * @return {integer} - It will return the length of the array;
 		 */
 		_checkDuplicatePoolSelection:function(oParamModel,oSchedulingObj){
-			var aPoolSelection = oSchedulingObj.selectedResources.filter(mPath => oParamModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1)
+			var aPoolSelection = oSchedulingObj.selectedResources.filter(function(mPath){
+				return oParamModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1
+			});
 			if(aPoolSelection.length  !== oSchedulingObj.selectedResources.length){
 				return true;
 			}
