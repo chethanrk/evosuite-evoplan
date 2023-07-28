@@ -261,11 +261,10 @@ sap.ui.define([
 		onRescheduleButtonPress: function (oEvent) {
 			var oViewModel = this.getModel("viewModel"),
 				oResourceBundle = this.getResourceBundle(),
-				bIsPoolExist = false,
-				sPoolNames = "";
+				oErrorParams = {};
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
-				bIsPoolExist = oResult.bIsPoolExist;
-				sPoolNames = oResult.poolResource;
+				oErrorParams["bIsPoolExist"] = oResult.bIsPoolExist;
+				oErrorParams["sPoolNames"] = oResult.poolResource;
 				if (oResult.bNoDuplicate) {
 					//calling function to check if the demand already is assigned to one of the selected resource
 					return this.oSchedulingActions.checkAssignedResource();
@@ -275,16 +274,11 @@ sap.ui.define([
 				}
 			}.bind(this)).then(function (oResult) {
 				if (oResult.bNotAssigned) {
-					if(bIsPoolExist){
-						setTimeout(function(){
-							this.showMessageToast(this.getResourceBundle().getText("ymsg.poolResourceExist", sPoolNames));
-						}.bind(this),500);
-					}
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					var mParams = {
 						entitySet: "DemandSet"
 					}
-					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams);
+					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams, oErrorParams);
 				} else {
 					this._showErrorMessage(oResourceBundle.getText("ymsg.alreadyAssigned", oResult.resourceNames));
 				}

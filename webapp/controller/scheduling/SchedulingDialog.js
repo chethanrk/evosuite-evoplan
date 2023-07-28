@@ -55,7 +55,7 @@ sap.ui.define([
 		 * @param {*} oView 
 		 * @param {*} mParams 
 		 */
-		openSchedulingDialog: function (oView, mParams) {
+		openSchedulingDialog: function (oView, mParams, oErrorParam) {
 			this._oView = oView;
 			this._mParams = mParams || {};
 
@@ -77,6 +77,9 @@ sap.ui.define([
 			this._ScheduleDialog.then(function (oDialog) {
 				this._renderWizardStep1Binding(oDialog);
 				oDialog.open();
+				if(!_.isEmpty(oErrorParam)){
+					this._showSchedulingMessageToast(oDialog, oErrorParam);
+				}
 			}.bind(this));
 			
 		},
@@ -336,6 +339,24 @@ sap.ui.define([
 			}else{
 				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemAssignmentListCount", [sCounter]));
 			}
+		},
+		/**
+		 * Method creates message toast for scheduling dialog and displays it.
+		 * @param {object} oSource - source control for MessageToast display
+		 * @param {object} mParam - parameters for message creation and display
+		 * Possible value of mParam:
+		 * bIsPoolExist - Boolean - If true, then POOL resource is selected.
+		 * sPoolNames - Strin.g - All POOL name selected, it is seperated by \n
+		 */
+		_showSchedulingMessageToast: function(oSource, mParam){
+			var message = "";
+			if(mParam.bIsPoolExist){
+				message = message + this._oResourceBundle.getText("ymsg.poolResourceExist", mParam.sPoolNames);
+			}
+			this.showMessageToast(message,{
+				width:"auto",
+				of: oSource
+			})
 		}
 
 	});
