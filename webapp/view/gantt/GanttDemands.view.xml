@@ -26,7 +26,7 @@
 				</OverflowToolbar>
 			</smartTable:customToolbar>
 			<table:Table enableGrouping="false" visibleRowCountMode="Auto" enableColumnReordering="false" enableCellFilter="true"
-				rowSelectionChange="onRowSelectionChange" minAutoRowCount="3" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}" cellClick="onCopyDemandCellData">
+				rowSelectionChange="onRowSelectionChange" minAutoRowCount="3" threshold="{parts:['user>/DEFAULT_DEMAND_THRESHOLD','user>/DEFAULT_DEMAND_SELECT_ALL'], formatter:'.formatter.getDemandTableThreshold'}" cellClick="onCopyDemandCellData">
 				<table:rowSettingsTemplate>
 					<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>
 				</table:rowSettingsTemplate>

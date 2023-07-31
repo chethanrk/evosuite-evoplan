@@ -354,10 +354,12 @@ sap.ui.define([
 			if(mParam.bIsPoolExist){
 				message = message + this._oResourceBundle.getText("ymsg.poolResourceExist", mParam.sPoolNames);
 			}
-			this.showMessageToast(message,{
-				width:"auto",
-				source: oSource
-			})
+			if (message) {
+				this.showMessageToast(message, {
+					width: "auto",
+					source: oSource
+				});
+			}
 		}
 
 	});

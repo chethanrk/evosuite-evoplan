@@ -22,7 +22,7 @@
 				<core:ExtensionPoint name="TableExtP|Map|DemandSet|TableToolbar|Right"/>
 			</OverflowToolbar>
 		</smartTable:customToolbar>
-		<table:Table enableGrouping="false" visibleRowCountMode="Auto" enableColumnReordering="false" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}"
+		<table:Table enableGrouping="false" visibleRowCountMode="Auto" enableColumnReordering="false" threshold="{parts:['user>/DEFAULT_DEMAND_THRESHOLD','user>/DEFAULT_DEMAND_SELECT_ALL'], formatter:'.formatter.getDemandTableThreshold'}"
 			enableCellFilter="false" rowSelectionChange="onRowSelectionChange" minAutoRowCount="3" cellClick="onCopyDemandCellData">
 			<table:rowSettingsTemplate>
 				<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>

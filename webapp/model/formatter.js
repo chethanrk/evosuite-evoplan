@@ -1096,6 +1096,18 @@ sap.ui.define([
 			} else {
 				return oBundle.getText("xtit.assignModalTitle");
 			}
+		},
+
+		/**
+		 * getting Demand table threshold if threshold is less the demand table select All config
+		 * @param nThreshold,nSelectAll
+		 * @return {Number}
+		 */
+		getDemandTableThreshold: function (nThreshold, nSelectAll) {
+			if (nSelectAll > nThreshold) {
+				return nSelectAll;
+			}
+			return nThreshold;
 		}
 	};
 });
