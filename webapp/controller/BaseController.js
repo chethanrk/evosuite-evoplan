@@ -101,9 +101,11 @@ sap.ui.define([
 		 * Shows the toast message on the screen
 		 * @param sMsg Messgae to be shown
 		 */
-		showMessageToast: function (sMsg) {
+		showMessageToast: function (sMsg, mParams) {
 			MessageToast.show(sMsg, {
-				duration: 5000
+				duration: 5000,
+				width: mParams.width || '15rem',
+				of: mParams.source || window
 			});
 		},
 

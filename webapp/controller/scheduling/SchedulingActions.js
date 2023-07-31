@@ -130,7 +130,9 @@ sap.ui.define([
 				aResourceGroupPromise = [],
 				aFilters = [],
 				aResourceFilters = oViewModel.getProperty("/Scheduling/aResourceTblFilters"),
-				aFinalResouceList = [];
+				aFinalResouceList = [],
+				aPoolResource = [],
+				bIsPoolExist=false;
 
 
 			//method will check for the duplicate resource
@@ -155,7 +157,9 @@ sap.ui.define([
 				}
 				return {
 					bNoDuplicate: bValidateState,
-					resourceNames: aResourceNameList.join("\n")
+					resourceNames: aResourceNameList.join("\n"),
+					bIsPoolExist: bIsPoolExist,
+					poolResource: aPoolResource.join("\n")
 				};
 			};
 			//Read all resource selected
@@ -168,6 +172,9 @@ sap.ui.define([
 				aFilters = [];
 				if (oResourceObj.ResourceGuid) {
 					aResourceData.push(oResourceObj);
+				} else if(oResourceObj.NodeId.split(":")[0] === "POOL"){
+					aPoolResource.push(oResourceObj.Description);
+					bIsPoolExist = true;
 				} else if (oResourceObj.ResourceGroupGuid) {
 					aFilters.push(new Filter("ParentNodeId", "EQ", oResourceObj.NodeId));
 					if (aResourceFilters.length > 0) {
@@ -233,10 +240,13 @@ sap.ui.define([
 		 * @param {Array} aSelectedRowsIdx 
 		 */
 		validateSelectedDemands: function (oTable, aSelectedRowsIdx) {
-			var oSelectedPaths = this._checkAllowedDemands(oTable, aSelectedRowsIdx);
+			var oSelectedPaths = this._checkAllowedDemands(oTable, aSelectedRowsIdx),
+			oMsgParam = {};
 
 			this.checkDuplicateResource().then(function (oResult) {
 				if (oResult.bNoDuplicate) {
+					oMsgParam["bIsPoolExist"] = oResult.bIsPoolExist;
+					oMsgParam["sPoolNames"] = oResult.poolResource;
 					if (oSelectedPaths.aNonAssignable.length > 0) {
 						//show popup with list of demands who are not allow for assign
 						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
@@ -248,7 +258,7 @@ sap.ui.define([
 						var mParams = {
 							entitySet: "DemandSet"
 						}
-						this._controller.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this._controller.getView(), mParams);
+						this._controller.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this._controller.getView(), mParams, oMsgParam);
 					}
 
 				} else {
