@@ -815,7 +815,7 @@ sap.ui.define([
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
 				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
 				sTargetPath = oDropContext.getPath(),
-				aSources = this.oViewModel.getProperty("/dragSession") || this.localStorage.get("Evo-aPathsData"),
+				aSources = JSON.parse(this.localStorage.get("Evo-aPathsData")) || this.oViewModel.getProperty("/dragSession"),
 				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
 				iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays"),
 				oSvgPoint, oTargetDate, endDate;
