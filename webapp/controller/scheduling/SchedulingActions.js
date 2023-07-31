@@ -125,12 +125,10 @@ sap.ui.define([
 				oGanttModel = this.oGanttModel,
 				aResourcePath = oViewModel.getProperty("/Scheduling/selectedResources"),
 				aResourceData = [],
-				aFinalResourceData = [],
 				oResourceObj = {},
 				aResourceGroupPromise = [],
 				aFilters = [],
 				aResourceFilters = oViewModel.getProperty("/Scheduling/aResourceTblFilters"),
-				aFinalResouceList = [],
 				aPoolResource = [],
 				bIsPoolExist=false;
 
@@ -192,11 +190,11 @@ sap.ui.define([
 				oAppViewModel.setProperty("/busy", false);
 				aResult.forEach(function (oResult) {
 					aResourceData = aResourceData.concat(oResult.results);
-					aFinalResourceData = aResourceData.filter(function (oParam1) {
+					aResourceData = aResourceData.filter(function (oParam1) {
 						return (oParam1.NodeId.indexOf("POOL") < 0);
 					});
 				});
-				return checkDuplicate(aFinalResourceData);
+				return checkDuplicate(aResourceData);
 			}.bind(this));
 			//Read all Resource from Resource group
 
