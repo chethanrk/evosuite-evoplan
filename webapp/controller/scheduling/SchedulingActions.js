@@ -125,12 +125,10 @@ sap.ui.define([
 				oGanttModel = this.oGanttModel,
 				aResourcePath = oViewModel.getProperty("/Scheduling/selectedResources"),
 				aResourceData = [],
-				aFinalResourceData = [],
 				oResourceObj = {},
 				aResourceGroupPromise = [],
 				aFilters = [],
 				aResourceFilters = oViewModel.getProperty("/Scheduling/aResourceTblFilters"),
-				aFinalResouceList = [],
 				aPoolResource = [],
 				bIsPoolExist=false;
 
