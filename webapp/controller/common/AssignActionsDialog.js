@@ -186,10 +186,7 @@ sap.ui.define([
 				this.showMessageToast(sMsg);
 				return;
 			}
-			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			// if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
-			// 	this._updatedAssignmentsPath(aContexts);
-			// }
+			
 			this._eventBus.publish("AssignActionsDialog", "selectAssign", {
 				oView: this._oView,
 				isReassign: this.reAssign,
