@@ -70,13 +70,11 @@ sap.ui.define([
 				oResourceDataModel=this.oGanttModel;
 			}
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length === 1) {
-				if (this._checkDuplicatePoolSelection(oResourceDataModel,oScheduling)) {
 					oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 					if (oSelectedDemandItem.ALLOW_RESCHEDULE) {
 						this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
 						return;
 					}
-				}
 			}
 			this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 			return;
@@ -86,17 +84,17 @@ sap.ui.define([
 		 * button is enabled.
 		 */
 		validateReScheduleAfterPress:function(){
-			var oSelectedDemandItem,
-			oScheduling = this.oViewModel.getProperty("/Scheduling"),
+			var oScheduling = this.oViewModel.getProperty("/Scheduling"),
 			oResourceDataModel=this.oDataModel;
 			if(this.oViewModel.getProperty("/sViewRoute")==="NEWGANTT"){
 				oResourceDataModel=this.oGanttModel;
 			}
 			// first if we are checking if only pools are selected in the resource tree.
 			if (!this._checkDuplicatePoolSelection(oResourceDataModel,oScheduling)) {
-				this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
+				this._showErrorMessage(this.oResourceBundle.getText("ysmg.PoolSelectedError"));
 				return false;
 			}
+			return true;
 		},
 
 		/** 
