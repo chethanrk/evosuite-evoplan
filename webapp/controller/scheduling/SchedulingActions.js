@@ -60,7 +60,7 @@ sap.ui.define([
 		 * Function to validate rescheduling button
 		 */
 		validateReScheduleButton: function () {
-			var oSelectedDemandItem, oScheduling;
+			var oSelectedDemandItem,
 			oScheduling = this.oViewModel.getProperty("/Scheduling"),
 			oResourceDataModel=this.oDataModel;
 			if (!this.userModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")) {
@@ -80,6 +80,23 @@ sap.ui.define([
 			}
 			this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 			return;
+		},
+		/**
+		 * This method is used to display the validation messages once the Re-Schedule 
+		 * button is enabled.
+		 */
+		validateReScheduleAfterPress:function(){
+			var oSelectedDemandItem,
+			oScheduling = this.oViewModel.getProperty("/Scheduling"),
+			oResourceDataModel=this.oDataModel;
+			if(this.oViewModel.getProperty("/sViewRoute")==="NEWGANTT"){
+				oResourceDataModel=this.oGanttModel;
+			}
+			// first if we are checking if only pools are selected in the resource tree.
+			if (!this._checkDuplicatePoolSelection(oResourceDataModel,oScheduling)) {
+				this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
+				return false;
+			}
 		},
 
 		/** 
