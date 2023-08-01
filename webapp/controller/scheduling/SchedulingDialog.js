@@ -117,6 +117,41 @@ sap.ui.define([
 			this.oSchedulingActions.handleScheduleDemands();
 
 			this._renderWizardStep2Binding();
+			this.getDemandPayload(); //To be removed
+		},
+		getDemandPayload:function(){
+			// function to be removed
+			var aSelectedDemands = this._oViewModel.getProperty("/Scheduling/demandList"),
+				locations=[],
+				orders=[];
+				aSelectedDemands.forEach(function(oDemand){
+					locations.push({						
+						"$type": "CustomerSite",
+						"id": oDemand.oData.Guid + "_location",
+						"routeLocation": {
+							"$type": "OffRoadRouteLocation",
+							"offRoadCoordinate": {
+								"x": oDemand.oData.LATITUDE,
+								"y": oDemand.oData.LONGITUDE
+							}
+						}						  
+					});
+
+					orders.push({
+						"$type": "VisitOrder",
+						"id": oDemand.oData.Guid,
+						"locationId": oDemand.oData.Guid + "_location",
+						"priority":  parseInt(oDemand.oData.PRIORITY),
+						"serviceTime": 21600,
+						"requiredVehicleEquipment": oDemand.oData.QUALIFICATION_DESCRIPTION.split(",")
+					});
+				});
+
+				return {
+					locations: locations,
+					orders: orders
+				};
+
 		},
 		/**
 		 * This method is used to handle the press event of 
