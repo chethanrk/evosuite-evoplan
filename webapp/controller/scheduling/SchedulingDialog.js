@@ -225,6 +225,9 @@ sap.ui.define([
 			this._oViewModel.setProperty("/Scheduling/sScheduleDialogTitle", sDialogTitle);
 			this._oViewModel.setProperty("/Scheduling/bSchedulingTableBusy", true);
 
+			this._oViewModel.setProperty("/Scheduling/startDate", null);
+			this._oViewModel.setProperty("/Scheduling/endDate", null);
+
 
 			var oData = {
 				bBackButtonVisible: false,
