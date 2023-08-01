@@ -187,9 +187,9 @@ sap.ui.define([
 				return;
 			}
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
-				this._updatedAssignmentsPath(aContexts);
-			}
+			// if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
+			// 	this._updatedAssignmentsPath(aContexts);
+			// }
 			this._eventBus.publish("AssignActionsDialog", "selectAssign", {
 				oView: this._oView,
 				isReassign: this.reAssign,
@@ -521,17 +521,7 @@ sap.ui.define([
 				aAssignmentStatus = this._getAssignmentStatus(aSelectedAssignments);
 			this._component.AssignmentStatus.open(this._oView, oSource, aAssignmentStatus, this._mParameters, this._oAssignMentTable);
 		},
-		/**
-		* Function for capturing updated Resource Contexts from Assignments
-		 * @param aContexts
-		 * Since 2309
-		 */
-		_updatedAssignmentsPath: function (aContexts) {
-			for (var a in aContexts) {
-				this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(aContexts[a].getPath()));
-			}
-		},
-
+		
 		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog, this);
 			this._eventBus.subscribe("AssignTreeDialog", "updateSelection", this._deselectAssignments, this);
