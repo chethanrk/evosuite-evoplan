@@ -54,7 +54,7 @@ sap.ui.define([
 						} else {
 							return;
 						}
-					});
+					}.bind(this));
 				} else {
 					this._proceedToAssignTools(aSources, oDateParams, mParameters);
 				}
