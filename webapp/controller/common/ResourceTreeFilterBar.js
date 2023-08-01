@@ -61,6 +61,7 @@ sap.ui.define([
 			this._component = this._oView.getController().getOwnerComponent();
 			this._viewModel = this._component.getModel("viewModel");
 			this._userModel = this._component.getModel("user");
+			this._eventBus =  sap.ui.getCore().getEventBus();
 			//use global promise for getting when filterbar was fully initalized
 			// create fragment lazily
 			return Fragment.load({
@@ -146,7 +147,9 @@ sap.ui.define([
 		 * event when something in SmartFileterBar was changed
 		 * @param oEvent
 		 */
-		onFilterBarChanged: function (oEvent) {},
+		onFilterBarChanged: function (oEvent) {
+			console.log("method trigerred");
+		},
 
 		/**
 		 * event when a custom control value changed
@@ -353,6 +356,7 @@ sap.ui.define([
 			if (this.getFilterBar()._updateToolbarText) {
 				this.getFilterBar()._updateToolbarText();
 			}
+			this._eventBus.publish("ManageAbsences", "ClearSelection", {});
 		},
 
 		/**
