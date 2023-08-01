@@ -148,7 +148,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onFilterBarChanged: function (oEvent) {
-			console.log("method trigerred");
+			
 		},
 
 		/**
