@@ -27,6 +27,7 @@ sap.ui.define([
 			this.oGanttModel = controller.getModel("ganttModel");
 			this.userModel = controller.getModel("user");
 			this.oResourceBundle = controller.getResourceBundle();
+			this._eventBus = sap.ui.getCore().getEventBus();
 
 		},
 
@@ -91,7 +92,8 @@ sap.ui.define([
 			}
 			// first if we are checking if only pools are selected in the resource tree.
 			if (!this._checkDuplicatePoolSelection(oResourceDataModel,oScheduling)) {
-				this._showErrorMessage(this.oResourceBundle.getText("ysmg.PoolSelectedError"));
+				this.showMessageToast(this.oResourceBundle.getText("ysmg.PoolSelectedError"));
+				this._eventBus.publish("ManageAbsences", "ClearSelection",{});
 				return false;
 			}
 			return true;
