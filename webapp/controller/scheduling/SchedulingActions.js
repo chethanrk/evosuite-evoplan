@@ -25,8 +25,9 @@ sap.ui.define([
 			this.oAppViewModel = controller.getModel("appView");
 			this.oDataModel = controller.getModel();
 			this.oGanttModel = controller.getModel("ganttModel");
-			this.userModel = controller.getModel("user");
+			this.oUserModel = controller.getModel("user");
 			this.oResourceBundle = controller.getResourceBundle();
+			this._oEventBus = sap.ui.getCore().getEventBus();
 			this.oOwnerComponent = controller.getOwnerComponent();
 		},
 
@@ -41,7 +42,7 @@ sap.ui.define([
 			var oScheduling;
 			oScheduling = this.oViewModel.getProperty("/Scheduling"),
 			oResourceDataModel=this.oDataModel;
-			if (!this.userModel.getProperty("/ENABLE_AUTO_SCHEDULE_BUTTON")) {
+			if (!this.oUserModel.getProperty("/ENABLE_AUTO_SCHEDULE_BUTTON")) {
 				return;
 			}
 			if(this.oViewModel.getProperty("/sViewRoute")==="NEWGANTT"){
@@ -60,26 +61,49 @@ sap.ui.define([
 		 * Function to validate rescheduling button
 		 */
 		validateReScheduleButton: function () {
-			var oSelectedDemandItem, oScheduling;
+			var oSelectedDemandItem,
 			oScheduling = this.oViewModel.getProperty("/Scheduling"),
 			oResourceDataModel=this.oDataModel;
-			if (!this.userModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")) {
+			if (!this.oUserModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")) {
 				return;
 			};
 			if(this.oViewModel.getProperty("/sViewRoute")==="NEWGANTT"){
 				oResourceDataModel=this.oGanttModel;
 			}
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length === 1) {
-				if (this._checkDuplicatePoolSelection(oResourceDataModel,oScheduling)) {
 					oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 					if (oSelectedDemandItem.ALLOW_RESCHEDULE) {
 						this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
 						return;
 					}
-				}
 			}
 			this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 			return;
+		},
+		/**
+		 * This method is used to display the validation messages once the Re-Schedule 
+		 * button is enabled.
+		 * This method is applicable for the demands, gantt chart and maps view.
+		 * @return {boolean} - 'false' if only all pools are selected | 'true' if any resource/resource group is also selected
+		 */
+		validateReScheduleAfterPress:function(){
+			var oScheduling = this.oViewModel.getProperty("/Scheduling"),
+			oResourceDataModel=this.oDataModel,
+			sRoute = this.oViewModel.getProperty("/sViewRoute");
+			if(sRoute ==="NEWGANTT"){
+				oResourceDataModel=this.oGanttModel;
+			}
+			// first if we are checking if only pools are selected in the resource tree.
+			if (!this._checkDuplicatePoolSelection(oResourceDataModel,oScheduling)) {
+				this.showMessageToast(this.oResourceBundle.getText("ysmg.PoolSelectedError"));
+				if(sRoute ==="NEWGANTT"){
+					this._oEventBus.publish("BaseController", "resetSelections",{});
+				}else{
+					this._oEventBus.publish("ManageAbsences", "ClearSelection",{});
+				}
+				return false;
+			};
+			return true;
 		},
 
 		/** 
