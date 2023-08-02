@@ -1151,6 +1151,17 @@ sap.ui.define([
 					mParameters = oUserConfirmResponse.parameters;
 				this.deleteAssignment(sAssginmentGuid, mParameters);
 			}
-		}
+		},
+		/**
+		* Function for capturing updated Resource Contexts from Assignments
+		 * @param aContexts
+		 * Since 2309
+		 */
+		_updatedAssignmentsPath: function (aContexts) {
+			for (var a in aContexts) {
+				this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(aContexts[a].getPath()));
+			}
+		},
+
 	});
 });

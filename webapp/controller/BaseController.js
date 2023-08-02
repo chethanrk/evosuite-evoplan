@@ -1203,8 +1203,8 @@ sap.ui.define([
 
 				aDemandsForSplitAssignment = oResourceAvailabiltyResponse.arrayOfDemandsToSplit,
 				bShowSplitConfirmationDialog, sDemandSourceType;
-				sDemandSourceType = this.getObjectSourceType(aDemandsForSplitAssignment);
-				bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP") && (sDemandSourceType === "DEM_PMWO");
+			sDemandSourceType = this.getObjectSourceType(aDemandsForSplitAssignment);
+			bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP") && (sDemandSourceType === "DEM_PMWO");
 
 			return new Promise(function (resolve, reject) {
 
@@ -1447,11 +1447,12 @@ sap.ui.define([
 		* @param oResObj
 		*/
 		_updatedDmdResources: function (oViewModel, oResObj) {
-			var aUpdatedResources = oViewModel.getProperty("/aUpdatedResources"),
-				sNodeId = oResObj.NodeId,
-				oUpdatedResObj;
-			if (!sNodeId) {
-				sNodeId = oResObj.ResourceGuid + "//" + oResObj.ResourceGroupGuid
+			var oUpdatedResObj,
+				aUpdatedResources = oViewModel.getProperty("/aUpdatedResources"),
+				sNodeId = oResObj.ResourceGuid + "//" + oResObj.ResourceGroupGuid;
+			//Considering as Pool Resources when Dropped on Resource Group
+			if (oResObj.NodeType === "RES_GROUP" || oResObj.ResourceGuid === "") {
+				sNodeId = "POOL:" + oResObj.ResourceGroupGuid;
 			}
 			oUpdatedResObj = {
 				ResourceGuid: oResObj.ResourceGuid,
