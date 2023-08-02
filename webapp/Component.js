@@ -601,6 +601,7 @@ sap.ui.define([
 					selectedDemandPath: null,
 					resourceList:[],
 					resourceData:{},
+					demandData: {},
 					DateFrom: moment().startOf("day").toDate(),
 					DateTo: moment().add(14, "days").endOf("day").toDate(),
 					sUtilizationSlider:null,
