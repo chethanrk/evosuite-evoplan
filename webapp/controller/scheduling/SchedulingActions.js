@@ -25,9 +25,9 @@ sap.ui.define([
 			this.oAppViewModel = controller.getModel("appView");
 			this.oDataModel = controller.getModel();
 			this.oGanttModel = controller.getModel("ganttModel");
-			this.userModel = controller.getModel("user");
+			this.oUserModel = controller.getModel("user");
 			this.oResourceBundle = controller.getResourceBundle();
-			this._eventBus = sap.ui.getCore().getEventBus();
+			this._oEventBus = sap.ui.getCore().getEventBus();
 
 		},
 
@@ -42,7 +42,7 @@ sap.ui.define([
 			var oScheduling;
 			oScheduling = this.oViewModel.getProperty("/Scheduling"),
 			oResourceDataModel=this.oDataModel;
-			if (!this.userModel.getProperty("/ENABLE_AUTO_SCHEDULE_BUTTON")) {
+			if (!this.oUserModel.getProperty("/ENABLE_AUTO_SCHEDULE_BUTTON")) {
 				return;
 			}
 			if(this.oViewModel.getProperty("/sViewRoute")==="NEWGANTT"){
@@ -64,7 +64,7 @@ sap.ui.define([
 			var oSelectedDemandItem,
 			oScheduling = this.oViewModel.getProperty("/Scheduling"),
 			oResourceDataModel=this.oDataModel;
-			if (!this.userModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")) {
+			if (!this.oUserModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")) {
 				return;
 			};
 			if(this.oViewModel.getProperty("/sViewRoute")==="NEWGANTT"){
@@ -93,7 +93,7 @@ sap.ui.define([
 			// first if we are checking if only pools are selected in the resource tree.
 			if (!this._checkDuplicatePoolSelection(oResourceDataModel,oScheduling)) {
 				this.showMessageToast(this.oResourceBundle.getText("ysmg.PoolSelectedError"));
-				this._eventBus.publish("ManageAbsences", "ClearSelection",{});
+				this._oEventBus.publish("ManageAbsences", "ClearSelection",{});
 				return false;
 			}
 			return true;
