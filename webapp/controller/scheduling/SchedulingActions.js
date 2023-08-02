@@ -84,6 +84,7 @@ sap.ui.define([
 		 * This method is used to display the validation messages once the Re-Schedule 
 		 * button is enabled.
 		 * This method is applicable for the demands, gantt chart and maps view.
+		 * @return {boolean} - 'false' if only all pools are selected | 'true' if any resource/resource group is also selected
 		 */
 		validateReScheduleAfterPress:function(){
 			var oScheduling = this.oViewModel.getProperty("/Scheduling"),
