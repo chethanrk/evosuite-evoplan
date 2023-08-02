@@ -86,16 +86,21 @@ sap.ui.define([
 		 */
 		validateReScheduleAfterPress:function(){
 			var oScheduling = this.oViewModel.getProperty("/Scheduling"),
-			oResourceDataModel=this.oDataModel;
-			if(this.oViewModel.getProperty("/sViewRoute")==="NEWGANTT"){
+			oResourceDataModel=this.oDataModel,
+			sRoute = this.oViewModel.getProperty("/sViewRoute");
+			if(sRoute ==="NEWGANTT"){
 				oResourceDataModel=this.oGanttModel;
 			}
 			// first if we are checking if only pools are selected in the resource tree.
 			if (!this._checkDuplicatePoolSelection(oResourceDataModel,oScheduling)) {
 				this.showMessageToast(this.oResourceBundle.getText("ysmg.PoolSelectedError"));
-				this._oEventBus.publish("ManageAbsences", "ClearSelection",{});
+				if(sRoute ==="NEWGANTT"){
+					this._oEventBus.publish("BaseController", "resetSelections",{});
+				}else{
+					this._oEventBus.publish("ManageAbsences", "ClearSelection",{});
+				}
 				return false;
-			}
+			};
 			return true;
 		},
 
