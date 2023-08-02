@@ -121,36 +121,37 @@ sap.ui.define([
 		},
 		getDemandPayload:function(){
 			// function to be removed
-			var aSelectedDemands = this._oViewModel.getProperty("/Scheduling/demandList"),
+			var oDemandHash = this._oViewModel.getProperty("/Scheduling/demandData"),
 				locations=[],
 				orders=[];
-				aSelectedDemands.forEach(function(oDemand){
-					locations.push({						
-						"$type": "CustomerSite",
-						"id": oDemand.oData.Guid + "_location",
-						"routeLocation": {
-							"$type": "OffRoadRouteLocation",
-							"offRoadCoordinate": {
-								"x": oDemand.oData.LATITUDE,
-								"y": oDemand.oData.LONGITUDE
-							}
-						}						  
-					});
-
-					orders.push({
-						"$type": "VisitOrder",
-						"id": oDemand.oData.Guid,
-						"locationId": oDemand.oData.Guid + "_location",
-						"priority":  parseInt(oDemand.oData.PRIORITY),
-						"serviceTime": 21600,
-						"requiredVehicleEquipment": oDemand.oData.QUALIFICATION_DESCRIPTION.split(",")
-					});
+			
+			for (let oDemandGuid in oDemandHash){
+				locations.push({						
+					"$type": "CustomerSite",
+					"id": oDemandGuid + "_location",
+					"routeLocation": {
+						"$type": "OffRoadRouteLocation",
+						"offRoadCoordinate": {
+							"x": oDemandHash[oDemandGuid].location.x,
+							"y": oDemandHash[oDemandGuid].location.y
+						}
+					}						  
 				});
 
-				return {
-					locations: locations,
-					orders: orders
-				};
+				orders.push({
+					"$type": "VisitOrder",
+					"id": oDemandGuid,
+					"locationId": oDemandGuid + "_location",
+					"priority":  oDemandHash[oDemandGuid].priority,
+					"serviceTime": oDemandHash[oDemandGuid].serviceTime,
+					"requiredVehicleEquipment": oDemandHash[oDemandGuid].qualification
+				});
+			}
+
+			return {
+				locations: locations,
+				orders: orders
+			};
 
 		},
 		/**
