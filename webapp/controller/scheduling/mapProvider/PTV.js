@@ -231,7 +231,6 @@ sap.ui.define([
 				aVehicles = [],
 				aDrivers = [];
 			for (var sGuid in aResourceData) {
-				debugger;
 				//Resource location coordinates added as DepotSite to add in Locations
 				aResourceLocations.push({
 					"$type": "DepotSite",
@@ -268,7 +267,7 @@ sap.ui.define([
 		 * set the demands data in the payload Structure to Pass to call PTV.
 		 * @return {object} Payload structure with demands data.
 		 */
-		_setDemandsData: function (oPayload, aResourceData) {
+		_setDemandsData: function (oPayload, aDemandsData) {
 			//code for payload creation with demands data needs to place here
 			return oPayload;
 		}
