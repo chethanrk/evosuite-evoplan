@@ -219,6 +219,7 @@ sap.ui.define([
 				aSelectedDemandPath: [],
 				aResourceTblFilters: [],
 				demandList: [],
+				demandData: {},
 				minDate: moment().add(1, "days").startOf("day").toDate(),
 				maxDate: moment().add(15, "days").endOf("day").toDate(),
 				startDate: null,
@@ -353,6 +354,35 @@ sap.ui.define([
 			});
 
 			return oResourceData;
+		},
+		/**
+		 * Method will create and return hash map data fro seleted demand for Auto/Re-schedule
+		 * Hash map will have demand guid as key
+		 * Hash map will have object with location, qualification, priority, serviceTime as value
+		 * Method returns propmise, promise will return hash map
+		 * @returns {object} 
+		 */
+		createDemandScheduleData: function(){
+			var aDemandList = this.oViewModel.getProperty("/Scheduling/demandList"),
+				oTempDemandData = {},
+				oDemandData = {};
+			return new Promise(function(resolve,reject){
+				aDemandList.forEach(function(oDemand){
+					oTempDemandData = {
+						"location":{
+							"x": oDemand.oData.LATITUDE,
+							"y": oDemand.oData.LONGITUDE
+						},
+						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION.split(","),
+						"priority": oDemand.oData.PRIORITY ? parseInt(oDemand.oData.PRIORITY) : 0,
+						"serviceTime": oDemand.oData.Effort ? (parseFloat(oDemand.oData.Effort) * 60 * 60 * 1000) : 0
+					}
+					oDemandData[oDemand.oData.Guid] = oTempDemandData;
+				});
+				this.oViewModel.setProperty("/Scheduling/demandData", oDemandData);
+				resolve(oDemandData);
+			}.bind(this));
+			
 		},
 
 		/**
