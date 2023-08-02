@@ -372,8 +372,8 @@ sap.ui.define([
 					oTempDemandData = {
 						"data": oDemand.oData,
 						"location":{
-							"x": oDemand.oData.LATITUDE,
-							"y": oDemand.oData.LONGITUDE
+							"x": oDemand.oData.LONGITUDE,
+							"y": oDemand.oData.LATITUDE
 						},
 						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION.split(","),
 						"priority": oDemand.oData.PRIORITY ? parseInt(oDemand.oData.PRIORITY) : 0,
