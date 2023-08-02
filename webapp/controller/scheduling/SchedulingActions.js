@@ -370,6 +370,7 @@ sap.ui.define([
 			return new Promise(function(resolve,reject){
 				aDemandList.forEach(function(oDemand){
 					oTempDemandData = {
+						"data": oDemand.oData,
 						"location":{
 							"x": oDemand.oData.LATITUDE,
 							"y": oDemand.oData.LONGITUDE
