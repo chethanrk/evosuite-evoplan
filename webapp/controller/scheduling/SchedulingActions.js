@@ -27,7 +27,7 @@ sap.ui.define([
 			this.oGanttModel = controller.getModel("ganttModel");
 			this.userModel = controller.getModel("user");
 			this.oResourceBundle = controller.getResourceBundle();
-
+			this.oOwnerComponent = controller.getOwnerComponent();
 		},
 
 		/* =========================================================== */
@@ -257,7 +257,8 @@ sap.ui.define([
 						var mParams = {
 							entitySet: "DemandSet"
 						}
-						this._controller.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this._controller.getView(), mParams, oMsgParam);
+						this._controller.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this._controller.getView(), mParams, oMsgParam, this);
+						this.createScheduleData();
 					}
 
 				} else {
@@ -331,6 +332,7 @@ sap.ui.define([
 			//looping resource list to create data
 			aResourceList.forEach(function (oResource, i) {
 				oTempResourceData = {
+					aData: oResource,
 					assignments: aAssignmentData[i].results,
 					breaks: [],
 					workSchedules: [],
@@ -474,6 +476,18 @@ sap.ui.define([
 			this.oViewModel.setProperty("/Scheduling/aResourceTblFilters", aSchedulingFilter);
 		},
 
+		/**
+		 * This method to handle payload creation
+		 * @return {Object} - Payload object
+		 */
+		handleScheduleDemands: function (aPayload) {
+			var aResourceData = this.oViewModel.getProperty("/Scheduling/resourceData"),
+				aDemandsData = {};
+			var aPayload = this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
+			
+			// After creation of payload, method to call the PTV service will be added here ;
+		},
+
 		/* =========================================================== */
 		/* Private methods                                              */
 		/* =========================================================== */
@@ -524,7 +538,7 @@ sap.ui.define([
 				return true;
 			}
 			return false;
-		},
+		}
 		
 	});
 });
