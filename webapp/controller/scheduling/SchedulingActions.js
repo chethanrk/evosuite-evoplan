@@ -322,7 +322,6 @@ sap.ui.define([
 							entitySet: "DemandSet"
 						}
 						this._controller.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this._controller.getView(), mParams, oMsgParam, this);
-						this.createScheduleData();
 					}
 
 				} else {
@@ -435,7 +434,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				aDemandList.forEach(function (oDemand) {
 					oTempDemandData = {
-						"location": {
+						"data": oDemand.oData,
+						"location":{
 							"x": oDemand.oData.LATITUDE,
 							"y": oDemand.oData.LONGITUDE
 						},
