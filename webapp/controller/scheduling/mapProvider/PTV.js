@@ -269,6 +269,34 @@ sap.ui.define([
 		 */
 		_setDemandsData: function (oPayload, aDemandsData) {
 			//code for payload creation with demands data needs to place here
+			var locations=[],
+				orders=[];
+			
+			for (let oDemandGuid in aDemandsData){
+				locations.push({						
+					"$type": "CustomerSite",
+					"id": oDemandGuid + "_location",
+					"routeLocation": {
+						"$type": "OffRoadRouteLocation",
+						"offRoadCoordinate": {
+							"x": aDemandsData[oDemandGuid].location.x,
+							"y": aDemandsData[oDemandGuid].location.y
+						}
+					}						  
+				});
+
+				orders.push({
+					"$type": "VisitOrder",
+					"id": oDemandGuid,
+					"locationId": oDemandGuid + "_location",
+					"priority":  aDemandsData[oDemandGuid].priority,
+					"serviceTime": aDemandsData[oDemandGuid].serviceTime,
+					"requiredVehicleEquipment": aDemandsData[oDemandGuid].qualification
+				});
+			}
+
+			oPayload.locations = oPayload.locations.concat(locations);
+			oPayload.orders = oPayload.orders.concat(orders);
 			return oPayload;
 		}
 
