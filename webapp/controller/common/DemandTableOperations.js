@@ -265,6 +265,9 @@ sap.ui.define([
 				sPath = oViewModel.getProperty("/Scheduling/selectedDemandPath"),
 				aDemandList = [],
 				oMsgParam = {};
+			if(!this.oSchedulingActions.validateReScheduleAfterPress()){
+				return;
+			}
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
 				if (oResult.bNoDuplicate) {
 					oMsgParam["bIsPoolExist"] = oResult.bIsPoolExist;
