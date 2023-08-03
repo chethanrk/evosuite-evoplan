@@ -251,6 +251,9 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
 		 */
 		onAutoscheduleButtonPress: function (oEvent) {
+			if(!this.oSchedulingActions.validateScheduleAfterPress()){
+				return;
+			}
 			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
 		},
 

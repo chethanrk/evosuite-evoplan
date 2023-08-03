@@ -49,13 +49,36 @@ sap.ui.define([
 				oResourceDataModel = this.oGanttModel;
 			}
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
-				if (this._checkDuplicatePoolSelection(oResourceDataModel, oScheduling)) {
 					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 					return;
-				}
 			}
 			this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 			return;
+		},
+		/**
+		 * This method is used to display the validation messages once the Schedule/PlanDemands
+		 * button is enabled.
+		 * This method is applicable for the demands, gantt chart and maps view.
+		 * @return {boolean} - 'false' if only all pools are selected | 'true' if any resource/resource group is also selected
+		 */
+		validateScheduleAfterPress:function(){
+			var oScheduling = this.oViewModel.getProperty("/Scheduling"),
+				oResourceDataModel = this.oDataModel,
+				sRoute = this.oViewModel.getProperty("/sViewRoute");
+			if (sRoute === "NEWGANTT") {
+				oResourceDataModel = this.oGanttModel;
+			}
+			// first if we are checking if only pools are selected in the resource tree.
+			if (!this._checkDuplicatePoolSelection(oResourceDataModel, oScheduling)) {
+				this.showMessageToast(this.oResourceBundle.getText("ysmg.PoolSelectedError"));
+				if (sRoute === "NEWGANTT") {
+					this._oEventBus.publish("BaseController", "resetSelections", {});
+				} else {
+					this._oEventBus.publish("ManageAbsences", "ClearSelection", {});
+				}
+				return false;
+			};
+			return true;
 		},
 		/**
 		 * Function to validate rescheduling button
@@ -73,8 +96,8 @@ sap.ui.define([
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length === 1) {
 				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
+				
 				return;
-
 			}
 			this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 			return;
@@ -102,14 +125,11 @@ sap.ui.define([
 				}
 				return false;
 			};
+			
 			// check if the allow re-schedule flag is enabled or not.
-			if (!this._checkDuplicatePoolSelection(oResourceDataModel, oScheduling)) {
-				this.showMessageToast(this.oResourceBundle.getText("ysmg.PoolSelectedError"));
-				if (sRoute === "NEWGANTT") {
-					this._oEventBus.publish("BaseController", "resetSelections", {});
-				} else {
-					this._oEventBus.publish("ManageAbsences", "ClearSelection", {});
-				}
+			oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
+			if (!oSelectedDemandItem.ALLOW_RESCHEDULE) {
+				this.showMessageToast(this.oResourceBundle.getText("ysmg.DemandRescheduleError"));
 				return false;
 			};
 			return true;
