@@ -162,28 +162,39 @@ sap.ui.define([
 				var bValidateState = true,
 					aResourceNameList = [],
 					oUniqueResourceList = {};
+					sResourceGroupName = "";
+					sResourceFullName = "";
 				aResourceList.forEach(function (oResource) {
 					if (oResource.ResourceGuid) {
 						if (oUniqueResourceList[oResource.ResourceGuid]) {
+							//to check for the existing resource
+							sResourceFullNameOld = oResource.Description + " : " + oUniqueResourceList[oResource.ResourceGuid].Group ;
+							aResourceNameList.indexOf(sResourceFullNameOld) === -1 && aResourceNameList.push(sResourceFullNameOld);
 							bValidateState = false;
-							aResourceNameList.indexOf(oResource.Description) === -1 && aResourceNameList.push(oResource.Description);
+							sResourceGroupName = this.getResourceGroupName(oResource.ParentNodeId);
+							//to check the current resource
+							sResourceFullName = oResource.Description + " : " + sResourceGroupName ;
+							aResourceNameList.indexOf(sResourceFullName) === -1 && aResourceNameList.push(sResourceFullName);
+							
 						} else {
-							oUniqueResourceList[oResource.ResourceGuid] = true;
+							oUniqueResourceList[oResource.ResourceGuid] = {Group:this.getResourceGroupName(oResource.ParentNodeId)};
 						}
 					}
-				});
+				}.bind(this));
 				if (bValidateState) {
 					//storing the final resource list into viewModel>/Scheduling/resourceList
 
 					oViewModel.setProperty("/Scheduling/resourceList", aResourceList);
 				}
+				//sorting the list
+				aResourceNameList.sort();
 				return {
 					bNoDuplicate: bValidateState,
 					resourceNames: aResourceNameList.join("\n"),
 					bIsPoolExist: bIsPoolExist,
 					poolResource: aPoolResource.join("\n")
 				};
-			};
+			}.bind(this);
 			//Read all resource selected
 			aResourcePath.forEach(function (sPath) {
 				if (sPath.indexOf("children") === -1) {
@@ -510,6 +521,17 @@ sap.ui.define([
 			var aPayload = this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
 			
 			// After creation of payload, method to call the PTV service will be added here ;
+		},
+
+		/**
+		 * 
+		 * @param {string} sResourceGuid - Resource guid of the child node of which group name is required
+		 * @returns {string} sResourceGroupName - Resource Group name of the child node
+		 */
+		getResourceGroupName: function(sParentNodeId){
+			var sResourceGroupName;
+			sResourceGroupName = this.oDataModel.getProperty("/ResourceHierarchySet('" + sParentNodeId + "')").Description;
+			return sResourceGroupName;			
 		},
 
 		/* =========================================================== */
