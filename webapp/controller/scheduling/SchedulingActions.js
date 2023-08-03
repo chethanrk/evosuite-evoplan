@@ -94,9 +94,7 @@ sap.ui.define([
 				oResourceDataModel = this.oGanttModel;
 			}
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length === 1) {
-				oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
-				
 				return;
 			}
 			this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
