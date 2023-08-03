@@ -164,6 +164,7 @@ sap.ui.define([
 					oUniqueResourceList = {};
 					sResourceGroupName = "";
 					sResourceFullName = "";
+					sResourceFullNameOld = "";
 				aResourceList.forEach(function (oResource) {
 					if (oResource.ResourceGuid) {
 						if (oUniqueResourceList[oResource.ResourceGuid]) {
