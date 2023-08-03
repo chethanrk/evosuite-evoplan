@@ -258,8 +258,6 @@ sap.ui.define([
 							entitySet: "DemandSet"
 						}
 						this._controller.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this._controller.getView(), mParams, oMsgParam, this);
-						// this.createScheduleData();
-						// this.createDemandScheduleData();
 					}
 
 				} else {
