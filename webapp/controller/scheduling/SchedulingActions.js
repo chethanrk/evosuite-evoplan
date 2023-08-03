@@ -276,8 +276,8 @@ sap.ui.define([
 		 */
 		createScheduleData: function () {
 			var aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
-				oStartDate = this.oViewModel.getProperty("/Scheduling/minDate"),
-				oEndDate = this.oViewModel.getProperty("/Scheduling/maxDate"),
+				oStartDate = this.oViewModel.getProperty("/Scheduling/startDate"),
+				oEndDate = this.oViewModel.getProperty("/Scheduling/endDate"),
 				aAssignmentPromise = [],
 				aAssignmentFilter = [],
 				aAvailabilityPromise = [],
