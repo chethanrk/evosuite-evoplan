@@ -41,41 +41,61 @@ sap.ui.define([
 		validateScheduleButtons: function () {
 			var oScheduling;
 			oScheduling = this.oViewModel.getProperty("/Scheduling"),
-			oResourceDataModel=this.oDataModel;
+				oResourceDataModel = this.oDataModel;
 			if (!this.oUserModel.getProperty("/ENABLE_AUTO_SCHEDULE_BUTTON")) {
 				return;
 			}
-			if(this.oViewModel.getProperty("/sViewRoute")==="NEWGANTT"){
-				oResourceDataModel=this.oGanttModel;
+			if (this.oViewModel.getProperty("/sViewRoute") === "NEWGANTT") {
+				oResourceDataModel = this.oGanttModel;
 			}
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
-				if (this._checkDuplicatePoolSelection(oResourceDataModel,oScheduling)) {
 					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 					return;
-				}
 			}
 			this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 			return;
+		},
+		/**
+		 * This method is used to display the validation messages once the Schedule/PlanDemands
+		 * button is enabled.
+		 * This method is applicable for the demands, gantt chart and maps view.
+		 * @return {boolean} - 'false' if only all pools are selected | 'true' if any resource/resource group is also selected.
+		 */
+		validateScheduleAfterPress:function(){
+			var oScheduling = this.oViewModel.getProperty("/Scheduling"),
+				oResourceDataModel = this.oDataModel,
+				sRoute = this.oViewModel.getProperty("/sViewRoute");
+			if (sRoute === "NEWGANTT") {
+				oResourceDataModel = this.oGanttModel;
+			}
+			// first if we are checking if only pools are selected in the resource tree.
+			if (!this._checkDuplicatePoolSelection(oResourceDataModel, oScheduling)) {
+				this.showMessageToast(this.oResourceBundle.getText("ysmg.PoolSelectedError"));
+				if (sRoute === "NEWGANTT") {
+					this._oEventBus.publish("BaseController", "resetSelections", {});
+				} else {
+					this._oEventBus.publish("ManageAbsences", "ClearSelection", {});
+				}
+				return false;
+			};
+			return true;
 		},
 		/**
 		 * Function to validate rescheduling button
 		 */
 		validateReScheduleButton: function () {
 			var oSelectedDemandItem,
-			oScheduling = this.oViewModel.getProperty("/Scheduling"),
-			oResourceDataModel=this.oDataModel;
+				oScheduling = this.oViewModel.getProperty("/Scheduling"),
+				oResourceDataModel = this.oDataModel;
 			if (!this.oUserModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")) {
 				return;
 			};
-			if(this.oViewModel.getProperty("/sViewRoute")==="NEWGANTT"){
-				oResourceDataModel=this.oGanttModel;
+			if (this.oViewModel.getProperty("/sViewRoute") === "NEWGANTT") {
+				oResourceDataModel = this.oGanttModel;
 			}
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length === 1) {
-					oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
-					if (oSelectedDemandItem.ALLOW_RESCHEDULE) {
-						this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
-						return;
-					}
+				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
+				return;
 			}
 			this.oViewModel.setProperty("/Scheduling/bEnableReschedule", false);
 			return;
@@ -84,23 +104,30 @@ sap.ui.define([
 		 * This method is used to display the validation messages once the Re-Schedule 
 		 * button is enabled.
 		 * This method is applicable for the demands, gantt chart and maps view.
-		 * @return {boolean} - 'false' if only all pools are selected | 'true' if any resource/resource group is also selected
+		 * @return {boolean} - 'false' if validation not met | 'true' validation met.
 		 */
-		validateReScheduleAfterPress:function(){
+		validateReScheduleAfterPress: function () {
 			var oScheduling = this.oViewModel.getProperty("/Scheduling"),
-			oResourceDataModel=this.oDataModel,
-			sRoute = this.oViewModel.getProperty("/sViewRoute");
-			if(sRoute ==="NEWGANTT"){
-				oResourceDataModel=this.oGanttModel;
+				oResourceDataModel = this.oDataModel,
+				sRoute = this.oViewModel.getProperty("/sViewRoute");
+			if (sRoute === "NEWGANTT") {
+				oResourceDataModel = this.oGanttModel;
 			}
 			// first if we are checking if only pools are selected in the resource tree.
-			if (!this._checkDuplicatePoolSelection(oResourceDataModel,oScheduling)) {
+			if (!this._checkDuplicatePoolSelection(oResourceDataModel, oScheduling)) {
 				this.showMessageToast(this.oResourceBundle.getText("ysmg.PoolSelectedError"));
-				if(sRoute ==="NEWGANTT"){
-					this._oEventBus.publish("BaseController", "resetSelections",{});
-				}else{
-					this._oEventBus.publish("ManageAbsences", "ClearSelection",{});
+				if (sRoute === "NEWGANTT") {
+					this._oEventBus.publish("BaseController", "resetSelections", {});
+				} else {
+					this._oEventBus.publish("ManageAbsences", "ClearSelection", {});
 				}
+				return false;
+			};
+			
+			// check if the allow re-schedule flag is enabled or not.
+			oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
+			if (!oSelectedDemandItem.ALLOW_RESCHEDULE) {
+				this.showMessageToast(this.oResourceBundle.getText("ysmg.DemandRescheduleError"));
 				return false;
 			};
 			return true;
@@ -154,7 +181,7 @@ sap.ui.define([
 				aFilters = [],
 				aResourceFilters = oViewModel.getProperty("/Scheduling/aResourceTblFilters"),
 				aPoolResource = [],
-				bIsPoolExist=false;
+				bIsPoolExist = false;
 
 
 			//method will check for the duplicate resource
@@ -162,28 +189,40 @@ sap.ui.define([
 				var bValidateState = true,
 					aResourceNameList = [],
 					oUniqueResourceList = {};
+					sResourceGroupName = "";
+					sResourceFullName = "";
+					sResourceFullNameOld = "";
 				aResourceList.forEach(function (oResource) {
 					if (oResource.ResourceGuid) {
 						if (oUniqueResourceList[oResource.ResourceGuid]) {
+							//to check for the existing resource
+							sResourceFullNameOld = oResource.Description + " : " + oUniqueResourceList[oResource.ResourceGuid].Group ;
+							aResourceNameList.indexOf(sResourceFullNameOld) === -1 && aResourceNameList.push(sResourceFullNameOld);
 							bValidateState = false;
-							aResourceNameList.indexOf(oResource.Description) === -1 && aResourceNameList.push(oResource.Description);
+							sResourceGroupName = this.getResourceGroupName(oResource.ParentNodeId);
+							//to check the current resource
+							sResourceFullName = oResource.Description + " : " + sResourceGroupName ;
+							aResourceNameList.indexOf(sResourceFullName) === -1 && aResourceNameList.push(sResourceFullName);
+							
 						} else {
-							oUniqueResourceList[oResource.ResourceGuid] = true;
+							oUniqueResourceList[oResource.ResourceGuid] = {Group:this.getResourceGroupName(oResource.ParentNodeId)};
 						}
 					}
-				});
+				}.bind(this));
 				if (bValidateState) {
 					//storing the final resource list into viewModel>/Scheduling/resourceList
 
 					oViewModel.setProperty("/Scheduling/resourceList", aResourceList);
 				}
+				//sorting the list
+				aResourceNameList.sort();
 				return {
 					bNoDuplicate: bValidateState,
 					resourceNames: aResourceNameList.join("\n"),
 					bIsPoolExist: bIsPoolExist,
 					poolResource: aPoolResource.join("\n")
 				};
-			};
+			}.bind(this);
 			//Read all resource selected
 			aResourcePath.forEach(function (sPath) {
 				if (sPath.indexOf("children") === -1) {
@@ -194,7 +233,7 @@ sap.ui.define([
 				aFilters = [];
 				if (oResourceObj.ResourceGuid) {
 					aResourceData.push(oResourceObj);
-				} else if(oResourceObj.NodeId.split(":")[0] === "POOL"){
+				} else if (oResourceObj.NodeId.split(":")[0] === "POOL") {
 					aPoolResource.push(oResourceObj.Description);
 					bIsPoolExist = true;
 				} else if (oResourceObj.ResourceGroupGuid) {
@@ -264,7 +303,7 @@ sap.ui.define([
 		 */
 		validateSelectedDemands: function (oTable, aSelectedRowsIdx) {
 			var oSelectedPaths = this._checkAllowedDemands(oTable, aSelectedRowsIdx),
-			oMsgParam = {};
+				oMsgParam = {};
 
 			this.checkDuplicateResource().then(function (oResult) {
 				if (oResult.bNoDuplicate) {
@@ -387,15 +426,15 @@ sap.ui.define([
 		 * Method returns propmise, promise will return hash map
 		 * @returns {object} 
 		 */
-		createDemandScheduleData: function(){
+		createDemandScheduleData: function () {
 			var aDemandList = this.oViewModel.getProperty("/Scheduling/demandList"),
 				oTempDemandData = {},
 				oDemandData = {};
-			return new Promise(function(resolve,reject){
-				aDemandList.forEach(function(oDemand){
+			return new Promise(function (resolve, reject) {
+				aDemandList.forEach(function (oDemand) {
 					oTempDemandData = {
 						"data": oDemand.oData,
-						"location":{
+						"location": {
 							"x": oDemand.oData.LONGITUDE,
 							"y": oDemand.oData.LATITUDE
 						},
@@ -408,7 +447,7 @@ sap.ui.define([
 				this.oViewModel.setProperty("/Scheduling/demandData", oDemandData);
 				resolve(oDemandData);
 			}.bind(this));
-			
+
 		},
 
 		/**
@@ -445,17 +484,17 @@ sap.ui.define([
 				this.oViewModel.setProperty("/Scheduling/maxDate", moment(oStartDate).add(14, "days").endOf("day").toDate());
 			}
 
-			for(var i = 0, len = aDemands.length; i < len; i++){
+			for (var i = 0, len = aDemands.length; i < len; i++) {
 				var demandStartDate = moment(aDemands[i].DateFrom),
 					demandEndDate = moment(aDemands[i].DateTo);
 
-				if(!startDate || !endDate){
+				if (!startDate || !endDate) {
 					//when datepickers was set empty by user
 					aDemands[i].dateRangeIconStatus = IconColor.Neutral;
 					aDemands[i].dateRangeStatus = MessageType.None;
 					aDemands[i].dateRangeStatusText = this.oResourceBundle.getText("ymsg.scheduleDateStatusNeutral");
 
-				} else if(demandStartDate.diff(startDate) > 0 && demandEndDate.diff(endDate) < 0){
+				} else if (demandStartDate.diff(startDate) > 0 && demandEndDate.diff(endDate) < 0) {
 					//only when startdate and enddate of demand is inside of picked dates then its inside
 					aDemands[i].dateRangeIconStatus = IconColor.Positive;
 					aDemands[i].dateRangeStatus = MessageType.Success;
@@ -473,7 +512,7 @@ sap.ui.define([
 			oSchedulingModel.setProperty("/step1/dataSet", aDemands);
 			oSchedulingModel.setProperty("/inside", inside);
 			oSchedulingModel.setProperty("/outside", outside);
-			
+
 		},
 		/**
 		 * On refresh of the resource table we have to call this method reset the resource data
@@ -490,10 +529,10 @@ sap.ui.define([
 		 * scheduling model so that we can use the values in check duplicate method.
 		 * @param {Array} aParam
 		 */
-		setResourceTreeFilter:function(aParam){
+		setResourceTreeFilter: function (aParam) {
 			var aSchedulingFilter = [];
-			if(aParam instanceof Array){
-				aSchedulingFilter = aParam.filter(function(mParam1){
+			if (aParam instanceof Array) {
+				aSchedulingFilter = aParam.filter(function (mParam1) {
 					return (mParam1.sPath === "StartDate" || mParam1.sPath === "EndDate");
 				});
 			}
@@ -511,6 +550,17 @@ sap.ui.define([
 					aPayload = this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
 				// After creation of payload, method to call the PTV service will be added here ;
 			}.bind(this));
+		},
+
+		/**
+		 * 
+		 * @param {string} sResourceGuid - Resource guid of the child node of which group name is required
+		 * @returns {string} sResourceGroupName - Resource Group name of the child node
+		 */
+		getResourceGroupName: function(sParentNodeId){
+			var sResourceGroupName;
+			sResourceGroupName = this.oDataModel.getProperty("/ResourceHierarchySet('" + sParentNodeId + "')").Description;
+			return sResourceGroupName;			
 		},
 
 		/* =========================================================== */
@@ -555,15 +605,15 @@ sap.ui.define([
 		 * @param {object} oSchedulingObj json object from
 		 * @return {boolean} It will boolean based on conditon specidied in the logic.
 		 */
-		_checkDuplicatePoolSelection:function(oParamModel,oSchedulingObj){
-			var aPoolSelection = oSchedulingObj.selectedResources.filter(function(mPath){
+		_checkDuplicatePoolSelection: function (oParamModel, oSchedulingObj) {
+			var aPoolSelection = oSchedulingObj.selectedResources.filter(function (mPath) {
 				return (oParamModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1);
 			});
-			if(aPoolSelection.length  !== oSchedulingObj.selectedResources.length){
+			if (aPoolSelection.length !== oSchedulingObj.selectedResources.length) {
 				return true;
 			}
 			return false;
 		}
-		
+
 	});
 });
