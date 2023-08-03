@@ -456,7 +456,7 @@ sap.ui.define([
 			if (message) {
 				this.showMessageToast(message, {
 					width: "auto",
-					source: oSource
+					of: oSource
 				});
 			}
 		},
