@@ -545,11 +545,12 @@ sap.ui.define([
 		 * @return {Object} - Payload object
 		 */
 		handleScheduleDemands: function (aPayload) {
-			var aResourceData = this.oViewModel.getProperty("/Scheduling/resourceData"),
-				aDemandsData = {};
-			var aPayload = this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
-
-			// After creation of payload, method to call the PTV service will be added here ;
+			Promise.all([this.createScheduleData(),this.createDemandScheduleData()]).then(function(aResult){
+				var aResourceData = aResult[0],
+					aDemandsData = aResult[1],
+					aPayload = this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
+				// After creation of payload, method to call the PTV service will be added here ;
+			}.bind(this));
 		},
 
 		/**
