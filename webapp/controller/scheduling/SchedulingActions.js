@@ -127,7 +127,9 @@ sap.ui.define([
 			// check if the allow re-schedule flag is enabled or not.
 			oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 			if (!oSelectedDemandItem.ALLOW_RESCHEDULE) {
-				this.showMessageToast(this.oResourceBundle.getText("ysmg.DemandRescheduleError"));
+				var aNonAssignableDemands = [];
+				aNonAssignableDemands.push(this.getMessageDescWithOrderID(oSelectedDemandItem, null, null,true));
+				this._showAssignErrorDialog(aNonAssignableDemands, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 				return false;
 			};
 			return true;
