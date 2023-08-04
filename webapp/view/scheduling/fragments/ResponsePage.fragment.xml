@@ -15,7 +15,7 @@
                     </RadioButtonGroup>
                 </HBox>
                 <Table id="step2_ResponseTable"
-                    items="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\'}'}">
+                    items="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\', sorter: { path: \''+ 'ResourceName' +'\', descending: false, group:\''+ '.fnGetResName' +'\'}}'}">
                     <headerToolbar>
 					<OverflowToolbar>
 						<Title text="{i18n>xtit.demands}"/>
