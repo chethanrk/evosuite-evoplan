@@ -1,47 +1,50 @@
 <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
 	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">
-		<edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+		<edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1" />
 	</edmx:Reference>
 	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/Common.xml">
-		<edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+		<edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1" />
 	</edmx:Reference>
 	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/vocabularies/Core.xml">
-		<edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+		<edmx:Include Alias="Core" Namespace="Org.OData.Core.V1" />
 	</edmx:Reference>
 	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Timeline.V1.xml">
-		<edmx:Include Alias="Timeline" Namespace="com.sap.vocabularies.Timeline.v1"/>
+		<edmx:Include Alias="Timeline" Namespace="com.sap.vocabularies.Timeline.v1" />
 	</edmx:Reference>
 	<edmx:Reference Uri="/sap/opu/odata/EVORA/EP_MAIN_SRV/$metadata">
-		<edmx:Include Alias="Metadata" Namespace="com.evorait.evoplan"/>
+		<edmx:Include Alias="Metadata" Namespace="com.evorait.evoplan" />
 	</edmx:Reference>
 	<edmx:DataServices>
-		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="evoplan2-ui5.annotations.annotations.com.evorait.evoplan">
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm"
+			Namespace="evoplan2-ui5.annotations.annotations.com.evorait.evoplan">
 			<Annotations Target="com.evorait.evoplan.Message">
 				<Annotation Term="UI.LineItem">
 					<Collection>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="Orderid"/>
+							<PropertyValue Property="Value" Path="Orderid" />
 						</Record>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="OrderDesc"/>
+							<PropertyValue Property="Value" Path="OrderDesc" />
 						</Record>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="CreatedAt"/>
+							<PropertyValue Property="Value" Path="CreatedAt" />
 						</Record>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="DateFrom"/>
+							<PropertyValue Property="Value" Path="DateFrom" />
 						</Record>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="DateTo"/>
+							<PropertyValue Property="Value" Path="DateTo" />
 						</Record>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="ObjectType"/>
+							<PropertyValue Property="Value" Path="ObjectType" />
 						</Record>
 					</Collection>
 				</Annotation>
 			</Annotations>
-			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand"></Annotations>
-			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.GanttResourceHierarchy">
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand">
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm"
+				Target="com.evorait.evoplan.GanttResourceHierarchy">
 				<Annotation Term="com.sap.vocabularies.UI.v1.SelectionFields">
 					<Collection>
 						<PropertyPath>Description</PropertyPath>
@@ -49,17 +52,17 @@
 				</Annotation>
 			</Annotations>
 			<Annotations Target="Metadata.GanttResourceHierarchy/Description">
-				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues" Bool="true"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues" Bool="true" />
 				<Annotation Term="Common.ValueList">
 					<Record Type="Common.ValueListType">
-						<PropertyValue Property="CollectionPath" String="ResourceSet"/>
-						<PropertyValue Property="CollectionRoot" String=""/>
-						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="CollectionPath" String="ResourceSet" />
+						<PropertyValue Property="CollectionRoot" String="" />
+						<PropertyValue Property="SearchSupported" Bool="false" />
 						<PropertyValue Property="Parameters">
 							<Collection>
 								<Record Type="Common.ValueListParameterInOut">
-									<PropertyValue Property="LocalDataProperty" PropertyPath="Description"/>
-									<PropertyValue Property="ValueListProperty" String="Description"/>
+									<PropertyValue Property="LocalDataProperty" PropertyPath="Description" />
+									<PropertyValue Property="ValueListProperty" String="Description" />
 								</Record>
 							</Collection>
 						</PropertyValue>
@@ -84,7 +87,45 @@
 					</Collection>
 				</Annotation>
 			</Annotations>
-			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Assignment"></Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Assignment">
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand">
+				<Annotation Term="UI.FieldGroup" Qualifier="ResponseTable">
+					<Record Type="UI.FieldGroupType">
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="ORDERID" />
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="ORDER_DESC" />
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="OPERATIONID" />
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="OPERATION_DESC" />
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="DURATION" />
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="DateFrom" />
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="TimeFrom" />
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="DateTo" />
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="TimeTo" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

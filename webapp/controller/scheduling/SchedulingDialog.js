@@ -113,6 +113,8 @@ sap.ui.define([
 			this._oSelectedStep = oNextStep;
 
 			this._handleButtonsVisibility();
+
+			this._renderWizardStep2Binding();
 		},
 		/**
 		 * This method is used to handle the press event of 
@@ -298,7 +300,17 @@ sap.ui.define([
 					dataSet: [],
 				},
 				step2: {
-					dataSet: []
+					dataSet: [
+						{
+							"ResourceName": "Rahul Inamdar",
+							"ResourceGroup": "Group A",
+							"ORDERID": "485421",
+							"ORDER_DESC": "Change gear",
+							"OPERATIONID": "0020",
+							"OPERATION_DESC": "Oil check",
+							"DURATION": "5.00H",
+							"DateFrom": ""
+					}]
 				}
 			});
 		},
@@ -360,6 +372,31 @@ sap.ui.define([
 					source: oSource
 				});
 			}
+		},
+
+		/**
+		 * set wizard content for step2 
+		 * Response from PTV API will be displayed in table format
+		 * 
+		 * In template views the Json model and path to Json data are set instead of an entitySet
+		 * Table columns are rendered from EntitySet LineItems but Table data are from Json Model
+		 * 
+		 * @param {*} oDialog 
+		 */
+		_renderWizardStep2Binding: function(oDialog){
+			sContainerId = "ConfirmationStep";
+
+			this._mParams.viewName = "com.evorait.evoplan.view.scheduling.AutoScheduling.AutoScheduleStep2#AutoScheduleStep2";
+			this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ResponseTable";
+			this._mParams.modelName = "SchedulingModel";
+			this._mParams.modelDataSetPath = "/step2/dataSet";
+
+			this._oModel.metadataLoaded().then(function () {
+				//get template and create views
+				this._mParams.oView = this._oView;
+				this.setTemplateProperties(this._mParams);
+				this.insertTemplateFragment(null, this._mParams.viewName, sContainerId, null, this._mParams);
+			}.bind(this));
 		}
 
 	});

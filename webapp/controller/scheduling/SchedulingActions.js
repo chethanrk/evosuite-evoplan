@@ -229,6 +229,7 @@ sap.ui.define([
 				sInvalidDateRangeMsg: "",
 				btnInsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleInside"),
 				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
+				iSelectedResponse: 0
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
 		},

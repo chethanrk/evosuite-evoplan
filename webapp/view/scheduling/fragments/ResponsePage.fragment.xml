@@ -1,0 +1,76 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core"
+    xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+    xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+    <template:with path="templateProperties>/" var="tempProps">
+        <template:with path="templateProperties>/annotationPath"
+            helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="target">
+            <template:with path="target>Data" var="data">
+                <HBox>
+                    <RadioButtonGroup columns="3" class="sapUiTinyMargin"
+                        selectedIndex="{viewModel>/Scheduling/iSelectedResponse}">
+                        <RadioButton class="sapUiSmallMarginBegin sapUiMediumMarginEnd" groupName="scheduleType"
+                            text="All" selected="true" />
+                        <RadioButton class="sapUiMediumMarginEnd" groupName="scheduleType" text="Scheduled" />
+                        <RadioButton class="sapUiMediumMarginEnd" groupName="scheduleType" text="Not Scheduled" />
+                    </RadioButtonGroup>
+                </HBox>
+                <Table id="step2_ResponseTable"
+                    items="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\'}'}">
+                    <columns>
+                        <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}">
+                            <Label text="Resource Name" />
+                        </Column>
+                        <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}">
+                            <Label text="Resource Group" />
+                        </Column>
+                        <template:repeat list="{path:'data>'}">
+                            <template:with path="data>Value" var="value">
+                                <Column width="3rem">
+                                    <Label
+                                        text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
+                                </Column>
+                            </template:with>
+                        </template:repeat>
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text text="{:= '{'+ ${tempProps>tempData/modelName} +'>ResourceName}' }"
+                                    visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}" />
+                                <Text text="{:= '{'+ ${tempProps>tempData/modelName} +'>ResourceGroup}' }"
+                                    visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}" />
+
+                                <template:repeat list="{path:'data>'}">
+                                    <template:with path="data>Value" var="value">
+                                        <template:if test="{:= ${data>EdmType} === 'Edm.Date'}">
+                                            <template:then>
+                                                <Text
+                                                    text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Date\', style: \'long\'}' }"
+                                                    wrapping="false" />
+                                            </template:then>
+                                            <template:elseif test="{:= ${data>EdmType} === 'Edm.DateTime'}">
+                                                <Text
+                                                    text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.DateTime\', style: \'long\'}' }"
+                                                    wrapping="false" />
+                                            </template:elseif>
+                                            <template:elseif test="{:= ${data>EdmType} === 'Edm.Time'}">
+                                                <Text
+                                                    text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.odata.type.Time\', style: \'long\'}' }"
+                                                    wrapping="false" />
+                                            </template:elseif>
+                                            <template:else>
+                                                <Text
+                                                    text="{:= '{'+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'}' }"
+                                                    wrapping="false" />
+                                            </template:else>
+                                        </template:if>
+                                    </template:with>
+                                </template:repeat>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </template:with>
+        </template:with>
+    </template:with>
+</core:FragmentDefinition>
