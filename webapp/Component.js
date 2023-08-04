@@ -94,7 +94,9 @@ sap.ui.define([
 		},
 		_appId: "evoplan",
 		MapProvider: null,
+		SchedulingMapProvider: null,
 		_pMapProviderLoaded: null,
+		_pMapProviderLoadedForScheduling: null,
 		/**
 		 * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
 		 * In this function, the device models are set and the router is initialized.
@@ -232,6 +234,22 @@ sap.ui.define([
 			this._pMapProviderLoaded = new Promise(function (resolve, reject) {
 				sap.ui.require([sProviderJSModuleName], function (cMapProvider) {
 					this.MapProvider = new cMapProvider(this, oMapConfigModel);
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		},
+
+		/**
+		 * Instatiate and initialize map provider object for Scheduling. 
+		 * Type of the instance depends on configuration provided by backend: oMapConfigModel.getProperty("/name")
+		 */
+		initializeSchedulingMapProvider: function () {
+			// dependency injection for MapProvider
+			var oMapConfigModel = this.getModel("mapConfig");
+			var sProviderJSModuleName = Constants.MAP.SCHEDULING_JS_PROVIDERS_PATH + oMapConfigModel.getProperty("/name");
+			this._pMapProviderLoadedForScheduling = new Promise(function (resolve, reject) {
+				sap.ui.require([sProviderJSModuleName], function (cMapProvider) {
+					this.SchedulingMapProvider = new cMapProvider(this, oMapConfigModel);
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -456,6 +474,7 @@ sap.ui.define([
 				if (data[2].results.length > 0) {
 					this.getModel("mapConfig").setData(data[2].results[0]);
 					this.initializeMapProvider();
+					this.initializeSchedulingMapProvider();
 				}
 				if (data[3].results.length > 0) {
 					this.getModel("oCostElementModel").setData(data[3].results);

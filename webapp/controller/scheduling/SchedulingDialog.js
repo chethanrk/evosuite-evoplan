@@ -56,9 +56,10 @@ sap.ui.define([
 		 * @param {*} mParams
 		 * @param {object} oMsgParam - To display message toast on Scheduling Dialog
 		 */
-		openSchedulingDialog: function (oView, mParams, oMsgParam) {
+		openSchedulingDialog: function (oView, mParams, oMsgParam, oSchedulingActions) {
 			this._oView = oView;
 			this._mParams = mParams || {};
+			this.oSchedulingActions = oSchedulingActions;
 
 			this._initializeDialogModel();
 			this._resortSelectedDemands();
@@ -113,6 +114,7 @@ sap.ui.define([
 			this._oSelectedStep = oNextStep;
 
 			this._handleButtonsVisibility();
+			this.oSchedulingActions.handleScheduleDemands();
 
 			this._renderWizardStep2Binding();
 		},
@@ -226,6 +228,9 @@ sap.ui.define([
 			}
 			this._oViewModel.setProperty("/Scheduling/sScheduleDialogTitle", sDialogTitle);
 			this._oViewModel.setProperty("/Scheduling/bSchedulingTableBusy", true);
+
+			this._oViewModel.setProperty("/Scheduling/startDate", null);
+			this._oViewModel.setProperty("/Scheduling/endDate", null);
 
 
 			var oData = {
