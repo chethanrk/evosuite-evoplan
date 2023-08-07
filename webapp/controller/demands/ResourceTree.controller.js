@@ -32,6 +32,9 @@ sap.ui.define([
 
 		_bFirsrTime: true,
 
+		_bDragResourceTree: false,
+
+		_oDraggedResObj: {},
 
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
@@ -291,7 +294,8 @@ sap.ui.define([
 			this.sDemandPath = "/DemandSet('" + oObject.DemandGuid + "')";
 			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
 			this._oViewModel.setProperty("/dragDropSetting/isReassign", true);
-
+			this._bDragResourceTree = true; //Flag to Check the Resource Tree Drag Instance
+			this._oDraggedResObj = oObject; //Resource Tree Dragged Context Data
 		},
 
 		/**
@@ -311,7 +315,8 @@ sap.ui.define([
 				iVendorAssignmentLen,
 				aPSDemandsNetworkAssignment,
 				mParams, mParameter,
-				oView = this.getView();
+				oView = this.getView(),
+				sResourceGuid =	oModel.getProperty(oDraggedContext.getPath()).ResourceGuid;
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -328,12 +333,16 @@ sap.ui.define([
 				bFromHome: true
 			};
 
+			if(this._bDragResourceTree){
+				sResourceGuid = this._oDraggedResObj.ResourceGuid;
+			}
+			this._bDragResourceTree = false; //Resetting Resource Tree Drag State
+
 			//if its the same resource then update has to be called
-			if (oTargetData.ResourceGuid === oModel.getProperty(oDraggedContext.getPath()).ResourceGuid) {
+			if (oTargetData.ResourceGuid === sResourceGuid) {
 				//call update
 				this.handleDropOnSameResource(this.assignmentPath, sPath, mParameter);
 			} else if (this._oViewModel.getProperty("/dragDropSetting/isReassign")) {
-
 				this.getOwnerComponent()._getData(this.sDemandPath)
 					.then(function (oData) {
 						oViewModel.setProperty("/dragSession", [{
@@ -343,9 +352,7 @@ sap.ui.define([
 						}]);
 						this._reassignmentOnDrop(this.assignmentPath, sPath, oView, mParameter);
 					}.bind(this));
-
 			} else {
-
 				aSources = this._oViewModel.getProperty("/dragSession");
 				iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
 				iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
