@@ -314,27 +314,52 @@ sap.ui.define([
 							"OPERATIONID": "0020",
 							"OPERATION_DESC": "Oil check",
 							"DURATION": "5.00H",
-							"DateFrom": ""
+							"DateFrom": "",
+							"PLANNED": true
 						},
 						{
 							"ResourceName": "Rahul Inamdar",
-							"ResourceGroup": "Group A",
+							"ResourceGroup": "Group B",
 							"ORDERID": "485421",
 							"ORDER_DESC": "Change gear",
 							"OPERATIONID": "0020",
 							"OPERATION_DESC": "Oil check",
 							"DURATION": "5.00H",
-							"DateFrom": ""
+							"DateFrom": "",
+							"PLANNED": true
 						},
 						{
 							"ResourceName": "",
-							"ResourceGroup": "Group A",
+							"ResourceGroup": "",
 							"ORDERID": "485421",
 							"ORDER_DESC": "Change gear",
 							"OPERATIONID": "0020",
 							"OPERATION_DESC": "Oil check",
 							"DURATION": "5.00H",
-							"DateFrom": ""
+							"DateFrom": "",
+							"PLANNED": false
+						},
+						{
+							"ResourceName": "",
+							"ResourceGroup": "",
+							"ORDERID": "485423",
+							"ORDER_DESC": "Change box",
+							"OPERATIONID": "0010",
+							"OPERATION_DESC": "Box check",
+							"DURATION": "2.00H",
+							"DateFrom": "",
+							"PLANNED": false
+						},
+						{
+							"ResourceName": "Alex Pitt",
+							"ResourceGroup": "Prod line",
+							"ORDERID": "485426",
+							"ORDER_DESC": "Check blades",
+							"OPERATIONID": "0040",
+							"OPERATION_DESC": "Blade broken",
+							"DURATION": "7.00H",
+							"DateFrom": "",
+							"PLANNED": true
 						}
 					]
 				}

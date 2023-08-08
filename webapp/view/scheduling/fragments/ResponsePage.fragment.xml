@@ -6,11 +6,9 @@
             helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="target">
             <template:with path="target>Data" var="data">
                 <HBox>
-                    <RadioButtonGroup columns="3" class="sapUiTinyMargin"
-                        selectedIndex="{viewModel>/Scheduling/iSelectedResponse}">
-                        <RadioButton class="sapUiSmallMarginBegin sapUiMediumMarginEnd" groupName="scheduleType"
-                            text="{i18n>xrd.all}" selected="true" />
-                        <RadioButton class="sapUiMediumMarginEnd" groupName="scheduleType" text="{i18n>xrd.scheduled}" />
+                    <RadioButtonGroup columns="2" class="sapUiTinyMargin"
+                        selectedIndex="{viewModel>/Scheduling/iSelectedResponse}" select="onChangeResponseType">
+                        <RadioButton class="sapUiSmallMarginBegin sapUiMediumMarginEnd" groupName="scheduleType" text="{i18n>xrd.scheduled}" selected="true"/>
                         <RadioButton class="sapUiMediumMarginEnd" groupName="scheduleType" text="{i18n>xrd.notScheduled}" />
                     </RadioButtonGroup>
                 </HBox>
@@ -26,10 +24,7 @@
 					</OverflowToolbar>
 				</headerToolbar>
                     <columns>
-                        <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}">
-                            <Label text="{i18n>xlbl.resName}" />
-                        </Column>
-                        <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}">
+                        <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}">
                             <Label text="{i18n>xlbl.resGrp}" />
                         </Column>
                         <template:repeat list="{path:'data>'}">
@@ -44,10 +39,8 @@
                     <items>
                         <ColumnListItem>
                             <cells>
-                                <Text text="{:= '{'+ ${tempProps>tempData/modelName} +'>ResourceName}' }"
-                                    visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}" />
                                 <Text text="{:= '{'+ ${tempProps>tempData/modelName} +'>ResourceGroup}' }"
-                                    visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}" />
+                                    visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}" />
 
                                 <template:repeat list="{path:'data>'}">
                                     <template:with path="data>Value" var="value">
