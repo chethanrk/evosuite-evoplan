@@ -591,11 +591,11 @@ sap.ui.define([
 			);
 		},
 		/**
-		 * This method is used to clear the selections of the demands table
+		 * This method is used to clear the selections of the demands table in
+		 * Demands, NewGantt and Maps view.
 		 */
 		_clearDemandsSelection:function(){
 			this._oDataTable.clearSelection();
-			console.log("table refresh trigerred");
 		},
 
 		/**
