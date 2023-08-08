@@ -14,6 +14,7 @@ sap.ui.define([
 	var CREATE_DISTANCE_MATRIX_PATH = "/createDistanceMatrix";
 	var TOUR_SERVICE_PATH = "/XTour";
 	var PLAN_TOURS_PATH = "/planTours";
+	var START_PLAN_TOURS_PATH = "/startPlanTours";
 	var VEHICLE_ID = "EvoPlanVehicle";
 	var DRIVER_ID = "EvoPlanDriver";
 
@@ -73,6 +74,7 @@ sap.ui.define([
 			this._sRouteCalculationUrl = this.sServiceUrl + ROUTE_SERVICE_PATH + CALCULATE_ROUTE_PATH;
 			this._sCreateDistanceMatrixUrl = this.sServiceUrl + DIMA_SERVICE_PATH + CREATE_DISTANCE_MATRIX_PATH;
 			this._sPlanToursUrl = this.sServiceUrl + TOUR_SERVICE_PATH + PLAN_TOURS_PATH;
+			this._sStartPlanToursUrl = this.sServiceUrl + TOUR_SERVICE_PATH + START_PLAN_TOURS_PATH;
 			this._sAuthToken = btoa(oServiceData.Username + ":" + oServiceData.Password);
 			this.oUserModel = this.oComponent.getModel("user");
 			this._sDefaultResourceStartHour = parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_STARTHR")) || 0;
@@ -93,6 +95,17 @@ sap.ui.define([
 			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
 
 			return oPayload;
+		},
+		/** 
+		 * @param {object} oRequestBody 
+		 * @returns {object} - promise
+		 */
+		sendPTVPayload: function (oRequestBody){
+			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oRequestBody).then(function (oResponse) {
+				debugger;
+				//call watch job
+				//call fetch response
+			}.bind(this));
 		},
 
 		/* =========================================================== */
