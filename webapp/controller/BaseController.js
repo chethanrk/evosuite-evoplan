@@ -1120,12 +1120,8 @@ sap.ui.define([
 		 */
 		getMessageDescWithOrderID: function (oData, Desc, bIsForScheduling,bIsForReScheduling) {
 			Desc = Desc ? Desc : oData.DemandDesc;
-			// Condition to add number of assignments to display in error dialog for plan demands/scheduling
-			if (bIsForScheduling) {
-				return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;;
-			}
-			// Condition to add number of assignments to display in error dialog for re-scheduling
-			if (bIsForReScheduling) {
+			// Condition to add number of assignments to display in error dialog for scheduling or auto scheduling.
+			if (bIsForScheduling || bIsForReScheduling) {
 				return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;;
 			}
 			if (oData.ORDERID) {
