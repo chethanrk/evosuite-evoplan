@@ -102,10 +102,11 @@ sap.ui.define([
 		 * @param sMsg Messgae to be shown
 		 */
 		showMessageToast: function (sMsg, mParams) {
-			var msgParam = Object.assign({
-				duration: 5000
-			}, mParams);
-			MessageToast.show(sMsg, msgParam);
+			MessageToast.show(sMsg, {
+				duration: 5000,
+				width: mParams ? mParams.width : '15rem',
+				of: mParams ? mParams.source : window
+			});
 		},
 
 		/**
