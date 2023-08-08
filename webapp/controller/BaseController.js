@@ -105,6 +105,8 @@ sap.ui.define([
 			MessageToast.show(sMsg, {
 				duration: 5000,
 				width: mParams ? mParams.width : '15rem',
+				offset:"0 600",
+				at:"center center",
 				of: mParams ? mParams.source : window
 			});
 		},
@@ -587,6 +589,13 @@ sap.ui.define([
 				onClose: fnCallback
 			}
 			);
+		},
+		/**
+		 * This method is used to clear the selections of the demands table
+		 */
+		_clearDemandsSelection:function(){
+			this._oDataTable.clearSelection();
+			console.log("table refresh trigerred");
 		},
 
 		/**

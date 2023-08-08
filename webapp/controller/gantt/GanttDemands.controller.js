@@ -78,6 +78,7 @@ sap.ui.define([
 			// add binging change event forthe demands table
 			this._addDemandTblBindingChangeEvent();
 			this.oSchedulingActions = new SchedulingActions(this);
+			this._oEventBus.subscribe("BaseController", "clearDemandsSelection", this._clearDemandsSelection, this);
 
 		},
 

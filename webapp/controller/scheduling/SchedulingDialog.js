@@ -47,6 +47,7 @@ sap.ui.define([
 			}
 			this._component.setModel(this._oSchedulingModel, "SchedulingModel");
 			this._oUserModel = this._component.getModel("user");
+			this._oEventBus = sap.ui.getCore().getEventBus();
 		},
 
 		/**
@@ -95,6 +96,22 @@ sap.ui.define([
 			this._oSelectedStep = this._oWizard.getSteps()[this._iSelectedStepIndex];
 			// set busy indicator
 			this._handleButtonsVisibility();
+		},
+		/**
+		 * This method is used to set properties once the dialog is closed.
+		 * Once the dialog is closed we are -
+		 * 1. REemovig the selection from demands and resource tree table.
+		 * 2. Resetting the scheduling json model.
+		 */
+		onSchedDialogClose:function(){
+			var sRoute = this._oViewModel.getProperty("/sViewRoute");
+			this.oSchedulingActions.resetSchedulingJson();
+			if (sRoute === "NEWGANTT") {
+				this._oEventBus.publish("BaseController", "resetSelections", {});
+			} else {
+				this._oEventBus.publish("ManageAbsences", "ClearSelection", {});
+			}
+			this._oEventBus.publish("BaseController", "clearDemandsSelection", {});
 		},
 		/**
 		 * This method is used to handle the press event of 
@@ -165,6 +182,7 @@ sap.ui.define([
 			var sMessage = this._oResourceBundle.getText("ymsg.SubmitOfReSecheduling");
 			this._handleMessageBoxOpen(sMessage, "confirm");
 		},
+
 
 		/* =========================================================== */
 		/* Private methods                                              */
