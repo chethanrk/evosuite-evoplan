@@ -323,7 +323,6 @@ sap.ui.define([
 							entitySet: "DemandSet"
 						}
 						this._controller.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this._controller.getView(), mParams, oMsgParam, this);
-						this.createScheduleData();
 					}
 
 				} else {
@@ -342,8 +341,8 @@ sap.ui.define([
 		 */
 		createScheduleData: function () {
 			var aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
-				oStartDate = this.oViewModel.getProperty("/Scheduling/minDate"),
-				oEndDate = this.oViewModel.getProperty("/Scheduling/maxDate"),
+				oStartDate = this.oViewModel.getProperty("/Scheduling/startDate"),
+				oEndDate = this.oViewModel.getProperty("/Scheduling/endDate"),
 				aAssignmentPromise = [],
 				aAssignmentFilter = [],
 				aAvailabilityPromise = [],
@@ -436,9 +435,10 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				aDemandList.forEach(function (oDemand) {
 					oTempDemandData = {
+						"data": oDemand.oData,
 						"location": {
-							"x": oDemand.oData.LATITUDE,
-							"y": oDemand.oData.LONGITUDE
+							"x": oDemand.oData.LONGITUDE,
+							"y": oDemand.oData.LATITUDE
 						},
 						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION.split(","),
 						"priority": oDemand.oData.PRIORITY ? parseInt(oDemand.oData.PRIORITY) : 0,
@@ -546,11 +546,12 @@ sap.ui.define([
 		 * @return {Object} - Payload object
 		 */
 		handleScheduleDemands: function (aPayload) {
-			var aResourceData = this.oViewModel.getProperty("/Scheduling/resourceData"),
-				aDemandsData = {};
-			var aPayload = this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
-
-			// After creation of payload, method to call the PTV service will be added here ;
+			Promise.all([this.createScheduleData(),this.createDemandScheduleData()]).then(function(aResult){
+				var aResourceData = aResult[0],
+					aDemandsData = aResult[1],
+					aPayload = this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
+				// After creation of payload, method to call the PTV service will be added here ;
+			}.bind(this));
 		},
 
 		/**
