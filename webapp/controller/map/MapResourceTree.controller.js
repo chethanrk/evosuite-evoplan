@@ -160,6 +160,10 @@ sap.ui.define([
 
 		aMapDemandGuid: [],
 
+		_bDragResourceTree: false,
+
+		_oDraggedResObj: {},
+
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -366,6 +370,8 @@ sap.ui.define([
 			this.sDemandPath = "/DemandSet('" + oObject.DemandGuid + "')";
 			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
 			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", true);
+			this._bDragResourceTree = true; //Flag to Check the Resource Tree Drag Instance
+			this._oDraggedResObj = oObject; //Resource Tree Dragged Context Data
 		},
 
 		/**
@@ -385,7 +391,8 @@ sap.ui.define([
 				iVendorAssignmentLen,
 				eventBus = sap.ui.getCore().getEventBus(),
 				aPSDemandsNetworkAssignment, mParams, mParameter,
-				oView = this.getView();
+				oView = this.getView(),
+				sResourceGuid = oModel.getProperty(oDraggedContext.getPath()).ResourceGuid;
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -400,10 +407,15 @@ sap.ui.define([
 
 			mParameter = {
 				bFromMap: true
-			};
+			};	
+			
+			if (this._bDragResourceTree) {
+				sResourceGuid = this._oDraggedResObj.ResourceGuid;
+			}
+			this._bDragResourceTree = false; //Resetting Resource Tree Drag State
 
 			//if its the same resource then update has to be called
-			if (oTargetData.ResourceGuid === oModel.getProperty(oDraggedContext.getPath()).ResourceGuid) {
+			if (oTargetData.ResourceGuid === sResourceGuid) {
 				//call update
 				this.handleDropOnSameResource(this.assignmentPath, sPath, mParameter);
 			} else if (this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")) {
