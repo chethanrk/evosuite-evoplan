@@ -233,7 +233,7 @@ sap.ui.define([
 				aFilters = [];
 				if (oResourceObj.ResourceGuid) {
 					aResourceData.push(oResourceObj);
-				} else if (oResourceObj.NodeId.split(":")[0] === "POOL") {
+				} else if (oResourceObj.NodeId.indexOf("POOL") >= 0) {
 					aPoolResource.push(oResourceObj.Description);
 					bIsPoolExist = true;
 				} else if (oResourceObj.ResourceGroupGuid) {
