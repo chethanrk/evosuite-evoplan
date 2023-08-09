@@ -549,6 +549,176 @@ sap.ui.define([
 					aDemandsData = aResult[1],
 					aPayload = this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
 				// After creation of payload, method to call the PTV service will be added here ;
+				aPayload = {
+					"locations": [
+					  {
+						"$type": "DepotSite",
+						"id": 0,
+						"routeLocation": {
+						  "$type": "OffRoadRouteLocation",
+						  "offRoadCoordinate": {
+							"x": 147.331985,
+							"y": -42.881994
+						  }
+						}
+					  },
+					  {
+						"$type": "CustomerSite",
+						"id": 1,
+						"routeLocation": {
+						  "$type": "OffRoadRouteLocation",
+						  "offRoadCoordinate": {
+							"x": 147.389075,
+							"y": -42.878814
+						  }
+						}
+					  },
+					  {
+						"$type": "CustomerSite",
+						"id": 2,
+						"routeLocation": {
+						  "$type": "OffRoadRouteLocation",
+						  "offRoadCoordinate": {
+							"x": 147.168325,
+							"y": -41.437357
+						  }
+						}
+					  },
+					  {
+						"$type": "CustomerSite",
+						"id": 3,
+						"routeLocation": {
+						  "$type": "OffRoadRouteLocation",
+						  "offRoadCoordinate": {
+							"x": 145.150998,
+							"y": -40.841898
+						  }
+						}
+					  },
+					  {
+						"$type": "CustomerSite",
+						"id": 4,
+						"routeLocation": {
+						  "$type": "OffRoadRouteLocation",
+						  "offRoadCoordinate": {
+							"x": 147.772834,
+							"y": -40.875283
+						  }
+						}
+					  },
+					  {
+						"$type": "CustomerSite",
+						"id": 5,
+						"routeLocation": {
+						  "$type": "OffRoadRouteLocation",
+						  "offRoadCoordinate": {
+							"x": 147.833893,
+							"y": -39.839152
+						  }
+						}
+					  }
+					],
+					"orders": [
+					  {
+						"$type": "PickupDeliveryOrder",
+						"id": 0,
+						"quantities": [
+						  1
+						],
+						"pickupLocationId": 0,
+						"deliveryLocationId": 1,
+						"requiredVehicleEquipment": [
+						  "crane"
+						]
+					  },
+					  {
+						"$type": "PickupDeliveryOrder",
+						"id": 1,
+						"quantities": [
+						  1
+						],
+						"pickupLocationId": 0,
+						"deliveryLocationId": 2
+					  },
+					  {
+						"$type": "PickupDeliveryOrder",
+						"id": 2,
+						"quantities": [
+						  1
+						],
+						"pickupLocationId": 0,
+						"deliveryLocationId": 3,
+						"requiredVehicleEquipment": [
+						  "refrigeration"
+						]
+					  },
+					  {
+						"$type": "PickupDeliveryOrder",
+						"id": 3,
+						"quantities": [
+						  1
+						],
+						"pickupLocationId": 0,
+						"deliveryLocationId": 4,
+						"requiredVehicleEquipment": [
+						  "cooling"
+						]
+					  },
+					  {
+						"$type": "PickupDeliveryOrder",
+						"id": 4,
+						"quantities": [
+						  1
+						],
+						"pickupLocationId": 0,
+						"deliveryLocationId": 5
+					  }
+					],
+					"fleet": {
+					  "vehicles": [
+						{
+						  "ids": [
+							"vehicle0"
+						  ],
+						  "maximumQuantityScenarios": [
+							{
+							  "quantities": [
+								3
+							  ]
+							}
+						  ],
+						  "equipment": [
+							"refrigeration",
+							"cooling"
+						  ]
+						},
+						{
+						  "ids": [
+							"vehicle1"
+						  ],
+						  "maximumQuantityScenarios": [
+							{
+							  "quantities": [
+								3
+							  ]
+							}
+						  ],
+						  "equipment": [
+							"crane"
+						  ]
+						}
+					  ]
+					},
+					"distanceMode": {
+					  "$type": "DirectDistance"
+					},
+					"planToursOptions": {
+					  "planningHorizon": {
+						"start": "2017-09-01T08:00:00+01:00",
+						"end": "2017-09-01T17:00:00+01:00"
+					  }
+					}
+				  };
 				this.oOwnerComponent.SchedulingMapProvider.sendPTVPayload(aPayload);
 			}.bind(this));
 		},

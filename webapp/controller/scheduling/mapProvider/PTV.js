@@ -107,13 +107,17 @@ sap.ui.define([
 		sendPTVPayload: function (oPlanTourRequestBody){
 			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oPlanTourRequestBody).then(function (oPlanTourResponse) {
 				//call watch job
-				var oWatchJobRequestBody = {};
+				var oWatchJobRequestBody = {
+					id: oPlanTourResponse.data.id
+				};
 				var intervalID = setInterval(function() {
 					this._sendPOSTRequestToPTV(this._sWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
-						if(true){ // if successed or failed
+						if(oWatchJobResponse.data.status === "SUCCEEDED"){ // if successed or failed
 							clearInterval(intervalID);
 							//call fetch response
-							var oFetchResponseRequestBody = {};
+							var oFetchResponseRequestBody = {
+								id: oWatchJobResponse.data.id
+							};
 							this._sendPOSTRequestToPTV(this._sFetchToursResponseUrl, oFetchResponseRequestBody).then(function(oFetchToursResponse){
 								return oFetchToursResponse;
 							}.bind(this));
