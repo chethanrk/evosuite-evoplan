@@ -398,7 +398,9 @@ sap.ui.define([
 							"PLANNED": true
 						}
 					]
-				}
+				},
+				iPlanned: 0,
+				iNonPlanned: 0
 			});
 		},
 

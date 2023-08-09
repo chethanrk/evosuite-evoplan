@@ -9,9 +9,9 @@
                     <RadioButtonGroup columns="2" class="sapUiTinyMargin"
                         selectedIndex="{viewModel>/Scheduling/iSelectedResponse}" select="onChangeResponseType">
                         <RadioButton class="sapUiSmallMarginBegin sapUiMediumMarginEnd" groupName="scheduleType"
-                            text="{i18n>xrd.scheduled}" selected="true" />
+                            text="{i18n>xrd.scheduled} ({SchedulingModel>/iPlanned})" selected="true" />
                         <RadioButton class="sapUiMediumMarginEnd" groupName="scheduleType"
-                            text="{i18n>xrd.notScheduled}" />
+                            text="{i18n>xrd.notScheduled} ({SchedulingModel>/iNonPlanned})" />
                     </RadioButtonGroup>
                 </HBox>
                 <Table id="step2_ResponseTable"
