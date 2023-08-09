@@ -251,6 +251,20 @@ sap.ui.define([
 		 */
 		onProceedSaveDialog: function (oEvent) {
 			if (this._assignPath) {
+				//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+				if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
+					this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(this._assignPath));
+					if (this._bulkReAssign) {
+						this._updatedAssignmentsPath(this._aSelectedPaths);
+					} else {
+						if (this._isToolReAssign) {
+							this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel("assignment").getData());
+						} else {
+							this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(this._aSelectedPaths[0]));
+						}
+					}
+				}
+				
 				if (this._isToolReAssign) {
 					this._eventBus.publish("AssignTreeDialog", "ToolReAssignment", {
 						sAssignPath: this._assignPath,

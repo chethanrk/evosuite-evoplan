@@ -105,7 +105,9 @@ sap.ui.define([
 			MessageToast.show(sMsg, {
 				duration: 5000,
 				width: mParams ? mParams.width : '15rem',
-				of: mParams ? mParams.source : window
+				at:"center bottom",
+				of: mParams ? mParams.source : window,
+				offset: "0 -60"
 			});
 		},
 
@@ -332,6 +334,9 @@ sap.ui.define([
 				}
 			} else if (oParameter.bFromGanttTools) {
 				eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+				if (!oParameter.bIsFromPRTAssignmentInfo) {
+					eventBus.publish("BaseController", "refreshToolsTable", {});
+				}
 			}
 
 		},
@@ -585,6 +590,7 @@ sap.ui.define([
 			}
 			);
 		},
+		
 
 		/**
 		 * Shows the confirmation Box.
@@ -1106,10 +1112,10 @@ sap.ui.define([
 		 * Since 2301.4.0
 		 * @Author Rakesh Sahu
 		 */
-		getMessageDescWithOrderID: function (oData, Desc, bIsForScheduling) {
+		getMessageDescWithOrderID: function (oData, Desc, bIsForScheduling,bIsForReScheduling) {
 			Desc = Desc ? Desc : oData.DemandDesc;
-			// Condition to add number of assignments to display in error dialog
-			if (bIsForScheduling) {
+			// Condition to add number of assignments to display in error dialog for scheduling or auto scheduling.
+			if (bIsForScheduling || bIsForReScheduling) {
 				return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;;
 			}
 			if (oData.ORDERID) {
@@ -1203,8 +1209,8 @@ sap.ui.define([
 
 				aDemandsForSplitAssignment = oResourceAvailabiltyResponse.arrayOfDemandsToSplit,
 				bShowSplitConfirmationDialog, sDemandSourceType;
-				sDemandSourceType = this.getObjectSourceType(aDemandsForSplitAssignment);
-				bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP") && (sDemandSourceType === "DEM_PMWO");
+			sDemandSourceType = this.getObjectSourceType(aDemandsForSplitAssignment);
+			bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP") && (sDemandSourceType === "DEM_PMWO");
 
 			return new Promise(function (resolve, reject) {
 
@@ -1447,11 +1453,12 @@ sap.ui.define([
 		* @param oResObj
 		*/
 		_updatedDmdResources: function (oViewModel, oResObj) {
-			var aUpdatedResources = oViewModel.getProperty("/aUpdatedResources"),
-				sNodeId = oResObj.NodeId,
-				oUpdatedResObj;
-			if (!sNodeId) {
-				sNodeId = oResObj.ResourceGuid + "//" + oResObj.ResourceGroupGuid
+			var oUpdatedResObj,
+				aUpdatedResources = oViewModel.getProperty("/aUpdatedResources"),
+				sNodeId = oResObj.ResourceGuid + "//" + oResObj.ResourceGroupGuid;
+			//Considering as Pool Resources when Dropped on Resource Group
+			if (oResObj.NodeType === "RES_GROUP" || oResObj.ResourceGuid === "") {
+				sNodeId = "POOL:" + oResObj.ResourceGroupGuid;
 			}
 			oUpdatedResObj = {
 				ResourceGuid: oResObj.ResourceGuid,

@@ -251,6 +251,9 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
 		 */
 		onAutoscheduleButtonPress: function (oEvent) {
+			if(!this.oSchedulingActions.validateScheduleAfterPress()){
+				return;
+			}
 			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
 		},
 
@@ -265,6 +268,9 @@ sap.ui.define([
 				sPath = oViewModel.getProperty("/Scheduling/selectedDemandPath"),
 				aDemandList = [],
 				oMsgParam = {};
+			if(!this.oSchedulingActions.validateReScheduleAfterPress()){
+				return;
+			}
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
 				if (oResult.bNoDuplicate) {
 					oMsgParam["bIsPoolExist"] = oResult.bIsPoolExist;
@@ -286,11 +292,18 @@ sap.ui.define([
 					var mParams = {
 						entitySet: "DemandSet"
 					}
-					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams, oMsgParam);
+					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams, oMsgParam, this.oSchedulingActions);
 				} else {
 					this._showErrorMessage(oResourceBundle.getText("ymsg.alreadyAssigned", oResult.resourceNames));
 				}
 			}.bind(this));
+		},
+		/**
+		 * This method is used to clear the selections of the demands table in
+		 * Demands, NewGantt and Maps view.
+		 */
+		clearDemandsSelection:function(){
+			this._oDataTable.clearSelection();
 		},
 
 		/* =========================================================== */

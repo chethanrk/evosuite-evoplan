@@ -815,7 +815,7 @@ sap.ui.define([
 				oDropContext = oDroppedControl.getBindingContext("ganttModel"),
 				oResourceData = this.oGanttModel.getProperty(oDropContext.getPath()),
 				sTargetPath = oDropContext.getPath(),
-				aSources = this.oViewModel.getProperty("/dragSession") || this.localStorage.get("Evo-aPathsData"),
+				aSources = JSON.parse(this.localStorage.get("Evo-aPathsData")) || this.oViewModel.getProperty("/dragSession"),
 				oAxisTime = this.byId("idPageGanttChartContainer").getAggregation("ganttCharts")[0].getAxisTime(),
 				iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays"),
 				oSvgPoint, oTargetDate, endDate;
@@ -2571,14 +2571,14 @@ sap.ui.define([
 		 */
 		_updateAfterReAssignment: function (aData, oTargetResource, oSourceResource) {
 			oTargetResource.AssignmentSet.results = aData[0].results.filter(function (sKey) { //Filtering Demand Assignments
-				return sKey.PRT_ASSIGNMENT_TYPE !== 'PRTDEMASGN';
+				return sKey.IS_PRT === false;
 			});
 			this._updateResourceChildren(oTargetResource, this._updateDmdPRTAssignments(aData[0].results));
 			this.oGanttOriginDataModel.setProperty(this._oTargetResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oTargetResourcePath)));
 
 			if (oSourceResource) {
 				oSourceResource.AssignmentSet.results = aData[1].results.filter(function (sKey) { //Filtering Demand Assignments
-					return sKey.PRT_ASSIGNMENT_TYPE !== 'PRTDEMASGN';
+					return sKey.IS_PRT === false;
 				});
 				this._updateResourceChildren(oSourceResource, this._updateDmdPRTAssignments(aData[1].results));
 				this.oGanttOriginDataModel.setProperty(this._oSourceResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oSourceResourcePath)));
