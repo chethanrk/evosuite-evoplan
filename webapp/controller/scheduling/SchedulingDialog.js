@@ -7,7 +7,7 @@ sap.ui.define([
 	"com/evorait/evoplan/model/models",
 	"sap/ui/core/mvc/OverrideExecution"
 ], function (TemplateRenderController, MessageBox, formatter, Constants, Fragment, models, OverrideExecution) {
-	
+
 	return TemplateRenderController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingDialog", {
 
 		/* =========================================================== */
@@ -20,7 +20,7 @@ sap.ui.define([
 		_oResourceBundle: null,
 		_oModel: null,
 		_oSchedulingModel: null,
-		_oUserModel:null,
+		_oUserModel: null,
 
 		/**
 		 * overwrite constructor
@@ -41,7 +41,7 @@ sap.ui.define([
 			this._oModel = this._component.getModel();
 
 			this._oSchedulingModel = this._component.getModel("SchedulingModel");
-			if(!this._oSchedulingModel){
+			if (!this._oSchedulingModel) {
 				this._oSchedulingModel = models.createSchedulingModel();
 				this._setJsonModelDefaults();
 			}
@@ -80,11 +80,11 @@ sap.ui.define([
 			this._ScheduleDialog.then(function (oDialog) {
 				this._renderWizardStep1Binding(oDialog);
 				oDialog.open();
-				if(!_.isEmpty(oMsgParam)){
+				if (!_.isEmpty(oMsgParam)) {
 					this._showSchedulingMessageToast(oDialog, oMsgParam);
 				}
 			}.bind(this));
-			
+
 		},
 		/**
 		 * This method is used to set properties once the 
@@ -132,6 +132,8 @@ sap.ui.define([
 
 			this._handleButtonsVisibility();
 			this.oSchedulingActions.handleScheduleDemands();
+
+			this._renderWizardStep2Binding();
 		},
 		/**
 		 * This method is used to handle the press event of 
@@ -198,7 +200,7 @@ sap.ui.define([
 		 * 
 		 * @param {*} oDialog 
 		 */
-		_renderWizardStep1Binding: function(oDialog){
+		_renderWizardStep1Binding: function (oDialog) {
 			sContainerId = "DateRangeStep";
 			oDialog.setBusyIndicatorDelay(0);
 			oDialog.setBusy(true);
@@ -214,7 +216,7 @@ sap.ui.define([
 				this._mParams.modelName = "SchedulingModel";
 				this._mParams.modelDataSetPath = "/step1/dataSet";
 			}
-			this._oViewModel.setProperty("/Scheduling/sUtilizationSlider",this._oUserModel.getProperty("/DEFAULT_UTILIZATION_BAR_MAPS"));
+			this._oViewModel.setProperty("/Scheduling/sUtilizationSlider", this._oUserModel.getProperty("/DEFAULT_UTILIZATION_BAR_MAPS"));
 
 			this._oModel.metadataLoaded().then(function () {
 				//get template and create views
@@ -236,10 +238,10 @@ sap.ui.define([
 
 			//set SchedulingModel defaults
 			this._setJsonModelDefaults(this._mParams.isAutoSchedule, this._mParams.isReschuduling);
-			
+
 			// setting the dialog title based on flag in viewMiodel
 			let sDialogTitle = this._oResourceBundle.getText("xtit.AutoscheduleDialogTitle");
-			if(this._mParams.isReschuduling){
+			if (this._mParams.isReschuduling) {
 				sDialogTitle = this._oResourceBundle.getText("xtit.RescheduleDialogTitle");
 			}
 			this._oViewModel.setProperty("/Scheduling/sScheduleDialogTitle", sDialogTitle);
@@ -255,19 +257,19 @@ sap.ui.define([
 				bFinishButtonVisible: false
 			};
 			var oInitialModelState = Object.assign({}, oData);
-			this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags",oInitialModelState);
+			this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags", oInitialModelState);
 		},
 
 		/**
 		 * Get selected valid demands and remap demands for better PTV usage
 		 * Add flag for visibility if demand is out of date range
 		 */
-		_resortSelectedDemands: function(){
+		_resortSelectedDemands: function () {
 			var aSelectedDemands = this._oViewModel.getProperty("/Scheduling/demandList"),
 				aTableDataset = [];
-				oReorderedDemands = {};
+			oReorderedDemands = {};
 
-			for(var i = 0, len = aSelectedDemands.length; i < len; i++){
+			for (var i = 0, len = aSelectedDemands.length; i < len; i++) {
 				let oItemData = aSelectedDemands[i].oData;
 				oItemData.sPath = aSelectedDemands[i].sPath;
 				oItemData["dateRangeIconStatus"] = sap.ui.core.IconColor.Neutral;
@@ -300,7 +302,8 @@ sap.ui.define([
 					oModel.setProperty("/Scheduling/SchedulingDialogFlags/bFinishButtonVisible", true);
 					oModel.setProperty("/Scheduling/SchedulingDialogFlags/bBackButtonVisible", true);
 					break;
-				default: break;
+				default:
+					break;
 			}
 			oModel.refresh();
 		},
@@ -310,7 +313,7 @@ sap.ui.define([
 		 * @param {*} isAutoSchedule 
 		 * @param {*} isReSchedule 
 		 */
-		_setJsonModelDefaults: function(isAutoSchedule, isReSchedule){
+		_setJsonModelDefaults: function (isAutoSchedule, isReSchedule) {
 			this._oSchedulingModel.setData({
 				isAutoSchedule: isAutoSchedule || false,
 				isReschuduling: isReSchedule || false,
@@ -321,7 +324,37 @@ sap.ui.define([
 					dataSet: [],
 				},
 				step2: {
-					dataSet: []
+					dataSet: [{
+							"ResourceName": "Rahul Inamdar",
+							"ResourceGroup": "Group A",
+							"ORDERID": "485421",
+							"ORDER_DESC": "Change gear",
+							"OPERATIONID": "0020",
+							"OPERATION_DESC": "Oil check",
+							"DURATION": "5.00H",
+							"DateFrom": ""
+						},
+						{
+							"ResourceName": "Rahul Inamdar",
+							"ResourceGroup": "Group A",
+							"ORDERID": "485421",
+							"ORDER_DESC": "Change gear",
+							"OPERATIONID": "0020",
+							"OPERATION_DESC": "Oil check",
+							"DURATION": "5.00H",
+							"DateFrom": ""
+						},
+						{
+							"ResourceName": "",
+							"ResourceGroup": "Group A",
+							"ORDERID": "485421",
+							"ORDER_DESC": "Change gear",
+							"OPERATIONID": "0020",
+							"OPERATION_DESC": "Oil check",
+							"DURATION": "5.00H",
+							"DateFrom": ""
+						}
+					]
 				}
 			});
 		},
@@ -348,7 +381,7 @@ sap.ui.define([
 		 * After step1 template rendering was completed
 		 * @param {*} oEvent 
 		 */
-		_afterStepRenderSuccess: function(oDialog){
+		_afterStepRenderSuccess: function (oDialog) {
 			oDialog.setBusy(false);
 		},
 
@@ -357,10 +390,10 @@ sap.ui.define([
 		 * @param {*} isAutoSchedule 
 		 * @param {*} sCounter 
 		 */
-		_setScheduleTableTitle: function(isAutoSchedule, sCounter){
-			if(isAutoSchedule){
+		_setScheduleTableTitle: function (isAutoSchedule, sCounter) {
+			if (isAutoSchedule) {
 				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemDemandListCount", [sCounter]));
-			}else{
+			} else {
 				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemAssignmentListCount", [sCounter]));
 			}
 		},
@@ -372,9 +405,9 @@ sap.ui.define([
 		 * bIsPoolExist - Boolean - If true, then POOL resource is selected.
 		 * sPoolNames - Strin.g - All POOL name selected, it is seperated by \n
 		 */
-		_showSchedulingMessageToast: function(oSource, mParam){
+		_showSchedulingMessageToast: function (oSource, mParam) {
 			var message = "";
-			if(mParam.bIsPoolExist){
+			if (mParam.bIsPoolExist) {
 				message = message + this._oResourceBundle.getText("ymsg.poolResourceExist", mParam.sPoolNames);
 			}
 			if (message) {
@@ -383,6 +416,31 @@ sap.ui.define([
 					source: oSource
 				});
 			}
+		},
+
+		/**
+		 * set wizard content for step2 
+		 * Response from PTV API will be displayed in table format
+		 * 
+		 * In template views the Json model and path to Json data are set instead of an entitySet
+		 * Table columns are rendered from EntitySet LineItems but Table data are from Json Model
+		 * 
+		 * @param {*} oDialog 
+		 */
+		_renderWizardStep2Binding: function (oDialog) {
+			sContainerId = "ConfirmationStep";
+
+			this._mParams.viewName = "com.evorait.evoplan.view.scheduling.AutoScheduling.AutoScheduleStep2#AutoScheduleStep2";
+			this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ResponseTable";
+			this._mParams.modelName = "SchedulingModel";
+			this._mParams.modelDataSetPath = "/step2/dataSet";
+
+			this._oModel.metadataLoaded().then(function () {
+				//get template and create views
+				this._mParams.oView = this._oView;
+				this.setTemplateProperties(this._mParams);
+				this.insertTemplateFragment(null, this._mParams.viewName, sContainerId, null, this._mParams);
+			}.bind(this));
 		}
 
 	});
