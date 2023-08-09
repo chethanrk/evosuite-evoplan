@@ -435,7 +435,7 @@ sap.ui.define([
 				aDemandList.forEach(function (oDemand) {
 					oTempDemandData = {
 						"data": oDemand.oData,
-						"location":{
+						"location": {
 							"x": oDemand.oData.LONGITUDE,
 							"y": oDemand.oData.LATITUDE
 						},
