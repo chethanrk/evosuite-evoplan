@@ -9,7 +9,8 @@
 		showHeader="true"
 		verticalScrolling="false"
 		contentHeight="70%"
-		contentWidth="80%">
+		contentWidth="80%"
+		afterClose="onSchedDialogClose">
 
 		<content>
 			<Wizard id="WizardScheduling"

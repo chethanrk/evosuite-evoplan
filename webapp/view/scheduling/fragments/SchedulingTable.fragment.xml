@@ -20,16 +20,16 @@
 							<Title text="{viewModel>/Scheduling/sScheduleFilteredDemandsTableTitle}" />
 							<ToolbarSpacer/>
 							<ToggleButton id="btnInsideDateRange" 
-								type="Transparent" 
+								type="Ghost" 
 								text="{i18n>xbut.scheduleToogleInside} ({SchedulingModel>/inside})" 
 								pressed="false" 
 								press="onPressInsideDate" />
 							<ToggleButton id="btnOutsideDateRange" 
-								type="Transparent" 
+								type="Ghost" 
 								text="{i18n>xbut.scheduleToogleOutside} ({SchedulingModel>/outside})" 
 								pressed="false" 
 								press="onPressOutsideDate" />
-							<Button type="Transparent" icon="sap-icon://filter" text="{viewModel>/Scheduling/sFilterCounts}" press="onPressShowFilterbar" />							
+							<Button type="Ghost"  icon="sap-icon://filter" text="{viewModel>/Scheduling/sFilterCounts}" press="onPressShowFilterbar" />							
 						</OverflowToolbar>
 					</table:extension>
 
