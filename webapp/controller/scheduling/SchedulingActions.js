@@ -454,7 +454,7 @@ sap.ui.define([
 			var aResourceData = this.oViewModel.getProperty("/Scheduling/resourceData"),
 				aDemandsData = {};
 			var aPayload = this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
-			
+
 			// After creation of payload, method to call the PTV service will be added here ;
 		},
 

@@ -57,6 +57,7 @@ sap.ui.define([
 		_sDefaultResourceStartHour: "",
 		_sDefaultResourceEndHour: "",
 		oUserModel: null,
+		oViewModel: null,
 
 		/**
 		 * Creates a new instance of the PTV map provider. 
@@ -75,6 +76,7 @@ sap.ui.define([
 			this._sPlanToursUrl = this.sServiceUrl + TOUR_SERVICE_PATH + PLAN_TOURS_PATH;
 			this._sAuthToken = btoa(oServiceData.Username + ":" + oServiceData.Password);
 			this.oUserModel = this.oComponent.getModel("user");
+			this.oViewModel = this.oComponent.getModel("viewModel");
 			this._sDefaultResourceStartHour = parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_STARTHR")) || 0;
 			this._sDefaultResourceEndHour = parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_ENDHR")) || 24;
 		},
@@ -88,10 +90,12 @@ sap.ui.define([
 		 */
 		getPTVPayload: function (aResourceData, aDemandsData) {
 			var oPayload = this._getPayloadStructure();
+			this.oViewModel.setProperty("/Scheduling/minDate", new Date('2023-07-31'));
+			this.oViewModel.setProperty("/Scheduling/maxDate", new Date('2023-08-06T23:59:59'));
 
 			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload 
 			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
-
+			debugger;
 			return oPayload;
 		},
 
@@ -214,8 +218,8 @@ sap.ui.define([
 					"calculationMode": "PERFORMANCE",
 					"planningHorizon": {
 						"$type": "StartEndInterval",
-						"start": "",
-						"end": ""
+						"start": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/minDate")),
+						"end": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/maxDate"))
 					}
 				}
 			};
@@ -229,37 +233,54 @@ sap.ui.define([
 		_setResourceData: function (oPayload, aResourceData) {
 			var aResourceLocations = [],
 				aVehicles = [],
-				aDrivers = [];
+				aVehicles = [],
+				aVehicleIDs = [],
+				aDrivers = [],
+				aSchedulingData = this.oViewModel.getProperty("/Scheduling"),
+				aHorizonDateIntervals = this._getDateIntervals(aSchedulingData.minDate, aSchedulingData.maxDate),
+				aWorkSchedules = [];
+				
+
 			for (var sGuid in aResourceData) {
 				//Resource location coordinates added as DepotSite to add in Locations
-				aResourceLocations.push({
-					"$type": "DepotSite",
-					"id": sGuid + "_location",
-					"routeLocation": {
-						"$type": "OffRoadRouteLocation",
-						"offRoadCoordinate": {
-							"x": aResourceData[sGuid].aData.LONGITUDE,
-							"y": aResourceData[sGuid].aData.LONGITUDE
-						}
+				aResourceLocations.push(this._getPTVLocationObject(sGuid, aResourceData, "DepotSite"));
+
+				// calculating breaks and availability/Unavailability and creating objects for Breaks, OperatingInterval 
+				aWorkSchedules = this._getFormattedWorkSchedules(aResourceData[sGuid], aHorizonDateIntervals);
+
+				//Creation of Vehicles and Driver object for each in the planning horizon
+				aHorizonDateIntervals.forEach(function (sDate) {
+					if (aWorkSchedules[sDate]) {
+						//Creating and adding vehicle ids to pass to vehicle object 
+						aVehicleIDs.push(sGuid + "_" + sDate);
+
+						//Adding vehicle objects for each day 
+						aDrivers.push({
+							"id": sGuid + "_" + sDate + "_driver",
+							"vehicleId": sGuid + "_" + sDate,
+							"operatingIntervals": aWorkSchedules[sDate].aOperationIntervals,
+							"breakIntervals": aWorkSchedules[sDate].aBreakIntervals
+						});
 					}
 				});
 
 				// Vehicle objects added as for the resource
 				aVehicles.push({
-					"ids": [
-						sGuid
-					],
+					"ids": aVehicleIDs,
 					"startLocationId": sGuid + "_location",
-					"endLocationId": sGuid + "_location"
+					"endLocationId": sGuid + "_location",
+					"equipment": aResourceData[sGuid].qualifications
 				});
-				aDrivers.push({
-					"id": sGuid + "_driver",
-					"vehicleId": sGuid,
-					"operatingIntervals": [],
-					"breakIntervals": []
-				});
+				debugger;
+				
 			};
 
+			// Adding all the generated data into payload
+			oPayload.locations = oPayload.locations.concat(aResourceLocations);
+			oPayload.fleet.drivers = aDrivers;
+			oPayload.fleet.vehicles = aVehicles;
+
+			//Return the payload structure with Resource Data
 			return oPayload;
 		},
 
@@ -270,9 +291,212 @@ sap.ui.define([
 		_setDemandsData: function (oPayload, aDemandsData) {
 			//code for payload creation with demands data needs to place here
 			return oPayload;
+		},
+
+		/**
+		 * Convert date object in oData date format
+		 * @param {Object} oDate
+		 * @return {String} - formatted date for PTV payload planning horizon
+		 */
+		_getFormattedDate: function(oDate){
+			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				pattern: "yyyy-MM-ddTHH:mm:ss:SSSZ"
+			});
+			return oDateFormat.format(oDate); 
+		},
+
+		/**
+		 * Convert date object in oData date format
+		 * @return {Object} - array of formatted date 
+		 */
+		_getDateIntervals: function (aStartDate, aEndDate){
+			var aHorizonDateIntervals = [];
+			while (aStartDate.getDate() != aEndDate.getDate()){
+				aHorizonDateIntervals.push(this._getFormattedDate(aStartDate).substr(0, 10));
+				aStartDate.setDate(aStartDate.getDate() + 1) 
+			}
+			aHorizonDateIntervals.push(this._getFormattedDate(aStartDate).substr(0, 10));
+			return aHorizonDateIntervals;
+		},
+
+		/**
+		 * create PTV location object for Resource/Demands
+		 * @return {Object} - location object for PTV payload
+		 */
+		_getPTVLocationObject: function (sGuid, aResourceData,sType){
+			return {
+				"$type": sType,
+				"id": sGuid + "_location",
+				"routeLocation": {
+					"$type": "OffRoadRouteLocation",
+					"offRoadCoordinate": {
+						"x": aResourceData[sGuid].aData.LONGITUDE,
+						"y": aResourceData[sGuid].aData.LATITUDE
+					}
+				}
+			}
+		},
+
+		/**
+		 * format Operations and Break intervals for the resource
+		 * @param {Object} oResource resource object
+		 * @param {Object} aHorizonDateIntervals Array of dates of PTV payload planning horizon
+		 * @return {Object} - array containing Operations and Break intervals
+		 */
+		_getFormattedWorkSchedules: function (oResource, aHorizonDateIntervals){
+			var aFormattedWorkSchedules = [],
+				sStartDate="",
+				aAbsences=[],
+				aProjectBlockers = [],
+				aIntervals = [],
+				sDate;
+			
+			//creating array of all absence days 	
+			oResource.absenses.forEach(function (oItem) {
+				aAbsences = aAbsences.concat(this._getDateIntervals(oItem.DateFrom, oItem.DateTo));
+			}.bind(this));
+
+			// creating actual planing horizon for resource based on availability
+			aHorizonDateIntervals.forEach(function (oDate) { 
+				if (aAbsences.indexOf(oDate) === -1) {
+					aFormattedWorkSchedules[oDate] = { aOperationIntervals: [], aBreakIntervals: [] }
+				}
+			});
+
+			// calculating blockers for each day for resource
+			oResource.projectBlockers.forEach(function (oItem) {
+				aIntervals = aIntervals.concat(this._getDateIntervals(oItem.DateFrom, oItem.DateTo));
+				for (sDate of aIntervals ){
+					aProjectBlockers[sDate] = parseFloat(oItem.BLOCKED_HOURS)*3600;
+				}
+			}.bind(this));
+			
+			// Adding Breaks for the resources
+			oResource.breaks.forEach(function (oItem) {				
+					sStartDate = this._getFormattedDate(oItem.DateFrom);
+					sDate = sStartDate.substring(0, 10);
+				if (aFormattedWorkSchedules[sDate] && aFormattedWorkSchedules[sDate].aBreakIntervals) {
+					aFormattedWorkSchedules[sDate].aBreakIntervals.push({
+						"breakTime": this._getDateDuration(oItem.DateFrom, oItem.DateTo),
+						"interval": {
+							"$type": "StartEndInterval",
+							"start": sStartDate,
+							"end": this._getFormattedDate(oItem.DateTo)
+						}
+					})
+				}
+			}.bind(this));
+
+			// Adding Operating intervals by calculating the availability hours for each day
+			oResource.workSchedules.forEach(function(oItem){
+					sStartDate = this._getFormattedDate(oItem.DateFrom);
+					sDate = sStartDate.substring(0, 10);
+					if (aFormattedWorkSchedules[sDate] && aFormattedWorkSchedules[sDate].aOperationIntervals){
+						aFormattedWorkSchedules[sDate].aOperationIntervals.push({
+							"$type": "StartDurationInterval",
+							"start": sStartDate,
+							"duration": this._getAvailabilityDuration(oItem.DateFrom, oItem.DateTo, aProjectBlockers[sDate])
+						})
+					}
+			}.bind(this));
+			return aFormattedWorkSchedules;	
+		},
+
+		/**
+		 * Calculting resource availabity base on workschedule 
+		 * removing blockers duration 
+		 * @param {Object} oDateFrom Start date and time of work schedule
+		 * @param {Object} oDateTo End date and time of work schedule
+		 * @param {Number} nBlockedDuration duration of blocker for the day
+		 * @return {Number} Total available duration excluding blocker and considering the Utilization
+		 */
+		_getAvailabilityDuration: function (oDateFrom, oDateTo, nBlockedDuration) {
+			var nAvailabilityDuration = this._getDateDuration(oDateFrom, oDateTo),
+				nUtilization = this.oViewModel.getProperty('/Scheduling/sUtilizationSlider');
+			
+			//Condition to check if any blocker is there then remove the blocker duration from actual availability duration	
+			if (nBlockedDuration) {
+				nAvailabilityDuration = nAvailabilityDuration - nBlockedDuration;
+			}
+
+			// calculating duration based on given Utilization and returning the duration value of availability
+			return nAvailabilityDuration * nUtilization / 100; 
+		},
+
+		/**
+		 * To calculate time duration between two date values considering time 
+		 * @param {Object} oDateFrom Start date and time 
+		 * @param {Object} oDateTo End date and time 
+		 * @return {Number} Duration between given start and end data/time
+		 */
+		_getDateDuration: function(oStartDate,oEndDate){
+			return Math.ceil((oEndDate.getTime() - oStartDate.getTime()) / 1000);
+		},
+		
+		/**
+		 * To create input plans for already assigned demands for the resource
+		 * @param {Object} oResource Start date and time 
+		 * @return {Object} array containing InputPlan, ORDERS and Locations for already assigned demands
+		 */
+		_getInputPlans: function (oResource) {
+			var aAssingments = [],
+				sAssignmentDate = "",
+				aInputPlans = {
+					stops: [],
+					demandLocations: [],
+					demandOrders: []
+				};
+
+			aAssingments = oResource.assignments;
+			if (aAssingments && aAssingments.length) {
+				for (var oAssingnment of aAssingments) {
+					if (oAssingnment.DateFrom.getDate() === oAssingnment.DateTo.getDate()) {
+						sAssignmentDate = this._getFormattedDate(oAssingnment.DateFrom).substring(0, 10);
+						aInputPlans.stops[sAssignmentDate] = {
+							"locationId": oAssingnment.DemandGuid + "_location",
+							"tasks": [{
+								"orderId": oAssingnment.DemandGuid,
+								"taskType": "VISIT"
+							}]
+						};
+						aInputPlans.demandLocations.push({
+							"$type": "CustomerSite",
+							"id": oAssingnment.DemandGuid + "_location",
+							"routeLocation": {
+								"$type": "OffRoadRouteLocation",
+								"offRoadCoordinate": {
+									"x": oAssingnment.LONGITUDE,
+									"y": oAssingnment.LATITUDE
+								}
+							},
+							"openingIntervals": [
+								{
+									"$type": "StartDurationInterval",
+									"start": this._getFormattedDate(oAssingnment.DateFrom),
+									"duration": this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo) || 1
+								}
+							]
+						});
+
+						aInputPlans.demandOrders.push(
+							{
+								"$type": "VisitOrder",
+								"id": oAssingnment.DemandGuid,
+								"locationId": oAssingnment.DemandGuid + "_location",
+								"priority": 9,
+								"serviceTime": this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo),
+								"requiredVehicleEquipment": aResourceData[sGuid].qualifications
+							}
+						)
+
+					} else {
+						// Multiple days assignments would get processed here
+					}
+
+				}
+			}
+			return aInputPlans;
 		}
-
-
 		/* ============================================================================== */
 		/* Data types                                                                     */
 		/* ------------------------------------------------------------------------------ */
