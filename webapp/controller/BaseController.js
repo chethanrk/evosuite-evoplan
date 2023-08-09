@@ -105,9 +105,9 @@ sap.ui.define([
 			MessageToast.show(sMsg, {
 				duration: 5000,
 				width: mParams ? mParams.width : '15rem',
-				offset:"0 600",
 				at:"center center",
-				of: mParams ? mParams.source : window
+				of: mParams ? mParams.source : window,
+				offset: "0 200"
 			});
 		},
 
@@ -590,13 +590,7 @@ sap.ui.define([
 			}
 			);
 		},
-		/**
-		 * This method is used to clear the selections of the demands table in
-		 * Demands, NewGantt and Maps view.
-		 */
-		_clearDemandsSelection:function(){
-			this._oDataTable.clearSelection();
-		},
+		
 
 		/**
 		 * Shows the confirmation Box.

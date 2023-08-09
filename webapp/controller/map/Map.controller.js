@@ -226,7 +226,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.subscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
 			this._oEventBus.subscribe("MapController", "displayRoute", this._zoomToPoint, this);
-			this._oEventBus.subscribe("BaseController", "clearDemandsSelection", this._clearDemandsSelection, this);
+			this._oEventBus.subscribe("DemandTableOperation", "clearDemandsSelection", this.clearDemandsSelection, this);
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
 			this._oDraggableTable = this.byId("draggableList");
@@ -943,6 +943,7 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
+			this._oEventBus.unsubscribe("DemandTableOperation", "clearDemandsSelection", this.clearDemandsSelection, this);
 		},
 
 		/* =========================================================== */
