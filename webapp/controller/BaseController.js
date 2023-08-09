@@ -105,9 +105,9 @@ sap.ui.define([
 			MessageToast.show(sMsg, {
 				duration: 5000,
 				width: mParams ? mParams.width : '15rem',
-				at:"center center",
+				at:"center bottom",
 				of: mParams ? mParams.source : window,
-				offset: "0 200"
+				offset: "0 -60"
 			});
 		},
 
