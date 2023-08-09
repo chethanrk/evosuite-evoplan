@@ -111,7 +111,7 @@ sap.ui.define([
 			} else {
 				this._oEventBus.publish("ManageAbsences", "ClearSelection", {});
 			}
-			this._oEventBus.publish("BaseController", "clearDemandsSelection", {});
+			this._oEventBus.publish("DemandTableOperation", "clearDemandsSelection", {});
 		},
 		/**
 		 * This method is used to handle the press event of 
