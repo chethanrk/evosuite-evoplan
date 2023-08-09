@@ -15,6 +15,8 @@ sap.ui.define([
 	var TOUR_SERVICE_PATH = "/XTour";
 	var PLAN_TOURS_PATH = "/planTours";
 	var START_PLAN_TOURS_PATH = "/startPlanTours";
+	var WATCH_JOB_PATH = "/watchJob";
+	var FETCH_JOB_RESPONSE_PATH = "/fetchToursResponse";
 	var VEHICLE_ID = "EvoPlanVehicle";
 	var DRIVER_ID = "EvoPlanDriver";
 
@@ -75,6 +77,8 @@ sap.ui.define([
 			this._sCreateDistanceMatrixUrl = this.sServiceUrl + DIMA_SERVICE_PATH + CREATE_DISTANCE_MATRIX_PATH;
 			this._sPlanToursUrl = this.sServiceUrl + TOUR_SERVICE_PATH + PLAN_TOURS_PATH;
 			this._sStartPlanToursUrl = this.sServiceUrl + TOUR_SERVICE_PATH + START_PLAN_TOURS_PATH;
+			this._sWatchJobUrl = this.sServiceUrl + TOUR_SERVICE_PATH + WATCH_JOB_PATH;
+			this._sFetchToursResponseUrl = this.sServiceUrl + TOUR_SERVICE_PATH + FETCH_JOB_RESPONSE_PATH;
 			this._sAuthToken = btoa(oServiceData.Username + ":" + oServiceData.Password);
 			this.oUserModel = this.oComponent.getModel("user");
 			this._sDefaultResourceStartHour = parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_STARTHR")) || 0;
@@ -100,11 +104,22 @@ sap.ui.define([
 		 * @param {object} oRequestBody 
 		 * @returns {object} - promise
 		 */
-		sendPTVPayload: function (oRequestBody){
-			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oRequestBody).then(function (oResponse) {
-				debugger;
+		sendPTVPayload: function (oPlanTourRequestBody){
+			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oPlanTourRequestBody).then(function (oPlanTourResponse) {
 				//call watch job
-				//call fetch response
+				var oWatchJobRequestBody = {};
+				var intervalID = setInterval(function() {
+					this._sendPOSTRequestToPTV(this._sWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
+						if(true){ // if successed or failed
+							clearInterval(intervalID);
+							//call fetch response
+							var oFetchResponseRequestBody = {};
+							this._sendPOSTRequestToPTV(this._sFetchToursResponseUrl, oFetchResponseRequestBody).then(function(oFetchToursResponse){
+								return oFetchToursResponse;
+							}.bind(this));
+						}
+					}.bind(this));
+				}.bind(this),2000);
 			}.bind(this));
 		},
 
