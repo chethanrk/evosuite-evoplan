@@ -90,12 +90,8 @@ sap.ui.define([
 		 */
 		getPTVPayload: function (aResourceData, aDemandsData) {
 			var oPayload = this._getPayloadStructure();
-			this.oViewModel.setProperty("/Scheduling/minDate", new Date('2023-07-31'));
-			this.oViewModel.setProperty("/Scheduling/maxDate", new Date('2023-08-06T23:59:59'));
-
 			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload 
 			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
-			debugger;
 			return oPayload;
 		},
 
@@ -218,8 +214,8 @@ sap.ui.define([
 					"calculationMode": "PERFORMANCE",
 					"planningHorizon": {
 						"$type": "StartEndInterval",
-						"start": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/minDate")),
-						"end": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/maxDate"))
+						"start": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/startDate")),
+						"end": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/endDate"))
 					}
 				}
 			};
@@ -233,15 +229,15 @@ sap.ui.define([
 		_setResourceData: function (oPayload, aResourceData) {
 			var aResourceLocations = [],
 				aVehicles = [],
-				aVehicles = [],
 				aVehicleIDs = [],
 				aDrivers = [],
 				aSchedulingData = this.oViewModel.getProperty("/Scheduling"),
-				aHorizonDateIntervals = this._getDateIntervals(aSchedulingData.minDate, aSchedulingData.maxDate),
+				aHorizonDateIntervals = this._getDateIntervals(aSchedulingData.startDate, aSchedulingData.endDate),
 				aWorkSchedules = [];
 				
 
 			for (var sGuid in aResourceData) {
+				aVehicleIDs = [];
 				//Resource location coordinates added as DepotSite to add in Locations
 				aResourceLocations.push(this._getPTVLocationObject(sGuid, aResourceData, "DepotSite"));
 
@@ -250,7 +246,7 @@ sap.ui.define([
 
 				//Creation of Vehicles and Driver object for each in the planning horizon
 				aHorizonDateIntervals.forEach(function (sDate) {
-					if (aWorkSchedules[sDate]) {
+					if (aWorkSchedules[sDate] && aWorkSchedules[sDate].aOperationIntervals.length) {
 						//Creating and adding vehicle ids to pass to vehicle object 
 						aVehicleIDs.push(sGuid + "_" + sDate);
 
@@ -266,13 +262,11 @@ sap.ui.define([
 
 				// Vehicle objects added as for the resource
 				aVehicles.push({
-					"ids": aVehicleIDs,
+					"ids": _.cloneDeep(aVehicleIDs),
 					"startLocationId": sGuid + "_location",
 					"endLocationId": sGuid + "_location",
 					"equipment": aResourceData[sGuid].qualifications
 				});
-				debugger;
-				
 			};
 
 			// Adding all the generated data into payload
@@ -395,7 +389,7 @@ sap.ui.define([
 			oResource.projectBlockers.forEach(function (oItem) {
 				aIntervals = aIntervals.concat(this._getDateIntervals(oItem.DateFrom, oItem.DateTo));
 				for (sDate of aIntervals ){
-					aProjectBlockers[sDate] = parseFloat(oItem.BLOCKED_HOURS)*3600;
+					aProjectBlockers[sDate] = oItem.BlockPercentage;
 				}
 			}.bind(this));
 			
@@ -435,16 +429,16 @@ sap.ui.define([
 		 * removing blockers duration 
 		 * @param {Object} oDateFrom Start date and time of work schedule
 		 * @param {Object} oDateTo End date and time of work schedule
-		 * @param {Number} nBlockedDuration duration of blocker for the day
+		 * @param {Number} nBlockedPercentage percentage of blocker for the day
 		 * @return {Number} Total available duration excluding blocker and considering the Utilization
 		 */
-		_getAvailabilityDuration: function (oDateFrom, oDateTo, nBlockedDuration) {
+		_getAvailabilityDuration: function (oDateFrom, oDateTo, nBlockedPercentage) {
 			var nAvailabilityDuration = this._getDateDuration(oDateFrom, oDateTo),
 				nUtilization = this.oViewModel.getProperty('/Scheduling/sUtilizationSlider');
 			
 			//Condition to check if any blocker is there then remove the blocker duration from actual availability duration	
-			if (nBlockedDuration) {
-				nAvailabilityDuration = nAvailabilityDuration - nBlockedDuration;
+			if (nBlockedPercentage) {
+				nAvailabilityDuration = nAvailabilityDuration - (nAvailabilityDuration * nBlockedPercentage/100);
 			}
 
 			// calculating duration based on given Utilization and returning the duration value of availability
