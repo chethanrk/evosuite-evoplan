@@ -148,9 +148,9 @@ sap.ui.define([
 			aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
 			aFilterResource = [];
 			for(var x in aResourceList){
-				aFilterResource.push(new Filter("ResourceGuid",FilterOperator.EQ,aResourceList[x]["ResourceGuid"]))
+				aFilterResource.push(new Filter("ResourceGuid",FilterOperator.EQ,aResourceList[x].ResourceGuid))
 			}
-			aFilterResource.push(new Filter("DemandGuid",FilterOperator.EQ,sSelectedDemand["Guid"]));
+			aFilterResource.push(new Filter("DemandGuid",FilterOperator.EQ,sSelectedDemand.Guid));
 			this.oAppViewModel.setProperty("/busy", true);
 			//to fetch the assigned resource to the selected demand
 			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource).then(function (oData) {
