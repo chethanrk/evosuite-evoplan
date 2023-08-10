@@ -719,7 +719,9 @@ sap.ui.define([
 					  }
 					}
 				  };
-				this.oOwnerComponent.SchedulingMapProvider.sendPTVPayload(aPayload);
+				this.oOwnerComponent.SchedulingMapProvider.sendPTVPayload(aPayload).then(function(oPlanTourResponse){
+					console.log(oPlanTourResponse);
+				});
 			}.bind(this));
 		},
 
