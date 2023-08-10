@@ -127,7 +127,9 @@ sap.ui.define([
 			// check if the allow re-schedule flag is enabled or not.
 			oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 			if (!oSelectedDemandItem.ALLOW_RESCHEDULE) {
-				this.showMessageToast(this.oResourceBundle.getText("ysmg.DemandRescheduleError"));
+				var aNonAssignableDemands = [];
+				aNonAssignableDemands.push(this.getMessageDescWithOrderID(oSelectedDemandItem, null, null,true));
+				this._showAssignErrorDialog(aNonAssignableDemands, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 				return false;
 			};
 			return true;
@@ -233,7 +235,7 @@ sap.ui.define([
 				aFilters = [];
 				if (oResourceObj.ResourceGuid) {
 					aResourceData.push(oResourceObj);
-				} else if (oResourceObj.NodeId.split(":")[0] === "POOL") {
+				} else if (oResourceObj.NodeId.indexOf("POOL") >= 0) {
 					aPoolResource.push(oResourceObj.Description);
 					bIsPoolExist = true;
 				} else if (oResourceObj.ResourceGroupGuid) {
@@ -292,6 +294,7 @@ sap.ui.define([
 				sInvalidDateRangeMsg: "",
 				btnInsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleInside"),
 				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
+				iSelectedResponse: 0
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
 		},

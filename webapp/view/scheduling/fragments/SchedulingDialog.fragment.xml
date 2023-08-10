@@ -9,7 +9,8 @@
 		showHeader="true"
 		verticalScrolling="false"
 		contentHeight="70%"
-		contentWidth="80%">
+		contentWidth="80%"
+		afterClose="onSchedDialogClose">
 
 		<content>
 			<Wizard id="WizardScheduling"
@@ -28,13 +29,6 @@
 							activate="optionalStepActivation"
 							icon="sap-icon://accept"
 							title="{i18n>xtit.ReScheSecondStepTitle}">
-					<!--Relevent Content to be added later in the next development tickets-->
-					<core:ExtensionPoint name="WizardExtP|Schedule|Step2|Content|Before"/>
-					<MessageStrip class="sapUiSmallMarginBottom"
-							text="Sample Content for Checking the PTV response"
-							showIcon="true"/>
-				
-					<core:ExtensionPoint name="WizardExtP|Schedule|Step2|Content|After"/>
 				</WizardStep>
 					
 			</Wizard>

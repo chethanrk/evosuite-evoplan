@@ -105,7 +105,9 @@ sap.ui.define([
 			MessageToast.show(sMsg, {
 				duration: 5000,
 				width: mParams ? mParams.width : '15rem',
-				of: mParams ? mParams.source : window
+				at:"center bottom",
+				of: mParams ? mParams.source : window,
+				offset: "0 -60"
 			});
 		},
 
@@ -588,6 +590,7 @@ sap.ui.define([
 			}
 			);
 		},
+		
 
 		/**
 		 * Shows the confirmation Box.
@@ -1109,10 +1112,10 @@ sap.ui.define([
 		 * Since 2301.4.0
 		 * @Author Rakesh Sahu
 		 */
-		getMessageDescWithOrderID: function (oData, Desc, bIsForScheduling) {
+		getMessageDescWithOrderID: function (oData, Desc, bIsForScheduling,bIsForReScheduling) {
 			Desc = Desc ? Desc : oData.DemandDesc;
-			// Condition to add number of assignments to display in error dialog
-			if (bIsForScheduling) {
+			// Condition to add number of assignments to display in error dialog for scheduling or auto scheduling.
+			if (bIsForScheduling || bIsForReScheduling) {
 				return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;;
 			}
 			if (oData.ORDERID) {

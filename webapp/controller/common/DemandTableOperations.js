@@ -298,6 +298,13 @@ sap.ui.define([
 				}
 			}.bind(this));
 		},
+		/**
+		 * This method is used to clear the selections of the demands table in
+		 * Demands, NewGantt and Maps view.
+		 */
+		clearDemandsSelection:function(){
+			this._oDataTable.clearSelection();
+		},
 
 		/* =========================================================== */
 		/* Private methods                                             */

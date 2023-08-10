@@ -40,6 +40,7 @@ sap.ui.define([
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 			this._eventBus.subscribe("AssignTreeDialog", "updateDemandTableSelection", this._deselectDemands, this);
+			this._eventBus.subscribe("DemandTableOperation", "clearDemandsSelection", this.clearDemandsSelection, this);
 			//toAdd busystete change event to the table
 			this._oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
 			this._mParameters = {
@@ -48,6 +49,7 @@ sap.ui.define([
 			this._oRouter = this.getOwnerComponent().getRouter();
 
 		},
+		
 
 		/* =========================================================== */
 		/* event handlers                                              */
@@ -168,6 +170,7 @@ sap.ui.define([
 			}
 			this._eventBus.unsubscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 			this._eventBus.unsubscribe("AssignTreeDialog", "updateDemandTableSelection", this._deselectDemands, this);
+			this._eventBus.unsubscribe("DemandTableOperation", "clearDemandsSelection", this.clearDemandsSelection, this);
 		},
 
 		/* =========================================================== */
@@ -196,7 +199,7 @@ sap.ui.define([
 			oDataTable.attachRowSelectionChange(function (oEvent) {
 				var selected = this._oDataTable.getSelectedIndices(),
 					bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
-					sDemandPath, bComponentExist, sMsg,
+					sDemandPath, bComponentExist, sMsg, iLastIndex,
 					oViewModel=this.getModel("viewModel");
 				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 
@@ -222,12 +225,22 @@ sap.ui.define([
 					this.byId("idUnassignButton").setEnabled(false);
 				}
 
+				// condition to deselect All when max selection limit is already reach but pressing select All checkbox
+				if (oEvent.getParameter("selectAll") && this._nSelectedDemandsCount === iMaxRowSelection) {
+					this._oDataTable.clearSelection();
+					return;
+				}
 				//If the selected demands exceeds more than the maintained selected configuration value
-				if (oEvent.getParameter("selectAll")) {
-					sMsg = this.getResourceBundle().getText("ymsg.allSelect", [this._aSelectedRowsIdx.length]);
-					this.showMessageToast(sMsg);
-				} else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
-					sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+				if (selected.length > iMaxRowSelection) {
+					if (oEvent.getParameter("selectAll")) {
+						iLastIndex = selected.pop();
+						this._oDataTable.removeSelectionInterval(iMaxRowSelection, iLastIndex);
+						sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection]);
+					} else {
+						iLastIndex = oEvent.getParameter('rowIndex');
+						this._oDataTable.removeSelectionInterval(iLastIndex, iLastIndex);
+						sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+					}
 					this.showMessageToast(sMsg);
 				}
 
@@ -257,6 +270,7 @@ sap.ui.define([
 				this.oSchedulingActions.validateReScheduleButton();
 
 				this.showWarningMsgResourceTree(true);
+				this._nSelectedDemandsCount = this._oDataTable.getSelectedIndices().length;
 			}, this);
 		},
 
@@ -525,7 +539,6 @@ sap.ui.define([
 				}
 			}
 		},
-
 		/**
 		 * Event handler to switch between Demand and Tool list
 		 * @param oEvent

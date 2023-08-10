@@ -78,6 +78,7 @@ sap.ui.define([
 			// add binging change event forthe demands table
 			this._addDemandTblBindingChangeEvent();
 			this.oSchedulingActions = new SchedulingActions(this);
+			this._oEventBus.subscribe("DemandTableOperation", "clearDemandsSelection", this.clearDemandsSelection, this);
 
 		},
 
@@ -86,6 +87,7 @@ sap.ui.define([
 		 */
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshDemandGanttTable", this._refreshDemandTable, this);
+			this._oEventBus.unsubscribe("DemandTableOperation", "clearDemandsSelection", this.clearDemandsSelection, this);
 		},
 
 		/* =========================================================== */
@@ -169,7 +171,7 @@ sap.ui.define([
 				iMaxRowSelection = this.oUserModel.getProperty("/DEFAULT_DEMAND_SELECT_ALL"),
 				bEnable = this._viewModel.getProperty("/validateIW32Auth"),
 				index = oEvent.getParameter("rowIndex"),
-				sDemandPath, bComponentExist, sMsg,
+				sDemandPath, bComponentExist, sMsg, iLastIndex,
 				oViewModel=this.getModel("viewModel");
 
 			this._aSelectedRowsIdx = _.clone(selected);
@@ -192,12 +194,23 @@ sap.ui.define([
 				this.byId("idUnassignButton").setEnabled(false);
 			}
 
+			// condition to deselect All when max selection limit is already reach but pressing select All checkbox
+			if (oEvent.getParameter("selectAll") && this._nSelectedDemandsCount === iMaxRowSelection) {
+				this._oDataTable.clearSelection();
+				return;
+			}
+
 			//If the selected demands exceeds more than the maintained selected configuration value
-			if (oEvent.getParameter("selectAll")) {
-				sMsg = this.getResourceBundle().getText("ymsg.allSelect", [this._aSelectedRowsIdx.length]);
-				this.showMessageToast(sMsg);
-			} else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
-				sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+			if (selected.length > iMaxRowSelection) {
+				if (oEvent.getParameter("selectAll")) {
+					iLastIndex = selected.pop();
+					this._oDataTable.removeSelectionInterval(iMaxRowSelection, iLastIndex);
+					sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection]);
+				} else {
+					iLastIndex = oEvent.getParameter('rowIndex');
+					this._oDataTable.removeSelectionInterval(iLastIndex, iLastIndex);
+					sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+				}
 				this.showMessageToast(sMsg);
 			}
 
@@ -237,6 +250,7 @@ sap.ui.define([
 			oViewModel.setProperty("/Scheduling/aSelectedDemandPath",this._aSelectedRowsIdx);
 			this.oSchedulingActions.validateScheduleButtons();
 			this.oSchedulingActions.validateReScheduleButton();
+			this._nSelectedDemandsCount = this._oDataTable.getSelectedIndices().length;
 		},
 		onPressFilterGantChart: function () {
 			var aPplicationFilters = this.getView().byId("draggableList").getTable().getBinding("rows").aApplicationFilters;
