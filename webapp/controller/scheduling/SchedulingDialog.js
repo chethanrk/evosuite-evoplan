@@ -121,6 +121,10 @@ sap.ui.define([
 			this._iSelectedStepIndex = this._oWizard.getSteps().indexOf(this._oSelectedStep);
 			var oNextStep = this._oWizard.getSteps()[this._iSelectedStepIndex + 1];
 
+			if (this._iSelectedStepIndex === 0 && !this.step1Validation()){
+				return;
+			}
+
 			if (this._oSelectedStep && !this._oSelectedStep.bLast) {
 				this._oWizard.goToStep(oNextStep, true);
 			} else {
@@ -153,6 +157,19 @@ sap.ui.define([
 			this._oSelectedStep = oPreviousStep;
 
 			this._handleButtonsVisibility();
+		},
+		step1Validation: function() {
+			var oStartDate = this._oViewModel.getProperty("/Scheduling/startDate"),
+				oEndDate = this._oViewModel.getProperty("/Scheduling/endDate"),
+				validateState = true;
+
+			if (!oStartDate){
+				validateState = false;
+			}
+			if (!oEndDate){
+				validateState = false;
+			}
+			return validateState;
 		},
 		/**
 		 * Tis method is used to handle the activation/validation of the 
