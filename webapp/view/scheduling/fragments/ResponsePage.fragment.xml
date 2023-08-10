@@ -14,7 +14,7 @@
                         <RadioButton class="sapUiMediumMarginEnd" groupName="scheduleType" text="{i18n>xrd.notScheduled}" />
                     </RadioButtonGroup>
                 </HBox>
-                <Table id="step2_ResponseTable"
+                <Table id="step2_ResponseTable" noData="{i18n>ymsg.NoDataFound}"
                     items="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\', sorter: { path: \''+ 'ResourceName' +'\', descending: false, group:\''+ '.fnGetResName' +'\'}}'}">
                     <headerToolbar>
 					<OverflowToolbar>
