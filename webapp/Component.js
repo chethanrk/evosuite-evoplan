@@ -580,6 +580,7 @@ sap.ui.define([
 				ganttResourceFiltersFromPin: [],
 				ganttDateRangeFromMap: [],
 				iFirstVisibleRowIndex: -1,
+				iFirstTreeTableVisibleindex: -1,
 				availabilities: {
 					data: [],
 					isToAssign: false
