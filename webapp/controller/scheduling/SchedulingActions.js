@@ -153,6 +153,7 @@ sap.ui.define([
 			aFilterResource.push(new Filter("DemandGuid",FilterOperator.EQ,sSelectedDemand.Guid));
 			this.oAppViewModel.setProperty("/busy", true);
 			//to fetch the assigned resource to the selected demand
+			//we are using AssignmentSet instead of DemandSet as demandset was taking more time than assignmentset.
 			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource,"$select=FIRSTNAME,LASTNAME").then(function (oData) {
 				this.oAppViewModel.setProperty("/busy", false);
 				if(oData.results.length>0){
