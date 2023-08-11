@@ -1207,10 +1207,13 @@ sap.ui.define([
 				oi18nModel = this.getModel("i18n"),
 				sDisplayDemandInfo, sCancelResponse, aDraggedDemands = [],
 
-				aDemandsForSplitAssignment = oResourceAvailabiltyResponse.arrayOfDemandsToSplit,
-				bShowSplitConfirmationDialog, sDemandSourceType;
-			sDemandSourceType = this.getObjectSourceType(aDemandsForSplitAssignment);
-			bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP") && (sDemandSourceType === "DEM_PMWO");
+				aDemandsForSplitAssignment = oResourceAvailabiltyResponse.arrayOfDemandsToSplit, bAllowSplitStretchPopUp,
+				bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP");
+
+				if(aDemandsForSplitAssignment.length > 0) {
+					bAllowSplitStretchPopUp = this.getSplitStretchPopUpFlag(aDemandsForSplitAssignment);
+					bShowSplitConfirmationDialog = bShowSplitConfirmationDialog && bAllowSplitStretchPopUp;
+				}				
 
 			return new Promise(function (resolve, reject) {
 
@@ -1425,15 +1428,15 @@ sap.ui.define([
 		},
 
 		/**
-		 * method returns a demand object source type
+		 * method returns a demand split Assignment Falg
 		 * asking to display the confirmation pop up to continue with splits or not
 		 * 
 		 * @param {array} aDemandsForSplitAssignment demands which are marked for split
 		 * @returns 
 		 */
-		getObjectSourceType: function (aDemandsForSplitAssignment) {
+		getSplitStretchPopUpFlag: function (aDemandsForSplitAssignment) {
 			var oModel = this.getModel(),
-				sDisplayObjectSourceType,
+				bAllowSplitStretchPopUp,
 				aDemandObjectsFromLocalStorage = JSON.parse(this.localStorage.get("Evo-Dmnd-guid"));
 
 			for (var iIndex = 0; iIndex < aDemandsForSplitAssignment.length; iIndex++) {
@@ -1442,9 +1445,9 @@ sap.ui.define([
 				if (!oDemandDetails && aDemandObjectsFromLocalStorage.length > 0) {
 					oDemandDetails = this._getDemandObjectSplitPage(sDemandPath);
 				}
-				sDisplayObjectSourceType = oDemandDetails.OBJECT_SOURCE_TYPE;
+				bAllowSplitStretchPopUp = oDemandDetails.ALLOW_SPLIT_STRETCH_POPUP;
 			}
-			return sDisplayObjectSourceType;
+			return bAllowSplitStretchPopUp;
 		},
 
 		/**
