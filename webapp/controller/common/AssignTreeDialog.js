@@ -260,7 +260,9 @@ sap.ui.define([
 						if (this._isToolReAssign) {
 							this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel("assignment").getData());
 						} else {
+							if (!this._aSelectedPaths[0].sPath) {
 							this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(this._aSelectedPaths[0]));
+							}
 						}
 					}
 				}

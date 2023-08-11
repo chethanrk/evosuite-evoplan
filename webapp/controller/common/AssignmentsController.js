@@ -262,7 +262,7 @@ sap.ui.define([
 			this.aFixedAppointmentDemands = [];
 			this.clearMessageModel();
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
+			if (mParameters && !mParameters.bFromNewGantt && !mParameters.bFromGanttTools) {
 				this._updatedDmdResources(this.getModel("viewModel"), targetObj);
 			}
 
@@ -529,23 +529,14 @@ sap.ui.define([
 					ResourceGroupGuid: oResource.ResourceGroupGuid,
 					ResourceGuid: oResource.ResourceGuid
 				};
-				if (this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")) {
-					if (oResource.NodeType === "RESOURCE") {
+			
 						oParams = this.setDateTimeParams(oParams, oAssignment.DateFrom, {
 							ms: oAssignment.DateFrom.getTime()
 						}, oAssignment.DateTo, {
 							ms: oAssignment.DateTo.getTime()
 						});
-					} else {
-						oParams = this.setDateTimeParams(oParams, oResource.StartDate, {
-							ms: oAssignment.DateFrom.getTime()
-						}, oResource.EndDate, {
-							ms: oAssignment.DateTo.getTime()
-						});
-					}
-				} else {
-					oParams = this.setDateTimeParams(oParams, oResource.StartDate, oResource.StartTime, oResource.EndDate, oResource.EndTime);
-				}
+					
+				
 				oDemandObj = this.getModel().getProperty("/DemandSet('" + oAssignment.DemandGuid + "')");
 
 				//Conditon for PS Demand Network Assignments Update
