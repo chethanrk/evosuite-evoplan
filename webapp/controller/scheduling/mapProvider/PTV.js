@@ -113,7 +113,7 @@ sap.ui.define([
 					};
 					var intervalID = setInterval(function() {
 						this._sendPOSTRequestToPTV(this._sWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
-							if(oWatchJobResponse.data.status === "SUCCEEDED"){ // if successed or failed
+							if(["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)){ // if successed or failed
 								clearInterval(intervalID);
 								resolve (oWatchJobResponse);
 							}
@@ -358,7 +358,7 @@ sap.ui.define([
 		 */
 		_getFormattedDate: function(oDate){
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-				pattern: "yyyy-MM-ddTHH:mm:ss:SSSZ"
+				pattern: "yyyy-MM-ddTHH:mm:ssXXX"
 			});
 			return oDateFormat.format(oDate); 
 		},
