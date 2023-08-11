@@ -1050,15 +1050,15 @@ sap.ui.define([
 					if (aSources) {
 						//Checking PS Demands for Network Assignment 
 						if (oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
-							this.getOwnerComponent().NetworkAssignment.open(this.getView(), sResourcePath, aPSDemandsNetworkAssignment, null);
+							this.getOwnerComponent().NetworkAssignment.open(this.getView(), sResourcePath, aPSDemandsNetworkAssignment, mParameter);
 						} //Checking Vendor Assignment for External Resources
 						else if (oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
 							iVendorAssignmentLen) {
-							this.getOwnerComponent().VendorAssignment.open(this.getView(), sResourcePath, null);
+							this.getOwnerComponent().VendorAssignment.open(this.getView(), sResourcePath, mParameter);
 						} else if (oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
 							"RESOURCE") {
 							//Checking Operation Times
-							this.getOwnerComponent().OperationTimeCheck.open(this.getView(), null, sResourcePath);
+							this.getOwnerComponent().OperationTimeCheck.open(this.getView(), mParameter, sResourcePath);
 						} else {
 							this._setAssignmentDetail(oAssignData, sResourcePath);
 							this.updateAssignment(true, mParameter);
