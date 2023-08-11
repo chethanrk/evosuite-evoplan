@@ -18,7 +18,7 @@
                     noDataText="{i18n>ymsg.NoDataFound}" items="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\', sorter: { path: \''+ 'ResourceName' +'\', descending: false, group:\''+ '.fnGetResName' +'\'}}'}">
                     <headerToolbar>
 					<OverflowToolbar>
-						<Title text="{i18n>xtit.demands}"/>
+						<Title text="{i18n>xfld.demandName}"/>
                         <ToolbarSpacer/>
 						<Button
 							tooltip="{i18n>xbut.filters}"
@@ -30,7 +30,7 @@
                             <Label text="{i18n>xlbl.resName}" />
                         </Column>
                         <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}">
-                            <Label text="{i18n>xlbl.resGrp}" />
+                            <Label text="{i18n>xfld.ResourceGroupName}" />
                         </Column>
                         <template:repeat list="{path:'data>'}">
                             <template:with path="data>Value" var="value">
