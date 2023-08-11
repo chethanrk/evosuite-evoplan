@@ -479,9 +479,11 @@ sap.ui.define([
 					if (bEndDateChanged) {
 						this.oViewModel.setProperty("/Scheduling/startDate", null);
 						startDate = null;
+						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateFromErrorMsg"));
 					} else {
 						this.oViewModel.setProperty("/Scheduling/endDate", null);
 						endDate = null;
+						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateToErrorMsg"));
 					}
 				}
 			}
