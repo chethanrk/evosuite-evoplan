@@ -104,28 +104,36 @@ sap.ui.define([
 		 * @param {object} oRequestBody 
 		 * @returns {object} - promise
 		 */
-		sendPTVPayload: function (oPlanTourRequestBody){
+		callPTVPlanTours: function (oPlanTourRequestBody){
 			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oPlanTourRequestBody).then(function (oPlanTourResponse) {
+				if(oPlanTourResponse){
 				//call watch job
-				return new Promise(function(resolve){
-					var oWatchJobRequestBody = {
-						id: oPlanTourResponse.data.id
-					};
-					var intervalID = setInterval(function() {
-						this._sendPOSTRequestToPTV(this._sWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
-							if(["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)){ // if successed or failed
-								clearInterval(intervalID);
-								resolve (oWatchJobResponse);
-							}
-						}.bind(this));
-					}.bind(this),2000);
-				}.bind(this));				
+					return new Promise(function(resolve){
+						var oWatchJobRequestBody = {
+							id: oPlanTourResponse.data.id
+						};
+						var intervalID = setInterval(function() {
+							this._sendPOSTRequestToPTV(this._sWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
+								if(["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)){ // if successed or failed
+									clearInterval(intervalID);
+									resolve (oWatchJobResponse);
+								}
+							}.bind(this));
+						}.bind(this),2000);
+					}.bind(this));
+				}else{
+					return;
+				}		
 			}.bind(this)).then(function(oWatchJobResponse){
-				//call fetch response
-				var oFetchResponseRequestBody = {
-					id: oWatchJobResponse.data.id
-				};
-				return this._sendPOSTRequestToPTV(this._sFetchToursResponseUrl, oFetchResponseRequestBody);
+				if(oWatchJobResponse){
+					//call fetch response
+					var oFetchResponseRequestBody = {
+						id: oWatchJobResponse.data.id
+					};
+					return this._sendPOSTRequestToPTV(this._sFetchToursResponseUrl, oFetchResponseRequestBody);
+				}else{
+					return;
+				}
 			}.bind(this)).then(function(oFetchToursResponse){
 				return oFetchToursResponse;
 			}.bind(this));
