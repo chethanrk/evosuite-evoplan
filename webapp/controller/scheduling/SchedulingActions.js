@@ -292,6 +292,8 @@ sap.ui.define([
 				initialFocusedDateValue: moment().add(1, "days").toDate(),
 				bInvalidDateRange: false,
 				sInvalidDateRangeMsg: "",
+				sStartDateValueState:"None",
+				sEndDateValueState:"None",
 				btnInsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleInside"),
 				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
 				iSelectedResponse: 0

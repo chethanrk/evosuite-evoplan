@@ -165,9 +165,11 @@ sap.ui.define([
 
 			if (!oStartDate){
 				validateState = false;
+				this._oViewModel.setProperty("/Scheduling/sStartDateValueState", "Error");
 			}
 			if (!oEndDate){
 				validateState = false;
+				this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "Error");
 			}
 			return validateState;
 		},
