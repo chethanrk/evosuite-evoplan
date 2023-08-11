@@ -21,7 +21,7 @@
 						<Title text="{i18n>xtit.demands}"/>
                         <ToolbarSpacer/>
 						<Button
-							tooltip="{i18n>xtip.filters}"
+							tooltip="{i18n>xbut.filters}"
 							icon="sap-icon://filter"/>
 					</OverflowToolbar>
 				</headerToolbar>
