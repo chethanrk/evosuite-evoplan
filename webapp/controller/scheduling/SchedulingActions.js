@@ -4,8 +4,10 @@ sap.ui.define([
 	'sap/ui/model/Filter',
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/IconColor",
-	"sap/ui/core/MessageType"
-], function (BaseController, formatter, Filter, Constants, IconColor, MessageType) {
+	"sap/ui/core/MessageType",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function (BaseController, formatter, Filter, Constants, IconColor, MessageType,Filter,FilterOperator) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
 
@@ -143,19 +145,22 @@ sap.ui.define([
 			var sDemandPath, sSelectedDemand, aResourceList, aAssignedList = [];
 			sDemandPath = this.oViewModel.getProperty("/Scheduling/selectedDemandPath");
 			sSelectedDemand = this.oDataModel.getProperty(sDemandPath);
-			aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList");
-
+			aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
+			aFilterResource = [];
+			for(var x in aResourceList){
+				aFilterResource.push(new Filter("ResourceGuid",FilterOperator.EQ,aResourceList[x].ResourceGuid))
+			}
+			aFilterResource.push(new Filter("DemandGuid",FilterOperator.EQ,sSelectedDemand.Guid));
 			this.oAppViewModel.setProperty("/busy", true);
 			//to fetch the assigned resource to the selected demand
-			return this._controller.getOwnerComponent().readData(sDemandPath, [], "$expand=DemandToAssignment").then(function (oData) {
+			//we are using AssignmentSet instead of DemandSet as demandset was taking more time than assignmentset.
+			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource,"$select=FIRSTNAME,LASTNAME").then(function (oData) {
 				this.oAppViewModel.setProperty("/busy", false);
-				oData.DemandToAssignment.results.forEach(function (item) {
-					aResourceList.forEach(function (resourceItem) {
-						if (resourceItem.ResourceGuid === item.ResourceGuid) {
-							aAssignedList.push(item.RESOURCE_DESCRIPTION);
-						}
+				if(oData.results.length>0){
+					oData.results.forEach(function(aItem){
+						aAssignedList.push(aItem.FIRSTNAME+" "+aItem.LASTNAME);
 					});
-				});
+				};
 				if (aAssignedList.length > 0) {
 					return {
 						bNotAssigned: false,
