@@ -496,8 +496,6 @@ sap.ui.define([
 
 				//Intialize variables for SAP authorization
 				this._handleAuthorization();
-				// create the views based on the url/hash
-				this.getRouter().initialize();
 				// below we are calling function import RefreshSharedMemoryAreas
 				// on intial loading of app if ENABLE_RESOURCE_TREE_CLUSTER is true in 
 				// GetSystemInformationSet.
@@ -506,6 +504,9 @@ sap.ui.define([
 						method:"POST"
 					});
 				}
+				// create the views based on the url/hash
+				this.getRouter().initialize();
+
 			}.bind(this));
 		},
 
