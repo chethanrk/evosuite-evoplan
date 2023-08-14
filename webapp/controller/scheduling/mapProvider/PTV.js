@@ -29,6 +29,9 @@ sap.ui.define([
 	 * @property {string} _sRouteCalculationUrl - Url for the `calculateRoute` operation
 	 * @property {string} _sCreateDistanceMatrixUrl - Url for the `createDistanceMatrix` operation
 	 * @property {string} _sPlanToursUrl - Url for the `planTours` operation
+	 * @property {string} _sStartPlanToursUrl - Url for the `startPlanTours` operation
+	 * @property {string} _sWatchJobUrl - Url for the `watchJob` operation
+	 * @property {string} _sFetchToursResponseUrl - Url for the `fetchToursResponse` operation
 	 * @property {string} _sDefaultResourceStartHour - Number representing starting working hour (e.g. 8)
 	 * @property {string} _sDefaultResourceEndtHour - Number representing ending working hour (e.g. 17)
 	 * @property {sap.ui.model.json.JSONModel} oUserModel - User model containing system parameters for a user
@@ -57,6 +60,9 @@ sap.ui.define([
 		_sRouteCalculationUrl: "",
 		_sCreateDistanceMatrixUrl: "",
 		_sPlanToursUrl: "",
+		_sStartPlanToursUrl: "",
+		_sWatchJobUrl: "",
+		_sFetchToursResponseUrl: "",
 		_sDefaultResourceStartHour: "",
 		_sDefaultResourceEndHour: "",
 		oUserModel: null,
