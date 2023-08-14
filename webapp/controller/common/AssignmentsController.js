@@ -24,7 +24,8 @@ sap.ui.define([
 				targetObj = this.getModel().getProperty(sTargetPath),
 				bValdiMsgPopupFlag = this.getModel("user").getProperty("/ENABLE_RES_ASGN_VALID_CHECK"), //Condition to check Global configuration for validation Mesg Popup
 				bIsGroup = targetObj.NodeType === "RES_GROUP",
-				bIsPool = targetObj.NodeType === "RESOURCE" && targetObj.ResourceGuid === "";
+				bIsPool = targetObj.NodeType === "RESOURCE" && targetObj.ResourceGuid === "",
+				bValidNodeType = targetObj.NodeType === "RESOURCE" || targetObj.NodeType === "RES_GROUP";
 
 			//Added new condition to Check & show resource availability for WEEK/MONTH view
 			if (this.checkToShowAvailabilities(targetObj)) {
@@ -33,7 +34,7 @@ sap.ui.define([
 					this.getModel("viewModel").setProperty("/availabilities/isToAssign", true);
 					this.getOwnerComponent().ResourceAvailabilities.open(this.getView(), aSourcePaths, targetObj, this._mParameters);
 				}.bind(this));
-			} else if (bIsGroup || bIsPool || this.isTargetValid(sTargetPath) || !bValdiMsgPopupFlag) {
+			} else if (bIsGroup || bIsPool || this.isTargetValid(sTargetPath) || !bValdiMsgPopupFlag || !bValidNodeType) {
 				oParams = this.setDateTimeParams(oParams, targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime);
 				this.checkQualificationAssignment(aSourcePaths, targetObj, oParams, mParameters); //Proceed to check the Qualification
 
@@ -262,7 +263,7 @@ sap.ui.define([
 			this.aFixedAppointmentDemands = [];
 			this.clearMessageModel();
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
+			if (mParameters && !mParameters.bFromNewGantt && !mParameters.bFromGanttTools) {
 				this._updatedDmdResources(this.getModel("viewModel"), targetObj);
 			}
 
@@ -529,23 +530,14 @@ sap.ui.define([
 					ResourceGroupGuid: oResource.ResourceGroupGuid,
 					ResourceGuid: oResource.ResourceGuid
 				};
-				if (this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")) {
-					if (oResource.NodeType === "RESOURCE") {
+			
 						oParams = this.setDateTimeParams(oParams, oAssignment.DateFrom, {
 							ms: oAssignment.DateFrom.getTime()
 						}, oAssignment.DateTo, {
 							ms: oAssignment.DateTo.getTime()
 						});
-					} else {
-						oParams = this.setDateTimeParams(oParams, oResource.StartDate, {
-							ms: oAssignment.DateFrom.getTime()
-						}, oResource.EndDate, {
-							ms: oAssignment.DateTo.getTime()
-						});
-					}
-				} else {
-					oParams = this.setDateTimeParams(oParams, oResource.StartDate, oResource.StartTime, oResource.EndDate, oResource.EndTime);
-				}
+					
+				
 				oDemandObj = this.getModel().getProperty("/DemandSet('" + oAssignment.DemandGuid + "')");
 
 				//Conditon for PS Demand Network Assignments Update
@@ -1059,15 +1051,15 @@ sap.ui.define([
 					if (aSources) {
 						//Checking PS Demands for Network Assignment 
 						if (oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
-							this.getOwnerComponent().NetworkAssignment.open(this.getView(), sResourcePath, aPSDemandsNetworkAssignment, null);
+							this.getOwnerComponent().NetworkAssignment.open(this.getView(), sResourcePath, aPSDemandsNetworkAssignment, mParameter);
 						} //Checking Vendor Assignment for External Resources
 						else if (oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
 							iVendorAssignmentLen) {
-							this.getOwnerComponent().VendorAssignment.open(this.getView(), sResourcePath, null);
+							this.getOwnerComponent().VendorAssignment.open(this.getView(), sResourcePath, mParameter);
 						} else if (oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
 							"RESOURCE") {
 							//Checking Operation Times
-							this.getOwnerComponent().OperationTimeCheck.open(this.getView(), null, sResourcePath);
+							this.getOwnerComponent().OperationTimeCheck.open(this.getView(), mParameter, sResourcePath);
 						} else {
 							this._setAssignmentDetail(oAssignData, sResourcePath);
 							this.updateAssignment(true, mParameter);
