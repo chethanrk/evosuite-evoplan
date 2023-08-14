@@ -101,6 +101,10 @@ sap.ui.define([
 			return oPayload;
 		},
 		/** 
+		 * Method with fetch the PTV response by calling startPlanTours -> watchJob -> fetchTourResponse endpoint
+		 * First startPlanTours will be called and response will be sent to watchJob end point.
+		 * Second watchJob will be called continuously until get the response
+		 * Thirdt fetchTourResponse will be called to get the PTV response
 		 * @param {object} oRequestBody 
 		 * @returns {object} - promise
 		 */
