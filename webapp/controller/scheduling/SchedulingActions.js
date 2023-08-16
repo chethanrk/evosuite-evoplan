@@ -574,6 +574,19 @@ sap.ui.define([
 			sResourceGroupName = this.oDataModel.getProperty("/ResourceHierarchySet('" + sParentNodeId + "')").Description;
 			return sResourceGroupName;			
 		},
+		handleCreateAssignment:function(){
+			//1. Busy Dialog for the 
+			//2. get the existing data from the model.
+			//3.send the call for the assignemnt.
+			var aDemandData = this._getDemandsDataForAssignment(),
+			aPromise=[];
+			aDemandData.forEach(function(mParam){
+				
+			})
+			
+
+
+		},
 
 		/* =========================================================== */
 		/* Private methods                                              */
@@ -625,7 +638,39 @@ sap.ui.define([
 				return true;
 			}
 			return false;
-		}
+		},
+		_getDemandsDataForAssignment:function(){
+			// sample Data
+			var aData = [{
+				DateFrom:null,// from FIXED_ASSGN_START_DATE
+				TimeFrom:null,// from FIXED_ASSGN_START_TIME
+				DateTo:null,// from FIXED_ASSGN_END_DATE
+				TimeTo:null,// from FIXED_ASSGN_END_TIME
+				DemandGuid:null,
+				ResourceGroupGuid:null,
+				ResourceGuid:null,
+				Effort:null,
+				EffortUnit:null
+			}]
+			/*{
+				"DateFrom": "2023-08-16T09:25:08.053Z",
+				"TimeFrom": {
+					"ms": 1692177908053
+				},
+				"DateTo": "2023-08-16T09:25:08.053Z",
+				"TimeTo": {
+					"ms": 1692177908053
+				},
+				"DemandGuid": "A12B77123F2E1EDDBAB06CD3E0B9826B",
+				"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+				"ResourceGuid": "0A51491BD5A01EE8A5910DE06717D060",
+				"Effort": "0",
+				"EffortUnit": ""
+			}*/
+			
+			return aData;
+		},
+
 
 	});
 });
