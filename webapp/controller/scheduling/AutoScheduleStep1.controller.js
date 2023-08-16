@@ -116,6 +116,7 @@ sap.ui.define([
          */
         onChangeDateFrom: function(oEvent){
             var oDate = oEvent.getSource().getDateValue();
+            this._oViewModel.setProperty("/Scheduling/sStartDateValueState", "None");
             this.oSchedulingActions.validateDemandDateRanges(oDate, this._oDateTo.getDateValue(), false);
         },
 
@@ -129,6 +130,7 @@ sap.ui.define([
          */
         onChangeDateTo: function(oEvent){
             var oDate = oEvent.getSource().getDateValue();
+            this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "None");
             this.oSchedulingActions.validateDemandDateRanges(this._oDateFrom.getDateValue(), oDate, true);
         },
 
