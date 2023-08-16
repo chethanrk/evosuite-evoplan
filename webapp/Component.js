@@ -432,6 +432,20 @@ sap.ui.define([
 				this.getModel("viewModel").setProperty("/validateIW32Auth", Boolean(bIW32Auth));
 			}
 		},
+		_callFuntionImport:function(sPath,sMethod){
+	
+			return new Promise(function(resolve,reject){
+				this.getModel().callFunction(sPath,{
+					method:sMethod,
+					success:function(){
+						resolve();
+					},
+					error:function(){
+						reject()
+					}
+				})
+			}.bind(this));
+		},
 
 		/**
 		 * Initail Batch Get Call with Promises for fetching
@@ -465,6 +479,8 @@ sap.ui.define([
 				new Filter("AVAILABILITY_TYPE_GROUP", FilterOperator.EQ, "N")
 			]));
 
+			aPromises.push(this._callFuntionImport("/RefreshSharedMemoryAreas","POST"));
+
 			//sets user model - model has to be intantiated before any view is loaded
 			Promise.all(aPromises).then(function (data) {
 				this.getModel("user").setData(data[0]);
@@ -497,14 +513,9 @@ sap.ui.define([
 				//Intialize variables for SAP authorization
 				this._handleAuthorization();
 				// below we are calling function import RefreshSharedMemoryAreas
-				this.getModel().callFunction("/RefreshSharedMemoryAreas", {
-					method: "POST",
-					success: function () {
-						// create the views based on the url/hash
-						this.getRouter().initialize();
-					}.bind(this)
-				})
-
+			
+				this.getRouter().initialize();
+				
 
 
 			}.bind(this));
