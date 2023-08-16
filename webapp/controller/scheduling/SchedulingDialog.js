@@ -119,57 +119,35 @@ sap.ui.define([
 		 */
 		onDialogNextButton: function () {
 			this._iSelectedStepIndex = this._oWizard.getSteps().indexOf(this._oSelectedStep);
-			var oNextStep = this._oWizard.getSteps()[this._iSelectedStepIndex + 1];
+			var oNextStep = this._oWizard.getSteps()[this._iSelectedStepIndex + 1],
+				sLoadingMsg = this._oResourceBundle.getText("ymsg.Loading");
 
-			if (this._oSelectedStep && !this._oSelectedStep.bLast) {
-				this._oWizard.goToStep(oNextStep, true);
-			} else {
-				this._oWizard.nextStep();
+			if (this._iSelectedStepIndex === 0 && !this.step1Validation()){
+				return;
 			}
 
-			this._iSelectedStepIndex++;
-			this._oSelectedStep = oNextStep;
+			//TODO: new busy dialog will be developed
+			var oBusyDialog = new sap.m.BusyDialog({
+				text:sLoadingMsg
+			});
+			oBusyDialog.open();
+			this.oSchedulingActions.handleScheduleDemands().then(function(oResponse){
+				oBusyDialog.close();
+				if (this._oSelectedStep && !this._oSelectedStep.bLast) {
+					this._oWizard.goToStep(oNextStep, true);
+				} else {
+					this._oWizard.nextStep();
+				}
+	
+				this._iSelectedStepIndex++;
+				this._oSelectedStep = oNextStep;
+	
+				this._handleButtonsVisibility();
 
-			this._handleButtonsVisibility();
-			this.oSchedulingActions.handleScheduleDemands();
-
-			this._renderWizardStep2Binding();
-			this.getDemandPayload(); //To be removed
-		},
-		getDemandPayload:function(){
-			// function to be removed
-			var oDemandHash = this._oViewModel.getProperty("/Scheduling/demandData"),
-				locations=[],
-				orders=[];
-			
-			for (let oDemandGuid in oDemandHash){
-				locations.push({						
-					"$type": "CustomerSite",
-					"id": oDemandGuid + "_location",
-					"routeLocation": {
-						"$type": "OffRoadRouteLocation",
-						"offRoadCoordinate": {
-							"x": oDemandHash[oDemandGuid].location.x,
-							"y": oDemandHash[oDemandGuid].location.y
-						}
-					}						  
-				});
-
-				orders.push({
-					"$type": "VisitOrder",
-					"id": oDemandGuid,
-					"locationId": oDemandGuid + "_location",
-					"priority":  oDemandHash[oDemandGuid].priority,
-					"serviceTime": oDemandHash[oDemandGuid].serviceTime,
-					"requiredVehicleEquipment": oDemandHash[oDemandGuid].qualification
-				});
-			}
-
-			return {
-				locations: locations,
-				orders: orders
-			};
-
+				// TODO: Display response in step2 table 
+				//console.log(oResponse)contains response from the PTV 
+				this._renderWizardStep2Binding();
+			}.bind(this));
 		},
 		/**
 		 * This method is used to handle the press event of 
@@ -189,6 +167,25 @@ sap.ui.define([
 			this._oSelectedStep = oPreviousStep;
 
 			this._handleButtonsVisibility();
+		},
+		/**
+		 * Validates step1 fields, if error then return false, or else true
+		 * @returns {boolean}
+		 */
+		step1Validation: function() {
+			var oStartDate = this._oViewModel.getProperty("/Scheduling/startDate"),
+				oEndDate = this._oViewModel.getProperty("/Scheduling/endDate"),
+				validateState = true;
+
+			if (!oStartDate){
+				validateState = false;
+				this._oViewModel.setProperty("/Scheduling/sStartDateValueState", "Error");
+			}
+			if (!oEndDate){
+				validateState = false;
+				this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "Error");
+			}
+			return validateState;
 		},
 		/**
 		 * Tis method is used to handle the activation/validation of the 

@@ -4,8 +4,10 @@ sap.ui.define([
 	'sap/ui/model/Filter',
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/IconColor",
-	"sap/ui/core/MessageType"
-], function (BaseController, formatter, Filter, Constants, IconColor, MessageType) {
+	"sap/ui/core/MessageType",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function (BaseController, formatter, Filter, Constants, IconColor, MessageType,Filter,FilterOperator) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
 
@@ -143,19 +145,22 @@ sap.ui.define([
 			var sDemandPath, sSelectedDemand, aResourceList, aAssignedList = [];
 			sDemandPath = this.oViewModel.getProperty("/Scheduling/selectedDemandPath");
 			sSelectedDemand = this.oDataModel.getProperty(sDemandPath);
-			aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList");
-
+			aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
+			aFilterResource = [];
+			for(var x in aResourceList){
+				aFilterResource.push(new Filter("ResourceGuid",FilterOperator.EQ,aResourceList[x].ResourceGuid))
+			}
+			aFilterResource.push(new Filter("DemandGuid",FilterOperator.EQ,sSelectedDemand.Guid));
 			this.oAppViewModel.setProperty("/busy", true);
 			//to fetch the assigned resource to the selected demand
-			return this._controller.getOwnerComponent().readData(sDemandPath, [], "$expand=DemandToAssignment").then(function (oData) {
+			//we are using AssignmentSet instead of DemandSet as demandset was taking more time than assignmentset.
+			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource,"$select=FIRSTNAME,LASTNAME").then(function (oData) {
 				this.oAppViewModel.setProperty("/busy", false);
-				oData.DemandToAssignment.results.forEach(function (item) {
-					aResourceList.forEach(function (resourceItem) {
-						if (resourceItem.ResourceGuid === item.ResourceGuid) {
-							aAssignedList.push(item.RESOURCE_DESCRIPTION);
-						}
+				if(oData.results.length>0){
+					oData.results.forEach(function(aItem){
+						aAssignedList.push(aItem.FIRSTNAME+" "+aItem.LASTNAME);
 					});
-				});
+				};
 				if (aAssignedList.length > 0) {
 					return {
 						bNotAssigned: false,
@@ -235,7 +240,7 @@ sap.ui.define([
 				aFilters = [];
 				if (oResourceObj.ResourceGuid) {
 					aResourceData.push(oResourceObj);
-				} else if (oResourceObj.NodeId.split(":")[0] === "POOL") {
+				} else if (oResourceObj.NodeId.indexOf("POOL") >= 0) {
 					aPoolResource.push(oResourceObj.Description);
 					bIsPoolExist = true;
 				} else if (oResourceObj.ResourceGroupGuid) {
@@ -292,6 +297,8 @@ sap.ui.define([
 				initialFocusedDateValue: moment().add(1, "days").toDate(),
 				bInvalidDateRange: false,
 				sInvalidDateRangeMsg: "",
+				sStartDateValueState:"None",
+				sEndDateValueState:"None",
 				btnInsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleInside"),
 				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
 				iSelectedResponse: 0
@@ -441,9 +448,9 @@ sap.ui.define([
 							"x": oDemand.oData.LONGITUDE,
 							"y": oDemand.oData.LATITUDE
 						},
-						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION.split(","),
+						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION ? oDemand.oData.QUALIFICATION_DESCRIPTION.split(",") : [],
 						"priority": oDemand.oData.PRIORITY ? parseInt(oDemand.oData.PRIORITY) : 0,
-						"serviceTime": oDemand.oData.Effort ? (parseFloat(oDemand.oData.Effort) * 60 * 60 * 1000) : 0
+						"serviceTime": oDemand.oData.Effort ? (parseFloat(oDemand.oData.Effort) * 3600) : 1
 					}
 					oDemandData[oDemand.oData.Guid] = oTempDemandData;
 				});
@@ -474,9 +481,11 @@ sap.ui.define([
 					if (bEndDateChanged) {
 						this.oViewModel.setProperty("/Scheduling/startDate", null);
 						startDate = null;
+						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateFromErrorMsg"));
 					} else {
 						this.oViewModel.setProperty("/Scheduling/endDate", null);
 						endDate = null;
+						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateToErrorMsg"));
 					}
 				}
 			}
@@ -546,12 +555,12 @@ sap.ui.define([
 		 * This method to handle payload creation
 		 * @return {Object} - Payload object
 		 */
-		handleScheduleDemands: function (aPayload) {
-			Promise.all([this.createScheduleData(),this.createDemandScheduleData()]).then(function(aResult){
+		handleScheduleDemands: function () {
+			return Promise.all([this.createScheduleData(),this.createDemandScheduleData()]).then(function(aResult){
 				var aResourceData = aResult[0],
 					aDemandsData = aResult[1],
 					aPayload = this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
-				// After creation of payload, method to call the PTV service will be added here ;
+				return this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload);
 			}.bind(this));
 		},
 

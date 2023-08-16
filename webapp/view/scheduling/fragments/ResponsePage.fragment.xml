@@ -14,19 +14,23 @@
                             text="{i18n>xrd.notScheduled} ({SchedulingModel>/iNonPlanned})" />
                     </RadioButtonGroup>
                 </HBox>
-                <Table id="step2_ResponseTable"
-                    items="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\', sorter: { path: \''+ 'ResourceName' +'\', descending: false, group:\''+ '.fnGetResName' +'\'}}'}">
+                <Table id="step2_ResponseTable" 
+                    noDataText="{i18n>ymsg.NoDataFound}" items="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\', sorter: { path: \''+ 'ResourceName' +'\', descending: false, group:\''+ '.fnGetResName' +'\'}}'}">
                     <headerToolbar>
-                        <OverflowToolbar>
-                            <Title text="{i18n>xtit.demands}" />
-                            <ToolbarSpacer />
-                            <Button tooltip="{i18n>xtip.filters}" text="{viewModel>/Scheduling/sResponseFilterCounts}"
-                                icon="sap-icon://filter" press="onShowFilters" />
-                        </OverflowToolbar>
-                    </headerToolbar>
+					<OverflowToolbar>
+						<Title text="{i18n>xfld.demandName}"/>
+                        <ToolbarSpacer/>
+						<Button
+							tooltip="{i18n>xbut.filters}"
+							icon="sap-icon://filter"/>
+					</OverflowToolbar>
+				</headerToolbar>
                     <columns>
-                        <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}">
-                            <Label text="{i18n>xlbl.resGrp}" />
+                        <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}">
+                            <Label text="{i18n>xlbl.resName}" />
+                        </Column>
+                        <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}">
+                            <Label text="{i18n>xfld.ResourceGroupName}" />
                         </Column>
                         <template:repeat list="{path:'data>'}">
                             <template:with path="data>Value" var="value">
