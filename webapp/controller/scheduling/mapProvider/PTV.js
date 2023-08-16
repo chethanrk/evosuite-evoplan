@@ -14,6 +14,9 @@ sap.ui.define([
 	var CREATE_DISTANCE_MATRIX_PATH = "/createDistanceMatrix";
 	var TOUR_SERVICE_PATH = "/XTour";
 	var PLAN_TOURS_PATH = "/planTours";
+	var START_PLAN_TOURS_PATH = "/startPlanTours";
+	var WATCH_JOB_PATH = "/watchJob";
+	var FETCH_JOB_RESPONSE_PATH = "/fetchToursResponse";
 	var VEHICLE_ID = "EvoPlanVehicle";
 	var DRIVER_ID = "EvoPlanDriver";
 
@@ -26,6 +29,9 @@ sap.ui.define([
 	 * @property {string} _sRouteCalculationUrl - Url for the `calculateRoute` operation
 	 * @property {string} _sCreateDistanceMatrixUrl - Url for the `createDistanceMatrix` operation
 	 * @property {string} _sPlanToursUrl - Url for the `planTours` operation
+	 * @property {string} _sStartPlanToursUrl - Url for the `startPlanTours` operation
+	 * @property {string} _sWatchJobUrl - Url for the `watchJob` operation
+	 * @property {string} _sFetchToursResponseUrl - Url for the `fetchToursResponse` operation
 	 * @property {string} _sDefaultResourceStartHour - Number representing starting working hour (e.g. 8)
 	 * @property {string} _sDefaultResourceEndtHour - Number representing ending working hour (e.g. 17)
 	 * @property {sap.ui.model.json.JSONModel} oUserModel - User model containing system parameters for a user
@@ -54,6 +60,9 @@ sap.ui.define([
 		_sRouteCalculationUrl: "",
 		_sCreateDistanceMatrixUrl: "",
 		_sPlanToursUrl: "",
+		_sStartPlanToursUrl: "",
+		_sWatchJobUrl: "",
+		_sFetchToursResponseUrl: "",
 		_sDefaultResourceStartHour: "",
 		_sDefaultResourceEndHour: "",
 		oUserModel: null,
@@ -74,6 +83,9 @@ sap.ui.define([
 			this._sRouteCalculationUrl = this.sServiceUrl + ROUTE_SERVICE_PATH + CALCULATE_ROUTE_PATH;
 			this._sCreateDistanceMatrixUrl = this.sServiceUrl + DIMA_SERVICE_PATH + CREATE_DISTANCE_MATRIX_PATH;
 			this._sPlanToursUrl = this.sServiceUrl + TOUR_SERVICE_PATH + PLAN_TOURS_PATH;
+			this._sStartPlanToursUrl = this.sServiceUrl + TOUR_SERVICE_PATH + START_PLAN_TOURS_PATH;
+			this._sWatchJobUrl = this.sServiceUrl + TOUR_SERVICE_PATH + WATCH_JOB_PATH;
+			this._sFetchToursResponseUrl = this.sServiceUrl + TOUR_SERVICE_PATH + FETCH_JOB_RESPONSE_PATH;
 			this._sAuthToken = btoa(oServiceData.Username + ":" + oServiceData.Password);
 			this.oUserModel = this.oComponent.getModel("user");
 			this.oViewModel = this.oComponent.getModel("viewModel");
@@ -93,6 +105,48 @@ sap.ui.define([
 			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload 
 			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
 			return oPayload;
+		},
+		/** 
+		 * Method with fetch the PTV response by calling startPlanTours -> watchJob -> fetchTourResponse endpoint
+		 * First startPlanTours will be called and response will be sent to watchJob end point.
+		 * Second watchJob will be called continuously until get the response
+		 * Thirdt fetchTourResponse will be called to get the PTV response
+		 * @param {object} oRequestBody 
+		 * @returns {object} - promise
+		 */
+		callPTVPlanTours: function (oPlanTourRequestBody){
+			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oPlanTourRequestBody).then(function (oPlanTourResponse) {
+				if(oPlanTourResponse){
+				//call watch job
+					return new Promise(function(resolve){
+						var oWatchJobRequestBody = {
+							id: oPlanTourResponse.data.id
+						};
+						var intervalID = setInterval(function() {
+							this._sendPOSTRequestToPTV(this._sWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
+								if(["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)){ // if successed or failed
+									clearInterval(intervalID);
+									resolve (oWatchJobResponse);
+								}
+							}.bind(this));
+						}.bind(this),2000);
+					}.bind(this));
+				}else{
+					return;
+				}		
+			}.bind(this)).then(function(oWatchJobResponse){
+				if(oWatchJobResponse){
+					//call fetch response
+					var oFetchResponseRequestBody = {
+						id: oWatchJobResponse.data.id
+					};
+					return this._sendPOSTRequestToPTV(this._sFetchToursResponseUrl, oFetchResponseRequestBody);
+				}else{
+					return;
+				}
+			}.bind(this)).then(function(oFetchToursResponse){
+				return oFetchToursResponse;
+			}.bind(this));
 		},
 
 		/* =========================================================== */
@@ -322,7 +376,7 @@ sap.ui.define([
 		 */
 		_getFormattedDate: function(oDate){
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-				pattern: "yyyy-MM-ddTHH:mm:ss:SSSZ"
+				pattern: "yyyy-MM-ddTHH:mm:ssXXX"
 			});
 			return oDateFormat.format(oDate); 
 		},

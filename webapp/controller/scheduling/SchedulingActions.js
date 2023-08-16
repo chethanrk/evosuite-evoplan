@@ -297,6 +297,8 @@ sap.ui.define([
 				initialFocusedDateValue: moment().add(1, "days").toDate(),
 				bInvalidDateRange: false,
 				sInvalidDateRangeMsg: "",
+				sStartDateValueState:"None",
+				sEndDateValueState:"None",
 				btnInsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleInside"),
 				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
 				iSelectedResponse: 0
@@ -446,9 +448,9 @@ sap.ui.define([
 							"x": oDemand.oData.LONGITUDE,
 							"y": oDemand.oData.LATITUDE
 						},
-						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION.split(","),
+						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION ? oDemand.oData.QUALIFICATION_DESCRIPTION.split(",") : [],
 						"priority": oDemand.oData.PRIORITY ? parseInt(oDemand.oData.PRIORITY) : 0,
-						"serviceTime": oDemand.oData.Effort ? (parseFloat(oDemand.oData.Effort) * 60 * 60 * 1000) : 0
+						"serviceTime": oDemand.oData.Effort ? (parseFloat(oDemand.oData.Effort) * 3600) : 1
 					}
 					oDemandData[oDemand.oData.Guid] = oTempDemandData;
 				});
@@ -553,12 +555,12 @@ sap.ui.define([
 		 * This method to handle payload creation
 		 * @return {Object} - Payload object
 		 */
-		handleScheduleDemands: function (aPayload) {
-			Promise.all([this.createScheduleData(),this.createDemandScheduleData()]).then(function(aResult){
+		handleScheduleDemands: function () {
+			return Promise.all([this.createScheduleData(),this.createDemandScheduleData()]).then(function(aResult){
 				var aResourceData = aResult[0],
 					aDemandsData = aResult[1],
 					aPayload = this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
-				// After creation of payload, method to call the PTV service will be added here ;
+				return this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload);
 			}.bind(this));
 		},
 
