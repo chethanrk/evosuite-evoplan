@@ -497,9 +497,6 @@ sap.ui.define([
 				//Intialize variables for SAP authorization
 				this._handleAuthorization();
 				// below we are calling function import RefreshSharedMemoryAreas
-				// on intial loading of app if ENABLE_RESOURCE_TREE_CLUSTER is true in 
-				// GetSystemInformationSet.
-
 				this.getModel().callFunction("/RefreshSharedMemoryAreas", {
 					method: "POST",
 					success: function () {
