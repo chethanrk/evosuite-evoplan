@@ -115,7 +115,9 @@ sap.ui.define([
 		 * @returns {object} - promise
 		 */
 		callPTVPlanTours: function (oPlanTourRequestBody){
+			this.oComponent.ProgressBarDialog.setProgressData({description:"Analyzing the location.."});
 			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oPlanTourRequestBody).then(function (oPlanTourResponse) {
+				this.oComponent.ProgressBarDialog.setProgressData({progress:"40"});
 				if(oPlanTourResponse){
 				//call watch job
 					return new Promise(function(resolve){
@@ -124,6 +126,9 @@ sap.ui.define([
 						};
 						var intervalID = setInterval(function() {
 							this._sendPOSTRequestToPTV(this._sWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
+								if(oWatchJobResponse.data.status === "RUNNING"){
+									this.ProgressBarDialog.oComponent.setProgressData({progress:"70"});
+								}
 								if(["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)){ // if successed or failed
 									clearInterval(intervalID);
 									resolve (oWatchJobResponse);
@@ -135,6 +140,7 @@ sap.ui.define([
 					return;
 				}		
 			}.bind(this)).then(function(oWatchJobResponse){
+				this.oComponent.ProgressBarDialog.setProgressData({progress:"80"});
 				if(oWatchJobResponse){
 					//call fetch response
 					var oFetchResponseRequestBody = {
@@ -145,6 +151,7 @@ sap.ui.define([
 					return;
 				}
 			}.bind(this)).then(function(oFetchToursResponse){
+				this.oComponent.ProgressBarDialog.setProgressData({progress:"100"});
 				return oFetchToursResponse;
 			}.bind(this));
 		},

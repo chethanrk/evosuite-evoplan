@@ -347,7 +347,7 @@ sap.ui.define([
 			this.TimeAllocations = new TimeAllocations();
 			this.TimeAllocations.init();
 
-			this.ProgressBarDialog = new ProgressBarDialog();
+			this.ProgressBarDialog = new ProgressBarDialog(this);
 			this.ProgressBarDialog.init();
 
 		},
@@ -724,11 +724,7 @@ sap.ui.define([
 			oSinglePlanningModel.setDefaultBindingMode("TwoWay");
 			this.setModel(oSinglePlanningModel, "mapSinglePlanning");
 
-			this.setModel(models.createProgressBarDialogModel({
-				description:"Loading data...",
-				progress:"0",
-				progressDescription:"0%"
-			}),"progressBarData");
+			this.setModel(models.createProgressBarDialogModel(),"progressBarModel");
 
 		},
 

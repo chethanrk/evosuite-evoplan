@@ -127,12 +127,14 @@ sap.ui.define([
 			}
 
 			//TODO: new busy dialog will be developed
-			var oBusyDialog = new sap.m.BusyDialog({
-				text:sLoadingMsg
-			});
-			oBusyDialog.open();
+			// var oBusyDialog = new sap.m.BusyDialog({
+			// 	text:sLoadingMsg
+			// });
+			// oBusyDialog.open();
+			this._component.ProgressBarDialog.open(this._oView);
 			this.oSchedulingActions.handleScheduleDemands().then(function(oResponse){
-				oBusyDialog.close();
+				// oBusyDialog.close();
+				this._component.ProgressBarDialog.close();
 				if (this._oSelectedStep && !this._oSelectedStep.bLast) {
 					this._oWizard.goToStep(oNextStep, true);
 				} else {

@@ -556,7 +556,9 @@ sap.ui.define([
 		 * @return {Object} - Payload object
 		 */
 		handleScheduleDemands: function () {
+			this.oOwnerComponent.ProgressBarDialog.setProgressData({description:"Creating resource and demand data"});
 			return Promise.all([this.createScheduleData(),this.createDemandScheduleData()]).then(function(aResult){
+				this.oOwnerComponent.ProgressBarDialog.setProgressData({progress:"10"});
 				var aResourceData = aResult[0],
 					aDemandsData = aResult[1],
 					aPayload = this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
