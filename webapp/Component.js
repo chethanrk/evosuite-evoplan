@@ -790,11 +790,11 @@ sap.ui.define([
 			return new Promise(function(resolve,reject){
 				this.getModel().callFunction(sPath,{
 					method:sMethod,
-					success:function(){
-						resolve();
+					success:function(data){
+						resolve(data);
 					},
-					error:function(){
-						reject()
+					error:function(data){
+						reject(data)
 					}
 				})
 			}.bind(this));
