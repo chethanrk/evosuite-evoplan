@@ -503,6 +503,7 @@ sap.ui.define([
 					this.getModel().callFunction("/RefreshSharedMemoryAreas",{
 						method:"POST",
 						success:function(){
+							// create the views based on the url/hash
 							this.getRouter().initialize();
 						}.bind(this)
 					})
