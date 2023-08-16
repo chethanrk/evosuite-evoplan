@@ -501,11 +501,17 @@ sap.ui.define([
 				// GetSystemInformationSet.
 				if(data[0].ENABLE_RESOURCE_TREE_CLUSTER){
 					this.getModel().callFunction("/RefreshSharedMemoryAreas",{
-						method:"POST"
-					});
+						method:"POST",
+						success:function(){
+							this.getRouter().initialize();
+						}.bind(this)
+					})
+				}else{
+					// create the views based on the url/hash
+					this.getRouter().initialize();
 				}
-				// create the views based on the url/hash
-				this.getRouter().initialize();
+			
+				
 
 			}.bind(this));
 		},
