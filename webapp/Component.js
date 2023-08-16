@@ -432,20 +432,6 @@ sap.ui.define([
 				this.getModel("viewModel").setProperty("/validateIW32Auth", Boolean(bIW32Auth));
 			}
 		},
-		_callFuntionImport:function(sPath,sMethod){
-	
-			return new Promise(function(resolve,reject){
-				this.getModel().callFunction(sPath,{
-					method:sMethod,
-					success:function(){
-						resolve();
-					},
-					error:function(){
-						reject()
-					}
-				})
-			}.bind(this));
-		},
 
 		/**
 		 * Initail Batch Get Call with Promises for fetching
@@ -793,6 +779,24 @@ sap.ui.define([
 						this.getModel("templateProperties").setProperty("/navLinks/", mProps);
 						resolve(mProps);
 					}.bind(this));
+			}.bind(this));
+		},
+		/* Method to call function import.
+		* @param {string} sPath
+		* @param {string} sMethod
+		*/
+		_callFuntionImport:function(sPath,sMethod){
+	
+			return new Promise(function(resolve,reject){
+				this.getModel().callFunction(sPath,{
+					method:sMethod,
+					success:function(){
+						resolve();
+					},
+					error:function(){
+						reject()
+					}
+				})
 			}.bind(this));
 		},
 	});
