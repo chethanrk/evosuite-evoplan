@@ -12,6 +12,9 @@ sap.ui.define([
 	var CALCULATE_ROUTE_PATH = "/calculateRoute";
 	var DIMA_SERVICE_PATH = "/XDima";
 	var CREATE_DISTANCE_MATRIX_PATH = "/createDistanceMatrix";
+	var START_CREATE_DISTANCE_MATRIX_PATH = "/startCreateDistanceMatrix";
+	var FETCH_DISTANCE_MATRIX_JOB = "/fetchDistanceMatrixResponse";
+	var DELETE_DISTANCE_MATRIX_PATH = "/deleteDistanceMatrix";
 	var TOUR_SERVICE_PATH = "/XTour";
 	var PLAN_TOURS_PATH = "/planTours";
 	var START_PLAN_TOURS_PATH = "/startPlanTours";
@@ -28,6 +31,10 @@ sap.ui.define([
 	 * @property {string} _sAuthToken - Authorisation token to pass as a header in requests to PTV 
 	 * @property {string} _sRouteCalculationUrl - Url for the `calculateRoute` operation
 	 * @property {string} _sCreateDistanceMatrixUrl - Url for the `createDistanceMatrix` operation
+	 * @property {string} _sDeleteDistanceMatrixUrl - Url for the `deleteDistanceMatrix` operation
+	 * @property {string} _sStartCreateDistanceMatrixUrl - Url for the `startCreateDistanceMatrix` operation
+	 * @property {string} _sDimaWatchJobUrl - Url for the `watchJob` operation for XDima
+	 * @property {string} _sFetchDistanceMatrixUrl - Url for the `fetchDistanceMatrixResponse` operation
 	 * @property {string} _sPlanToursUrl - Url for the `planTours` operation
 	 * @property {string} _sStartPlanToursUrl - Url for the `startPlanTours` operation
 	 * @property {string} _sWatchJobUrl - Url for the `watchJob` operation
@@ -59,6 +66,10 @@ sap.ui.define([
 		_sAuthToken: "",
 		_sRouteCalculationUrl: "",
 		_sCreateDistanceMatrixUrl: "",
+		_sDeleteDistanceMatrixUrl: "",
+		_sStartCreateDistanceMatrixUrl: "",
+		_sDimaWatchJobUrl: "",
+		_sFetchDistanceMatrixUrl: "",
 		_sPlanToursUrl: "",
 		_sStartPlanToursUrl: "",
 		_sWatchJobUrl: "",
@@ -82,6 +93,10 @@ sap.ui.define([
 			var oServiceData = oMapModel.getData().MapServiceLinks.results[0];
 			this._sRouteCalculationUrl = this.sServiceUrl + ROUTE_SERVICE_PATH + CALCULATE_ROUTE_PATH;
 			this._sCreateDistanceMatrixUrl = this.sServiceUrl + DIMA_SERVICE_PATH + CREATE_DISTANCE_MATRIX_PATH;
+			this._sDeleteDistanceMatrixUrl = this.sServiceUrl + DIMA_SERVICE_PATH + DELETE_DISTANCE_MATRIX_PATH;
+			this._sStartCreateDistanceMatrixUrl = this.sServiceUrl + DIMA_SERVICE_PATH + START_CREATE_DISTANCE_MATRIX_PATH;
+			this._sDimaWatchJobUrl = this.sServiceUrl + DIMA_SERVICE_PATH + WATCH_JOB_PATH;
+			this._sFetchDistanceMatrixUrl = this.sServiceUrl + DIMA_SERVICE_PATH + FETCH_DISTANCE_MATRIX_JOB;
 			this._sPlanToursUrl = this.sServiceUrl + TOUR_SERVICE_PATH + PLAN_TOURS_PATH;
 			this._sStartPlanToursUrl = this.sServiceUrl + TOUR_SERVICE_PATH + START_PLAN_TOURS_PATH;
 			this._sWatchJobUrl = this.sServiceUrl + TOUR_SERVICE_PATH + WATCH_JOB_PATH;
@@ -104,7 +119,14 @@ sap.ui.define([
 			var oPayload = this._getPayloadStructure();
 			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload 
 			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
-			return oPayload;
+			return this._createDistanceMatrix(aResourceData, aDemandsData).then(function(sMatrixId) {
+				this.oComponent.getModel("viewModel").setProperty("/Scheduling/sDistanceMatrixId", sMatrixId);
+				oPayload.distanceMode = {
+					"$type": "ExistingDistanceMatrix",
+					"id": sMatrixId
+				};
+				return oPayload;
+			}.bind(this));
 		},
 		/** 
 		 * Method with fetch the PTV response by calling startPlanTours -> watchJob -> fetchTourResponse endpoint
@@ -115,6 +137,7 @@ sap.ui.define([
 		 * @returns {object} - promise
 		 */
 		callPTVPlanTours: function (oPlanTourRequestBody){
+			var sMatrixId;
 			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oPlanTourRequestBody).then(function (oPlanTourResponse) {
 				if(oPlanTourResponse){
 				//call watch job
@@ -145,6 +168,9 @@ sap.ui.define([
 					return;
 				}
 			}.bind(this)).then(function(oFetchToursResponse){
+				//delete the matrix Id once the plan Tours is successfully fetched
+				sMatrixId = this.oComponent.getModel("viewModel").getProperty("/Scheduling/sDistanceMatrixId");
+				this._deleteDistanceMatrix(sMatrixId);
 				return oFetchToursResponse;
 			}.bind(this));
 		},
@@ -152,30 +178,60 @@ sap.ui.define([
 		/* =========================================================== */
 		/* internal methods                                            */
 		/* =========================================================== */
-
 		/**
 		 * Make a request to create distance matrix for route optimization.
-		 * @param {Waypoint} oStartPoint - Starting point of the route
-		 * @param {Waypoint[]} aPointsToVisit - Array of Waypoint to be visisted.
-		 * @param {Date} oDateForRoute - Date for which the route optimization should be performed
+		 * 1st Step: Payload will be sent to startCreateDistanceMatrix API
+		 * 2nd Step: WatchJob will be checking for the completion of the above process.
+		 * 3rd Step: FetchJobResponse will get the matrix Id and pass it to the plan Tours API
+		 * @param {Waypoint[]} aStartPoints - Starting points of the route (resource data)
+		 * @param {Waypoint[]} aPointsToVisit - Array of Waypoint to be visited (Demand data)
 		 * @return {Promise<string>} Promise representing id of the distance matrix. The matrix itself stored in PTV service after its creation.
 		 */
-		_createDistanceMatrix: function (oStartPoint, aPointsToVisit, oDate) {
-			var oRequestBody = this._createPayloadForDistanceMatrixRequest([oStartPoint].concat(aPointsToVisit), oDate);
-			return this._sendPOSTRequestToPTV(this._sCreateDistanceMatrixUrl, oRequestBody).then(function (oCreateMatrixResponse) {
-				return oCreateMatrixResponse.data.summary.id;
+		_createDistanceMatrix: function (aStartPoints, aPointsToVisit) {
+			var oRequestBody = this._createPayloadForDistanceMatrixRequest(aStartPoints, aPointsToVisit);
+			return this._sendPOSTRequestToPTV(this._sStartCreateDistanceMatrixUrl, oRequestBody).then(function (oCreateMatrixResponse) {
+				if(oCreateMatrixResponse){
+					//call watchJob
+					return new Promise(function(resolve){
+						var oWatchJobRequestBody = {
+							id: oCreateMatrixResponse.data.id
+						};
+						var intervalID = setInterval(function() {
+							this._sendPOSTRequestToPTV(this._sDimaWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
+								if(["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)){ // if successed or failed
+									clearInterval(intervalID);
+									resolve (oWatchJobResponse);
+								}
+							}.bind(this));
+						}.bind(this),2000);
+					}.bind(this));
+				}else{
+					return;
+				}
+			}.bind(this)).then(function(oWatchJobResponse){
+				if(oWatchJobResponse){
+					//call fetch response
+					var oFetchResponseRequestBody = {
+						id: oWatchJobResponse.data.id
+					};
+					return this._sendPOSTRequestToPTV(this._sFetchDistanceMatrixUrl, oFetchResponseRequestBody);
+				}else{
+					return;
+				}
+			}.bind(this)).then(function(oFetchDistMatrixResponse){
+				return oFetchDistMatrixResponse.data.summary.id;
 			}.bind(this));
 		},
 
 		/**
 		 * Creates payload according to CreateDistanceMatrix type:
 		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xdima.html#com.ptvgroup.xserver.xdima.CreateDistanceMatrixRequest
-		 * @param {Waypoint[]} aPointsToVisit - Array of Waypoint to be visisted.
-		 * @param {Date} oDateForRoute - Date for which the route optimization should be performed
-		 * @return {Object} - Payload for a distance matrix request
+		* @param {Waypoint[]} aResourceData - Starting points of the route (resource data)
+		 *  @param {Waypoint[]} aDemandsData -  Array of Waypoint to be visited.(demand data)
 		 */
-		_createPayloadForDistanceMatrixRequest: function (aWaypoints, oDate) {
-			var oPointTemplate = {
+		_createPayloadForDistanceMatrixRequest: function (aResourceData, aDemandsData) {
+			var oPointTemplate, aResourcePoints = [], aDemandPoints = [], oPayload = {};
+			oPointTemplate = {
 				$type: "OffRoadRouteLocation",
 				offRoadCoordinate: {
 					x: "",
@@ -183,45 +239,42 @@ sap.ui.define([
 				}
 			};
 
-			var aPreparedPoints = aWaypoints.reduce(function (prev, next) {
+			for(var sGuid in aResourceData){
 				var oPoint = _.cloneDeep(oPointTemplate);
-				oPoint.offRoadCoordinate.x = next.LONGITUDE;
-				oPoint.offRoadCoordinate.y = next.LATITUDE;
-				prev.push(oPoint);
-				return prev;
-			}, []);
+				oPoint.offRoadCoordinate.x = aResourceData[sGuid].aData.LONGITUDE;
+				oPoint.offRoadCoordinate.y = aResourceData[sGuid].aData.LATITUDE;
+				aResourcePoints.push(oPoint);
+			}
 
-			var oPayload = {};
-			oPayload.startLocations = aPreparedPoints;
+			for(var sGuid in aDemandsData){
+				var oPoint = _.cloneDeep(oPointTemplate);
+				oPoint.offRoadCoordinate.x = aDemandsData[sGuid].location.x;
+				oPoint.offRoadCoordinate.y = aDemandsData[sGuid].location.y;
+				aDemandPoints.push(oPoint);
+			}
+
+			oPayload.startLocations = aResourcePoints;
+			oPayload.destinationLocations = aDemandPoints;
 			oPayload.storedProfile = "car";
 
-			oPayload.requestProfile = {
-				featureLayerProfile: {
-					themes: [{
-						enabled: true,
-						id: "PTV_SpeedPatterns"
-					}]
-				}
-			};
-
-			var oStartDate = _.cloneDeep(oDate);
-			var oEndDate = _.cloneDeep(oDate);
-			oStartDate.setHours(this._sDefaultResourceStartHour, 0, 0);
-			oEndDate.setHours(23, 59, 0);
-
 			oPayload.distanceMatrixOptions = {
+				//current default routing type
 				routingType: "HIGH_PERFORMANCE_ROUTING_WITH_FALLBACK_CONVENTIONAL",
-				timeConsideration: {
-					$type: "MultipleTravelTimesConsideration",
-					horizon: {
-						$type: "StartEndInterval",
-						start: oStartDate,
-						end: oEndDate
-					}
-				}
 			};
 
 			return oPayload;
+		},
+
+		/**
+		 * 
+		 * @param {string} sMatrixId - Created matrix Id
+		 * Passing matrix Id to this function after using in planTours API will delete the Matrix
+		 */
+		_deleteDistanceMatrix: function(sMatrixId) {
+			var oDeleteMatrix = {
+				"id": sMatrixId
+			};
+			this._sendPOSTRequestToPTV(this._sDeleteDistanceMatrixUrl, oDeleteMatrix);
 		},
 
 		/**

@@ -277,6 +277,7 @@ sap.ui.define([
 				sType: "",
 				sScheduleDialogTitle: "",
 				sScheduleTableTitle: "",
+				sDistanceMatrixId: "",
 				bEnableReschedule: false,
 				bEnableAutoschedule: false,
 				SchedulingDialogFlags: {
@@ -558,8 +559,9 @@ sap.ui.define([
 		handleScheduleDemands: function () {
 			return Promise.all([this.createScheduleData(),this.createDemandScheduleData()]).then(function(aResult){
 				var aResourceData = aResult[0],
-					aDemandsData = aResult[1],
-					aPayload = this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
+					aDemandsData = aResult[1];
+					return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
+			}.bind(this)).then(function(aPayload) {
 				return this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload);
 			}.bind(this));
 		},
