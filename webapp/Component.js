@@ -274,7 +274,7 @@ sap.ui.define([
 			//display and change auto scheduling and re-scheduling dialog
 			this.SchedulingDialog = new SchedulingDialog(this);
 			this.SchedulingDialog.init();
-			
+
 			//select resource from tree for assigning dialog
 			this.assignTreeDialog = new AssignTreeDialog();
 			this.assignTreeDialog.init();
@@ -441,8 +441,8 @@ sap.ui.define([
 			var aPromises = [];
 			aPromises.push(this._getSystemInformation());
 			aPromises.push(this._getData("/NavigationLinksSet", [new Filter("LaunchMode", FilterOperator.EQ, this.getModel("viewModel").getProperty(
-					"/launchMode")),
-				new Filter("LaunchMode", FilterOperator.EQ, "ITS")
+				"/launchMode")),
+			new Filter("LaunchMode", FilterOperator.EQ, "ITS")
 			]));
 
 			aPromises.push(this._getData("/MapProviderSet", [], {
@@ -499,20 +499,16 @@ sap.ui.define([
 				// below we are calling function import RefreshSharedMemoryAreas
 				// on intial loading of app if ENABLE_RESOURCE_TREE_CLUSTER is true in 
 				// GetSystemInformationSet.
-				if(data[0].ENABLE_RESOURCE_TREE_CLUSTER){
-					this.getModel().callFunction("/RefreshSharedMemoryAreas",{
-						method:"POST",
-						success:function(){
-							// create the views based on the url/hash
-							this.getRouter().initialize();
-						}.bind(this)
-					})
-				}else{
-					// create the views based on the url/hash
-					this.getRouter().initialize();
-				}
-			
-				
+
+				this.getModel().callFunction("/RefreshSharedMemoryAreas", {
+					method: "POST",
+					success: function () {
+						// create the views based on the url/hash
+						this.getRouter().initialize();
+					}.bind(this)
+				})
+
+
 
 			}.bind(this));
 		},
@@ -621,31 +617,31 @@ sap.ui.define([
 				},
 				// whatever properties are added here please update the same in the 
 				// method resetSchedulingJson in the file schedulingaction.js
-				Scheduling:{
-					sType:"",
+				Scheduling: {
+					sType: "",
 					sScheduleDialogTitle: "",
 					sScheduleTableTitle: "",
 					bEnableReschedule: false,
 					bEnableAutoschedule: false,
-					SchedulingDialogFlags:{
-						
+					SchedulingDialogFlags: {
+
 					},
-					aSelectedDemandPath:[],
-					selectedResources:null,
+					aSelectedDemandPath: [],
+					selectedResources: null,
 					selectedDemandPath: null,
-					resourceList:[],
-					resourceData:{},
+					resourceList: [],
+					resourceData: {},
 					demandData: {},
 					DateFrom: moment().startOf("day").toDate(),
 					DateTo: moment().add(14, "days").endOf("day").toDate(),
-					sUtilizationSlider:null,
-					aResourceTblFilters:[],
+					sUtilizationSlider: null,
+					aResourceTblFilters: [],
 					iSelectedResponse: 0
 				},
-				sViewRoute:null,
-				aUpdatedResources : []
+				sViewRoute: null,
+				aUpdatedResources: []
 			});
-			
+
 			oViewModel.setSizeLimit(999999999);
 			this.setModel(oViewModel, "viewModel");
 
