@@ -726,9 +726,15 @@ sap.ui.define([
 		 * which we will have to resolve each 100 chunk at a time.
 		 */
 		_ResolvinPromiseCreatAssign: function (aArray) {
-			return Promise.all(aArray.map(function (entity) {
-				return Promise.all(entity);
-			}));
+			var aResult = []
+			return aArray.reduce(function (prev, curr) {
+				return prev.then(function (mParam1) {
+					aResult = aResult.concat(mParam1)
+					return Promise.all(curr)
+				});
+			},Promise.resolve(1)).then(function (result) {
+				return aResult = aResult.concat(result)
+			});
 		}
 
 
