@@ -563,7 +563,7 @@ sap.ui.define([
 				this.oOwnerComponent.ProgressBarDialog.setProgressData({progress:"10"});
 				var aResourceData = aResult[0],
 					aDemandsData = aResult[1];
-					return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
+				return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
 			}.bind(this)).then(function(aPayload) {
 				return this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload);
 			}.bind(this));
