@@ -620,6 +620,7 @@ sap.ui.define([
 					sType: "",
 					sScheduleDialogTitle: "",
 					sScheduleTableTitle: "",
+					sDistanceMatrixId: "",
 					bEnableReschedule: false,
 					bEnableAutoschedule: false,
 					SchedulingDialogFlags: {
