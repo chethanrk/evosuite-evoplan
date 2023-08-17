@@ -560,7 +560,7 @@ sap.ui.define([
 				var aResourceData = aResult[0],
 					aDemandsData = aResult[1],
 					aPayload = this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
-				return this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload);
+				return Promise.all([this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload), aResourceData, aDemandsData]);
 			}.bind(this));
 		},
 
