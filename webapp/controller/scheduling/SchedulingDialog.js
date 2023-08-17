@@ -103,7 +103,7 @@ sap.ui.define([
 		 * 1. REemovig the selection from demands and resource tree table.
 		 * 2. Resetting the scheduling json model.
 		 */
-		onSchedDialogClose:function(){
+		onSchedDialogClose: function () {
 			var sRoute = this._oViewModel.getProperty("/sViewRoute");
 			this.oSchedulingActions.resetSchedulingJson();
 			if (sRoute === "NEWGANTT") {
@@ -122,26 +122,26 @@ sap.ui.define([
 			var oNextStep = this._oWizard.getSteps()[this._iSelectedStepIndex + 1],
 				sLoadingMsg = this._oResourceBundle.getText("ymsg.Loading");
 
-			if (this._iSelectedStepIndex === 0 && !this.step1Validation()){
+			if (this._iSelectedStepIndex === 0 && !this.step1Validation()) {
 				return;
 			}
 
 			//TODO: new busy dialog will be developed
 			var oBusyDialog = new sap.m.BusyDialog({
-				text:sLoadingMsg
+				text: sLoadingMsg
 			});
 			oBusyDialog.open();
-			this.oSchedulingActions.handleScheduleDemands().then(function(oResponse){
+			this.oSchedulingActions.handleScheduleDemands().then(function (oResponse) {
 				oBusyDialog.close();
 				if (this._oSelectedStep && !this._oSelectedStep.bLast) {
 					this._oWizard.goToStep(oNextStep, true);
 				} else {
 					this._oWizard.nextStep();
 				}
-	
+
 				this._iSelectedStepIndex++;
 				this._oSelectedStep = oNextStep;
-	
+
 				this._handleButtonsVisibility();
 
 				// TODO: Display response in step2 table 
@@ -172,16 +172,16 @@ sap.ui.define([
 		 * Validates step1 fields, if error then return false, or else true
 		 * @returns {boolean}
 		 */
-		step1Validation: function() {
+		step1Validation: function () {
 			var oStartDate = this._oViewModel.getProperty("/Scheduling/startDate"),
 				oEndDate = this._oViewModel.getProperty("/Scheduling/endDate"),
 				validateState = true;
 
-			if (!oStartDate){
+			if (!oStartDate) {
 				validateState = false;
 				this._oViewModel.setProperty("/Scheduling/sStartDateValueState", "Error");
 			}
-			if (!oEndDate){
+			if (!oEndDate) {
 				validateState = false;
 				this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "Error");
 			}
@@ -375,8 +375,12 @@ sap.ui.define([
 					if (oAction === MessageBox.Action.YES) {
 						this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
 						this._ScheduleDialog.then(function (oDialog) {
-							oDialog.close();
-							this._initializeDialogModel();
+							this.oSchedulingActions.handleCreateAssignment().then(function () {
+								oDialog.close();
+								oDialog.setBusy(false);
+								this._initializeDialogModel();
+							});
+
 						}.bind(this));
 					}
 				}.bind(this)
