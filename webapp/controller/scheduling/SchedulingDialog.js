@@ -357,38 +357,10 @@ sap.ui.define([
 					dataSet: [],
 				},
 				step2: {
-					dataSet: [{
-							"ResourceName": "Rahul Inamdar",
-							"ResourceGroup": "Group A",
-							"ORDERID": "485421",
-							"ORDER_DESC": "Change gear",
-							"OPERATIONID": "0020",
-							"OPERATION_DESC": "Oil check",
-							"DURATION": "5.00H",
-							"DateFrom": ""
-						},
-						{
-							"ResourceName": "Rahul Inamdar",
-							"ResourceGroup": "Group A",
-							"ORDERID": "485421",
-							"ORDER_DESC": "Change gear",
-							"OPERATIONID": "0020",
-							"OPERATION_DESC": "Oil check",
-							"DURATION": "5.00H",
-							"DateFrom": ""
-						},
-						{
-							"ResourceName": "",
-							"ResourceGroup": "Group A",
-							"ORDERID": "485421",
-							"ORDER_DESC": "Change gear",
-							"OPERATIONID": "0020",
-							"OPERATION_DESC": "Oil check",
-							"DURATION": "5.00H",
-							"DateFrom": ""
-						}
-					]
-				}
+					dataSet: []
+				},
+				iPlanned: 0,
+				iNonPlanned: 0
 			});
 		},
 
