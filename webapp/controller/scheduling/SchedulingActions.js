@@ -595,10 +595,6 @@ sap.ui.define([
 						// now for each chunk of array we will calling Promise.All method
 						this._ResolvinPromiseCreatAssign(mParam).then(function (mParam) {
 							resolve(mParam)
-							/* TO Do 
-								1. Close the dialog
-								2. Call the other method from this. 
-							 */
 						});
 					}.bind(this))
 				}.bind(this));
@@ -662,6 +658,7 @@ sap.ui.define([
 		 * This method is used to create the data of the deamnds that will be used by CreateAssignmentSet.
 		 *  Here we will create array of all the demands with the service all using callfunctionImport with mParam as the 
 		 * demand detail. The array retured here will later later be used for promise.all.
+		 * @return {array} 
 		 */
 		_getDemandsDataForAssignment: function () {
 			return new Promise(function (resolve, reject) {
@@ -712,6 +709,7 @@ sap.ui.define([
 		 * This method is used to create group/array of 100 elements inside the parent array. 
 		 * @param {array} arr - Array of the demands 
 		 * @param {integer} size - size of each array or group inside the parent array
+		 * @return {array} myArray - [[.....100][...100]] 
 		 */
 		_CreateArrayInGroups: function (arr, size) {
 			return new Promise(function (resolve, reject) {
