@@ -572,8 +572,10 @@ sap.ui.define([
 		 * @returns {string} sResourceGroupName - Resource Group name of the child node
 		 */
 		getResourceGroupName: function(sParentNodeId){
-			var sResourceGroupName;
-			sResourceGroupName = this.oDataModel.getProperty("/ResourceHierarchySet('" + sParentNodeId + "')").Description;
+			var sResourceGroupName, sCurrentView, sModelName;
+			sCurrentView = this.oViewModel.getProperty("/sViewRoute");
+			sCurrentView === "NEWGANTT" ? sModelName = "GanttResourceHierarchySet" : sModelName = "ResourceHierarchySet";
+			sResourceGroupName = this.oDataModel.getProperty("/" + sModelName + "('" + sParentNodeId + "')").Description;
 			return sResourceGroupName;			
 		},
 
