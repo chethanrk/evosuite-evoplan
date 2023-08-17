@@ -24,6 +24,7 @@ sap.ui.define([
 					name: "com.evorait.evoplan.view.common.fragments.ProgressBarDialog",
 					controller: this
 				}).then(function (oDialog) {
+                    oDialog.setEscapeHandler(function(){});
 					this._oProgressBarDialog = oDialog;
 					this.onOpen(this._oProgressBarDialog, oView);
 				}.bind(this));
@@ -39,7 +40,6 @@ sap.ui.define([
         },
 
         setProgressData: function (oData){
-            debugger;
             var oProgressBarData = this._progressBarDialogModel.getData();
             oProgressBarData = Object.assign(oProgressBarData, oData);
             oProgressBarData.progressDescription = oProgressBarData.progress ? oProgressBarData.progress + "%" : "0%";
