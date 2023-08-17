@@ -242,6 +242,11 @@ sap.ui.define([
 						sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
 					}
 					this.showMessageToast(sMsg);
+				} else {
+					if(selected.length !== 0 && oEvent.getParameter("selectAll")) {
+						sMsg = this.getResourceBundle().getText("ymsg.allSelect", selected.length);
+						this.showMessageToast(sMsg);
+					}				
 				}
 
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
