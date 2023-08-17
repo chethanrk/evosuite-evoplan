@@ -556,7 +556,8 @@ sap.ui.define([
 		 * @return {Object} - Payload object
 		 */
 		handleScheduleDemands: function () {
-			this.oOwnerComponent.ProgressBarDialog.setProgressData({description:"Creating resource and demand data"});
+			var sDialogMsg= this.oResourceBundle.getText("ymsg.creatingresourcedemanddata");
+			this.oOwnerComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
 			return Promise.all([this.createScheduleData(),this.createDemandScheduleData()]).then(function(aResult){
 				this.oOwnerComponent.ProgressBarDialog.setProgressData({progress:"10"});
 				var aResourceData = aResult[0],

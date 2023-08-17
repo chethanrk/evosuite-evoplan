@@ -115,7 +115,8 @@ sap.ui.define([
 		 * @returns {object} - promise
 		 */
 		callPTVPlanTours: function (oPlanTourRequestBody){
-			this.oComponent.ProgressBarDialog.setProgressData({description:"Analyzing the location.."});
+			var sDialogMsg = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.analysinglocation");
+			this.oComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
 			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oPlanTourRequestBody).then(function (oPlanTourResponse) {
 				this.oComponent.ProgressBarDialog.setProgressData({progress:"40"});
 				if(oPlanTourResponse){

@@ -14,6 +14,7 @@ sap.ui.define([
 
         init: function () {
             this._progressBarDialogModel = this._component.getModel("progressBarModel");
+            this._resourceBundle = this._component.getModel("i18n").getResourceBundle();
             this.resetProgressData();
         },
 
@@ -47,7 +48,7 @@ sap.ui.define([
 
         resetProgressData: function () {
             var oData = {
-				description:"Loading data...",
+				description:this._resourceBundle.getText("ymsg.loading"),
 				progress:"0",
 				progressDescription:"0%"
             };
