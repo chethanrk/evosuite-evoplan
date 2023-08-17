@@ -358,7 +358,9 @@ sap.ui.define([
 				},
 				step2: {
 					dataSet: []
-				}
+				},
+				iPlanned: 0,
+				iNonPlanned: 0
 			});
 		},
 

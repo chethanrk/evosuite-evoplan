@@ -6,12 +6,12 @@
             helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="target">
             <template:with path="target>Data" var="data">
                 <HBox>
-                    <RadioButtonGroup columns="3" class="sapUiTinyMargin"
-                        selectedIndex="{viewModel>/Scheduling/iSelectedResponse}">
+                    <RadioButtonGroup columns="2" class="sapUiTinyMargin"
+                        selectedIndex="{viewModel>/Scheduling/iSelectedResponse}" select="onChangeResponseType">
                         <RadioButton class="sapUiSmallMarginBegin sapUiMediumMarginEnd" groupName="scheduleType"
-                            text="{i18n>xrd.all}" selected="true" />
-                        <RadioButton class="sapUiMediumMarginEnd" groupName="scheduleType" text="{i18n>xrd.scheduled}" />
-                        <RadioButton class="sapUiMediumMarginEnd" groupName="scheduleType" text="{i18n>xrd.notScheduled}" />
+                            text="{i18n>xrd.scheduled} ({SchedulingModel>/iPlanned})" selected="true" />
+                        <RadioButton class="sapUiMediumMarginEnd" groupName="scheduleType"
+                            text="{i18n>xrd.notScheduled} ({SchedulingModel>/iNonPlanned})" />
                     </RadioButtonGroup>
                 </HBox>
                 <Table id="step2_ResponseTable" 
@@ -44,10 +44,8 @@
                     <items>
                         <ColumnListItem>
                             <cells>
-                                <Text text="{:= '{'+ ${tempProps>tempData/modelName} +'>ResourceName}' }"
-                                    visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}" />
                                 <Text text="{:= '{'+ ${tempProps>tempData/modelName} +'>ResourceGroup}' }"
-                                    visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}" />
+                                    visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}" />
 
                                 <template:repeat list="{path:'data>'}">
                                     <template:with path="data>Value" var="value">

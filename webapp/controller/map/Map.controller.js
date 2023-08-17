@@ -606,6 +606,11 @@ sap.ui.define([
 					sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
 				}
 				this.showMessageToast(sMsg);
+			} else {
+				if(selected.length !== 0 && oEvent.getParameter("selectAll")) {
+					sMsg = this.getResourceBundle().getText("ymsg.allSelect", selected.length);
+					this.showMessageToast(sMsg);
+				}				
 			}
 
 			// To make selection on map by selecting Demand from demand table
