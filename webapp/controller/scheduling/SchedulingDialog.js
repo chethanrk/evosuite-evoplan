@@ -215,7 +215,7 @@ sap.ui.define([
 		 */
 		handleWizardSubmit: function () {
 			var sMessage = this._oResourceBundle.getText("ymsg.SubmitOfReSecheduling");
-			this._handleMessageBoxOpen(sMessage, "confirm");
+			this._handleMessageBoxOpen(sMessage, "confirm","createAssignment");
 		},
 
 
@@ -384,7 +384,7 @@ sap.ui.define([
 									oDialog.close();
 									oDialog.setBusy(false);
 									this._initializeDialogModel();
-								});
+								}.bind(this));
 	
 							}.bind(this));
 							

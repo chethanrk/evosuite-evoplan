@@ -583,11 +583,9 @@ sap.ui.define([
 		 * @param {object} oDialog - This has the referrence of the scheduling dialog.
 		 */
 		handleCreateAssignment: function (oDialog) {
-			//1. Busy Dialog for the 
-			//2. get the existing data from the model.
-			//3.send the call for the assignemnt.
-			oDialog.setBusy(true);
-			var iArraySize = 100;
+			//1. get the existing data from the model.
+			//2.send the call for the assignemnt.
+			var iArraySize = 3;
 			return new Promise(function (resolve, reject) {
 				this._getDemandsDataForAssignment().then(function (mParam) {
 					// create chunks of the array for now its 3 later it would be 100.
@@ -664,16 +662,127 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				// sample Data
 				var aData = [{
-					DateFrom: null,// from FIXED_ASSGN_START_DATE
-					TimeFrom: null,// from FIXED_ASSGN_START_TIME
-					DateTo: null,// from FIXED_ASSGN_END_DATE
-					TimeTo: null,// from FIXED_ASSGN_END_TIME
-					DemandGuid: null,
-					ResourceGroupGuid: null,
-					ResourceGuid: null,
-					Effort: null,
-					EffortUnit: null
-				}]
+					"ResourceGuid": "A12B77123F2E1EEE86C8D6EA457E724B",
+					"ResourceGroupGuid": "A12B77123F2E1EEE86C9058AB87013B4",
+					"ResourceName": "Resource AE",
+					"ResourceGroup": "EvoPlan Maps",
+					"DateFrom": "2023-08-21T14:00:00.000Z",
+					"TimeFrom": {
+						"ms": 1692622800000,
+						"__edmType": "Edm.Time"
+					},
+					"DateTo": "2023-08-21T14:00:00.000Z",
+					"TimeTo": {
+						"ms": 1692626400000,
+						"__edmType": "Edm.Time"
+					},
+					"DemandGuid": "A12B77123F2E1EDE86CBEE9A5FD3F3BA",
+					"ORDERID": "847605",
+					"OPERATIONID": "0010",
+					"OPERATION_DESC": "Job1002",
+					"DURATION": "1.0",
+					"ORDER_DESC": "Job1002",
+					"PLANNED": true
+				},{
+					"ResourceGuid": "A12B77123F2E1EEE86C8D6EA457E724B Second",
+					"ResourceGroupGuid": "A12B77123F2E1EEE86C9058AB87013B4",
+					"ResourceName": "Resource AE",
+					"ResourceGroup": "EvoPlan Maps",
+					"DateFrom": "2023-08-21T14:00:00.000Z",
+					"TimeFrom": {
+						"ms": 1692622800000,
+						"__edmType": "Edm.Time"
+					},
+					"DateTo": "2023-08-21T14:00:00.000Z",
+					"TimeTo": {
+						"ms": 1692626400000,
+						"__edmType": "Edm.Time"
+					},
+					"DemandGuid": "A12B77123F2E1EDE86CBEE9A5FD3F3BA",
+					"ORDERID": "847605",
+					"OPERATIONID": "0010",
+					"OPERATION_DESC": "Job1002",
+					"DURATION": "1.0",
+					"ORDER_DESC": "Job1002",
+					"PLANNED": true
+				},{
+					"ResourceGuid": "A12B77123F2E1EEE86C8D6EA457E724B Third",
+					"ResourceGroupGuid": "A12B77123F2E1EEE86C9058AB87013B4",
+					"ResourceName": "Resource AE",
+					"ResourceGroup": "EvoPlan Maps",
+					"DateFrom": "2023-08-21T14:00:00.000Z",
+					"TimeFrom": {
+						"ms": 1692622800000,
+						"__edmType": "Edm.Time"
+					},
+					"DateTo": "2023-08-21T14:00:00.000Z",
+					"TimeTo": {
+						"ms": 1692626400000,
+						"__edmType": "Edm.Time"
+					},
+					"DemandGuid": "A12B77123F2E1EDE86CBEE9A5FD3F3BA",
+					"ORDERID": "847605",
+					"OPERATIONID": "0010",
+					"OPERATION_DESC": "Job1002",
+					"DURATION": "1.0",
+					"ORDER_DESC": "Job1002",
+					"PLANNED": true
+				},{
+					"ResourceGuid": "A12B77123F2E1EEE86C8D6EA457E724B fourth",
+					"ResourceGroupGuid": "A12B77123F2E1EEE86C9058AB87013B4",
+					"ResourceName": "Resource AE",
+					"ResourceGroup": "EvoPlan Maps",
+					"DateFrom": "2023-08-21T14:00:00.000Z",
+					"TimeFrom": {
+						"ms": 1692622800000,
+						"__edmType": "Edm.Time"
+					},
+					"DateTo": "2023-08-21T14:00:00.000Z",
+					"TimeTo": {
+						"ms": 1692626400000,
+						"__edmType": "Edm.Time"
+					},
+					"DemandGuid": "A12B77123F2E1EDE86CBEE9A5FD3F3BA",
+					"ORDERID": "847605",
+					"OPERATIONID": "0010",
+					"OPERATION_DESC": "Job1002",
+					"DURATION": "1.0",
+					"ORDER_DESC": "Job1002",
+					"PLANNED": true
+				},{
+					"ResourceGuid": "A12B77123F2E1EEE86C8D6EA457E724B fifth",
+					"ResourceGroupGuid": "A12B77123F2E1EEE86C9058AB87013B4",
+					"ResourceName": "Resource AE",
+					"ResourceGroup": "EvoPlan Maps",
+					"DateFrom": "2023-08-21T14:00:00.000Z",
+					"TimeFrom": {
+						"ms": 1692622800000,
+						"__edmType": "Edm.Time"
+					},
+					"DateTo": "2023-08-21T14:00:00.000Z",
+					"TimeTo": {
+						"ms": 1692626400000,
+						"__edmType": "Edm.Time"
+					},
+					"DemandGuid": "A12B77123F2E1EDE86CBEE9A5FD3F3BA",
+					"ORDERID": "847605",
+					"OPERATIONID": "0010",
+					"OPERATION_DESC": "Job1002",
+					"DURATION": "1.0",
+					"ORDER_DESC": "Job1002",
+					"PLANNED": true
+				}];
+				// close an object
+				var oBjectInitial, aNewArray = [], aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
+				for (var x = 0; x < aData.length; x++) {
+					oBjectInitial = Object.assign({}, aData[x]);
+					Object.keys(oBjectInitial).forEach(function (key) {
+						if (aPropReq.indexOf(key) < 0) {
+							delete oBjectInitial[key];
+						};
+					});
+					aNewArray.push(oBjectInitial);
+				};
 				/*{
 					"DateFrom": "2023-08-16T09:25:08.053Z",
 					"TimeFrom": {
@@ -700,10 +809,8 @@ sap.ui.define([
 					setTimeout(resolve, 100, 'geek part6');
 				});
 				var aPayload = [p1, p2, p3, p4, p5, p6];
-
-				resolve(aPayload)
+				resolve(aNewArray);
 			})
-
 		},
 		/**
 		 * This method is used to create group/array of 100 elements inside the parent array. 
@@ -732,7 +839,7 @@ sap.ui.define([
 					aResult = aResult.concat(mParam1)
 					return Promise.all(curr)
 				});
-			},Promise.resolve(1)).then(function (result) {
+			}, Promise.resolve(1)).then(function (result) {
 				return aResult = aResult.concat(result)
 			});
 		}
