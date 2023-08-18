@@ -139,9 +139,9 @@ sap.ui.define([
 		callPTVPlanTours: function (oPlanTourRequestBody){
 			var sMatrixId;
 			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oPlanTourRequestBody).then(function (oPlanTourResponse) {
-				if(oPlanTourResponse){
-				//call watch job
-					return new Promise(function(resolve){
+				if (oPlanTourResponse) {
+					//call watch job
+					return new Promise(function (resolve) {
 						var oWatchJobRequestBody = {
 							id: oPlanTourResponse.data.id
 						};
@@ -341,7 +341,7 @@ sap.ui.define([
 				aSchedulingData = this.oViewModel.getProperty("/Scheduling"),
 				aHorizonDateIntervals = this._getDateIntervals(aSchedulingData.startDate, aSchedulingData.endDate),
 				aWorkSchedules = [];
-				
+
 
 			for (var sGuid in aResourceData) {
 				aVehicleIDs = [];
@@ -368,12 +368,14 @@ sap.ui.define([
 				});
 
 				// Vehicle objects added as for the resource
-				aVehicles.push({
-					"ids": _.cloneDeep(aVehicleIDs),
-					"startLocationId": sGuid + "_location",
-					"endLocationId": sGuid + "_location",
-					"equipment": aResourceData[sGuid].qualifications
-				});
+				if (aVehicleIDs && aVehicleIDs.length) {
+					aVehicles.push({
+						"ids": _.cloneDeep(aVehicleIDs),
+						"startLocationId": sGuid + "_location",
+						"endLocationId": sGuid + "_location",
+						"equipment": aResourceData[sGuid].qualifications
+					});
+				}
 			};
 
 			// Adding all the generated data into payload
@@ -391,11 +393,11 @@ sap.ui.define([
 		 */
 		_setDemandsData: function (oPayload, aDemandsData) {
 			//code for payload creation with demands data needs to place here
-			var locations=[],
-				orders=[];
-			
-			for (let oDemandGuid in aDemandsData){
-				locations.push({						
+			var locations = [],
+				orders = [];
+
+			for (let oDemandGuid in aDemandsData) {
+				locations.push({
 					"$type": "CustomerSite",
 					"id": oDemandGuid + "_location",
 					"routeLocation": {
@@ -404,14 +406,14 @@ sap.ui.define([
 							"x": aDemandsData[oDemandGuid].location.x,
 							"y": aDemandsData[oDemandGuid].location.y
 						}
-					}						  
+					}
 				});
 
 				orders.push({
 					"$type": "VisitOrder",
 					"id": oDemandGuid,
 					"locationId": oDemandGuid + "_location",
-					"priority":  aDemandsData[oDemandGuid].priority,
+					"priority": aDemandsData[oDemandGuid].priority,
 					"serviceTime": aDemandsData[oDemandGuid].serviceTime,
 					"requiredVehicleEquipment": aDemandsData[oDemandGuid].qualification
 				});
@@ -427,22 +429,22 @@ sap.ui.define([
 		 * @param {Object} oDate
 		 * @return {String} - formatted date for PTV payload planning horizon
 		 */
-		_getFormattedDate: function(oDate){
+		_getFormattedDate: function (oDate) {
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				pattern: "yyyy-MM-ddTHH:mm:ssXXX"
 			});
-			return oDateFormat.format(oDate); 
+			return oDateFormat.format(oDate);
 		},
 
 		/**
 		 * Convert date object in oData date format
 		 * @return {Object} - array of formatted date 
 		 */
-		_getDateIntervals: function (aStartDate, aEndDate){
+		_getDateIntervals: function (aStartDate, aEndDate) {
 			var aHorizonDateIntervals = [];
-			while (aStartDate.getDate() != aEndDate.getDate()){
+			while (aStartDate.getDate() != aEndDate.getDate()) {
 				aHorizonDateIntervals.push(this._getFormattedDate(aStartDate).substr(0, 10));
-				aStartDate.setDate(aStartDate.getDate() + 1) 
+				aStartDate.setDate(aStartDate.getDate() + 1)
 			}
 			aHorizonDateIntervals.push(this._getFormattedDate(aStartDate).substr(0, 10));
 			return aHorizonDateIntervals;
@@ -452,7 +454,7 @@ sap.ui.define([
 		 * create PTV location object for Resource/Demands
 		 * @return {Object} - location object for PTV payload
 		 */
-		_getPTVLocationObject: function (sGuid, aResourceData,sType){
+		_getPTVLocationObject: function (sGuid, aResourceData, sType) {
 			return {
 				"$type": sType,
 				"id": sGuid + "_location",
@@ -472,38 +474,41 @@ sap.ui.define([
 		 * @param {Object} aHorizonDateIntervals Array of dates of PTV payload planning horizon
 		 * @return {Object} - array containing Operations and Break intervals
 		 */
-		_getFormattedWorkSchedules: function (oResource, aHorizonDateIntervals){
+		_getFormattedWorkSchedules: function (oResource, aHorizonDateIntervals) {
 			var aFormattedWorkSchedules = [],
-				sStartDate="",
-				aAbsences=[],
+				sStartDate = "",
+				aAbsences = [],
 				aProjectBlockers = [],
 				aIntervals = [],
 				sDate;
-			
+
 			//creating array of all absence days 	
 			oResource.absenses.forEach(function (oItem) {
 				aAbsences = aAbsences.concat(this._getDateIntervals(oItem.DateFrom, oItem.DateTo));
 			}.bind(this));
 
 			// creating actual planing horizon for resource based on availability
-			aHorizonDateIntervals.forEach(function (oDate) { 
+			aHorizonDateIntervals.forEach(function (oDate) {
 				if (aAbsences.indexOf(oDate) === -1) {
-					aFormattedWorkSchedules[oDate] = { aOperationIntervals: [], aBreakIntervals: [] }
+					aFormattedWorkSchedules[oDate] = {
+						aOperationIntervals: [],
+						aBreakIntervals: []
+					}
 				}
 			});
 
 			// calculating blockers for each day for resource
 			oResource.projectBlockers.forEach(function (oItem) {
 				aIntervals = aIntervals.concat(this._getDateIntervals(oItem.DateFrom, oItem.DateTo));
-				for (sDate of aIntervals ){
+				for (sDate of aIntervals) {
 					aProjectBlockers[sDate] = oItem.BlockPercentage;
 				}
 			}.bind(this));
-			
+
 			// Adding Breaks for the resources
-			oResource.breaks.forEach(function (oItem) {				
-					sStartDate = this._getFormattedDate(oItem.DateFrom);
-					sDate = sStartDate.substring(0, 10);
+			oResource.breaks.forEach(function (oItem) {
+				sStartDate = this._getFormattedDate(oItem.DateFrom);
+				sDate = sStartDate.substring(0, 10);
 				if (aFormattedWorkSchedules[sDate] && aFormattedWorkSchedules[sDate].aBreakIntervals) {
 					aFormattedWorkSchedules[sDate].aBreakIntervals.push({
 						"breakTime": this._getDateDuration(oItem.DateFrom, oItem.DateTo),
@@ -517,18 +522,18 @@ sap.ui.define([
 			}.bind(this));
 
 			// Adding Operating intervals by calculating the availability hours for each day
-			oResource.workSchedules.forEach(function(oItem){
-					sStartDate = this._getFormattedDate(oItem.DateFrom);
-					sDate = sStartDate.substring(0, 10);
-					if (aFormattedWorkSchedules[sDate] && aFormattedWorkSchedules[sDate].aOperationIntervals){
-						aFormattedWorkSchedules[sDate].aOperationIntervals.push({
-							"$type": "StartDurationInterval",
-							"start": sStartDate,
-							"duration": this._getAvailabilityDuration(oItem.DateFrom, oItem.DateTo, aProjectBlockers[sDate])
-						})
-					}
+			oResource.workSchedules.forEach(function (oItem) {
+				sStartDate = this._getFormattedDate(oItem.DateFrom);
+				sDate = sStartDate.substring(0, 10);
+				if (aFormattedWorkSchedules[sDate] && aFormattedWorkSchedules[sDate].aOperationIntervals) {
+					aFormattedWorkSchedules[sDate].aOperationIntervals.push({
+						"$type": "StartDurationInterval",
+						"start": sStartDate,
+						"duration": this._getAvailabilityDuration(oItem.DateFrom, oItem.DateTo, aProjectBlockers[sDate])
+					})
+				}
 			}.bind(this));
-			return aFormattedWorkSchedules;	
+			return aFormattedWorkSchedules;
 		},
 
 		/**
@@ -542,14 +547,14 @@ sap.ui.define([
 		_getAvailabilityDuration: function (oDateFrom, oDateTo, nBlockedPercentage) {
 			var nAvailabilityDuration = this._getDateDuration(oDateFrom, oDateTo),
 				nUtilization = this.oViewModel.getProperty('/Scheduling/sUtilizationSlider');
-			
+
 			//Condition to check if any blocker is there then remove the blocker duration from actual availability duration	
 			if (nBlockedPercentage) {
-				nAvailabilityDuration = nAvailabilityDuration - (nAvailabilityDuration * nBlockedPercentage/100);
+				nAvailabilityDuration = nAvailabilityDuration - (nAvailabilityDuration * nBlockedPercentage / 100);
 			}
 
 			// calculating duration based on given Utilization and returning the duration value of availability
-			return nAvailabilityDuration * nUtilization / 100; 
+			return nAvailabilityDuration * nUtilization / 100;
 		},
 
 		/**
@@ -558,10 +563,10 @@ sap.ui.define([
 		 * @param {Object} oDateTo End date and time 
 		 * @return {Number} Duration between given start and end data/time
 		 */
-		_getDateDuration: function(oStartDate,oEndDate){
+		_getDateDuration: function (oStartDate, oEndDate) {
 			return Math.ceil((oEndDate.getTime() - oStartDate.getTime()) / 1000);
 		},
-		
+
 		/**
 		 * To create input plans for already assigned demands for the resource
 		 * @param {Object} oResource Start date and time 
@@ -598,25 +603,21 @@ sap.ui.define([
 									"y": oAssingnment.LATITUDE
 								}
 							},
-							"openingIntervals": [
-								{
-									"$type": "StartDurationInterval",
-									"start": this._getFormattedDate(oAssingnment.DateFrom),
-									"duration": this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo) || 1
-								}
-							]
+							"openingIntervals": [{
+								"$type": "StartDurationInterval",
+								"start": this._getFormattedDate(oAssingnment.DateFrom),
+								"duration": this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo) || 1
+							}]
 						});
 
-						aInputPlans.demandOrders.push(
-							{
-								"$type": "VisitOrder",
-								"id": oAssingnment.DemandGuid,
-								"locationId": oAssingnment.DemandGuid + "_location",
-								"priority": 9,
-								"serviceTime": this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo),
-								"requiredVehicleEquipment": aResourceData[sGuid].qualifications
-							}
-						)
+						aInputPlans.demandOrders.push({
+							"$type": "VisitOrder",
+							"id": oAssingnment.DemandGuid,
+							"locationId": oAssingnment.DemandGuid + "_location",
+							"priority": 9,
+							"serviceTime": this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo),
+							"requiredVehicleEquipment": aResourceData[sGuid].qualifications
+						})
 
 					} else {
 						// Multiple days assignments would get processed here
@@ -656,19 +657,19 @@ sap.ui.define([
 		 */
 
 		/**
-		* @typedef {Object} TimeDistance
-		* @property {number} time - Travel time
-		* @property {number} distance - Travel distance
-		*/
+		 * @typedef {Object} TimeDistance
+		 * @property {number} time - Travel time
+		 * @property {number} distance - Travel distance
+		 */
 
 		/**
-		* @typedef {Object} Driving
-		* @property {number} travelTime - Travel time
-		* @property {number} index - Index of the corresponding driving event.
-		* The corresponding driving can be divided into multiple driving events due to break. 
-		* In case there are multiple driving events for the Driving between two Assignments,
-		* returned index reflects to the very first driving event because exactly the first one corresponds to LegReport.
-		*/
+		 * @typedef {Object} Driving
+		 * @property {number} travelTime - Travel time
+		 * @property {number} index - Index of the corresponding driving event.
+		 * The corresponding driving can be divided into multiple driving events due to break. 
+		 * In case there are multiple driving events for the Driving between two Assignments,
+		 * returned index reflects to the very first driving event because exactly the first one corresponds to LegReport.
+		 */
 
 		/**
 		 * potential refactoring:
