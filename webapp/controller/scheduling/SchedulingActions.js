@@ -718,7 +718,6 @@ sap.ui.define([
 		 * which we will have to resolve each 100 chunk at a time.
 		 */
 		_ResolvinPromiseCreatAssign: function (aArray) {
-			console.log(aArray);
 			var aResult = []
 			return aArray.reduce(function (prev, curr) {
 				return prev.then(function (mParam1) {
@@ -726,12 +725,22 @@ sap.ui.define([
 					return Promise.all(curr)
 				});
 			}, Promise.resolve(1)).then(function (result) {
-				return aResult = aResult.concat(result)
+				aResult = aResult.concat(result);
+				return aResult;
 			});
 		},
+		/**
+		 * This method is used to call function import and returns the function import as promise.
+		 * @param {json} oParams -JSON that is passed as url parameter.
+		 * @param {string} sFuncName - function name to be called.
+		 * @param {string} sMethod - method it could be post or anyother.
+		 */
 		_CallFunctionImportScheduling: function (oParams, sFuncName, sMethod, mParameters, bIsLast) {
+			// TODO. 1 check for utilization
+			// 2. check for message toast to be displyaed after the success of this call
+			// 3. Refractor this code.
+
 			return new Promise(function (resolve, reject) {
-				console.log(oParams, sFuncName, sMethod, mParameters, bIsLast)
 				var oModel = this.oDataModel,
 					oViewModel = this.oAppViewModel,
 					oResourceBundle = this.oResourceBundle;
@@ -756,7 +765,6 @@ sap.ui.define([
 					error: function (oError) {
 						//set first dragged index to set initial
 						this.oViewModel.setProperty("/iFirstVisibleRowIndex", -1);
-						//Handle Error
 						this.showMessageToast(oResourceBundle.getText("errorMessage"));
 						reject(oError)
 					}.bind(this)
