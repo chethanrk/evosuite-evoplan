@@ -558,11 +558,11 @@ sap.ui.define([
 		 */
 		handleScheduleDemands: function () {
 			var aResourceData, aDemandsData;
-			return Promise.all([this.createScheduleData(),this.createDemandScheduleData()]).then(function(aResult){
+			return Promise.all([this.createScheduleData(), this.createDemandScheduleData()]).then(function (aResult) {
 				aResourceData = aResult[0];
 				aDemandsData = aResult[1];
-					return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
-			}.bind(this)).then(function(aPayload) {
+				return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
+			}.bind(this)).then(function (aPayload) {
 				return Promise.all([this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload), aResourceData, aDemandsData]);
 			}.bind(this));
 		},
@@ -583,12 +583,13 @@ sap.ui.define([
 		 * This method is used to handle the create assignment for the PTV selected Demands.
 		 * @param {object} oDialog - This has the referrence of the scheduling dialog.
 		 */
-		handleCreateAssignment: function (oDialog) {
+		handleCreateAssignment: function (oModelDialog) {
 			//1. get the existing data from the model.
 			//2.send the call for the assignemnt.
+
 			var iArraySize = 3;
 			return new Promise(function (resolve, reject) {
-				this._getDemandsDataForAssignment().then(function (mParam) {
+				this._getDemandsDataForAssignment(oModelDialog).then(function (mParam) {
 					// create chunks of the array for now its 3 later it would be 100.
 					this._CreateArrayInGroups(mParam, iArraySize).then(function (mParam) {
 						// now for each chunk of array we will calling Promise.All method
@@ -597,7 +598,6 @@ sap.ui.define([
 						});
 					}.bind(this))
 				}.bind(this));
-
 			}.bind(this))
 
 		},
@@ -659,132 +659,26 @@ sap.ui.define([
 		 * demand detail. The array retured here will later later be used for promise.all.
 		 * @return {array} 
 		 */
-		_getDemandsDataForAssignment: function () {
+		_getDemandsDataForAssignment: function (oModelDialog) {
 			return new Promise(function (resolve, reject) {
 				// sample Data
-				var aData = [{
-					"ResourceGuid": "A12B77123F2E1EEE86C8D6EA457E724B",
-					"ResourceGroupGuid": "A12B77123F2E1EEE86C9058AB87013B4",
-					"ResourceName": "Resource AE",
-					"ResourceGroup": "EvoPlan Maps",
-					"DateFrom": "2023-08-21T14:00:00.000Z",
-					"TimeFrom": {
-						"ms": 1692622800000,
-						"__edmType": "Edm.Time"
-					},
-					"DateTo": "2023-08-21T14:00:00.000Z",
-					"TimeTo": {
-						"ms": 1692626400000,
-						"__edmType": "Edm.Time"
-					},
-					"DemandGuid": "A12B77123F2E1EDE86CBEE9A5FD3F3BA",
-					"ORDERID": "847605",
-					"OPERATIONID": "0010",
-					"OPERATION_DESC": "Job1002",
-					"DURATION": "1.0",
-					"ORDER_DESC": "Job1002",
-					"PLANNED": true
-				},{
-					"ResourceGuid": "A12B77123F2E1EEE86C8D6EA457E724B Second",
-					"ResourceGroupGuid": "A12B77123F2E1EEE86C9058AB87013B4",
-					"ResourceName": "Resource AE",
-					"ResourceGroup": "EvoPlan Maps",
-					"DateFrom": "2023-08-21T14:00:00.000Z",
-					"TimeFrom": {
-						"ms": 1692622800000,
-						"__edmType": "Edm.Time"
-					},
-					"DateTo": "2023-08-21T14:00:00.000Z",
-					"TimeTo": {
-						"ms": 1692626400000,
-						"__edmType": "Edm.Time"
-					},
-					"DemandGuid": "A12B77123F2E1EDE86CBEE9A5FD3F3BA",
-					"ORDERID": "847605",
-					"OPERATIONID": "0010",
-					"OPERATION_DESC": "Job1002",
-					"DURATION": "1.0",
-					"ORDER_DESC": "Job1002",
-					"PLANNED": true
-				},{
-					"ResourceGuid": "A12B77123F2E1EEE86C8D6EA457E724B Third",
-					"ResourceGroupGuid": "A12B77123F2E1EEE86C9058AB87013B4",
-					"ResourceName": "Resource AE",
-					"ResourceGroup": "EvoPlan Maps",
-					"DateFrom": "2023-08-21T14:00:00.000Z",
-					"TimeFrom": {
-						"ms": 1692622800000,
-						"__edmType": "Edm.Time"
-					},
-					"DateTo": "2023-08-21T14:00:00.000Z",
-					"TimeTo": {
-						"ms": 1692626400000,
-						"__edmType": "Edm.Time"
-					},
-					"DemandGuid": "A12B77123F2E1EDE86CBEE9A5FD3F3BA",
-					"ORDERID": "847605",
-					"OPERATIONID": "0010",
-					"OPERATION_DESC": "Job1002",
-					"DURATION": "1.0",
-					"ORDER_DESC": "Job1002",
-					"PLANNED": true
-				},{
-					"ResourceGuid": "A12B77123F2E1EEE86C8D6EA457E724B fourth",
-					"ResourceGroupGuid": "A12B77123F2E1EEE86C9058AB87013B4",
-					"ResourceName": "Resource AE",
-					"ResourceGroup": "EvoPlan Maps",
-					"DateFrom": "2023-08-21T14:00:00.000Z",
-					"TimeFrom": {
-						"ms": 1692622800000,
-						"__edmType": "Edm.Time"
-					},
-					"DateTo": "2023-08-21T14:00:00.000Z",
-					"TimeTo": {
-						"ms": 1692626400000,
-						"__edmType": "Edm.Time"
-					},
-					"DemandGuid": "A12B77123F2E1EDE86CBEE9A5FD3F3BA",
-					"ORDERID": "847605",
-					"OPERATIONID": "0010",
-					"OPERATION_DESC": "Job1002",
-					"DURATION": "1.0",
-					"ORDER_DESC": "Job1002",
-					"PLANNED": true
-				},{
-					"ResourceGuid": "A12B77123F2E1EEE86C8D6EA457E724B fifth",
-					"ResourceGroupGuid": "A12B77123F2E1EEE86C9058AB87013B4",
-					"ResourceName": "Resource AE",
-					"ResourceGroup": "EvoPlan Maps",
-					"DateFrom": "2023-08-21T14:00:00.000Z",
-					"TimeFrom": {
-						"ms": 1692622800000,
-						"__edmType": "Edm.Time"
-					},
-					"DateTo": "2023-08-21T14:00:00.000Z",
-					"TimeTo": {
-						"ms": 1692626400000,
-						"__edmType": "Edm.Time"
-					},
-					"DemandGuid": "A12B77123F2E1EDE86CBEE9A5FD3F3BA",
-					"ORDERID": "847605",
-					"OPERATIONID": "0010",
-					"OPERATION_DESC": "Job1002",
-					"DURATION": "1.0",
-					"ORDER_DESC": "Job1002",
-					"PLANNED": true
-				}];
+				var aData = oModelDialog.getProperty("/step2/dataSet");
 				// close an object
 				var oBjectInitial, aNewArray = [], aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 				for (var x = 0; x < aData.length; x++) {
-					oBjectInitial = Object.assign({}, aData[x]);
-					Object.keys(oBjectInitial).forEach(function (key) {
-						if (aPropReq.indexOf(key) < 0) {
-							delete oBjectInitial[key];
-						};
-					});
-					aNewArray.push(oBjectInitial);
+					if (aData[x].PLANNED) {
+						oBjectInitial = Object.assign({}, aData[x]);
+						Object.keys(oBjectInitial).forEach(function (key) {
+							if (aPropReq.indexOf(key) < 0) {
+								delete oBjectInitial[key];
+							};
+						});
+						aNewArray.push(this._CallFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST", null, true));
+					}
 				};
-				/*{
+				/* sample responce
+			
+				{
 					"DateFrom": "2023-08-16T09:25:08.053Z",
 					"TimeFrom": {
 						"ms": 1692177908053
@@ -799,19 +693,9 @@ sap.ui.define([
 					"Effort": "0",
 					"EffortUnit": ""
 				}*/
-				p1 = Promise.resolve(50);
-				p2 = 200
-				p3 = new Promise(function (resolve, reject) {
-					setTimeout(resolve, 10000, 'geek');
-				});
-				p4 = 400
-				p5 = 500
-				p6 = new Promise(function (resolve, reject) {
-					setTimeout(resolve, 100, 'geek part6');
-				});
-				var aPayload = [p1, p2, p3, p4, p5, p6];
+
 				resolve(aNewArray);
-			})
+			}.bind(this));
 		},
 		/**
 		 * This method is used to create group/array of 100 elements inside the parent array. 
@@ -826,7 +710,7 @@ sap.ui.define([
 					myArray.push(arr.slice(i, i + size));
 				}
 				resolve(myArray);
-			})
+			}.bind(this));
 
 		},
 		/**
@@ -834,6 +718,7 @@ sap.ui.define([
 		 * which we will have to resolve each 100 chunk at a time.
 		 */
 		_ResolvinPromiseCreatAssign: function (aArray) {
+			console.log(aArray);
 			var aResult = []
 			return aArray.reduce(function (prev, curr) {
 				return prev.then(function (mParam1) {
@@ -843,7 +728,42 @@ sap.ui.define([
 			}, Promise.resolve(1)).then(function (result) {
 				return aResult = aResult.concat(result)
 			});
+		},
+		_CallFunctionImportScheduling: function (oParams, sFuncName, sMethod, mParameters, bIsLast) {
+			return new Promise(function (resolve, reject) {
+				console.log(oParams, sFuncName, sMethod, mParameters, bIsLast)
+				var oModel = this.oDataModel,
+					oViewModel = this.oAppViewModel,
+					oResourceBundle = this.oResourceBundle;
+
+				if (mParameters === undefined || (mParameters && !mParameters.bCustomBusy)) {
+					oViewModel.setProperty("/busy", true);
+				}
+
+				oModel.callFunction("/" + sFuncName, {
+					method: sMethod || "POST",
+					urlParameters: oParams,
+					refreshAfterChange: false,
+					success: function (oData, oResponse) {
+						//Handle Success
+						if (bIsLast) {
+							oViewModel.setProperty("/busy", false);
+							this.showMessage(oResponse);
+							this.afterUpdateOperations(mParameters, oParams, oData);
+						}
+						resolve(oData)
+					}.bind(this),
+					error: function (oError) {
+						//set first dragged index to set initial
+						this.oViewModel.setProperty("/iFirstVisibleRowIndex", -1);
+						//Handle Error
+						this.showMessageToast(oResourceBundle.getText("errorMessage"));
+						reject(oError)
+					}.bind(this)
+				});
+			}.bind(this))
 		}
+
 
 
 	});

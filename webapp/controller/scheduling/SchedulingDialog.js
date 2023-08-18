@@ -379,7 +379,7 @@ sap.ui.define([
 						if(sOperationType==="createAssignment"){
 							this._ScheduleDialog.then(function (oDialog) {
 								oDialog.setBusy(true);
-								this.oSchedulingActions.handleCreateAssignment().then(function () {
+								this.oSchedulingActions.handleCreateAssignment(this._oSchedulingModel).then(function () {
 									this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
 									oDialog.close();
 									oDialog.setBusy(false);
