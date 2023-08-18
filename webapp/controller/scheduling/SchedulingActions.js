@@ -302,7 +302,8 @@ sap.ui.define([
 				sEndDateValueState: "None",
 				btnInsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleInside"),
 				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
-				iSelectedResponse: 0
+				iSelectedResponse: 0,
+				sScheduleType:""
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
 		},
@@ -660,9 +661,11 @@ sap.ui.define([
 		 * @return {array} 
 		 */
 		_getDemandsDataForAssignment: function (oModelDialog) {
+
 			return new Promise(function (resolve, reject) {
 				// sample Data
-				var aData = oModelDialog.getProperty("/step2/dataSet");
+				var aData = oModelDialog.getProperty("/step2/dataSet"),
+				sSchedulingType=this.oViewModel.getProperty("/Scheduling/sScheduleType");
 				// close an object
 				var oBjectInitial, aNewArray = [], aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 				for (var x = 0; x < aData.length; x++) {
@@ -673,6 +676,7 @@ sap.ui.define([
 								delete oBjectInitial[key];
 							};
 						});
+						oBjectInitial.MapAssignmentType=sSchedulingType;
 						aNewArray.push(this._CallFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST"));
 					}
 				};

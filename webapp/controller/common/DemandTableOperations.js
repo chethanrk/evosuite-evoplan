@@ -251,6 +251,8 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
 		 */
 		onAutoscheduleButtonPress: function (oEvent) {
+			var oViewModel = this.getModel("viewModel");
+			oViewModel.setProperty("/Scheduling/sScheduleType","A");
 			if(!this.oSchedulingActions.validateScheduleAfterPress()){
 				return;
 			}
@@ -268,6 +270,7 @@ sap.ui.define([
 				sPath = oViewModel.getProperty("/Scheduling/selectedDemandPath"),
 				aDemandList = [],
 				oMsgParam = {};
+			oViewModel.setProperty("/Scheduling/sScheduleType","B");
 			if(!this.oSchedulingActions.validateReScheduleAfterPress()){
 				return;
 			}
