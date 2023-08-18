@@ -270,7 +270,7 @@ sap.ui.define([
 				sPath = oViewModel.getProperty("/Scheduling/selectedDemandPath"),
 				aDemandList = [],
 				oMsgParam = {};
-			oViewModel.setProperty("/Scheduling/sScheduleType","B");
+			oViewModel.setProperty("/Scheduling/sScheduleType","R");
 			if(!this.oSchedulingActions.validateReScheduleAfterPress()){
 				return;
 			}
