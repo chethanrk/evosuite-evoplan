@@ -448,9 +448,15 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		
+		/**
+		 * modify PTV API response as per table needs
+		 * Response from PTV API will be displayed in table format
+		 * 
+		 * @param {oResponse} - Response from PTV API
+		 * @param {aResourceData} - Selected resources list
+		 * @param {aDemandsData} - Selected demands list
+		 */
 		_designResponse: function (oResponse, aResourceData, aDemandsData) {
-			debugger;
 			if (oResponse.data) {
 				var aDataSet = [],
 					aData = {},
@@ -458,11 +464,13 @@ sap.ui.define([
 					iPlanned = 0,
 					sResourceGuid;
 
+				//Scheduled demands
 				if (oResponse.data.tourReports) {
 					for (var i = 0; i < oResponse.data.tourReports.length; i++) {
 						oTour = oResponse.data.tourReports[i];
 						aData = {};
 
+						//Resource related info
 						sResourceGuid = oTour.vehicleId.split("_")[0];
 						aData.ResourceGuid = sResourceGuid;
 						aData.ResourceGroupGuid = aResourceData[sResourceGuid].aData.ResourceGroupGuid;
@@ -471,6 +479,7 @@ sap.ui.define([
 
 						oTour.tourEvents.forEach(function (tourItem) {
 							if (tourItem.eventTypes.indexOf('SERVICE') !== -1) {
+								//Demand related info
 								tourStartDate = new Date(tourItem.startTime);
 								aData.DateFrom = tourStartDate;
 								aData.TimeFrom = aDemandsData[tourItem.orderId].data.TimeFrom;   //To initialise TimeFrom property to be type of EdmTime
@@ -478,8 +487,8 @@ sap.ui.define([
 
 								tourEndDate = new Date(tourStartDate.setSeconds(tourStartDate.getSeconds() + tourItem.duration));
 								aData.DateTo = tourEndDate;
-								aData.TimeFrom = aDemandsData[tourItem.orderId].data.TimeTo;   //To initialise TimeTo property to be type of EdmTime
-								aData.TimeFrom.ms = tourEndDate.getTime();
+								aData.TimeTo = aDemandsData[tourItem.orderId].data.TimeTo;   //To initialise TimeTo property to be type of EdmTime
+								aData.TimeTo.ms = tourEndDate.getTime();
 
 								aData.DemandGuid = tourItem.orderId;
 								aData.ORDERID = aDemandsData[tourItem.orderId].data.ORDERID;
@@ -496,6 +505,7 @@ sap.ui.define([
 					}
 				}
 
+				//Non-scheduled demands
 				if (oResponse.data.orderIdsNotPlanned) {
 					iNotPlanned = oResponse.data.orderIdsNotPlanned.length;
 					for (var j = 0; j < oResponse.data.orderIdsNotPlanned.length; j++) {
@@ -513,6 +523,7 @@ sap.ui.define([
 					}
 				}
 
+				//Setting the values in Schdeuling model
 				this._oSchedulingModel.setProperty("/step2/iPlanned", iPlanned);
 				this._oSchedulingModel.setProperty("/step2/iNonPlanned", iNotPlanned);
 				this._oSchedulingModel.setProperty("/step2/dataSet", aDataSet);
