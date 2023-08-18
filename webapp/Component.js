@@ -631,7 +631,8 @@ sap.ui.define([
 					DateTo: moment().add(14, "days").endOf("day").toDate(),
 					sUtilizationSlider: null,
 					aResourceTblFilters: [],
-					iSelectedResponse: 0
+					iSelectedResponse: 0,
+					bDateChanged:false
 				},
 				sViewRoute: null,
 				aUpdatedResources: []

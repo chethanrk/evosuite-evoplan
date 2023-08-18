@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/MessageType",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
-], function (BaseController, formatter, Filter, Constants, IconColor, MessageType,Filter,FilterOperator) {
+], function (BaseController, formatter, Filter, Constants, IconColor, MessageType, Filter, FilterOperator) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
 
@@ -51,8 +51,8 @@ sap.ui.define([
 				oResourceDataModel = this.oGanttModel;
 			}
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
-					this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
-					return;
+				this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
+				return;
 			}
 			this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", false);
 			return;
@@ -63,7 +63,7 @@ sap.ui.define([
 		 * This method is applicable for the demands, gantt chart and maps view.
 		 * @return {boolean} - 'false' if only all pools are selected | 'true' if any resource/resource group is also selected.
 		 */
-		validateScheduleAfterPress:function(){
+		validateScheduleAfterPress: function () {
 			var oScheduling = this.oViewModel.getProperty("/Scheduling"),
 				oResourceDataModel = this.oDataModel,
 				sRoute = this.oViewModel.getProperty("/sViewRoute");
@@ -125,12 +125,12 @@ sap.ui.define([
 				}
 				return false;
 			};
-			
+
 			// check if the allow re-schedule flag is enabled or not.
 			oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
 			if (!oSelectedDemandItem.ALLOW_RESCHEDULE) {
 				var aNonAssignableDemands = [];
-				aNonAssignableDemands.push(this.getMessageDescWithOrderID(oSelectedDemandItem, null, null,true));
+				aNonAssignableDemands.push(this.getMessageDescWithOrderID(oSelectedDemandItem, null, null, true));
 				this._showAssignErrorDialog(aNonAssignableDemands, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 				return false;
 			};
@@ -146,19 +146,19 @@ sap.ui.define([
 			sDemandPath = this.oViewModel.getProperty("/Scheduling/selectedDemandPath");
 			sSelectedDemand = this.oDataModel.getProperty(sDemandPath);
 			aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
-			aFilterResource = [];
-			for(var x in aResourceList){
-				aFilterResource.push(new Filter("ResourceGuid",FilterOperator.EQ,aResourceList[x].ResourceGuid))
+				aFilterResource = [];
+			for (var x in aResourceList) {
+				aFilterResource.push(new Filter("ResourceGuid", FilterOperator.EQ, aResourceList[x].ResourceGuid))
 			}
-			aFilterResource.push(new Filter("DemandGuid",FilterOperator.EQ,sSelectedDemand.Guid));
+			aFilterResource.push(new Filter("DemandGuid", FilterOperator.EQ, sSelectedDemand.Guid));
 			this.oAppViewModel.setProperty("/busy", true);
 			//to fetch the assigned resource to the selected demand
 			//we are using AssignmentSet instead of DemandSet as demandset was taking more time than assignmentset.
-			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource,"$select=FIRSTNAME,LASTNAME").then(function (oData) {
+			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource, "$select=FIRSTNAME,LASTNAME").then(function (oData) {
 				this.oAppViewModel.setProperty("/busy", false);
-				if(oData.results.length>0){
-					oData.results.forEach(function(aItem){
-						aAssignedList.push(aItem.FIRSTNAME+" "+aItem.LASTNAME);
+				if (oData.results.length > 0) {
+					oData.results.forEach(function (aItem) {
+						aAssignedList.push(aItem.FIRSTNAME + " " + aItem.LASTNAME);
 					});
 				};
 				if (aAssignedList.length > 0) {
@@ -196,23 +196,23 @@ sap.ui.define([
 				var bValidateState = true,
 					aResourceNameList = [],
 					oUniqueResourceList = {};
-					sResourceGroupName = "";
-					sResourceFullName = "";
-					sResourceFullNameOld = "";
+				sResourceGroupName = "";
+				sResourceFullName = "";
+				sResourceFullNameOld = "";
 				aResourceList.forEach(function (oResource) {
 					if (oResource.ResourceGuid) {
 						if (oUniqueResourceList[oResource.ResourceGuid]) {
 							//to check for the existing resource
-							sResourceFullNameOld = oResource.Description + " : " + oUniqueResourceList[oResource.ResourceGuid].Group ;
+							sResourceFullNameOld = oResource.Description + " : " + oUniqueResourceList[oResource.ResourceGuid].Group;
 							aResourceNameList.indexOf(sResourceFullNameOld) === -1 && aResourceNameList.push(sResourceFullNameOld);
 							bValidateState = false;
 							sResourceGroupName = this.getResourceGroupName(oResource.ParentNodeId);
 							//to check the current resource
-							sResourceFullName = oResource.Description + " : " + sResourceGroupName ;
+							sResourceFullName = oResource.Description + " : " + sResourceGroupName;
 							aResourceNameList.indexOf(sResourceFullName) === -1 && aResourceNameList.push(sResourceFullName);
-							
+
 						} else {
-							oUniqueResourceList[oResource.ResourceGuid] = {Group:this.getResourceGroupName(oResource.ParentNodeId)};
+							oUniqueResourceList[oResource.ResourceGuid] = { Group: this.getResourceGroupName(oResource.ParentNodeId) };
 						}
 					}
 				}.bind(this));
@@ -298,11 +298,12 @@ sap.ui.define([
 				initialFocusedDateValue: moment().add(1, "days").toDate(),
 				bInvalidDateRange: false,
 				sInvalidDateRangeMsg: "",
-				sStartDateValueState:"None",
-				sEndDateValueState:"None",
+				sStartDateValueState: "None",
+				sEndDateValueState: "None",
 				btnInsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleInside"),
 				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
-				iSelectedResponse: 0
+				iSelectedResponse: 0,
+				bDateChanged: false
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
 		},
@@ -475,21 +476,10 @@ sap.ui.define([
 				inside = 0,
 				outside = 0;
 
-			if (startDate && endDate) {
-				//check if endDate before startDate
-				//check if end date bigger than 14 days
-				if ((endDate.diff(startDate) < 0) || endDate.diff(startDate, 'days') > 14) {
-					if (bEndDateChanged) {
-						this.oViewModel.setProperty("/Scheduling/startDate", null);
-						startDate = null;
-						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateFromErrorMsg"));
-					} else {
-						this.oViewModel.setProperty("/Scheduling/endDate", null);
-						endDate = null;
-						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateToErrorMsg"));
-					}
-				}
+			if (!this.validateDateSchedule(oStartDate, oEndDate, bEndDateChanged)) {
+				return;
 			}
+
 			if (startDate) {
 				//when enddate datepicker opens set new focused date
 				this.oViewModel.setProperty("/Scheduling/initialFocusedDateValue", oStartDate);
@@ -527,6 +517,24 @@ sap.ui.define([
 			oSchedulingModel.setProperty("/outside", outside);
 
 		},
+		validateDateSchedule: function (startDate, endDate, bEndDateChanged) {
+			var bValidate = true
+			if (startDate && endDate) {
+				//check if endDate before startDate
+				//check if end date bigger than 14 days
+				if ((endDate.diff(startDate) < 0) || endDate.diff(startDate, 'days') > 14) {
+					if (bEndDateChanged) {
+						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateFromErrorMsg"));
+						bValidate = false;
+					
+					} else {
+						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateToErrorMsg"));
+						bValidate=false
+					}
+				}
+			}
+			return bValidate;
+		},
 		/**
 		 * On refresh of the resource table we have to call this method reset the resource data
 		 * so that we can 
@@ -557,11 +565,11 @@ sap.ui.define([
 		 * @return {Object} - Payload object
 		 */
 		handleScheduleDemands: function () {
-			return Promise.all([this.createScheduleData(),this.createDemandScheduleData()]).then(function(aResult){
+			return Promise.all([this.createScheduleData(), this.createDemandScheduleData()]).then(function (aResult) {
 				var aResourceData = aResult[0],
 					aDemandsData = aResult[1];
-					return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
-			}.bind(this)).then(function(aPayload) {
+				return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
+			}.bind(this)).then(function (aPayload) {
 				return this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload);
 			}.bind(this));
 		},
@@ -571,12 +579,12 @@ sap.ui.define([
 		 * @param {string} sResourceGuid - Resource guid of the child node of which group name is required
 		 * @returns {string} sResourceGroupName - Resource Group name of the child node
 		 */
-		getResourceGroupName: function(sParentNodeId){
+		getResourceGroupName: function (sParentNodeId) {
 			var sResourceGroupName, sCurrentView, sModelName;
 			sCurrentView = this.oViewModel.getProperty("/sViewRoute");
 			sCurrentView === "NEWGANTT" ? sModelName = "GanttResourceHierarchySet" : sModelName = "ResourceHierarchySet";
 			sResourceGroupName = this.oDataModel.getProperty("/" + sModelName + "('" + sParentNodeId + "')").Description;
-			return sResourceGroupName;			
+			return sResourceGroupName;
 		},
 
 		/* =========================================================== */

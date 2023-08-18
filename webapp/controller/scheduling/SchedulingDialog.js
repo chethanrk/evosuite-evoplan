@@ -173,8 +173,8 @@ sap.ui.define([
 		 * @returns {boolean}
 		 */
 		step1Validation: function() {
-			var oStartDate = this._oViewModel.getProperty("/Scheduling/startDate"),
-				oEndDate = this._oViewModel.getProperty("/Scheduling/endDate"),
+			var oStartDate = this._oViewModel.getProperty("/Scheduling/startDate")  ? moment(this._oViewModel.getProperty("/Scheduling/startDate") ) : null,
+				oEndDate = this._oViewModel.getProperty("/Scheduling/endDate") ? moment(this._oViewModel.getProperty("/Scheduling/endDate") ) : null,
 				validateState = true;
 
 			if (!oStartDate){
@@ -184,6 +184,25 @@ sap.ui.define([
 			if (!oEndDate){
 				validateState = false;
 				this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "Error");
+			}
+			if (oStartDate && oEndDate) {
+				//check if endDate before startDate
+				//check if end date bigger than 14 days
+				if ((oEndDate.diff(oStartDate) < 0) || oEndDate.diff(oStartDate, 'days') > 14) {
+					if (bEndDateChanged) {
+						validateState = false;
+						/* this.oViewModel.setProperty("/Scheduling/startDate", null);
+						startDate = null; */
+						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateFromErrorMsg"));
+						return;
+					} else {
+						validateState = false;
+						/* this.oViewModel.setProperty("/Scheduling/endDate", null);
+						endDate = null; */
+						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateToErrorMsg"));
+						return;
+					}
+				}
 			}
 			return validateState;
 		},
