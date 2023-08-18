@@ -673,7 +673,7 @@ sap.ui.define([
 								delete oBjectInitial[key];
 							};
 						});
-						aNewArray.push(this._CallFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST", null, true));
+						aNewArray.push(this._CallFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST"));
 					}
 				};
 				/* sample responce
