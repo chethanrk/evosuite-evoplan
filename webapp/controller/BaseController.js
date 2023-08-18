@@ -1115,10 +1115,10 @@ sap.ui.define([
 			Desc = Desc ? Desc : oData.DemandDesc;
 			// Condition to add number of assignments to display in error dialog for scheduling or auto scheduling.
 			if (bIsForScheduling || bIsForReScheduling) {
-				if (oData.ORDERID) {
-					return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;
+				if (oData.OBJECT_SOURCE_TYPE === 'DEM_PMNO') {
+					return oData.NOTIFICATION_TYPE + ", " + oData.NOTIFICATION + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;
 				} else {
-					return oData.NOTIFICATION_TYPE + ", " + oData.NOTIFICATION + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;;
+					return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;
 				}
 			}
 			if (oData.ORDERID) {
