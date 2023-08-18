@@ -475,11 +475,10 @@ sap.ui.define([
 				aDemands = oSchedulingModel.getProperty("/step1/dataSet"),
 				inside = 0,
 				outside = 0;
-
-			if (!this.validateDateSchedule(oStartDate, oEndDate, bEndDateChanged)) {
+				this.oViewModel.setProperty("/Scheduling/bDateChanged",bEndDateChanged)
+			if (!this.validateDateSchedule(startDate, endDate, bEndDateChanged)) {
 				return;
-			}
-
+			};
 			if (startDate) {
 				//when enddate datepicker opens set new focused date
 				this.oViewModel.setProperty("/Scheduling/initialFocusedDateValue", oStartDate);
@@ -517,8 +516,24 @@ sap.ui.define([
 			oSchedulingModel.setProperty("/outside", outside);
 
 		},
+		/** This method is used to validate the dates -
+		 * 	1. checks if dates are empty 
+		 *  2. checks if the diff b/w start and end date is not more than 14 days
+		 *  @param {object} startDate 
+		 *  @param {object} endDate
+		 *  @param {boolean} bEndDateChanged
+		 *  @return {boolean} - 'false' if validation fails | 'true' if validations meets the criteria.
+		 */
 		validateDateSchedule: function (startDate, endDate, bEndDateChanged) {
-			var bValidate = true
+			var bValidate = true;
+			if (!startDate){
+				validateState = false;
+				this.oViewModel.setProperty("/Scheduling/sStartDateValueState", "Error");
+			}
+			if (!endDate){
+				validateState = false;
+				this.oViewModel.setProperty("/Scheduling/sEndDateValueState", "Error");
+			}
 			if (startDate && endDate) {
 				//check if endDate before startDate
 				//check if end date bigger than 14 days
