@@ -144,8 +144,8 @@ sap.ui.define([
 
 				this._handleButtonsVisibility();
 
-				// TODO: Display response in step2 table 
-				//console.log(oResponse)contains response from the PTV 
+				this._designResponse(oResponse[0], oResponse[1], oResponse[2]); //(Response, Resources, Demands)
+
 				this._renderWizardStep2Binding();
 			}.bind(this));
 		},
@@ -466,7 +466,88 @@ sap.ui.define([
 				this.setTemplateProperties(this._mParams);
 				this.insertTemplateFragment(null, this._mParams.viewName, sContainerId, null, this._mParams);
 			}.bind(this));
-		}
+		},
 
+		/**
+		 * modify PTV API response as per table needs
+		 * Response from PTV API will be displayed in table format
+		 * 
+		 * @param {oResponse} - Response from PTV API
+		 * @param {aResourceData} - Selected resources list
+		 * @param {aDemandsData} - Selected demands list
+		 */
+		_designResponse: function (oResponse, aResourceData, aDemandsData) {
+			if (oResponse.data) {
+				var aDataSet = [],
+					aData = {},
+					iNotPlanned = 0,
+					iPlanned = 0,
+					sResourceGuid;
+
+				//Scheduled demands
+				if (oResponse.data.tourReports) {
+					for (var i = 0; i < oResponse.data.tourReports.length; i++) {
+						oTour = oResponse.data.tourReports[i];
+						aData = {};
+
+						//Resource related info
+						sResourceGuid = oTour.vehicleId.split("_")[0];
+						aData.ResourceGuid = sResourceGuid;
+						aData.ResourceGroupGuid = aResourceData[sResourceGuid].aData.ResourceGroupGuid;
+						aData.ResourceName = aResourceData[sResourceGuid].aData.Description;
+						aData.ResourceGroup = this.oSchedulingActions.getResourceGroupName(aResourceData[sResourceGuid].aData.ParentNodeId);
+
+						oTour.tourEvents.forEach(function (tourItem) {
+							if (tourItem.eventTypes.indexOf('SERVICE') !== -1) {
+								//Demand related info
+								tourStartDate = new Date(tourItem.startTime);
+								aData.DateFrom = tourStartDate;
+								aData.TimeFrom = aDemandsData[tourItem.orderId].data.TimeFrom;   //To initialise TimeFrom property to be type of EdmTime
+								aData.TimeFrom.ms = tourStartDate.getTime();
+
+								tourEndDate = new Date(tourStartDate.setSeconds(tourStartDate.getSeconds() + tourItem.duration));
+								aData.DateTo = tourEndDate;
+								aData.TimeTo = aDemandsData[tourItem.orderId].data.TimeTo;   //To initialise TimeTo property to be type of EdmTime
+								aData.TimeTo.ms = tourEndDate.getTime();
+
+								aData.DemandGuid = tourItem.orderId;
+								aData.ORDERID = aDemandsData[tourItem.orderId].data.ORDERID;
+								aData.OPERATIONID = aDemandsData[tourItem.orderId].data.OPERATIONID;
+								aData.OPERATION_DESC = aDemandsData[tourItem.orderId].data.OPERATION_DESC;
+								aData.DURATION = aDemandsData[tourItem.orderId].data.DURATION;
+								aData.ORDER_DESC = aDemandsData[tourItem.orderId].data.DemandDesc;
+								aData.PLANNED = true;
+
+								iPlanned++;
+								aDataSet.push(aData);
+							}
+						}.bind(this));
+					}
+				}
+
+				//Non-scheduled demands
+				if (oResponse.data.orderIdsNotPlanned) {
+					iNotPlanned = oResponse.data.orderIdsNotPlanned.length;
+					for (var j = 0; j < oResponse.data.orderIdsNotPlanned.length; j++) {
+						aOrder = oResponse.data.orderIdsNotPlanned[j];
+						aData = {};
+
+						aData.DemandGuid = aOrder;
+						aData = aDemandsData[aOrder].data;
+						aData.ORDER_DESC = aDemandsData[aOrder].data.DemandDesc;
+						aData.TimeFrom = aDemandsData[aOrder].data.TimeFrom;
+						aData.TimeTo = aDemandsData[aOrder].data.TimeTo;
+						aData.PLANNED = false;
+
+						aDataSet.push(aData);
+					}
+				}
+
+				//Setting the values in Schdeuling model
+				this._oSchedulingModel.setProperty("/step2/iPlanned", iPlanned);
+				this._oSchedulingModel.setProperty("/step2/iNonPlanned", iNotPlanned);
+				this._oSchedulingModel.setProperty("/step2/dataSet", aDataSet);
+			}
+		}
 	});
 });
