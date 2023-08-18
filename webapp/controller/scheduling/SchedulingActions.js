@@ -735,7 +735,7 @@ sap.ui.define([
 		 * @param {string} sFuncName - function name to be called.
 		 * @param {string} sMethod - method it could be post or anyother.
 		 */
-		_CallFunctionImportScheduling: function (oParams, sFuncName, sMethod, mParameters, bIsLast) {
+		_CallFunctionImportScheduling: function (oParams, sFuncName, sMethod) {
 			// TODO. 1 check for utilization
 			// 2. check for message toast to be displyaed after the success of this call
 			// 3. Refractor this code.
@@ -744,29 +744,23 @@ sap.ui.define([
 				var oModel = this.oDataModel,
 					oViewModel = this.oAppViewModel,
 					oResourceBundle = this.oResourceBundle;
-
-				if (mParameters === undefined || (mParameters && !mParameters.bCustomBusy)) {
-					oViewModel.setProperty("/busy", true);
-				}
-
+				oViewModel.setProperty("/busy", true);
 				oModel.callFunction("/" + sFuncName, {
 					method: sMethod || "POST",
 					urlParameters: oParams,
 					refreshAfterChange: false,
 					success: function (oData, oResponse) {
 						//Handle Success
-						if (bIsLast) {
-							oViewModel.setProperty("/busy", false);
-							this.showMessage(oResponse);
-							this.afterUpdateOperations(mParameters, oParams, oData);
-						}
+						oViewModel.setProperty("/busy", false);
+						this.showMessage(oResponse);
+						this.afterUpdateOperations(null, oParams, oData);
 						resolve(oData)
 					}.bind(this),
 					error: function (oError) {
 						//set first dragged index to set initial
 						this.oViewModel.setProperty("/iFirstVisibleRowIndex", -1);
 						this.showMessageToast(oResourceBundle.getText("errorMessage"));
-						reject(oError)
+						reject(oError);
 					}.bind(this)
 				});
 			}.bind(this))
