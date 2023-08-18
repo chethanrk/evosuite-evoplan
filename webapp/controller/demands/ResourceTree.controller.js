@@ -212,8 +212,7 @@ sap.ui.define([
 				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician");
 			if (!this.isLoaded) {
 				this.isLoaded = true;
-			}
-
+			}		
 			// Bug fix for some time tree getting collapsed
 			if (oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND")) {
 				oBinding.parameters.numberOfExpandedLevels = nTreeExpandLevel ? nTreeExpandLevel : 1;
@@ -317,6 +316,7 @@ sap.ui.define([
 				mParams, mParameter,
 				oView = this.getView(),
 				sResourceGuid =	oModel.getProperty(oDraggedContext.getPath()).ResourceGuid;
+			oViewModel.setProperty("/iFirstTreeTableVisibleindex", this._oDroppableTable.getTable().getFirstVisibleRow());	
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -527,7 +527,8 @@ sap.ui.define([
 			var oBindings = this._oDataTable.getBinding(),
 				aNodes = oBindings.getNodes(),
 				expandIdx = [],
-				collapseIdx = [];
+				collapseIdx = [],
+				oViewModel = this.getView().getModel("viewModel");
 
 			for (var j = 0; j < aNodes.length; j++) {
 				if (this.mTreeState[aNodes[j].key] && !aNodes[j].nodeState.isLeaf) {
@@ -546,6 +547,7 @@ sap.ui.define([
 			} else {
 				this.mTreeState = {};
 			}
+			this._oDroppableTable.getTable().setFirstVisibleRow(oViewModel.getProperty("/iFirstTreeTableVisibleindex"));
 		},
 		onToggleOpenState: function () {
 			this.mTreeState = {};

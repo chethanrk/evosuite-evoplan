@@ -177,7 +177,11 @@ sap.ui.define([
 		 */
 		onReassign: function (oEvent) {
 			var aContexts = this._oAssignMentTable.getSelectedContexts(),
-				sMsg;
+				sMsg,
+				oViewModel = this._oView.getModel("viewModel");
+				if(this._oView.byId('droppableTable')) {
+					oViewModel.setProperty("/iFirstTreeTableVisibleindex", this._oView.byId('droppableTable').getTable().getFirstVisibleRow());
+				}
 			this.getOperationDemands(aContexts);
 
 			//check at least one demand selected

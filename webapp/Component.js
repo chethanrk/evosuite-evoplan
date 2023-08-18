@@ -585,6 +585,7 @@ sap.ui.define([
 				ganttResourceFiltersFromPin: [],
 				ganttDateRangeFromMap: [],
 				iFirstVisibleRowIndex: -1,
+				iFirstTreeTableVisibleindex: -1,
 				availabilities: {
 					data: [],
 					isToAssign: false
@@ -615,6 +616,7 @@ sap.ui.define([
 					sType: "",
 					sScheduleDialogTitle: "",
 					sScheduleTableTitle: "",
+					sDistanceMatrixId: "",
 					bEnableReschedule: false,
 					bEnableAutoschedule: false,
 					SchedulingDialogFlags: {

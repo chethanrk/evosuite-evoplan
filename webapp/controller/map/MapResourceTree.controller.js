@@ -213,7 +213,7 @@ sap.ui.define([
 		onBusyStateChanged: function (oEvent) {
 			var parameters = oEvent.getParameters();
 			if (parameters.busy === false) {
-				if (Object.keys(this.mTreeState).length > 0) {
+				if (Object.keys(this.mTreeState).length > 0 && this._oDataTable.getBinding().getNodes().length > 0) {
 					this._restoreTreeState();
 				}
 			}
@@ -393,6 +393,7 @@ sap.ui.define([
 				aPSDemandsNetworkAssignment, mParams, mParameter,
 				oView = this.getView(),
 				sResourceGuid = oModel.getProperty(oDraggedContext.getPath()).ResourceGuid;
+			oViewModel.setProperty("/iFirstTreeTableVisibleindex", this._oDroppableTable.getTable().getFirstVisibleRow());
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -884,7 +885,8 @@ sap.ui.define([
 			var oBindings = this._oDataTable.getBinding(),
 				aNodes = oBindings.getNodes(),
 				expandIdx = [],
-				collapseIdx = [];
+				collapseIdx = [],
+				oViewModel = this.getView().getModel("viewModel");
 
 			for (var j = 0; j < aNodes.length; j++) {
 				if (this.mTreeState[aNodes[j].key] && !aNodes[j].nodeState.isLeaf) {
@@ -903,6 +905,7 @@ sap.ui.define([
 			} else {
 				this.mTreeState = {};
 			}
+			this._oDroppableTable.getTable().setFirstVisibleRow(oViewModel.getProperty("/iFirstTreeTableVisibleindex"));
 		},
 
 		/**
