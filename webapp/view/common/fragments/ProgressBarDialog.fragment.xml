@@ -1,0 +1,33 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        title=""
+        stretch="false"
+        showHeader="false"
+        type="Message"
+    >
+        <content>
+            <FlexBox
+                height="100%"
+                width="100%"
+                alignItems="Center"
+                justifyContent="Center"
+                direction="Column"
+            >
+                <Title text="{progressBarModel>/description}" class="sapUiSmallMarginBottom" />
+                <ProgressIndicator
+                    class="sapUiSmallMarginBottom"
+                    percentValue="{progressBarModel>/progress}"
+                    displayValue="{progressBarModel>/progressDescription}"
+                    showValue="true"
+                    state="Success"
+                    width="20em"
+                    height="0.2em"
+                />
+                <BusyIndicator class="sapUiSmallMarginBottom" size="1em" />
+            </FlexBox>
+        </content>
+    </Dialog>
+</core:FragmentDefinition>

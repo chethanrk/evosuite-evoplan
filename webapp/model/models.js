@@ -65,6 +65,12 @@ sap.ui.define([
 			var oModel = new JSONModel();
 			oModel.setDefaultBindingMode("TwoWay");
 			return oModel;
+		},
+
+		createProgressBarDialogModel: function(){
+			var oModel = new JSONModel();
+			oModel.setDefaultBindingMode("OneWay");
+			return oModel;
 		}
 	};
 
