@@ -560,12 +560,11 @@ sap.ui.define([
 			var sDialogMsg= this.oResourceBundle.getText("ymsg.creatingresourcedemanddata");
 			this.oOwnerComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
 			return Promise.all([this.createScheduleData(),this.createDemandScheduleData()]).then(function(aResult){
-				this.oOwnerComponent.ProgressBarDialog.setProgressData({progress:"10"});
 				var aResourceData = aResult[0],
 					aDemandsData = aResult[1];
-				return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
+					return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
 			}.bind(this)).then(function(aPayload) {
-				return this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload);
+				return Promise.all([this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload), aResourceData, aDemandsData]);
 			}.bind(this));
 		},
 

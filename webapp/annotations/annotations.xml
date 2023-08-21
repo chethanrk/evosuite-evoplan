@@ -89,43 +89,6 @@
 			</Annotations>
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Assignment">
 			</Annotations>
-			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="com.evorait.evoplan.Demand">
-				<Annotation Term="UI.FieldGroup" Qualifier="ResponseTable">
-					<Record Type="UI.FieldGroupType">
-						<PropertyValue Property="Data">
-							<Collection>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="ORDERID" />
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="ORDER_DESC" />
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="OPERATIONID" />
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="OPERATION_DESC" />
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="DURATION" />
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="DateFrom" />
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="TimeFrom" />
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="DateTo" />
-								</Record>
-								<Record Type="UI.DataField">
-									<PropertyValue Property="Value" Path="TimeTo" />
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>
