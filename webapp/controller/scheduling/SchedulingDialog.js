@@ -215,7 +215,7 @@ sap.ui.define([
 		 */
 		handleWizardSubmit: function () {
 			var sMessage = this._oResourceBundle.getText("ymsg.SubmitOfReSecheduling");
-			this._handleMessageBoxOpen(sMessage, "confirm");
+			this._handleMessageBoxOpen(sMessage, "confirm","createAssignment");
 		},
 
 
@@ -366,18 +366,38 @@ sap.ui.define([
 
 		/**
 		 * This method used to handle the open of the message box.
+		 * @param {string} sMessage - the type of message what we are going to display in the box.
+		 * @param {string} sMessageBoxType - type of the message box.
+		 * @param {string} sOperationType - the operation to be performed once we click on confirm
 		 */
-		_handleMessageBoxOpen: function (sMessage, sMessageBoxType) {
+		_handleMessageBoxOpen: function (sMessage, sMessageBoxType,sOperationType) {
 			// later to be replaced with the generic method based on avaiability in base controller.
 			MessageBox[sMessageBoxType](sMessage, {
 				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 				onClose: function (oAction) {
 					if (oAction === MessageBox.Action.YES) {
-						this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
-						this._ScheduleDialog.then(function (oDialog) {
-							oDialog.close();
-							this._initializeDialogModel();
-						}.bind(this));
+						if(sOperationType==="createAssignment"){
+							this._ScheduleDialog.then(function (oDialog) {
+								oDialog.setBusy(true);
+								this.oSchedulingActions.handleCreateAssignment(this._oSchedulingModel).then(function () {
+									this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
+									oDialog.close();
+									oDialog.setBusy(false);
+									this._initializeDialogModel();
+								}.bind(this));
+	
+							}.bind(this));
+							
+						}else{
+							this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
+							this._ScheduleDialog.then(function (oDialog) {
+								oDialog.close();
+								this._initializeDialogModel();
+	
+							}.bind(this));
+						}
+						
+						
 					}
 				}.bind(this)
 			});
