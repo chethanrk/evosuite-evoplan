@@ -124,10 +124,10 @@ sap.ui.define([
 			return this._createDistanceMatrix(aResourceData, aDemandsData).then(function(sMatrixId) {
 				this.oComponent.getModel("viewModel").setProperty("/Scheduling/sDistanceMatrixId", sMatrixId);
 				//commenting it temporarily till we fix the distance matrix use in planTour API
-				// oPayload.distanceMode = {
-				// 	"$type": "ExistingDistanceMatrix",
-				// 	"id": sMatrixId
-				// };
+				oPayload.distanceMode = {
+					"$type": "ExistingDistanceMatrix",
+					"id": sMatrixId
+				};
 				return oPayload;
 			}.bind(this));
 		},
@@ -236,8 +236,25 @@ sap.ui.define([
 				}
 			}.bind(this)).then(function(oFetchDistMatrixResponse){
 				this.oComponent.ProgressBarDialog.setProgressData({progress:"50"});
+				this.listDistanceMatrix();
 				return oFetchDistMatrixResponse.data.summary.id;
 			}.bind(this));
+		},
+
+		listDistanceMatrix: function(){
+			var payload = {
+				"resultFields": {
+				  "startLocations": true,
+				  "destinationLocations": true,
+				  "directDistanceRelations": false
+				}
+			},
+			LIST_DISTANCE_MATRIX_PATH = "/listDistanceMatrices";
+			this._sListDistanceMatrixUrl = this.sServiceUrl + DIMA_SERVICE_PATH + LIST_DISTANCE_MATRIX_PATH;
+			this._sendPOSTRequestToPTV(this._sListDistanceMatrixUrl, payload).then(function(returnedRes) {
+				console.log(returnedRes);
+			});
+			
 		},
 
 		/**
@@ -270,7 +287,7 @@ sap.ui.define([
 				aDemandPoints.push(oPoint);
 			}
 
-			oPayload.startLocations = aResourcePoints;
+			oPayload.startLocations = aResourcePoints.concat(aDemandPoints);
 			oPayload.destinationLocations = aDemandPoints;
 			oPayload.storedProfile = "car";
 
