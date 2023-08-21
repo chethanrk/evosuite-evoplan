@@ -690,7 +690,17 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				// sample Data
 				var aData = oModelDialog.getProperty("/step2/dataSet"),
-				sSchedulingType=this.oViewModel.getProperty("/Scheduling/sScheduleType");
+				sSchedulingType=this.oViewModel.getProperty("/Scheduling/sScheduleType"),
+				sViewRoute = this.oViewModel.getProperty("/sViewRoute"),
+				mRefreshParam={};
+				if (sViewRoute==="NEWGANTT"){
+					mRefreshParam.bFromNewGantt=true;
+				  }else if (sViewRoute==="MAP"){
+					mRefreshParam.bFromMap=true
+				  }else{
+					mRefreshParam.bFromHome=true;
+				  }
+		  
 				// close an object
 				var oBjectInitial, aNewArray = [], aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 				for (var x = 0; x < aData.length; x++) {
@@ -702,7 +712,7 @@ sap.ui.define([
 							};
 						});
 						oBjectInitial.MapAssignmentType=sSchedulingType;
-						aNewArray.push(this._CallFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST"));
+						aNewArray.push(this._CallFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST",mRefreshParam));
 					}
 				};
 				/* sample responce
@@ -763,8 +773,9 @@ sap.ui.define([
 		 * @param {json} oParams -JSON that is passed as url parameter.
 		 * @param {string} sFuncName - function name to be called.
 		 * @param {string} sMethod - method it could be post or anyother.
+		 * @param {object} mRefreshParam - this method is passed to afterUpdateOperations method
 		 */
-		_CallFunctionImportScheduling: function (oParams, sFuncName, sMethod) {
+		_CallFunctionImportScheduling: function (oParams, sFuncName, sMethod,mRefreshParam) {
 			// TODO. 1 check for utilization
 			// 2. check for message toast to be displyaed after the success of this call
 			// 3. Refractor this code.
@@ -782,7 +793,7 @@ sap.ui.define([
 						//Handle Success
 						oViewModel.setProperty("/busy", false);
 						this.showMessage(oResponse);
-						this.afterUpdateOperations(null, oParams, oData);
+						this.afterUpdateOperations(mRefreshParam, oParams, oData);
 						resolve(oData)
 					}.bind(this),
 					error: function (oError) {
