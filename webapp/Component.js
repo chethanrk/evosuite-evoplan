@@ -39,7 +39,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttAssignmentPopOver",
 	"com/evorait/evoplan/controller/map/SingleDayPlanner",
 	"com/evorait/evoplan/controller/common/ResourceAvailabilities",
-	"com/evorait/evoplan/controller/common/TimeAllocations"
+	"com/evorait/evoplan/controller/common/TimeAllocations",
+	"com/evorait/evoplan/controller/common/ProgressBarDialog"
 ], function (
 	UIComponent,
 	Device,
@@ -80,7 +81,8 @@ sap.ui.define([
 	GanttAssignmentPopOver,
 	SingleDayPlanner,
 	ResourceAvailabilities,
-	TimeAllocations) {
+	TimeAllocations,
+	ProgressBarDialog) {
 
 	"use strict";
 
@@ -344,6 +346,9 @@ sap.ui.define([
 
 			this.TimeAllocations = new TimeAllocations();
 			this.TimeAllocations.init();
+
+			this.ProgressBarDialog = new ProgressBarDialog(this);
+			this.ProgressBarDialog.init();
 
 		},
 
@@ -726,6 +731,9 @@ sap.ui.define([
 			});
 			oSinglePlanningModel.setDefaultBindingMode("TwoWay");
 			this.setModel(oSinglePlanningModel, "mapSinglePlanning");
+
+			this.setModel(models.createProgressBarDialogModel(),"progressBarModel");
+
 		},
 
 		/**

@@ -116,9 +116,11 @@ sap.ui.define([
 		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#Welcome/Home.htm
 		 */
 		getPTVPayload: function (aResourceData, aDemandsData) {
-			var oPayload = this._getPayloadStructure();
+			var oPayload = this._getPayloadStructure(),
+				sDialogMsg= this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.creatingDistanceMatrix");
 			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload 
 			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
+			this.oComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
 			return this._createDistanceMatrix(aResourceData, aDemandsData).then(function(sMatrixId) {
 				this.oComponent.getModel("viewModel").setProperty("/Scheduling/sDistanceMatrixId", sMatrixId);
 				oPayload.distanceMode = {
@@ -137,8 +139,11 @@ sap.ui.define([
 		 * @returns {object} - promise
 		 */
 		callPTVPlanTours: function (oPlanTourRequestBody){
-			var sMatrixId;
+			var sDialogMsg = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.analysinglocation"),
+				sMatrixId;
+			this.oComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
 			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oPlanTourRequestBody).then(function (oPlanTourResponse) {
+				this.oComponent.ProgressBarDialog.setProgressData({progress:"60"});
 				if (oPlanTourResponse) {
 					//call watch job
 					return new Promise(function (resolve) {
@@ -147,6 +152,9 @@ sap.ui.define([
 						};
 						var intervalID = setInterval(function() {
 							this._sendPOSTRequestToPTV(this._sWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
+								if(oWatchJobResponse.data.status === "RUNNING"){
+									this.ProgressBarDialog.oComponent.setProgressData({progress:"70"});
+								}
 								if(["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)){ // if successed or failed
 									clearInterval(intervalID);
 									resolve (oWatchJobResponse);
@@ -158,6 +166,7 @@ sap.ui.define([
 					return;
 				}		
 			}.bind(this)).then(function(oWatchJobResponse){
+				this.oComponent.ProgressBarDialog.setProgressData({progress:"90"});
 				if(oWatchJobResponse){
 					//call fetch response
 					var oFetchResponseRequestBody = {
@@ -168,6 +177,7 @@ sap.ui.define([
 					return;
 				}
 			}.bind(this)).then(function(oFetchToursResponse){
+				this.oComponent.ProgressBarDialog.setProgressData({progress:"100"});
 				//delete the matrix Id once the plan Tours is successfully fetched
 				sMatrixId = this.oComponent.getModel("viewModel").getProperty("/Scheduling/sDistanceMatrixId");
 				this._deleteDistanceMatrix(sMatrixId);
@@ -190,6 +200,7 @@ sap.ui.define([
 		_createDistanceMatrix: function (aStartPoints, aPointsToVisit) {
 			var oRequestBody = this._createPayloadForDistanceMatrixRequest(aStartPoints, aPointsToVisit);
 			return this._sendPOSTRequestToPTV(this._sStartCreateDistanceMatrixUrl, oRequestBody).then(function (oCreateMatrixResponse) {
+				this.oComponent.ProgressBarDialog.setProgressData({progress:"20"});
 				if(oCreateMatrixResponse){
 					//call watchJob
 					return new Promise(function(resolve){
@@ -198,6 +209,9 @@ sap.ui.define([
 						};
 						var intervalID = setInterval(function() {
 							this._sendPOSTRequestToPTV(this._sDimaWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
+								if(oWatchJobResponse.data.status === "RUNNING"){
+									this.ProgressBarDialog.oComponent.setProgressData({progress:"30"});
+								}
 								if(["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)){ // if successed or failed
 									clearInterval(intervalID);
 									resolve (oWatchJobResponse);
@@ -209,6 +223,7 @@ sap.ui.define([
 					return;
 				}
 			}.bind(this)).then(function(oWatchJobResponse){
+				this.oComponent.ProgressBarDialog.setProgressData({progress:"40"});
 				if(oWatchJobResponse){
 					//call fetch response
 					var oFetchResponseRequestBody = {
@@ -219,6 +234,7 @@ sap.ui.define([
 					return;
 				}
 			}.bind(this)).then(function(oFetchDistMatrixResponse){
+				this.oComponent.ProgressBarDialog.setProgressData({progress:"50"});
 				return oFetchDistMatrixResponse.data.summary.id;
 			}.bind(this));
 		},

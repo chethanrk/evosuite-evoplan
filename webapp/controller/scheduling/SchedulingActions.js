@@ -558,10 +558,12 @@ sap.ui.define([
 		 * @return {Object} - Payload object
 		 */
 		handleScheduleDemands: function () {
-			var aResourceData, aDemandsData;
+			var aResourceData, aDemandsData, 
+				sDialogMsg= this.oResourceBundle.getText("ymsg.creatingresourcedemanddata");
+			this.oOwnerComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
 			return Promise.all([this.createScheduleData(), this.createDemandScheduleData()]).then(function (aResult) {
-				aResourceData = aResult[0];
-				aDemandsData = aResult[1];
+					aResourceData = aResult[0];
+					aDemandsData = aResult[1];
 				return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
 			}.bind(this)).then(function (aPayload) {
 				return Promise.all([this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload), aResourceData, aDemandsData]);
