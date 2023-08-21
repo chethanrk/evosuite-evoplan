@@ -168,20 +168,12 @@ sap.ui.define([
 		 * Validates step1 fields, if error then return false, or else true
 		 * @returns {boolean}
 		 */
-		step1Validation: function () {
-			var oStartDate = this._oViewModel.getProperty("/Scheduling/startDate"),
-				oEndDate = this._oViewModel.getProperty("/Scheduling/endDate"),
-				validateState = true;
-
-			if (!oStartDate) {
-				validateState = false;
-				this._oViewModel.setProperty("/Scheduling/sStartDateValueState", "Error");
-			}
-			if (!oEndDate) {
-				validateState = false;
-				this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "Error");
-			}
-			return validateState;
+		step1Validation: function() {
+			var startDate = this._oViewModel.getProperty("/Scheduling/startDate")  ? moment(this._oViewModel.getProperty("/Scheduling/startDate") ) : null,
+				endDate = this._oViewModel.getProperty("/Scheduling/endDate") ? moment(this._oViewModel.getProperty("/Scheduling/endDate") ) : null,
+				bEndDateChanged = this._oViewModel.getProperty("/Scheduling/bDateChanged");
+			return this.oSchedulingActions.validateDateSchedule(startDate, endDate, bEndDateChanged);
+			
 		},
 		/**
 		 * Tis method is used to handle the activation/validation of the 

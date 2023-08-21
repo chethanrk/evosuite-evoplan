@@ -42,10 +42,16 @@ sap.ui.define([
 			}
 		},
 		_openPopOver: function (oSource, oDialog, oModel, oContext) {
+			oDialog.setBusy(true);
 			oDialog.bindElement({
 				path: oContext.getPath(),
 				parameters: {
 					"expand": "DemandToAssignment"
+				},
+				events:{
+					dataReceived:function(){
+						oDialog.setBusy(false);
+					}
 				}
 			});
 			oDialog.openBy(oSource);

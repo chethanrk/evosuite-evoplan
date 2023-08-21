@@ -303,7 +303,8 @@ sap.ui.define([
 				btnInsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleInside"),
 				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
 				iSelectedResponse: 0,
-				sScheduleType:""
+				sScheduleType:"",
+				bDateChanged: false
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
 		},
@@ -475,22 +476,10 @@ sap.ui.define([
 				aDemands = oSchedulingModel.getProperty("/step1/dataSet"),
 				inside = 0,
 				outside = 0;
-
-			if (startDate && endDate) {
-				//check if endDate before startDate
-				//check if end date bigger than 14 days
-				if ((endDate.diff(startDate) < 0) || endDate.diff(startDate, 'days') > 14) {
-					if (bEndDateChanged) {
-						this.oViewModel.setProperty("/Scheduling/startDate", null);
-						startDate = null;
-						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateFromErrorMsg"));
-					} else {
-						this.oViewModel.setProperty("/Scheduling/endDate", null);
-						endDate = null;
-						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateToErrorMsg"));
-					}
-				}
-			}
+				this.oViewModel.setProperty("/Scheduling/bDateChanged",bEndDateChanged)
+			if (!this.validateDateSchedule(startDate, endDate, bEndDateChanged)) {
+				return;
+			};
 			if (startDate) {
 				//when enddate datepicker opens set new focused date
 				this.oViewModel.setProperty("/Scheduling/initialFocusedDateValue", oStartDate);
@@ -527,6 +516,40 @@ sap.ui.define([
 			oSchedulingModel.setProperty("/inside", inside);
 			oSchedulingModel.setProperty("/outside", outside);
 
+		},
+		/** This method is used to validate the dates -
+		 * 	1. checks if dates are empty 
+		 *  2. checks if the diff b/w start and end date is not more than 14 days
+		 *  @param {object} startDate 
+		 *  @param {object} endDate
+		 *  @param {boolean} bEndDateChanged
+		 *  @return {boolean} - 'false' if validation fails | 'true' if validations meets the criteria.
+		 */
+		validateDateSchedule: function (startDate, endDate, bEndDateChanged) {
+			var bValidate = true;
+			if (!startDate){
+				validateState = false;
+				this.oViewModel.setProperty("/Scheduling/sStartDateValueState", "Error");
+			}
+			if (!endDate){
+				validateState = false;
+				this.oViewModel.setProperty("/Scheduling/sEndDateValueState", "Error");
+			}
+			if (startDate && endDate) {
+				//check if endDate before startDate
+				//check if end date bigger than 14 days
+				if ((endDate.diff(startDate) < 0) || endDate.diff(startDate, 'days') > 14) {
+					if (bEndDateChanged) {
+						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateFromErrorMsg"));
+						bValidate = false;
+					
+					} else {
+						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateToErrorMsg"));
+						bValidate=false
+					}
+				}
+			}
+			return bValidate;
 		},
 		/**
 		 * On refresh of the resource table we have to call this method reset the resource data

@@ -638,6 +638,7 @@ sap.ui.define([
 					sUtilizationSlider: null,
 					aResourceTblFilters: [],
 					iSelectedResponse: 0,
+					bDateChanged:false,
 					sScheduleType:""
 				},
 				sViewRoute: null,
