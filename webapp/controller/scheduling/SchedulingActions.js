@@ -303,6 +303,7 @@ sap.ui.define([
 				btnInsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleInside"),
 				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
 				iSelectedResponse: 0,
+				sScheduleType:"",
 				bDateChanged: false
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
@@ -580,12 +581,13 @@ sap.ui.define([
 		 * @return {Object} - Payload object
 		 */
 		handleScheduleDemands: function () {
+			var aResourceData, aDemandsData;
 			return Promise.all([this.createScheduleData(), this.createDemandScheduleData()]).then(function (aResult) {
-				var aResourceData = aResult[0],
-					aDemandsData = aResult[1];
+				aResourceData = aResult[0];
+				aDemandsData = aResult[1];
 				return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
 			}.bind(this)).then(function (aPayload) {
-				return this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload);
+				return Promise.all([this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload), aResourceData, aDemandsData]);
 			}.bind(this));
 		},
 
@@ -600,6 +602,28 @@ sap.ui.define([
 			sCurrentView === "NEWGANTT" ? sModelName = "GanttResourceHierarchySet" : sModelName = "ResourceHierarchySet";
 			sResourceGroupName = this.oDataModel.getProperty("/" + sModelName + "('" + sParentNodeId + "')").Description;
 			return sResourceGroupName;
+		},
+		/**
+		 * This method is used to handle the create assignment for the PTV selected Demands.
+		 * @param {object} oDialog - This has the referrence of the scheduling dialog.
+		 */
+		handleCreateAssignment: function (oModelDialog) {
+			//1. get the existing data from the model.
+			//2.send the call for the assignemnt.
+
+			var iArraySize = 3;
+			return new Promise(function (resolve, reject) {
+				this._getDemandsDataForAssignment(oModelDialog).then(function (mParam) {
+					// create chunks of the array for now its 3 later it would be 100.
+					this._CreateArrayInGroups(mParam, iArraySize).then(function (mParam) {
+						// now for each chunk of array we will calling Promise.All method
+						this._ResolvinPromiseCreatAssign(mParam).then(function (mParam) {
+							resolve(mParam)
+						});
+					}.bind(this))
+				}.bind(this));
+			}.bind(this))
+
 		},
 
 		/* =========================================================== */
@@ -652,7 +676,124 @@ sap.ui.define([
 				return true;
 			}
 			return false;
+		},
+		/**
+		 * This method is used to create the data of the deamnds that will be used by CreateAssignmentSet.
+		 *  Here we will create array of all the demands with the service all using callfunctionImport with mParam as the 
+		 * demand detail. The array retured here will later later be used for promise.all.
+		 * @return {array} 
+		 */
+		_getDemandsDataForAssignment: function (oModelDialog) {
+
+			return new Promise(function (resolve, reject) {
+				// sample Data
+				var aData = oModelDialog.getProperty("/step2/dataSet"),
+				sSchedulingType=this.oViewModel.getProperty("/Scheduling/sScheduleType");
+				// close an object
+				var oBjectInitial, aNewArray = [], aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
+				for (var x = 0; x < aData.length; x++) {
+					if (aData[x].PLANNED) {
+						oBjectInitial = Object.assign({}, aData[x]);
+						Object.keys(oBjectInitial).forEach(function (key) {
+							if (aPropReq.indexOf(key) < 0) {
+								delete oBjectInitial[key];
+							};
+						});
+						oBjectInitial.MapAssignmentType=sSchedulingType;
+						aNewArray.push(this._CallFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST"));
+					}
+				};
+				/* sample responce
+			
+				{
+					"DateFrom": "2023-08-16T09:25:08.053Z",
+					"TimeFrom": {
+						"ms": 1692177908053
+					},
+					"DateTo": "2023-08-16T09:25:08.053Z",
+					"TimeTo": {
+						"ms": 1692177908053
+					},
+					"DemandGuid": "A12B77123F2E1EDDBAB06CD3E0B9826B",
+					"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+					"ResourceGuid": "0A51491BD5A01EE8A5910DE06717D060",
+					"Effort": "0",
+					"EffortUnit": ""
+				}*/
+
+				resolve(aNewArray);
+			}.bind(this));
+		},
+		/**
+		 * This method is used to create group/array of 100 elements inside the parent array. 
+		 * @param {array} arr - Array of the demands 
+		 * @param {integer} size - size of each array or group inside the parent array
+		 * @return {array} myArray - [[.....100][...100]] 
+		 */
+		_CreateArrayInGroups: function (arr, size) {
+			return new Promise(function (resolve, reject) {
+				var myArray = [];
+				for (var i = 0; i < arr.length; i += size) {
+					myArray.push(arr.slice(i, i + size));
+				}
+				resolve(myArray);
+			}.bind(this));
+
+		},
+		/**
+		 * @param {array} aArray - This array will have chunks of 100 array with promises 
+		 * which we will have to resolve each 100 chunk at a time.
+		 */
+		_ResolvinPromiseCreatAssign: function (aArray) {
+			var aResult = []
+			return aArray.reduce(function (prev, curr) {
+				return prev.then(function (mParam1) {
+					aResult = aResult.concat(mParam1)
+					return Promise.all(curr)
+				});
+			}, Promise.resolve(1)).then(function (result) {
+				aResult = aResult.concat(result);
+				return aResult;
+			});
+		},
+		/**
+		 * This method is used to call function import and returns the function import as promise.
+		 * @param {json} oParams -JSON that is passed as url parameter.
+		 * @param {string} sFuncName - function name to be called.
+		 * @param {string} sMethod - method it could be post or anyother.
+		 */
+		_CallFunctionImportScheduling: function (oParams, sFuncName, sMethod) {
+			// TODO. 1 check for utilization
+			// 2. check for message toast to be displyaed after the success of this call
+			// 3. Refractor this code.
+
+			return new Promise(function (resolve, reject) {
+				var oModel = this.oDataModel,
+					oViewModel = this.oAppViewModel,
+					oResourceBundle = this.oResourceBundle;
+				oViewModel.setProperty("/busy", true);
+				oModel.callFunction("/" + sFuncName, {
+					method: sMethod || "POST",
+					urlParameters: oParams,
+					refreshAfterChange: false,
+					success: function (oData, oResponse) {
+						//Handle Success
+						oViewModel.setProperty("/busy", false);
+						this.showMessage(oResponse);
+						this.afterUpdateOperations(null, oParams, oData);
+						resolve(oData)
+					}.bind(this),
+					error: function (oError) {
+						//set first dragged index to set initial
+						this.oViewModel.setProperty("/iFirstVisibleRowIndex", -1);
+						this.showMessageToast(oResourceBundle.getText("errorMessage"));
+						reject(oError);
+					}.bind(this)
+				});
+			}.bind(this))
 		}
+
+
 
 	});
 });

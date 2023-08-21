@@ -9,9 +9,9 @@
                     <RadioButtonGroup columns="2" class="sapUiTinyMargin"
                         selectedIndex="{viewModel>/Scheduling/iSelectedResponse}" select="onChangeResponseType">
                         <RadioButton class="sapUiSmallMarginBegin sapUiMediumMarginEnd" groupName="scheduleType"
-                            text="{i18n>xrd.scheduled} ({SchedulingModel>/iPlanned})" selected="true" />
+                            text="{i18n>xrd.scheduled} ({SchedulingModel>/step2/iPlanned})" selected="true" />
                         <RadioButton class="sapUiMediumMarginEnd" groupName="scheduleType"
-                            text="{i18n>xrd.notScheduled} ({SchedulingModel>/iNonPlanned})" />
+                            text="{i18n>xrd.notScheduled} ({SchedulingModel>/step2/iNonPlanned})" />
                     </RadioButtonGroup>
                 </HBox>
                 <Table id="step2_ResponseTable" 
@@ -26,10 +26,7 @@
 					</OverflowToolbar>
 				</headerToolbar>
                     <columns>
-                        <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}">
-                            <Label text="{i18n>xlbl.resName}" />
-                        </Column>
-                        <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}">
+                        <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}">
                             <Label text="{i18n>xfld.ResourceGroupName}" />
                         </Column>
                         <template:repeat list="{path:'data>'}">

@@ -103,7 +103,7 @@ sap.ui.define([
 		 * 1. REemovig the selection from demands and resource tree table.
 		 * 2. Resetting the scheduling json model.
 		 */
-		onSchedDialogClose:function(){
+		onSchedDialogClose: function () {
 			var sRoute = this._oViewModel.getProperty("/sViewRoute");
 			this.oSchedulingActions.resetSchedulingJson();
 			if (sRoute === "NEWGANTT") {
@@ -122,30 +122,30 @@ sap.ui.define([
 			var oNextStep = this._oWizard.getSteps()[this._iSelectedStepIndex + 1],
 				sLoadingMsg = this._oResourceBundle.getText("ymsg.Loading");
 
-			if (this._iSelectedStepIndex === 0 && !this.step1Validation()){
+			if (this._iSelectedStepIndex === 0 && !this.step1Validation()) {
 				return;
 			}
 
 			//TODO: new busy dialog will be developed
 			var oBusyDialog = new sap.m.BusyDialog({
-				text:sLoadingMsg
+				text: sLoadingMsg
 			});
 			oBusyDialog.open();
-			this.oSchedulingActions.handleScheduleDemands().then(function(oResponse){
+			this.oSchedulingActions.handleScheduleDemands().then(function (oResponse) {
 				oBusyDialog.close();
 				if (this._oSelectedStep && !this._oSelectedStep.bLast) {
 					this._oWizard.goToStep(oNextStep, true);
 				} else {
 					this._oWizard.nextStep();
 				}
-	
+
 				this._iSelectedStepIndex++;
 				this._oSelectedStep = oNextStep;
-	
+
 				this._handleButtonsVisibility();
 
-				// TODO: Display response in step2 table 
-				//console.log(oResponse)contains response from the PTV 
+				this._designResponse(oResponse[0], oResponse[1], oResponse[2]); //(Response, Resources, Demands)
+
 				this._renderWizardStep2Binding();
 			}.bind(this));
 		},
@@ -207,7 +207,7 @@ sap.ui.define([
 		 */
 		handleWizardSubmit: function () {
 			var sMessage = this._oResourceBundle.getText("ymsg.SubmitOfReSecheduling");
-			this._handleMessageBoxOpen(sMessage, "confirm");
+			this._handleMessageBoxOpen(sMessage, "confirm","createAssignment");
 		},
 
 
@@ -358,18 +358,38 @@ sap.ui.define([
 
 		/**
 		 * This method used to handle the open of the message box.
+		 * @param {string} sMessage - the type of message what we are going to display in the box.
+		 * @param {string} sMessageBoxType - type of the message box.
+		 * @param {string} sOperationType - the operation to be performed once we click on confirm
 		 */
-		_handleMessageBoxOpen: function (sMessage, sMessageBoxType) {
+		_handleMessageBoxOpen: function (sMessage, sMessageBoxType,sOperationType) {
 			// later to be replaced with the generic method based on avaiability in base controller.
 			MessageBox[sMessageBoxType](sMessage, {
 				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 				onClose: function (oAction) {
 					if (oAction === MessageBox.Action.YES) {
-						this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
-						this._ScheduleDialog.then(function (oDialog) {
-							oDialog.close();
-							this._initializeDialogModel();
-						}.bind(this));
+						if(sOperationType==="createAssignment"){
+							this._ScheduleDialog.then(function (oDialog) {
+								oDialog.setBusy(true);
+								this.oSchedulingActions.handleCreateAssignment(this._oSchedulingModel).then(function () {
+									this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
+									oDialog.close();
+									oDialog.setBusy(false);
+									this._initializeDialogModel();
+								}.bind(this));
+	
+							}.bind(this));
+							
+						}else{
+							this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
+							this._ScheduleDialog.then(function (oDialog) {
+								oDialog.close();
+								this._initializeDialogModel();
+	
+							}.bind(this));
+						}
+						
+						
 					}
 				}.bind(this)
 			});
@@ -438,7 +458,88 @@ sap.ui.define([
 				this.setTemplateProperties(this._mParams);
 				this.insertTemplateFragment(null, this._mParams.viewName, sContainerId, null, this._mParams);
 			}.bind(this));
-		}
+		},
 
+		/**
+		 * modify PTV API response as per table needs
+		 * Response from PTV API will be displayed in table format
+		 * 
+		 * @param {oResponse} - Response from PTV API
+		 * @param {aResourceData} - Selected resources list
+		 * @param {aDemandsData} - Selected demands list
+		 */
+		_designResponse: function (oResponse, aResourceData, aDemandsData) {
+			if (oResponse.data) {
+				var aDataSet = [],
+					aData = {},
+					iNotPlanned = 0,
+					iPlanned = 0,
+					sResourceGuid;
+
+				//Scheduled demands
+				if (oResponse.data.tourReports) {
+					for (var i = 0; i < oResponse.data.tourReports.length; i++) {
+						oTour = oResponse.data.tourReports[i];
+						aData = {};
+
+						//Resource related info
+						sResourceGuid = oTour.vehicleId.split("_")[0];
+						aData.ResourceGuid = sResourceGuid;
+						aData.ResourceGroupGuid = aResourceData[sResourceGuid].aData.ResourceGroupGuid;
+						aData.ResourceName = aResourceData[sResourceGuid].aData.Description;
+						aData.ResourceGroup = this.oSchedulingActions.getResourceGroupName(aResourceData[sResourceGuid].aData.ParentNodeId);
+
+						oTour.tourEvents.forEach(function (tourItem) {
+							if (tourItem.eventTypes.indexOf('SERVICE') !== -1) {
+								//Demand related info
+								tourStartDate = new Date(tourItem.startTime);
+								aData.DateFrom = tourStartDate;
+								aData.TimeFrom = aDemandsData[tourItem.orderId].data.TimeFrom;   //To initialise TimeFrom property to be type of EdmTime
+								aData.TimeFrom.ms = tourStartDate.getTime();
+
+								tourEndDate = new Date(tourStartDate.setSeconds(tourStartDate.getSeconds() + tourItem.duration));
+								aData.DateTo = tourEndDate;
+								aData.TimeTo = aDemandsData[tourItem.orderId].data.TimeTo;   //To initialise TimeTo property to be type of EdmTime
+								aData.TimeTo.ms = tourEndDate.getTime();
+
+								aData.DemandGuid = tourItem.orderId;
+								aData.ORDERID = aDemandsData[tourItem.orderId].data.ORDERID;
+								aData.OPERATIONID = aDemandsData[tourItem.orderId].data.OPERATIONID;
+								aData.OPERATION_DESC = aDemandsData[tourItem.orderId].data.OPERATION_DESC;
+								aData.DURATION = aDemandsData[tourItem.orderId].data.DURATION;
+								aData.ORDER_DESC = aDemandsData[tourItem.orderId].data.DemandDesc;
+								aData.PLANNED = true;
+
+								iPlanned++;
+								aDataSet.push(aData);
+							}
+						}.bind(this));
+					}
+				}
+
+				//Non-scheduled demands
+				if (oResponse.data.orderIdsNotPlanned) {
+					iNotPlanned = oResponse.data.orderIdsNotPlanned.length;
+					for (var j = 0; j < oResponse.data.orderIdsNotPlanned.length; j++) {
+						aOrder = oResponse.data.orderIdsNotPlanned[j];
+						aData = {};
+
+						aData.DemandGuid = aOrder;
+						aData = aDemandsData[aOrder].data;
+						aData.ORDER_DESC = aDemandsData[aOrder].data.DemandDesc;
+						aData.TimeFrom = aDemandsData[aOrder].data.TimeFrom;
+						aData.TimeTo = aDemandsData[aOrder].data.TimeTo;
+						aData.PLANNED = false;
+
+						aDataSet.push(aData);
+					}
+				}
+
+				//Setting the values in Schdeuling model
+				this._oSchedulingModel.setProperty("/step2/iPlanned", iPlanned);
+				this._oSchedulingModel.setProperty("/step2/iNonPlanned", iNotPlanned);
+				this._oSchedulingModel.setProperty("/step2/dataSet", aDataSet);
+			}
+		}
 	});
 });

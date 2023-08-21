@@ -585,6 +585,7 @@ sap.ui.define([
 				ganttResourceFiltersFromPin: [],
 				ganttDateRangeFromMap: [],
 				iFirstVisibleRowIndex: -1,
+				iFirstTreeTableVisibleindex: -1,
 				availabilities: {
 					data: [],
 					isToAssign: false
@@ -632,7 +633,8 @@ sap.ui.define([
 					sUtilizationSlider: null,
 					aResourceTblFilters: [],
 					iSelectedResponse: 0,
-					bDateChanged:false
+					bDateChanged:false,
+					sScheduleType:""
 				},
 				sViewRoute: null,
 				aUpdatedResources: []
