@@ -639,7 +639,9 @@ sap.ui.define([
 					aResourceTblFilters: [],
 					iSelectedResponse: 0,
 					bDateChanged:false,
-					sScheduleType:""
+					sScheduleType:"",
+					PTVResponse:{},
+					TravelTimes:[]
 				},
 				sViewRoute: null,
 				aUpdatedResources: []

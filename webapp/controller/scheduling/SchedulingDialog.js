@@ -128,6 +128,11 @@ sap.ui.define([
 
 			this._component.ProgressBarDialog.open(this._oView);
 			this.oSchedulingActions.handleScheduleDemands().then(function(oResponse){
+				
+				if (this._oViewModel.getProperty("/sViewRoute") === "NEWGANTT") {
+					this._oViewModel.setProperty("/Scheduling/PTVResponse", oResponse[0].data);
+					this._oEventBus.publish("AutoSchedule", "calculateTravelTime", {});
+				}
 				this._component.ProgressBarDialog.close();
 				if (this._oSelectedStep && !this._oSelectedStep.bLast) {
 					this._oWizard.goToStep(oNextStep, true);
