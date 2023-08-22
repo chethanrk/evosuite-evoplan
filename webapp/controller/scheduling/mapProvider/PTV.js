@@ -235,25 +235,8 @@ sap.ui.define([
 				}
 			}.bind(this)).then(function(oFetchDistMatrixResponse){
 				this.oComponent.ProgressBarDialog.setProgressData({progress:"50"});
-				this.listDistanceMatrix();
 				return oFetchDistMatrixResponse.data.summary.id;
 			}.bind(this));
-		},
-
-		listDistanceMatrix: function(){
-			var payload = {
-				"resultFields": {
-				  "startLocations": true,
-				  "destinationLocations": true,
-				  "directDistanceRelations": false
-				}
-			},
-			LIST_DISTANCE_MATRIX_PATH = "/listDistanceMatrices";
-			this._sListDistanceMatrixUrl = this.sServiceUrl + DIMA_SERVICE_PATH + LIST_DISTANCE_MATRIX_PATH;
-			this._sendPOSTRequestToPTV(this._sListDistanceMatrixUrl, payload).then(function(returnedRes) {
-				console.log(returnedRes);
-			});
-			
 		},
 
 		/**
