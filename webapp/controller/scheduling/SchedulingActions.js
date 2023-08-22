@@ -613,7 +613,7 @@ sap.ui.define([
 			//1. get the existing data from the model.
 			//2.send the call for the assignemnt.
 
-			var iArraySize = 3;
+			var iArraySize = 100;
 			return new Promise(function (resolve, reject) {
 				this._getDemandsDataForAssignment(oModelDialog).then(function (mParam) {
 					// create chunks of the array for now its 3 later it would be 100.
