@@ -49,6 +49,7 @@ sap.ui.define([
      * Opens filter dialog for response table
      */
     onShowFilters: function () {
+      //To be changed when annotations for filters are added
       if (!this._oResponseFilterDialog) {
         this._oResponseFilterDialog = Fragment.load({
           name: "com.evorait.evoplan.view.scheduling.fragments.DemandFilterDialog",
