@@ -528,11 +528,11 @@ sap.ui.define([
 		validateDateSchedule: function (startDate, endDate, bEndDateChanged) {
 			var bValidate = true;
 			if (!startDate){
-				validateState = false;
+				bValidate = false;
 				this.oViewModel.setProperty("/Scheduling/sStartDateValueState", "Error");
 			}
 			if (!endDate){
-				validateState = false;
+				bValidate = false;
 				this.oViewModel.setProperty("/Scheduling/sEndDateValueState", "Error");
 			}
 			if (startDate && endDate) {

@@ -46,16 +46,14 @@ sap.ui.define([
             this._oViewModel = this.getModel("viewModel");
             this._oViewModel.setProperty("/Scheduling/bSchedulingTableBusy", false);
             this._oViewModel.setProperty("/Scheduling/sFilterCounts", this.getResourceBundle().getText("xbut.filters") + " (0)");
-            //this._oViewModel.setProperty("/Scheduling/sScheduleFilteredDemandsTableTitle", this.getResourceBundle().getText("xtit.itemFilteresDemandListCount", "0"));
 
             var oBinding = this._oDemandsTable.getBinding("rows");
             oBinding.attachChange(function() {
                 var aDataset = this._oSchedulingModel.getProperty("/step1/dataSet"),
-                    isAutoSchedule = this._oSchedulingModel.getProperty("/isAutoSchedule"),
-                    visibleCountText = this.getResourceBundle().getText("xtit.itemFilteresDemandListCount", [oBinding.getLength()]);
+                    isAutoSchedule = this._oSchedulingModel.getProperty("/isAutoSchedule");
                 
                 //visible filtered demands
-                this._oViewModel.setProperty("/Scheduling/sScheduleFilteredDemandsTableTitle", visibleCountText);
+                
                 //all demands counter for scheduling
 
                 this.getOwnerComponent().SchedulingDialog._setScheduleTableTitle(isAutoSchedule, aDataset.length)
