@@ -137,7 +137,19 @@ sap.ui.define([
 			// Not able load more than 100 associations
 			this.getModel().setSizeLimit(600);
 
+			this.initMomentSetting(); // to set inital settings for moment
+
 			this._setApp2AppLinks();
+		},
+		/**
+		 * Method to set initial settings for moment.js
+		 */
+		initMomentSetting: function(){
+			moment.updateLocale(moment.locale(), {
+				week: {
+				  dow: 1, // Set Monday as the start of the week (0: Sunday, 1: Monday, ...)
+				},
+			  });
 		},
 
 		/**
