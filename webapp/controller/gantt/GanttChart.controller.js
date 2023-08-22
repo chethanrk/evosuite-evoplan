@@ -869,9 +869,8 @@ sap.ui.define([
 					}
 				}
 			}
-			this.oViewModel.setProperty("/Scheduling/TravelTimes", aTravelTimes);
-
-			
+			this.oViewModel.setProperty("/ganttSettings/TravelTimes", aTravelTimes);
+			this.oViewModel.setProperty("/ganttSettings/SelectedResources", _.cloneDeep(this.selectedResources));
 		},
 		/* =========================================================== */
 		/* Private methods                                             */
@@ -909,8 +908,8 @@ sap.ui.define([
 		 * to Add travel time between assignment after auto schedule
 		 */
 		_addTravelTimesToResources: function(){
-			var oResources = this.oViewModel.getProperty("/Scheduling/selectedResources"),
-				aTravelTimes = this.oViewModel.getProperty("/Scheduling/TravelTimes"),
+			var oResources = this.oViewModel.getProperty("/ganttSettings/selectedResources"),
+				aTravelTimes = this.oViewModel.getProperty("/ganttSettings/TravelTimes"),
 				oResourceObject;
 
 			for (var i in oResources) {
