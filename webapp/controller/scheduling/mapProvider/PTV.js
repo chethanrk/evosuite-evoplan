@@ -123,11 +123,10 @@ sap.ui.define([
 			this.oComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
 			return this._createDistanceMatrix(aResourceData, aDemandsData).then(function(sMatrixId) {
 				this.oComponent.getModel("viewModel").setProperty("/Scheduling/sDistanceMatrixId", sMatrixId);
-				//commenting it temporarily till we fix the distance matrix use in planTour API
-				// oPayload.distanceMode = {
-				// 	"$type": "ExistingDistanceMatrix",
-				// 	"id": sMatrixId
-				// };
+				oPayload.distanceMode = {
+					"$type": "ExistingDistanceMatrix",
+					"id": sMatrixId
+				};
 				return oPayload;
 			}.bind(this));
 		},
@@ -270,8 +269,9 @@ sap.ui.define([
 				aDemandPoints.push(oPoint);
 			}
 
-			oPayload.startLocations = aResourcePoints;
-			oPayload.destinationLocations = aDemandPoints;
+			oPayload.startLocations = aResourcePoints.concat(aDemandPoints);
+			//destinations are added into startLocations to maintain the matrix shape
+			oPayload.destinationLocations = [];
 			oPayload.storedProfile = "car";
 
 			oPayload.distanceMatrixOptions = {
