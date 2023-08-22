@@ -609,7 +609,7 @@ sap.ui.define([
 			}
 			oStartDateSource.setDateValue(start);
 			oEndDateSource.setDateValue(end);
-		}q
+		}
 
 	});
 
