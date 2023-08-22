@@ -173,12 +173,12 @@ sap.ui.define([
 		 * Validates step1 fields, if error then return false, or else true
 		 * @returns {boolean}
 		 */
-		step1Validation: function() {
-			var startDate = this._oViewModel.getProperty("/Scheduling/startDate")  ? moment(this._oViewModel.getProperty("/Scheduling/startDate") ) : null,
-				endDate = this._oViewModel.getProperty("/Scheduling/endDate") ? moment(this._oViewModel.getProperty("/Scheduling/endDate") ) : null,
+		step1Validation: function () {
+			var startDate = this._oViewModel.getProperty("/Scheduling/startDate") ? moment(this._oViewModel.getProperty("/Scheduling/startDate")) : null,
+				endDate = this._oViewModel.getProperty("/Scheduling/endDate") ? moment(this._oViewModel.getProperty("/Scheduling/endDate")) : null,
 				bEndDateChanged = this._oViewModel.getProperty("/Scheduling/bDateChanged");
 			return this.oSchedulingActions.validateDateSchedule(startDate, endDate, bEndDateChanged);
-			
+
 		},
 		/**
 		 * Tis method is used to handle the activation/validation of the 
@@ -208,7 +208,7 @@ sap.ui.define([
 		 */
 		handleWizardSubmit: function () {
 			var sMessage = this._oResourceBundle.getText("ymsg.SubmitOfReSecheduling");
-			this._handleMessageBoxOpen(sMessage, "confirm","createAssignment");
+			this._handleMessageBoxOpen(sMessage, "confirm", "createAssignment");
 		},
 
 
@@ -363,13 +363,13 @@ sap.ui.define([
 		 * @param {string} sMessageBoxType - type of the message box.
 		 * @param {string} sOperationType - the operation to be performed once we click on confirm
 		 */
-		_handleMessageBoxOpen: function (sMessage, sMessageBoxType,sOperationType) {
+		_handleMessageBoxOpen: function (sMessage, sMessageBoxType, sOperationType) {
 			// later to be replaced with the generic method based on avaiability in base controller.
 			MessageBox[sMessageBoxType](sMessage, {
 				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 				onClose: function (oAction) {
 					if (oAction === MessageBox.Action.YES) {
-						if(sOperationType==="createAssignment"){
+						if (sOperationType === "createAssignment") {
 							this._ScheduleDialog.then(function (oDialog) {
 								oDialog.setBusy(true);
 								this.oSchedulingActions.handleCreateAssignment(this._oSchedulingModel).then(function () {
@@ -378,19 +378,19 @@ sap.ui.define([
 									oDialog.setBusy(false);
 									this._initializeDialogModel();
 								}.bind(this));
-	
+
 							}.bind(this));
-							
-						}else{
+
+						} else {
 							this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
 							this._ScheduleDialog.then(function (oDialog) {
 								oDialog.close();
 								this._initializeDialogModel();
-	
+
 							}.bind(this));
 						}
-						
-						
+
+
 					}
 				}.bind(this)
 			});
@@ -481,26 +481,27 @@ sap.ui.define([
 				if (oResponse.data.tourReports) {
 					for (var i = 0; i < oResponse.data.tourReports.length; i++) {
 						oTour = oResponse.data.tourReports[i];
-						aData = {};
-
-						//Resource related info
 						sResourceGuid = oTour.vehicleId.split("_")[0];
-						aData.ResourceGuid = sResourceGuid;
-						aData.ResourceGroupGuid = aResourceData[sResourceGuid].aData.ResourceGroupGuid;
-						aData.ResourceName = aResourceData[sResourceGuid].aData.Description;
-						aData.ResourceGroup = this.oSchedulingActions.getResourceGroupName(aResourceData[sResourceGuid].aData.ParentNodeId);
 
 						oTour.tourEvents.forEach(function (tourItem) {
 							if (tourItem.eventTypes.indexOf('SERVICE') !== -1) {
+								aData = {};
+
+								//Resource related info
+								aData.ResourceGuid = sResourceGuid;
+								aData.ResourceGroupGuid = aResourceData[sResourceGuid].aData.ResourceGroupGuid;
+								aData.ResourceName = aResourceData[sResourceGuid].aData.Description;
+								aData.ResourceGroup = this.oSchedulingActions.getResourceGroupName(aResourceData[sResourceGuid].aData.ParentNodeId);
+
 								//Demand related info
 								tourStartDate = new Date(tourItem.startTime);
 								aData.DateFrom = tourStartDate;
-								aData.TimeFrom = aDemandsData[tourItem.orderId].data.TimeFrom;   //To initialise TimeFrom property to be type of EdmTime
+								aData.TimeFrom = aDemandsData[tourItem.orderId].data.TimeFrom; //To initialise TimeFrom property to be type of EdmTime
 								aData.TimeFrom.ms = tourStartDate.getTime();
 
 								tourEndDate = new Date(tourStartDate.setSeconds(tourStartDate.getSeconds() + tourItem.duration));
 								aData.DateTo = tourEndDate;
-								aData.TimeTo = aDemandsData[tourItem.orderId].data.TimeTo;   //To initialise TimeTo property to be type of EdmTime
+								aData.TimeTo = aDemandsData[tourItem.orderId].data.TimeTo; //To initialise TimeTo property to be type of EdmTime
 								aData.TimeTo.ms = tourEndDate.getTime();
 
 								aData.DemandGuid = tourItem.orderId;

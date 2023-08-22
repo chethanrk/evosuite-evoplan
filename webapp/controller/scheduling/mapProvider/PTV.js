@@ -123,6 +123,7 @@ sap.ui.define([
 			this.oComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
 			return this._createDistanceMatrix(aResourceData, aDemandsData).then(function(sMatrixId) {
 				this.oComponent.getModel("viewModel").setProperty("/Scheduling/sDistanceMatrixId", sMatrixId);
+				//commenting it temporarily till we fix the distance matrix use in planTour API
 				// oPayload.distanceMode = {
 				// 	"$type": "ExistingDistanceMatrix",
 				// 	"id": sMatrixId
