@@ -549,7 +549,10 @@ sap.ui.define([
 						change: false
 					},
 					aGanttSplitDemandData: false,
-					GanttPopOverData: {}
+					GanttPopOverData: {},
+					TravelTimes: [],
+					SelectedResources:[]
+
 				},
 				showDemands: true,
 				mapSettings: {
@@ -641,7 +644,7 @@ sap.ui.define([
 					bDateChanged:false,
 					sScheduleType:"",
 					PTVResponse:{},
-					TravelTimes:[]
+					
 				},
 				sViewRoute: null,
 				aUpdatedResources: []
