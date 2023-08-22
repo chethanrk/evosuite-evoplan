@@ -1,4 +1,3 @@
-
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History",
@@ -105,7 +104,7 @@ sap.ui.define([
 			MessageToast.show(sMsg, {
 				duration: 5000,
 				width: mParams ? mParams.width : '15rem',
-				at:"center bottom",
+				at: "center bottom",
 				of: mParams ? mParams.source : window,
 				offset: "0 -60"
 			});
@@ -536,7 +535,7 @@ sap.ui.define([
 				endDate = oTargetObj.EndDate ? oTargetObj.EndDate.getTime() : new Date(formatter.date(new Date())).getTime(),
 				resAsgnEndDate = oTargetObj.RES_ASGN_END_DATE ? oTargetObj.RES_ASGN_END_DATE.getTime() : null,
 				bValid = startDate === resAsgnStartDate && oTargetObj.StartTime.ms === oTargetObj.RES_ASGN_START_TIME.ms && endDate ===
-					resAsgnEndDate && oTargetObj.EndTime.ms === oTargetObj.RES_ASGN_END_TIME.ms;
+				resAsgnEndDate && oTargetObj.EndTime.ms === oTargetObj.RES_ASGN_END_TIME.ms;
 			return bValid;
 		},
 		/**
@@ -582,15 +581,15 @@ sap.ui.define([
 			var oController = this;
 			MessageBox.confirm(
 				message, {
-				styleClass: oController.getOwnerComponent().getContentDensityClass(),
-				icon: sap.m.MessageBox.Icon.CONFIRM,
-				title: this.getResourceBundle().getText("xtit.confirm"),
-				actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-				onClose: fnCallback
-			}
+					styleClass: oController.getOwnerComponent().getContentDensityClass(),
+					icon: sap.m.MessageBox.Icon.CONFIRM,
+					title: this.getResourceBundle().getText("xtit.confirm"),
+					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+					onClose: fnCallback
+				}
 			);
 		},
-		
+
 
 		/**
 		 * Shows the confirmation Box.
@@ -605,14 +604,14 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				MessageBox.confirm(
 					message, {
-					styleClass: oController.getOwnerComponent().getContentDensityClass(),
-					icon: sap.m.MessageBox.Icon.CONFIRM,
-					title: oController.getResourceBundle().getText("xtit.confirm"),
-					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-					onClose: function (oEvent) {
-						resolve(oEvent);
+						styleClass: oController.getOwnerComponent().getContentDensityClass(),
+						icon: sap.m.MessageBox.Icon.CONFIRM,
+						title: oController.getResourceBundle().getText("xtit.confirm"),
+						actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+						onClose: function (oEvent) {
+							resolve(oEvent);
+						}
 					}
-				}
 				);
 			});
 		},
@@ -630,14 +629,14 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				MessageBox.confirm(
 					message, {
-					styleClass: oComponent.getContentDensityClass(),
-					icon: sap.m.MessageBox.Icon.CONFIRM,
-					title: oComponent.getModel("i18n").getResourceBundle().getText("xtit.confirm"),
-					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-					onClose: function (oEvent) {
-						resolve(oEvent);
+						styleClass: oComponent.getContentDensityClass(),
+						icon: sap.m.MessageBox.Icon.CONFIRM,
+						title: oComponent.getModel("i18n").getResourceBundle().getText("xtit.confirm"),
+						actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+						onClose: function (oEvent) {
+							resolve(oEvent);
+						}
 					}
-				}
 				);
 			});
 		},
@@ -757,12 +756,12 @@ sap.ui.define([
 				mParams = {};
 			mParams[sParameter] = [sParamValue];
 			sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
-				target: {
-					semanticObject: sSemanticObject,
-					action: sAction
-				},
-				params: mParams
-			}) || "", // generate the Hash to display a Notification details app
+					target: {
+						semanticObject: sSemanticObject,
+						action: sAction
+					},
+					params: mParams
+				}) || "", // generate the Hash to display a Notification details app
 
 				sUrl = window.location.href.split('#')[0] + sHash;
 			window.open(sUrl, "_blank");
@@ -1083,7 +1082,7 @@ sap.ui.define([
 		 */
 		checkToShowAvailabilities: function (oNode) {
 			return (oNode.NodeType === "TIMEMONTH" || oNode.NodeType === "TIMEWEEK" || oNode.NodeType === "TIMEQUART" || oNode.NodeType ===
-				"TIMEYEAR") && oNode.RES_ASGN_AVAILABILITY_FLAG ===
+					"TIMEYEAR") && oNode.RES_ASGN_AVAILABILITY_FLAG ===
 				"P";
 		},
 
@@ -1112,11 +1111,15 @@ sap.ui.define([
 		 * Since 2301.4.0
 		 * @Author Rakesh Sahu
 		 */
-		getMessageDescWithOrderID: function (oData, Desc, bIsForScheduling,bIsForReScheduling) {
+		getMessageDescWithOrderID: function (oData, Desc, bIsForScheduling, bIsForReScheduling) {
 			Desc = Desc ? Desc : oData.DemandDesc;
 			// Condition to add number of assignments to display in error dialog for scheduling or auto scheduling.
 			if (bIsForScheduling || bIsForReScheduling) {
-				return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;;
+				if (oData.OBJECT_SOURCE_TYPE === 'DEM_PMNO') {
+					return oData.NOTIFICATION_TYPE + ", " + oData.NOTIFICATION + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;
+				} else {
+					return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;
+				}
 			}
 			if (oData.ORDERID) {
 				return oData.ORDERID + " / " + oData.OPERATIONID + "  " + Desc
@@ -1207,13 +1210,14 @@ sap.ui.define([
 				oi18nModel = this.getModel("i18n"),
 				sDisplayDemandInfo, sCancelResponse, aDraggedDemands = [],
 
-				aDemandsForSplitAssignment = oResourceAvailabiltyResponse.arrayOfDemandsToSplit, bAllowSplitStretchPopUp,
+				aDemandsForSplitAssignment = oResourceAvailabiltyResponse.arrayOfDemandsToSplit,
+				bAllowSplitStretchPopUp,
 				bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP");
 
-				if(aDemandsForSplitAssignment.length > 0) {
-					bAllowSplitStretchPopUp = this.getSplitStretchPopUpFlag(aDemandsForSplitAssignment);
-					bShowSplitConfirmationDialog = bShowSplitConfirmationDialog && bAllowSplitStretchPopUp;
-				}				
+			if (aDemandsForSplitAssignment.length > 0) {
+				bAllowSplitStretchPopUp = this.getSplitStretchPopUpFlag(aDemandsForSplitAssignment);
+				bShowSplitConfirmationDialog = bShowSplitConfirmationDialog && bAllowSplitStretchPopUp;
+			}
 
 			return new Promise(function (resolve, reject) {
 
@@ -1384,7 +1388,7 @@ sap.ui.define([
 			oModel = this._mParameters.bFromHome || this._mParameters.bFromMap ? this.getModel() : this.getModel("ganttModel");
 			for (var i in this.selectedResources) {
 				if (oModel.getProperty(this.selectedResources[i] + "/NodeType") === "RES_GROUP" || oModel.getProperty(this.selectedResources[i] +
-					"/ResourceGuid") === "") {
+						"/ResourceGuid") === "") {
 					aRemoveItems.push(this.selectedResources[i]);
 				}
 			}
@@ -1451,10 +1455,10 @@ sap.ui.define([
 		},
 
 		/**
-		* Storing the updated Resources Info in Demand and Map View
-		* @param oViewModel
-		* @param oResObj
-		*/
+		 * Storing the updated Resources Info in Demand and Map View
+		 * @param oViewModel
+		 * @param oResObj
+		 */
 		_updatedDmdResources: function (oViewModel, oResObj) {
 			var oUpdatedResObj,
 				aUpdatedResources = oViewModel.getProperty("/aUpdatedResources"),
