@@ -543,7 +543,9 @@ sap.ui.define([
 				this._oSchedulingModel.setProperty("/step2/dataSet", aDataSet);
 
 				//Setting button visibility for scheduling
-				this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bFinishButtonVisible", false);
+				if (!iPlanned){
+					this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bFinishButtonVisible", false);
+				}
 			}
 		}
 	});
