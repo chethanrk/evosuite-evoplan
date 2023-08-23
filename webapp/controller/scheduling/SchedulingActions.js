@@ -72,7 +72,7 @@ sap.ui.define([
 			}
 			// first if we are checking if only pools are selected in the resource tree.
 			if (!this._checkDuplicatePoolSelection(oResourceDataModel, oScheduling)) {
-				this.showMessageToast(this.oResourceBundle.getText("ysmg.PoolSelectedError"));
+				this.showMessageToast(this.oResourceBundle.getText("ysmg.PoolSelectedReSchError"));
 				if (sRoute === "NEWGANTT") {
 					this._oEventBus.publish("BaseController", "resetSelections", {});
 				} else {

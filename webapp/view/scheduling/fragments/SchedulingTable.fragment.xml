@@ -38,7 +38,7 @@
 
 					<table:columns>
 						<table:Column width="3rem">
-							<Label text="{i18n>xtit.labelScheduleInDateRange}" />
+							<Label text="{i18n>xbut.scheduleToogleInside}" />
 							<table:template>
 								<core:Icon src="sap-icon://pending" color="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeIconStatus}' }" tooltip="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatusText}' }" />
 							</table:template>
