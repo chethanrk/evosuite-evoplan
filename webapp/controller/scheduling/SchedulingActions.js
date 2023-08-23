@@ -708,6 +708,8 @@ sap.ui.define([
 				var oBjectInitial, aNewArray = [], aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 				for (var x = 0; x < aData.length; x++) {
 					if (aData[x].PLANNED) {
+						aData[x].TimeFrom.ms = aData[x].DateFrom.getTime();
+						aData[x].TimeTo.ms = aData[x].DateTo.getTime();
 						oBjectInitial = Object.assign({}, aData[x]);
 						Object.keys(oBjectInitial).forEach(function (key) {
 							if (aPropReq.indexOf(key) < 0) {
