@@ -22,7 +22,8 @@
                         <ToolbarSpacer/>
 						<Button
 							tooltip="{i18n>xbut.filters}"
-							icon="sap-icon://filter"/>
+							icon="sap-icon://filter" 
+                            press="onShowFilters"/> <!--To be changed when annotations are added -->
 					</OverflowToolbar>
 				</headerToolbar>
                     <columns>

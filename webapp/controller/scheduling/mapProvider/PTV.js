@@ -269,8 +269,9 @@ sap.ui.define([
 				aDemandPoints.push(oPoint);
 			}
 
-			oPayload.startLocations = aResourcePoints;
-			oPayload.destinationLocations = aDemandPoints;
+			oPayload.startLocations = aResourcePoints.concat(aDemandPoints);
+			//destinations are added into startLocations to maintain the matrix shape
+			oPayload.destinationLocations = [];
 			oPayload.storedProfile = "car";
 
 			oPayload.distanceMatrixOptions = {

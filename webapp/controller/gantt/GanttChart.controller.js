@@ -77,6 +77,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("GanttFixedAssignments", "assignDemand", this._proceedToAssign, this);
 			this._oEventBus.subscribe("GanttChart", "refreshResourceOnDelete", this._refreshResourceOnBulkDelete, this);
 			this._oEventBus.subscribe("GanttChart", "refreshDroppedContext", this._refreshDroppedContext, this);
+			this._oEventBus.subscribe("AutoSchedule", "calculateTravelTime", this.calculateTimeAfterScheduling, this);
 			this._oEventBus.subscribe("GanttCharController", "onToolReassignGantt", this._onToolReassignGantt, this);
 			this.getRouter().getRoute("newgantt").attachPatternMatched(function () {
 				this._routeName = Constants.GANTT.NAME;
@@ -838,6 +839,39 @@ sap.ui.define([
 			this.checksBeforeAssignTools(aSources, oResourceData, this._mParameters, sTargetPath);
 		},
 
+		/**
+		 * to calculate travel time between assignment after auto schedul
+		 */
+		calculateTimeAfterScheduling: function () {
+			var oTourReports = this.oViewModel.getProperty("/Scheduling/PTVResponse/tourReports"),
+				oTourEvents,
+				sResourceGuid,
+				oStartDate,
+				oEndDate,
+				aTravelTimes = {};
+
+			for (var i in oTourReports) {
+				oTourEvents = oTourReports[i].tourEvents;
+				sResourceGuid = oTourReports[i].vehicleId.substring(0, 32);
+				aTravelTimes[sResourceGuid] = aTravelTimes[sResourceGuid] || [];
+				for (var j in oTourEvents) {
+					if (oTourEvents[j].eventTypes[0] === "DRIVING") {
+						oStartDate = new Date(oTourEvents[j].startTime);
+						oEndDate = new Date(oStartDate.getTime() + oTourEvents[j].duration * 1000);
+
+						aTravelTimes[sResourceGuid].push({
+							DateFrom: oStartDate,
+							DateTo: oEndDate,
+							Description: "Travel Time",
+							Effort: (oTourEvents[j].duration / 3600).toFixed(2),
+							TRAVEL_TIME: oTourEvents[j].duration
+						});
+					}
+				}
+			}
+			this.oViewModel.setProperty("/ganttSettings/TravelTimes", aTravelTimes);
+			this.oViewModel.setProperty("/ganttSettings/SelectedResources", _.cloneDeep(this.selectedResources));
+		},
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
@@ -868,6 +902,22 @@ sap.ui.define([
 			this._resetSelections();
 			//resetting buttons due to Resource selection is resetted.	
 			this._resetToolbarButtons();
+		},
+
+		/**
+		 * to Add travel time between assignment after auto schedule
+		 */
+		_addTravelTimesToResources: function(){
+			var oResources = this.oViewModel.getProperty("/ganttSettings/selectedResources"),
+				aTravelTimes = this.oViewModel.getProperty("/ganttSettings/TravelTimes"),
+				oResourceObject;
+
+			for (var i in oResources) {
+				oResourceObject = this.oGanttModel.getProperty(oResources[i]);
+				oResourceObject.TravelTimes = {
+					results: aTravelTimes[oResourceObject.ResourceGuid]
+				};
+			}
 		},
 	
 		/**
@@ -1986,11 +2036,12 @@ sap.ui.define([
 						this._addAssignments(data[0].results);
 						this.getModel().setUseBatch(true);
 						this.oAppViewModel.setProperty("/busy", false);
+						this._addTravelTimesToResources();//Adding Travel times after refreshing the gantt chart
 						this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
 						this.oGanttOriginDataModel.refresh();
 					}.bind(this));
 				}
-
+				
 			}
 		},
 

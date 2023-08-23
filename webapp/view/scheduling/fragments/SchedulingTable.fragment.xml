@@ -17,7 +17,6 @@
 					<table:extension>
 						<OverflowToolbar>
 							<Title text="{viewModel>/Scheduling/sScheduleTableTitle}" />
-							<Title text="{viewModel>/Scheduling/sScheduleFilteredDemandsTableTitle}" />
 							<ToolbarSpacer/>
 							<ToggleButton id="btnInsideDateRange" 
 								type="Ghost" 
