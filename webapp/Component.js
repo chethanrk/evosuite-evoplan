@@ -550,9 +550,7 @@ sap.ui.define([
 					},
 					aGanttSplitDemandData: false,
 					GanttPopOverData: {},
-					TravelTimes: [],
-					SelectedResources:[]
-
+					TravelTimes: []
 				},
 				showDemands: true,
 				mapSettings: {

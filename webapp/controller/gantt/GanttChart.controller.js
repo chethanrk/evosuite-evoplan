@@ -870,7 +870,6 @@ sap.ui.define([
 				}
 			}
 			this.oViewModel.setProperty("/ganttSettings/TravelTimes", aTravelTimes);
-			this.oViewModel.setProperty("/ganttSettings/SelectedResources", _.cloneDeep(this.selectedResources));
 		},
 		/* =========================================================== */
 		/* Private methods                                             */
@@ -904,22 +903,6 @@ sap.ui.define([
 			this._resetToolbarButtons();
 		},
 
-		/**
-		 * to Add travel time between assignment after auto schedule
-		 */
-		_addTravelTimesToResources: function(){
-			var oResources = this.oViewModel.getProperty("/ganttSettings/selectedResources"),
-				aTravelTimes = this.oViewModel.getProperty("/ganttSettings/TravelTimes"),
-				oResourceObject;
-
-			for (var i in oResources) {
-				oResourceObject = this.oGanttModel.getProperty(oResources[i]);
-				oResourceObject.TravelTimes = {
-					results: aTravelTimes[oResourceObject.ResourceGuid]
-				};
-			}
-		},
-	
 		/**
 		 * to reset buttons when navigate from Map or reset the selection of resources
 		 */
@@ -2036,7 +2019,6 @@ sap.ui.define([
 						this._addAssignments(data[0].results);
 						this.getModel().setUseBatch(true);
 						this.oAppViewModel.setProperty("/busy", false);
-						this._addTravelTimesToResources();//Adding Travel times after refreshing the gantt chart
 						this.oGanttOriginDataModel.setProperty("/data", _.cloneDeep(this.oGanttModel.getProperty("/data")));
 						this.oGanttOriginDataModel.refresh();
 					}.bind(this));
@@ -2086,12 +2068,21 @@ sap.ui.define([
 		 * @Author Rahul
 		 */
 		_addAssignments: function (aAssignments) {
-			var aGanttData = this.oGanttModel.getProperty("/data/children");
+			var aGanttData = this.oGanttModel.getProperty("/data/children"),
+				aTravelTimes = this.oViewModel.getProperty("/ganttSettings/TravelTimes");
 			for (let i = 0; i < aGanttData.length; i++) {
 				var aResources = aGanttData[i].children;
 				if (aResources) {
 					for (let j = 0; aResources && j < aResources.length; j++) {
 						var oResource = aResources[j];
+
+						//Adding Travel time if available for the resource
+						if (oResource.ResourceGuid && aTravelTimes[oResource.ResourceGuid]) {
+							oResource.TravelTimes = {
+								results: aTravelTimes[oResource.ResourceGuid]
+							};
+						}
+
 						oResource.AssignmentSet.results = [];
 						oResource.children = []; //Updating resource child nodes
 						for (var k in aAssignments) {
