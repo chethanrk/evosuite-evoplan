@@ -582,7 +582,7 @@ sap.ui.define([
 		 */
 		handleScheduleDemands: function () {
 			var aResourceData, aDemandsData, 
-				sDialogMsg= this.oResourceBundle.getText("ymsg.creatingresourcedemanddata");
+				sDialogMsg= this.oResourceBundle.getText("ymsg.fetchingData");
 			this.oOwnerComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
 			return Promise.all([this.createScheduleData(), this.createDemandScheduleData()]).then(function (aResult) {
 					aResourceData = aResult[0];
