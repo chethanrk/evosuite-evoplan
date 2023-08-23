@@ -585,6 +585,7 @@ sap.ui.define([
 				sDialogMsg = this.oResourceBundle.getText("ymsg.fetchingData");
 			this.oOwnerComponent.ProgressBarDialog.setProgressData({ description: sDialogMsg });
 			return Promise.all([this.createScheduleData(), this.createDemandScheduleData()]).then(function (aResult) {
+				this.oOwnerComponent.ProgressBarDialog.setProgressData({ progress: "10" });
 				aResourceData = aResult[0];
 				aDemandsData = aResult[1];
 				return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
