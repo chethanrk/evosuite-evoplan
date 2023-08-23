@@ -482,12 +482,11 @@ sap.ui.define([
 				this.oViewModel.setProperty("/Scheduling/initialFocusedDateValue", oStartDate);
 				//max date for datepicker is always startdate + 14 days
 				this.oViewModel.setProperty("/Scheduling/maxDate", moment(oStartDate).add(14, "days").endOf("day").toDate());
-			};
+			}
 			if (!this.validateDateSchedule(startDate, endDate, bEndDateChanged)) {
 				return;
 			};
 			
-
 			for (var i = 0, len = aDemands.length; i < len; i++) {
 				var demandStartDate = moment(aDemands[i].DateFrom),
 					demandEndDate = moment(aDemands[i].DateTo);
@@ -583,9 +582,10 @@ sap.ui.define([
 		 */
 		handleScheduleDemands: function () {
 			var aResourceData, aDemandsData,
-				sDialogMsg = this.oResourceBundle.getText("ymsg.creatingresourcedemanddata");
+				sDialogMsg = this.oResourceBundle.getText("ymsg.fetchingData");
 			this.oOwnerComponent.ProgressBarDialog.setProgressData({ description: sDialogMsg });
 			return Promise.all([this.createScheduleData(), this.createDemandScheduleData()]).then(function (aResult) {
+				this.oOwnerComponent.ProgressBarDialog.setProgressData({ progress: "10" });
 				aResourceData = aResult[0];
 				aDemandsData = aResult[1];
 				return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
