@@ -303,7 +303,7 @@ sap.ui.define([
 				btnInsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleInside"),
 				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
 				iSelectedResponse: 0,
-				sScheduleType:"",
+				sScheduleType: "",
 				bDateChanged: false
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
@@ -476,17 +476,17 @@ sap.ui.define([
 				aDemands = oSchedulingModel.getProperty("/step1/dataSet"),
 				inside = 0,
 				outside = 0;
-				this.oViewModel.setProperty("/Scheduling/bDateChanged",bEndDateChanged)
-			if (!this.validateDateSchedule(startDate, endDate, bEndDateChanged)) {
-				return;
-			};
+			this.oViewModel.setProperty("/Scheduling/bDateChanged", bEndDateChanged);
 			if (startDate) {
 				//when enddate datepicker opens set new focused date
 				this.oViewModel.setProperty("/Scheduling/initialFocusedDateValue", oStartDate);
 				//max date for datepicker is always startdate + 14 days
 				this.oViewModel.setProperty("/Scheduling/maxDate", moment(oStartDate).add(14, "days").endOf("day").toDate());
 			}
-
+			if (!this.validateDateSchedule(startDate, endDate, bEndDateChanged)) {
+				return;
+			};
+			
 			for (var i = 0, len = aDemands.length; i < len; i++) {
 				var demandStartDate = moment(aDemands[i].DateFrom),
 					demandEndDate = moment(aDemands[i].DateTo);
@@ -527,11 +527,11 @@ sap.ui.define([
 		 */
 		validateDateSchedule: function (startDate, endDate, bEndDateChanged) {
 			var bValidate = true;
-			if (!startDate){
+			if (!startDate) {
 				bValidate = false;
 				this.oViewModel.setProperty("/Scheduling/sStartDateValueState", "Error");
 			}
-			if (!endDate){
+			if (!endDate) {
 				bValidate = false;
 				this.oViewModel.setProperty("/Scheduling/sEndDateValueState", "Error");
 			}
@@ -542,10 +542,10 @@ sap.ui.define([
 					if (bEndDateChanged) {
 						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateFromErrorMsg"));
 						bValidate = false;
-					
+
 					} else {
 						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateToErrorMsg"));
-						bValidate=false
+						bValidate = false
 					}
 				}
 			}
@@ -581,12 +581,13 @@ sap.ui.define([
 		 * @return {Object} - Payload object
 		 */
 		handleScheduleDemands: function () {
-			var aResourceData, aDemandsData, 
-				sDialogMsg= this.oResourceBundle.getText("ymsg.creatingresourcedemanddata");
-			this.oOwnerComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
+			var aResourceData, aDemandsData,
+				sDialogMsg = this.oResourceBundle.getText("ymsg.fetchingData");
+			this.oOwnerComponent.ProgressBarDialog.setProgressData({ description: sDialogMsg });
 			return Promise.all([this.createScheduleData(), this.createDemandScheduleData()]).then(function (aResult) {
-					aResourceData = aResult[0];
-					aDemandsData = aResult[1];
+				this.oOwnerComponent.ProgressBarDialog.setProgressData({ progress: "10" });
+				aResourceData = aResult[0];
+				aDemandsData = aResult[1];
 				return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
 			}.bind(this)).then(function (aPayload) {
 				return Promise.all([this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload), aResourceData, aDemandsData]);
@@ -614,14 +615,24 @@ sap.ui.define([
 			//2.send the call for the assignemnt.
 
 			var iArraySize = 100;
+			var sViewRoute = this.oViewModel.getProperty("/sViewRoute"),
+				mRefreshParam = {};
+			if (sViewRoute === "NEWGANTT") {
+				mRefreshParam.bFromNewGantt = true;
+			} else if (sViewRoute === "MAP") {
+				mRefreshParam.bFromMap = true
+			} else {
+				mRefreshParam.bFromHome = true;
+			}
 			return new Promise(function (resolve, reject) {
 				this._getDemandsDataForAssignment(oModelDialog).then(function (mParam) {
 					// create chunks of the array for now its 3 later it would be 100.
 					this._CreateArrayInGroups(mParam, iArraySize).then(function (mParam) {
 						// now for each chunk of array we will calling Promise.All method
 						this._ResolvinPromiseCreatAssign(mParam).then(function (mParam) {
-							resolve(mParam)
-						});
+							this.afterUpdateOperations(mRefreshParam);
+							resolve()
+						}.bind(this));
 					}.bind(this))
 				}.bind(this));
 			}.bind(this))
@@ -690,17 +701,9 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				// sample Data
 				var aData = oModelDialog.getProperty("/step2/dataSet"),
-				sSchedulingType=this.oViewModel.getProperty("/Scheduling/sScheduleType"),
-				sViewRoute = this.oViewModel.getProperty("/sViewRoute"),
-				mRefreshParam={};
-				if (sViewRoute==="NEWGANTT"){
-					mRefreshParam.bFromNewGantt=true;
-				  }else if (sViewRoute==="MAP"){
-					mRefreshParam.bFromMap=true
-				  }else{
-					mRefreshParam.bFromHome=true;
-				  }
-		  
+					sSchedulingType = this.oViewModel.getProperty("/Scheduling/sScheduleType");
+
+
 				// close an object
 				var oBjectInitial, aNewArray = [], aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 				for (var x = 0; x < aData.length; x++) {
@@ -711,8 +714,8 @@ sap.ui.define([
 								delete oBjectInitial[key];
 							};
 						});
-						oBjectInitial.MapAssignmentType=sSchedulingType;
-						aNewArray.push(this._CallFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST",mRefreshParam));
+						oBjectInitial.MapAssignmentType = sSchedulingType;
+						aNewArray.push(this._CallFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST"));
 					}
 				};
 				/* sample responce
@@ -775,7 +778,7 @@ sap.ui.define([
 		 * @param {string} sMethod - method it could be post or anyother.
 		 * @param {object} mRefreshParam - this method is passed to afterUpdateOperations method
 		 */
-		_CallFunctionImportScheduling: function (oParams, sFuncName, sMethod,mRefreshParam) {
+		_CallFunctionImportScheduling: function (oParams, sFuncName, sMethod) {
 			// TODO. 1 check for utilization
 			// 2. check for message toast to be displyaed after the success of this call
 			// 3. Refractor this code.
@@ -793,7 +796,7 @@ sap.ui.define([
 						//Handle Success
 						oViewModel.setProperty("/busy", false);
 						this.showMessage(oResponse);
-						this.afterUpdateOperations(mRefreshParam, oParams, oData);
+
 						resolve(oData)
 					}.bind(this),
 					error: function (oError) {

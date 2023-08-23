@@ -45,7 +45,6 @@ sap.ui.define([
          */
         onOpen: function (oDialog, oView) {
             oView.addDependent(oDialog);
-            this.resetProgressData();
             oDialog.open();
         },
         /**
