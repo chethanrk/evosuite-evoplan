@@ -266,7 +266,7 @@ sap.ui.define([
 			this._setJsonModelDefaults(this._mParams.isAutoSchedule, this._mParams.isReschuduling);
 
 			// setting the dialog title based on flag in viewMiodel
-			let sDialogTitle = this._oResourceBundle.getText("xtit.AutoscheduleDialogTitle");
+			let sDialogTitle = this._oResourceBundle.getText("xbut.PlanDemands");
 			if (this._mParams.isReschuduling) {
 				sDialogTitle = this._oResourceBundle.getText("xtit.RescheduleDialogTitle");
 			}
