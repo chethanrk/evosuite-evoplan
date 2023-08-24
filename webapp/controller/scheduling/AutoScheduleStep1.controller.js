@@ -101,10 +101,10 @@ sap.ui.define([
                     break;
                 }
             }
-
+            this._checkGeneratedResponse();
             this._oSchedulingModel.setProperty("/step1/dataSet", aDataSet);
             this._oSchedulingModel.setProperty("/oDemandMapping", oMappedDemands);
-            this._checkGeneratedResponse();
+            
         },
 
         /**
