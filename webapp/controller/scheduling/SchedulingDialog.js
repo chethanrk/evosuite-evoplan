@@ -293,7 +293,6 @@ sap.ui.define([
 		_resortSelectedDemands: function () {
 			var aSelectedDemands = this._oViewModel.getProperty("/Scheduling/demandList"),
 				aTableDataset = [];
-			oReorderedDemands = {};
 
 			for (var i = 0, len = aSelectedDemands.length; i < len; i++) {
 				let oItemData = aSelectedDemands[i].oData;
@@ -301,14 +300,12 @@ sap.ui.define([
 				oItemData["dateRangeIconStatus"] = sap.ui.core.IconColor.Neutral;
 				oItemData["dateRangeStatus"] = sap.ui.core.MessageType.None;
 				oItemData["dateRangeStatusText"] = this._oResourceBundle.getText("ymsg.scheduleDateStatusNeutral");
-				oReorderedDemands[oItemData.Guid] = oItemData;
 				aTableDataset.push(oItemData);
 			}
 
 			//Todo set table counter after data was load
 			this._setScheduleTableTitle(this._mParams.isAutoSchedule, aSelectedDemands.length);
 			this._oSchedulingModel.setProperty("/step1/dataSet", aTableDataset);
-			this._oSchedulingModel.setProperty("/oDemandMapping", oReorderedDemands);
 		},
 
 		/**
