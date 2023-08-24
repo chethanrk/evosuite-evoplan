@@ -495,14 +495,14 @@ sap.ui.define([
 
 								//Demand related info
 								tourStartDate = new Date(tourItem.startTime);
-								aData.DateFrom = tourStartDate;
+								aData.DateFrom = new Date(tourItem.startTime);
 								aData.TimeFrom = aDemandsData[tourItem.orderId].data.TimeFrom; //To initialise TimeFrom property to be type of EdmTime
-								aData.TimeFrom.ms = tourStartDate.getTime();
+								aData.TimeFrom.ms = tourStartDate.getTime() - tourStartDate.getTimezoneOffset() * 60 * 1000;
 
 								tourEndDate = new Date(tourStartDate.setSeconds(tourStartDate.getSeconds() + tourItem.duration));
 								aData.DateTo = tourEndDate;
 								aData.TimeTo = aDemandsData[tourItem.orderId].data.TimeTo; //To initialise TimeTo property to be type of EdmTime
-								aData.TimeTo.ms = tourEndDate.getTime();
+								aData.TimeTo.ms = tourEndDate.getTime() - tourEndDate.getTimezoneOffset() * 60 * 1000;
 
 								aData.DemandGuid = tourItem.orderId;
 								aData.ORDERID = aDemandsData[tourItem.orderId].data.ORDERID;
