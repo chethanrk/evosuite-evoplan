@@ -117,7 +117,7 @@ sap.ui.define([
 		 */
 		getPTVPayload: function (aResourceData, aDemandsData) {
 			var oPayload = this._getPayloadStructure(),
-				sDialogMsg= this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.creatingDistanceMatrix");
+				sDialogMsg= this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.analysinglocations");
 			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload 
 			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
 			this.oComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
@@ -139,7 +139,7 @@ sap.ui.define([
 		 * @returns {object} - promise
 		 */
 		callPTVPlanTours: function (oPlanTourRequestBody){
-			var sDialogMsg = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.analysinglocation"),
+			var sDialogMsg = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.fetchingSchedulingData"),
 				sMatrixId;
 			this.oComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
 			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oPlanTourRequestBody).then(function (oPlanTourResponse) {
