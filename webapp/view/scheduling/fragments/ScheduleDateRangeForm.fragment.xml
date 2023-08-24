@@ -41,5 +41,10 @@
     visible="{viewModel>/Scheduling/bInvalidDateRange}"
     type="Error"
     class="sapUiSmallMarginBeginEnd" />
-
+ <MessageStrip
+			text="{viewModel>/Scheduling/InputDataChanged}"
+			type="Warning"
+			showIcon="true"
+			showCloseButton="false"
+			visible="{= ${viewModel>/Scheduling/InputDataChanged} === ''? false : true}"/>
 </core:FragmentDefinition>

@@ -79,6 +79,8 @@ sap.ui.define([
 			}
 			this._ScheduleDialog.then(function (oDialog) {
 				this._renderWizardStep1Binding(oDialog);
+				this._oViewModel.setProperty("/Scheduling/InputDataChanged","");
+				this._oSchedulingModel.setProperty("/step2/dataSet",[]);
 				oDialog.open();
 				if (!_.isEmpty(oMsgParam)) {
 					this._showSchedulingMessageToast(oDialog, oMsgParam);
@@ -118,14 +120,14 @@ sap.ui.define([
 		 * Next button in the dialog box
 		 */
 		onDialogNextButton: function () {
-			this._iSelectedStepIndex = this._oWizard.getSteps().indexOf(this._oSelectedStep);
-			var oNextStep = this._oWizard.getSteps()[this._iSelectedStepIndex + 1],
-				sLoadingMsg = this._oResourceBundle.getText("ymsg.Loading");
+			this._iSelectedStepIndex = 0;
+			var oNextStep = this._oWizard.getSteps()[this._iSelectedStepIndex + 1];
 
 			if (this._iSelectedStepIndex === 0 && !this.step1Validation()) {
 				return;
 			}
 
+			this._oViewModel.setProperty("/Scheduling/InputDataChanged", "");
 			this._component.ProgressBarDialog.open(this._oView);
 			this.oSchedulingActions.handleScheduleDemands().then(function(oResponse){
 				
@@ -134,14 +136,13 @@ sap.ui.define([
 					this._oEventBus.publish("AutoSchedule", "calculateTravelTime", {});
 				}
 				this._component.ProgressBarDialog.close();
-				if (this._oSelectedStep && !this._oSelectedStep.bLast) {
-					this._oWizard.goToStep(oNextStep, true);
-				} else {
-					this._oWizard.nextStep();
-				}
 
-				this._iSelectedStepIndex++;
+				this._iSelectedStepIndex = 1;
 				this._oSelectedStep = oNextStep;
+				this._oWizard.setCurrentStep(this._oWizard.getSteps()[1])
+				this._oWizard.goToStep(oNextStep, true);
+				
+				
 
 				this._handleButtonsVisibility();
 
