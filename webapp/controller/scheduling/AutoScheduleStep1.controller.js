@@ -103,7 +103,7 @@ sap.ui.define([
             }
             this._checkGeneratedResponse();
             this._oSchedulingModel.setProperty("/step1/dataSet", aDataSet);
-            this._oSchedulingModel.setProperty("/oDemandMapping", oMappedDemands);
+            this._oViewModel.setProperty("/Scheduling/demandList", aDemandList);
             
         },
 
