@@ -626,21 +626,9 @@ sap.ui.define([
 			}
 			var oDataArr = this._getDemandsDataForAssignment(oModelDialog);
 
-			new Promise.all(oDataArr).then(function(oResponse){
-				return;
+			return Promise.all(oDataArr).then(function(oResponse){
+				return oResponse;
 			});
-			// return new Promise(function (resolve, reject) {
-			// 	this._getDemandsDataForAssignment(oModelDialog).then(function (mParam) {
-			// 		// create chunks of the array for now its 3 later it would be 100.
-			// 		this._CreateArrayInGroups(mParam, iArraySize).then(function (mParam) {
-			// 			// now for each chunk of array we will calling Promise.All method
-			// 			this._ResolvinPromiseCreatAssign(mParam).then(function (mParam) {
-			// 				this.afterUpdateOperations(mRefreshParam);
-			// 				resolve()
-			// 			}.bind(this));
-			// 		}.bind(this))
-			// 	}.bind(this));
-			// }.bind(this))
 
 		},
 
@@ -702,84 +690,54 @@ sap.ui.define([
 		 * @return {array} 
 		 */
 		_getDemandsDataForAssignment: function (oModelDialog) {
-
-			
-				// sample Data
-				var aData = oModelDialog.getProperty("/step2/dataSet"),
-					sSchedulingType = this.oViewModel.getProperty("/Scheduling/sScheduleType");
-
-
-				// close an object
-				var oBjectInitial, aNewArray = [], aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
-				for (var x = 0; x < aData.length; x++) {
-					var sGroupId = "groupId" + x;
-					var sChangeSetId = "changeSetId" + x;
-					var mParams = {
+			var aData = oModelDialog.getProperty("/step2/dataSet"),
+				sSchedulingType = this.oViewModel.getProperty("/Scheduling/sScheduleType"),
+				sGroupId,
+				sChangeSetId,
+				mParams,
+				i = 0,
+				oBjectInitial, 
+				aNewArray = [], 
+				aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
+			for (var x = 0; x < aData.length; x++) {
+				if(x % 100 === 0){
+					sGroupId = "groupId" + i;
+					sChangeSetId = "changeSetId" + i;
+					mParams = {
 						batchGroupId:sGroupId,
 						changeSetId:sChangeSetId
 					};
-					if (aData[x].PLANNED) {
-						oBjectInitial = Object.assign({}, aData[x]);
-						Object.keys(oBjectInitial).forEach(function (key) {
-							if (aPropReq.indexOf(key) < 0) {
-								delete oBjectInitial[key];
-							};
-						});
-						oBjectInitial.MapAssignmentType = sSchedulingType;
-						aNewArray.push(this._CallFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST", mParams));
-					}
-				};
-				/* sample responce
-			
-				{
-					"DateFrom": "2023-08-16T09:25:08.053Z",
-					"TimeFrom": {
-						"ms": 1692177908053
-					},
-					"DateTo": "2023-08-16T09:25:08.053Z",
-					"TimeTo": {
-						"ms": 1692177908053
-					},
-					"DemandGuid": "A12B77123F2E1EDDBAB06CD3E0B9826B",
-					"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
-					"ResourceGuid": "0A51491BD5A01EE8A5910DE06717D060",
-					"Effort": "0",
-					"EffortUnit": ""
-				}*/
-
-				return aNewArray;
-		},
-		/**
-		 * This method is used to create group/array of 100 elements inside the parent array. 
-		 * @param {array} arr - Array of the demands 
-		 * @param {integer} size - size of each array or group inside the parent array
-		 * @return {array} myArray - [[.....100][...100]] 
-		 */
-		_CreateArrayInGroups: function (arr, size) {
-			return new Promise(function (resolve, reject) {
-				var myArray = [];
-				for (var i = 0; i < arr.length; i += size) {
-					myArray.push(arr.slice(i, i + size));
 				}
-				resolve(myArray);
-			}.bind(this));
+				if (aData[x].PLANNED) {
+					oBjectInitial = Object.assign({}, aData[x]);
+					Object.keys(oBjectInitial).forEach(function (key) {
+						if (aPropReq.indexOf(key) < 0) {
+							delete oBjectInitial[key];
+						};
+					});
+					oBjectInitial.MapAssignmentType = sSchedulingType;
+					aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST", mParams));
+				}
+			};
+			/* sample responce
+		
+			{
+				"DateFrom": "2023-08-16T09:25:08.053Z",
+				"TimeFrom": {
+					"ms": 1692177908053
+				},
+				"DateTo": "2023-08-16T09:25:08.053Z",
+				"TimeTo": {
+					"ms": 1692177908053
+				},
+				"DemandGuid": "A12B77123F2E1EDDBAB06CD3E0B9826B",
+				"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
+				"ResourceGuid": "0A51491BD5A01EE8A5910DE06717D060",
+				"Effort": "0",
+				"EffortUnit": ""
+			}*/
 
-		},
-		/**
-		 * @param {array} aArray - This array will have chunks of 100 array with promises 
-		 * which we will have to resolve each 100 chunk at a time.
-		 */
-		_ResolvinPromiseCreatAssign: function (aArray) {
-			var aResult = []
-			return aArray.reduce(function (prev, curr) {
-				return prev.then(function (mParam1) {
-					aResult = aResult.concat(mParam1)
-					return Promise.all(curr)
-				});
-			}, Promise.resolve(1)).then(function (result) {
-				aResult = aResult.concat(result);
-				return aResult;
-			});
+			return aNewArray;
 		},
 		/**
 		 * This method is used to call function import and returns the function import as promise.
@@ -788,7 +746,7 @@ sap.ui.define([
 		 * @param {string} sMethod - method it could be post or anyother.
 		 * @param {object} mRefreshParam - this method is passed to afterUpdateOperations method
 		 */
-		_CallFunctionImportScheduling: function (oData, sFuncName, sMethod, mParams) {
+		_callFunctionImportScheduling: function (oData, sFuncName, sMethod, mParams) {
 			// TODO. 1 check for utilization
 			// 2. check for message toast to be displyaed after the success of this call
 			// 3. Refractor this code.
@@ -797,6 +755,7 @@ sap.ui.define([
 				var oModel = this.oDataModel,
 					oViewModel = this.oAppViewModel,
 					oResourceBundle = this.oResourceBundle;
+
 				oViewModel.setProperty("/busy", true);
 				oModel.callFunction("/" + sFuncName, {
 					method: sMethod || "POST",
@@ -820,8 +779,5 @@ sap.ui.define([
 				});
 			}.bind(this))
 		}
-
-
-
 	});
 });
