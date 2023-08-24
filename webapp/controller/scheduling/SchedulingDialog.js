@@ -266,7 +266,7 @@ sap.ui.define([
 			this._setJsonModelDefaults(this._mParams.isAutoSchedule, this._mParams.isReschuduling);
 
 			// setting the dialog title based on flag in viewMiodel
-			let sDialogTitle = this._oResourceBundle.getText("xtit.AutoscheduleDialogTitle");
+			let sDialogTitle = this._oResourceBundle.getText("xbut.PlanDemands");
 			if (this._mParams.isReschuduling) {
 				sDialogTitle = this._oResourceBundle.getText("xtit.RescheduleDialogTitle");
 			}
@@ -293,7 +293,6 @@ sap.ui.define([
 		_resortSelectedDemands: function () {
 			var aSelectedDemands = this._oViewModel.getProperty("/Scheduling/demandList"),
 				aTableDataset = [];
-			oReorderedDemands = {};
 
 			for (var i = 0, len = aSelectedDemands.length; i < len; i++) {
 				let oItemData = aSelectedDemands[i].oData;
@@ -301,14 +300,12 @@ sap.ui.define([
 				oItemData["dateRangeIconStatus"] = sap.ui.core.IconColor.Neutral;
 				oItemData["dateRangeStatus"] = sap.ui.core.MessageType.None;
 				oItemData["dateRangeStatusText"] = this._oResourceBundle.getText("ymsg.scheduleDateStatusNeutral");
-				oReorderedDemands[oItemData.Guid] = oItemData;
 				aTableDataset.push(oItemData);
 			}
 
 			//Todo set table counter after data was load
 			this._setScheduleTableTitle(this._mParams.isAutoSchedule, aSelectedDemands.length);
 			this._oSchedulingModel.setProperty("/step1/dataSet", aTableDataset);
-			this._oSchedulingModel.setProperty("/oDemandMapping", oReorderedDemands);
 		},
 
 		/**
@@ -496,14 +493,14 @@ sap.ui.define([
 
 								//Demand related info
 								tourStartDate = new Date(tourItem.startTime);
-								aData.DateFrom = tourStartDate;
+								aData.DateFrom = new Date(tourItem.startTime);
 								aData.TimeFrom = aDemandsData[tourItem.orderId].data.TimeFrom; //To initialise TimeFrom property to be type of EdmTime
-								aData.TimeFrom.ms = tourStartDate.getTime();
+								aData.TimeFrom.ms = tourStartDate.getTime() - tourStartDate.getTimezoneOffset() * 60 * 1000;
 
 								tourEndDate = new Date(tourStartDate.setSeconds(tourStartDate.getSeconds() + tourItem.duration));
 								aData.DateTo = tourEndDate;
 								aData.TimeTo = aDemandsData[tourItem.orderId].data.TimeTo; //To initialise TimeTo property to be type of EdmTime
-								aData.TimeTo.ms = tourEndDate.getTime();
+								aData.TimeTo.ms = tourEndDate.getTime() - tourEndDate.getTimezoneOffset() * 60 * 1000;
 
 								aData.DemandGuid = tourItem.orderId;
 								aData.ORDERID = aDemandsData[tourItem.orderId].data.ORDERID;

@@ -78,16 +78,13 @@ sap.ui.define([
         onColumnDeletePress: function(oEvent){
             var oParams = oEvent.getParameters(),
                 aDataSet = this._oSchedulingModel.getProperty("/step1/dataSet"),
-                oMappedDemands = this._oSchedulingModel.getProperty("/oDemandMapping"),
+                aDemandList = this._oViewModel.getProperty("/Scheduling/demandList"),
                 oContext = oParams.row.getBindingContext(this._sScheduleModelName),
                 sDeleteGuid = oContext.getProperty("Guid");
 
-            //remove from demand mapping
-            delete oMappedDemands[sDeleteGuid];
             //Delete right entry also when filters are set to table
             for(var i=0, len=aDataSet.length; i<len; i++){
                 if(sDeleteGuid === aDataSet[i].Guid){
-                    aDataSet.splice(i, 1);
                     //set counts for inside/outside date range again
                     if(aDataSet[i].dateRangeStatus === MessageType.Success){
                         var count = this._oSchedulingModel.getProperty("/inside");
@@ -96,12 +93,17 @@ sap.ui.define([
                         var count = this._oSchedulingModel.getProperty("/outside");
                         this._oSchedulingModel.setProperty("/outside", --count);
                     }
+                    aDataSet.splice(i, 1);
+
+                    //removing demand from demand list as well
+                    aDemandList.splice(i, 1);
+                    
                     break;
                 }
             }
 
             this._oSchedulingModel.setProperty("/step1/dataSet", aDataSet);
-            this._oSchedulingModel.setProperty("/oDemandMapping", oMappedDemands);
+            this._oViewModel.setProperty("/Scheduling/demandList", aDemandList);
         },
 
         /**

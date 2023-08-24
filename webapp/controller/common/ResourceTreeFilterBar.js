@@ -156,6 +156,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onCustomFilterChange: function (oEvent) {
+			this._setValidDate(); //method will set the date based on view
 			if (this.getFilterBar()) {
 				this._updateCustomFilterData();
 			}
@@ -574,6 +575,40 @@ sap.ui.define([
 				return [startDateCtrl.getValue(), endDateCrtl.getValue()];
 			}
 			return this._getDateRangeValues(null, this._aCustomFilters.viewType.default);
+		},
+
+		/**
+		 * Method will set the start and end date based on the view selected.
+		 * SIMPLE and DAILY view - selected date will be set
+		 * WEEKLY view - startDate -> start of the week of selected date | endDate -> end of the week of selected date
+		 * MONTHLY view - startDate -> start of the month of selected date | endDate -> end of the month of selected date
+		 * QUARTERLY view - startDate -> start of the quarter of selected date | endDate -> end of the quarter of selected date
+		 * YEARLY view - startDate -> start of the year of selected date | endDate -> end of the year of selected date
+		 */
+		_setValidDate: function(){
+			var selectedHierarchyView = this._component.getModel("viewModel").getProperty("/selectedHierarchyView"),
+			oStartDateSource = this._oFilterBar.getControlByKey(this._aCustomFilters.startDate.origin),
+			oEndDateSource = this._oFilterBar.getControlByKey(this._aCustomFilters.endDate.origin),
+			oStartDate = oStartDateSource.getDateValue(),
+			oEndDate = oEndDateSource.getDateValue(),
+			start = oStartDate,
+			end = oEndDate;
+
+			if (selectedHierarchyView === "TIMEWEEK"){
+				start = moment(oStartDate).startOf("week").toDate();
+				end = moment(oEndDate).endOf("week").toDate();
+			} else if (selectedHierarchyView === "TIMEMONTH"){
+				start = moment(oStartDate).startOf("month").toDate();
+				end = moment(oEndDate).endOf("month").toDate();
+			} else if (selectedHierarchyView === "TIMEQUART"){
+				start = moment(oStartDate).startOf("quarter").toDate();
+				end = moment(oEndDate).endOf("quarter").toDate();
+			} else if (selectedHierarchyView === "TIMEYEAR"){
+				start = moment(oStartDate).startOf("year").toDate();
+				end = moment(oEndDate).endOf("year").toDate();
+			}
+			oStartDateSource.setDateValue(start);
+			oEndDateSource.setDateValue(end);
 		}
 
 	});
