@@ -361,7 +361,6 @@ sap.ui.define([
 		 * @param {string} sOperationType - the operation to be performed once we click on confirm
 		 */
 		_handleMessageBoxOpen: function (sMessage, sMessageBoxType, sOperationType) {
-			debugger;
 			// later to be replaced with the generic method based on avaiability in base controller.
 			MessageBox[sMessageBoxType](sMessage, {
 				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
