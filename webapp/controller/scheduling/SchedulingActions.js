@@ -543,12 +543,12 @@ sap.ui.define([
 			}
 			if(startDate.toDate() < oMinDate || startDate.toDate() > oMaxDate){
 				bValidate=false;
-				this.showMessageToast("Kindly Selecte Start Date in valid Date Range");
+				this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateStart"));
 				return bValidate;
 			}
 			if(endDate.toDate() < oMinDate || startDate.toDate() > oMaxDate){
 				bValidate=false;
-				this.showMessageToast("Kindly Select End Date in valid Date Range");
+				this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateEnd"));
 				return bValidate
 			}
 			if (startDate && endDate) {
