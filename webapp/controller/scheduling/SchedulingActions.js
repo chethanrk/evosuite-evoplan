@@ -295,6 +295,8 @@ sap.ui.define([
 				maxDate: moment().add(15, "days").endOf("day").toDate(),
 				startDate: null,
 				endDate: null,
+				startDateValue:"",
+				endDateValue:"",
 				initialFocusedDateValue: moment().add(1, "days").toDate(),
 				bInvalidDateRange: false,
 				sInvalidDateRangeMsg: "",
@@ -526,14 +528,28 @@ sap.ui.define([
 		 *  @return {boolean} - 'false' if validation fails | 'true' if validations meets the criteria.
 		 */
 		validateDateSchedule: function (startDate, endDate, bEndDateChanged) {
+			var oMinDate = this.oViewModel.getProperty("/Scheduling/minDate");
+			var oMaxDate = this.oViewModel.getProperty("/Scheduling/maxDate");
 			var bValidate = true;
 			if (!startDate) {
 				bValidate = false;
 				this.oViewModel.setProperty("/Scheduling/sStartDateValueState", "Error");
+				return bValidate
 			}
 			if (!endDate) {
 				bValidate = false;
 				this.oViewModel.setProperty("/Scheduling/sEndDateValueState", "Error");
+				return bValidate
+			}
+			if(startDate.toDate() < oMinDate || startDate.toDate() > oMaxDate){
+				bValidate=false;
+				this.showMessageToast("Kindly Selecte Start Date in valid Date Range");
+				return bValidate;
+			}
+			if(endDate.toDate() < oMinDate || startDate.toDate() > oMaxDate){
+				bValidate=false;
+				this.showMessageToast("Kindly Select End Date in valid Date Range");
+				return bValidate
 			}
 			if (startDate && endDate) {
 				//check if endDate before startDate
