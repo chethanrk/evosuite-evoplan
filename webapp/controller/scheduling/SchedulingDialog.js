@@ -484,13 +484,16 @@ sap.ui.define([
 							if (tourItem.eventTypes.indexOf('SERVICE') !== -1) {
 								aData = {};
 
+								//Demand related info
+								aData = aDemandsData[tourItem.orderId].data;
+
 								//Resource related info
 								aData.ResourceGuid = sResourceGuid;
 								aData.ResourceGroupGuid = aResourceData[sResourceGuid].aData.ResourceGroupGuid;
 								aData.ResourceName = aResourceData[sResourceGuid].aData.Description;
 								aData.ResourceGroup = this.oSchedulingActions.getResourceGroupName(aResourceData[sResourceGuid].aData.ParentNodeId);
 
-								//Demand related info
+								//Servicing times
 								tourStartDate = new Date(tourItem.startTime);
 								aData.DateFrom = new Date(tourItem.startTime);
 								aData.TimeFrom = aDemandsData[tourItem.orderId].data.TimeFrom; //To initialise TimeFrom property to be type of EdmTime
@@ -502,11 +505,6 @@ sap.ui.define([
 								aData.TimeTo.ms = tourEndDate.getTime() - tourEndDate.getTimezoneOffset() * 60 * 1000;
 
 								aData.DemandGuid = tourItem.orderId;
-								aData.ORDERID = aDemandsData[tourItem.orderId].data.ORDERID;
-								aData.OPERATIONID = aDemandsData[tourItem.orderId].data.OPERATIONID;
-								aData.OPERATION_DESC = aDemandsData[tourItem.orderId].data.OPERATION_DESC;
-								aData.DURATION = aDemandsData[tourItem.orderId].data.DURATION;
-								aData.ORDER_DESC = aDemandsData[tourItem.orderId].data.DemandDesc;
 								aData.PLANNED = true;
 
 								iPlanned++;
@@ -525,9 +523,6 @@ sap.ui.define([
 
 						aData.DemandGuid = aOrder;
 						aData = aDemandsData[aOrder].data;
-						aData.ORDER_DESC = aDemandsData[aOrder].data.DemandDesc;
-						aData.TimeFrom = aDemandsData[aOrder].data.TimeFrom;
-						aData.TimeTo = aDemandsData[aOrder].data.TimeTo;
 						aData.PLANNED = false;
 
 						aDataSet.push(aData);
