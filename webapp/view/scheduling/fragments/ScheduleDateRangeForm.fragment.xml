@@ -11,6 +11,7 @@
             placeholder="{i18n>xtit.EnterDateFrom}"
             minDate="{viewModel>/Scheduling/minDate}"
             dateValue="{viewModel>/Scheduling/startDate}"
+            value="{viewModel>/Scheduling/startDateValue}"
             initialFocusedDateValue="{viewModel>/Scheduling/initialFocusedDateValue}"
             valueState="{viewModel>/Scheduling/sStartDateValueState}"
             change="onChangeDateFrom"/>
@@ -21,6 +22,7 @@
             minDate="{viewModel>/Scheduling/minDate}"
             maxDate="{viewModel>/Scheduling/maxDate}"
             dateValue="{viewModel>/Scheduling/endDate}"
+             value="{viewModel>/Scheduling/endDateValue}"
             initialFocusedDateValue="{viewModel>/Scheduling/initialFocusedDateValue}"
             valueState="{viewModel>/Scheduling/sEndDateValueState}"
             change="onChangeDateTo"/>

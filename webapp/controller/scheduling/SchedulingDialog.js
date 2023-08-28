@@ -175,8 +175,8 @@ sap.ui.define([
 		 * @returns {boolean}
 		 */
 		step1Validation: function () {
-			var startDate = this._oViewModel.getProperty("/Scheduling/startDate") ? moment(this._oViewModel.getProperty("/Scheduling/startDate")) : null,
-				endDate = this._oViewModel.getProperty("/Scheduling/endDate") ? moment(this._oViewModel.getProperty("/Scheduling/endDate")) : null,
+			var startDate = this._oViewModel.getProperty("/Scheduling/startDateValue") ? moment(this._oViewModel.getProperty("/Scheduling/startDateValue")) : null,
+				endDate = this._oViewModel.getProperty("/Scheduling/endDateValue")? moment(this._oViewModel.getProperty("/Scheduling/endDateValue")) : null,
 				bEndDateChanged = this._oViewModel.getProperty("/Scheduling/bDateChanged");
 			return this.oSchedulingActions.validateDateSchedule(startDate, endDate, bEndDateChanged);
 
