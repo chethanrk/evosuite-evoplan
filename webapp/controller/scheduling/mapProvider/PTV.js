@@ -393,6 +393,8 @@ sap.ui.define([
 						"equipment": aResourceData[sGuid].qualifications
 					});
 				}
+				// Need to call method to create input plans
+				// getInputPlan()
 			};
 
 			// Adding all the generated data into payload
