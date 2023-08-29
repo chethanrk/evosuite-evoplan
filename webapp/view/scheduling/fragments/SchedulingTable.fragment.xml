@@ -28,7 +28,7 @@
 								text="{i18n>xbut.scheduleToogleOutside} ({SchedulingModel>/outside})" 
 								pressed="false" 
 								press="onPressOutsideDate" />
-							<Button type="Ghost"  icon="sap-icon://filter" text="{viewModel>/Scheduling/sFilterCounts}" press="onPressShowFilterbar" />							
+							<Button type="Ghost"  icon="sap-icon://filter" text="{viewModel>/Scheduling/sFilterCounts}" press="onPressShowFilterbar" visible="{SchedulingModel>/isAutoSchedule}"/>							
 						</OverflowToolbar>
 					</table:extension>
 
