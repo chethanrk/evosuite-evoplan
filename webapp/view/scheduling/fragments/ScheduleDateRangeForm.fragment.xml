@@ -11,7 +11,7 @@
             placeholder="{i18n>xtit.EnterDateFrom}"
             minDate="{viewModel>/Scheduling/minDate}"
             dateValue="{viewModel>/Scheduling/startDate}"
-            value="{viewModel>/Scheduling/startDateValue}"
+              value="{path: 'viewModel>/Scheduling/startDateValue',type: 'sap.ui.model.type.DateTime', formatOptions:{pattern:'dd MMM yyyy, HH:mm:ss'} }"
             initialFocusedDateValue="{viewModel>/Scheduling/initialFocusedDateValue}"
             valueState="{viewModel>/Scheduling/sStartDateValueState}"
             change="onChangeDateFrom"/>
@@ -22,7 +22,7 @@
             minDate="{viewModel>/Scheduling/minDate}"
             maxDate="{viewModel>/Scheduling/maxDate}"
             dateValue="{viewModel>/Scheduling/endDate}"
-             value="{viewModel>/Scheduling/endDateValue}"
+             value="{path: 'viewModel>/Scheduling/endDateValue',type: 'sap.ui.model.type.DateTime', formatOptions:{pattern:'dd MMM yyyy, HH:mm:ss'} }"
             initialFocusedDateValue="{viewModel>/Scheduling/initialFocusedDateValue}"
             valueState="{viewModel>/Scheduling/sEndDateValueState}"
             change="onChangeDateTo"/>
