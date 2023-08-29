@@ -546,7 +546,7 @@ sap.ui.define([
 				this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateStart"));
 				return bValidate;
 			}
-			if(endDate.toDate() < oMinDate || startDate.toDate() > oMaxDate){
+			if(endDate.toDate() < oMinDate || endDate.toDate() > oMaxDate){
 				bValidate=false;
 				this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateEnd"));
 				return bValidate
@@ -663,6 +663,8 @@ sap.ui.define([
 		 * @return {Object} - Array of allowed and not allowed demands in separate properties
 		 */
 		_checkAllowedDemands: function (oTable, aSelectedRowsIdx) {
+
+
 			var aPathsData = [],
 				aNonAssignableDemands = [],
 				oData, oContext, sPath;
@@ -686,6 +688,7 @@ sap.ui.define([
 					aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData, null, true));
 				}
 			}
+			
 			return {
 				aPathsData: aPathsData,
 				aNonAssignable: aNonAssignableDemands,
