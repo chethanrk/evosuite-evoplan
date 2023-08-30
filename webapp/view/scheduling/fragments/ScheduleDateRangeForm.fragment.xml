@@ -11,6 +11,7 @@
             placeholder="{i18n>xtit.EnterDateFrom}"
             minDate="{viewModel>/Scheduling/minDate}"
             dateValue="{viewModel>/Scheduling/startDate}"
+              value="{path: 'viewModel>/Scheduling/startDateValue',type: 'sap.ui.model.type.DateTime', formatOptions:{pattern:'dd MMM yyyy, HH:mm:ss'} }"
             initialFocusedDateValue="{viewModel>/Scheduling/initialFocusedDateValue}"
             valueState="{viewModel>/Scheduling/sStartDateValueState}"
             change="onChangeDateFrom"/>
@@ -21,6 +22,7 @@
             minDate="{viewModel>/Scheduling/minDate}"
             maxDate="{viewModel>/Scheduling/maxDate}"
             dateValue="{viewModel>/Scheduling/endDate}"
+             value="{path: 'viewModel>/Scheduling/endDateValue',type: 'sap.ui.model.type.DateTime', formatOptions:{pattern:'dd MMM yyyy, HH:mm:ss'} }"
             initialFocusedDateValue="{viewModel>/Scheduling/initialFocusedDateValue}"
             valueState="{viewModel>/Scheduling/sEndDateValueState}"
             change="onChangeDateTo"/>
@@ -41,5 +43,10 @@
     visible="{viewModel>/Scheduling/bInvalidDateRange}"
     type="Error"
     class="sapUiSmallMarginBeginEnd" />
-
+ <MessageStrip
+			text="{viewModel>/Scheduling/InputDataChanged}"
+			type="Warning"
+			showIcon="true"
+			showCloseButton="false"
+			visible="{= ${viewModel>/Scheduling/InputDataChanged} === ''? false : true}"/>
 </core:FragmentDefinition>

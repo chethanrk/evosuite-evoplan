@@ -15,7 +15,7 @@
                     </RadioButtonGroup>
                 </HBox>
                 <Table id="step2_ResponseTable" 
-                    noDataText="{i18n>ymsg.NoDataFound}" items="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\', sorter: { path: \''+ 'ResourceName' +'\', descending: false, group:\''+ '.fnGetResName' +'\'}}'}">
+                    noDataText="{i18n>ymsg.NoDemandSchedule}" items="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\', sorter: { path: \''+ 'ResourceName' +'\', descending: false, group:\''+ '.fnGetResName' +'\'}}'}">
                     <headerToolbar>
 					<OverflowToolbar>
 						<Title text="{i18n>xfld.demandName}"/>

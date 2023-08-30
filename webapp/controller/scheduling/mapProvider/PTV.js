@@ -403,6 +403,8 @@ sap.ui.define([
 						"equipment": aResourceData[sGuid].qualifications
 					});
 				}
+				// Need to call method to create input plans
+				// getInputPlan()
 				oInputPlanData = this._getInputPlans(aResourceData[sGuid]);
 				oInputPlan = this._getPTVInputPlanObject(sGuid, oInputPlanData);
 				aDemandLocations = aDemandLocations.concat(oInputPlanData.demandLocations);

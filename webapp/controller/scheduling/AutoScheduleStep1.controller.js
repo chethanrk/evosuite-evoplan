@@ -101,9 +101,10 @@ sap.ui.define([
                     break;
                 }
             }
-
+            this._checkGeneratedResponse();
             this._oSchedulingModel.setProperty("/step1/dataSet", aDataSet);
             this._oViewModel.setProperty("/Scheduling/demandList", aDemandList);
+            
         },
 
         /**
@@ -118,6 +119,7 @@ sap.ui.define([
             var oDate = oEvent.getSource().getDateValue();
             this._oViewModel.setProperty("/Scheduling/sStartDateValueState", "None");
             this.oSchedulingActions.validateDemandDateRanges(oDate, this._oDateTo.getDateValue(), false);
+            this._checkGeneratedResponse();
         },
 
         /**
@@ -132,6 +134,7 @@ sap.ui.define([
             var oDate = oEvent.getSource().getDateValue();
             this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "None");
             this.oSchedulingActions.validateDemandDateRanges(this._oDateFrom.getDateValue(), oDate, true);
+            this._checkGeneratedResponse();
         },
 
         /**
@@ -246,8 +249,19 @@ sap.ui.define([
             for (var i = 0; i < aColumns.length; i++) {
                 this._oDemandsTable.autoResizeColumn(i);
             }
+        },
+
+        /**
+         * check if response is there then reset the step buttons to regenerate plan
+         * so columns will rerendered with proper widths
+         */
+        _checkGeneratedResponse: function(){
+            var oResponse = this._oSchedulingModel.getProperty("/step2/dataSet");
+            if (oResponse.length){
+                this._oViewModel.setProperty("/Scheduling/InputDataChanged",this.getResourceBundle().getText("ymsg.InputDataChanged"));
+                this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bFinishButtonVisible", false);
+                this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bNextButtonVisible", true);
+            }
         }
-
-
     });
 })
