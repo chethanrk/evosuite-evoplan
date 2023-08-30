@@ -485,9 +485,6 @@ sap.ui.define([
 				//max date for datepicker is always startdate + 14 days
 				this.oViewModel.setProperty("/Scheduling/maxDate", moment(oStartDate).add(14, "days").endOf("day").toDate());
 			}
-			if (!this.validateDateSchedule(startDate, endDate, bEndDateChanged)) {
-				return;
-			};
 			
 			for (var i = 0, len = aDemands.length; i < len; i++) {
 				var demandStartDate = moment(aDemands[i].DateFrom),
@@ -517,6 +514,11 @@ sap.ui.define([
 			oSchedulingModel.setProperty("/step1/dataSet", aDemands);
 			oSchedulingModel.setProperty("/inside", inside);
 			oSchedulingModel.setProperty("/outside", outside);
+			oSchedulingModel.refresh();    //required as sometimes the change in the model is not getting reflected
+
+			if (!this.validateDateSchedule(startDate, endDate, bEndDateChanged)) {
+				return;
+			};
 
 		},
 		/** This method is used to validate the dates -
