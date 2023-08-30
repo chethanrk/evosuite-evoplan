@@ -123,10 +123,10 @@ sap.ui.define([
 			this.oComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
 			return this._createDistanceMatrix(aResourceData, aDemandsData).then(function(sMatrixId) {
 				this.oComponent.getModel("viewModel").setProperty("/Scheduling/sDistanceMatrixId", sMatrixId);
-				oPayload.distanceMode = {
-					"$type": "ExistingDistanceMatrix",
-					"id": sMatrixId
-				};
+				// oPayload.distanceMode = {
+				// 	"$type": "ExistingDistanceMatrix",
+				// 	"id": sMatrixId
+				// };
 				return oPayload;
 			}.bind(this));
 		},
@@ -341,6 +341,10 @@ sap.ui.define([
 						"start": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/startDate")),
 						"end": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/endDate"))
 					}
+				},
+				"inputPlan": {
+					"tours": [],
+					"fixations": []
 				}
 			};
 		},
@@ -359,7 +363,11 @@ sap.ui.define([
 				aHorizonDateIntervals = this._getDateIntervals(aSchedulingData.startDate, aSchedulingData.endDate),
 				aWorkSchedules = [],
 				oInputPlanData = {},
-				aInputPlans = [];
+				oInputPlan = {},
+				aTours = [],
+				aFixations = [],
+				aDemandLocations = [],
+				aDemands = [];
 
 
 			for (var sGuid in aResourceData) {
@@ -396,24 +404,48 @@ sap.ui.define([
 					});
 				}
 				oInputPlanData = this._getInputPlans(aResourceData[sGuid]);
-
-				aInputPlans.push(this._getPTVInputPlanObject(oInputPlanData));
+				oInputPlan = this._getPTVInputPlanObject(sGuid, oInputPlanData);
+				aDemandLocations = aDemandLocations.concat(oInputPlanData.demandLocations);
+				aDemands = aDemands.concat(oInputPlanData.demandOrders);
+				aTours = aTours.concat(oInputPlan.tours);
+				aFixations = aFixations.concat(oInputPlan.fixations);
 			};
 
 			// Adding all the generated data into payload
 			oPayload.locations = oPayload.locations.concat(aResourceLocations);
+			oPayload.locations = oPayload.locations.concat(aDemandLocations);
+			oPayload.orders = oPayload.orders.concat(aDemands);
 			oPayload.fleet.drivers = aDrivers;
 			oPayload.fleet.vehicles = aVehicles;
-			oPayload.inputPlan = aInputPlans;
+			oPayload.inputPlan.tours = aTours;
+			oPayload.inputPlan.fixations = aFixations;
 
 			//Return the payload structure with Resource Data
 			return oPayload;
 		},
 
-		_getPTVInputPlanObject: function(oInputPlanData){
+		_getPTVInputPlanObject: function(sGuid, oInputPlanData){
 			debugger;
-			var inputPlan = {};
+			var inputPlan = {
+				"tours":[],
+				"fixations":[]
+			};
+			for(var date in oInputPlanData.stops){
+				inputPlan.tours.push({
+					"vehicleId": sGuid + "_" + date,
+					"vehicleStartLocationId": sGuid + "_location",
+					"vehicleEndLocationId": sGuid + "_location",
+					"trips": [{
+						"id": sGuid + "_" + date + "_trip",
+						"stops":oInputPlanData.stops[date]
+					}]
+				});
 
+				inputPlan.fixations.push({
+					"id": sGuid + "_" + date,
+					"fixationType": "VEHICLE_ORDERS"
+				});
+			}
 
 
 			return inputPlan;
@@ -618,13 +650,24 @@ sap.ui.define([
 				for (var oAssingnment of aAssingments) {
 					if (oAssingnment.DateFrom.getDate() === oAssingnment.DateTo.getDate()) {
 						sAssignmentDate = this._getFormattedDate(oAssingnment.DateFrom).substring(0, 10);
-						aInputPlans.stops[sAssignmentDate] = {
-							"locationId": oAssingnment.DemandGuid + "_location",
-							"tasks": [{
-								"orderId": oAssingnment.DemandGuid,
-								"taskType": "VISIT"
-							}]
-						};
+						if (aInputPlans.stops[sAssignmentDate]){
+							aInputPlans.stops[sAssignmentDate].push({
+								"locationId": oAssingnment.DemandGuid + "_location",
+								"tasks": [{
+									"orderId": oAssingnment.DemandGuid,
+									"taskType": "VISIT"
+								}]
+							})
+						}else {
+							aInputPlans.stops[sAssignmentDate] = [];
+						}
+						// aInputPlans.stops[sAssignmentDate] = {
+						// 	"locationId": oAssingnment.DemandGuid + "_location",
+						// 	"tasks": [{
+						// 		"orderId": oAssingnment.DemandGuid,
+						// 		"taskType": "VISIT"
+						// 	}]
+						// };
 						aInputPlans.demandLocations.push({
 							"$type": "CustomerSite",
 							"id": oAssingnment.DemandGuid + "_location",
