@@ -700,7 +700,7 @@ sap.ui.define([
 				aNewArray = [], 
 				aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 			for (var x = 0; x < aData.length; x++) {
-				if(x % 3 === 0){
+				if(x % 100 === 0){
 					sGroupId = "groupId" + i;
 					sChangeSetId = "changeSetId" + i;
 					mParams = {
