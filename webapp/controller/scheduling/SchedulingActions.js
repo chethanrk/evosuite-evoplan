@@ -516,10 +516,7 @@ sap.ui.define([
 			oSchedulingModel.setProperty("/outside", outside);
 			oSchedulingModel.refresh();    //required as sometimes the change in the model is not getting reflected
 
-			if (!this.validateDateSchedule(startDate, endDate, bEndDateChanged)) {
-				return;
-			};
-
+			this.validateDateSchedule(startDate, endDate, bEndDateChanged);			
 		},
 		/** This method is used to validate the dates -
 		 * 	1. checks if dates are empty 
