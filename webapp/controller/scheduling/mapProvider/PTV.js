@@ -357,7 +357,9 @@ sap.ui.define([
 				aDrivers = [],
 				aSchedulingData = this.oViewModel.getProperty("/Scheduling"),
 				aHorizonDateIntervals = this._getDateIntervals(aSchedulingData.startDate, aSchedulingData.endDate),
-				aWorkSchedules = [];
+				aWorkSchedules = [],
+				oInputPlanData = {},
+				aInputPlans = [];
 
 
 			for (var sGuid in aResourceData) {
@@ -393,15 +395,28 @@ sap.ui.define([
 						"equipment": aResourceData[sGuid].qualifications
 					});
 				}
+				oInputPlanData = this._getInputPlans(aResourceData[sGuid]);
+
+				aInputPlans.push(this._getPTVInputPlanObject(oInputPlanData));
 			};
 
 			// Adding all the generated data into payload
 			oPayload.locations = oPayload.locations.concat(aResourceLocations);
 			oPayload.fleet.drivers = aDrivers;
 			oPayload.fleet.vehicles = aVehicles;
+			oPayload.inputPlan = aInputPlans;
 
 			//Return the payload structure with Resource Data
 			return oPayload;
+		},
+
+		_getPTVInputPlanObject: function(oInputPlanData){
+			debugger;
+			var inputPlan = {};
+
+
+
+			return inputPlan;
 		},
 
 		/**
@@ -593,7 +608,7 @@ sap.ui.define([
 			var aAssingments = [],
 				sAssignmentDate = "",
 				aInputPlans = {
-					stops: [],
+					stops: {},
 					demandLocations: [],
 					demandOrders: []
 				};
@@ -633,7 +648,7 @@ sap.ui.define([
 							"locationId": oAssingnment.DemandGuid + "_location",
 							"priority": 9,
 							"serviceTime": this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo),
-							"requiredVehicleEquipment": aResourceData[sGuid].qualifications
+							"requiredVehicleEquipment": oResource.qualifications
 						})
 
 					} else {
