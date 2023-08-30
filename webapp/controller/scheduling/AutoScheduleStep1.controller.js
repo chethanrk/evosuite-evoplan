@@ -116,9 +116,9 @@ sap.ui.define([
          * @param {*} oEvent 
          */
         onChangeDateFrom: function(oEvent){
-            var oDate = oEvent.getSource().getDateValue();
+            var oDate = oEvent.getSource().getValue();
             this._oViewModel.setProperty("/Scheduling/sStartDateValueState", "None");
-            this.oSchedulingActions.validateDemandDateRanges(oDate, this._oDateTo.getDateValue(), false);
+            this.oSchedulingActions.validateDemandDateRanges(new Date(oDate), this._oDateTo.getDateValue(), false);
             this._checkGeneratedResponse();
         },
 
@@ -131,9 +131,9 @@ sap.ui.define([
          * @param {*} oEvent 
          */
         onChangeDateTo: function(oEvent){
-            var oDate = oEvent.getSource().getDateValue();
+            var oDate = oEvent.getSource().getValue();
             this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "None");
-            this.oSchedulingActions.validateDemandDateRanges(this._oDateFrom.getDateValue(), oDate, true);
+            this.oSchedulingActions.validateDemandDateRanges(this._oDateFrom.getDateValue(), new Date(oDate), true);
             this._checkGeneratedResponse();
         },
 
