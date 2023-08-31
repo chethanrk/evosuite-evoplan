@@ -5,7 +5,7 @@
 		<tnt:InfoLabel class="sapUiSmallMarginBegin sapUiTinyMarginTop" text="{viewModel>/ganttSettings/GanttPopOverData/status}"
 			renderMode="Narrow" colorScheme="1"/>
 		<ToolbarSpacer/>
-		<Link class="sapUiTinyMarginTop" text="Go to Details" press="onActionPress"/>
+		<Link class="sapUiTinyMarginTop" text="{i18n>xtit.goToDetails}" press="onActionPress"/>
 	</Toolbar>
 	<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
 		<template:with path="templateProperties>/annotationPath" helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="paths">
