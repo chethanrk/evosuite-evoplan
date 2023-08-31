@@ -267,7 +267,7 @@ sap.ui.define([
 			this._setJsonModelDefaults(this._mParams.isAutoSchedule, this._mParams.isReschuduling);
 
 			// setting the dialog title based on flag in viewMiodel
-			let sDialogTitle = this._oResourceBundle.getText("xbut.PlanDemands");
+			let sDialogTitle = this._oResourceBundle.getText("xtit.AutoscheduleDialogTitle");
 			if (this._mParams.isReschuduling) {
 				sDialogTitle = this._oResourceBundle.getText("xtit.RescheduleDialogTitle");
 			}
@@ -408,7 +408,7 @@ sap.ui.define([
 		 */
 		_setScheduleTableTitle: function (isAutoSchedule, sCounter) {
 			if (isAutoSchedule) {
-				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemDemandListCount", [sCounter]));
+				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemAssignmentListCount", [sCounter]));
 			} else {
 				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemAssignmentListCount", [sCounter]));
 			}
