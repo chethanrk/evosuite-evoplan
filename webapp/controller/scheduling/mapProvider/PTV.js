@@ -338,8 +338,8 @@ sap.ui.define([
 					"calculationMode": "PERFORMANCE",
 					"planningHorizon": {
 						"$type": "StartEndInterval",
-						"start": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/startDate")),
-						"end": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/endDate"))
+						"start": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/startDateValue")),
+						"end": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/endDateValue"))
 					}
 				},
 				"inputPlan": {
@@ -419,8 +419,12 @@ sap.ui.define([
 			oPayload.orders = oPayload.orders.concat(aDemands);
 			oPayload.fleet.drivers = aDrivers;
 			oPayload.fleet.vehicles = aVehicles;
-			oPayload.inputPlan.tours = aTours;
-			oPayload.inputPlan.fixations = aFixations;
+			if (aTours.length){
+				oPayload.inputPlan.tours = aTours;
+				oPayload.inputPlan.fixations = aFixations;
+			}else {
+				delete oPayload.inputPlan;
+			}
 
 			//Return the payload structure with Resource Data
 			return oPayload;
@@ -433,20 +437,22 @@ sap.ui.define([
 				"fixations":[]
 			};
 			for(var date in oInputPlanData.stops){
-				inputPlan.tours.push({
-					"vehicleId": sGuid + "_" + date,
-					"vehicleStartLocationId": sGuid + "_location",
-					"vehicleEndLocationId": sGuid + "_location",
-					"trips": [{
-						"id": sGuid + "_" + date + "_trip",
-						"stops":oInputPlanData.stops[date]
-					}]
-				});
+				if (oInputPlanData.stops[date].length){
+					inputPlan.tours.push({
+						"vehicleId": sGuid + "_" + date,
+						"vehicleStartLocationId": sGuid + "_location",
+						"vehicleEndLocationId": sGuid + "_location",
+						"trips": [{
+							"id": sGuid + "_" + date + "_trip",
+							"stops":oInputPlanData.stops[date]
+						}]
+					});
 
-				inputPlan.fixations.push({
-					"id": sGuid + "_" + date,
-					"fixationType": "VEHICLE_ORDERS"
-				});
+					inputPlan.fixations.push({
+						"id": sGuid + "_" + date,
+						"fixationType": "VEHICLE_ORDERS"
+					});
+				}
 			}
 
 
@@ -661,7 +667,13 @@ sap.ui.define([
 								}]
 							})
 						}else {
-							aInputPlans.stops[sAssignmentDate] = [];
+							aInputPlans.stops[sAssignmentDate] = [{
+								"locationId": oAssingnment.DemandGuid + "_location",
+								"tasks": [{
+									"orderId": oAssingnment.DemandGuid,
+									"taskType": "VISIT"
+								}]
+							}];
 						}
 						// aInputPlans.stops[sAssignmentDate] = {
 						// 	"locationId": oAssingnment.DemandGuid + "_location",

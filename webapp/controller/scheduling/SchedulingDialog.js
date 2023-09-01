@@ -482,7 +482,7 @@ sap.ui.define([
 						sResourceGuid = oTour.vehicleId.split("_")[0];
 
 						oTour.tourEvents.forEach(function (tourItem) {
-							if (tourItem.eventTypes.indexOf('SERVICE') !== -1) {
+							if (tourItem.eventTypes.indexOf('SERVICE') !== -1 && aDemandsData[tourItem.orderId]) {
 								aData = {};
 
 								//Resource related info
