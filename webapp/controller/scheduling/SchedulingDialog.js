@@ -267,7 +267,7 @@ sap.ui.define([
 			this._setJsonModelDefaults(this._mParams.isAutoSchedule, this._mParams.isReschuduling);
 
 			// setting the dialog title based on flag in viewMiodel
-			let sDialogTitle = this._oResourceBundle.getText("xbut.PlanDemands");
+			let sDialogTitle = this._oResourceBundle.getText("xtit.AutoscheduleDialogTitle");
 			if (this._mParams.isReschuduling) {
 				sDialogTitle = this._oResourceBundle.getText("xtit.RescheduleDialogTitle");
 			}
@@ -408,7 +408,7 @@ sap.ui.define([
 		 */
 		_setScheduleTableTitle: function (isAutoSchedule, sCounter) {
 			if (isAutoSchedule) {
-				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemDemandListCount", [sCounter]));
+				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemAssignmentListCount", [sCounter]));
 			} else {
 				this._oViewModel.setProperty("/Scheduling/sScheduleTableTitle", this._oResourceBundle.getText("xtit.itemAssignmentListCount", [sCounter]));
 			}
@@ -468,7 +468,7 @@ sap.ui.define([
 		 * @param {aDemandsData} - Selected demands list
 		 */
 		_designResponse: function (oResponse, aResourceData, aDemandsData) {
-			if (oResponse.data) {
+			if (oResponse && oResponse.data) {
 				var aDataSet = [],
 					aData = {},
 					iNotPlanned = 0,
@@ -485,13 +485,16 @@ sap.ui.define([
 							if (tourItem.eventTypes.indexOf('SERVICE') !== -1) {
 								aData = {};
 
+								//Demand related info
+								aData = aDemandsData[tourItem.orderId].data;
+
 								//Resource related info
 								aData.ResourceGuid = sResourceGuid;
 								aData.ResourceGroupGuid = aResourceData[sResourceGuid].aData.ResourceGroupGuid;
 								aData.ResourceName = aResourceData[sResourceGuid].aData.Description;
 								aData.ResourceGroup = this.oSchedulingActions.getResourceGroupName(aResourceData[sResourceGuid].aData.ParentNodeId);
 
-								//Demand related info
+								//Servicing times
 								tourStartDate = new Date(tourItem.startTime);
 								aData.DateFrom = new Date(tourItem.startTime);
 								aData.TimeFrom = aDemandsData[tourItem.orderId].data.TimeFrom; //To initialise TimeFrom property to be type of EdmTime
@@ -503,11 +506,6 @@ sap.ui.define([
 								aData.TimeTo.ms = tourEndDate.getTime() - tourEndDate.getTimezoneOffset() * 60 * 1000;
 
 								aData.DemandGuid = tourItem.orderId;
-								aData.ORDERID = aDemandsData[tourItem.orderId].data.ORDERID;
-								aData.OPERATIONID = aDemandsData[tourItem.orderId].data.OPERATIONID;
-								aData.OPERATION_DESC = aDemandsData[tourItem.orderId].data.OPERATION_DESC;
-								aData.DURATION = aDemandsData[tourItem.orderId].data.DURATION;
-								aData.ORDER_DESC = aDemandsData[tourItem.orderId].data.DemandDesc;
 								aData.PLANNED = true;
 
 								iPlanned++;
@@ -526,9 +524,6 @@ sap.ui.define([
 
 						aData.DemandGuid = aOrder;
 						aData = aDemandsData[aOrder].data;
-						aData.ORDER_DESC = aDemandsData[aOrder].data.DemandDesc;
-						aData.TimeFrom = aDemandsData[aOrder].data.TimeFrom;
-						aData.TimeTo = aDemandsData[aOrder].data.TimeTo;
 						aData.PLANNED = false;
 
 						aDataSet.push(aData);

@@ -104,7 +104,10 @@ sap.ui.define([
             this._checkGeneratedResponse();
             this._oSchedulingModel.setProperty("/step1/dataSet", aDataSet);
             this._oViewModel.setProperty("/Scheduling/demandList", aDemandList);
-            
+
+            if(aDemandList.length === 0){
+                this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bNextButtonVisible", false);
+            }
         },
 
         /**
