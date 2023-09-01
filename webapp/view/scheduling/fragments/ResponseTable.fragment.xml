@@ -13,6 +13,8 @@
             </OverflowToolbar>
         </headerToolbar>
         <columns>
+            <Column width="1rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}">
+            </Column>
             <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}">
                 <Label text="{i18n>xfld.ResourceGroupName}" />
             </Column>
@@ -28,6 +30,8 @@
         <items>
             <ColumnListItem>
                 <cells>
+                    <core:Icon src="sap-icon://activity-items"
+                        color="{:= '{'+ ${tempProps>tempData/modelName} +'>NotPlanState}' }" tooltip="{:= '{'+ ${tempProps>tempData/modelName} +'>NotPlanText}' }"/>
                     <Text text="{:= '{'+ ${tempProps>tempData/modelName} +'>ResourceGroup}' }"
                         visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}" />
 

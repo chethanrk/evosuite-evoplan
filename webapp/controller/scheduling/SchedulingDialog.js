@@ -5,8 +5,9 @@ sap.ui.define([
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/models",
-	"sap/ui/core/mvc/OverrideExecution"
-], function (TemplateRenderController, MessageBox, formatter, Constants, Fragment, models, OverrideExecution) {
+	"sap/ui/core/mvc/OverrideExecution",
+	"sap/ui/core/IconColor"
+], function (TemplateRenderController, MessageBox, formatter, Constants, Fragment, models, OverrideExecution, IconColor) {
 
 	return TemplateRenderController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingDialog", {
 
@@ -475,7 +476,8 @@ sap.ui.define([
 					iPlanned = 0,
 					iNotPlannedRes = 0,
 					sResourceGuid,
-					aNonScheduledResIds = [];
+					aNonScheduledResIds = [],
+					aNonPlannableIds = [];
 
 				//Scheduled demands
 				if (oResponse.data.tourReports) {
@@ -517,18 +519,39 @@ sap.ui.define([
 					}
 				}
 
-				//Non-scheduled demands
-				if (oResponse.data.orderIdsNotPlanned) {
-					iNotPlanned = oResponse.data.orderIdsNotPlanned.length;
-					for (var j = 0; j < oResponse.data.orderIdsNotPlanned.length; j++) {
-						aOrder = oResponse.data.orderIdsNotPlanned[j];
+				//Non-plannable demands
+				if (oResponse.data.orderIdsNotPlannable) {
+					for (var h = 0; h < oResponse.data.orderIdsNotPlannable.length; h++) {
+						aOrder = oResponse.data.orderIdsNotPlannable[h];
 						aData = {};
 
 						aData.DemandGuid = aOrder;
 						aData = aDemandsData[aOrder].data;
+						aData.NotPlanState = IconColor.Critical;
+						aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlannable");
 						aData.PLANNED = false;
 
+						aNonPlannableIds.push(aOrder);
 						aDataSet.push(aData);
+					}
+				}
+
+				//Non-planned demands
+				if (oResponse.data.orderIdsNotPlanned) {
+					iNotPlanned = oResponse.data.orderIdsNotPlanned.length;
+					for (var j = 0; j < oResponse.data.orderIdsNotPlanned.length; j++) {
+						aOrder = oResponse.data.orderIdsNotPlanned[j];
+						if (aNonPlannableIds.indexOf(aOrder) === -1) {                //Bcz non-plannable is subset of not-planned
+							aData = {};
+
+							aData.DemandGuid = aOrder;
+							aData = aDemandsData[aOrder].data;
+							aData.NotPlanState = IconColor.Negative;
+							aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlanned");
+							aData.PLANNED = false;
+
+							aDataSet.push(aData);
+						}
 					}
 				}
 
