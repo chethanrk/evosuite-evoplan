@@ -138,9 +138,9 @@ sap.ui.define([
 		},
 
 		/** 
-		*	This method will check if the selected resources contain already assigned resource to a demand for rescheduling  
-			  *   @returns  Promise - String if the selected resource is already assigned to the selected demand
-		**/
+		 *	This method will check if the selected resources contain already assigned resource to a demand for rescheduling  
+		 *   @returns  Promise - String if the selected resource is already assigned to the selected demand
+		 **/
 		checkAssignedResource: function () {
 			var sDemandPath, sSelectedDemand, aResourceList, aAssignedList = [];
 			sDemandPath = this.oViewModel.getProperty("/Scheduling/selectedDemandPath");
@@ -167,7 +167,9 @@ sap.ui.define([
 						resourceNames: aAssignedList.join("\n")
 					}
 				}
-				return { bNotAssigned: true };
+				return {
+					bNotAssigned: true
+				};
 			}.bind(this));
 		},
 
@@ -212,7 +214,9 @@ sap.ui.define([
 							aResourceNameList.indexOf(sResourceFullName) === -1 && aResourceNameList.push(sResourceFullName);
 
 						} else {
-							oUniqueResourceList[oResource.ResourceGuid] = { Group: this.getResourceGroupName(oResource.ParentNodeId) };
+							oUniqueResourceList[oResource.ResourceGuid] = {
+								Group: this.getResourceGroupName(oResource.ParentNodeId)
+							};
 						}
 					}
 				}.bind(this));
@@ -293,10 +297,10 @@ sap.ui.define([
 				demandData: {},
 				minDate: moment().add(1, "days").startOf("day").toDate(),
 				maxDate: moment().add(15, "days").endOf("day").toDate(),
-				startDate: null,
-				endDate: null,
-				startDateValue:"",
-				endDateValue:"",
+				startDate: "",
+				endDate: "",
+				startDateValue: "",
+				endDateValue: "",
 				initialFocusedDateValue: moment().add(1, "days").toDate(),
 				bInvalidDateRange: false,
 				sInvalidDateRangeMsg: "",
@@ -362,7 +366,6 @@ sap.ui.define([
 				aAvailibilityFilter = [],
 				aAllPromise = [],
 				oResourceData = {};
-
 			aResourceList.forEach(function (oResource) {
 				//Read Assignment
 				aAssignmentFilter = [
@@ -485,9 +488,6 @@ sap.ui.define([
 				//max date for datepicker is always startdate + 14 days
 				this.oViewModel.setProperty("/Scheduling/maxDate", moment(oStartDate).add(14, "days").endOf("day").toDate());
 			}
-			if (!this.validateDateSchedule(startDate, endDate, bEndDateChanged)) {
-				return;
-			};
 			
 			for (var i = 0, len = aDemands.length; i < len; i++) {
 				var demandStartDate = moment(aDemands[i].DateFrom),
@@ -517,7 +517,9 @@ sap.ui.define([
 			oSchedulingModel.setProperty("/step1/dataSet", aDemands);
 			oSchedulingModel.setProperty("/inside", inside);
 			oSchedulingModel.setProperty("/outside", outside);
+			oSchedulingModel.refresh();    //required as sometimes the change in the model is not getting reflected
 
+			this.validateDateSchedule(startDate, endDate, bEndDateChanged);			
 		},
 		/** This method is used to validate the dates -
 		 * 	1. checks if dates are empty 
@@ -541,20 +543,20 @@ sap.ui.define([
 				this.oViewModel.setProperty("/Scheduling/sEndDateValueState", "Error");
 				return bValidate
 			}
-			if(startDate.toDate() < oMinDate || startDate.toDate() > oMaxDate){
-				bValidate=false;
+			if (startDate.toDate() < oMinDate || startDate.toDate() > oMaxDate) {
+				bValidate = false;
 				this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateStart"));
 				return bValidate;
 			}
-			if(endDate.toDate() < oMinDate || endDate.toDate() > oMaxDate){
-				bValidate=false;
+			if (endDate.toDate() < oMinDate || endDate.toDate() > oMaxDate) {
+				bValidate = false;
 				this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateEnd"));
 				return bValidate
 			}
 			if (startDate && endDate) {
 				//check if endDate before startDate
 				//check if end date bigger than 14 days
-				if ((endDate.diff(startDate) < 0) || endDate.diff(startDate, 'days') > 14) {
+				if ((endDate.diff(startDate) < 0)) {
 					if (bEndDateChanged) {
 						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateFromErrorMsg"));
 						bValidate = false;
@@ -563,6 +565,13 @@ sap.ui.define([
 						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateToErrorMsg"));
 						bValidate = false
 					}
+				} else if (endDate.diff(startDate, 'days') > 13) {
+					if (bEndDateChanged) {
+						this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateEnd"));
+					} else {
+						this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateStart"));
+					}
+					bValidate = false;
 				}
 			}
 			return bValidate;
@@ -599,14 +608,22 @@ sap.ui.define([
 		handleScheduleDemands: function () {
 			var aResourceData, aDemandsData,
 				sDialogMsg = this.oResourceBundle.getText("ymsg.fetchingData");
-			this.oOwnerComponent.ProgressBarDialog.setProgressData({ description: sDialogMsg });
+			this.oOwnerComponent.ProgressBarDialog.setProgressData({
+				description: sDialogMsg
+			});
 			return Promise.all([this.createScheduleData(), this.createDemandScheduleData()]).then(function (aResult) {
-				this.oOwnerComponent.ProgressBarDialog.setProgressData({ progress: "10" });
+				this.oOwnerComponent.ProgressBarDialog.setProgressData({
+					progress: "10"
+				});
 				aResourceData = aResult[0];
 				aDemandsData = aResult[1];
 				return this.oOwnerComponent.SchedulingMapProvider.getPTVPayload(aResourceData, aDemandsData);
 			}.bind(this)).then(function (aPayload) {
-				return Promise.all([this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload), aResourceData, aDemandsData]);
+				if (!aPayload) {
+					return;
+				} else {
+					return Promise.all([this.oOwnerComponent.SchedulingMapProvider.callPTVPlanTours(aPayload), aResourceData, aDemandsData]);
+				}
 			}.bind(this));
 		},
 
@@ -688,7 +705,7 @@ sap.ui.define([
 					aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData, null, true));
 				}
 			}
-			
+
 			return {
 				aPathsData: aPathsData,
 				aNonAssignable: aNonAssignableDemands,
@@ -724,7 +741,8 @@ sap.ui.define([
 
 
 				// close an object
-				var oBjectInitial, aNewArray = [], aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
+				var oBjectInitial, aNewArray = [],
+					aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 				for (var x = 0; x < aData.length; x++) {
 					if (aData[x].PLANNED) {
 						aData[x].TimeFrom.ms = aData[x].DateFrom.getTime();

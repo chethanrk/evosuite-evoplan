@@ -15,6 +15,7 @@
 		
 		<buttons>
 			<Button text="{i18n>xbut.buttonOK}" type="Emphasized" press="onPressAddFilterDialog" />
+			<Button text="{i18n>xbut.Cancel}" type="Ghost" press="onPressCancelFilterDialog" />
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

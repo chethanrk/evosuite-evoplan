@@ -104,7 +104,10 @@ sap.ui.define([
             this._checkGeneratedResponse();
             this._oSchedulingModel.setProperty("/step1/dataSet", aDataSet);
             this._oViewModel.setProperty("/Scheduling/demandList", aDemandList);
-            
+
+            if(aDemandList.length === 0){
+                this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bNextButtonVisible", false);
+            }
         },
 
         /**
@@ -116,9 +119,9 @@ sap.ui.define([
          * @param {*} oEvent 
          */
         onChangeDateFrom: function(oEvent){
-            var oDate = oEvent.getSource().getDateValue();
+            var oDate = oEvent.getSource().getValue();
             this._oViewModel.setProperty("/Scheduling/sStartDateValueState", "None");
-            this.oSchedulingActions.validateDemandDateRanges(oDate, this._oDateTo.getDateValue(), false);
+            this.oSchedulingActions.validateDemandDateRanges(new Date(oDate), this._oViewModel.getProperty("/Scheduling/endDate"), false);
             this._checkGeneratedResponse();
         },
 
@@ -131,9 +134,9 @@ sap.ui.define([
          * @param {*} oEvent 
          */
         onChangeDateTo: function(oEvent){
-            var oDate = oEvent.getSource().getDateValue();
+            var oDate = oEvent.getSource().getValue();
             this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "None");
-            this.oSchedulingActions.validateDemandDateRanges(this._oDateFrom.getDateValue(), oDate, true);
+            this.oSchedulingActions.validateDemandDateRanges(this._oViewModel.getProperty("/Scheduling/startDate"), new Date(oDate), true);
             this._checkGeneratedResponse();
         },
 
@@ -185,6 +188,17 @@ sap.ui.define([
                 this._oDemandFilterDialog.then(function(oDialog){
                     this._setCustomTableFilter();
                     oDialog.close();
+                }.bind(this));
+            }
+        },
+        /**
+         *Close the filter Bar
+         */
+         onPressCancelFilterDialog: function(){
+            if(this._oDemandFilterDialog){
+                this._oDemandFilterDialog.then(function(oDialog){
+                    oDialog.close();
+                    oDialog.destory();
                 }.bind(this));
             }
         },
