@@ -297,8 +297,8 @@ sap.ui.define([
 				demandData: {},
 				minDate: moment().add(1, "days").startOf("day").toDate(),
 				maxDate: moment().add(15, "days").endOf("day").toDate(),
-				startDate: null,
-				endDate: null,
+				startDate: "",
+				endDate: "",
 				startDateValue: "",
 				endDateValue: "",
 				initialFocusedDateValue: moment().add(1, "days").toDate(),
@@ -366,7 +366,7 @@ sap.ui.define([
 				aAvailibilityFilter = [],
 				aAllPromise = [],
 				oResourceData = {};
-
+			console.log(oStartDate,oEndDate);
 			aResourceList.forEach(function (oResource) {
 				//Read Assignment
 				aAssignmentFilter = [

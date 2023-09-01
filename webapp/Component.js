@@ -654,7 +654,9 @@ sap.ui.define([
 					bDateChanged:false,
 					sScheduleType:"",
 					PTVResponse:{},
-					InputDataChanged:""
+					InputDataChanged:"",
+					startDate: "",
+				endDate: ""
 					
 				},
 				sViewRoute: null,
