@@ -468,7 +468,7 @@ sap.ui.define([
 		 * @param {aDemandsData} - Selected demands list
 		 */
 		_designResponse: function (oResponse, aResourceData, aDemandsData) {
-			if (oResponse.data) {
+			if (oResponse && oResponse.data) {
 				var aDataSet = [],
 					aData = {},
 					iNotPlanned = 0,
