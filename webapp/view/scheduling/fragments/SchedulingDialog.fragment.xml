@@ -37,7 +37,7 @@
 		<buttons>
 			<Button text="{i18n>xbut.WizardProceed}" type="Emphasized"  visible="{viewModel>/Scheduling/SchedulingDialogFlags/bNextButtonVisible}" press="onDialogNextButton" />
 			<Button text="{i18n>xbut.WizardAccept}" type="Emphasized" visible="{viewModel>/Scheduling/SchedulingDialogFlags/bFinishButtonVisible}" press="handleWizardSubmit" />
-			<Button	text="{i18n>xbut.WizardCancel}" type="Transparent" press="handleWizardCancel"/>
+			<Button	text="{i18n>xbut.WizardCancel}" type="Ghost" press="handleWizardCancel"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>
