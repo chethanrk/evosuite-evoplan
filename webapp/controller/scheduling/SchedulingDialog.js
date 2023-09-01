@@ -258,7 +258,6 @@ sap.ui.define([
 		 * property binded to controls of the dialog box and wizard
 		 */
 		_initializeDialogModel: function () {
-			console.log("method trigerred");
 			//is it Autoscheduling or Rescheduling?
 			var sType = this._oViewModel.getProperty("/Scheduling/sType");
 			this._mParams.isAutoSchedule = sType === Constants.SCHEDULING.AUTOSCHEDULING;

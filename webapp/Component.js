@@ -656,7 +656,7 @@ sap.ui.define([
 					PTVResponse:{},
 					InputDataChanged:"",
 					startDate: "",
-				endDate: ""
+					endDate: ""
 					
 				},
 				sViewRoute: null,

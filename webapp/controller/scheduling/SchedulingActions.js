@@ -366,7 +366,6 @@ sap.ui.define([
 				aAvailibilityFilter = [],
 				aAllPromise = [],
 				oResourceData = {};
-			console.log(oStartDate,oEndDate);
 			aResourceList.forEach(function (oResource) {
 				//Read Assignment
 				aAssignmentFilter = [
