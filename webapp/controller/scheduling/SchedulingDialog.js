@@ -79,8 +79,8 @@ sap.ui.define([
 			}
 			this._ScheduleDialog.then(function (oDialog) {
 				this._renderWizardStep1Binding(oDialog);
-				this._oViewModel.setProperty("/Scheduling/InputDataChanged","");
-				this._oSchedulingModel.setProperty("/step2/dataSet",[]);
+				this._oViewModel.setProperty("/Scheduling/InputDataChanged", "");
+				this._oSchedulingModel.setProperty("/step2/dataSet", []);
 				oDialog.open();
 				if (!_.isEmpty(oMsgParam)) {
 					this._showSchedulingMessageToast(oDialog, oMsgParam);
@@ -129,8 +129,8 @@ sap.ui.define([
 
 			this._oViewModel.setProperty("/Scheduling/InputDataChanged", "");
 			this._component.ProgressBarDialog.open(this._oView);
-			this.oSchedulingActions.handleScheduleDemands().then(function(oResponse){
-				
+			this.oSchedulingActions.handleScheduleDemands().then(function (oResponse) {
+
 				if (this._oViewModel.getProperty("/sViewRoute") === "NEWGANTT") {
 					this._oViewModel.setProperty("/Scheduling/PTVResponse", oResponse[0].data);
 					this._oEventBus.publish("AutoSchedule", "calculateTravelTime", {});
@@ -141,8 +141,8 @@ sap.ui.define([
 				this._oSelectedStep = oNextStep;
 				this._oWizard.setCurrentStep(this._oWizard.getSteps()[1])
 				this._oWizard.goToStep(oNextStep, true);
-				
-				
+
+
 
 				this._handleButtonsVisibility();
 
@@ -176,7 +176,7 @@ sap.ui.define([
 		 */
 		step1Validation: function () {
 			var startDate = this._oViewModel.getProperty("/Scheduling/startDateValue") ? moment(this._oViewModel.getProperty("/Scheduling/startDateValue")) : null,
-				endDate = this._oViewModel.getProperty("/Scheduling/endDateValue")? moment(this._oViewModel.getProperty("/Scheduling/endDateValue")) : null,
+				endDate = this._oViewModel.getProperty("/Scheduling/endDateValue") ? moment(this._oViewModel.getProperty("/Scheduling/endDateValue")) : null,
 				bEndDateChanged = this._oViewModel.getProperty("/Scheduling/bDateChanged");
 			return this.oSchedulingActions.validateDateSchedule(startDate, endDate, bEndDateChanged);
 
@@ -473,7 +473,9 @@ sap.ui.define([
 					aData = {},
 					iNotPlanned = 0,
 					iPlanned = 0,
-					sResourceGuid;
+					iNotPlannedRes = 0,
+					sResourceGuid,
+					aNonScheduledResIds = [];
 
 				//Scheduled demands
 				if (oResponse.data.tourReports) {
@@ -535,13 +537,51 @@ sap.ui.define([
 					}
 				}
 
+				//Non-scheduled resources
+				if (oResponse.data.vehicleIdsNotPlanned) {
+					// for (var k = 0; k < oResponse.data.vehicleIdsNotPlanned.length; k++) {
+					// 	sResourceGuid = oResponse.data.vehicleIdsNotPlanned[k].split("_")[0];
+
+					// 	if (aNonScheduledResIds.indexOf(sResourceGuid) === -1) {
+					// 		aData = {};
+					// 		aNonScheduledResIds.push(sResourceGuid);
+
+					// 		//Resource related info
+					// 		aData.ResourceGuid = sResourceGuid;
+					// 		aData.ResourceGroupGuid = aResourceData[sResourceGuid].aData.ResourceGroupGuid;
+					// 		aData.ResourceName = aResourceData[sResourceGuid].aData.Description;
+					// 		aData.ResourceGroup = this.oSchedulingActions.getResourceGroupName(aResourceData[sResourceGuid].aData.ParentNodeId);
+					// 		aData.Qualifications = aResourceData[sResourceGuid].qualifications.join();
+
+					// 		if (aResourceData[sResourceGuid].absenses.length !== 0) {
+					// 			aResourceData[sResourceGuid].absenses.forEach(function (oAbs) {
+					// 				aData.AbsenceFrom = oAbs.DateFrom;
+					// 				aData.AbsenceTo = oAbs.DateTo;
+
+					// 				aData.PLANNED = "RES";
+
+					// 				iNotPlannedRes++;
+					// 				aDataSet.push(JSON.parse(JSON.stringify(aData)));
+					// 			}.bind(this));
+					// 		} else {
+					// 			aData.PLANNED = "RES";
+
+					// 			iNotPlannedRes++;
+					// 			aDataSet.push(aData);
+					// 		}
+
+					// 	}
+					// }
+				}
+
 				//Setting the values in Schdeuling model
 				this._oSchedulingModel.setProperty("/step2/iPlanned", iPlanned);
 				this._oSchedulingModel.setProperty("/step2/iNonPlanned", iNotPlanned);
+				this._oSchedulingModel.setProperty("/step2/iNonPlannedRes", iNotPlannedRes);
 				this._oSchedulingModel.setProperty("/step2/dataSet", aDataSet);
 
 				//Setting button visibility for scheduling
-				if (!iPlanned){
+				if (!iPlanned) {
 					this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bFinishButtonVisible", false);
 				}
 			}

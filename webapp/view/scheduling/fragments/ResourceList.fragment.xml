@@ -1,0 +1,44 @@
+<core:FragmentDefinition xmlns:table="sap.ui.table" xmlns="sap.m" xmlns:core="sap.ui.core">
+    <table:Table id="step2_ResourceList" title="{i18n>xtit.hrResourceTable}" selectionMode="None"
+        rows="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\', filters: [{path: \''+ 'PLANNED' +'\', operator: \''+ 'EQ' +'\', value1: \''+ 'RES' +'\'}]}'}"
+        visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 2}">
+        <table:columns>
+            <table:Column >
+                <Label text="{i18n>xlbl.resName}" />
+                <table:template>
+                    <Text text="{:= '{'+ ${tempProps>tempData/modelName} +'>ResourceName}' }" />
+                </table:template>
+            </table:Column>
+            <table:Column>
+                <Label text="{i18n>xfld.ResourceGroupName}" />
+                <table:template>
+                    <Text text="{:= '{'+ ${tempProps>tempData/modelName} +'>ResourceGroup}' }" />
+                </table:template>
+            </table:Column>
+            <table:Column headerSpan="2">
+                <table:multiLabels>
+                    <Label text="{i18n>xfld.unavailibility}" textAlign="Center" width="100%"/>
+                    <Label text="{i18n>xfld.from}" />
+                </table:multiLabels>
+                <table:template>
+                    <Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>AbsenceFrom' +'\'}' }" />
+                </table:template>
+            </table:Column>
+            <table:Column>
+                <table:multiLabels>
+                    <Label text="{i18n>xfld.unavailibility}" textAlign="Center" width="100%"/>
+                    <Label text="{i18n>xfld.to}" />
+                </table:multiLabels>
+                <table:template>
+                    <Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>AbsenceTo' +'\'}' }" />
+                </table:template>
+            </table:Column>
+            <table:Column>
+                <Label text="{i18n>xfld.qualification}" />
+                <table:template>
+                    <Text text="{:= '{'+ ${tempProps>tempData/modelName} +'>Qualifications}' }" />
+                </table:template>
+            </table:Column>
+        </table:columns>
+    </table:Table>
+</core:FragmentDefinition>
