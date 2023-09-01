@@ -403,8 +403,8 @@ sap.ui.define([
 						"equipment": aResourceData[sGuid].qualifications
 					});
 				}
-				// Need to call method to create input plans
-				// getInputPlan()
+
+				//Input Plan Data
 				oInputPlanData = this._getInputPlans(aResourceData[sGuid]);
 				oInputPlan = this._getPTVInputPlanObject(sGuid, oInputPlanData);
 				aDemandLocations = aDemandLocations.concat(oInputPlanData.demandLocations);
@@ -415,10 +415,11 @@ sap.ui.define([
 
 			// Adding all the generated data into payload
 			oPayload.locations = oPayload.locations.concat(aResourceLocations);
-			oPayload.locations = oPayload.locations.concat(aDemandLocations);
-			oPayload.orders = oPayload.orders.concat(aDemands);
+			oPayload.locations = oPayload.locations.concat(aDemandLocations); // adding input plan demand locations
+			oPayload.orders = oPayload.orders.concat(aDemands); // adding input plan demand data
 			oPayload.fleet.drivers = aDrivers;
 			oPayload.fleet.vehicles = aVehicles;
+			//checking if any input plan data is available, if not, removing "inputPlan" property from payload
 			if (aTours.length){
 				oPayload.inputPlan.tours = aTours;
 				oPayload.inputPlan.fixations = aFixations;
@@ -428,35 +429,6 @@ sap.ui.define([
 
 			//Return the payload structure with Resource Data
 			return oPayload;
-		},
-
-		_getPTVInputPlanObject: function(sGuid, oInputPlanData){
-			debugger;
-			var inputPlan = {
-				"tours":[],
-				"fixations":[]
-			};
-			for(var date in oInputPlanData.stops){
-				if (oInputPlanData.stops[date].length){
-					inputPlan.tours.push({
-						"vehicleId": sGuid + "_" + date,
-						"vehicleStartLocationId": sGuid + "_location",
-						"vehicleEndLocationId": sGuid + "_location",
-						"trips": [{
-							"id": sGuid + "_" + date + "_trip",
-							"stops":oInputPlanData.stops[date]
-						}]
-					});
-
-					inputPlan.fixations.push({
-						"id": sGuid + "_" + date,
-						"fixationType": "VEHICLE_ORDERS"
-					});
-				}
-			}
-
-
-			return inputPlan;
 		},
 
 		/**
@@ -715,6 +687,39 @@ sap.ui.define([
 				}
 			}
 			return aInputPlans;
+		},
+
+		/**
+		 * To create input plans object
+		 * @param {string} sGuid - Resource Guid
+		 * @return {Object} oInputPlanData - input plan data needed for creating object - will contain stops for dates
+		 */
+		_getPTVInputPlanObject: function(sGuid, oInputPlanData){
+			var inputPlan = {
+				"tours":[],
+				"fixations":[]
+			};
+			for(var date in oInputPlanData.stops){
+				if (oInputPlanData.stops[date].length){
+					inputPlan.tours.push({
+						"vehicleId": sGuid + "_" + date,
+						"vehicleStartLocationId": sGuid + "_location",
+						"vehicleEndLocationId": sGuid + "_location",
+						"trips": [{
+							"id": sGuid + "_" + date + "_trip",
+							"stops":oInputPlanData.stops[date]
+						}]
+					});
+
+					inputPlan.fixations.push({
+						"id": sGuid + "_" + date,
+						"fixationType": "VEHICLE_ORDERS"
+					});
+				}
+			}
+
+
+			return inputPlan;
 		}
 		/* ============================================================================== */
 		/* Data types                                                                     */
