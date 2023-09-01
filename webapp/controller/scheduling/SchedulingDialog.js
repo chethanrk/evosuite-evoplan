@@ -131,25 +131,26 @@ sap.ui.define([
 			this._oViewModel.setProperty("/Scheduling/InputDataChanged", "");
 			this._component.ProgressBarDialog.open(this._oView);
 			this.oSchedulingActions.handleScheduleDemands().then(function (oResponse) {
+				if (oResponse) {
+					if (this._oViewModel.getProperty("/sViewRoute") === "NEWGANTT") {
+						this._oViewModel.setProperty("/Scheduling/PTVResponse", oResponse[0].data);
+						this._oEventBus.publish("AutoSchedule", "calculateTravelTime", {});
+					}
+					this._component.ProgressBarDialog.close();
 
-				if (this._oViewModel.getProperty("/sViewRoute") === "NEWGANTT") {
-					this._oViewModel.setProperty("/Scheduling/PTVResponse", oResponse[0].data);
-					this._oEventBus.publish("AutoSchedule", "calculateTravelTime", {});
+					this._iSelectedStepIndex = 1;
+					this._oSelectedStep = oNextStep;
+					this._oWizard.setCurrentStep(this._oWizard.getSteps()[1])
+					this._oWizard.goToStep(oNextStep, true);
+
+
+
+					this._handleButtonsVisibility();
+
+					this._designResponse(oResponse[0], oResponse[1], oResponse[2]); //(Response, Resources, Demands)
+
+					this._renderWizardStep2Binding();
 				}
-				this._component.ProgressBarDialog.close();
-
-				this._iSelectedStepIndex = 1;
-				this._oSelectedStep = oNextStep;
-				this._oWizard.setCurrentStep(this._oWizard.getSteps()[1])
-				this._oWizard.goToStep(oNextStep, true);
-
-
-
-				this._handleButtonsVisibility();
-
-				this._designResponse(oResponse[0], oResponse[1], oResponse[2]); //(Response, Resources, Demands)
-
-				this._renderWizardStep2Binding();
 			}.bind(this));
 		},
 		/**
@@ -541,7 +542,7 @@ sap.ui.define([
 					iNotPlanned = oResponse.data.orderIdsNotPlanned.length;
 					for (var j = 0; j < oResponse.data.orderIdsNotPlanned.length; j++) {
 						aOrder = oResponse.data.orderIdsNotPlanned[j];
-						if (aNonPlannableIds.indexOf(aOrder) === -1) {                //Bcz non-plannable is subset of not-planned
+						if (aNonPlannableIds.indexOf(aOrder) === -1) { //Bcz non-plannable is subset of not-planned
 							aData = {};
 
 							aData.DemandGuid = aOrder;
