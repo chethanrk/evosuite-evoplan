@@ -130,10 +130,10 @@ sap.ui.define([
 			this.oComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
 			return this._createDistanceMatrix(aResourceData, aDemandsData).then(function(sMatrixId) {
 				this.oComponent.getModel("viewModel").setProperty("/Scheduling/sDistanceMatrixId", sMatrixId);
-				// oPayload.distanceMode = {
-				// 	"$type": "ExistingDistanceMatrix",
-				// 	"id": sMatrixId
-				// };
+				oPayload.distanceMode = {
+					"$type": "ExistingDistanceMatrix",
+					"id": sMatrixId
+				};
 				return oPayload;
 			}.bind(this));
 		},
