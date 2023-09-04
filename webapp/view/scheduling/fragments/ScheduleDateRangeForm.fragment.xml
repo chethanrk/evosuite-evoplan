@@ -10,9 +10,10 @@
             id="ScheduleDateFrom"
             placeholder="{i18n>xtit.EnterDateFrom}"
             minDate="{viewModel>/Scheduling/minDate}"
-            dateValue="{viewModel>/Scheduling/startDate}"
+            value="{path: 'viewModel>/Scheduling/startDate',type: 'sap.ui.model.type.DateTime', formatOptions:{pattern:'dd MMM yyyy, HH:mm:ss'} }"
             initialFocusedDateValue="{viewModel>/Scheduling/initialFocusedDateValue}"
             valueState="{viewModel>/Scheduling/sStartDateValueState}"
+            valueStateText="{i18n>xtit.PlanHorizonStartMandatory}"
             change="onChangeDateFrom"/>
         <Label text="{i18n>xtit.DateTo}" labelFor="ScheduleDateto" required="true"/>
         <DateTimePicker
@@ -20,9 +21,10 @@
             placeholder="{i18n>xtit.EnterDateTo}"
             minDate="{viewModel>/Scheduling/minDate}"
             maxDate="{viewModel>/Scheduling/maxDate}"
-            dateValue="{viewModel>/Scheduling/endDate}"
+            value="{path: 'viewModel>/Scheduling/endDate',type: 'sap.ui.model.type.DateTime', formatOptions:{pattern:'dd MMM yyyy, HH:mm:ss'} }"
             initialFocusedDateValue="{viewModel>/Scheduling/initialFocusedDateValue}"
             valueState="{viewModel>/Scheduling/sEndDateValueState}"
+            valueStateText="{i18n>xtit.PlanHorizonEndMandatory}"
             change="onChangeDateTo"/>
         <Label text="{i18n>xtit.Utilization}  {viewModel>/Scheduling/sUtilizationSlider}" labelFor="ScheduleUtilization"/>
         <Slider value="{viewModel>/Scheduling/sUtilizationSlider}"
@@ -41,5 +43,10 @@
     visible="{viewModel>/Scheduling/bInvalidDateRange}"
     type="Error"
     class="sapUiSmallMarginBeginEnd" />
-
+ <MessageStrip
+			text="{viewModel>/Scheduling/InputDataChanged}"
+			type="Warning"
+			showIcon="true"
+			showCloseButton="false"
+			visible="{= ${viewModel>/Scheduling/InputDataChanged} === ''? false : true}"/>
 </core:FragmentDefinition>

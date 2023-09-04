@@ -101,9 +101,13 @@ sap.ui.define([
                     break;
                 }
             }
-
+            this._checkGeneratedResponse();
             this._oSchedulingModel.setProperty("/step1/dataSet", aDataSet);
             this._oViewModel.setProperty("/Scheduling/demandList", aDemandList);
+
+            if(aDemandList.length === 0){
+                this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bNextButtonVisible", false);
+            }
         },
 
         /**
@@ -115,9 +119,10 @@ sap.ui.define([
          * @param {*} oEvent 
          */
         onChangeDateFrom: function(oEvent){
-            var oDate = oEvent.getSource().getDateValue();
+            var oDate = oEvent.getSource().getValue();
             this._oViewModel.setProperty("/Scheduling/sStartDateValueState", "None");
-            this.oSchedulingActions.validateDemandDateRanges(oDate, this._oDateTo.getDateValue(), false);
+            this.oSchedulingActions.validateDemandDateRanges(new Date(oDate), this._oViewModel.getProperty("/Scheduling/endDate"), false);
+            this._checkGeneratedResponse();
         },
 
         /**
@@ -129,9 +134,10 @@ sap.ui.define([
          * @param {*} oEvent 
          */
         onChangeDateTo: function(oEvent){
-            var oDate = oEvent.getSource().getDateValue();
+            var oDate = oEvent.getSource().getValue();
             this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "None");
-            this.oSchedulingActions.validateDemandDateRanges(this._oDateFrom.getDateValue(), oDate, true);
+            this.oSchedulingActions.validateDemandDateRanges(this._oViewModel.getProperty("/Scheduling/startDate"), new Date(oDate), true);
+            this._checkGeneratedResponse();
         },
 
         /**
@@ -182,6 +188,17 @@ sap.ui.define([
                 this._oDemandFilterDialog.then(function(oDialog){
                     this._setCustomTableFilter();
                     oDialog.close();
+                }.bind(this));
+            }
+        },
+        /**
+         *Close the filter Bar
+         */
+         onPressCancelFilterDialog: function(){
+            if(this._oDemandFilterDialog){
+                this._oDemandFilterDialog.then(function(oDialog){
+                    oDialog.close();
+                    oDialog.destory();
                 }.bind(this));
             }
         },
@@ -246,8 +263,19 @@ sap.ui.define([
             for (var i = 0; i < aColumns.length; i++) {
                 this._oDemandsTable.autoResizeColumn(i);
             }
+        },
+
+        /**
+         * check if response is there then reset the step buttons to regenerate plan
+         * so columns will rerendered with proper widths
+         */
+        _checkGeneratedResponse: function(){
+            var oResponse = this._oSchedulingModel.getProperty("/step2/dataSet");
+            if (oResponse.length){
+                this._oViewModel.setProperty("/Scheduling/InputDataChanged",this.getResourceBundle().getText("ymsg.InputDataChanged"));
+                this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bFinishButtonVisible", false);
+                this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bNextButtonVisible", true);
+            }
         }
-
-
     });
 })

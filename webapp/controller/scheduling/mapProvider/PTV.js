@@ -118,7 +118,14 @@ sap.ui.define([
 		getPTVPayload: function (aResourceData, aDemandsData) {
 			var oPayload = this._getPayloadStructure(),
 				sDialogMsg= this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.analysinglocations");
-			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload 
+			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload
+
+			if (oPayload.fleet.drivers.length === 0 || oPayload.fleet.vehicles.length === 0) { //Stop the process of PTV API call when no drivers
+				this.oComponent.ProgressBarDialog.close();
+				MessageBox.error(this.oComponent.getModel("i18n").getResourceBundle().getText("xmsg.noAvailability"));
+				return false;
+			}
+
 			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
 			this.oComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
 			return this._createDistanceMatrix(aResourceData, aDemandsData).then(function(sMatrixId) {
@@ -393,6 +400,8 @@ sap.ui.define([
 						"equipment": aResourceData[sGuid].qualifications
 					});
 				}
+				// Need to call method to create input plans
+				// getInputPlan()
 			};
 
 			// Adding all the generated data into payload

@@ -412,7 +412,7 @@ sap.ui.define([
 		 */
 		_triggerRefreshBufferTree: function () {
 			this._oViewModel.setProperty("/CheckRightTechnician", false);
-			this._oDroppableTable.rebindTable();
+			this._triggerRefreshTree();
 		},
 		/**
 		 * Resets the selected resource if selected

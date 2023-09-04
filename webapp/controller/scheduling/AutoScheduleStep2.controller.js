@@ -78,6 +78,18 @@ sap.ui.define([
         }.bind(this));
       }
     },
+     /**
+         *Close the filter Bar
+         */
+         onPressCancelFilterDialog: function(){
+          if(this._oDemandFilterDialog){
+              this._oDemandFilterDialog.then(function(oDialog){
+                  oDialog.close();
+                  oDialog.destory();
+              }.bind(this));
+          }
+      },
+
 
     /* =========================================================== */
     /* Private methods                                             */
