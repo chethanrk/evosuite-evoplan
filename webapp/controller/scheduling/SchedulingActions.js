@@ -729,7 +729,6 @@ sap.ui.define([
 			var aData = oModelDialog.getProperty("/step2/dataSet"),
 				sSchedulingType = this.oViewModel.getProperty("/Scheduling/sScheduleType"),
 				sGroupId,
-				sChangeSetId,
 				mParams,
 				i = 0,
 				oBjectInitial, 
@@ -738,10 +737,8 @@ sap.ui.define([
 			for (var x = 0; x < aData.length; x++) {
 				if(x % 100 === 0){
 					sGroupId = "groupId" + i;
-					sChangeSetId = "changeSetId" + i;
 					mParams = {
-						batchGroupId:sGroupId,
-						changeSetId:sChangeSetId
+						batchGroupId:sGroupId
 					};
 					i++;
 				}
@@ -800,7 +797,6 @@ sap.ui.define([
 					method: sMethod || "POST",
 					urlParameters: oData,
 					batchGroupId:mParams.batchGroupId,
-					changeSetId:mParams.changeSetId,
 					refreshAfterChange: false,
 					success: function (oData, oResponse) {
 						//Handle Success
