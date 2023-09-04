@@ -4,13 +4,12 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form">
 	<Dialog
-		id="SchedulingDemandFilterDialog"
 		title="{viewModel>/Scheduling/sScheduleDialogTitle}"
 		showHeader="true"
 		verticalScrolling="false">
 
 		<content>
-			<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.SmartFilter" type="XML"/>
+			<core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.fragments.SchedulingSmartFilter" type="XML"/>
 		</content>
 		
 		<buttons>

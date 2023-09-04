@@ -50,6 +50,8 @@ sap.ui.define([
      */
     onShowFilters: function () {
       //To be changed when annotations for filters are added
+      this.getModel("viewModel").setProperty("/Scheduling/sFilterEntity", "ScheduleResponseSet");
+      this.getModel("viewModel").setProperty("/Scheduling/sFilterPersistencyKey", "com.evorait.evosuite.evoplan.SchedulingResponseFilter");
       if (!this._oResponseFilterDialog) {
         this._oResponseFilterDialog = Fragment.load({
           name: "com.evorait.evoplan.view.scheduling.fragments.DemandFilterDialog",

@@ -160,6 +160,8 @@ sap.ui.define([
          * @param {*} oEvent 
          */
         onPressShowFilterbar: function(oEvent){
+            this.getModel("viewModel").setProperty("/Scheduling/sFilterEntity", "ScheduleSelectSet");
+            this.getModel("viewModel").setProperty("/Scheduling/sFilterPersistencyKey", "com.evorait.evosuite.evoplan.SchedulingSelectFilter");
             if(!this._oDemandFilterDialog){
                 this._oDemandFilterDialog = Fragment.load({
                     name: "com.evorait.evoplan.view.scheduling.fragments.DemandFilterDialog",
@@ -201,7 +203,7 @@ sap.ui.define([
          * - Outside button
          */
         _setCustomTableFilter: function(){
-            var oSmartFilter = sap.ui.getCore().byId("listReportFilter"),
+            var oSmartFilter = sap.ui.getCore().byId("scheduleSelect"),
                 aFilter = [];
         
             if(oSmartFilter){
