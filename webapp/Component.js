@@ -150,6 +150,22 @@ sap.ui.define([
 				  dow: 1, // Set Monday as the start of the week (0: Sunday, 1: Monday, ...)
 				},
 			  });
+
+			this._getSystemInformation().then(function(oData){
+				var month = parseInt(oData.DEFAULT_FY_START_MONTH) - 1, 
+					yearMatrix = [];
+				for(var i=0;i<4;i++){
+					yearMatrix.push([]);
+					for(var j=0;j<3;j++){
+						yearMatrix[i].push(month);
+						month++;
+						if(month > 11){
+							month = 0;
+						}
+					}
+				}
+				this.getModel("viewModel").setProperty("/yearMatrix", yearMatrix);
+			}.bind(this));			
 		},
 
 		/**
@@ -660,7 +676,8 @@ sap.ui.define([
 					
 				},
 				sViewRoute: null,
-				aUpdatedResources: []
+				aUpdatedResources: [],
+				yearMatrix:[]
 			});
 
 			oViewModel.setSizeLimit(999999999);
