@@ -345,8 +345,8 @@ sap.ui.define([
 					"calculationMode": "PERFORMANCE",
 					"planningHorizon": {
 						"$type": "StartEndInterval",
-						"start": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/startDateValue")),
-						"end": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/endDateValue"))
+						"start": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/startDate")),
+						"end": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/endDate"))
 					}
 				},
 				"inputPlan": {
