@@ -654,13 +654,6 @@ sap.ui.define([
 								}]
 							}];
 						}
-						// aInputPlans.stops[sAssignmentDate] = {
-						// 	"locationId": oAssingnment.DemandGuid + "_location",
-						// 	"tasks": [{
-						// 		"orderId": oAssingnment.DemandGuid,
-						// 		"taskType": "VISIT"
-						// 	}]
-						// };
 						aInputPlans.demandLocations.push({
 							"$type": "CustomerSite",
 							"id": oAssingnment.DemandGuid + "_location",
