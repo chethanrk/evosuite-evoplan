@@ -755,23 +755,6 @@ sap.ui.define([
 					aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST", mParams));
 				}
 			};
-			/* sample responce
-		
-			{
-				"DateFrom": "2023-08-16T09:25:08.053Z",
-				"TimeFrom": {
-					"ms": 1692177908053
-				},
-				"DateTo": "2023-08-16T09:25:08.053Z",
-				"TimeTo": {
-					"ms": 1692177908053
-				},
-				"DemandGuid": "A12B77123F2E1EDDBAB06CD3E0B9826B",
-				"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
-				"ResourceGuid": "0A51491BD5A01EE8A5910DE06717D060",
-				"Effort": "0",
-				"EffortUnit": ""
-			}*/
 
 			return aNewArray;
 		},
