@@ -33,7 +33,8 @@
             min="0" max="100"
             showAdvancedTooltip="true"
             showHandleTooltip="false"
-            class="sapUiMediumMarginBottom" />
+            class="sapUiMediumMarginBottom"
+            change="onUtilizationChange"/>
         <core:ExtensionPoint name="WizardExtP|Schedule|Step1|Form|Content|After"/>
     </f:content>
 </f:SimpleForm>

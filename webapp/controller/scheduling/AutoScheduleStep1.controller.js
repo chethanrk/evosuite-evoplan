@@ -139,6 +139,13 @@ sap.ui.define([
             this.oSchedulingActions.validateDemandDateRanges(this._oViewModel.getProperty("/Scheduling/startDate"), new Date(oDate), true);
             this._checkGeneratedResponse();
         },
+        /**
+         * Called when utilization changes
+         * @param {object} oEvent 
+         */
+        onUtilizationChange: function(oEvent){            
+            this._checkGeneratedResponse();
+        },
 
         /**
          * when user press demand filter for inside date range
