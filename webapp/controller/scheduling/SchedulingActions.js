@@ -548,11 +548,6 @@ sap.ui.define([
 				this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateStart"));
 				return bValidate;
 			}
-			if (endDate.toDate() < oMinDate || endDate.toDate() > oMaxDate) {
-				bValidate = false;
-				this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateEnd"));
-				return bValidate
-			}
 			if (startDate && endDate) {
 				//check if endDate before startDate
 				//check if end date bigger than 14 days
