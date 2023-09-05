@@ -310,7 +310,8 @@ sap.ui.define([
 				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
 				iSelectedResponse: 0,
 				sScheduleType: "",
-				bDateChanged: false
+				bDateChanged: false,
+				bSchedBtnBusy:false
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
 		},
@@ -348,6 +349,7 @@ sap.ui.define([
 						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 					}
 				}
+				this.oViewModel.setProperty("/Scheduling/bSchedBtnBusy",false);
 			}.bind(this));
 		},
 
@@ -547,11 +549,6 @@ sap.ui.define([
 				bValidate = false;
 				this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateStart"));
 				return bValidate;
-			}
-			if (endDate.toDate() < oMinDate || endDate.toDate() > oMaxDate) {
-				bValidate = false;
-				this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateEnd"));
-				return bValidate
 			}
 			if (startDate && endDate) {
 				//check if endDate before startDate

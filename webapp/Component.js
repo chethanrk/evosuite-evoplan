@@ -656,8 +656,8 @@ sap.ui.define([
 					PTVResponse:{},
 					InputDataChanged:"",
 					startDate: "",
-					endDate: ""
-					
+					endDate: "",
+					bSchedBtnBusy:false
 				},
 				sViewRoute: null,
 				aUpdatedResources: []
