@@ -251,10 +251,12 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
 		 */
 		onAutoscheduleButtonPress: function (oEvent) {
-			var oViewModel = this.getModel("viewModel");
-			this.getModel("appViewModel").setProperty("/busy",true);
+			var oViewModel = this.getModel("viewModel"),
+			oAppModel=this.getModel("appView");
+			oAppModel.setProperty("/busy",true);
 			oViewModel.setProperty("/Scheduling/sScheduleType","A");
 			if(!this.oSchedulingActions.validateScheduleAfterPress()){
+				oAppModel.setProperty("/busy",false);
 				return;
 			}
 			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
