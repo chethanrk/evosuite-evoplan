@@ -3,7 +3,7 @@
 	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<template:with path="templateProperties>/" var="tempProps">
 		<template:with path="templateProperties>/annotationPath" helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="target">
-			<template:with path="target>Data" var="data">
+			<template:with path="target>" var="data">
 
 				<table:Table id="step1_SchedulingTable" rows="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\' }' }"
 					busyStateChanged="onBusyStateChanged"
