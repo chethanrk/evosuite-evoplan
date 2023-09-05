@@ -660,8 +660,9 @@ sap.ui.define([
 			var oDataArr = this._getDemandsDataForAssignment(oModelDialog);
 
 			return Promise.all(oDataArr).then(function(oResponse){
+				this.afterUpdateOperations(mRefreshParam);
 				return oResponse;
-			});
+			}.bind(this));
 
 		},
 
