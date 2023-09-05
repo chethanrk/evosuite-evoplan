@@ -728,6 +728,7 @@ sap.ui.define([
 		_getDemandsDataForAssignment: function (oModelDialog) {
 			var aData = oModelDialog.getProperty("/step2/dataSet"),
 				sSchedulingType = this.oViewModel.getProperty("/Scheduling/sScheduleType"),
+				iBatchCount = this.oUserModel.getProperty("/DEFAULT_PTV_SCHEDUL_BATCH_SIZE"),
 				sGroupId,
 				mParams,
 				i = 0,
@@ -735,8 +736,10 @@ sap.ui.define([
 				aNewArray = [], 
 				bIsLast = false,
 				aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
+
+				iBatchCount = iBatchCount ? parseInt(iBatchCount) : 100;
 			for (var x = 0; x < aData.length; x++) {
-				if(x % 100 === 0){
+				if(x % iBatchCount === 0){
 					sGroupId = "groupId" + i;
 					mParams = {
 						batchGroupId:sGroupId
@@ -769,7 +772,7 @@ sap.ui.define([
 		 * @param {string} sMethod - method it could be post or anyother.
 		 * @param {object} mRefreshParam - this method is passed to afterUpdateOperations method
 		 */
-		_callFunctionImportScheduling: function (oData, sFuncName, sMethod, mParams) {
+		_callFunctionImportScheduling: function (oData, sFuncName, sMethod, mParams, bIsLast) {
 			// TODO. 1 check for utilization
 			// 2. check for message toast to be displyaed after the success of this call
 			// 3. Refractor this code.
