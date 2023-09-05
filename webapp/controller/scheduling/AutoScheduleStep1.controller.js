@@ -183,9 +183,12 @@ sap.ui.define([
          * to json demand table
          */
         onPressAddFilterDialog: function(){
+            var oSmartFilter = {};
             if(this._oDemandFilterDialog){
                 this._oDemandFilterDialog.then(function(oDialog){
-                    this._setCustomTableFilter();
+                    //adding this to avoid duplicate Id error when used multiple times
+                    oSmartFilter = oDialog.getContent()[0];
+                    this._setCustomTableFilter(oSmartFilter);
                     oDialog.close();
                 }.bind(this));
             }
@@ -201,10 +204,10 @@ sap.ui.define([
          * - Filter dialog
          * - Inside button
          * - Outside button
+         * @param {Object} oSmartFilter - used for fetching the filters and applying the filters
          */
-        _setCustomTableFilter: function(){
-            var oSmartFilter = sap.ui.getCore().byId("scheduleSelect"),
-                aFilter = [];
+        _setCustomTableFilter: function(oSmartFilter){
+            var aFilter = [];
         
             if(oSmartFilter){
                 aFilter = oSmartFilter.getFilters();

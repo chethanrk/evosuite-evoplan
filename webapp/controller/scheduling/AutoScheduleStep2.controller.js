@@ -73,9 +73,12 @@ sap.ui.define([
      * to json response table
      */
     onPressAddFilterDialog: function () {
+      var oSmartFilter = {};
       if (this._oResponseFilterDialog) {
         this._oResponseFilterDialog.then(function (oDialog) {
-          this._setCustomTableFilter();
+          //adding this to avoid duplicate Id error when used multiple times
+          oSmartFilter = oDialog.getContent()[0];
+          this._setCustomTableFilter(oSmartFilter);
           oDialog.close();
         }.bind(this));
       }
@@ -100,10 +103,10 @@ sap.ui.define([
     /**
      * collect all filters and bind to json model table of response
      * - Filter dialog
+     * @param {Object} oSmartFilter - used for fetching the filters and applying the filters
      */
-    _setCustomTableFilter: function () {
-      var oSmartFilter = sap.ui.getCore().byId("listReportFilter"),
-        aFilter = [];
+    _setCustomTableFilter: function (oSmartFilter) {
+      var aFilter = [];
 
       if (oSmartFilter) {
         aFilter = oSmartFilter.getFilters();
