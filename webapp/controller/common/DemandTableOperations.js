@@ -251,7 +251,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
 		 */
 		onAutoscheduleButtonPress: function (oEvent) {
-			console.log("manik");
+			
 			var oViewModel = this.getModel("viewModel");
 			oViewModel.setProperty("/Scheduling/bSchedBtnBusy",true);
 			oViewModel.setProperty("/Scheduling/sScheduleType","A");
