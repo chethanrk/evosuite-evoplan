@@ -733,6 +733,7 @@ sap.ui.define([
 				i = 0,
 				oBjectInitial, 
 				aNewArray = [], 
+				bIsLast = false,
 				aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 			for (var x = 0; x < aData.length; x++) {
 				if(x % 100 === 0){
@@ -741,6 +742,9 @@ sap.ui.define([
 						batchGroupId:sGroupId
 					};
 					i++;
+				}
+				if (x === (aData.length-1)){
+					bIsLast = true;
 				}
 				if (aData[x].PLANNED) {
 						aData[x].TimeFrom.ms = aData[x].DateFrom.getTime();
@@ -752,7 +756,7 @@ sap.ui.define([
 						};
 					});
 					oBjectInitial.MapAssignmentType = sSchedulingType;
-					aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST", mParams));
+					aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST", mParams, bIsLast));
 				}
 			};
 
@@ -784,14 +788,17 @@ sap.ui.define([
 					success: function (oData, oResponse) {
 						//Handle Success
 						oViewModel.setProperty("/busy", false);
-						this.showMessage(oResponse);
-
+						if(bIsLast){
+							this.showMessage(oResponse);
+						}
 						resolve(oData)
 					}.bind(this),
 					error: function (oError) {
 						//set first dragged index to set initial
 						this.oViewModel.setProperty("/iFirstVisibleRowIndex", -1);
-						this.showMessageToast(oResourceBundle.getText("errorMessage"));
+						if (bIsLast){
+							this.showMessageToast(oResourceBundle.getText("errorMessage"));
+						}
 						reject(oError);
 					}.bind(this)
 				});
