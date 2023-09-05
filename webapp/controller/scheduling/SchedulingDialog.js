@@ -235,7 +235,6 @@ sap.ui.define([
 			if (this._mParams.isAutoSchedule) {
 				this._mParams.viewName = "com.evorait.evoplan.view.scheduling.AutoScheduling.AutoScheduleStep1#AutoScheduleStep1";
 				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ScheduleTable";
-				// this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.LineItem";
 				this._mParams.modelName = "SchedulingModel";
 				this._mParams.modelDataSetPath = "/step1/dataSet";
 			} else {
