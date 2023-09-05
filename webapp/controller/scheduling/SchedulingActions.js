@@ -310,7 +310,8 @@ sap.ui.define([
 				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
 				iSelectedResponse: 0,
 				sScheduleType: "",
-				bDateChanged: false
+				bDateChanged: false,
+				bSchedBtnBusy:false
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
 		},
@@ -348,7 +349,7 @@ sap.ui.define([
 						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 					}
 				}
-				this.oAppViewModel.setProperty("/busy",false);
+				this.oViewModel.setProperty("/Scheduling/bSchedBtnBusy",false);
 			}.bind(this));
 		},
 
