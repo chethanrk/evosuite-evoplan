@@ -252,6 +252,7 @@ sap.ui.define([
 		 */
 		onAutoscheduleButtonPress: function (oEvent) {
 			var oViewModel = this.getModel("viewModel");
+			this.getModel("appViewModel").setProperty("/busy",true);
 			oViewModel.setProperty("/Scheduling/sScheduleType","A");
 			if(!this.oSchedulingActions.validateScheduleAfterPress()){
 				return;

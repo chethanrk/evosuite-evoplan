@@ -348,6 +348,7 @@ sap.ui.define([
 						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 					}
 				}
+				this.oAppViewModel.setProperty("/busy",false)
 			}.bind(this));
 		},
 
