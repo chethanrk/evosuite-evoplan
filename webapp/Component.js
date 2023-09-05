@@ -152,8 +152,7 @@ sap.ui.define([
 			  });
 
 			this._getSystemInformation().then(function(oData){
-				oData.DEFAULT_FY_START_MONTH  = 5;
-				var month = oData.DEFAULT_FY_START_MONTH ? parseInt(oData.DEFAULT_FY_START_MONTH) - 1 : 1, 
+				var month = oData.DEFAULT_FY_START_MONTH ? (parseInt(oData.DEFAULT_FY_START_MONTH) - 1) : 0, 
 					yearMatrix = [];
 				for(var i=0;i<4;i++){
 					yearMatrix.push([]);
