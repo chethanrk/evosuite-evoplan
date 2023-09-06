@@ -681,7 +681,7 @@ sap.ui.define([
 
 			var aPathsData = [],
 				aNonAssignableDemands = [],
-				oData, oContext, sPath;
+				oData, oContext, sPath,aSelection=[];
 
 			oTable.clearSelection();
 
@@ -697,10 +697,38 @@ sap.ui.define([
 						oData: oData,
 						index: aSelectedRowsIdx[i]
 					});
-					oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
+
+					aSelection.push(aSelectedRowsIdx[i])
+					//oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
 				} else {
 					aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData, null, true));
 				}
+			}
+			console.log(aSelection)
+			if(aSelection.length>1){
+				
+				var result = aSelection.reduce((r, n) => {
+					var lastSubArray = r[r.length - 1];
+					
+					if(!lastSubArray || lastSubArray[lastSubArray.length - 1] !== n - 1) {
+					  r.push([]);
+					} 
+					
+					r[r.length - 1].push(n);
+					
+					return r;  
+				  }, []);
+				  
+				  console.log(result);
+
+				  for(var j=0;j<result.length;j++){
+					if(result[j].length > 0){
+						console.log(result[j][0],result[j][result.length-1])
+						oTable.addSelectionInterval(result[j][0], result[j][result[j].length-1]);
+					}else{
+						oTable.addSelectionInterval(result[j][0], result[j][0]);
+					}
+				  }
 			}
 
 			return {
