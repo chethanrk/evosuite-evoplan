@@ -4,7 +4,7 @@
     <template:with path="templateProperties>/" var="tempProps">
         <template:with path="templateProperties>/annotationPath"
             helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="target">
-            <template:with path="target>Data" var="data">
+            <template:with path="target>" var="data">
                 <HBox>
                     <RadioButtonGroup columns="3" class="sapUiTinyMargin"
                         selectedIndex="{viewModel>/Scheduling/iSelectedResponse}" select="onChangeResponseType">
