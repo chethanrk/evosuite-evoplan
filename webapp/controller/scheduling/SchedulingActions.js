@@ -704,22 +704,18 @@ sap.ui.define([
 					aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData, null, true));
 				}
 			}
-			console.log(aSelection)
 			if(aSelection.length>1){
-				
+				/* Here we are creating groups of array in sequence like [[1...n]]
+					so to limit the call of addSelectionInterval based on start and end index.
+				 */
 				var result = aSelection.reduce((r, n) => {
 					var lastSubArray = r[r.length - 1];
-					
 					if(!lastSubArray || lastSubArray[lastSubArray.length - 1] !== n - 1) {
 					  r.push([]);
 					} 
-					
 					r[r.length - 1].push(n);
-					
 					return r;  
 				  }, []);
-				  
-				  console.log(result);
 
 				  for(var j=0;j<result.length;j++){
 					if(result[j].length > 0){
