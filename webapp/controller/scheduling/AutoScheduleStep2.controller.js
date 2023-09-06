@@ -56,7 +56,8 @@ sap.ui.define([
         this._oResponseFilterDialog = Fragment.load({
           name: "com.evorait.evoplan.view.scheduling.fragments.DemandFilterDialog",
           controller: this,
-          type: "XML"
+          type: "XML",
+          id:this.getView().getId()
         }).then(function (oDialog) {
           oDialog.addStyleClass(this._oViewModel.getProperty("/densityClass"));
           this.getView().addDependent(oDialog);
@@ -87,8 +88,8 @@ sap.ui.define([
          *Close the filter Bar
          */
          onPressCancelFilterDialog: function(){
-          if(this._oDemandFilterDialog){
-              this._oDemandFilterDialog.then(function(oDialog){
+          if(this._oResponseFilterDialog){
+              this._oResponseFilterDialog.then(function(oDialog){
                   oDialog.close();
                   oDialog.destory();
               }.bind(this));

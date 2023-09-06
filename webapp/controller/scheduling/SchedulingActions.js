@@ -718,7 +718,6 @@ sap.ui.define([
 
 				  for(var j=0;j<result.length;j++){
 					if(result[j].length > 0){
-						console.log(result[j][0],result[j][result.length-1])
 						oTable.addSelectionInterval(result[j][0], result[j][result[j].length-1]);
 					}else{
 						oTable.addSelectionInterval(result[j][0], result[j][0]);

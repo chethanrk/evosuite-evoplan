@@ -169,7 +169,8 @@ sap.ui.define([
                 this._oDemandFilterDialog = Fragment.load({
                     name: "com.evorait.evoplan.view.scheduling.fragments.DemandFilterDialog",
                     controller: this,
-                    type: "XML"
+                    type: "XML",
+                    id:this.getView().getId()
                 }).then(function(oDialog) {
                     oDialog.addStyleClass(this._oViewModel.getProperty("/densityClass"));
                     this.getView().addDependent(oDialog);
