@@ -138,6 +138,7 @@ sap.ui.define([
             this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "None");
             this.oSchedulingActions.validateDemandDateRanges(this._oViewModel.getProperty("/Scheduling/startDate"), new Date(oDate), true);
             this._checkGeneratedResponse();
+            this._setCustomTableFilter(this._oSmartFilter);
         },
 
         /**
@@ -191,6 +192,7 @@ sap.ui.define([
                 this._oDemandFilterDialog.then(function(oDialog){
                     //adding this to avoid duplicate Id error when used multiple times
                     oSmartFilter = oDialog.getContent()[0];
+                    this._oSmartFilter = oSmartFilter;
                     this._setCustomTableFilter(oSmartFilter);
                     oDialog.close();
                 }.bind(this));
