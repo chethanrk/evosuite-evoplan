@@ -123,6 +123,7 @@ sap.ui.define([
             this._oViewModel.setProperty("/Scheduling/sStartDateValueState", "None");
             this.oSchedulingActions.validateDemandDateRanges(new Date(oDate), this._oViewModel.getProperty("/Scheduling/endDate"), false);
             this._checkGeneratedResponse();
+            this._setCustomTableFilter(this._oSmartFilter);
         },
 
         /**
