@@ -698,8 +698,7 @@ sap.ui.define([
 						index: aSelectedRowsIdx[i]
 					});
 
-					aSelection.push(aSelectedRowsIdx[i])
-					//oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
+					aSelection.push(aSelectedRowsIdx[i]);
 				} else {
 					aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData, null, true));
 				}
