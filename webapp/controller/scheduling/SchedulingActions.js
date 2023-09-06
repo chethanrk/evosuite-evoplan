@@ -484,7 +484,7 @@ sap.ui.define([
 				inside = 0,
 				outside = 0;
 			this.oViewModel.setProperty("/Scheduling/bDateChanged", bEndDateChanged);
-			if (startDate) {
+			if (isFinite(startDate)) {
 				//when enddate datepicker opens set new focused date
 				this.oViewModel.setProperty("/Scheduling/initialFocusedDateValue", oStartDate);
 				//max date for datepicker is always startdate + 14 days
