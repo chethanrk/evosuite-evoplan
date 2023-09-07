@@ -170,11 +170,14 @@ sap.ui.define([
          * @param {*} oEvent 
          */
         onPressShowFilterbar: function(oEvent){
+            this.getModel("viewModel").setProperty("/Scheduling/sFilterEntity", "ScheduleSelectSet");
+            this.getModel("viewModel").setProperty("/Scheduling/sFilterPersistencyKey", "com.evorait.evosuite.evoplan.SchedulingSelectFilter");
             if(!this._oDemandFilterDialog){
                 this._oDemandFilterDialog = Fragment.load({
                     name: "com.evorait.evoplan.view.scheduling.fragments.DemandFilterDialog",
                     controller: this,
-                    type: "XML"
+                    type: "XML",
+                    id:this.getView().getId()
                 }).then(function(oDialog) {
                     oDialog.addStyleClass(this._oViewModel.getProperty("/densityClass"));
                     this.getView().addDependent(oDialog);
@@ -191,9 +194,12 @@ sap.ui.define([
          * to json demand table
          */
         onPressAddFilterDialog: function(){
+            var oSmartFilter = {};
             if(this._oDemandFilterDialog){
                 this._oDemandFilterDialog.then(function(oDialog){
-                    this._setCustomTableFilter();
+                    //adding this to avoid duplicate Id error when used multiple times
+                    oSmartFilter = oDialog.getContent()[0];
+                    this._setCustomTableFilter(oSmartFilter);
                     oDialog.close();
                 }.bind(this));
             }
@@ -220,10 +226,10 @@ sap.ui.define([
          * - Filter dialog
          * - Inside button
          * - Outside button
+         * @param {Object} oSmartFilter - used for fetching the filters and applying the filters
          */
-        _setCustomTableFilter: function(){
-            var oSmartFilter = sap.ui.getCore().byId("listReportFilter"),
-                aFilter = [];
+        _setCustomTableFilter: function(oSmartFilter){
+            var aFilter = [];
         
             if(oSmartFilter){
                 aFilter = oSmartFilter.getFilters();

@@ -50,11 +50,14 @@ sap.ui.define([
      */
     onShowFilters: function () {
       //To be changed when annotations for filters are added
+      this.getModel("viewModel").setProperty("/Scheduling/sFilterEntity", "ScheduleResponseSet");
+      this.getModel("viewModel").setProperty("/Scheduling/sFilterPersistencyKey", "com.evorait.evosuite.evoplan.SchedulingResponseFilter");
       if (!this._oResponseFilterDialog) {
         this._oResponseFilterDialog = Fragment.load({
           name: "com.evorait.evoplan.view.scheduling.fragments.DemandFilterDialog",
           controller: this,
-          type: "XML"
+          type: "XML",
+          id:this.getView().getId()
         }).then(function (oDialog) {
           oDialog.addStyleClass(this._oViewModel.getProperty("/densityClass"));
           this.getView().addDependent(oDialog);
@@ -71,9 +74,12 @@ sap.ui.define([
      * to json response table
      */
     onPressAddFilterDialog: function () {
+      var oSmartFilter = {};
       if (this._oResponseFilterDialog) {
         this._oResponseFilterDialog.then(function (oDialog) {
-          this._setCustomTableFilter();
+          //adding this to avoid duplicate Id error when used multiple times
+          oSmartFilter = oDialog.getContent()[0];
+          this._setCustomTableFilter(oSmartFilter);
           oDialog.close();
         }.bind(this));
       }
@@ -82,8 +88,8 @@ sap.ui.define([
          *Close the filter Bar
          */
          onPressCancelFilterDialog: function(){
-          if(this._oDemandFilterDialog){
-              this._oDemandFilterDialog.then(function(oDialog){
+          if(this._oResponseFilterDialog){
+              this._oResponseFilterDialog.then(function(oDialog){
                   oDialog.close();
                   oDialog.destory();
               }.bind(this));
@@ -110,10 +116,10 @@ sap.ui.define([
     /**
      * collect all filters and bind to json model table of response
      * - Filter dialog
+     * @param {Object} oSmartFilter - used for fetching the filters and applying the filters
      */
-    _setCustomTableFilter: function () {
-      var oSmartFilter = sap.ui.getCore().byId("listReportFilter"),
-        aFilter = [];
+    _setCustomTableFilter: function (oSmartFilter) {
+      var aFilter = [];
 
       if (oSmartFilter) {
         aFilter = oSmartFilter.getFilters();

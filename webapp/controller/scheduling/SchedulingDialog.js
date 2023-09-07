@@ -236,9 +236,10 @@ sap.ui.define([
 
 			if (this._mParams.isAutoSchedule) {
 				this._mParams.viewName = "com.evorait.evoplan.view.scheduling.AutoScheduling.AutoScheduleStep1#AutoScheduleStep1";
-				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ScheduleTable";
+				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.LineItem";
 				this._mParams.modelName = "SchedulingModel";
 				this._mParams.modelDataSetPath = "/step1/dataSet";
+				this._mParams.entitySet = "ScheduleSelectSet"
 			} else {
 				this._mParams.viewName = "com.evorait.evoplan.view.scheduling.ReScheduling.ReScheduleStep1#ReScheduleStep1";
 				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ReScheduleTable";
@@ -449,9 +450,10 @@ sap.ui.define([
 			sContainerId = "ConfirmationStep";
 
 			this._mParams.viewName = "com.evorait.evoplan.view.scheduling.AutoScheduling.AutoScheduleStep2#AutoScheduleStep2";
-			this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ResponseTable";
+			this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.LineItem";
 			this._mParams.modelName = "SchedulingModel";
 			this._mParams.modelDataSetPath = "/step2/dataSet";
+			this._mParams.entitySet = "ScheduleResponseSet"
 
 			this._oModel.metadataLoaded().then(function () {
 				//get template and create views
