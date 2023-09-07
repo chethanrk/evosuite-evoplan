@@ -65,6 +65,7 @@ sap.ui.define([
         }.bind(this));
       }
       this._oResponseFilterDialog.then(function (oDialog) {
+        oDialog.getContent()[0].clear();
         oDialog.open();
       });
     },

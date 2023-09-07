@@ -7,8 +7,9 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/core/MessageType",
-    "sap/ui/core/Fragment"
-], function (BaseController, formatter, RowAction, RowActionItem, SchedulingActions, Filter, FilterOperator, MessageType, Fragment) {
+    "sap/ui/core/Fragment",
+    "com/evorait/evoplan/controller/scheduling/SchedulingDialog"
+], function (BaseController, formatter, RowAction, RowActionItem, SchedulingActions, Filter, FilterOperator, MessageType, Fragment, SchedulingDialog) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.scheduling.AutoScheduleStep1", {
@@ -36,6 +37,7 @@ sap.ui.define([
             this._btnInsideDateRange = this.byId("btnInsideDateRange");
 
             this.oSchedulingActions = new SchedulingActions(this);
+            this.oSchedulingDialog = new SchedulingDialog(this);
         },
 
         /**
@@ -48,6 +50,7 @@ sap.ui.define([
             this._oViewModel.setProperty("/Scheduling/sFilterCounts", this.getResourceBundle().getText("xbut.filters") + " (0)");
 
             var oBinding = this._oDemandsTable.getBinding("rows");
+            oBinding.filter([]);
             oBinding.attachChange(function() {
                 var aDataset = this._oSchedulingModel.getProperty("/step1/dataSet"),
                     isAutoSchedule = this._oSchedulingModel.getProperty("/isAutoSchedule");
@@ -174,6 +177,8 @@ sap.ui.define([
                 }).then(function(oDialog) {
                     oDialog.addStyleClass(this._oViewModel.getProperty("/densityClass"));
                     this.getView().addDependent(oDialog);
+                    //used to access from SchedulingDialog to clear the filters on dialog close
+                    this.getOwnerComponent().demandFilterDialog = oDialog;
                     return oDialog;
                 }.bind(this));
             }
