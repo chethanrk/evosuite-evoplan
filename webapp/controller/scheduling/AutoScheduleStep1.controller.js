@@ -7,9 +7,8 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/core/MessageType",
-    "sap/ui/core/Fragment",
-    "com/evorait/evoplan/controller/scheduling/SchedulingDialog"
-], function (BaseController, formatter, RowAction, RowActionItem, SchedulingActions, Filter, FilterOperator, MessageType, Fragment, SchedulingDialog) {
+    "sap/ui/core/Fragment"
+], function (BaseController, formatter, RowAction, RowActionItem, SchedulingActions, Filter, FilterOperator, MessageType, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.scheduling.AutoScheduleStep1", {
@@ -37,7 +36,6 @@ sap.ui.define([
             this._btnInsideDateRange = this.byId("btnInsideDateRange");
 
             this.oSchedulingActions = new SchedulingActions(this);
-            this.oSchedulingDialog = new SchedulingDialog(this);
         },
 
         /**
