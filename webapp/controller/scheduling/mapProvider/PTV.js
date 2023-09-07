@@ -217,7 +217,7 @@ sap.ui.define([
 						var intervalID = setInterval(function() {
 							this._sendPOSTRequestToPTV(this._sDimaWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
 								if(oWatchJobResponse.data.status === "RUNNING"){
-									this.ProgressBarDialog.oComponent.setProgressData({progress:"30"});
+									this.oComponent.ProgressBarDialog.setProgressData({progress:"30"});
 								}
 								if(["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)){ // if successed or failed
 									clearInterval(intervalID);
