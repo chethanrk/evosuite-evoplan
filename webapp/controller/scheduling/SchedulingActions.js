@@ -310,7 +310,8 @@ sap.ui.define([
 				btnOutsideDateRangeText: this.oResourceBundle.getText("xbut.scheduleToogleOutside"),
 				iSelectedResponse: 0,
 				sScheduleType: "",
-				bDateChanged: false
+				bDateChanged: false,
+				bSchedBtnBusy:false
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
 		},
@@ -348,6 +349,7 @@ sap.ui.define([
 						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 					}
 				}
+				this.oViewModel.setProperty("/Scheduling/bSchedBtnBusy",false);
 			}.bind(this));
 		},
 
@@ -482,7 +484,7 @@ sap.ui.define([
 				inside = 0,
 				outside = 0;
 			this.oViewModel.setProperty("/Scheduling/bDateChanged", bEndDateChanged);
-			if (startDate) {
+			if (isFinite(startDate)) {
 				//when enddate datepicker opens set new focused date
 				this.oViewModel.setProperty("/Scheduling/initialFocusedDateValue", oStartDate);
 				//max date for datepicker is always startdate + 14 days
@@ -547,11 +549,6 @@ sap.ui.define([
 				bValidate = false;
 				this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateStart"));
 				return bValidate;
-			}
-			if (endDate.toDate() < oMinDate || endDate.toDate() > oMaxDate) {
-				bValidate = false;
-				this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateEnd"));
-				return bValidate
 			}
 			if (startDate && endDate) {
 				//check if endDate before startDate
@@ -678,7 +675,7 @@ sap.ui.define([
 
 			var aPathsData = [],
 				aNonAssignableDemands = [],
-				oData, oContext, sPath;
+				oData, oContext, sPath,aSelection=[];
 
 			oTable.clearSelection();
 
@@ -694,10 +691,32 @@ sap.ui.define([
 						oData: oData,
 						index: aSelectedRowsIdx[i]
 					});
-					oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
+
+					aSelection.push(aSelectedRowsIdx[i]);
 				} else {
 					aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData, null, true));
 				}
+			}
+			if(aSelection.length>1){
+				/* Here we are creating groups of array in sequence like [[1...n]]
+					so to limit the call of addSelectionInterval based on start and end index.
+				 */
+				var result = aSelection.reduce((r, n) => {
+					var lastSubArray = r[r.length - 1];
+					if(!lastSubArray || lastSubArray[lastSubArray.length - 1] !== n - 1) {
+					  r.push([]);
+					} 
+					r[r.length - 1].push(n);
+					return r;  
+				  }, []);
+
+				  for(var j=0;j<result.length;j++){
+					if(result[j].length > 0){
+						oTable.addSelectionInterval(result[j][0], result[j][result[j].length-1]);
+					}else{
+						oTable.addSelectionInterval(result[j][0], result[j][0]);
+					}
+				  }
 			}
 
 			return {
