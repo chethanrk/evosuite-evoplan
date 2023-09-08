@@ -288,6 +288,11 @@ sap.ui.define([
 			};
 			var oInitialModelState = Object.assign({}, oData);
 			this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags", oInitialModelState);
+
+			//reset filters in smartFilterBar
+			if(this._component.demandFilterDialog){
+				this._component.demandFilterDialog.getContent()[0].clear();
+			}
 		},
 
 		/**

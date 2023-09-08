@@ -460,7 +460,7 @@ sap.ui.define([
 						},
 						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION ? oDemand.oData.QUALIFICATION_DESCRIPTION.split(",") : [],
 						"priority": oDemand.oData.PRIORITY ? parseInt(oDemand.oData.PRIORITY) : 0,
-						"serviceTime": oDemand.oData.Effort ? (parseFloat(oDemand.oData.Effort) * 3600) : 1
+						"serviceTime": parseInt(oDemand.oData.Effort) ? oDemand.oData.DURATION_UNIT === "MIN" ? (parseFloat(oDemand.oData.Effort) * 60) : (parseFloat(oDemand.oData.Effort) * 3600) : 1
 					}
 					oDemandData[oDemand.oData.Guid] = oTempDemandData;
 				});
@@ -478,13 +478,13 @@ sap.ui.define([
 		 */
 		validateDemandDateRanges: function (oStartDate, oEndDate, bEndDateChanged) {
 			var oSchedulingModel = this._controller.getModel("SchedulingModel"),
-				startDate = oStartDate ? moment(oStartDate) : null,
-				endDate = oEndDate ? moment(oEndDate) : null,
+				startDate = (oStartDate && !isNaN(oStartDate)) ? moment(oStartDate) : null,
+				endDate = (oEndDate && !isNaN(oEndDate)) ? moment(oEndDate) : null,
 				aDemands = oSchedulingModel.getProperty("/step1/dataSet"),
 				inside = 0,
 				outside = 0;
 			this.oViewModel.setProperty("/Scheduling/bDateChanged", bEndDateChanged);
-			if (isFinite(startDate)) {
+			if (startDate) {
 				//when enddate datepicker opens set new focused date
 				this.oViewModel.setProperty("/Scheduling/initialFocusedDateValue", oStartDate);
 				//max date for datepicker is always startdate + 14 days

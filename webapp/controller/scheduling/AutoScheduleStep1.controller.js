@@ -48,6 +48,7 @@ sap.ui.define([
             this._oViewModel.setProperty("/Scheduling/sFilterCounts", this.getResourceBundle().getText("xbut.filters") + " (0)");
 
             var oBinding = this._oDemandsTable.getBinding("rows");
+            oBinding.filter([]);
             oBinding.attachChange(function() {
                 var aDataset = this._oSchedulingModel.getProperty("/step1/dataSet"),
                     isAutoSchedule = this._oSchedulingModel.getProperty("/isAutoSchedule");
@@ -123,6 +124,7 @@ sap.ui.define([
             this._oViewModel.setProperty("/Scheduling/sStartDateValueState", "None");
             this.oSchedulingActions.validateDemandDateRanges(new Date(oDate), this._oViewModel.getProperty("/Scheduling/endDate"), false);
             this._checkGeneratedResponse();
+            this._setCustomTableFilter(this._oSmartFilter);
         },
 
         /**
@@ -138,6 +140,7 @@ sap.ui.define([
             this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "None");
             this.oSchedulingActions.validateDemandDateRanges(this._oViewModel.getProperty("/Scheduling/startDate"), new Date(oDate), true);
             this._checkGeneratedResponse();
+            this._setCustomTableFilter(this._oSmartFilter);
         },
 
         /**
@@ -174,6 +177,8 @@ sap.ui.define([
                 }).then(function(oDialog) {
                     oDialog.addStyleClass(this._oViewModel.getProperty("/densityClass"));
                     this.getView().addDependent(oDialog);
+                    //used to access from SchedulingDialog to clear the filters on dialog close
+                    this.getOwnerComponent().demandFilterDialog = oDialog;
                     return oDialog;
                 }.bind(this));
             }
@@ -192,6 +197,7 @@ sap.ui.define([
                 this._oDemandFilterDialog.then(function(oDialog){
                     //adding this to avoid duplicate Id error when used multiple times
                     oSmartFilter = oDialog.getContent()[0];
+                    this._oSmartFilter = oSmartFilter;
                     this._setCustomTableFilter(oSmartFilter);
                     oDialog.close();
                 }.bind(this));
