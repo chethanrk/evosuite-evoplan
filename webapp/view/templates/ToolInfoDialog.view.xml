@@ -16,7 +16,7 @@
 				columnsL="2" columnsM="1" singleContainerFullSize="false">
 				<form:content>
 					<Label text="{/#Assignment/DateFrom/@sap:label}"/>
-					<DateTimePicker name="DateFrom"
+					<DateTimePicker id="idDateFromAssignInf" name="DateFrom"
 						value="{path:'assignment>/DateFrom', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true} }"
 						change="onAssignmentDateChange" enabled="{assignment>/AllowChange}"/>
 					<Label text="{/#Assignment/DateTo/@sap:label}"/>
