@@ -172,7 +172,7 @@ sap.ui.define([
 					this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 				} else if (this._mParameters.bFromMap) {
 					this._eventBus.publish("BaseController", "refreshMapView", {});
-				} else if (this._mParameters.bFromDetail) {
+				} else if (this._mParameters.bFromDetail || this._mParameters.bFromGanttDetail) {
 					this._eventBus.publish("BaseController", "refreshFullGantt", this._loadGanttData, this);
 					this._eventBus.publish("BaseController", "refreshDemandOverview", {});
 				}
