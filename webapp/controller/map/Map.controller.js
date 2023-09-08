@@ -250,6 +250,7 @@ sap.ui.define([
 
 		//TODO comment
 		getGroupHeader: function (oGroup) {
+			console.log(oGroup.key);
 			return new GroupHeaderListItem({
 				title: oGroup.key,
 				upperCase: false
