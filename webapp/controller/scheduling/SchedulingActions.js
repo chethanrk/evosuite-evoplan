@@ -460,7 +460,7 @@ sap.ui.define([
 						},
 						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION ? oDemand.oData.QUALIFICATION_DESCRIPTION.split(",") : [],
 						"priority": oDemand.oData.PRIORITY ? parseInt(oDemand.oData.PRIORITY) : 0,
-						"serviceTime": oDemand.oData.Effort ? (parseFloat(oDemand.oData.Effort) * 3600) : 1
+						"serviceTime": parseInt(oDemand.oData.Effort) ? oDemand.oData.DURATION_UNIT === "MIN" ? (parseFloat(oDemand.oData.Effort) * 60) : (parseFloat(oDemand.oData.Effort) * 3600) : 1
 					}
 					oDemandData[oDemand.oData.Guid] = oTempDemandData;
 				});
