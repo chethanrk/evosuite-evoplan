@@ -84,7 +84,9 @@ sap.ui.define([
 				this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
 
 				this.localStorage.put("Evo-Action-page", "DemandDetails");
-				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, {
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, this.oViewModel.getProperty("/bFromGanttDemandDetails") ? {
+					bFromGanttDetail: true
+				} : {
 					bFromDetail: true
 				});
 			} else {
@@ -108,7 +110,9 @@ sap.ui.define([
 					sPath: sPath,
 					oData: oData
 				}];
-			this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedData, {
+			this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedData, this.oViewModel.getProperty("/bFromGanttDemandDetails") ? {
+				bFromGanttDetail: true
+			} : {
 				bFromDetail: true
 			});
 
@@ -134,7 +138,9 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oAssignmentData = oModel.getProperty(sPath),
-				mParameters = {
+				mParameters = this.oViewModel.getProperty("/bFromGanttDemandDetails") ? {
+					bFromGanttDetail: true
+				} : {
 					bFromDetail: true
 				},
 				oDemandContext = this.getView().getBindingContext().getObject();
@@ -164,12 +170,14 @@ sap.ui.define([
 			this._eventBus.publish("StatusSelectDialog", "changeStatusDemand", {
 				selectedPaths: oSelectedData,
 				functionKey: sFunctionKey,
-				parameters: {
+				parameters: this.oViewModel.getProperty("/bFromGanttDemandDetails") ? {
+					bFromGanttDetail: true
+				} : {
 					bFromDetail: true
 				}
 			});
 		},
-		
+
 		/**
 		 * This method required when user directly open the demand overview page
 		 * and change status or assignment actions are performed
@@ -180,7 +188,7 @@ sap.ui.define([
 		_triggerRefreshDemand: function () {
 			this.getView().getElementBinding().refresh();
 		},
-		
+
 
 	});
 });

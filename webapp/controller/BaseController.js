@@ -336,6 +336,8 @@ sap.ui.define([
 				if (!oParameter.bIsFromPRTAssignmentInfo) {
 					eventBus.publish("BaseController", "refreshToolsTable", {});
 				}
+			} else if (oParameter.bFromGanttDetail) {
+				eventBus.publish("BaseController", "refreshAssignments");
 			}
 
 		},

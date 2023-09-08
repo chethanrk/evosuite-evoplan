@@ -141,8 +141,8 @@ sap.ui.define([
 					return sPRTIcon;
 				}
 				return sStatusIcon;
-			} else if (sStatusIcon) {
-				return sStatusIcon;
+			} else if (sStatusIcon || sPRTIcon) {
+				return sStatusIcon || sPRTIcon;
 			} else {
 				if (iconFormat) {
 					return iconFormat.icon || "";

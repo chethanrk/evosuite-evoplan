@@ -23,6 +23,7 @@ sap.ui.define([
 			if (!this.oViewModel.getProperty("/bObjectPageRouteMatchAttached")) {
 				this.oRouter.attachRouteMatched(function (oEvent) {
 					this.oViewModel.setProperty("/bObjectPageRouteMatchAttached", true);
+					this.oViewModel.setProperty("/bFromGanttDemandDetails", false);
 					var sRouteName = oEvent.getParameter("name"),
 						oArgs = oEvent.getParameter("arguments"),
 						sViewName = null,
@@ -62,6 +63,7 @@ sap.ui.define([
 								this.getModel("viewModel").setProperty("/detailPageBreadCrum", this.oResourceBundle.getText("xbut.pageNewGantt"));
 							}
 							this._onRouteMatched(oEvent, sViewName, "DemandSet", mParams, this.callBackFn2);
+							this.getModel("viewModel").setProperty("/bFromGanttDemandDetails", true);
 						} else if (sRouteName === "assetDemandDetail") {
 							sViewName = "com.evorait.evoplan.view.templates.DemandDetails#DemandDetailTabs";
 							mParams = {
