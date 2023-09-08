@@ -250,7 +250,6 @@ sap.ui.define([
 
 		//TODO comment
 		getGroupHeader: function (oGroup) {
-			console.log(oGroup.key);
 			return new GroupHeaderListItem({
 				title: oGroup.key,
 				upperCase: false
@@ -1236,7 +1235,6 @@ sap.ui.define([
 			this.setMapBusy(true);
 			var sSelect="$select=Guid,IS_SELECTED,MAP_MARKER_COLOUR,DEMAND_KEY,LONGITUDE,LATITUDE,Status,EffortUnit,DateFrom,DateTo,START_DATE,END_DATE,EARL_SCHED_START_DATE,EARL_SCHED_FIN_DATE,LATE_SCHED_START_DATE,LATE_SCHED_FIN_DATE,ACTUAL_START_DATE,ACTUAL_FIN_DATE,NOTIF_REQ_START_DATE,NOTIF_REQ_END_DATE,NOTIFICATION_DATE,FIXED_ASSGN_START_DATE,FIXED_ASSGN_END_DATE,OPERATION_LTXT,ORDERID,OPERATIONID,REVISION_NO,NOTIFICATION,MATERIAL_STATUS"
 			this.getOwnerComponent().readData("/DemandSet",null,sSelect).then(function (response) {
-				console.log(response);
 				this.setMapBusy(false);
 				this._viewModel.setProperty("/mapSettings/DemandSet", response.results);
 				this._viewModel.refresh();
