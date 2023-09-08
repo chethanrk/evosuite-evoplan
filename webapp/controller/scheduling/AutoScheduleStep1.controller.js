@@ -48,6 +48,7 @@ sap.ui.define([
             this._oViewModel.setProperty("/Scheduling/sFilterCounts", this.getResourceBundle().getText("xbut.filters") + " (0)");
 
             var oBinding = this._oDemandsTable.getBinding("rows");
+            oBinding.filter([]);
             oBinding.attachChange(function() {
                 var aDataset = this._oSchedulingModel.getProperty("/step1/dataSet"),
                     isAutoSchedule = this._oSchedulingModel.getProperty("/isAutoSchedule");
@@ -176,6 +177,8 @@ sap.ui.define([
                 }).then(function(oDialog) {
                     oDialog.addStyleClass(this._oViewModel.getProperty("/densityClass"));
                     this.getView().addDependent(oDialog);
+                    //used to access from SchedulingDialog to clear the filters on dialog close
+                    this.getOwnerComponent().demandFilterDialog = oDialog;
                     return oDialog;
                 }.bind(this));
             }
