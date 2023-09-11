@@ -360,11 +360,13 @@ sap.ui.define([
 		_setResourceData: function (oPayload, aResourceData) {
 			var aResourceLocations = [],
 				aVehicles = [],
+				oVehicle = {},
 				aVehicleIDs = [],
 				aDrivers = [],
 				aSchedulingData = this.oViewModel.getProperty("/Scheduling"),
 				aHorizonDateIntervals = this._getDateIntervals(aSchedulingData.startDate, aSchedulingData.endDate),
-				aWorkSchedules = [];
+				aWorkSchedules = [],
+				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD");
 
 
 			for (var sGuid in aResourceData) {
@@ -393,12 +395,15 @@ sap.ui.define([
 
 				// Vehicle objects added as for the resource
 				if (aVehicleIDs && aVehicleIDs.length) {
-					aVehicles.push({
+					oVehicle = {
 						"ids": _.cloneDeep(aVehicleIDs),
 						"startLocationId": sGuid + "_location",
-						"endLocationId": sGuid + "_location",
-						"equipment": aResourceData[sGuid].qualifications
-					});
+						"endLocationId": sGuid + "_location"
+					};
+					if (bQualificationCheck){
+						oVehicle["equipment"] = aResourceData[sGuid].qualifications;
+					}
+					aVehicles.push(oVehicle);
 				}
 				// Need to call method to create input plans
 				// getInputPlan()
@@ -420,7 +425,9 @@ sap.ui.define([
 		_setDemandsData: function (oPayload, aDemandsData) {
 			//code for payload creation with demands data needs to place here
 			var locations = [],
-				orders = [];
+				orders = [],
+				oOrder = {},
+				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD");
 
 			for (let oDemandGuid in aDemandsData) {
 				locations.push({
@@ -435,14 +442,17 @@ sap.ui.define([
 					}
 				});
 
-				orders.push({
+				oOrder = {
 					"$type": "VisitOrder",
 					"id": oDemandGuid,
 					"locationId": oDemandGuid + "_location",
 					"priority": aDemandsData[oDemandGuid].priority,
-					"serviceTime": aDemandsData[oDemandGuid].serviceTime,
-					"requiredVehicleEquipment": aDemandsData[oDemandGuid].qualification
-				});
+					"serviceTime": aDemandsData[oDemandGuid].serviceTime
+				};
+				if (bQualificationCheck){
+					oOrder["requiredVehicleEquipment"] = aDemandsData[oDemandGuid].qualification;
+				}
+				orders.push(oOrder);
 			}
 
 			oPayload.locations = oPayload.locations.concat(locations);
