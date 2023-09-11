@@ -105,8 +105,8 @@ sap.ui.define([
 			}
 			// setting the flag to hide show go to details button
 			if (mParameters) {
-				if (mParameters.hasOwnProperty("bFromDetail") || mParameters.hasOwnProperty("bFromGanttDetail")) {
-					if (mParameters.bFromDetail === true || mParameters.bFromGanttDetail === true) {
+				if (mParameters.hasOwnProperty("bFromDetail")) {
+					if (mParameters.bFromDetail === true) {
 						oAssignment.ShowGoToDetailBtn = false;
 					}
 				}

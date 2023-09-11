@@ -84,9 +84,7 @@ sap.ui.define([
 				this.onAllowVendorAssignment(this.getModel("viewModel"), this.getModel("user"));
 
 				this.localStorage.put("Evo-Action-page", "DemandDetails");
-				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, this.oViewModel.getProperty("/bFromGanttDemandDetails") ? {
-					bFromGanttDetail: true
-				} : {
+				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, {
 					bFromDetail: true
 				});
 			} else {
@@ -110,9 +108,7 @@ sap.ui.define([
 					sPath: sPath,
 					oData: oData
 				}];
-			this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedData, this.oViewModel.getProperty("/bFromGanttDemandDetails") ? {
-				bFromGanttDetail: true
-			} : {
+			this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedData, {
 				bFromDetail: true
 			});
 
@@ -138,9 +134,7 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oAssignmentData = oModel.getProperty(sPath),
-				mParameters = this.oViewModel.getProperty("/bFromGanttDemandDetails") ? {
-					bFromGanttDetail: true
-				} : {
+				mParameters = {
 					bFromDetail: true
 				},
 				oDemandContext = this.getView().getBindingContext().getObject();
@@ -167,15 +161,15 @@ sap.ui.define([
 					oData: oData
 				}];
 
+
 			this._eventBus.publish("StatusSelectDialog", "changeStatusDemand", {
 				selectedPaths: oSelectedData,
 				functionKey: sFunctionKey,
-				parameters: this.oViewModel.getProperty("/bFromGanttDemandDetails") ? {
-					bFromGanttDetail: true
-				} : {
+				parameters: {
 					bFromDetail: true
 				}
 			});
+			this._setUpdateResources();
 		},
 
 		/**
@@ -188,6 +182,25 @@ sap.ui.define([
 		_triggerRefreshDemand: function () {
 			this.getView().getElementBinding().refresh();
 		},
+
+		/**
+		 * This method sets aUpdatesResources array to update selected resources
+		 * when change status function is triggered
+		 * @author Bhumika
+		 */
+		_setUpdateResources: function () {
+			var sBindPath = this.getView().getElementBinding().sPath,
+				oBindObj = this.getModel().getData(sBindPath),
+				aAssignmentList = oBindObj.DemandToAssignment.__list,
+				oAsgnObj;
+
+			if (aAssignmentList) {
+				for (let i = 0; i < aAssignmentList.length; i++) {
+					oAsgnObj = this.getModel().getData("/" + aAssignmentList[i]);
+					this._updatedDmdResources(this.getModel("viewModel"), oAsgnObj);
+				}
+			}
+		}
 
 
 	});

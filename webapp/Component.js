@@ -677,8 +677,7 @@ sap.ui.define([
 				},
 				sViewRoute: null,
 				aUpdatedResources: [],
-				yearMatrix:[],
-				bFromGanttDemandDetails: false
+				yearMatrix:[]
 			});
 
 			oViewModel.setSizeLimit(999999999);
