@@ -1108,6 +1108,16 @@ sap.ui.define([
 				return nSelectAll;
 			}
 			return nThreshold;
+		},
+		/*
+		 * SingleDayPlanner Display Date Contactination with Time
+		 * @param sDate,sDate
+		 * @return Date
+		 */
+		formatDisplayDate : function(sDate, sTime){
+			if(sDate && sTime){
+				return new Date(sDate.getTime() + sTime.ms);
+			}
 		}
 	};
 });
