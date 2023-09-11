@@ -169,7 +169,7 @@ sap.ui.define([
 					bFromDetail: true
 				}
 			});
-			this._setUpdateResources();
+			this._setUpdateResources(oData);
 		},
 
 		/**
@@ -188,10 +188,8 @@ sap.ui.define([
 		 * when change status function is triggered
 		 * @author Bhumika
 		 */
-		_setUpdateResources: function () {
-			var sBindPath = this.getView().getElementBinding().sPath,
-				oBindObj = this.getModel().getData(sBindPath),
-				aAssignmentList = oBindObj.DemandToAssignment.__list,
+		_setUpdateResources: function (oData) {
+			var aAssignmentList = oData.DemandToAssignment.__list,
 				oAsgnObj;
 
 			if (aAssignmentList) {
