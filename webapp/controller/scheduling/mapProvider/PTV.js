@@ -117,7 +117,7 @@ sap.ui.define([
 		 */
 		getPTVPayload: function (aResourceData, aDemandsData) {
 			var oPayload = this._getPayloadStructure(),
-				sDialogMsg= this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.analysinglocations");
+				sDialogMsg = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.analysinglocations");
 			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload
 
 			if (oPayload.fleet.drivers.length === 0 || oPayload.fleet.vehicles.length === 0) { //Stop the process of PTV API call when no drivers
@@ -127,8 +127,8 @@ sap.ui.define([
 			}
 
 			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
-			this.oComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
-			return this._createDistanceMatrix(aResourceData, aDemandsData).then(function(sMatrixId) {
+			this.oComponent.ProgressBarDialog.setProgressData({ description: sDialogMsg });
+			return this._createDistanceMatrix(aResourceData, aDemandsData).then(function (sMatrixId) {
 				this.oComponent.getModel("viewModel").setProperty("/Scheduling/sDistanceMatrixId", sMatrixId);
 				oPayload.distanceMode = {
 					"$type": "ExistingDistanceMatrix",
@@ -145,46 +145,46 @@ sap.ui.define([
 		 * @param {object} oRequestBody 
 		 * @returns {object} - promise
 		 */
-		callPTVPlanTours: function (oPlanTourRequestBody){
+		callPTVPlanTours: function (oPlanTourRequestBody) {
 			var sDialogMsg = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.fetchingSchedulingData"),
 				sMatrixId;
-			this.oComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
+			this.oComponent.ProgressBarDialog.setProgressData({ description: sDialogMsg });
 			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oPlanTourRequestBody).then(function (oPlanTourResponse) {
-				this.oComponent.ProgressBarDialog.setProgressData({progress:"60"});
+				this.oComponent.ProgressBarDialog.setProgressData({ progress: "60" });
 				if (oPlanTourResponse) {
 					//call watch job
 					return new Promise(function (resolve) {
 						var oWatchJobRequestBody = {
 							id: oPlanTourResponse.data.id
 						};
-						var intervalID = setInterval(function() {
-							this._sendPOSTRequestToPTV(this._sWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
-								if(oWatchJobResponse.data.status === "RUNNING"){
-									this.ProgressBarDialog.oComponent.setProgressData({progress:"70"});
+						var intervalID = setInterval(function () {
+							this._sendPOSTRequestToPTV(this._sWatchJobUrl, oWatchJobRequestBody).then(function (oWatchJobResponse) {
+								if (oWatchJobResponse.data.status === "RUNNING") {
+									this.ProgressBarDialog.oComponent.setProgressData({ progress: "70" });
 								}
-								if(["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)){ // if successed or failed
+								if (["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)) { // if successed or failed
 									clearInterval(intervalID);
-									resolve (oWatchJobResponse);
+									resolve(oWatchJobResponse);
 								}
 							}.bind(this));
-						}.bind(this),2000);
+						}.bind(this), 2000);
 					}.bind(this));
-				}else{
+				} else {
 					return;
-				}		
-			}.bind(this)).then(function(oWatchJobResponse){
-				this.oComponent.ProgressBarDialog.setProgressData({progress:"90"});
-				if(oWatchJobResponse){
+				}
+			}.bind(this)).then(function (oWatchJobResponse) {
+				this.oComponent.ProgressBarDialog.setProgressData({ progress: "90" });
+				if (oWatchJobResponse) {
 					//call fetch response
 					var oFetchResponseRequestBody = {
 						id: oWatchJobResponse.data.id
 					};
 					return this._sendPOSTRequestToPTV(this._sFetchToursResponseUrl, oFetchResponseRequestBody);
-				}else{
+				} else {
 					return;
 				}
-			}.bind(this)).then(function(oFetchToursResponse){
-				this.oComponent.ProgressBarDialog.setProgressData({progress:"100"});
+			}.bind(this)).then(function (oFetchToursResponse) {
+				this.oComponent.ProgressBarDialog.setProgressData({ progress: "100" });
 				//delete the matrix Id once the plan Tours is successfully fetched
 				sMatrixId = this.oComponent.getModel("viewModel").getProperty("/Scheduling/sDistanceMatrixId");
 				this._deleteDistanceMatrix(sMatrixId);
@@ -207,41 +207,41 @@ sap.ui.define([
 		_createDistanceMatrix: function (aStartPoints, aPointsToVisit) {
 			var oRequestBody = this._createPayloadForDistanceMatrixRequest(aStartPoints, aPointsToVisit);
 			return this._sendPOSTRequestToPTV(this._sStartCreateDistanceMatrixUrl, oRequestBody).then(function (oCreateMatrixResponse) {
-				this.oComponent.ProgressBarDialog.setProgressData({progress:"20"});
-				if(oCreateMatrixResponse){
+				this.oComponent.ProgressBarDialog.setProgressData({ progress: "20" });
+				if (oCreateMatrixResponse) {
 					//call watchJob
-					return new Promise(function(resolve){
+					return new Promise(function (resolve) {
 						var oWatchJobRequestBody = {
 							id: oCreateMatrixResponse.data.id
 						};
-						var intervalID = setInterval(function() {
-							this._sendPOSTRequestToPTV(this._sDimaWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
-								if(oWatchJobResponse.data.status === "RUNNING"){
-									this.oComponent.ProgressBarDialog.setProgressData({progress:"30"});
+						var intervalID = setInterval(function () {
+							this._sendPOSTRequestToPTV(this._sDimaWatchJobUrl, oWatchJobRequestBody).then(function (oWatchJobResponse) {
+								if (oWatchJobResponse.data.status === "RUNNING") {
+									this.oComponent.ProgressBarDialog.setProgressData({ progress: "30" });
 								}
-								if(["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)){ // if successed or failed
+								if (["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)) { // if successed or failed
 									clearInterval(intervalID);
-									resolve (oWatchJobResponse);
+									resolve(oWatchJobResponse);
 								}
 							}.bind(this));
-						}.bind(this),2000);
+						}.bind(this), 2000);
 					}.bind(this));
-				}else{
+				} else {
 					return;
 				}
-			}.bind(this)).then(function(oWatchJobResponse){
-				this.oComponent.ProgressBarDialog.setProgressData({progress:"40"});
-				if(oWatchJobResponse){
+			}.bind(this)).then(function (oWatchJobResponse) {
+				this.oComponent.ProgressBarDialog.setProgressData({ progress: "40" });
+				if (oWatchJobResponse) {
 					//call fetch response
 					var oFetchResponseRequestBody = {
 						id: oWatchJobResponse.data.id
 					};
 					return this._sendPOSTRequestToPTV(this._sFetchDistanceMatrixUrl, oFetchResponseRequestBody);
-				}else{
+				} else {
 					return;
 				}
-			}.bind(this)).then(function(oFetchDistMatrixResponse){
-				this.oComponent.ProgressBarDialog.setProgressData({progress:"50"});
+			}.bind(this)).then(function (oFetchDistMatrixResponse) {
+				this.oComponent.ProgressBarDialog.setProgressData({ progress: "50" });
 				return oFetchDistMatrixResponse.data.summary.id;
 			}.bind(this));
 		},
@@ -262,14 +262,14 @@ sap.ui.define([
 				}
 			};
 
-			for(var sGuid in aResourceData){
+			for (var sGuid in aResourceData) {
 				var oPoint = _.cloneDeep(oPointTemplate);
 				oPoint.offRoadCoordinate.x = aResourceData[sGuid].aData.LONGITUDE;
 				oPoint.offRoadCoordinate.y = aResourceData[sGuid].aData.LATITUDE;
 				aResourcePoints.push(oPoint);
 			}
 
-			for(var sGuid in aDemandsData){
+			for (var sGuid in aDemandsData) {
 				var oPoint = _.cloneDeep(oPointTemplate);
 				oPoint.offRoadCoordinate.x = aDemandsData[sGuid].location.x;
 				oPoint.offRoadCoordinate.y = aDemandsData[sGuid].location.y;
@@ -294,7 +294,7 @@ sap.ui.define([
 		 * @param {string} sMatrixId - Created matrix Id
 		 * Passing matrix Id to this function after using in planTours API will delete the Matrix
 		 */
-		_deleteDistanceMatrix: function(sMatrixId) {
+		_deleteDistanceMatrix: function (sMatrixId) {
 			var oDeleteMatrix = {
 				"id": sMatrixId
 			};
@@ -399,6 +399,7 @@ sap.ui.define([
 						"endLocationId": sGuid + "_location",
 						"equipment": aResourceData[sGuid].qualifications
 					});
+
 				}
 				// Need to call method to create input plans
 				// getInputPlan()
