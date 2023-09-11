@@ -1111,12 +1111,12 @@ sap.ui.define([
 		},
 		/*
 		 * SingleDayPlanner Display Date Contactination with Time
-		 * @param sDate,sDate
+		 * @param oDate, oTime
 		 * @return Date
 		 */
-		formatDisplayDate : function(sDate, sTime){
-			if(sDate && sTime){
-				return new Date(sDate.getTime() + sTime.ms);
+		formatDisplayDate : function(oDate, oTime){
+			if(oDate && oTime){
+				return new Date(oDate.getTime() + oTime.ms);
 			}
 		}
 	};
