@@ -315,7 +315,6 @@ sap.ui.define([
 				bReSchedBtnBusy:false
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
-			console.log("method trigerred");
 		},
 
 		/**
