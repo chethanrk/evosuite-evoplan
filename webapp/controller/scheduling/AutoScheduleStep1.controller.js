@@ -151,7 +151,7 @@ sap.ui.define([
          */
         onPressInsideDate: function(oEvent){
             this._oInsideFilterBtn = oEvent.getSource();
-            this._setCustomTableFilter();
+            this._setCustomTableFilter(this._oSmartFilter);
         },
 
         /**
@@ -160,7 +160,7 @@ sap.ui.define([
          */
         onPressOutsideDate: function(oEvent){
             this._oOutsideFilterBtn = oEvent.getSource();
-            this._setCustomTableFilter();
+            this._setCustomTableFilter(this._oSmartFilter);
         },
 
         /**
