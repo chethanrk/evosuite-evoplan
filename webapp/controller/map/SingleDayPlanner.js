@@ -123,6 +123,7 @@ sap.ui.define([
 			//set view for this calendar base on NodeType
 			this._setCalenderViews(sNodeType);
 			this.oSinglePlanningModel.setProperty("/startDate", oTreeData.StartDate);
+			this.oSinglePlanningModel.setProperty("/startTime", oTreeData.StartTime);
 			this.oSinglePlanningModel.setProperty("/parentData", oParentData);
 			this.oSinglePlanningModel.setProperty("/startHour", parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_STARTHR")) || 0);
 			this.oSinglePlanningModel.setProperty("/endHour", parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_ENDHR")) || 24);

@@ -1473,6 +1473,23 @@ sap.ui.define([
 				NodeId: sNodeId
 			};
 			aUpdatedResources.push(oUpdatedResObj);
+		},
+
+		/*
+		* Function to validate manually entered date format in Assignment Dialogs (For both Demand and PRT)
+		*/
+		onValidateDateFormat : function(oSource, bValidFormat, oViewModel){
+			oSource.setValueState("None");
+			if (!bValidFormat) {
+				oSource.setValueState("Error");
+			}
+			var bValid = true,
+			eErrorDateFrom = this.getView().byId("idDateFromAssignInf").getValueState(),
+			eErrorDateTo = this.getView().byId("idDateToAssignInf").getValueState();
+			if (eErrorDateFrom === "Error" || eErrorDateTo === "Error") {
+				bValid = false;
+			}
+			oViewModel.setProperty("/bEnableAsgnSave", bValid);
 		}
 
 	});

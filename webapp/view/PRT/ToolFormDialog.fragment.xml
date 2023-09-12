@@ -9,7 +9,7 @@
 				enabled="{viewModel>/validateIW32Auth}"/>
 			<Button text="{i18n>xbut.buttonSave}" type="Emphasized" press="onSaveDialog"
 				visible="{ parts:[ {path:'assignment>/AllowChange'}, {path:'assignment>/AllowReassign'} ], formatter:'.formatter.formartVisibleSaveBtn' }"
-				enabled="{viewModel>/validateIW32Auth}"/>
+				enabled="{= ${viewModel>/validateIW32Auth} &amp;&amp; ${viewModel>/bEnableAsgnSave}}"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

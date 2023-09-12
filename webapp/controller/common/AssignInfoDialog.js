@@ -135,6 +135,7 @@ sap.ui.define([
 			}
 			this._getAssignedDemand(oAssignementPath, data);
 			this._assignmentGuid = oAssignment.AssignmentGuid;
+			this._oView.getModel("viewModel").setProperty("/bEnableAsgnSave", true);
 		},
 
 		/**

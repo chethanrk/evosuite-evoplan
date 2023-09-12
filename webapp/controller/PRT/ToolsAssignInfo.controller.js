@@ -45,5 +45,16 @@ sap.ui.define([
 				aSelectedPaths: ["/AssignmentSet('" + this.oView.getModel('assignment').getProperty('/Guid') + "')"]
 			});
 		},
+		
+		/*
+		*Function is triggered when we change ToolInfoAsgn Dialog Date Fields
+		*For validating invalid date formats
+		*/
+		onAssignmentDateChange: function (oEvent) {
+			var oSource = oEvent.getSource(),
+				bValidFormat = oEvent.getParameter("valid"),
+				oViewModel = this.oView.getModel("viewModel");
+			this.onValidateDateFormat(oSource, bValidFormat, oViewModel);
+		},
 	});
 });
