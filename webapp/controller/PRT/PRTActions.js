@@ -424,7 +424,7 @@ sap.ui.define([
 					oComponent = this.getOwnerComponent(),
 					oView = this.getView();
 				var sAction = oResourceBundle.getText("xbut.proceed"),
-					sMsg = oResourceBundle.getText("ymsg.PRTAvailability", [sResource]);
+					sMsg = oResourceBundle.getText("ymsg.PRTAvailability");
 				sap.m.MessageBox.warning(
 					sMsg, {
 						actions: [sAction, sap.m.MessageBox.Action.CANCEL],
