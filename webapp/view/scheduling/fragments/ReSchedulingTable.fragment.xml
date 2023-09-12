@@ -3,7 +3,7 @@
 	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<template:with path="templateProperties>/" var="tempProps">
 		<template:with path="templateProperties>/annotationPath" helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="target">
-			<template:with path="target>" var="data">
+			<template:with path="target>Data" var="data">
 
 				<table:Table id="step1_SchedulingTable" rows="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\' }' }"
 					busyStateChanged="onBusyStateChanged"
@@ -50,7 +50,7 @@
 									<table:template>
 										<template:if test="{:= ${data>EdmType} === 'Edm.Date'}">
 											<template:then>
-												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Date\', style: \'long\'}' }" wrapping="false" />
+												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Date\', formatOptions:{ pattern: \'MMM dd, yyyy\'}}' }" wrapping="false" />
 											</template:then>
 											<template:elseif test="{:= ${data>EdmType} === 'Edm.DateTime'}">
 												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.DateTime\', formatOptions:{ pattern: \'MMM dd, yyyy\'}}' }" wrapping="false" />
