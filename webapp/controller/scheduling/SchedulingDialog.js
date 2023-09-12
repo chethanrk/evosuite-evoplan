@@ -498,7 +498,7 @@ sap.ui.define([
 								aData = {};
 
 								//Demand related info
-								aData = aDemandsData[tourItem.orderId].data;
+								aData = _.clone(aDemandsData[tourItem.orderId].data);
 
 								//Resource related info
 								aData.ResourceGuid = sResourceGuid;
@@ -536,7 +536,7 @@ sap.ui.define([
 						aData = {};
 
 						aData.DemandGuid = aOrder;
-						aData = aDemandsData[aOrder].data;
+						aData = _.clone(aDemandsData[aOrder].data);
 						aData.NotPlanState = IconColor.Critical;
 						aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlannable");
 						aData.PLANNED = false;
@@ -557,7 +557,7 @@ sap.ui.define([
 							aData = {};
 
 							aData.DemandGuid = aOrder;
-							aData = aDemandsData[aOrder].data;
+							aData = _.clone(aDemandsData[aOrder].data);
 							aData.NotPlanState = IconColor.Negative;
 							aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlanned");
 							aData.PLANNED = false;
