@@ -50,7 +50,7 @@
 									<table:template>
 										<template:if test="{:= ${data>EdmType} === 'Edm.Date'}">
 											<template:then>
-												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Date\', style: \'long\'}' }" wrapping="false" />
+												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Date\', formatOptions:{ pattern: \'MMM dd, yyyy\'} }' }" wrapping="false" />
 											</template:then>
 											<template:elseif test="{:= ${data>EdmType} === 'Edm.DateTime'}">
 												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.DateTime\', formatOptions:{ pattern: \'MMM dd, yyyy\'}}' }" wrapping="false" />
