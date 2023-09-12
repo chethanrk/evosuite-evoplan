@@ -137,8 +137,10 @@ sap.ui.define([
          */
         onChangeDateTo: function(oEvent){
             var oDate = oEvent.getSource().getValue();
+            oDate = new Date(new Date(oDate).getTime() - 1000);
+            oEvent.getSource().setDateValue(oDate);
             this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "None");
-            this.oSchedulingActions.validateDemandDateRanges(this._oViewModel.getProperty("/Scheduling/startDate"), new Date(oDate), true);
+            this.oSchedulingActions.validateDemandDateRanges(this._oViewModel.getProperty("/Scheduling/startDate"), oDate, true);
             this._checkGeneratedResponse();
             this._setCustomTableFilter(this._oSmartFilter);
         },
@@ -214,6 +216,14 @@ sap.ui.define([
                 }.bind(this));
             }
         },
+        /**
+         * Called when utilization changes
+         * @param {object} oEvent 
+         */
+        onUtilizationChange: function (oEvent) {
+            this._checkGeneratedResponse();
+        },
+
 
 
         /* =========================================================== */
