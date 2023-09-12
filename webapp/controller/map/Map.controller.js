@@ -945,15 +945,6 @@ sap.ui.define([
 			this._bDemandListScroll = false;
 		},
 
-		/**
-		 * On press of auto-schedule button
-		 * Function to handle press event Plan Demands
-		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
-		 */	
-		onAutoscheduleButtonPress: function(oEvent){
-			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
-		},
-
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
