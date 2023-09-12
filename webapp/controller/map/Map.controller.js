@@ -196,11 +196,6 @@ sap.ui.define([
 					public: true,
 					final: false,
 					overrideExecution: OverrideExecution.Instead
-				},
-				onAutoscheduleButtonPress: {
-					public: true,
-					final: false,
-					overrideExecution: OverrideExecution.Instead
 				}
 			}
 		},
