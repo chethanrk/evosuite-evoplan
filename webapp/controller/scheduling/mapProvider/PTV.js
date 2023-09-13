@@ -477,12 +477,13 @@ sap.ui.define([
 		 * @return {Object} - array of formatted date 
 		 */
 		_getDateIntervals: function (aStartDate, aEndDate) {
+			var aStartDateTmp = new Date(aStartDate);
 			var aHorizonDateIntervals = [];
-			while (aStartDate.getDate() != aEndDate.getDate()) {
-				aHorizonDateIntervals.push(this._getFormattedDate(aStartDate).substr(0, 10));
-				aStartDate.setDate(aStartDate.getDate() + 1)
+			while (aStartDateTmp.getDate() != aEndDate.getDate()) {
+				aHorizonDateIntervals.push(this._getFormattedDate(aStartDateTmp).substr(0, 10));
+				aStartDateTmp.setDate(aStartDateTmp.getDate() + 1)
 			}
-			aHorizonDateIntervals.push(this._getFormattedDate(aStartDate).substr(0, 10));
+			aHorizonDateIntervals.push(this._getFormattedDate(aStartDateTmp).substr(0, 10));
 			return aHorizonDateIntervals;
 		},
 
