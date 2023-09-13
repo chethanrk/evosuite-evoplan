@@ -680,7 +680,7 @@ sap.ui.define([
 
 			var aPathsData = [],
 				aNonAssignableDemands = [],
-				oData, oContext, sPath,aSelection=[];
+				oData, oContext, sPath, aSelection = [], nDuration;
 
 			oTable.clearSelection();
 
@@ -688,9 +688,10 @@ sap.ui.define([
 				oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
 				sPath = oContext.getPath();
 				oData = this.oDataModel.getProperty(sPath);
+				nDuration = this._getDemandDurationInSeconds(oData.DURATION, oData.DURATION_UNIT);
 
 				//Added condition to check for number of assignments to plan demands via scheduling
-				if (oData.ALLOW_AUTOSCHEDULE) {
+				if (oData.ALLOW_AUTOSCHEDULE && nDuration <= 1209600) {
 					aPathsData.push({
 						sPath: sPath,
 						oData: oData,
