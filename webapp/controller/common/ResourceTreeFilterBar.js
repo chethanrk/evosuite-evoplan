@@ -592,7 +592,8 @@ sap.ui.define([
 			oStartDate = oStartDateSource.getDateValue(),
 			oEndDate = oEndDateSource.getDateValue(),
 			start = oStartDate,
-			end = oEndDate;
+			end = oEndDate,
+			aYearMatrix = this._component.getModel("viewModel").getProperty("/yearMatrix");
 
 			if (selectedHierarchyView === "TIMEWEEK"){
 				start = moment(oStartDate).startOf("week").toDate();
@@ -601,8 +602,20 @@ sap.ui.define([
 				start = moment(oStartDate).startOf("month").toDate();
 				end = moment(oEndDate).endOf("month").toDate();
 			} else if (selectedHierarchyView === "TIMEQUART"){
-				start = moment(oStartDate).startOf("quarter").toDate();
-				end = moment(oEndDate).endOf("quarter").toDate();
+				var startMonth = moment(oStartDate).month();
+				var endMonth = moment(oEndDate).month();
+				for(var i=0;i<4;i++){
+					for(var j=0;j<3;j++){
+						if (aYearMatrix[i][j] === startMonth){
+							startMonth = aYearMatrix[i][0]
+						}
+						if (aYearMatrix[i][j] === endMonth){
+							endMonth = aYearMatrix[i][2]
+						}
+					}
+				}
+				start = moment().month(startMonth).startOf('month').toDate();
+				end = moment(oEndDate).month(endMonth).endOf('month').toDate();
 			} else if (selectedHierarchyView === "TIMEYEAR"){
 				start = moment(oStartDate).startOf("year").toDate();
 				end = moment(oEndDate).endOf("year").toDate();
