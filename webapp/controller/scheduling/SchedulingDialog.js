@@ -498,7 +498,7 @@ sap.ui.define([
 								aData = {};
 
 								//Demand related info
-								aData = aDemandsData[tourItem.orderId].data;
+								aData = _.clone(aDemandsData[tourItem.orderId].data);
 
 								//Resource related info
 								aData.ResourceGuid = sResourceGuid;
@@ -519,6 +519,8 @@ sap.ui.define([
 
 								aData.DemandGuid = tourItem.orderId;
 								aData.PLANNED = true;
+								//Appending Duration and Duration Unit
+								aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
 
 								iPlanned++;
 								aDataSet.push(aData);
@@ -534,10 +536,12 @@ sap.ui.define([
 						aData = {};
 
 						aData.DemandGuid = aOrder;
-						aData = aDemandsData[aOrder].data;
+						aData = _.clone(aDemandsData[aOrder].data);
 						aData.NotPlanState = IconColor.Critical;
 						aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlannable");
 						aData.PLANNED = false;
+						//Appending Duration and Duration Unit
+						aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
 
 						aNonPlannableIds.push(aOrder);
 						aDataSet.push(aData);
@@ -553,10 +557,13 @@ sap.ui.define([
 							aData = {};
 
 							aData.DemandGuid = aOrder;
-							aData = aDemandsData[aOrder].data;
+							aData = _.clone(aDemandsData[aOrder].data);
 							aData.NotPlanState = IconColor.Negative;
 							aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlanned");
 							aData.PLANNED = false;
+
+							//Appending Duration and Duration Unit
+							aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
 
 							aDataSet.push(aData);
 						}

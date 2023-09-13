@@ -451,7 +451,11 @@ sap.ui.define([
 				oTempDemandData = {},
 				oDemandData = {};
 			return new Promise(function (resolve, reject) {
+				var iServiceTime;
 				aDemandList.forEach(function (oDemand) {
+					
+					iServiceTime = this._getDemandDurationInSeconds(oDemand.oData.Effort, oDemand.oData.DURATION_UNIT);
+					
 					oTempDemandData = {
 						"data": oDemand.oData,
 						"location": {
@@ -460,10 +464,10 @@ sap.ui.define([
 						},
 						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION ? oDemand.oData.QUALIFICATION_DESCRIPTION.split(",") : [],
 						"priority": oDemand.oData.PRIORITY ? parseInt(oDemand.oData.PRIORITY) : 0,
-						"serviceTime": parseInt(oDemand.oData.Effort) ? oDemand.oData.DURATION_UNIT === "MIN" ? (parseFloat(oDemand.oData.Effort) * 60) : (parseFloat(oDemand.oData.Effort) * 3600) : 1
+						"serviceTime": iServiceTime
 					}
 					oDemandData[oDemand.oData.Guid] = oTempDemandData;
-				});
+				}.bind(this));
 				this.oViewModel.setProperty("/Scheduling/demandData", oDemandData);
 				resolve(oDemandData);
 			}.bind(this));
@@ -826,6 +830,25 @@ sap.ui.define([
 					}.bind(this)
 				});
 			}.bind(this))
+		},
+
+		/**
+		 * This method is used to convert Duration into seconds based on duration Unit 
+		 * @param {number} nDuration - Demand duration
+		 * @param {string} sDurationUnit - Demand duration Unit.
+		 */
+		_getDemandDurationInSeconds: function(nDuration,sDurationUnit){
+			if (parseInt(nDuration)){
+				if (sDurationUnit === 'H'){
+					return parseFloat(nDuration) * 3600;
+				} else if (sDurationUnit === 'MIN'){
+					return parseFloat(nDuration) * 60;
+				} else{
+					return parseFloat(nDuration) * 86400;
+				}
+			}else {
+				return 1;
+			}
 		}
 	});
 });
