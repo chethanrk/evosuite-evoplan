@@ -273,8 +273,10 @@ sap.ui.define([
 				sPath = oViewModel.getProperty("/Scheduling/selectedDemandPath"),
 				aDemandList = [],
 				oMsgParam = {};
+			oViewModel.setProperty("/Scheduling/bReSchedBtnBusy",true);
 			oViewModel.setProperty("/Scheduling/sScheduleType","R");
 			if(!this.oSchedulingActions.validateReScheduleAfterPress()){
+				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy",false);
 				return;
 			}
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
@@ -285,6 +287,7 @@ sap.ui.define([
 					return this.oSchedulingActions.checkAssignedResource();
 				} else {
 					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
+					oViewModel.setProperty("/Scheduling/bReSchedBtnBusy",false);
 					return false;
 				}
 			}.bind(this)).then(function (oResult) {
@@ -302,6 +305,7 @@ sap.ui.define([
 				} else {
 					this._showErrorMessage(oResourceBundle.getText("ymsg.alreadyAssigned", oResult.resourceNames));
 				}
+				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy",false);
 			}.bind(this));
 		},
 		/**

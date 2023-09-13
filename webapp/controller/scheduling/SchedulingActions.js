@@ -311,7 +311,8 @@ sap.ui.define([
 				iSelectedResponse: 0,
 				sScheduleType: "",
 				bDateChanged: false,
-				bSchedBtnBusy:false
+				bSchedBtnBusy:false,
+				bReSchedBtnBusy:false
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
 		},
