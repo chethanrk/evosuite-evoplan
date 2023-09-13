@@ -21,12 +21,12 @@
 							<ToggleButton id="btnInsideDateRange" 
 								type="Ghost" 
 								text="{i18n>xbut.scheduleToogleInside} ({SchedulingModel>/inside})" 
-								pressed="false" 
+								pressed="{SchedulingModel>/btnInsidePressed}" 
 								press="onPressInsideDate" />
 							<ToggleButton id="btnOutsideDateRange" 
 								type="Ghost" 
 								text="{i18n>xbut.scheduleToogleOutside} ({SchedulingModel>/outside})" 
-								pressed="false" 
+								pressed="{SchedulingModel>/btnOutsidePressed}" 
 								press="onPressOutsideDate" />
 							<Button type="Ghost"  icon="sap-icon://filter" text="{viewModel>/Scheduling/sFilterCounts}" press="onPressShowFilterbar" visible="{SchedulingModel>/isAutoSchedule}"/>							
 						</OverflowToolbar>
