@@ -65,7 +65,6 @@ sap.ui.define([
         }.bind(this));
       }
       this._oResponseFilterDialog.then(function (oDialog) {
-        oDialog.getContent()[0].clear();
         oDialog.open();
       });
     },
@@ -74,7 +73,7 @@ sap.ui.define([
      * close filter dialog and add all seleted filters 
      * to json response table
      */
-    onPressAddFilterDialog: function () {
+    onPressCloseFilterDialog: function () {
       var oSmartFilter = {};
       if (this._oResponseFilterDialog) {
         this._oResponseFilterDialog.then(function (oDialog) {
@@ -85,17 +84,6 @@ sap.ui.define([
         }.bind(this));
       }
     },
-     /**
-         *Close the filter Bar
-         */
-         onPressCancelFilterDialog: function(){
-          if(this._oResponseFilterDialog){
-              this._oResponseFilterDialog.then(function(oDialog){
-                  oDialog.close();
-                  oDialog.destory();
-              }.bind(this));
-          }
-      },
 
 
     /* =========================================================== */

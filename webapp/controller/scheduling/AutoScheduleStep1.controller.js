@@ -189,7 +189,7 @@ sap.ui.define([
          * close filter dialog and add all seleted filters 
          * to json demand table
          */
-        onPressAddFilterDialog: function(){
+        onPressCloseFilterDialog: function(){
             var oSmartFilter = {};
             if(this._oDemandFilterDialog){
                 this._oDemandFilterDialog.then(function(oDialog){
@@ -197,17 +197,6 @@ sap.ui.define([
                     oSmartFilter = oDialog.getContent()[0];
                     this._setCustomTableFilter(oSmartFilter);
                     oDialog.close();
-                }.bind(this));
-            }
-        },
-        /**
-         *Close the filter Bar
-         */
-         onPressCancelFilterDialog: function(){
-            if(this._oDemandFilterDialog){
-                this._oDemandFilterDialog.then(function(oDialog){
-                    oDialog.close();
-                    oDialog.destory();
                 }.bind(this));
             }
         },
