@@ -206,17 +206,6 @@ sap.ui.define([
             }
         },
         /**
-         *Close the filter Bar
-         */
-         onPressCancelFilterDialog: function(){
-            if(this._oDemandFilterDialog){
-                this._oDemandFilterDialog.then(function(oDialog){
-                    oDialog.close();
-                    oDialog.destory();
-                }.bind(this));
-            }
-        },
-        /**
          * Called when utilization changes
          * @param {object} oEvent 
          */
