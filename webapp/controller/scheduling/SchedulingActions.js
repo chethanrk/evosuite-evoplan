@@ -464,7 +464,7 @@ sap.ui.define([
 							"y": oDemand.oData.LATITUDE
 						},
 						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION ? oDemand.oData.QUALIFICATION_DESCRIPTION.split(",") : [],
-						"priority": oDemand.oData.PRIORITY ? parseInt(oDemand.oData.PRIORITY) : 0,
+						"priority": oDemand.oData.DEMAND_WEIGHTAGE ? parseInt(oDemand.oData.DEMAND_WEIGHTAGE) : 0,
 						"serviceTime": iServiceTime
 					}
 					oDemandData[oDemand.oData.Guid] = oTempDemandData;
