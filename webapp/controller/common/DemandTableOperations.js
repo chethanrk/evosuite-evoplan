@@ -291,6 +291,9 @@ sap.ui.define([
 					return false;
 				}
 			}.bind(this)).then(function (oResult) {
+				return this.oSchedulingActions.getAssignmentIdForReschedule(oResult);
+			}.bind(this)).then(function (oResult) {
+				console.log(oViewModel);
 				if (oResult.bNotAssigned) {
 					aDemandList = [{
 						sPath:sPath,
