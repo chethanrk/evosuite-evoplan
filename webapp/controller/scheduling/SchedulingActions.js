@@ -785,9 +785,7 @@ sap.ui.define([
 				aNewArray = [],
 				bIsLast = false,
 				aPropReq,
-				aPropRe = ["ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"],
-				aPropAuto = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"]
-			sFunctionImp = "CreateAssignment";//UpdateAssignment
+				sFunctionImp;
 
 
 			iBatchCount = iBatchCount ? parseInt(iBatchCount) : 100;
@@ -805,7 +803,7 @@ sap.ui.define([
 				if (aData[x].PLANNED) {
 					if (sSchType === Constants.SCHEDULING.AUTOSCHEDULING) {
 						sFunctionImp = "CreateAssignment";
-						aPropReq =  ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
+						aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 						aData[x].TimeFrom.ms = aData[x].DateFrom.getTime();
 						aData[x].TimeTo.ms = aData[x].DateTo.getTime();
 						oBjectInitial = Object.assign({}, aData[x]);
@@ -828,7 +826,7 @@ sap.ui.define([
 							};
 						});
 						oBjectInitial.MapAssignmentType = sSchedulingType;
-						oBjectInitial.AssignmentGUID =this.oViewModel.getProperty("/Scheduling/sReSchAssignGuid");
+						oBjectInitial.AssignmentGUID = this.oViewModel.getProperty("/Scheduling/sReSchAssignGuid");
 						aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, sFunctionImp, "POST", mParams, bIsLast));
 					}
 
