@@ -550,6 +550,14 @@ sap.ui.define([
 
 								fTravelTime = 0.0;
 
+								//Forward travel time
+								aData.TRAVEL_TIME = (fTravelTime / 3600);
+								aData.TRAVEL_BACK_TIME = fTravelBackTime;
+
+								aData.TRAVEL_TIME_UNIT = "H";   //Travel time unit will be hour
+
+								fTravelTime = 0.0;
+
 								iPlanned++;
 								aDataSet.push(aData);
 							}
