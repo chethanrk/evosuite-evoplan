@@ -1,7 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar">
 	<smartFilterBar:SmartFilterBar entitySet="{viewModel>/Scheduling/sFilterEntity}" persistencyKey="{viewModel>/Scheduling/sFilterPersistencyKey}" enableBasicSearch="false"
 		useToolbar="true" liveMode="true" considerSelectionVariants="true" showClearButton="true" showRestoreButton="true" showRestoreOnFB="true"
-		showClearOnFB="true" showFilterConfiguration="false">
+		showClearOnFB="true" showFilterConfiguration="false" filterChange="onSchedulingFilterChange">
 		<smartFilterBar:controlConfiguration>
 			<core:ExtensionPoint name="FilterExtP|Scheduling|{viewModel>/Scheduling/sFilterEntity}|ControlConfiguration"/>
 		</smartFilterBar:controlConfiguration>

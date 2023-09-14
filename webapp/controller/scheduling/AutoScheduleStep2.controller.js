@@ -73,16 +73,17 @@ sap.ui.define([
      * close filter dialog and add all seleted filters 
      * to json response table
      */
-    onPressCloseFilterDialog: function () {
-      var oSmartFilter = {};
-      if (this._oResponseFilterDialog) {
-        this._oResponseFilterDialog.then(function (oDialog) {
-          //adding this to avoid duplicate Id error when used multiple times
-          oSmartFilter = oDialog.getContent()[0];
-          this._setCustomTableFilter(oSmartFilter);
-          oDialog.close();
-        }.bind(this));
+    onPressCloseFilterDialog: function(){
+      if(this._oResponseFilterDialog){
+          this._oResponseFilterDialog.then(function(oDialog){
+              oDialog.close();
+          }.bind(this));
       }
+    },
+
+    onSchedulingFilterChange: function(oEvent){
+      var oSmartFilter = oEvent.getSource();
+      this._setCustomTableFilter(oSmartFilter);
     },
 
 
