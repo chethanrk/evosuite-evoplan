@@ -64,6 +64,9 @@
                                         text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.odata.type.Time\', style: \'long\'}' }"
                                         wrapping="false" />
                                 </template:elseif>
+                                <template:elseif test="{:= ${data>EdmType} === 'Edm.Decimal'}">
+                                    <Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Float\', formatOptions:{ maxFractionDigits: 2 }}' }" wrapping="false" />
+                                </template:elseif>
                                 <template:else>
                                     <Text
                                         text="{:= '{'+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'}' }"
