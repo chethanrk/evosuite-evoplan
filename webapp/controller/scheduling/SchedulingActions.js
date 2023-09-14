@@ -805,7 +805,7 @@ sap.ui.define([
 				if (aData[x].PLANNED) {
 					if (sSchType === Constants.SCHEDULING.AUTOSCHEDULING) {
 						sFunctionImp = "CreateAssignment";
-						aPropReq =  ["ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
+						aPropReq =  ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 						aData[x].TimeFrom.ms = aData[x].DateFrom.getTime();
 						aData[x].TimeTo.ms = aData[x].DateTo.getTime();
 						oBjectInitial = Object.assign({}, aData[x]);
@@ -818,7 +818,7 @@ sap.ui.define([
 						aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, sFunctionImp, "POST", mParams, bIsLast));
 					} else {
 						sFunctionImp = "UpdateAssignment";
-						aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
+						aPropReq = ["ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 						aData[x].TimeFrom.ms = aData[x].DateFrom.getTime();
 						aData[x].TimeTo.ms = aData[x].DateTo.getTime();
 						oBjectInitial = Object.assign({}, aData[x]);
