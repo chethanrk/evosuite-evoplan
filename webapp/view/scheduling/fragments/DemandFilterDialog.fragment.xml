@@ -13,8 +13,7 @@
 		</content>
 		
 		<buttons>
-			<Button text="{i18n>xbut.buttonOK}" type="Emphasized" press="onPressAddFilterDialog" />
-			<Button text="{i18n>xbut.Cancel}" type="Ghost" press="onPressCancelFilterDialog" />
+			<Button text="{i18n>xbut.buttonClose}" type="Ghost" press="onPressCloseFilterDialog" />
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

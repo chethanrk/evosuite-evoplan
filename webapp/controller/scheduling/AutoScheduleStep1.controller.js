@@ -193,26 +193,10 @@ sap.ui.define([
          * close filter dialog and add all seleted filters 
          * to json demand table
          */
-        onPressAddFilterDialog: function(){
-            var oSmartFilter = {};
-            if(this._oDemandFilterDialog){
-                this._oDemandFilterDialog.then(function(oDialog){
-                    //adding this to avoid duplicate Id error when used multiple times
-                    oSmartFilter = oDialog.getContent()[0];
-                    this._oSmartFilter = oSmartFilter;
-                    this._setCustomTableFilter(oSmartFilter);
-                    oDialog.close();
-                }.bind(this));
-            }
-        },
-        /**
-         *Close the filter Bar
-         */
-         onPressCancelFilterDialog: function(){
+        onPressCloseFilterDialog: function(){
             if(this._oDemandFilterDialog){
                 this._oDemandFilterDialog.then(function(oDialog){
                     oDialog.close();
-                    oDialog.destory();
                 }.bind(this));
             }
         },
@@ -222,6 +206,11 @@ sap.ui.define([
          */
         onUtilizationChange: function (oEvent) {
             this._checkGeneratedResponse();
+        },
+
+        onSchedulingFilterChange: function(oEvent){
+            var oSmartFilter = oEvent.getSource();
+            this._setCustomTableFilter(oSmartFilter);
         },
 
 

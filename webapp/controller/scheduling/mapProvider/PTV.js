@@ -253,7 +253,7 @@ sap.ui.define([
 		 *  @param {Waypoint[]} aDemandsData -  Array of Waypoint to be visited.(demand data)
 		 */
 		_createPayloadForDistanceMatrixRequest: function (aResourceData, aDemandsData) {
-			var oPointTemplate, aResourcePoints = [], aDemandPoints = [], oPayload = {};
+			var oPointTemplate, sFirstKey, sModeOfTransport, aResourcePoints = [], aDemandPoints = [], oPayload = {};
 			oPointTemplate = {
 				$type: "OffRoadRouteLocation",
 				offRoadCoordinate: {
@@ -279,7 +279,12 @@ sap.ui.define([
 			oPayload.startLocations = aResourcePoints.concat(aDemandPoints);
 			//destinations are added into startLocations to maintain the matrix shape
 			oPayload.destinationLocations = [];
-			oPayload.storedProfile = "car";
+
+			//doing the below procedure to get the mode of transport for the first resource
+			sFirstKey = Object.keys(aResourceData)[0];
+			sModeOfTransport = aResourceData[sFirstKey].aData.MODE_OF_TRANSPORT;
+
+			oPayload.storedProfile = sModeOfTransport;
 
 			oPayload.distanceMatrixOptions = {
 				//current default routing type
