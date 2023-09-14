@@ -312,10 +312,7 @@ sap.ui.define([
 				}
 				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy",false);
 				oAppViewModel.setProperty("/busy",false);
-			}.bind(this)).catch(function(abc){
-				console.log("Error",abc)
-			});
-		},
+			}.bind(this))
 		/**
 		 * This method is used to clear the selections of the demands table in
 		 * Demands, NewGantt and Maps view.
