@@ -94,8 +94,7 @@ sap.ui.define([
 		 */
 		insertTemplateFragment: function (sPath, sViewName, sContainerId, callbackFn, mParams, callbackfn2) {
 			var oView = this.getView(),
-				sControllerName = null,
-				bTemplateDataRefresh = false;
+				sControllerName = null;
 			
 			if (mParams.oView) {
 				oView = mParams.oView;
@@ -124,8 +123,7 @@ sap.ui.define([
 					//when template was already in use then just integrate in viewContainer and bind new path
 					//will improve performance
 					oViewContainer.insertContent(this.mTemplates[sViewName]);
-					bTemplateDataRefresh = true;
-					this.bindView(this.mTemplates[sViewName], sPath, mParams, callbackFn, callbackfn2, bTemplateDataRefresh);
+					this.bindView(this.mTemplates[sViewName], sPath, mParams, callbackFn, callbackfn2);
 				} else {
 					//load template view ansync and interpret annotations based on metadata model
 					//and bind view path and save interpreted template global for reload
@@ -136,7 +134,7 @@ sap.ui.define([
 						var setTemplateAndBind = function (oTemplateView) {
 							this.mTemplates[sViewName] = oTemplateView;							
 							oViewContainer.insertContent(oTemplateView);
-							this.bindView(oTemplateView, sPath, mParams, callbackFn, callbackfn2, bTemplateDataRefresh);
+							this.bindView(oTemplateView, sPath, mParams, callbackFn, callbackfn2);
 						}.bind(this);
 
 						if (sControllerName) {
@@ -154,8 +152,7 @@ sap.ui.define([
 					}.bind(this));
 				}
 			} else {
-				bTemplateDataRefresh = true;
-				this.bindView(aContent[0], sPath, mParams, callbackFn, callbackfn2, bTemplateDataRefresh);
+				this.bindView(aContent[0], sPath, mParams, callbackFn, callbackfn2);
 			}
 		},
 
@@ -216,12 +213,11 @@ sap.ui.define([
 		 * @param sPath
 		 * @param callbackFn
 		 */
-		bindView: function (oView, sPath, mParams, callbackFn, callbackfn2, bTemplateDataRefresh) {
+		bindView: function (oView, sPath, mParams, callbackFn, callbackfn2) {
 			var sViewName = this._joinTemplateViewNameId(oView.getId(), oView.getViewName()),
 				eventBus = sap.ui.getCore().getEventBus(),
-				parameters = null,
-				bGanttSplitt = mParams['refreshParameters'] ? mParams['refreshParameters']['bFromNewGanttSplit'] || mParams['controllerName'] === 'PRT.ToolsAssignInfo' : false;
-
+				parameters = null;
+				
 			if (!sPath) {
 				eventBus.publish("TemplateRendererEvoPlan", "changedBinding", {
 					viewNameId: sViewName
@@ -249,9 +245,7 @@ sap.ui.define([
 							callbackFn();
 						}
 						if (callbackfn2) {
-							if(bTemplateDataRefresh || bGanttSplitt) {
 								oEvent.getSource().refresh();	
-							}
 							callbackfn2("change", null, mParams);
 						}
 					},
