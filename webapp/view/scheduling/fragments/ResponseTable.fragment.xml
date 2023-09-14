@@ -27,6 +27,13 @@
                                     text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
                             </Column>
                         </template:then>
+                        <template:elseif
+                            test="{:= ${value>Path} === 'TRAVEL_TIME' || ${value>Path} === 'TRAVEL_BACK_TIME' || ${value>Path} === 'TRAVEL_TIME_UNIT'}">
+                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}">
+                                <Label
+                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
+                            </Column>
+                        </template:elseif>
                         <template:else>
                             <Column width="3rem">
                                 <Label
@@ -65,7 +72,9 @@
                                         wrapping="false" />
                                 </template:elseif>
                                 <template:elseif test="{:= ${data>EdmType} === 'Edm.Decimal'}">
-                                    <Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Float\', formatOptions:{ maxFractionDigits: 2 }}' }" wrapping="false" />
+                                    <Text
+                                        text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Float\', formatOptions:{ maxFractionDigits: 2 }}' }"
+                                        wrapping="false" />
                                 </template:elseif>
                                 <template:else>
                                     <Text
