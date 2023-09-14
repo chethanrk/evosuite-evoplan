@@ -136,7 +136,7 @@ sap.ui.define([
          * @param {*} oEvent 
          */
         onChangeDateTo: function(oEvent){
-            var oDate = oEvent.getSource().getDateValue();
+            var oDate = oEvent.getSource().getValue();
             if (oDate){
                 oDate = new Date(new Date(oDate).getTime() - 1000);
                 oEvent.getSource().setDateValue(oDate);
