@@ -136,9 +136,13 @@ sap.ui.define([
          * @param {*} oEvent 
          */
         onChangeDateTo: function(oEvent){
-            var oDate = oEvent.getSource().getValue();
-            oDate = new Date(new Date(oDate).getTime() - 1000);
-            oEvent.getSource().setDateValue(oDate);
+            var oDate = oEvent.getSource().getDateValue();
+            if (oDate){
+                oDate = new Date(new Date(oDate).getTime() - 1000);
+                oEvent.getSource().setDateValue(oDate);
+            }else{
+                oDate = new Date(oDate);
+            }
             this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "None");
             this.oSchedulingActions.validateDemandDateRanges(this._oViewModel.getProperty("/Scheduling/startDate"), oDate, true);
             this._checkGeneratedResponse();
