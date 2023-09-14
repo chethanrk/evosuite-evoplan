@@ -151,11 +151,11 @@ sap.ui.define([
 				aFilterResource.push(new Filter("ResourceGuid", FilterOperator.EQ, aResourceList[x].ResourceGuid))
 			}
 			aFilterResource.push(new Filter("DemandGuid", FilterOperator.EQ, sSelectedDemand.Guid));
-			this.oAppViewModel.setProperty("/busy", true);
+			
 			//to fetch the assigned resource to the selected demand
 			//we are using AssignmentSet instead of DemandSet as demandset was taking more time than assignmentset.
 			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource, "$select=FIRSTNAME,LASTNAME").then(function (oData) {
-				this.oAppViewModel.setProperty("/busy", false);
+				
 				if (oData.results.length > 0) {
 					oData.results.forEach(function (aItem) {
 						aAssignedList.push(aItem.FIRSTNAME + " " + aItem.LASTNAME);
@@ -261,7 +261,7 @@ sap.ui.define([
 			//Read all Resource from Resource group
 			oAppViewModel.setProperty("/busy", true);
 			return Promise.all(aResourceGroupPromise).then(function (aResult) {
-				oAppViewModel.setProperty("/busy", false);
+				//oAppViewModel.setProperty("/busy", false);
 				aResult.forEach(function (oResult) {
 					aResourceData = aResourceData.concat(oResult.results);
 					aResourceData = aResourceData.filter(function (oParam1) {
@@ -678,15 +678,18 @@ sap.ui.define([
 			sSelectedDemand = this.oDataModel.getProperty(sDemandPath);
 			aFilterResource = [];
 			aFilterResource.push(new Filter("DemandGuid", FilterOperator.EQ, sSelectedDemand.Guid));
+			
 			//To Fetch the 
 			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource, "$select=Guid").then(function (oData) {
-
+				
 				if (oData.results.length > 0) {
 					this.oViewModel.setProperty("/Scheduling/sReSchAssignGuid", oData.results[0].Guid);
 				}
+				
 				if (mParam) {
 					return mParam;
 				}
+				
 			}.bind(this));
 		},
 
