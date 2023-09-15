@@ -178,7 +178,7 @@ sap.ui.define([
 		 */
 		step1Validation: function () {
 			var startDate = this._oViewModel.getProperty("/Scheduling/startDate") ? moment(this._oViewModel.getProperty("/Scheduling/startDate")) : null,
-				endDate = this._oViewModel.getProperty("/Scheduling/endDate")? moment(this._oViewModel.getProperty("/Scheduling/endDate")) : null,
+				endDate = this._oViewModel.getProperty("/Scheduling/endDate") ? moment(this._oViewModel.getProperty("/Scheduling/endDate")) : null,
 				bEndDateChanged = this._oViewModel.getProperty("/Scheduling/bDateChanged");
 			return this.oSchedulingActions.validateDateSchedule(startDate, endDate, bEndDateChanged);
 
@@ -294,7 +294,7 @@ sap.ui.define([
 			this._oSchedulingModel.setProperty("btnOutsidePressed", false);
 
 			//reset filters in smartFilterBar
-			if(this._component.demandFilterDialog){
+			if (this._component.demandFilterDialog) {
 				this._component.demandFilterDialog.getContent()[0].clear();
 			}
 		},
@@ -491,7 +491,9 @@ sap.ui.define([
 					iNotPlannedRes = 0,
 					sResourceGuid,
 					aNonScheduledResIds = [],
-					aNonPlannableIds = [];
+					aNonPlannableIds = [],
+					fTravelTime = 0.0,
+					fTravelBackTime = 0.0;
 
 				//Scheduled demands
 				if (oResponse.data.tourReports) {
@@ -499,7 +501,15 @@ sap.ui.define([
 						oTour = oResponse.data.tourReports[i];
 						sResourceGuid = oTour.vehicleId.split("_")[0];
 
-						oTour.tourEvents.forEach(function (tourItem) {
+						oTour.tourEvents.forEach(function (tourItem, index) {
+							//Saving travel times 
+							if (tourItem.eventTypes.indexOf('DRIVING') !== -1) {
+								if (oTour.tourEvents[index + 1].eventTypes.indexOf('TRIP_END') !== -1) { //Going back travel
+									fTravelBackTime = tourItem.duration;
+								} else { //Forward travel
+									fTravelTime = fTravelTime + tourItem.duration;      // If ['Driving' 'Break' 'Driving'] is the sequence then both driving times must be added
+								}
+							}
 							if (tourItem.eventTypes.indexOf('SERVICE') !== -1) {
 								aData = {};
 
@@ -528,8 +538,21 @@ sap.ui.define([
 								//Appending Duration and Duration Unit
 								aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
 
+								//Forward travel time
+								aData.TRAVEL_TIME = (fTravelTime / 3600);
+								aData.TRAVEL_BACK_TIME = fTravelBackTime;
+
+								aData.TRAVEL_TIME_UNIT = "H";   //Travel time unit will be hour
+
+								fTravelTime = 0.0;
+
 								iPlanned++;
 								aDataSet.push(aData);
+							}
+							if (tourItem.eventTypes.indexOf('TRIP_END') !== -1) {
+								//Backward travel time
+								aData.TRAVEL_BACK_TIME = (fTravelBackTime / 3600);
+								fTravelBackTime = 0.0;
 							}
 						}.bind(this));
 					}
