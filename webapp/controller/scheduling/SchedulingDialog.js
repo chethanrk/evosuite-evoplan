@@ -289,6 +289,10 @@ sap.ui.define([
 			var oInitialModelState = Object.assign({}, oData);
 			this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags", oInitialModelState);
 
+			//reset the toggle button pressed state
+			this._oSchedulingModel.setProperty("btnInsidePressed", false);
+			this._oSchedulingModel.setProperty("btnOutsidePressed", false);
+
 			//reset filters in smartFilterBar
 			if(this._component.demandFilterDialog){
 				this._component.demandFilterDialog.getContent()[0].clear();
@@ -359,7 +363,9 @@ sap.ui.define([
 					dataSet: []
 				},
 				iPlanned: 0,
-				iNonPlanned: 0
+				iNonPlanned: 0,
+				btnInsidePressed: false,
+				btnOutsidePressed: false
 			});
 		},
 
@@ -498,7 +504,7 @@ sap.ui.define([
 								aData = {};
 
 								//Demand related info
-								aData = aDemandsData[tourItem.orderId].data;
+								aData = _.clone(aDemandsData[tourItem.orderId].data);
 
 								//Resource related info
 								aData.ResourceGuid = sResourceGuid;
@@ -519,6 +525,8 @@ sap.ui.define([
 
 								aData.DemandGuid = tourItem.orderId;
 								aData.PLANNED = true;
+								//Appending Duration and Duration Unit
+								aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
 
 								iPlanned++;
 								aDataSet.push(aData);
@@ -534,10 +542,12 @@ sap.ui.define([
 						aData = {};
 
 						aData.DemandGuid = aOrder;
-						aData = aDemandsData[aOrder].data;
+						aData = _.clone(aDemandsData[aOrder].data);
 						aData.NotPlanState = IconColor.Critical;
 						aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlannable");
 						aData.PLANNED = false;
+						//Appending Duration and Duration Unit
+						aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
 
 						aNonPlannableIds.push(aOrder);
 						aDataSet.push(aData);
@@ -553,10 +563,13 @@ sap.ui.define([
 							aData = {};
 
 							aData.DemandGuid = aOrder;
-							aData = aDemandsData[aOrder].data;
+							aData = _.clone(aDemandsData[aOrder].data);
 							aData.NotPlanState = IconColor.Negative;
 							aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlanned");
 							aData.PLANNED = false;
+
+							//Appending Duration and Duration Unit
+							aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
 
 							aDataSet.push(aData);
 						}

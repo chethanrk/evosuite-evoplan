@@ -311,7 +311,8 @@ sap.ui.define([
 				iSelectedResponse: 0,
 				sScheduleType: "",
 				bDateChanged: false,
-				bSchedBtnBusy:false
+				bSchedBtnBusy:false,
+				bReSchedBtnBusy:false
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
 		},
@@ -451,7 +452,11 @@ sap.ui.define([
 				oTempDemandData = {},
 				oDemandData = {};
 			return new Promise(function (resolve, reject) {
+				var iServiceTime;
 				aDemandList.forEach(function (oDemand) {
+					
+					iServiceTime = this._getDemandDurationInSeconds(oDemand.oData.Effort, oDemand.oData.DURATION_UNIT);
+					
 					oTempDemandData = {
 						"data": oDemand.oData,
 						"location": {
@@ -459,11 +464,11 @@ sap.ui.define([
 							"y": oDemand.oData.LATITUDE
 						},
 						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION ? oDemand.oData.QUALIFICATION_DESCRIPTION.split(",") : [],
-						"priority": oDemand.oData.PRIORITY ? parseInt(oDemand.oData.PRIORITY) : 0,
-						"serviceTime": parseInt(oDemand.oData.Effort) ? oDemand.oData.DURATION_UNIT === "MIN" ? (parseFloat(oDemand.oData.Effort) * 60) : (parseFloat(oDemand.oData.Effort) * 3600) : 1
+						"priority": oDemand.oData.DEMAND_WEIGHTAGE ? parseInt(oDemand.oData.DEMAND_WEIGHTAGE) : 0,
+						"serviceTime": iServiceTime
 					}
 					oDemandData[oDemand.oData.Guid] = oTempDemandData;
-				});
+				}.bind(this));
 				this.oViewModel.setProperty("/Scheduling/demandData", oDemandData);
 				resolve(oDemandData);
 			}.bind(this));
@@ -675,7 +680,7 @@ sap.ui.define([
 
 			var aPathsData = [],
 				aNonAssignableDemands = [],
-				oData, oContext, sPath,aSelection=[];
+				oData, oContext, sPath, aSelection = [], nDuration;
 
 			oTable.clearSelection();
 
@@ -683,9 +688,10 @@ sap.ui.define([
 				oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
 				sPath = oContext.getPath();
 				oData = this.oDataModel.getProperty(sPath);
+				nDuration = this._getDemandDurationInSeconds(oData.DURATION, oData.DURATION_UNIT);
 
 				//Added condition to check for number of assignments to plan demands via scheduling
-				if (oData.ALLOW_AUTOSCHEDULE) {
+				if (oData.ALLOW_AUTOSCHEDULE && nDuration <= 1209600) {
 					aPathsData.push({
 						sPath: sPath,
 						oData: oData,
@@ -826,6 +832,25 @@ sap.ui.define([
 					}.bind(this)
 				});
 			}.bind(this))
+		},
+
+		/**
+		 * This method is used to convert Duration into seconds based on duration Unit 
+		 * @param {number} nDuration - Demand duration
+		 * @param {string} sDurationUnit - Demand duration Unit.
+		 */
+		_getDemandDurationInSeconds: function(nDuration,sDurationUnit){
+			if (parseInt(nDuration)){
+				if (sDurationUnit === 'H'){
+					return parseFloat(nDuration) * 3600;
+				} else if (sDurationUnit === 'MIN'){
+					return parseFloat(nDuration) * 60;
+				} else{
+					return parseFloat(nDuration) * 86400;
+				}
+			}else {
+				return 1;
+			}
 		}
 	});
 });
