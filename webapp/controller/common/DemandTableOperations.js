@@ -291,7 +291,6 @@ sap.ui.define([
 					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
 					oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
 					oAppViewModel.setProperty("/busy", true);
-					console.log("false");
 					return false;
 				}
 			}.bind(this)).then(function (oResult) {
