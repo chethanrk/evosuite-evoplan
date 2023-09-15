@@ -196,11 +196,6 @@ sap.ui.define([
 					public: true,
 					final: false,
 					overrideExecution: OverrideExecution.Instead
-				},
-				onAutoscheduleButtonPress: {
-					public: true,
-					final: false,
-					overrideExecution: OverrideExecution.Instead
 				}
 			}
 		},
@@ -945,15 +940,6 @@ sap.ui.define([
 			this._bDemandListScroll = false;
 		},
 
-		/**
-		 * On press of auto-schedule button
-		 * Function to handle press event Plan Demands
-		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
-		 */	
-		onAutoscheduleButtonPress: function(oEvent){
-			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
-		},
-
 		onExit: function () {
 			this._oEventBus.unsubscribe("BaseController", "refreshMapView", this._refreshMapView, this);
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
@@ -1233,7 +1219,8 @@ sap.ui.define([
 		 */
 		_getDemandsForMap: function () {
 			this.setMapBusy(true);
-			this.getOwnerComponent().readData("/DemandSet").then(function (response) {
+			var sSelect="$select=Guid,IS_SELECTED,MAP_MARKER_COLOUR,DEMAND_KEY,LONGITUDE,LATITUDE,Status,EffortUnit,DateFrom,DateTo,START_DATE,END_DATE,EARL_SCHED_START_DATE,EARL_SCHED_FIN_DATE,LATE_SCHED_START_DATE,LATE_SCHED_FIN_DATE,ACTUAL_START_DATE,ACTUAL_FIN_DATE,NOTIF_REQ_START_DATE,NOTIF_REQ_END_DATE,NOTIFICATION_DATE,FIXED_ASSGN_START_DATE,FIXED_ASSGN_END_DATE,OPERATION_LTXT,ORDERID,OPERATIONID,REVISION_NO,NOTIFICATION,MATERIAL_STATUS"
+			this.getOwnerComponent().readData("/DemandSet",null,sSelect).then(function (response) {
 				this.setMapBusy(false);
 				this._viewModel.setProperty("/mapSettings/DemandSet", response.results);
 				this._viewModel.refresh();

@@ -8,7 +8,7 @@
             <OverflowToolbar>
                 <Title text="{i18n>xfld.demandName}" />
                 <ToolbarSpacer />
-                <Button tooltip="{i18n>xbut.filters}" icon="sap-icon://filter" press="onShowFilters" />
+                <Button tooltip="{i18n>xbut.filters}" type="Ghost" icon="sap-icon://filter" press="onShowFilters" />
                 <!--To be changed when annotations are added -->
             </OverflowToolbar>
         </headerToolbar>
@@ -20,10 +20,27 @@
             </Column>
             <template:repeat list="{path:'data>'}">
                 <template:with path="data>Value" var="value">
-                    <Column width="3rem">
-                        <Label
-                            text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
-                    </Column>
+                    <template:if test="{:= ${value>Path} === 'ORDER_TYPE'}">
+                        <template:then>
+                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}">
+                                <Label
+                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
+                            </Column>
+                        </template:then>
+                        <template:elseif
+                            test="{:= ${value>Path} === 'TRAVEL_TIME' || ${value>Path} === 'TRAVEL_BACK_TIME' || ${value>Path} === 'TRAVEL_TIME_UNIT'}">
+                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}">
+                                <Label
+                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
+                            </Column>
+                        </template:elseif>
+                        <template:else>
+                            <Column width="3rem">
+                                <Label
+                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
+                            </Column>
+                        </template:else>
+                    </template:if>
                 </template:with>
             </template:repeat>
         </columns>
@@ -31,7 +48,8 @@
             <ColumnListItem>
                 <cells>
                     <core:Icon src="sap-icon://activity-items"
-                        color="{:= '{'+ ${tempProps>tempData/modelName} +'>NotPlanState}' }" tooltip="{:= '{'+ ${tempProps>tempData/modelName} +'>NotPlanText}' }"/>
+                        color="{:= '{'+ ${tempProps>tempData/modelName} +'>NotPlanState}' }"
+                        tooltip="{:= '{'+ ${tempProps>tempData/modelName} +'>NotPlanText}' }" />
                     <Text text="{:= '{'+ ${tempProps>tempData/modelName} +'>ResourceGroup}' }"
                         visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}" />
 
@@ -40,17 +58,22 @@
                             <template:if test="{:= ${data>EdmType} === 'Edm.Date'}">
                                 <template:then>
                                     <Text
-                                        text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Date\', style: \'long\'}' }"
+                                        text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Date\', formatOptions:{ pattern: \'MMM dd, yyyy\'}}' }"
                                         wrapping="false" />
                                 </template:then>
                                 <template:elseif test="{:= ${data>EdmType} === 'Edm.DateTime'}">
                                     <Text
-                                        text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.DateTime\', style: \'long\'}' }"
+                                        text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.DateTime\', formatOptions:{ pattern: \'MMM dd, yyyy\'}}' }"
                                         wrapping="false" />
                                 </template:elseif>
                                 <template:elseif test="{:= ${data>EdmType} === 'Edm.Time'}">
                                     <Text
                                         text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.odata.type.Time\', style: \'long\'}' }"
+                                        wrapping="false" />
+                                </template:elseif>
+                                <template:elseif test="{:= ${data>EdmType} === 'Edm.Decimal'}">
+                                    <Text
+                                        text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Float\', formatOptions:{ maxFractionDigits: 2 }}' }"
                                         wrapping="false" />
                                 </template:elseif>
                                 <template:else>

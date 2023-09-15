@@ -117,7 +117,7 @@ sap.ui.define([
 		 */
 		getPTVPayload: function (aResourceData, aDemandsData) {
 			var oPayload = this._getPayloadStructure(),
-				sDialogMsg= this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.analysinglocations");
+				sDialogMsg = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.analysinglocations");
 			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload
 
 			if (oPayload.fleet.drivers.length === 0 || oPayload.fleet.vehicles.length === 0) { //Stop the process of PTV API call when no drivers
@@ -127,8 +127,8 @@ sap.ui.define([
 			}
 
 			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
-			this.oComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
-			return this._createDistanceMatrix(aResourceData, aDemandsData).then(function(sMatrixId) {
+			this.oComponent.ProgressBarDialog.setProgressData({ description: sDialogMsg });
+			return this._createDistanceMatrix(aResourceData, aDemandsData).then(function (sMatrixId) {
 				this.oComponent.getModel("viewModel").setProperty("/Scheduling/sDistanceMatrixId", sMatrixId);
 				oPayload.distanceMode = {
 					"$type": "ExistingDistanceMatrix",
@@ -145,46 +145,46 @@ sap.ui.define([
 		 * @param {object} oRequestBody 
 		 * @returns {object} - promise
 		 */
-		callPTVPlanTours: function (oPlanTourRequestBody){
+		callPTVPlanTours: function (oPlanTourRequestBody) {
 			var sDialogMsg = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.fetchingSchedulingData"),
 				sMatrixId;
-			this.oComponent.ProgressBarDialog.setProgressData({description:sDialogMsg});
+			this.oComponent.ProgressBarDialog.setProgressData({ description: sDialogMsg });
 			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oPlanTourRequestBody).then(function (oPlanTourResponse) {
-				this.oComponent.ProgressBarDialog.setProgressData({progress:"60"});
+				this.oComponent.ProgressBarDialog.setProgressData({ progress: "60" });
 				if (oPlanTourResponse) {
 					//call watch job
 					return new Promise(function (resolve) {
 						var oWatchJobRequestBody = {
 							id: oPlanTourResponse.data.id
 						};
-						var intervalID = setInterval(function() {
-							this._sendPOSTRequestToPTV(this._sWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
-								if(oWatchJobResponse.data.status === "RUNNING"){
-									this.ProgressBarDialog.oComponent.setProgressData({progress:"70"});
+						var intervalID = setInterval(function () {
+							this._sendPOSTRequestToPTV(this._sWatchJobUrl, oWatchJobRequestBody).then(function (oWatchJobResponse) {
+								if (oWatchJobResponse.data.status === "RUNNING") {
+									this.ProgressBarDialog.oComponent.setProgressData({ progress: "70" });
 								}
-								if(["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)){ // if successed or failed
+								if (["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)) { // if successed or failed
 									clearInterval(intervalID);
-									resolve (oWatchJobResponse);
+									resolve(oWatchJobResponse);
 								}
 							}.bind(this));
-						}.bind(this),2000);
+						}.bind(this), 2000);
 					}.bind(this));
-				}else{
+				} else {
 					return;
-				}		
-			}.bind(this)).then(function(oWatchJobResponse){
-				this.oComponent.ProgressBarDialog.setProgressData({progress:"90"});
-				if(oWatchJobResponse){
+				}
+			}.bind(this)).then(function (oWatchJobResponse) {
+				this.oComponent.ProgressBarDialog.setProgressData({ progress: "90" });
+				if (oWatchJobResponse) {
 					//call fetch response
 					var oFetchResponseRequestBody = {
 						id: oWatchJobResponse.data.id
 					};
 					return this._sendPOSTRequestToPTV(this._sFetchToursResponseUrl, oFetchResponseRequestBody);
-				}else{
+				} else {
 					return;
 				}
-			}.bind(this)).then(function(oFetchToursResponse){
-				this.oComponent.ProgressBarDialog.setProgressData({progress:"100"});
+			}.bind(this)).then(function (oFetchToursResponse) {
+				this.oComponent.ProgressBarDialog.setProgressData({ progress: "100" });
 				//delete the matrix Id once the plan Tours is successfully fetched
 				sMatrixId = this.oComponent.getModel("viewModel").getProperty("/Scheduling/sDistanceMatrixId");
 				this._deleteDistanceMatrix(sMatrixId);
@@ -207,41 +207,41 @@ sap.ui.define([
 		_createDistanceMatrix: function (aStartPoints, aPointsToVisit) {
 			var oRequestBody = this._createPayloadForDistanceMatrixRequest(aStartPoints, aPointsToVisit);
 			return this._sendPOSTRequestToPTV(this._sStartCreateDistanceMatrixUrl, oRequestBody).then(function (oCreateMatrixResponse) {
-				this.oComponent.ProgressBarDialog.setProgressData({progress:"20"});
-				if(oCreateMatrixResponse){
+				this.oComponent.ProgressBarDialog.setProgressData({ progress: "20" });
+				if (oCreateMatrixResponse) {
 					//call watchJob
-					return new Promise(function(resolve){
+					return new Promise(function (resolve) {
 						var oWatchJobRequestBody = {
 							id: oCreateMatrixResponse.data.id
 						};
-						var intervalID = setInterval(function() {
-							this._sendPOSTRequestToPTV(this._sDimaWatchJobUrl, oWatchJobRequestBody).then(function(oWatchJobResponse){
-								if(oWatchJobResponse.data.status === "RUNNING"){
-									this.ProgressBarDialog.oComponent.setProgressData({progress:"30"});
+						var intervalID = setInterval(function () {
+							this._sendPOSTRequestToPTV(this._sDimaWatchJobUrl, oWatchJobRequestBody).then(function (oWatchJobResponse) {
+								if (oWatchJobResponse.data.status === "RUNNING") {
+									this.oComponent.ProgressBarDialog.setProgressData({ progress: "30" });
 								}
-								if(["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)){ // if successed or failed
+								if (["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)) { // if successed or failed
 									clearInterval(intervalID);
-									resolve (oWatchJobResponse);
+									resolve(oWatchJobResponse);
 								}
 							}.bind(this));
-						}.bind(this),2000);
+						}.bind(this), 2000);
 					}.bind(this));
-				}else{
+				} else {
 					return;
 				}
-			}.bind(this)).then(function(oWatchJobResponse){
-				this.oComponent.ProgressBarDialog.setProgressData({progress:"40"});
-				if(oWatchJobResponse){
+			}.bind(this)).then(function (oWatchJobResponse) {
+				this.oComponent.ProgressBarDialog.setProgressData({ progress: "40" });
+				if (oWatchJobResponse) {
 					//call fetch response
 					var oFetchResponseRequestBody = {
 						id: oWatchJobResponse.data.id
 					};
 					return this._sendPOSTRequestToPTV(this._sFetchDistanceMatrixUrl, oFetchResponseRequestBody);
-				}else{
+				} else {
 					return;
 				}
-			}.bind(this)).then(function(oFetchDistMatrixResponse){
-				this.oComponent.ProgressBarDialog.setProgressData({progress:"50"});
+			}.bind(this)).then(function (oFetchDistMatrixResponse) {
+				this.oComponent.ProgressBarDialog.setProgressData({ progress: "50" });
 				return oFetchDistMatrixResponse.data.summary.id;
 			}.bind(this));
 		},
@@ -253,7 +253,7 @@ sap.ui.define([
 		 *  @param {Waypoint[]} aDemandsData -  Array of Waypoint to be visited.(demand data)
 		 */
 		_createPayloadForDistanceMatrixRequest: function (aResourceData, aDemandsData) {
-			var oPointTemplate, aResourcePoints = [], aDemandPoints = [], oPayload = {};
+			var oPointTemplate, sFirstKey, sModeOfTransport, aResourcePoints = [], aDemandPoints = [], oPayload = {};
 			oPointTemplate = {
 				$type: "OffRoadRouteLocation",
 				offRoadCoordinate: {
@@ -262,14 +262,14 @@ sap.ui.define([
 				}
 			};
 
-			for(var sGuid in aResourceData){
+			for (var sGuid in aResourceData) {
 				var oPoint = _.cloneDeep(oPointTemplate);
 				oPoint.offRoadCoordinate.x = aResourceData[sGuid].aData.LONGITUDE;
 				oPoint.offRoadCoordinate.y = aResourceData[sGuid].aData.LATITUDE;
 				aResourcePoints.push(oPoint);
 			}
 
-			for(var sGuid in aDemandsData){
+			for (var sGuid in aDemandsData) {
 				var oPoint = _.cloneDeep(oPointTemplate);
 				oPoint.offRoadCoordinate.x = aDemandsData[sGuid].location.x;
 				oPoint.offRoadCoordinate.y = aDemandsData[sGuid].location.y;
@@ -279,7 +279,12 @@ sap.ui.define([
 			oPayload.startLocations = aResourcePoints.concat(aDemandPoints);
 			//destinations are added into startLocations to maintain the matrix shape
 			oPayload.destinationLocations = [];
-			oPayload.storedProfile = "car";
+
+			//doing the below procedure to get the mode of transport for the first resource
+			sFirstKey = Object.keys(aResourceData)[0];
+			sModeOfTransport = aResourceData[sFirstKey].aData.MODE_OF_TRANSPORT;
+
+			oPayload.storedProfile = sModeOfTransport;
 
 			oPayload.distanceMatrixOptions = {
 				//current default routing type
@@ -294,7 +299,7 @@ sap.ui.define([
 		 * @param {string} sMatrixId - Created matrix Id
 		 * Passing matrix Id to this function after using in planTours API will delete the Matrix
 		 */
-		_deleteDistanceMatrix: function(sMatrixId) {
+		_deleteDistanceMatrix: function (sMatrixId) {
 			var oDeleteMatrix = {
 				"id": sMatrixId
 			};
@@ -360,11 +365,13 @@ sap.ui.define([
 		_setResourceData: function (oPayload, aResourceData) {
 			var aResourceLocations = [],
 				aVehicles = [],
+				oVehicle = {},
 				aVehicleIDs = [],
 				aDrivers = [],
 				aSchedulingData = this.oViewModel.getProperty("/Scheduling"),
 				aHorizonDateIntervals = this._getDateIntervals(aSchedulingData.startDate, aSchedulingData.endDate),
-				aWorkSchedules = [];
+				aWorkSchedules = [],
+				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD");
 
 
 			for (var sGuid in aResourceData) {
@@ -393,12 +400,15 @@ sap.ui.define([
 
 				// Vehicle objects added as for the resource
 				if (aVehicleIDs && aVehicleIDs.length) {
-					aVehicles.push({
+					oVehicle = {
 						"ids": _.cloneDeep(aVehicleIDs),
 						"startLocationId": sGuid + "_location",
-						"endLocationId": sGuid + "_location",
-						"equipment": aResourceData[sGuid].qualifications
-					});
+						"endLocationId": sGuid + "_location"
+					};
+					if (bQualificationCheck){
+						oVehicle["equipment"] = aResourceData[sGuid].qualifications;
+					}
+					aVehicles.push(oVehicle);
 				}
 				// Need to call method to create input plans
 				// getInputPlan()
@@ -420,7 +430,9 @@ sap.ui.define([
 		_setDemandsData: function (oPayload, aDemandsData) {
 			//code for payload creation with demands data needs to place here
 			var locations = [],
-				orders = [];
+				orders = [],
+				oOrder = {},
+				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD");
 
 			for (let oDemandGuid in aDemandsData) {
 				locations.push({
@@ -435,14 +447,17 @@ sap.ui.define([
 					}
 				});
 
-				orders.push({
+				oOrder = {
 					"$type": "VisitOrder",
 					"id": oDemandGuid,
 					"locationId": oDemandGuid + "_location",
 					"priority": aDemandsData[oDemandGuid].priority,
-					"serviceTime": aDemandsData[oDemandGuid].serviceTime,
-					"requiredVehicleEquipment": aDemandsData[oDemandGuid].qualification
-				});
+					"serviceTime": aDemandsData[oDemandGuid].serviceTime
+				};
+				if (bQualificationCheck){
+					oOrder["requiredVehicleEquipment"] = aDemandsData[oDemandGuid].qualification;
+				}
+				orders.push(oOrder);
 			}
 
 			oPayload.locations = oPayload.locations.concat(locations);
@@ -467,12 +482,13 @@ sap.ui.define([
 		 * @return {Object} - array of formatted date 
 		 */
 		_getDateIntervals: function (aStartDate, aEndDate) {
+			var aStartDateTmp = new Date(aStartDate);
 			var aHorizonDateIntervals = [];
-			while (aStartDate.getDate() != aEndDate.getDate()) {
-				aHorizonDateIntervals.push(this._getFormattedDate(aStartDate).substr(0, 10));
-				aStartDate.setDate(aStartDate.getDate() + 1)
+			while (aStartDateTmp.getDate() != aEndDate.getDate()) {
+				aHorizonDateIntervals.push(this._getFormattedDate(aStartDateTmp).substr(0, 10));
+				aStartDateTmp.setDate(aStartDateTmp.getDate() + 1)
 			}
-			aHorizonDateIntervals.push(this._getFormattedDate(aStartDate).substr(0, 10));
+			aHorizonDateIntervals.push(this._getFormattedDate(aStartDateTmp).substr(0, 10));
 			return aHorizonDateIntervals;
 		},
 

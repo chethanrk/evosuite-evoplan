@@ -178,7 +178,7 @@ sap.ui.define([
 		 */
 		step1Validation: function () {
 			var startDate = this._oViewModel.getProperty("/Scheduling/startDate") ? moment(this._oViewModel.getProperty("/Scheduling/startDate")) : null,
-				endDate = this._oViewModel.getProperty("/Scheduling/endDate")? moment(this._oViewModel.getProperty("/Scheduling/endDate")) : null,
+				endDate = this._oViewModel.getProperty("/Scheduling/endDate") ? moment(this._oViewModel.getProperty("/Scheduling/endDate")) : null,
 				bEndDateChanged = this._oViewModel.getProperty("/Scheduling/bDateChanged");
 			return this.oSchedulingActions.validateDateSchedule(startDate, endDate, bEndDateChanged);
 
@@ -236,9 +236,10 @@ sap.ui.define([
 
 			if (this._mParams.isAutoSchedule) {
 				this._mParams.viewName = "com.evorait.evoplan.view.scheduling.AutoScheduling.AutoScheduleStep1#AutoScheduleStep1";
-				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ScheduleTable";
+				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.LineItem";
 				this._mParams.modelName = "SchedulingModel";
 				this._mParams.modelDataSetPath = "/step1/dataSet";
+				this._mParams.entitySet = "ScheduleSelectSet"
 			} else {
 				this._mParams.viewName = "com.evorait.evoplan.view.scheduling.ReScheduling.ReScheduleStep1#ReScheduleStep1";
 				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ReScheduleTable";
@@ -287,6 +288,15 @@ sap.ui.define([
 			};
 			var oInitialModelState = Object.assign({}, oData);
 			this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags", oInitialModelState);
+
+			//reset the toggle button pressed state
+			this._oSchedulingModel.setProperty("btnInsidePressed", false);
+			this._oSchedulingModel.setProperty("btnOutsidePressed", false);
+
+			//reset filters in smartFilterBar
+			if (this._component.demandFilterDialog) {
+				this._component.demandFilterDialog.getContent()[0].clear();
+			}
 		},
 
 		/**
@@ -353,7 +363,9 @@ sap.ui.define([
 					dataSet: []
 				},
 				iPlanned: 0,
-				iNonPlanned: 0
+				iNonPlanned: 0,
+				btnInsidePressed: false,
+				btnOutsidePressed: false
 			});
 		},
 
@@ -372,7 +384,7 @@ sap.ui.define([
 						if (sOperationType === "createAssignment") {
 							this._ScheduleDialog.then(function (oDialog) {
 								oDialog.setBusy(true);
-								this.oSchedulingActions.handleCreateAssignment(this._oSchedulingModel).then(function () {
+								this.oSchedulingActions.handleCreateAssignment(this._oSchedulingModel).then(function (oResponse) {
 									this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
 									oDialog.close();
 									oDialog.setBusy(false);
@@ -449,9 +461,10 @@ sap.ui.define([
 			sContainerId = "ConfirmationStep";
 
 			this._mParams.viewName = "com.evorait.evoplan.view.scheduling.AutoScheduling.AutoScheduleStep2#AutoScheduleStep2";
-			this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ResponseTable";
+			this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.LineItem";
 			this._mParams.modelName = "SchedulingModel";
 			this._mParams.modelDataSetPath = "/step2/dataSet";
+			this._mParams.entitySet = "ScheduleResponseSet"
 
 			this._oModel.metadataLoaded().then(function () {
 				//get template and create views
@@ -478,7 +491,9 @@ sap.ui.define([
 					iNotPlannedRes = 0,
 					sResourceGuid,
 					aNonScheduledResIds = [],
-					aNonPlannableIds = [];
+					aNonPlannableIds = [],
+					fTravelTime = 0.0,
+					fTravelBackTime = 0.0;
 
 				//Scheduled demands
 				if (oResponse.data.tourReports) {
@@ -486,12 +501,20 @@ sap.ui.define([
 						oTour = oResponse.data.tourReports[i];
 						sResourceGuid = oTour.vehicleId.split("_")[0];
 
-						oTour.tourEvents.forEach(function (tourItem) {
+						oTour.tourEvents.forEach(function (tourItem, index) {
+							//Saving travel times 
+							if (tourItem.eventTypes.indexOf('DRIVING') !== -1) {
+								if (oTour.tourEvents[index + 1].eventTypes.indexOf('TRIP_END') !== -1) { //Going back travel
+									fTravelBackTime = tourItem.duration;
+								} else { //Forward travel
+									fTravelTime = fTravelTime + tourItem.duration;      // If ['Driving' 'Break' 'Driving'] is the sequence then both driving times must be added
+								}
+							}
 							if (tourItem.eventTypes.indexOf('SERVICE') !== -1) {
 								aData = {};
 
 								//Demand related info
-								aData = aDemandsData[tourItem.orderId].data;
+								aData = _.clone(aDemandsData[tourItem.orderId].data);
 
 								//Resource related info
 								aData.ResourceGuid = sResourceGuid;
@@ -512,9 +535,24 @@ sap.ui.define([
 
 								aData.DemandGuid = tourItem.orderId;
 								aData.PLANNED = true;
+								//Appending Duration and Duration Unit
+								aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
+
+								//Forward travel time
+								aData.TRAVEL_TIME = (fTravelTime / 3600);
+								aData.TRAVEL_BACK_TIME = fTravelBackTime;
+
+								aData.TRAVEL_TIME_UNIT = "H";   //Travel time unit will be hour
+
+								fTravelTime = 0.0;
 
 								iPlanned++;
 								aDataSet.push(aData);
+							}
+							if (tourItem.eventTypes.indexOf('TRIP_END') !== -1) {
+								//Backward travel time
+								aData.TRAVEL_BACK_TIME = (fTravelBackTime / 3600);
+								fTravelBackTime = 0.0;
 							}
 						}.bind(this));
 					}
@@ -527,10 +565,12 @@ sap.ui.define([
 						aData = {};
 
 						aData.DemandGuid = aOrder;
-						aData = aDemandsData[aOrder].data;
+						aData = _.clone(aDemandsData[aOrder].data);
 						aData.NotPlanState = IconColor.Critical;
 						aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlannable");
 						aData.PLANNED = false;
+						//Appending Duration and Duration Unit
+						aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
 
 						aNonPlannableIds.push(aOrder);
 						aDataSet.push(aData);
@@ -546,10 +586,13 @@ sap.ui.define([
 							aData = {};
 
 							aData.DemandGuid = aOrder;
-							aData = aDemandsData[aOrder].data;
+							aData = _.clone(aDemandsData[aOrder].data);
 							aData.NotPlanState = IconColor.Negative;
 							aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlanned");
 							aData.PLANNED = false;
+
+							//Appending Duration and Duration Unit
+							aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
 
 							aDataSet.push(aData);
 						}

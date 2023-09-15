@@ -316,16 +316,6 @@ sap.ui.define([
 				this._oRouter.navTo("newgantt", {});
 			}
 		},
-
-		/**
-		 * On press of auto-schedule button
-		 * Function to handle press event Plan Demands
-		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
-		 */
-		onAutoscheduleButtonPress: function (oEvent) {
-			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
-		},
-		
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */

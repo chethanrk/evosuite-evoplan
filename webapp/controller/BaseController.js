@@ -1116,9 +1116,9 @@ sap.ui.define([
 			// Condition to add number of assignments to display in error dialog for scheduling or auto scheduling.
 			if (bIsForScheduling || bIsForReScheduling) {
 				if (oData.OBJECT_SOURCE_TYPE === 'DEM_PMNO') {
-					return oData.NOTIFICATION_TYPE + ", " + oData.NOTIFICATION + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;
+					return oData.NOTIFICATION_TYPE + ", " + oData.NOTIFICATION + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES + ", " + oData.DURATION + oData.DURATION_UNIT;
 				} else {
-					return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;
+					return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES + ", " + oData.DURATION + oData.DURATION_UNIT;
 				}
 			}
 			if (oData.ORDERID) {
@@ -1473,6 +1473,23 @@ sap.ui.define([
 				NodeId: sNodeId
 			};
 			aUpdatedResources.push(oUpdatedResObj);
+		},
+
+		/*
+		* Function to validate manually entered date format in Assignment Dialogs (For both Demand and PRT)
+		*/
+		onValidateDateFormat : function(oSource, bValidFormat, oViewModel){
+			oSource.setValueState("None");
+			if (!bValidFormat) {
+				oSource.setValueState("Error");
+			}
+			var bValid = true,
+			eErrorDateFrom = this.getView().byId("idDateFromAssignInf").getValueState(),
+			eErrorDateTo = this.getView().byId("idDateToAssignInf").getValueState();
+			if (eErrorDateFrom === "Error" || eErrorDateTo === "Error") {
+				bValid = false;
+			}
+			oViewModel.setProperty("/bEnableAsgnSave", bValid);
 		}
 
 	});

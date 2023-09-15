@@ -161,6 +161,7 @@ sap.ui.define([
 					oData: oData
 				}];
 
+
 			this._eventBus.publish("StatusSelectDialog", "changeStatusDemand", {
 				selectedPaths: oSelectedData,
 				functionKey: sFunctionKey,
@@ -168,8 +169,9 @@ sap.ui.define([
 					bFromDetail: true
 				}
 			});
+			this._setUpdateResources(oData);
 		},
-		
+
 		/**
 		 * This method required when user directly open the demand overview page
 		 * and change status or assignment actions are performed
@@ -180,7 +182,24 @@ sap.ui.define([
 		_triggerRefreshDemand: function () {
 			this.getView().getElementBinding().refresh();
 		},
-		
+
+		/**
+		 * This method sets aUpdatesResources array to update selected resources
+		 * when change status function is triggered
+		 * @author Bhumika
+		 */
+		_setUpdateResources: function (oData) {
+			var aAssignmentList = oData.DemandToAssignment.__list,
+				oAsgnObj;
+
+			if (aAssignmentList) {
+				for (let i = 0; i < aAssignmentList.length; i++) {
+					oAsgnObj = this.getModel().getData("/" + aAssignmentList[i]);
+					this._updatedDmdResources(this.getModel("viewModel"), oAsgnObj);
+				}
+			}
+		}
+
 
 	});
 });
