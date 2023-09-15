@@ -408,7 +408,7 @@ sap.ui.define([
 					this._proceedToAssignTools(aSources, oDateParams, mParameters);
 				}
 			} else {
-				this.showMessageToast(oResourceBundle.getText("ymsg.poolPrtNotAllowed"));
+				this.showMessageToast(this.getResourceBundle().getText("ymsg.poolPrtNotAllowed"));
 				return;
 			}
 		},
