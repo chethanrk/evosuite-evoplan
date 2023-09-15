@@ -297,6 +297,9 @@ sap.ui.define([
 			if (this._component.demandFilterDialog) {
 				this._component.demandFilterDialog.getContent()[0].clear();
 			}
+			if (this._component._oResponseFilterDialog) {
+				this._component._oResponseFilterDialog.getContent()[0].clear();
+			}
 		},
 
 		/**
