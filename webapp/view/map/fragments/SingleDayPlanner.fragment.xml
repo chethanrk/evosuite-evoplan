@@ -18,7 +18,7 @@
 				<l:mainContent>
 					<SinglePlanningCalendar id="idSinglePlanningCalendar"
 						title="{parts: ['i18n>xtit.planningFor', 'mapSinglePlanning>/parentData/Description', 'mapSinglePlanning>/overallTravelTime'], formatter: 'formatMessage'}"
-						startDate="{path: 'mapSinglePlanning>/startDate'}" fullDay="true" startHour="{mapSinglePlanning>/startHour}"
+						startDate="{parts:['mapSinglePlanning>/startDate', 'mapSinglePlanning>/startTime'], formatter: '.formatter.formatDisplayDate'}" fullDay="true" startHour="{mapSinglePlanning>/startHour}"
 						endHour="{mapSinglePlanning>/endHour}" appointments="{path: 'mapSinglePlanning>/appointments'}"
 						specialDates="{path: 'mapSinglePlanning>/specialDates'}" enableAppointmentsCreate="false" enableAppointmentsDragAndDrop="true"
 						enableAppointmentsResize="false" startDateChange="onChangeStartDate" headerDateSelect="onChangeStartDate"

@@ -288,6 +288,11 @@ sap.ui.define([
 			};
 			var oInitialModelState = Object.assign({}, oData);
 			this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags", oInitialModelState);
+
+			//reset filters in smartFilterBar
+			if(this._component.demandFilterDialog){
+				this._component.demandFilterDialog.getContent()[0].clear();
+			}
 		},
 
 		/**
@@ -373,7 +378,7 @@ sap.ui.define([
 						if (sOperationType === "createAssignment") {
 							this._ScheduleDialog.then(function (oDialog) {
 								oDialog.setBusy(true);
-								this.oSchedulingActions.handleCreateAssignment(this._oSchedulingModel).then(function () {
+								this.oSchedulingActions.handleCreateAssignment(this._oSchedulingModel).then(function (oResponse) {
 									this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
 									oDialog.close();
 									oDialog.setBusy(false);

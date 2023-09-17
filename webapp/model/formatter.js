@@ -141,8 +141,8 @@ sap.ui.define([
 					return sPRTIcon;
 				}
 				return sStatusIcon;
-			} else if (sStatusIcon) {
-				return sStatusIcon;
+			} else if (sStatusIcon || sPRTIcon) {
+				return sStatusIcon || sPRTIcon;
 			} else {
 				if (iconFormat) {
 					return iconFormat.icon || "";
@@ -1108,6 +1108,16 @@ sap.ui.define([
 				return nSelectAll;
 			}
 			return nThreshold;
+		},
+		/*
+		 * SingleDayPlanner Display Date Contactination with Time
+		 * @param oDate, oTime
+		 * @return Date
+		 */
+		formatDisplayDate : function(oDate, oTime){
+			if(oDate && oTime){
+				return new Date(oDate.getTime() + oTime.ms);
+			}
 		}
 	};
 });

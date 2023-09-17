@@ -28,10 +28,13 @@ sap.ui.define([
 			this._component = this._oView.getController().getOwnerComponent();
 			this.AssignmentSourcePath = mParameters.parentContext.getPath();
 
+			this._oView.getModel("viewModel").setProperty("/bEnableAsgnSave", true);
+			
 			oPrtToolsAssignment.isPRT = true;
 			this.oAssignmentModel.setData(oPrtToolsAssignment);
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 			oView.addDependent(oDialog);
+
 		},
 		/**
 		 * Function to validate effort assignment save 
@@ -102,34 +105,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * On Change of Assignment Dates
-		 * Validating Start and End Date falls within Resource Start and End Date
-		 * 
-		 */
-		onAssignmentDateChange: function () {
-			var bValidDateFrom, bValidDateTo,
-				sResStartDate = this.oAssignmentModel.getProperty("/RES_ASGN_START_DATE"),
-				sResEndDate = this.oAssignmentModel.getProperty("/RES_ASGN_END_DATE"),
-				sDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
-				sDateTo = this.oAssignmentModel.getProperty("/DateTo");
-
-			//Checking DateFrom falls within Resource Start and End Date
-			bValidDateFrom = sDateFrom <= sResEndDate && sDateFrom >= sResStartDate;
-			//Checking DateTo falls within Resource Start and End Date
-			bValidDateTo = sDateTo <= sResEndDate && sDateTo >= sResStartDate;
-
-			//If DateFrom and DateTo doesn't fall within Resource Start and End Date
-			if (!bValidDateFrom || !bValidDateTo) {
-				this._showEffortConfirmMessageBox(this._oView.getController().getResourceBundle().getText("ymsg.targetValidity")).then(function (
-					oAction) {
-					if (oAction === "YES") {
-						this.oAssignmentModel.setProperty("/DateFrom", this.oAssignmentModel.getProperty("/RES_ASGN_START_DATE"));
-						this.oAssignmentModel.setProperty("/DateTo", this.oAssignmentModel.getProperty("/RES_ASGN_END_DATE"));
-					} else {}
-				}.bind(this));
-			}
-		},
-		/**
 		 * Function to Tool save and validate date
 		 * 
 		 */
@@ -158,14 +133,14 @@ sap.ui.define([
 					this.clearMessageModel.call(this._oView.getController());
 					this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), oParams, "ChangeToolAssignment", "POST",
 						this._mParameters, true).then(function (results) {
-						this.showMessage(results[1]);
-						if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
-							this._eventBus.publish("BaseController", "refreshTreeTable", {});
-						}
-						if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
-							this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
-						}
-					}.bind(this));
+							this.showMessage(results[1]);
+							if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
+								this._eventBus.publish("BaseController", "refreshTreeTable", {});
+							}
+							if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
+								this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+							}
+						}.bind(this));
 					this._closeDialog();
 				} else {
 					this.showMessageToast(sMsg);

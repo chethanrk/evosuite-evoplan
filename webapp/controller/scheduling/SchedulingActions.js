@@ -295,13 +295,13 @@ sap.ui.define([
 				aResourceTblFilters: [],
 				demandList: [],
 				demandData: {},
-				minDate: moment().add(1, "days").startOf("day").toDate(),
-				maxDate: moment().add(15, "days").endOf("day").toDate(),
+				minDate: moment().startOf("day").toDate(),
+				maxDate: moment().add(14, "days").endOf("day").toDate(),
 				startDate: "",
 				endDate: "",
 				startDateValue: "",
 				endDateValue: "",
-				initialFocusedDateValue: moment().add(1, "days").toDate(),
+				initialFocusedDateValue: moment().toDate(),
 				bInvalidDateRange: false,
 				sInvalidDateRangeMsg: "",
 				sStartDateValueState: "None",
@@ -460,7 +460,7 @@ sap.ui.define([
 						},
 						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION ? oDemand.oData.QUALIFICATION_DESCRIPTION.split(",") : [],
 						"priority": oDemand.oData.PRIORITY ? parseInt(oDemand.oData.PRIORITY) : 0,
-						"serviceTime": oDemand.oData.Effort ? (parseFloat(oDemand.oData.Effort) * 3600) : 1
+						"serviceTime": parseInt(oDemand.oData.Effort) ? oDemand.oData.DURATION_UNIT === "MIN" ? (parseFloat(oDemand.oData.Effort) * 60) : (parseFloat(oDemand.oData.Effort) * 3600) : 1
 					}
 					oDemandData[oDemand.oData.Guid] = oTempDemandData;
 				});
@@ -478,13 +478,13 @@ sap.ui.define([
 		 */
 		validateDemandDateRanges: function (oStartDate, oEndDate, bEndDateChanged) {
 			var oSchedulingModel = this._controller.getModel("SchedulingModel"),
-				startDate = oStartDate ? moment(oStartDate) : null,
-				endDate = oEndDate ? moment(oEndDate) : null,
+				startDate = (oStartDate && !isNaN(oStartDate)) ? moment(oStartDate) : null,
+				endDate = (oEndDate && !isNaN(oEndDate)) ? moment(oEndDate) : null,
 				aDemands = oSchedulingModel.getProperty("/step1/dataSet"),
 				inside = 0,
 				outside = 0;
 			this.oViewModel.setProperty("/Scheduling/bDateChanged", bEndDateChanged);
-			if (isFinite(startDate)) {
+			if (startDate) {
 				//when enddate datepicker opens set new focused date
 				this.oViewModel.setProperty("/Scheduling/initialFocusedDateValue", oStartDate);
 				//max date for datepicker is always startdate + 14 days
@@ -654,18 +654,12 @@ sap.ui.define([
 			} else {
 				mRefreshParam.bFromHome = true;
 			}
-			return new Promise(function (resolve, reject) {
-				this._getDemandsDataForAssignment(oModelDialog).then(function (mParam) {
-					// create chunks of the array for now its 3 later it would be 100.
-					this._CreateArrayInGroups(mParam, iArraySize).then(function (mParam) {
-						// now for each chunk of array we will calling Promise.All method
-						this._ResolvinPromiseCreatAssign(mParam).then(function (mParam) {
-							this.afterUpdateOperations(mRefreshParam);
-							resolve()
-						}.bind(this));
-					}.bind(this))
-				}.bind(this));
-			}.bind(this))
+			var oDataArr = this._getDemandsDataForAssignment(oModelDialog);
+
+			return Promise.all(oDataArr).then(function(oResponse){
+				this.afterUpdateOperations(mRefreshParam);
+				return oResponse;
+			}.bind(this));
 
 		},
 
@@ -752,82 +746,44 @@ sap.ui.define([
 		 * @return {array} 
 		 */
 		_getDemandsDataForAssignment: function (oModelDialog) {
+			var aData = oModelDialog.getProperty("/step2/dataSet"),
+				sSchedulingType = this.oViewModel.getProperty("/Scheduling/sScheduleType"),
+				iBatchCount = this.oUserModel.getProperty("/DEFAULT_PTV_SCHEDUL_BATCH_SIZE"),
+				sGroupId,
+				mParams,
+				i = 0,
+				oBjectInitial, 
+				aNewArray = [], 
+				bIsLast = false,
+				aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 
-			return new Promise(function (resolve, reject) {
-				// sample Data
-				var aData = oModelDialog.getProperty("/step2/dataSet"),
-					sSchedulingType = this.oViewModel.getProperty("/Scheduling/sScheduleType");
-
-
-				// close an object
-				var oBjectInitial, aNewArray = [],
-					aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
-				for (var x = 0; x < aData.length; x++) {
-					if (aData[x].PLANNED) {
+				iBatchCount = iBatchCount ? parseInt(iBatchCount) : 100;
+			for (var x = 0; x < aData.length; x++) {
+				if(x % iBatchCount === 0){
+					sGroupId = "groupId" + i;
+					mParams = {
+						batchGroupId:sGroupId
+					};
+					i++;
+				}
+				if (x === (aData.length-1)){
+					bIsLast = true;
+				}
+				if (aData[x].PLANNED) {
 						aData[x].TimeFrom.ms = aData[x].DateFrom.getTime();
 						aData[x].TimeTo.ms = aData[x].DateTo.getTime();
-						oBjectInitial = Object.assign({}, aData[x]);
-						Object.keys(oBjectInitial).forEach(function (key) {
-							if (aPropReq.indexOf(key) < 0) {
-								delete oBjectInitial[key];
-							};
-						});
-						oBjectInitial.MapAssignmentType = sSchedulingType;
-						aNewArray.push(this._CallFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST"));
-					}
-				};
-				/* sample responce
-			
-				{
-					"DateFrom": "2023-08-16T09:25:08.053Z",
-					"TimeFrom": {
-						"ms": 1692177908053
-					},
-					"DateTo": "2023-08-16T09:25:08.053Z",
-					"TimeTo": {
-						"ms": 1692177908053
-					},
-					"DemandGuid": "A12B77123F2E1EDDBAB06CD3E0B9826B",
-					"ResourceGroupGuid": "0AA10FE57E901EE9BBCE2297AA435A96",
-					"ResourceGuid": "0A51491BD5A01EE8A5910DE06717D060",
-					"Effort": "0",
-					"EffortUnit": ""
-				}*/
-
-				resolve(aNewArray);
-			}.bind(this));
-		},
-		/**
-		 * This method is used to create group/array of 100 elements inside the parent array. 
-		 * @param {array} arr - Array of the demands 
-		 * @param {integer} size - size of each array or group inside the parent array
-		 * @return {array} myArray - [[.....100][...100]] 
-		 */
-		_CreateArrayInGroups: function (arr, size) {
-			return new Promise(function (resolve, reject) {
-				var myArray = [];
-				for (var i = 0; i < arr.length; i += size) {
-					myArray.push(arr.slice(i, i + size));
+					oBjectInitial = Object.assign({}, aData[x]);
+					Object.keys(oBjectInitial).forEach(function (key) {
+						if (aPropReq.indexOf(key) < 0) {
+							delete oBjectInitial[key];
+						};
+					});
+					oBjectInitial.MapAssignmentType = sSchedulingType;
+					aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST", mParams, bIsLast));
 				}
-				resolve(myArray);
-			}.bind(this));
+			};
 
-		},
-		/**
-		 * @param {array} aArray - This array will have chunks of 100 array with promises 
-		 * which we will have to resolve each 100 chunk at a time.
-		 */
-		_ResolvinPromiseCreatAssign: function (aArray) {
-			var aResult = []
-			return aArray.reduce(function (prev, curr) {
-				return prev.then(function (mParam1) {
-					aResult = aResult.concat(mParam1)
-					return Promise.all(curr)
-				});
-			}, Promise.resolve(1)).then(function (result) {
-				aResult = aResult.concat(result);
-				return aResult;
-			});
+			return aNewArray;
 		},
 		/**
 		 * This method is used to call function import and returns the function import as promise.
@@ -836,7 +792,7 @@ sap.ui.define([
 		 * @param {string} sMethod - method it could be post or anyother.
 		 * @param {object} mRefreshParam - this method is passed to afterUpdateOperations method
 		 */
-		_CallFunctionImportScheduling: function (oParams, sFuncName, sMethod) {
+		_callFunctionImportScheduling: function (oData, sFuncName, sMethod, mParams, bIsLast) {
 			// TODO. 1 check for utilization
 			// 2. check for message toast to be displyaed after the success of this call
 			// 3. Refractor this code.
@@ -845,29 +801,31 @@ sap.ui.define([
 				var oModel = this.oDataModel,
 					oViewModel = this.oAppViewModel,
 					oResourceBundle = this.oResourceBundle;
+
 				oViewModel.setProperty("/busy", true);
 				oModel.callFunction("/" + sFuncName, {
 					method: sMethod || "POST",
-					urlParameters: oParams,
+					urlParameters: oData,
+					batchGroupId:mParams.batchGroupId,
 					refreshAfterChange: false,
 					success: function (oData, oResponse) {
 						//Handle Success
 						oViewModel.setProperty("/busy", false);
-						this.showMessage(oResponse);
-
+						if(bIsLast){
+							this.showMessage(oResponse);
+						}
 						resolve(oData)
 					}.bind(this),
 					error: function (oError) {
 						//set first dragged index to set initial
 						this.oViewModel.setProperty("/iFirstVisibleRowIndex", -1);
-						this.showMessageToast(oResourceBundle.getText("errorMessage"));
+						if (bIsLast){
+							this.showMessageToast(oResourceBundle.getText("errorMessage"));
+						}
 						reject(oError);
 					}.bind(this)
 				});
 			}.bind(this))
 		}
-
-
-
 	});
 });
