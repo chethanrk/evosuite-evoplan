@@ -537,6 +537,7 @@ sap.ui.define([
 								aData.PLANNED = true;
 								//Appending Duration and Duration Unit
 								// aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
+								// commenting this code due to causing issue | decimal field type is diplaying black for string
 
 								//Forward travel time
 								aData.TRAVEL_TIME = (fTravelTime / 3600);
