@@ -536,7 +536,7 @@ sap.ui.define([
 								aData.DemandGuid = tourItem.orderId;
 								aData.PLANNED = true;
 								//Appending Duration and Duration Unit
-								aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
+								// aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
 
 								//Forward travel time
 								aData.TRAVEL_TIME = (fTravelTime / 3600);
@@ -570,7 +570,8 @@ sap.ui.define([
 						aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlannable");
 						aData.PLANNED = false;
 						//Appending Duration and Duration Unit
-						aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
+						// aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
+						// commenting this code due to causing issue | decimal field type is diplaying black for string 
 
 						aNonPlannableIds.push(aOrder);
 						aDataSet.push(aData);
@@ -592,7 +593,8 @@ sap.ui.define([
 							aData.PLANNED = false;
 
 							//Appending Duration and Duration Unit
-							aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
+							// aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
+							// commenting this code due to causing issue | decimal field type is diplaying black for string
 
 							aDataSet.push(aData);
 						}
