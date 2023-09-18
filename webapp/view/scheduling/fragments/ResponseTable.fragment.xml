@@ -8,7 +8,7 @@
             <OverflowToolbar>
                 <Title text="{i18n>xfld.demandName}" />
                 <ToolbarSpacer />
-                <Button tooltip="{i18n>xbut.filters}" type="Ghost" icon="sap-icon://filter" press="onShowFilters" />
+                <Button tooltip="{i18n>xbut.filters}" type="Ghost" icon="sap-icon://filter" press="onShowFilters" visible="{SchedulingModel>/isAutoSchedule}" />
                 <!--To be changed when annotations are added -->
             </OverflowToolbar>
         </headerToolbar>
