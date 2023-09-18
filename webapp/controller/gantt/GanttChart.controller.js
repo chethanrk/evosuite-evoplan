@@ -1911,10 +1911,12 @@ sap.ui.define([
 		 * @param oResData
 		 */
 		_addChildrenToParent: function (iLevel, oResData) {
-			var aChildren = this.oGanttModel.getProperty("/data/children");
+			var aChildren = this.oGanttModel.getProperty("/data/children"),
+				aTravelTimes=[];
 			var callbackFn = function (oItem, level) {
 				oItem.children = [];
 				oResData.forEach(function (oResItem) {
+
 					if (oItem.NodeId === oResItem.ParentNodeId) {
 						if (oResItem.NodeType === "ASSIGNMENT") { // if it's assignment node then push same assignment in AssignmentSet to show the Shape
 							if (oResItem.AssignmentSet && oResItem.AssignmentSet.results.length > 0) {
@@ -1934,17 +1936,73 @@ sap.ui.define([
 									_cloneObj.OBJECT_ID_RELATION = _cloneObj.OBJECT_ID_RELATION + "//" + _cloneObj.ResourceGuid;
 									oResItem.AssignmentSet.results.push(_cloneObj);
 								}
-							});
+								if (parseFloat(oAsgn.TRAVEL_TIME) > 0){
+									aTravelTimes.push(this._getAssignmentTravelTimeObject(oAsgn, oItem));
+								}
+								if (parseFloat(oAsgn.TRAVEL_BACK_TIME) > 0) {
+									aTravelTimes.push(this._getAssignmentTravelTimeObject(oAsgn, oItem, true));
+								}
+							}.bind(this));
+							
 							oResItem.ResourceAvailabilitySet = oItem.ResourceAvailabilitySet; // copying resource availabilities to assignment node
 						}
-
 						oItem.children.push(oResItem);
+						oItem.TravelTimes = {
+							results: _.cloneDeep(aTravelTimes)
+						}
+						aTravelTimes = [];
 					}
-				});
-			};
+				}.bind(this));
+			}.bind(this);
 			aChildren = this._recurseChildren2Level(aChildren, iLevel, callbackFn);
 			this.oGanttModel.setProperty("/data/children", aChildren);
 		},
+		_getAssignmentTravelTimeObject: function(oAssignment, oResource, bIsTravelBack){
+			var aAvailabilities = [],
+				oTempDate,
+				oDateTo, 
+				oDateFrom,
+				nTravelTime,
+				oBreakFrom,
+				oBreakTo,
+				oTraveltimeObjects = [];
+			
+			if (bIsTravelBack){
+				oTempDate = new Date(oAssignment.DateTo);
+				nTravelTime = oAssignment.TRAVEL_BACK_TIME;
+				oDateFrom = new Date(oTempDate.getTime() + 1000);
+				oDateTo = new Date(oTempDate.getTime() + 1000 + parseFloat(nTravelTime) * 60000);
+			}else{
+				oTempDate = new Date(oAssignment.DateFrom);
+				nTravelTime = oAssignment.TRAVEL_TIME;
+				oDateTo = new Date(oTempDate.getTime() - 1000);
+				oDateFrom = new Date(oTempDate.getTime() - 1000 - parseFloat(nTravelTime) * 60000);
+			}
+			
+			// //check for break overlaps
+			// if (oResource.ResourceAvailabilitySet && oResource.ResourceAvailabilitySet.results){
+			// 	aAvailabilities = oResource.ResourceAvailabilitySet.results;
+			// }
+			// for (var i in aAvailabilities) {
+			// 	if (aAvailabilities[i].AvailabilityTypeGroup === "B" && aAvailabilities[i].DateFrom.getDate() === oTempDate.getDate()){
+			// 		oBreakFrom = aAvailabilities[i].DateFrom;
+			// 		oBreakTo = aAvailabilities[i].DateTo;
+			// 		if (moment(oBreakFrom) > moment(oDateFrom) && moment(oDateFrom) > moment(oBreakTo)){
+			// 				debugger;
+			// 		} else if (moment(oBreakFrom) > moment(oDateTo) && moment(oDateTo) > moment(oBreakTo)){
+			// 			debugger;
+			// 		}
+			// 	}
+			// }
+			return {
+				DateFrom: oDateFrom,
+				DateTo: oDateTo,
+				Description: "Travel Time",
+				Effort: (nTravelTime / 60).toFixed(2),
+				TRAVEL_TIME: parseFloat(nTravelTime / 60).toFixed(2)
+			};
+		},
+		
 		/**
 		 * loop trough all nested array of children
 		 * When max level for search was reached execute callbackFn
@@ -2069,20 +2127,13 @@ sap.ui.define([
 		 */
 		_addAssignments: function (aAssignments) {
 			var aGanttData = this.oGanttModel.getProperty("/data/children"),
-				aTravelTimes = this.oViewModel.getProperty("/ganttSettings/TravelTimes");
+				aTravelTimes = [];
 			for (let i = 0; i < aGanttData.length; i++) {
 				var aResources = aGanttData[i].children;
 				if (aResources) {
 					for (let j = 0; aResources && j < aResources.length; j++) {
 						var oResource = aResources[j];
-
-						//Adding Travel time if available for the resource
-						if (oResource.ResourceGuid && aTravelTimes[oResource.ResourceGuid]) {
-							oResource.TravelTimes = {
-								results: aTravelTimes[oResource.ResourceGuid]
-							};
-						}
-
+						aTravelTimes = [];
 						oResource.AssignmentSet.results = [];
 						oResource.children = []; //Updating resource child nodes
 						for (var k in aAssignments) {
@@ -2097,9 +2148,18 @@ sap.ui.define([
 										results: [_cloneObj]
 									};
 								});
-
+								if (parseFloat(aAssignments[k].TRAVEL_TIME) > 0) {
+									aTravelTimes.push(this._getAssignmentTravelTimeObject(aAssignments[k],oResource))
+								}
+								if (parseFloat(aAssignments[k].TRAVEL_BACK_TIME) > 0) {
+									aTravelTimes.push(this._getAssignmentTravelTimeObject(aAssignments[k], oResource, true))
+								}
 							}
 						}
+						//Adding Travel time if available for the resource
+						oResource.TravelTimes = {
+							results: _.cloneDeep(aTravelTimes)
+						};
 					}
 				}
 			}
@@ -2963,6 +3023,9 @@ sap.ui.define([
 				});
 				this._refreshChangedResources(sResPath);
 			}.bind(this));
+		},
+		_getDateDuration: function (oStartDate, oEndDate) {
+			return Math.ceil((oEndDate.getTime() - oStartDate.getTime()) / 1000);
 		},
 	});
 

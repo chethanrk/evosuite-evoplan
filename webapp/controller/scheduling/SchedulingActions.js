@@ -785,6 +785,11 @@ sap.ui.define([
 						};
 					});
 					oBjectInitial.MapAssignmentType = sSchedulingType;
+
+					// Adding travel time to Pass to create assignment call
+					// converting it into minutes as in Backend travel time unit is hardcoded as 'MIN'
+					oBjectInitial.TravelTime = (aData[x].TRAVEL_TIME * 60).toFixed(2);
+					oBjectInitial.TravelBackTime = (aData[x].TRAVEL_BACK_TIME * 60).toFixed(2);
 					aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST", mParams, bIsLast));
 				}
 			};
