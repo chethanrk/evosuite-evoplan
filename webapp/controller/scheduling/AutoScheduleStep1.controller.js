@@ -137,8 +137,12 @@ sap.ui.define([
          */
         onChangeDateTo: function(oEvent){
             var oDate = oEvent.getSource().getValue();
-            oDate = new Date(new Date(oDate).getTime() - 1000);
-            oEvent.getSource().setDateValue(oDate);
+            if (oDate){
+                oDate = new Date(new Date(oDate).getTime() - 1000);
+                oEvent.getSource().setDateValue(oDate);
+            }else{
+                oDate = new Date(oDate);
+            }
             this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "None");
             this.oSchedulingActions.validateDemandDateRanges(this._oViewModel.getProperty("/Scheduling/startDate"), oDate, true);
             this._checkGeneratedResponse();
@@ -181,6 +185,7 @@ sap.ui.define([
                     this.getView().addDependent(oDialog);
                     //used to access from SchedulingDialog to clear the filters on dialog close
                     this.getOwnerComponent().demandFilterDialog = oDialog;
+                    this._oSmartFilter = oDialog.getContent()[0];
                     return oDialog;
                 }.bind(this));
             }
@@ -209,8 +214,7 @@ sap.ui.define([
         },
 
         onSchedulingFilterChange: function(oEvent){
-            var oSmartFilter = oEvent.getSource();
-            this._setCustomTableFilter(oSmartFilter);
+            this._setCustomTableFilter(this._oSmartFilter);
         },
 
 

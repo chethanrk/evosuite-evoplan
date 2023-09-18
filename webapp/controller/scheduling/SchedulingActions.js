@@ -455,9 +455,9 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				var iServiceTime;
 				aDemandList.forEach(function (oDemand) {
-
-					iServiceTime = this._getDemandDurationInSeconds(oDemand.oData.Effort, oDemand.oData.DURATION_UNIT);
-
+					
+					iServiceTime = this._getDemandDurationInSeconds(oDemand.oData.DURATION, oDemand.oData.DURATION_UNIT);
+					
 					oTempDemandData = {
 						"data": oDemand.oData,
 						"location": {

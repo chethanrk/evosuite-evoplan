@@ -61,6 +61,8 @@ sap.ui.define([
         }).then(function (oDialog) {
           oDialog.addStyleClass(this._oViewModel.getProperty("/densityClass"));
           this.getView().addDependent(oDialog);
+          //used to access from SchedulingDialog to clear the filters on dialog close
+          this.getOwnerComponent()._oResponseFilterDialog = oDialog;
           return oDialog;
         }.bind(this));
       }
