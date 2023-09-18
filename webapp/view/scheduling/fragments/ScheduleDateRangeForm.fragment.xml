@@ -31,7 +31,7 @@
             visible="{user>/ENABLE_UTILIZATION_BAR_MAPS}"
             width="100%"
             min="0" max="100"
-            showAdvancedTooltip="true"
+            showAdvancedTooltip="false"
             showHandleTooltip="false"
             change="onUtilizationChange"
             class="sapUiMediumMarginBottom" />
