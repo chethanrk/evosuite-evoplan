@@ -791,7 +791,8 @@ sap.ui.define([
 				aNewArray = [],
 				bIsLast = false,
 				aPropReq,
-				sFunctionImp;
+				sFunctionImp,
+				mParam2="Scheduling";
 
 
 			iBatchCount = iBatchCount ? parseInt(iBatchCount) : 100;
@@ -819,7 +820,7 @@ sap.ui.define([
 							};
 						});
 						oBjectInitial.MapAssignmentType = sSchedulingType;
-						aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, sFunctionImp, "POST", mParams, bIsLast));
+						aNewArray.push(this.executeFunctionImport(this.oDataModel,oBjectInitial, sFunctionImp, "POST", false, mParams,mParam2));
 					} else {
 						sFunctionImp = "UpdateAssignment";
 						aPropReq = ["ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
@@ -833,7 +834,7 @@ sap.ui.define([
 						});
 						oBjectInitial.MapAssignmentType = sSchedulingType;
 						oBjectInitial.AssignmentGUID = this.oViewModel.getProperty("/Scheduling/sReSchAssignGuid");
-						aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, sFunctionImp, "POST", mParams, bIsLast));
+						aNewArray.push(this.executeFunctionImport(this.oDataModel,oBjectInitial, sFunctionImp, "POST", false,mParams,mParam2));
 					}
 
 				}
@@ -841,49 +842,6 @@ sap.ui.define([
 
 			return aNewArray;
 		},
-		/**
-		 * This method is used to call function import and returns the function import as promise.
-		 * @param {json} oParams -JSON that is passed as url parameter.
-		 * @param {string} sFuncName - function name to be called.
-		 * @param {string} sMethod - method it could be post or anyother.
-		 * @param {object} mRefreshParam - this method is passed to afterUpdateOperations method
-		 */
-		_callFunctionImportScheduling: function (oData, sFuncName, sMethod, mParams, bIsLast) {
-			// TODO. 1 check for utilization
-			// 2. check for message toast to be displyaed after the success of this call
-			// 3. Refractor this code.
-
-			return new Promise(function (resolve, reject) {
-				var oModel = this.oDataModel,
-					oViewModel = this.oAppViewModel,
-					oResourceBundle = this.oResourceBundle;
-
-				oViewModel.setProperty("/busy", true);
-				oModel.callFunction("/" + sFuncName, {
-					method: sMethod || "POST",
-					urlParameters: oData,
-					batchGroupId: mParams.batchGroupId,
-					refreshAfterChange: false,
-					success: function (oData, oResponse) {
-						//Handle Success
-						oViewModel.setProperty("/busy", false);
-						if (bIsLast) {
-							this.showMessage(oResponse);
-						}
-						resolve(oData)
-					}.bind(this),
-					error: function (oError) {
-						//set first dragged index to set initial
-						this.oViewModel.setProperty("/iFirstVisibleRowIndex", -1);
-						if (bIsLast) {
-							this.showMessageToast(oResourceBundle.getText("errorMessage"));
-						}
-						reject(oError);
-					}.bind(this)
-				});
-			}.bind(this))
-		},
-
 		/**
 		 * This method is used to convert Duration into seconds based on duration Unit 
 		 * @param {number} nDuration - Demand duration
