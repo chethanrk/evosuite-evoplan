@@ -247,7 +247,6 @@ sap.ui.define([
 					method: sMethod || "POST",
 					urlParameters: oParams,
 					refreshAfterChange: false,
-					batchGroupId: mParams !== null ? mParams.batchGroupId : null,
 					success: function (oData, oResponse) {
 						if (bFromMultiTimeAlloc) {
 							resolve([oData, oResponse]);
