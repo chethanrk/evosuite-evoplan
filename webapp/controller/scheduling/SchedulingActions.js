@@ -227,6 +227,7 @@ sap.ui.define([
 				}
 				//sorting the list
 				aResourceNameList.sort();
+				oAppViewModel.setProperty("/busy", false);
 				return {
 					bNoDuplicate: bValidateState,
 					resourceNames: aResourceNameList.join("\n"),
