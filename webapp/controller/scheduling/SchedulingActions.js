@@ -820,7 +820,7 @@ sap.ui.define([
 							};
 						});
 						oBjectInitial.MapAssignmentType = sSchedulingType;
-						aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, sFunctionImp, "POST", mParams));
+						aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, sFunctionImp, "POST", mParams,bIsLast));
 					} else {
 						sFunctionImp = "UpdateAssignment";
 						aPropReq = ["ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
@@ -834,7 +834,7 @@ sap.ui.define([
 						});
 						oBjectInitial.MapAssignmentType = sSchedulingType;
 						oBjectInitial.AssignmentGUID = this.oViewModel.getProperty("/Scheduling/sReSchAssignGuid");
-						aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, sFunctionImp, "POST", mParams));
+						aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, sFunctionImp, "POST", mParams,bIsLast));
 					}
 
 				}
