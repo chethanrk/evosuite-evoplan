@@ -284,6 +284,7 @@ sap.ui.define([
 			}
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
 				if (oResult.bNoDuplicate) {
+					oAppViewModel.setProperty("/busy", true);
 					oMsgParam["bIsPoolExist"] = oResult.bIsPoolExist;
 					oMsgParam["sPoolNames"] = oResult.poolResource;
 					//calling function to check if the demand already is assigned to one of the selected resource
@@ -291,7 +292,7 @@ sap.ui.define([
 				} else {
 					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
 					oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
-					oAppViewModel.setProperty("/busy", true);
+					oAppViewModel.setProperty("/busy", false);
 					return false;
 				}
 			}.bind(this)).then(function (oResult) {

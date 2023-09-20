@@ -227,7 +227,6 @@ sap.ui.define([
 				}
 				//sorting the list
 				aResourceNameList.sort();
-				oAppViewModel.setProperty("/busy", false);
 				return {
 					bNoDuplicate: bValidateState,
 					resourceNames: aResourceNameList.join("\n"),
@@ -262,7 +261,7 @@ sap.ui.define([
 			//Read all Resource from Resource group
 			oAppViewModel.setProperty("/busy", true);
 			return Promise.all(aResourceGroupPromise).then(function (aResult) {
-				//oAppViewModel.setProperty("/busy", false);
+				oAppViewModel.setProperty("/busy", false);
 				aResult.forEach(function (oResult) {
 					aResourceData = aResourceData.concat(oResult.results);
 					aResourceData = aResourceData.filter(function (oParam1) {
