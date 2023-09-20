@@ -3085,7 +3085,7 @@ sap.ui.define([
 			// check if travel time splitted
 			if (!bIsChanged) {
 
-				// addiign singler travel time object if it's not splitted
+				// adding single travel time object if it's not splitted
 				aTravelTimes.push({
 					DateFrom: new Date(oDateFrom),
 					DateTo: new Date(oDateTo),
