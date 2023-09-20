@@ -682,7 +682,6 @@ sap.ui.define([
 			aFilterResource = [];
 			aFilterResource.push(new Filter("DemandGuid", FilterOperator.EQ, sSelectedDemand.Guid));
 			
-			//To Fetch the 
 			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource, "$select=Guid").then(function (oData) {
 				
 				if (oData.results.length > 0) {
