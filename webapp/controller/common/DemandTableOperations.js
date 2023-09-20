@@ -251,12 +251,12 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
 		 */
 		onAutoscheduleButtonPress: function (oEvent) {
-			
+
 			var oViewModel = this.getModel("viewModel");
-			oViewModel.setProperty("/Scheduling/bSchedBtnBusy",true);
-			oViewModel.setProperty("/Scheduling/sScheduleType","A");
-			if(!this.oSchedulingActions.validateScheduleAfterPress()){
-				oViewModel.setProperty("/Scheduling/bSchedBtnBusy",false);
+			oViewModel.setProperty("/Scheduling/bSchedBtnBusy", true);
+			oViewModel.setProperty("/Scheduling/sScheduleType", "A");
+			if (!this.oSchedulingActions.validateScheduleAfterPress()) {
+				oViewModel.setProperty("/Scheduling/bSchedBtnBusy", false);
 				return;
 			}
 			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
@@ -272,11 +272,13 @@ sap.ui.define([
 				oResourceBundle = this.getResourceBundle(),
 				sPath = oViewModel.getProperty("/Scheduling/selectedDemandPath"),
 				aDemandList = [],
-				oMsgParam = {};
-			oViewModel.setProperty("/Scheduling/bReSchedBtnBusy",true);
-			oViewModel.setProperty("/Scheduling/sScheduleType","R");
-			if(!this.oSchedulingActions.validateReScheduleAfterPress()){
-				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy",false);
+				oMsgParam = {},
+				oAppViewModel = this.getModel("appView");
+			oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", true);
+			oViewModel.setProperty("/Scheduling/sScheduleType", "R");
+			oAppViewModel.setProperty("/busy", true);
+			if (!this.oSchedulingActions.validateReScheduleAfterPress()) {
+				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
 				return;
 			}
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
@@ -287,14 +289,17 @@ sap.ui.define([
 					return this.oSchedulingActions.checkAssignedResource();
 				} else {
 					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
-					oViewModel.setProperty("/Scheduling/bReSchedBtnBusy",false);
+					oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
+					oAppViewModel.setProperty("/busy", true);
 					return false;
 				}
 			}.bind(this)).then(function (oResult) {
+				return this.oSchedulingActions.getAssignmentIdForReschedule(oResult);
+			}.bind(this)).then(function (oResult) {
 				if (oResult.bNotAssigned) {
 					aDemandList = [{
-						sPath:sPath,
-						oData:oDataModel.getProperty(sPath)
+						sPath: sPath,
+						oData: oDataModel.getProperty(sPath)
 					}];
 					oViewModel.setProperty("/Scheduling/demandList", aDemandList);
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
@@ -305,14 +310,16 @@ sap.ui.define([
 				} else {
 					this._showErrorMessage(oResourceBundle.getText("ymsg.alreadyAssigned", oResult.resourceNames));
 				}
-				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy",false);
-			}.bind(this));
+				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
+				oAppViewModel.setProperty("/busy", false);
+			}.bind(this))
+
 		},
 		/**
 		 * This method is used to clear the selections of the demands table in
 		 * Demands, NewGantt and Maps view.
 		 */
-		clearDemandsSelection:function(){
+		clearDemandsSelection: function () {
 			this._oDataTable.clearSelection();
 		},
 

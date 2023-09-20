@@ -42,7 +42,7 @@ sap.ui.define([
      * Call set filter when radio button selected
      */
     onChangeResponseType: function () {
-      this._setCustomTableFilter();
+      this._setCustomTableFilter(this._oSmartFilter);
     },
 
     /**
@@ -61,6 +61,9 @@ sap.ui.define([
         }).then(function (oDialog) {
           oDialog.addStyleClass(this._oViewModel.getProperty("/densityClass"));
           this.getView().addDependent(oDialog);
+          //used to access from SchedulingDialog to clear the filters on dialog close
+          this.getOwnerComponent()._oResponseFilterDialog = oDialog;
+          this._oSmartFilter = oDialog.getContent()[0];
           return oDialog;
         }.bind(this));
       }
@@ -82,8 +85,7 @@ sap.ui.define([
     },
 
     onSchedulingFilterChange: function(oEvent){
-      var oSmartFilter = oEvent.getSource();
-      this._setCustomTableFilter(oSmartFilter);
+      this._setCustomTableFilter(this._oSmartFilter);
     },
 
 
