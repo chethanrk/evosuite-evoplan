@@ -2980,8 +2980,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 		/**
-		 * loop trough all nested array of children
-		 * When max level for search was reached execute callbackFn
+		 * Creating Travel time object from given assignment object
 		 * @param {Array} aTravelTimes stores all travel time objects
 		 * @param {Object} oAssignment respective Assignment object 
 		 * @param {Function} oResource respective Resource object to get Availabilities

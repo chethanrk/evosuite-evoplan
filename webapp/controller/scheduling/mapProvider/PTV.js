@@ -284,7 +284,7 @@ sap.ui.define([
 			sFirstKey = Object.keys(aResourceData)[0];
 			sModeOfTransport = aResourceData[sFirstKey].aData.MODE_OF_TRANSPORT;
 
-			oPayload.storedProfile = 'car' //sModeOfTransport;
+			oPayload.storedProfile = sModeOfTransport;
 
 			oPayload.distanceMatrixOptions = {
 				//current default routing type
