@@ -261,7 +261,7 @@ sap.ui.define([
 			//Read all Resource from Resource group
 			oAppViewModel.setProperty("/busy", true);
 			return Promise.all(aResourceGroupPromise).then(function (aResult) {
-				//oAppViewModel.setProperty("/busy", false);
+				oAppViewModel.setProperty("/busy", false);
 				aResult.forEach(function (oResult) {
 					aResourceData = aResourceData.concat(oResult.results);
 					aResourceData = aResourceData.filter(function (oParam1) {
@@ -673,25 +673,22 @@ sap.ui.define([
 		 * update assignment call at the time of re-schedule functionality.
 		 * @param {object} mParam model to ge the 
 		 * @param mParam {object} this is the parmeter from the last function and this is used to reuturn on sucessfull retrival of the assignment guid.
-		 * @return {json} mParam.
+		 * @return {boolean} true.
 		 */
-		getAssignmentIdForReschedule: function (mParam) {
+		getAssignmentIdForReschedule: function () {
 			var sDemandPath, sSelectedDemand, aResourceList, aAssignedList = [];
 			sDemandPath = this.oViewModel.getProperty("/Scheduling/selectedDemandPath");
 			sSelectedDemand = this.oDataModel.getProperty(sDemandPath);
 			aFilterResource = [];
 			aFilterResource.push(new Filter("DemandGuid", FilterOperator.EQ, sSelectedDemand.Guid));
 			
-			//To Fetch the 
 			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource, "$select=Guid").then(function (oData) {
 				
 				if (oData.results.length > 0) {
 					this.oViewModel.setProperty("/Scheduling/sReSchAssignGuid", oData.results[0].Guid);
 				}
 				
-				if (mParam) {
-					return mParam;
-				}
+				return true;
 				
 			}.bind(this));
 		},

@@ -279,10 +279,12 @@ sap.ui.define([
 			oAppViewModel.setProperty("/busy", true);
 			if (!this.oSchedulingActions.validateReScheduleAfterPress()) {
 				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
+				oAppViewModel.setProperty("/busy", false);
 				return;
 			}
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
 				if (oResult.bNoDuplicate) {
+					oAppViewModel.setProperty("/busy", true);
 					oMsgParam["bIsPoolExist"] = oResult.bIsPoolExist;
 					oMsgParam["sPoolNames"] = oResult.poolResource;
 					//calling function to check if the demand already is assigned to one of the selected resource
@@ -290,11 +292,9 @@ sap.ui.define([
 				} else {
 					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
 					oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
-					oAppViewModel.setProperty("/busy", true);
+					oAppViewModel.setProperty("/busy", false);
 					return false;
 				}
-			}.bind(this)).then(function (oResult) {
-				return this.oSchedulingActions.getAssignmentIdForReschedule(oResult);
 			}.bind(this)).then(function (oResult) {
 				if (oResult.bNotAssigned) {
 					aDemandList = [{
@@ -303,16 +303,23 @@ sap.ui.define([
 					}];
 					oViewModel.setProperty("/Scheduling/demandList", aDemandList);
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
+					// calling below method to get the assignment id for the resource so that 
+					return this.oSchedulingActions.getAssignmentIdForReschedule();
+				} else {
+					this._showErrorMessage(oResourceBundle.getText("ymsg.alreadyAssigned", oResult.resourceNames));
+				}
+			
+			}.bind(this)).then(function (bParam) {
+				if(bParam){
 					var mParams = {
 						entitySet: "DemandSet"
 					}
 					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams, oMsgParam, this.oSchedulingActions);
-				} else {
-					this._showErrorMessage(oResourceBundle.getText("ymsg.alreadyAssigned", oResult.resourceNames));
 				}
 				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
 				oAppViewModel.setProperty("/busy", false);
-			}.bind(this))
+				
+			}.bind(this));
 
 		},
 		/**
