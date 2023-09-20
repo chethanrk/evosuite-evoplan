@@ -675,7 +675,7 @@ sap.ui.define([
 		 * @param mParam {object} this is the parmeter from the last function and this is used to reuturn on sucessfull retrival of the assignment guid.
 		 * @return {json} mParam.
 		 */
-		getAssignmentIdForReschedule: function (mParam) {
+		getAssignmentIdForReschedule: function () {
 			var sDemandPath, sSelectedDemand, aResourceList, aAssignedList = [];
 			sDemandPath = this.oViewModel.getProperty("/Scheduling/selectedDemandPath");
 			sSelectedDemand = this.oDataModel.getProperty(sDemandPath);
@@ -689,9 +689,7 @@ sap.ui.define([
 					this.oViewModel.setProperty("/Scheduling/sReSchAssignGuid", oData.results[0].Guid);
 				}
 				
-				if (mParam) {
-					return mParam;
-				}
+				return true;
 				
 			}.bind(this));
 		},

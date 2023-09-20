@@ -296,8 +296,6 @@ sap.ui.define([
 					return false;
 				}
 			}.bind(this)).then(function (oResult) {
-				return this.oSchedulingActions.getAssignmentIdForReschedule(oResult);
-			}.bind(this)).then(function (oResult) {
 				if (oResult.bNotAssigned) {
 					aDemandList = [{
 						sPath: sPath,
@@ -305,16 +303,22 @@ sap.ui.define([
 					}];
 					oViewModel.setProperty("/Scheduling/demandList", aDemandList);
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
+					return this.oSchedulingActions.getAssignmentIdForReschedule();
+				} else {
+					this._showErrorMessage(oResourceBundle.getText("ymsg.alreadyAssigned", oResult.resourceNames));
+				}
+			
+			}.bind(this)).then(function (bParam) {
+				if(bParam){
 					var mParams = {
 						entitySet: "DemandSet"
 					}
 					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams, oMsgParam, this.oSchedulingActions);
-				} else {
-					this._showErrorMessage(oResourceBundle.getText("ymsg.alreadyAssigned", oResult.resourceNames));
 				}
 				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
 				oAppViewModel.setProperty("/busy", false);
-			}.bind(this))
+				
+			}.bind(this));
 
 		},
 		/**
