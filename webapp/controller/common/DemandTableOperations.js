@@ -303,6 +303,7 @@ sap.ui.define([
 					}];
 					oViewModel.setProperty("/Scheduling/demandList", aDemandList);
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
+					// calling below method to get the assignment id for the resource so that 
 					return this.oSchedulingActions.getAssignmentIdForReschedule();
 				} else {
 					this._showErrorMessage(oResourceBundle.getText("ymsg.alreadyAssigned", oResult.resourceNames));

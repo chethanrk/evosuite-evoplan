@@ -673,7 +673,7 @@ sap.ui.define([
 		 * update assignment call at the time of re-schedule functionality.
 		 * @param {object} mParam model to ge the 
 		 * @param mParam {object} this is the parmeter from the last function and this is used to reuturn on sucessfull retrival of the assignment guid.
-		 * @return {json} mParam.
+		 * @return {boolean} true.
 		 */
 		getAssignmentIdForReschedule: function () {
 			var sDemandPath, sSelectedDemand, aResourceList, aAssignedList = [];
