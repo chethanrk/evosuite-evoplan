@@ -238,20 +238,15 @@ sap.ui.define([
 		 * @param sFuncName Function name of the function import
 		 * @param sMethod method of http operation ex: GET/POST/PUT/DELETE
 		 */
-		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod, bFromMultiTimeAlloc,mParams,mParam2) {
-			if(mParam2==="Scheduling"){
-				var oResourceBundle = this.oResourceBundle;
-			}else{
-				var oResourceBundle = this.getResourceBundle();
-			}
-			
-
+		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod, bFromMultiTimeAlloc) {
+	
+			var oResourceBundle = this.getResourceBundle();
+	
 			return new Promise(function (resolve, reject) {
 				oModel.callFunction("/" + sFuncName, {
 					method: sMethod || "POST",
 					urlParameters: oParams,
 					refreshAfterChange: false,
-					batchGroupId: mParams !== null ? mParams.batchGroupId : null,
 					success: function (oData, oResponse) {
 						if (bFromMultiTimeAlloc) {
 							resolve([oData, oResponse]);
