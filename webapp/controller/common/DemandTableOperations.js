@@ -279,6 +279,7 @@ sap.ui.define([
 			oAppViewModel.setProperty("/busy", true);
 			if (!this.oSchedulingActions.validateReScheduleAfterPress()) {
 				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
+				oAppViewModel.setProperty("/busy", false);
 				return;
 			}
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
