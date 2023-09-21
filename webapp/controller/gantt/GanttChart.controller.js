@@ -1911,10 +1911,12 @@ sap.ui.define([
 		 * @param oResData
 		 */
 		_addChildrenToParent: function (iLevel, oResData) {
-			var aChildren = this.oGanttModel.getProperty("/data/children");
+			var aChildren = this.oGanttModel.getProperty("/data/children"),
+				aTravelTimes=[];
 			var callbackFn = function (oItem, level) {
 				oItem.children = [];
 				oResData.forEach(function (oResItem) {
+
 					if (oItem.NodeId === oResItem.ParentNodeId) {
 						if (oResItem.NodeType === "ASSIGNMENT") { // if it's assignment node then push same assignment in AssignmentSet to show the Shape
 							if (oResItem.AssignmentSet && oResItem.AssignmentSet.results.length > 0) {
@@ -1934,17 +1936,28 @@ sap.ui.define([
 									_cloneObj.OBJECT_ID_RELATION = _cloneObj.OBJECT_ID_RELATION + "//" + _cloneObj.ResourceGuid;
 									oResItem.AssignmentSet.results.push(_cloneObj);
 								}
-							});
+								if (parseFloat(oAsgn.TRAVEL_TIME) > 0){
+									aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes,oAsgn, oItem);
+								}
+								if (parseFloat(oAsgn.TRAVEL_BACK_TIME) > 0) {
+									aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes, oAsgn, oItem, true);
+								}
+							}.bind(this));
+							
 							oResItem.ResourceAvailabilitySet = oItem.ResourceAvailabilitySet; // copying resource availabilities to assignment node
 						}
-
 						oItem.children.push(oResItem);
+						oItem.TravelTimes = {
+							results: _.cloneDeep(aTravelTimes)
+						}
+						aTravelTimes = [];
 					}
-				});
-			};
+				}.bind(this));
+			}.bind(this);
 			aChildren = this._recurseChildren2Level(aChildren, iLevel, callbackFn);
 			this.oGanttModel.setProperty("/data/children", aChildren);
 		},
+		
 		/**
 		 * loop trough all nested array of children
 		 * When max level for search was reached execute callbackFn
@@ -2069,20 +2082,13 @@ sap.ui.define([
 		 */
 		_addAssignments: function (aAssignments) {
 			var aGanttData = this.oGanttModel.getProperty("/data/children"),
-				aTravelTimes = this.oViewModel.getProperty("/ganttSettings/TravelTimes");
+				aTravelTimes = [];
 			for (let i = 0; i < aGanttData.length; i++) {
 				var aResources = aGanttData[i].children;
 				if (aResources) {
 					for (let j = 0; aResources && j < aResources.length; j++) {
 						var oResource = aResources[j];
-
-						//Adding Travel time if available for the resource
-						if (oResource.ResourceGuid && aTravelTimes[oResource.ResourceGuid]) {
-							oResource.TravelTimes = {
-								results: aTravelTimes[oResource.ResourceGuid]
-							};
-						}
-
+						aTravelTimes = [];
 						oResource.AssignmentSet.results = [];
 						oResource.children = []; //Updating resource child nodes
 						for (var k in aAssignments) {
@@ -2097,9 +2103,18 @@ sap.ui.define([
 										results: [_cloneObj]
 									};
 								});
-
+								if (parseFloat(aAssignments[k].TRAVEL_TIME) > 0) {
+									aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes,aAssignments[k],oResource);
+								}
+								if (parseFloat(aAssignments[k].TRAVEL_BACK_TIME) > 0) {
+									aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes, aAssignments[k], oResource, true);
+								}
 							}
 						}
+						//Adding Travel time if available for the resource
+						oResource.TravelTimes = {
+							results: _.cloneDeep(aTravelTimes)
+						};
 					}
 				}
 			}
@@ -2963,6 +2978,135 @@ sap.ui.define([
 				});
 				this._refreshChangedResources(sResPath);
 			}.bind(this));
+		},
+		/**
+		 * Creating Travel time object from given assignment object
+		 * @param {Array} aTravelTimes stores all travel time objects
+		 * @param {Object} oAssignment respective Assignment object 
+		 * @param {Function} oResource respective Resource object to get Availabilities
+		 * @param {Boolean}bIsTravelBack flag to differenticate between travel and travel Back time
+		 * @returns Array
+		 */
+		_getAssignmentTravelTimeObject: function (aTravelTimes, oAssignment, oResource, bIsTravelBack) {
+			var aAvailabilities = [],
+				oTempDate,
+				oDateTo,
+				oDateFrom,
+				nTravelTime,
+				oBreakFrom,
+				oBreakTo,
+				nDurationDifference,
+				bIsChanged = false;
+
+			if (bIsTravelBack) {
+				// calculating date for travel back time object
+				oTempDate = new Date(oAssignment.DateTo);
+				nTravelTime = oAssignment.TRAVEL_BACK_TIME;
+				oDateFrom = new Date(oTempDate);
+				oDateTo = new Date(moment(oTempDate).add(nTravelTime, 'minutes'));
+			} else {
+				// calculating date for travel back time object
+				oTempDate = new Date(oAssignment.DateFrom);
+				nTravelTime = oAssignment.TRAVEL_TIME;
+				oDateTo = new Date(oTempDate);
+				oDateFrom = new Date(moment(oTempDate).add(-(nTravelTime), 'minutes'));
+			}
+
+			//Getting & Traversing availabilities of Resource to check for overlaps of break with Travel time
+			if (oResource.ResourceAvailabilitySet && oResource.ResourceAvailabilitySet.results) {
+				aAvailabilities = oResource.ResourceAvailabilitySet.results;
+			}
+			for (var i in aAvailabilities) {
+				// condition to check breaks for same date
+				if (aAvailabilities[i].AvailabilityTypeGroup === "B" && aAvailabilities[i].DateFrom.getDate() === oTempDate.getDate()) {
+					oBreakFrom = aAvailabilities[i].DateFrom;
+					oBreakTo = aAvailabilities[i].DateTo;
+
+					// checking if travel start time falls between break
+					if (moment(oBreakFrom) < moment(oDateFrom) && moment(oDateFrom) < moment(oBreakTo)) {
+						
+						// splitting the travel time object into two parts 
+						// 1. after break ends
+						// 2. before break starts
+						nDurationDifference = this._getDateDuration(oBreakTo, oDateTo);
+						nDurationDifference = nDurationDifference / 60;
+						oDateFrom = new Date(oBreakTo);
+						aTravelTimes.push({
+							DateFrom: new Date(oDateFrom),
+							DateTo: new Date(oDateTo),
+							Description: "Travel Time",
+							Effort: (nTravelTime / 60).toFixed(2),
+							TRAVEL_TIME: parseFloat(nTravelTime / 60).toFixed(2)
+						});
+						oDateTo = new Date(oBreakFrom);
+						oDateFrom = new Date(moment(oDateTo).add(-(nTravelTime - nDurationDifference), "minutes"));
+						aTravelTimes.push({
+							DateFrom: new Date(oDateFrom),
+							DateTo: new Date(oDateTo),
+							Description: "Travel Time",
+							Effort: ((nTravelTime - nDurationDifference) / 60).toFixed(2),
+							TRAVEL_TIME: parseFloat(((nTravelTime - nDurationDifference) / 60)).toFixed(2)
+						});
+						bIsChanged = true;
+						break;
+					} else {
+						// checking if travel end time falls between break
+						if (moment(oBreakFrom) < moment(oDateTo) && moment(oDateTo) < moment(oBreakTo)) {
+							// splitting the travel time object into two parts 
+							// 1. before break starts
+							// 2. after break ends
+							nDurationDifference = this._getDateDuration(oDateFrom, oBreakFrom);
+							nDurationDifference = nDurationDifference / 60;
+							oDateTo = new Date(moment(oDateFrom).add(nDurationDifference, "minutes"));
+							aTravelTimes.push({
+								DateFrom: new Date(oDateFrom),
+								DateTo: new Date(oDateTo),
+								Description: "Travel Time",
+								Effort: (nDurationDifference / 60).toFixed(2),
+								TRAVEL_TIME: parseFloat(nDurationDifference / 60).toFixed(2)
+							});
+							// Add one object
+							oDateFrom = new Date(oBreakTo);
+							oDateTo = new Date(moment(oDateFrom).add((nTravelTime - nDurationDifference), "minutes"));
+							aTravelTimes.push({
+								DateFrom: new Date(oDateFrom),
+								DateTo: new Date(oDateTo),
+								Description: "Travel Time",
+								Effort: ((nTravelTime - nDurationDifference) / 60).toFixed(2),
+								TRAVEL_TIME: parseFloat(((nTravelTime - nDurationDifference) / 60)).toFixed(2)
+							});
+							bIsChanged = true;
+							break;
+						}
+					}
+				}
+			}
+
+			// check if travel time splitted
+			if (!bIsChanged) {
+
+				// adding single travel time object if it's not splitted
+				aTravelTimes.push({
+					DateFrom: new Date(oDateFrom),
+					DateTo: new Date(oDateTo),
+					Description: "Travel Time",
+					Effort: (nTravelTime / 60).toFixed(2),
+					TRAVEL_TIME: parseFloat(nTravelTime / 60).toFixed(2)
+				});
+			}
+
+			// returning array of travel times with updated elements
+			return aTravelTimes;
+		},
+
+		/**
+		 * To calculate time duration between two date values considering time 
+		 * @param {Object} oDateFrom Start date and time 
+		 * @param {Object} oDateTo End date and time 
+		 * @return {Number} Duration between given start and end data/time
+		 */
+		_getDateDuration: function (oStartDate, oEndDate) {
+			return Math.ceil((oEndDate.getTime() - oStartDate.getTime()) / 1000);
 		},
 	});
 
