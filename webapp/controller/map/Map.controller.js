@@ -703,7 +703,20 @@ sap.ui.define([
 				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items"),
 				oFilters = aFilters ? aFilters : this.getModel("viewModel").getProperty("/mapSettings/filters");
 			if (oFilters && oFilters.length) {
-				oBinding.filter(oFilters);
+				
+				var aGuidFilter = [];
+				this.setMapBusy(true);
+				this.getOwnerComponent().readData("/DemandSet",oFilters,"$select=Guid").then(function (response) {
+					
+					if(response.results.length > 0){
+						for (var i=0;i<response.results.length;i++){
+							aGuidFilter.push(new Filter("Guid",FilterOperator.EQ,response.results[i].Guid));
+						}
+						oBinding.filter(aGuidFilter);
+						console.log(aGuidFilter,response)
+					}
+					this.setMapBusy(false);
+				}.bind(this));
 			} else {
 				oBinding.filter([]);
 				oBinding.refresh();
@@ -1219,7 +1232,7 @@ sap.ui.define([
 		 */
 		_getDemandsForMap: function () {
 			this.setMapBusy(true);
-			var sSelect="$select=Guid,IS_SELECTED,MAP_MARKER_COLOUR,DEMAND_KEY,LONGITUDE,LATITUDE,Status,EffortUnit,DateFrom,DateTo,START_DATE,END_DATE,EARL_SCHED_START_DATE,EARL_SCHED_FIN_DATE,LATE_SCHED_START_DATE,LATE_SCHED_FIN_DATE,ACTUAL_START_DATE,ACTUAL_FIN_DATE,NOTIF_REQ_START_DATE,NOTIF_REQ_END_DATE,NOTIFICATION_DATE,FIXED_ASSGN_START_DATE,FIXED_ASSGN_END_DATE,OPERATION_LTXT,ORDERID,OPERATIONID,REVISION_NO,NOTIFICATION,MATERIAL_STATUS"
+			var sSelect="$select=Guid,IS_SELECTED,MAP_MARKER_COLOUR,DEMAND_KEY,LONGITUDE,LATITUDE"
 			this.getOwnerComponent().readData("/DemandSet",null,sSelect).then(function (response) {
 				this.setMapBusy(false);
 				this._viewModel.setProperty("/mapSettings/DemandSet", response.results);
