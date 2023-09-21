@@ -712,8 +712,6 @@ sap.ui.define([
 						for (var i=0;i<response.results.length;i++){
 							aGuidFilter.push(new Filter("Guid",FilterOperator.EQ,response.results[i].Guid));
 						}
-						
-						console.log(aGuidFilter,response)
 					}else {
 						aGuidFilter.push(new Filter("Guid",FilterOperator.EQ,null));
 					}
