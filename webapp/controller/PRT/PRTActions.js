@@ -278,10 +278,8 @@ sap.ui.define([
 		getPRTDateParams: function (oPRTShapeData) {
 			var oParams = {},
 				iDefNum = this.getModel("viewModel").getProperty("/iDefToolAsgnDays"),
-				oStartDate = new Date(),
-				oEndDate = new Date();
-			oEndDate = new Date(oEndDate.setDate(oEndDate.getDate() + parseInt(iDefNum)));
-			oEndDate = new Date(oEndDate.setHours(23, 59, 59));
+				oStartDate = oPRTShapeData.DateFrom,
+				oEndDate = oPRTShapeData.DateTo;
 
 			oParams.DateFrom = oStartDate
 			oParams.TimeFrom = {
