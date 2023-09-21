@@ -127,7 +127,8 @@ sap.ui.define([
 					this._mParameters.bIsFromPRTAssignmentInfo = true;
 					var oData = {
 						oSourceData: {
-							sTargetPath: this.AssignmentSourcePath
+							sSourcePath: this.AssignmentSourcePath,
+							sTargetPath: this.AssignmentTargetPath
 						}
 					}
 					this.clearMessageModel.call(this._oView.getController());
@@ -227,6 +228,10 @@ sap.ui.define([
 			this.oAssignmentModel = this.oAssignmentModel ? this.oAssignmentModel : oData.oAssignmentModel;
 			var oNewAssign = this._oView.getModel().getProperty(oData.sAssignPath),
 				newAssignDesc = this._getParentsDescription(oNewAssign);
+
+			//TODOSAGAR
+			var sTargetResource = this._oView.getModel().getProperty(oData.sAssignPath);
+			var sTargetPath = this._getGanttModelPathByProperty("NodeId", oTargetData.NodeId, null);
 
 			this.oAssignmentModel.setProperty("/NewAssignPath", oData.sAssignPath);
 			this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
