@@ -1120,6 +1120,8 @@ sap.ui.define([
 		},
 		/*
 		* For Formatting Gantt Assignment Shapes Tooltip Text
+		* @param sDemandDesc, sStatus, bPRT
+		* @return String
 		*/
 		shapeTooltipDescription: function (sDemandDesc, sStatus, bPRT) {
 			if (bPRT) {
