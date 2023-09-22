@@ -228,8 +228,9 @@ sap.ui.define([
 			this.oAssignmentModel = this.oAssignmentModel ? this.oAssignmentModel : oData.oAssignmentModel;
 			var oNewAssign = this._oView.getModel().getProperty(oData.sAssignPath),
 				newAssignDesc = this._getParentsDescription(oNewAssign);
-
-			this.AssignmentTargetPath = this._oView.getController()._getGanttModelPathByProperty("NodeId", oNewAssign.NodeId, null);
+			if (["GANTT","NEWGANTT","GANTTSPLIT","NEWGANTTSPLIT"].indexOf(this._oView.getModel("viewModel").getProperty("/sViewRoute")) != -1){
+				this.AssignmentTargetPath = this._oView.getController()._getGanttModelPathByProperty("NodeId", oNewAssign.NodeId, null);
+			}
 
 			this.oAssignmentModel.setProperty("/NewAssignPath", oData.sAssignPath);
 			this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
