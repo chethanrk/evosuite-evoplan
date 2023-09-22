@@ -340,14 +340,14 @@ sap.ui.define([
 		getAssetIcon: function (sValue) {
 			var sIcon;
 			switch (sValue) {
-			case "FLOC":
-				sIcon = "sap-icon://functional-location";
-				break;
-			case "EQUI":
-				sIcon = "sap-icon://technical-object";
-				break;
-			default:
-				sIcon = "sap-icon://functional-location";
+				case "FLOC":
+					sIcon = "sap-icon://functional-location";
+					break;
+				case "EQUI":
+					sIcon = "sap-icon://technical-object";
+					break;
+				default:
+					sIcon = "sap-icon://functional-location";
 			}
 			return sIcon;
 		},
@@ -811,15 +811,15 @@ sap.ui.define([
 				aData = aManageResourceData.Assignments,
 				sResourceName = this._oSelectedNodeContext.getProperty("Description");
 			switch (sOperation) {
-			case "deleteResource":
-				sMsgTypeText = "Removable";
-				break;
-			case "moveResource":
-				sMsgTypeText = "Movable";
-				break;
-			case "updateResource":
-				sMsgTypeText = "Update";
-				break;
+				case "deleteResource":
+					sMsgTypeText = "Removable";
+					break;
+				case "moveResource":
+					sMsgTypeText = "Movable";
+					break;
+				case "updateResource":
+					sMsgTypeText = "Update";
+					break;
 			}
 
 			if (aData && aData.length) {
@@ -936,7 +936,7 @@ sap.ui.define([
 		 * @param {*} bGlobalConfigFlag 
 		 * @returns 
 		 */
-		setVisibilityScheduleBtn: function(bSelected, bGlobalConfigFlag){
+		setVisibilityScheduleBtn: function (bSelected, bGlobalConfigFlag) {
 			return bSelected && bGlobalConfigFlag;
 		},
 
@@ -962,8 +962,7 @@ sap.ui.define([
 		 * @returns sDemandDesc
 		 */
 		formatGanttResourceTitle: function (sNodeType, sDescription, sDemandDesc) {
-			//	if (sNodeType === "ASSIGNMENT") {
-			if (sDemandDesc) {
+			if (sNodeType === "ASSIGNMENT") {
 				return sDemandDesc;
 			}
 			return sDescription;
@@ -1064,9 +1063,9 @@ sap.ui.define([
 		 * @param mParam1 {string}
 		 * @param mParam2 {string}
 		 */
-		formatSchedulingBtn:function(mParam1,mParam2){
-			if(mParam1 ==="DEMANDS" || mParam1 ==="NEWGANTT" || mParam1 ==="MAP"){
-				if(mParam2){
+		formatSchedulingBtn: function (mParam1, mParam2) {
+			if (mParam1 === "DEMANDS" || mParam1 === "NEWGANTT" || mParam1 === "MAP") {
+				if (mParam2) {
 					return true
 				}
 			}
@@ -1114,9 +1113,19 @@ sap.ui.define([
 		 * @param oDate, oTime
 		 * @return Date
 		 */
-		formatDisplayDate : function(oDate, oTime){
-			if(oDate && oTime){
+		formatDisplayDate: function (oDate, oTime) {
+			if (oDate && oTime) {
 				return new Date(oDate.getTime() + oTime.ms);
+			}
+		},
+		/*
+		* For Formatting Gantt Assignment Shapes Tooltip Text
+		*/
+		shapeTooltipDescription: function (sDemandDesc, sStatus, bIS_PRT) {
+			if (bIS_PRT) {
+				return sDemandDesc;
+			} else {
+				return sDemandDesc + " - " + sStatus;
 			}
 		}
 	};

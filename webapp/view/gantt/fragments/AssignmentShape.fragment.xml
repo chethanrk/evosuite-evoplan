@@ -2,7 +2,7 @@
 	<!-- Assignment shape -->
 	<gnt2:BaseRectangle shapeId="{ganttModel>OBJECT_ID_RELATION}" countInBirdEye="true" hoverable="true" time="{ganttModel>DateFrom}"
 		height="19" endTime="{ganttModel>DateTo}" title="{ganttModel>DemandDesc}" showTitle="true"
-		tooltip="{ganttModel>DemandDesc} - {ganttModel>STATUS}"
+		tooltip="{parts: ['ganttModel>DemandDesc', 'ganttModel>STATUS', 'ganttModel>IS_PRT'], formatter: '.formatter.shapeTooltipDescription'}"
 		fill="{parts: ['ganttModel>DEMAND_STATUS_COLOR', 'ganttModel>DUPLICATE_ASSIGNMENT_FLAG'], formatter: '.fillGradient'}"
 		stroke="{parts: ['ganttModel>DEMAND_STATUS_COLOR',{value:'-20', model:'ganttModel'}], formatter: '.ganttFormatter.shadeColor'}"
 		strokeWidth="1" yBias="-1"
