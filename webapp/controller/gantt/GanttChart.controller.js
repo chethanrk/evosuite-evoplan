@@ -2678,11 +2678,11 @@ sap.ui.define([
 					if (parseFloat(oAsgnObj.TRAVEL_BACK_TIME) > 0) {
 						aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes, oAsgnObj, oResource, true);
 					}
-					//Adding Travel time if available for the resource
-					oResource.TravelTimes = {
-						results: _.cloneDeep(aTravelTimes)
-					};
 				}.bind(this));
+				//Adding Travel time if available for the resource
+				oResource.TravelTimes = {
+					results: _.cloneDeep(aTravelTimes)
+				};
 			}
 		},
 
