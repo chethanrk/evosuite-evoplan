@@ -2650,6 +2650,7 @@ sap.ui.define([
 		 * @Author Rakesh Sahu
 		 */
 		_updateResourceChildren: function (oResource, aChildAsgnData) {
+			var aTravelTimes = [];
 			if (oResource.AssignmentSet) {
 				oResource.children = aChildAsgnData;
 				oResource.children.forEach(function (oAsgnObj) {
@@ -2669,6 +2670,17 @@ sap.ui.define([
 					clonedObj.OBJECT_ID_RELATION = clonedObj.OBJECT_ID_RELATION + "//" + clonedObj.ResourceGuid;
 					oAsgnObj.AssignmentSet = {
 						results: [clonedObj]
+					};
+					//added the below code for calculating the travel times when coming from different views
+					if (parseFloat(oAsgnObj.TRAVEL_TIME) > 0) {
+						aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes,oAsgnObj,oResource);
+					}
+					if (parseFloat(oAsgnObj.TRAVEL_BACK_TIME) > 0) {
+						aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes, oAsgnObj, oResource, true);
+					}
+					//Adding Travel time if available for the resource
+					oResource.TravelTimes = {
+						results: _.cloneDeep(aTravelTimes)
 					};
 				}.bind(this));
 			}

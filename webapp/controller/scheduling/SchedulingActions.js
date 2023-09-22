@@ -660,6 +660,11 @@ sap.ui.define([
 			} else {
 				mRefreshParam.bFromHome = true;
 			}
+			//this is written to store the updated resources data so that we can refresh it inside the gantt view
+			if(sViewRoute !== "NEWGANTT"){
+				this._fnStoreUpdatedDemandResources(oModelDialog);
+			}
+
 			var oDataArr = this._getDemandsDataForAssignment(oModelDialog);
 
 			return Promise.all(oDataArr).then(function (oResponse) {
@@ -908,6 +913,18 @@ sap.ui.define([
 			} else {
 				return 1;
 			}
-		}
+		},
+
+		/**
+		 * This function is used for storing the updated resources so that 
+		 * it can be used to refresh the resources in Gantt view
+		 * @param {Object} oModelDialog - Dialog model; used for fetching the resource data 
+		 */
+		_fnStoreUpdatedDemandResources: function(oModelDialog){
+			var aData = oModelDialog.getProperty("/step2/dataSet");
+			aData.forEach(function (item) {
+				this._updatedDmdResources(this.oViewModel, item);
+			}.bind(this));				
+		},
 	});
 });
