@@ -16,28 +16,28 @@
             <Column width="1rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}">
             </Column>
             <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}">
-                <Label text="{i18n>xfld.ResourceGroupName}" />
+                <Label text="{i18n>xfld.ResourceGroupName}" wrapping="true" />
             </Column>
             <template:repeat list="{path:'data>'}">
                 <template:with path="data>Value" var="value">
                     <template:if test="{:= ${value>Path} === 'ORDER_TYPE'}">
                         <template:then>
-                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}">
+                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}" demandPopin="true" minScreenWidth="Tablet">
                                 <Label
-                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
+                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" wrapping="true" />
                             </Column>
                         </template:then>
                         <template:elseif
                             test="{:= ${value>Path} === 'TRAVEL_TIME' || ${value>Path} === 'TRAVEL_BACK_TIME' || ${value>Path} === 'TRAVEL_TIME_UNIT'}">
-                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}">
+                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}" demandPopin="true" minScreenWidth="Tablet">
                                 <Label
-                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
+                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" wrapping="true" />
                             </Column>
                         </template:elseif>
                         <template:else>
-                            <Column width="3rem">
+                            <Column width="3rem" demandPopin="true" minScreenWidth="Tablet">
                                 <Label
-                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
+                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" wrapping="true" />
                             </Column>
                         </template:else>
                     </template:if>
