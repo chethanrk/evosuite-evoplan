@@ -229,9 +229,7 @@ sap.ui.define([
 			var oNewAssign = this._oView.getModel().getProperty(oData.sAssignPath),
 				newAssignDesc = this._getParentsDescription(oNewAssign);
 
-			//TODOSAGAR
-			var sTargetResource = this._oView.getModel().getProperty(oData.sAssignPath);
-			var sTargetPath = this._getGanttModelPathByProperty("NodeId", oTargetData.NodeId, null);
+			this.AssignmentTargetPath = this._oView.getController()._getGanttModelPathByProperty("NodeId", oNewAssign.NodeId, null);
 
 			this.oAssignmentModel.setProperty("/NewAssignPath", oData.sAssignPath);
 			this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
