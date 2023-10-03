@@ -678,7 +678,8 @@ sap.ui.define([
 				sViewRoute: null,
 				aUpdatedResources: [],
 				yearMatrix:[],
-				bEnableAsgnSave : true
+				bEnableAsgnSave : true,
+				selectedAssignment:[],
 			});
 
 			oViewModel.setSizeLimit(999999999);
