@@ -82,6 +82,8 @@ sap.ui.define([
 				this._renderWizardStep1Binding(oDialog);
 				this._oViewModel.setProperty("/Scheduling/InputDataChanged", "");
 				this._oSchedulingModel.setProperty("/step2/dataSet", []);
+				// validation added below so that user is not able to select the date and time less than current time.
+				this._oViewModel.setProperty("/Scheduling/minDate", new Date());
 				oDialog.open();
 				if (!_.isEmpty(oMsgParam)) {
 					this._showSchedulingMessageToast(oDialog, oMsgParam);

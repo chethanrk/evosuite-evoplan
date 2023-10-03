@@ -432,10 +432,14 @@ sap.ui.define([
 			var locations = [],
 				orders = [],
 				oOrder = {},
-				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD");
+				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD"),
+				oLocationObject,
+				oMustStart,
+				oMustFinish,
+				nDuration;
 
 			for (let oDemandGuid in aDemandsData) {
-				locations.push({
+				oLocationObject = {
 					"$type": "CustomerSite",
 					"id": oDemandGuid + "_location",
 					"routeLocation": {
@@ -445,8 +449,23 @@ sap.ui.define([
 							"y": aDemandsData[oDemandGuid].location.y
 						}
 					}
-				});
+				};
 
+				// adding opening intervals if must start time and must finished time is given for the demand
+				if (aDemandsData[oDemandGuid].data.START_CONS && aDemandsData[oDemandGuid].data.FIN_CONSTR){
+					oMustStart = this._mergeDateTime(aDemandsData[oDemandGuid].data.START_CONS, aDemandsData[oDemandGuid].data.STRTTIMCON);
+					oMustFinish = this._mergeDateTime(aDemandsData[oDemandGuid].data.FIN_CONSTR, aDemandsData[oDemandGuid].data.FINTIMCONS);
+					nDuration = this._getDateDuration(oMustStart, oMustFinish) - aDemandsData[oDemandGuid].serviceTime;
+					oLocationObject.openingIntervals = [
+						{
+							"$type": "StartDurationInterval",
+							"start": this._getFormattedDate(oMustStart),
+							"duration": nDuration < 0 ? 0 : nDuration
+						}
+					];
+				}
+				locations.push(oLocationObject);
+				
 				oOrder = {
 					"$type": "VisitOrder",
 					"id": oDemandGuid,
@@ -668,7 +687,26 @@ sap.ui.define([
 				}
 			}
 			return aInputPlans;
-		}
+		},
+		/**
+		 * merge given date and time to datetime and format
+		 * @param date
+		 * @param time
+		 */
+		_mergeDateTime: function (date, time) {
+			var offsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
+				dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+					pattern: "yyyy-MM-dd"
+				}),
+				timeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+					pattern: "HH:mm:ss"
+				});
+
+			var dateStr = dateFormat.format(new Date(date.getTime() + offsetMs));
+			var timeStr = timeFormat.format(new Date(time.ms + offsetMs));
+
+			return new Date(dateStr + "T" + timeStr);
+		},
 		/* ============================================================================== */
 		/* Data types                                                                     */
 		/* ------------------------------------------------------------------------------ */

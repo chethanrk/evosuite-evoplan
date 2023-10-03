@@ -137,7 +137,7 @@ sap.ui.define([
          */
         onChangeDateTo: function(oEvent){
             var oDate = oEvent.getSource().getValue();
-            if (oDate){
+            if (oDate && new Date(oDate) < oEvent.getSource().getMaxDate()){
                 oDate = new Date(new Date(oDate).getTime() - 1000);
                 oEvent.getSource().setDateValue(oDate);
             }else{

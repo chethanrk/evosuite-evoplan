@@ -961,11 +961,13 @@ sap.ui.define([
 		 * @returns sDescription
 		 * @returns sDemandDesc
 		 */
-		formatGanttResourceTitle: function (sNodeType, sDescription, sDemandDesc) {
-			if (sNodeType === "ASSIGNMENT") {
+		formatGanttResourceTitle: function (iHierarchyLevel, sDescription, sDemandDesc) {
+			if (iHierarchyLevel === 0 || iHierarchyLevel === 1 || iHierarchyLevel === 2) {
+				return sDescription;
+			}else{
 				return sDemandDesc;
+				
 			}
-			return sDescription;
 		},
 		/*
 		 * Customizing remaining work label
