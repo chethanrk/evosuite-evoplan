@@ -237,16 +237,15 @@ sap.ui.define([
 		fnWatchJobCall: function(sURL, resolve){
 			this.sCurrentURL = sURL;
 			this._sendPOSTRequestToPTV(this.sCurrentURL, this.oWatchJobRequestBody).then(function (oWatchJobResponse) {
-						if (oWatchJobResponse.data.status === "RUNNING" || oWatchJobResponse.data.status ===  "QUEUING") {
-							setTimeout( function (){
-								this.fnWatchJobCall(sURL, resolve);
-							}.bind(this), 2000);
-						}
-						if (["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)) { // if successed or failed
-							// clearInterval(intervalID);
-							resolve(oWatchJobResponse);
-						}
-					}.bind(this));
+				if (oWatchJobResponse.data.status === "RUNNING" || oWatchJobResponse.data.status ===  "QUEUING") {
+					setTimeout( function (){
+							this.fnWatchJobCall(sURL, resolve);
+						}.bind(this), 2000);
+					}
+					if (["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)) { // if successed or failed
+						resolve(oWatchJobResponse);
+					}
+			}.bind(this));
 		},
 
 		/**
