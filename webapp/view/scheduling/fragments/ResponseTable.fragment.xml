@@ -3,7 +3,7 @@
     xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
     <Table id="step2_ResponseTable" noDataText="{i18n>ymsg.NoDemandSchedule}"
         items="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\', sorter: { path: \''+ 'ResourceName' +'\', descending: false, group:\''+ '.fnGetResName' +'\'}}'}"
-        visible="{= ${viewModel>/Scheduling/iSelectedResponse} &lt; 2}">
+        visible="{= ${viewModel>/Scheduling/iSelectedResponse} &lt; 2}" popinLayout="GridSmall">
         <headerToolbar>
             <OverflowToolbar>
                 <Title text="{i18n>xfld.demandName}" />
@@ -22,22 +22,25 @@
                 <template:with path="data>Value" var="value">
                     <template:if test="{:= ${value>Path} === 'ORDER_TYPE'}">
                         <template:then>
-                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}" demandPopin="true" minScreenWidth="Tablet">
+                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}" demandPopin="true" minScreenWidth="phone">
                                 <Label
-                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" wrapping="true" />
+                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" wrapping="true"
+                                    tooltip="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
                             </Column>
                         </template:then>
                         <template:elseif
                             test="{:= ${value>Path} === 'TRAVEL_TIME' || ${value>Path} === 'TRAVEL_BACK_TIME' || ${value>Path} === 'TRAVEL_TIME_UNIT'}">
-                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}" demandPopin="true" minScreenWidth="Tablet">
+                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}" demandPopin="true" minScreenWidth="phone">
                                 <Label
-                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" wrapping="true" />
+                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" wrapping="true"
+                                    tooltip="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
                             </Column>
                         </template:elseif>
                         <template:else>
-                            <Column width="3rem" demandPopin="true" minScreenWidth="Tablet">
+                            <Column width="3rem" demandPopin="true" minScreenWidth="phone">
                                 <Label
-                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" wrapping="true" />
+                                    text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" wrapping="true"
+                                    tooltip="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
                             </Column>
                         </template:else>
                     </template:if>
@@ -59,27 +62,32 @@
                                 <template:then>
                                     <Text
                                         text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Date\', formatOptions:{ pattern: \'MMM dd, yyyy\'}}' }"
-                                        wrapping="false" />
+                                        tooltip="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Date\', formatOptions:{ pattern: \'MMM dd, yyyy\'}}' }"
+                                        wrapping="true" />
                                 </template:then>
                                 <template:elseif test="{:= ${data>EdmType} === 'Edm.DateTime'}">
                                     <Text
                                         text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.DateTime\', formatOptions:{ pattern: \'MMM dd, yyyy\'}}' }"
-                                        wrapping="false" />
+                                        tooltip="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.DateTime\', formatOptions:{ pattern: \'MMM dd, yyyy\'}}' }"
+                                        wrapping="true" />
                                 </template:elseif>
                                 <template:elseif test="{:= ${data>EdmType} === 'Edm.Time'}">
                                     <Text
                                         text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.odata.type.Time\', style: \'long\'}' }"
-                                        wrapping="false" />
+                                        tooltip="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.odata.type.Time\', style: \'long\'}' }"
+                                        wrapping="true" />
                                 </template:elseif>
                                 <template:elseif test="{:= ${data>EdmType} === 'Edm.Decimal'}">
                                     <Text
                                         text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Float\', formatOptions:{ maxFractionDigits: 2 }}' }"
-                                        wrapping="false" />
+                                        tooltip="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Float\', formatOptions:{ maxFractionDigits: 2 }}' }"
+                                        wrapping="true" />
                                 </template:elseif>
                                 <template:else>
                                     <Text
                                         text="{:= '{'+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'}' }"
-                                        wrapping="false" />
+                                        tooltip="{:= '{'+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'}' }"
+                                        wrapping="true" />
                                 </template:else>
                             </template:if>
                         </template:with>
