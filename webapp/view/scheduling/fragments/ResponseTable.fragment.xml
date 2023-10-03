@@ -3,7 +3,7 @@
     xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
     <Table id="step2_ResponseTable" noDataText="{i18n>ymsg.NoDemandSchedule}"
         items="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\', sorter: { path: \''+ 'ResourceName' +'\', descending: false, group:\''+ '.fnGetResName' +'\'}}'}"
-        visible="{= ${viewModel>/Scheduling/iSelectedResponse} &lt; 2}" popinLayout="GridSmall">
+        visible="{= ${viewModel>/Scheduling/iSelectedResponse} &lt; 2}">
         <headerToolbar>
             <OverflowToolbar>
                 <Title text="{i18n>xfld.demandName}" />
@@ -22,7 +22,7 @@
                 <template:with path="data>Value" var="value">
                     <template:if test="{:= ${value>Path} === 'ORDER_TYPE'}">
                         <template:then>
-                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}" demandPopin="true" minScreenWidth="phone">
+                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 1}" demandPopin="true" minScreenWidth="Tablet">
                                 <Label
                                     text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" wrapping="true"
                                     tooltip="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
@@ -30,14 +30,14 @@
                         </template:then>
                         <template:elseif
                             test="{:= ${value>Path} === 'TRAVEL_TIME' || ${value>Path} === 'TRAVEL_BACK_TIME' || ${value>Path} === 'TRAVEL_TIME_UNIT'}">
-                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}" demandPopin="true" minScreenWidth="phone">
+                            <Column width="3rem" visible="{= ${viewModel>/Scheduling/iSelectedResponse} === 0}" demandPopin="true" minScreenWidth="Tablet">
                                 <Label
                                     text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" wrapping="true"
                                     tooltip="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
                             </Column>
                         </template:elseif>
                         <template:else>
-                            <Column width="3rem" demandPopin="true" minScreenWidth="phone">
+                            <Column width="3rem" demandPopin="true" minScreenWidth="Tablet">
                                 <Label
                                     text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" wrapping="true"
                                     tooltip="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
