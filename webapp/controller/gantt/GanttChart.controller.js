@@ -2094,6 +2094,7 @@ sap.ui.define([
 						for (var k in aAssignments) {
 							if (oResource.NodeId === aAssignments[k].ObjectId) {
 								oResource.AssignmentSet.results.push(aAssignments[k]);
+								aAssignments[k].ResourceAvailabilitySet = oResource.ResourceAvailabilitySet;
 								oResource.children.push(aAssignments[k]);
 								oResource.children.forEach(function (oAssignItem, idx) { //Updating resource child node data
 									oAssignItem.NodeType = "ASSIGNMENT";
