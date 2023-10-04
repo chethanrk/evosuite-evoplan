@@ -321,12 +321,10 @@ sap.ui.define([
 			} else if (oParameter.bFromManageResourceRemoveAssignments) {
 				eventBus.publish("ManageResourcesActionsController", "refreshAssignmentDialog", {});
 			} else if (oParameter.bFromNewGantt) {
-				eventBus.publish("BaseController", "refreshAssignments", oData);
+				eventBus.publish("GanttChart", "refreshDroppedContext", oData);
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-				eventBus.publish("BaseController", "refreshCapacity", {});
 			} else if (oParameter.bFromNewGanttSplit) {
-				eventBus.publish("BaseController", "refreshAssignments", oData);
-				eventBus.publish("BaseController", "refreshCapacity", {});
+				eventBus.publish("GanttChart", "refreshDroppedContext", oData);
 			} else if (oParameter.bFromDemandTools) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				if (!oParameter.bIsFromPRTAssignmentInfo) {
