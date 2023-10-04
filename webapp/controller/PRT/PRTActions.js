@@ -314,9 +314,7 @@ sap.ui.define([
 					sTargetPath: this.sDropTargetPath
 				};
 				//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-				// if(!this._mParameters.bFromGanttTools){
-					this._updatedDmdResources(this._oViewModel, oDateParams);
-				// }
+			this._updatedDmdResources(this._oViewModel, oDateParams);
 			for (var i = 0; i < aSources.length; i++) {
 				oParams = {
 					DateFrom: oDateParams.DateFrom,
