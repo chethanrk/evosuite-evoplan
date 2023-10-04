@@ -154,20 +154,11 @@ sap.ui.define([
 				if (oPlanTourResponse) {
 					//call watch job
 					return new Promise(function (resolve) {
-						var oWatchJobRequestBody = {
+						this.oWatchJobRequestBody = {
 							id: oPlanTourResponse.data.id
 						};
-						var intervalID = setInterval(function () {
-							this._sendPOSTRequestToPTV(this._sWatchJobUrl, oWatchJobRequestBody).then(function (oWatchJobResponse) {
-								if (oWatchJobResponse.data.status === "RUNNING") {
-									this.ProgressBarDialog.oComponent.setProgressData({ progress: "70" });
-								}
-								if (["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)) { // if successed or failed
-									clearInterval(intervalID);
-									resolve(oWatchJobResponse);
-								}
-							}.bind(this));
-						}.bind(this), 2000);
+						this.oComponent.ProgressBarDialog.setProgressData({ progress: "70" });
+						this.fnWatchJobCall(this._sWatchJobUrl, resolve);
 					}.bind(this));
 				} else {
 					return;
@@ -211,20 +202,11 @@ sap.ui.define([
 				if (oCreateMatrixResponse) {
 					//call watchJob
 					return new Promise(function (resolve) {
-						var oWatchJobRequestBody = {
+						this.oWatchJobRequestBody = {
 							id: oCreateMatrixResponse.data.id
 						};
-						var intervalID = setInterval(function () {
-							this._sendPOSTRequestToPTV(this._sDimaWatchJobUrl, oWatchJobRequestBody).then(function (oWatchJobResponse) {
-								if (oWatchJobResponse.data.status === "RUNNING") {
-									this.oComponent.ProgressBarDialog.setProgressData({ progress: "30" });
-								}
-								if (["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)) { // if successed or failed
-									clearInterval(intervalID);
-									resolve(oWatchJobResponse);
-								}
-							}.bind(this));
-						}.bind(this), 2000);
+						this.oComponent.ProgressBarDialog.setProgressData({ progress: "30" });
+						this.fnWatchJobCall(this._sDimaWatchJobUrl, resolve);
 					}.bind(this));
 				} else {
 					return;
@@ -243,6 +225,26 @@ sap.ui.define([
 			}.bind(this)).then(function (oFetchDistMatrixResponse) {
 				this.oComponent.ProgressBarDialog.setProgressData({ progress: "50" });
 				return oFetchDistMatrixResponse.data.summary.id;
+			}.bind(this));
+		},
+
+		/**
+		 * Function is used for performing watch job call for both Distance Matrix and Plan Tours API
+		 * @param {string} sURL - contains the URL of Distance Matrix or Plan Tours depending on the call location 
+		 * @param {Promise} resolve - used for resolving once the promise is complete
+		 */
+
+		fnWatchJobCall: function(sURL, resolve){
+			this.sCurrentURL = sURL;
+			this._sendPOSTRequestToPTV(this.sCurrentURL, this.oWatchJobRequestBody).then(function (oWatchJobResponse) {
+				if (oWatchJobResponse.data.status === "RUNNING" || oWatchJobResponse.data.status ===  "QUEUING") {
+					setTimeout( function (){
+							this.fnWatchJobCall(sURL, resolve);
+						}.bind(this), 2000);
+					}
+					if (["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)) { // if successed or failed
+						resolve(oWatchJobResponse);
+					}
 			}.bind(this));
 		},
 
