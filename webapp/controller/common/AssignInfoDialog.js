@@ -191,9 +191,9 @@ sap.ui.define([
 		 */
 		onSaveAssignments: function (oEvent) {
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
+			// if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
 				this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
-			}
+			// }
 			var oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
 				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid");
@@ -230,9 +230,9 @@ sap.ui.define([
 		 */
 		onDeleteAssignment: function (oEvent) {
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
+			// if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
 				this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
-			}
+			// }
 			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid"),sDemandGuid = this.oAssignmentModel.getProperty("/DemandGuid"),
 				sSplitIndex = this.oAssignmentModel.getProperty("/SplitIndex"),
 				sSplitCounter = this.oAssignmentModel.getProperty("/SplitCounter"),
@@ -430,6 +430,10 @@ sap.ui.define([
 				var oNewAssign = this._oView.getModel().getProperty(oData.sPath),
 					newAssignDesc = this._getParentsDescription(oNewAssign);
 
+				// if (["GANTT","NEWGANTT","GANTTSPLIT","NEWGANTTSPLIT"].indexOf(this._oView.getModel("viewModel").getProperty("/sViewRoute")) != -1){
+					this._updatedDmdResources(this._oView.getModel("viewModel"), oNewAssign);
+					//this._oView.getController().AssignmentTargetPath = this._oView.getController()._getGanttModelPathByProperty("NodeId", oNewAssign.NodeId, null);
+				// }
 				this.oAssignmentModel.setProperty("/NewAssignPath", oData.sPath);
 				this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
 				this.oAssignmentModel.setProperty("/NewAssignDesc", newAssignDesc);

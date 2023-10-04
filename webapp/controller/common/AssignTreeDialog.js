@@ -59,7 +59,7 @@ sap.ui.define([
 			if (aSelectedPaths && aSelectedPaths.constructor === Array && mParameters) {
 				if (mParameters.hasOwnProperty("bFromNewGantt") && aSelectedPaths.length === 1) {
 					if (mParameters.bFromNewGantt) {
-						oDialog.bindElement(aSelectedPaths[0])
+						oDialog.bindElement(aSelectedPaths[0].sPath)
 					}
 				}
 			}
@@ -252,7 +252,8 @@ sap.ui.define([
 		onProceedSaveDialog: function (oEvent) {
 			if (this._assignPath) {
 				//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-				if (this._oView && !this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
+				// if (this._oView && !this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
+				if (this._oView) {
 					this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(this._assignPath));
 					if (this._bulkReAssign) {
 						this._updatedAssignmentsPath(this._aSelectedPaths);
