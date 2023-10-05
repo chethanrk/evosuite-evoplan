@@ -118,7 +118,9 @@ sap.ui.define([
 		getPTVPayload: function (aResourceData, aDemandsData) {
 			var oPayload = this._getPayloadStructure(),
 				sDialogMsg = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.analysinglocations");
+			this.oViewModel.setProperty('/Scheduling/aListOfAssignments', [])
 			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload
+
 
 			if (oPayload.fleet.drivers.length === 0 || oPayload.fleet.vehicles.length === 0) { //Stop the process of PTV API call when no drivers
 				this.oComponent.ProgressBarDialog.close();
@@ -130,10 +132,10 @@ sap.ui.define([
 			this.oComponent.ProgressBarDialog.setProgressData({ description: sDialogMsg });
 			return this._createDistanceMatrix(aResourceData, aDemandsData).then(function (sMatrixId) {
 				this.oComponent.getModel("viewModel").setProperty("/Scheduling/sDistanceMatrixId", sMatrixId);
-				oPayload.distanceMode = {
-					"$type": "ExistingDistanceMatrix",
-					"id": sMatrixId
-				};
+				// oPayload.distanceMode = {
+				// 	"$type": "ExistingDistanceMatrix",
+				// 	"id": sMatrixId
+				// };
 				return oPayload;
 			}.bind(this));
 		},
@@ -418,7 +420,7 @@ sap.ui.define([
 						"endLocationId": sGuid + "_location"
 					};
 					if (bQualificationCheck) {
-						oVehicle["equipment"] = aResourceData[sGuid].qualifications;
+						oVehicle["equipment"] = aResourceData[sGuid].qualifications.join(",");
 					}
 					aVehicles.push(oVehicle);
 				}
@@ -667,12 +669,16 @@ sap.ui.define([
 					stops: {},
 					demandLocations: [],
 					demandOrders: []
-				};
+				},
+				aListOfAssignments = this.oViewModel.getProperty('/Scheduling/aListOfAssignments') || [],
+				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD"),
+				oOrder;
 
 			aAssingments = oResource.assignments;
 			if (aAssingments && aAssingments.length) {
 				for (var oAssingnment of aAssingments) {
 					if (oAssingnment.DateFrom.getDate() === oAssingnment.DateTo.getDate()) {
+						aListOfAssignments[oAssingnment.DemandGuid] = oAssingnment;
 						sAssignmentDate = this._getFormattedDate(oAssingnment.DateFrom).substring(0, 10);
 						if (aInputPlans.stops[sAssignmentDate]) {
 							aInputPlans.stops[sAssignmentDate].push({
@@ -704,18 +710,22 @@ sap.ui.define([
 							"openingIntervals": [{
 								"$type": "StartDurationInterval",
 								"start": this._getFormattedDate(oAssingnment.DateFrom),
-								"duration": this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo) || 1
+								"duration": 0
 							}]
 						});
-
-						aInputPlans.demandOrders.push({
+						oOrder = {
 							"$type": "VisitOrder",
 							"id": oAssingnment.DemandGuid,
 							"locationId": oAssingnment.DemandGuid + "_location",
 							"priority": 9,
-							"serviceTime": this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo),
-							"requiredVehicleEquipment": oResource.qualifications
-						})
+							"serviceTime": this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo)
+						};
+
+						if (bQualificationCheck) {
+							oOrder["requiredVehicleEquipment"] = oResource.qualifications.join(",");
+						}
+						aInputPlans.demandOrders.push(oOrder);
+
 
 					} else {
 						// Multiple days assignments would get processed here
@@ -723,6 +733,7 @@ sap.ui.define([
 
 				}
 			}
+			this.oViewModel.setProperty('/Scheduling/aListOfAssignments', aListOfAssignments)
 			return aInputPlans;
 		},
 

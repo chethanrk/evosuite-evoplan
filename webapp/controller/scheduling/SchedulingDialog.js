@@ -498,7 +498,10 @@ sap.ui.define([
 					aNonScheduledResIds = [],
 					aNonPlannableIds = [],
 					fTravelTime = 0.0,
-					fTravelBackTime = 0.0;
+					fTravelBackTime = 0.0,
+					violatedAssignments = [],
+					aListOfAssignments = this._oViewModel.getProperty('/Scheduling/aListOfAssignments'),
+					aViolationsTypes = [];
 
 				//Scheduled demands
 				if (oResponse.data.tourReports) {
@@ -507,59 +510,72 @@ sap.ui.define([
 						sResourceGuid = oTour.vehicleId.split("_")[0];
 
 						oTour.tourEvents.forEach(function (tourItem, index) {
-							//Saving travel times 
-							if (tourItem.eventTypes.indexOf('DRIVING') !== -1) {
-								if (oTour.tourEvents[index + 1].eventTypes.indexOf('TRIP_END') !== -1) { //Going back travel
-									fTravelBackTime = tourItem.duration;
-								} else { //Forward travel
-									fTravelTime = fTravelTime + tourItem.duration;      // If ['Driving' 'Break' 'Driving'] is the sequence then both driving times must be added
+							aViolationsTypes = [];
+							if (tourItem.tourViolations && tourItem.orderId) {
+								for (var i in tourItem.tourViolations) {
+									if (aViolationsTypes.indexOf(tourItem.tourViolations[i].$type) === -1) {
+										aViolationsTypes.push(tourItem.tourViolations[i].$type);
+									}
 								}
+								aListOfAssignments[tourItem.orderId].ViolationType = aViolationsTypes.join(",");
+								violatedAssignments.push(aListOfAssignments[tourItem.orderId]);
 							}
-							if (tourItem.eventTypes.indexOf('SERVICE') !== -1) {
-								aData = {};
 
-								//Demand related info
-								aData = _.clone(aDemandsData[tourItem.orderId].data);
+							if (aDemandsData[tourItem.orderId]) {
+								//Saving travel times 
+								if (tourItem.eventTypes.indexOf('DRIVING') !== -1) {
+									if (oTour.tourEvents[index + 1].eventTypes.indexOf('TRIP_END') !== -1) { //Going back travel
+										fTravelBackTime = tourItem.duration;
+									} else { //Forward travel
+										fTravelTime = fTravelTime + tourItem.duration;      // If ['Driving' 'Break' 'Driving'] is the sequence then both driving times must be added
+									}
+								}
+								if (tourItem.eventTypes.indexOf('SERVICE') !== -1) {
+									aData = {};
 
-								//Resource related info
-								aData.ResourceGuid = sResourceGuid;
-								aData.ResourceGroupGuid = aResourceData[sResourceGuid].aData.ResourceGroupGuid;
-								aData.ResourceName = aResourceData[sResourceGuid].aData.Description;
-								aData.ResourceGroup = this.oSchedulingActions.getResourceGroupName(aResourceData[sResourceGuid].aData.ParentNodeId);
+									//Demand related info
+									aData = _.clone(aDemandsData[tourItem.orderId].data);
 
-								//Servicing times
-								tourStartDate = new Date(tourItem.startTime);
-								aData.DateFrom = new Date(tourItem.startTime);
-								aData.TimeFrom = aDemandsData[tourItem.orderId].data.TimeFrom; //To initialise TimeFrom property to be type of EdmTime
-								aData.TimeFrom.ms = tourStartDate.getTime() - tourStartDate.getTimezoneOffset() * 60 * 1000;
+									//Resource related info
+									aData.ResourceGuid = sResourceGuid;
+									aData.ResourceGroupGuid = aResourceData[sResourceGuid].aData.ResourceGroupGuid;
+									aData.ResourceName = aResourceData[sResourceGuid].aData.Description;
+									aData.ResourceGroup = this.oSchedulingActions.getResourceGroupName(aResourceData[sResourceGuid].aData.ParentNodeId);
 
-								tourEndDate = new Date(tourStartDate.setSeconds(tourStartDate.getSeconds() + tourItem.duration));
-								aData.DateTo = tourEndDate;
-								aData.TimeTo = aDemandsData[tourItem.orderId].data.TimeTo; //To initialise TimeTo property to be type of EdmTime
-								aData.TimeTo.ms = tourEndDate.getTime() - tourEndDate.getTimezoneOffset() * 60 * 1000;
+									//Servicing times
+									tourStartDate = new Date(tourItem.startTime);
+									aData.DateFrom = new Date(tourItem.startTime);
+									aData.TimeFrom = aDemandsData[tourItem.orderId].data.TimeFrom; //To initialise TimeFrom property to be type of EdmTime
+									aData.TimeFrom.ms = tourStartDate.getTime() - tourStartDate.getTimezoneOffset() * 60 * 1000;
 
-								aData.DemandGuid = tourItem.orderId;
-								aData.PLANNED = true;
-								//Appending Duration and Duration Unit
-								// aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
-								// commenting this code due to causing issue | decimal field type is diplaying black for string
+									tourEndDate = new Date(tourStartDate.setSeconds(tourStartDate.getSeconds() + tourItem.duration));
+									aData.DateTo = tourEndDate;
+									aData.TimeTo = aDemandsData[tourItem.orderId].data.TimeTo; //To initialise TimeTo property to be type of EdmTime
+									aData.TimeTo.ms = tourEndDate.getTime() - tourEndDate.getTimezoneOffset() * 60 * 1000;
 
-								//Forward travel time
-								aData.TRAVEL_TIME = (fTravelTime / 3600);
-								aData.TRAVEL_BACK_TIME = fTravelBackTime;
+									aData.DemandGuid = tourItem.orderId;
+									aData.PLANNED = true;
+									//Appending Duration and Duration Unit
+									// aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
+									// commenting this code due to causing issue | decimal field type is diplaying black for string
 
-								aData.TRAVEL_TIME_UNIT = "H";   //Travel time unit will be hour
+									//Forward travel time
+									aData.TRAVEL_TIME = (fTravelTime / 3600);
+									aData.TRAVEL_BACK_TIME = fTravelBackTime;
 
-								fTravelTime = 0.0;
+									aData.TRAVEL_TIME_UNIT = "H";   //Travel time unit will be hour
 
-								iPlanned++;
-								aDataSet.push(aData);
-							}
-							if (tourItem.eventTypes.indexOf('TRIP_END') !== -1) {
-								//Backward travel time
-								aData.TRAVEL_BACK_TIME = (fTravelBackTime / 3600);
-								fTravelBackTime = 0.0;
-							}
+									fTravelTime = 0.0;
+
+									iPlanned++;
+									aDataSet.push(aData);
+								}
+								if (tourItem.eventTypes.indexOf('TRIP_END') !== -1) {
+									//Backward travel time
+									aData.TRAVEL_BACK_TIME = (fTravelBackTime / 3600);
+									fTravelBackTime = 0.0;
+								}
+							}		
 						}.bind(this));
 					}
 				}
@@ -653,6 +669,10 @@ sap.ui.define([
 				//Setting button visibility for scheduling
 				if (!iPlanned) {
 					this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bFinishButtonVisible", false);
+				}
+				if (violatedAssignments.length) {
+					this._oViewModel.setProperty("/Scheduling/aViolatedAssignments", violatedAssignments);
+					this.oSchedulingActions.showViolationError();
 				}
 			}
 		}

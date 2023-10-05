@@ -1,0 +1,99 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form">
+	<Dialog
+		id="idViolationDisplayDialog"
+		title="{i18n>xtit.ViolationDialogTitle}"
+		showHeader="true"
+		verticalScrolling="true"
+		contentHeight="50%"
+		contentWidth="60%"
+		afterClose="onSchedDialogClose"
+		>
+		<content>
+			
+
+			<Table sticky="HeaderToolbar,InfoToolbar,ColumnHeaders" class="sapUiResponsiveContentPadding" id="idDemandTableWithViolation" inset="true" items="{path: 'viewModel>/Scheduling/aViolatedAssignments', sorter:{path:'RESOURCE_DESCRIPTION',group:true}}" >
+				<infoToolbar>
+			<OverflowToolbar>
+				<Label text="{i18n>ymsg.PlanViolationWarning}"/>
+			</OverflowToolbar>
+		</infoToolbar>
+				<columns>
+					<Column
+				width="12em">
+						<Label design="Bold" tooltip="{/#Assignment/ORDERID/@sap:label}" text="{/#Assignment/ORDERID/@sap:label}" />
+					</Column>
+					<Column
+				minScreenWidth="Tablet"
+				demandPopin="true">
+						<Label design="Bold" tooltip="{/#Assignment/OPERATIONID/@sap:label}" text="{/#Assignment/OPERATIONID/@sap:label}"/>
+					</Column>
+					<Column
+				minScreenWidth="Tablet"
+				demandPopin="true">
+						<Label design="Bold" tooltip="{/#Assignment/DemandDesc/@sap:label}" text="{/#Assignment/DemandDesc/@sap:label}" />
+					</Column>
+					<Column
+				minScreenWidth="Desktop"
+				demandPopin="true"
+				>
+						<Label design="Bold" tooltip="{/#Assignment/DateFrom/@sap:label}" text="{/#Assignment/DateFrom/@sap:label}" />
+					</Column>
+					<Column
+				minScreenWidth="Desktop"
+				demandPopin="true"
+				>
+						<Label design="Bold" tooltip="{/#Assignment/TimeFrom/@sap:label}" text="{/#Assignment/TimeFrom/@sap:label}" />
+					</Column>
+					<Column
+				minScreenWidth="Desktop"
+				demandPopin="true"
+				>
+						<Label design="Bold" tooltip="{/#Assignment/DateTo/@sap:label}" text="{/#Assignment/DateTo/@sap:label}" />
+					</Column>
+					<Column
+				minScreenWidth="Desktop"
+				demandPopin="true"
+				>
+						<Label design="Bold" tooltip="{/#Assignment/TimeTo/@sap:label}" text="{/#Assignment/TimeTo/@sap:label}" />
+					</Column>
+					<Column
+				minScreenWidth="Desktop"
+				demandPopin="true"
+				>
+						<Label design="Bold" tooltip="{i18n>xlab.ViolationType}" text="{i18n>xlab.ViolationType}" />
+					</Column>
+			
+				</columns>
+				<items>
+					<ColumnListItem vAlign="Middle">
+						<cells>
+							<Text
+						text="{viewModel>ORDERID}" />
+						<Text
+						text="{viewModel>OPERATIONID}" />
+							<Text
+						text="{viewModel>DemandDesc}" />
+						<Text
+						text="{path : 'viewModel>DateFrom', type : 'sap.ui.model.odata.type.Date'}"/>
+						<Text
+						text="{path : 'viewModel>DateFrom', type : 'sap.ui.model.odata.type.DateTime', formatOptions:{pattern:'hh:mm:ss a'}}"/>
+						<Text
+						text="{path : 'viewModel>DateTo', type : 'sap.ui.model.odata.type.Date'}" />
+						<Text
+						text="{path : 'viewModel>DateTo', type : 'sap.ui.model.odata.type.DateTime', formatOptions:{pattern:'hh:mm:ss a'}}"/>
+						<Text
+						text="{path:'viewModel>ViolationType', formatter:'.formatter.getViolationType'}" />	
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+		<buttons>
+			<Button	text="{i18n>xbut.buttonClose}" type="Ghost" press="closeViolationDisplayDialog"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

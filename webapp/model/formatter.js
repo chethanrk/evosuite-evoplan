@@ -1131,6 +1131,25 @@ sap.ui.define([
 			} else {
 				return sDemandDesc + " - " + sStatus;
 			}
+		},
+		/*
+		* For Formatting Gantt Assignment Shapes Tooltip Text
+		* @param sDemandDesc, sStatus, bPRT
+		* @return String
+		*/
+		getViolationType: function (sViolationTypes) {
+			var aViolationTexts = [];
+
+			if (sViolationTypes.indexOf(",") === -1) {
+				aViolationTexts.push(this.oOwnerComponent.getModel("i18n").getResourceBundle().getText(sViolationTypes));
+			} else {
+				sViolationTypes = sViolationTypes.split(",");
+				for (var i in sViolationTypes) {
+					aViolationTexts.push(this.oOwnerComponent.getModel("i18n").getResourceBundle().getText(sViolationTypes));
+				}
+			}
+			debugger;
+			return aViolationTexts.join(", ");
 		}
 	};
 });
