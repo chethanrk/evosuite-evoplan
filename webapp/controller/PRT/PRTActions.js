@@ -260,6 +260,7 @@ sap.ui.define([
 		 * @param mParameters flag of source view 
 		 */
 		onChangeTools: function (aSources, oDateParams, mParameters) {
+			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel('viewModel');
 			var oParams;
 			oParams = this._getParams();
 			this._mParameters.bIsFromPRTAssignmentInfo = true;

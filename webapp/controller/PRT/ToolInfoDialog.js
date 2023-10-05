@@ -130,7 +130,7 @@ sap.ui.define([
 					this.clearMessageModel.call(this._oView.getController());
 					this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), oParams, "ChangeToolAssignment", "POST",
 						this._mParameters, true).then(function (results) {
-							this.showMessage(results[1]);
+							this.showMessage.call(this._oView.getController(),results[1]);
 							if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
 								this._eventBus.publish("BaseController", "refreshTreeTable", {});
 							}
