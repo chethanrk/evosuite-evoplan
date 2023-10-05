@@ -388,8 +388,6 @@ sap.ui.define([
 				this.getModel().callFunction("/GetSystemInformation", {
 					method: "GET",
 					success: function (oData, oResponse) {
-						oData.ENABLE_RESCHEDULE_BUTTON = true;
-						oData.ENABLE_AUTO_SCHEDULE_BUTTON = true;
 						resolve(oData);
 					},
 					error: function (oError) {
