@@ -657,9 +657,7 @@ sap.ui.define([
 				mRefreshParam.bFromHome = true;
 			}
 			//this is written to store the updated resources data so that we can refresh it inside the gantt view
-			if(sViewRoute !== "NEWGANTT"){
-				this._fnStoreUpdatedDemandResources(oModelDialog);
-			}
+			this._fnStoreUpdatedDemandResources(oModelDialog);
 
 			var oDataArr = this._getDemandsDataForAssignment(oModelDialog);
 
