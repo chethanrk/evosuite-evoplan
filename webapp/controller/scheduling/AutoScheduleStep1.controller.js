@@ -137,8 +137,12 @@ sap.ui.define([
          */
         onChangeDateTo: function(oEvent){
             var oDate = oEvent.getSource().getValue();
-            oDate = new Date(new Date(oDate).getTime() - 1000);
-            oEvent.getSource().setDateValue(oDate);
+            if (oDate){
+                oDate = new Date(new Date(oDate).getTime() - 1000);
+                oEvent.getSource().setDateValue(oDate);
+            }else{
+                oDate = new Date(oDate);
+            }
             this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "None");
             this.oSchedulingActions.validateDemandDateRanges(this._oViewModel.getProperty("/Scheduling/startDate"), oDate, true);
             this._checkGeneratedResponse();
@@ -158,7 +162,7 @@ sap.ui.define([
          */
         onPressInsideDate: function(oEvent){
             this._oInsideFilterBtn = oEvent.getSource();
-            this._setCustomTableFilter();
+            this._setCustomTableFilter(this._oSmartFilter);
         },
 
         /**
@@ -167,7 +171,7 @@ sap.ui.define([
          */
         onPressOutsideDate: function(oEvent){
             this._oOutsideFilterBtn = oEvent.getSource();
-            this._setCustomTableFilter();
+            this._setCustomTableFilter(this._oSmartFilter);
         },
 
         /**
@@ -188,6 +192,7 @@ sap.ui.define([
                     this.getView().addDependent(oDialog);
                     //used to access from SchedulingDialog to clear the filters on dialog close
                     this.getOwnerComponent().demandFilterDialog = oDialog;
+                    this._oSmartFilter = oDialog.getContent()[0];
                     return oDialog;
                 }.bind(this));
             }
@@ -200,26 +205,10 @@ sap.ui.define([
          * close filter dialog and add all seleted filters 
          * to json demand table
          */
-        onPressAddFilterDialog: function(){
-            var oSmartFilter = {};
-            if(this._oDemandFilterDialog){
-                this._oDemandFilterDialog.then(function(oDialog){
-                    //adding this to avoid duplicate Id error when used multiple times
-                    oSmartFilter = oDialog.getContent()[0];
-                    this._oSmartFilter = oSmartFilter;
-                    this._setCustomTableFilter(oSmartFilter);
-                    oDialog.close();
-                }.bind(this));
-            }
-        },
-        /**
-         *Close the filter Bar
-         */
-         onPressCancelFilterDialog: function(){
+        onPressCloseFilterDialog: function(){
             if(this._oDemandFilterDialog){
                 this._oDemandFilterDialog.then(function(oDialog){
                     oDialog.close();
-                    oDialog.destory();
                 }.bind(this));
             }
         },
@@ -229,6 +218,10 @@ sap.ui.define([
          */
         onUtilizationChange: function (oEvent) {
             this._checkGeneratedResponse();
+        },
+
+        onSchedulingFilterChange: function(oEvent){
+            this._setCustomTableFilter(this._oSmartFilter);
         },
 
 

@@ -196,11 +196,6 @@ sap.ui.define([
 					public: true,
 					final: false,
 					overrideExecution: OverrideExecution.Instead
-				},
-				onAutoscheduleButtonPress: {
-					public: true,
-					final: false,
-					overrideExecution: OverrideExecution.Instead
 				}
 			}
 		},
@@ -943,15 +938,6 @@ sap.ui.define([
 		onSelectSpots: function (oEvent) {
 			// Do Not remove this method, Demand table filter on changing map selection won't work
 			this._bDemandListScroll = false;
-		},
-
-		/**
-		 * On press of auto-schedule button
-		 * Function to handle press event Plan Demands
-		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
-		 */	
-		onAutoscheduleButtonPress: function(oEvent){
-			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
 		},
 
 		onExit: function () {

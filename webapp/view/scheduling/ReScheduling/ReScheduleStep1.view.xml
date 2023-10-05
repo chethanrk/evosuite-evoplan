@@ -7,7 +7,7 @@
         
         <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.fragments.ScheduleDateRangeForm" type="XML"/>
             
-        <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.fragments.SchedulingTable" type="XML"/>
+        <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.fragments.ReSchedulingTable" type="XML"/>
             
         <core:ExtensionPoint name="WizardExtP|ReSchedule|Step1|Content|After"/>
     

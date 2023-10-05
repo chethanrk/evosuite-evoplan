@@ -26,12 +26,12 @@
             valueState="{viewModel>/Scheduling/sEndDateValueState}"
             valueStateText="{i18n>xtit.PlanHorizonEndMandatory}"
             change="onChangeDateTo"/>
-        <Label text="{i18n>xtit.Utilization}  {viewModel>/Scheduling/sUtilizationSlider}" labelFor="ScheduleUtilization"/>
+        <Label text="{i18n>xtit.Utilization}  ({viewModel>/Scheduling/sUtilizationSlider})" labelFor="ScheduleUtilization"/>
         <Slider value="{viewModel>/Scheduling/sUtilizationSlider}"
             visible="{user>/ENABLE_UTILIZATION_BAR_MAPS}"
             width="100%"
             min="0" max="100"
-            showAdvancedTooltip="true"
+            showAdvancedTooltip="false"
             showHandleTooltip="false"
             change="onUtilizationChange"
             class="sapUiMediumMarginBottom" />

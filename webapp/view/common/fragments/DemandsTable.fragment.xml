@@ -3,7 +3,7 @@
 	<smartTable:SmartTable id="draggableList" height="100%" width="100%" direction="Column" fitContainer="true" enableAutoBinding="true"
 		entitySet="DemandSet" smartFilterId="listReportFilter" showRowCount="true" header="{i18n>xtit.itemListTitle}" useExportToExcel="true"
 		useVariantManagement="true" beforeRebindTable="onBeforeRebindTable" persistencyKey="com.evorait.evosuite.evoplan.DemandsTable" useTablePersonalisation="true"
-		requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,FIXED_APPOINTMENT_ICON_COLOR,FIXED_APPOINTMENT,FIXED_APPOINTMENT_START_DATE,FIXED_APPOINTMENT_START_TIME,FIXED_APPOINTMENT_END_DATE,FIXED_APPOINTMENT_END_TIME,ALLOW_REASSIGN">
+		requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,FIXED_APPOINTMENT_ICON_COLOR,FIXED_APPOINTMENT,FIXED_APPOINTMENT_START_DATE,FIXED_APPOINTMENT_START_TIME,FIXED_APPOINTMENT_END_DATE,FIXED_APPOINTMENT_END_TIME,ALLOW_REASSIGN,ORDER_DESC">
 		<!-- layout data used to make the table growing but the filter bar fixed -->
 		<smartTable:layoutData>
 			<FlexItemData growFactor="1"/>

@@ -239,8 +239,9 @@ sap.ui.define([
 		 * @param sMethod method of http operation ex: GET/POST/PUT/DELETE
 		 */
 		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod, bFromMultiTimeAlloc) {
+	
 			var oResourceBundle = this.getResourceBundle();
-
+	
 			return new Promise(function (resolve, reject) {
 				oModel.callFunction("/" + sFuncName, {
 					method: sMethod || "POST",
@@ -1116,9 +1117,9 @@ sap.ui.define([
 			// Condition to add number of assignments to display in error dialog for scheduling or auto scheduling.
 			if (bIsForScheduling || bIsForReScheduling) {
 				if (oData.OBJECT_SOURCE_TYPE === 'DEM_PMNO') {
-					return oData.NOTIFICATION_TYPE + ", " + oData.NOTIFICATION + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;
+					return oData.NOTIFICATION_TYPE + ", " + oData.NOTIFICATION + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES + ", " + oData.DURATION + oData.DURATION_UNIT;
 				} else {
-					return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES;
+					return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES + ", " + oData.DURATION + oData.DURATION_UNIT;
 				}
 			}
 			if (oData.ORDERID) {

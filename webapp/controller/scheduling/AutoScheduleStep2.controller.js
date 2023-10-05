@@ -42,7 +42,7 @@ sap.ui.define([
      * Call set filter when radio button selected
      */
     onChangeResponseType: function () {
-      this._setCustomTableFilter();
+      this._setCustomTableFilter(this._oSmartFilter);
     },
 
     /**
@@ -61,11 +61,13 @@ sap.ui.define([
         }).then(function (oDialog) {
           oDialog.addStyleClass(this._oViewModel.getProperty("/densityClass"));
           this.getView().addDependent(oDialog);
+          //used to access from SchedulingDialog to clear the filters on dialog close
+          this.getOwnerComponent()._oResponseFilterDialog = oDialog;
+          this._oSmartFilter = oDialog.getContent()[0];
           return oDialog;
         }.bind(this));
       }
       this._oResponseFilterDialog.then(function (oDialog) {
-        oDialog.getContent()[0].clear();
         oDialog.open();
       });
     },
@@ -74,28 +76,17 @@ sap.ui.define([
      * close filter dialog and add all seleted filters 
      * to json response table
      */
-    onPressAddFilterDialog: function () {
-      var oSmartFilter = {};
-      if (this._oResponseFilterDialog) {
-        this._oResponseFilterDialog.then(function (oDialog) {
-          //adding this to avoid duplicate Id error when used multiple times
-          oSmartFilter = oDialog.getContent()[0];
-          this._setCustomTableFilter(oSmartFilter);
-          oDialog.close();
-        }.bind(this));
+    onPressCloseFilterDialog: function(){
+      if(this._oResponseFilterDialog){
+          this._oResponseFilterDialog.then(function(oDialog){
+              oDialog.close();
+          }.bind(this));
       }
     },
-     /**
-         *Close the filter Bar
-         */
-         onPressCancelFilterDialog: function(){
-          if(this._oResponseFilterDialog){
-              this._oResponseFilterDialog.then(function(oDialog){
-                  oDialog.close();
-                  oDialog.destory();
-              }.bind(this));
-          }
-      },
+
+    onSchedulingFilterChange: function(oEvent){
+      this._setCustomTableFilter(this._oSmartFilter);
+    },
 
 
     /* =========================================================== */

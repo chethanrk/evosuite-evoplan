@@ -151,11 +151,11 @@ sap.ui.define([
 				aFilterResource.push(new Filter("ResourceGuid", FilterOperator.EQ, aResourceList[x].ResourceGuid))
 			}
 			aFilterResource.push(new Filter("DemandGuid", FilterOperator.EQ, sSelectedDemand.Guid));
-			this.oAppViewModel.setProperty("/busy", true);
+			
 			//to fetch the assigned resource to the selected demand
 			//we are using AssignmentSet instead of DemandSet as demandset was taking more time than assignmentset.
 			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource, "$select=FIRSTNAME,LASTNAME").then(function (oData) {
-				this.oAppViewModel.setProperty("/busy", false);
+				
 				if (oData.results.length > 0) {
 					oData.results.forEach(function (aItem) {
 						aAssignedList.push(aItem.FIRSTNAME + " " + aItem.LASTNAME);
@@ -311,7 +311,9 @@ sap.ui.define([
 				iSelectedResponse: 0,
 				sScheduleType: "",
 				bDateChanged: false,
-				bSchedBtnBusy:false
+				bSchedBtnBusy: false,
+				bReSchedBtnBusy: false,
+				sReSchAssignGuid: null
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
 		},
@@ -349,7 +351,7 @@ sap.ui.define([
 						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 					}
 				}
-				this.oViewModel.setProperty("/Scheduling/bSchedBtnBusy",false);
+				this.oViewModel.setProperty("/Scheduling/bSchedBtnBusy", false);
 			}.bind(this));
 		},
 
@@ -451,7 +453,11 @@ sap.ui.define([
 				oTempDemandData = {},
 				oDemandData = {};
 			return new Promise(function (resolve, reject) {
+				var iServiceTime;
 				aDemandList.forEach(function (oDemand) {
+					
+					iServiceTime = this._getDemandDurationInSeconds(oDemand.oData.DURATION, oDemand.oData.DURATION_UNIT);
+					
 					oTempDemandData = {
 						"data": oDemand.oData,
 						"location": {
@@ -459,11 +465,11 @@ sap.ui.define([
 							"y": oDemand.oData.LATITUDE
 						},
 						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION ? oDemand.oData.QUALIFICATION_DESCRIPTION.split(",") : [],
-						"priority": oDemand.oData.PRIORITY ? parseInt(oDemand.oData.PRIORITY) : 0,
-						"serviceTime": parseInt(oDemand.oData.Effort) ? oDemand.oData.DURATION_UNIT === "MIN" ? (parseFloat(oDemand.oData.Effort) * 60) : (parseFloat(oDemand.oData.Effort) * 3600) : 1
+						"priority": oDemand.oData.DEMAND_WEIGHTAGE ? parseInt(oDemand.oData.DEMAND_WEIGHTAGE) : 0,
+						"serviceTime": iServiceTime
 					}
 					oDemandData[oDemand.oData.Guid] = oTempDemandData;
-				});
+				}.bind(this));
 				this.oViewModel.setProperty("/Scheduling/demandData", oDemandData);
 				resolve(oDemandData);
 			}.bind(this));
@@ -490,7 +496,7 @@ sap.ui.define([
 				//max date for datepicker is always startdate + 14 days
 				this.oViewModel.setProperty("/Scheduling/maxDate", moment(oStartDate).add(14, "days").endOf("day").toDate());
 			}
-			
+
 			for (var i = 0, len = aDemands.length; i < len; i++) {
 				var demandStartDate = moment(aDemands[i].DateFrom),
 					demandEndDate = moment(aDemands[i].DateTo);
@@ -521,7 +527,7 @@ sap.ui.define([
 			oSchedulingModel.setProperty("/outside", outside);
 			oSchedulingModel.refresh();    //required as sometimes the change in the model is not getting reflected
 
-			this.validateDateSchedule(startDate, endDate, bEndDateChanged);			
+			this.validateDateSchedule(startDate, endDate, bEndDateChanged);
 		},
 		/** This method is used to validate the dates -
 		 * 	1. checks if dates are empty 
@@ -656,11 +662,35 @@ sap.ui.define([
 			}
 			var oDataArr = this._getDemandsDataForAssignment(oModelDialog);
 
-			return Promise.all(oDataArr).then(function(oResponse){
+			return Promise.all(oDataArr).then(function (oResponse) {
 				this.afterUpdateOperations(mRefreshParam);
 				return oResponse;
 			}.bind(this));
 
+		},
+		/**
+		 * This method is used to call the assignment to get the assignment guid which will be required for the 
+		 * update assignment call at the time of re-schedule functionality.
+		 * @param {object} mParam model to ge the 
+		 * @param mParam {object} this is the parmeter from the last function and this is used to reuturn on sucessfull retrival of the assignment guid.
+		 * @return {boolean} true.
+		 */
+		getAssignmentIdForReschedule: function () {
+			var sDemandPath, sSelectedDemand, aResourceList, aAssignedList = [];
+			sDemandPath = this.oViewModel.getProperty("/Scheduling/selectedDemandPath");
+			sSelectedDemand = this.oDataModel.getProperty(sDemandPath);
+			aFilterResource = [];
+			aFilterResource.push(new Filter("DemandGuid", FilterOperator.EQ, sSelectedDemand.Guid));
+			
+			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource, "$select=Guid").then(function (oData) {
+				
+				if (oData.results.length > 0) {
+					this.oViewModel.setProperty("/Scheduling/sReSchAssignGuid", oData.results[0].Guid);
+				}
+				
+				return true;
+				
+			}.bind(this));
 		},
 
 		/* =========================================================== */
@@ -675,7 +705,7 @@ sap.ui.define([
 
 			var aPathsData = [],
 				aNonAssignableDemands = [],
-				oData, oContext, sPath,aSelection=[];
+				oData, oContext, sPath, aSelection = [], nDuration;
 
 			oTable.clearSelection();
 
@@ -683,9 +713,10 @@ sap.ui.define([
 				oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
 				sPath = oContext.getPath();
 				oData = this.oDataModel.getProperty(sPath);
+				nDuration = this._getDemandDurationInSeconds(oData.DURATION, oData.DURATION_UNIT);
 
 				//Added condition to check for number of assignments to plan demands via scheduling
-				if (oData.ALLOW_AUTOSCHEDULE) {
+				if (oData.ALLOW_AUTOSCHEDULE && nDuration <= 1209600) {
 					aPathsData.push({
 						sPath: sPath,
 						oData: oData,
@@ -697,26 +728,26 @@ sap.ui.define([
 					aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData, null, true));
 				}
 			}
-			if(aSelection.length>1){
+			if (aSelection.length > 1) {
 				/* Here we are creating groups of array in sequence like [[1...n]]
 					so to limit the call of addSelectionInterval based on start and end index.
 				 */
 				var result = aSelection.reduce((r, n) => {
 					var lastSubArray = r[r.length - 1];
-					if(!lastSubArray || lastSubArray[lastSubArray.length - 1] !== n - 1) {
-					  r.push([]);
-					} 
+					if (!lastSubArray || lastSubArray[lastSubArray.length - 1] !== n - 1) {
+						r.push([]);
+					}
 					r[r.length - 1].push(n);
-					return r;  
-				  }, []);
+					return r;
+				}, []);
 
-				  for(var j=0;j<result.length;j++){
-					if(result[j].length > 0){
-						oTable.addSelectionInterval(result[j][0], result[j][result[j].length-1]);
-					}else{
+				for (var j = 0; j < result.length; j++) {
+					if (result[j].length > 0) {
+						oTable.addSelectionInterval(result[j][0], result[j][result[j].length - 1]);
+					} else {
 						oTable.addSelectionInterval(result[j][0], result[j][0]);
 					}
-				  }
+				}
 			}
 
 			return {
@@ -748,84 +779,135 @@ sap.ui.define([
 		_getDemandsDataForAssignment: function (oModelDialog) {
 			var aData = oModelDialog.getProperty("/step2/dataSet"),
 				sSchedulingType = this.oViewModel.getProperty("/Scheduling/sScheduleType"),
+				sSchType = this.oViewModel.getProperty("/Scheduling/sType"),
 				iBatchCount = this.oUserModel.getProperty("/DEFAULT_PTV_SCHEDUL_BATCH_SIZE"),
 				sGroupId,
 				mParams,
 				i = 0,
-				oBjectInitial, 
-				aNewArray = [], 
+				oBjectInitial,
+				aNewArray = [],
 				bIsLast = false,
-				aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
+				aPropReq,
+				sFunctionImp,
+				mParam2="Scheduling";
 
-				iBatchCount = iBatchCount ? parseInt(iBatchCount) : 100;
+
+			iBatchCount = iBatchCount ? parseInt(iBatchCount) : 100;
 			for (var x = 0; x < aData.length; x++) {
-				if(x % iBatchCount === 0){
+				if (x % iBatchCount === 0) {
 					sGroupId = "groupId" + i;
 					mParams = {
-						batchGroupId:sGroupId
+						batchGroupId: sGroupId
 					};
 					i++;
 				}
-				if (x === (aData.length-1)){
+				if (x === (aData.length - 1)) {
 					bIsLast = true;
 				}
 				if (aData[x].PLANNED) {
+					if (sSchType === Constants.SCHEDULING.AUTOSCHEDULING) {
+						sFunctionImp = "CreateAssignment";
+						aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 						aData[x].TimeFrom.ms = aData[x].DateFrom.getTime();
 						aData[x].TimeTo.ms = aData[x].DateTo.getTime();
-					oBjectInitial = Object.assign({}, aData[x]);
-					Object.keys(oBjectInitial).forEach(function (key) {
-						if (aPropReq.indexOf(key) < 0) {
-							delete oBjectInitial[key];
-						};
-					});
-					oBjectInitial.MapAssignmentType = sSchedulingType;
-					aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, "CreateAssignment", "POST", mParams, bIsLast));
+						oBjectInitial = Object.assign({}, aData[x]);
+						Object.keys(oBjectInitial).forEach(function (key) {
+							if (aPropReq.indexOf(key) < 0) {
+								delete oBjectInitial[key];
+							};
+						});
+						oBjectInitial.MapAssignmentType = sSchedulingType;
+						// Adding travel time to Pass to create assignment call
+						// converting it into minutes as in Backend travel time unit is hardcoded as 'MIN'
+						oBjectInitial.TravelTime = (aData[x].TRAVEL_TIME * 60).toFixed(2);
+						oBjectInitial.TravelBackTime = (aData[x].TRAVEL_BACK_TIME * 60).toFixed(2);
+						aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, sFunctionImp, "POST", mParams,bIsLast));
+					} else {
+						sFunctionImp = "UpdateAssignment";
+						aPropReq = ["ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
+						aData[x].TimeFrom.ms = aData[x].DateFrom.getTime();
+						aData[x].TimeTo.ms = aData[x].DateTo.getTime();
+						oBjectInitial = Object.assign({}, aData[x]);
+						Object.keys(oBjectInitial).forEach(function (key) {
+							if (aPropReq.indexOf(key) < 0) {
+								delete oBjectInitial[key];
+							};
+						});
+						oBjectInitial.MapAssignmentType = sSchedulingType;
+						oBjectInitial.AssignmentGUID = this.oViewModel.getProperty("/Scheduling/sReSchAssignGuid");
+						
+						// Adding travel time to Pass to create assignment call
+						// converting it into minutes as in Backend travel time unit is hardcoded as 'MIN'
+						oBjectInitial.TravelTime = (aData[x].TRAVEL_TIME * 60).toFixed(2);
+						oBjectInitial.TravelBackTime = (aData[x].TRAVEL_BACK_TIME * 60).toFixed(2);
+						aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, sFunctionImp, "POST", mParams,bIsLast));
+					}
+
 				}
 			};
 
 			return aNewArray;
 		},
 		/**
-		 * This method is used to call function import and returns the function import as promise.
-		 * @param {json} oParams -JSON that is passed as url parameter.
-		 * @param {string} sFuncName - function name to be called.
-		 * @param {string} sMethod - method it could be post or anyother.
-		 * @param {object} mRefreshParam - this method is passed to afterUpdateOperations method
-		 */
+     * This method is used to call function import and returns the function import as promise.
+     * @param {json} oParams -JSON that is passed as url parameter.
+     * @param {string} sFuncName - function name to be called.
+     * @param {string} sMethod - method it could be post or anyother.
+     * @param {object} mRefreshParam - this method is passed to afterUpdateOperations method
+     */
 		_callFunctionImportScheduling: function (oData, sFuncName, sMethod, mParams, bIsLast) {
 			// TODO. 1 check for utilization
 			// 2. check for message toast to be displyaed after the success of this call
 			// 3. Refractor this code.
-
+	  
 			return new Promise(function (resolve, reject) {
-				var oModel = this.oDataModel,
-					oViewModel = this.oAppViewModel,
-					oResourceBundle = this.oResourceBundle;
-
-				oViewModel.setProperty("/busy", true);
-				oModel.callFunction("/" + sFuncName, {
-					method: sMethod || "POST",
-					urlParameters: oData,
-					batchGroupId:mParams.batchGroupId,
-					refreshAfterChange: false,
-					success: function (oData, oResponse) {
-						//Handle Success
-						oViewModel.setProperty("/busy", false);
-						if(bIsLast){
-							this.showMessage(oResponse);
-						}
-						resolve(oData)
-					}.bind(this),
-					error: function (oError) {
-						//set first dragged index to set initial
-						this.oViewModel.setProperty("/iFirstVisibleRowIndex", -1);
-						if (bIsLast){
-							this.showMessageToast(oResourceBundle.getText("errorMessage"));
-						}
-						reject(oError);
-					}.bind(this)
-				});
+			  var oModel = this.oDataModel,
+				oViewModel = this.oAppViewModel,
+				oResourceBundle = this.oResourceBundle;
+	  
+			  oViewModel.setProperty("/busy", true);
+			  oModel.callFunction("/" + sFuncName, {
+				method: sMethod || "POST",
+				urlParameters: oData,
+				batchGroupId: mParams.batchGroupId,
+				refreshAfterChange: false,
+				success: function (oData, oResponse) {
+				  //Handle Success
+				  oViewModel.setProperty("/busy", false);
+				  if (bIsLast) {
+					this.showMessage(oResponse);
+				  }
+				  resolve(oData)
+				}.bind(this),
+				error: function (oError) {
+				  //set first dragged index to set initial
+				  this.oViewModel.setProperty("/iFirstVisibleRowIndex", -1);
+				  if (bIsLast) {
+					this.showMessageToast(oResourceBundle.getText("errorMessage"));
+				  }
+				  reject(oError);
+				}.bind(this)
+			  });
 			}.bind(this))
+		  },
+	  
+		/**
+		 * This method is used to convert Duration into seconds based on duration Unit 
+		 * @param {number} nDuration - Demand duration
+		 * @param {string} sDurationUnit - Demand duration Unit.
+		 */
+		_getDemandDurationInSeconds: function (nDuration, sDurationUnit) {
+			if (parseInt(nDuration)) {
+				if (sDurationUnit === 'H') {
+					return parseFloat(nDuration) * 3600;
+				} else if (sDurationUnit === 'MIN') {
+					return parseFloat(nDuration) * 60;
+				} else {
+					return parseFloat(nDuration) * 86400;
+				}
+			} else {
+				return 1;
+			}
 		}
 	});
 });

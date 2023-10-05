@@ -253,7 +253,7 @@ sap.ui.define([
 		 *  @param {Waypoint[]} aDemandsData -  Array of Waypoint to be visited.(demand data)
 		 */
 		_createPayloadForDistanceMatrixRequest: function (aResourceData, aDemandsData) {
-			var oPointTemplate, aResourcePoints = [], aDemandPoints = [], oPayload = {};
+			var oPointTemplate, sFirstKey, sModeOfTransport, aResourcePoints = [], aDemandPoints = [], oPayload = {};
 			oPointTemplate = {
 				$type: "OffRoadRouteLocation",
 				offRoadCoordinate: {
@@ -279,7 +279,12 @@ sap.ui.define([
 			oPayload.startLocations = aResourcePoints.concat(aDemandPoints);
 			//destinations are added into startLocations to maintain the matrix shape
 			oPayload.destinationLocations = [];
-			oPayload.storedProfile = "car";
+
+			//doing the below procedure to get the mode of transport for the first resource
+			sFirstKey = Object.keys(aResourceData)[0];
+			sModeOfTransport = aResourceData[sFirstKey].aData.MODE_OF_TRANSPORT;
+
+			oPayload.storedProfile = sModeOfTransport;
 
 			oPayload.distanceMatrixOptions = {
 				//current default routing type
@@ -364,6 +369,7 @@ sap.ui.define([
 		_setResourceData: function (oPayload, aResourceData) {
 			var aResourceLocations = [],
 				aVehicles = [],
+				oVehicle = {},
 				aVehicleIDs = [],
 				aDrivers = [],
 				aSchedulingData = this.oViewModel.getProperty("/Scheduling"),
@@ -374,7 +380,8 @@ sap.ui.define([
 				aTours = [],
 				aFixations = [],
 				aDemandLocations = [],
-				aDemands = [];
+				aDemands = [],
+				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD");
 
 
 			for (var sGuid in aResourceData) {
@@ -403,13 +410,15 @@ sap.ui.define([
 
 				// Vehicle objects added as for the resource
 				if (aVehicleIDs && aVehicleIDs.length) {
-					aVehicles.push({
+					oVehicle = {
 						"ids": _.cloneDeep(aVehicleIDs),
 						"startLocationId": sGuid + "_location",
-						"endLocationId": sGuid + "_location",
-						"equipment": aResourceData[sGuid].qualifications
-					});
-
+						"endLocationId": sGuid + "_location"
+					};
+					if (bQualificationCheck){
+						oVehicle["equipment"] = aResourceData[sGuid].qualifications;
+					}
+					aVehicles.push(oVehicle);
 				}
 
 				//Input Plan Data
@@ -446,7 +455,9 @@ sap.ui.define([
 		_setDemandsData: function (oPayload, aDemandsData) {
 			//code for payload creation with demands data needs to place here
 			var locations = [],
-				orders = [];
+				orders = [],
+				oOrder = {},
+				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD");
 
 			for (let oDemandGuid in aDemandsData) {
 				locations.push({
@@ -461,14 +472,17 @@ sap.ui.define([
 					}
 				});
 
-				orders.push({
+				oOrder = {
 					"$type": "VisitOrder",
 					"id": oDemandGuid,
 					"locationId": oDemandGuid + "_location",
 					"priority": aDemandsData[oDemandGuid].priority,
-					"serviceTime": aDemandsData[oDemandGuid].serviceTime,
-					"requiredVehicleEquipment": aDemandsData[oDemandGuid].qualification
-				});
+					"serviceTime": aDemandsData[oDemandGuid].serviceTime
+				};
+				if (bQualificationCheck){
+					oOrder["requiredVehicleEquipment"] = aDemandsData[oDemandGuid].qualification;
+				}
+				orders.push(oOrder);
 			}
 
 			oPayload.locations = oPayload.locations.concat(locations);
@@ -493,12 +507,13 @@ sap.ui.define([
 		 * @return {Object} - array of formatted date 
 		 */
 		_getDateIntervals: function (aStartDate, aEndDate) {
+			var aStartDateTmp = new Date(aStartDate);
 			var aHorizonDateIntervals = [];
-			while (aStartDate.getDate() != aEndDate.getDate()) {
-				aHorizonDateIntervals.push(this._getFormattedDate(aStartDate).substr(0, 10));
-				aStartDate.setDate(aStartDate.getDate() + 1)
+			while (aStartDateTmp.getDate() != aEndDate.getDate()) {
+				aHorizonDateIntervals.push(this._getFormattedDate(aStartDateTmp).substr(0, 10));
+				aStartDateTmp.setDate(aStartDateTmp.getDate() + 1)
 			}
-			aHorizonDateIntervals.push(this._getFormattedDate(aStartDate).substr(0, 10));
+			aHorizonDateIntervals.push(this._getFormattedDate(aStartDateTmp).substr(0, 10));
 			return aHorizonDateIntervals;
 		},
 
