@@ -154,20 +154,11 @@ sap.ui.define([
 				if (oPlanTourResponse) {
 					//call watch job
 					return new Promise(function (resolve) {
-						var oWatchJobRequestBody = {
+						this.oWatchJobRequestBody = {
 							id: oPlanTourResponse.data.id
 						};
-						var intervalID = setInterval(function () {
-							this._sendPOSTRequestToPTV(this._sWatchJobUrl, oWatchJobRequestBody).then(function (oWatchJobResponse) {
-								if (oWatchJobResponse.data.status === "RUNNING") {
-									this.ProgressBarDialog.oComponent.setProgressData({ progress: "70" });
-								}
-								if (["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)) { // if successed or failed
-									clearInterval(intervalID);
-									resolve(oWatchJobResponse);
-								}
-							}.bind(this));
-						}.bind(this), 2000);
+						this.oComponent.ProgressBarDialog.setProgressData({ progress: "70" });
+						this.fnWatchJobCall(this._sWatchJobUrl, resolve);
 					}.bind(this));
 				} else {
 					return;
@@ -211,20 +202,11 @@ sap.ui.define([
 				if (oCreateMatrixResponse) {
 					//call watchJob
 					return new Promise(function (resolve) {
-						var oWatchJobRequestBody = {
+						this.oWatchJobRequestBody = {
 							id: oCreateMatrixResponse.data.id
 						};
-						var intervalID = setInterval(function () {
-							this._sendPOSTRequestToPTV(this._sDimaWatchJobUrl, oWatchJobRequestBody).then(function (oWatchJobResponse) {
-								if (oWatchJobResponse.data.status === "RUNNING") {
-									this.oComponent.ProgressBarDialog.setProgressData({ progress: "30" });
-								}
-								if (["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)) { // if successed or failed
-									clearInterval(intervalID);
-									resolve(oWatchJobResponse);
-								}
-							}.bind(this));
-						}.bind(this), 2000);
+						this.oComponent.ProgressBarDialog.setProgressData({ progress: "30" });
+						this.fnWatchJobCall(this._sDimaWatchJobUrl, resolve);
 					}.bind(this));
 				} else {
 					return;
@@ -243,6 +225,26 @@ sap.ui.define([
 			}.bind(this)).then(function (oFetchDistMatrixResponse) {
 				this.oComponent.ProgressBarDialog.setProgressData({ progress: "50" });
 				return oFetchDistMatrixResponse.data.summary.id;
+			}.bind(this));
+		},
+
+		/**
+		 * Function is used for performing watch job call for both Distance Matrix and Plan Tours API
+		 * @param {string} sURL - contains the URL of Distance Matrix or Plan Tours depending on the call location 
+		 * @param {Promise} resolve - used for resolving once the promise is complete
+		 */
+
+		fnWatchJobCall: function (sURL, resolve) {
+			this.sCurrentURL = sURL;
+			this._sendPOSTRequestToPTV(this.sCurrentURL, this.oWatchJobRequestBody).then(function (oWatchJobResponse) {
+				if (oWatchJobResponse.data.status === "RUNNING" || oWatchJobResponse.data.status === "QUEUING") {
+					setTimeout(function () {
+						this.fnWatchJobCall(sURL, resolve);
+					}.bind(this), 2000);
+				}
+				if (["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)) { // if successed or failed
+					resolve(oWatchJobResponse);
+				}
 			}.bind(this));
 		},
 
@@ -415,7 +417,7 @@ sap.ui.define([
 						"startLocationId": sGuid + "_location",
 						"endLocationId": sGuid + "_location"
 					};
-					if (bQualificationCheck){
+					if (bQualificationCheck) {
 						oVehicle["equipment"] = aResourceData[sGuid].qualifications;
 					}
 					aVehicles.push(oVehicle);
@@ -437,10 +439,10 @@ sap.ui.define([
 			oPayload.fleet.drivers = aDrivers;
 			oPayload.fleet.vehicles = aVehicles;
 			//checking if any input plan data is available, if not, removing "inputPlan" property from payload
-			if (aTours.length){
+			if (aTours.length) {
 				oPayload.inputPlan.tours = aTours;
 				oPayload.inputPlan.fixations = aFixations;
-			}else {
+			} else {
 				delete oPayload.inputPlan;
 			}
 
@@ -457,10 +459,14 @@ sap.ui.define([
 			var locations = [],
 				orders = [],
 				oOrder = {},
-				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD");
+				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD"),
+				oLocationObject,
+				oMustStart,
+				oMustFinish,
+				nDuration;
 
 			for (let oDemandGuid in aDemandsData) {
-				locations.push({
+				oLocationObject = {
 					"$type": "CustomerSite",
 					"id": oDemandGuid + "_location",
 					"routeLocation": {
@@ -470,7 +476,22 @@ sap.ui.define([
 							"y": aDemandsData[oDemandGuid].location.y
 						}
 					}
-				});
+				};
+
+				// adding opening intervals if must start time and must finished time is given for the demand
+				if (aDemandsData[oDemandGuid].data.START_CONS && aDemandsData[oDemandGuid].data.FIN_CONSTR) {
+					oMustStart = this._mergeDateTime(aDemandsData[oDemandGuid].data.START_CONS, aDemandsData[oDemandGuid].data.STRTTIMCON);
+					oMustFinish = this._mergeDateTime(aDemandsData[oDemandGuid].data.FIN_CONSTR, aDemandsData[oDemandGuid].data.FINTIMCONS);
+					nDuration = this._getDateDuration(oMustStart, oMustFinish) - aDemandsData[oDemandGuid].serviceTime;
+					oLocationObject.openingIntervals = [
+						{
+							"$type": "StartDurationInterval",
+							"start": this._getFormattedDate(oMustStart),
+							"duration": nDuration < 0 ? 0 : nDuration
+						}
+					];
+				}
+				locations.push(oLocationObject);
 
 				oOrder = {
 					"$type": "VisitOrder",
@@ -479,7 +500,7 @@ sap.ui.define([
 					"priority": aDemandsData[oDemandGuid].priority,
 					"serviceTime": aDemandsData[oDemandGuid].serviceTime
 				};
-				if (bQualificationCheck){
+				if (bQualificationCheck) {
 					oOrder["requiredVehicleEquipment"] = aDemandsData[oDemandGuid].qualification;
 				}
 				orders.push(oOrder);
@@ -653,7 +674,7 @@ sap.ui.define([
 				for (var oAssingnment of aAssingments) {
 					if (oAssingnment.DateFrom.getDate() === oAssingnment.DateTo.getDate()) {
 						sAssignmentDate = this._getFormattedDate(oAssingnment.DateFrom).substring(0, 10);
-						if (aInputPlans.stops[sAssignmentDate]){
+						if (aInputPlans.stops[sAssignmentDate]) {
 							aInputPlans.stops[sAssignmentDate].push({
 								"locationId": oAssingnment.DemandGuid + "_location",
 								"tasks": [{
@@ -661,7 +682,7 @@ sap.ui.define([
 									"taskType": "VISIT"
 								}]
 							})
-						}else {
+						} else {
 							aInputPlans.stops[sAssignmentDate] = [{
 								"locationId": oAssingnment.DemandGuid + "_location",
 								"tasks": [{
@@ -710,20 +731,20 @@ sap.ui.define([
 		 * @param {string} sGuid - Resource Guid
 		 * @return {Object} oInputPlanData - input plan data needed for creating object - will contain stops for dates
 		 */
-		_getPTVInputPlanObject: function(sGuid, oInputPlanData){
+		_getPTVInputPlanObject: function (sGuid, oInputPlanData) {
 			var inputPlan = {
-				"tours":[],
-				"fixations":[]
+				"tours": [],
+				"fixations": []
 			};
-			for(var date in oInputPlanData.stops){
-				if (oInputPlanData.stops[date].length){
+			for (var date in oInputPlanData.stops) {
+				if (oInputPlanData.stops[date].length) {
 					inputPlan.tours.push({
 						"vehicleId": sGuid + "_" + date,
 						"vehicleStartLocationId": sGuid + "_location",
 						"vehicleEndLocationId": sGuid + "_location",
 						"trips": [{
 							"id": sGuid + "_" + date + "_trip",
-							"stops":oInputPlanData.stops[date]
+							"stops": oInputPlanData.stops[date]
 						}]
 					});
 
@@ -736,7 +757,26 @@ sap.ui.define([
 
 
 			return inputPlan;
-		}
+		},
+		/**
+		 * merge given date and time to datetime and format
+		 * @param date
+		 * @param time
+		 */
+		_mergeDateTime: function (date, time) {
+			var offsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
+				dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+					pattern: "yyyy-MM-dd"
+				}),
+				timeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+					pattern: "HH:mm:ss"
+				});
+
+			var dateStr = dateFormat.format(new Date(date.getTime() + offsetMs));
+			var timeStr = timeFormat.format(new Date(time.ms + offsetMs));
+
+			return new Date(dateStr + "T" + timeStr);
+		},
 		/* ============================================================================== */
 		/* Data types                                                                     */
 		/* ------------------------------------------------------------------------------ */

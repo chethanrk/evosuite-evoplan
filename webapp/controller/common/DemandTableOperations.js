@@ -288,7 +288,10 @@ sap.ui.define([
 					oMsgParam["bIsPoolExist"] = oResult.bIsPoolExist;
 					oMsgParam["sPoolNames"] = oResult.poolResource;
 					//calling function to check if the demand already is assigned to one of the selected resource
-					return this.oSchedulingActions.checkAssignedResource();
+					this.oSchedulingActions.checkAssignedResource();
+					return {
+						bNotAssigned: true
+					};
 				} else {
 					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
 					oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
@@ -305,10 +308,7 @@ sap.ui.define([
 					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					// calling below method to get the assignment id for the resource so that 
 					return this.oSchedulingActions.getAssignmentIdForReschedule();
-				} else {
-					this._showErrorMessage(oResourceBundle.getText("ymsg.alreadyAssigned", oResult.resourceNames));
-				}
-			
+				} 
 			}.bind(this)).then(function (bParam) {
 				if(bParam){
 					var mParams = {

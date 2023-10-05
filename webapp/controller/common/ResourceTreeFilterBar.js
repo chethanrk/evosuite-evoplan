@@ -593,7 +593,12 @@ sap.ui.define([
 			oEndDate = oEndDateSource.getDateValue(),
 			start = oStartDate,
 			end = oEndDate,
-			aYearMatrix = this._component.getModel("viewModel").getProperty("/yearMatrix");
+			aYearMatrix = this._component.getModel("viewModel").getProperty("/yearMatrix"),
+			bEnableClusterTable = this._userModel.getProperty("/ENABLE_RESOURCE_TREE_CLUSTER");
+
+			if (!bEnableClusterTable){
+				return;
+			}
 
 			if (selectedHierarchyView === "TIMEWEEK"){
 				start = moment(oStartDate).startOf("week").toDate();

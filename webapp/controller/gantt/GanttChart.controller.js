@@ -2094,6 +2094,7 @@ sap.ui.define([
 						for (var k in aAssignments) {
 							if (oResource.NodeId === aAssignments[k].ObjectId) {
 								oResource.AssignmentSet.results.push(aAssignments[k]);
+								aAssignments[k].ResourceAvailabilitySet = oResource.ResourceAvailabilitySet;
 								oResource.children.push(aAssignments[k]);
 								oResource.children.forEach(function (oAssignItem, idx) { //Updating resource child node data
 									oAssignItem.NodeType = "ASSIGNMENT";
@@ -2650,6 +2651,7 @@ sap.ui.define([
 		 * @Author Rakesh Sahu
 		 */
 		_updateResourceChildren: function (oResource, aChildAsgnData) {
+			var aTravelTimes = [];
 			if (oResource.AssignmentSet) {
 				oResource.children = aChildAsgnData;
 				oResource.children.forEach(function (oAsgnObj) {
@@ -2670,7 +2672,18 @@ sap.ui.define([
 					oAsgnObj.AssignmentSet = {
 						results: [clonedObj]
 					};
+					//added the below code for calculating the travel times when coming from different views
+					if (parseFloat(oAsgnObj.TRAVEL_TIME) > 0) {
+						aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes,oAsgnObj,oResource);
+					}
+					if (parseFloat(oAsgnObj.TRAVEL_BACK_TIME) > 0) {
+						aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes, oAsgnObj, oResource, true);
+					}
 				}.bind(this));
+				//Adding Travel time if available for the resource
+				oResource.TravelTimes = {
+					results: _.cloneDeep(aTravelTimes)
+				};
 			}
 		},
 
@@ -2919,13 +2932,7 @@ sap.ui.define([
 		},
 
 		_refreshDroppedContext: function (sChannel, sEvent, oData) {
-			var oSourceData = oData.oSourceData,
-				sTargetPath = oSourceData.sTargetPath,
-				sSourcePath = oSourceData.sSourcePath;
-			if (!sTargetPath) {
-				sTargetPath = this.assignmentRowContext.getPath();
-			}
-			this._refreshChangedResources(sTargetPath, sSourcePath);
+			this._refreshUpdatedResources();
 		},
 
 		/**

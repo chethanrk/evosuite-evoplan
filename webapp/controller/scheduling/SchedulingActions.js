@@ -154,22 +154,8 @@ sap.ui.define([
 			
 			//to fetch the assigned resource to the selected demand
 			//we are using AssignmentSet instead of DemandSet as demandset was taking more time than assignmentset.
-			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource, "$select=FIRSTNAME,LASTNAME").then(function (oData) {
-				
-				if (oData.results.length > 0) {
-					oData.results.forEach(function (aItem) {
-						aAssignedList.push(aItem.FIRSTNAME + " " + aItem.LASTNAME);
-					});
-				};
-				if (aAssignedList.length > 0) {
-					return {
-						bNotAssigned: false,
-						resourceNames: aAssignedList.join("\n")
-					}
-				}
-				return {
-					bNotAssigned: true
-				};
+			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource, "$select=FIRSTNAME,LASTNAME,Guid,DateFrom,DateTo,TimeFrom,TimeTo,NODE_ID").then(function (oData) {
+				this.oViewModel.setProperty("/Scheduling/selectedAssignment", oData.results);				
 			}.bind(this));
 		},
 
@@ -652,7 +638,17 @@ sap.ui.define([
 
 			var iArraySize = 100;
 			var sViewRoute = this.oViewModel.getProperty("/sViewRoute"),
-				mRefreshParam = {};
+				mRefreshParam = {},
+				oAssignment = this.oViewModel.getProperty("/Scheduling/selectedAssignment"),
+				oPlanData = oModelDialog.getProperty("/step2/dataSet")[0],
+				sMessage;
+
+			if (oModelDialog.getProperty("/isReschuduling") && oAssignment.length && oPlanData.ResourceGuid === oAssignment[0].NODE_ID.split("//")[0] && oAssignment[0].DateFrom.toString().substr(0, 21) === oPlanData.DateFrom.toString().substr(0, 21)) {
+				sMessage = this.oResourceBundle.getText("ymsg.alreadyAssigned", oPlanData.ORDERID) + oAssignment[0].FIRSTNAME + " " + oAssignment[0].LASTNAME ;
+				this.showMessageToast(sMessage);				
+				return Promise.all([]);
+			} 
+
 			if (sViewRoute === "NEWGANTT") {
 				mRefreshParam.bFromNewGantt = true;
 			} else if (sViewRoute === "MAP") {
@@ -660,6 +656,11 @@ sap.ui.define([
 			} else {
 				mRefreshParam.bFromHome = true;
 			}
+			//this is written to store the updated resources data so that we can refresh it inside the gantt view
+			if(sViewRoute !== "NEWGANTT"){
+				this._fnStoreUpdatedDemandResources(oModelDialog);
+			}
+
 			var oDataArr = this._getDemandsDataForAssignment(oModelDialog);
 
 			return Promise.all(oDataArr).then(function (oResponse) {
@@ -908,6 +909,18 @@ sap.ui.define([
 			} else {
 				return 1;
 			}
-		}
+		},
+
+		/**
+		 * This function is used for storing the updated resources so that 
+		 * it can be used to refresh the resources in Gantt view
+		 * @param {Object} oModelDialog - Dialog model; used for fetching the resource data 
+		 */
+		_fnStoreUpdatedDemandResources: function(oModelDialog){
+			var aData = oModelDialog.getProperty("/step2/dataSet");
+			aData.forEach(function (item) {
+				this._updatedDmdResources(this.oViewModel, item);
+			}.bind(this));				
+		},
 	});
 });

@@ -82,6 +82,8 @@ sap.ui.define([
 				this._renderWizardStep1Binding(oDialog);
 				this._oViewModel.setProperty("/Scheduling/InputDataChanged", "");
 				this._oSchedulingModel.setProperty("/step2/dataSet", []);
+				// validation added below so that user is not able to select the date and time less than current time.
+				this._oViewModel.setProperty("/Scheduling/minDate", new Date());
 				oDialog.open();
 				if (!_.isEmpty(oMsgParam)) {
 					this._showSchedulingMessageToast(oDialog, oMsgParam);
@@ -641,13 +643,13 @@ sap.ui.define([
 					// 	}
 					// }
 				}
-
+				
 				//Setting the values in Schdeuling model
 				this._oSchedulingModel.setProperty("/step2/iPlanned", iPlanned);
 				this._oSchedulingModel.setProperty("/step2/iNonPlanned", iNotPlanned);
 				this._oSchedulingModel.setProperty("/step2/iNonPlannedRes", iNotPlannedRes);
 				this._oSchedulingModel.setProperty("/step2/dataSet", aDataSet);
-
+					
 				//Setting button visibility for scheduling
 				if (!iPlanned) {
 					this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bFinishButtonVisible", false);
