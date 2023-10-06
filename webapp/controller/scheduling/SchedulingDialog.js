@@ -512,9 +512,9 @@ sap.ui.define([
 						oTour.tourEvents.forEach(function (tourItem, index) {
 							aViolationsTypes = [];
 							if (tourItem.tourViolations && tourItem.orderId) {
-								for (var i in tourItem.tourViolations) {
-									if (aViolationsTypes.indexOf(tourItem.tourViolations[i].$type) === -1) {
-										aViolationsTypes.push(tourItem.tourViolations[i].$type);
+								for (var index in tourItem.tourViolations) {
+									if (aViolationsTypes.indexOf(tourItem.tourViolations[index].$type) === -1) {
+										aViolationsTypes.push(tourItem.tourViolations[index].$type);
 									}
 								}
 								aListOfAssignments[tourItem.orderId].ViolationType = aViolationsTypes.join(",");

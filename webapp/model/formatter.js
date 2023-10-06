@@ -1133,8 +1133,8 @@ sap.ui.define([
 			}
 		},
 		/*
-		* For Formatting Gantt Assignment Shapes Tooltip Text
-		* @param sDemandDesc, sStatus, bPRT
+		* to get PTV autoscheduling violation type
+		* @param sViolationTypes
 		* @return String
 		*/
 		getViolationType: function (sViolationTypes) {
@@ -1148,7 +1148,6 @@ sap.ui.define([
 					aViolationTexts.push(this.oOwnerComponent.getModel("i18n").getResourceBundle().getText(sViolationTypes));
 				}
 			}
-			debugger;
 			return aViolationTexts.join(", ");
 		}
 	};

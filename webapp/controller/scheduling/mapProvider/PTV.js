@@ -130,7 +130,7 @@ sap.ui.define([
 
 			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
 			this.oComponent.ProgressBarDialog.setProgressData({ description: sDialogMsg });
-			return this._createDistanceMatrix(aResourceData, aDemandsData).then(function (sMatrixId) {
+			return this._createDistanceMatrix(aResourceData, oPayload.locations).then(function (sMatrixId) {
 				this.oComponent.getModel("viewModel").setProperty("/Scheduling/sDistanceMatrixId", sMatrixId);
 				// oPayload.distanceMode = {
 				// 	"$type": "ExistingDistanceMatrix",
@@ -193,12 +193,12 @@ sap.ui.define([
 		 * 1st Step: Payload will be sent to startCreateDistanceMatrix API
 		 * 2nd Step: WatchJob will be checking for the completion of the above process.
 		 * 3rd Step: FetchJobResponse will get the matrix Id and pass it to the plan Tours API
-		 * @param {Waypoint[]} aStartPoints - Starting points of the route (resource data)
+		 * @param {Waypoint[]} aResourceData - Resource Data
 		 * @param {Waypoint[]} aPointsToVisit - Array of Waypoint to be visited (Demand data)
 		 * @return {Promise<string>} Promise representing id of the distance matrix. The matrix itself stored in PTV service after its creation.
 		 */
-		_createDistanceMatrix: function (aStartPoints, aPointsToVisit) {
-			var oRequestBody = this._createPayloadForDistanceMatrixRequest(aStartPoints, aPointsToVisit);
+		_createDistanceMatrix: function (aResourceData, aLocations) {
+			var oRequestBody = this._createPayloadForDistanceMatrixRequest(aResourceData, aLocations);
 			return this._sendPOSTRequestToPTV(this._sStartCreateDistanceMatrixUrl, oRequestBody).then(function (oCreateMatrixResponse) {
 				this.oComponent.ProgressBarDialog.setProgressData({ progress: "20" });
 				if (oCreateMatrixResponse) {
@@ -253,11 +253,11 @@ sap.ui.define([
 		/**
 		 * Creates payload according to CreateDistanceMatrix type:
 		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xdima.html#com.ptvgroup.xserver.xdima.CreateDistanceMatrixRequest
-		* @param {Waypoint[]} aResourceData - Starting points of the route (resource data)
-		 *  @param {Waypoint[]} aDemandsData -  Array of Waypoint to be visited.(demand data)
+		* @param {Waypoint[]} aResourceData - Resource date to get Mode of transport
+		 *  @param {Waypoint[]} aLocation -  Array of all locations involved in scheduling payload (Resource, Demand and input plans)
 		 */
-		_createPayloadForDistanceMatrixRequest: function (aResourceData, aDemandsData) {
-			var oPointTemplate, sFirstKey, sModeOfTransport, aResourcePoints = [], aDemandPoints = [], oPayload = {};
+		_createPayloadForDistanceMatrixRequest: function (aResourceData, aLocations) {
+			var oPointTemplate, sFirstKey, sModeOfTransport, aLocationPoints = [], oPayload = {};
 			oPointTemplate = {
 				$type: "OffRoadRouteLocation",
 				offRoadCoordinate: {
@@ -266,21 +266,14 @@ sap.ui.define([
 				}
 			};
 
-			for (var sGuid in aResourceData) {
+			for (var i in aLocations) {
 				var oPoint = _.cloneDeep(oPointTemplate);
-				oPoint.offRoadCoordinate.x = aResourceData[sGuid].aData.LONGITUDE;
-				oPoint.offRoadCoordinate.y = aResourceData[sGuid].aData.LATITUDE;
-				aResourcePoints.push(oPoint);
+				oPoint.offRoadCoordinate.x = aLocations[i].routeLocation.offRoadCoordinate.x;
+				oPoint.offRoadCoordinate.y = aLocations[i].routeLocation.offRoadCoordinate.y;
+				aLocationPoints.push(oPoint);
 			}
 
-			for (var sGuid in aDemandsData) {
-				var oPoint = _.cloneDeep(oPointTemplate);
-				oPoint.offRoadCoordinate.x = aDemandsData[sGuid].location.x;
-				oPoint.offRoadCoordinate.y = aDemandsData[sGuid].location.y;
-				aDemandPoints.push(oPoint);
-			}
-
-			oPayload.startLocations = aResourcePoints.concat(aDemandPoints);
+			oPayload.startLocations = aLocationPoints;
 			//destinations are added into startLocations to maintain the matrix shape
 			oPayload.destinationLocations = [];
 

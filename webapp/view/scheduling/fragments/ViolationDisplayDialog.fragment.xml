@@ -14,13 +14,8 @@
 		>
 		<content>
 			
-
+			<Text  class="sapUiMediumMarginBeginEnd sapUiTinyMarginTopBottom" text="{i18n>ymsg.PlanViolationWarning}" wrappingType="Hyphenated"/>
 			<Table sticky="HeaderToolbar,InfoToolbar,ColumnHeaders" class="sapUiResponsiveContentPadding" id="idDemandTableWithViolation" inset="true" items="{path: 'viewModel>/Scheduling/aViolatedAssignments', sorter:{path:'RESOURCE_DESCRIPTION',group:true}}" >
-				<infoToolbar>
-			<OverflowToolbar>
-				<Label text="{i18n>ymsg.PlanViolationWarning}"/>
-			</OverflowToolbar>
-		</infoToolbar>
 				<columns>
 					<Column
 				width="12em">
