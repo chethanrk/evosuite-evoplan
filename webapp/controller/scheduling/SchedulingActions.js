@@ -6,11 +6,12 @@ sap.ui.define([
 	"sap/ui/core/IconColor",
 	"sap/ui/core/MessageType",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
-], function (BaseController, formatter, Filter, Constants, IconColor, MessageType, Filter, FilterOperator) {
+	"sap/ui/model/FilterOperator",
+	"sap/ui/core/Fragment",
+], function (BaseController, formatter, Filter, Constants, IconColor, MessageType, Filter, FilterOperator, Fragment) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
-
+		formatter: formatter,
 		_controller: undefined, //controller from where this class was initialized
 		oViewModel: undefined,
 		oDataModel: undefined,
@@ -690,6 +691,25 @@ sap.ui.define([
 				return true;
 				
 			}.bind(this));
+		},
+		showViolationError: function () {
+
+			if (!this.oOwnerComponent.ViolationDisplayDialog) {
+				Fragment.load({
+					name: "com.evorait.evoplan.view.scheduling.fragments.ViolationDisplayDialog",
+					controller: this,
+					type: "XML"
+				}).then(function (ViolationDisplayDialog) {
+					this._controller.getView().addDependent(ViolationDisplayDialog)
+					this.oOwnerComponent.ViolationDisplayDialog = ViolationDisplayDialog;
+					ViolationDisplayDialog.open();
+				}.bind(this));
+			} else {
+				this.oOwnerComponent.ViolationDisplayDialog.open();
+			}
+		},
+		closeViolationDisplayDialog: function () {
+			this.oOwnerComponent.ViolationDisplayDialog.close();
 		},
 
 		/* =========================================================== */

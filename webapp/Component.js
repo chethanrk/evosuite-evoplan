@@ -673,7 +673,9 @@ sap.ui.define([
 					InputDataChanged:"",
 					startDate: "",
 					endDate: "",
-					bSchedBtnBusy:false
+					bSchedBtnBusy: false,
+					aListOfAssignments: [],
+					aViolatedAssignments: []
 				},
 				sViewRoute: null,
 				aUpdatedResources: [],

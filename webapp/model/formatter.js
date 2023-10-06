@@ -1131,6 +1131,24 @@ sap.ui.define([
 			} else {
 				return sDemandDesc + " - " + sStatus;
 			}
+		},
+		/*
+		* to get PTV autoscheduling violation type
+		* @param sViolationTypes
+		* @return String
+		*/
+		getViolationType: function (sViolationTypes) {
+			var aViolationTexts = [];
+
+			if (sViolationTypes.indexOf(",") === -1) {
+				aViolationTexts.push(this.oOwnerComponent.getModel("i18n").getResourceBundle().getText(sViolationTypes));
+			} else {
+				sViolationTypes = sViolationTypes.split(",");
+				for (var i in sViolationTypes) {
+					aViolationTexts.push(this.oOwnerComponent.getModel("i18n").getResourceBundle().getText(sViolationTypes));
+				}
+			}
+			return aViolationTexts.join(", ");
 		}
 	};
 });

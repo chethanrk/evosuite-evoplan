@@ -150,6 +150,13 @@ sap.ui.define([
             this._checkGeneratedResponse();
             this._setCustomTableFilter(this._oSmartFilter);
         },
+        /**
+         * Called when utilization changes
+         * @param {object} oEvent 
+         */
+        onUtilizationChange: function(oEvent){            
+            this._checkGeneratedResponse();
+        },
 
         /**
          * when user press demand filter for inside date range

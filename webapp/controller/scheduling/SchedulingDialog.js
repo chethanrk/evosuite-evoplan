@@ -498,7 +498,10 @@ sap.ui.define([
 					aNonScheduledResIds = [],
 					aNonPlannableIds = [],
 					fTravelTime = 0.0,
-					fTravelBackTime = 0.0;
+					fTravelBackTime = 0.0,
+					violatedAssignments = [],
+					aListOfAssignments = this._oViewModel.getProperty('/Scheduling/aListOfAssignments'),
+					aViolationsTypes = [];
 
 				//Scheduled demands
 				if (oResponse.data.tourReports) {
@@ -507,6 +510,17 @@ sap.ui.define([
 						sResourceGuid = oTour.vehicleId.split("_")[0];
 
 						oTour.tourEvents.forEach(function (tourItem, index) {
+							aViolationsTypes = [];
+							if (tourItem.tourViolations && tourItem.orderId) {
+								for (var violationIndex in tourItem.tourViolations) {
+									if (aViolationsTypes.indexOf(tourItem.tourViolations[violationIndex].$type) === -1) {
+										aViolationsTypes.push(tourItem.tourViolations[violationIndex].$type);
+									}
+								}
+								aListOfAssignments[tourItem.orderId].ViolationType = aViolationsTypes.join(",");
+								violatedAssignments.push(aListOfAssignments[tourItem.orderId]);
+							}
+
 							//Saving travel times 
 							if (tourItem.eventTypes.indexOf('DRIVING') !== -1) {
 								if (oTour.tourEvents[index + 1].eventTypes.indexOf('TRIP_END') !== -1) { //Going back travel
@@ -515,7 +529,7 @@ sap.ui.define([
 									fTravelTime = fTravelTime + tourItem.duration;      // If ['Driving' 'Break' 'Driving'] is the sequence then both driving times must be added
 								}
 							}
-							if (tourItem.eventTypes.indexOf('SERVICE') !== -1) {
+							if (tourItem.eventTypes.indexOf('SERVICE') !== -1 && aDemandsData[tourItem.orderId]) {
 								aData = {};
 
 								//Demand related info
@@ -555,11 +569,12 @@ sap.ui.define([
 								iPlanned++;
 								aDataSet.push(aData);
 							}
+
 							if (tourItem.eventTypes.indexOf('TRIP_END') !== -1) {
 								//Backward travel time
 								aData.TRAVEL_BACK_TIME = (fTravelBackTime / 3600);
 								fTravelBackTime = 0.0;
-							}
+							}	
 						}.bind(this));
 					}
 				}
@@ -653,6 +668,10 @@ sap.ui.define([
 				//Setting button visibility for scheduling
 				if (!iPlanned) {
 					this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bFinishButtonVisible", false);
+				}
+				if (violatedAssignments.length) {
+					this._oViewModel.setProperty("/Scheduling/aViolatedAssignments", violatedAssignments);
+					this.oSchedulingActions.showViolationError();
 				}
 			}
 		}
