@@ -496,7 +496,7 @@ sap.ui.define([
 					"serviceTime": aDemandsData[oDemandGuid].serviceTime
 				};
 				if (bQualificationCheck) {
-					oOrder["requiredVehicleEquipment"] = aDemandsData[oDemandGuid].qualification;
+					oOrder["requiredVehicleEquipment"] = aDemandsData[oDemandGuid].qualification.join(",");
 				}
 				if (aLocationIds.indexOf(oDemandGuid + "_location") === -1) {
 					locations.push(oLocationObject);
