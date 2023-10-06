@@ -118,18 +118,19 @@ sap.ui.define([
 		getPTVPayload: function (aResourceData, aDemandsData) {
 			var oPayload = this._getPayloadStructure(),
 				sDialogMsg = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.analysinglocations");
+
 			this.oViewModel.setProperty('/Scheduling/aListOfAssignments', []);
 			this.oViewModel.setProperty("/Scheduling/aDemandLocationIds", []);
-			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload
 
+			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
+
+			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload
 
 			if (oPayload.fleet.drivers.length === 0 || oPayload.fleet.vehicles.length === 0) { //Stop the process of PTV API call when no drivers
 				this.oComponent.ProgressBarDialog.close();
 				MessageBox.error(this.oComponent.getModel("i18n").getResourceBundle().getText("xmsg.noAvailability"));
 				return false;
 			}
-
-			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
 			this.oComponent.ProgressBarDialog.setProgressData({ description: sDialogMsg });
 			return this._createDistanceMatrix(aResourceData, oPayload.locations).then(function (sMatrixId) {
 				this.oComponent.getModel("viewModel").setProperty("/Scheduling/sDistanceMatrixId", sMatrixId);
@@ -474,7 +475,7 @@ sap.ui.define([
 						}
 					}
 				};
-
+				aLocationIds.push(oDemandGuid + "_location");
 				// adding opening intervals if must start time and must finished time is given for the demand
 				if (aDemandsData[oDemandGuid].data.START_CONS && aDemandsData[oDemandGuid].data.FIN_CONSTR) {
 					oMustStart = this._mergeDateTime(aDemandsData[oDemandGuid].data.START_CONS, aDemandsData[oDemandGuid].data.STRTTIMCON);
@@ -498,13 +499,12 @@ sap.ui.define([
 				if (bQualificationCheck) {
 					oOrder["requiredVehicleEquipment"] = aDemandsData[oDemandGuid].qualification.join(",");
 				}
-				if (aLocationIds.indexOf(oDemandGuid + "_location") === -1) {
-					locations.push(oLocationObject);
-					orders.push(oOrder);
-				}
+				locations.push(oLocationObject);
+				orders.push(oOrder);	
 
 			}
 
+			this.oViewModel.setProperty("/Scheduling/aDemandLocationIds", aLocationIds)
 			oPayload.locations = oPayload.locations.concat(locations);
 			oPayload.orders = oPayload.orders.concat(orders);
 			return oPayload;
@@ -676,63 +676,63 @@ sap.ui.define([
 			if (aAssingments && aAssingments.length) {
 				for (var oAssingnment of aAssingments) {
 					if (oAssingnment.DateFrom.getDate() === oAssingnment.DateTo.getDate()) {
-						aListOfAssignments[oAssingnment.DemandGuid] = oAssingnment;
-						sAssignmentDate = this._getFormattedDate(oAssingnment.DateFrom).substring(0, 10);
-						if (aInputPlans.stops[sAssignmentDate]) {
-							aInputPlans.stops[sAssignmentDate].push({
-								"locationId": oAssingnment.DemandGuid + "_location",
-								"tasks": [{
-									"orderId": oAssingnment.DemandGuid,
-									"taskType": "VISIT"
+						if (aDemandLocations.indexOf(oAssingnment.DemandGuid + "_location") === -1) {
+							aListOfAssignments[oAssingnment.DemandGuid] = oAssingnment;
+							sAssignmentDate = this._getFormattedDate(oAssingnment.DateFrom).substring(0, 10);
+							if (aInputPlans.stops[sAssignmentDate]) {
+								aInputPlans.stops[sAssignmentDate].push({
+									"locationId": oAssingnment.DemandGuid + "_location",
+									"tasks": [{
+										"orderId": oAssingnment.DemandGuid,
+										"taskType": "VISIT"
+									}]
+								})
+							} else {
+								aInputPlans.stops[sAssignmentDate] = [{
+									"locationId": oAssingnment.DemandGuid + "_location",
+									"tasks": [{
+										"orderId": oAssingnment.DemandGuid,
+										"taskType": "VISIT"
+									}]
+								}];
+							}
+							aInputPlans.demandLocations.push({
+								"$type": "CustomerSite",
+								"id": oAssingnment.DemandGuid + "_location",
+								"routeLocation": {
+									"$type": "OffRoadRouteLocation",
+									"offRoadCoordinate": {
+										"x": oAssingnment.LONGITUDE,
+										"y": oAssingnment.LATITUDE
+									}
+								},
+								"openingIntervals": [{
+									"$type": "StartDurationInterval",
+									"start": this._getFormattedDate(oAssingnment.DateFrom),
+									"duration": 0
 								}]
-							})
-						} else {
-							aInputPlans.stops[sAssignmentDate] = [{
+							});
+							aDemandLocations.push(oAssingnment.DemandGuid + "_location");
+							oOrder = {
+								"$type": "VisitOrder",
+								"id": oAssingnment.DemandGuid,
 								"locationId": oAssingnment.DemandGuid + "_location",
-								"tasks": [{
-									"orderId": oAssingnment.DemandGuid,
-									"taskType": "VISIT"
-								}]
-							}];
+								"priority": 9,
+								"serviceTime": this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo)
+							};
+
+							if (bQualificationCheck) {
+								oOrder["requiredVehicleEquipment"] = oResource.qualifications.join(",");
+							}
+							aInputPlans.demandOrders.push(oOrder);
+
 						}
-						aInputPlans.demandLocations.push({
-							"$type": "CustomerSite",
-							"id": oAssingnment.DemandGuid + "_location",
-							"routeLocation": {
-								"$type": "OffRoadRouteLocation",
-								"offRoadCoordinate": {
-									"x": oAssingnment.LONGITUDE,
-									"y": oAssingnment.LATITUDE
-								}
-							},
-							"openingIntervals": [{
-								"$type": "StartDurationInterval",
-								"start": this._getFormattedDate(oAssingnment.DateFrom),
-								"duration": 0
-							}]
-						});
-						aDemandLocations.push(oAssingnment.DemandGuid + "_location");
-						oOrder = {
-							"$type": "VisitOrder",
-							"id": oAssingnment.DemandGuid,
-							"locationId": oAssingnment.DemandGuid + "_location",
-							"priority": 9,
-							"serviceTime": this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo)
-						};
-
-						if (bQualificationCheck) {
-							oOrder["requiredVehicleEquipment"] = oResource.qualifications.join(",");
-						}
-						aInputPlans.demandOrders.push(oOrder);
-
-
 					} else {
 						// Multiple days assignments would get processed here
 					}
 
 				}
 			}
-			this.oViewModel.setProperty("/Scheduling/aDemandLocationIds", aDemandLocations)
 			this.oViewModel.setProperty('/Scheduling/aListOfAssignments', aListOfAssignments)
 			return aInputPlans;
 		},
