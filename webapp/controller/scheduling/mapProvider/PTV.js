@@ -118,7 +118,8 @@ sap.ui.define([
 		getPTVPayload: function (aResourceData, aDemandsData) {
 			var oPayload = this._getPayloadStructure(),
 				sDialogMsg = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.analysinglocations");
-			this.oViewModel.setProperty('/Scheduling/aListOfAssignments', [])
+			this.oViewModel.setProperty('/Scheduling/aListOfAssignments', []);
+			this.oViewModel.setProperty("/Scheduling/aDemandLocationIds", []);
 			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload
 
 
@@ -458,7 +459,8 @@ sap.ui.define([
 				oLocationObject,
 				oMustStart,
 				oMustFinish,
-				nDuration;
+				nDuration,
+				aLocationIds = this.oViewModel.getProperty("/Scheduling/aDemandLocationIds");
 
 			for (let oDemandGuid in aDemandsData) {
 				oLocationObject = {
@@ -486,8 +488,6 @@ sap.ui.define([
 						}
 					];
 				}
-				locations.push(oLocationObject);
-
 				oOrder = {
 					"$type": "VisitOrder",
 					"id": oDemandGuid,
@@ -498,7 +498,11 @@ sap.ui.define([
 				if (bQualificationCheck) {
 					oOrder["requiredVehicleEquipment"] = aDemandsData[oDemandGuid].qualification;
 				}
-				orders.push(oOrder);
+				if (aLocationIds.indexOf(oDemandGuid + "_location") === -1) {
+					locations.push(oLocationObject);
+					orders.push(oOrder);
+				}
+
 			}
 
 			oPayload.locations = oPayload.locations.concat(locations);
@@ -665,7 +669,8 @@ sap.ui.define([
 				},
 				aListOfAssignments = this.oViewModel.getProperty('/Scheduling/aListOfAssignments') || [],
 				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD"),
-				oOrder;
+				oOrder,
+				aDemandLocations = this.oViewModel.getProperty("/Scheduling/aDemandLocationIds");
 
 			aAssingments = oResource.assignments;
 			if (aAssingments && aAssingments.length) {
@@ -706,6 +711,7 @@ sap.ui.define([
 								"duration": 0
 							}]
 						});
+						aDemandLocations.push(oAssingnment.DemandGuid + "_location");
 						oOrder = {
 							"$type": "VisitOrder",
 							"id": oAssingnment.DemandGuid,
@@ -726,6 +732,7 @@ sap.ui.define([
 
 				}
 			}
+			this.oViewModel.setProperty("/Scheduling/aDemandLocationIds", aDemandLocations)
 			this.oViewModel.setProperty('/Scheduling/aListOfAssignments', aListOfAssignments)
 			return aInputPlans;
 		},
