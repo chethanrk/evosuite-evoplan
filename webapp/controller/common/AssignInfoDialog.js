@@ -70,6 +70,7 @@ sap.ui.define([
 				oAssignment.ResourceGroupDesc = oAssignData.GROUP_DESCRIPTION;
 				oAssignment.ResourceGuid = oAssignData.ResourceGuid;
 				oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
+				oAssignment.ObjectId = oAssignData.ObjectId;
 
 				oAssignment.SplitIndex = oAssignData.SPLIT_INDEX;
 				oAssignment.SplitCounter = oAssignData.SPLIT_COUNTER;
@@ -90,6 +91,7 @@ sap.ui.define([
 				oAssignment.ResourceGroupDesc = oAssignmentData.GROUP_DESCRIPTION;
 				oAssignment.ResourceGuid = oAssignmentData.ResourceGuid;
 				oAssignment.ResourceDesc = oAssignmentData.RESOURCE_DESCRIPTION;
+				oAssignment.ObjectId = oAssignmentData.ObjectId;
 
 				oAssignment.SplitIndex = oAssignmentData.SPLIT_INDEX;
 				oAssignment.SplitCounter = oAssignmentData.SPLIT_COUNTER;
@@ -190,13 +192,16 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onSaveAssignments: function (oEvent) {
-			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
 			var oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
 				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid");
 
 			this.reAssign = !!this.oAssignmentModel.getProperty("/NewAssignPath");
+
+			if(!this.reAssign ){
+				//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+				this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
+			}
 
 			if (oDateTo !== undefined && oDateFrom !== undefined) {
 				oDateFrom = oDateFrom.getTime();

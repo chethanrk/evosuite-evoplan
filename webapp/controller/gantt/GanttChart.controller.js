@@ -2653,6 +2653,7 @@ sap.ui.define([
 		_updateResourceChildren: function (oResource, aChildAsgnData) {
 			var aTravelTimes = [];
 			if (oResource.AssignmentSet) {
+				oResource.AssignmentSet.results = aChildAsgnData;
 				oResource.children = aChildAsgnData;
 				oResource.children.forEach(function (oAsgnObj) {
 					oAsgnObj.NodeType = "ASSIGNMENT";
