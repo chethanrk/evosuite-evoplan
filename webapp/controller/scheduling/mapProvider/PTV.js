@@ -415,14 +415,14 @@ sap.ui.define([
 						"endLocationId": sGuid + "_location"
 					};
 					if (bQualificationCheck) {
-						oVehicle["equipment"] = aResourceData[sGuid].qualifications.join(",");
+						oVehicle["equipment"] = aResourceData[sGuid].qualifications;
 					}
 					aVehicles.push(oVehicle);
 				}
 
 				//Input Plan Data
 				oInputPlanData = this._getInputPlans(aResourceData[sGuid]);
-				oInputPlan = this._getPTVInputPlanObject(sGuid, oInputPlanData);
+				oInputPlan = this._getPTVInputPlanObject(sGuid, oInputPlanData, aVehicleIDs);
 				aDemandLocations = aDemandLocations.concat(oInputPlanData.demandLocations);
 				aDemands = aDemands.concat(oInputPlanData.demandOrders);
 				aTours = aTours.concat(oInputPlan.tours);
@@ -497,7 +497,7 @@ sap.ui.define([
 					"serviceTime": aDemandsData[oDemandGuid].serviceTime
 				};
 				if (bQualificationCheck) {
-					oOrder["requiredVehicleEquipment"] = aDemandsData[oDemandGuid].qualification.join(",");
+					oOrder["requiredVehicleEquipment"] = aDemandsData[oDemandGuid].qualification;
 				}
 				locations.push(oLocationObject);
 				orders.push(oOrder);	
@@ -722,7 +722,7 @@ sap.ui.define([
 							};
 
 							if (bQualificationCheck) {
-								oOrder["requiredVehicleEquipment"] = oResource.qualifications.join(",");
+								oOrder["requiredVehicleEquipment"] = oResource.qualifications;
 							}
 							aInputPlans.demandOrders.push(oOrder);
 
@@ -742,13 +742,14 @@ sap.ui.define([
 		 * @param {string} sGuid - Resource Guid
 		 * @return {Object} oInputPlanData - input plan data needed for creating object - will contain stops for dates
 		 */
-		_getPTVInputPlanObject: function (sGuid, oInputPlanData) {
+		_getPTVInputPlanObject: function (sGuid, oInputPlanData, aDriverIds) {
 			var inputPlan = {
 				"tours": [],
 				"fixations": []
 			};
 			for (var date in oInputPlanData.stops) {
-				if (oInputPlanData.stops[date].length) {
+				
+				if (oInputPlanData.stops[date].length && aDriverIds.indexOf(sGuid + "_" + date) !== -1) {
 					inputPlan.tours.push({
 						"vehicleId": sGuid + "_" + date,
 						"vehicleStartLocationId": sGuid + "_location",
