@@ -570,19 +570,12 @@ sap.ui.define([
 				sDate,
 				aShiftTimes;
 
-			//creating array of all absence days 	
-			// oResource.absenses.forEach(function (oItem) {
-			// 	aAbsences = aAbsences.concat(this._getDateIntervals(oItem.DateFrom, oItem.DateTo));
-			// }.bind(this));
-
 			// creating actual planing horizon for resource based on availability
 			aHorizonDateIntervals.forEach(function (oDate) {
-				// if (aAbsences.indexOf(oDate) === -1) {
 					aFormattedWorkSchedules[oDate] = {
 						aOperationIntervals: [],
 						aBreakIntervals: []
 					}
-				// }
 			});
 
 			// calculating blockers for each day for resource
@@ -862,7 +855,10 @@ sap.ui.define([
 					}
 				}
 			}
-			
+			return {
+				DateFrom: DateFrom,
+				DateTo: DateTo
+			}
 		}
 		/* ============================================================================== */
 		/* Data types                                                                     */
