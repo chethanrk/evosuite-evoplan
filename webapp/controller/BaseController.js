@@ -1472,7 +1472,6 @@ sap.ui.define([
 				}else if(oResObj.ObjectId && oResObj.ObjectId.indexOf(":") > -1){
 					sPoolPrefix = oResObj.ObjectId.split(":")[0] + ":";
 				}
-				// sPoolPrefix = oResObj.ParentNodeId ? oResObj.ParentNodeId.split(":")[0] : oResObj.ObjectId.split(":")[0];
 				sNodeId = sPoolPrefix + oResObj.ResourceGroupGuid;
 			}
 			oUpdatedResObj = {
