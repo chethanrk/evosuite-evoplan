@@ -1461,10 +1461,12 @@ sap.ui.define([
 		_updatedDmdResources: function (oViewModel, oResObj) {
 			var oUpdatedResObj,
 				aUpdatedResources = oViewModel.getProperty("/aUpdatedResources"),
-				sNodeId = oResObj.ResourceGuid + "//" + oResObj.ResourceGroupGuid;
+				sNodeId = oResObj.ResourceGuid + "//" + oResObj.ResourceGroupGuid,
+				sPoolPrefix = "";
 			//Considering as Pool Resources when Dropped on Resource Group
 			if (oResObj.NodeType === "RES_GROUP" || oResObj.ResourceGuid === "") {
-				sNodeId = "POOL:" + oResObj.ResourceGroupGuid;
+				sPoolPrefix = oResObj.ParentNodeId ? oResObj.ParentNodeId.split(":")[0] : oResObj.ObjectId.split(":")[0];
+				sNodeId = sPoolPrefix + ":" + oResObj.ResourceGroupGuid;
 			}
 			oUpdatedResObj = {
 				ResourceGuid: oResObj.ResourceGuid,

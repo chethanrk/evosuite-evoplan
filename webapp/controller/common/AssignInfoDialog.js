@@ -70,6 +70,7 @@ sap.ui.define([
 				oAssignment.ResourceGroupDesc = oAssignData.GROUP_DESCRIPTION;
 				oAssignment.ResourceGuid = oAssignData.ResourceGuid;
 				oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
+				oAssignment.ObjectId = oAssignData.ObjectId;
 
 				oAssignment.SplitIndex = oAssignData.SPLIT_INDEX;
 				oAssignment.SplitCounter = oAssignData.SPLIT_COUNTER;
@@ -90,6 +91,7 @@ sap.ui.define([
 				oAssignment.ResourceGroupDesc = oAssignmentData.GROUP_DESCRIPTION;
 				oAssignment.ResourceGuid = oAssignmentData.ResourceGuid;
 				oAssignment.ResourceDesc = oAssignmentData.RESOURCE_DESCRIPTION;
+				oAssignment.ObjectId = oAssignmentData.ObjectId;
 
 				oAssignment.SplitIndex = oAssignmentData.SPLIT_INDEX;
 				oAssignment.SplitCounter = oAssignmentData.SPLIT_COUNTER;
