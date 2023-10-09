@@ -654,7 +654,9 @@ sap.ui.define([
 			if (sViewRoute === "NEWGANTT") {
 				mRefreshParam.bFromNewGantt = true;
 				//this is written to fetch the details of the resource containing the assignment
-				this._fnFetchAndRefreshAssnRes();
+				if(oModelDialog.getProperty("/isReschuduling")){
+					this._fnFetchAndRefreshAssnRes();
+				}
 			} else if (sViewRoute === "MAP") {
 				mRefreshParam.bFromMap = true
 			} else {
