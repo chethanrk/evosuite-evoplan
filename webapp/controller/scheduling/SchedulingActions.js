@@ -300,7 +300,8 @@ sap.ui.define([
 				bDateChanged: false,
 				bSchedBtnBusy: false,
 				bReSchedBtnBusy: false,
-				sReSchAssignGuid: null
+				sReSchAssignGuid: null,
+				oReSchResourceObj: null
 			}
 			this.oViewModel.setProperty("/Scheduling", oBj);
 		},
@@ -652,6 +653,10 @@ sap.ui.define([
 
 			if (sViewRoute === "NEWGANTT") {
 				mRefreshParam.bFromNewGantt = true;
+				//this is written to fetch the details of the resource containing the assignment
+				if(oModelDialog.getProperty("/isReschuduling")){
+					this._fnFetchAndRefreshAssnRes();
+				}
 			} else if (sViewRoute === "MAP") {
 				mRefreshParam.bFromMap = true
 			} else {
@@ -682,10 +687,11 @@ sap.ui.define([
 			aFilterResource = [];
 			aFilterResource.push(new Filter("DemandGuid", FilterOperator.EQ, sSelectedDemand.Guid));
 			
-			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource, "$select=Guid").then(function (oData) {
+			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource, "$select=Guid,ResourceGuid,NODE_ID,NODE_TYPE").then(function (oData) {
 				
 				if (oData.results.length > 0) {
 					this.oViewModel.setProperty("/Scheduling/sReSchAssignGuid", oData.results[0].Guid);
+					this.oViewModel.setProperty("/Scheduling/oReSchResourceObj", oData.results[0]);
 				}
 				
 				return true;
@@ -940,5 +946,20 @@ sap.ui.define([
 				this._updatedDmdResources(this.oViewModel, item);
 			}.bind(this));				
 		},
+
+		/**
+		 * This function is written to fetch the details of the resource containing the assignment and create the resource obj to pass in the _updatedDmdResources Fn
+		 */
+		_fnFetchAndRefreshAssnRes: function(){
+			var oAssignObj, oResObj;
+			oAssignObj = this.oViewModel.getProperty("/Scheduling/oReSchResourceObj");
+			oResObj = {
+				ResourceGuid: oAssignObj.ResourceGuid,
+				ResourceGroupGuid: oAssignObj.NODE_ID.split("//")[1],
+				NodeId: oAssignObj.NODE_ID.split("//")[1] + "//" + oAssignObj.ResourceGuid,
+				NodeType: oAssignObj.NODE_TYPE
+			}
+			this._updatedDmdResources(this.oViewModel, oResObj);
+		}
 	});
 });
