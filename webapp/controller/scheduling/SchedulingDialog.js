@@ -544,12 +544,12 @@ sap.ui.define([
 								//Servicing times
 								tourStartDate = new Date(tourItem.startTime);
 								aData.DateFrom = new Date(tourItem.startTime);
-								aData.TimeFrom = aDemandsData[tourItem.orderId].data.TimeFrom; //To initialise TimeFrom property to be type of EdmTime
+								aData.TimeFrom = _.clone(aDemandsData[tourItem.orderId].data.TimeFrom); //To initialise TimeFrom property to be type of EdmTime
 								aData.TimeFrom.ms = tourStartDate.getTime() - tourStartDate.getTimezoneOffset() * 60 * 1000;
 
 								tourEndDate = new Date(tourStartDate.setSeconds(tourStartDate.getSeconds() + tourItem.duration));
 								aData.DateTo = tourEndDate;
-								aData.TimeTo = aDemandsData[tourItem.orderId].data.TimeTo; //To initialise TimeTo property to be type of EdmTime
+								aData.TimeTo = _.clone(aDemandsData[tourItem.orderId].data.TimeTo); //To initialise TimeTo property to be type of EdmTime
 								aData.TimeTo.ms = tourEndDate.getTime() - tourEndDate.getTimezoneOffset() * 60 * 1000;
 
 								aData.DemandGuid = tourItem.orderId;
