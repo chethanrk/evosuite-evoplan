@@ -583,30 +583,27 @@ sap.ui.define([
 				if (oResponse.data.orderIdsNotPlannable) {
 					for (var h = 0; h < oResponse.data.orderIdsNotPlannable.length; h++) {
 						aOrder = oResponse.data.orderIdsNotPlannable[h];
-						aData = {};
-
-						aData.DemandGuid = aOrder;
-						aData = _.clone(aDemandsData[aOrder].data);
-						aData.NotPlanState = IconColor.Critical;
-						aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlannable");
-						aData.PLANNED = false;
-						//Appending Duration and Duration Unit
-						// aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
-						// commenting this code due to causing issue | decimal field type is diplaying black for string 
-
-						aNonPlannableIds.push(aOrder);
-						aDataSet.push(aData);
+						if (aDemandsData[aOrder]) {
+							aData = {};
+							aData.DemandGuid = aOrder;
+							aData = _.clone(aDemandsData[aOrder].data);
+							aData.NotPlanState = IconColor.Critical;
+							aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlannable");
+							aData.PLANNED = false;
+							aNonPlannableIds.push(aOrder);
+							aDataSet.push(aData);
+						}
 					}
 				}
 
 				//Non-planned demands
 				if (oResponse.data.orderIdsNotPlanned) {
-					iNotPlanned = oResponse.data.orderIdsNotPlanned.length;
+					iNotPlanned = 0;
 					for (var j = 0; j < oResponse.data.orderIdsNotPlanned.length; j++) {
 						aOrder = oResponse.data.orderIdsNotPlanned[j];
-						if (aNonPlannableIds.indexOf(aOrder) === -1) { //Bcz non-plannable is subset of not-planned
+						if (aNonPlannableIds.indexOf(aOrder) === -1 && aDemandsData[aOrder]) { //Bcz non-plannable is subset of not-planned
 							aData = {};
-
+							iNotPlanned ++;
 							aData.DemandGuid = aOrder;
 							aData = _.clone(aDemandsData[aOrder].data);
 							aData.NotPlanState = IconColor.Negative;
