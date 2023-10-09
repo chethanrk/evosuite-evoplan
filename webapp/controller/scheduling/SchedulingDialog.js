@@ -601,20 +601,25 @@ sap.ui.define([
 					iNotPlanned = 0;
 					for (var j = 0; j < oResponse.data.orderIdsNotPlanned.length; j++) {
 						aOrder = oResponse.data.orderIdsNotPlanned[j];
-						if (aNonPlannableIds.indexOf(aOrder) === -1 && aDemandsData[aOrder]) { //Bcz non-plannable is subset of not-planned
-							aData = {};
-							iNotPlanned ++;
-							aData.DemandGuid = aOrder;
-							aData = _.clone(aDemandsData[aOrder].data);
-							aData.NotPlanState = IconColor.Negative;
-							aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlanned");
-							aData.PLANNED = false;
+						if (aDemandsData[aOrder]) {
+							if (aNonPlannableIds.indexOf(aOrder) !== -1) {
+								iNotPlanned++;
+							}
+							if (aNonPlannableIds.indexOf(aOrder) === -1) { //Bcz non-plannable is subset of not-planned
+								aData = {};
+								iNotPlanned++;
+								aData.DemandGuid = aOrder;
+								aData = _.clone(aDemandsData[aOrder].data);
+								aData.NotPlanState = IconColor.Negative;
+								aData.NotPlanText = this._oResourceBundle.getText("ymsg.nonPlanned");
+								aData.PLANNED = false;
 
-							//Appending Duration and Duration Unit
-							// aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
-							// commenting this code due to causing issue | decimal field type is diplaying black for string
+								//Appending Duration and Duration Unit
+								// aData.DURATION = aData.DURATION + aData.DURATION_UNIT;
+								// commenting this code due to causing issue | decimal field type is diplaying black for string
 
-							aDataSet.push(aData);
+								aDataSet.push(aData);
+							}
 						}
 					}
 				}
