@@ -567,21 +567,15 @@ sap.ui.define([
 				aAbsences = [],
 				aProjectBlockers = [],
 				aIntervals = [],
-				sDate;
-
-			//creating array of all absence days 	
-			oResource.absenses.forEach(function (oItem) {
-				aAbsences = aAbsences.concat(this._getDateIntervals(oItem.DateFrom, oItem.DateTo));
-			}.bind(this));
+				sDate,
+				aShiftTimes;
 
 			// creating actual planing horizon for resource based on availability
 			aHorizonDateIntervals.forEach(function (oDate) {
-				if (aAbsences.indexOf(oDate) === -1) {
 					aFormattedWorkSchedules[oDate] = {
 						aOperationIntervals: [],
 						aBreakIntervals: []
 					}
-				}
 			});
 
 			// calculating blockers for each day for resource
@@ -613,11 +607,21 @@ sap.ui.define([
 				sStartDate = this._getFormattedDate(oItem.DateFrom);
 				sDate = sStartDate.substring(0, 10);
 				if (aFormattedWorkSchedules[sDate] && aFormattedWorkSchedules[sDate].aOperationIntervals) {
+					
+					aShiftTimes = this._getShiftOperatingIntervalconsideringAbsence(oResource.absenses, oItem.DateFrom, oItem.DateTo);
 					aFormattedWorkSchedules[sDate].aOperationIntervals.push({
 						"$type": "StartDurationInterval",
-						"start": sStartDate,
-						"duration": this._getAvailabilityDuration(oItem.DateFrom, oItem.DateTo, aProjectBlockers[sDate])
+						"start": aShiftTimes.DateFrom,
+						"duration": this._getAvailabilityDuration(aShiftTimes.DateFrom, aShiftTimes.DateTo, aProjectBlockers[sDate])
 					})
+
+					if (aShiftTimes.SecondShift){
+						aFormattedWorkSchedules[sDate].aOperationIntervals.push({
+							"$type": "StartDurationInterval",
+							"start": aShiftTimes.SecondShift.DateFrom,
+							"duration": this._getAvailabilityDuration(aShiftTimes.SecondShift.DateFrom, aShiftTimes.SecondShift.DateTo, aProjectBlockers[sDate])
+						})
+					}
 				}
 			}.bind(this));
 			return aFormattedWorkSchedules;
@@ -789,6 +793,73 @@ sap.ui.define([
 
 			return new Date(dateStr + "T" + timeStr);
 		},
+
+		/**
+		 * Method to generate shift timing based on absence time
+		 * @param aAbsenses 
+		 * @param DateFrom
+		 * @param DateTo
+		 */
+		_getShiftOperatingIntervalconsideringAbsence: function (aAbsenses, DateFrom, DateTo){
+			var oShiftStart = DateFrom, oShiftEnd = DateTo;
+			for (var i in aAbsenses){
+				if ((aAbsenses[i].DateFrom.getTime() < DateFrom.getTime()) && (aAbsenses[i].DateTo.getTime() <= DateFrom.getTime()) || (aAbsenses[i].DateFrom.getTime() >= DateTo.getTime()) && (aAbsenses[i].DateTo.getTime() > DateTo.getTime())) {
+					oShiftStart = DateFrom;
+					oShiftEnd = DateTo;
+					return {
+						DateFrom: oShiftStart,
+						DateTo: oShiftEnd
+					}
+				}
+				else if ((aAbsenses[i].DateFrom.getTime() < DateFrom.getTime()) && (DateFrom.getTime() < aAbsenses[i].DateTo.getTime()) && (aAbsenses[i].DateTo.getTime() < DateTo.getTime())){
+					oShiftStart = aAbsenses[i].DateTo;
+					oShiftEnd = DateTo;
+					return {
+						DateFrom: oShiftStart,
+						DateTo: oShiftEnd
+					}
+				}
+				else if ((aAbsenses[i].DateFrom.getTime() < DateTo.getTime()) && (DateTo.getTime() < aAbsenses[i].DateTo.getTime()) && (DateFrom.getTime()  < aAbsenses[i].DateFrom.getTime())){
+					oShiftStart = DateFrom;
+					oShiftEnd = aAbsenses[i].DateFrom;
+
+					return {
+						DateFrom: oShiftStart,
+						DateTo: oShiftEnd
+					}
+				} else if ((aAbsenses[i].DateFrom.getTime() < DateFrom.getTime()) &&  (DateTo.getTime() < aAbsenses[i].DateTo.getTime())){
+					oShiftStart = DateFrom;
+					oShiftEnd = DateFrom;
+					return {
+						DateFrom: oShiftStart,
+						DateTo: oShiftEnd
+					}
+				}
+				else if ((DateFrom.getTime() < aAbsenses[i].DateFrom.getTime())  && ( aAbsenses[i].DateTo.getTime() < DateTo.getTime())) {
+					oShiftStart = DateFrom;
+					oShiftEnd = DateFrom;
+					return {
+						DateFrom: DateFrom,
+						DateTo: aAbsenses[i].DateFrom,
+						SecondShift:{
+							DateFrom: aAbsenses[i].DateTo,
+							DateTo: DateTo,
+						}
+					}
+				} else if ((aAbsenses[i].DateFrom.getTime() === DateFrom.getTime()) && (DateTo.getTime() === aAbsenses[i].DateTo.getTime())) {
+					oShiftStart = DateFrom;
+					oShiftEnd = DateFrom;
+					return {
+						DateFrom: oShiftStart,
+						DateTo: oShiftEnd
+					}
+				}
+			}
+			return {
+				DateFrom: DateFrom,
+				DateTo: DateTo
+			}
+		}
 		/* ============================================================================== */
 		/* Data types                                                                     */
 		/* ------------------------------------------------------------------------------ */
