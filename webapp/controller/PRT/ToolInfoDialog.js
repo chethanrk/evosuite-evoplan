@@ -231,6 +231,8 @@ sap.ui.define([
 			this.oAssignmentModel.setProperty("/NewAssignDesc", newAssignDesc);
 			this.oAssignmentModel.setProperty("/ResourceGroupGuid", oNewAssign.ResourceGroupGuid);
 			this.oAssignmentModel.setProperty("/ResourceGuid", oNewAssign.ResourceGuid);
+			this.oAssignmentModel.setProperty("/ParentNodeId", oNewAssign.ParentNodeId);
+			this.oAssignmentModel.setProperty("/NodeType", oNewAssign.NodeType);
 
 			if (oNewAssign.NodeType === "ASSIGNMENT") {
 				this.oAssignmentModel.setProperty("/DemandGuid", oNewAssign.DemandGuid);

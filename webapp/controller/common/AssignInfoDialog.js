@@ -192,13 +192,16 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onSaveAssignments: function (oEvent) {
-			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
 			var oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
 				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid");
 
 			this.reAssign = !!this.oAssignmentModel.getProperty("/NewAssignPath");
+
+			if(!this.reAssign ){
+				//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+				this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
+			}
 
 			if (oDateTo !== undefined && oDateFrom !== undefined) {
 				oDateFrom = oDateFrom.getTime();

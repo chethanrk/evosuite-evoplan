@@ -1465,8 +1465,15 @@ sap.ui.define([
 				sPoolPrefix = "";
 			//Considering as Pool Resources when Dropped on Resource Group
 			if (oResObj.NodeType === "RES_GROUP" || oResObj.ResourceGuid === "") {
-				sPoolPrefix = oResObj.ParentNodeId ? oResObj.ParentNodeId.split(":")[0] : oResObj.ObjectId.split(":")[0];
-				sNodeId = sPoolPrefix + ":" + oResObj.ResourceGroupGuid;
+				if (oResObj.NodeId && oResObj.NodeId.indexOf(":") > -1){
+					sPoolPrefix = oResObj.NodeId.split(":")[0] + ":";
+				}else if (oResObj.ParentNodeId && oResObj.ParentNodeId.indexOf(":") > -1){
+					sPoolPrefix = oResObj.ParentNodeId.split(":")[0] + ":";
+				}else if(oResObj.ObjectId && oResObj.ObjectId.indexOf(":") > -1){
+					sPoolPrefix = oResObj.ObjectId.split(":")[0] + ":";
+				}
+				// sPoolPrefix = oResObj.ParentNodeId ? oResObj.ParentNodeId.split(":")[0] : oResObj.ObjectId.split(":")[0];
+				sNodeId = sPoolPrefix + oResObj.ResourceGroupGuid;
 			}
 			oUpdatedResObj = {
 				ResourceGuid: oResObj.ResourceGuid,
