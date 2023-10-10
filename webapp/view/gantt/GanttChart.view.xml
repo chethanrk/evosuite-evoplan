@@ -60,7 +60,7 @@
 								<table:rowSettingsTemplate>
 									<gnt2:GanttRowSettings rowId="{ganttModel>NodeId}_{ganttModel>ObjectId}"
 										shapes4="{ path:'ganttModel>TravelTimes/results', templateShareable:true }"
-										shapes3="{ path:'ganttModel>AssignmentSet/results', templateShareable:true }"
+										shapes3="{ path:'ganttModel>AssignmentSet/results', templateShareable:true, sorter: { path: 'IS_PRT', descending: 'false', group: 'true'} }"
 										shapes2="{ path:'ganttModel>ResourceAvailabilitySet/results', templateShareable:true }"
 										relationships="{path:'ganttModel>AssignmentSet/results/0/RelationshipSet/results', templateShareable: 'true'}">
 										<gnt2:shapes1>
