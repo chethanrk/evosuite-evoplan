@@ -3004,7 +3004,8 @@ sap.ui.define([
 				oBreakFrom,
 				oBreakTo,
 				nDurationDifference,
-				bIsChanged = false;
+				bIsChanged = false,
+				nBreakTimeDifference;
 
 			if (bIsTravelBack) {
 				// calculating date for travel back time object
@@ -3057,9 +3058,8 @@ sap.ui.define([
 						});
 						bIsChanged = true;
 						break;
-					} else {
 						// checking if travel end time falls between break
-						if (moment(oBreakFrom) < moment(oDateTo) && moment(oDateTo) < moment(oBreakTo)) {
+					} else if (moment(oBreakFrom) < moment(oDateTo) && moment(oDateTo) < moment(oBreakTo)) {
 							// splitting the travel time object into two parts 
 							// 1. before break starts
 							// 2. after break ends
@@ -3085,7 +3085,25 @@ sap.ui.define([
 							});
 							bIsChanged = true;
 							break;
-						}
+					//condition added to handle the case where the dates are overlapping
+					} else if(moment(oBreakFrom) <= moment(oDateTo) && moment(oDateTo) <= moment(oBreakTo)){
+						nBreakTimeDifference = this._getDateDuration(oBreakFrom, oBreakTo);
+						nBreakTimeDifference = nBreakTimeDifference / 60;
+						oDateFrom = new Date(moment(oDateFrom).add(-(nBreakTimeDifference), 'minutes'));
+						oDateTo = new Date(oBreakFrom);
+						
+						nDurationDifference = this._getDateDuration(oDateFrom, oBreakFrom);
+						nDurationDifference = nDurationDifference / 60;
+
+						aTravelTimes.push({
+							DateFrom: new Date(oDateFrom),
+							DateTo: new Date(oDateTo),
+							Description: "Travel Time",
+							Effort: (nTravelTime / 60).toFixed(2),
+							TRAVEL_TIME: parseFloat(nTravelTime / 60).toFixed(2)
+						});						
+						bIsChanged = true;
+						break;
 					}
 				}
 			}
