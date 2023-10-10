@@ -557,11 +557,7 @@ sap.ui.define([
 						bValidate = false
 					}
 				} else if (endDate.diff(startDate, 'days') > 13) {
-					if (bEndDateChanged) {
-						this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateEnd"));
-					} else {
-						this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateStart"));
-					}
+					this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateEnd"));
 					bValidate = false;
 				}
 			}
