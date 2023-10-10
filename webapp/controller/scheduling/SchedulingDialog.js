@@ -495,7 +495,6 @@ sap.ui.define([
 					iPlanned = 0,
 					iNotPlannedRes = 0,
 					sResourceGuid,
-					aNonScheduledResIds = [],
 					aNonPlannableIds = [],
 					fTravelTime = 0.0,
 					fTravelBackTime = 0.0,
@@ -517,8 +516,8 @@ sap.ui.define([
 										aViolationsTypes.push(tourItem.tourViolations[violationIndex].$type);
 									}
 								}
+
 								aListOfAssignments[tourItem.orderId].ViolationType = aViolationsTypes.join(",");
-								violatedAssignments.push(aListOfAssignments[tourItem.orderId]);
 							}
 
 							//Saving travel times 
@@ -666,7 +665,12 @@ sap.ui.define([
 				if (!iPlanned) {
 					this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bFinishButtonVisible", false);
 				}
-				if (violatedAssignments.length) {
+				if (oResponse.data.violated) {
+					for (var sGuid in aListOfAssignments) {
+						if (aListOfAssignments[sGuid].ViolationType){
+							violatedAssignments.push(aListOfAssignments[sGuid]);
+						}
+					} 
 					this._oViewModel.setProperty("/Scheduling/aViolatedAssignments", violatedAssignments);
 					this.oSchedulingActions.showViolationError();
 				}
