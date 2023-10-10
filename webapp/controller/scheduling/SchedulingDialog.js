@@ -528,6 +528,9 @@ sap.ui.define([
 									fTravelTime = fTravelTime + tourItem.duration;      // If ['Driving' 'Break' 'Driving'] is the sequence then both driving times must be added
 								}
 							}
+							if (tourItem.eventTypes.indexOf('SERVICE') !== -1 && !aDemandsData[tourItem.orderId]) {
+								fTravelTime = 0.0;
+							}
 							if (tourItem.eventTypes.indexOf('SERVICE') !== -1 && aDemandsData[tourItem.orderId]) {
 								aData = {};
 
