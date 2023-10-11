@@ -674,7 +674,8 @@ sap.ui.define([
 				aListOfAssignments = this.oViewModel.getProperty('/Scheduling/aListOfAssignments') || [],
 				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD"),
 				oOrder,
-				aDemandLocations = this.oViewModel.getProperty("/Scheduling/aDemandLocationIds");
+				aDemandLocations = this.oViewModel.getProperty("/Scheduling/aDemandLocationIds"),
+				aExistingDemandQualification = this.oViewModel.getProperty("/Scheduling/aExistingDemandQualification");
 
 			aAssingments = oResource.assignments;
 			if (aAssingments && aAssingments.length) {
@@ -726,7 +727,7 @@ sap.ui.define([
 							};
 
 							if (bQualificationCheck) {
-								oOrder["requiredVehicleEquipment"] = oResource.qualifications;
+								oOrder["requiredVehicleEquipment"] = aExistingDemandQualification[oAssingnment.DemandGuid];
 							}
 							aInputPlans.demandOrders.push(oOrder);
 

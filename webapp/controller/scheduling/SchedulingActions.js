@@ -400,7 +400,9 @@ sap.ui.define([
 				oTempResourceData = {},
 				oResourceData = {},
 				aAssignmentData = aResourceData.slice(0, iResourceLength), //reading assignment data
-				aAvailabilityData = aResourceData.slice(iResourceLength, (iResourceLength * 2)); //reading availibility data
+				aAvailabilityData = aResourceData.slice(iResourceLength, (iResourceLength * 2)), //reading availibility data
+				aAssignmentDemandFilter = [],
+				aExistingDemandQualification = [];
 			//looping resource list to create data
 			aResourceList.forEach(function (oResource, i) {
 				oTempResourceData = {
@@ -426,8 +428,22 @@ sap.ui.define([
 				});
 				oResourceData[oResource.ResourceGuid] = oTempResourceData;
 			});
-
-			return oResourceData;
+			
+			// creating Demand Guid Filters to read Demands for qualifications
+			for (var i in aAssignmentData) {
+				for (var j in aAssignmentData[i].results) {
+					aAssignmentDemandFilter.push(new Filter("Guid", "EQ", aAssignmentData[i].results[j].DemandGuid));
+				}
+			}
+			// reading existing Demands for qualifications
+			return this._controller.getOwnerComponent().readData("/DemandSet", aAssignmentDemandFilter, "$top=" + aAssignmentDemandFilter.length, "idAssignmentDemand").then(function(oDemands){
+				for (i in oDemands.results){
+					oDemands.results[i].Guid
+					aExistingDemandQualification[oDemands.results[i].Guid] = oDemands.results[i].QUALIFICATION_DESCRIPTION ? oDemands.results[i].QUALIFICATION_DESCRIPTION.split(",") : [];
+				}
+				this.oViewModel.setProperty("/Scheduling/aExistingDemandQualification", aExistingDemandQualification);
+				return oResourceData;
+			}.bind(this));
 		},
 		/**
 		 * Method will create and return hash map data fro seleted demand for Auto/Re-schedule

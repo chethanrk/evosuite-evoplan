@@ -676,7 +676,8 @@ sap.ui.define([
 					bSchedBtnBusy: false,
 					aListOfAssignments: [],
 					aViolatedAssignments: [],
-					aDemandLocationIds: []
+					aDemandLocationIds: [],
+					aExistingDemandQualification:[]
 				},
 				sViewRoute: null,
 				aUpdatedResources: [],

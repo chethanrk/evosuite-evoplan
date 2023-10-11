@@ -1145,7 +1145,7 @@ sap.ui.define([
 			} else {
 				sViolationTypes = sViolationTypes.split(",");
 				for (var i in sViolationTypes) {
-					aViolationTexts.push(this.oOwnerComponent.getModel("i18n").getResourceBundle().getText(sViolationTypes));
+					aViolationTexts.push(this.oOwnerComponent.getModel("i18n").getResourceBundle().getText(sViolationTypes[i]));
 				}
 			}
 			return aViolationTexts.join(", ");
