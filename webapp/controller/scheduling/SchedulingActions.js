@@ -436,7 +436,7 @@ sap.ui.define([
 				}
 			}
 			// reading existing Demands for qualifications
-			return this._controller.getOwnerComponent().readData("/DemandSet", aAssignmentDemandFilter, {}, "idAssignmentDemand").then(function(oDemands){
+			return this._controller.getOwnerComponent().readData("/DemandSet", aAssignmentDemandFilter, "$top=" + aAssignmentDemandFilter.length, "idAssignmentDemand").then(function(oDemands){
 				for (i in oDemands.results){
 					oDemands.results[i].Guid
 					aExistingDemandQualification[oDemands.results[i].Guid] = oDemands.results[i].QUALIFICATION_DESCRIPTION ? oDemands.results[i].QUALIFICATION_DESCRIPTION.split(",") : [];
