@@ -444,9 +444,6 @@ sap.ui.define([
 				this.oViewModel.setProperty("/Scheduling/aExistingDemandQualification", aExistingDemandQualification);
 				return oResourceData;
 			}.bind(this));
-			// aAssignmentData[i].results
-			debugger;
-			
 		},
 		/**
 		 * Method will create and return hash map data fro seleted demand for Auto/Re-schedule
