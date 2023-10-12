@@ -1664,8 +1664,8 @@ sap.ui.define([
 
 			this.assignedDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(
 				function (aPromises) {
-					return Promise.all(aPromises);
 					this.clearDragSession(this.getView());
+					return Promise.all(aPromises);
 				}.bind(this),
 				function () {
 					if (sDummyPath) {
