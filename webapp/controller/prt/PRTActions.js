@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/MessageToast"
 ], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast) {
 
-	return BaseController.extend("com.evorait.evoplan.controller.PRT.PRTOperations", {
+	return BaseController.extend("com.evorait.evoplan.controller.prt.PRTOperations", {
 
 		/* =========================================================== */
 		/* Public methods                                              */
@@ -91,7 +91,7 @@ sap.ui.define([
 			if (!this._oDialog) {
 				this.oAppViewModel.setProperty("/busy", true);
 				Fragment.load({
-					name: "com.evorait.evoplan.view.PRT.ToolAssignDates",
+					name: "com.evorait.evoplan.view.prt.ToolAssignDates",
 					controller: this
 				}).then(function (oDialog) {
 					this.oAppViewModel.setProperty("/busy", false);

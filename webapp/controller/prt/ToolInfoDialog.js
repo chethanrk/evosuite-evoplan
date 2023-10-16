@@ -6,7 +6,7 @@ sap.ui.define([
 ], function (BaseController, formatter, Fragment, MessageToast) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.PRT.ToolInfoDialog", {
+	return BaseController.extend("com.evorait.evoplan.controller.prt.ToolInfoDialog", {
 
 		formatter: formatter,
 
