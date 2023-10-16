@@ -209,7 +209,7 @@ sap.ui.define([
 				viewName: "com.evorait.evoplan.view.templates.ToolInfoDialog#" + sQualifier,
 				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
 				entitySet: "AssignmentSet",
-				controllerName: "PRT.ToolsAssignInfo",
+				controllerName: "prt.ToolsAssignInfo",
 				title: "xtit.toolsAssignInfoModalTitle",
 				type: "add",
 				smartTable: null,
