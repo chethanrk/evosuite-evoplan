@@ -541,8 +541,11 @@ sap.ui.define([
 									aData.ResourceGroupGuid = aResourceData[sResourceGuid].aData.ResourceGroupGuid;
 									bIsTravelTimeUpdated = true;	
 								}
-								if (parseFloat(aData.TRAVEL_BACK_TIME) && oTour.tourEvents[index + 1].eventTypes.indexOf('TRIP_END') === -1){
+								if ((oTour.tourEvents[index + 2].eventTypes.indexOf('TRIP_END') === -1 && parseFloat(aData.TRAVEL_BACK_TIME) > 0)){
 									aData.TRAVEL_BACK_TIME = 0.0;
+									bIsTravelTimeUpdated = true;
+								} else if (oTour.tourEvents[index + 2].eventTypes.indexOf('TRIP_END') !== -1){
+									aData.TRAVEL_BACK_TIME = (oTour.tourEvents[index + 1].duration /3600);
 									bIsTravelTimeUpdated = true;
 								}
 								if (bIsTravelTimeUpdated){
