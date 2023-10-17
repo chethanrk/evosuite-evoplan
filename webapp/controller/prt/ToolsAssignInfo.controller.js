@@ -14,7 +14,7 @@ sap.ui.define([
 	RowAction, RowActionItem, Fragment) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.prt.Tools", {
+	return BaseController.extend("com.evorait.evoplan.controller.prt.ToolsAssignInfo", {
 
 		formatter: formatter,
 

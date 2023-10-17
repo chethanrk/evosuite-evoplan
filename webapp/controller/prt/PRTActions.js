@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/MessageToast"
 ], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast) {
 
-	return BaseController.extend("com.evorait.evoplan.controller.prt.PRTOperations", {
+	return BaseController.extend("com.evorait.evoplan.controller.prt.PRTActions", {
 
 		/* =========================================================== */
 		/* Public methods                                              */
