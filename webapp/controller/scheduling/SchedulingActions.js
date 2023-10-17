@@ -435,15 +435,21 @@ sap.ui.define([
 					aAssignmentDemandFilter.push(new Filter("Guid", "EQ", aAssignmentData[i].results[j].DemandGuid));
 				}
 			}
-			// reading existing Demands for qualifications
-			return this._controller.getOwnerComponent().readData("/DemandSet", aAssignmentDemandFilter, "$top=" + aAssignmentDemandFilter.length, "idAssignmentDemand").then(function(oDemands){
-				for (i in oDemands.results){
-					oDemands.results[i].Guid
-					aExistingDemandQualification[oDemands.results[i].Guid] = oDemands.results[i].QUALIFICATION_DESCRIPTION ? oDemands.results[i].QUALIFICATION_DESCRIPTION.split(",") : [];
-				}
-				this.oViewModel.setProperty("/Scheduling/aExistingDemandQualification", aExistingDemandQualification);
+
+			if (aAssignmentDemandFilter.length){
+				// reading existing Demands for qualifications
+				return this._controller.getOwnerComponent().readData("/DemandSet", aAssignmentDemandFilter, "$top=" + aAssignmentDemandFilter.length, "idAssignmentDemand").then(function (oDemands) {
+					for (i in oDemands.results) {
+						oDemands.results[i].Guid
+						aExistingDemandQualification[oDemands.results[i].Guid] = oDemands.results[i].QUALIFICATION_DESCRIPTION ? oDemands.results[i].QUALIFICATION_DESCRIPTION.split(",") : [];
+					}
+					this.oViewModel.setProperty("/Scheduling/aExistingDemandQualification", aExistingDemandQualification);
+					return oResourceData;
+				}.bind(this));
+			} else {
 				return oResourceData;
-			}.bind(this));
+			}
+
 		},
 		/**
 		 * Method will create and return hash map data fro seleted demand for Auto/Re-schedule
@@ -826,9 +832,37 @@ sap.ui.define([
 				bIsLast = false,
 				aPropReq,
 				sFunctionImp,
-				mParam2="Scheduling";
+				mParam2 = "Scheduling",
+				aUpdatedExistingAssignments = this.oViewModel.getProperty("/Scheduling/aUpdatedExistingAssignments");
 
 
+			mParams = {
+				batchGroupId: "UpdateExistingAssignments"
+			};
+			for (var i = 0; i < aUpdatedExistingAssignments.length; i++) {
+				
+				bIsLast = false;
+				sFunctionImp = "UpdateAssignment";
+				aPropReq = ["ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
+				aUpdatedExistingAssignments[i].TimeFrom.ms = aUpdatedExistingAssignments[i].DateFrom.getTime();
+				aUpdatedExistingAssignments[i].TimeTo.ms = aUpdatedExistingAssignments[i].DateTo.getTime();
+				oBjectInitial = Object.assign({}, aUpdatedExistingAssignments[i]);
+				Object.keys(oBjectInitial).forEach(function (key) {
+					if (aPropReq.indexOf(key) < 0) {
+						delete oBjectInitial[key];
+					};
+				});
+				oBjectInitial.AssignmentGUID = aUpdatedExistingAssignments[i].Guid;
+				// oBjectInitial.MapAssignmentType = sSchedulingType;
+				// oBjectInitial.AssignmentGUID = this.oViewModel.getProperty("/Scheduling/sReSchAssignGuid");
+
+				// Adding travel time to Pass to create assignment call
+				// converting it into minutes as in Backend travel time unit is hardcoded as 'MIN'
+				oBjectInitial.TravelTime = (aUpdatedExistingAssignments[i].TRAVEL_TIME * 60).toFixed(2);
+				oBjectInitial.TravelBackTime = (aUpdatedExistingAssignments[i].TRAVEL_BACK_TIME * 60).toFixed(2);
+				aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, sFunctionImp, "POST", mParams, bIsLast));
+			}
+			
 			iBatchCount = iBatchCount ? parseInt(iBatchCount) : 100;
 			for (var x = 0; x < aData.length; x++) {
 				if (x % iBatchCount === 0) {
