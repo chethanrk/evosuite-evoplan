@@ -111,13 +111,13 @@ sap.ui.define([
 		 */
 		onOperationTimesRowDisable: function () {
 			var oTable = sap.ui.getCore().byId("idAsgnDateCheckTable"),
-				oHeader = oTable.$().find('thead'),
-				oSelectAll = oHeader.find('.sapMCb');
+				oHeader = oTable.$().find("thead"),
+				oSelectAll = oHeader.find(".sapMCb");
 			oSelectAll.remove();
 			oTable.getItems().forEach(function (oEvent) {
 				var bIsDisplayed = oEvent.getBindingContext("viewModel").getObject().IsDisplayed,
-					oCheckBox = oEvent.$().find('.sapMCb'),
-					oSelectedRow = sap.ui.getCore().byId(oCheckBox.attr('id'));
+					oCheckBox = oEvent.$().find(".sapMCb"),
+					oSelectedRow = sap.ui.getCore().byId(oCheckBox.attr("id"));
 				if (bIsDisplayed) {
 					oSelectedRow.setEnabled(true);
 					oEvent.getBindingContext("viewModel").getObject().IsSelected = true;
@@ -126,7 +126,7 @@ sap.ui.define([
 					oEvent.getBindingContext("viewModel").getObject().IsSelected = false;
 				}
 			});
-		},
+		}
 
 	});
 });

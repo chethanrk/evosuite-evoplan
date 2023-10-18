@@ -124,6 +124,6 @@ sap.ui.define([
 				}
 			}
 			oView.getModel("navLinks").refresh(true);
-		},
+		}
 	});
 });

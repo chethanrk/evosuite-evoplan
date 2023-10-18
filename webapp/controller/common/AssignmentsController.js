@@ -475,7 +475,7 @@ sap.ui.define([
 
 			//Condition added and Method is modified for fixed Appointments			// since Release/2201
 
-			bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) ||
+			bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && (bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE ||
 				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
 				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
 
@@ -553,7 +553,7 @@ sap.ui.define([
 
 				//Condition added and Method is modified for fixed Appointments			// since Release/2201
 				if (oDemandObj && oDemandObj.FIXED_APPOINTMENT) {
-					if ((bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE) || oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
+					if (bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE || oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
 						oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE) {
 						this.aFixedAppointmentPayload.push(oParams);
 						this.aFixedAppointmentDemands.push(oDemandObj);
@@ -779,7 +779,7 @@ sap.ui.define([
 				this.oComponent = oView.getController().getOwnerComponent();
 			}
 			if (!oDemandContext) {
-				var bIsPRT = (oContext.IS_PRT !== undefined) ? oContext.IS_PRT : oContext.getObject().IS_PRT;
+				var bIsPRT = oContext.IS_PRT !== undefined ? oContext.IS_PRT : oContext.getObject().IS_PRT;
 				var sObjectSourceType = oContext.OBJECT_SOURCE_TYPE ? oContext.OBJECT_SOURCE_TYPE : oContext.getObject().OBJECT_SOURCE_TYPE;
 				if (bIsPRT) {
 					this.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
@@ -1151,7 +1151,7 @@ sap.ui.define([
 			for (var a in aContexts) {
 				this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(aContexts[a].getPath()));
 			}
-		},
+		}
 
 	});
 });

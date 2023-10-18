@@ -103,7 +103,7 @@ sap.ui.define([
 		showMessageToast: function (sMsg, mParams) {
 			MessageToast.show(sMsg, {
 				duration: 5000,
-				width: mParams ? mParams.width : '15rem',
+				width: mParams ? mParams.width : "15rem",
 				at: "center bottom",
 				of: mParams ? mParams.source : window,
 				offset: "0 -60"
@@ -202,7 +202,7 @@ sap.ui.define([
 				oViewModel = this.getModel("appView"),
 				oResourceBundle = this.getResourceBundle();
 
-			if (mParameters === undefined || (mParameters && !mParameters.bCustomBusy)) {
+			if (mParameters === undefined || mParameters && !mParameters.bCustomBusy) {
 				oViewModel.setProperty("/busy", true);
 			}
 
@@ -372,7 +372,7 @@ sap.ui.define([
 				sDemandPath = this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[i]).getPath();
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 					oViewModel.setProperty("/busy", false);
-				}.bind(this));
+				});
 			}
 		},
 
@@ -418,7 +418,7 @@ sap.ui.define([
 					//on check on oData property ALLOW_ASSIGN when flag was given
 					if (checkAssignAllowed) {
 						//Added condition to check for number of assignments to plan demands via scheduling
-						if ((!bIsForScheduling && oData.ALLOW_ASSIGN) || (bIsForScheduling && oData.ALLOW_ASSIGN && oData.NUMBER_OF_CAPACITIES <= 1)) {
+						if (!bIsForScheduling && oData.ALLOW_ASSIGN || bIsForScheduling && oData.ALLOW_ASSIGN && oData.NUMBER_OF_CAPACITIES <= 1) {
 							aPathsData.push({
 								sPath: sPath,
 								oData: oData,
@@ -762,7 +762,7 @@ sap.ui.define([
 					params: mParams
 				}) || "", // generate the Hash to display a Notification details app
 
-				sUrl = window.location.href.split('#')[0] + sHash;
+				sUrl = window.location.href.split("#")[0] + sHash;
 			window.open(sUrl, "_blank");
 
 		},
@@ -798,7 +798,7 @@ sap.ui.define([
 			var oTimeStampFrom = oDateFrom.getTime(),
 				oTimeStampTo = oDateTo.getTime(),
 				iDifference = oTimeStampTo - oTimeStampFrom,
-				iEffort = (((iDifference / 1000) / 60) / 60);
+				iEffort = iDifference / 1000 / 60 / 60;
 			return iEffort;
 		},
 
@@ -815,13 +815,13 @@ sap.ui.define([
 		 *	Display Response Message for OData call
 		 */
 		showResponseMessage: function (sMessage, sType) {
-			if (sType === 'S' || !sType) {
+			if (sType === "S" || !sType) {
 				MessageBox.success(sMessage);
-			} else if (sType === 'E') {
+			} else if (sType === "E") {
 				MessageBox.error(sMessage);
-			} else if (sType === 'I') {
+			} else if (sType === "I") {
 				MessageBox.information(sMessage);
-			} else if (sType === 'W') {
+			} else if (sType === "W") {
 				MessageBox.warning(sMessage);
 			}
 
@@ -893,9 +893,9 @@ sap.ui.define([
 						reject(oError);
 					}
 				});
-			}.bind(this)).then(this.handleResponsesToShowMessages.bind(this)).catch(function (oError) {
+			}).then(this.handleResponsesToShowMessages.bind(this)).catch(function (oError) {
 				oModel.resetChanges();
-			}.bind(this));
+			});
 		},
 
 		/**
@@ -1114,14 +1114,14 @@ sap.ui.define([
 			Desc = Desc ? Desc : oData.DemandDesc;
 			// Condition to add number of assignments to display in error dialog for scheduling or auto scheduling.
 			if (bIsForScheduling || bIsForReScheduling) {
-				if (oData.OBJECT_SOURCE_TYPE === 'DEM_PMNO') {
+				if (oData.OBJECT_SOURCE_TYPE === "DEM_PMNO") {
 					return oData.NOTIFICATION_TYPE + ", " + oData.NOTIFICATION + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES + ", " + oData.DURATION + oData.DURATION_UNIT;
 				} else {
 					return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES + ", " + oData.DURATION + oData.DURATION_UNIT;
 				}
 			}
 			if (oData.ORDERID) {
-				return oData.ORDERID + " / " + oData.OPERATIONID + "  " + Desc
+				return oData.ORDERID + " / " + oData.OPERATIONID + "  " + Desc;
 			} else {
 				return oData.NOTIFICATION + "  " + Desc;
 			}

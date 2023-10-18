@@ -44,7 +44,7 @@ sap.ui.define([
 			this._mParams = mParams;
 			this._oSmartTable = mParams.smartTable;
 			this._component = this._oView.getController().getOwnerComponent();
-			this._IsTool = bIsTool
+			this._IsTool = bIsTool;
 				//set annotation path and other parameters
 			this.setTemplateProperties(mParams);
 

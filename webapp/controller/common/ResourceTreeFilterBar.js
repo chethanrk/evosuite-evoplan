@@ -612,15 +612,15 @@ sap.ui.define([
 				for(var i=0;i<4;i++){
 					for(var j=0;j<3;j++){
 						if (aYearMatrix[i][j] === startMonth){
-							startMonth = aYearMatrix[i][0]
+							startMonth = aYearMatrix[i][0];
 						}
 						if (aYearMatrix[i][j] === endMonth){
-							endMonth = aYearMatrix[i][2]
+							endMonth = aYearMatrix[i][2];
 						}
 					}
 				}
-				start = moment().month(startMonth).startOf('month').toDate();
-				end = moment(oEndDate).month(endMonth).endOf('month').toDate();
+				start = moment().month(startMonth).startOf("month").toDate();
+				end = moment(oEndDate).month(endMonth).endOf("month").toDate();
 			} else if (selectedHierarchyView === "TIMEYEAR"){
 				start = moment(oStartDate).startOf("year").toDate();
 				end = moment(oEndDate).endOf("year").toDate();

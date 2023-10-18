@@ -104,7 +104,7 @@ sap.ui.define([
 						},
 						errorMessage: "Assignment Event not Triggered  "
 					});
-				},
+				}
 			},
 			assertions: {
 

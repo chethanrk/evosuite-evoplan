@@ -47,7 +47,7 @@ sap.ui.define([
 		 */
 		getPTVPayload: function () {
 			Log.error("The 'getPTVPayload' method is not implemented!");
-		},
+		}
 
 		/* ============================================================================== */
 		/* Data types                                                                     */

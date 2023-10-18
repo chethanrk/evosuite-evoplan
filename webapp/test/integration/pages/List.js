@@ -224,7 +224,7 @@ sap.ui.define([
 
 						errorMessage: "Demand Table does not support Drop"
 					});
-				},
+				}
 			},
 			assertions: {
 				iFinishDragAndDrop: function () {

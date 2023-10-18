@@ -119,7 +119,7 @@ sap.ui.define([
 			var oPayload = this._getPayloadStructure(),
 				sDialogMsg = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.analysinglocations");
 
-			this.oViewModel.setProperty('/Scheduling/aListOfAssignments', []);
+			this.oViewModel.setProperty("/Scheduling/aListOfAssignments", []);
 			this.oViewModel.setProperty("/Scheduling/aDemandLocationIds", []);
 
 			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
@@ -135,8 +135,8 @@ sap.ui.define([
 			return this._createDistanceMatrix(aResourceData, oPayload.locations).then(function (sMatrixId) {
 				this.oComponent.getModel("viewModel").setProperty("/Scheduling/sDistanceMatrixId", sMatrixId);
 				oPayload.distanceMode = {
-					"$type": "ExistingDistanceMatrix",
-					"id": sMatrixId
+					$type: "ExistingDistanceMatrix",
+					id: sMatrixId
 				};
 				return oPayload;
 			}.bind(this));
@@ -287,7 +287,7 @@ sap.ui.define([
 
 			oPayload.distanceMatrixOptions = {
 				//current default routing type
-				routingType: "HIGH_PERFORMANCE_ROUTING_WITH_FALLBACK_CONVENTIONAL",
+				routingType: "HIGH_PERFORMANCE_ROUTING_WITH_FALLBACK_CONVENTIONAL"
 			};
 
 			return oPayload;
@@ -300,7 +300,7 @@ sap.ui.define([
 		 */
 		_deleteDistanceMatrix: function (sMatrixId) {
 			var oDeleteMatrix = {
-				"id": sMatrixId
+				id: sMatrixId
 			};
 			this._sendPOSTRequestToPTV(this._sDeleteDistanceMatrixUrl, oDeleteMatrix);
 		},
@@ -332,30 +332,30 @@ sap.ui.define([
 		 */
 		_getPayloadStructure: function () {
 			return {
-				"locations": [],
-				"orders": [],
-				"fleet": {
-					"vehicles": [],
-					"drivers": []
+				locations: [],
+				orders: [],
+				fleet: {
+					vehicles: [],
+					drivers: []
 				},
-				"distanceMode": {
-					"$type": "DirectDistance"
+				distanceMode: {
+					$type: "DirectDistance"
 				},
-				"planToursOptions": {
-					"tweaksToObjective": {
-						"minimizeNumberOfTours": false
+				planToursOptions: {
+					tweaksToObjective: {
+						minimizeNumberOfTours: false
 					},
-					"considerOrderPriorities": true,
-					"calculationMode": "PERFORMANCE",
-					"planningHorizon": {
-						"$type": "StartEndInterval",
-						"start": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/startDate")),
-						"end": this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/endDate"))
+					considerOrderPriorities: true,
+					calculationMode: "PERFORMANCE",
+					planningHorizon: {
+						$type: "StartEndInterval",
+						start: this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/startDate")),
+						end: this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/endDate"))
 					}
 				},
-				"inputPlan": {
-					"tours": [],
-					"fixations": []
+				inputPlan: {
+					tours: [],
+					fixations: []
 				}
 			};
 		},
@@ -399,10 +399,10 @@ sap.ui.define([
 
 						//Adding vehicle objects for each day 
 						aDrivers.push({
-							"id": sGuid + "_" + sDate + "_driver",
-							"vehicleId": sGuid + "_" + sDate,
-							"operatingIntervals": aWorkSchedules[sDate].aOperationIntervals,
-							"breakIntervals": aWorkSchedules[sDate].aBreakIntervals
+							id: sGuid + "_" + sDate + "_driver",
+							vehicleId: sGuid + "_" + sDate,
+							operatingIntervals: aWorkSchedules[sDate].aOperationIntervals,
+							breakIntervals: aWorkSchedules[sDate].aBreakIntervals
 						});
 					}
 				});
@@ -410,12 +410,12 @@ sap.ui.define([
 				// Vehicle objects added as for the resource
 				if (aVehicleIDs && aVehicleIDs.length) {
 					oVehicle = {
-						"ids": _.cloneDeep(aVehicleIDs),
-						"startLocationId": sGuid + "_location",
-						"endLocationId": sGuid + "_location"
+						ids: _.cloneDeep(aVehicleIDs),
+						startLocationId: sGuid + "_location",
+						endLocationId: sGuid + "_location"
 					};
 					if (bQualificationCheck) {
-						oVehicle["equipment"] = aResourceData[sGuid].qualifications;
+						oVehicle.equipment = aResourceData[sGuid].qualifications;
 					}
 					aVehicles.push(oVehicle);
 				}
@@ -427,7 +427,7 @@ sap.ui.define([
 				aDemands = aDemands.concat(oInputPlanData.demandOrders);
 				aTours = aTours.concat(oInputPlan.tours);
 				aFixations = aFixations.concat(oInputPlan.fixations);
-			};
+			}
 
 			// Adding all the generated data into payload
 			oPayload.locations = oPayload.locations.concat(aResourceLocations);
@@ -465,13 +465,13 @@ sap.ui.define([
 
 			for (let oDemandGuid in aDemandsData) {
 				oLocationObject = {
-					"$type": "CustomerSite",
-					"id": oDemandGuid + "_location",
-					"routeLocation": {
-						"$type": "OffRoadRouteLocation",
-						"offRoadCoordinate": {
-							"x": aDemandsData[oDemandGuid].location.x,
-							"y": aDemandsData[oDemandGuid].location.y
+					$type: "CustomerSite",
+					id: oDemandGuid + "_location",
+					routeLocation: {
+						$type: "OffRoadRouteLocation",
+						offRoadCoordinate: {
+							x: aDemandsData[oDemandGuid].location.x,
+							y: aDemandsData[oDemandGuid].location.y
 						}
 					}
 				};
@@ -483,28 +483,28 @@ sap.ui.define([
 					nDuration = this._getDateDuration(oMustStart, oMustFinish) - aDemandsData[oDemandGuid].serviceTime;
 					oLocationObject.openingIntervals = [
 						{
-							"$type": "StartDurationInterval",
-							"start": this._getFormattedDate(oMustStart),
-							"duration": nDuration < 0 ? 0 : nDuration
+							$type: "StartDurationInterval",
+							start: this._getFormattedDate(oMustStart),
+							duration: nDuration < 0 ? 0 : nDuration
 						}
 					];
 				}
 				oOrder = {
-					"$type": "VisitOrder",
-					"id": oDemandGuid,
-					"locationId": oDemandGuid + "_location",
-					"priority": aDemandsData[oDemandGuid].priority,
-					"serviceTime": aDemandsData[oDemandGuid].serviceTime
+					$type: "VisitOrder",
+					id: oDemandGuid,
+					locationId: oDemandGuid + "_location",
+					priority: aDemandsData[oDemandGuid].priority,
+					serviceTime: aDemandsData[oDemandGuid].serviceTime
 				};
 				if (bQualificationCheck) {
-					oOrder["requiredVehicleEquipment"] = aDemandsData[oDemandGuid].qualification;
+					oOrder.requiredVehicleEquipment = aDemandsData[oDemandGuid].qualification;
 				}
 				locations.push(oLocationObject);
 				orders.push(oOrder);	
 
 			}
 
-			this.oViewModel.setProperty("/Scheduling/aDemandLocationIds", aLocationIds)
+			this.oViewModel.setProperty("/Scheduling/aDemandLocationIds", aLocationIds);
 			oPayload.locations = oPayload.locations.concat(locations);
 			oPayload.orders = oPayload.orders.concat(orders);
 			return oPayload;
@@ -531,7 +531,7 @@ sap.ui.define([
 			var aHorizonDateIntervals = [];
 			while (aStartDateTmp.getDate() != aEndDate.getDate()) {
 				aHorizonDateIntervals.push(this._getFormattedDate(aStartDateTmp).substr(0, 10));
-				aStartDateTmp.setDate(aStartDateTmp.getDate() + 1)
+				aStartDateTmp.setDate(aStartDateTmp.getDate() + 1);
 			}
 			aHorizonDateIntervals.push(this._getFormattedDate(aStartDateTmp).substr(0, 10));
 			return aHorizonDateIntervals;
@@ -543,16 +543,16 @@ sap.ui.define([
 		 */
 		_getPTVLocationObject: function (sGuid, aResourceData, sType) {
 			return {
-				"$type": sType,
-				"id": sGuid + "_location",
-				"routeLocation": {
-					"$type": "OffRoadRouteLocation",
-					"offRoadCoordinate": {
-						"x": aResourceData[sGuid].aData.LONGITUDE,
-						"y": aResourceData[sGuid].aData.LATITUDE
+				$type: sType,
+				id: sGuid + "_location",
+				routeLocation: {
+					$type: "OffRoadRouteLocation",
+					offRoadCoordinate: {
+						x: aResourceData[sGuid].aData.LONGITUDE,
+						y: aResourceData[sGuid].aData.LATITUDE
 					}
 				}
-			}
+			};
 		},
 
 		/**
@@ -575,7 +575,7 @@ sap.ui.define([
 					aFormattedWorkSchedules[oDate] = {
 						aOperationIntervals: [],
 						aBreakIntervals: []
-					}
+					};
 			});
 
 			// calculating blockers for each day for resource
@@ -592,13 +592,13 @@ sap.ui.define([
 				sDate = sStartDate.substring(0, 10);
 				if (aFormattedWorkSchedules[sDate] && aFormattedWorkSchedules[sDate].aBreakIntervals) {
 					aFormattedWorkSchedules[sDate].aBreakIntervals.push({
-						"breakTime": this._getDateDuration(oItem.DateFrom, oItem.DateTo),
-						"interval": {
-							"$type": "StartEndInterval",
-							"start": sStartDate,
-							"end": this._getFormattedDate(oItem.DateTo)
+						breakTime: this._getDateDuration(oItem.DateFrom, oItem.DateTo),
+						interval: {
+							$type: "StartEndInterval",
+							start: sStartDate,
+							end: this._getFormattedDate(oItem.DateTo)
 						}
-					})
+					});
 				}
 			}.bind(this));
 
@@ -610,17 +610,17 @@ sap.ui.define([
 					
 					aShiftTimes = this._getShiftOperatingIntervalconsideringAbsence(oResource.absenses, oItem.DateFrom, oItem.DateTo);
 					aFormattedWorkSchedules[sDate].aOperationIntervals.push({
-						"$type": "StartDurationInterval",
-						"start": aShiftTimes.DateFrom,
-						"duration": this._getAvailabilityDuration(aShiftTimes.DateFrom, aShiftTimes.DateTo, aProjectBlockers[sDate])
-					})
+						$type: "StartDurationInterval",
+						start: aShiftTimes.DateFrom,
+						duration: this._getAvailabilityDuration(aShiftTimes.DateFrom, aShiftTimes.DateTo, aProjectBlockers[sDate])
+					});
 
 					if (aShiftTimes.SecondShift){
 						aFormattedWorkSchedules[sDate].aOperationIntervals.push({
-							"$type": "StartDurationInterval",
-							"start": aShiftTimes.SecondShift.DateFrom,
-							"duration": this._getAvailabilityDuration(aShiftTimes.SecondShift.DateFrom, aShiftTimes.SecondShift.DateTo, aProjectBlockers[sDate])
-						})
+							$type: "StartDurationInterval",
+							start: aShiftTimes.SecondShift.DateFrom,
+							duration: this._getAvailabilityDuration(aShiftTimes.SecondShift.DateFrom, aShiftTimes.SecondShift.DateTo, aProjectBlockers[sDate])
+						});
 					}
 				}
 			}.bind(this));
@@ -637,11 +637,11 @@ sap.ui.define([
 		 */
 		_getAvailabilityDuration: function (oDateFrom, oDateTo, nBlockedPercentage) {
 			var nAvailabilityDuration = this._getDateDuration(oDateFrom, oDateTo),
-				nUtilization = this.oViewModel.getProperty('/Scheduling/sUtilizationSlider');
+				nUtilization = this.oViewModel.getProperty("/Scheduling/sUtilizationSlider");
 
 			//Condition to check if any blocker is there then remove the blocker duration from actual availability duration	
 			if (nBlockedPercentage) {
-				nAvailabilityDuration = nAvailabilityDuration - (nAvailabilityDuration * nBlockedPercentage / 100);
+				nAvailabilityDuration = nAvailabilityDuration - nAvailabilityDuration * nBlockedPercentage / 100;
 			}
 
 			// calculating duration based on given Utilization and returning the duration value of availability
@@ -671,7 +671,7 @@ sap.ui.define([
 					demandLocations: [],
 					demandOrders: []
 				},
-				aListOfAssignments = this.oViewModel.getProperty('/Scheduling/aListOfAssignments') || [],
+				aListOfAssignments = this.oViewModel.getProperty("/Scheduling/aListOfAssignments") || [],
 				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD"),
 				oOrder,
 				aDemandLocations = this.oViewModel.getProperty("/Scheduling/aDemandLocationIds"),
@@ -686,48 +686,48 @@ sap.ui.define([
 							sAssignmentDate = this._getFormattedDate(oAssingnment.DateFrom).substring(0, 10);
 							if (aInputPlans.stops[sAssignmentDate]) {
 								aInputPlans.stops[sAssignmentDate].push({
-									"locationId": oAssingnment.DemandGuid + "_location",
-									"tasks": [{
-										"orderId": oAssingnment.DemandGuid,
-										"taskType": "VISIT"
+									locationId: oAssingnment.DemandGuid + "_location",
+									tasks: [{
+										orderId: oAssingnment.DemandGuid,
+										taskType: "VISIT"
 									}]
-								})
+								});
 							} else {
 								aInputPlans.stops[sAssignmentDate] = [{
-									"locationId": oAssingnment.DemandGuid + "_location",
-									"tasks": [{
-										"orderId": oAssingnment.DemandGuid,
-										"taskType": "VISIT"
+									locationId: oAssingnment.DemandGuid + "_location",
+									tasks: [{
+										orderId: oAssingnment.DemandGuid,
+										taskType: "VISIT"
 									}]
 								}];
 							}
 							aInputPlans.demandLocations.push({
-								"$type": "CustomerSite",
-								"id": oAssingnment.DemandGuid + "_location",
-								"routeLocation": {
-									"$type": "OffRoadRouteLocation",
-									"offRoadCoordinate": {
-										"x": oAssingnment.LONGITUDE,
-										"y": oAssingnment.LATITUDE
+								$type: "CustomerSite",
+								id: oAssingnment.DemandGuid + "_location",
+								routeLocation: {
+									$type: "OffRoadRouteLocation",
+									offRoadCoordinate: {
+										x: oAssingnment.LONGITUDE,
+										y: oAssingnment.LATITUDE
 									}
 								},
-								"openingIntervals": [{
-									"$type": "StartDurationInterval",
-									"start": this._getFormattedDate(oAssingnment.DateFrom),
-									"duration": 0
+								openingIntervals: [{
+									$type: "StartDurationInterval",
+									start: this._getFormattedDate(oAssingnment.DateFrom),
+									duration: 0
 								}]
 							});
 							aDemandLocations.push(oAssingnment.DemandGuid + "_location");
 							oOrder = {
-								"$type": "VisitOrder",
-								"id": oAssingnment.DemandGuid,
-								"locationId": oAssingnment.DemandGuid + "_location",
-								"priority": 9,
-								"serviceTime": this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo)
+								$type: "VisitOrder",
+								id: oAssingnment.DemandGuid,
+								locationId: oAssingnment.DemandGuid + "_location",
+								priority: 9,
+								serviceTime: this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo)
 							};
 
 							if (bQualificationCheck) {
-								oOrder["requiredVehicleEquipment"] = aExistingDemandQualification[oAssingnment.DemandGuid];
+								oOrder.requiredVehicleEquipment = aExistingDemandQualification[oAssingnment.DemandGuid];
 							}
 							aInputPlans.demandOrders.push(oOrder);
 
@@ -738,7 +738,7 @@ sap.ui.define([
 
 				}
 			}
-			this.oViewModel.setProperty('/Scheduling/aListOfAssignments', aListOfAssignments)
+			this.oViewModel.setProperty("/Scheduling/aListOfAssignments", aListOfAssignments);
 			return aInputPlans;
 		},
 
@@ -749,25 +749,25 @@ sap.ui.define([
 		 */
 		_getPTVInputPlanObject: function (sGuid, oInputPlanData, aDriverIds) {
 			var inputPlan = {
-				"tours": [],
-				"fixations": []
+				tours: [],
+				fixations: []
 			};
 			for (var date in oInputPlanData.stops) {
 				
 				if (oInputPlanData.stops[date].length && aDriverIds.indexOf(sGuid + "_" + date) !== -1) {
 					inputPlan.tours.push({
-						"vehicleId": sGuid + "_" + date,
-						"vehicleStartLocationId": sGuid + "_location",
-						"vehicleEndLocationId": sGuid + "_location",
-						"trips": [{
-							"id": sGuid + "_" + date + "_trip",
-							"stops": oInputPlanData.stops[date]
+						vehicleId: sGuid + "_" + date,
+						vehicleStartLocationId: sGuid + "_location",
+						vehicleEndLocationId: sGuid + "_location",
+						trips: [{
+							id: sGuid + "_" + date + "_trip",
+							stops: oInputPlanData.stops[date]
 						}]
 					});
 
 					inputPlan.fixations.push({
-						"id": sGuid + "_" + date,
-						"fixationType": "VEHICLE_ORDERS"
+						id: sGuid + "_" + date,
+						fixationType: "VEHICLE_ORDERS"
 					});
 				}
 			}
@@ -804,39 +804,39 @@ sap.ui.define([
 		_getShiftOperatingIntervalconsideringAbsence: function (aAbsenses, DateFrom, DateTo){
 			var oShiftStart = DateFrom, oShiftEnd = DateTo;
 			for (var i in aAbsenses){
-				if ((aAbsenses[i].DateFrom.getTime() < DateFrom.getTime()) && (aAbsenses[i].DateTo.getTime() <= DateFrom.getTime()) || (aAbsenses[i].DateFrom.getTime() >= DateTo.getTime()) && (aAbsenses[i].DateTo.getTime() > DateTo.getTime())) {
+				if (aAbsenses[i].DateFrom.getTime() < DateFrom.getTime() && aAbsenses[i].DateTo.getTime() <= DateFrom.getTime() || aAbsenses[i].DateFrom.getTime() >= DateTo.getTime() && aAbsenses[i].DateTo.getTime() > DateTo.getTime()) {
 					oShiftStart = DateFrom;
 					oShiftEnd = DateTo;
 					return {
 						DateFrom: oShiftStart,
 						DateTo: oShiftEnd
-					}
+					};
 				}
-				else if ((aAbsenses[i].DateFrom.getTime() < DateFrom.getTime()) && (DateFrom.getTime() < aAbsenses[i].DateTo.getTime()) && (aAbsenses[i].DateTo.getTime() < DateTo.getTime())){
+				else if (aAbsenses[i].DateFrom.getTime() < DateFrom.getTime() && DateFrom.getTime() < aAbsenses[i].DateTo.getTime() && aAbsenses[i].DateTo.getTime() < DateTo.getTime()){
 					oShiftStart = aAbsenses[i].DateTo;
 					oShiftEnd = DateTo;
 					return {
 						DateFrom: oShiftStart,
 						DateTo: oShiftEnd
-					}
+					};
 				}
-				else if ((aAbsenses[i].DateFrom.getTime() < DateTo.getTime()) && (DateTo.getTime() < aAbsenses[i].DateTo.getTime()) && (DateFrom.getTime()  < aAbsenses[i].DateFrom.getTime())){
+				else if (aAbsenses[i].DateFrom.getTime() < DateTo.getTime() && DateTo.getTime() < aAbsenses[i].DateTo.getTime() && DateFrom.getTime()  < aAbsenses[i].DateFrom.getTime()){
 					oShiftStart = DateFrom;
 					oShiftEnd = aAbsenses[i].DateFrom;
 
 					return {
 						DateFrom: oShiftStart,
 						DateTo: oShiftEnd
-					}
-				} else if ((aAbsenses[i].DateFrom.getTime() < DateFrom.getTime()) &&  (DateTo.getTime() < aAbsenses[i].DateTo.getTime())){
+					};
+				} else if (aAbsenses[i].DateFrom.getTime() < DateFrom.getTime() &&  DateTo.getTime() < aAbsenses[i].DateTo.getTime()){
 					oShiftStart = DateFrom;
 					oShiftEnd = DateFrom;
 					return {
 						DateFrom: oShiftStart,
 						DateTo: oShiftEnd
-					}
+					};
 				}
-				else if ((DateFrom.getTime() < aAbsenses[i].DateFrom.getTime())  && ( aAbsenses[i].DateTo.getTime() < DateTo.getTime())) {
+				else if (DateFrom.getTime() < aAbsenses[i].DateFrom.getTime()  &&  aAbsenses[i].DateTo.getTime() < DateTo.getTime()) {
 					oShiftStart = DateFrom;
 					oShiftEnd = DateFrom;
 					return {
@@ -844,22 +844,22 @@ sap.ui.define([
 						DateTo: aAbsenses[i].DateFrom,
 						SecondShift:{
 							DateFrom: aAbsenses[i].DateTo,
-							DateTo: DateTo,
+							DateTo: DateTo
 						}
-					}
-				} else if ((aAbsenses[i].DateFrom.getTime() === DateFrom.getTime()) && (DateTo.getTime() === aAbsenses[i].DateTo.getTime())) {
+					};
+				} else if (aAbsenses[i].DateFrom.getTime() === DateFrom.getTime() && DateTo.getTime() === aAbsenses[i].DateTo.getTime()) {
 					oShiftStart = DateFrom;
 					oShiftEnd = DateFrom;
 					return {
 						DateFrom: oShiftStart,
 						DateTo: oShiftEnd
-					}
+					};
 				}
 			}
 			return {
 				DateFrom: DateFrom,
 				DateTo: DateTo
-			}
+			};
 		}
 		/* ============================================================================== */
 		/* Data types                                                                     */

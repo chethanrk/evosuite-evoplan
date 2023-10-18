@@ -207,7 +207,7 @@ sap.ui.define([
 					this._oDataTable.removeSelectionInterval(iMaxRowSelection, iLastIndex);
 					sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection]);
 				} else {
-					iLastIndex = oEvent.getParameter('rowIndex');
+					iLastIndex = oEvent.getParameter("rowIndex");
 					this._oDataTable.removeSelectionInterval(iLastIndex, iLastIndex);
 					sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
 				}
@@ -261,8 +261,8 @@ sap.ui.define([
 			var aPplicationFilters = this.getView().byId("draggableList").getTable().getBinding("rows").aApplicationFilters;
 			var aFilters = [];
 			this.getOwnerComponent().readData("/DemandSet", aPplicationFilters, "$select=Guid").then(function (data) {
-				for (var x in data["results"]) {
-					aFilters.push(new Filter("DemandGuid", FilterOperator.EQ, data["results"][x]["Guid"]));
+				for (var x in data.results) {
+					aFilters.push(new Filter("DemandGuid", FilterOperator.EQ, data.results[x].Guid));
 				}
 				this._oEventBus.publish("BaseController", "refreshFullGantt", aFilters);
 				var sMsg = this.getResourceBundle().getText("msg.filterGanttSave");

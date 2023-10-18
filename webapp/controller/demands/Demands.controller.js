@@ -237,7 +237,7 @@ sap.ui.define([
 						this._oDataTable.removeSelectionInterval(iMaxRowSelection, iLastIndex);
 						sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection]);
 					} else {
-						iLastIndex = oEvent.getParameter('rowIndex');
+						iLastIndex = oEvent.getParameter("rowIndex");
 						this._oDataTable.removeSelectionInterval(iLastIndex, iLastIndex);
 						sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
 					}

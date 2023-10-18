@@ -521,8 +521,8 @@ sap.ui.define([
 					} else {
 						aLegendItems.push(oItem);
 					}
-				}.bind(this));
-			}.bind(this));
+				});
+			});
 		},
 
 		/**
@@ -590,7 +590,7 @@ sap.ui.define([
 				this.oSinglePlanner.setBusy(true);
 
 				var mParams = {
-					"$expand": "Demand,Resource"
+					$expand: "Demand,Resource"
 				};
 
 				var oFilter = new Filter(this.oParentController.oMapUtilities.getAssignmentsFiltersWithinDateFrame(oResourseHierachyData), true);
@@ -690,9 +690,9 @@ sap.ui.define([
 		 * in Route Optimization
 		 */
 		_checkOverlappingUnavailability: function (oTravelItem, nTravelTime) {
-			var bOverlappingUnavailability = (this.aUnavailabilities[0].DateFrom <= oTravelItem.DateFrom && oTravelItem.DateFrom >= this.aUnavailabilities[
-				0].DateTo) || (this.aUnavailabilities[0].DateFrom <= oTravelItem.DateTo && oTravelItem.DateTo >= this.aUnavailabilities[
-				0].DateTo);
+			var bOverlappingUnavailability = this.aUnavailabilities[0].DateFrom <= oTravelItem.DateFrom && oTravelItem.DateFrom >= this.aUnavailabilities[
+				0].DateTo || this.aUnavailabilities[0].DateFrom <= oTravelItem.DateTo && oTravelItem.DateTo >= this.aUnavailabilities[
+				0].DateTo;
 			if (bOverlappingUnavailability) {
 				oTravelItem.DateFrom = moment(this.aUnavailabilities[0].DateFrom).subtract(nTravelTime, "minutes").toDate();
 				oTravelItem.DateTo = this.aUnavailabilities[0].DateFrom;

@@ -39,31 +39,31 @@ sap.ui.define([], function () {
 			SCHEDULING_JS_PROVIDERS_PATH: "com/evorait/evoplan/controller/scheduling/mapProvider/"
 		},
 		CRITICALLYSTATES: {
-			"info": {
+			info: {
 				color: "#5E696E",
 				state: "Information"
 			},
-			"0": {
+			0: {
 				color: "#5E696E",
 				state: "None"
 			},
-			"1": {
+			1: {
 				color: "#BB0000",
 				state: "Error"
 			},
-			"2": {
+			2: {
 				color: "#ff0000",
 				state: "Error"
 			},
-			"3": {
+			3: {
 				color: "#E78C07",
 				state: "Warning"
 			},
-			"4": {
+			4: {
 				color: "#2B7D2B",
 				state: "Success"
 			},
-			"5": {
+			5: {
 				color: "#00ff00",
 				state: "Success"
 			}

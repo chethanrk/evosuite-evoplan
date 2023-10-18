@@ -150,7 +150,7 @@ sap.ui.define([
 						if (oProperty !== null) {
 							//check if key is creatable true and url param value is not bigger then maxLength of property
 							if ((!oProperty.hasOwnProperty("sap:creatable") || oProperty["sap:creatable"] === "true") &&
-								(urlValue.length <= parseInt(oProperty["maxLength"]))) {
+								urlValue.length <= parseInt(oProperty.maxLength)) {
 								oModel.setProperty(sPath + "/" + key, urlValue);
 							}
 
