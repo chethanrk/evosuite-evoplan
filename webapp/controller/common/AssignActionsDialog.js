@@ -179,8 +179,8 @@ sap.ui.define([
 			var aContexts = this._oAssignMentTable.getSelectedContexts(),
 				sMsg,
 				oViewModel = this._oView.getModel("viewModel");
-				if(this._oView.byId('droppableTable')) {
-					oViewModel.setProperty("/iFirstTreeTableVisibleindex", this._oView.byId('droppableTable').getTable().getFirstVisibleRow());
+				if(this._oView.byId("droppableTable")) {
+					oViewModel.setProperty("/iFirstTreeTableVisibleindex", this._oView.byId("droppableTable").getTable().getFirstVisibleRow());
 				}
 			this.getOperationDemands(aContexts);
 
@@ -492,7 +492,7 @@ sap.ui.define([
 						sPath: sPath
 					};
 					aPathsData.push(oDemandObj);
-				}.bind(this));
+				});
 			}
 			this._oView.getModel("viewModel").setProperty("/dragSession", aPathsData);
 		},

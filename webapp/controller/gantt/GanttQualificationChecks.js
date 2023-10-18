@@ -136,6 +136,6 @@ sap.ui.define([
 						});
 					}, reject);
 			}.bind(this));
-		},
+		}
 	});
 });

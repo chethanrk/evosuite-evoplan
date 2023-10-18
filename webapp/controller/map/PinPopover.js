@@ -194,7 +194,7 @@ sap.ui.define([
 		 */
 		handleRouteDateSelect: function (oEvent) {
 			var oDateSelected = oEvent.getSource().getSelectedDates() && oEvent.getSource().getSelectedDates()[0];
-			oDateSelected = oDateSelected.getProperty('startDate');
+			oDateSelected = oDateSelected.getProperty("startDate");
 			// Z is the zone designator for the zero hour offset (UTC)
 			var oAdjustedTime = new Date(oDateSelected.toLocaleDateString() + "Z");
 			this.fDatePickerCallback(oAdjustedTime);
@@ -439,7 +439,7 @@ sap.ui.define([
 				.catch(function (oError) {
 					oViewModel.setProperty("/mapSettings/busy", false);
 					Log.error(oError);
-				}.bind(this));
+				});
 
 		}
 

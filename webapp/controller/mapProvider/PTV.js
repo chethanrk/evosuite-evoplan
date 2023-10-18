@@ -116,7 +116,7 @@ sap.ui.define([
 			var oRequestBody = this._createPayloadForRouteRequest([oStartPoint, oEndPoint], false, null); // default date will be used
 			return this._sendPOSTRequestToPTV(this._sRouteCalculationUrl, oRequestBody).then(function (oRouteResponse) {
 				return oRouteResponse.data.travelTime / 60; // return the travel time in minutes
-			}.bind(this));
+			});
 		},
 
 		/**
@@ -233,7 +233,7 @@ sap.ui.define([
 						return a.DateFrom - b.DateFrom;
 					});
 					return aUpdatedAssignments;
-				}.bind(this));;
+				}.bind(this));
 		},
 
 		/* =========================================================== */
@@ -366,7 +366,7 @@ sap.ui.define([
 			var oRequestBody = this._createPayloadForDistanceMatrixRequest([oStartPoint].concat(aPointsToVisit), oDate);
 			return this._sendPOSTRequestToPTV(this._sCreateDistanceMatrixUrl, oRequestBody).then(function (oCreateMatrixResponse) {
 				return oCreateMatrixResponse.data.summary.id;
-			}.bind(this));
+			});
 		},
 
 		/**
@@ -494,7 +494,7 @@ sap.ui.define([
 			});
 
 			var oResourceLocation = _.cloneDeep(oLocationTemplate);
-			oResourceLocation["$type"] = "DepotSite";
+			oResourceLocation.$type = "DepotSite";
 			oResourceLocation.id = "ResourceHomeLocation";
 			oResourceLocation.routeLocation.offRoadCoordinate.x = oResource.LONGITUDE;
 			oResourceLocation.routeLocation.offRoadCoordinate.y = oResource.LATITUDE;

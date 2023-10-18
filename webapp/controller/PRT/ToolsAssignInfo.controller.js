@@ -42,7 +42,7 @@ sap.ui.define([
 			this._eventBus.publish("AssignInfoDialog", "selectAssign", {
 				oView: this.oView,
 				isToolReAssign: true,
-				aSelectedPaths: ["/AssignmentSet('" + this.oView.getModel('assignment').getProperty('/Guid') + "')"]
+				aSelectedPaths: ["/AssignmentSet('" + this.oView.getModel("assignment").getProperty("/Guid") + "')"]
 			});
 		},
 		
@@ -55,6 +55,6 @@ sap.ui.define([
 				bValidFormat = oEvent.getParameter("valid"),
 				oViewModel = this.oView.getModel("viewModel");
 			this.onValidateDateFormat(oSource, bValidFormat, oViewModel);
-		},
+		}
 	});
 });

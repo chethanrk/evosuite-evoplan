@@ -57,7 +57,7 @@ sap.ui.define([
 
                 //all demands counter for scheduling
 
-                this.getOwnerComponent().SchedulingDialog._setScheduleTableTitle(isAutoSchedule, aDataset.length)
+                this.getOwnerComponent().SchedulingDialog._setScheduleTableTitle(isAutoSchedule, aDataset.length);
             }.bind(this));
         },
 
@@ -121,7 +121,7 @@ sap.ui.define([
          */
         onChangeDateFrom: function (oEvent) {
             var oDate = oEvent.getSource().getValue();
-            oDate = new Date(moment(oDate, 'DD MMM. YYYY, hh:mm:ss', sap.ui.getCore().getConfiguration().getLanguage())).toString();
+            oDate = new Date(moment(oDate, "DD MMM. YYYY, hh:mm:ss", sap.ui.getCore().getConfiguration().getLanguage())).toString();
             this._oViewModel.setProperty("/Scheduling/sStartDateValueState", "None");
             this.oSchedulingActions.validateDemandDateRanges(new Date(oDate), this._oViewModel.getProperty("/Scheduling/endDate"), false);
             this._checkGeneratedResponse();
@@ -138,7 +138,7 @@ sap.ui.define([
          */
         onChangeDateTo: function (oEvent) {
             var oDate = oEvent.getSource().getValue();
-            oDate = new Date(moment(oDate, 'DD MMM. YYYY, hh:mm:ss', sap.ui.getCore().getConfiguration().getLanguage())).toString();
+            oDate = new Date(moment(oDate, "DD MMM. YYYY, hh:mm:ss", sap.ui.getCore().getConfiguration().getLanguage())).toString();
             if (oDate && new Date(oDate) < oEvent.getSource().getMaxDate()) {
                 oDate = new Date(new Date(oDate).getTime() - 1000);
                 oEvent.getSource().setDateValue(oDate);
@@ -211,7 +211,7 @@ sap.ui.define([
             if (this._oDemandFilterDialog) {
                 this._oDemandFilterDialog.then(function (oDialog) {
                     oDialog.close();
-                }.bind(this));
+                });
             }
         },
         /**
@@ -247,10 +247,10 @@ sap.ui.define([
                 var sFilterCount = Object.keys(oSmartFilter.getFilterData()).length;
                 this._oViewModel.setProperty("/Scheduling/sFilterCounts", this.getResourceBundle().getText("xbut.filters") + " (" + sFilterCount + ")");
             }
-            if (this._oInsideFilterBtn && (this._oInsideFilterBtn.getPressed())) {
+            if (this._oInsideFilterBtn && this._oInsideFilterBtn.getPressed()) {
                 aFilter.push(this._mFilters.inside);
             }
-            if (this._oOutsideFilterBtn && (this._oOutsideFilterBtn.getPressed())) {
+            if (this._oOutsideFilterBtn && this._oOutsideFilterBtn.getPressed()) {
                 aFilter.push(this._mFilters.outside);
             }
             this._oDemandsTable.getBinding("rows").filter(aFilter);
@@ -304,4 +304,4 @@ sap.ui.define([
             }
         }
     });
-})
+});

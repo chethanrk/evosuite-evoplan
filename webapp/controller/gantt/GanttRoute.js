@@ -134,7 +134,7 @@ sap.ui.define([
 						DateTo: oItem.DateTo
 					});
 				}
-			}.bind(this));
+			});
 			return aUnavailability;
 		},
 
@@ -283,6 +283,6 @@ sap.ui.define([
 				}
 				this.callFunctionImport(oParams, "UpdateAssignment", "POST", this._mParameters, bIsLast);
 			}
-		},
+		}
 	});
 });

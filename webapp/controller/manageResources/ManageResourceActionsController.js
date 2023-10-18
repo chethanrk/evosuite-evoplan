@@ -116,7 +116,7 @@ sap.ui.define([
 		onCloseAssignmentDialog: function () {
 			this._oAssignmentsDialog.then(function (oAssignmentsDialog) {
 				oAssignmentsDialog.close();
-			}.bind(this));
+			});
 		},
 		/**
 		 * Handle selection of assignments in Assignment Dialog
@@ -228,9 +228,9 @@ sap.ui.define([
 				this.doDeleteResource(this._oModel, sPath, true).then(function (oResponse) {
 					return this.doCreateResource(this._oModel, sEntitySetName, this._aPayLoad);
 				}.bind(this)).then(function (oResponse) {
-				}.bind(this)).catch(function(oError){
+				}).catch(function(oError){
 					// TO DO - Handle Catch
-				}.bind(this));
+				});
 			} else if (sOperationType === "deleteResource") {
 				this.doDeleteResource(this._oModel, sPath).then(function () {
 					this._oEventBus.publish("ManageResourcesController", "refreshManageResourcesView", {});
@@ -273,9 +273,9 @@ sap.ui.define([
 					oRow.Start = result.Start;
 					oRow.End = result.End;
 					oRow.AssignmentCount = result.AssignmentCount;
-				}.bind(this));
+				});
 			}
-			this.getOwnerComponent()._getData(sPath.split("(")[0]).then(function (result) {}.bind(this));
+			this.getOwnerComponent()._getData(sPath.split("(")[0]).then(function (result) {});
 		},
 		/**
 		 * destroy contents on Exit

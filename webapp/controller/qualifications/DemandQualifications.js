@@ -88,6 +88,6 @@ sap.ui.define([
 		 */
 		onCloseDialog : function(oEvent){
 			this._oDialog.close();
-		},
+		}
 	});
 });

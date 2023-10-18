@@ -1,8 +1,8 @@
 sap.ui.define([
   "com/evorait/evoplan/controller/BaseController",
-  'sap/ui/model/Filter',
+  "sap/ui/model/Filter",
   "sap/ui/core/Fragment",
-  "sap/ui/model/FilterOperator",
+  "sap/ui/model/FilterOperator"
 ], function (BaseController, Filter, Fragment, FilterOperator) {
   "use strict";
 
@@ -34,7 +34,7 @@ sap.ui.define([
      */
     fnGetResName: function (oContext) {
       if (!this._oViewModel.getProperty("/Scheduling/iSelectedResponse")) {
-        return oContext.getProperty('ResourceName');
+        return oContext.getProperty("ResourceName");
       }
     },
 
@@ -80,7 +80,7 @@ sap.ui.define([
       if(this._oResponseFilterDialog){
           this._oResponseFilterDialog.then(function(oDialog){
               oDialog.close();
-          }.bind(this));
+          });
       }
     },
 
@@ -122,7 +122,7 @@ sap.ui.define([
       aFilter.push(this._setDataFilter());
 
       this._oResponseTable.getBinding("items").filter(aFilter);
-    },
+    }
 
   });
-})
+});

@@ -3,7 +3,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentActionsController",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/core/mvc/OverrideExecution",
+	"sap/ui/core/mvc/OverrideExecution"
 ], function (BaseController, Filter, FilterOperator, OverrideExecution) {
 	"use strict";
 
@@ -40,14 +40,14 @@ sap.ui.define([
 			//Condition check if div is availabel then change only the position 
 			if (div) {
 				div.style.top = oSpotPosition[1] + "px";
-				div.style.left = (parseInt(oSpotPosition[0]) + 10) + "px";
+				div.style.left = parseInt(oSpotPosition[0]) + 10 + "px";
 			} else {
 				// Creating new div in case div is getting created first time
 				div = document.createElement("div");
 				div.id = "idDivRightClick";
 				div.style.position = "absolute";
 				div.style.top = oSpotPosition[1] + "px";
-				div.style.left = (parseInt(oSpotPosition[0]) + 10) + "px";
+				div.style.left = parseInt(oSpotPosition[0]) + 10 + "px";
 				var oGeoMapContainer = oView.byId("idMapContainer");
 				var oGeoMapContainerDOM = oGeoMapContainer.getDomRef();
 				oGeoMapContainerDOM.appendChild(div);

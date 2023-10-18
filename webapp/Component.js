@@ -147,12 +147,12 @@ sap.ui.define([
 		initMomentSetting: function(){
 			moment.updateLocale(moment.locale(), {
 				week: {
-				  dow: 1, // Set Monday as the start of the week (0: Sunday, 1: Monday, ...)
-				},
+				  dow: 1 // Set Monday as the start of the week (0: Sunday, 1: Monday, ...)
+				}
 			  });
 
 			this._getSystemInformation().then(function(oData){
-				var month = oData.DEFAULT_FY_START_MONTH ? (parseInt(oData.DEFAULT_FY_START_MONTH) - 1) : 0, 
+				var month = oData.DEFAULT_FY_START_MONTH ? parseInt(oData.DEFAULT_FY_START_MONTH) - 1 : 0, 
 					yearMatrix = [];
 				for(var i=0;i<4;i++){
 					yearMatrix.push([]);
@@ -197,11 +197,11 @@ sap.ui.define([
 					groupId: sGroupId || "",
 					success: function (oData, oResponse) {
 						resolve(oData);
-					}.bind(this),
+					},
 					error: function (oError) {
 						//Handle Error
 						reject(oError);
-					}.bind(this)
+					}
 				});
 			}.bind(this));
 		},
@@ -240,7 +240,7 @@ sap.ui.define([
 			//Fiori Launchpad startup parameters
 			if (oComponentData) {
 				var oStartupParams = oComponentData.startupParameters;
-				if (oStartupParams[sKey] && (oStartupParams[sKey].length > 0)) {
+				if (oStartupParams[sKey] && oStartupParams[sKey].length > 0) {
 					return oStartupParams[sKey][0];
 				}
 			} else {
@@ -683,7 +683,7 @@ sap.ui.define([
 				aUpdatedResources: [],
 				yearMatrix:[],
 				bEnableAsgnSave : true,
-				selectedAssignment:[],
+				selectedAssignment:[]
 			});
 
 			oViewModel.setSizeLimit(999999999);
@@ -828,7 +828,7 @@ sap.ui.define([
 									mProps[oItem.Property] = oItem;
 								}
 							}
-						}.bind(this));
+						});
 						this.getModel("templateProperties").setProperty("/navLinks/", mProps);
 						resolve(mProps);
 					}.bind(this));
@@ -847,10 +847,10 @@ sap.ui.define([
 						resolve(data);
 					},
 					error:function(data){
-						reject(data)
+						reject(data);
 					}
-				})
+				});
 			}.bind(this));
-		},
+		}
 	});
 });

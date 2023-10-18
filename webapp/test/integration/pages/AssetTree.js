@@ -16,7 +16,7 @@ sap.ui.define([
 							actions: new Press(),
 							errorMessage: "Was not able to find the control with the id controlId"
 						});
-					},
+					}
 					
 				},
 				assertions: {

@@ -117,7 +117,7 @@ sap.ui.define([
 						reject(oError);
 					}
 				});
-			}.bind(this)).then(function (oData) {
+			}).then(function (oData) {
 				msg = this._component.getModel("i18n").getResourceBundle().getText("xmsg.saveSuccess");
 				this.showMessageToast(msg);
 				this._oLongTextPopover.close();
@@ -134,7 +134,7 @@ sap.ui.define([
 			var oRowContext = oModel.getProperty(this._oContext.getPath());
 			this._component._getData(this._oContext.getPath()).then(function (oResult) {
 				oRowContext = oResult;
-			}.bind(this));
-		},
+			});
+		}
 	});
 });

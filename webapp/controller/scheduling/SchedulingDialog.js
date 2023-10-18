@@ -142,7 +142,7 @@ sap.ui.define([
 
 					this._iSelectedStepIndex = 1;
 					this._oSelectedStep = oNextStep;
-					this._oWizard.setCurrentStep(this._oWizard.getSteps()[1])
+					this._oWizard.setCurrentStep(this._oWizard.getSteps()[1]);
 					this._oWizard.goToStep(oNextStep, true);
 
 
@@ -241,7 +241,7 @@ sap.ui.define([
 				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.LineItem";
 				this._mParams.modelName = "SchedulingModel";
 				this._mParams.modelDataSetPath = "/step1/dataSet";
-				this._mParams.entitySet = "ScheduleSelectSet"
+				this._mParams.entitySet = "ScheduleSelectSet";
 			} else {
 				this._mParams.viewName = "com.evorait.evoplan.view.scheduling.ReScheduling.ReScheduleStep1#ReScheduleStep1";
 				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ReScheduleTable";
@@ -315,9 +315,9 @@ sap.ui.define([
 			for (var i = 0, len = aSelectedDemands.length; i < len; i++) {
 				let oItemData = aSelectedDemands[i].oData;
 				oItemData.sPath = aSelectedDemands[i].sPath;
-				oItemData["dateRangeIconStatus"] = sap.ui.core.IconColor.Neutral;
-				oItemData["dateRangeStatus"] = sap.ui.core.MessageType.None;
-				oItemData["dateRangeStatusText"] = this._oResourceBundle.getText("ymsg.scheduleDateStatusNeutral");
+				oItemData.dateRangeIconStatus = sap.ui.core.IconColor.Neutral;
+				oItemData.dateRangeStatus = sap.ui.core.MessageType.None;
+				oItemData.dateRangeStatusText = this._oResourceBundle.getText("ymsg.scheduleDateStatusNeutral");
 				aTableDataset.push(oItemData);
 			}
 
@@ -362,7 +362,7 @@ sap.ui.define([
 				inside: 0,
 				outside: 0,
 				step1: {
-					dataSet: [],
+					dataSet: []
 				},
 				step2: {
 					dataSet: []
@@ -469,7 +469,7 @@ sap.ui.define([
 			this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.LineItem";
 			this._mParams.modelName = "SchedulingModel";
 			this._mParams.modelDataSetPath = "/step2/dataSet";
-			this._mParams.entitySet = "ScheduleResponseSet"
+			this._mParams.entitySet = "ScheduleResponseSet";
 
 			this._oModel.metadataLoaded().then(function () {
 				//get template and create views
@@ -499,7 +499,7 @@ sap.ui.define([
 					fTravelTime = 0.0,
 					fTravelBackTime = 0.0,
 					violatedAssignments = [],
-					aListOfAssignments = this._oViewModel.getProperty('/Scheduling/aListOfAssignments'),
+					aListOfAssignments = this._oViewModel.getProperty("/Scheduling/aListOfAssignments"),
 					aViolationsTypes = [];
 
 				//Scheduled demands
@@ -521,17 +521,17 @@ sap.ui.define([
 							}
 
 							//Saving travel times 
-							if (tourItem.eventTypes.indexOf('DRIVING') !== -1) {
-								if (oTour.tourEvents[index + 1].eventTypes.indexOf('TRIP_END') !== -1) { //Going back travel
+							if (tourItem.eventTypes.indexOf("DRIVING") !== -1) {
+								if (oTour.tourEvents[index + 1].eventTypes.indexOf("TRIP_END") !== -1) { //Going back travel
 									fTravelBackTime = tourItem.duration;
 								} else { //Forward travel
 									fTravelTime = fTravelTime + tourItem.duration;      // If ['Driving' 'Break' 'Driving'] is the sequence then both driving times must be added
 								}
 							}
-							if (tourItem.eventTypes.indexOf('SERVICE') !== -1 && !aDemandsData[tourItem.orderId]) {
+							if (tourItem.eventTypes.indexOf("SERVICE") !== -1 && !aDemandsData[tourItem.orderId]) {
 								fTravelTime = 0.0;
 							}
-							if (tourItem.eventTypes.indexOf('SERVICE') !== -1 && aDemandsData[tourItem.orderId]) {
+							if (tourItem.eventTypes.indexOf("SERVICE") !== -1 && aDemandsData[tourItem.orderId]) {
 								aData = {};
 
 								//Demand related info
@@ -561,7 +561,7 @@ sap.ui.define([
 								// commenting this code due to causing issue | decimal field type is diplaying black for string
 
 								//Forward travel time
-								aData.TRAVEL_TIME = (fTravelTime / 3600);
+								aData.TRAVEL_TIME = fTravelTime / 3600;
 								aData.TRAVEL_BACK_TIME = fTravelBackTime;
 
 								aData.TRAVEL_TIME_UNIT = "H";   //Travel time unit will be hour
@@ -572,9 +572,9 @@ sap.ui.define([
 								aDataSet.push(aData);
 							}
 
-							if (tourItem.eventTypes.indexOf('TRIP_END') !== -1) {
+							if (tourItem.eventTypes.indexOf("TRIP_END") !== -1) {
 								//Backward travel time
-								aData.TRAVEL_BACK_TIME = (fTravelBackTime / 3600);
+								aData.TRAVEL_BACK_TIME = fTravelBackTime / 3600;
 								fTravelBackTime = 0.0;
 							}	
 						}.bind(this));

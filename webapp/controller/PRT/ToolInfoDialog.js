@@ -54,7 +54,7 @@ sap.ui.define([
 				oSourceData: {
 					sTargetPath: this.AssignmentSourcePath
 				}
-			}
+			};
 			this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), {
 				PrtAssignmentGuid: sPrtAssignmentGuid
 			}, "DeleteToolAssignment", "POST").then(function () {
@@ -126,7 +126,7 @@ sap.ui.define([
 							sSourcePath: this.AssignmentSourcePath,
 							sTargetPath: this.AssignmentTargetPath
 						}
-					}
+					};
 					this.clearMessageModel.call(this._oView.getController());
 					this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), oParams, "ChangeToolAssignment", "POST",
 						this._mParameters, true).then(function (results) {

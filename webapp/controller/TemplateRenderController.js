@@ -144,7 +144,7 @@ sap.ui.define([
 								return this.createView(oModel, oMetaModel, sPath, sViewName, controller);
 							}.bind(this)).then(setTemplateAndBind).catch(function(oError){
 								// TO DO - Handle Catch here
-							}.bind(this));
+							});
 						} else {
 							this.createView(oModel, oMetaModel, sPath, sViewName, null).then(setTemplateAndBind);
 						}

@@ -621,7 +621,7 @@ sap.ui.define([
 				} else {
 					oGanttModel.setProperty(sPath + "/busy", false);
 				}
-			}.bind(this));
+			});
 		},
 
 		/**
@@ -701,7 +701,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onPressOrderNumber: function (oEvent) {
-			this.sAppName = 'EvoOrder';
+			this.sAppName = "EvoOrder";
 			this.handleGanttPopoverNavigation(oEvent);
 		},
 
@@ -711,7 +711,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onPressNotficationNumber: function (oEvent) {
-			this.sAppName = 'EvoNotify';
+			this.sAppName = "EvoNotify";
 			this.handleGanttPopoverNavigation(oEvent);
 		},
 
@@ -875,7 +875,7 @@ sap.ui.define([
 				}
 			}
 			return aCreatedAssignments;
-		},
+		}
 
 	
 	});

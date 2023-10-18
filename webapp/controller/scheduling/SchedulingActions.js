@@ -1,13 +1,13 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/model/formatter",
-	'sap/ui/model/Filter',
+	"sap/ui/model/Filter",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/IconColor",
 	"sap/ui/core/MessageType",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/core/Fragment",
+	"sap/ui/core/Fragment"
 ], function (BaseController, formatter, Filter, Constants, IconColor, MessageType, Filter, FilterOperator, Fragment) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.Scheduling.SchedulingActions", {
@@ -51,7 +51,7 @@ sap.ui.define([
 			if (this.oViewModel.getProperty("/sViewRoute") === "NEWGANTT") {
 				oResourceDataModel = this.oGanttModel;
 			}
-			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0)) {
+			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && oScheduling.selectedResources.length > 0) {
 				this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 				return;
 			}
@@ -80,7 +80,7 @@ sap.ui.define([
 					this._oEventBus.publish("ManageAbsences", "ClearSelection", {});
 				}
 				return false;
-			};
+			}
 			return true;
 		},
 		/**
@@ -92,11 +92,11 @@ sap.ui.define([
 				oResourceDataModel = this.oDataModel;
 			if (!this.oUserModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")) {
 				return;
-			};
+			}
 			if (this.oViewModel.getProperty("/sViewRoute") === "NEWGANTT") {
 				oResourceDataModel = this.oGanttModel;
 			}
-			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && (oScheduling.selectedResources.length > 0) && oScheduling.aSelectedDemandPath.length === 1) {
+			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && oScheduling.selectedResources.length > 0 && oScheduling.aSelectedDemandPath.length === 1) {
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
 				return;
 			}
@@ -125,7 +125,7 @@ sap.ui.define([
 					this._oEventBus.publish("ManageAbsences", "ClearSelection", {});
 				}
 				return false;
-			};
+			}
 
 			// check if the allow re-schedule flag is enabled or not.
 			oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
@@ -134,7 +134,7 @@ sap.ui.define([
 				aNonAssignableDemands.push(this.getMessageDescWithOrderID(oSelectedDemandItem, null, null, true));
 				this._showAssignErrorDialog(aNonAssignableDemands, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 				return false;
-			};
+			}
 			return true;
 		},
 
@@ -149,7 +149,7 @@ sap.ui.define([
 			aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
 				aFilterResource = [];
 			for (var x in aResourceList) {
-				aFilterResource.push(new Filter("ResourceGuid", FilterOperator.EQ, aResourceList[x].ResourceGuid))
+				aFilterResource.push(new Filter("ResourceGuid", FilterOperator.EQ, aResourceList[x].ResourceGuid));
 			}
 			aFilterResource.push(new Filter("DemandGuid", FilterOperator.EQ, sSelectedDemand.Guid));
 			
@@ -238,7 +238,7 @@ sap.ui.define([
 					aFilters.push(new Filter("ParentNodeId", "EQ", oResourceObj.NodeId));
 					if (aResourceFilters.length > 0) {
 						for (var x in aResourceFilters) {
-							aFilters.push(aResourceFilters[x])
+							aFilters.push(aResourceFilters[x]);
 						}
 					}
 					aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceHierarchySet", aFilters));
@@ -252,11 +252,11 @@ sap.ui.define([
 				aResult.forEach(function (oResult) {
 					aResourceData = aResourceData.concat(oResult.results);
 					aResourceData = aResourceData.filter(function (oParam1) {
-						return (oParam1.NodeId.indexOf("POOL") < 0);
+						return oParam1.NodeId.indexOf("POOL") < 0;
 					});
 				});
 				return checkDuplicate(aResourceData);
-			}.bind(this));
+			});
 			//Read all Resource from Resource group
 
 		},
@@ -302,7 +302,7 @@ sap.ui.define([
 				bReSchedBtnBusy: false,
 				sReSchAssignGuid: null,
 				oReSchResourceObj: null
-			}
+			};
 			this.oViewModel.setProperty("/Scheduling", oBj);
 		},
 
@@ -317,8 +317,8 @@ sap.ui.define([
 
 			this.checkDuplicateResource().then(function (oResult) {
 				if (oResult.bNoDuplicate) {
-					oMsgParam["bIsPoolExist"] = oResult.bIsPoolExist;
-					oMsgParam["sPoolNames"] = oResult.poolResource;
+					oMsgParam.bIsPoolExist = oResult.bIsPoolExist;
+					oMsgParam.sPoolNames = oResult.poolResource;
 					if (oSelectedPaths.aNonAssignable.length > 0) {
 						//show popup with list of demands who are not allow for assign
 						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
@@ -329,7 +329,7 @@ sap.ui.define([
 						this.oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
 						var mParams = {
 							entitySet: "DemandSet"
-						}
+						};
 						this._controller.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this._controller.getView(), mParams, oMsgParam, this);
 					}
 
@@ -400,7 +400,7 @@ sap.ui.define([
 				oTempResourceData = {},
 				oResourceData = {},
 				aAssignmentData = aResourceData.slice(0, iResourceLength), //reading assignment data
-				aAvailabilityData = aResourceData.slice(iResourceLength, (iResourceLength * 2)), //reading availibility data
+				aAvailabilityData = aResourceData.slice(iResourceLength, iResourceLength * 2), //reading availibility data
 				aAssignmentDemandFilter = [],
 				aExistingDemandQualification = [];
 			//looping resource list to create data
@@ -412,18 +412,18 @@ sap.ui.define([
 					workSchedules: [],
 					projectBlockers: [],
 					absenses: [],
-					qualifications: oResource["QUALIFICATION_DESCRIPTION"] ? oResource["QUALIFICATION_DESCRIPTION"].split(",") : [] //qualification added from ResourcehierarchySet
+					qualifications: oResource.QUALIFICATION_DESCRIPTION ? oResource.QUALIFICATION_DESCRIPTION.split(",") : [] //qualification added from ResourcehierarchySet
 				};
 				//looping availibility data of resource to segragate based on AvailabilityTypeGroup
 				aAvailabilityData[i].results.forEach(function (oAvail) {
 					if (oAvail.AvailabilityTypeGroup === "A") {
-						oTempResourceData["workSchedules"].push(oAvail);
+						oTempResourceData.workSchedules.push(oAvail);
 					} else if (oAvail.AvailabilityTypeGroup === "B") {
-						oTempResourceData["breaks"].push(oAvail);
+						oTempResourceData.breaks.push(oAvail);
 					} else if (oAvail.AvailabilityTypeGroup === "L") {
-						oTempResourceData["projectBlockers"].push(oAvail);
+						oTempResourceData.projectBlockers.push(oAvail);
 					} else if (oAvail.AvailabilityTypeGroup === "N" || oAvail.AvailabilityTypeGroup === "O") {
-						oTempResourceData["absenses"].push(oAvail);
+						oTempResourceData.absenses.push(oAvail);
 					}
 				});
 				oResourceData[oResource.ResourceGuid] = oTempResourceData;
@@ -438,7 +438,7 @@ sap.ui.define([
 			// reading existing Demands for qualifications
 			return this._controller.getOwnerComponent().readData("/DemandSet", aAssignmentDemandFilter, "$top=" + aAssignmentDemandFilter.length, "idAssignmentDemand").then(function(oDemands){
 				for (i in oDemands.results){
-					oDemands.results[i].Guid
+					oDemands.results[i].Guid;
 					aExistingDemandQualification[oDemands.results[i].Guid] = oDemands.results[i].QUALIFICATION_DESCRIPTION ? oDemands.results[i].QUALIFICATION_DESCRIPTION.split(",") : [];
 				}
 				this.oViewModel.setProperty("/Scheduling/aExistingDemandQualification", aExistingDemandQualification);
@@ -463,15 +463,15 @@ sap.ui.define([
 					iServiceTime = this._getDemandDurationInSeconds(oDemand.oData.DURATION, oDemand.oData.DURATION_UNIT);
 					
 					oTempDemandData = {
-						"data": oDemand.oData,
-						"location": {
-							"x": oDemand.oData.LONGITUDE,
-							"y": oDemand.oData.LATITUDE
+						data: oDemand.oData,
+						location: {
+							x: oDemand.oData.LONGITUDE,
+							y: oDemand.oData.LATITUDE
 						},
-						"qualification": oDemand.oData.QUALIFICATION_DESCRIPTION ? oDemand.oData.QUALIFICATION_DESCRIPTION.split(",") : [],
-						"priority": oDemand.oData.DEMAND_WEIGHTAGE ? parseInt(oDemand.oData.DEMAND_WEIGHTAGE) : 0,
-						"serviceTime": iServiceTime
-					}
+						qualification: oDemand.oData.QUALIFICATION_DESCRIPTION ? oDemand.oData.QUALIFICATION_DESCRIPTION.split(",") : [],
+						priority: oDemand.oData.DEMAND_WEIGHTAGE ? parseInt(oDemand.oData.DEMAND_WEIGHTAGE) : 0,
+						serviceTime: iServiceTime
+					};
 					oDemandData[oDemand.oData.Guid] = oTempDemandData;
 				}.bind(this));
 				this.oViewModel.setProperty("/Scheduling/demandData", oDemandData);
@@ -488,8 +488,8 @@ sap.ui.define([
 		 */
 		validateDemandDateRanges: function (oStartDate, oEndDate, bEndDateChanged) {
 			var oSchedulingModel = this._controller.getModel("SchedulingModel"),
-				startDate = (oStartDate && !isNaN(oStartDate)) ? moment(oStartDate) : null,
-				endDate = (oEndDate && !isNaN(oEndDate)) ? moment(oEndDate) : null,
+				startDate = oStartDate && !isNaN(oStartDate) ? moment(oStartDate) : null,
+				endDate = oEndDate && !isNaN(oEndDate) ? moment(oEndDate) : null,
 				aDemands = oSchedulingModel.getProperty("/step1/dataSet"),
 				inside = 0,
 				outside = 0;
@@ -548,12 +548,12 @@ sap.ui.define([
 			if (!startDate) {
 				bValidate = false;
 				this.oViewModel.setProperty("/Scheduling/sStartDateValueState", "Error");
-				return bValidate
+				return bValidate;
 			}
 			if (!endDate) {
 				bValidate = false;
 				this.oViewModel.setProperty("/Scheduling/sEndDateValueState", "Error");
-				return bValidate
+				return bValidate;
 			}
 			if (startDate.toDate() < oMinDate || startDate.toDate() > oMaxDate) {
 				bValidate = false;
@@ -563,16 +563,16 @@ sap.ui.define([
 			if (startDate && endDate) {
 				//check if endDate before startDate
 				//check if end date bigger than 14 days
-				if ((endDate.diff(startDate) < 0)) {
+				if (endDate.diff(startDate) < 0) {
 					if (bEndDateChanged) {
 						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateFromErrorMsg"));
 						bValidate = false;
 
 					} else {
 						this.showMessageToast(this.oResourceBundle.getText("ymsg.DateToErrorMsg"));
-						bValidate = false
+						bValidate = false;
 					}
-				} else if (endDate.diff(startDate, 'days') > 13) {
+				} else if (endDate.diff(startDate, "days") > 13) {
 					this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateEnd"));
 					bValidate = false;
 				}
@@ -598,7 +598,7 @@ sap.ui.define([
 			var aSchedulingFilter = [];
 			if (aParam instanceof Array) {
 				aSchedulingFilter = aParam.filter(function (mParam1) {
-					return (mParam1.sPath === "StartDate" || mParam1.sPath === "EndDate");
+					return mParam1.sPath === "StartDate" || mParam1.sPath === "EndDate";
 				});
 			}
 			this.oViewModel.setProperty("/Scheduling/aResourceTblFilters", aSchedulingFilter);
@@ -670,7 +670,7 @@ sap.ui.define([
 					this._fnFetchAndRefreshAssnRes();
 				}
 			} else if (sViewRoute === "MAP") {
-				mRefreshParam.bFromMap = true
+				mRefreshParam.bFromMap = true;
 			} else {
 				mRefreshParam.bFromHome = true;
 			}
@@ -718,7 +718,7 @@ sap.ui.define([
 					controller: this,
 					type: "XML"
 				}).then(function (ViolationDisplayDialog) {
-					this._controller.getView().addDependent(ViolationDisplayDialog)
+					this._controller.getView().addDependent(ViolationDisplayDialog);
 					this.oOwnerComponent.ViolationDisplayDialog = ViolationDisplayDialog;
 					ViolationDisplayDialog.open();
 				}.bind(this));
@@ -789,7 +789,7 @@ sap.ui.define([
 
 			return {
 				aPathsData: aPathsData,
-				aNonAssignable: aNonAssignableDemands,
+				aNonAssignable: aNonAssignableDemands
 			};
 		},
 		/**
@@ -800,7 +800,7 @@ sap.ui.define([
 		 */
 		_checkDuplicatePoolSelection: function (oParamModel, oSchedulingObj) {
 			var aPoolSelection = oSchedulingObj.selectedResources.filter(function (mPath) {
-				return (oParamModel.getProperty(mPath)["NodeId"].indexOf("POOL") > -1);
+				return oParamModel.getProperty(mPath).NodeId.indexOf("POOL") > -1;
 			});
 			if (aPoolSelection.length !== oSchedulingObj.selectedResources.length) {
 				return true;
@@ -838,7 +838,7 @@ sap.ui.define([
 					};
 					i++;
 				}
-				if (x === (aData.length - 1)) {
+				if (x === aData.length - 1) {
 					bIsLast = true;
 				}
 				if (aData[x].PLANNED) {
@@ -851,7 +851,7 @@ sap.ui.define([
 						Object.keys(oBjectInitial).forEach(function (key) {
 							if (aPropReq.indexOf(key) < 0) {
 								delete oBjectInitial[key];
-							};
+							}
 						});
 						oBjectInitial.MapAssignmentType = sSchedulingType;
 						// Adding travel time to Pass to create assignment call
@@ -868,7 +868,7 @@ sap.ui.define([
 						Object.keys(oBjectInitial).forEach(function (key) {
 							if (aPropReq.indexOf(key) < 0) {
 								delete oBjectInitial[key];
-							};
+							}
 						});
 						oBjectInitial.MapAssignmentType = sSchedulingType;
 						oBjectInitial.AssignmentGUID = this.oViewModel.getProperty("/Scheduling/sReSchAssignGuid");
@@ -881,7 +881,7 @@ sap.ui.define([
 					}
 
 				}
-			};
+			}
 
 			return aNewArray;
 		},
@@ -914,7 +914,7 @@ sap.ui.define([
 				  if (bIsLast) {
 					this.showMessage(oResponse);
 				  }
-				  resolve(oData)
+				  resolve(oData);
 				}.bind(this),
 				error: function (oError) {
 				  //set first dragged index to set initial
@@ -925,7 +925,7 @@ sap.ui.define([
 				  reject(oError);
 				}.bind(this)
 			  });
-			}.bind(this))
+			}.bind(this));
 		  },
 	  
 		/**
@@ -935,9 +935,9 @@ sap.ui.define([
 		 */
 		_getDemandDurationInSeconds: function (nDuration, sDurationUnit) {
 			if (parseInt(nDuration)) {
-				if (sDurationUnit === 'H') {
+				if (sDurationUnit === "H") {
 					return parseFloat(nDuration) * 3600;
-				} else if (sDurationUnit === 'MIN') {
+				} else if (sDurationUnit === "MIN") {
 					return parseFloat(nDuration) * 60;
 				} else {
 					return parseFloat(nDuration) * 86400;
@@ -970,7 +970,7 @@ sap.ui.define([
 				ResourceGroupGuid: oAssignObj.NODE_ID.split("//")[1],
 				NodeId: oAssignObj.NODE_ID.split("//")[1] + "//" + oAssignObj.ResourceGuid,
 				NodeType: oAssignObj.NODE_TYPE
-			}
+			};
 			this._updatedDmdResources(this.oViewModel, oResObj);
 		}
 	});

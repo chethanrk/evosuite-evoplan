@@ -29,7 +29,7 @@ sap.ui.define([
 				oUserModel = this.getModel("user"),
 				oResourceBundle = this.getResourceBundle();
 			this.sDropTargetPath = sTargetPath;
-			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel('viewModel');
+			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel("viewModel");
 			this.oAppViewModel = this.getModel("appView");
 
 			oDateParams = {
@@ -40,7 +40,7 @@ sap.ui.define([
 				ResourceGroupGuid: oTargetObj.ResourceGroupGuid,
 				ResourceGuid: oTargetObj.ResourceGuid,
 				DemandGuid: ""
-			}
+			};
 
 			if (oTargetObj.OBJECT_SOURCE_TYPE === "DEM_PMNO") { //PRT assignment to notification demand not allowed
 				this.showMessageToast(oResourceBundle.getText("ymsg.prtToNotifNA"));
@@ -131,7 +131,7 @@ sap.ui.define([
 		 * method to trigger create/update function import for tool assignment
 		 */
 		onSaveDialog: function () {
-			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel('viewModel');
+			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel("viewModel");
 			var oStartDate = this._oViewModel.getProperty("/PRT/defaultStartDate"),
 				oEndDate = this._oViewModel.getProperty("/PRT/defaultEndDate"),
 				sMsg = this.getResourceBundle().getText("ymsg.wrongDates"),
@@ -145,10 +145,10 @@ sap.ui.define([
 						oPRTAssignmentData.DateTo = oEndDate,
 						oPRTAssignmentData.TimeFrom = {
 							ms: oStartDate.getTime()
-						}
+						};
 					oPRTAssignmentData.TimeTo = {
 						ms: oEndDate.getTime()
-					}
+					};
 					oParams = this._getParams();
 					this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function () {
 						this._oEventBus.publish("GanttChart", "refreshDroppedContext", {
@@ -156,7 +156,7 @@ sap.ui.define([
 								sTargetPath: this._oAssignmentPaths.sTargetResourcePath,
 								sSourcePath: this._oAssignmentPaths.sCurrentResourcePath
 							}
-						})
+						});
 					}.bind(this));
 				} else if (this._mParameters.hasOwnProperty("bFromGanttToolReassign")) {
 					/*	This nested if else condition is used when the Tool is dropped inside the 
@@ -245,7 +245,7 @@ sap.ui.define([
 						if (sap.m.MessageBox.Action.YES === response) {
 							resolve(bToolExists);
 						}
-					}.bind(this));
+					});
 				} else {
 					resolve(bToolExists);
 				}
@@ -260,7 +260,7 @@ sap.ui.define([
 		 * @param mParameters flag of source view 
 		 */
 		onChangeTools: function (aSources, oDateParams, mParameters) {
-			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel('viewModel');
+			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel("viewModel");
 			var oParams;
 			oParams = this._getParams();
 			this._mParameters.bIsFromPRTAssignmentInfo = true;
@@ -269,9 +269,9 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function (success) {
 					resolve(success);
-				}.bind(this), function (error) {
+				}, function (error) {
 					reject(error);
-				}.bind(this));
+				});
 			}.bind(this));
 		},
 		/** 
@@ -283,7 +283,7 @@ sap.ui.define([
 				oStartDate = oPRTShapeData.DateFrom,
 				oEndDate = oPRTShapeData.DateTo;
 
-			oParams.DateFrom = oStartDate
+			oParams.DateFrom = oStartDate;
 			oParams.TimeFrom = {
 				ms: oStartDate.getTime()
 			};
@@ -365,7 +365,7 @@ sap.ui.define([
 				ResourceGroupGuid: oPRTAssignment.ResourceGroupGuid,
 				ResourceGuid: oPRTAssignment.ResourceGuid,
 				DemandGuid: oPRTAssignment.DemandGuid ? oPRTAssignment.DemandGuid : ""
-			}
+			};
 		},
 
 		/** 
@@ -433,6 +433,6 @@ sap.ui.define([
 					}
 				);
 			}.bind(this));
-		},
+		}
 	});
 });

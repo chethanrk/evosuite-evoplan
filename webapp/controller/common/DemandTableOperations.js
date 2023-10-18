@@ -124,7 +124,7 @@ sap.ui.define([
 		 */
 		onBeforeRebindDemandTable: function (oEvent) {
 			var oParams = oEvent.getParameter("bindingParams");
-			oParams["parameters"].batchGroupId = "DemandBatch";
+			oParams.parameters.batchGroupId = "DemandBatch";
 		},
 
 		/**
@@ -285,8 +285,8 @@ sap.ui.define([
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
 				if (oResult.bNoDuplicate) {
 					oAppViewModel.setProperty("/busy", true);
-					oMsgParam["bIsPoolExist"] = oResult.bIsPoolExist;
-					oMsgParam["sPoolNames"] = oResult.poolResource;
+					oMsgParam.bIsPoolExist = oResult.bIsPoolExist;
+					oMsgParam.sPoolNames = oResult.poolResource;
 					//calling function to check if the demand already is assigned to one of the selected resource
 					this.oSchedulingActions.checkAssignedResource();
 					return {
@@ -313,7 +313,7 @@ sap.ui.define([
 				if(bParam){
 					var mParams = {
 						entitySet: "DemandSet"
-					}
+					};
 					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams, oMsgParam, this.oSchedulingActions);
 				}
 				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
@@ -367,7 +367,7 @@ sap.ui.define([
 		 */
 		_openLongTextPopover: function (oSource) {
 			this.getOwnerComponent().longTextPopover.open(this.getView(), oSource);
-		},
+		}
 
 	});
 });

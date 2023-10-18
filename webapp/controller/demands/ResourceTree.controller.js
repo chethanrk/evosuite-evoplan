@@ -286,7 +286,7 @@ sap.ui.define([
 				oObject = oContext.getObject(),
 				vAssignGuid = oObject.AssignmentGuid;
 
-			if (oObject.NodeType !== "ASSIGNMENT" || (oObject.NodeType === "ASSIGNMENT" && oObject.IS_PRT)) {
+			if (oObject.NodeType !== "ASSIGNMENT" || oObject.NodeType === "ASSIGNMENT" && oObject.IS_PRT) {
 				// if not "ASSIGNMENT" type or if "ASSIGNMENT" is "PRT" type
 				oEvent.preventDefault();
 			}
