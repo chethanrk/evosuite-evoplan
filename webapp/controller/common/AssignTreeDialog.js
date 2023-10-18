@@ -60,7 +60,12 @@ sap.ui.define([
 				if (mParameters.hasOwnProperty("bFromNewGantt") && aSelectedPaths.length === 1) {
 					if (mParameters.bFromNewGantt) {
 						if(aSelectedPaths[0]){
-							oDialog.bindElement(aSelectedPaths[0].sPath);
+							if(aSelectedPaths[0].hasOwnProperty("sPath")){
+								oDialog.bindElement(aSelectedPaths[0].sPath);
+							}else{
+								oDialog.bindElement(aSelectedPaths[0]);
+							}
+							
 						}
 						
 					}
