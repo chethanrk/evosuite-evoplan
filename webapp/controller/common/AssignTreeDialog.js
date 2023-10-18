@@ -64,7 +64,7 @@ sap.ui.define([
 								// this case is for assign new from the demands table toolbar.
 								oDialog.bindElement(aSelectedPaths[0].sPath);
 							}else{
-								// this case is the assign new by clicking on the gantt chart.
+								// this case is the assign new by right clicking demands on the gantt chart.
 								oDialog.bindElement(aSelectedPaths[0]);
 							}
 							
