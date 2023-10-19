@@ -3,7 +3,6 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/core/Fragment",
 	"sap/m/MessageToast",
-	"com/evorait/evoplan/controller/prt/PRTActions",
 ], function (BaseController, formatter, Fragment, MessageToast, PRTActions) {
 	"use strict";
 
@@ -16,18 +15,19 @@ sap.ui.define([
 		init: function () {
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("AssignTreeDialog", "ToolReAssignment", this._reAssignTool, this);
-
-			this.oPRTActions = new PRTActions(this);
 		},
 		/**
 		 * Setting dialog properties to use in tool operations
 		 */
-		onToolOpen: function (oDialog, oView, sAssignementPath, oAssignmentData, mParameters) {
+		onToolOpen: function (oDialog, oView, sAssignementPath, oAssignmentData, mParameters, oPRTActions) {
 			var oPrtToolsAssignment = this._getDefaultPRTAssignmentObject(oAssignmentData);
 
 			this._sAssignmentPath = sAssignementPath;
 			this._mParameters = mParameters.refreshParameters;
 			this.oAssignmentModel = oView.getModel("assignment");
+
+			debugger;
+			this.oPRTActions = oPRTActions;
 			this._oDialog = oDialog;
 			this._oView = oView;
 			this._component = this._oView.getController().getOwnerComponent();
@@ -124,7 +124,7 @@ sap.ui.define([
 				oDateTo = oDateTo.getTime();
 				// To Validate DateTo and DateFrom
 				if (oDateTo >= oDateFrom) {
-					oParams = this.oPRTActions._getParams();
+					oParams = this._getParams();
 					this._mParameters.bIsFromPRTAssignmentInfo = true;
 					var oData = {
 						oSourceData: {

@@ -130,6 +130,7 @@ sap.ui.define([
 			this.oViewModel.setProperty("/iDefToolAsgnDays", iDefNum);
 
 			this.oSchedulingActions = new SchedulingActions(this);
+			debugger;
 			this.oPRTActions = new PRTActions(this);
 		},
 
@@ -839,7 +840,7 @@ sap.ui.define([
 			endDate.setDate(oTargetDate.getDate() + parseInt(iDefNum));
 			this.oViewModel.setProperty("/PRT/defaultStartDate", oTargetDate);
 			this.oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
-			this.oPRTActions.checksBeforeAssignTools(aSources, oResourceData, this._mParameters, sTargetPath);
+			this.oPRTActions.checksBeforeAssignTools(aSources, oResourceData, this._mParameters, sTargetPath, this.getView());
 		},
 
 		/**

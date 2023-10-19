@@ -15,7 +15,7 @@ sap.ui.define([
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
 
-		oPRTActions:  new PRTActions(this),
+		oPRTActions:  null,
 
 		/**
 		 * formatter for for Gantt view

@@ -10,6 +10,18 @@ sap.ui.define([
 
 	return BaseController.extend("com.evorait.evoplan.controller.prt.PRTActions", {
 
+		constructor: function(controller){
+			debugger;
+			this.controller = controller;
+			this.oComponent = controller.getOwnerComponent();
+			this.oODataModel = controller.getModel();
+			this.oViewModel = controller.getModel("viewModel");
+			this.oAppViewModel = controller.getModel("appView");
+			this.oUserModel = controller.getModel("user");
+			this.oResourceBundle = controller.getResourceBundle();
+			this._oEventBus = sap.ui.getCore().getEventBus();
+		},
+
 		/* =========================================================== */
 		/* Public methods                                              */
 		/* =========================================================== */
@@ -20,17 +32,13 @@ sap.ui.define([
 		 * @param sTargetPath Target Resource/Demand 
 		 * @param mParameters flag of source view 
 		 */
-		checksBeforeAssignTools: function (aSources, oTargetObj, mParameters, sTargetPath) {
+		checksBeforeAssignTools: function (aSources, oTargetObj, mParameters, sTargetPath, oView) {
 			var oDateParams,
 				sNodeType = oTargetObj.NodeType,
 				bIsDateNode = sNodeType === "TIMEWEEK" || sNodeType === "TIMEDAY" || sNodeType === "TIMEMONTH" || sNodeType === "TIMEQUART" ||
 				sNodeType ===
-				"TIMEYEAR",
-				oUserModel = this.getModel("user"),
-				oResourceBundle = this.getResourceBundle();
+				"TIMEYEAR";
 			this.sDropTargetPath = sTargetPath;
-			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel("viewModel");
-			this.oAppViewModel = this.getModel("appView");
 
 			oDateParams = {
 				DateFrom: oTargetObj.StartDate || oTargetObj.DateFrom,
@@ -43,7 +51,7 @@ sap.ui.define([
 			};
 
 			if (oTargetObj.OBJECT_SOURCE_TYPE === "DEM_PMNO") { //PRT assignment to notification demand not allowed
-				this.showMessageToast(oResourceBundle.getText("ymsg.prtToNotifNA"));
+				this.showMessageToast(this.oResourceBundle.getText("ymsg.prtToNotifNA"));
 				return;
 			} else if (bIsDateNode) {
 				/*Code to check Resource availability*/
@@ -60,17 +68,17 @@ sap.ui.define([
 				}
 
 			} else if (sNodeType === "RESOURCE") {
-				var bToolAssignDialog = oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG");
+				var bToolAssignDialog = this.oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG");
 				if (oTargetObj.IS_AVAILABLE !== "A") {
 					this.showMessageToProceedPRT(oTargetObj.Description).then(function (resolve, reject) {
 						if (resolve) {
-							this.onPRTAssignmentProceed(this.getView(), oDateParams, aSources, mParameters, bToolAssignDialog, oTargetObj.ResourceGuid);
+							this.onPRTAssignmentProceed(oView, oDateParams, aSources, mParameters, bToolAssignDialog, oTargetObj.ResourceGuid);
 						} else {
 							return;
 						}
 					}.bind(this));
 				} else {
-					this.onPRTAssignmentProceed(this.getView(), oDateParams, aSources, mParameters, bToolAssignDialog, oTargetObj.ResourceGuid);
+					this.onPRTAssignmentProceed(oView, oDateParams, aSources, mParameters, bToolAssignDialog, oTargetObj.ResourceGuid);
 				}
 
 			} else if (sNodeType === "ASSIGNMENT" && !oTargetObj.IS_PRT) {
@@ -131,16 +139,15 @@ sap.ui.define([
 		 * method to trigger create/update function import for tool assignment
 		 */
 		onSaveDialog: function () {
-			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel("viewModel");
-			var oStartDate = this._oViewModel.getProperty("/PRT/defaultStartDate"),
-				oEndDate = this._oViewModel.getProperty("/PRT/defaultEndDate"),
-				sMsg = this.getResourceBundle().getText("ymsg.wrongDates"),
+			var oStartDate = this.oViewModel.getProperty("/PRT/defaultStartDate"),
+				oEndDate = this.oViewModel.getProperty("/PRT/defaultEndDate"),
+				sMsg = this.oResourceBundle.getText("ymsg.wrongDates"),
 				oPRTAssignmentData,
 				oParams;
 
 			if (oStartDate <= oEndDate) {
 				if (this._bIsGanttPRTReassign) {
-					oPRTAssignmentData = this._oViewModel.getProperty("/PRT/AssignmentData");
+					oPRTAssignmentData = this.oViewModel.getProperty("/PRT/AssignmentData");
 					oPRTAssignmentData.DateFrom = oStartDate,
 						oPRTAssignmentData.DateTo = oEndDate,
 						oPRTAssignmentData.TimeFrom = {
@@ -150,7 +157,7 @@ sap.ui.define([
 						ms: oEndDate.getTime()
 					};
 					oParams = this._getParams();
-					this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function () {
+					this.controller.executeFunctionImport(this.oODataModel, oParams, "ChangeToolAssignment", "POST").then(function () {
 						this._oEventBus.publish("GanttChart", "refreshDroppedContext", {
 							oSourceData: {
 								sTargetPath: this._oAssignmentPaths.sTargetResourcePath,
@@ -186,11 +193,11 @@ sap.ui.define([
 		 * @param Context of demand assignment if tool is under demand assignment
 		 */
 		openToolsInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext) {
-			if (this.getOwnerComponent()) {
-				this.oComponent = this.getOwnerComponent();
-			} else {
-				this.oComponent = oView.getController().getOwnerComponent();
-			}
+			// if (this.getOwnerComponent()) {
+			// 	this.oComponent = this.getOwnerComponent();
+			// } else {
+			// 	this.oComponent = oView.getController().getOwnerComponent();
+			// }
 			this.openToolsDialog(oView, sPath, oContext, mParameters);
 
 		},
@@ -230,9 +237,9 @@ sap.ui.define([
 				oAsgnData;
 			for (var i in aContexts) {
 				if (aContexts[i].AssignmentGUID) {
-					oAsgnData = this.getModel().getProperty("/AssignmentSet('" + aContexts[i].AssignmentGUID + "')");
+					oAsgnData = this.oODataModel.getProperty("/AssignmentSet('" + aContexts[i].AssignmentGUID + "')");
 				} else {
-					oAsgnData = this.getModel().getProperty(aContexts[i].getPath());
+					oAsgnData = this.oODataModel.getProperty(aContexts[i].getPath());
 				}
 				if (oAsgnData.PRT_ASSIGNMENT_EXISTS) {
 					bToolExists = true;
@@ -241,7 +248,7 @@ sap.ui.define([
 			}
 			return new Promise(function (resolve, reject) {
 				if (bToolExists) {
-					this._showConfirmMessageBox(this.getResourceBundle().getText("ymsg.confirmAssignmentDelete")).then(function (response) {
+					this._showConfirmMessageBox(this.oResourceBundle.getText("ymsg.confirmAssignmentDelete")).then(function (response) {
 						if (sap.m.MessageBox.Action.YES === response) {
 							resolve(bToolExists);
 						}
@@ -260,14 +267,13 @@ sap.ui.define([
 		 * @param mParameters flag of source view 
 		 */
 		onChangeTools: function (aSources, oDateParams, mParameters) {
-			this._oViewModel = this._oViewModel ? this._oViewModel : this.getModel("viewModel");
 			var oParams;
 			oParams = this._getParams();
 			this._mParameters.bIsFromPRTAssignmentInfo = true;
-			this.clearMessageModel();
-			this._updatedDmdResources(this._oViewModel, oParams);
+			this.controller.clearMessageModel();
+			this._updatedDmdResources(this.oViewModel, oParams);
 			return new Promise(function (resolve, reject) {
-				this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function (success) {
+				this.controller.executeFunctionImport(this.oODataModel, oParams, "ChangeToolAssignment", "POST").then(function (success) {
 					resolve(success);
 				}, function (error) {
 					reject(error);
@@ -279,7 +285,7 @@ sap.ui.define([
 		 */
 		getPRTDateParams: function (oPRTShapeData) {
 			var oParams = {},
-				iDefNum = this.getModel("viewModel").getProperty("/iDefToolAsgnDays"),
+				iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays"),
 				oStartDate = oPRTShapeData.DateFrom,
 				oEndDate = oPRTShapeData.DateTo;
 
@@ -315,7 +321,7 @@ sap.ui.define([
 					sTargetPath: this.sDropTargetPath
 				};
 				//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			this._updatedDmdResources(this._oViewModel, oDateParams);
+			this._updatedDmdResources(this.oViewModel, oDateParams);
 			for (var i = 0; i < aSources.length; i++) {
 				oParams = {
 					DateFrom: oDateParams.DateFrom,
@@ -331,8 +337,8 @@ sap.ui.define([
 				if (parseInt(i, 10) === aSources.length - 1) {
 					bIsLast = true;
 				}
-				this.clearMessageModel();
-				aPromise.push(this.executeFunctionImport(this.getModel(), oParams, "CreateToolAssignment", "POST"));
+				this.controller.clearMessageModel();
+				aPromise.push(this.controller.executeFunctionImport(this.oODataModel, oParams, "CreateToolAssignment", "POST"));
 			}
 			this.oAppViewModel.setProperty("/busy", true);
 			Promise.all(aPromise).then(function (oSuccess) {
@@ -349,7 +355,7 @@ sap.ui.define([
 		 * get Parameteres to pass into Function Import
 		 */
 		_getParams: function () {
-			var oPRTAssignment = this.getModel("viewModel").getProperty("/PRT/AssignmentData");
+			var oPRTAssignment = this.oViewModel.getProperty("/PRT/AssignmentData");
 			return {
 				ToolId: oPRTAssignment.TOOL_ID,
 				ToolType: oPRTAssignment.TOOL_TYPE,
@@ -381,7 +387,7 @@ sap.ui.define([
 			if (sEvent === "dataReceived") {
 				//Fetching Context Data for PlanningCalendar 
 				oDialog.setBusy(false);
-				this.oComponent.toolInfoDialog.onToolOpen(oDialog, oView, sPath, data, mParams);
+				this.oComponent.toolInfoDialog.onToolOpen(oDialog, oView, sPath, data, mParams, this);
 			}
 		},
 
@@ -397,16 +403,16 @@ sap.ui.define([
 		onPRTAssignmentProceed: function (oView, oDateParams, aSources, mParameters, bToolAssignDialog, sResourceGuid) {
 			if (sResourceGuid) {
 				if (bToolAssignDialog) { // If Dialog show config is on 
-					this.openDateSelectionDialog(this.getView(), oDateParams, aSources, mParameters);
+					this.openDateSelectionDialog(oView, oDateParams, aSources, mParameters);
 				} else { // If dialog show config is off
-					oDateParams.DateFrom = this._oViewModel.getProperty("/PRT/defaultStartDate");
+					oDateParams.DateFrom = this.oViewModel.getProperty("/PRT/defaultStartDate");
 					oDateParams.TimeFrom.ms = oDateParams.DateFrom.getTime();
-					oDateParams.DateTo = this._oViewModel.getProperty("/PRT/defaultEndDate");
+					oDateParams.DateTo = this.oViewModel.getProperty("/PRT/defaultEndDate");
 					oDateParams.TimeTo.ms = oDateParams.DateTo.getTime();
 					this._proceedToAssignTools(aSources, oDateParams, mParameters);
 				}
 			} else {
-				this.showMessageToast(this.getResourceBundle().getText("ymsg.poolPrtNotAllowed"));
+				this.showMessageToast(this.oResourceBundle.getText("ymsg.poolPrtNotAllowed"));
 				return;
 			}
 		},
@@ -418,15 +424,12 @@ sap.ui.define([
 		 */
 		showMessageToProceedPRT: function (sResource) {
 			return new Promise(function (resolve, reject) {
-				var oResourceBundle = this.getResourceBundle(),
-					oComponent = this.getOwnerComponent(),
-					oView = this.getView();
-				var sAction = oResourceBundle.getText("xbut.proceed"),
-					sMsg = oResourceBundle.getText("ymsg.PRTAvailability");
+				var sAction = this.oResourceBundle.getText("xbut.proceed"),
+					sMsg = this.oResourceBundle.getText("ymsg.PRTAvailability");
 				sap.m.MessageBox.warning(
 					sMsg, {
 						actions: [sAction, sap.m.MessageBox.Action.CANCEL],
-						styleClass: oComponent.getContentDensityClass(),
+						styleClass: this.oComponent.getContentDensityClass(),
 						onClose: function (sValue) {
 							return sValue === sAction ? resolve(true) : resolve(false);
 						}

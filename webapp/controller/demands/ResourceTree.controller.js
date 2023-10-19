@@ -50,7 +50,7 @@ sap.ui.define([
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
 			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
 			this._oViewModel = this.getModel("viewModel");
-
+			debugger
 			this.oPRTActions = new PRTActions(this);
 
 			Fragment.load({
@@ -624,7 +624,7 @@ sap.ui.define([
 			this._oViewModel.setProperty("/PRT/defaultStartDate", new Date());
 			this._oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
 
-			this.oPRTActions.checksBeforeAssignTools(aSources, oTargetObj, this._mParameters);
+			this.oPRTActions.checksBeforeAssignTools(aSources, oTargetObj, this._mParameters, null, this.getView());
 		}
 	});
 });

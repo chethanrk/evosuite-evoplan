@@ -12,7 +12,7 @@ sap.ui.define([
 		onInit: function () {
 			// call super class onInit
 			DemandTableOperations.prototype.onInit.apply(this, arguments);
-
+			debugger;
 			this.oPRTActions = new PRTActions(this);
 		},
 
