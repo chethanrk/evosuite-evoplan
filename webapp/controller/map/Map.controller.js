@@ -547,7 +547,7 @@ sap.ui.define([
 			this.getModel("viewModel").setProperty("/mapDragSession", aPathsData);
 			this.getModel("viewModel").setProperty("/dragSession", aPathsData);
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+				this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 				oEvent.preventDefault();
 			}
 		},
@@ -664,7 +664,7 @@ sap.ui.define([
 				if (oData.ALLOW_ASSIGN) {
 					this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, this._mParameters);
 				} else {
-					this._showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
+					this.showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
 				}
 			} else {
 				//Operation performed from Demands Toolbar
@@ -674,7 +674,7 @@ sap.ui.define([
 					this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
 				}
 				if (oSelectedPaths.aNonAssignable.length > 0) {
-					this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+					this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 				}
 			}
 		},

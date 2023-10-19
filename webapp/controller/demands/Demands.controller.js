@@ -84,7 +84,7 @@ sap.ui.define([
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
 			}
 			if (oSelectedPaths.aNonAssignable.length > 0) {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+				this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 			}
 		},
 
@@ -314,7 +314,7 @@ sap.ui.define([
 			// keeping the data in drag session
 			this.getModel("viewModel").setProperty("/dragSession", aPathsData);
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+				this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 				oEvent.preventDefault();
 			}
 		},
@@ -472,7 +472,7 @@ sap.ui.define([
 				});
 			}
 			if (oSelectedPaths.aNonAssignable.length > 0) {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, false, sErrorMsg);
+				this.showAssignErrorDialog(oSelectedPaths.aNonAssignable, false, sErrorMsg);
 			}
 		},
 

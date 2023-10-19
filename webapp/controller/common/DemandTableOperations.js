@@ -91,6 +91,7 @@ sap.ui.define([
 		 **/
 		onInit: function () {
 			this.oSchedulingActions = new SchedulingActions(this);
+			this._viewModel  = this.getModel("viewModel");
 		},
 		/**
 		 * open change status dialog
@@ -190,10 +191,12 @@ sap.ui.define([
 		 */
 		onPressUnassignDemand: function () {
 			var oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+			//checking if the selected demands have any unassignable demands or not
 			if (oSelectedPaths.aUnAssignDemands.length > 0) {
 				this.getOwnerComponent().assignActionsDialog.open(this.getView(), oSelectedPaths, true, this._mParameters);
+			//showing the error message along with displaying non assignable data
 			} else {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+				this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 			}
 		},
 
@@ -204,10 +207,12 @@ sap.ui.define([
 		onAssignmentStatusButtonPress: function () {
 			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
 			var aSelectedPaths = this.getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx);
+			//checking if the selected demands have any assignment or not
 			if (aSelectedPaths.aAssignmentDemands.length > 0) {
 				this._viewModel.setProperty("/Show_Assignment_Status_Button", true);
 				this._viewModel.setProperty("/Disable_Assignment_Status_Button", false);
 				this.getOwnerComponent().assignActionsDialog.open(this.getView(), aSelectedPaths, true, this._mParameters);
+			//showing a message toast if there are no assignments
 			} else {
 				this.showMessageToast(this.getResourceBundle().getText("ymsg.noAssignments"));
 			}
@@ -227,37 +232,37 @@ sap.ui.define([
 
 		/**
 		 * handle message popover response to save data/ open longtext popover
-		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
+		 * @param {sap.ui.base.Event} bResponse - press event for the long text button
 		 */
 		handleResponse: function (bResponse) {
 			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle(),
-				oViewModel = this.getModel("viewModel"),
 				oModel = this.getModel(),
-				bDemandEditMode = oViewModel.getProperty("/bDemandEditMode"),
 				sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
 				sSave = oResourceBundle.getText("xbut.buttonSave");
 
+			//checking if the response is to discard then resetting the changes
 			if (bResponse === sDiscard) {
 				oModel.resetChanges();
-				oViewModel.setProperty("/bDemandEditMode", false);
+				this._viewModel.setProperty("/bDemandEditMode", false);
 				this.getOwnerComponent().longTextPopover.open(this.getView(), this._oSource);
+			//if save is pressed then submiting the table changes
 			} else if (bResponse === sSave) {
-				oViewModel.setProperty("/bDemandEditMode", false);
+				this._viewModel.setProperty("/bDemandEditMode", false);
 				this.submitDemandTableChanges();
 			}
 		},
 
 		/**
 		 * On press of auto-schedule button
-		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
+		 * Since 2309
 		 */
-		onAutoscheduleButtonPress: function (oEvent) {
+		onAutoscheduleButtonPress: function () {
+			this._viewModel.setProperty("/Scheduling/bSchedBtnBusy", true);
+			this._viewModel.setProperty("/Scheduling/sScheduleType", "A");
 
-			var oViewModel = this.getModel("viewModel");
-			oViewModel.setProperty("/Scheduling/bSchedBtnBusy", true);
-			oViewModel.setProperty("/Scheduling/sScheduleType", "A");
+			//incase all the selected demands are invalid then the selections are cleared and the message toast will be displayed
 			if (!this.oSchedulingActions.validateScheduleAfterPress()) {
-				oViewModel.setProperty("/Scheduling/bSchedBtnBusy", false);
+				this._viewModel.setProperty("/Scheduling/bSchedBtnBusy", false);
 				return;
 			}
 			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
@@ -265,21 +270,21 @@ sap.ui.define([
 
 		/**
 		 * On press of reschedule button
-		 * @param {sap.ui.base.Event} oEvent - press event for reschedule button
+		 * since 2309
 		 */
-		onRescheduleButtonPress: function (oEvent) {
-			var oViewModel = this.getModel("viewModel"),
-				oDataModel = this.getModel(),
+		onRescheduleButtonPress: function () {
+			var oDataModel = this.getModel(),
 				oResourceBundle = this.getResourceBundle(),
-				sPath = oViewModel.getProperty("/Scheduling/selectedDemandPath"),
+				sPath = this._viewModel.getProperty("/Scheduling/selectedDemandPath"),
 				aDemandList = [],
 				oMsgParam = {},
 				oAppViewModel = this.getModel("appView");
-			oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", true);
-			oViewModel.setProperty("/Scheduling/sScheduleType", "R");
-			oAppViewModel.setProperty("/busy", true);
+			this._viewModel.setProperty("/Scheduling/bReSchedBtnBusy", true);
+			this._viewModel.setProperty("/Scheduling/sScheduleType", "R");
+			this._viewModel.setProperty("/busy", true);
+			//incase the selected demand is invalid then the selection is cleared and the message toast will be displayed
 			if (!this.oSchedulingActions.validateReScheduleAfterPress()) {
-				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
+				this._viewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
 				oAppViewModel.setProperty("/busy", false);
 				return;
 			}
@@ -295,7 +300,7 @@ sap.ui.define([
 					};
 				} else {
 					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
-					oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
+					this._viewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
 					oAppViewModel.setProperty("/busy", false);
 					return false;
 				}
@@ -305,8 +310,8 @@ sap.ui.define([
 						sPath: sPath,
 						oData: oDataModel.getProperty(sPath)
 					}];
-					oViewModel.setProperty("/Scheduling/demandList", aDemandList);
-					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
+					this._viewModel.setProperty("/Scheduling/demandList", aDemandList);
+					this._viewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
 					// calling below method to get the assignment id for the resource so that 
 					return this.oSchedulingActions.getAssignmentIdForReschedule();
 				} 
@@ -317,7 +322,7 @@ sap.ui.define([
 					};
 					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams, oMsgParam, this.oSchedulingActions);
 				}
-				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
+				this._viewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
 				oAppViewModel.setProperty("/busy", false);
 				
 			}.bind(this));

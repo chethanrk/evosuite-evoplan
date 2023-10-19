@@ -138,7 +138,7 @@ sap.ui.define([
 			this.localStorage.put("Evo-toolDrag", "");
 
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+				this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 				oEvent.preventDefault();
 			}
 		},
@@ -158,7 +158,7 @@ sap.ui.define([
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
 			}
 			if (oSelectedPaths.aNonAssignable.length > 0) {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+				this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 			}
 		},
 		/**

@@ -88,7 +88,7 @@ sap.ui.define([
 					bFromDetail: true
 				});
 			} else {
-				this._showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
+				this.showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
 			}
 		},
 

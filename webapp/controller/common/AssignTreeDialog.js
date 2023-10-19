@@ -94,7 +94,7 @@ sap.ui.define([
 
 				//Global Error Msg Popup shows Description of discarded assignments
 				sMsg = this._oView.getController().getResourceBundle().getText("xmsg.findResourceNotAllowed");
-				this._showAssignErrorDialog(oDemandsPaths.oNotAllowedPaths, null, sMsg);
+				this.showAssignErrorDialog(oDemandsPaths.oNotAllowedPaths, null, sMsg);
 			}
 		},
 
