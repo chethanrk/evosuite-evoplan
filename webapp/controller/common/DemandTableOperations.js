@@ -89,7 +89,7 @@ sap.ui.define([
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
 		 **/
-		onInit: function (oEvent) {
+		onInit: function () {
 			this.oSchedulingActions = new SchedulingActions(this);
 		},
 		/**
@@ -97,6 +97,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onChangeStatusButtonPress: function (oEvent) {
+			//checking if the status button is pressed in the map view
 			if (this._mParameters.bFromMap) {
 				var sParentId = oEvent.getSource().getParent().getId();
 				if (sParentId.includes("menu")) {
@@ -130,14 +131,14 @@ sap.ui.define([
 		/**
 		 * On Drag end check for dropped control, If dropped control not found
 		 * then make reset the selection
-		 * @param oEvent
 		 */
-		onDragEnd: function (oEvent) {
+		onDragEnd: function () {
 			this._deselectAll();
 		},
 
 		/**
 		 *	Navigates to evoOrder detail page with static url.
+		 * @param oEvent
 		 */
 		OnClickOrderId: function (oEvent) {
 			var sOrderId = oEvent.getSource().getText();
@@ -188,7 +189,7 @@ sap.ui.define([
 		 * on press unassign button in footer
 		 */
 		onPressUnassignDemand: function () {
-			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+			var oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 			if (oSelectedPaths.aUnAssignDemands.length > 0) {
 				this.getOwnerComponent().assignActionsDialog.open(this.getView(), oSelectedPaths, true, this._mParameters);
 			} else {
@@ -202,7 +203,7 @@ sap.ui.define([
 		 */
 		onAssignmentStatusButtonPress: function () {
 			this._aSelectedRowsIdx = this._oDataTable.getSelectedIndices();
-			var aSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx);
+			var aSelectedPaths = this.getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx);
 			if (aSelectedPaths.aAssignmentDemands.length > 0) {
 				this._viewModel.setProperty("/Show_Assignment_Status_Button", true);
 				this._viewModel.setProperty("/Disable_Assignment_Status_Button", false);
@@ -338,7 +339,7 @@ sap.ui.define([
 		 * On Open change status dialog after validating all conditions in all the views
 		 */
 		_proceedToChangeStatus: function () {
-			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
+			var oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
 			if (this._aSelectedRowsIdx.length > 0) {
 				if (this._mParameters.bFromNewGantt) {
 					this.localStorage.put("Evo-Action-page", "splitDemands");

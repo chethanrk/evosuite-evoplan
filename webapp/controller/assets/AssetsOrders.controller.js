@@ -529,7 +529,7 @@ sap.ui.define([
 		 * @since 2.1
 		 */
 		onAssignButtonPress: function () {
-			var oSelectedPaths = this._getSelectedRowPaths(null, null, null, this._aSelectedDemands);
+			var oSelectedPaths = this.getSelectedRowPaths(null, null, null, this._aSelectedDemands);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, {

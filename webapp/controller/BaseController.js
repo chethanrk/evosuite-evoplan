@@ -351,7 +351,7 @@ sap.ui.define([
 		 * 
 		 */
 		onMaterialInfoButtonPress: function () {
-			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
+			var oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
 			var iMaxSelcRow = this.getModel("user").getProperty("/DEFAULT_MAX_DEM_SEL_MAT_LIST");
 			if (oSelectedPaths.aPathsData.length > 0 && iMaxSelcRow >= this._aSelectedRowsIdx.length) {
 				this.getOwnerComponent().materialInfoDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
@@ -378,17 +378,20 @@ sap.ui.define([
 
 		/**
 		 * get all selected rows from table and return to draggable helper function
-		 * @param aSelectedRowsIdx
-		 * @private
+		 * @param {Object} oTable - table from which the items are selected
+		 * @param {Array} aSelectedRowsIdx - index of the selected rows from the table
+		 * @param {Boolean} bCheckAssignAllowed - flag containing if assigning is allowed or not
+		 * @param {Array} aDemands - array of the selected demands
+		 * @param {Boolean} bIsForScheduling - flag to check if the funciton is being called for scheduling
 		 */
-		_getSelectedRowPaths: function (oTable, aSelectedRowsIdx, checkAssignAllowed, aDemands, bIsForScheduling) {
+		getSelectedRowPaths: function (oTable, aSelectedRowsIdx, bCheckAssignAllowed, aDemands, bIsForScheduling) {
 			var aPathsData = [],
 				aNonAssignableDemands = [],
 				aUnAssignableDemands = [],
 				aAssignmentWithDemands = [],
 				oData, oContext, sPath;
 
-			if (checkAssignAllowed) {
+			if (bCheckAssignAllowed) {
 				oTable.clearSelection();
 			}
 			if (!aDemands) {
@@ -416,7 +419,7 @@ sap.ui.define([
 					}
 
 					//on check on oData property ALLOW_ASSIGN when flag was given
-					if (checkAssignAllowed) {
+					if (bCheckAssignAllowed) {
 						//Added condition to check for number of assignments to plan demands via scheduling
 						if (!bIsForScheduling && oData.ALLOW_ASSIGN || bIsForScheduling && oData.ALLOW_ASSIGN && oData.NUMBER_OF_CAPACITIES <= 1) {
 							aPathsData.push({

@@ -115,11 +115,11 @@ sap.ui.define([
 			oDragSession.setTextData("Hi I am dragging");
 			//get all selected rows when checkboxes in table selected
 			if (aIndices.length > 0) {
-				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedIndices, true);
+				oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, this._aSelectedIndices, true);
 				aPathsData = oSelectedPaths.aPathsData;
 			} else {
 				//table tr single dragged element
-				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, [oDraggedControl.getIndex()], true);
+				oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, [oDraggedControl.getIndex()], true);
 				aPathsData = oSelectedPaths.aPathsData;
 			}
 
@@ -149,7 +149,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onAssignButtonPress: function (oEvent) {
-			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+			var oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 			this._viewModel.setProperty("/dragSession", oSelectedPaths.aPathsData);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
