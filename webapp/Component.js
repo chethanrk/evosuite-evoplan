@@ -5,7 +5,7 @@ sap.ui.define([
 	"com/evorait/evoplan/model/models",
 	"com/evorait/evoplan/assets/js/moment-with-locales.min",
 	"com/evorait/evoplan/controller/ErrorHandler",
-	"com/evorait/evoplan/controller/PRT/ToolInfoDialog",
+	"com/evorait/evoplan/controller/prt/ToolInfoDialog",
 	"com/evorait/evoplan/controller/common/AssignInfoDialog",
 	"com/evorait/evoplan/controller/common/AssignTreeDialog",
 	"com/evorait/evoplan/controller/common/StatusSelectDialog",

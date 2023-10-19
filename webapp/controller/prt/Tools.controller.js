@@ -1,5 +1,5 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/AssignmentsController",
+	"com/evorait/evoplan/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
@@ -14,7 +14,7 @@ sap.ui.define([
 	RowAction, RowActionItem, Fragment) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.PRT.Tools", {
+	return BaseController.extend("com.evorait.evoplan.controller.prt.Tools", {
 
 		formatter: formatter,
 

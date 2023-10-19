@@ -59,7 +59,8 @@ sap.ui.define([
 			if (aSelectedPaths && aSelectedPaths.constructor === Array && mParameters) {
 				if (mParameters.hasOwnProperty("bFromNewGantt") && aSelectedPaths.length === 1) {
 					if (mParameters.bFromNewGantt) {
-						if(aSelectedPaths[0]){
+						//Checking if sPath property is available for aSelectedPaths[0]
+						if(aSelectedPaths[0].hasOwnProperty("sPath")){
 							oDialog.bindElement(aSelectedPaths[0].sPath);
 						}
 						

@@ -4,12 +4,12 @@
 		<f:header>
 			<f:DynamicPageHeader id="idToolsViewDemandsHeader" pinnable="true" visible="{= ${viewModel>/PRT/bIsGantt} === false}">
 				<f:content>
-					<core:Fragment fragmentName="com.evorait.evoplan.view.PRT.ToolsSmartFilter" type="XML"/>
+					<core:Fragment fragmentName="com.evorait.evoplan.view.prt.ToolsSmartFilter" type="XML"/>
 				</f:content>
 			</f:DynamicPageHeader>
 		</f:header>
 		<f:content>
-			<core:Fragment fragmentName="com.evorait.evoplan.view.PRT.ToolsList" type="XML"/>
+			<core:Fragment fragmentName="com.evorait.evoplan.view.prt.ToolsList" type="XML"/>
 		</f:content>
 		<f:footer></f:footer>
 	</f:DynamicPage>

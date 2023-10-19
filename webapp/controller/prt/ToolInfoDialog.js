@@ -1,12 +1,12 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/AssignmentsController",
+	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/core/Fragment",
 	"sap/m/MessageToast"
 ], function (BaseController, formatter, Fragment, MessageToast) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.PRT.ToolInfoDialog", {
+	return BaseController.extend("com.evorait.evoplan.controller.prt.ToolInfoDialog", {
 
 		formatter: formatter,
 
