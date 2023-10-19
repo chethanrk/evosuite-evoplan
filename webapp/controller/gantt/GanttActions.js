@@ -8,11 +8,14 @@ sap.ui.define([
 	"sap/m/Tokenizer",
 	"sap/ui/core/Fragment",
 	"sap/m/MessageBox",
-	"sap/m/MessageToast"
-], function (Controller, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageBox, MessageToast) {
+	"sap/m/MessageToast",
+	"com/evorait/evoplan/controller/prt/PRTActions",
+], function (Controller, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageBox, MessageToast, PRTActions) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
+
+		oPRTActions:  new PRTActions(this),
 
 		/**
 		 * formatter for for Gantt view
@@ -587,7 +590,7 @@ sap.ui.define([
 					});
 			}.bind(this);
 
-			this.checkToolExists([{ // check tool exists
+			this.oPRTActions.checkToolExists([{ // check tool exists
 				AssignmentGUID: sAssignGuid
 			}]).then(function (resolve) {
 				if (resolve) { // If user click yes

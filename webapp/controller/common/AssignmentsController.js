@@ -3,14 +3,17 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
-	"sap/ui/core/Fragment"
-], function (DemandTableOperations, MessageBox, formatter, Constants, Fragment) {
+	"sap/ui/core/Fragment",
+	"com/evorait/evoplan/controller/prt/PRTActions",
+], function (DemandTableOperations, MessageBox, formatter, Constants, Fragment, PRTActions) {
 
 	return DemandTableOperations.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
-
+		oPRTActions: null,
 		onInit: function () {
 			// call super class onInit
 			DemandTableOperations.prototype.onInit.apply(this, arguments);
+
+			this.oPRTActions = new PRTActions(this);
 		},
 
 		/**
@@ -593,7 +596,7 @@ sap.ui.define([
 				sPath, sAssignmentGuid, oParams;
 			this.clearMessageModel();
 
-			this.checkToolExists(aContexts).then(function (resolve) {
+			this.oPRTActions.checkToolExists(aContexts).then(function (resolve) {
 				for (var i in aContexts) {
 					sPath = aContexts[i].getPath();
 					sAssignmentGuid = oModel.getProperty(sPath + "/Guid");
@@ -614,7 +617,7 @@ sap.ui.define([
 		 * @param sPath
 		 */
 		deleteAssignment: function (sId, mParameters) {
-			this.checkToolExists([{
+			this.oPRTActions.checkToolExists([{
 				AssignmentGUID: sId
 			}]).then(function (resolve) {
 				var oParams = {
@@ -782,14 +785,14 @@ sap.ui.define([
 				var bIsPRT = oContext.IS_PRT !== undefined ? oContext.IS_PRT : oContext.getObject().IS_PRT;
 				var sObjectSourceType = oContext.OBJECT_SOURCE_TYPE ? oContext.OBJECT_SOURCE_TYPE : oContext.getObject().OBJECT_SOURCE_TYPE;
 				if (bIsPRT) {
-					this.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+					this.oPRTActions.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 				} else {
 					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 				}
 			} else {
 				var sObjectSourceType = oDemandContext.OBJECT_SOURCE_TYPE;
 				if (oDemandContext.IS_PRT) {
-					this.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+					this.oPRTActions.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 				} else {
 					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 				}

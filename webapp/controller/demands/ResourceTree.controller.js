@@ -10,10 +10,11 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/ui/core/Fragment",
-	"com/evorait/evoplan/model/Constants"
+	"com/evorait/evoplan/model/Constants",
+	"com/evorait/evoplan/controller/prt/PRTActions",
 ], function (Device, JSONModel, Filter, FilterOperator,
 	FilterType, formatter, AssignmentsController, ResourceTreeFilterBar,
-	MessageToast, MessageBox, Fragment, Constants) {
+	MessageToast, MessageBox, Fragment, Constants, PRTActions) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.demands.ResourceTree", {
@@ -36,6 +37,8 @@ sap.ui.define([
 
 		_oDraggedResObj: {},
 
+		oPRTActions: null,
+
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -47,6 +50,8 @@ sap.ui.define([
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
 			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
 			this._oViewModel = this.getModel("viewModel");
+
+			this.oPRTActions = new PRTActions(this);
 
 			Fragment.load({
 				name: "com.evorait.evoplan.view.common.fragments.ResourceTreeTable",
@@ -175,7 +180,7 @@ sap.ui.define([
 			if (this.assignmentRowContext) {
 				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
 				if (this.assignmentRowContext.getObject().IS_PRT) {
-					this.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
+					this.oPRTActions.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 				} else {
 					this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 				}
@@ -619,7 +624,7 @@ sap.ui.define([
 			this._oViewModel.setProperty("/PRT/defaultStartDate", new Date());
 			this._oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
 
-			this.checksBeforeAssignTools(aSources, oTargetObj, this._mParameters);
+			this.oPRTActions.checksBeforeAssignTools(aSources, oTargetObj, this._mParameters);
 		}
 	});
 });

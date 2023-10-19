@@ -2,17 +2,22 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/core/Fragment",
-	"sap/m/MessageToast"
-], function (BaseController, formatter, Fragment, MessageToast) {
+	"sap/m/MessageToast",
+	"com/evorait/evoplan/controller/prt/PRTActions",
+], function (BaseController, formatter, Fragment, MessageToast, PRTActions) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.prt.ToolInfoDialog", {
 
 		formatter: formatter,
 
+		oPRTActions: null,
+
 		init: function () {
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("AssignTreeDialog", "ToolReAssignment", this._reAssignTool, this);
+
+			this.oPRTActions = new PRTActions(this);
 		},
 		/**
 		 * Setting dialog properties to use in tool operations
@@ -119,7 +124,7 @@ sap.ui.define([
 				oDateTo = oDateTo.getTime();
 				// To Validate DateTo and DateFrom
 				if (oDateTo >= oDateFrom) {
-					oParams = this._getParams();
+					oParams = this.oPRTActions._getParams();
 					this._mParameters.bIsFromPRTAssignmentInfo = true;
 					var oData = {
 						oSourceData: {
