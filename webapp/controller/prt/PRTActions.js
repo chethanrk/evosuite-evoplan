@@ -248,7 +248,7 @@ sap.ui.define([
 			}
 			return new Promise(function (resolve, reject) {
 				if (bToolExists) {
-					this._showConfirmMessageBox(this.oResourceBundle.getText("ymsg.confirmAssignmentDelete")).then(function (response) {
+					this.controller._showConfirmMessageBox(this.oResourceBundle.getText("ymsg.confirmAssignmentDelete")).then(function (response) {
 						if (sap.m.MessageBox.Action.YES === response) {
 							resolve(bToolExists);
 						}

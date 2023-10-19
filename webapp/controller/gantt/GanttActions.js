@@ -8,14 +8,12 @@ sap.ui.define([
 	"sap/m/Tokenizer",
 	"sap/ui/core/Fragment",
 	"sap/m/MessageBox",
-	"sap/m/MessageToast",
-	"com/evorait/evoplan/controller/prt/PRTActions",
-], function (Controller, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageBox, MessageToast, PRTActions) {
+	"sap/m/MessageToast"
+], function (Controller, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageBox, MessageToast) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
 
-		oPRTActions:  null,
 
 		/**
 		 * formatter for for Gantt view
