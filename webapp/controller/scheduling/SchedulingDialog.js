@@ -510,9 +510,11 @@ sap.ui.define([
 									fTravelTime = fTravelTime + tourItem.duration;
 								}
 							}
+							//condition for service event for existing assignments without violation
 							if (tourItem.eventTypes.indexOf("SERVICE") !== -1 && !aDemandsData[tourItem.orderId]) {
 								fTravelTime = 0.0;
 							}
+							//condition for service event for new planned demands
 							if (tourItem.eventTypes.indexOf("SERVICE") !== -1 && aDemandsData[tourItem.orderId]) {
 								aData = {};
 
@@ -554,9 +556,8 @@ sap.ui.define([
 								aDataSet.push(aData);
 							}
 
-
+							//Backward travel time
 							if (tourItem.eventTypes.indexOf("TRIP_END") !== -1) {
-								//Backward travel time
 								aData.TRAVEL_BACK_TIME = fTravelBackTime / 3600;
 								fTravelBackTime = 0.0;
 							}
