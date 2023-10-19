@@ -677,7 +677,8 @@ sap.ui.define([
 					aListOfAssignments: [],
 					aViolatedAssignments: [],
 					aDemandLocationIds: [],
-					aExistingDemandQualification:[]
+					aExistingDemandQualification:[],
+					aUpdatedExistingAssignments:[]
 				},
 				sViewRoute: null,
 				aUpdatedResources: [],

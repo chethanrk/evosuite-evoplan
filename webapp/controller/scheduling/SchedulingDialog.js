@@ -500,7 +500,9 @@ sap.ui.define([
 					fTravelBackTime = 0.0,
 					violatedAssignments = [],
 					aListOfAssignments = this._oViewModel.getProperty('/Scheduling/aListOfAssignments'),
-					aViolationsTypes = [];
+					aViolationsTypes = [],
+					aChangedExistingAssignments = [],
+					bIsTravelTimeUpdated;
 
 				//Scheduled demands
 				if (oResponse.data.tourReports) {
@@ -528,7 +530,28 @@ sap.ui.define([
 									fTravelTime = fTravelTime + tourItem.duration;      // If ['Driving' 'Break' 'Driving'] is the sequence then both driving times must be added
 								}
 							}
-							if (tourItem.eventTypes.indexOf('SERVICE') !== -1 && !aDemandsData[tourItem.orderId]) {
+							if (tourItem.eventTypes.indexOf('SERVICE') !== -1 && aListOfAssignments[tourItem.orderId]) {
+								aData = {};
+								aData = _.clone(aListOfAssignments[tourItem.orderId]);
+								bIsTravelTimeUpdated = false;
+								if (aListOfAssignments[tourItem.orderId].TRAVEL_TIME !== (fTravelTime / 60).toFixed(1)){
+									aData.TRAVEL_TIME = (fTravelTime / 3600);
+									aData.TRAVEL_TIME_UNIT = "H";   //Travel time unit will be hour
+									aData.ResourceGuid = sResourceGuid;
+									aData.ResourceGroupGuid = aResourceData[sResourceGuid].aData.ResourceGroupGuid;
+									bIsTravelTimeUpdated = true;	
+								}
+								if ((oTour.tourEvents[index + 2].eventTypes.indexOf('TRIP_END') === -1 && parseFloat(aData.TRAVEL_BACK_TIME) > 0)){
+									aData.TRAVEL_BACK_TIME = 0.0;
+									bIsTravelTimeUpdated = true;
+								} else if (oTour.tourEvents[index + 2].eventTypes.indexOf('TRIP_END') !== -1){
+									aData.TRAVEL_BACK_TIME = (oTour.tourEvents[index + 1].duration /3600);
+									bIsTravelTimeUpdated = true;
+								}
+								if (bIsTravelTimeUpdated){
+									aChangedExistingAssignments.push(aData);
+								}
+
 								fTravelTime = 0.0;
 							}
 							if (tourItem.eventTypes.indexOf('SERVICE') !== -1 && aDemandsData[tourItem.orderId]) {
@@ -682,6 +705,7 @@ sap.ui.define([
 					this._oViewModel.setProperty("/Scheduling/aViolatedAssignments", violatedAssignments);
 					this.oSchedulingActions.showViolationError();
 				}
+				this._oViewModel.setProperty("/Scheduling/aUpdatedExistingAssignments", aChangedExistingAssignments);
 			}
 		}
 	});
