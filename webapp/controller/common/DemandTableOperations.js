@@ -91,7 +91,8 @@ sap.ui.define([
 		 **/
 		onInit: function () {
 			this.oSchedulingActions = new SchedulingActions(this);
-			this._viewModel  = this.getModel("viewModel");
+			this._viewModel = this.getModel("viewModel");
+			this._appViewModel = this.getModel("appView");
 		},
 		/**
 		 * open change status dialog
@@ -194,7 +195,7 @@ sap.ui.define([
 			//checking if the selected demands have any unassignable demands or not
 			if (oSelectedPaths.aUnAssignDemands.length > 0) {
 				this.getOwnerComponent().assignActionsDialog.open(this.getView(), oSelectedPaths, true, this._mParameters);
-			//showing the error message along with displaying non assignable data
+				//showing the error message along with displaying non assignable data
 			} else {
 				this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 			}
@@ -212,7 +213,7 @@ sap.ui.define([
 				this._viewModel.setProperty("/Show_Assignment_Status_Button", true);
 				this._viewModel.setProperty("/Disable_Assignment_Status_Button", false);
 				this.getOwnerComponent().assignActionsDialog.open(this.getView(), aSelectedPaths, true, this._mParameters);
-			//showing a message toast if there are no assignments
+				//showing a message toast if there are no assignments
 			} else {
 				this.showMessageToast(this.getResourceBundle().getText("ymsg.noAssignments"));
 			}
@@ -245,7 +246,7 @@ sap.ui.define([
 				oModel.resetChanges();
 				this._viewModel.setProperty("/bDemandEditMode", false);
 				this.getOwnerComponent().longTextPopover.open(this.getView(), this._oSource);
-			//if save is pressed then submiting the table changes
+				//if save is pressed then submiting the table changes
 			} else if (bResponse === sSave) {
 				this._viewModel.setProperty("/bDemandEditMode", false);
 				this.submitDemandTableChanges();
@@ -273,67 +274,92 @@ sap.ui.define([
 		 * since 2309
 		 */
 		onRescheduleButtonPress: function () {
-			var oDataModel = this.getModel(),
-				oResourceBundle = this.getResourceBundle(),
-				sPath = this._viewModel.getProperty("/Scheduling/selectedDemandPath"),
-				aDemandList = [],
-				oMsgParam = {},
-				oAppViewModel = this.getModel("appView");
+			var oMsgParam = {};
 			this._viewModel.setProperty("/Scheduling/bReSchedBtnBusy", true);
 			this._viewModel.setProperty("/Scheduling/sScheduleType", "R");
 			this._viewModel.setProperty("/busy", true);
 			//incase the selected demand is invalid then the selection is cleared and the message toast will be displayed
 			if (!this.oSchedulingActions.validateReScheduleAfterPress()) {
 				this._viewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
-				oAppViewModel.setProperty("/busy", false);
+				this._appViewModel.setProperty("/busy", false);
 				return;
 			}
 			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
-				if (oResult.bNoDuplicate) {
-					oAppViewModel.setProperty("/busy", true);
-					oMsgParam.bIsPoolExist = oResult.bIsPoolExist;
-					oMsgParam.sPoolNames = oResult.poolResource;
-					//calling function to check if the demand already is assigned to one of the selected resource
-					this.oSchedulingActions.checkAssignedResource();
-					return {
-						bNotAssigned: true
-					};
-				} else {
-					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
-					this._viewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
-					oAppViewModel.setProperty("/busy", false);
-					return false;
-				}
+				//calling below method to check if the resource is already assigned or not
+				return this.fnCheckReturnedDuplicates(oResult);
 			}.bind(this)).then(function (oResult) {
-				if (oResult.bNotAssigned) {
-					aDemandList = [{
-						sPath: sPath,
-						oData: oDataModel.getProperty(sPath)
-					}];
-					this._viewModel.setProperty("/Scheduling/demandList", aDemandList);
-					this._viewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
-					// calling below method to get the assignment id for the resource so that 
-					return this.oSchedulingActions.getAssignmentIdForReschedule();
-				} 
+				//below method is to fetch the assignment id required for rescheduling
+				return this.fnFetchAssignmentIdForReschedule(oResult);
 			}.bind(this)).then(function (bParam) {
-				if(bParam){
+				//check if the valid assignment exists
+				if (bParam) {
 					var mParams = {
 						entitySet: "DemandSet"
 					};
 					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams, oMsgParam, this.oSchedulingActions);
 				}
 				this._viewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
-				oAppViewModel.setProperty("/busy", false);
-				
+				this._appViewModel.setProperty("/busy", false);
+
 			}.bind(this));
 
 		},
+
 		/**
 		 * This method is used to clear the selections of the demands table in
 		 * Demands, NewGantt and Maps view.
 		 */
 		clearDemandsSelection: function () {
 			this._oDataTable.clearSelection();
+		},
+
+		/**
+		 * @param {Object} oResult - contains the results returned from checkDuplicateResource promise
+		 * @returns {Boolean} false if duplicate resource exists else return true
+		 * currently we are allowing demand to be re-assigned to the same resource using ReSchedule as planning can be done for different timings
+		 */
+		fnCheckReturnedDuplicates: function (oResult) {
+			var oMsgParam = {},
+				oResourceBundle = this.getResourceBundle();
+			//if no duplicate resource then check the assigned resources
+			if (oResult.bNoDuplicate) {
+				this._appViewModel.setProperty("/busy", true);
+				oMsgParam.bIsPoolExist = oResult.bIsPoolExist;
+				oMsgParam.sPoolNames = oResult.poolResource;
+				//calling function to check if the demand already is assigned to one of the selected resource
+				this.oSchedulingActions.checkAssignedResource();
+				return {
+					bNotAssigned: true
+				};
+				//display the error message along with the duplicate resource names
+			} else {
+				this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
+				this._viewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
+				this._appViewModel.setProperty("/busy", false);
+				return false;
+			}
+		},
+
+		/**
+		 * 
+		 * @param {Object} oResult - contains the results returned from fnCheckReturnedDuplicates promise
+		 * @returns {Boolean} true if assignment Id is found
+		 */
+		fnFetchAssignmentIdForReschedule: function (oResult) {
+			var aDemandList = [],
+				oDataModel = this.getModel(),
+				sPath = this._viewModel.getProperty("/Scheduling/selectedDemandPath");
+			//always allowed as currently we are allowing the demands to be r-assigned to the same resource for some other time or date
+			if (oResult.bNotAssigned) {
+				aDemandList = [{
+					sPath: sPath,
+					oData: oDataModel.getProperty(sPath)
+				}];
+				this._viewModel.setProperty("/Scheduling/demandList", aDemandList);
+				this._viewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
+				// calling below method to get the assignment id for the resource so that 
+				return this.oSchedulingActions.getAssignmentIdForReschedule();
+			}
 		},
 
 		/* =========================================================== */
@@ -345,11 +371,14 @@ sap.ui.define([
 		 */
 		_proceedToChangeStatus: function () {
 			var oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
+			//check if atleast one item is selected or not
 			if (this._aSelectedRowsIdx.length > 0) {
+				//adding a paramter into localStorage in case it is from New Gantt. It is being used in websocket.js
 				if (this._mParameters.bFromNewGantt) {
 					this.localStorage.put("Evo-Action-page", "splitDemands");
 				}
 				this.getOwnerComponent().statusSelectDialog.open(this.getView(), oSelectedPaths.aPathsData, this._mParameters);
+				//show a validation to select minimum one item
 			} else {
 				var msg = this.getResourceBundle().getText("ymsg.selectMinItem");
 				this.showMessageToast(msg);
@@ -361,15 +390,17 @@ sap.ui.define([
 		 * @private
 		 */
 		_deselectAll: function () {
+			//check if the event is triggered from map and set a flag in case it does
 			if (this._mParameters && this._mParameters.bFromMap) {
-				this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
+				//Flag to identify Demand List row is selected and scrolled or not
+				this._bDemandListScroll = false;
 			}
 			this._oDataTable.clearSelection();
 		},
 
 		/**
 		 * Opens long text view/edit popover
-		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
+		 * @param {sap.ui.base.Event} oSource - press event for the long text button
 		 */
 		_openLongTextPopover: function (oSource) {
 			this.getOwnerComponent().longTextPopover.open(this.getView(), oSource);
