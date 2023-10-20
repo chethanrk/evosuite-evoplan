@@ -3,17 +3,13 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
-	"sap/ui/core/Fragment",
-	"com/evorait/evoplan/controller/prt/PRTActions",
-], function (DemandTableOperations, MessageBox, formatter, Constants, Fragment, PRTActions) {
+	"sap/ui/core/Fragment"
+], function (DemandTableOperations, MessageBox, formatter, Constants, Fragment) {
 
 	return DemandTableOperations.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
-		oPRTActions: null,
 		onInit: function () {
 			// call super class onInit
 			DemandTableOperations.prototype.onInit.apply(this, arguments);
-			debugger;
-			this.oPRTActions = new PRTActions(this);
 		},
 
 		/**

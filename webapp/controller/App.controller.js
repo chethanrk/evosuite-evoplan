@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
-	"com/evorait/evoplan/controller/scheduling/SchedulingActions"
-], function (AssignmentsController, JSONModel, Fragment, formatter, Constants,SchedulingActions) {
+	"com/evorait/evoplan/controller/scheduling/SchedulingActions",
+	"com/evorait/evoplan/controller/prt/PRTActions"
+], function (AssignmentsController, JSONModel, Fragment, formatter, Constants,SchedulingActions, PRTActions) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.App", {
@@ -57,6 +58,7 @@ sap.ui.define([
 			oRouter.attachRouteMatched(this._onAllRouteMatched, this);
 
 			this.oSchedulingActions = new SchedulingActions(this);
+			this.oPRTActions = new PRTActions(this);
 		},
 
 		onAfterRendering: function () {

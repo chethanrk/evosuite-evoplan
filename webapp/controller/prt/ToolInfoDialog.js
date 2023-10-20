@@ -3,7 +3,7 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/core/Fragment",
 	"sap/m/MessageToast",
-], function (BaseController, formatter, Fragment, MessageToast, PRTActions) {
+], function (BaseController, formatter, Fragment, MessageToast) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.prt.ToolInfoDialog", {

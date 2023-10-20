@@ -18,11 +18,10 @@ sap.ui.define([
 	"sap/ui/util/Storage",
 	"sap/gantt/def/gradient/Stop",
 	"sap/gantt/def/gradient/LinearGradient",
-	"com/evorait/evoplan/controller/scheduling/SchedulingActions",
-	"com/evorait/evoplan/controller/prt/PRTActions",
+	"com/evorait/evoplan/controller/scheduling/SchedulingActions"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, FilterType, Popup, MessageToast, Fragment, CoordinateUtils,
 	Constants,
-	Utility, SlashPattern, BackSlashPattern, MapUtilities, Storage, Stop, LinearGradient, SchedulingActions, PRTActions) {
+	Utility, SlashPattern, BackSlashPattern, MapUtilities, Storage, Stop, LinearGradient, SchedulingActions) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttChart", {
@@ -34,7 +33,6 @@ sap.ui.define([
 		oGanttModel: null,
 		oGanttOriginDataModel: null,
 		oSchedulingActions: undefined,
-		oPRTActions: null,
 
 		mRequestTypes: {
 			update: "update",
@@ -59,6 +57,7 @@ sap.ui.define([
 		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
 		 */
 		onInit: function () {
+			Controller.prototype.onInit.apply(this, arguments);
 			this.oViewModel = this.getModel("viewModel");
 			this.oUserModel = this.getModel("user");
 			this.oAppViewModel = this.getModel("appView");
@@ -130,8 +129,6 @@ sap.ui.define([
 			this.oViewModel.setProperty("/iDefToolAsgnDays", iDefNum);
 
 			this.oSchedulingActions = new SchedulingActions(this);
-			debugger;
-			this.oPRTActions = new PRTActions(this);
 		},
 
 		/**
