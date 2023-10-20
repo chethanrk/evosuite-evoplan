@@ -9,6 +9,14 @@ sap.ui.define([
 ], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution, MessageToast) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.prt.PRTActions", {
+		controller:undefined,
+		oComponent:undefined,
+		oODataModel:undefined,
+		oViewModel:undefined,
+		oAppViewModel:undefined,
+		oUserModel:undefined,
+		oResourceBundle:undefined,
+		_oEventBus:undefined,
 
 		constructor: function(controller){
 			this.controller = controller;
