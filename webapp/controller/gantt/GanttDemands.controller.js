@@ -1,18 +1,11 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttActions",
-	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
-	"com/evorait/evoplan/model/ganttFormatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/m/MessageToast",
-	"sap/ui/table/RowAction",
-	"sap/ui/table/RowActionItem",
 	"com/evorait/evoplan/model/Constants",
-	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/controller/scheduling/SchedulingActions"
-], function (AssignmentsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, MessageToast, RowAction, RowActionItem,
-	Constants, Fragment, SchedulingActions) {
+], function (AssignmentsController, formatter, Filter, FilterOperator, Constants, SchedulingActions) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.gantt.GanttDemands", {
@@ -172,7 +165,7 @@ sap.ui.define([
 				bEnable = this._viewModel.getProperty("/validateIW32Auth"),
 				index = oEvent.getParameter("rowIndex"),
 				sDemandPath, bComponentExist, sMsg, iLastIndex,
-				oViewModel=this.getModel("viewModel");
+				oViewModel = this.getModel("viewModel");
 
 			this._aSelectedRowsIdx = _.clone(selected);
 			if (this._aSelectedRowsIdx.length > 0) {
@@ -213,10 +206,10 @@ sap.ui.define([
 				}
 				this.showMessageToast(sMsg);
 			} else {
-				if(selected.length !== 0 && oEvent.getParameter("selectAll")) {
+				if (selected.length !== 0 && oEvent.getParameter("selectAll")) {
 					sMsg = this.getResourceBundle().getText("ymsg.allSelect", selected.length);
 					this.showMessageToast(sMsg);
-				}				
+				}
 			}
 
 			//Enabling/Disabling the Material Status Button based on Component_Exit flag
@@ -252,7 +245,7 @@ sap.ui.define([
 			} else {
 				oViewModel.setProperty("/Scheduling/selectedDemandPath", null);
 			}
-			oViewModel.setProperty("/Scheduling/aSelectedDemandPath",this._aSelectedRowsIdx);
+			oViewModel.setProperty("/Scheduling/aSelectedDemandPath", this._aSelectedRowsIdx);
 			this.oSchedulingActions.validateScheduleButtons();
 			this.oSchedulingActions.validateReScheduleButton();
 			this._nSelectedDemandsCount = this._oDataTable.getSelectedIndices().length;

@@ -1,15 +1,9 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttQualificationChecks",
-	"com/evorait/evoplan/model/formatter",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	"sap/m/Token",
-	"sap/m/Tokenizer",
 	"sap/ui/core/Fragment",
-	"sap/m/MessageToast",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual"
-], function (GanttQualificationChecks, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageToast) {
+], function (GanttQualificationChecks, Fragment) {
 	"use strict";
 
 	return GanttQualificationChecks.extend("com.evorait.evoplan.controller.gantt.GanttRoute", {

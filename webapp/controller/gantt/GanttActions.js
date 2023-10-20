@@ -4,12 +4,8 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/m/Token",
-	"sap/m/Tokenizer",
-	"sap/ui/core/Fragment",
-	"sap/m/MessageBox",
-	"sap/m/MessageToast"
-], function (Controller, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageBox, MessageToast) {
+	"sap/m/MessageBox"
+], function (Controller, formatter, Filter, FilterOperator, MessageBox) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
@@ -77,7 +73,7 @@ sap.ui.define([
 
 				// non-fixed appointments
 				// creating function import calls for multi assignment for non-fixed appointments
-				for (var i in aSources) {
+				for (i in aSources) {
 					oParams = {
 						DemandGuid: "",
 						ResourceGroupGuid: oResourceData.ResourceGroupGuid,
@@ -877,7 +873,7 @@ sap.ui.define([
 			return aCreatedAssignments;
 		}
 
-	
+
 	});
 
 });

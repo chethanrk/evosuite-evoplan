@@ -1,15 +1,8 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentsController",
-	"com/evorait/evoplan/model/formatter",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	"sap/m/Token",
-	"sap/m/Tokenizer",
-	"sap/ui/core/Fragment",
-	"sap/m/MessageToast",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual"
-], function (AssignmentsController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageToast) {
+], function (AssignmentsController) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.gantt.GanttQualificationChecks", {

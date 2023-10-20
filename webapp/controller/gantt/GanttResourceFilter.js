@@ -3,10 +3,8 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/m/Token",
-	"sap/m/Tokenizer",
 	"sap/ui/core/Fragment"
-], function (BaseController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment) {
+], function (BaseController, formatter, Filter, FilterOperator, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.gantt.GanttResourceFilter", {
