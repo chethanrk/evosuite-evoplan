@@ -11,7 +11,6 @@ sap.ui.define([
 	return BaseController.extend("com.evorait.evoplan.controller.prt.PRTActions", {
 
 		constructor: function(controller){
-			debugger;
 			this.controller = controller;
 			this.oComponent = controller.getOwnerComponent();
 			this.oODataModel = controller.getModel();
@@ -193,11 +192,6 @@ sap.ui.define([
 		 * @param Context of demand assignment if tool is under demand assignment
 		 */
 		openToolsInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext) {
-			// if (this.getOwnerComponent()) {
-			// 	this.oComponent = this.getOwnerComponent();
-			// } else {
-			// 	this.oComponent = oView.getController().getOwnerComponent();
-			// }
 			this.openToolsDialog(oView, sPath, oContext, mParameters);
 
 		},

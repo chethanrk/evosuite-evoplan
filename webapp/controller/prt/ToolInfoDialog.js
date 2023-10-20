@@ -26,7 +26,6 @@ sap.ui.define([
 			this._mParameters = mParameters.refreshParameters;
 			this.oAssignmentModel = oView.getModel("assignment");
 
-			debugger;
 			this.oPRTActions = oPRTActions;
 			this._oDialog = oDialog;
 			this._oView = oView;
