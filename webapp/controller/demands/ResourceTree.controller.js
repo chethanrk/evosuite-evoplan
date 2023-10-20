@@ -10,11 +10,10 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/ui/core/Fragment",
-	"com/evorait/evoplan/model/Constants",
-	"com/evorait/evoplan/controller/prt/PRTActions",
+	"com/evorait/evoplan/model/Constants"
 ], function (Device, JSONModel, Filter, FilterOperator,
 	FilterType, formatter, AssignmentsController, ResourceTreeFilterBar,
-	MessageToast, MessageBox, Fragment, Constants, PRTActions) {
+	MessageToast, MessageBox, Fragment, Constants) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.demands.ResourceTree", {
@@ -37,8 +36,6 @@ sap.ui.define([
 
 		_oDraggedResObj: {},
 
-		oPRTActions: null,
-
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
@@ -50,8 +47,6 @@ sap.ui.define([
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
 			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
 			this._oViewModel = this.getModel("viewModel");
-			debugger
-			this.oPRTActions = new PRTActions(this);
 
 			Fragment.load({
 				name: "com.evorait.evoplan.view.common.fragments.ResourceTreeTable",
