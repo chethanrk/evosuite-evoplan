@@ -213,8 +213,8 @@ sap.ui.define([
 		 * @param Context of demand assignment if tool is under demand assignment
 		 */
 		openToolsDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType) {
-			var sQualifier = Constants.ANNOTATION_CONSTANTS.PRT_TOOLS_ASSIGN_DIALOG;
-			var mParams = {
+			var sQualifier = Constants.ANNOTATION_CONSTANTS.PRT_TOOLS_ASSIGN_DIALOG,
+			mParams = {
 				viewName: "com.evorait.evoplan.view.templates.ToolInfoDialog#" + sQualifier,
 				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
 				entitySet: "AssignmentSet",
@@ -287,7 +287,6 @@ sap.ui.define([
 		 */
 		getPRTDateParams: function (oPRTShapeData) {
 			var oParams = {},
-				iDefNum = this.oViewModel.getProperty("/iDefToolAsgnDays"),
 				oStartDate = oPRTShapeData.DateFrom,
 				oEndDate = oPRTShapeData.DateTo;
 
