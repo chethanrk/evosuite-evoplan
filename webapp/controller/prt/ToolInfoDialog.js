@@ -74,9 +74,8 @@ sap.ui.define([
 
 		/**
 		 * trigger event for open select assign tree table dialog
-		 * @param oEvent
 		 */
-		onPressReAssign: function (oEvent) {
+		onPressReAssign: function () {
 			this._eventBus.publish("AssignInfoDialog", "selectAssign", {
 				oView: this._oView,
 				isReassign: this.reAssign,
@@ -150,12 +149,17 @@ sap.ui.define([
 				this.showMessageToast(sMsg);
 			}
 		},
+		/**
+		 * This method is a Ui5 hook method trigged at the exit of the view.
+		 * Here we can call any methods that are required to be called at exit of the view.
+		 */
 		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "ToolReAssignment");
 		},
 		/**
-		 * get assignment resource details
-		 * @param resId
+		 * This method is used to get assignment resource details
+		 * @param {string} resId
+		 * @return {object} used to return the JSON object.
 		 * @private
 		 */
 		_getAssignResource: function (resId) {
@@ -167,8 +171,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * get assignment resource group details
-		 * @param groupId
+		 * This method is used to get assignment resource group details.
+		 * @param {string} groupId
+		 * @return {object} returns the JSON object
 		 * @private
 		 */
 		_getAssignResourceGroup: function (groupId) {
@@ -180,19 +185,16 @@ sap.ui.define([
 		},
 
 		/**
-		 * get resouce info based on id
-		 * @param sId
-		 * @private
+		 * This method is used to get resouce info based on id.
+		 * @param {string} sId
+		 * @return The value of the property. If the property is not found, null or undefined is returned.
 		 */
 		_getResourceInfo: function (sId) {
 			var sPath = "/ResourceHierarchySet('" + sId + "')";
 			return this._oView.getModel().getProperty(sPath);
 		},
-		/**
-		 * get all parents description for display in dialog new assigned field
-		 * @param oNewAssign
-		 * @returns {string}
-		 * @private
+		/** This method is used to get all parents description for display in dialog new assigned field.
+		 *  @param {object} oNewAssign
 		 */
 		_getParentsDescription: function (oNewAssign) {
 			var resourceGroup = "",
@@ -219,8 +221,10 @@ sap.ui.define([
 			return newAssignDesc;
 		},
 
-		/** 
-		 * set reassignment details to assignment data object
+		/** This method is used to set the reassignment details to the assignment data object
+		 *  @param {string} sChanel
+		 *  @param {string} sEvent
+		 *  @param {object} oData
 		 */
 		_reAssignTool: function (sChanel, sEvent, oData) {
 			// sAssignPath, aSourcePaths
@@ -253,10 +257,10 @@ sap.ui.define([
 				this.oAssignmentModel.setProperty("/DateTo", end);
 			}
 		},
-
-		/** 
-		 * to getPRT assignment object for update operations
-		 * @param oAssignmentData
+		/** This method is used to return a JSON object that is used in this function
+		 * onToolOpen.
+		 *  @param {object} oAssignmentData
+		 *  @return {object} - always a JSON object is returned
 		 */
 		_getDefaultPRTAssignmentObject: function (oAssignmentData) {
 			return {
@@ -278,8 +282,9 @@ sap.ui.define([
 				ShowGoToDetailBtn: false
 			};
 		},
-		/** 
-		 * get Parameteres to pass into Function Import
+		/** This method is used to return a JSON object that is used in this function
+		 * onSaveDialog.
+		 *  @return {JSON} - always a JSON object is returned
 		 */
 		_getParams: function () {
 			var oAssignmentData = this.oAssignmentModel.getData();
