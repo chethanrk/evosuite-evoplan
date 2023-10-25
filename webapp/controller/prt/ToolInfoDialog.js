@@ -224,9 +224,9 @@ sap.ui.define([
 		},
 
 		/** This method is used to set the reassignment details to the assignment data object
-		 *  @param {string} sChanel
-		 *  @param {string} sEvent
-		 *  @param {object} oData
+		 *  @param {string} sChanel channel for the event bus
+		 *  @param {string} sEvent event for the event bus
+		 *  @param {object} oData data that was passed in the event bus
 		 */
 		_reAssignTool: function (sChanel, sEvent, oData) {
 			// sAssignPath, aSourcePaths

@@ -163,8 +163,8 @@ sap.ui.define([
 		/**
 		 * reading context and getting path of selected items from Tool list
 		 * helper method for tools assignment process
-		 * @param oTable Tools list
-		 * @param aIndices Array of selected Row indices
+		 * @param {object} oTable Tools list
+		 * @param {array} aIndices Array of selected Row indices
 		 */
 		_getSelectedToolsPaths: function (oTable, aIndices) {
 			var aPathsData = [],
@@ -195,7 +195,7 @@ sap.ui.define([
 
 		/**
 		 * add configuration to Tools table
-		 * @param oDataTable
+		 * @param {object} oDataTable
 		 * @private
 		 */
 		_configureToolDataTable: function (oDataTable) {
