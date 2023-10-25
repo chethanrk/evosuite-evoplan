@@ -62,9 +62,8 @@ sap.ui.define([
 
 		/**
 		 * after rendering of view
-		 * @param {object}  oEvent
 		 */
-		onAfterRendering: function (oEvent) {
+		onAfterRendering: function () {
 			if (!this._oUserModel.getProperty("/ENABLE_PRT")) {
 				this._oRouter.navTo("demands", {});
 			}
@@ -87,7 +86,7 @@ sap.ui.define([
 		/**
 		 * event before loading the the tool list
 		 * adding default filters
-		 * @param {object} oEvent
+		 * @param {object} oEvent This even trigerres from the table in ToolList.fragment
 		 */
 		onBeforeRebindToolsTable: function (oEvent) {
 			oEvent.getParameter("bindingParams").filters.push(new Filter("TOOL_TYPE", FilterOperator.EQ, "EQUI"));
@@ -95,7 +94,7 @@ sap.ui.define([
 
 		/**
 		 * Event handler to switch between Demand and Tool list
-		 * @param {object} oEvent
+		 * @param {object} oEvent This event is trigerred when we press button in the ToolList.fragment
 		 */
 		handleViewSelectionChange: function (oEvent) {
 			this.getOwnerComponent().bIsFromPRTSwitch = true;
@@ -114,7 +113,7 @@ sap.ui.define([
 		/**
 		 * Drag items from Tool list
 		 * to store dragged items in local JSON model
-		 * @param {object} oEvent
+		 * @param {object} oEvent This event is trigerred when use drag drop in the ToolList.fragment
 		 */
 		onToolsDragStart: function (oEvent) {
 			var oDragSession = oEvent.getParameter("dragSession"),

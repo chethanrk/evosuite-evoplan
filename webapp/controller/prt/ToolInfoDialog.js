@@ -24,12 +24,12 @@ sap.ui.define([
 		},
 		/**
 		 * This method is used for setting dialog properties to use in too operations
-		 * @param {object} oDialog
-		 * @param {object} oView
-		 * @param {string} sAssignementPath
-		 * @param {object} oAssignmentData
-		 * @param {object} mParameters
-		 * @param {object} oPRTActions
+		 * @param {object} oDialog tool dialog object
+		 * @param {object} oView view object
+		 * @param {string} sAssignementPath path of the tool assignment
+		 * @param {object} oAssignmentData response data
+		 * @param {object} mParameters parameters
+		 * @param {object} oPRTActions prt actions controller referrence
 		 * @return The value of the property. If the property is not found, null or undefined is returned.
 		 */
 		onToolOpen: function (oDialog, oView, sAssignementPath, oAssignmentData, mParameters, oPRTActions) {
@@ -55,7 +55,7 @@ sap.ui.define([
 		},
 		/** 
 		 * On unassign assignment of tool the delete function import will be called
-		 * @param {object} oEvent
+		 * @param {object} oEvent This event is triggerd from the button in the Tool Form Dialog
 		 */
 		onDeleteAssignment: function (oEvent) {
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
@@ -164,6 +164,10 @@ sap.ui.define([
 		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "ToolReAssignment");
 		},
+		/* =========================================================== */
+		/* Private methods                                             */
+		/* =========================================================== */
+
 		/**
 		 * This method is used to get assignment resource details
 		 * @param {string} resId
