@@ -1,7 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar">
 	<Dialog id="idGanttToolsFilterDialog" title="{i18n>xtit.PRTFilterTitle}" draggable="true" contentWidth="80%">
 		<content>
-			<core:Fragment fragmentName="com.evorait.evoplan.view.PRT.ToolsSmartFilter" type="XML"/>
+			<core:Fragment fragmentName="com.evorait.evoplan.view.prt.ToolsSmartFilter" type="XML"/>
 		</content>
 		<buttons>
 			<Button text="{i18n>xbut.buttonClose}" press="onCloseGanttToolsFilters"></Button>

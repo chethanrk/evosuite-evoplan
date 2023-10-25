@@ -1,14 +1,16 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/AssignmentsController",
+	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/core/Fragment",
-	"sap/m/MessageToast"
+	"sap/m/MessageToast",
 ], function (BaseController, formatter, Fragment, MessageToast) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.PRT.ToolInfoDialog", {
+	return BaseController.extend("com.evorait.evoplan.controller.prt.ToolInfoDialog", {
 
 		formatter: formatter,
+
+		oPRTActions: null,
 
 		init: function () {
 			this._eventBus = sap.ui.getCore().getEventBus();
@@ -17,12 +19,14 @@ sap.ui.define([
 		/**
 		 * Setting dialog properties to use in tool operations
 		 */
-		onToolOpen: function (oDialog, oView, sAssignementPath, oAssignmentData, mParameters) {
+		onToolOpen: function (oDialog, oView, sAssignementPath, oAssignmentData, mParameters, oPRTActions) {
 			var oPrtToolsAssignment = this._getDefaultPRTAssignmentObject(oAssignmentData);
 
 			this._sAssignmentPath = sAssignementPath;
 			this._mParameters = mParameters.refreshParameters;
 			this.oAssignmentModel = oView.getModel("assignment");
+
+			this.oPRTActions = oPRTActions;
 			this._oDialog = oDialog;
 			this._oView = oView;
 			this._component = this._oView.getController().getOwnerComponent();

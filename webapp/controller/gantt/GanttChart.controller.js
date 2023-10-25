@@ -57,6 +57,7 @@ sap.ui.define([
 		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
 		 */
 		onInit: function () {
+			Controller.prototype.onInit.apply(this, arguments);
 			this.oViewModel = this.getModel("viewModel");
 			this.oUserModel = this.getModel("user");
 			this.oAppViewModel = this.getModel("appView");
@@ -739,7 +740,7 @@ sap.ui.define([
 				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
 				//For PRT Assignments
 				if (this.assignmentRowContext.getObject().IS_PRT) {
-					this.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
+					this.oPRTActions.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 				} else {
 					this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 				}
@@ -836,7 +837,7 @@ sap.ui.define([
 			endDate.setDate(oTargetDate.getDate() + parseInt(iDefNum));
 			this.oViewModel.setProperty("/PRT/defaultStartDate", oTargetDate);
 			this.oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
-			this.checksBeforeAssignTools(aSources, oResourceData, this._mParameters, sTargetPath);
+			this.oPRTActions.checksBeforeAssignTools(aSources, oResourceData, this._mParameters, sTargetPath, this.getView());
 		},
 
 		/**
@@ -1119,7 +1120,7 @@ sap.ui.define([
 								oParams: oParams,
 								sRequestType: sRequestType
 							};
-							this.openDateSelectionDialog(this.getView(), null, null, mParameters);
+							this.oPRTActions.openDateSelectionDialog(this.getView(), null, null, mParameters);
 						} else {
 							sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
 							this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
@@ -1249,8 +1250,8 @@ sap.ui.define([
 					oPRTShapeData.ResourceGroupGuid = oTargetData.ResourceGroupGuid;
 					oPRTShapeData.ResourceGuid = oTargetData.ResourceGuid;
 					this.oViewModel.setProperty("/PRT/AssignmentData", oPRTShapeData);
-					oParams = this._getParams();
-					oDateParams = this.getPRTDateParams(oPRTShapeData);
+					oParams = this.oPRTActions._getParams();
+					oDateParams = this.oPRTActions.getPRTDateParams(oPRTShapeData);
 					if (oTargetData.NodeType === "ASSIGNMENT") {
 						oParams.DateFrom = oTargetData.StartDate;
 						oParams.DateTo = oTargetData.EndDate;
@@ -1261,7 +1262,7 @@ sap.ui.define([
 							this._refreshChangedResources(sTargetResourcePath, sCurrentResourcePath);
 						}.bind(this));
 					} else if (this.oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) {
-						this.openDateSelectionDialog(this.getView(), oDateParams, oPRTShapeData, this._mParameters, true, {
+						this.oPRTActions.openDateSelectionDialog(this.getView(), oDateParams, oPRTShapeData, this._mParameters, true, {
 							sCurrentResourcePath: sCurrentResourcePath,
 							sTargetResourcePath: sTargetResourcePath
 						});
@@ -1342,7 +1343,7 @@ sap.ui.define([
 
 			if (oData.IS_PRT) { // PRT reassignmnet
 				this.oViewModel.setProperty("/PRT/AssignmentData", oData);
-				this.onChangeTools().then(function (resolve) {
+				this.oPRTActions.onChangeTools().then(function (resolve) {
 					this._refreshChangedResources(sPath, sSourcePath);
 				}.bind(this), function (reject) {
 					this._resetChanges(sPath);

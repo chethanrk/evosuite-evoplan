@@ -98,7 +98,7 @@ sap.ui.define([
 		_loadToolDialog: function (sDialogController, onDataReceived) {
 			if (!this._oToolsDialog) {
 				Fragment.load({
-					name: "com.evorait.evoplan.view.PRT.ToolFormDialog",
+					name: "com.evorait.evoplan.view.prt.ToolFormDialog",
 					controller: sDialogController || this,
 					type: "XML"
 				}).then(function (oFragment) {
