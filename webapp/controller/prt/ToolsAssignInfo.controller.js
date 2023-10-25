@@ -36,7 +36,7 @@ sap.ui.define([
 
 		/**
 		 * trigger event for open select assign tree table dialog
-		 * @param oEvent
+		 * @param {object} oEvent
 		 */
 		onPressReAssign: function (oEvent) {
 			this._eventBus.publish("AssignInfoDialog", "selectAssign", {
@@ -46,9 +46,10 @@ sap.ui.define([
 			});
 		},
 		
-		/*
-		*Function is triggered when we change ToolInfoAsgn Dialog Date Fields
-		*For validating invalid date formats
+		/**
+		* Function is triggered when we change ToolInfoAsgn Dialog Date Fields
+		* For validating invalid date formats
+		* @param {object} oEvent
 		*/
 		onAssignmentDateChange: function (oEvent) {
 			var oSource = oEvent.getSource(),

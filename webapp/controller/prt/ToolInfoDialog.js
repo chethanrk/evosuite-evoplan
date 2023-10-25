@@ -11,7 +11,13 @@ sap.ui.define([
 		formatter: formatter,
 
 		oPRTActions: null,
-
+		/* =========================================================== */
+		/* lifecycle methods                                           */
+		/* =========================================================== */
+		/**
+		 * Called when the controller is instantiated.
+		 * @public
+		 */
 		init: function () {
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("AssignTreeDialog", "ToolReAssignment", this._reAssignTool, this);
