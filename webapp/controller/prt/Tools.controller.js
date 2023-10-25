@@ -62,9 +62,8 @@ sap.ui.define([
 
 		/**
 		 * after rendering of view
-		 * @param oEvent
 		 */
-		onAfterRendering: function (oEvent) {
+		onAfterRendering: function () {
 			if (!this._oUserModel.getProperty("/ENABLE_PRT")) {
 				this._oRouter.navTo("demands", {});
 			}
@@ -87,7 +86,7 @@ sap.ui.define([
 		/**
 		 * event before loading the the tool list
 		 * adding default filters
-		 * @param oEvent
+		 * @param {object} oEvent This even trigerres from the table in ToolList.fragment
 		 */
 		onBeforeRebindToolsTable: function (oEvent) {
 			oEvent.getParameter("bindingParams").filters.push(new Filter("TOOL_TYPE", FilterOperator.EQ, "EQUI"));
@@ -95,12 +94,11 @@ sap.ui.define([
 
 		/**
 		 * Event handler to switch between Demand and Tool list
-		 * @param oEvent
+		 * @param {object} oEvent This event is trigerred when we press button in the ToolList.fragment
 		 */
 		handleViewSelectionChange: function (oEvent) {
 			this.getOwnerComponent().bIsFromPRTSwitch = true;
-			var sSelectedKey = this._oViewModel.getProperty("/PRT/btnSelectedKey"),
-				sCurrentHash = this._oRouter.getHashChanger().getHash();
+			var sCurrentHash = this._oRouter.getHashChanger().getHash();
 
 			// go back to demand list view based on current page
 			if (sCurrentHash === "DemandTools") {
@@ -115,7 +113,7 @@ sap.ui.define([
 		/**
 		 * Drag items from Tool list
 		 * to store dragged items in local JSON model
-		 * @param oEvent
+		 * @param {object} oEvent This event is trigerred when use drag drop in the ToolList.fragment
 		 */
 		onToolsDragStart: function (oEvent) {
 			var oDragSession = oEvent.getParameter("dragSession"),
@@ -163,8 +161,8 @@ sap.ui.define([
 		/**
 		 * reading context and getting path of selected items from Tool list
 		 * helper method for tools assignment process
-		 * @param oTable Tools list
-		 * @param aIndices Array of selected Row indices
+		 * @param {object} oTable Tools list
+		 * @param {array} aIndices Array of selected Row indices
 		 */
 		_getSelectedToolsPaths: function (oTable, aIndices) {
 			var aPathsData = [],
@@ -195,7 +193,7 @@ sap.ui.define([
 
 		/**
 		 * add configuration to Tools table
-		 * @param oDataTable
+		 * @param {object} oDataTable
 		 * @private
 		 */
 		_configureToolDataTable: function (oDataTable) {
