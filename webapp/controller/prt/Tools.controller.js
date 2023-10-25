@@ -62,7 +62,7 @@ sap.ui.define([
 
 		/**
 		 * after rendering of view
-		 * @param oEvent
+		 * @param {object}  oEvent
 		 */
 		onAfterRendering: function (oEvent) {
 			if (!this._oUserModel.getProperty("/ENABLE_PRT")) {
@@ -87,7 +87,7 @@ sap.ui.define([
 		/**
 		 * event before loading the the tool list
 		 * adding default filters
-		 * @param oEvent
+		 * @param {object} oEvent
 		 */
 		onBeforeRebindToolsTable: function (oEvent) {
 			oEvent.getParameter("bindingParams").filters.push(new Filter("TOOL_TYPE", FilterOperator.EQ, "EQUI"));
@@ -95,12 +95,11 @@ sap.ui.define([
 
 		/**
 		 * Event handler to switch between Demand and Tool list
-		 * @param oEvent
+		 * @param {object} oEvent
 		 */
 		handleViewSelectionChange: function (oEvent) {
 			this.getOwnerComponent().bIsFromPRTSwitch = true;
-			var sSelectedKey = this._oViewModel.getProperty("/PRT/btnSelectedKey"),
-				sCurrentHash = this._oRouter.getHashChanger().getHash();
+			var sCurrentHash = this._oRouter.getHashChanger().getHash();
 
 			// go back to demand list view based on current page
 			if (sCurrentHash === "DemandTools") {
@@ -115,7 +114,7 @@ sap.ui.define([
 		/**
 		 * Drag items from Tool list
 		 * to store dragged items in local JSON model
-		 * @param oEvent
+		 * @param {object} oEvent
 		 */
 		onToolsDragStart: function (oEvent) {
 			var oDragSession = oEvent.getParameter("dragSession"),

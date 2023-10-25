@@ -55,7 +55,7 @@ sap.ui.define([
 		},
 		/** 
 		 * On unassign assignment of tool the delete function import will be called
-		 * @param oEvent
+		 * @param {object} oEvent
 		 */
 		onDeleteAssignment: function (oEvent) {
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
