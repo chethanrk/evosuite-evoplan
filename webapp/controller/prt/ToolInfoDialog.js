@@ -17,7 +17,14 @@ sap.ui.define([
 			this._eventBus.subscribe("AssignTreeDialog", "ToolReAssignment", this._reAssignTool, this);
 		},
 		/**
-		 * Setting dialog properties to use in tool operations
+		 * This method is used for setting dialog properties to use in too operations
+		 * @param {object} oDialog
+		 * @param {object} oView
+		 * @param {string} sAssignementPath
+		 * @param {object} oAssignmentData
+		 * @param {object} mParameters
+		 * @param {object} oPRTActions
+		 * @return The value of the property. If the property is not found, null or undefined is returned.
 		 */
 		onToolOpen: function (oDialog, oView, sAssignementPath, oAssignmentData, mParameters, oPRTActions) {
 			var oPrtToolsAssignment = this._getDefaultPRTAssignmentObject(oAssignmentData);
@@ -40,11 +47,6 @@ sap.ui.define([
 			oView.addDependent(oDialog);
 
 		},
-		/**
-		 * Function to validate effort assignment save 
-		 * 
-		 */
-
 		/** 
 		 * On unassign assignment of tool the delete function import will be called
 		 * @param oEvent
@@ -258,7 +260,7 @@ sap.ui.define([
 			}
 		},
 		/** This method is used to return a JSON object that is used in this function
-		 * onToolOpen.
+		 *  onToolOpen.
 		 *  @param {object} oAssignmentData
 		 *  @return {object} - always a JSON object is returned
 		 */
@@ -283,7 +285,7 @@ sap.ui.define([
 			};
 		},
 		/** This method is used to return a JSON object that is used in this function
-		 * onSaveDialog.
+		 *  onSaveDialog.
 		 *  @return {JSON} - always a JSON object is returned
 		 */
 		_getParams: function () {
