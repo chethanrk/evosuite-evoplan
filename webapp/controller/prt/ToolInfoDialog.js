@@ -296,7 +296,7 @@ sap.ui.define([
 		},
 		/** This method is used to return a JSON object that is used in this function
 		 *  onSaveDialog.
-		 *  @return {JSON} - always a JSON object is returned
+		 *  @return {object} - always a JSON object is returned
 		 */
 		_getParams: function () {
 			var oAssignmentData = this.oAssignmentModel.getData();
