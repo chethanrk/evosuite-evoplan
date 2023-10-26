@@ -262,7 +262,7 @@ sap.ui.define([
 			this.aFixedAppointmentDemands = [];
 			this.clearMessageModel();
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			this._updatedDmdResources(this.getModel("viewModel"), targetObj);
+			this.updatedResources(this.getModel("viewModel"), this.getModel("user"), targetObj);
 
 			for (var i = 0; i < aItems.length; i++) {
 				oParams = {};
@@ -1148,7 +1148,7 @@ sap.ui.define([
 		 */
 		_updatedAssignmentsPath: function (aContexts) {
 			for (var a in aContexts) {
-				this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(aContexts[a].getPath()));
+				this.updatedResources(this._oView.getModel("viewModel"), this.getModel("user"),this._oView.getModel().getProperty(aContexts[a].getPath()));
 			}
 		}
 

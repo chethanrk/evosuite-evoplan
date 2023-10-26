@@ -59,7 +59,7 @@ sap.ui.define([
 		 */
 		onDeleteAssignment: function (oEvent) {
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
+			this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this.oAssignmentModel.getProperty("/"));
 			var sPrtAssignmentGuid = this.oAssignmentModel.getProperty("/PrtAssignmentGuid");
 			this.clearMessageModel.call(this._oView.getController());
 			var oData = {
@@ -119,7 +119,7 @@ sap.ui.define([
 		 */
 		onSaveDialog: function () {
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
+			this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this.oAssignmentModel.getProperty("/"));
 			var oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
 				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid"),
@@ -244,7 +244,7 @@ sap.ui.define([
 			this.oAssignmentModel = this.oAssignmentModel ? this.oAssignmentModel : oData.oAssignmentModel;
 			var oNewAssign = this._oView.getModel().getProperty(oData.sAssignPath),
 				newAssignDesc = this._getParentsDescription(oNewAssign);
-			this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
+			this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this.oAssignmentModel.getProperty("/"));
 
 			this.oAssignmentModel.setProperty("/NewAssignPath", oData.sAssignPath);
 			this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);

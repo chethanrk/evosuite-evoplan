@@ -1452,13 +1452,38 @@ sap.ui.define([
 			}
 			return bAllowSplitStretchPopUp;
 		},
+		/**
+		 * Storing the updated Resources Info 
+		 * For refreshing only the updated resources assigments in Gantt
+		 * @param oViewModel	
+		 * @param oUserModel	 
+		 * @param oResObj 		Resource Data
+		 * Author Chethan RK
+		 */
+		updatedResources : function(oViewModel, oUserModel, oResObj){
+			var oUpdatedResObj,
+				aUpdatedResources = oViewModel.getProperty("/aUpdatedResources"),
+				sPoolId = oUserModel.getProperty("/POOL_RESOURCE_PREFIX"),
+				sNodeId = oResObj.ResourceGuid + "//" + oResObj.ResourceGroupGuid;
+				
+			//Considering as Pool Resources when NodeType is "RES_GROUP" or ResourceGuid is empty
+			if (oResObj.NodeType === "RES_GROUP" || oResObj.ResourceGuid === "") {
+				sNodeId = sPoolId + oResObj.ResourceGroupGuid;
+			}
+			oUpdatedResObj = {
+				ResourceGuid: oResObj.ResourceGuid,
+				ResourceGroupGuid: oResObj.ResourceGroupGuid,
+				NodeId: sNodeId
+			};
+			aUpdatedResources.push(oUpdatedResObj);
+		},
 
 		/**
 		 * Storing the updated Resources Info in Demand and Map View
 		 * @param oViewModel
 		 * @param oResObj
 		 */
-		_updatedDmdResources: function (oViewModel, oResObj) {
+		_updatedDmdResources1: function (oViewModel, oResObj) {
 			var oUpdatedResObj,
 				aUpdatedResources = oViewModel.getProperty("/aUpdatedResources"),
 				sNodeId = oResObj.ResourceGuid + "//" + oResObj.ResourceGroupGuid,

@@ -955,12 +955,12 @@ sap.ui.define([
 		_fnStoreUpdatedDemandResources: function(oModelDialog){
 			var aData = oModelDialog.getProperty("/step2/dataSet");
 			aData.forEach(function (item) {
-				this._updatedDmdResources(this.oViewModel, item);
+				this.updatedResources(this.oViewModel, this.oUserModel, item);
 			}.bind(this));				
 		},
 
 		/**
-		 * This function is written to fetch the details of the resource containing the assignment and create the resource obj to pass in the _updatedDmdResources Fn
+		 * This function is written to fetch the details of the resource containing the assignment and create the resource obj to pass in the updatedResources Fn
 		 */
 		_fnFetchAndRefreshAssnRes: function(){
 			var oAssignObj, oResObj;
@@ -971,7 +971,7 @@ sap.ui.define([
 				NodeId: oAssignObj.NODE_ID.split("//")[1] + "//" + oAssignObj.ResourceGuid,
 				NodeType: oAssignObj.NODE_TYPE
 			};
-			this._updatedDmdResources(this.oViewModel, oResObj);
+			this.updatedResources(this.oViewModel, this.oUserModel, oResObj);
 		}
 	});
 });

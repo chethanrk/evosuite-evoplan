@@ -263,15 +263,15 @@ sap.ui.define([
 			if (this._assignPath) {
 				//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
 				if (this._oView) {
-					this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(this._assignPath));
+					this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this._oView.getModel().getProperty(this._assignPath));
 					if (this._bulkReAssign) {
 						this._updatedAssignmentsPath(this._aSelectedPaths);
 					} else {
 						if (this._isToolReAssign) {
-							this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel("assignment").getData());
+							this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this._oView.getModel("assignment").getData());
 						} else {
 							if (!this._aSelectedPaths[0].sPath) {
-							this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(this._aSelectedPaths[0]));
+							this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this._oView.getModel().getProperty(this._aSelectedPaths[0]));
 							}
 						}
 					}

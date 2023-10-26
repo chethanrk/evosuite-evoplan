@@ -66,7 +66,6 @@ sap.ui.define([
 			this._treeTable = this.getView().byId("idGanttResourceTreeTable");
 			this._ganttChart = this.getView().byId("idGanttResourceAssignments");
 			this._axisTime = this.getView().byId("idAxisTime");
-			this._userData = this.oUserModel.getData();
 
 			this._oEventBus.subscribe("BaseController", "refreshAssignments", this._refreshAssignments, this);
 			this._oEventBus.subscribe("BaseController", "refreshAvailabilities", this._refreshAvailabilities, this);
@@ -110,7 +109,7 @@ sap.ui.define([
 				};
 			}.bind(this));
 
-			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
+			if (this.oUserModel.getProperty("/ENABLE_RESOURCE_AVAILABILITY")) {
 				this._ganttChart.addStyleClass("resourceGanttWithTable");
 			}
 
@@ -518,6 +517,7 @@ sap.ui.define([
 			//get demand details to assignment
 
 			if (sFunctionKey) {
+				this.updatedResources(this.oViewModel, this.oUserModel, oData);
 				//user status update
 				this._oEventBus.publish("StatusSelectDialog", "changeStatusDemand", {
 					selectedPaths: [{
@@ -1259,7 +1259,7 @@ sap.ui.define([
 						oParams.TimeTo = oTargetData.EndTime;
 						oParams.DemandGuid = oTargetData.DemandGuid;
 						this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function () {
-							this._refreshChangedResources(sTargetResourcePath, sCurrentResourcePath);
+							this._refreshUpdatedResources();	//this._refreshChangedResources(sTargetResourcePath, sCurrentResourcePath);
 						}.bind(this));
 					} else if (this.oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) {
 						this.oPRTActions.openDateSelectionDialog(this.getView(), oDateParams, oPRTShapeData, this._mParameters, true, {
@@ -1272,7 +1272,7 @@ sap.ui.define([
 						oParams.TimeFrom = oDateParams.TimeFrom;
 						oParams.TimeTo = oDateParams.TimeTo;
 						this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function () {
-							this._refreshChangedResources(sTargetResourcePath, sCurrentResourcePath);
+							this._refreshUpdatedResources();//	this._refreshChangedResources(sTargetResourcePath, sCurrentResourcePath);
 						}.bind(this));
 					}
 
@@ -1344,7 +1344,8 @@ sap.ui.define([
 			if (oData.IS_PRT) { // PRT reassignmnet
 				this.oViewModel.setProperty("/PRT/AssignmentData", oData);
 				this.oPRTActions.onChangeTools().then(function (resolve) {
-					this._refreshChangedResources(sPath, sSourcePath);
+				//	this._refreshChangedResources(sPath, sSourcePath);
+				this._refreshUpdatedResources();
 				}.bind(this), function (reject) {
 					this._resetChanges(sPath);
 				}.bind(this));
@@ -1355,43 +1356,46 @@ sap.ui.define([
 				}.bind(this), function (oError) {
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
-					this._refreshChangedResources(sPath);
+					//this._refreshChangedResources(sPath);
+					this._refreshUpdatedResources();
 				}.bind(this)).then(function (aData) {
 					// these events
-					this._oEventBus.publish("BaseController", "refreshCapacity", {
-						sTargetPath: sPath.split("/AssignmentSet/results/")[0]
-					});
-					if (sSourcePath) {
-						this._oEventBus.publish("BaseController", "refreshCapacity", {
-							sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
-						});
-					}
-
+					// this._oEventBus.publish("BaseController", "refreshCapacity", {
+					// 	sTargetPath: sPath.split("/AssignmentSet/results/")[0]
+					// });
+					// if (sSourcePath) {
+					// 	this._oEventBus.publish("BaseController", "refreshCapacity", {
+					// 		sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
+					// 	});
+					// }
+					this._refreshUpdatedResources();
 					if (sRequestType === "reassign") {
 						//method call for updating resource assignment in case of single reassignment
-						this._refreshChangedResources(sPath, sSourcePath);
+					//	this._refreshChangedResources(sPath, sSourcePath);
 						this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
-					} else {
-						//method call for updating resource assignment in case of Multi Assignment in same axis
-						this._refreshChangedResources(sPath);
 					}
+					//  else {
+					// 	//method call for updating resource assignment in case of Multi Assignment in same axis
+					// 	this._refreshChangedResources(sPath);
+					// }
 
 					// in case of gantt shape drag from POOL to RESOURCE 
 					// on successful call of CreateSplitStretchAssignments the response contains the array of split assignments
 					// add those to the gantt view
-					if (aData && aData.results && aData.results.length > 0) {
-						var aCreatedAssignments = this._getCreatedAssignments(aData.results);
-						if (aCreatedAssignments.length > 0) {
-							this._addCreatedAssignment(aCreatedAssignments, sPath.split("/AssignmentSet/results/")[0]);
-						}
-					}
+					// if (aData && aData.results && aData.results.length > 0) {
+					// 	var aCreatedAssignments = this._getCreatedAssignments(aData.results);
+					// 	if (aCreatedAssignments.length > 0) {
+					// 		this._addCreatedAssignment(aCreatedAssignments, sPath.split("/AssignmentSet/results/")[0]);
+					// 	}
+					// }
 				}.bind(this), function () {
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
-					if (sRequestType !== "reassign") {
-						this._refreshChangedResources(sPath);
-					}
+					this._refreshUpdatedResources();
+					// if (sRequestType !== "reassign") {
+					// 	this._refreshChangedResources(sPath);
+					// }
 				}.bind(this));
 			}
 		},
@@ -2318,20 +2322,22 @@ sap.ui.define([
 		_handleMultipleAssignment: function (oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects) {
 			var sDummyPath = this._createDummyAssignment(oTarget, oTargetDate);
 			this.oGanttModel.setProperty(sDummyPath + "/busy", true);
-
+			this.updatedResources(this.oViewModel, this.oUserModel, oResourceData);
 			this.assignMultipleDemands(oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects).then(
 				function (aPromises) {
 					Promise.all(aPromises).then(
 						function (aResults, oResponse) {
-							if (aResults.length > 0) {
-								var aCreatedAssignments = this._getCreatedAssignments(aResults);
-								if (aCreatedAssignments.length > 0) {
-									this._addCreatedAssignment(aCreatedAssignments, oTarget, sDummyPath);
-								} else {
-									this.oGanttModel.setProperty(sDummyPath, null);
-									this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-								}
-							}
+							this._refreshUpdatedResources(); 
+							//2309 Changes
+							// if (aResults.length > 0) {
+							// 	var aCreatedAssignments = this._getCreatedAssignments(aResults);
+							// 	if (aCreatedAssignments.length > 0) {
+							// 		this._addCreatedAssignment(aCreatedAssignments, oTarget, sDummyPath);
+							// 	} else {
+							// 		this.oGanttModel.setProperty(sDummyPath, null);
+							// 		this.oGanttModel.setProperty(sDummyPath + "/busy", false);
+							// 	}
+							// }
 							//	this._oEventBus.publish("BaseController", "refreshAssignments", aResults);
 							//	this._oEventBus.publish("BaseController", "refreshCapacity", {});
 						}.bind(this),
@@ -2927,7 +2933,8 @@ sap.ui.define([
 			this.executeFunctionImport(this.getModel(), {
 				PrtAssignmentGuid: oData.Guid
 			}, "DeleteToolAssignment", "POST").then(function (results) {
-				this._refreshChangedResources(this.oTargetPath);
+				//this._refreshChangedResources(this.oTargetPath);
+				this._refreshUpdatedResources();
 			}.bind(this));
 		},
 

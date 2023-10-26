@@ -200,7 +200,7 @@ sap.ui.define([
 
 			if(!this.reAssign ){
 				//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-				this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
+				this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this.oAssignmentModel.getProperty("/"));
 			}
 
 			if (oDateTo !== undefined && oDateFrom !== undefined) {
@@ -233,7 +233,7 @@ sap.ui.define([
 		 */
 		onDeleteAssignment: function (oEvent) {
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
+			this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this.oAssignmentModel.getProperty("/"));
 			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid"),sDemandGuid = this.oAssignmentModel.getProperty("/DemandGuid"),
 				sSplitIndex = this.oAssignmentModel.getProperty("/SplitIndex"),
 				sSplitCounter = this.oAssignmentModel.getProperty("/SplitCounter"),
@@ -430,7 +430,7 @@ sap.ui.define([
 			if (sEvent === "selectedAssignment") {
 				var oNewAssign = this._oView.getModel().getProperty(oData.sPath),
 					newAssignDesc = this._getParentsDescription(oNewAssign);
-				this._updatedDmdResources(this._oView.getModel("viewModel"), oNewAssign);
+				this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), oNewAssign);
 				this.oAssignmentModel.setProperty("/NewAssignPath", oData.sPath);
 				this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
 				this.oAssignmentModel.setProperty("/NewAssignDesc", newAssignDesc);
