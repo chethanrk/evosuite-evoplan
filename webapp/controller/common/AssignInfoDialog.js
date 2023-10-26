@@ -70,6 +70,7 @@ sap.ui.define([
 				oAssignment.ResourceGroupDesc = oAssignData.GROUP_DESCRIPTION;
 				oAssignment.ResourceGuid = oAssignData.ResourceGuid;
 				oAssignment.ResourceDesc = oAssignData.RESOURCE_DESCRIPTION;
+				oAssignment.ObjectId = oAssignData.ObjectId;
 
 				oAssignment.SplitIndex = oAssignData.SPLIT_INDEX;
 				oAssignment.SplitCounter = oAssignData.SPLIT_COUNTER;
@@ -90,6 +91,7 @@ sap.ui.define([
 				oAssignment.ResourceGroupDesc = oAssignmentData.GROUP_DESCRIPTION;
 				oAssignment.ResourceGuid = oAssignmentData.ResourceGuid;
 				oAssignment.ResourceDesc = oAssignmentData.RESOURCE_DESCRIPTION;
+				oAssignment.ObjectId = oAssignmentData.ObjectId;
 
 				oAssignment.SplitIndex = oAssignmentData.SPLIT_INDEX;
 				oAssignment.SplitCounter = oAssignmentData.SPLIT_COUNTER;
@@ -135,6 +137,7 @@ sap.ui.define([
 			}
 			this._getAssignedDemand(oAssignementPath, data);
 			this._assignmentGuid = oAssignment.AssignmentGuid;
+			this._oView.getModel("viewModel").setProperty("/bEnableAsgnSave", true);
 		},
 
 		/**
@@ -195,6 +198,11 @@ sap.ui.define([
 
 			this.reAssign = !!this.oAssignmentModel.getProperty("/NewAssignPath");
 
+			if(!this.reAssign ){
+				//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+				this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
+			}
+
 			if (oDateTo !== undefined && oDateFrom !== undefined) {
 				oDateFrom = oDateFrom.getTime();
 				oDateTo = oDateTo.getTime();
@@ -224,9 +232,9 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onDeleteAssignment: function (oEvent) {
-			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid"),
-
-				sDemandGuid = this.oAssignmentModel.getProperty("/DemandGuid"),
+			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+			this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
+			var sId = this.oAssignmentModel.getProperty("/AssignmentGuid"),sDemandGuid = this.oAssignmentModel.getProperty("/DemandGuid"),
 				sSplitIndex = this.oAssignmentModel.getProperty("/SplitIndex"),
 				sSplitCounter = this.oAssignmentModel.getProperty("/SplitCounter"),
 				bSplitGlobalConfigEnabled = this._oView.getModel("user").getProperty("/ENABLE_SPLIT_STRETCH_ASSIGN");
@@ -422,7 +430,7 @@ sap.ui.define([
 			if (sEvent === "selectedAssignment") {
 				var oNewAssign = this._oView.getModel().getProperty(oData.sPath),
 					newAssignDesc = this._getParentsDescription(oNewAssign);
-
+				this._updatedDmdResources(this._oView.getModel("viewModel"), oNewAssign);
 				this.oAssignmentModel.setProperty("/NewAssignPath", oData.sPath);
 				this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
 				this.oAssignmentModel.setProperty("/NewAssignDesc", newAssignDesc);
@@ -510,7 +518,8 @@ sap.ui.define([
 			bValidDateFrom = sDateFrom <= sResEndDate && sDateFrom >= sResStartDate;
 			//Checking DateTo falls within Resource Start and End Date
 			bValidDateTo = sDateTo <= sResEndDate && sDateTo >= sResStartDate;
-
+			//We need this changes we will un-comment it in 2401
+			//if(this._oView.getModel("user").getProperty("/ENABLE_RES_ASGN_VALID_CHECK")){
 			//If DateFrom and DateTo doesn't fall within Resource Start and End Date
 			if (!bValidDateFrom || !bValidDateTo) {
 				this._showEffortConfirmMessageBox(this._oView.getController().getResourceBundle().getText("ymsg.targetValidity")).then(function (
@@ -521,6 +530,7 @@ sap.ui.define([
 					} else {}
 				}.bind(this));
 			}
+		//}
 		},
 
 		/**

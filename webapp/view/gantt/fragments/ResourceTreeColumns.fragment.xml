@@ -3,8 +3,8 @@
 		name="{i18n>xtit.tableObject}">
 		<table:template>
 			<controls:CustomTitle
-				text="{ parts:[{path: 'ganttModel>NodeType'},{path: 'ganttModel>Description'},{path: 'ganttModel>DemandDesc'}], formatter: '.formatter.formatGanttResourceTitle' }"
-				tooltip="{ parts:[{path: 'ganttModel>NodeType'},{path: 'ganttModel>Description'},{path: 'ganttModel>DemandDesc'}], formatter: '.formatter.formatGanttResourceTitle' }"
+				text="{ parts:[{path: 'ganttModel>HierarchyLevel'},{path: 'ganttModel>Description'},{path: 'ganttModel>AssignmentSet/results/0/NODE_DESCRIPTION'}], formatter: '.formatter.formatGanttResourceTitle' }"
+				tooltip="{ parts:[{path: 'ganttModel>HierarchyLevel'},{path: 'ganttModel>Description'},{path: 'ganttModel>AssignmentSet/results/0/NODE_DESCRIPTION'}], formatter: '.formatter.formatGanttResourceTitle' }"
 				titleStyle="{ path: 'ganttModel>NodeType', formatter: '.formatter.formatResourceTitle' }"
 				iconColor="{ path: 'ganttModel>IS_AVAILABLE', formatter: '.formatter.formatIconColor' }"
 				icon="{ parts:[{path: 'ganttModel>NodeType'},{path: 'ganttModel>StatusIcon'},{path: 'ganttModel>ResourceIcon'},{path: 'ganttModel>IS_PRT'},{path: 'ganttModel>DEMAND_STATUS_ICON'}], formatter: '.formatter.getResourceIcon' }"

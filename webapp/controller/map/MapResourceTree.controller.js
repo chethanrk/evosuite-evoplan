@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/base/Log", "com/evorait/evoplan/model/Constants",
 	"com/evorait/evoplan/controller/map/MapUtilities",
-	"sap/ui/core/mvc/OverrideExecution",
+	"sap/ui/core/mvc/OverrideExecution"
 ], function (Device, JSONModel, Filter, FilterOperator, FilterType, formatter, BaseController, ResourceTreeFilterBar,
 	MessageToast, MessageBox, Fragment, Log, Constants, MapUtilities, OverrideExecution) {
 	"use strict";
@@ -116,11 +116,6 @@ sap.ui.define([
 					final: false,
 					overrideExecution: OverrideExecution.Instead
 				},
-				removeRouteDataFlag: {
-					public: true,
-					final: false,
-					overrideExecution: OverrideExecution.Instead
-				},
 				onResourceIconPress: {
 					public: true,
 					final: false,
@@ -165,11 +160,18 @@ sap.ui.define([
 
 		aMapDemandGuid: [],
 
+		_bDragResourceTree: false,
+
+		_oDraggedResObj: {},
+
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
 		 **/
 		onInit: function () {
+			// call super class onInit
+			BaseController.prototype.onInit.apply(this, arguments);
+			
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
 			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment")
 				.then(function (result) {
@@ -200,6 +202,7 @@ sap.ui.define([
 			oRouter.attachRouteMatched(this._routeMatched, this);
 
 			this.oMapUtilities = new MapUtilities();
+
 		},
 
 		/**
@@ -210,7 +213,7 @@ sap.ui.define([
 		onBusyStateChanged: function (oEvent) {
 			var parameters = oEvent.getParameters();
 			if (parameters.busy === false) {
-				if (Object.keys(this.mTreeState).length > 0) {
+				if (Object.keys(this.mTreeState).length > 0 && this._oDataTable.getBinding().getNodes().length > 0) {
 					this._restoreTreeState();
 				}
 			}
@@ -262,6 +265,11 @@ sap.ui.define([
 			} else {
 				this.byId("assignedDemands").setEnabled(false);
 			}
+
+			//validate resource tree is selected or not for Auto/Re-Schedule
+			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", this.selectedResources);
+			this.oSchedulingActions.validateScheduleButtons();
+			this.oSchedulingActions.validateReScheduleButton();			
 		},
 
 		/**
@@ -316,6 +324,7 @@ sap.ui.define([
 			var oParams = oEvent.getParameters(),
 				oBinding = oParams.bindingParams,
 				oUserModel = this.getModel("user"),
+				oViewModel=this.getModel("viewModel"),
 				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels;
 
 			if (!this.isLoaded) {
@@ -329,9 +338,9 @@ sap.ui.define([
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
 			aFilter.push(new Filter("IS_MAP_VIEW_CALL", FilterOperator.EQ, "X")); //To restrict fetching of PRT assignments in resource tree
 			// setting filters in local model to access in assignTree dialog.
-			this.getModel("viewModel").setProperty("/resourceFilterView", aFilter);
+			oViewModel.setProperty("/resourceFilterView", aFilter);
 			oBinding.filters = [new Filter(aFilter, true)];
-
+			this.oSchedulingActions.setResourceTreeFilter(aFilter);
 		},
 
 		/**
@@ -361,6 +370,8 @@ sap.ui.define([
 			this.sDemandPath = "/DemandSet('" + oObject.DemandGuid + "')";
 			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
 			this.getModel("viewModel").setProperty("/dragDropSetting/isReassign", true);
+			this._bDragResourceTree = true; //Flag to Check the Resource Tree Drag Instance
+			this._oDraggedResObj = oObject; //Resource Tree Dragged Context Data
 		},
 
 		/**
@@ -380,7 +391,9 @@ sap.ui.define([
 				iVendorAssignmentLen,
 				eventBus = sap.ui.getCore().getEventBus(),
 				aPSDemandsNetworkAssignment, mParams, mParameter,
-				oView = this.getView();
+				oView = this.getView(),
+				sResourceGuid = oModel.getProperty(oDraggedContext.getPath()).ResourceGuid;
+			oViewModel.setProperty("/iFirstTreeTableVisibleindex", this._oDroppableTable.getTable().getFirstVisibleRow());
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -395,10 +408,15 @@ sap.ui.define([
 
 			mParameter = {
 				bFromMap: true
-			};
+			};	
+			
+			if (this._bDragResourceTree) {
+				sResourceGuid = this._oDraggedResObj.ResourceGuid;
+			}
+			this._bDragResourceTree = false; //Resetting Resource Tree Drag State
 
 			//if its the same resource then update has to be called
-			if (oTargetData.ResourceGuid === oModel.getProperty(oDraggedContext.getPath()).ResourceGuid) {
+			if (oTargetData.ResourceGuid === sResourceGuid) {
 				//call update
 				this.handleDropOnSameResource(this.assignmentPath, sPath, mParameter);
 			} else if (this.getModel("viewModel").getProperty("/dragDropSetting/isReassign")) {
@@ -461,6 +479,9 @@ sap.ui.define([
 			this.byId("idButtonTimeAllocNew").setEnabled(false);
 			this.byId("showRoute").setEnabled(false);
 			this.byId("assignedDemands").setEnabled(false);
+
+			//validate resource tree is selected or not for Auto/Re-Schedule
+			this.oSchedulingActions.resetResourceForScheduling();
 		},
 
 		/**
@@ -564,14 +585,6 @@ sap.ui.define([
 		 */
 		onCloseDialog: function (oEvent) {
 			this._oPopover.close();
-		},
-
-		/**
-		 * method called after close the date range fragment used for route creation to remove flag
-		 * @Author: Rakesh
-		 */
-		removeRouteDataFlag: function (oEvent) {
-			// this.oView.getModel("viewModel").setProperty("/mapSettings/bRouteDateSelected", false);
 		},
 
 		/**
@@ -872,7 +885,8 @@ sap.ui.define([
 			var oBindings = this._oDataTable.getBinding(),
 				aNodes = oBindings.getNodes(),
 				expandIdx = [],
-				collapseIdx = [];
+				collapseIdx = [],
+				oViewModel = this.getView().getModel("viewModel");
 
 			for (var j = 0; j < aNodes.length; j++) {
 				if (this.mTreeState[aNodes[j].key] && !aNodes[j].nodeState.isLeaf) {
@@ -891,6 +905,7 @@ sap.ui.define([
 			} else {
 				this.mTreeState = {};
 			}
+			this._oDroppableTable.getTable().setFirstVisibleRow(oViewModel.getProperty("/iFirstTreeTableVisibleindex"));
 		},
 
 		/**

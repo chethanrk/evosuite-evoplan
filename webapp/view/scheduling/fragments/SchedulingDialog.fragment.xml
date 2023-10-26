@@ -1,0 +1,43 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form">
+	<Dialog
+		id="SchedulingDialog"
+		title="{viewModel>/Scheduling/sScheduleDialogTitle}"
+		showHeader="true"
+		verticalScrolling="false"
+		contentHeight="70%"
+		contentWidth="80%"
+		afterClose="onSchedDialogClose">
+
+		<content>
+			<Wizard id="WizardScheduling"
+				class="sapUiResponsivePadding--header sapUiResponsivePadding--content"
+				showNextButton="false"
+				stepActivate="handleNavigationChange">
+				
+				<WizardStep id="DateRangeStep"
+							validated="true"
+							title="{i18n>xtit.ReScheFirstStepTitle}"
+							icon="sap-icon://appointment">
+					
+				</WizardStep>
+				<WizardStep id="ConfirmationStep"
+							validated="true"
+							activate="optionalStepActivation"
+							icon="sap-icon://accept"
+							title="{i18n>xtit.ReScheSecondStepTitle}">
+				</WizardStep>
+					
+			</Wizard>
+		</content>
+		
+		<buttons>
+			<Button text="{i18n>xbut.WizardProceed}" type="Emphasized"  visible="{viewModel>/Scheduling/SchedulingDialogFlags/bNextButtonVisible}" press="onDialogNextButton" />
+			<Button text="{i18n>xbut.WizardAccept}" type="Emphasized" visible="{viewModel>/Scheduling/SchedulingDialogFlags/bFinishButtonVisible}" press="handleWizardSubmit" />
+			<Button	text="{i18n>xbut.WizardCancel}" type="Ghost" press="handleWizardCancel"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

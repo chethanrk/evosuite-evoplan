@@ -271,7 +271,7 @@ sap.ui.define([
 		 * @param oChanges - Which holds Data 
 		 * @param  oUpdateData - Data to be passed to backend
 		 */
-		_ProceedToManageAbsenceService: function (sProperty, oChanges, oUpdateData) {
+		_callManageAbsence: function (sProperty, oChanges, oUpdateData) {
 
 			if (!this._checkMandaoryFields(oChanges, sProperty)) {
 				return;
@@ -312,12 +312,12 @@ sap.ui.define([
 				};
 			if (oChanges) {
 				if (sProperty === "CREATE") {
-					this._ProceedToManageAbsenceService(sProperty, oChanges, oUpdateData);
+					this._callManageAbsence(sProperty, oChanges, oUpdateData);
 				} else {
 					oUpdateData.Guid = oChanges.Guid;
 					oUpdateData.ResourceGuid = oChanges.ResourceGuid;
 					if (sProperty === "SAVE") {
-						this._ProceedToManageAbsenceService(sProperty, oChanges, oUpdateData);
+						this._callManageAbsence(sProperty, oChanges, oUpdateData);
 					} else {
 						this._deleteUnavailability(oUpdateData);
 					}
@@ -557,6 +557,8 @@ sap.ui.define([
 				this._oView.byId("showPlanCalendar").setEnabled(false);
 				this._oView.byId("assignedDemands").setEnabled(false);
 			}
+			//validate resource tree is selected or not for Re-Schedule
+			this._oView.getController().oSchedulingActions.resetResourceForScheduling();
 		},
 		/**
 		 * If any absence are created/updated/deleted the resource tree/ gantt will refreshed

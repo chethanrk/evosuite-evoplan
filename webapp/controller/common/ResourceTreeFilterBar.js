@@ -61,6 +61,7 @@ sap.ui.define([
 			this._component = this._oView.getController().getOwnerComponent();
 			this._viewModel = this._component.getModel("viewModel");
 			this._userModel = this._component.getModel("user");
+			this._eventBus =  sap.ui.getCore().getEventBus();
 			//use global promise for getting when filterbar was fully initalized
 			// create fragment lazily
 			return Fragment.load({
@@ -146,13 +147,16 @@ sap.ui.define([
 		 * event when something in SmartFileterBar was changed
 		 * @param oEvent
 		 */
-		onFilterBarChanged: function (oEvent) {},
+		onFilterBarChanged: function (oEvent) {
+			
+		},
 
 		/**
 		 * event when a custom control value changed
 		 * @param oEvent
 		 */
 		onCustomFilterChange: function (oEvent) {
+			this._setValidDate(); //method will set the date based on view
 			if (this.getFilterBar()) {
 				this._updateCustomFilterData();
 			}
@@ -334,8 +338,8 @@ sap.ui.define([
 					oCtrl = this._oFilterBar.getControlByKey(sFilterKey);
 				if (oCtrl) {
 					try {
-						if (oCtrl.getDateValue()) {
-							this._oCustomFilterData._CUSTOM[sFilterKey] = oCtrl.getDateValue();
+						if (oCtrl.getDateValue) {
+							this._oCustomFilterData._CUSTOM[sFilterKey] = new Date(oCtrl.getValue());
 						} else {
 							this._oCustomFilterData._CUSTOM[sFilterKey] = oCtrl.getValue();
 						}
@@ -353,6 +357,7 @@ sap.ui.define([
 			if (this.getFilterBar()._updateToolbarText) {
 				this.getFilterBar()._updateToolbarText();
 			}
+			this._eventBus.publish("ManageAbsences", "ClearSelection", {});
 		},
 
 		/**
@@ -570,6 +575,58 @@ sap.ui.define([
 				return [startDateCtrl.getValue(), endDateCrtl.getValue()];
 			}
 			return this._getDateRangeValues(null, this._aCustomFilters.viewType.default);
+		},
+
+		/**
+		 * Method will set the start and end date based on the view selected.
+		 * SIMPLE and DAILY view - selected date will be set
+		 * WEEKLY view - startDate -> start of the week of selected date | endDate -> end of the week of selected date
+		 * MONTHLY view - startDate -> start of the month of selected date | endDate -> end of the month of selected date
+		 * QUARTERLY view - startDate -> start of the quarter of selected date | endDate -> end of the quarter of selected date
+		 * YEARLY view - startDate -> start of the year of selected date | endDate -> end of the year of selected date
+		 */
+		_setValidDate: function(){
+			var selectedHierarchyView = this._component.getModel("viewModel").getProperty("/selectedHierarchyView"),
+			oStartDateSource = this._oFilterBar.getControlByKey(this._aCustomFilters.startDate.origin),
+			oEndDateSource = this._oFilterBar.getControlByKey(this._aCustomFilters.endDate.origin),
+			oStartDate = oStartDateSource.getDateValue(),
+			oEndDate = oEndDateSource.getDateValue(),
+			start = oStartDate,
+			end = oEndDate,
+			aYearMatrix = this._component.getModel("viewModel").getProperty("/yearMatrix"),
+			bEnableClusterTable = this._userModel.getProperty("/ENABLE_RESOURCE_TREE_CLUSTER");
+
+			if (!bEnableClusterTable){
+				return;
+			}
+
+			if (selectedHierarchyView === "TIMEWEEK"){
+				start = moment(oStartDate).startOf("week").toDate();
+				end = moment(oEndDate).endOf("week").toDate();
+			} else if (selectedHierarchyView === "TIMEMONTH"){
+				start = moment(oStartDate).startOf("month").toDate();
+				end = moment(oEndDate).endOf("month").toDate();
+			} else if (selectedHierarchyView === "TIMEQUART"){
+				var startMonth = moment(oStartDate).month();
+				var endMonth = moment(oEndDate).month();
+				for(var i=0;i<4;i++){
+					for(var j=0;j<3;j++){
+						if (aYearMatrix[i][j] === startMonth){
+							startMonth = aYearMatrix[i][0]
+						}
+						if (aYearMatrix[i][j] === endMonth){
+							endMonth = aYearMatrix[i][2]
+						}
+					}
+				}
+				start = moment().month(startMonth).startOf('month').toDate();
+				end = moment(oEndDate).month(endMonth).endOf('month').toDate();
+			} else if (selectedHierarchyView === "TIMEYEAR"){
+				start = moment(oStartDate).startOf("year").toDate();
+				end = moment(oEndDate).endOf("year").toDate();
+			}
+			oStartDateSource.setDateValue(start);
+			oEndDateSource.setDateValue(end);
 		}
 
 	});

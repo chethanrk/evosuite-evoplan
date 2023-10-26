@@ -27,7 +27,7 @@
 			</u:Menu>
 		</u:MenuItem>
 		<u:MenuItem text="{i18n>xbut.showPlanningCal}"
-			visible="{= ${user>/ENABLE_PLANNING_CALENDAR} &amp;&amp; !${viewModel>/ganttSettings/shapeData/IS_PRT}}"/>
+			visible="{= ${user>/ENABLE_PLANNING_CALENDAR} &amp;&amp; !${viewModel>/ganttSettings/shapeData/IS_PRT} &amp;&amp; ${user>/ENABLE_GANTT_CM_PLANG_CALENDAR}}"/>
 		<u:MenuItem text="{i18n>xbut.ChngAssgnStatus}"
 			visible="{= ${user>/ENABLE_ASSIGNMENT_STATUS} &amp;&amp; !${viewModel>/ganttSettings/shapeData/IS_PRT}}">
 			<u:Menu items="{path:'/DemandFunctionsSet', templateShareable:true }">

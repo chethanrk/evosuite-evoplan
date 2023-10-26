@@ -20,6 +20,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/common/AssignmentList",
 	"com/evorait/evoplan/controller/common/MaterialInfoDialog",
 	"com/evorait/evoplan/controller/common/FixedAppointmentsList",
+	"com/evorait/evoplan/controller/scheduling/SchedulingDialog",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
 	"sap/m/Link",
@@ -38,7 +39,8 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttAssignmentPopOver",
 	"com/evorait/evoplan/controller/map/SingleDayPlanner",
 	"com/evorait/evoplan/controller/common/ResourceAvailabilities",
-	"com/evorait/evoplan/controller/common/TimeAllocations"
+	"com/evorait/evoplan/controller/common/TimeAllocations",
+	"com/evorait/evoplan/controller/common/ProgressBarDialog"
 ], function (
 	UIComponent,
 	Device,
@@ -61,6 +63,7 @@ sap.ui.define([
 	AssignmentList,
 	MaterialInfoDialog,
 	FixedAppointmentsList,
+	SchedulingDialog,
 	MessagePopover,
 	MessagePopoverItem,
 	Link,
@@ -78,7 +81,8 @@ sap.ui.define([
 	GanttAssignmentPopOver,
 	SingleDayPlanner,
 	ResourceAvailabilities,
-	TimeAllocations) {
+	TimeAllocations,
+	ProgressBarDialog) {
 
 	"use strict";
 
@@ -92,7 +96,9 @@ sap.ui.define([
 		},
 		_appId: "evoplan",
 		MapProvider: null,
+		SchedulingMapProvider: null,
 		_pMapProviderLoaded: null,
+		_pMapProviderLoadedForScheduling: null,
 		/**
 		 * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
 		 * In this function, the device models are set and the router is initialized.
@@ -131,7 +137,35 @@ sap.ui.define([
 			// Not able load more than 100 associations
 			this.getModel().setSizeLimit(600);
 
+			this.initMomentSetting(); // to set inital settings for moment
+
 			this._setApp2AppLinks();
+		},
+		/**
+		 * Method to set initial settings for moment.js
+		 */
+		initMomentSetting: function(){
+			moment.updateLocale(moment.locale(), {
+				week: {
+				  dow: 1, // Set Monday as the start of the week (0: Sunday, 1: Monday, ...)
+				},
+			  });
+
+			this._getSystemInformation().then(function(oData){
+				var month = oData.DEFAULT_FY_START_MONTH ? (parseInt(oData.DEFAULT_FY_START_MONTH) - 1) : 0, 
+					yearMatrix = [];
+				for(var i=0;i<4;i++){
+					yearMatrix.push([]);
+					for(var j=0;j<3;j++){
+						yearMatrix[i].push(month);
+						month++;
+						if(month > 11){
+							month = 0;
+						}
+					}
+				}
+				this.getModel("viewModel").setProperty("/yearMatrix", yearMatrix);
+			}.bind(this));			
 		},
 
 		/**
@@ -154,11 +188,13 @@ sap.ui.define([
 		/**
 		 *  Read call given entityset and filters
 		 */
-		readData: function (sUri, aFilters, mUrlParams) {
+		readData: function (sUri, aFilters, mUrlParams, sGroupId) {
 			return new Promise(function (resolve, reject) {
 				this.getModel().read(sUri, {
 					filters: aFilters,
+					groupId: sGroupId || "",
 					urlParameters: mUrlParams || {},
+					groupId: sGroupId || "",
 					success: function (oData, oResponse) {
 						resolve(oData);
 					}.bind(this),
@@ -233,6 +269,22 @@ sap.ui.define([
 			}.bind(this));
 		},
 
+		/**
+		 * Instatiate and initialize map provider object for Scheduling. 
+		 * Type of the instance depends on configuration provided by backend: oMapConfigModel.getProperty("/name")
+		 */
+		initializeSchedulingMapProvider: function () {
+			// dependency injection for MapProvider
+			var oMapConfigModel = this.getModel("mapConfig");
+			var sProviderJSModuleName = Constants.MAP.SCHEDULING_JS_PROVIDERS_PATH + oMapConfigModel.getProperty("/name");
+			this._pMapProviderLoadedForScheduling = new Promise(function (resolve, reject) {
+				sap.ui.require([sProviderJSModuleName], function (cMapProvider) {
+					this.SchedulingMapProvider = new cMapProvider(this, oMapConfigModel);
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		},
+
 		/* =========================================================== */
 		/* Private methods                                              */
 		/* =========================================================== */
@@ -248,6 +300,10 @@ sap.ui.define([
 			//display and change tools dialog
 			this.toolInfoDialog = new ToolInfoDialog();
 			this.toolInfoDialog.init();
+
+			//display and change auto scheduling and re-scheduling dialog
+			this.SchedulingDialog = new SchedulingDialog(this);
+			this.SchedulingDialog.init();
 
 			//select resource from tree for assigning dialog
 			this.assignTreeDialog = new AssignTreeDialog();
@@ -318,6 +374,9 @@ sap.ui.define([
 
 			this.TimeAllocations = new TimeAllocations();
 			this.TimeAllocations.init();
+
+			this.ProgressBarDialog = new ProgressBarDialog(this);
+			this.ProgressBarDialog.init();
 
 		},
 
@@ -415,8 +474,8 @@ sap.ui.define([
 			var aPromises = [];
 			aPromises.push(this._getSystemInformation());
 			aPromises.push(this._getData("/NavigationLinksSet", [new Filter("LaunchMode", FilterOperator.EQ, this.getModel("viewModel").getProperty(
-					"/launchMode")),
-				new Filter("LaunchMode", FilterOperator.EQ, "ITS")
+				"/launchMode")),
+			new Filter("LaunchMode", FilterOperator.EQ, "ITS")
 			]));
 
 			aPromises.push(this._getData("/MapProviderSet", [], {
@@ -439,6 +498,8 @@ sap.ui.define([
 				new Filter("AVAILABILITY_TYPE_GROUP", FilterOperator.EQ, "N")
 			]));
 
+			aPromises.push(this._callFuntionImport("/RefreshSharedMemoryAreas","POST"));
+
 			//sets user model - model has to be intantiated before any view is loaded
 			Promise.all(aPromises).then(function (data) {
 				this.getModel("user").setData(data[0]);
@@ -448,6 +509,7 @@ sap.ui.define([
 				if (data[2].results.length > 0) {
 					this.getModel("mapConfig").setData(data[2].results[0]);
 					this.initializeMapProvider();
+					this.initializeSchedulingMapProvider();
 				}
 				if (data[3].results.length > 0) {
 					this.getModel("oCostElementModel").setData(data[3].results);
@@ -469,9 +531,12 @@ sap.ui.define([
 
 				//Intialize variables for SAP authorization
 				this._handleAuthorization();
-
-				// create the views based on the url/hash
+				// below we are calling function import RefreshSharedMemoryAreas
+			
 				this.getRouter().initialize();
+				
+
+
 			}.bind(this));
 		},
 
@@ -512,7 +577,8 @@ sap.ui.define([
 						change: false
 					},
 					aGanttSplitDemandData: false,
-					GanttPopOverData: {}
+					GanttPopOverData: {},
+					TravelTimes: []
 				},
 				showDemands: true,
 				mapSettings: {
@@ -553,6 +619,7 @@ sap.ui.define([
 				ganttResourceFiltersFromPin: [],
 				ganttDateRangeFromMap: [],
 				iFirstVisibleRowIndex: -1,
+				iFirstTreeTableVisibleindex: -1,
 				availabilities: {
 					data: [],
 					isToAssign: false
@@ -576,8 +643,50 @@ sap.ui.define([
 					bIsGantt: false,
 					defaultStartDate: "",
 					defaultEndDate: ""
-				}
+				},
+				// whatever properties are added here please update the same in the 
+				// method resetSchedulingJson in the file schedulingaction.js
+				Scheduling: {
+					sType: "",
+					sScheduleDialogTitle: "",
+					sScheduleTableTitle: "",
+					sDistanceMatrixId: "",
+					bEnableReschedule: false,
+					bEnableAutoschedule: false,
+					SchedulingDialogFlags: {
+
+					},
+					aSelectedDemandPath: [],
+					selectedResources: null,
+					selectedDemandPath: null,
+					resourceList: [],
+					resourceData: {},
+					demandData: {},
+					DateFrom: moment().startOf("day").toDate(),
+					DateTo: moment().add(14, "days").endOf("day").toDate(),
+					sUtilizationSlider: null,
+					aResourceTblFilters: [],
+					iSelectedResponse: 0,
+					bDateChanged:false,
+					sScheduleType:"",
+					PTVResponse:{},
+					InputDataChanged:"",
+					startDate: "",
+					endDate: "",
+					bSchedBtnBusy: false,
+					aListOfAssignments: [],
+					aViolatedAssignments: [],
+					aDemandLocationIds: [],
+					aExistingDemandQualification:[],
+					aUpdatedExistingAssignments:[]
+				},
+				sViewRoute: null,
+				aUpdatedResources: [],
+				yearMatrix:[],
+				bEnableAsgnSave : true,
+				selectedAssignment:[],
 			});
+
 			oViewModel.setSizeLimit(999999999);
 			this.setModel(oViewModel, "viewModel");
 
@@ -665,6 +774,9 @@ sap.ui.define([
 			});
 			oSinglePlanningModel.setDefaultBindingMode("TwoWay");
 			this.setModel(oSinglePlanningModel, "mapSinglePlanning");
+
+			this.setModel(models.createProgressBarDialogModel(),"progressBarModel");
+
 		},
 
 		/**
@@ -721,6 +833,24 @@ sap.ui.define([
 						this.getModel("templateProperties").setProperty("/navLinks/", mProps);
 						resolve(mProps);
 					}.bind(this));
+			}.bind(this));
+		},
+		/* Method to call function import.
+		* @param {string} sPath
+		* @param {string} sMethod
+		*/
+		_callFuntionImport:function(sPath,sMethod){
+	
+			return new Promise(function(resolve,reject){
+				this.getModel().callFunction(sPath,{
+					method:sMethod,
+					success:function(data){
+						resolve(data);
+					},
+					error:function(data){
+						reject(data)
+					}
+				})
 			}.bind(this));
 		},
 	});

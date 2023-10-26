@@ -156,7 +156,7 @@ sap.ui.define([
 
 			for (var i = 0; i < this.selectedResources.length; i++) {
 				var obj = oModel.getProperty(this.selectedResources[i]);
-				if (obj.NodeType === "RESOURCE") {
+				if (obj.NodeType === "RESOURCE" || obj.NodeType === "ASSIGNMENT") {
 					if (obj.ResourceGuid && obj.ResourceGuid !== "") { // This check is required for POOL Node.
 						aUsers.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGuid + "//" + obj.ResourceGroupGuid));
 					} else {
@@ -647,7 +647,7 @@ sap.ui.define([
 				for (var i in oBatchData.results) {
 					oFirstRecord = oBatchData.results[0];
 					if (oFirstRecord && oFirstRecord.__metadata && (oFirstRecord.__metadata.type === "com.evorait.evoplan.Assignment" ||
-							oFirstRecord.__metadata.type === "com.evorait.evoplan.ResourceAvailability")) {
+						oFirstRecord.__metadata.type === "com.evorait.evoplan.ResourceAvailability")) {
 						oResourceMap[oBatchData.results[i].ObjectId] = {};
 						oResourceMap[oBatchData.results[i].ObjectId].Assignments = [];
 						oResourceMap[oBatchData.results[i].ObjectId].AbsenceInfo = [];
@@ -712,6 +712,10 @@ sap.ui.define([
 		onSaveDialog: function (oEvent) {
 			if (this.checkDirty()) {
 				this._oPlanningCalendar.setBusy(true);
+				//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+				if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
+					this._updateResources();
+				}
 				this._triggerSaveAssignments();
 				// enable or disable the button after the operation
 				this.checkDirty();
@@ -906,6 +910,12 @@ sap.ui.define([
 				return new Date(sFinalEndDate.setHours(23, 59, 59));
 			} else {
 				return sEndDate;
+			}
+		},
+
+		_updateResources : function(){
+			for(var r in this.selectedResources){
+				this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(this.selectedResources[r]));
 			}
 		},
 

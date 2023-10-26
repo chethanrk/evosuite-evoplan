@@ -35,7 +35,8 @@ sap.ui.define([], function () {
 			SPLITDMD: "splitDemands"
 		},
 		MAP: {
-			JS_PROVIDERS_PATH: "com/evorait/evoplan/controller/map/"
+			JS_PROVIDERS_PATH: "com/evorait/evoplan/controller/mapProvider/",
+			SCHEDULING_JS_PROVIDERS_PATH: "com/evorait/evoplan/controller/scheduling/mapProvider/"
 		},
 		CRITICALLYSTATES: {
 			"info": {
@@ -93,6 +94,10 @@ sap.ui.define([], function () {
 			GANTT_POP_OVER_QUALIFIER: "GanttAssignmentPopOver",
 			MAP_DEMAND_PIN: "MapDemandPin",
 			PRT_TOOLS_ASSIGN_DIALOG:"ToolAssignmentDialogResource"
+		},
+		SCHEDULING: {
+			AUTOSCHEDULING: "AutoScheduling",
+			RESCHEDULING: "ReScheduling"
 		}
 	};
 

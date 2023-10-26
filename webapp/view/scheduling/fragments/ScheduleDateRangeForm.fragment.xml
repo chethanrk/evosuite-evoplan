@@ -1,0 +1,53 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+<f:SimpleForm editable="true" layout="ColumnLayout"
+    columnsM="2"
+    columnsL="2"
+    columnsXL="2">
+    <f:content>
+        <core:ExtensionPoint name="WizardExtP|Schedule|Step1|Form|Content|Before"/>
+        <Label text="{i18n>xtit.DateFrom}" labelFor="ScheduleDateFrom" required="true"/>
+        <DateTimePicker
+            id="ScheduleDateFrom"
+            placeholder="{i18n>xtit.EnterDateFrom}"
+            minDate="{viewModel>/Scheduling/minDate}"
+            value="{path: 'viewModel>/Scheduling/startDate',type: 'sap.ui.model.type.DateTime', formatOptions:{pattern:'dd MMM yyyy, HH:mm:ss'} }"
+            initialFocusedDateValue="{viewModel>/Scheduling/initialFocusedDateValue}"
+            valueState="{viewModel>/Scheduling/sStartDateValueState}"
+            valueStateText="{i18n>xtit.PlanHorizonStartMandatory}"
+            change="onChangeDateFrom"/>
+        <Label text="{i18n>xtit.DateTo}" labelFor="ScheduleDateto" required="true"/>
+        <DateTimePicker
+            id="ScheduleDateTo"
+            placeholder="{i18n>xtit.EnterDateTo}"
+            minDate="{viewModel>/Scheduling/minDate}"
+            maxDate="{viewModel>/Scheduling/maxDate}"
+            value="{path: 'viewModel>/Scheduling/endDate',type: 'sap.ui.model.type.DateTime', formatOptions:{pattern:'dd MMM yyyy, HH:mm:ss'} }"
+            initialFocusedDateValue="{viewModel>/Scheduling/initialFocusedDateValue}"
+            valueState="{viewModel>/Scheduling/sEndDateValueState}"
+            valueStateText="{i18n>xtit.PlanHorizonEndMandatory}"
+            change="onChangeDateTo"/>
+        <Label text="{i18n>xtit.Utilization}  ({viewModel>/Scheduling/sUtilizationSlider})" labelFor="ScheduleUtilization"/>
+        <Slider value="{viewModel>/Scheduling/sUtilizationSlider}"
+            visible="{user>/ENABLE_UTILIZATION_BAR_MAPS}"
+            width="100%"
+            min="0" max="100"
+            showAdvancedTooltip="false"
+            showHandleTooltip="false"
+            change="onUtilizationChange"
+            class="sapUiMediumMarginBottom" />
+        <core:ExtensionPoint name="WizardExtP|Schedule|Step1|Form|Content|After"/>
+    </f:content>
+</f:SimpleForm>
+
+<MessageStrip
+    text="{viewModel>/Scheduling/sInvalidDateRangeMsg}"
+    visible="{viewModel>/Scheduling/bInvalidDateRange}"
+    type="Error"
+    class="sapUiSmallMarginBeginEnd" />
+ <MessageStrip
+			text="{viewModel>/Scheduling/InputDataChanged}"
+			type="Warning"
+			showIcon="true"
+			showCloseButton="false"
+			visible="{= ${viewModel>/Scheduling/InputDataChanged} === ''? false : true}"/>
+</core:FragmentDefinition>

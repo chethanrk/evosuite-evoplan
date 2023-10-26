@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"com/evorait/evoplan/model/Constants",
 	"sap/m/MessageToast"
-], function (BaseController, formatter, models, MessageStrip, Filter, FilterOperator, Constants,MessageToast) {
+], function (BaseController, formatter, models, MessageStrip, Filter, FilterOperator, Constants, MessageToast) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.AssignInfo", {
@@ -112,20 +112,26 @@ sap.ui.define([
 		 * Validating Start and End Date falls within Resource Start and End Date
 		 * 
 		 */
-		onAssignmentDateChange: function () {
+		onAssignmentDateChange: function (oEvent) {
 			var bValidDateFrom, bValidDateTo,
-				oAssignmentModel = this.getView().getController().getOwnerComponent().getModel("assignment"),
+				oSource = oEvent.getSource(),
+				bValidFormat = oEvent.getParameter("valid"),
+				oComponent = this.getView().getController().getOwnerComponent(),
+				oViewModel = oComponent.getModel("viewModel"),
+				oAssignmentModel = oComponent.getModel("assignment"),
 				sResStartDate = oAssignmentModel.getProperty("/RES_ASGN_START_DATE"),
 				sResEndDate = oAssignmentModel.getProperty("/RES_ASGN_END_DATE"),
 				sDateFrom = oAssignmentModel.getProperty("/DateFrom"),
 				sDateTo = oAssignmentModel.getProperty("/DateTo"),
 				bIsResource = oAssignmentModel.getProperty("/ResourceGuid");
+			this.onValidateDateFormat(oSource, bValidFormat, oViewModel);
 
 			//Checking DateFrom falls within Resource Start and End Date
 			bValidDateFrom = sDateFrom <= sResEndDate && sDateFrom >= sResStartDate;
 			//Checking DateTo falls within Resource Start and End Date
 			bValidDateTo = sDateTo <= sResEndDate && sDateTo >= sResStartDate;
-
+			//We need this changes we will un-comment it in 2401
+			//if (this.getModel("user").getProperty("/ENABLE_RES_ASGN_VALID_CHECK")){
 			//If DateFrom and DateTo doesn't fall within Resource Start and End Date
 			if (bIsResource && (!bValidDateFrom || !bValidDateTo)) {
 				this._showEffortConfirmMessageBox(this.getView().getController().getResourceBundle().getText("ymsg.targetValidity")).then(function (
@@ -136,6 +142,7 @@ sap.ui.define([
 					}
 				}.bind(this));
 			}
+			//}
 		},
 
 		/**
@@ -214,7 +221,7 @@ sap.ui.define([
 				if (sValue.includes("-") || Number(sValue) <= 0) {
 					this.showMessageToast(this.getView().getController().getResourceBundle().getText("ymsg.validEffort"));
 				} else if (Number(sEffort) + Number(sRemainingDuration) < Number(sNewValue)) {
-					this.showMessageToast(this.getView().getController().getResourceBundle().getText("ymsg.invalidAssgnDuration",[sTotalEffort,sEffortUnit]));
+					this.showMessageToast(this.getView().getController().getResourceBundle().getText("ymsg.invalidAssgnDuration", [sTotalEffort, sEffortUnit]));
 				}
 			}
 		},

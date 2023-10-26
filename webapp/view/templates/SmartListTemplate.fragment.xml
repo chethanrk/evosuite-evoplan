@@ -13,19 +13,24 @@
 									color="#6a6d70" class="sapUiSmallMarginBegin sapUiTinyMarginTop"/>
 								<VBox class="sapUiSmallMarginBegin sapUiTinyMarginTopBottom">
 									<Label text="{path:'data>Value',formatter:'com.evorait.evoplan.model.AnnotationHelper.getLabel'}:"/>
-									<template:if test="{:= (${path:'data>Value',formatter:'com.evorait.evoplan.model.AnnotationHelper.getPathName'} === 'ORDERID')}">
+									<template:if test="{:= ${data>Value/Path} in ${templateProperties>/navLinks} }">
 										<template:then>
-											<Link class="sapUiTinyMarginTop"
-												text="{path:'data>Value',formatter:'.AH.simplePath'} {path:'data>Org.OData.Measures.V1.Unit',formatter:'.AH.simplePath'}"
-												press="onPressOrderNumber"/>
+											<smartField:SmartField value="{path:'data>Value',formatter:'.AH.simplePath'}"
+												name="{path:'data>Value',formatter:'com.evorait.evoplan.model.AnnotationHelper.getSmartFieldName'}" uomEditable="false"
+												press="onPressSmartField" url="{data>Value/Path}" editable="false" contextEditable="false">
+												<smartField:configuration>
+													<smartField:Configuration controlType="auto" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false"/>
+												</smartField:configuration>
+											</smartField:SmartField>
 										</template:then>
-										<template:elseif test="{:= (${path:'data>Value',formatter:'com.evorait.evoplan.model.AnnotationHelper.getPathName'} === 'NOTIFICATION')}">
-											<Link class="sapUiTinyMarginTop"
-												text="{path:'data>Value',formatter:'.AH.simplePath'} {path:'data>Org.OData.Measures.V1.Unit',formatter:'.AH.simplePath'}"
-												press="onPressNotficationNumber"/>
-										</template:elseif>
 										<template:else>
-											<Text text="{path:'data>Value',formatter:'.AH.simplePath'}{path:'data>Org.OData.Measures.V1.Unit',formatter:'.AH.simplePath'}"/>
+											<smartField:SmartField value="{path:'data>Value',formatter:'.AH.simplePath'}"
+												name="{path:'data>Value',formatter:'com.evorait.evoplan.model.AnnotationHelper.getSmartFieldName'}" uomEditable="false" editable="false"
+												contextEditable="false">
+												<smartField:configuration>
+													<smartField:Configuration controlType="auto" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false"/>
+												</smartField:configuration>
+											</smartField:SmartField>
 										</template:else>
 									</template:if>
 								</VBox>

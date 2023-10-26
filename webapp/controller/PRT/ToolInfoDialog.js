@@ -18,7 +18,7 @@ sap.ui.define([
 		 * Setting dialog properties to use in tool operations
 		 */
 		onToolOpen: function (oDialog, oView, sAssignementPath, oAssignmentData, mParameters) {
-			var oPrtToolsAssignment = this._getDefaultPRTToolsAssignmentModelObject(oAssignmentData);
+			var oPrtToolsAssignment = this._getDefaultPRTAssignmentObject(oAssignmentData);
 
 			this._sAssignmentPath = sAssignementPath;
 			this._mParameters = mParameters.refreshParameters;
@@ -28,10 +28,13 @@ sap.ui.define([
 			this._component = this._oView.getController().getOwnerComponent();
 			this.AssignmentSourcePath = mParameters.parentContext.getPath();
 
+			this._oView.getModel("viewModel").setProperty("/bEnableAsgnSave", true);
+			
 			oPrtToolsAssignment.isPRT = true;
 			this.oAssignmentModel.setData(oPrtToolsAssignment);
 			oDialog.addStyleClass(this._component.getContentDensityClass());
 			oView.addDependent(oDialog);
+
 		},
 		/**
 		 * Function to validate effort assignment save 
@@ -43,6 +46,8 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onDeleteAssignment: function (oEvent) {
+			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+			this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
 			var sPrtAssignmentGuid = this.oAssignmentModel.getProperty("/PrtAssignmentGuid");
 			this.clearMessageModel.call(this._oView.getController());
 			var oData = {
@@ -98,38 +103,12 @@ sap.ui.define([
 		},
 
 		/**
-		 * On Change of Assignment Dates
-		 * Validating Start and End Date falls within Resource Start and End Date
-		 * 
-		 */
-		onAssignmentDateChange: function () {
-			var bValidDateFrom, bValidDateTo,
-				sResStartDate = this.oAssignmentModel.getProperty("/RES_ASGN_START_DATE"),
-				sResEndDate = this.oAssignmentModel.getProperty("/RES_ASGN_END_DATE"),
-				sDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
-				sDateTo = this.oAssignmentModel.getProperty("/DateTo");
-
-			//Checking DateFrom falls within Resource Start and End Date
-			bValidDateFrom = sDateFrom <= sResEndDate && sDateFrom >= sResStartDate;
-			//Checking DateTo falls within Resource Start and End Date
-			bValidDateTo = sDateTo <= sResEndDate && sDateTo >= sResStartDate;
-
-			//If DateFrom and DateTo doesn't fall within Resource Start and End Date
-			if (!bValidDateFrom || !bValidDateTo) {
-				this._showEffortConfirmMessageBox(this._oView.getController().getResourceBundle().getText("ymsg.targetValidity")).then(function (
-					oAction) {
-					if (oAction === "YES") {
-						this.oAssignmentModel.setProperty("/DateFrom", this.oAssignmentModel.getProperty("/RES_ASGN_START_DATE"));
-						this.oAssignmentModel.setProperty("/DateTo", this.oAssignmentModel.getProperty("/RES_ASGN_END_DATE"));
-					} else {}
-				}.bind(this));
-			}
-		},
-		/**
 		 * Function to Tool save and validate date
 		 * 
 		 */
 		onSaveDialog: function () {
+			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+			this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
 			var oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
 				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid"),
@@ -144,20 +123,21 @@ sap.ui.define([
 					this._mParameters.bIsFromPRTAssignmentInfo = true;
 					var oData = {
 						oSourceData: {
-							sTargetPath: this.AssignmentSourcePath
+							sSourcePath: this.AssignmentSourcePath,
+							sTargetPath: this.AssignmentTargetPath
 						}
 					}
 					this.clearMessageModel.call(this._oView.getController());
 					this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), oParams, "ChangeToolAssignment", "POST",
 						this._mParameters, true).then(function (results) {
-						this.showMessage(results[1]);
-						if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
-							this._eventBus.publish("BaseController", "refreshTreeTable", {});
-						}
-						if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
-							this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
-						}
-					}.bind(this));
+							this.showMessage.call(this._oView.getController(),results[1]);
+							if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
+								this._eventBus.publish("BaseController", "refreshTreeTable", {});
+							}
+							if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
+								this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+							}
+						}.bind(this));
 					this._closeDialog();
 				} else {
 					this.showMessageToast(sMsg);
@@ -244,12 +224,15 @@ sap.ui.define([
 			this.oAssignmentModel = this.oAssignmentModel ? this.oAssignmentModel : oData.oAssignmentModel;
 			var oNewAssign = this._oView.getModel().getProperty(oData.sAssignPath),
 				newAssignDesc = this._getParentsDescription(oNewAssign);
+			this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
 
 			this.oAssignmentModel.setProperty("/NewAssignPath", oData.sAssignPath);
 			this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
 			this.oAssignmentModel.setProperty("/NewAssignDesc", newAssignDesc);
 			this.oAssignmentModel.setProperty("/ResourceGroupGuid", oNewAssign.ResourceGroupGuid);
 			this.oAssignmentModel.setProperty("/ResourceGuid", oNewAssign.ResourceGuid);
+			this.oAssignmentModel.setProperty("/ParentNodeId", oNewAssign.ParentNodeId);
+			this.oAssignmentModel.setProperty("/NodeType", oNewAssign.NodeType);
 
 			if (oNewAssign.NodeType === "ASSIGNMENT") {
 				this.oAssignmentModel.setProperty("/DemandGuid", oNewAssign.DemandGuid);
@@ -271,7 +254,7 @@ sap.ui.define([
 		 * to getPRT assignment object for update operations
 		 * @param oAssignmentData
 		 */
-		_getDefaultPRTToolsAssignmentModelObject: function (oAssignmentData) {
+		_getDefaultPRTAssignmentObject: function (oAssignmentData) {
 			return {
 				AllowChange: oAssignmentData.PRT_ASSIGNMENT_TYPE === "PRTASGN" ? true : false,
 				AllowReassign: oAssignmentData.PRT_ASSIGNMENT_TYPE === "PRTASGN" ? true : false,

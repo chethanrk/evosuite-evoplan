@@ -3,9 +3,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/formatter",
-	"com/evorait/evoplan/model/Constants"
-
-], function (AssignmentsController, JSONModel, Fragment, formatter, Constants) {
+	"com/evorait/evoplan/model/Constants",
+	"com/evorait/evoplan/controller/scheduling/SchedulingActions"
+], function (AssignmentsController, JSONModel, Fragment, formatter, Constants,SchedulingActions) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.App", {
@@ -55,6 +55,8 @@ sap.ui.define([
 
 			//set init page title
 			oRouter.attachRouteMatched(this._onAllRouteMatched, this);
+
+			this.oSchedulingActions = new SchedulingActions(this);
 		},
 
 		onAfterRendering: function () {
@@ -126,6 +128,7 @@ sap.ui.define([
 			}
 			oAppViewModel.setProperty("/pageTitle", sItemText);
 			oAppViewModel.setProperty("/busy", true);
+
 			switch (sItemText) {
 			case oResourceBundle.getText("xbut.pageDemands"):
 				oRouter.navTo("demands", {});
@@ -237,10 +240,14 @@ sap.ui.define([
 				pageTitle = oResourceBundle.getText("xbut.pageDemands");
 
 			this.getModel("viewModel").setProperty("/ganttSettings/active", false);
+			//buffer refresh visible for other views
+			oAppViewModel.setProperty("/bBufferRefreshVisible", true);
 
 			if (oParams.config.pattern.startsWith("AssetPlanning")) {
 				pageTitle = oResourceBundle.getText("xbut.pageAssetManager");
 			} else if (oParams.config.pattern.startsWith("MessageCockpit")) {
+				//buffer refresh hidden for message cockpit
+				oAppViewModel.setProperty("/bBufferRefreshVisible", false);
 				pageTitle = oResourceBundle.getText("xbut.pageMessageCockpit");
 			} else if (oParams.config.pattern.startsWith("SplitPage")) {
 				pageTitle = oResourceBundle.getText("xbut.pageNewGanttChartSplit");
@@ -295,27 +302,41 @@ sap.ui.define([
 				this.getOwnerComponent().bIsFromPRTSwitch = false;
 				return;
 			}
+			this.oSchedulingActions.resetSchedulingJson();
+			var oViewModel = this.getModel("viewModel")
+			//Reset scheduling buttons enability and stored data
+
+
 			if (sRoute === "gantt") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				oViewModel.setProperty("/sViewRoute","GANTT")
 			} else if (sRoute === "newgantt") {
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				oViewModel.setProperty("/sViewRoute","NEWGANTT");
 			} else if (sRoute === "ganttSplit") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
+				oViewModel.setProperty("/sViewRoute","GANTTSPLIT");
 			} else if (sRoute === "splitDemands") {
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
+				oViewModel.setProperty("/sViewRoute","SPLITDEMANDS");
 			} else if (sRoute === "DemandDetail") {
 				/* No action require */
 			} else if (sRoute === "map") {
 				this._eventBus.publish("BaseController", "refreshMapTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshMapView", {});
+				oViewModel.setProperty("/sViewRoute","MAP");
 			} else if (this.getOwnerComponent().bIsFromPRTSwitch && (sRoute === "demands" || sRoute === "demandTools")) {
 				this.getOwnerComponent().bIsFromPRTSwitch = false;
+			}else if(sRoute === "newGanttSplit"){
+				this._eventBus.publish("BaseController", "refreshTreeTable", {});
+				this._eventBus.publish("BaseController", "refreshDemandTable", {});
+				oViewModel.setProperty("/sViewRoute","NEWGANTTSPLIT");
 			} else {
 				this._eventBus.publish("BaseController", "refreshTreeTable", {});
 				this._eventBus.publish("BaseController", "refreshDemandTable", {});
+				oViewModel.setProperty("/sViewRoute","DEMANDS");
 			}
-
 		},
 		/**
 		 * catch event from dialog for saving demand status change

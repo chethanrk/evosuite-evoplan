@@ -1,0 +1,27 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core"
+    xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+    xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+    <template:with path="templateProperties>/" var="tempProps">
+        <template:with path="templateProperties>/annotationPath"
+            helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="target">
+            <template:with path="target>" var="data">
+                <HBox>
+                    <RadioButtonGroup columns="3" class="sapUiTinyMargin"
+                        selectedIndex="{viewModel>/Scheduling/iSelectedResponse}" select="onChangeResponseType">
+                        <RadioButton class="sapUiSmallMarginBegin sapUiMediumMarginEnd" groupName="scheduleType"
+                            text="{i18n>xrd.scheduled} ({SchedulingModel>/step2/iPlanned})" selected="true" />
+                        <RadioButton class="sapUiMediumMarginEnd" groupName="scheduleType"
+                            text="{i18n>xrd.notScheduled} ({SchedulingModel>/step2/iNonPlanned})" />
+                        <RadioButton class="sapUiMediumMarginEnd" groupName="scheduleType"
+                            text="{i18n>xrd.notScheduledRes} ({SchedulingModel>/step2/iNonPlannedRes})" visible="false"/>
+                    </RadioButtonGroup>
+                </HBox>
+                <!-- Scheduled and non-scheduled demands -->
+                <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.fragments.ResponseTable" type="XML" />
+                <!-- Non-scheduled resources -->
+                <core:Fragment fragmentName="com.evorait.evoplan.view.scheduling.fragments.ResourceList" type="XML" />
+
+            </template:with>
+        </template:with>
+    </template:with>
+</core:FragmentDefinition>

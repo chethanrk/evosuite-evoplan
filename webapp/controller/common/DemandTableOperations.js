@@ -1,11 +1,12 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/PRT/PRTActions",
+	"com/evorait/evoplan/controller/scheduling/SchedulingActions",
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/OverrideExecution"
-], function (BaseController, MessageBox, formatter, Constants, Fragment, OverrideExecution) {
+], function (BaseController, SchedulingActions, MessageBox, formatter, Constants, Fragment, OverrideExecution) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.DemandTableOperations", {
 
@@ -68,10 +69,29 @@ sap.ui.define([
 					public: true,
 					final: false,
 					overrideExecution: OverrideExecution.Instead
+				},
+				onRescheduleButtonPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
+				},
+				onAutoscheduleButtonPress: {
+					public: true,
+					final: false,
+					overrideExecution: OverrideExecution.Instead
 				}
 			}
 		},
 
+		oSchedulingActions: undefined,
+
+		/**
+		 * Called when a controller is instantiated and its View controls (if available) are already created.
+		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
+		 **/
+		onInit: function (oEvent) {
+			this.oSchedulingActions = new SchedulingActions(this);
+		},
 		/**
 		 * open change status dialog
 		 * @param oEvent
@@ -95,6 +115,16 @@ sap.ui.define([
 			} else {
 				this._proceedToChangeStatus();
 			}
+		},
+
+		/**
+		 * Called on rebind demand smart table 
+		 * to set batch Group ID to binding params to separate batch calls
+		 * @param oEvent
+		 */
+		onBeforeRebindDemandTable: function (oEvent) {
+			var oParams = oEvent.getParameter("bindingParams");
+			oParams["parameters"].batchGroupId = "DemandBatch";
 		},
 
 		/**
@@ -193,7 +223,7 @@ sap.ui.define([
 			this.selectedDemandData = oModel.getProperty(sPath);
 			this.getOwnerComponent().NavigationActionSheet.open(this.getView(), oEvent.getSource().getParent(), this.selectedDemandData);
 		},
-		
+
 		/**
 		 * handle message popover response to save data/ open longtext popover
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button
@@ -216,10 +246,94 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * On press of auto-schedule button
+		 * @param {sap.ui.base.Event} oEvent - press event for auto schedule button
+		 */
+		onAutoscheduleButtonPress: function (oEvent) {
+
+			var oViewModel = this.getModel("viewModel");
+			oViewModel.setProperty("/Scheduling/bSchedBtnBusy", true);
+			oViewModel.setProperty("/Scheduling/sScheduleType", "A");
+			if (!this.oSchedulingActions.validateScheduleAfterPress()) {
+				oViewModel.setProperty("/Scheduling/bSchedBtnBusy", false);
+				return;
+			}
+			this.oSchedulingActions.validateSelectedDemands(this._oDataTable, this._aSelectedRowsIdx);
+		},
+
+		/**
+		 * On press of reschedule button
+		 * @param {sap.ui.base.Event} oEvent - press event for reschedule button
+		 */
+		onRescheduleButtonPress: function (oEvent) {
+			var oViewModel = this.getModel("viewModel"),
+				oDataModel = this.getModel(),
+				oResourceBundle = this.getResourceBundle(),
+				sPath = oViewModel.getProperty("/Scheduling/selectedDemandPath"),
+				aDemandList = [],
+				oMsgParam = {},
+				oAppViewModel = this.getModel("appView");
+			oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", true);
+			oViewModel.setProperty("/Scheduling/sScheduleType", "R");
+			oAppViewModel.setProperty("/busy", true);
+			if (!this.oSchedulingActions.validateReScheduleAfterPress()) {
+				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
+				oAppViewModel.setProperty("/busy", false);
+				return;
+			}
+			this.oSchedulingActions.checkDuplicateResource().then(function (oResult) {
+				if (oResult.bNoDuplicate) {
+					oAppViewModel.setProperty("/busy", true);
+					oMsgParam["bIsPoolExist"] = oResult.bIsPoolExist;
+					oMsgParam["sPoolNames"] = oResult.poolResource;
+					//calling function to check if the demand already is assigned to one of the selected resource
+					this.oSchedulingActions.checkAssignedResource();
+					return {
+						bNotAssigned: true
+					};
+				} else {
+					this._showErrorMessage(oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
+					oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
+					oAppViewModel.setProperty("/busy", false);
+					return false;
+				}
+			}.bind(this)).then(function (oResult) {
+				if (oResult.bNotAssigned) {
+					aDemandList = [{
+						sPath: sPath,
+						oData: oDataModel.getProperty(sPath)
+					}];
+					oViewModel.setProperty("/Scheduling/demandList", aDemandList);
+					oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.RESCHEDULING);
+					// calling below method to get the assignment id for the resource so that 
+					return this.oSchedulingActions.getAssignmentIdForReschedule();
+				} 
+			}.bind(this)).then(function (bParam) {
+				if(bParam){
+					var mParams = {
+						entitySet: "DemandSet"
+					}
+					this.getOwnerComponent().SchedulingDialog.openSchedulingDialog(this.getView(), mParams, oMsgParam, this.oSchedulingActions);
+				}
+				oViewModel.setProperty("/Scheduling/bReSchedBtnBusy", false);
+				oAppViewModel.setProperty("/busy", false);
+				
+			}.bind(this));
+
+		},
+		/**
+		 * This method is used to clear the selections of the demands table in
+		 * Demands, NewGantt and Maps view.
+		 */
+		clearDemandsSelection: function () {
+			this._oDataTable.clearSelection();
+		},
+
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
-	
+
 		/**
 		 * On Open change status dialog after validating all conditions in all the views
 		 */
@@ -235,7 +349,7 @@ sap.ui.define([
 				this.showMessageToast(msg);
 			}
 		},
-		
+
 		/**
 		 * deselect all checkboxes in table
 		 * @private
@@ -246,7 +360,7 @@ sap.ui.define([
 			}
 			this._oDataTable.clearSelection();
 		},
-		
+
 		/**
 		 * Opens long text view/edit popover
 		 * @param {sap.ui.base.Event} oEvent - press event for the long text button

@@ -132,7 +132,7 @@ sap.ui.define([
 
 						//insert rendered template in content and bind path
 						var setTemplateAndBind = function (oTemplateView) {
-							this.mTemplates[sViewName] = oTemplateView;
+							this.mTemplates[sViewName] = oTemplateView;							
 							oViewContainer.insertContent(oTemplateView);
 							this.bindView(oTemplateView, sPath, mParams, callbackFn, callbackfn2);
 						}.bind(this);
@@ -141,7 +141,9 @@ sap.ui.define([
 							Controller.create({
 								name: "com.evorait.evoplan.controller." + sControllerName
 							}).then(function (controller) {
-								this.createView(oModel, oMetaModel, sPath, sViewName, controller).then(setTemplateAndBind);
+								return this.createView(oModel, oMetaModel, sPath, sViewName, controller);
+							}.bind(this)).then(setTemplateAndBind).catch(function(oError){
+								// TO DO - Handle Catch here
 							}.bind(this));
 						} else {
 							this.createView(oModel, oMetaModel, sPath, sViewName, null).then(setTemplateAndBind);
@@ -215,7 +217,7 @@ sap.ui.define([
 			var sViewName = this._joinTemplateViewNameId(oView.getId(), oView.getViewName()),
 				eventBus = sap.ui.getCore().getEventBus(),
 				parameters = null;
-
+				
 			if (!sPath) {
 				eventBus.publish("TemplateRendererEvoPlan", "changedBinding", {
 					viewNameId: sViewName
@@ -243,7 +245,7 @@ sap.ui.define([
 							callbackFn();
 						}
 						if (callbackfn2) {
-							oEvent.getSource().refresh();
+								oEvent.getSource().refresh();	
 							callbackfn2("change", null, mParams);
 						}
 					},

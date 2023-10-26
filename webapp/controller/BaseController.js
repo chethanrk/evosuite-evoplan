@@ -100,9 +100,13 @@ sap.ui.define([
 		 * Shows the toast message on the screen
 		 * @param sMsg Messgae to be shown
 		 */
-		showMessageToast: function (sMsg) {
+		showMessageToast: function (sMsg, mParams) {
 			MessageToast.show(sMsg, {
-				duration: 5000
+				duration: 5000,
+				width: mParams ? mParams.width : '15rem',
+				at: "center bottom",
+				of: mParams ? mParams.source : window,
+				offset: "0 -60"
 			});
 		},
 
@@ -165,6 +169,7 @@ sap.ui.define([
 		 * @returns
 		 */
 		_showErrorMessage: function (sMessage, fnCallback) {
+			var oOwnerComponent = this._controller ? this._controller.getOwnerComponent() : this.getOwnerComponent();
 			var fnClose = function () {
 				this._bMessageOpen = false;
 			}.bind(this);
@@ -180,7 +185,7 @@ sap.ui.define([
 			}
 
 			MessageBox.error(sMessage, {
-				styleClass: this.getOwnerComponent().getContentDensityClass(),
+				styleClass: oOwnerComponent.getContentDensityClass(),
 				actions: [MessageBox.Action.CLOSE],
 				onClose: fnClose
 			});
@@ -234,8 +239,9 @@ sap.ui.define([
 		 * @param sMethod method of http operation ex: GET/POST/PUT/DELETE
 		 */
 		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod, bFromMultiTimeAlloc) {
+	
 			var oResourceBundle = this.getResourceBundle();
-
+	
 			return new Promise(function (resolve, reject) {
 				oModel.callFunction("/" + sFuncName, {
 					method: sMethod || "POST",
@@ -315,12 +321,10 @@ sap.ui.define([
 			} else if (oParameter.bFromManageResourceRemoveAssignments) {
 				eventBus.publish("ManageResourcesActionsController", "refreshAssignmentDialog", {});
 			} else if (oParameter.bFromNewGantt) {
-				eventBus.publish("BaseController", "refreshAssignments", oData);
+				eventBus.publish("GanttChart", "refreshDroppedContext", oData);
 				eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-				eventBus.publish("BaseController", "refreshCapacity", {});
 			} else if (oParameter.bFromNewGanttSplit) {
-				eventBus.publish("BaseController", "refreshAssignments", oData);
-				eventBus.publish("BaseController", "refreshCapacity", {});
+				eventBus.publish("GanttChart", "refreshDroppedContext", oData);
 			} else if (oParameter.bFromDemandTools) {
 				eventBus.publish("BaseController", "refreshTreeTable", {});
 				if (!oParameter.bIsFromPRTAssignmentInfo) {
@@ -328,6 +332,9 @@ sap.ui.define([
 				}
 			} else if (oParameter.bFromGanttTools) {
 				eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+				if (!oParameter.bIsFromPRTAssignmentInfo) {
+					eventBus.publish("BaseController", "refreshToolsTable", {});
+				}
 			}
 
 		},
@@ -374,7 +381,7 @@ sap.ui.define([
 		 * @param aSelectedRowsIdx
 		 * @private
 		 */
-		_getSelectedRowPaths: function (oTable, aSelectedRowsIdx, checkAssignAllowed, aDemands) {
+		_getSelectedRowPaths: function (oTable, aSelectedRowsIdx, checkAssignAllowed, aDemands, bIsForScheduling) {
 			var aPathsData = [],
 				aNonAssignableDemands = [],
 				aUnAssignableDemands = [],
@@ -410,7 +417,8 @@ sap.ui.define([
 
 					//on check on oData property ALLOW_ASSIGN when flag was given
 					if (checkAssignAllowed) {
-						if (oData.ALLOW_ASSIGN) {
+						//Added condition to check for number of assignments to plan demands via scheduling
+						if ((!bIsForScheduling && oData.ALLOW_ASSIGN) || (bIsForScheduling && oData.ALLOW_ASSIGN && oData.NUMBER_OF_CAPACITIES <= 1)) {
 							aPathsData.push({
 								sPath: sPath,
 								oData: oData,
@@ -418,7 +426,7 @@ sap.ui.define([
 							});
 							oTable.addSelectionInterval(aSelectedRowsIdx[i], aSelectedRowsIdx[i]);
 						} else {
-							aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData));
+							aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData, null, bIsForScheduling));
 						}
 					} else {
 						aPathsData.push({
@@ -580,6 +588,7 @@ sap.ui.define([
 				}
 			);
 		},
+
 
 		/**
 		 * Shows the confirmation Box.
@@ -1154,8 +1163,16 @@ sap.ui.define([
 		 * Since 2301.4.0
 		 * @Author Rakesh Sahu
 		 */
-		getMessageDescWithOrderID: function (oData, Desc) {
+		getMessageDescWithOrderID: function (oData, Desc, bIsForScheduling, bIsForReScheduling) {
 			Desc = Desc ? Desc : oData.DemandDesc;
+			// Condition to add number of assignments to display in error dialog for scheduling or auto scheduling.
+			if (bIsForScheduling || bIsForReScheduling) {
+				if (oData.OBJECT_SOURCE_TYPE === 'DEM_PMNO') {
+					return oData.NOTIFICATION_TYPE + ", " + oData.NOTIFICATION + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES + ", " + oData.DURATION + oData.DURATION_UNIT;
+				} else {
+					return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES + ", " + oData.DURATION + oData.DURATION_UNIT;
+				}
+			}
 			if (oData.ORDERID) {
 				return oData.ORDERID + " / " + oData.OPERATIONID + "  " + Desc
 			} else {
@@ -1246,7 +1263,13 @@ sap.ui.define([
 				sDisplayDemandInfo, sCancelResponse, aDraggedDemands = [],
 
 				aDemandsForSplitAssignment = oResourceAvailabiltyResponse.arrayOfDemandsToSplit,
+				bAllowSplitStretchPopUp,
 				bShowSplitConfirmationDialog = this.getModel("user").getProperty("/ENABLE_SPLIT_STRETC_ASGN_POPUP");
+
+			if (aDemandsForSplitAssignment.length > 0) {
+				bAllowSplitStretchPopUp = this.getSplitStretchPopUpFlag(aDemandsForSplitAssignment);
+				bShowSplitConfirmationDialog = bShowSplitConfirmationDialog && bAllowSplitStretchPopUp;
+			}
 
 			return new Promise(function (resolve, reject) {
 
@@ -1459,6 +1482,76 @@ sap.ui.define([
 			}
 			return null;
 		},
+
+		/**
+		 * method returns a demand split Assignment Falg
+		 * asking to display the confirmation pop up to continue with splits or not
+		 * 
+		 * @param {array} aDemandsForSplitAssignment demands which are marked for split
+		 * @returns 
+		 */
+		getSplitStretchPopUpFlag: function (aDemandsForSplitAssignment) {
+			var oModel = this.getModel(),
+				bAllowSplitStretchPopUp,
+				aDemandObjectsFromLocalStorage = JSON.parse(this.localStorage.get("Evo-Dmnd-guid"));
+
+			for (var iIndex = 0; iIndex < aDemandsForSplitAssignment.length; iIndex++) {
+				var sDemandPath = "/DemandSet('" + aDemandsForSplitAssignment[iIndex] + "')",
+					oDemandDetails = oModel.getProperty(sDemandPath);
+				if (!oDemandDetails && aDemandObjectsFromLocalStorage.length > 0) {
+					oDemandDetails = this._getDemandObjectSplitPage(sDemandPath);
+				}
+				bAllowSplitStretchPopUp = oDemandDetails.ALLOW_SPLIT_STRETCH_POPUP;
+			}
+			return bAllowSplitStretchPopUp;
+		},
+
+		/**
+		 * Storing the updated Resources Info in Demand and Map View
+		 * @param oViewModel
+		 * @param oResObj
+		 */
+		_updatedDmdResources: function (oViewModel, oResObj) {
+			var oUpdatedResObj,
+				aUpdatedResources = oViewModel.getProperty("/aUpdatedResources"),
+				sNodeId = oResObj.ResourceGuid + "//" + oResObj.ResourceGroupGuid,
+				sPoolPrefix = "";
+			//Considering as Pool Resources when Dropped on Resource Group
+			if (oResObj.NodeType === "RES_GROUP" || oResObj.ResourceGuid === "") {
+				if (oResObj.NodeId && oResObj.NodeId.indexOf(":") > -1){
+					sPoolPrefix = oResObj.NodeId.split(":")[0] + ":";
+				}else if (oResObj.ParentNodeId && oResObj.ParentNodeId.indexOf(":") > -1){
+					sPoolPrefix = oResObj.ParentNodeId.split(":")[0] + ":";
+				}else if(oResObj.ObjectId && oResObj.ObjectId.indexOf(":") > -1){
+					sPoolPrefix = oResObj.ObjectId.split(":")[0] + ":";
+				}
+				sNodeId = sPoolPrefix + oResObj.ResourceGroupGuid;
+			}
+			oUpdatedResObj = {
+				ResourceGuid: oResObj.ResourceGuid,
+				ResourceGroupGuid: oResObj.ResourceGroupGuid,
+				NodeId: sNodeId
+			};
+			aUpdatedResources.push(oUpdatedResObj);
+		},
+
+		/*
+		* Function to validate manually entered date format in Assignment Dialogs (For both Demand and PRT)
+		*/
+		onValidateDateFormat : function(oSource, bValidFormat, oViewModel){
+			oSource.setValueState("None");
+			if (!bValidFormat) {
+				oSource.setValueState("Error");
+			}
+			var bValid = true,
+			eErrorDateFrom = this.getView().byId("idDateFromAssignInf").getValueState(),
+			eErrorDateTo = this.getView().byId("idDateToAssignInf").getValueState();
+			if (eErrorDateFrom === "Error" || eErrorDateTo === "Error") {
+				bValid = false;
+			}
+			oViewModel.setProperty("/bEnableAsgnSave", bValid);
+		}
+
 	});
 
 });

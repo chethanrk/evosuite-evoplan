@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
+
+specVersion: "2.6"
+metadata:
+  name: com.evorait.evoplan
+type: application
+builder:
+  resources:
+    excludes:
+      - /test/**
+      - /localService/**
+  customTasks:
+    - name: deploy-to-abap
+      afterTask: generateCachebusterInfo
+      configuration:
+        target:
+          destination: ED1CloudConnector_100
+          url: http://ed1cloud.evorait.net:50103
+        app:
+          name: /EVORA/EP_UI5
+          description: EvoPlan Deployment
+          package: /EVORA/EP_UI_UI5
+          transport: ED1K921026 
+        exclude:
+          - /test/

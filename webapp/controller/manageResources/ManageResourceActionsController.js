@@ -9,7 +9,7 @@ sap.ui.define([
 		sOperationTypePath = "/manageResourcesSettings/operationType";
 	return BaseController.extend("com.evorait.evoplan.controller.manageResources.ManageResourceActionsController", {
 
-		onInitResourceActionController: function () {
+		onInitActionController: function () {
 			this._oEventBus = sap.ui.getCore().getEventBus();
 			this._oEventBus.subscribe("ManageResourcesActionsController", "refreshAssignmentDialog", this._refreshAssignmentDialog, this);
 		},
@@ -226,7 +226,10 @@ sap.ui.define([
 
 			if (sOperationType === "moveResource") {
 				this.doDeleteResource(this._oModel, sPath, true).then(function (oResponse) {
-					this.doCreateResource(this._oModel, sEntitySetName, this._aPayLoad).then(function (oResponse) {}.bind(this));
+					return this.doCreateResource(this._oModel, sEntitySetName, this._aPayLoad);
+				}.bind(this)).then(function (oResponse) {
+				}.bind(this)).catch(function(oError){
+					// TO DO - Handle Catch
 				}.bind(this));
 			} else if (sOperationType === "deleteResource") {
 				this.doDeleteResource(this._oModel, sPath).then(function () {
@@ -278,7 +281,7 @@ sap.ui.define([
 		 * destroy contents on Exit
 		 * @param 
 		 */
-		onExitResourceActionController: function () {
+		onExitActionController: function () {
 			this._oEventBus.unsubscribe("ManageResourcesActionsController", "refreshAssignmentDialog", this._refreshAssignmentDialog, this);
 		}
 

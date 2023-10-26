@@ -4,9 +4,9 @@
 		entitySet="DemandSet" showRowCount="true" header="{i18n>xtit.itemListTitle}" smartFilterId="listReportFilter"
 		editTogglable="{parts:['user>/ENABLE_DEMAND_EDIT', 'viewModel>/validateIW32Auth'], formatter:'.formatter.editBtnVisibility'}"
 		editable="{viewModel>/bDemandEditMode}" customData:useSmartField="true" editToggled="onEditToggledDemandTable" useExportToExcel="true"
-		useVariantManagement="false" beforeRebindTable="onBeforeRebindTable" persistencyKey="com.evorait.evosuite.evoplan.DemandsTable"
+		useVariantManagement="{user>/ENABLE_MAP_VARIANT}" beforeRebindTable="onBeforeRebindTable" persistencyKey="com.evorait.evosuite.evoplan.DemandsTable"
 		useTablePersonalisation="true"
-		requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_UNASSIGN,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,MAP_MARKER_COLOUR,ENABLE_ROUTE_EVOORDER,ENABLE_ROUTE_EVOEQUIP,ENABLE_ROUTE_EVONOTIFY,ENABLE_ROUTE_EVOTIME,EQUIPMENT,ORDER_TYPE,ENABLE_ROUTE_GUI1,ENABLE_ROUTE_GUI2,ENABLE_ROUTE_EVOFLOC,FUNCTIONAL_LOC,COMPONENT_EXISTS,FIXED_ASSGN_START_DATE,FIXED_ASSGN_START_TIME,FIXED_ASSGN_END_DATE,FIXED_ASSGN_END_TIME,ALLOW_ASSIGNMENT_DIALOG,LONG_TEXT_ICON,OBJECT_SOURCE_TYPE,FIXED_APPOINTMENT_ICON_COLOR,FIXED_APPOINTMENT,FIXED_APPOINTMENT_START_DATE,FIXED_APPOINTMENT_START_TIME,FIXED_APPOINTMENT_END_DATE,FIXED_APPOINTMENT_END_TIME,MATERIAL_STATUS_ICON,MATERIAL_STATUS_DESC,MATERIAL_STATUS_STATE"
+		requestAtLeastFields="Guid,ALLOW_ASSIGN,ALLOW_ONHOLD,ALLOW_STARTED,ALLOW_ENROUTE,ALLOW_UNASSIGN,ALLOW_DEM_MOBILE,ALLOW_COMPLETE,StatusDesc,CRITICALITY,MAP_MARKER_COLOUR,ENABLE_ROUTE_EVOORDER,ENABLE_ROUTE_EVOEQUIP,ENABLE_ROUTE_EVONOTIFY,ENABLE_ROUTE_EVOTIME,EQUIPMENT,ORDER_TYPE,ENABLE_ROUTE_GUI1,ENABLE_ROUTE_GUI2,ENABLE_ROUTE_EVOFLOC,FUNCTIONAL_LOC,COMPONENT_EXISTS,FIXED_ASSGN_START_DATE,FIXED_ASSGN_START_TIME,FIXED_ASSGN_END_DATE,FIXED_ASSGN_END_TIME,ALLOW_ASSIGNMENT_DIALOG,LONG_TEXT_ICON,OBJECT_SOURCE_TYPE,FIXED_APPOINTMENT_ICON_COLOR,FIXED_APPOINTMENT,FIXED_APPOINTMENT_START_DATE,FIXED_APPOINTMENT_START_TIME,FIXED_APPOINTMENT_END_DATE,FIXED_APPOINTMENT_END_TIME,MATERIAL_STATUS_ICON,MATERIAL_STATUS_DESC,MATERIAL_STATUS_STATE,ALLOW_AUTOSCHEDULE,ALLOW_RESCHEDULE,LATITUDE,LONGITUDE,DURATION,DURATION_UNIT,PRIORITY,QUALIFICATION_DESCRIPTION,Effort,TimeFrom,TimeTo,NOTIFICATION_TYPE,ORDER_DESC,OPERATION_DESC"
 		customData:p13nDialogSettings='{filter:{visible:false},sort:{visible:false}}'>
 		<!-- layout data used to make the table growing but the filter bar fixed -->
 		<smartTable:layoutData>
@@ -15,14 +15,14 @@
 		<smartTable:customToolbar>
 			<OverflowToolbar>
 				<core:ExtensionPoint name="TableExtP|Map|DemandSet|TableToolbar|Left"/>
-				<ToolbarSpacer/>
+				<ToolbarSpacer/>				
 				<ToggleButton icon="{=${viewModel>/showDemands} === true?'sap-icon://show':'sap-icon://hide'}" enabled="true"
 					pressed="{viewModel>/showDemands}"/>
 				<core:Fragment fragmentName="com.evorait.evoplan.view.common.fragments.DemandToolbarButtons" type="XML"/>
 				<core:ExtensionPoint name="TableExtP|Map|DemandSet|TableToolbar|Right"/>
 			</OverflowToolbar>
 		</smartTable:customToolbar>
-		<table:Table enableGrouping="false" visibleRowCountMode="Auto" enableColumnReordering="false" threshold="{user>/DEFAULT_DEMAND_THRESHOLD}"
+		<table:Table enableGrouping="false" visibleRowCountMode="Auto" enableColumnReordering="false" threshold="{parts:['user>/DEFAULT_DEMAND_THRESHOLD','user>/DEFAULT_DEMAND_SELECT_ALL'], formatter:'.formatter.getDemandTableThreshold'}"
 			enableCellFilter="false" rowSelectionChange="onRowSelectionChange" minAutoRowCount="3" cellClick="onCopyDemandCellData">
 			<table:rowSettingsTemplate>
 				<table:RowSettings highlight="{ path:'CRITICALITY', formatter:'.formatter.formatCriticality' }"/>

@@ -12,11 +12,11 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/Constants"
 ], function (Device, JSONModel, Filter, FilterOperator,
-	FilterType, formatter, BaseController, ResourceTreeFilterBar,
+	FilterType, formatter, AssignmentsController, ResourceTreeFilterBar,
 	MessageToast, MessageBox, Fragment, Constants) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.demands.ResourceTree", {
+	return AssignmentsController.extend("com.evorait.evoplan.controller.demands.ResourceTree", {
 
 		formatter: formatter,
 
@@ -32,11 +32,18 @@ sap.ui.define([
 
 		_bFirsrTime: true,
 
+		_bDragResourceTree: false,
+
+		_oDraggedResObj: {},
+
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
 		 **/
 		onInit: function () {
+			// call super class onInit
+			AssignmentsController.prototype.onInit.apply(this, arguments);
+
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
 			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
 			this._oViewModel = this.getModel("viewModel");
@@ -67,6 +74,7 @@ sap.ui.define([
 			//route match function
 			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.attachRouteMatched(this._routeMatched, this);
+
 		},
 
 		_routeMatched: function (oEvent) {
@@ -137,6 +145,11 @@ sap.ui.define([
 				this.byId("idButtonreassign").setEnabled(false);
 				this.byId("idButtonunassign").setEnabled(false);
 			}
+
+			//validate resource tree is selected or not for Auto/Re-Schedule
+			this.getModel("viewModel").setProperty("/Scheduling/selectedResources", this.selectedResources);
+			this.oSchedulingActions.validateScheduleButtons();
+			this.oSchedulingActions.validateReScheduleButton();
 		},
 
 		/**
@@ -197,19 +210,19 @@ sap.ui.define([
 				nTreeExpandLevel = oBinding.parameters.numberOfExpandedLevels,
 				oFilterRightTechnician = this._oViewModel.getProperty("/resourceFilterforRightTechnician"),
 				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician");
-
 			if (!this.isLoaded) {
 				this.isLoaded = true;
-			}
-
+			}		
 			// Bug fix for some time tree getting collapsed
 			if (oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND")) {
 				oBinding.parameters.numberOfExpandedLevels = nTreeExpandLevel ? nTreeExpandLevel : 1;
 			}
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
+		
 			// setting filters in local model to access in assignTree dialog.
 			this._oViewModel.setProperty("/resourceFilterView", aFilter);
+			this.oSchedulingActions.setResourceTreeFilter(aFilter);
 
 			oBinding.filters = [new Filter(aFilter, true)];
 
@@ -219,6 +232,7 @@ sap.ui.define([
 				this._oViewModel.setProperty("/CheckRightTechnician", false);
 				this._oViewModel.setProperty("/resourceFilterforRightTechnician", false);
 			}
+			
 		},
 
 		/**
@@ -279,7 +293,8 @@ sap.ui.define([
 			this.sDemandPath = "/DemandSet('" + oObject.DemandGuid + "')";
 			this.assignmentPath = "/AssignmentSet('" + vAssignGuid + "')";
 			this._oViewModel.setProperty("/dragDropSetting/isReassign", true);
-
+			this._bDragResourceTree = true; //Flag to Check the Resource Tree Drag Instance
+			this._oDraggedResObj = oObject; //Resource Tree Dragged Context Data
 		},
 
 		/**
@@ -299,7 +314,9 @@ sap.ui.define([
 				iVendorAssignmentLen,
 				aPSDemandsNetworkAssignment,
 				mParams, mParameter,
-				oView = this.getView();
+				oView = this.getView(),
+				sResourceGuid =	oModel.getProperty(oDraggedContext.getPath()).ResourceGuid;
+			oViewModel.setProperty("/iFirstTreeTableVisibleindex", this._oDroppableTable.getTable().getFirstVisibleRow());	
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -316,12 +333,16 @@ sap.ui.define([
 				bFromHome: true
 			};
 
+			if(this._bDragResourceTree){
+				sResourceGuid = this._oDraggedResObj.ResourceGuid;
+			}
+			this._bDragResourceTree = false; //Resetting Resource Tree Drag State
+
 			//if its the same resource then update has to be called
-			if (oTargetData.ResourceGuid === oModel.getProperty(oDraggedContext.getPath()).ResourceGuid) {
+			if (oTargetData.ResourceGuid === sResourceGuid) {
 				//call update
 				this.handleDropOnSameResource(this.assignmentPath, sPath, mParameter);
 			} else if (this._oViewModel.getProperty("/dragDropSetting/isReassign")) {
-
 				this.getOwnerComponent()._getData(this.sDemandPath)
 					.then(function (oData) {
 						oViewModel.setProperty("/dragSession", [{
@@ -331,9 +352,7 @@ sap.ui.define([
 						}]);
 						this._reassignmentOnDrop(this.assignmentPath, sPath, oView, mParameter);
 					}.bind(this));
-
 			} else {
-
 				aSources = this._oViewModel.getProperty("/dragSession");
 				iOperationTimesLen = this.onShowOperationTimes(this._oViewModel);
 				iVendorAssignmentLen = this.onAllowVendorAssignment(this._oViewModel, this.getModel("user"));
@@ -393,7 +412,7 @@ sap.ui.define([
 		 */
 		_triggerRefreshBufferTree: function () {
 			this._oViewModel.setProperty("/CheckRightTechnician", false);
-			this._oDroppableTable.rebindTable();
+			this._triggerRefreshTree();
 		},
 		/**
 		 * Resets the selected resource if selected
@@ -411,6 +430,9 @@ sap.ui.define([
 			this.byId("idButtonreassign").setEnabled(false);
 			this.byId("idButtonunassign").setEnabled(false);
 			this.byId("idButtonTimeAllocNew").setEnabled(false);
+
+			//validate resource tree is selected or not for Auto/Re-Schedule
+			this.oSchedulingActions.resetResourceForScheduling();
 		},
 		/**
 		 * On select of capacitive checkbox the adjusting splitter length
@@ -505,7 +527,8 @@ sap.ui.define([
 			var oBindings = this._oDataTable.getBinding(),
 				aNodes = oBindings.getNodes(),
 				expandIdx = [],
-				collapseIdx = [];
+				collapseIdx = [],
+				oViewModel = this.getView().getModel("viewModel");
 
 			for (var j = 0; j < aNodes.length; j++) {
 				if (this.mTreeState[aNodes[j].key] && !aNodes[j].nodeState.isLeaf) {
@@ -524,6 +547,7 @@ sap.ui.define([
 			} else {
 				this.mTreeState = {};
 			}
+			this._oDroppableTable.getTable().setFirstVisibleRow(oViewModel.getProperty("/iFirstTreeTableVisibleindex"));
 		},
 		onToggleOpenState: function () {
 			this.mTreeState = {};

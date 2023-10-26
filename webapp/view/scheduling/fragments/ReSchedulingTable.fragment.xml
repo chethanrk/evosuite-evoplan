@@ -1,0 +1,77 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:table="sap.ui.table"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1" 
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+	<template:with path="templateProperties>/" var="tempProps">
+		<template:with path="templateProperties>/annotationPath" helper="com.evorait.evoplan.model.AnnotationHelper.resolveModelPath" var="target">
+			<template:with path="target>Data" var="data">
+
+				<table:Table id="step1_SchedulingTable" rows="{= '{path: \''+ ${tempProps>tempData/modelName} +'>'+ ${tempProps>tempData/modelDataSetPath} +'\' }' }"
+					busyStateChanged="onBusyStateChanged"
+					enableBusyIndicator="true"
+					enableCustomFilter="true"
+					busy="{viewModel>/Scheduling/bSchedulingTableBusy}"
+					selectionMode="None"
+					minAutoRowCount="1"
+					visibleRowCountMode="Interactive">
+						
+					<table:extension>
+						<OverflowToolbar>
+							<Title text="{viewModel>/Scheduling/sScheduleTableTitle}" />
+							<ToolbarSpacer/>
+							<ToggleButton id="btnInsideDateRange" 
+								type="Ghost" 
+								text="{i18n>xbut.scheduleToogleInside} ({SchedulingModel>/inside})" 
+								pressed="false" 
+								press="onPressInsideDate" />
+							<ToggleButton id="btnOutsideDateRange" 
+								type="Ghost" 
+								text="{i18n>xbut.scheduleToogleOutside} ({SchedulingModel>/outside})" 
+								pressed="false" 
+								press="onPressOutsideDate" />
+							<Button type="Ghost"  icon="sap-icon://filter" text="{viewModel>/Scheduling/sFilterCounts}" press="onPressShowFilterbar" visible="{SchedulingModel>/isAutoSchedule}"/>							
+						</OverflowToolbar>
+					</table:extension>
+
+					<table:rowSettingsTemplate>
+						<table:RowSettings highlight="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatus}' }" highlightText="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatusText}' }"/>						
+					</table:rowSettingsTemplate>
+
+					<table:columns>
+						<table:Column width="3rem">
+							<Label text="{i18n>xtit.DateIndicator}" />
+							<table:template>
+								<core:Icon src="sap-icon://pending" color="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeIconStatus}' }" tooltip="{:= '{'+ ${tempProps>tempData/modelName} +'>dateRangeStatusText}' }" />
+							</table:template>
+						</table:Column>
+						<template:repeat list="{path:'data>'}">
+							<template:with path="data>Value" var="value">
+								<table:Column sortProperty="{:= ${path:'value>Path'} }">
+									<Label text="{:= ${parts: [{path:'value>Path'},{path:'templateProperties>/'}],formatter:'com.evorait.evoplan.model.AnnotationHelper.getPropertyLabel'}}" />
+									<table:template>
+										<template:if test="{:= ${data>EdmType} === 'Edm.Date'}">
+											<template:then>
+												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.Date\', formatOptions:{ pattern: \'MMM dd, yyyy\'}}' }" wrapping="false" />
+											</template:then>
+											<template:elseif test="{:= ${data>EdmType} === 'Edm.DateTime'}">
+												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.type.DateTime\', formatOptions:{ pattern: \'MMM dd, yyyy\'}}' }" wrapping="false" />
+											</template:elseif>
+											<template:elseif test="{:= ${data>EdmType} === 'Edm.Time'}">
+												<Text text="{:= '{path:\''+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'\', type: \'sap.ui.model.odata.type.Time\', style: \'long\'}' }" wrapping="false" />
+											</template:elseif>
+											<template:elseif test="{:= ${value>Path}.toLowerCase().includes('icon')}">
+												<core:Icon src="{:= '{'+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'}' }" />
+											</template:elseif>
+											<template:else>
+												<Text text="{:= '{'+ ${tempProps>tempData/modelName} +'>'+ ${path:'value>Path'} +'}' }" wrapping="false" />
+											</template:else>
+										</template:if>
+									</table:template>
+								</table:Column>
+							</template:with>
+						</template:repeat>
+					</table:columns>
+				</table:Table>
+			</template:with>
+		</template:with>
+	</template:with>
+</core:FragmentDefinition>

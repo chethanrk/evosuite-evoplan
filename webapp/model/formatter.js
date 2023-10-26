@@ -141,8 +141,8 @@ sap.ui.define([
 					return sPRTIcon;
 				}
 				return sStatusIcon;
-			} else if (sStatusIcon) {
-				return sStatusIcon;
+			} else if (sStatusIcon || sPRTIcon) {
+				return sStatusIcon || sPRTIcon;
 			} else {
 				if (iconFormat) {
 					return iconFormat.icon || "";
@@ -340,14 +340,14 @@ sap.ui.define([
 		getAssetIcon: function (sValue) {
 			var sIcon;
 			switch (sValue) {
-			case "FLOC":
-				sIcon = "sap-icon://functional-location";
-				break;
-			case "EQUI":
-				sIcon = "sap-icon://technical-object";
-				break;
-			default:
-				sIcon = "sap-icon://functional-location";
+				case "FLOC":
+					sIcon = "sap-icon://functional-location";
+					break;
+				case "EQUI":
+					sIcon = "sap-icon://technical-object";
+					break;
+				default:
+					sIcon = "sap-icon://functional-location";
 			}
 			return sIcon;
 		},
@@ -811,15 +811,15 @@ sap.ui.define([
 				aData = aManageResourceData.Assignments,
 				sResourceName = this._oSelectedNodeContext.getProperty("Description");
 			switch (sOperation) {
-			case "deleteResource":
-				sMsgTypeText = "Removable";
-				break;
-			case "moveResource":
-				sMsgTypeText = "Movable";
-				break;
-			case "updateResource":
-				sMsgTypeText = "Update";
-				break;
+				case "deleteResource":
+					sMsgTypeText = "Removable";
+					break;
+				case "moveResource":
+					sMsgTypeText = "Movable";
+					break;
+				case "updateResource":
+					sMsgTypeText = "Update";
+					break;
 			}
 
 			if (aData && aData.length) {
@@ -931,6 +931,16 @@ sap.ui.define([
 		},
 
 		/**
+		 * 
+		 * @param {*} bSelected 
+		 * @param {*} bGlobalConfigFlag 
+		 * @returns 
+		 */
+		setVisibilityScheduleBtn: function (bSelected, bGlobalConfigFlag) {
+			return bSelected && bGlobalConfigFlag;
+		},
+
+		/**
 		 * Visibility of Assignment Status Button's in Assignment Status Popover based on Allow Fields 
 		 * @Author Chethan
 		 * @since 2205
@@ -951,12 +961,13 @@ sap.ui.define([
 		 * @returns sDescription
 		 * @returns sDemandDesc
 		 */
-		formatGanttResourceTitle: function (sNodeType, sDescription, sDemandDesc) {
-			//	if (sNodeType === "ASSIGNMENT") {
-			if (sDemandDesc) {
+		formatGanttResourceTitle: function (iHierarchyLevel, sDescription, sDemandDesc) {
+			if (iHierarchyLevel === 0 || iHierarchyLevel === 1 || iHierarchyLevel === 2) {
+				return sDescription;
+			}else{
 				return sDemandDesc;
+				
 			}
-			return sDescription;
 		},
 		/*
 		 * Customizing remaining work label
@@ -1048,6 +1059,20 @@ sap.ui.define([
 			}
 			return "";
 		},
+		/**
+		 * @Author Manik
+		 * format the 
+		 * @param mParam1 {string}
+		 * @param mParam2 {string}
+		 */
+		formatSchedulingBtn: function (mParam1, mParam2) {
+			if (mParam1 === "DEMANDS" || mParam1 === "NEWGANTT" || mParam1 === "MAP") {
+				if (mParam2) {
+					return true
+				}
+			}
+			return false;
+		},
 
 		/**
 		 * @Author Bhumika
@@ -1072,6 +1097,58 @@ sap.ui.define([
 			} else {
 				return oBundle.getText("xtit.assignModalTitle");
 			}
+		},
+
+		/**
+		 * getting Demand table threshold if threshold is less the demand table select All config
+		 * @param nThreshold,nSelectAll
+		 * @return {Number}
+		 */
+		getDemandTableThreshold: function (nThreshold, nSelectAll) {
+			if (nSelectAll > nThreshold) {
+				return nSelectAll;
+			}
+			return nThreshold;
+		},
+		/*
+		 * SingleDayPlanner Display Date Contactination with Time
+		 * @param oDate, oTime
+		 * @return Date
+		 */
+		formatDisplayDate: function (oDate, oTime) {
+			if (oDate && oTime) {
+				return new Date(oDate.getTime() + oTime.ms);
+			}
+		},
+		/*
+		* For Formatting Gantt Assignment Shapes Tooltip Text
+		* @param sDemandDesc, sStatus, bPRT
+		* @return String
+		*/
+		shapeTooltipDescription: function (sDemandDesc, sStatus, bPRT) {
+			if (bPRT) {
+				return sDemandDesc;
+			} else {
+				return sDemandDesc + " - " + sStatus;
+			}
+		},
+		/*
+		* to get PTV autoscheduling violation type
+		* @param sViolationTypes
+		* @return String
+		*/
+		getViolationType: function (sViolationTypes) {
+			var aViolationTexts = [];
+
+			if (sViolationTypes.indexOf(",") === -1) {
+				aViolationTexts.push(this.oOwnerComponent.getModel("i18n").getResourceBundle().getText(sViolationTypes));
+			} else {
+				sViolationTypes = sViolationTypes.split(",");
+				for (var i in sViolationTypes) {
+					aViolationTexts.push(this.oOwnerComponent.getModel("i18n").getResourceBundle().getText(sViolationTypes[i]));
+				}
+			}
+			return aViolationTexts.join(", ");
 		}
 	};
 });

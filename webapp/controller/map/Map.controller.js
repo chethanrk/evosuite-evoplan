@@ -14,9 +14,10 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/unified/Calendar",
 	"com/evorait/evoplan/controller/map/MapUtilities",
-	"sap/ui/core/mvc/OverrideExecution"
+	"sap/ui/core/mvc/OverrideExecution",
+	"com/evorait/evoplan/model/Constants",
 ], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
-	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, MapUtilities, OverrideExecution) {
+	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, MapUtilities, OverrideExecution,Constants) {
 	"use strict";
 
 	return AssignmentActionsController.extend("com.evorait.evoplan.controller.map.Map", {
@@ -156,7 +157,7 @@ sap.ui.define([
 					final: false,
 					overrideExecution: OverrideExecution.Instead
 				},
-				onSelectMapLagend: {
+				onSelectMapLegend: {
 					public: true,
 					final: false,
 					overrideExecution: OverrideExecution.Instead
@@ -205,6 +206,9 @@ sap.ui.define([
 		_mapContextActionSheet: null,
 
 		onInit: function () {
+			// call super class onInit
+			AssignmentActionsController.prototype.onInit.apply(this, arguments);
+
 			var oGeoMap = this.getView().byId("idGeoMap"),
 				oMapModel = this.getModel("mapConfig");
 			this._oGeoMap = oGeoMap;
@@ -217,7 +221,7 @@ sap.ui.define([
 			this._oEventBus.subscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.subscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
 			this._oEventBus.subscribe("MapController", "displayRoute", this._zoomToPoint, this);
-
+			this._oEventBus.subscribe("DemandTableOperation", "clearDemandsSelection", this.clearDemandsSelection, this);
 			var onClickNavigation = this._onActionPress.bind(this);
 			var openActionSheet = this.openActionSheet.bind(this);
 			this._oDraggableTable = this.byId("draggableList");
@@ -234,6 +238,7 @@ sap.ui.define([
 
 			//initialize PinPopover controller
 			this.oPinPopover = new PinPopover(this);
+
 
 			this.oMapUtilities = new MapUtilities();
 		},
@@ -264,6 +269,10 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			oViewModel.setProperty("/mapSettings/bRouteDateSelected", false);
+			oViewModel.setProperty("/Scheduling/selectedDemandPath", aSelectedDemands[0]);
+			oViewModel.setProperty("/Scheduling/aSelectedDemandPath", aSelectedDemands);
+			this.oSchedulingActions.validateScheduleButtons();
+			this.oSchedulingActions.validateReScheduleButton();
 			this._oDraggableTable.rebindTable();
 		},
 		/**
@@ -385,6 +394,9 @@ sap.ui.define([
 		 * @return
 		 */
 		onBeforeRebindTable: function (oEvent) {
+			var oParams = oEvent.getParameter("bindingParams");
+			oParams["parameters"].batchGroupId = "DemandBatch";
+			
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 
 			var aFilters,
@@ -450,6 +462,8 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/routeData", []);
 			oViewModel.setProperty("/Disable_Assignment_Status_Button", false);
 			this.onResetLegendSelection();
+			this.oSchedulingActions.resetSchedulingJson();
+			this._oEventBus.publish("BaseController", "refreshMapTreeTable",{});
 		},
 		/**
 		 * Clearing the selected demands the Reseting the selection
@@ -546,7 +560,8 @@ sap.ui.define([
 			//todo need to check scroll, this flag is disturbing selection/deselection
 			var selected = this._oDataTable.getSelectedIndices(),
 				bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
-				sDemandPath, bComponentExist, sMsg;
+				sDemandPath, bComponentExist, sMsg, iLastIndex,
+				oViewModel=this.getModel("viewModel");
 			var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 
 			this._aSelectedRowsIdx = _.clone(selected);
@@ -569,13 +584,28 @@ sap.ui.define([
 				this.byId("idUnassignButton").setEnabled(false);
 			}
 
+			// condition to deselect All when max selection limit is already reach but pressing select All checkbox
+			if (oEvent.getParameter("selectAll") && this._nSelectedDemandsCount === iMaxRowSelection) {
+				this._oDataTable.clearSelection();
+				return;
+			}
 			//If the selected demands exceeds more than the maintained selected configuration value
-			if (oEvent.getParameter("selectAll")) {
-				sMsg = this.getResourceBundle().getText("ymsg.allSelect", [this._aSelectedRowsIdx.length]);
+			if (selected.length > iMaxRowSelection) {
+				if (oEvent.getParameter("selectAll")) {
+					iLastIndex = selected.pop();
+					this._oDataTable.removeSelectionInterval(iMaxRowSelection, iLastIndex);
+					sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection]);
+				} else {
+					iLastIndex = oEvent.getParameter('rowIndex');
+					this._oDataTable.removeSelectionInterval(iLastIndex, iLastIndex);
+					sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+				}
 				this.showMessageToast(sMsg);
-			} else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
-				sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
-				this.showMessageToast(sMsg);
+			} else {
+				if(selected.length !== 0 && oEvent.getParameter("selectAll")) {
+					sMsg = this.getResourceBundle().getText("ymsg.allSelect", selected.length);
+					this.showMessageToast(sMsg);
+				}				
 			}
 
 			// To make selection on map by selecting Demand from demand table
@@ -588,6 +618,7 @@ sap.ui.define([
 				this.updateMapDemandSelection(oEvent);
 				// }
 			}
+
 
 			//Enabling/Disabling the Material Status Button based on Component_Exit flag
 			for (var i = 0; i < this._aSelectedRowsIdx.length; i++) {
@@ -602,6 +633,17 @@ sap.ui.define([
 					this.byId("idOverallStatusButton").setEnabled(false);
 				}
 			}
+
+		    //Enabling or disabling Re-Schedule button based on status and flag
+		    if(this._aSelectedRowsIdx && this._aSelectedRowsIdx.length > 0){
+				oViewModel.setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
+			} else {
+				oViewModel.setProperty("/Scheduling/selectedDemandPath", null);
+			}
+			oViewModel.setProperty("/Scheduling/aSelectedDemandPath", this._aSelectedRowsIdx);
+			this.oSchedulingActions.validateScheduleButtons();
+			this.oSchedulingActions.validateReScheduleButton();
+			this._nSelectedDemandsCount = this._oDataTable.getSelectedIndices().length;
 		},
 		/**
 		 * on press assign button in footer
@@ -661,7 +703,21 @@ sap.ui.define([
 				oBinding = oGeoMap.getAggregation("vos")[1].getBinding("items"),
 				oFilters = aFilters ? aFilters : this.getModel("viewModel").getProperty("/mapSettings/filters");
 			if (oFilters && oFilters.length) {
-				oBinding.filter(oFilters);
+				
+				var aGuidFilter = [];
+				this.setMapBusy(true);
+				this.getOwnerComponent().readData("/DemandSet",oFilters,"$select=Guid").then(function (response) {
+					
+					if(response.results.length > 0){
+						for (var i=0;i<response.results.length;i++){
+							aGuidFilter.push(new Filter("Guid",FilterOperator.EQ,response.results[i].Guid));
+						}
+					}else {
+						aGuidFilter.push(new Filter("Guid",FilterOperator.EQ,null));
+					}
+					oBinding.filter(aGuidFilter);
+					this.setMapBusy(false);
+				}.bind(this));
 			} else {
 				oBinding.filter([]);
 				oBinding.refresh();
@@ -777,12 +833,12 @@ sap.ui.define([
 			oViewModel.setProperty("/mapSettings/selectedDemands", aSelectedDemands);
 		},
 		/**
-		 * Select item in Map Lagend to filter the map and Demand Table.
+		 * Select item in Map Legend to filter the map and Demand Table.
 		 * @Author Rakesh Sahu
 		 * @return
 		 * @param oEvent
 		 */
-		onSelectMapLagend: function (oEvent) {
+		onSelectMapLegend: function (oEvent) {
 			var sValue = oEvent.getSource().getSelectedItem().getTitle(),
 				oStatusFilter = this.byId("listReportFilter").getControlByKey("Status"),
 				aTokens = [],
@@ -903,6 +959,7 @@ sap.ui.define([
 			this._oEventBus.unsubscribe("BaseController", "resetMapSelection", this._resetMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "setMapSelection", this._setMapSelection, this);
 			this._oEventBus.unsubscribe("MapController", "showAssignedDemands", this._showAssignedDemands, this);
+			this._oEventBus.unsubscribe("DemandTableOperation", "clearDemandsSelection", this.clearDemandsSelection, this);
 		},
 
 		/* =========================================================== */
@@ -1176,7 +1233,8 @@ sap.ui.define([
 		 */
 		_getDemandsForMap: function () {
 			this.setMapBusy(true);
-			this.getOwnerComponent().readData("/DemandSet").then(function (response) {
+			var sSelect="$select=Guid,IS_SELECTED,MAP_MARKER_COLOUR,DEMAND_KEY,LONGITUDE,LATITUDE"
+			this.getOwnerComponent().readData("/DemandSet",null,sSelect).then(function (response) {
 				this.setMapBusy(false);
 				this._viewModel.setProperty("/mapSettings/DemandSet", response.results);
 				this._viewModel.refresh();

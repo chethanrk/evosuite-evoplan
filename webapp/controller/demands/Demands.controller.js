@@ -29,6 +29,9 @@ sap.ui.define([
 		 * @public
 		 */
 		onInit: function () {
+			// call super class onInit
+			BaseController.prototype.onInit.apply(this, arguments);
+
 			this._oDraggableTable = this.byId("draggableList");
 			this._viewModel  = this.getModel("viewModel");
 			this._oDataTable = this._oDraggableTable.getTable();
@@ -37,13 +40,16 @@ sap.ui.define([
 			this._eventBus = sap.ui.getCore().getEventBus();
 			this._eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 			this._eventBus.subscribe("AssignTreeDialog", "updateDemandTableSelection", this._deselectDemands, this);
+			this._eventBus.subscribe("DemandTableOperation", "clearDemandsSelection", this.clearDemandsSelection, this);
 			//toAdd busystete change event to the table
 			this._oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
 			this._mParameters = {
 				bFromHome: true
 			};
 			this._oRouter = this.getOwnerComponent().getRouter();
+
 		},
+		
 
 		/* =========================================================== */
 		/* event handlers                                              */
@@ -106,10 +112,10 @@ sap.ui.define([
 						oViewModel.setProperty("/bDemandEditMode", false);
 						this._navToDetail(null, this.oRow);
 					} else
-					if (bResponse === sSave) {
-						oViewModel.setProperty("/bDemandEditMode", false);
-						this.submitDemandTableChanges();
-					}
+						if (bResponse === sSave) {
+							oViewModel.setProperty("/bDemandEditMode", false);
+							this.submitDemandTableChanges();
+						}
 				}.bind(this));
 
 			} else {
@@ -164,6 +170,7 @@ sap.ui.define([
 			}
 			this._eventBus.unsubscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 			this._eventBus.unsubscribe("AssignTreeDialog", "updateDemandTableSelection", this._deselectDemands, this);
+			this._eventBus.unsubscribe("DemandTableOperation", "clearDemandsSelection", this.clearDemandsSelection, this);
 		},
 
 		/* =========================================================== */
@@ -192,7 +199,8 @@ sap.ui.define([
 			oDataTable.attachRowSelectionChange(function (oEvent) {
 				var selected = this._oDataTable.getSelectedIndices(),
 					bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
-					sDemandPath, bComponentExist, sMsg;
+					sDemandPath, bComponentExist, sMsg, iLastIndex,
+					oViewModel=this.getModel("viewModel");
 				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 
 				this._aSelectedRowsIdx = _.clone(selected);
@@ -217,13 +225,28 @@ sap.ui.define([
 					this.byId("idUnassignButton").setEnabled(false);
 				}
 
+				// condition to deselect All when max selection limit is already reach but pressing select All checkbox
+				if (oEvent.getParameter("selectAll") && this._nSelectedDemandsCount === iMaxRowSelection) {
+					this._oDataTable.clearSelection();
+					return;
+				}
 				//If the selected demands exceeds more than the maintained selected configuration value
-				if (oEvent.getParameter("selectAll")) {
-					sMsg = this.getResourceBundle().getText("ymsg.allSelect", [this._aSelectedRowsIdx.length]);
+				if (selected.length > iMaxRowSelection) {
+					if (oEvent.getParameter("selectAll")) {
+						iLastIndex = selected.pop();
+						this._oDataTable.removeSelectionInterval(iMaxRowSelection, iLastIndex);
+						sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection]);
+					} else {
+						iLastIndex = oEvent.getParameter('rowIndex');
+						this._oDataTable.removeSelectionInterval(iLastIndex, iLastIndex);
+						sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
+					}
 					this.showMessageToast(sMsg);
-				} else if (iMaxRowSelection <= this._aSelectedRowsIdx.length) {
-					sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
-					this.showMessageToast(sMsg);
+				} else {
+					if(selected.length !== 0 && oEvent.getParameter("selectAll")) {
+						sMsg = this.getResourceBundle().getText("ymsg.allSelect", selected.length);
+						this.showMessageToast(sMsg);
+					}				
 				}
 
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
@@ -240,8 +263,19 @@ sap.ui.define([
 					}
 
 				}
+				//Enabling or disabling Re-Schedule button based on status and flag
+				//TODO - support multiple demands
+				if(this._aSelectedRowsIdx.length > 0){
+					oViewModel.setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
+				} else {
+					oViewModel.setProperty("/Scheduling/selectedDemandPath", null);
+				}
+				oViewModel.setProperty("/Scheduling/aSelectedDemandPath",this._aSelectedRowsIdx);
+				this.oSchedulingActions.validateScheduleButtons();
+				this.oSchedulingActions.validateReScheduleButton();
 
 				this.showWarningMsgResourceTree(true);
+				this._nSelectedDemandsCount = this._oDataTable.getSelectedIndices().length;
 			}, this);
 		},
 
@@ -410,7 +444,7 @@ sap.ui.define([
 				if (aEntityTypes[i].name === sEntity) {
 					for (var j in aEntityTypes[i].property) {
 						if (aEntityTypes[i].property[j].name === sKey && (aEntityTypes[i].property[j].name.type === "Edm.DateTime" || aEntityTypes[i].property[
-								j].name.type === "Edm.DateTimeOffset")) {
+							j].name.type === "Edm.DateTimeOffset")) {
 							return true;
 						}
 					}
@@ -427,7 +461,7 @@ sap.ui.define([
 			if (this._aSelectedRowsIdx.length > 100) {
 				this._aSelectedRowsIdx.length = 100;
 			}
-			var oSelectedPaths = this._getAllowedDemandsToCheckResource(this._oDataTable, this._aSelectedRowsIdx),
+			var oSelectedPaths = this._getAllowedDemands(this._oDataTable, this._aSelectedRowsIdx),
 				sRequirementProfileIds,
 				sErrorMsg = this.getResourceBundle().getText("xmsg.findResourceNotAllowed");
 
@@ -458,7 +492,7 @@ sap.ui.define([
 		/**
 		 * Validate Selected Demands Based on ALLOW_FINDRESOURCE Flag
 		 */
-		_getAllowedDemandsToCheckResource: function (oTable, aSelectedRowsIdx) {
+		_getAllowedDemands: function (oTable, aSelectedRowsIdx) {
 			var aPathsData = [],
 				aNonAssignableDemands = [],
 				oData, oContext, sPath;
@@ -510,20 +544,19 @@ sap.ui.define([
 				}
 			}
 		},
-		
 		/**
 		 * Event handler to switch between Demand and Tool list
 		 * @param oEvent
 		 */
 		handleViewSelectionChange: function (oEvent) {
 			this.getOwnerComponent().bIsFromPRTSwitch = true;
-			var sSelectedKey = this._viewModel .getProperty("/PRT/btnSelectedKey");
+			var sSelectedKey = this._viewModel.getProperty("/PRT/btnSelectedKey");
 			if (sSelectedKey === "demands") {
 				this._oRouter.navTo("demands", {});
 			} else {
 				this._oRouter.navTo("demandTools", {});
 			}
-		},
+		}
 
 	});
 });

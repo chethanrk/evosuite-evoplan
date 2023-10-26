@@ -59,7 +59,17 @@ sap.ui.define([
 			if (aSelectedPaths && aSelectedPaths.constructor === Array && mParameters) {
 				if (mParameters.hasOwnProperty("bFromNewGantt") && aSelectedPaths.length === 1) {
 					if (mParameters.bFromNewGantt) {
-						oDialog.bindElement(aSelectedPaths[0])
+						if(aSelectedPaths[0]){
+							if(aSelectedPaths[0].hasOwnProperty("sPath")){
+								// this case is for assign new from the demands table toolbar.
+								oDialog.bindElement(aSelectedPaths[0].sPath);
+							}else{
+								// this case is the assign new by right clicking demands on the gantt chart.
+								oDialog.bindElement(aSelectedPaths[0]);
+							}
+							
+						}
+						
 					}
 				}
 			}
@@ -68,7 +78,7 @@ sap.ui.define([
 				bCheckRightTechnician = this._oView.getModel("viewModel").getProperty("/CheckRightTechnician");
 
 			if (bCheckRightTechnician) {
-				oDemandsPaths = this._getAllowedDemandsToCheckResource(aSelectedPaths, isReassign, isBulkReAssign);
+				oDemandsPaths = this._getAllowedDemands(aSelectedPaths, isReassign, isBulkReAssign);
 				this._aSelectedPaths = oDemandsPaths.oAllowedSelectedPaths;
 				this._oFiltersRightTechnician = [this._getFormattedReqProfileId(this._aSelectedPaths, isReassign, isBulkReAssign)];
 			}
@@ -98,7 +108,7 @@ sap.ui.define([
 		/**
 		 * Validate Selected Demands Based on ALLOW_FINDRESOURCE Flag
 		 */
-		_getAllowedDemandsToCheckResource: function (aSelectedPaths, isReassign, isBulkReAssign) {
+		_getAllowedDemands: function (aSelectedPaths, isReassign, isBulkReAssign) {
 			var oAllowedSelectedPaths = [],
 				oNotAllowedPaths = [],
 				oDeselectAssignmentsContexts = [],
@@ -203,7 +213,7 @@ sap.ui.define([
 					msg = this._oView.getModel("i18n").getResourceBundle().getText("ymsg.selectResourceOrDemand");
 					this.showMessageToast(msg);
 
-				} else if (this._isToolReAssign && !oTargetObj.ResourceGuid) {
+				} else if (this._isToolReAssign && !oTargetObj.ResourceGuid && !oTargetObj.AssignmentGuid) {
 					msg = this._oView.getModel("i18n").getResourceBundle().getText("ymsg.poolPrtNotAllowed");
 					this.showMessageToast(msg);
 				} else if (this._isToolReAssign && oTargetObj.OBJECT_SOURCE_TYPE === "DEM_PMNO") { //PRT re-assignment to notification demand not allowed
@@ -251,6 +261,22 @@ sap.ui.define([
 		 */
 		onProceedSaveDialog: function (oEvent) {
 			if (this._assignPath) {
+				//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+				if (this._oView) {
+					this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(this._assignPath));
+					if (this._bulkReAssign) {
+						this._updatedAssignmentsPath(this._aSelectedPaths);
+					} else {
+						if (this._isToolReAssign) {
+							this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel("assignment").getData());
+						} else {
+							if (!this._aSelectedPaths[0].sPath) {
+							this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(this._aSelectedPaths[0]));
+							}
+						}
+					}
+				}
+				
 				if (this._isToolReAssign) {
 					this._eventBus.publish("AssignTreeDialog", "ToolReAssignment", {
 						sAssignPath: this._assignPath,

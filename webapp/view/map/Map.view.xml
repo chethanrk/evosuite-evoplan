@@ -20,8 +20,8 @@
 								<vk:ListPanelStack width="230px">
 									<vk:content>
 										<vk:ListPanel id="idMapLegendsList"
-											items="{ path: '/MapLegendSet', sorter: { path: 'CharactersticCode', group: true }, groupHeaderFactory: '.getGroupHeader'}"
-											headerText="Legend" expanded="false" selectionMode="SingleSelectMaster" selectionChange="onSelectMapLagend" headerIcon="sap-icon://legend"
+											items="{ path: '/MapLegendSet', parameters:{select:'Colourcode,CharactersticValue,CharactersticDescription,CharactersticCode'} , sorter: { path: 'CharactersticCode', group: true }, groupHeaderFactory: '.getGroupHeader'}"
+											headerText="Legend" expanded="false" selectionMode="SingleSelectMaster" selectionChange="onSelectMapLegend" headerIcon="sap-icon://legend"
 											expand="onExpandCollapseLegends">
 											<vk:items>
 												<core:ExtensionPoint name="MapContainerExtP|Map|Legends|LegendSet|items">
@@ -63,7 +63,7 @@
 														<vbm:DragSource type="Spot"/>
 													</vbm:dragSource>
 												</vbm:Spots>
-												<vbm:Spots items="{ path:'/ResourceSet', parameters:{ batchGroupId:'mapdemands' } }" select="onSelectResourcePin">
+												<vbm:Spots items="{ path:'/ResourceSet', parameters:{ batchGroupId:'mapdemands' , select:'ObjectId,ResourceGuid,ResourceGroupGuid,ResourceDescription,LONGITUDE,LATITUDE' } }" select="onSelectResourcePin">
 													<vbm:items>
 														<core:ExtensionPoint name="GeoMapExtP|Map|Spots|ResourceSet|items">
 															<vbm:Spot contentColor="{user>/DEFAULT_RES_MAP_SEL_PIN_CLR}" tooltip="{ResourceDescription}" type="Inactive"

@@ -116,7 +116,7 @@ sap.ui.define([
 			}
 			//Hiding UnAssign and Assign New buttons when it's Change Assignment Status   #since 2205
 			if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGNMENT_STATUS") && this._oView.getModel("viewModel").getProperty(
-					"/Show_Assignment_Status_Button")) {
+				"/Show_Assignment_Status_Button")) {
 				oUnAssignBtn.setVisible(false);
 				oReAssignBtn.setVisible(false);
 				oDialog.setTitle(this._resourceBundle.getText("xbut.ChngAssgnStatus"));
@@ -157,6 +157,10 @@ sap.ui.define([
 				this.showMessageToast(sMsg);
 				return;
 			}
+			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+			if (!this._mParameters.bFromNewGantt && !this._mParameters.bFromGanttTools) {
+				this._updatedAssignmentsPath(aContexts);
+			}
 
 			this._eventBus.publish("AssignActionsDialog", "bulkDeleteAssignment", {
 				aContexts: aContexts,
@@ -173,7 +177,11 @@ sap.ui.define([
 		 */
 		onReassign: function (oEvent) {
 			var aContexts = this._oAssignMentTable.getSelectedContexts(),
-				sMsg;
+				sMsg,
+				oViewModel = this._oView.getModel("viewModel");
+				if(this._oView.byId('droppableTable')) {
+					oViewModel.setProperty("/iFirstTreeTableVisibleindex", this._oView.byId('droppableTable').getTable().getFirstVisibleRow());
+				}
 			this.getOperationDemands(aContexts);
 
 			//check at least one demand selected
@@ -182,6 +190,7 @@ sap.ui.define([
 				this.showMessageToast(sMsg);
 				return;
 			}
+			
 			this._eventBus.publish("AssignActionsDialog", "selectAssign", {
 				oView: this._oView,
 				isReassign: this.reAssign,
@@ -342,7 +351,7 @@ sap.ui.define([
 		onSelectionChange: function (oEvent) {
 			//Enabling Change Assignment Status Button   #since 2205
 			if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGNMENT_STATUS") && this._oView.getModel("viewModel").getProperty(
-					"/Show_Assignment_Status_Button")) {
+				"/Show_Assignment_Status_Button")) {
 				var oSource = oEvent.getSource(),
 					aSelectedItems = oSource.getSelectedItems(),
 					bEnableAssignmentStatusButton = true;
@@ -445,7 +454,7 @@ sap.ui.define([
 				this._oView.getModel("viewModel").setProperty("/CheckRightTechnician", this._bCheckRightTechnician);
 				this._oDialog.close();
 				if (this._oView.getModel("user").getProperty("/ENABLE_ASSIGNMENT_STATUS") && this._oView.getModel("viewModel").getProperty(
-						"/Show_Assignment_Status_Button")) {
+					"/Show_Assignment_Status_Button")) {
 					this._oView.getModel("viewModel").setProperty("/Show_Assignment_Status_Button", false);
 				}
 			}
@@ -513,7 +522,7 @@ sap.ui.define([
 				aAssignmentStatus = this._getAssignmentStatus(aSelectedAssignments);
 			this._component.AssignmentStatus.open(this._oView, oSource, aAssignmentStatus, this._mParameters, this._oAssignMentTable);
 		},
-
+		
 		exit: function () {
 			this._eventBus.unsubscribe("AssignTreeDialog", "closeActionDialog", this.onCloseDialog, this);
 			this._eventBus.subscribe("AssignTreeDialog", "updateSelection", this._deselectAssignments, this);
