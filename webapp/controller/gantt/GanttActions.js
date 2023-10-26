@@ -580,12 +580,14 @@ sap.ui.define([
 						oGanttModel.setProperty(sPath + "/busy", false);
 						this.getModel("ganttModel").setProperty(sPath, null);
 						this.getModel("ganttOriginalData").setProperty(sPath, null);
-						this._refreshUpdatedResources();
 						oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 						if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
 							// in case of split unassign, all the splits are unassigned from backend,
 							// thus on refresh of the entire gantt the splits are also deleted from the gantt UI
 							oEventBus.publish("BaseController", "refreshFullGantt", {});
+						}else{
+							//This will refresh only the updated Resoures when Split is not enabled
+							this._refreshUpdatedResources();
 						}
 					}.bind(this),
 					function () {
@@ -648,7 +650,6 @@ sap.ui.define([
 				this.showDemandEditModeWarningMessage().then(function (bResponse) {
 					var sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
 						sSave = oResourceBundle.getText("xbut.buttonSave");
-
 					if (bResponse === sDiscard) {
 						oModel.resetChanges();
 						oViewModel.setProperty("/bDemandEditMode", false);
