@@ -164,8 +164,7 @@ sap.ui.define([
 				iMaxRowSelection = this.oUserModel.getProperty("/DEFAULT_DEMAND_SELECT_ALL"),
 				bEnable = this._viewModel.getProperty("/validateIW32Auth"),
 				index = oEvent.getParameter("rowIndex"),
-				sDemandPath, bComponentExist, sMsg, iLastIndex,
-				oViewModel = this.getModel("viewModel");
+				sDemandPath, bComponentExist, sMsg, iLastIndex;
 
 			this._aSelectedRowsIdx = _.clone(selected);
 			if (this._aSelectedRowsIdx.length > 0) {
@@ -241,11 +240,11 @@ sap.ui.define([
 
 			//Enabling or disabling Re-Schedule button based on status and flag
 			if (this._aSelectedRowsIdx && this._aSelectedRowsIdx.length > 0) {
-				oViewModel.setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
+				this._viewModel.setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
 			} else {
-				oViewModel.setProperty("/Scheduling/selectedDemandPath", null);
+				this._viewModel.setProperty("/Scheduling/selectedDemandPath", null);
 			}
-			oViewModel.setProperty("/Scheduling/aSelectedDemandPath", this._aSelectedRowsIdx);
+			this._viewModel.setProperty("/Scheduling/aSelectedDemandPath", this._aSelectedRowsIdx);
 			this.oSchedulingActions.validateScheduleButtons();
 			this.oSchedulingActions.validateReScheduleButton();
 			this._nSelectedDemandsCount = this._oDataTable.getSelectedIndices().length;
@@ -278,13 +277,12 @@ sap.ui.define([
 		onGanttDemandFilterChange: function (oEvent) {
 			var oView = this.getView(),
 				oResourceBundle = oView.getModel("i18n").getResourceBundle(),
-				oViewModel = oView.getModel("viewModel"),
 				sFilterText = oResourceBundle.getText("xbut.filters"),
 				sFilterCount = Object.keys(oEvent.getSource().getFilterData()).length;
 			if (sFilterCount > 0) {
-				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText + "(" + sFilterCount + ")");
+				this._viewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText + "(" + sFilterCount + ")");
 			} else {
-				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText);
+				this._viewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText);
 			}
 		},
 		/**
