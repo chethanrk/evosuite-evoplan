@@ -580,10 +580,7 @@ sap.ui.define([
 						oGanttModel.setProperty(sPath + "/busy", false);
 						this.getModel("ganttModel").setProperty(sPath, null);
 						this.getModel("ganttOriginalData").setProperty(sPath, null);
-						this._refreshChangedResources(sPath);
-						oEventBus.publish("BaseController", "refreshCapacity", {
-							sTargetPath: sPath.split("/AssignmentSet/results/")[0]
-						});
+						this._refreshUpdatedResources();
 						oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
 						if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
 							// in case of split unassign, all the splits are unassigned from backend,

@@ -1452,6 +1452,7 @@ sap.ui.define([
 			}
 			return bAllowSplitStretchPopUp;
 		},
+		
 		/**
 		 * Storing the updated Resources Info 
 		 * For refreshing only the updated resources assigments in Gantt
@@ -1469,35 +1470,6 @@ sap.ui.define([
 			//Considering as Pool Resources when NodeType is "RES_GROUP" or ResourceGuid is empty
 			if (oResObj.NodeType === "RES_GROUP" || oResObj.ResourceGuid === "") {
 				sNodeId = sPoolId + oResObj.ResourceGroupGuid;
-			}
-			oUpdatedResObj = {
-				ResourceGuid: oResObj.ResourceGuid,
-				ResourceGroupGuid: oResObj.ResourceGroupGuid,
-				NodeId: sNodeId
-			};
-			aUpdatedResources.push(oUpdatedResObj);
-		},
-
-		/**
-		 * Storing the updated Resources Info in Demand and Map View
-		 * @param oViewModel
-		 * @param oResObj
-		 */
-		_updatedDmdResources1: function (oViewModel, oResObj) {
-			var oUpdatedResObj,
-				aUpdatedResources = oViewModel.getProperty("/aUpdatedResources"),
-				sNodeId = oResObj.ResourceGuid + "//" + oResObj.ResourceGroupGuid,
-				sPoolPrefix = "";
-			//Considering as Pool Resources when Dropped on Resource Group
-			if (oResObj.NodeType === "RES_GROUP" || oResObj.ResourceGuid === "") {
-				if (oResObj.NodeId && oResObj.NodeId.indexOf(":") > -1){
-					sPoolPrefix = oResObj.NodeId.split(":")[0] + ":";
-				}else if (oResObj.ParentNodeId && oResObj.ParentNodeId.indexOf(":") > -1){
-					sPoolPrefix = oResObj.ParentNodeId.split(":")[0] + ":";
-				}else if(oResObj.ObjectId && oResObj.ObjectId.indexOf(":") > -1){
-					sPoolPrefix = oResObj.ObjectId.split(":")[0] + ":";
-				}
-				sNodeId = sPoolPrefix + oResObj.ResourceGroupGuid;
 			}
 			oUpdatedResObj = {
 				ResourceGuid: oResObj.ResourceGuid,
