@@ -505,8 +505,8 @@ sap.ui.define([
 				oShape = oEvent.getSource().getPopup()._oPosition.of,
 				oContext = oShape.getBindingContext("ganttModel"),
 				oRowContext = oShape.getParent().getParent().getBindingContext("ganttModel");
-				//Storing updated Resource info for refreshing only the updated Resources in Gantt
-				this.updatedResources(this.oViewModel, this.oUserModel, oData);
+			//Storing updated Resource info for refreshing only the updated Resources in Gantt
+			this.updatedResources(this.oViewModel, this.oUserModel, oData);
 			//still needed?
 			if (oAppModel.getProperty("/currentRoute") === "ganttSplit") {
 				mParameters = {

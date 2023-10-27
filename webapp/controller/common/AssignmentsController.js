@@ -527,14 +527,14 @@ sap.ui.define([
 					ResourceGroupGuid: oResource.ResourceGroupGuid,
 					ResourceGuid: oResource.ResourceGuid
 				};
-			
-						oParams = this.setDateTimeParams(oParams, oAssignment.DateFrom, {
-							ms: oAssignment.DateFrom.getTime()
-						}, oAssignment.DateTo, {
-							ms: oAssignment.DateTo.getTime()
-						});
-					
-				
+
+				oParams = this.setDateTimeParams(oParams, oAssignment.DateFrom, {
+					ms: oAssignment.DateFrom.getTime()
+				}, oAssignment.DateTo, {
+					ms: oAssignment.DateTo.getTime()
+				});
+
+
 				oDemandObj = this.getModel().getProperty("/DemandSet('" + oAssignment.DemandGuid + "')");
 
 				//Conditon for PS Demand Network Assignments Update
@@ -602,7 +602,9 @@ sap.ui.define([
 					if (parseInt(i, 10) === aContexts.length - 1) {
 						bIsLast = true;
 					}
-					oEventBus.publish("GanttChart", "refreshResourceOnDelete");
+					//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+					this.updatedResources(this.getModel("viewModel"), this.getModel("user"), oModel.getProperty(sPath));
+					//oEventBus.publish("GanttChart", "refreshResourceOnDelete");
 					this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, bIsLast);
 				}
 			}.bind(this));
@@ -1148,7 +1150,7 @@ sap.ui.define([
 		 */
 		_updatedAssignmentsPath: function (aContexts) {
 			for (var a in aContexts) {
-				this.updatedResources(this._oView.getModel("viewModel"), this.getModel("user"),this._oView.getModel().getProperty(aContexts[a].getPath()));
+				this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this._oView.getModel().getProperty(aContexts[a].getPath()));
 			}
 		}
 

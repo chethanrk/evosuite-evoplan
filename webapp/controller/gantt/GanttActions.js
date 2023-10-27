@@ -406,12 +406,12 @@ sap.ui.define([
 
 				sap.m.MessageBox.warning(
 					sMsg, {
-						actions: [sAction, sap.m.MessageBox.Action.CANCEL],
-						styleClass: oComponent.getContentDensityClass(),
-						onClose: function (sValue) {
-							return sValue === sAction ? resolve(true) : resolve(false);
-						}
+					actions: [sAction, sap.m.MessageBox.Action.CANCEL],
+					styleClass: oComponent.getContentDensityClass(),
+					onClose: function (sValue) {
+						return sValue === sAction ? resolve(true) : resolve(false);
 					}
+				}
 				);
 			}.bind(this));
 		},
@@ -546,8 +546,8 @@ sap.ui.define([
 					resolve(oData);
 				} else {
 					var sPath = this.getModel().createKey("AssignmentSet", {
-							Guid: oData.Guid
-						}),
+						Guid: oData.Guid
+					}),
 						oAssignData = this.getModel().getProperty("/" + sPath);
 					if (oAssignData && oAssignData.Demand && oAssignData.Demand.Guid && !bInvalidate) {
 						resolve(oAssignData);
@@ -577,19 +577,19 @@ sap.ui.define([
 
 			var fnDeleteAssignment = function () {
 				this.deleteAssignment(oModel, sAssignGuid).then(function () {
-						oGanttModel.setProperty(sPath + "/busy", false);
-						this.getModel("ganttModel").setProperty(sPath, null);
-						this.getModel("ganttOriginalData").setProperty(sPath, null);
-						oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
-						if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
-							// in case of split unassign, all the splits are unassigned from backend,
-							// thus on refresh of the entire gantt the splits are also deleted from the gantt UI
-							oEventBus.publish("BaseController", "refreshFullGantt", {});
-						}else{
-							//This will refresh only the updated Resoures when Split is not enabled
-							this._refreshUpdatedResources();
-						}
-					}.bind(this),
+					oGanttModel.setProperty(sPath + "/busy", false);
+					this.getModel("ganttModel").setProperty(sPath, null);
+					this.getModel("ganttOriginalData").setProperty(sPath, null);
+					oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+					if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
+						// in case of split unassign, all the splits are unassigned from backend,
+						// thus on refresh of the entire gantt the splits are also deleted from the gantt UI
+						oEventBus.publish("BaseController", "refreshFullGantt", {});
+					} else {
+						//This will refresh only the updated Resoures when Split is not enabled
+						this._refreshUpdatedResources();
+					}
+				}.bind(this),
 					function () {
 						oGanttModel.setProperty(sPath + "/busy", false);
 					});
@@ -655,10 +655,10 @@ sap.ui.define([
 						oViewModel.setProperty("/bDemandEditMode", false);
 						this._navToDetail(null, this.oRow);
 					} else
-					if (bResponse === sSave) {
-						oViewModel.setProperty("/bDemandEditMode", false);
-						this.submitDemandTableChanges();
-					}
+						if (bResponse === sSave) {
+							oViewModel.setProperty("/bDemandEditMode", false);
+							this.submitDemandTableChanges();
+						}
 				}.bind(this));
 
 			} else {
@@ -884,7 +884,7 @@ sap.ui.define([
 			return aCreatedAssignments;
 		}
 
-	
+
 	});
 
 });
