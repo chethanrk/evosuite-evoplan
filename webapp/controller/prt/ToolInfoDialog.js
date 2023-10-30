@@ -11,6 +11,14 @@ sap.ui.define([
 		formatter: formatter,
 
 		oPRTActions: null,
+		_oController:undefined,
+		_oViewModel:undefined,
+		_oDataModel:undefined,
+		_oGanttModel:undefined,
+		_oUserModel:undefined,
+		_oResourceBundle:undefined,
+		_oEventBus:undefined,
+		_oOwnerComponent:undefined,
 		/* =========================================================== */
 		/* lifecycle methods                                           */
 		/* =========================================================== */
@@ -18,9 +26,19 @@ sap.ui.define([
 		 * Called when the controller is instantiated.
 		 * @public
 		 */
+
+		constructor: function (controller) {
+			this._oViewModel = controller.getModel("viewModel");
+			this._oAppViewModel = controller.getModel("appView");
+			this._oDataModel = controller.getModel();
+			this._oGanttModel = controller.getModel("ganttModel");
+			this._oUserModel = controller.getModel("user");
+			this._oResourceBundle = controller.getModel("i18n").getResourceBundle();
+			this._oEventBus = sap.ui.getCore().getEventBus();
+			this._oOwnerComponent = controller;
+		},
 		init: function () {
-			this._eventBus = sap.ui.getCore().getEventBus();
-			this._eventBus.subscribe("AssignTreeDialog", "ToolReAssignment", this._reAssignTool, this);
+			this._oEventBus.subscribe("AssignTreeDialog", "ToolReAssignment", this._reAssignTool, this);
 		},
 		/**
 		 * This method is used for setting dialog properties to use in too operations
@@ -45,7 +63,7 @@ sap.ui.define([
 			this._component = this._oView.getController().getOwnerComponent();
 			this.AssignmentSourcePath = mParameters.parentContext.getPath();
 
-			this._oView.getModel("viewModel").setProperty("/bEnableAsgnSave", true);
+			this._oViewModel.setProperty("/bEnableAsgnSave", true);
 			
 			oPrtToolsAssignment.isPRT = true;
 			this.oAssignmentModel.setData(oPrtToolsAssignment);
@@ -67,14 +85,14 @@ sap.ui.define([
 					sTargetPath: this.AssignmentSourcePath
 				}
 			};
-			this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), {
+			this.executeFunctionImport.call(this._oView.getController(), this._oDataModel, {
 				PrtAssignmentGuid: sPrtAssignmentGuid
 			}, "DeleteToolAssignment", "POST").then(function () {
 				if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
-					this._eventBus.publish("BaseController", "refreshTreeTable", {});
+					this._oEventBus.publish("BaseController", "refreshTreeTable", {});
 				}
 				if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
-					this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+					this._oEventBus.publish("GanttChart", "refreshDroppedContext", oData);
 				}
 			}.bind(this));
 			this._closeDialog();
@@ -84,7 +102,7 @@ sap.ui.define([
 		 * trigger event for open select assign tree table dialog
 		 */
 		onPressReAssign: function () {
-			this._eventBus.publish("AssignInfoDialog", "selectAssign", {
+			this._oEventBus.publish("AssignInfoDialog", "selectAssign", {
 				oView: this._oView,
 				isReassign: this.reAssign,
 				aSelectedPaths: ["/AssignmentSet('" + this._assignmentGuid + "')"]
@@ -122,7 +140,7 @@ sap.ui.define([
 			this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this.oAssignmentModel.getProperty("/"));
 			var oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
-				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid"),
+				sMsg = this._oResourceBundle.getText("ymsg.datesInvalid"),
 				oParams;
 
 			if (oDateTo !== undefined && oDateFrom !== undefined) {
@@ -139,14 +157,14 @@ sap.ui.define([
 						}
 					};
 					this.clearMessageModel.call(this._oView.getController());
-					this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), oParams, "ChangeToolAssignment", "POST",
+					this.executeFunctionImport.call(this._oView.getController(), this._oDataModel, oParams, "ChangeToolAssignment", "POST",
 						this._mParameters, true).then(function (results) {
 							this.showMessage.call(this._oView.getController(),results[1]);
 							if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
-								this._eventBus.publish("BaseController", "refreshTreeTable", {});
+								this._oEventBus.publish("BaseController", "refreshTreeTable", {});
 							}
 							if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
-								this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+								this._oEventBus.publish("GanttChart", "refreshDroppedContext", oData);
 							}
 						}.bind(this));
 					this._closeDialog();
@@ -162,7 +180,7 @@ sap.ui.define([
 		 * Here we can call any methods that are required to be called at exit of the view.
 		 */
 		exit: function () {
-			this._eventBus.unsubscribe("AssignTreeDialog", "ToolReAssignment");
+			this._oEventBus.unsubscribe("AssignTreeDialog", "ToolReAssignment");
 		},
 		/* =========================================================== */
 		/* Private methods                                             */
@@ -203,7 +221,7 @@ sap.ui.define([
 		 */
 		_getResourceInfo: function (sId) {
 			var sPath = "/ResourceHierarchySet('" + sId + "')";
-			return this._oView.getModel().getProperty(sPath);
+			return this._oDataModel.getProperty(sPath);
 		},
 		/** This method is used to get all parents description for display in dialog new assigned field.
 		 *  @param {object} oNewAssign
@@ -242,7 +260,7 @@ sap.ui.define([
 			// sAssignPath, aSourcePaths
 			this._oView = this._oView ? this._oView : oData.view;
 			this.oAssignmentModel = this.oAssignmentModel ? this.oAssignmentModel : oData.oAssignmentModel;
-			var oNewAssign = this._oView.getModel().getProperty(oData.sAssignPath),
+			var oNewAssign = this._oDataModel.getProperty(oData.sAssignPath),
 				newAssignDesc = this._getParentsDescription(oNewAssign);
 			this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this.oAssignmentModel.getProperty("/"));
 
