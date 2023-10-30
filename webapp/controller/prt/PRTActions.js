@@ -17,7 +17,11 @@ sap.ui.define([
 		oUserModel:undefined,
 		oResourceBundle:undefined,
 		_oEventBus:undefined,
-
+		/**
+		 * Constructor for PRT Action
+		 * Constructor initializes reused object such as oComponent, oDataModel, oViewModel, oAppModel, oUserModel, oResourceBundle, oEventBus
+		 * @param {object} controller - Controller object of the colling view
+		 */
 		constructor: function(controller){
 			this.controller = controller;
 			this.oComponent = controller.getOwnerComponent();
@@ -35,9 +39,11 @@ sap.ui.define([
 
 		/**
 		 * validations before tools assignment service call
-		 * @param aSources Selected tools data and path
-		 * @param sTargetPath Target Resource/Demand 
-		 * @param mParameters flag of source view 
+		 * @param { object } aSources Selected tools data and path
+		 * @param { string } sTargetPath Target Resource/Demand 
+		 * @param { object } mParameters flag of source view 
+		 * @param { string } sTargetPath - Path of resource where Tool is assigned
+		 * @param { object } oView - Calling view object
 		 */
 		checksBeforeAssignTools: function (aSources, oTargetObj, mParameters, sTargetPath, oView) {
 			var oDateParams,
@@ -57,7 +63,8 @@ sap.ui.define([
 				DemandGuid: ""
 			};
 
-			if (oTargetObj.OBJECT_SOURCE_TYPE === "DEM_PMNO") { //PRT assignment to notification demand not allowed
+			if (oTargetObj.OBJECT_SOURCE_TYPE === "DEM_PMNO") { 
+				//PRT assignment to notification demand not allowed
 				this.showMessageToast(this.oResourceBundle.getText("ymsg.prtToNotifNA"));
 				return;
 			} else if (bIsDateNode) {
@@ -96,10 +103,12 @@ sap.ui.define([
 
 		/**
 		 * method to open dates fragment for tool assignment
-		 * @param oView source view
-		 * @param oDateParams required common parameters for all the assignments 
-		 * @param aSources Selected tools data and path
-		 * @param mParameters flag of source view 
+		 * @param { object } oView - source view
+		 * @param { object } oDateParams - required common parameters for all the assignments 
+		 * @param { array } aSources - Selected tools data and path
+		 * @param { object } mParameters - flag of source view 
+		 * @param { boolean } bIsGanttPRTReassign - flag  
+		 * @param { object } oAssignmentPaths - Assignment path object
 		 */
 		openDateSelectionDialog: function (oView, oDateParams, aSources, mParameters, bIsGanttPRTReassign, oAssignmentPaths) {
 			// create dialog lazily
@@ -120,10 +129,13 @@ sap.ui.define([
 
 		/**
 		 * method to store parameters to be passed for function import call
-		 * @param oView source view
-		 * @param oDateParams required common parameters for all the assignments 
-		 * @param aSources Selected tools data and path
-		 * @param mParameters flag of source view 
+		 * @param { object } oDialog - Dialog object
+		 * @param { object } oView - source view
+		 * @param { object } oDateParams - required common parameters for all the assignments 
+		 * @param { array } aSources - Selected tools data and path
+		 * @param { object } mParameters - flag of source view 
+		 * @param { boolean } bIsGanttPRTReassign - flag  
+		 * @param { object } oAssignmentPaths - Assignment path object
 		 */
 		onOpen: function (oDialog, oView, oDateParams, aSources, mParameters, bIsGanttPRTReassign, oAssignmentPaths) {
 			this._oDateParams = oDateParams;
@@ -233,6 +245,7 @@ sap.ui.define([
 
 		/**
 		 * Check whether tool exists under demand assignment and ask for user confirmation befire deleting assignment
+		 * @param { array } aContext - contexts of selected demand
 		 */
 		checkToolExists: function (aContexts) {
 			var bToolExists = false,
@@ -284,6 +297,7 @@ sap.ui.define([
 		},
 		/** 
 		 * get Date n Time Parameteres to pass into Function Import/Date Selection dialog
+		 * @param { object } oPRTShapeData - selected tool shape
 		 */
 		getPRTDateParams: function (oPRTShapeData) {
 			var oParams = {},
@@ -302,6 +316,53 @@ sap.ui.define([
 			this.oViewModel.setProperty("/PRT/defaultStartDate", oStartDate);
 			this.oViewModel.setProperty("/PRT/defaultEndDate", oEndDate);
 			return oParams;
+		},
+
+		/**
+		 * method to open and set dates for tool assignment
+		 * @param oView source view
+		 * @param oDateParams required common parameters for all the assignments 
+		 * @param aSources Selected tools data and path
+		 * @param mParameters flag of source view 
+		 * @param bToolAssignDialog flag of Assign Dialog 
+		 * @param sResourceGuid for Resource GUID
+		 */
+		onPRTAssignmentProceed: function (oView, oDateParams, aSources, mParameters, bToolAssignDialog, sResourceGuid) {
+			if (sResourceGuid) {
+				if (bToolAssignDialog) { // If Dialog show config is on 
+					this.openDateSelectionDialog(oView, oDateParams, aSources, mParameters);
+				} else { // If dialog show config is off
+					oDateParams.DateFrom = this.oViewModel.getProperty("/PRT/defaultStartDate");
+					oDateParams.TimeFrom.ms = oDateParams.DateFrom.getTime();
+					oDateParams.DateTo = this.oViewModel.getProperty("/PRT/defaultEndDate");
+					oDateParams.TimeTo.ms = oDateParams.DateTo.getTime();
+					this._proceedToAssignTools(aSources, oDateParams, mParameters);
+				}
+			} else {
+				this.showMessageToast(this.oResourceBundle.getText("ymsg.poolPrtNotAllowed"));
+				return;
+			}
+		},
+		/**
+		 * show simple confirm dialog
+		 * when action was pressed (custom or proceed action) then promise resolve is returned
+		 * @param {String} sResource
+		 * return {Promise}
+		 */
+		showMessageToProceedPRT: function (sResource) {
+			return new Promise(function (resolve, reject) {
+				var sAction = this.oResourceBundle.getText("xbut.proceed"),
+					sMsg = this.oResourceBundle.getText("ymsg.PRTAvailability");
+				sap.m.MessageBox.warning(
+					sMsg, {
+						actions: [sAction, sap.m.MessageBox.Action.CANCEL],
+						styleClass: this.oComponent.getContentDensityClass(),
+						onClose: function (sValue) {
+							return sValue === sAction ? resolve(true) : resolve(false);
+						}
+					}
+				);
+			}.bind(this));
 		},
 
 		/* =========================================================== */
@@ -390,53 +451,6 @@ sap.ui.define([
 				oDialog.setBusy(false);
 				this.oComponent.toolInfoDialog.onToolOpen(oDialog, oView, sPath, data, mParams, this);
 			}
-		},
-
-		/**
-		 * method to open and set dates for tool assignment
-		 * @param oView source view
-		 * @param oDateParams required common parameters for all the assignments 
-		 * @param aSources Selected tools data and path
-		 * @param mParameters flag of source view 
-		 * @param bToolAssignDialog flag of Assign Dialog 
-		 * @param sResourceGuid for Resource GUID
-		 */
-		onPRTAssignmentProceed: function (oView, oDateParams, aSources, mParameters, bToolAssignDialog, sResourceGuid) {
-			if (sResourceGuid) {
-				if (bToolAssignDialog) { // If Dialog show config is on 
-					this.openDateSelectionDialog(oView, oDateParams, aSources, mParameters);
-				} else { // If dialog show config is off
-					oDateParams.DateFrom = this.oViewModel.getProperty("/PRT/defaultStartDate");
-					oDateParams.TimeFrom.ms = oDateParams.DateFrom.getTime();
-					oDateParams.DateTo = this.oViewModel.getProperty("/PRT/defaultEndDate");
-					oDateParams.TimeTo.ms = oDateParams.DateTo.getTime();
-					this._proceedToAssignTools(aSources, oDateParams, mParameters);
-				}
-			} else {
-				this.showMessageToast(this.oResourceBundle.getText("ymsg.poolPrtNotAllowed"));
-				return;
-			}
-		},
-		/**
-		 * show simple confirm dialog
-		 * when action was pressed (custom or proceed action) then promise resolve is returned
-		 * @param {String} sResource
-		 * return {Promise}
-		 */
-		showMessageToProceedPRT: function (sResource) {
-			return new Promise(function (resolve, reject) {
-				var sAction = this.oResourceBundle.getText("xbut.proceed"),
-					sMsg = this.oResourceBundle.getText("ymsg.PRTAvailability");
-				sap.m.MessageBox.warning(
-					sMsg, {
-						actions: [sAction, sap.m.MessageBox.Action.CANCEL],
-						styleClass: this.oComponent.getContentDensityClass(),
-						onClose: function (sValue) {
-							return sValue === sAction ? resolve(true) : resolve(false);
-						}
-					}
-				);
-			}.bind(this));
 		}
 	});
 });
