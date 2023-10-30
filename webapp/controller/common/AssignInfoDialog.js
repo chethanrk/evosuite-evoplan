@@ -430,6 +430,7 @@ sap.ui.define([
 			if (sEvent === "selectedAssignment") {
 				var oNewAssign = this._oView.getModel().getProperty(oData.sPath),
 					newAssignDesc = this._getParentsDescription(oNewAssign);
+				//Storing updated Resource info for refreshing only the updated Resources in Gantt
 				this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), oNewAssign);
 				this.oAssignmentModel.setProperty("/NewAssignPath", oData.sPath);
 				this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
