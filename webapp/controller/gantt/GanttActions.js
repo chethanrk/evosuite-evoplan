@@ -15,6 +15,15 @@ sap.ui.define([
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
 
 		/**
+		 * Called when a controller is instantiated and its View controls (if available) are already created.
+		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
+		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
+		 */
+		onInit: function () {
+			Controller.prototype.onInit.apply(this, arguments);
+		},
+
+		/**
 		 * formatter for for Gantt view
 		 */
 		isBusyShape: function (bAllowProperty, bIsBusy, bAuthCheck) {
@@ -587,7 +596,7 @@ sap.ui.define([
 					});
 			}.bind(this);
 
-			this.checkToolExists([{ // check tool exists
+			this.oPRTActions.checkToolExists([{ // check tool exists
 				AssignmentGUID: sAssignGuid
 			}]).then(function (resolve) {
 				if (resolve) { // If user click yes

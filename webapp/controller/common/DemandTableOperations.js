@@ -1,12 +1,13 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/PRT/PRTActions",
+	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/controller/scheduling/SchedulingActions",
+	"com/evorait/evoplan/controller/prt/PRTActions",
 	"sap/m/MessageBox",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/OverrideExecution"
-], function (BaseController, SchedulingActions, MessageBox, formatter, Constants, Fragment, OverrideExecution) {
+], function (BaseController, SchedulingActions, PRTActions, MessageBox, formatter, Constants, Fragment, OverrideExecution) {
 
 	return BaseController.extend("com.evorait.evoplan.controller.common.DemandTableOperations", {
 
@@ -84,6 +85,7 @@ sap.ui.define([
 		},
 
 		oSchedulingActions: undefined,
+		oPRTActions: undefined,
 
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
@@ -91,6 +93,7 @@ sap.ui.define([
 		 **/
 		onInit: function () {
 			this.oSchedulingActions = new SchedulingActions(this);
+			this.oPRTActions = new PRTActions(this);
 			this._viewModel = this.getModel("viewModel");
 			this._appViewModel = this.getModel("appView");
 		},

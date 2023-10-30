@@ -1,19 +1,19 @@
 <mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:f="sap.f" xmlns:smartTable="sap.ui.comp.smarttable"
 	xmlns:semantic="sap.m.semantic" xmlns:dnd="sap.ui.core.dnd" xmlns:table="sap.ui.table" xmlns:tnt="sap.tnt"
-	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" controllerName="com.evorait.evoplan.controller.PRT.Tools"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" controllerName="com.evorait.evoplan.controller.prt.Tools"
 	displayBlock="true" height="100%">
 	<Page id="listPage" title="{i18n>xtit.itemListTitle}" showFooter="false" showHeader="false" enableScrolling="false">
 		<content>
 			<f:DynamicPage id="idToolsViewDynamicPage" headerExpanded="true" fitContent="true" preserveHeaderStateOnScroll="true" showFooter="true"
 				toggleHeaderOnTitleClick="false" class="sapUiNoContentPadding tableContentPage">
 				<f:content>
-					<core:Fragment fragmentName="com.evorait.evoplan.view.PRT.ToolsList" type="XML"/>
+					<core:Fragment fragmentName="com.evorait.evoplan.view.prt.ToolsList" type="XML"/>
 				</f:content>
 				<f:footer></f:footer>
 			</f:DynamicPage>
 		</content>
 		<dependents>
-			<core:Fragment fragmentName="com.evorait.evoplan.view.PRT.GanttToolsFilter" type="XML"/>
+			<core:Fragment fragmentName="com.evorait.evoplan.view.prt.GanttToolsFilter" type="XML"/>
 		</dependents>
 	</Page>
 </mvc:View>

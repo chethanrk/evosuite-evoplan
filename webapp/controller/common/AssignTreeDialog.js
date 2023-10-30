@@ -60,7 +60,14 @@ sap.ui.define([
 				if (mParameters.hasOwnProperty("bFromNewGantt") && aSelectedPaths.length === 1) {
 					if (mParameters.bFromNewGantt) {
 						if(aSelectedPaths[0]){
-							oDialog.bindElement(aSelectedPaths[0].sPath);
+							if(aSelectedPaths[0].hasOwnProperty("sPath")){
+								// this case is for assign new from the demands table toolbar.
+								oDialog.bindElement(aSelectedPaths[0].sPath);
+							}else{
+								// this case is the assign new by right clicking demands on the gantt chart.
+								oDialog.bindElement(aSelectedPaths[0]);
+							}
+							
 						}
 						
 					}

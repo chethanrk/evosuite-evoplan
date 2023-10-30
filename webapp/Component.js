@@ -5,7 +5,7 @@ sap.ui.define([
 	"com/evorait/evoplan/model/models",
 	"com/evorait/evoplan/assets/js/moment-with-locales.min",
 	"com/evorait/evoplan/controller/ErrorHandler",
-	"com/evorait/evoplan/controller/PRT/ToolInfoDialog",
+	"com/evorait/evoplan/controller/prt/ToolInfoDialog",
 	"com/evorait/evoplan/controller/common/AssignInfoDialog",
 	"com/evorait/evoplan/controller/common/AssignTreeDialog",
 	"com/evorait/evoplan/controller/common/StatusSelectDialog",
@@ -144,28 +144,28 @@ sap.ui.define([
 		/**
 		 * Method to set initial settings for moment.js
 		 */
-		initMomentSetting: function(){
+		initMomentSetting: function () {
 			moment.updateLocale(moment.locale(), {
 				week: {
-				  dow: 1 // Set Monday as the start of the week (0: Sunday, 1: Monday, ...)
+					dow: 1 // Set Monday as the start of the week (0: Sunday, 1: Monday, ...)
 				}
-			  });
+			});
 
-			this._getSystemInformation().then(function(oData){
-				var month = oData.DEFAULT_FY_START_MONTH ? parseInt(oData.DEFAULT_FY_START_MONTH) - 1 : 0, 
+			this._getSystemInformation().then(function (oData) {
+				var month = oData.DEFAULT_FY_START_MONTH ? parseInt(oData.DEFAULT_FY_START_MONTH) - 1 : 0,
 					yearMatrix = [];
-				for(var i=0;i<4;i++){
+				for (var i = 0; i < 4; i++) {
 					yearMatrix.push([]);
-					for(var j=0;j<3;j++){
+					for (var j = 0; j < 3; j++) {
 						yearMatrix[i].push(month);
 						month++;
-						if(month > 11){
+						if (month > 11) {
 							month = 0;
 						}
 					}
 				}
 				this.getModel("viewModel").setProperty("/yearMatrix", yearMatrix);
-			}.bind(this));			
+			}.bind(this));
 		},
 
 		/**
@@ -291,6 +291,7 @@ sap.ui.define([
 		/**
 		 * init different global dialogs with controls
 		 * @private
+		 * Author Chethan RK
 		 */
 		_initDialogs: function () {
 			//display and change assignment dialog
@@ -298,7 +299,7 @@ sap.ui.define([
 			this.assignInfoDialog.init();
 
 			//display and change tools dialog
-			this.toolInfoDialog = new ToolInfoDialog();
+			this.toolInfoDialog = new ToolInfoDialog(this);
 			this.toolInfoDialog.init();
 
 			//display and change auto scheduling and re-scheduling dialog
@@ -401,11 +402,12 @@ sap.ui.define([
 		/**
 		 * Calls the GetSystemInformation 
 		 */
-		_getData: function (sUri, aFilters, mParameters) {
+		_getData: function (sUri, aFilters, mParameters, sGroupId) {
 			return new Promise(function (resolve, reject) {
 				this.getModel().read(sUri, {
 					filters: aFilters,
-					urlParameters: mParameters,
+					urlParameters: mParameters || {},
+					groupId: sGroupId || "",
 					success: function (oData, oResponse) {
 						resolve(oData);
 					},
@@ -482,27 +484,12 @@ sap.ui.define([
 				$expand: ["MapSource", "MapServiceLinks"]
 			}));
 
-			//Fetching Cost Element F4 for Vendor Assignment
-			aPromises.push(this._getData("/ShCostelementSet", [], {}));
-
-			//Fetching Currency F4 for Vendor Assignment
-			aPromises.push(this._getData("/ShCurrencySet", [], {}));
-
-			//lodaing Avalability type for Time Allocation in Gantt
-			aPromises.push(this._getData("/SHAvailabilityTypeSet", [
-				new Filter("AVAILABILITY_TYPE_GROUP", FilterOperator.EQ, "L")
-			]));
-
-			//loading Availability type for Manage Absence in Gantt
-			aPromises.push(this._getData("/SHAvailabilityTypeSet", [
-				new Filter("AVAILABILITY_TYPE_GROUP", FilterOperator.EQ, "N")
-			]));
-
-			aPromises.push(this._callFuntionImport("/RefreshSharedMemoryAreas","POST"));
+			aPromises.push(this._callFuntionImport("/RefreshSharedMemoryAreas", "POST"));
 
 			//sets user model - model has to be intantiated before any view is loaded
 			Promise.all(aPromises).then(function (data) {
 				this.getModel("user").setData(data[0]);
+				//Loading NavLinks data for AppToApp Navigation
 				if (data[1].results.length > 0) {
 					this.getModel("navLinks").setData(data[1].results);
 				}
@@ -511,37 +498,37 @@ sap.ui.define([
 					this.initializeMapProvider();
 					this.initializeSchedulingMapProvider();
 				}
-				if (data[3].results.length > 0) {
-					this.getModel("oCostElementModel").setData(data[3].results);
-				}
-				if (data[4].results.length > 0) {
-					this.getModel("oCurrencyModel").setData(data[4].results);
-				}
-
-				//lodaing Avalability type data for Time Allocation in Gantt
-				this.getModel("availabilityGroup").setProperty("/timeAllocation", data[5].results);
-
-				//loading Availability type data for Manage Absence in Gantt
-				this.getModel("availabilityGroup").setProperty("/manageAbsence", data[6].results);
-
+				
 				// Initialize websocket
 				if (data[0].ENABLE_PUSH_DEMAND) {
 					WebSocket.init(this);
 				}
 
+				//Loading Vendor Assignment F4Help's only when this config is true
+				if (data[0].ENABLE_EXTERNAL_ASSIGN_DIALOG) {
+					this._loadVendorF4Helps();
+				}
+				//Loading Avalability type data for Time Allocation only when this config is true
+				if (data[0].ENABLE_BLOCK_TIME) {
+					this._loadTimeAllocationData();
+				}
+				//Loading Availability type data for Manage Absence only when this config is true
+				if (data[0].ENABLE_MANAGE_ABSENCE) {
+					this._loadManageAbsenceData();
+				}
+
 				//Intialize variables for SAP authorization
 				this._handleAuthorization();
 				// below we are calling function import RefreshSharedMemoryAreas
-			
-				this.getRouter().initialize();
-				
 
+				this.getRouter().initialize();
 
 			}.bind(this));
 		},
 
 		/**
 		 * Function to declare all the global models and it's properties
+		 * Author Chethan RK
 		 */
 		_createDataModels: function () {
 			// set the device model
@@ -667,23 +654,23 @@ sap.ui.define([
 					sUtilizationSlider: null,
 					aResourceTblFilters: [],
 					iSelectedResponse: 0,
-					bDateChanged:false,
-					sScheduleType:"",
-					PTVResponse:{},
-					InputDataChanged:"",
+					bDateChanged: false,
+					sScheduleType: "",
+					PTVResponse: {},
+					InputDataChanged: "",
 					startDate: "",
 					endDate: "",
 					bSchedBtnBusy: false,
 					aListOfAssignments: [],
 					aViolatedAssignments: [],
 					aDemandLocationIds: [],
-					aExistingDemandQualification:[]
+					aExistingDemandQualification: []
 				},
 				sViewRoute: null,
 				aUpdatedResources: [],
-				yearMatrix:[],
-				bEnableAsgnSave : true,
-				selectedAssignment:[]
+				yearMatrix: [],
+				bEnableAsgnSave: true,
+				selectedAssignment: []
 			});
 
 			oViewModel.setSizeLimit(999999999);
@@ -774,7 +761,7 @@ sap.ui.define([
 			oSinglePlanningModel.setDefaultBindingMode("TwoWay");
 			this.setModel(oSinglePlanningModel, "mapSinglePlanning");
 
-			this.setModel(models.createProgressBarDialogModel(),"progressBarModel");
+			this.setModel(models.createProgressBarDialogModel(), "progressBarModel");
 
 		},
 
@@ -838,18 +825,65 @@ sap.ui.define([
 		* @param {string} sPath
 		* @param {string} sMethod
 		*/
-		_callFuntionImport:function(sPath,sMethod){
-	
-			return new Promise(function(resolve,reject){
-				this.getModel().callFunction(sPath,{
-					method:sMethod,
-					success:function(data){
+		_callFuntionImport: function (sPath, sMethod) {
+			return new Promise(function (resolve, reject) {
+				this.getModel().callFunction(sPath, {
+					method: sMethod,
+					success: function (data) {
 						resolve(data);
 					},
-					error:function(data){
+					error: function (data) {
 						reject(data);
 					}
 				});
+			}.bind(this));
+		},
+		/*
+		* Function to fetch Vendor Assignment related F4Hep's data
+		* Author Chethan RK
+		*/
+		_loadVendorF4Helps: function () {
+			var aPromises = [];
+			//Fetching Cost Element F4 for Vendor Assignment
+			aPromises.push(this._getData("/ShCostelementSet", [], {}, "VendorF4GroupId"));
+
+			//Fetching Currency F4 for Vendor Assignment
+			aPromises.push(this._getData("/ShCurrencySet", [], {}, "VendorF4GroupId"));
+
+			//sets user model - model has to be intantiated before any view is loaded
+			Promise.all(aPromises).then(function (data) {
+				if (data[0].results.length > 0) {
+					this.getModel("oCostElementModel").setData(data[0].results);
+				}
+				if (data[1].results.length > 0) {
+					this.getModel("oCurrencyModel").setData(data[1].results);
+				}
+			}.bind(this));
+		},
+		/*
+		* Function to fetch AvalabilityType data for Time Allocation 
+		* Author Chethan RK
+		*/
+		_loadTimeAllocationData: function () {
+			var sUri = "/SHAvailabilityTypeSet",
+				aFilters = [
+					new Filter("AVAILABILITY_TYPE_GROUP", FilterOperator.EQ, "L")
+				];
+			this._getData(sUri, aFilters, {}, "AvailabilityGroupId").then(function (aData) {
+				this.getModel("availabilityGroup").setProperty("/timeAllocation", aData.results);
+			}.bind(this));
+		},
+		/*
+		* Function to fetch AvailabilityType data for Manage Absence
+		* Author Chethan RK
+		*/
+		_loadManageAbsenceData: function () {
+			var sUri = "/SHAvailabilityTypeSet",
+				aFilters = [
+					new Filter("AVAILABILITY_TYPE_GROUP", FilterOperator.EQ, "N")
+				];
+			this._getData(sUri, aFilters, {}, "AvailabilityGroupId").then(function (aData) {
+				this.getModel("availabilityGroup").setProperty("/manageAbsence", aData.results);
 			}.bind(this));
 		}
 	});

@@ -1,34 +1,69 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/AssignmentsController",
+	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/core/Fragment",
-	"sap/m/MessageToast"
+	"sap/m/MessageToast",
 ], function (BaseController, formatter, Fragment, MessageToast) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.PRT.ToolInfoDialog", {
+	return BaseController.extend("com.evorait.evoplan.controller.prt.ToolInfoDialog", {
 
 		formatter: formatter,
 
+		oPRTActions: null,
+		_oController:undefined,
+		_oViewModel:undefined,
+		_oDataModel:undefined,
+		_oGanttModel:undefined,
+		_oUserModel:undefined,
+		_oResourceBundle:undefined,
+		_oEventBus:undefined,
+		_oOwnerComponent:undefined,
+		/* =========================================================== */
+		/* lifecycle methods                                           */
+		/* =========================================================== */
+		/**
+		 * Called when the controller is instantiated.
+		 * @public
+		 */
+
+		constructor: function (controller) {
+			this._oViewModel = controller.getModel("viewModel");
+			this._oAppViewModel = controller.getModel("appView");
+			this._oDataModel = controller.getModel();
+			this._oGanttModel = controller.getModel("ganttModel");
+			this._oUserModel = controller.getModel("user");
+			this._oResourceBundle = controller.getModel("i18n").getResourceBundle();
+			this._oEventBus = sap.ui.getCore().getEventBus();
+			this._oOwnerComponent = controller;
+		},
 		init: function () {
-			this._eventBus = sap.ui.getCore().getEventBus();
-			this._eventBus.subscribe("AssignTreeDialog", "ToolReAssignment", this._reAssignTool, this);
+			this._oEventBus.subscribe("AssignTreeDialog", "ToolReAssignment", this._reAssignTool, this);
 		},
 		/**
-		 * Setting dialog properties to use in tool operations
+		 * This method is used for setting dialog properties to use in too operations
+		 * @param {object} oDialog tool dialog object
+		 * @param {object} oView view object
+		 * @param {string} sAssignementPath path of the tool assignment
+		 * @param {object} oAssignmentData response data
+		 * @param {object} mParameters parameters
+		 * @param {object} oPRTActions prt actions controller referrence
+		 * @return The value of the property. If the property is not found, null or undefined is returned.
 		 */
-		onToolOpen: function (oDialog, oView, sAssignementPath, oAssignmentData, mParameters) {
+		onToolOpen: function (oDialog, oView, sAssignementPath, oAssignmentData, mParameters, oPRTActions) {
 			var oPrtToolsAssignment = this._getDefaultPRTAssignmentObject(oAssignmentData);
 
 			this._sAssignmentPath = sAssignementPath;
 			this._mParameters = mParameters.refreshParameters;
 			this.oAssignmentModel = oView.getModel("assignment");
+
+			this.oPRTActions = oPRTActions;
 			this._oDialog = oDialog;
 			this._oView = oView;
 			this._component = this._oView.getController().getOwnerComponent();
 			this.AssignmentSourcePath = mParameters.parentContext.getPath();
 
-			this._oView.getModel("viewModel").setProperty("/bEnableAsgnSave", true);
+			this._oViewModel.setProperty("/bEnableAsgnSave", true);
 			
 			oPrtToolsAssignment.isPRT = true;
 			this.oAssignmentModel.setData(oPrtToolsAssignment);
@@ -36,18 +71,13 @@ sap.ui.define([
 			oView.addDependent(oDialog);
 
 		},
-		/**
-		 * Function to validate effort assignment save 
-		 * 
-		 */
-
 		/** 
 		 * On unassign assignment of tool the delete function import will be called
-		 * @param oEvent
+		 * @param {object} oEvent This event is triggerd from the button in the Tool Form Dialog
 		 */
 		onDeleteAssignment: function (oEvent) {
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
+			this._updatedDmdResources(this._oViewModel, this.oAssignmentModel.getProperty("/"));
 			var sPrtAssignmentGuid = this.oAssignmentModel.getProperty("/PrtAssignmentGuid");
 			this.clearMessageModel.call(this._oView.getController());
 			var oData = {
@@ -55,14 +85,14 @@ sap.ui.define([
 					sTargetPath: this.AssignmentSourcePath
 				}
 			};
-			this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), {
+			this.executeFunctionImport.call(this._oView.getController(), this._oDataModel, {
 				PrtAssignmentGuid: sPrtAssignmentGuid
 			}, "DeleteToolAssignment", "POST").then(function () {
 				if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
-					this._eventBus.publish("BaseController", "refreshTreeTable", {});
+					this._oEventBus.publish("BaseController", "refreshTreeTable", {});
 				}
 				if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
-					this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+					this._oEventBus.publish("GanttChart", "refreshDroppedContext", oData);
 				}
 			}.bind(this));
 			this._closeDialog();
@@ -70,10 +100,9 @@ sap.ui.define([
 
 		/**
 		 * trigger event for open select assign tree table dialog
-		 * @param oEvent
 		 */
-		onPressReAssign: function (oEvent) {
-			this._eventBus.publish("AssignInfoDialog", "selectAssign", {
+		onPressReAssign: function () {
+			this._oEventBus.publish("AssignInfoDialog", "selectAssign", {
 				oView: this._oView,
 				isReassign: this.reAssign,
 				aSelectedPaths: ["/AssignmentSet('" + this._assignmentGuid + "')"]
@@ -108,10 +137,10 @@ sap.ui.define([
 		 */
 		onSaveDialog: function () {
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
+			this._updatedDmdResources(this._oViewModel, this.oAssignmentModel.getProperty("/"));
 			var oDateFrom = this.oAssignmentModel.getProperty("/DateFrom"),
 				oDateTo = this.oAssignmentModel.getProperty("/DateTo"),
-				sMsg = this._oView.getController().getResourceBundle().getText("ymsg.datesInvalid"),
+				sMsg = this._oResourceBundle.getText("ymsg.datesInvalid"),
 				oParams;
 
 			if (oDateTo !== undefined && oDateFrom !== undefined) {
@@ -128,14 +157,14 @@ sap.ui.define([
 						}
 					};
 					this.clearMessageModel.call(this._oView.getController());
-					this.executeFunctionImport.call(this._oView.getController(), this._oView.getModel(), oParams, "ChangeToolAssignment", "POST",
+					this.executeFunctionImport.call(this._oView.getController(), this._oDataModel, oParams, "ChangeToolAssignment", "POST",
 						this._mParameters, true).then(function (results) {
 							this.showMessage.call(this._oView.getController(),results[1]);
 							if (this._mParameters.bFromHome || this._mParameters.bFromDemandTools) {
-								this._eventBus.publish("BaseController", "refreshTreeTable", {});
+								this._oEventBus.publish("BaseController", "refreshTreeTable", {});
 							}
 							if (this._mParameters.bFromGanttTools || this._mParameters.bFromNewGantt || this._mParameters.bFromNewGanttSplit) {
-								this._eventBus.publish("GanttChart", "refreshDroppedContext", oData);
+								this._oEventBus.publish("GanttChart", "refreshDroppedContext", oData);
 							}
 						}.bind(this));
 					this._closeDialog();
@@ -146,12 +175,21 @@ sap.ui.define([
 				this.showMessageToast(sMsg);
 			}
 		},
-		exit: function () {
-			this._eventBus.unsubscribe("AssignTreeDialog", "ToolReAssignment");
-		},
 		/**
-		 * get assignment resource details
-		 * @param resId
+		 * This method is a Ui5 hook method trigged at the exit of the view.
+		 * Here we can call any methods that are required to be called at exit of the view.
+		 */
+		exit: function () {
+			this._oEventBus.unsubscribe("AssignTreeDialog", "ToolReAssignment");
+		},
+		/* =========================================================== */
+		/* Private methods                                             */
+		/* =========================================================== */
+
+		/**
+		 * This method is used to get assignment resource details
+		 * @param {string} resId
+		 * @return {object} used to return the JSON object.
 		 * @private
 		 */
 		_getAssignResource: function (resId) {
@@ -163,8 +201,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * get assignment resource group details
-		 * @param groupId
+		 * This method is used to get assignment resource group details.
+		 * @param {string} groupId
+		 * @return {object} returns the JSON object
 		 * @private
 		 */
 		_getAssignResourceGroup: function (groupId) {
@@ -176,19 +215,16 @@ sap.ui.define([
 		},
 
 		/**
-		 * get resouce info based on id
-		 * @param sId
-		 * @private
+		 * This method is used to get resouce info based on id.
+		 * @param {string} sId
+		 * @return The value of the property. If the property is not found, null or undefined is returned.
 		 */
 		_getResourceInfo: function (sId) {
 			var sPath = "/ResourceHierarchySet('" + sId + "')";
-			return this._oView.getModel().getProperty(sPath);
+			return this._oDataModel.getProperty(sPath);
 		},
-		/**
-		 * get all parents description for display in dialog new assigned field
-		 * @param oNewAssign
-		 * @returns {string}
-		 * @private
+		/** This method is used to get all parents description for display in dialog new assigned field.
+		 *  @param {object} oNewAssign
 		 */
 		_getParentsDescription: function (oNewAssign) {
 			var resourceGroup = "",
@@ -215,16 +251,18 @@ sap.ui.define([
 			return newAssignDesc;
 		},
 
-		/** 
-		 * set reassignment details to assignment data object
+		/** This method is used to set the reassignment details to the assignment data object
+		 *  @param {string} sChanel channel for the event bus
+		 *  @param {string} sEvent event for the event bus
+		 *  @param {object} oData data that was passed in the event bus
 		 */
 		_reAssignTool: function (sChanel, sEvent, oData) {
 			// sAssignPath, aSourcePaths
 			this._oView = this._oView ? this._oView : oData.view;
 			this.oAssignmentModel = this.oAssignmentModel ? this.oAssignmentModel : oData.oAssignmentModel;
-			var oNewAssign = this._oView.getModel().getProperty(oData.sAssignPath),
+			var oNewAssign = this._oDataModel.getProperty(oData.sAssignPath),
 				newAssignDesc = this._getParentsDescription(oNewAssign);
-			this._updatedDmdResources(this._oView.getModel("viewModel"), this.oAssignmentModel.getProperty("/"));
+			this._updatedDmdResources(this._oViewModel, this.oAssignmentModel.getProperty("/"));
 
 			this.oAssignmentModel.setProperty("/NewAssignPath", oData.sAssignPath);
 			this.oAssignmentModel.setProperty("/NewAssignId", oNewAssign.Guid || oNewAssign.NodeId);
@@ -249,10 +287,10 @@ sap.ui.define([
 				this.oAssignmentModel.setProperty("/DateTo", end);
 			}
 		},
-
-		/** 
-		 * to getPRT assignment object for update operations
-		 * @param oAssignmentData
+		/** This method is used to return a JSON object that is used in this function
+		 *  onToolOpen.
+		 *  @param {object} oAssignmentData
+		 *  @return {object} - always a JSON object is returned
 		 */
 		_getDefaultPRTAssignmentObject: function (oAssignmentData) {
 			return {
@@ -274,8 +312,9 @@ sap.ui.define([
 				ShowGoToDetailBtn: false
 			};
 		},
-		/** 
-		 * get Parameteres to pass into Function Import
+		/** This method is used to return a JSON object that is used in this function
+		 *  onSaveDialog.
+		 *  @return {object} - always a JSON object is returned
 		 */
 		_getParams: function () {
 			var oAssignmentData = this.oAssignmentModel.getData();
