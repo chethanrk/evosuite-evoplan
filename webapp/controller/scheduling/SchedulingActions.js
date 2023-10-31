@@ -985,7 +985,7 @@ sap.ui.define([
 				NodeId: oAssignObj.NODE_ID.split("//")[1] + "//" + oAssignObj.ResourceGuid,
 				NodeType: oAssignObj.NODE_TYPE
 			};
-			this._updatedDmdResources(this.oViewModel, oResObj);
+			this.updatedResources(this.oViewModel, this.oUserModel, oResObj);
 		},
 
 		/**
