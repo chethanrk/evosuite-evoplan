@@ -421,15 +421,21 @@ sap.ui.define([
 					aAssignmentDemandFilter.push(new Filter("Guid", "EQ", aAssignmentData[i].results[j].DemandGuid));
 				}
 			}
-			// reading existing Demands for qualifications
-			return this._controller.getOwnerComponent().readData("/DemandSet", aAssignmentDemandFilter, "$top=" + aAssignmentDemandFilter.length, "idAssignmentDemand").then(function(oDemands){
-				for (i in oDemands.results){
-					oDemands.results[i].Guid;
-					aExistingDemandQualification[oDemands.results[i].Guid] = oDemands.results[i].QUALIFICATION_DESCRIPTION ? oDemands.results[i].QUALIFICATION_DESCRIPTION.split(",") : [];
-				}
-				this.oViewModel.setProperty("/Scheduling/aExistingDemandQualification", aExistingDemandQualification);
+
+			// check if existing asssgnments filter is available
+			if (aAssignmentDemandFilter.length) {
+				// reading existing Demands for qualifications
+				return this._controller.getOwnerComponent().readData("/DemandSet", aAssignmentDemandFilter, "$top=" + aAssignmentDemandFilter.length, "idAssignmentDemand").then(function (oDemands) {
+					for (i in oDemands.results) {
+						oDemands.results[i].Guid;
+						aExistingDemandQualification[oDemands.results[i].Guid] = oDemands.results[i].QUALIFICATION_DESCRIPTION ? oDemands.results[i].QUALIFICATION_DESCRIPTION.split(",") : [];
+					}
+					this.oViewModel.setProperty("/Scheduling/aExistingDemandQualification", aExistingDemandQualification);
+					return oResourceData;
+				}.bind(this));
+			} else {
 				return oResourceData;
-			}.bind(this));
+			}
 		},
 		/**
 		 * Method will create and return hash map data froM seleted demand for Auto/Re-schedule

@@ -693,7 +693,12 @@ sap.ui.define([
 					aViolatedAssignments: [],
 					aDemandLocationIds: [],
 					aExistingDemandQualification: []
-				}
+				},
+				sViewRoute: null,
+				aUpdatedResources: [],
+				yearMatrix: [],
+				bEnableAsgnSave: true,
+				selectedAssignment: []
 			});
 
 			oViewModel.setSizeLimit(999999999);
