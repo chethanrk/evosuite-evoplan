@@ -643,6 +643,7 @@ sap.ui.define([
 					SchedulingDialogFlags: {
 
 					},
+					aSelectedDemandPath: [],
 					selectedResources: null,
 					selectedDemandPath: null,
 					resourceList: [],
