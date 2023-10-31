@@ -324,6 +324,10 @@ sap.ui.define([
 		fnCheckReturnedDuplicates: function (oResult) {
 			var oMsgParam = {},
 				oResourceBundle = this.getResourceBundle();
+
+			// check of appView model is initialize  
+			this._appViewModel = this._appViewModel ? this._appViewModel :this.getModel("appView");	
+
 			//if no duplicate resource then check the assigned resources
 			if (oResult.bNoDuplicate) {
 				this._appViewModel.setProperty("/busy", true);
