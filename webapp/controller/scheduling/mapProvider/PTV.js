@@ -41,7 +41,7 @@ sap.ui.define([
 	 * @property {string} _sFetchToursResponseUrl - Url for the `fetchToursResponse` operation
 	 * @property {string} _sDefaultResourceStartHour - Number representing starting working hour (e.g. 8)
 	 * @property {string} _sDefaultResourceEndtHour - Number representing ending working hour (e.g. 17)
-	 * @property {sap.ui.model.json.JSONModel} oUserModel - User model containing system parameters for a user
+	 * @property {sap.ui.model.json.JSONModel} _oUserModel - User model containing system parameters for a user
 	 */
 	return MapProvider.extend("com.evorait.evoplan.controller.scheduling.mapProvider.PTV", {
 
@@ -76,8 +76,8 @@ sap.ui.define([
 		_sFetchToursResponseUrl: "",
 		_sDefaultResourceStartHour: "",
 		_sDefaultResourceEndHour: "",
-		oUserModel: null,
-		oViewModel: null,
+		_oUserModel: null,
+		_oViewModel: null,
 
 		/**
 		 * Creates a new instance of the PTV map provider. 
@@ -91,8 +91,6 @@ sap.ui.define([
 			MapProvider.prototype.constructor.call(this, oComponent, oMapModel);
 
 			var oServiceData = oMapModel.getData().MapServiceLinks.results[0];
-			this._sRouteCalculationUrl = this.sServiceUrl + ROUTE_SERVICE_PATH + CALCULATE_ROUTE_PATH;
-			this._sCreateDistanceMatrixUrl = this.sServiceUrl + DIMA_SERVICE_PATH + CREATE_DISTANCE_MATRIX_PATH;
 			this._sDeleteDistanceMatrixUrl = this.sServiceUrl + DIMA_SERVICE_PATH + DELETE_DISTANCE_MATRIX_PATH;
 			this._sStartCreateDistanceMatrixUrl = this.sServiceUrl + DIMA_SERVICE_PATH + START_CREATE_DISTANCE_MATRIX_PATH;
 			this._sDimaWatchJobUrl = this.sServiceUrl + DIMA_SERVICE_PATH + WATCH_JOB_PATH;
@@ -102,15 +100,17 @@ sap.ui.define([
 			this._sWatchJobUrl = this.sServiceUrl + TOUR_SERVICE_PATH + WATCH_JOB_PATH;
 			this._sFetchToursResponseUrl = this.sServiceUrl + TOUR_SERVICE_PATH + FETCH_JOB_RESPONSE_PATH;
 			this._sAuthToken = btoa(oServiceData.Username + ":" + oServiceData.Password);
-			this.oUserModel = this.oComponent.getModel("user");
-			this.oViewModel = this.oComponent.getModel("viewModel");
-			this._sDefaultResourceStartHour = parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_STARTHR")) || 0;
-			this._sDefaultResourceEndHour = parseInt(this.oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_ENDHR")) || 24;
+			this._oUserModel = this.oComponent.getModel("user");
+			this._oViewModel = this.oComponent.getModel("viewModel");
+			this._sDefaultResourceStartHour = parseInt(this._oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_STARTHR")) || 0;
+			this._sDefaultResourceEndHour = parseInt(this._oUserModel.getProperty("/DEFAULT_SINGLE_PLNNR_ENDHR")) || 24;
 		},
 
 		/**
 		 * Generates the full payload to pass to PTV.
 		 * To generate payload, need to need to get the data for resource and Demands from other helper methods.
+		 * @param {Array} aResourceData array of all the resource data eg.. availability, breaks, workshift and qualifications
+		 * @param {Array} aDemandsData array of all the demands date
 		 * @returns {Object} - Payload object
 		 * Please see the PTV API documentation to find out, what affect the properties:
 		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#Welcome/Home.htm
@@ -119,19 +119,22 @@ sap.ui.define([
 			var oPayload = this._getPayloadStructure(),
 				sDialogMsg = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.analysinglocations");
 
-			this.oViewModel.setProperty("/Scheduling/aListOfAssignments", []);
-			this.oViewModel.setProperty("/Scheduling/aDemandLocationIds", []);
+			this._oViewModel.setProperty("/Scheduling/aListOfAssignments", []);
+			this._oViewModel.setProperty("/Scheduling/aDemandLocationIds", []);
 
 			oPayload = this._setDemandsData(oPayload, aDemandsData);//adding Demand data to payload
-
 			oPayload = this._setResourceData(oPayload, aResourceData);//adding Resource data to payload
 
+			// validation check if there are no availability of selected resource
 			if (oPayload.fleet.drivers.length === 0 || oPayload.fleet.vehicles.length === 0) { //Stop the process of PTV API call when no drivers
 				this.oComponent.ProgressBarDialog.close();
 				MessageBox.error(this.oComponent.getModel("i18n").getResourceBundle().getText("xmsg.noAvailability"));
 				return false;
 			}
-			this.oComponent.ProgressBarDialog.setProgressData({ description: sDialogMsg });
+
+			this.oComponent.ProgressBarDialog.setProgressData({ description: sDialogMsg }); //updating progress bar in the busy dialog 
+
+			// method call in return statment to create distance matrix and add matrix id into generated payload
 			return this._createDistanceMatrix(aResourceData, oPayload.locations).then(function (sMatrixId) {
 				this.oComponent.getModel("viewModel").setProperty("/Scheduling/sDistanceMatrixId", sMatrixId);
 				oPayload.distanceMode = {
@@ -146,15 +149,18 @@ sap.ui.define([
 		 * First startPlanTours will be called and response will be sent to watchJob end point.
 		 * Second watchJob will be called continuously until get the response
 		 * Thirdt fetchTourResponse will be called to get the PTV response
-		 * @param {object} oRequestBody 
-		 * @returns {object} - promise
+		 * @param {object} oPlanTourRequestBody  payload object to pass into PTV PlanTour API call 
+		 * @returns {object} - returns the promise, which further return the PTV response
 		 */
 		callPTVPlanTours: function (oPlanTourRequestBody) {
 			var sDialogMsg = this.oComponent.getModel("i18n").getResourceBundle().getText("ymsg.fetchingSchedulingData"),
 				sMatrixId;
 			this.oComponent.ProgressBarDialog.setProgressData({ description: sDialogMsg });
+
+			// promise chain which starts the Plan tour call and checked further in the intervals if it's completed  
 			return this._sendPOSTRequestToPTV(this._sStartPlanToursUrl, oPlanTourRequestBody).then(function (oPlanTourResponse) {
 				this.oComponent.ProgressBarDialog.setProgressData({ progress: "60" });
+				// check if there is any response from startPlanTour API
 				if (oPlanTourResponse) {
 					//call watch job
 					return new Promise(function (resolve) {
@@ -162,13 +168,15 @@ sap.ui.define([
 							id: oPlanTourResponse.data.id
 						};
 						this.oComponent.ProgressBarDialog.setProgressData({ progress: "70" });
-						this.fnWatchJobCall(this._sWatchJobUrl, resolve);
+						this._fnWatchJobCall(this._sWatchJobUrl, resolve); // method call for watch job for plan tour 
 					}.bind(this));
 				} else {
 					return;
 				}
 			}.bind(this)).then(function (oWatchJobResponse) {
 				this.oComponent.ProgressBarDialog.setProgressData({ progress: "90" });
+
+				// check if there is any response from watchJob API
 				if (oWatchJobResponse) {
 					//call fetch response
 					var oFetchResponseRequestBody = {
@@ -195,28 +203,31 @@ sap.ui.define([
 		 * 1st Step: Payload will be sent to startCreateDistanceMatrix API
 		 * 2nd Step: WatchJob will be checking for the completion of the above process.
 		 * 3rd Step: FetchJobResponse will get the matrix Id and pass it to the plan Tours API
-		 * @param {Waypoint[]} aResourceData - Resource Data
-		 * @param {Waypoint[]} aPointsToVisit - Array of Waypoint to be visited (Demand data)
+		 * @param {Array} aResourceData - Resource Data
+		 * @param {Array} aLocations - Array of Locations to be visited (locations of all resources and demands)
 		 * @return {Promise<string>} Promise representing id of the distance matrix. The matrix itself stored in PTV service after its creation.
 		 */
 		_createDistanceMatrix: function (aResourceData, aLocations) {
 			var oRequestBody = this._createPayloadForDistanceMatrixRequest(aResourceData, aLocations);
 			return this._sendPOSTRequestToPTV(this._sStartCreateDistanceMatrixUrl, oRequestBody).then(function (oCreateMatrixResponse) {
 				this.oComponent.ProgressBarDialog.setProgressData({ progress: "20" });
+
+				// check if there is any response from startCreateDistanceMatrix API
 				if (oCreateMatrixResponse) {
-					//call watchJob
 					return new Promise(function (resolve) {
 						this.oWatchJobRequestBody = {
 							id: oCreateMatrixResponse.data.id
 						};
 						this.oComponent.ProgressBarDialog.setProgressData({ progress: "30" });
-						this.fnWatchJobCall(this._sDimaWatchJobUrl, resolve);
+						this._fnWatchJobCall(this._sDimaWatchJobUrl, resolve); // method call for watch job for distance matrix
 					}.bind(this));
 				} else {
 					return;
 				}
 			}.bind(this)).then(function (oWatchJobResponse) {
 				this.oComponent.ProgressBarDialog.setProgressData({ progress: "40" });
+
+				// check if there is any response from watchJob API
 				if (oWatchJobResponse) {
 					//call fetch response
 					var oFetchResponseRequestBody = {
@@ -238,14 +249,18 @@ sap.ui.define([
 		 * @param {Promise} resolve - used for resolving once the promise is complete
 		 */
 
-		fnWatchJobCall: function (sURL, resolve) {
+		_fnWatchJobCall: function (sURL, resolve) {
 			this.sCurrentURL = sURL;
 			this._sendPOSTRequestToPTV(this.sCurrentURL, this.oWatchJobRequestBody).then(function (oWatchJobResponse) {
+
+				// check if watch job status is in progress 
 				if (oWatchJobResponse.data.status === "RUNNING" || oWatchJobResponse.data.status === "QUEUING") {
 					setTimeout(function () {
-						this.fnWatchJobCall(sURL, resolve);
+						this._fnWatchJobCall(sURL, resolve); // recursive method call for watch job until success or failure
 					}.bind(this), 2000);
 				}
+
+				// check if watch job status is completed
 				if (["SUCCEEDED", "FAILED", "UNKNOWN"].includes(oWatchJobResponse.data.status)) { // if successed or failed
 					resolve(oWatchJobResponse);
 				}
@@ -255,8 +270,9 @@ sap.ui.define([
 		/**
 		 * Creates payload according to CreateDistanceMatrix type:
 		 * https://xserver2-dashboard.cloud.ptvgroup.com/dashboard/Default.htm#API-Documentation/xdima.html#com.ptvgroup.xserver.xdima.CreateDistanceMatrixRequest
-		* @param {Waypoint[]} aResourceData - Resource date to get Mode of transport
-		 *  @param {Waypoint[]} aLocation -  Array of all locations involved in scheduling payload (Resource, Demand and input plans)
+		 * @param {Array} aResourceData - Resource date to get Mode of transport
+		 * @param {Array} aLocation -  Array of all locations involved in scheduling payload (Resource, Demand and input plans)
+		 * @return {Object} payload to create distance matrix
 		 */
 		_createPayloadForDistanceMatrixRequest: function (aResourceData, aLocations) {
 			var oPointTemplate, sFirstKey, sModeOfTransport, aLocationPoints = [], oPayload = {};
@@ -268,6 +284,7 @@ sap.ui.define([
 				}
 			};
 
+			// loop to store all the locations into single array
 			for (var i in aLocations) {
 				var oPoint = _.cloneDeep(oPointTemplate);
 				oPoint.offRoadCoordinate.x = aLocations[i].routeLocation.offRoadCoordinate.x;
@@ -294,7 +311,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * 
+		 * method to delete distance matrix afte completing the planning
 		 * @param {string} sMatrixId - Created matrix Id
 		 * Passing matrix Id to this function after using in planTours API will delete the Matrix
 		 */
@@ -349,8 +366,8 @@ sap.ui.define([
 					calculationMode: "PERFORMANCE",
 					planningHorizon: {
 						$type: "StartEndInterval",
-						start: this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/startDate")),
-						end: this._getFormattedDate(this.oViewModel.getProperty("/Scheduling/endDate"))
+						start: this._getFormattedDate(this._oViewModel.getProperty("/Scheduling/startDate")),
+						end: this._getFormattedDate(this._oViewModel.getProperty("/Scheduling/endDate"))
 					}
 				},
 				inputPlan: {
@@ -361,8 +378,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * set the resource data in the payload Structure to Pass to call PTV.
+		 * set the resource data into the payload Structure to Pass to call PTV.
 		 * Used in the Auto/Re-Schduling both.
+		 * @param {Object} oPayload - payload object to pass into PTV plan tour call
+		 * @param {string} aResourceData - array of all the resource data eg.. availability, breaks, workshift and qualifications
 		 * @return {object} Payload structure with resource data.
 		 */
 		_setResourceData: function (oPayload, aResourceData) {
@@ -371,7 +390,7 @@ sap.ui.define([
 				oVehicle = {},
 				aVehicleIDs = [],
 				aDrivers = [],
-				aSchedulingData = this.oViewModel.getProperty("/Scheduling"),
+				aSchedulingData = this._oViewModel.getProperty("/Scheduling"),
 				aHorizonDateIntervals = this._getDateIntervals(aSchedulingData.startDate, aSchedulingData.endDate),
 				aWorkSchedules = [],
 				oInputPlanData = {},
@@ -380,7 +399,7 @@ sap.ui.define([
 				aFixations = [],
 				aDemandLocations = [],
 				aDemands = [],
-				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD");
+				bQualificationCheck = this._oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD");
 
 
 			for (var sGuid in aResourceData) {
@@ -393,6 +412,8 @@ sap.ui.define([
 
 				//Creation of Vehicles and Driver object for each in the planning horizon
 				aHorizonDateIntervals.forEach(function (sDate) {
+
+					// condition to check if there is operating interval for the resource for specific date
 					if (aWorkSchedules[sDate] && aWorkSchedules[sDate].aOperationIntervals.length) {
 						//Creating and adding vehicle ids to pass to vehicle object 
 						aVehicleIDs.push(sGuid + "_" + sDate);
@@ -414,17 +435,19 @@ sap.ui.define([
 						startLocationId: sGuid + "_location",
 						endLocationId: sGuid + "_location"
 					};
+
+					// check global config for qualification to add the qualification data
 					if (bQualificationCheck) {
 						oVehicle.equipment = aResourceData[sGuid].qualifications;
 					}
 					aVehicles.push(oVehicle);
 				}
 
-				//Input Plan Data
+				// handling Input Plan Data to add into the payload
 				oInputPlanData = this._getInputPlans(aResourceData[sGuid]);
 				oInputPlan = this._getPTVInputPlanObject(sGuid, oInputPlanData, aVehicleIDs);
-				aDemandLocations = aDemandLocations.concat(oInputPlanData.demandLocations);
-				aDemands = aDemands.concat(oInputPlanData.demandOrders);
+				aDemandLocations = aDemandLocations.concat(oInputPlanData.demandLocations); //merging existing demand locations into payload 
+				aDemands = aDemands.concat(oInputPlanData.demandOrders); //merging existing demand Object into payload 
 				aTours = aTours.concat(oInputPlan.tours);
 				aFixations = aFixations.concat(oInputPlan.fixations);
 			}
@@ -435,6 +458,7 @@ sap.ui.define([
 			oPayload.orders = oPayload.orders.concat(aDemands); // adding input plan demand data
 			oPayload.fleet.drivers = aDrivers;
 			oPayload.fleet.vehicles = aVehicles;
+
 			//checking if any input plan data is available, if not, removing "inputPlan" property from payload
 			if (aTours.length) {
 				oPayload.inputPlan.tours = aTours;
@@ -449,6 +473,8 @@ sap.ui.define([
 
 		/**
 		 * set the demands data in the payload Structure to Pass to call PTV.
+		 * @param {Object} oPayload - payload object to pass into PTV plan tour call
+		 * @param {string} aResourceData - array of all the resource data eg.. availability, breaks, workshift and qualifications
 		 * @return {object} Payload structure with demands data.
 		 */
 		_setDemandsData: function (oPayload, aDemandsData) {
@@ -456,26 +482,21 @@ sap.ui.define([
 			var locations = [],
 				orders = [],
 				oOrder = {},
-				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD"),
+				bQualificationCheck = this._oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD"),
 				oLocationObject,
 				oMustStart,
 				oMustFinish,
 				nDuration,
-				aLocationIds = this.oViewModel.getProperty("/Scheduling/aDemandLocationIds");
+				aLocationIds = this._oViewModel.getProperty("/Scheduling/aDemandLocationIds");
 
 			for (let oDemandGuid in aDemandsData) {
-				oLocationObject = {
-					$type: "CustomerSite",
-					id: oDemandGuid + "_location",
-					routeLocation: {
-						$type: "OffRoadRouteLocation",
-						offRoadCoordinate: {
-							x: aDemandsData[oDemandGuid].location.x,
-							y: aDemandsData[oDemandGuid].location.y
-						}
-					}
-				};
+
+				//Demand location coordinates added as CustomerSite to add in Locations
+				oLocationObject = this._getPTVLocationObject(oDemandGuid, aDemandsData, "CustomerSite");
+
+				// collecting the added Demand location ids to avoid adding duplicate locations further
 				aLocationIds.push(oDemandGuid + "_location");
+
 				// adding opening intervals if must start time and must finished time is given for the demand
 				if (aDemandsData[oDemandGuid].data.START_CONS && aDemandsData[oDemandGuid].data.FIN_CONSTR) {
 					oMustStart = this._mergeDateTime(aDemandsData[oDemandGuid].data.START_CONS, aDemandsData[oDemandGuid].data.STRTTIMCON);
@@ -489,6 +510,8 @@ sap.ui.define([
 						}
 					];
 				}
+
+				// creating Order object for demands
 				oOrder = {
 					$type: "VisitOrder",
 					id: oDemandGuid,
@@ -496,6 +519,8 @@ sap.ui.define([
 					priority: aDemandsData[oDemandGuid].priority,
 					serviceTime: aDemandsData[oDemandGuid].serviceTime
 				};
+
+				// check global config for qualification to add the qualification data
 				if (bQualificationCheck) {
 					oOrder.requiredVehicleEquipment = aDemandsData[oDemandGuid].qualification;
 				}
@@ -504,7 +529,7 @@ sap.ui.define([
 
 			}
 
-			this.oViewModel.setProperty("/Scheduling/aDemandLocationIds", aLocationIds);
+			this._oViewModel.setProperty("/Scheduling/aDemandLocationIds", aLocationIds);
 			oPayload.locations = oPayload.locations.concat(locations);
 			oPayload.orders = oPayload.orders.concat(orders);
 			return oPayload;
@@ -513,7 +538,7 @@ sap.ui.define([
 		/**
 		 * Convert date object in oData date format
 		 * @param {Object} oDate
-		 * @return {String} - formatted date for PTV payload planning horizon
+		 * @return {String} - formatted date for PTV API date time format
 		 */
 		_getFormattedDate: function (oDate) {
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
@@ -529,6 +554,8 @@ sap.ui.define([
 		_getDateIntervals: function (aStartDate, aEndDate) {
 			var aStartDateTmp = new Date(aStartDate);
 			var aHorizonDateIntervals = [];
+
+			// loop to get all the dates in between a date range 
 			while (aStartDateTmp.getDate() != aEndDate.getDate()) {
 				aHorizonDateIntervals.push(this._getFormattedDate(aStartDateTmp).substr(0, 10));
 				aStartDateTmp.setDate(aStartDateTmp.getDate() + 1);
@@ -541,15 +568,15 @@ sap.ui.define([
 		 * create PTV location object for Resource/Demands
 		 * @return {Object} - location object for PTV payload
 		 */
-		_getPTVLocationObject: function (sGuid, aResourceData, sType) {
+		_getPTVLocationObject: function (sGuid, aDataSet, sType) {
 			return {
 				$type: sType,
 				id: sGuid + "_location",
 				routeLocation: {
 					$type: "OffRoadRouteLocation",
 					offRoadCoordinate: {
-						x: aResourceData[sGuid].aData.LONGITUDE,
-						y: aResourceData[sGuid].aData.LATITUDE
+						x: sType === "DepotSite" ? aDataSet[sGuid].aData.LONGITUDE : aDataSet[sGuid].location.x,
+						y: sType === "DepotSite" ? aDataSet[sGuid].aData.LATITUDE : aDataSet[sGuid].location.y
 					}
 				}
 			};
@@ -564,7 +591,6 @@ sap.ui.define([
 		_getFormattedWorkSchedules: function (oResource, aHorizonDateIntervals) {
 			var aFormattedWorkSchedules = [],
 				sStartDate = "",
-				aAbsences = [],
 				aProjectBlockers = [],
 				aIntervals = [],
 				sDate,
@@ -606,8 +632,10 @@ sap.ui.define([
 			oResource.workSchedules.forEach(function (oItem) {
 				sStartDate = this._getFormattedDate(oItem.DateFrom);
 				sDate = sStartDate.substring(0, 10);
+
+				// checking work schedule for the date if available then add operating intervals
 				if (aFormattedWorkSchedules[sDate] && aFormattedWorkSchedules[sDate].aOperationIntervals) {
-					
+					// calculating shift times base on absenses
 					aShiftTimes = this._getShiftOperatingIntervalconsideringAbsence(oResource.absenses, oItem.DateFrom, oItem.DateTo);
 					aFormattedWorkSchedules[sDate].aOperationIntervals.push({
 						$type: "StartDurationInterval",
@@ -615,6 +643,7 @@ sap.ui.define([
 						duration: this._getAvailabilityDuration(aShiftTimes.DateFrom, aShiftTimes.DateTo, aProjectBlockers[sDate])
 					});
 
+					// if absence is in between then adding work shift after absence ends
 					if (aShiftTimes.SecondShift){
 						aFormattedWorkSchedules[sDate].aOperationIntervals.push({
 							$type: "StartDurationInterval",
@@ -637,7 +666,7 @@ sap.ui.define([
 		 */
 		_getAvailabilityDuration: function (oDateFrom, oDateTo, nBlockedPercentage) {
 			var nAvailabilityDuration = this._getDateDuration(oDateFrom, oDateTo),
-				nUtilization = this.oViewModel.getProperty("/Scheduling/sUtilizationSlider");
+				nUtilization = this._oViewModel.getProperty("/Scheduling/sUtilizationSlider");
 
 			//Condition to check if any blocker is there then remove the blocker duration from actual availability duration	
 			if (nBlockedPercentage) {
@@ -671,19 +700,29 @@ sap.ui.define([
 					demandLocations: [],
 					demandOrders: []
 				},
-				aListOfAssignments = this.oViewModel.getProperty("/Scheduling/aListOfAssignments") || [],
-				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD"),
+				aListOfAssignments = this._oViewModel.getProperty("/Scheduling/aListOfAssignments") || [],
+				bQualificationCheck = this._oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD"),
 				oOrder,
-				aDemandLocations = this.oViewModel.getProperty("/Scheduling/aDemandLocationIds"),
-				aExistingDemandQualification = this.oViewModel.getProperty("/Scheduling/aExistingDemandQualification");
+				aDemandLocations = this._oViewModel.getProperty("/Scheduling/aDemandLocationIds"),
+				aExistingDemandQualification = this._oViewModel.getProperty("/Scheduling/aExistingDemandQualification");
 
 			aAssingments = oResource.assignments;
+
+			// check if existing assignment is available to create input plan
 			if (aAssingments && aAssingments.length) {
+
+				// looping on assignment list to arrange assignments datewise 
 				for (var oAssingnment of aAssingments) {
+
+					// check if assignment is for single day as currently we are not considering multiple days assignments
 					if (oAssingnment.DateFrom.getDate() === oAssingnment.DateTo.getDate()) {
+
+						// check if existing assignment location is already added in Location array in payload
 						if (aDemandLocations.indexOf(oAssingnment.DemandGuid + "_location") === -1) {
 							aListOfAssignments[oAssingnment.DemandGuid] = oAssingnment;
 							sAssignmentDate = this._getFormattedDate(oAssingnment.DateFrom).substring(0, 10);
+
+							// check if array of stops is available for particular date || create if not available
 							if (aInputPlans.stops[sAssignmentDate]) {
 								aInputPlans.stops[sAssignmentDate].push({
 									locationId: oAssingnment.DemandGuid + "_location",
@@ -693,6 +732,7 @@ sap.ui.define([
 									}]
 								});
 							} else {
+								// append if array of stops is available
 								aInputPlans.stops[sAssignmentDate] = [{
 									locationId: oAssingnment.DemandGuid + "_location",
 									tasks: [{
@@ -725,26 +765,31 @@ sap.ui.define([
 								priority: 9,
 								serviceTime: this._getDateDuration(oAssingnment.DateFrom, oAssingnment.DateTo)
 							};
-
+							
+							// check if qualification is enable then add qualifications for existing assignment 
 							if (bQualificationCheck) {
 								oOrder.requiredVehicleEquipment = aExistingDemandQualification[oAssingnment.DemandGuid];
 							}
+
+							//adding existing demand orders objects into input plan
 							aInputPlans.demandOrders.push(oOrder);
 
 						}
 					} else {
-						// Multiple days assignments would get processed here
+						// Multiple days assignments would get processed here but currently we are not considering multiple days assignments
 					}
 
 				}
 			}
-			this.oViewModel.setProperty("/Scheduling/aListOfAssignments", aListOfAssignments);
+			this._oViewModel.setProperty("/Scheduling/aListOfAssignments", aListOfAssignments);
 			return aInputPlans;
 		},
 
 		/**
 		 * To create input plans object
 		 * @param {string} sGuid - Resource Guid
+		 * @param {Object} oInputPlanData - existing assignments stops object
+		 * @param {Array} aDriverIds - array of driver ids 
 		 * @return {Object} oInputPlanData - input plan data needed for creating object - will contain stops for dates
 		 */
 		_getPTVInputPlanObject: function (sGuid, oInputPlanData, aDriverIds) {
@@ -752,8 +797,10 @@ sap.ui.define([
 				tours: [],
 				fixations: []
 			};
-			for (var date in oInputPlanData.stops) {
-				
+
+			// looping on existing assignments stops object to generate input plan object 
+			for (var date in oInputPlanData.stops) {	
+				// check if driver is available for the date then add the existing assingment into input plan
 				if (oInputPlanData.stops[date].length && aDriverIds.indexOf(sGuid + "_" + date) !== -1) {
 					inputPlan.tours.push({
 						vehicleId: sGuid + "_" + date,
@@ -776,9 +823,10 @@ sap.ui.define([
 			return inputPlan;
 		},
 		/**
-		 * merge given date and time to datetime and format
+		 * merge given date and time to datetime format
 		 * @param date
 		 * @param time
+		 * @return {Object} Date Object - returns merged date and time
 		 */
 		_mergeDateTime: function (date, time) {
 			var offsetMs = new Date(0).getTimezoneOffset() * 60 * 1000,
@@ -800,10 +848,16 @@ sap.ui.define([
 		 * @param aAbsenses 
 		 * @param DateFrom
 		 * @param DateTo
+		 * @return {Object} Shift star and end date based on absence occurance - 
+		 * 
 		 */
 		_getShiftOperatingIntervalconsideringAbsence: function (aAbsenses, DateFrom, DateTo){
 			var oShiftStart = DateFrom, oShiftEnd = DateTo;
+
+			// looping on absence to check if it overlaps the workshif
 			for (var i in aAbsenses){
+
+				// check if absence is not overlapping the current shift timings
 				if (aAbsenses[i].DateFrom.getTime() < DateFrom.getTime() && aAbsenses[i].DateTo.getTime() <= DateFrom.getTime() || aAbsenses[i].DateFrom.getTime() >= DateTo.getTime() && aAbsenses[i].DateTo.getTime() > DateTo.getTime()) {
 					oShiftStart = DateFrom;
 					oShiftEnd = DateTo;
@@ -812,6 +866,7 @@ sap.ui.define([
 						DateTo: oShiftEnd
 					};
 				}
+				// check if absence is partially overlapping the current shift timings (absence ends between the shift time)
 				else if (aAbsenses[i].DateFrom.getTime() < DateFrom.getTime() && DateFrom.getTime() < aAbsenses[i].DateTo.getTime() && aAbsenses[i].DateTo.getTime() < DateTo.getTime()){
 					oShiftStart = aAbsenses[i].DateTo;
 					oShiftEnd = DateTo;
@@ -820,6 +875,7 @@ sap.ui.define([
 						DateTo: oShiftEnd
 					};
 				}
+				// check if absence is partially overlapping the current shift timings (absence start between the shift time)
 				else if (aAbsenses[i].DateFrom.getTime() < DateTo.getTime() && DateTo.getTime() < aAbsenses[i].DateTo.getTime() && DateFrom.getTime()  < aAbsenses[i].DateFrom.getTime()){
 					oShiftStart = DateFrom;
 					oShiftEnd = aAbsenses[i].DateFrom;
@@ -828,7 +884,9 @@ sap.ui.define([
 						DateFrom: oShiftStart,
 						DateTo: oShiftEnd
 					};
-				} else if (aAbsenses[i].DateFrom.getTime() < DateFrom.getTime() &&  DateTo.getTime() < aAbsenses[i].DateTo.getTime()){
+				} 
+				// check if absence is fully overlapping the current shift timings (absence start before shift start and ends after shift end)
+				else if (aAbsenses[i].DateFrom.getTime() < DateFrom.getTime() &&  DateTo.getTime() < aAbsenses[i].DateTo.getTime()){
 					oShiftStart = DateFrom;
 					oShiftEnd = DateFrom;
 					return {
@@ -836,6 +894,7 @@ sap.ui.define([
 						DateTo: oShiftEnd
 					};
 				}
+				// check if absence is partially overlapping the current shift timings (absence occurs in between shift)
 				else if (DateFrom.getTime() < aAbsenses[i].DateFrom.getTime()  &&  aAbsenses[i].DateTo.getTime() < DateTo.getTime()) {
 					oShiftStart = DateFrom;
 					oShiftEnd = DateFrom;
@@ -847,7 +906,9 @@ sap.ui.define([
 							DateTo: DateTo
 						}
 					};
-				} else if (aAbsenses[i].DateFrom.getTime() === DateFrom.getTime() && DateTo.getTime() === aAbsenses[i].DateTo.getTime()) {
+				} 
+				// check if absence is fully overlapping the current shift timings (absence occurs exactly same time of shift)
+				else if (aAbsenses[i].DateFrom.getTime() === DateFrom.getTime() && DateTo.getTime() === aAbsenses[i].DateTo.getTime()) {
 					oShiftStart = DateFrom;
 					oShiftEnd = DateFrom;
 					return {
