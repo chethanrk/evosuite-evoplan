@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.ui.table" xmlns:core="sap.ui.core" xmlns:gnt2="sap.gantt.simple">
 	<gnt2:Relationship shapeId="{ganttModel>RelationId}" type="{ganttModel>RELATION_TYPE}" predecessor="{ganttModel>PredecTaskId}"
-		successor="{ganttModel>SuccTaskId}" shapeTypeStart="{ganttModel>SHAPE_TYPE_START}"
-		shapeTypeEnd="{ganttModel>SHAPE_TYPE_END}" stroke="{ganttModel>RELATION_COLOR}"/>
+		successor="{ganttModel>SuccTaskId}"
+		stroke="{ganttModel>RELATION_COLOR}"/>
 </core:FragmentDefinition>

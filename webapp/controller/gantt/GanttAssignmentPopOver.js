@@ -1,12 +1,12 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/gantt/GanttActions",
+	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/Constants"
 ], function (BaseController, formatter, Fragment, Constants) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.common.AssignInfoDialog", {
+	return BaseController.extend("com.evorait.evoplan.controller.gantt.GanttAssignmentPopOver", {
 
 		formatter: formatter,
 

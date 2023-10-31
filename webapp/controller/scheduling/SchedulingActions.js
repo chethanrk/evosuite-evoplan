@@ -134,7 +134,7 @@ sap.ui.define([
 			if (!oSelectedDemandItem.ALLOW_RESCHEDULE) {
 				var aNonAssignableDemands = [];
 				aNonAssignableDemands.push(this.getMessageDescWithOrderID(oSelectedDemandItem, null, null, true));
-				this._showAssignErrorDialog(aNonAssignableDemands, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
+				this.showAssignErrorDialog(aNonAssignableDemands, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 				return false;
 			}
 			return true;
@@ -299,7 +299,7 @@ sap.ui.define([
 					// check for non assignable demands, display error
 					if (oSelectedPaths.aNonAssignable.length > 0) {
 						//show popup with list of demands who are not allow for assign
-						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
+						this.showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 
 					} else if (oSelectedPaths.aPathsData.length > 0) {
 						//open auto schedule wizard with selected demands if any of demands are assignable
@@ -315,7 +315,7 @@ sap.ui.define([
 					// show error message in case of duplicate resources selected
 					this._showErrorMessage(this.oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
 					if (oSelectedPaths.aNonAssignable.length > 0) {
-						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
+						this.showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 					}
 				}
 				this.oViewModel.setProperty("/Scheduling/bSchedBtnBusy", false);
@@ -969,12 +969,12 @@ sap.ui.define([
 		_fnStoreUpdatedDemandResources: function(oModelDialog){
 			var aData = oModelDialog.getProperty("/step2/dataSet");
 			aData.forEach(function (item) {
-				this._updatedDmdResources(this.oViewModel, item);
+				this.updatedResources(this.oViewModel, this.oUserModel, item);
 			}.bind(this));				
 		},
 
 		/**
-		 * This function is written to fetch the details of the resource containing the assignment and create the resource obj to pass in the _updatedDmdResources Fn
+		 * This function is written to fetch the details of the resource containing the assignment and create the resource obj to pass in the updatedResources Fn
 		 */
 		_fnFetchAndRefreshAssnRes: function(){
 			var oAssignObj, oResObj;

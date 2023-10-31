@@ -536,18 +536,18 @@ sap.ui.define([
 			this._isDemandDraggable = true;
 			//get all selected rows when checkboxes in table selected
 			if (aIndices.length > 0) {
-				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, aIndices, true);
+				oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, aIndices, true);
 				aPathsData = oSelectedPaths.aPathsData;
 			} else {
 				//table tr single dragged element
-				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, [oDraggedControl.getIndex()], true);
+				oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, [oDraggedControl.getIndex()], true);
 				aPathsData = oSelectedPaths.aPathsData;
 			}
 			// keeping the data in drag session
 			this.getModel("viewModel").setProperty("/mapDragSession", aPathsData);
 			this.getModel("viewModel").setProperty("/dragSession", aPathsData);
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+				this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 				oEvent.preventDefault();
 			}
 		},
@@ -664,17 +664,17 @@ sap.ui.define([
 				if (oData.ALLOW_ASSIGN) {
 					this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, this._mParameters);
 				} else {
-					this._showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
+					this.showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
 				}
 			} else {
 				//Operation performed from Demands Toolbar
-				var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+				var oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 				this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
 				if (oSelectedPaths.aPathsData.length > 0) {
 					this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
 				}
 				if (oSelectedPaths.aNonAssignable.length > 0) {
-					this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+					this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 				}
 			}
 		},

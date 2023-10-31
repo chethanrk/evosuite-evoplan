@@ -915,7 +915,7 @@ sap.ui.define([
 
 		_updateResources : function(){
 			for(var r in this.selectedResources){
-				this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(this.selectedResources[r]));
+				this.updatedResources(this._oView.getModel("viewModel"), this._component.getModel("user"), this._oView.getModel().getProperty(this.selectedResources[r]));
 			}
 		},
 

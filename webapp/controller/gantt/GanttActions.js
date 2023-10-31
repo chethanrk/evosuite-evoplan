@@ -15,6 +15,15 @@ sap.ui.define([
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
 
 		/**
+		 * Called when a controller is instantiated and its View controls (if available) are already created.
+		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
+		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
+		 */
+		onInit: function () {
+			Controller.prototype.onInit.apply(this, arguments);
+		},
+
+		/**
 		 * formatter for for Gantt view
 		 */
 		isBusyShape: function (bAllowProperty, bIsBusy, bAuthCheck) {
@@ -397,12 +406,12 @@ sap.ui.define([
 
 				sap.m.MessageBox.warning(
 					sMsg, {
-						actions: [sAction, sap.m.MessageBox.Action.CANCEL],
-						styleClass: oComponent.getContentDensityClass(),
-						onClose: function (sValue) {
-							return sValue === sAction ? resolve(true) : resolve(false);
-						}
+					actions: [sAction, sap.m.MessageBox.Action.CANCEL],
+					styleClass: oComponent.getContentDensityClass(),
+					onClose: function (sValue) {
+						return sValue === sAction ? resolve(true) : resolve(false);
 					}
+				}
 				);
 			}.bind(this));
 		},
@@ -537,8 +546,8 @@ sap.ui.define([
 					resolve(oData);
 				} else {
 					var sPath = this.getModel().createKey("AssignmentSet", {
-							Guid: oData.Guid
-						}),
+						Guid: oData.Guid
+					}),
 						oAssignData = this.getModel().getProperty("/" + sPath);
 					if (oAssignData && oAssignData.Demand && oAssignData.Demand.Guid && !bInvalidate) {
 						resolve(oAssignData);
@@ -568,26 +577,25 @@ sap.ui.define([
 
 			var fnDeleteAssignment = function () {
 				this.deleteAssignment(oModel, sAssignGuid).then(function () {
-						oGanttModel.setProperty(sPath + "/busy", false);
-						this.getModel("ganttModel").setProperty(sPath, null);
-						this.getModel("ganttOriginalData").setProperty(sPath, null);
-						this._refreshChangedResources(sPath);
-						oEventBus.publish("BaseController", "refreshCapacity", {
-							sTargetPath: sPath.split("/AssignmentSet/results/")[0]
-						});
-						oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
-						if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
-							// in case of split unassign, all the splits are unassigned from backend,
-							// thus on refresh of the entire gantt the splits are also deleted from the gantt UI
-							oEventBus.publish("BaseController", "refreshFullGantt", {});
-						}
-					}.bind(this),
+					oGanttModel.setProperty(sPath + "/busy", false);
+					this.getModel("ganttModel").setProperty(sPath, null);
+					this.getModel("ganttOriginalData").setProperty(sPath, null);
+					oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
+					if (bSplitGlobalConfigEnabled && isAssignmentPartOfSplit) {
+						// in case of split unassign, all the splits are unassigned from backend,
+						// thus on refresh of the entire gantt the splits are also deleted from the gantt UI
+						oEventBus.publish("BaseController", "refreshFullGantt", {});
+					} else {
+						//This will refresh only the updated Resoures when Split is not enabled
+						this._refreshUpdatedResources();
+					}
+				}.bind(this),
 					function () {
 						oGanttModel.setProperty(sPath + "/busy", false);
 					});
 			}.bind(this);
 
-			this.checkToolExists([{ // check tool exists
+			this.oPRTActions.checkToolExists([{ // check tool exists
 				AssignmentGUID: sAssignGuid
 			}]).then(function (resolve) {
 				if (resolve) { // If user click yes
@@ -642,16 +650,15 @@ sap.ui.define([
 				this.showDemandEditModeWarningMessage().then(function (bResponse) {
 					var sDiscard = oResourceBundle.getText("xbut.discard&Nav"),
 						sSave = oResourceBundle.getText("xbut.buttonSave");
-
 					if (bResponse === sDiscard) {
 						oModel.resetChanges();
 						oViewModel.setProperty("/bDemandEditMode", false);
 						this._navToDetail(null, this.oRow);
 					} else
-					if (bResponse === sSave) {
-						oViewModel.setProperty("/bDemandEditMode", false);
-						this.submitDemandTableChanges();
-					}
+						if (bResponse === sSave) {
+							oViewModel.setProperty("/bDemandEditMode", false);
+							this.submitDemandTableChanges();
+						}
 				}.bind(this));
 
 			} else {
@@ -877,7 +884,7 @@ sap.ui.define([
 			return aCreatedAssignments;
 		}
 
-	
+
 	});
 
 });

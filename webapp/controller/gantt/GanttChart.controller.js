@@ -57,6 +57,7 @@ sap.ui.define([
 		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
 		 */
 		onInit: function () {
+			Controller.prototype.onInit.apply(this, arguments);
 			this.oViewModel = this.getModel("viewModel");
 			this.oUserModel = this.getModel("user");
 			this.oAppViewModel = this.getModel("appView");
@@ -65,7 +66,6 @@ sap.ui.define([
 			this._treeTable = this.getView().byId("idGanttResourceTreeTable");
 			this._ganttChart = this.getView().byId("idGanttResourceAssignments");
 			this._axisTime = this.getView().byId("idAxisTime");
-			this._userData = this.oUserModel.getData();
 
 			this._oEventBus.subscribe("BaseController", "refreshAssignments", this._refreshAssignments, this);
 			this._oEventBus.subscribe("BaseController", "refreshAvailabilities", this._refreshAvailabilities, this);
@@ -109,7 +109,7 @@ sap.ui.define([
 				};
 			}.bind(this));
 
-			if (this._userData.ENABLE_RESOURCE_AVAILABILITY) {
+			if (this.oUserModel.getProperty("/ENABLE_RESOURCE_AVAILABILITY")) {
 				this._ganttChart.addStyleClass("resourceGanttWithTable");
 			}
 
@@ -505,6 +505,8 @@ sap.ui.define([
 				oShape = oEvent.getSource().getPopup()._oPosition.of,
 				oContext = oShape.getBindingContext("ganttModel"),
 				oRowContext = oShape.getParent().getParent().getBindingContext("ganttModel");
+			//Storing updated Resource info for refreshing only the updated Resources in Gantt
+			this.updatedResources(this.oViewModel, this.oUserModel, oData);
 			//still needed?
 			if (oAppModel.getProperty("/currentRoute") === "ganttSplit") {
 				mParameters = {
@@ -739,7 +741,7 @@ sap.ui.define([
 				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
 				//For PRT Assignments
 				if (this.assignmentRowContext.getObject().IS_PRT) {
-					this.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
+					this.oPRTActions.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 				} else {
 					this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 				}
@@ -836,7 +838,7 @@ sap.ui.define([
 			endDate.setDate(oTargetDate.getDate() + parseInt(iDefNum));
 			this.oViewModel.setProperty("/PRT/defaultStartDate", oTargetDate);
 			this.oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
-			this.checksBeforeAssignTools(aSources, oResourceData, this._mParameters, sTargetPath);
+			this.oPRTActions.checksBeforeAssignTools(aSources, oResourceData, this._mParameters, sTargetPath, this.getView());
 		},
 
 		/**
@@ -1119,7 +1121,7 @@ sap.ui.define([
 								oParams: oParams,
 								sRequestType: sRequestType
 							};
-							this.openDateSelectionDialog(this.getView(), null, null, mParameters);
+							this.oPRTActions.openDateSelectionDialog(this.getView(), null, null, mParameters);
 						} else {
 							sNewPath = this._setNewShapeDropData(sSourcePath, sTargetPath, oParams.draggedShapeDates[key], oParams);
 							this._updateDraggedShape(sNewPath, sRequestType, sSourcePath);
@@ -1249,8 +1251,8 @@ sap.ui.define([
 					oPRTShapeData.ResourceGroupGuid = oTargetData.ResourceGroupGuid;
 					oPRTShapeData.ResourceGuid = oTargetData.ResourceGuid;
 					this.oViewModel.setProperty("/PRT/AssignmentData", oPRTShapeData);
-					oParams = this._getParams();
-					oDateParams = this.getPRTDateParams(oPRTShapeData);
+					oParams = this.oPRTActions._getParams();
+					oDateParams = this.oPRTActions.getPRTDateParams(oPRTShapeData);
 					if (oTargetData.NodeType === "ASSIGNMENT") {
 						oParams.DateFrom = oTargetData.StartDate;
 						oParams.DateTo = oTargetData.EndDate;
@@ -1258,10 +1260,10 @@ sap.ui.define([
 						oParams.TimeTo = oTargetData.EndTime;
 						oParams.DemandGuid = oTargetData.DemandGuid;
 						this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function () {
-							this._refreshChangedResources(sTargetResourcePath, sCurrentResourcePath);
+							this._refreshUpdatedResources();
 						}.bind(this));
 					} else if (this.oUserModel.getProperty("/ENABLE_TOOL_ASGN_DIALOG")) {
-						this.openDateSelectionDialog(this.getView(), oDateParams, oPRTShapeData, this._mParameters, true, {
+						this.oPRTActions.openDateSelectionDialog(this.getView(), oDateParams, oPRTShapeData, this._mParameters, true, {
 							sCurrentResourcePath: sCurrentResourcePath,
 							sTargetResourcePath: sTargetResourcePath
 						});
@@ -1271,7 +1273,7 @@ sap.ui.define([
 						oParams.TimeFrom = oDateParams.TimeFrom;
 						oParams.TimeTo = oDateParams.TimeTo;
 						this.executeFunctionImport(this.getModel(), oParams, "ChangeToolAssignment", "POST").then(function () {
-							this._refreshChangedResources(sTargetResourcePath, sCurrentResourcePath);
+							this._refreshUpdatedResources();
 						}.bind(this));
 					}
 
@@ -1342,8 +1344,8 @@ sap.ui.define([
 
 			if (oData.IS_PRT) { // PRT reassignmnet
 				this.oViewModel.setProperty("/PRT/AssignmentData", oData);
-				this.onChangeTools().then(function (resolve) {
-					this._refreshChangedResources(sPath, sSourcePath);
+				this.oPRTActions.onChangeTools().then(function (resolve) {
+					this._refreshUpdatedResources();
 				}.bind(this), function (reject) {
 					this._resetChanges(sPath);
 				}.bind(this));
@@ -1354,43 +1356,17 @@ sap.ui.define([
 				}.bind(this), function (oError) {
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
-					this._refreshChangedResources(sPath);
+					this._refreshUpdatedResources();
 				}.bind(this)).then(function (aData) {
-					// these events
-					this._oEventBus.publish("BaseController", "refreshCapacity", {
-						sTargetPath: sPath.split("/AssignmentSet/results/")[0]
-					});
-					if (sSourcePath) {
-						this._oEventBus.publish("BaseController", "refreshCapacity", {
-							sTargetPath: sSourcePath.split("/AssignmentSet/results/")[0]
-						});
-					}
-
+					this._refreshUpdatedResources();
 					if (sRequestType === "reassign") {
-						//method call for updating resource assignment in case of single reassignment
-						this._refreshChangedResources(sPath, sSourcePath);
 						this._oEventBus.publish("BaseController", "refreshDemandGanttTable", {});
-					} else {
-						//method call for updating resource assignment in case of Multi Assignment in same axis
-						this._refreshChangedResources(sPath);
-					}
-
-					// in case of gantt shape drag from POOL to RESOURCE 
-					// on successful call of CreateSplitStretchAssignments the response contains the array of split assignments
-					// add those to the gantt view
-					if (aData && aData.results && aData.results.length > 0) {
-						var aCreatedAssignments = this._getCreatedAssignments(aData.results);
-						if (aCreatedAssignments.length > 0) {
-							this._addCreatedAssignment(aCreatedAssignments, sPath.split("/AssignmentSet/results/")[0]);
-						}
 					}
 				}.bind(this), function () {
 					//on reject validation or user don't want proceed
 					this.oGanttModel.setProperty(sPath + "/busy", false);
 					this._resetChanges(sPath);
-					if (sRequestType !== "reassign") {
-						this._refreshChangedResources(sPath);
-					}
+					this._refreshUpdatedResources();
 				}.bind(this));
 			}
 		},
@@ -1491,6 +1467,8 @@ sap.ui.define([
 					ResourceGroupGuid: oData.ResourceGroupGuid,
 					ResourceGuid: oData.ResourceGuid
 				};
+				//Storing updated Resource info for refreshing only the updated Resources in Gantt
+				this.updatedResources(this.oViewModel, this.oUserModel, oParams);
 
 				//If assignment is duplicate then send the resource group id of original assignment
 				if (oData.DUPLICATE_ASSIGNMENT_FLAG) {
@@ -1548,7 +1526,7 @@ sap.ui.define([
 				//is re-assign allowed
 				if (this.mRequestTypes.reassign === sType && !oData.Demand.ALLOW_REASSIGN) {
 					sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
-					this._showAssignErrorDialog([this.getMessageDescWithOrderID(oData, oData.Description)], null, sDisplayMessage);
+					this.showAssignErrorDialog([this.getMessageDescWithOrderID(oData, oData.Description)], null, sDisplayMessage);
 					this._resetChanges(sPath);
 					reject();
 				}
@@ -1857,7 +1835,7 @@ sap.ui.define([
 						$expand: "AssignmentSet,ResourceAvailabilitySet"
 					},
 					oUserData = this.oUserModel.getData(),
-					aResourceTblFilters=[];
+					aResourceTblFilters = [];
 				aFilters.push(new Filter("HierarchyLevel", FilterOperator.EQ, iLevel));
 				aFilters.push(new Filter("StartDate", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 				aFilters.push(new Filter("EndDate", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
@@ -1910,7 +1888,7 @@ sap.ui.define([
 		 */
 		_addChildrenToParent: function (iLevel, oResData) {
 			var aChildren = this.oGanttModel.getProperty("/data/children"),
-				aTravelTimes=[];
+				aTravelTimes = [];
 			var callbackFn = function (oItem, level) {
 				oItem.children = [];
 				oResData.forEach(function (oResItem) {
@@ -1934,14 +1912,14 @@ sap.ui.define([
 									_cloneObj.OBJECT_ID_RELATION = _cloneObj.OBJECT_ID_RELATION + "//" + _cloneObj.ResourceGuid;
 									oResItem.AssignmentSet.results.push(_cloneObj);
 								}
-								if (parseFloat(oAsgn.TRAVEL_TIME) > 0){
-									aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes,oAsgn, oItem);
+								if (parseFloat(oAsgn.TRAVEL_TIME) > 0) {
+									aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes, oAsgn, oItem);
 								}
 								if (parseFloat(oAsgn.TRAVEL_BACK_TIME) > 0) {
 									aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes, oAsgn, oItem, true);
 								}
 							}.bind(this));
-							
+
 							oResItem.ResourceAvailabilitySet = oItem.ResourceAvailabilitySet; // copying resource availabilities to assignment node
 						}
 						oItem.children.push(oResItem);
@@ -1955,7 +1933,7 @@ sap.ui.define([
 			aChildren = this._recurseChildren2Level(aChildren, iLevel, callbackFn);
 			this.oGanttModel.setProperty("/data/children", aChildren);
 		},
-		
+
 		/**
 		 * loop trough all nested array of children
 		 * When max level for search was reached execute callbackFn
@@ -1988,14 +1966,14 @@ sap.ui.define([
 			var aFilters = [],
 				oUserData = this.oUserModel.getData();
 			//Refreshing Assignments for only updated Resources
-			this._refreshUpdatedResources(); 
+			this._refreshUpdatedResources();
 			aFilters.push(new Filter("DateFrom", FilterOperator.LE, formatter.date(oUserData.DEFAULT_GANT_END_DATE)));
 			aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
 			this.getOwnerComponent().readData("/ResourceAvailabilitySet", aFilters, null, "sAvailabilityBatchId").then(function (oData) {
 				this._addAvailabilities(oData.results);
 			}.bind(this));
 		},
-		
+
 		/**
 		 * fetch event when callFunctionImport happened in BaseController
 		 * @param {String} sChannel
@@ -2034,7 +2012,7 @@ sap.ui.define([
 						this.oGanttOriginDataModel.refresh();
 					}.bind(this));
 				}
-				
+
 			}
 		},
 
@@ -2103,7 +2081,7 @@ sap.ui.define([
 									};
 								});
 								if (parseFloat(aAssignments[k].TRAVEL_TIME) > 0) {
-									aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes,aAssignments[k],oResource);
+									aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes, aAssignments[k], oResource);
 								}
 								if (parseFloat(aAssignments[k].TRAVEL_BACK_TIME) > 0) {
 									aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes, aAssignments[k], oResource, true);
@@ -2317,22 +2295,13 @@ sap.ui.define([
 		_handleMultipleAssignment: function (oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects) {
 			var sDummyPath = this._createDummyAssignment(oTarget, oTargetDate);
 			this.oGanttModel.setProperty(sDummyPath + "/busy", true);
-
+			//Storing updated Resource info for refreshing only the updated Resources in Gantt
+			this.updatedResources(this.oViewModel, this.oUserModel, oResourceData);
 			this.assignMultipleDemands(oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects).then(
 				function (aPromises) {
 					Promise.all(aPromises).then(
 						function (aResults, oResponse) {
-							if (aResults.length > 0) {
-								var aCreatedAssignments = this._getCreatedAssignments(aResults);
-								if (aCreatedAssignments.length > 0) {
-									this._addCreatedAssignment(aCreatedAssignments, oTarget, sDummyPath);
-								} else {
-									this.oGanttModel.setProperty(sDummyPath, null);
-									this.oGanttModel.setProperty(sDummyPath + "/busy", false);
-								}
-							}
-							//	this._oEventBus.publish("BaseController", "refreshAssignments", aResults);
-							//	this._oEventBus.publish("BaseController", "refreshCapacity", {});
+							this._refreshUpdatedResources();
 						}.bind(this),
 						function () {
 							if (sDummyPath) {
@@ -2626,16 +2595,20 @@ sap.ui.define([
 		 * @Author Rakesh Sahu
 		 */
 		_updateAfterReAssignment: function (aData, oTargetResource, oSourceResource) {
-			oTargetResource.AssignmentSet.results = aData[0].results.filter(function (sKey) { //Filtering Demand Assignments
-				return sKey.IS_PRT === false;
-			});
+			if (oTargetResource.AssignmentSet) {
+				oTargetResource.AssignmentSet.results = aData[0].results.filter(function (sKey) { //Filtering Demand Assignments
+					return sKey.IS_PRT === false;
+				});
+			}
 			this._updateResourceChildren(oTargetResource, this._updateDmdPRTAssignments(aData[0].results));
 			this.oGanttOriginDataModel.setProperty(this._oTargetResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oTargetResourcePath)));
 
 			if (oSourceResource) {
-				oSourceResource.AssignmentSet.results = aData[1].results.filter(function (sKey) { //Filtering Demand Assignments
-					return sKey.IS_PRT === false;
-				});
+				if (oSourceResource.AssignmentSet) {
+					oSourceResource.AssignmentSet.results = aData[1].results.filter(function (sKey) { //Filtering Demand Assignments
+						return sKey.IS_PRT === false;
+					});
+				}
 				this._updateResourceChildren(oSourceResource, this._updateDmdPRTAssignments(aData[1].results));
 				this.oGanttOriginDataModel.setProperty(this._oSourceResourcePath, _.cloneDeep(this.oGanttModel.getProperty(this._oSourceResourcePath)));
 			}
@@ -2673,7 +2646,7 @@ sap.ui.define([
 					};
 					//added the below code for calculating the travel times when coming from different views
 					if (parseFloat(oAsgnObj.TRAVEL_TIME) > 0) {
-						aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes,oAsgnObj,oResource);
+						aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes, oAsgnObj, oResource);
 					}
 					if (parseFloat(oAsgnObj.TRAVEL_BACK_TIME) > 0) {
 						aTravelTimes = this._getAssignmentTravelTimeObject(aTravelTimes, oAsgnObj, oResource, true);
@@ -2926,7 +2899,7 @@ sap.ui.define([
 			this.executeFunctionImport(this.getModel(), {
 				PrtAssignmentGuid: oData.Guid
 			}, "DeleteToolAssignment", "POST").then(function (results) {
-				this._refreshChangedResources(this.oTargetPath);
+				this._refreshUpdatedResources();
 			}.bind(this));
 		},
 
@@ -2943,8 +2916,8 @@ sap.ui.define([
 		_removeDuplicateObjects: function (aData) {
 			var oUnique = {},
 				aUniqueArr = [];
-			aData.forEach(function(oResObj){
-				if(!oUnique[oResObj.NodeId]){
+			aData.forEach(function (oResObj) {
+				if (!oUnique[oResObj.NodeId]) {
 					oUnique[oResObj.NodeId] = true;
 					aUniqueArr.push(oResObj);
 				}
@@ -3031,7 +3004,7 @@ sap.ui.define([
 
 					// checking if travel start time falls between break
 					if (moment(oBreakFrom) < moment(oDateFrom) && moment(oDateFrom) < moment(oBreakTo)) {
-						
+
 						// splitting the travel time object into two parts 
 						// 1. after break ends
 						// 2. before break starts
@@ -3058,38 +3031,38 @@ sap.ui.define([
 						break;
 						// checking if travel end time falls between break
 					} else if (moment(oBreakFrom) < moment(oDateTo) && moment(oDateTo) < moment(oBreakTo)) {
-							// splitting the travel time object into two parts 
-							// 1. before break starts
-							// 2. after break ends
-							nDurationDifference = this._getDateDuration(oDateFrom, oBreakFrom);
-							nDurationDifference = nDurationDifference / 60;
-							oDateTo = new Date(moment(oDateFrom).add(nDurationDifference, "minutes"));
-							aTravelTimes.push({
-								DateFrom: new Date(oDateFrom),
-								DateTo: new Date(oDateTo),
-								Description: "Travel Time",
-								Effort: (nDurationDifference / 60).toFixed(2),
-								TRAVEL_TIME: parseFloat(nDurationDifference / 60).toFixed(2)
-							});
-							// Add one object
-							oDateFrom = new Date(oBreakTo);
-							oDateTo = new Date(moment(oDateFrom).add(nTravelTime - nDurationDifference, "minutes"));
-							aTravelTimes.push({
-								DateFrom: new Date(oDateFrom),
-								DateTo: new Date(oDateTo),
-								Description: "Travel Time",
-								Effort: ((nTravelTime - nDurationDifference) / 60).toFixed(2),
-								TRAVEL_TIME: parseFloat((nTravelTime - nDurationDifference) / 60).toFixed(2)
-							});
-							bIsChanged = true;
-							break;
-					//condition added to handle the case where the dates are overlapping
-					} else if(moment(oBreakFrom) <= moment(oDateTo) && moment(oDateTo) <= moment(oBreakTo)){
+						// splitting the travel time object into two parts 
+						// 1. before break starts
+						// 2. after break ends
+						nDurationDifference = this._getDateDuration(oDateFrom, oBreakFrom);
+						nDurationDifference = nDurationDifference / 60;
+						oDateTo = new Date(moment(oDateFrom).add(nDurationDifference, "minutes"));
+						aTravelTimes.push({
+							DateFrom: new Date(oDateFrom),
+							DateTo: new Date(oDateTo),
+							Description: "Travel Time",
+							Effort: (nDurationDifference / 60).toFixed(2),
+							TRAVEL_TIME: parseFloat(nDurationDifference / 60).toFixed(2)
+						});
+						// Add one object
+						oDateFrom = new Date(oBreakTo);
+						oDateTo = new Date(moment(oDateFrom).add(nTravelTime - nDurationDifference, "minutes"));
+						aTravelTimes.push({
+							DateFrom: new Date(oDateFrom),
+							DateTo: new Date(oDateTo),
+							Description: "Travel Time",
+							Effort: ((nTravelTime - nDurationDifference) / 60).toFixed(2),
+							TRAVEL_TIME: parseFloat((nTravelTime - nDurationDifference) / 60).toFixed(2)
+						});
+						bIsChanged = true;
+						break;
+						//condition added to handle the case where the dates are overlapping
+					} else if (moment(oBreakFrom) <= moment(oDateTo) && moment(oDateTo) <= moment(oBreakTo)) {
 						nBreakTimeDifference = this._getDateDuration(oBreakFrom, oBreakTo);
 						nBreakTimeDifference = nBreakTimeDifference / 60;
 						oDateFrom = new Date(moment(oDateFrom).add(-nBreakTimeDifference, "minutes"));
 						oDateTo = new Date(oBreakFrom);
-						
+
 						nDurationDifference = this._getDateDuration(oDateFrom, oBreakFrom);
 						nDurationDifference = nDurationDifference / 60;
 
@@ -3099,7 +3072,7 @@ sap.ui.define([
 							Description: "Travel Time",
 							Effort: (nTravelTime / 60).toFixed(2),
 							TRAVEL_TIME: parseFloat(nTravelTime / 60).toFixed(2)
-						});						
+						});
 						bIsChanged = true;
 						break;
 					}
