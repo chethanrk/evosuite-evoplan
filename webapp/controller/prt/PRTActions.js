@@ -286,7 +286,8 @@ sap.ui.define([
 			oParams = this._getParams();
 			this._mParameters.bIsFromPRTAssignmentInfo = true;
 			this.controller.clearMessageModel();
-			this._updatedDmdResources(this.oViewModel, oParams);
+			//Storing updated Resource info for refreshing only the updated Resources in Gantt
+			this.updatedResources(this.oViewModel, this.oUserModel, oParams);
 			return new Promise(function (resolve, reject) {
 				this.controller.executeFunctionImport(this.oODataModel, oParams, "ChangeToolAssignment", "POST").then(function (success) {
 					resolve(success);
@@ -383,7 +384,7 @@ sap.ui.define([
 					sTargetPath: this.sDropTargetPath
 				};
 				//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			this._updatedDmdResources(this.oViewModel, oDateParams);
+			this.updatedResources(this.oViewModel, this.oUserModel, oDateParams);
 			for (var i = 0; i < aSources.length; i++) {
 				oParams = {
 					DateFrom: oDateParams.DateFrom,

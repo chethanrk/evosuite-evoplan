@@ -239,9 +239,9 @@ sap.ui.define([
 		 * @param sMethod method of http operation ex: GET/POST/PUT/DELETE
 		 */
 		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod, bFromMultiTimeAlloc) {
-	
+
 			var oResourceBundle = this.getResourceBundle();
-	
+
 			return new Promise(function (resolve, reject) {
 				oModel.callFunction("/" + sFuncName, {
 					method: sMethod || "POST",
@@ -534,7 +534,7 @@ sap.ui.define([
 				endDate = oTargetObj.EndDate ? oTargetObj.EndDate.getTime() : new Date(formatter.date(new Date())).getTime(),
 				resAsgnEndDate = oTargetObj.RES_ASGN_END_DATE ? oTargetObj.RES_ASGN_END_DATE.getTime() : null,
 				bValid = startDate === resAsgnStartDate && oTargetObj.StartTime.ms === oTargetObj.RES_ASGN_START_TIME.ms && endDate ===
-				resAsgnEndDate && oTargetObj.EndTime.ms === oTargetObj.RES_ASGN_END_TIME.ms;
+					resAsgnEndDate && oTargetObj.EndTime.ms === oTargetObj.RES_ASGN_END_TIME.ms;
 			return bValid;
 		},
 		/**
@@ -580,12 +580,12 @@ sap.ui.define([
 			var oController = this;
 			MessageBox.confirm(
 				message, {
-					styleClass: oController.getOwnerComponent().getContentDensityClass(),
-					icon: sap.m.MessageBox.Icon.CONFIRM,
-					title: this.getResourceBundle().getText("xtit.confirm"),
-					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-					onClose: fnCallback
-				}
+				styleClass: oController.getOwnerComponent().getContentDensityClass(),
+				icon: sap.m.MessageBox.Icon.CONFIRM,
+				title: this.getResourceBundle().getText("xtit.confirm"),
+				actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+				onClose: fnCallback
+			}
 			);
 		},
 
@@ -603,14 +603,14 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				MessageBox.confirm(
 					message, {
-						styleClass: oController.getOwnerComponent().getContentDensityClass(),
-						icon: sap.m.MessageBox.Icon.CONFIRM,
-						title: oController.getResourceBundle().getText("xtit.confirm"),
-						actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-						onClose: function (oEvent) {
-							resolve(oEvent);
-						}
+					styleClass: oController.getOwnerComponent().getContentDensityClass(),
+					icon: sap.m.MessageBox.Icon.CONFIRM,
+					title: oController.getResourceBundle().getText("xtit.confirm"),
+					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+					onClose: function (oEvent) {
+						resolve(oEvent);
 					}
+				}
 				);
 			});
 		},
@@ -628,14 +628,14 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				MessageBox.confirm(
 					message, {
-						styleClass: oComponent.getContentDensityClass(),
-						icon: sap.m.MessageBox.Icon.CONFIRM,
-						title: oComponent.getModel("i18n").getResourceBundle().getText("xtit.confirm"),
-						actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-						onClose: function (oEvent) {
-							resolve(oEvent);
-						}
+					styleClass: oComponent.getContentDensityClass(),
+					icon: sap.m.MessageBox.Icon.CONFIRM,
+					title: oComponent.getModel("i18n").getResourceBundle().getText("xtit.confirm"),
+					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+					onClose: function (oEvent) {
+						resolve(oEvent);
 					}
+				}
 				);
 			});
 		},
@@ -755,12 +755,12 @@ sap.ui.define([
 				mParams = {};
 			mParams[sParameter] = [sParamValue];
 			sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
-					target: {
-						semanticObject: sSemanticObject,
-						action: sAction
-					},
-					params: mParams
-				}) || "", // generate the Hash to display a Notification details app
+				target: {
+					semanticObject: sSemanticObject,
+					action: sAction
+				},
+				params: mParams
+			}) || "", // generate the Hash to display a Notification details app
 
 				sUrl = window.location.href.split("#")[0] + sHash;
 			window.open(sUrl, "_blank");
@@ -1081,7 +1081,7 @@ sap.ui.define([
 		 */
 		checkToShowAvailabilities: function (oNode) {
 			return (oNode.NodeType === "TIMEMONTH" || oNode.NodeType === "TIMEWEEK" || oNode.NodeType === "TIMEQUART" || oNode.NodeType ===
-					"TIMEYEAR") && oNode.RES_ASGN_AVAILABILITY_FLAG ===
+				"TIMEYEAR") && oNode.RES_ASGN_AVAILABILITY_FLAG ===
 				"P";
 		},
 
@@ -1387,7 +1387,7 @@ sap.ui.define([
 			oModel = this._mParameters.bFromHome || this._mParameters.bFromMap ? this.getModel() : this.getModel("ganttModel");
 			for (var i in this.selectedResources) {
 				if (oModel.getProperty(this.selectedResources[i] + "/NodeType") === "RES_GROUP" || oModel.getProperty(this.selectedResources[i] +
-						"/ResourceGuid") === "") {
+					"/ResourceGuid") === "") {
 					aRemoveItems.push(this.selectedResources[i]);
 				}
 			}
@@ -1454,25 +1454,22 @@ sap.ui.define([
 		},
 
 		/**
-		 * Storing the updated Resources Info in Demand and Map View
-		 * @param oViewModel
-		 * @param oResObj
+		 * Storing the updated Resources Info 
+		 * For refreshing only the updated resources assigments in Gantt
+		 * @param oViewModel	
+		 * @param oUserModel	 
+		 * @param oResObj 		Resource Data
+		 * Author Chethan RK
 		 */
-		_updatedDmdResources: function (oViewModel, oResObj) {
+		updatedResources: function (oViewModel, oUserModel, oResObj) {
 			var oUpdatedResObj,
 				aUpdatedResources = oViewModel.getProperty("/aUpdatedResources"),
-				sNodeId = oResObj.ResourceGuid + "//" + oResObj.ResourceGroupGuid,
-				sPoolPrefix = "";
-			//Considering as Pool Resources when Dropped on Resource Group
+				sPoolId = oUserModel.getProperty("/POOL_RESOURCE_PREFIX"),
+				sNodeId = oResObj.ResourceGuid + "//" + oResObj.ResourceGroupGuid;
+
+			//Considering as Pool Resources when NodeType is "RES_GROUP" or ResourceGuid is empty
 			if (oResObj.NodeType === "RES_GROUP" || oResObj.ResourceGuid === "") {
-				if (oResObj.NodeId && oResObj.NodeId.indexOf(":") > -1){
-					sPoolPrefix = oResObj.NodeId.split(":")[0] + ":";
-				}else if (oResObj.ParentNodeId && oResObj.ParentNodeId.indexOf(":") > -1){
-					sPoolPrefix = oResObj.ParentNodeId.split(":")[0] + ":";
-				}else if(oResObj.ObjectId && oResObj.ObjectId.indexOf(":") > -1){
-					sPoolPrefix = oResObj.ObjectId.split(":")[0] + ":";
-				}
-				sNodeId = sPoolPrefix + oResObj.ResourceGroupGuid;
+				sNodeId = sPoolId + oResObj.ResourceGroupGuid;
 			}
 			oUpdatedResObj = {
 				ResourceGuid: oResObj.ResourceGuid,
@@ -1485,14 +1482,14 @@ sap.ui.define([
 		/*
 		* Function to validate manually entered date format in Assignment Dialogs (For both Demand and PRT)
 		*/
-		onValidateDateFormat : function(oSource, bValidFormat, oViewModel){
+		onValidateDateFormat: function (oSource, bValidFormat, oViewModel) {
 			oSource.setValueState("None");
 			if (!bValidFormat) {
 				oSource.setValueState("Error");
 			}
 			var bValid = true,
-			eErrorDateFrom = this.getView().byId("idDateFromAssignInf").getValueState(),
-			eErrorDateTo = this.getView().byId("idDateToAssignInf").getValueState();
+				eErrorDateFrom = this.getView().byId("idDateFromAssignInf").getValueState(),
+				eErrorDateTo = this.getView().byId("idDateToAssignInf").getValueState();
 			if (eErrorDateFrom === "Error" || eErrorDateTo === "Error") {
 				bValid = false;
 			}
