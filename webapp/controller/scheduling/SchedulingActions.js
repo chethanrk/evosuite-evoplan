@@ -132,7 +132,7 @@ sap.ui.define([
 			if (!oSelectedDemandItem.ALLOW_RESCHEDULE) {
 				var aNonAssignableDemands = [];
 				aNonAssignableDemands.push(this.getMessageDescWithOrderID(oSelectedDemandItem, null, null, true));
-				this._showAssignErrorDialog(aNonAssignableDemands, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
+				this.showAssignErrorDialog(aNonAssignableDemands, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 				return false;
 			}
 			return true;
@@ -321,7 +321,7 @@ sap.ui.define([
 					oMsgParam.sPoolNames = oResult.poolResource;
 					if (oSelectedPaths.aNonAssignable.length > 0) {
 						//show popup with list of demands who are not allow for assign
-						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
+						this.showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 
 					} else if (oSelectedPaths.aPathsData.length > 0) {
 						//open auto schedule wizard with selected demands
@@ -336,7 +336,7 @@ sap.ui.define([
 				} else {
 					this._showErrorMessage(this.oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
 					if (oSelectedPaths.aNonAssignable.length > 0) {
-						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
+						this.showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 					}
 				}
 				this.oViewModel.setProperty("/Scheduling/bSchedBtnBusy", false);
